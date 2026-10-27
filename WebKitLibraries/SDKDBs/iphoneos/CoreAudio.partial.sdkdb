@@ -498,7 +498,7 @@
    "globals": [
     {"access": "public", "introduced": "27", "kind": "function", "linkage": "exported", "name": "_AudioServerPlugInRegisterMediaDeviceExtension"}
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "AudioClassID"},
     {"access": "public", "name": "AudioDeviceClockAlgorithmSelector"},
@@ -1016,7 +1016,7 @@
    "globals": [
     {"access": "public", "introduced": "27", "kind": "function", "linkage": "exported", "name": "_AudioServerPlugInRegisterMediaDeviceExtension"}
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "AudioClassID"},
     {"access": "public", "name": "AudioDeviceClockAlgorithmSelector"},
@@ -1173,7 +1173,7 @@
     {"access": "public", "linkage": "exported", "name": "_$sSr9CoreAudioEySryxGSo0B6BufferVcfC"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftCoreAudio"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

@@ -1341,7 +1341,7 @@
     {"access": "public", "introduced": "5", "kind": "function", "linkage": "exported", "name": "_unw_step"},
     {"access": "public", "introduced": "5", "kind": "function", "linkage": "exported", "name": "_unw_strerror"}
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "_Unwind_Action"},
     {"access": "public", "name": "_Unwind_Context"},
@@ -2698,7 +2698,7 @@
     {"access": "public", "introduced": "5", "kind": "function", "linkage": "exported", "name": "_unw_step"},
     {"access": "public", "introduced": "5", "kind": "function", "linkage": "exported", "name": "_unw_strerror"}
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "_Unwind_Action"},
     {"access": "public", "name": "_Unwind_Context"},

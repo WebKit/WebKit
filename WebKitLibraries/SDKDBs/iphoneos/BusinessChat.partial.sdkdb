@@ -41,7 +41,7 @@
      "super": "UIControl"
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "BCChatButtonStyle"},
     {"access": "public", "name": "BCParameterName"}
@@ -87,7 +87,7 @@
      "super": "UIControl"
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "BCChatButtonStyle"},
     {"access": "public", "name": "BCParameterName"}

@@ -1,0 +1,767 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NIAlgorithmConvergenceStatusUnknown"},
+      {"access": "public", "name": "NIAlgorithmConvergenceStatusNotConverged"},
+      {"access": "public", "name": "NIAlgorithmConvergenceStatusConverged"}
+     ],
+     "name": "NIAlgorithmConvergenceStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NIDLTDOACoordinatesTypeGeodetic"},
+      {"access": "public", "name": "NIDLTDOACoordinatesTypeRelative"}
+     ],
+     "name": "NIDLTDOACoordinatesType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NIDLTDOADiscoveryMethodWiFi"},
+      {"access": "public", "name": "NIDLTDOADiscoveryMethodBluetoothLowEnergy"}
+     ],
+     "name": "NIDLTDOADiscoveryMethod"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NIDLTDOAMeasurementTypePoll"},
+      {"access": "public", "name": "NIDLTDOAMeasurementTypeResponse"},
+      {"access": "public", "name": "NIDLTDOAMeasurementTypeFinal"}
+     ],
+     "name": "NIDLTDOAMeasurementType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NIErrorCodeUnsupportedPlatform"},
+      {"access": "public", "name": "NIErrorCodeInvalidConfiguration"},
+      {"access": "public", "name": "NIErrorCodeSessionFailed"},
+      {"access": "public", "name": "NIErrorCodeResourceUsageTimeout"},
+      {"access": "public", "name": "NIErrorCodeActiveSessionsLimitExceeded"},
+      {"access": "public", "name": "NIErrorCodeUserDidNotAllow"},
+      {"access": "public", "introduced": "16", "name": "NIErrorCodeInvalidARConfiguration"},
+      {"access": "public", "introduced": "16", "name": "NIErrorCodeAccessoryPeerDeviceUnavailable"},
+      {"access": "public", "introduced": "17", "name": "NIErrorCodeIncompatiblePeerDevice"},
+      {"access": "public", "introduced": "17", "name": "NIErrorCodeActiveExtendedDistanceSessionsLimitExceeded"}
+     ],
+     "name": "NIErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NIMotionActivityStateUnknown"},
+      {"access": "public", "name": "NIMotionActivityStateStationary"},
+      {"access": "public", "name": "NIMotionActivityStateMoving"}
+     ],
+     "name": "NIMotionActivityState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NINearbyObjectRemovalReasonTimeout"},
+      {"access": "public", "name": "NINearbyObjectRemovalReasonPeerEnded"}
+     ],
+     "name": "NINearbyObjectRemovalReason"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NINearbyObjectVerticalDirectionEstimateUnknown"},
+      {"access": "public", "name": "NINearbyObjectVerticalDirectionEstimateSame"},
+      {"access": "public", "name": "NINearbyObjectVerticalDirectionEstimateAbove"},
+      {"access": "public", "name": "NINearbyObjectVerticalDirectionEstimateBelow"},
+      {"access": "public", "name": "NINearbyObjectVerticalDirectionEstimateAboveOrBelow"}
+     ],
+     "name": "NINearbyObjectVerticalDirectionEstimate"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_NIAlgorithmConvergenceStatusReasonDescription"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_NIAlgorithmConvergenceStatusReasonInsufficientHorizontalSweep"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_NIAlgorithmConvergenceStatusReasonInsufficientLighting"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_NIAlgorithmConvergenceStatusReasonInsufficientMovement"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_NIAlgorithmConvergenceStatusReasonInsufficientVerticalSweep"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_NIErrorDomain"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_NINearbyObjectAngleNotAvailable"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_NINearbyObjectDirectionNotAvailable"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_NINearbyObjectDistanceNotAvailable"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_NINearbyObjectWorldTransformNotAvailable"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "NIAlgorithmConvergence",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "status", "name": "status"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "reasons", "name": "reasons"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "NIConfiguration",
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithNetworkIdentifier:"},
+      {"access": "public", "introduced": "27", "name": "initWithNetworkIdentifier:discoveryMethod:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "NIDLTDOAConfiguration",
+     "properties": [
+      {"access": "public", "getter": "networkIdentifier", "name": "networkIdentifier", "setter": "setNetworkIdentifier:"},
+      {"access": "public", "getter": "discoveryMethod", "introduced": "27", "name": "discoveryMethod", "setter": "setDiscoveryMethod:"}
+     ],
+     "super": "NIConfiguration"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "NIDLTDOAMeasurement",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "address", "name": "address"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "clusterInitiatorAddress", "introduced": "27", "name": "clusterInitiatorAddress"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "measurementType", "name": "measurementType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transmitTime", "name": "transmitTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rawTransmitTime", "introduced": "27", "name": "rawTransmitTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "receiveTime", "name": "receiveTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rawReceiveTime", "introduced": "27", "name": "rawReceiveTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "signalStrength", "name": "signalStrength"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "carrierFrequencyOffset", "name": "carrierFrequencyOffset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "responderClockFrequencyOffset", "introduced": "27", "name": "responderClockFrequencyOffset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "coordinatesType", "name": "coordinatesType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "coordinates", "name": "coordinates"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "floorElevation", "introduced": "27", "name": "floorElevation"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "NIDLTDOAMeasurementFloorElevation",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "floorNumber", "name": "floorNumber"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "height", "name": "height"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "NIDiscoveryToken",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceCapabilities", "introduced": "17", "name": "deviceCapabilities"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithData:error:"},
+      {"access": "public", "introduced": "16", "name": "initWithAccessoryData:bluetoothPeerIdentifier:error:"},
+      {"access": "public", "introduced": "27", "name": "initWithBluetoothChannelSoundingIdentifier:previousBluetoothIdentifier:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "NINearbyAccessoryConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "accessoryDiscoveryToken", "name": "accessoryDiscoveryToken"},
+      {"access": "public", "getter": "isCameraAssistanceEnabled", "introduced": "16", "name": "cameraAssistanceEnabled", "setter": "setCameraAssistanceEnabled:"}
+     ],
+     "super": "NIConfiguration"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "NINearbyObject",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "discoveryToken", "name": "discoveryToken"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "distance", "name": "distance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "direction", "name": "direction"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "verticalDirectionEstimate", "introduced": "16", "name": "verticalDirectionEstimate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "horizontalAngle", "introduced": "16", "name": "horizontalAngle"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPeerToken:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "NINearbyPeerConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "peerDiscoveryToken", "name": "peerDiscoveryToken"},
+      {"access": "public", "getter": "isCameraAssistanceEnabled", "introduced": "16", "name": "cameraAssistanceEnabled", "setter": "setCameraAssistanceEnabled:"},
+      {"access": "public", "getter": "isExtendedDistanceMeasurementEnabled", "introduced": "17", "name": "extendedDistanceMeasurementEnabled", "setter": "setExtendedDistanceMeasurementEnabled:"}
+     ],
+     "super": "NIConfiguration"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "runWithConfiguration:"},
+      {"access": "public", "name": "pause"},
+      {"access": "public", "name": "invalidate"},
+      {"access": "public", "introduced": "16", "name": "setARSession:"},
+      {"access": "public", "introduced": "27", "name": "updateMotionState:forObjectWithToken:"},
+      {"access": "public", "introduced": "16", "name": "worldTransformForObject:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "NISession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "introduced": "14", "name": "supported"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "deviceCapabilities", "introduced": "16", "name": "deviceCapabilities"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "delegateQueue", "name": "delegateQueue", "setter": "setDelegateQueue:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "discoveryToken", "name": "discoveryToken"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "configuration", "name": "configuration"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "introduced": "16",
+     "name": "NIDeviceCapability",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsPreciseDistanceMeasurement", "name": "supportsPreciseDistanceMeasurement"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsDirectionMeasurement", "name": "supportsDirectionMeasurement"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsCameraAssistance", "name": "supportsCameraAssistance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsExtendedDistanceMeasurement", "introduced": "17", "name": "supportsExtendedDistanceMeasurement"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsDLTDOAMeasurement", "introduced": "26", "name": "supportsDLTDOAMeasurement"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsBluetoothChannelSounding", "introduced": "27", "name": "supportsBluetoothChannelSounding"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "session:didUpdateNearbyObjects:", "optional": true},
+      {"access": "public", "name": "session:didRemoveNearbyObjects:withReason:", "optional": true},
+      {"access": "public", "name": "sessionWasSuspended:", "optional": true},
+      {"access": "public", "name": "sessionSuspensionEnded:", "optional": true},
+      {"access": "public", "name": "session:didInvalidateWithError:", "optional": true},
+      {"access": "public", "introduced": "15", "name": "session:didGenerateShareableConfigurationData:forObject:", "optional": true},
+      {"access": "public", "introduced": "16", "name": "session:didUpdateAlgorithmConvergence:forObject:", "optional": true},
+      {"access": "public", "introduced": "26", "name": "session:didUpdateDLTDOAMeasurements:", "optional": true},
+      {"access": "public", "introduced": "16", "name": "sessionDidStartRunning:", "optional": true}
+     ],
+     "introduced": "14",
+     "name": "NISessionDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios27.2",
+   "typedefs": [
+    {"access": "public", "introduced": "16", "name": "NIAlgorithmConvergenceStatus"},
+    {"access": "public", "introduced": "16", "name": "NIAlgorithmConvergenceStatusReason"},
+    {"access": "public", "introduced": "26", "name": "NIDLTDOACoordinatesType"},
+    {"access": "public", "introduced": "27", "name": "NIDLTDOADiscoveryMethod"},
+    {"access": "public", "introduced": "26", "name": "NIDLTDOAMeasurementType"},
+    {"access": "public", "introduced": "14", "name": "NIErrorCode"},
+    {"access": "public", "introduced": "15", "name": "NIMotionActivityState"},
+    {"access": "public", "introduced": "14", "name": "NINearbyObjectRemovalReason"},
+    {"access": "public", "introduced": "16", "name": "NINearbyObjectVerticalDirectionEstimate"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NIAlgorithmConvergenceStatusUnknown"},
+      {"access": "public", "name": "NIAlgorithmConvergenceStatusNotConverged"},
+      {"access": "public", "name": "NIAlgorithmConvergenceStatusConverged"}
+     ],
+     "name": "NIAlgorithmConvergenceStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NIDLTDOACoordinatesTypeGeodetic"},
+      {"access": "public", "name": "NIDLTDOACoordinatesTypeRelative"}
+     ],
+     "name": "NIDLTDOACoordinatesType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NIDLTDOADiscoveryMethodWiFi"},
+      {"access": "public", "name": "NIDLTDOADiscoveryMethodBluetoothLowEnergy"}
+     ],
+     "name": "NIDLTDOADiscoveryMethod"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NIDLTDOAMeasurementTypePoll"},
+      {"access": "public", "name": "NIDLTDOAMeasurementTypeResponse"},
+      {"access": "public", "name": "NIDLTDOAMeasurementTypeFinal"}
+     ],
+     "name": "NIDLTDOAMeasurementType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NIErrorCodeUnsupportedPlatform"},
+      {"access": "public", "name": "NIErrorCodeInvalidConfiguration"},
+      {"access": "public", "name": "NIErrorCodeSessionFailed"},
+      {"access": "public", "name": "NIErrorCodeResourceUsageTimeout"},
+      {"access": "public", "name": "NIErrorCodeActiveSessionsLimitExceeded"},
+      {"access": "public", "name": "NIErrorCodeUserDidNotAllow"},
+      {"access": "public", "introduced": "16", "name": "NIErrorCodeInvalidARConfiguration"},
+      {"access": "public", "introduced": "16", "name": "NIErrorCodeAccessoryPeerDeviceUnavailable"},
+      {"access": "public", "introduced": "17", "name": "NIErrorCodeIncompatiblePeerDevice"},
+      {"access": "public", "introduced": "17", "name": "NIErrorCodeActiveExtendedDistanceSessionsLimitExceeded"}
+     ],
+     "name": "NIErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NIMotionActivityStateUnknown"},
+      {"access": "public", "name": "NIMotionActivityStateStationary"},
+      {"access": "public", "name": "NIMotionActivityStateMoving"}
+     ],
+     "name": "NIMotionActivityState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NINearbyObjectRemovalReasonTimeout"},
+      {"access": "public", "name": "NINearbyObjectRemovalReasonPeerEnded"}
+     ],
+     "name": "NINearbyObjectRemovalReason"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NINearbyObjectVerticalDirectionEstimateUnknown"},
+      {"access": "public", "name": "NINearbyObjectVerticalDirectionEstimateSame"},
+      {"access": "public", "name": "NINearbyObjectVerticalDirectionEstimateAbove"},
+      {"access": "public", "name": "NINearbyObjectVerticalDirectionEstimateBelow"},
+      {"access": "public", "name": "NINearbyObjectVerticalDirectionEstimateAboveOrBelow"}
+     ],
+     "name": "NINearbyObjectVerticalDirectionEstimate"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_NIAlgorithmConvergenceStatusReasonDescription"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_NIAlgorithmConvergenceStatusReasonInsufficientHorizontalSweep"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_NIAlgorithmConvergenceStatusReasonInsufficientLighting"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_NIAlgorithmConvergenceStatusReasonInsufficientMovement"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_NIAlgorithmConvergenceStatusReasonInsufficientVerticalSweep"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_NIErrorDomain"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_NINearbyObjectAngleNotAvailable"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_NINearbyObjectDirectionNotAvailable"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_NINearbyObjectDistanceNotAvailable"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_NINearbyObjectWorldTransformNotAvailable"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "NIAlgorithmConvergence",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "status", "name": "status"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "reasons", "name": "reasons"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "NIConfiguration",
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithNetworkIdentifier:"},
+      {"access": "public", "introduced": "27", "name": "initWithNetworkIdentifier:discoveryMethod:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "NIDLTDOAConfiguration",
+     "properties": [
+      {"access": "public", "getter": "networkIdentifier", "name": "networkIdentifier", "setter": "setNetworkIdentifier:"},
+      {"access": "public", "getter": "discoveryMethod", "introduced": "27", "name": "discoveryMethod", "setter": "setDiscoveryMethod:"}
+     ],
+     "super": "NIConfiguration"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "NIDLTDOAMeasurement",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "address", "name": "address"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "clusterInitiatorAddress", "introduced": "27", "name": "clusterInitiatorAddress"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "measurementType", "name": "measurementType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transmitTime", "name": "transmitTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rawTransmitTime", "introduced": "27", "name": "rawTransmitTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "receiveTime", "name": "receiveTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rawReceiveTime", "introduced": "27", "name": "rawReceiveTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "signalStrength", "name": "signalStrength"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "carrierFrequencyOffset", "name": "carrierFrequencyOffset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "responderClockFrequencyOffset", "introduced": "27", "name": "responderClockFrequencyOffset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "coordinatesType", "name": "coordinatesType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "coordinates", "name": "coordinates"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "floorElevation", "introduced": "27", "name": "floorElevation"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "NIDLTDOAMeasurementFloorElevation",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "floorNumber", "name": "floorNumber"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "height", "name": "height"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "NIDiscoveryToken",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceCapabilities", "introduced": "17", "name": "deviceCapabilities"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithData:error:"},
+      {"access": "public", "introduced": "16", "name": "initWithAccessoryData:bluetoothPeerIdentifier:error:"},
+      {"access": "public", "introduced": "27", "name": "initWithBluetoothChannelSoundingIdentifier:previousBluetoothIdentifier:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "NINearbyAccessoryConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "accessoryDiscoveryToken", "name": "accessoryDiscoveryToken"},
+      {"access": "public", "getter": "isCameraAssistanceEnabled", "introduced": "16", "name": "cameraAssistanceEnabled", "setter": "setCameraAssistanceEnabled:"}
+     ],
+     "super": "NIConfiguration"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "NINearbyObject",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "discoveryToken", "name": "discoveryToken"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "distance", "name": "distance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "direction", "name": "direction"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "verticalDirectionEstimate", "introduced": "16", "name": "verticalDirectionEstimate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "horizontalAngle", "introduced": "16", "name": "horizontalAngle"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPeerToken:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "NINearbyPeerConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "peerDiscoveryToken", "name": "peerDiscoveryToken"},
+      {"access": "public", "getter": "isCameraAssistanceEnabled", "introduced": "16", "name": "cameraAssistanceEnabled", "setter": "setCameraAssistanceEnabled:"},
+      {"access": "public", "getter": "isExtendedDistanceMeasurementEnabled", "introduced": "17", "name": "extendedDistanceMeasurementEnabled", "setter": "setExtendedDistanceMeasurementEnabled:"}
+     ],
+     "super": "NIConfiguration"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "runWithConfiguration:"},
+      {"access": "public", "name": "pause"},
+      {"access": "public", "name": "invalidate"},
+      {"access": "public", "introduced": "16", "name": "setARSession:"},
+      {"access": "public", "introduced": "27", "name": "updateMotionState:forObjectWithToken:"},
+      {"access": "public", "introduced": "16", "name": "worldTransformForObject:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "NISession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "introduced": "14", "name": "supported"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "deviceCapabilities", "introduced": "16", "name": "deviceCapabilities"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "delegateQueue", "name": "delegateQueue", "setter": "setDelegateQueue:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "discoveryToken", "name": "discoveryToken"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "configuration", "name": "configuration"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "introduced": "16",
+     "name": "NIDeviceCapability",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsPreciseDistanceMeasurement", "name": "supportsPreciseDistanceMeasurement"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsDirectionMeasurement", "name": "supportsDirectionMeasurement"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsCameraAssistance", "name": "supportsCameraAssistance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsExtendedDistanceMeasurement", "introduced": "17", "name": "supportsExtendedDistanceMeasurement"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsDLTDOAMeasurement", "introduced": "26", "name": "supportsDLTDOAMeasurement"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsBluetoothChannelSounding", "introduced": "27", "name": "supportsBluetoothChannelSounding"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "session:didUpdateNearbyObjects:", "optional": true},
+      {"access": "public", "name": "session:didRemoveNearbyObjects:withReason:", "optional": true},
+      {"access": "public", "name": "sessionWasSuspended:", "optional": true},
+      {"access": "public", "name": "sessionSuspensionEnded:", "optional": true},
+      {"access": "public", "name": "session:didInvalidateWithError:", "optional": true},
+      {"access": "public", "introduced": "15", "name": "session:didGenerateShareableConfigurationData:forObject:", "optional": true},
+      {"access": "public", "introduced": "16", "name": "session:didUpdateAlgorithmConvergence:forObject:", "optional": true},
+      {"access": "public", "introduced": "26", "name": "session:didUpdateDLTDOAMeasurements:", "optional": true},
+      {"access": "public", "introduced": "16", "name": "sessionDidStartRunning:", "optional": true}
+     ],
+     "introduced": "14",
+     "name": "NISessionDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27.2",
+   "typedefs": [
+    {"access": "public", "introduced": "16", "name": "NIAlgorithmConvergenceStatus"},
+    {"access": "public", "introduced": "16", "name": "NIAlgorithmConvergenceStatusReason"},
+    {"access": "public", "introduced": "26", "name": "NIDLTDOACoordinatesType"},
+    {"access": "public", "introduced": "27", "name": "NIDLTDOADiscoveryMethod"},
+    {"access": "public", "introduced": "26", "name": "NIDLTDOAMeasurementType"},
+    {"access": "public", "introduced": "14", "name": "NIErrorCode"},
+    {"access": "public", "introduced": "15", "name": "NIMotionActivityState"},
+    {"access": "public", "introduced": "14", "name": "NINearbyObjectRemovalReason"},
+    {"access": "public", "introduced": "16", "name": "NINearbyObjectVerticalDirectionEstimate"}
+   ]
+  },
+  {
+   "globals": [
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO12notConvergedyACSayAC6ReasonVGcACmFWC"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV20insufficientLightingAEvgZ"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV20insufficientLightingAEvpZMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV20insufficientMovementAEvgZ"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV20insufficientMovementAEvpZMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV20localizedDescriptionSSSgvg"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV20localizedDescriptionSSSgvpMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV25insufficientVerticalSweepAEvgZ"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV25insufficientVerticalSweepAEvpZMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV26insufficientSignalStrengthAEvgZ"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV26insufficientSignalStrengthAEvpZMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV27insufficientHorizontalSweepAEvgZ"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV27insufficientHorizontalSweepAEvpZMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV8rawValueAESS_tcfC"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV8rawValueSSvM"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV8rawValueSSvg"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV8rawValueSSvpMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonV8rawValueSSvs"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonVMa"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonVMn"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonVN"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonVSHAAMc"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonVSQAAMc"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO6ReasonVSYAAMc"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO7unknownyA2CmFWC"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusO9convergedyA2CmFWC"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusOMa"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusOMn"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusON"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s17NearbyInteraction28NIAlgorithmConvergenceStatusOSQAAMc"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo14NINearbyObjectC17NearbyInteractionE15horizontalAngleSfSgvg"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo14NINearbyObjectC17NearbyInteractionE15horizontalAngleSfSgvpMV"},
+    {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo14NINearbyObjectC17NearbyInteractionE8distanceSfSgvg"},
+    {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo14NINearbyObjectC17NearbyInteractionE8distanceSfSgvpMV"},
+    {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo14NINearbyObjectC17NearbyInteractionE9directions5SIMD3VySfGSgvg"},
+    {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo14NINearbyObjectC17NearbyInteractionE9directions5SIMD3VySfGSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo19NIDLTDOAMeasurementC17NearbyInteractionE29responderClockFrequencyOffsetSdSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo19NIDLTDOAMeasurementC17NearbyInteractionE29responderClockFrequencyOffsetSdSgvpMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo22NIAlgorithmConvergenceC17NearbyInteractionE6statusAC0aB6StatusOvg"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo22NIAlgorithmConvergenceC17NearbyInteractionE6statusAC0aB6StatusOvpMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo9NISessionC17NearbyInteractionE14worldTransform3forSo13simd_float4x4aSgSo14NINearbyObjectC_tF"}
+   ],
+   "target": "arm64e-apple-ios27.2"
+  }
+ ],
+ "version": "1.0"
+}

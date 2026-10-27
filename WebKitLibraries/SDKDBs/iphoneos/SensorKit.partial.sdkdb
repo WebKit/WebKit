@@ -1329,7 +1329,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "14", "name": "SRAbsoluteTime"},
     {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsName"},
@@ -2693,7 +2693,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "14", "name": "SRAbsoluteTime"},
     {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsName"},
@@ -3228,7 +3228,7 @@
     {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE21normalizedReflectanceSdSgvg"},
     {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE21normalizedReflectanceSdSgvpMV"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

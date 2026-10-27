@@ -1592,7 +1592,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "MPChangeLanguageOptionSetting"},
     {"access": "public", "name": "MPErrorCode"},
@@ -3214,7 +3214,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "MPChangeLanguageOptionSetting"},
     {"access": "public", "name": "MPErrorCode"},
@@ -3255,7 +3255,7 @@
     {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersCSE05MediaB0Mc"},
     {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersCSe05MediaB0Mc"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

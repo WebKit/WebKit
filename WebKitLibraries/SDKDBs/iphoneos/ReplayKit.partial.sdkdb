@@ -79,7 +79,7 @@
    ],
    "globals": [
     {"access": "public", "introduced": "11.2", "kind": "variable", "linkage": "exported", "name": "_RPApplicationInfoBundleIdentifierKey"},
-    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_RPRecordingErrorDomain"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_RPRecordingErrorDomain"},
     {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_RPVideoSampleOrientationKey"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_SCStreamErrorDomain"}
    ],
@@ -188,7 +188,7 @@
     {
      "access": "public",
      "classMethods": [
-      {"access": "public", "name": "sharedRecorder"}
+      {"access": "public", "introduced": "9", "name": "sharedRecorder"}
      ],
      "instanceMethods": [
       {"access": "public", "name": "init", "unavailable": true},
@@ -203,6 +203,7 @@
       {"access": "public", "introduced": "15", "name": "stopClipBufferingWithCompletionHandler:"},
       {"access": "public", "introduced": "15", "name": "exportClipToURL:duration:completionHandler:"}
      ],
+     "introduced": "9",
      "linkage": "exported",
      "name": "RPScreenRecorder",
      "properties": [
@@ -282,7 +283,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "11", "name": "RPCameraPosition"},
     {"access": "public", "introduced": "9", "name": "RPRecordingErrorCode"},
@@ -367,7 +368,7 @@
    ],
    "globals": [
     {"access": "public", "introduced": "11.2", "kind": "variable", "linkage": "exported", "name": "_RPApplicationInfoBundleIdentifierKey"},
-    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_RPRecordingErrorDomain"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_RPRecordingErrorDomain"},
     {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_RPVideoSampleOrientationKey"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_SCStreamErrorDomain"}
    ],
@@ -476,7 +477,7 @@
     {
      "access": "public",
      "classMethods": [
-      {"access": "public", "name": "sharedRecorder"}
+      {"access": "public", "introduced": "9", "name": "sharedRecorder"}
      ],
      "instanceMethods": [
       {"access": "public", "name": "init", "unavailable": true},
@@ -491,6 +492,7 @@
       {"access": "public", "introduced": "15", "name": "stopClipBufferingWithCompletionHandler:"},
       {"access": "public", "introduced": "15", "name": "exportClipToURL:duration:completionHandler:"}
      ],
+     "introduced": "9",
      "linkage": "exported",
      "name": "RPScreenRecorder",
      "properties": [
@@ -570,7 +572,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "11", "name": "RPCameraPosition"},
     {"access": "public", "introduced": "9", "name": "RPRecordingErrorCode"},
@@ -1190,7 +1192,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "SCCaptureDynamicRange"},
     {"access": "public", "name": "SCCaptureResolutionType"},
@@ -1821,7 +1823,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "SCCaptureDynamicRange"},
     {"access": "public", "name": "SCCaptureResolutionType"},
@@ -1883,7 +1885,7 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE20defaultConfigurationAC0abcH0VvpMV"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE20defaultConfigurationAC0abcH0Vvs"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

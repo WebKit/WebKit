@@ -154,7 +154,7 @@
     {"access": "public", "introduced": "2", "linkage": "exported", "name": "_$ss6UInt64V12CoreGraphicsEyAbC7CGFloatVcfC"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftCoreFoundation"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

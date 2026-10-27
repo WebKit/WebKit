@@ -3,10 +3,9 @@
  "PublicSDKContentRoot": [
   {
    "globals": [
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit14USDRenderErrorV20localizedDescriptionSSvM"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit14USDRenderErrorV20localizedDescriptionSSvg"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit14USDRenderErrorV20localizedDescriptionSSvpMV"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit14USDRenderErrorV20localizedDescriptionSSvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit14USDRenderErrorV10Foundation09LocalizedE0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit14USDRenderErrorV16errorDescriptionSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit14USDRenderErrorV16errorDescriptionSSSgvpMV"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit14USDRenderErrorVMa"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit14USDRenderErrorVMn"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit14USDRenderErrorVN"},
@@ -37,11 +36,13 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV16allowsHitTestingSbvpMV"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV20rendersAutomaticallySbvg"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV20rendersAutomaticallySbvpMV"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV21waitForRenderComplete2onAC0H6ResultV0bC06EntityC_tYaFZ"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV21waitForRenderComplete2onAC0H6ResultV0bC06EntityC_tYaFZTu"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV23waitForRenderCompletion2onAC0H6ResultV0bC06EntityC_tYaFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV23waitForRenderCompletion2onAC0H6ResultV0bC06EntityC_tYaFZTu"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV4fromACs7Decoder_p_tKcfC"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV5stage0A00D0VSgvg"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV5stage0A00D0VSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV6encode2toys7Encoder_p_tKF"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV6render_2to2atAC12RenderResultV0A00D0V_0bC06EntityCAK8TimeCodeVtYaFZ"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV6render_2to2atAC12RenderResultV0A00D0V_0bC06EntityCAK8TimeCodeVtYaFZTu"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV8timeCode0A00D0V04TimeG0VvM"},
@@ -51,7 +52,9 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentVMa"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentVMn"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentVSEAAMc"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentVSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentVSeAAMc"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV_8timeCode16allowsHitTestingAC0A00D0V_AH04TimeG0VSbtYacfC"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit17USDStageComponentV_8timeCode16allowsHitTestingAC0A00D0V_AH04TimeG0VSbtYacfCTu"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit9USDPlayerC10MaterialIDV11descriptionSSvg"},
@@ -304,7 +307,7 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit9USDPlayerCfD"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s18_USDKit_RealityKit9USDPlayerCfd"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

@@ -33,7 +33,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "ARConfidenceLevel"}
    ]
@@ -64,7 +64,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "ARConfidenceLevel"}
    ]

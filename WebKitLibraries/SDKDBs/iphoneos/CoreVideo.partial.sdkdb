@@ -487,7 +487,7 @@
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCVPixelFormatVerticalSubsampling"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kCVZeroTime"}
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "CVAttachmentMode"},
     {"access": "public", "name": "CVBufferRef"},
@@ -1008,7 +1008,7 @@
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCVPixelFormatVerticalSubsampling"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kCVZeroTime"}
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "CVAttachmentMode"},
     {"access": "public", "name": "CVBufferRef"},
@@ -2377,7 +2377,7 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$ss6UInt64V9CoreVideo30CVAttachmentValueRepresentableACMc"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$ss6UInt64V9CoreVideo30CVAttachmentValueRepresentableACWP"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

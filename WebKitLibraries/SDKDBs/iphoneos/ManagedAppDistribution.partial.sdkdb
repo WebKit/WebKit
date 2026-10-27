@@ -2,10 +2,10 @@
 {
  "PublicSDKContentRoot": [
   {
-   "target": "arm64e-apple-ios27"
+   "target": "arm64e-apple-ios27.2"
   },
   {
-   "target": "arm64e.x1-apple-ios27"
+   "target": "arm64e.x1-apple-ios27.2"
   },
   {
    "globals": [
@@ -203,7 +203,7 @@
     {"access": "public", "introduced": "17.2", "linkage": "exported", "name": "_$s22ManagedAppDistribution8PlatformVSQAAMc"},
     {"access": "public", "introduced": "17.2", "linkage": "exported", "name": "_$s22ManagedAppDistribution8PlatformVs23CustomStringConvertibleAAMc"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -278,6 +278,8 @@
     {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$s14MarketplaceKit0aB5ErrorOs0C0AAMc"},
     {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$s14MarketplaceKit0aB5ErrorOs23CustomStringConvertibleAAMc"},
     {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$s14MarketplaceKit0aB9URISchemeSSvg"},
+    {"access": "public", "introduced": "27.2", "linkage": "exported", "name": "_$s14MarketplaceKit10AppLibraryC013requestInlineC12Installation_12subjectTokenyAC0G7RequestV_SSSgtYaKF"},
+    {"access": "public", "introduced": "27.2", "linkage": "exported", "name": "_$s14MarketplaceKit10AppLibraryC013requestInlineC12Installation_12subjectTokenyAC0G7RequestV_SSSgtYaKFTu"},
     {"access": "public", "linkage": "exported", "name": "_$s14MarketplaceKit10AppLibraryC07requestC12Installation3for7account24installVerificationTokeny10Foundation3URLV_S2StYaKF"},
     {"access": "public", "linkage": "exported", "name": "_$s14MarketplaceKit10AppLibraryC07requestC12Installation3for7account24installVerificationTokeny10Foundation3URLV_S2StYaKFTu"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s14MarketplaceKit10AppLibraryC07requestC12InstallationyyAC0F7RequestVYaKF"},
@@ -500,7 +502,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s14MarketplaceKit20TransactionReportingOMn"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s14MarketplaceKit20TransactionReportingON"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

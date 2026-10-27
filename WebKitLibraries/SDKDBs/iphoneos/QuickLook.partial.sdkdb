@@ -201,7 +201,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "QLPreviewItemEditingMode"}
    ]
@@ -406,7 +406,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "QLPreviewItemEditingMode"}
    ]
@@ -464,7 +464,7 @@
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo14QLPreviewReplyC9QuickLookE18forPDFWithPageSize19createDocumentUsingABSo6CGSizeV_So11PDFDocumentCABKctcfC"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo14QLPreviewReplyC9QuickLookE18forPDFWithPageSize19createDocumentUsingABSo6CGSizeV_So11PDFDocumentCABKctcfc"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

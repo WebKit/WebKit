@@ -592,7 +592,7 @@
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kSCValNetSMBNetBIOSNodeTypeMixed", "unavailable": true},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kSCValNetSMBNetBIOSNodeTypePeer", "unavailable": true}
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "AuthorizationRef"},
     {"access": "public", "name": "SCBondInterfaceRef"},
@@ -1212,7 +1212,7 @@
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kSCValNetSMBNetBIOSNodeTypeMixed", "unavailable": true},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kSCValNetSMBNetBIOSNodeTypePeer", "unavailable": true}
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "AuthorizationRef"},
     {"access": "public", "name": "SCBondInterfaceRef"},

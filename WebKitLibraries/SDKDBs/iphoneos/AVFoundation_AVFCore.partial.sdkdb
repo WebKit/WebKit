@@ -2315,7 +2315,8 @@
       {"access": "public", "introduced": "26", "name": "AVErrorFollowExternalSyncDeviceTimedOut"},
       {"access": "public", "introduced": "27", "name": "AVErrorFollowExternalSyncFailed"},
       {"access": "public", "introduced": "27", "name": "AVErrorExternalSyncDeviceFrequencyHigherThanSpecified"},
-      {"access": "public", "introduced": "27", "name": "AVErrorExternalSyncDeviceFrequencyLowerThanSpecified"}
+      {"access": "public", "introduced": "27", "name": "AVErrorExternalSyncDeviceFrequencyLowerThanSpecified"},
+      {"access": "public", "introduced": "27", "name": "AVErrorNotEnoughSpaceForProVideoStorageReplenishment"}
      ],
      "name": "AVError"
     },
@@ -2576,7 +2577,6 @@
     {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVAssetExportPresetMVHEVC960x960"},
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVAssetExportPresetMediumQuality"},
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVAssetExportPresetPassthrough"},
-    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_AVAssetExportSessionResumptionFailureReasonIncompatiblePreset"},
     {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_AVAssetExportSessionResumptionFailureReasonIncompatibleSessionSettings"},
     {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_AVAssetExportSessionResumptionFailureReasonIncompatibleTemporaryDirectoryContents"},
     {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_AVAssetExportSessionResumptionFailureReasonTemporaryDirectoryDoesNotExist"},
@@ -2701,6 +2701,7 @@
     {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_AVMediaCharacteristicLanguageTranslation"},
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVMediaCharacteristicLegible"},
     {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVMediaCharacteristicMachineGenerated"},
+    {"access": "public", "introduced": "27.2", "kind": "variable", "linkage": "exported", "name": "_AVMediaCharacteristicSignLanguageInterpretationForAccessibility"},
     {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVMediaCharacteristicTactileMinimal"},
     {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_AVMediaCharacteristicTranscribesSpokenDialogForAccessibility"},
     {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_AVMediaCharacteristicUsesWideGamutColorSpace"},
@@ -7384,6 +7385,12 @@
       "AVSampleBufferAudioRendererVolumeControl",
       "AVSampleBufferAudioRendererQueueManagement"
      ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "11", "name": "enqueueSampleBuffer:"},
+      {"access": "public", "introduced": "11", "name": "flush"},
+      {"access": "public", "introduced": "11", "name": "requestMediaDataWhenReadyOnQueue:usingBlock:"},
+      {"access": "public", "introduced": "11", "name": "stopRequestingMediaData"}
+     ],
      "introduced": "11",
      "ivars": [
       {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_audioRendererInternal"}
@@ -7395,7 +7402,9 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "error", "introduced": "11", "name": "error"},
       {"access": "public", "getter": "audioOutputDeviceUniqueID", "name": "audioOutputDeviceUniqueID", "setter": "setAudioOutputDeviceUniqueID:", "unavailable": true},
       {"access": "public", "getter": "audioTimePitchAlgorithm", "name": "audioTimePitchAlgorithm", "setter": "setAudioTimePitchAlgorithm:"},
-      {"access": "public", "getter": "allowedAudioSpatializationFormats", "introduced": "15", "name": "allowedAudioSpatializationFormats", "setter": "setAllowedAudioSpatializationFormats:"}
+      {"access": "public", "getter": "allowedAudioSpatializationFormats", "introduced": "15", "name": "allowedAudioSpatializationFormats", "setter": "setAllowedAudioSpatializationFormats:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isReadyForMoreMediaData", "introduced": "11", "name": "readyForMoreMediaData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasSufficientMediaDataForReliablePlaybackStart", "introduced": "14.5", "name": "hasSufficientMediaDataForReliablePlaybackStart"}
      ],
      "protocols": [
       "AVQueuedSampleBufferRendering"
@@ -7518,7 +7527,11 @@
       "AVSampleBufferVideoRendererVideoPerformanceMetrics"
      ],
      "instanceMethods": [
-      {"access": "public", "introduced": "17", "name": "flushWithRemovalOfDisplayedImage:completionHandler:"}
+      {"access": "public", "introduced": "17", "name": "flushWithRemovalOfDisplayedImage:completionHandler:"},
+      {"access": "public", "introduced": "11", "name": "enqueueSampleBuffer:"},
+      {"access": "public", "introduced": "11", "name": "flush"},
+      {"access": "public", "introduced": "11", "name": "requestMediaDataWhenReadyOnQueue:usingBlock:"},
+      {"access": "public", "introduced": "11", "name": "stopRequestingMediaData"}
      ],
      "introduced": "17",
      "linkage": "exported",
@@ -7526,7 +7539,9 @@
      "properties": [
       {"access": "public", "attr": [ "readonly" ], "getter": "status", "introduced": "17", "name": "status"},
       {"access": "public", "attr": [ "readonly" ], "getter": "error", "introduced": "17", "name": "error"},
-      {"access": "public", "attr": [ "readonly" ], "getter": "requiresFlushToResumeDecoding", "introduced": "17", "name": "requiresFlushToResumeDecoding"}
+      {"access": "public", "attr": [ "readonly" ], "getter": "requiresFlushToResumeDecoding", "introduced": "17", "name": "requiresFlushToResumeDecoding"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isReadyForMoreMediaData", "introduced": "11", "name": "readyForMoreMediaData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasSufficientMediaDataForReliablePlaybackStart", "introduced": "14.5", "name": "hasSufficientMediaDataForReliablePlaybackStart"}
      ],
      "protocols": [
       "AVQueuedSampleBufferRendering"
@@ -10589,7 +10604,8 @@
       {"access": "public", "introduced": "26", "name": "AVErrorFollowExternalSyncDeviceTimedOut"},
       {"access": "public", "introduced": "27", "name": "AVErrorFollowExternalSyncFailed"},
       {"access": "public", "introduced": "27", "name": "AVErrorExternalSyncDeviceFrequencyHigherThanSpecified"},
-      {"access": "public", "introduced": "27", "name": "AVErrorExternalSyncDeviceFrequencyLowerThanSpecified"}
+      {"access": "public", "introduced": "27", "name": "AVErrorExternalSyncDeviceFrequencyLowerThanSpecified"},
+      {"access": "public", "introduced": "27", "name": "AVErrorNotEnoughSpaceForProVideoStorageReplenishment"}
      ],
      "name": "AVError"
     },
@@ -10850,7 +10866,6 @@
     {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVAssetExportPresetMVHEVC960x960"},
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVAssetExportPresetMediumQuality"},
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVAssetExportPresetPassthrough"},
-    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_AVAssetExportSessionResumptionFailureReasonIncompatiblePreset"},
     {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_AVAssetExportSessionResumptionFailureReasonIncompatibleSessionSettings"},
     {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_AVAssetExportSessionResumptionFailureReasonIncompatibleTemporaryDirectoryContents"},
     {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_AVAssetExportSessionResumptionFailureReasonTemporaryDirectoryDoesNotExist"},
@@ -10975,6 +10990,7 @@
     {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_AVMediaCharacteristicLanguageTranslation"},
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVMediaCharacteristicLegible"},
     {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVMediaCharacteristicMachineGenerated"},
+    {"access": "public", "introduced": "27.2", "kind": "variable", "linkage": "exported", "name": "_AVMediaCharacteristicSignLanguageInterpretationForAccessibility"},
     {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_AVMediaCharacteristicTactileMinimal"},
     {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_AVMediaCharacteristicTranscribesSpokenDialogForAccessibility"},
     {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_AVMediaCharacteristicUsesWideGamutColorSpace"},
@@ -15658,6 +15674,12 @@
       "AVSampleBufferAudioRendererVolumeControl",
       "AVSampleBufferAudioRendererQueueManagement"
      ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "11", "name": "enqueueSampleBuffer:"},
+      {"access": "public", "introduced": "11", "name": "flush"},
+      {"access": "public", "introduced": "11", "name": "requestMediaDataWhenReadyOnQueue:usingBlock:"},
+      {"access": "public", "introduced": "11", "name": "stopRequestingMediaData"}
+     ],
      "introduced": "11",
      "ivars": [
       {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_audioRendererInternal"}
@@ -15669,7 +15691,9 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "error", "introduced": "11", "name": "error"},
       {"access": "public", "getter": "audioOutputDeviceUniqueID", "name": "audioOutputDeviceUniqueID", "setter": "setAudioOutputDeviceUniqueID:", "unavailable": true},
       {"access": "public", "getter": "audioTimePitchAlgorithm", "name": "audioTimePitchAlgorithm", "setter": "setAudioTimePitchAlgorithm:"},
-      {"access": "public", "getter": "allowedAudioSpatializationFormats", "introduced": "15", "name": "allowedAudioSpatializationFormats", "setter": "setAllowedAudioSpatializationFormats:"}
+      {"access": "public", "getter": "allowedAudioSpatializationFormats", "introduced": "15", "name": "allowedAudioSpatializationFormats", "setter": "setAllowedAudioSpatializationFormats:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isReadyForMoreMediaData", "introduced": "11", "name": "readyForMoreMediaData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasSufficientMediaDataForReliablePlaybackStart", "introduced": "14.5", "name": "hasSufficientMediaDataForReliablePlaybackStart"}
      ],
      "protocols": [
       "AVQueuedSampleBufferRendering"
@@ -15792,7 +15816,11 @@
       "AVSampleBufferVideoRendererVideoPerformanceMetrics"
      ],
      "instanceMethods": [
-      {"access": "public", "introduced": "17", "name": "flushWithRemovalOfDisplayedImage:completionHandler:"}
+      {"access": "public", "introduced": "17", "name": "flushWithRemovalOfDisplayedImage:completionHandler:"},
+      {"access": "public", "introduced": "11", "name": "enqueueSampleBuffer:"},
+      {"access": "public", "introduced": "11", "name": "flush"},
+      {"access": "public", "introduced": "11", "name": "requestMediaDataWhenReadyOnQueue:usingBlock:"},
+      {"access": "public", "introduced": "11", "name": "stopRequestingMediaData"}
      ],
      "introduced": "17",
      "linkage": "exported",
@@ -15800,7 +15828,9 @@
      "properties": [
       {"access": "public", "attr": [ "readonly" ], "getter": "status", "introduced": "17", "name": "status"},
       {"access": "public", "attr": [ "readonly" ], "getter": "error", "introduced": "17", "name": "error"},
-      {"access": "public", "attr": [ "readonly" ], "getter": "requiresFlushToResumeDecoding", "introduced": "17", "name": "requiresFlushToResumeDecoding"}
+      {"access": "public", "attr": [ "readonly" ], "getter": "requiresFlushToResumeDecoding", "introduced": "17", "name": "requiresFlushToResumeDecoding"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isReadyForMoreMediaData", "introduced": "11", "name": "readyForMoreMediaData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasSufficientMediaDataForReliablePlaybackStart", "introduced": "14.5", "name": "hasSufficientMediaDataForReliablePlaybackStart"}
      ],
      "protocols": [
       "AVQueuedSampleBufferRendering"

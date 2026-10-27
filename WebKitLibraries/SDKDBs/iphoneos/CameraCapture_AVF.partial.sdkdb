@@ -695,15 +695,6 @@
     },
     {
      "access": "public",
-     "interface": "AVMetadataObject",
-     "introduced": "27",
-     "name": "AVMetadataObjectContinuousAutoFocusTracking",
-     "properties": [
-      {"access": "public", "attr": [ "readonly" ], "getter": "isTrackedForContinuousAutoFocus", "introduced": "27", "name": "trackedForContinuousAutoFocus"}
-     ]
-    },
-    {
-     "access": "public",
      "interface": "AVCaptureDeviceFormat",
      "introduced": "26",
      "name": "CameraLensSmudgeDetection",
@@ -1002,7 +993,7 @@
       {"access": "public", "name": "AVCaptureSystemPressureFactorPeakPower"},
       {"access": "public", "name": "AVCaptureSystemPressureFactorDepthModuleTemperature"},
       {"access": "public", "introduced": "17", "name": "AVCaptureSystemPressureFactorCameraTemperature"},
-      {"access": "public", "name": "AVCaptureSystemPressureFactorSystemStress"}
+      {"access": "public", "introduced": "27", "name": "AVCaptureSystemPressureFactorBatteryStress"}
      ],
      "introduced": "11.1",
      "name": "AVCaptureSystemPressureFactors"
@@ -1147,8 +1138,10 @@
     {"access": "public", "introduced": "10.2", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInDualCamera"},
     {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInDualWideCamera"},
     {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInDuoCamera"},
+    {"access": "public", "introduced": "27.1", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInInnerUltraWideCamera"},
     {"access": "public", "introduced": "15.4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInLiDARDepthCamera"},
     {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInMicrophone"},
+    {"access": "public", "introduced": "27.1", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInOuterUltraWideCamera"},
     {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInTelephotoCamera"},
     {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInTripleCamera"},
     {"access": "public", "introduced": "11.1", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInTrueDepthCamera"},
@@ -3120,8 +3113,7 @@
     {
      "access": "public",
      "categories": [
-      "AVMetadataObjectCinematicVideoSupport",
-      "AVMetadataObjectContinuousAutoFocusTracking"
+      "AVMetadataObjectCinematicVideoSupport"
      ],
      "classMethods": [
       {"access": "public", "name": "new", "unavailable": true}
@@ -4187,15 +4179,6 @@
     },
     {
      "access": "public",
-     "interface": "AVMetadataObject",
-     "introduced": "27",
-     "name": "AVMetadataObjectContinuousAutoFocusTracking",
-     "properties": [
-      {"access": "public", "attr": [ "readonly" ], "getter": "isTrackedForContinuousAutoFocus", "introduced": "27", "name": "trackedForContinuousAutoFocus"}
-     ]
-    },
-    {
-     "access": "public",
      "interface": "AVCaptureDeviceFormat",
      "introduced": "26",
      "name": "CameraLensSmudgeDetection",
@@ -4494,7 +4477,7 @@
       {"access": "public", "name": "AVCaptureSystemPressureFactorPeakPower"},
       {"access": "public", "name": "AVCaptureSystemPressureFactorDepthModuleTemperature"},
       {"access": "public", "introduced": "17", "name": "AVCaptureSystemPressureFactorCameraTemperature"},
-      {"access": "public", "name": "AVCaptureSystemPressureFactorSystemStress"}
+      {"access": "public", "introduced": "27", "name": "AVCaptureSystemPressureFactorBatteryStress"}
      ],
      "introduced": "11.1",
      "name": "AVCaptureSystemPressureFactors"
@@ -4639,8 +4622,10 @@
     {"access": "public", "introduced": "10.2", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInDualCamera"},
     {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInDualWideCamera"},
     {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInDuoCamera"},
+    {"access": "public", "introduced": "27.1", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInInnerUltraWideCamera"},
     {"access": "public", "introduced": "15.4", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInLiDARDepthCamera"},
     {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInMicrophone"},
+    {"access": "public", "introduced": "27.1", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInOuterUltraWideCamera"},
     {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInTelephotoCamera"},
     {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInTripleCamera"},
     {"access": "public", "introduced": "11.1", "kind": "variable", "linkage": "exported", "name": "_AVCaptureDeviceTypeBuiltInTrueDepthCamera"},
@@ -6612,8 +6597,7 @@
     {
      "access": "public",
      "categories": [
-      "AVMetadataObjectCinematicVideoSupport",
-      "AVMetadataObjectContinuousAutoFocusTracking"
+      "AVMetadataObjectCinematicVideoSupport"
      ],
      "classMethods": [
       {"access": "public", "name": "new", "unavailable": true}

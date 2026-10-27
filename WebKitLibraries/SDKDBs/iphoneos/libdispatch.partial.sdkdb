@@ -485,7 +485,7 @@
      "name": "OS_os_workgroup_parallel"
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "dispatch_autorelease_frequency_t"},
     {"access": "public", "name": "dispatch_block_flags_t"},
@@ -1022,7 +1022,7 @@
      "name": "OS_os_workgroup_parallel"
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "dispatch_autorelease_frequency_t"},
     {"access": "public", "name": "dispatch_block_flags_t"},

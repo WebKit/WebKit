@@ -79,6 +79,7 @@
       {"access": "public", "introduced": "17", "name": "setNeedsUpdateContentUnavailableConfiguration"},
       {"access": "public", "introduced": "17", "name": "updateContentUnavailableConfigurationUsingState:"},
       {"access": "public", "introduced": "26", "name": "setNeedsUpdateOfPrefersInterfaceOrientationLocked"},
+      {"access": "public", "introduced": "27.1", "name": "setNeedsUpdateOfVerticalBarConfiguration"},
       {"access": "public", "introduced": "17", "name": "updateTraitsIfNeeded"},
       {"access": "public", "name": "setNeedsUpdateOfPreferredContainerBackgroundStyle", "unavailable": true}
      ],
@@ -89,6 +90,8 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "contentUnavailableConfigurationState", "introduced": "17", "name": "contentUnavailableConfigurationState"},
       {"access": "public", "attr": [ "readonly" ], "getter": "childViewControllerForInterfaceOrientationLock", "introduced": "26", "name": "childViewControllerForInterfaceOrientationLock"},
       {"access": "public", "attr": [ "readonly" ], "getter": "prefersInterfaceOrientationLocked", "introduced": "26", "name": "prefersInterfaceOrientationLocked"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "preferredVerticalBarBehavior", "introduced": "27.1", "name": "preferredVerticalBarBehavior"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "childViewControllerForPreferredVerticalBarBehavior", "introduced": "27.1", "name": "childViewControllerForPreferredVerticalBarBehavior"},
       {"access": "public", "attr": [ "readonly" ], "getter": "previewActionItems", "introduced": "9", "name": "previewActionItems"},
       {"access": "public", "attr": [ "readonly" ], "getter": "traitOverrides", "introduced": "17", "name": "traitOverrides"},
       {"access": "public", "attr": [ "readonly" ], "getter": "preferredContainerBackgroundStyle", "name": "preferredContainerBackgroundStyle", "unavailable": true},
@@ -167,6 +170,14 @@
      "name": "",
      "protocols": [
       "UIInteraction"
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "UINavigationItem",
+     "name": "",
+     "properties": [
+      {"access": "public", "getter": "verticalBarCompressionBehavior", "introduced": "27.1", "name": "verticalBarCompressionBehavior", "setter": "setVerticalBarCompressionBehavior:"}
      ]
     },
     {
@@ -375,6 +386,16 @@
     },
     {
      "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "startTextAnimation:forRange:inContext:writingDirection:"},
+      {"access": "public", "introduced": "27", "name": "cancelTextAnimationsWithIdentifiers:"},
+      {"access": "public", "introduced": "27", "name": "showGrammarPresentationForRange:inContext:"}
+     ],
+     "interface": "UIWritingToolsCoordinator",
+     "name": "GrammarPresentation"
+    },
+    {
+     "access": "public",
      "interface": "UITraitCollection",
      "name": "ImageConfiguration",
      "properties": [
@@ -478,6 +499,14 @@
     },
     {
      "access": "public",
+     "interface": "UITraitCollection",
+     "name": "NavigationTitleAlignment",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "navigationTitleAlignment", "introduced": "27.2", "name": "navigationTitleAlignment"}
+     ]
+    },
+    {
+     "access": "public",
      "interface": "UIScene",
      "name": "PointerLockState",
      "properties": [
@@ -506,6 +535,15 @@
      "properties": [
       {"access": "public", "attr": [ "readonly" ], "getter": "prominence", "introduced": "18", "name": "prominence"}
      ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27.1", "name": "reservedRegionsOfKind:"},
+      {"access": "public", "introduced": "27.1", "name": "reservedRegionsOfKind:options:"}
+     ],
+     "interface": "UIView",
+     "name": "ReservedRegion"
     },
     {
      "access": "public",
@@ -865,6 +903,14 @@
       {"access": "public", "getter": "statusBarOrientation", "introduced": "2", "name": "statusBarOrientation", "setter": "setStatusBarOrientation:"},
       {"access": "public", "getter": "statusBarStyle", "introduced": "2", "name": "statusBarStyle", "setter": "setStatusBarStyle:"},
       {"access": "public", "getter": "isStatusBarHidden", "introduced": "2", "name": "statusBarHidden", "setter": "setStatusBarHidden:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "UIViewController",
+     "name": "UIArrangementViewController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "arrangementViewController", "introduced": "27.1", "name": "arrangementViewController"}
      ]
     },
     {
@@ -2187,6 +2233,15 @@
      "properties": [
       {"access": "public", "getter": "overrideUserInterfaceStyle", "introduced": "13", "name": "overrideUserInterfaceStyle", "setter": "setOverrideUserInterfaceStyle:"}
      ]
+    },
+    {
+     "access": "public",
+     "interface": "UITraitCollection",
+     "name": "VerticalBar",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "verticalBarEdge", "introduced": "27.1", "name": "verticalBarEdge"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "systemTraitsAffectingVerticalBarEdge", "introduced": "27.1", "name": "systemTraitsAffectingVerticalBarEdge"}
+     ]
     }
    ],
    "enums": [
@@ -2533,6 +2588,16 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UIArrangementViewControllerViewPlacementNone"},
+      {"access": "public", "name": "UIArrangementViewControllerViewPlacementPrimary"},
+      {"access": "public", "name": "UIArrangementViewControllerViewPlacementSecondary"}
+     ],
+     "introduced": "27.1",
+     "name": "UIArrangementViewControllerViewPlacement"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UIAttachmentBehaviorTypeItems"},
       {"access": "public", "name": "UIAttachmentBehaviorTypeAnchor"}
      ],
@@ -2569,6 +2634,16 @@
      ],
      "introduced": "15",
      "name": "UIBandSelectionInteractionState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIBarButtonItemAxisBehaviorAutomatic"},
+      {"access": "public", "introduced": "27.1", "name": "UIBarButtonItemAxisBehaviorHorizontalOnly"},
+      {"access": "public", "introduced": "27.1", "name": "UIBarButtonItemAxisBehaviorVerticalPreferred"}
+     ],
+     "introduced": "27.1",
+     "name": "UIBarButtonItemAxisBehavior"
     },
     {
      "access": "public",
@@ -3580,6 +3655,17 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UIHingeStatusUnknown"},
+      {"access": "public", "name": "UIHingeStatusClosed"},
+      {"access": "public", "name": "UIHingeStatusPartiallyOpen"},
+      {"access": "public", "name": "UIHingeStatusFullyOpen"}
+     ],
+     "introduced": "27.1",
+     "name": "UIHingeStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UIImageDynamicRangeUnspecified"},
       {"access": "public", "name": "UIImageDynamicRangeStandard"},
       {"access": "public", "name": "UIImageDynamicRangeConstrainedHigh"},
@@ -4319,6 +4405,16 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UINavigationItemTitleAlignmentAutomatic"},
+      {"access": "public", "name": "UINavigationItemTitleAlignmentLeading"},
+      {"access": "public", "name": "UINavigationItemTitleAlignmentCenter"}
+     ],
+     "introduced": "27.2",
+     "name": "UINavigationItemTitleAlignment"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UINotificationFeedbackTypeSuccess"},
       {"access": "public", "name": "UINotificationFeedbackTypeWarning"},
       {"access": "public", "name": "UINotificationFeedbackTypeError"}
@@ -4744,6 +4840,17 @@
      ],
      "introduced": "9",
      "name": "UISemanticContentAttribute"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UISheetPresentationControllerPlacementAutomatic"},
+      {"access": "public", "name": "UISheetPresentationControllerPlacementLeading"},
+      {"access": "public", "name": "UISheetPresentationControllerPlacementCenter"},
+      {"access": "public", "name": "UISheetPresentationControllerPlacementTrailing"}
+     ],
+     "introduced": "27",
+     "name": "UISheetPresentationControllerPlacement"
     },
     {
      "access": "public",
@@ -5337,6 +5444,16 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UITextGrammarCheckingTypeDefault"},
+      {"access": "public", "name": "UITextGrammarCheckingTypeNo"},
+      {"access": "public", "name": "UITextGrammarCheckingTypeYes"}
+     ],
+     "introduced": "27",
+     "name": "UITextGrammarCheckingType"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UITextGranularityCharacter"},
       {"access": "public", "name": "UITextGranularityWord"},
       {"access": "public", "name": "UITextGranularitySentence"},
@@ -5642,6 +5759,35 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UIVerticalBarBehaviorAutomatic"},
+      {"access": "public", "name": "UIVerticalBarBehaviorDisabled"}
+     ],
+     "introduced": "27.1",
+     "name": "UIVerticalBarBehavior"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIVerticalBarCompressionBehaviorAutomatic"},
+      {"access": "public", "introduced": "27.1", "name": "UIVerticalBarCompressionBehaviorPrefersBarItems"},
+      {"access": "public", "introduced": "27.1", "name": "UIVerticalBarCompressionBehaviorPrefersTabBar"}
+     ],
+     "introduced": "27.1",
+     "name": "UIVerticalBarCompressionBehavior"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIVerticalBarEdgeUnspecified"},
+      {"access": "public", "introduced": "27.1", "name": "UIVerticalBarEdgeLeading"},
+      {"access": "public", "introduced": "27.1", "name": "UIVerticalBarEdgeTrailing"}
+     ],
+     "introduced": "27.1",
+     "name": "UIVerticalBarEdge"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UIVibrancyEffectStyleLabel"},
       {"access": "public", "name": "UIVibrancyEffectStyleSecondaryLabel"},
       {"access": "public", "name": "UIVibrancyEffectStyleTertiaryLabel"},
@@ -5792,6 +5938,15 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UIViewReservedRegionQueryOptionsNone"},
+      {"access": "public", "name": "UIViewReservedRegionQueryOptionsIncludeInactive"}
+     ],
+     "introduced": "27.1",
+     "name": "UIViewReservedRegionQueryOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UIViewTintAdjustmentModeAutomatic"},
       {"access": "public", "name": "UIViewTintAdjustmentModeNormal"},
       {"access": "public", "name": "UIViewTintAdjustmentModeDimmed"}
@@ -5897,7 +6052,8 @@
      "constants": [
       {"access": "public", "name": "UIWritingToolsCoordinatorTextAnimationAnticipate"},
       {"access": "public", "name": "UIWritingToolsCoordinatorTextAnimationRemove"},
-      {"access": "public", "name": "UIWritingToolsCoordinatorTextAnimationInsert"}
+      {"access": "public", "name": "UIWritingToolsCoordinatorTextAnimationInsert"},
+      {"access": "public", "introduced": "27", "name": "UIWritingToolsCoordinatorTextAnimationIndicateGrammar"}
      ],
      "introduced": "18.2",
      "name": "UIWritingToolsCoordinatorTextAnimation"
@@ -5905,8 +6061,20 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UIWritingToolsCoordinatorTextDecorationNone"},
+      {"access": "public", "name": "UIWritingToolsCoordinatorTextDecorationGrammarUnderline"}
+     ],
+     "introduced": "27",
+     "name": "UIWritingToolsCoordinatorTextDecoration"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UIWritingToolsCoordinatorTextReplacementReasonInteractive"},
-      {"access": "public", "name": "UIWritingToolsCoordinatorTextReplacementReasonNoninteractive"}
+      {"access": "public", "name": "UIWritingToolsCoordinatorTextReplacementReasonNoninteractive"},
+      {"access": "public", "introduced": "27", "name": "UIWritingToolsCoordinatorTextReplacementReasonAccepted"},
+      {"access": "public", "introduced": "27", "name": "UIWritingToolsCoordinatorTextReplacementReasonRejected"},
+      {"access": "public", "introduced": "27", "name": "UIWritingToolsCoordinatorTextReplacementReasonTemporary"}
      ],
      "introduced": "18.2",
      "name": "UIWritingToolsCoordinatorTextReplacementReason"
@@ -6471,6 +6639,9 @@
     {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeBirthdateYear"},
     {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCellularEID"},
     {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCellularIMEI"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCellularIMEI1"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCellularIMEI2"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCellularNAL"},
     {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCountryName"},
     {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCreditCardExpiration"},
     {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCreditCardExpirationMonth"},
@@ -6588,6 +6759,7 @@
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_UIWindowLevelStatusBar"},
     {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_UIWindowSceneSessionRoleApplication"},
     {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_UIWindowSceneSessionRoleAssistiveAccessApplication"},
+    {"access": "public", "introduced": "27.1", "kind": "variable", "linkage": "exported", "name": "_UIWindowSceneSessionRoleCameraCaptureAccessory"},
     {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_UIWindowSceneSessionRoleExternalDisplay"},
     {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_UIWindowSceneSessionRoleExternalDisplayNonInteractive"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_UIWindowSceneSessionRoleVolumetricApplication", "unavailable": true},
@@ -7547,6 +7719,54 @@
     },
     {
      "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIArrangement",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "updateArrangement:animated:"},
+      {"access": "public", "name": "updateArrangement:"},
+      {"access": "public", "name": "stateForPlacement:"},
+      {"access": "public", "name": "viewControllerForPlacement:"},
+      {"access": "public", "name": "placementForViewController:"},
+      {"access": "public", "name": "setViewController:forPlacement:animated:"},
+      {"access": "public", "name": "setViewController:forPlacement:"}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIArrangementViewController",
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIArrangementViewState",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "zIndex", "name": "zIndex"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "splitAxis", "name": "splitAxis"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isHidden", "name": "hidden"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
      "classMethods": [
       {"access": "public", "introduced": "9", "name": "slidingAttachmentWithItem:attachedToItem:attachmentAnchor:axisOfTranslation:"},
       {"access": "public", "introduced": "9", "name": "slidingAttachmentWithItem:attachmentAnchor:axisOfTranslation:"},
@@ -7754,6 +7974,7 @@
       {"access": "public", "getter": "isSymbolAnimationEnabled", "introduced": "17", "name": "symbolAnimationEnabled", "setter": "setSymbolAnimationEnabled:"},
       {"access": "public", "getter": "visibilityPriority", "introduced": "27", "name": "visibilityPriority", "setter": "setVisibilityPriority:"},
       {"access": "public", "getter": "isPaddingRemoved", "introduced": "27", "name": "paddingRemoved", "setter": "setPaddingRemoved:"},
+      {"access": "public", "getter": "axisBehavior", "introduced": "27.1", "name": "axisBehavior", "setter": "setAxisBehavior:"},
       {"access": "public", "getter": "menuRepresentation", "introduced": "16", "name": "menuRepresentation", "setter": "setMenuRepresentation:"},
       {"access": "public", "getter": "hidesSharedBackground", "introduced": "26", "name": "hidesSharedBackground", "setter": "setHidesSharedBackground:"},
       {"access": "public", "getter": "sharesBackground", "introduced": "26", "name": "sharesBackground", "setter": "setSharesBackground:"},
@@ -10664,6 +10885,65 @@
     {
      "access": "public",
      "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIHinge",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "status", "name": "status"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "angle", "name": "angle"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithUpdateHandler:"}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIHingeInteraction",
+     "properties": [
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:"}
+     ],
+     "protocols": [
+      "UIInteraction"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIHingeInteractionUpdate",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "hinge", "name": "hinge"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
       {"access": "public", "name": "effect"},
       {"access": "public", "name": "new", "unavailable": true}
      ],
@@ -12033,6 +12313,7 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "overflowPresentationSource", "introduced": "16", "name": "overflowPresentationSource"},
       {"access": "public", "getter": "largeTitleDisplayMode", "introduced": "11", "name": "largeTitleDisplayMode", "setter": "setLargeTitleDisplayMode:"},
       {"access": "public", "getter": "style", "introduced": "16", "name": "style", "setter": "setStyle:"},
+      {"access": "public", "getter": "titleAlignment", "introduced": "27.2", "name": "titleAlignment", "setter": "setTitleAlignment:"},
       {"access": "public", "getter": "searchController", "introduced": "11", "name": "searchController", "setter": "setSearchController:"},
       {"access": "public", "getter": "hidesSearchBarWhenScrolling", "introduced": "11", "name": "hidesSearchBarWhenScrolling", "setter": "setHidesSearchBarWhenScrolling:"},
       {"access": "public", "getter": "preferredSearchBarPlacement", "introduced": "16", "name": "preferredSearchBarPlacement", "setter": "setPreferredSearchBarPlacement:"},
@@ -12089,6 +12370,40 @@
      "properties": [
       {"access": "public", "attr": [ "readonly" ], "getter": "URL", "name": "URL"},
       {"access": "public", "attr": [ "readonly" ], "getter": "options", "name": "options"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "overlayArrangement"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "setViewProperties:forPlacement:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIOverlayArrangement",
+     "properties": [
+      {"access": "public", "getter": "axes", "name": "axes", "setter": "setAxes:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "defaultViewProperties", "name": "defaultViewProperties"}
+     ],
+     "super": "UIArrangement"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIOverlayArrangementViewProperties",
+     "properties": [
+      {"access": "public", "getter": "edge", "name": "edge", "setter": "setEdge:"}
+     ],
+     "protocols": [
+      "NSCopying"
      ],
      "super": "NSObject"
     },
@@ -13085,7 +13400,9 @@
      "access": "public",
      "classMethods": [
       {"access": "public", "name": "externalNonInteractiveSceneAccessoryWithConfiguration:"},
-      {"access": "public", "name": "externalNonInteractiveSceneAccessoryWithConfiguration:userInfo:"}
+      {"access": "public", "name": "externalNonInteractiveSceneAccessoryWithConfiguration:userInfo:"},
+      {"access": "public", "introduced": "27.1", "name": "cameraCaptureSceneAccessoryWithConfiguration:"},
+      {"access": "public", "introduced": "27.1", "name": "cameraCaptureSceneAccessoryWithConfiguration:userInfo:"}
      ],
      "instanceMethods": [
       {"access": "public", "name": "init", "unavailable": true}
@@ -13966,6 +14283,7 @@
      "properties": [
       {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
       {"access": "public", "getter": "sourceView", "name": "sourceView", "setter": "setSourceView:"},
+      {"access": "public", "getter": "preferredPlacement", "introduced": "27", "name": "preferredPlacement", "setter": "setPreferredPlacement:"},
       {"access": "public", "getter": "prefersPageSizing", "introduced": "17", "name": "prefersPageSizing", "setter": "setPrefersPageSizing:"},
       {"access": "public", "getter": "prefersEdgeAttachedInCompactHeight", "name": "prefersEdgeAttachedInCompactHeight", "setter": "setPrefersEdgeAttachedInCompactHeight:"},
       {"access": "public", "getter": "widthFollowsPreferredContentSizeWhenEdgeAttached", "name": "widthFollowsPreferredContentSizeWhenEdgeAttached", "setter": "setWidthFollowsPreferredContentSizeWhenEdgeAttached:"},
@@ -14113,6 +14431,79 @@
       {"access": "public", "getter": "damping", "name": "damping", "setter": "setDamping:"}
      ],
      "super": "UIDynamicBehavior"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "splitArrangement"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "setViewProperties:forPlacement:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UISplitArrangement",
+     "properties": [
+      {"access": "public", "getter": "axes", "name": "axes", "setter": "setAxes:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "defaultViewProperties", "name": "defaultViewProperties"}
+     ],
+     "super": "UIArrangement"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "automaticDimension"},
+      {"access": "public", "name": "intrinsicDimension"},
+      {"access": "public", "name": "fractionalDimension:"},
+      {"access": "public", "name": "absoluteDimension:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UISplitArrangementDimension",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UISplitArrangementDimensionRange",
+     "properties": [
+      {"access": "public", "getter": "minimum", "name": "minimum", "setter": "setMinimum:"},
+      {"access": "public", "getter": "preferred", "name": "preferred", "setter": "setPreferred:"},
+      {"access": "public", "getter": "maximum", "name": "maximum", "setter": "setMaximum:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UISplitArrangementViewProperties",
+     "properties": [
+      {"access": "public", "getter": "width", "name": "width", "setter": "setWidth:"},
+      {"access": "public", "getter": "height", "name": "height", "setter": "setHeight:"},
+      {"access": "public", "getter": "layoutPriority", "name": "layoutPriority", "setter": "setLayoutPriority:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
     },
     {
      "access": "public",
@@ -15939,7 +16330,9 @@
      "categories": [
       "CurrentTraitCollection",
       "DynamicAppearance",
-      "ImageConfiguration"
+      "ImageConfiguration",
+      "NavigationTitleAlignment",
+      "VerticalBar"
      ],
      "classMethods": [
       {"access": "public", "introduced": "8", "name": "traitCollectionWithTraitsFromCollections:"},
@@ -16090,6 +16483,16 @@
      "introduced": "18",
      "linkage": "exported",
      "name": "UITraitListEnvironment",
+     "protocols": [
+      "UINSIntegerTraitDefinition"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "27.2",
+     "linkage": "exported",
+     "name": "UITraitNavigationTitleAlignment",
      "protocols": [
       "UINSIntegerTraitDefinition"
      ],
@@ -16406,6 +16809,7 @@
       "UserInterfaceStyle",
       "UIContentSizeCategoryLimit",
       "LayoutRegions",
+      "ReservedRegion",
       "CornerConfiguration",
       "Interactions",
       "UIAccessibilityInvertColors",
@@ -16499,6 +16903,7 @@
       "UIScreenEdgesDeferringSystemGestures",
       "UIHomeIndicatorAutoHidden",
       "UIPointerLockSupport",
+      "UIArrangementViewController",
       "UINavigationControllerItem",
       "UINavigationControllerContextualToolbarItems",
       "UIPopoverController",
@@ -16624,6 +17029,10 @@
       {"access": "public", "name": "safeAreaLayoutRegionWithCornerAdaptation:"},
       {"access": "public", "name": "marginsLayoutRegionWithCornerAdaptation:"},
       {"access": "public", "name": "readableContentLayoutRegionWithCornerAdaptation:"},
+      {"access": "public", "introduced": "27.1", "name": "layoutRegionForBarOnEdge:extent:"},
+      {"access": "public", "introduced": "27.1", "name": "layoutRegionForBarOnDirectionalEdge:extent:"},
+      {"access": "public", "introduced": "27.2", "name": "layoutRegionForBarOnEdge:"},
+      {"access": "public", "introduced": "27.2", "name": "layoutRegionForBarOnDirectionalEdge:"},
       {"access": "public", "name": "new", "unavailable": true}
      ],
      "instanceMethods": [
@@ -16665,6 +17074,63 @@
      ],
      "protocols": [
       "UIViewImplicitlyAnimating",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIViewReservedRegion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "kind", "name": "kind"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frame", "name": "frame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "margins", "name": "margins"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isActive", "name": "active"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIViewReservedRegionIdentifier",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "occlusionRegionKind"},
+      {"access": "public", "name": "divisionRegionKind"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIViewReservedRegionKind",
+     "protocols": [
       "NSCopying"
      ],
      "super": "NSObject"
@@ -17031,6 +17497,9 @@
     },
     {
      "access": "public",
+     "categories": [
+      "GrammarPresentation"
+     ],
      "instanceMethods": [
       {"access": "public", "name": "initWithDelegate:"},
       {"access": "public", "name": "stopWritingTools"},
@@ -19654,6 +20123,7 @@
       {"access": "public", "getter": "smartInsertDeleteType", "introduced": "11", "name": "smartInsertDeleteType", "optional": true, "setter": "setSmartInsertDeleteType:"},
       {"access": "public", "getter": "inlinePredictionType", "introduced": "17", "name": "inlinePredictionType", "optional": true, "setter": "setInlinePredictionType:"},
       {"access": "public", "getter": "mathExpressionCompletionType", "introduced": "18", "name": "mathExpressionCompletionType", "optional": true, "setter": "setMathExpressionCompletionType:"},
+      {"access": "public", "getter": "grammarCheckingType", "introduced": "27", "name": "grammarCheckingType", "optional": true, "setter": "setGrammarCheckingType:"},
       {"access": "public", "getter": "keyboardType", "name": "keyboardType", "optional": true, "setter": "setKeyboardType:"},
       {"access": "public", "getter": "keyboardAppearance", "name": "keyboardAppearance", "optional": true, "setter": "setKeyboardAppearance:"},
       {"access": "public", "getter": "returnKeyType", "name": "returnKeyType", "optional": true, "setter": "setReturnKeyType:"},
@@ -20172,6 +20642,9 @@
       {"access": "public", "name": "writingToolsCoordinator:requestsSingleContainerSubrangesOfRange:inContext:completion:", "optional": true},
       {"access": "public", "name": "writingToolsCoordinator:requestsDecorationContainerViewForRange:inContext:completion:", "optional": true},
       {"access": "public", "name": "writingToolsCoordinator:willChangeToState:completion:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "writingToolsCoordinator:requestsPreviewForTextAnimation:ofRange:inContext:textDecoration:completion:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "writingToolsCoordinator:requestsGrammarResultsForContext:completion:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "writingToolsCoordinator:setGrammarCheckingEnabled:", "optional": true},
       {"access": "public", "introduced": "18.2", "name": "writingToolsCoordinator:requestsRangeInContextWithIdentifierForPoint:completion:", "optional": true}
      ],
      "introduced": "18.2",
@@ -20249,11 +20722,13 @@
     {"access": "public", "introduced": "9", "name": "UIApplicationOpenURLOptionsKey"},
     {"access": "public", "name": "UIApplicationShortcutIconType"},
     {"access": "public", "name": "UIApplicationState"},
+    {"access": "public", "name": "UIArrangementViewControllerViewPlacement"},
     {"access": "public", "name": "UIAttachmentBehaviorType"},
     {"access": "public", "name": "UIBackgroundFetchResult"},
     {"access": "public", "name": "UIBackgroundRefreshStatus"},
     {"access": "public", "name": "UIBackgroundTaskIdentifier"},
     {"access": "public", "name": "UIBandSelectionInteractionState"},
+    {"access": "public", "name": "UIBarButtonItemAxisBehavior"},
     {"access": "public", "name": "UIBarButtonItemStyle"},
     {"access": "public", "introduced": "27", "name": "UIBarButtonItemVisibilityPriority"},
     {"access": "public", "name": "UIBarButtonSystemItem"},
@@ -20381,6 +20856,7 @@
     {"access": "public", "name": "UIGuidedAccessErrorCode"},
     {"access": "public", "name": "UIGuidedAccessRestrictionState"},
     {"access": "public", "name": "UIHDRHeadroomUsageLimit"},
+    {"access": "public", "name": "UIHingeStatus"},
     {"access": "public", "name": "UIImageDynamicRange"},
     {"access": "public", "name": "UIImageOrientation"},
     {"access": "public", "name": "UIImagePickerControllerCameraCaptureMode"},
@@ -20437,6 +20913,7 @@
     {"access": "public", "name": "UINavigationItemLargeTitleDisplayMode"},
     {"access": "public", "name": "UINavigationItemSearchBarPlacement"},
     {"access": "public", "name": "UINavigationItemStyle"},
+    {"access": "public", "name": "UINavigationItemTitleAlignment"},
     {"access": "public", "name": "UINibOptionsKey"},
     {"access": "public", "name": "UINotificationFeedbackType"},
     {"access": "public", "introduced": "17", "name": "UIObjectTrait"},
@@ -20489,6 +20966,7 @@
     {"access": "public", "name": "UISegmentedControlStyle"},
     {"access": "public", "name": "UISemanticContentAttribute"},
     {"access": "public", "introduced": "15", "name": "UISheetPresentationControllerDetentIdentifier"},
+    {"access": "public", "name": "UISheetPresentationControllerPlacement"},
     {"access": "public", "name": "UISliderStyle"},
     {"access": "public", "name": "UISplitViewControllerBackgroundStyle"},
     {"access": "public", "name": "UISplitViewControllerColumn"},
@@ -20559,6 +21037,7 @@
     {"access": "public", "introduced": "18", "name": "UITextFormattingViewControllerHighlight"},
     {"access": "public", "introduced": "18", "name": "UITextFormattingViewControllerTextAlignment"},
     {"access": "public", "introduced": "18", "name": "UITextFormattingViewControllerTextList"},
+    {"access": "public", "name": "UITextGrammarCheckingType"},
     {"access": "public", "name": "UITextGranularity"},
     {"access": "public", "name": "UITextInlinePredictionType"},
     {"access": "public", "name": "UITextInteractionMode"},
@@ -20596,6 +21075,9 @@
     {"access": "public", "name": "UIUserNotificationActionContext"},
     {"access": "public", "name": "UIUserNotificationActivationMode"},
     {"access": "public", "name": "UIUserNotificationType"},
+    {"access": "public", "name": "UIVerticalBarBehavior"},
+    {"access": "public", "name": "UIVerticalBarCompressionBehavior"},
+    {"access": "public", "name": "UIVerticalBarEdge"},
     {"access": "public", "name": "UIVibrancyEffectStyle"},
     {"access": "public", "name": "UIViewAnimatingPosition"},
     {"access": "public", "name": "UIViewAnimatingState"},
@@ -20606,6 +21088,7 @@
     {"access": "public", "name": "UIViewContentMode"},
     {"access": "public", "name": "UIViewKeyframeAnimationOptions"},
     {"access": "public", "name": "UIViewLayoutRegionAdaptivityAxis"},
+    {"access": "public", "name": "UIViewReservedRegionQueryOptions"},
     {"access": "public", "name": "UIViewTintAdjustmentMode"},
     {"access": "public", "name": "UIWebPaginationBreakingMode"},
     {"access": "public", "name": "UIWebPaginationMode"},
@@ -20620,6 +21103,7 @@
     {"access": "public", "name": "UIWritingToolsCoordinatorContextScope"},
     {"access": "public", "name": "UIWritingToolsCoordinatorState"},
     {"access": "public", "name": "UIWritingToolsCoordinatorTextAnimation"},
+    {"access": "public", "name": "UIWritingToolsCoordinatorTextDecoration"},
     {"access": "public", "name": "UIWritingToolsCoordinatorTextReplacementReason"},
     {"access": "public", "name": "UIWritingToolsCoordinatorTextUpdateReason"},
     {"access": "public", "name": "UIWritingToolsResultOptions"}
@@ -20703,6 +21187,7 @@
       {"access": "public", "introduced": "17", "name": "setNeedsUpdateContentUnavailableConfiguration"},
       {"access": "public", "introduced": "17", "name": "updateContentUnavailableConfigurationUsingState:"},
       {"access": "public", "introduced": "26", "name": "setNeedsUpdateOfPrefersInterfaceOrientationLocked"},
+      {"access": "public", "introduced": "27.1", "name": "setNeedsUpdateOfVerticalBarConfiguration"},
       {"access": "public", "introduced": "17", "name": "updateTraitsIfNeeded"},
       {"access": "public", "name": "setNeedsUpdateOfPreferredContainerBackgroundStyle", "unavailable": true}
      ],
@@ -20713,6 +21198,8 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "contentUnavailableConfigurationState", "introduced": "17", "name": "contentUnavailableConfigurationState"},
       {"access": "public", "attr": [ "readonly" ], "getter": "childViewControllerForInterfaceOrientationLock", "introduced": "26", "name": "childViewControllerForInterfaceOrientationLock"},
       {"access": "public", "attr": [ "readonly" ], "getter": "prefersInterfaceOrientationLocked", "introduced": "26", "name": "prefersInterfaceOrientationLocked"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "preferredVerticalBarBehavior", "introduced": "27.1", "name": "preferredVerticalBarBehavior"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "childViewControllerForPreferredVerticalBarBehavior", "introduced": "27.1", "name": "childViewControllerForPreferredVerticalBarBehavior"},
       {"access": "public", "attr": [ "readonly" ], "getter": "previewActionItems", "introduced": "9", "name": "previewActionItems"},
       {"access": "public", "attr": [ "readonly" ], "getter": "traitOverrides", "introduced": "17", "name": "traitOverrides"},
       {"access": "public", "attr": [ "readonly" ], "getter": "preferredContainerBackgroundStyle", "name": "preferredContainerBackgroundStyle", "unavailable": true},
@@ -20791,6 +21278,14 @@
      "name": "",
      "protocols": [
       "UIInteraction"
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "UINavigationItem",
+     "name": "",
+     "properties": [
+      {"access": "public", "getter": "verticalBarCompressionBehavior", "introduced": "27.1", "name": "verticalBarCompressionBehavior", "setter": "setVerticalBarCompressionBehavior:"}
      ]
     },
     {
@@ -20999,6 +21494,16 @@
     },
     {
      "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "startTextAnimation:forRange:inContext:writingDirection:"},
+      {"access": "public", "introduced": "27", "name": "cancelTextAnimationsWithIdentifiers:"},
+      {"access": "public", "introduced": "27", "name": "showGrammarPresentationForRange:inContext:"}
+     ],
+     "interface": "UIWritingToolsCoordinator",
+     "name": "GrammarPresentation"
+    },
+    {
+     "access": "public",
      "interface": "UITraitCollection",
      "name": "ImageConfiguration",
      "properties": [
@@ -21102,6 +21607,14 @@
     },
     {
      "access": "public",
+     "interface": "UITraitCollection",
+     "name": "NavigationTitleAlignment",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "navigationTitleAlignment", "introduced": "27.2", "name": "navigationTitleAlignment"}
+     ]
+    },
+    {
+     "access": "public",
      "interface": "UIScene",
      "name": "PointerLockState",
      "properties": [
@@ -21130,6 +21643,15 @@
      "properties": [
       {"access": "public", "attr": [ "readonly" ], "getter": "prominence", "introduced": "18", "name": "prominence"}
      ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27.1", "name": "reservedRegionsOfKind:"},
+      {"access": "public", "introduced": "27.1", "name": "reservedRegionsOfKind:options:"}
+     ],
+     "interface": "UIView",
+     "name": "ReservedRegion"
     },
     {
      "access": "public",
@@ -21489,6 +22011,14 @@
       {"access": "public", "getter": "statusBarOrientation", "introduced": "2", "name": "statusBarOrientation", "setter": "setStatusBarOrientation:"},
       {"access": "public", "getter": "statusBarStyle", "introduced": "2", "name": "statusBarStyle", "setter": "setStatusBarStyle:"},
       {"access": "public", "getter": "isStatusBarHidden", "introduced": "2", "name": "statusBarHidden", "setter": "setStatusBarHidden:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "UIViewController",
+     "name": "UIArrangementViewController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "arrangementViewController", "introduced": "27.1", "name": "arrangementViewController"}
      ]
     },
     {
@@ -22811,6 +23341,15 @@
      "properties": [
       {"access": "public", "getter": "overrideUserInterfaceStyle", "introduced": "13", "name": "overrideUserInterfaceStyle", "setter": "setOverrideUserInterfaceStyle:"}
      ]
+    },
+    {
+     "access": "public",
+     "interface": "UITraitCollection",
+     "name": "VerticalBar",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "verticalBarEdge", "introduced": "27.1", "name": "verticalBarEdge"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "systemTraitsAffectingVerticalBarEdge", "introduced": "27.1", "name": "systemTraitsAffectingVerticalBarEdge"}
+     ]
     }
    ],
    "enums": [
@@ -23157,6 +23696,16 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UIArrangementViewControllerViewPlacementNone"},
+      {"access": "public", "name": "UIArrangementViewControllerViewPlacementPrimary"},
+      {"access": "public", "name": "UIArrangementViewControllerViewPlacementSecondary"}
+     ],
+     "introduced": "27.1",
+     "name": "UIArrangementViewControllerViewPlacement"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UIAttachmentBehaviorTypeItems"},
       {"access": "public", "name": "UIAttachmentBehaviorTypeAnchor"}
      ],
@@ -23193,6 +23742,16 @@
      ],
      "introduced": "15",
      "name": "UIBandSelectionInteractionState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIBarButtonItemAxisBehaviorAutomatic"},
+      {"access": "public", "introduced": "27.1", "name": "UIBarButtonItemAxisBehaviorHorizontalOnly"},
+      {"access": "public", "introduced": "27.1", "name": "UIBarButtonItemAxisBehaviorVerticalPreferred"}
+     ],
+     "introduced": "27.1",
+     "name": "UIBarButtonItemAxisBehavior"
     },
     {
      "access": "public",
@@ -24204,6 +24763,17 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UIHingeStatusUnknown"},
+      {"access": "public", "name": "UIHingeStatusClosed"},
+      {"access": "public", "name": "UIHingeStatusPartiallyOpen"},
+      {"access": "public", "name": "UIHingeStatusFullyOpen"}
+     ],
+     "introduced": "27.1",
+     "name": "UIHingeStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UIImageDynamicRangeUnspecified"},
       {"access": "public", "name": "UIImageDynamicRangeStandard"},
       {"access": "public", "name": "UIImageDynamicRangeConstrainedHigh"},
@@ -24943,6 +25513,16 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UINavigationItemTitleAlignmentAutomatic"},
+      {"access": "public", "name": "UINavigationItemTitleAlignmentLeading"},
+      {"access": "public", "name": "UINavigationItemTitleAlignmentCenter"}
+     ],
+     "introduced": "27.2",
+     "name": "UINavigationItemTitleAlignment"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UINotificationFeedbackTypeSuccess"},
       {"access": "public", "name": "UINotificationFeedbackTypeWarning"},
       {"access": "public", "name": "UINotificationFeedbackTypeError"}
@@ -25368,6 +25948,17 @@
      ],
      "introduced": "9",
      "name": "UISemanticContentAttribute"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UISheetPresentationControllerPlacementAutomatic"},
+      {"access": "public", "name": "UISheetPresentationControllerPlacementLeading"},
+      {"access": "public", "name": "UISheetPresentationControllerPlacementCenter"},
+      {"access": "public", "name": "UISheetPresentationControllerPlacementTrailing"}
+     ],
+     "introduced": "27",
+     "name": "UISheetPresentationControllerPlacement"
     },
     {
      "access": "public",
@@ -25961,6 +26552,16 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UITextGrammarCheckingTypeDefault"},
+      {"access": "public", "name": "UITextGrammarCheckingTypeNo"},
+      {"access": "public", "name": "UITextGrammarCheckingTypeYes"}
+     ],
+     "introduced": "27",
+     "name": "UITextGrammarCheckingType"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UITextGranularityCharacter"},
       {"access": "public", "name": "UITextGranularityWord"},
       {"access": "public", "name": "UITextGranularitySentence"},
@@ -26266,6 +26867,35 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UIVerticalBarBehaviorAutomatic"},
+      {"access": "public", "name": "UIVerticalBarBehaviorDisabled"}
+     ],
+     "introduced": "27.1",
+     "name": "UIVerticalBarBehavior"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIVerticalBarCompressionBehaviorAutomatic"},
+      {"access": "public", "introduced": "27.1", "name": "UIVerticalBarCompressionBehaviorPrefersBarItems"},
+      {"access": "public", "introduced": "27.1", "name": "UIVerticalBarCompressionBehaviorPrefersTabBar"}
+     ],
+     "introduced": "27.1",
+     "name": "UIVerticalBarCompressionBehavior"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIVerticalBarEdgeUnspecified"},
+      {"access": "public", "introduced": "27.1", "name": "UIVerticalBarEdgeLeading"},
+      {"access": "public", "introduced": "27.1", "name": "UIVerticalBarEdgeTrailing"}
+     ],
+     "introduced": "27.1",
+     "name": "UIVerticalBarEdge"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UIVibrancyEffectStyleLabel"},
       {"access": "public", "name": "UIVibrancyEffectStyleSecondaryLabel"},
       {"access": "public", "name": "UIVibrancyEffectStyleTertiaryLabel"},
@@ -26416,6 +27046,15 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UIViewReservedRegionQueryOptionsNone"},
+      {"access": "public", "name": "UIViewReservedRegionQueryOptionsIncludeInactive"}
+     ],
+     "introduced": "27.1",
+     "name": "UIViewReservedRegionQueryOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UIViewTintAdjustmentModeAutomatic"},
       {"access": "public", "name": "UIViewTintAdjustmentModeNormal"},
       {"access": "public", "name": "UIViewTintAdjustmentModeDimmed"}
@@ -26521,7 +27160,8 @@
      "constants": [
       {"access": "public", "name": "UIWritingToolsCoordinatorTextAnimationAnticipate"},
       {"access": "public", "name": "UIWritingToolsCoordinatorTextAnimationRemove"},
-      {"access": "public", "name": "UIWritingToolsCoordinatorTextAnimationInsert"}
+      {"access": "public", "name": "UIWritingToolsCoordinatorTextAnimationInsert"},
+      {"access": "public", "introduced": "27", "name": "UIWritingToolsCoordinatorTextAnimationIndicateGrammar"}
      ],
      "introduced": "18.2",
      "name": "UIWritingToolsCoordinatorTextAnimation"
@@ -26529,8 +27169,20 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UIWritingToolsCoordinatorTextDecorationNone"},
+      {"access": "public", "name": "UIWritingToolsCoordinatorTextDecorationGrammarUnderline"}
+     ],
+     "introduced": "27",
+     "name": "UIWritingToolsCoordinatorTextDecoration"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UIWritingToolsCoordinatorTextReplacementReasonInteractive"},
-      {"access": "public", "name": "UIWritingToolsCoordinatorTextReplacementReasonNoninteractive"}
+      {"access": "public", "name": "UIWritingToolsCoordinatorTextReplacementReasonNoninteractive"},
+      {"access": "public", "introduced": "27", "name": "UIWritingToolsCoordinatorTextReplacementReasonAccepted"},
+      {"access": "public", "introduced": "27", "name": "UIWritingToolsCoordinatorTextReplacementReasonRejected"},
+      {"access": "public", "introduced": "27", "name": "UIWritingToolsCoordinatorTextReplacementReasonTemporary"}
      ],
      "introduced": "18.2",
      "name": "UIWritingToolsCoordinatorTextReplacementReason"
@@ -27095,6 +27747,9 @@
     {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeBirthdateYear"},
     {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCellularEID"},
     {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCellularIMEI"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCellularIMEI1"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCellularIMEI2"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCellularNAL"},
     {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCountryName"},
     {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCreditCardExpiration"},
     {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_UITextContentTypeCreditCardExpirationMonth"},
@@ -27212,6 +27867,7 @@
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_UIWindowLevelStatusBar"},
     {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_UIWindowSceneSessionRoleApplication"},
     {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_UIWindowSceneSessionRoleAssistiveAccessApplication"},
+    {"access": "public", "introduced": "27.1", "kind": "variable", "linkage": "exported", "name": "_UIWindowSceneSessionRoleCameraCaptureAccessory"},
     {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_UIWindowSceneSessionRoleExternalDisplay"},
     {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_UIWindowSceneSessionRoleExternalDisplayNonInteractive"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_UIWindowSceneSessionRoleVolumetricApplication", "unavailable": true},
@@ -28171,6 +28827,54 @@
     },
     {
      "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIArrangement",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "updateArrangement:animated:"},
+      {"access": "public", "name": "updateArrangement:"},
+      {"access": "public", "name": "stateForPlacement:"},
+      {"access": "public", "name": "viewControllerForPlacement:"},
+      {"access": "public", "name": "placementForViewController:"},
+      {"access": "public", "name": "setViewController:forPlacement:animated:"},
+      {"access": "public", "name": "setViewController:forPlacement:"}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIArrangementViewController",
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIArrangementViewState",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "zIndex", "name": "zIndex"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "splitAxis", "name": "splitAxis"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isHidden", "name": "hidden"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
      "classMethods": [
       {"access": "public", "introduced": "9", "name": "slidingAttachmentWithItem:attachedToItem:attachmentAnchor:axisOfTranslation:"},
       {"access": "public", "introduced": "9", "name": "slidingAttachmentWithItem:attachmentAnchor:axisOfTranslation:"},
@@ -28378,6 +29082,7 @@
       {"access": "public", "getter": "isSymbolAnimationEnabled", "introduced": "17", "name": "symbolAnimationEnabled", "setter": "setSymbolAnimationEnabled:"},
       {"access": "public", "getter": "visibilityPriority", "introduced": "27", "name": "visibilityPriority", "setter": "setVisibilityPriority:"},
       {"access": "public", "getter": "isPaddingRemoved", "introduced": "27", "name": "paddingRemoved", "setter": "setPaddingRemoved:"},
+      {"access": "public", "getter": "axisBehavior", "introduced": "27.1", "name": "axisBehavior", "setter": "setAxisBehavior:"},
       {"access": "public", "getter": "menuRepresentation", "introduced": "16", "name": "menuRepresentation", "setter": "setMenuRepresentation:"},
       {"access": "public", "getter": "hidesSharedBackground", "introduced": "26", "name": "hidesSharedBackground", "setter": "setHidesSharedBackground:"},
       {"access": "public", "getter": "sharesBackground", "introduced": "26", "name": "sharesBackground", "setter": "setSharesBackground:"},
@@ -31288,6 +31993,65 @@
     {
      "access": "public",
      "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIHinge",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "status", "name": "status"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "angle", "name": "angle"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithUpdateHandler:"}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIHingeInteraction",
+     "properties": [
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:"}
+     ],
+     "protocols": [
+      "UIInteraction"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIHingeInteractionUpdate",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "hinge", "name": "hinge"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
       {"access": "public", "name": "effect"},
       {"access": "public", "name": "new", "unavailable": true}
      ],
@@ -32657,6 +33421,7 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "overflowPresentationSource", "introduced": "16", "name": "overflowPresentationSource"},
       {"access": "public", "getter": "largeTitleDisplayMode", "introduced": "11", "name": "largeTitleDisplayMode", "setter": "setLargeTitleDisplayMode:"},
       {"access": "public", "getter": "style", "introduced": "16", "name": "style", "setter": "setStyle:"},
+      {"access": "public", "getter": "titleAlignment", "introduced": "27.2", "name": "titleAlignment", "setter": "setTitleAlignment:"},
       {"access": "public", "getter": "searchController", "introduced": "11", "name": "searchController", "setter": "setSearchController:"},
       {"access": "public", "getter": "hidesSearchBarWhenScrolling", "introduced": "11", "name": "hidesSearchBarWhenScrolling", "setter": "setHidesSearchBarWhenScrolling:"},
       {"access": "public", "getter": "preferredSearchBarPlacement", "introduced": "16", "name": "preferredSearchBarPlacement", "setter": "setPreferredSearchBarPlacement:"},
@@ -32713,6 +33478,40 @@
      "properties": [
       {"access": "public", "attr": [ "readonly" ], "getter": "URL", "name": "URL"},
       {"access": "public", "attr": [ "readonly" ], "getter": "options", "name": "options"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "overlayArrangement"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "setViewProperties:forPlacement:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIOverlayArrangement",
+     "properties": [
+      {"access": "public", "getter": "axes", "name": "axes", "setter": "setAxes:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "defaultViewProperties", "name": "defaultViewProperties"}
+     ],
+     "super": "UIArrangement"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIOverlayArrangementViewProperties",
+     "properties": [
+      {"access": "public", "getter": "edge", "name": "edge", "setter": "setEdge:"}
+     ],
+     "protocols": [
+      "NSCopying"
      ],
      "super": "NSObject"
     },
@@ -33709,7 +34508,9 @@
      "access": "public",
      "classMethods": [
       {"access": "public", "name": "externalNonInteractiveSceneAccessoryWithConfiguration:"},
-      {"access": "public", "name": "externalNonInteractiveSceneAccessoryWithConfiguration:userInfo:"}
+      {"access": "public", "name": "externalNonInteractiveSceneAccessoryWithConfiguration:userInfo:"},
+      {"access": "public", "introduced": "27.1", "name": "cameraCaptureSceneAccessoryWithConfiguration:"},
+      {"access": "public", "introduced": "27.1", "name": "cameraCaptureSceneAccessoryWithConfiguration:userInfo:"}
      ],
      "instanceMethods": [
       {"access": "public", "name": "init", "unavailable": true}
@@ -34590,6 +35391,7 @@
      "properties": [
       {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
       {"access": "public", "getter": "sourceView", "name": "sourceView", "setter": "setSourceView:"},
+      {"access": "public", "getter": "preferredPlacement", "introduced": "27", "name": "preferredPlacement", "setter": "setPreferredPlacement:"},
       {"access": "public", "getter": "prefersPageSizing", "introduced": "17", "name": "prefersPageSizing", "setter": "setPrefersPageSizing:"},
       {"access": "public", "getter": "prefersEdgeAttachedInCompactHeight", "name": "prefersEdgeAttachedInCompactHeight", "setter": "setPrefersEdgeAttachedInCompactHeight:"},
       {"access": "public", "getter": "widthFollowsPreferredContentSizeWhenEdgeAttached", "name": "widthFollowsPreferredContentSizeWhenEdgeAttached", "setter": "setWidthFollowsPreferredContentSizeWhenEdgeAttached:"},
@@ -34737,6 +35539,79 @@
       {"access": "public", "getter": "damping", "name": "damping", "setter": "setDamping:"}
      ],
      "super": "UIDynamicBehavior"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "splitArrangement"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "setViewProperties:forPlacement:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UISplitArrangement",
+     "properties": [
+      {"access": "public", "getter": "axes", "name": "axes", "setter": "setAxes:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "defaultViewProperties", "name": "defaultViewProperties"}
+     ],
+     "super": "UIArrangement"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "automaticDimension"},
+      {"access": "public", "name": "intrinsicDimension"},
+      {"access": "public", "name": "fractionalDimension:"},
+      {"access": "public", "name": "absoluteDimension:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UISplitArrangementDimension",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UISplitArrangementDimensionRange",
+     "properties": [
+      {"access": "public", "getter": "minimum", "name": "minimum", "setter": "setMinimum:"},
+      {"access": "public", "getter": "preferred", "name": "preferred", "setter": "setPreferred:"},
+      {"access": "public", "getter": "maximum", "name": "maximum", "setter": "setMaximum:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UISplitArrangementViewProperties",
+     "properties": [
+      {"access": "public", "getter": "width", "name": "width", "setter": "setWidth:"},
+      {"access": "public", "getter": "height", "name": "height", "setter": "setHeight:"},
+      {"access": "public", "getter": "layoutPriority", "name": "layoutPriority", "setter": "setLayoutPriority:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
     },
     {
      "access": "public",
@@ -36563,7 +37438,9 @@
      "categories": [
       "CurrentTraitCollection",
       "DynamicAppearance",
-      "ImageConfiguration"
+      "ImageConfiguration",
+      "NavigationTitleAlignment",
+      "VerticalBar"
      ],
      "classMethods": [
       {"access": "public", "introduced": "8", "name": "traitCollectionWithTraitsFromCollections:"},
@@ -36714,6 +37591,16 @@
      "introduced": "18",
      "linkage": "exported",
      "name": "UITraitListEnvironment",
+     "protocols": [
+      "UINSIntegerTraitDefinition"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "27.2",
+     "linkage": "exported",
+     "name": "UITraitNavigationTitleAlignment",
      "protocols": [
       "UINSIntegerTraitDefinition"
      ],
@@ -37030,6 +37917,7 @@
       "UserInterfaceStyle",
       "UIContentSizeCategoryLimit",
       "LayoutRegions",
+      "ReservedRegion",
       "CornerConfiguration",
       "Interactions",
       "UIAccessibilityInvertColors",
@@ -37123,6 +38011,7 @@
       "UIScreenEdgesDeferringSystemGestures",
       "UIHomeIndicatorAutoHidden",
       "UIPointerLockSupport",
+      "UIArrangementViewController",
       "UINavigationControllerItem",
       "UINavigationControllerContextualToolbarItems",
       "UIPopoverController",
@@ -37248,6 +38137,10 @@
       {"access": "public", "name": "safeAreaLayoutRegionWithCornerAdaptation:"},
       {"access": "public", "name": "marginsLayoutRegionWithCornerAdaptation:"},
       {"access": "public", "name": "readableContentLayoutRegionWithCornerAdaptation:"},
+      {"access": "public", "introduced": "27.1", "name": "layoutRegionForBarOnEdge:extent:"},
+      {"access": "public", "introduced": "27.1", "name": "layoutRegionForBarOnDirectionalEdge:extent:"},
+      {"access": "public", "introduced": "27.2", "name": "layoutRegionForBarOnEdge:"},
+      {"access": "public", "introduced": "27.2", "name": "layoutRegionForBarOnDirectionalEdge:"},
       {"access": "public", "name": "new", "unavailable": true}
      ],
      "instanceMethods": [
@@ -37289,6 +38182,63 @@
      ],
      "protocols": [
       "UIViewImplicitlyAnimating",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIViewReservedRegion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "kind", "name": "kind"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frame", "name": "frame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "margins", "name": "margins"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isActive", "name": "active"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIViewReservedRegionIdentifier",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "occlusionRegionKind"},
+      {"access": "public", "name": "divisionRegionKind"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27.1",
+     "linkage": "exported",
+     "name": "UIViewReservedRegionKind",
+     "protocols": [
       "NSCopying"
      ],
      "super": "NSObject"
@@ -37655,6 +38605,9 @@
     },
     {
      "access": "public",
+     "categories": [
+      "GrammarPresentation"
+     ],
      "instanceMethods": [
       {"access": "public", "name": "initWithDelegate:"},
       {"access": "public", "name": "stopWritingTools"},
@@ -40278,6 +41231,7 @@
       {"access": "public", "getter": "smartInsertDeleteType", "introduced": "11", "name": "smartInsertDeleteType", "optional": true, "setter": "setSmartInsertDeleteType:"},
       {"access": "public", "getter": "inlinePredictionType", "introduced": "17", "name": "inlinePredictionType", "optional": true, "setter": "setInlinePredictionType:"},
       {"access": "public", "getter": "mathExpressionCompletionType", "introduced": "18", "name": "mathExpressionCompletionType", "optional": true, "setter": "setMathExpressionCompletionType:"},
+      {"access": "public", "getter": "grammarCheckingType", "introduced": "27", "name": "grammarCheckingType", "optional": true, "setter": "setGrammarCheckingType:"},
       {"access": "public", "getter": "keyboardType", "name": "keyboardType", "optional": true, "setter": "setKeyboardType:"},
       {"access": "public", "getter": "keyboardAppearance", "name": "keyboardAppearance", "optional": true, "setter": "setKeyboardAppearance:"},
       {"access": "public", "getter": "returnKeyType", "name": "returnKeyType", "optional": true, "setter": "setReturnKeyType:"},
@@ -40796,6 +41750,9 @@
       {"access": "public", "name": "writingToolsCoordinator:requestsSingleContainerSubrangesOfRange:inContext:completion:", "optional": true},
       {"access": "public", "name": "writingToolsCoordinator:requestsDecorationContainerViewForRange:inContext:completion:", "optional": true},
       {"access": "public", "name": "writingToolsCoordinator:willChangeToState:completion:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "writingToolsCoordinator:requestsPreviewForTextAnimation:ofRange:inContext:textDecoration:completion:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "writingToolsCoordinator:requestsGrammarResultsForContext:completion:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "writingToolsCoordinator:setGrammarCheckingEnabled:", "optional": true},
       {"access": "public", "introduced": "18.2", "name": "writingToolsCoordinator:requestsRangeInContextWithIdentifierForPoint:completion:", "optional": true}
      ],
      "introduced": "18.2",
@@ -40873,11 +41830,13 @@
     {"access": "public", "introduced": "9", "name": "UIApplicationOpenURLOptionsKey"},
     {"access": "public", "name": "UIApplicationShortcutIconType"},
     {"access": "public", "name": "UIApplicationState"},
+    {"access": "public", "name": "UIArrangementViewControllerViewPlacement"},
     {"access": "public", "name": "UIAttachmentBehaviorType"},
     {"access": "public", "name": "UIBackgroundFetchResult"},
     {"access": "public", "name": "UIBackgroundRefreshStatus"},
     {"access": "public", "name": "UIBackgroundTaskIdentifier"},
     {"access": "public", "name": "UIBandSelectionInteractionState"},
+    {"access": "public", "name": "UIBarButtonItemAxisBehavior"},
     {"access": "public", "name": "UIBarButtonItemStyle"},
     {"access": "public", "introduced": "27", "name": "UIBarButtonItemVisibilityPriority"},
     {"access": "public", "name": "UIBarButtonSystemItem"},
@@ -41005,6 +41964,7 @@
     {"access": "public", "name": "UIGuidedAccessErrorCode"},
     {"access": "public", "name": "UIGuidedAccessRestrictionState"},
     {"access": "public", "name": "UIHDRHeadroomUsageLimit"},
+    {"access": "public", "name": "UIHingeStatus"},
     {"access": "public", "name": "UIImageDynamicRange"},
     {"access": "public", "name": "UIImageOrientation"},
     {"access": "public", "name": "UIImagePickerControllerCameraCaptureMode"},
@@ -41061,6 +42021,7 @@
     {"access": "public", "name": "UINavigationItemLargeTitleDisplayMode"},
     {"access": "public", "name": "UINavigationItemSearchBarPlacement"},
     {"access": "public", "name": "UINavigationItemStyle"},
+    {"access": "public", "name": "UINavigationItemTitleAlignment"},
     {"access": "public", "name": "UINibOptionsKey"},
     {"access": "public", "name": "UINotificationFeedbackType"},
     {"access": "public", "introduced": "17", "name": "UIObjectTrait"},
@@ -41113,6 +42074,7 @@
     {"access": "public", "name": "UISegmentedControlStyle"},
     {"access": "public", "name": "UISemanticContentAttribute"},
     {"access": "public", "introduced": "15", "name": "UISheetPresentationControllerDetentIdentifier"},
+    {"access": "public", "name": "UISheetPresentationControllerPlacement"},
     {"access": "public", "name": "UISliderStyle"},
     {"access": "public", "name": "UISplitViewControllerBackgroundStyle"},
     {"access": "public", "name": "UISplitViewControllerColumn"},
@@ -41183,6 +42145,7 @@
     {"access": "public", "introduced": "18", "name": "UITextFormattingViewControllerHighlight"},
     {"access": "public", "introduced": "18", "name": "UITextFormattingViewControllerTextAlignment"},
     {"access": "public", "introduced": "18", "name": "UITextFormattingViewControllerTextList"},
+    {"access": "public", "name": "UITextGrammarCheckingType"},
     {"access": "public", "name": "UITextGranularity"},
     {"access": "public", "name": "UITextInlinePredictionType"},
     {"access": "public", "name": "UITextInteractionMode"},
@@ -41220,6 +42183,9 @@
     {"access": "public", "name": "UIUserNotificationActionContext"},
     {"access": "public", "name": "UIUserNotificationActivationMode"},
     {"access": "public", "name": "UIUserNotificationType"},
+    {"access": "public", "name": "UIVerticalBarBehavior"},
+    {"access": "public", "name": "UIVerticalBarCompressionBehavior"},
+    {"access": "public", "name": "UIVerticalBarEdge"},
     {"access": "public", "name": "UIVibrancyEffectStyle"},
     {"access": "public", "name": "UIViewAnimatingPosition"},
     {"access": "public", "name": "UIViewAnimatingState"},
@@ -41230,6 +42196,7 @@
     {"access": "public", "name": "UIViewContentMode"},
     {"access": "public", "name": "UIViewKeyframeAnimationOptions"},
     {"access": "public", "name": "UIViewLayoutRegionAdaptivityAxis"},
+    {"access": "public", "name": "UIViewReservedRegionQueryOptions"},
     {"access": "public", "name": "UIViewTintAdjustmentMode"},
     {"access": "public", "name": "UIWebPaginationBreakingMode"},
     {"access": "public", "name": "UIWebPaginationMode"},
@@ -41244,6 +42211,7 @@
     {"access": "public", "name": "UIWritingToolsCoordinatorContextScope"},
     {"access": "public", "name": "UIWritingToolsCoordinatorState"},
     {"access": "public", "name": "UIWritingToolsCoordinatorTextAnimation"},
+    {"access": "public", "name": "UIWritingToolsCoordinatorTextDecoration"},
     {"access": "public", "name": "UIWritingToolsCoordinatorTextReplacementReason"},
     {"access": "public", "name": "UIWritingToolsCoordinatorTextUpdateReason"},
     {"access": "public", "name": "UIWritingToolsResultOptions"}

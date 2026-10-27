@@ -613,7 +613,7 @@
     {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSTileBackward"},
     {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSTranspose"}
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "BNNSActivation"},
     {"access": "public", "name": "BNNSActivationFunction"},
@@ -1325,7 +1325,7 @@
     {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSTileBackward"},
     {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSTranspose"}
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "BNNSActivation"},
     {"access": "public", "name": "BNNSActivationFunction"},

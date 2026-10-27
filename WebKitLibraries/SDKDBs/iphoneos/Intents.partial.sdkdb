@@ -7490,11 +7490,11 @@
      "instanceMethods": [
       {"access": "public", "name": "handleAddTasks:completion:"},
       {"access": "public", "name": "confirmAddTasks:completion:", "optional": true},
-      {"access": "public", "introduced": "11", "name": "resolveTargetTaskListForAddTasks:withCompletion:", "optional": true},
+      {"access": "public", "name": "resolveTargetTaskListForAddTasks:withCompletion:", "optional": true},
       {"access": "public", "introduced": "13", "name": "resolveTargetTaskListForAddTasks:completion:", "optional": true},
       {"access": "public", "name": "resolveTaskTitlesForAddTasks:withCompletion:", "optional": true},
       {"access": "public", "name": "resolveSpatialEventTriggerForAddTasks:withCompletion:", "optional": true},
-      {"access": "public", "introduced": "11", "name": "resolveTemporalEventTriggerForAddTasks:withCompletion:", "optional": true},
+      {"access": "public", "name": "resolveTemporalEventTriggerForAddTasks:withCompletion:", "optional": true},
       {"access": "public", "introduced": "13", "name": "resolveTemporalEventTriggerForAddTasks:completion:", "optional": true},
       {"access": "public", "introduced": "13", "name": "resolvePriorityForAddTasks:withCompletion:", "optional": true}
      ],
@@ -8340,7 +8340,7 @@
       {"access": "public", "name": "resolveStatusForSetTaskAttribute:withCompletion:", "optional": true},
       {"access": "public", "introduced": "13", "name": "resolvePriorityForSetTaskAttribute:withCompletion:", "optional": true},
       {"access": "public", "name": "resolveSpatialEventTriggerForSetTaskAttribute:withCompletion:", "optional": true},
-      {"access": "public", "introduced": "11", "name": "resolveTemporalEventTriggerForSetTaskAttribute:withCompletion:", "optional": true},
+      {"access": "public", "name": "resolveTemporalEventTriggerForSetTaskAttribute:withCompletion:", "optional": true},
       {"access": "public", "introduced": "13", "name": "resolveTemporalEventTriggerForSetTaskAttribute:completion:", "optional": true}
      ],
      "introduced": "11",
@@ -8530,7 +8530,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "INAccountType"},
     {"access": "public", "name": "INActivateCarSignalIntentResponseCode"},
@@ -16177,11 +16177,11 @@
      "instanceMethods": [
       {"access": "public", "name": "handleAddTasks:completion:"},
       {"access": "public", "name": "confirmAddTasks:completion:", "optional": true},
-      {"access": "public", "introduced": "11", "name": "resolveTargetTaskListForAddTasks:withCompletion:", "optional": true},
+      {"access": "public", "name": "resolveTargetTaskListForAddTasks:withCompletion:", "optional": true},
       {"access": "public", "introduced": "13", "name": "resolveTargetTaskListForAddTasks:completion:", "optional": true},
       {"access": "public", "name": "resolveTaskTitlesForAddTasks:withCompletion:", "optional": true},
       {"access": "public", "name": "resolveSpatialEventTriggerForAddTasks:withCompletion:", "optional": true},
-      {"access": "public", "introduced": "11", "name": "resolveTemporalEventTriggerForAddTasks:withCompletion:", "optional": true},
+      {"access": "public", "name": "resolveTemporalEventTriggerForAddTasks:withCompletion:", "optional": true},
       {"access": "public", "introduced": "13", "name": "resolveTemporalEventTriggerForAddTasks:completion:", "optional": true},
       {"access": "public", "introduced": "13", "name": "resolvePriorityForAddTasks:withCompletion:", "optional": true}
      ],
@@ -17027,7 +17027,7 @@
       {"access": "public", "name": "resolveStatusForSetTaskAttribute:withCompletion:", "optional": true},
       {"access": "public", "introduced": "13", "name": "resolvePriorityForSetTaskAttribute:withCompletion:", "optional": true},
       {"access": "public", "name": "resolveSpatialEventTriggerForSetTaskAttribute:withCompletion:", "optional": true},
-      {"access": "public", "introduced": "11", "name": "resolveTemporalEventTriggerForSetTaskAttribute:withCompletion:", "optional": true},
+      {"access": "public", "name": "resolveTemporalEventTriggerForSetTaskAttribute:withCompletion:", "optional": true},
       {"access": "public", "introduced": "13", "name": "resolveTemporalEventTriggerForSetTaskAttribute:completion:", "optional": true}
      ],
      "introduced": "11",
@@ -17217,7 +17217,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "INAccountType"},
     {"access": "public", "name": "INActivateCarSignalIntentResponseCode"},

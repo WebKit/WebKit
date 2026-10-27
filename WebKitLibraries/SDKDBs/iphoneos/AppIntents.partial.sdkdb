@@ -2,16 +2,16 @@
 {
  "PublicSDKContentRoot": [
   {
-   "target": "arm64e-apple-ios27"
+   "target": "arm64e-apple-ios27.2"
   },
   {
-   "target": "arm64e.x1-apple-ios27"
+   "target": "arm64e.x1-apple-ios27.2"
   },
   {
-   "target": "arm64e-apple-ios27"
+   "target": "arm64e-apple-ios27.2"
   },
   {
-   "target": "arm64e.x1-apple-ios27"
+   "target": "arm64e.x1-apple-ios27.2"
   },
   {
    "globals": [
@@ -706,7 +706,7 @@
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV10MapsIntentPAAE14reportIncidentQrvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV10MapsIntentPAAE14stopNavigationQrvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV10MapsIntentPAAE15startNavigationQrvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV10MapsIntentPAAE22addNavigationWaypointsQrvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV10MapsIntentPAAE25updateNavigationWaypointsQrvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV10MapsIntentPAAE8shareETAQrvpMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV10PhotosEnumPAAE10filterTypeQrvpMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV10PhotosEnumPAAE17rotationDirectionQrvpMV"},
@@ -777,6 +777,7 @@
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV11NotesEntityPAAE4noteQrvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV11NotesEntityPAAE6folderQrvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV11NotesEntityPAAE7accountQrvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV11NotesIntentPAAE10appendTextQrvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV11NotesIntentPAAE10createNoteQrvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV11NotesIntentPAAE10updateNoteQrvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV11PhoneEntityPAAE11phonePersonQrvpMV"},
@@ -797,7 +798,7 @@
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV12MessagesEnumPAAE21conversationAttributeQrvpMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV12PhotosEntityPAAE16recognizedPersonQrvpMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV12PhotosEntityPAAE5albumQrvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV12PhotosEntityPAAE5assetQrvpMV"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV12PhotosEntityPAAE5assetQrvpMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV12PhotosIntentPAAE10pasteEditsQrvpMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV12PhotosIntentPAAE10straightenQrvpMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV12PhotosIntentPAAE11createAlbumQrvpMV"},
@@ -891,10 +892,7 @@
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV15RemindersEntityPAAE8reminderQrvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV15RemindersIntentPAAE06deleteD0QrvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV15RemindersIntentPAAE10createListQrvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV15RemindersIntentPAAE10updateListQrvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV15RemindersIntentPAAE11updateGroupQrvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV15RemindersIntentPAAE13createSectionQrvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV15RemindersIntentPAAE13updateSectionQrvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV15RemindersIntentPAAE14createReminderQrvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV15RemindersIntentPAAE14updateReminderQrvpMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents0A6SchemaV16WhiteboardEntityPAAE4itemQrvpMV"},
@@ -1057,8 +1055,9 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s10AppIntents10IntentFileV21displayRepresentationAA07DisplayF0VvpMV"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s10AppIntents10IntentFileV25typeDisplayRepresentationAA04TypefG0VvgZ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s10AppIntents10IntentFileV25typeDisplayRepresentationAA04TypefG0VvpZMV"},
-    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s10AppIntents10IntentFileV28defaultResolverSpecificationAA05EmptyfG0VyACGvgZ"},
-    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s10AppIntents10IntentFileV28defaultResolverSpecificationAA05EmptyfG0VyACGvpZMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s10AppIntents10IntentFileV28defaultResolverSpecificationQrvgZ"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s10AppIntents10IntentFileV28defaultResolverSpecificationQrvpZMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s10AppIntents10IntentFileV28defaultResolverSpecificationQrvpZQOMQ"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents10IntentFileV2eeoiySbAC_ACtFZ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s10AppIntents10IntentFileV4data10Foundation4DataVvg"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s10AppIntents10IntentFileV4data10Foundation4DataVvpMV"},
@@ -4474,6 +4473,14 @@
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE11description07requestE6Dialog23inputConnectionBehavior9resolversACyxG10Foundation23LocalizedStringResourceVSg_AA0cJ0VSgAA05InputlM0OYtqd__yctcAA21ResolverSpecificationRd__lufc"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE11description07requestE6Dialog23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceVSg_AA0cJ0VSgAA05InputlM0OYttcfC"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE11description07requestE6Dialog23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceVSg_AA0cJ0VSgAA05InputlM0OYttcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE11description7default07requestE6Dialog23inputConnectionBehavior15optionsProvider9resolversACyxG10Foundation23LocalizedStringResourceVSg_09UnwrappedG0QzSgAA0cK0VSgAA05InputmN0OYtqd_0_qd__yctcAA21ResolverSpecificationRd__AA014DynamicOptionsP0Rd_0_07DefaultE0_AEQYd_0_AFRSr0_lufC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE11description7default07requestE6Dialog23inputConnectionBehavior15optionsProvider9resolversACyxG10Foundation23LocalizedStringResourceVSg_09UnwrappedG0QzSgAA0cK0VSgAA05InputmN0OYtqd_0_qd__yctcAA21ResolverSpecificationRd__AA014DynamicOptionsP0Rd_0_07DefaultE0_AEQYd_0_AFRSr0_lufc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE11description7default07requestE6Dialog23inputConnectionBehavior15optionsProviderACyxG10Foundation23LocalizedStringResourceVSg_09UnwrappedG0QzSgAA0cK0VSgAA05InputmN0OYtqd__tcAA014DynamicOptionsP0Rd__07DefaultE0_AEQYd__AFRSlufC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE11description7default07requestE6Dialog23inputConnectionBehavior15optionsProviderACyxG10Foundation23LocalizedStringResourceVSg_09UnwrappedG0QzSgAA0cK0VSgAA05InputmN0OYtqd__tcAA014DynamicOptionsP0Rd__07DefaultE0_AEQYd__AFRSlufc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE11description7default07requestE6Dialog23inputConnectionBehavior9resolversACyxG10Foundation23LocalizedStringResourceVSg_09UnwrappedG0QzSgAA0cK0VSgAA05InputmN0OYtqd__yctcAA21ResolverSpecificationRd__lufC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE11description7default07requestE6Dialog23inputConnectionBehavior9resolversACyxG10Foundation23LocalizedStringResourceVSg_09UnwrappedG0QzSgAA0cK0VSgAA05InputmN0OYtqd__yctcAA21ResolverSpecificationRd__lufc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE11description7default07requestE6Dialog23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceVSg_09UnwrappedG0QzSgAA0cK0VSgAA05InputmN0OYttcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE11description7default07requestE6Dialog23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceVSg_09UnwrappedG0QzSgAA0cK0VSgAA05InputmN0OYttcfc"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE5title11description07requestE6Dialog23inputConnectionBehavior15optionsProvider9resolversACyxG10Foundation23LocalizedStringResourceV_APSgAA0cK0VSgAA05InputmN0OYtqd_0_qd__yctcAA21ResolverSpecificationRd__AA014DynamicOptionsP0Rd_0_07DefaultE0_AEQYd_0_AFRSr0_lufC"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE5title11description07requestE6Dialog23inputConnectionBehavior15optionsProvider9resolversACyxG10Foundation23LocalizedStringResourceV_APSgAA0cK0VSgAA05InputmN0OYtqd_0_qd__yctcAA21ResolverSpecificationRd__AA014DynamicOptionsP0Rd_0_07DefaultE0_AEQYd_0_AFRSr0_lufc"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE5title11description07requestE6Dialog23inputConnectionBehavior15optionsProviderACyxG10Foundation23LocalizedStringResourceV_AOSgAA0cK0VSgAA05InputmN0OYtqd__tcAA014DynamicOptionsP0Rd__07DefaultE0_AEQYd__AFRSlufC"},
@@ -4482,6 +4489,14 @@
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE5title11description07requestE6Dialog23inputConnectionBehavior9resolversACyxG10Foundation23LocalizedStringResourceV_AOSgAA0cK0VSgAA05InputmN0OYtqd__yctcAA21ResolverSpecificationRd__lufc"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE5title11description07requestE6Dialog23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceV_ANSgAA0cK0VSgAA05InputmN0OYttcfC"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE5title11description07requestE6Dialog23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceV_ANSgAA0cK0VSgAA05InputmN0OYttcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE5title11description7default07requestE6Dialog23inputConnectionBehavior15optionsProvider9resolversACyxG10Foundation23LocalizedStringResourceV_AQSg09UnwrappedG0QzSgAA0cL0VSgAA05InputnO0OYtqd_0_qd__yctcAA21ResolverSpecificationRd__AA014DynamicOptionsQ0Rd_0_07DefaultE0_AEQYd_0_AFRSr0_lufC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE5title11description7default07requestE6Dialog23inputConnectionBehavior15optionsProvider9resolversACyxG10Foundation23LocalizedStringResourceV_AQSg09UnwrappedG0QzSgAA0cL0VSgAA05InputnO0OYtqd_0_qd__yctcAA21ResolverSpecificationRd__AA014DynamicOptionsQ0Rd_0_07DefaultE0_AEQYd_0_AFRSr0_lufc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE5title11description7default07requestE6Dialog23inputConnectionBehavior15optionsProviderACyxG10Foundation23LocalizedStringResourceV_APSg09UnwrappedG0QzSgAA0cL0VSgAA05InputnO0OYtqd__tcAA014DynamicOptionsQ0Rd__07DefaultE0_AEQYd__AFRSlufC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE5title11description7default07requestE6Dialog23inputConnectionBehavior15optionsProviderACyxG10Foundation23LocalizedStringResourceV_APSg09UnwrappedG0QzSgAA0cL0VSgAA05InputnO0OYtqd__tcAA014DynamicOptionsQ0Rd__07DefaultE0_AEQYd__AFRSlufc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE5title11description7default07requestE6Dialog23inputConnectionBehavior9resolversACyxG10Foundation23LocalizedStringResourceV_APSg09UnwrappedG0QzSgAA0cL0VSgAA05InputnO0OYtqd__yctcAA21ResolverSpecificationRd__lufC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE5title11description7default07requestE6Dialog23inputConnectionBehavior9resolversACyxG10Foundation23LocalizedStringResourceV_APSg09UnwrappedG0QzSgAA0cL0VSgAA05InputnO0OYtqd__yctcAA21ResolverSpecificationRd__lufc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE5title11description7default07requestE6Dialog23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceV_AOSg09UnwrappedG0QzSgAA0cL0VSgAA05InputnO0OYttcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A01_C18ValueRepresentable0E4TypeRpzrlE5title11description7default07requestE6Dialog23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceV_AOSg09UnwrappedG0QzSgAA0cL0VSgAA05InputnO0OYttcfc"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A07_SystemC5Value0F4TypeRpzrlE11description7default07requestF6Dialog23inputConnectionBehavior15optionsProvider9resolversACyxG10Foundation23LocalizedStringResourceVSg_09UnwrappedG0QzSgAA0cK0VSgAA05InputmN0OYtqd_0_qd__yctcAA21ResolverSpecificationRd__AA014DynamicOptionsP0Rd_0_07DefaultF0_AEQYd_0_AFRSr0_lufC"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A07_SystemC5Value0F4TypeRpzrlE11description7default07requestF6Dialog23inputConnectionBehavior15optionsProvider9resolversACyxG10Foundation23LocalizedStringResourceVSg_09UnwrappedG0QzSgAA0cK0VSgAA05InputmN0OYtqd_0_qd__yctcAA21ResolverSpecificationRd__AA014DynamicOptionsP0Rd_0_07DefaultF0_AEQYd_0_AFRSr0_lufc"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCA2A07_SystemC5Value0F4TypeRpzrlE11description7default07requestF6Dialog23inputConnectionBehavior15optionsProviderACyxG10Foundation23LocalizedStringResourceVSg_09UnwrappedG0QzSgAA0cK0VSgAA05InputmN0OYtqd__tcAA014DynamicOptionsP0Rd__07DefaultF0_AEQYd__AFRSlufC"},
@@ -6035,6 +6050,14 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCAASl13UnwrappedTypeRpz10Foundation3URLV05ValueF0RtzrlE5title11description7default07requestI6Dialog23inputConnectionBehavior9resolversACyxGAF23LocalizedStringResourceV_ASSgSayAHSgGAA0cN0VSgAA05InputpQ0OYtqd__yctcAA21ResolverSpecificationRd__lufc"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCAASl13UnwrappedTypeRpz10Foundation3URLV05ValueF0RtzrlE5title11description7default07requestI6Dialog23inputConnectionBehaviorACyxGAF23LocalizedStringResourceV_ARSgSayAHSgGAA0cN0VSgAA05InputpQ0OYttcfC"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCAASl13UnwrappedTypeRpz10Foundation3URLV05ValueF0RtzrlE5title11description7default07requestI6Dialog23inputConnectionBehaviorACyxGAF23LocalizedStringResourceV_ARSgSayAHSgGAA0cN0VSgAA05InputpQ0OYttcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCAASl13UnwrappedTypeRpzAA01_C18ValueRepresentable0gF0RpzrlE11description7default4size23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceVSg_AESgAA0C14CollectionSizeVAA05InputmN0OYttcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCAASl13UnwrappedTypeRpzAA01_C18ValueRepresentable0gF0RpzrlE11description7default4size23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceVSg_AESgAA0C14CollectionSizeVAA05InputmN0OYttcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCAASl13UnwrappedTypeRpzAA01_C18ValueRepresentable0gF0RpzrlE11description7default4size23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceVSg_AESgSDyAA0C12WidgetFamilyOAA0C14CollectionSizeVGAA05InputmN0OYttcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCAASl13UnwrappedTypeRpzAA01_C18ValueRepresentable0gF0RpzrlE11description7default4size23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceVSg_AESgSDyAA0C12WidgetFamilyOAA0C14CollectionSizeVGAA05InputmN0OYttcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCAASl13UnwrappedTypeRpzAA01_C18ValueRepresentable0gF0RpzrlE5title11description7default4size23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceV_AQSgAESgAA0C14CollectionSizeVAA05InputnO0OYttcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCAASl13UnwrappedTypeRpzAA01_C18ValueRepresentable0gF0RpzrlE5title11description7default4size23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceV_AQSgAESgAA0C14CollectionSizeVAA05InputnO0OYttcfc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCAASl13UnwrappedTypeRpzAA01_C18ValueRepresentable0gF0RpzrlE5title11description7default4size23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceV_AQSgAESgSDyAA0C12WidgetFamilyOAA0C14CollectionSizeVGAA05InputnO0OYttcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCAASl13UnwrappedTypeRpzAA01_C18ValueRepresentable0gF0RpzrlE5title11description7default4size23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceV_AQSgAESgSDyAA0C12WidgetFamilyOAA0C14CollectionSizeVGAA05InputnO0OYttcfc"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCAASl13UnwrappedTypeRpzAA07_SystemC5Value0hF0RpzrlE11description7default4size23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceVSg_AESgAA0C14CollectionSizeVAA05InputmN0OYttcfC"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCAASl13UnwrappedTypeRpzAA07_SystemC5Value0hF0RpzrlE11description7default4size23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceVSg_AESgAA0C14CollectionSizeVAA05InputmN0OYttcfc"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents15IntentParameterCAASl13UnwrappedTypeRpzAA07_SystemC5Value0hF0RpzrlE11description7default4size23inputConnectionBehaviorACyxG10Foundation23LocalizedStringResourceVSg_AESgSDyAA0C12WidgetFamilyOAA0C14CollectionSizeVGAA05InputmN0OYttcfC"},
@@ -6858,6 +6881,7 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents18IntentWidgetFamilyO16systemExtraLargeyA2CmFWC"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents18IntentWidgetFamilyO17accessoryCircularyA2CmFWC"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents18IntentWidgetFamilyO20accessoryRectangularyA2CmFWC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents18IntentWidgetFamilyO24systemExtraLargePortraityA2CmFWC"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents18IntentWidgetFamilyO28defaultResolverSpecificationAA05EmptygH0VyACGvMZ"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents18IntentWidgetFamilyO28defaultResolverSpecificationAA05EmptygH0VyACGvgZ"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents18IntentWidgetFamilyO28defaultResolverSpecificationAA05EmptygH0VyACGvpZMV"},
@@ -6926,6 +6950,8 @@
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents19AssistantSchemaEnumPAAE02isC4OnlySbvpZMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents19AssistantSchemaEnumPAAE25typeDisplayRepresentationAA04TypegH0VvgZ"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents19AssistantSchemaEnumPAAE25typeDisplayRepresentationAA04TypegH0VvpZMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents19AssistantSchemaEnumPAAE26caseDisplayRepresentationsSDyxAA0G14RepresentationVGvgZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents19AssistantSchemaEnumPAAE26caseDisplayRepresentationsSDyxAA0G14RepresentationVGvpZMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents19AssistantSchemaEnumTL"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents19AudioPlaybackIntentMp"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents19AudioPlaybackIntentPAA06SystemE0Tb"},
@@ -7282,21 +7308,6 @@
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents21AssistantSchemaIntentPAAE5title10Foundation23LocalizedStringResourceVvgZ"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents21AssistantSchemaIntentPAAE5title10Foundation23LocalizedStringResourceVvpZMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10AppIntents21AssistantSchemaIntentTL"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsV4textAEvgZ"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsV4textAEvpZMV"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsV5imageAEvgZ"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsV5imageAEvpZMV"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsV8rawValueAESi_tcfC"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsV8rawValueSivg"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsV8rawValueSivpMV"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsVMa"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsVMn"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsVN"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsVSQAAMc"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsVSYAAMc"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsVs10SetAlgebraAAMc"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsVs25ExpressibleByArrayLiteralAAMc"},
-    {"access": "public", "introduced": "18.4", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV10ComponentsVs9OptionSetAAMc"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV13stringLiteralACSS_tcfC"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV2eeoiySbAC_ACtFZ"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents21DisplayRepresentationV5ImageV0C5StyleV2eeoiySbAG_AGtFZ"},
@@ -8372,8 +8383,10 @@
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents25IntentValueRepresentationV4bodyQrvpQOMQ"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents25IntentValueRepresentationVA2A07_SystemcD0R_rlE9exporting9importingACyxq_Gq_xYaYbKc_xq_YaYbKctcfC"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents25IntentValueRepresentationVA2A07_SystemcD0R_rlE9exportingACyxq_Gq_xYaYbKc_tcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents25IntentValueRepresentationVA2A07_SystemcD0R_rlE9importingACyxq_Gxq_YaYbKc_tcfC"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents25IntentValueRepresentationVA2A0C6PersonVRs_rlE9exporting9importingACyxAEGAExYaYbKc_xAEYaYbKctcfC"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents25IntentValueRepresentationVA2A0C6PersonVRs_rlE9exportingACyxAEGAExYaYbKc_tcfC"},
+    {"access": "public", "linkage": "exported", "name": "_$s10AppIntents25IntentValueRepresentationVA2A0C6PersonVRs_rlE9importingACyxAEGxAEYaYbKc_tcfC"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents25IntentValueRepresentationVMa"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents25IntentValueRepresentationVMn"},
     {"access": "public", "linkage": "exported", "name": "_$s10AppIntents25IntentValueRepresentationVyxq_G16CoreTransferable08TransferE0AAMc"},
@@ -9223,7 +9236,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sxSg10AppIntents12_IntentValueA2bCRzlMc"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sxSg10AppIntents12_IntentValueA2bCRzlWP"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -9379,7 +9392,7 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sxSg21AppIntentsTypeSupport22IntentValueConvertibleA2bCRzlMc"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sxSg21AppIntentsTypeSupport22IntentValueConvertibleA2bCRzlWP"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

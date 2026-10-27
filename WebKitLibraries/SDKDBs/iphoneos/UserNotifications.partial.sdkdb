@@ -61,7 +61,6 @@
       {"access": "public", "name": "UNErrorCodeAttachmentNotInDataStore"},
       {"access": "public", "name": "UNErrorCodeAttachmentMoveIntoDataStoreFailed"},
       {"access": "public", "name": "UNErrorCodeAttachmentCorrupt"},
-      {"access": "public", "name": "UNErrorCodeAttachmentUnsupportedType"},
       {"access": "public", "name": "UNErrorCodeNotificationInvalidNoDate"},
       {"access": "public", "name": "UNErrorCodeNotificationInvalidNoContent"},
       {"access": "public", "name": "UNErrorCodeContentProvidingObjectNotAllowed"},
@@ -585,7 +584,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "UNAlertStyle"},
     {"access": "public", "name": "UNAuthorizationOptions"},
@@ -660,7 +659,6 @@
       {"access": "public", "name": "UNErrorCodeAttachmentNotInDataStore"},
       {"access": "public", "name": "UNErrorCodeAttachmentMoveIntoDataStoreFailed"},
       {"access": "public", "name": "UNErrorCodeAttachmentCorrupt"},
-      {"access": "public", "name": "UNErrorCodeAttachmentUnsupportedType"},
       {"access": "public", "name": "UNErrorCodeNotificationInvalidNoDate"},
       {"access": "public", "name": "UNErrorCodeNotificationInvalidNoContent"},
       {"access": "public", "name": "UNErrorCodeContentProvidingObjectNotAllowed"},
@@ -1184,7 +1182,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "UNAlertStyle"},
     {"access": "public", "name": "UNAuthorizationOptions"},

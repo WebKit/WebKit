@@ -103,6 +103,7 @@
     {"access": "public", "introduced": "26.4", "kind": "variable", "linkage": "exported", "name": "_AXReduceHighlightingEffectsEnabledDidChangeNotification"},
     {"access": "public", "introduced": "26.1", "kind": "function", "linkage": "exported", "name": "_AXShowBordersEnabled"},
     {"access": "public", "introduced": "26.1", "kind": "variable", "linkage": "exported", "name": "_AXShowBordersEnabledStatusDidChangeNotification"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_AXSpeechAttributeSSML"},
     {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_AXSupportsBidirectionalAXMFiHearingDeviceStreaming"},
     {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_AXTechnologyAutomation"},
     {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_AXTechnologyFullKeyboardAccess"},
@@ -702,7 +703,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "15", "name": "AXChartDescriptorContentDirection"},
     {"access": "public", "name": "AXCustomContentImportance"},
@@ -817,6 +818,7 @@
     {"access": "public", "introduced": "26.4", "kind": "variable", "linkage": "exported", "name": "_AXReduceHighlightingEffectsEnabledDidChangeNotification"},
     {"access": "public", "introduced": "26.1", "kind": "function", "linkage": "exported", "name": "_AXShowBordersEnabled"},
     {"access": "public", "introduced": "26.1", "kind": "variable", "linkage": "exported", "name": "_AXShowBordersEnabledStatusDidChangeNotification"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_AXSpeechAttributeSSML"},
     {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_AXSupportsBidirectionalAXMFiHearingDeviceStreaming"},
     {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_AXTechnologyAutomation"},
     {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_AXTechnologyFullKeyboardAccess"},
@@ -1416,7 +1418,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "15", "name": "AXChartDescriptorContentDirection"},
     {"access": "public", "name": "AXCustomContentImportance"},
@@ -1595,6 +1597,19 @@
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV08SpellOutB0OMa"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV08SpellOutB0OMn"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV08SpellOutB0ON"},
+    {"access": "public", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV19SpeechSSMLAttributeO12markdownNameSSvgZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV19SpeechSSMLAttributeO12markdownNameSSvpZMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV19SpeechSSMLAttributeO4nameSSvgZ"},
+    {"access": "public", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV19SpeechSSMLAttributeO4nameSSvpZMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV19SpeechSSMLAttributeOAA19AttributedStringKeyADMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV19SpeechSSMLAttributeOAA28DecodableAttributedStringKeyADMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV19SpeechSSMLAttributeOAA28EncodableAttributedStringKeyADMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV19SpeechSSMLAttributeOAA36MarkdownDecodableAttributedStringKeyADMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV19SpeechSSMLAttributeOMa"},
+    {"access": "public", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV19SpeechSSMLAttributeOMn"},
+    {"access": "public", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV19SpeechSSMLAttributeON"},
+    {"access": "public", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV23accessibilitySpeechSSMLAF0G13SSMLAttributeOvg"},
+    {"access": "public", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV23accessibilitySpeechSSMLAF0G13SSMLAttributeOvpMV"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV23accessibilityTextCustomAF0ghB0Ovg"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV23accessibilityTextCustomAF0ghB0OvpMV"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$s10Foundation15AttributeScopesO13AccessibilityE0D10AttributesV25accessibilityHeadingLevelAF0ghB0Ovg"},
@@ -1733,7 +1748,7 @@
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo27AXNumericDataAxisDescriptorC13AccessibilityE5title5range17gridlinePositions24valueDescriptionProviderABSS_SNySdGSaySdGSSSdctcfC"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo27AXNumericDataAxisDescriptorC13AccessibilityE5title5range17gridlinePositions24valueDescriptionProviderABSS_SNySdGSaySdGSSSdctcfc"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

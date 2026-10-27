@@ -251,7 +251,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "MCEncryptionPreference"},
     {"access": "public", "name": "MCErrorCode"},
@@ -509,7 +509,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "MCEncryptionPreference"},
     {"access": "public", "name": "MCErrorCode"},

@@ -46,7 +46,8 @@
       {"access": "public", "name": "CLActivityTypeAutomotiveNavigation"},
       {"access": "public", "name": "CLActivityTypeFitness"},
       {"access": "public", "name": "CLActivityTypeOtherNavigation"},
-      {"access": "public", "introduced": "12", "name": "CLActivityTypeAirborne"}
+      {"access": "public", "introduced": "12", "name": "CLActivityTypeAirborne"},
+      {"access": "public", "introduced": "27", "name": "CLActivityTypeMaritime"}
      ],
      "name": "CLActivityType"
     },
@@ -108,7 +109,8 @@
       {"access": "public", "name": "CLLiveUpdateConfigurationAutomotiveNavigation"},
       {"access": "public", "name": "CLLiveUpdateConfigurationOtherNavigation"},
       {"access": "public", "name": "CLLiveUpdateConfigurationFitness"},
-      {"access": "public", "name": "CLLiveUpdateConfigurationAirborne"}
+      {"access": "public", "name": "CLLiveUpdateConfigurationAirborne"},
+      {"access": "public", "introduced": "27", "name": "CLLiveUpdateConfigurationMaritime"}
      ],
      "name": "CLLiveUpdateConfiguration"
     },
@@ -753,7 +755,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "CLAccuracyAuthorization"},
     {"access": "public", "name": "CLActivityType"},
@@ -817,7 +819,8 @@
       {"access": "public", "name": "CLActivityTypeAutomotiveNavigation"},
       {"access": "public", "name": "CLActivityTypeFitness"},
       {"access": "public", "name": "CLActivityTypeOtherNavigation"},
-      {"access": "public", "introduced": "12", "name": "CLActivityTypeAirborne"}
+      {"access": "public", "introduced": "12", "name": "CLActivityTypeAirborne"},
+      {"access": "public", "introduced": "27", "name": "CLActivityTypeMaritime"}
      ],
      "name": "CLActivityType"
     },
@@ -879,7 +882,8 @@
       {"access": "public", "name": "CLLiveUpdateConfigurationAutomotiveNavigation"},
       {"access": "public", "name": "CLLiveUpdateConfigurationOtherNavigation"},
       {"access": "public", "name": "CLLiveUpdateConfigurationFitness"},
-      {"access": "public", "name": "CLLiveUpdateConfigurationAirborne"}
+      {"access": "public", "name": "CLLiveUpdateConfigurationAirborne"},
+      {"access": "public", "introduced": "27", "name": "CLLiveUpdateConfigurationMaritime"}
      ],
      "name": "CLLiveUpdateConfiguration"
     },
@@ -1524,7 +1528,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "CLAccuracyAuthorization"},
     {"access": "public", "name": "CLActivityType"},

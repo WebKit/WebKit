@@ -206,7 +206,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "ALAssetOrientation"},
     {"access": "public", "introduced": "4", "name": "ALAssetsGroupEnumerationResultsBlock", "obsoleted": "26"},
@@ -425,7 +425,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "ALAssetOrientation"},
     {"access": "public", "introduced": "4", "name": "ALAssetsGroupEnumerationResultsBlock", "obsoleted": "26"},
@@ -1077,7 +1077,7 @@
      "name": "PHAssetExtendedMetadata",
      "properties": [
       {"access": "public", "attr": [ "readonly" ], "getter": "caption", "name": "caption"},
-      {"access": "public", "attr": [ "readonly" ], "getter": "originalFileName", "name": "originalFileName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "originalFilename", "name": "originalFilename"},
       {"access": "public", "attr": [ "readonly" ], "getter": "keywords", "name": "keywords"}
      ],
      "super": "NSObject"
@@ -1096,6 +1096,7 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "type", "introduced": "9", "name": "type"},
       {"access": "public", "attr": [ "readonly" ], "getter": "assetLocalIdentifier", "introduced": "9", "name": "assetLocalIdentifier"},
       {"access": "public", "attr": [ "readonly" ], "getter": "originalFilename", "introduced": "9", "name": "originalFilename"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "filename", "introduced": "27", "name": "filename"},
       {"access": "public", "attr": [ "readonly" ], "getter": "contentType", "introduced": "26", "name": "contentType"},
       {"access": "public", "attr": [ "readonly" ], "getter": "uniformTypeIdentifier", "introduced": "9", "name": "uniformTypeIdentifier"},
       {"access": "public", "attr": [ "readonly" ], "getter": "pixelWidth", "introduced": "16", "name": "pixelWidth"},
@@ -1188,6 +1189,19 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "placeholderForCreatedAssetResourceUploadJob", "name": "placeholderForCreatedAssetResourceUploadJob"}
      ],
      "super": "PHChangeRequest"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "PHAssetResourceUploadJobOptions",
+     "properties": [
+      {"access": "public", "getter": "preventsExpensiveNetworkAccess", "name": "preventsExpensiveNetworkAccess", "setter": "setPreventsExpensiveNetworkAccess:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
     },
     {
      "access": "public",
@@ -1681,6 +1695,9 @@
      ],
      "instanceMethods": [
       {"access": "public", "introduced": "26.1", "name": "setUploadJobExtensionEnabled:error:"},
+      {"access": "public", "introduced": "27", "name": "enableUploadJobExtensionWithOptions:error:"},
+      {"access": "public", "introduced": "27", "name": "disableUploadJobExtensionWithError:"},
+      {"access": "public", "introduced": "27", "name": "setUploadJobExtensionOptions:error:"},
       {"access": "public", "introduced": "13", "name": "registerAvailabilityObserver:"},
       {"access": "public", "introduced": "13", "name": "unregisterAvailabilityObserver:"},
       {"access": "public", "introduced": "8", "name": "performChanges:completionHandler:"},
@@ -1696,6 +1713,7 @@
      "name": "PHPhotoLibrary",
      "properties": [
       {"access": "public", "attr": [ "readonly" ], "getter": "isUploadJobExtensionEnabled", "introduced": "26.1", "name": "uploadJobExtensionEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "uploadJobExtensionOptions", "introduced": "27", "name": "uploadJobExtensionOptions"},
       {"access": "public", "attr": [ "readonly" ], "getter": "unavailabilityReason", "introduced": "13", "name": "unavailabilityReason"},
       {"access": "public", "attr": [ "readonly" ], "getter": "currentChangeToken", "introduced": "16", "name": "currentChangeToken"}
      ],
@@ -1792,7 +1810,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "8", "name": "PHAccessLevel"},
     {"access": "public", "introduced": "8", "name": "PHAssetAdjustmentsState"},
@@ -2475,7 +2493,7 @@
      "name": "PHAssetExtendedMetadata",
      "properties": [
       {"access": "public", "attr": [ "readonly" ], "getter": "caption", "name": "caption"},
-      {"access": "public", "attr": [ "readonly" ], "getter": "originalFileName", "name": "originalFileName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "originalFilename", "name": "originalFilename"},
       {"access": "public", "attr": [ "readonly" ], "getter": "keywords", "name": "keywords"}
      ],
      "super": "NSObject"
@@ -2494,6 +2512,7 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "type", "introduced": "9", "name": "type"},
       {"access": "public", "attr": [ "readonly" ], "getter": "assetLocalIdentifier", "introduced": "9", "name": "assetLocalIdentifier"},
       {"access": "public", "attr": [ "readonly" ], "getter": "originalFilename", "introduced": "9", "name": "originalFilename"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "filename", "introduced": "27", "name": "filename"},
       {"access": "public", "attr": [ "readonly" ], "getter": "contentType", "introduced": "26", "name": "contentType"},
       {"access": "public", "attr": [ "readonly" ], "getter": "uniformTypeIdentifier", "introduced": "9", "name": "uniformTypeIdentifier"},
       {"access": "public", "attr": [ "readonly" ], "getter": "pixelWidth", "introduced": "16", "name": "pixelWidth"},
@@ -2586,6 +2605,19 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "placeholderForCreatedAssetResourceUploadJob", "name": "placeholderForCreatedAssetResourceUploadJob"}
      ],
      "super": "PHChangeRequest"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "PHAssetResourceUploadJobOptions",
+     "properties": [
+      {"access": "public", "getter": "preventsExpensiveNetworkAccess", "name": "preventsExpensiveNetworkAccess", "setter": "setPreventsExpensiveNetworkAccess:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
     },
     {
      "access": "public",
@@ -3079,6 +3111,9 @@
      ],
      "instanceMethods": [
       {"access": "public", "introduced": "26.1", "name": "setUploadJobExtensionEnabled:error:"},
+      {"access": "public", "introduced": "27", "name": "enableUploadJobExtensionWithOptions:error:"},
+      {"access": "public", "introduced": "27", "name": "disableUploadJobExtensionWithError:"},
+      {"access": "public", "introduced": "27", "name": "setUploadJobExtensionOptions:error:"},
       {"access": "public", "introduced": "13", "name": "registerAvailabilityObserver:"},
       {"access": "public", "introduced": "13", "name": "unregisterAvailabilityObserver:"},
       {"access": "public", "introduced": "8", "name": "performChanges:completionHandler:"},
@@ -3094,6 +3129,7 @@
      "name": "PHPhotoLibrary",
      "properties": [
       {"access": "public", "attr": [ "readonly" ], "getter": "isUploadJobExtensionEnabled", "introduced": "26.1", "name": "uploadJobExtensionEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "uploadJobExtensionOptions", "introduced": "27", "name": "uploadJobExtensionOptions"},
       {"access": "public", "attr": [ "readonly" ], "getter": "unavailabilityReason", "introduced": "13", "name": "unavailabilityReason"},
       {"access": "public", "attr": [ "readonly" ], "getter": "currentChangeToken", "introduced": "16", "name": "currentChangeToken"}
      ],
@@ -3190,7 +3226,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "8", "name": "PHAccessLevel"},
     {"access": "public", "introduced": "8", "name": "PHAssetAdjustmentsState"},
@@ -3237,6 +3273,25 @@
   },
   {
    "globals": [
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoC022imageContainsReferenceC4DataSbvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoC022imageContainsReferenceC4DataSbvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoC022imageContainsReferenceC4DataSbvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoC5assetACSo7PHAssetC_tcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoC5assetACSo7PHAssetC_tcfCTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoC5assetACSo7PHAssetC_tcfCTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoC5assetACSo7PHAssetC_tcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoC7fileURLAC10Foundation0F0V_tcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoC7fileURLAC10Foundation0F0V_tcfCTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoC7fileURLAC10Foundation0F0V_tcfCTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoC7fileURLAC10Foundation0F0V_tcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoCMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoCMm"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoCMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoCMo"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoCMu"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoCN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoCfD"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Photos20PHReferenceImageInfoCfd"},
     {"access": "public", "introduced": "26.1", "linkage": "exported", "name": "_$s6Photos35PHBackgroundResourceUploadExtensionMp"},
     {"access": "public", "introduced": "26.1", "linkage": "exported", "name": "_$s6Photos35PHBackgroundResourceUploadExtensionP0E10Foundation03AppE0Tb"},
     {"access": "public", "introduced": "26.1", "linkage": "exported", "name": "_$s6Photos35PHBackgroundResourceUploadExtensionP17notifyTerminationyyFTj"},
@@ -3297,7 +3352,7 @@
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$sSo8PHChangeC6PhotosE13changeDetails3forSo014PHObjectChangeD0CyxGSgx_tSo0F0CRbzlF"},
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$sSo8PHChangeC6PhotosE13changeDetails3forSo019PHFetchResultChangeD0CyxGSgSo0fG0CyxG_tSo8PHObjectCRbzlF"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

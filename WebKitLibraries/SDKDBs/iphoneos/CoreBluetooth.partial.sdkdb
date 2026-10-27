@@ -605,7 +605,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "CBATTError"},
     {"access": "public", "name": "CBAttributePermissions"},
@@ -1230,7 +1230,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "CBATTError"},
     {"access": "public", "name": "CBAttributePermissions"},
@@ -1575,7 +1575,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "ENActivityFlags"},
     {"access": "public", "introduced": "12.5", "name": "ENActivityHandler"},
@@ -1925,7 +1925,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "ENActivityFlags"},
     {"access": "public", "introduced": "12.5", "name": "ENActivityHandler"},

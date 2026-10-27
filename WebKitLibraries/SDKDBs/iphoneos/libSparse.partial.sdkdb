@@ -761,7 +761,7 @@
     {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_sparse_vector_triangular_solve_dense_float"},
     {"access": "public", "introduced": "18.5", "kind": "function", "linkage": "exported", "name": "_sparse_vector_triangular_solve_dense_float_complex"}
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "DenseMatrix_Complex_Double"},
     {"access": "public", "name": "DenseMatrix_Complex_Float"},
@@ -1586,7 +1586,7 @@
     {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_sparse_vector_triangular_solve_dense_float"},
     {"access": "public", "introduced": "18.5", "kind": "function", "linkage": "exported", "name": "_sparse_vector_triangular_solve_dense_float_complex"}
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "DenseMatrix_Complex_Double"},
     {"access": "public", "name": "DenseMatrix_Complex_Float"},

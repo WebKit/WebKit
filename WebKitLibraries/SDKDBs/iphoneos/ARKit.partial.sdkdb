@@ -2,10 +2,10 @@
 {
  "PublicSDKContentRoot": [
   {
-   "target": "arm64e-apple-ios27"
+   "target": "arm64e-apple-ios27.2"
   },
   {
-   "target": "arm64e.x1-apple-ios27"
+   "target": "arm64e.x1-apple-ios27.2"
   },
   {
    "enums": [
@@ -165,7 +165,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "13", "name": "ARCoachingGoal"},
     {"access": "public", "introduced": "11", "name": "ARSCNDebugOptions"}
@@ -329,7 +329,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "13", "name": "ARCoachingGoal"},
     {"access": "public", "introduced": "11", "name": "ARSCNDebugOptions"}

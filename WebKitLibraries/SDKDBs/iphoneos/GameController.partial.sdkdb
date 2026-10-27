@@ -1746,7 +1746,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "8", "name": "GCAcceleration"},
     {"access": "public", "introduced": "7", "name": "GCControllerAxisValueChangedHandler"},
@@ -3541,7 +3541,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "8", "name": "GCAcceleration"},
     {"access": "public", "introduced": "7", "name": "GCControllerAxisValueChangedHandler"},
@@ -4009,7 +4009,7 @@
     {"access": "public", "linkage": "exported", "name": "_$sSo8GCStylusC14GameControllerE20DidDisconnectMessageVN", "unavailable": true},
     {"access": "public", "linkage": "exported", "name": "_$sSo8GCStylusC14GameControllerE20DidDisconnectMessageVSo20NSNotificationCenterC10FoundationE09MainActorF0ACMc", "unavailable": true}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

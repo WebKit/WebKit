@@ -6,14 +6,14 @@
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sandbox_free_error"},
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sandbox_init"}
    ],
-   "target": "arm64e-apple-ios27"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sandbox_free_error"},
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sandbox_init"}
    ],
-   "target": "arm64e.x1-apple-ios27"
+   "target": "arm64e.x1-apple-ios27.2"
   }
  ],
  "version": "1.0"

@@ -271,7 +271,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss17CodingUserInfoKeyV11DistributedE011actorSystemD0ABvpZMV"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftDistributed"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -543,7 +543,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss17CodingUserInfoKeyV11DistributedE011actorSystemD0ABvpZMV"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftDistributed"}
    ],
-   "target": "arm64e.x1-apple-ios27.0"
+   "target": "arm64e.x1-apple-ios27.2"
   },
   {
    "globals": [
@@ -639,7 +639,7 @@
     {"access": "public", "linkage": "exported", "name": "_$s11Observation12ObservationsVyxq_GSciAAMc"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftObservation"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -735,7 +735,7 @@
     {"access": "public", "linkage": "exported", "name": "_$s11Observation12ObservationsVyxq_GSciAAMc"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftObservation"}
    ],
-   "target": "arm64e.x1-apple-ios27.0"
+   "target": "arm64e.x1-apple-ios27.2"
   },
   {
    "globals": [
@@ -948,7 +948,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss7UnicodeO6ScalarV17_StringProcessing14RegexComponent0E7BuilderMc"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftRegexBuilder"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -1161,7 +1161,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss7UnicodeO6ScalarV17_StringProcessing14RegexComponent0E7BuilderMc"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftRegexBuilder"}
    ],
-   "target": "arm64e.x1-apple-ios27.0"
+   "target": "arm64e.x1-apple-ios27.2"
   },
   {
    "globals": [
@@ -1396,7 +1396,7 @@
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sxSg15Synchronization19AtomicRepresentableA2B0b8OptionalC0RzlWP"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftSynchronization"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -1631,7 +1631,7 @@
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sxSg15Synchronization19AtomicRepresentableA2B0b8OptionalC0RzlWP"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftSynchronization"}
    ],
-   "target": "arm64e.x1-apple-ios27.0"
+   "target": "arm64e.x1-apple-ios27.2"
   },
   {
    "globals": [
@@ -1822,7 +1822,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSy17_StringProcessingE8containsySbSsF"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swift_StringProcessing"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -2013,7 +2013,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSy17_StringProcessingE8containsySbSsF"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swift_StringProcessing"}
    ],
-   "target": "arm64e.x1-apple-ios27.0"
+   "target": "arm64e.x1-apple-ios27.2"
   },
   {
    "globals": [
@@ -2032,7 +2032,7 @@
     {"access": "public", "linkage": "exported", "name": "_$s9_Volatile0A14MappedRegisterVMn"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swift_Volatile"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -2051,7 +2051,7 @@
     {"access": "public", "linkage": "exported", "name": "_$s9_Volatile0A14MappedRegisterVMn"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swift_Volatile"}
    ],
-   "target": "arm64e.x1-apple-ios27.0"
+   "target": "arm64e.x1-apple-ios27.2"
   }
  ],
  "version": "1.0"

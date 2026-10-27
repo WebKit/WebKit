@@ -17,7 +17,7 @@
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo16CAFrameRateRangeVSQ10QuartzCoreMc"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftQuartzCore"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

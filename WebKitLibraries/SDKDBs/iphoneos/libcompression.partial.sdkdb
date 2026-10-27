@@ -52,7 +52,7 @@
     {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_init"},
     {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_process"}
    ],
-   "target": "arm64-apple-ios27",
+   "target": "arm64-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "compression_algorithm"},
     {"access": "public", "name": "compression_status"},
@@ -112,7 +112,7 @@
     {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_init"},
     {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_process"}
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "compression_algorithm"},
     {"access": "public", "name": "compression_status"},
@@ -172,7 +172,7 @@
     {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_init"},
     {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_process"}
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "compression_algorithm"},
     {"access": "public", "name": "compression_status"},

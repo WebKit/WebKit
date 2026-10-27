@@ -2235,7 +2235,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "CKAccountStatus"},
     {"access": "public", "introduced": "8", "name": "CKApplicationPermissionBlock"},
@@ -4506,7 +4506,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "CKAccountStatus"},
     {"access": "public", "introduced": "8", "name": "CKApplicationPermissionBlock"},
@@ -5524,7 +5524,7 @@
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$ss6UInt64V8CloudKit21CKRecordValueProtocolACMc"},
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$ss6UInt64V8CloudKit21CKRecordValueProtocolACWP"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

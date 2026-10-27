@@ -22,7 +22,7 @@
      "name": "SPEulerAngleOrder"
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "16", "name": "SPAffineTransform3D"},
     {"access": "public", "introduced": "26", "name": "SPAffineTransform3DFloat"},
@@ -77,7 +77,7 @@
      "name": "SPEulerAngleOrder"
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "16", "name": "SPAffineTransform3D"},
     {"access": "public", "introduced": "26", "name": "SPAffineTransform3DFloat"},
@@ -2159,7 +2159,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$ss5SIMD4V7SpatialSfRszrlEyABySfGSo29SPSphericalCoordinates3DFloatacfC"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftSpatial"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

@@ -1803,7 +1803,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "17", "name": "VNAnimalBodyPoseObservationJointName"},
     {"access": "public", "introduced": "17", "name": "VNAnimalBodyPoseObservationJointsGroupName"},
@@ -3642,7 +3642,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "17", "name": "VNAnimalBodyPoseObservationJointName"},
     {"access": "public", "introduced": "17", "name": "VNAnimalBodyPoseObservationJointsGroupName"},
@@ -5631,6 +5631,21 @@
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23InstanceMaskObservationVyACSgSo010VNInstancecD0CcfC"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV09supportedC0SayAC6AnimalOGvg"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV09supportedC0SayAC6AnimalOGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierO3catyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierO3dogyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierO7catHeadyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierO7dogHeadyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierO8rawValueAESgSS_tcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierO8rawValueSSvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierO8rawValueSSvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierOMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierOMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierON"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierOSEAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierOSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierOSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierOSYAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10IdentifierOSeAAMc"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10descriptorAA0D10DescriptorOvg"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV10descriptorAA0D10DescriptorOvpMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV16regionOfInterestAA14NormalizedRectVvM"},
@@ -5640,6 +5655,8 @@
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV16setComputeDevice_3fory6CoreML09MLComputeG0OSg_AA0F5StageOtF"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV18supportedRevisionsSayAC8RevisionOGvgZ"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV18supportedRevisionsSayAC8RevisionOGvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV20supportedIdentifiersSayAC10IdentifierOGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV20supportedIdentifiersSayAC10IdentifierOGvpMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV28supportedComputeStageDevicesSDyAA0fG0OSay6CoreML15MLComputeDeviceOGGvg"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV28supportedComputeStageDevicesSDyAA0fG0OSay6CoreML15MLComputeDeviceOGGvpMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV2eeoiySbAC_ACtFZ"},
@@ -5665,6 +5682,7 @@
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV8RevisionO9hashValueSivg"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV8RevisionO9hashValueSivpMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV8RevisionO9revision2yA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV8RevisionO9revision3yA2EmFWC"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV8RevisionOMa"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV8RevisionOMn"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s6Vision23RecognizeAnimalsRequestV8RevisionON"},
@@ -7389,6 +7407,8 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision36GenerateIterativeSegmentationRequestC18seedScribbleBuffer_AC9CoreVideo015CVReadOnlyPixelH0C_AC8RevisionOSgtcfc"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision36GenerateIterativeSegmentationRequestC18supportedRevisionsSayAC8RevisionOGvgZ"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision36GenerateIterativeSegmentationRequestC18supportedRevisionsSayAC8RevisionOGvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision36GenerateIterativeSegmentationRequestC28supportedComputeStageDevicesSDyAA0gH0OSay6CoreML15MLComputeDeviceOGGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision36GenerateIterativeSegmentationRequestC28supportedComputeStageDevicesSDyAA0gH0OSay6CoreML15MLComputeDeviceOGGvpMV"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision36GenerateIterativeSegmentationRequestC2eeoiySbAC_ACtFZ"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision36GenerateIterativeSegmentationRequestC4hash4intoys6HasherVz_tF"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Vision36GenerateIterativeSegmentationRequestC7seedBox_AcA14NormalizedRectV_AC8RevisionOSgtcfC"},
@@ -7916,7 +7936,7 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo9VNRequestC6VisionE28supportedComputeStageDevicesSDySo09VNComputeE0aSay6CoreML15MLComputeDeviceOGGvg"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo9VNRequestC6VisionE28supportedComputeStageDevicesSDySo09VNComputeE0aSay6CoreML15MLComputeDeviceOGGvpMV"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

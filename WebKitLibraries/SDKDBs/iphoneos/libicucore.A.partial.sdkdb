@@ -1571,7 +1571,7 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_utf8_nextCharSafeBody"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_utf8_prevCharSafeBody"}
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "OldUChar"},
     {"access": "public", "name": "UBidiPairedBracketType"},
@@ -3214,7 +3214,7 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_utf8_nextCharSafeBody"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_utf8_prevCharSafeBody"}
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "OldUChar"},
     {"access": "public", "name": "UBidiPairedBracketType"},

@@ -1750,7 +1750,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "NSAttributeType"},
     {"access": "public", "name": "NSBatchDeleteRequestResultType"},
@@ -3523,7 +3523,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "NSAttributeType"},
     {"access": "public", "name": "NSBatchDeleteRequestResultType"},
@@ -4410,7 +4410,7 @@
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo31NSCoreDataCoreSpotlightDelegateC0cB0E26indexDidUpdateNotificationSo18NSNotificationNameavgZ"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo31NSCoreDataCoreSpotlightDelegateC0cB0E26indexDidUpdateNotificationSo18NSNotificationNameavpZMV"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

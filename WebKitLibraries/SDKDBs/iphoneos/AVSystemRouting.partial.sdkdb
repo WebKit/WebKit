@@ -2,10 +2,10 @@
 {
  "PublicSDKContentRoot": [
   {
-   "target": "arm64e-apple-ios27"
+   "target": "arm64e-apple-ios27.2"
   },
   {
-   "target": "arm64e.x1-apple-ios27"
+   "target": "arm64e.x1-apple-ios27.2"
   },
   {
    "categories": [
@@ -182,7 +182,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "27", "name": "AVSystemRouteEventReason"},
     {"access": "public", "introduced": "27", "name": "AVSystemRouteLaunchMode"},
@@ -364,7 +364,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "27", "name": "AVSystemRouteEventReason"},
     {"access": "public", "introduced": "27", "name": "AVSystemRouteLaunchMode"},
@@ -514,7 +514,7 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorVs0C0AAMc"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorVyA2C4CodeOcfC"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -643,7 +643,7 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC13volumeChanged3foryAA0a6OutputB0V_tF"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC15discoveryFailedyyAA0aB5ErrorVF"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC18requestPairingCode3for7session6reason19authorizationMethodyAA0a6OutputB0V_AA0aM7SessionC10Foundation23LocalizedStringResourceVAJ013AuthorizationL0VtF"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC32reportRealtimeSampleDeliveryKPIs7session03metI0yAA0A13OutputSessionC_SbtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC26reportQualityMetricsPassed_10forSessionySb_AA0a6OutputJ0CtF"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC7started11application15playbackControl7sessionySSSg_xAA0A13OutputSessionCt5AVKit35AVPlaybackUserInterfaceControllableRzlF"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerCMa"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerCMm"},
@@ -729,7 +729,7 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice22RealtimeSampleHandlingPAA0aB9ExtensionTb"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice22RealtimeSampleHandlingTL"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

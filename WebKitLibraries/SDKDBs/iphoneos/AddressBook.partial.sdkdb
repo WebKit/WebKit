@@ -249,7 +249,7 @@
     {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kABSourceTypeProperty"},
     {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kABWorkLabel"}
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "2", "name": "ABAddressBookRef"},
     {"access": "public", "introduced": "2", "name": "ABAddressBookRequestAccessCompletionHandler"},
@@ -517,7 +517,7 @@
     {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kABSourceTypeProperty"},
     {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kABWorkLabel"}
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "2", "name": "ABAddressBookRef"},
     {"access": "public", "introduced": "2", "name": "ABAddressBookRequestAccessCompletionHandler"},

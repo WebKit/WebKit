@@ -39,7 +39,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "interfaces": [
@@ -79,7 +79,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27"
+   "target": "arm64e.x1-apple-ios27.2"
   },
   {
    "globals": [
@@ -152,7 +152,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss5NeverO12ExtensionKitE4bodyABvg"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss5NeverO12ExtensionKitE4bodyABvpMV"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

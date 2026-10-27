@@ -1887,7 +1887,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "BLASParamErrorProc"},
     {"access": "public", "name": "__CLPK_L_fp"},
@@ -3807,7 +3807,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "BLASParamErrorProc"},
     {"access": "public", "name": "__CLPK_L_fp"},

@@ -273,7 +273,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "IOSurfaceComponentName"},
     {"access": "public", "name": "IOSurfaceComponentRange"},
@@ -560,7 +560,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "IOSurfaceComponentName"},
     {"access": "public", "name": "IOSurfaceComponentRange"},

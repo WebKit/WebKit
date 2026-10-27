@@ -312,7 +312,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "SFSpeechErrorCode"},
     {"access": "public", "name": "SFSpeechRecognitionTaskHint"},
@@ -631,7 +631,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "SFSpeechErrorCode"},
     {"access": "public", "name": "SFSpeechRecognitionTaskHint"},
@@ -1564,7 +1564,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

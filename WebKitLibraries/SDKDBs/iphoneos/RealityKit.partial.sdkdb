@@ -2,10 +2,10 @@
 {
  "PublicSDKContentRoot": [
   {
-   "target": "arm64e-apple-ios27"
+   "target": "arm64e-apple-ios27.2"
   },
   {
-   "target": "arm64e.x1-apple-ios27"
+   "target": "arm64e.x1-apple-ios27.2"
   },
   {
    "categories": [
@@ -35,7 +35,7 @@
     {"access": "public", "linkage": "exported", "name": "_$s10RealityKit12AnchorEntityC13raycastResultACSo09ARRaycastF0C_tcfc"},
     {"access": "public", "linkage": "exported", "name": "_$s10RealityKit12AnchorEntityC6anchorACSo8ARAnchorC_tcfC"},
     {"access": "public", "linkage": "exported", "name": "_$s10RealityKit12AnchorEntityC6anchorACSo8ARAnchorC_tcfc"},
-    {"access": "public", "linkage": "exported", "name": "_$s10RealityKit12MeshResourceC12generateText_14extrusionDepth4font14containerFrame9alignment13lineBreakModeACSS_SfSo6UIFontCSo6CGRectVSo15CTTextAlignmentVSo06CTLinenO0VtFZ"},
+    {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s10RealityKit12MeshResourceC12generateText_14extrusionDepth4font14containerFrame9alignment13lineBreakModeACSS_SfSo6UIFontCSo6CGRectVSo15CTTextAlignmentVSo06CTLinenO0VtFZ"},
     {"access": "public", "linkage": "exported", "name": "_$s10RealityKit12MeshResourceC14__generateText_14extrusionDepth4font14containerFrame9alignment13lineBreakMode12segmentCountACSS_SfSo6UIFontCSo6CGRectVSo15CTTextAlignmentVSo06CTLinenO0Vs5UInt8VtFZ"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10RealityKit13ShapeResourceC18generateStaticMesh4fromACSo12ARMeshAnchorC_tYaKFZ"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10RealityKit13ShapeResourceC18generateStaticMesh4fromACSo12ARMeshAnchorC_tYaKFZTu"},
@@ -1033,7 +1033,7 @@
      "super": "UIView"
     }
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

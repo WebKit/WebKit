@@ -11031,7 +11031,7 @@
      "name": "NSXPCProxyCreating"
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "NSActivityOptions"},
     {"access": "public", "name": "NSAttributedStringEnumerationOptions"},
@@ -22263,7 +22263,7 @@
      "name": "NSXPCProxyCreating"
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "NSActivityOptions"},
     {"access": "public", "name": "NSAttributedStringEnumerationOptions"},
@@ -31733,6 +31733,8 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s10Foundation4DateV27SystemClockDidChangeMessageVSo20NSNotificationCenterCAAE09MainActorG0AAMc"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s10Foundation4DateV27SystemClockDidChangeMessageVSo20NSNotificationCenterCAAE09MainActorG0AAWP"},
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$s10Foundation4DateV2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$s10Foundation4DateV2geoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$s10Foundation4DateV2leoiySbAC_ACtFZ"},
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$s10Foundation4DateV2peoiyyACz_SdtFZ"},
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$s10Foundation4DateV2seoiyyACz_SdtFZ"},
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$s10Foundation4DateV34_conditionallyBridgeFromObjectiveC_6resultSbSo6NSDateC_ACSgztFZ"},
@@ -36359,13 +36361,13 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftSystem_Foundation"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

@@ -582,8 +582,8 @@
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersion7DNG"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersion8"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersion8DNG"},
-    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersion9"},
-    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersion9DNG"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersion9"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersion9DNG"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersionNone"},
     {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_kCIActiveKeys"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kCIApplyOptionColorSpace", "unavailable": true},
@@ -1458,9 +1458,13 @@
      "access": "public",
      "classMethods": [
       {"access": "public", "introduced": "27", "name": "supportedCameraModelsWithVersion:"},
+      {"access": "public", "introduced": "27.2", "name": "downloadAllResourcesWithTimeout:completionHandler:"},
       {"access": "public", "name": "filterWithImageURL:"},
       {"access": "public", "name": "filterWithImageData:identifierHint:"},
       {"access": "public", "name": "filterWithCVPixelBuffer:properties:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "downloadResourcesWithTimeout:completionHandler:"}
      ],
      "introduced": "15",
      "linkage": "exported",
@@ -4094,7 +4098,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "CIContextOption"},
     {"access": "public", "name": "CIDataMatrixCodeECCVersion"},
@@ -4691,8 +4695,8 @@
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersion7DNG"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersion8"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersion8DNG"},
-    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersion9"},
-    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersion9DNG"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersion9"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersion9DNG"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CIRAWDecoderVersionNone"},
     {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_kCIActiveKeys"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kCIApplyOptionColorSpace", "unavailable": true},
@@ -5567,9 +5571,13 @@
      "access": "public",
      "classMethods": [
       {"access": "public", "introduced": "27", "name": "supportedCameraModelsWithVersion:"},
+      {"access": "public", "introduced": "27.2", "name": "downloadAllResourcesWithTimeout:completionHandler:"},
       {"access": "public", "name": "filterWithImageURL:"},
       {"access": "public", "name": "filterWithImageData:identifierHint:"},
       {"access": "public", "name": "filterWithCVPixelBuffer:properties:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "downloadResourcesWithTimeout:completionHandler:"}
      ],
      "introduced": "15",
      "linkage": "exported",
@@ -8203,7 +8211,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "CIContextOption"},
     {"access": "public", "name": "CIDataMatrixCodeECCVersion"},

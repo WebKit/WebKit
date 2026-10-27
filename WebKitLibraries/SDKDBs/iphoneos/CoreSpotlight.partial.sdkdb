@@ -696,7 +696,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "CSIndexErrorCode"},
     {"access": "public", "name": "CSSearchQueryErrorCode"},
@@ -1401,7 +1401,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "CSIndexErrorCode"},
     {"access": "public", "name": "CSSearchQueryErrorCode"},
@@ -1413,6 +1413,11 @@
   },
   {
    "globals": [
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight14SearchableItemV4itemSo012CSSearchableD0Cvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight14SearchableItemV4itemSo012CSSearchableD0CvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight14SearchableItemVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight14SearchableItemVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight14SearchableItemVN"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10colorSpaceACvgZ"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10colorSpaceACvpZMV"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10contentURLACvgZ"},
@@ -1889,7 +1894,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo13CSSearchQueryC13CoreSpotlightE7resultsAbCE7ResultsVvg"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo13CSSearchQueryC13CoreSpotlightE7resultsAbCE7ResultsVvpMV"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

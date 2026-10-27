@@ -142,7 +142,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "MACaptionAppearanceBehavior"},
     {"access": "public", "name": "MACaptionAppearanceDisplayType"},
@@ -293,7 +293,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "MACaptionAppearanceBehavior"},
     {"access": "public", "name": "MACaptionAppearanceDisplayType"},
@@ -318,7 +318,7 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultVMn"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultVN"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

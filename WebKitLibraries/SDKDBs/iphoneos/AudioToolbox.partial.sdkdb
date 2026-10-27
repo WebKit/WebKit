@@ -3424,7 +3424,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "AU3DMixerAttenuationCurve"},
     {"access": "public", "name": "AU3DMixerRenderingFlags"},
@@ -7141,7 +7141,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "AU3DMixerAttenuationCurve"},
     {"access": "public", "name": "AU3DMixerRenderingFlags"},
@@ -7442,7 +7442,7 @@
    ]
   },
   {
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

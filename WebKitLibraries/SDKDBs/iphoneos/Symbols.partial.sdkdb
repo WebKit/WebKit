@@ -306,7 +306,7 @@
      "super": "NSSymbolEffect"
     }
    ],
-   "target": "arm64e-apple-ios27"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "interfaces": [
@@ -613,7 +613,7 @@
      "super": "NSSymbolEffect"
     }
    ],
-   "target": "arm64e.x1-apple-ios27"
+   "target": "arm64e.x1-apple-ios27.2"
   },
   {
    "globals": [
@@ -991,7 +991,7 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s7Symbols25VariableColorSymbolEffectVSHAAMc"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s7Symbols25VariableColorSymbolEffectVSQAAMc"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

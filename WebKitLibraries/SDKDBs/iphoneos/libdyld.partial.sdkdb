@@ -303,7 +303,7 @@
     {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_uuid_command"},
     {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_version_min_command"}
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "Dl_info"},
     {"access": "public", "name": "Dl_info_t"},
@@ -619,7 +619,7 @@
     {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_uuid_command"},
     {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_version_min_command"}
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "Dl_info"},
     {"access": "public", "name": "Dl_info_t"},

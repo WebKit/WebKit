@@ -714,7 +714,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "9", "name": "TKErrorCode"},
     {"access": "public", "name": "TKSmartCardPINCharset"},
@@ -1445,7 +1445,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "9", "name": "TKErrorCode"},
     {"access": "public", "name": "TKSmartCardPINCharset"},
@@ -1471,7 +1471,7 @@
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo11TKSmartCardC14CryptoTokenKitE4send3ins2p12p24data2les6UInt16V2sw_10Foundation4DataV8responsets5UInt8V_A2rOSgSiSgtYaKF"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo11TKSmartCardC14CryptoTokenKitE4send3ins2p12p24data2les6UInt16V2sw_10Foundation4DataV8responsets5UInt8V_A2rOSgSiSgtYaKFTu"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

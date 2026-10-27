@@ -321,8 +321,8 @@
       {"access": "public", "name": "NEPacketTunnelNetworkSettingsIPFamilyIPv4"},
       {"access": "public", "name": "NEPacketTunnelNetworkSettingsIPFamilyIPv6"}
      ],
-     "introduced": "27",
-     "name": "NEPacketTunnelNetworkSettingsIPFamily"
+     "name": "NEPacketTunnelNetworkSettingsIPFamily",
+     "unavailable": true
     },
     {
      "access": "public",
@@ -1637,12 +1637,12 @@
       {"access": "public", "getter": "IPv6Settings", "introduced": "9", "name": "IPv6Settings", "setter": "setIPv6Settings:"},
       {"access": "public", "getter": "tunnelOverheadBytes", "introduced": "9", "name": "tunnelOverheadBytes", "setter": "setTunnelOverheadBytes:"},
       {"access": "public", "getter": "MTU", "introduced": "9", "name": "MTU", "setter": "setMTU:"},
-      {"access": "public", "getter": "includeAllNetworks", "introduced": "27", "name": "includeAllNetworks", "setter": "setIncludeAllNetworks:"},
-      {"access": "public", "getter": "excludeLocalNetworks", "introduced": "27", "name": "excludeLocalNetworks", "setter": "setExcludeLocalNetworks:"},
-      {"access": "public", "getter": "excludeCellularServices", "introduced": "27", "name": "excludeCellularServices", "setter": "setExcludeCellularServices:"},
-      {"access": "public", "getter": "excludeAPNs", "introduced": "27", "name": "excludeAPNs", "setter": "setExcludeAPNs:"},
-      {"access": "public", "getter": "excludeDeviceCommunication", "introduced": "27", "name": "excludeDeviceCommunication", "setter": "setExcludeDeviceCommunication:"},
-      {"access": "public", "getter": "enforceRoutes", "introduced": "27", "name": "enforceRoutes", "setter": "setEnforceRoutes:"}
+      {"access": "public", "getter": "includeAllNetworks", "name": "includeAllNetworks", "setter": "setIncludeAllNetworks:", "unavailable": true},
+      {"access": "public", "getter": "excludeLocalNetworks", "name": "excludeLocalNetworks", "setter": "setExcludeLocalNetworks:", "unavailable": true},
+      {"access": "public", "getter": "excludeCellularServices", "name": "excludeCellularServices", "setter": "setExcludeCellularServices:", "unavailable": true},
+      {"access": "public", "getter": "excludeAPNs", "name": "excludeAPNs", "setter": "setExcludeAPNs:", "unavailable": true},
+      {"access": "public", "getter": "excludeDeviceCommunication", "name": "excludeDeviceCommunication", "setter": "setExcludeDeviceCommunication:", "unavailable": true},
+      {"access": "public", "getter": "enforceRoutes", "name": "enforceRoutes", "setter": "setEnforceRoutes:", "unavailable": true}
      ],
      "super": "NETunnelNetworkSettings"
     },
@@ -2211,7 +2211,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "NEAppProxyFlowError"},
     {"access": "public", "name": "NEAppPushManagerError"},
@@ -2584,8 +2584,8 @@
       {"access": "public", "name": "NEPacketTunnelNetworkSettingsIPFamilyIPv4"},
       {"access": "public", "name": "NEPacketTunnelNetworkSettingsIPFamilyIPv6"}
      ],
-     "introduced": "27",
-     "name": "NEPacketTunnelNetworkSettingsIPFamily"
+     "name": "NEPacketTunnelNetworkSettingsIPFamily",
+     "unavailable": true
     },
     {
      "access": "public",
@@ -3900,12 +3900,12 @@
       {"access": "public", "getter": "IPv6Settings", "introduced": "9", "name": "IPv6Settings", "setter": "setIPv6Settings:"},
       {"access": "public", "getter": "tunnelOverheadBytes", "introduced": "9", "name": "tunnelOverheadBytes", "setter": "setTunnelOverheadBytes:"},
       {"access": "public", "getter": "MTU", "introduced": "9", "name": "MTU", "setter": "setMTU:"},
-      {"access": "public", "getter": "includeAllNetworks", "introduced": "27", "name": "includeAllNetworks", "setter": "setIncludeAllNetworks:"},
-      {"access": "public", "getter": "excludeLocalNetworks", "introduced": "27", "name": "excludeLocalNetworks", "setter": "setExcludeLocalNetworks:"},
-      {"access": "public", "getter": "excludeCellularServices", "introduced": "27", "name": "excludeCellularServices", "setter": "setExcludeCellularServices:"},
-      {"access": "public", "getter": "excludeAPNs", "introduced": "27", "name": "excludeAPNs", "setter": "setExcludeAPNs:"},
-      {"access": "public", "getter": "excludeDeviceCommunication", "introduced": "27", "name": "excludeDeviceCommunication", "setter": "setExcludeDeviceCommunication:"},
-      {"access": "public", "getter": "enforceRoutes", "introduced": "27", "name": "enforceRoutes", "setter": "setEnforceRoutes:"}
+      {"access": "public", "getter": "includeAllNetworks", "name": "includeAllNetworks", "setter": "setIncludeAllNetworks:", "unavailable": true},
+      {"access": "public", "getter": "excludeLocalNetworks", "name": "excludeLocalNetworks", "setter": "setExcludeLocalNetworks:", "unavailable": true},
+      {"access": "public", "getter": "excludeCellularServices", "name": "excludeCellularServices", "setter": "setExcludeCellularServices:", "unavailable": true},
+      {"access": "public", "getter": "excludeAPNs", "name": "excludeAPNs", "setter": "setExcludeAPNs:", "unavailable": true},
+      {"access": "public", "getter": "excludeDeviceCommunication", "name": "excludeDeviceCommunication", "setter": "setExcludeDeviceCommunication:", "unavailable": true},
+      {"access": "public", "getter": "enforceRoutes", "name": "enforceRoutes", "setter": "setEnforceRoutes:", "unavailable": true}
      ],
      "super": "NETunnelNetworkSettings"
     },
@@ -4474,7 +4474,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "NEAppProxyFlowError"},
     {"access": "public", "name": "NEAppPushManagerError"},
@@ -4599,9 +4599,9 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC12ReportFormatON"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC12ReportFormatOSHAAMc"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC12ReportFormatOSQAAMc"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC12pirServerURL10Foundation0G0VSgvgTj"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC12pirServerURL10Foundation0G0VSgvgTq"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC12pirServerURL10Foundation0G0VSgvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC12pirServerURL10Foundation0G0VSgvgTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC12pirServerURL10Foundation0G0VSgvgTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC12pirServerURL10Foundation0G0VSgvpMV"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC12reportFormatAC06ReportF0OvMTj"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC12reportFormatAC06ReportF0OvMTq"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC12reportFormatAC06ReportF0OvgTj"},
@@ -4755,9 +4755,9 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC22prefilterFetchIntervalSdvpMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC22prefilterFetchIntervalSdvsTj"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC22prefilterFetchIntervalSdvsTq"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC23pirPrivacyPassIssuerURL10Foundation0I0VSgvgTj"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC23pirPrivacyPassIssuerURL10Foundation0I0VSgvgTq"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC23pirPrivacyPassIssuerURL10Foundation0I0VSgvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC23pirPrivacyPassIssuerURL10Foundation0I0VSgvgTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC23pirPrivacyPassIssuerURL10Foundation0I0VSgvgTq"},
+    {"access": "public", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC23pirPrivacyPassIssuerURL10Foundation0I0VSgvpMV"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC23urlParsingConfigurationAC0fG0VvMTj"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC23urlParsingConfigurationAC0fG0VvMTq"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16NetworkExtension18NEURLFilterManagerC23urlParsingConfigurationAC0fG0VvgTj"},
@@ -4975,7 +4975,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo39NEVPNIKEv2SecurityAssociationParametersC16NetworkExtensionE29postQuantumKeyExchangeMethodsSaySo0a4PosthiJ6MethodVGvpMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo39NEVPNIKEv2SecurityAssociationParametersC16NetworkExtensionE29postQuantumKeyExchangeMethodsSaySo0a4PosthiJ6MethodVGvs"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

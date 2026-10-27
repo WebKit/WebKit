@@ -21,6 +21,7 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s12CoreLocation16CLLocationUpdateV17LiveConfigurationO7defaultyA2EmFWC"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s12CoreLocation16CLLocationUpdateV17LiveConfigurationO7fitnessyA2EmFWC"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s12CoreLocation16CLLocationUpdateV17LiveConfigurationO8airborneyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s12CoreLocation16CLLocationUpdateV17LiveConfigurationO8maritimeyA2EmFWC"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s12CoreLocation16CLLocationUpdateV17LiveConfigurationO9hashValueSivg"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s12CoreLocation16CLLocationUpdateV17LiveConfigurationO9hashValueSivpMV"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s12CoreLocation16CLLocationUpdateV17LiveConfigurationOMa"},
@@ -305,7 +306,7 @@
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo26CLBeaconIdentityConstraintC12CoreLocationE5minors6UInt16VSgvpMV"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftCoreLocation"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

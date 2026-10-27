@@ -634,7 +634,7 @@
     {"access": "public", "introduced": "10", "linkage": "exported", "name": "_$sSo9OS_os_logC0B0E9subsystem8categoryABSS_SStcfc"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftos"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

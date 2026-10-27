@@ -87,7 +87,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "categories": [
@@ -175,7 +175,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27"
+   "target": "arm64e.x1-apple-ios27.2"
   },
   {
    "categories": [
@@ -216,23 +216,6 @@
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonVMa"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonVMn"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonVN"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC23checkShouldShowAutofill10completionyySo8NSNumberCSg_So7NSErrorCSgtc_tFTj"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC23checkShouldShowAutofill10completionyySo8NSNumberCSg_So7NSErrorCSgtc_tFTq"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC7contactSo0C0CSgvMTj"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC7contactSo0C0CSgvMTq"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC7contactSo0C0CSgvgTj"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC7contactSo0C0CSgvgTq"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC7contactSo0C0CSgvpMV"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC7contactSo0C0CSgvsTj"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC7contactSo0C0CSgvsTq"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCACycfC"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCACycfc"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCMa"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCMn"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCMo"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCMu"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCN"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCfD"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E19contactAccessPicker11isPresented17completionHandlerQrAA7BindingVySbG_ySaySSGctF"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E19contactAccessPicker11isPresented17completionHandlerQrAA7BindingVySbG_ySaySSGctFQOMQ"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E24contactAccessButtonStyleyQrAD07ContactfG0V0H0VF"},
@@ -241,22 +224,7 @@
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E26contactAccessButtonCaptionyQrAD07ContactfG0V0H0OFQOMQ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo16CNMutableContactC10ContactsUIE2id10Foundation4UUIDVvg"}
    ],
-   "interfaces": [
-    {
-     "access": "public",
-     "instanceMethods": [
-      {"access": "public", "introduced": "27", "name": "contact"},
-      {"access": "public", "introduced": "27", "name": "setContact:"},
-      {"access": "public", "introduced": "27", "name": "init"},
-      {"access": "public", "introduced": "27", "name": "checkShouldShowAutofillWithCompletion:"}
-     ],
-     "introduced": "27",
-     "linkage": "exported",
-     "name": "CNContactSavedAutoFillDetailsController",
-     "super": "NSObject"
-    }
-   ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

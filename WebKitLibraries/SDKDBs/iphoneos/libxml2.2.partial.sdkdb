@@ -3156,7 +3156,7 @@
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_xmlXPtrRangeToFunction"},
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_xmlXPtrWrapLocationSet"}
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "UConverter"},
     {"access": "public", "name": "attributeDeclSAXFunc"},
@@ -6660,7 +6660,7 @@
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_xmlXPtrRangeToFunction"},
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_xmlXPtrWrapLocationSet"}
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "UConverter"},
     {"access": "public", "name": "attributeDeclSAXFunc"},

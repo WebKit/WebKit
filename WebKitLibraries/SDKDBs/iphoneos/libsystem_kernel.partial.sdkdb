@@ -2,6 +2,15 @@
 {
  "PublicSDKContentRoot": [
   {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OS_CROSS_ARCH_X86_64"}
+     ],
+     "name": "os_cross_arch_t"
+    }
+   ],
    "globals": [
     {"access": "public", "kind": "function", "linkage": "exported", "name": "__host_page_size"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_act_get_state"},
@@ -143,6 +152,7 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_mach_zone_info_for_zone"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_mig_reply_setup"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_mig_strncpy_zerofill"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_os_cross_arch_is_supported", "unavailable": true},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_os_custom_x18_abi_enabled", "unavailable": true},
     {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_os_proc_available_memory"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_os_set_custom_x18_abi_enabled", "unavailable": true},
@@ -336,7 +346,7 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_voucher_mach_msg_set"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_vprintf_stderr_func"}
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "__Reply___host_page_size_t"},
     {"access": "public", "name": "__Reply__act_get_state_t"},
@@ -854,12 +864,22 @@
     {"access": "public", "name": "__Request__vm_remap_t"},
     {"access": "public", "name": "__Request__vm_wire_t"},
     {"access": "public", "name": "__Request__vm_write_t"},
+    {"access": "public", "name": "os_cross_arch_t"},
     {"access": "public", "name": "posix_spawn_file_actions_t"},
     {"access": "public", "name": "posix_spawnattr_t"},
     {"access": "public", "name": "voucher_mach_msg_state_t"}
    ]
   },
   {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "OS_CROSS_ARCH_X86_64"}
+     ],
+     "name": "os_cross_arch_t"
+    }
+   ],
    "globals": [
     {"access": "public", "kind": "function", "linkage": "exported", "name": "__host_page_size"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_act_get_state"},
@@ -1001,6 +1021,7 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_mach_zone_info_for_zone"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_mig_reply_setup"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_mig_strncpy_zerofill"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_os_cross_arch_is_supported", "unavailable": true},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_os_custom_x18_abi_enabled", "unavailable": true},
     {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_os_proc_available_memory"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_os_set_custom_x18_abi_enabled", "unavailable": true},
@@ -1194,7 +1215,7 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_voucher_mach_msg_set"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_vprintf_stderr_func"}
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "__Reply___host_page_size_t"},
     {"access": "public", "name": "__Reply__act_get_state_t"},
@@ -1712,6 +1733,7 @@
     {"access": "public", "name": "__Request__vm_remap_t"},
     {"access": "public", "name": "__Request__vm_wire_t"},
     {"access": "public", "name": "__Request__vm_write_t"},
+    {"access": "public", "name": "os_cross_arch_t"},
     {"access": "public", "name": "posix_spawn_file_actions_t"},
     {"access": "public", "name": "posix_spawnattr_t"},
     {"access": "public", "name": "voucher_mach_msg_state_t"}

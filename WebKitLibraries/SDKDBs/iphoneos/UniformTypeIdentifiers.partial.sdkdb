@@ -267,7 +267,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios27"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "categories": [
@@ -535,7 +535,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e.x1-apple-ios27"
+   "target": "arm64e.x1-apple-ios27.2"
   }
  ],
  "version": "1.0"

@@ -2131,7 +2131,7 @@
      "name": "CTAdaptiveImageProviding"
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "1", "name": "ALMXGlyphEntry"},
     {"access": "public", "introduced": "1", "name": "ALMXHeader"},
@@ -4480,7 +4480,7 @@
      "name": "CTAdaptiveImageProviding"
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "1", "name": "ALMXGlyphEntry"},
     {"access": "public", "introduced": "1", "name": "ALMXHeader"},
@@ -4788,7 +4788,7 @@
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10Foundation16AttributedStringV8CoreTextE18AdaptiveImageGlyphVSQADMc"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10Foundation16AttributedStringV8CoreTextE18AdaptiveImageGlyphVSeADMc"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

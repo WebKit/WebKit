@@ -384,7 +384,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo14NSItemProviderC22UniformTypeIdentifiersE26registerFileRepresentation3for10visibility11openInPlace11loadHandleryAC6UTTypeV_So0abH10VisibilityVSbSo10NSProgressCSgy10Foundation3URLVSg_Sbs5Error_pSgtcYbctF"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftUniformTypeIdentifiers"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

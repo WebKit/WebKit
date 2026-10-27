@@ -1193,6 +1193,7 @@
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_ConformingDataTypes"},
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_DataType"},
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_DataTypeNamespace"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_HumanReadableString"},
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_LanguageTag"},
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_LocalID"},
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_Namespace"},
@@ -1201,6 +1202,7 @@
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_Value"},
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionMetadataSpecificationKey_DataType"},
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionMetadataSpecificationKey_ExtendedLanguageTag"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionMetadataSpecificationKey_HumanReadableString"},
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionMetadataSpecificationKey_Identifier"},
     {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionMetadataSpecificationKey_SetupData"},
     {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionMetadataSpecificationKey_StructuralDependency"},
@@ -1399,7 +1401,7 @@
     {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_kCMTimebaseNotification_TimeJumped"},
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCMTimingInfoInvalid"}
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "4", "name": "CMAttachmentBearerRef"},
     {"access": "public", "introduced": "4", "name": "CMAttachmentMode"},
@@ -2688,6 +2690,7 @@
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_ConformingDataTypes"},
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_DataType"},
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_DataTypeNamespace"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_HumanReadableString"},
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_LanguageTag"},
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_LocalID"},
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_Namespace"},
@@ -2696,6 +2699,7 @@
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionKey_Value"},
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionMetadataSpecificationKey_DataType"},
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionMetadataSpecificationKey_ExtendedLanguageTag"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionMetadataSpecificationKey_HumanReadableString"},
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionMetadataSpecificationKey_Identifier"},
     {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionMetadataSpecificationKey_SetupData"},
     {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kCMMetadataFormatDescriptionMetadataSpecificationKey_StructuralDependency"},
@@ -2894,7 +2898,7 @@
     {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_kCMTimebaseNotification_TimeJumped"},
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCMTimingInfoInvalid"}
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "4", "name": "CMAttachmentBearerRef"},
     {"access": "public", "introduced": "4", "name": "CMAttachmentMode"},
@@ -4658,6 +4662,7 @@
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo17CMSampleBufferRefa9CoreMediaE8durationSo6CMTimeavg"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo17CMSampleBufferRefa9CoreMediaE8durationSo6CMTimeavpMV"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo18CMSampleTimingInfoa9CoreMediaE2eeoiySbAB_ABtFZ"},
+    {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo18CMSampleTimingInfoa9CoreMediaE2neoiySbAB_ABtFZ"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo18CMSampleTimingInfoaSQ9CoreMediaMc"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo22CMFormatDescriptionRefa9CoreMedia01_aB14InitTrampolineACMc"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo22CMFormatDescriptionRefa9CoreMedia01_aB14InitTrampolineACWP"},
@@ -5907,7 +5912,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$ss5NeverOSo17CMSampleBufferRefa9CoreMediaE7ContentAEMc"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$ss5NeverOSo17CMSampleBufferRefa9CoreMediaE7ContentAEWP"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

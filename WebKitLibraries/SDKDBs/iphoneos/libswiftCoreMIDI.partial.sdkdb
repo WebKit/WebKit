@@ -293,7 +293,7 @@
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo15MIDIEventPacketV8CoreMIDIE7BuilderCfd"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftCoreMIDI"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

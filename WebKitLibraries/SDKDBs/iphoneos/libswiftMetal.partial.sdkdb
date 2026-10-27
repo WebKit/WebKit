@@ -188,7 +188,7 @@
     {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo9MTLDeviceP5MetalE25getDefaultSamplePositions11sampleCountSaySo17MTLSamplePositionaGSi_tF"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftMetal"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

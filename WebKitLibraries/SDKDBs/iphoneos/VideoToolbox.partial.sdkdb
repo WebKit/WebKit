@@ -790,7 +790,9 @@
      "access": "public",
      "classMethods": [
       {"access": "public", "name": "new", "unavailable": true},
-      {"access": "public", "name": "supportedScaleFactorsForFrameWidth:frameHeight:"}
+      {"access": "public", "name": "supportedScaleFactorsForFrameWidth:frameHeight:"},
+      {"access": "public", "introduced": "27", "name": "maximumDimensionForSpatialScaleFactor:"},
+      {"access": "public", "introduced": "27", "name": "maximumPixelCountForSpatialScaleFactor:"}
      ],
      "instanceMethods": [
       {"access": "public", "name": "initWithFrameWidth:frameHeight:scaleFactor:"},
@@ -808,7 +810,8 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "scaleFactor", "name": "scaleFactor"},
       {"access": "public", "attr": [ "readonly", "class" ], "getter": "maximumDimensions", "name": "maximumDimensions"},
       {"access": "public", "attr": [ "readonly", "class" ], "getter": "minimumDimensions", "name": "minimumDimensions"},
-      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "supported"}
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "supported"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportedScaleFactors", "introduced": "27", "name": "supportedScaleFactors"}
      ],
      "protocols": [
       "VTFrameProcessorConfiguration"
@@ -1097,7 +1100,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "8", "name": "VTCompressionOutputCallback"},
     {"access": "public", "introduced": "9", "name": "VTCompressionOutputHandler"},
@@ -1932,7 +1935,9 @@
      "access": "public",
      "classMethods": [
       {"access": "public", "name": "new", "unavailable": true},
-      {"access": "public", "name": "supportedScaleFactorsForFrameWidth:frameHeight:"}
+      {"access": "public", "name": "supportedScaleFactorsForFrameWidth:frameHeight:"},
+      {"access": "public", "introduced": "27", "name": "maximumDimensionForSpatialScaleFactor:"},
+      {"access": "public", "introduced": "27", "name": "maximumPixelCountForSpatialScaleFactor:"}
      ],
      "instanceMethods": [
       {"access": "public", "name": "initWithFrameWidth:frameHeight:scaleFactor:"},
@@ -1950,7 +1955,8 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "scaleFactor", "name": "scaleFactor"},
       {"access": "public", "attr": [ "readonly", "class" ], "getter": "maximumDimensions", "name": "maximumDimensions"},
       {"access": "public", "attr": [ "readonly", "class" ], "getter": "minimumDimensions", "name": "minimumDimensions"},
-      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "supported"}
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupported", "name": "supported"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportedScaleFactors", "introduced": "27", "name": "supportedScaleFactors"}
      ],
      "protocols": [
       "VTFrameProcessorConfiguration"
@@ -2239,7 +2245,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "8", "name": "VTCompressionOutputCallback"},
     {"access": "public", "introduced": "9", "name": "VTCompressionOutputHandler"},
@@ -2425,13 +2431,19 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo40VTLowLatencyFrameInterpolationParametersC12VideoToolboxE06sourceC008previousC018interpolationPhase17destinationFramesABSgSo016VTFrameProcessorC0C_AJSaySfGSayAJGtcfc"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo40VTLowLatencyFrameInterpolationParametersC12VideoToolboxE18interpolationPhaseSaySfGvg"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo40VTLowLatencyFrameInterpolationParametersC12VideoToolboxE18interpolationPhaseSaySfGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo43VTLowLatencyFrameInterpolationConfigurationC12VideoToolboxE16maximumDimension21forSpatialScaleFactorSiSgSi_tFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo43VTLowLatencyFrameInterpolationConfigurationC12VideoToolboxE17maximumPixelCount21forSpatialScaleFactorSiSgSi_tFZ"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo43VTLowLatencyFrameInterpolationConfigurationC12VideoToolboxE21supportedPixelFormatsSays6UInt32VGvg"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo43VTLowLatencyFrameInterpolationConfigurationC12VideoToolboxE21supportedPixelFormatsSays6UInt32VGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo46VTLowLatencySuperResolutionScalerConfigurationC12VideoToolboxE16maximumDimension21forSpatialScaleFactorSiSgSf_tFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo46VTLowLatencySuperResolutionScalerConfigurationC12VideoToolboxE17maximumPixelCount21forSpatialScaleFactorSiSgSf_tFZ"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo46VTLowLatencySuperResolutionScalerConfigurationC12VideoToolboxE21supportedPixelFormatsSays6UInt32VGvg"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo46VTLowLatencySuperResolutionScalerConfigurationC12VideoToolboxE21supportedPixelFormatsSays6UInt32VGvpMV"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo46VTLowLatencySuperResolutionScalerConfigurationC12VideoToolboxE21supportedScaleFactors10frameWidth0L6HeightSaySfGSi_SitFZ"}
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo46VTLowLatencySuperResolutionScalerConfigurationC12VideoToolboxE21supportedScaleFactors10frameWidth0L6HeightSaySfGSi_SitFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo46VTLowLatencySuperResolutionScalerConfigurationC12VideoToolboxE21supportedScaleFactorsSaySfGvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo46VTLowLatencySuperResolutionScalerConfigurationC12VideoToolboxE21supportedScaleFactorsSaySfGvpZMV"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

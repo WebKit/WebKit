@@ -196,6 +196,7 @@
      "access": "public",
      "instanceMethods": [
       {"access": "public", "introduced": "27", "name": "initWithString:"},
+      {"access": "public", "introduced": "27", "name": "initWithPhotoSearchSuggestion:"},
       {"access": "public", "introduced": "14", "name": "init", "unavailable": true}
      ],
      "introduced": "27",
@@ -403,7 +404,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyle"},
     {"access": "public", "introduced": "9.1", "name": "PHLivePhotoBadgeOptions"},
@@ -611,6 +612,7 @@
      "access": "public",
      "instanceMethods": [
       {"access": "public", "introduced": "27", "name": "initWithString:"},
+      {"access": "public", "introduced": "27", "name": "initWithPhotoSearchSuggestion:"},
       {"access": "public", "introduced": "14", "name": "init", "unavailable": true}
      ],
      "introduced": "27",
@@ -818,7 +820,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyle"},
     {"access": "public", "introduced": "9.1", "name": "PHLivePhotoBadgeOptions"},
@@ -898,6 +900,7 @@
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI14PHPickerResultVN"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI14PHPickerResultVSHAAMc"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI14PHPickerResultVSQAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s8PhotosUI18PHPickerSearchTextV05photoD10SuggestionACSo07UIPhotodG0C_tcfC"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI18PHPickerSearchTextV2eeoiySbAC_ACtFZ"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI18PHPickerSearchTextV4hash4intoys6HasherVz_tF"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI18PHPickerSearchTextV9hashValueSivg"},
@@ -1006,12 +1009,14 @@
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationVN"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationVSHAAMc"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationVSQAAMc"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV15albumIdentifierSSvg"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV15albumIdentifierSSvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV15albumIdentifierSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV15albumIdentifierSSSgvpMV"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV2eeoiySbAC_ACtFZ"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV4hash4intoys6HasherVz_tF"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV8albumURL10Foundation0H0Vvg"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV8albumURL10Foundation0H0VvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV5errors5Error_pSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV5errors5Error_pSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV8albumURL10Foundation0H0VSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV8albumURL10Foundation0H0VSgvpMV"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV9hashValueSivg"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV9hashValueSivpMV"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultVMa"},
@@ -1057,7 +1062,7 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo35PHSharedAlbumCreationViewControllerC8PhotosUIE13configurationAbC0abC13ConfigurationV_tcfC"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo35PHSharedAlbumCreationViewControllerC8PhotosUIE13configurationAbC0abC13ConfigurationV_tcfc"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -1161,6 +1166,14 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E22photosPickerSearchTextyQr0dB008PHPickergH0VSgFQOMQ"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E22photosPickerSearchTextyQrSSSgF"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E22photosPickerSearchTextyQrSSSgFQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E26photosReferenceImageViewer10pickerItem22onProcessingCompletionQrAA7BindingVyAD0d6PickerJ0VSgG_ys6ResultOySo7PHAssetCs5Error_pGcSgtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E26photosReferenceImageViewer10pickerItem22onProcessingCompletionQrAA7BindingVyAD0d6PickerJ0VSgG_ys6ResultOySo7PHAssetCs5Error_pGcSgtFQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E26photosReferenceImageViewer12pickerResult22onProcessingCompletionQrAA7BindingVy0dB008PHPickerJ0VSgG_ys0J0OySo7PHAssetCs5Error_pGcSgtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E26photosReferenceImageViewer12pickerResult22onProcessingCompletionQrAA7BindingVy0dB008PHPickerJ0VSgG_ys0J0OySo7PHAssetCs5Error_pGcSgtFQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E26photosReferenceImageViewer5asset22onProcessingCompletionQrAA7BindingVySo7PHAssetCSgG_ys6ResultOyAKs5Error_pGcSgtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E26photosReferenceImageViewer5asset22onProcessingCompletionQrAA7BindingVySo7PHAssetCSgG_ys6ResultOyAKs5Error_pGcSgtFQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E26photosReferenceImageViewer7fileURL22onProcessingCompletionQrAA7BindingVy10Foundation0J0VSgG_ys6ResultOyALs5Error_pGcSgtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E26photosReferenceImageViewer7fileURL22onProcessingCompletionQrAA7BindingVy10Foundation0J0VSgG_ys6ResultOyALs5Error_pGcSgtFQOMQ"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E27photosPickerMetadataOptionsyQrSo08PHPickergH0VF"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E27photosPickerMetadataOptionsyQrSo08PHPickergH0VFQOMQ"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E29photosSharedAlbumPostingSheet11isPresented5items07defaultG10Identifier12photoLibrary10completionQrAA7BindingVySbG_Say0dB014PHPickerResultVGSSSgSo07PHPhotoP0Cys0T0OySSs5Error_pGcSgtF"},
@@ -1173,14 +1186,14 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E31photosPickerAccessoryVisibility_5edgesQrAA0H0O_AA4EdgeO3SetVtFQOMQ"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E32photosPickerDisabledCapabilitiesyQrSo08PHPickerH0VF"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E32photosPickerDisabledCapabilitiesyQrSo08PHPickerH0VFQOMQ"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E35photosSharedAlbumCustomizationSheet11isPresented15albumIdentifier12photoLibrary12onCompletionQrAA7BindingVySbG_SSSgSo07PHPhotoO0CyycSgtF"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E35photosSharedAlbumCustomizationSheet11isPresented15albumIdentifier12photoLibrary12onCompletionQrAA7BindingVySbG_SSSgSo07PHPhotoO0CyycSgtFQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E35photosSharedAlbumCustomizationSheet11isPresented15albumIdentifier12photoLibrary12onCompletionQrAA7BindingVySbG_SSSgSo07PHPhotoO0Cys5Error_pSgcSgtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E35photosSharedAlbumCustomizationSheet11isPresented15albumIdentifier12photoLibrary12onCompletionQrAA7BindingVySbG_SSSgSo07PHPhotoO0Cys5Error_pSgcSgtFQOMQ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo11PHLivePhotoC015_PhotosUI_SwiftD0E22transferRepresentationQrvgZ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo11PHLivePhotoC015_PhotosUI_SwiftD0E22transferRepresentationQrvpZMV"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo11PHLivePhotoC015_PhotosUI_SwiftD0E22transferRepresentationQrvpZQOMQ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo11PHLivePhotoC16CoreTransferable0D0015_PhotosUI_SwiftF0Mc"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -1202,7 +1215,7 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC21AppIntentsTypeSupport21IntentValueExpressing08_Photos_bC0Mc"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC21AppIntentsTypeSupport22IntentValueConvertible08_Photos_bC0Mc"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

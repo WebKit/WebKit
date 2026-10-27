@@ -16,7 +16,7 @@
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s9CryptoKit03ChaC4PolyO5NonceV12makeIterators08IndexingG0VySays5UInt8VGGyF"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s9CryptoKit03ChaC4PolyO5NonceV15withUnsafeBytesyxxSWKXEKlF"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s9CryptoKit03ChaC4PolyO5NonceV4dataAEx_tKc10Foundation12DataProtocolRzlufC"},
-    {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s9CryptoKit03ChaC4PolyO5NonceV5bytess7RawSpanVvg"},
+    {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s9CryptoKit03ChaC4PolyO5NonceV5bytess7RawSpanVvr"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s9CryptoKit03ChaC4PolyO5NonceV5countSivg"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s9CryptoKit03ChaC4PolyO5NonceV5countSivpMV"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9CryptoKit03ChaC4PolyO5NonceV7copyingAEs7RawSpanV_tKcfC"},
@@ -544,7 +544,7 @@
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s9CryptoKit3AESO3GCMO5NonceV12makeIterators08IndexingG0VySays5UInt8VGGyF"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s9CryptoKit3AESO3GCMO5NonceV15withUnsafeBytesyxxSWKXEKlF"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s9CryptoKit3AESO3GCMO5NonceV4dataAGx_tKc10Foundation12DataProtocolRzlufC"},
-    {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s9CryptoKit3AESO3GCMO5NonceV5bytess7RawSpanVvg"},
+    {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s9CryptoKit3AESO3GCMO5NonceV5bytess7RawSpanVvr"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s9CryptoKit3AESO3GCMO5NonceV5countSivg"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s9CryptoKit3AESO3GCMO5NonceV5countSivpMV"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9CryptoKit3AESO3GCMO5NonceV7copyingAGs7RawSpanV_tKcfC"},
@@ -1370,7 +1370,7 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s9PublicKey9CryptoKit013DiffieHellmanB9AgreementPTl"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9PublicKey9CryptoKit017KEMOneTimePrivateB0PTl"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

@@ -2676,7 +2676,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "AVAudio3DAngularOrientation"},
     {"access": "public", "name": "AVAudio3DMixingPointSourceInHeadMode"},
@@ -5447,7 +5447,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "AVAudio3DAngularOrientation"},
     {"access": "public", "name": "AVAudio3DMixingPointSourceInHeadMode"},
@@ -10944,7 +10944,7 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo27AVAudioUnitComponentManagerC8AVFAudioE27RegistrationsChangedMessageVN"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo27AVAudioUnitComponentManagerC8AVFAudioE27RegistrationsChangedMessageVSo20NSNotificationCenterC10FoundationE05AsyncH0ACMc"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

@@ -1029,7 +1029,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "nw_advertise_descriptor_t"},
     {"access": "public", "name": "nw_browse_descriptor_t"},
@@ -2176,7 +2176,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "nw_advertise_descriptor_t"},
     {"access": "public", "name": "nw_browse_descriptor_t"},
@@ -5437,7 +5437,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$ss6UInt64V7Network0B17FixedWidthIntegerACWP"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftNetwork"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

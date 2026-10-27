@@ -2,164 +2,6 @@
 {
  "PublicSDKContentRoot": [
   {
-   "enums": [
-    {
-     "access": "public",
-     "constants": [
-      {"access": "public", "name": "SGBlendingOpaque"},
-      {"access": "public", "name": "SGBlendingTransparent"}
-     ],
-     "name": "SGBlending"
-    },
-    {
-     "access": "public",
-     "constants": [
-      {"access": "public", "name": "SGDataTypeInvalid"},
-      {"access": "public", "name": "SGDataTypeBool"},
-      {"access": "public", "name": "SGDataTypeUchar"},
-      {"access": "public", "name": "SGDataTypeInt"},
-      {"access": "public", "name": "SGDataTypeUint"},
-      {"access": "public", "name": "SGDataTypeHalf"},
-      {"access": "public", "name": "SGDataTypeFloat"},
-      {"access": "public", "name": "SGDataTypeTimecode"},
-      {"access": "public", "name": "SGDataTypeString"},
-      {"access": "public", "name": "SGDataTypeToken"},
-      {"access": "public", "name": "SGDataTypeAsset"},
-      {"access": "public", "name": "SGDataTypeMatrix2f"},
-      {"access": "public", "name": "SGDataTypeMatrix3f"},
-      {"access": "public", "name": "SGDataTypeMatrix4f"},
-      {"access": "public", "name": "SGDataTypeQuatf"},
-      {"access": "public", "name": "SGDataTypeQuath"},
-      {"access": "public", "name": "SGDataTypeFloat2"},
-      {"access": "public", "name": "SGDataTypeHalf2"},
-      {"access": "public", "name": "SGDataTypeInt2"},
-      {"access": "public", "name": "SGDataTypeFloat3"},
-      {"access": "public", "name": "SGDataTypeHalf3"},
-      {"access": "public", "name": "SGDataTypeInt3"},
-      {"access": "public", "name": "SGDataTypeFloat4"},
-      {"access": "public", "name": "SGDataTypeHalf4"},
-      {"access": "public", "name": "SGDataTypeInt4"},
-      {"access": "public", "name": "SGDataTypePoint3f"},
-      {"access": "public", "name": "SGDataTypePoint3h"},
-      {"access": "public", "name": "SGDataTypeNormal3f"},
-      {"access": "public", "name": "SGDataTypeNormal3h"},
-      {"access": "public", "name": "SGDataTypeVector3f"},
-      {"access": "public", "name": "SGDataTypeVector3h"},
-      {"access": "public", "name": "SGDataTypeColor3f"},
-      {"access": "public", "name": "SGDataTypeColor3h"},
-      {"access": "public", "name": "SGDataTypeColor4f"},
-      {"access": "public", "name": "SGDataTypeColor4h"},
-      {"access": "public", "name": "SGDataTypeTexCoord2h"},
-      {"access": "public", "name": "SGDataTypeTexCoord2f"},
-      {"access": "public", "name": "SGDataTypeTexCoord3h"},
-      {"access": "public", "name": "SGDataTypeTexCoord3f"},
-      {"access": "public", "name": "SGDataTypeSurfaceShader"},
-      {"access": "public", "name": "SGDataTypeGeometryModifier"},
-      {"access": "public", "name": "SGDataTypeCGColor3"},
-      {"access": "public", "name": "SGDataTypeCGColor4"},
-      {"access": "public", "name": "SGDataTypePostLightingShader"}
-     ],
-     "name": "SGDataType"
-    },
-    {
-     "access": "public",
-     "constants": [
-      {"access": "public", "name": "SGLightingModelNone"},
-      {"access": "public", "name": "SGLightingModelRealityKitPBR"},
-      {"access": "public", "name": "SGLightingModelRealityKitUnlit"},
-      {"access": "public", "name": "SGLightingModelRealityKitClearcoat"},
-      {"access": "public", "name": "SGLightingModelRealityKitPortal"}
-     ],
-     "name": "SGLightingModel"
-    }
-   ],
-   "target": "arm64e-apple-ios27",
-   "typedefs": [
-    {"access": "public", "name": "SGBlending"},
-    {"access": "public", "name": "SGDataType"},
-    {"access": "public", "name": "SGLightingModel"}
-   ]
-  },
-  {
-   "enums": [
-    {
-     "access": "public",
-     "constants": [
-      {"access": "public", "name": "SGBlendingOpaque"},
-      {"access": "public", "name": "SGBlendingTransparent"}
-     ],
-     "name": "SGBlending"
-    },
-    {
-     "access": "public",
-     "constants": [
-      {"access": "public", "name": "SGDataTypeInvalid"},
-      {"access": "public", "name": "SGDataTypeBool"},
-      {"access": "public", "name": "SGDataTypeUchar"},
-      {"access": "public", "name": "SGDataTypeInt"},
-      {"access": "public", "name": "SGDataTypeUint"},
-      {"access": "public", "name": "SGDataTypeHalf"},
-      {"access": "public", "name": "SGDataTypeFloat"},
-      {"access": "public", "name": "SGDataTypeTimecode"},
-      {"access": "public", "name": "SGDataTypeString"},
-      {"access": "public", "name": "SGDataTypeToken"},
-      {"access": "public", "name": "SGDataTypeAsset"},
-      {"access": "public", "name": "SGDataTypeMatrix2f"},
-      {"access": "public", "name": "SGDataTypeMatrix3f"},
-      {"access": "public", "name": "SGDataTypeMatrix4f"},
-      {"access": "public", "name": "SGDataTypeQuatf"},
-      {"access": "public", "name": "SGDataTypeQuath"},
-      {"access": "public", "name": "SGDataTypeFloat2"},
-      {"access": "public", "name": "SGDataTypeHalf2"},
-      {"access": "public", "name": "SGDataTypeInt2"},
-      {"access": "public", "name": "SGDataTypeFloat3"},
-      {"access": "public", "name": "SGDataTypeHalf3"},
-      {"access": "public", "name": "SGDataTypeInt3"},
-      {"access": "public", "name": "SGDataTypeFloat4"},
-      {"access": "public", "name": "SGDataTypeHalf4"},
-      {"access": "public", "name": "SGDataTypeInt4"},
-      {"access": "public", "name": "SGDataTypePoint3f"},
-      {"access": "public", "name": "SGDataTypePoint3h"},
-      {"access": "public", "name": "SGDataTypeNormal3f"},
-      {"access": "public", "name": "SGDataTypeNormal3h"},
-      {"access": "public", "name": "SGDataTypeVector3f"},
-      {"access": "public", "name": "SGDataTypeVector3h"},
-      {"access": "public", "name": "SGDataTypeColor3f"},
-      {"access": "public", "name": "SGDataTypeColor3h"},
-      {"access": "public", "name": "SGDataTypeColor4f"},
-      {"access": "public", "name": "SGDataTypeColor4h"},
-      {"access": "public", "name": "SGDataTypeTexCoord2h"},
-      {"access": "public", "name": "SGDataTypeTexCoord2f"},
-      {"access": "public", "name": "SGDataTypeTexCoord3h"},
-      {"access": "public", "name": "SGDataTypeTexCoord3f"},
-      {"access": "public", "name": "SGDataTypeSurfaceShader"},
-      {"access": "public", "name": "SGDataTypeGeometryModifier"},
-      {"access": "public", "name": "SGDataTypeCGColor3"},
-      {"access": "public", "name": "SGDataTypeCGColor4"},
-      {"access": "public", "name": "SGDataTypePostLightingShader"}
-     ],
-     "name": "SGDataType"
-    },
-    {
-     "access": "public",
-     "constants": [
-      {"access": "public", "name": "SGLightingModelNone"},
-      {"access": "public", "name": "SGLightingModelRealityKitPBR"},
-      {"access": "public", "name": "SGLightingModelRealityKitUnlit"},
-      {"access": "public", "name": "SGLightingModelRealityKitClearcoat"},
-      {"access": "public", "name": "SGLightingModelRealityKitPortal"}
-     ],
-     "name": "SGLightingModel"
-    }
-   ],
-   "target": "arm64e.x1-apple-ios27",
-   "typedefs": [
-    {"access": "public", "name": "SGBlending"},
-    {"access": "public", "name": "SGDataType"},
-    {"access": "public", "name": "SGLightingModel"}
-   ]
-  },
-  {
    "globals": [
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph011_Proto_NodeB0Mp"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph011_Proto_NodeB0P0D3KeyAC_SHTn"},
@@ -538,55 +380,6 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph07_Proto_aB5ValueOMn"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph07_Proto_aB5ValueON"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph07_Proto_aB5ValueOSQAAMc"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetC11descriptionSSvg"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetC11descriptionSSvpMV"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetC2eeoiySbAC_ACtFZ"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetC4hash4intoys6HasherVz_tF"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetC4nameSSvg"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetC4nameSSvpMV"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetC6parentACSgvg"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetC6parentACSgvpMV"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetC9hashValueSivg"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetC9hashValueSivpMV"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetCMa"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetCMm"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetCMn"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetCMo"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetCN"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetCSHAAMc"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetCSQAAMc"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetCfD"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetCfd"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph15MaterialXTargetCs23CustomStringConvertibleAAMc"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph16MaterialXVersionV2eeoiySbAC_ACtFZ"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph16MaterialXVersionV4fromACs7Decoder_p_tKcfC"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph16MaterialXVersionV4hash4intoys6HasherVz_tF"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph16MaterialXVersionV6encode2toys7Encoder_p_tKF"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph16MaterialXVersionV9hashValueSivg"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph16MaterialXVersionV9hashValueSivpMV"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph16MaterialXVersionVMa"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph16MaterialXVersionVMn"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph16MaterialXVersionVN"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph16MaterialXVersionVSEAAMc"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph16MaterialXVersionVSHAAMc"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph16MaterialXVersionVSQAAMc"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph16MaterialXVersionVSeAAMc"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityO10deprecatedyACSSSgcACmFWC"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityO10prereleaseyA2CmFWC"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityO11descriptionSSvg"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityO11descriptionSSvpMV"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityO11unsupportedyA2CmFWC"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityO2eeoiySbAC_ACtFZ"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityO4hash4intoys6HasherVz_tF"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityO9hashValueSivg"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityO9hashValueSivpMV"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityO9supportedyA2CmFWC"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityOMa"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityOMn"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityON"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityOSHAAMc"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityOSQAAMc"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph21MaterialXAvailabilityOs23CustomStringConvertibleAAMc"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph24_Proto_TextureCoordinateO2eeoiySbAC_ACtFZ"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph24_Proto_TextureCoordinateO3uv0yA2CmFWC"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph24_Proto_TextureCoordinateO3uv1yA2CmFWC"},
@@ -604,9 +397,6 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph24_Proto_TextureCoordinateON"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph24_Proto_TextureCoordinateOSHAAMc"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph24_Proto_TextureCoordinateOSQAAMc"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph29MaterialDecodingConfigurationVMa"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph29MaterialDecodingConfigurationVMn"},
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraph29MaterialDecodingConfigurationVN"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraphAAC10canAddEdgeySbAB0E0VF"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraphAAC10canAddNodeySbAB0E0VF"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11ShaderGraphAAC10removeEdgeyyAB0D0VKF"},
@@ -938,15 +728,9 @@
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9EdgeError11ShaderGraph011_Proto_NodeD0PTl"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9GraphType06ShaderA0011_Proto_NodeA7LibraryPTl"},
     {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9NodeError11ShaderGraph07_Proto_aD0PTl"},
-    {"access": "public", "linkage": "exported", "name": "_$sSa11ShaderGraphE12toDictionary4withSDyqd__xGqd__xXE_tSHRd__lF"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo10SGDataTypeV11ShaderGraphE11stringValueSSvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo10SGDataTypeV11ShaderGraphE11stringValueSSvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo10SGDataTypeV11ShaderGraphE4fromABs7Decoder_p_tKcfC"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo10SGDataTypeV11ShaderGraphE6encode2toys7Encoder_p_tKF"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo10SGDataTypeVSE11ShaderGraphMc"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo10SGDataTypeVSe11ShaderGraphMc"}
+    {"access": "public", "linkage": "exported", "name": "_$sSa11ShaderGraphE12toDictionary4withSDyqd__xGqd__xXE_tSHRd__lF"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

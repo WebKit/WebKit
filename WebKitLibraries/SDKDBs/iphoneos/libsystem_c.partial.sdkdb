@@ -1178,7 +1178,7 @@
     {"access": "public", "introduced": "7", "kind": "function", "linkage": "exported", "name": "_xprintf"},
     {"access": "public", "introduced": "7", "kind": "function", "linkage": "exported", "name": "_xprintf_exec"}
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "ACTION"},
     {"access": "public", "name": "BKT"},
@@ -2446,7 +2446,7 @@
     {"access": "public", "introduced": "7", "kind": "function", "linkage": "exported", "name": "_xprintf"},
     {"access": "public", "introduced": "7", "kind": "function", "linkage": "exported", "name": "_xprintf_exec"}
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "ACTION"},
     {"access": "public", "name": "BKT"},

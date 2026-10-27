@@ -158,7 +158,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo13audit_token_taSe6DarwinMc"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftDarwin"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -258,7 +258,7 @@
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s6Darwin9remainderyxx_xtSFRzlF"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swift_DarwinFoundation1"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -279,7 +279,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss8DurationV6DarwinEyABSo8timespecVcfC"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swift_DarwinFoundation2"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -291,7 +291,7 @@
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s6Darwin8SIG_HOLDyys5Int32VXCvg"},
     {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swift_DarwinFoundation3"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

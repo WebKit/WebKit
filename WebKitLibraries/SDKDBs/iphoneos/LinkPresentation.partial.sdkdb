@@ -73,7 +73,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "LPErrorCode"}
    ]
@@ -150,7 +150,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "LPErrorCode"}
    ]
@@ -204,7 +204,7 @@
     {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataVSeAAMc"},
     {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataVyACSgSo06LPLinkC0CncfC"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

@@ -617,7 +617,7 @@
     {"access": "public", "introduced": "15.4", "linkage": "exported", "name": "_$sSo14NSItemProviderC15GroupActivitiesE08registerC8ActivityyyxAC0cF0RzlF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo21AVPlaybackCoordinatorC15GroupActivitiesE21coordinateWithSessionyyAC0cG0CyxGAC0C8ActivityRzlF"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

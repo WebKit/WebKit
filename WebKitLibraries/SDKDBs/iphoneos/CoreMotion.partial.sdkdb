@@ -489,6 +489,7 @@
      "linkage": "exported",
      "name": "CMMotionManager",
      "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "authorizationStatus", "introduced": "27.2", "name": "authorizationStatus"},
       {"access": "public", "getter": "accelerometerUpdateInterval", "name": "accelerometerUpdateInterval", "setter": "setAccelerometerUpdateInterval:"},
       {"access": "public", "attr": [ "readonly" ], "getter": "isAccelerometerAvailable", "name": "accelerometerAvailable"},
       {"access": "public", "attr": [ "readonly" ], "getter": "isAccelerometerActive", "name": "accelerometerActive"},
@@ -844,7 +845,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "15", "name": "CMAbsoluteAltitudeHandler"},
     {"access": "public", "name": "CMAcceleration"},
@@ -1372,6 +1373,7 @@
      "linkage": "exported",
      "name": "CMMotionManager",
      "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "authorizationStatus", "introduced": "27.2", "name": "authorizationStatus"},
       {"access": "public", "getter": "accelerometerUpdateInterval", "name": "accelerometerUpdateInterval", "setter": "setAccelerometerUpdateInterval:"},
       {"access": "public", "attr": [ "readonly" ], "getter": "isAccelerometerAvailable", "name": "accelerometerAvailable"},
       {"access": "public", "attr": [ "readonly" ], "getter": "isAccelerometerActive", "name": "accelerometerActive"},
@@ -1727,7 +1729,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "15", "name": "CMAbsoluteAltitudeHandler"},
     {"access": "public", "name": "CMAcceleration"},
@@ -1798,7 +1800,7 @@
     {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesVSciACMc", "unavailable": true},
     {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20accelerometerUpdatesAbCE013AccelerometerG0VyF", "unavailable": true}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

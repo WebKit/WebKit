@@ -232,7 +232,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices0aB33WebPresentmentRawRequestValidatorVMn"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices0aB33WebPresentmentRawRequestValidatorVN"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
@@ -317,7 +317,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s26IdentityDocumentServicesUI0aB8ProviderTL"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s4Body26IdentityDocumentServicesUI0bC8ProviderPTl"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

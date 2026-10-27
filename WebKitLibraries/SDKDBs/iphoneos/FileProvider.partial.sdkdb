@@ -1054,7 +1054,7 @@
      "unavailable": true
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "16", "name": "NSFileProviderContentPolicy"},
     {"access": "public", "name": "NSFileProviderCreateItemOptions"},
@@ -2138,7 +2138,7 @@
      "unavailable": true
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "introduced": "16", "name": "NSFileProviderContentPolicy"},
     {"access": "public", "name": "NSFileProviderCreateItemOptions"},
@@ -2177,7 +2177,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo27NSFileProviderDomainVersionC04FileB0E1loiySbAB_ABtFZ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo27NSFileProviderDomainVersionCSL04FileB0Mc"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

@@ -140,6 +140,7 @@
      "properties": [
       {"access": "public", "getter": "cloudSharingDelegate", "name": "cloudSharingDelegate", "setter": "setCloudSharingDelegate:"},
       {"access": "public", "getter": "activeParticipantCount", "name": "activeParticipantCount", "setter": "setActiveParticipantCount:"},
+      {"access": "public", "getter": "showsParticipantCount", "introduced": "27.2", "name": "showsParticipantCount", "setter": "setShowsParticipantCount:"},
       {"access": "public", "getter": "pendingAccessRequestsCount", "introduced": "27", "name": "pendingAccessRequestsCount", "setter": "setPendingAccessRequestsCount:"},
       {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
       {"access": "public", "getter": "headerTitle", "name": "headerTitle", "setter": "setHeaderTitle:"},
@@ -327,7 +328,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "SWAttributionViewBackgroundStyle"},
     {"access": "public", "name": "SWAttributionViewDisplayContext"},
@@ -477,6 +478,7 @@
      "properties": [
       {"access": "public", "getter": "cloudSharingDelegate", "name": "cloudSharingDelegate", "setter": "setCloudSharingDelegate:"},
       {"access": "public", "getter": "activeParticipantCount", "name": "activeParticipantCount", "setter": "setActiveParticipantCount:"},
+      {"access": "public", "getter": "showsParticipantCount", "introduced": "27.2", "name": "showsParticipantCount", "setter": "setShowsParticipantCount:"},
       {"access": "public", "getter": "pendingAccessRequestsCount", "introduced": "27", "name": "pendingAccessRequestsCount", "setter": "setPendingAccessRequestsCount:"},
       {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
       {"access": "public", "getter": "headerTitle", "name": "headerTitle", "setter": "setHeaderTitle:"},
@@ -664,7 +666,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "SWAttributionViewBackgroundStyle"},
     {"access": "public", "name": "SWAttributionViewDisplayContext"},
@@ -958,7 +960,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "SWCollaborationIdentifier"},
     {"access": "public", "name": "SWLocalCollaborationIdentifier"}
@@ -1247,7 +1249,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "SWCollaborationIdentifier"},
     {"access": "public", "name": "SWLocalCollaborationIdentifier"}
@@ -1272,17 +1274,17 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo23SWCollaborationMetadataC13SharedWithYouE22transferRepresentationQrvpZQOMQ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo23SWCollaborationMetadataC16CoreTransferable0D013SharedWithYouMc"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
    "globals": [
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo21SWCollaborationOptionC17SharedWithYouCoreE5title10identifier8subtitle8selected26requiredOptionsIdentifiersABSS_S2SSbSaySSGtcfC"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo21SWCollaborationOptionC17SharedWithYouCoreE5title10identifier8subtitle8selected26requiredOptionsIdentifiersABSS_S2SSbSaySSGtcfc"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   },
   {
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"

@@ -37,7 +37,8 @@
      "constants": [
       {"access": "public", "name": "CTCellularPlanStatusAuthorizationNotAuthorized"},
       {"access": "public", "name": "CTCellularPlanStatusAuthorizationAuthorized"},
-      {"access": "public", "name": "CTCellularPlanStatusAuthorizationRestricted"}
+      {"access": "public", "name": "CTCellularPlanStatusAuthorizationRestricted"},
+      {"access": "public", "name": "CTCellularPlanStatusAuthorizationNotSupported"}
      ],
      "introduced": "27",
      "name": "CTCellularPlanStatusAuthorization"
@@ -327,7 +328,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios27",
+   "target": "arm64e-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "CTCellularDataRestrictedState"},
     {"access": "public", "introduced": "26", "name": "CTCellularPlanCapability"},
@@ -376,7 +377,8 @@
      "constants": [
       {"access": "public", "name": "CTCellularPlanStatusAuthorizationNotAuthorized"},
       {"access": "public", "name": "CTCellularPlanStatusAuthorizationAuthorized"},
-      {"access": "public", "name": "CTCellularPlanStatusAuthorizationRestricted"}
+      {"access": "public", "name": "CTCellularPlanStatusAuthorizationRestricted"},
+      {"access": "public", "name": "CTCellularPlanStatusAuthorizationNotSupported"}
      ],
      "introduced": "27",
      "name": "CTCellularPlanStatusAuthorization"
@@ -666,7 +668,7 @@
      ]
     }
    ],
-   "target": "arm64e.x1-apple-ios27",
+   "target": "arm64e.x1-apple-ios27.2",
    "typedefs": [
     {"access": "public", "name": "CTCellularDataRestrictedState"},
     {"access": "public", "introduced": "26", "name": "CTCellularPlanCapability"},
@@ -681,7 +683,6 @@
   },
   {
    "globals": [
-    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO10webBrowseryA2EmFWC"},
     {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO11descriptionSSvg"},
     {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO11descriptionSSvpMV"},
     {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO13communicationyA2EmFWC"},
@@ -771,7 +772,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo24CTCellularPlanPropertiesC13CoreTelephonyE20supportedRegionCodesSay10Foundation6LocaleV0G0VGvpMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo24CTCellularPlanPropertiesC13CoreTelephonyE20supportedRegionCodesSay10Foundation6LocaleV0G0VGvs"}
    ],
-   "target": "arm64e-apple-ios27.0"
+   "target": "arm64e-apple-ios27.2"
   }
  ],
  "version": "1.0"
