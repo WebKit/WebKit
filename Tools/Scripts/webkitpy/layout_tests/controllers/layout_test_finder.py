@@ -462,22 +462,25 @@ class LayoutTestFinder(object):
         if "web-platform-tests" not in f:
             return [""]
 
-        opened_file = self.fs.open_text_file_for_reading(f)
+        contents = self.fs.read_binary_file(f)
+        if b"variant" not in contents:
+            return [""]
+
         try:
-            first_line = opened_file.readline()
-            if not first_line:
+            lines = contents.decode("utf-8").splitlines(True)
+            if not lines:
                 return [""]
 
             variants = []
 
-            if first_line.strip() == TEMPLATED_TEST_HEADER:
-                for line in iter(opened_file.readline, ""):
+            if lines[0].strip() == TEMPLATED_TEST_HEADER:
+                for line in lines[1:]:
                     results = re.match(r"<!--\s*META:\s*variant=(\S*)\s*-->", line)
                     if not results:
                         continue
                     variants.append(results.group(1))
             else:
-                for line in iter(opened_file.readline, ""):
+                for line in lines[1:]:
                     try:
                         line = line.lstrip()
                         if not line.startswith("<meta"):
