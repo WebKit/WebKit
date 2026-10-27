@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/UniStdExtras.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/UTF8CStringView.h>
@@ -82,6 +83,9 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
 
     if (!m_parameters.processIdentifier->toUInt64() || m_parameters.connectionIdentifier.handle.value() <= 0)
         return false;
+
+    // We may spawn subprocesses, like a crash handler, that keep the connection open beyond the life of our process.
+    setCloseOnExec(m_parameters.connectionIdentifier.handle.value());
 
 #if ENABLE(DEVELOPER_MODE)
     // Check last remaining options for JSC testing
