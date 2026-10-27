@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=video-test.js></script>
+    <script>
+        var wrapCount = 0;
+        var lastTime = 0;
+        var seekAfterLoop = false;
+        var finished = false;
+
+        function timeupdate()
+        {
+            // Time going back by a large amount means the video looped.
+            if (video.currentTime < lastTime - 1) {
+                ++wrapCount;
+                consoleWrite("++ loop " + wrapCount + " completed.");
+                testExpected("video.paused", false);
+                testExpected("video.ended", false);
+                if (wrapCount == 2) {
+                    finished = true;
+                    endTest();
+                    return;
+                }
+                seekAfterLoop = true;
+            } else if (seekAfterLoop && video.currentTime > 0.1) {
+                // Playback is progressing again; seek near the end once more.
+                seekAfterLoop = false;
+                run("video.currentTime = video.duration - 0.5");
+            }
+            lastTime = video.currentTime;
+        }
+
+        function bufferedRanges()
+        {
+            let ranges = [];
+            for (let i = 0; i < video.buffered.length; ++i)
+                ranges.push("[" + video.buffered.start(i) + ", " + video.buffered.end(i) + "]");
+            return ranges.join(" ");
+        }
+
+        function start()
+        {
+            findMediaElement();
+            video.loop = true;
+            video.muted = true;
+            video.addEventListener("canplaythrough", function() {
+                consoleWrite("<em>++ seek to near the end of a looping WebM, and play.</em>");
+                video.addEventListener("seeked", function() {
+                    run("video.play()");
+                    video.addEventListener("timeupdate", timeupdate);
+                }, { once: true });
+                run("video.currentTime = video.duration - 0.5");
+            }, { once: true });
+            video.src = "content/test-vp8.webm";
+
+            setTimeout(function() {
+                if (finished)
+                    return;
+                failTest("Video looped " + wrapCount + " time(s) instead of 2; currentTime = " + video.currentTime + ", duration = " + video.duration + ", paused = " + video.paused + ", ended = " + video.ended + ", readyState = " + video.readyState + ", seeking = " + video.seeking + ", buffered = " + bufferedRanges());
+            }, 20000);
+        }
+    </script>
+</head>
+<body onload="start()">
+    <video></video>
+    <p>Test that a looping WebM video loops more than once.</p>
+</body>
+</html>

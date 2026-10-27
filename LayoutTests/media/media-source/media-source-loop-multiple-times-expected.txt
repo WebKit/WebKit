@@ -1,0 +1,22 @@
+This tests that a looping MediaSource video loops more than once.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(audioSourceBuffer = source.addSourceBuffer(audioLoader.type()))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.initSegment()))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(0)))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(1)))
+RUN(source.endOfStream())
+-
+Seek near the end of a looping MediaSource and play.
+RUN(video.currentTime = video.duration - 0.5)
+RUN(video.play())
+++ loop 1 completed.
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.ended == 'false') OK
+RUN(video.currentTime = video.duration - 0.5)
+++ loop 2 completed.
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.ended == 'false') OK
+END OF TEST
+
