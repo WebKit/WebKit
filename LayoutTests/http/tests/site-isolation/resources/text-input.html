@@ -3,6 +3,9 @@
 <body>
 <input id="target" type="text" autocapitalize="none" style="width: 200px; font-size: 16px;">
 <script>
+document.getElementById("target").addEventListener("input", (event) => {
+    window.parent.postMessage({ type: "inputChanged", value: event.target.value }, "*");
+});
 window.addEventListener("blur", () => {
     window.parent.postMessage({ type: "windowBlurred" }, "*");
 });

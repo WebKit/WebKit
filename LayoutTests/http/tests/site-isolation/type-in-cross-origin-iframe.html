@@ -37,8 +37,14 @@ async function runTest() {
     testPassed("Keyboard is visible after tapping input in cross-origin iframe.");
 
     for (const character of "hello") {
+        const inputChanged = new Promise(resolve => {
+            window.addEventListener("message", (event) => {
+                if (event.data.type === "inputChanged")
+                    resolve();
+            }, { once: true });
+        });
         await UIHelper.typeCharacter(character);
-        await UIHelper.ensurePresentationUpdate();
+        await inputChanged;
     }
 
     iframe.contentWindow.postMessage({ type: "getInputValue" }, "*");
