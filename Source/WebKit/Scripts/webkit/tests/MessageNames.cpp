@@ -48,6 +48,7 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "TestWithIfMessage_LoadURL"_s, ReceiverName::TestWithIfMessage, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #endif
     MessageDescription { "TestWithImageData_ReceiveImageDataReply"_s, ReceiverName::TestWithImageData, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithImageData_SendBitmapOrText"_s, ReceiverName::TestWithImageData, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithImageData_SendImageData"_s, ReceiverName::TestWithImageData, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
     MessageDescription { "TestWithLegacyReceiver_AddEvent"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },

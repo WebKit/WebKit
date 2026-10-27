@@ -27,10 +27,13 @@
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "MessageNames.h"
+#include <WebCore/ShareableBitmapHandle.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/Variant.h>
+#include <wtf/text/WTFString.h>
 
 
 namespace Messages {
@@ -91,6 +94,31 @@ public:
     }
 
 private:
+};
+
+class SendBitmapOrText {
+public:
+    using Arguments = std::tuple<Variant<String, WebCore::ShareableBitmapHandle>>;
+
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithImageData_SendBitmapOrText; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    explicit SendBitmapOrText(Variant<String, WebCore::ShareableBitmapHandle>&& content)
+        : m_content(WTF::move(content))
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        encoder << WTF::move(m_content);
+    }
+
+private:
+    Variant<String, WebCore::ShareableBitmapHandle>&& m_content;
 };
 
 class ReceiveImageDataReply {

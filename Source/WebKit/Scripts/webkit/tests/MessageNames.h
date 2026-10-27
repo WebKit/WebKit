@@ -98,6 +98,7 @@ enum class MessageName : uint16_t {
     TestWithIfMessage_LoadURL,
 #endif
     TestWithImageData_ReceiveImageDataReply,
+    TestWithImageData_SendBitmapOrText,
     TestWithImageData_SendImageData,
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
     TestWithLegacyReceiver_AddEvent,

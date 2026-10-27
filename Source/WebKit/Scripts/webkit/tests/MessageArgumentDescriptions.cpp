@@ -81,6 +81,8 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithImageData_SendImageData>(globalObject, decoder);
     case MessageName::TestWithImageData_ReceiveImageData:
         return jsValueForDecodedMessage<MessageName::TestWithImageData_ReceiveImageData>(globalObject, decoder);
+    case MessageName::TestWithImageData_SendBitmapOrText:
+        return jsValueForDecodedMessage<MessageName::TestWithImageData_SendBitmapOrText>(globalObject, decoder);
     case MessageName::TestWithImageData_ReceiveImageDataReply:
         return jsValueForDecodedMessage<MessageName::TestWithImageData_ReceiveImageDataReply>(globalObject, decoder);
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
@@ -745,6 +747,10 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         };
     case MessageName::TestWithImageData_ReceiveImageData:
         return Vector<ArgumentDescription> { };
+    case MessageName::TestWithImageData_SendBitmapOrText:
+        return Vector<ArgumentDescription> {
+            { "content"_s, "Variant<String, WebCore::ShareableBitmapHandle>"_s },
+        };
     case MessageName::TestWithImageData_ReceiveImageDataReply:
         return Vector<ArgumentDescription> {
             { "r0"_s, "RefPtr<WebCore::ImageData>"_s },

@@ -28,4 +28,5 @@
 messages -> TestWithImageData {
     void SendImageData(RefPtr<WebCore::ImageData> s0)
     void ReceiveImageData() -> (RefPtr<WebCore::ImageData> r0)
+    void SendBitmapOrText(Variant<String, WebCore::ShareableBitmapHandle> content)
 }

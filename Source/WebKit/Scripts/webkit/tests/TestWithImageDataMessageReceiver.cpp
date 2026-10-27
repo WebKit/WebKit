@@ -30,7 +30,10 @@
 #include "HandleMessage.h" // NOLINT
 #include "TestWithImageDataMessages.h" // NOLINT
 #include <WebCore/ImageData.h> // NOLINT
+#include <WebCore/ShareableBitmapHandle.h> // NOLINT
 #include <wtf/RefCounted.h> // NOLINT
+#include <wtf/Variant.h> // NOLINT
+#include <wtf/text/WTFString.h> // NOLINT
 
 #if ENABLE(IPC_TESTING_API)
 #include "JSIPCBinding.h"
@@ -46,6 +49,10 @@ void TestWithImageData::didReceiveMessage(IPC::Connection& connection, IPC::Deco
     }
     if (decoder.messageName() == Messages::TestWithImageData::ReceiveImageData::name()) {
         IPC::handleMessageAsync<Messages::TestWithImageData::ReceiveImageData>(connection, decoder, this, &TestWithImageData::receiveImageData);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithImageData::SendBitmapOrText::name()) {
+        IPC::handleMessage<Messages::TestWithImageData::SendBitmapOrText>(connection, decoder, this, &TestWithImageData::sendBitmapOrText);
         return;
     }
     UNUSED_PARAM(connection);
@@ -70,6 +77,10 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithImageData_ReceiveImageData>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithImageData::ReceiveImageData::ReplyArguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithImageData_SendBitmapOrText>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithImageData::SendBitmapOrText::Arguments>(globalObject, decoder);
 }
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithImageData_ReceiveImageDataReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {

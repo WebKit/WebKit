@@ -224,6 +224,33 @@ def types_that_must_be_moved():
     ]
 
 
+def split_template_arguments(arguments):
+    result = []
+    depth = 0
+    start = 0
+    for index, character in enumerate(arguments):
+        if character == '<':
+            depth += 1
+        elif character == '>':
+            depth -= 1
+        elif character == ',' and depth == 0:
+            result.append(arguments[start:index].strip())
+            start = index + 1
+    result.append(arguments[start:].strip())
+    return result
+
+
+def type_must_be_moved(type):
+    if type in types_that_must_be_moved():
+        return True
+
+    variant_match = re.match(r'^Variant<(.*)>$', type)
+    if variant_match:
+        return any(type_must_be_moved(argument) for argument in split_template_arguments(variant_match.group(1)))
+
+    return False
+
+
 builtin_types = frozenset([
     'bool',
     'float',
@@ -251,7 +278,7 @@ def function_parameter_type(type, kind, for_reply=False):
     if kind.startswith('enum:'):
         return type
 
-    if type in types_that_must_be_moved() or for_reply:
+    if type_must_be_moved(type) or for_reply:
         return '%s&&' % type
 
     return 'const %s&' % type
@@ -262,12 +289,13 @@ def function_parameter_requires_suppress_forward_decl(type, kind, for_reply=Fals
     return not (
         type in builtin_types or
         kind.startswith('enum:') or
-        type in types_that_cannot_be_forward_declared()
+        type in types_that_cannot_be_forward_declared() or
+        type_must_be_moved(type)
     )
 
 
 def arguments_constructor_name(type, name):
-    if unwrap_if_untrusted(type) in types_that_must_be_moved():
+    if type_must_be_moved(unwrap_if_untrusted(type)):
         return 'WTF::move(%s)' % name
 
     return name
@@ -354,7 +382,7 @@ def message_to_struct_declaration(receiver, message):
         result.append('        ')
         if requires_suppress_forward_decl[i]:
             result.append('SUPPRESS_FORWARD_DECL_ARG ')
-        if unwrap_if_untrusted(parameter.type) in types_that_must_be_moved():
+        if type_must_be_moved(unwrap_if_untrusted(parameter.type)):
             result.append('encoder << WTF::move(m_%s);\n' % parameter.name)
         else:
             result.append('encoder << m_%s;\n' % parameter.name)
