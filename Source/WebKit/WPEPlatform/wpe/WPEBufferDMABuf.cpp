@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WPEBufferDMABuf.h"
 
+#include "WPEBufferPrivate.h"
 #include "WPEDisplayPrivate.h"
 #include <epoxy/egl.h>
 #include <fcntl.h>
@@ -267,6 +268,18 @@ static GBytes* wpeBufferDMABufImportToPixels(WPEBuffer* buffer, GError** error)
     if (!map) {
         g_set_error_literal(error, WPE_BUFFER_ERROR, WPE_BUFFER_ERROR_IMPORT_FAILED, "Failed to import buffer to pixels buffer: gbm_bo_map failed");
         return nullptr;
+    }
+
+    if (mapStride != width * 4) {
+        // Copy the pixels to remove the row padding, since the returned rows must not be padded.
+        auto mappedPixels = unsafeMakeSpan(static_cast<const uint8_t*>(map), static_cast<size_t>(height) * mapStride);
+        priv->pixels = wpeBufferCopyPixelsWithoutRowPadding(mappedPixels, width, height, mapStride);
+        gbm_bo_unmap(priv->bufferObject, mapData);
+        if (!priv->pixels) {
+            g_set_error_literal(error, WPE_BUFFER_ERROR, WPE_BUFFER_ERROR_IMPORT_FAILED, "Failed to import buffer to pixels buffer: invalid map stride");
+            return nullptr;
+        }
+        return priv->pixels.get();
     }
 
     struct BufferData {

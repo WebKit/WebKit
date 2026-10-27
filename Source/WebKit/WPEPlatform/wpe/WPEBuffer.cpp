@@ -26,7 +26,10 @@
 #include "config.h"
 #include "WPEBuffer.h"
 
+#include "WPEBufferPrivate.h"
+#include <wtf/StdLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/unix/UnixFileDescriptor.h>
@@ -279,14 +282,28 @@ gpointer wpe_buffer_import_to_egl_image(WPEBuffer* buffer, GError** error)
     return wpeBufferClass->import_to_egl_image(buffer, error);
 }
 
+GRefPtr<GBytes> wpeBufferCopyPixelsWithoutRowPadding(std::span<const uint8_t> pixels, size_t width, size_t height, size_t stride)
+{
+    auto rowSize = width * 4;
+    if (!height || stride < rowSize || pixels.size() < stride * (height - 1) + rowSize)
+        return nullptr;
+
+    auto data = GMallocSpan<uint8_t>::malloc(rowSize * height);
+    for (size_t y = 0; y < height; ++y)
+        memcpySpan(data.mutableSpan().subspan(y * rowSize, rowSize), pixels.subspan(y * stride, rowSize));
+    auto bytes = data.leakSpan();
+    return adoptGRef(g_bytes_new_take(bytes.data(), bytes.size()));
+}
+
 /**
  * wpe_buffer_import_to_pixels:
  * @buffer: a #WPEBuffer
  * @error: return location for error or %NULL to ignore
  *
- * Import @buffer into a pixels buffer. The returned data is owned by the @buffer and it's
- * not a copy, so if you are not going to use it immediately or need to modify the data, you
- * should make a copy.
+ * Import @buffer into a pixels buffer. The rows of the returned data are not padded, so
+ * each row is the @buffer width multiplied by 4 bytes. The returned data is owned by the
+ * @buffer and it might not be a copy, so if you are not going to use it immediately or need
+ * to modify the data, you should make a copy.
  *
  * Returns: (transfer none): a #GBytes with the pixels data, or %NULL in case of error
  */

@@ -26,8 +26,10 @@
 #include "config.h"
 #include "WPEBufferSHM.h"
 
+#include "WPEBufferPrivate.h"
 #include "WPEEnumTypes.h"
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/WTFGType.h>
 
 /**
@@ -43,6 +45,7 @@ struct _WPEBufferSHMPrivate {
     WPEPixelFormat format;
     GRefPtr<GBytes> data;
     unsigned stride;
+    GRefPtr<GBytes> pixels;
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEBufferSHM, wpe_buffer_shm, WPE_TYPE_BUFFER, WPEBuffer)
 
@@ -96,9 +99,20 @@ static void wpeBufferSHMGetProperty(GObject* object, guint propId, GValue* value
     }
 }
 
-static GBytes* wpeBufferSHMImportToPixels(WPEBuffer* buffer, GError**)
+static GBytes* wpeBufferSHMImportToPixels(WPEBuffer* buffer, GError** error)
 {
-    return WPE_BUFFER_SHM(buffer)->priv->data.get();
+    auto* priv = WPE_BUFFER_SHM(buffer)->priv;
+    auto width = static_cast<unsigned>(wpe_buffer_get_width(buffer));
+    if (priv->stride == width * 4)
+        return priv->data.get();
+
+    // Copy the pixels to remove the row padding, since the returned rows must not be padded.
+    priv->pixels = wpeBufferCopyPixelsWithoutRowPadding(span(priv->data), width, wpe_buffer_get_height(buffer), priv->stride);
+    if (!priv->pixels) {
+        g_set_error_literal(error, WPE_BUFFER_ERROR, WPE_BUFFER_ERROR_IMPORT_FAILED, "Failed to import buffer to pixels: invalid buffer stride");
+        return nullptr;
+    }
+    return priv->pixels.get();
 }
 
 static void wpe_buffer_shm_class_init(WPEBufferSHMClass* bufferSHMClass)
