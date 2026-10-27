@@ -1,16 +1,16 @@
 
 
-*** Test with auto-play policy set to 'Allow'
+*** Test with auto-play policy set to 'allowed'
 EVENT(load)
 EVENT(message)
 PASS: Video auto-played
 
-*** Test with auto-play policy set to 'AllowWithoutSound'
+*** Test with auto-play policy set to 'allowed-muted'
 EVENT(load)
 EVENT(message)
 PASS: Video did not auto-play
 
-*** Test with auto-play policy set to 'Deny'
+*** Test with auto-play policy set to 'disallowed'
 EVENT(load)
 EVENT(message)
 PASS: Video did not auto-play

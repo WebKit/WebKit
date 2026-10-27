@@ -6340,17 +6340,15 @@ NODELETE void Page::setPresentingApplicationAuditToken(std::optional<audit_token
 
 bool Page::requiresUserGestureForAudioPlayback() const
 {
-    auto autoplayPolicy = protect(mainFrame())->autoplayPolicy();
-    if (autoplayPolicy != AutoplayPolicy::Default)
-        return autoplayPolicy == AutoplayPolicy::AllowWithoutSound || autoplayPolicy == AutoplayPolicy::Deny;
+    if (auto autoplayPolicy = protect(mainFrame())->autoplayPolicy())
+        return autoplayPolicy == AutoplayPolicy::AllowedMuted || autoplayPolicy == AutoplayPolicy::Disallowed;
     return m_settings->requiresUserGestureForAudioPlayback();
 }
 
 bool Page::requiresUserGestureForVideoPlayback() const
 {
-    auto autoplayPolicy = protect(mainFrame())->autoplayPolicy();
-    if (autoplayPolicy != AutoplayPolicy::Default)
-        return autoplayPolicy == AutoplayPolicy::Deny;
+    if (auto autoplayPolicy = protect(mainFrame())->autoplayPolicy())
+        return autoplayPolicy == AutoplayPolicy::Disallowed;
     return m_settings->requiresUserGestureForVideoPlayback();
 }
 

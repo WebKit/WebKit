@@ -24,6 +24,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/applicationmanifest"
     "${WEBCORE_DIR}/Modules/async-clipboard"
     "${WEBCORE_DIR}/Modules/audiosession"
+    "${WEBCORE_DIR}/Modules/autoplay"
     "${WEBCORE_DIR}/Modules/badge"
     "${WEBCORE_DIR}/Modules/beacon"
     "${WEBCORE_DIR}/Modules/cache"
@@ -311,6 +312,7 @@ set(WebCore_IDL_INCLUDES
 
     Modules/WebGPU
     Modules/airplay
+    Modules/autoplay
     Modules/badge
     Modules/cache
     Modules/compression
@@ -366,6 +368,10 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/async-clipboard/ClipboardItem.idl
 
     Modules/audiosession/DOMAudioSession.idl
+
+    Modules/autoplay/AutoplayPolicy.idl
+    Modules/autoplay/AutoplayPolicyMediaType.idl
+    Modules/autoplay/Navigator+GetAutoplayPolicy.idl
 
     Modules/cache/CacheQueryOptions.idl
     Modules/cache/DOMCache.idl

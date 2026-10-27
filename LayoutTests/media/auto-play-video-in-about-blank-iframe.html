@@ -70,11 +70,11 @@
     window.addEventListener('load', async () => {
         iframe = document.querySelector('iframe');
 
-        await loadVideo('Allow', true);
+        await loadVideo('allowed', true);
 
-        await loadVideo('AllowWithoutSound', false);
+        await loadVideo('allowed-muted', false);
 
-        await loadVideo('Deny', false);
+        await loadVideo('disallowed', false);
 
         consoleWrite('');
         endTest();

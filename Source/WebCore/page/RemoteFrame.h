@@ -99,8 +99,8 @@ public:
     void setAllowPrivacyProxy(bool allowPrivacyProxy) { m_allowPrivacyProxy = allowPrivacyProxy; }
     NODELETE bool allowPrivacyProxy() const final;
 
-    void setAutoplayPolicy(AutoplayPolicy autoplayPolicy) { m_autoplayPolicy = autoplayPolicy; }
-    NODELETE AutoplayPolicy autoplayPolicy() const final;
+    void setAutoplayPolicy(std::optional<AutoplayPolicy> autoplayPolicy) { m_autoplayPolicy = autoplayPolicy; }
+    std::optional<AutoplayPolicy> LEGACY_NODELETE autoplayPolicy() const final;
 
     void setColorSchemePreference(ColorSchemePreference colorSchemePreference) { m_colorSchemePreference = colorSchemePreference; }
     NODELETE ColorSchemePreference colorSchemePreference() const final;
@@ -147,7 +147,7 @@ private:
     String m_customNavigatorPlatform;
     OptionSet<AdvancedPrivacyProtections> m_advancedPrivacyProtections;
     bool m_allowPrivacyProxy { true };
-    AutoplayPolicy m_autoplayPolicy;
+    std::optional<AutoplayPolicy> m_autoplayPolicy;
     ColorSchemePreference m_colorSchemePreference;
     bool m_preventsParentFromBeingComplete { true };
     bool m_hasStartedDetaching { false };
