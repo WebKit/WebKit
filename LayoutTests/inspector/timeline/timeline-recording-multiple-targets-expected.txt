@@ -1,0 +1,58 @@
+Tests that Timeline recordings start, record, and stop on every target, including Workers created or terminated during the recording.
+
+
+== Running test suite: Timeline.MultipleTargets
+-- Running test case: Timeline.MultipleTargets.ExistingWorker
+PASS: Recorded a timer from the page.
+PASS: Recorded a timer from the Worker.
+PASS: Page target should report that Timeline stopped before capturing stops.
+PASS: Page target should report that ScriptProfiler stopped before capturing stops.
+PASS: Worker target should report that Timeline stopped before capturing stops.
+PASS: Worker target should report that ScriptProfiler stopped before capturing stops.
+PASS: Every domain that started tracking on a target that still exists should report that it stopped before capturing stops.
+
+-- Running test case: Timeline.MultipleTargets.WorkerCreatedDuringCapture
+PASS: Recorded a timer from the Worker created during the capture.
+PASS: Worker target created during the capture should report that Timeline stopped before capturing stops.
+PASS: Worker target created during the capture should report that ScriptProfiler stopped before capturing stops.
+PASS: Every domain that started tracking on a target that still exists should report that it stopped before capturing stops.
+
+-- Running test case: Timeline.MultipleTargets.WorkerTerminatedDuringCapture
+PASS: Recorded a timer from the Worker.
+PASS: Capturing should still be active after the Worker target is removed.
+PASS: Capturing stopped after the Worker target was removed.
+PASS: Page target should report that Timeline stopped before capturing stops.
+PASS: Page target should report that ScriptProfiler stopped before capturing stops.
+PASS: Every domain that started tracking on a target that still exists should report that it stopped before capturing stops.
+
+-- Running test case: Timeline.MultipleTargets.ProgrammaticCaptureWithWorkerCreatedDuringCapture
+PASS: Recorded a timer from the Worker created during the programmatic capture.
+PASS: Capturing stopped after console.profileEnd in the page.
+PASS: Worker target created during the programmatic capture should report that Timeline stopped before capturing stops.
+PASS: Worker target created during the programmatic capture should report that ScriptProfiler stopped before capturing stops.
+PASS: Every domain that started tracking on a target that still exists should report that it stopped before capturing stops.
+
+-- Running test case: Timeline.MultipleTargets.ProgrammaticCaptureInPageAndWorker
+PASS: Worker started a programmatic capture.
+PASS: Capturing stopped after console.profileEnd in the page.
+PASS: Worker target with its own programmatic capture should report that Timeline stopped before capturing stops.
+PASS: Worker target with its own programmatic capture should report that ScriptProfiler stopped before capturing stops.
+PASS: Every domain that started tracking on a target that still exists should report that it stopped before capturing stops.
+
+-- Running test case: Timeline.MultipleTargets.WorkerTerminatedWhileStopping
+PASS: Capturing should still be stopping while the busy Worker has not reported that it stopped.
+PASS: Capturing stopped after the busy Worker target was removed.
+
+-- Running test case: Timeline.MultipleTargets.ProgrammaticStartWhileStopping
+PASS: Capturing should still be stopping while the busy Worker has not reported that it stopped.
+PASS: Worker that started a programmatic capture while stopping was stopped.
+PASS: Capturing stopped after the busy Worker target was removed.
+
+-- Running test case: Timeline.MultipleTargets.ProgrammaticCaptureRestartedImmediately
+PASS: Capturing stopped and started again.
+PASS: The second capture should still be active after recording a timer from the page.
+PASS: Capturing stopped after console.profileEnd for the second capture.
+
+-- Running test case: Timeline.MultipleTargets.InstrumentsChangedDuringProgrammaticCapture
+PASS: Capturing stopped after console.profileEnd.
+

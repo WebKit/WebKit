@@ -36,15 +36,18 @@ WI.MemoryInstrument = class MemoryInstrument extends WI.Instrument
     {
         if (!initiatedByBackend) {
             let target = WI.assumingMainTarget();
+            WI.timelineManager.willStartTrackingForTarget(target, "Memory");
             target.MemoryAgent.startTracking();
         }
     }
 
-    stopInstrumentation(initiatedByBackend)
+    startInstrumentationForTarget(target)
     {
-        if (!initiatedByBackend) {
-            let target = WI.assumingMainTarget();
-            target.MemoryAgent.stopTracking();
-        }
+        // Nothing to do, only the main target is instrumented.
+    }
+
+    stopInstrumentation()
+    {
+        // Nothing to do, TimelineManager stops every domain that is tracking.
     }
 };

@@ -36,15 +36,18 @@ WI.CPUInstrument = class CPUInstrument extends WI.Instrument
     {
         if (!initiatedByBackend) {
             let target = WI.assumingMainTarget();
+            WI.timelineManager.willStartTrackingForTarget(target, "CPUProfiler");
             target.CPUProfilerAgent.startTracking();
         }
     }
 
-    stopInstrumentation(initiatedByBackend)
+    startInstrumentationForTarget(target)
     {
-        if (!initiatedByBackend) {
-            let target = WI.assumingMainTarget();
-            target.CPUProfilerAgent.stopTracking();
-        }
+        // Nothing to do, only the main target is instrumented.
+    }
+
+    stopInstrumentation()
+    {
+        // Nothing to do, TimelineManager stops every domain that is tracking.
     }
 };

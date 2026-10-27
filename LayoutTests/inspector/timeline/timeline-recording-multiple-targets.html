@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let initialWorker = new Worker("resources/timeline-worker.js");
+let laterWorker = null;
+let extraWorkers = [];
+
+function pageTimerFired() {
+    return 42;
+}
+
+function fireTimerInPage() {
+    setTimeout(pageTimerFired);
+}
+
+function createLaterWorker() {
+    laterWorker = new Worker("resources/timeline-worker.js");
+}
+
+function createExtraWorker() {
+    extraWorkers.push(new Worker("resources/timeline-worker.js"));
+}
+
+function test()
+{
+    let initialWorkerTarget = WI.targetManager.workerTargets[0];
+    if (!initialWorkerTarget) {
+        InspectorTest.fail("Missing Worker target.");
+        InspectorTest.completeTest();
+        return;
+    }
+
+    // Record, in order, every report from a target that one of its domains started or stopped tracking.
+    let trackingEvents = [];
+    let trackingEventListeners = [];
+    for (let functionName of ["capturingStarted", "capturingStopped"]) {
+        let original = WI.timelineManager[functionName];
+        WI.timelineManager[functionName] = function(target, domain, ...rest) {
+            trackingEvents.push({functionName, target, domain});
+            let result = original.call(this, target, domain, ...rest);
+
+            for (let listener of trackingEventListeners.slice()) {
+                if (listener.functionName === functionName && listener.target === target && listener.domain === domain) {
+                    trackingEventListeners.remove(listener);
+                    listener.resolve();
+                }
+            }
+            return result;
+        };
+    }
+
+    function awaitTrackingEvent(functionName, target, domain) {
+        return new Promise((resolve) => {
+            trackingEventListeners.push({functionName, target, domain, resolve});
+        });
+    }
+
+    function awaitCapturingState(capturingState) {
+        return new Promise((resolve) => {
+            let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+                if (WI.timelineManager.capturingState !== capturingState)
+                    return;
+
+                WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
+                resolve(trackingEvents.slice());
+            });
+        });
+    }
+
+    async function startCapturing() {
+        trackingEvents = [];
+
+        let activePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+        const newRecording = true;
+        WI.timelineManager.startCapturing(newRecording);
+        await activePromise;
+    }
+
+    // Resolves with the tracking events that were reported before capturing became inactive.
+    async function stopCapturing() {
+        let inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+        WI.timelineManager.stopCapturing();
+        return inactivePromise;
+    }
+
+    function awaitTimerFiredRecord(target) {
+        let scriptTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Script);
+        return new Promise((resolve) => {
+            let listener = scriptTimeline.addEventListener(WI.Timeline.Event.RecordAdded, (event) => {
+                let {record} = event.data;
+                if (record.eventType !== WI.ScriptTimelineRecord.EventType.TimerFired || record.target !== target)
+                    return;
+
+                scriptTimeline.removeEventListener(WI.Timeline.Event.RecordAdded, listener);
+                resolve(record);
+            });
+        });
+    }
+
+    function awaitTargetEvent(eventType, predicate) {
+        return new Promise((resolve) => {
+            let listener = WI.targetManager.addEventListener(eventType, (event) => {
+                let {target} = event.data;
+                if (!predicate(target))
+                    return;
+
+                WI.targetManager.removeEventListener(eventType, listener);
+                resolve(target);
+            });
+        });
+    }
+
+    let extraWorkerCount = 0;
+
+    // Resolves with the index of the Worker in the page's `extraWorkers` and its target.
+    async function addExtraWorker() {
+        let workerTargetPromise = awaitTargetEvent(WI.TargetManager.Event.TargetAdded, (target) => target.type === WI.TargetType.Worker);
+        await InspectorTest.evaluateInPage(`createExtraWorker()`);
+        return {index: extraWorkerCount++, target: await workerTargetPromise};
+    }
+
+    function postMessageToExtraWorker(worker, message) {
+        return InspectorTest.evaluateInPage(`extraWorkers[${worker.index}].postMessage("${message}")`);
+    }
+
+    async function terminateExtraWorker(worker) {
+        let workerTargetRemovedPromise = awaitTargetEvent(WI.TargetManager.Event.TargetRemoved, (target) => target === worker.target);
+        await InspectorTest.evaluateInPage(`extraWorkers[${worker.index}].terminate()`);
+        await workerTargetRemovedPromise;
+    }
+
+    function expectTrackingStopped(trackingEvents, target, targetDescription) {
+        for (let domain of ["Timeline", "ScriptProfiler"]) {
+            let stopped = trackingEvents.some((event) => event.functionName === "capturingStopped" && event.target === target && event.domain === domain);
+            InspectorTest.expectThat(stopped, `${targetDescription} should report that ${domain} stopped before capturing stops.`);
+        }
+    }
+
+    function expectEveryStartedDomainStopped(trackingEvents) {
+        let everyStartedDomainStopped = trackingEvents.every(({functionName, target, domain}) => {
+            if (functionName !== "capturingStarted" || target.isDestroyed)
+                return true;
+            return trackingEvents.some((event) => event.functionName === "capturingStopped" && event.target === target && event.domain === domain);
+        });
+        InspectorTest.expectThat(everyStartedDomainStopped, "Every domain that started tracking on a target that still exists should report that it stopped before capturing stops.");
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Timeline.MultipleTargets");
+
+    suite.addTestCase({
+        name: "Timeline.MultipleTargets.ExistingWorker",
+        description: "Check that a capture records from the page and a Worker, and stops after both stop.",
+        async test() {
+            await startCapturing();
+
+            let pageRecordPromise = awaitTimerFiredRecord(WI.mainTarget);
+            let workerRecordPromise = awaitTimerFiredRecord(initialWorkerTarget);
+            await InspectorTest.evaluateInPage(`fireTimerInPage()`);
+            await InspectorTest.evaluateInPage(`initialWorker.postMessage("fire-timer")`);
+            await pageRecordPromise;
+            InspectorTest.pass("Recorded a timer from the page.");
+            await workerRecordPromise;
+            InspectorTest.pass("Recorded a timer from the Worker.");
+
+            let trackingEvents = await stopCapturing();
+            expectTrackingStopped(trackingEvents, WI.mainTarget, "Page target");
+            expectTrackingStopped(trackingEvents, initialWorkerTarget, "Worker target");
+            expectEveryStartedDomainStopped(trackingEvents);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MultipleTargets.WorkerCreatedDuringCapture",
+        description: "Check that a Worker created during a capture is recorded, and that the capture stops after it stops.",
+        async test() {
+            await startCapturing();
+
+            let workerTargetPromise = awaitTargetEvent(WI.TargetManager.Event.TargetAdded, (target) => target.type === WI.TargetType.Worker);
+            await InspectorTest.evaluateInPage(`createLaterWorker()`);
+            let laterWorkerTarget = await workerTargetPromise;
+
+            let workerRecordPromise = awaitTimerFiredRecord(laterWorkerTarget);
+            await InspectorTest.evaluateInPage(`laterWorker.postMessage("fire-timer")`);
+            await workerRecordPromise;
+            InspectorTest.pass("Recorded a timer from the Worker created during the capture.");
+
+            let trackingEvents = await stopCapturing();
+            expectTrackingStopped(trackingEvents, laterWorkerTarget, "Worker target created during the capture");
+            expectEveryStartedDomainStopped(trackingEvents);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MultipleTargets.WorkerTerminatedDuringCapture",
+        description: "Check that terminating a Worker during a capture does not stop the capture, and that the capture can still stop.",
+        async test() {
+            await startCapturing();
+
+            let workerRecordPromise = awaitTimerFiredRecord(initialWorkerTarget);
+            await InspectorTest.evaluateInPage(`initialWorker.postMessage("fire-timer")`);
+            await workerRecordPromise;
+            InspectorTest.pass("Recorded a timer from the Worker.");
+
+            let workerTargetRemovedPromise = awaitTargetEvent(WI.TargetManager.Event.TargetRemoved, (target) => target === initialWorkerTarget);
+            await InspectorTest.evaluateInPage(`initialWorker.terminate()`);
+            await workerTargetRemovedPromise;
+            InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Active, "Capturing should still be active after the Worker target is removed.");
+
+            let trackingEvents = await stopCapturing();
+            InspectorTest.pass("Capturing stopped after the Worker target was removed.");
+            expectTrackingStopped(trackingEvents, WI.mainTarget, "Page target");
+            expectEveryStartedDomainStopped(trackingEvents);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MultipleTargets.ProgrammaticCaptureWithWorkerCreatedDuringCapture",
+        description: "Check that a programmatic stop from the page also stops a Worker that the frontend started during the capture.",
+        async test() {
+            trackingEvents = [];
+
+            let activePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            await InspectorTest.evaluateInPage(`console.profile("multiple-targets")`);
+            await activePromise;
+
+            let workerTargetPromise = awaitTargetEvent(WI.TargetManager.Event.TargetAdded, (target) => target.type === WI.TargetType.Worker);
+            await InspectorTest.evaluateInPage(`createLaterWorker()`);
+            let laterWorkerTarget = await workerTargetPromise;
+
+            let workerRecordPromise = awaitTimerFiredRecord(laterWorkerTarget);
+            await InspectorTest.evaluateInPage(`laterWorker.postMessage("fire-timer")`);
+            await workerRecordPromise;
+            InspectorTest.pass("Recorded a timer from the Worker created during the programmatic capture.");
+
+            let inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            await InspectorTest.evaluateInPage(`console.profileEnd("multiple-targets")`);
+            let trackingEventsBeforeInactive = await inactivePromise;
+            InspectorTest.pass("Capturing stopped after console.profileEnd in the page.");
+            expectTrackingStopped(trackingEventsBeforeInactive, laterWorkerTarget, "Worker target created during the programmatic capture");
+            expectEveryStartedDomainStopped(trackingEventsBeforeInactive);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MultipleTargets.ProgrammaticCaptureInPageAndWorker",
+        description: "Check that a programmatic stop from the page also stops a Worker that started a programmatic capture on its own.",
+        async test() {
+            trackingEvents = [];
+
+            let worker = await addExtraWorker();
+
+            let activePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            await InspectorTest.evaluateInPage(`console.profile("multiple-targets")`);
+            await activePromise;
+
+            let workerStartedPromise = awaitTrackingEvent("capturingStarted", worker.target, "Timeline");
+            await postMessageToExtraWorker(worker, "profile");
+            await workerStartedPromise;
+            InspectorTest.pass("Worker started a programmatic capture.");
+
+            let inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            await InspectorTest.evaluateInPage(`console.profileEnd("multiple-targets")`);
+            let trackingEventsBeforeInactive = await inactivePromise;
+            InspectorTest.pass("Capturing stopped after console.profileEnd in the page.");
+            expectTrackingStopped(trackingEventsBeforeInactive, worker.target, "Worker target with its own programmatic capture");
+            expectEveryStartedDomainStopped(trackingEventsBeforeInactive);
+
+            await terminateExtraWorker(worker);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MultipleTargets.WorkerTerminatedWhileStopping",
+        description: "Check that capturing finishes stopping when a Worker that never reports that it stopped is terminated.",
+        async test() {
+            let busyWorker = await addExtraWorker();
+
+            await startCapturing();
+            await postMessageToExtraWorker(busyWorker, "busy");
+
+            let pageStoppedPromises = ["Timeline", "ScriptProfiler"].map((domain) => awaitTrackingEvent("capturingStopped", WI.mainTarget, domain));
+            let inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            WI.timelineManager.stopCapturing();
+            await Promise.all(pageStoppedPromises);
+            InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Stopping, "Capturing should still be stopping while the busy Worker has not reported that it stopped.");
+
+            await terminateExtraWorker(busyWorker);
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped after the busy Worker target was removed.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MultipleTargets.ProgrammaticStartWhileStopping",
+        description: "Check that a target that starts a programmatic capture while capturing is stopping is also stopped.",
+        async test() {
+            let busyWorker = await addExtraWorker();
+            let profilingWorker = await addExtraWorker();
+
+            await startCapturing();
+            await postMessageToExtraWorker(busyWorker, "busy");
+
+            let stoppedPromises = [WI.mainTarget, profilingWorker.target].flatMap((target) => ["Timeline", "ScriptProfiler"].map((domain) => awaitTrackingEvent("capturingStopped", target, domain)));
+            let inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            WI.timelineManager.stopCapturing();
+            await Promise.all(stoppedPromises);
+            InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Stopping, "Capturing should still be stopping while the busy Worker has not reported that it stopped.");
+
+            let profilingWorkerStoppedPromise = awaitTrackingEvent("capturingStopped", profilingWorker.target, "Timeline");
+            await postMessageToExtraWorker(profilingWorker, "profile");
+            await profilingWorkerStoppedPromise;
+            InspectorTest.pass("Worker that started a programmatic capture while stopping was stopped.");
+
+            await terminateExtraWorker(busyWorker);
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped after the busy Worker target was removed.");
+
+            await terminateExtraWorker(profilingWorker);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MultipleTargets.ProgrammaticCaptureRestartedImmediately",
+        description: "Check that a programmatic capture that the page starts right after a programmatic stop is not stopped by the frontend.",
+        async test() {
+            let activePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            await InspectorTest.evaluateInPage(`console.profile("first")`);
+            await activePromise;
+
+            let restartedPromise = new Promise((resolve) => {
+                let becameInactive = false;
+                let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+                    if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Inactive)
+                        becameInactive = true;
+                    else if (becameInactive && WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Active) {
+                        WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
+                        resolve();
+                    }
+                });
+            });
+            await InspectorTest.evaluateInPage(`console.profileEnd("first"); console.profile("second")`);
+            await restartedPromise;
+            InspectorTest.pass("Capturing stopped and started again.");
+
+            let pageRecordPromise = awaitTimerFiredRecord(WI.mainTarget);
+            await InspectorTest.evaluateInPage(`fireTimerInPage()`);
+            await pageRecordPromise;
+            InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Active, "The second capture should still be active after recording a timer from the page.");
+
+            let inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            await InspectorTest.evaluateInPage(`console.profileEnd("second")`);
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped after console.profileEnd for the second capture.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MultipleTargets.InstrumentsChangedDuringProgrammaticCapture",
+        description: "Check that a programmatic capture still stops after the enabled instruments change during it.",
+        async test() {
+            let originalTimelineTypes = WI.timelineManager.enabledTimelineTypes;
+            InspectorTest.assert(originalTimelineTypes.includes(WI.TimelineRecord.Type.CPU), "CPU should be enabled by default.");
+
+            let activePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            await InspectorTest.evaluateInPage(`console.profile("instruments")`);
+            await activePromise;
+
+            WI.timelineManager.enabledTimelineTypes = originalTimelineTypes.filter((type) => type !== WI.TimelineRecord.Type.CPU);
+
+            let inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            await InspectorTest.evaluateInPage(`console.profileEnd("instruments")`);
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped after console.profileEnd.");
+
+            WI.timelineManager.enabledTimelineTypes = originalTimelineTypes;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Timeline recordings start, record, and stop on every target, including Workers created or terminated during the recording.</p>
+</body>
+</html>

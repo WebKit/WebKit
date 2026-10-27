@@ -34,12 +34,12 @@ WI.TimelineObserver = class TimelineObserver extends InspectorBackend.Dispatcher
 
     recordingStarted(startTime)
     {
-        WI.timelineManager.capturingStarted(startTime);
+        WI.timelineManager.capturingStarted(this._target, "Timeline", startTime);
     }
 
     recordingStopped(endTime)
     {
-        WI.timelineManager.capturingStopped(endTime);
+        WI.timelineManager.capturingStopped(this._target, "Timeline", endTime);
     }
 
     autoCaptureStarted()

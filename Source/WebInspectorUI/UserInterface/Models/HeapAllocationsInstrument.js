@@ -45,8 +45,10 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
         // FIXME: Include a periodic snapshot interval option for this instrument.
 
         if (!initiatedByBackend) {
-            for (let target of this.#allSupportedTargets())
+            for (let target of this.#allSupportedTargets()) {
+                WI.timelineManager.willStartTrackingForTarget(target, "Heap");
                 target.HeapAgent.startTracking();
+            }
         }
 
         // Periodic snapshots.
@@ -54,12 +56,14 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
         this._snapshotIntervalIdentifier = setInterval(this._takeHeapSnapshot.bind(this), snapshotInterval);
     }
 
-    stopInstrumentation(initiatedByBackend)
+    startInstrumentationForTarget(target)
     {
-        if (!initiatedByBackend) {
-            for (let target of this.#allSupportedTargets())
-                target.HeapAgent.stopTracking();
-        }
+        // Nothing to do, heap tracking only covers the targets that existed when capturing started.
+    }
+
+    stopInstrumentation()
+    {
+        // TimelineManager stops every domain that is tracking.
 
         window.clearInterval(this._snapshotIntervalIdentifier);
         this._snapshotIntervalIdentifier = undefined;

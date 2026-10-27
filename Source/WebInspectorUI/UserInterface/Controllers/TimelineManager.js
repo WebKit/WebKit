@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: TimelineManager lacks advanced multi-target support. (Instruments/Profilers per-target)
-
 WI.TimelineManager = class TimelineManager extends WI.Object
 {
     constructor()
@@ -38,6 +36,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, this._handleMessageAdded, this);
 
+        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
+
         this._enabledTimelineTypesSetting = new WI.Setting("enabled-instrument-types", WI.TimelineManager.defaultTimelineTypes());
 
         this._capturingState = TimelineManager.CapturingState.Inactive;
@@ -45,7 +45,13 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._capturingEndTime = NaN;
 
         this._initiatedByBackendStart = false;
-        this._initiatedByBackendStop = false;
+        this._programmaticStopTarget = null;
+
+        // For each target, the domains that are tracking and have not reported that they stopped, each
+        // mapped to whether the frontend started it. Capturing only finishes stopping once this is empty.
+        this._trackingDomainsForTarget = new Map;
+        this._capturingBecameActive = false;
+        this._shouldUpdateAutoCaptureInstrumentsWhenInactive = false;
 
         this._isCapturingPageReload = false;
         this._autoCaptureOnPageLoad = false;
@@ -92,6 +98,10 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         if (target.hasCommand("Timeline.setAutoCaptureEnabled"))
             target.TimelineAgent.setAutoCaptureEnabled(this._autoCaptureOnPageLoad);
+
+        // Targets created while capturing, including provisional targets, are instrumented too.
+        if (this._capturingState === TimelineManager.CapturingState.Starting || this._capturingState === TimelineManager.CapturingState.Active)
+            this._activeRecording.startInstrumentationForTarget(target);
     }
 
     transitionPageTarget()
@@ -216,6 +226,13 @@ WI.TimelineManager = class TimelineManager extends WI.Object
     {
         this._enabledTimelineTypesSetting.value = x || [];
 
+        // A target stops a capture that it started itself with the instruments it has at that time, so changing them
+        // while capturing would leave some of them running.
+        if (this.isCapturing()) {
+            this._shouldUpdateAutoCaptureInstrumentsWhenInactive = true;
+            return;
+        }
+
         this._updateAutoCaptureInstruments(WI.targets);
     }
 
@@ -274,6 +291,11 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 target.TimelineAgent.disable();
         }
 
+        // The agents are disabled, so nothing will report that it stopped anymore.
+        this._trackingDomainsForTarget.clear();
+        if (this._capturingState === TimelineManager.CapturingState.Stopping)
+            this._finishStoppingCapturingIfPossible();
+
         this._enabled = false;
     }
 
@@ -287,6 +309,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         if (!this._activeRecording || shouldCreateRecording)
             this._loadNewRecording();
+
+        // Capturing can restart while the previous capture is still stopping.
+        this._programmaticStopTarget = null;
 
         this._updateCapturingState(TimelineManager.CapturingState.Starting);
 
@@ -305,7 +330,25 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._updateCapturingState(TimelineManager.CapturingState.Stopping);
 
         this._capturingEndTime = NaN;
-        this._activeRecording.stop(this._initiatedByBackendStop);
+        this._activeRecording.stop();
+
+        // Stop every domain that capturing waits for, including ones that a target started on its own (e.g. a
+        // `console.profile()` in a Worker) and ones started by an instrument that was removed from the recording.
+        for (let [target, trackingDomains] of this._trackingDomainsForTarget) {
+            for (let [domain, startedByFrontend] of trackingDomains) {
+                // The target that stopped programmatically already stops what it started itself, and a stop command
+                // could arrive after it starts again (e.g. `console.profileEnd()` then `console.profile()`).
+                if (target === this._programmaticStopTarget && !startedByFrontend)
+                    continue;
+
+                this._stopTrackingDomainForTarget(target, domain);
+            }
+        }
+
+        // There may be nothing left to wait for, e.g. if every target that was tracking has been destroyed. A
+        // programmatic stop instead finishes in `capturingStopped`, after it has recorded the end time.
+        if (!this._programmaticStopTarget)
+            this._finishStoppingCapturingIfPossible();
     }
 
     async processJSON({filename, json, error})
@@ -367,6 +410,19 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         return this._scriptProfilerRecordsForTarget.size;
     }
 
+    willStartTrackingForTarget(target, domain)
+    {
+        console.assert(this.isCapturing());
+
+        // A destroyed target is no longer waited for (see `_handleTargetRemoved`).
+        if (target.isDestroyed)
+            return;
+
+        // Expect a stop from the target even before it reports that it started, because messages
+        // from a provisional target are held until it is committed.
+        this._trackingDomainsForTarget.getOrInsertComputed(target, () => new Map).set(domain, true);
+    }
+
     // ConsoleObserver
 
     heapSnapshotAdded(timestamp, snapshot)
@@ -379,13 +435,32 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
     // TimelineObserver
 
-    capturingStarted(startTime)
+    capturingStarted(target, domain, startTime)
     {
+        // Events that were already on their way when Timeline was disabled must not start a new capture.
+        if (!this._enabled)
+            return;
+
+        // Some events are handled asynchronously (e.g. after a Heap snapshot is parsed), so they can arrive after
+        // the target was destroyed. Capturing must not wait for such a target again.
+        if (target.isDestroyed)
+            return;
+
         // The frontend didn't start capturing, so this was a programmatic start.
         if (this._capturingState === TimelineManager.CapturingState.Inactive) {
             this._initiatedByBackendStart = true;
             this._activeRecording.addScriptInstrumentForProgrammaticCapture();
             this.startCapturing();
+        }
+
+        let trackingDomains = this._trackingDomainsForTarget.getOrInsertComputed(target, () => new Map);
+        if (!trackingDomains.has(domain)) {
+            trackingDomains.set(domain, false);
+
+            // The target started on its own after capturing was asked to stop (e.g. a `console.profile()`), so
+            // stop it too, as capturing can't finish stopping while it is tracking.
+            if (this._capturingState === TimelineManager.CapturingState.Stopping)
+                this._stopTrackingDomainForTarget(target, domain);
         }
 
         if (!isNaN(startTime)) {
@@ -395,8 +470,11 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             this._activeRecording.initializeTimeBoundsIfNecessary(startTime);
         }
 
-        if (this._capturingState === TimelineManager.CapturingState.Active)
+        // Only the first target to start makes capturing active, unless capturing was already asked to stop.
+        if (this._capturingState !== TimelineManager.CapturingState.Starting)
             return;
+
+        this._capturingBecameActive = true;
 
         this._lastDeadTimeTickle = 0;
 
@@ -419,11 +497,27 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._updateCapturingState(TimelineManager.CapturingState.Active, {startTime: this._capturingStartTime});
     }
 
-    capturingStopped(endTime)
+    capturingStopped(target, domain, endTime)
     {
-        // The frontend didn't stop capturing, so this was a programmatic stop.
-        if (this._capturingState === TimelineManager.CapturingState.Active) {
-            this._initiatedByBackendStop = true;
+        if (!this._enabled)
+            return;
+
+        // See `capturingStarted`. A destroyed target is no longer waited for, and its stop isn't a programmatic stop.
+        if (target.isDestroyed)
+            return;
+
+        let trackingDomains = this._trackingDomainsForTarget.get(target);
+        let startedByFrontend = !!trackingDomains?.get(domain);
+        if (trackingDomains) {
+            trackingDomains.delete(domain);
+            if (!trackingDomains.size)
+                this._trackingDomainsForTarget.delete(target);
+        }
+
+        // The frontend didn't stop capturing, so this was a programmatic stop. A target that the frontend
+        // started can also stop on its own (e.g. when it is being destroyed), which doesn't stop capturing.
+        if (this._capturingState === TimelineManager.CapturingState.Active && !startedByFrontend) {
+            this._programmaticStopTarget = target;
             this.stopCapturing();
         }
 
@@ -432,32 +526,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 this._capturingEndTime = endTime;
         }
 
-        if (this._capturingState === TimelineManager.CapturingState.Inactive)
-            return;
-
-        WI.DOMNode.removeEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
-        WI.DOMNode.removeEventListener(WI.DOMNode.Event.PowerEfficientPlaybackStateChanged, this._handleDOMNodePowerEfficientPlaybackStateChanged, this);
-
-        WI.heapManager.removeEventListener(WI.HeapManager.Event.GarbageCollected, this._garbageCollected, this);
-
-        WI.memoryManager.removeEventListener(WI.MemoryManager.Event.MemoryPressure, this._memoryPressure, this);
-
-        WI.Target.removeEventListener(WI.Target.Event.ResourceAdded, this._resourceWasAdded, this);
-        WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
-
-        WI.settings.timelinesAutoStop.removeEventListener(WI.Setting.Event.Changed, this._handleTimelinesAutoStopSettingChanged, this);
-
-        this._activeRecording.capturingStopped(this._capturingEndTime);
-
-        this.relaxAutoStop();
-
-        this._isCapturingPageReload = false;
-        this._shouldSetAutoCapturingMainResource = false;
-        this._mainResourceForAutoCapturing = null;
-        this._initiatedByBackendStart = false;
-        this._initiatedByBackendStop = false;
-
-        this._updateCapturingState(TimelineManager.CapturingState.Inactive, {endTime: this._capturingEndTime});
+        if (this._capturingState === TimelineManager.CapturingState.Starting || this._capturingState === TimelineManager.CapturingState.Stopping)
+            this._finishStoppingCapturingIfPossible();
     }
 
     autoCaptureStarted()
@@ -566,9 +636,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
     // CPUProfilerObserver
 
-    cpuProfilerTrackingStarted(timestamp)
+    cpuProfilerTrackingStarted(target, timestamp)
     {
-        this.capturingStarted(timestamp);
+        this.capturingStarted(target, "CPUProfiler", timestamp);
     }
 
     cpuProfilerTrackingUpdated(event)
@@ -583,9 +653,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._addRecord(new WI.CPUTimelineRecord(event));
     }
 
-    cpuProfilerTrackingCompleted(timestamp)
+    cpuProfilerTrackingCompleted(target, timestamp)
     {
-        this.capturingStopped(timestamp);
+        this.capturingStopped(target, "CPUProfiler", timestamp);
     }
 
     // ScriptProfilerObserver
@@ -595,7 +665,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         console.assert(!this._scriptProfilerRecordsForTarget.has(target), this._scriptProfilerRecordsForTarget, target);
         this._scriptProfilerRecordsForTarget.set(target, []);
 
-        this.capturingStarted(timestamp);
+        this.capturingStarted(target, "ScriptProfiler", timestamp);
     }
 
     scriptProfilerTrackingUpdated(target, event)
@@ -693,14 +763,14 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             scriptTimeline.refresh();
         }
 
-        this.capturingStopped(timestamp);
+        this.capturingStopped(target, "ScriptProfiler", timestamp);
     }
 
     // MemoryObserver
 
-    memoryTrackingStarted(timestamp)
+    memoryTrackingStarted(target, timestamp)
     {
-        this.capturingStarted(timestamp);
+        this.capturingStarted(target, "Memory", timestamp);
     }
 
     memoryTrackingUpdated(event)
@@ -715,34 +785,34 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._addRecord(new WI.MemoryTimelineRecord(event.timestamp, event.categories));
     }
 
-    memoryTrackingCompleted(timestamp)
+    memoryTrackingCompleted(target, timestamp)
     {
-        this.capturingStopped(timestamp);
+        this.capturingStopped(target, "Memory", timestamp);
     }
 
     // HeapObserver
 
-    heapTrackingStarted(timestamp, snapshot)
+    heapTrackingStarted(target, timestamp, snapshot)
     {
-        this.capturingStarted(timestamp);
+        this.capturingStarted(target, "Heap", timestamp);
 
         if (this._enabled)
             this._addRecord(new WI.HeapAllocationsTimelineRecord(timestamp, snapshot));
     }
 
-    heapTrackingCompleted(timestamp, snapshot)
+    heapTrackingCompleted(target, timestamp, snapshot)
     {
         if (this._enabled)
             this._addRecord(new WI.HeapAllocationsTimelineRecord(timestamp, snapshot));
 
-        this.capturingStopped();
+        this.capturingStopped(target, "Heap");
     }
 
     // AnimationObserver
 
-    animationTrackingStarted(timestamp)
+    animationTrackingStarted(target, timestamp)
     {
-        this.capturingStarted(timestamp);
+        this.capturingStarted(target, "Animation", timestamp);
     }
 
     animationTrackingUpdated(timestamp, event)
@@ -785,9 +855,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         record.updateAnimationState(timestamp, event.animationState);
     }
 
-    animationTrackingCompleted(timestamp)
+    animationTrackingCompleted(target, timestamp)
     {
-        this.capturingStopped(timestamp);
+        this.capturingStopped(target, "Animation", timestamp);
     }
 
     // Private
@@ -800,6 +870,80 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._capturingState = state;
 
         this.dispatchEventToListeners(TimelineManager.Event.CapturingStateChanged, data);
+    }
+
+    _stopTrackingDomainForTarget(target, domain)
+    {
+        // Agents ignore a stop when they aren't tracking.
+        switch (domain) {
+        case "Timeline":
+            target.TimelineAgent.stop();
+            return;
+
+        case "ScriptProfiler":
+            target.ScriptProfilerAgent.stopTracking();
+            return;
+
+        case "CPUProfiler":
+            target.CPUProfilerAgent.stopTracking();
+            return;
+
+        case "Memory":
+            target.MemoryAgent.stopTracking();
+            return;
+
+        case "Heap":
+            target.HeapAgent.stopTracking();
+            return;
+
+        case "Animation":
+            target.AnimationAgent.stopTracking();
+            return;
+        }
+
+        console.assert(false, "Unknown tracking domain", domain);
+    }
+
+    _finishStoppingCapturingIfPossible()
+    {
+        console.assert(this._capturingState === TimelineManager.CapturingState.Starting || this._capturingState === TimelineManager.CapturingState.Stopping);
+
+        // Wait until every target that is tracking has reported that it stopped or has been destroyed.
+        if (this._trackingDomainsForTarget.size)
+            return;
+
+        if (this._capturingBecameActive) {
+            WI.DOMNode.removeEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
+            WI.DOMNode.removeEventListener(WI.DOMNode.Event.PowerEfficientPlaybackStateChanged, this._handleDOMNodePowerEfficientPlaybackStateChanged, this);
+
+            WI.heapManager.removeEventListener(WI.HeapManager.Event.GarbageCollected, this._garbageCollected, this);
+
+            WI.memoryManager.removeEventListener(WI.MemoryManager.Event.MemoryPressure, this._memoryPressure, this);
+
+            WI.Target.removeEventListener(WI.Target.Event.ResourceAdded, this._resourceWasAdded, this);
+            WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
+
+            WI.settings.timelinesAutoStop.removeEventListener(WI.Setting.Event.Changed, this._handleTimelinesAutoStopSettingChanged, this);
+
+            this._capturingBecameActive = false;
+        }
+
+        this._activeRecording.capturingStopped(this._capturingEndTime);
+
+        this.relaxAutoStop();
+
+        this._isCapturingPageReload = false;
+        this._shouldSetAutoCapturingMainResource = false;
+        this._mainResourceForAutoCapturing = null;
+        this._initiatedByBackendStart = false;
+        this._programmaticStopTarget = null;
+
+        if (this._shouldUpdateAutoCaptureInstrumentsWhenInactive) {
+            this._shouldUpdateAutoCaptureInstrumentsWhenInactive = false;
+            this._updateAutoCaptureInstruments(WI.targets);
+        }
+
+        this._updateCapturingState(TimelineManager.CapturingState.Inactive, {endTime: this._capturingEndTime});
     }
 
     _processRecord(target, recordPayload, parentRecordPayload)
@@ -1484,6 +1628,19 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
             target.TimelineAgent.setInstruments(Array.from(instrumentSet));
         }
+    }
+
+    _handleTargetRemoved(event)
+    {
+        let {target} = event.data;
+
+        // A destroyed target may never report that it stopped, so stop waiting for it.
+        this._trackingDomainsForTarget.delete(target);
+        this._scriptProfilerRecordsForTarget.delete(target);
+        this._webTimelineScriptRecordsExpectingScriptProfilerEventsForTarget.delete(target);
+
+        if (this._capturingState === TimelineManager.CapturingState.Stopping)
+            this._finishStoppingCapturingIfPossible();
     }
 
     _handleDOMNodeDidFireEvent(event)
