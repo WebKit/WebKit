@@ -49,7 +49,7 @@ enum class GStreamerTrackType {
 };
 
 class TrackPrivateBaseGStreamer;
-class TrackDataHolder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<TrackDataHolder> {
+class TrackDataHolder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<TrackDataHolder, WTF::DestructionThread::Main> {
     WTF_MAKE_TZONE_ALLOCATED(TrackDataHolder);
     WTF_MAKE_NONCOPYABLE(TrackDataHolder);
 

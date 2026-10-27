@@ -371,11 +371,11 @@ void TrackDataHolder::notifyTrackOfTagsChanged()
     if (!tags)
         return;
 
-    m_track.tagsChanged(GRefPtr<GstTagList>(tags));
-
     RefPtr owner = m_owner.get();
     if (!owner)
         return;
+
+    m_track.tagsChanged(GRefPtr<GstTagList>(tags));
 
     auto label = getTag(tags.get(), GST_TAG_TITLE);
     if (label) {
