@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationFormattingContextLayout.h"
 
+#include "BlockFormattingContext.h"
 #include "BlockLayoutState.h"
 #include "FloatingObjects.h"
 #include "InlineLayoutState.h"
@@ -288,6 +289,26 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
         inlineLayoutState.marginState() = marginState;
     };
     updateIFCAfterLayout();
+}
+
+void layoutWithBlockFormattingContextForBlockInInline(Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult, const Layout::ElementBox& block, LayoutPoint blockLineLogicalTopLeft, Layout::InlineLayoutState& inlineLayoutState, Layout::LayoutState& layoutState)
+{
+    CheckedRef blockRenderer = downcast<RenderBox>(*block.rendererForIntegration());
+    auto lineLogicalTop = blockLineLogicalTopLeft.y();
+    // The inline formatting context keeps the inline margins it took from the style (BoxGeometryUpdater::setFormattingContextContentGeometry),
+    // which size the line. The box's own inline content, as the root of its inline formatting context, gets the geometry the block formatting
+    // context gave it, with the used ones (LineLayout::updateFormattingContextGeometries).
+    auto inlineMargins = layoutState.geometryForBox(block).horizontalMargin();
+    auto box = blockFormattingContext.layoutBlockLevelBoxInInlineContent(blockRenderer, lineLogicalTop, inlineLayoutState.lineCount(), blockLayoutResult);
+
+    // Like the render tree path above: the line of the box ends where the content after it starts, and the box sits in it at its border box
+    // top.
+    auto& blockGeometry = layoutState.ensureGeometryForBox(block);
+    blockGeometry.setHorizontalMargin(inlineMargins);
+    blockGeometry.setContentBoxSize({ box.geometry.contentBoxWidth(), box.geometry.contentBoxHeight() });
+    blockGeometry.setVerticalMargin({ box.logicalBottom - lineLogicalTop - box.geometry.borderBoxHeight(), { } });
+    blockGeometry.setTopLeft({ blockGeometry.marginStart(), Layout::BoxGeometry::borderBoxTop(box.geometry) - lineLogicalTop });
+    inlineLayoutState.marginState() = box.marginState;
 }
 
 LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& box, LogicalWidthType logicalWidthType)
