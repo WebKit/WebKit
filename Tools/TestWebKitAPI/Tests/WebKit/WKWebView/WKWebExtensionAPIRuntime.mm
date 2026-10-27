@@ -468,7 +468,52 @@ TEST(WKWebExtensionAPIRuntime, LastError)
         @"browser.test.assertEq(typeof browser.runtime.lastError, 'object')",
         @"browser.test.assertEq(browser.runtime.lastError, null)",
 
-        // FIXME: <https://webkit.org/b/248156> Need test cases for lastError
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(runtimeManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIRuntime, LastErrorSetInCallbackOnFailure)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.tabs.get(9999, () => {",
+        @"  browser.test.assertEq(typeof browser.runtime.lastError, 'object')",
+        @"  browser.test.assertTrue(!!browser.runtime.lastError, 'lastError should be set inside the callback')",
+        @"  browser.test.assertEq(typeof browser.runtime.lastError.message, 'string')",
+        @"  browser.test.assertTrue(/tab not found/i.test(browser.runtime.lastError.message), 'lastError.message should describe the failure')",
+
+        @"  browser.test.notifyPass()",
+        @"})"
+    ]);
+
+    Util::loadAndRunExtension(runtimeManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIRuntime, LastErrorNullInCallbackOnSuccess)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.tabs.query({ }, () => {",
+        @"  browser.test.assertEq(browser.runtime.lastError, null)",
+
+        @"  browser.test.notifyPass()",
+        @"})"
+    ]);
+
+    Util::loadAndRunExtension(runtimeManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIRuntime, LastErrorClearedAfterCallback)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.tabs.get(9999, () => {",
+        @"  browser.test.assertTrue(!!browser.runtime.lastError, 'lastError should be set inside the callback')",
+        @"})",
+
+        // A second round trip is processed after the failing callback has returned.
+        @"await browser.tabs.query({ })",
+
+        @"browser.test.assertEq(browser.runtime.lastError, null, 'lastError should be cleared once the callback returns')",
 
         @"browser.test.notifyPass()"
     ]);
