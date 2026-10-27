@@ -200,17 +200,17 @@ class DarwinPort(ApplePort):
         return directories
 
     def _merge_crash_logs(self, logs, new_logs, crashed_processes):
+        reported_names_by_pid = {}
+        for _, reported_name, reported_pid in crashed_processes:
+            reported_names_by_pid.setdefault(reported_pid, []).append(reported_name)
+
         def already_collected(process_name, pid):
             # A crash report's parsed procName may be an alias of the reported crash-process
             # name (e.g. a ServiceWorkerProcess crash is recorded under a WebContent procName).
             # Match those the way CrashLogs._find_newest_log_darwin does, so an aliased crash
             # already collected in the first pass is not appended again as a "new" crash.
-            for _, reported_name, reported_pid in crashed_processes:
-                if reported_pid != pid:
-                    continue
-                if process_name == reported_name or process_name in CrashLogs.PROCESS_NAME_ALIASES.get(reported_name, ()):
-                    return True
-            return False
+            return any(process_name == reported_name or process_name in CrashLogs.PROCESS_NAME_ALIASES.get(reported_name, ())
+                       for reported_name in reported_names_by_pid.get(pid, ()))
 
         for test, crash_log in new_logs.items():
             try:
@@ -253,13 +253,15 @@ class DarwinPort(ApplePort):
             return (stderr, None)
         return (stderr, crash_log)
 
-    def look_for_new_crash_logs(self, crashed_processes, start_time):
+    def look_for_new_crash_logs(self, crashed_processes, start_time, known_crashed_processes=None):
         """Since crash logs can take a long time to be written out if the system is
            under stress do a second pass at the end of the test run.
 
            crashes: test_name -> pid, process_name tuple of crashed process
            start_time: time the tests started at.  We're looking for crash
                logs after that time.
+           known_crashed_processes: like crashes, but only excluded from the new
+               crashes, not gathered.
         """
         crash_logs = {}
         for (test_name, process_name, pid) in crashed_processes:
@@ -270,7 +272,7 @@ class DarwinPort(ApplePort):
                 continue
             crash_logs[test_name] = crash_log
         all_crash_log = self._look_for_all_crash_logs_in_log_dir(start_time)
-        return self._merge_crash_logs(crash_logs, all_crash_log, crashed_processes)
+        return self._merge_crash_logs(crash_logs, all_crash_log, crashed_processes + (known_crashed_processes or []))
 
     def sample_process(self, name, pid, target_host=None):
         host = target_host or self.host

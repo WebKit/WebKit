@@ -63,6 +63,13 @@ class SingleTestRunnerTest(unittest.TestCase):
         test_input = TestInput(Test(test_name))
         return SingleTestRunner(port, port._options, results_directory, worker_name, driver, test_input, True)
 
+    def test_crash_failure_records_whether_crash_log_was_found(self):
+        single_test_runner = self._make_test_runner('crash-test.html')
+        for crash_log_found in (True, False):
+            driver_output = DriverOutput('', '', '', '', crash=True, crashed_process_name='WebProcess', crashed_pid=1234, crash_log='crash log', crash_log_found=crash_log_found)
+            [failure] = single_test_runner._handle_error(driver_output)
+            self.assertEqual(crash_log_found, failure.crash_log_found)
+
     def test_fuzzy_matching_values(self):
         single_test_runner = self._make_test_runner('fuzzy-test.html')
         self._add_file(single_test_runner._port, 'fuzzy-test.html', b'<html><head><meta name=fuzzy content="maxDifference=15;totalPixels=300">')

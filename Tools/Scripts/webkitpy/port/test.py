@@ -664,9 +664,9 @@ class TestDriver(Driver):
             self.is_valid_state = False
 
         return DriverOutput(actual_text, image, test.actual_checksum, audio,
-            crash=test.crash or test.web_process_crash, crashed_process_name=crashed_process_name,
-            crashed_pid=crashed_pid, crash_log=crash_log,
-            test_time=time.time() - start_time, timeout=test.timeout, error=test.error, pid=self.pid)
+                            crash=test.crash or test.web_process_crash, crashed_process_name=crashed_process_name,
+                            crashed_pid=crashed_pid, crash_log=crash_log, crash_log_found=bool(crash_log),
+                            test_time=time.time() - start_time, timeout=test.timeout, error=test.error, pid=self.pid)
 
     def do_post_tests_work(self):
         if not self._port.get_option('world_leaks'):

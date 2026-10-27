@@ -134,11 +134,12 @@ class FailureTimeout(TestFailure):
 
 
 class FailureCrash(TestFailure):
-    def __init__(self, is_reftest=False, process_name='DumpRenderTree', pid=None):
+    def __init__(self, is_reftest=False, process_name='DumpRenderTree', pid=None, crash_log_found=False):
         super(FailureCrash, self).__init__()
         self.process_name = process_name
         self.pid = pid
         self.is_reftest = is_reftest
+        self.crash_log_found = crash_log_found
 
     def message(self):
         if self.pid:

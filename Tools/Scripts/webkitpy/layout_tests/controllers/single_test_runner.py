@@ -368,7 +368,8 @@ class SingleTestRunner(object):
         if driver_output.crash:
             failures.append(test_failures.FailureCrash(bool(reference_filename),
                                                        driver_output.crashed_process_name,
-                                                       driver_output.crashed_pid))
+                                                       driver_output.crashed_pid,
+                                                       driver_output.crash_log_found))
             if driver_output.error:
                 _log.debug("%s %s crashed, (stderr lines):" % (self._worker_name, testname))
             else:
