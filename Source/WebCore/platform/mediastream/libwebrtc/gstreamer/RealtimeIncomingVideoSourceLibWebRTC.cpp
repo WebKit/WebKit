@@ -89,7 +89,7 @@ void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& fra
     options.rotation = videoRotationFromLibWebRTCVideoFrame(frame);
     options.colorSpace = colorSpaceFromLibWebRTCVideoFrame(frame);
     options.contentHint = VideoFrameContentHint::WebRTC;
-    auto colorSpace = options.colorSpace.value_or({ });
+    auto colorSpace = options.colorSpace.value_or(PlatformVideoColorSpace { });
     videoFrameAvailable(VideoFrameGStreamer::create(WTF::move(sample), options, WTF::move(colorSpace)), { });
 }
 
