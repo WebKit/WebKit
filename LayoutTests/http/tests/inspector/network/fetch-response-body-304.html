@@ -1,44 +1,216 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ InspectorMaximumResourcesContentSize=1 ] -->
 <html>
 <head>
 <meta charset="utf-8">
 <script src="../resources/inspector-test.js"></script>
 <script>
-function createFetchForPHP200() {
-    fetch("resources/fetch-cachable.py", { headers: { 'X-Status-Code-Needed': '200' } });
+let pendingXHR;
+let pendingFrame;
+
+function createFetchForPHP200(url) {
+    fetch(url, { headers: { 'X-Status-Code-Needed': '200' } });
 }
 
-function createFetchForPHP304() {
-    fetch("resources/fetch-cachable.py", { headers: { 'X-Status-Code-Needed': '304' } });
+function createFetchForPHP304(url) {
+    fetch(url, { headers: { 'X-Status-Code-Needed': '304' } });
 }
 
-function createFetchForFile200() {
-    fetch("resources/fetch-cachable.txt");
+async function createFetchForPHP200Aborted(url) {
+    let controller = new AbortController;
+    let response = await fetch(url, { cache: "no-store", headers: { 'X-Status-Code-Needed': 'incomplete' }, signal: controller.signal });
+    let {done, value} = await response.body.getReader().read();
+    controller.abort();
+    return !done && value.byteLength > 0;
 }
 
-function createFetchForFile304() {
-    fetch("resources/fetch-cachable.txt", { headers: { 'If-Modified-Since': new Date().toUTCString() } });
+async function fetchForStatus(url, status) {
+    let response = await fetch(url, { cache: "no-store", headers: { 'X-Status-Code-Needed': status } });
+    await response.arrayBuffer();
+}
+
+function xhrAborted(url) {
+    return new Promise((resolve) => {
+        let xhr = new XMLHttpRequest;
+        xhr.open("GET", url);
+        xhr.setRequestHeader("X-Status-Code-Needed", "incomplete");
+        xhr.addEventListener("readystatechange", function readyStateChanged() {
+            if (xhr.readyState !== XMLHttpRequest.LOADING)
+                return;
+            xhr.removeEventListener("readystatechange", readyStateChanged);
+            let receivedData = xhr.responseText.length > 0;
+            xhr.abort();
+            resolve(receivedData);
+        });
+        xhr.addEventListener("error", () => resolve(false));
+        xhr.addEventListener("load", () => resolve(false));
+        xhr.send();
+    });
+}
+
+function xhr304(url) {
+    let xhr = new XMLHttpRequest;
+    xhr.open("GET", url);
+    xhr.setRequestHeader("X-Status-Code-Needed", "304");
+    xhr.send();
+}
+
+function destroyUnusedCachedResources() {
+    internals.clearMemoryCache();
+    internals.garbageCollectDocumentResources();
+}
+
+function startXHR(url, status) {
+    pendingFrame = document.createElement("iframe");
+    document.body.appendChild(pendingFrame);
+    pendingXHR = new pendingFrame.contentWindow.XMLHttpRequest;
+    return new Promise((resolve, reject) => {
+        pendingXHR.addEventListener("progress", (event) => {
+            if (event.loaded > 0)
+                resolve(true);
+        });
+        pendingXHR.addEventListener("error", () => reject(new Error("The XHR failed before receiving data.")));
+        pendingXHR.open("GET", url);
+        pendingXHR.setRequestHeader("X-Status-Code-Needed", status);
+        pendingXHR.setRequestHeader("Cache-Control", "no-store");
+        pendingXHR.send();
+    });
+}
+
+function startXHRWithCompetingCompletion(url, competingURL) {
+    let promise = startXHR(url, "200");
+    pendingXHR.addEventListener("readystatechange", () => {
+        if (pendingXHR.readyState !== XMLHttpRequest.DONE)
+            return;
+        let competingXHR = new XMLHttpRequest;
+        competingXHR.open("GET", competingURL, false);
+        competingXHR.setRequestHeader("X-Status-Code-Needed", "200");
+        competingXHR.setRequestHeader("Cache-Control", "no-store");
+        competingXHR.send();
+        if (competingXHR.status !== 200)
+            throw new Error("The competing synchronous XHR should succeed.");
+    });
+    return promise;
+}
+
+async function destroyPendingXHR() {
+    pendingXHR?.abort();
+    pendingXHR = null;
+    pendingFrame?.remove();
+    pendingFrame = null;
+    internals.clearMemoryCache();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    GCController.collect();
+}
+
+function createFetchForFile200(url) {
+    fetch(url);
+}
+
+function createFetchForFile304(url) {
+    fetch(url, { headers: { 'If-Modified-Since': new Date().toUTCString() } });
 }
 
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("Network.getResponseBody.Fetch304");
+    const cacheKey = Math.random();
+    const phpURL = new URL(`resources/fetch-cachable.py?test=${cacheKey}`, WI.networkManager.mainFrame.mainResource.url).href;
+    const fileURL = new URL(`resources/fetch-cachable.txt?test=${cacheKey}`, WI.networkManager.mainFrame.mainResource.url).href;
+    const abortedURL = `${phpURL}&aborted`;
+    let suite = InspectorTest.createAsyncSuite("Network.getResponseBody.304");
+
+    async function evaluatePagePromise(expression) {
+        let promise = await InspectorTest.evaluateInPage(expression);
+        let {result, wasThrown} = await RuntimeAgent.awaitPromise(promise.objectId, true);
+        if (wasThrown)
+            throw new Error(result.description);
+        return result.value;
+    }
+
+    function awaitResource(url) {
+        return new Promise((resolve) => {
+            function resourceWasAdded(event) {
+                if (event.data.resource.url !== url)
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, resourceWasAdded);
+                resolve(event.data.resource);
+            }
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, resourceWasAdded);
+        });
+    }
+
+    async function fetchResource(url, status) {
+        let [resource] = await Promise.all([
+            awaitResource(url),
+            evaluatePagePromise(`fetchForStatus(${JSON.stringify(url)}, ${JSON.stringify(status)})`),
+        ]);
+        return resource;
+    }
+
+    async function abortResource(expression) {
+        let [, receivedData] = await Promise.all([
+            WI.Resource.awaitEvent(WI.Resource.Event.LoadingDidFail),
+            evaluatePagePromise(expression),
+        ]);
+        InspectorTest.expectTrue(receivedData, "Should receive data before aborting the response.");
+    }
+
+    async function contentAsText(resource) {
+        let {error, content, rawBase64Encoded} = await resource.requestContent();
+        if (content instanceof Blob)
+            content = await content.text();
+        return {error, content, rawBase64Encoded};
+    }
+
+    function expectEvicted(resource, message) {
+        return new Promise((resolve) => {
+            NetworkAgent.getResponseBody(resource.requestIdentifier, (error) => {
+                InspectorTest.expectEqual(error, "Resource content was evicted from inspector cache", message);
+                resolve();
+            });
+        });
+    }
+
+    async function resetNetworkAgent() {
+        await NetworkAgent.disable();
+        await NetworkAgent.enable();
+    }
+
+    function expectCachedPlainText({sourceCode, content}) {
+        InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
+        InspectorTest.expectEqual(sourceCode.statusCode, 200, "Status code should be 200.");
+        InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.DiskCache, "responseSource should be WI.Resource.ResponseSource.DiskCache");
+        InspectorTest.expectEqual(content, "Plain text resource.", "Text content should be 'Plain text resource.'.");
+    }
+
+    function expectNoCachedContent({sourceCode, content}) {
+        InspectorTest.expectEqual(sourceCode.mimeType, "", "MIME type should be empty.");
+        InspectorTest.expectEqual(sourceCode.statusCode, 304, "Status code should be 304.");
+        InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.Network, "responseSource should be WI.Resource.ResponseSource.Network");
+        InspectorTest.expectEqual(content, undefined, "Text content should be undefined.");
+    }
+
+    async function expectNoReusedXHRContent(url) {
+        let [resource] = await Promise.all([
+            awaitResource(url),
+            InspectorTest.evaluateInPage(`xhr304(${JSON.stringify(url)})`),
+        ]);
+        InspectorTest.expectEqual(resource.type, WI.Resource.Type.XHR, "Resource should be XHR type.");
+        expectNoCachedContent(await resource.requestContent());
+    }
 
     function addTestCase({name, description, setup, expression, contentHandler}) {
         suite.addTestCase({
             name,
             description,
             setup,
-            test(resolve, reject) {
-                InspectorTest.evaluateInPage(expression);
-                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
-                    .then((event) => {
-                        let resource = event.data.resource;
-                        InspectorTest.expectEqual(resource.type, WI.Resource.Type.Fetch, "Resource should be Fetch type.");
-                        return resource.requestContent();
-                    })
-                    .then(contentHandler)
-                    .then(resolve, reject);
+            async test() {
+                let [resourceWasAddedEvent] = await Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    InspectorTest.evaluateInPage(expression),
+                ]);
+                let {resource} = resourceWasAddedEvent.data;
+                InspectorTest.expectEqual(resource.type, WI.Resource.Type.Fetch, "Resource should be Fetch type.");
+                await contentHandler(await resource.requestContent());
             }
         });
     }
@@ -49,19 +221,14 @@ function test()
         async setup() {
             return InspectorTest.evaluateInPage(`internals.clearMemoryCache()`);
         },
-        expression: `createFetchForPHP304()`,
-        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
-            InspectorTest.expectEqual(sourceCode.mimeType, "", "MIME type should be empty.");
-            InspectorTest.expectEqual(sourceCode.statusCode, 304, "Status code should be 304.");
-            InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.Network, "responseSource should be WI.Resource.ResponseSource.Network");
-            InspectorTest.expectEqual(content, undefined, "Text content should be undefined.");
-        }
+        expression: `createFetchForPHP304(${JSON.stringify(phpURL)})`,
+        contentHandler: expectNoCachedContent,
     });
 
     addTestCase({
         name: "Network.getResponseBody.Fetch304.PHP200NotCached",
         description: "Get body for 200 response from network.",
-        expression: `createFetchForPHP200()`,
+        expression: `createFetchForPHP200(${JSON.stringify(phpURL)})`,
         contentHandler({error, sourceCode, content, rawBase64Encoded}) {
             InspectorTest.expectEqual(sourceCode.responseHeaders["Cache-Control"], "public, max-age=31556926", "Should see caching header.");
             InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
@@ -74,24 +241,57 @@ function test()
     addTestCase({
         name: "Network.getResponseBody.Fetch304.PHP200Cached",
         description: "Get body for 200 response from cache.",
-        expression: `createFetchForPHP200()`,
-        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
-            InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
-            InspectorTest.expectEqual(sourceCode.statusCode, 200, "Status code should be 200.");
-            InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.DiskCache, "responseSource should be WI.Resource.ResponseSource.DiskCache");
-            InspectorTest.expectEqual(content, "Plain text resource.", "Text content should be 'Plain text resource.'.");
-        }
+        expression: `createFetchForPHP200(${JSON.stringify(phpURL)})`,
+        contentHandler: expectCachedPlainText,
     });
 
     addTestCase({
         name: "Network.getResponseBody.Fetch304.PHP304Cached",
         description: "Get cached body for 304 response.",
-        expression: `createFetchForPHP304()`,
-        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
-            InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
-            InspectorTest.expectEqual(sourceCode.statusCode, 200, "Status code should be 200.");
-            InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.DiskCache, "responseSource should be WI.Resource.ResponseSource.DiskCache");
-            InspectorTest.expectEqual(content, "Plain text resource.", "Text content should be 'Plain text resource.'.");
+        expression: `createFetchForPHP304(${JSON.stringify(phpURL)})`,
+        contentHandler: expectCachedPlainText,
+    });
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch304.PHP304AfterAbort",
+        description: "A 304 response must not reuse content from an aborted fetch.",
+        async setup() {
+            await abortResource(`createFetchForPHP200Aborted(${JSON.stringify(abortedURL)})`);
+            await InspectorTest.evaluateInPage("destroyUnusedCachedResources()");
+        },
+        expression: `fetch(${JSON.stringify(abortedURL)}, { headers: { 'X-Status-Code-Needed': '304' } })`,
+        contentHandler: expectNoCachedContent,
+    });
+
+    suite.addTestCase({
+        name: "Network.getResponseBody.Fetch304.FetchCompleteThenAborted",
+        description: "An aborted fetch must not hide an earlier completed response.",
+        async test() {
+            let url = `${phpURL}&fetch-complete-then-aborted`;
+            let complete = await contentAsText(await fetchResource(url, "200"));
+            InspectorTest.expectEqual(complete.content, "Plain text resource.", "Should load the complete response.");
+            await abortResource(`createFetchForPHP200Aborted(${JSON.stringify(url)})`);
+            await InspectorTest.evaluateInPage("destroyUnusedCachedResources()");
+            let response = await fetchResource(url, "304");
+            InspectorTest.expectEqual(response.type, WI.Resource.Type.Fetch, "Resource should be Fetch type.");
+            expectCachedPlainText(await response.requestContent());
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.getResponseBody.XHR304.AfterAbort",
+        description: "An aborted XHR must not provide cached content, with or without forced resource destruction.",
+        async test() {
+            let url = `${phpURL}&xhr-aborted`;
+            InspectorTest.log("Without forced resource destruction:");
+            await abortResource(`xhrAborted(${JSON.stringify(url)})`);
+            await expectNoReusedXHRContent(url);
+
+            url = `${phpURL}&xhr-aborted-then-destroyed`;
+            InspectorTest.log("After forced resource destruction:");
+            await abortResource(`xhrAborted(${JSON.stringify(url)})`);
+            await InspectorTest.evaluateInPage("destroyUnusedCachedResources()");
+            await expectNoReusedXHRContent(url);
         }
     });
 
@@ -101,19 +301,14 @@ function test()
         async setup() {
             return InspectorTest.evaluateInPage(`internals.clearMemoryCache()`);
         },
-        expression: `createFetchForFile304()`,
-        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
-            InspectorTest.expectEqual(sourceCode.mimeType, "", "MIME type should be empty.");
-            InspectorTest.expectEqual(sourceCode.statusCode, 304, "Status code should be 304.");
-            InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.Network, "responseSource should be WI.Resource.ResponseSource.Network");
-            InspectorTest.expectEqual(content, undefined, "Text content should be undefined.");
-        }
+        expression: `createFetchForFile304(${JSON.stringify(fileURL)})`,
+        contentHandler: expectNoCachedContent,
     });
 
     addTestCase({
         name: "Network.getResponseBody.Fetch304.File200NotCached",
         description: "Get body for 200 response from network.",
-        expression: `createFetchForFile200()`,
+        expression: `createFetchForFile200(${JSON.stringify(fileURL)})`,
         contentHandler({error, sourceCode, content, rawBase64Encoded}) {
             InspectorTest.expectEqual(sourceCode.responseHeaders["Cache-Control"], "public, max-age=31556926", "Should see caching header.");
             InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
@@ -126,24 +321,126 @@ function test()
     addTestCase({
         name: "Network.getResponseBody.Fetch304.File200Cached",
         description: "Get body for 200 response from cache.",
-        expression: `createFetchForFile200()`,
-        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
-            InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
-            InspectorTest.expectEqual(sourceCode.statusCode, 200, "Status code should be 200.");
-            InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.DiskCache, "responseSource should be WI.Resource.ResponseSource.DiskCache");
-            InspectorTest.expectEqual(content, "Plain text resource.", "Text content should be 'Plain text resource.'.");
-        }
+        expression: `createFetchForFile200(${JSON.stringify(fileURL)})`,
+        contentHandler: expectCachedPlainText,
     });
 
     addTestCase({
         name: "Network.getResponseBody.Fetch304.File304Cached",
         description: "Get cached body for 304 response.",
-        expression: `createFetchForFile304()`,
-        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
-            InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
-            InspectorTest.expectEqual(sourceCode.statusCode, 200, "Status code should be 200.");
-            InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.DiskCache, "responseSource should be WI.Resource.ResponseSource.DiskCache");
-            InspectorTest.expectEqual(content, "Plain text resource.", "Text content should be 'Plain text resource.'.");
+        expression: `createFetchForFile304(${JSON.stringify(fileURL)})`,
+        contentHandler: expectCachedPlainText,
+    });
+
+    suite.addTestCase({
+        name: "Network.getResponseBody.XHR304.MostRecentCompletedResponse",
+        description: "Ignore unfinished and failed XHR responses, including content saved during cached resource destruction.",
+        async test() {
+            let completeContent = "Complete \u2603 response.";
+            let url = `${phpURL}&mimetype=application/octet-stream&content=${encodeURIComponent(completeContent)}`;
+            await fetchResource(url, "200");
+
+            let [pendingResource, receivedData] = await Promise.all([
+                awaitResource(url),
+                evaluatePagePromise(`startXHR(${JSON.stringify(url)}, "incomplete")`),
+            ]);
+            InspectorTest.expectTrue(receivedData, "The competing XHR should receive partial data.");
+            // The CGI exits after sending 17 of the advertised 100 bytes.
+            // Apache keeps the connection open until its idle timeout, leaving the XHR loading.
+            InspectorTest.expectTrue(pendingResource.isLoading(), "The competing XHR should still be loading.");
+
+            let whileLoading = await contentAsText(await fetchResource(url, "304"));
+            InspectorTest.expectFalse(whileLoading.error, "Should recover complete content while the newer XHR is loading.");
+            InspectorTest.expectTrue(whileLoading.rawBase64Encoded, "Recovered binary content should remain base64 encoded.");
+            InspectorTest.expectEqual(whileLoading.content, completeContent, "Should recover the completed response instead of the unfinished response.");
+
+            await Promise.all([
+                pendingResource.failed ? Promise.resolve() : pendingResource.awaitEvent(WI.Resource.Event.LoadingDidFail),
+                evaluatePagePromise("destroyPendingXHR()"),
+            ]);
+            InspectorTest.expectTrue(pendingResource.failed, "The competing XHR should fail after being aborted.");
+
+            let partial = await NetworkAgent.getResponseBody(pendingResource.requestIdentifier);
+            let partialContent = partial.base64Encoded ? await WI.BlobUtilities.decodeBase64ToBlob(partial.body, "application/octet-stream").text() : partial.body;
+            InspectorTest.expectEqual(partialContent, "Partial response.", "The destroyed XHR should retain its own partial content.");
+
+            let afterAbort = await contentAsText(await fetchResource(url, "304"));
+            InspectorTest.expectFalse(afterAbort.error, "Should recover complete content after the newer XHR fails.");
+            InspectorTest.expectTrue(afterAbort.rawBase64Encoded, "Recovered binary content should remain base64 encoded after the XHR fails.");
+            InspectorTest.expectEqual(afterAbort.content, completeContent, "Partial content saved during destruction must not replace the completed response.");
+
+            await fetchResource(url, "empty");
+            let afterEmpty = await fetchResource(url, "304");
+            let emptyContent = await afterEmpty.requestContent();
+            InspectorTest.expectEqual(afterEmpty.statusCode, 304, "A newer empty response must not fall back to an older nonempty response.");
+            InspectorTest.expectEqual(emptyContent.content, undefined, "A newer empty response must not reuse older content.");
+            await evaluatePagePromise("destroyPendingXHR()");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.getResponseBody.XHR304.CopyWhileSourceIsEvicted",
+        description: "Preserve recovered content when making room for the copy evicts its source.",
+        async test() {
+            // Two copies of 600,000 bytes exceed the 1 MiB cache limit.
+            let url = `${phpURL}&repeat=30000`;
+            let completeContent = "Plain text resource.".repeat(30000);
+            let [source] = await Promise.all([
+                awaitResource(url),
+                evaluatePagePromise(`startXHR(${JSON.stringify(url)}, "200")`),
+            ]);
+            let original = await contentAsText(source);
+            InspectorTest.expectFalse(original.error, "Should retain the complete original response.");
+            InspectorTest.expectTrue(original.content === completeContent, "The original response should contain every byte.");
+
+            await evaluatePagePromise("destroyPendingXHR()");
+            let afterDestruction = await NetworkAgent.getResponseBody(source.requestIdentifier);
+            InspectorTest.expectTrue(!afterDestruction.base64Encoded && afterDestruction.body === completeContent, "Saving the destroyed resource should preserve its existing content.");
+
+            let recovered = await contentAsText(await fetchResource(url, "304"));
+            InspectorTest.expectFalse(recovered.error, "Should recover the response while evicting its source.");
+            InspectorTest.expectTrue(recovered.content === completeContent, "The recovered response should contain every byte.");
+
+            await expectEvicted(source, "Recovering the response should evict the original cache entry.");
+            await evaluatePagePromise("destroyPendingXHR()");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.getResponseBody.Fetch304.DecodedContentExceedsLimit",
+        description: "Evict content that fits while loading but exceeds the limit after base64 encoding.",
+        setup: resetNetworkAgent,
+        async test() {
+            // Base64 encoding grows 800,000 bytes to 1,066,668 bytes, exceeding the 1 MiB cache limit.
+            let url = `${phpURL}&mimetype=application/octet-stream&repeat=40000`;
+            let resource = await fetchResource(url, "200");
+            await expectEvicted(resource, "Decoded content larger than the cache limit should be evicted.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.getResponseBody.XHR304.DecodeWhileAnotherResponseCompletes",
+        description: "Exclude unaccounted decoded content from eviction while another response finishes reentrantly.",
+        setup: resetNetworkAgent,
+        async test() {
+            // The raw bodies fit within 1 MiB (440,000 + 600,000 bytes).
+            // UTF-16 decoding grows the first body to 800,000 bytes, so the second must be evicted.
+            let pattern = "A".repeat(19) + "\u2603";
+            let url = `${phpURL}&content=${encodeURIComponent(pattern)}&repeat=20000`;
+            let competingURL = `${phpURL}&repeat=30000&competing`;
+            let competingAdded = awaitResource(competingURL);
+            let [source] = await Promise.all([
+                awaitResource(url),
+                evaluatePagePromise(`startXHRWithCompetingCompletion(${JSON.stringify(url)}, ${JSON.stringify(competingURL)})`),
+            ]);
+            let [content, competing] = await Promise.all([
+                contentAsText(source),
+                competingAdded,
+            ]);
+            InspectorTest.expectFalse(content.error, "Decoding should preserve the completed response under cache pressure.");
+            InspectorTest.expectTrue(content.content === pattern.repeat(20000), "The decoded response should preserve every character.");
+            await expectEvicted(competing, "Decoding should evict the competing response instead of unaccounted content.");
+            await evaluatePagePromise("destroyPendingXHR()");
         }
     });
 
@@ -152,6 +449,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>Tests for getting the content of Fetch requests with the "304 Not Modified" response status.</p>
+<p>Tests for getting the content of requests with the "304 Not Modified" response status.</p>
 </body>
 </html>

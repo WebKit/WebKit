@@ -354,20 +354,14 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
     
     // FIXME: <webkit.org/b/216125> 304 Not Modified responses for XHR/Fetch do not have all their information from the cache.
     if (isNotModified && (type == ResourceType::XHR || type == ResourceType::Fetch) && (!cachedResource || !cachedResource->encodedSize())) {
-        if (auto previousResourceData = m_resourcesData->dataForURL(response.url().string())) {
-            if (previousResourceData->hasContent())
-                m_resourcesData->setResourceContent(requestId, previousResourceData->content(), previousResourceData->base64Encoded());
-            else if (previousResourceData->hasBufferedData()) {
-                previousResourceData->buffer()->forEachSegmentAsSharedBuffer([&](auto&& buffer) {
-                    m_resourcesData->maybeAddResourceData(requestId, buffer);
-                });
-            }
-            
+        if (auto previousResourceData = m_resourcesData->dataForURL(response.url().string()); previousResourceData && previousResourceData->hasContent()) {
+            m_resourcesData->setResourceContent(requestId, previousResourceData->content(), previousResourceData->base64Encoded());
+
             resourceResponse->setString("mimeType"_s, previousResourceData->mimeType());
-            
+
             resourceResponse->setInteger("status"_s, previousResourceData->httpStatusCode());
             resourceResponse->setString("statusText"_s, previousResourceData->httpStatusText());
-            
+
             resourceResponse->setString("source"_s, Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::Network::Response::Source::DiskCache));
         }
     }
@@ -420,7 +414,7 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
     if (loader && loader->frameLoader() && m_resourcesData->resourceType(requestId) == ResourceType::Document)
         m_resourcesData->addResourceSharedBuffer(requestId, protect(loader->frameLoader()->documentLoader())->mainResourceData(), protect(loader->frame()->document())->encoding());
 
-    m_resourcesData->maybeDecodeDataToContent(requestId);
+    m_resourcesData->loadingFinished(requestId);
 
     String sourceMappingURL;
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
@@ -444,6 +438,7 @@ void InspectorNetworkAgent::didFailLoading(ResourceLoaderIdentifier identifier, 
         return;
 
     String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
+    m_resourcesData->loadingFailed(requestId);
 
     if (loader && m_resourcesData->resourceType(requestId) == ResourceType::Document) {
         RefPtr frame = loader->frame();

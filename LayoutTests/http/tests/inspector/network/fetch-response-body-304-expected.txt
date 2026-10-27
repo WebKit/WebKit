@@ -1,7 +1,7 @@
-Tests for getting the content of Fetch requests with the "304 Not Modified" response status.
+Tests for getting the content of requests with the "304 Not Modified" response status.
 
 
-== Running test suite: Network.getResponseBody.Fetch304
+== Running test suite: Network.getResponseBody.304
 -- Running test setup.
 -- Running test case: Network.getResponseBody.Fetch304.PHP304NotCached
 PASS: Resource should be Fetch type.
@@ -33,6 +33,40 @@ PASS: responseSource should be WI.Resource.ResponseSource.DiskCache
 PASS: Text content should be 'Plain text resource.'.
 
 -- Running test setup.
+PASS: Should receive data before aborting the response.
+-- Running test case: Network.getResponseBody.Fetch304.PHP304AfterAbort
+PASS: Resource should be Fetch type.
+PASS: MIME type should be empty.
+PASS: Status code should be 304.
+PASS: responseSource should be WI.Resource.ResponseSource.Network
+PASS: Text content should be undefined.
+
+-- Running test case: Network.getResponseBody.Fetch304.FetchCompleteThenAborted
+PASS: Should load the complete response.
+PASS: Should receive data before aborting the response.
+PASS: Resource should be Fetch type.
+PASS: MIME type should be 'text/plain'.
+PASS: Status code should be 200.
+PASS: responseSource should be WI.Resource.ResponseSource.DiskCache
+PASS: Text content should be 'Plain text resource.'.
+
+-- Running test case: Network.getResponseBody.XHR304.AfterAbort
+Without forced resource destruction:
+PASS: Should receive data before aborting the response.
+PASS: Resource should be XHR type.
+PASS: MIME type should be empty.
+PASS: Status code should be 304.
+PASS: responseSource should be WI.Resource.ResponseSource.Network
+PASS: Text content should be undefined.
+After forced resource destruction:
+PASS: Should receive data before aborting the response.
+PASS: Resource should be XHR type.
+PASS: MIME type should be empty.
+PASS: Status code should be 304.
+PASS: responseSource should be WI.Resource.ResponseSource.Network
+PASS: Text content should be undefined.
+
+-- Running test setup.
 -- Running test case: Network.getResponseBody.Fetch304.File304NotCached
 PASS: Resource should be Fetch type.
 PASS: MIME type should be empty.
@@ -61,4 +95,36 @@ PASS: MIME type should be 'text/plain'.
 PASS: Status code should be 200.
 PASS: responseSource should be WI.Resource.ResponseSource.DiskCache
 PASS: Text content should be 'Plain text resource.'.
+
+-- Running test case: Network.getResponseBody.XHR304.MostRecentCompletedResponse
+PASS: The competing XHR should receive partial data.
+PASS: The competing XHR should still be loading.
+PASS: Should recover complete content while the newer XHR is loading.
+PASS: Recovered binary content should remain base64 encoded.
+PASS: Should recover the completed response instead of the unfinished response.
+PASS: The competing XHR should fail after being aborted.
+PASS: The destroyed XHR should retain its own partial content.
+PASS: Should recover complete content after the newer XHR fails.
+PASS: Recovered binary content should remain base64 encoded after the XHR fails.
+PASS: Partial content saved during destruction must not replace the completed response.
+PASS: A newer empty response must not fall back to an older nonempty response.
+PASS: A newer empty response must not reuse older content.
+
+-- Running test case: Network.getResponseBody.XHR304.CopyWhileSourceIsEvicted
+PASS: Should retain the complete original response.
+PASS: The original response should contain every byte.
+PASS: Saving the destroyed resource should preserve its existing content.
+PASS: Should recover the response while evicting its source.
+PASS: The recovered response should contain every byte.
+PASS: Recovering the response should evict the original cache entry.
+
+-- Running test setup.
+-- Running test case: Network.getResponseBody.Fetch304.DecodedContentExceedsLimit
+PASS: Decoded content larger than the cache limit should be evicted.
+
+-- Running test setup.
+-- Running test case: Network.getResponseBody.XHR304.DecodeWhileAnotherResponseCompletes
+PASS: Decoding should preserve the completed response under cache pressure.
+PASS: The decoded response should preserve every character.
+PASS: Decoding should evict the competing response instead of unaccounted content.
 

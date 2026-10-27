@@ -51,10 +51,15 @@ public:
         WTF_MAKE_TZONE_ALLOCATED(ResourceData);
         friend class NetworkResourcesData;
     public:
+        enum class LoadState : uint8_t { Loading, Finished, Failed };
+
         ResourceData(const String& requestId, const String& loaderId);
 
         const String& requestId() const LIFETIME_BOUND { return m_requestId; }
         const String& loaderId() const LIFETIME_BOUND { return m_loaderId; }
+
+        LoadState loadState() const { return m_loadState; }
+        void setLoadState(LoadState state) { m_loadState = state; }
 
         const String& frameId() const LIFETIME_BOUND { return m_frameId; }
         void setFrameId(const String& frameId) { m_frameId = frameId; }
@@ -131,6 +136,7 @@ public:
         bool m_isContentEvicted { false };
         bool m_base64Encoded { false };
         bool m_forceBufferData { false };
+        LoadState m_loadState { LoadState::Loading };
         WallTime m_responseTimestamp;
     };
 
@@ -152,9 +158,10 @@ public:
     void responseReceived(const String& requestId, const String& frameId, const ResourceResponse&, Inspector::ResourceType, bool forceBufferData);
     void setResourceType(const String& requestId, Inspector::ResourceType);
     Inspector::ResourceType resourceType(const String& requestId);
-    void setResourceContent(const String& requestId, const String& content, bool base64Encoded = false);
+    void setResourceContent(const String& requestId, String content, bool base64Encoded = false);
     ResourceData const* maybeAddResourceData(const String& requestId, const SharedBuffer&);
-    void maybeDecodeDataToContent(const String& requestId);
+    void loadingFinished(const String& requestId);
+    void loadingFailed(const String& requestId);
     void addCachedResource(const String& requestId, CachedResource*);
     void addResourceSharedBuffer(const String& requestId, RefPtr<FragmentedSharedBuffer>&&, const String& textEncodingName);
     ResourceData const* data(const String& requestId);

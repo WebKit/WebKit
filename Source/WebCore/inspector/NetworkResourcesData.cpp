@@ -184,7 +184,7 @@ Inspector::ResourceType NetworkResourcesData::resourceType(const String& request
     return resourceData->type();
 }
 
-void NetworkResourcesData::setResourceContent(const String& requestId, const String& content, bool base64Encoded)
+void NetworkResourcesData::setResourceContent(const String& requestId, String content, bool base64Encoded)
 {
     if (content.isNull())
         return;
@@ -194,12 +194,14 @@ void NetworkResourcesData::setResourceContent(const String& requestId, const Str
         return;
 
     size_t dataLength = content.sizeInBytes();
-    if (dataLength > m_settings.maximumSingleResourceContentSize)
+    if (dataLength > m_settings.maximumSingleResourceContentSize || dataLength > m_settings.maximumResourcesContentSize)
         return;
     if (resourceData->isContentEvicted())
         return;
 
-    if (ensureFreeSpace(dataLength) && !resourceData->isContentEvicted()) {
+    size_t previousDataLength = resourceData->hasData() ? resourceData->dataLength() : resourceData->content().sizeInBytes();
+    size_t additionalDataLength = dataLength > previousDataLength ? dataLength - previousDataLength : 0;
+    if (ensureFreeSpace(additionalDataLength) && !resourceData->isContentEvicted()) {
         // We can not be sure that we didn't try to save this request data while it was loading, so remove it, if any.
         if (resourceData->hasContent() || resourceData->hasData())
             m_contentSize -= resourceData->removeContent();
@@ -247,15 +249,19 @@ NetworkResourcesData::ResourceData const* NetworkResourcesData::maybeAddResource
     return resourceData;
 }
 
-void NetworkResourcesData::maybeDecodeDataToContent(const String& requestId)
+void NetworkResourcesData::loadingFinished(const String& requestId)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
-    if (!resourceData)
+    if (!resourceData || resourceData->loadState() != ResourceData::LoadState::Loading)
         return;
+
+    resourceData->setLoadState(ResourceData::LoadState::Finished);
 
     if (!resourceData->hasData())
         return;
 
+    // Do not evict this entry while its decoded size is not yet accounted for.
+    m_requestIdsDeque.remove(requestId);
     auto byteCount = resourceData->dataLength();
     m_contentSize -= byteCount;
 
@@ -266,8 +272,17 @@ void NetworkResourcesData::maybeDecodeDataToContent(const String& requestId)
         return;
     }
 
-    if (ensureFreeSpace(byteCount) && !resourceData->isContentEvicted())
+    if (ensureFreeSpace(byteCount) && !resourceData->isContentEvicted()) {
+        m_requestIdsDeque.appendOrMoveToLast(requestId);
         m_contentSize += byteCount;
+    } else
+        resourceData->evictContent();
+}
+
+void NetworkResourcesData::loadingFailed(const String& requestId)
+{
+    if (auto* resourceData = resourceDataForRequestId(requestId))
+        resourceData->setLoadState(ResourceData::LoadState::Failed);
 }
 
 void NetworkResourcesData::addCachedResource(const String& requestId, CachedResource* cachedResource)
@@ -300,6 +315,9 @@ NetworkResourcesData::ResourceData const* NetworkResourcesData::dataForURL(const
     NetworkResourcesData::ResourceData* mostRecentResourceData = nullptr;
     
     for (auto* resourceData : resources()) {
+        if (resourceData->loadState() != ResourceData::LoadState::Finished)
+            continue;
+
         // responseTimestamp is checked so that we only grab the most recent response for the URL, instead of potentionally getting a more stale response.
         if (resourceData->url() == url && resourceData->httpStatusCode() != httpStatus304NotModified && (!mostRecentResourceData || (resourceData->responseTimestamp() > mostRecentResourceData->responseTimestamp())))
             mostRecentResourceData = resourceData;
