@@ -767,9 +767,6 @@
 		};
 		07C913DA2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWebKitAPILibrary" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			additionalCompilerFlagsByRelativePath = {
-				WebKit/WKWebView/WKWebExtensionAPILocalization.mm = "-fobjc-arc";
-			};
 			membershipExceptions = (
 				JavaScriptCore/DisallowVMEntry.cpp,
 				JavaScriptCore/InspectorConsoleMessage.cpp,
