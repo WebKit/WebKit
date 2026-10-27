@@ -27,6 +27,7 @@
 #if USE(AVFOUNDATION)
 
 #include "BitrateMode.h"
+#include "MediaChannelLayout.h"
 #include <CoreMedia/CoreMedia.h>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -85,7 +86,6 @@ public:
         std::optional<unsigned> packetlossperc { };
         std::optional<bool> useinbandfec { };
         std::optional<bool> usedtx { };
-        bool useWebAudioChannelOrder { false };
     };
     static RefPtr<AudioSampleBufferConverter> create(Function<void()>&&, const Options&);
     // Whether a converter created with these options can convert content described by the CMFormatDescription.
@@ -139,6 +139,7 @@ private:
     AudioStreamBasicDescription m_sourceFormat WTF_GUARDED_BY_CAPABILITY(queue());
     AudioStreamBasicDescription m_destinationFormat WTF_GUARDED_BY_CAPABILITY(queue());
     RetainPtr<CMFormatDescriptionRef> m_destinationFormatDescription WTF_GUARDED_BY_CAPABILITY(queue());
+    std::optional<MediaChannelLayout> m_destinationChannelLayout WTF_GUARDED_BY_CAPABILITY(queue());
     RetainPtr<NSNumber> m_gdrCountNum WTF_GUARDED_BY_CAPABILITY(queue());
     UInt32 m_maxOutputPacketSize WTF_GUARDED_BY_CAPABILITY(queue()) { 0 };
     Vector<AudioStreamPacketDescription> m_destinationPacketDescriptions WTF_GUARDED_BY_CAPABILITY(queue());

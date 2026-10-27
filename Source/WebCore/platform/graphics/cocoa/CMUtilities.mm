@@ -545,9 +545,18 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
 
             auto absd = CAAudioStreamDescription { static_cast<double>(audioInfo->rate()), audioInfo->channels(), *format, CAAudioStreamDescription::IsInterleaved::Yes }.streamDescription();
 
+            AudioChannelLayoutWithSize channelLayout;
+            if (auto layout = audioInfo->channelLayout()) {
+                channelLayout = channelLayoutFromMediaChannelLayout(*layout, audioInfo->channels());
+                if (!channelLayout.first) {
+                    RELEASE_LOG_ERROR(MediaStream, "createFormatDescriptionFromTrackInfo: invalid channel layout");
+                    return nullptr;
+                }
+            }
+
             RetainPtr extensions = createExtensionsDictionary(info);
             CMFormatDescriptionRef newFormat = nullptr;
-            if (auto error = PAL::CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &absd, 0, nullptr, 0, nullptr, extensions.get(), &newFormat)) {
+            if (auto error = PAL::CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &absd, channelLayout.second, channelLayout.first.get(), 0, nullptr, extensions.get(), &newFormat)) {
                 RELEASE_LOG_ERROR(MediaStream, "createFormatDescriptionFromTrackInfo: CMAudioFormatDescriptionCreate failed with error %d", (int)error);
                 return nullptr;
             }
@@ -1642,7 +1651,7 @@ FourCC computeBoxType(FourCC codecType)
     }
 }
 
-std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout>>, size_t> channelLayoutFromChannelLayoutTag(UInt32 channelLayoutTag)
+AudioChannelLayoutWithSize channelLayoutFromChannelLayoutTag(UInt32 channelLayoutTag)
 {
     if (channelLayoutTag == kAudioChannelLayoutTag_UseChannelDescriptions || channelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap) {
         ASSERT_NOT_REACHED();
@@ -1655,7 +1664,7 @@ std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout
     return { WTF::move(channelLayout), channelLayoutSize };
 }
 
-std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout>>, size_t> channelLayoutFromChannelLabels(std::span<const AudioChannelLabel> channelLabels)
+AudioChannelLayoutWithSize channelLayoutFromChannelLabels(std::span<const AudioChannelLabel> channelLabels)
 {
     auto channelLayout = PAL::createAudioChannelLayout(static_cast<uint32_t>(channelLabels.size()), PAL::ShouldZeroMemory::Yes);
     channelLayout->mChannelLayoutTag = kAudioChannelLayoutTag_UseChannelDescriptions;
@@ -1664,6 +1673,235 @@ std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout
         descriptions[index].mChannelLabel = channelLabels[index];
     auto channelLayoutSize = PAL::allocationSize(*channelLayout);
     return { WTF::move(channelLayout), channelLayoutSize };
+}
+
+static std::optional<WebAudioChannel> webAudioChannel(AudioChannelLabel label, bool surroundsAreSides)
+{
+    switch (label) {
+    case kAudioChannelLabel_Left:
+        return WebAudioChannel::FrontLeft;
+    case kAudioChannelLabel_Right:
+        return WebAudioChannel::FrontRight;
+    case kAudioChannelLabel_Center:
+    case kAudioChannelLabel_Mono:
+        return WebAudioChannel::FrontCenter;
+    case kAudioChannelLabel_LFEScreen:
+        return WebAudioChannel::LowFrequency;
+    case kAudioChannelLabel_LeftSurround:
+        return surroundsAreSides ? WebAudioChannel::SideLeft : WebAudioChannel::BackLeft;
+    case kAudioChannelLabel_RightSurround:
+        return surroundsAreSides ? WebAudioChannel::SideRight : WebAudioChannel::BackRight;
+    case kAudioChannelLabel_RearSurroundLeft:
+    case kAudioChannelLabel_LeftBackSurround:
+        return WebAudioChannel::BackLeft;
+    case kAudioChannelLabel_RearSurroundRight:
+    case kAudioChannelLabel_RightBackSurround:
+        return WebAudioChannel::BackRight;
+    case kAudioChannelLabel_LeftCenter:
+        return WebAudioChannel::FrontLeftOfCenter;
+    case kAudioChannelLabel_RightCenter:
+        return WebAudioChannel::FrontRightOfCenter;
+    case kAudioChannelLabel_CenterSurround:
+        return WebAudioChannel::BackCenter;
+    case kAudioChannelLabel_LeftSurroundDirect:
+    case kAudioChannelLabel_LeftSideSurround:
+        return WebAudioChannel::SideLeft;
+    case kAudioChannelLabel_RightSurroundDirect:
+    case kAudioChannelLabel_RightSideSurround:
+        return WebAudioChannel::SideRight;
+    case kAudioChannelLabel_TopCenterSurround:
+        return WebAudioChannel::TopCenter;
+    case kAudioChannelLabel_VerticalHeightLeft:
+        return WebAudioChannel::TopFrontLeft;
+    case kAudioChannelLabel_VerticalHeightCenter:
+        return WebAudioChannel::TopFrontCenter;
+    case kAudioChannelLabel_VerticalHeightRight:
+        return WebAudioChannel::TopFrontRight;
+    case kAudioChannelLabel_TopBackLeft:
+    case kAudioChannelLabel_LeftTopRear:
+        return WebAudioChannel::TopBackLeft;
+    case kAudioChannelLabel_TopBackCenter:
+    case kAudioChannelLabel_CenterTopRear:
+        return WebAudioChannel::TopBackCenter;
+    case kAudioChannelLabel_TopBackRight:
+    case kAudioChannelLabel_RightTopRear:
+        return WebAudioChannel::TopBackRight;
+    default:
+        return { };
+    }
+}
+
+std::optional<Vector<WebAudioChannel>> webAudioChannelsFromChannelDescriptions(std::span<const AudioChannelDescription> descriptions)
+{
+    // Surround channels are at the back, unless the layout also has back or back center channels; they are then at the side.
+    bool surroundsAreSides = std::ranges::any_of(descriptions, [](auto& description) {
+        switch (description.mChannelLabel) {
+        case kAudioChannelLabel_RearSurroundLeft:
+        case kAudioChannelLabel_RearSurroundRight:
+        case kAudioChannelLabel_LeftBackSurround:
+        case kAudioChannelLabel_RightBackSurround:
+        case kAudioChannelLabel_CenterSurround:
+            return true;
+        default:
+            return false;
+        }
+    });
+
+    Vector<WebAudioChannel> channels;
+    channels.reserveInitialCapacity(descriptions.size());
+    for (auto& description : descriptions) {
+        auto channel = webAudioChannel(description.mChannelLabel, surroundsAreSides);
+        if (!channel)
+            return { };
+        channels.append(*channel);
+    }
+    return channels;
+}
+
+// The inverse of webAudioChannelsFromChannelDescriptions(): surround channels are labelled as such when they are
+// the only channels at the back or at the side; otherwise the back channels are rear surround channels.
+static Vector<AudioChannelLabel> channelLabelsFromWebAudioChannelMask(uint32_t mask)
+{
+    auto has = [&](WebAudioChannel channel) {
+        return !!(mask & webAudioChannelBit(channel));
+    };
+    bool hasSides = has(WebAudioChannel::SideLeft) || has(WebAudioChannel::SideRight);
+    bool hasBacks = has(WebAudioChannel::BackLeft) || has(WebAudioChannel::BackRight) || has(WebAudioChannel::BackCenter);
+
+    Vector<AudioChannelLabel> labels;
+    for (uint8_t index = 0; index < numberOfWebAudioChannels; ++index) {
+        auto channel = static_cast<WebAudioChannel>(index);
+        if (!has(channel))
+            continue;
+        labels.append([&] -> AudioChannelLabel {
+            switch (channel) {
+            case WebAudioChannel::FrontLeft:
+                return kAudioChannelLabel_Left;
+            case WebAudioChannel::FrontRight:
+                return kAudioChannelLabel_Right;
+            case WebAudioChannel::FrontCenter:
+                return kAudioChannelLabel_Center;
+            case WebAudioChannel::LowFrequency:
+                return kAudioChannelLabel_LFEScreen;
+            case WebAudioChannel::BackLeft:
+                return hasSides || has(WebAudioChannel::BackCenter) ? kAudioChannelLabel_RearSurroundLeft : kAudioChannelLabel_LeftSurround;
+            case WebAudioChannel::BackRight:
+                return hasSides || has(WebAudioChannel::BackCenter) ? kAudioChannelLabel_RearSurroundRight : kAudioChannelLabel_RightSurround;
+            case WebAudioChannel::FrontLeftOfCenter:
+                return kAudioChannelLabel_LeftCenter;
+            case WebAudioChannel::FrontRightOfCenter:
+                return kAudioChannelLabel_RightCenter;
+            case WebAudioChannel::BackCenter:
+                return kAudioChannelLabel_CenterSurround;
+            case WebAudioChannel::SideLeft:
+                return hasBacks ? kAudioChannelLabel_LeftSurround : kAudioChannelLabel_LeftSideSurround;
+            case WebAudioChannel::SideRight:
+                return hasBacks ? kAudioChannelLabel_RightSurround : kAudioChannelLabel_RightSideSurround;
+            case WebAudioChannel::TopCenter:
+                return kAudioChannelLabel_TopCenterSurround;
+            case WebAudioChannel::TopFrontLeft:
+                return kAudioChannelLabel_VerticalHeightLeft;
+            case WebAudioChannel::TopFrontCenter:
+                return kAudioChannelLabel_VerticalHeightCenter;
+            case WebAudioChannel::TopFrontRight:
+                return kAudioChannelLabel_VerticalHeightRight;
+            case WebAudioChannel::TopBackLeft:
+                return kAudioChannelLabel_TopBackLeft;
+            case WebAudioChannel::TopBackCenter:
+                return kAudioChannelLabel_TopBackCenter;
+            case WebAudioChannel::TopBackRight:
+                return kAudioChannelLabel_TopBackRight;
+            }
+            ASSERT_NOT_REACHED();
+            return kAudioChannelLabel_Unknown;
+        }());
+    }
+    return labels;
+}
+
+AudioChannelLayoutWithSize channelLayoutFromMediaChannelLayout(const MediaChannelLayout& layout, uint32_t numberOfChannels)
+{
+    if (!layout.isValid(numberOfChannels) || numberOfChannels > std::numeric_limits<uint16_t>::max())
+        return { nullptr, 0 };
+
+    // The labels are the ones of CoreAudio's own layouts, so that the speakers are the same as with a layout tag.
+    if (layout.kind == MediaChannelLayout::Kind::Positional)
+        return channelLayoutFromChannelLabels(channelLabelsFromWebAudioChannelMask(layout.mask).span());
+
+    if (layout.kind == MediaChannelLayout::Kind::Ambisonic && layout.mask) {
+        // A tag can't describe non-diegetic channels, so the channels are described one by one.
+        uint32_t components = numberOfChannels - std::popcount(layout.mask);
+        Vector<AudioChannelLabel> labels(components, [](size_t index) -> AudioChannelLabel {
+            return kAudioChannelLabel_HOA_ACN_0 + static_cast<AudioChannelLabel>(index);
+        });
+        labels.append(kAudioChannelLabel_Left);
+        labels.append(kAudioChannelLabel_Right);
+        return channelLayoutFromChannelLabels(labels.span());
+    }
+
+    auto channelLayout = PAL::createAudioChannelLayout(0, PAL::ShouldZeroMemory::Yes);
+    switch (layout.kind) {
+    case MediaChannelLayout::Kind::Positional:
+        ASSERT_NOT_REACHED();
+        return { nullptr, 0 };
+    case MediaChannelLayout::Kind::Discrete:
+        // A single channel without a position is mono.
+        channelLayout->mChannelLayoutTag = numberOfChannels == 1 ? kAudioChannelLayoutTag_Mono : kAudioChannelLayoutTag_DiscreteInOrder | numberOfChannels;
+        break;
+    case MediaChannelLayout::Kind::Ambisonic:
+        channelLayout->mChannelLayoutTag = kAudioChannelLayoutTag_HOA_ACN_SN3D | numberOfChannels;
+        break;
+    }
+    auto channelLayoutSize = PAL::allocationSize(*channelLayout);
+    return { WTF::move(channelLayout), channelLayoutSize };
+}
+
+std::optional<MediaChannelLayout> mediaChannelLayoutFromChannelLayout(const AudioChannelLayout& channelLayout)
+{
+    if (channelLayout.mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap) {
+        uint32_t mask = channelLayout.mChannelBitmap;
+        if (!mask || mask >= (1U << numberOfWebAudioChannels))
+            return { };
+        return MediaChannelLayout { .kind = MediaChannelLayout::Kind::Positional, .mask = mask };
+    }
+    if (channelLayout.mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelDescriptions) {
+        // Ambisonic components HOA_ACN_0 to HOA_ACN_n, optionally followed by a non-diegetic stereo pair.
+        auto descriptions = PAL::span(channelLayout);
+        size_t components = 0;
+        while (components < descriptions.size() && descriptions[components].mChannelLabel == kAudioChannelLabel_HOA_ACN_0 + components)
+            ++components;
+        if (components) {
+            if (components == descriptions.size())
+                return MediaChannelLayout { .kind = MediaChannelLayout::Kind::Ambisonic };
+            if (descriptions.size() == components + 2 && descriptions[components].mChannelLabel == kAudioChannelLabel_Left && descriptions[components + 1].mChannelLabel == kAudioChannelLabel_Right)
+                return MediaChannelLayout { .kind = MediaChannelLayout::Kind::Ambisonic, .mask = MediaChannelLayout::nonDiegeticStereoMask };
+            return { };
+        }
+
+        // A single channel without a position is mono.
+        if (descriptions.size() == 1 && descriptions[0].mChannelLabel == kAudioChannelLabel_Mono)
+            return MediaChannelLayout { .kind = MediaChannelLayout::Kind::Discrete };
+
+        // Channels at distinct Web Audio positions, in Web Audio order.
+        auto channels = webAudioChannelsFromChannelDescriptions(descriptions);
+        if (!channels || channels->isEmpty() || !std::ranges::is_sorted(*channels))
+            return { };
+        uint32_t mask = 0;
+        for (auto channel : *channels)
+            mask |= webAudioChannelBit(channel);
+        if (static_cast<size_t>(std::popcount(mask)) != channels->size())
+            return { };
+        return MediaChannelLayout { .kind = MediaChannelLayout::Kind::Positional, .mask = mask };
+    }
+    switch (channelLayout.mChannelLayoutTag & 0xFFFF0000) {
+    case kAudioChannelLayoutTag_Mono & 0xFFFF0000:
+    case kAudioChannelLayoutTag_DiscreteInOrder:
+        return MediaChannelLayout { .kind = MediaChannelLayout::Kind::Discrete };
+    case kAudioChannelLayoutTag_HOA_ACN_SN3D:
+        return MediaChannelLayout { .kind = MediaChannelLayout::Kind::Ambisonic };
+    default:
+        return { };
+    }
 }
 
 String channelLayoutDescription(UInt32 channelLayoutTag)

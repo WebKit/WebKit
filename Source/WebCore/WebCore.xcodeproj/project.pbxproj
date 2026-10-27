@@ -2050,6 +2050,7 @@
 		5130F2F624AEA60A00E1D0A0 /* GameControllerSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5130F2F424AEA60300E1D0A0 /* GameControllerSoftLink.mm */; };
 		51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 51327D5E11A33A2B004F9D65 /* SinkDocument.h */; };
 		513C7B6D2E7C2C2400079881 /* MediaSamplesBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 513C7B6C2E7C2BC700079881 /* MediaSamplesBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4A1C0D7F2EB0A11500C0FFEE /* MediaChannelLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A1C0D7E2EB0A11500C0FFEE /* MediaChannelLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D5A0032F1E000300C0FFEE /* MediaSamplesDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D5A0022F1E000200C0FFEE /* MediaSamplesDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D5A0062F1E000600C0FFEE /* PacedMediaSamplesDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D5A0052F1E000500C0FFEE /* PacedMediaSamplesDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		513C7B6E2E7C2E7A00079881 /* TrackInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 513C7B6B2E7C2A0E00079881 /* TrackInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12551,6 +12552,7 @@
 		51327D5F11A33A2B004F9D65 /* SinkDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SinkDocument.cpp; sourceTree = "<group>"; };
 		513C7B6B2E7C2A0E00079881 /* TrackInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackInfo.h; sourceTree = "<group>"; };
 		513C7B6C2E7C2BC700079881 /* MediaSamplesBlock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSamplesBlock.h; sourceTree = "<group>"; };
+		4A1C0D7E2EB0A11500C0FFEE /* MediaChannelLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaChannelLayout.h; sourceTree = "<group>"; };
 		513C7B6F2E7C312E00079881 /* TrackInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TrackInfo.cpp; sourceTree = "<group>"; };
 		513C7B762E7CD9CA00079881 /* MediaSamplesBlock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSamplesBlock.cpp; sourceTree = "<group>"; };
 		51D5A0012F1E000100C0FFEE /* MediaSamplesDecoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSamplesDecoder.cpp; sourceTree = "<group>"; };
@@ -39743,6 +39745,7 @@
 				46EFAF101E5FB9E100E7F34B /* LowPowerModeNotifier.h */,
 				7AE6C9391BE0C60100E19E03 /* MainThreadSharedTimer.cpp */,
 				7AE6C93A1BE0C60100E19E03 /* MainThreadSharedTimer.h */,
+				4A1C0D7E2EB0A11500C0FFEE /* MediaChannelLayout.h */,
 				CDF2B003181F059C00F2B424 /* MediaDescription.h */,
 				5154F6EE2B02340900B857D9 /* MediaPromiseTypes.h */,
 				CD641EC7181ED60100EE4C41 /* MediaSample.h */,
@@ -47584,6 +47587,7 @@
 				076614EC2A74398500F1658B /* MediaAccessDenialReason.h in Headers */,
 				5CBC8DAD1AAA302200E1C803 /* MediaAccessibilitySoftLink.h in Headers */,
 				931BCC611124DFCB00BE70DD /* MediaCanStartListener.h in Headers */,
+				4A1C0D7F2EB0A11500C0FFEE /* MediaChannelLayout.h in Headers */,
 				078E093A17D16E1C00420AA1 /* MediaConstraints.h in Headers */,
 				4194EBC22B726719005D076C /* MediaConstraintType.h in Headers */,
 				CDF65CC8145B1E7500C4C7AA /* MediaController.h in Headers */,

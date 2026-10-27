@@ -84,8 +84,16 @@ WEBCORE_EXPORT Vector<Ref<SharedBuffer>> getKeyIDs(CMFormatDescriptionRef);
 
 WEBCORE_EXPORT FourCC LEGACY_NODELETE computeBoxType(FourCC);
 
-WEBCORE_EXPORT std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout>>, size_t> channelLayoutFromChannelLayoutTag(UInt32);
-WEBCORE_EXPORT std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout>>, size_t> channelLayoutFromChannelLabels(std::span<const AudioChannelLabel>);
+using AudioChannelLayoutWithSize = std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout>>, size_t>;
+
+WEBCORE_EXPORT AudioChannelLayoutWithSize channelLayoutFromChannelLayoutTag(UInt32);
+WEBCORE_EXPORT AudioChannelLayoutWithSize channelLayoutFromChannelLabels(std::span<const AudioChannelLabel>);
+// Returns the Web Audio channel of each channel, or std::nullopt if a channel has no Web Audio position.
+std::optional<Vector<WebAudioChannel>> webAudioChannelsFromChannelDescriptions(std::span<const AudioChannelDescription>);
+// Returns { nullptr, 0 } if the layout isn't valid for numberOfChannels.
+WEBCORE_EXPORT AudioChannelLayoutWithSize channelLayoutFromMediaChannelLayout(const MediaChannelLayout&, uint32_t numberOfChannels);
+// Converts back a layout created by channelLayoutFromMediaChannelLayout().
+WEBCORE_EXPORT std::optional<MediaChannelLayout> mediaChannelLayoutFromChannelLayout(const AudioChannelLayout&);
 // Retrieve channel layout name string for debugging.
 WEBCORE_EXPORT String channelLayoutDescription(UInt32);
 

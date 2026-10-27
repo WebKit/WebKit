@@ -7157,6 +7157,19 @@ header: <WebCore/TrackInfo.h>
 #endif
 };
 
+header: <WebCore/MediaChannelLayout.h>
+enum class WebCore::MediaChannelLayoutKind : uint8_t {
+    Positional,
+    Discrete,
+    Ambisonic,
+};
+
+header: <WebCore/MediaChannelLayout.h>
+[CustomHeader] struct WebCore::MediaChannelLayout {
+    WebCore::MediaChannelLayoutKind kind;
+    uint32_t mask;
+};
+
 header: <WebCore/TrackInfo.h>
 [CustomHeader] struct WebCore::AudioSpecificInfoData {
     uint32_t rate;
@@ -7166,6 +7179,7 @@ header: <WebCore/TrackInfo.h>
 
     RefPtr<WebCore::SharedBuffer> cookieData;
     std::optional<WebCore::AudioSampleFormat> sampleFormat;
+    std::optional<WebCore::MediaChannelLayout> channelLayout;
 };
 using WebCore::AudioInfoData = std::pair<WebCore::TrackInfoData, WebCore::AudioSpecificInfoData>;
 

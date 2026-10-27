@@ -46,8 +46,6 @@ public:
         Vector<uint8_t> description;
         uint64_t sampleRate { 0 };
         uint64_t numberOfChannels { 0 };
-        // Output channels follow https://webaudio.github.io/web-audio-api/#ChannelOrdering instead of the codec's order.
-        bool useWebAudioChannelOrder { true };
     };
 
     struct DecodedData {

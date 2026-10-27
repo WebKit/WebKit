@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <WebCore/MediaChannelLayout.h>
 #include <WebCore/MediaPlayer.h>
 #include <span>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -43,6 +44,8 @@ public:
     virtual size_t numberOfFrames() const = 0;
     virtual std::optional<uint64_t> duration() const = 0;
     virtual int64_t timestamp() const = 0;
+    // The channels follow https://webaudio.github.io/web-audio-api/#ChannelOrdering when they have a speaker position.
+    virtual MediaChannelLayout channelLayout() const = 0;
 
     virtual size_t memoryCost() const = 0;
 

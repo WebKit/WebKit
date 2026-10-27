@@ -179,6 +179,14 @@ int64_t PlatformRawAudioDataGStreamer::timestamp() const
     return timestamp;
 }
 
+// Two channels are the front left and right, and other channels are discrete.
+MediaChannelLayout PlatformRawAudioDataGStreamer::channelLayout() const
+{
+    if (numberOfChannels() == 2)
+        return { .kind = MediaChannelLayout::Kind::Positional, .mask = webAudioChannelBit(WebAudioChannel::FrontLeft) | webAudioChannelBit(WebAudioChannel::FrontRight) };
+    return { .kind = MediaChannelLayout::Kind::Discrete };
+}
+
 bool PlatformRawAudioDataGStreamer::isInterleaved() const
 {
     return GST_AUDIO_INFO_LAYOUT(&m_info) == GST_AUDIO_LAYOUT_INTERLEAVED;

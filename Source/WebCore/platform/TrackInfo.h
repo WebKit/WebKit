@@ -29,6 +29,7 @@
 #include <WebCore/FloatSize.h>
 #include <WebCore/FourCC.h>
 #include <WebCore/ImmersiveVideoMetadata.h>
+#include <WebCore/MediaChannelLayout.h>
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/SharedBuffer.h>
@@ -232,6 +233,7 @@ struct AudioSpecificInfoData {
 
     RefPtr<SharedBuffer> cookieData { };
     std::optional<AudioSampleFormat> sampleFormat { };
+    std::optional<MediaChannelLayout> channelLayout { };
 
     bool operator==(const AudioSpecificInfoData&) const = default;
 };
@@ -250,6 +252,7 @@ public:
     RefPtr<SharedBuffer> cookieData() const { return m_data.cookieData; }
     std::optional<AudioSampleFormat> sampleFormat() const { return m_data.sampleFormat; }
     bool isDecoded() const { return !!m_data.sampleFormat; }
+    std::optional<MediaChannelLayout> channelLayout() const { return m_data.channelLayout; }
 
     AudioInfoData toAudioInfoData() const
     {

@@ -50,6 +50,7 @@ public:
     size_t numberOfFrames() const final;
     std::optional<uint64_t> duration() const final;
     int64_t timestamp() const final;
+    MediaChannelLayout channelLayout() const final { return m_channelLayout; }
     size_t memoryCost() const final;
 
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::AVFObjC; }
@@ -65,6 +66,7 @@ private:
 
     const Ref<MediaSampleAVFObjC> m_sample;
     const CAAudioStreamDescription m_description;
+    const MediaChannelLayout m_channelLayout;
 };
 
 }
