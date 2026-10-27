@@ -186,6 +186,12 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         }
     }
 
+    if (RefPtr document = cachedResourceLoader.document(); document && document->backForwardCacheState() == Document::InBackForwardCache) {
+        CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Document already in back/forward cache", frame.get());
+        failBeforeStarting();
+        return;
+    }
+
     Ref frameLoader = frame->loader();
     if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && !m_options.keepAlive && !shouldUsePingLoad(type())) {
         while (true) {
