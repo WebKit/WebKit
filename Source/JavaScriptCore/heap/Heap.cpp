@@ -1403,21 +1403,16 @@ bool Heap::stopTheMutator()
 {
     for (;;) {
         unsigned oldState = m_worldState.load();
+        // Only called by the collector thread when it is conducting.
+        RELEASE_ASSERT(!(oldState & mutatorHasConnBit));
+
         if (oldState & stoppedBit) {
             RELEASE_ASSERT(!(oldState & hasAccessBit));
             RELEASE_ASSERT(!(oldState & mutatorWaitingBit));
-            RELEASE_ASSERT(!(oldState & mutatorHasConnBit));
             return true;
-        }
-        
-        if (oldState & mutatorHasConnBit) {
-            RELEASE_ASSERT(!(oldState & hasAccessBit));
-            RELEASE_ASSERT(!(oldState & stoppedBit));
-            return false;
         }
 
         if (!(oldState & hasAccessBit)) {
-            RELEASE_ASSERT(!(oldState & mutatorHasConnBit));
             RELEASE_ASSERT(!(oldState & mutatorWaitingBit));
             // We can stop the world instantly.
             if (m_worldState.compareExchangeWeak(oldState, oldState | stoppedBit))
