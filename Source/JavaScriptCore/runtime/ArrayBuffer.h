@@ -38,6 +38,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/SharedTask.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -54,6 +55,12 @@ class Memory;
 }
 
 using ArrayBufferDestructorFunction = RefPtr<SharedTask<void(void*)>>;
+
+#if defined(__swift__)
+// FIXME: rdar://190236443 Swift only generates a Span overload of ArrayBuffer::createFromSpan()
+// if its return type is spelled without template arguments. Remove this alias once that's fixed.
+using RefArrayBuffer = Ref<ArrayBuffer>;
+#endif
 
 class SharedArrayBufferContents final : public ThreadSafeRefCounted<SharedArrayBufferContents> {
 public:
@@ -247,9 +254,29 @@ private:
 
 class ArrayBuffer final : public GCIncomingRefCounted<ArrayBuffer> {
 public:
+#if defined(__swift__) && !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
+    // FIXME: rdar://165684636 means we have to define these at this level of the
+    // type hierarchy.
+    void ref() const
+    {
+        GCIncomingRefCounted<ArrayBuffer>::ref();
+    }
+
+    void deref() const
+    {
+        GCIncomingRefCounted<ArrayBuffer>::deref();
+    }
+#endif
+
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(size_t numElements, unsigned elementByteSize);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(ArrayBuffer&);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(std::span<const uint8_t> = { });
+#if defined(__swift__)
+    // FIXME: Swift only generates a Span overload for a NOESCAPE std::span parameter, but PlayStation's compiler
+    // rejects NOESCAPE on a parameter that isn't a pointer, so this wrapper adds it for Swift alone. Once every
+    // compiler accepts it, mark create(std::span<const uint8_t>) NOESCAPE and remove this wrapper.
+    static RefArrayBuffer createFromSpan(NOESCAPE std::span<const uint8_t> span) { return create(span); }
+#endif
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(ArrayBufferContents&&);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createAdopted(std::span<const uint8_t>);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createFromBytes(std::span<const uint8_t> data, ArrayBufferDestructorFunction&&);
@@ -339,7 +366,7 @@ private:
     static constexpr unsigned s_lockedFlag = INT32_MIN;
     Checked<unsigned> m_pinCount { 0 };
     bool m_isWasmMemory { false };
-};
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(.ref, .deref);
 
 void* ArrayBuffer::data() LIFETIME_BOUND
 {
