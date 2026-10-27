@@ -60,7 +60,7 @@ https://www.cbssports.com/
 https://chatgpt.com/
     (none)
 https://www.cnn.com/
-    (none)
+    NeedsFormControlToBeMouseFocusableQuirk
 https://configurator.audi.com/
     ShouldRenderModelElementFallbackContentQuirk
 https://www.digitaltrends.com/

@@ -246,6 +246,11 @@
             ]
         },
         {
+            "bugs": ["rdar://190735753"],
+            "matches": ["*://*.cnn.com/*"],
+            "behaviors": [{ "id": "NeedsFormControlToBeMouseFocusableQuirk" }]
+        },
+        {
             "matches": ["*://codepen.io/*"],
             "behaviors": [{ "id": "ShouldEnableSpeakerSelectionPermissionsPolicyQuirk" }]
         },
