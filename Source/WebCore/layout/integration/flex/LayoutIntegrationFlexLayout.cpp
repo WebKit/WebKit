@@ -511,6 +511,9 @@ LayoutUnit FlexLayout::staticCrossAxisPositionForPositionedFlexItem(const Render
     auto availableSpace = utils.availableAlignmentSpaceForFlexItem(FlexFormattingUtils::crossAxisContentExtent(flexBox()), flexItem, utils.crossAxisExtentForFlexItem(flexItem));
     auto safety = utils.overflowAlignmentForFlexItem(flexItem);
     auto align = FlexFormattingUtils::alignmentForFlexItem(flexItem);
+    // An out-of-flow item has no baseline-sharing group, so baseline values use their fallback alignment: start for first baseline and end for last baseline.
+    if (align == ItemPosition::LastBaseline)
+        align = ItemPosition::FlexEnd;
     if (availableSpace < 0 && safety == OverflowAlignment::Safe)
         align = ItemPosition::FlexStart;
     return FlexFormattingUtils::alignmentOffset(availableSpace, align, { }, { }, FlexFormattingUtils::isWrapReverse(flexBox()));
