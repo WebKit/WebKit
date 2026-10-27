@@ -322,7 +322,7 @@ void CSSFilterRenderer::setFilterRegion(const FloatRect& filterRegion)
 
 bool CSSFilterRenderer::isIdentity(const RenderElement& renderer, const Style::Filter& filter)
 {
-    if (filter.hasFilterThatShouldBeRestrictedBySecurityOrigin())
+    if (!renderer.isSVGLayerAwareDescendantRenderer() && filter.hasFilterThatShouldBeRestrictedBySecurityOrigin())
         return false;
 
     for (auto& value : filter) {

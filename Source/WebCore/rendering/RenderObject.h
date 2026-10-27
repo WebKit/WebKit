@@ -605,7 +605,8 @@ public:
     bool isRenderOrLegacyRenderSVGHiddenContainer() const { return isRenderSVGHiddenContainer() || isLegacyRenderSVGHiddenContainer(); }
     bool isRenderOrLegacyRenderSVGModelObject() const { return isRenderSVGModelObject() || isLegacyRenderSVGModelObject(); }
     bool isRenderOrLegacyRenderSVGResourceFilterPrimitive() const { return isRenderSVGResourceFilterPrimitive() || isLegacyRenderSVGResourceFilterPrimitive(); }
-    bool isSVGLayerAwareRenderer() const { return isRenderSVGRoot() || isRenderSVGModelObject() || isRenderSVGText() || isRenderSVGInline() || isRenderSVGForeignObject(); }
+    bool isSVGLayerAwareDescendantRenderer() const { return isRenderSVGModelObject() || isRenderSVGText() || isRenderSVGInline() || isRenderSVGForeignObject(); }
+    bool isSVGLayerAwareRenderer() const { return isRenderSVGRoot() || isSVGLayerAwareDescendantRenderer(); }
     bool isSVGRenderer() const { return isRenderOrLegacyRenderSVGRoot() || isRenderOrLegacyRenderSVGModelObject() || isRenderSVGBlock() || isRenderSVGInline(); }
 
     // FIXME: Those belong into a SVG specific base-class for all renderers (see above)
