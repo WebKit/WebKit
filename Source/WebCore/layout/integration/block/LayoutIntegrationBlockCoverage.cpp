@@ -296,6 +296,10 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
             descendant = descendant->nextInPreOrderAfterChildren(&box);
             continue;
         }
+        // FIXME: A block-level box in inline content, which the inline formatting context measures through the render tree
+        // (LineBuilder::handleBlockContent).
+        if (CheckedPtr element = dynamicDowncast<RenderElement>(*descendant); element && element != &box && element->isBlockLevelBox() && element->parent()->isInlineBox())
+            return false;
         // The own formatting context of a box laid out through the render tree measures it (RenderBox::minContentLogicalWidthContribution),
         // and so does the inline formatting context for an atomic inline-level box (BoxGeometryUpdater::updateLayoutBoxDimensions).
         // FIXME: An orthogonal box, which the render tree lays out to measure it (RenderBox::computeIntrinsicLogicalHeight), a percentage
@@ -487,6 +491,21 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     return outOfFlowBoxesInLeafAvoidanceReason(box, rootContainer);
 }
 
+// The inline formatting context hands a block-level box in inline content back to the block formatting context laying out the block container
+// the content is in (BlockFormattingContext::layoutBlockLevelBoxInInlineContent), which has to be on its stack: the root or one of its in-flow
+// block containers that does not establish a formatting context of its own.
+// FIXME: Quirks mode, whose margins and percentage heights look past the block container, anonymous boxes, and the inline content of out-of-flow
+// boxes and of nested roots, which get a block layout state of their own.
+static std::optional<BlockAvoidanceReason> blockLevelBoxInInlineContentAvoidanceReason(const RenderBlockFlow& box, const RenderBlockFlow& rootContainer)
+{
+    if (box.document().inQuirksMode() || box.isAnonymous())
+        return BlockAvoidanceReason::ContentHasBlockInInline;
+    CheckedPtr blockContainer = box.containingBlock();
+    if (blockContainer != &rootContainer && (blockContainer->createsNewFormattingContext() || blockContainer->isOutOfFlowPositioned()))
+        return BlockAvoidanceReason::ContentHasBlockInInline;
+    return { };
+}
+
 static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer)
 {
     // A box a line-clamp container hid after its clamp point stays hidden until the render tree path lays it out again
@@ -523,8 +542,13 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     // Form controls and legends treat an auto width as fit-content (RenderBox::sizesLogicalWidthToFitContent).
     if (isAnyOf<HTMLButtonElement, HTMLInputElement, HTMLLegendElement, HTMLSelectElement, HTMLTextAreaElement>(blockContainer->element()))
         return BlockAvoidanceReason::ContentIsFormControl;
-    if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(blockContainer->parent()); !blockContainer->isOutOfFlowPositioned() && (!parent || parent->childrenInline()))
-        return BlockAvoidanceReason::ContentHasBlockInInline;
+    if (!blockContainer->isOutOfFlowPositioned()) {
+        if (blockContainer->parent()->isInlineBox()) {
+            if (auto reason = blockLevelBoxInInlineContentAvoidanceReason(*blockContainer, rootContainer))
+                return reason;
+        } else if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(blockContainer->parent()); !parent || parent->childrenInline())
+            return BlockAvoidanceReason::ContentHasBlockInInline;
+    }
     if (blockContainer->createsNewFormattingContext() && !isSupportedBlockFormattingContextRoot(*blockContainer))
         return BlockAvoidanceReason::ContentHasFormattingContextRoot;
     // Its layer is positioned once layout is done, which also offsets a relatively or sticky positioned box without moving anything else
