@@ -290,6 +290,13 @@ void SimulatedXRDevice::frameTimerFired()
     }
 #endif
 
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    if (m_simulateIncompletePlaneData)
+        m_simulateIncompletePlaneData = false;
+    else
+        data.detectedPlanes = detectedPlanes();
+#endif
+
     if (m_FrameCallback)
         m_FrameCallback(WTF::move(data));
 }
@@ -553,14 +560,60 @@ Vector<PlatformXR::FrameData::HitTestResult> SimulatedXRDevice::hitTestWorld(con
     return resultsForRegions.map([](auto& x) { return PlatformXR::FrameData::HitTestResult { x.pose }; });
 }
 
+#endif
+
+#if ENABLE(WEBXR_HIT_TEST) || ENABLE(WEBXR_PLANE_DETECTION)
 void SimulatedXRDevice::setWorld(const FakeXRWorldInit& world)
 {
     m_world = world;
+#if ENABLE(WEBXR_PLANE_DETECTION)
+    // A new world replaces all its planes, so they get new ids and thus new lastChangedTime values.
+    ++m_worldGeneration;
+#endif
 }
 
 void SimulatedXRDevice::clearWorld()
 {
     m_world.hitTestRegions.clear();
+}
+#endif
+
+#if ENABLE(WEBXR_PLANE_DETECTION)
+void SimulatedXRDevice::updateWorld(const FakeXRWorldInit& world)
+{
+    m_world = world;
+}
+
+Vector<PlatformXR::FrameData::Plane> SimulatedXRDevice::detectedPlanes() const
+{
+    Vector<PlatformXR::FrameData::Plane> planes;
+    for (size_t i = 0; i < m_world.hitTestRegions.size(); ++i) {
+        const auto& planeInfo = m_world.hitTestRegions[i].planeInfo;
+        if (!planeInfo)
+            continue;
+
+        auto pose = WebFakeXRDevice::parseRigidTransform(planeInfo->origin);
+        if (pose.hasException())
+            continue;
+
+        PlatformXR::FrameData::Plane plane;
+        plane.id = (static_cast<uint64_t>(m_worldGeneration) << 32) | (i + 1);
+        plane.pose = pose.releaseReturnValue();
+        plane.polygon = planeInfo->polygon.map([](auto& point) {
+            return FloatPoint(point.x, point.z);
+        });
+        plane.orientation = planeInfo->orientation == XRPlaneOrientation::Horizontal ? PlatformXR::PlaneOrientation::Horizontal : PlatformXR::PlaneOrientation::Vertical;
+        if (planeInfo->semanticLabel == "floor"_s)
+            plane.semanticLabel = PlatformXR::PlaneSemanticLabel::Floor;
+        else if (planeInfo->semanticLabel == "wall"_s)
+            plane.semanticLabel = PlatformXR::PlaneSemanticLabel::Wall;
+        else if (planeInfo->semanticLabel == "ceiling"_s)
+            plane.semanticLabel = PlatformXR::PlaneSemanticLabel::Ceiling;
+        else if (planeInfo->semanticLabel == "table"_s)
+            plane.semanticLabel = PlatformXR::PlaneSemanticLabel::Table;
+        planes.append(WTF::move(plane));
+    }
+    return planes;
 }
 #endif
 
@@ -685,7 +738,7 @@ void WebFakeXRDevice::simulateShutdown()
     m_device->simulateShutdownCompleted();
 }
 
-#if ENABLE(WEBXR_HIT_TEST)
+#if ENABLE(WEBXR_HIT_TEST) || ENABLE(WEBXR_PLANE_DETECTION)
 void WebFakeXRDevice::setWorld(const FakeXRWorldInit& world)
 {
     m_device->setWorld(world);

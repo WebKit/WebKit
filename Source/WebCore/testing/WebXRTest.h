@@ -55,7 +55,7 @@ public:
         std::optional<FakeXRRigidTransformInit> floorOrigin;
         std::optional<FakeXRRigidTransformInit> viewerOrigin;
 
-#if ENABLE(WEBXR_HIT_TEST)
+#if ENABLE(WEBXR_HIT_TEST) || ENABLE(WEBXR_PLANE_DETECTION)
         std::optional<FakeXRWorldInit> world;
 #endif
     };

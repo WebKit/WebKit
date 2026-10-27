@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webxr/plane-detection/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/webxr/plane-detection/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/webxr/plane-detection/idlharness.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webxr/plane-detection/xrFrame_detectedPlanes_inactive_frame.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/plane-detection/xrFrame_detectedPlanes_incomplete_update.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/plane-detection/xrFrame_detectedPlanes_plumbing.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/plane-detection/xrPlane_identity.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/plane-detection/xrPlane_lastChangedTime_no_change.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/plane-detection/xrSession_initiateRoomCapture.https.html

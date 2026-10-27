@@ -82,6 +82,6 @@
     // is used to provide a reference origin for all matrices.
     FakeXRRigidTransformInit viewerOrigin;
 
-    // Hit test extensions:
-    [EnabledBySetting=WebXRHitTestModuleEnabled, Conditional=WEBXR_HIT_TEST] FakeXRWorldInit world;
+    // Hit test and plane detection extensions:
+    [EnabledBySetting=WebXRHitTestModuleEnabled|WebXRPlaneDetectionModuleEnabled, Conditional=WEBXR_HIT_TEST|WEBXR_PLANE_DETECTION] FakeXRWorldInit world;
 };

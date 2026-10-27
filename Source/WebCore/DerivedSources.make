@@ -881,6 +881,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webxr/WebXRBoundedReferenceSpace.idl \
     $(WebCore)/Modules/webxr/WebXRFrame+HandInput.idl \
     $(WebCore)/Modules/webxr/WebXRFrame+HitTest.idl \
+    $(WebCore)/Modules/webxr/WebXRFrame+PlaneDetection.idl \
     $(WebCore)/Modules/webxr/WebXRFrame.idl \
     $(WebCore)/Modules/webxr/WebXRHand.idl \
     $(WebCore)/Modules/webxr/WebXRHitTestResult.idl \
@@ -892,6 +893,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webxr/WebXRJointPose.idl \
     $(WebCore)/Modules/webxr/WebXRJointSpace.idl \
     $(WebCore)/Modules/webxr/WebXRLayer.idl \
+    $(WebCore)/Modules/webxr/WebXRPlane.idl \
+    $(WebCore)/Modules/webxr/WebXRPlaneSet.idl \
     $(WebCore)/Modules/webxr/WebXRPose.idl \
     $(WebCore)/Modules/webxr/WebXRRay.idl \
     $(WebCore)/Modules/webxr/WebXRReferenceSpace.idl \
@@ -901,6 +904,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webxr/WebXRSession+AR.idl \
     $(WebCore)/Modules/webxr/WebXRSession+Layers.idl \
     $(WebCore)/Modules/webxr/WebXRSession+HitTest.idl \
+    $(WebCore)/Modules/webxr/WebXRSession+PlaneDetection.idl \
     $(WebCore)/Modules/webxr/WebXRSession.idl \
     $(WebCore)/Modules/webxr/WebXRSpace.idl \
     $(WebCore)/Modules/webxr/WebXRSystem.idl \
@@ -935,6 +939,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webxr/XRLayerInit.idl \
     $(WebCore)/Modules/webxr/XRLayerLayout.idl \
     $(WebCore)/Modules/webxr/XRLayerQuality.idl \
+    $(WebCore)/Modules/webxr/XRPlaneOrientation.idl \
     $(WebCore)/Modules/webxr/XRProjectionLayer.idl \
     $(WebCore)/Modules/webxr/XRProjectionLayerInit.idl \
     $(WebCore)/Modules/webxr/XRQuadLayer.idl \

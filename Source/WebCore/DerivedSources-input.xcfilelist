@@ -1149,6 +1149,7 @@ $(PROJECT_DIR)/Modules/webxr/Navigator+WebXR.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRBoundedReferenceSpace.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRFrame+HandInput.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRFrame+HitTest.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRFrame+PlaneDetection.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRFrame.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRHand.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRHitTestResult.idl
@@ -1167,7 +1168,10 @@ $(PROJECT_DIR)/Modules/webxr/WebXRRenderState+Layers.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRRenderState.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRRigidTransform.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSession+AR.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRPlane.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRPlaneSet.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSession+HitTest.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRSession+PlaneDetection.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSession+Layers.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSession.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSpace.idl
@@ -1203,6 +1207,7 @@ $(PROJECT_DIR)/Modules/webxr/XRLayerEvent.idl
 $(PROJECT_DIR)/Modules/webxr/XRLayerInit.idl
 $(PROJECT_DIR)/Modules/webxr/XRLayerLayout.idl
 $(PROJECT_DIR)/Modules/webxr/XRLayerQuality.idl
+$(PROJECT_DIR)/Modules/webxr/XRPlaneOrientation.idl
 $(PROJECT_DIR)/Modules/webxr/XRProjectionLayer.idl
 $(PROJECT_DIR)/Modules/webxr/XRProjectionLayerInit.idl
 $(PROJECT_DIR)/Modules/webxr/XRQuadLayer.idl

@@ -3566,6 +3566,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRFrame+HandInput.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRFrame+HandInput.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRFrame+HitTest.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRFrame+HitTest.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRFrame+PlaneDetection.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRFrame+PlaneDetection.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRFrame.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRFrame.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRHand.cpp
@@ -3590,6 +3592,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRLayer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRLayer.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRPose.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRPose.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRPlane.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRPlane.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRPlaneSet.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRPlaneSet.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRRay.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRRay.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRReferenceSpace.cpp
@@ -3606,6 +3612,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRSession+HitTest.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRSession+HitTest.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRSession+Layers.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRSession+Layers.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRSession+PlaneDetection.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRSession+PlaneDetection.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRSession.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRSession.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRSpace.cpp
@@ -3760,6 +3768,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRLayerLayout.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRLayerLayout.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRLayerQuality.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRLayerQuality.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRPlaneOrientation.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRPlaneOrientation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRProjectionLayer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRProjectionLayer.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRProjectionLayerInit.cpp

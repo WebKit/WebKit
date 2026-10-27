@@ -548,6 +548,8 @@ namespace WebCore {
     macro(XRJointSpace) \
     macro(XRLayer) \
     macro(XRLayerEvent) \
+    macro(XRPlane) \
+    macro(XRPlaneSet) \
     macro(XRPose) \
     macro(XRProjectionLayer) \
     macro(XRQuadLayer) \

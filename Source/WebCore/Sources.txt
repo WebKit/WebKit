@@ -616,6 +616,9 @@ Modules/webxr/XRCylinderLayer.cpp
 Modules/webxr/XREquirectLayer.cpp
 Modules/webxr/WebXRHitTestResult.cpp
 Modules/webxr/WebXRHitTestSource.cpp
+Modules/webxr/WebXRPlane.cpp
+Modules/webxr/WebXRPlaneSet.cpp
+Modules/webxr/WebXRPlaneSpace.cpp
 Modules/webxr/XRInputSourceEvent.cpp
 Modules/webxr/XRInputSourcesChangeEvent.cpp
 Modules/webxr/XRLayerEvent.cpp

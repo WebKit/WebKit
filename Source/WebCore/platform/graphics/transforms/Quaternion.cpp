@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Quaternion.h"
 
+#include "FloatPoint3D.h"
 #include <cmath>
 
 namespace WebCore {
@@ -65,12 +66,27 @@ Quaternion Quaternion::slerp(const Quaternion& other, double t)
 }
 
 // Compute quaternion multiplication
-Quaternion Quaternion::accumulate(const Quaternion& other)
+Quaternion Quaternion::accumulate(const Quaternion& other) const
 {
     return { w * other.x + x * other.w + y * other.z - z * other.y,
         w * other.y - x * other.z + y * other.w + z * other.x,
         w * other.z + x * other.y - y * other.x + z * other.w,
         w * other.w - x * other.x - y * other.y - z * other.z };
+}
+
+Quaternion Quaternion::conjugate() const
+{
+    return { -x, -y, -z, w };
+}
+
+// Rotate the passed vector by this (unit) quaternion, as v + 2w(u × v) + 2u × (u × v) with u the vector part.
+FloatPoint3D Quaternion::rotate(const FloatPoint3D& vector) const
+{
+    FloatPoint3D u(x, y, z);
+    auto t = u.cross(vector);
+    t.scale(2, 2, 2);
+    auto ut = u.cross(t);
+    return { static_cast<float>(vector.x() + w * t.x() + ut.x()), static_cast<float>(vector.y() + w * t.y() + ut.y()), static_cast<float>(vector.z() + w * t.z() + ut.z()) };
 }
 
 Quaternion Quaternion::interpolate(const Quaternion& other, double progress, CompositeOperation compositeOperation)

@@ -5787,6 +5787,7 @@ imported/w3c/web-platform-tests/webxr/hand-input [ Skip ]
 imported/w3c/web-platform-tests/webxr/hit-test [ Skip ]
 imported/w3c/web-platform-tests/webxr/layers [ Skip ]
 imported/w3c/web-platform-tests/webxr/light-estimation [ Skip ]
+imported/w3c/web-platform-tests/webxr/plane-detection [ Skip ]
 
 # WebXR - These currently timeout due to missing features.
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/events_referenceSpace_reset_immersive.https.html [ Skip ]

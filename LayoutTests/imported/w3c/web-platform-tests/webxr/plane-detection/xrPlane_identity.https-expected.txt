@@ -1,0 +1,4 @@
+
+PASS XRPlane objects are the same across frames - webgl
+PASS XRPlane objects are the same across frames - webgl2
+
