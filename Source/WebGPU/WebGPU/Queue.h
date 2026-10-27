@@ -66,6 +66,22 @@ enum class HDRTransferFunction : uint8_t {
     HLG = 2, // NOLINT
 };
 HDRTransferFunction hdrTransferFunctionForPixelBuffer(CVPixelBufferRef);
+// The command buffers that a queue committed and Metal has not completed. Metal's completion
+// handlers remove them on Metal's threads, without referencing the queue.
+class CommittedCommandBuffers : public ThreadSafeRefCounted<CommittedCommandBuffers> {
+public:
+    static Ref<CommittedCommandBuffers> create() { return adoptRef(*new CommittedCommandBuffers); }
+
+    void add(id<MTLCommandBuffer>);
+    void remove(id<MTLCommandBuffer>);
+    id<MTLCommandBuffer> _Nullable first();
+
+private:
+    CommittedCommandBuffers() = default;
+
+    Lock m_lock;
+    NSMutableOrderedSet<id<MTLCommandBuffer>> * _Nullable m_commandBuffers WTF_GUARDED_BY_LOCK(m_lock) { nil };
+};
 
 // https://gpuweb.github.io/gpuweb/#gpuqueue
 // A device owns its default queue, not the other way around.
@@ -190,10 +206,10 @@ private:
     HashMap<uint64_t, OnSubmittedWorkDoneCallbacks> m_onSubmittedWorkDoneCallbacks;
     NSMutableDictionary<NSNumber*, NSMutableSet<id<MTLCounterSampleBuffer>>*> * _Nullable m_retainedCounterSampleBuffers;
     NSMutableOrderedSet<id<MTLCommandBuffer>> * _Nullable m_createdNotCommittedBuffers { nil };
-    NSMutableOrderedSet<id<MTLCommandBuffer>> * _Nullable m_committedNotCompletedBuffers WTF_GUARDED_BY_LOCK(m_committedNotCompletedBuffersLock) { nil };
-    Lock m_committedNotCompletedBuffersLock;
+    const Ref<CommittedCommandBuffers> m_committedNotCompletedBuffers;
     NSMapTable<id<MTLCommandBuffer>, id<MTLCommandEncoder>> * _Nullable m_openCommandEncoders;
     const ThreadSafeWeakPtr<Instance> m_instance;
+    const Ref<WorkScheduler> m_workScheduler;
     id<MTLBuffer> _Nullable m_temporaryBuffer;
     uint64_t m_temporaryBufferOffset;
     // The bytes a pending staged copy aliases, waiting for finalizeBlitCommandEncoder() to attach
