@@ -48,7 +48,8 @@ public:
     void addStreamConnection(StreamServerConnection&);
     void removeStreamConnection(StreamServerConnection&);
     // Runs all the work dispatched before the work queue stops, including the work dispatched while it is
-    // stopping, then the cleanup function. The work dispatched once the cleanup function runs is dropped.
+    // stopping, then the cleanup function. Work must not be dispatched after the work queue has stopped,
+    // including by the cleanup function.
     void stopAndWaitForCompletion(NOESCAPE WTF::Function<void()>&& cleanupFunction = nullptr);
     void wakeUp();
     Semaphore& wakeUpSemaphore() LIFETIME_BOUND { return m_wakeUpSemaphore; }

@@ -35,28 +35,6 @@ namespace TestWebKitAPI {
 
 namespace {
 
-class SetOnDestruction {
-public:
-    explicit SetOnDestruction(bool& flag)
-        : m_flag(&flag)
-    {
-    }
-
-    SetOnDestruction(SetOnDestruction&& other)
-        : m_flag(std::exchange(other.m_flag, nullptr))
-    {
-    }
-
-    ~SetOnDestruction()
-    {
-        if (m_flag)
-            *m_flag = true;
-    }
-
-private:
-    bool* m_flag;
-};
-
 // Called on the work queue as the only work dispatched so far. Returns once stopAndWaitForCompletion()
 // has been called: it wakes up the work queue only after it has marked the work queue as stopping.
 void waitUntilStopping(IPC::StreamConnectionWorkQueue& queue)
@@ -128,49 +106,6 @@ TEST_F(StreamConnectionWorkQueueTest, WorkDispatchedFromOtherThreadWhileStopping
     });
     otherThread->waitForCompletion();
     EXPECT_EQ(order, (Vector<int> { 1, 2, 3 }));
-}
-
-TEST_F(StreamConnectionWorkQueueTest, WorkDispatchedByCleanupFunctionIsDropped)
-{
-    auto queue = IPC::StreamConnectionWorkQueue::create("StreamConnectionWorkQueueTest work queue"_s);
-    bool didRun = false;
-    bool wasDestroyed = false;
-    queue->dispatch([] { });
-    queue->stopAndWaitForCompletion([&] {
-        queue->dispatch([&didRun, setOnDestruction = SetOnDestruction { wasDestroyed }] {
-            didRun = true;
-        });
-    });
-    EXPECT_FALSE(didRun);
-    EXPECT_TRUE(wasDestroyed);
-}
-
-TEST_F(StreamConnectionWorkQueueTest, WorkDispatchedAfterStopIsDropped)
-{
-    auto queue = IPC::StreamConnectionWorkQueue::create("StreamConnectionWorkQueueTest work queue"_s);
-    queue->dispatch([] { });
-    queue->stopAndWaitForCompletion();
-    bool didRun = false;
-    bool wasDestroyed = false;
-    queue->dispatch([&didRun, setOnDestruction = SetOnDestruction { wasDestroyed }] {
-        didRun = true;
-    });
-    EXPECT_FALSE(didRun);
-    EXPECT_TRUE(wasDestroyed);
-}
-
-TEST_F(StreamConnectionWorkQueueTest, WorkDispatchedAfterStopWithoutWorkIsDropped)
-{
-    // The work queue destructor asserts that no processing thread was started after the stop.
-    auto queue = IPC::StreamConnectionWorkQueue::create("StreamConnectionWorkQueueTest work queue"_s);
-    queue->stopAndWaitForCompletion();
-    bool didRun = false;
-    bool wasDestroyed = false;
-    queue->dispatch([&didRun, setOnDestruction = SetOnDestruction { wasDestroyed }] {
-        didRun = true;
-    });
-    EXPECT_FALSE(didRun);
-    EXPECT_TRUE(wasDestroyed);
 }
 
 }

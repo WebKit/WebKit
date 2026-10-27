@@ -122,7 +122,7 @@ void RemoteGPU::workQueueInitialize()
     // this owns m_backing, but m_backing contains a callback which has a stong reference to this.
     // The retain cycle is required because callbacks need to execute even if this is disowned
     // (because the callbacks handle resource cleanup, etc.).
-    // The retain cycle is broken in workQueueUninitialize().
+    // The retain cycle is broken in workQueueUninitialize(), which destroys m_backing.
     auto gpuProcessConnection = m_gpuConnectionToWebProcess.get();
     auto backing = WebCore::createWebGPUIntegration([protectedThis = protect(*this)](Function<void()>&& workItem) {
         protectedThis->m_workQueue->dispatch(WTF::move(workItem));
@@ -144,12 +144,13 @@ void RemoteGPU::workQueueUninitialize()
     streamConnection->stopReceivingMessages(Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
     streamConnection->invalidate();
     m_streamConnection = nullptr;
-    // Once the instance is released, the devices' queues drop the work that would call their pending
-    // callbacks, so destroying the devices calls them now.
+    // Once the instance is destroyed, it drops the work that would call the pending callbacks of
+    // the devices, so destroying the devices calls them now.
     for (Ref device : m_objectHeap->devices())
         device->destroy();
     clearObjectHeaps();
-    // Destroying the instance releases the objects that it keeps alive here, on the work queue.
+    // A destroyed instance schedules no more work, so it dispatches nothing to the work queue once
+    // the work queue has stopped.
     if (RefPtr backing = std::exchange(m_backing, nullptr))
         backing->destroy();
 }
