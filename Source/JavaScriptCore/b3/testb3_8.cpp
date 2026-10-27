@@ -1769,50 +1769,94 @@ void testMemoryMoveConstant()
     }
 }
 
-void testMemoryFill()
+void testMemoryFill(B3::Opcode opcode, bool isGCSafe, bool usesSIMD)
 {
-    Procedure proc;
-    BasicBlock* root = proc.addBlock();
-    auto arguments = cCallArgumentValues<void*, uint32_t, void*>(proc, root);
-    root->appendNew<BulkMemoryValue>(proc, MemoryFill, Origin(), arguments[0], arguments[1], arguments[2]);
-    root->clearSuccessors();
-    root->appendNew<Value>(proc, Return, Origin());
+    Width width = memoryFillWidth(opcode);
+    unsigned elementSize = bytesForWidth(width);
+    Type patternType = width <= Width32 ? Int32 : width == Width64 ? Int64 : V128;
 
-    auto code = compileProc(proc);
-    Vector<uint8_t> src(4096 + 1024);
-
-    for (unsigned base = 1; base < 4096; base <<= 1) {
-        unsigned offset = 0;
-        for (auto a : int32Operands()) {
-            src.fill(0);
-            invoke<void>(*code, src.mutableSpan().data(), static_cast<uint8_t>(a.value), static_cast<uintptr_t>(base + offset));
-            for (unsigned i = 0; i < (base + offset); ++i)
-                CHECK_EQ(src[i], static_cast<uint8_t>(a.value));
-            CHECK_EQ(src[(base + offset)], 0);
-            ++offset;
-        }
+    using Pattern = std::array<uint8_t, 16>;
+    Vector<Pattern> patterns;
+    patterns.constructAndAppend();
+    Pattern repeated;
+    repeated.fill(0x5a);
+    patterns.append(repeated);
+    for (unsigned seed = 1; seed <= 2; ++seed) {
+        Pattern distinct;
+        for (unsigned i = 0; i < distinct.size(); ++i)
+            distinct[i] = static_cast<uint8_t>(seed * 0x9d + i * 0x3b + 1);
+        patterns.append(distinct);
     }
-}
 
-void testMemoryFillConstant()
-{
-    Vector<uint8_t> src(4096 + 1024);
+    constexpr unsigned maxByteCount = 4096;
+    constexpr unsigned slack = 64;
+    Vector<uint64_t> storage((maxByteCount + 2 * slack) / sizeof(uint64_t));
+    uint8_t* buffer = reinterpret_cast<uint8_t*>(storage.mutableSpan().data());
 
-    for (unsigned width = 0; width < 128; ++width) {
-        for (auto a : int32Operands()) {
-            Procedure proc;
-            BasicBlock* root = proc.addBlock();
-            auto arguments = cCallArgumentValues<void*>(proc, root);
-            root->appendNew<BulkMemoryValue>(proc, MemoryFill, Origin(), arguments[0], root->appendIntConstant(proc, Origin(), Int32, a.value), root->appendIntConstant(proc, Origin(), pointerType(), width));
-            root->clearSuccessors();
-            root->appendNew<Value>(proc, Return, Origin());
-            auto code = compileProc(proc);
+    auto compile = [&](std::optional<uint64_t> constantCount, const Pattern* constantPattern) {
+        Procedure proc(usesSIMD);
+        BasicBlock* root = proc.addBlock();
+        auto arguments = cCallArgumentValues<void*, void*, size_t>(proc, root);
+        Value* pattern;
+        if (!constantPattern)
+            pattern = root->appendNew<MemoryValue>(proc, Load, patternType, Origin(), arguments[1]);
+        else if (patternType == Int32)
+            pattern = root->appendNew<Const32Value>(proc, Origin(), std::bit_cast<std::array<int32_t, 4>>(*constantPattern)[0]);
+        else if (patternType == Int64)
+            pattern = root->appendNew<Const64Value>(proc, Origin(), std::bit_cast<std::array<int64_t, 2>>(*constantPattern)[0]);
+        else
+            pattern = root->appendNew<Const128Value>(proc, Origin(), std::bit_cast<v128_t>(*constantPattern));
+        Value* count = constantCount ? root->appendIntConstant(proc, Origin(), pointerType(), *constantCount) : arguments[2];
+        root->appendNew<BulkMemoryValue>(proc, opcode, Origin(), arguments[0], pattern, count, isGCSafe);
+        root->clearSuccessors();
+        root->appendNew<Value>(proc, Return, Origin());
+        return compileProc(proc);
+    };
 
-            src.fill(0);
-            invoke<void>(*code, src.mutableSpan().data(), static_cast<uint8_t>(a.value));
-            for (unsigned i = 0; i < width; ++i)
-                CHECK_EQ(src[i], static_cast<uint8_t>(a.value));
-            CHECK_EQ(src[width], 0);
+    Vector<unsigned> offsets { 0, elementSize };
+    if (!isGCSafe)
+        offsets.append(1);
+
+    auto check = [&](Compilation& code, const Pattern& pattern, uint64_t count) {
+        uint64_t byteCount = count * elementSize;
+        unsigned end = byteCount + 2 * slack;
+        for (unsigned offset : offsets) {
+            for (unsigned i = 0; i < end; ++i)
+                buffer[i] = static_cast<uint8_t>(0xcc ^ i);
+            invoke<void>(code, buffer + slack + offset, pattern.data(), static_cast<uintptr_t>(count));
+            for (unsigned i = 0; i < end; ++i) {
+                if (i >= slack + offset && i < slack + offset + byteCount)
+                    CHECK_EQ(buffer[i], pattern[(i - slack - offset) % elementSize]);
+                else
+                    CHECK_EQ(buffer[i], static_cast<uint8_t>(0xcc ^ i));
+            }
+        }
+    };
+
+    {
+        auto code = compile(std::nullopt, nullptr);
+        for (uint64_t count = 0; count <= 1100 / elementSize; ++count) {
+            for (auto& pattern : patterns)
+                check(*code, pattern, count);
+        }
+        for (auto& pattern : patterns)
+            check(*code, pattern, maxByteCount / elementSize);
+    }
+
+    Vector<uint64_t> constantCounts;
+    for (uint64_t count = 0; count <= 160 / elementSize; ++count)
+        constantCounts.append(count);
+    for (uint64_t byteCount : { 496, 512, 528, 1024 })
+        constantCounts.append(byteCount / elementSize);
+    for (uint64_t count : constantCounts) {
+        {
+            auto code = compile(count, nullptr);
+            for (auto& pattern : patterns)
+                check(*code, pattern, count);
+        }
+        for (auto& pattern : patterns) {
+            auto code = compile(count, &pattern);
+            check(*code, pattern, count);
         }
     }
 }

@@ -32,6 +32,7 @@
 #include "AirCode.h"
 #include "B3ArgumentRegValue.h"
 #include "B3AtomicValue.h"
+#include "B3BulkMemoryValue.h"
 #include "B3Dominators.h"
 #include "B3MemoryValue.h"
 #include "B3Procedure.h"
@@ -422,14 +423,22 @@ public:
                 VALIDATE(value->child(2)->type() == pointerType(), ("At ", *value));
                 VALIDATE(value->type() == Void, ("At ", *value));
                 break;
-            case MemoryFill:
+            case MemoryFill8:
+            case MemoryFill16:
+            case MemoryFill32:
+            case MemoryFill64:
+            case MemoryFill128: {
+                Width width = memoryFillWidth(value->opcode());
+                Type patternType = width <= Width32 ? Int32 : width == Width64 ? Int64 : V128;
                 VALIDATE(!value->kind().isChill(), ("At ", *value));
                 VALIDATE(value->numChildren() == 3, ("At ", *value));
                 VALIDATE(value->child(0)->type() == pointerType(), ("At ", *value));
-                VALIDATE(value->child(1)->type() == Int32, ("At ", *value));
+                VALIDATE(value->child(1)->type() == patternType, ("At ", *value));
                 VALIDATE(value->child(2)->type() == pointerType(), ("At ", *value));
                 VALIDATE(value->type() == Void, ("At ", *value));
+                VALIDATE(!value->as<BulkMemoryValue>()->isGCSafe() || value->opcode() == MemoryFill64, ("At ", *value));
                 break;
+            }
             case AtomicWeakCAS:
                 VALIDATE(!value->kind().isChill(), ("At ", *value));
                 VALIDATE(value->numChildren() == 3, ("At ", *value));

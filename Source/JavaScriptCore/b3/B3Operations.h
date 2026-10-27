@@ -35,8 +35,13 @@
 namespace JSC::B3 {
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMemoryMove, void, (void* dst, const void* src, size_t count));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMemoryFill, void, (void* dst, int32_t target, size_t count));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationGCSafeMemoryMove, void, (void* dst, const void* src, size_t byteCount));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMemoryFill8, void, (void* dst, int32_t target, size_t count));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMemoryFill16, void, (void* dst, uint32_t pattern, size_t count));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMemoryFill32, void, (void* dst, uint32_t pattern, size_t count));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMemoryFill64, void, (void* dst, uint64_t pattern, size_t count));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationGCSafeMemoryFill64, void, (void* dst, uint64_t pattern, size_t count));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMemoryFill128, void, (void* dst, uint64_t lane0, uint64_t lane1, size_t count));
 
 } // namespace JSC::B3
 

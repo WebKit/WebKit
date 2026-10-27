@@ -294,8 +294,15 @@ enum Opcode : uint8_t {
     // result is as if the source were copied to a temporary first, as with memmove.
     MemoryMove,
 
-    // This is used for Wasm bulk memory operation `memory.fill`
-    MemoryFill,
+    // MemoryFillN(@dst, @pattern, @count) stores @pattern to each of @count consecutive N-bit
+    // elements starting at @dst. @count counts elements, not bytes. @pattern is Int32 for N <= 32,
+    // of which only the low N bits are stored, Int64 for N = 64, and V128 for N = 128. MemoryFill8
+    // is memset.
+    MemoryFill8,
+    MemoryFill16,
+    MemoryFill32,
+    MemoryFill64,
+    MemoryFill128,
 
     // This is used to represent standalone fences - i.e. fences that are not part of other
     // instructions. It's expressive enough to expose mfence on x86 and dmb ish/ishst on ARM. On
@@ -644,6 +651,39 @@ inline bool isAtomicXchg(Opcode opcode)
 inline bool isMemoryAccess(Opcode opcode)
 {
     return isAtom(opcode) || isLoadStore(opcode);
+}
+
+inline bool isMemoryFill(Opcode opcode)
+{
+    switch (opcode) {
+    case MemoryFill8:
+    case MemoryFill16:
+    case MemoryFill32:
+    case MemoryFill64:
+    case MemoryFill128:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline Width memoryFillWidth(Opcode opcode)
+{
+    switch (opcode) {
+    case MemoryFill8:
+        return Width8;
+    case MemoryFill16:
+        return Width16;
+    case MemoryFill32:
+        return Width32;
+    case MemoryFill64:
+        return Width64;
+    case MemoryFill128:
+        return Width128;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return Width8;
+    }
 }
 
 inline Opcode signExtendOpcode(Width width)
