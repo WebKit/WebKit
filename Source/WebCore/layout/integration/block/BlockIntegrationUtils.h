@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/AdjoiningMargins.h>
 #include <WebCore/LayoutBoxGeometry.h>
 #include <WebCore/LayoutRect.h>
 #include <WebCore/LayoutUnit.h>
@@ -37,14 +38,18 @@ class RenderBlockFlow;
 class RenderBox;
 
 namespace Layout {
+class BlockFormattingContext;
 class BlockLayoutState;
 class BoxGeometry;
+struct BlockLayoutResult;
 struct ConstraintsForIndependentFormattingContext;
 struct ConstraintsForInlineContent;
 struct IntrinsicWidthConstraints;
 }
 
 namespace LayoutIntegration {
+
+class LineLayout;
 
 class PaintInvalidation {
     WTF_MAKE_NONCOPYABLE(PaintInvalidation);
@@ -93,10 +98,20 @@ public:
         LayoutUnit contentBlockSize;
         // Only line boxes separate margins: content whose line boxes are all phantom does not (CSS 2.2 §8.3.1, css-inline-3).
         bool hasLineBoxes { false };
+        // The last line with content holds a block-level box, whose block formatting context keeps the margins after it open.
+        bool endsWithBlockLevelBox { false };
+        // Lines kept from their last layout with the block-level boxes in them, which keep the margins it gave them: those that collapsed with
+        // the block container's block-start margin, and those still open after the box the content ends with, at its bottom border edge.
+        struct MarginsOfKeptBlockLevelBoxes {
+            Layout::AdjoiningMargins before;
+            Layout::AdjoiningMargins after;
+        };
+        std::optional<MarginsOfKeptBlockLevelBoxes> marginsOfKeptBlockLevelBoxes { };
     };
     // The content box block size is the percentage basis of the atomic inline-level boxes in it. Relayout children lays the lines out from
-    // scratch, like when the inline size, border or padding of the block container changed.
-    InlineContentLayoutResult layoutInlineContent(const RenderBlockFlow&, const Layout::ConstraintsForInlineContent&, const Layout::BoxGeometry&, std::optional<LayoutUnit> contentBoxBlockSize, bool relayoutChildren, const Layout::BlockLayoutState&);
+    // scratch, like when the inline size, border or padding of the block container changed. The block formatting context lays out the
+    // block-level boxes in the content when the inline formatting context reaches them, and adds them to the result it is building.
+    InlineContentLayoutResult layoutInlineContent(const RenderBlockFlow&, const Layout::ConstraintsForInlineContent&, const Layout::BoxGeometry&, std::optional<LayoutUnit> contentBoxBlockSize, bool relayoutChildren, const Layout::BlockLayoutState&, Layout::BlockFormattingContext&, Layout::BlockLayoutResult&);
     // The geometry its parent formatting context gave a block formatting context root, which its renderer has before its content is laid out.
     static Layout::BoxGeometry rootGeometry(const RenderBlockFlow&);
     // The min-content and max-content inline sizes of the inline content of a block container (css-sizing-3 §5.1), from the inline formatting
@@ -134,6 +149,7 @@ public:
     static bool laysOutThroughRenderTree(const RenderBox&);
 
 private:
+    static std::optional<InlineContentLayoutResult> keptInlineContentWithBlockLevelBoxesLayoutResult(const RenderBlockFlow&, const LineLayout&);
     PaintInvalidation& m_paintInvalidation;
 };
 
