@@ -5295,7 +5295,11 @@ private:
         }
 
         case MemoryMove:
-        case MemoryFill: {
+        case MemoryFill8:
+        case MemoryFill16:
+        case MemoryFill32:
+        case MemoryFill64:
+        case MemoryFill128: {
             // They should be lowered already.
             RELEASE_ASSERT_NOT_REACHED();
             return;

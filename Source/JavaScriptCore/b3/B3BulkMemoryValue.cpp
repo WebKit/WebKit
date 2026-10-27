@@ -28,11 +28,72 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3ProcedureInlines.h"
+#include "B3SIMDValue.h"
 #include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 {
 
 BulkMemoryValue::~BulkMemoryValue() = default;
+
+Width BulkMemoryValue::widestFillStoreWidth(const Procedure& proc) const
+{
+    // Only 64-bit stores are known to be single-copy atomic per word on every target.
+    if (fillWidth() == Width128 || (!isGCSafe() && proc.usesSIMD()))
+        return Width128;
+    return Width64;
+}
+
+Value* BulkMemoryValue::splatFillPattern(Procedure& proc, Width storeWidth, NOESCAPE const ScopedLambda<void(Value*)>& insert) const
+{
+    Width elementWidth = fillWidth();
+    ASSERT(storeWidth >= elementWidth);
+    Value* pattern = child(1);
+    if (storeWidth == elementWidth)
+        return pattern;
+
+    auto add = [&](Value* value) {
+        insert(value);
+        return value;
+    };
+
+    ASSERT(elementWidth <= Width64);
+    uint64_t elementMask = mask(elementWidth);
+    uint64_t splatMultiplier = UINT64_MAX / elementMask;
+
+    if (pattern->hasInt()) {
+        uint64_t splat = (static_cast<uint64_t>(pattern->asInt()) & elementMask) * splatMultiplier;
+        if (storeWidth == Width128)
+            return add(proc.addConstant(origin(), V128, v128_t { splat, splat }));
+        return add(proc.addConstant(origin(), storeWidth == Width64 ? Int64 : Int32, splat));
+    }
+
+    if (storeWidth == Width128) {
+        SIMDLane lane = SIMDLane::i64x2;
+        switch (elementWidth) {
+        case Width8:
+            lane = SIMDLane::i8x16;
+            break;
+        case Width16:
+            lane = SIMDLane::i16x8;
+            break;
+        case Width32:
+            lane = SIMDLane::i32x4;
+            break;
+        default:
+            break;
+        }
+        return add(proc.add<SIMDValue>(origin(), VectorSplat, V128, lane, SIMDSignMode::None, pattern));
+    }
+
+    ASSERT(pattern->type() == Int32);
+    Value* element = pattern;
+    if (elementWidth < Width32)
+        element = add(proc.add<Value>(BitAnd, origin(), pattern, add(proc.addIntConstant(origin(), Int32, elementMask))));
+    if (storeWidth == Width64)
+        return add(proc.add<Value>(Mul, origin(), add(proc.add<Value>(ZExt32, origin(), element)), add(proc.addIntConstant(origin(), Int64, splatMultiplier))));
+    return add(proc.add<Value>(Mul, origin(), element, add(proc.addIntConstant(origin(), Int32, static_cast<int32_t>(splatMultiplier)))));
+}
 
 void BulkMemoryValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
@@ -43,7 +104,7 @@ BulkMemoryValue::BulkMemoryValue(Kind kind, Origin origin, Value* child0, Value*
     : Value(CheckedOpcode, kind, Void, Three, origin, child0, child1, child2)
     , m_isGCSafe(isGCSafe)
 {
-    ASSERT(!isGCSafe || kind == MemoryMove);
+    ASSERT(!isGCSafe || kind == MemoryMove || kind == MemoryFill64);
 }
 
 } } // namespace JSC::B3
