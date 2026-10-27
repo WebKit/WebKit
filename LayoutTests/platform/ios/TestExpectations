@@ -428,6 +428,10 @@ http/tests/site-isolation/scrolling/wheel-scroll-full-size-iframe-after-content-
 http/tests/site-isolation/scrolling/wheel-scroll-listbox-in-cross-site-iframe.html [ Skip ]
 http/tests/site-isolation/scrolling/wheel-scroll-listbox-in-multiple-root-frames.html [ Skip ]
 
+# There are no listboxes on iOS, and the non-fast scrollable region overlay shows touch event regions.
+http/tests/site-isolation/scrolling/non-fast-scrollable-region-overlay-in-cross-site-iframe.html [ Skip ]
+http/tests/site-isolation/scrolling/non-fast-scrollable-region-overlay-in-nested-root-frame.html [ Skip ]
+
 # This test requires alpha-channel video support.
 compositing/video/video-background-color.html [ WontFix ]
 

@@ -66,6 +66,7 @@ private:
     void hideRegionOverlay(Page&, RegionType);
 
     void updateRegionIfNecessary(Page&, RegionType);
+    void updateRootFrameNonFastScrollableRegionOverlays(Page&);
 
     void LEGACY_NODELETE regionChanged(LocalFrame&, RegionType);
 
@@ -79,6 +80,7 @@ private:
     Ref<RegionOverlay> ensureRegionOverlayForPage(Page&, RegionType);
 
     WeakHashMap<Page, Vector<RefPtr<RegionOverlay>>> m_pageRegionOverlays;
+    WeakHashMap<Page, Vector<Ref<RegionOverlay>>> m_rootFrameNonFastScrollableRegionOverlays;
 
     static DebugPageOverlays* sharedDebugOverlays;
 };

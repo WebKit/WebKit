@@ -199,6 +199,7 @@ public:
     String synchronousScrollingReasonsAsText() const;
 
     EventTrackingRegions absoluteEventTrackingRegions() const;
+    EventTrackingRegions absoluteEventTrackingRegionsForFrame(const LocalFrame&) const;
     virtual void updateIsMonitoringWheelEventsForFrameView(const LocalFrameView&) { }
 
     virtual void startMonitoringWheelEvents(bool /* clearLatchingState */) { }
@@ -241,8 +242,6 @@ protected:
     virtual void willCommitTree(FrameIdentifier) { }
 
     WEBCORE_EXPORT Page* LEGACY_NODELETE page() const;
-
-    EventTrackingRegions absoluteEventTrackingRegionsForFrame(const LocalFrame&) const;
 
 private:
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const LocalFrameView&) const;

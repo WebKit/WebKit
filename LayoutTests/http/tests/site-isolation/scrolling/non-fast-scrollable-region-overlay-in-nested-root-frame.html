@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true VisibleDebugOverlayRegions=1 AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<style>
+body { margin: 0; }
+#list { position: absolute; left: 450px; top: 10px; width: 150px; }
+iframe { position: absolute; left: 10px; top: 10px; width: 400px; height: 300px; border: 0; }
+</style>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+<select id="list" multiple size="5"></select>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const list = document.getElementById('list');
+for (let i = 0; i < 40; ++i)
+    list.appendChild(new Option(`option ${i}`));
+
+addEventListener('message', async (event) => {
+    if (!event.data.loaded)
+        return;
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    await UIHelper.ensurePresentationUpdate();
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+<iframe src="http://localhost:8000/site-isolation/scrolling/resources/listbox-parent-iframe.html?childOrigin=http://127.0.0.1:8000"></iframe>
+</body>
