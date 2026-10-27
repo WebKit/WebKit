@@ -50,6 +50,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
 #endif
+#include "SwiftTypes.h"
 #include "TemplateTest.h"
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/EmptyConstructorWithIf.h>
@@ -76,6 +77,7 @@
 #include <WebCore/ScrollingStateFrameHostingNodeWithStuffAfterTuple.h>
 #include <WebCore/TimingFunction.h>
 #include <wtf/CreateUsingClass.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/Seconds.h>
 #if USE(AVFOUNDATION)
 #include <pal/cocoa/AVFoundationSoftLink.h>
@@ -1639,6 +1641,350 @@ std::optional<WebCore::OpaqueTypeObject> ArgumentCoder<WebCore::OpaqueTypeObject
     };
 }
 
+void ArgumentCoder<WTF::ObjectIdentifier<WebCore::FrameIdentifierType>>::encode(Encoder& encoder, const WTF::ObjectIdentifier<WebCore::FrameIdentifierType>& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.toUInt64())>, uint64_t>);
+
+    encoder << instance.toUInt64();
+}
+
+std::optional<WTF::ObjectIdentifier<WebCore::FrameIdentifierType>> ArgumentCoder<WTF::ObjectIdentifier<WebCore::FrameIdentifierType>>::decode(Decoder& decoder)
+{
+    auto toUInt64 = decoder.decode<uint64_t>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+
+    if (!(WTF::ObjectIdentifierGenericBase::isValidIdentifier(*toUInt64))) {
+#if ENABLE(IPC_TESTING_API)
+        decoder.setErrorString("Validation failed: WTF::ObjectIdentifierGenericBase::isValidIdentifier(*toUInt64)"_s);
+#endif
+        return std::nullopt;
+    }
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        WTF::ObjectIdentifier<WebCore::FrameIdentifierType> {
+            WTF::move(*toUInt64)
+        }
+    };
+}
+
+void ArgumentCoder<WTF::ObjectIdentifier<WebKit::NotAnIdentifierTag>>::encode(Encoder& encoder, const WTF::ObjectIdentifier<WebKit::NotAnIdentifierTag>& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.toUInt64())>, uint64_t>);
+
+    encoder << instance.toUInt64();
+}
+
+std::optional<WTF::ObjectIdentifier<WebKit::NotAnIdentifierTag>> ArgumentCoder<WTF::ObjectIdentifier<WebKit::NotAnIdentifierTag>>::decode(Decoder& decoder)
+{
+    auto toUInt64 = decoder.decode<uint64_t>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+
+    if (!(WTF::ObjectIdentifierGenericBase::isValidIdentifier(*toUInt64))) {
+#if ENABLE(IPC_TESTING_API)
+        decoder.setErrorString("Validation failed: WTF::ObjectIdentifierGenericBase::isValidIdentifier(*toUInt64)"_s);
+#endif
+        return std::nullopt;
+    }
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        WTF::ObjectIdentifier<WebKit::NotAnIdentifierTag> {
+            WTF::move(*toUInt64)
+        }
+    };
+}
+
+void ArgumentCoder<WTF::AtomicObjectIdentifier<WebKit::SwiftAtomicTestIdentifierType>>::encode(Encoder& encoder, const WTF::AtomicObjectIdentifier<WebKit::SwiftAtomicTestIdentifierType>& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.toUInt64())>, uint64_t>);
+
+    encoder << instance.toUInt64();
+}
+
+std::optional<WTF::AtomicObjectIdentifier<WebKit::SwiftAtomicTestIdentifierType>> ArgumentCoder<WTF::AtomicObjectIdentifier<WebKit::SwiftAtomicTestIdentifierType>>::decode(Decoder& decoder)
+{
+    auto toUInt64 = decoder.decode<uint64_t>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+
+    if (!(WTF::ObjectIdentifierGenericBase::isValidIdentifier(*toUInt64))) {
+#if ENABLE(IPC_TESTING_API)
+        decoder.setErrorString("Validation failed: WTF::ObjectIdentifierGenericBase::isValidIdentifier(*toUInt64)"_s);
+#endif
+        return std::nullopt;
+    }
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        WTF::AtomicObjectIdentifier<WebKit::SwiftAtomicTestIdentifierType> {
+            WTF::move(*toUInt64)
+        }
+    };
+}
+
+void ArgumentCoder<Namespace::SwiftInner>::encode(Encoder& encoder, const Namespace::SwiftInner& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, int32_t>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.label)>, String>);
+    struct ShouldBeSameSizeAsSwiftInner : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<Namespace::SwiftInner>, false> {
+        int32_t value;
+        String label;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsSwiftInner) == sizeof(Namespace::SwiftInner));
+    static_assert(IsIncreasing < 0
+        , offsetof(Namespace::SwiftInner, value)
+        , offsetof(Namespace::SwiftInner, label)
+    >);
+
+    encoder << instance.value;
+    encoder << instance.label;
+}
+
+std::optional<Namespace::SwiftInner> ArgumentCoder<Namespace::SwiftInner>::decode(Decoder& decoder)
+{
+    auto value = decoder.decode<int32_t>();
+    auto label = decoder.decode<String>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        Namespace::SwiftInner {
+            WTF::move(*value),
+            WTF::move(*label)
+        }
+    };
+}
+
+void ArgumentCoder<Namespace::SwiftStruct>::encode(Encoder& encoder, const Namespace::SwiftStruct& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_flag)>, bool>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_name)>, String>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_numbers)>, Vector<uint64_t>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_strings)>, Vector<String>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_optionalDouble)>, std::optional<double>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_markableFrameID)>, Markable<WebCore::FrameIdentifier>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_frameID)>, WebCore::FrameIdentifier>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_atomicID)>, WebKit::SwiftAtomicTestIdentifier>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_inner)>, Namespace::SwiftInner>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_optionalInner)>, std::optional<Namespace::SwiftInner>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_enumValue)>, Namespace::SwiftEnum>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_boolEnum)>, Namespace::SwiftBoolEnum>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_options)>, OptionSet<Namespace::SwiftOptionSet>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_variant)>, Namespace::SwiftVariant>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_default)>, bool>);
+#if ENABLE(SWIFT_MEMBER)
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_conditionalMember)>, uint32_t>);
+#endif
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_notSerialized)>, int>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.accessor())>, float>);
+
+    encoder << instance.m_flag;
+    encoder << instance.m_name;
+    encoder << instance.m_numbers;
+    encoder << instance.m_strings;
+    encoder << instance.m_optionalDouble;
+    encoder << instance.m_markableFrameID;
+    encoder << instance.m_frameID;
+    encoder << instance.m_atomicID;
+    encoder << instance.m_inner;
+    encoder << instance.m_optionalInner;
+    encoder << instance.m_enumValue;
+    encoder << instance.m_boolEnum;
+    encoder << instance.m_options;
+    encoder << instance.m_variant;
+    encoder << instance.m_default;
+#if ENABLE(SWIFT_MEMBER)
+    encoder << instance.m_conditionalMember;
+#endif
+    encoder << instance.accessor();
+}
+
+std::optional<Namespace::SwiftStruct> ArgumentCoder<Namespace::SwiftStruct>::decode(Decoder& decoder)
+{
+    auto m_flag = decoder.decode<bool>();
+    auto m_name = decoder.decode<String>();
+    auto m_numbers = decoder.decode<Vector<uint64_t>>();
+    auto m_strings = decoder.decode<Vector<String>>();
+    auto m_optionalDouble = decoder.decode<std::optional<double>>();
+    auto m_markableFrameID = decoder.decode<Markable<WebCore::FrameIdentifier>>();
+    auto m_frameID = decoder.decode<WebCore::FrameIdentifier>();
+    auto m_atomicID = decoder.decode<WebKit::SwiftAtomicTestIdentifier>();
+    auto m_inner = decoder.decode<Namespace::SwiftInner>();
+    auto m_optionalInner = decoder.decode<std::optional<Namespace::SwiftInner>>();
+    auto m_enumValue = decoder.decode<Namespace::SwiftEnum>();
+    auto m_boolEnum = decoder.decode<Namespace::SwiftBoolEnum>();
+    auto m_options = decoder.decode<OptionSet<Namespace::SwiftOptionSet>>();
+    auto m_variant = decoder.decode<Namespace::SwiftVariant>();
+    auto m_default = decoder.decode<bool>();
+#if ENABLE(SWIFT_MEMBER)
+    auto m_conditionalMember = decoder.decode<uint32_t>();
+#endif
+    auto accessor = decoder.decode<float>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        Namespace::SwiftStruct {
+            WTF::move(*m_flag),
+            WTF::move(*m_name),
+            WTF::move(*m_numbers),
+            WTF::move(*m_strings),
+            WTF::move(*m_optionalDouble),
+            WTF::move(*m_markableFrameID),
+            WTF::move(*m_frameID),
+            WTF::move(*m_atomicID),
+            WTF::move(*m_inner),
+            WTF::move(*m_optionalInner),
+            WTF::move(*m_enumValue),
+            WTF::move(*m_boolEnum),
+            WTF::move(*m_options),
+            WTF::move(*m_variant),
+            WTF::move(*m_default),
+#if ENABLE(SWIFT_MEMBER)
+            WTF::move(*m_conditionalMember),
+#endif
+            WTF::move(*accessor)
+        }
+    };
+}
+
+void ArgumentCoder<Namespace::SwiftNode>::encode(Encoder& encoder, const Namespace::SwiftNode& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.name())>, String>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.children())>, Vector<Ref<Namespace::SwiftNode>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.parent())>, RefPtr<Namespace::SwiftNode>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.leaf())>, Ref<Namespace::SwiftLeaf>>);
+
+    encoder << instance.name();
+    encoder << instance.children();
+    encoder << instance.parent();
+    encoder << instance.leaf();
+}
+
+std::optional<Ref<Namespace::SwiftNode>> ArgumentCoder<Namespace::SwiftNode>::decode(Decoder& decoder)
+{
+    auto name = decoder.decode<String>();
+    auto children = decoder.decode<Vector<Ref<Namespace::SwiftNode>>>();
+    auto parent = decoder.decode<RefPtr<Namespace::SwiftNode>>();
+    auto leaf = decoder.decode<Ref<Namespace::SwiftLeaf>>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        Namespace::SwiftNode::create(
+            WTF::move(*name),
+            WTF::move(*children),
+            WTF::move(*parent),
+            WTF::move(*leaf)
+        )
+    };
+}
+
+void ArgumentCoder<Namespace::SwiftLeaf>::encode(Encoder& encoder, const Namespace::SwiftLeaf& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_value)>, uint64_t>);
+#if ENABLE(SWIFT_MEMBER)
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_conditionalValue)>, double>);
+#endif
+    struct ShouldBeSameSizeAsSwiftLeaf : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<Namespace::SwiftLeaf>, true> {
+        uint64_t m_value;
+#if ENABLE(SWIFT_MEMBER)
+        double m_conditionalValue;
+#endif
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsSwiftLeaf) == sizeof(Namespace::SwiftLeaf));
+    static_assert(IsIncreasing < 0
+        , offsetof(Namespace::SwiftLeaf, m_value)
+#if ENABLE(SWIFT_MEMBER)
+        , offsetof(Namespace::SwiftLeaf, m_conditionalValue)
+#endif
+    >);
+
+    encoder << instance.m_value;
+#if ENABLE(SWIFT_MEMBER)
+    encoder << instance.m_conditionalValue;
+#endif
+}
+
+std::optional<Ref<Namespace::SwiftLeaf>> ArgumentCoder<Namespace::SwiftLeaf>::decode(Decoder& decoder)
+{
+    auto m_value = decoder.decode<uint64_t>();
+#if ENABLE(SWIFT_MEMBER)
+    auto m_conditionalValue = decoder.decode<double>();
+#endif
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        Namespace::SwiftLeaf::create(
+            WTF::move(*m_value),
+#if ENABLE(SWIFT_MEMBER)
+            WTF::move(*m_conditionalValue)
+#endif
+        )
+    };
+}
+
+void ArgumentCoder<Namespace::SwiftBase>::encode(Encoder& encoder, const Namespace::SwiftBase& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.baseValue)>, uint32_t>);
+    struct ShouldBeSameSizeAsSwiftBase : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<Namespace::SwiftBase>, false> {
+        uint32_t baseValue;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsSwiftBase) == sizeof(Namespace::SwiftBase));
+    static_assert(IsIncreasing < 0
+        , offsetof(Namespace::SwiftBase, baseValue)
+    >);
+
+    encoder << instance.baseValue;
+}
+
+std::optional<Namespace::SwiftBase> ArgumentCoder<Namespace::SwiftBase>::decode(Decoder& decoder)
+{
+    auto baseValue = decoder.decode<uint32_t>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        Namespace::SwiftBase {
+            WTF::move(*baseValue)
+        }
+    };
+}
+
+#if ENABLE(SWIFT_TYPE_CONDITION)
+void ArgumentCoder<Namespace::SwiftDerived>::encode(Encoder& encoder, const Namespace::SwiftDerived& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.baseValue)>, uint32_t>);
+    static_assert(IsIncreasing < 0
+        , offsetof(Namespace::SwiftBase, baseValue)
+    >);
+
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.derivedValue)>, double>);
+    static_assert(IsIncreasing < 0
+        , offsetof(Namespace::SwiftDerived, derivedValue)
+    >);
+
+    encoder << instance.baseValue;
+    encoder << instance.derivedValue;
+}
+
+std::optional<Namespace::SwiftDerived> ArgumentCoder<Namespace::SwiftDerived>::decode(Decoder& decoder)
+{
+    auto baseValue = decoder.decode<uint32_t>();
+    auto derivedValue = decoder.decode<double>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        Namespace::SwiftDerived {
+            Namespace::SwiftBase {
+                WTF::move(*baseValue)
+            },
+            WTF::move(*derivedValue)
+        }
+    };
+}
+
+#endif
+
 } // namespace IPC
 
 namespace WTF {
@@ -1837,6 +2183,70 @@ template<> bool isValidEnum<EnumNamespace::InnerBoolType>(bool value)
     return false;
 }
 #endif
+
+static_assert(sizeof(std::underlying_type_t<Namespace::SwiftEnum>) == sizeof(uint8_t), "IPCTypes.SwiftEnum in GeneratedSerializers.swift has the size of the underlying type in .serialization.in");
+static_assert(!static_cast<uint8_t>(Namespace::SwiftEnum::FirstValue), "IPCTypes.SwiftEnum in GeneratedSerializers.swift numbers values in .serialization.in order");
+static_assert(static_cast<uint8_t>(Namespace::SwiftEnum::HTTPSOnly) == 1, "IPCTypes.SwiftEnum in GeneratedSerializers.swift numbers values in .serialization.in order");
+static_assert(static_cast<uint8_t>(Namespace::SwiftEnum::URL) == 2, "IPCTypes.SwiftEnum in GeneratedSerializers.swift numbers values in .serialization.in order");
+static_assert(static_cast<uint8_t>(Namespace::SwiftEnum::Default) == 3, "IPCTypes.SwiftEnum in GeneratedSerializers.swift numbers values in .serialization.in order");
+#if ENABLE(SWIFT_ENUM_VALUE)
+static_assert(static_cast<uint8_t>(Namespace::SwiftEnum::ConditionalValue) == 4, "IPCTypes.SwiftEnum in GeneratedSerializers.swift numbers values in .serialization.in order");
+#endif
+template<> bool isValidEnum<Namespace::SwiftEnum>(uint8_t value)
+{
+    switch (static_cast<Namespace::SwiftEnum>(value)) {
+    case Namespace::SwiftEnum::FirstValue:
+    case Namespace::SwiftEnum::HTTPSOnly:
+    case Namespace::SwiftEnum::URL:
+    case Namespace::SwiftEnum::Default:
+#if ENABLE(SWIFT_ENUM_VALUE)
+    case Namespace::SwiftEnum::ConditionalValue:
+#endif
+        return true;
+    }
+    return false;
+}
+
+static_assert(sizeof(std::underlying_type_t<Namespace::SwiftBoolEnum>) == sizeof(bool), "IPCTypes.SwiftBoolEnum in GeneratedSerializers.swift has the size of the underlying type in .serialization.in");
+static_assert(!static_cast<bool>(Namespace::SwiftBoolEnum::No), "IPCTypes.SwiftBoolEnum in GeneratedSerializers.swift numbers values in .serialization.in order");
+static_assert(static_cast<bool>(Namespace::SwiftBoolEnum::Yes) == 1, "IPCTypes.SwiftBoolEnum in GeneratedSerializers.swift numbers values in .serialization.in order");
+template<> bool isValidEnum<Namespace::SwiftBoolEnum>(bool value)
+{
+    switch (static_cast<uint8_t>(value)) {
+    case 0:
+    case 1:
+        return true;
+    }
+    return false;
+}
+
+static_assert(sizeof(std::underlying_type_t<Namespace::SwiftOptionSet>) == sizeof(uint16_t), "IPCTypes.SwiftOptionSet in GeneratedSerializers.swift has the size of the underlying type in .serialization.in");
+static_assert(static_cast<uint16_t>(Namespace::SwiftOptionSet::FirstOption) == (1ull << 0), "IPCTypes.SwiftOptionSet in GeneratedSerializers.swift numbers values in .serialization.in order");
+#if ENABLE(SWIFT_OPTION)
+static_assert(static_cast<uint16_t>(Namespace::SwiftOptionSet::ConditionalOption) == (1ull << 1), "IPCTypes.SwiftOptionSet in GeneratedSerializers.swift numbers values in .serialization.in order");
+#endif
+static_assert(static_cast<uint16_t>(Namespace::SwiftOptionSet::ThirdOption) == (1ull << 2), "IPCTypes.SwiftOptionSet in GeneratedSerializers.swift numbers values in .serialization.in order");
+template<> bool isValidOptionSet<Namespace::SwiftOptionSet>(OptionSet<Namespace::SwiftOptionSet> value)
+{
+    // Empty switch to catch missing values.
+    switch (static_cast<Namespace::SwiftOptionSet>(value.toRaw())) {
+    case Namespace::SwiftOptionSet::FirstOption:
+#if ENABLE(SWIFT_OPTION)
+    case Namespace::SwiftOptionSet::ConditionalOption:
+#endif
+    case Namespace::SwiftOptionSet::ThirdOption:
+        (void)0;
+    }
+
+    constexpr uint16_t allValidBitsValue = 0
+        | static_cast<uint16_t>(Namespace::SwiftOptionSet::FirstOption)
+#if ENABLE(SWIFT_OPTION)
+        | static_cast<uint16_t>(Namespace::SwiftOptionSet::ConditionalOption)
+#endif
+        | static_cast<uint16_t>(Namespace::SwiftOptionSet::ThirdOption)
+        | 0;
+    return (value.toRaw() | allValidBitsValue) == allValidBitsValue;
+}
 
 } // namespace WTF
 

@@ -27,6 +27,8 @@ TESTS = \
     TestWithSwift \
     TestWithSwiftConditionally \
     TestWithSwiftConditionallyAndEnabledBy \
+    TestWithSwiftTypes \
+    TestWithSwiftTypesOptIn \
     TestWithValidator \
     TestWithWantsAsyncDispatch \
     TestWithWantsDispatch \

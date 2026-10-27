@@ -51,6 +51,7 @@
 #include "APIArray.h"
 #include "IPCTesterReceiverMessages.h"
 #include "StreamServerConnection.h"
+#include "SwiftCoding.h"
 #include "WebBackForwardListItem.h"
 #include "WebBackForwardListMessages.h"
 #include "WebBackForwardListSwiftUtilities.h"

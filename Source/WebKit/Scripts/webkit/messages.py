@@ -28,7 +28,8 @@ import sys
 from webkit.opaque_ipc_types import opaque_ipc_types
 from webkit.untrusted_origins import unwrap_if_untrusted, unwrap_untrusted
 from webkit import parser
-from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, ANYTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, CALL_WITH_REPLY_ID_ATTRIBUTE, MessageReceiver, Message
+from webkit import swift_types
+from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, ANYTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, CALL_WITH_REPLY_ID_ATTRIBUTE, NOT_USING_IPC_CONNECTION_ATTRIBUTE, WANTS_DISPATCH_MESSAGE_ATTRIBUTE, WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE, MessageReceiver, Message
 
 _license_header = """/*
  * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
@@ -55,14 +56,11 @@ _license_header = """/*
  */
 """
 
-WANTS_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsDispatchMessage'
-WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsAsyncDispatchMessage'
 NOT_STREAM_ENCODABLE_ATTRIBUTE = 'NotStreamEncodable'
 NOT_STREAM_ENCODABLE_REPLY_ATTRIBUTE = 'NotStreamEncodableReply'
 STREAM_BATCHED_ATTRIBUTE = 'StreamBatched'
 CAN_DISPATCH_OUT_OF_ORDER_ATTRIBUTE = 'CanDispatchOutOfOrder'
 REPLY_CAN_DISPATCH_OUT_OF_ORDER_ATTRIBUTE = 'ReplyCanDispatchOutOfOrder'
-NOT_USING_IPC_CONNECTION_ATTRIBUTE = 'NotUsingIPCConnection'
 
 PROCESS_NAMES = ["UI", "Networking", "GPU", "WebContent", "Model"]
 
@@ -739,6 +737,9 @@ def types_that_cannot_be_forward_declared():
         'WebKit::FileSystemSyncAccessHandleInfo',
         'WebKit::FocusedElementInformation',
         'WebKit::GPUProcessConnectionInfo',
+        'WebKit::IPCTesterChoice',
+        'WebKit::IPCTesterColor',
+        'WebKit::IPCTesterVariant',
         'WebKit::ImageBufferSetIdentifier',
         'WebKit::LayerHostingContextID',
         'WebKit::LegacyCustomProtocolID',
@@ -918,12 +919,16 @@ def message_to_completion_handler_using_declaration(receiver, message):
     return 'using %s = WTF::RefCountable<Messages::%s::%s::Reply>;' % (completion_handler_name, receiver.name, message.name)
 
 
+# Messages whose Swift handlers reply through a C++ completion handler. A message that takes Swift
+# types encodes its reply itself.
+def messages_with_completion_handlers(receiver):
+    return [x for x in receiver.messages if x.reply_parameters is not None and not receiver.takes_swift_types(x)]
+
+
 def messages_with_distinct_reply_types(receiver):
     seen = set()
     result = []
-    for message in receiver.messages:
-        if message.reply_parameters is None:
-            continue
+    for message in messages_with_completion_handlers(receiver):
         key = tuple(parameter.type for parameter in message.reply_parameters)
         if key in seen:
             continue
@@ -1065,7 +1070,7 @@ def generate_messages_header(receiver):
     result.append('} // namespace %s\n} // namespace Messages\n' % receiver.name)
 
     def append_completion_handler_types_for_swift(result):
-        reply_messages = [x for x in receiver.messages if x.reply_parameters is not None]
+        reply_messages = messages_with_completion_handlers(receiver)
         result.append('\n')
         result.append('namespace CompletionHandlers {\nnamespace %s {\n' % receiver.name)
         result.append('\n'.join([message_to_completion_handler_using_declaration(receiver, x) for x in reply_messages]))
@@ -1166,6 +1171,8 @@ def swift_type_alias(cpp_type):
 def swift_type_aliases(receiver):
     aliases = {}
     for message in receiver.messages:
+        if message.is_async_reply or receiver.takes_swift_types(message):
+            continue
         for parameter in list(message.parameters) + list(message.reply_parameters or []):
             alias = swift_type_alias(parameter.type)
             if alias:
@@ -1204,8 +1211,26 @@ def swift_reply_completion_call(receiver, message, reply_variable):
     return 'completionHandler.pointee(consuming: %s)' % reply_variable
 
 
+# How the Invocation of a message that takes Swift types encodes the handler's return value: the value
+# itself for a single reply, or each element of the tuple returned for several.
+def swift_reply_encoding_statements(message, reply_variable, encoder):
+    reply_parameters = message.reply_parameters or []
+    if len(reply_parameters) == 1:
+        return ['%s.encode(%s, to: %s)' % (swift_types.swift_coder(reply_parameters[0].type), reply_variable, encoder)]
+    return ['%s.encode(%s.%d, to: %s)' % (swift_types.swift_coder(parameter.type), reply_variable, index, encoder) for index, parameter in enumerate(reply_parameters)]
+
+
 def generates_swift_trampoline(receiver, message):
     return bool(receiver.swift_receiver or receiver.swift_receiver_build_enabled_by) and not message.is_async_reply
+
+
+# The HandleMessage.h function that dispatches a message whose Swift receiver decodes the arguments.
+def swift_types_dispatch_function(message):
+    if message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
+        return 'handleSwiftMessageSynchronous'
+    if message.reply_parameters is not None:
+        return 'handleSwiftMessageAsync'
+    return 'handleSwiftMessage'
 
 
 def handler_function_name(message):
@@ -1242,9 +1267,13 @@ def async_message_statement(receiver, message):
             dispatch_function_args = ['decoder', target_name, '&%s' % dispatched_function]
         result.append(pattern % (', '.join(dispatch_function_args)))
 
-    def append_with_dispatch_function_args(receiver, result, pattern):
+    def append_with_dispatch_function_args(receiver, result):
+        pattern = '        IPC::%s<Messages::%s::%s>(%s%%s);\n' % (dispatch_function, receiver.name, message.name, connection)
+        swift_pattern = pattern
+        if receiver.takes_swift_types(message):
+            swift_pattern = '        IPC::%s<Messages::%s::%s>(%s%%s);\n' % (swift_types_dispatch_function(message), receiver.name, message.name, connection)
         swift_target, swift_function = swift_dispatch_target_and_function(receiver, message)
-        if_swift_enabled(receiver, result, lambda x: append_with_dispatch_function_args_and_particular_target_name(receiver, x, pattern, swift_target, swift_function), lambda x: append_with_dispatch_function_args_and_particular_target_name(receiver, x, pattern, 'this', handler_function(receiver, message)))
+        if_swift_enabled(receiver, result, lambda x: append_with_dispatch_function_args_and_particular_target_name(receiver, x, swift_pattern, swift_target, swift_function), lambda x: append_with_dispatch_function_args_and_particular_target_name(receiver, x, pattern, 'this', handler_function(receiver, message)))
 
     dispatch_function = 'handleMessage'
     if message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
@@ -1280,12 +1309,12 @@ def async_message_statement(receiver, message):
             result.append('            decoder.markInvalid();\n')
             result.append('            return;\n')
             result.append('        }\n')
-        append_with_dispatch_function_args(receiver, result, '        IPC::%s<Messages::%s::%s>(%s%%s);\n' % (dispatch_function, receiver.name, message.name, connection))
+        append_with_dispatch_function_args(receiver, result)
         result.append('        return;\n')
         result.append('    }\n')
     else:
         result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
-        append_with_dispatch_function_args(receiver, result, '        IPC::%s<Messages::%s::%s>(%s%%s);\n' % (dispatch_function, receiver.name, message.name, connection))
+        append_with_dispatch_function_args(receiver, result)
         result.append('        return;\n')
         result.append('    }\n')
     return result
@@ -1317,11 +1346,12 @@ def sync_message_statement(receiver, message):
     else:
         result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
 
-    def append_call_with_target_name(result, target_name, dispatched_function):
+    def append_call_with_target_name(result, dispatch_function, target_name, dispatched_function):
         result.append('        IPC::%s<Messages::%s::%s>(connection, decoder%s, %s, &%s);\n' % (dispatch_function, receiver.name, message.name, maybe_reply_encoder, target_name, dispatched_function))
 
+    swift_dispatch_function = swift_types_dispatch_function(message) if receiver.takes_swift_types(message) else dispatch_function
     swift_target, swift_function = swift_dispatch_target_and_function(receiver, message)
-    if_swift_enabled(receiver, result, lambda x: append_call_with_target_name(x, swift_target, swift_function), lambda x: append_call_with_target_name(x, 'this', handler_function(receiver, message)), )
+    if_swift_enabled(receiver, result, lambda x: append_call_with_target_name(x, swift_dispatch_function, swift_target, swift_function), lambda x: append_call_with_target_name(x, dispatch_function, 'this', handler_function(receiver, message)), )
     result.append('        return;\n')
     result.append('    }\n')
     return result
@@ -1829,6 +1859,13 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::FrameTraversalResult': ['"GoToBackForwardItemParameters.h"'],
         'WebKit::GestureRecognizerState': ['"GestureTypes.h"'],
         'WebKit::GestureType': ['"GestureTypes.h"'],
+        'WebKit::IPCTesterChoice': ['"IPCTesterPayload.h"'],
+        'WebKit::IPCTesterColor': ['"IPCTesterPayload.h"'],
+        'WebKit::IPCTesterFlag': ['"IPCTesterPayload.h"'],
+        'WebKit::IPCTesterInner': ['"IPCTesterPayload.h"'],
+        'WebKit::IPCTesterNode': ['"IPCTesterPayload.h"'],
+        'WebKit::IPCTesterPayload': ['"IPCTesterPayload.h"'],
+        'WebKit::IPCTesterVariant': ['"IPCTesterPayload.h"'],
         'WebKit::InputType': ['"FocusedElementInformation.h"'],
         'WebKit::JSObjectID': ['"JavaScriptEvaluationResult.h"'],
         'WebKit::SnapshotOption': ['"ImageOptions.h"'],
@@ -2283,7 +2320,7 @@ def generate_message_handler(receiver):
     result.append('} // namespace WebKit\n')
 
     def append_complete_with_default_reply_definitions(result):
-        reply_messages = [x for x in receiver.messages if x.reply_parameters is not None]
+        reply_messages = messages_with_completion_handlers(receiver)
         if not reply_messages:
             return
         result.append('\n')
@@ -2401,17 +2438,28 @@ def generate_swift_message_handler(receiver):
             continue
 
         connection_type = 'IPC.StreamServerConnection' if receiver.has_attribute(STREAM_ATTRIBUTE) else 'IPC.Connection'
+        # A message that takes Swift types is decoded here, from a decoder C++ lends for the duration of
+        # this call, and its reply is encoded by the Invocation. Returning false tells C++ that the
+        # arguments were malformed.
+        takes_swift_types = receiver.takes_swift_types(message)
+        has_reply = message.reply_parameters is not None
         # `sending` rather than marking these types Sendable: C++ hands each value to dispatch and
         # does not use it again, which is a far narrower claim than the type being safe to share.
         parameters = ['connection: sending %s' % connection_type]
         arguments = ['connection: connection']
+        decoded_parameters = []
         for parameter in message.parameters:
-            parameters.append('%s: sending %s' % (parameter.name, swift_type_name(parameter.type)))
+            if takes_swift_types:
+                decoded_parameters.append((parameter.name,) + swift_types.swift_type_and_coder(parameter.type))
+            else:
+                parameters.append('%s: sending %s' % (parameter.name, swift_type_name(parameter.type)))
             arguments.append('%s: %s' % (parameter.name, parameter.name))
-        completion_handler = None
-        if message.reply_parameters is not None:
-            completion_handler = 'CompletionHandlers.%s.%sCompletionHandler' % (receiver.name, message.name)
-            parameters.append('completionHandler: sending %s' % completion_handler)
+        if takes_swift_types:
+            parameters.append('decoder: inout IPC.SwiftDecoder')
+            if has_reply:
+                parameters.append('replyEncoder: sending IPC.SwiftReplyEncoder')
+        elif has_reply:
+            parameters.append('completionHandler: sending CompletionHandlers.%s.%sCompletionHandler' % (receiver.name, message.name))
 
         # Any handler may be async: .messages.in cannot say, and even a Synchronous reply may be sent
         # after dispatch returns, since handleMessageSynchronous moves the reply encoder into the
@@ -2425,14 +2473,29 @@ def generate_swift_message_handler(receiver):
         # FIXME(rdar://189495426): store arguments in an Invocation class to work around Windows tail
         # call problem.
         invocation_class = '%sInvocation' % message.name
-        stored = ['target: %s' % class_name] + [p.replace(': sending ', ': ') for p in parameters]
+        if takes_swift_types:
+            stored = ['target: %s' % class_name, 'connection: %s' % connection_type]
+            stored += ['%s: %s' % (name, swift_type) for name, swift_type, _ in decoded_parameters]
+            if has_reply:
+                stored.append('replyEncoder: IPC.SwiftReplyEncoder')
+        else:
+            stored = ['target: %s' % class_name] + [p.replace(': sending ', ': ') for p in parameters]
         stored_names = [p.split(':')[0] for p in stored]
 
         result.append('\n')
         result.append('    @used\n')
         result.append('    func dispatch%s(\n' % message.name)
         result.append(',\n'.join(['        %s' % parameter for parameter in parameters]))
-        result.append('\n    ) {\n')
+        result.append('\n    ) -> Bool {\n' if takes_swift_types else '\n    ) {\n')
+        if decoded_parameters:
+            for name, swift_type, _ in decoded_parameters:
+                result.append('        let %s: %s\n' % (name, swift_type))
+            result.append('        do {\n')
+            for name, _, coder in decoded_parameters:
+                result.append('            %s = try %s.decode(from: &decoder)\n' % (name, coder))
+            result.append('        } catch {\n')
+            result.append('            return false\n')
+            result.append('        }\n')
         result.append('        MainActor.assumeIsolated {\n')
         result.append('            guard let target else {\n')
         result.append('                return\n')
@@ -2444,6 +2507,8 @@ def generate_swift_message_handler(receiver):
         result.append('                .run()\n')
         result.append('            }\n')
         result.append('        }\n')
+        if takes_swift_types:
+            result.append('        return true\n')
         result.append('    }\n')
 
         result.append('\n')
@@ -2471,12 +2536,20 @@ def generate_swift_message_handler(receiver):
         for line in call:
             result.append('\n'.join(['%s    %s' % (base, part) for part in line.split('\n')]))
             result.append('\n')
-        if completion_handler:
-            result.append('%s    %s\n' % (base, swift_reply_completion_call(receiver, message, 'reply')))
+        reply_statements = []
+        cancel_statements = []
+        if takes_swift_types and has_reply:
+            reply_statements = swift_reply_encoding_statements(message, 'reply', 'replyEncoder') + ['replyEncoder.send()']
+            cancel_statements = ['replyEncoder.cancel()']
+        elif has_reply:
+            reply_statements = [swift_reply_completion_call(receiver, message, 'reply')]
+            cancel_statements = ['CompletionHandlers.%s.completeWithDefaultReply(completionHandler)' % receiver.name]
+        for statement in reply_statements:
+            result.append('%s    %s\n' % (base, statement))
         result.append('%s} catch {\n' % base)
         result.append('%s    markMessageInvalid(error, on: connection)\n' % base)
-        if completion_handler:
-            result.append('%s    CompletionHandlers.%s.completeWithDefaultReply(completionHandler)\n' % (base, receiver.name))
+        for statement in cancel_statements:
+            result.append('%s    %s\n' % (base, statement))
         result.append('%s}\n' % base)
         result.append('        }\n')
         result.append('    }\n')

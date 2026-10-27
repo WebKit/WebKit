@@ -21,9 +21,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import itertools
+import re
 
 from collections import Counter, defaultdict
 from .opaque_ipc_types import is_opaque_type, opaque_ipc_types
+from .swift_types import UnmappableSwiftType, strip_cpp_type_decorations, swift_type_and_coder
 from .untrusted_origins import conveys_untrusted_value, is_privileged_receiver, unwrap_if_untrusted, unwrap_untrusted
 
 BUILTIN_ATTRIBUTE = "Builtin"
@@ -34,9 +36,18 @@ ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE = "AllowedWhenWaitingForSyncReply"
 ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE = "AllowedWhenWaitingForSyncReplyDuringUnboundedIPC"
 SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
 STREAM_ATTRIBUTE = "Stream"
+SWIFT_TYPES_ATTRIBUTE = 'SwiftTypes'
+CXX_TYPES_ATTRIBUTE = 'CxxTypes'
+NOT_USING_IPC_CONNECTION_ATTRIBUTE = 'NotUsingIPCConnection'
+WANTS_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsDispatchMessage'
+WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsAsyncDispatchMessage'
+
+# Names the generated Swift dispatch of a message that takes Swift types gives its own locals and
+# stored properties, so a parameter cannot have them.
+_SWIFT_TYPES_RESERVED_PARAMETER_NAMES = frozenset(['connection', 'decoder', 'replyEncoder', 'reply', 'target'])
 
 class MessageReceiver(object):
-    def __init__(self, name, superclass, attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, condition, namespace, swift_receiver, swift_receiver_build_enabled_by, receiver_name):
+    def __init__(self, name, superclass, attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, condition, namespace, swift_receiver, swift_receiver_build_enabled_by, receiver_name, swift_types=False):
         self.name = name
         self.superclass = superclass
         self.attributes = frozenset(attributes or [])
@@ -54,6 +65,7 @@ class MessageReceiver(object):
         self.swift_receiver = swift_receiver
         self.swift_receiver_build_enabled_by = swift_receiver_build_enabled_by
         self.receiver_name = receiver_name
+        self.swift_types = swift_types
 
     def iterparameters(self):
         return itertools.chain((parameter for message in self.messages for parameter in message.parameters),
@@ -61,6 +73,71 @@ class MessageReceiver(object):
 
     def has_attribute(self, attribute):
         return attribute in self.attributes
+
+    def is_swift_receiver(self):
+        return bool(self.swift_receiver or self.swift_receiver_build_enabled_by)
+
+    def takes_swift_types(self, message):
+        """Whether the Swift receiver decodes this message's arguments, and encodes its reply, as Swift types."""
+        if message.is_async_reply or not self.is_swift_receiver():
+            return False
+        if message.has_attribute(SWIFT_TYPES_ATTRIBUTE):
+            return True
+        if message.has_attribute(CXX_TYPES_ATTRIBUTE):
+            return False
+        return self.swift_types
+
+    def enforce_swift_types_constraints(self):
+        if self.swift_types and not self.is_swift_receiver():
+            raise Exception("ERROR: Receiver %s has 'SwiftTypes' but is not a Swift receiver: it also needs 'SwiftReceiver' or 'SwiftReceiverBuildEnabledBy='" % self.name)
+        if self.swift_types and self.has_attribute(STREAM_ATTRIBUTE):
+            raise Exception("ERROR: Receiver %s has 'SwiftTypes', which stream receivers do not support" % self.name)
+        for message in self.messages:
+            self._enforce_swift_types_constraints_for_message(message)
+
+    def _enforce_swift_types_constraints_for_message(self, message):
+        description = '%s.%s' % (self.name, message.name)
+        if message.has_attribute(SWIFT_TYPES_ATTRIBUTE) and message.has_attribute(CXX_TYPES_ATTRIBUTE):
+            raise Exception("ERROR: Message %s cannot have both 'SwiftTypes' and 'CxxTypes'" % description)
+        if message.has_attribute(SWIFT_TYPES_ATTRIBUTE) and not self.is_swift_receiver():
+            raise Exception("ERROR: Message %s has 'SwiftTypes' but receiver %s is not a Swift receiver: it needs 'SwiftReceiver' or 'SwiftReceiverBuildEnabledBy='" % (description, self.name))
+        if message.has_attribute(CXX_TYPES_ATTRIBUTE) and not self.swift_types:
+            raise Exception("ERROR: Message %s has 'CxxTypes' but receiver %s does not have 'SwiftTypes'" % (description, self.name))
+        if not self.takes_swift_types(message):
+            return
+
+        def unsupported(what):
+            return Exception("ERROR: Message %s takes Swift types, which is not supported %s" % (description, what))
+
+        if self.has_attribute(STREAM_ATTRIBUTE):
+            raise unsupported('on a stream receiver')
+        for attribute in (NOT_USING_IPC_CONNECTION_ATTRIBUTE, WANTS_DISPATCH_MESSAGE_ATTRIBUTE, WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE):
+            if self.has_attribute(attribute):
+                raise unsupported("on a receiver with '%s'" % attribute)
+        if message.has_attribute(CALL_WITH_REPLY_ID_ATTRIBUTE):
+            raise unsupported("together with '%s'" % CALL_WITH_REPLY_ID_ATTRIBUTE)
+        if message.validator:
+            raise unsupported("together with 'Validator=%s'" % message.validator)
+        if message.has_attribute(SYNCHRONOUS_ATTRIBUTE) and message.reply_parameters is None:
+            raise unsupported("for a '%s' message without a reply" % SYNCHRONOUS_ATTRIBUTE)
+
+        for parameter in message.parameters:
+            if parameter.name in _SWIFT_TYPES_RESERVED_PARAMETER_NAMES:
+                raise Exception("ERROR: Message %s takes Swift types, so cannot have a parameter named '%s', which the generated Swift uses itself" % (description, parameter.name))
+        parameters = [('parameter', parameter) for parameter in message.parameters] + [('reply parameter', parameter) for parameter in message.reply_parameters or []]
+        for kind, parameter in parameters:
+            if parameter.attributes:
+                raise unsupported("with attributes on %s '%s': %s" % (kind, parameter.name, ', '.join(sorted(parameter.attributes))))
+            if unwrap_untrusted(parameter.type):
+                raise unsupported("with an IPC::Untrusted<> %s '%s'" % (kind, parameter.name))
+            try:
+                swift_type_and_coder(parameter.type)
+            except UnmappableSwiftType as error:
+                raise Exception("ERROR: Message %s takes Swift types, but cannot take %s '%s': %s" % (description, kind, parameter.name, error))
+        for parameter in message.reply_parameters or []:
+            # The reply to a message found to be invalid is built from default-constructed values.
+            if re.match(r'(?:WTF::)?Ref<', strip_cpp_type_decorations(parameter.type)):
+                raise Exception("ERROR: Message %s takes Swift types, so its reply parameter '%s' cannot be a Ref<>, which has no default value for the reply to an invalid message: use RefPtr<> or std::optional<> instead" % (description, parameter.name))
 
     def enforce_attribute_constraints(self):
         if not self.receiver_dispatched_from and not self.receiver_dispatched_from_exception:
@@ -153,7 +230,7 @@ def check_global_model_inputs(receivers):
     # A message might be defined multiple times using ifdef conditions.
     # Certain attributes must match in this case. E.g. USE(COCOA) cannot have a sync message that
     # would be non-sync in USE(GTK).
-    matching_attributes = [SYNCHRONOUS_ATTRIBUTE]
+    matching_attributes = [SYNCHRONOUS_ATTRIBUTE, SWIFT_TYPES_ATTRIBUTE, CXX_TYPES_ATTRIBUTE]
     for receiver in receivers:
         receiver_messages = defaultdict(list)
         for message in receiver.messages:

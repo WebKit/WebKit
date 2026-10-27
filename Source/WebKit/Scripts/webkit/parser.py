@@ -54,6 +54,7 @@ def parse(file):
     shared_preferences_needs_connection = False
     swift_receiver = False
     swift_receiver_build_enabled_by = None
+    swift_types = False
     destination = None
     messages = []
     conditions = []
@@ -98,6 +99,9 @@ def parse(file):
                 continue
             elif attribute == 'SwiftReceiver':
                 swift_receiver = True
+                continue
+            elif attribute == 'SwiftTypes':
+                swift_types = True
                 continue
             raise Exception("ERROR: Unknown extended attribute: '%s'" % attribute)
     if receiver_enabled_by and receiver_enabled_by_exception:
@@ -202,7 +206,9 @@ def parse(file):
     if receiver_dispatched_to and receiver_dispatched_to_exception:
         raise Exception("ERROR: 'ExceptionForDispatchedTo' cannot be used together with 'DispatchedTo=%s'" % receiver_dispatched_to)
 
-    return model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, combine_condition(master_condition), namespace, swift_receiver, swift_receiver_build_enabled_by, receiver_name)
+    receiver = model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, combine_condition(master_condition), namespace, swift_receiver, swift_receiver_build_enabled_by, receiver_name, swift_types)
+    receiver.enforce_swift_types_constraints()
+    return receiver
 
 
 def parse_attributes_string(attributes_string):

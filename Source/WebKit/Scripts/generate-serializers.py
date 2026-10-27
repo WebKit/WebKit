@@ -29,6 +29,7 @@ import os
 import re
 import sys
 
+from webkit import swift_types
 from webkit.opaque_ipc_types import OPAQUE_TYPES, is_opaque_type, opaque_ipc_types
 
 # Generated serializers are split into per-bundle translation units to keep
@@ -126,6 +127,7 @@ def matches_bundle(item, bundle_filter):
 # LegacyPopulateFromEmptyConstructor - instead of calling a constructor with the members, call the empty constructor then insert the members one at a time.
 # OptionSet - for enum classes, instead of only allowing deserialization of the exact values, allow deserialization of any bit combination of the values.
 # RValue - serializer takes an rvalue reference, instead of an lvalue.
+# Swift - also generate a Swift form of this struct, class, enum class or Variant using statement into IPCTypes in GeneratedSerializers.swift, for messages whose Swift receivers take Swift types. A RefCounted class becomes a final class, other structs and classes become structs. Enum values must be numbered in declaration order (bits in declaration order for an OptionSet), which the generated C++ checks. A bool enum class must list its two values. Not supported together with CreateUsing, whose function may check values that Swift would not.
 # WebKitPlatform - put serializer into a file built as part of WebKitPlatform
 # CustomEncoder - Only generate the decoder, not the encoder.
 # WebKitSecureCodingClass - For webkit_secure_coding declarations that need a custom way of establishing the Obj-C class to instantiate (e.g. softlinked frameworks)
@@ -190,10 +192,13 @@ class SerializedType(object):
         self.generic_wrapper = None
         self.gref_type = None
         self.bundle = None
+        self.swift = False
+        self.attribute_names = []
         if attributes is not None:
             for attribute in attributes.split(', '):
                 if '=' in attribute:
                     key, value = attribute.split('=')
+                    self.attribute_names.append(key)
                     if key == 'AdditionalEncoder':
                         self.encoders.append(value)
                     elif key == 'ConstructSubclass':
@@ -218,6 +223,7 @@ class SerializedType(object):
                     else:
                         raise Exception(f'Invalid attribute ({key}={value}) found on struct: {self.namespace}::{self.name}')
                 else:
+                    self.attribute_names.append(attribute)
                     if attribute == 'Nested':
                         self.nested = True
                     elif attribute == 'RefCounted':
@@ -236,6 +242,8 @@ class SerializedType(object):
                         self.support_wkkeyedcoder = True
                     elif attribute == 'DebugDecodingFailure':
                         self.debug_decoding_failure = True
+                    elif attribute == 'Swift':
+                        self.swift = True
                     elif attribute in ['CustomHeader']:
                         pass
                     else:
@@ -387,6 +395,19 @@ class SerializedEnum(object):
 
     def is_webkit_platform(self):
         return 'WebKitPlatform' in self.attributes
+
+    def attribute_list(self):
+        return attribute_list(self.attributes)
+
+    def is_swift(self):
+        return 'Swift' in self.attribute_list()
+
+
+def attribute_list(attributes):
+    match = re.search(r'\[(.*)\]', attributes or '')
+    if not match:
+        return []
+    return [attribute.strip() for attribute in match.group(1).split(',') if attribute.strip()]
 
 
 class MemberVariable(object):
@@ -564,10 +585,14 @@ class ConditionalHeader(object):
 
 
 class UsingStatement(object):
-    def __init__(self, name, alias_lines, condition):
+    def __init__(self, name, alias_lines, condition, attributes=None):
         self.name = name
         self.alias_lines = alias_lines
         self.condition = condition
+        self.attributes = attributes
+
+    def is_swift(self):
+        return 'Swift' in attribute_list(self.attributes)
 
     def enforce_opaque_ipc_types_usage(self):
         for alias_line in self.alias_lines:
@@ -1386,6 +1411,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
         result.append('')
         if enum.condition is not None:
             result.append(f'#if {enum.condition}')
+        result.extend(swift_enum_value_assertions(enum))
         result.append(f'template<> bool {enum.function_name()}<{enum.namespace_and_name()}>({enum.parameter()} value)')
         result.append('{')
         if enum.is_option_set():
@@ -1790,7 +1816,8 @@ def parse_serialized_types(file):
         match = re.search(r'(.*)enum class (.*)::(.*) : (.*) {', line)
         if match:
             attributes, namespace, name, underlying_type = match.groups()
-            assert underlying_type != 'bool'
+            # Only the Swift form of a bool enum class needs the names of its values.
+            assert underlying_type != 'bool' or 'Swift' in attribute_list(attributes)
             continue
         match = re.search(r'(.*)enum class (.*)::(.*) : bool', line)
         if match:
@@ -1799,7 +1826,7 @@ def parse_serialized_types(file):
         match = re.search(r'(.*)enum class (.*) : (.*) {', line)
         if match:
             attributes, name, underlying_type = match.groups()
-            assert underlying_type != 'bool'
+            assert underlying_type != 'bool' or 'Swift' in attribute_list(attributes)
             continue
 
         match = re.search(r'\[(.*)\] (struct|class|alias) (.*)::(.*) : (.*) {', line)
@@ -1845,6 +1872,8 @@ def parse_serialized_types(file):
         match = re.search(r'(.*) wrapped by (.*)', line)
         if match:
             objc_wrapped_type, objc_wrapper = match.groups()
+            if 'Swift' in attribute_list(objc_wrapped_type):
+                raise Exception(f'[Swift] is not supported on wrapped types: {line}')
             objc_wrapped_types.append(ObjCWrappedType(objc_wrapped_type, objc_wrapper, type_condition))
             continue
         match = re.search(r'additional_forward_declaration: (.*)', line)
@@ -1852,7 +1881,7 @@ def parse_serialized_types(file):
             declaration = match.groups()[0]
             additional_forward_declarations.append(ConditionalForwardDeclaration(declaration, type_condition))
             continue
-        match = re.search(r'using (.*) = Variant<$', line)
+        match = re.search(r'(\[.*\] )?using (.*) = Variant<$', line)
         if match:
             line_number = line_number + 1
             alias_lines = ['Variant<']
@@ -1860,11 +1889,11 @@ def parse_serialized_types(file):
                 alias_lines.append('    ' + file_lines[line_number])
                 line_number = line_number + 1
             alias_lines.append('>')
-            using_statements.append(UsingStatement(match.groups()[0], alias_lines, type_condition))
+            using_statements.append(UsingStatement(match.groups()[1], alias_lines, type_condition, match.groups()[0]))
             continue
-        match = re.search(r'using (.*) = ([^;]*)', line)
+        match = re.search(r'(\[.*\] )?using (.*) = ([^;]*)', line)
         if match:
-            using_statements.append(UsingStatement(match.groups()[0], [match.groups()[1]], type_condition))
+            using_statements.append(UsingStatement(match.groups()[1], [match.groups()[2]], type_condition, match.groups()[0]))
             continue
         if underlying_type is not None:
             members.append(EnumMember(line.strip(' ,'), member_condition))
@@ -2152,6 +2181,576 @@ def generate_webkit_secure_coding_header(serialized_types):
     return '\n'.join(result)
 
 
+SWIFT_FILE_CONDITION = 'ENABLE_BACK_FORWARD_LIST_SWIFT || (ENABLE_IPC_TESTING_API && ENABLE_IPC_TESTING_SWIFT)'
+
+_SWIFT_KEYWORDS = frozenset([
+    'Any', 'Self', 'as', 'associatedtype', 'await', 'break', 'case', 'catch', 'class', 'continue', 'default', 'defer', 'deinit',
+    'do', 'else', 'enum', 'extension', 'fallthrough', 'false', 'fileprivate', 'for', 'func', 'guard', 'if', 'import', 'in', 'init',
+    'inout', 'internal', 'is', 'let', 'nil', 'operator', 'precedencegroup', 'private', 'protocol', 'public', 'repeat', 'rethrows',
+    'return', 'self', 'static', 'struct', 'subscript', 'super', 'switch', 'throw', 'throws', 'true', 'try', 'typealias', 'var',
+    'where', 'while',
+])
+
+# Attributes that do not change how a type is encoded, so can be used on types marked [Swift].
+_SWIFT_COMPATIBLE_TYPE_ATTRIBUTES = frozenset([
+    'AdditionalEncoder', 'ConstructSubclass', 'CustomHeader', 'DebugDecodingFailure', 'DisableMissingMemberCheck',
+    'LegacyPopulateFromEmptyConstructor', 'Nested', 'RValue', 'RefCounted', 'Swift', 'WebKitPlatform', 'Wrapper',
+])
+_SWIFT_COMPATIBLE_ENUM_ATTRIBUTES = frozenset(['AdditionalEncoder', 'CustomHeader', 'Nested', 'OptionSet', 'Swift', 'WebKitPlatform'])
+_SWIFT_COMPATIBLE_MEMBER_ATTRIBUTES = frozenset(['BitField', 'NotSerialized'])
+
+# Types that generated Swift names without qualification, so must not be shadowed by a type in IPCTypes.
+_SWIFT_RESERVED_TYPE_NAMES = frozenset([
+    'Array', 'Bool', 'Double', 'Equatable', 'Float', 'Hashable', 'IPC', 'IPCCoder', 'IPCCoding', 'IPCDecodingError', 'IPCObjectIdentifier',
+    'IPCTypes', 'Int16', 'Int32', 'Int64', 'Int8', 'OptionSet', 'Optional', 'Sendable', 'String', 'UInt16', 'UInt32', 'UInt64', 'UInt8',
+])
+
+# Names that Swift does not allow for a member, even in backticks.
+_SWIFT_DISALLOWED_MEMBER_NAMES = frozenset(['Any', 'Protocol', 'Self', 'Type'])
+
+
+class SwiftTypeName(object):
+    # kind is 'struct', 'class', 'enum', 'option_set', 'variant', 'identifier' or 'identifier_tag'.
+    def __init__(self, cpp_name, kind):
+        self.cpp_name = cpp_name
+        self.kind = kind
+
+
+class SwiftCxxName(object):
+    def __init__(self, name, swift_name, condition):
+        self.name = name
+        self.swift_name = swift_name
+        self.condition = condition
+
+
+class SwiftMember(object):
+    def __init__(self, name, type, coder, condition, index=None):
+        self.name = name
+        self.type = type
+        self.coder = coder
+        self.condition = condition
+        self.index = index
+
+
+def swift_identifier(name):
+    return f'`{name}`' if name in _SWIFT_KEYWORDS else name
+
+
+def swift_lower_camel_case(name):
+    uppercase = re.match(r'[A-Z]*', name).group(0)
+    if len(uppercase) == len(name):
+        return name.lower()
+    if len(uppercase) > 1 and name[len(uppercase)].islower():
+        uppercase = uppercase[:-1]
+    return uppercase.lower() + name[len(uppercase):]
+
+
+def swift_condition(condition, context):
+    if condition is None:
+        return None
+    try:
+        return swift_types.swift_condition(condition)
+    except swift_types.UnmappableSwiftCondition as error:
+        raise Exception(f'{context}: {error}')
+
+
+def swift_qualified_name(name):
+    return f'{swift_types.SWIFT_TYPES_NAMESPACE}.{name}'
+
+
+def swift_identifiers(serialized_types, serialized_enums, using_statements):
+    """(Swift tag type, Swift identifier type, C++ tag type, C++ identifier type) for each ObjectIdentifier and
+    AtomicObjectIdentifier with a template: argument named like FrameIdentifierType, unless the identifier's name
+    is described as another type, like the ProcessQualified alias WebCore::NavigationIdentifier."""
+    described_types = set(type.namespace_and_name().removeprefix('::') for type in serialized_types)
+    described_types.update(enum.namespace_and_name().removeprefix('::') for enum in serialized_enums)
+    described_types.update(using_statement.name.removeprefix('::') for using_statement in using_statements)
+    result = []
+    for type in serialized_types:
+        if type.namespace != 'WTF' or type.name not in ['ObjectIdentifier', 'AtomicObjectIdentifier']:
+            continue
+        for template in type.templates:
+            if not template.name.endswith('Type') or template.name == 'Type':
+                continue
+            identifier = template.name.removesuffix('Type')
+            namespace = template.namespace.removeprefix('::')
+            if f'{namespace}::{identifier}' in described_types:
+                continue
+            result.append((template.name, identifier, f'{namespace}::{template.name}', f'{namespace}::{identifier}'))
+    return result
+
+
+def swift_type_names(serialized_types, serialized_enums, using_statements):
+    names = {}
+
+    def add(swift_name, cpp_name, kind):
+        cpp_name = cpp_name.removeprefix('::')
+        if swift_name in _SWIFT_RESERVED_TYPE_NAMES:
+            raise Exception(f'{cpp_name} cannot have a Swift form, because {swift_qualified_name(swift_name)} would hide the Swift type {swift_name}.')
+        if swift_name in _SWIFT_DISALLOWED_MEMBER_NAMES:
+            raise Exception(f'{cpp_name} cannot have a Swift form, because Swift does not allow a type named {swift_name}.')
+        if swift_name == swift_types.SWIFT_CXX_NAMES:
+            raise Exception(f'{cpp_name} cannot have a Swift form, because {swift_qualified_name(swift_name)} is the generated index of Swift forms by C++ name.')
+        existing = names.get(swift_name)
+        if existing is not None:
+            # A type can be declared more than once under different conditions.
+            if existing.cpp_name == cpp_name and existing.kind == kind:
+                return
+            raise Exception(f'{existing.cpp_name} and {cpp_name} would both be {swift_qualified_name(swift_name)} in Swift.')
+        names[swift_name] = SwiftTypeName(cpp_name, kind)
+
+    for swift_tag, swift_identifier_name, cpp_tag, cpp_identifier in swift_identifiers(serialized_types, serialized_enums, using_statements):
+        add(swift_tag, cpp_tag, 'identifier_tag')
+        add(swift_identifier_name, cpp_identifier, 'identifier')
+    for enum in serialized_enums:
+        if enum.is_swift():
+            add(enum.name, enum.namespace_and_name(), 'option_set' if enum.is_option_set() else 'enum')
+    for type in serialized_types:
+        if type.swift:
+            add(type.name, type.namespace_and_name(), 'class' if type.return_ref else 'struct')
+    for using_statement in using_statements:
+        if using_statement.is_swift():
+            add(using_statement.name.split('::')[-1], using_statement.name, 'variant')
+    return names
+
+
+def check_swift_type_references(cpp_type, context, swift_names, template=None):
+    """Checks that each type that cpp_type names, which swift_types maps to IPCTypes by its unqualified name,
+    is the C++ type that has that Swift form, and is held as C++ holds it."""
+    cpp_type = swift_types.strip_cpp_type_decorations(cpp_type)
+    match = re.fullmatch(r'([A-Za-z_][A-Za-z_0-9:]*)<(.+)>', cpp_type)
+    if match:
+        template = match.group(1).removeprefix('WTF::')
+        arguments = swift_types.split_template_arguments(match.group(2))
+        if template == 'Markable':
+            arguments = arguments[:1]
+        for argument in arguments:
+            check_swift_type_references(argument, context, swift_names, template)
+        return
+
+    cpp_name = cpp_type.removeprefix('::')
+    if '::' not in cpp_name or cpp_name.startswith(('WTF::', 'std::')):
+        return
+    swift_name = cpp_name.rsplit('::', 1)[1]
+    referenced = swift_names.get(swift_name)
+    if referenced is None or referenced.kind == 'identifier_tag':
+        raise Exception(f'{context}: {cpp_name} has no Swift form. It must be marked [Swift] in a .serialization.in file, or be an ObjectIdentifier whose tag type is a template: of WTF::ObjectIdentifier or WTF::AtomicObjectIdentifier.')
+    if referenced.cpp_name != cpp_name:
+        raise Exception(f'{context}: {cpp_name} would be {swift_qualified_name(swift_name)} in Swift, which is the Swift form of {referenced.cpp_name}.')
+    if (template in ['Ref', 'RefPtr']) != (referenced.kind == 'class'):
+        raise Exception(f'{context}: {cpp_name} must be held in a Ref or RefPtr if, and only if, it is marked [RefCounted].')
+    if (template == 'OptionSet') != (referenced.kind == 'option_set'):
+        raise Exception(f'{context}: {cpp_name} must be held in an OptionSet if, and only if, it is marked [OptionSet].')
+
+
+def swift_type_and_coder(cpp_type, context, swift_names):
+    try:
+        swift_type, swift_coder = swift_types.swift_type_and_coder(cpp_type, cxx_name_coders=False)
+    except swift_types.UnmappableSwiftType as error:
+        raise Exception(f'{context}: {error}')
+    check_swift_type_references(cpp_type, context, swift_names)
+    return swift_type, swift_coder
+
+
+def check_swift_type_attributes(type, context):
+    if 'CreateUsing' in type.attribute_names:
+        raise Exception(f'{context}: types marked [Swift] do not support the attribute CreateUsing, because Swift would not make the checks that the C++ function may make.')
+    for attribute in type.attribute_names:
+        if attribute not in _SWIFT_COMPATIBLE_TYPE_ATTRIBUTES:
+            raise Exception(f'{context}: types marked [Swift] do not support the attribute {attribute}.')
+    if type.cf_type is not None:
+        raise Exception(f'{context}: wrapped CF types cannot be marked [Swift].')
+    if type.is_webkit_secure_coding_type():
+        raise Exception(f'{context}: webkit_secure_coding types cannot be marked [Swift].')
+    if type.struct_or_class == 'alias' or type.alias is not None:
+        raise Exception(f'{context}: aliases cannot be marked [Swift].')
+    if type.members_are_subclasses:
+        raise Exception(f'{context}: types serialized as their subclasses cannot be marked [Swift].')
+    if type.templates or not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', type.name):
+        raise Exception(f'{context}: templates cannot be marked [Swift].')
+
+
+def swift_members(type, context, swift_names):
+    """The members of a struct or class in the order they are encoded, which starts with its parent class's."""
+    if type.cf_type is not None or type.is_webkit_secure_coding_type() or type.members_are_subclasses:
+        raise Exception(f'{context}: its parent class {type.namespace_and_name()} is not serialized as its members, so it has no Swift form.')
+    members = []
+    if type.parent_class_name is not None:
+        if type.parent_class is None:
+            raise Exception(f'{context}: its parent class {type.parent_class_name} is not described in a .serialization.in file, so it has no Swift form.')
+        members = swift_members(type.parent_class, context, swift_names)
+    for member in type.members:
+        member_context = f'{context}: member {member.name}'
+        attributes = [attribute.split('=')[0] for attribute in member.attributes if attribute]
+        if 'NotSerialized' in attributes:
+            continue
+        for attribute in attributes:
+            if attribute not in _SWIFT_COMPATIBLE_MEMBER_ATTRIBUTES:
+                raise Exception(f'{member_context}: types marked [Swift] do not support the member attribute {attribute}.')
+        match = re.fullmatch(r'(?:m_(?=[A-Za-z_]))?([A-Za-z_][A-Za-z0-9_]*)(?:\(\))?', member.name)
+        if not match:
+            raise Exception(f'{member_context}: types marked [Swift] can only have members that are variables or member functions without arguments.')
+        if match.group(1) in _SWIFT_DISALLOWED_MEMBER_NAMES or match.group(1) == 'self':
+            raise Exception(f'{member_context}: it would be named {match.group(1)} in Swift, which cannot be the name of a property.')
+        swift_type, swift_coder = swift_type_and_coder(member.type, member_context, swift_names)
+        members.append(SwiftMember(match.group(1), swift_type, swift_coder, swift_condition(member.condition, member_context)))
+    return members
+
+
+def check_swift_names_are_unique(names_and_conditions, context, what):
+    seen = {}
+    for name, condition in names_and_conditions:
+        if name in seen:
+            # The same name under #if and #else is fine.
+            if condition is None or seen[name] is None or condition == seen[name]:
+                raise Exception(f'{context}: more than one of its {what} would be named {name} in Swift.')
+        seen[name] = condition
+
+
+def swift_conditional_lines(items, lines_for_item):
+    result = []
+    for item in items:
+        lines = lines_for_item(item)
+        if item.condition is None:
+            result.extend(lines)
+            continue
+        indentation = lines[0][:len(lines[0]) - len(lines[0].lstrip())]
+        result.append(f'{indentation}#if {item.condition}')
+        result.extend(lines)
+        result.append(f'{indentation}#endif')
+    return result
+
+
+def swift_coder_conformance(name, decode_lines, encode_lines, before_decode_lines=None):
+    qualified_name = swift_qualified_name(name)
+    result = []
+    result.append(f'extension {qualified_name}: IPCCoder {{')
+    if before_decode_lines:
+        result.extend(before_decode_lines)
+        result.append('')
+    result.append(f'    static func decode(from decoder: inout IPC.SwiftDecoder) throws(IPCDecodingError) -> {qualified_name} {{')
+    result.extend(decode_lines)
+    result.append('    }')
+    result.append('')
+    result.append(f'    static func encode(_ value: {qualified_name}, to encoder: IPC.SwiftReplyEncoder) {{')
+    result.extend(encode_lines)
+    result.append('    }')
+    result.append('}')
+    return result
+
+
+def swift_guarded(condition, lines):
+    if condition is None:
+        return lines
+    return [f'#if {condition}'] + lines + ['#endif']
+
+
+def generate_swift_struct_or_class(type, swift_names):
+    context = f'[Swift] {type.namespace_and_name()}'
+    check_swift_type_attributes(type, context)
+    members = swift_members(type, context, swift_names)
+    check_swift_names_are_unique([(member.name, member.condition) for member in members], context, 'members')
+    name = type.name
+    qualified_name = swift_qualified_name(name)
+
+    def decoding_initializer(indentation):
+        result = [f'{indentation}fileprivate init(ipcDecodingFrom decoder: inout IPC.SwiftDecoder) throws(IPCDecodingError) {{']
+        result.extend(swift_conditional_lines(members, lambda member: [f'{indentation}    self.{swift_identifier(member.name)} = try {member.coder}.decode(from: &decoder)']))
+        result.append(f'{indentation}}}')
+        return result
+
+    result = []
+    result.append(f'extension {swift_types.SWIFT_TYPES_NAMESPACE} {{')
+    if type.return_ref:
+        result.append(f'    final class {name}: Sendable, Equatable {{')
+        result.extend(swift_conditional_lines(members, lambda member: [f'        let {swift_identifier(member.name)}: {member.type}']))
+        # Swift has no #if inside a parameter list.
+        if not members:
+            result.append('')
+            result.append('        init() {}')
+        elif all(member.condition is None for member in members):
+            result.append('')
+            result.append('        init(')
+            for index, member in enumerate(members):
+                result.append(f'            {swift_identifier(member.name)}: {member.type}{"," if index < len(members) - 1 else ""}')
+            result.append('        ) {')
+            for member in members:
+                result.append(f'            self.{swift_identifier(member.name)} = {swift_identifier(member.name)}')
+            result.append('        }')
+        result.append('')
+        result.extend(decoding_initializer('        '))
+        result.append('')
+        result.append(f'        static func == (lhs: {qualified_name}, rhs: {qualified_name}) -> Bool {{')
+        result.append('            if lhs === rhs {')
+        result.append('                return true')
+        result.append('            }')
+        result.extend(swift_conditional_lines(members, lambda member: [
+            f'            guard lhs.{swift_identifier(member.name)} == rhs.{swift_identifier(member.name)} else {{',
+            '                return false',
+            '            }',
+        ]))
+        result.append('            return true')
+        result.append('        }')
+        result.append('    }')
+    else:
+        result.append(f'    struct {name}: Sendable, Equatable {{')
+        result.extend(swift_conditional_lines(members, lambda member: [f'        var {swift_identifier(member.name)}: {member.type}']))
+        result.append('    }')
+    result.append('}')
+    result.append('')
+    result.extend(swift_coder_conformance(
+        name,
+        [f'        try {qualified_name}(ipcDecodingFrom: &decoder)'],
+        swift_conditional_lines(members, lambda member: [f'        {member.coder}.encode(value.{swift_identifier(member.name)}, to: encoder)']),
+        None if type.return_ref else decoding_initializer('    ')))
+    return swift_guarded(swift_condition(type.condition, context), result)
+
+
+def generate_swift_enum(enum):
+    context = f'[Swift] {enum.namespace_and_name()}'
+    for attribute in enum.attribute_list():
+        if attribute.split('=')[0] not in _SWIFT_COMPATIBLE_ENUM_ATTRIBUTES:
+            raise Exception(f'{context}: enums marked [Swift] do not support the attribute {attribute}.')
+    values = enum.valid_values
+    if not values:
+        raise Exception(f'{context}: an enum marked [Swift] must list its values.')
+    # Swift does not allow an enum with no cases to have a raw type.
+    if all(value.condition is not None for value in values):
+        raise Exception(f'{context}: an enum marked [Swift] must have at least one value that is not conditional.')
+
+    if enum.underlying_type == 'bool':
+        if len(values) != 2 or any(value.condition is not None for value in values):
+            raise Exception(f'{context}: a bool enum marked [Swift] must have exactly two values, which are not conditional.')
+        raw_type, raw_coder = 'UInt8', 'Bool'
+    else:
+        try:
+            raw_type, raw_coder = swift_types.swift_type_and_coder(enum.underlying_type)
+        except swift_types.UnmappableSwiftType as error:
+            raise Exception(f'{context}: {error}')
+        if not re.fullmatch(r'U?Int(8|16|32|64)', raw_type):
+            raise Exception(f'{context}: the underlying type of an enum marked [Swift] must be an integer type or bool.')
+        if enum.is_option_set() and not raw_type.startswith('U'):
+            raise Exception(f'{context}: the underlying type of an OptionSet marked [Swift] must be unsigned.')
+        if enum.is_option_set() and len(values) > int(re.search(r'\d+', raw_type).group(0)):
+            raise Exception(f'{context}: it has more values than {enum.underlying_type} has bits.')
+
+    case_names = [swift_lower_camel_case(value.name) for value in values]
+    check_swift_names_are_unique(zip(case_names, [value.condition for value in values]), context, 'values')
+    if 'rawValue' in case_names:
+        raise Exception(f'{context}: a value would be named rawValue in Swift.')
+    cases = [SwiftMember(swift_identifier(case_name), None, None, swift_condition(value.condition, f'{context}: value {value.name}'), index)
+             for index, (case_name, value) in enumerate(zip(case_names, values))]
+
+    name = enum.name
+    qualified_name = swift_qualified_name(name)
+    result = []
+    result.append(f'extension {swift_types.SWIFT_TYPES_NAMESPACE} {{')
+    if enum.is_option_set():
+        result.append(f'    struct {name}: OptionSet, Sendable, Hashable {{')
+        result.append(f'        let rawValue: {raw_type}')
+        result.append('')
+        result.extend(swift_conditional_lines(cases, lambda case: [f'        static let {case.name} = {name}(rawValue: 1 << {case.index})']))
+        result.append('    }')
+        decode_lines = [f'        let value = {qualified_name}(rawValue: try {raw_coder}.decode(from: &decoder))']
+        decode_lines.append('        var unknownValues = value')
+        decode_lines.extend(swift_conditional_lines(cases, lambda case: [f'        unknownValues.subtract(.{case.name})']))
+        decode_lines.append('        guard unknownValues.isEmpty else {')
+        decode_lines.append('            throw IPCDecodingError()')
+        decode_lines.append('        }')
+        decode_lines.append('        return value')
+        encode_lines = [f'        {raw_coder}.encode(value.rawValue, to: encoder)']
+    else:
+        result.append(f'    enum {name}: {raw_type}, Sendable, Hashable {{')
+        result.extend(swift_conditional_lines(cases, lambda case: [f'        case {case.name} = {case.index}']))
+        result.append('    }')
+        if enum.underlying_type == 'bool':
+            raw_value = f'try {raw_coder}.decode(from: &decoder) ? 1 : 0'
+            encode_lines = [f'        {raw_coder}.encode(value.rawValue != 0, to: encoder)']
+        else:
+            raw_value = f'try {raw_coder}.decode(from: &decoder)'
+            encode_lines = [f'        {raw_coder}.encode(value.rawValue, to: encoder)']
+        decode_lines = [f'        guard let value = {qualified_name}(rawValue: {raw_value}) else {{']
+        decode_lines.append('            throw IPCDecodingError()')
+        decode_lines.append('        }')
+        decode_lines.append('        return value')
+    result.append('}')
+    result.append('')
+    result.extend(swift_coder_conformance(name, decode_lines, encode_lines))
+    return swift_guarded(swift_condition(enum.condition, context), result)
+
+
+def swift_variant_case_name(cpp_type):
+    words = []
+    for qualified_name in re.findall(r'[A-Za-z_][A-Za-z_0-9]*(?:::[A-Za-z_][A-Za-z_0-9]*)*', cpp_type):
+        if qualified_name in ['const', 'struct', 'class', 'enum'] or qualified_name.removeprefix('WTF::') == 'Ref':
+            continue
+        try:
+            swift_type, swift_coder = swift_types.swift_type_and_coder(qualified_name)
+        except swift_types.UnmappableSwiftType:
+            swift_type, swift_coder = None, None
+        if swift_type is not None and swift_type == swift_coder and '.' not in swift_type:
+            # A primitive, like uint8_t, is named after its Swift type.
+            words.append(swift_type.lower() if not words else swift_type)
+            continue
+        word = qualified_name.rsplit('::', 1)[-1]
+        words.append(swift_lower_camel_case(word) if not words else word[0].upper() + word[1:])
+    return ''.join(words)
+
+
+def generate_swift_variant(using_statement, swift_names):
+    context = f'[Swift] {using_statement.name}'
+    for attribute in attribute_list(using_statement.attributes):
+        if attribute != 'Swift':
+            raise Exception(f'{context}: using statements marked [Swift] do not support the attribute {attribute}.')
+    if any(line.strip().startswith('#') for line in using_statement.alias_lines):
+        raise Exception(f'{context}: a Variant marked [Swift] cannot have conditional alternatives.')
+    match = re.fullmatch(r'(?:WTF::)?Variant<(.*)>', ' '.join(line.strip() for line in using_statement.alias_lines))
+    if not match:
+        raise Exception(f'{context}: only using statements of a Variant can be marked [Swift].')
+    alternatives = swift_types.split_template_arguments(match.group(1).strip())
+    if len(alternatives) > 255:
+        raise Exception(f'{context}: it has more alternatives than IPC can encode.')
+
+    cases = []
+    for alternative in alternatives:
+        if alternative == 'std::monostate':
+            cases.append(SwiftMember('empty', None, None, None))
+            continue
+        swift_type, swift_coder = swift_type_and_coder(alternative, f'{context}: alternative {alternative}', swift_names)
+        cases.append(SwiftMember(swift_variant_case_name(alternative), swift_type, swift_coder, None))
+    check_swift_names_are_unique([(case.name, None) for case in cases], context, 'alternatives')
+
+    name = using_statement.name.split('::')[-1]
+    result = []
+    result.append(f'extension {swift_types.SWIFT_TYPES_NAMESPACE} {{')
+    result.append(f'    enum {name}: Sendable, Equatable {{')
+    for case in cases:
+        result.append(f'        case {swift_identifier(case.name)}' + (f'({case.type})' if case.type else ''))
+    result.append('    }')
+    result.append('}')
+    result.append('')
+    decode_lines = ['        switch try UInt8.decode(from: &decoder) {']
+    encode_lines = ['        switch value {']
+    for index, case in enumerate(cases):
+        decode_lines.append(f'        case {index}:')
+        if case.type:
+            decode_lines.append(f'            return .{swift_identifier(case.name)}(try {case.coder}.decode(from: &decoder))')
+            encode_lines.append(f'        case .{swift_identifier(case.name)}(let alternative):')
+            encode_lines.append(f'            UInt8.encode({index}, to: encoder)')
+            encode_lines.append(f'            {case.coder}.encode(alternative, to: encoder)')
+        else:
+            decode_lines.append(f'            return .{swift_identifier(case.name)}')
+            encode_lines.append(f'        case .{swift_identifier(case.name)}:')
+            encode_lines.append(f'            UInt8.encode({index}, to: encoder)')
+    decode_lines.append('        default:')
+    decode_lines.append('            throw IPCDecodingError()')
+    decode_lines.append('        }')
+    encode_lines.append('        }')
+    result.extend(swift_coder_conformance(name, decode_lines, encode_lines))
+    return swift_guarded(swift_condition(using_statement.condition, context), result)
+
+
+def generate_swift_identifiers(identifiers):
+    result = []
+    emitted = set()
+    for swift_tag, swift_identifier_name, _, _ in identifiers:
+        if swift_identifier_name in emitted:
+            continue
+        emitted.add(swift_identifier_name)
+        result.append(f'    enum {swift_tag} {{}}')
+        result.append(f'    typealias {swift_identifier_name} = IPCObjectIdentifier<{swift_tag}>')
+    if not result:
+        return []
+    return [f'extension {swift_types.SWIFT_TYPES_NAMESPACE} {{'] + result + ['}']
+
+
+def generate_swift_cxx_names(identifiers, serialized_types, serialized_enums, using_statements):
+    """IPCTypes.CxxName, which names the Swift form of each C++ type by the C++ type's qualified name. The message
+    generator spells coders this way, so a message naming a C++ type without a Swift form does not compile."""
+    types = [(cpp_identifier, swift_identifier_name, None) for _, swift_identifier_name, _, cpp_identifier in identifiers]
+    types += [(enum.namespace_and_name(), enum.name, enum.condition) for enum in serialized_enums if enum.is_swift()]
+    types += [(type.namespace_and_name(), type.name, type.condition) for type in serialized_types if type.swift]
+    types += [(using_statement.name, using_statement.name.split('::')[-1], using_statement.condition) for using_statement in using_statements if using_statement.is_swift()]
+    if not types:
+        return []
+
+    cpp_names = {}
+    aliases = []
+    for cpp_name, swift_name, condition in types:
+        cpp_name = cpp_name.removeprefix('::')
+        alias = SwiftCxxName(swift_types.swift_cxx_name(cpp_name), swift_name, swift_condition(condition, f'[Swift] {cpp_name}'))
+        if cpp_names.setdefault(alias.name, cpp_name) != cpp_name:
+            raise Exception(f'{cpp_names[alias.name]} and {cpp_name} would both be {swift_qualified_name(swift_types.SWIFT_CXX_NAMES)}.{alias.name} in Swift.')
+        if not any(existing.name == alias.name and existing.condition == alias.condition for existing in aliases):
+            aliases.append(alias)
+
+    result = [f'extension {swift_types.SWIFT_TYPES_NAMESPACE} {{']
+    result.append('    /// The Swift forms of C++ types by qualified C++ name, so Swift naming a C++ type that has none does not compile.')
+    result.append(f'    enum {swift_types.SWIFT_CXX_NAMES} {{')
+    result.extend(swift_conditional_lines(sorted(aliases, key=lambda alias: alias.name),
+                                          lambda alias: [f'        typealias {alias.name} = {swift_qualified_name(alias.swift_name)}']))
+    result.append('    }')
+    result.append('}')
+    return result
+
+
+def swift_line_comments(block_comment):
+    result = []
+    for line in block_comment.strip().split('\n'):
+        line = line.strip().removeprefix('/*').removesuffix('*/').strip().removeprefix('*').strip()
+        result.append(f'// {line}' if line else '//')
+    return result
+
+
+def generate_swift(serialized_types, serialized_enums, using_statements):
+    swift_names = swift_type_names(serialized_types, serialized_enums, using_statements)
+    identifiers = swift_identifiers(serialized_types, serialized_enums, using_statements)
+    declarations = [generate_swift_identifiers(identifiers)]
+    for enum in serialized_enums:
+        if enum.is_swift():
+            declarations.append(generate_swift_enum(enum))
+    for type in serialized_types:
+        if type.swift:
+            declarations.append(generate_swift_struct_or_class(type, swift_names))
+    for using_statement in using_statements:
+        if using_statement.is_swift():
+            declarations.append(generate_swift_variant(using_statement, swift_names))
+    declarations.append(generate_swift_cxx_names(identifiers, serialized_types, serialized_enums, using_statements))
+
+    result = swift_line_comments(_license_header)
+    result.append('')
+    result.append(f'#if {SWIFT_FILE_CONDITION}')
+    result.append('')
+    result.append('import WebKit_Internal')
+    for declaration in declarations:
+        if declaration:
+            result.append('')
+            result.extend(declaration)
+    result.append('')
+    result.append('#endif')
+    result.append('')
+    return '\n'.join(result)
+
+
+def swift_enum_value_assertions(enum):
+    if not enum.is_swift():
+        return []
+    result = []
+    result.append(f'static_assert(sizeof(std::underlying_type_t<{enum.namespace_and_name()}>) == sizeof({enum.underlying_type}), "{swift_qualified_name(enum.name)} in GeneratedSerializers.swift has the size of the underlying type in .serialization.in");')
+    for index, valid_value in enumerate(enum.valid_values):
+        if valid_value.condition is not None:
+            result.append(f'#if {valid_value.condition}')
+        value = f'static_cast<{enum.underlying_type}>({enum.namespace_and_name()}::{valid_value.name})'
+        if enum.is_option_set():
+            assertion = f'{value} == (1ull << {index})'
+        else:
+            assertion = f'!{value}' if not index else f'{value} == {index}'
+        result.append(f'static_assert({assertion}, "{swift_qualified_name(enum.name)} in GeneratedSerializers.swift numbers values in .serialization.in order");')
+        if valid_value.condition is not None:
+            result.append('#endif')
+    return result
+
+
 def main(argv):
     parser = argparse.ArgumentParser(description='Generate serializers from input files', fromfile_prefix_chars='@')
     parser.add_argument('file_extension', help='File extension for output files')
@@ -2205,6 +2804,7 @@ def main(argv):
     headers = sorted(header_set)
 
     serialized_types = resolve_inheritance(serialized_types)
+    swift_source = generate_swift(serialized_types, serialized_enums, using_statements)
 
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -2235,6 +2835,8 @@ def main(argv):
         output.write(generate_webkit_secure_coding_header(serialized_types))
     with open(output_path('GeneratedWebKitSecureCoding.%s' % file_extension), "w+") as output:
         output.write(generate_webkit_secure_coding_impl(serialized_types, headers))
+    with open(output_path('GeneratedSerializers.swift'), "w+") as output:
+        output.write(swift_source)
     return 0
 
 

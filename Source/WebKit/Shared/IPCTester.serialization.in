@@ -27,4 +27,60 @@ struct WebKit::TestParameter {
     [Validator='*value > 10'] uint32_t value;
 };
 
+header: "IPCTesterPayload.h"
+[Swift] enum class WebKit::IPCTesterColor : uint8_t {
+    Red,
+    Green,
+    Blue,
+};
+
+[Swift, OptionSet] enum class WebKit::IPCTesterFlag : uint8_t {
+    First,
+    Second,
+    Third,
+};
+
+[Swift] enum class WebKit::IPCTesterChoice : bool {
+    No,
+    Yes,
+};
+
+[Swift, CustomHeader] struct WebKit::IPCTesterInner {
+    int32_t value;
+    String label;
+};
+
+[Swift] using WebKit::IPCTesterVariant = Variant<uint64_t, String, WebKit::IPCTesterInner>;
+
+[Swift] struct WebKit::IPCTesterPayload {
+    bool flag;
+    uint8_t u8;
+    uint16_t u16;
+    uint32_t u32;
+    uint64_t u64;
+    int8_t i8;
+    int16_t i16;
+    int32_t i32;
+    int64_t i64;
+    float f;
+    double d;
+    String text;
+    String nullText;
+    Vector<uint32_t> numbers;
+    Vector<String> strings;
+    std::optional<WebKit::IPCTesterColor> color;
+    OptionSet<WebKit::IPCTesterFlag> flags;
+    WebKit::IPCTesterChoice choice;
+    WebKit::IPCTesterInner inner;
+    Vector<WebKit::IPCTesterInner> inners;
+    WebKit::IPCTesterVariant variant;
+    Markable<WebKit::IPCConnectionTesterIdentifier> identifier;
+};
+
+[Swift, RefCounted, CustomHeader] class WebKit::IPCTesterNode {
+    String name();
+    Vector<Ref<WebKit::IPCTesterNode>> children();
+    RefPtr<WebKit::IPCTesterNode> link();
+};
+
 #endif

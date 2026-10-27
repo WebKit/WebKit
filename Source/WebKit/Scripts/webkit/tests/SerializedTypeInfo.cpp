@@ -50,6 +50,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
 #endif
+#include "SwiftTypes.h"
 #include "TemplateTest.h"
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/EmptyConstructorWithIf.h>
@@ -76,6 +77,7 @@
 #include <WebCore/ScrollingStateFrameHostingNodeWithStuffAfterTuple.h>
 #include <WebCore/TimingFunction.h>
 #include <wtf/CreateUsingClass.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/Seconds.h>
 #if USE(AVFOUNDATION)
 #include <pal/cocoa/AVFoundationSoftLink.h>
@@ -114,6 +116,15 @@ static_assert(std::is_same_v<WebCore::ConditionalVariant,
 >);
 static_assert(std::is_same_v<WebCore::NonConditionalVariant,
     Variant<int, double>
+>);
+static_assert(std::is_same_v<Namespace::SwiftVariant,
+    Variant<std::monostate, uint64_t, String, Vector<String>, Namespace::SwiftInner, Ref<Namespace::SwiftNode>>
+>);
+static_assert(std::is_same_v<Namespace::SwiftMultiLineVariant,
+    Variant<
+        WebCore::FrameIdentifier,
+        std::optional<Namespace::SwiftEnum>
+    >
 >);
 
 #if ENABLE(IPC_TESTING_API)
@@ -585,6 +596,148 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "member"_s
             },
         } },
+        { "ObjectIdentifier"_s, {
+            {
+                "uint64_t"_s,
+                "toUInt64()"_s
+            },
+        } },
+        { "AtomicObjectIdentifier"_s, {
+            {
+                "uint64_t"_s,
+                "toUInt64()"_s
+            },
+        } },
+        { "Namespace::SwiftInner"_s, {
+            {
+                "int32_t"_s,
+                "value"_s
+            },
+            {
+                "String"_s,
+                "label"_s
+            },
+        } },
+        { "Namespace::SwiftStruct"_s, {
+            {
+                "bool"_s,
+                "m_flag"_s
+            },
+            {
+                "String"_s,
+                "m_name"_s
+            },
+            {
+                "Vector<uint64_t>"_s,
+                "m_numbers"_s
+            },
+            {
+                "Vector<String>"_s,
+                "m_strings"_s
+            },
+            {
+                "std::optional<double>"_s,
+                "m_optionalDouble"_s
+            },
+            {
+                "Markable<WebCore::FrameIdentifier>"_s,
+                "m_markableFrameID"_s
+            },
+            {
+                "WebCore::FrameIdentifier"_s,
+                "m_frameID"_s
+            },
+            {
+                "WebKit::SwiftAtomicTestIdentifier"_s,
+                "m_atomicID"_s
+            },
+            {
+                "Namespace::SwiftInner"_s,
+                "m_inner"_s
+            },
+            {
+                "std::optional<Namespace::SwiftInner>"_s,
+                "m_optionalInner"_s
+            },
+            {
+                "Namespace::SwiftEnum"_s,
+                "m_enumValue"_s
+            },
+            {
+                "Namespace::SwiftBoolEnum"_s,
+                "m_boolEnum"_s
+            },
+            {
+                "OptionSet<Namespace::SwiftOptionSet>"_s,
+                "m_options"_s
+            },
+            {
+                "Namespace::SwiftVariant"_s,
+                "m_variant"_s
+            },
+            {
+                "bool"_s,
+                "m_default"_s
+            },
+#if ENABLE(SWIFT_MEMBER)
+            {
+                "uint32_t"_s,
+                "m_conditionalMember"_s
+            },
+#endif
+            {
+                "float"_s,
+                "accessor()"_s
+            },
+        } },
+        { "Namespace::SwiftNode"_s, {
+            {
+                "String"_s,
+                "name()"_s
+            },
+            {
+                "Vector<Ref<Namespace::SwiftNode>>"_s,
+                "children()"_s
+            },
+            {
+                "RefPtr<Namespace::SwiftNode>"_s,
+                "parent()"_s
+            },
+            {
+                "Ref<Namespace::SwiftLeaf>"_s,
+                "leaf()"_s
+            },
+        } },
+        { "Namespace::SwiftLeaf"_s, {
+            {
+                "uint64_t"_s,
+                "m_value"_s
+            },
+#if ENABLE(SWIFT_MEMBER)
+            {
+                "double"_s,
+                "m_conditionalValue"_s
+            },
+#endif
+        } },
+        { "Namespace::SwiftBase"_s, {
+            {
+                "uint32_t"_s,
+                "baseValue"_s
+            },
+        } },
+#if ENABLE(SWIFT_TYPE_CONDITION)
+        { "Namespace::SwiftDerived"_s, {
+            {
+                "uint32_t"_s,
+                "baseValue"_s
+            },
+            {
+                "double"_s,
+                "derivedValue"_s
+            },
+        } },
+#endif // ENABLE(SWIFT_TYPE_CONDITION)
 #if USE(PASSKIT)
         { "PKPaymentMethod"_s, {
             { "WebKit::CoreIPCPKPaymentMethod"_s, "wrapper"_s }
@@ -636,6 +789,19 @@ Vector<SerializedTypeInfo> allSerializedTypes()
         { "WebCore::NonConditionalVariant"_s, {
         {
             "Variant<int, double>"_s
+            , "alias"_s }
+        } },
+        { "Namespace::SwiftVariant"_s, {
+        {
+            "Variant<std::monostate, uint64_t, String, Vector<String>, Namespace::SwiftInner, Ref<Namespace::SwiftNode>>"_s
+            , "alias"_s }
+        } },
+        { "Namespace::SwiftMultiLineVariant"_s, {
+        {
+            "Variant<"
+            "WebCore::FrameIdentifier, "
+            "std::optional<Namespace::SwiftEnum>"
+            ">"_s
             , "alias"_s }
         } },
     };
@@ -715,6 +881,26 @@ Vector<SerializedEnumInfo> allSerializedEnums()
             { 1, "true"_s }
         } },
 #endif
+        { "Namespace::SwiftEnum"_s, sizeof(Namespace::SwiftEnum), false, {
+            { enumValueForIPCTestAPI(Namespace::SwiftEnum::FirstValue), "FirstValue"_s },
+            { enumValueForIPCTestAPI(Namespace::SwiftEnum::HTTPSOnly), "HTTPSOnly"_s },
+            { enumValueForIPCTestAPI(Namespace::SwiftEnum::URL), "URL"_s },
+            { enumValueForIPCTestAPI(Namespace::SwiftEnum::Default), "Default"_s },
+#if ENABLE(SWIFT_ENUM_VALUE)
+            { enumValueForIPCTestAPI(Namespace::SwiftEnum::ConditionalValue), "ConditionalValue"_s },
+#endif
+        } },
+        { "Namespace::SwiftBoolEnum"_s, sizeof(Namespace::SwiftBoolEnum), false, {
+            { 0, "false"_s },
+            { 1, "true"_s }
+        } },
+        { "Namespace::SwiftOptionSet"_s, sizeof(Namespace::SwiftOptionSet), true, {
+            { enumValueForIPCTestAPI(Namespace::SwiftOptionSet::FirstOption), "FirstOption"_s },
+#if ENABLE(SWIFT_OPTION)
+            { enumValueForIPCTestAPI(Namespace::SwiftOptionSet::ConditionalOption), "ConditionalOption"_s },
+#endif
+            { enumValueForIPCTestAPI(Namespace::SwiftOptionSet::ThirdOption), "ThirdOption"_s },
+        } },
     };
 }
 

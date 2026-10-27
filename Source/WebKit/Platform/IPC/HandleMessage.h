@@ -30,6 +30,7 @@
 #include "MessageArgumentDescriptions.h"
 #include "MessageNames.h"
 #include "StreamServerConnection.h"
+#include "SwiftCoding.h"
 #include <functional>
 #include <wtf/Compiler.h>
 #include <wtf/CompletionHandler.h>
@@ -632,6 +633,57 @@ void handleMessageAsyncWithReplyID(Connection& connection, Decoder& decoder, T* 
     auto replyID = decoder.asyncReplyID();
     decoder.markHandled();
     callMemberFunction(object, function, std::tuple<IPC::AsyncReplyID>(replyID));
+}
+
+// Dispatch to Swift handlers of messages that take Swift types. The Swift dispatch function decodes the
+// arguments itself, and returns false if they were malformed.
+
+inline void markSwiftArgumentsInvalid(Decoder& decoder)
+{
+#if ENABLE(IPC_TESTING_API)
+    decoder.setErrorString("Failed to decode the arguments of a message that takes Swift types"_s);
+#endif
+    decoder.markInvalid();
+}
+
+template<typename MessageType>
+void encodeDefaultSwiftReply(Encoder& encoder)
+{
+    Connection::cancelReply<MessageType>([&encoder](auto&&... arguments) {
+        (..., void(encoder << std::forward<decltype(arguments)>(arguments)));
+    });
+}
+
+template<typename MessageType, typename T, typename U, typename MF>
+void handleSwiftMessage(Connection& connection, Decoder& decoder, T* object, MF U::* function)
+{
+    SwiftDecoderLender swiftDecoderLender { decoder };
+    SUPPRESS_UNCOUNTED_ARG if (!(object->*function)(&connection, swiftDecoderLender.swiftDecoder()))
+        markSwiftArgumentsInvalid(decoder);
+}
+
+template<typename MessageType, typename T, typename U, typename MF>
+void handleSwiftMessageAsync(Connection& connection, Decoder& decoder, T* object, MF U::* function)
+{
+    Ref replyEncoder = SwiftReplyEncoder::create(connection, makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), decoder.asyncReplyID().toUInt64()), encodeDefaultSwiftReply<MessageType>);
+    SwiftDecoderLender swiftDecoderLender { decoder };
+    SUPPRESS_UNCOUNTED_ARG if (!(object->*function)(&connection, swiftDecoderLender.swiftDecoder(), replyEncoder.ptr())) {
+        replyEncoder->discard();
+        markSwiftArgumentsInvalid(decoder);
+        return;
+    }
+    decoder.markHandled();
+}
+
+template<typename MessageType, typename T, typename U, typename MF>
+void handleSwiftMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder, T* object, MF U::* function)
+{
+    Ref swiftReplyEncoder = SwiftReplyEncoder::create(connection, WTF::move(replyEncoder), encodeDefaultSwiftReply<MessageType>);
+    SwiftDecoderLender swiftDecoderLender { decoder };
+    SUPPRESS_UNCOUNTED_ARG if (!(object->*function)(&connection, swiftDecoderLender.swiftDecoder(), swiftReplyEncoder.ptr())) {
+        replyEncoder = makeUniqueRefFromNonNullUniquePtr(swiftReplyEncoder->discard());
+        markSwiftArgumentsInvalid(decoder);
+    }
 }
 
 } // namespace IPC

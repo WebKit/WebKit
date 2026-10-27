@@ -53,6 +53,10 @@ messages -> IPCTester {
     EmptyMessage()
     EmptyMessageWithReply() -> (uint64_t valueq)
     CheckTestParameter(struct WebKit::TestParameter param)
+
+    SendSwiftTypesMessagesToReceiver() -> (String failures)
+    AddReceiverForSwiftTypesTesting() -> (bool swiftUsed) Synchronous
+    RemoveReceiverForSwiftTypesTesting() -> () Synchronous
 }
 
 #endif

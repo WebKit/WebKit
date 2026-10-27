@@ -1,0 +1,25 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that a Swift receiver decodes and encodes C++ types and Swift types as C++ does.</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ipc.js"></script>
+<body>
+<script>
+
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+    IPC.addTesterReceiver('UI');
+    try {
+        // The UI process sends IPCTesterReceiver messages that it takes as C++ types and as Swift
+        // types, and checks every reply. It replies with the names of the messages whose replies
+        // were wrong.
+        let result = await IPC.sendWithPromisedReply('UI', 0, IPC.messages.IPCTester_SendSwiftTypesMessagesToReceiver.name, []);
+        assert_equals(result.arguments[0].value, '');
+    } finally {
+        IPC.removeTesterReceiver('UI');
+    }
+    done();
+}, "Replies to messages taking C++ types and Swift types are what C++ expects.");
+</script>
+</body>
