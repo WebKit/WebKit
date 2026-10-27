@@ -1,0 +1,17 @@
+<script>
+var worker = new Worker("page-cache-worker-in-subframe-fetch-after-pagehide-worker.js");
+var workerLoadResult = new Promise(function(resolve) {
+    worker.onmessage = function(event) {
+        if (event.data === "ready") {
+            parent.postMessage("ready", "*");
+            return;
+        }
+        resolve(event.data);
+    };
+});
+
+function startFetch()
+{
+    worker.postMessage("fetch");
+}
+</script>
