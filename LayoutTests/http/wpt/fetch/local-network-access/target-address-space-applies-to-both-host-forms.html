@@ -1,0 +1,53 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LocalNetworkAccessEnabled=true ] -->
+<html>
+<body>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+
+// The test server answers on a loopback address under an address literal and under hostnames its
+// resolver maps to that same address, so each target below names one device by both host forms. The
+// page itself is served from neither literal host, which keeps both targets cross-origin and so out
+// of the same-origin exemption in performLocalNetworkAccessCheck().
+const literalTarget = `http://127.0.0.1:${location.port}/common/blank.html`;
+const resolvedHostTarget = `http://${location.hostname === "not-web-platform.test" ? "web-platform.test" : "not-web-platform.test"}:${location.port}/common/blank.html`;
+
+test(() => {
+    assert_not_equals(location.hostname, "127.0.0.1", "the literal target has to stay cross-origin");
+    assert_equals(new Request(literalTarget, { targetAddressSpace: "local" }).targetAddressSpace, "local");
+    assert_equals(new Request(resolvedHostTarget, { targetAddressSpace: "local" }).targetAddressSpace, "local");
+}, 'a declared targetAddressSpace survives both host forms');
+
+test(() => {
+    assert_equals(new Request(literalTarget).targetAddressSpace, "loopback");
+    assert_equals(new Request(resolvedHostTarget).targetAddressSpace, "public");
+}, 'a request with no declared targetAddressSpace takes the one its host form gives');
+
+// A space declared as local cannot be satisfied by a loopback connection, so both host forms have to
+// be refused. Before the declaration was kept, the literal form was quietly rewritten to loopback and
+// reached the device that the hostname form was refused.
+promise_test(async (t) => {
+    await promise_rejects_js(t, TypeError,
+        fetch(literalTarget, { mode: "no-cors", targetAddressSpace: "local" }));
+}, 'a local target address space is refused for the literal address');
+
+promise_test(async (t) => {
+    await promise_rejects_js(t, TypeError,
+        fetch(resolvedHostTarget, { mode: "no-cors", targetAddressSpace: "local" }));
+}, 'a local target address space is refused for a hostname that resolves to that address');
+
+// The matching declaration, and no declaration at all, have to keep working for both host forms, or
+// the refusal above is just a check that rejects everything.
+promise_test(async () => {
+    await fetch(literalTarget, { mode: "no-cors", targetAddressSpace: "loopback" });
+    await fetch(resolvedHostTarget, { mode: "no-cors", targetAddressSpace: "loopback" });
+}, 'a loopback target address space is allowed for both host forms');
+
+promise_test(async () => {
+    await fetch(literalTarget, { mode: "no-cors" });
+    await fetch(resolvedHostTarget, { mode: "no-cors" });
+}, 'a target with no declared address space keeps the space its resolved address gives it');
+
+</script>
+</body>
+</html>
