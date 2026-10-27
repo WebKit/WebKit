@@ -149,28 +149,27 @@ auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64
     }
 
     bool canUseOffsetForm = uoffset <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) && B3::Air::Arg::isValidAddrForm(B3::Air::Move, static_cast<int32_t>(uoffset), accessWidth);
-#if CPU(ARM64)
     if (canUseOffsetForm) {
         if (m_info.memory(memoryIndex).isMemory64())
             return functor(CCallHelpers::BaseIndex(baseRegister, pointerLocation.asGPR(), CCallHelpers::TimesOne, static_cast<int32_t>(uoffset)));
+#if CPU(ARM64)
         return functor(CCallHelpers::BaseIndex(baseRegister, pointerLocation.asGPR(), CCallHelpers::TimesOne, static_cast<int32_t>(uoffset), CCallHelpers::Extend::ZExt32));
+#else
+        m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
+        return functor(CCallHelpers::BaseIndex(baseRegister, wasmScratchGPR, CCallHelpers::TimesOne, static_cast<int32_t>(uoffset)));
+#endif
     }
 
-    if (m_info.memory(memoryIndex).isMemory64())
-        m_jit.addPtr(baseRegister, pointerLocation.asGPR(), wasmScratchGPR);
-    else
-        m_jit.addZeroExtend64(baseRegister, pointerLocation.asGPR(), wasmScratchGPR);
-#else
     if (m_info.memory(memoryIndex).isMemory64())
         m_jit.addPtr(baseRegister, pointerLocation.asGPR(), wasmScratchGPR);
     else {
+#if CPU(ARM64)
+        m_jit.addZeroExtend64(baseRegister, pointerLocation.asGPR(), wasmScratchGPR);
+#else
         m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
         m_jit.addPtr(baseRegister, wasmScratchGPR);
-    }
 #endif
-
-    if (canUseOffsetForm)
-        return functor(Address(wasmScratchGPR, static_cast<int32_t>(uoffset)));
+    }
 
     // FIXME: We (potentially) already computed this above before adding the boundary, we should preserve that add result and use it again here
     m_jit.addPtr(TrustedImmPtr(uoffset), wasmScratchGPR);
