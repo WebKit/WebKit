@@ -16398,6 +16398,22 @@ IGNORE_CLANG_WARNINGS_END
         TypedPointer entryKeySlot = m_out.baseIndex(m_heaps.indexedContiguousProperties, mapStorageData, m_out.zeroExt(entryKeyIndex, Int64));
         LValue entryKey = m_out.load64(entryKeySlot);
 
+        // Two resolved strings are equal if they share a StringImpl, and two distinct atoms are never equal.
+        auto compareStrings = [&](LValue keyString, LValue entryString) {
+            LBasicBlock bothResolved = m_out.newBlock();
+            LBasicBlock implsDiffer = m_out.newBlock();
+            LValue keyImpl = m_out.loadPtr(keyString, m_heaps.JSString_value);
+            LValue entryImpl = m_out.loadPtr(entryString, m_heaps.JSString_value);
+            m_out.branch(m_out.testNonZeroPtr(m_out.bitOr(keyImpl, entryImpl), m_out.constIntPtr(JSString::isRopeInPointer)), rarely(slowPath), usually(bothResolved));
+
+            m_out.appendTo(bothResolved);
+            m_out.branch(m_out.equal(keyImpl, entryImpl), unsure(presentInTable), unsure(implsDiffer));
+
+            m_out.appendTo(implsDiffer);
+            LValue flags = m_out.bitAnd(m_out.load32(keyImpl, m_heaps.StringImpl_hashAndFlags), m_out.load32(entryImpl, m_heaps.StringImpl_hashAndFlags));
+            m_out.branch(m_out.testNonZero32(flags, m_out.constInt32(StringImpl::flagIsAtom())), unsure(loopAround), unsure(slowPath));
+        };
+
         // A deleted entry holds a VM-private symbol, which is never a key and is neither a string
         // nor a BigInt, so every case below already sends it to loopAround.
         switch (m_node->child2().useKind()) {
@@ -16424,13 +16440,17 @@ IGNORE_CLANG_WARNINGS_END
             m_out.branch(isString(entryKey), unsure(entryKeyIsString), unsure(entryKeyIsNotString));
 
             m_out.appendTo(entryKeyIsString, entryKeyIsNotString);
-            m_out.branch(isString(key, provenType(m_node->child2())), unsure(slowPath), unsure(loopAround));
+            LBasicBlock bothAreStrings = m_out.newBlock();
+            m_out.branch(isString(key, provenType(m_node->child2())), unsure(bothAreStrings), unsure(loopAround));
 
             m_out.appendTo(entryKeyIsNotString, entryKeyIsHeapBigInt);
             m_out.branch(isHeapBigInt(entryKey), unsure(entryKeyIsHeapBigInt), unsure(loopAround));
 
             m_out.appendTo(entryKeyIsHeapBigInt, loopAround);
             m_out.branch(isHeapBigInt(key, provenType(m_node->child2())), unsure(slowPath), unsure(loopAround));
+
+            m_out.appendTo(bothAreStrings);
+            compareStrings(key, entryKey);
             break;
         }
         case StringUse: {
@@ -16443,7 +16463,11 @@ IGNORE_CLANG_WARNINGS_END
             m_out.branch(isCell(entryKey), unsure(entryKeyIsCell), unsure(loopAround));
 
             m_out.appendTo(entryKeyIsCell, loopAround);
-            m_out.branch(isString(entryKey), unsure(slowPath), unsure(loopAround));
+            LBasicBlock bothAreStrings = m_out.newBlock();
+            m_out.branch(isString(entryKey), unsure(bothAreStrings), unsure(loopAround));
+
+            m_out.appendTo(bothAreStrings);
+            compareStrings(key, entryKey);
             break;
         }
         case HeapBigIntUse: {
@@ -16479,13 +16503,17 @@ IGNORE_CLANG_WARNINGS_END
             m_out.branch(isString(entryKey), unsure(entryKeyIsString), unsure(entryKeyIsNotString));
 
             m_out.appendTo(entryKeyIsString, entryKeyIsNotString);
-            m_out.branch(isString(key, provenType(m_node->child2())), unsure(slowPath), unsure(loopAround));
+            LBasicBlock bothAreStrings = m_out.newBlock();
+            m_out.branch(isString(key, provenType(m_node->child2())), unsure(bothAreStrings), unsure(loopAround));
 
             m_out.appendTo(entryKeyIsNotString, entryKeyIsHeapBigInt);
             m_out.branch(isHeapBigInt(entryKey), unsure(entryKeyIsHeapBigInt), unsure(loopAround));
 
             m_out.appendTo(entryKeyIsHeapBigInt, loopAround);
             m_out.branch(isHeapBigInt(key, provenType(m_node->child2())), unsure(slowPath), unsure(loopAround));
+
+            m_out.appendTo(bothAreStrings);
+            compareStrings(key, entryKey);
             break;
         }
         default:
