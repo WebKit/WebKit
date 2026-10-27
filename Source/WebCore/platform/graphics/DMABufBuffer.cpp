@@ -213,17 +213,6 @@ EGLImage DMABufBuffer::createEGLImageForQualcommVideoFrame(GLDisplay& display, c
 }
 #endif
 
-bool DMABufBuffer::isQualcommVideoFrameBuffer() const
-{
-#if USE(GSTREAMER)
-    // Color space hint is used for Qualcomm video decoder, that exposes
-    // a single fd for two planes using external OES texture.
-    return m_colorSpace && m_sampleRange;
-#else
-    return false;
-#endif
-}
-
 std::optional<Vector<EGLint>> DMABufBuffer::buildEGLImageAttributes(const Attributes& dmaBufAttributes, Attributes::EnableModifiers enableModifiers)
 {
     auto eglAttributes = buildEGLAttributesForDMABuf(dmaBufAttributes, enableModifiers);
@@ -429,16 +418,19 @@ SkYUVAInfo DMABufBuffer::yuvaInfo() const
         RELEASE_ASSERT_NOT_REACHED();
     }
 
+    bool isFullRange = m_sampleRange == DMABufBuffer::SampleRange::Full;
     SkYUVColorSpace yuvaColorSpace = [&] {
         switch (m_colorSpace.value_or(DMABufBuffer::ColorSpace::Bt601)) {
         case DMABufBuffer::ColorSpace::Bt601:
-            return kRec601_Limited_SkYUVColorSpace;
+            return isFullRange ? kJPEG_Full_SkYUVColorSpace : kRec601_Limited_SkYUVColorSpace;
         case DMABufBuffer::ColorSpace::Bt709:
-            return kRec709_Full_SkYUVColorSpace;
+            return isFullRange ? kRec709_Full_SkYUVColorSpace : kRec709_Limited_SkYUVColorSpace;
         case DMABufBuffer::ColorSpace::Bt2020:
-            return kBT2020_8bit_Full_SkYUVColorSpace;
+            if (m_attributes.fourcc.value == DRM_FORMAT_P010)
+                return isFullRange ? kBT2020_10bit_Full_SkYUVColorSpace : kBT2020_10bit_Limited_SkYUVColorSpace;
+            return isFullRange ? kBT2020_8bit_Full_SkYUVColorSpace : kBT2020_8bit_Limited_SkYUVColorSpace;
         case DMABufBuffer::ColorSpace::Smpte240M:
-            return kSMPTE240_Full_SkYUVColorSpace;
+            return isFullRange ? kSMPTE240_Full_SkYUVColorSpace : kSMPTE240_Limited_SkYUVColorSpace;
         }
         RELEASE_ASSERT_NOT_REACHED();
     }();
@@ -450,7 +442,8 @@ sk_sp<SkColorSpace> DMABufBuffer::skiaColorSpace() const
 {
     switch (m_transferFunction.value_or(DMABufBuffer::TransferFunction::Bt709)) {
     case DMABufBuffer::TransferFunction::Bt709:
-        return SkColorSpace::MakeRGB(SkNamedTransferFn::kRec709, SkNamedGamut::kSRGB);
+        // The transfer function of SDR frames is not converted, as when GStreamer converts them to RGB.
+        return SkColorSpace::MakeSRGB();
     case DMABufBuffer::TransferFunction::Pq:
         return SkColorSpace::MakeRGB(SkNamedTransferFn::kPQ, SkNamedGamut::kRec2020);
     }
