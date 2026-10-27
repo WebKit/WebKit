@@ -1,0 +1,15 @@
+<p>Cross-origin iframe that triggers failing image and script loads on demand.</p>
+
+<script>
+// Port 54321 refuses connections, so each load fails at the network layer.
+function triggerFailedImage(token) {
+    let image = new Image;
+    image.src = `http://localhost:54321/failed-image-${token}.png`;
+}
+
+function triggerFailedScript(token) {
+    let script = document.createElement("script");
+    script.src = `http://localhost:54321/failed-script-${token}.js`;
+    document.body.appendChild(script);
+}
+</script>

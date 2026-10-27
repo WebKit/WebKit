@@ -1,0 +1,21 @@
+Tests that requests made from iframes without a src list under the iframe's own frame, once, finished, under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.SrclessIFrame
+-- Running test case: SiteIsolation.Network.SrclessIFrame.Static
+PASS: Srcless iframe should be a child frame of the main frame.
+PASS: Fetch should be added.
+PASS: Fetch should belong to the srcless iframe's frame.
+PASS: Fetch should finish loading.
+PASS: Fetch should be listed once.
+PASS: Main frame should have no extra child frames.
+
+-- Running test case: SiteIsolation.Network.SrclessIFrame.Dynamic
+PASS: Srcless iframe should be a child frame of the main frame.
+PASS: Fetch should be added.
+PASS: Fetch should belong to the srcless iframe's frame.
+PASS: Fetch should finish loading.
+PASS: Fetch should be listed once.
+PASS: Main frame should have no extra child frames.
+

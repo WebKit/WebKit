@@ -1,0 +1,21 @@
+Tests that loads cancelled in a cross-origin iframe fail as canceled in the Network model instead of staying pending, under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrameAbortedLoads
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.AbortedFetch
+PASS: Aborted fetch should be added.
+PASS: Aborted fetch should have the resource-type-fetch type.
+PASS: Aborted fetch should belong to the iframe's frame.
+PASS: Aborted fetch should fail instead of staying pending.
+PASS: Aborted fetch should be marked as canceled.
+PASS: Aborted fetch should be listed once.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.StoppedImage
+PASS: Stopped image should be added.
+PASS: Stopped image should have the resource-type-image type.
+PASS: Stopped image should belong to the iframe's frame.
+PASS: Stopped image should fail instead of staying pending.
+PASS: Stopped image should be marked as canceled.
+PASS: Stopped image should be listed once.
+
