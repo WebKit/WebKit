@@ -433,12 +433,13 @@ static Thread::QOS LEGACY_NODELETE toQOS(qos_class_t qosClass)
 }
 #endif
 
-auto Thread::currentThreadQOS() -> QOS
+auto Thread::currentThreadQOS() -> std::optional<QOS>
 {
 #if HAVE(QOS_CLASSES)
-    qos_class_t qos = QOS_CLASS_DEFAULT;
-    int relativePriority;
-    pthread_get_qos_class_np(pthread_self(), &qos, &relativePriority);
+    qos_class_t qos = QOS_CLASS_UNSPECIFIED;
+    pthread_get_qos_class_np(pthread_self(), &qos, nullptr);
+    if (qos == QOS_CLASS_UNSPECIFIED)
+        return std::nullopt;
     return toQOS(qos);
 #else
     return currentSingleton().qos();

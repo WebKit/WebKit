@@ -285,6 +285,19 @@ struct ConnectionAsyncReplyHandler {
     Markable<AsyncReplyID> replyID;
 };
 
+// The state that m_sendLock guards only exists on Cocoa.
+#if PLATFORM(COCOA)
+#define IPC_CONNECTION_GUARDED_BY_SEND_LOCK WTF_GUARDED_BY_LOCK(m_sendLock)
+#define IPC_CONNECTION_REQUIRES_SEND_LOCK WTF_REQUIRES_LOCK(m_sendLock)
+#define IPC_CONNECTION_EXCLUDES_SEND_LOCK WTF_EXCLUDES_LOCK(m_sendLock)
+#define IPC_CONNECTION_REQUIRES_SEND_STATE WTF_REQUIRES_LOCK(m_sendLock)
+#else
+#define IPC_CONNECTION_GUARDED_BY_SEND_LOCK
+#define IPC_CONNECTION_REQUIRES_SEND_LOCK
+#define IPC_CONNECTION_EXCLUDES_SEND_LOCK
+#define IPC_CONNECTION_REQUIRES_SEND_STATE WTF_REQUIRES_CAPABILITY(m_connectionQueue.get())
+#endif
+
 class Connection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Connection, WTF::DestructionThread::MainRunLoop> {
 public:
     using SyncRequestID = IPC::SyncRequestID;
@@ -633,6 +646,11 @@ public:
 
 #if PLATFORM(COCOA)
     static void LEGACY_NODELETE setForceUseSharedMemoryForSendingForTesting(bool);
+
+#if ENABLE(IPC_SEND_DIRECTLY)
+    static void setAllowsSendingDirectly(bool);
+    static bool allowsSendingDirectly();
+#endif
 #endif
 
 #if ENABLE(IPC_TESTING_API)
@@ -684,11 +702,14 @@ private:
     void processIncomingMessage(UniqueRef<Decoder>);
     void processIncomingSyncReply(UniqueRef<Decoder>);
 
-    bool LEGACY_NODELETE hasPendingOutgoingMessage() const WTF_REQUIRES_CAPABILITY(m_connectionQueue.get());
-    void sendOutgoingMessages();
-    void didFinishSendingOutgoingMessage() WTF_EXCLUDES_LOCK(m_outgoingMessagesLock);
-    bool sendOutgoingMessage(UniqueRef<Encoder>&&);
-    void connectionDidClose();
+    bool LEGACY_NODELETE hasPendingOutgoingMessage() const IPC_CONNECTION_REQUIRES_SEND_STATE;
+    void sendOutgoingMessages() IPC_CONNECTION_EXCLUDES_SEND_LOCK;
+    void drainOutgoingMessages() IPC_CONNECTION_REQUIRES_SEND_STATE;
+    void didFinishSendingOutgoingMessage() WTF_EXCLUDES_LOCK(m_outgoingMessagesLock) IPC_CONNECTION_REQUIRES_SEND_STATE;
+    bool sendOutgoingMessage(UniqueRef<Encoder>&&) IPC_CONNECTION_REQUIRES_SEND_LOCK;
+
+    bool isConnected() const IPC_CONNECTION_EXCLUDES_SEND_LOCK;
+    void connectionDidClose() IPC_CONNECTION_EXCLUDES_SEND_LOCK;
 
     // Called on the connection run loop.
     void dispatchSyncStateMessages();
@@ -715,8 +736,11 @@ private:
 #if PLATFORM(COCOA)
     enum class SendMessageResult : uint8_t { Success, Failure, MessageTooLarge };
     enum class IsRetryDueToLargeSize : bool { No, Yes };
-    SendMessageResult sendMessage(std::unique_ptr<MachMessage>&, IsRetryDueToLargeSize = IsRetryDueToLargeSize::No);
-    bool retrySendMessageWithSharedMemory(std::unique_ptr<MachMessage> failedMessage, UniqueRef<Encoder>&);
+    SendMessageResult sendMessage(std::unique_ptr<MachMessage>&, IsRetryDueToLargeSize = IsRetryDueToLargeSize::No) WTF_REQUIRES_LOCK(m_sendLock);
+    bool retrySendMessageWithSharedMemory(std::unique_ptr<MachMessage> failedMessage, UniqueRef<Encoder>&) WTF_REQUIRES_LOCK(m_sendLock);
+#if ENABLE(IPC_SEND_DIRECTLY)
+    bool trySendOutgoingMessageDirectly(UniqueRef<Encoder>&, OptionSet<SendOption>, std::optional<ThreadQOS>) WTF_EXCLUDES_LOCK(m_sendLock);
+#endif
 #endif
     template<typename F>
     void dispatchToClient(F&& clientRunLoopTask) WTF_EXCLUDES_LOCK(m_incomingMessagesLock);
@@ -771,7 +795,7 @@ private:
     MonotonicTime m_lastOutgoingMessageQueueIsGrowingLargeCallbackCallTime WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
 
     const Ref<WorkQueue> m_connectionQueue;
-    bool m_isConnected { false };
+    bool m_isConnected IPC_CONNECTION_GUARDED_BY_SEND_LOCK { false };
 
     unsigned m_inSendSyncCount { 0 };
     unsigned m_inDispatchSyncMessageCount { 0 };
@@ -876,18 +900,32 @@ private:
 #elif OS(DARWIN)
     // Called on the connection queue.
     void receiveSourceEventHandler();
-    void initializeSendSource();
-    void resumeSendSource();
+    void initializeSendSource() WTF_REQUIRES_LOCK(m_sendLock);
+    void resumeSendSource() WTF_REQUIRES_LOCK(m_sendLock);
     void cancelReceiveSource();
-    void cancelSendSource();
 
-    mach_port_t m_sendPort { MACH_PORT_NULL };
-    OSObjectPtr<dispatch_source_t> m_sendSource;
+    // Called on the connection queue or on the thread that called sendMessage() if the message was
+    // sent directly.
+    void cancelSendSource() WTF_REQUIRES_LOCK(m_sendLock);
+
+    // Serializes everything that sends on m_sendPort. drainOutgoingMessages() on the connection
+    // queue holds it while dequeueing messages and sending them via mach_msg(). On the direct send
+    // fast path, the calling thread only uses tryLock() and queues the message if that fails, so it
+    // never waits for the connection queue. It also only sends directly if no message is queued or
+    // parked, so it can never send a message before a previously sent one.
+    //
+    // This lock must not be taken after m_outgoingMessagesLock.
+    mutable UnfairLock m_sendLock;
+    mach_port_t m_sendPort WTF_GUARDED_BY_LOCK(m_sendLock) { MACH_PORT_NULL };
+    OSObjectPtr<dispatch_source_t> m_sendSource WTF_GUARDED_BY_LOCK(m_sendLock);
+    std::unique_ptr<MachMessage> m_pendingOutgoingMachMessage WTF_GUARDED_BY_LOCK(m_sendLock);
+#if ENABLE(IPC_SEND_DIRECTLY)
+    bool m_sendSourceIsRegistered WTF_GUARDED_BY_LOCK(m_sendLock) { false };
+    const ThreadQOS m_connectionQueueQOS;
+#endif
 
     mach_port_t m_receivePort { MACH_PORT_NULL };
     OSObjectPtr<dispatch_source_t> m_receiveSource;
-
-    std::unique_ptr<MachMessage> m_pendingOutgoingMachMessage WTF_GUARDED_BY_CAPABILITY(m_connectionQueue.get());
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
     std::atomic<bool> m_didRequestProcessTermination { false };

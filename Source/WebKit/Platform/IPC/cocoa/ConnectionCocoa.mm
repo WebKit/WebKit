@@ -51,6 +51,10 @@
 #import <wtf/text/MakeString.h>
 #import <wtf/text/ParsingUtilities.h>
 
+#if ENABLE(IPC_SEND_DIRECTLY)
+#import <wtf/Threading.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import "ProcessAssertion.h"
 #endif
@@ -70,6 +74,20 @@ void Connection::setForceUseSharedMemoryForSendingForTesting(bool force)
 {
     s_forceUseSharedMemoryForSending = force;
 }
+
+#if ENABLE(IPC_SEND_DIRECTLY)
+static std::atomic<bool> s_allowsSendingDirectly { false };
+
+void Connection::setAllowsSendingDirectly(bool allowsSendingDirectly)
+{
+    s_allowsSendingDirectly.store(allowsSendingDirectly, std::memory_order_relaxed);
+}
+
+bool Connection::allowsSendingDirectly()
+{
+    return s_allowsSendingDirectly.load(std::memory_order_relaxed);
+}
+#endif
 
 static void requestNoSenderNotifications(mach_port_t port, mach_port_t notify)
 {
@@ -96,6 +114,7 @@ static void clearNoSenderNotifications(mach_port_t port)
 void Connection::platformInvalidate()
 {
     assertIsCurrent(m_connectionQueue.get());
+    Locker sendLocker { m_sendLock };
 
     if (!m_isConnected) {
         if (MACH_PORT_VALID(m_sendPort)) {
@@ -138,6 +157,9 @@ void Connection::platformInvalidate()
 void Connection::cancelSendSource()
 {
     m_sendPort = MACH_PORT_NULL;
+#if ENABLE(IPC_SEND_DIRECTLY)
+    m_sendSourceIsRegistered = false;
+#endif
     if (!m_sendSource)
         return;
     dispatch_source_cancel(protect(m_sendSource));
@@ -153,6 +175,7 @@ void Connection::cancelReceiveSource()
 
 void Connection::platformInitialize(Identifier&& identifier)
 {
+    Locker sendLocker { m_sendLock };
     if (m_isServer) {
         RELEASE_ASSERT(MACH_PORT_VALID(identifier.port)); // Caller error. MACH_DEAD_NAME does not make sense, as we do not transfer receive rights.
         m_receivePort = identifier.port;
@@ -172,7 +195,12 @@ void Connection::platformInitialize(Identifier&& identifier)
 void Connection::platformOpen()
 {
     if (m_isServer) {
-        ASSERT(!m_sendPort);
+#if ASSERT_ENABLED
+        {
+            Locker sendLocker { m_sendLock };
+            ASSERT(!m_sendPort);
+        }
+#endif
         // Client passed m_receivePort. Call Client::didClose() when there are no senders to that port.
         requestNoSenderNotifications(m_receivePort);
     } else {
@@ -190,16 +218,20 @@ void Connection::platformOpen()
         mach_port_set_attributes(mach_task_self(), m_receivePort, MACH_PORT_DENAP_RECEIVER, (mach_port_info_t)0, 0);
 #endif
 
-        m_isConnected = true;
-
         // Send the initialize message, which contains a send right for the server to use.
         auto serverSendRight = MachSendRight::createFromReceiveRight(m_receivePort);
 
         // Call Client::didClose() when the serverSendRight gets destroyed.
         requestNoSenderNotifications(m_receivePort);
 
-        initializeSendSource();
-        if (m_sendPort != MACH_PORT_DEAD) {
+        bool sendPortIsDead;
+        {
+            Locker sendLocker { m_sendLock };
+            m_isConnected = true;
+            initializeSendSource();
+            sendPortIsDead = m_sendPort == MACH_PORT_DEAD;
+        }
+        if (!sendPortIsDead) {
             auto encoder = makeUniqueRef<Encoder>(MessageName::InitializeConnection, 0);
             encoder.get() << WTF::move(serverSendRight);
             sendMessage(WTF::move(encoder), { });
@@ -235,7 +267,6 @@ void Connection::platformOpen()
 
 Connection::SendMessageResult Connection::sendMessage(std::unique_ptr<MachMessage>& message, IsRetryDueToLargeSize isRetryDueToLargeSize)
 {
-    assertIsCurrent(m_connectionQueue.get());
     ASSERT(message);
     ASSERT(!m_pendingOutgoingMachMessage);
     // Send the message.
@@ -325,6 +356,64 @@ static Vector<MachSendRight> extractPortDescriptorsFromMessage(MachMessage& mess
     message.leakDescriptors();
     return ports;
 }
+
+#if ENABLE(IPC_SEND_DIRECTLY)
+bool Connection::trySendOutgoingMessageDirectly(UniqueRef<Encoder>& encoder, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
+{
+    if (!s_allowsSendingDirectly.load(std::memory_order_relaxed))
+        return false;
+
+#if ENABLE(IPC_TESTING_API)
+    if (sendOptions.contains(SendOption::IPCTestingMessage))
+        return false;
+#else
+    UNUSED_PARAM(sendOptions);
+#endif
+
+    // Keep larger messages on the connection queue.
+    if (s_forceUseSharedMemoryForSending || encoder->hasOutOfLineBuffer())
+        return false;
+
+    // Never send at a lower priority than the connection queue or the requested QoS. Also bail if
+    // the thread has no explicit QoS. (Note that lower Thread::QOS values imply higher priority.)
+    auto requiredQOS = m_connectionQueueQOS;
+    if (qos)
+        requiredQOS = std::min(requiredQOS, *qos);
+    auto currentQOS = Thread::currentThreadQOS();
+    if (!currentQOS || *currentQOS > requiredQOS)
+        return false;
+
+    // If there's any contention on the lock (e.g. connection queue is currently sending a message
+    // or another thread is directly sending a message), then queue the message rather than waiting.
+    if (!m_sendLock.tryLock())
+        return false;
+    Locker sendLocker { AdoptLock, m_sendLock };
+
+    if (!isValid() || !m_sendSourceIsRegistered || !m_isConnected || !MACH_PORT_VALID(m_sendPort))
+        return false;
+
+    // If there are any parked or queued messages, then we need to queue this message behind them.
+    if (m_pendingOutgoingMachMessage)
+        return false;
+    {
+        Locker locker { m_outgoingMessagesLock };
+        if (!m_outgoingMessages.isEmpty())
+            return false;
+    }
+
+    // Explicitly move the encoder out of the caller's UniqueRef. Callers like dispatchSyncMessage()
+    // check whether their UniqueRef is empty to know whether the message was sent.
+    UniqueRef message = WTF::move(encoder);
+    if (!sendOutgoingMessage(WTF::move(message))) {
+        // When sendOutgoingMessage fails, that means that we either dropped the message or the Mach
+        // port queue is full and parked the message in m_pendingOutgoingMachMessage.
+        // didFinishSendingOutgoingMessage() handles both cases.
+        didFinishSendingOutgoingMessage();
+    }
+
+    return true;
+}
+#endif
 
 bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 {
@@ -457,11 +546,16 @@ void Connection::initializeSendSource()
     OSObjectPtr sendSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_POSSIBLE, protect(m_connectionQueue->dispatchQueue()).get()));
     m_sendSource = sendSource;
     dispatch_source_set_registration_handler(sendSource, [this, protectedThis = Ref { *this }] {
+        Locker sendLocker { m_sendLock };
         if (!m_sendSource)
             return;
+#if ENABLE(IPC_SEND_DIRECTLY)
+        m_sendSourceIsRegistered = true;
+#endif
         resumeSendSource();
     });
     dispatch_source_set_event_handler(sendSource, [this, protectedThis = Ref { *this }] {
+        Locker sendLocker { m_sendLock };
         if (!m_sendSource)
             return;
 
@@ -494,7 +588,7 @@ void Connection::resumeSendSource()
             RELEASE_LOG_ERROR(IPC, "resumeSendSource: Unexpected MACH_SEND_TOO_LARGE for pending message");
         }
     }
-    sendOutgoingMessages();
+    drainOutgoingMessages();
 }
 
 static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, std::span<uint8_t> message)
@@ -686,8 +780,7 @@ void Connection::receiveSourceEventHandler()
 
     if (decoder->messageName() == MessageName::InitializeConnection) {
         ASSERT(m_isServer);
-        ASSERT(!m_sendPort);
-        if (m_isConnected) {
+        if (isConnected()) {
             // The sender sent an invalid message deliberately, close immediately.
             ASSERT_IS_TESTING_IPC();
             connectionDidClose();
@@ -701,6 +794,8 @@ void Connection::receiveSourceEventHandler()
             return;
         }
 
+        Locker sendLocker { m_sendLock };
+        ASSERT(!m_sendPort);
         m_isConnected = true;
 
         if (!MACH_PORT_VALID(sendRight->sendRight())) {
@@ -724,6 +819,7 @@ void Connection::receiveSourceEventHandler()
 
 IPC::Connection::Identifier Connection::identifier() const
 {
+    Locker sendLocker { m_sendLock };
     return Identifier(m_isServer ? m_receivePort : m_sendPort, m_xpcConnection);
 }
 

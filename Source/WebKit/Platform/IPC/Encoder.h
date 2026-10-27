@@ -97,6 +97,7 @@ public:
     void addAttachment(Attachment&&);
     Vector<Attachment> releaseAttachments();
     void reserve(size_t);
+    bool hasOutOfLineBuffer() const { return !!m_outOfLineBuffer; }
 
     static constexpr bool isIPCEncoder = true;
 
