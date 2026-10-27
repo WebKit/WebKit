@@ -159,13 +159,17 @@ class Runner(object):
         return args
 
     @staticmethod
+    def _suite_name(test):
+        return '.'.join(test.split('.')[:-1])
+
+    @staticmethod
     def _shard_tests(tests, fully_parallel):
         shards = {}
         for test in tests:
-            shard_prefix = '.'.join(test.split('.')[:-1])
-            if shard_prefix not in shards:
-                shards[shard_prefix] = []
-            shards[shard_prefix].append(test)
+            suite = Runner._suite_name(test)
+            if suite not in shards:
+                shards[suite] = []
+            shards[suite].append(test)
         if fully_parallel:
             shards = {}
             for i, test in enumerate(tests):
@@ -275,8 +279,8 @@ class Runner(object):
             _log.info('Test-parallel-safety mode: no tests to check')
             return
 
-        checked_set = set(checked_tests)
-        background_chunks = Runner._parallel_safety_background_chunks([test for test in allowlisted_tests if test not in checked_set], checked_tests)
+        checked_suites = {Runner._suite_name(test) for test in checked_tests}
+        background_chunks = Runner._parallel_safety_background_chunks([test for test in allowlisted_tests if Runner._suite_name(test) not in checked_suites], checked_tests)
         iterations = self.port.get_option('parallel_safety_iterations') or 1
         checked_workers = min(len(checked_tests), max(1, workers // 3))
         background_workers = min(len(background_chunks), workers - checked_workers)
