@@ -170,16 +170,23 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     return { };
 }
 
-// Only display: flow-root, overflow: hidden and out-of-flow boxes. The other ways to establish a block formatting context also contain, align or fragment the
-// content, or give it scrollbars: those take space, and RenderBlock::layout lays the box out again when they come or go.
+// Scrollbars take space, and RenderBlock::layout lays the box out again when they come or go.
+static bool hasScrollbarsOrGutter(const RenderBox& box)
+{
+    CheckedRef style = box.style();
+    auto isScrollable = [](Overflow overflow) {
+        return overflow == Overflow::Auto || overflow == Overflow::Scroll;
+    };
+    // Marquees scroll their content and size their children differently (RenderBox::sizesLogicalWidthToFitContent).
+    return isScrollable(style->overflowX()) || isScrollable(style->overflowY()) || !style->scrollbarGutter().isAuto() || box.isHTMLMarquee();
+}
+
+// Only display: flow-root, overflow other than visible without scrollbars and out-of-flow boxes. The other ways to establish a block formatting
+// context also contain, align or fragment the content, or give it scrollbars.
 static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockContainer)
 {
     CheckedRef style = blockContainer.style();
-    auto isScrollContainerWithoutScrollbars = [&] {
-        // Marquees scroll their content and size their children differently (RenderBox::sizesLogicalWidthToFitContent).
-        return style->overflowX() == Overflow::Hidden && style->overflowY() == Overflow::Hidden && style->scrollbarGutter().isAuto() && !blockContainer.isHTMLMarquee();
-    };
-    auto isSupportedRoot = blockContainer.hasNonVisibleOverflow() ? isScrollContainerWithoutScrollbars() : style->display() == Style::DisplayType::BlockFlowRoot || blockContainer.isOutOfFlowPositioned();
+    auto isSupportedRoot = blockContainer.hasNonVisibleOverflow() ? !hasScrollbarsOrGutter(blockContainer) : style->display() == Style::DisplayType::BlockFlowRoot || blockContainer.isOutOfFlowPositioned();
     return isSupportedRoot && !blockContainer.isWritingModeRoot() && !blockContainer.isFieldset()
         && !blockContainer.shouldApplyAnyContainment() && style->alignContent().isNormal()
         && !style->specifiesColumns() && style->columnSpan() != ColumnSpan::All && style->blockStepSize().isNone()
@@ -361,8 +368,8 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
     // Nor the justify-items of its parent, which an auto justify-self takes to align its static position (PositionedLayoutConstraints::shouldAlignStaticPositionInInlineAxis).
     if (CheckedPtr parent = outOfFlowBox.parent(); parent && !style->justifySelf().resolve(&parent->style()).isNormalStretchOrLegacy())
         return BlockAvoidanceReason::ContentHasOutOfFlowSelfAlignment;
-    // A scroll container with a definite size is a layout boundary, which the render tree path lays out on its own (RenderObject::markContainingBlocksForLayout).
-    if (outOfFlowBox.hasNonVisibleOverflow())
+    // FIXME: Scrollbars (hasScrollbarsOrGutter).
+    if (outOfFlowBox.hasNonVisibleOverflow() && hasScrollbarsOrGutter(outOfFlowBox))
         return BlockAvoidanceReason::ContentHasOutOfFlowScrollContainer;
     // So is a box with layout and size containment.
     if (outOfFlowBox.shouldApplyLayoutContainment() && outOfFlowBox.shouldApplySizeContainment())
