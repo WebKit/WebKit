@@ -1438,20 +1438,11 @@ NEVER_INLINE void Heap::resumeTheMutator()
     dataLogLnIf(HeapInternal::verbose, "Resuming the mutator.");
     for (;;) {
         unsigned oldState = m_worldState.load();
-        if (!!(oldState & hasAccessBit) != !(oldState & stoppedBit)) {
-            dataLog("Fatal: hasAccess = ", !!(oldState & hasAccessBit), ", stopped = ", !!(oldState & stoppedBit), "\n");
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-        if (oldState & mutatorHasConnBit) {
-            dataLog("Fatal: mutator has the conn.\n");
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-        
-        if (!(oldState & stoppedBit)) {
-            dataLogLnIf(HeapInternal::verbose, "Returning because not stopped.");
-            return;
-        }
-        
+        // Only called by the collector thread when it is conducting, after it stopped the mutator.
+        RELEASE_ASSERT(oldState & stoppedBit, oldState);
+        RELEASE_ASSERT(!(oldState & hasAccessBit), oldState);
+        RELEASE_ASSERT(!(oldState & mutatorHasConnBit), oldState);
+
         if (m_worldState.compareExchangeWeak(oldState, oldState & ~stoppedBit)) {
             dataLogLnIf(HeapInternal::verbose, "CASing and returning.");
             ParkingLot::unparkAll(&m_worldState);
