@@ -125,6 +125,8 @@ private:
     }
 
     void requestAdapter(const ::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<::WebGPU::Adapter>&&)>&&) final;
+    // The GPU process destroys the instance when the GPU is released.
+    void destroy() final { }
 
     RefPtr<::WebGPU::PresentationContext> createPresentationContext(const WebCore::WebGPUPresentationContextDescriptor&) final;
 

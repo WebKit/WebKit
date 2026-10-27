@@ -140,13 +140,15 @@ void CommandBuffer::makeInvalidDueToCommit(NSString* lastError)
     m_cachedCommandBuffer = m_commandBuffer;
     if (RefPtr instance = m_device->instance())
         instance->retainCommandBuffer(*this, m_commandBuffer);
-    [m_commandBuffer addCompletedHandler:[protectedThis = protect(*this)](id<MTLCommandBuffer> completedCommandBuffer) {
+    // Metal runs this handler on its own thread. It doesn't reference the command buffer strongly,
+    // lest it destroys it there.
+    [m_commandBuffer addCompletedHandler:[weakThis = ThreadSafeWeakPtr { *this }, completion = m_completion, workScheduler = Ref { m_device->workScheduler() }](id<MTLCommandBuffer> completedCommandBuffer) {
         // GPUStartTime/GPUEndTime bracket execution on the GPU; kernelStartTime/kernelEndTime only bracket the driver scheduling it.
         double gpuStartTime = completedCommandBuffer.GPUStartTime;
         double gpuEndTime = completedCommandBuffer.GPUEndTime;
-        protectedThis->m_gpuExecutionDurationSeconds.store(gpuEndTime - gpuStartTime, std::memory_order_relaxed);
-        protectedThis->m_commandBufferComplete.signal();
-        protectedThis->m_device->getQueue()->scheduleWork([weakThis = ThreadSafeWeakPtr { protectedThis.get() }, gpuStartTime, gpuEndTime]() mutable {
+        completion->gpuExecutionDurationSeconds.store(gpuEndTime - gpuStartTime, std::memory_order_relaxed);
+        completion->semaphore.signal();
+        workScheduler->scheduleWork([weakThis, gpuStartTime, gpuEndTime] mutable {
             RefPtr protectedThis { weakThis.get() };
             if (!protectedThis)
                 return;
@@ -176,7 +178,7 @@ bool CommandBuffer::waitForCompletion()
     auto status = [m_cachedCommandBuffer status];
     constexpr auto commandBufferSubmissionTimeout = 500_ms;
     if (status == MTLCommandBufferStatusCommitted || status == MTLCommandBufferStatusScheduled)
-        return m_commandBufferComplete.waitFor(commandBufferSubmissionTimeout);
+        return m_completion->semaphore.waitFor(commandBufferSubmissionTimeout);
 
     return true;
 }

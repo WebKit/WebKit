@@ -37,6 +37,7 @@
 #import <wtf/MachSendRight.h>
 #import <wtf/Ref.h>
 #import <wtf/TZoneMalloc.h>
+#import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/ThreadSafeWeakPtr.h>
 #import <wtf/ThreadSafetyAnalysis.h>
 #import <wtf/WeakObjCPtr.h>
@@ -54,6 +55,33 @@ class CommandBuffer;
 class Device;
 class PresentationContext;
 class Texture;
+
+// Runs work items on the thread that the instance calls back on. Metal's completion handlers hold
+// it instead of the instance, so that they never hold the last reference to the instance. Once
+// closed, it drops the work items, which therefore must not own anything that has to be destroyed
+// on the thread that the instance calls back on.
+class WorkScheduler : public ThreadSafeRefCounted<WorkScheduler> {
+public:
+    using WorkItem = Function<void()>;
+    static Ref<WorkScheduler> create(Function<void(WorkItem&&)>&& scheduleWork)
+    {
+        return adoptRef(*new WorkScheduler(WTF::move(scheduleWork)));
+    }
+
+    // This can be called on a background thread.
+    void scheduleWork(WorkItem&&);
+    void close();
+
+private:
+    explicit WorkScheduler(Function<void(WorkItem&&)>&& scheduleWork)
+        : m_scheduleWork(WTF::move(scheduleWork))
+    {
+    }
+
+    Lock m_lock;
+    // Null once closed.
+    Function<void(WorkItem&&)> m_scheduleWork WTF_GUARDED_BY_LOCK(m_lock);
+};
 
 // https://gpuweb.github.io/gpuweb/#gpu
 class Instance final : public WebGPU::Instance {
@@ -73,14 +101,16 @@ public:
 
     void setLabel(String&&) final { }
     bool isValid() const final { return m_isValid; }
+    void destroy() final;
     void retainDevice(Device&, id<MTLCommandBuffer>);
     void retainCommandBuffer(CommandBuffer&, id<MTLCommandBuffer>);
     void releaseCompletedCommandBuffers();
     void waitForCommandBufferCompletions();
 
     // This can be called on a background thread.
-    using WorkItem = Function<void()>;
+    using WorkItem = WorkScheduler::WorkItem;
     void scheduleWork(WorkItem&&);
+    WorkScheduler& workScheduler() const { return m_workScheduler; }
     const std::optional<const MachSendRight>& LEGACY_NODELETE webProcessID() const;
     id<MTLDevice> device() const;
 
@@ -110,8 +140,8 @@ private:
     HashMap<Ref<Device>, CommandBufferContainer> retainedDeviceInstances;
     Vector<std::pair<Ref<CommandBuffer>, WeakObjCPtr<id<MTLCommandBuffer>>>> m_retainedCommandBufferInstances;
     const std::optional<const MachSendRight> m_webProcessID;
-    // Null when the work waits in m_pendingWork for processEvents().
-    const Function<void(WorkItem&&)> m_scheduleWork;
+    // Without a schedule function, the work waits in m_pendingWork for processEvents().
+    const Ref<WorkScheduler> m_workScheduler;
     Lock m_lock;
     bool m_isValid { true };
 };
