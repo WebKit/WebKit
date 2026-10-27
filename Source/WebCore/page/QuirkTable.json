@@ -210,6 +210,11 @@
             "behaviors": [{ "id": "ShouldOmitTouchEventDOMAttributesForDesktopWebsiteQuirk" }]
         },
         {
+            "bugs": ["rdar://190449381"],
+            "matches": ["*://*.chatgpt.com/*"],
+            "behaviors": [{ "id": "ShouldUseLayoutViewportForClientRectsQuirk" }]
+        },
+        {
             "matches": ["*://*.chess.com/*"],
             "environment": "SmallScreen",
             "available": "iOS",

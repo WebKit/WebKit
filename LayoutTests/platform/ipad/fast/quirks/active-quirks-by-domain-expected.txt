@@ -62,6 +62,8 @@ https://www.capitalgroup.com/
     ShouldDelayReloadWhenRegisteringServiceWorker
 https://www.cbssports.com/
     ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk
+https://chatgpt.com/
+    ShouldUseLayoutViewportForClientRectsQuirk
 https://www.cnn.com/
     NeedsCNNCaptionQuirk
     NeedsFullscreenObjectFitQuirk
