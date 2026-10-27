@@ -59,7 +59,6 @@ namespace WebKit {
 
 using namespace Inspector;
 using BrowsingContext = Inspector::Protocol::BidiBrowsingContext::BrowsingContext;
-using EvaluateResultType = Inspector::Protocol::BidiScript::EvaluateResultType;
 
 static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value*);
 static Ref<JSON::Value> deserializeLocalValue(const JSON::Value&);
@@ -278,6 +277,7 @@ static Ref<JSON::Value> deserializeLocalValue(const JSON::Value& jsonValue)
 
 void BidiScriptAgent::callFunction(const String& functionDeclaration, bool awaitPromise, Ref<JSON::Object>&& target, RefPtr<JSON::Array>&& arguments, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&&, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Object>&& optionalThis, std::optional<bool>&& optionalUserActivation, CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)
 {
+    // https://w3c.github.io/webdriver-bidi/#command-script-callFunction
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
@@ -289,59 +289,44 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
     auto& [topLevelContextHandle, frameHandle] = pageAndFrameHandles.value();
 
-    // FIXME: handle `awaitPromise` option.
     // FIXME: handle `resultOwnership` option.
-    // FIXME: handle `serializationOptions` option.
-    // FIXME: handle custom `this` option.
-    // FIXME: handle `userActivation` option.
 
-    // Deserialize LocalValue arguments into plain JSON values for script evaluation.
-    // FIXME: Implement RemoteReference and Channel types for arguments <https://webkit.org/b/288057>
-    auto argumentsArray = JSON::Array::create();
-    if (arguments) {
-        for (unsigned i = 0; i < arguments->length(); ++i) {
-            Ref argValue = arguments->get(i);
-            argumentsArray->pushValue(deserializeLocalValue(argValue.get()));
+    std::optional<double> maxObjectDepth;
+    std::optional<double> maxDomDepth { 0 };
+    String includeShadowTree = "none"_s;
+    if (optionalSerializationOptions) {
+        auto& serializationOptions = *optionalSerializationOptions;
+
+        auto maxDomDepthValidationResult = updateValidatedDepthParameter(serializationOptions, "maxDomDepth"_s, maxDomDepth);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!maxDomDepthValidationResult, InvalidParameter);
+        auto maxObjectDepthValidationResult = updateValidatedDepthParameter(serializationOptions, "maxObjectDepth"_s, maxObjectDepth);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!maxObjectDepthValidationResult, InvalidParameter);
+
+        if (auto includeShadowTreeJSON = serializationOptions.getValue("includeShadowTree"_s)) {
+            String includeShadowTreeValue;
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!includeShadowTreeJSON->asString(includeShadowTreeValue), InvalidParameter);
+            auto parsedIncludeShadowTree = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<Inspector::Protocol::BidiScript::SerializationOptions::IncludeShadowTree>(includeShadowTreeValue);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parsedIncludeShadowTree, InvalidParameter);
+            includeShadowTree = includeShadowTreeValue;
         }
     }
 
-    // FIXME: Route script.callFunction through the BiDi evaluation path.
-    // https://bugs.webkit.org/show_bug.cgi?id=313658
+    String serializedArguments = "[]"_s;
+    if (arguments) {
+        for (auto& argument : *arguments)
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!argument->asObject(), InvalidParameter, "arguments must contain only objects"_s);
+        serializedArguments = arguments->toJSONString();
+    }
+    String serializedThis = optionalThis ? optionalThis->toJSONString() : String();
+
     String realmID = generateRealmIdForBrowsingContext(*browsingContext);
-    session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle, functionDeclaration, WTF::move(argumentsArray), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTF::move(callback), realmID](Inspector::CommandResult<String>&& stringResult) {
-        // FIXME: Properly serialize RemoteValue types according to WebDriver BiDi spec.
-        // https://bugs.webkit.org/show_bug.cgi?id=301159
-
-        // FIXME: Properly fill ExceptionDetails remaining fields once we have a way to get them instead of just the error message.
-        // https://bugs.webkit.org/show_bug.cgi?id=288058
-        if (!stringResult) {
-            if (stringResult.error().startsWith("JavaScriptError"_s)) {
-                String errorMessage = stringResult.error().substring("JavaScriptError;"_s.length());
-                auto exceptionValue = Inspector::Protocol::BidiScript::RemoteValue::create()
-                    .setType(Inspector::Protocol::BidiScript::RemoteValueType::Error)
-                    .release();
-                auto errorObject = JSON::Object::create();
-                errorObject->setString("message"_s, errorMessage);
-                exceptionValue->setValue(WTF::move(errorObject));
-                callback({ { EvaluateResultType::Exception, realmID, nullptr, createExceptionDetails(errorMessage, WTF::move(exceptionValue)) } });
+    session->callBidiFunction(topLevelContextHandle, frameHandle, functionDeclaration, serializedArguments, serializedThis, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, optionalUserActivation.value_or(false), std::nullopt,
+        [weakThis = WeakPtr { *this }, callback = WTF::move(callback), realmID = realmID.isolatedCopy(), functionDeclaration = functionDeclaration.isolatedCopy()](Inspector::CommandResult<String>&& result) mutable {
+            CheckedPtr protectedThis = weakThis;
+            if (!protectedThis)
                 return;
-            }
-
-            callback(makeUnexpected(stringResult.error()));
-            return;
-        }
-
-        auto resultValue = JSON::Value::parseJSON(stringResult.value());
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!resultValue, InternalError, "Failed to parse callFunction result as JSON"_s);
-
-        auto resultObject = Inspector::Protocol::BidiScript::RemoteValue::create()
-            .setType(Inspector::Protocol::BidiScript::RemoteValueType::Object)
-            .release();
-
-        resultObject->setValue(resultValue.releaseNonNull());
-
-        callback({ { EvaluateResultType::Success, realmID, WTF::move(resultObject), nullptr } });
-    });
+            protectedThis->finishEvaluateBidiScriptResult(realmID, functionDeclaration, WTF::move(result), WTF::move(callback));
+        });
 }
 
 void BidiScriptAgent::disown(Ref<JSON::Array>&& handles, Ref<JSON::Object>&& target, CommandCallback<void>&& callback)
@@ -1046,24 +1031,6 @@ Ref<Inspector::Protocol::BidiScript::ExceptionDetails> BidiScriptAgent::buildExc
         .setStackTrace(BidiScript::StackTrace::create()
             .setCallFrames(WTF::move(parsedStack.callFrames))
             .release())
-        .release();
-}
-
-Ref<Inspector::Protocol::BidiScript::StackTrace> BidiScriptAgent::createEmptyStackTrace()
-{
-    return Inspector::Protocol::BidiScript::StackTrace::create()
-        .setCallFrames(JSON::ArrayOf<Inspector::Protocol::BidiScript::StackFrame>::create())
-        .release();
-}
-
-Ref<Inspector::Protocol::BidiScript::ExceptionDetails> BidiScriptAgent::createExceptionDetails(const String& text, Ref<Inspector::Protocol::BidiScript::RemoteValue>&& exceptionValue, unsigned lineNumber, unsigned columnNumber)
-{
-    return Inspector::Protocol::BidiScript::ExceptionDetails::create()
-        .setLineNumber(lineNumber)
-        .setColumnNumber(columnNumber)
-        .setText(text)
-        .setException(WTF::move(exceptionValue))
-        .setStackTrace(createEmptyStackTrace())
         .release();
 }
 

@@ -713,6 +713,73 @@ void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageI
     didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage, errorType);
 }
 
+void WebAutomationSessionProxy::callBidiFunction(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& functionDeclaration, const String& serializedArguments, const String& serializedThis, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, bool userActivation, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+{
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    if (!page)
+        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound));
+
+    RefPtr frame = optionalFrameID ? WebProcess::singleton().webFrame(*optionalFrameID) : &page->mainWebFrame();
+    RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr window = coreLocalFrame ? coreLocalFrame->window() : nullptr;
+    if (!window || !window->frame())
+        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+
+    // No need to track the main frame, this is handled by didClearWindowObjectForFrame.
+    if (!coreLocalFrame->isMainFrame())
+        ensureObserverForFrame(*frame);
+
+    JSObjectRef scriptObject = scriptObjectForFrame(*frame);
+    ASSERT(scriptObject);
+
+    auto frameID = frame->frameID();
+    JSValueRef exception = nullptr;
+    JSGlobalContextRef context = frame->jsContext();
+
+    JSValueRef argumentsValue = JSValueMakeFromJSONString(context, OpaqueJSString::tryCreate(serializedArguments).get());
+    JSValueRef thisValue = serializedThis.isEmpty() ? JSValueMakeUndefined(context) : JSValueMakeFromJSONString(context, OpaqueJSString::tryCreate(serializedThis).get());
+    if (!argumentsValue || !JSValueIsArray(context, argumentsValue) || !thisValue)
+        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError));
+
+    auto callbackID = JSCallbackIdentifier::generate();
+
+    auto result = m_webFramePendingEvaluateJavaScriptCallbacksMap.add(frameID, HashMap<JSCallbackIdentifier, CompletionHandler<void(String&&, String&&)>>());
+    result.iterator->value.set(callbackID, WTF::move(completionHandler));
+
+    JSValueRef functionArguments[] = {
+        toJSValue(context, functionDeclaration),
+        argumentsValue,
+        thisValue,
+        JSValueMakeBoolean(context, awaitPromise),
+        maxObjectDepth ? JSValueMakeNumber(context, *maxObjectDepth) : JSValueMakeNull(context),
+        maxDomDepth ? JSValueMakeNumber(context, *maxDomDepth) : JSValueMakeNull(context),
+        toJSValue(context, includeShadowTree),
+        JSValueMakeNumber(context, frameID.toUInt64()),
+        JSValueMakeNumber(context, callbackID.toUInt64()),
+        JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback),
+        JSValueMakeNumber(context, callbackTimeout.value_or(-1))
+    };
+
+    auto isProcessingUserGesture = userActivation ? std::optional { WebCore::IsProcessingUserGesture::Yes } : std::nullopt;
+    WebCore::UserGestureIndicator gestureIndicator { isProcessingUserGesture, protect(frame->coreLocalFrame()->document()) };
+    callPropertyFunction(context, scriptObject, "callBidiFunction"_s, std::size(functionArguments), functionArguments, &exception);
+
+    if (!exception)
+        return;
+
+    String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
+    String exceptionMessage;
+    if (JSValueIsObject(context, exception)) {
+        JSValueRef nameValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), OpaqueJSString::tryCreate("name"_s).get(), nullptr);
+        errorType = errorTypeFromJavaScriptExceptionName(adoptRef(JSValueToStringCopy(context, nameValue, nullptr))->string());
+        JSValueRef messageValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), OpaqueJSString::tryCreate("message"_s).get(), nullptr);
+        exceptionMessage = adoptRef(JSValueToStringCopy(context, messageValue, nullptr))->string();
+    } else
+        exceptionMessage = adoptRef(JSValueToStringCopy(context, exception, nullptr))->string();
+
+    didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage, errorType);
+}
+
 void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, uint32_t ordinal, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&& completionHandler)
 {
     String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);

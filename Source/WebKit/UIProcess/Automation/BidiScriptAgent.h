@@ -127,8 +127,6 @@ private:
 
     ParsedStackTrace parseStackTrace(const String& stackTraceString);
     Ref<Inspector::Protocol::BidiScript::ExceptionDetails> buildExceptionDetailsFromExceptionObject(const JSON::Object& exceptionObject);
-    static Ref<Inspector::Protocol::BidiScript::StackTrace> createEmptyStackTrace();
-    static Ref<Inspector::Protocol::BidiScript::ExceptionDetails> createExceptionDetails(const String& text, Ref<Inspector::Protocol::BidiScript::RemoteValue>&&, unsigned lineNumber = 0, unsigned columnNumber = 0);
 
     static std::optional<RealmIdentifier> parseRealmIdentifier(const String& realmID);
     std::optional<String> browsingContextForRealm(RealmIdentifier) const;

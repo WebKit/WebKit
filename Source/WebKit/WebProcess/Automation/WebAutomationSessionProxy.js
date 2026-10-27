@@ -28,10 +28,26 @@
 (function (sessionIdentifier, currentFrameIdentifier, evaluate, createUUID, isValidNodeIdentifier, isKnownReference, addKnownReference, shadowRootForElement, specialBidiRemoteValueType) {
 
 const sessionNodePropertyName = "session-node-" + sessionIdentifier;
+const BigIntConstructor = BigInt;
+const DateConstructor = Date;
+const MapConstructor = Map;
+const RegExpConstructor = RegExp;
+const SetConstructor = Set;
+const arrayIsArray = Array.isArray;
+const dateGetTime = Date.prototype.getTime;
 const jsonStringify = JSON.stringify;
 const mapForEach = Map.prototype.forEach;
+const mapGet = Map.prototype.get;
+const mapSet = Map.prototype.set;
+const objectDefineProperty = Object.defineProperty;
+const objectHasOwn = Object.hasOwn;
 const reflectApply = Reflect.apply;
+const regExpExec = RegExp.prototype.exec;
+const setAdd = Set.prototype.add;
 const setForEach = Set.prototype.forEach;
+
+// https://tc39.es/ecma262/#sec-date-time-string-format
+const dateTimeStringFormat = /^(?!-000000)(?:\d{4}|[+-]\d{6})(?:-\d{2}(?:-\d{2})?)?(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d{3})?)?(?:Z|[+-]\d{2}:\d{2})?)?$/;
 
 function safelyReadStringProperty(value, property)
 {
@@ -56,6 +72,11 @@ function createBidiScriptError(error, name, fallbackMessage)
     };
 }
 
+function createDataProperty(object, key, value)
+{
+    objectDefineProperty(object, key, { __proto__: null, value, writable: true, enumerable: true, configurable: true });
+}
+
 let AutomationSessionProxy = class AutomationSessionProxy
 {
     constructor()
@@ -77,7 +98,34 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     evaluateBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, frameID, callbackID, resultCallback, callbackTimeout)
     {
-        this._executeBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, callbackTimeout).then(result => {
+        this._runBidiScript(() => globalThis.eval(expression), awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, frameID, callbackID, resultCallback, callbackTimeout);
+    }
+
+    callBidiFunction(functionDeclaration, argumentLocalValues, thisLocalValue, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, frameID, callbackID, resultCallback, callbackTimeout)
+    {
+        // https://w3c.github.io/webdriver-bidi/#command-script-callFunction
+        let argumentValues = this._deserializeBidiList(argumentLocalValues);
+        let thisValue = thisLocalValue === undefined ? null : this._deserializeBidiLocalValue(thisLocalValue);
+
+        let functionValue;
+        try {
+            functionValue = evaluate("(" + functionDeclaration + ")");
+        } catch (error) {
+            this._runBidiScript(() => { throw error; }, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, frameID, callbackID, resultCallback, callbackTimeout);
+            return;
+        }
+
+        if (typeof functionValue !== "function") {
+            resultCallback(frameID, callbackID, createBidiScriptError("functionDeclaration did not evaluate to a function", "InvalidParameter"));
+            return;
+        }
+
+        this._runBidiScript(() => reflectApply(functionValue, thisValue, argumentValues), awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, frameID, callbackID, resultCallback, callbackTimeout);
+    }
+
+    _runBidiScript(evaluateScript, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, frameID, callbackID, resultCallback, callbackTimeout)
+    {
+        this._executeBidiScript(evaluateScript, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, callbackTimeout).then(result => {
             let serializedResult;
             let serializationError;
             try {
@@ -179,7 +227,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
             });
     }
 
-    _executeBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, callbackTimeout)
+    _executeBidiScript(evaluateScript, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, callbackTimeout)
     {
         let timeoutPromise;
         let timeoutIdentifier = 0;
@@ -223,8 +271,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
             let result;
             try {
-                // Evaluate the expression in the target global scope.
-                result = globalThis.eval(expression);
+                result = evaluateScript();
             } catch (error) {
                 resolveWithExceptionResult(error);
                 return;
@@ -256,6 +303,156 @@ let AutomationSessionProxy = class AutomationSessionProxy
                     clearTimeout(timeoutIdentifier);
                 }
             });
+    }
+
+    _deserializeBidiLocalValue(localValue)
+    {
+        // https://w3c.github.io/webdriver-bidi/#deserialize-local-value
+        if (localValue === null || typeof localValue !== "object" || arrayIsArray(localValue))
+            throw createBidiScriptError("LocalValue must be an object", "InvalidParameter");
+
+        if (objectHasOwn(localValue, "sharedId") || objectHasOwn(localValue, "handle"))
+            return this._deserializeBidiRemoteReference(localValue);
+
+        let type = objectHasOwn(localValue, "type") ? localValue.type : undefined;
+        let value = objectHasOwn(localValue, "value") ? localValue.value : undefined;
+
+        switch (type) {
+        case "undefined":
+            return undefined;
+        case "null":
+            return null;
+        case "string":
+            if (typeof value === "string")
+                return value;
+            break;
+        case "number":
+            if (typeof value === "number")
+                return value;
+            switch (value) {
+            case "NaN":
+                return NaN;
+            case "-0":
+                return -0;
+            case "Infinity":
+                return Infinity;
+            case "-Infinity":
+                return -Infinity;
+            }
+            break;
+        case "boolean":
+            if (typeof value === "boolean")
+                return value;
+            break;
+        case "bigint":
+            if (typeof value !== "string")
+                break;
+            try {
+                return BigIntConstructor(value);
+            } catch {
+                throw createBidiScriptError("Invalid bigint LocalValue", "InvalidParameter");
+            }
+        case "date": {
+            if (typeof value !== "string" || reflectApply(regExpExec, dateTimeStringFormat, [value]) === null)
+                break;
+            let date = new DateConstructor(value);
+            let time = reflectApply(dateGetTime, date, []);
+            if (time !== time)
+                break;
+            return date;
+        }
+        case "regexp": {
+            if (value === null || typeof value !== "object" || arrayIsArray(value))
+                break;
+            let pattern = objectHasOwn(value, "pattern") ? value.pattern : undefined;
+            let flags = objectHasOwn(value, "flags") ? value.flags : undefined;
+            if (typeof pattern !== "string" || (flags !== undefined && typeof flags !== "string"))
+                break;
+            try {
+                return new RegExpConstructor(pattern, flags);
+            } catch {
+                throw createBidiScriptError("Invalid regexp LocalValue", "InvalidParameter");
+            }
+        }
+        case "array":
+            return this._deserializeBidiList(value);
+        case "set": {
+            let items = this._deserializeBidiList(value);
+            let set = new SetConstructor;
+            for (let i = 0; i < items.length; ++i)
+                reflectApply(setAdd, set, [items[i]]);
+            return set;
+        }
+        case "object": {
+            let object = {};
+            this._deserializeBidiMapping(value, (key, entryValue) => { createDataProperty(object, key, entryValue); });
+            return object;
+        }
+        case "map": {
+            let map = new MapConstructor;
+            this._deserializeBidiMapping(value, (key, entryValue) => { reflectApply(mapSet, map, [key, entryValue]); });
+            return map;
+        }
+        case "channel":
+            if (value === null || typeof value !== "object" || arrayIsArray(value) || !objectHasOwn(value, "channel") || typeof value.channel !== "string")
+                break;
+            // FIXME: Create channels for ChannelValue arguments. https://bugs.webkit.org/show_bug.cgi?id=288057
+            throw createBidiScriptError("ChannelValue is not supported", "NotImplemented");
+        }
+
+        throw createBidiScriptError(typeof type === "string" ? "Invalid LocalValue of type \"" + type + "\"" : "LocalValue has no valid type", "InvalidParameter");
+    }
+
+    _deserializeBidiRemoteReference(remoteReference)
+    {
+        // https://w3c.github.io/webdriver-bidi/#deserialize-remote-reference
+        let hasSharedId = objectHasOwn(remoteReference, "sharedId");
+        if (hasSharedId && typeof remoteReference.sharedId !== "string")
+            throw createBidiScriptError("sharedId must be a string", "InvalidParameter");
+        if (objectHasOwn(remoteReference, "handle") && typeof remoteReference.handle !== "string")
+            throw createBidiScriptError("handle must be a string", "InvalidParameter");
+
+        if (hasSharedId)
+            return this._deserializeBidiSharedReference(remoteReference.sharedId);
+
+        // FIXME: Create handles for resultOwnership "root". https://bugs.webkit.org/show_bug.cgi?id=288059
+        throw createBidiScriptError("Handle is not supported", "NotImplemented");
+    }
+
+    _deserializeBidiSharedReference(sharedId)
+    {
+        // https://w3c.github.io/webdriver-bidi/#deserialize-shared-reference
+        let node = reflectApply(mapGet, this._idToNodeMap, [sharedId]);
+        if (!node || (node !== document && node.ownerDocument !== document))
+            throw createBidiScriptError("Node with sharedId '" + sharedId + "' was not found", "NodeNotFound");
+        return node;
+    }
+
+    _deserializeBidiList(list)
+    {
+        // https://w3c.github.io/webdriver-bidi/#deserialize-value-list
+        if (!arrayIsArray(list))
+            throw createBidiScriptError("List LocalValue must be an array", "InvalidParameter");
+
+        let values = [];
+        for (let i = 0; i < list.length; ++i)
+            createDataProperty(values, i, this._deserializeBidiLocalValue(list[i]));
+        return values;
+    }
+
+    _deserializeBidiMapping(mapping, addEntry)
+    {
+        // https://w3c.github.io/webdriver-bidi/#deserialize-key-value-list
+        if (!arrayIsArray(mapping))
+            throw createBidiScriptError("Mapping LocalValue must be an array", "InvalidParameter");
+
+        for (let i = 0; i < mapping.length; ++i) {
+            let entry = mapping[i];
+            if (!arrayIsArray(entry) || entry.length !== 2)
+                throw createBidiScriptError("Mapping LocalValue entries must have two items", "InvalidParameter");
+            let key = typeof entry[0] === "string" ? entry[0] : this._deserializeBidiLocalValue(entry[0]);
+            addEntry(key, this._deserializeBidiLocalValue(entry[1]));
+        }
     }
 
     _jsonParse(string)

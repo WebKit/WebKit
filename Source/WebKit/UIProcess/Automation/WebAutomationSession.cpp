@@ -500,6 +500,20 @@ bool WebAutomationSession::isValidUserContext(const String& userContextID) const
 {
     return m_bidiProcessor->browserAgent().isValidUserContext(userContextID);
 }
+
+std::expected<String, AutomationCommandError> WebAutomationSession::nodeHandleForSharedReference(const JSON::Object& sharedReference) const
+{
+    // https://w3c.github.io/webdriver-bidi/#type-script-SharedReference
+    RefPtr sharedId = sharedReference.getValue("sharedId"_s);
+    if (!sharedId || sharedId->type() != JSON::Value::Type::String)
+        return makeUnexpected(AUTOMATION_COMMAND_ERROR_WITH_NAME_AND_MESSAGE(InvalidParameter, "The 'sharedId' parameter must be a string"_s));
+
+    RefPtr handle = sharedReference.getValue("handle"_s);
+    if (handle && handle->type() != JSON::Value::Type::String)
+        return makeUnexpected(AUTOMATION_COMMAND_ERROR_WITH_NAME_AND_MESSAGE(InvalidParameter, "The 'handle' parameter must be a string"_s));
+
+    return sharedId->asString();
+}
 #endif
 
 // Platform-independent Commands.
@@ -2679,6 +2693,34 @@ void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automat
 
         if (!errorType.isEmpty()) {
             callback(makeUnexpected(normalizedBidiScriptEvaluationError(errorType, result)));
+            return;
+        }
+
+        callback(WTF::move(result));
+    } });
+}
+
+void WebAutomationSession::callBidiFunction(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const String& functionDeclaration, const String& serializedArguments, const String& serializedThis, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, bool userActivation, std::optional<double>&& callbackTimeout, CommandCallback<String>&& callback)
+{
+    auto page = webPageProxyForHandle(browsingContextHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!page, FrameNotFound, "The browsing context is no longer available."_s);
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(frameNotFound, FrameNotFound, "The browsing context is no longer available."_s);
+
+    uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
+    m_evaluateJavaScriptFunctionCallbacks.set(callbackID, WTF::move(callback));
+
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::CallBidiFunction(page->webPageIDInProcessForFrame(frameID), frameID, functionDeclaration, serializedArguments, serializedThis, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, WTF::move(callbackTimeout)), CompletionHandler<void(String&&, String&&)> { [protectedThis = Ref { *this }, callbackID](String&& result, String&& errorType) {
+        auto callback = protectedThis->m_evaluateJavaScriptFunctionCallbacks.take(callbackID);
+        if (!callback)
+            return;
+
+        if (!errorType.isEmpty()) {
+            using ErrorMessage = Inspector::Protocol::Automation::ErrorMessage;
+            auto parsedError = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<ErrorMessage>(errorType);
+            bool isArgumentError = parsedError && (*parsedError == ErrorMessage::InvalidParameter || *parsedError == ErrorMessage::NodeNotFound || *parsedError == ErrorMessage::NotImplemented);
+            callback(makeUnexpected(isArgumentError ? STRING_FOR_PREDEFINED_ERROR_MESSAGE_AND_DETAILS(errorType, result) : normalizedBidiScriptEvaluationError(errorType, result)));
             return;
         }
 
