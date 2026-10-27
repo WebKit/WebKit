@@ -509,6 +509,9 @@ bool ContentSecurityPolicy::allowScriptForStrictDynamic(const URL& sourceURL, co
     if (!shouldPerformEarlyCSPCheck() || m_policies.isEmpty())
         return true;
 
+    if (!sourceURL.isEmpty() && LegacySchemeRegistry::schemeShouldBypassContentSecurityPolicy(sourceURL.protocol()))
+        return true;
+
     auto handleViolatedDirective = [checkedThis = CheckedRef { *this }, &sourceURL, &contextURL, &contextLine, &scriptContent] (const ContentSecurityPolicyDirective& violatedDirective) {
         TextPosition sourcePosition(contextLine, OrdinalNumber());
         const auto message = sourceURL.isEmpty() ? "Refused to execute a script"_s : "Refused to load"_s;

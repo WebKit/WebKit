@@ -2083,6 +2083,47 @@ TEST(WKWebExtensionAPIScripting, InjectScriptWithTrustedTypesCSP)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIScripting, InjectExtensionScriptElementWithStrictDynamicReportOnlyCSP)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s }, { "Content-Security-Policy"_s, "script-src 'self'"_s }, { "Content-Security-Policy-Report-Only"_s, "script-src 'nonce-r4nd0m' 'strict-dynamic'"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Scripting Test",
+        @"description": @"Scripting Test",
+        @"version": @"1.0",
+
+        @"web_accessible_resources": @[ @{
+            @"resources": @[ @"page.js" ],
+            @"matches": @[ @"*://localhost/*" ]
+        } ],
+
+        @"content_scripts": @[ @{
+            @"matches": @[ @"*://localhost/*" ],
+            @"js": @[ @"content.js" ]
+        } ]
+    };
+
+    auto *contentScript = Util::constructScript(@[
+        @"const script = document.createElement('script')",
+        @"script.src = browser.runtime.getURL('page.js')",
+        @"script.onload = () => browser.test.notifyPass()",
+        @"script.onerror = () => browser.test.notifyFail('Extension script was blocked by CSP')",
+        @"document.head.appendChild(script)"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"content.js": contentScript, @"page.js": @"" });
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIScripting, MigrateScriptDataToNewFormat)
 {
     auto *backgroundScript = Util::constructScript(@[
