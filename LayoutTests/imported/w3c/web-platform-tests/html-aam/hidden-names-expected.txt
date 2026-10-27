@@ -1,0 +1,30 @@
+Accname tests for hidden elements that would otherwise provide names to an associated element
+
+These tests are a complement to w3c/html-aam#533.
+
+Input with hidden label
+
+
+Table with hidden caption
+
+Table with two captions, the first hidden
+
+Visible caption
+Fieldset with hidden legend
+
+
+Fieldset with two legends, the first hidden
+
+Visible legend
+
+FAIL Input with hidden label assert_equals: <input id="input-01" class="ex-label" data-testname="Input with hidden label" data-expectedlabel=""> expected "" but got "Hidden label"
+FAIL Table with hidden caption assert_equals: <table class="ex-label" data-testname="Table with hidden caption" data-expectedlabel="">
+    <caption hidden="">Hidden caption</caption>
+  </table> expected "" but got "Hidden caption"
+FAIL Table with two captions, the first hidden assert_equals: <table class="ex-label" data-testname="Table with two captions, the first hidden" data-expectedlabel="Visible caption">
+    <caption hidden="">Hidden caption</caption>
+    <caption>Visible caption</caption>
+  </table> expected "Visible caption" but got "Hidden caption"
+PASS Fieldset with hidden legend
+PASS Fieldset with two legends, the first hidden
+

@@ -1,0 +1,103 @@
+Accname computation tests for <table>
+
+HTML-AAM computation steps
+
+table expecting name from 2 aria-labelledby refs
+
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+caption text contents
+Duplicate caption text contents
+td text node contents
+<h2>table expecting name from 2 aria-labelledby refs</h2>
+<p id="el-1-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-1-label-2">aria-labelledby ref element #2 text contents</p>
+<table id="el-1" class="ex-label" data-testname="table expecting name from 2 aria-labelledby refs" aria-labelledby="el-1-label-1 el-1-label-2" aria-label="table aria-label attribute value" title="table title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+<caption>caption text contents</caption>
+<caption>Duplicate caption text contents</caption>
+<tbody>
+<tr>
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+table expecting name from 1 aria-labelledby ref
+
+aria-labelledby ref element #1 text contents
+
+caption text contents
+Duplicate caption text contents
+td text node contents
+<h2>table expecting name from 1 aria-labelledby ref</h2>
+<p id="el-2-label-1">aria-labelledby ref element #1 text contents</p>
+<table id="el-2" class="ex-label" data-testname="table expecting name from 1 aria-labelledby ref" aria-labelledby="el-2-label-1" aria-label="table aria-label attribute value" title="table title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+<caption>caption text contents</caption>
+<caption>Duplicate caption text contents</caption>
+<tbody>
+<tr>
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+table expecting name from aria-label
+
+caption text contents
+Duplicate caption text contents
+td text node contents
+<h2>table expecting name from aria-label</h2>
+<table id="el-3" class="ex-label" data-testname="table expecting name from aria-label" aria-label="table aria-label attribute value" title="table title attribute value" data-expectedlabel="table aria-label attribute value">
+<caption>caption text contents</caption>
+<caption>Duplicate caption text contents</caption>
+<tbody>
+<tr>
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+table expecting name from first caption
+
+caption text contents
+Duplicate caption text contents
+td text node contents
+<h2>table expecting name from first caption</h2>
+<table id="el-4" class="ex-label" data-testname="table expecting name from first caption" title="table title attribute value" data-expectedlabel="caption text contents">
+<caption>caption text contents</caption>
+<caption>Duplicate caption text contents</caption>
+<tbody>
+<tr>
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+table expecting name from title
+
+td text node contents
+<h2>table expecting name from title</h2>
+<table id="el-5" class="ex-label" data-testname="table expecting name from title" title="table title attribute value" data-expectedlabel="table title attribute value">
+<tbody>
+<tr>
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+table expecting name to be empty
+
+td text node contents
+<h2>table expecting name to be empty</h2>
+<table id="el-6" class="ex-label" data-testname="table expecting name to be empty" data-expectedlabel="">
+<tbody>
+<tr>
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+
+FAIL table expecting name from 2 aria-labelledby refs assert_equals: <table id="el-1" class="ex-label" data-testname="table expecting name from 2 aria-labelledby refs" aria-labelledby="el-1-label-1 el-1-label-2" aria-label="table aria-label attribute value" title="table title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents"><caption>caption text contents</caption><caption>Duplicate caption text contents</caption><tbody><tr><td>td text node contents</td></tr></tbody></table> expected "aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents" but got "caption text contents"
+FAIL table expecting name from 1 aria-labelledby ref assert_equals: <table id="el-2" class="ex-label" data-testname="table expecting name from 1 aria-labelledby ref" aria-labelledby="el-2-label-1" aria-label="table aria-label attribute value" title="table title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents"><caption>caption text contents</caption><caption>Duplicate caption text contents</caption><tbody><tr><td>td text node contents</td></tr></tbody></table> expected "aria-labelledby ref element #1 text contents" but got "caption text contents"
+FAIL table expecting name from aria-label assert_equals: <table id="el-3" class="ex-label" data-testname="table expecting name from aria-label" aria-label="table aria-label attribute value" title="table title attribute value" data-expectedlabel="table aria-label attribute value"><caption>caption text contents</caption><caption>Duplicate caption text contents</caption><tbody><tr><td>td text node contents</td></tr></tbody></table> expected "table aria-label attribute value" but got "caption text contents"
+PASS table expecting name from first caption
+PASS table expecting name from title
+PASS table expecting name to be empty
+

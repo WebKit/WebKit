@@ -1,0 +1,7 @@
+
+
+FAIL el-optgroup assert_equals: <optgroup label="x" data-testname="el-optgroup" data-expectedrole="group" class="ex">
+    <option>x1</option>
+    <option>x2</option>
+  </optgroup> expected "group" but got ""
+

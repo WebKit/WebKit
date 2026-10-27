@@ -1,0 +1,82 @@
+Accname computation tests for <output>
+
+HTML-AAM computation steps
+
+output expecting name from 2 aria-labelledby refs
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+
+<h2>output expecting name from 2 aria-labelledby refs</h2>
+<label for="el-1">associated label #1 text contents</label>
+<label for="el-1">associated label #2 text contents</label>
+<p id="el-1-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-1-label-2">aria-labelledby ref element #2 text contents</p>
+<output id="el-1" class="ex-label" data-testname="output expecting name from 2 aria-labelledby refs" aria-labelledby="el-1-label-1 el-1-label-2" aria-label="output aria-label attribute value" title="output title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</output>
+output expecting name from 1 aria-labelledby ref
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+
+<h2>output expecting name from 1 aria-labelledby ref</h2>
+<label for="el-2">associated label #1 text contents</label>
+<label for="el-2">associated label #2 text contents</label>
+<p id="el-2-label-1">aria-labelledby ref element #1 text contents</p>
+<output id="el-2" class="ex-label" data-testname="output expecting name from 1 aria-labelledby ref" aria-labelledby="el-2-label-1" aria-label="output aria-label attribute value" title="output title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</output>
+output expecting name from aria-label
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>output expecting name from aria-label</h2>
+<label for="el-3">associated label #1 text contents</label>
+<label for="el-3">associated label #2 text contents</label>
+<output id="el-3" class="ex-label" data-testname="output expecting name from aria-label" aria-label="output aria-label attribute value" title="output title attribute value" data-expectedlabel="output aria-label attribute value">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</output>
+output expecting name from 2 labels
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>output expecting name from 2 labels</h2>
+<label for="el-4">associated label #1 text contents</label>
+<label for="el-4">associated label #2 text contents</label>
+<output id="el-4" class="ex-label" data-testname="output expecting name from 2 labels" title="output title attribute value" data-expectedlabel="associated label #1 text contents associated label #2 text contents">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</output>
+output expecting name from 1 label
+
+associated label #1 text contents
+<h2>output expecting name from 1 label</h2>
+<label for="el-5">associated label #1 text contents</label>
+<output id="el-5" class="ex-label" data-testname="output expecting name from 1 label" title="output title attribute value" data-expectedlabel="associated label #1 text contents">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</output>
+output expecting name from title
+
+
+<h2>output expecting name from title</h2>
+<output id="el-6" class="ex-label" data-testname="output expecting name from title" title="output title attribute value" data-expectedlabel="output title attribute value">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</output>
+output expecting name to be empty
+
+
+<h2>output expecting name to be empty</h2>
+<output id="el-7" class="ex-label" data-testname="output expecting name to be empty" data-expectedlabel="">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</output>
+
+PASS output expecting name from 2 aria-labelledby refs
+PASS output expecting name from 1 aria-labelledby ref
+PASS output expecting name from aria-label
+PASS output expecting name from 2 labels
+PASS output expecting name from 1 label
+PASS output expecting name from title
+PASS output expecting name to be empty
+

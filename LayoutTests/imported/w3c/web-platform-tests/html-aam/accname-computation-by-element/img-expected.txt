@@ -1,0 +1,67 @@
+Accname computation tests for <img>
+
+HTML-AAM computation steps
+
+img expecting name from 2 aria-labelledby refs
+
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+
+<h2>img expecting name from 2 aria-labelledby refs</h2>
+<p id="el-1-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-1-label-2">aria-labelledby ref element #2 text contents</p>
+<img id="el-1" class="ex-label" data-testname="img expecting name from 2 aria-labelledby refs" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC" aria-labelledby="el-1-label-1 el-1-label-2" aria-label="img aria-label attribute value" alt="alt attribute value" title="img title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+img expecting name from 1 aria-labelledby ref
+
+aria-labelledby ref element #1 text contents
+
+
+<h2>img expecting name from 1 aria-labelledby ref</h2>
+<p id="el-2-label-1">aria-labelledby ref element #1 text contents</p>
+<img id="el-2" class="ex-label" data-testname="img expecting name from 1 aria-labelledby ref" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC" aria-labelledby="el-2-label-1" aria-label="img aria-label attribute value" alt="alt attribute value" title="img title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+img expecting name from aria-label
+
+
+<h2>img expecting name from aria-label</h2>
+<img id="el-3" class="ex-label" data-testname="img expecting name from aria-label" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC" aria-label="img aria-label attribute value" alt="alt attribute value" title="img title attribute value" data-expectedlabel="img aria-label attribute value">
+img expecting name from alt
+
+
+<h2>img expecting name from alt</h2>
+<img id="el-4" class="ex-label" data-testname="img expecting name from alt" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC" alt="alt attribute value" title="img title attribute value" data-expectedlabel="alt attribute value">
+img expecting name from empty alt
+
+
+<h2>img expecting name from empty alt</h2>
+<img id="el-5" class="ex-label" data-testname="img expecting name from empty alt" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC" title="img title attribute value" alt="" data-expectedlabel="">
+img expecting name from title
+
+
+<h2>img expecting name from title</h2>
+<img id="el-6" class="ex-label" data-testname="img expecting name from title" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC" title="img title attribute value" data-expectedlabel="img title attribute value">
+img expecting name from ancestor figure figcaption
+
+
+ancestor figure figcaption text contents
+<h2>img expecting name from ancestor figure figcaption</h2>
+<figure>
+<img id="el-7" class="ex-label" data-testname="img expecting name from ancestor figure figcaption" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC" data-expectedlabel="ancestor figure figcaption text contents">
+<figcaption>ancestor figure figcaption text contents</figcaption>
+</figure>
+img expecting name to be empty
+
+
+<h2>img expecting name to be empty</h2>
+<img id="el-8" class="ex-label" data-testname="img expecting name to be empty" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC" data-expectedlabel="">
+
+PASS img expecting name from 2 aria-labelledby refs
+PASS img expecting name from 1 aria-labelledby ref
+PASS img expecting name from aria-label
+PASS img expecting name from alt
+PASS img expecting name from empty alt
+PASS img expecting name from title
+PASS img expecting name from ancestor figure figcaption
+PASS img expecting name to be empty
+
