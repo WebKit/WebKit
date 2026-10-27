@@ -469,6 +469,25 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _processPool->setShouldMakeNextWebProcessLaunchFailForTesting(true);
 }
 
+static WebKit::WebProcessPool::AXAuthenticationTestingMode toAXAuthenticationTestingMode(_WKAXAuthenticationTestingMode mode)
+{
+    switch (mode) {
+    case _WKAXAuthenticationTestingModeDefault:
+        return WebKit::WebProcessPool::AXAuthenticationTestingMode::Default;
+    case _WKAXAuthenticationTestingModeAllow:
+        return WebKit::WebProcessPool::AXAuthenticationTestingMode::Allow;
+    case _WKAXAuthenticationTestingModeDeny:
+        return WebKit::WebProcessPool::AXAuthenticationTestingMode::Deny;
+    }
+    ASSERT_NOT_REACHED();
+    return WebKit::WebProcessPool::AXAuthenticationTestingMode::Default;
+}
+
+- (void)_setAXAuthenticationModeForTesting:(_WKAXAuthenticationTestingMode)mode
+{
+    _processPool->setAXAuthenticationTestingMode(toAXAuthenticationTestingMode(mode));
+}
+
 - (BOOL)_hasPrewarmedWebProcess
 {
     for (Ref process : borrow(_processPool->processes()).get()) {

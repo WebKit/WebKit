@@ -34,6 +34,7 @@ interface AccessibilityController {
 
     // Client accessibility mode
     undefined setClientAccessibilityMode(boolean enable);
+    undefined setClientAccessibilityAuthenticationDenied(boolean denied);
     readonly attribute boolean clientAccessibilityModeEnabled;
 
     readonly attribute DOMString platformName;

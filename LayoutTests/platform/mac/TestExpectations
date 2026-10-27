@@ -149,6 +149,7 @@ http/tests/site-isolation/accessibility/client/walk-up-from-iframe-content.html 
 http/tests/site-isolation/accessibility/client/search-past-remote-frame-immediate-descendants.html [ Pass ]
 http/tests/site-isolation/accessibility/client/search-from-remote-frame-host.html [ Pass ]
 http/tests/site-isolation/accessibility/client/iframe-name-propagates-to-web-area.html [ Pass ]
+http/tests/site-isolation/accessibility/client/iframe-access-denied.html [ Pass ]
 
 # Shared-process site isolation accessibility tests using the accessibility client API:
 # Skip by default, enable tests that are stable.

@@ -852,7 +852,7 @@ private:
     void systemBeep();
     
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    void isAXAuthenticated(CoreIPCAuditToken&&, CompletionHandler<void(bool)>&&);
+    void requestAXAuthenticationDecision(CoreIPCAuditToken&&, CompletionHandler<void(uint32_t)>&&);
 #endif
 
 #if PLATFORM(COCOA)
