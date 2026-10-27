@@ -56,6 +56,8 @@ public:
 
     const RTCSctpTransportBackend& backend() const { return m_backend.get(); }
 
+    void close() { stop(); }
+
 private:
     RTCSctpTransport(ScriptExecutionContext&, UniqueRef<RTCSctpTransportBackend>&&, Ref<RTCDtlsTransport>&&);
 

@@ -818,7 +818,13 @@ bool RTCPeerConnection::doClose()
     for (auto identifier : std::exchange(m_channels, { }))
         RTCDataChannelHandlerClient::peerConnectionIsClosing(identifier);
 
+    if (RefPtr sctpTransport = m_sctpTransport)
+        sctpTransport->close();
+
     for (auto& transport : m_dtlsTransports)
+        transport->close();
+
+    for (auto& transport : m_iceTransports)
         transport->close();
 
     return true;
