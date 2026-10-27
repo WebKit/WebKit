@@ -663,6 +663,15 @@ AutomaticallyForceEnableScrollingIfNeededToRevealUI:
   status: embedder
   defaultValue: true
 
+AutoplayPolicyAPIEnabled:
+  type: bool
+  status: testable
+  category: media
+  condition: ENABLE(VIDEO)
+  humanReadableName: "Enable Autoplay Policy API"
+  humanReadableDescription: "Enable Autoplay Policy API"
+  defaultValue: false
+
 AzimuthAngleEnabled:
   type: bool
   status: stable

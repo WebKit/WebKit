@@ -44,6 +44,8 @@ class MediaStreamAudioSourceNode;
 struct AudioContextOptions;
 struct AudioTimestamp;
 
+enum class AutoplayPolicy : uint8_t;
+
 class AudioContext final
     : public BaseAudioContext
     , public MediaProducer
@@ -106,6 +108,8 @@ public:
 #if PLATFORM(IOS_FAMILY)
     const String& sceneIdentifier() const LIFETIME_BOUND final;
 #endif
+
+    AutoplayPolicy getAutoplayPolicy() const;
 
 private:
     AudioContext(Document&, const AudioContextOptions&);

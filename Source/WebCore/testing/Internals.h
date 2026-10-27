@@ -28,6 +28,7 @@
 
 #include "AV1Utilities.h"
 #include "ActivityState.h"
+#include "AutoplayPolicy.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "ContextDestructionObserver.h"
 #include "Cookie.h"
@@ -1681,13 +1682,8 @@ public:
 
     String dumpStyleResolvers();
 
-    enum class AutoplayPolicy : uint8_t {
-        Default,
-        Allow,
-        AllowWithoutSound,
-        Deny,
-    };
-    ExceptionOr<void> setDocumentAutoplayPolicy(Document&, AutoplayPolicy);
+    using AutoplayPolicy = AutoplayPolicy;
+    ExceptionOr<void> setDocumentAutoplayPolicy(Document&, std::optional<AutoplayPolicy>);
 
     void retainTextIteratorForDocumentContent();
 

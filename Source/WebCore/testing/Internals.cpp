@@ -8828,18 +8828,13 @@ String Internals::dumpStyleResolvers()
     return result.toString();
 }
 
-ExceptionOr<void> Internals::setDocumentAutoplayPolicy(Document& document, Internals::AutoplayPolicy policy)
+ExceptionOr<void> Internals::setDocumentAutoplayPolicy(Document& document, std::optional<AutoplayPolicy> policy)
 {
-    static_assert(static_cast<uint8_t>(WebCore::AutoplayPolicy::Default) == static_cast<uint8_t>(Internals::AutoplayPolicy::Default), "Internals::Default != WebCore::Default");
-    static_assert(static_cast<uint8_t>(WebCore::AutoplayPolicy::Allow) == static_cast<uint8_t>(Internals::AutoplayPolicy::Allow), "Internals::Allow != WebCore::Allow");
-    static_assert(static_cast<uint8_t>(WebCore::AutoplayPolicy::AllowWithoutSound) == static_cast<uint8_t>(Internals::AutoplayPolicy::AllowWithoutSound), "Internals::AllowWithoutSound != WebCore::AllowWithoutSound");
-    static_assert(static_cast<uint8_t>(WebCore::AutoplayPolicy::Deny) == static_cast<uint8_t>(Internals::AutoplayPolicy::Deny), "Internals::Deny != WebCore::Deny");
-
     RefPtr loader = document.loader();
     if (!loader)
         return Exception { ExceptionCode::InvalidStateError };
 
-    loader->setAutoplayPolicy(static_cast<WebCore::AutoplayPolicy>(policy));
+    loader->setAutoplayPolicy(policy);
 
     return { };
 }

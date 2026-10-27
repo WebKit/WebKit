@@ -102,6 +102,7 @@ public:
     virtual bool isNavigatorDevicePosture() const { return false; }
     virtual bool isNavigatorGamepad() const { return false; }
     virtual bool isNavigatorGeolocation() const { return false; }
+    virtual bool isNavigatorGetAutoplayPolicy() const { return false; }
     virtual bool isNavigatorLoginStatus() const { return false; }
     virtual bool isNavigatorMediaCapabilities() const { return false; }
     virtual bool isNavigatorMediaDevices() const { return false; }

@@ -28,10 +28,9 @@
 namespace WebCore {
 
 enum class AutoplayPolicy : uint8_t {
-    Default, // Uses policies specified in document settings.
-    Allow,
-    AllowWithoutSound,
-    Deny,
+    Allowed,
+    AllowedMuted,
+    Disallowed,
 };
 
 } // namespace WebCore

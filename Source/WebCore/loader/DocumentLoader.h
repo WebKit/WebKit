@@ -344,8 +344,8 @@ public:
     void setDeviceOrientationAndMotionAccessState(DeviceOrientationOrMotionPermissionState state) { m_deviceOrientationAndMotionAccessState = state; }
 #endif
 
-    AutoplayPolicy autoplayPolicy() const { return m_autoplayPolicy; }
-    void setAutoplayPolicy(AutoplayPolicy policy) { m_autoplayPolicy = policy; }
+    std::optional<AutoplayPolicy> autoplayPolicy() const { return m_autoplayPolicy; }
+    void setAutoplayPolicy(std::optional<AutoplayPolicy> policy) { m_autoplayPolicy = policy; }
 
     void setCustomUserAgent(String&& customUserAgent) { m_customUserAgent = WTF::move(customUserAgent); }
     const String& customUserAgent() const LIFETIME_BOUND { return m_customUserAgent; }
@@ -772,7 +772,7 @@ private:
     OptionSet<AdvancedPrivacyProtections> m_advancedPrivacyProtections;
     std::optional<OptionSet<AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;
     std::optional<bool> m_globalPrivacyControlEnabled;
-    AutoplayPolicy m_autoplayPolicy { AutoplayPolicy::Default };
+    std::optional<AutoplayPolicy> m_autoplayPolicy;
     OptionSet<AutoplayQuirk> m_allowedAutoplayQuirks;
     PopUpPolicy m_popUpPolicy { PopUpPolicy::Default };
     MetaViewportPolicy m_metaViewportPolicy { MetaViewportPolicy::Default };
