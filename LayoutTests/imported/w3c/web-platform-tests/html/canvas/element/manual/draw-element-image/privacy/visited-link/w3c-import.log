@@ -12,9 +12,13 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link/image-map-area-visited-color-ignored.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link/visited-link-color-ignored.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link/visited-link-currentcolor-ignored.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link/visited-link-custom-selection-color-ignored.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link/visited-link-decorating-box-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link/visited-link-decorating-box.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link/visited-link-decorating-box.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link/visited-link-decoration-color-ignored.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link/visited-link-slotted-color-ignored.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/visited-link/visited-link-svg-fill-stroke-color-ignored.tentative.html

@@ -7,4 +7,11 @@ NOTRUN drawElementImage() does not update element canvas transform with {preserv
 NOTRUN drawElementImage() with destination size overload (4 arguments)
 NOTRUN drawElementImage() with source rect overload (6 arguments)
 NOTRUN drawElementImage() with source and destination rect overload (8 arguments)
+NOTRUN drawElementImage() accounts for non-zero sx and sy offset
+NOTRUN drawElementImage() element transform does not include CSS transform on the element
+NOTRUN drawElementImage() accounts for CTM and ignores element transform-origin
+NOTRUN drawElementImage() element transform is not affected by zoom on the canvas
+NOTRUN drawElementImage() element transform accounts for canvas grid pixel scale
+NOTRUN drawElementImage() element transform accounts for canvas CSS pixel scale
+NOTRUN drawElementImage() element transform accounts for canvas pixel scale, zoom, CTM, and dx/dy
 

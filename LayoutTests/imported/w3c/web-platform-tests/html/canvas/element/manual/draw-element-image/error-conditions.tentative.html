@@ -7,7 +7,7 @@
 <script src="/html/canvas/resources/wait-for-canvas-paint.js"></script>
 
 <style>
-#child {
+#child, #dialogchild {
   width: 100px;
   height: 100px;
   background: green;
@@ -18,14 +18,15 @@
 </style>
 
 <canvas id=canvas width="200" height="200" content=drawable>
-  <div id=child>
+  <div id=child drawable>
     <div id=grandchild></div>
   </div>
+  <dialog id=dialog>
+    <div id=dialogchild drawable></div>
+  </dialog>
 </canvas>
 <canvas id=canvaswithoutlayout content=drawable>
-  <div id=child2></div>
-</div>
-
+  <div id=child2 drawable></div>
 </canvas>
 
 <script>
@@ -34,7 +35,7 @@ promise_test(async () => {
 
   assert_throws_dom("InvalidStateError",
     () => canvas.getContext("2d").drawElementImage(grandchild, 20, 30),
-    "Can't draw non-direct children.");
+    "Can't draw non-drawable descendants.");
 
   canvas.removeAttribute("content"); // Remove attribute.
   assert_throws_dom("InvalidStateError",
@@ -44,15 +45,16 @@ promise_test(async () => {
     () => canvas.captureElementImage(child),
     "Can't capture element image if content=drawable is not specified.");
   assert_throws_dom("InvalidStateError",
-    () => canvas.getElementTransform(child, new DOMMatrix()),
-    "Can't get element transform if content=drawable is not specified.");
+    () => canvas.getElementImageDefaultSize(child),
+    "Can't get element image default size if content=drawable is not specified.");
 
   canvas.setAttribute("content", "drawable"); // Add attribute.
   await waitForCanvasPaint(canvas);
   // Should not throw an exception.
   canvas.getContext("2d").drawElementImage(child, 20, 30);
   let img = canvas.captureElementImage(child);
-  canvas.getElementTransform(child, new DOMMatrix());
+  canvas.getElementImageDefaultSize(child);
+  canvas.getElementImageDefaultSize(img);
 
   canvaswithoutlayout.removeAttribute("content");
   assert_throws_dom("InvalidStateError",
@@ -63,16 +65,36 @@ promise_test(async () => {
     () => canvaswithoutlayout.captureElementImage(child2),
     "Can't capture element image if content=drawable is not specified.");
   assert_throws_dom("InvalidStateError",
-    () => canvaswithoutlayout.getElementTransform(child2, new DOMMatrix()),
-    "Can't get element transform if content=drawable is not specified.");
+    () => canvaswithoutlayout.getElementImageDefaultSize(child2),
+    "Can't get element image default size if content=drawable is not specified.");
 
-  // Also test wrong children exceptions
+  // Also test non-drawable descendants exceptions
   assert_throws_dom("InvalidStateError",
     () => canvas.captureElementImage(grandchild),
-    "Can't capture non-direct children.");
+    "Can't capture non-drawable descendants.");
+  assert_throws_dom("InvalidStateError",
+    () => canvas.getElementImageDefaultSize(grandchild),
+    "Can't get default size for non-drawable descendants.");
   assert_throws_dom("InvalidStateError",
     () => canvas.getElementTransform(grandchild, new DOMMatrix()),
-    "Can't get transform for non-direct children.");
+    "Can't get transform for non-drawable descendants.");
+
+  // Drawable descendants inside a top-layer ancestor cannot be drawn.
+  dialog.showModal();
+  await waitForCanvasPaint(canvas);
+  assert_throws_dom("InvalidStateError",
+    () => canvas.getContext("2d").drawElementImage(dialogchild, 20, 30),
+    "Can't draw drawable descendants inside a modal dialog.");
+  assert_throws_dom("InvalidStateError",
+    () => canvas.captureElementImage(dialogchild),
+    "Can't capture drawable descendants inside a modal dialog.");
+  dialog.close();
+  assert_throws_dom("InvalidStateError",
+    () => canvas.getContext("2d").drawElementImage(dialogchild, 20, 30),
+    "After closing modal dialog, children cannot be drawn until repainted.");
+  assert_throws_dom("InvalidStateError",
+    () => canvas.captureElementImage(dialogchild),
+    "After closing modal dialog, children cannot be captured until repainted.");
 });
 </script>
 </html>

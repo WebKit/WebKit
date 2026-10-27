@@ -22,14 +22,13 @@
 </head>
 <body>
   <canvas id=canvas width="100" height="100" content=drawable>
-    <div id="child"></div>
+    <div drawable id="child"></div>
+    <svg width="1px" height="1px">
+      <filter id="filter-green">
+        <feFlood flood-color="green" />
+      </filter>
+    </svg>
   </canvas>
-
-  <svg width="1px" height="1px">
-    <filter id="filter-green">
-      <feFlood flood-color="green" />
-    </filter>
-  </svg>
 
   <script>
     onload = async () => {

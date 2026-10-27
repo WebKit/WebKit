@@ -1,0 +1,4 @@
+
+FAIL display:contents element throws InvalidStateError while its child element can be drawn promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+FAIL Dynamic display changes between flex and contents update child styles and draw correctly assert_equals: expected "static" but got "absolute"
+

@@ -13,7 +13,7 @@
     #mask-same a:visited { color: #ffffff; }
 
     /* In mask-cross, unvisited is black (luma 0 -> alpha 0), visited is white (luma 1 -> alpha 255).
-       Privacy-preserving rendering disallows external masks, preventing the element from drawing. */
+       Read-back allowed rendering disallows external masks, preventing the element from drawing. */
     #mask-cross a:link    { color: #000000; }
     #mask-cross a:visited { color: #ffffff; }
   </style>
@@ -31,7 +31,7 @@
   </svg>
 
   <canvas id="canvas" width="100" height="200" content=drawable>
-    <svg id="child" width="100" height="200">
+    <svg drawable id="child" width="100" height="200">
       <defs>
         <mask id="mask-same" maskContentUnits="objectBoundingBox">
           <a href="">

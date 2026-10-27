@@ -26,13 +26,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/box-mask-png-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/box-mask-svg-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/box-reflect-images-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/box-reflect-images-in-iframe-moved-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/box-reflect-images-in-iframe-multicol-moved-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/canvas-in-custom-element-images-ignored.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/embed-image-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-div-drawable-added-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-div-multi-filters-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-div-ref-external-svg-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-div-ref-svg-feimage-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-div-ref-svg-feimage-svg-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-div-ref-svg-mixed-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-outside-subtree-ignored.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-svg-ref-svg-feimage-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-svg-ref-svg-feimage-svg-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/fragment-mask-png-ignored.tentative.https.sub.html
@@ -45,6 +49,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/nested-tainted-html-in-canvas-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/object-image-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/picture-images-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/popover-show-hide-background-image-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/scrollbar-thumb-images-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/selection-alone-with-decorations-painted-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/selection-alone-with-decorations-painted.tentative-expected.html
