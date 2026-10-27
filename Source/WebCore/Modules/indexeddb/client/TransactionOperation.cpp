@@ -66,11 +66,8 @@ void TransactionOperation::transitionToComplete(const IDBResultData& data, RefPt
 
     if (canCurrentThreadAccessThreadLocalData(originThread()))
         transitionToCompleteOnThisThread(data);
-    else {
-        m_transaction->performCallbackOnOriginThread(*this, &TransactionOperation::transitionToCompleteOnThisThread, data);
-        m_transaction->callFunctionOnOriginThread([lastRef = WTF::move(lastRef)]() {
-        });
-    }
+    else
+        m_transaction->performCallbackOnOriginThread(lastRef.releaseNonNull(), &TransactionOperation::transitionToCompleteOnThisThread, data);
 }
 
 } // namespace IDBClient
