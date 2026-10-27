@@ -32,6 +32,7 @@ namespace Layout {
 
 class InlineFormattingContext;
 class LineBox;
+enum class IntrinsicWidthMode;
 
 class InlineQuirks {
 public:
@@ -46,6 +47,7 @@ public:
     std::optional<InlineRect> adjustedRectForLineGridLineAlign(const InlineRect&) const;
     std::optional<InlineLayoutUnit> adjustmentForLineGridLineSnap(const LineBox&) const;
     bool shouldCollapseLineBoxHeight(const LineRunList&, size_t numberOfOutsideListMarkers) const;
+    bool hasSoftWrapOpportunityAroundImages(std::optional<IntrinsicWidthMode>) const;
 
 private:
     const InlineFormattingContext& formattingContext() const LIFETIME_BOUND { return m_inlineFormattingContext; }

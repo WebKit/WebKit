@@ -70,6 +70,8 @@ public:
 
     void setInStandardsMode() { m_inStandardsMode = true; }
     bool inStandardsMode() const { return m_inStandardsMode; }
+    void setInQuirksMode() { m_inQuirksMode = true; }
+    bool inQuirksMode() const { return m_inQuirksMode; }
 
     void setShouldShapeTextAcrossInlineBoxes() { m_shouldShapeTextAcrossInlineBoxes = true; }
     bool shouldShapeTextAcrossInlineBoxes() const { return m_shouldShapeTextAcrossInlineBoxes; }
@@ -104,6 +106,7 @@ private:
     bool m_contentMayHaveInkOverflow { false };
     bool m_shouldNotSynthesizeInlineBlockBaseline { false };
     bool m_inStandardsMode { false };
+    bool m_inQuirksMode { false };
     bool m_shouldShapeTextAcrossInlineBoxes { false };
 };
 
