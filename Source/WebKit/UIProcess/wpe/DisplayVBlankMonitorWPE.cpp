@@ -29,6 +29,7 @@
 #if ENABLE(WPE_PLATFORM)
 #include "Logging.h"
 #include "ScreenManager.h"
+#include <WebCore/AnimationFrameRate.h>
 #include <wpe/wpe-platform.h>
 
 namespace WebKit {
@@ -47,7 +48,8 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorWPE::create(PlatformDi
         return nullptr;
     }
 
-    return makeUnique<DisplayVBlankMonitorWPE>(wpe_screen_get_refresh_rate(screen) / 1000, WTF::move(observer));
+    unsigned refreshRate = wpe_screen_get_refresh_rate(screen) / 1000;
+    return makeUnique<DisplayVBlankMonitorWPE>(refreshRate ? refreshRate : WebCore::FullSpeedFramesPerSecond, WTF::move(observer));
 }
 
 DisplayVBlankMonitorWPE::DisplayVBlankMonitorWPE(unsigned refreshRate, GRefPtr<WPEScreenSyncObserver>&& observer)
