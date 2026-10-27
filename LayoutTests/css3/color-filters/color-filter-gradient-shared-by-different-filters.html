@@ -1,0 +1,50 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ColorFilterEnabled=true ] -->
+<html>
+    <head>
+        <title>CSS Test: -apple-color-filter applies per element to a gradient shared by elements of the same size</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-gradient-shared-by-different-filters-expected.html">
+
+        <meta name="assert" content="Elements of the same size whose backgrounds come from the same gradient each paint it with their own -apple-color-filter">
+        <style type="text/css">
+            .row
+            {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+
+            .test
+            {
+                width: 100px;
+                height: 100px;
+                background-image: linear-gradient(yellow, cyan);
+            }
+
+            /* The background is positioned in the padding box but painted in the border box, so it is drawn as a pattern. */
+            .bordered
+            {
+                border-top: 20px solid transparent;
+            }
+
+            .inverted
+            {
+                -apple-color-filter: invert();
+            }
+        </style>
+    </head>
+    <body>
+        <div class="row">
+            <div class="test"></div>
+            <div class="test inverted"></div>
+            <div class="test"></div>
+            <div class="test inverted"></div>
+        </div>
+        <div class="row">
+            <div class="test bordered"></div>
+            <div class="test bordered inverted"></div>
+            <div class="test bordered"></div>
+            <div class="test bordered inverted"></div>
+        </div>
+    </body>
+</html>

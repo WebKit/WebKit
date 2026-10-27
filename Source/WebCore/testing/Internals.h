@@ -44,6 +44,7 @@
 #include "RenderingMode.h"
 #include "ResourceMonitorChecker.h"
 #include "SleepDisabler.h"
+#include "StyleGradientImage.h"
 #include "TextIndicator.h"
 #include "VP9Utilities.h"
 #include <JavaScriptCore/Forward.h>
@@ -290,6 +291,8 @@ public:
     unsigned imageBlankDrawCount(HTMLImageElement&);
     AtomString imageLastDecodingOptions(HTMLImageElement&);
     unsigned imageCachedSubimageCreateCount(HTMLImageElement&);
+    using BackgroundGradientCacheEntry = Style::GradientImage::CachedGradientForTesting;
+    Vector<BackgroundGradientCacheEntry> backgroundGradientCache(Element&);
     unsigned remoteImagesCountForTesting() const;
     void setAsyncDecodingEnabledForTesting(HTMLImageElement&, bool enabled);
     void LEGACY_NODELETE setForceUpdateImageDataEnabledForTesting(HTMLImageElement&, bool enabled);

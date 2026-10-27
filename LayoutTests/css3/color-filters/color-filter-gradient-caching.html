@@ -1,0 +1,123 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ColorFilterEnabled=true ] -->
+<html>
+<head>
+<style>
+.box {
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+    float: left;
+    -apple-color-filter: invert();
+    outline: 2px solid black;
+}
+
+.plain {
+    background-image: linear-gradient(yellow, cyan);
+}
+
+/* The background is positioned in the padding box but painted in the border box, so it is drawn as a pattern. */
+.bordered {
+    background-image: linear-gradient(yellow, magenta);
+    border-top: 20px solid transparent;
+}
+
+.mixed {
+    background-image: linear-gradient(cyan, magenta);
+    border-top: 20px solid transparent;
+}
+
+.unfiltered {
+    -apple-color-filter: none;
+}
+
+.repainted {
+    outline-color: white;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div class="box plain"></div>
+<div class="box plain"></div>
+<div class="box plain"></div>
+<div class="box plain"></div>
+<div class="box bordered"></div>
+<div class="box bordered"></div>
+<div class="box bordered"></div>
+<div class="box bordered"></div>
+<div class="box mixed"></div>
+<div class="box mixed unfiltered"></div>
+<div class="box mixed"></div>
+<div class="box mixed unfiltered"></div>
+<script>
+description("Tests that same-size elements sharing a gradient with an -apple-color-filter share one cached gradient, that elements with different filters each get their own, and that a repaint reuses their pattern buffers.");
+jsTestIsAsync = true;
+
+let plainCache;
+let borderedCache;
+let patternBufferIdentifier;
+let mixedCache;
+let mixedPatternBufferIdentifiers;
+
+addEventListener("load", async () => {
+    if (!window.internals) {
+        testFailed("This test requires internals.");
+        finishJSTest();
+        return;
+    }
+
+    await UIHelper.renderingUpdate();
+
+    let plain = document.querySelector(".plain");
+    let bordered = document.querySelector(".bordered");
+
+    debug("After the first paint:");
+    plainCache = internals.backgroundGradientCache(plain);
+    shouldBe("plainCache.length", "1");
+    shouldBe("plainCache[0].width", "100");
+    shouldBe("plainCache[0].height", "100");
+    shouldBeTrue("plainCache[0].hasColorFilter");
+    shouldBe("plainCache[0].patternBufferIdentifier", "0");
+
+    borderedCache = internals.backgroundGradientCache(bordered);
+    shouldBe("borderedCache.length", "1");
+    shouldBe("borderedCache[0].width", "100");
+    shouldBe("borderedCache[0].height", "100");
+    shouldBeTrue("borderedCache[0].hasColorFilter");
+    shouldNotBe("borderedCache[0].patternBufferIdentifier", "0");
+    patternBufferIdentifier = borderedCache[0]?.patternBufferIdentifier;
+
+    mixedCache = internals.backgroundGradientCache(document.querySelector(".mixed"));
+    shouldBe("mixedCache.length", "2");
+    shouldBe("mixedCache.filter(entry => entry.hasColorFilter).length", "1");
+    shouldBeTrue("mixedCache.every(entry => entry.width == 100 && entry.height == 100 && entry.patternBufferIdentifier)");
+    mixedPatternBufferIdentifiers = mixedCache.map(entry => entry.patternBufferIdentifier).join();
+
+    internals.startTrackingRepaints();
+    for (let box of document.querySelectorAll(".box"))
+        box.classList.add("repainted");
+    await UIHelper.renderingUpdate();
+    shouldBeTrue("internals.repaintRectsAsText().includes('rect')");
+    internals.stopTrackingRepaints();
+
+    debug("");
+    debug("After repainting:");
+    plainCache = internals.backgroundGradientCache(plain);
+    shouldBe("plainCache.length", "1");
+    shouldBeTrue("plainCache[0].hasColorFilter");
+
+    borderedCache = internals.backgroundGradientCache(bordered);
+    shouldBe("borderedCache.length", "1");
+    shouldBeTrue("borderedCache[0].hasColorFilter");
+    shouldBe("borderedCache[0].patternBufferIdentifier", "patternBufferIdentifier");
+
+    mixedCache = internals.backgroundGradientCache(document.querySelector(".mixed"));
+    shouldBe("mixedCache.length", "2");
+    shouldBe("mixedCache.map(entry => entry.patternBufferIdentifier).join()", "mixedPatternBufferIdentifiers");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

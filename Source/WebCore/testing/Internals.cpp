@@ -260,6 +260,7 @@
 #include "StorageNamespaceProvider.h"
 #include "StreamTransferUtilities.h"
 #include "StringCallback.h"
+#include "StyleBackgroundLayers.h"
 #include "StyleDocumentScope.h"
 #include "StyleExtractor.h"
 #include "StyleGridPosition.h"
@@ -1372,6 +1373,25 @@ unsigned Internals::imageCachedSubimageCreateCount(HTMLImageElement& element)
     UNUSED_PARAM(element);
 #endif
     return 0;
+}
+
+static RefPtr<Style::GradientImage> backgroundGradientImage(Element& element)
+{
+    CheckedPtr renderer = element.renderer();
+    if (!renderer)
+        return nullptr;
+
+    for (auto& layer : renderer->style().backgroundLayers().usedValues()) {
+        if (RefPtr gradientImage = dynamicDowncast<Style::GradientImage>(layer.image().tryStyleImage()))
+            return gradientImage;
+    }
+    return nullptr;
+}
+
+auto Internals::backgroundGradientCache(Element& element) -> Vector<BackgroundGradientCacheEntry>
+{
+    RefPtr gradientImage = backgroundGradientImage(element);
+    return gradientImage ? gradientImage->cachedGradientsForTesting() : Vector<BackgroundGradientCacheEntry> { };
 }
 
 unsigned Internals::remoteImagesCountForTesting() const

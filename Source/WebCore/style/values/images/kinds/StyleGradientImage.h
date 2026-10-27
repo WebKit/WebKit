@@ -35,6 +35,8 @@
 namespace WebCore {
 namespace Style {
 
+struct AppleColorFilter;
+
 class GradientImage final : public GeneratedImage {
 public:
     static Ref<GradientImage> create(Gradient gradient)
@@ -47,6 +49,14 @@ public:
     bool equals(const GradientImage&) const;
 
     const Gradient& gradient() const LIFETIME_BOUND { return m_gradient; }
+
+    struct CachedGradientForTesting {
+        float width { 0 };
+        float height { 0 };
+        bool hasColorFilter { false };
+        uint64_t patternBufferIdentifier { 0 };
+    };
+    WEBCORE_EXPORT Vector<CachedGradientForTesting> cachedGradientsForTesting() const;
 
 private:
     explicit GradientImage(Gradient&&);
@@ -64,13 +74,13 @@ private:
 
     // The platform gradient for one size, and the buffer a tiled draw rasterized it into.
     class CachedGradient;
-    CachedGradient* cachedGradientForSize(FloatSize);
-    void evictCachedGradient(FloatSize);
+    CachedGradient* cachedGradient(FloatSize, const AppleColorFilter&);
+    void evictCachedGradient(CachedGradient&);
     Ref<WebCore::Gradient> gradientForSize(const RenderElement&, FloatSize, bool isForFirstLine, CachedGradient*&) const;
 
     Gradient m_gradient;
-    bool m_knownCacheableBarringFilter { false };
-    HashMap<FloatSize, std::unique_ptr<CachedGradient>> m_gradients;
+    bool m_stopsAreCacheable { false };
+    HashMap<FloatSize, Vector<std::unique_ptr<CachedGradient>, 1>> m_gradients;
 };
 
 } // namespace Style

@@ -206,6 +206,16 @@ enum AutoplayPolicy {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary BackgroundGradientCacheEntry {
+    required unrestricted float width;
+    required unrestricted float height;
+    required boolean hasColorFilter;
+    required unsigned long long patternBufferIdentifier;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] dictionary FullscreenInsets {
     float top = 0;
     float left = 0;
@@ -806,6 +816,7 @@ enum ContentsFormat {
     unsigned long imageBlankDrawCount(HTMLImageElement element);
     DOMString imageLastDecodingOptions(HTMLImageElement element);
     unsigned long imageCachedSubimageCreateCount(HTMLImageElement element);
+    sequence<BackgroundGradientCacheEntry> backgroundGradientCache(Element element);
     unsigned long remoteImagesCountForTesting();
     undefined setAsyncDecodingEnabledForTesting(HTMLImageElement element, boolean enabled);
     undefined setForceUpdateImageDataEnabledForTesting(HTMLImageElement element, boolean enabled);
