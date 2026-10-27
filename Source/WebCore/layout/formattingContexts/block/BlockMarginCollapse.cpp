@@ -95,9 +95,9 @@ LayoutUnit BlockMarginCollapse::collapsedLogicalBottomForCollapsedThroughBox() c
     return m_logicalTop + margins.collapsedValue();
 }
 
-void BlockMarginCollapse::resetAdjoiningMargins(LayoutUnit logicalTop)
+void BlockMarginCollapse::resetAdjoiningMargins(LayoutUnit logicalTop, const AdjoiningMargins& margins)
 {
-    m_adjoiningMargins = { };
+    m_adjoiningMargins = margins;
     m_logicalTop = logicalTop;
     m_endsWithQuirk = false;
 }
@@ -106,6 +106,12 @@ void BlockMarginCollapse::resetAdjoiningMarginsAfterLineBoxes(LayoutUnit logical
 {
     resetAdjoiningMargins(logicalTop);
     m_endsWithQuirk = std::nullopt;
+}
+
+void BlockMarginCollapse::addKeptContentMarginsBefore(ContainingBlockState& blockContainerState, const AdjoiningMargins& margins)
+{
+    m_adjoiningMargins.add(margins);
+    blockContainerState.margins.m_collapsedMarginsBefore.margins.add(margins);
 }
 
 void BlockMarginCollapse::startBlockContainer(ContainingBlockState& blockContainerState, const ContainingBlockState& containingBlockState, LayoutUnit marginBefore)

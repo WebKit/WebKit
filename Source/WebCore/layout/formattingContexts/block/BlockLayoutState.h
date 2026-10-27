@@ -65,6 +65,9 @@ struct ContainingBlockState {
     // The children laid out through the render tree are laid out again (RenderBlockFlow::layoutBlockChildren), like when its content box
     // inline size, border or padding changed since its last layout (RenderBlock::recomputeLogicalWidth).
     bool relayoutChildren { false };
+    // The lines with content in its inline content up to the line of the last block-level box in it, that line included: the inline
+    // formatting context's line count is larger when line boxes came after that box.
+    size_t lineCountThroughLastBlockLevelBox { 0 };
 
     LayoutUnit contentBoxLogicalTop() const { return *borderBoxLogicalTop + borderAndPaddingBefore; }
 };

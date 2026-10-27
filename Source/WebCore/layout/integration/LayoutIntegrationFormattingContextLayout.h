@@ -33,9 +33,11 @@ namespace WebCore {
 
 namespace Layout {
 
+class BlockFormattingContext;
 class InlineLayoutState;
 class ElementBox;
 class LayoutState;
+struct BlockLayoutResult;
 }
 
 namespace LayoutIntegration {
@@ -60,6 +62,8 @@ enum class LogicalHeightType : uint8_t  {
 LayoutUnit LEGACY_NODELETE formattingContextRootLogicalHeightForType(const Layout::ElementBox&, LogicalHeightType);
 
 void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block, LayoutPoint blockLineLogicalTopLeft, Layout::InlineLayoutState&, Layout::LayoutState&);
+// The block formatting context the inline content is in lays out the block-level box, and adds it to the result it is building.
+void layoutWithBlockFormattingContextForBlockInInline(Layout::BlockFormattingContext&, Layout::BlockLayoutResult&, const Layout::ElementBox& block, LayoutPoint blockLineLogicalTopLeft, Layout::InlineLayoutState&, Layout::LayoutState&);
 
 }
 }
