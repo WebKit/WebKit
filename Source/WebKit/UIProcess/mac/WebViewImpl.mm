@@ -129,6 +129,7 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/NodeHTMLConverter.h>
 #import <WebCore/NowPlayingInfo.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PlatformDynamicRangeLimitCocoa.h>
@@ -3346,6 +3347,17 @@ void WebViewImpl::changeFontAttributesFromSender(id sender)
     auto& editorState = m_page->editorState();
     if (!editorState.isContentEditable || editorState.selectionType == WebCore::SelectionType::None)
         return;
+
+    // A formatting style can carry a block intent, as in -[NSTextView changeAttributes:]. Its other attributes then
+    // describe how the block looks, which the page's style sheet decides, so they are not applied inline.
+    if (WebCore::presentationIntentHTMLInterchangeEnabled() && [sender respondsToSelector:@selector(convertAttributes:)]) {
+        RetainPtr<NSDictionary> convertedAttributes = [sender convertAttributes:@{ }];
+        RetainPtr intent = dynamic_objc_cast<NSPresentationIntent>([convertedAttributes objectForKey:NSPresentationIntentAttributeName]);
+        if (auto blockIntent = WebCore::BlockPresentationIntent::fromPresentationIntent(intent.get())) {
+            m_page->applyBlockPresentationIntent(*blockIntent);
+            return;
+        }
+    }
 
     m_page->changeFontAttributes(WebCore::computedFontAttributeChanges(NSFontManager.sharedFontManager, sender));
 }
