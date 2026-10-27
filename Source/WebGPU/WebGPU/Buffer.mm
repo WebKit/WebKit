@@ -281,6 +281,14 @@ void Buffer::addResourceHolder(const RenderBundle& renderBundle) const
 
 bool Buffer::validateGetMappedRange(size_t offset, size_t rangeSize) const
 {
+    if (!validateMappedRangeBounds(offset, rangeSize))
+        return false;
+
+    return !m_mappedRanges.overlaps({ offset, offset + rangeSize });
+}
+
+bool Buffer::validateMappedRangeBounds(size_t offset, size_t rangeSize) const
+{
     if (m_state == State::Destroyed)
         return false;
 
@@ -298,9 +306,6 @@ bool Buffer::validateGetMappedRange(size_t offset, size_t rangeSize) const
 
     auto endOffset = checkedSum<size_t>(offset, rangeSize);
     if (endOffset.hasOverflowed() || endOffset.value() > m_mappingRange.endOffset)
-        return false;
-
-    if (m_mappedRanges.overlaps({ offset, endOffset }))
         return false;
 
     return true;
@@ -354,6 +359,14 @@ std::span<uint8_t> Buffer::getMappedRangeSpan(uint64_t apiOffset, std::optional<
     if (!m_buffer.contents)
         return { };
     return getBufferContents().subspan(offset);
+}
+
+std::span<uint8_t> Buffer::mappedRangeForCAPI(uint64_t offset, std::optional<uint64_t> size)
+{
+    size_t rangeSize = size ? *size : computeRangeSize(initialSize(), offset);
+    if (!isValid() || !validateMappedRangeBounds(offset, rangeSize) || !m_buffer.contents)
+        return { };
+    return getBufferContents().subspan(offset, rangeSize);
 }
 
 std::span<uint8_t> Buffer::getBufferContents()
@@ -701,7 +714,7 @@ WGPUBufferMapState wgpuBufferGetMapState(WGPUBuffer buffer)
 
 void* wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
 {
-    return protect(WebGPU::Metal::fromAPI(buffer))->getMappedRangeSpan(offset, WebGPU::Metal::mapSizeFromAPI(size)).data();
+    return protect(WebGPU::Metal::fromAPI(buffer))->mappedRangeForCAPI(offset, WebGPU::Metal::mapSizeFromAPI(size)).data();
 }
 
 const void* wgpuBufferGetConstMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
