@@ -1042,8 +1042,6 @@ webkit.org/b/303884 accessibility/gtk/spans-paragraphs-and-divs.html [ Failure ]
 
 fast/images/async-image-body-background-image.html [ Timeout Pass ]
 
-webkit.org/b/316158 fullscreen/full-screen-enter-while-exiting-fully-mid-completion-handler.html [ Crash Pass ]
-
 webkit.org/b/304278 inspector/worker/debugger-pause-subworker.html [ Skip ]
 
 # webkit.org/b/304535 ui-serif, ui-sans-serif, ui-monospace, ui-rounded generic families not implemented on GTK
