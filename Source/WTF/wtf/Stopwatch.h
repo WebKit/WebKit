@@ -45,6 +45,10 @@ public:
     void start();
     void stop();
 
+    // Starts the stopwatch as if it had been running since the MonotonicTime epoch, so that its
+    // times are raw MonotonicTime seconds and line up with those of stopwatches in other processes.
+    void startAtMonotonicEpoch();
+
     Seconds elapsedTime() const;
     Seconds elapsedTimeSince(MonotonicTime) const;
     std::tuple<Seconds, MonotonicTime> elapsedTimeAndTimestamp() const;
@@ -72,6 +76,12 @@ inline void Stopwatch::start()
     ASSERT_WITH_MESSAGE(m_lastStartTime.isNaN(), "Tried to start the stopwatch, but it is already running.");
 
     m_lastStartTime = MonotonicTime::now();
+}
+
+inline void Stopwatch::startAtMonotonicEpoch()
+{
+    reset();
+    m_lastStartTime = MonotonicTime::fromRawSeconds(0);
 }
 
 inline void Stopwatch::stop()

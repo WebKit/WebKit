@@ -223,6 +223,8 @@ void PageInspectorController::createLazyAgents()
 void PageInspectorController::siteIsolationFirstEnabled()
 {
     m_identifierRegistry = Inspector::BackendIdentifierRegistry::create();
+    m_executionStopwatch->startAtMonotonicEpoch();
+    m_executionStopwatchIsShared = true;
 }
 
 void PageInspectorController::inspectedPageDestroyed()

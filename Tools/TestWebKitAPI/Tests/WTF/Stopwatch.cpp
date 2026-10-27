@@ -92,4 +92,48 @@ TEST(WTF_Stopwatch, TimesAfterResetAreRelativeToTheNewStart)
     EXPECT_TRUE(*elapsed <= duringRun - beforeStart);
 }
 
+TEST(WTF_Stopwatch, StartAtMonotonicEpochReportsMonotonicTimeSeconds)
+{
+    auto beforeStart = MonotonicTime::now();
+    WTF::sleep(5_ms);
+
+    auto stopwatch = Stopwatch::create();
+    stopwatch->startAtMonotonicEpoch();
+    EXPECT_TRUE(stopwatch->isActive());
+
+    WTF::sleep(5_ms);
+    auto beforeRead = MonotonicTime::now();
+    auto elapsed = stopwatch->elapsedTime();
+    auto afterRead = MonotonicTime::now();
+    EXPECT_TRUE(elapsed >= beforeRead.secondsSinceEpoch());
+    EXPECT_TRUE(elapsed <= afterRead.secondsSinceEpoch());
+
+    // Times from before the call are converted too, because the stopwatch counts from the epoch.
+    auto converted = stopwatch->fromMonotonicTime(beforeStart);
+    ASSERT_TRUE(converted);
+    EXPECT_EQ(converted->value(), beforeStart.secondsSinceEpoch().value());
+}
+
+TEST(WTF_Stopwatch, MonotonicEpochClocksStartedAtDifferentTimesAgree)
+{
+    auto first = Stopwatch::create();
+    first->startAtMonotonicEpoch();
+    WTF::sleep(10_ms);
+    auto second = Stopwatch::create();
+    second->startAtMonotonicEpoch();
+
+    auto time = MonotonicTime::now();
+    auto fromFirst = first->fromMonotonicTime(time);
+    auto fromSecond = second->fromMonotonicTime(time);
+    ASSERT_TRUE(fromFirst);
+    ASSERT_TRUE(fromSecond);
+    EXPECT_EQ(fromFirst->value(), fromSecond->value());
+
+    // Starting an epoch clock again keeps its times.
+    first->startAtMonotonicEpoch();
+    auto fromFirstAgain = first->fromMonotonicTime(time);
+    ASSERT_TRUE(fromFirstAgain);
+    EXPECT_EQ(fromFirstAgain->value(), fromFirst->value());
+}
+
 } // namespace TestWebKitAPI

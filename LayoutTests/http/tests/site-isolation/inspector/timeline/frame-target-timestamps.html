@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/timestamps-script.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.FrameTargetTimestamps");
+
+    // Lines in resources/timestamps-script.js and resources/timestamps-worker.js.
+    const sampleTimeProbeLineNumber = 4;
+    const workerProbeLineNumber = 3;
+
+    let mainFrameTarget;
+    let iframeTarget;
+    let workerTarget;
+    let probeForTarget = new Map;
+
+    function awaitEventMatching(object, eventType, predicate) {
+        return new Promise((resolve) => {
+            let listener = object.addEventListener(eventType, (event) => {
+                if (!predicate(event))
+                    return;
+                object.removeEventListener(eventType, listener);
+                resolve(event);
+            });
+        });
+    }
+
+    async function addProbe(target, urlSubstring, lineNumber) {
+        let script = WI.debuggerManager.dataForTarget(target).scripts.find((script) => script.url?.includes(urlSubstring));
+        InspectorTest.assert(script, `Should find ${urlSubstring} in the target.`);
+
+        let probeSetAddedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.ProbeSetAdded);
+        let breakpoint = new WI.JavaScriptBreakpoint(script.createSourceCodeLocation(lineNumber, 0), {
+            autoContinue: true,
+            actions: [new WI.BreakpointAction(WI.BreakpointAction.Type.Probe, {data: "now"})],
+        });
+        WI.debuggerManager.addBreakpoint(breakpoint);
+
+        let {probeSet} = (await probeSetAddedPromise).data;
+        probeForTarget.set(target, probeSet.probes[0]);
+
+        if (!breakpoint.resolved)
+            await breakpoint.awaitEvent(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange);
+    }
+
+    // Evaluates the expression in evaluationTarget so that it hits the probe in target. Returns the probe sample's protocol
+    // timestamp (in seconds) and the value of performance.now() when it was taken.
+    async function sample(target, expression, evaluationTarget = target) {
+        let sampleAddedPromise = probeForTarget.get(target).awaitEvent(WI.Probe.Event.SampleAdded);
+        evaluationTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+        let probeSample = (await sampleAddedPromise).data;
+        return {timestamp: probeSample.timestamp, performanceNow: probeSample.object.value};
+    }
+
+    async function startCapturing() {
+        let capturingStartedPromise = awaitEventMatching(WI.timelineManager, WI.TimelineManager.Event.CapturingStateChanged, () => WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Active);
+        WI.timelineManager.startCapturing();
+        return (await capturingStartedPromise).data.startTime;
+    }
+
+    async function stopCapturing() {
+        let capturingStoppedPromise = awaitEventMatching(WI.timelineManager, WI.TimelineManager.Event.CapturingStateChanged, () => WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Inactive);
+        WI.timelineManager.stopCapturing();
+        return (await capturingStoppedPromise).data.endTime;
+    }
+
+    // Records an empty recording. Its start and end times come from the targets that have the Timeline domain: the
+    // page target, whose clock is in the main frame's process, and the worker target.
+    async function recordTimeBounds() {
+        let startTime = await startCapturing();
+        let endTime = await stopCapturing();
+
+        // Breakpoints are inactive during a recording (so probes do not fire), and are reactivated when it stops.
+        // A round trip to each probed target makes sure that the reactivation has reached it.
+        await Promise.all([...probeForTarget.keys()].map((target) => target.RuntimeAgent.evaluate.invoke({expression: "0", objectGroup: "test"})));
+
+        return {startTime, endTime};
+    }
+
+    async function expectSamplesBetweenRecordings(targetsAndExpressions) {
+        let before = await recordTimeBounds();
+        let samples = [];
+        for (let [target, expression, evaluationTarget] of targetsAndExpressions)
+            samples.push(await sample(target, expression, evaluationTarget));
+        let after = await recordTimeBounds();
+
+        InspectorTest.expectThat(before.startTime > 0 && before.startTime <= before.endTime, "Earlier recording should have valid start and end times.");
+        InspectorTest.expectThat(after.startTime > 0 && after.startTime <= after.endTime, "Later recording should have valid start and end times.");
+        for (let i = 0; i < samples.length; ++i) {
+            let [target, expression] = targetsAndExpressions[i];
+            let {timestamp} = samples[i];
+            InspectorTest.expectThat(before.endTime <= timestamp && timestamp <= after.startTime, `Probe sample timestamp from ${expression} in the ${targetDescription(target)} should be between the earlier and later recordings.`);
+        }
+    }
+
+    function targetDescription(target) {
+        if (target === mainFrameTarget)
+            return "main frame target";
+        if (target === iframeTarget)
+            return "cross-origin iframe target";
+        if (target === workerTarget)
+            return "worker target in the cross-origin iframe";
+        return "unknown target";
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetTimestamps.Setup",
+        description: "Find the targets and add a probe in each.",
+        async test() {
+            mainFrameTarget = InspectorTest.mainFrameTarget;
+            iframeTarget = await waitForFrameTargetForURLContaining("timestamps-frame.html");
+            InspectorTest.expectNotNull(iframeTarget, "Should find the cross-origin iframe target.");
+            InspectorTest.expectNotEqual(iframeTarget, mainFrameTarget, "The cross-origin iframe target should not be the main frame target.");
+
+            workerTarget = WI.targets.find((target) => target.type === WI.TargetType.Worker && target.parentTarget === iframeTarget);
+            if (!workerTarget)
+                workerTarget = (await awaitEventMatching(WI.targetManager, WI.TargetManager.Event.TargetAdded, (event) => event.data.target.type === WI.TargetType.Worker)).data.target;
+            InspectorTest.expectEqual(workerTarget.parentTarget, iframeTarget, "The worker target's parent should be the cross-origin iframe target.");
+            await waitForExpressionInTarget(workerTarget, "!!self.onmessage");
+
+            await addProbe(mainFrameTarget, "timestamps-script.js", sampleTimeProbeLineNumber);
+            await addProbe(iframeTarget, "timestamps-script.js", sampleTimeProbeLineNumber);
+            await addProbe(workerTarget, "timestamps-worker.js", workerProbeLineNumber);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetTimestamps.SameTimebase",
+        description: "Timestamps from frame and worker targets in every process should use the page target's timebase.",
+        async test() {
+            await expectSamplesBetweenRecordings([
+                [mainFrameTarget, "sampleTime()"],
+                [iframeTarget, "sampleTime()"],
+                [workerTarget, "sampleTimeInWorker()", iframeTarget],
+            ]);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetTimestamps.PauseDoesNotStopClock",
+        description: "Pausing in the debugger should not stop the frame target's clock.",
+        async test() {
+            // A clock that keeps running stays at the same offset from performance.now(), which is not affected by pauses.
+            let before = await sample(iframeTarget, "sampleTime()");
+
+            let pausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            iframeTarget.RuntimeAgent.evaluate.invoke({expression: "pauseHere()", objectGroup: "test"});
+            await pausedPromise;
+            InspectorTest.pass("Paused in the cross-origin iframe.");
+
+            // Pause long enough for a stopped clock to fall measurably behind.
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
+            let resumedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+            await WI.debuggerManager.resume();
+            await resumedPromise;
+            InspectorTest.pass("Resumed.");
+
+            let after = await sample(iframeTarget, "sampleTime()");
+
+            let offsetBefore = before.timestamp - (before.performanceNow / 1000);
+            let offsetAfter = after.timestamp - (after.performanceNow / 1000);
+            InspectorTest.expectLessThan(Math.abs(offsetAfter - offsetBefore), 0.1, "The frame target's clock should keep its offset from performance.now() across a pause.");
+
+            await expectSamplesBetweenRecordings([
+                [mainFrameTarget, "sampleTime()"],
+                [iframeTarget, "sampleTime()"],
+            ]);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, timestamps from frame and worker targets in every process use the same timebase as the page target, also after a debugger pause.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/timeline/resources/timestamps-frame.html"></iframe>
+</body>

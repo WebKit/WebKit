@@ -56,6 +56,11 @@ public:
     virtual InspectorEvaluateHandler evaluateHandler() const = 0;
     virtual void frontendInitialized() = 0;
     virtual WTF::Stopwatch& executionStopwatch() const = 0;
+
+    // True when the execution stopwatch is on a timebase shared with other processes' stopwatches,
+    // so that their timestamps line up. Such a stopwatch must not be stopped or reset on its own.
+    virtual bool executionStopwatchIsSharedAcrossProcesses() const { return false; }
+
     virtual JSC::Debugger* debugger() = 0;
 
     // JSC::Debugger is deliberately only forward declared here: including Debugger.h would pull the

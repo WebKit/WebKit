@@ -86,7 +86,7 @@ FrameInspectorController::FrameInspectorController(LocalFrame& frame, PageInspec
     , m_executionStopwatch(Stopwatch::create())
 {
     if (frame.settings().siteIsolationEnabled())
-        createConsoleAgent();
+        siteIsolationFirstEnabled();
 }
 
 FrameInspectorController::~FrameInspectorController()
@@ -163,6 +163,8 @@ FrameAgentContext FrameInspectorController::frameAgentContext()
 void FrameInspectorController::siteIsolationFirstEnabled()
 {
     createConsoleAgent();
+    m_executionStopwatch->startAtMonotonicEpoch();
+    m_executionStopwatchIsShared = true;
 }
 
 void FrameInspectorController::createConsoleAgent()

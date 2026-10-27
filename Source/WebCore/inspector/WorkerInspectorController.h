@@ -78,6 +78,7 @@ public:
     Inspector::InspectorEvaluateHandler evaluateHandler() const override;
     void frontendInitialized() final;
     WTF::Stopwatch& executionStopwatch() const override;
+    bool executionStopwatchIsSharedAcrossProcesses() const override { return m_executionStopwatchIsShared; }
     JSC::Debugger* debugger() override;
     JSC::VM& vm() override;
 
@@ -101,6 +102,7 @@ private:
     WeakRef<WorkerOrWorkletGlobalScope> m_globalScope;
     std::unique_ptr<Inspector::FrontendChannel> m_forwardingChannel;
     bool m_didCreateLazyAgents { false };
+    bool m_executionStopwatchIsShared { false };
     bool m_isAutomaticInspection { false };
     bool m_pauseAfterInitialization { false };
     Function<void()> m_frontendInitializedCallback;

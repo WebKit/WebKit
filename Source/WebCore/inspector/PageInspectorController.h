@@ -157,6 +157,7 @@ public:
     Inspector::InspectorEvaluateHandler evaluateHandler() const override;
     void frontendInitialized() override;
     WEBCORE_EXPORT WTF::Stopwatch& LEGACY_NODELETE executionStopwatch() const final;
+    bool executionStopwatchIsSharedAcrossProcesses() const final { return m_executionStopwatchIsShared; }
     JSC::Debugger* debugger() override;
     void forEachDebugger(NOESCAPE const WTF::Function<void(JSC::Debugger&)>&) override;
     JSC::VM& vm() override;
@@ -191,6 +192,7 @@ private:
     bool m_isAutomaticInspection { false };
     bool m_pauseAfterInitialization = { false };
     bool m_didCreateLazyAgents { false };
+    bool m_executionStopwatchIsShared { false };
 };
 
 } // namespace WebCore

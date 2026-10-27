@@ -35,6 +35,7 @@
 #include "SWContextManager.h"
 #include "ServiceWorkerAgent.h"
 #include "ServiceWorkerGlobalScope.h"
+#include "Settings.h"
 #include "WebHeapAgent.h"
 #include "WebInjectedScriptHost.h"
 #include "WebInjectedScriptManager.h"
@@ -133,8 +134,13 @@ void WorkerInspectorController::connectFrontend(bool isAutomaticInspection, bool
         InspectorInstrumentation::frontendCreated();
     });
 
-    m_executionStopwatch->reset();
-    m_executionStopwatch->start();
+    if (m_globalScope->settingsValues().siteIsolationEnabled) {
+        m_executionStopwatch->startAtMonotonicEpoch();
+        m_executionStopwatchIsShared = true;
+    } else {
+        m_executionStopwatch->reset();
+        m_executionStopwatch->start();
+    }
 
     m_forwardingChannel = makeUnique<WorkerToPageFrontendChannel>(m_globalScope);
     m_frontendRouter->connectFrontend(*m_forwardingChannel.get());

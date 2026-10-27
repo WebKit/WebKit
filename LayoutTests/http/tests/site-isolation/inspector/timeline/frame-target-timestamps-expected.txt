@@ -1,0 +1,26 @@
+Test that under Site Isolation, timestamps from frame and worker targets in every process use the same timebase as the page target, also after a debugger pause.
+
+
+
+== Running test suite: SiteIsolation.Timeline.FrameTargetTimestamps
+-- Running test case: SiteIsolation.Timeline.FrameTargetTimestamps.Setup
+PASS: Should find the cross-origin iframe target.
+PASS: The cross-origin iframe target should not be the main frame target.
+PASS: The worker target's parent should be the cross-origin iframe target.
+
+-- Running test case: SiteIsolation.Timeline.FrameTargetTimestamps.SameTimebase
+PASS: Earlier recording should have valid start and end times.
+PASS: Later recording should have valid start and end times.
+PASS: Probe sample timestamp from sampleTime() in the main frame target should be between the earlier and later recordings.
+PASS: Probe sample timestamp from sampleTime() in the cross-origin iframe target should be between the earlier and later recordings.
+PASS: Probe sample timestamp from sampleTimeInWorker() in the worker target in the cross-origin iframe should be between the earlier and later recordings.
+
+-- Running test case: SiteIsolation.Timeline.FrameTargetTimestamps.PauseDoesNotStopClock
+PASS: Paused in the cross-origin iframe.
+PASS: Resumed.
+PASS: The frame target's clock should keep its offset from performance.now() across a pause.
+PASS: Earlier recording should have valid start and end times.
+PASS: Later recording should have valid start and end times.
+PASS: Probe sample timestamp from sampleTime() in the main frame target should be between the earlier and later recordings.
+PASS: Probe sample timestamp from sampleTime() in the cross-origin iframe target should be between the earlier and later recordings.
+

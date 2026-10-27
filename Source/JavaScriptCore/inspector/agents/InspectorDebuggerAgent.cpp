@@ -54,6 +54,7 @@
 #include "VMInlines.h"
 #include "Weak.h"
 #include <wtf/Box.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Stopwatch.h>
@@ -2029,8 +2030,10 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::De
         m_continueToLocationDebuggerBreakpoint = nullptr;
     }
 
-    auto& stopwatch = protect(injectedScriptManager().inspectorEnvironment())->executionStopwatch();
-    if (stopwatch.isActive()) {
+    // A shared stopwatch keeps running, because other processes do not pause together with this one.
+    CheckedRef environment = injectedScriptManager().inspectorEnvironment();
+    auto& stopwatch = environment->executionStopwatch();
+    if (stopwatch.isActive() && !environment->executionStopwatchIsSharedAcrossProcesses()) {
         stopwatch.stop();
         m_didPauseStopwatch = true;
     }
@@ -2077,7 +2080,9 @@ void InspectorDebuggerAgent::didContinue()
 {
     if (m_didPauseStopwatch) {
         m_didPauseStopwatch = false;
-        protect(injectedScriptManager().inspectorEnvironment())->executionStopwatch().start();
+        CheckedRef environment = injectedScriptManager().inspectorEnvironment();
+        ASSERT(!environment->executionStopwatchIsSharedAcrossProcesses());
+        environment->executionStopwatch().start();
     }
 
     m_pausedGlobalObject = nullptr;

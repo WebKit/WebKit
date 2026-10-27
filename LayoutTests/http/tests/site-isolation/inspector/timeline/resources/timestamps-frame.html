@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Cross-origin frame for timestamp tests</title>
+<script src="timestamps-script.js"></script>
+<script>
+let worker = new Worker("timestamps-worker.js");
+
+function sampleTimeInWorker()
+{
+    worker.postMessage("sample");
+}
+</script>
+<p>Cross-origin frame for timestamp tests.</p>
