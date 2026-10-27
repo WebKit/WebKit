@@ -655,7 +655,7 @@ AutomaticallyAdjustsViewScaleUsingMinimumEffectiveDeviceWidth:
   defaultValue:
     default: false
     WebKit:
-      "ENABLE(FLEXIBLE_VIEW_SCALE_FACTOR)": true
+      "PLATFORM(APPLETV)": WebKit::defaultAutomaticallyAdjustsViewScaleUsingMinimumEffectiveDeviceWidth()
       default: false
 
 AutomaticallyForceEnableScrollingIfNeededToRevealUI:
@@ -3570,7 +3570,8 @@ LayoutViewportHeightExpansionFactor:
   defaultValue:
     default: 0
     WebKit:
-      "PLATFORM(WATCHOS) || ENABLE(FLEXIBLE_VIEW_SCALE_FACTOR)" : 1
+      "PLATFORM(WATCHOS)" : 1
+      "PLATFORM(APPLETV)": WebKit::defaultLayoutViewportHeightExpansionFactor()
       default: 0
 
 LazyIframeLoadingEnabled:
@@ -6270,7 +6271,7 @@ TextAutosizingEnabledAtLargeInitialScale:
   humanReadableDescription: "Enable Text Autosizing at Large Initial Scale"
   excludeFrom: [ WebKitLegacy, WebKit ]
   defaultValue:
-    "ENABLE(TEXT_AUTOSIZING_BASED_ON_INITIAL_SCALE)": false
+    "PLATFORM(APPLETV)": defaultTextAutosizingEnabledAtLargeInitialScale()
     default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.

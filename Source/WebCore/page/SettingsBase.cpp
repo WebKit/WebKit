@@ -50,6 +50,10 @@
 #include "MockRealtimeMediaSourceCenter.h"
 #endif
 
+#if PLATFORM(APPLETV)
+#include <pal/system/ios/Device.h>
+#endif
+
 #if __has_include(<WebKitAdditions/SettingsBaseAdditions.cpp>)
 #include <WebKitAdditions/SettingsBaseAdditions.cpp>
 #endif
@@ -68,6 +72,13 @@ static void invalidateAfterGenericFamilyChange(Page* page)
     if (page)
         page->setNeedsRecalcStyleInAllFrames();
 }
+
+#if PLATFORM(APPLETV)
+bool defaultTextAutosizingEnabledAtLargeInitialScale()
+{
+    return !PAL::deviceClassIsHomeView();
+}
+#endif
 
 SettingsBase::SettingsBase(Page* page)
     : m_page(page)

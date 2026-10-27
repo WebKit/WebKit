@@ -64,6 +64,7 @@
 #import <pal/spi/cocoa/NSStringSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/cocoa/URLFormattingSPI.h>
+#import <pal/system/ios/Device.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/NSURLExtras.h>
@@ -172,12 +173,27 @@ enum FullScreenState : NSInteger {
     ExitingFullScreen,
 };
 
+static CGFloat baseScale()
+{
+#if PLATFORM(APPLETV)
+    if (PAL::deviceClassIsHomeView())
+        return 544. / 448;
+#endif
+    return 1;
+}
+
+static CGFloat baseMinimumEffectiveDeviceWidth()
+{
+#if PLATFORM(APPLETV)
+    if (PAL::deviceClassIsHomeView())
+        return 448;
+#endif
+    return 0;
+}
+
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKFullScreenWindowControllerIOSAdditions.mm>)
 #import <WebKitAdditions/WKFullScreenWindowControllerIOSAdditions.mm>
 #else
-static constexpr auto baseScale = 1;
-static constexpr auto baseMinimumEffectiveDeviceWidth = 0;
-
 #if PLATFORM(VISION)
 static void setLightspillEnabledForElementFullscreenLayer(CALayer *, bool) { }
 #endif
@@ -185,9 +201,9 @@ static void setLightspillEnabledForElementFullscreenLayer(CALayer *, bool) { }
 
 struct WKWebViewState {
     WebCore::FloatBoxExtent _savedWebPageObscuredContentInsets;
-    CGFloat _savedPageScale = baseScale;
+    CGFloat _savedPageScale = baseScale();
     CGFloat _savedViewScale = 1.0;
-    CGFloat _savedZoomScale = baseScale;
+    CGFloat _savedZoomScale = baseScale();
     CGFloat _savedContentZoomScale = 1;
     BOOL _savedContentInsetWasExternallyOverridden = NO;
     UIEdgeInsets _savedEdgeInset = UIEdgeInsetsZero;
@@ -202,7 +218,7 @@ struct WKWebViewState {
     std::optional<CGPoint> _savedContentOffset;
     BOOL _savedBouncesZoom = NO;
     BOOL _savedForceAlwaysUserScalable = NO;
-    CGFloat _savedMinimumEffectiveDeviceWidth = baseMinimumEffectiveDeviceWidth;
+    CGFloat _savedMinimumEffectiveDeviceWidth = baseMinimumEffectiveDeviceWidth();
     BOOL _savedHaveSetUnobscuredSafeAreaInsets = NO;
     UIEdgeInsets _savedUnobscuredSafeAreaInsets = UIEdgeInsetsZero;
     BOOL _savedHasOverriddenLayoutParameters = NO;

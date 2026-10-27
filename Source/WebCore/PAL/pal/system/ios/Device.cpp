@@ -45,8 +45,8 @@ bool deviceClassIsDesktop()
 
 bool deviceClassIsSmallScreen()
 {
-#if ENABLE(FORCE_DEVICE_CLASS_SMALL_SCREEN)
-    return true;
+#if PLATFORM(APPLETV)
+    return deviceClassIsHomeView();
 #else
     static auto deviceClass = MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);
     return deviceClass == MGDeviceClassiPhone || deviceClass == MGDeviceClassiPod || deviceClass == MGDeviceClassWatch;

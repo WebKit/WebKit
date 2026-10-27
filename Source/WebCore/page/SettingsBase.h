@@ -60,6 +60,10 @@ namespace WebCore {
 
 class Page;
 
+#if PLATFORM(APPLETV)
+bool defaultTextAutosizingEnabledAtLargeInitialScale();
+#endif
+
 class SettingsBase : public AbstractRefCountedAndCanMakeWeakPtr<SettingsBase> {
     WTF_MAKE_TZONE_ALLOCATED(SettingsBase);
     WTF_MAKE_NONCOPYABLE(SettingsBase);

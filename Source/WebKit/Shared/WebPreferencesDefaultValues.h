@@ -142,6 +142,8 @@ bool LEGACY_NODELETE defaultDigitalCredentialsEnabled();
 
 #if PLATFORM(IOS_FAMILY)
 bool defaultAutomaticLiveResizeEnabled();
+bool defaultAutomaticallyAdjustsViewScaleUsingMinimumEffectiveDeviceWidth();
+double defaultLayoutViewportHeightExpansionFactor();
 bool defaultVisuallyContiguousBidiTextSelectionEnabled();
 bool defaultBidiContentAwarePasteEnabled();
 #endif

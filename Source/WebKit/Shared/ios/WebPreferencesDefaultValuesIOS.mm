@@ -90,6 +90,24 @@ bool defaultWriteRichTextDataWhenCopyingOrDragging()
     return !isAsyncTextInputFeatureFlagEnabled();
 }
 
+bool defaultAutomaticallyAdjustsViewScaleUsingMinimumEffectiveDeviceWidth()
+{
+#if PLATFORM(APPLETV)
+    return PAL::deviceClassIsHomeView();
+#else
+    return false;
+#endif
+}
+
+double defaultLayoutViewportHeightExpansionFactor()
+{
+#if PLATFORM(APPLETV)
+    return PAL::deviceClassIsHomeView() ? 1 : 0;
+#else
+    return 0;
+#endif
+}
+
 bool defaultAutomaticLiveResizeEnabled()
 {
 #if PLATFORM(VISION)
