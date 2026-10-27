@@ -28,6 +28,18 @@
 
 namespace WebCore {
 
+GPUValidationError::GPUValidationError(String&& message)
+    : m_message(WTF::move(message))
+{
+}
+
+GPUValidationError::GPUValidationError(Ref<WebGPU::ValidationError>&& backing)
+    : m_backing(WTF::move(backing))
+{
+}
+
+GPUValidationError::~GPUValidationError() = default;
+
 const String& GPUValidationError::message() const
 {
     if (m_backing)

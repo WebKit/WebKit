@@ -31,6 +31,20 @@
 
 namespace WebCore {
 
+SVGNumberList::SVGNumberList() = default;
+
+SVGNumberList::SVGNumberList(SVGPropertyOwner* owner, SVGPropertyAccess access)
+    : Base(owner, access)
+{
+}
+
+SVGNumberList::SVGNumberList(const SVGNumberList& other, SVGPropertyAccess access)
+    : Base(other, access)
+{
+}
+
+SVGNumberList::~SVGNumberList() = default;
+
 bool SVGNumberList::parse(StringView value)
 {
     clearItems();

@@ -87,4 +87,6 @@ void CustomEffect::animationDidTick()
     m_callback->invoke(*computedTiming.progress);
 }
 
+CustomEffect::~CustomEffect() = default;
+
 } // namespace WebCore

@@ -43,7 +43,7 @@ class CSSAnimation final : public StyleOriginatedAnimation {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSAnimation);
 public:
     static Ref<CSSAnimation> create(const Styleable&, Style::Animation&&, Style::ZoomFactor, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle, const Style::ResolutionContext&);
-    ~CSSAnimation() = default;
+    ~CSSAnimation();
 
     const String& animationName() const LIFETIME_BOUND { return m_animationName.name; }
     const Style::ScopedName& scopedAnimationName() const LIFETIME_BOUND { return m_animationName; }

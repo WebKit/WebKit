@@ -31,6 +31,20 @@
 
 namespace WebCore {
 
+SVGPointList::SVGPointList() = default;
+
+SVGPointList::SVGPointList(SVGPropertyOwner* owner, SVGPropertyAccess access)
+    : Base(owner, access)
+{
+}
+
+SVGPointList::SVGPointList(const SVGPointList& other, SVGPropertyAccess access)
+    : Base(other, access)
+{
+}
+
+SVGPointList::~SVGPointList() = default;
+
 bool SVGPointList::parse(StringView value)
 {
     clearItems();

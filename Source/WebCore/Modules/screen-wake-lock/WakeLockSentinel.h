@@ -45,6 +45,7 @@ public:
         sentinel->suspendIfNeeded();
         return sentinel;
     }
+    ~WakeLockSentinel();
 
     // ContextDestructionObserver.
     void ref() const final { RefCounted::ref(); }
