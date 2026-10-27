@@ -57,6 +57,7 @@ static NSString *classToClassString(Class classType, bool plural = false)
         [classTypeToSingularClassString setObject:@"null" forKey:NSNull.class];
         [classTypeToSingularClassString setObject:@"an array" forKey:NSArray.class];
         [classTypeToSingularClassString setObject:@"an object" forKey:NSDictionary.class];
+        [classTypeToSingularClassString setObject:@"a date" forKey:NSDate.class];
         return classTypeToSingularClassString;
     }();
     static NSMapTable<Class, NSString *> *classTypeToPluralClassString = [] {
@@ -68,6 +69,7 @@ static NSString *classToClassString(Class classType, bool plural = false)
         [classTypeToPluralClassString setObject:@"null values" forKey:NSNull.class];
         [classTypeToPluralClassString setObject:@"arrays" forKey:NSArray.class];
         [classTypeToPluralClassString setObject:@"objects" forKey:NSDictionary.class];
+        [classTypeToPluralClassString setObject:@"dates" forKey:NSDate.class];
         return classTypeToPluralClassString;
     }();
 
