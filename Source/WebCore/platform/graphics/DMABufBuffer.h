@@ -81,7 +81,10 @@ public:
 #if USE(GSTREAMER)
     static EGLImage createEGLImageForQualcommVideoFrame(GLDisplay&, const Attributes&, ColorSpace, SampleRange);
 #endif
-    bool isQualcommVideoFrameBuffer() const;
+    // The Qualcomm video decoder exposes both planes in a single fd, which the driver converts to RGB
+    // in an external OES texture with the color space and sample range hints.
+    bool isQualcommVideoFrameBuffer() const { return m_isQualcommVideoFrameBuffer; }
+    void setIsQualcommVideoFrameBuffer(bool isQualcommVideoFrameBuffer) { m_isQualcommVideoFrameBuffer = isQualcommVideoFrameBuffer; }
     static std::optional<Vector<EGLint>> buildEGLImageAttributes(const Attributes&, Attributes::EnableModifiers = Attributes::EnableModifiers::Yes);
 
 #if USE(TEXTURE_MAPPER)
@@ -108,6 +111,7 @@ private:
     std::optional<ColorSpace> m_colorSpace;
     std::optional<TransferFunction> m_transferFunction;
     std::optional<SampleRange> m_sampleRange;
+    bool m_isQualcommVideoFrameBuffer { false };
 #if USE(TEXTURE_MAPPER)
     std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
 #else
