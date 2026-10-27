@@ -288,7 +288,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     get mainFrame() { return this._mainFrame; }
     get localResourceOverrides() { return this._localResourceOverrides; }
     get bootstrapScript() { return this._bootstrapScript; }
-    get enabledNetworkForSiteIsolation() { return this._enabledNetworkForSiteIsolation; }
     get enabledPageForSiteIsolation() { return this._enabledPageForSiteIsolation; }
 
     get frames()
@@ -358,6 +357,15 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     resourceForRequestIdentifier(requestIdentifier)
     {
         return this._resourceRequestIdentifierMap.get(requestIdentifier) || null;
+    }
+
+    networkTargetForCommand(target, command)
+    {
+        // Under Site Isolation, ProxyingNetworkAgent on the backend target routes the command to the owning process.
+        // hasCommand() alone can't tell: the protocol declares these commands on the backend target either way.
+        if (this._enabledNetworkForSiteIsolation && WI.backendTarget?.hasCommand(command))
+            return WI.backendTarget;
+        return target;
     }
 
     downloadSourceMap(sourceMapURL, baseURL, originalSourceCode)
@@ -1806,15 +1814,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             return;
         }
 
-        let target = WI.assumingMainTarget();
-
-        // Under Site Isolation, ProxyingNetworkAgent implements Network.loadResource on the backend
-        // (web-page) target, fanning the load out to the frame's owning process. Route there when
-        // Network is enabled on the backend target; otherwise the main target handles it. Mirrors
-        // Resource.requestContentFromBackend.
-        if (this._networkEnabledOnBackendTarget && WI.backendTarget && WI.backendTarget !== target && WI.backendTarget.hasCommand("Network.loadResource"))
-            target = WI.backendTarget;
-
+        let target = this.networkTargetForCommand(WI.assumingMainTarget(), "Network.loadResource");
         if (!target.hasCommand("Network.loadResource")) {
             this._sourceMapLoadFailed(sourceMapURL);
             return;

@@ -157,14 +157,7 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
             });
         }
 
-        // Under Site Isolation, ProxyingNetworkAgent implements Network.loadResource on the backend
-        // (web-page) target, fanning the load out to the frame's owning process. Route there when
-        // Network is enabled on the backend target; otherwise this resource's target handles it.
-        // Mirrors Resource.requestContentFromBackend.
-        let target = this._target;
-        if (WI.networkManager.networkEnabledOnBackendTarget && WI.backendTarget && WI.backendTarget !== target && WI.backendTarget.hasCommand("Network.loadResource"))
-            target = WI.backendTarget;
-
+        let target = WI.networkManager.networkTargetForCommand(this._target, "Network.loadResource");
         if (!target.hasCommand("Network.loadResource"))
             return sourceMapResourceLoadError.call(this);
 
