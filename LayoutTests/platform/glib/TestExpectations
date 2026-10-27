@@ -4851,9 +4851,6 @@ webkit.org/b/307368 fast/repaint/iframe-from-display-none-repaint.html [ Pass Im
 
 imported/w3c/web-platform-tests/css/CSS2/normal-flow/canvas-paint-order.html [ ImageOnlyFailure ]
 
-# Note: this randomly crashes on the EWS (which runs Release+Asserts) but passes always on post-commit (Release)
-webkit.org/b/307597 imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html [ Crash Pass ]
-
 webkit.org/b/307657 [ Release ] imported/w3c/web-platform-tests/resource-timing/status-codes-create-entry.html [ Pass Failure ]
 
 webkit.org/b/308139 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-019.html [ Pass ImageOnlyFailure ]

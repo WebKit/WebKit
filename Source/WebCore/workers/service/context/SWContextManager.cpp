@@ -373,12 +373,13 @@ void SWContextManager::setRegistrationUpdateViaCache(ServiceWorkerRegistrationId
 
 void SWContextManager::removeFetch(ServiceWorkerIdentifier serviceWorkerIdentifier, SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier, bool isNavigationFetch)
 {
-    ASSERT(isMainThread());
-    if (RefPtr proxy = serviceWorkerThreadProxy(serviceWorkerIdentifier))
+    if (RefPtr proxy = serviceWorkerThreadProxyFromBackgroundThread(serviceWorkerIdentifier))
         proxy->removeFetch(serverConnectionIdentifier, fetchIdentifier);
     if (isNavigationFetch) {
-        if (RefPtr connection = m_connection)
-            connection->removeNavigationFetch(serverConnectionIdentifier, fetchIdentifier);
+        ensureOnMainThread([serverConnectionIdentifier, fetchIdentifier] {
+            if (RefPtr connection = SWContextManager::singleton().m_connection)
+                connection->removeNavigationFetch(serverConnectionIdentifier, fetchIdentifier);
+        });
     }
 }
 
