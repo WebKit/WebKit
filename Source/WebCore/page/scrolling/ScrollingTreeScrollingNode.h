@@ -130,6 +130,8 @@ public:
     bool canHaveHorizontalScrollbar() const { return m_scrollableAreaParameters.horizontalScrollbarMode != ScrollbarMode::AlwaysOff; }
     bool canHaveVerticalScrollbar() const { return m_scrollableAreaParameters.verticalScrollbarMode != ScrollbarMode::AlwaysOff; }
     bool canHaveScrollbars() const { return m_scrollableAreaParameters.horizontalScrollbarMode != ScrollbarMode::AlwaysOff || m_scrollableAreaParameters.verticalScrollbarMode != ScrollbarMode::AlwaysOff; }
+    bool allowsHorizontalScrolling() const;
+    bool allowsVerticalScrolling() const;
 
     const FloatScrollSnapOffsetsInfo& LEGACY_NODELETE snapOffsetsInfo() const LIFETIME_BOUND;
     std::optional<unsigned> LEGACY_NODELETE currentHorizontalSnapPointIndex() const;
@@ -201,9 +203,6 @@ protected:
     ScrollElasticity horizontalScrollElasticity() const { return m_scrollableAreaParameters.horizontalScrollElasticity; }
     ScrollElasticity verticalScrollElasticity() const { return m_scrollableAreaParameters.verticalScrollElasticity; }
 
-    bool allowsHorizontalScrolling() const { return m_scrollableAreaParameters.allowsHorizontalScrolling; }
-    bool allowsVerticalScrolling() const { return m_scrollableAreaParameters.allowsVerticalScrolling; }
-
     bool horizontalOverscrollBehaviorPreventsPropagation() const { return m_scrollableAreaParameters.horizontalOverscrollBehavior != OverscrollBehavior::Auto; }
     bool verticalOverscrollBehaviorPreventsPropagation() const { return m_scrollableAreaParameters.verticalOverscrollBehavior != OverscrollBehavior::Auto; }
 
@@ -250,6 +249,16 @@ private:
     LayerRepresentation m_scrollContainerLayer;
     LayerRepresentation m_scrolledContentsLayer;
 };
+
+inline bool ScrollingTreeScrollingNode::allowsHorizontalScrolling() const
+{
+    return m_scrollableAreaParameters.allowsHorizontalScrolling;
+}
+
+inline bool ScrollingTreeScrollingNode::allowsVerticalScrolling() const
+{
+    return m_scrollableAreaParameters.allowsVerticalScrolling;
+}
 
 } // namespace WebCore
 

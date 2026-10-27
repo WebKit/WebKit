@@ -53,8 +53,10 @@ class AcceleratedTimeline;
 #endif
 class PlatformWheelEvent;
 class WheelEventDeltaFilter;
+struct FrameIdentifierType;
 struct WheelEventHandlingResult;
 struct ScrollingNodeIDType;
+using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
 using ScrollingNodeID = ProcessQualified<ObjectIdentifier<ScrollingNodeIDType>>;
 enum class WheelScrollGestureState : uint8_t;
 enum class WheelEventProcessingSteps : uint8_t;
@@ -94,7 +96,7 @@ public:
     void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&);
 
     void handleWheelEvent(Ref<WebWheelEvent>&&, WebCore::RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges);
-    void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool wasHandled);
+    void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, std::optional<WebCore::FrameIdentifier> defaultHandlingFrameID, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool wasHandled);
 
     void setScrollingTree(RefPtr<RemoteScrollingTree>&&);
 

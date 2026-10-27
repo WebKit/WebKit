@@ -117,6 +117,13 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::computeWheelProcessingSteps(
             return { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::BlockingDOMEventDispatch };
     }
 
+    if (m_treeState.hostedFramesHaveEventTrackingRegions) {
+        if (auto hostedRootNodeID { hostedRootNodeIDWithNonFastScrollableRegionAtPoint(position) }) {
+            LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::computeWheelProcessingSteps: wheelEvent " << wheelEvent << " mapped to content point " << position << ", in the non-fast region of hosted root node " << *hostedRootNodeID);
+            return { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::BlockingDOMEventDispatch };
+        }
+    }
+
 #if ENABLE(WHEEL_EVENT_REGIONS)
     auto eventListenerTypes = eventListenerRegionTypesForPoint(position);
     if (eventListenerTypes.contains(EventListenerRegionType::NonPassiveWheel)) {
@@ -269,6 +276,11 @@ OptionSet<EventListenerRegionType> ScrollingTree::eventListenerRegionTypesForPoi
     return { };
 }
 #endif
+
+std::optional<ScrollingNodeID> ScrollingTree::hostedRootNodeIDWithNonFastScrollableRegionAtPoint(FloatPoint) const
+{
+    return std::nullopt;
+}
 
 void ScrollingTree::traverseScrollingTree(NOESCAPE const VisitorFunction& visitorFunction)
 {
@@ -506,7 +518,32 @@ bool ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
 {
     SetForScope inCommitTreeState(m_inCommitTreeState, true);
     Locker locker { m_treeLock };
-    return commitTreeStateInternal(WTF::move(scrollingStateTree), hostingContextIdentifier);
+    bool succeeded { commitTreeStateInternal(WTF::move(scrollingStateTree), hostingContextIdentifier) };
+
+    bool hostedFramesHaveEventTrackingRegions { false };
+    for (auto& frameHostingNode : m_hostedSubtrees.values()) {
+        for (auto& child : frameHostingNode->children()) {
+            RefPtr hostedRootNode { dynamicDowncast<ScrollingTreeFrameScrollingNode>(child) };
+            if (hostedRootNode && !hostedRootNode->eventTrackingRegions().isEmpty())
+                hostedFramesHaveEventTrackingRegions = true;
+        }
+    }
+
+    Locker treeStateLocker { m_treeStateLock };
+    m_treeState.hostedFramesHaveEventTrackingRegions = hostedFramesHaveEventTrackingRegions;
+    return succeeded;
+}
+
+RefPtr<ScrollingTreeFrameScrollingNode> ScrollingTree::hostedRootNodeForFrame(FrameIdentifier frameID) const
+{
+    for (auto& frameHostingNode : m_hostedSubtrees.values()) {
+        for (auto& child : frameHostingNode->children()) {
+            auto* hostedRootNode { dynamicDowncast<ScrollingTreeFrameScrollingNode>(child) };
+            if (hostedRootNode && hostedRootNode->frameIdentifier() == frameID)
+                return hostedRootNode;
+        }
+    }
+    return nullptr;
 }
 
 bool ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* stateNode, CommitTreeState& state)

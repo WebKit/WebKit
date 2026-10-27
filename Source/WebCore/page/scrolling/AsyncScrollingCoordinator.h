@@ -33,6 +33,7 @@
 #include <WebCore/ScrollingStateNode.h>
 #include <WebCore/ScrollingTree.h>
 #include <WebCore/Timer.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SmallMap.h>
 #include <wtf/TZoneMalloc.h>
@@ -114,7 +115,6 @@ protected:
     void synchronizeStateFromScrollingTree();
     void scheduleRenderingUpdate();
 
-    bool eventTrackingRegionsDirty() const { return m_eventTrackingRegionsDirty; }
     WEBCORE_EXPORT LocalFrameView* frameViewForScrollingNode(std::optional<ScrollingNodeID>) const;
     RefPtr<ScrollingStateNode> stateNodeForNodeID(std::optional<ScrollingNodeID>) const;
     RefPtr<ScrollingStateNode> stateNodeForScrollableArea(const ScrollableArea&) const;
@@ -187,6 +187,7 @@ private:
     void ensureRootStateNodeForFrameView(LocalFrameView&);
 
     void updateEventTrackingRegions(FrameIdentifier rootFrameID);
+    EventTrackingRegions absoluteEventTrackingRegionsForRootFrame(FrameIdentifier) const;
     
     void applyScrollPositionUpdate(ScrollUpdate&&, ScrollType, ViewportRectStability);
     void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, FloatPoint, const std::optional<LayoutViewportOriginOrOverrideRect>&, ScrollingLayerPositionAction, ScrollType, ViewportRectStability);
@@ -209,7 +210,7 @@ private:
     SmallMap<FrameIdentifier, UniqueRef<ScrollingStateTree>> m_scrollingStateTrees;
     RefPtr<ScrollingTree> m_scrollingTree;
 
-    bool m_eventTrackingRegionsDirty { false };
+    HashSet<FrameIdentifier> m_rootFramesWithDirtyEventTrackingRegions;
 
     PAL::HysteresisActivity m_hysterisisActivity;
 };

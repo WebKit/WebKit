@@ -1,0 +1,13 @@
+Tests that wheel events over a listbox that is already at its end, in a frame that cannot scroll, all scroll the main frame when some are sent before earlier ones are handled, even when the listbox is in another process.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mouse wheel events, cross-site iframe that cannot scroll: scrolled the main frame as far as with a same-site iframe
+PASS mouse wheel events, same-site frame inside a cross-site iframe that cannot scroll: scrolled the main frame as far as with a same-site iframe
+PASS wheel gesture, cross-site iframe that cannot scroll: scrolled the main frame as far as with a same-site iframe
+PASS wheel gesture, same-site frame inside a cross-site iframe that cannot scroll: scrolled the main frame as far as with a same-site iframe
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

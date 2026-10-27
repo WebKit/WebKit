@@ -1,0 +1,19 @@
+Tests that wheel events over an iframe with a non-passive wheel event listener that does not call preventDefault() scroll the nearest frame that can scroll, even when the iframe is in another process.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mouse wheel, cross-site iframe that cannot scroll: scrolled the main frame
+PASS mouse wheel, cross-site iframe with overflow: hidden: scrolled the main frame
+PASS mouse wheel, cross-site iframe that can scroll: scrolled the iframe
+PASS mouse wheel, cross-site iframe whose listener calls preventDefault(): scrolled nothing
+PASS mouse wheel, same-site iframe that cannot scroll: scrolled the main frame
+PASS wheel gesture, cross-site iframe that cannot scroll: scrolled the main frame
+PASS wheel gesture, cross-site iframe with overflow: hidden: scrolled the main frame
+PASS wheel gesture, cross-site iframe that can scroll: scrolled the iframe
+PASS wheel gesture, cross-site iframe whose listener calls preventDefault(): scrolled nothing
+PASS wheel gesture, same-site iframe that cannot scroll: scrolled the main frame
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
