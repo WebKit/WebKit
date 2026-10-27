@@ -105,7 +105,7 @@ Ref<AtomStringImpl> Identifier::add(VM& vm, std::span<const T> string)
     if (string.empty())
         return *static_cast<AtomStringImpl*>(StringImpl::empty());
 
-    return *AtomStringImpl::add(string);
+    return AtomStringImpl::add(string).releaseNonNull();
 }
 
 inline Ref<AtomStringImpl> Identifier::add(VM& vm, StringImpl* r)
@@ -113,7 +113,7 @@ inline Ref<AtomStringImpl> Identifier::add(VM& vm, StringImpl* r)
 #ifndef NDEBUG
     checkCurrentAtomStringTable(vm);
 #endif
-    return *AtomStringImpl::addWithStringTableProvider(vm, r);
+    return AtomStringImpl::addWithStringTableProvider(vm, r).releaseNonNull();
 }
 
 inline Identifier Identifier::createLatin1(VM& vm, std::span<const char16_t> string)
