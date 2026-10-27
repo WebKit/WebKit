@@ -41,6 +41,7 @@
 #include <gio/gio.h>
 #include <libudev.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/IndexedRange.h>
 #include <wtf/Scope.h>
 #include <wtf/dtoa.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -250,10 +251,10 @@ static std::unique_ptr<WPE::DRM::Crtc> chooseCrtcForConnector(int fd, drmModeRes
     // Try the currently connected encoder+crtc.
     WPE::DRM::UniquePtr<drmModeEncoder> encoder(drmModeGetEncoder(fd, connector.encoderID()));
     if (encoder) {
-        for (const auto& [i, crtcId] : unsafeMakeSpan(resources->crtcs, resources->count_crtcs) | std::views::enumerate) {
+        for (const auto& [i, crtcId] : indexedRange(unsafeMakeSpan(resources->crtcs, resources->count_crtcs))) {
             if (crtcId == encoder->crtc_id) {
                 WPE::DRM::UniquePtr<drmModeCrtc> drmCrtc(drmModeGetCrtc(fd, crtcId));
-                return WPE::DRM::Crtc::create(fd, drmCrtc.get(), i);
+                return WPE::DRM::Crtc::create(fd, drmCrtc.get(), static_cast<unsigned>(i));
             }
         }
     }
@@ -264,11 +265,11 @@ static std::unique_ptr<WPE::DRM::Crtc> chooseCrtcForConnector(int fd, drmModeRes
         if (!encoder)
             continue;
 
-        for (const auto& [i, crtcId] : unsafeMakeSpan(resources->crtcs, resources->count_crtcs) | std::views::enumerate) {
+        for (const auto& [i, crtcId] : indexedRange(unsafeMakeSpan(resources->crtcs, resources->count_crtcs))) {
             const uint32_t crtcMask = 1 << i;
             if (encoder->possible_crtcs & crtcMask) {
                 WPE::DRM::UniquePtr<drmModeCrtc> drmCrtc(drmModeGetCrtc(fd, crtcId));
-                return WPE::DRM::Crtc::create(fd, drmCrtc.get(), i);
+                return WPE::DRM::Crtc::create(fd, drmCrtc.get(), static_cast<unsigned>(i));
             }
         }
     }

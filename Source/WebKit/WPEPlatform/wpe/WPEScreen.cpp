@@ -34,6 +34,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <optional>
+#include <wtf/IndexedRange.h>
 #include <wtf/glib/GRefPtr.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>
@@ -196,9 +197,9 @@ static std::optional<uint32_t> findCrtc(WPEScreen* screen, int fd)
 
         // FIXME: if there are multiple connectors matching the size, check other properties.
         if (drmModeEncoder* encoder = drmModeGetEncoder(fd, connector->encoder_id)) {
-            for (const auto& [i, crtcId] : unsafeMakeSpan(resources->crtcs, resources->count_crtcs) | std::views::enumerate) {
+            for (const auto& [i, crtcId] : indexedRange(unsafeMakeSpan(resources->crtcs, resources->count_crtcs))) {
                 if (crtcId == encoder->crtc_id) {
-                    crtcIndex = i;
+                    crtcIndex = static_cast<uint32_t>(i);
                     break;
                 }
             }

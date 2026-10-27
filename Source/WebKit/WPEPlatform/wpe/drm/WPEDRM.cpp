@@ -30,6 +30,7 @@
 #include <drm_fourcc.h>
 #include <glib.h>
 #include <string.h>
+#include <wtf/IndexedRange.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WPE {
@@ -111,9 +112,9 @@ Connector::Connector(drmModeConnector* connector, Properties&& properties)
     , m_properties(WTF::move(properties))
 {
     m_modes.reserveInitialCapacity(connector->count_modes);
-    for (const auto& [i, mode] : unsafeMakeSpan(connector->modes, connector->count_modes) | std::views::enumerate) {
+    for (const auto& [i, mode] : indexedRange(unsafeMakeSpan(connector->modes, connector->count_modes))) {
         if (mode.type & DRM_MODE_TYPE_PREFERRED)
-            m_preferredModeIndex = i;
+            m_preferredModeIndex = static_cast<unsigned>(i);
         m_modes.append(mode);
     }
 }
