@@ -505,10 +505,10 @@ TEST(WKWebExtensionController, ContentScriptLoading)
         @"browser.test.assertEq(typeof browser.runtime.id, 'string')",
         @"browser.test.assertEq(typeof browser.runtime.getManifest(), 'object')",
         @"browser.test.assertEq(typeof browser.runtime.getURL(''), 'string')",
+        @"browser.test.assertEq(browser.runtime.lastError, null)",
 
         // Not exposed to content scripts
         @"browser.test.assertEq(browser.runtime.getPlatformInfo, undefined)",
-        @"browser.test.assertEq(browser.runtime.lastError, undefined)",
 
         // Finish
         @"browser.test.notifyPass()"

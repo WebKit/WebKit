@@ -546,6 +546,42 @@ TEST(WKWebExtensionAPIRuntime, LastErrorClearedAfterCallback)
     Util::loadAndRunExtension(runtimeManifest, @{ @"background.js": backgroundScript });
 }
 
+TEST(WKWebExtensionAPIRuntime, LastErrorFromContentScript)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.test.assertEq(typeof browser.runtime.lastError, 'object', 'lastError should be exposed to content scripts')",
+        @"browser.test.assertEq(browser.runtime.lastError, null, 'lastError should be null outside of a failed callback')",
+
+        @"browser.runtime.sendMessage('unknown.extension.identifier', { content: 'Hello' }, () => {",
+        @"  const error = browser.runtime.lastError",
+        @"  browser.test.assertEq(typeof error, 'object', 'lastError should be set inside the failed callback')",
+        @"  browser.test.assertTrue(!!error?.message?.includes('cross-extension messaging is not supported'), 'lastError should describe the failure')",
+
+        @"  browser.test.notifyPass()",
+        @"})"
+    ]);
+
+    auto manager = Util::loadExtension(runtimeContentScriptManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScript)
 {
     TestWebKitAPI::HTTPServer server({
