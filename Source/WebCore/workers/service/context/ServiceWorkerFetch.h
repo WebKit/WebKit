@@ -51,7 +51,7 @@ public:
     virtual ~Client() = default;
 
     virtual void didReceiveRedirection(const ResourceResponse&) = 0;
-    virtual void didReceiveResponse(ResourceResponse&&) = 0;
+    virtual void didReceiveResponse(ResourceResponse&&, const URL& firstResponseURL) = 0;
     virtual void didReceiveData(const SharedBuffer&) = 0;
     virtual void didReceiveFormDataAndFinish(Ref<FormData>&&) = 0;
     virtual void didFail(const ResourceError&) = 0;

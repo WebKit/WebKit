@@ -224,6 +224,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(JSDOMGlobalObject& globalOb
     clone->m_opaqueLoadIdentifier = m_opaqueLoadIdentifier;
     clone->m_bodySizeWithPadding = m_bodySizeWithPadding;
     clone->m_resourceLoaderIdentifier = m_resourceLoaderIdentifier;
+    clone->m_requestURL = m_requestURL;
     return clone;
 }
 
@@ -275,6 +276,7 @@ Ref<FetchResponse> FetchResponse::createFetchResponse(ScriptExecutionContext& co
     response->body().consumer().setAsLoading();
 
     response->addAbortSteps(request.signal());
+    response->m_requestURL = request.url();
 
     response->m_loader = Loader::create(response.get(), WTF::move(responseCallback), WTF::move(pendingUpload));
     return response;

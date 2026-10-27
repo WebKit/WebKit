@@ -29,7 +29,7 @@ messages -> ServiceWorkerFetchTask {
     DidNotHandle()
     DidFail(WebCore::ResourceError error)
     DidReceiveRedirectResponse(WebCore::ResourceResponse response)
-    DidReceiveResponse(WebCore::ResourceResponse response, bool needsContinueDidReceiveResponseMessage)
+    DidReceiveResponse(WebCore::ResourceResponse response, URL firstResponseURL, bool needsContinueDidReceiveResponseMessage)
     DidReceiveData(IPC::SharedBufferReference data)
     DidReceiveFormData(IPC::FormDataReference data)
     DidFinish(WebCore::NetworkLoadMetrics metrics)
