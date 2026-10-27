@@ -7009,6 +7009,13 @@ class TestCheckChangeRelevanceBuildGroup(BuildStepMixinAdditions, unittest.TestC
         self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.run_step()
 
+    def test_build_group_runs_for_gtk_tools_change(self):
+        CheckChangeRelevance._get_patch = lambda x: b'Tools/gtk/jhbuild.modules'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'GTK-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
     def test_services_group_still_runs_for_cisupport(self):
         """Regression guard: adding the `build` group must not break Services-EWS routing.
         Services-EWS matches the `services-ews` group, not `build`."""
