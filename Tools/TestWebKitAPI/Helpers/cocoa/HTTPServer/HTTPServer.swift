@@ -58,7 +58,7 @@ public struct Route: Sendable {
         let pathComponents: [String]
         let statusCode: Int
         let headerFields: [String: String]
-        let response: String
+        let response: Data
     }
 
     fileprivate let children: [Storage]
@@ -67,7 +67,7 @@ public struct Route: Sendable {
         self.children = children
     }
 
-    fileprivate init(path: String, statusCode: Int, headerFields: [String: String], response: String) {
+    fileprivate init(path: String, statusCode: Int, headerFields: [String: String], response: Data) {
         self.children = [Storage(pathComponents: [path], statusCode: statusCode, headerFields: headerFields, response: response)]
     }
 
@@ -88,6 +88,17 @@ public struct Route: Sendable {
             }
     }
 
+    /// Creates a Route whose response data is binary, such as an image or a PDF.
+    ///
+    /// - Parameters:
+    ///   - path: The path of this route. If this value is non-empty, it must start with `/`.
+    ///   - statusCode: The status code of the response.
+    ///   - headerFields: The header fields of the response, such as `["Content-Type": "application/pdf"]`.
+    ///   - response: The response to be used.
+    public init(_ path: String, statusCode: Int = 200, headerFields: [String: String] = [:], _ response: () -> Data) {
+        self.init(path: path, statusCode: statusCode, headerFields: headerFields, response: response())
+    }
+
     /// Creates a Route whose response data is a String.
     ///
     /// - Parameters:
@@ -96,7 +107,7 @@ public struct Route: Sendable {
     ///   - headerFields: The header fields of the response.
     ///   - response: The response to be used.
     public init(_ path: String, statusCode: Int = 200, headerFields: [String: String] = [:], _ response: () -> String) {
-        self.init(path: path, statusCode: statusCode, headerFields: headerFields, response: response())
+        self.init(path: path, statusCode: statusCode, headerFields: headerFields, response: Data(response().utf8))
     }
 }
 
@@ -186,7 +197,7 @@ public struct HTTPServer: ~Copyable {
                 let response = HTTPResponseData(
                     statusCode: UInt(child.statusCode),
                     headerFields: child.headerFields.map { (name: $0.key, value: $0.value) },
-                    body: Data(child.response.utf8)
+                    body: child.response
                 )
 
                 result[path] = response
