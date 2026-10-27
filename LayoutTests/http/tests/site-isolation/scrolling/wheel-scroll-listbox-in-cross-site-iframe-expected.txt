@@ -1,0 +1,21 @@
+Tests that wheel events over a listbox in a cross-site iframe scroll the listbox, not the iframe or the page.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS cross-site iframe: scrolled the listbox
+PASS cross-site iframe: the scrolling state tree has a synchronous wheel region
+PASS cross-site iframe that cannot scroll: scrolled the listbox
+PASS cross-site iframe that cannot scroll: the scrolling state tree has a synchronous wheel region
+PASS cross-site iframe with a passive wheel listener on the listbox: scrolled the listbox
+PASS cross-site iframe with a passive wheel listener on the listbox: the scrolling state tree has a synchronous wheel region
+PASS cross-site iframe in a scrolled page: scrolled the listbox
+PASS cross-site iframe in a scrolled page: the scrolling state tree has a synchronous wheel region
+PASS scrolled cross-site iframe: scrolled the listbox
+PASS scrolled cross-site iframe: the scrolling state tree has a synchronous wheel region
+PASS same-site iframe: scrolled the listbox
+PASS same-site iframe: the scrolling state tree has a synchronous wheel region
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

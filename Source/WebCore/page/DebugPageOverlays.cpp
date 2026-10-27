@@ -180,7 +180,8 @@ bool NonFastScrollableRegionOverlay::updateRegion()
     bool regionChanged = false;
 
     if (RefPtr scrollingCoordinator = page->scrollingCoordinator()) {
-        EventTrackingRegions eventTrackingRegions = scrollingCoordinator->absoluteEventTrackingRegions();
+        RefPtr rootFrame { overlay().associatedFrame() };
+        EventTrackingRegions eventTrackingRegions { rootFrame ? scrollingCoordinator->absoluteEventTrackingRegionsForFrame(*rootFrame) : scrollingCoordinator->absoluteEventTrackingRegions() };
 
         if (eventTrackingRegions != m_eventTrackingRegions) {
             m_eventTrackingRegions = eventTrackingRegions;
@@ -231,6 +232,8 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     font.update(nullptr);
 
     auto drawLegend = [&] (const Color& color, ASCIILiteral text) {
+        if (pageOverlay.associatedFrame())
+            return;
         context.setFillColor(color);
         context.fillRect(legendRect);
         drawRightAlignedText(text, context, font, legendRect.location());
@@ -852,6 +855,11 @@ void DebugPageOverlays::showRegionOverlay(Page& page, RegionType regionType)
 
 void DebugPageOverlays::hideRegionOverlay(Page& page, RegionType regionType)
 {
+    if (regionType == RegionType::NonFastScrollableRegion) {
+        for (auto& visualizer : m_rootFrameNonFastScrollableRegionOverlays.take(page))
+            page.pageOverlayController().uninstallPageOverlay(protect(visualizer->overlay()), PageOverlay::FadeMode::DoNotFade);
+    }
+
     auto it = m_pageRegionOverlays.find(page);
     if (it == m_pageRegionOverlays.end())
         return;
@@ -870,6 +878,14 @@ void DebugPageOverlays::regionChanged(LocalFrame& frame, RegionType regionType)
 
     if (auto* visualizer = regionOverlayForPage(*page, regionType))
         visualizer->setRegionChanged();
+
+    if (regionType == RegionType::NonFastScrollableRegion) {
+        auto it = m_rootFrameNonFastScrollableRegionOverlays.find(*page);
+        if (it != m_rootFrameNonFastScrollableRegionOverlays.end()) {
+            for (auto& visualizer : it->value)
+                visualizer->setRegionChanged();
+        }
+    }
 }
 
 bool DebugPageOverlays::hasOverlaysForPage(Page& page) const
@@ -879,7 +895,42 @@ bool DebugPageOverlays::hasOverlaysForPage(Page& page) const
 
 void DebugPageOverlays::updateRegionIfNecessary(Page& page, RegionType regionType)
 {
-    if (RefPtr visualizer = regionOverlayForPage(page, regionType))
+    RefPtr visualizer { regionOverlayForPage(page, regionType) };
+    if (!visualizer)
+        return;
+
+    visualizer->recomputeRegion();
+
+    if (regionType == RegionType::NonFastScrollableRegion)
+        updateRootFrameNonFastScrollableRegionOverlays(page);
+}
+
+void DebugPageOverlays::updateRootFrameNonFastScrollableRegionOverlays(Page& page)
+{
+    auto& visualizers { m_rootFrameNonFastScrollableRegionOverlays.ensure(page, [] {
+        return Vector<Ref<RegionOverlay>> { };
+    }).iterator->value };
+
+    visualizers.removeAllMatching([&](const Ref<RegionOverlay>& visualizer) {
+        RefPtr rootFrame { visualizer->overlay().associatedFrame() };
+        if (rootFrame && page.rootFrames().contains(*rootFrame))
+            return false;
+        page.pageOverlayController().uninstallPageOverlay(protect(visualizer->overlay()), PageOverlay::FadeMode::DoNotFade);
+        return true;
+    });
+
+    for (auto& rootFrame : page.rootFrames()) {
+        if (rootFrame->isMainFrame())
+            continue;
+        if (visualizers.containsIf([&](auto& visualizer) { return visualizer->overlay().associatedFrame() == rootFrame.ptr(); }))
+            continue;
+        Ref visualizer { RegionOverlay::create(page, RegionType::NonFastScrollableRegion) };
+        visualizer->overlay().setAssociatedFrame(rootFrame.ptr());
+        page.pageOverlayController().installPageOverlay(protect(visualizer->overlay()), PageOverlay::FadeMode::DoNotFade);
+        visualizers.append(WTF::move(visualizer));
+    }
+
+    for (auto& visualizer : visualizers)
         visualizer->recomputeRegion();
 }
 

@@ -60,6 +60,9 @@ bool ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingS
     if (state->hasChangedProperty(ScrollingStateNode::Property::FrameScaleFactor))
         m_frameScaleFactor = state->frameScaleFactor();
 
+    if (state->hasChangedProperty(ScrollingStateNode::Property::EventTrackingRegion))
+        m_eventTrackingRegions = state->eventTrackingRegions();
+
     if (state->hasChangedProperty(ScrollingStateNode::Property::HeaderHeight))
         m_headerHeight = state->headerHeight();
 
@@ -104,6 +107,11 @@ bool ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingS
     }
     
     return true;
+}
+
+const EventTrackingRegions& ScrollingTreeFrameScrollingNode::eventTrackingRegions() const
+{
+    return m_eventTrackingRegions;
 }
 
 bool ScrollingTreeFrameScrollingNode::scrollPositionAndLayoutViewportMatch(const FloatPoint& position, std::optional<FloatRect> overrideLayoutViewport)

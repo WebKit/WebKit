@@ -322,6 +322,7 @@ protected:
 
     WEBCORE_EXPORT void LEGACY_NODELETE setGestureState(std::optional<WheelScrollGestureState>);
     WEBCORE_EXPORT std::optional<WheelScrollGestureState> LEGACY_NODELETE gestureState();
+    WEBCORE_EXPORT RefPtr<ScrollingTreeFrameScrollingNode> hostedRootNodeForFrame(FrameIdentifier) const WTF_REQUIRES_LOCK(m_treeLock);
 
     std::optional<FramesPerSecond> LEGACY_NODELETE nominalFramesPerSecond();
 
@@ -362,6 +363,7 @@ private:
 #if ENABLE(WHEEL_EVENT_REGIONS)
     WEBCORE_EXPORT virtual OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(FloatPoint) const;
 #endif
+    WEBCORE_EXPORT virtual std::optional<ScrollingNodeID> hostedRootNodeIDWithNonFastScrollableRegionAtPoint(FloatPoint) const;
 
     OptionSet<WheelEventProcessingSteps> computeWheelProcessingSteps(const PlatformWheelEvent&) WTF_REQUIRES_LOCK(m_treeStateLock);
 
@@ -383,6 +385,7 @@ private:
 
     struct TreeState {
         EventTrackingRegions eventTrackingRegions;
+        bool hostedFramesHaveEventTrackingRegions { false };
         FloatPoint mainFrameScrollPosition;
         PlatformDisplayID displayID { 0 };
         std::optional<FramesPerSecond> nominalFramesPerSecond;

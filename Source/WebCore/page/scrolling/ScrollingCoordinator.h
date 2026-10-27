@@ -199,6 +199,7 @@ public:
     String synchronousScrollingReasonsAsText() const;
 
     EventTrackingRegions absoluteEventTrackingRegions() const;
+    EventTrackingRegions absoluteEventTrackingRegionsForFrame(const LocalFrame&) const;
     virtual void updateIsMonitoringWheelEventsForFrameView(const LocalFrameView&) { }
 
     virtual void startMonitoringWheelEvents(bool /* clearLatchingState */) { }
@@ -247,8 +248,6 @@ private:
 
     void updateSynchronousScrollingReasons(LocalFrameView&);
     void updateSynchronousScrollingReasonsForAllFrames();
-
-    EventTrackingRegions absoluteEventTrackingRegionsForFrame(const LocalFrame&) const;
 
     bool m_forceSynchronousScrollLayerPositionUpdates { false };
     WeakPtr<Page> m_page; // FIXME: ideally this would be a WeakRef but it gets nulled on async teardown.

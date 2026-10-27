@@ -83,7 +83,7 @@ struct EventTrackingRegions {
     void uniteSynchronousRegion(EventType, const Region&);
     void unite(const EventTrackingRegions&);
 
-    TrackingType LEGACY_NODELETE trackingTypeForPoint(EventType, const IntPoint&) const;
+    WEBCORE_EXPORT TrackingType LEGACY_NODELETE trackingTypeForPoint(EventType, const IntPoint&) const;
 
     friend bool operator==(const EventTrackingRegions&, const EventTrackingRegions&) = default;
 };

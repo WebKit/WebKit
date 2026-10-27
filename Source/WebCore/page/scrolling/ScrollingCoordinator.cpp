@@ -115,7 +115,8 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     // On iOS, we use nonFastScrollableRegion to represent the region covered by elements with touch event handlers.
-    ASSERT(frame.isMainFrame());
+    if (!frame.isMainFrame())
+        return { };
     auto* document = frame.document();
     if (!document)
         return { };

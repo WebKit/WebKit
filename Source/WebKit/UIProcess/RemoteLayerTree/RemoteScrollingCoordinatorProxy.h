@@ -114,7 +114,7 @@ public:
     virtual void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&) { }
     virtual void handleWheelEvent(Ref<WebWheelEvent>&&, WebCore::RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges);
     void continueWheelEventHandling(Ref<WebWheelEvent>&&, WebCore::WheelEventHandlingResult);
-    virtual void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool /* wasHandled */) { }
+    virtual void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, std::optional<WebCore::FrameIdentifier> /* defaultHandlingFrameID */, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool /* wasHandled */) { }
 
     virtual WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent) { return wheelEvent; }
 

@@ -3677,7 +3677,7 @@ private:
 
     void handleWheelEvent(Ref<WebWheelEvent>&&);
     void sendWheelEvent(WebCore::FrameIdentifier, Ref<WebWheelEvent>&&, OptionSet<WebCore::WheelEventProcessingSteps>, WebCore::RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges, std::optional<bool> willStartSwipe, bool wasHandledForScrolling);
-    void handleWheelEventReply(IPC::Connection*, const WebWheelEvent&, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool wasHandledForScrolling, bool wasHandledByWebProcess);
+    void handleWheelEventReply(IPC::Connection*, const WebWheelEvent&, std::optional<WebCore::FrameIdentifier> defaultHandlingFrameID, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool wasHandledForScrolling, bool wasHandledByWebProcess);
 
     void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&);
     void sendWheelEventScrollingAccelerationCurveIfNecessary(WebCore::FrameIdentifier, const WebWheelEvent&);
