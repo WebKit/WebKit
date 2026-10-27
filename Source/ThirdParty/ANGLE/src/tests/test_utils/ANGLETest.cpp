@@ -194,8 +194,9 @@ bool ShouldAlwaysForceNewDisplay(const PlatformParameters &params)
 bool ShouldAlwaysForceNewWindow(const PlatformParameters &params)
 {
     // The WebGPU underlying vulkan and D3D swap chain appears to fail to get a new image after
-    // swapping when rapidly creating new swap chains for an existing window.
-    if (params.isWebGPU())
+    // swapping when rapidly creating new swap chains for an existing window. The Metal swap chain
+    // does not, and a new window for every test makes the tests four times slower.
+    if (params.isWebGPU() && !IsApple())
     {
         return true;
     }
