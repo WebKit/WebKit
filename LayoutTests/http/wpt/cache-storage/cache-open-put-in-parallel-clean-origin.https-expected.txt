@@ -1,0 +1,3 @@
+
+PASS Putting records into caches opened in parallel on a clean origin should succeed
+
