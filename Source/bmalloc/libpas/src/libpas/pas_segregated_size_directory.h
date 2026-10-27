@@ -339,7 +339,8 @@ PAS_API pas_page_sharing_pool_take_result
 pas_segregated_size_directory_take_last_empty(
     pas_segregated_size_directory* directory,
     pas_deferred_decommit_log* log,
-    pas_lock_hold_mode heap_lock_hold_mode);
+    pas_lock_hold_mode heap_lock_hold_mode,
+    bool is_forced_scavenge);
 
 PAS_API pas_segregated_size_directory* pas_segregated_size_directory_for_object(
     uintptr_t begin,
