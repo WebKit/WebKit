@@ -32,12 +32,24 @@
 
 - (NSObject *)_web_createTarget
 {
-    return [protect(downcast<API::URLRequest>(&self._apiObject)->resourceRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)) copy];
+    auto& request = downcast<API::URLRequest>(&self._apiObject)->resourceRequest();
+    RetainPtr target = adoptNS([protect(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)) copy]);
+    // -isKindOfClass: relies on this to answer without creating the target NSURLRequest.
+    ASSERT(request.isNull() || [target isKindOfClass:NSURLRequest.class]);
+    return target.leakRef();
 }
 
 - (NSURL *)URL
 {
     return downcast<API::URLRequest>(&self._apiObject)->resourceRequest().url().createNSURL().autorelease();
+}
+
+- (BOOL)isKindOfClass:(Class)aClass
+{
+    if ([NSURLRequest.class isSubclassOfClass:aClass] && !downcast<API::URLRequest>(&self._apiObject)->resourceRequest().isNull())
+        return YES;
+
+    return [super isKindOfClass:aClass];
 }
 
 #pragma mark NSCopying protocol implementation
