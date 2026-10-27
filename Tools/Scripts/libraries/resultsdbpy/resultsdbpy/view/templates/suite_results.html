@@ -54,14 +54,14 @@ class MainView {
             state: SUITES,
             onStateUpdate: (element, state) => {
                 if (!state)
-                    element.innerHTML = this.placeholder();
+                    DOM.inject(element, this.placeholder());
                 else if (state.error)
-                    element.innerHTML = ErrorDisplay(state);
+                    DOM.inject(element, ErrorDisplay(state));
                 else if (state.length === 0)
-                    element.innerHTML = ErrorDisplay({
+                    DOM.inject(element, ErrorDisplay({
                         error: 'Not Found',
                         description: 'No suites matching the specified criteria',
-                    });
+                    }));
                 else
                     DOM.inject(element, this.render(state));
             }

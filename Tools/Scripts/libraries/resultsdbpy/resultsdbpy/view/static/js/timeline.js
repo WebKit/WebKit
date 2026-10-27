@@ -383,7 +383,9 @@ class TimelineFromEndpoint {
         const self = this;
 
         this.latestDispatch = Date.now();
-        searchEvent.action( (val) => this.onSearch(val));
+        this.searchEvent = searchEvent;
+        this.searchAction = (val) => this.onSearch(val);
+        searchEvent.action(this.searchAction);
 
         this.ref = REF.createRef({
             state: {},
@@ -406,9 +408,15 @@ class TimelineFromEndpoint {
 
     }
     teardown() {
+        this.latestDispatch = Infinity;
         CommitBank.callbacks = CommitBank.callbacks.filter((value, index, arr) => {
-            return this.commit_callback === value;
+            return this.commit_callback !== value;
         });
+        if (this.searchAction) {
+            this.searchEvent.stopAction(this.searchAction);
+            this.searchAction = null;
+        }
+        this.forgetUnrenderedRef();
     }
     update() {
         if (this.selectedDotsButtonGroupRef)
@@ -527,7 +535,12 @@ class TimelineFromEndpoint {
                 <div class="spinner"></div>
             </div>`;
     }
+    forgetUnrenderedRef() {
+        if (!this.ref.element)
+            delete REF.refs[this.ref.key];
+    }
     toString() {
+        this.forgetUnrenderedRef();
         this.ref = REF.createRef({
             state: this.ref.state,
             onStateUpdate: (element, state) => {
@@ -872,29 +885,6 @@ class TimelineFromEndpoint {
                     this.bugTrackers = bugTrackers;
                     this._renderSelectedDotsButtonGroup(element);
                 })
-            },
-            onStateUpdate: (element, stateDiff) => {
-                if ('show' in stateDiff) {
-                    if (stateDiff.show)
-                        element.style.display = 'block';
-                    else
-                        element.style.display = 'none';
-                }
-                if ('top' in stateDiff)
-                    element.style.top = `${stateDiff.top}px`;
-                if ('left' in stateDiff) {
-                    const rect = element.getBoundingClientRect();
-                    element.style.left = `${stateDiff.left - rect.width}px`;
-                }
-            }
-        });
-
-        this.radarButtonRef = REF.createRef({
-            state: {
-                show: false,
-                top: 0,
-                left: 0,
-                loading: false,
             },
             onStateUpdate: (element, stateDiff) => {
                 if ('show' in stateDiff) {
@@ -1474,7 +1464,7 @@ class TimelineFromEndpoint {
             },
             onElementUnmount: (element) => {
                 window.removeEventListener("scroll", onScrollAction);
-                window.addEventListener("resize", onResizeAction);
+                window.removeEventListener("resize", onResizeAction);
             }
         });
         return `<div ref="${containnerRef}" style="position: relative">
