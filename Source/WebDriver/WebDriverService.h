@@ -158,6 +158,7 @@ private:
     void connectToBrowser(Vector<Capabilities>&&, Function<void (CommandResult&&)>&&);
     void createSession(Vector<Capabilities>&&, Ref<SessionHost>&&, Function<void (CommandResult&&)>&&);
     bool findSessionOrCompleteWithError(JSON::Object&, Function<void (CommandResult&&)>&);
+    void discardSessionIfDisconnected();
 
     void handleRequest(HTTPRequestHandler::Request&&, Function<void (HTTPRequestHandler::Response&&)>&& replyHandler) override;
     void sendResponse(Function<void (HTTPRequestHandler::Response&&)>&& replyHandler, CommandResult&&) const;
