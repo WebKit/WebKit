@@ -2082,6 +2082,7 @@
 		5151F07E2615435A00FDB2B4 /* MediaUniqueIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 5151F07B2615363F00FDB2B4 /* MediaUniqueIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51547FE52C9296BD00CD402D /* MediaSourceInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 51547FE02C9296BD00CD402D /* MediaSourceInit.h */; };
 		5154F6EC2B01FC7000B857D9 /* PlatformMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = 5154F6EB2B01FC7000B857D9 /* PlatformMediaError.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		607598DE8C5AD55D3832EAFE /* PlatformResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A1CBCF7AFC3206E9B4CEB78 /* PlatformResource.h */; };
 		5154F6EF2B02340900B857D9 /* MediaPromiseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5154F6EE2B02340900B857D9 /* MediaPromiseTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		515BE1901D54F5FB00DD7C68 /* EmptyGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1891D54F5F600DD7C68 /* EmptyGamepadProvider.h */; };
 		515BE1921D54F5FB00DD7C68 /* GamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE18B1D54F5F600DD7C68 /* GamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12611,6 +12612,8 @@
 		51547FE62C929FF100CD402D /* JSMediaSourceInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSMediaSourceInit.h; sourceTree = "<group>"; };
 		51547FE72C929FF100CD402D /* JSMediaSourceInit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaSourceInit.cpp; sourceTree = "<group>"; };
 		5154F6EB2B01FC7000B857D9 /* PlatformMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformMediaError.h; sourceTree = "<group>"; };
+		5A1CBCF7AFC3206E9B4CEB78 /* PlatformResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformResource.h; sourceTree = "<group>"; };
+		5F145CC4FAC732077EB99F4E /* PlatformResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformResource.cpp; sourceTree = "<group>"; };
 		5154F6EE2B02340900B857D9 /* MediaPromiseTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaPromiseTypes.h; sourceTree = "<group>"; };
 		515BE1881D54F5F600DD7C68 /* EmptyGamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmptyGamepadProvider.cpp; sourceTree = "<group>"; };
 		515BE1891D54F5F600DD7C68 /* EmptyGamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyGamepadProvider.h; sourceTree = "<group>"; };
@@ -23399,6 +23402,7 @@
 		F45EAC972A950D12009B986E /* MediaProducer.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaProducer.serialization.in; sourceTree = "<group>"; };
 		F46284532A7B196400A01B18 /* HTTPHeaderNames.serialization.in */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = HTTPHeaderNames.serialization.in; sourceTree = "<group>"; };
 		F4628A9E234D3BBF00BC884C /* PlatformPasteboardCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformPasteboardCocoa.mm; sourceTree = "<group>"; };
+		82A80BB4F6BA4B87DDBC330A /* PlatformResourceCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformResourceCocoa.mm; sourceTree = "<group>"; };
 		F462E79F242ADA3C00204DDD /* DragDataCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragDataCocoa.mm; sourceTree = "<group>"; };
 		F462E7A0242ADA3D00204DDD /* DragImageCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragImageCocoa.mm; sourceTree = "<group>"; };
 		F46729251E0DE5AB00ACC3D8 /* ScrollSnapOffsetsInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollSnapOffsetsInfo.h; sourceTree = "<group>"; };
@@ -34776,6 +34780,7 @@
 				B933F55A2C5873C10046BA88 /* PhotosFormatSoftLink.mm */,
 				E5C5B2082C3795EE00838733 /* PlatformNSAdaptiveImageGlyph.h */,
 				F4628A9E234D3BBF00BC884C /* PlatformPasteboardCocoa.mm */,
+				82A80BB4F6BA4B87DDBC330A /* PlatformResourceCocoa.mm */,
 				AAE3755D17429BCC006200C2 /* PlatformSpeechSynthesizerCocoa.mm */,
 				F4E90A3B2B52038E002DA469 /* PlatformTextAlternatives.h */,
 				95BA4FAB26D981AA002A0E62 /* PlatformViewController.h */,
@@ -39784,6 +39789,8 @@
 				5154F6EB2B01FC7000B857D9 /* PlatformMediaError.h */,
 				935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */,
 				C5BAC16F14E30E4700008837 /* PlatformPasteboard.h */,
+				5F145CC4FAC732077EB99F4E /* PlatformResource.cpp */,
+				5A1CBCF7AFC3206E9B4CEB78 /* PlatformResource.h */,
 				C137846B242BEEBA00E86FA8 /* PlatformScreen.cpp */,
 				BCEC01D60C274EB4009F4EC9 /* PlatformScreen.h */,
 				F45EAC7B2A8ADE03009B986E /* PlatformScreen.serialization.in */,
@@ -48190,6 +48197,7 @@
 				9A87D9E22A82933500EE7A8A /* PlatformRawAudioData.h in Headers */,
 				5183EBD72CF73A86005FAC1F /* PlatformRawAudioDataCocoa.h in Headers */,
 				D72D8B7BFB8842FA17CD110E /* PlatformRenderTheme.h in Headers */,
+				607598DE8C5AD55D3832EAFE /* PlatformResource.h in Headers */,
 				BCEC01D70C274EB4009F4EC9 /* PlatformScreen.h in Headers */,
 				F45EAC7D2A8ADFC4009B986E /* PlatformScreen.serialization.in in Headers */,
 				297BE3D516C03C08003316BD /* PlatformSpeechSynthesisUtterance.h in Headers */,

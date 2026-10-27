@@ -33,7 +33,6 @@
 #include "FontCascadeInlines.h"
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
-#include "ImageAdapter.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "LocalFrameView.h"
@@ -208,16 +207,16 @@ void CachedImage::allClientsRemoved()
 std::pair<WeakPtr<BitmapImage>, float> CachedImage::brokenImage(float deviceScaleFactor)
 {
     if (deviceScaleFactor >= 3) {
-        static NeverDestroyed<BitmapImage*> brokenImageVeryHiRes(&ImageAdapter::loadPlatformResource("missingImage@3x").leakRef());
+        static NeverDestroyed<BitmapImage*> brokenImageVeryHiRes(&BitmapImage::createFromPlatformResource("missingImage@3x"_s).leakRef());
         return std::make_pair(WeakPtr { *brokenImageVeryHiRes }, 3);
     }
 
     if (deviceScaleFactor >= 2) {
-        static NeverDestroyed<BitmapImage*> brokenImageHiRes(&ImageAdapter::loadPlatformResource("missingImage@2x").leakRef());
+        static NeverDestroyed<BitmapImage*> brokenImageHiRes(&BitmapImage::createFromPlatformResource("missingImage@2x"_s).leakRef());
         return std::make_pair(WeakPtr { *brokenImageHiRes }, 2);
     }
 
-    static NeverDestroyed<BitmapImage*> brokenImageLoRes(&ImageAdapter::loadPlatformResource("missingImage").leakRef());
+    static NeverDestroyed<BitmapImage*> brokenImageLoRes(&BitmapImage::createFromPlatformResource("missingImage"_s).leakRef());
     return std::make_pair(WeakPtr { *brokenImageLoRes }, 1);
 }
 

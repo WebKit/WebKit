@@ -29,8 +29,11 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "ImageDecoder.h"
+#include "PlatformResource.h"
 #include "RenderingMode.h"
 #include "ShareableBitmap.h"
+#include "SharedBuffer.h"
 #include <wtf/Locker.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -133,6 +136,20 @@ std::optional<Ref<NativeImage>> NativeImage::create(RefPtr<ShareableBitmap>&& bi
     if (!image)
         return std::nullopt;
     return image.releaseNonNull();
+}
+
+RefPtr<NativeImage> NativeImage::createFromPlatformResource(StringView name)
+{
+    RefPtr data = loadPlatformResource(name, "png"_s);
+    if (!data)
+        return nullptr;
+
+    RefPtr decoder = ImageDecoder::create(*data, "image/png"_s, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+    if (!decoder)
+        return nullptr;
+
+    decoder->setData(*data, true);
+    return create(decoder->createFrameImageAtIndex(0));
 }
 
 RefPtr<ShareableBitmap> NativeImage::toShareableBitmap() const

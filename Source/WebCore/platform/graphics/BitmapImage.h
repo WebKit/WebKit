@@ -47,6 +47,7 @@ public:
     WEBCORE_EXPORT static std::optional<Ref<BitmapImage>> create(RefPtr<ShareableBitmap>&&); // Uses `std::optional<Ref<...>>` to conform to the interface needed by IPC infrastructure.
     // The image directly references the shared bitmap data, so the bitmap's contents must not change.
     WEBCORE_EXPORT static RefPtr<BitmapImage> create(ShareableBitmap&);
+    WEBCORE_EXPORT static Ref<BitmapImage> createFromPlatformResource(StringView name);
 
     WEBCORE_EXPORT static BitmapImage& nullImage();
 

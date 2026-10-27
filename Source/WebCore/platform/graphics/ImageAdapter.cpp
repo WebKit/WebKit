@@ -34,31 +34,10 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageAdapter);
 
 #if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN) && !PLATFORM(WPE)
-Ref<BitmapImage> ImageAdapter::loadPlatformResource(const char* resource)
-{
-    WTFLogAlways("WARNING: trying to load platform resource '%s'", resource);
-    return BitmapImage::create();
-}
-
 void ImageAdapter::invalidate()
 {
 }
 #endif // !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN)
-
-RefPtr<NativeImage> ImageAdapter::nativeImageOfSize(const IntSize& size, ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
-{
-    RefPtr image = this->image();
-    unsigned count = image->frameCount();
-
-    for (unsigned i = 0; i < count; ++i) {
-        RefPtr nativeImage = image->nativeImageAtIndex(i, concreteObjectSize, extras);
-        if (nativeImage && nativeImage->size() == size)
-            return nativeImage;
-    }
-
-    // Fallback to the first frame image if we can't find the right size
-    return image->nativeImageAtIndex(0, concreteObjectSize, extras);
-}
 
 Vector<Ref<NativeImage>> ImageAdapter::allNativeImages(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
 {

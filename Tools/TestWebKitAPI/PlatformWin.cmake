@@ -19,7 +19,6 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/curl/CurlMultipartHandleTests.cpp
     Tests/WebCore/curl/OpenSSLHelperTests.cpp
 
-    Tests/WebCore/win/BitmapImage.cpp
     Tests/WebCore/win/DIBPixelData.cpp
     Tests/WebCore/win/LinkedFonts.cpp
     Tests/WebCore/win/WebCoreBundle.cpp

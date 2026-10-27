@@ -28,44 +28,13 @@
 
 #if PLATFORM(WIN)
 
-#include "BitmapImage.h"
-#include "SharedBuffer.h"
-#include "WebCoreBundleWin.h"
-#include <windows.h>
-#include <wtf/text/WTFString.h>
+#include "Image.h"
 
 namespace WebCore {
-
-Ref<BitmapImage> ImageAdapter::loadPlatformResource(const char *name)
-{
-    auto path = webKitBundlePath(StringView::fromLatin1(name), "png"_s, "icons"_s);
-    auto data = FileSystem::readEntireFile(path);
-    auto img = BitmapImage::create();
-    if (data)
-        img->setData(SharedBuffer::create(WTF::move(*data)), true);
-    return img;
-}
 
 void ImageAdapter::invalidate()
 {
 }
-
-bool ImageAdapter::getHBITMAP(HBITMAP bmp, ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
-{
-    return getHBITMAPOfSize(bmp, nullptr, concreteObjectSize, extras);
-}
-
-#if USE(SKIA)
-bool ImageAdapter::getHBITMAPOfSize(HBITMAP, const IntSize*, ConcreteObjectSize, const ImageDrawingExtras*)
-{
-    return false;
-}
-
-RefPtr<NativeImage> ImageAdapter::nativeImageOfHBITMAP(HBITMAP)
-{
-    return nullptr;
-}
-#endif
 
 } // namespace WebCore
 

@@ -33,7 +33,9 @@
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "NativeImageSource.h"
+#include "PlatformResource.h"
 #include "ShareableBitmap.h"
+#include "SharedBuffer.h"
 
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
 #include "ShareableSpatialImage.h"
@@ -76,6 +78,17 @@ RefPtr<BitmapImage> BitmapImage::create(ShareableBitmap& bitmap)
 RefPtr<BitmapImage> BitmapImage::create(PlatformImagePtr&& platformImage)
 {
     return create(NativeImage::create(WTF::move(platformImage)));
+}
+
+Ref<BitmapImage> BitmapImage::createFromPlatformResource(StringView name)
+{
+    RefPtr data = loadPlatformResource(name, "png"_s);
+    if (!data)
+        return nullImage();
+
+    auto image = create();
+    image->setData(data.releaseNonNull(), true);
+    return image;
 }
 
 BitmapImage& BitmapImage::nullImage()

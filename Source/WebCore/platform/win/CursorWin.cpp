@@ -27,11 +27,11 @@
 #include "config.h"
 #include "Cursor.h"
 
-#include "BitmapImage.h"
 #include "BitmapInfo.h"
 #include "HWndDC.h"
-#include "ImageAdapter.h"
 #include "IntPoint.h"
+#include "NativeImage.h"
+#include "NativeImageWin.h"
 #include <wtf/win/GDIObject.h>
 
 #include <windows.h>
@@ -58,13 +58,13 @@ SharedCursor::~SharedCursor()
 static Ref<SharedCursor> createSharedCursor(NativeImage& image, const IntPoint& hotSpot)
 {
     auto cursorSize = image.size();
-    BitmapInfo cursorImage = BitmapInfo::create(cursorSize);
+    BitmapInfo cursorImage = BitmapInfo::createBottomUp(cursorSize);
 
     HWndDC dc(0);
     auto workingDC = adoptGDIObject(::CreateCompatibleDC(dc));
     auto hCursor = adoptGDIObject(::CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, nullptr, 0, 0));
 
-    BitmapImage::create(Ref { image })->adapter().getHBITMAP(hCursor.get(), ConcreteObjectSize::fixed(cursorSize));
+    drawNativeImageIntoHBITMAP(image, hCursor.get());
     HBITMAP hOldBitmap = (HBITMAP)SelectObject(workingDC.get(), hCursor.get());
     SetBkMode(workingDC.get(), TRANSPARENT);
     SelectObject(workingDC.get(), hOldBitmap);
@@ -88,15 +88,13 @@ static Ref<SharedCursor> loadSharedCursor(HINSTANCE hInstance, LPCWSTR lpCursorN
     return SharedCursor::create(::LoadCursorW(hInstance, lpCursorName));
 }
 
-static Ref<SharedCursor> loadCursorByName(const char* name, int x, int y)
+static Ref<SharedCursor> loadCursorByName(StringView name, int x, int y)
 {
-    IntPoint hotSpot(x, y);
-    Ref cursorImage = ImageAdapter::loadPlatformResource(name);
-    RefPtr nativeImage = cursorImage->currentNativeImage();
+    RefPtr nativeImage = NativeImage::createFromPlatformResource(name);
     if (!nativeImage)
         return loadSharedCursor(0, IDC_ARROW);
 
-    return createSharedCursor(*nativeImage, determineHotSpot(nativeImage->size(), hotSpot, cursorImage->hotSpot()));
+    return createSharedCursor(*nativeImage, determineHotSpot(nativeImage->size(), IntPoint { x, y }));
 }
 
 void Cursor::ensurePlatformCursor() const
@@ -134,49 +132,49 @@ void Cursor::ensurePlatformCursor() const
         m_platformCursor = loadSharedCursor(0, IDC_SIZEALL);
         break;
     case Type::MiddlePanning:
-        m_platformCursor = loadCursorByName("panIcon", 8, 8);
+        m_platformCursor = loadCursorByName("panIcon"_s, 8, 8);
         break;
     case Type::EastResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZEWE);
         break;
     case Type::EastPanning:
-        m_platformCursor = loadCursorByName("panEastCursor", 7, 7);
+        m_platformCursor = loadCursorByName("panEastCursor"_s, 7, 7);
         break;
     case Type::NorthResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENS);
         break;
     case Type::NorthPanning:
-        m_platformCursor = loadCursorByName("panNorthCursor", 7, 7);
+        m_platformCursor = loadCursorByName("panNorthCursor"_s, 7, 7);
         break;
     case Type::NorthEastResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENESW);
         break;
     case Type::NorthEastPanning:
-        m_platformCursor = loadCursorByName("panNorthEastCursor", 7, 7);
+        m_platformCursor = loadCursorByName("panNorthEastCursor"_s, 7, 7);
         break;
     case Type::NorthWestResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENWSE);
         break;
     case Type::NorthWestPanning:
-        m_platformCursor = loadCursorByName("panNorthWestCursor", 7, 7);
+        m_platformCursor = loadCursorByName("panNorthWestCursor"_s, 7, 7);
         break;
     case Type::SouthResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENS);
         break;
     case Type::SouthPanning:
-        m_platformCursor = loadCursorByName("panSouthCursor", 7, 7);
+        m_platformCursor = loadCursorByName("panSouthCursor"_s, 7, 7);
         break;
     case Type::SouthEastResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENWSE);
         break;
     case Type::SouthEastPanning:
-        m_platformCursor = loadCursorByName("panSouthEastCursor", 7, 7);
+        m_platformCursor = loadCursorByName("panSouthEastCursor"_s, 7, 7);
         break;
     case Type::SouthWestResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENESW);
         break;
     case Type::SouthWestPanning:
-        m_platformCursor = loadCursorByName("panSouthWestCursor", 7, 7);
+        m_platformCursor = loadCursorByName("panSouthWestCursor"_s, 7, 7);
         break;
     case Type::WestResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZEWE);
@@ -188,7 +186,7 @@ void Cursor::ensurePlatformCursor() const
         m_platformCursor = loadSharedCursor(0, IDC_SIZEWE);
         break;
     case Type::WestPanning:
-        m_platformCursor = loadCursorByName("panWestCursor", 7, 7);
+        m_platformCursor = loadCursorByName("panWestCursor"_s, 7, 7);
         break;
     case Type::NorthEastSouthWestResize:
         m_platformCursor = loadSharedCursor(0, IDC_SIZENESW);
@@ -205,7 +203,7 @@ void Cursor::ensurePlatformCursor() const
         m_platformCursor = loadSharedCursor(0, IDC_SIZENS);
         break;
     case Type::VerticalText:
-        m_platformCursor = loadCursorByName("verticalTextCursor", 7, 7);
+        m_platformCursor = loadCursorByName("verticalTextCursor"_s, 7, 7);
         break;
     case Type::Progress:
         m_platformCursor = loadSharedCursor(0, IDC_APPSTARTING);
@@ -215,10 +213,10 @@ void Cursor::ensurePlatformCursor() const
         m_platformCursor = loadSharedCursor(0, IDC_NO);
         break;
     case Type::ZoomIn:
-        m_platformCursor = loadCursorByName("zoomInCursor", 7, 7);
+        m_platformCursor = loadCursorByName("zoomInCursor"_s, 7, 7);
         break;
     case Type::ZoomOut:
-        m_platformCursor = loadCursorByName("zoomOutCursor", 7, 7);
+        m_platformCursor = loadCursorByName("zoomOutCursor"_s, 7, 7);
         break;
     case Type::Custom:
         if (RefPtr image = m_image; image && !image->size().isEmpty())

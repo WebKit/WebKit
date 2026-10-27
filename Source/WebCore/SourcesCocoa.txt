@@ -326,6 +326,7 @@ platform/cocoa/PasteboardCocoa.mm @nonARC
 platform/cocoa/PasteboardCustomDataCocoa.mm @nonARC
 platform/cocoa/PhotosFormatSoftLink.mm @nonARC
 platform/cocoa/PlatformPasteboardCocoa.mm @nonARC
+platform/cocoa/PlatformResourceCocoa.mm @nonARC
 platform/cocoa/PlatformSpeechSynthesizerCocoa.mm @nonARC @no-unify-when(bundle<=8)
 platform/cocoa/PlaybackSessionInterfaceAVKitLegacy.mm @nonARC @no-unify
 platform/cocoa/PlaybackSessionInterfaceCocoa.mm @nonARC @no-unify

@@ -26,33 +26,9 @@
 #include "config.h"
 #include "ImageAdapter.h"
 
-#include "BitmapImage.h"
-#include "SharedBuffer.h"
-#include <wtf/glib/GSpanExtras.h>
-#include <wtf/glib/GUniquePtr.h>
-
-#if PLATFORM(GTK)
-#define IMAGES_GRESOURCE_PATH "/org/webkitgtk/resources/images"
-#else
-#define IMAGES_GRESOURCE_PATH "/org/webkitwpe/resources/images"
-#endif
+#include "Image.h"
 
 namespace WebCore {
-
-static Ref<BitmapImage> loadImageFromGResource(const char* iconName)
-{
-    auto icon = BitmapImage::create();
-    GUniquePtr<char> path(g_strdup_printf(IMAGES_GRESOURCE_PATH "/%s", iconName));
-    GRefPtr<GBytes> data = adoptGRef(g_resources_lookup_data(path.get(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
-    ASSERT(data);
-    icon->setData(SharedBuffer::create(span(data)), true);
-    return icon;
-}
-
-Ref<BitmapImage> ImageAdapter::loadPlatformResource(const char* name)
-{
-    return loadImageFromGResource(name);
-}
 
 void ImageAdapter::invalidate()
 {

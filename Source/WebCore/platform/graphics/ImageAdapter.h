@@ -38,12 +38,6 @@ OBJC_CLASS NSAdaptiveImageGlyph;
 struct CGContext;
 #endif
 
-#if PLATFORM(WIN)
-typedef struct tagSIZE SIZE;
-typedef SIZE* LPSIZE;
-typedef struct HBITMAP__ *HBITMAP;
-#endif
-
 #include <WebCore/ImageDrawingExtras.h>
 #include <WebCore/ImageDrawingOptions.h>
 #include <WebCore/ImageTypes.h>
@@ -66,7 +60,6 @@ class FloatRect;
 class Font;
 class GraphicsContext;
 class Image;
-class IntSize;
 
 class ImageAdapter {
     WTF_MAKE_TZONE_ALLOCATED(ImageAdapter);
@@ -75,11 +68,6 @@ public:
         : m_image(image)
     {
     }
-
-    WEBCORE_EXPORT static Ref<BitmapImage> loadPlatformResource(const char* name);
-#if PLATFORM(WIN)
-    WEBCORE_EXPORT static RefPtr<NativeImage> nativeImageOfHBITMAP(HBITMAP);
-#endif
 
 #if USE(APPKIT)
     WEBCORE_EXPORT NSImage *nsImage();
@@ -98,16 +86,11 @@ public:
     ImageDrawResult drawMultiRepresentationHEIC(GraphicsContext&, const Font&, const FloatRect& destination, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage });
 #endif
 
-#if PLATFORM(WIN)
-    WEBCORE_EXPORT bool getHBITMAP(HBITMAP, ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
-    WEBCORE_EXPORT bool getHBITMAPOfSize(HBITMAP, const IntSize*, ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
-#endif
     void invalidate();
 
 private:
     Image& image() const { return m_image; }
 
-    RefPtr<NativeImage> nativeImageOfSize(const IntSize&, ConcreteObjectSize, const ImageDrawingExtras*);
     Vector<Ref<NativeImage>> allNativeImages(ConcreteObjectSize, const ImageDrawingExtras*);
 
 #if USE(CG)

@@ -83,6 +83,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/IntRectWin.cpp
     platform/graphics/win/IntSizeWin.cpp
     platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp
+    platform/graphics/win/NativeImageWin.cpp
     platform/graphics/win/PlatformDisplayWin.cpp
     platform/graphics/win/SystemFontDatabaseWin.cpp
     platform/graphics/win/TransformationMatrixWin.cpp
@@ -106,6 +107,7 @@ list(APPEND WebCore_SOURCES
     platform/win/PasteboardWin.cpp
     platform/win/PlatformMouseEventWin.cpp
     platform/win/PlatformPasteboardWin.cpp
+    platform/win/PlatformResourceWin.cpp
     platform/win/PlatformScreenWin.cpp
     platform/win/SearchPopupMenuDB.cpp
     platform/win/SharedMemoryWin.cpp
@@ -221,7 +223,6 @@ if (USE_CAIRO)
         platform/graphics/win/cairo/FontCustomPlatformDataWinCairo.cpp
         platform/graphics/win/cairo/FontPlatformDataWinCairo.cpp
         platform/graphics/win/cairo/GraphicsContextWinCairo.cpp
-        platform/graphics/win/cairo/ImageAdapterWinCairo.cpp
         platform/graphics/win/cairo/MediaPlayerPrivateMediaFoundationCairo.cpp
 
         platform/win/cairo/DragImageWinCairo.cpp

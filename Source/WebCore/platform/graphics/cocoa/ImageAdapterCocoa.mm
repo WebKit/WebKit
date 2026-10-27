@@ -52,31 +52,7 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
-@interface WebCoreBundleFinder : NSObject
-@end
-
-@implementation WebCoreBundleFinder
-@end
-
 namespace WebCore {
-
-Ref<BitmapImage> ImageAdapter::loadPlatformResource(const char *name)
-{
-    NSBundle *bundle = [NSBundle bundleForClass:[WebCoreBundleFinder class]];
-    NSString *imagePath = [bundle pathForResource:[NSString stringWithUTF8String:name] ofType:@"png"];
-    NSData *namedImageData = [NSData dataWithContentsOfFile:imagePath];
-    if (namedImageData) {
-        auto image = BitmapImage::create();
-        image->setData(SharedBuffer::create(namedImageData), true);
-        return WTF::move(image);
-    }
-
-    // We have reports indicating resource loads are failing, but we don't yet know the root cause(s).
-    // Two theories are bad installs (image files are missing), and too-many-open-files.
-    // See rdar://5607381
-    ASSERT_NOT_REACHED();
-    return BitmapImage::nullImage();
-}
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 NSAdaptiveImageGlyph *ImageAdapter::multiRepresentationHEIC()
