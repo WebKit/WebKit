@@ -69,6 +69,7 @@
 #include "NotificationPermissionRequestManager.h"
 #include "PageBanner.h"
 #include "PageInspectorTarget.h"
+#include "PageScaleFactor.h"
 #include "PlaybackSessionContextIdentifier.h"
 #include "PluginView.h"
 #include "PolicyDecision.h"
@@ -3077,7 +3078,7 @@ void WebPage::didSetTextZoomFactor(double zoomFactor)
 {
 #if ENABLE(PDF_PLUGIN)
     if (RefPtr pluginView = mainFramePlugIn(); pluginView && pluginView->pluginHandlesPageScaleFactor())
-        return pluginView->setPageScaleFactor(zoomFactor, std::nullopt);
+        return pluginView->setClampedPageScaleFactor(zoomFactor);
 #endif
 
     if (!m_page)
@@ -3107,7 +3108,7 @@ void WebPage::didSetPageZoomFactor(double zoomFactor)
 #if ENABLE(PDF_PLUGIN)
     if (RefPtr pluginView = mainFramePlugIn(); pluginView && pluginView->pluginHandlesPageScaleFactor()) {
         // Note that this maps page *zoom* factor to page *scale* factor.
-        pluginView->setPageScaleFactor(zoomFactor, std::nullopt);
+        pluginView->setClampedPageScaleFactor(zoomFactor);
         return;
     }
 #endif
@@ -3281,6 +3282,12 @@ void WebPage::platformDidScalePage()
 
 void WebPage::scalePage(double scale, const IntPoint& origin)
 {
+    // WebPageProxy::didSetPageScaleFactor() terminates this process for an out-of-range scale factor.
+    if (!isValidScaleFactor(scale)) [[unlikely]] {
+        WEBPAGE_RELEASE_LOG_ERROR(ViewState, "scalePage: refusing to apply out-of-range scale factor %f", scale);
+        return;
+    }
+
     didScalePage(scale, origin);
     send(Messages::WebPageProxy::DidSetPageScaleFactor(scale));
 }
@@ -3325,6 +3332,12 @@ void WebPage::didScaleView(double scale)
 
 void WebPage::scaleView(double scale)
 {
+    // See scalePage(): WebPageProxy::viewScaleFactorDidChange() enforces the same range.
+    if (!isValidScaleFactor(scale)) [[unlikely]] {
+        WEBPAGE_RELEASE_LOG_ERROR(ViewState, "scaleView: refusing to apply out-of-range scale factor %f", scale);
+        return;
+    }
+
     if (scale == viewScaleFactor())
         return;
     didScaleView(scale);

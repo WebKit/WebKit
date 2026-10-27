@@ -117,6 +117,7 @@
 #include "NotificationPermissionRequest.h"
 #include "NotificationPermissionRequestManager.h"
 #include "PageClient.h"
+#include "PageScaleFactor.h"
 #include "PendingPostMessages.h"
 #include "PendingSnapshotDrawing.h"
 #include "PlatformPopupMenuData.h"
@@ -7469,7 +7470,12 @@ bool WebPageProxy::delegatesScalingToUIProcess() const
 
 void WebPageProxy::scalePage(double scale, const IntPoint& origin, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(scale > 0);
+    // The web process reports the scale factor back, and would be terminated for an invalid one.
+    if (!isValidScaleFactor(scale)) {
+        WEBPAGEPROXY_RELEASE_LOG_ERROR(ViewState, "scalePage: ignoring out-of-range scale factor %f", scale);
+        completionHandler();
+        return;
+    }
 
     m_pageScaleFactor = scale;
     pageScaleFactorDidChange();
@@ -7490,7 +7496,10 @@ void WebPageProxy::scalePage(double scale, const IntPoint& origin, CompletionHan
 
 void WebPageProxy::scalePageInViewCoordinates(double scale, const IntPoint& centerInViewCoordinates)
 {
-    ASSERT(scale > 0);
+    if (!isValidScaleFactor(scale)) {
+        WEBPAGEPROXY_RELEASE_LOG_ERROR(ViewState, "scalePageInViewCoordinates: ignoring out-of-range scale factor %f", scale);
+        return;
+    }
 
     m_pageScaleFactor = scale;
     pageScaleFactorDidChange();
@@ -7508,7 +7517,10 @@ void WebPageProxy::scalePageInViewCoordinates(double scale, const IntPoint& cent
 
 void WebPageProxy::scalePageRelativeToScrollPosition(double scale, const IntPoint& origin)
 {
-    ASSERT(scale > 0);
+    if (!isValidScaleFactor(scale)) {
+        WEBPAGEPROXY_RELEASE_LOG_ERROR(ViewState, "scalePageRelativeToScrollPosition: ignoring out-of-range scale factor %f", scale);
+        return;
+    }
 
     m_pageScaleFactor = scale;
     pageScaleFactorDidChange();
@@ -7526,7 +7538,11 @@ void WebPageProxy::scalePageRelativeToScrollPosition(double scale, const IntPoin
 
 void WebPageProxy::scaleView(double scale)
 {
-    ASSERT(scale > 0);
+    // See scalePage(); viewScaleFactorDidChange() enforces the same range.
+    if (!isValidScaleFactor(scale)) {
+        WEBPAGEPROXY_RELEASE_LOG_ERROR(ViewState, "scaleView: ignoring out-of-range scale factor %f", scale);
+        return;
+    }
 
     m_viewScaleFactor = scale;
 
@@ -7993,14 +8009,9 @@ void WebPageProxy::setGapBetweenPages(double gap)
     send(Messages::WebPage::SetGapBetweenPages(gap));
 }
 
-static bool LEGACY_NODELETE scaleFactorIsValid(double scaleFactor)
-{
-    return scaleFactor > 0 && scaleFactor <= 100;
-}
-
 void WebPageProxy::didSetPageScaleFactor(IPC::Connection& connection, double scaleFactor)
 {
-    MESSAGE_CHECK_BASE(scaleFactorIsValid(scaleFactor), connection);
+    MESSAGE_CHECK_BASE(isValidScaleFactor(scaleFactor), connection);
     if (!legacyMainFrameProcess().hasConnection(connection))
         return;
     m_pageScaleFactor = scaleFactor;
@@ -8027,7 +8038,7 @@ void WebPageProxy::pageScaleFactorDidChange()
 
 void WebPageProxy::viewScaleFactorDidChange(IPC::Connection& connection, double scaleFactor)
 {
-    MESSAGE_CHECK_BASE(scaleFactorIsValid(scaleFactor), connection);
+    MESSAGE_CHECK_BASE(isValidScaleFactor(scaleFactor), connection);
     if (!legacyMainFrameProcess().hasConnection(connection))
         return;
     m_viewScaleFactor = scaleFactor;
@@ -8041,13 +8052,13 @@ void WebPageProxy::viewScaleFactorDidChange(IPC::Connection& connection, double 
 
 void WebPageProxy::pluginScaleFactorDidChange(IPC::Connection& connection, double pluginScaleFactor)
 {
-    MESSAGE_CHECK_BASE(scaleFactorIsValid(pluginScaleFactor), connection);
+    MESSAGE_CHECK_BASE(isValidScaleFactor(pluginScaleFactor), connection);
     m_pluginScaleFactor = pluginScaleFactor;
 }
 
 void WebPageProxy::pluginZoomFactorDidChange(IPC::Connection& connection, double pluginZoomFactor)
 {
-    MESSAGE_CHECK_BASE(scaleFactorIsValid(pluginZoomFactor), connection);
+    MESSAGE_CHECK_BASE(isValidScaleFactor(pluginZoomFactor), connection);
     m_pluginZoomFactor = pluginZoomFactor;
 }
 

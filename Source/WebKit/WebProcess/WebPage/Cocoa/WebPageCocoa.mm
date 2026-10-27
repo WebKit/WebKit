@@ -35,6 +35,7 @@
 #import "MessageSenderInlines.h"
 #import "PDFPlugin.h"
 #import "PDFPluginBase.h"
+#import "PageScaleFactor.h"
 #import "PluginView.h"
 #import "PositionInformationForWebPage.h"
 #import "PrintInfo.h"
@@ -198,6 +199,7 @@
 #import <pal/cocoa/PDFKitSoftLink.h>
 
 #define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
+#define WEBPAGE_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
 
 #if PLATFORM(COCOA)
 
@@ -4018,6 +4020,12 @@ std::optional<float> WebPage::scaleFromUIProcess(const VisibleContentRectUpdateI
 #endif
         if (!mustReconcileForDelegatedScaling)
             return std::nullopt;
+    }
+
+    // The UI process terminates us for an invalid scale, which the clamp above does not rule out.
+    if (!isValidScaleFactor(scaleFromUIProcess)) [[unlikely]] {
+        WEBPAGE_RELEASE_LOG_ERROR(ViewState, "scaleFromUIProcess: ignoring out-of-range scale factor %f (clamp range [%f, %f])", scaleFromUIProcess, minimumPageScaleFactorForUIProcessScale(), maximumPageScaleFactorForUIProcessScale());
+        return std::nullopt;
     }
 
     return scaleFromUIProcess;
