@@ -188,11 +188,6 @@ void WebExtensionContext::runtimeSendMessage(const String& extensionID, const St
     WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
     if (RefPtr tab = getTab(senderParameters.pageProxyIdentifier))
         completeSenderParameters.tabParameters = tab->parameters();
-    else if (senderParameters.contentWorldType == WebExtensionContentWorldType::ContentScript) {
-        RELEASE_LOG_ERROR(Extensions, "Tab not found for message for content script message");
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
-        return;
-    }
 
     // Don't propagate web page gestures from content scripts to extension pages. Only gestures
     // from extension-originated events (action.onClicked, commands.onCommand, menus.onClicked)
@@ -242,11 +237,6 @@ void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtension
     WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
     if (RefPtr tab = getTab(senderParameters.pageProxyIdentifier))
         completeSenderParameters.tabParameters = tab->parameters();
-    else if (senderParameters.contentWorldType == WebExtensionContentWorldType::ContentScript) {
-        RELEASE_LOG_ERROR(Extensions, "Tab not found for message for content script port");
-        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
-        return;
-    }
 
     // Don't propagate web page gestures from content scripts to extension pages.
     bool resolvedUserGesture = userGesture && senderParameters.contentWorldType != WebExtensionContentWorldType::ContentScript;

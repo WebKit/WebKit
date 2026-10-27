@@ -83,6 +83,31 @@ static auto *runtimeContentScriptManifest = @{
     @"permissions": @[ @"nativeMessaging" ],
 };
 
+static auto *runtimePopupContentScriptManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"Runtime Test",
+    @"description": @"Runtime Test",
+    @"version": @"1",
+
+    @"background": @{
+        @"scripts": @[ @"background.js" ],
+        @"type": @"module",
+        @"persistent": @NO,
+    },
+
+    @"action": @{
+        @"default_title": @"Test Action",
+        @"default_popup": @"popup.html",
+    },
+
+    @"content_scripts": @[ @{
+        @"js": @[ @"content.js" ],
+        @"matches": @[ @"*://localhost/*" ],
+        @"all_frames": @YES,
+    } ],
+};
+
 static auto *runtimeServiceWorkerManifest = @{
     @"manifest_version": @3,
 
@@ -1754,6 +1779,130 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromPopup)
     };
 
     auto manager = Util::loadExtension(runtimeManifest, resources);
+
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+        // Do nothing so the popup web view will stay loaded.
+    };
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptInPopupSubframe)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    auto *urlString = urlRequest.get().URL.absoluteString;
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const expectedURL = '%@'", urlString],
+
+        @"browser.runtime.onMessage.addListener((message, sender) => {",
+        @"  browser.test.assertEq(message?.content, 'Hello from popup subframe', 'Should receive the correct message from the content script')",
+
+        @"  browser.test.assertEq(sender?.tab, undefined, 'sender.tab should be undefined')",
+        @"  browser.test.assertEq(sender?.frameId, undefined, 'sender.frameId should be undefined')",
+        @"  browser.test.assertEq(sender?.url, expectedURL, 'sender.url should be the expected URL')",
+        @"  browser.test.assertEq(typeof sender?.documentId, 'string', 'sender.documentId should be a string')",
+
+        @"  return Promise.resolve({ content: 'Received your message' })",
+        @"})",
+
+        @"browser.action.openPopup()"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const response = await browser.runtime.sendMessage({ content: 'Hello from popup subframe' })",
+        @"  browser.test.assertEq(response?.content, 'Received your message', 'Should get the response from the background script')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    auto *popupScript = Util::constructScript(@[
+        @"const frame = document.createElement('iframe')",
+        [NSString stringWithFormat:@"frame.src = '%@'", urlString],
+        @"document.body.appendChild(frame)"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript,
+        @"popup.html": @"<script type='module' src='popup.js'></script>",
+        @"popup.js": popupScript
+    };
+
+    auto manager = Util::loadExtension(runtimePopupContentScriptManifest, resources);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.get().URL];
+
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+        // Do nothing so the popup web view will stay loaded.
+    };
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, ConnectFromContentScriptInPopupSubframe)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    RetainPtr urlRequest = server.requestWithLocalhost();
+    auto *urlString = urlRequest.get().URL.absoluteString;
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const expectedURL = '%@'", urlString],
+
+        @"browser.runtime.onConnect.addListener((port) => {",
+        @"  browser.test.assertEq(port?.name, 'testPort', 'Port name should be testPort')",
+
+        @"  browser.test.assertEq(port?.sender?.tab, undefined, 'sender.tab should be undefined')",
+        @"  browser.test.assertEq(port?.sender?.frameId, undefined, 'sender.frameId should be undefined')",
+        @"  browser.test.assertEq(port?.sender?.url, expectedURL, 'sender.url should be the expected URL')",
+
+        @"  port?.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message, 'Hello from popup subframe', 'Should receive the correct message content')",
+
+        @"    port?.postMessage('Received by background')",
+        @"  })",
+        @"})",
+
+        @"browser.action.openPopup()"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"const port = browser.runtime.connect({ name: 'testPort' })",
+
+        @"port.onMessage.addListener((response) => {",
+        @"  browser.test.assertEq(response, 'Received by background', 'Should get the response from the background script')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"port.postMessage('Hello from popup subframe')"
+    ]);
+
+    auto *popupScript = Util::constructScript(@[
+        @"const frame = document.createElement('iframe')",
+        [NSString stringWithFormat:@"frame.src = '%@'", urlString],
+        @"document.body.appendChild(frame)"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript,
+        @"popup.html": @"<script type='module' src='popup.js'></script>",
+        @"popup.js": popupScript
+    };
+
+    auto manager = Util::loadExtension(runtimePopupContentScriptManifest, resources);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.get().URL];
 
     manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         // Do nothing so the popup web view will stay loaded.
