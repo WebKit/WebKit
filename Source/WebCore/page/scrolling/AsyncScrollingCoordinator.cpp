@@ -160,6 +160,7 @@ const ScrollingStateTree* AsyncScrollingCoordinator::existingScrollingStateTreeF
 void AsyncScrollingCoordinator::rootFrameWasRemoved(FrameIdentifier rootFrameID)
 {
     m_scrollingStateTrees.remove(rootFrameID);
+    m_rootFramesWithDirtyEventTrackingRegions.remove(rootFrameID);
 }
 
 void AsyncScrollingCoordinator::setAllScrollingStatePropertiesChangedForRootFrameID(FrameIdentifier rootFrameID)
@@ -207,15 +208,27 @@ void AsyncScrollingCoordinator::willCommitTree(FrameIdentifier rootFrameID)
 
 void AsyncScrollingCoordinator::updateEventTrackingRegions(FrameIdentifier rootFrameID)
 {
-    if (!m_eventTrackingRegionsDirty)
+    if (!m_rootFramesWithDirtyEventTrackingRegions.contains(rootFrameID))
         return;
 
     CheckedPtr scrollingStateTree = existingScrollingStateTreeForRootFrameID(rootFrameID);
     if (!scrollingStateTree || !scrollingStateTree->rootStateNode())
         return;
 
-    scrollingStateTree->rootStateNode()->setEventTrackingRegions(absoluteEventTrackingRegions());
-    m_eventTrackingRegionsDirty = false;
+    scrollingStateTree->rootStateNode()->setEventTrackingRegions(absoluteEventTrackingRegionsForRootFrame(rootFrameID));
+    m_rootFramesWithDirtyEventTrackingRegions.remove(rootFrameID);
+}
+
+EventTrackingRegions AsyncScrollingCoordinator::absoluteEventTrackingRegionsForRootFrame(FrameIdentifier rootFrameID) const
+{
+    if (!page())
+        return { };
+
+    for (const auto& rootFrame : page()->rootFrames()) {
+        if (rootFrame->frameID() == rootFrameID)
+            return absoluteEventTrackingRegionsForFrame(protect(rootFrame.get()));
+    }
+    return { };
 }
 
 void AsyncScrollingCoordinator::frameViewLayoutUpdated(LocalFrameView& frameView)
@@ -223,7 +236,7 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(LocalFrameView& frameView
     ASSERT(isMainThread());
     ASSERT(page());
 
-    m_eventTrackingRegionsDirty = true;
+    m_rootFramesWithDirtyEventTrackingRegions.add(frameView.frame().rootFrame().frameID());
 
     auto scrollingStateNode = stateNodeForNodeID(frameView.scrollingNodeID());
 
@@ -315,8 +328,9 @@ void AsyncScrollingCoordinator::updateIsMonitoringWheelEventsForFrameView(const 
 
 void AsyncScrollingCoordinator::frameViewEventTrackingRegionsChanged(LocalFrameView& frameView)
 {
-    m_eventTrackingRegionsDirty = true;
-    if (!ensureScrollingStateTreeForRootFrameID(frameView.frame().rootFrame().frameID()).rootStateNode())
+    auto rootFrameID { frameView.frame().rootFrame().frameID() };
+    m_rootFramesWithDirtyEventTrackingRegions.add(rootFrameID);
+    if (!ensureScrollingStateTreeForRootFrameID(rootFrameID).rootStateNode())
         return;
 
     // We have to schedule a commit, but the computed non-fast region may not have actually changed.
@@ -1357,8 +1371,8 @@ String AsyncScrollingCoordinator::scrollingStateTreeAsText(OptionSet<ScrollingSt
     StringBuilder stateTree;
     m_scrollingStateTrees.forEach([&](auto& key, auto& tree) {
         if (tree->rootStateNode()) {
-            if (m_eventTrackingRegionsDirty)
-                tree->rootStateNode()->setEventTrackingRegions(absoluteEventTrackingRegions());
+            if (m_rootFramesWithDirtyEventTrackingRegions.contains(key))
+                tree->rootStateNode()->setEventTrackingRegions(absoluteEventTrackingRegionsForRootFrame(key));
             if (m_scrollingStateTrees.size() > 1)
                 stateTree.append(makeString("Tree-for-root-frameID: "_s, key.toUInt64()));
             stateTree.append(tree->scrollingStateTreeAsText(behavior));

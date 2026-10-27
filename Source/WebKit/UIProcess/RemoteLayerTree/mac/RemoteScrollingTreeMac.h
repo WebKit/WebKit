@@ -61,6 +61,7 @@ private:
 #if ENABLE(WHEEL_EVENT_REGIONS)
     OptionSet<WebCore::EventListenerRegionType> eventListenerRegionTypesForPoint(WebCore::FloatPoint) const override;
 #endif
+    std::optional<WebCore::ScrollingNodeID> hostedRootNodeIDWithNonFastScrollableRegionAtPoint(WebCore::FloatPoint) const override;
 
     void didCommitTree() override WTF_REQUIRES_LOCK(m_treeLock);
 
@@ -79,7 +80,7 @@ private:
     void waitForEventDefaultHandlingCompletion(const WebCore::PlatformWheelEvent&) override;
     void receivedEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, std::optional<WebCore::WheelScrollGestureState>) override;
 
-    WebCore::WheelEventHandlingResult handleWheelEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>) override;
+    WebCore::WheelEventHandlingResult handleWheelEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, std::optional<WebCore::FrameIdentifier> defaultHandlingFrameID, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool wasHandled) override;
 
     void deferWheelEventTestCompletionForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason) override;
     void removeWheelEventTestCompletionDeferralForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason) override;

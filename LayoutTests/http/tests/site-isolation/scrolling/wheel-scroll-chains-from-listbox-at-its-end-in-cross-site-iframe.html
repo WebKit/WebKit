@@ -1,0 +1,59 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<style>
+body { margin: 0; height: 3000px; }
+iframe { position: absolute; left: 10px; top: 10px; width: 400px; height: 300px; border: 0; }
+</style>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/iframe-test-helpers.js"></script>
+<body>
+<script>
+description("Tests that wheel events over a listbox that is already at its end, in a frame that cannot scroll, scroll the parent frame even when the parent frame is in another process.");
+jsTestIsAsync = true;
+
+async function runCase(name, src, listWindow, parentWindow)
+{
+    scrollTo(0, 0);
+    await loadIframe(src);
+    await UIHelper.renderingUpdate();
+    await UIHelper.startMonitoringWheelEvents();
+
+    const parentScrollY = parentWindow ? async () => (await sendToFrame(parentWindow(), 'query', 'parentScrollY')).parentScrollY : async () => scrollY;
+    const before = await sendToFrame(listWindow(), 'query', 'listScrollTop');
+    const iframeRect = iframe.getBoundingClientRect();
+    eventSender.mouseMoveTo(iframeRect.left + before.listRect.x + before.listRect.width / 2, iframeRect.top + before.listRect.y + before.listRect.height / 2);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -200, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+
+    let parentScrolled = 0;
+    for (let i = 0; i < 20 && !(parentScrolled = await parentScrollY()); ++i)
+        await UIHelper.renderingUpdate();
+
+    const after = await sendToFrame(listWindow(), 'query', 'listScrollTop');
+    const mainScrolled = parentWindow ? scrollY : 0;
+    if (parentScrolled > 0 && !mainScrolled && after.listScrollTop == before.listScrollTop && !after.scrollY)
+        testPassed(`${name}: scrolled the parent frame`);
+    else
+        testFailed(`${name}: parentScrollY=${parentScrolled} mainScrollY=${scrollY} listScrollTop=${after.listScrollTop} (was ${before.listScrollTop}) listFrameScrollY=${after.scrollY}`);
+}
+
+onload = async () => {
+    if (!window.eventSender) {
+        finishJSTest();
+        return;
+    }
+    const crossSiteOrigin = 'http://localhost:8000';
+    const sameSiteOrigin = 'http://127.0.0.1:8000';
+    await runCase('cross-site iframe that cannot scroll', `${crossSiteOrigin}/site-isolation/scrolling/resources/listbox-iframe.html?short&end`,
+        () => iframe.contentWindow, null);
+    await runCase('same-site frame that cannot scroll inside a cross-site iframe', `${crossSiteOrigin}/site-isolation/scrolling/resources/listbox-parent-iframe.html?tall&childOrigin=${sameSiteOrigin}&childQuery=short%26end`,
+        () => iframe.contentWindow.frames[0], () => iframe.contentWindow);
+    await runCase('same-site iframe that cannot scroll', `${sameSiteOrigin}/site-isolation/scrolling/resources/listbox-iframe.html?short&end`,
+        () => iframe.contentWindow, null);
+    iframe.remove();
+    finishJSTest();
+};
+</script>
+</body>

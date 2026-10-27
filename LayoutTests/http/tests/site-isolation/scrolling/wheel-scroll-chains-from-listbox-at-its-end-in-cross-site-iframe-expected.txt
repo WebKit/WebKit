@@ -1,0 +1,12 @@
+Tests that wheel events over a listbox that is already at its end, in a frame that cannot scroll, scroll the parent frame even when the parent frame is in another process.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS cross-site iframe that cannot scroll: scrolled the parent frame
+PASS same-site frame that cannot scroll inside a cross-site iframe: scrolled the parent frame
+PASS same-site iframe that cannot scroll: scrolled the parent frame
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

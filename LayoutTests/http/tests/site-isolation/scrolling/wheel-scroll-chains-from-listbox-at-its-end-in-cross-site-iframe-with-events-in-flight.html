@@ -1,0 +1,74 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<style>
+body { margin: 0; height: 3000px; }
+iframe { position: absolute; left: 10px; top: 10px; width: 400px; height: 300px; border: 0; }
+</style>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/iframe-test-helpers.js"></script>
+<body>
+<script>
+description("Tests that wheel events over a listbox that is already at its end, in a frame that cannot scroll, all scroll the main frame when some are sent before earlier ones are handled, even when the listbox is in another process.");
+jsTestIsAsync = true;
+
+async function mainFrameScrollAfterEvents(src, listWindow, sendEvents)
+{
+    scrollTo(0, 0);
+    await loadIframe(src);
+    await UIHelper.renderingUpdate();
+    await UIHelper.startMonitoringWheelEvents();
+
+    const { listRect } = await sendToFrame(listWindow(), 'query', 'listScrollTop');
+    const iframeRect = iframe.getBoundingClientRect();
+    eventSender.mouseMoveTo(iframeRect.left + listRect.x + listRect.width / 2, iframeRect.top + listRect.y + listRect.height / 2);
+    sendEvents();
+
+    let previousScrollY;
+    for (let unchangedFrames = 0, i = 0; unchangedFrames < 30 && i < 300; ++i) {
+        await UIHelper.renderingUpdate();
+        unchangedFrames = scrollY == previousScrollY ? unchangedFrames + 1 : 0;
+        previousScrollY = scrollY;
+    }
+    return scrollY;
+}
+
+onload = async () => {
+    if (!window.eventSender) {
+        finishJSTest();
+        return;
+    }
+    const crossSiteOrigin = 'http://localhost:8000';
+    const sameSiteOrigin = 'http://127.0.0.1:8000';
+    const listbox = 'site-isolation/scrolling/resources/listbox-iframe.html?short&end';
+    const listboxInFrame = `${crossSiteOrigin}/site-isolation/scrolling/resources/listbox-parent-iframe.html?childOrigin=${sameSiteOrigin}&childQuery=short%26end`;
+    // Sent in one task, so the UI process sends a second event once ten are queued, before the first one is handled.
+    const gestures = {
+        'mouse wheel events': () => {
+            for (let i = 0; i < 12; ++i)
+                eventSender.mouseScrollBy(0, -1);
+        },
+        'wheel gesture': () => {
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+            for (let i = 0; i < 12; ++i)
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        },
+    };
+    for (const [gesture, sendEvents] of Object.entries(gestures)) {
+        const expectedScrollY = await mainFrameScrollAfterEvents(`${sameSiteOrigin}/${listbox}`, () => iframe.contentWindow, sendEvents);
+        for (const [name, src, listWindow] of [
+            ['cross-site iframe that cannot scroll', `${crossSiteOrigin}/${listbox}`, () => iframe.contentWindow],
+            ['same-site frame inside a cross-site iframe that cannot scroll', listboxInFrame, () => iframe.contentWindow.frames[0]]]) {
+            const mainScrollY = await mainFrameScrollAfterEvents(src, listWindow, sendEvents);
+            if (expectedScrollY && mainScrollY == expectedScrollY)
+                testPassed(`${gesture}, ${name}: scrolled the main frame as far as with a same-site iframe`);
+            else
+                testFailed(`${gesture}, ${name}: scrolled the main frame ${mainScrollY} px, ${expectedScrollY} px with a same-site iframe`);
+        }
+    }
+    iframe.remove();
+    finishJSTest();
+};
+</script>
+</body>

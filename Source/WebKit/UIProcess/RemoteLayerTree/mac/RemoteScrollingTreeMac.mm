@@ -377,16 +377,23 @@ void RemoteScrollingTreeMac::receivedEventAfterDefaultHandling(const WebCore::Pl
     m_waitingForBeganEventCondition.notifyOne();
 }
 
-WheelEventHandlingResult RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling(const PlatformWheelEvent& wheelEvent, std::optional<ScrollingNodeID> targetNodeID, std::optional<WheelScrollGestureState> gestureState)
+WheelEventHandlingResult RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling(const PlatformWheelEvent& wheelEvent, std::optional<FrameIdentifier> defaultHandlingFrameID, std::optional<ScrollingNodeID> targetNodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandled)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling - targetNodeID " << targetNodeID << " gestureState " << gestureState);
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling - defaultHandlingFrameID " << defaultHandlingFrameID << " targetNodeID " << targetNodeID << " gestureState " << gestureState << " wasHandled " << wasHandled);
 
     ASSERT(ScrollingThread::isCurrentThread());
 
-    if (!targetNodeID)
+    if (!targetNodeID && (wasHandled || !defaultHandlingFrameID))
         return WheelEventHandlingResult::unhandled();
 
     Locker locker { m_treeLock };
+
+    RefPtr hostedRootNode { defaultHandlingFrameID ? hostedRootNodeForFrame(*defaultHandlingFrameID) : nullptr };
+    if (!targetNodeID && !hostedRootNode)
+        return WheelEventHandlingResult::unhandled();
+
+    if (!targetNodeID && wheelEvent.isGestureStart())
+        gestureState = WheelScrollGestureState::NonBlocking;
 
     bool allowLatching = false;
     OptionSet<WheelEventProcessingSteps> processingSteps;
@@ -396,8 +403,14 @@ WheelEventHandlingResult RemoteScrollingTreeMac::handleWheelEventAfterDefaultHan
     }
 
     SetForScope disallowLatchingScope(m_allowLatching, allowLatching);
+    if (!targetNodeID) {
+        LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling - the process of hosted root node " << hostedRootNode->scrollingNodeID() << " did not handle the event, propagating it to the parent frame");
+        return handleWheelEventWithNode(wheelEvent, processingSteps, hostedRootNode->parent().get(), EventTargeting::Propagate);
+    }
+
     RefPtr<ScrollingTreeNode> targetNode = nodeForID(*targetNodeID);
-    return handleWheelEventWithNode(wheelEvent, processingSteps, targetNode.get(), EventTargeting::NodeOnly);
+    bool hostedRootNodeCannotScroll { hostedRootNode && targetNodeID == hostedRootNode->scrollingNodeID() && !hostedRootNode->allowsHorizontalScrolling() && !hostedRootNode->allowsVerticalScrolling() };
+    return handleWheelEventWithNode(wheelEvent, processingSteps, targetNode.get(), hostedRootNodeCannotScroll ? EventTargeting::Propagate : EventTargeting::NodeOnly);
 }
 
 void RemoteScrollingTreeMac::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
@@ -594,6 +607,43 @@ OptionSet<EventListenerRegionType> RemoteScrollingTreeMac::eventListenerRegionTy
     }).value_or(OptionSet<EventListenerRegionType> { });
 }
 #endif
+
+std::optional<ScrollingNodeID> RemoteScrollingTreeMac::hostedRootNodeIDWithNonFastScrollableRegionAtPoint(FloatPoint point) const
+{
+    RefPtr rootScrollingNode { downcast<ScrollingTreeFrameScrollingNodeMac>(rootNode()) };
+    if (!rootScrollingNode)
+        return std::nullopt;
+
+    ASSERT(m_layerHitTestMutex.isLocked());
+
+    Vector<LayerAndPoint, 16> layersAtPoint;
+    collectDescendantLayersAtPoint(layersAtPoint, rootScrollingNode->rootContentsLayer().get(), point, layerEventRegionContainsPoint);
+    if (layersAtPoint.isEmpty())
+        return std::nullopt;
+
+    RetainPtr hitLayer { layersAtPoint.last().layer };
+    RefPtr<ScrollingTreeNode> node;
+    for (RetainPtr layer { hitLayer }; layer && !node; layer = [layer superlayer])
+        node = nodeForID(scrollingNodeIDForLayer(layer.get()));
+
+    while (node) {
+        RefPtr parent { node->parent() };
+        if (parent && parent->isRootOfHostedSubtree())
+            break;
+        node = WTF::move(parent);
+    }
+
+    RefPtr hostedRootNode { dynamicDowncast<ScrollingTreeFrameScrollingNodeMac>(dynamicDowncast<ScrollingTreeFrameScrollingNode>(node)) };
+    if (!hostedRootNode)
+        return std::nullopt;
+
+    auto pointInHostedRoot { roundedIntPoint(FloatPoint { [hostedRootNode->rootContentsLayer().get() convertPoint:layersAtPoint.last().point fromLayer:hitLayer.get()] }) };
+    auto& eventTrackingRegions { hostedRootNode->eventTrackingRegions() };
+    if (eventTrackingRegions.trackingTypeForPoint(EventTrackingRegions::EventType::Wheel, pointInHostedRoot) == TrackingType::Synchronous
+        || eventTrackingRegions.trackingTypeForPoint(EventTrackingRegions::EventType::Mousewheel, pointInHostedRoot) == TrackingType::Synchronous)
+        return hostedRootNode->scrollingNodeID();
+    return std::nullopt;
+}
 
 void RemoteScrollingTreeMac::scrollingTreeNodeScrollbarVisibilityDidChange(ScrollingNodeID nodeID, ScrollbarOrientation orientation, bool isVisible)
 {

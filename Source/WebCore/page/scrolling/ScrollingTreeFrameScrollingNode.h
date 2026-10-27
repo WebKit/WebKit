@@ -29,6 +29,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include <WebCore/EventTrackingRegions.h>
 #include <WebCore/ScrollingTreeScrollingNode.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -45,6 +46,8 @@ public:
     bool commitStateBeforeChildren(const ScrollingStateNode&) override;
     
     bool visualViewportIsSmallerThanLayoutViewport() const { return m_visualViewportIsSmallerThanLayoutViewport; }
+
+    const EventTrackingRegions& eventTrackingRegions() const LIFETIME_BOUND;
 
     FloatSize LEGACY_NODELETE viewToContentsOffset(const FloatPoint& scrollPosition) const;
 
@@ -102,6 +105,7 @@ private:
 
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
+    EventTrackingRegions m_eventTrackingRegions;
     FloatRect m_layoutViewport;
     FloatSize m_sizeForVisibleContent;
     FloatPoint m_minLayoutViewportOrigin;

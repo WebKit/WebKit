@@ -1,0 +1,68 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<style>
+body { margin: 0; height: 3000px; }
+iframe { position: absolute; left: 10px; top: 10px; width: 400px; height: 300px; border: 0; }
+</style>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/iframe-test-helpers.js"></script>
+<body>
+<script>
+description("Tests that wheel events over an iframe with a non-passive wheel event listener that does not call preventDefault() scroll the nearest frame that can scroll, even when the iframe is in another process.");
+jsTestIsAsync = true;
+
+async function runCase(name, src, expectedScroller, sendEvents)
+{
+    scrollTo(0, 0);
+    await loadIframe(src);
+    await UIHelper.renderingUpdate();
+    await UIHelper.startMonitoringWheelEvents();
+
+    const iframeRect = iframe.getBoundingClientRect();
+    eventSender.mouseMoveTo(iframeRect.left + iframeRect.width / 2, iframeRect.top + iframeRect.height / 2);
+    sendEvents();
+
+    let frame;
+    const scrolledFrames = () => [scrollY && 'main frame', frame.scrollY && 'iframe'].filter((scroller) => scroller);
+    for (let i = 0; i < 20; ++i) {
+        await UIHelper.renderingUpdate();
+        frame = await sendToFrame(iframe.contentWindow, 'query', 'wheelEventCount');
+        if (scrolledFrames().length)
+            break;
+    }
+
+    if (frame.wheelEventCount && scrolledFrames().join() == (expectedScroller ?? ''))
+        testPassed(`${name}: ${expectedScroller ? `scrolled the ${expectedScroller}` : 'scrolled nothing'}`);
+    else
+        testFailed(`${name}: mainScrollY=${scrollY} iframeScrollY=${frame.scrollY} wheelEventCount=${frame.wheelEventCount}`);
+}
+
+onload = async () => {
+    if (!window.eventSender) {
+        finishJSTest();
+        return;
+    }
+    const crossSiteOrigin = 'http://localhost:8000';
+    const sameSiteOrigin = 'http://127.0.0.1:8000';
+    const listener = 'site-isolation/scrolling/resources/non-passive-wheel-listener-iframe.html';
+    const gestures = {
+        'mouse wheel': () => eventSender.mouseScrollBy(0, -5),
+        'wheel gesture': () => {
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        },
+    };
+    for (const [gesture, sendEvents] of Object.entries(gestures)) {
+        await runCase(`${gesture}, cross-site iframe that cannot scroll`, `${crossSiteOrigin}/${listener}?short`, 'main frame', sendEvents);
+        await runCase(`${gesture}, cross-site iframe with overflow: hidden`, `${crossSiteOrigin}/${listener}?short&overflowHidden`, 'main frame', sendEvents);
+        await runCase(`${gesture}, cross-site iframe that can scroll`, `${crossSiteOrigin}/${listener}`, 'iframe', sendEvents);
+        await runCase(`${gesture}, cross-site iframe whose listener calls preventDefault()`, `${crossSiteOrigin}/${listener}?short&preventDefault`, null, sendEvents);
+        await runCase(`${gesture}, same-site iframe that cannot scroll`, `${sameSiteOrigin}/${listener}?short`, 'main frame', sendEvents);
+    }
+    iframe.remove();
+    finishJSTest();
+};
+</script>
+</body>
