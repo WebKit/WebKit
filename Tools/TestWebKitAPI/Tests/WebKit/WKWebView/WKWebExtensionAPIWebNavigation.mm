@@ -400,6 +400,43 @@ TEST(WKWebExtensionAPIWebNavigation, RemoveListenerDuringEvent)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIWebNavigation, UpdateTabDuringCommittedEvent)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+        { "/redirected"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webNavigation.onCommitted.addListener(async (details) => {",
+        @"    const url = new URL(details.url)",
+
+        @"    if (url.pathname === '/redirected') {",
+        @"        browser.test.notifyPass()",
+        @"        return",
+        @"    }",
+
+        @"    const updatedTab = await browser.tabs.update(details.tabId, { url: new URL('/redirected', url).href })",
+        @"    browser.test.assertEq(updatedTab?.id, details.tabId, 'The updated tab should be the navigating tab')",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto manager = Util::loadExtension(webNavigationManifest, @{ @"background.js": backgroundScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIWebNavigation, ErrorOccurredEventDuringProvisionalLoad)
 {
     TestWebKitAPI::HTTPServer server({
