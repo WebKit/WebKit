@@ -452,6 +452,16 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
     completionHandler(_page->selectionBoundingRectInRootViewCoordinates());
 }
 
+- (void)_linkIndicatorBoundingRectAtPointForTesting:(CGPoint)point completionHandler:(void (^)(CGRect))completionHandler
+{
+    WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint(point) };
+    request.includeLinkIndicator = true;
+    [_contentView doAfterPositionInformationUpdate:[completionHandler = makeBlockPtr(completionHandler)](WebKit::InteractionInformationAtPosition information) {
+        RefPtr textIndicator = information.textIndicator;
+        completionHandler(textIndicator ? textIndicator->textBoundingRectInRootViewCoordinates() : WebCore::FloatRect { });
+    } forRequest:request];
+}
+
 - (CGRect)_rectToRevealWhenZoomingToFocusedElementForTesting
 {
     return [_contentView rectToRevealWhenZoomingToFocusedElement];
