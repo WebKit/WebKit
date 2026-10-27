@@ -3910,6 +3910,32 @@ macro simdLoadSplat64()
     end
 end
 
+# A scalar FP load clears the upper lanes of the vector register on ARM64 and X86_64.
+macro simdLoad32Zero()
+    if ARM64 or ARM64E or X86_64
+        loadf [t0], ft0
+        pushVec(ft0)
+    else
+        loadi [t0], t0
+        subp V128ISize, sp
+        storei t0, [sp]
+        storei 0, 4[sp]
+        storeq 0, 8[sp]
+    end
+end
+
+macro simdLoad64Zero()
+    if ARM64 or ARM64E or X86_64
+        loadd [t0], ft0
+        pushVec(ft0)
+    else
+        loadq [t0], t0
+        subp V128ISize, sp
+        storeq t0, [sp]
+        storeq 0, 8[sp]
+    end
+end
+
 # 0xFD 0x00 - 0xFD 0x0B: memory
 
 ipintOp(_simd_v128_load_mem, macro()
@@ -5402,11 +5428,7 @@ ipintOp(_simd_v128_load32_zero_mem, macro()
     # v128.load32_zero - load 32-bit value from memory and zero-pad to 128 bits
     popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], t0, 4, t1, t2, .simd_v128_load32_zero_slow_path)
-    loadi [t0], t0
-    subp V128ISize, sp
-    storei t0, [sp]
-    storei 0, 4[sp]
-    storeq 0, 8[sp]
+    simdLoad32Zero()
     leap 2[t4], PC
     nextIPIntInstruction()
 end)
@@ -5415,10 +5437,7 @@ ipintOp(_simd_v128_load64_zero_mem, macro()
     # v128.load64_zero - load 64-bit value from memory and zero-pad to 128 bits
     popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], t0, 8, t1, t2, .simd_v128_load64_zero_slow_path)
-    loadq [t0], t0
-    subp V128ISize, sp
-    storeq t0, [sp]
-    storeq 0, 8[sp]
+    simdLoad64Zero()
     leap 2[t4], PC
     nextIPIntInstruction()
 end)
@@ -11054,20 +11073,13 @@ _ipint_op_memory_atomic_wait64:
 
 .simd_v128_load32_zero_slow_path:
     loadStoreMakePointerSlow(t4, t0, 4, t1, t2, t5, t6)
-    loadi [t0], t0
-    subp V128ISize, sp
-    storei t0, [sp]
-    storei 0, 4[sp]
-    storeq 0, 8[sp]
+    simdLoad32Zero()
     move t4, PC
     nextIPIntInstruction()
 
 .simd_v128_load64_zero_slow_path:
     loadStoreMakePointerSlow(t4, t0, 8, t1, t2, t5, t6)
-    loadq [t0], t0
-    subp V128ISize, sp
-    storeq t0, [sp]
-    storeq 0, 8[sp]
+    simdLoad64Zero()
     move t4, PC
     nextIPIntInstruction()
 

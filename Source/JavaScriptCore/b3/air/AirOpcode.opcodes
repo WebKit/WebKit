@@ -2090,6 +2090,14 @@ x86_64: VectorLoad8Splat U:G:8, D:F:128, S:F:128
 64: VectorLoad64Splat U:G:64, D:F:128
     SimpleAddr, Tmp
 
+# Scalar FP loads clear the rest of the vector register on both ARM64 and x86_64.
+64: VectorLoad32Zero U:F:32, D:F:128
+    Addr, Tmp as loadFloat
+    Index, Tmp as loadFloat
+64: VectorLoad64Zero U:F:64, D:F:128
+    Addr, Tmp as loadDouble
+    Index, Tmp as loadDouble
+
 64: VectorLoad8Lane U:G:8, U:G:8, UD:F:128
     SimpleAddr, Imm, Tmp
 64: VectorLoad16Lane U:G:16, U:G:8, UD:F:128

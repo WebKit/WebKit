@@ -4077,7 +4077,40 @@ void testVectorDotProductSplatOne()
     }
 }
 
-// Test EOR3 (3-way XOR) pattern matching: VectorXor(VectorXor(a, b), c) → EOR3(a, b, c)
+void testVectorReplaceLaneOfZeroWithLoad()
+{
+    auto test = [&](SIMDLane lane, B3::Type loadType) {
+        alignas(16) v128_t vectors[2];
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        auto arguments = cCallArgumentValues<void*>(proc, root);
+        Value* address = arguments[0];
+        Value* scalar = root->appendNew<MemoryValue>(proc, Load, loadType, Origin(), address);
+        Value* zero = root->appendNew<Const128Value>(proc, Origin(), vectorAllZeros());
+        Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorReplaceLane, B3::V128, lane, SIMDSignMode::None, static_cast<uint8_t>(0), zero, scalar);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), result, address, static_cast<int32_t>(sizeof(v128_t)));
+        root->clearSuccessors();
+        root->appendNew<Value>(proc, Return, Origin());
+
+        auto code = compileProc(proc);
+        for (auto& operand : v128Operands()) {
+            vectors[0] = operand.value;
+            vectors[1] = v128_t { std::numeric_limits<uint64_t>::max(), std::numeric_limits<uint64_t>::max() };
+            invoke<void>(*code, vectors);
+            v128_t expected { };
+            if (lane == SIMDLane::f32x4)
+                expected.u32x4[0] = operand.value.u32x4[0];
+            else
+                expected.u64x2[0] = operand.value.u64x2[0];
+            CHECK(bitEquals(vectors[1], expected));
+        }
+    };
+
+    test(SIMDLane::f32x4, B3::Float);
+    test(SIMDLane::f64x2, B3::Double);
+}
+
+// Test EOR3 (3-way XOR) pattern matching: VectorXor(VectorXor(a, b), c) -> EOR3(a, b, c)
 void testVectorXor3()
 {
     if constexpr (!isARM64())

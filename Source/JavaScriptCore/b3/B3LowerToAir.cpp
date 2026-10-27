@@ -5169,6 +5169,16 @@ private:
         case B3::VectorReplaceLane: {
             SIMDValue* value = m_value->as<SIMDValue>();
             auto lane = value->simdLane();
+            if (!value->immediate() && value->child(0)->isV128(vectorAllZeros()) && (lane == SIMDLane::f32x4 || lane == SIMDLane::f64x2)) {
+                Air::Opcode loadZeroOpcode = lane == SIMDLane::f32x4 ? Air::VectorLoad32Zero : Air::VectorLoad64Zero;
+                ArgPromise addr = loadPromise(value->child(1));
+                if (addr && isValidForm(loadZeroOpcode, addr.kind(), Arg::Tmp)) {
+                    if (canBeInternal(value->child(0)))
+                        commitInternal(value->child(0));
+                    append(addr.inst(loadZeroOpcode, value, addr.consume(*this), tmp(value)));
+                    return;
+                }
+            }
             auto replacementScalar = tmp(value->child(1));
             Tmp result = tmp(value);
             append(Air::MoveVector, tmp(value->child(0)), result);

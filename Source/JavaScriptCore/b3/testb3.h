@@ -1571,6 +1571,7 @@ void testVectorXorRotateRight64();
 void testVectorXorRotateRight64ShiftKindAndAmount();
 void testVectorXor3();
 void testVectorDotProductSplatOne();
+void testVectorReplaceLaneOfZeroWithLoad();
 void testVectorShrZipToExtend();
 void testVectorShrZipToExtendI32();
 void testVectorShrZipToExtendI64();
