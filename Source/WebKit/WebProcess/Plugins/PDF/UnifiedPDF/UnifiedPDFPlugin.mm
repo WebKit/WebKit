@@ -3856,7 +3856,7 @@ RefPtr<TextIndicator> UnifiedPDFPlugin::textIndicatorForPageRect(FloatRect pageR
     auto rectInMainFrameViewCoordinates = convertFromRootViewToMainFrameView(rectInRootViewCoordinates);
 
     RefPtr textIndicator = TextIndicator::create();
-    textIndicator->setContentImage(BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTF::move(buffer))));
+    textIndicator->setContentImage(ImageBuffer::sinkIntoNativeImage(WTF::move(buffer)).get());
     textIndicator->setContentImageScaleFactor(deviceScaleFactor);
     textIndicator->setContentImageWithoutSelection(protect(textIndicator->contentImage()).get());
     textIndicator->setContentImageWithoutSelectionRectInRootViewCoordinates(rectInMainFrameViewCoordinates);

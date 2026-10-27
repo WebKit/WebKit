@@ -10908,11 +10908,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     if (!textIndicator->contentImage())
         return;
 
-    RefPtr snapshotWithoutSelection = textIndicator->contentImageWithoutSelection();
-    if (!snapshotWithoutSelection)
-        return;
-
-    auto unselectedSnapshotImage = snapshotWithoutSelection->nativeImage();
+    RefPtr unselectedSnapshotImage = textIndicator->contentImageWithoutSelection();
     if (!unselectedSnapshotImage)
         return;
 
@@ -11164,15 +11160,9 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
             return;
         }
 
-        auto snapshotWithoutSelection = textIndicator->contentImageWithoutSelection();
-        if (!snapshotWithoutSelection) {
-            RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: missing unselected content image.");
-            return;
-        }
-
-        auto unselectedSnapshotImage = snapshotWithoutSelection->nativeImage();
+        RefPtr unselectedSnapshotImage = textIndicator->contentImageWithoutSelection();
         if (!unselectedSnapshotImage) {
-            RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: could not decode unselected content image.");
+            RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: missing unselected content image.");
             return;
         }
 
@@ -11708,16 +11698,12 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 #if USE(UICONTEXTMENU)
 
-static RetainPtr<UIImage> uiImageForImage(WebCore::BitmapImage* image)
+static RetainPtr<UIImage> uiImageForImage(WebCore::NativeImage* image)
 {
     if (!image)
         return nil;
 
-    auto nativeImage = image->nativeImage(WebCore::ConcreteObjectSize::fixed(image->size()));
-    if (!nativeImage)
-        return nil;
-
-    return adoptNS([[UIImage alloc] initWithCGImage:nativeImage->platformImage().get()]);
+    return adoptNS([[UIImage alloc] initWithCGImage:image->platformImage().get()]);
 }
 
 // FIXME: This should be merged with createTargetedDragPreview in DragDropInteractionState.
@@ -16033,11 +16019,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!textIndicator || !textIndicator->contentImage())
         return nullptr;
 
-    auto nativeImage = protect(textIndicator->contentImage())->nativeImage();
-    if (!nativeImage)
-        return nullptr;
-
-    return adoptNS([[UIImage alloc] initWithCGImage:nativeImage->platformImage().get()]).autorelease();
+    return adoptNS([[UIImage alloc] initWithCGImage:protect(textIndicator->contentImage())->platformImage().get()]).autorelease();
 }
 
 - (NSArray *)_presentationRectsForPreviewItemController:(UIPreviewItemController *)controller

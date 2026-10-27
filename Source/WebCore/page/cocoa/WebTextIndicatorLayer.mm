@@ -107,9 +107,9 @@ static bool LEGACY_NODELETE indicatorWantsFadeIn(const WebCore::TextIndicator& i
         contentsImageLogicalSize = contentImage->size();
         contentsImageLogicalSize.scale(1 / _textIndicator->contentImageScaleFactor());
         if (RefPtr contentImageWithHighlight = _textIndicator->contentImageWithHighlight(); contentImageWithHighlight && indicatorWantsContentCrossfade(*protect(_textIndicator)))
-            contentsImage = contentImageWithHighlight->nativeImage();
+            contentsImage = WTF::move(contentImageWithHighlight);
         else
-            contentsImage = contentImage->nativeImage();
+            contentsImage = WTF::move(contentImage);
     }
 
     auto bounceLayers = adoptNS([[NSMutableArray alloc] init]);
@@ -232,7 +232,7 @@ static RetainPtr<CAKeyframeAnimation> createBounceAnimation(CFTimeInterval durat
 static RetainPtr<CABasicAnimation> createContentCrossfadeAnimation(CFTimeInterval duration, WebCore::TextIndicator& textIndicator)
 {
     RetainPtr crossfadeAnimation = [CABasicAnimation animationWithKeyPath:@"contents"];
-    RefPtr contentsImage = protect(textIndicator.contentImage())->nativeImage();
+    RefPtr contentsImage = textIndicator.contentImage();
     [crossfadeAnimation setToValue:(__bridge id)contentsImage->platformImage().get()];
     [crossfadeAnimation setFillMode:kCAFillModeForwards];
     [crossfadeAnimation setRemovedOnCompletion:NO];

@@ -918,13 +918,12 @@ static bool isLockdownModeEnabled()
     _textRectsInBoundingRectCoordinates = createNSArray(indicator->textRectsInBoundingRectCoordinates());
     _contentImageScaleFactor = indicator->contentImageScaleFactor();
     if (indicator->contentImageWithHighlight())
-        _contentImageWithHighlight = adoptNS([PAL::allocUIImageInstance() initWithCGImage:protect(indicator->contentImageWithHighlight())->nativeImage()->platformImage().get() scale:scale orientation:UIImageOrientationDownMirrored]);
+        _contentImageWithHighlight = adoptNS([PAL::allocUIImageInstance() initWithCGImage:protect(indicator->contentImageWithHighlight())->platformImage().get() scale:scale orientation:UIImageOrientationDownMirrored]);
     if (indicator->contentImage())
-        _contentImage = adoptNS([PAL::allocUIImageInstance() initWithCGImage:protect(indicator->contentImage())->nativeImage()->platformImage().get() scale:scale orientation:UIImageOrientationUp]);
+        _contentImage = adoptNS([PAL::allocUIImageInstance() initWithCGImage:protect(indicator->contentImage())->platformImage().get() scale:scale orientation:UIImageOrientationUp]);
 
     if (indicator->contentImageWithoutSelection()) {
-        auto nativeImage = protect(indicator->contentImageWithoutSelection())->nativeImage();
-        if (nativeImage) {
+        if (RefPtr nativeImage = indicator->contentImageWithoutSelection()) {
             _contentImageWithoutSelection = adoptNS([PAL::allocUIImageInstance() initWithCGImage:nativeImage->platformImage().get() scale:scale orientation:UIImageOrientationUp]);
             _contentImageWithoutSelectionRectInRootViewCoordinates = indicator->contentImageWithoutSelectionRectInRootViewCoordinates();
         }

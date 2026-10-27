@@ -1248,11 +1248,7 @@ static OptionSet<WebCore::DataDetectorType> LEGACY_NODELETE coreDataDetectorType
         if (!textIndicator)
             return completionHandler(text);
 
-        RefPtr contentImage = textIndicator->contentImage();
-        if (!contentImage)
-            return completionHandler(text);
-
-        RefPtr nativeImage = contentImage->nativeImage();
+        RefPtr nativeImage = textIndicator->contentImage();
         if (!nativeImage)
             return completionHandler(text);
 

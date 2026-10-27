@@ -81,11 +81,7 @@ static void forEachTextPreviewImage(const RefPtr<WebCore::TextIndicator>& textIn
     if (!textIndicator)
         return;
 
-    RefPtr snapshot = textIndicator->contentImage();
-    if (!snapshot)
-        return;
-
-    RefPtr snapshotImage = snapshot->nativeImage();
+    RefPtr snapshotImage = textIndicator->contentImage();
     if (!snapshotImage)
         return;
 

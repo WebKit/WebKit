@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "RenderingMode.h"
+#include "ShareableBitmap.h"
 #include <wtf/Locker.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -123,5 +124,22 @@ RefPtr<NativeImage> NativeImage::rotatedImage(ImageOrientation orientation)
 }
 
 #endif
+
+std::optional<Ref<NativeImage>> NativeImage::create(RefPtr<ShareableBitmap>&& bitmap)
+{
+    if (!bitmap)
+        return std::nullopt;
+    RefPtr image = bitmap->createNativeImage();
+    if (!image)
+        return std::nullopt;
+    return image.releaseNonNull();
+}
+
+RefPtr<ShareableBitmap> NativeImage::toShareableBitmap() const
+{
+    if (RefPtr bitmap = ShareableBitmap::createFromImageDraw(*this, colorSpace()))
+        return bitmap;
+    return ShareableBitmap::createFromImageDraw(*this, ColorSpace::SRGB());
+}
 
 } // namespace WebCore

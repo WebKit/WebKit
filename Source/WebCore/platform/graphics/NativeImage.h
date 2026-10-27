@@ -61,8 +61,9 @@ class GraphicsContext;
 class IntSize;
 class NativeImageBackend;
 class PixelBuffer;
-struct ImageOrientation;
+class ShareableBitmap;
 struct ImageDrawingOptions;
+struct ImageOrientation;
 
 class NativeImage : public ThreadSafeRefCounted<NativeImage>, public CanMakeThreadSafeCheckedPtr<NativeImage> {
     WTF_MAKE_TZONE_ALLOCATED(NativeImage);
@@ -84,6 +85,7 @@ public:
     WEBCORE_EXPORT static RefPtr<NativeImage> create(RetainPtr<CVPixelBufferRef>, CGImageAlphaInfo, RetainPtr<CGColorSpaceRef>);
 #endif
     WEBCORE_EXPORT static RefPtr<NativeImage> create(Ref<PixelBuffer>&&);
+    WEBCORE_EXPORT static std::optional<Ref<NativeImage>> create(RefPtr<ShareableBitmap>&&); // Uses `std::optional<Ref<...>>` to conform to the interface needed by IPC infrastructure.
 
     WEBCORE_EXPORT virtual ~NativeImage();
 
@@ -94,6 +96,8 @@ public:
     WEBCORE_EXPORT size_t sizeInBytes() const;
     std::optional<Color> singlePixelSolidColor() const;
     WEBCORE_EXPORT virtual ColorSpace colorSpace() const;
+
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> toShareableBitmap() const;
     // The pixels are held elsewhere and cannot be read in this process: platformImage() is null, and
     // only a compositor can display the image.
     virtual bool isDisplayOnly() const { return false; }

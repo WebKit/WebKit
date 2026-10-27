@@ -91,7 +91,7 @@ void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsConte
     for (const auto& path : paths)
         context.fillPath(path);
 
-    indicatorImage->draw(context, overlay.bounds());
+    context.drawNativeImage(*indicatorImage, overlay.bounds());
 }
 
 bool FindIndicatorIOS::update(WebCore::LocalFrame* selectedFrame, bool isShowingOverlay, bool shouldAnimate)

@@ -334,11 +334,7 @@ std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndi
 
 static RetainPtr<CGImageRef> cgImageFromTextIndicator(const TextIndicator& textIndicator)
 {
-    RefPtr image = textIndicator.contentImage();
-    if (!image)
-        return { };
-
-    RefPtr nativeImage = image->nativeImage();
+    RefPtr nativeImage = textIndicator.contentImage();
     if (!nativeImage)
         return { };
 
@@ -405,7 +401,7 @@ DragImage DragController::dragImageForRange(LocalFrame& frame, const SimpleRange
     RetainPtr render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:image->size()]);
     RetainPtr finalImage = [render imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContextCG context(protect(rendererContext.CGContext).get());
-        image->draw(context);
+        context.drawNativeImage(image);
     }];
 
     return DragImage { RetainPtr { [finalImage CGImage] } };

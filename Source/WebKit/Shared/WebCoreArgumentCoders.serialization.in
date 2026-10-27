@@ -1757,9 +1757,9 @@ header: <WebCore/TextIndicator.h>
     WebCore::FloatRect contentImageWithoutSelectionRectInRootViewCoordinates;
     Vector<WebCore::FloatRect> textRectsInBoundingRectCoordinates;
     float contentImageScaleFactor;
-    RefPtr<WebCore::BitmapImage> contentImageWithHighlight;
-    RefPtr<WebCore::BitmapImage> contentImageWithoutSelection;
-    RefPtr<WebCore::BitmapImage> contentImage;
+    RefPtr<WebCore::NativeImage> contentImageWithHighlight;
+    RefPtr<WebCore::NativeImage> contentImageWithoutSelection;
+    RefPtr<WebCore::NativeImage> contentImage;
     WebCore::Color estimatedBackgroundColor;
     WebCore::TextIndicatorPresentationTransition presentationTransition;
     OptionSet<WebCore::TextIndicatorOption> options;
@@ -6304,6 +6304,11 @@ header: <WebCore/Image.h>
 
 header: <WebCore/BitmapImage.h>
 [RefCounted] class WebCore::BitmapImage {
+    RefPtr<WebCore::ShareableBitmap> toShareableBitmap();
+};
+
+header: <WebCore/NativeImage.h>
+[RefCounted] class WebCore::NativeImage {
     RefPtr<WebCore::ShareableBitmap> toShareableBitmap();
 };
 

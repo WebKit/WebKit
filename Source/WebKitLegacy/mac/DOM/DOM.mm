@@ -550,7 +550,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
 
     if (textIndicator) {
         if (RefPtr image = textIndicator->contentImage()) {
-            auto contentImage = image->nativeImage()->platformImage();
+            auto contentImage = image->platformImage();
             *cgImage = contentImage.autorelease();
         }
     }

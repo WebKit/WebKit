@@ -40,10 +40,12 @@
 #include "TransientZoomState.h"
 #include "WKLayoutMode.h"
 #include "WebMouseEvent.h"
+#include <WebCore/BitmapImage.h>
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/DigitalCredentialsRequestData.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
+#include <WebCore/Image.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntRectHash.h>
 #include <WebCore/KeypressCommand.h>

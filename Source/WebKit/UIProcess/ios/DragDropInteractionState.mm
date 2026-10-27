@@ -111,16 +111,12 @@ static RetainPtr<UITargetedDragPreview> createTargetedDragPreview(UIImage *image
     return adoptNS([[UITargetedDragPreview alloc] initWithView:imageView.get() parameters:parameters.get() target:target.get()]);
 }
 
-static RetainPtr<UIImage> uiImageForImage(BitmapImage* image)
+static RetainPtr<UIImage> uiImageForImage(NativeImage* image)
 {
     if (!image)
         return nullptr;
 
-    auto nativeImage = image->nativeImage(ConcreteObjectSize::fixed(image->size()));
-    if (!nativeImage)
-        return nullptr;
-
-    return adoptNS([[UIImage alloc] initWithCGImage:nativeImage->platformImage().get()]);
+    return adoptNS([[UIImage alloc] initWithCGImage:image->platformImage().get()]);
 }
 
 static bool shouldUseDragImageToCreatePreviewForDragSource(const DragSourceState& source)

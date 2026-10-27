@@ -3104,14 +3104,7 @@ std::optional<WebCore::JSHandleIdentifier> WebKit::jsHandleIdentifierInFrame(con
             return;
         }
 
-        RefPtr contentImage = textIndicator->contentImage();
-        if (!contentImage) {
-            ASSERT_NOT_REACHED();
-            completion(@[ ]);
-            return;
-        }
-
-        RefPtr nativeImage = contentImage->nativeImage();
+        RefPtr nativeImage = textIndicator->contentImage();
         if (!nativeImage) {
             ASSERT_NOT_REACHED();
             completion(@[ ]);
@@ -3151,14 +3144,7 @@ std::optional<WebCore::JSHandleIdentifier> WebKit::jsHandleIdentifierInFrame(con
             return;
         }
 
-        RefPtr contentImage = textIndicator->contentImage();
-        if (!contentImage) {
-            ASSERT_NOT_REACHED();
-            completion(nil);
-            return;
-        }
-
-        RefPtr nativeImage = contentImage->nativeImage();
+        RefPtr nativeImage = textIndicator->contentImage();
         if (!nativeImage) {
             ASSERT_NOT_REACHED();
             completion(nil);
@@ -7170,14 +7156,7 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
             return;
         }
 
-        RefPtr contentImage = textIndicator->contentImage();
-        if (!contentImage) {
-            ASSERT_NOT_REACHED();
-            completionHandler(@[ ]);
-            return;
-        }
-
-        RefPtr nativeImage = contentImage->nativeImage();
+        RefPtr nativeImage = textIndicator->contentImage();
         if (!nativeImage) {
             ASSERT_NOT_REACHED();
             completionHandler(@[ ]);

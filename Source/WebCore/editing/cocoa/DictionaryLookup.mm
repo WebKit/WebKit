@@ -146,18 +146,18 @@ SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, 
 
 @interface WebRevealHighlight : NSObject<UIRVPresenterHighlightDelegate>
 
-- (instancetype)initWithHighlightRect:(NSRect)highlightRect view:(UIView *)view image:(RefPtr<WebCore::BitmapImage>&&)image;
+- (instancetype)initWithHighlightRect:(NSRect)highlightRect view:(UIView *)view image:(RefPtr<WebCore::NativeImage>&&)image;
 
 @end
 
 @implementation WebRevealHighlight {
-    RefPtr<WebCore::BitmapImage> _image;
+    RefPtr<WebCore::NativeImage> _image;
     CGRect _highlightRect;
     BOOL _highlighting;
     UIView *_view;
 }
 
-- (instancetype)initWithHighlightRect:(NSRect)highlightRect view:(UIView *)view image:(RefPtr<WebCore::BitmapImage>&&)image
+- (instancetype)initWithHighlightRect:(NSRect)highlightRect view:(UIView *)view image:(RefPtr<WebCore::NativeImage>&&)image
 {
     if (!(self = [super init]))
         return nil;
@@ -170,7 +170,7 @@ SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, 
     return self;
 }
 
-- (void)setImage:(RefPtr<WebCore::BitmapImage>&&)image
+- (void)setImage:(RefPtr<WebCore::NativeImage>&&)image
 {
     _image = WTF::move(image);
 }
@@ -234,9 +234,8 @@ SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, 
     
     for (NSValue *v in rects) {
         CGRect imgSrcRect = [_view convertRect:v.CGRectValue fromView:nil];
-        auto nativeImage = _image->nativeImage();
         CGRect origin = CGRectMake(imgSrcRect.origin.x - highlightRect.origin.x, imgSrcRect.origin.y - highlightRect.origin.y, highlightRect.size.width, highlightRect.size.height);
-        CGContextDrawImage(context, origin, nativeImage->platformImage().get());
+        CGContextDrawImage(context, origin, _image->platformImage().get());
     }
 }
 

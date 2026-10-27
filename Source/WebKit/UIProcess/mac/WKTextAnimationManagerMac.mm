@@ -247,13 +247,7 @@
             return;
         }
 
-        RefPtr snapshot = textIndicator->contentImage();
-        if (!snapshot) {
-            completionHandler(nil);
-            return;
-        }
-
-        RefPtr snapshotImage = snapshot->nativeImage();
+        RefPtr snapshotImage = textIndicator->contentImage();
         if (!snapshotImage) {
             completionHandler(nil);
             return;
