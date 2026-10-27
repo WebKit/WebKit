@@ -670,6 +670,30 @@ struct WKWebExtensionAPIActionTests {
     }
 
     @Test
+    func setIconWithWindowIdNotifiesWindowAction() async throws {
+        let backgroundScript = """
+            const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })
+
+            await browser.action.setIcon({ path: 'window-toolbar-48.png', windowId: currentTab.windowId })
+            """
+
+        let resources: [String: Any] = [
+            "background.js": backgroundScript,
+            "popup.html": "Hello World!",
+            "toolbar-32.png": makePNGData(size: CGSize(width: 32, height: 32), color: .red),
+            "window-toolbar-48.png": makePNGData(size: CGSize(width: 48, height: 48), color: .green),
+        ]
+
+        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: resources)
+
+        let action = try await manager.nextUpdatedAction()
+        #expect(action.associatedTab == nil)
+
+        let icon = try #require(action.icon(for: CGSize(width: 48, height: 48)))
+        #expect(icon.size == CGSize(width: 48, height: 48))
+    }
+
+    @Test
     func setIconSinglePath() async throws {
         let resources: [String: Any] = [
             "background.js": "await browser.action.setIcon({ path: 'toolbar-48.png' })",

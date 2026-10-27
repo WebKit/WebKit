@@ -706,6 +706,9 @@ void WebExtensionAction::propertiesDidChange()
         };
 
         if (isWindowAction()) {
+            // Call the delegate about the window action, since it is retrievable via the API.
+            [delegate webExtensionController:extensionController->wrapper() didUpdateAction:wrapper() forExtensionContext:extensionContext->wrapper()];
+
             // Call the delegate about tab-specific actions that inherit from the window.
             RefPtr window = protectedThis->window();
             callDelegateForTabs(window->tabs());
