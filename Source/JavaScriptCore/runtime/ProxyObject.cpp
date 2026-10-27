@@ -32,7 +32,6 @@
 #include "JSInternalFieldObjectImplInlines.h"
 #include "ObjectConstructor.h"
 #include "VMInlines.h"
-#include <algorithm>
 #include <wtf/NoTailCalls.h>
 #include <wtf/text/MakeString.h>
 
@@ -50,12 +49,9 @@ const ClassInfo ProxyObject::s_info = { "ProxyObject"_s, &Base::s_info, nullptr,
 static JSC_DECLARE_HOST_FUNCTION(performProxyCall);
 static JSC_DECLARE_HOST_FUNCTION(performProxyConstruct);
 
-static constexpr PropertyOffset emptyHandlerTrapCache = INT_MIN;
-
 ProxyObject::ProxyObject(VM& vm, Structure* structure)
     : Base(vm, structure)
 {
-    clearHandlerTrapsOffsetsCache();
 }
 
 Structure* ProxyObject::structureForTarget(JSGlobalObject* globalObject, JSValue target)
@@ -107,12 +103,17 @@ JSObject* ProxyObject::getHandlerTrap(JSGlobalObject* globalObject, JSObject* ha
         return asObject(value);
     };
 
-    if (isHandlerTrapsCacheValid(handler)) {
-        PropertyOffset offset = m_handlerTrapsOffsetsCache[static_cast<uint8_t>(trap)];
-        if (offset == invalidOffset)
+    bool isCacheValid = isHandlerTrapsCacheValid(handler);
+    if (isCacheValid) {
+        ProxyHandlerOffset offset = m_handlerTrapsOffsetsCache[static_cast<uint8_t>(trap)];
+        switch (offset.state()) {
+        case ProxyHandlerOffset::State::HasCachedOffset:
+            return ensureIsCallable(handler->getDirect(offset.offset()));
+        case ProxyHandlerOffset::State::HasNoTrap:
             return nullptr;
-        if (offset != emptyHandlerTrapCache)
-            return ensureIsCallable(handler->getDirect(offset));
+        case ProxyHandlerOffset::State::NeedsFullLookup:
+            break;
+        }
     } else if (m_handlerStructureID)
         clearHandlerTrapsOffsetsCache();
 
@@ -128,10 +129,11 @@ JSObject* ProxyObject::getHandlerTrap(JSGlobalObject* globalObject, JSObject* ha
         bool isHandlerPrototypeChainCacheable = handler->type() == FinalObjectType && handler->structure()->hasMonoProto() && !handler->structure()->isDictionary()
             && handlerPrototype.inherits<ObjectPrototype>() && !asObject(handlerPrototype)->structure()->isDictionary();
         if (isHandlerPrototypeChainCacheable) {
-            ASSERT(slot.cachedOffset() != emptyHandlerTrapCache);
-            m_handlerTrapsOffsetsCache[static_cast<uint8_t>(trap)] = slot.cachedOffset();
-            m_handlerStructureID.set(vm, this, handler->structure());
-            m_handlerPrototypeStructureID.set(vm, this, asObject(handlerPrototype)->structure());
+            m_handlerTrapsOffsetsCache[static_cast<uint8_t>(trap)] = ProxyHandlerOffset(slot.cachedOffset());
+            if (!isCacheValid) {
+                m_handlerStructureID.set(vm, this, handler->structure());
+                m_handlerPrototypeStructureID.set(vm, this, asObject(handlerPrototype)->structure());
+            }
         }
     }
 
@@ -146,7 +148,7 @@ JSObject* ProxyObject::getHandlerTrap(JSGlobalObject* globalObject, JSObject* ha
 
 void ProxyObject::clearHandlerTrapsOffsetsCache()
 {
-    std::fill_n(m_handlerTrapsOffsetsCache, numberOfCachedHandlerTrapsOffsets, emptyHandlerTrapCache);
+    m_handlerTrapsOffsetsCache.fill(ProxyHandlerOffset());
 }
 
 static const ASCIILiteral s_proxyAlreadyRevokedErrorMessage { "Proxy has already been revoked. No more operations are allowed to be performed on it"_s };
@@ -669,10 +671,11 @@ JSC_DEFINE_HOST_FUNCTION(performProxyConstruct, (JSGlobalObject* globalObject, C
 
     JSObject* handler = uncheckedDowncast<JSObject>(handlerValue);
     CallData callData;
-    JSValue constructMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "construct"_s), "'construct' property of a Proxy's handler should be callable"_s);
+    JSObject* constructMethod = proxy->getHandlerTrap(globalObject, handler, callData, vm.propertyNames->construct, ProxyObject::HandlerTrap::Construct);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
     JSObject* target = proxy->target();
-    if (constructMethod.isUndefined()) {
+    if (!constructMethod) {
         auto constructData = JSC::getConstructDataInline(target);
         RELEASE_ASSERT(constructData.type != CallData::Type::None);
         RELEASE_AND_RETURN(scope, JSValue::encode(construct(globalObject, target, constructData, ArgList(callFrame), callFrame->newTarget())));
@@ -731,10 +734,10 @@ bool ProxyObject::performDelete(JSGlobalObject* globalObject, PropertyName prope
 
     JSObject* handler = uncheckedDowncast<JSObject>(handlerValue);
     CallData callData;
-    JSValue deletePropertyMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "deleteProperty"_s), "'deleteProperty' property of a Proxy's handler should be callable"_s);
+    JSObject* deletePropertyMethod = getHandlerTrap(globalObject, handler, callData, vm.propertyNames->builtinNames().deletePropertyPublicName(), HandlerTrap::DeleteProperty);
     RETURN_IF_EXCEPTION(scope, false);
     JSObject* target = this->target();
-    if (deletePropertyMethod.isUndefined())
+    if (!deletePropertyMethod)
         RELEASE_AND_RETURN(scope, performDefaultDelete());
 
     auto arguments = WTF::toArray<EncodedJSValue>({
@@ -815,10 +818,10 @@ bool ProxyObject::performPreventExtensions(JSGlobalObject* globalObject)
 
     JSObject* handler = uncheckedDowncast<JSObject>(handlerValue);
     CallData callData;
-    JSValue preventExtensionsMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "preventExtensions"_s), "'preventExtensions' property of a Proxy's handler should be callable"_s);
+    JSObject* preventExtensionsMethod = getHandlerTrap(globalObject, handler, callData, vm.propertyNames->preventExtensions, HandlerTrap::PreventExtensions);
     RETURN_IF_EXCEPTION(scope, false);
     JSObject* target = this->target();
-    if (preventExtensionsMethod.isUndefined())
+    if (!preventExtensionsMethod)
         RELEASE_AND_RETURN(scope, target->methodTable()->preventExtensions(target, globalObject));
 
     auto arguments = WTF::toArray<EncodedJSValue>({
@@ -866,11 +869,11 @@ bool ProxyObject::performIsExtensible(JSGlobalObject* globalObject)
 
     JSObject* handler = uncheckedDowncast<JSObject>(handlerValue);
     CallData callData;
-    JSValue isExtensibleMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "isExtensible"_s), "'isExtensible' property of a Proxy's handler should be callable"_s);
+    JSObject* isExtensibleMethod = getHandlerTrap(globalObject, handler, callData, vm.propertyNames->isExtensible, HandlerTrap::IsExtensible);
     RETURN_IF_EXCEPTION(scope, false);
 
     JSObject* target = this->target();
-    if (isExtensibleMethod.isUndefined())
+    if (!isExtensibleMethod)
         RELEASE_AND_RETURN(scope, target->isExtensible(globalObject));
 
     auto arguments = WTF::toArray<EncodedJSValue>({
@@ -931,10 +934,10 @@ bool ProxyObject::performDefineOwnProperty(JSGlobalObject* globalObject, Propert
 
     JSObject* handler = uncheckedDowncast<JSObject>(handlerValue);
     CallData callData;
-    JSValue definePropertyMethod = handler->getMethod(globalObject, callData, vm.propertyNames->defineProperty, "'defineProperty' property of a Proxy's handler should be callable"_s);
+    JSObject* definePropertyMethod = getHandlerTrap(globalObject, handler, callData, vm.propertyNames->defineProperty, HandlerTrap::DefineProperty);
     RETURN_IF_EXCEPTION(scope, false);
 
-    if (definePropertyMethod.isUndefined())
+    if (!definePropertyMethod)
         return performDefaultDefineOwnProperty();
 
     JSObject* descriptorObject = constructObjectFromPropertyDescriptor(globalObject, descriptor);
@@ -1014,22 +1017,9 @@ bool ProxyObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalObje
 
 bool ProxyObject::forwardsGetOwnPropertyNamesToTarget(DontEnumPropertiesMode dontEnumPropertiesMode)
 {
-    JSValue handler = this->handler();
-    if (handler.isNull())
-        return false;
-
-    if (!isHandlerTrapsCacheValid(asObject(handler)))
-        return false;
-
-    if (m_handlerTrapsOffsetsCache[static_cast<uint8_t>(HandlerTrap::OwnKeys)] != invalidOffset)
-        return false;
-
-    if (dontEnumPropertiesMode == DontEnumPropertiesMode::Exclude) {
-        if (m_handlerTrapsOffsetsCache[static_cast<uint8_t>(HandlerTrap::GetOwnPropertyDescriptor)] != invalidOffset)
-            return false;
-    }
-
-    return true;
+    if (dontEnumPropertiesMode == DontEnumPropertiesMode::Exclude)
+        return isKnownToHaveNoHandlerTraps(HandlerTrap::OwnKeys, HandlerTrap::GetOwnPropertyDescriptor);
+    return isKnownToHaveNoHandlerTraps(HandlerTrap::OwnKeys);
 }
 
 void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, PropertyNameArrayBuilder& propertyNames)
@@ -1184,11 +1174,11 @@ bool ProxyObject::performSetPrototype(JSGlobalObject* globalObject, JSValue prot
 
     JSObject* handler = uncheckedDowncast<JSObject>(handlerValue);
     CallData callData;
-    JSValue setPrototypeOfMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "setPrototypeOf"_s), "'setPrototypeOf' property of a Proxy's handler should be callable"_s);
+    JSObject* setPrototypeOfMethod = getHandlerTrap(globalObject, handler, callData, vm.propertyNames->setPrototypeOf, HandlerTrap::SetPrototypeOf);
     RETURN_IF_EXCEPTION(scope, false);
 
     JSObject* target = this->target();
-    if (setPrototypeOfMethod.isUndefined())
+    if (!setPrototypeOfMethod)
         RELEASE_AND_RETURN(scope, target->setPrototype(vm, globalObject, prototype, shouldThrowIfCantSet));
 
     auto arguments = WTF::toArray<EncodedJSValue>({
@@ -1248,11 +1238,11 @@ JSValue ProxyObject::performGetPrototype(JSGlobalObject* globalObject)
 
     JSObject* handler = uncheckedDowncast<JSObject>(handlerValue);
     CallData callData;
-    JSValue getPrototypeOfMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "getPrototypeOf"_s), "'getPrototypeOf' property of a Proxy's handler should be callable"_s);
+    JSObject* getPrototypeOfMethod = getHandlerTrap(globalObject, handler, callData, vm.propertyNames->getPrototypeOf, HandlerTrap::GetPrototypeOf);
     RETURN_IF_EXCEPTION(scope, { });
 
     JSObject* target = this->target();
-    if (getPrototypeOfMethod.isUndefined()) 
+    if (!getPrototypeOfMethod)
         RELEASE_AND_RETURN(scope, target->getPrototype(globalObject));
 
     auto arguments = WTF::toArray<EncodedJSValue>({
