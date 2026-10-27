@@ -168,11 +168,10 @@ void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
 
 TransactionID RemoteLayerTreeDrawingAreaProxy::nextMainFrameLayerTreeTransactionID() const
 {
-    for (int i = m_webPageProxyProcessState.pendingCommits.size() - 1; i >= 0; i--) {
-        if (m_webPageProxyProcessState.pendingCommits[i].pendingMessage > PendingCommitMessage::NotifyPendingCommitLayerTree)
-            return m_webPageProxyProcessState.pendingCommits[i].transactionID;
-    }
-    return lastCommittedMainFrameLayerTreeTransactionID();
+    auto& state = m_webPageProxyProcessState;
+    if (!state.pendingCommits.isEmpty() && state.pendingCommits[0].pendingMessage == PendingCommitMessage::NotifyPendingCommitLayerTree)
+        return state.pendingCommits[0].transactionID;
+    return state.nextLayerTreeTransactionID;
 }
 
 TransactionID RemoteLayerTreeDrawingAreaProxy::lastCommittedMainFrameLayerTreeTransactionID() const
