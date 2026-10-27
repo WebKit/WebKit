@@ -131,11 +131,12 @@ struct FontPlatformDataAttributes {
 #endif
 
 #if USE(SKIA)
-    FontPlatformDataAttributes(const FontMetadata& metadata, SkString familyName, SkFontStyle style, Vector<hb_feature_t>&& features)
+    FontPlatformDataAttributes(const FontMetadata& metadata, SkString familyName, SkFontStyle style, Vector<hb_feature_t>&& features, Vector<SkFontArguments::VariationPosition::Coordinate>&& variations)
         : m_metadata(metadata)
         , m_familyName(familyName)
         , m_style(style)
         , m_features(WTF::move(features))
+        , m_variations(WTF::move(variations))
         { }
 #endif
 
@@ -152,6 +153,7 @@ struct FontPlatformDataAttributes {
     SkString m_familyName;
     SkFontStyle m_style;
     Vector<hb_feature_t> m_features;
+    Vector<SkFontArguments::VariationPosition::Coordinate> m_variations;
 #endif
 };
 
@@ -332,7 +334,7 @@ public:
 
     using Attributes = FontPlatformDataAttributes;
 
-    WEBCORE_EXPORT static FontPlatformData create(const Attributes&, const FontCustomPlatformData*);
+    WEBCORE_EXPORT static FontPlatformData create(const Attributes&, FontCustomPlatformData*);
 
     WEBCORE_EXPORT FontPlatformData(const FontPlatformData&);
     WEBCORE_EXPORT FontPlatformData& operator=(const FontPlatformData&);

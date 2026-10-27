@@ -26,3 +26,11 @@ header: <skia/core/SkFontStyle.h>
     int width();
     SkFontStyle::Slant slant();
 };
+
+using SkFourByteTag = uint32_t;
+
+header: <skia/core/SkFontArguments.h>
+[CustomHeader, Nested] struct SkFontArguments::VariationPosition::Coordinate {
+    SkFourByteTag axis;
+    float value;
+};

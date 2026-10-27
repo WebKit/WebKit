@@ -98,6 +98,7 @@ header: <WebCore/FontPlatformData.h>
     SkString m_familyName;
     SkFontStyle m_style;
     Vector<hb_feature_t> m_features;
+    Vector<SkFontArguments::VariationPosition::Coordinate> m_variations;
 #endif
 };
 

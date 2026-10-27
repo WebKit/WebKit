@@ -311,7 +311,7 @@ HbUniquePtr<hb_font_t> FontPlatformData::createOpenTypeMathHarfBuzzFont() const
 }
 #endif
 
-FontPlatformData FontPlatformData::create(const Attributes& data, const FontCustomPlatformData* custom)
+FontPlatformData FontPlatformData::create(const Attributes& data, FontCustomPlatformData* custom)
 {
     static FcPattern* pattern = nullptr;
     static bool fixedWidth = false;

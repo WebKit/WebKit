@@ -140,7 +140,7 @@ RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size, CTFont
     return adoptCF(CTFontCreateWithFontDescriptorAndOptions(fontDescriptor.get(), size, nullptr, options));
 }
 
-FontPlatformData FontPlatformData::create(const Attributes& data, const FontCustomPlatformData* custom)
+FontPlatformData FontPlatformData::create(const Attributes& data, FontCustomPlatformData* custom)
 {
     RetainPtr<CTFontRef> ctFont;
     if (custom) {

@@ -61,7 +61,7 @@ RefPtr<SharedBuffer> FontPlatformData::platformOpenTypeTable(uint32_t table) con
     return buffer;
 }
 
-FontPlatformData FontPlatformData::create(const Attributes& data, const FontCustomPlatformData* custom)
+FontPlatformData FontPlatformData::create(const Attributes& data, FontCustomPlatformData* custom)
 {
     LOGFONT logFont = data.m_font;
     if (custom)
