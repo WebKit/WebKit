@@ -947,6 +947,8 @@ webkit.org/b/183880 [ Debug ] inspector/console/messageAdded-from-named-evaluati
 webkit.org/b/156634 inspector/formatting/formatting-javascript.html [ Pass Timeout ]
 webkit.org/b/158948 inspector/timeline [ Pass Timeout ]
 webkit.org/b/302413 inspector/timeline/timeline-event-TimerInstall.html [ Skip ]
+# Keep this test out of the [ Pass Timeout ] above.
+inspector/timeline/timeline-recording-multiple-targets.html [ Pass ]
 webkit.org/b/191539 http/tests/inspector/network/resource-security-connection.html [ Skip ]
 
 # Touch events are not enabled on Mac

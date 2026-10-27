@@ -66,14 +66,22 @@ WI.Instrument = class Instrument
         if (initiatedByBackend)
             return;
 
-        for (let target of WI.targets) {
-            // COMPATIBILITY (macOS 15.4, iOS 18.4): `Timeline.start` did not exist yet for Worker targets.
-            if (target.hasDomain("Timeline"))
-                target.TimelineAgent.start();
-        }
+        for (let target of WI.targets)
+            WI.Instrument._startLegacyTimelineAgentOnTargetIfNeeded(target);
     }
 
-    static stopLegacyTimelineAgent(initiatedByBackend)
+    static startLegacyTimelineAgentForTarget(target)
+    {
+        console.assert(WI.timelineManager._enabled);
+
+        // Only instrument a new target if the current capture uses the Timeline agent.
+        if (!WI.Instrument._legacyTimelineAgentStarted)
+            return;
+
+        WI.Instrument._startLegacyTimelineAgentOnTargetIfNeeded(target);
+    }
+
+    static stopLegacyTimelineAgent()
     {
         console.assert(WI.timelineManager._enabled);
 
@@ -82,14 +90,24 @@ WI.Instrument = class Instrument
 
         WI.Instrument._legacyTimelineAgentStarted = false;
 
-        if (initiatedByBackend)
+        // TimelineManager stops every domain that is tracking.
+        WI.Instrument._legacyTimelineAgentTargets.clear();
+    }
+
+    static _startLegacyTimelineAgentOnTargetIfNeeded(target)
+    {
+        // COMPATIBILITY (macOS 15.4, iOS 18.4): `Timeline.start` did not exist yet for Worker targets.
+        if (!target.hasDomain("Timeline"))
             return;
 
-        for (let target of WI.targets) {
-            // COMPATIBILITY (macOS 15.4, iOS 18.4): `Timeline.stop` did not exist yet for Worker targets.
-            if (target.hasDomain("Timeline"))
-                target.TimelineAgent.stop();
-        }
+        // Several instruments share the Timeline agent of each target.
+        if (WI.Instrument._legacyTimelineAgentTargets.has(target))
+            return;
+
+        WI.Instrument._legacyTimelineAgentTargets.add(target);
+
+        WI.timelineManager.willStartTrackingForTarget(target, "Timeline");
+        target.TimelineAgent.start();
     }
 
     // Protected
@@ -104,10 +122,16 @@ WI.Instrument = class Instrument
         WI.Instrument.startLegacyTimelineAgent(initiatedByBackend);
     }
 
-    stopInstrumentation(initiatedByBackend)
+    startInstrumentationForTarget(target)
     {
-        WI.Instrument.stopLegacyTimelineAgent(initiatedByBackend);
+        WI.Instrument.startLegacyTimelineAgentForTarget(target);
+    }
+
+    stopInstrumentation()
+    {
+        WI.Instrument.stopLegacyTimelineAgent();
     }
 };
 
 WI.Instrument._legacyTimelineAgentStarted = false;
+WI.Instrument._legacyTimelineAgentTargets = new Set;

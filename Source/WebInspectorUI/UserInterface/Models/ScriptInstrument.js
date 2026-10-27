@@ -25,6 +25,13 @@
 
 WI.ScriptInstrument = class ScriptInstrument extends WI.Instrument
 {
+    constructor()
+    {
+        super();
+
+        this._targets = new Set;
+    }
+
     // Protected
 
     get timelineRecordType()
@@ -34,26 +41,41 @@ WI.ScriptInstrument = class ScriptInstrument extends WI.Instrument
 
     startInstrumentation(initiatedByBackend)
     {
+        if (initiatedByBackend)
+            return;
+
+        for (let target of WI.targets)
+            this._startTrackingForTarget(target);
+    }
+
+    startInstrumentationForTarget(target)
+    {
+        this._startTrackingForTarget(target);
+    }
+
+    stopInstrumentation()
+    {
+        // TimelineManager stops every domain that is tracking.
+        this._targets.clear();
+    }
+
+    // Private
+
+    _startTrackingForTarget(target)
+    {
+        // COMPATIBILITY (macOS 15.4, iOS 18.4): `ScriptProfiler.startTracking` did not exist yet in Worker targets.
+        if (!target.hasDomain("ScriptProfiler"))
+            return;
+
+        if (this._targets.has(target))
+            return;
+
+        this._targets.add(target);
+
         // FIXME: Make this some UI visible option.
         const includeSamples = true;
 
-        if (!initiatedByBackend) {
-            for (let target of WI.targets) {
-                // COMPATIBILITY (macOS 15.4, iOS 18.4): `ScriptProfiler.startTracking` did not exist yet in Worker targets.
-                if (target.hasDomain("ScriptProfiler"))
-                    target.ScriptProfilerAgent.startTracking(includeSamples);
-            }
-        }
-    }
-
-    stopInstrumentation(initiatedByBackend)
-    {
-        if (!initiatedByBackend) {
-            for (let target of WI.targets) {
-                // COMPATIBILITY (macOS 15.4, iOS 18.4): `ScriptProfiler.stopTracking` did not exist yet for Worker targets.
-                if (target.hasDomain("ScriptProfiler"))
-                    target.ScriptProfilerAgent.stopTracking();
-            }
-        }
+        WI.timelineManager.willStartTrackingForTarget(target, "ScriptProfiler");
+        target.ScriptProfilerAgent.startTracking(includeSamples);
     }
 };
