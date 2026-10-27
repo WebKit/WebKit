@@ -684,6 +684,8 @@ public:
         RenderLayer* layer { nullptr };
     };
     EnclosingCompositingLayerStatus enclosingCompositingLayerForRepaint(IncludeSelfOrNot = IncludeSelf) const;
+    // Same layer as enclosingCompositingLayerForRepaint().layer, without computing fullRepaintAlreadyScheduled.
+    RenderLayer* enclosingRepaintTargetLayer(IncludeSelfOrNot = IncludeSelf) const;
     // Ancestor compositing layer, excluding this.
     RenderLayer* ancestorCompositingLayer() const { return enclosingCompositingLayer(ExcludeSelf); }
 

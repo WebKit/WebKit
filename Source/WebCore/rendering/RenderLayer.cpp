@@ -2583,6 +2583,31 @@ RenderLayer::EnclosingCompositingLayerStatus RenderLayer::enclosingCompositingLa
     return { };
 }
 
+RenderLayer* RenderLayer::enclosingRepaintTargetLayer(IncludeSelfOrNot includeSelf) const
+{
+    auto repaintTargetForLayer = [](const RenderLayer& layer) -> RenderLayer* {
+        if (compositedWithOwnBackingStore(layer))
+            return const_cast<RenderLayer*>(&layer);
+
+        if (layer.paintsIntoProvidedBacking())
+            return layer.backingProviderLayer();
+
+        return nullptr;
+    };
+
+    if (includeSelf == IncludeSelf) {
+        if (auto* repaintTarget = repaintTargetForLayer(*this))
+            return repaintTarget;
+    }
+
+    for (const RenderLayer* curr = paintOrderParent(); curr; curr = curr->paintOrderParent()) {
+        if (auto* repaintTarget = repaintTargetForLayer(*curr))
+            return repaintTarget;
+    }
+
+    return nullptr;
+}
+
 RenderLayer* RenderLayer::enclosingPixelMovingFilterLayer(IncludeSelfOrNot includeSelf) const
 {
     const RenderLayer* curr = (includeSelf == IncludeSelf) ? this : parent();
@@ -5357,7 +5382,7 @@ ClipRects* RenderLayer::clipRects(const ClipRectsContext& context) const
 bool RenderLayer::clipCrossesPaintingBoundary() const
 {
     return parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers) != enclosingPaginationLayer(IncludeCompositedPaginatedLayers)
-        || parent()->enclosingCompositingLayerForRepaint().layer != enclosingCompositingLayerForRepaint().layer;
+        || parent()->enclosingRepaintTargetLayer() != enclosingRepaintTargetLayer();
 }
 
 void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, ClipRects& clipRects) const
