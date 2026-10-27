@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+
+    button {
+        position: absolute;
+        top: 20px;
+        display: flex;
+        align-items: center;
+        width: 100px;
+        height: 48px;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        appearance: none;
+        cursor: pointer;
+    }
+    #zero-radius {
+        left: 20px;
+        border-radius: 0;
+    }
+    #no-radius {
+        left: 140px;
+    }
+    #rounded {
+        left: 260px;
+        border-radius: 8px;
+    }
+    #zero-radius-text-and-icon {
+        left: 380px;
+        border-radius: 0;
+    }
+    #zero-radius-icon {
+        left: 500px;
+        border-radius: 0;
+    }
+    .pill {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100px;
+        height: 32px;
+        border-radius: 16px;
+        background: lightgray;
+    }
+</style>
+<body>
+<!--
+    A transparent button whose only child paints its visible shape is a guard container: the button gets a Guard
+    region and the child's region gives the shape. A border-radius of 0, as CSS resets set on buttons, gives the
+    button no shape of its own, so "zero-radius" gets the same regions as "no-radius". A non-zero border radius
+    still shapes the button's own region ("rounded"). A zero-radius button whose only child paints no box keeps its
+    own region: text plus an icon ("zero-radius-text-and-icon") or an icon alone ("zero-radius-icon").
+-->
+<section id="test">
+    <button id="zero-radius"><div class="pill">Chip</div></button>
+    <button id="no-radius"><div class="pill">Chip</div></button>
+    <button id="rounded"><div class="pill">Chip</div></button>
+    <button id="zero-radius-text-and-icon">Menu<svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4z"/></svg></button>
+    <button id="zero-radius-icon"><span><svg width="24" height="24" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6" fill="none" stroke="black" stroke-width="2"/></svg></span></button>
+</section>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+        return;
+
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    document.getElementById("test").remove();
+};
+</script>
+</body>
+</html>
