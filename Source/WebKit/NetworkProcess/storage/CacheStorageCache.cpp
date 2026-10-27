@@ -394,7 +394,6 @@ void CacheStorageCache::putRecordsInStore(Vector<CacheStorageRecord>&& records, 
                 continue;
             }
 
-            auto& existingRecord = borrowedExistingRecords[index];
             // Ensure identifier still exists.
             auto* existingRecordInfo = findExistingRecord(record.request, record.info.identifier());
             if (!existingRecordInfo) {
@@ -404,15 +403,9 @@ void CacheStorageCache::putRecordsInStore(Vector<CacheStorageRecord>&& records, 
 
             record.info.setKey(existingRecordInfo->key());
             record.info.setInsertionTime(existingRecordInfo->insertionTime());
-            record.info.setURL(existingRecordInfo->url());
-            record.requestHeadersGuard = existingRecord->requestHeadersGuard;
-            record.request = WTF::move(existingRecord->request);
-            record.options = WTF::move(existingRecord->options);
-            record.referrer = WTF::move(existingRecord->referrer);
-            record.info.updateVaryHeaders(record.request, record.responseData);
             sizeIncreased += record.info.size();
             sizeDecreased += existingRecordInfo->size();
-            existingRecordInfo->setSize(record.info.size());
+            *existingRecordInfo = record.info;
         }
 
         targetIdentifiers.append(record.info.identifier());
