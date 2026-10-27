@@ -41,4 +41,6 @@ typedef [EnforceRange] unsigned long WebCodecsVideoDecoderConfigSize;
     VideoColorSpaceInit colorSpace;
     HardwareAcceleration hardwareAcceleration = "no-preference";
     boolean optimizeForLatency;
+    [EnabledBySetting=WebCodecsVideoFrameRotationEnabled] double rotation = 0;
+    [EnabledBySetting=WebCodecsVideoFrameRotationEnabled] boolean flip = false;
 };

@@ -102,6 +102,8 @@ private:
     const bool m_useIOSurface { false };
     const std::optional<PlatformVideoColorSpace> m_colorSpace;
     const ProcessIdentity m_resourceOwner;
+    const VideoFrame::Rotation m_rotation;
+    const bool m_isMirrored { false };
 };
 
 void LibWebRTCVPXVideoDecoder::create(Type type, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
@@ -210,6 +212,8 @@ LibWebRTCVPXInternalVideoDecoder::LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXV
     , m_useIOSurface(config.pixelBuffer == VideoDecoder::HardwareBuffer::Yes)
     , m_colorSpace(config.colorSpace)
     , m_resourceOwner(config.resourceOwner)
+    , m_rotation(config.rotation)
+    , m_isMirrored(config.isMirrored)
 {
     m_internalDecoder->RegisterDecodeCompleteCallback(this);
     webrtc::VideoDecoder::Settings settings;
@@ -294,7 +298,7 @@ int32_t LibWebRTCVPXInternalVideoDecoder::Decoded(webrtc::VideoFrame& frame)
     }
     bool isFullRange = colorSpace && colorSpace->fullRange.value_or(false);
 
-    auto videoFrame = VideoFrameLibWebRTC::create({ }, false, VideoFrame::Rotation::None, std::optional { colorSpace }, toRef(frame.video_frame_buffer()), [protectedThis = Ref { *this }, colorSpace, isFullRange](auto& buffer) {
+    auto videoFrame = VideoFrameLibWebRTC::create({ }, m_isMirrored, m_rotation, std::optional { colorSpace }, toRef(frame.video_frame_buffer()), [protectedThis = Ref { *this }, colorSpace, isFullRange](auto& buffer) {
         return adoptCF(webrtc::createPixelBufferFromFrameBuffer(buffer, [protectedThis, colorSpace, isFullRange](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
             return protectedThis->createPixelBuffer(width, height, bufferType, isFullRange, colorSpace);
         }));
