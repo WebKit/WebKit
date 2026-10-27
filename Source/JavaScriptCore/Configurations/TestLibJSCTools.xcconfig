@@ -23,13 +23,6 @@
 
 #include "TestExecutable.xcconfig"
 
-// We build and install testLibJSCTools for the simulator and MacCatalyst but it does nothing
-// on these platforms. We do this so that run-javascriptcore-tests do not error out for a missing
-// testLibJSCTools executable.
-WK_LIB_JSC_TOOLS_SIMULATOR = NO;
-WK_LIB_JSC_TOOLS_SIMULATOR[sdk=*simulator*] = YES;
-WK_LIB_JSC_TOOLS_SUPPORTED = $(WK_NOT_$(WK_LIB_JSC_TOOLS_UNSUPPORTED));
-WK_LIB_JSC_TOOLS_UNSUPPORTED = $(WK_OR_$(WK_LIB_JSC_TOOLS_SIMULATOR)_$(WK_CHECK_CATALYST));
+EXCLUDED_SOURCE_FILE_NAMES = $(WK_LIB_JSC_TOOLS_EXCLUDED_SOURCE_FILE_NAMES);
 
-OTHER_LDFLAGS = $(inherited) $(WK_LIB_JSC_TOOLS_LDFLAGS_$(WK_LIB_JSC_TOOLS_SUPPORTED));
-WK_LIB_JSC_TOOLS_LDFLAGS_YES = -lJavaScriptCoreTools;
+OTHER_LDFLAGS = $(inherited) -lJavaScriptCoreTools;

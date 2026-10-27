@@ -14761,26 +14761,61 @@
 /* Begin PBXTargetDependency section */
 		D3934A4385F631C04057F7E7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				macos,
+				tvos,
+				watchos,
+				xros,
+			);
 			target = 49D9C56EC7911960C24239F3 /* JavaScriptCoreTools */;
 			targetProxy = 6044D4B120B01FBCA9BCFBE5 /* PBXContainerItemProxy */;
 		};
 		A1B2C30005E5B4A700C0FFEE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				macos,
+				tvos,
+				watchos,
+				xros,
+			);
 			target = 49D9C56EC7911960C24239F3 /* JavaScriptCoreTools */;
 			targetProxy = A1B2C30004E5B4A700C0FFEE /* PBXContainerItemProxy */;
 		};
 		A1B2C30007E5B4A700C0FFEE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				macos,
+				tvos,
+				watchos,
+				xros,
+			);
 			target = 6B03652E1F50D87F0DEC6B42 /* mya */;
 			targetProxy = A1B2C30006E5B4A700C0FFEE /* PBXContainerItemProxy */;
 		};
 		A1B2C30009E5B4A700C0FFEE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				macos,
+				tvos,
+				watchos,
+				xros,
+			);
 			target = 7E83C41317D785F3003DC41B /* testLibJSCTools */;
 			targetProxy = A1B2C30008E5B4A700C0FFEE /* PBXContainerItemProxy */;
 		};
 		F7DDEC2D6CAFD2ACDD19D991 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				macos,
+				tvos,
+				watchos,
+				xros,
+			);
 			target = 49D9C56EC7911960C24239F3 /* JavaScriptCoreTools */;
 			targetProxy = 291A8D565940996D3CA021C1 /* PBXContainerItemProxy */;
 		};
@@ -14881,6 +14916,13 @@
 		};
 		5F40739EF054554602787C41 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				macos,
+				tvos,
+				watchos,
+				xros,
+			);
 			target = 6B03652E1F50D87F0DEC6B42 /* mya */;
 			targetProxy = A269FDF04AF38423A3A5DE9A /* PBXContainerItemProxy */;
 		};

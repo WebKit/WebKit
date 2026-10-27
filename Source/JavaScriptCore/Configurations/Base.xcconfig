@@ -105,6 +105,13 @@ CODE_SIGN_IDENTITY = -;
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;
 
+// libJavaScriptCoreTools, and the tools built on it, are not supported on simulators or
+// Mac Catalyst. Those targets exclude every source there, so Xcode produces no binary.
+WK_LIB_JSC_TOOLS_UNSUPPORTED = $(WK_IS_CATALYST);
+WK_LIB_JSC_TOOLS_UNSUPPORTED[sdk=*simulator*] = YES;
+WK_LIB_JSC_TOOLS_EXCLUDED_SOURCE_FILE_NAMES = $(WK_LIB_JSC_TOOLS_EXCLUDED_SOURCE_FILE_NAMES_$(WK_LIB_JSC_TOOLS_UNSUPPORTED));
+WK_LIB_JSC_TOOLS_EXCLUDED_SOURCE_FILE_NAMES_YES = *;
+
 FRAMEWORK_SEARCH_PATHS = $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR);
 
 NORMAL_JAVASCRIPTCORE_FRAMEWORKS_DIR = $(SYSTEM_LIBRARY_DIR)/Frameworks;

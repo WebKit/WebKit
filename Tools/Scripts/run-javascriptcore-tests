@@ -682,13 +682,18 @@ if (!isWindows()) {
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 }
 
-# We'll want to always run testLibJSCTools (and error out if the binary is missing) if:
-# 1. We're on Apple platforms where we expect testLibJSCTools to always be present.
-# 2. The user explicitly requested this. So, don't fail silently.
-# Otherwise, allow the test to be skipped if it's missing.
-if ($runTestLibJSCTools && !$testLibJSCToolsRequested && $^O ne "darwin" && !-e testPath($productDir, "testLibJSCTools")) {
-    print "Not running testLibJSCTools: it is not built for this platform.\n";
-    $runTestLibJSCTools = DONT_RUN;
+if ($runTestLibJSCTools) {
+    if (isAppleCocoaWebKit()) {
+        if (webkitdirs::willUseSimulatorSDK() || isMacCatalystWebKit()) {
+            $runTestLibJSCTools = DONT_RUN; # Expected to not be supported. Just skip silently.
+        }
+        # Otherwise, testLibJSCTools is expected to be built. So a missing one is a failure.
+    } elsif ($testLibJSCToolsRequested) {
+        # User expects testLibJSCTools to be run because the request is explicit. Don't skip.
+    } elsif (!-e testPath($productDir, "testLibJSCTools")) {
+        print "Not running testLibJSCTools: it is not built for this platform.\n";
+        $runTestLibJSCTools = DONT_RUN;
+    }
 }
 
 $ENV{JSCTEST_timeout} = 120 unless $ENV{JSCTEST_timeout}; # Set a 120 second timeout on all jsc tests (if environment variable not defined already).
