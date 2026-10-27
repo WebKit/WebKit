@@ -166,6 +166,19 @@ void WebViewTest::clickMouseButton(int x, int y, MouseButton button, OptionSet<M
 #endif
 }
 
+#if ENABLE(WPE_PLATFORM)
+void WebViewTest::tapTouchscreen(int x, int y)
+{
+    g_assert_nonnull(m_display.get());
+    auto* view = webkit_web_view_get_wpe_view(m_webView.get());
+    for (auto type : { WPE_EVENT_TOUCH_DOWN, WPE_EVENT_TOUCH_UP }) {
+        auto* event = wpe_event_touch_new(type, view, WPE_INPUT_SOURCE_TOUCHSCREEN, 0, static_cast<WPEModifiers>(0), 1, x, y);
+        wpe_view_event(view, event);
+        wpe_event_unref(event);
+    }
+}
+#endif
+
 void WebViewTest::keyStroke(unsigned keyVal, OptionSet<Modifiers> keyModifiers)
 {
 #if ENABLE(WPE_PLATFORM)

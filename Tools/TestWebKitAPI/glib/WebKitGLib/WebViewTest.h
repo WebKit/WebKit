@@ -84,6 +84,9 @@ public:
     void mouseMoveTo(int x, int y, OptionSet<Modifiers> = OptionSet<Modifiers>());
     void clickMouseButton(int x, int y, MouseButton = MouseButton::Primary, OptionSet<Modifiers> = OptionSet<Modifiers>());
     void keyStroke(unsigned keyVal, OptionSet<Modifiers> = OptionSet<Modifiers>());
+#if ENABLE(WPE_PLATFORM)
+    void tapTouchscreen(int x, int y);
+#endif
 
     void showInWindow(int width = 0, int height = 0);
 
