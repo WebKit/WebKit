@@ -449,7 +449,8 @@ extension WebGPU.Metal.CommandEncoder {
                     ? .invalid : depthStencilAttachmentToClear.pixelFormat
                 depthStencilDescriptor?.isDepthWriteEnabled = false
 
-                if stencilAttachmentToClear
+                // The clear pass has the stencil attachment also when it clears only the depth: it loads the stencil.
+                if (stencilAttachmentToClear || depthAttachmentToClear)
                     && (depthStencilAttachmentToClear.pixelFormat == .depth32Float_stencil8
                         || depthStencilAttachmentToClear.pixelFormat == .stencil8
                         || depthStencilAttachmentToClear.pixelFormat == .x32_stencil8)

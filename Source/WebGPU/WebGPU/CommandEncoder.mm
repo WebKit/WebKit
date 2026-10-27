@@ -525,7 +525,8 @@ static std::pair<id<MTLRenderPipelineState>, id<MTLDepthStencilState>> createSim
         mtlRenderPipelineDescriptor.depthAttachmentPixelFormat = (!depthAttachmentToClear || Device::isStencilOnlyFormat(t.pixelFormat)) ? MTLPixelFormatInvalid : t.pixelFormat;
         depthStencilDescriptor.depthWriteEnabled = NO;
 
-        if (stencilAttachmentToClear && (t.pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || t.pixelFormat == MTLPixelFormatStencil8 || t.pixelFormat == MTLPixelFormatX32_Stencil8))
+        // The clear pass has the stencil attachment also when it clears only the depth: it loads the stencil.
+        if ((stencilAttachmentToClear || depthAttachmentToClear) && (t.pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || t.pixelFormat == MTLPixelFormatStencil8 || t.pixelFormat == MTLPixelFormatX32_Stencil8))
             mtlRenderPipelineDescriptor.stencilAttachmentPixelFormat = t.pixelFormat;
     }
 
