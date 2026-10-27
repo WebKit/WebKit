@@ -469,6 +469,7 @@ _PATH_RULES_SPECIFIER = [
      ["-runtime/wtf_make_unique",
       "-runtime/wtf_move",
       "-runtime/wtf_to_array",
+      "-safercpp/dispatch_get_global_queue",
       "-safercpp/dispatch_get_main_queue"]),
 
     ([  # Ignore formatting and whitespace issues in gmock.

@@ -44,7 +44,8 @@ namespace WebKit {
 // A FrontendChannel that funnels every outbound JSON-RPC message into a
 // caller-supplied Objective-C block. Used by API tests as a stand-in for
 // the real RemoteInspector transport so a test can observe what the
-// automation backend would send back to the driver. Lifetime is managed
+// automation backend would send back to the driver, and by Mac MiniBrowser
+// (see _WKAutomationSessionPrivateForTesting.h). Lifetime is managed
 // by the Objective-C wrapper @_WKAutomationSessionTestChannel below; the
 // channel disconnects from the session before deallocation.
 class TestFrontendChannel final : public Inspector::FrontendChannel {

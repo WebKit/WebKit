@@ -31,9 +31,12 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /// Testing-only SPI that lets in-process API tests drive the Automation
 /// backend without a RemoteInspector transport. Not intended for production
-/// clients; the surface exists solely to exercise WebAutomationSession's
-/// dispatch path (and downstream Inspector backend round-trips) from unit
-/// tests in TestWebKitAPI.
+/// clients; the surface exists to exercise WebAutomationSession's dispatch
+/// path (and downstream Inspector backend round-trips) from unit tests in
+/// TestWebKitAPI. Mac MiniBrowser also uses it at runtime, to connect the
+/// automation sessions that minidriver requests
+/// (Tools/MiniBrowser/mac/AutomationConnection.m). It won't need to once
+/// WebKit can host that connection itself.
 @interface _WKAutomationSession (PrivateForTesting)
 
 /// Register the given WKWebView as a browsing context for this session and
@@ -44,8 +47,9 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /// Install a block that captures every outbound JSON-RPC message the
 /// session would otherwise send through its FrontendChannel (responses
-/// and events). Replaces any previously installed handler. Passing nil
-/// detaches the test channel.
+/// and events). Replacing an installed handler, or removing it by passing
+/// nil, disconnects its channel, which terminates the session, as when a
+/// remote driver disconnects.
 - (void)_setMessageToFrontendHandlerForTesting:(nullable void (^)(NSString *message))handler;
 
 /// Drive an inbound JSON-RPC message into the Automation backend dispatcher
