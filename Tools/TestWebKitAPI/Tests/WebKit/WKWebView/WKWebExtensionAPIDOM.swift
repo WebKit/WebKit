@@ -149,6 +149,34 @@ struct WKWebExtensionAPIDOMTests {
             try await manager.run()
         }
     }
+
+    @Test
+    func openOrClosedShadowRootIgnoresUserAgentShadowRoot() async throws {
+        var server = try HTTPServer(protocol: .http) {
+            Route("/", headerFields: ["Content-Type": "text/html"]) {
+                "<input type='text' id='text-field'>"
+            }
+        }
+
+        let contentScript = """
+            const textField = document.getElementById('text-field')
+            browser.test.assertEq(textField.openOrClosedShadowRoot, null, 'Should return null for a user agent shadow root via element')
+            browser.test.assertEq(browser.dom.openOrClosedShadowRoot(textField), null, 'Should return null for a user agent shadow root via API')
+
+            browser.test.notifyPass()
+            """
+
+        try await server.run { configuration in
+            let manager = try loadWebExtension(manifest: domManifest, resources: ["content.js": contentScript])
+            let context = try #require(manager.context)
+            let webView = try #require(manager.defaultTab?.webView)
+
+            context.setPermissionStatus(.grantedExplicitly, for: configuration.localhostAddress)
+            webView.load(URLRequest(url: configuration.localhostAddress))
+
+            try await manager.run()
+        }
+    }
 }
 
 #endif // ENABLE_WK_WEB_EXTENSIONS

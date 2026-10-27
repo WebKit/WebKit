@@ -3647,7 +3647,11 @@ RefPtr<ShadowRoot> Element::shadowRootForBindings(JSC::JSGlobalObject& lexicalGl
 
 RefPtr<ShadowRoot> Element::openOrClosedShadowRoot() const
 {
-    return shadowRoot();
+    RefPtr shadow = shadowRoot();
+    if (!shadow || shadow->mode() == ShadowRootMode::UserAgent)
+        return nullptr;
+
+    return shadow;
 }
 
 RefPtr<Element> Element::resolveReferenceTarget() const

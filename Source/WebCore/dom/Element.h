@@ -463,7 +463,7 @@ public:
 
     inline ShadowRoot* shadowRoot() const;
     RefPtr<ShadowRoot> shadowRootForBindings(JSC::JSGlobalObject&) const;
-    RefPtr<ShadowRoot> LEGACY_NODELETE openOrClosedShadowRoot() const;
+    RefPtr<ShadowRoot> openOrClosedShadowRoot() const;
     RefPtr<Element> resolveReferenceTarget() const;
     RefPtr<Element> retargetReferenceTargetForBindings(RefPtr<Element>) const;
 
