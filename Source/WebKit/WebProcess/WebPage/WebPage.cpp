@@ -2691,6 +2691,9 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     if (loadParameters.originatingFrame && !loadParameters.frameIdentifier)
         m_mainFrameNavigationInitiator = makeUnique<FrameInfoData>(*loadParameters.originatingFrame);
 
+    if (RefPtr currentHistoryItem = WTF::move(loadParameters.currentHistoryItemForReattach))
+        protect(localFrame->loader())->history().setCurrentItem(toHistoryItem(m_historyItemClient, *currentHistoryItem));
+
     // Initate the load in WebCore.
     ASSERT(localFrame->document());
     FrameLoadRequest frameLoadRequest { *localFrame, WTF::move(loadParameters.request) };

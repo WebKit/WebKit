@@ -7083,6 +7083,16 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         if (isPendingInitialHistoryItem)
             frame.setIsPendingInitialHistoryItem(true);
 
+        loadParameters.currentHistoryItemForReattach = [&] -> RefPtr<FrameState> {
+            if (loadParameters.lockBackForwardList == LockBackForwardList::No || newProcess->coreProcessIdentifier() == frame.process().coreProcessIdentifier())
+                return nullptr;
+            RefPtr currentItem = backForwardList().currentItem();
+            RefPtr frameItem = currentItem ? currentItem->mainFrameItem().childItemForFrameID(frame.frameID()) : nullptr;
+            if (!frameItem)
+                return nullptr;
+            return frameItem->copyFrameStateForReplacingDocument(currentRequestURL);
+        }();
+
         frame.prepareForProvisionalLoadInProcess(newProcess, navigation, browsingContextGroup, originator, [
             loadParameters = WTF::move(loadParameters),
             newProcess = newProcess.copyRef(),
@@ -7130,8 +7140,10 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         RefPtr currentItem = backForwardList().currentItem();
         if (currentItem && (navigation->lockBackForwardList() == LockBackForwardList::Yes || navigation->lockHistory() == LockHistory::Yes)) {
             // If WebCore is supposed to lock the history for this load, then the new process needs to know about the current history item so it can update
-            // it instead of creating a new one.
-            provisionalPage->send(Messages::WebPage::SetCurrentHistoryItemForReattach(currentItem->copyMainFrameStateWithChildren()));
+            // it instead of creating a new one. If the load doesn't replace the entry, the new process saves state to the item and sends it back, so it
+            // needs all of it.
+            Ref frameState = navigation->lockBackForwardList() == LockBackForwardList::Yes ? protect(currentItem->mainFrameItem())->copyFrameStateForReplacingDocument(navigation->currentRequest().url()) : currentItem->copyMainFrameStateWithChildren();
+            provisionalPage->send(Messages::WebPage::SetCurrentHistoryItemForReattach(WTF::move(frameState)));
         }
 
         // FIXME: Work out timing of responding with the last policy delegate, etc

@@ -44,6 +44,7 @@ enum class WebCore::ReplaceIfNotCompletelyLoaded : bool;
     WebKit::UserData userData;
     WebCore::LockHistory lockHistory;
     WebCore::LockBackForwardList lockBackForwardList;
+    RefPtr<WebKit::FrameState> currentHistoryItemForReattach;
     WebCore::NavigationHistoryBehavior navigationHistoryBehavior;
     WebCore::ReplaceIfNotCompletelyLoaded replaceIfNotCompletelyLoaded;
     WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility
