@@ -86,6 +86,7 @@
  */
 struct _WPEDisplayWaylandPrivate {
     struct wl_display* wlDisplay;
+    struct wl_registry* wlRegistry;
     struct wl_compositor* wlCompositor;
     struct xdg_wm_base* xdgWMBase;
     struct wl_shm* wlSHM;
@@ -257,6 +258,7 @@ static void wpeDisplayWaylandDispose(GObject* object)
     g_clear_pointer(&priv->wlDataDeviceManager, wl_data_device_manager_destroy);
     g_clear_pointer(&priv->xdgWMBase, xdg_wm_base_destroy);
     g_clear_pointer(&priv->wlCompositor, wl_compositor_destroy);
+    g_clear_pointer(&priv->wlRegistry, wl_registry_destroy);
     g_clear_pointer(&priv->wlDisplay, wl_display_disconnect);
 
     G_OBJECT_CLASS(wpe_display_wayland_parent_class)->dispose(object);
@@ -430,8 +432,8 @@ static gboolean wpeDisplayWaylandSetup(WPEDisplayWayland* display, GError** erro
     auto* priv = display->priv;
     priv->eventSource = wpeDisplayWaylandCreateEventSource(display);
 
-    auto* registry = wl_display_get_registry(priv->wlDisplay);
-    wl_registry_add_listener(registry, &registryListener, display);
+    priv->wlRegistry = wl_display_get_registry(priv->wlDisplay);
+    wl_registry_add_listener(priv->wlRegistry, &registryListener, display);
     if (wl_display_roundtrip(priv->wlDisplay) < 0) {
         g_clear_pointer(&priv->wlDisplay, wl_display_disconnect);
         g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Failed to connect to default Wayland display");
