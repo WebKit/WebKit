@@ -912,6 +912,9 @@ caches.open("test").then(() => {
 
 TEST(NetworkProcess, DoNotLaunchForDOMCacheDestruction)
 {
+    networkProcessReceivedMessage = false;
+    networkProcessReceivedMessagesVector.clear();
+
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { mainBytes } },
         { "/worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, networkProcessWorkerBytes } }
