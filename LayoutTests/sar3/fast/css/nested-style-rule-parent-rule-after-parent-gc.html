@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const style = document.createElement("style");
+document.head.appendChild(style);
+const sheet = style.sheet;
+sheet.insertRule(".outer { color: red; & .nested { color: blue; } }", 0);
+
+let nestedRules = sheet.cssRules[0].cssRules;
+sheet.deleteRule(0);
+GCController.collect();
+
+const nested = nestedRules[0];
+nestedRules = null;
+GCController.collect();
+
+document.write(nested.parentRule === null ? "PASS" : "FAIL: parentRule is " + nested.parentRule);
+</script>
+</body>
+</html>

@@ -35,6 +35,7 @@ WebCoreOpaqueRoot root(StyleSheet*);
 
 inline WebCoreOpaqueRoot root(CSSRule* rule)
 {
+    Locker locker { rule->opaqueRootLockForGC() };
     // Cannot ref on the GC thread.
     if (rule->parentRule())
         SUPPRESS_UNCOUNTED_ARG return root(rule->parentRule());
