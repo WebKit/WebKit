@@ -59,6 +59,8 @@ GridLayout::~GridLayout()
 
 void GridLayout::updateFormattingContextGeometries()
 {
+    clearGridItemGridAreas();
+
     auto boxGeometryUpdater = BoxGeometryUpdater { protect(layoutState()), gridBox() };
     CheckedPtr gridBoxContainingBlock = CheckedRef { gridBoxRenderer() }->containingBlock();
 
@@ -199,6 +201,27 @@ void GridLayout::updateGridItemRenderers(const GridItemBorderBoxRects& previousG
     ASSERT(gridItemIndex == previousGridItemRects.size());
 }
 
+void GridLayout::clearGridItemGridAreas()
+{
+    for (CheckedRef layoutBox : formattingContextBoxes(gridBox()))
+        CheckedRef { downcast<RenderBox>(*layoutBox->rendererForIntegration()) }->clearGridAreaContentSize();
+}
+
+// Some code (e.g. relative positioning) needs the grid areas after layout is done.
+void GridLayout::updateGridItemGridAreas(const Layout::UsedTrackSizes& usedTrackSizes, const Layout::GridItemRects& gridItemRects)
+{
+    CheckedRef renderGridStyle = gridBoxRenderer().style();
+    auto usedColumnGap = Layout::GridFormattingContext::usedGapValue(renderGridStyle->columnGap(), renderGridStyle.get());
+    auto usedRowGap = Layout::GridFormattingContext::usedGapValue(renderGridStyle->rowGap(), renderGridStyle.get());
+
+    for (auto& gridItemRect : gridItemRects) {
+        auto& lineNumbersForGridArea = gridItemRect.lineNumbersForGridArea;
+        CheckedRef renderer = downcast<RenderBox>(*gridItemRect.layoutBox->rendererForIntegration());
+        renderer->setGridAreaContentLogicalWidth(Layout::GridLayoutUtils::gridAreaDimensionSize(lineNumbersForGridArea.columnStartLine, lineNumbersForGridArea.columnEndLine, usedTrackSizes.columnSizes, usedColumnGap));
+        renderer->setGridAreaContentLogicalHeight(Layout::GridLayoutUtils::gridAreaDimensionSize(lineNumbersForGridArea.rowStartLine, lineNumbersForGridArea.rowEndLine, usedTrackSizes.rowSizes, usedRowGap));
+    }
+}
+
 void GridLayout::updateFormattingContextRootRenderer(LayoutUnit usedBlockContentSize, const Layout::GridItemRects& gridItemRects, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount)
 {
     CheckedRef renderGrid = gridBoxRenderer();
@@ -272,6 +295,7 @@ void GridLayout::layout()
         autoRepeatColumnsCount, autoRepeatRowsCount,
         leadingImplicitColumnsCount, leadingImplicitRowsCount ] = Layout::GridFormattingContext { gridBox(), protect(layoutState()) }.layout(gridLayoutConstraints);
     updateGridItemRenderers(previousGridItemRects);
+    updateGridItemGridAreas(usedTrackSizes, gridItemRects);
     updateFormattingContextRootRenderer(usedBlockContentSize, gridItemRects, autoRepeatColumnsCount, autoRepeatRowsCount, leadingImplicitColumnsCount, leadingImplicitRowsCount);
     layoutOutOfFlowBoxes(usedTrackSizes);
 

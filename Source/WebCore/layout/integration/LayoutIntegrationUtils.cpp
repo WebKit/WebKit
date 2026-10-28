@@ -91,10 +91,10 @@ std::pair<LayoutUnit, LayoutUnit> IntegrationUtils::borderAndPaddingForGridItem(
     return { inlineBorderAndPadding, blockBorderAndPadding };
 }
 
-void IntegrationUtils::layoutGridItem(const ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize) const
+void IntegrationUtils::layoutGridItem(const ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize, std::optional<LayoutUnit> gridAreaBlockSize) const
 {
     ASSERT(box.isGridItem());
-    LayoutIntegration::layoutGridItemWithFormattingContext(box, overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight, gridAreaInlineSize, const_cast<LayoutState&>(m_globalLayoutState.get()));
+    LayoutIntegration::layoutGridItemWithFormattingContext(box, overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight, gridAreaInlineSize, gridAreaBlockSize, const_cast<LayoutState&>(m_globalLayoutState.get()));
 }
 
 std::optional<LayoutUnit> IntegrationUtils::firstLineBaselineForGridItem(const ElementBox& box) const
@@ -153,7 +153,7 @@ static LayoutUnit blockSizeForGridItem(const LayoutState& layoutState, const Ele
     case LayoutIntegration::LogicalHeightType::MaxContentContribution: {
         renderer->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
 
-        LayoutIntegration::layoutGridItemWithFormattingContext(box, { }, { }, gridAreaInlineSize, const_cast<LayoutState&>(layoutState));
+        LayoutIntegration::layoutGridItemWithFormattingContext(box, { }, { }, gridAreaInlineSize, { }, const_cast<LayoutState&>(layoutState));
 
         return layoutState.geometryForBox(box).borderBoxHeight();
     }

@@ -65,6 +65,8 @@ private:
     GridItemBorderBoxRects gridItemBorderBoxRects() const;
 
     void updateGridItemRenderers(const GridItemBorderBoxRects& previousGridItemRects);
+    void clearGridItemGridAreas();
+    void updateGridItemGridAreas(const Layout::UsedTrackSizes&, const Layout::GridItemRects&);
     void updateFormattingContextRootRenderer(LayoutUnit usedBlockContentSize, const Layout::GridItemRects&, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount);
     void layoutOutOfFlowBoxes(const Layout::UsedTrackSizes&);
     void updateOverflow(RenderGrid&);

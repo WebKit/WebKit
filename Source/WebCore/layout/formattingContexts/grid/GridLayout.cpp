@@ -305,7 +305,7 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
                 gridAreaInlineSize, gridAreaBlockSize, formattingContext, inlineMargins, blockMargins);
             usedInlineSizes.append(inlineUsedSize);
             usedBlockSizes.append(blockUsedSize);
-            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, blockUsedSize, gridAreaInlineSize);
+            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, blockUsedSize, gridAreaInlineSize, gridAreaBlockSize);
             continue;
         }
 
@@ -318,10 +318,10 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
         bool hasFitContentBlockSize = GridLayoutUtils::hasFitContentBlockSize(gridItem);
         if (!hasFitContentBlockSize) {
             auto usedBlockSize = GridLayoutUtils::blockUsedSize(gridItem, rowTrackSizingFunctions, blockBorderAndPadding, gridAreaBlockSize, formattingContext, gridAreaInlineSize, blockMargins);
-            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, usedBlockSize, gridAreaInlineSize);
+            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, usedBlockSize, gridAreaInlineSize, gridAreaBlockSize);
             usedBlockSizes.append(usedBlockSize);
         } else {
-            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, { }, gridAreaInlineSize);
+            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, { }, gridAreaInlineSize, gridAreaBlockSize);
             // The item's padding in its box geometry is resolved against the grid container rather than
             // the grid area, so only take the content box size from it.
             usedBlockSizes.append(formattingContext.geometryForGridItem(gridItem.layoutBox()).contentBoxHeight() + blockBorderAndPadding);
