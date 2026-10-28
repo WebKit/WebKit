@@ -62,6 +62,7 @@ public:
     }
 
     void add(const Identifier&);
+    void add(Identifier&&);
     void add(UniquedStringImpl*);
     void addUnchecked(UniquedStringImpl*);
 
@@ -86,6 +87,7 @@ public:
 
 private:
     void addUncheckedInternal(UniquedStringImpl*);
+    bool shouldAdd(UniquedStringImpl*);
     bool isUidMatchedToTypeMode(UniquedStringImpl* identifier);
 
     RefPtr<PropertyNameArray> m_data;
@@ -112,28 +114,40 @@ ALWAYS_INLINE void PropertyNameArrayBuilder::addUnchecked(UniquedStringImpl* ide
     addUncheckedInternal(identifier);
 }
 
-ALWAYS_INLINE void PropertyNameArrayBuilder::add(UniquedStringImpl* identifier)
+ALWAYS_INLINE bool PropertyNameArrayBuilder::shouldAdd(UniquedStringImpl* identifier)
 {
     static constexpr unsigned setThreshold = 20;
 
     ASSERT(identifier);
 
     if (!isUidMatchedToTypeMode(identifier))
-        return;
+        return false;
 
     if (size() < setThreshold) {
         if (m_data->propertyNameVector().contains(identifier))
-            return;
+            return false;
     } else {
         if (m_set.isEmpty()) {
             for (Identifier& name : m_data->propertyNameVector())
                 m_set.add(name.impl());
         }
         if (!m_set.add(identifier).isNewEntry)
-            return;
+            return false;
     }
 
-    addUncheckedInternal(identifier);
+    return true;
+}
+
+ALWAYS_INLINE void PropertyNameArrayBuilder::add(UniquedStringImpl* identifier)
+{
+    if (shouldAdd(identifier))
+        addUncheckedInternal(identifier);
+}
+
+ALWAYS_INLINE void PropertyNameArrayBuilder::add(Identifier&& identifier)
+{
+    if (shouldAdd(identifier.impl()))
+        m_data->propertyNameVector().append(WTF::move(identifier));
 }
 
 ALWAYS_INLINE bool PropertyNameArrayBuilder::isUidMatchedToTypeMode(UniquedStringImpl* identifier)
