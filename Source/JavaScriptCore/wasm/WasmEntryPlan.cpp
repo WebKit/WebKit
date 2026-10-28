@@ -123,21 +123,6 @@ void EntryPlan::prepare()
     if (!tryReserveCapacity(m_wasmToJSExitStubs, importFunctionCount, " WebAssembly to JavaScript stubs"_s))
         return;
 
-    for (const auto& exp : m_moduleInformation->exports) {
-        if (exp.kindIndex >= importFunctionCount)
-            m_exportedFunctionIndices.add(exp.kindIndex - importFunctionCount);
-    }
-
-    for (const auto& element : m_moduleInformation->elements) {
-        for (uint32_t i = 0; i < element.length(); i++) {
-            if (element.initTypes[i] == Element::InitializationType::FromRefFunc && element.initialBitsOrIndices[i] >= importFunctionCount)
-                m_exportedFunctionIndices.add(element.initialBitsOrIndices[i] - importFunctionCount);
-        }
-    }
-
-    if (m_moduleInformation->startFunctionIndexSpace && m_moduleInformation->startFunctionIndexSpace >= importFunctionCount)
-        m_exportedFunctionIndices.add(*m_moduleInformation->startFunctionIndexSpace - importFunctionCount);
-
     if (!prepareImpl())
         return;
 
