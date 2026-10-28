@@ -675,7 +675,10 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
 
     // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain. <rdar://116202119>
     Site mainFrameSite(page->mainFrame()->url());
-    auto mainFrameDomain = WebCore::RegistrableDomain { protect(page->mainFrame())->securityOrigin()->data() };
+    // Built from the main frame's security origin rather than its URL so that it matches the Site the
+    // WebContent process derives from Document::topOrigin() for a shared worker request, including when
+    // the main frame is sandboxed into an opaque origin.
+    auto mainFrameFirstPartySite = WebCore::Site { protect(page->mainFrame())->securityOrigin()->data() };
 
     // If we have an effectiveOrigin, it means we are loading about:blank which doesn't have any resources
     // to load can commit it's provisional frame immediately
@@ -687,7 +690,7 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
 
     page->inspectorController().didCreateProvisionalFrame(provisionalFrame);
 
-    auto continuation = [page = Ref { *page }, process = Ref { process }, mainFrameDomain, weakProvisionalFrame = WeakPtr { m_provisionalFrame }, pageID = page->webPageIDInProcess(process), completionHandler = WTF::move(completionHandler)] () mutable {
+    auto continuation = [page = Ref { *page }, process = Ref { process }, mainFrameFirstPartySite, weakProvisionalFrame = WeakPtr { m_provisionalFrame }, pageID = page->webPageIDInProcess(process), completionHandler = WTF::move(completionHandler)] () mutable {
         RefPtr provisionalFrame = weakProvisionalFrame.get();
         bool cancelled = !provisionalFrame || !protect(provisionalFrame->frame())->isConnected();
         if (cancelled) {
@@ -695,7 +698,7 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
             return;
         }
 
-        page->addAllowedFirstPartyForCookies(process, mainFrameDomain, LoadedWebArchive::No, [weakProvisionalFrame = WTF::move(weakProvisionalFrame), pageID, completionHandler = WTF::move(completionHandler)] mutable {
+        page->addAllowedFirstPartyForCookies(process, mainFrameFirstPartySite, LoadedWebArchive::No, [weakProvisionalFrame = WTF::move(weakProvisionalFrame), pageID, completionHandler = WTF::move(completionHandler)] mutable {
             RefPtr provisionalFrame = weakProvisionalFrame.get();
             bool cancelled = !provisionalFrame || !protect(provisionalFrame->frame())->isConnected();
             if (cancelled) {

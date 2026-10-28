@@ -315,6 +315,7 @@ Tests/WebKit/WKWebView/ScriptTrackingPrivacyTests.mm @nonARC
 Tests/WebKit/WKWebView/ServiceWorkerBasic.mm @nonARC
 Tests/WebKit/WKWebView/ServiceWorkerModuleUnregisterDuringLoad.mm @nonARC
 Tests/WebKit/WKWebView/SessionStorage.mm @nonARC
+Tests/WebKit/WKWebView/SharedWorker.mm @nonARC
 Tests/WebKit/WKWebView/ShouldGoToBackForwardListItem.mm @nonARC
 Tests/WebKit/WKWebView/ShouldOpenExternalURLsInNewWindowActions.mm @nonARC
 Tests/WebKit/WKWebView/ShrinkToFit.mm @nonARC

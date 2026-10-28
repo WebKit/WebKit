@@ -1,0 +1,190 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<head>
+<script>
+
+// TALOS-2026-2510: WebSharedWorkerServerConnection::requestSharedWorker only validates the
+// registrable domain of the renderer-supplied top origin, but the UI process places the worker by
+// comparing full WebCore::Sites (scheme + domain). Forging only the scheme therefore names a site
+// the renderer does not own. A renderer must not be able to run a shared worker under one.
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const objectIdentifierWordCount = 2; // ProcessQualified: object, processIdentifier.
+const transferredPortWordCount = 4; // Two MessagePortIdentifiers, each a process and a port word.
+const stepTimeoutInMilliseconds = 10000;
+const workerStartTimeoutInMilliseconds = 8000;
+const workerMustNotStartTimeoutInMilliseconds = 3000;
+
+const failures = [];
+const workerMessages = [];
+const capturedRequests = [];
+
+// SharedWorker::fromIdentifier() only resolves while the object is alive, and the network process
+// needs it to resolve to run the script fetch that a replayed request triggers.
+const harvestedWorkers = [];
+
+function expect(description, actual, expected)
+{
+    if (actual !== expected)
+        failures.push("FAIL: " + description + " (expected " + expected + ", got " + actual + ")");
+}
+
+function withTimeout(promise, description)
+{
+    return Promise.race([promise, new Promise((resolve, reject) => {
+        setTimeout(() => reject(new Error("timed out waiting for " + description)), stepTimeoutInMilliseconds);
+    })]);
+}
+
+// An argument's buffer can carry leading alignment padding but never trailing bytes, so read a
+// fixed-size payload from the end.
+function trailingWords(buffer, wordCount)
+{
+    const byteCount = wordCount * 8;
+    if (!(buffer instanceof ArrayBuffer) || buffer.byteLength < byteCount)
+        throw new Error("an argument of RequestSharedWorker is too small to hold " + wordCount + " identifiers");
+    const view = new DataView(buffer, buffer.byteLength - byteCount, byteCount);
+    const words = [];
+    for (let index = 0; index < wordCount; ++index)
+        words.push(view.getBigUint64(index * 8, true));
+    return words;
+}
+
+const requestSharedWorkerMessageName = window.IPC ? IPC.messages.WebSharedWorkerServerConnection_RequestSharedWorker.name : 0;
+
+if (window.IPC) {
+    IPC.addOutgoingMessageListener("Networking", message => {
+        if (message.name !== requestSharedWorkerMessageName)
+            return;
+        try {
+            capturedRequests.push({
+                objectIdentifier: trailingWords(message.arguments[1], objectIdentifierWordCount),
+                port: trailingWords(message.arguments[2], transferredPortWordCount)
+            });
+        } catch (error) {
+            failures.push("FAIL: could not read the identifiers out of RequestSharedWorker: " + error.message);
+        }
+    });
+}
+
+// A shared worker whose script 404s still names a live SharedWorkerObjectIdentifier and an
+// unentangled message port pair, but leaves the network process with no shared worker of its own.
+// Each replayed request below needs its own pair, because launching a worker consumes one.
+function harvestFailedSharedWorker(index)
+{
+    return new Promise(resolve => {
+        const countBefore = capturedRequests.length;
+        const worker = new SharedWorker("resources/missing-worker.js", { name: "harvest" + index });
+        harvestedWorkers.push(worker);
+        worker.port.onmessage = event => workerMessages.push(event.data);
+        worker.onerror = () => {
+            const waitForCapture = () => {
+                if (capturedRequests.length > countBefore)
+                    resolve(capturedRequests[capturedRequests.length - 1]);
+                else
+                    setTimeout(waitForCapture, 10);
+            };
+            waitForCapture();
+        };
+    });
+}
+
+function securityOriginTuple(protocol, host, port)
+{
+    const encoded = [
+        { type: "uint8_t", value: 0 }, // Variant index of SecurityOriginData::Tuple.
+        { type: "String", value: protocol },
+        { type: "String", value: host }
+    ];
+    if (port === null)
+        encoded.push({ type: "bool", value: 0 });
+    else {
+        encoded.push({ type: "bool", value: 1 });
+        encoded.push({ type: "uint16_t", value: port });
+    }
+    return encoded;
+}
+
+// Replays a harvested request under a worker name no existing SharedWorker uses, so the network
+// process has to place it rather than join it to an existing one.
+function requestSharedWorker(harvested, topOriginProtocol, name)
+{
+    const host = location.hostname;
+    const port = location.port ? Number(location.port) : null;
+    const clientProtocol = location.protocol.replace(":", "");
+
+    const sharedWorkerKey = [
+        [
+            securityOriginTuple(topOriginProtocol, host, port),
+            securityOriginTuple(clientProtocol, host, port)
+        ],
+        { type: "URL", value: new URL("resources/shared-worker-forged-top-origin-scheme-worker.js", location.href).href },
+        { type: "String", value: name }
+    ];
+    const workerOptions = [
+        { type: "uint8_t", value: 0 }, // WorkerType::Classic.
+        { type: "uint8_t", value: 1 }, // FetchOptionsCredentials::SameOrigin.
+        { type: "String", value: name }
+    ];
+
+    IPC.sendMessage("Networking", 0, requestSharedWorkerMessageName, [
+        sharedWorkerKey,
+        harvested.objectIdentifier.map(word => ({ type: "uint64_t", value: word })),
+        harvested.port.map(word => ({ type: "uint64_t", value: word })),
+        workerOptions
+    ]);
+}
+
+function workerStarted(name, milliseconds)
+{
+    return new Promise(resolve => {
+        const deadline = Date.now() + milliseconds;
+        const poll = () => {
+            if (workerMessages.includes(name))
+                resolve(true);
+            else if (Date.now() >= deadline)
+                resolve(false);
+            else
+                setTimeout(poll, 50);
+        };
+        poll();
+    });
+}
+
+async function main()
+{
+    if (!window.IPC)
+        return;
+
+    const forgedRequest = await withTimeout(harvestFailedSharedWorker(0), "the first harvest worker to fail to load");
+    const controlRequest = await withTimeout(harvestFailedSharedWorker(1), "the second harvest worker to fail to load");
+
+    requestSharedWorker(forgedRequest, "x-forged", "forged");
+    expect("a forged top origin scheme does not start a shared worker",
+        await workerStarted("forged", workerMustNotStartTimeoutInMilliseconds), false);
+
+    // The same code path with the real scheme has to start a worker. Without this the check above
+    // would also pass whenever the replayed message was malformed or never delivered.
+    requestSharedWorker(controlRequest, location.protocol.replace(":", ""), "control");
+    expect("an unforged top origin scheme still starts a shared worker",
+        await workerStarted("control", workerStartTimeoutInMilliseconds), true);
+}
+
+window.onload = () => {
+    main().then(() => {
+        document.body.textContent = failures.length ? failures.join("\n") : "PASS";
+    }, error => {
+        document.body.textContent = "FAIL: " + error;
+    }).then(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+};
+</script>
+</head>
+<body></body>
+</html>

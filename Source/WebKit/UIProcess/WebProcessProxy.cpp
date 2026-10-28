@@ -423,9 +423,9 @@ void WebProcessProxy::forWebPagesWithOrigin(PAL::SessionID sessionID, const Secu
     }
 }
 
-void WebProcessProxy::addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain& domain, LoadedWebArchive loadedWebArchive)
+void WebProcessProxy::addAllowedFirstPartyForCookies(const WebCore::Site& site, LoadedWebArchive loadedWebArchive)
 {
-    m_allowedFirstPartiesForCookies.second.add(domain);
+    m_allowedFirstPartiesForCookies.second.add(site);
     if (loadedWebArchive == LoadedWebArchive::Yes)
         m_allowedFirstPartiesForCookies.first = LoadedWebArchive::Yes;
 }

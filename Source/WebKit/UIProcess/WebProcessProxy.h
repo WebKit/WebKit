@@ -224,8 +224,8 @@ public:
     ~WebProcessProxy();
 
     static void forWebPagesWithOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, NOESCAPE const Function<void(WebPageProxy&)>&);
-    void addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain&, LoadedWebArchive);
-    const std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>& allowedFirstPartiesForCookiesData() const { return m_allowedFirstPartiesForCookies; }
+    void addAllowedFirstPartyForCookies(const WebCore::Site&, LoadedWebArchive);
+    const std::pair<LoadedWebArchive, HashSet<WebCore::Site>>& allowedFirstPartiesForCookiesData() const { return m_allowedFirstPartiesForCookies; }
     bool hasCommittedWebArchive() const { return m_hasCommittedWebArchive; }
     void setHasCommittedWebArchive() { m_hasCommittedWebArchive = true; }
 
@@ -952,7 +952,7 @@ private:
     // and for remote-worker processes, and it can move to MultipleSites.
     enum class HostedSiteTracking : uint8_t { NotStarted, Recorded, AnySite };
     HostedSiteTracking m_hostedSiteTracking { HostedSiteTracking::NotStarted };
-    std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>> m_allowedFirstPartiesForCookies { LoadedWebArchive::No, { } };
+    std::pair<LoadedWebArchive, HashSet<WebCore::Site>> m_allowedFirstPartiesForCookies { LoadedWebArchive::No, { } };
     bool m_isInProcessCache { false };
     bool m_isEligibleForWebProcessCache { true };
     std::optional<WebCore::SecurityOriginData> m_coopCacheOrigin;

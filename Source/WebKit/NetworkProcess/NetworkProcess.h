@@ -31,6 +31,7 @@
 #include "DataTaskIdentifier.h"
 #include "DownloadID.h"
 #include "DownloadManager.h"
+#include "LoadedWebArchive.h"
 #include "NetworkActivityTracker.h"
 #include "NetworkContentRuleListManager.h"
 #include "NetworkStorageSession.h"
@@ -54,6 +55,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
+#include <WebCore/Site.h>
 #include <memory>
 #include <wtf/CheckedRef.h>
 #include <wtf/CrossThreadTask.h>
@@ -128,7 +130,6 @@ class SandboxExtensionHandle;
 class WebPageNetworkParameters;
 enum class CallDownloadDidStart : bool;
 enum class DidFilterKnownLinkDecoration : bool;
-enum class LoadedWebArchive : bool;
 enum class RemoteWorkerType : uint8_t;
 enum class ShouldGrandfatherStatistics : bool;
 enum class StorageAccessStatus : uint8_t;
@@ -486,7 +487,12 @@ public:
     enum class AllowCookieAccess : uint8_t { Disallow, Allow, Terminate };
     AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const URL&);
     AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const RegistrableDomain&);
-    void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, LoadedWebArchive, CompletionHandler<void()>&&);
+
+    // Unlike allowsFirstPartyForCookies, this compares the scheme as well as the registrable domain.
+    bool allowsFirstPartySite(WebCore::ProcessIdentifier, const WebCore::Site&) const;
+
+    void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::Site&&, LoadedWebArchive, CompletionHandler<void()>&&);
+    void addAllowedFirstPartyDomainForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, LoadedWebArchive, CompletionHandler<void()>&&);
     void setHostedDomains(WebCore::ProcessIdentifier, std::optional<HashSet<WebCore::RegistrableDomain>>&&);
 
     // Per launch, so a reconnecting web process keeps its Vary entries.
@@ -671,7 +677,12 @@ private:
 
     HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
     HashMap<PAL::SessionID, std::unique_ptr<NetworkStorageSession>> m_networkStorageSessions;
-    HashMap<WebCore::ProcessIdentifier, std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>> m_allowedFirstPartiesForCookies;
+    struct AllowedFirstParties {
+        LoadedWebArchive loadedWebArchive { LoadedWebArchive::No };
+        HashSet<WebCore::RegistrableDomain> domains;
+        HashSet<WebCore::Site> sites;
+    };
+    HashMap<WebCore::ProcessIdentifier, AllowedFirstParties> m_allowedFirstPartiesForCookies;
     HashMap<WebCore::ProcessIdentifier, HashSet<String>> m_pendingAllowedFilePathsByProcess;
     const uint64_t m_cookieHeaderDigestSalt { cryptographicallyRandomNumber<uint64_t>() };
     HashMap<WebCore::ProcessIdentifier, HashSet<WebPageProxyIdentifier>> m_allowedWebPageProxyIdentifiers;

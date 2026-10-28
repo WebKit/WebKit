@@ -1140,7 +1140,7 @@ void NetworkSession::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier w
         return;
     }
 
-    m_networkProcess->addAllowedFirstPartyForCookies(webProcessIdentifier, WTF::move(firstPartyForCookies), LoadedWebArchive::No, [] { });
+    m_networkProcess->addAllowedFirstPartyDomainForCookies(webProcessIdentifier, WTF::move(firstPartyForCookies), LoadedWebArchive::No, [] { });
 }
 
 RefPtr<SWRegistrationStore> NetworkSession::createRegistrationStore(WebCore::SWServer& server)

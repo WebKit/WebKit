@@ -33,7 +33,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     SecurityFlagsDidChange(struct WebKit::SecurityFlags securityFlags)
     IsSecurityFlagEnabledForTesting(String flagName) -> (std::optional<bool> enabled)
 
-    AddAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain firstPartyForCookies, enum:bool WebKit::LoadedWebArchive loadedWebArchive) -> ()
+    AddAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::Site firstPartyForCookies, enum:bool WebKit::LoadedWebArchive loadedWebArchive) -> ()
     AddAllowedWebPageProxyIdentifier(WebCore::ProcessIdentifier processIdentifier, WebKit::WebPageProxyIdentifier pageID)
     SetHostedDomains(WebCore::ProcessIdentifier processIdentifier, std::optional<HashSet<WebCore::RegistrableDomain>> domains)
 
