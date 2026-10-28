@@ -32,6 +32,7 @@ include(WebKitCommon)
 if (SWIFT_REQUIRED)
     if (POLICY CMP0157)
         cmake_policy(SET CMP0157 NEW)
+        set(CMAKE_Swift_COMPILATION_MODE "$<IF:$<CONFIG:Debug>,incremental,wholemodule>")
     endif ()
 
     enable_language(Swift)

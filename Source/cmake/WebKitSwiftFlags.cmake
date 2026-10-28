@@ -185,9 +185,8 @@ if (APPLE)
         )
     endif ()
 
-    # FIXME: Consider building with -wmo in release / performance builds.
     webkit_add_swift_options(
-        -enable-batch-mode
+        "$<$<AND:$<COMPILE_LANGUAGE:Swift>,$<CONFIG:Debug>>:-enable-batch-mode>"
     )
 else ()
     webkit_add_swift_options(

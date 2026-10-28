@@ -34,17 +34,23 @@ import WebKit_Internal
 // locked can transition to the other axis, not scroll freely around.
 @_expose(Cxx)
 struct WKDirectionalScrollLockTracker {
+    // @used ensures these, and the type metadata, are retained even under -O -wmo: rdar://179098545
+    @used
+    static let cxxTypeMetadata: Any.Type = Self.self
+
     private var lockedAxis: Axis?
     private var lastLockedAxis: Axis?
     private var lastEventTime: TimeInterval = 0
     private var caughtMomentum = false
     private var uncommittedTranslation = CGSize.zero // Translation accumulated since the axis decision was last opened.
 
+    @used
     init() {
     }
 
     // Takes one incremental (per-event) gesture delta and returns it with the locked-out axis zeroed,
     // or unchanged while unlocked.
+    @used
     mutating func update(
         delta: CGSize,
         canScrollHorizontally: Bool,
@@ -95,6 +101,7 @@ struct WKDirectionalScrollLockTracker {
 
     // Applies the current lock to a velocity vector without mutating state, so a locked drag continues
     // its scroll on the locked axis rather than reintroducing diagonal drift.
+    @used
     func filterVelocity(_ velocity: CGSize, prefersUnlocked: Bool) -> CGSize {
         Self.apply(prefersUnlocked ? nil : lockedAxis, to: velocity)
     }
@@ -102,6 +109,7 @@ struct WKDirectionalScrollLockTracker {
     // A fresh gesture re-decides its axis, seeded from the previous drag's axis if it caught that
     // drag's momentum, so the user cannot change direction immediately. The decision stays open for
     // `panHysteresis`, so their actual direction can still supersede the seed.
+    @used
     mutating func didStartGesture() {
         lockedAxis = exchange(&caughtMomentum, with: false) ? lastLockedAxis : nil
         lastEventTime = 0
@@ -109,6 +117,7 @@ struct WKDirectionalScrollLockTracker {
     }
 
     // Hands this gesture's final axis to `lastLockedAxis` for the next gesture to potentially catch.
+    @used
     mutating func didEndGesture() {
         lastLockedAxis = lockedAxis
         lockedAxis = nil
@@ -117,10 +126,12 @@ struct WKDirectionalScrollLockTracker {
         caughtMomentum = false
     }
 
+    @used
     mutating func didCatchMomentum() {
         caughtMomentum = true
     }
 
+    @used
     mutating func reset() {
         lockedAxis = nil
         lastLockedAxis = nil

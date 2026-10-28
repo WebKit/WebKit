@@ -37,10 +37,13 @@ final class IPCTesterReceiver {
     @MainActor
     private var deferredReplyArgument: UInt32 = 0
 
+    // @used ensures these are retained even under -O -wmo: rdar://179098545
+    @used
     init() {
         self.messageForwarder = WebKit.IPCTesterReceiverMessageForwarder.create(target: self)
     }
 
+    @used
     func getMessageReceiver() -> RefIPCTesterReceiverMessageForwarder {
         guard let messageForwarder = self.messageForwarder else {
             fatalError("Unreachable - guaranteed to exist")

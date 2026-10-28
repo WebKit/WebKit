@@ -72,10 +72,11 @@ def dependency_files(output_file_map):
         return []
 
     paths = [entry["dependencies"] for entry in entries.values() if "dependencies" in entry]
-    # The driver derives the emit-module job's depfile name instead of taking it
-    # from the output-file-map, and that one has the fullest view of the
-    # module's imports, so pick it up from the map's own directory.
-    paths += (str(path) for path in Path(output_file_map).parent.glob("*.emit-module.d"))
+    # The driver derives the depfile names of the emit-module job, which has the
+    # fullest view of the module's imports, and of a whole-module compile, which
+    # writes no per-source depfiles, instead of taking them from the
+    # output-file-map, so pick them up from the map's own directory.
+    paths += (str(path) for path in Path(output_file_map).parent.glob("*.d"))
     return [path for path in paths if os.path.exists(path)]
 
 

@@ -129,6 +129,9 @@ SWIFT_VERSION = 6.0;
 SWIFT_OPTIMIZATION_LEVEL = -O;
 SWIFT_OPTIMIZATION_LEVEL[config=Debug] = -Onone;
 
+SWIFT_COMPILATION_MODE = wholemodule;
+SWIFT_COMPILATION_MODE[config=Debug] = singlefile;
+
 // Enable strict memory safety in Swift.
 WK_SWIFT_MEMORY_SAFETY_FLAGS = -strict-memory-safety -enable-experimental-feature Lifetimes -enable-experimental-feature LifetimeDependence -enable-experimental-feature ImportNonPublicCxxMembers;
 
