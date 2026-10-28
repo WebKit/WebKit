@@ -349,7 +349,8 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
     auto autoRepeatRowsCount = gridDefinition.explicitGridTrackSizes.rowAutoRepeatTracksIndexes.distance();
     return { WTF::move(usedTrackSizes), WTF::move(gridItemRects), usedBlockContentSize,
         autoRepeatColumnsCount, autoRepeatRowsCount,
-        leadingImplicitTracks.columnsCount, leadingImplicitTracks.rowsCount };
+        leadingImplicitTracks.columnsCount, leadingImplicitTracks.rowsCount,
+        layoutState.collapsedColumnTracksList, layoutState.collapsedRowTracksList };
 }
 
 PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas& gridAreas) const

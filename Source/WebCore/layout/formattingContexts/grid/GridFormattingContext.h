@@ -72,6 +72,9 @@ struct GridLayoutResult {
 
     size_t leadingImplicitColumnsCount { 0 };
     size_t leadingImplicitRowsCount { 0 };
+
+    BitVector collapsedColumnTracks;
+    BitVector collapsedRowTracks;
 };
 
 // The number of implicit tracks generated before the start of the explicit grid, per axis, because

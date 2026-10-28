@@ -65,10 +65,11 @@ private:
     GridItemBorderBoxRects gridItemBorderBoxRects() const;
 
     void updateGridItemRenderers(const GridItemBorderBoxRects& previousGridItemRects);
-    void updateFormattingContextRootRenderer(LayoutUnit usedBlockContentSize, const Layout::GridItemRects&, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount);
-    void layoutOutOfFlowBoxes(const Layout::UsedTrackSizes&);
+    void updateFormattingContextRootRendererBeforeLayout();
+    void updateFormattingContextRootRenderer(LayoutUnit usedBlockContentSize, const Layout::GridItemRects&, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks);
+    void layoutOutOfFlowBoxes(const Layout::UsedTrackSizes&, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks);
     void updateOverflow(RenderGrid&);
-    void populateGridPositionsForOutOfFlowLayout(const Layout::UsedTrackSizes&);
+    void populateGridPositionsForOutOfFlowLayout(const Layout::UsedTrackSizes&, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks);
 
     const Layout::ElementBox& gridBox() const { return *m_gridBox; }
     Layout::ElementBox& gridBox() { return *m_gridBox; }

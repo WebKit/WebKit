@@ -199,7 +199,12 @@ void GridLayout::updateGridItemRenderers(const GridItemBorderBoxRects& previousG
     ASSERT(gridItemIndex == previousGridItemRects.size());
 }
 
-void GridLayout::updateFormattingContextRootRenderer(LayoutUnit usedBlockContentSize, const Layout::GridItemRects& gridItemRects, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount)
+void GridLayout::updateFormattingContextRootRendererBeforeLayout()
+{
+    gridBoxRenderer().currentGrid().setNeedsItemsPlacement(true);
+}
+
+void GridLayout::updateFormattingContextRootRenderer(LayoutUnit usedBlockContentSize, const Layout::GridItemRects& gridItemRects, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks)
 {
     CheckedRef renderGrid = gridBoxRenderer();
     auto& currentGrid = renderGrid->currentGrid();
@@ -220,6 +225,17 @@ void GridLayout::updateFormattingContextRootRenderer(LayoutUnit usedBlockContent
     // grid it computes from style plus these auto-repeated track counts, offset by the explicit grid start.
     currentGrid.setAutoRepeatTracks(autoRepeatRowsCount, autoRepeatColumnsCount);
     currentGrid.setExplicitGridStart(leadingImplicitRowsCount, leadingImplicitColumnsCount);
+
+    auto emptyTrackIndexes = [](const BitVector& collapsedTracks) -> std::unique_ptr<OrderedTrackIndexSet> {
+        if (collapsedTracks.isEmpty())
+            return { };
+        auto trackIndexes = makeUnique<OrderedTrackIndexSet>();
+        for (auto trackIndex : collapsedTracks)
+            trackIndexes->add(trackIndex);
+        return trackIndexes;
+    };
+    currentGrid.setAutoRepeatEmptyColumns(emptyTrackIndexes(collapsedColumnTracks));
+    currentGrid.setAutoRepeatEmptyRows(emptyTrackIndexes(collapsedRowTracks));
 
     OrderIteratorPopulator orderIteratorPopulator(currentGrid.orderIterator());
 
@@ -264,16 +280,19 @@ std::pair<LayoutUnit, LayoutUnit> GridLayout::computeIntrinsicWidths()
 
 void GridLayout::layout()
 {
+    updateFormattingContextRootRendererBeforeLayout();
+
     auto gridLayoutConstraints = constraintsForGridContent(gridBox());
 
     auto previousGridItemRects = gridItemBorderBoxRects();
 
     auto [ usedTrackSizes, gridItemRects, usedBlockContentSize,
         autoRepeatColumnsCount, autoRepeatRowsCount,
-        leadingImplicitColumnsCount, leadingImplicitRowsCount ] = Layout::GridFormattingContext { gridBox(), protect(layoutState()) }.layout(gridLayoutConstraints);
+        leadingImplicitColumnsCount, leadingImplicitRowsCount,
+        collapsedColumnTracks, collapsedRowTracks ] = Layout::GridFormattingContext { gridBox(), protect(layoutState()) }.layout(gridLayoutConstraints);
     updateGridItemRenderers(previousGridItemRects);
-    updateFormattingContextRootRenderer(usedBlockContentSize, gridItemRects, autoRepeatColumnsCount, autoRepeatRowsCount, leadingImplicitColumnsCount, leadingImplicitRowsCount);
-    layoutOutOfFlowBoxes(usedTrackSizes);
+    updateFormattingContextRootRenderer(usedBlockContentSize, gridItemRects, autoRepeatColumnsCount, autoRepeatRowsCount, leadingImplicitColumnsCount, leadingImplicitRowsCount, collapsedColumnTracks, collapsedRowTracks);
+    layoutOutOfFlowBoxes(usedTrackSizes, collapsedColumnTracks, collapsedRowTracks);
 
     CheckedRef renderGrid = gridBoxRenderer();
     renderGrid->updateLogicalHeight();
@@ -338,7 +357,7 @@ void GridLayout::updateOverflow(RenderGrid& renderGrid)
         renderGrid.addVisualOverflow(gridItemsVisualOverflowRect);
 }
 
-void GridLayout::layoutOutOfFlowBoxes(const Layout::UsedTrackSizes& usedTrackSizes)
+void GridLayout::layoutOutOfFlowBoxes(const Layout::UsedTrackSizes& usedTrackSizes, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks)
 {
     CheckedRef renderGrid = gridBoxRenderer();
     auto* outOfFlowDescendants = renderGrid->outOfFlowBoxes();
@@ -348,7 +367,7 @@ void GridLayout::layoutOutOfFlowBoxes(const Layout::UsedTrackSizes& usedTrackSiz
     // Populate grid positions so that gridAreaRangeForOutOfFlow (called from
     // PositionedLayoutConstraints::captureGridArea during positioned layout)
     // can resolve grid lines to their positions in the grid.
-    populateGridPositionsForOutOfFlowLayout(usedTrackSizes);
+    populateGridPositionsForOutOfFlowLayout(usedTrackSizes, collapsedColumnTracks, collapsedRowTracks);
 
     // FIXME: Determine whether we should conditionally use RelayoutChildren::No
     // based on whether the grid container size changed, matching the legacy path's
@@ -356,7 +375,7 @@ void GridLayout::layoutOutOfFlowBoxes(const Layout::UsedTrackSizes& usedTrackSiz
     renderGrid->layoutOutOfFlowBoxes(RelayoutChildren::Yes);
 }
 
-void GridLayout::populateGridPositionsForOutOfFlowLayout(const Layout::UsedTrackSizes& usedTrackSizes)
+void GridLayout::populateGridPositionsForOutOfFlowLayout(const Layout::UsedTrackSizes& usedTrackSizes, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks)
 {
     CheckedRef renderGrid = gridBoxRenderer();
 
@@ -366,18 +385,19 @@ void GridLayout::populateGridPositionsForOutOfFlowLayout(const Layout::UsedTrack
     auto populate = [&](Style::GridTrackSizingDirection direction) {
         bool isColumns = direction == Style::GridTrackSizingDirection::Columns;
         auto& trackSizes = isColumns ? usedTrackSizes.columnSizes : usedTrackSizes.rowSizes;
+        auto& collapsedTracks = isColumns ? collapsedColumnTracks : collapsedRowTracks;
         auto gap = Layout::GridFormattingContext::usedGapValue(isColumns ? renderGrid->style().columnGap() : renderGrid->style().rowGap(), renderGrid->style());
         auto borderAndPadding = isColumns ? renderGrid->borderAndPaddingStart() : renderGrid->borderAndPaddingBefore();
         auto numberOfTracks = trackSizes.size();
-        bool hasMultipleTracks = numberOfTracks > 1;
+        auto numberOfNonCollapsedTracks = numberOfTracks - collapsedTracks.bitCount();
 
         auto& positions = renderGrid->positions(direction);
         positions.resize(numberOfTracks + 1);
         positions[0] = borderAndPadding;
+        size_t nonCollapsedTracksSoFar = 0;
         for (auto [trackIndex, trackSize] : WTF::indexedRange(trackSizes)) {
-            bool isLastTrack = trackIndex == numberOfTracks - 1;
-            auto gapAfterTrack = (!isLastTrack && hasMultipleTracks) ? gap : 0_lu;
-            positions[trackIndex + 1] = positions[trackIndex] + trackSize + gapAfterTrack;
+            bool hasGutterAfterTrack = !collapsedTracks.get(trackIndex) && ++nonCollapsedTracksSoFar < numberOfNonCollapsedTracks;
+            positions[trackIndex + 1] = positions[trackIndex] + trackSize + (hasGutterAfterTrack ? gap : 0_lu);
         }
     };
 
