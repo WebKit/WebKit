@@ -426,6 +426,15 @@ nothing to commit, working tree clean
                     ][:int(args[2].split('=')[-1])])
                 )
             ), mocks.Subprocess.Route(
+                self.executable, 'log', '--first-parent', '--format=%ct', re.compile(r'--since=.+'), re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout=''.join([
+                        '{}\n'.format(int(commit.timestamp)) for commit in self.rev_list(args[5])
+                    ])
+                ) if self.find(args[5]) else mocks.ProcessCompletion(returncode=128),
+            ), mocks.Subprocess.Route(
                 self.executable, 'log', '--oneline', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
