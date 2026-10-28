@@ -747,6 +747,48 @@ TEST(WKWebExtension, IconVariantWithOnlyUnknownPropertyHasNoIcon)
     EXPECT_NULL([testExtension iconForSize:CGSizeMake(32, 32)]);
 }
 
+TEST(WKWebExtension, IconVariantSelectionUsesPixelSize)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Variant Pixel Size",
+        @"version": @"1.0",
+        @"description": @"Test choosing between icon variants by pixel size",
+
+        @"icon_variants": @[
+            @{ @"16": @"icon-16.png" },
+            @{ @"32": @"icon-32.png" }
+        ]
+    };
+
+    auto *resources = @{
+        @"icon-16.png": Util::makePNGData(CGSizeMake(16, 16), @selector(blackColor)),
+        @"icon-32.png": Util::makePNGData(CGSizeMake(32, 32), @selector(whiteColor)),
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    CGFloat largestScreenScale = 1;
+#if USE(APPKIT)
+    for (NSScreen *screen in NSScreen.screens)
+        largestScreenScale = std::max(largestScreenScale, screen.backingScaleFactor);
+#else
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    for (UIScreen *screen in UIScreen.screens)
+        largestScreenScale = std::max(largestScreenScale, screen.scale);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
+
+    // A 16 point icon needs 32 pixels on a 2x screen, so the 32 pixel variant is the better match there.
+    auto *expectedColor = largestScreenScale >= 2 ? [CocoaColor whiteColor] : [CocoaColor blackColor];
+
+    auto *icon = [testExtension iconForSize:CGSizeMake(16, 16)];
+    EXPECT_NOT_NULL(icon);
+    EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon), expectedColor));
+}
+
 TEST(WKWebExtension, AnySizeIconVariant)
 {
     auto *testManifestDictionary = @{
