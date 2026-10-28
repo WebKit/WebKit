@@ -748,6 +748,11 @@ static NSNumber *_currentBadge;
     return _automationSession;
 }
 
+- (BOOL)automationAcceptsInsecureCertificates
+{
+    return _automationSession.configuration.acceptInsecureCertificates;
+}
+
 - (NSString *)browserNameForAutomationConnection:(AutomationConnection *)connection
 {
     return @"MiniBrowser";

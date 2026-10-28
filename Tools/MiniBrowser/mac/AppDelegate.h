@@ -60,6 +60,7 @@
 @property (readonly, nonatomic) WKUserContentController *userContentContoller;
 @property (readonly, nonatomic) SettingsController *settingsController;
 @property (readonly, nonatomic) WKPreferences *defaultPreferences;
+@property (readonly, nonatomic) BOOL automationAcceptsInsecureCertificates;
 
 @end
 

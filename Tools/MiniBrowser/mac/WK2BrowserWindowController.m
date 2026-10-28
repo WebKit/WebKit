@@ -1136,7 +1136,8 @@ static BOOL responseIsAttachment(NSURLResponse *response)
         }];
         return;
     } else if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
-        if ([[NSApplication sharedApplication] browserAppDelegate].settingsController.acceptAllTLSCertificates) {
+        BrowserAppDelegate *appDelegate = [[NSApplication sharedApplication] browserAppDelegate];
+        if (appDelegate.settingsController.acceptAllTLSCertificates || (webView.configuration._isControlledByAutomation && appDelegate.automationAcceptsInsecureCertificates)) {
             completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
             return;
         }
