@@ -253,18 +253,18 @@ void OpenXRGraphicsBindingOpenGLES::releaseSessionGraphics()
 }
 
 #if OS(ANDROID)
-std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenGLES::exportOpenXRTextureAndroid(const OpenXRSwapchain& swapchain, PlatformGLObject openxrTexture, uint32_t width, uint32_t height)
+std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenGLES::exportOpenXRTextureAndroid(const OpenXRSwapchain& swapchain, PlatformGLObject openxrTexture, const ExportDescriptor& descriptor)
 {
     static constexpr auto kHardwareBufferUsage = AHARDWAREBUFFER_USAGE_GPU_FRAMEBUFFER | AHARDWAREBUFFER_USAGE_GPU_SAMPLED_IMAGE;
 
     RefPtr<AHardwareBuffer> hardwareBuffer;
     {
-        RELEASE_ASSERT(width > 0);
-        RELEASE_ASSERT(height > 0);
+        RELEASE_ASSERT(descriptor.width > 0);
+        RELEASE_ASSERT(descriptor.height > 0);
 
         AHardwareBuffer_Desc bufferDesc = { };
-        bufferDesc.width = width;
-        bufferDesc.height = height;
+        bufferDesc.width = descriptor.width;
+        bufferDesc.height = descriptor.height;
         bufferDesc.usage = kHardwareBufferUsage;
         bufferDesc.layers = 1;
 
@@ -401,7 +401,7 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenG
 #endif // !OS(ANDROID)
 
 #if USE(GBM)
-std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenGLES::exportOpenXRTextureGBM(const OpenXRSwapchain& swapchain, PlatformGLObject openxrTexture, uint32_t width, uint32_t height)
+std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenGLES::exportOpenXRTextureGBM(const OpenXRSwapchain& swapchain, PlatformGLObject openxrTexture, const ExportDescriptor& descriptor)
 {
     static constexpr std::array<WebCore::FourCC, 3> preferredAlphaDRMFormats = { DRM_FORMAT_ARGB8888, DRM_FORMAT_RGBA8888, DRM_FORMAT_ABGR8888 };
     static constexpr std::array<WebCore::FourCC, 3> preferredNoAlphaDRMFormats = { DRM_FORMAT_XRGB8888, DRM_FORMAT_RGBX8888, DRM_FORMAT_BGRX8888 };
@@ -423,9 +423,9 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenG
         return std::nullopt;
     }
 
-    auto* buffer = gbm_bo_create_with_modifiers2(m_gbmDevice->device(), width, height, format.fourcc.value, format.modifiers.span().data(), format.modifiers.size(), GBM_BO_USE_RENDERING);
+    auto* buffer = gbm_bo_create_with_modifiers2(m_gbmDevice->device(), descriptor.width, descriptor.height, format.fourcc.value, format.modifiers.span().data(), format.modifiers.size(), GBM_BO_USE_RENDERING);
     if (!buffer)
-        buffer = gbm_bo_create(m_gbmDevice->device(), width, height, format.fourcc.value, GBM_BO_USE_RENDERING);
+        buffer = gbm_bo_create(m_gbmDevice->device(), descriptor.width, descriptor.height, format.fourcc.value, GBM_BO_USE_RENDERING);
     if (!buffer) {
         RELEASE_LOG(XR, "Failed to allocate GBM buffer for OpenXR texture");
         return std::nullopt;
@@ -471,17 +471,17 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenG
 }
 #endif // USE(GBM)
 
-std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenGLES::exportTexture(uint64_t image, const OpenXRSwapchain& swapchain, TextureType type, uint32_t width, uint32_t height)
+std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenGLES::exportTexture(uint64_t image, const OpenXRSwapchain& swapchain, const ExportDescriptor& descriptor)
 {
     ASSERT(m_glContext);
     ASSERT(m_glDisplay);
 
-    switch (type) {
+    switch (descriptor.type) {
     case TextureType::Texture2D:
-        return exportTexture2D(static_cast<PlatformGLObject>(image), swapchain, width, height);
+        return exportTexture2D(static_cast<PlatformGLObject>(image), swapchain, descriptor);
     case TextureType::Cubemap:
 #if defined(XR_KHR_composition_layer_cube)
-        return exportCubeBuffer(image, swapchain, width, height);
+        return exportCubeBuffer(image, swapchain, descriptor);
 #else
         break;
 #endif
@@ -507,10 +507,10 @@ void OpenXRGraphicsBindingOpenGLES::commitFrame(uint64_t keyImage, const OpenXRS
 #endif
 }
 
-std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenGLES::exportTexture2D(PlatformGLObject openxrTexture, const OpenXRSwapchain& swapchain, [[maybe_unused]] uint32_t width, [[maybe_unused]] uint32_t height)
+std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenGLES::exportTexture2D(PlatformGLObject openxrTexture, const OpenXRSwapchain& swapchain, [[maybe_unused]] const ExportDescriptor& descriptor)
 {
 #if OS(ANDROID)
-    return exportOpenXRTextureAndroid(swapchain, openxrTexture, width, height);
+    return exportOpenXRTextureAndroid(swapchain, openxrTexture, descriptor);
 #else
     if (m_glDisplay->extensions().MESA_image_dma_buf_export)
         return exportOpenXRTextureDMABuf(swapchain, openxrTexture);
@@ -518,7 +518,7 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenG
 
 #if USE(GBM)
     if (m_gbmDevice)
-        return exportOpenXRTextureGBM(swapchain, openxrTexture, width, height);
+        return exportOpenXRTextureGBM(swapchain, openxrTexture, descriptor);
 #endif
 
     RELEASE_LOG(XR, "Failed to export OpenXR texture");
@@ -559,7 +559,7 @@ void OpenXRGraphicsBindingOpenGLES::blitTextureIfNeeded(const OpenXRSwapchain& s
 }
 
 #if defined(XR_KHR_composition_layer_cube)
-std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenGLES::exportCubeBuffer(uint64_t keyImage, const OpenXRSwapchain& swapchain, uint32_t width, uint32_t height)
+std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenGLES::exportCubeBuffer(uint64_t keyImage, const OpenXRSwapchain& swapchain, const ExportDescriptor& descriptor)
 {
     ASSERT(m_glContext);
     ASSERT(m_glDisplay);
@@ -567,7 +567,7 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenG
     auto key = static_cast<PlatformGLObject>(keyImage);
     PlatformGLObject sideBySideTexture = 0;
 #if OS(ANDROID)
-    auto externalTexture = exportOpenXRTextureAndroid(swapchain, key, width, height);
+    auto externalTexture = exportOpenXRTextureAndroid(swapchain, key, descriptor);
     if (!externalTexture)
         return std::nullopt;
     sideBySideTexture = m_exportedTexturesMap.take(key);
@@ -576,7 +576,7 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenG
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
     glGenTextures(1, &sideBySideTexture);
     glBindTexture(GL_TEXTURE_2D, sideBySideTexture);
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, static_cast<GLsizei>(descriptor.width), static_cast<GLsizei>(descriptor.height));
     glBindTexture(GL_TEXTURE_2D, boundTexture);
 
     std::optional<PlatformXR::FrameData::ExternalTexture> externalTexture;
@@ -584,7 +584,7 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenG
         externalTexture = exportOpenXRTextureDMABuf(swapchain, sideBySideTexture);
 #if USE(GBM)
     else if (m_gbmDevice)
-        externalTexture = exportOpenXRTextureGBM(swapchain, sideBySideTexture, width, height);
+        externalTexture = exportOpenXRTextureGBM(swapchain, sideBySideTexture, descriptor);
 #endif
     if (!externalTexture) {
         glDeleteTextures(1, &sideBySideTexture);

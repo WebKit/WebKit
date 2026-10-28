@@ -74,7 +74,7 @@ public:
     const void* sessionGraphicsBinding() const final;
     int64_t selectColorFormat(const Vector<int64_t>& supportedFormats, bool alpha) const final;
     Vector<uint64_t> enumerateSwapchainImages(XrSwapchain) const final;
-    std::optional<PlatformXR::FrameData::ExternalTexture> exportTexture(uint64_t image, const OpenXRSwapchain&, TextureType, uint32_t width, uint32_t height) final;
+    std::optional<PlatformXR::FrameData::ExternalTexture> exportTexture(uint64_t image, const OpenXRSwapchain&, const ExportDescriptor&) final;
     void commitFrame(uint64_t keyImage, const OpenXRSwapchain&, TextureType, const Vector<uint64_t>& images) final;
     void waitFrameFence(WTF::UnixFileDescriptor&&) final;
     void releaseSessionGraphics() final;
@@ -83,18 +83,18 @@ private:
     OpenXRGraphicsBindingOpenGLES();
 
 #if OS(ANDROID)
-    std::optional<PlatformXR::FrameData::ExternalTexture> exportOpenXRTextureAndroid(const OpenXRSwapchain&, PlatformGLObject, uint32_t width, uint32_t height);
+    std::optional<PlatformXR::FrameData::ExternalTexture> exportOpenXRTextureAndroid(const OpenXRSwapchain&, PlatformGLObject, const ExportDescriptor&);
 #else
     std::optional<PlatformXR::FrameData::ExternalTexture> exportOpenXRTextureDMABuf(const OpenXRSwapchain&, PlatformGLObject);
 #endif
 #if USE(GBM)
-    std::optional<PlatformXR::FrameData::ExternalTexture> exportOpenXRTextureGBM(const OpenXRSwapchain&, PlatformGLObject, uint32_t width, uint32_t height);
+    std::optional<PlatformXR::FrameData::ExternalTexture> exportOpenXRTextureGBM(const OpenXRSwapchain&, PlatformGLObject, const ExportDescriptor&);
 #endif
-    std::optional<PlatformXR::FrameData::ExternalTexture> exportTexture2D(PlatformGLObject, const OpenXRSwapchain&, uint32_t width, uint32_t height);
+    std::optional<PlatformXR::FrameData::ExternalTexture> exportTexture2D(PlatformGLObject, const OpenXRSwapchain&, const ExportDescriptor&);
     void blitTextureIfNeeded(const OpenXRSwapchain&);
 
 #if defined(XR_KHR_composition_layer_cube)
-    std::optional<PlatformXR::FrameData::ExternalTexture> exportCubeBuffer(uint64_t keyImage, const OpenXRSwapchain&, uint32_t width, uint32_t height);
+    std::optional<PlatformXR::FrameData::ExternalTexture> exportCubeBuffer(uint64_t keyImage, const OpenXRSwapchain&, const ExportDescriptor&);
     void reconstructCubeFaces(uint64_t keyImage, const Vector<uint64_t>& cubeImages, uint32_t faceSize);
 #endif
 
