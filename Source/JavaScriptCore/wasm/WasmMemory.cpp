@@ -397,6 +397,7 @@ std::expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
         RELEASE_ASSERT(maximum().bytes() != 0);
 
         void* newMemory = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, desiredSize);
+<<<<<<< HEAD
         if (!newMemory) {
             BufferMemoryManager::singleton().freePhysicalBytes(desiredSize);
             return makeUnexpected(GrowFailReason::OutOfMemory);
@@ -404,8 +405,26 @@ std::expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
 
         memcpySpan(unsafeMakeSpan(static_cast<uint8_t*>(newMemory), desiredSize), m_handle->mutableSpan());
         Ref newHandle = adoptRef(*new BufferMemoryHandle(newMemory, desiredSize, desiredSize, initial(), maximum(), sharingMode(), MemoryMode::BoundsChecking));
+=======
+#ifdef RC_REMOVE_SEC_ACCEL_3
+        if (!newMemory)
+            return makeUnexpected(GrowFailReason::OutOfMemory);
+#else
+        if (!newMemory) {
+            BufferMemoryManager::singleton().freePhysicalBytes(desiredSize);
+            return makeUnexpected(GrowFailReason::OutOfMemory);
+        }
+#endif // RC_REMOVE_SEC_ACCEL_3
+
+        memcpy(newMemory, basePointer(), size());
+#ifdef RC_REMOVE_SEC_ACCEL_3
+        auto newHandle = adoptRef(*new BufferMemoryHandle(newMemory, desiredSize, desiredSize, initial(), maximum(), sharingMode(), MemoryMode::BoundsChecking));
+>>>>>>> 9e7715c04353 ([JSC] Update MemoryHandle in place when growing non-shared bounds-checking memory)
         m_handle->transferAnchors(newHandle.get());
         m_handle = WTF::move(newHandle);
+#else
+        m_handle->replaceAllocatedMemory(newMemory, desiredSize);
+#endif // RC_REMOVE_SEC_ACCEL_3
 
         ASSERT(basePointer() == newMemory);
         return success();

@@ -50,10 +50,12 @@ class ArrayBuffer;
 class ArrayBufferView;
 class JSArrayBuffer;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 namespace Wasm {
 class Memory;
 }
 
+#endif // RC_REMOVE_SEC_ACCEL_3
 using ArrayBufferDestructorFunction = RefPtr<SharedTask<void(void*)>>;
 
 #if defined(__swift__)
@@ -195,7 +197,11 @@ public:
     bool isGrowableShared() const { return isResizableOrGrowableShared() && isShared(); }
     bool isResizableNonShared() const { return isResizableOrGrowableShared() && !isShared(); }
     
+#ifdef RC_REMOVE_SEC_ACCEL_3
     void refreshAfterWasmMemoryGrow(Wasm::Memory*);
+#else
+    void refreshAfterWasmMemoryGrow();
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     void swap(ArrayBufferContents& other)
     {
@@ -324,7 +330,11 @@ public:
     void LEGACY_NODELETE makeWasmMemory();
     inline bool isWasmMemory();
     // When a resizable buffer is associated with a non-shared Wasm memory, this function is called by the memory's growthSuccessCallback.
+#ifdef RC_REMOVE_SEC_ACCEL_3
     void refreshAfterWasmMemoryGrow(Wasm::Memory*);
+#else
+    void refreshAfterWasmMemoryGrow();
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     JS_EXPORT_PRIVATE bool transferTo(VM&, ArrayBufferContents&);
     JS_EXPORT_PRIVATE bool shareWith(ArrayBufferContents&);

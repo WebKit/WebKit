@@ -274,6 +274,15 @@ void* BufferMemoryHandle::nullBasePointer()
     });
     return result;
 }
+#ifndef RC_REMOVE_SEC_ACCEL_3
+
+static void freeVirtualPagesUnlessNullBasePointer(void* memory, size_t size)
+{
+    if (!size && memory == BufferMemoryHandle::nullBasePointer())
+        return;
+    Gigacage::freeVirtualPages(Gigacage::Primitive, memory, size);
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 BufferMemoryHandle::~BufferMemoryHandle()
 {
@@ -297,9 +306,13 @@ BufferMemoryHandle::~BufferMemoryHandle()
         case MemoryMode::BoundsChecking: {
             switch (m_sharingMode) {
             case MemorySharingMode::Default: {
+#ifdef RC_REMOVE_SEC_ACCEL_3
                 if (memory == nullBasePointer() && !m_size)
                     return;
                 Gigacage::freeVirtualPages(Gigacage::Primitive, memory, m_size);
+#else
+                freeVirtualPagesUnlessNullBasePointer(memory, m_size);
+#endif // RC_REMOVE_SEC_ACCEL_3
                 break;
             }
             case MemorySharingMode::Shared: {
@@ -323,6 +336,26 @@ BufferMemoryHandle::~BufferMemoryHandle()
         }
     }
 }
+#ifndef RC_REMOVE_SEC_ACCEL_3
+
+void BufferMemoryHandle::replaceAllocatedMemory(void* newMemory, size_t newSize)
+{
+    RELEASE_ASSERT(m_sharingMode == MemorySharingMode::Default);
+    RELEASE_ASSERT(m_mode == MemoryMode::BoundsChecking);
+    ASSERT(newMemory);
+
+    void* oldMemory = memory();
+    size_t oldSize = size();
+    ASSERT(newSize >= oldSize);
+
+    m_memory = CagedMemory(newMemory);
+    m_mappedCapacity = newSize;
+    updateSize(newSize);
+
+    BufferMemoryManager::singleton().freePhysicalBytes(oldSize);
+    freeVirtualPagesUnlessNullBasePointer(oldMemory, oldSize);
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 // FIXME: ARM64E clang has a bug and inlining this function makes optimizer run forever.
 // For now, putting NEVER_INLINE to suppress inlining of this.
@@ -333,6 +366,7 @@ NEVER_INLINE void* BufferMemoryHandle::memory() const
 }
 
 #if ENABLE(WEBASSEMBLY)
+#ifdef RC_REMOVE_SEC_ACCEL_3
 void BufferMemoryHandle::transferAnchors(BufferMemoryHandle& newHandle)
 {
     RELEASE_ASSERT(sharingMode() == MemorySharingMode::Default); // This function should be usable only when this handle is not shared with the other thread.
@@ -340,6 +374,7 @@ void BufferMemoryHandle::transferAnchors(BufferMemoryHandle& newHandle)
     newHandle.m_anchors = std::exchange(m_anchors, { });
 }
 
+#endif // RC_REMOVE_SEC_ACCEL_3
 void BufferMemoryHandle::registerInstance(JSWebAssemblyInstance& instance)
 {
     Locker locker { m_lock };

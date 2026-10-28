@@ -175,9 +175,15 @@ public:
 
 #if ENABLE(WEBASSEMBLY)
     const ThreadSafeWeakHashSet<Wasm::InstanceAnchor>& anchors(const AbstractLocker&) const LIFETIME_BOUND { return m_anchors; }
+#ifdef RC_REMOVE_SEC_ACCEL_3
     void transferAnchors(BufferMemoryHandle& newHandle);
+#endif // RC_REMOVE_SEC_ACCEL_3
     void registerInstance(JSWebAssemblyInstance&);
 #endif
+#ifndef RC_REMOVE_SEC_ACCEL_3
+
+    void replaceAllocatedMemory(void* newMemory, size_t newSize);
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 private:
     using CagedMemory = CagedPtr<Gigacage::Primitive, void>;

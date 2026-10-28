@@ -456,12 +456,20 @@ void ArrayBuffer::makeWasmMemory()
     ASSERT(!isDetachable());
 }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 void ArrayBuffer::refreshAfterWasmMemoryGrow(Wasm::Memory* memory)
+#else
+void ArrayBuffer::refreshAfterWasmMemoryGrow()
+#endif // RC_REMOVE_SEC_ACCEL_3
 {
     ASSERT(isWasmMemory());
 
     void* oldData = m_contents.data();
+#ifdef RC_REMOVE_SEC_ACCEL_3
     m_contents.refreshAfterWasmMemoryGrow(memory);
+#else
+    m_contents.refreshAfterWasmMemoryGrow();
+#endif // RC_REMOVE_SEC_ACCEL_3
     void* newData = m_contents.data();
     if (newData == oldData)
         return;
@@ -784,6 +792,7 @@ std::optional<ArrayBufferContents> ArrayBufferContents::fromSpan(std::span<const
     return ArrayBufferContents { buffer, data.size_bytes(), std::nullopt, ArrayBuffer::primitiveGigacageDestructor() };
 }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 void ArrayBufferContents::refreshAfterWasmMemoryGrow(Wasm::Memory* memory)
 {
 #if ENABLE(WEBASSEMBLY)
@@ -796,6 +805,15 @@ void ArrayBufferContents::refreshAfterWasmMemoryGrow(Wasm::Memory* memory)
     UNUSED_PARAM(memory);
 #endif
 }
+#else // not RC_REMOVE_SEC_ACCEL_3
+void ArrayBufferContents::refreshAfterWasmMemoryGrow()
+{
+    ASSERT(isResizableNonShared());
+    // A BoundsChecking memory handle's allocated memory block is replaced on grow.
+    m_data = m_memoryHandle->memory();
+    m_sizeInBytes = m_memoryHandle->size();
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 
 } // namespace JSC
