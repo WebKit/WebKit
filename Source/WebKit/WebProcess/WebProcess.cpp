@@ -209,6 +209,7 @@
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 #include "PrintConnectionToWebProcess.h"
+#include "PrintConnectionToWebProcessMessages.h"
 #include "PrintProcessConnection.h"
 #include "RemoteSnapshotRegistry.h"
 #include <WebCore/ControlFactory.h>
@@ -2006,26 +2007,47 @@ void WebProcess::waitForPrintSnapshot(RemoteSnapshotIdentifier identifier, Compl
 
 // Received by the process rather than a page, because the frame's page may have gone here since the
 // frame was painted, and a request that reached nothing would leave the snapshot waiting for it.
-void WebProcess::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, const WebCore::IntRect& rect, RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode)
+void WebProcess::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, const WebCore::IntRect& rect, RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode, RemoteSnapshotHost host)
 {
     RefPtr frame = webFrame(frameID);
     RefPtr page = frame ? frame->page() : nullptr;
     if (!page) {
-        abandonSnapshotFrame(snapshotIdentifier, frameID);
+        abandonSnapshotFrame(snapshotIdentifier, frameID, host);
         return;
     }
-    page->drawFrameToSnapshot(frameID, rect, snapshotIdentifier, renderingMode);
+    page->drawFrameToSnapshot(frameID, rect, snapshotIdentifier, renderingMode, host);
 }
 
-void WebProcess::abandonSnapshotFrame(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID)
+// Not through a page's backend, since there may be no page left to have one. For the print process,
+// nothing is sent without a connection to it: it has gone away, and the snapshot failed with it.
+void WebProcess::abandonSnapshotFrame(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, RemoteSnapshotHost host)
 {
-    // Not through a page's rendering backend, since there may be no page left to have one.
-    protect(ensureGPUProcessConnection().connection())->send(Messages::GPUConnectionToWebProcess::AbandonSnapshotFrame(snapshotIdentifier, frameID), 0);
+    switch (host) {
+    case RemoteSnapshotHost::GPU:
+        protect(ensureGPUProcessConnection().connection())->send(Messages::GPUConnectionToWebProcess::AbandonSnapshotFrame(snapshotIdentifier, frameID), 0);
+        return;
+    case RemoteSnapshotHost::Print:
+#if PLATFORM(COCOA)
+        if (RefPtr printProcessConnection = m_printProcessConnection)
+            protect(printProcessConnection->connection())->send(Messages::PrintConnectionToWebProcess::AbandonSnapshotFrame(snapshotIdentifier, frameID), 0);
+#endif
+        return;
+    }
 }
 
-void WebProcess::failSnapshot(RemoteSnapshotIdentifier snapshotIdentifier)
+void WebProcess::failSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, RemoteSnapshotHost host)
 {
-    protect(ensureGPUProcessConnection().connection())->send(Messages::GPUConnectionToWebProcess::FailSnapshot(snapshotIdentifier), 0);
+    switch (host) {
+    case RemoteSnapshotHost::GPU:
+        protect(ensureGPUProcessConnection().connection())->send(Messages::GPUConnectionToWebProcess::FailSnapshot(snapshotIdentifier), 0);
+        return;
+    case RemoteSnapshotHost::Print:
+#if PLATFORM(COCOA)
+        if (RefPtr printProcessConnection = m_printProcessConnection)
+            protect(printProcessConnection->connection())->send(Messages::PrintConnectionToWebProcess::FailSnapshot(snapshotIdentifier), 0);
+#endif
+        return;
+    }
 }
 
 #endif

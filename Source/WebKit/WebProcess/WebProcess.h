@@ -30,6 +30,7 @@
 #include "EventDispatcher.h"
 #include "IdentifierTypes.h"
 #include "NetworkProcessConnection.h"
+#include "RemoteSnapshotHost.h"
 #include "RemoteSnapshotIdentifier.h"
 #include "ScriptTrackingPrivacyFilter.h"
 #include "SharedPreferencesForWebProcess.h"
@@ -319,9 +320,9 @@ public:
 #if ENABLE(GPU_PROCESS)
     GPUProcessConnection& ensureGPUProcessConnection();
     // Resolves a frame of a snapshot that will not be recorded, so that the snapshot does not wait for it.
-    void abandonSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier);
+    void abandonSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, RemoteSnapshotHost);
     // Fails a snapshot whose root will not be recorded, so that nothing waits for it.
-    void failSnapshot(RemoteSnapshotIdentifier);
+    void failSnapshot(RemoteSnapshotIdentifier, RemoteSnapshotHost);
     GPUProcessConnection* existingGPUProcessConnection() { return m_gpuProcessConnection.get(); }
     // Returns timeout duration for GPU process connections. Thread-safe.
     Seconds LEGACY_NODELETE gpuProcessTimeoutDuration() const;
@@ -661,7 +662,7 @@ private:
     void bindAccessibilityFrameWithData(WebCore::FrameIdentifier, std::span<const uint8_t>);
 
 #if ENABLE(GPU_PROCESS)
-    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, WebCore::RenderingMode);
+    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, WebCore::RenderingMode, RemoteSnapshotHost);
 #endif
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
     void prepareForPrinting(CompletionHandler<void(bool)>&&);

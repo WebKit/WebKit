@@ -410,6 +410,12 @@ public:
     bool isPrintProcessClient(const WebProcessProxy& printProcess, WebCore::ProcessIdentifier) const;
     // The snapshot API of the print process with this Lockdown Mode, if it runs.
     RefPtr<PrintProcessProxy> printProcessProxy(WebProcessProxy::LockdownMode);
+
+    // The snapshots being drawn in a print process, with its Lockdown Mode. The other snapshots are
+    // drawn in the GPU process.
+    void didStartPrintSnapshot(RemoteSnapshotIdentifier, WebProcessProxy::LockdownMode);
+    void didEndPrintSnapshot(RemoteSnapshotIdentifier);
+    std::optional<WebProcessProxy::LockdownMode> printSnapshotLockdownMode(RemoteSnapshotIdentifier) const;
     void printProcessClientCountForTesting(WebProcessProxy::LockdownMode, CompletionHandler<void(uint64_t)>&&);
 #endif
 
@@ -972,6 +978,7 @@ private:
     Seconds m_printProcessIdleTimeout { 1_min };
     PrintProcessState m_printProcessState;
     PrintProcessState m_lockdownPrintProcessState;
+    HashMap<RemoteSnapshotIdentifier, WebProcessProxy::LockdownMode> m_printSnapshots;
 #endif
 
 #if ENABLE(MODEL_PROCESS)

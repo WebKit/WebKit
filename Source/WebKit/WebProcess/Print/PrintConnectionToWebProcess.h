@@ -29,9 +29,11 @@
 
 #include "Connection.h"
 #include "RemoteRenderingBackendIdentifier.h"
+#include "RemoteSnapshotIdentifier.h"
 #include "ScopedActiveMessageReceiveQueue.h"
 #include "SharedPreferencesForWebProcess.h"
 #include "StreamServerConnection.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ProcessIdentity.h>
 #include <wtf/HashMap.h>
@@ -78,6 +80,8 @@ private:
     // Messages.
     void createPrintBackend(RemoteRenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
     void releasePrintBackend(RemoteRenderingBackendIdentifier);
+    void abandonSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier);
+    void failSnapshot(RemoteSnapshotIdentifier);
 
     const Ref<IPC::Connection> m_connection;
     const WebCore::ProcessIdentifier m_webProcessIdentifier;

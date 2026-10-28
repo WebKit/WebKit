@@ -1612,20 +1612,42 @@ void WebProcessProxy::gpuProcessConnectionDidBecomeUnresponsive(GPUProcessConnec
 // A frame hosted in another process was painted into a snapshot here. Received by the process rather
 // than a page, because the frame may be going away along with the last of this process's frames in
 // the page, and a request that reached nothing would leave the snapshot waiting for it.
-void WebProcessProxy::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, const WebCore::IntRect& rect, RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode)
+void WebProcessProxy::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, const WebCore::IntRect& rect, RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode, RemoteSnapshotHost host)
 {
     MESSAGE_CHECK(renderingMode == WebCore::RenderingMode::DisplayList || renderingMode == WebCore::RenderingMode::PDFDocument);
 
-    // Nothing can be waiting for a snapshot the GPU process does not have.
-    RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
-    if (!gpuProcess)
+    // The host is the one this process chose for the snapshot: the print process for the print
+    // snapshots it is drawing, and the GPU process otherwise.
+    RefPtr<GPUProcessProxy> gpuProcess;
+#if PLATFORM(COCOA)
+    RefPtr<PrintProcessProxy> printProcess;
+    auto printLockdownMode = protect(processPool())->printSnapshotLockdownMode(snapshotIdentifier);
+    MESSAGE_CHECK((host == RemoteSnapshotHost::Print) == !!printLockdownMode);
+#else
+    MESSAGE_CHECK(host == RemoteSnapshotHost::GPU);
+#endif
+    RemoteSnapshotHostProxy* snapshotHost = nullptr;
+    switch (host) {
+    case RemoteSnapshotHost::GPU:
+        gpuProcess = GPUProcessProxy::singletonIfCreated();
+        snapshotHost = gpuProcess.get();
+        break;
+    case RemoteSnapshotHost::Print:
+#if PLATFORM(COCOA)
+        printProcess = protect(processPool())->printProcessProxy(*printLockdownMode);
+        snapshotHost = printProcess.get();
+#endif
+        break;
+    }
+    // Nothing can be waiting for a snapshot the host does not have.
+    if (!snapshotHost)
         return;
 
     // Gone since it was painted, so it draws nothing.
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     RefPtr parentFrame = frame ? frame->parentFrame() : nullptr;
     if (!parentFrame) {
-        gpuProcess->abandonSnapshotFrame(snapshotIdentifier, frameID);
+        snapshotHost->abandonSnapshotFrame(snapshotIdentifier, frameID);
         return;
     }
 
@@ -1633,23 +1655,40 @@ void WebProcessProxy::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, cons
     // have moved to another process since it was painted, so the frame draws nothing either way.
     if (&parentFrame->process() != this) {
         WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "drawFrameToSnapshot: asked for a frame whose parent is hosted elsewhere");
-        gpuProcess->abandonSnapshotFrame(snapshotIdentifier, frameID);
+        snapshotHost->abandonSnapshotFrame(snapshotIdentifier, frameID);
         return;
     }
 
     Ref frameProcess = frame->process();
     if (!frameProcess->canSendMessage()) {
-        gpuProcess->abandonSnapshotFrame(snapshotIdentifier, frameID);
+        snapshotHost->abandonSnapshotFrame(snapshotIdentifier, frameID);
         return;
     }
 
     // Told before the frame's process is asked, so that the frame is abandoned if that process goes
-    // away first: either by the GPU process, if it had connected there, or by shutDown(), on this same
+    // away first: either by the host, if it had connected there, or by shutDown(), on this same
     // connection so that it cannot overtake this.
-    gpuProcess->snapshotFrameWillBeDrawnByProcess(snapshotIdentifier, frameID, frameProcess->coreProcessIdentifier());
+    snapshotHost->snapshotFrameWillBeDrawnByProcess(snapshotIdentifier, frameID, frameProcess->coreProcessIdentifier());
+
+#if PLATFORM(COCOA)
+    if (printProcess) {
+        // The frame's process records into the print process, so it is connected there first. A
+        // frame whose process has another Lockdown Mode is not drawn.
+        protect(processPool())->ensurePrintProcessConnection(frameProcess, *printLockdownMode, [weakFrameProcess = WeakPtr { frameProcess.get() }, printProcess, frameID, rect, snapshotIdentifier, renderingMode](bool success) {
+            RefPtr frameProcess = weakFrameProcess.get();
+            if (!success || !frameProcess || !frameProcess->canSendMessage()) {
+                printProcess->abandonSnapshotFrame(snapshotIdentifier, frameID);
+                return;
+            }
+            frameProcess->send(Messages::WebProcess::DrawFrameToSnapshot(frameID, rect, snapshotIdentifier, renderingMode, RemoteSnapshotHost::Print), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+        });
+        return;
+    }
+#endif
+
     // Also while the frame's process is waiting on this one, as it does for alert(), since this
     // process may itself be blocked waiting for the snapshot.
-    frameProcess->send(Messages::WebProcess::DrawFrameToSnapshot(frameID, rect, snapshotIdentifier, renderingMode), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    frameProcess->send(Messages::WebProcess::DrawFrameToSnapshot(frameID, rect, snapshotIdentifier, renderingMode, RemoteSnapshotHost::GPU), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
 }
 
 #if HAVE(IOSURFACE)

@@ -1656,6 +1656,24 @@ void WebProcessPool::printProcessClientDidDisconnect(WebProcessProxy& process)
     }
 }
 
+void WebProcessPool::didStartPrintSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, WebProcessProxy::LockdownMode lockdownMode)
+{
+    m_printSnapshots.set(snapshotIdentifier, lockdownMode);
+}
+
+void WebProcessPool::didEndPrintSnapshot(RemoteSnapshotIdentifier snapshotIdentifier)
+{
+    m_printSnapshots.remove(snapshotIdentifier);
+}
+
+std::optional<WebProcessProxy::LockdownMode> WebProcessPool::printSnapshotLockdownMode(RemoteSnapshotIdentifier snapshotIdentifier) const
+{
+    auto iterator = m_printSnapshots.find(snapshotIdentifier);
+    if (iterator == m_printSnapshots.end())
+        return std::nullopt;
+    return iterator->value;
+}
+
 RefPtr<PrintProcessProxy> WebProcessPool::printProcessProxy(WebProcessProxy::LockdownMode lockdownMode)
 {
     RefPtr process = printProcessState(lockdownMode).process;

@@ -29,6 +29,8 @@
 messages -> PrintConnectionToWebProcess {
     CreatePrintBackend(WebKit::RemoteRenderingBackendIdentifier identifier, IPC::StreamServerConnectionHandle connectionHandle)
     ReleasePrintBackend(WebKit::RemoteRenderingBackendIdentifier identifier)
+    AbandonSnapshotFrame(WebKit::RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameIdentifier)
+    FailSnapshot(WebKit::RemoteSnapshotIdentifier snapshotIdentifier)
 }
 
 #endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)

@@ -53,8 +53,8 @@ RefPtr<NativePromise<Ref<NativeImage>, void>> DisplayOnlyImageProxy::create(WebP
 
     // A root that fails to record fails the snapshot in the GPU process, so that the UI process
     // fails to complete it below.
-    auto rootRecorded = MainRunLoopSuccessCallbackAggregator::create(WebPage::failRemoteSnapshotIfRootFails(identifier, [](bool) { }));
-    if (!page.recordRemoteSnapshot(identifier, rootFrameIdentifier, WebPage::RemoteSnapshotRole::Root, RenderingMode::DisplayList, FloatRect { { }, size }, size, WTF::move(rootRecorded), paint))
+    auto rootRecorded = MainRunLoopSuccessCallbackAggregator::create(WebPage::failRemoteSnapshotIfRootFails(identifier, RemoteSnapshotHost::GPU, [](bool) { }));
+    if (!page.recordRemoteSnapshot(identifier, RemoteSnapshotHost::GPU, rootFrameIdentifier, WebPage::RemoteSnapshotRole::Root, RenderingMode::DisplayList, FloatRect { { }, size }, size, WTF::move(rootRecorded), paint))
         return nullptr;
 
     RefPtr connection = WebProcess::singleton().parentProcessConnection();

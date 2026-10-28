@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "PrintConnectionToWebProcessMessages.h"
 #include "RemotePrintBackend.h"
+#include "RemoteSnapshotRegistry.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <wtf/RunLoop.h>
@@ -119,6 +120,17 @@ void PrintConnectionToWebProcess::releasePrintBackend(RemoteRenderingBackendIden
 {
     bool found = m_printBackends.remove(identifier);
     MESSAGE_CHECK(found);
+}
+
+void PrintConnectionToWebProcess::abandonSnapshotFrame(RemoteSnapshotIdentifier snapshotIdentifier, FrameIdentifier frameIdentifier)
+{
+    // FIXME: using global identifiers (frameIdentifier) is not secure. Do not follow this pattern.
+    protect(WebProcess::singleton().snapshotRegistry())->abandonSnapshotFrame(snapshotIdentifier, frameIdentifier);
+}
+
+void PrintConnectionToWebProcess::failSnapshot(RemoteSnapshotIdentifier snapshotIdentifier)
+{
+    protect(WebProcess::singleton().snapshotRegistry())->failSnapshot(snapshotIdentifier);
 }
 
 #undef MESSAGE_CHECK

@@ -30,12 +30,16 @@
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteGradientIdentifier.h"
 #include "RemotePathImplIdentifier.h"
+#include "RemoteSnapshotIdentifier.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/RenderingMode.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <optional>
 #include <wtf/AbstractCanMakeCheckedPtr.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/UniqueRef.h>
 
 namespace IPC {
 class StreamClientConnection;
@@ -44,6 +48,7 @@ class StreamClientConnection;
 namespace WebCore {
 class ColorSpace;
 class Filter;
+class FloatRect;
 class FloatSize;
 class Gradient;
 class ImageBuffer;
@@ -65,6 +70,7 @@ namespace WebKit {
 class RemoteImageBufferProxy;
 class RemoteNativeImageProxy;
 class RemoteResourceCacheProxy;
+class RemoteSnapshotRecorderProxy;
 
 // The backend proxy that RemoteGraphicsContextProxy and RemoteResourceCacheProxy record for: the
 // stream the drawing goes to, the resources sent ahead of it, and the image buffers that contexts
@@ -101,6 +107,11 @@ public:
     virtual void releaseFilter(WebCore::RenderingResourceIdentifier) = 0;
     virtual void cacheDisplayList(RemoteDisplayListIdentifier, const WebCore::DisplayList::DisplayList&) = 0;
     virtual void releaseDisplayList(RemoteDisplayListIdentifier) = 0;
+
+    // Remote snapshots, which the backend's process assembles.
+    virtual void createSnapshot(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, const WebCore::FloatSize&) = 0;
+    virtual UniqueRef<RemoteSnapshotRecorderProxy> createSnapshotRecorder(const WebCore::FloatRect& initialClip, RemoteSnapshotIdentifier, WebCore::RenderingMode) = 0;
+    virtual void sinkSnapshotRecorderIntoSnapshotFrame(UniqueRef<RemoteSnapshotRecorderProxy>&&, WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&) = 0;
 };
 
 } // namespace WebKit

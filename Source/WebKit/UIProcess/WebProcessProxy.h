@@ -37,6 +37,7 @@
 #include "ProcessCrossOriginIsolation.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
+#include "RemoteSnapshotHost.h"
 #include "RemoteSnapshotIdentifier.h"
 #include "RemoteWorkerInitializationData.h"
 #include "ResponsivenessTimer.h"
@@ -788,7 +789,7 @@ private:
 #if ENABLE(GPU_PROCESS)
     void createGPUProcessConnection(GPUProcessConnectionIdentifier, IPC::Connection::Handle&&);
     void gpuProcessConnectionDidBecomeUnresponsive(GPUProcessConnectionIdentifier);
-    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, WebCore::RenderingMode);
+    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, WebCore::RenderingMode, RemoteSnapshotHost);
 #endif
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
     void terminatePrintProcessClient(WebCore::ProcessIdentifier, IPC::MessageName invalidMessageName);

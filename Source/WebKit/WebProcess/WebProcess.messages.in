@@ -83,7 +83,7 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     BindAccessibilityFrameWithData(WebCore::FrameIdentifier frameID, std::span<const uint8_t> data);
 
 #if ENABLE(GPU_PROCESS)
-    DrawFrameToSnapshot(WebCore::FrameIdentifier frameID, WebCore::IntRect rect, WebKit::RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+    DrawFrameToSnapshot(WebCore::FrameIdentifier frameID, WebCore::IntRect rect, WebKit::RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode, enum:bool WebKit::RemoteSnapshotHost host) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
 #endif
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
     PrepareForPrinting() -> (bool success)

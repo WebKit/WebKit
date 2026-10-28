@@ -113,6 +113,9 @@ header: <WebCore/ProcessQualified.h>
     WebCore::ProcessIdentifier processIdentifier();
 };
 
+header: "RemoteSnapshotHost.h"
+enum class WebKit::RemoteSnapshotHost : bool;
+
 header: "RemoteSnapshotIdentifier.h"
 # A ProcessQualified<WTF::UUID>, whose coder is declared as ScriptExecutionContextIdentifier.
 using WebKit::RemoteSnapshotIdentifier = WebCore::ScriptExecutionContextIdentifier;
