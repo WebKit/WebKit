@@ -11,21 +11,24 @@ let iframe;
 function addCrossOriginIFrame() {
     let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
     iframe = document.createElement("iframe");
+    iframe.onload = () => { TestPage.dispatchEventToFrontend("IFrameLoaded"); };
     iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/override-setting-frame.html`;
     document.body.appendChild(iframe);
 }
 
 function test() {
     async function addIFrameAndGetTarget() {
-        let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+        // The first Frame target added is the iframe's initial about:blank in the parent's process. Use the target the
+        // cross-origin document commits into instead, once that document has loaded.
+        let committedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+        let loadedPromise = InspectorTest.awaitEvent("IFrameLoaded");
         InspectorTest.evaluateInPage("addCrossOriginIFrame()");
-        let event = await targetAddedPromise;
-        return event.data.target;
+        let [committedEvent] = await Promise.all([committedPromise, loadedPromise]);
+        return committedEvent.data.target;
     }
 
     async function getComputedColorInTarget(target) {
         // Wait for the iframe document to fully load before checking computed styles.
-        // TargetAdded fires when the JS context is created, before DOM and CSS are ready.
         await target.RuntimeAgent.evaluate.invoke({
             expression: "new Promise(resolve => { if (document.readyState === 'complete') resolve(); else window.addEventListener('load', resolve); })",
             objectGroup: "test",
