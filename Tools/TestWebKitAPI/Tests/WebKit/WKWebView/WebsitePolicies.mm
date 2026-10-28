@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
@@ -1556,6 +1555,8 @@ static bool calledShouldAllowDeviceOrientationAndMotionAccessDelegate = false;
 
 static void runWebsitePoliciesDeviceOrientationEventTest(_WKWebsiteDeviceOrientationAndMotionAccessPolicy accessPolicy)
 {
+    calledShouldAllowDeviceOrientationAndMotionAccessDelegate = false;
+
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
     RetainPtr schemeHandler = adoptNS([[DataMappingSchemeHandler alloc] init]);
@@ -1675,7 +1676,10 @@ TEST(WebpagePreferences, WebsitePoliciesPopUp)
 @interface WebsitePoliciesWebsiteDataStoreDelegate : NSObject <WKNavigationDelegatePrivate, WKURLSchemeHandler, WKUIDelegate>
 @end
 
-@implementation WebsitePoliciesWebsiteDataStoreDelegate
+@implementation WebsitePoliciesWebsiteDataStoreDelegate {
+@package
+    bool _done;
+}
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
 {
@@ -1692,7 +1696,7 @@ TEST(WebpagePreferences, WebsitePoliciesPopUp)
         }
         EXPECT_FALSE(sawException);
 
-        done = true;
+        _done = true;
     }
     if ([url.path isEqualToString:@"/checkStorage"]
         || [url.path isEqualToString:@"/checkCookies"]
@@ -1711,7 +1715,7 @@ TEST(WebpagePreferences, WebsitePoliciesPopUp)
             sawException = true;
         }
         EXPECT_TRUE(sawException);
-        done = true;
+        _done = true;
     }
 }
 
@@ -1734,26 +1738,26 @@ TEST(WebpagePreferences, WebsitePoliciesPopUp)
 {
     EXPECT_STREQ(message.UTF8String, "old value: <>");
     completionHandler();
-    done = true;
+    _done = true;
 }
 
 @end
 
-RetainPtr<WKWebView> websiteDataStoreTestWebView()
+RetainPtr<WKWebView> websiteDataStoreTestWebView(WebsitePoliciesWebsiteDataStoreDelegate *delegate)
 {
-    RetainPtr delegate = adoptNS([[WebsitePoliciesWebsiteDataStoreDelegate alloc] init]);
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setURLSchemeHandler:delegate.get() forURLScheme:@"test"];
+    [configuration setURLSchemeHandler:delegate forURLScheme:@"test"];
     [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView setNavigationDelegate:delegate.get()];
-    [webView setUIDelegate:delegate.get()];
+    [webView setNavigationDelegate:delegate];
+    [webView setUIDelegate:delegate];
     return webView;
 }
 
 TEST(WebpagePreferences, UpdateWebsitePoliciesInvalid)
 {
-    auto webView = websiteDataStoreTestWebView();
+    RetainPtr delegate = adoptNS([[WebsitePoliciesWebsiteDataStoreDelegate alloc] init]);
+    auto webView = websiteDataStoreTestWebView(delegate.get());
     RetainPtr policies = adoptNS([[WKWebpagePreferences alloc] init]);
     [policies _setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
     bool sawException = false;
@@ -1765,25 +1769,26 @@ TEST(WebpagePreferences, UpdateWebsitePoliciesInvalid)
     EXPECT_TRUE(sawException);
     
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///invalid"]]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
     
-    done = false;
+    delegate->_done = false;
     [webView loadHTMLString:@"<iframe src='subFrame'></iframe>" baseURL:[NSURL URLWithString:@"http://webkit.org/mainFrame"]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 TEST(WebpagePreferences, WebsitePoliciesDataStore)
 {
-    auto cookieWebView = websiteDataStoreTestWebView();
+    RetainPtr delegate = adoptNS([[WebsitePoliciesWebsiteDataStoreDelegate alloc] init]);
+    auto cookieWebView = websiteDataStoreTestWebView(delegate.get());
     NSString *alertOldCookie = @"<script>var oldCookie = document.cookie; document.cookie = 'key=value'; alert('old value: <' + oldCookie + '>');</script>";
     [cookieWebView loadHTMLString:alertOldCookie baseURL:[NSURL URLWithString:@"http://example.com/checkCookies"]];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&delegate->_done);
+    delegate->_done = false;
 
     auto pid1 = [cookieWebView _webProcessIdentifier];
 
     [cookieWebView loadHTMLString:alertOldCookie baseURL:[NSURL URLWithString:@"http://example.com/checkCookies"]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 
     EXPECT_NE(pid1, [cookieWebView _webProcessIdentifier]);
 }
