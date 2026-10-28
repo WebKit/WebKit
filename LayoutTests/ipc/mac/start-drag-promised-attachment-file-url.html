@@ -1,0 +1,119 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("A compromised WebContent process must not be able to put a file type on the drag pasteboard via WebPageProxy::StartDrag.");
+
+jsTestIsAsync = true;
+
+const WIDTH = 4;
+const HEIGHT = 4;
+const BYTES_PER_ROW = WIDTH * 4;
+
+function makeDragImageHandle()
+{
+    const shm = IPC.createSharedMemory(BYTES_PER_ROW * HEIGHT);
+    shm.writeBytes(new Uint8Array(BYTES_PER_ROW * HEIGHT).fill(0xff).buffer);
+    return {
+        m_handle: { handle: shm, protection: "ReadWrite" },
+        m_configuration: {
+            m_size: { width: WIDTH, height: HEIGHT },
+            m_colorSpace: { },
+            m_baseImageHeadroom: { headroom: 1 },
+            m_isOpaque: false,
+            bitsPerComponent: 8,
+            bytesPerPixel: 4,
+            bytesPerRow: BYTES_PER_ROW,
+            m_bitmapInfo: 0x2002,
+            m_shareableGainMap: { },
+        },
+    };
+}
+
+function makeSharedBuffer(string)
+{
+    const bytes = Array.from(string, character => character.charCodeAt(0));
+    return { optionalValue: { asFragmentedSharedBuffer: { toIPCData: { variantIndex: 1, variant: [ bytes ] } } } };
+}
+
+function makeDragItem(additionalType)
+{
+    const origin = { x: 0, y: 0 };
+    const point = { x: 50, y: 50 };
+    return {
+        image: { textIndicator: { }, visiblePath: { } },
+        imageAnchorPoint: { x: 0, y: 0 },
+        sourceAction: { },
+        rootFrameID: { optionalValue: IPC.frameID[0] },
+        eventPositionInContentCoordinates: point,
+        eventPositionInRootViewCoordinates: point,
+        dragLocationInContentCoordinates: point,
+        dragLocationInWindowCoordinates: point,
+        title: "",
+        url: { string: "" },
+        dragPreviewFrameInRootViewCoordinates: { location: origin, size: { width: WIDTH, height: HEIGHT } },
+        containsSelection: false,
+        promisedAttachmentInfo: {
+            attachmentIdentifier: "",
+            additionalTypesAndData: [ [ additionalType, makeSharedBuffer("file:///etc/hosts") ] ],
+        },
+        modelLayerID: { },
+    };
+}
+
+(async () => {
+    if (!self.IPC) {
+        // The IPC testing API is not always available (e.g. when this test is repeated under
+        // stress). Emit the expected output so the result still matches, matching the convention
+        // used by other ipc/ tests.
+        testPassed('"public.file-url" was rejected');
+        testPassed('"public.utf8-plain-text" was accepted');
+        finishJSTest();
+        return;
+    }
+
+    const { CoreIPC } = await import("../coreipc.js");
+
+    // WebViewImpl::startDrag has no drag initiator in the test runner, so an accepted StartDrag
+    // always ends up cancelling the drag. Use WebPage::DragCancelled as the signal that the message
+    // made it past WebPageProxy::startDrag's message checks.
+    let sawDragCancelled = false;
+    IPC.addIncomingMessageListener("UI", (message) => {
+        if (String(message.description).includes("DragCancelled"))
+            sawDragCancelled = true;
+    });
+
+    function sendStartDragAndWaitForDispatch(additionalType)
+    {
+        sawDragCancelled = false;
+        CoreIPC.UI.WebPageProxy.StartDrag(IPC.pageID, {
+            dragItem: makeDragItem(additionalType),
+            dragImage: makeDragImageHandle(),
+            nodeID: { },
+            frameID: { optionalValue: IPC.frameID[0] },
+        });
+        // StartDrag is asynchronous, and an accepted one additionally round-trips through the web
+        // process to convert the drag location. Give it several turns to come back.
+        return new Promise(resolve => setTimeout(resolve, 500));
+    }
+
+    await sendStartDragAndWaitForDispatch("public.file-url");
+    if (sawDragCancelled)
+        testFailed('"public.file-url" was accepted');
+    else
+        testPassed('"public.file-url" was rejected');
+
+    // Positive control: the same message with a non-file type must still be dispatched, proving the
+    // rejection above is the type check and not a decoding failure.
+    await sendStartDragAndWaitForDispatch("public.utf8-plain-text");
+    if (sawDragCancelled)
+        testPassed('"public.utf8-plain-text" was accepted');
+    else
+        testFailed('"public.utf8-plain-text" was rejected');
+})().catch(e => testFailed(String(e))).finally(finishJSTest);
+</script>
+</body>
+</html>

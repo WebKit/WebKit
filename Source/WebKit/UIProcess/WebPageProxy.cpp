@@ -17542,7 +17542,10 @@ void WebPageProxy::registerAttachmentIdentifierFromData(IPC::Connection& connect
     attachment->setContentType(contentType);
     m_attachmentIdentifierToAttachmentMap.set(identifier, attachment.copyRef());
 
-    platformRegisterAttachment(WTF::move(attachment), preferredFileName, data);
+    // The preferred file name is web content controlled and ends up naming files created on the
+    // user's behalf (e.g. when dropping the attachment into another application), so strip any
+    // path components out of it before it reaches the file wrapper.
+    platformRegisterAttachment(WTF::move(attachment), ResourceResponseBase::sanitizeSuggestedFilename(preferredFileName), data);
 }
 
 void WebPageProxy::registerAttachmentIdentifierFromFilePath(IPC::Connection& connection, const String& identifier, const String& contentType, const String& filePath)

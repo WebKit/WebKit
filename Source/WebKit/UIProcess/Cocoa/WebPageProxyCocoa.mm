@@ -88,6 +88,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/NowPlayingInfo.h>
 #import <WebCore/NullPlaybackSessionInterface.h>
+#import <WebCore/PlatformPasteboard.h>
 #import <WebCore/PlatformPlaybackSessionInterface.h>
 #import <WebCore/PlatformRenderTheme.h>
 #import <WebCore/PlaybackSessionInterfaceAVKitLegacy.h>
@@ -496,8 +497,24 @@ bool WebPageProxy::scrollingUpdatesDisabledForTesting()
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::startDrag(const DragItem& dragItem, ShareableBitmap::Handle&& dragImageHandle, const std::optional<NodeIdentifier>& nodeID, const std::optional<FrameIdentifier>& frameID)
+void WebPageProxy::startDrag(IPC::Connection& connection, const DragItem& dragItem, ShareableBitmap::Handle&& dragImageHandle, const std::optional<NodeIdentifier>& nodeID, const std::optional<FrameIdentifier>& frameID)
 {
+    auto& promisedAttachmentInfo = dragItem.promisedAttachmentInfo;
+#if ENABLE(ATTACHMENT_ELEMENT)
+    MESSAGE_CHECK(promisedAttachmentInfo.attachmentIdentifier.isEmpty() || protect(preferences())->attachmentElementEnabled(), connection);
+#endif
+    for (auto& [type, data] : promisedAttachmentInfo.additionalTypesAndData) {
+        // These are written to the platform drag pasteboard verbatim, so hold them to the same
+        // standard as any other pasteboard write coming from the web process: it must never be able
+        // to plant a file reference on the drag pasteboard. Editor::getPasteboardTypesAndDataForAttachment
+        // never produces a file type, so this is not a limitation on any legitimate drag.
+        MESSAGE_CHECK(!type.isEmpty(), connection);
+        MESSAGE_CHECK(data, connection);
+#if PLATFORM(MAC)
+        MESSAGE_CHECK(!PlatformPasteboard::isFilePasteboardType(type), connection);
+#endif
+    }
+
     if (RefPtr pageClient = this->pageClient())
         pageClient->startDrag(dragItem, WTF::move(dragImageHandle), nodeID, frameID);
 }
