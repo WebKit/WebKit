@@ -74,7 +74,13 @@ ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariant
 
 RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView, std::optional<char32_t>& matchedPrecomposedCharacter) const
 {
+<<<<<<< HEAD
     matchedPrecomposedCharacter = std::nullopt;
+=======
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Ref fonts = *this->fonts();
+#endif // RC_REMOVE_SEC_ACCEL_3
+>>>>>>> 14335b961fad (Protect FontCascadeFonts across fallback walks that can load a font)
     ASSERT(!stringView.isEmpty());
     auto codePoints = stringView.codePoints();
     auto codePointsIterator = codePoints.begin();
@@ -140,8 +146,15 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
     };
 
     bool triedBaseCharacterFont = false;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
         auto& fontRanges = fallbackRangesAt(i);
+#else
+    for (unsigned fallbackIndex = 0; ; ++fallbackIndex) {
+        auto& fontRanges = fallbackRangesAt(fonts, fallbackIndex);
+        if (fontRanges.isNull())
+            break;
+#endif // RC_REMOVE_SEC_ACCEL_3
         if (fontRanges.isGenericFontFamily() && isPrivateUseAreaCharacter(baseCharacter))
             continue;
 
@@ -191,7 +204,11 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
     // Try a system fallback for the whole cluster if needed.
     if (clusterContainsOtherNonDefaultIgnorableCodePoints) {
         auto preferColoredFont = emojiPolicy == ResolvedEmojiPolicy::RequireEmoji ? FontCache::PreferColoredFont::Yes : FontCache::PreferColoredFont::No;
+#ifdef RC_REMOVE_SEC_ACCEL_3
         if (auto systemFallback = FontCache::forCurrentThread().systemFallbackForCharacterCluster(m_fontDescription, fallbackRangesAt(0).fontForFirstRange(), IsForPlatformFont::No, preferColoredFont, stringView)) {
+#else
+        if (auto systemFallback = FontCache::forCurrentThread().systemFallbackForCharacterCluster(m_fontDescription, fallbackRangesAt(fonts, 0).fontForFirstRange(), IsForPlatformFont::No, preferColoredFont, stringView)) {
+#endif // RC_REMOVE_SEC_ACCEL_3
             if (systemFallback->canRenderCombiningCharacterSequence(stringView))
                 return systemFallback.get();
         }

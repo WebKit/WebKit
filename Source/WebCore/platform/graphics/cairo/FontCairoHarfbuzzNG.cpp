@@ -95,7 +95,13 @@ static bool characterSequenceIsEmoji(SurrogatePairAwareTextIterator& iterator, c
 
 RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView, std::optional<char32_t>& matchedPrecomposedCharacter) const
 {
+<<<<<<< HEAD
     matchedPrecomposedCharacter = std::nullopt;
+=======
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Ref fonts = *this->fonts();
+#endif // RC_REMOVE_SEC_ACCEL_3
+>>>>>>> 14335b961fad (Protect FontCascadeFonts across fallback walks that can load a font)
     auto normalizedString = normalizedNFC(stringView);
 
     // Code below relies on normalizedNFC never narrowing a 16-bit input string into an 8-bit output string.
@@ -125,8 +131,16 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
         && (!preferColoredFont || baseFont->platformData().isColorBitmapFont()))
         return baseFont.get();
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
         RefPtr fallbackFont = fallbackRangesAt(i).fontForCharacter(character);
+#else
+    for (unsigned fallbackIndex = 0; ; ++fallbackIndex) {
+        auto& fontRanges = fallbackRangesAt(fonts, fallbackIndex);
+        if (fontRanges.isNull())
+            break;
+        RefPtr fallbackFont = fontRanges.fontForCharacter(character);
+#endif // RC_REMOVE_SEC_ACCEL_3
         if (!fallbackFont || fallbackFont == baseFont)
             continue;
 
@@ -134,7 +148,11 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
             return fallbackFont.get();
     }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     const auto& originalFont = fallbackRangesAt(0).fontForFirstRange();
+#else
+    const auto& originalFont = fallbackRangesAt(fonts, 0).fontForFirstRange();
+#endif // RC_REMOVE_SEC_ACCEL_3
     if (auto systemFallback = FontCache::forCurrentThread().systemFallbackForCharacterCluster(m_fontDescription, originalFont, IsForPlatformFont::No, preferColoredFont ? FontCache::PreferColoredFont::Yes : FontCache::PreferColoredFont::No, normalizedString.view)) {
         if (systemFallback->canRenderCombiningCharacterSequence(normalizedString.view) && (!preferColoredFont || systemFallback->platformData().isColorBitmapFont()))
             return systemFallback.get();

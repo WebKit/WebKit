@@ -474,7 +474,12 @@ GlyphData FontCascade::glyphDataForCharacter(char32_t c, bool mirror, FontVarian
 
     auto emojiPolicy = resolvedEmojiPolicy.value_or(resolveEmojiPolicy(m_fontDescription.variantEmoji(), c));
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     SUPPRESS_UNCOUNTED_ARG return fonts()->glyphDataForCharacter(c, m_fontDescription, fontSelector(), variant, emojiPolicy);
+#else
+    Ref fonts = *this->fonts();
+    return fonts->glyphDataForCharacter(c, m_fontDescription, fontSelector(), variant, emojiPolicy);
+#endif // RC_REMOVE_SEC_ACCEL_3
 }
 
 

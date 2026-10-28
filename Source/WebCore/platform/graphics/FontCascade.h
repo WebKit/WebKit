@@ -173,7 +173,11 @@ public:
     float floatEmphasisMarkHeight(const AtomString&) const;
 
     inline const Font& primaryFont() const; // Defined in FontCascadeInlines.h
+#ifdef RC_REMOVE_SEC_ACCEL_3
     inline const FontRanges& fallbackRangesAt(unsigned) const; // Defined in FontCascadeInlines.h
+#else
+    inline const FontRanges& fallbackRangesAt(FontCascadeFonts&, unsigned) const; // Defined in FontCascadeInlines.h
+#endif // RC_REMOVE_SEC_ACCEL_3
     WEBCORE_EXPORT GlyphData glyphDataForCharacter(char32_t, bool mirror, FontVariant = FontVariant::Auto, std::optional<ResolvedEmojiPolicy> = std::nullopt) const;
     bool canUseSimplifiedTextMeasuring(char32_t, FontVariant, bool whitespaceIsCollapsed, const Font&) const;
 

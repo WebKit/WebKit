@@ -192,6 +192,9 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     RefPtr effectiveFont = font;
     bool isSystemFallback = false;
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Ref fonts = *m_fontCascade->fonts();
+#endif // RC_REMOVE_SEC_ACCEL_3
     char32_t baseCharacter = 0;
     RetainPtr<CFDictionaryRef> stringAttributes;
     if (effectiveFont->isSystemFontFallbackPlaceholder()) {
@@ -201,10 +204,20 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
         isSystemFallback = true;
 
         U16_GET(characters, 0, 0, characters.size(), baseCharacter);
+#ifdef RC_REMOVE_SEC_ACCEL_3
         effectiveFont = m_fontCascade->fallbackRangesAt(0).fontForCharacter(baseCharacter);
         if (!effectiveFont)
             effectiveFont = &m_fontCascade->fallbackRangesAt(0).fontForFirstRange();
+<<<<<<< HEAD
         stringAttributes = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, getCFStringAttributes(*effectiveFont, m_fontCascade->enableKerning(), effectiveFont->platformData().orientation(), m_fontCascade->fontDescription().usedLocale()).get()));
+=======
+#else
+        effectiveFont = m_fontCascade->fallbackRangesAt(fonts, 0).fontForCharacter(baseCharacter);
+        if (!effectiveFont)
+            effectiveFont = &m_fontCascade->fallbackRangesAt(fonts, 0).fontForFirstRange();
+#endif // RC_REMOVE_SEC_ACCEL_3
+        stringAttributes = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, getCFStringAttributes(*effectiveFont, m_fontCascade->enableKerning(), effectiveFont->platformData().orientation(), m_fontCascade->fontDescription().computedLocale()).get()));
+>>>>>>> 14335b961fad (Protect FontCascadeFonts across fallback walks that can load a font)
         // We don't know which font should be used to render this grapheme cluster, so enable CoreText's fallback mechanism by using the CTFont which doesn't have CoreText's fallback disabled.
         CFDictionarySetValue(const_cast<CFMutableDictionaryRef>(stringAttributes.get()), kCTFontAttributeName, effectiveFont->platformData().ctFont());
     } else
@@ -275,8 +288,16 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
             RetainPtr<CFTypeRef> runFontEqualityObject = FontPlatformData::objectForEqualityCheck(runCTFont.get());
             if (!safeCFEqual(runFontEqualityObject.get(), effectiveFont->platformData().objectForEqualityCheck().get())) {
                 // Begin trying to see if runFont matches any of the fonts in the fallback list.
+#ifdef RC_REMOVE_SEC_ACCEL_3
                 for (unsigned i = 0; !m_fontCascade->fallbackRangesAt(i).isNull(); ++i) {
                     runFont = m_fontCascade->fallbackRangesAt(i).fontForCharacter(baseCharacter);
+#else
+                for (unsigned fallbackIndex = 0; ; ++fallbackIndex) {
+                    auto& fontRanges = m_fontCascade->fallbackRangesAt(fonts, fallbackIndex);
+                    if (fontRanges.isNull())
+                        break;
+                    runFont = fontRanges.fontForCharacter(baseCharacter);
+#endif // RC_REMOVE_SEC_ACCEL_3
                     if (!runFont)
                         continue;
                     if (safeCFEqual(runFont->platformData().objectForEqualityCheck().get(), runFontEqualityObject.get()))
