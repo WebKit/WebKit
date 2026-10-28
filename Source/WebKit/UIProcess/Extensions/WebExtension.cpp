@@ -2209,6 +2209,11 @@ RefPtr<WebCore::Icon> WebExtension::bestIconVariantForManifestKey(const JSON::Ob
         return *std::get_if<RefPtr<WebCore::Icon>>(&*cacheResult);
 
     RefPtr iconArray = object.getArray(manifestKey);
+    if (!iconArray) {
+        recordError(createError(error));
+        return nullptr;
+    }
+
     RefPtr result = bestIconVariant(iconArray, idealSize, [&](Ref<API::Error> error) {
         recordError(error);
     });

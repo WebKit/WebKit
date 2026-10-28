@@ -854,6 +854,49 @@ TEST(WKWebExtension, AnySizeIconVariant)
     EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(64, 64)));
 }
 
+TEST(WKWebExtension, IconVariantsWithWrongTypeRecordsError)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test with a non-array icon_variants",
+
+        @"icon_variants": @"icon.png"
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:@{ }];
+
+    EXPECT_NULL([testExtension iconForSize:CGSizeMake(32, 32)]);
+    EXPECT_EQ(testExtension.errors.count, 1UL);
+}
+
+TEST(WKWebExtension, IconVariantsSkipsNonObjectEntries)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test with a non-object entry in icon_variants",
+
+        @"icon_variants": @[
+            @"icon-16.png",
+            @{ @"32": @"icon-32.png" }
+        ]
+    };
+
+    auto *resources = @{
+        @"icon-32.png": Util::makePNGData(CGSizeMake(32, 32), @selector(whiteColor)),
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+
+    auto *icon = [testExtension iconForSize:CGSizeMake(32, 32)];
+    EXPECT_NOT_NULL(icon);
+}
+
 TEST(WKWebExtension, NoIconVariants)
 {
     auto *testManifestDictionary = @{
