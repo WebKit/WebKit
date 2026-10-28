@@ -571,21 +571,31 @@ ExceptionOr<void> CSSStyleSheet::replaceSync(String&& text)
     // Try to use the cache in the case where contents is replaced before the stylesheet is attached to the document.
     if (isDetached() && m_childRuleCSSOMWrappers.isEmpty()) {
         auto key = Style::StyleSheetContentsCache::Key { text, m_contents->parserContext() };
-        auto cachedContents = Style::StyleSheetContentsCache::singleton().get(key);
-        if (cachedContents) {
+        if (RefPtr cachedContents = Style::StyleSheetContentsCache::singleton().get(key)) {
             protect(m_contents)->unregisterClient(this);
-            m_contents = *cachedContents;
+            m_contents = cachedContents.releaseNonNull();
             protect(m_contents)->registerClient(this);
-        } else {
+            return { };
+        }
+
+        // Contents that are shared with other stylesheets or published to the cache have to stay
+        // immutable, so parse into fresh contents instead of replacing the rules in place.
+        auto contentsForReplacement = [&] -> Ref<StyleSheetContents> {
+            if (m_contents->hasOneClient() && !m_contents->isInMemoryCache()) {
+                protect(m_contents)->clearRules();
+                return m_contents;
+            }
             Ref contents = StyleSheetContents::create(m_contents->parserContext());
             protect(m_contents)->unregisterClient(this);
-            m_contents = contents;
+            m_contents = contents.copyRef();
             contents->registerClient(this);
             contents->checkLoaded();
-            contents->parseString(WTF::move(text));
-            if (contents->isCacheable())
-                Style::StyleSheetContentsCache::singleton().add(WTF::move(key), contents);
-        }
+            return contents;
+        }();
+
+        contentsForReplacement->parseString(WTF::move(text));
+        if (contentsForReplacement->isCacheable())
+            Style::StyleSheetContentsCache::singleton().add(WTF::move(key), WTF::move(contentsForReplacement));
         return { };
     }
 
