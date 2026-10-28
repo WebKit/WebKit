@@ -1573,6 +1573,8 @@ std::optional<IPC::Connection::AsyncReplyID> WebProcessPool::ensurePrintProcessC
     Ref printProcess = *state.process;
     auto clientIdentifier = frameProcess.coreProcessIdentifier();
     if (state.clients.contains(clientIdentifier)) {
+        // For the print backends that it creates from now on.
+        printProcess->send(Messages::WebProcess::UpdatePrintConnectionSharedPreferences(clientIdentifier, frameProcess.sharedPreferencesForWebProcessValue()), 0);
         completionHandler(true);
         return std::nullopt;
     }

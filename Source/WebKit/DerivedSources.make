@@ -71,6 +71,7 @@ VPATH = \
     $(WebKit2)/WebProcess/Notifications \
     $(WebKit2)/WebProcess/OriginData \
     $(WebKit2)/WebProcess/Plugins \
+    $(WebKit2)/WebProcess/Print \
     $(WebKit2)/WebProcess/ResourceCache \
 	$(WebKit2)/WebProcess/Speech \
     $(WebKit2)/WebProcess/Storage \
@@ -261,6 +262,8 @@ MESSAGE_RECEIVERS = \
 	WebProcess/WebCoreSupport/WebPermissionController \
 	WebProcess/WebCoreSupport/WebScreenOrientationManager \
 	WebProcess/WebCoreSupport/WebSpeechRecognitionConnection \
+	WebProcess/Print/PrintConnectionToWebProcess \
+	WebProcess/Print/RemotePrintBackend \
 	WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager \
 	WebProcess/Storage/WebSharedWorkerContextManagerConnection \
 	WebProcess/Storage/WebSharedWorkerObjectConnection \

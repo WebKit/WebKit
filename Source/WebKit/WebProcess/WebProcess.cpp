@@ -210,6 +210,8 @@
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 #include "PrintConnectionToWebProcess.h"
 #include "PrintProcessConnection.h"
+#include "RemoteSnapshotRegistry.h"
+#include <WebCore/ControlFactory.h>
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -1856,7 +1858,19 @@ void WebProcess::prepareForPrinting(CompletionHandler<void(bool)>&& completionHa
     enableContentSandboxStateFlags(true, false);
 #endif
     blockIOKit();
+#if PLATFORM(MAC)
+    // The print backends draw form controls on their work queues.
+    ControlFactory::setDrawsControlsOffMainThread();
+#endif
     completionHandler(protect(ensureGPUProcessConnection())->waitForDidInitialize());
+}
+
+RemoteSnapshotRegistry& WebProcess::snapshotRegistry()
+{
+    ASSERT(m_isPrintProcess);
+    if (!m_snapshotRegistry)
+        m_snapshotRegistry = RemoteSnapshotRegistry::create();
+    return *m_snapshotRegistry;
 }
 
 #define PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, protect(parentProcessConnection()), completion)
@@ -1885,15 +1899,39 @@ void WebProcess::removePrintConnectionToWebProcess(ProcessIdentifier webProcessI
         return;
     }
     // Also for web processes that went away before they could connect, which the connection would not notice.
-    if (RefPtr connection = m_printConnectionsToWebProcesses.take(webProcessIdentifier))
+    if (RefPtr connection = m_printConnectionsToWebProcesses.take(webProcessIdentifier)) {
         connection->invalidate();
+        printClientDidGoAway(webProcessIdentifier);
+    }
+}
+
+// As the GPU process does when a web process goes away: nothing waits for its frames, and nobody can
+// ask for the snapshots it minted.
+void WebProcess::printClientDidGoAway(ProcessIdentifier webProcessIdentifier)
+{
+    if (RefPtr snapshotRegistry = m_snapshotRegistry) {
+        snapshotRegistry->abandonSnapshotFramesOwnedBy(webProcessIdentifier);
+        snapshotRegistry->removeSnapshotsForProcess(webProcessIdentifier);
+    }
+}
+
+void WebProcess::updatePrintConnectionSharedPreferences(ProcessIdentifier webProcessIdentifier, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess)
+{
+    if (!m_isPrintProcess) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    if (RefPtr connection = m_printConnectionsToWebProcesses.get(webProcessIdentifier))
+        connection->updateSharedPreferencesForWebProcess(WTF::move(sharedPreferencesForWebProcess));
 }
 
 void WebProcess::printConnectionToWebProcessDidClose(PrintConnectionToWebProcess& connection)
 {
     auto iterator = m_printConnectionsToWebProcesses.find(connection.webProcessIdentifier());
-    if (iterator != m_printConnectionsToWebProcesses.end() && iterator->value.ptr() == &connection)
-        m_printConnectionsToWebProcesses.remove(iterator);
+    if (iterator == m_printConnectionsToWebProcesses.end() || iterator->value.ptr() != &connection)
+        return;
+    m_printConnectionsToWebProcesses.remove(iterator);
+    printClientDidGoAway(connection.webProcessIdentifier());
 }
 
 void WebProcess::printConnectionToWebProcessCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)

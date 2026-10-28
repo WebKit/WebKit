@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+class RemotePrintBackendProxy;
+
 // In a web process, the connection to the print process that it draws frames of print snapshots into.
 // The UI process gives it to the web process before asking it to draw.
 class PrintProcessConnection final : public ThreadSafeRefCounted<PrintProcessConnection, WTF::DestructionThread::Main>, public IPC::Connection::Client {
@@ -48,6 +50,9 @@ public:
     IPC::Connection& connection() { return m_connection.get(); }
     void invalidate();
 
+    // The backend that this web process records its frames of print snapshots into.
+    RemotePrintBackendProxy& printBackendProxy();
+
 private:
     explicit PrintProcessConnection(IPC::Connection::Handle&&);
 
@@ -58,6 +63,7 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     const Ref<IPC::Connection> m_connection;
+    RefPtr<RemotePrintBackendProxy> m_printBackendProxy;
 };
 
 } // namespace WebKit

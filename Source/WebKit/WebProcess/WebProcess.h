@@ -157,6 +157,7 @@ class RemoteImageDecoderAVFManager;
 class RemoteLegacyCDMFactory;
 class RemoteMediaEngineConfigurationFactory;
 class RemoteMediaPlayerManager;
+class RemoteSnapshotRegistry;
 class StorageAreaMap;
 class UserData;
 class WebAutomationSessionProxy;
@@ -343,6 +344,9 @@ public:
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
     void printConnectionToWebProcessDidClose(PrintConnectionToWebProcess&);
     void printProcessConnectionDidClose(PrintProcessConnection&);
+    // In the print process, the snapshots that the print backends record into.
+    RemoteSnapshotRegistry& snapshotRegistry();
+    PrintProcessConnection* printProcessConnection() const { return m_printProcessConnection.get(); }
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -661,6 +665,8 @@ private:
     void prepareForPrinting(CompletionHandler<void(bool)>&&);
     void createPrintConnectionToWebProcess(WebCore::ProcessIdentifier, WebCore::ProcessIdentity&&, SharedPreferencesForWebProcess&&, bool isLockdownModeEnabled, CompletionHandler<void(std::optional<IPC::Connection::Handle>&&)>&&);
     void removePrintConnectionToWebProcess(WebCore::ProcessIdentifier);
+    void updatePrintConnectionSharedPreferences(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&);
+    void printClientDidGoAway(WebCore::ProcessIdentifier);
     void printConnectionToWebProcessCountForTesting(CompletionHandler<void(uint64_t)>&&);
     void connectToPrintProcess(IPC::Connection::Handle&&);
 #endif
@@ -895,6 +901,7 @@ private:
     HashMap<WebCore::ProcessIdentifier, Ref<PrintConnectionToWebProcess>> m_printConnectionsToWebProcesses;
     // In the other web processes, the connection to the print process with their Lockdown Mode.
     RefPtr<PrintProcessConnection> m_printProcessConnection;
+    RefPtr<RemoteSnapshotRegistry> m_snapshotRegistry;
 #endif
 
 #if ENABLE(MODEL_PROCESS)

@@ -377,6 +377,9 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 
     WebProcess/Inspector/WebInspectorUIExtensionController
 
+    WebProcess/Print/PrintConnectionToWebProcess
+    WebProcess/Print/RemotePrintBackend
+
     WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider
 
     WebProcess/WebPage/ViewGestureGeometryCollector

@@ -89,6 +89,7 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     PrepareForPrinting() -> (bool success)
     CreatePrintConnectionToWebProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentity webProcessIdentity, struct WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess, bool isLockdownModeEnabled) -> (std::optional<IPC::ConnectionHandle> connectionHandle)
     RemovePrintConnectionToWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
+    UpdatePrintConnectionSharedPreferences(WebCore::ProcessIdentifier webProcessIdentifier, struct WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess)
     PrintConnectionToWebProcessCountForTesting() -> (uint64_t count)
     ConnectToPrintProcess(IPC::ConnectionHandle connectionHandle) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
 #endif

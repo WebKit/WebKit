@@ -60,6 +60,12 @@ public:
     WEBCORE_EXPORT static Ref<ControlFactory> LEGACY_NODELETE create();
     WEBCORE_EXPORT static ControlFactory& singleton();
 
+#if PLATFORM(MAC)
+    // For a process that draws controls off the main thread, as the GPU process does: they are then
+    // drawn without NSViews. Call before any control is drawn.
+    WEBCORE_EXPORT static void setDrawsControlsOffMainThread();
+#endif
+
 #if ENABLE(APPLE_PAY)
     virtual std::unique_ptr<PlatformControl> createPlatformApplePayButton(ApplePayButtonPart&) = 0;
 #endif

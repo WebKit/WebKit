@@ -28,13 +28,19 @@
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
 #include "Connection.h"
+#include "RemoteRenderingBackendIdentifier.h"
+#include "ScopedActiveMessageReceiveQueue.h"
 #include "SharedPreferencesForWebProcess.h"
+#include "StreamServerConnection.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ProcessIdentity.h>
+#include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
+
+class RemotePrintBackend;
 
 // In the print process, the connection from a web process that draws frames into print snapshots.
 // The UI process creates it, so that the web process gets its end before it is asked to draw.
@@ -52,8 +58,13 @@ public:
 
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
     const WebCore::ProcessIdentity& webProcessIdentity() const LIFETIME_BOUND { return m_webProcessIdentity; }
+    // Taken by the print backends created after it is updated.
     const SharedPreferencesForWebProcess& sharedPreferencesForWebProcessValue() const LIFETIME_BOUND { return m_sharedPreferencesForWebProcess; }
+    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTF::move(sharedPreferencesForWebProcess); }
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
+
+    // Asks the UI process to terminate the web process, for an invalid message. Called on the main thread.
+    static void terminateWebProcess(WebCore::ProcessIdentifier, IPC::MessageName);
 
 private:
     PrintConnectionToWebProcess(WebCore::ProcessIdentifier, IPC::Connection::Identifier&&, WebCore::ProcessIdentity&&, SharedPreferencesForWebProcess&&, bool isLockdownModeEnabled);
@@ -64,11 +75,16 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
+    // Messages.
+    void createPrintBackend(RemoteRenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
+    void releasePrintBackend(RemoteRenderingBackendIdentifier);
+
     const Ref<IPC::Connection> m_connection;
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
     const WebCore::ProcessIdentity m_webProcessIdentity;
-    const SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
+    SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
     const bool m_isLockdownModeEnabled;
+    HashMap<RemoteRenderingBackendIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemotePrintBackend>> m_printBackends;
 };
 
 } // namespace WebKit

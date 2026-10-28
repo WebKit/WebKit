@@ -30,8 +30,11 @@
 
 #include "Decoder.h"
 #include "Logging.h"
+#include "PrintConnectionToWebProcessMessages.h"
+#include "RemotePrintBackend.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
+#include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -61,32 +64,64 @@ PrintConnectionToWebProcess::~PrintConnectionToWebProcess()
 
 void PrintConnectionToWebProcess::invalidate()
 {
+    m_printBackends.clear();
     m_connection->invalidate();
 }
 
 void PrintConnectionToWebProcess::didClose(IPC::Connection&)
 {
     RELEASE_LOG(Process, "%p - PrintConnectionToWebProcess::didClose: webProcessIdentifier=%" PRIu64, this, m_webProcessIdentifier.toUInt64());
+    Ref protectedThis { *this };
+    m_printBackends.clear();
     WebProcess::singleton().printConnectionToWebProcessDidClose(*this);
+}
+
+void PrintConnectionToWebProcess::terminateWebProcess(ProcessIdentifier webProcessIdentifier, IPC::MessageName messageName)
+{
+    ASSERT(RunLoop::isMain());
+    if (RefPtr parentConnection = WebProcess::singleton().parentProcessConnection())
+        parentConnection->send(Messages::WebProcessProxy::TerminatePrintProcessClient(webProcessIdentifier, messageName), 0);
 }
 
 void PrintConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName, const Vector<uint32_t>&)
 {
     RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, "Received an invalid message %s from WebContent process %" PRIu64 ", requesting for it to be terminated.", description(messageName), m_webProcessIdentifier.toUInt64());
-    if (RefPtr parentConnection = WebProcess::singleton().parentProcessConnection())
-        parentConnection->send(Messages::WebProcessProxy::TerminatePrintProcessClient(m_webProcessIdentifier, messageName), 0);
-}
-
-void PrintConnectionToWebProcess::didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder)
-{
-    // The web process has nothing to send here yet.
-    decoder.markInvalid();
+    terminateWebProcess(m_webProcessIdentifier, messageName);
 }
 
 void PrintConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>&)
 {
+    // The web process sends no synchronous messages here.
     decoder.markInvalid();
 }
+
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_connection)
+
+void PrintConnectionToWebProcess::createPrintBackend(RemoteRenderingBackendIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
+{
+    IPC::StreamServerConnectionParameters parameters;
+#if ENABLE(IPC_TESTING_API)
+    parameters.ignoreInvalidMessageForTesting = m_connection->ignoreInvalidMessageForTesting();
+#endif
+    RefPtr streamConnection = IPC::StreamServerConnection::tryCreate(WTF::move(connectionHandle), parameters);
+    MESSAGE_CHECK(streamConnection);
+
+    auto addResult = m_printBackends.ensure(identifier, [&] {
+        return IPC::ScopedActiveMessageReceiveQueue { RemotePrintBackend::create(*this, identifier, streamConnection.releaseNonNull()) };
+    });
+    if (!addResult.isNewEntry) {
+        streamConnection->invalidate();
+        MESSAGE_CHECK(false);
+    }
+}
+
+void PrintConnectionToWebProcess::releasePrintBackend(RemoteRenderingBackendIdentifier identifier)
+{
+    bool found = m_printBackends.remove(identifier);
+    MESSAGE_CHECK(found);
+}
+
+#undef MESSAGE_CHECK
 
 } // namespace WebKit
 

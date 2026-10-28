@@ -199,7 +199,7 @@ static bool supportsViewlessCells()
     if (!supportsViewlessCells) {
         // FIXME: rdar://105249508 - Remove the GPUP check when the viewless focus ring an be drawn without a problem.
 #if ENABLE(GPU_PROCESS)
-        supportsViewlessCells = isInGPUProcess() && [NSCell instancesRespondToSelector:@selector(_setFallbackBackingScaleFactor:)];
+        supportsViewlessCells = (isInGPUProcess() || ControlFactoryMac::drawsControlsOffMainThread()) && [NSCell instancesRespondToSelector:@selector(_setFallbackBackingScaleFactor:)];
 #else
         supportsViewlessCells = [NSCell instancesRespondToSelector:@selector(_setFallbackBackingScaleFactor:)];
 #endif

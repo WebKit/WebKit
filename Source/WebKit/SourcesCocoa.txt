@@ -871,6 +871,8 @@ WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm @nonARC @cost:7
 
 WebProcess/Print/PrintConnectionToWebProcess.cpp
 WebProcess/Print/PrintProcessConnection.cpp
+WebProcess/Print/RemotePrintBackend.cpp
+WebProcess/Print/RemotePrintBackendProxy.cpp
 
 WebProcess/WebCoreSupport/WebCaptionPreferencesDelegate.cpp
 WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
@@ -964,6 +966,7 @@ NetworkStorageManagerMessageReceiver.cpp @cost:6
 NotificationManagerMessageHandlerMessageReceiver.cpp @cost:3
 PlaybackSessionManagerMessageReceiver.cpp @cost:3
 PlaybackSessionManagerProxyMessageReceiver.cpp @cost:3
+PrintConnectionToWebProcessMessageReceiver.cpp
 RemoteAudioDestinationManagerMessageReceiver.cpp
 RemoteAudioHardwareListenerMessageReceiver.cpp
 RemoteAudioSessionMessageReceiver.cpp
@@ -998,6 +1001,7 @@ RemoteMediaSessionHelperProxyMessageReceiver.cpp
 RemoteMediaSessionManagerMessageReceiver.cpp
 RemoteMediaSessionManagerProxyMessageReceiver.cpp
 RemoteObjectRegistryMessageReceiver.cpp
+RemotePrintBackendMessageReceiver.cpp
 RemoteRemoteCommandListenerMessageReceiver.cpp
 RemoteRemoteCommandListenerProxyMessageReceiver.cpp
 RemoteRenderingBackendMessageReceiver.cpp @cost:7

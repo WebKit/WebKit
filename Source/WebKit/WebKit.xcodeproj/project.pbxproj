@@ -4042,8 +4042,14 @@
 		1A6FB7AD11E64B6800DB1371 /* PluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginView.h; sourceTree = "<group>"; };
 		7CFC6A94FFD342711DC736D1 /* PrintConnectionToWebProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrintConnectionToWebProcess.cpp; sourceTree = "<group>"; };
 		DE1FFEC0F1EEBE7B816AA40D /* PrintConnectionToWebProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintConnectionToWebProcess.h; sourceTree = "<group>"; };
+		30C478FBFF7C4E6515CF2972 /* PrintConnectionToWebProcess.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrintConnectionToWebProcess.messages.in; sourceTree = "<group>"; };
 		0A325BB44CD263CD146CD3BC /* PrintProcessConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrintProcessConnection.cpp; sourceTree = "<group>"; };
 		6E5AAF1198DBEFB9AA9CEF2F /* PrintProcessConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintProcessConnection.h; sourceTree = "<group>"; };
+		4F79F6EACD0E0E0C39D97C31 /* RemotePrintBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePrintBackend.cpp; sourceTree = "<group>"; };
+		79F97A3650B242483B2F3DBE /* RemotePrintBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePrintBackend.h; sourceTree = "<group>"; };
+		B0C6A689097C16A360C1DC2A /* RemotePrintBackend.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemotePrintBackend.messages.in; sourceTree = "<group>"; };
+		6B73F57D18FFCD3D831623F6 /* RemotePrintBackendProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePrintBackendProxy.cpp; sourceTree = "<group>"; };
+		86A5444E304AEA8670B33947 /* RemotePrintBackendProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePrintBackendProxy.h; sourceTree = "<group>"; };
 		1A7284441959ED100007BCE5 /* SessionStateConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionStateConversion.cpp; sourceTree = "<group>"; };
 		1A7284451959ED100007BCE5 /* SessionStateConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionStateConversion.h; sourceTree = "<group>"; };
 		1A7C0DF41B7D1F1000A9B848 /* WKWindowFeaturesRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWindowFeaturesRef.cpp; sourceTree = "<group>"; };
@@ -10412,8 +10418,14 @@
 			children = (
 				7CFC6A94FFD342711DC736D1 /* PrintConnectionToWebProcess.cpp */,
 				DE1FFEC0F1EEBE7B816AA40D /* PrintConnectionToWebProcess.h */,
+				30C478FBFF7C4E6515CF2972 /* PrintConnectionToWebProcess.messages.in */,
 				0A325BB44CD263CD146CD3BC /* PrintProcessConnection.cpp */,
 				6E5AAF1198DBEFB9AA9CEF2F /* PrintProcessConnection.h */,
+				4F79F6EACD0E0E0C39D97C31 /* RemotePrintBackend.cpp */,
+				79F97A3650B242483B2F3DBE /* RemotePrintBackend.h */,
+				B0C6A689097C16A360C1DC2A /* RemotePrintBackend.messages.in */,
+				6B73F57D18FFCD3D831623F6 /* RemotePrintBackendProxy.cpp */,
+				86A5444E304AEA8670B33947 /* RemotePrintBackendProxy.h */,
 			);
 			path = Print;
 			sourceTree = "<group>";

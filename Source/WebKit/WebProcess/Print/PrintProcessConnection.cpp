@@ -30,6 +30,7 @@
 
 #include "Decoder.h"
 #include "Logging.h"
+#include "RemotePrintBackendProxy.h"
 #include "WebProcess.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -57,14 +58,27 @@ PrintProcessConnection::~PrintProcessConnection()
     m_connection->invalidate();
 }
 
+RemotePrintBackendProxy& PrintProcessConnection::printBackendProxy()
+{
+    if (!m_printBackendProxy)
+        m_printBackendProxy = RemotePrintBackendProxy::create(*this);
+    return *m_printBackendProxy;
+}
+
 void PrintProcessConnection::invalidate()
 {
+    if (RefPtr printBackendProxy = m_printBackendProxy)
+        printBackendProxy->disconnect();
     m_connection->invalidate();
 }
 
 void PrintProcessConnection::didClose(IPC::Connection&)
 {
     RELEASE_LOG(Process, "%p - PrintProcessConnection::didClose", this);
+    Ref protectedThis { *this };
+    // The print snapshots that the web process is recording fail, rather than being recorded again.
+    if (RefPtr printBackendProxy = m_printBackendProxy)
+        printBackendProxy->disconnect();
     WebProcess::singleton().printProcessConnectionDidClose(*this);
 }
 
