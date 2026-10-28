@@ -149,7 +149,7 @@ public:
     static LayoutUnit LEGACY_NODELETE alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition, std::optional<LayoutUnit> ascent, std::optional<LayoutUnit> maxAscent, bool isWrapReverse);
     static LayoutUnit LEGACY_NODELETE contentAlignmentStartOverflow(LayoutUnit availableFreeSpace, ContentPosition, ContentDistribution, OverflowAlignment safety, bool isReverse);
     static LayoutUnit LEGACY_NODELETE initialContentAlignmentOffset(LayoutUnit availableFreeSpace, ContentPosition, ContentDistribution, OverflowAlignment safety, unsigned numberOfAlignmentSubjects, bool isReversed);
-    static LayoutUnit LEGACY_NODELETE alignContentSpaceBetweenFlexItems(LayoutUnit availableFreeSpace, ContentDistribution, unsigned numberOfLines);
+    static LayoutUnit LEGACY_NODELETE alignContentSpaceBetweenFlexItems(LayoutUnit availableFreeSpace, ContentDistribution, unsigned numberOfLines, unsigned gapIndex);
     static LayoutUnit LEGACY_NODELETE evenlyDistributedFreeSpace(LayoutUnit freeSpace, unsigned numberOfSpaces, unsigned spaceIndex);
 
 private:

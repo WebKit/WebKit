@@ -832,15 +832,20 @@ LayoutUnit FlexFormattingUtils::initialContentAlignmentOffset(LayoutUnit availab
     return 0_lu;
 }
 
-LayoutUnit FlexFormattingUtils::alignContentSpaceBetweenFlexItems(LayoutUnit availableFreeSpace, ContentDistribution alignContentDistribution, unsigned numberOfLines)
+LayoutUnit FlexFormattingUtils::alignContentSpaceBetweenFlexItems(LayoutUnit availableFreeSpace, ContentDistribution alignContentDistribution, unsigned numberOfLines, unsigned gapIndex)
 {
+    // As with justifyContentSpaceBetweenFlexItems, each gap gets its spaces of the evenly distributed free space. With
+    // stretch, there is one space per line, which the line grows by, and the gap after a line is that space.
+    ASSERT(gapIndex + 1 < numberOfLines);
     if (availableFreeSpace > 0 && numberOfLines > 1) {
         if (alignContentDistribution == ContentDistribution::SpaceBetween)
-            return availableFreeSpace / (numberOfLines - 1);
-        if (alignContentDistribution == ContentDistribution::SpaceAround || alignContentDistribution == ContentDistribution::Stretch)
-            return availableFreeSpace / numberOfLines;
+            return evenlyDistributedFreeSpace(availableFreeSpace, numberOfLines - 1, gapIndex);
+        if (alignContentDistribution == ContentDistribution::SpaceAround)
+            return evenlyDistributedFreeSpace(availableFreeSpace, 2 * numberOfLines, 2 * gapIndex + 1) + evenlyDistributedFreeSpace(availableFreeSpace, 2 * numberOfLines, 2 * gapIndex + 2);
+        if (alignContentDistribution == ContentDistribution::Stretch)
+            return evenlyDistributedFreeSpace(availableFreeSpace, numberOfLines, gapIndex);
         if (alignContentDistribution == ContentDistribution::SpaceEvenly)
-            return availableFreeSpace / (numberOfLines + 1);
+            return evenlyDistributedFreeSpace(availableFreeSpace, numberOfLines + 1, gapIndex + 1);
     }
     return 0_lu;
 }

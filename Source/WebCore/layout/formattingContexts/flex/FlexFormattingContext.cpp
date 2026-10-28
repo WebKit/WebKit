@@ -592,9 +592,10 @@ void FlexFormattingContext::handleCrossAxisAlignmentForFlexLines(const FlexLines
             flexItemsPositionList[flexItemIndex].move(0_lu, lineOffset);
 
         if (distribution == ContentDistribution::Stretch && availableCrossAxisSpace > 0)
-            flexLinesCrossSizeList[lineNumber] += availableCrossAxisSpace / static_cast<unsigned>(numLines);
+            flexLinesCrossSizeList[lineNumber] += FlexFormattingUtils::evenlyDistributedFreeSpace(availableCrossAxisSpace, numLines, lineNumber);
 
-        lineOffset += FlexFormattingUtils::alignContentSpaceBetweenFlexItems(availableCrossAxisSpace, distribution, numLines) + gapBetweenLines;
+        if (lineNumber + 1 < numLines)
+            lineOffset += FlexFormattingUtils::alignContentSpaceBetweenFlexItems(availableCrossAxisSpace, distribution, numLines, lineNumber) + gapBetweenLines;
     }
 }
 
