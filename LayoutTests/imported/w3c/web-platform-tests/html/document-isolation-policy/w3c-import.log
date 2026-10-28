@@ -34,6 +34,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-video.https.tentative.window.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-websocket.https.tentative.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-frame.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-isolated-permissions-policy-nested.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-isolated-permissions-policy-nested.tentative.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-isolated-permissions-policy.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-isolated.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/dedicated-worker.tentative.https.html

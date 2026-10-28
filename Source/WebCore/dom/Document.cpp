@@ -8957,7 +8957,11 @@ bool Document::isInCrossOriginIsolatedAgentCluster() const
 
 bool Document::crossOriginIsolated() const
 {
-    return isInCrossOriginIsolatedAgentCluster() && PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::CrossOriginIsolated, *this, PermissionsPolicy::ShouldReportViolation::No);
+    if (!isInCrossOriginIsolatedAgentCluster())
+        return false;
+    if (documentIsolationPolicy().value != DocumentIsolationPolicyValue::None)
+        return true;
+    return PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::CrossOriginIsolated, *this, PermissionsPolicy::ShouldReportViolation::No);
 }
 
 String Document::agentClusterID() const
