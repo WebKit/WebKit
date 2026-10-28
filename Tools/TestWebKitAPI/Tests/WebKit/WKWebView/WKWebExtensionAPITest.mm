@@ -189,6 +189,173 @@ TEST(WKWebExtensionAPITest, MessageEventInContentScript)
     [manager run];
 }
 
+TEST(WKWebExtensionAPITest, JSHandleCreationInBackgroundPage)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const canCreateJSHandle = typeof window.webkit?.createJSHandle === 'function'",
+        @"browser.test.assertTrue(canCreateJSHandle, 'createJSHandle should be available in an extension page')",
+
+        @"const handle = canCreateJSHandle ? window.webkit.createJSHandle(document.documentElement) : null",
+        @"browser.test.assertTrue(!!handle, 'createJSHandle should return a handle for an element')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(manifest, @{
+        @"background.js": backgroundScript
+    });
+}
+
+TEST(WKWebExtensionAPITest, JSHandleCreationInContentScript)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body></body>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *contentScript = Util::constructScript(@[
+        @"const canCreateJSHandle = typeof window.webkit?.createJSHandle === 'function'",
+        @"browser.test.assertTrue(canCreateJSHandle, 'createJSHandle should be available in a content script')",
+
+        @"const handle = canCreateJSHandle ? window.webkit.createJSHandle(document.body) : null",
+        @"browser.test.assertTrue(!!handle, 'createJSHandle should return a handle for an element')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *resources = @{
+        @"background.js": @"// This script is intentionally left blank.",
+        @"content.js": contentScript
+    };
+
+    RetainPtr extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    RetainPtr manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager load];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITest, JSHandleCreationInExtensionFrame)
+{
+    auto *frameManifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Extension",
+        @"description": @"Test Extension",
+        @"version": @"1.0",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"persistent": @NO
+        },
+
+        @"content_scripts": @[ @{
+            @"matches": @[ @"*://localhost/*" ],
+            @"js": @[ @"content.js" ]
+        } ],
+
+        @"web_accessible_resources": @[ @{
+            @"resources": @[ @"*.html" ],
+            @"matches": @[ @"*://localhost/*" ]
+        } ]
+    };
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body></body>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *frameScript = Util::constructScript(@[
+        @"const canCreateJSHandle = typeof window.webkit?.createJSHandle === 'function'",
+        @"browser.test.assertTrue(canCreateJSHandle, 'createJSHandle should be available in an extension frame')",
+
+        @"const handle = canCreateJSHandle ? window.webkit.createJSHandle(document.documentElement) : null",
+        @"browser.test.assertTrue(!!handle, 'createJSHandle should return a handle for an element')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"const iframe = document.createElement('iframe')",
+        @"iframe.src = browser.runtime.getURL('extension-frame.html')",
+        @"document.body.appendChild(iframe)"
+    ]);
+
+    auto *resources = @{
+        @"background.js": @"// This script is intentionally left blank.",
+        @"content.js": contentScript,
+        @"extension-frame.js": frameScript,
+        @"extension-frame.html": @"<script src='extension-frame.js'></script>"
+    };
+
+    auto manager = Util::loadExtension(frameManifest, resources);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITest, JSHandleCreationUnavailableInWebPage)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body><script>document.body.dataset.canCreateJSHandle = String(typeof window.webkit?.createJSHandle === 'function')</script></body>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.test.assertEq(document.body.dataset.canCreateJSHandle, 'false', 'createJSHandle should not be available to the web page')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *resources = @{
+        @"background.js": @"// This script is intentionally left blank.",
+        @"content.js": contentScript
+    };
+
+    RetainPtr extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    RetainPtr manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager load];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITest, JSHandleCreationUnavailableInWebPageFrameInExtensionPage)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script>parent.postMessage(typeof window.webkit?.createJSHandle, '*')</script>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const iframe = document.createElement('iframe')",
+        [NSString stringWithFormat:@"iframe.src = 'http://localhost:%d/'", server.port()],
+
+        @"window.addEventListener('message', (event) => {",
+        @"  browser.test.assertEq(event.data, 'undefined', 'createJSHandle should not be available to a web page frame')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"document.body.appendChild(iframe)"
+    ]);
+
+    Util::loadAndRunExtension(manifest, @{
+        @"background.js": backgroundScript
+    });
+}
+
 TEST(WKWebExtensionAPITest, MessageEventWithSendMessageReply)
 {
     auto *backgroundScript = Util::constructScript(@[

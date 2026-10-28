@@ -208,6 +208,32 @@ struct WKWebExtensionAPIOffscreenTests {
     }
 
     @Test
+    func offscreenDocumentCanCreateJSHandle() async throws {
+        let backgroundScript = """
+            browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })
+            """
+
+        let offscreenScript = """
+            const canCreateJSHandle = typeof window.webkit?.createJSHandle === 'function'
+            browser.test.assertTrue(canCreateJSHandle, 'createJSHandle should be available in an offscreen document')
+
+            const handle = canCreateJSHandle ? window.webkit.createJSHandle(document.documentElement) : null
+            browser.test.assertTrue(!!handle, 'createJSHandle should return a handle for an element')
+
+            browser.test.notifyPass()
+            """
+
+        try await loadAndRun(
+            manifest: offscreenManifest,
+            resources: [
+                "background.js": backgroundScript,
+                "offscreen.html": "<script type='module' src='offscreen.js'></script>",
+                "offscreen.js": offscreenScript,
+            ]
+        )
+    }
+
+    @Test
     func windowCloseFromDocumentClosesDocument() async throws {
         let backgroundScript = """
             await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })

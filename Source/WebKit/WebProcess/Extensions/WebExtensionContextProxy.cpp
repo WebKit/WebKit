@@ -361,6 +361,7 @@ void WebExtensionContextProxy::setContentScriptWorld(WebCore::DOMWrapperWorld& w
 {
     m_contentScriptWorld = world;
     world.setClosedShadowRootIsExposedForExtensions();
+    world.setAllowsJSHandleCreation();
 }
 
 void WebExtensionContextProxy::enumerateFramesAndNamespaceObjects(NOESCAPE const Function<void(WebFrame&, WebExtensionAPINamespace&)>& function, Ref<DOMWrapperWorld>&& world)

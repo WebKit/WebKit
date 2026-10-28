@@ -45,7 +45,10 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <JavaScriptCore/APICast.h>
+#include <WebCore/DocumentLoader.h>
+#include <WebCore/FrameLoader.h>
 #include <WebCore/JSDOMGlobalObject.h>
+#include <WebCore/LocalFrame.h>
 
 namespace WebKit {
 
@@ -79,6 +82,10 @@ void WebExtensionControllerProxy::globalObjectIsAvailableForFrame(WebPage& page,
 
     if (!isMainWorld)
         extension->setContentScriptWorld(world);
+    else if (RefPtr coreFrame = frame.coreLocalFrame()) {
+        if (RefPtr documentLoader = coreFrame->loader().loaderForWebsitePolicies())
+            documentLoader->setAllowsJSHandleCreationInPageWorld(true);
+    }
 
     auto contentWorldType = isMainWorld ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript;
 
