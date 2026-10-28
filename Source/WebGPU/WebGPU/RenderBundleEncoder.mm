@@ -1596,51 +1596,69 @@ void LEGACY_NODELETE wgpuRenderBundleEncoderAddRef(WGPURenderBundleEncoder rende
 
 void wgpuRenderBundleEncoderRelease(WGPURenderBundleEncoder renderBundleEncoder)
 {
-    WebGPU::Metal::fromAPI(renderBundleEncoder).deref();
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(renderBundleEncoder).deref();
+    }
 }
 
 void wgpuRenderBundleEncoderDraw(WGPURenderBundleEncoder renderBundleEncoder, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
-    protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->draw(vertexCount, instanceCount, firstVertex, firstInstance);
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->draw(vertexCount, instanceCount, firstVertex, firstInstance);
+    }
 }
 
 void wgpuRenderBundleEncoderDrawIndexed(WGPURenderBundleEncoder renderBundleEncoder, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
 {
-    protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
+    }
 }
 
 void wgpuRenderBundleEncoderDrawIndexedIndirect(WGPURenderBundleEncoder renderBundleEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
-    RELEASE_ASSERT(indirectBuffer);
-    protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->drawIndexedIndirect(protect(WebGPU::Metal::fromAPI(indirectBuffer)), indirectOffset);
+    @autoreleasepool {
+        RELEASE_ASSERT(indirectBuffer);
+        protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->drawIndexedIndirect(protect(WebGPU::Metal::fromAPI(indirectBuffer)), indirectOffset);
+    }
 }
 
 void wgpuRenderBundleEncoderDrawIndirect(WGPURenderBundleEncoder renderBundleEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
-    RELEASE_ASSERT(indirectBuffer);
-    protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->drawIndirect(protect(WebGPU::Metal::fromAPI(indirectBuffer)), indirectOffset);
+    @autoreleasepool {
+        RELEASE_ASSERT(indirectBuffer);
+        protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->drawIndirect(protect(WebGPU::Metal::fromAPI(indirectBuffer)), indirectOffset);
+    }
 }
 
 WGPURenderBundle wgpuRenderBundleEncoderFinish(WGPURenderBundleEncoder renderBundleEncoder, const WGPURenderBundleDescriptor* descriptor)
 {
-    // Every WebGPU::RenderBundle that a WebGPU::Metal::RenderBundleEncoder creates is a WebGPU::Metal::RenderBundle.
-    Ref renderBundle = downcast<WebGPU::Metal::RenderBundle>(*protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->finish({ .label = descriptor ? WebGPU::Metal::fromAPI(descriptor->label) : String() }));
-    return WebGPU::Metal::releaseToAPI(WTF::move(renderBundle));
+    @autoreleasepool {
+        // Every WebGPU::RenderBundle that a WebGPU::Metal::RenderBundleEncoder creates is a WebGPU::Metal::RenderBundle.
+        Ref renderBundle = downcast<WebGPU::Metal::RenderBundle>(*protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->finish({ .label = descriptor ? WebGPU::Metal::fromAPI(descriptor->label) : String() }));
+        return WebGPU::Metal::releaseToAPI(WTF::move(renderBundle));
+    }
 }
 
 void wgpuRenderBundleEncoderInsertDebugMarker(WGPURenderBundleEncoder renderBundleEncoder, WGPUStringView markerLabel)
 {
-    protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->insertDebugMarker(WebGPU::Metal::fromAPI(markerLabel));
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->insertDebugMarker(WebGPU::Metal::fromAPI(markerLabel));
+    }
 }
 
 void wgpuRenderBundleEncoderPopDebugGroup(WGPURenderBundleEncoder renderBundleEncoder)
 {
-    protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->popDebugGroup();
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->popDebugGroup();
+    }
 }
 
 void wgpuRenderBundleEncoderPushDebugGroup(WGPURenderBundleEncoder renderBundleEncoder, WGPUStringView groupLabel)
 {
-    protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->pushDebugGroup(WebGPU::Metal::fromAPI(groupLabel));
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->pushDebugGroup(WebGPU::Metal::fromAPI(groupLabel));
+    }
 }
 
 void LEGACY_NODELETE wgpuRenderBundleEncoderSetBindGroup(WGPURenderBundleEncoder, uint32_t, WGPUBindGroup, size_t, const uint32_t*)
@@ -1649,27 +1667,35 @@ void LEGACY_NODELETE wgpuRenderBundleEncoderSetBindGroup(WGPURenderBundleEncoder
 
 void wgpuRenderBundleEncoderSetIndexBuffer(WGPURenderBundleEncoder renderBundleEncoder, WGPUBuffer buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)
 {
-    Ref protectedRenderBundleEncoder = WebGPU::Metal::fromAPI(renderBundleEncoder);
-    auto apiFormat = WebGPU::Metal::fromAPI(format);
-    if (!apiFormat)
-        return protectedRenderBundleEncoder->makeInvalid(@"setIndexBuffer: invalid index format");
-    protectedRenderBundleEncoder->setIndexBuffer(protect(WebGPU::Metal::fromAPI(buffer)), *apiFormat, offset, size == WGPU_WHOLE_SIZE ? std::nullopt : std::optional { size });
+    @autoreleasepool {
+        Ref protectedRenderBundleEncoder = WebGPU::Metal::fromAPI(renderBundleEncoder);
+        auto apiFormat = WebGPU::Metal::fromAPI(format);
+        if (!apiFormat)
+            return protectedRenderBundleEncoder->makeInvalid(@"setIndexBuffer: invalid index format");
+        protectedRenderBundleEncoder->setIndexBuffer(protect(WebGPU::Metal::fromAPI(buffer)), *apiFormat, offset, size == WGPU_WHOLE_SIZE ? std::nullopt : std::optional { size });
+    }
 }
 
 void wgpuRenderBundleEncoderSetPipeline(WGPURenderBundleEncoder renderBundleEncoder, WGPURenderPipeline pipeline)
 {
-    protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->setPipeline(protect(WebGPU::Metal::fromAPI(pipeline)));
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->setPipeline(protect(WebGPU::Metal::fromAPI(pipeline)));
+    }
 }
 
 void wgpuRenderBundleEncoderSetVertexBuffer(WGPURenderBundleEncoder renderBundleEncoder, uint32_t slot, WGPUBuffer buffer, uint64_t offset, uint64_t size)
 {
-    RefPtr<WebGPU::Metal::Buffer> optionalBuffer;
-    if (buffer)
-        optionalBuffer = protect(WebGPU::Metal::fromAPI(buffer)).ptr();
-    protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->setVertexBuffer(slot, optionalBuffer.get(), offset, size == WGPU_WHOLE_SIZE ? std::nullopt : std::optional { size });
+    @autoreleasepool {
+        RefPtr<WebGPU::Metal::Buffer> optionalBuffer;
+        if (buffer)
+            optionalBuffer = protect(WebGPU::Metal::fromAPI(buffer)).ptr();
+        protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->setVertexBuffer(slot, optionalBuffer.get(), offset, size == WGPU_WHOLE_SIZE ? std::nullopt : std::optional { size });
+    }
 }
 
 void wgpuRenderBundleEncoderSetLabel(WGPURenderBundleEncoder renderBundleEncoder, WGPUStringView label)
 {
-    protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->setLabel(WebGPU::Metal::fromAPI(label));
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->setLabel(WebGPU::Metal::fromAPI(label));
+    }
 }

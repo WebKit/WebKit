@@ -381,10 +381,14 @@ void LEGACY_NODELETE wgpuPipelineLayoutAddRef(WGPUPipelineLayout pipelineLayout)
 
 void wgpuPipelineLayoutRelease(WGPUPipelineLayout pipelineLayout)
 {
-    WebGPU::Metal::fromAPI(pipelineLayout).deref();
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(pipelineLayout).deref();
+    }
 }
 
 void wgpuPipelineLayoutSetLabel(WGPUPipelineLayout pipelineLayout, WGPUStringView label)
 {
-    WebGPU::Metal::fromAPI(pipelineLayout).setLabel(WebGPU::Metal::fromAPI(label));
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(pipelineLayout).setLabel(WebGPU::Metal::fromAPI(label));
+    }
 }

@@ -171,7 +171,9 @@ bool Adapter::isXRCompatible() const
 // The caller owns the reference to the instance. Null when the instance is gone.
 WGPUInstance wgpuAdapterGetInstance(WGPUAdapter adapter)
 {
-    return WebGPU::Metal::releaseToAPI(protect(WebGPU::Metal::fromAPI(adapter))->instance());
+    @autoreleasepool {
+        return WebGPU::Metal::releaseToAPI(protect(WebGPU::Metal::fromAPI(adapter))->instance());
+    }
 }
 
 void LEGACY_NODELETE wgpuAdapterAddRef(WGPUAdapter adapter)
@@ -181,75 +183,87 @@ void LEGACY_NODELETE wgpuAdapterAddRef(WGPUAdapter adapter)
 
 void wgpuAdapterRelease(WGPUAdapter adapter)
 {
-    WebGPU::Metal::fromAPI(adapter).deref();
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(adapter).deref();
+    }
 }
 
 // The chained structs of limits are not filled in.
 WGPUStatus wgpuAdapterGetLimits(WGPUAdapter adapter, WGPULimits* limits)
 {
-    auto* nextInChain = limits->nextInChain;
-    *limits = WebGPU::Metal::toAPI(protect(WebGPU::Metal::fromAPI(adapter))->limits());
-    limits->nextInChain = nextInChain;
-    return WGPUStatus_Success;
+    @autoreleasepool {
+        auto* nextInChain = limits->nextInChain;
+        *limits = WebGPU::Metal::toAPI(protect(WebGPU::Metal::fromAPI(adapter))->limits());
+        limits->nextInChain = nextInChain;
+        return WGPUStatus_Success;
+    }
 }
 
 // The strings of info are freed with wgpuAdapterInfoFreeMembers().
 WGPUStatus wgpuAdapterGetInfo(WGPUAdapter adapter, WGPUAdapterInfo* info)
 {
-    Ref protectedAdapter = WebGPU::Metal::fromAPI(adapter);
-    auto apiInfo = protectedAdapter->info();
-    id<MTLDevice> device = protectedAdapter->device();
-    // FIXME: What should the vendorID and deviceID be?
-    info->vendor = WebGPU::Metal::toAPIAllocated(emptyString());
-    info->architecture = WebGPU::Metal::toAPIAllocated(emptyString());
-    info->device = WebGPU::Metal::toAPIAllocated(apiInfo.name);
-    info->description = WebGPU::Metal::toAPIAllocated(emptyString());
-    info->backendType = WGPUBackendType_Metal;
-    info->adapterType = device.hasUnifiedMemory ? WGPUAdapterType_IntegratedGPU : WGPUAdapterType_DiscreteGPU;
-    info->vendorID = 0;
-    info->deviceID = 0;
-    info->subgroupMinSize = apiInfo.subgroupMinSize;
-    info->subgroupMaxSize = apiInfo.subgroupMaxSize;
-    return WGPUStatus_Success;
+    @autoreleasepool {
+        Ref protectedAdapter = WebGPU::Metal::fromAPI(adapter);
+        auto apiInfo = protectedAdapter->info();
+        id<MTLDevice> device = protectedAdapter->device();
+        // FIXME: What should the vendorID and deviceID be?
+        info->vendor = WebGPU::Metal::toAPIAllocated(emptyString());
+        info->architecture = WebGPU::Metal::toAPIAllocated(emptyString());
+        info->device = WebGPU::Metal::toAPIAllocated(apiInfo.name);
+        info->description = WebGPU::Metal::toAPIAllocated(emptyString());
+        info->backendType = WGPUBackendType_Metal;
+        info->adapterType = device.hasUnifiedMemory ? WGPUAdapterType_IntegratedGPU : WGPUAdapterType_DiscreteGPU;
+        info->vendorID = 0;
+        info->deviceID = 0;
+        info->subgroupMinSize = apiInfo.subgroupMinSize;
+        info->subgroupMaxSize = apiInfo.subgroupMaxSize;
+        return WGPUStatus_Success;
+    }
 }
 
 void wgpuAdapterInfoFreeMembers(WGPUAdapterInfo info)
 {
-    WebGPU::Metal::freeAllocated(info.vendor);
-    WebGPU::Metal::freeAllocated(info.architecture);
-    WebGPU::Metal::freeAllocated(info.device);
-    WebGPU::Metal::freeAllocated(info.description);
+    @autoreleasepool {
+        WebGPU::Metal::freeAllocated(info.vendor);
+        WebGPU::Metal::freeAllocated(info.architecture);
+        WebGPU::Metal::freeAllocated(info.device);
+        WebGPU::Metal::freeAllocated(info.description);
+    }
 }
 
 WGPUBool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 {
-    auto apiFeature = WebGPU::Metal::fromAPI(feature);
-    return apiFeature && protect(WebGPU::Metal::fromAPI(adapter))->hasFeature(*apiFeature);
+    @autoreleasepool {
+        auto apiFeature = WebGPU::Metal::fromAPI(feature);
+        return apiFeature && protect(WebGPU::Metal::fromAPI(adapter))->hasFeature(*apiFeature);
+    }
 }
 
 // The C API reports a device that could not be created with WGPURequestDeviceStatus_Error and no
 // device. A null descriptor is the default one.
 WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallbackInfo callbackInfo)
 {
-    Ref protectedAdapter = WebGPU::Metal::fromAPI(adapter);
-    WebGPU::Metal::CAPIFuture future { protectedAdapter->instance() };
-    auto callback = [callbackInfo, future](WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message) {
-        callbackInfo.callback(status, device, message, callbackInfo.userdata1, callbackInfo.userdata2);
-        future.complete();
-    };
-    WGPUDeviceDescriptor defaultDescriptor = WGPU_DEVICE_DESCRIPTOR_INIT;
-    WebGPU::Metal::DeviceDescriptorStorage storage;
-    auto apiDescriptor = WebGPU::Metal::fromAPI(descriptor ? *descriptor : defaultDescriptor, storage);
-    if (!apiDescriptor) {
-        callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::Metal::toAPI("Device does not support requested features"_s));
+    @autoreleasepool {
+        Ref protectedAdapter = WebGPU::Metal::fromAPI(adapter);
+        WebGPU::Metal::CAPIFuture future { protectedAdapter->instance() };
+        auto callback = [callbackInfo, future](WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message) {
+            callbackInfo.callback(status, device, message, callbackInfo.userdata1, callbackInfo.userdata2);
+            future.complete();
+        };
+        WGPUDeviceDescriptor defaultDescriptor = WGPU_DEVICE_DESCRIPTOR_INIT;
+        WebGPU::Metal::DeviceDescriptorStorage storage;
+        auto apiDescriptor = WebGPU::Metal::fromAPI(descriptor ? *descriptor : defaultDescriptor, storage);
+        if (!apiDescriptor) {
+            callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::Metal::toAPI("Device does not support requested features"_s));
+            return future.future();
+        }
+        protectedAdapter->requestDeviceOrError(*apiDescriptor, [callback = WTF::move(callback)](std::expected<Ref<WebGPU::Metal::Device>, String>&& device) {
+            if (!device) {
+                auto message = device.error().utf8();
+                return callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::Metal::toAPI(message));
+            }
+            callback(WGPURequestDeviceStatus_Success, WebGPU::Metal::releaseToAPI(WTF::move(*device)), WebGPU::Metal::toAPI(""_s));
+        });
         return future.future();
     }
-    protectedAdapter->requestDeviceOrError(*apiDescriptor, [callback = WTF::move(callback)](std::expected<Ref<WebGPU::Metal::Device>, String>&& device) {
-        if (!device) {
-            auto message = device.error().utf8();
-            return callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::Metal::toAPI(message));
-        }
-        callback(WGPURequestDeviceStatus_Success, WebGPU::Metal::releaseToAPI(WTF::move(*device)), WebGPU::Metal::toAPI(""_s));
-    });
-    return future.future();
 }

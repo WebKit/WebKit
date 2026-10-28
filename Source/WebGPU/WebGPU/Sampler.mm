@@ -368,10 +368,14 @@ void LEGACY_NODELETE wgpuSamplerAddRef(WGPUSampler sampler)
 
 void wgpuSamplerRelease(WGPUSampler sampler)
 {
-    WebGPU::Metal::fromAPI(sampler).deref();
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(sampler).deref();
+    }
 }
 
 void wgpuSamplerSetLabel(WGPUSampler sampler, WGPUStringView label)
 {
-    protect(WebGPU::Metal::fromAPI(sampler))->setLabel(WebGPU::Metal::fromAPI(label));
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(sampler))->setLabel(WebGPU::Metal::fromAPI(label));
+    }
 }

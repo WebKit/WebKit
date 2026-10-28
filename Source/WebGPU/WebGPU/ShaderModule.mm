@@ -1136,7 +1136,9 @@ void LEGACY_NODELETE wgpuShaderModuleAddRef(WGPUShaderModule shaderModule)
 
 void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
 {
-    WebGPU::Metal::fromAPI(shaderModule).deref();
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(shaderModule).deref();
+    }
 }
 
 static void getCompilationInfo(WGPUShaderModule shaderModule, CompletionHandler<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback)
@@ -1157,15 +1159,19 @@ static void getCompilationInfo(WGPUShaderModule shaderModule, CompletionHandler<
 
 WGPUFuture wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompilationInfoCallbackInfo callbackInfo)
 {
-    WebGPU::Metal::CAPIFuture future { WebGPU::Metal::fromAPI(shaderModule).device().instance() };
-    getCompilationInfo(shaderModule, [callbackInfo, future](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
-        callbackInfo.callback(status, &compilationInfo, callbackInfo.userdata1, callbackInfo.userdata2);
-        future.complete();
-    });
-    return future.future();
+    @autoreleasepool {
+        WebGPU::Metal::CAPIFuture future { WebGPU::Metal::fromAPI(shaderModule).device().instance() };
+        getCompilationInfo(shaderModule, [callbackInfo, future](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
+            callbackInfo.callback(status, &compilationInfo, callbackInfo.userdata1, callbackInfo.userdata2);
+            future.complete();
+        });
+        return future.future();
+    }
 }
 
 void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, WGPUStringView label)
 {
-    protect(WebGPU::Metal::fromAPI(shaderModule))->setLabel(WebGPU::Metal::fromAPI(label));
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(shaderModule))->setLabel(WebGPU::Metal::fromAPI(label));
+    }
 }

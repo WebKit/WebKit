@@ -192,10 +192,14 @@ void LEGACY_NODELETE wgpuCommandBufferAddRef(WGPUCommandBuffer commandBuffer)
 
 void wgpuCommandBufferRelease(WGPUCommandBuffer commandBuffer)
 {
-    WebGPU::Metal::fromAPI(commandBuffer).deref();
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(commandBuffer).deref();
+    }
 }
 
 void wgpuCommandBufferSetLabel(WGPUCommandBuffer commandBuffer, WGPUStringView label)
 {
-    protect(WebGPU::Metal::fromAPI(commandBuffer))->setLabel(WebGPU::Metal::fromAPI(label));
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(commandBuffer))->setLabel(WebGPU::Metal::fromAPI(label));
+    }
 }

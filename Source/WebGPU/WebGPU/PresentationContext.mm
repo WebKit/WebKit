@@ -87,7 +87,9 @@ void LEGACY_NODELETE wgpuSurfaceAddRef(WGPUSurface surface)
 
 void wgpuSurfaceRelease(WGPUSurface surface)
 {
-    WebGPU::Metal::fromAPI(surface).deref();
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(surface).deref();
+    }
 }
 
 // The capabilities of the surfaces that present into a CAMetalLayer. The arrays are static, so

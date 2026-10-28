@@ -2185,51 +2185,63 @@ void LEGACY_NODELETE wgpuQueueAddRef(WGPUQueue queue)
 
 void wgpuQueueRelease(WGPUQueue queue)
 {
-    WebGPU::Metal::fromAPI(queue).deref();
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(queue).deref();
+    }
 }
 
 // Work that cannot complete, because the device is lost, is WGPUQueueWorkDoneStatus_Error.
 WGPUFuture wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, WGPUQueueWorkDoneCallbackInfo callbackInfo)
 {
-    Ref protectedQueue = WebGPU::Metal::fromAPI(queue);
-    WebGPU::Metal::CAPIFuture future { protect(protectedQueue->device())->instance() };
-    protectedQueue->onSubmittedWorkDone(CompletionHandler<void(bool)> { [callbackInfo, future](bool success) {
-        if (success)
-            callbackInfo.callback(WGPUQueueWorkDoneStatus_Success, WebGPU::Metal::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
-        else
-            callbackInfo.callback(WGPUQueueWorkDoneStatus_Error, WebGPU::Metal::toAPI("The device is lost"_s), callbackInfo.userdata1, callbackInfo.userdata2);
-        future.complete();
-    } });
-    return future.future();
+    @autoreleasepool {
+        Ref protectedQueue = WebGPU::Metal::fromAPI(queue);
+        WebGPU::Metal::CAPIFuture future { protect(protectedQueue->device())->instance() };
+        protectedQueue->onSubmittedWorkDone(CompletionHandler<void(bool)> { [callbackInfo, future](bool success) {
+            if (success)
+                callbackInfo.callback(WGPUQueueWorkDoneStatus_Success, WebGPU::Metal::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
+            else
+                callbackInfo.callback(WGPUQueueWorkDoneStatus_Error, WebGPU::Metal::toAPI("The device is lost"_s), callbackInfo.userdata1, callbackInfo.userdata2);
+            future.complete();
+        } });
+        return future.future();
+    }
 }
 
 void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, const WGPUCommandBuffer* commands)
 {
-    Vector<Ref<WebGPU::Metal::CommandBuffer>> commandsToForward;
-    for (auto& command : unsafeMakeSpan(commands, commandCount))
-        commandsToForward.append(protect(WebGPU::Metal::fromAPI(command)));
-    protect(WebGPU::Metal::fromAPI(queue))->submit(WTF::move(commandsToForward));
+    @autoreleasepool {
+        Vector<Ref<WebGPU::Metal::CommandBuffer>> commandsToForward;
+        for (auto& command : unsafeMakeSpan(commands, commandCount))
+            commandsToForward.append(protect(WebGPU::Metal::fromAPI(command)));
+        protect(WebGPU::Metal::fromAPI(queue))->submit(WTF::move(commandsToForward));
+    }
 }
 
 void wgpuQueueWriteBuffer(WGPUQueue queue, WGPUBuffer buffer, uint64_t bufferOffset, const void* data, size_t size)
 {
-    auto bytes = unsafeMakeSpan(static_cast<const uint8_t*>(data), size);
-    protect(WebGPU::Metal::fromAPI(queue))->writeBuffer(protect(WebGPU::Metal::fromAPI(buffer)), bufferOffset, bytes);
+    @autoreleasepool {
+        auto bytes = unsafeMakeSpan(static_cast<const uint8_t*>(data), size);
+        protect(WebGPU::Metal::fromAPI(queue))->writeBuffer(protect(WebGPU::Metal::fromAPI(buffer)), bufferOffset, bytes);
+    }
 }
 
 void wgpuQueueWriteTexture(WGPUQueue queue, const WGPUTexelCopyTextureInfo* destination, const void* data, size_t dataSize, const WGPUTexelCopyBufferLayout* dataLayout, const WGPUExtent3D* writeSize)
 {
-    auto bytes = unsafeMakeSpan(static_cast<const uint8_t*>(data), dataSize);
-    Ref protectedQueue = WebGPU::Metal::fromAPI(queue);
-    auto apiDestination = WebGPU::Metal::fromAPI(*destination);
-    if (!apiDestination) {
-        protectedQueue->generateAValidationError("GPUQueue.writeTexture: the destination has a null texture or an invalid aspect"_s);
-        return;
+    @autoreleasepool {
+        auto bytes = unsafeMakeSpan(static_cast<const uint8_t*>(data), dataSize);
+        Ref protectedQueue = WebGPU::Metal::fromAPI(queue);
+        auto apiDestination = WebGPU::Metal::fromAPI(*destination);
+        if (!apiDestination) {
+            protectedQueue->generateAValidationError("GPUQueue.writeTexture: the destination has a null texture or an invalid aspect"_s);
+            return;
+        }
+        protectedQueue->writeTexture(*apiDestination, bytes, WebGPU::Metal::fromAPI(*dataLayout), WebGPU::Metal::fromAPI(*writeSize));
     }
-    protectedQueue->writeTexture(*apiDestination, bytes, WebGPU::Metal::fromAPI(*dataLayout), WebGPU::Metal::fromAPI(*writeSize));
 }
 
 void wgpuQueueSetLabel(WGPUQueue queue, WGPUStringView label)
 {
-    protect(WebGPU::Metal::fromAPI(queue))->setLabel(WebGPU::Metal::fromAPI(label));
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(queue))->setLabel(WebGPU::Metal::fromAPI(label));
+    }
 }

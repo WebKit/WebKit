@@ -1841,10 +1841,14 @@ void LEGACY_NODELETE wgpuBindGroupAddRef(WGPUBindGroup bindGroup)
 
 void wgpuBindGroupRelease(WGPUBindGroup bindGroup)
 {
-    WebGPU::Metal::fromAPI(bindGroup).deref();
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(bindGroup).deref();
+    }
 }
 
 void wgpuBindGroupSetLabel(WGPUBindGroup bindGroup, WGPUStringView label)
 {
-    protect(WebGPU::Metal::fromAPI(bindGroup))->setLabel(WebGPU::Metal::fromAPI(label));
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(bindGroup))->setLabel(WebGPU::Metal::fromAPI(label));
+    }
 }

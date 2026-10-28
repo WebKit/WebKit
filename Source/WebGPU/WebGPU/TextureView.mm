@@ -221,10 +221,14 @@ void LEGACY_NODELETE wgpuTextureViewAddRef(WGPUTextureView textureView)
 
 void wgpuTextureViewRelease(WGPUTextureView textureView)
 {
-    WebGPU::Metal::fromAPI(textureView).deref();
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(textureView).deref();
+    }
 }
 
 void wgpuTextureViewSetLabel(WGPUTextureView textureView, WGPUStringView label)
 {
-    protect(WebGPU::Metal::fromAPI(textureView))->setLabel(WebGPU::Metal::fromAPI(label));
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(textureView))->setLabel(WebGPU::Metal::fromAPI(label));
+    }
 }

@@ -4214,74 +4214,98 @@ void LEGACY_NODELETE wgpuTextureAddRef(WGPUTexture texture)
 
 void wgpuTextureRelease(WGPUTexture texture)
 {
-    WebGPU::Metal::fromAPI(texture).deref();
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(texture).deref();
+    }
 }
 
 WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureViewDescriptor* descriptor)
 {
-    Ref protectedTexture = WebGPU::Metal::fromAPI(texture);
-    // A null descriptor is a descriptor with all members at their defaults.
-    std::optional<WebGPU::TextureViewDescriptor> apiDescriptor;
-    if (descriptor) {
-        apiDescriptor = WebGPU::Metal::fromAPI(*descriptor);
-        if (!apiDescriptor) {
-            Ref device = protectedTexture->device();
-            device->generateAValidationError("GPUTextureViewDescriptor has an invalid enum value or usage bit"_s);
-            return WebGPU::Metal::releaseToAPI(WebGPU::Metal::TextureView::createInvalid(protectedTexture, device));
+    @autoreleasepool {
+        Ref protectedTexture = WebGPU::Metal::fromAPI(texture);
+        // A null descriptor is a descriptor with all members at their defaults.
+        std::optional<WebGPU::TextureViewDescriptor> apiDescriptor;
+        if (descriptor) {
+            apiDescriptor = WebGPU::Metal::fromAPI(*descriptor);
+            if (!apiDescriptor) {
+                Ref device = protectedTexture->device();
+                device->generateAValidationError("GPUTextureViewDescriptor has an invalid enum value or usage bit"_s);
+                return WebGPU::Metal::releaseToAPI(WebGPU::Metal::TextureView::createInvalid(protectedTexture, device));
+            }
         }
+        // Every WebGPU::TextureView that a WebGPU::Metal::Texture creates is a WebGPU::Metal::TextureView.
+        Ref view = downcast<WebGPU::Metal::TextureView>(*protectedTexture->createView(apiDescriptor));
+        return WebGPU::Metal::releaseToAPI(WTF::move(view));
     }
-    // Every WebGPU::TextureView that a WebGPU::Metal::Texture creates is a WebGPU::Metal::TextureView.
-    Ref view = downcast<WebGPU::Metal::TextureView>(*protectedTexture->createView(apiDescriptor));
-    return WebGPU::Metal::releaseToAPI(WTF::move(view));
 }
 
 void wgpuTextureDestroy(WGPUTexture texture)
 {
-    protect(WebGPU::Metal::fromAPI(texture))->destroy();
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(texture))->destroy();
+    }
 }
 
 void wgpuTextureSetLabel(WGPUTexture texture, WGPUStringView label)
 {
-    protect(WebGPU::Metal::fromAPI(texture))->setLabel(WebGPU::Metal::fromAPI(label));
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(texture))->setLabel(WebGPU::Metal::fromAPI(label));
+    }
 }
 
 uint32_t wgpuTextureGetDepthOrArrayLayers(WGPUTexture texture)
 {
-    return protect(WebGPU::Metal::fromAPI(texture))->depthOrArrayLayers();
+    @autoreleasepool {
+        return protect(WebGPU::Metal::fromAPI(texture))->depthOrArrayLayers();
+    }
 }
 
 WGPUTextureDimension wgpuTextureGetDimension(WGPUTexture texture)
 {
-    return WebGPU::Metal::toAPI(protect(WebGPU::Metal::fromAPI(texture))->dimension());
+    @autoreleasepool {
+        return WebGPU::Metal::toAPI(protect(WebGPU::Metal::fromAPI(texture))->dimension());
+    }
 }
 
 WGPUTextureFormat wgpuTextureGetFormat(WGPUTexture texture)
 {
-    auto format = protect(WebGPU::Metal::fromAPI(texture))->optionalFormat();
-    return format ? WebGPU::Metal::toAPI(*format) : WGPUTextureFormat_Undefined;
+    @autoreleasepool {
+        auto format = protect(WebGPU::Metal::fromAPI(texture))->optionalFormat();
+        return format ? WebGPU::Metal::toAPI(*format) : WGPUTextureFormat_Undefined;
+    }
 }
 
 uint32_t wgpuTextureGetHeight(WGPUTexture texture)
 {
-    return protect(WebGPU::Metal::fromAPI(texture))->height();
+    @autoreleasepool {
+        return protect(WebGPU::Metal::fromAPI(texture))->height();
+    }
 }
 
 uint32_t wgpuTextureGetWidth(WGPUTexture texture)
 {
-    return protect(WebGPU::Metal::fromAPI(texture))->width();
+    @autoreleasepool {
+        return protect(WebGPU::Metal::fromAPI(texture))->width();
+    }
 }
 
 uint32_t wgpuTextureGetMipLevelCount(WGPUTexture texture)
 {
-    return protect(WebGPU::Metal::fromAPI(texture))->mipLevelCount();
+    @autoreleasepool {
+        return protect(WebGPU::Metal::fromAPI(texture))->mipLevelCount();
+    }
 }
 
 uint32_t wgpuTextureGetSampleCount(WGPUTexture texture)
 {
-    return protect(WebGPU::Metal::fromAPI(texture))->sampleCount();
+    @autoreleasepool {
+        return protect(WebGPU::Metal::fromAPI(texture))->sampleCount();
+    }
 }
 
 WGPUTextureUsage wgpuTextureGetUsage(WGPUTexture texture)
 {
-    return WebGPU::Metal::toAPI(protect(WebGPU::Metal::fromAPI(texture))->usage());
+    @autoreleasepool {
+        return WebGPU::Metal::toAPI(protect(WebGPU::Metal::fromAPI(texture))->usage());
+    }
 }

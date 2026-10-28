@@ -210,10 +210,14 @@ void LEGACY_NODELETE wgpuRenderBundleAddRef(WGPURenderBundle renderBundle)
 
 void wgpuRenderBundleRelease(WGPURenderBundle renderBundle)
 {
-    WebGPU::Metal::fromAPI(renderBundle).deref();
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(renderBundle).deref();
+    }
 }
 
 void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, WGPUStringView label)
 {
-    protect(WebGPU::Metal::fromAPI(renderBundle))->setLabel(WebGPU::Metal::fromAPI(label));
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(renderBundle))->setLabel(WebGPU::Metal::fromAPI(label));
+    }
 }
