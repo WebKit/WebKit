@@ -1308,3 +1308,5 @@ webkit.org/b/328888 [ arm64 ] fast/harness/internals-object-property-access-on-w
 webkit.org/b/328890 [ arm64 ] imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrolling-with-margin-and-transform.html [ Failure Pass ]
 
 webkit.org/b/329157 [ arm64 ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/prompt/001.html [ Crash Pass ]
+
+webkit.org/b/329221 http/tests/misc/image-blocked-src-change.html [ Pass Crash ]
