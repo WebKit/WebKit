@@ -6050,6 +6050,7 @@ void ArrayPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) 
                 generator.emitLoad(index.get(), jsNumber(0));
                 Ref<Label> loopStart = generator.newLabel();
                 generator.emitLabel(loopStart.get());
+                generator.emitLoopHint();
 
                 RefPtr<RegisterID> value = generator.newTemporary();
                 {
