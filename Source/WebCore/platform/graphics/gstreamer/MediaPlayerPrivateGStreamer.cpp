@@ -3514,6 +3514,7 @@ void MediaPlayerPrivateGStreamer::setPlaybackFlags(bool isMediaStream)
     unsigned hasNativeVideo = getGstPlayFlag("native-video");
     unsigned hasNativeAudio = getGstPlayFlag("native-audio");
     unsigned hasSoftwareColorBalance = getGstPlayFlag("soft-colorbalance");
+    unsigned hasDeinterlace = getGstPlayFlag("deinterlace");
 
     unsigned flags = 0;
     g_object_get(pipeline(), "flags", &flags, nullptr);
@@ -3522,6 +3523,7 @@ void MediaPlayerPrivateGStreamer::setPlaybackFlags(bool isMediaStream)
     flags = flags & ~hasNativeAudio;
     flags = flags & ~hasNativeVideo;
     flags = flags & ~hasSoftwareColorBalance;
+    flags = flags & ~hasDeinterlace;
 
     if (isMediaStream)
         flags = flags & ~getGstPlayFlag("buffering");
@@ -3532,12 +3534,19 @@ void MediaPlayerPrivateGStreamer::setPlaybackFlags(bool isMediaStream)
     hasNativeVideo &= additionalFlags;
     hasNativeAudio &= additionalFlags;
 
-    GST_INFO_OBJECT(pipeline(), "text %s, audio %s (native %s), video %s (native %s, software color balance %s)", boolForPrinting(hasText),
+    if (!m_isUsingFallbackVideoSink) {
+        GST_INFO_OBJECT(pipeline(), "Hardware-accelerated video rendering is enabled, so enabling native-video as well");
+        hasNativeVideo = getGstPlayFlag("native-video");
+        hasSoftwareColorBalance = 0;
+        hasDeinterlace = 0;
+    }
+
+    GST_INFO_OBJECT(pipeline(), "text %s, audio %s (native %s), video %s (native %s, software color balance %s, deinterlace: %s)", boolForPrinting(hasText),
         boolForPrinting(hasAudio), boolForPrinting(hasNativeAudio), boolForPrinting(hasVideo), boolForPrinting(hasNativeVideo),
-        boolForPrinting(hasSoftwareColorBalance));
-    flags |= hasText | hasAudio | hasVideo | hasNativeVideo | hasNativeAudio | hasSoftwareColorBalance;
+        boolForPrinting(hasSoftwareColorBalance), boolForPrinting(hasDeinterlace));
+    flags |= hasText | hasAudio | hasVideo | hasNativeVideo | hasNativeAudio | hasSoftwareColorBalance | hasDeinterlace;
     g_object_set(pipeline(), "flags", flags, nullptr);
-    GST_DEBUG_OBJECT(pipeline(), "current pipeline flags %x", flags);
+    GST_DEBUG_OBJECT(pipeline(), "Current pipeline flags 0x%x", flags);
 
     if (m_shouldPreservePitch && hasAudio && hasNativeAudio) {
         GST_WARNING_OBJECT(pipeline(), "can't preserve pitch with native audio");
@@ -3615,8 +3624,6 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
 
     GST_INFO_OBJECT(pipeline(), "Using legacy playbin element: %s", boolForPrinting(m_isLegacyPlaybin));
 
-    setPlaybackFlags(isMediaStream);
-
     // Let also other listeners subscribe to (application) messages in this bus.
     GRefPtr bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
     gst_bus_enable_sync_message_emission(bus.get());
@@ -3678,6 +3685,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
         m_audioSink = createAudioSink();
 
     g_object_set(m_pipeline.get(), "audio-sink", m_audioSink.get(), "video-sink", createVideoSink(), nullptr);
+
+    setPlaybackFlags(isMediaStream);
 
     if (m_shouldPreservePitch && !isMediaStream && !GStreamerQuirksManager::singleton().needsCustomInstantRateChange()) {
         if (auto* scale = makeGStreamerElement("scaletempo"_s))
