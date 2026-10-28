@@ -6,9 +6,16 @@
 // LinkAndRelinkFailureTest:
 //   Link and relink failure tests for rendering pipeline and compute pipeline.
 
+#include <algorithm>
+#include <fstream>
+#include <functional>
+#include <string>
 #include <vector>
+#include "common/string_utils.h"
+#include "common/system_utils.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
+#include "util/test_utils.h"
 
 using namespace angle;
 
@@ -31,6 +38,43 @@ class LinkAndRelinkTestES31 : public ANGLETest<>
 {
   protected:
     LinkAndRelinkTestES31() {}
+};
+
+// Runs with dumpTranslatedShaders, which writes the translated source of a compiled shader to
+// <shader dump directory>/<hash of the shader source>.translated, and with
+// enableTranslatedShaderSubstitution, which makes a shader compile use the contents of that file as
+// its translated source.
+class LinkWithTranslatedShaderSubstitutionTest : public ANGLETest<>
+{
+  protected:
+    void testTearDown() override
+    {
+        for (const std::string &path : mShaderDumpPaths)
+        {
+            angle::DeleteSystemFile(path.c_str());
+        }
+    }
+
+    std::string shaderDumpPath(const std::string &source)
+    {
+        std::string dumpDirectory = angle::GetEnvironmentVar("ANGLE_SHADER_DUMP_PATH");
+        if (dumpDirectory.empty() || dumpDirectory == "0")
+        {
+            dumpDirectory = angle::GetTempDirectory().valueOr("");
+        }
+        if (!dumpDirectory.empty())
+        {
+            dumpDirectory += "/";
+        }
+        std::string path =
+            dumpDirectory + std::to_string(std::hash<std::string>{}(source)) + ".translated";
+        // A dump left by an earlier run that did not tear down would be used as the substitute.
+        angle::DeleteSystemFile(path.c_str());
+        mShaderDumpPaths.push_back(path);
+        return path;
+    }
+
+    std::vector<std::string> mShaderDumpPaths;
 };
 
 // Test destruction of a context with a pending relink of the current in-use
@@ -1056,7 +1100,76 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests that a program fails to link and reports the WebGPU errors in its info log when WebGPU
+// rejects the WGSL of one of its shaders.
+TEST_P(LinkWithTranslatedShaderSubstitutionTest, InvalidWGSL)
+{
+    // The sources are made unique to the test so that the shaders are not served from the shader
+    // cache, which would skip both the dump and the substitution.
+    const std::string uniqueComment =
+        std::string("// ") + ::testing::UnitTest::GetInstance()->current_test_info()->name() + "\n";
+    const std::string fs        = uniqueComment + R"(precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+}
+)";
+    const std::string vs        = uniqueComment + essl1_shaders::vs::Simple();
+    const std::string invalidFS = fs + "// Invalid WGSL.\n";
+
+    const std::string fsDumpPath        = shaderDumpPath(fs);
+    const std::string invalidFSDumpPath = shaderDumpPath(invalidFS);
+    shaderDumpPath(vs);
+
+    // Compile the fragment shader to get its WGSL, and make the WGSL of invalidFS that WGSL plus a
+    // function that references an undeclared identifier.
+    GLuint validFS = CompileShader(GL_FRAGMENT_SHADER, fs.c_str());
+    ASSERT_NE(validFS, 0u);
+    glDeleteShader(validFS);
+    std::string wgsl;
+    ASSERT_TRUE(angle::ReadFileToString(fsDumpPath, &wgsl)) << fsDumpPath;
+    wgsl += "\nfn angleTestInvalidFunction() -> i32 { return angleTestUndeclaredIdentifier; }\n";
+    std::ofstream invalidFSDump(invalidFSDumpPath, std::ios::binary | std::ios::trunc);
+    invalidFSDump << wgsl;
+    invalidFSDump.close();
+    ASSERT_FALSE(invalidFSDump.fail()) << invalidFSDumpPath;
+
+    GLuint program  = glCreateProgram();
+    GLuint vsShader = CompileShader(GL_VERTEX_SHADER, vs.c_str());
+    GLuint fsShader = CompileShader(GL_FRAGMENT_SHADER, invalidFS.c_str());
+    ASSERT_NE(vsShader, 0u);
+    ASSERT_NE(fsShader, 0u);
+    glAttachShader(program, vsShader);
+    glAttachShader(program, fsShader);
+    glLinkProgram(program);
+    glDeleteShader(vsShader);
+    glDeleteShader(fsShader);
+
+    GLint linkStatus = GL_TRUE;
+    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+    EXPECT_GL_FALSE(linkStatus);
+
+    GLint infoLogLength = 0;
+    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
+    std::vector<GLchar> infoLog(std::max(infoLogLength, 1), '\0');
+    glGetProgramInfoLog(program, static_cast<GLsizei>(infoLog.size()), nullptr, infoLog.data());
+    EXPECT_NE(std::string(infoLog.data()).find("angleTestUndeclaredIdentifier"), std::string::npos)
+        << "Info log: " << infoLog.data();
+
+    glUseProgram(program);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glDeleteProgram(program);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(LinkAndRelinkTest);
+
+ANGLE_INSTANTIATE_TEST(LinkWithTranslatedShaderSubstitutionTest,
+                       ES2_WEBGPU()
+                           .enable(Feature::DumpTranslatedShaders)
+                           .enable(Feature::EnableTranslatedShaderSubstitution),
+                       ES3_WEBGPU()
+                           .enable(Feature::DumpTranslatedShaders)
+                           .enable(Feature::EnableTranslatedShaderSubstitution));
 
 ANGLE_INSTANTIATE_TEST_ES3(LinkAndRelinkTestES3);
 
