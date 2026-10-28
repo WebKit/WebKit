@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/HTTPServer.h"
@@ -83,43 +82,52 @@ static bool serviceWorkerGlobalObjectIsAvailable;
 static String serviceWorkerExpectedMessage;
 static String retrievedString;
 
-@interface SWMessageHandler : NSObject <WKScriptMessageHandler>
+@interface SWDoneMessageHandler : NSObject {
+@public
+    bool _done;
+}
+@end
+
+@implementation SWDoneMessageHandler
+@end
+
+@interface SWMessageHandler : SWDoneMessageHandler <WKScriptMessageHandler>
 @end
 
 @implementation SWMessageHandler
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     EXPECT_WK_STREQ(@"Message from worker: ServiceWorker received: Hello from the web page", [message body]);
-    done = true;
+    _done = true;
 }
 @end
 
-@interface SWMessageHandlerForFetchTest : NSObject <WKScriptMessageHandler>
+@interface SWMessageHandlerForFetchTest : SWDoneMessageHandler <WKScriptMessageHandler>
 @end
 
 @implementation SWMessageHandlerForFetchTest
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     EXPECT_TRUE([[message body] isEqualToString:@"Intercepted by worker"]);
-    done = true;
+    _done = true;
 }
 @end
 
-@interface SWMessageHandlerForRestoreFromDiskTest : NSObject <WKScriptMessageHandler> {
+@interface SWMessageHandlerForRestoreFromDiskTest : SWDoneMessageHandler <WKScriptMessageHandler> {
     NSString *_serviceWorkerExpectedMessage;
 }
 - (instancetype)initWithExpectedMessage:(NSString *)serviceWorkerExpectedMessage;
 - (void)resetExpectedMessage:(NSString *)serviceWorkerExpectedMessage;
 @end
 
-@interface SWMessageHandlerWithExpectedMessage : NSObject <WKScriptMessageHandler>
+@interface SWMessageHandlerWithExpectedMessage : SWDoneMessageHandler <WKScriptMessageHandler>
 @end
 
 @implementation SWMessageHandlerWithExpectedMessage
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     EXPECT_WK_STREQ(message.body, serviceWorkerExpectedMessage);
-    done = true;
+    _done = true;
 }
 @end
 
@@ -143,18 +151,30 @@ static String retrievedString;
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     EXPECT_WK_STREQ(message.body, _serviceWorkerExpectedMessage);
-    done = true;
+    _done = true;
 }
 @end
 
-static bool shouldAccept = true;
 static bool navigationComplete = false;
 static bool navigationFailed = false;
 
-@interface TestSWAsyncNavigationDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
+@interface TestSWAsyncNavigationDelegate : NSObject <WKNavigationDelegate, WKUIDelegate> {
+@public
+    bool _shouldAccept;
+}
 @end
 
 @implementation TestSWAsyncNavigationDelegate
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _shouldAccept = true;
+
+    return self;
+}
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
@@ -183,7 +203,7 @@ static bool navigationFailed = false;
     int64_t deferredWaitTime = 100 * NSEC_PER_MSEC;
     dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
     dispatch_after(when, mainDispatchQueueSingleton(), ^{
-        decisionHandler(shouldAccept ? WKNavigationResponsePolicyAllow : WKNavigationResponsePolicyCancel);
+        decisionHandler(self->_shouldAccept ? WKNavigationResponsePolicyAllow : WKNavigationResponsePolicyCancel);
     });
 }
 @end
@@ -546,6 +566,7 @@ static void runBasicSWTest(ShouldRunServiceWorkersOnMainThread shouldRunServiceW
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -559,8 +580,7 @@ static void runBasicSWTest(ShouldRunServiceWorkersOnMainThread shouldRunServiceW
 
     [webView loadRequest:server.request()];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     webView = nullptr;
 
@@ -611,7 +631,7 @@ TEST(ServiceWorkers, BasicWithMainThreadSW)
 
 @end
 
-@interface SWUserAgentMessageHandler : NSObject <WKScriptMessageHandler> {
+@interface SWUserAgentMessageHandler : SWDoneMessageHandler <WKScriptMessageHandler> {
 @public
     NSString *serviceWorkerExpectedMessage;
 }
@@ -630,7 +650,7 @@ TEST(ServiceWorkers, BasicWithMainThreadSW)
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     EXPECT_WK_STREQ(serviceWorkerExpectedMessage, [message body]);
-    done = true;
+    _done = true;
 }
 @end
 
@@ -647,6 +667,7 @@ TEST(ServiceWorkers, UserAgentOverride)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -673,8 +694,7 @@ TEST(ServiceWorkers, UserAgentOverride)
 
     [webView loadRequest:server.request()];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     // Restore from disk.
     webView = nullptr;
@@ -694,8 +714,7 @@ TEST(ServiceWorkers, UserAgentOverride)
 
     [webView loadRequest:server.request()];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 TEST(ServiceWorkers, RestoreFromDisk)
@@ -703,6 +722,7 @@ TEST(ServiceWorkers, RestoreFromDisk)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
     
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -727,13 +747,11 @@ TEST(ServiceWorkers, RestoreFromDisk)
 
     [webView loadRequest:server.request("/first.html"_s)];
 
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     webView = nullptr;
     configuration = nullptr;
     messageHandler = nullptr;
-
-    done = false;
 
     configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Registration already has an active worker"]);
@@ -743,8 +761,7 @@ TEST(ServiceWorkers, RestoreFromDisk)
 
     [webView loadRequest:server.request("/second.html"_s)];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 #if PLATFORM(MAC)
@@ -779,9 +796,8 @@ TEST(ServiceWorkers, ImportRegistrationsForOriginWithEmptyDatabase)
         [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
         RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-        done = false;
         [webView loadRequest:server.request("/first.html"_s)];
-        TestWebKitAPI::Util::run(&done);
+        TestWebKitAPI::Util::run(&messageHandler->_done);
 
         // Give the service worker a moment to be persisted before terminating the network process.
         TestWebKitAPI::Util::runFor(0.25_s);
@@ -830,9 +846,8 @@ TEST(ServiceWorkers, ImportRegistrationsForOriginWithEmptyDatabase)
         [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
         RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-        done = false;
         [webView loadRequest:server.request("/first.html"_s)];
-        TestWebKitAPI::Util::run(&done);
+        TestWebKitAPI::Util::run(&messageHandler->_done);
     }
 }
 #endif // PLATFORM(MAC)
@@ -857,6 +872,7 @@ TEST(ServiceWorkers, UpdateCheckAfterRestoreFromDisk)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -882,7 +898,7 @@ TEST(ServiceWorkers, UpdateCheckAfterRestoreFromDisk)
     // Phase 1: Register a service worker under /scope/ and wait for it to activate.
     [webView loadRequest:server.request("/scope/first.html"_s)];
 
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     // Flush registrations to disk and terminate the network process so that Phase 2 will
     // import registrations from disk (with lazy script loading) in a fresh network process.
@@ -913,14 +929,14 @@ TEST(ServiceWorkers, UpdateCheckAfterRestoreFromDisk)
 
     [webView loadRequest:server.request("/second.html"_s)];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 TEST(ServiceWorkers, CheckRegistrationWithoutMainScript)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -945,7 +961,7 @@ TEST(ServiceWorkers, CheckRegistrationWithoutMainScript)
 
     // Register a service worker under /scope/ and wait for it to activate.
     [webView loadRequest:server.request("/scope/first.html"_s)];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     // Flush registrations to disk and terminate the network process so that Phase 2 will
     // import registrations from disk (with lazy script loading) in a fresh network process.
@@ -987,10 +1003,9 @@ TEST(ServiceWorkers, CheckRegistrationWithoutMainScript)
     messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"FAIL: No registrations found"]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    done = false;
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request("/scope/second.html"_s)];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     done = false;
     [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
@@ -1004,6 +1019,7 @@ TEST(ServiceWorkers, CheckRegistrationWithoutImportedScript)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -1029,7 +1045,7 @@ TEST(ServiceWorkers, CheckRegistrationWithoutImportedScript)
 
     // Register a service worker under /scope/ and wait for it to activate.
     [webView loadRequest:server.request("/scope/first.html"_s)];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     // Flush registrations to disk and terminate the network process so that we will
     // import registrations from disk (with lazy script loading) in a fresh network process.
@@ -1079,10 +1095,9 @@ TEST(ServiceWorkers, CheckRegistrationWithoutImportedScript)
     messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"FAIL: No registrations found"]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    done = false;
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request("/scope/second.html"_s)];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     done = false;
     [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
@@ -1171,6 +1186,7 @@ TEST(ServiceWorkers, ThirdPartyRestoredFromDisk)
     RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
 
     // Start with a clean slate data store
+    __block bool done = false;
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -1189,9 +1205,9 @@ TEST(ServiceWorkers, ThirdPartyRestoredFromDisk)
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     [webView loadRequest:server.request("/index.html"_s)];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
-    done = false;
+    messageHandler->_done = false;
     [messageHandler resetExpectedMessage:@"PASS: Registration was successful and service worker was activated"];
 
     String thirdPartyIframeURL = URL(server.requestWithLocalhost("/thirdPartyIframeWithSW.html"_s).URL).string();
@@ -1203,13 +1219,12 @@ TEST(ServiceWorkers, ThirdPartyRestoredFromDisk)
     }];
 
     TestWebKitAPI::Util::run(&addedIframe);
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     [webView _close];
     webView = nullptr;
     configuration = nullptr;
     messageHandler = nullptr;
-    done = false;
 
     // Let the service worker process exit.
     TestWebKitAPI::Util::runFor(1_s);
@@ -1223,9 +1238,9 @@ TEST(ServiceWorkers, ThirdPartyRestoredFromDisk)
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     [webView loadRequest:server.request("/index.html"_s)];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
-    done = false;
+    messageHandler->_done = false;
     [messageHandler resetExpectedMessage:@"PASS: Registration already has an active worker"];
 
     String thirdPartyIframeURL2 = URL(server.requestWithLocalhost("/thirdPartyIframeWithSW2.html"_s).URL).string();
@@ -1237,8 +1252,8 @@ TEST(ServiceWorkers, ThirdPartyRestoredFromDisk)
     }];
 
     TestWebKitAPI::Util::run(&addedIframe);
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
 
     [messageHandler resetExpectedMessage:@"Message from worker: Load succeeded"];
 
@@ -1249,8 +1264,7 @@ TEST(ServiceWorkers, ThirdPartyRestoredFromDisk)
     }];
     TestWebKitAPI::Util::run(&requestedFetch);
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 TEST(ServiceWorkers, CacheStorageRestoreFromDisk)
@@ -1258,6 +1272,7 @@ TEST(ServiceWorkers, CacheStorageRestoreFromDisk)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -1281,8 +1296,7 @@ TEST(ServiceWorkers, CacheStorageRestoreFromDisk)
 
     [webView loadRequest:server.request()];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     webView = nullptr;
     configuration = nullptr;
@@ -1297,8 +1311,7 @@ TEST(ServiceWorkers, CacheStorageRestoreFromDisk)
 
     [webView loadRequest:server.request()];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 TEST(ServiceWorkers, FetchAfterRestoreFromDisk)
@@ -1306,6 +1319,7 @@ TEST(ServiceWorkers, FetchAfterRestoreFromDisk)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -1329,13 +1343,11 @@ TEST(ServiceWorkers, FetchAfterRestoreFromDisk)
 
     [webView loadRequest:server.request()];
 
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     webView = nullptr;
     configuration = nullptr;
     messageHandler = nullptr;
-
-    done = false;
 
     configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     messageHandler = adoptNS([[SWMessageHandlerForFetchTest alloc] init]);
@@ -1345,8 +1357,7 @@ TEST(ServiceWorkers, FetchAfterRestoreFromDisk)
 
     [webView loadRequest:server.request()];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 TEST(ServiceWorkers, InterceptFirstLoadAfterRestoreFromDisk)
@@ -1354,6 +1365,7 @@ TEST(ServiceWorkers, InterceptFirstLoadAfterRestoreFromDisk)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -1378,13 +1390,11 @@ TEST(ServiceWorkers, InterceptFirstLoadAfterRestoreFromDisk)
     serviceWorkerExpectedMessage = "Service Worker activated"_s;
     [webView loadRequest:server.request("/main.html"_s)];
 
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     webView = nullptr;
     configuration = nullptr;
     messageHandler = nullptr;
-
-    done = false;
 
     configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
@@ -1395,8 +1405,7 @@ TEST(ServiceWorkers, InterceptFirstLoadAfterRestoreFromDisk)
     serviceWorkerExpectedMessage = "Intercepted by worker"_s;
     [webView loadRequest:server.request("/main.html"_s)];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 TEST(ServiceWorkers, MainThreadSWInterceptsLoad)
@@ -1408,6 +1417,7 @@ TEST(ServiceWorkers, MainThreadSWInterceptsLoad)
     RetainPtr<WKWebsiteDataStore> dataStore = [configuration websiteDataStore];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -1430,13 +1440,11 @@ TEST(ServiceWorkers, MainThreadSWInterceptsLoad)
     serviceWorkerExpectedMessage = "Service Worker activated"_s;
     [webView loadRequest:server.request("/main.html"_s)];
 
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     webView = nullptr;
     configuration = nullptr;
     messageHandler = nullptr;
-
-    done = false;
 
     configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setWebsiteDataStore:dataStore.get()];
@@ -1448,8 +1456,7 @@ TEST(ServiceWorkers, MainThreadSWInterceptsLoad)
     serviceWorkerExpectedMessage = "Intercepted by worker"_s;
     [webView loadRequest:server.request("/main.html"_s)];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 TEST(ServiceWorkers, WaitForPolicyDelegate)
@@ -1457,6 +1464,7 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -1482,13 +1490,11 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     serviceWorkerExpectedMessage = "Service Worker activated"_s;
     [webView loadRequest:server.request("/main.html"_s)];
 
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     webView = nullptr;
     configuration = nullptr;
     messageHandler = nullptr;
-
-    done = false;
 
     configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
@@ -1500,15 +1506,13 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     serviceWorkerExpectedMessage = "Intercepted by worker"_s;
     [webView loadRequest:server.request("/main.html"_s)];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     RetainPtr delegate = adoptNS([[TestSWAsyncNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
 
-    shouldAccept = true;
     navigationFailed = false;
     navigationComplete = false;
 
@@ -1522,7 +1526,7 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
 
-    shouldAccept = false;
+    delegate->_shouldAccept = false;
     navigationFailed = false;
     navigationComplete = false;
 
@@ -1541,14 +1545,14 @@ void setConfigurationInjectedBundlePath(WKWebViewConfiguration* configuration)
     configuration.processPool = (WKProcessPool *)context.get();
 }
 
-@interface RegularPageMessageHandler : NSObject <WKScriptMessageHandler>
+@interface RegularPageMessageHandler : SWDoneMessageHandler <WKScriptMessageHandler>
 @end
 
 @implementation RegularPageMessageHandler
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     EXPECT_TRUE([[message body] isEqualToString:@"PASS"]);
-    done = true;
+    _done = true;
 }
 @end
 
@@ -1565,7 +1569,7 @@ TEST(ServiceWorkers, SWProcessConnectionCreation)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     setConfigurationInjectedBundlePath(configuration.get());
 
-    done = false;
+    __block bool done = false;
 
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -1603,24 +1607,22 @@ TEST(ServiceWorkers, SWProcessConnectionCreation)
 
     // Test that a regular page does not trigger a service worker connection to network process if there is no registered service worker.
     [regularPageWebView loadRequest:server.request("/first.html"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&regularPageMessageHandler->_done);
+    regularPageMessageHandler->_done = false;
 
     // Test that a sw scheme page can register a service worker.
     [webView loadRequest:server.request("/second.html"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
     webView = nullptr;
 
     // Now that a service worker is registered, the regular page should have a service worker connection.
     [regularPageWebView loadRequest:server.request("/third.html"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&regularPageMessageHandler->_done);
+    regularPageMessageHandler->_done = false;
     regularPageWebView = nullptr;
 
     [newRegularPageWebView loadRequest:server.request("/fourth.html"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&regularPageMessageHandler->_done);
     newRegularPageWebView = nullptr;
 
     [[configuration websiteDataStore] fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords) {
@@ -1673,7 +1675,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
     setConfigurationInjectedBundlePath(configuration.get());
     RetainPtr<WKProcessPool> originalProcessPool = configuration.get().processPool;
 
-    done = false;
+    __block bool done = false;
 
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -1707,8 +1709,8 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
 
     // Load a page that registers a service worker.
     [webView loadRequest:server.request("/first.html"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
     webView = nullptr;
 
     // Now that a sw is registered, let's create a new configuration and try loading a regular page, there should be no service worker process created.
@@ -1722,8 +1724,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
     EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
     [webView loadRequest:server.request("/second.html"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&regularPageMessageHandler->_done);
 
     // Make sure that loading the simple page did not start the service worker process.
     EXPECT_EQ(1u, webView.get().configuration.processPool._serviceWorkerProcessCount);
@@ -1731,8 +1732,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
     EXPECT_EQ(2u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
     [webView loadRequest:server.request("/third.html"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     EXPECT_EQ(1u, webView.get().configuration.processPool._serviceWorkerProcessCount);
     EXPECT_EQ(1u, originalProcessPool.get()._serviceWorkerProcessCount);
@@ -1780,14 +1780,14 @@ window.caches.open("test").then(() => {
 </script>
 )SWRESOURCE"_s;
 
-@interface SWMessageHandlerForCacheStorage : NSObject <WKScriptMessageHandler>
+@interface SWMessageHandlerForCacheStorage : SWDoneMessageHandler <WKScriptMessageHandler>
 @end
 
 @implementation SWMessageHandlerForCacheStorage
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     EXPECT_WK_STREQ(@"PASS", [message body]);
-    done = true;
+    _done = true;
 }
 @end
 
@@ -1809,13 +1809,12 @@ TEST(ServiceWorkers, CacheStorageInPrivateBrowsingMode)
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request("/first.html"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request("/second.html"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 static constexpr auto serviceWorkerCacheAccessEphemeralSessionMainBytes = R"SWRESOURCE(
@@ -1858,6 +1857,7 @@ TEST(ServiceWorkers, ServiceWorkerCacheAccessEphemeralSession)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -1897,8 +1897,7 @@ TEST(ServiceWorkers, ServiceWorkerCacheAccessEphemeralSession)
     RetainPtr ephemeralWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     [ephemeralWebView loadRequest:server.request()];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 static constexpr auto differentSessionsUseDifferentRegistrationsMainBytes = R"SWRESOURCE(
@@ -1944,6 +1943,7 @@ TEST(ServiceWorkers, DifferentSessionsUseDifferentRegistrations)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -1969,20 +1969,19 @@ TEST(ServiceWorkers, DifferentSessionsUseDifferentRegistrations)
     RetainPtr defaultWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [defaultWebView synchronouslyLoadRequest:server.request("/first.html"_s)];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
 
     [defaultWebView synchronouslyLoadRequest:server.request("/second.html"_s)];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
 
     configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
     RetainPtr ephemeralWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [ephemeralWebView synchronouslyLoadRequest:server.request("/third.html"_s)];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 static constexpr auto regularPageGrabbingCacheStorageDirectory = R"SWRESOURCE(
@@ -1996,14 +1995,14 @@ getResult();
 </script>
 )SWRESOURCE"_s;
 
-@interface DirectoryPageMessageHandler : NSObject <WKScriptMessageHandler>
+@interface DirectoryPageMessageHandler : SWDoneMessageHandler <WKScriptMessageHandler>
 @end
 
 @implementation DirectoryPageMessageHandler
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     retrievedString = [message body];
-    done = true;
+    _done = true;
 }
 @end
 
@@ -2027,9 +2026,10 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     [webView loadRequest:server.request("/first.html"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&directoryPageMessageHandler->_done);
+    directoryPageMessageHandler->_done = false;
     
+    __block bool done = false;
     [configuration.get().websiteDataStore _storeServiceWorkerRegistrations:^{
         done = true;
     }];
@@ -2039,8 +2039,7 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     [webView loadRequest:server.request("/second.html"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&directoryPageMessageHandler->_done);
     EXPECT_TRUE(retrievedString.contains("/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/CacheStorage"_s));
 
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
@@ -2079,8 +2078,9 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     [webView loadRequest:server.request("/first.html"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&directoryPageMessageHandler->_done);
+    directoryPageMessageHandler->_done = false;
+    __block bool done = false;
     [websiteDataStore _storeServiceWorkerRegistrations:^{
         done = true;
     }];
@@ -2090,8 +2090,7 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     [webView loadRequest:server.request("/second.html"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&directoryPageMessageHandler->_done);
     RetainPtr tempDirectoryInUse = FileSystem::realPath(tempDirectory).createNSString();
     String expectedString = [NSString stringWithFormat:@"\"path\": \"%@\"", tempDirectoryInUse.get()];
     EXPECT_TRUE(retrievedString.contains(expectedString));
@@ -2140,14 +2139,14 @@ TEST(ServiceWorkers, NonDefaultSessionID)
 
     [webView loadRequest:server.request()];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     [webView _close];
     webView = nullptr;
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:serviceWorkersPath.path]);
 
+    __block bool done = false;
     [configuration.get().websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords) {
         EXPECT_EQ(1u, [websiteDataRecords count]);
         EXPECT_WK_STREQ(websiteDataRecords[0].displayName, "127.0.0.1");
@@ -2182,6 +2181,7 @@ TEST(ServiceWorkers, ProcessPerSite)
     RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
     
     // Start with a clean slate data store
+    __block bool done = false;
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -2212,32 +2212,31 @@ TEST(ServiceWorkers, ProcessPerSite)
 
     [webView1 loadRequest:server1.request()];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
 
     EXPECT_EQ(1U, processPool._serviceWorkerProcessCount);
 
     RetainPtr<WKWebView> webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView2 loadRequest:server1.request()];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
 
     EXPECT_EQ(1U, processPool._serviceWorkerProcessCount);
 
     RetainPtr<WKWebView> webView3 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView3 loadRequest:server1.request()];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
 
     EXPECT_EQ(1U, processPool._serviceWorkerProcessCount);
 
     RetainPtr<WKWebView> webView4 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView4 loadRequest:server2.requestWithLocalhost()];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     EXPECT_EQ(2U, processPool._serviceWorkerProcessCount);
 
@@ -2262,6 +2261,7 @@ TEST(ServiceWorkers, ParallelProcessLaunch)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -2302,6 +2302,7 @@ static size_t launchServiceWorkerProcess(bool useSeparateServiceWorkerProcess, b
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -2326,16 +2327,16 @@ static size_t launchServiceWorkerProcess(bool useSeparateServiceWorkerProcess, b
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
+    __block bool didFinishNavigation = false;
     RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
-        didFinishNavigationBoolean = true;
+        didFinishNavigation = true;
     }];
     [webView setNavigationDelegate:navigationDelegate.get()];
 
     if (loadAboutBlankBeforePage) {
-        didFinishNavigationBoolean = false;
         [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-        TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
+        TestWebKitAPI::Util::run(&didFinishNavigation);
     }
 
     [webView loadRequest:server.request()];
@@ -2422,6 +2423,7 @@ TEST(ServiceWorkers, LockdownModeInSharedWorkerProcess)
     TestWebKitAPI::Util::spinRunLoop();
 
     // Start with a clean slate data store.
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -2448,15 +2450,10 @@ TEST(ServiceWorkers, LockdownModeInSharedWorkerProcess)
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
-    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
-        didFinishNavigationBoolean = true;
-    }];
-    [webView setNavigationDelegate:navigationDelegate.get()];
     [webView loadRequest:server.request()];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
 
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [processPool _webProcessCount] == 2; }));
 
@@ -2470,14 +2467,14 @@ TEST(ServiceWorkers, LockdownModeInSharedWorkerProcess)
 
     auto runJSCheck = [&](const String& jsToEvalInWorker) {
         bool finishedRunningScript = false;
-        done = false;
+        messageHandler->_done = false;
         auto js = makeString("sharedWorker.port.postMessage('"_s, jsToEvalInWorker,"');"_s);
         [webView evaluateJavaScript:js.createNSString().get() completionHandler:[&] (id result, NSError *error) {
             EXPECT_NULL(error);
             finishedRunningScript = true;
         }];
         TestWebKitAPI::Util::run(&finishedRunningScript);
-        TestWebKitAPI::Util::run(&done);
+        TestWebKitAPI::Util::run(&messageHandler->_done);
     };
 
     [messageHandler resetExpectedMessage:@"Message from worker: Evaluation result: true"];
@@ -2548,6 +2545,7 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWor
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -2659,6 +2657,7 @@ TEST(ServiceWorkers, SuspendAndTerminateWorker)
     RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
 
     // Start with a clean slate data store
+    __block bool done = false;
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -2689,8 +2688,8 @@ TEST(ServiceWorkers, SuspendAndTerminateWorker)
     serviceWorkerExpectedMessage = "Message from worker: ServiceWorker received: Hello from the web page"_s;
     [webView loadRequest:server.request()];
     // Wait until ServiceWorker is launched.
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
 
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [processPool _serviceWorkerProcessCount] == 1; }));
 
@@ -2732,8 +2731,7 @@ TEST(ServiceWorkers, SuspendAndTerminateWorker)
     // Let's verify the WKWebView did not crash and has the same PID as before.
     serviceWorkerExpectedMessage = "OK"_s;
     [webView evaluateJavaScript:@"log('OK')" completionHandler: nil];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     pid_t pidAfterTerminatingServiceWorker = [webView _webProcessIdentifier];
     EXPECT_EQ(pidBeforeTerminatingServiceWorker, pidAfterTerminatingServiceWorker);
@@ -2744,6 +2742,7 @@ TEST(ServiceWorkers, ThrottleCrash)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -2760,9 +2759,10 @@ TEST(ServiceWorkers, ThrottleCrash)
         { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerScriptBytes } },
     });
 
+    __block bool didFinishNavigation = false;
     RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
-        didFinishNavigationBoolean = true;
+        didFinishNavigation = true;
     }];
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2784,10 +2784,8 @@ TEST(ServiceWorkers, ThrottleCrash)
 
     [webView1 loadRequest:server.request()];
 
-    didFinishNavigationBoolean = false;
-    TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     RetainPtr webView2Configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 #if PLATFORM(MAC)
@@ -2804,8 +2802,8 @@ TEST(ServiceWorkers, ThrottleCrash)
 
     [webView2 loadRequest:server.request()];
 
-    didFinishNavigationBoolean = false;
-    TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
+    didFinishNavigation = false;
+    TestWebKitAPI::Util::run(&didFinishNavigation);
 }
 
 TEST(ServiceWorkers, LoadData)
@@ -2813,6 +2811,7 @@ TEST(ServiceWorkers, LoadData)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -2838,20 +2837,17 @@ TEST(ServiceWorkers, LoadData)
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
 
-    done = false;
-
     // Normal load to get SW registered.
     [webView loadRequest:server.request()];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
 
     // Now try a data load.
     NSData *data = [NSData dataWithBytes:serviceWorkerMainBytes length:strlen(serviceWorkerMainBytes)];
     [webView loadData:data MIMEType:@"text/html" characterEncodingName:@"UTF-8" baseURL:server.request().URL];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
@@ -2892,8 +2888,7 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
 
         [webView loadRequest:server.request("/first.html"_s)];
 
-        TestWebKitAPI::Util::run(&done);
-        done = false;
+        TestWebKitAPI::Util::run(&messageHandler->_done);
 
         [webView.get().configuration.processPool _terminateServiceWorkers];
     }
@@ -2915,8 +2910,7 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
 
         [webView loadRequest:server.request("/second.html"_s)];
 
-        TestWebKitAPI::Util::run(&done);
-        done = false;
+        TestWebKitAPI::Util::run(&messageHandler->_done);
     }
 }
 
@@ -2928,6 +2922,7 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     websiteDataStoreConfiguration.get().unifiedOriginStorageLevel = _WKUnifiedOriginStorageLevelBasic;
     RetainPtr websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    __block bool done = false;
     [websiteDataStore.get() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -2954,13 +2949,11 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
 
-    done = false;
-
     // Normal load to get SW registered.
     [webView loadRequest:server.request("/first.html"_s)];
 
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
 
     auto store = [configuration websiteDataStore];
     auto path = store._configuration._serviceWorkerRegistrationDirectory.path;
@@ -2981,8 +2974,7 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
     [webView.get().configuration.websiteDataStore _sendNetworkProcessDidResume];
 
     [webView loadRequest:server.request("/second.html"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path]);
 }
@@ -3017,6 +3009,7 @@ TEST(WebKit, ServiceWorkerDatabaseWithRecordsTableButUnexpectedSchema)
 TEST(ServiceWorkers, V2DatabaseUpgrade)
 {
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -3066,6 +3059,7 @@ TEST(ServiceWorkers, ProcessPerSession)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -3089,8 +3083,8 @@ TEST(ServiceWorkers, ProcessPerSession)
 
     RetainPtr webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView1 loadRequest:server1.request()];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
 
     EXPECT_EQ(1U, processPool._serviceWorkerProcessCount);
 
@@ -3103,8 +3097,7 @@ TEST(ServiceWorkers, ProcessPerSession)
 
     RetainPtr webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView2 loadRequest:server2.requestWithLocalhost()];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     EXPECT_EQ(2U, processPool._serviceWorkerProcessCount);
 }
@@ -3137,6 +3130,7 @@ TEST(ServiceWorkers, ContentRuleList)
     TestWebKitAPI::Util::run(&doneCompiling);
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -3172,7 +3166,7 @@ TEST(ServiceWorkers, ContentRuleList)
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
     
     __block bool doneRemoving = false;
     [[WKContentRuleListStore defaultStore] removeContentRuleListForIdentifier:@"ServiceWorkerRuleList" completionHandler:^(NSError *error) {
@@ -3431,6 +3425,7 @@ TEST(ServiceWorkers, ClearDOMCacheAlsoIncludesServiceWorkerRegistrations)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -3452,8 +3447,7 @@ TEST(ServiceWorkers, ClearDOMCacheAlsoIncludesServiceWorkerRegistrations)
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     // Fetch SW records
     RetainPtr websiteDataTypes = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeServiceWorkerRegistrations]]);
@@ -3508,8 +3502,7 @@ TEST(ServiceWorkers, CustomDataStorePathsVersusCompletionHandlers)
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     unsigned timeout = 0;
     while (![[NSFileManager defaultManager] fileExistsAtPath:[swPath URLByAppendingPathComponent:serviceWorkerRegistrationFilename].path] && ++timeout < 20)
@@ -3559,6 +3552,7 @@ TEST(ServiceWorkers, WebProcessCache)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -3718,6 +3712,7 @@ TEST(ServiceWorker, ExtensionServiceWorker)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -3802,6 +3797,7 @@ TEST(ServiceWorker, ExtensionServiceWorkerDisableCORS)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -3830,7 +3826,6 @@ TEST(ServiceWorker, ExtensionServiceWorkerDisableCORS)
                 if (requestParts.size() > 2)
                     filenameRequestedOverHTTP = requestParts[1];
                 madeHTTPGetRequest = true;
-                done = true;
             }
         });
     });
@@ -3853,7 +3848,6 @@ TEST(ServiceWorker, ExtensionServiceWorkerDisableCORS)
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
     // The service worker script should get loaded over the custom scheme handler.
-    done = false;
     didStartURLSchemeTask = false;
     [webView _loadServiceWorker:[NSURL URLWithString:@"sw-ext://ABC/sw.js"] usingModules:NO completionHandler:^(BOOL success) {
         EXPECT_TRUE(success);
@@ -3875,6 +3869,7 @@ TEST(ServiceWorker, ExtensionServiceWorkerWithModules)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -3943,7 +3938,7 @@ TEST(ServiceWorker, ExtensionServiceWorkerNotPersistedToDisk)
     [webViewConfiguration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"sw-ext"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
 
-    done = false;
+    __block bool done = false;
     didStartURLSchemeTask = false;
     [webView _loadServiceWorker:[NSURL URLWithString:@"sw-ext://ABC/sw.js"] usingModules:NO completionHandler:^(BOOL success) {
         EXPECT_TRUE(success);
@@ -3973,6 +3968,7 @@ TEST(ServiceWorker, ExtensionServiceWorkerFailureBadScript)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -4009,6 +4005,7 @@ TEST(ServiceWorker, ExtensionServiceWorkerFailureBadURL)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -4038,6 +4035,7 @@ TEST(ServiceWorker, ExtensionServiceWorkerFailureViewClosed)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -4067,6 +4065,7 @@ TEST(ServiceWorker, ExtensionServiceWorkerFailureViewDestroyed)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -4119,6 +4118,7 @@ TEST(ServiceWorker, RemovalOfSameRegistrableDomainButDifferentOrigin)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -4235,6 +4235,7 @@ TEST(ServiceWorkers, CacheStorageNetworkProcessCrash)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -4261,15 +4262,14 @@ TEST(ServiceWorkers, CacheStorageNetworkProcessCrash)
 
     // Create cache1
     [webView loadRequest:server.request()];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
 
     [configuration.get().websiteDataStore _terminateNetworkProcess];
 
     // Verify cache1 is invalidated after network process crash.
     [webView evaluateJavaScript:@"check()" completionHandler: nil];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 #endif // WK_HAVE_C_SPI
@@ -4333,6 +4333,7 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocus)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -4375,10 +4376,10 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocus)
     EXPECT_FALSE([webView2 hostWindow].isVisible);
 #endif
 
-    done = false;
+    messageHandler->_done = false;
     serviceWorkerExpectedMessage = "focused"_s;
     [webView1 evaluateJavaScript:@"focusClient()" completionHandler: nil];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 #if PLATFORM(MAC)
     EXPECT_TRUE([webView1 hostWindow].isVisible);
     EXPECT_FALSE([webView2 hostWindow].isVisible);
@@ -4388,21 +4389,21 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocus)
         TestWebKitAPI::Util::spinRunLoop(1);
 
     // FIXME: We should be able to run these tests in iOS once pages are actually visible.
-    done = false;
+    messageHandler->_done = false;
     serviceWorkerExpectedMessage = "PASS"_s;
     [webView1 evaluateJavaScript:@"checkFocusValue(true, 'webView1')" completionHandler:nil];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
-    done = false;
+    messageHandler->_done = false;
     serviceWorkerExpectedMessage = "PASS"_s;
     [webView2 evaluateJavaScript:@"checkFocusValue(false, 'webView2')" completionHandler:nil];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 #endif
 
-    done = false;
+    messageHandler->_done = false;
     serviceWorkerExpectedMessage = "focused"_s;
     [webView2 evaluateJavaScript:@"focusClient()" completionHandler: nil];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 #if PLATFORM(MAC)
     EXPECT_TRUE([webView2 hostWindow].isVisible);
     while ([webView1 hostWindow].isMiniaturized)
@@ -4411,10 +4412,10 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocus)
         TestWebKitAPI::Util::spinRunLoop(1);
 
     // FIXME: We should be able to run these tests in iOS once pages are actually visible.
-    done = false;
+    messageHandler->_done = false;
     serviceWorkerExpectedMessage = "PASS"_s;
     [webView2 evaluateJavaScript:@"checkFocusValue(true, 'webView2')" completionHandler:nil];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 #endif
 }
 
@@ -4423,6 +4424,7 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocusRequiresUserGesture)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -4453,10 +4455,10 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocusRequiresUserGesture)
     [webView loadRequest:server.request()];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully registered");
 
-    done = false;
+    messageHandler->_done = false;
     serviceWorkerExpectedMessage = "not focused"_s;
     [webView evaluateJavaScript:@"focusClient()" completionHandler: nil];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 static constexpr auto ServiceWorkerWindowClientOpenWindowMain =
@@ -4507,6 +4509,7 @@ TEST(ServiceWorker, openWindowWithoutDelegate)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -4537,10 +4540,10 @@ TEST(ServiceWorker, openWindowWithoutDelegate)
     [webView loadRequest:server.request()];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully registered");
 
-    done = false;
+    messageHandler->_done = false;
     serviceWorkerExpectedMessage = "opened without client"_s;
     [webView evaluateJavaScript:@"openWindowClient()" completionHandler: nil];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 static constexpr auto ServiceWorkerWindowClientNavigateMain =
@@ -4658,6 +4661,7 @@ TEST(ServiceWorker, WindowClientNavigate)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -4731,6 +4735,7 @@ TEST(ServiceWorker, WindowClientNavigateCrossOrigin)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -4798,6 +4803,7 @@ TEST(ServiceWorker, OpenWindowWebsiteDataStoreDelegate)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -4852,6 +4858,7 @@ TEST(ServiceWorker, OpenWindowCOOP)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -4977,6 +4984,7 @@ TEST(ServiceWorker, FocusNotYetLoadedClient)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -5115,6 +5123,7 @@ TEST(ServiceWorkers, ServiceWorkerStorageTiming)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -5135,22 +5144,21 @@ TEST(ServiceWorkers, ServiceWorkerStorageTiming)
     setConfigurationInjectedBundlePath(configuration.get());
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    done = false;
     serviceWorkerExpectedMessage = "Message from worker: V1"_s;
     RetainPtr webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow: YES]);
     [webView1 loadRequest:server.request()];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     Vector<WTF::KeyValuePair<String, String>> sourceHeaders;
     sourceHeaders.append({ "Cache-Control"_s, "no-cache"_s });
     sourceHeaders.append({ "Content-Type"_s, "application/javascript"_s });
     server.setResponse("/sw.js"_s, TestWebKitAPI::HTTPResponse { WTF::move(sourceHeaders), serviceWorkerStorageTimingScriptBytesV2 });
 
-    done = false;
+    messageHandler->_done = false;
     serviceWorkerExpectedMessage = "Message from worker: V1"_s;
     RetainPtr webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView2 loadRequest:server.request()];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 
     // Let's wait for a V2 service worker.
     [webView1 evaluateJavaScript:@"waitForWaitingWorker()" completionHandler: nil];
@@ -5162,11 +5170,11 @@ TEST(ServiceWorkers, ServiceWorkerStorageTiming)
 
     [[webView1 configuration].websiteDataStore _terminateNetworkProcess];
 
-    done = false;
+    messageHandler->_done = false;
     serviceWorkerExpectedMessage = "Message from worker: V2"_s;
     RetainPtr webView3 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView3 loadRequest:server.request()];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 static constexpr auto ServiceWorkerCOOPNavigateMain =
@@ -5215,6 +5223,7 @@ TEST(ServiceWorker, ServiceWorkerProcessSwapWithNoDelay)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -5355,6 +5364,7 @@ TEST(ServiceWorkers, ServiceWorkerCacheReference)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -5390,16 +5400,15 @@ TEST(ServiceWorkers, ServiceWorkerCacheReference)
     RetainPtr webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     [webView1 loadRequest:server.request("#fill"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
+    messageHandler->_done = false;
 
     [webView1 _close];
 
     RetainPtr webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     [webView2 loadRequest:server.request("#check"_s)];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    TestWebKitAPI::Util::run(&messageHandler->_done);
 }
 
 static constexpr auto ServiceWorkerIdleOnMemoryPressureMain = R"SWRESOURCE(
@@ -5501,6 +5510,7 @@ TEST(ServiceWorker, ServiceWorkerIdleOnMemoryPressure)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -5644,6 +5654,7 @@ TEST(ServiceWorker, ServiceWorkerReadableStreamDownloadCancel)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
+    __block bool done = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
