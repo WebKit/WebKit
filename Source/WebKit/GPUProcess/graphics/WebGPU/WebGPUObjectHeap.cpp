@@ -135,6 +135,7 @@ void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteDevice& device)
 {
     auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteDevice> { protect(device) } });
     ASSERT_UNUSED(result, result.isNewEntry);
+    m_devices.add(device.backing());
 }
 
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteExternalTexture& externalTexture)
@@ -248,6 +249,11 @@ void ObjectHeap::removeObject(WebGPUIdentifier identifier)
 void ObjectHeap::clear()
 {
     m_objects.clear();
+}
+
+Vector<Ref<::WebGPU::Device>> ObjectHeap::devices() const
+{
+    return m_devices.values();
 }
 
 RefPtr<::WebGPU::Adapter> ObjectHeap::convertAdapterFromBacking(WebGPUIdentifier identifier)
