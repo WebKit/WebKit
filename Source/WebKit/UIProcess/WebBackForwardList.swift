@@ -143,12 +143,24 @@ final class WebBackForwardList {
             return nil
         }
 
+        #if ENABLE_RC_REMOVE_SEC_ACCEL_3_FOR_SWIFT
         // FIXME(rdar://162357139): We can't use == here
         assert(
             WebKit.WebBackForwardListItem.itemForID(identifier) == nil
                 || contentsMatch(WebKit.WebBackForwardListItem.itemForID(identifier).pageID(), page.identifier())
         )
         return WebKit.WebBackForwardListItem.itemForID(identifier)
+        #else
+        guard let item = WebKit.WebBackForwardListItem.itemForID(identifier) else {
+            return nil
+        }
+        // The disable switch falls back to resolving against the process-global map without regard for
+        // which page owns the item.
+        if WebKit.SecurityFlags.radar183491061() && !contentsMatch(item.pageID(), page.identifier()) {
+            return nil
+        }
+        return item
+        #endif
     }
 
     @used

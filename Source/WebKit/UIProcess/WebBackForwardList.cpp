@@ -30,6 +30,7 @@
 #include "BrowsingContextGroup.h"
 #include "LoadedWebArchive.h"
 #include "Logging.h"
+#include "SecurityFlags.h"
 #include "SessionState.h"
 #include "WebBackForwardCache.h"
 #include "WebBackForwardListCounts.h"
@@ -97,8 +98,20 @@ RefPtr<WebBackForwardListItem> WebBackForwardList::itemForID(BackForwardItemIden
     if (!m_page)
         return nullptr;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     ASSERT(!WebBackForwardListItem::itemForID(identifier) || WebBackForwardListItem::itemForID(identifier)->pageID() == m_page->identifier());
     return WebBackForwardListItem::itemForID(identifier);
+#else
+    auto* item = WebBackForwardListItem::itemForID(identifier);
+    if (!item)
+        return nullptr;
+
+    // The disable switch falls back to resolving against the process-global map without regard for which page owns the item.
+    if (SecurityFlags::radar183491061() && item->pageID() != m_page->identifier())
+        return nullptr;
+
+    return item;
+#endif
 }
 
 void WebBackForwardList::pageClosed()

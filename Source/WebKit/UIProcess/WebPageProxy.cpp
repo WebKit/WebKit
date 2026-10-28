@@ -135,6 +135,7 @@
 #include "ResourceLoadInfo.h"
 #include "RunJavaScriptParameters.h"
 #include "SandboxExtension.h"
+#include "SecurityFlags.h"
 #include "SessionHistoryTraversalQueue.h"
 #include "SharedBufferReference.h"
 #include "SpeechRecognitionPermissionManager.h"
@@ -11102,8 +11103,28 @@ static RefPtr<API::JSHandle> takeHitTestJSHandle(NavigationActionData& navigatio
     return nullptr;
 }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+static bool isBackForwardItemIdentifierForPage(const std::optional<BackForwardItemIdentifier>& identifier, WebPageProxyIdentifier pageID)
+{
+    // The disable switch falls back to accepting whichever item the WebContent process named.
+    if (!SecurityFlags::radar183491061())
+        return true;
+
+    if (!identifier)
+        return true;
+
+    RefPtr item = WebBackForwardListItem::itemForID(*identifier);
+    return !item || item->pageID() == pageID;
+}
+#endif
+
 void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& process, WebFrameProxy& frame, NavigationActionData&& navigationActionData, CompletionHandler<void(PolicyDecision&&)>&& originalCompletionHandler)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    MESSAGE_CHECK_COMPLETION(process, isBackForwardItemIdentifierForPage(navigationActionData.targetBackForwardItemIdentifier, identifier()), originalCompletionHandler(PolicyDecision { isNavigatingToAppBoundDomain() }));
+    MESSAGE_CHECK_COMPLETION(process, isBackForwardItemIdentifierForPage(navigationActionData.sourceBackForwardItemIdentifier, identifier()), originalCompletionHandler(PolicyDecision { isNavigatingToAppBoundDomain() }));
+#endif
+
     RefPtr hitTestJSHandle = takeHitTestJSHandle(navigationActionData);
 
     RefPtr<FrameState> frameStateForBackForwardNavigation;
@@ -21703,9 +21724,24 @@ Vector<Ref<WebProcessProxy>> WebPageProxy::activeRemoteFrameProcesses() const
     return processes;
 }
 
+// When enabled, resolves a WebContent-supplied identifier through the page's own list.
+// When disabled, falls back to the process-global map.
+static RefPtr<WebBackForwardListItem> backForwardItemForIdentifierFromWebContent(WebBackForwardList& list, BackForwardItemIdentifier itemID)
+{
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    UNUSED_PARAM(list);
+    return WebBackForwardListItem::itemForID(itemID);
+#else
+    if (!SecurityFlags::radar183491061())
+        return WebBackForwardListItem::itemForID(itemID);
+
+    return list.itemForID(itemID);
+#endif
+}
+
 void WebPageProxy::didCacheBackForwardItem(BackForwardItemIdentifier itemID, CompletionHandler<void(bool)>&& completionHandler)
 {
-    RefPtr item = WebBackForwardListItem::itemForID(itemID);
+    RefPtr item = backForwardItemForIdentifierFromWebContent(backForwardList(), itemID);
     if (!item) {
         WEBPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "didCacheBackForwardItem: unknown itemID %" PUBLIC_LOG_STRING, itemID.toString().utf8());
         return completionHandler(false);
@@ -21795,7 +21831,7 @@ void WebPageProxy::didEvictBackForwardItem(BackForwardItemIdentifier itemID)
     // WP-initiated eviction (capacity / expiration). Idempotent: drop our entry
     // if any. UI→WP discard IPCs are NOT sent because the WP that informed us
     // has already evicted on its side.
-    RefPtr item = WebBackForwardListItem::itemForID(itemID);
+    RefPtr item = backForwardItemForIdentifierFromWebContent(backForwardList(), itemID);
     if (!item || !item->backForwardCacheEntry())
         return;
     protect(backForwardCache())->removeEntry(*item);
@@ -21807,7 +21843,7 @@ void WebPageProxy::didTakeBackForwardItemForRestoration(BackForwardItemIdentifie
     // immediately after BackForwardCache::take() succeeds, ahead of any
     // DidCacheBackForwardItem for the outgoing page in the same load. Drops
     // the UI-side entry.
-    RefPtr item = WebBackForwardListItem::itemForID(itemID);
+    RefPtr item = backForwardItemForIdentifierFromWebContent(backForwardList(), itemID);
     if (!item) {
         WEBPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "didTakeBackForwardItemForRestoration: unknown itemID %" PUBLIC_LOG_STRING, itemID.toString().utf8());
         return;
@@ -21832,7 +21868,7 @@ void WebPageProxy::didTakeBackForwardItemForRestoration(BackForwardItemIdentifie
 
 void WebPageProxy::discardBackForwardCacheEntry(BackForwardItemIdentifier itemID)
 {
-    RefPtr item = WebBackForwardListItem::itemForID(itemID);
+    RefPtr item = backForwardItemForIdentifierFromWebContent(backForwardList(), itemID);
     if (!item || !item->backForwardCacheEntry())
         return;
     protect(backForwardCache())->removeEntry(*item);
