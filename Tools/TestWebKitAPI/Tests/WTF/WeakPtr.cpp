@@ -3861,4 +3861,48 @@ TEST(WTF_WeakPtr, AssignFromWeakRefConst)
     }
 }
 
+struct RefInDestructor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RefInDestructor> {
+    static Ref<RefInDestructor> create(bool* ran, bool* weakWasNull, ThreadSafeWeakPtr<RefInDestructor>* weak) { return adoptRef(*new RefInDestructor(ran, weakWasNull, weak)); }
+    ~RefInDestructor()
+    {
+        {
+            Ref protectedThis { *this };
+            RefPtr other = this;
+            EXPECT_EQ(refCount(), 3u);
+        }
+        EXPECT_EQ(refCount(), 1u);
+        if (m_weak)
+            *m_weakWasNull = !m_weak->get();
+        *m_ran = true;
+    }
+    RefInDestructor(bool* ran, bool* weakWasNull, ThreadSafeWeakPtr<RefInDestructor>* weak)
+        : m_ran(ran), m_weakWasNull(weakWasNull), m_weak(weak) { }
+    bool* m_ran;
+    bool* m_weakWasNull;
+    ThreadSafeWeakPtr<RefInDestructor>* m_weak;
+};
+
+TEST(WTF_ThreadSafeWeakPtr, RefDerefDuringDestructionStrongOnly)
+{
+    bool ran = false;
+    bool weakWasNull = false;
+    RefInDestructor::create(&ran, &weakWasNull, nullptr);
+    EXPECT_TRUE(ran);
+}
+
+TEST(WTF_ThreadSafeWeakPtr, RefDerefDuringDestructionWithControlBlock)
+{
+    bool ran = false;
+    bool weakWasNull = false;
+    ThreadSafeWeakPtr<RefInDestructor> weak;
+    {
+        auto object = RefInDestructor::create(&ran, &weakWasNull, &weak);
+        weak = object.get();
+        EXPECT_EQ(weak.get().get(), object.ptr());
+    }
+    EXPECT_TRUE(ran);
+    EXPECT_TRUE(weakWasNull);
+    EXPECT_EQ(weak.get(), nullptr);
+}
+
 } // namespace TestWebKitAPI
