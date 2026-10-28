@@ -251,6 +251,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/Media/cocoa"
     "${WEBKIT_DIR}/UIProcess/Notifications/cocoa"
     "${WEBKIT_DIR}/UIProcess/PDF"
+    "${WEBKIT_DIR}/UIProcess/PhoneNumberPossession"
     "${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/cocoa"

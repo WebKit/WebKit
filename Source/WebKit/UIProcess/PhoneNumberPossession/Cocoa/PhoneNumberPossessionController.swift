@@ -33,6 +33,7 @@ import UIKit
 import AppKit
 #endif
 
+@_expose(Cxx)
 final class PhoneNumberPossessionController {
     private let base: Base
 
