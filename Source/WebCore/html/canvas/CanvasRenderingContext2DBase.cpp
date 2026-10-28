@@ -368,6 +368,7 @@ void CanvasRenderingContext2DBase::didUpdateCanvasSizeProperties(bool sizeChange
         restore();
     m_stateStack.first() = State();
     m_path.clear();
+    m_hasInvertibleTransform = state().transformInverse.has_value();
     m_bufferNativeImage = nullptr;
     m_cachedContents.emplace<CachedContentsTransparent>();
     m_hasDeferredOperations = false;

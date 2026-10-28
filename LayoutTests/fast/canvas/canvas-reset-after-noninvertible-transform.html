@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Resetting a 2D context (reset(), or setting the canvas width or height) must restore an invertible identity transform, even if the transform was non-invertible before the reset.");
+
+let pixel;
+function checkPixel(context, x, y, expected)
+{
+    pixel = Array.from(context.getImageData(x, y, 1, 1).data);
+    shouldBe("pixel", JSON.stringify(expected));
+}
+
+const red = [255, 0, 0, 255];
+
+function checkDrawingAfterReset(createContext, resetContext)
+{
+    // fillRect.
+    let context = createContext();
+    context.scale(0, 0);
+    resetContext(context);
+    context.fillStyle = "red";
+    context.fillRect(0, 0, 10, 10);
+    checkPixel(context, 5, 5, red);
+
+    // Transform calls and path drawing.
+    context = createContext();
+    context.scale(0, 0);
+    resetContext(context);
+    context.translate(20, 0);
+    context.fillStyle = "red";
+    context.rect(0, 0, 10, 10);
+    context.fill();
+    checkPixel(context, 25, 5, red);
+}
+
+function createCanvasContext()
+{
+    const canvas = document.createElement("canvas");
+    canvas.width = 100;
+    canvas.height = 100;
+    return canvas.getContext("2d");
+}
+
+function createOffscreenCanvasContext()
+{
+    return new OffscreenCanvas(100, 100).getContext("2d");
+}
+
+debug("reset():");
+checkDrawingAfterReset(createCanvasContext, context => context.reset());
+
+debug("");
+debug("reset() with the non-invertible transform in a saved state:");
+checkDrawingAfterReset(createCanvasContext, context => {
+    context.save();
+    context.reset();
+});
+
+debug("");
+debug("Setting the canvas width to its current value:");
+checkDrawingAfterReset(createCanvasContext, context => context.canvas.width = context.canvas.width);
+
+debug("");
+debug("Changing the canvas height:");
+checkDrawingAfterReset(createCanvasContext, context => context.canvas.height = 50);
+
+debug("");
+debug("OffscreenCanvas reset():");
+checkDrawingAfterReset(createOffscreenCanvasContext, context => context.reset());
+
+debug("");
+debug("Setting the OffscreenCanvas width to its current value:");
+checkDrawingAfterReset(createOffscreenCanvasContext, context => context.canvas.width = context.canvas.width);
+</script>
+</body>
+</html>

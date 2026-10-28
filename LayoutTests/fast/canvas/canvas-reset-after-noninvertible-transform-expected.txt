@@ -1,0 +1,32 @@
+Resetting a 2D context (reset(), or setting the canvas width or height) must restore an invertible identity transform, even if the transform was non-invertible before the reset.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+reset():
+PASS pixel is [255,0,0,255]
+PASS pixel is [255,0,0,255]
+
+reset() with the non-invertible transform in a saved state:
+PASS pixel is [255,0,0,255]
+PASS pixel is [255,0,0,255]
+
+Setting the canvas width to its current value:
+PASS pixel is [255,0,0,255]
+PASS pixel is [255,0,0,255]
+
+Changing the canvas height:
+PASS pixel is [255,0,0,255]
+PASS pixel is [255,0,0,255]
+
+OffscreenCanvas reset():
+PASS pixel is [255,0,0,255]
+PASS pixel is [255,0,0,255]
+
+Setting the OffscreenCanvas width to its current value:
+PASS pixel is [255,0,0,255]
+PASS pixel is [255,0,0,255]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
