@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-static const Seconds inputNotificationDelay { 50_ms };
+static const Seconds inputNotificationDelay { 1_ms };
 
 ManetteGamepadProvider& ManetteGamepadProvider::singleton()
 {
