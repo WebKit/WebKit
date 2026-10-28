@@ -84,7 +84,12 @@ function createInternalWritableStreamFromUnderlyingSink(underlyingSink, strategy
     const sizeAlgorithm = @extractSizeAlgorithm(strategy);
     const highWaterMark = @extractHighWaterMark(strategy, 1);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     const underlyingSinkDict = { };
+#else
+    // We set __proto__ to null so property assignments can never hit an Object.prototype setter installed by page script.
+    const underlyingSinkDict = { __proto__: null };
+#endif
     if ("start" in underlyingSink) {
         underlyingSinkDict["start"] = underlyingSink["start"];
         if (typeof underlyingSinkDict["start"] !== "function")

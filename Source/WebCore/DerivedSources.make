@@ -2846,8 +2846,14 @@ WebCore_BUILTINS_WRAPPERS_PATTERNS = $(call to-pattern, $(WebCore_BUILTINS_WRAPP
 WebCore_BUILTINS_SOURCES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py $(WebCore)/DerivedSources.make
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(WebCore_BUILTINS_SOURCES)' $@
 
+WebCore_BUILTINS_DEPENDENCIES = $(BUILTINS_GENERATOR_SCRIPTS) RC_REMOVE_SEC_ACCEL_3=$(RC_REMOVE_SEC_ACCEL_3)
+
+# A build setting change should trigger regeneration of the builtin files since preprocessing migh change the content.
+# To do so, we always call UpdateContents.py while parsing this makefile.
+WebCore_BUILTINS_DEPENDENCIES_REFRESH := $(shell $(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(WebCore_BUILTINS_DEPENDENCIES)' WebCore_BUILTINS_DEPENDENCIES_LIST)
+
 WebCore_BUILTINS_DEPENDENCIES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py $(WebCore)/DerivedSources.make
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(BUILTINS_GENERATOR_SCRIPTS)' $@
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(WebCore_BUILTINS_DEPENDENCIES)' $@
 
 $(WebCore_BUILTINS_WRAPPERS_PATTERNS) : $(WebCore_BUILTINS_SOURCES) WebCore_BUILTINS_SOURCES_LIST $(BUILTINS_GENERATOR_SCRIPTS) WebCore_BUILTINS_DEPENDENCIES_LIST
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --wrappers-only --output-directory . --framework WebCore $(WebCore_BUILTINS_SOURCES)

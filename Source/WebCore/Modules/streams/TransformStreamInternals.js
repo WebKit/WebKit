@@ -50,7 +50,12 @@ function createInternalTransformStreamFromTransformer(transformer, writableStrat
     if (writableStrategy === @undefined)
         writableStrategy = { };
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     let transformerDict = { };
+#else
+    // We set __proto__ to null so property assignments can never hit an Object.prototype setter installed by page script.
+    let transformerDict = { __proto__: null };
+#endif
     if (transformer !== null) {
         if ("start" in transformer) {
             transformerDict["start"] = transformer["start"];
@@ -81,8 +86,17 @@ function createInternalTransformStreamFromTransformer(transformer, writableStrat
     const writableSizeAlgorithm = @extractSizeAlgorithm(writableStrategy);
 
     const internalTransformStream = {};
+<<<<<<< HEAD
     const startPromise = @newPromise();
     const [readable, writable] = @initializeTransformStream(internalTransformStream, startPromise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+=======
+    const startPromiseCapability = @newPromiseCapability(@Promise);
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    const [readable, writable] = @initializeTransformStream(internalTransformStream, startPromiseCapability.promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+#else
+    const streams = @initializeTransformStream(internalTransformStream, startPromiseCapability.promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+#endif
+>>>>>>> 72aea328b2bd (ReadableStreamInternals.js exposes internal object, leading to type confusion)
     @setUpTransformStreamDefaultControllerFromTransformer(internalTransformStream, transformer, transformerDict);
 
     if ("start" in transformerDict) {
@@ -97,7 +111,11 @@ function createInternalTransformStreamFromTransformer(transformer, writableStrat
     } else
         @resolvePromiseWithFirstResolvingFunctionCallCheck(startPromise, @undefined);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     return [internalTransformStream, readable, writable];
+#else
+    return [internalTransformStream, streams[0], streams[1]];
+#endif
 }
 
 function createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorithm, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm)
@@ -114,8 +132,17 @@ function createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorith
     @assert(readableHighWaterMark >= 0);
 
     const stream = {};
+<<<<<<< HEAD
     const startPromise = @newPromise();
     const [readable, writable] = @initializeTransformStream(stream, startPromise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+=======
+    const startPromiseCapability = @newPromiseCapability(@Promise);
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    const [readable, writable] = @initializeTransformStream(stream, startPromiseCapability.promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+#else
+    const streams = @initializeTransformStream(stream, startPromiseCapability.promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+#endif
+>>>>>>> 72aea328b2bd (ReadableStreamInternals.js exposes internal object, leading to type confusion)
 
     const controller = new @TransformStreamDefaultController(@isTransformStream);
     @setUpTransformStreamDefaultController(stream, controller, transformAlgorithm, flushAlgorithm);
@@ -126,7 +153,11 @@ function createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorith
         @rejectPromiseWithFirstResolvingFunctionCallCheck(startPromise, error);
     });
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     return [stream, readable, writable];
+#else
+    return [stream, streams[0], streams[1]];
+#endif
 }
 
 function initializeTransformStream(stream, startPromise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm)
