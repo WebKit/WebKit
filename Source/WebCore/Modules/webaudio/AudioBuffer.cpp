@@ -272,18 +272,21 @@ ExceptionOr<void> AudioBuffer::copyToChannel(Ref<Float32Array>&& source, unsigne
     
     if (bufferOffset >= dataLength)
         return { };
-    
+
+    // This only overwrites one channel from bufferOffset onwards, so noise the rest of the buffer
+    // first; otherwise a single-sample write would negate noise injection for everything it misses.
+    applyNoiseIfNeeded();
+
     size_t count = dataLength - bufferOffset;
     count = std::min(source.get().length(), count);
-    
+
     auto src = source->typedSpan();
     auto dst = channelData->typedMutableSpan();
-    
+
     ASSERT(src.data());
     ASSERT(dst.data());
-    
+
     memmoveSpan(dst.subspan(bufferOffset), src.first(count));
-    m_noiseInjectionMultiplier = 0;
     return { };
 }
 
