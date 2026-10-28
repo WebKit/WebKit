@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SiteIsolationEnabled=true pageTopColorSamplingEnabled=true ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- The page is scrolled before the frame is sampled, so the strip has to be mapped through the main frame's scroll position. -->
+<link rel="stylesheet" href="resources/edge-sampling.css">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/edge-sampling.js"></script>
+</head>
+<body>
+<div class="edge top"><iframe data-src="http://localhost:8000/site-isolation/resources/scrollable-color.html?top=ff7800&amp;bottom=007aff&amp;boundary=60&amp;height=120&amp;scrollTo=0"></iframe></div>
+<div class="tall"></div>
+<script>
+scrollTo(0, 1000);
+testFixedContainerEdges({ top: "rgb(255, 120, 0)" });
+</script>
+</body>
+</html>
