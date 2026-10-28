@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0">
+<button style="margin: 10px; width: 100px; height: 20px">Button</button>
+<script>
+function findButton(element) {
+    if (!element)
+        return null;
+    if (element.role.includes("Button"))
+        return element;
+    for (let i = 0; i < element.childrenCount; i++) {
+        const button = findButton(element.childAtIndex(i));
+        if (button)
+            return button;
+    }
+    return null;
+}
+
+window.addEventListener("message", (event) => {
+    if (event.data !== "report-button-frame")
+        return;
+
+    const root = window.accessibilityController ? accessibilityController.rootElement : null;
+    const button = root && root.isFrameGeometryInitialized ? findButton(root) : null;
+    top.postMessage({
+        id: new URLSearchParams(location.search).get("id"),
+        frame: button ? { x: button.x, y: button.y } : null,
+    }, "*");
+});
+</script>
+</body>
+</html>

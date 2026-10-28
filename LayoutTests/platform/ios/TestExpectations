@@ -1632,6 +1632,7 @@ http/tests/site-isolation/accessibility/ [ Skip ]
 # ...except these tests, which run in-process and use the iOS remote-frame placeholder (AXRemoteElement).
 http/tests/site-isolation/accessibility/heading-search-returns-remote-frame.html [ Pass ]
 http/tests/site-isolation/accessibility/remote-frame-built-during-remote-element-lookup.html [ Pass ]
+http/tests/site-isolation/accessibility/remote-frame-element-frame.html [ Pass ]
 
 ###
 # Known failures

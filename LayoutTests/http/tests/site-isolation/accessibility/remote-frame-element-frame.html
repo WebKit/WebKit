@@ -1,0 +1,99 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<style>
+body { margin: 0; }
+button#reference { position: absolute; left: 0; top: 0; margin: 0; width: 100px; height: 20px; }
+iframe { position: absolute; width: 200px; height: 100px; border: 0; }
+</style>
+</head>
+<body>
+
+<button id="reference">Reference</button>
+<!-- Both iframes are same-site with each other but cross-site with this page, so they share one web content process. -->
+<iframe id="iframe1" style="left: 0; top: 0" src="http://localhost:8000/site-isolation/accessibility/resources/iframe-with-button-reporting-frame.html?id=iframe1"></iframe>
+<iframe id="iframe2" style="left: 0; top: 0" src="http://localhost:8000/site-isolation/accessibility/resources/iframe-with-button-reporting-frame.html?id=iframe2"></iframe>
+
+<script>
+var output = "This test ensures that the accessibility frame of an element in a cross-site iframe accounts for the iframe's position exactly once, including when two such iframes share a web content process.\n\n";
+
+window.jsTestIsAsync = true;
+
+var reports = {};
+window.addEventListener("message", (event) => {
+    reports[event.data.id] = event.data;
+});
+
+function findReferenceButton(element) {
+    if (!element)
+        return null;
+    if (element.role.includes("Button"))
+        return element;
+    for (let i = 0; i < element.childrenCount; i++) {
+        const button = findReferenceButton(element.childAtIndex(i));
+        if (button)
+            return button;
+    }
+    return null;
+}
+
+var loadedFrames = 0;
+for (const iframe of document.querySelectorAll("iframe")) {
+    iframe.onload = () => {
+        if (++loadedFrames == 2)
+            runTest();
+    };
+}
+
+async function buttonOffsetFromReference(id) {
+    // Laying out first sends any change in the iframe's position to its process ahead of this message.
+    document.getElementById(id).getBoundingClientRect();
+    delete reports[id];
+    document.getElementById(id).contentWindow.postMessage("report-button-frame", "*");
+    await waitFor(() => reports[id]);
+
+    const frame = reports[id].frame;
+    const reference = findReferenceButton(accessibilityController.rootElement);
+    if (!frame || !reference)
+        return "null";
+    // macOS screen coordinates have a bottom-left origin.
+    const yDirection = accessibilityController.platformName === "mac" ? -1 : 1;
+    return `${frame.x - reference.x}, ${yDirection * (frame.y - reference.y)}`;
+}
+
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    // Turn accessibility on in this process before moving the iframes, so that the moves update their screen
+    // positions. Between tests, accessibility is turned off in this process but can stay on in the iframes'
+    // process, which may already have their screen positions from before the moves.
+    accessibilityController.rootElement;
+
+    // Move the iframes once they have loaded, so that their processes are sent their new positions.
+    document.getElementById("iframe1").style.left = "50px";
+    document.getElementById("iframe1").style.top = "40px";
+    document.getElementById("iframe2").style.left = "300px";
+    document.getElementById("iframe2").style.top = "150px";
+
+    for (const id of ["iframe1", "iframe2"]) {
+        // Each button is 10px inside its iframe. Measure its accessibility frame relative to the reference
+        // button at the page origin, so that the web view's own screen position cancels out. The iframe's
+        // screen position arrives asynchronously, so poll until it's up to date.
+        const iframeRect = document.getElementById(id).getBoundingClientRect();
+        const expected = `${iframeRect.x + 10}, ${iframeRect.y + 10}`;
+        let actual = await buttonOffsetFromReference(id);
+        for (let attempt = 0; attempt < 30 && actual != expected; attempt++) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            actual = await buttonOffsetFromReference(id);
+        }
+        output += `${id} button offset from reference: ${actual} (expected ${expected})\n`;
+    }
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>

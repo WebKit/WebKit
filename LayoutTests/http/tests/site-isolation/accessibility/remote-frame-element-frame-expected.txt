@@ -1,0 +1,9 @@
+This test ensures that the accessibility frame of an element in a cross-site iframe accounts for the iframe's position exactly once, including when two such iframes share a web content process.
+
+iframe1 button offset from reference: 60, 50 (expected 60, 50)
+iframe2 button offset from reference: 310, 160 (expected 310, 160)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Reference

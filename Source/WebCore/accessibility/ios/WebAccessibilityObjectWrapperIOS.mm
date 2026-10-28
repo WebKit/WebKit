@@ -1886,7 +1886,9 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 {
     RefPtr<AccessibilityObject> object = self.axBackingObject;
     auto rect = FloatRect(snappedIntRect(object->elementRect()));
+#if !ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     rect.moveBy({ object->remoteFrameOffset() });
+#endif
     return [self convertRectToSpace:rect space:AccessibilityConversionSpace::Page];
 }
 
@@ -1932,7 +1934,11 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
     RefPtr<AccessibilityObject> object = self.axBackingObject;
     auto rect = FloatRect(snappedIntRect(object->elementRect()));
+#if !ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     rect.moveBy({ object->remoteFrameOffset() });
+#endif
+    // With ACCESSIBILITY_LOCAL_FRAME, the screen conversion uses this frame's own screen position,
+    // which already includes the frame's offset within the main frame.
     return [self convertRectToSpace:rect space:AccessibilityConversionSpace::Screen];
 }
 
