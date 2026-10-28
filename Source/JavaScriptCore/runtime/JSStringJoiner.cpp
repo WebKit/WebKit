@@ -39,11 +39,7 @@ JSStringJoiner::~JSStringJoiner() = default;
 template<typename CharacterType>
 static inline void appendStringToData(std::span<CharacterType>& data, StringView string)
 {
-    if constexpr (std::is_same_v<CharacterType, Latin1Character>) {
-        ASSERT(string.is8Bit());
-        string.getCharacters8(data);
-    } else
-        string.getCharacters(data);
+    string.getCharacters(data);
     skip(data, string.length());
 }
 
@@ -206,7 +202,7 @@ static inline String joinStrings(JSGlobalObject* globalObject, const WriteBarrie
                 }
                 unsigned length = string->length();
                 string->resolveToBuffer(data.first(length));
-                data = data.subspan(length);
+                skip(data, length);
                 return;
             }
             if (value.isBoolean()) {
