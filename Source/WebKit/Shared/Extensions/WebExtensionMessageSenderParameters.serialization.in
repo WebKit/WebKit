@@ -30,6 +30,7 @@ struct WebKit::WebExtensionMessageSenderParameters {
     WebKit::WebExtensionContentWorldType contentWorldType;
     URL url;
     Markable<WTF::UUID> documentIdentifier;
+    std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier;
 };
 
 #endif

@@ -361,6 +361,7 @@ void WebExtensionAPIRuntime::sendMessage(WebPageProxyIdentifier webPageProxyIden
         contentWorldType(),
         frame.url(),
         documentIdentifier.value(),
+        std::nullopt, // windowIdentifier
     };
 
 #if PLATFORM(COCOA)
@@ -400,6 +401,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebPageProxyIdentifi
         contentWorldType(),
         frame.url(),
         documentIdentifier.value(),
+        std::nullopt, // windowIdentifier
     };
 
     Ref port = WebExtensionAPIPort::create(*this, webPageProxyIdentifier, WebExtensionContentWorldType::Main, resolvedName);
@@ -476,6 +478,7 @@ void WebExtensionAPIWebPageRuntime::sendMessage(WebPage& page, WebFrame& frame, 
         WebExtensionContentWorldType::WebPage,
         frame.url(),
         documentIdentifier.value(),
+        std::nullopt, // windowIdentifier
     };
 
     RefPtr destinationExtensionContext = page.webExtensionControllerProxy()->extensionContext(extensionID);
@@ -524,6 +527,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebPage& page
         WebExtensionContentWorldType::WebPage,
         frame.url(),
         documentIdentifier.value(),
+        std::nullopt, // windowIdentifier
     };
 
     RefPtr destinationExtensionContext = page.webExtensionControllerProxy()->extensionContext(extensionID);

@@ -2224,6 +2224,7 @@ TEST(WKWebExtensionAPITabs, SendMessage)
         @"  browser.test.assertTrue(sender.origin.startsWith('webkit-extension://'), 'sender.origin should start with webkit-extension://')",
 
         @"  browser.test.assertEq(sender.tab, undefined, 'sender.tab should be undefined')",
+        @"  browser.test.assertEq(sender.windowId, undefined, 'sender.windowId should be undefined for a background page')",
         @"  browser.test.assertEq(sender.frameId, undefined, 'sender.frameId should be undefined')",
 
         @"  sendResponse({ content: 'Received' })",

@@ -189,6 +189,8 @@ void WebExtensionContext::runtimeSendMessage(const String& extensionID, const St
     if (RefPtr tab = getTab(senderParameters.pageProxyIdentifier))
         completeSenderParameters.tabParameters = tab->parameters();
 
+    completeSenderParameters.windowIdentifier = windowIdentifierForPage(senderParameters.pageProxyIdentifier);
+
     // Don't propagate web page gestures from content scripts to extension pages. Only gestures
     // from extension-originated events (action.onClicked, commands.onCommand, menus.onClicked)
     // should curry — those carry explicit user intent directed at the extension.
@@ -237,6 +239,8 @@ void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtension
     WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
     if (RefPtr tab = getTab(senderParameters.pageProxyIdentifier))
         completeSenderParameters.tabParameters = tab->parameters();
+
+    completeSenderParameters.windowIdentifier = windowIdentifierForPage(senderParameters.pageProxyIdentifier);
 
     // Don't propagate web page gestures from content scripts to extension pages.
     bool resolvedUserGesture = userGesture && senderParameters.contentWorldType != WebExtensionContentWorldType::ContentScript;
@@ -497,6 +501,7 @@ void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, c
 
     WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
     completeSenderParameters.tabParameters = tab->parameters();
+    completeSenderParameters.windowIdentifier = windowIdentifierForPage(senderParameters.pageProxyIdentifier);
 
     auto url = completeSenderParameters.url;
     auto validMatchPatterns = protect(destinationExtension->extension())->externallyConnectableMatchPatterns();
@@ -561,6 +566,7 @@ void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebEx
 
     WebExtensionMessageSenderParameters completeSenderParameters = senderParameters;
     completeSenderParameters.tabParameters = tab->parameters();
+    completeSenderParameters.windowIdentifier = windowIdentifierForPage(senderParameters.pageProxyIdentifier);
 
     auto url = completeSenderParameters.url;
     auto validMatchPatterns = protect(destinationExtension->extension())->externallyConnectableMatchPatterns();

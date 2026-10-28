@@ -107,6 +107,10 @@ JSValueRef toWebAPI(JSContextRef context, const WebExtensionMessageSenderParamet
     if (parameters.tabParameters)
         JSObjectSetProperty(context, result, toJSString(tabKey).get(), toJSValueRef(context, toWebAPI(parameters.tabParameters.value())), 0, nullptr);
 
+    // The window identifier is omitted for senders without a window, like background pages.
+    if (isValid(parameters.windowIdentifier))
+        JSObjectSetProperty(context, result, toJSString(windowIdKey).get(), JSValueMakeNumber(context, toWebAPI(parameters.windowIdentifier.value())), 0, nullptr);
+
     // The frame identifier is only included when tab is included.
     if (parameters.frameIdentifier && parameters.tabParameters)
         JSObjectSetProperty(context, result, toJSString(frameIdKey).get(), JSValueMakeNumber(context, toWebAPI(parameters.frameIdentifier.value())), 0, nullptr);

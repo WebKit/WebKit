@@ -1029,6 +1029,7 @@ void WebExtensionAPITabs::sendMessage(WebFrame& frame, double tabID, const Strin
         contentWorldType(),
         frame.url(),
         documentIdentifier,
+        std::nullopt, // windowIdentifier
     };
 
     bool userGesture = WebCore::UserGestureIndicator::processingUserGesture();
@@ -1071,6 +1072,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPITabs::connect(WebFrame& frame, JSCont
         contentWorldType(),
         frame.url(),
         documentIdentifier,
+        std::nullopt, // windowIdentifier
     };
 
     Ref port = WebExtensionAPIPort::create(*this, frame.page()->webPageProxyIdentifier(), WebExtensionContentWorldType::ContentScript, resolvedName);
