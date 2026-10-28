@@ -69,6 +69,23 @@ window.GlobalPause = {
         return null;
     },
 
+    pageTarget()
+    {
+        return WI.backendTarget;
+    },
+
+    awaitSessionEvent(predicate)
+    {
+        return new Promise((resolve) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.PauseSessionChanged, (event) => {
+                if (!predicate(event.data))
+                    return;
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.PauseSessionChanged, listener);
+                resolve(event.data);
+            });
+        });
+    },
+
     processIdentifier(target)
     {
         return target.identifier.split("-").pop();

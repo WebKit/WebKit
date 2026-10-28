@@ -161,6 +161,17 @@ void InspectorTargetAgent::didCommitProvisionalTarget(const String& oldTargetID,
     m_frontendDispatcher->didCommitProvisionalTarget(oldTargetID, committedTargetID);
 }
 
+void InspectorTargetAgent::debuggerPauseSessionChanged(const String& sessionID, bool isPaused, const Vector<String>& stoppingTargetIDs, double timestamp)
+{
+    if (!m_isConnected)
+        return;
+
+    auto targetIDs = JSON::ArrayOf<String>::create();
+    for (auto& targetID : stoppingTargetIDs)
+        targetIDs->addItem(targetID);
+    m_frontendDispatcher->debuggerPauseSessionChanged(sessionID, isPaused ? Protocol::Target::DebuggerPauseSessionState::Paused : Protocol::Target::DebuggerPauseSessionState::Closed, WTF::move(targetIDs), timestamp);
+}
+
 FrontendChannel::ConnectionType InspectorTargetAgent::connectionType() const
 {
     return m_router->hasLocalFrontend() ? Inspector::FrontendChannel::ConnectionType::Local : Inspector::FrontendChannel::ConnectionType::Remote;

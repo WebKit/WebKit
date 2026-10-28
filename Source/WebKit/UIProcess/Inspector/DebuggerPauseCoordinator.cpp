@@ -27,6 +27,7 @@
 #include "DebuggerPauseCoordinator.h"
 
 #include "BrowsingContextGroup.h"
+#include "FrameInspectorTarget.h"
 #include "MessageSenderInlines.h"
 #include "ProvisionalPageProxy.h"
 #include "WebInspectorBackendMessages.h"
@@ -46,20 +47,25 @@ DebuggerPauseCoordinator::DebuggerPauseCoordinator(WebPageProxy& page)
 
 DebuggerPauseCoordinator::~DebuggerPauseCoordinator()
 {
+    m_isDestroying = true;
     closeSession();
 }
 
 void DebuggerPauseCoordinator::frameDidPause(WebProcessProxy& process, WebCore::FrameIdentifier frameID)
 {
-    m_stoppingFrames.add({ process.coreProcessIdentifier(), frameID });
-    if (!m_sessionID && !protect(m_page.get())->inspectorController().isMainFrameNavigating())
-        openSession();
+    bool isNewStoppingFrame = m_stoppingFrames.add({ process.coreProcessIdentifier(), frameID }).isNewEntry;
+    if (!m_sessionID) {
+        if (!protect(m_page.get())->inspectorController().isMainFrameNavigating())
+            openSession();
+    } else if (isNewStoppingFrame)
+        notifySessionChanged(true);
 }
 
 void DebuggerPauseCoordinator::frameDidContinue(WebProcessProxy& process, WebCore::FrameIdentifier frameID)
 {
-    if (m_stoppingFrames.remove({ process.coreProcessIdentifier(), frameID }) && m_stoppingFrames.isEmpty())
-        closeSession();
+    if (!m_stoppingFrames.remove({ process.coreProcessIdentifier(), frameID }))
+        return;
+    stoppingFramesDidShrink();
 }
 
 // A frame that leaves its process, or is removed, may never report that it continued: the process can lose the
@@ -93,8 +99,19 @@ void DebuggerPauseCoordinator::processDidTerminate(WebProcessProxy& process)
 template<typename Predicate>
 void DebuggerPauseCoordinator::removeStoppingFramesIf(NOESCAPE const Predicate& predicate)
 {
-    if (m_stoppingFrames.removeIf(predicate) && m_stoppingFrames.isEmpty())
+    if (!m_stoppingFrames.removeIf(predicate))
+        return;
+    stoppingFramesDidShrink();
+}
+
+void DebuggerPauseCoordinator::stoppingFramesDidShrink()
+{
+    if (!m_sessionID)
+        return;
+    if (m_stoppingFrames.isEmpty())
         closeSession();
+    else
+        notifySessionChanged(true);
 }
 
 void DebuggerPauseCoordinator::openSession()
@@ -112,6 +129,23 @@ void DebuggerPauseCoordinator::openSession()
         if (RefPtr provisionalPage = page.provisionalPageProxy(); provisionalPage && &provisionalPage->browsingContextGroup() == group.ptr())
             suspendPage(protect(provisionalPage->process()), provisionalPage->webPageID());
     });
+
+    notifySessionChanged(true);
+}
+
+void DebuggerPauseCoordinator::notifySessionChanged(bool isPaused)
+{
+    ASSERT(m_sessionID);
+    if (m_isDestroying)
+        return;
+
+    Vector<String> stoppingTargetIDs;
+    if (isPaused) {
+        for (auto& [processID, frameID] : m_stoppingFrames)
+            stoppingTargetIDs.append(FrameInspectorTarget::toTargetID(frameID, processID));
+        std::ranges::sort(stoppingTargetIDs, WTF::codePointCompareLessThan);
+    }
+    protect(m_page)->inspectorController().debuggerPauseSessionDidChange(*m_sessionID, isPaused, stoppingTargetIDs);
 }
 
 void DebuggerPauseCoordinator::pageWasAdded(WebProcessProxy& process, WebCore::PageIdentifier pageID)
@@ -134,7 +168,7 @@ void DebuggerPauseCoordinator::suspendPage(WebProcessProxy& process, WebCore::Pa
 
 void DebuggerPauseCoordinator::mainFrameDidStartProvisionalLoad()
 {
-    releaseSuspendedPages();
+    endSession();
 }
 
 void DebuggerPauseCoordinator::openSessionIfFramesAreStopping()
@@ -146,14 +180,16 @@ void DebuggerPauseCoordinator::openSessionIfFramesAreStopping()
 void DebuggerPauseCoordinator::closeSession()
 {
     m_stoppingFrames.clear();
-    releaseSuspendedPages();
+    endSession();
 }
 
-void DebuggerPauseCoordinator::releaseSuspendedPages()
+void DebuggerPauseCoordinator::endSession()
 {
-    auto sessionID = std::exchange(m_sessionID, std::nullopt);
-    if (!sessionID)
+    if (!m_sessionID)
         return;
+
+    notifySessionChanged(false);
+    auto sessionID = std::exchange(m_sessionID, std::nullopt);
 
     for (auto& [weakProcess, pageID] : std::exchange(m_suspendedPages, { })) {
         if (RefPtr process = weakProcess.get())

@@ -1,0 +1,24 @@
+Test that the page target reports the pause session opening, the frames it is stopped in changing, and closing.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseSessionReportsSessionChanges
+-- Running test case: SiteIsolation.Debugger.PauseSessionReportsSessionChanges.Setup
+PASS: Should find the frame target for frame A.
+PASS: Should find the target that serves the Target domain.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionReportsSessionChanges.OpenWithStoppingFrame
+PASS: The event should carry a timestamp.
+PASS: DebuggerManager should know the session.
+PASS: DebuggerManager should know the session by the same ID.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionReportsSessionChanges.SecondStoppingFrame
+PASS: The session ID should not change.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionReportsSessionChanges.OneFrameResumes
+PASS: The session ID should not change.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionReportsSessionChanges.Close
+PASS: The session ID should not change.
+PASS: DebuggerManager should not know a session.
+
