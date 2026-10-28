@@ -122,7 +122,11 @@ FontCascadeFonts::FontCascadeFonts(const FontPlatformData& platformData)
     , m_generation(FontCache::forCurrentThread().generation())
     , m_isForPlatformFont(true)
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     m_realizedFallbackRanges.append(FontRanges(protect(FontCache::forCurrentThread())->fontForPlatformData(platformData)));
+#else
+    appendRealizedFallbackRanges(FontRanges(protect(FontCache::forCurrentThread())->fontForPlatformData(platformData)));
+#endif // RC_REMOVE_SEC_ACCEL_3
 }
 
 FontCascadeFonts::~FontCascadeFonts() = default;
@@ -156,7 +160,11 @@ void FontCascadeFonts::determineCanTakeFixedPitchFastContentMeasuring(const Font
 bool FontCascadeFonts::isLoadingCustomFonts() const
 {
     for (auto& fontRanges : m_realizedFallbackRanges) {
+#ifdef RC_REMOVE_SEC_ACCEL_3
         if (fontRanges.isLoading())
+#else
+        if (fontRanges->isLoading())
+#endif // RC_REMOVE_SEC_ACCEL_3
             return true;
     }
     return false;
@@ -197,6 +205,14 @@ static FontRanges realizeNextFallback(const FontCascadeDescription& description,
     return { };
 }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+const FontRanges& FontCascadeFonts::appendRealizedFallbackRanges(FontRanges&& fontRanges)
+{
+    m_realizedFallbackRanges.append(makeUniqueRef<FontRanges>(WTF::move(fontRanges)));
+    return m_realizedFallbackRanges.last();
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
+
 const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDescription& description, FontSelector* fontSelector, unsigned index)
 {
     if (index < m_realizedFallbackRanges.size())
@@ -205,8 +221,13 @@ const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDes
     ASSERT(index == m_realizedFallbackRanges.size());
     ASSERT(FontCache::forCurrentThread().generation() == m_generation);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     m_realizedFallbackRanges.append(FontRanges());
     auto& fontRanges = m_realizedFallbackRanges.last();
+#else
+    // Build the result in a local to avoid half-initialized entries in m_realizedFallbackRanges.
+    FontRanges fontRanges;
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     if (!index) {
         fontRanges = realizeNextFallback(description, m_lastRealizedFallbackIndex, fontSelector);
@@ -214,7 +235,11 @@ const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDes
             fontRanges = fontSelector->fontRangesForFamily(description, FontFamily { *familyNamesData->at(FamilyNamesIndex::StandardFamily), FontFamilyKind::Generic });
         if (fontRanges.isNull())
             fontRanges = FontRanges(protect(FontCache::forCurrentThread())->lastResortFallbackFont(description));
+#ifdef RC_REMOVE_SEC_ACCEL_3
         return fontRanges;
+#else
+        return appendRealizedFallbackRanges(WTF::move(fontRanges));
+#endif // RC_REMOVE_SEC_ACCEL_3
     }
 
     if (m_lastRealizedFallbackIndex < description.effectiveFamilyCount())
@@ -225,12 +250,20 @@ const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDes
 
         unsigned fontSelectorFallbackIndex = m_lastRealizedFallbackIndex - description.effectiveFamilyCount();
         if (fontSelectorFallbackIndex == fontSelector->fallbackFontCount())
+#ifdef RC_REMOVE_SEC_ACCEL_3
             return fontRanges;
+#else
+            return appendRealizedFallbackRanges({ });
+#endif // RC_REMOVE_SEC_ACCEL_3
         ++m_lastRealizedFallbackIndex;
         fontRanges = FontRanges(fontSelector->fallbackFontAt(description, fontSelectorFallbackIndex));
     }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     return fontRanges;
+#else
+    return appendRealizedFallbackRanges(WTF::move(fontRanges));
+#endif // RC_REMOVE_SEC_ACCEL_3
 }
 
 static inline bool LEGACY_NODELETE isInRange(char32_t character, char32_t lowerBound, char32_t upperBound)
@@ -544,19 +577,43 @@ GlyphData FontCascadeFonts::glyphDataForCharacter(char32_t c, const FontCascadeD
         return glyphDataForVariant(c, description, fontSelector, variant, resolvedEmojiPolicy);
 
     const unsigned pageNumber = GlyphPage::pageNumberForCodePoint(c);
+    auto& cachedPages = m_cachedPages[resolvedEmojiPolicy];
 
-    auto& cacheEntry = m_cachedPages[resolvedEmojiPolicy].ensure(pageNumber, [&] {
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    auto& cacheEntry = cachedPages.ensure(pageNumber, [&] {
         // Initialize cache with a full page of glyph mappings from a single font.
         return GlyphPageCacheEntry { glyphPageFromFontRanges(pageNumber, realizeFallbackRangesAt(description, fontSelector, 0)) };
     }).iterator->value;
 
     GlyphData glyphData = cacheEntry.glyphDataForCharacter(c);
+#else
+    auto glyphData = [&]() {
+        auto cacheEntry = cachedPages.find(pageNumber);
+        if (cacheEntry == cachedPages.end()) {
+            // We need to build the cache page. This can trigger font loading /
+            // cache changes, so build the entry on the stack, then insert.
+            GlyphPageCacheEntry newEntry { glyphPageFromFontRanges(pageNumber, realizeFallbackRangesAt(description, fontSelector, 0)) };
+            cacheEntry = cachedPages.add(pageNumber, WTF::move(newEntry)).iterator;
+        }
+        return cacheEntry->value.glyphDataForCharacter(c);
+    }();
+#endif // RC_REMOVE_SEC_ACCEL_3
+
     if (!glyphData.isValid()) {
         // No glyph, resolve per-character.
         ASSERT(variant == FontVariant::Normal);
         glyphData = glyphDataForVariant(c, description, fontSelector, variant, resolvedEmojiPolicy);
+
+#ifdef RC_REMOVE_SEC_ACCEL_3
         // Cache the results.
         cacheEntry.setGlyphDataForCharacter(c, glyphData);
+#else
+        // Since glyphDataForVariant() can itself trigger cache changes,
+        // do a fresh lookup for the cache page before storing.
+        auto cacheEntry = cachedPages.find(pageNumber);
+        if (cacheEntry != cachedPages.end() && !cacheEntry->value.glyphDataForCharacter(c).isValid())
+            cacheEntry->value.setGlyphDataForCharacter(c, glyphData);
+#endif // RC_REMOVE_SEC_ACCEL_3
     }
 
     return glyphData;

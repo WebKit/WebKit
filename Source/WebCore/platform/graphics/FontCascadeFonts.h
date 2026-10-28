@@ -38,6 +38,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/Platform.h>
 #include <wtf/TriState.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -169,11 +170,22 @@ private:
     GlyphData glyphDataForSystemFallback(char32_t, const FontCascadeDescription&, FontSelector*, FontVariant, ResolvedEmojiPolicy, bool systemFallbackShouldBeInvisible);
     GlyphData glyphDataForVariant(char32_t, const FontCascadeDescription&, FontSelector*, FontVariant, ResolvedEmojiPolicy, unsigned fallbackIndex = 0);
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    const FontRanges& appendRealizedFallbackRanges(FontRanges&&);
+#endif // RC_REMOVE_SEC_ACCEL_3
+
     WEBCORE_EXPORT void determinePitch(const FontCascadeDescription&, FontSelector*);
     WEBCORE_EXPORT void determineCanTakeFixedPitchFastContentMeasuring(const FontCascadeDescription&, FontSelector*);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     Vector<FontRanges, 1> m_realizedFallbackRanges;
-    unsigned m_lastRealizedFallbackIndex { 0 };
+#else
+    // Realized ranges are held by reference across calls that can realize
+    // further fallbacks, so they are stored indirectly, and must never move.
+    // A null range indicates we reached the end of our sources.
+    Vector<UniqueRef<FontRanges>, 1> m_realizedFallbackRanges;
+#endif // RC_REMOVE_SEC_ACCEL_3
+    unsigned m_lastRealizedFallbackIndex { 0 }; // Index into fallback sources (specified and system).
 
     class GlyphPageCacheEntry {
     public:

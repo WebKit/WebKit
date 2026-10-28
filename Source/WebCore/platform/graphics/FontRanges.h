@@ -26,6 +26,9 @@
 #pragma once
 
 #include <WebCore/Font.h>
+#ifndef RC_REMOVE_SEC_ACCEL_3
+#include <wtf/TZoneMalloc.h>
+#endif // RC_REMOVE_SEC_ACCEL_3
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -43,6 +46,9 @@ enum class IsGenericFontFamily : bool {
 };
 
 class FontRanges {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    WTF_MAKE_TZONE_ALLOCATED(FontRanges);
+#endif // RC_REMOVE_SEC_ACCEL_3
 public:
     struct Range {
         Range(char32_t from, char32_t to, Ref<FontAccessor>&& fontAccessor)

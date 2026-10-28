@@ -30,10 +30,17 @@
 #include "FontSelector.h"
 #include "GlyphPage.h"
 #include <wtf/Assertions.h>
+#ifndef RC_REMOVE_SEC_ACCEL_3
+#include <wtf/TZoneMallocInlines.h>
+#endif // RC_REMOVE_SEC_ACCEL_3
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FontRanges);
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 const Font* FontRanges::Range::font(ExternalResourceDownloadPolicy policy) const
 {

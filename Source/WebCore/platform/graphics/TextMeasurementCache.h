@@ -197,7 +197,13 @@ public:
 
     void clear()
     {
+#ifdef RC_REMOVE_SEC_ACCEL_3
         ASSERT(isMainThread());
+#else
+        if (!isMainThread())
+            return;
+#endif // RC_REMOVE_SEC_ACCEL_3
+
         m_singleCharMap.clear();
         m_map.clear();
         m_outOfLineMap.clear();
