@@ -77,6 +77,14 @@ class Git(mocks.Subprocess):
 
         with open(datafile or os.path.join(os.path.dirname(os.path.dirname(__file__)), 'git-repo.json')) as file:
             self.commits = json.load(file)
+        if self.default_branch != 'main':
+            self.commits = {(self.default_branch if key == 'main' else key): commits for key, commits in self.commits.items()}
+            for commits in self.commits.values():
+                for kwargs in commits:
+                    if kwargs.get('branch') == 'main':
+                        kwargs['branch'] = self.default_branch
+                    if str(kwargs.get('identifier', '')).endswith('@main'):
+                        kwargs['identifier'] = kwargs['identifier'][:-len('main')] + self.default_branch
         for key, commits in self.commits.items():
             commit_objs = []
             for kwargs in commits:
@@ -741,7 +749,7 @@ nothing to commit, working tree clean
             ), mocks.Subprocess.Route(
                 self.executable, 'reset', '--hard',
                 cwd=self.path,
-                generator=lambda *args, **kwargs: self.reset(int(args[2].split('~')[-1]) if '~' in args[2] else None),
+                generator=lambda *args, **kwargs: self.reset_hard(*args[3:]),
             ), mocks.Subprocess.Route(
                 self.executable, 'reset', re.compile(r'.+'),
                 cwd=self.path,
@@ -887,10 +895,7 @@ nothing to commit, working tree clean
             if len(split) == 2 and Commit.NUMBER_RE.match(split[1]):
                 found = self.find(split[0])
                 difference = int(split[1])
-                if split[0] in self.remotes:
-                    all_commits = self.resolve_all_commits(found.branch, remote=split[0].replace('/{}'.format(found.branch), ''))
-                else:
-                    all_commits = self.resolve_all_commits(found.branch)
+                all_commits = self.resolve_all_commits(found.branch, remote=self._remote_of(split[0], found))
                 head_index = None
                 for i in range(len(all_commits)):
                     if found == all_commits[i]:
@@ -923,6 +928,10 @@ nothing to commit, working tree clean
             for commit in commits:
                 if something == str(commit.revision):
                     return commit
+                if len(something) > 4 and commit.hash.startswith(str(something)):
+                    return commit
+        for commits in self.remotes.values():
+            for commit in commits:
                 if len(something) > 4 and commit.hash.startswith(str(something)):
                     return commit
         return None
@@ -1484,6 +1493,11 @@ nothing to commit, working tree clean
             self.head = commits[-1]
         return mocks.ProcessCompletion(returncode=0)
 
+    def reset_hard(self, target=None):
+        if target is None or target == 'HEAD' or '~' in target:
+            return self.reset(None)
+        return self.reset_commit(target)
+
     def reset(self, index):
         if index is None:
             self.modified = {}
@@ -1518,6 +1532,21 @@ nothing to commit, working tree clean
                 setattr(commit, '__mock__remotes', set([remote]))
         return all_commits
 
+    def _remote_of(self, ref, commit):
+        """The remote whose history `ref` should be resolved against, or None for local history."""
+        if not commit:
+            return None
+        if ref in self.remotes:
+            return ref.replace('/{}'.format(commit.branch), '')
+        # A commit which no local branch has can only be resolved on the remote which does
+        if any(commit.hash == local_commit.hash for local_commit in self.commits.get(commit.branch, [])):
+            return None
+        for remote_branch, commits in self.remotes.items():
+            remote, branch = remote_branch.split('/', 1)
+            if branch == commit.branch and any(commit.hash == remote_commit.hash for remote_commit in commits):
+                return remote
+        return None
+
     def rev_list(self, something):
         """
         A..B = A u B - A
@@ -1534,23 +1563,18 @@ nothing to commit, working tree clean
             triple_dots = True
             a_commit = self.find(something[0])
             b_commit = self.find(something[1])
-            if something[0] in self.remotes:
-                a_remote = something[0].replace('/{}'.format(a_commit.branch), '')
-            if something[1] in self.remotes:
-                b_remote = something[1].replace('/{}'.format(b_commit.branch), '')
+            a_remote = self._remote_of(something[0], a_commit)
+            b_remote = self._remote_of(something[1], b_commit)
         elif '..' in something:
             something = something.split('..')
             two_dots = True
             a_commit = self.find(something[0])
             b_commit = self.find(something[1])
-            if something[0] in self.remotes:
-                a_remote = something[0].replace('/{}'.format(a_commit.branch), '')
-            if something[1] in self.remotes:
-                b_remote = something[1].replace('/{}'.format(b_commit.branch), '')
+            a_remote = self._remote_of(something[0], a_commit)
+            b_remote = self._remote_of(something[1], b_commit)
         else:
             a_commit = self.find(something)
-            if something in self.remotes:
-                a_remote = something.replace('/{}'.format(a_commit.branch), '')
+            a_remote = self._remote_of(something, a_commit)
 
         a_commits = []
         a_branch_commits = self.resolve_all_commits(a_commit.branch, remote=a_remote) if a_commit else []
@@ -1678,8 +1702,7 @@ nothing to commit, working tree clean
                 returncode=128,
                 stderr=f'fatal: Unable to find remote reference {ref}\n',
             )
-        if commit not in self.remotes[remote_ref]:
-            self.remotes[remote_ref] = list(reversed(self.rev_list(value)))
+        self.remotes[remote_ref] = list(reversed(self.rev_list(value)))
         return mocks.ProcessCompletion(returncode=0)
 
 
