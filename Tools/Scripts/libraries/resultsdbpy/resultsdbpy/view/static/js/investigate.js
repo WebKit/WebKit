@@ -299,6 +299,13 @@ class _InvestigateDrawer {
         this.data = [];
 
         this.willFilterExpected = false;
+
+        this.closeOnEscape = (event) => {
+            if (event.key !== 'Escape' || event.defaultPrevented)
+                return;
+            event.preventDefault();
+            this.collapse();
+        };
     }
     isRendered() {
         let result = true;
@@ -353,10 +360,18 @@ class _InvestigateDrawer {
                 </div>
             </div>`;
     }
+    setDisplayed(isDisplayed) {
+        this.ref.element.classList.toggle('display', isDisplayed);
+        document.body.style.paddingBottom = isDisplayed ? 'var(--drawerHeight)' : '';
+        if (isDisplayed)
+            window.addEventListener('keydown', this.closeOnEscape);
+        else
+            window.removeEventListener('keydown', this.closeOnEscape);
+    }
     expand(suite, agregateData, allData) {
         if (!this.isRendered())
             return;
-        this.ref.element.classList.add('display');
+        this.setDisplayed(true);
         this.suite = suite;
         this.agregate = agregateData;
         this.data = allData;
@@ -438,7 +453,7 @@ class _InvestigateDrawer {
     collapse() {
         if (!this.isRendered())
             return;
-        this.ref.element.classList.remove('display');
+        this.setDisplayed(false);
 
         this.agregate = null;
         this.data = [];
@@ -455,7 +470,7 @@ class _InvestigateDrawer {
         if (this.agregate && this.data.length > 1)
             candidates += 1;
         if (!candidates) {
-            this.ref.element.classList.remove('display');
+            this.setDisplayed(false);
             return;
         }
 
