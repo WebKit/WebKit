@@ -1,0 +1,73 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<video id="video" src="../resources/test.mp4" preload="auto"></video>
+
+<script>
+var output = "This test ensures that a video exposes play, pause, skip and mute as accessibility custom actions, that the action names follow the media state, and that each action reaches the page as ordinary media input, including through the page's media session handlers.\n\n";
+
+var video = document.getElementById("video");
+var axVideo;
+var seekForwardOffset;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        await waitFor(() => video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA);
+        axVideo = await waitForElementById("video");
+
+        output += "A paused video with audio offers Play, both skips, Mute and Enter Full Screen:\n";
+        await waitFor(() => axVideo.customActionNames().startsWith("Play, "));
+        output += `Actions: ${axVideo.customActionNames()}\n`;
+
+        output += "\nThe first action plays the video, and the name changes to Pause:\n";
+        output += expect("axVideo.invokeCustomActionAtIndex(0)", "true");
+        await waitFor(() => !video.paused);
+        output += expect("video.paused", "false");
+        await waitFor(() => axVideo.customActionNames().startsWith("Pause, "));
+        output += `Actions: ${axVideo.customActionNames()}\n`;
+
+        output += "\nPressing the video toggles playback too:\n";
+        axVideo.press();
+        await waitFor(() => video.paused);
+        output += expect("video.paused", "true");
+
+        output += "\nSkip Back seeks back 15 seconds, stopping at the start:\n";
+        video.currentTime = 5;
+        await waitFor(() => video.currentTime == 5);
+        output += expect("axVideo.invokeCustomActionAtIndex(1)", "true");
+        await waitFor(() => video.currentTime == 0);
+        output += expect("video.currentTime", "0");
+
+        output += "\nMute mutes the video, and the name changes to Unmute:\n";
+        output += expect("axVideo.invokeCustomActionAtIndex(3)", "true");
+        await waitFor(() => video.muted);
+        output += expect("video.muted", "true");
+        await waitFor(() => axVideo.customActionNames().includes("Unmute"));
+        output += `Actions: ${axVideo.customActionNames()}\n`;
+
+        output += "\nWith a captions track, Show Captions is offered:\n";
+        var track = video.addTextTrack("captions", "English", "en");
+        track.addCue(new VTTCue(0, 5, "Caption"));
+        await waitFor(() => axVideo.customActionNames().includes("Show Captions"));
+        output += `Actions: ${axVideo.customActionNames()}\n`;
+
+        output += "\nWhen the page handles media session actions, Skip Forward calls its handler like a media key would:\n";
+        navigator.mediaSession.setActionHandler("seekforward", details => seekForwardOffset = details.seekOffset);
+        output += expect("axVideo.invokeCustomActionAtIndex(2)", "true");
+        await waitFor(() => seekForwardOffset !== undefined);
+        output += expect("seekForwardOffset", "15");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

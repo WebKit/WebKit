@@ -43,6 +43,7 @@
 #import "AXTreeStore.h"
 #import "AXTreeStoreInlines.h"
 #import "AXUtilities.h"
+#import "AccessibilityMediaHelpers.h"
 #import "AccessibilityObjectInlines.h"
 #import "AccessibilityProgressIndicator.h"
 #import "AccessibilityRenderObject.h"
@@ -64,6 +65,7 @@
 #import "HTMLFrameOwnerElement.h"
 #import "HTMLImageElement.h"
 #import "HTMLInputElement.h"
+#import "HTMLMediaElement.h"
 #import "HTMLNames.h"
 #import "IntRect.h"
 #import "LocalFrame.h"
@@ -4657,6 +4659,41 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return subarray;
 }
 
+#if ENABLE(VIDEO)
+static RefPtr<HTMLMediaElement> mediaElementForObjectID(AXTreeID treeID, AXID objectID)
+{
+    AX_ASSERT(isMainThread());
+    WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID);
+    if (!cache)
+        return nullptr;
+    RefPtr object = cache->objectForID(objectID);
+    return object ? dynamicDowncast<HTMLMediaElement>(object->node()) : nullptr;
+}
+
+using MediaActions = Vector<std::pair<String, AccessibilityMediaHelpers::Action>>;
+
+static MediaActions mediaActionsForObject(AXCoreObject& object)
+{
+    if (!AXObjectCache::isAXMediaActionsEnabled() || !(object.isVideo() || object.role() == AccessibilityRole::Audio))
+        return { };
+
+    auto treeID = object.treeID();
+    if (!treeID)
+        return { };
+
+    // Media state (paused, muted, captions, full screen) lives on the main thread.
+    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([treeID = *treeID, objectID = object.objectID()] -> MediaActions {
+        RefPtr mediaElement = mediaElementForObjectID(treeID, objectID);
+        if (!mediaElement)
+            return { };
+        auto actions = AccessibilityMediaHelpers::availableActions(*mediaElement);
+        for (auto& action : actions)
+            action.first = action.first.isolatedCopy();
+        return actions;
+    }, Accessibility::InteractiveTimeout, MediaActions { });
+}
+#endif // ENABLE(VIDEO)
+
 - (NSArray<NSAccessibilityCustomAction *> *)accessibilityCustomActions
 {
     RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
@@ -4664,10 +4701,36 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return nil;
 
     auto actionsData = [self baseAccessibilityCustomActionsData];
+#if ENABLE(VIDEO)
+    auto mediaActions = mediaActionsForObject(*backingObject);
+    if (actionsData.isEmpty() && mediaActions.isEmpty())
+#else
     if (actionsData.isEmpty())
+#endif
         return nil;
 
     RetainPtr<NSMutableArray<NSAccessibilityCustomAction *>> actions = adoptNS([[NSMutableArray alloc] init]);
+
+#if ENABLE(VIDEO)
+    if (!mediaActions.isEmpty()) {
+        auto treeID = *backingObject->treeID();
+        auto objectID = backingObject->objectID();
+        for (auto& [name, mediaAction] : mediaActions) {
+            auto actionType = mediaAction;
+            RetainPtr action = adoptNS([[NSAccessibilityCustomAction alloc] initWithName:name.createNSString() handler:^BOOL {
+                // Like the press action, return right away so that anything the action causes (e.g. entering
+                // full screen) can't make VoiceOver wait on the main thread.
+                RunLoop::mainSingleton().dispatch([treeID, objectID, actionType] {
+                    if (RefPtr mediaElement = mediaElementForObjectID(treeID, objectID))
+                        AccessibilityMediaHelpers::perform(*mediaElement, actionType);
+                });
+                return YES;
+            }]);
+            [actions addObject:action.get()];
+        }
+    }
+#endif
+
     for (auto& actionData : actionsData) {
         auto treeID = actionData.treeID;
         auto targetID = actionData.targetID;

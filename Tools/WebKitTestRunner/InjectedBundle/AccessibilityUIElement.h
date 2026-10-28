@@ -114,6 +114,7 @@ public:
     virtual void press();
     virtual bool dismiss();
     virtual bool invokeCustomActionAtIndex(unsigned);
+    virtual RefPtr<OpaqueJSString> customActionNames();
     virtual void syncPress();
     virtual void asyncIncrement();
     virtual void asyncDecrement();

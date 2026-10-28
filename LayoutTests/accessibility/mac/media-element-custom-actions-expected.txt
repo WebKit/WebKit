@@ -1,0 +1,33 @@
+This test ensures that a video exposes play, pause, skip and mute as accessibility custom actions, that the action names follow the media state, and that each action reaches the page as ordinary media input, including through the page's media session handlers.
+
+A paused video with audio offers Play, both skips, Mute and Enter Full Screen:
+Actions: Play, Skip Back 15 Seconds, Skip Forward 15 Seconds, Mute, Enter Full Screen
+
+The first action plays the video, and the name changes to Pause:
+PASS: axVideo.invokeCustomActionAtIndex(0) === true
+PASS: video.paused === false
+Actions: Pause, Skip Back 15 Seconds, Skip Forward 15 Seconds, Mute, Enter Full Screen
+
+Pressing the video toggles playback too:
+PASS: video.paused === true
+
+Skip Back seeks back 15 seconds, stopping at the start:
+PASS: axVideo.invokeCustomActionAtIndex(1) === true
+PASS: video.currentTime === 0
+
+Mute mutes the video, and the name changes to Unmute:
+PASS: axVideo.invokeCustomActionAtIndex(3) === true
+PASS: video.muted === true
+Actions: Play, Skip Back 15 Seconds, Skip Forward 15 Seconds, Unmute, Enter Full Screen
+
+With a captions track, Show Captions is offered:
+Actions: Play, Skip Back 15 Seconds, Skip Forward 15 Seconds, Unmute, Show Captions, Enter Full Screen
+
+When the page handles media session actions, Skip Forward calls its handler like a media key would:
+PASS: axVideo.invokeCustomActionAtIndex(2) === true
+PASS: seekForwardOffset === 15
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

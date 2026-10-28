@@ -47,6 +47,7 @@ class AdwaitaFullscreenMediaControls extends MediaControls
         this.fullscreenButton.isFullscreen = true;
 
         this.volumeSlider = new Slider(this, "volume");
+        this.volumeSlider.inputAccessibleName = UIString("Volume");
         this.volumeSlider.width = 60;
 
         this._leftContainer = new ButtonsContainer({

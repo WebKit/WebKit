@@ -397,6 +397,18 @@ namespace WebCore {
     String addAudioTrackKindCommentarySuffix(const String&);
 #endif // PLATFORM(COCOA)
     String contextMenuItemTagShowMediaStats();
+#if PLATFORM(MAC)
+    String AXMediaPlayActionText();
+    String AXMediaPauseActionText();
+    String AXMediaSkipBackActionText();
+    String AXMediaSkipForwardActionText();
+    String AXMediaMuteActionText();
+    String AXMediaUnmuteActionText();
+    String AXMediaShowCaptionsActionText();
+    String AXMediaHideCaptionsActionText();
+    String AXMediaEnterFullScreenActionText();
+    String AXMediaExitFullScreenActionText();
+#endif
 #endif // ENABLE(VIDEO)
 
 #if PLATFORM(COCOA)

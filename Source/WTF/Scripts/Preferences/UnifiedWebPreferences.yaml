@@ -208,6 +208,17 @@ AccessibilityFormErrorDetectionEnabled:
     "ENABLE(ACCESSIBILITY_FORM_ERROR_DETECTION)": true
     default: false
 
+AccessibilityMediaActionsEnabled:
+  type: bool
+  status: internal
+  defaultsOverridable: true
+  humanReadableName: "Accessibility Media Actions"
+  humanReadableDescription: "Expose play, pause, skip, mute, captions and full screen as accessibility actions on media elements"
+  webcoreDeprecatedGlobalSettings: true
+  defaultValue:
+    "PLATFORM(MAC)": true
+    default: false
+
 AccessibilityTextStitchingEnabled:
   type: bool
   status: embedder

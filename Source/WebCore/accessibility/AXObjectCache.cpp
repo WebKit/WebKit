@@ -239,6 +239,7 @@ std::atomic<AccessibilityMode> AXObjectCache::gAccessibilityMode { Accessibility
 bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
 std::atomic<bool> AXObjectCache::gForceDeferredSpellChecking = false;
 std::atomic<bool> AXObjectCache::gAccessibilityTextStitchingEnabled = false;
+std::atomic<bool> AXObjectCache::gAccessibilityMediaActionsEnabled = false;
 std::atomic<bool> AXObjectCache::gAccessibilityThreadHitTestingEnabled = false;
 std::atomic<bool> AXObjectCache::gForceInitialFrameCaching = false;
 #if PLATFORM(COCOA)
@@ -454,6 +455,7 @@ AXObjectCache::AXObjectCache(LocalFrame& localFrame, Document* document)
 #endif
 
     gAccessibilityTextStitchingEnabled = DeprecatedGlobalSettings::accessibilityTextStitchingEnabled();
+    gAccessibilityMediaActionsEnabled = DeprecatedGlobalSettings::accessibilityMediaActionsEnabled();
     gAccessibilityThreadHitTestingEnabled = DeprecatedGlobalSettings::accessibilityThreadHitTestingEnabled();
 
 #if PLATFORM(COCOA)

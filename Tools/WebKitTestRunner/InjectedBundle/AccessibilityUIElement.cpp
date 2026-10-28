@@ -442,6 +442,11 @@ bool AccessibilityUIElement::invokeCustomActionAtIndex(unsigned)
     return false;
 }
 
+RefPtr<OpaqueJSString> AccessibilityUIElement::customActionNames()
+{
+    return nullptr;
+}
+
 RefPtr<OpaqueJSString> AccessibilityUIElement::domIdentifier() const
 {
     return nullptr;

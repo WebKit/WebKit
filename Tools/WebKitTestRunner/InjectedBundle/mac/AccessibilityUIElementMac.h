@@ -84,6 +84,7 @@ public:
     void press() override;
     bool dismiss() override;
     bool invokeCustomActionAtIndex(unsigned) override;
+    RefPtr<OpaqueJSString> customActionNames() override;
     void syncPress() override;
     void asyncIncrement() override;
     void asyncDecrement() override;

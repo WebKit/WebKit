@@ -573,6 +573,7 @@ public:
     static bool shouldCreateAXThreadCompatibleMarkers() { return isIsolatedTreeEnabled(); }
 #endif
     static bool isAXTextStitchingEnabled() { return gAccessibilityTextStitchingEnabled; }
+    static bool isAXMediaActionsEnabled() { return gAccessibilityMediaActionsEnabled; }
     WEBCORE_EXPORT static bool LEGACY_NODELETE isAXThreadHitTestingEnabled();
 
 #if PLATFORM(COCOA)
@@ -1083,6 +1084,8 @@ private:
 
     // Accessed on and off the main thread.
     static std::atomic<bool> gAccessibilityTextStitchingEnabled;
+    // Accessed on and off the main thread.
+    static std::atomic<bool> gAccessibilityMediaActionsEnabled;
     // Accessed on and off the main thread.
     static std::atomic<bool> gAccessibilityThreadHitTestingEnabled;
 

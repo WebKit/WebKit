@@ -40,6 +40,7 @@ class AutoHideController
         this._mediaControls.element.addEventListener("pointerup", this);
         this._mediaControls.element.addEventListener("pointerleave", this);
         this._mediaControls.element.addEventListener("pointerout", this);
+        this._mediaControls.element.addEventListener("focusout", this);
 
         if (this._mediaControls.layoutTraits.supportsTouches())
             this._tapGestureRecognizer = new TapGestureRecognizer(this._mediaControls.element, this);
@@ -134,6 +135,11 @@ class AutoHideController
             this._pointerIdentifiersPreventingAutoHideForHover.delete(event.pointerId);
             this._resetAutoHideTimer();
             return;
+
+        case "focusout":
+            // Focus may have left the controls, which lets them fade again.
+            this._resetAutoHideTimer();
+            return;
         }
     }
 
@@ -183,7 +189,9 @@ class AutoHideController
     {
         delete this._autoHideTimer;
 
-        this._mediaControls.faded = this._canFadeControls && !this._pointerIdentifiersPreventingAutoHide.size && !this._pointerIdentifiersPreventingAutoHideForHover.size;
+        // Keep the controls visible while keyboard or assistive technology focus is inside them,
+        // otherwise they fade out from under the user.
+        this._mediaControls.faded = this._canFadeControls && !this._pointerIdentifiersPreventingAutoHide.size && !this._pointerIdentifiersPreventingAutoHideForHover.size && !this._mediaControls.element.matches(":focus-within");
     }
 
 }

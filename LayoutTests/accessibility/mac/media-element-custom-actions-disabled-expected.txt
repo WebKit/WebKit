@@ -1,0 +1,8 @@
+This test ensures that a video exposes no media custom actions when the feature is off.
+
+PASS: axVideo.customActionNames() === ''
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -583,6 +583,9 @@
 /* Video Enter Full Screen context menu item */
 "Enter Full Screen" = "Enter Full Screen";
 
+/* accessibility action name to show a video in full screen */
+"Enter Full Screen (accessibility action)" = "Enter Full Screen";
+
 /* menu item */
 "Enter Picture in Picture" = "Enter Picture in Picture";
 
@@ -618,6 +621,9 @@
 
 /* Full Screen Deceptive Website Exit Action */
 "Exit Full Screen (Element Full Screen)" = "Exit Full Screen";
+
+/* accessibility action name to exit full screen video */
+"Exit Full Screen (accessibility action)" = "Exit Full Screen";
 
 /* Video Exit Full Screen context menu item */
 "Exit Full Screen (context menu)" = "Exit Full Screen";
@@ -714,6 +720,9 @@
 
 /* Title of the Hide button for zoomed form controls. */
 "Hide" = "Hide";
+
+/* accessibility action name to hide captions on a media element */
+"Hide Captions (accessibility action)" = "Hide Captions";
 
 /* Hide Media Controls context menu item */
 "Hide Controls" = "Hide Controls";
@@ -1084,6 +1093,9 @@
 /* Media Mute context menu item */
 "Mute" = "Mute";
 
+/* accessibility action name to mute a media element */
+"Mute (accessibility action)" = "Mute";
+
 /* WebKitErrorHTTPSOnlyHTTPURL description */
 "Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled" = "Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled";
 
@@ -1201,6 +1213,9 @@
 /* Media Pause context menu item */
 "Pause" = "Pause";
 
+/* accessibility action name to pause a media element */
+"Pause (accessibility action)" = "Pause";
+
 /* Pause All Animations context menu item */
 "Pause All Animations" = "Pause All Animations";
 
@@ -1218,6 +1233,9 @@
 
 /* Media Play context menu item */
 "Play" = "Play";
+
+/* accessibility action name to start playing a media element */
+"Play (accessibility action)" = "Play";
 
 /* Play All Animations context menu item */
 "Play All Animations" = "Play All Animations";
@@ -1372,6 +1390,9 @@
 /* Title for Share action button */
 "Share…" = "Share…";
 
+/* accessibility action name to show captions on a media element */
+"Show Captions (accessibility action)" = "Show Captions";
+
 /* Show colors context menu item */
 "Show Colors" = "Show Colors";
 
@@ -1404,6 +1425,12 @@
 
 /* Single Page Continuous context menu item */
 "Single Page Continuous" = "Single Page Continuous";
+
+/* accessibility action name to skip a media element back 15 seconds */
+"Skip Back 15 Seconds (accessibility action)" = "Skip Back 15 Seconds";
+
+/* accessibility action name to skip a media element forward 15 seconds */
+"Skip Forward 15 Seconds (accessibility action)" = "Skip Forward 15 Seconds";
 
 /* Smart Copy/Paste context menu item */
 "Smart Copy/Paste" = "Smart Copy/Paste";
@@ -1713,6 +1740,9 @@
 
 /* Undo action name */
 "Unlink (Undo action name)" = "Unlink";
+
+/* accessibility action name to unmute a media element */
+"Unmute (accessibility action)" = "Unmute";
 
 /* Undo action name */
 "Unscript (Undo action name)" = "Unscript";
