@@ -126,6 +126,7 @@ class WebAutomationSession;
 class WebBackForwardCache;
 class WebCompiledContentRuleList;
 class WebContextSupplement;
+class PrintProcessProxy;
 class WebFrameProxy;
 class WebPageGroup;
 class WebPageProxy;
@@ -407,6 +408,8 @@ public:
     // if any of them could not be connected.
     Vector<IPC::Connection::AsyncReplyID> ensurePrintProcessConnections(WebFrameProxy& rootFrame, WebProcessProxy::LockdownMode, CompletionHandler<void(bool)>&&);
     bool isPrintProcessClient(const WebProcessProxy& printProcess, WebCore::ProcessIdentifier) const;
+    // The snapshot API of the print process with this Lockdown Mode, if it runs.
+    RefPtr<PrintProcessProxy> printProcessProxy(WebProcessProxy::LockdownMode);
     void printProcessClientCountForTesting(WebProcessProxy::LockdownMode, CompletionHandler<void(uint64_t)>&&);
 #endif
 

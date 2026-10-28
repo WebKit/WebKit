@@ -32,9 +32,10 @@
 #include "ImageBufferBackendHandle.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
-#include <WebCore/ColorSpace.h>
+#include "RemoteSnapshotHostProxy.h"
 #include "RemoteSnapshotIdentifier.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/ColorSpace.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntDegrees.h>
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -87,7 +88,7 @@ struct GPUProcessCreationParameters;
 struct SecurityFlags;
 struct SharedPreferencesForWebProcess;
 
-class GPUProcessProxy final : public AuxiliaryProcessProxy {
+class GPUProcessProxy final : public AuxiliaryProcessProxy, public RemoteSnapshotHostProxy {
     WTF_MAKE_TZONE_ALLOCATED(GPUProcessProxy);
     WTF_MAKE_NONCOPYABLE(GPUProcessProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GPUProcessProxy);
@@ -196,24 +197,21 @@ public:
 #if PLATFORM(COCOA)
     void postWillTakeSnapshotNotification(CompletionHandler<void()>&&);
 
-    // Draws the snapshot at the size its root was recorded at, once it is complete. May be sent as soon
-    // as the root has been asked for.
-    std::optional<IPC::Connection::AsyncReplyID> sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier, WebCore::FrameIdentifier root, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    // RemoteSnapshotHostProxy.
+    std::optional<IPC::Connection::AsyncReplyID> sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier, WebCore::FrameIdentifier root, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&) final;
 #endif
-    std::optional<IPC::Connection::AsyncReplyID> sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier, WebCore::FrameIdentifier root, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
+    std::optional<IPC::Connection::AsyncReplyID> sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier, WebCore::FrameIdentifier root, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&) final;
 #if HAVE(IOSURFACE)
     void sinkCompletedSnapshotToIOSurface(RemoteSnapshotIdentifier, float scale, const WebCore::ColorSpace&, WebCore::FrameIdentifier root, CompletionHandler<void(std::optional<ImageBufferBackendHandle>&&)>&&);
 #endif
-    void releaseSnapshot(RemoteSnapshotIdentifier);
-    void abandonSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier);
-    void snapshotFrameWillBeDrawnByProcess(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
-    void abandonSnapshotFramesOwnedBy(WebCore::ProcessIdentifier);
-    // For the reply of the process asked to record a snapshot's root. Only failure matters: nothing more
-    // is coming for the snapshot then. Sent after the sink, so that the sink is not left waiting.
-    CompletionHandler<void(bool)> releaseSnapshotIfRootFails(RemoteSnapshotIdentifier);
-    // Blocks until a snapshot already sent to be drawn has been drawn, or has failed. Messages that ask
-    // frames hosted in other processes to record into it are dispatched meanwhile. False on timeout.
-    bool waitForSnapshot(RemoteSnapshotIdentifier, Seconds timeout);
+    void releaseSnapshot(RemoteSnapshotIdentifier) final;
+    void abandonSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier) final;
+    void snapshotFrameWillBeDrawnByProcess(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, WebCore::ProcessIdentifier) final;
+    void abandonSnapshotFramesOwnedBy(WebCore::ProcessIdentifier) final;
+    CompletionHandler<void(bool)> releaseSnapshotIfRootFails(RemoteSnapshotIdentifier) final;
+    bool waitForSnapshot(RemoteSnapshotIdentifier, Seconds timeout) final;
+    RefPtr<IPC::Connection> snapshotHostConnection() const final;
+    Function<void(Seconds timeout)> snapshotWaiter(RemoteSnapshotIdentifier) final;
 
 private:
     explicit GPUProcessProxy();

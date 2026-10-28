@@ -59,6 +59,7 @@
 #include "OverrideLanguages.h"
 #include "PageLoadState.h"
 #include "PerActivityStateCPUUsageSampler.h"
+#include "PrintProcessProxy.h"
 #include "ProcessTerminationReason.h"
 #include "RemotePageProxy.h"
 #include "RemoteWorkerType.h"
@@ -1653,6 +1654,14 @@ void WebProcessPool::printProcessClientDidDisconnect(WebProcessProxy& process)
                 completionHandler(false);
         }
     }
+}
+
+RefPtr<PrintProcessProxy> WebProcessPool::printProcessProxy(WebProcessProxy::LockdownMode lockdownMode)
+{
+    RefPtr process = printProcessState(lockdownMode).process;
+    if (!process)
+        return nullptr;
+    return PrintProcessProxy::create(*this, *process);
 }
 
 bool WebProcessPool::isPrintProcessClient(const WebProcessProxy& printProcess, WebCore::ProcessIdentifier clientIdentifier) const

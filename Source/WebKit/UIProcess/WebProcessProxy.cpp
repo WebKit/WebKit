@@ -47,6 +47,7 @@
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "PageLoadState.h"
 #include "PlatformXRSystem.h"
+#include "PrintProcessProxy.h"
 #include "ProcessTerminationReason.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
@@ -1041,6 +1042,15 @@ void WebProcessProxy::shutDown()
     // Any frame this process was asked to record into a snapshot will not be recorded now.
     if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
         gpuProcess->abandonSnapshotFramesOwnedBy(coreProcessIdentifier());
+#endif
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    // Nor any frame it was asked to record into a print snapshot.
+    if (RefPtr processPool = processPoolIfExists(); processPool && !isPrintProcess()) {
+        for (auto lockdownMode : { LockdownMode::Disabled, LockdownMode::Enabled }) {
+            if (RefPtr printProcess = processPool->printProcessProxy(lockdownMode))
+                printProcess->abandonSnapshotFramesOwnedBy(coreProcessIdentifier());
+        }
+    }
 #endif
 
     m_userInitiatedActionMap.clear();

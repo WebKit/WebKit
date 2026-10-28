@@ -115,6 +115,8 @@ class CPUMonitor;
 class Frame;
 class PageGroup;
 class SecurityOriginData;
+class ShareableBitmapHandle;
+class SharedBuffer;
 class Site;
 class UserGestureToken;
 
@@ -669,6 +671,13 @@ private:
     void printClientDidGoAway(WebCore::ProcessIdentifier);
     void printConnectionToWebProcessCountForTesting(CompletionHandler<void(uint64_t)>&&);
     void connectToPrintProcess(IPC::Connection::Handle&&);
+    void sinkCompletedPrintSnapshotToPDF(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    void sinkCompletedPrintSnapshotToBitmap(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
+    void releasePrintSnapshot(RemoteSnapshotIdentifier);
+    void abandonPrintSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier);
+    void printSnapshotFrameWillBeDrawnByProcess(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
+    void abandonPrintSnapshotFramesOwnedBy(WebCore::ProcessIdentifier);
+    void waitForPrintSnapshot(RemoteSnapshotIdentifier, CompletionHandler<void()>&&);
 #endif
 
     void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);
@@ -770,6 +779,7 @@ private:
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) final;
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
 

@@ -264,6 +264,7 @@ UIProcess/_WKWebViewPrintFormatter.mm @nonARC
 UIProcess/ApplicationStateTracker.mm @nonARC
 UIProcess/MemoryFootprintMonitor.cpp
 UIProcess/PerActivityStateCPUUsageSampler.cpp
+UIProcess/PrintProcessProxy.cpp
 UIProcess/ViewGestureController.cpp
 UIProcess/ViewSnapshotStore.cpp
 UIProcess/WebMemoryPressureHandler.cpp

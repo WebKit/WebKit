@@ -1077,6 +1077,25 @@ bool GPUProcessProxy::waitForSnapshot(RemoteSnapshotIdentifier identifier, Secon
     return sendSync(Messages::GPUProcess::WaitForSnapshot(identifier), 0, timeout, IPC::SendSyncOption::MaintainOrderingWithAsyncMessages).succeeded();
 }
 
+RefPtr<IPC::Connection> GPUProcessProxy::snapshotHostConnection() const
+{
+    if (!hasConnection())
+        return nullptr;
+    return &connection();
+}
+
+Function<void(Seconds)> GPUProcessProxy::snapshotWaiter(RemoteSnapshotIdentifier identifier)
+{
+    return [identifier](Seconds timeout) {
+        // The GPU process at the time of the wait, as there is one at a time.
+        RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
+        if (!gpuProcess)
+            return;
+        if (!gpuProcess->waitForSnapshot(identifier, timeout))
+            gpuProcess->releaseSnapshot(identifier);
+    };
+}
+
 #if HAVE(IOSURFACE)
 
 void GPUProcessProxy::sinkCompletedSnapshotToIOSurface(RemoteSnapshotIdentifier identifier, float scale, const WebCore::ColorSpace& colorSpace, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<ImageBufferBackendHandle>&&)>&& completionHandler)

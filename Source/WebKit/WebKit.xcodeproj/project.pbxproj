@@ -6061,6 +6061,9 @@
 		4C8E2A203D5F60718293A4D6 /* WKPortalVolumetricGestureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKPortalVolumetricGestureController.swift; sourceTree = "<group>"; };
 		4CAECB5E27465AE300AB78D0 /* UnifiedSource114.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource114.cpp; sourceTree = "<group>"; };
 		4D1A2B3C4E5F60718293A4B5 /* PendingSnapshotDrawing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PendingSnapshotDrawing.h; sourceTree = "<group>"; };
+		1F05A5C0FE8B30047A1446DC /* PrintProcessProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrintProcessProxy.cpp; sourceTree = "<group>"; };
+		D2F1995290C439244D48DC0F /* PrintProcessProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintProcessProxy.h; sourceTree = "<group>"; };
+		EDD91B7CE0F3F3D90CA88E13 /* RemoteSnapshotHostProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSnapshotHostProxy.h; sourceTree = "<group>"; };
 		51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClientMac.mm; sourceTree = "<group>"; };
 		5104F5A11F19D7CF004CF821 /* CookieStorageUtilsCF.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieStorageUtilsCF.mm; sourceTree = "<group>"; };
 		510523711C73D22B007993CB /* WebIDBConnectionToServer.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebIDBConnectionToServer.messages.in; sourceTree = "<group>"; };
@@ -16446,6 +16449,8 @@
 				4D1A2B3C4E5F60718293A4B5 /* PendingSnapshotDrawing.h */,
 				832ED1891E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.cpp */,
 				832ED18A1E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.h */,
+				1F05A5C0FE8B30047A1446DC /* PrintProcessProxy.cpp */,
+				D2F1995290C439244D48DC0F /* PrintProcessProxy.h */,
 				E3EA8F0D2F439059006CC6B3 /* ProcessActivityGroup.cpp */,
 				E3EA8F0C2F439059006CC6B3 /* ProcessActivityGroup.h */,
 				37716A59195B910500EE8B1B /* ProcessAssertion.cpp */,
@@ -16474,6 +16479,7 @@
 				729F145827DA4BFB83A7C750 /* RemotePageWebAuthenticatorCoordinatorProxy.h */,
 				7BDE98AD2F0F33B20091DCA3 /* RemotePageWebDeviceOrientationUpdateProviderProxy.cpp */,
 				7BDE98AC2F0F33140091DCA3 /* RemotePageWebDeviceOrientationUpdateProviderProxy.h */,
+				EDD91B7CE0F3F3D90CA88E13 /* RemoteSnapshotHostProxy.h */,
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
 				5E55104200000000000B0001 /* SecurityFlagsController.cpp */,

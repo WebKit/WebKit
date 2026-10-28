@@ -1957,6 +1957,50 @@ void WebProcess::printProcessConnectionDidClose(PrintProcessConnection& connecti
         m_printProcessConnection = nullptr;
 }
 
+// The UI process's control of the print snapshots, as of the GPU process's snapshots.
+
+void WebProcess::sinkCompletedPrintSnapshotToPDF(RemoteSnapshotIdentifier identifier, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, completionHandler(nullptr));
+    protect(snapshotRegistry())->sinkCompletedSnapshotToPDF(identifier, rootFrameIdentifier, WTF::move(completionHandler));
+}
+
+void WebProcess::sinkCompletedPrintSnapshotToBitmap(RemoteSnapshotIdentifier identifier, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&)>&& completionHandler)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, completionHandler(std::nullopt));
+    protect(snapshotRegistry())->sinkCompletedSnapshotToBitmap(identifier, rootFrameIdentifier, WTF::move(completionHandler));
+}
+
+void WebProcess::releasePrintSnapshot(RemoteSnapshotIdentifier identifier)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, (void)0);
+    protect(snapshotRegistry())->releaseSnapshot(identifier);
+}
+
+void WebProcess::abandonPrintSnapshotFrame(RemoteSnapshotIdentifier identifier, FrameIdentifier frameIdentifier)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, (void)0);
+    protect(snapshotRegistry())->abandonSnapshotFrame(identifier, frameIdentifier);
+}
+
+void WebProcess::printSnapshotFrameWillBeDrawnByProcess(RemoteSnapshotIdentifier identifier, FrameIdentifier frameIdentifier, ProcessIdentifier processIdentifier)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, (void)0);
+    protect(snapshotRegistry())->snapshotFrameWillBeDrawnByProcess(identifier, frameIdentifier, processIdentifier);
+}
+
+void WebProcess::abandonPrintSnapshotFramesOwnedBy(ProcessIdentifier processIdentifier)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, (void)0);
+    protect(snapshotRegistry())->abandonSnapshotFramesOwnedBy(processIdentifier);
+}
+
+void WebProcess::waitForPrintSnapshot(RemoteSnapshotIdentifier identifier, CompletionHandler<void()>&& completionHandler)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, completionHandler());
+    protect(snapshotRegistry())->waitForSnapshot(identifier, WTF::move(completionHandler));
+}
+
 #undef PRINT_PROCESS_MESSAGE_CHECK_COMPLETION
 #endif
 

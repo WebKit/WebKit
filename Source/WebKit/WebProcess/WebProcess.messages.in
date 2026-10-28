@@ -92,6 +92,14 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     UpdatePrintConnectionSharedPreferences(WebCore::ProcessIdentifier webProcessIdentifier, struct WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess)
     PrintConnectionToWebProcessCountForTesting() -> (uint64_t count)
     ConnectToPrintProcess(IPC::ConnectionHandle connectionHandle) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+
+    SinkCompletedPrintSnapshotToPDF(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier rootFrameIdentifier) -> (RefPtr<WebCore::SharedBuffer> result) ReplyCanDispatchOutOfOrder
+    SinkCompletedPrintSnapshotToBitmap(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier rootFrameIdentifier) -> (std::optional<WebCore::ShareableBitmapHandle> image) ReplyCanDispatchOutOfOrder
+    ReleasePrintSnapshot(WebKit::RemoteSnapshotIdentifier identifier)
+    AbandonPrintSnapshotFrame(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier frameIdentifier)
+    PrintSnapshotFrameWillBeDrawnByProcess(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier frameIdentifier, WebCore::ProcessIdentifier processIdentifier)
+    AbandonPrintSnapshotFramesOwnedBy(WebCore::ProcessIdentifier processIdentifier)
+    WaitForPrintSnapshot(WebKit::RemoteSnapshotIdentifier identifier) -> () Synchronous
 #endif
 
     GarbageCollectJavaScriptObjects()
