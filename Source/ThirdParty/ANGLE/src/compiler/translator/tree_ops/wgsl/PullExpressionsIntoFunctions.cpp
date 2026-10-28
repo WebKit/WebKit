@@ -676,11 +676,15 @@ class PullExpressionsIntoFunctionsTraverser : public TIntermTraverser
                     }
                 }
             }
+            else if (TIntermLoop *parentLoop = parentOfDecl->getAsLoopNode())
+            {
+                // A for loop init declaration without an initializer, e.g. for (int i; ...).
+                // Delete the declaration, the global one already exists.
+                ASSERT(parentLoop->getInit() == decl);
+                parentLoop->setInit(nullptr);
+            }
             else
             {
-                // TODO(anglebug.com/42267100): there can be declarations inside loops, not just
-                // blocks. Need to remove them from there probably. Or not, and this code should
-                // know how to remove declarations from while loops.
                 if (!parentOfDecl->getAsBlock())
                 {
                     UNIMPLEMENTED();

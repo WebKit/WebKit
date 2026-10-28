@@ -7431,6 +7431,51 @@ TEST_P(GLSLTest, EmptyForLoopWithSideEffect)
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(0, 0, 127, 255), 1);
 }
 
+// Test a for loop whose index is declared without an initializer and is used in a comma operator
+// in the loop condition or the loop expression.
+TEST_P(GLSLTest, ForLoopIndexWithoutInitializerUsedInCommaOperator)
+{
+    constexpr char kFS1[] = R"(precision mediump float;
+void main()
+{
+    int n = 0;
+    float sum = 0.0;
+    for (int i; (i = n++, i < 4);)
+    {
+        sum += float(i);
+    }
+    gl_FragColor = vec4(1, 0, 0, 1);
+    if (sum == 6.0 && n == 5)
+    {
+        gl_FragColor = vec4(0, 1, 0, 1);
+    }
+})";
+
+    ANGLE_GL_PROGRAM(program1, essl1_shaders::vs::Simple(), kFS1);
+    drawQuad(program1, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    constexpr char kFS2[] = R"(precision mediump float;
+void main()
+{
+    int n = 0;
+    float sum = 0.0;
+    for (int i; (i = n) < 4; (sum += float(i), n++))
+    {
+    }
+    gl_FragColor = vec4(1, 0, 0, 1);
+    if (sum == 6.0 && n == 4)
+    {
+        gl_FragColor = vec4(0, 1, 0, 1);
+    }
+})";
+
+    ANGLE_GL_PROGRAM(program2, essl1_shaders::vs::Simple(), kFS2);
+    drawQuad(program2, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that for loops with vec variable work
 TEST_P(GLSLTest_ES3, ForLoopWithVecVariable)
 {
