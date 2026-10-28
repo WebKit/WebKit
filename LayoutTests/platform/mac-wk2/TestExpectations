@@ -2521,20 +2521,6 @@ webkit.org/b/323246 [ Debug x86_64 ] accessibility/isolated-tree/canvas-fallback
 webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.html [ Pass Crash Timeout ]
 webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_matrix_matrix_multiplication.html [ Pass Crash Timeout ]
 
-# webkit.org/b/325200 REGRESSION(macOS GoldenGate)[ Debug ]: 12X http/tests/iframe-monitor/ (layout-tests) are constant timeouts
-[ GoldenGate Debug ] http/tests/iframe-monitor/blob-resource.html [ Skip ] 
-[ GoldenGate Debug ] http/tests/iframe-monitor/cached-resource.html [ Skip ] 
-[ GoldenGate Debug ] http/tests/iframe-monitor/compressed-resource.html [ Skip ] 
-[ GoldenGate Debug ] http/tests/iframe-monitor/dark-mode.html [ Skip ] 
-[ GoldenGate Debug ] http/tests/iframe-monitor/data-url-resource.html [ Skip ] 
-[ GoldenGate Debug ] http/tests/iframe-monitor/eligibility.html [ Skip ] 
-[ GoldenGate Debug ] http/tests/iframe-monitor/iframe-unload.html [ Skip ] 
-[ GoldenGate Debug ] http/tests/iframe-monitor/just-use-eligible-subresource.html [ Skip ] 
-[ GoldenGate Debug ] http/tests/iframe-monitor/throttler.html [ Skip ] 
-[ GoldenGate Debug ] http/tests/iframe-monitor/workers/service-worker-not-count-twice.html [ Skip ] 
-[ GoldenGate Debug ] http/tests/iframe-monitor/workers/service-worker.html [ Skip ] 
-[ GoldenGate Debug ] http/tests/iframe-monitor/workers/shared-worker.html [ Skip ]
-
 # webkit.org/b/325205 [ macOS Debug ] 4X http/tests/webgpu/webgpu/shader/execution/expression/ (layout-tests) are constant timeouts
 [ Debug ] http/tests/webgpu/webgpu/shader/execution/expression/binary/af_matrix_matrix_multiplication.html [ Skip ] 
 [ Debug ] http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/textureDimensions.html [ Skip ] 
