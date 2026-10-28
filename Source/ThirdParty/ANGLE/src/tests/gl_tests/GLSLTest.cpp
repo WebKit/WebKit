@@ -3620,6 +3620,40 @@ TEST_P(GLSLTest, VerifyMaxFragmentUniformVectorsExceeded)
     CompileGLSLWithUniformsAndSamplers(0, maxUniforms + 1, 0, 0, false);
 }
 
+// Tests that a program with the maximum number of uniforms that GL_MAX_FRAGMENT_UNIFORM_VECTORS
+// returns can draw.
+TEST_P(GLSLTest, DrawWithMaxFragmentUniformVectors)
+{
+    GLint maxUniforms = 0;
+    glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, &maxUniforms);
+    ASSERT_GL_NO_ERROR();
+
+    std::stringstream fragmentShader;
+    fragmentShader << "precision mediump float;\n";
+    for (GLint i = 0; i < maxUniforms; ++i)
+    {
+        fragmentShader << "uniform vec4 v" << i << ";\n";
+    }
+    fragmentShader << "void main()\n{\n    gl_FragColor = vec4(0.0);\n";
+    for (GLint i = 0; i < maxUniforms; ++i)
+    {
+        fragmentShader << "    gl_FragColor += v" << i << ";\n";
+    }
+    fragmentShader << "}\n";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), fragmentShader.str().c_str());
+    glUseProgram(program);
+
+    // The other uniforms are zero.
+    GLint firstUniformLocation = glGetUniformLocation(program, "v0");
+    ASSERT_NE(-1, firstUniformLocation);
+    glUniform4f(firstUniformLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // HLSL generates extra lod0 variants of functions. There was a bug that incorrectly reworte
 // function calls to use them in vertex shaders.  http://anglebug.com/42262136
 TEST_P(GLSLTest, TextureLODRewriteInVertexShader)
