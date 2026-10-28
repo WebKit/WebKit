@@ -38,9 +38,9 @@
 namespace WebCore {
 namespace Style {
 
-static inline bool NODELETE comparePageRules(const StyleRulePage* r1, const StyleRulePage* r2)
+static inline bool NODELETE comparePageRules(const StyleRulePage& r1, const StyleRulePage& r2)
 {
-    return r1->selector().specificityForPage() < r2->selector().specificityForPage();
+    return r1.selector().specificityForPage() < r2.selector().specificityForPage();
 }
 
 bool PageRuleCollector::isLeftPage(int pageIndex) const
@@ -79,7 +79,7 @@ void PageRuleCollector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isF
     if (!rules)
         return;
 
-    Vector<StyleRulePage*> matchedPageRules;
+    Vector<Ref<StyleRulePage>> matchedPageRules;
     matchPageRulesForList(matchedPageRules, rules->pageRules(), isLeftPage, isFirstPage, pageName);
     if (matchedPageRules.isEmpty())
         return;
@@ -111,11 +111,9 @@ static bool NODELETE checkPageSelectorComponents(const CSSSelector& selector, bo
     return true;
 }
 
-void PageRuleCollector::matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>& rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName)
+void PageRuleCollector::matchPageRulesForList(Vector<Ref<StyleRulePage>>& matchedRules, const Vector<Ref<StyleRulePage>>& rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName)
 {
-    for (unsigned i = 0; i < rules.size(); ++i) {
-        RefPtr rule = rules[i];
-
+    for (auto& rule : rules) {
         if (!checkPageSelectorComponents(rule->selector(), isLeftPage, isFirstPage, pageName))
             continue;
 

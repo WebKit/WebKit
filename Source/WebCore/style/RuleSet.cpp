@@ -542,7 +542,7 @@ void RuleSet::addRuleToBucket(RuleData& ruleData)
 
 void RuleSet::addPageRule(StyleRulePage& rule)
 {
-    m_pageRules.append(&rule);
+    m_pageRules.append(rule);
 }
 
 void RuleSet::setViewTransitionRule(StyleRuleViewTransition& rule)
