@@ -520,6 +520,39 @@ TEST(WKWebExtension, MalformedPDFIconIsReported)
 #endif // PLATFORM(MAC)
 
 
+TEST(WKWebExtension, IconsWithWrongTypeIsReported)
+{
+    for (id wrongTypeValue in @[ @"icon-128.png", @[ @"icon-128.png" ], @128 ]) {
+        auto *testManifestDictionary = @{
+            @"manifest_version": @3,
+            @"name": @"Test",
+            @"version": @"1.0",
+            @"description": @"Test",
+            @"icons": wrongTypeValue
+        };
+
+        auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:@{ }];
+
+        EXPECT_NULL([testExtension iconForSize:CGSizeMake(128, 128)]);
+        EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
+    }
+}
+
+TEST(WKWebExtension, MissingIconsIsNotReported)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test"
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:@{ }];
+
+    EXPECT_NULL([testExtension iconForSize:CGSizeMake(128, 128)]);
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+}
+
 TEST(WKWebExtension, SymbolImageIcon)
 {
     auto *testManifestDictionary = @{

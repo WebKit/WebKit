@@ -2077,8 +2077,14 @@ RefPtr<WebCore::Icon> WebExtension::bestIconForManifestKey(const JSON::Object& o
         return *std::get_if<RefPtr<WebCore::Icon>>(&*cacheResult);
 
     RefPtr iconObject = object.getObject(manifestKey);
-    if (!iconObject)
+    if (!iconObject) {
+        // A string `default_icon` is loaded and reported by populateActionPropertiesIfNeeded().
+        RefPtr value = object.getValue(manifestKey);
+        if (value && !(manifestKey == defaultIconManifestKey && value->type() == JSON::Value::Type::String))
+            recordError(createError(error));
+
         return nullptr;
+    }
 
     RefPtr result = bestIcon(iconObject, idealSize, [&](Ref<API::Error> error) {
         recordError(error);
