@@ -1,0 +1,18 @@
+Tests for WI.SourceCodeLocation.
+
+
+== Running test suite: SourceCodeLocation
+-- Running test case: SourceCodeLocation.AddingChangeListenerInitializesLocation
+PASS: LocationChanged should fire once when the source code is formatted.
+PASS: DisplayLocationChanged should fire once when the source code is formatted.
+PASS: The location should report a formatted location.
+PASS: The formatted line should reflect the applied formatter.
+PASS: The display line should reflect the applied formatter.
+PASS: The raw line should be unchanged.
+
+-- Running test case: SourceCodeLocation.InitializationAndReadsDoNotDispatch
+PASS: No change event should be dispatched by initialization or reads.
+PASS: The location should have no formatted location without a formatter.
+PASS: The formatted line should equal the raw line without a formatter.
+PASS: The display line should equal the raw line without a mapping or formatter.
+

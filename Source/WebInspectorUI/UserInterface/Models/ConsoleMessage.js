@@ -87,7 +87,7 @@ WI.ConsoleMessage = class ConsoleMessage
             if (sourceCode) {
                 let lineNumber = this._line > 0 ? this._line - 1 : 0;
                 let columnNumber = this._column > 0 ? this._column - 1 : 0;
-                this._sourceCodeLocation = new WI.SourceCodeLocation(sourceCode, lineNumber, columnNumber);
+                this._sourceCodeLocation = sourceCode.createSourceCodeLocation(lineNumber, columnNumber);
                 return this._sourceCodeLocation;
             }
         }
