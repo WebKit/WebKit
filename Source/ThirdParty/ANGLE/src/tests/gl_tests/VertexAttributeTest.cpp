@@ -6252,6 +6252,39 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(32, 32, GLColor::red);
 }
 
+// A draw with a vertex attribute offset past the end of its buffer (undefined behavior in ES)
+// must not lose the work that is recorded with it: verify that a clear, a draw and a readback
+// that follow it are still done.
+TEST_P(VertexAttributeTest, OutOfBoundsOffsetKeepsLaterWork)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    glUseProgram(program);
+
+    GLint posLoc = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(-1, posLoc);
+
+    const GLfloat vertices[] = {
+        -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
+    };
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(posLoc);
+
+    // Draw with an offset far past the end of the buffer.
+    glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const void *>(1024));
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::red);
+}
+
 // VAO emulation fails on Mac but is not used on Mac in the wild. http://anglebug.com/40096758
 #if !defined(__APPLE__)
 #    define EMULATED_VAO_CONFIGS                                          \

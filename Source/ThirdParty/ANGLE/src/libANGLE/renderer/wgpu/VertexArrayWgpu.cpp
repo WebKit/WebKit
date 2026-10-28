@@ -434,12 +434,31 @@ angle::Result VertexArrayWgpu::syncDirtyAttrib(ContextWgpu *contextWgpu,
         {
             // Data is sourced directly from the array buffer.
             SetBitField(mCurrentAttribs[attribIndex].offset, 0);
-            SetBitField(mCurrentAttribs[attribIndex].stride, binding.getStride());
 
             ASSERT(bufferGl);
             BufferWgpu *bufferWgpu                   = webgpu::GetImpl(bufferGl);
             mCurrentArrayBuffers[attribIndex].buffer = &(bufferWgpu->getBuffer());
-            mCurrentArrayBuffers[attribIndex].offset = reinterpret_cast<uintptr_t>(attrib.pointer);
+
+            const uintptr_t bindingOffset = reinterpret_cast<uintptr_t>(attrib.pointer);
+            const uint64_t bufferSize     = static_cast<uint64_t>(bufferGl->getSize());
+            const size_t typeSize         = gl::ComputeVertexAttributeTypeSize(attrib);
+            if (ANGLE_LIKELY(bindingOffset < bufferSize && bufferSize - bindingOffset >= typeSize))
+            {
+                SetBitField(mCurrentAttribs[attribIndex].stride, binding.getStride());
+                mCurrentArrayBuffers[attribIndex].offset = bindingOffset;
+            }
+            else
+            {
+                // Not even one vertex fits after the offset. The fetched values are undefined in
+                // ES (KHR_robust_buffer_access_behavior allows any value from the buffer), but
+                // WebGPU's setVertexBuffer() rejects an offset past the end of the buffer and
+                // draw() rejects vertex ranges that do not fit the bound size. Either error
+                // invalidates the render pass and its command encoder, losing all work recorded
+                // in it. Bind offset 0 with stride 0 so every vertex reads the first element of
+                // the buffer, like the Vulkan backend's empty-buffer path.
+                SetBitField(mCurrentAttribs[attribIndex].stride, 0);
+                mCurrentArrayBuffers[attribIndex].offset = 0;
+            }
         }
         else
         {
