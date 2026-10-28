@@ -254,6 +254,10 @@ public:
             return joinImpl<indexingShape>(globalObject, data, length);
         }
 
+        // Every length is below 2^32 and there are fewer than 2^32 elements, so the sum fits in
+        // 64 bits and only needs to be checked once.
+        uint64_t accumulatedStringsLength = 0;
+        bool isAll8Bit = m_isAll8Bit;
         for (size_t i = 0; i < length; ++i) {
             JSValue value = data[i].get();
             if (!value)
@@ -262,12 +266,17 @@ public:
             if constexpr (indexingShape == ContiguousShape) {
                 if (value.isString()) {
                     JSString* string = asString(value);
-                    m_accumulatedStringsLength += string->length();
-                    m_isAll8Bit &= string->is8Bit();
+                    if (auto* impl = string->tryGetValueImpl()) [[likely]] {
+                        accumulatedStringsLength += impl->length();
+                        isAll8Bit &= impl->is8Bit();
+                    } else {
+                        accumulatedStringsLength += string->length();
+                        isAll8Bit &= string->is8Bit();
+                    }
                     continue;
                 }
                 if (value.isBoolean()) {
-                    m_accumulatedStringsLength += value.isTrue() ? "true"_s.length() : "false"_s.length();
+                    accumulatedStringsLength += value.isTrue() ? "true"_s.length() : "false"_s.length();
                     continue;
                 }
                 if (value.isUndefinedOrNull())
@@ -276,8 +285,10 @@ public:
                     return nullptr;
             }
             ASSERT(value.isInt32());
-            m_accumulatedStringsLength += WTF::StringTypeAdapter<int32_t> { value.asInt32() }.length();
+            accumulatedStringsLength += WTF::StringTypeAdapter<int32_t> { value.asInt32() }.length();
         }
+        m_accumulatedStringsLength = accumulatedStringsLength;
+        m_isAll8Bit = isAll8Bit;
 
         return joinImpl<indexingShape>(globalObject, data, length);
     }
