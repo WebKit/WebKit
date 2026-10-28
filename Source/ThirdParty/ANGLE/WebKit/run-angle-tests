@@ -73,7 +73,7 @@ def is_crash(returncode):
         return False
     return returncode > 1 or returncode < 0
 
-def run(cmd, verbose, *, capture, timeout=None):
+def run(cmd, verbose, *, capture, timeout=None, cwd=None, env=None):
     """subprocess.run wrapper that, when verbose, prints the command before
     launch and (for capture=True) the captured stdout/stderr afterwards.
 
@@ -84,8 +84,8 @@ def run(cmd, verbose, *, capture, timeout=None):
     if verbose:
         print(f"+ {shlex.join(cmd)}", flush=True)
     if not capture:
-        return subprocess.run(cmd)
-    result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        return subprocess.run(cmd, cwd=cwd, env=env)
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, cwd=cwd, env=env)
     if verbose:
         if result.stdout:
             sys.stdout.write(result.stdout)
@@ -100,24 +100,34 @@ def run(cmd, verbose, *, capture, timeout=None):
     return result
 
 
+# The ANGLE source root. The test binaries find their expectations files, such as
+# src/tests/angle_end2end_tests_expectations.txt, relative to the current directory.
+ANGLE_SOURCE_DIR = Path(__file__).resolve().parent.parent
+
+
 class LocalRunner:
-    """Runs the test binary directly on the local machine."""
+    """Runs the test binary directly on the local machine, in the ANGLE source root, with
+    the frameworks of its build directory (for example WebGPU.framework, which the WebGPU
+    backend uses) ahead of the system ones."""
 
     def __init__(self, executable):
-        self.executable = Path(executable)
+        self.executable = Path(executable).resolve()
         self.verbose = False
+        self.env = dict(os.environ)
+        framework_path = self.env.get("DYLD_FRAMEWORK_PATH")
+        self.env["DYLD_FRAMEWORK_PATH"] = str(self.executable.parent) + (f":{framework_path}" if framework_path else "")
 
     def install(self):
         pass  # no install step for local binaries
 
     def launch(self, gtest_args):
         cmd = [str(self.executable), *gtest_args]
-        return run(cmd, self.verbose, capture=False).returncode
+        return run(cmd, self.verbose, capture=False, cwd=ANGLE_SOURCE_DIR, env=self.env).returncode
 
     def run_capturing(self, gtest_args, timeout):
         cmd = [str(self.executable), *gtest_args]
         try:
-            result = run(cmd, self.verbose, capture=True, timeout=timeout)
+            result = run(cmd, self.verbose, capture=True, timeout=timeout, cwd=ANGLE_SOURCE_DIR, env=self.env)
             return result.returncode, result.stdout
         except subprocess.TimeoutExpired:
             return None, ""
