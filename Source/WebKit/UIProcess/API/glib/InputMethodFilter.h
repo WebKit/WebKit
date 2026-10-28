@@ -96,6 +96,7 @@ private:
     bool isViewFocused() const;
 
     void notifyContentType();
+    void resetForFocusOut();
 
     WebCore::IntRect platformTransformCursorRectToViewCoordinates(const WebCore::IntRect&);
     bool platformEventKeyIsKeyPress(PlatformEventKey*) const;

@@ -92,8 +92,14 @@ void InputMethodFilter::setContext(WebKitInputMethodContext* context)
 void InputMethodFilter::setState(std::optional<InputMethodState>&& state)
 {
     bool focusChanged = state.has_value() != m_state.has_value();
-    if (focusChanged && !state)
-        notifyFocusedOut();
+    if (focusChanged && !state) {
+        // The input method context already got a focus out when the view lost the focus,
+        // or it never got a focus in.
+        if (isViewFocused())
+            notifyFocusedOut();
+        else
+            resetForFocusOut();
+    }
 
     m_state = WTF::move(state);
     notifyContentType();
@@ -216,10 +222,18 @@ void InputMethodFilter::notifyFocusedOut()
     if (!isEnabled() || !m_context)
         return;
 
+    resetForFocusOut();
+    webkit_input_method_context_notify_focus_out(m_context.get());
+}
+
+void InputMethodFilter::resetForFocusOut()
+{
+    if (!m_context)
+        return;
+
     cancelComposition();
     m_cursorRect = { };
     m_surrounding = { };
-    webkit_input_method_context_notify_focus_out(m_context.get());
 }
 
 void InputMethodFilter::notifyCursorRect(const IntRect& cursorRect)
