@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Media queries in a shadow root added after the viewport was resized</title>
+<link rel="help" href="https://drafts.csswg.org/mediaqueries-4/#mf-dimensions">
+<link rel="help" href="https://dom.spec.whatwg.org/#dom-element-attachshadow">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+iframe { display: block; height: 40px; border: 0; }
+</style>
+<body>
+<script>
+const css = '.b::after { content: "wide" } @media (max-width: 500px) { .b::after { content: "narrow" } }';
+
+async function createFrame(test) {
+    const iframe = await new Promise(resolve => {
+        const iframe = document.createElement('iframe');
+        iframe.style.width = '800px';
+        iframe.srcdoc = '<!DOCTYPE html><body style="margin: 4px">';
+        iframe.onload = () => resolve(iframe);
+        document.body.appendChild(iframe);
+        test.add_cleanup(() => iframe.remove());
+    });
+    return iframe;
+}
+
+async function resize(iframe, width) {
+    iframe.style.width = width + 'px';
+    iframe.offsetWidth;
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+function addShadowRoot(doc) {
+    const host = doc.createElement('div');
+    host.attachShadow({ mode: 'open' }).innerHTML = `<style>${css}</style><div class="b"></div>`;
+    doc.body.append(host);
+    return doc.defaultView.getComputedStyle(host.shadowRoot.querySelector('.b'), '::after').content.replaceAll('"', '');
+}
+
+function expectedContent(iframe) {
+    return iframe.contentWindow.matchMedia('(max-width: 500px)').matches ? 'narrow' : 'wide';
+}
+
+promise_test(async t => {
+    const iframe = await createFrame(t);
+    const doc = iframe.contentDocument;
+    for (const width of [800, 320, 800, 320]) {
+        doc.body.textContent = '';
+        await resize(iframe, width);
+        assert_equals(addShadowRoot(doc), expectedContent(iframe), `shadow root added at ${width}px`);
+    }
+}, 'Shadow root added after a resize evaluates media queries against the new viewport width, old shadow root removed before the resize');
+
+promise_test(async t => {
+    const iframe = await createFrame(t);
+    const doc = iframe.contentDocument;
+    for (const width of [800, 320, 800, 320]) {
+        await resize(iframe, width);
+        doc.body.textContent = '';
+        assert_equals(addShadowRoot(doc), expectedContent(iframe), `shadow root added at ${width}px`);
+    }
+}, 'Shadow root added after a resize evaluates media queries against the new viewport width, old shadow root kept during the resize');
+</script>

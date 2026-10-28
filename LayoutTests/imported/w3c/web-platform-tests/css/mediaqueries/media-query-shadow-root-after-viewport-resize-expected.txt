@@ -1,0 +1,4 @@
+
+PASS Shadow root added after a resize evaluates media queries against the new viewport width, old shadow root removed before the resize
+PASS Shadow root added after a resize evaluates media queries against the new viewport width, old shadow root kept during the resize
+

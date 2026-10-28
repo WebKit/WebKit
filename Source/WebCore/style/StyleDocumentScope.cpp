@@ -187,6 +187,10 @@ auto DocumentScope::collectResolverScopes() -> ResolverScopes
         if (RefPtr resolver = scope.resolverIfExists())
             resolverScopes.add(*resolver, Vector<WeakPtr<Scope>> { }).iterator->value.append(&scope);
     }
+
+    for (auto& resolver : m_sharedShadowTreeResolvers.values())
+        resolverScopes.add(resolver.copyRef(), Vector<WeakPtr<Scope>> { });
+
     return resolverScopes;
 }
 
