@@ -71,6 +71,11 @@ void stopResolveDNS(uint64_t identifier)
     WebCore::DNSResolveQueue::singleton().stopResolve(identifier);
 }
 
+uint64_t prefetchedHostnameCountForTesting()
+{
+    return DNSResolveQueue::singleton().prefetchedHostnameCountForTesting();
+}
+
 // FIXME: Temporary fix until we have rdar://63797758
 bool isIPAddressDisallowed(const URL& url)
 {

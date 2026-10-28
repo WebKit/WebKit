@@ -211,12 +211,17 @@ public:
 
     void processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&&);
     void isStorageSuspendedForTesting(PAL::SessionID, CompletionHandler<void(bool)>&&);
+    void canPrefetchDNSForTesting(PAL::SessionID, CompletionHandler<void(bool)>&&);
+    void prefetchedDNSHostnameCountForTesting(CompletionHandler<void(uint64_t)>&&) const;
     void prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&&);
     void processDidResume(bool forForegroundActivity);
 
     CacheModel cacheModel() const { return m_cacheModel; }
 
     const HashSet<String>& localhostAliasesForTesting() const LIFETIME_BOUND { return m_localhostAliasesForTesting; }
+
+    const OptionSet<NetworkCache::CacheOption>& cacheOptions() const LIFETIME_BOUND { return m_cacheOptions; }
+    WebCore::MessagePortChannelRegistry& messagePortChannelRegistry() { return m_messagePortChannelRegistry; }
 
     // Diagnostic messages logging.
     void logDiagnosticMessage(WebPageProxyIdentifier, const String& message, const String& description, WebCore::ShouldSample);
@@ -237,7 +242,9 @@ public:
 
     void findPendingDownloadLocation(NetworkDataTask&, ResponseCompletionHandler&&, const WebCore::ResourceResponse&);
 
+#if USE(SOUP)
     void prefetchDNS(const String&);
+#endif
 
     void addWebsiteDataStore(WebsiteDataStoreParameters&&);
 
@@ -373,6 +380,18 @@ public:
 
     const String& uiProcessBundleIdentifier() const LIFETIME_BOUND;
 
+    enum class AllowCookieAccess : uint8_t { Disallow, Allow, Terminate };
+
+    struct TaskIdentifierType;
+    enum class TaskTrigger : bool { Timer, Connection };
+
+    struct DeleteWebsiteDataTask {
+        std::optional<PAL::SessionID> sessionID;
+        OptionSet<WebsiteDataType> websiteDataTypes;
+        WallTime modifiedSince;
+        CompletionHandler<void()> completionHandler;
+    };
+
     void ref() const final { ThreadSafeRefCounted<NetworkProcess>::ref(); }
     void deref() const final { ThreadSafeRefCounted<NetworkProcess>::deref(); }
 
@@ -396,11 +415,8 @@ public:
     void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
     void removeKeptAliveLoad(NetworkResourceLoader&);
 
-    const OptionSet<NetworkCache::CacheOption>& cacheOptions() const LIFETIME_BOUND { return m_cacheOptions; }
-
     NetworkConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
     NetworkConnectionToWebProcess* NODELETE webProcessConnection(const IPC::Connection&) const;
-    WebCore::MessagePortChannelRegistry& messagePortChannelRegistry() { return m_messagePortChannelRegistry; }
 
     void setServiceWorkerFetchTimeoutForTesting(Seconds, CompletionHandler<void()>&&);
     void resetServiceWorkerFetchTimeoutForTesting(CompletionHandler<void()>&&);
@@ -468,8 +484,6 @@ public:
 
     void deleteWebsiteDataForOrigin(PAL::SessionID, OptionSet<WebsiteDataType>, const WebCore::ClientOrigin&, CompletionHandler<void()>&&);
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostnames, const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
-
-    enum class AllowCookieAccess : uint8_t { Disallow, Allow, Terminate };
     AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const URL&);
     AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const RegistrableDomain&);
     void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, LoadedWebArchive, CompletionHandler<void()>&&);
@@ -626,10 +640,7 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     void resetResourceMonitorThrottlerForTesting(PAL::SessionID, CompletionHandler<void()>&&);
 #endif
-
-    struct TaskIdentifierType;
     using TaskIdentifier = ObjectIdentifier<TaskIdentifierType>;
-    enum class TaskTrigger : bool { Timer, Connection };
     void performDeleteWebsiteDataTask(TaskIdentifier, TaskTrigger = TaskTrigger::Connection);
     void deleteWebsiteDataImpl(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime, CompletionHandler<void()>&&);
 
@@ -705,13 +716,6 @@ private:
 #if HAVE(ENHANCED_SECURITY_LINKS)
     bool m_isEnhancedSecurityLinksEnabled { false };
 #endif
-
-    struct DeleteWebsiteDataTask {
-        std::optional<PAL::SessionID> sessionID;
-        OptionSet<WebsiteDataType> websiteDataTypes;
-        WallTime modifiedSince;
-        CompletionHandler<void()> completionHandler;
-    };
     HashMap<TaskIdentifier, DeleteWebsiteDataTask> m_deleteWebsiteDataTasks;
 
 #if ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)

@@ -253,6 +253,12 @@ public:
 #endif
 
     enum class SendParametersToNetworkProcess : bool { No, Yes };
+
+    struct UploadActivity {
+        RefPtr<ProcessAssertion> uiAssertion;
+        RefPtr<ProcessAssertion> networkAssertion;
+        HashMap<WebCore::ProcessIdentifier, Ref<ProcessAssertion>> webProcessAssertions;
+    };
     void addSession(WebsiteDataStore&, SendParametersToNetworkProcess);
     void removeSession(WebsiteDataStore&, CompletionHandler<void(String&&)>&&);
 
@@ -301,6 +307,8 @@ public:
 #endif
 
     void isStorageSuspendedForTesting(PAL::SessionID, CompletionHandler<void(bool)>&&);
+    void canPrefetchDNSForTesting(PAL::SessionID, CompletionHandler<void(bool)>&&);
+    void prefetchedDNSHostnameCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
     // ProcessThrottlerClient
     void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) final;
@@ -466,12 +474,6 @@ private:
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     RefPtr<ListDataObserver> m_storageAccessPromptQuirksDataUpdateObserver;
 #endif
-
-    struct UploadActivity {
-        RefPtr<ProcessAssertion> uiAssertion;
-        RefPtr<ProcessAssertion> networkAssertion;
-        HashMap<WebCore::ProcessIdentifier, Ref<ProcessAssertion>> webProcessAssertions;
-    };
     std::optional<UploadActivity> m_uploadActivity;
 
 #if PLATFORM(COCOA)
