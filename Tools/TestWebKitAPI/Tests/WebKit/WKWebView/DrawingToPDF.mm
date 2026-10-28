@@ -188,19 +188,6 @@ TEST(DrawingToPDF, SiteIsolationFormControl)
     Util::run(&didTakeSnapshot);
 }
 
-TEST(DrawingToPDF, DisplayListData)
-{
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
-
-    __block bool done = false;
-    [webView _runDisplayListDataTestsInGPUProcessForTesting:^(NSArray<NSString *> *failures) {
-        for (NSString *failure in failures)
-            ADD_FAILURE() << failure.UTF8String;
-        done = true;
-    }];
-    Util::run(&done);
-}
-
 } // namespace TestWebKitAPI
 
 #endif // HAVE(PDFKIT)

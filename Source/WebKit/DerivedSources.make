@@ -924,7 +924,6 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/cf/CoreIPCSecCertificate.serialization.in \
 	Shared/cf/CoreIPCSecKeychainItem.serialization.in \
 	Shared/cf/CoreIPCSecTrust.serialization.in \
-	Shared/graphics/DisplayListData.serialization.in \
 	Shared/graphics/RemoteImageBufferSetConfiguration.serialization.in \
 	Shared/mac/PDFContextMenuItem.serialization.in \
 	Shared/mac/WebHitTestResultPlatformData.serialization.in \

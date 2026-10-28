@@ -1071,18 +1071,6 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     });
 }
 
-- (void)_runDisplayListDataTestsInGPUProcessForTesting:(void(^)(NSArray<NSString *> *))completionHandler
-{
-#if ENABLE(GPU_PROCESS)
-    Ref gpuProcess = WebKit::GPUProcessProxy::getOrCreate();
-    gpuProcess->runDisplayListDataTestsForTesting([completionHandler = makeBlockPtr(completionHandler)](Vector<String>&& failures) {
-        completionHandler(createNSArray(failures).get());
-    });
-#else
-    completionHandler(@[ @"The GPU process is not enabled" ]);
-#endif
-}
-
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)

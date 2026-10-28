@@ -548,7 +548,6 @@ $(PROJECT_DIR)/Shared/cf/CoreIPCSecAccessControl.serialization.in
 $(PROJECT_DIR)/Shared/cf/CoreIPCSecCertificate.serialization.in
 $(PROJECT_DIR)/Shared/cf/CoreIPCSecKeychainItem.serialization.in
 $(PROJECT_DIR)/Shared/cf/CoreIPCSecTrust.serialization.in
-$(PROJECT_DIR)/Shared/graphics/DisplayListData.serialization.in
 $(PROJECT_DIR)/Shared/graphics/DoubleGeometry.serialization.in
 $(PROJECT_DIR)/Shared/graphics/HostingContext.serialization.in
 $(PROJECT_DIR)/Shared/graphics/RemoteImageBufferSetConfiguration.serialization.in

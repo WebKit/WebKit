@@ -627,11 +627,6 @@ void GPUProcessProxy::webProcessConnectionCountForTesting(CompletionHandler<void
     sendWithAsyncReply(Messages::GPUProcess::WebProcessConnectionCountForTesting(), WTF::move(completionHandler));
 }
 
-void GPUProcessProxy::runDisplayListDataTestsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
-{
-    sendWithAsyncReply(Messages::GPUProcess::RunDisplayListDataTestsForTesting(), WTF::move(completionHandler));
-}
-
 void GPUProcessProxy::didClose(IPC::Connection&)
 {
     RELEASE_LOG_ERROR(Process, "%p - GPUProcessProxy::didClose:", this);

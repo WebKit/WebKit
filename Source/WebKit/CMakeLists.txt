@@ -727,7 +727,6 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/XR/PlatformXR.serialization.in
     Shared/XR/XRSystem.serialization.in
 
-    Shared/graphics/DisplayListData.serialization.in
     Shared/graphics/RemoteImageBufferSetConfiguration.serialization.in
 
     UIProcess/Extensions/WebExtension.serialization.in
