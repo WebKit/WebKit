@@ -30,11 +30,13 @@
 
 import optparse
 import sys
+import types
 import unittest
 
 from webkitcorepy import StringIO
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.program_status_mock import TTYStringIO, encoded
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
@@ -67,7 +69,7 @@ class  Testprinter(unittest.TestCase):
         stream.truncate(0)
         stream.seek(0)
 
-    def get_printer(self, args=None):
+    def get_printer(self, args=None, regular_output=None):
         args = args or []
         printing_options = printing.print_options()
         option_parser = optparse.OptionParser(option_list=printing_options)
@@ -76,7 +78,7 @@ class  Testprinter(unittest.TestCase):
         self._port = host.port_factory.get('test', options)
         nproc = 2
 
-        regular_output = StringIO()
+        regular_output = regular_output or StringIO()
         printer = printing.Printer(self._port, options, regular_output)
         return printer, regular_output
 
@@ -187,6 +189,87 @@ class  Testprinter(unittest.TestCase):
         printer.print_started_test('passes/image.html')
         printer.print_finished_test(result, expected=False, exp_str='', got_str='')
         self.assertNotEmpty(err)
+
+    def test_program_status_reports_progress_as_tests_finish(self):
+        printer, err = self.get_printer(regular_output=TTYStringIO())
+        printer.begin_tests(4)
+        for test_name in ('passes/a.html', 'passes/b.html'):
+            printer.print_started_test(test_name)
+            printer.print_finished_test(self.get_result(test_name), expected=True, exp_str='', got_str='')
+        self.assertEqual(err.program_status_reports(), [
+            'state=working:progress=0:app=run-webkit-tests',
+            'state=working:progress=25:app=run-webkit-tests',
+            'state=working:progress=50:app=run-webkit-tests',
+        ])
+
+    def test_program_status_restarts_progress_for_each_run(self):
+        printer, err = self.get_printer(regular_output=TTYStringIO())
+        printer.begin_tests(1)
+        printer.print_started_test('passes/a.html')
+        printer.print_finished_test(self.get_result('passes/a.html'), expected=True, exp_str='', got_str='')
+        printer.begin_tests(2)
+        self.assertEqual(err.program_status_reports()[-2:], [
+            'state=working:progress=100:app=run-webkit-tests',
+            'state=working:progress=0:app=run-webkit-tests',
+        ])
+
+    def test_program_status_reports_phases_before_tests_start(self):
+        printer, err = self.get_printer(regular_output=TTYStringIO())
+        printer.write_update('Collecting tests ...')
+        self.assertEqual(err.program_status_reports(), ['state=working:app=run-webkit-tests:msg=' + encoded('Collecting tests ...')])
+
+    def test_program_status_reports_unexpected_results_so_far(self):
+        printer, err = self.get_printer(regular_output=TTYStringIO())
+        printer.begin_tests(3)
+        printer.print_started_test('passes/a.html')
+        printer.print_finished_test(self.get_result('passes/a.html'), expected=False, exp_str='', got_str='')
+        self.assertEqual(err.program_status_reports(), [
+            'state=working:progress=0:app=run-webkit-tests',
+            'state=working:progress=33:app=run-webkit-tests:msg=' + encoded('1 unexpected result'),
+        ])
+
+    def test_program_status_labels_the_retry_run(self):
+        printer, err = self.get_printer(regular_output=TTYStringIO())
+        printer.begin_tests(2, retrying=True)
+        self.assertEqual(err.program_status_reports(), ['state=working:progress=0:app=run-webkit-tests:msg=' + encoded('Retrying 2 tests')])
+
+    def test_program_status_ignores_updates_after_the_run_finished(self):
+        printer, err = self.get_printer(regular_output=TTYStringIO())
+        printer._report_finished(types.SimpleNamespace(keyboard_interrupted=False, interrupted=False, unexpected=0, expected=1, expected_skips=0))
+        printer.write_update('Uploading results ...')
+        self.assertEqual(err.program_status_reports(), ['state=done:app=run-webkit-tests:msg=' + encoded('1 test ran as expected')])
+
+    def test_program_status_is_silent_without_a_tty(self):
+        printer, err = self.get_printer()
+        printer.begin_tests(1)
+        printer.print_started_test('passes/a.html')
+        printer.print_finished_test(self.get_result('passes/a.html'), expected=True, exp_str='', got_str='')
+        self.assertNotIn('\x1b]7501;', err.getvalue())
+
+    def test_program_status_goes_idle_on_cleanup_if_the_run_never_finished(self):
+        printer, err = self.get_printer(regular_output=TTYStringIO())
+        printer.begin_tests(2)
+        printer.cleanup()
+        self.assertEqual(err.program_status_reports(), [
+            'state=working:progress=0:app=run-webkit-tests',
+            'state=idle:app=run-webkit-tests',
+        ])
+
+    def test_program_status_reports_how_the_run_finished(self):
+        def run_results(**overrides):
+            return types.SimpleNamespace(**{'keyboard_interrupted': False, 'interrupted': False, 'unexpected': 0, 'expected': 5, 'expected_skips': 1, **overrides})
+
+        cases = [
+            (run_results(), 'state=done:app=run-webkit-tests:msg=' + encoded('4 tests ran as expected')),
+            (run_results(unexpected=1), 'state=error:app=run-webkit-tests:msg=' + encoded('1 unexpected result')),
+            (run_results(unexpected=2, interrupted=True), 'state=error:app=run-webkit-tests:msg=' + encoded('2 unexpected results, exited early')),
+            (run_results(keyboard_interrupted=True), 'state=idle:app=run-webkit-tests'),
+        ]
+        for results, expected_report in cases:
+            with self.subTest(expected_report=expected_report):
+                printer, err = self.get_printer(regular_output=TTYStringIO())
+                printer._report_finished(results)
+                self.assertEqual(err.program_status_reports(), [expected_report])
 
     def test_print_found(self):
         printer, err = self.get_printer()

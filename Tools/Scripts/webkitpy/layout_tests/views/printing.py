@@ -33,6 +33,7 @@ import optparse
 
 from webkitcorepy.string_utils import pluralize
 
+from webkitpy.common.program_status import ProgramStatus
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 
@@ -58,19 +59,45 @@ class Printer(object):
 
     def __init__(self, port, options, regular_output, logger=None):
         self.num_started = 0
+        self.num_finished = 0
         self.num_tests = 0
         self._port = port
         self._options = options
         self._meter = MeteredStream(regular_output, options.debug_rwt_logging, logger=logger,
                                     number_of_columns=self._port.host.platform.terminal_width())
+        self._status = ProgramStatus(regular_output, 'run-webkit-tests')
+        self._retrying = False
+        self._finished = False
+        self._num_unexpected = 0
         self._running_tests = []
         self._completed_tests = []
 
     def cleanup(self):
         self._meter.cleanup()
+        self._status.close()
 
     def __del__(self):
         self.cleanup()
+
+    def begin_tests(self, num_tests, retrying=False):
+        self.num_tests = num_tests
+        self.num_started = 0
+        self.num_finished = 0
+        self._retrying = retrying
+        self._report_working()
+
+    def _report_working(self, msg=None):
+        progress = None
+        if self.num_tests:
+            progress = min(self.num_finished * 100 // self.num_tests, 100)
+        self._status.report('working', progress=progress, msg=msg or self._working_message())
+
+    def _working_message(self):
+        if self._retrying:
+            return 'Retrying {}'.format(pluralize(self.num_tests, 'test'))
+        if self._num_unexpected:
+            return pluralize(self._num_unexpected, 'unexpected result')
+        return None
 
     def print_config(self, results_directory):
         self._print_default("Using port '%s'" % self._port.name())
@@ -164,6 +191,19 @@ class Printer(object):
         self._print_one_line_summary(run_results.total - run_results.expected_skips,
                                      run_results.expected - run_results.expected_skips,
                                      run_results.unexpected)
+        self._report_finished(run_results)
+
+    def _report_finished(self, run_results):
+        self._finished = True
+        if run_results.keyboard_interrupted:
+            self._status.report('idle')
+        elif run_results.interrupted or run_results.unexpected:
+            msg = pluralize(run_results.unexpected, 'unexpected result')
+            if run_results.interrupted:
+                msg += ', exited early'
+            self._status.report('error', msg=msg)
+        else:
+            self._status.report('done', msg='{} ran as expected'.format(pluralize(run_results.expected - run_results.expected_skips, 'test')))
 
     def _print_timing_statistics(self, total_time, run_results):
         self._print_debug("Test timing:")
@@ -339,6 +379,11 @@ class Printer(object):
         write(self._test_status_line(test_name, suffix))
 
     def print_finished_test(self, result, expected, exp_str, got_str):
+        self.num_finished += 1
+        if not expected:
+            self._num_unexpected += 1
+        self._report_working()
+
         test_name = result.test_name
 
         result_message = self._result_message(result.type, result.failures, expected, exp_str, self._options.verbose)
@@ -403,6 +448,8 @@ class Printer(object):
 
     def write_update(self, msg):
         self._meter.write_update(msg)
+        if not self._finished:
+            self._report_working(msg)
 
     def writeln(self, msg):
         self._meter.writeln(msg)

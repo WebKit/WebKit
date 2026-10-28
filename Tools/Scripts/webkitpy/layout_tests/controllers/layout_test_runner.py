@@ -137,8 +137,7 @@ class LayoutTestRunner(object):
         # FIXME: rename all variables to test_run_results or some such ...
         run_results = TestRunResults(self._expectations, len(test_inputs))
         self._current_run_results = run_results
-        self.printer.num_tests = len(test_inputs)
-        self.printer.num_started = 0
+        self.printer.begin_tests(len(test_inputs), retrying)
 
         if not retrying:
             self.printer.print_expected(run_results, self._expectations.model().get_tests_with_result_type)

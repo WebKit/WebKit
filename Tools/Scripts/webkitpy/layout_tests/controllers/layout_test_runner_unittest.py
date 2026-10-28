@@ -51,6 +51,9 @@ class FakePrinter(object):
     num_started = 0
     num_tests = 0
 
+    def begin_tests(self, num_tests, retrying):
+        pass
+
     def print_expected(self, run_results, get_tests_with_result_type):
         pass
 

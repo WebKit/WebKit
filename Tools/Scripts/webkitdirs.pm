@@ -46,6 +46,7 @@ use File::Spec;
 use File::Temp qw(tempdir);
 use File::stat;
 use List::Util qw(first);
+use MIME::Base64 qw(encode_base64);
 use POSIX;
 use Time::HiRes qw(usleep);
 use Text::ParseWords;
@@ -311,6 +312,8 @@ my $winVersion;
 # Defined in VCSUtils.
 sub exitStatus($);
 
+sub formatBuildTime($);
+
 sub findMatchingArguments($$);
 sub hasArgument($$);
 sub ninjaExecutable();
@@ -483,6 +486,51 @@ sub determineBaseProductDir
 sub systemVerbose {
     print "+ @_\n";
     return system(@_);
+}
+
+my $programStatusOwner;
+my $programStatusStartTime;
+my $programStatusFailure;
+my $programStatusInterrupted = 0;
+
+sub reportProgramStatus
+{
+    my ($state, $message) = @_;
+    my $body = "state=$state:app=" . basename($0);
+    $body .= ":msg=" . encode_base64($message, "") if defined $message;
+    print STDERR "\e]7501;$body\e\\";
+}
+
+sub runReportingProgramStatus
+{
+    my ($description, $run) = @_;
+    if (!defined $programStatusOwner && !$ENV{WEBKIT_PROGRAM_STATUS_OWNER} && -t STDERR) {
+        $ENV{WEBKIT_PROGRAM_STATUS_OWNER} = basename($0);
+        $programStatusOwner = $$;
+        $programStatusStartTime = time;
+    }
+    reportProgramStatus("working", $description) if defined $programStatusOwner;
+
+    my $result = $run->();
+    if (($result & 127) == SIGINT || exitStatus($result) == 128 + SIGINT) {
+        $programStatusInterrupted = 1;
+    } elsif ($result) {
+        $programStatusFailure = "$description failed (exit " . exitStatus($result) . ")";
+    }
+    return $result;
+}
+
+END {
+    if (defined $programStatusOwner && $programStatusOwner == $$) {
+        my $exitCode = $?;
+        if ($programStatusInterrupted) {
+            reportProgramStatus("idle");
+        } elsif ($exitCode) {
+            reportProgramStatus("error", $programStatusFailure // "Build failed with exit status $exitCode");
+        } else {
+            reportProgramStatus("done", "Build succeeded in " . formatBuildTime(time - $programStatusStartTime));
+        }
+    }
 }
 
 sub setBaseProductDir($)
@@ -1552,6 +1600,10 @@ sub XcodeOptions
     if (!checkForArgumentAndRemoveFromARGV("--no-use-workspace")) {
         push @options, ("-workspace", $configuredXcodeWorkspace) if $configuredXcodeWorkspace;
     }
+    # WebKit-only builds in Safari.xcworkspace use the SDK's AuthenticationServices frameworks instead of building
+    # SafariShared for WebKitSwift's product dependencies (see WebKitSwift.xcconfig). --build-safari-shared keeps them.
+    my $buildSafariShared = checkForArgumentAndRemoveFromARGV("--build-safari-shared");
+    push @options, "WK_BUILD_SAFARI_SHARED=NO" if !$buildSafariShared && $configuredXcodeWorkspace && $configuredXcodeWorkspace =~ /Safari\.xcworkspace\/?$/;
     push @options, ("-configuration", $configuration);
     push @options, ("-destination", $destination) if $destination;
     # Be mindful of adding build settings here. Any settings which don't
@@ -2567,7 +2619,7 @@ sub buildXCodeProject($$@)
 
     chomp($ENV{DSYMUTIL_NUM_THREADS} = `sysctl -n hw.activecpu`);
 
-    return system "xcodebuild", "-project", "$project.xcodeproj", @extraOptions;
+    return runReportingProgramStatus(($clean ? "Cleaning" : "Building") . " $project with xcodebuild", sub { system "xcodebuild", "-project", "$project.xcodeproj", @extraOptions });
 }
 
 sub buildXcodeScheme($$@)
@@ -2577,7 +2629,7 @@ sub buildXcodeScheme($$@)
         push @extraOptions, "clean";
     }
 
-    return system "xcodebuild", "-scheme", $scheme, @extraOptions;
+    return runReportingProgramStatus(($clean ? "Cleaning" : "Building") . " $scheme with xcodebuild", sub { system "xcodebuild", "-scheme", $scheme, @extraOptions });
 }
 
 sub getVisualStudioToolset()
@@ -3224,7 +3276,7 @@ sub generateBuildSystemFromCMakeProject
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
     # parsed for shell metacharacters.
     my $wrapper = join(" ", wrapperPrefixIfNeeded()) . " ";
-    my $returnCode = systemVerbose($wrapper . "cmake @args");
+    my $returnCode = runReportingProgramStatus("Configuring $config with cmake", sub { systemVerbose($wrapper . "cmake @args") });
 
     chdir($originalWorkingDirectory);
     return $returnCode;
@@ -3258,7 +3310,7 @@ sub buildCMakeGeneratedProject($)
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
     # parsed for shell metacharacters. In particular, @makeArgs may contain such metacharacters.
     my $wrapper = join(" ", wrapperPrefixIfNeeded()) . " ";
-    return systemVerbose($wrapper . "$command @args");
+    return runReportingProgramStatus("Building $config with cmake", sub { systemVerbose($wrapper . "$command @args") });
 }
 
 sub cleanCMakeGeneratedProject()

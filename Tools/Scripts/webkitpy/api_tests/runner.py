@@ -29,6 +29,7 @@ from webkitcorepy import string_utils
 from webkitcorepy import TaskPool
 
 from webkitpy.common.iteration_compatibility import iteritems
+from webkitpy.common.program_status import ProgramStatus
 from webkitpy.port.server_process import ServerProcess, _log as server_process_logger
 
 _log = logging.getLogger(__name__)
@@ -88,10 +89,12 @@ def report_result(worker, test, status, output, elapsed=None):
     else:
         Runner.instance.results[test] = status, output, elapsed
 
-    if status in (Runner.STATUS_FAILED, Runner.STATUS_CRASHED, Runner.STATUS_TIMEOUT):
+    failed = status in (Runner.STATUS_FAILED, Runner.STATUS_CRASHED, Runner.STATUS_TIMEOUT)
+    if failed:
         Runner.instance._failure_count += 1
-        if Runner.instance.exit_after_n_failures and Runner.instance._failure_count >= Runner.instance.exit_after_n_failures:
-            raise EarlyExitException(Runner.instance._failure_count)
+    Runner.instance.test_finished()
+    if failed and Runner.instance.exit_after_n_failures and Runner.instance._failure_count >= Runner.instance.exit_after_n_failures:
+        raise EarlyExitException(Runner.instance._failure_count)
 
 
 def teardown_shard():
@@ -121,10 +124,13 @@ class Runner(object):
 
     instance = None
 
-    def __init__(self, port, printer, log_limit=250, expectations=None):
+    def __init__(self, port, printer, log_limit=250, expectations=None, status=None):
         self.port = port
         self.printer = printer
         self.tests_run = 0
+        self._status = status or ProgramStatus.disabled()
+        self._tests_total = 0
+        self._tests_finished = 0
         self._num_workers = 1
         self.log_limit = log_limit
         self._has_logged_for_test = True  # Suppress an empty line between "Running tests" and the first test's output.
@@ -195,12 +201,30 @@ class Runner(object):
         components = test_name.split('.')[1:]
         return len(components) > 1 and components[1].startswith('DISABLED_')
 
+    def begin_tests(self, total):
+        self._tests_total = total
+        self._tests_finished = 0
+        self._report_progress()
+
+    def test_finished(self):
+        self._tests_finished += 1
+        self._report_progress()
+
+    def _report_progress(self):
+        progress = None
+        if self._tests_total and not self.port.get_option('test_parallel_safety'):
+            progress = min(self._tests_finished * 100 // self._tests_total, 100)
+        msg = string_utils.pluralize(self._failure_count, 'failure') if self._failure_count else None
+        self._status.report('working', progress=progress, msg=msg)
+
     def run(self, tests, num_workers):
         if not tests:
             return
 
         if self.port.get_option('fully_parallel') and self.port.get_option('test_parallel_safety'):
             raise RuntimeError(f'Running api tests fully parallel is not compatible with test_parallel_safety')
+
+        self.begin_tests(len(tests))
 
         self.printer.write_update('Filtering tests by allowlist ...')
         # Split tests by allowlist BEFORE sharding

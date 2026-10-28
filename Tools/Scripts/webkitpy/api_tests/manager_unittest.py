@@ -23,9 +23,12 @@
 """Unit tests for manager.py."""
 
 import unittest
+from unittest.mock import MagicMock
 
 from webkitpy.api_tests.manager import Manager
 from webkitpy.api_tests.test_expectations import PASS, FAIL, CRASH, TIMEOUT
+from webkitpy.common.program_status import ProgramStatus
+from webkitpy.common.program_status_mock import TTYStringIO, encoded
 from webkitexpectationspy.expectations import Expectation
 
 
@@ -157,3 +160,46 @@ TestWebKitAPI.WKWebViewSwiftOverlayTests/evaluateJavaScriptYieldsExpectedRespons
     def test_expected_results_for_upload_flaky(self):
         result = Manager._expected_results_for_upload(Expectation('TestWebKitAPI.WebKit.SomeTest', expected={PASS, FAIL}))
         self.assertEqual({'PASS', 'FAIL'}, set(result.split()))
+
+    def test_program_status_reports_how_the_run_finished(self):
+        cases = [
+            (Manager.SUCCESS, False, 'state=done:app=run-api-tests'),
+            (Manager.FAILED_BUILD_CHECK, False, 'state=error:app=run-api-tests:msg=' + encoded('Build check failed')),
+            (Manager.FAILED_COLLECT_TESTS, False, 'state=error:app=run-api-tests:msg=' + encoded('Failed to collect tests')),
+            (Manager.FAILED_TESTS, False, 'state=error:app=run-api-tests:msg=' + encoded('Test suite failed')),
+            (Manager.FAILED_UPLOAD, False, 'state=error:app=run-api-tests:msg=' + encoded('Upload failed')),
+            (Manager.SUCCESS, True, 'state=idle:app=run-api-tests'),
+            (Manager.FAILED_TESTS, True, 'state=idle:app=run-api-tests'),
+        ]
+        for result, interrupted, expected_report in cases:
+            with self.subTest(result=result, interrupted=interrupted):
+                stream = TTYStringIO()
+                manager = Manager(MagicMock(), MagicMock(), MagicMock(), status=ProgramStatus(stream, 'run-api-tests'))
+                manager._interrupted = interrupted
+                manager._report_finished(result)
+                self.assertEqual(stream.program_status_reports(), [expected_report])
+
+    def test_program_status_reports_the_unexpected_failure_count(self):
+        stream = TTYStringIO()
+        manager = Manager(MagicMock(), MagicMock(), MagicMock(), status=ProgramStatus(stream, 'run-api-tests'))
+        manager._unexpected_failure_count = 3
+        manager._report_finished(Manager.FAILED_TESTS)
+        self.assertEqual(stream.program_status_reports(), ['state=error:app=run-api-tests:msg=' + encoded('3 unexpected failures')])
+
+    def test_write_update_reports_the_phase(self):
+        stream = TTYStringIO()
+        manager_stream = MagicMock()
+        manager = Manager(MagicMock(), MagicMock(), manager_stream, status=ProgramStatus(stream, 'run-api-tests'))
+        manager._write_update('Collecting tests ...')
+        manager_stream.write_update.assert_called_once_with('Collecting tests ...')
+        self.assertEqual(stream.program_status_reports(), ['state=working:app=run-api-tests:msg=' + encoded('Collecting tests ...')])
+
+    def test_run_reports_working_before_the_run_and_finishes_with_its_result(self):
+        stream = TTYStringIO()
+        manager = Manager(MagicMock(), MagicMock(), MagicMock(), status=ProgramStatus(stream, 'run-api-tests'))
+        manager._run = lambda args, json_output: Manager.FAILED_BUILD_CHECK
+        self.assertEqual(manager.run([]), Manager.FAILED_BUILD_CHECK)
+        self.assertEqual(stream.program_status_reports(), [
+            'state=working:app=run-api-tests',
+            'state=error:app=run-api-tests:msg=' + encoded('Build check failed'),
+        ])

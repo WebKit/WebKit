@@ -26,6 +26,8 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from webkitpy.api_tests.runner import EarlyExitException, Runner, report_result, run_background_load, run_parallel_safety_iterations, run_shard
+from webkitpy.common.program_status import ProgramStatus
+from webkitpy.common.program_status_mock import TTYStringIO, encoded
 
 
 class FakeDevice(object):
@@ -201,6 +203,52 @@ class ReportResultEarlyExitTest(unittest.TestCase):
         report_result('w', 'D1', Runner.STATUS_DISABLED, output='', elapsed=0.1)
         report_result('w', 'P2', Runner.STATUS_PASSED, output='', elapsed=0.1)
         self.assertEqual(self.fake._failure_count, 0)
+
+
+class ProgramStatusTest(unittest.TestCase):
+    def _runner(self, test_parallel_safety=False):
+        port = MagicMock()
+        port.get_option.side_effect = lambda name: test_parallel_safety if name == 'test_parallel_safety' else None
+        stream = TTYStringIO()
+        return Runner(port, MagicMock(), status=ProgramStatus(stream, 'run-api-tests')), stream
+
+    def test_reports_progress_as_tests_finish(self):
+        runner, stream = self._runner()
+        runner.begin_tests(4)
+        runner.test_finished()
+        runner.test_finished()
+        self.assertEqual(stream.program_status_reports(), [
+            'state=working:progress=0:app=run-api-tests',
+            'state=working:progress=25:app=run-api-tests',
+            'state=working:progress=50:app=run-api-tests',
+        ])
+
+    def test_reports_failures_so_far(self):
+        runner, stream = self._runner()
+        saved_instance, Runner.instance = Runner.instance, runner
+        self.addCleanup(setattr, Runner, 'instance', saved_instance)
+        runner.begin_tests(4)
+        report_result('worker', 'TestWTF.Suite.Test', Runner.STATUS_FAILED, output='err', elapsed=0.1)
+        self.assertEqual(stream.program_status_reports(), [
+            'state=working:progress=0:app=run-api-tests',
+            'state=working:progress=25:app=run-api-tests:msg=' + encoded('1 failure'),
+        ])
+
+    def test_restarts_progress_for_each_iteration(self):
+        runner, stream = self._runner()
+        runner.begin_tests(1)
+        runner.test_finished()
+        runner.begin_tests(1)
+        self.assertEqual(stream.program_status_reports()[-2:], [
+            'state=working:progress=100:app=run-api-tests',
+            'state=working:progress=0:app=run-api-tests',
+        ])
+
+    def test_progress_is_indeterminate_in_test_parallel_safety_mode(self):
+        runner, stream = self._runner(test_parallel_safety=True)
+        runner.begin_tests(2)
+        runner.test_finished()
+        self.assertEqual(stream.program_status_reports(), ['state=working:app=run-api-tests'])
 
 
 class CommandForPortTest(unittest.TestCase):

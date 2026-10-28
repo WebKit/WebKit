@@ -26,6 +26,8 @@ import os
 import re
 import time
 
+from webkitcorepy.string_utils import pluralize
+
 from webkitpy.api_tests.runner import EarlyExitException, Runner
 from webkitpy.api_tests.test_expectations import (
     APITestExpectations, PASS, FAIL, CRASH, TIMEOUT,
@@ -33,6 +35,7 @@ from webkitpy.api_tests.test_expectations import (
 )
 from webkitpy.common.net import results_database
 from webkitpy.common.iteration_compatibility import iteritems
+from webkitpy.common.program_status import ProgramStatus
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.results.upload import Upload
 from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager
@@ -50,12 +53,22 @@ class Manager(object):
     FAILED_TESTS = 3
     FAILED_UPLOAD = 4
 
-    def __init__(self, port, options, stream):
+    FAILURE_MESSAGES = {
+        FAILED_BUILD_CHECK: 'Build check failed',
+        FAILED_COLLECT_TESTS: 'Failed to collect tests',
+        FAILED_TESTS: 'Test suite failed',
+        FAILED_UPLOAD: 'Upload failed',
+    }
+
+    def __init__(self, port, options, stream, status=None):
         self._port = port
         self.host = port.host
         self._options = options
         self._stream = stream
+        self._status = status or ProgramStatus.disabled()
         self._expectations = None
+        self._interrupted = False
+        self._unexpected_failure_count = 0
 
     @staticmethod
     def _test_list_from_output(output: str, prefix='') -> list[str]:
@@ -244,7 +257,7 @@ class Manager(object):
         )
 
     def _set_up_run(self, args, device_type=None):
-        self._stream.write_update("Starting helper ...")
+        self._write_update("Starting helper ...")
         if not self._port.start_helper():
             return False
 
@@ -278,6 +291,29 @@ class Manager(object):
         return result
 
     def run(self, args, json_output=None):
+        self._status.report('working')
+        result = self._run(args, json_output)
+        self._report_finished(result)
+        return result
+
+    def _report_finished(self, result):
+        if self._interrupted:
+            self._status.report('idle')
+        elif result == Manager.SUCCESS:
+            self._status.report('done')
+        else:
+            self._status.report('error', msg=self._failure_message(result))
+
+    def _failure_message(self, result):
+        if result == Manager.FAILED_TESTS and self._unexpected_failure_count:
+            return pluralize(self._unexpected_failure_count, 'unexpected failure')
+        return Manager.FAILURE_MESSAGES.get(result, 'Test suite failed')
+
+    def _write_update(self, msg):
+        self._stream.write_update(msg)
+        self._status.report('working', msg=msg)
+
+    def _run(self, args, json_output):
         if self._options.test_list:
             for list_path in self._options.test_list:
                 if not self.host.filesystem.isfile(list_path):
@@ -294,7 +330,7 @@ class Manager(object):
 
         start_time = time.time()
 
-        self._stream.write_update('Checking build ...')
+        self._write_update('Checking build ...')
         if not self._port.check_api_test_build(self._binaries_for_arguments(args)):
             _log.error('Build check failed')
             return Manager.FAILED_BUILD_CHECK
@@ -304,13 +340,13 @@ class Manager(object):
 
         configuration_for_upload = self._port.configuration_for_upload(self._port.target_host(0))
 
-        self._stream.write_update('Collecting tests ...')
+        self._write_update('Collecting tests ...')
         try:
             test_names = self._collect_tests(args)
         except ScriptError:
             self._stream.writeln('Failed to collect tests')
             return Manager.FAILED_COLLECT_TESTS
-        self._stream.write_update(f'Found {len(test_names)} tests')
+        self._write_update(f'Found {len(test_names)} tests')
         if len(test_names) == 0:
             self._stream.writeln('No tests found')
             return Manager.FAILED_COLLECT_TESTS
@@ -320,7 +356,7 @@ class Manager(object):
                 self._stream.writeln(test)
             return Manager.SUCCESS
 
-        self._stream.write_update('Loading test expectations ...')
+        self._write_update('Loading test expectations ...')
         self._load_expectations(test_names)
         current_config = self._expectations.get_current_configuration()
 
@@ -355,11 +391,11 @@ class Manager(object):
             test_names = [t for t in test_names if t not in all_skipped]
 
         if skipped_by_expectation:
-            self._stream.write_update(f'Skipping {len(skipped_by_expectation)} tests marked [ Skip ]')
+            self._write_update(f'Skipping {len(skipped_by_expectation)} tests marked [ Skip ]')
         if skipped_as_failing:
-            self._stream.write_update(f'Skipping {len(skipped_as_failing)} tests marked as failing (--skip-failing-tests)')
+            self._write_update(f'Skipping {len(skipped_as_failing)} tests marked as failing (--skip-failing-tests)')
         if skipped_as_flaky:
-            self._stream.write_update(f'Skipping {len(skipped_as_flaky)} flaky tests (--skip-flaky-tests)')
+            self._write_update(f'Skipping {len(skipped_as_flaky)} flaky tests (--skip-flaky-tests)')
 
         test_names = [test for test in test_names for _ in range(self._options.repeat_each)]
         if self._options.repeat_each != 1:
@@ -368,7 +404,7 @@ class Manager(object):
         runner = None
         try:
             _log.info('Running tests')
-            runner = Runner(self._port, self._stream, expectations=self._expectations)
+            runner = Runner(self._port, self._stream, expectations=self._expectations, status=self._status)
             runner.exit_after_n_failures = getattr(self._options, 'exit_after_n_failures', None)
             for i in range(self._options.iterations):
                 _log.debug(f'\nIteration {i + 1}')
@@ -377,6 +413,7 @@ class Manager(object):
             self._stream.writeln(f'\nExiting early after {e.failure_count} failures.')
         except KeyboardInterrupt:
             # If we receive a KeyboardInterrupt, print results.
+            self._interrupted = True
             self._stream.writeln('')
         finally:
             self._clean_up_run()
@@ -437,6 +474,7 @@ class Manager(object):
         result = Manager.SUCCESS
 
         has_unexpected_failures = bool(unexpected_failures)
+        self._unexpected_failure_count = len(unexpected_failures)
 
         if is_parallel_safety_mode:
             if has_unexpected_failures:
@@ -526,7 +564,7 @@ class Manager(object):
 
         if self._options.report_urls:
             self._stream.writeln('\n')
-            self._stream.write_update('Preparing upload data ...')
+            self._write_update('Preparing upload data ...')
 
             upload = Upload(
                 suite=self._options.suite or 'api-tests',
@@ -541,7 +579,7 @@ class Manager(object):
                 results=upload_results,
             )
             for url in self._options.report_urls:
-                self._stream.write_update(f'Uploading to {url} ...')
+                self._write_update(f'Uploading to {url} ...')
                 if not upload.upload(url, log_line_func=self._stream.writeln):
                     result = Manager.FAILED_UPLOAD
             self._stream.writeln('Uploads completed!')
