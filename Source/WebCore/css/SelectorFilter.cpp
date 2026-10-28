@@ -97,9 +97,8 @@ void SelectorFilter::pushParent(Element* parent)
     // Mix tags, class names and ids into some sort of weird bouillabaisse.
     // The filter is used for fast rejection of child and descendant selectors.
     collectElementIdentifierHashes(*parent, parentFrame.identifierHashes);
-    size_t count = parentFrame.identifierHashes.size();
-    for (size_t i = 0; i < count; ++i)
-        m_ancestorIdentifierFilter.add(parentFrame.identifierHashes[i]);
+    for (auto hash : parentFrame.identifierHashes.span())
+        m_ancestorIdentifierFilter.add(hash);
 }
 
 void SelectorFilter::pushParentInitializingIfNeeded(Element& parent)
@@ -115,9 +114,8 @@ void SelectorFilter::popParent()
 {
     ASSERT(!m_parentStack.isEmpty());
     const ParentStackFrame& parentFrame = m_parentStack.last();
-    size_t count = parentFrame.identifierHashes.size();
-    for (size_t i = 0; i < count; ++i)
-        m_ancestorIdentifierFilter.remove(parentFrame.identifierHashes[i]);
+    for (auto hash : parentFrame.identifierHashes.span())
+        m_ancestorIdentifierFilter.remove(hash);
     m_parentStack.removeLast();
     if (m_parentStack.isEmpty()) {
         ASSERT(m_ancestorIdentifierFilter.likelyEmpty());
