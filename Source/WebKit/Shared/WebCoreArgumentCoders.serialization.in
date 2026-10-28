@@ -4499,7 +4499,8 @@ enum class WebCore::StorageType : uint8_t {
     OffsetAnchor,
     OffsetRotate,
     Filter,
-    BackdropFilter
+    BackdropFilter,
+    ClipPath
 };
 
 header: <WebCore/WebAnimationTypes.h>
@@ -4787,6 +4788,7 @@ struct WebCore::AcceleratedEffectValues {
     WebCore::AcceleratedEffectOffsetPosition offsetPosition;
     WebCore::AcceleratedEffectOffsetAnchor offsetAnchor;
     WebCore::AcceleratedEffectOffsetRotate offsetRotate;
+    WebCore::AcceleratedEffectClipPath clipPath;
     WebCore::FilterOperations filter;
     WebCore::FilterOperations backdropFilter;
 };

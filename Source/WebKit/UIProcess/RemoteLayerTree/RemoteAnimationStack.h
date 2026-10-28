@@ -84,7 +84,8 @@ private:
     enum class LayerProperty : uint8_t {
         Opacity = 1 << 1,
         Transform = 1 << 2,
-        Filter = 1 << 3
+        Filter = 1 << 3,
+        ClipPath = 1 << 4
     };
 
     OptionSet<LayerProperty> m_affectedLayerProperties;
