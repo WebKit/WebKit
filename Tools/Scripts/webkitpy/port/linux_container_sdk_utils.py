@@ -147,6 +147,8 @@ def _strip_unix_path_prefix(value):
 
 def _get_at_spi_bus_socket_or_dir_and_var(xdg):
     """Find the AT-SPI bus socket, or the directory containing it."""
+    xdg_dir = os.path.join(xdg, 'at-spi')
+
     def _socket_or_none(addr):
         path = _strip_unix_path_prefix(addr or '')
         try:
@@ -154,10 +156,13 @@ def _get_at_spi_bus_socket_or_dir_and_var(xdg):
         except OSError:
             return None
 
+    def _socket_or_xdg_dir(path):
+        return xdg_dir if os.path.dirname(path) == xdg_dir else path
+
     # 1. AT_SPI_BUS_ADDRESS env var has precedence if defined
     path = _socket_or_none(os.environ.get('AT_SPI_BUS_ADDRESS'))
     if path:
-        return path, 'AT_SPI_BUS_ADDRESS'
+        return _socket_or_xdg_dir(path), 'AT_SPI_BUS_ADDRESS'
 
     # 2. Ask the session bus
     try:
@@ -169,12 +174,11 @@ def _get_at_spi_bus_socket_or_dir_and_var(xdg):
         if m:
             path = _socket_or_none(m.group(1))
             if path:
-                return path, None
+                return _socket_or_xdg_dir(path), None
     except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
         pass
 
     # 3 Fallback to usual directory
-    xdg_dir = os.path.join(xdg, 'at-spi')
     if os.path.isdir(xdg_dir):
         return xdg_dir, None
 
