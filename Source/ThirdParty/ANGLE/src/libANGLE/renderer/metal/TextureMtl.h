@@ -191,6 +191,9 @@ class TextureMtl : public TextureImpl
 
   private:
     void deallocateNativeStorage(bool keepImages);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    void invalidateRenderTargets(GLuint cubeFaceOrZero, GLuint glLevel);
+#endif
     angle::Result createNativeStorage(const gl::Context *context,
                                       gl::TextureType type,
                                       GLuint mips,

@@ -1810,6 +1810,18 @@ angle::Result FramebufferMtl::readPixelsImpl(const gl::Context *context,
 
     if (features.copyTextureToBufferForReadOptimization.enabled)
     {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        // The temporary buffer is sized from |texture|'s extents but indexed with |area|, which is
+        // clipped against the frontend attachment size. The mtl_utils.mm guards do not cover this:
+        // the copy into the buffer uses the texture's own extents, so only the indexing below is
+        // out of bounds when the two disagree.
+        const mtl::MipmapNativeLevel &readLevel = renderTarget->getLevelIndex();
+        const bool areaIsContainedInLevel =
+            area.x >= 0 && area.y >= 0 &&
+            static_cast<uint32_t>(area.x1()) <= texture->width(readLevel) &&
+            static_cast<uint32_t>(area.y1()) <= texture->height(readLevel);
+        ANGLE_CHECK_ASSERT(contextMtl, areaIsContainedInLevel);
+#endif
         mtl::BufferRef buffer;
         ANGLE_TRY(CopyTextureSliceLevelToTempBuffer(context, texture, renderTarget->getLevelIndex(),
                                                     renderTarget->getLayerIndex(), &buffer));

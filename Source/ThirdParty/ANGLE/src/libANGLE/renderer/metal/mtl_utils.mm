@@ -19,6 +19,7 @@
 #include "common/system_utils.h"
 #include "common/unsafe_buffers.h"
 #include "gpu_info_util/SystemInfo_internal.h"
+#include "libANGLE/ErrorStrings.h"
 #include "libANGLE/histogram_macros.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
@@ -757,6 +758,17 @@ angle::Result ReadTexturePerSliceBytesToBuffer(const gl::Context *context,
     MTLRegion mtlRegion = MTLRegionMake3D(fromRegion.x, fromRegion.y, startDepth, fromRegion.width,
                                           fromRegion.height, 1);
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // As in Texture::getBytes(); the blit encoder does not bounds check the source region.
+    const bool regionIsContainedInLevel =
+        mipLevel.get() < texture->mipmapLevels() &&
+        static_cast<uint32_t>(layer) < texture->cubeFacesOrArrayLength() &&
+        mtlRegion.origin.x + mtlRegion.size.width <= texture->width(mipLevel) &&
+        mtlRegion.origin.y + mtlRegion.size.height <= texture->height(mipLevel) &&
+        mtlRegion.origin.z + mtlRegion.size.depth <= texture->depth(mipLevel);
+    ANGLE_CHECK_ASSERT(contextMtl, regionIsContainedInLevel);
+
+#endif
     BlitCommandEncoder *blitEncoder = contextMtl->getBlitCommandEncoder();
     blitEncoder->copyTextureToBuffer(texture, layer, mipLevel, mtlRegion.origin, mtlRegion.size,
                                      dstBuffer, dstOffset, bytesPerRow, 0, MTLBlitOptionNone);

@@ -667,6 +667,20 @@ void Texture::getBytes(ContextMtl *context,
 {
     ASSERT(isCPUAccessible());
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // Refused rather than clamped: |dataOut| is sized for the requested region, so clamping would
+    // leave part of it uninitialized.
+    if (mipmapLevel.get() >= mipmapLevels() || slice >= cubeFacesOrArrayLength() ||
+        region.origin.x + region.size.width > width(mipmapLevel) ||
+        region.origin.y + region.size.height > height(mipmapLevel) ||
+        region.origin.z + region.size.depth > depth(mipmapLevel))
+    {
+        UNREACHABLE();
+        memset(dataOut.data(), 0, dataOut.size());
+        return;
+    }
+
+#endif
     CommandQueue &cmdQueue = context->cmdQueue();
 
     syncContentIfNeeded(context);
