@@ -32,6 +32,7 @@
 
 #include "CSSSubstitutionParser.h"
 #include "CSSVariableData.h"
+#include "StyleCustomProperty.h"
 
 namespace WebCore {
 
@@ -56,6 +57,8 @@ CSSSubstitutionValue::CSSSubstitutionValue(Ref<CSSVariableData>&& data, const CS
 {
     cacheSimpleReference();
 }
+
+CSSSubstitutionValue::~CSSSubstitutionValue() = default;
 
 Ref<CSSSubstitutionValue> CSSSubstitutionValue::create(const CSSParserTokenRange& range, const CSSNamespacePrefixMap& namespacePrefixMap, const CSSParserContext& context)
 {

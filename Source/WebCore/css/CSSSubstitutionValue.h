@@ -43,6 +43,7 @@ class CSSParserTokenRange;
 struct CSSParserContext;
 
 namespace Style {
+class CustomProperty;
 class SubstitutionResolver;
 }
 
@@ -53,6 +54,7 @@ class CSSSubstitutionValue final : public CSSValue {
 public:
     static Ref<CSSSubstitutionValue> create(const CSSParserTokenRange&, const CSSNamespacePrefixMap&, const CSSParserContext&);
     static Ref<CSSSubstitutionValue> create(Ref<CSSVariableData>&&);
+    ~CSSSubstitutionValue();
 
     bool equals(const CSSSubstitutionValue&) const;
     String customCSSText(const CSS::SerializationContext&) const;
@@ -93,6 +95,15 @@ private:
         std::optional<bool> isBaseAppearance;
         RefPtr<CSSValue> value;
         CSSPropertyID propertyID { CSSPropertyID::Invalid };
+
+        // The result of the last substitution, if it substituted only var() functions. It is reused while
+        // the custom properties they substituted have the same values.
+        struct VarSubstitution {
+            Vector<std::pair<AtomString, RefPtr<const Style::CustomProperty>>> customProperties;
+            Ref<CSSVariableData> result;
+            bool hasTaintedURL { false };
+        };
+        std::optional<VarSubstitution> varSubstitution;
     };
     mutable Cache m_cache;
 };

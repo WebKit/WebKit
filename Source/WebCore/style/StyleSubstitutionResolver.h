@@ -62,6 +62,10 @@ public:
     RefPtr<CSSVariableData> substitute(const CSSSubstitutionValue&);
 
 private:
+    RefPtr<CSSVariableData> substituteUsingCache(const CSSSubstitutionValue&);
+    RefPtr<CSSVariableData> tryCachedVarSubstitution(const CSSSubstitutionValue&);
+    bool canReuseVarSubstitution(const AtomString&, const CustomProperty*);
+
     std::optional<Vector<CSSParserToken>> substituteTokenRange(CSSParserTokenRange, const CSSParserContext&);
 
     bool substituteVarFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
@@ -131,6 +135,10 @@ private:
     unsigned m_randomItemAutoIndex { 0 };
     IsAttrTainted m_isAttrTainted { IsAttrTainted::No };
     bool m_hasTaintedURL { false };
+    // The custom properties var() substituted, in order. The result can be cached if no other function
+    // was substituted.
+    Vector<std::pair<AtomString, RefPtr<const CustomProperty>>> m_varSubstitutions;
+    bool m_didSubstituteFunctionOtherThanVar { false };
 };
 
 } // namespace Style
