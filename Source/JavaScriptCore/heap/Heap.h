@@ -676,7 +676,7 @@ private:
     void resumeTheMutator();
     
     JS_EXPORT_PRIVATE void stopIfNecessarySlow();
-    bool stopIfNecessarySlow(unsigned extraStateBits);
+    void stopIfNecessarySlow(unsigned extraStateBits);
     
     template<typename Func>
     void waitForCollector(NOESCAPE const Func&);
