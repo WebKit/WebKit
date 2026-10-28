@@ -37,6 +37,7 @@
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/Utilities.h"
+#import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <WebKit/WKMenuItemIdentifiersPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -569,6 +570,58 @@ TEST(ContextMenuTests, HitTestResultElementTypeNone)
     [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
     [webView mouseUpAtPoint:NSMakePoint(200, 200) withFlags:0 eventType:NSEventTypeRightMouseUp];
     Util::run(&gotProposedMenu);
+}
+
+// PageOverlayPlugIn installs a page overlay that handles right mouse downs where x < 200.
+static RetainPtr<TestWKWebView> webViewWithPageOverlayHandlingRightMouseDowns()
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"PageOverlayPlugIn"];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<script>"
+        "window.events = [];"
+        "addEventListener('mousedown', () => events.push('mousedown'));"
+        "addEventListener('contextmenu', () => events.push('contextmenu'));"
+        "</script>"];
+    return webView;
+}
+
+static NSString *takeEvents(TestWKWebView *webView)
+{
+    return [webView stringByEvaluatingJavaScript:@"events.splice(0).join(' ')"];
+}
+
+TEST(ContextMenuTests, NoContextMenuWhenPageOverlayHandlesMouseDown)
+{
+    RetainPtr webView = webViewWithPageOverlayHandlingRightMouseDowns();
+
+    RetainPtr delegate = adoptNS([[TestUIDelegate alloc] init]);
+    __block bool gotProposedMenu = false;
+    [delegate setGetContextMenuFromProposedMenu:^(NSMenu *, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
+        gotProposedMenu = true;
+        completion(nil);
+    }];
+    [webView setUIDelegate:delegate];
+
+    [webView rightClickAtPoint:NSMakePoint(100, 200)];
+    [webView waitForPendingMouseEvents];
+    EXPECT_WK_STREQ("", takeEvents(webView));
+    EXPECT_FALSE(gotProposedMenu);
+
+    [webView rightClickAtPoint:NSMakePoint(300, 200)];
+    Util::run(&gotProposedMenu);
+    EXPECT_WK_STREQ("mousedown contextmenu", takeEvents(webView));
+}
+
+TEST(ContextMenuTests, NoSimulatedContextMenuWhenPageOverlayHandlesMouseDown)
+{
+    RetainPtr webView = webViewWithPageOverlayHandlingRightMouseDowns();
+
+    // copyContextMenuAtPoint() simulates a context click in the web process, like eventSender.contextClick().
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"copyContextMenuAtPoint(100, 200)"] boolValue]);
+    EXPECT_WK_STREQ("", takeEvents(webView));
+
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"copyContextMenuAtPoint(300, 200)"] boolValue]);
+    EXPECT_WK_STREQ("mousedown contextmenu", takeEvents(webView));
 }
 
 TEST(ContextMenuTests, HitTestResultElementTypeVideo)

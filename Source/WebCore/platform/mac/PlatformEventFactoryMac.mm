@@ -762,6 +762,11 @@ public:
     }
 };
 
+bool PlatformMouseEvent::isContextMenuEvent() const
+{
+    return static_cast<NSMenuType>(m_menuTypeForEvent) == NSMenuTypeContextMenu;
+}
+
 PlatformMouseEvent PlatformEventFactory::createPlatformMouseEvent(NSEvent *event, NSEvent *correspondingPressureEvent, NSView *windowView)
 {
     return PlatformMouseEventBuilder(event, correspondingPressureEvent, windowView);

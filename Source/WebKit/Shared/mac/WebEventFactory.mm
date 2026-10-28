@@ -155,11 +155,6 @@ static unsigned short buttonsForAutomationEvent(NSEvent *event)
     }
 }
 
-bool WebEventFactory::shouldBeHandledAsContextClick(const WebCore::PlatformMouseEvent& event)
-{
-    return (static_cast<NSMenuType>(event.menuTypeForEvent()) == NSMenuTypeContextMenu);
-}
-
 WebMouseEventInit WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *lastPressureEvent, NSView *windowView, WebEventInputSource inputSource, WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag)
 {
     NSPoint position = WebCore::pointForEvent(event, windowView);

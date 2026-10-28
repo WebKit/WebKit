@@ -28,38 +28,48 @@
 #import "Helpers/PlatformUtilities.h"
 #import <WebKit/WKBundlePage.h>
 #import <WebKit/WKBundlePageOverlay.h>
+#import <WebKit/WKBundlePagePrivate.h>
 #import <WebKit/WKWebProcessPlugIn.h>
 #import <WebKit/WKWebProcessPlugInBrowserContextControllerPrivate.h>
 #import <WebKit/WKWebProcessPlugInFrame.h>
 #import <WebKit/WKWebProcessPlugInLoadDelegate.h>
-#import <wtf/RetainPtr.h>
+#import <WebKit/WKWebProcessPlugInScriptWorld.h>
 
-@interface PageOverlayPlugIn : NSObject <WKWebProcessPlugIn>
+// Installs a page overlay that handles right mouse downs where x < 200, like a data detector highlight that
+// presents its own menu. Also exposes `copyContextMenuAtPoint(x, y)` to the page, which simulates a context
+// click via WKBundlePageCopyContextMenuAtPointInWindow and returns whether a context menu was produced.
+@interface PageOverlayPlugIn : NSObject <WKWebProcessPlugIn, WKWebProcessPlugInLoadDelegate>
 @end
 
 @implementation PageOverlayPlugIn
 
+static bool overlayMouseDown(WKBundlePageOverlayRef, WKPoint position, WKEventMouseButton mouseButton, const void*)
+{
+    return mouseButton == kWKEventMouseButtonRightButton && position.x < 200;
+}
+
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
 {
-    WKBundlePageOverlayClientV1 overlayClient = {
-        { 1, 0 },
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-    };
+    browserContextController.loadDelegate = self;
 
-    WKBundlePageRef page = browserContextController._bundlePageRef;
+    WKBundlePageOverlayClientV1 overlayClient { };
+    overlayClient.base.version = 1;
+    overlayClient.mouseDown = overlayMouseDown;
 
     WKBundlePageOverlayRef pageOverlay = WKBundlePageOverlayCreate((WKBundlePageOverlayClientBase*)&overlayClient);
-    WKBundlePageInstallPageOverlay(page, pageOverlay);
+    WKBundlePageInstallPageOverlay(browserContextController._bundlePageRef, pageOverlay);
+}
+
+- (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller globalObjectIsAvailableForFrame:(WKWebProcessPlugInFrame *)frame inScriptWorld:(WKWebProcessPlugInScriptWorld *)scriptWorld
+{
+    WKBundlePageRef page = controller._bundlePageRef;
+    [[frame jsContextForWorld:scriptWorld] setObject:^BOOL(double x, double y) {
+        WKArrayRef menuItems = WKBundlePageCopyContextMenuAtPointInWindow(page, WKPointMake(x, y));
+        if (!menuItems)
+            return NO;
+        WKRelease(menuItems);
+        return YES;
+    } forKeyedSubscript:@"copyContextMenuAtPoint"];
 }
 
 @end

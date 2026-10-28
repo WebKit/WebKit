@@ -51,7 +51,6 @@
 #include "WebChromeClient.h"
 #include "WebContextMenu.h"
 #include "WebEventConversion.h"
-#include "WebEventFactory.h"
 #include "WebFrameProxyMessages.h"
 #include "WebHistoryItemClient.h"
 #include "WebImage.h"
@@ -1563,7 +1562,7 @@ std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> WebFrame::originat
 static bool LEGACY_NODELETE isContextClick(const PlatformMouseEvent& event)
 {
 #if USE(APPKIT)
-    return WebEventFactory::shouldBeHandledAsContextClick(event);
+    return event.isContextMenuEvent();
 #else
     return event.button() == WebCore::MouseButton::Right;
 #endif
@@ -1612,7 +1611,7 @@ WebCore::HandleUserInputEventResult WebFrame::handleMouseEvent(const WebMouseEve
 
         auto mousePressEventResult = coreLocalFrame->eventHandler().handleMousePressEvent(platformMouseEvent);
 #if ENABLE(CONTEXT_MENU_EVENT)
-        if (isContextClick(platformMouseEvent) && !mousePressEventResult.remoteUserInputEventData())
+        if (isContextClick(platformMouseEvent) && !mousePressEventResult.remoteUserInputEventData() && !mousePressEventResult.wasHandledByPageOverlay())
             mousePressEventResult.setHandled(handleContextMenuEvent(platformMouseEvent));
 #endif
         return mousePressEventResult;

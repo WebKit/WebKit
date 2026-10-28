@@ -32,7 +32,7 @@ namespace WebCore {
 class HandleUserInputEventResult {
 public:
     HandleUserInputEventResult(bool handled)
-        : m_result(handled)
+        : m_result(handled ? Handled::Yes : Handled::No)
     {
     }
 
@@ -41,11 +41,14 @@ public:
     {
     }
 
-    bool wasHandled() { return m_result ? *m_result : false; }
+    static HandleUserInputEventResult handledByPageOverlay() { return Handled::ByPageOverlay; }
+
+    bool wasHandled() const { return m_result.value_or(Handled::No) != Handled::No; }
+    bool wasHandledByPageOverlay() const { return m_result == Handled::ByPageOverlay; }
     void setHandled(bool handled)
     {
         if (m_result.has_value())
-            m_result = handled;
+            m_result = handled ? Handled::Yes : Handled::No;
     }
 
     std::optional<RemoteUserInputEventData> remoteUserInputEventData()
@@ -53,7 +56,14 @@ public:
         return m_result ? std::nullopt : std::optional<RemoteUserInputEventData>(m_result.error());
     }
 private:
-    std::expected<bool, RemoteUserInputEventData> m_result;
+    enum class Handled : uint8_t { No, Yes, ByPageOverlay };
+
+    HandleUserInputEventResult(Handled handled)
+        : m_result(handled)
+    {
+    }
+
+    std::expected<Handled, RemoteUserInputEventData> m_result;
 };
 
 }

@@ -31,6 +31,7 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import "InstanceMethodSwizzler.h"
@@ -480,6 +481,44 @@ TEST_P(TelephoneNumberInSubframe, HighlightAndMenuAreAtTheTelephoneNumber)
     CGRect rect { telephoneNumberRect(frame.get(), iframeContentBox.origin) };
     selectTelephoneNumber(frame.get(), rect);
     showHighlightAndMenu(rect, rootVisibleRect(iframeContentBox));
+}
+
+TEST_P(TelephoneNumberInSubframe, ControlClickOnButtonShowsContextMenu)
+{
+    load(@"/main");
+    RetainPtr frame { [webView firstChildFrame] };
+    CGRect rect { telephoneNumberRect(frame.get(), iframeContentBox.origin) };
+    selectTelephoneNumber(frame.get(), rect);
+    auto highlight { dataDetectorHighlightGeometry(rect, rootVisibleRect(iframeContentBox)) };
+    ASSERT_TRUE(hoverUntilHighlightIsShown(webView.get(), rect, highlight.boundingRect, telephoneNumberRectTolerance));
+
+    RetainPtr uiDelegate = adoptNS([[TestUIDelegate alloc] init]);
+    __block bool gotProposedMenu { false };
+    [uiDelegate setGetContextMenuFromProposedMenu:^(NSMenu *, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
+        gotProposedMenu = true;
+        completion(nil);
+    }];
+    [webView setUIDelegate:uiDelegate.get()];
+
+    __block bool didShowServicesMenu { false };
+    InstanceMethodSwizzler popUpSwizzler {
+        [NSMenu class],
+        @selector(popUpMenuPositioningItem:atLocation:inView:),
+        imp_implementationWithBlock(^(NSMenu *, NSMenuItem *, NSPoint, NSView *) {
+            didShowServicesMenu = true;
+            return NO;
+        })
+    };
+
+    // A control-click is a context click, so it should show the context menu rather than act like a click on the button.
+    moveMouse(highlight.buttonCenter);
+    NSPoint pointInWindow { [webView convertPoint:highlight.buttonCenter toView:nil] };
+    [webView mouseDownAtPoint:pointInWindow simulatePressure:NO withFlags:NSEventModifierFlagControl eventType:NSEventTypeLeftMouseDown];
+    [webView mouseUpAtPoint:pointInWindow withFlags:NSEventModifierFlagControl eventType:NSEventTypeLeftMouseUp];
+    [webView waitForPendingMouseEvents];
+    EXPECT_TRUE(TestWebKitAPI::Util::runFor(&gotProposedMenu, 5_s));
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE(didShowServicesMenu);
 }
 
 TEST_P(TelephoneNumberInSubframe, HighlightAndMenuAccountForMainFrameScroll)

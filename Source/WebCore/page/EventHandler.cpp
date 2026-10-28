@@ -1989,7 +1989,7 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
 #endif
 
     if (page->pageOverlayController().handleMouseEvent(platformMouseEvent, frame))
-        return true;
+        return HandleUserInputEventResult::handledByPageOverlay();
 
 #if ENABLE(TOUCH_EVENTS)
     bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(platformMouseEvent);
