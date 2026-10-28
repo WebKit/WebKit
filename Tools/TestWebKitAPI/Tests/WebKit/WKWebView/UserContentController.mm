@@ -1535,6 +1535,7 @@ TEST(WKUserContentController, AllowElementUserInfo)
     scriptMessagesVector.clear();
     isDoneWithNavigation = false;
     receivedScriptMessage = false;
+    didCallDidClickAutoFillButtonWithUserInfo = false;
 
     RetainPtr contentWorldConfiguration = adoptNS([[_WKContentWorldConfiguration alloc] init]);
     [contentWorldConfiguration setName:@"TestWorldAllowingAutofill3"];
@@ -1584,6 +1585,7 @@ TEST(WKUserContentController, AllowElementUserInfoFromShadowTree)
     scriptMessagesVector.clear();
     isDoneWithNavigation = false;
     receivedScriptMessage = false;
+    didCallDidClickAutoFillButtonWithUserInfo = false;
 
     RetainPtr contentWorldConfiguration = adoptNS([[_WKContentWorldConfiguration alloc] init]);
     [contentWorldConfiguration setName:@"TestWorldAllowingAutofill4"];
