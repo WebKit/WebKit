@@ -44,6 +44,11 @@ class FramebufferMtl : public FramebufferImpl
                                 const GLenum *attachments,
                                 const gl::Rectangle &area) override;
 
+    angle::Result ensureAttachmentsInitialized(const gl::Context *context,
+                                               const gl::DrawBufferMask &colorAttachments,
+                                               bool depth,
+                                               bool stencil) override;
+
     angle::Result clear(const gl::Context *context, GLbitfield mask) override;
     angle::Result clearBufferfv(const gl::Context *context,
                                 GLenum buffer,
@@ -140,6 +145,11 @@ class FramebufferMtl : public FramebufferImpl
                                bool blitStencilBuffer,
                                GLenum filter,
                                const mtl::BlitParams &baseParams);
+    bool canInitializeAttachmentsWithLoadOp(const gl::Context *context,
+                                            const gl::DrawBufferMask &colorAttachments,
+                                            bool depth,
+                                            bool stencil) const;
+
     angle::Result clearImpl(const gl::Context *context,
                             gl::DrawBufferMask clearColorBuffers,
                             mtl::ClearRectParams *clearOpts);

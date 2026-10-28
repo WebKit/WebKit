@@ -309,6 +309,7 @@ class RobustResourceInitTestES3 : public RobustResourceInitTest
     void testIntegerRenderbufferInit(GLenum internalFormat, GLenum type);
     template <typename PixelT>
     void testFloatRenderbufferInit(GLenum internalFormat, GLenum type);
+    void testPackedDepthStencilClearOneAspectAfterInvalidate(GLenum buffer);
 };
 
 using RobustResourceInitWithInvalidationTest = RobustResourceInitTestES3;
@@ -3312,6 +3313,378 @@ TEST_P(RobustResourceInitTestES3, PackedDepthStencilPartialClearLeaking)
     // We expect the stencil to be 0, so the final color should be green.
     // If the bug is present, it might be red.
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Clears one aspect of an invalidated packed depth-stencil attachment of a framebuffer that has
+// been used before, and checks that both aspects are initialized.
+void RobustResourceInitTestES3::testPackedDepthStencilClearOneAspectAfterInvalidate(GLenum buffer)
+{
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Store depth and stencil values other than the initialization values.
+    glClearDepthf(0.0f);
+    glClearStencil(0x5A);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glFinish();
+
+    const GLenum discard = GL_DEPTH_STENCIL_ATTACHMENT;
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, &discard);
+
+    // Clear the aspect to its initialization value.
+    if (buffer == GL_DEPTH)
+    {
+        const GLfloat depth = 1.0f;
+        glClearBufferfv(GL_DEPTH, 0, &depth);
+    }
+    else
+    {
+        const GLint stencil = 0;
+        glClearBufferiv(GL_STENCIL, 0, &stencil);
+    }
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw green where depth is 1.0 and stencil is 0.
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_EQUAL);
+    glDepthMask(GL_FALSE);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_EQUAL, 0, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 1.0f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
+}
+
+// Test that clearing the depth of an invalidated packed depth-stencil attachment initializes its
+// stencil.
+TEST_P(RobustResourceInitTestES3, PackedDepthStencilClearDepthAfterInvalidate)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+    testPackedDepthStencilClearOneAspectAfterInvalidate(GL_DEPTH);
+}
+
+// Test that clearing the stencil of an invalidated packed depth-stencil attachment initializes its
+// depth.
+TEST_P(RobustResourceInitTestES3, PackedDepthStencilClearStencilAfterInvalidate)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+    testPackedDepthStencilClearOneAspectAfterInvalidate(GL_STENCIL);
+}
+
+// Test that initializing an invalidated color attachment keeps the contents of the other color
+// attachment.
+TEST_P(RobustResourceInitTestES3, InvalidateOneOfTwoColorAttachmentsThenDraw)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+layout(location = 0) out vec4 color0;
+layout(location = 1) out vec4 color1;
+uniform vec4 color;
+void main()
+{
+    color0 = color;
+    color1 = color;
+})";
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+    const GLint colorLocation = glGetUniformLocation(program, "color");
+    ASSERT_NE(colorLocation, -1);
+
+    GLTexture textures[2];
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    for (GLenum i = 0; i < 2; ++i)
+    {
+        glBindTexture(GL_TEXTURE_2D, textures[i]);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, textures[i],
+                               0);
+    }
+    constexpr GLenum kDrawBuffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, kDrawBuffers);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glUniform4f(colorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+
+    const GLenum discard = GL_COLOR_ATTACHMENT1;
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, &discard);
+
+    // Draw to the left half.
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kWidth / 2, kHeight);
+    glUniform4f(colorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    glDisable(GL_SCISSOR_TEST);
+    ASSERT_GL_NO_ERROR();
+
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth / 2, kHeight, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(kWidth / 2, 0, kWidth / 2, kHeight, GLColor::red);
+    glReadBuffer(GL_COLOR_ATTACHMENT1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth / 2, kHeight, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(kWidth / 2, 0, kWidth / 2, kHeight, GLColor::transparentBlack);
+}
+
+// Test that initializing an invalidated cube map face keeps the contents of the other faces.
+TEST_P(RobustResourceInitTestES3, InvalidateCubeMapFaceThenDraw)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+    glTexStorage2D(GL_TEXTURE_CUBE_MAP, 1, GL_RGBA8, kWidth, kHeight);
+
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+                           texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 0.5f);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+                           texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
+
+    const GLenum discard = GL_COLOR_ATTACHMENT0;
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, &discard);
+
+    // Draw to the left half.
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kWidth / 2, kHeight);
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.5f);
+    glDisable(GL_SCISSOR_TEST);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth / 2, kHeight, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(kWidth / 2, 0, kWidth / 2, kHeight, GLColor::transparentBlack);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+                           texture, 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::blue);
+}
+
+// Test that a draw with color writes off initializes an invalidated color attachment, when a
+// depth clear has started the render pass.
+TEST_P(RobustResourceInitTestES3, InvalidateColorThenClearDepthThenDrawDepthOnly)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+
+    GLRenderbuffer depth;
+    glBindRenderbuffer(GL_RENDERBUFFER, depth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, kWidth, kHeight);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
+
+    const GLenum discard = GL_COLOR_ATTACHMENT0;
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, &discard);
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glDisable(GL_DEPTH_TEST);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::transparentBlack);
+}
+
+// Test that initializing an invalidated layer of a 2D array texture initializes its other layers,
+// which share its initialization state.
+TEST_P(RobustResourceInitTestES3, InvalidateLayerOf2DArrayThenDraw)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    constexpr GLint kLayerCount = 3;
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, kWidth, kHeight, kLayerCount);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    const GLenum discard = GL_COLOR_ATTACHMENT0;
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, &discard);
+
+    // Draw to the left half.
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kWidth / 2, kHeight);
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.5f);
+    glDisable(GL_SCISSOR_TEST);
+    ASSERT_GL_NO_ERROR();
+
+    for (GLint layer = 0; layer < kLayerCount; ++layer)
+    {
+        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0, layer);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kWidth / 2, kHeight,
+                             layer == 1 ? GLColor::green : GLColor::transparentBlack);
+        EXPECT_PIXEL_RECT_EQ(kWidth / 2, 0, kWidth / 2, kHeight, GLColor::transparentBlack);
+    }
+}
+
+// Test that reading an invalidated color attachment of the read framebuffer initializes it, when
+// the draw framebuffer is another framebuffer whose clear has started its render pass.
+TEST_P(RobustResourceInitTestES3, InvalidateReadFramebufferThenReadPixels)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    GLTexture readColor;
+    glBindTexture(GL_TEXTURE_2D, readColor);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+    GLFramebuffer readFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, readFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, readColor, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
+
+    GLTexture drawColor;
+    glBindTexture(GL_TEXTURE_2D, drawColor);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+    GLFramebuffer drawFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, drawFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, drawColor, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    const GLenum discard = GL_COLOR_ATTACHMENT0;
+    glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, &discard);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::transparentBlack);
+
+    // Draw to the left half of the draw framebuffer.
+    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kWidth / 2, kHeight);
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 0.5f);
+    glDisable(GL_SCISSOR_TEST);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFbo);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth / 2, kHeight, GLColor::blue);
+    EXPECT_PIXEL_RECT_EQ(kWidth / 2, 0, kWidth / 2, kHeight, GLColor::green);
+}
+
+// Test that blitting from an invalidated color attachment of the read framebuffer initializes it.
+TEST_P(RobustResourceInitTestES3, InvalidateReadFramebufferThenBlit)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    GLTexture readColor;
+    glBindTexture(GL_TEXTURE_2D, readColor);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+    GLFramebuffer readFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, readFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, readColor, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
+
+    GLTexture drawColor;
+    glBindTexture(GL_TEXTURE_2D, drawColor);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+    GLFramebuffer drawFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, drawFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, drawColor, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.5f);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    const GLenum discard = GL_COLOR_ATTACHMENT0;
+    glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, &discard);
+
+    // Blit to the left half of the draw framebuffer.
+    glBlitFramebuffer(0, 0, kWidth / 2, kHeight, 0, 0, kWidth / 2, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFbo);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth / 2, kHeight, GLColor::transparentBlack);
+    EXPECT_PIXEL_RECT_EQ(kWidth / 2, 0, kWidth / 2, kHeight, GLColor::green);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::transparentBlack);
+}
+
+// Test that copying from an invalidated color attachment of the read framebuffer to a texture of
+// the draw framebuffer initializes it.
+TEST_P(RobustResourceInitTestES3, InvalidateReadFramebufferThenCopyTexSubImage)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    GLTexture readColor;
+    glBindTexture(GL_TEXTURE_2D, readColor);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+    GLFramebuffer readFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, readFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, readColor, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
+
+    GLTexture drawColor;
+    glBindTexture(GL_TEXTURE_2D, drawColor);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+    GLFramebuffer drawFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, drawFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, drawColor, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.5f);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    const GLenum discard = GL_COLOR_ATTACHMENT0;
+    glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, &discard);
+
+    // Copy to the left half of the draw framebuffer's texture.
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, kWidth / 2, kHeight);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFbo);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth / 2, kHeight, GLColor::transparentBlack);
+    EXPECT_PIXEL_RECT_EQ(kWidth / 2, 0, kWidth / 2, kHeight, GLColor::green);
 }
 
 template <int Size, typename InitializedTest>

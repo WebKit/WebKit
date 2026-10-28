@@ -1487,6 +1487,178 @@ angle::Result FramebufferMtl::clearWithDraw(const gl::Context *context,
     return angle::Result::Continue;
 }
 
+// Whether the attachments that need initialization are whole images in this framebuffer's
+// render pass, so that clearing them with its load actions initializes exactly them. The render
+// targets are checked against the attachments, since robust initialization runs before syncState().
+bool FramebufferMtl::canInitializeAttachmentsWithLoadOp(const gl::Context *context,
+                                                        const gl::DrawBufferMask &colorAttachments,
+                                                        bool depth,
+                                                        bool stencil) const
+{
+    // Resolving the attachments, or unresolving memoryless ones, would do more than initialize
+    // them.
+    for (uint32_t colorIndexGL = 0; colorIndexGL < mRenderPassDesc.numColorAttachments;
+         ++colorIndexGL)
+    {
+        if (mRenderPassDesc.colorAttachments[colorIndexGL].hasResolveTexture())
+        {
+            return false;
+        }
+    }
+    if (mRenderPassDesc.depthAttachment.hasResolveTexture() ||
+        mRenderPassDesc.stencilAttachment.hasResolveTexture())
+    {
+        return false;
+    }
+
+    const gl::Extents extents     = mState.getExtents();
+    auto isWholeImageInRenderPass = [context, &extents](const gl::FramebufferAttachment *attachment,
+                                                        const RenderTargetMtl *cachedRenderTarget,
+                                                        const mtl::TextureRef &renderPassTexture) {
+        if (!attachment || !attachment->isAttached() || attachment->isMultiview() ||
+            attachment->getNumViews() > 1)
+        {
+            return false;
+        }
+        // The render pass covers the intersection of the attachments.
+        if (attachment->getSize().width != extents.width ||
+            attachment->getSize().height != extents.height)
+        {
+            return false;
+        }
+        if (attachment->type() == GL_TEXTURE)
+        {
+            gl::TextureType type = attachment->getTextureImageIndex().getType();
+            if (type != gl::TextureType::_2D && type != gl::TextureType::_2DMultisample &&
+                type != gl::TextureType::CubeMap && type != gl::TextureType::Rectangle)
+            {
+                return false;
+            }
+        }
+        else if (attachment->type() != GL_RENDERBUFFER)
+        {
+            return false;
+        }
+        RenderTargetMtl *renderTarget = nullptr;
+        if (attachment->getRenderTarget(context, attachment->getRenderToTextureSamples(),
+                                        &renderTarget) == angle::Result::Stop)
+        {
+            return false;
+        }
+        return renderTarget && renderTarget == cachedRenderTarget && renderPassTexture &&
+               renderPassTexture == renderTarget->getTexture();
+    };
+
+    for (size_t colorIndexGL : colorAttachments)
+    {
+        if (colorIndexGL >= mRenderPassDesc.numColorAttachments ||
+            !isWholeImageInRenderPass(mState.getColorAttachment(colorIndexGL),
+                                      mColorRenderTargets[colorIndexGL],
+                                      mRenderPassDesc.colorAttachments[colorIndexGL].texture))
+        {
+            return false;
+        }
+    }
+    if (depth && !isWholeImageInRenderPass(mState.getDepthAttachment(), mDepthRenderTarget,
+                                           mRenderPassDesc.depthAttachment.texture))
+    {
+        return false;
+    }
+    if (stencil && !isWholeImageInRenderPass(mState.getStencilAttachment(), mStencilRenderTarget,
+                                             mRenderPassDesc.stencilAttachment.texture))
+    {
+        return false;
+    }
+    return true;
+}
+
+angle::Result FramebufferMtl::ensureAttachmentsInitialized(
+    const gl::Context *context,
+    const gl::DrawBufferMask &colorAttachmentsToCheck,
+    bool depthToCheck,
+    bool stencilToCheck)
+{
+    // The framebuffer's mask can be stale: an upload that replaced a whole image initializes it.
+    auto mayNeedInit = [](const gl::FramebufferAttachment *attachment) {
+        return attachment && attachment->isAttached() &&
+               attachment->initState() == gl::InitState::MayNeedInit;
+    };
+    gl::DrawBufferMask colorAttachments;
+    for (size_t colorIndexGL : colorAttachmentsToCheck)
+    {
+        if (mayNeedInit(mState.getColorAttachment(colorIndexGL)))
+        {
+            colorAttachments.set(colorIndexGL);
+        }
+    }
+    bool depth   = depthToCheck && mayNeedInit(mState.getDepthAttachment());
+    bool stencil = stencilToCheck && mayNeedInit(mState.getStencilAttachment());
+    if (colorAttachments.none() && !depth && !stencil)
+    {
+        return angle::Result::Continue;
+    }
+
+    // A packed depth stencil image has one initialization state for both of its aspects, so both
+    // of them are initialized, as InitAttachment() does.
+    const bool isPackedDepthStencil =
+        (depth && mState.getDepthAttachment()->getStencilSize() > 0) ||
+        (stencil && mState.getStencilAttachment()->getDepthSize() > 0);
+    if (isPackedDepthStencil)
+    {
+        if (!mState.getDepthStencilAttachment())
+        {
+            return FramebufferImpl::ensureAttachmentsInitialized(context, colorAttachments, depth,
+                                                                 stencil);
+        }
+        depth   = true;
+        stencil = true;
+    }
+
+    // Initialize the attachments with the load actions of this framebuffer's render pass, rather
+    // than with a render pass or CPU writes for each attachment. The command that needs the
+    // attachments continues this render pass, unless its state changes end it.
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+    if (mState.isDefault() ||
+        !canInitializeAttachmentsWithLoadOp(context, colorAttachments, depth, stencil) ||
+        needsRG16UnormMSAAClearWorkaround(contextMtl, colorAttachments))
+    {
+        return FramebufferImpl::ensureAttachmentsInitialized(context, colorAttachments, depth,
+                                                             stencil);
+    }
+    mtl::RenderCommandEncoder *encoder = nullptr;
+    if (contextMtl->hasStartedRenderPass(mRenderPassDesc))
+    {
+        ANGLE_TRY(ensureRenderPassStarted(context, &encoder));
+        // Load actions do not clear what the render pass has already drawn.
+        if (encoder->hasDrawCalls())
+        {
+            return FramebufferImpl::ensureAttachmentsInitialized(context, colorAttachments, depth,
+                                                                 stencil);
+        }
+    }
+
+    mtl::ClearRectParams clearOpts;
+    if (colorAttachments.any())
+    {
+        mtl::ClearColorValue clearColor;
+        clearColor.setAsFloat(0, 0, 0, 0);
+        clearOpts.clearColor = clearColor;
+    }
+    if (depth)
+    {
+        clearOpts.clearDepth = 1.0f;
+    }
+    if (stencil)
+    {
+        clearOpts.clearStencil = 0u;
+    }
+    if (encoder)
+    {
+        return clearWithLoadOpRenderPassStarted(context, colorAttachments, clearOpts, encoder);
+    }
+    return clearWithLoadOpRenderPassNotStarted(context, colorAttachments, clearOpts);
+}
+
 angle::Result FramebufferMtl::clearImpl(const gl::Context *context,
                                         gl::DrawBufferMask clearColorBuffers,
                                         mtl::ClearRectParams *pClearOpts)

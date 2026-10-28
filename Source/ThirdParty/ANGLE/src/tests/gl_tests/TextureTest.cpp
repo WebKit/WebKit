@@ -8884,7 +8884,11 @@ TEST_P(Texture2DTestES3RobustInit, InvalidateDepthOnly)
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     ASSERT_GL_NO_ERROR();
 
-    // Depth and stencil are robust cleared.
+    // Draw to robust-clear depth and stencil.
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
     // Invalidate depth only, which should end up robust-clearing depth again.
     constexpr std::array<GLenum, 1> discards = {GL_DEPTH_ATTACHMENT};
     glInvalidateFramebuffer(GL_FRAMEBUFFER, discards.size(), discards.data());
@@ -8956,7 +8960,11 @@ TEST_P(Texture2DTestES3RobustInit, InvalidateStencilOnly)
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     ASSERT_GL_NO_ERROR();
 
-    // Depth and stencil are robust cleared.
+    // Draw to robust-clear depth and stencil.
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
     // Invalidate stencil only, which should end up robust-clearing depth again.
     constexpr std::array<GLenum, 1> discards = {GL_STENCIL_ATTACHMENT};
     glInvalidateFramebuffer(GL_FRAMEBUFFER, discards.size(), discards.data());

@@ -4992,7 +4992,13 @@ angle::Result Context::prepareForInvalidate(GLenum target)
     {
         effectiveTarget = GL_DRAW_FRAMEBUFFER;
     }
-    ANGLE_TRY(mState.syncDirtyObject(this, effectiveTarget, Command::Invalidate));
+    // Sync only the framebuffer, not its attachments: invalidation does not need initialized
+    // attachments. The attachments that still need initialization stay dirty, and the next command
+    // that uses them initializes them.
+    state::DirtyObjects dirtyObjects;
+    dirtyObjects.set(effectiveTarget == GL_READ_FRAMEBUFFER ? state::DIRTY_OBJECT_READ_FRAMEBUFFER
+                                                            : state::DIRTY_OBJECT_DRAW_FRAMEBUFFER);
+    ANGLE_TRY(syncDirtyObjects(dirtyObjects, Command::Invalidate));
     const state::DirtyBits dirtyBits                 = effectiveTarget == GL_READ_FRAMEBUFFER
                                                            ? kReadInvalidateDirtyBits
                                                            : kDrawInvalidateDirtyBits;
