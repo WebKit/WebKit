@@ -30,6 +30,7 @@
 #import "InstanceMethodSwizzler.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestNSBundleExtras.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/ios/TestWKWebViewController.h"
@@ -41,6 +42,7 @@
 #import <WebKit/WebKit.h>
 #import <objc/runtime.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/WTFString.h>
 #import <pal/ios/QuickLookSoftLink.h>
 #if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM) && !PLATFORM(VISION)
@@ -441,6 +443,97 @@ TEST(WebKit, PromptRealityTopLevelNavigation)
         RetainPtr realityURL = [NSBundle.test_resourcesBundle URLForResource:@"hab" withExtension:@"reality"];
         [webView loadRequest:[NSURLRequest requestWithURL:realityURL.get()]];
     });
+}
+
+static bool hasDescendantLabelWithText(UIView *view, NSString *text)
+{
+    if (RetainPtr label = dynamic_objc_cast<UILabel>(view); [[label text] isEqualToString:text])
+        return true;
+    for (UIView *subview in view.subviews) {
+        if (hasDescendantLabelWithText(subview, text))
+            return true;
+    }
+    return false;
+}
+
+static void testModelPreviewPromptDeferredUntilPresentingViewController(bool providePresentingViewController)
+{
+    bool qlItemCreated = false;
+    bool alertPresented = false;
+
+    auto swizzledQLItemBlock = makeBlockPtr([&](id self, SEL _cmd, id dataProvider, id contentType, id previewTitle) {
+        qlItemCreated = true;
+        return nil;
+    });
+
+    InstanceMethodSwizzler qlItemSwizzler { PAL::getQLItemClassSingleton(), @selector(initWithDataProvider:contentType:previewTitle:), imp_implementationWithBlock(swizzledQLItemBlock.get()) };
+
+    auto swizzledPresentBlock = makeBlockPtr([&](id self, UIViewController *controllerToPresent, BOOL animated, void (^completion)()) {
+        EXPECT_TRUE([controllerToPresent isKindOfClass:[UIAlertController class]]);
+        UIAlertController *alert = (UIAlertController *)controllerToPresent;
+        alertPresented = true;
+
+        EXPECT_WK_STREQ(@"View 3D Object?", alert.title);
+        EXPECT_EQ(2U, alert.actions.count);
+
+        EXPECT_FALSE(qlItemCreated);
+
+        UIAlertAction *allowAction = alert.actions[1];
+        EXPECT_EQ(UIAlertActionStyleDefault, allowAction.style);
+        id allowHandler = [allowAction valueForKey:@"handler"];
+        EXPECT_TRUE(allowHandler != nil);
+        void (^allowHandlerBlock)(UIAlertAction *) = allowHandler;
+        allowHandlerBlock(allowAction);
+        EXPECT_TRUE(qlItemCreated);
+    });
+
+    InstanceMethodSwizzler presentSwizzler { [UIViewController class], @selector(presentViewController:animated:completion:), imp_implementationWithBlock(swizzledPresentBlock.get()) };
+
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration _setSystemPreviewEnabled:YES];
+
+    // No window and no UI delegate, so there is no presenting view controller to show the confirmation alert, as in a link preview.
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get() addToWindow:NO]);
+
+    RetainPtr realityURL = [NSBundle.test_resourcesBundle URLForResource:@"hab" withExtension:@"reality"];
+    [webView loadRequest:[NSURLRequest requestWithURL:realityURL.get()]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_FALSE(alertPresented);
+    EXPECT_FALSE(qlItemCreated);
+
+    // A placeholder showing the file name is displayed while the confirmation alert is deferred.
+    EXPECT_TRUE(hasDescendantLabelWithText(webView.get(), @"hab.reality"));
+
+    RetainPtr viewController = adoptNS([[UIViewController alloc] init]);
+    RetainPtr uiDelegate = adoptNS([[TestSystemPreviewUIDelegate alloc] init]);
+    if (providePresentingViewController) {
+        [uiDelegate setViewController:viewController.get()];
+        [webView setUIDelegate:uiDelegate.get()];
+    }
+
+    [webView addToTestWindow];
+
+    if (providePresentingViewController) {
+        TestWebKitAPI::Util::run(&alertPresented);
+        EXPECT_TRUE(qlItemCreated);
+        EXPECT_FALSE(hasDescendantLabelWithText(webView.get(), @"hab.reality"));
+    } else {
+        [webView waitForNextPresentationUpdate];
+        EXPECT_FALSE(alertPresented);
+        EXPECT_FALSE(qlItemCreated);
+        EXPECT_TRUE(hasDescendantLabelWithText(webView.get(), @"hab.reality"));
+    }
+}
+
+TEST(WebKit, NoPromptOrParsingRealityTopLevelNavigationWithoutPresentingViewController)
+{
+    testModelPreviewPromptDeferredUntilPresentingViewController(false);
+}
+
+TEST(WebKit, DeferredPromptRealityTopLevelNavigationOncePresentingViewControllerExists)
+{
+    testModelPreviewPromptDeferredUntilPresentingViewController(true);
 }
 
 TEST(WebKit, PromptUSDZLinkWithoutRelAR)

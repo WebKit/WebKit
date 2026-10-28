@@ -67,7 +67,14 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
     RetainPtr<NSString> _mimeType;
     RetainPtr<QLItem> _item;
     RetainPtr<ASVThumbnailView> _thumbnailView;
+    RetainPtr<UIStackView> _placeholderView;
+    RetainPtr<UIImageView> _placeholderImageView;
+    RetainPtr<UILabel> _placeholderLabel;
+    RetainPtr<NSLayoutConstraint> _placeholderLeadingConstraint;
+    RetainPtr<NSLayoutConstraint> _placeholderTrailingConstraint;
+    CGFloat _placeholderLayoutDimension;
     WeakObjCPtr<WKWebView> _webView;
+    BOOL _confirmationAlertPending;
 }
 
 - (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView mimeType:(NSString *)mimeType
@@ -94,48 +101,164 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
     _suggestedFilename = adoptNS([filename copy]);
     _data = adoptNS([data copy]);
 
+    if ([self _presentConfirmationAlertWithCompletionHandler:completionHandler])
+        return;
+
+    RELEASE_LOG(Process, "WKUSDPreviewView %p: no presenting view controller, deferring confirmation alert", self);
+    _confirmationAlertPending = YES;
+    [self _showPlaceholderView];
+    completionHandler();
+}
+
+- (BOOL)_presentConfirmationAlertWithCompletionHandler:(void (^)(void))completionHandler
+{
+    RefPtr page = _webView.get()->_page;
+    RetainPtr presentingViewController = page ? page->uiClient().presentingViewController() : nil;
+    if (!presentingViewController)
+        return NO;
+
+    _confirmationAlertPending = NO;
+    [self _removePlaceholderView];
+
     RetainPtr alert = WebKit::createUIAlertController(protect(WEB_UI_NSSTRING(@"View 3D Object?", "View 3D Object?")), protect(WEB_UI_NSSTRING(@"You can see a preview of this object before viewing in 3D.", "You can see a preview of this object before viewing in 3D.")));
 
     RetainPtr allowAction = [UIAlertAction actionWithTitle:protect(WEB_UI_NSSTRING_KEY(@"View 3D Object", @"View 3D Object (QuickLook Preview)", "Allow displaying QuickLook Preview of 3D object")).get() style:UIAlertActionStyleDefault handler:[weakSelf = WeakObjCPtr<WKUSDPreviewView>(self), completionHandler = makeBlockPtr(completionHandler)](UIAlertAction *) mutable {
-        RetainPtr strongSelf = weakSelf.get();
-        if (!strongSelf) {
+        [weakSelf.get() _showThumbnailView];
+        if (completionHandler)
             completionHandler();
-            return;
-        }
-
-        RetainPtr contentType = getUTIForUSDMIMEType(strongSelf->_mimeType.get());
-
-        strongSelf->_item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:strongSelf.get() contentType:contentType.get() previewTitle:strongSelf->_suggestedFilename.get()]);
-        [strongSelf->_item setUseLoadingTimeout:NO];
-
-        strongSelf->_thumbnailView = adoptNS([allocASVThumbnailViewInstance() init]);
-        [strongSelf->_thumbnailView setDelegate:strongSelf.get()];
-        [strongSelf setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-
-        [strongSelf setAutoresizesSubviews:YES];
-        [strongSelf setClipsToBounds:YES];
-        [strongSelf addSubview:strongSelf->_thumbnailView.get()];
-        [strongSelf _layoutThumbnailView];
-
-        auto screenBounds = strongSelf.get().window.windowScene.screen.bounds;
-        CGFloat maxDimension = CGFloatMin(screenBounds.size.width, screenBounds.size.height);
-        [strongSelf->_thumbnailView setMaxThumbnailSize:CGSizeMake(maxDimension, maxDimension)];
-
-        [strongSelf->_thumbnailView setThumbnailItem:strongSelf->_item.get()];
-
-        completionHandler();
     }];
 
     RetainPtr doNotAllowAction = [UIAlertAction actionWithTitle:protect(WEB_UI_NSSTRING_KEY(@"Cancel", @"Cancel (QuickLook Preview)", "Cancel displaying QuickLook Preview of 3D object")).get() style:UIAlertActionStyleCancel handler:[completionHandler = makeBlockPtr(completionHandler)](UIAlertAction *) {
-        completionHandler();
+        if (completionHandler)
+            completionHandler();
     }];
 
     [alert addAction:doNotAllowAction.get()];
     [alert addAction:allowAction.get()];
 
-    RefPtr page = _webView.get()->_page;
-    RetainPtr presentingViewController = page->uiClient().presentingViewController();
     [presentingViewController.get() presentViewController:alert.get() animated:YES completion:nil];
+    return YES;
+}
+
+- (void)_presentPendingConfirmationAlertIfPossible
+{
+    if (!_confirmationAlertPending || !self.window || self.isBackground)
+        return;
+
+    if ([self _presentConfirmationAlertWithCompletionHandler:nil])
+        RELEASE_LOG(Process, "WKUSDPreviewView %p: presented deferred confirmation alert", self);
+}
+
+- (void)didMoveToWindow
+{
+    [super didMoveToWindow];
+    [self _presentPendingConfirmationAlertIfPossible];
+}
+
+- (void)_applicationWillEnterForeground
+{
+    [super _applicationWillEnterForeground];
+    [self _presentPendingConfirmationAlertIfPossible];
+}
+
+- (void)_showPlaceholderView
+{
+    if (_placeholderView)
+        return;
+
+    UIColor *foregroundColor = [UIColor colorWithWhite:1 alpha:0.6];
+
+    _placeholderImageView = adoptNS([[UIImageView alloc] init]);
+    [_placeholderImageView setTintColor:foregroundColor];
+    [_placeholderImageView setContentMode:UIViewContentModeScaleAspectFit];
+
+    _placeholderLabel = adoptNS([[UILabel alloc] init]);
+    [_placeholderLabel setText:_suggestedFilename.get()];
+    [_placeholderLabel setTextColor:foregroundColor];
+    [_placeholderLabel setTextAlignment:NSTextAlignmentCenter];
+    [_placeholderLabel setNumberOfLines:2];
+    [_placeholderLabel setLineBreakMode:NSLineBreakByTruncatingMiddle];
+
+    _placeholderView = adoptNS([[UIStackView alloc] initWithArrangedSubviews:@[ _placeholderImageView.get(), _placeholderLabel.get() ]]);
+    [_placeholderView setAxis:UILayoutConstraintAxisVertical];
+    [_placeholderView setAlignment:UIStackViewAlignmentCenter];
+    [_placeholderView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self addSubview:_placeholderView.get()];
+
+    UILayoutGuide *safeArea = self.safeAreaLayoutGuide;
+    _placeholderLeadingConstraint = [[_placeholderView leadingAnchor] constraintGreaterThanOrEqualToAnchor:safeArea.leadingAnchor];
+    _placeholderTrailingConstraint = [safeArea.trailingAnchor constraintGreaterThanOrEqualToAnchor:[_placeholderView trailingAnchor]];
+    [NSLayoutConstraint activateConstraints:@[
+        [[_placeholderView centerXAnchor] constraintEqualToAnchor:safeArea.centerXAnchor],
+        [[_placeholderView centerYAnchor] constraintEqualToAnchor:safeArea.centerYAnchor],
+        _placeholderLeadingConstraint.get(),
+        _placeholderTrailingConstraint.get(),
+    ]];
+
+    _placeholderLayoutDimension = 0;
+    [self _updatePlaceholderSizes];
+}
+
+- (void)_updatePlaceholderSizes
+{
+    if (!_placeholderView)
+        return;
+
+    CGSize size = self.bounds.size;
+    CGFloat dimension = std::min(size.width, size.height);
+    if (dimension <= 0 || dimension == _placeholderLayoutDimension)
+        return;
+    _placeholderLayoutDimension = dimension;
+
+    CGFloat symbolSize = dimension * 0.3;
+    RetainPtr symbolConfiguration = [UIImageSymbolConfiguration configurationWithPointSize:symbolSize weight:UIImageSymbolWeightLight];
+    [_placeholderImageView setImage:[UIImage systemImageNamed:@"arkit" withConfiguration:symbolConfiguration.get()]];
+    [_placeholderLabel setFont:[UIFont systemFontOfSize:symbolSize / 5]];
+    [_placeholderView setSpacing:symbolSize / 5];
+
+    CGFloat margin = symbolSize / 3;
+    [_placeholderLeadingConstraint setConstant:margin];
+    [_placeholderTrailingConstraint setConstant:margin];
+}
+
+- (void)_removePlaceholderView
+{
+    [_placeholderView removeFromSuperview];
+    _placeholderView = nil;
+    _placeholderImageView = nil;
+    _placeholderLabel = nil;
+    _placeholderLeadingConstraint = nil;
+    _placeholderTrailingConstraint = nil;
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    [self _updatePlaceholderSizes];
+}
+
+- (void)_showThumbnailView
+{
+    RetainPtr contentType = getUTIForUSDMIMEType(_mimeType.get());
+
+    _item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:self contentType:contentType.get() previewTitle:_suggestedFilename.get()]);
+    [_item setUseLoadingTimeout:NO];
+
+    _thumbnailView = adoptNS([allocASVThumbnailViewInstance() init]);
+    [_thumbnailView setDelegate:self];
+    [self setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+
+    [self setAutoresizesSubviews:YES];
+    [self setClipsToBounds:YES];
+    [self addSubview:_thumbnailView.get()];
+    [self _layoutThumbnailView];
+
+    UIScreen *screen = self.window.windowScene.screen;
+    CGRect screenBounds = screen ? screen.bounds : self.bounds;
+    CGFloat maxDimension = CGFloatMin(screenBounds.size.width, screenBounds.size.height);
+    [_thumbnailView setMaxThumbnailSize:CGSizeMake(maxDimension, maxDimension)];
+
+    [_thumbnailView setThumbnailItem:_item.get()];
 }
 
 - (void)_layoutThumbnailView
