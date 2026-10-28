@@ -167,7 +167,7 @@ void AXIsolatedTree::createEmptyContent(AccessibilityObject& axRoot)
     // derived dynamically from the tree's frame geometry, so we don't need to cache it.
     rootData.setProperty(AXProperty::ScreenRelativePosition, axRoot.screenRelativePosition());
 #endif
-    NodeChange rootAppend { WTF::move(rootData), axRoot.wrapper(), nextChangeSequence() };
+    SUPPRESS_FORWARD_DECL_ARG NodeChange rootAppend { WTF::move(rootData), axRoot.wrapper(), nextChangeSequence() };
 
     RefPtr axWebArea = Accessibility::findUnignoredChild(axRoot, [] (auto& object) {
         return object->isWebArea();
@@ -179,7 +179,7 @@ void AXIsolatedTree::createEmptyContent(AccessibilityObject& axRoot)
     }
     auto webAreaData = createIsolatedObjectData(*axWebArea, *this);
     webAreaData.setProperty(AXProperty::ScreenRelativePosition, axWebArea->screenRelativePosition());
-    NodeChange webAreaAppend { WTF::move(webAreaData), axWebArea->wrapper(), nextChangeSequence() };
+    SUPPRESS_FORWARD_DECL_ARG NodeChange webAreaAppend { WTF::move(webAreaData), axWebArea->wrapper(), nextChangeSequence() };
 
     m_nodeMap.set(axRoot.objectID(), ParentChildrenIDs { std::nullopt, { axWebArea->objectID() } });
     m_nodeMap.set(axWebArea->objectID(), ParentChildrenIDs { axRoot.objectID(), { } });
@@ -374,7 +374,7 @@ std::optional<AXIsolatedTree::NodeChange> AXIsolatedTree::nodeChangeForObject(Re
         iterator->value.parentID = parentID;
     }
 
-    NodeChange nodeChange { WTF::move(data), axObject->wrapper(), sequence.value_or(nextChangeSequence()) };
+    SUPPRESS_FORWARD_DECL_ARG NodeChange nodeChange { WTF::move(data), axObject->wrapper(), sequence.value_or(nextChangeSequence()) };
 
     if (axObject->isRoot())
         setPendingRootNodeID(axObject->objectID());
@@ -454,7 +454,7 @@ void AXIsolatedTree::addUnconnectedNode(Ref<AccessibilityObject> axObject)
     // Instead, just directly create and queue the node change so m_readerThreadNodeMap can hold a reference
     // to it. It will be removed from m_readerThreadNodeMap when the corresponding DOM element, renderer, or
     // other entity is removed from the page.
-    NodeChange nodeChange { createIsolatedObjectData(axObject, *this), axObject->wrapper(), nextChangeSequence() };
+    SUPPRESS_FORWARD_DECL_ARG NodeChange nodeChange { createIsolatedObjectData(axObject, *this), axObject->wrapper(), nextChangeSequence() };
     auto& workingChanges = markDirtyAndGetWorkingChanges();
     workingChanges.appends.append(WTF::move(nodeChange));
 #if ASSERT_ENABLED

@@ -326,7 +326,7 @@ void NetworkLoad::cancel()
 static inline void updateRequest(ResourceRequest& currentRequest, const ResourceRequest& newRequest)
 {
 #if PLATFORM(COCOA)
-    currentRequest.updateFromDelegatePreservingOldProperties(RetainPtr { newRequest.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) }.get());
+    SUPPRESS_FORWARD_DECL_ARG currentRequest.updateFromDelegatePreservingOldProperties(RetainPtr { newRequest.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) }.get());
 #else
     currentRequest.updateFromDelegatePreservingOldProperties(newRequest);
 #endif

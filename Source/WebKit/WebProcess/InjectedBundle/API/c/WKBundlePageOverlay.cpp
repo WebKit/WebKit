@@ -147,7 +147,7 @@ private:
             return std::nullopt;
 
         WKBundleRangeHandleRef apiRange = nullptr;
-        auto actionContext = (WKDDActionContext *)m_client.actionContextForResultAtPoint(toAPI(&pageOverlay), WKPointMake(location.x(), location.y()), &apiRange, m_client.base.clientInfo);
+        SUPPRESS_FORWARD_DECL_ARG auto actionContext = (WKDDActionContext *)m_client.actionContextForResultAtPoint(toAPI(&pageOverlay), WKPointMake(location.x(), location.y()), &apiRange, m_client.base.clientInfo);
         if (!actionContext || !apiRange)
             return std::nullopt;
 

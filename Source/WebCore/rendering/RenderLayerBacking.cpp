@@ -1474,7 +1474,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         case PluginLayerHostingStrategy::None:
             break;
         case PluginLayerHostingStrategy::PlatformLayer:
-            m_graphicsLayer->setContentsToPlatformLayer(pluginViewBase->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Plugin);
+            SUPPRESS_FORWARD_DECL_ARG m_graphicsLayer->setContentsToPlatformLayer(pluginViewBase->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Plugin);
             break;
         case PluginLayerHostingStrategy::GraphicsLayer:
             // layer is parented in RenderLayerCompositor::updateBackingAndHierarchy().
