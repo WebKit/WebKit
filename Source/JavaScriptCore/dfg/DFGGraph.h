@@ -611,7 +611,7 @@ public:
             return false;
 
         SpeculatedType prediction = node->child1()->prediction();
-        return prediction && !(prediction & ~(SpecHeapBigInt | SpecOther));
+        return isHeapBigIntSpeculation(prediction & ~SpecOther);
     }
 
     bool variadicArithShouldSpeculateInt32(Node* node, PredictionPass pass)
