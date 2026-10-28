@@ -7016,6 +7016,16 @@ class TestCheckChangeRelevanceBuildGroup(BuildStepMixinAdditions, unittest.TestC
         self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.run_step()
 
+    def test_build_group_runs_for_tools_scripts_change(self):
+        """Any Tools/Scripts/* change fires platform Build queues — matches main
+        behavior; CheckChangeRelevance doesn't attempt to carve out Tools/Scripts/*
+        subpaths that may or may not affect builds."""
+        CheckChangeRelevance._get_patch = lambda x: b'Tools/Scripts/filter-test-logs'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'iOS-26-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
     def test_build_group_runs_for_xcconfig_change(self):
         CheckChangeRelevance._get_patch = lambda x: b'Configurations/Version.xcconfig'
         self.setup_step(CheckChangeRelevance())
