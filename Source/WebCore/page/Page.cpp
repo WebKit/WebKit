@@ -2851,6 +2851,17 @@ void Page::renderingUpdateCompleted()
         auto nextRenderingUpdate = m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval();
         protect(opportunisticTaskScheduler())->rescheduleIfNeeded(nextRenderingUpdate);
     }
+
+    if (m_renderingUpdateRemainingSteps.isEmpty()) {
+        for (auto& callback : std::exchange(m_renderingUpdateCompletionCallbacks, { }))
+            callback();
+    }
+}
+
+void Page::callAfterNextRenderingUpdate(Function<void()>&& callback)
+{
+    ASSERT(!isInRenderingUpdate());
+    m_renderingUpdateCompletionCallbacks.append(WTF::move(callback));
 }
 
 void Page::willStartRenderingUpdateDisplay()

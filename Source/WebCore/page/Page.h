@@ -896,6 +896,8 @@ public:
 
     // Schedule a rendering update that coordinates with display refresh.
     WEBCORE_EXPORT void scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps);
+    void callAfterNextRenderingUpdate(Function<void()>&&);
+    bool isInRenderingUpdate() const { return !m_renderingUpdateRemainingSteps.isEmpty(); }
     void didScheduleRenderingUpdate();
     // Trigger a rendering update in the current runloop. Only used for testing.
     void triggerRenderingUpdateForTesting();
@@ -1776,6 +1778,7 @@ private:
 
     Vector<OptionSet<RenderingUpdateStep>, 2> m_renderingUpdateRemainingSteps;
     OptionSet<RenderingUpdateStep> m_unfulfilledRequestedSteps;
+    Vector<Function<void()>> m_renderingUpdateCompletionCallbacks;
     
     UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { UserInterfaceLayoutDirection::LTR };
     
