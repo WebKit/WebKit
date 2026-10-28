@@ -30,6 +30,7 @@
 #import "Helpers/mac/AppKitSPI.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <wtf/RetainPtr.h>
 
 TEST(AttributedSubstringForProposedRange, TextAlignmentParagraphStyles)
@@ -83,7 +84,7 @@ TEST(AttributedSubstringForProposedRange, TextAlignmentParagraphStyles)
     TestWebKitAPI::Util::run(&finished);
 }
 
-static constexpr unsigned siblingLineBreakCount = 5000;
+static constexpr unsigned siblingLineBreakCount = 100;
 
 static RetainPtr<NSString> markupWithSiblingLineBreaks(unsigned count)
 {
@@ -96,20 +97,31 @@ static RetainPtr<NSString> markupWithSiblingLineBreaks(unsigned count)
     return markup;
 }
 
-TEST(AttributedSubstringForProposedRange, FarRangeInDocumentWithManySiblingLineBreaks)
+static unsigned nodeIndexResolutionsForFarRange(unsigned lineBreakCount)
 {
-    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient_Async> alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:markupWithSiblingLineBreaks(siblingLineBreakCount)];
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient_Async> alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:markupWithSiblingLineBreaks(lineBreakCount)];
+
+    NSString *countScript = @"internals.computeNodeIndexCount()";
+    auto countBefore = [[webView objectByEvaluatingJavaScript:countScript] unsignedIntValue];
 
     __block bool finished = false;
-    [webView attributedSubstringForProposedRange:NSMakeRange(siblingLineBreakCount, 8) completionHandler:^(NSAttributedString *string, NSRange actualRange) {
-        EXPECT_EQ(siblingLineBreakCount, actualRange.location);
+    [webView attributedSubstringForProposedRange:NSMakeRange(lineBreakCount, 8) completionHandler:^(NSAttributedString *string, NSRange actualRange) {
+        EXPECT_EQ(lineBreakCount, actualRange.location);
         EXPECT_EQ(8U, actualRange.length);
         EXPECT_EQ(8U, string.string.length);
         EXPECT_TRUE([string.string hasPrefix:@"x"]);
         finished = true;
     }];
     TestWebKitAPI::Util::run(&finished);
+
+    return [[webView objectByEvaluatingJavaScript:countScript] unsignedIntValue] - countBefore;
+}
+
+TEST(AttributedSubstringForProposedRange, FarRangeNodeIndexResolutionsDoNotGrowWithLineBreakCount)
+{
+    EXPECT_EQ(nodeIndexResolutionsForFarRange(siblingLineBreakCount), nodeIndexResolutionsForFarRange(2 * siblingLineBreakCount));
 }
 
 #endif // PLATFORM(MAC)

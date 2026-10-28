@@ -1019,8 +1019,16 @@ void Node::invalidateStyle(Style::Validity validity, Style::InvalidationMode mod
         updateAncestorsForStyleRecalc();
 }
 
+static unsigned s_computeNodeIndexCountForTesting;
+
+unsigned Node::computeNodeIndexCountForTesting()
+{
+    return s_computeNodeIndexCountForTesting;
+}
+
 unsigned Node::computeNodeIndex() const
 {
+    ++s_computeNodeIndexCountForTesting;
     unsigned count = 0;
     for (Node* sibling = previousSibling(); sibling; sibling = sibling->previousSibling())
         ++count;

@@ -407,6 +407,8 @@ public:
 
     WEBCORE_EXPORT unsigned LEGACY_NODELETE computeNodeIndex() const;
 
+    WEBCORE_EXPORT static unsigned computeNodeIndexCountForTesting();
+
     // Returns the DOM ownerDocument attribute. This method never returns null, except in the case
     // of a Document node.
     inline Document* ownerDocument() const;

@@ -726,6 +726,7 @@ enum ContentsFormat {
     Range subrange(Range range, unsigned long rangeLocation, unsigned long rangeLength);
     Range? rangeForDictionaryLookupAtLocation(long x, long y);
     Range? rangeOfStringNearLocation(Range range, DOMString text, long targetOffset);
+    unsigned long computeNodeIndexCount();
     sequence<TextIteratorState> statesOfTextIterator(Range range);
 
     DOMString textFragmentDirectiveForRange(Range range);
