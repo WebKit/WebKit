@@ -130,6 +130,7 @@ namespace TestWebKitAPI {
 
 static void runTest()
 {
+    testFinished = false;
     wkView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     RetainPtr<CustomProtocolsLoadDelegate> loadDelegate = adoptNS([[CustomProtocolsLoadDelegate alloc] init]);
     wkView.get().navigationDelegate = loadDelegate.get();

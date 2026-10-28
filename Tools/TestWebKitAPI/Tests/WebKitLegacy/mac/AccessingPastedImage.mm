@@ -82,6 +82,8 @@ namespace TestWebKitAPI {
 
 TEST(WebKitLegacy, AccessingImageInPastedRTFD)
 {
+    didAlert = false;
+    didFinishLoad = false;
     RetainPtr webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) frameName:nil groupName:nil]);
     RetainPtr delegate = adoptNS([[SubresourceForBlobURLFrameLoadDelegate alloc] init]);
     [webView.get() setFrameLoadDelegate:delegate.get()];
@@ -117,6 +119,8 @@ TEST(WebKitLegacy, AccessingImageInPastedRTFD)
 
 TEST(WebKitLegacy, AccessingImageInPastedWebArchive)
 {
+    didAlert = false;
+    didFinishLoad = false;
     RetainPtr sourceWebView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) frameName:nil groupName:nil]);
     RetainPtr destinationWebView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) frameName:nil groupName:nil]);
     RetainPtr delegate = adoptNS([[SubresourceForBlobURLFrameLoadDelegate alloc] init]);
