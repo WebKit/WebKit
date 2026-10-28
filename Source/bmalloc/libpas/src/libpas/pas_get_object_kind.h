@@ -28,14 +28,15 @@
 
 #include "pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h"
 #include "pas_heap_config.h"
+#include "pas_heap_lock.h"
 #include "pas_object_kind.h"
 #include "pas_page_base.h"
 #include "pas_large_map.h"
 
 PAS_BEGIN_EXTERN_C;
 
-static PAS_ALWAYS_INLINE pas_object_kind pas_get_object_kind(void* ptr,
-                                                             pas_heap_config config)
+static PAS_ALWAYS_INLINE pas_object_kind pas_get_object_kind_with_heap_lock_hold_mode(
+    void* ptr, pas_heap_config config, pas_lock_hold_mode heap_lock_hold_mode)
 {
     uintptr_t begin;
     pas_page_kind page_kind;
@@ -58,11 +59,11 @@ static PAS_ALWAYS_INLINE pas_object_kind pas_get_object_kind(void* ptr,
             goto use_page_kind;
         }
         
-        pas_heap_lock_lock();
+        pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
         
         entry = pas_large_map_find(begin);
         
-        pas_heap_lock_unlock();
+        pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
         
         if (pas_large_map_entry_is_empty(entry))
             return pas_not_an_object_kind;
@@ -74,6 +75,12 @@ static PAS_ALWAYS_INLINE pas_object_kind pas_get_object_kind(void* ptr,
 
 use_page_kind:
     return pas_object_kind_for_page_kind(page_kind);
+}
+
+static PAS_ALWAYS_INLINE pas_object_kind pas_get_object_kind(void* ptr,
+                                                             pas_heap_config config)
+{
+    return pas_get_object_kind_with_heap_lock_hold_mode(ptr, config, pas_lock_is_not_held);
 }
 
 PAS_END_EXTERN_C;

@@ -405,6 +405,7 @@ void addLargeSharingPoolTests();
 void addLockFreeReadPtrPtrHashtableTests();
 void addLotsOfHeapsAndThreadsTests();
 void addMARTests();
+void addMallocLoggerTests();
 void addMemalignTests();
 void addMTETests();
 void addMemoryFlavorTests();
@@ -907,6 +908,7 @@ int main(int argc, char** argv)
     ADD_SUITE(LockFreeReadPtrPtrHashtable);
     ADD_SUITE(LotsOfHeapsAndThreads);
     ADD_SUITE(MAR);
+    ADD_SUITE(MallocLogger);
     ADD_SUITE(Memalign);
     ADD_SUITE(MemoryFlavor);
     ADD_SUITE(MinHeap);
