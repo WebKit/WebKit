@@ -1536,6 +1536,10 @@ webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/con
 webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-09E.html [ ImageOnlyFailure ]
 webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-09F.html [ ImageOnlyFailure ]
 
+# These tests use a font that kerns a hiragana-katakana pair, and the two scripts are shaped separately here.
+webkit.org/b/327579 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-kerning-cjk-001.html [ Failure ]
+webkit.org/b/327579 fast/inline/text-item-kerning-after-partial-rebuild.html [ Failure ]
+
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-13.html [ ImageOnlyFailure ]
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-16.html [ ImageOnlyFailure ]
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-17.html [ ImageOnlyFailure ]

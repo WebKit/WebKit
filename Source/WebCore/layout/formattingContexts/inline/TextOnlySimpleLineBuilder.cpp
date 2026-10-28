@@ -94,9 +94,18 @@ static inline bool consumeTrailingLineBreakIfApplicable(const TextOnlyLineBreakR
     return true;
 }
 
-TextOnlySimpleLineBuilder::TextOnlySimpleLineBuilder(InlineFormattingContext& inlineFormattingContext, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList)
+TextOnlySimpleLineBuilder::TextOnlySimpleLineBuilder(InlineFormattingContext& inlineFormattingContext, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList, std::span<const float> shapingAdjustments)
     : AbstractLineBuilder(inlineFormattingContext, rootBox, rootHorizontalConstraints, inlineItemList)
+    , m_shapingAdjustments(shapingAdjustments)
 {
+}
+
+InlineLayoutUnit TextOnlySimpleLineBuilder::leadingShapingAdjustment(const InlineTextItem& inlineTextItem) const
+{
+    // The kerning with the previous item's text does not apply at the start of a line.
+    if (!m_lineStartItemIndex || *m_lineStartItemIndex >= m_shapingAdjustments.size() || &inlineTextItem != &m_inlineItemList[*m_lineStartItemIndex])
+        return { };
+    return m_shapingAdjustments[*m_lineStartItemIndex];
 }
 
 LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine, bool isFirstFormattedLineCandidate)
@@ -155,6 +164,7 @@ void TextOnlySimpleLineBuilder::initialize(const InlineItemRange& layoutRange, c
     };
     m_isFirstFormattedLineCandidate = isFirstFormattedLineCandidate;
     m_partialLeadingTextItem = partialLeadingTextItem();
+    m_lineStartItemIndex = !m_partialLeadingTextItem && !layoutRange.isEmpty() ? std::make_optional(layoutRange.startIndex()) : std::nullopt;
     m_line.initialize({ }, isFirstFormattedLineCandidate);
     m_previousLine = previousLine;
     m_lineLogicalRect = initialLogicalRect;
@@ -244,7 +254,7 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeInlineTextContent(const Style
         if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
             auto contentWidth = [&] {
                 if (auto logicalWidth = inlineTextItem->width())
-                    return *logicalWidth;
+                    return *logicalWidth - leadingShapingAdjustment(*inlineTextItem);
                 return measuredInlineTextItem(*inlineTextItem, rootStyle, m_line.contentLogicalRight() + candidateContent.logicalWidth);
             };
             candidateContent.append(contentWidth());
@@ -282,7 +292,7 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeNonWrappingInlineTextContent(
         if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
             auto contentWidth = [&] {
                 if (auto logicalWidth = inlineTextItem->width())
-                    return *logicalWidth;
+                    return *logicalWidth - leadingShapingAdjustment(*inlineTextItem);
                 return measuredInlineTextItem(*inlineTextItem, rootStyle, candidateContent.logicalWidth);
             };
             candidateContent.append(contentWidth());
@@ -317,7 +327,7 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::commitCandidateContent(const 
     auto hasLeadingPartiaContent = m_partialLeadingTextItem && candidateContent.startIndex == layoutRange.startIndex();
     auto contentWidth = [&] (auto& inlineTextItem, InlineLayoutUnit contentOffset) {
         if (auto logicalWidth = inlineTextItem.width())
-            return *logicalWidth;
+            return *logicalWidth - leadingShapingAdjustment(inlineTextItem);
         return measuredInlineTextItem(inlineTextItem, rootStyle, m_line.contentLogicalRight() + contentOffset);
     };
 
@@ -446,7 +456,7 @@ size_t TextOnlySimpleLineBuilder::revertToTrailingItem(const Style::ComputedStyl
     size_t numberOfInlineItemsOnLine = 0;
 
     auto appendTextInlineItem = [&] (auto& inlineTextItem) {
-        auto logicalWidth = inlineTextItem.width() ? *inlineTextItem.width() : measuredInlineTextItem(inlineTextItem, rootStyle, m_line.contentLogicalRight());
+        auto logicalWidth = inlineTextItem.width() ? *inlineTextItem.width() - leadingShapingAdjustment(inlineTextItem) : measuredInlineTextItem(inlineTextItem, rootStyle, m_line.contentLogicalRight());
         m_line.appendTextFast(inlineTextItem, rootStyle, logicalWidth);
         ++numberOfInlineItemsOnLine;
         return &inlineTextItem == &trailingInlineItem;

@@ -181,7 +181,7 @@ std::unique_ptr<InlineLayoutResult> InlineFormattingContext::layout(const Constr
     }
 
     if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayoutByContent(inlineItems, inlineLayoutState) && TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(root())) {
-        auto simplifiedLineBuilder = makeUniqueRef<TextOnlySimpleLineBuilder>(*this, root(), constraints.horizontal(), inlineItemList);
+        auto simplifiedLineBuilder = makeUniqueRef<TextOnlySimpleLineBuilder>(*this, root(), constraints.horizontal(), inlineItemList, inlineContentCache().shapingAdjustments());
         auto shouldUseSimplifiedDisplayContentBuild = [&] {
             if (lineDamage || !m_globalLayoutState.inStandardsMode() || inlineLayoutState.parentBlockLayoutState().lineClamp())
                 return false;
@@ -193,7 +193,7 @@ std::unique_ptr<InlineLayoutResult> InlineFormattingContext::layout(const Constr
         auto rangeBasedLineBuilder = makeUniqueRef<RangeBasedLineBuilder>(*this, constraints.horizontal(), inlineItems);
         return lineLayout(rangeBasedLineBuilder, inlineItemList, needsLayoutRange, previousLine, constraints, lineDamage).moveToUniquePtr();
     }
-    auto lineBuilder = makeUniqueRef<LineBuilder>(*this, constraints.horizontal(), inlineItemList, inlineContentCache().textSpacingContext());
+    auto lineBuilder = makeUniqueRef<LineBuilder>(*this, constraints.horizontal(), inlineItemList, inlineContentCache().textSpacingContext(), inlineContentCache().shapingAdjustments());
     return lineLayout(lineBuilder, inlineItemList, needsLayoutRange, previousLine, constraints, lineDamage).moveToUniquePtr();
 }
 
@@ -210,7 +210,7 @@ std::pair<LayoutUnit, LayoutUnit> InlineFormattingContext::minimumMaximumContent
     auto& inlineItems = inlineContentCache.inlineItems();
 
     if (!isEmptyInlineContent(inlineItems.content())) {
-        auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineItems };
+        auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineItems, inlineContentCache.shapingAdjustments() };
 
         if (!minimumContentSize)
             minimumContentSize = intrinsicWidthHandler.minimumContentSize();
@@ -261,7 +261,7 @@ LayoutUnit InlineFormattingContext::minimumContentSize(InlineDamage* lineDamage)
     auto& inlineItems = inlineContentCache.inlineItems();
     auto minimumContentSize = InlineLayoutUnit { };
     if (!isEmptyInlineContent(inlineItems.content()))
-        minimumContentSize = IntrinsicWidthHandler { *this, inlineItems }.minimumContentSize();
+        minimumContentSize = IntrinsicWidthHandler { *this, inlineItems, inlineContentCache.shapingAdjustments() }.minimumContentSize();
     inlineContentCache.setMinimumContentSize(minimumContentSize);
     return ceiledLayoutUnit(minimumContentSize);
 }
@@ -276,7 +276,7 @@ LayoutUnit InlineFormattingContext::maximumContentSize(InlineDamage* lineDamage)
     auto& inlineItems = inlineContentCache.inlineItems();
     auto maximumContentSize = InlineLayoutUnit { };
     if (!isEmptyInlineContent(inlineItems.content())) {
-        auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineItems };
+        auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineItems, inlineContentCache.shapingAdjustments() };
 
         maximumContentSize = intrinsicWidthHandler.maximumContentSize();
         if (intrinsicWidthHandler.maximumIntrinsicWidthLineContent())
@@ -662,12 +662,21 @@ void InlineFormattingContext::rebuildInlineItemListIfNeeded(InlineDamage* lineDa
                 // partial rebuild starting mid-content cannot resolve. Re-collect all inline items.
                 return { };
             }
+            if (inlineContentCache.inlineItems().hasShapingAdjustments()) {
+                // Kerning between text items is computed over the whole content.
+                return { };
+            }
             return startPosition->inlineItemPosition;
         }
         // Unsupported damage. Need to run full build/layout.
         return { };
     };
-    InlineItemsBuilder { inlineContentCache, root(), m_globalLayoutState.securityOrigin() }.build(startPositionForInlineItemsBuilding());
+    auto inlineItemsBuilder = InlineItemsBuilder { inlineContentCache, root(), m_globalLayoutState.securityOrigin() };
+    inlineItemsBuilder.build(startPositionForInlineItemsBuilding());
+    if (inlineItemsBuilder.needsFullRebuild()) {
+        // The rebuilt content has kerning between text items, which is computed over the whole content.
+        InlineItemsBuilder { inlineContentCache, root(), m_globalLayoutState.securityOrigin() }.build({ });
+    }
     if (lineDamage)
         lineDamage->setInlineItemListClean();
     inlineContentCache.clearMaximumIntrinsicWidthLineContent();

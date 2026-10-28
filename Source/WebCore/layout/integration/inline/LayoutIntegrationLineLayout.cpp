@@ -222,7 +222,8 @@ LineLayout::~LineLayout()
     if (shouldPopulateBreakingPositionCache()) {
         auto& inlineItems = m_inlineContentCache->inlineItems();
         auto contentMayAdjustWidths = inlineItems.requiresVisualReordering() || inlineItems.hasTextAutospace();
-        Layout::InlineItemsBuilder::populateBreakingPositionCache(inlineItems.content(), protect(rootRenderer->document()), contentMayAdjustWidths);
+        auto shapingAdjustments = Layout::InlineItemsBuilder::shouldComputeShapingAdjustments(rootLayoutBox(), contentMayAdjustWidths) ? std::make_optional(m_inlineContentCache->shapingAdjustments()) : std::nullopt;
+        Layout::InlineItemsBuilder::populateBreakingPositionCache(inlineItems.content(), protect(rootRenderer->document()), contentMayAdjustWidths, shapingAdjustments);
     }
 
     auto prepareAndDetachInlineContent = [&] {

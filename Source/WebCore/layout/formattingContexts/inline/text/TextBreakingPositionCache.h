@@ -53,23 +53,36 @@ public:
     struct Entry {
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(Entry);
 
-        explicit Entry(List&& positions)
+        Entry(List&& positions, bool mayNeedShaping)
             : breakingPositions(WTF::move(positions))
+            , mayNeedShaping(mayNeedShaping)
         { }
 
         const List breakingPositions;
+        // False when the text has nothing that is shaped across inline text items (no CJK), so no shaping adjustments will ever be stored.
+        const bool mayNeedShaping { false };
 
         struct FontCascadeWidths {
             FontCascadeCacheKey fontCascade;
             WidthList widths;
         };
         Vector<FontCascadeWidths> widthsByFontCascade;
+
+        struct FontCascadeShapingAdjustments {
+            FontCascadeCacheKey fontCascade;
+            unsigned short fontCacheGeneration { 0 };
+            // The kerning with the previous item, one per non-whitespace item. Empty when there is none.
+            WidthList adjustments;
+        };
+        Vector<FontCascadeShapingAdjustments> shapingAdjustmentsByFontCascade;
     };
 
-    void set(const Key&, List&& breakingPositionList);
+    void set(const Key&, List&& breakingPositionList, bool mayNeedShaping);
     const Entry* get(const Key&) const;
     const WidthList* widths(const Entry&, const FontCascadeCacheKey&);
     void addWidths(const Key&, const FontCascadeCacheKey&, WidthList&&);
+    const WidthList* shapingAdjustments(const Entry&, const FontCascadeCacheKey&) const;
+    void addShapingAdjustments(const Key&, const FontCascadeCacheKey&, WidthList&&);
 
     void clear();
 
