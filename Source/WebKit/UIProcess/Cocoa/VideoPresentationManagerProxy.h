@@ -196,6 +196,7 @@ public:
     bool isPlayingVideoInPictureInPicture() const;
 
     RefPtr<WebCore::PlatformVideoPresentationInterface> controlsManagerInterface();
+    RefPtr<WebCore::PlatformVideoPresentationInterface> LEGACY_NODELETE findInterface(PlaybackSessionContextIdentifier) const;
     using VideoInPictureInPictureDidChangeObserver = WTF::Observer<void(bool)>;
     void addVideoInPictureInPictureDidChangeObserver(const VideoInPictureInPictureDidChangeObserver&);
 
@@ -240,7 +241,6 @@ private:
     PlaybackSessionContextIdentifier contextIdForConnection(IPC::Connection&, WebCore::HTMLMediaElementIdentifier) const;
     Ref<VideoPresentationModelContext> ensureModel(IPC::Connection&, WebCore::HTMLMediaElementIdentifier);
     Ref<WebCore::PlatformVideoPresentationInterface> ensureInterface(IPC::Connection&, WebCore::HTMLMediaElementIdentifier);
-    RefPtr<WebCore::PlatformVideoPresentationInterface> LEGACY_NODELETE findInterface(PlaybackSessionContextIdentifier) const;
     void ensureClientForContext(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);

@@ -8642,6 +8642,15 @@ ExceptionOr<void> Internals::sendMediaSessionAction(MediaSession& session, const
     return Exception { ExceptionCode::InvalidStateError };
 }
 
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+std::optional<CallToActionLabel> Internals::mediaSessionCallToActionLabel(const MediaSession& session)
+{
+    if (!session.hasActionHandler(MediaSessionAction::CallToAction))
+        return std::nullopt;
+    return session.callToActionLabel();
+}
+#endif
+
 #if ENABLE(WEB_CODECS)
 void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
 {

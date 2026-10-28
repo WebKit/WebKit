@@ -228,6 +228,8 @@
 		077BA575260FA5FE0072F19F /* MediaSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA232538CD8000A1300C /* MediaSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077BA576260FADF60072F19F /* MediaPositionState.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA342538CE6200A1300C /* MediaPositionState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077BA577260FAEC80072F19F /* MediaSessionAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA2B2538CDE300A1300C /* MediaSessionAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C0A11A010000000000000005 /* CallToActionLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = C0A11A010000000000000001 /* CallToActionLabel.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C0A11A010000000000000006 /* MediaSessionActionHandlerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = C0A11A010000000000000003 /* MediaSessionActionHandlerOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077BA578260FAEDB0072F19F /* MediaSessionActionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA3A2538E9C200A1300C /* MediaSessionActionHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077BA579260FAEE80072F19F /* MediaSessionPlaybackState.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA292538CDCB00A1300C /* MediaSessionPlaybackState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077BA57A260FAEF80072F19F /* MediaSessionReadyState.h in Headers */ = {isa = PBXBuildFile; fileRef = 074471FD25E180050054B231 /* MediaSessionReadyState.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -21521,6 +21523,10 @@
 		CDDDEA282538CDCB00A1300C /* MediaSessionPlaybackState.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaSessionPlaybackState.idl; sourceTree = "<group>"; };
 		CDDDEA292538CDCB00A1300C /* MediaSessionPlaybackState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionPlaybackState.h; sourceTree = "<group>"; };
 		CDDDEA2A2538CDE300A1300C /* MediaSessionAction.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaSessionAction.idl; sourceTree = "<group>"; };
+		C0A11A010000000000000001 /* CallToActionLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallToActionLabel.h; sourceTree = "<group>"; };
+		C0A11A010000000000000002 /* CallToActionLabel.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CallToActionLabel.idl; sourceTree = "<group>"; };
+		C0A11A010000000000000003 /* MediaSessionActionHandlerOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionActionHandlerOptions.h; sourceTree = "<group>"; };
+		C0A11A010000000000000004 /* MediaSessionActionHandlerOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaSessionActionHandlerOptions.idl; sourceTree = "<group>"; };
 		CDDDEA2B2538CDE300A1300C /* MediaSessionAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionAction.h; sourceTree = "<group>"; };
 		CDDDEA2C2538CE0400A1300C /* MediaMetadata.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaMetadata.idl; sourceTree = "<group>"; };
 		CDDDEA2D2538CE0400A1300C /* MediaMetadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaMetadata.h; sourceTree = "<group>"; };
@@ -40566,6 +40572,8 @@
 		CDDDEA212538CD3500A1300C /* mediasession */ = {
 			isa = PBXGroup;
 			children = (
+				C0A11A010000000000000001 /* CallToActionLabel.h */,
+				C0A11A010000000000000002 /* CallToActionLabel.idl */,
 				CDDDEA322538CE3500A1300C /* MediaImage.h */,
 				CDDDEA312538CE3500A1300C /* MediaImage.idl */,
 				CDDDEA5225395DE100A1300C /* MediaMetadata.cpp */,
@@ -40585,6 +40593,8 @@
 				CDDDEA352538CE7000A1300C /* MediaSessionActionDetails.idl */,
 				CDDDEA3A2538E9C200A1300C /* MediaSessionActionHandler.h */,
 				CDDDEA392538E9C200A1300C /* MediaSessionActionHandler.idl */,
+				C0A11A010000000000000003 /* MediaSessionActionHandlerOptions.h */,
+				C0A11A010000000000000004 /* MediaSessionActionHandlerOptions.idl */,
 				E12A50DCD3B6A216E46C6787 /* MediaSessionArtworkSizing.h */,
 				CDBA1F332F8C58FA00D30314 /* MediaSessionCaptionTrack.h */,
 				CDBA1F342F8C58FA00D30314 /* MediaSessionCaptionTrack.idl */,
@@ -44664,6 +44674,7 @@
 				41D129D51F3D0F6900D15E47 /* CacheStorageProvider.h in Headers */,
 				E43AF8E71AC5B7EC00CA717E /* CacheValidation.h in Headers */,
 				7C1E8D011ED0C2DA00B1D983 /* CallbackResult.h in Headers */,
+				C0A11A010000000000000005 /* CallToActionLabel.h in Headers */,
 				AAF09F0B2D2CEFA09FE51B86 /* CanBeCrossOriginIsolated.h in Headers */,
 				EFCC6C8F20FE914400A2321B /* CanvasActivityRecord.h in Headers */,
 				313171561FB079E5008D91FC /* CanvasBase.h in Headers */,
@@ -47666,6 +47677,7 @@
 				077BA577260FAEC80072F19F /* MediaSessionAction.h in Headers */,
 				077BA57B260FB1020072F19F /* MediaSessionActionDetails.h in Headers */,
 				077BA578260FAEDB0072F19F /* MediaSessionActionHandler.h in Headers */,
+				C0A11A010000000000000006 /* MediaSessionActionHandlerOptions.h in Headers */,
 				077BA571260F9F760072F19F /* MediaSessionCoordinator.h in Headers */,
 				077BA57E260FEF360072F19F /* MediaSessionCoordinatorPrivate.h in Headers */,
 				07C1482E2612A21F00775828 /* MediaSessionCoordinatorState.h in Headers */,

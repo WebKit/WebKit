@@ -176,6 +176,9 @@ class WebXRTest;
 
 #if ENABLE(MEDIA_SESSION)
 class MediaSession;
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+enum class CallToActionLabel : uint8_t;
+#endif
 struct MediaSessionActionDetails;
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 class MediaSessionCoordinator;
@@ -1654,6 +1657,9 @@ public:
 #if ENABLE(MEDIA_SESSION)
     ExceptionOr<double> currentMediaSessionPosition(const MediaSession&);
     ExceptionOr<void> sendMediaSessionAction(MediaSession&, const MediaSessionActionDetails&);
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    std::optional<CallToActionLabel> mediaSessionCallToActionLabel(const MediaSession&);
+#endif
 
 #if ENABLE(WEB_CODECS)
     using ArtworkImagePromise = DOMPromiseDeferred<IDLInterface<WebCodecsVideoFrame>>;

@@ -47,7 +47,7 @@
 #if HAVE(PIP_SKIP_PREROLL)
 #import <WebCore/VideoPresentationInterfaceMac.h>
 #endif
-#if ENABLE(LINEAR_MEDIA_PLAYER)
+#if ENABLE(LINEAR_MEDIA_PLAYER) || ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
 #import <WebCore/VideoPresentationInterfaceIOS.h>
 #endif
 #import <wtf/LoggerHelper.h>
@@ -200,6 +200,15 @@ void PlaybackSessionModelContext::skipAd()
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (RefPtr manager = m_manager.get())
         manager->skipAd(m_contextId);
+}
+#endif
+
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+void PlaybackSessionModelContext::triggerCallToAction()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (RefPtr manager = m_manager)
+        manager->triggerCallToAction(m_contextId);
 }
 #endif
 
@@ -860,6 +869,28 @@ void PlaybackSessionManagerProxy::canSkipAdChanged(IPC::Connection& connection, 
 }
 #endif
 
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+void PlaybackSessionManagerProxy::callToActionChanged(IPC::Connection& connection, HTMLMediaElementIdentifier identifier, std::optional<CallToActionLabel> label)
+{
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    RefPtr videoPresentationManager = page->videoPresentationManager();
+    if (!videoPresentationManager)
+        return;
+
+    auto contextId = contextIdForConnection(connection, identifier);
+    ASSERT(contextId == m_controlsManagerContextId);
+    RefPtr interface = videoPresentationManager->findInterface(contextId);
+    ALWAYS_LOG(LOGIDENTIFIER, "label ", label, ", has interface ", !!interface);
+    if (!interface)
+        return;
+
+    interface->callToActionChanged(label);
+}
+#endif
+
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 void PlaybackSessionManagerProxy::supportsLinearMediaPlayerChanged(IPC::Connection& connection, HTMLMediaElementIdentifier identifier, bool supportsLinearMediaPlayer)
 {
@@ -1011,6 +1042,13 @@ void PlaybackSessionManagerProxy::setPlayingOnSecondScreen(PlaybackSessionContex
 void PlaybackSessionManagerProxy::skipAd(PlaybackSessionContextIdentifier contextId)
 {
     sendToWebProcess(contextId, Messages::PlaybackSessionManager::SkipAd(contextId.object()));
+}
+#endif
+
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+void PlaybackSessionManagerProxy::triggerCallToAction(PlaybackSessionContextIdentifier contextId)
+{
+    sendToWebProcess(contextId, Messages::PlaybackSessionManager::TriggerCallToAction(contextId.object()));
 }
 #endif
 

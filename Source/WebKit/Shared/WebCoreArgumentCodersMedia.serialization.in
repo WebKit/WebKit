@@ -22,6 +22,15 @@
 
 
 #if ENABLE(MEDIA_SESSION)
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+header: <WebCore/CallToActionLabel.h>
+enum class WebCore::CallToActionLabel : uint8_t {
+    VisitWebsite,
+    Download,
+    VisitAppStore,
+};
+#endif
+
 header: <WebCore/MediaSessionPlaybackState.h>
 enum class WebCore::MediaSessionPlaybackState : uint8_t {
     None,

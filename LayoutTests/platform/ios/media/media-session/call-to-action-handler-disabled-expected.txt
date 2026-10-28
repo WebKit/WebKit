@@ -1,0 +1,4 @@
+Test that the call-to-action handler is rejected when MediaSessionCallToActionEnabled is off.
+threw TypeError
+END OF TEST
+

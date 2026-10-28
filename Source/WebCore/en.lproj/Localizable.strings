@@ -499,6 +499,9 @@
 /* Disallow button title in window and screen sharing prompt */
 "Don’t Allow (window and screen sharing)" = "Don’t Allow";
 
+/* PIP Call-to-action button label */
+"Download" = "Download";
+
 /* Download Audio To Disk context menu item */
 "Download Audio" = "Download Audio";
 
@@ -1791,6 +1794,12 @@
 
 /* View in AR? */
 "View in AR?" = "View in AR?";
+
+/* PIP Call-to-action button label */
+"Visit App Store" = "Visit App Store";
+
+/* PIP Call-to-action button label */
+"Visit Website" = "Visit Website";
 
 /* Codec Strings */
 "Vorbis Codec String" = "Vorbis";

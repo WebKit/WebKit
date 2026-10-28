@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
+#include <WebCore/CallToActionLabel.h>
 #include <WebCore/ImmersiveVideoMetadata.h>
 #include <WebCore/MediaSelectionOption.h>
 #include <WebCore/PlatformPlaybackSessionInterface.h>
@@ -127,6 +128,9 @@ private:
 #if HAVE(PIP_SKIP_PREROLL)
     void skipAd() final;
     void canSkipAdChanged(bool);
+#endif
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    void triggerCallToAction() final;
 #endif
     void seekToTime(double, double, double) final;
     void fastSeek(double time) final;
@@ -324,6 +328,9 @@ private:
 #if HAVE(PIP_SKIP_PREROLL)
     void canSkipAdChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool value);
 #endif
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    void callToActionChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, std::optional<WebCore::CallToActionLabel>);
+#endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     void supportsLinearMediaPlayerChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool);
 #endif
@@ -332,6 +339,9 @@ private:
     // Messages to PlaybackSessionManager
 #if HAVE(PIP_SKIP_PREROLL)
     void skipAd(PlaybackSessionContextIdentifier);
+#endif
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    void triggerCallToAction(PlaybackSessionContextIdentifier);
 #endif
     void play(PlaybackSessionContextIdentifier);
     void pause(PlaybackSessionContextIdentifier);

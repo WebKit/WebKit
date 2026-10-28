@@ -32,6 +32,7 @@
 #include <WebCore/MediaProducer.h>
 #include <WebCore/MediaSessionAction.h>
 #include <WebCore/MediaSessionActionHandler.h>
+#include <WebCore/MediaSessionActionHandlerOptions.h>
 #include <WebCore/MediaSessionPlaybackState.h>
 #include <WebCore/MediaSessionReadyState.h>
 #include <WebCore/PlatformMediaSessionInterface.h>
@@ -95,7 +96,11 @@ public:
     MediaSessionPlaybackState playbackState() const { return m_playbackState; };
     void setPlaybackState(MediaSessionPlaybackState);
 
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    ExceptionOr<void> setActionHandler(MediaSessionAction, RefPtr<MediaSessionActionHandler>&&, MediaSessionActionHandlerOptions&& = { });
+#else
     ExceptionOr<void> setActionHandler(MediaSessionAction, RefPtr<MediaSessionActionHandler>&&);
+#endif
 
     void callActionHandler(const MediaSessionActionDetails&, DOMPromiseDeferred<void>&&);
 
@@ -149,6 +154,9 @@ public:
 #endif
 
     WEBCORE_EXPORT bool LEGACY_NODELETE hasActionHandler(const MediaSessionAction) const;
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    CallToActionLabel callToActionLabel() const { return m_callToActionLabel; }
+#endif
 
     RefPtr<CaptionUserPreferences> captionPreferences();
     void captionPreferencesChanged();
@@ -210,6 +218,9 @@ private:
     std::optional<double> m_lastReportedPosition;
     MonotonicTime m_timeAtLastPositionUpdate;
     HashMap<MediaSessionAction, Ref<MediaSessionActionHandler>, IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>> m_actionHandlers WTF_GUARDED_BY_LOCK(m_actionHandlersLock);
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    CallToActionLabel m_callToActionLabel { CallToActionLabel::VisitWebsite };
+#endif
     const RefPtr<const Logger> m_logger;
     uint64_t m_logIdentifier { 0 };
 

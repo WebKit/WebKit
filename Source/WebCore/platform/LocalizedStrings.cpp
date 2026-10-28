@@ -27,6 +27,9 @@
 #include "config.h"
 #include "LocalizedStrings.h"
 
+#if ENABLE(MEDIA_SESSION) && ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+#include "CallToActionLabel.h"
+#endif
 #include "DateComponents.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
@@ -1651,6 +1654,22 @@ String contextMenuItemTagCopyLinkWithHighlight()
 {
     return WEB_UI_STRING("Copy Link with Highlight", "Copy link with highlight context menu item");
 }
+
+#if ENABLE(MEDIA_SESSION) && ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+String callToActionLabelTitle(CallToActionLabel label)
+{
+    switch (label) {
+    case CallToActionLabel::VisitWebsite:
+        return WEB_UI_STRING("Visit Website", "Title for the call to action button in Picture in Picture that visits a website");
+    case CallToActionLabel::Download:
+        return WEB_UI_STRING("Download", "Title for the call to action button in Picture in Picture that starts a download");
+    case CallToActionLabel::VisitAppStore:
+        return WEB_UI_STRING("Visit App Store", "Title for the call to action button in Picture in Picture that visits the App Store");
+    }
+    ASSERT_NOT_REACHED();
+    return { };
+}
+#endif
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 String fullscreenControllerViewSpatial()

@@ -45,6 +45,9 @@
     "voiceactivity",
     "togglecaptions",
     "selectcaptiontrack"
+#if defined(ENABLE_MEDIA_SESSION_CALL_TO_ACTION) && ENABLE_MEDIA_SESSION_CALL_TO_ACTION
+    , "call-to-action"
+#endif
 #if defined(ENABLE_MEDIA_SESSION_PLAYLIST) && ENABLE_MEDIA_SESSION_PLAYLIST
     , "settrack"
 #endif
