@@ -2425,9 +2425,11 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
     }
 
     URL sourceURL;
-    if (page.isPageOpenedByDOMShowingInitialEmptyDocument() && !navigation.requesterOrigin().isNull())
-        sourceURL = URL { navigation.requesterOrigin().toString() };
-    else
+    if (page.isPageOpenedByDOMShowingInitialEmptyDocument()) {
+        if (RefPtr openerFrame = WebFrameProxy::webFrame(page.openerFrameIdentifier()))
+            sourceURL = URL { openerFrame->url().protocolHostAndPort() };
+    }
+    if (sourceURL.isEmpty())
         sourceURL = pageSourceURL;
 
     if (sourceURL.isEmpty()) {
