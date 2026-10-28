@@ -31,7 +31,7 @@
 #import <WebKit/WKWebProcessPlugIn.h>
 #import <WebKit/WKWebProcessPlugInBrowserContextControllerPrivate.h>
 #import <WebKit/WKWebProcessPlugInFrame.h>
-#import <WebKit/WKWebProcessPlugInNodeHandlePrivate.h>
+#import <WebKit/WKWebProcessPlugInNodeHandle.h>
 #import <WebKit/WKWebProcessPlugInScriptWorld.h>
 
 @interface InjectedBundleNodeHandleIsTextField : NSObject <WKWebProcessPlugIn>

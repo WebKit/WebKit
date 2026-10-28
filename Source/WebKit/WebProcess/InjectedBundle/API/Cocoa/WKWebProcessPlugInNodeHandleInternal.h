@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebProcessPlugInNodeHandlePrivate.h"
+#import "WKWebProcessPlugInNodeHandle.h"
 
 #import "InjectedBundleNodeHandle.h"
 #import "WKObject.h"
