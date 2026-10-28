@@ -1627,8 +1627,14 @@ enum class DocumentFragmentMode : bool { New, ReuseForInnerOuterHTML };
 static ALWAYS_INLINE ExceptionOr<Ref<DocumentFragment>> createFragmentForMarkup(Element& contextElement, const String& markup, DocumentFragmentMode mode, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry = nullptr, Element::CustomElementRegistryKind registryKind = Element::CustomElementRegistryKind::Window)
 {
     Ref document = contextElement.hasTagName(templateTag) ? protect(contextElement.document())->ensureTemplateDocument() : contextElement.document();
-    auto fragment = mode == DocumentFragmentMode::New ? DocumentFragment::create(document.get()) : document->documentFragmentForInnerOuterHTML();
+    bool parseAsHTML = document->isHTMLDocument() || parserContentPolicy.contains(ParserContentPolicy::AlwaysParseAsHTML);
+    auto fragment = mode == DocumentFragmentMode::New
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        || !parseAsHTML
+#endif
+        ? DocumentFragment::create(document.get()) : document->documentFragmentForInnerOuterHTML();
     ASSERT(!fragment->hasChildNodes());
+<<<<<<< HEAD
 
     if (registryKind == Element::CustomElementRegistryKind::Null)
         fragment->setUsesNullCustomElementRegistry();
@@ -1636,6 +1642,9 @@ static ALWAYS_INLINE ExceptionOr<Ref<DocumentFragment>> createFragmentForMarkup(
         fragment->clearUsesNullCustomElementRegistry();
 
     if (document->isHTMLDocument() || parserContentPolicy.contains(ParserContentPolicy::AlwaysParseAsHTML)) {
+=======
+    if (parseAsHTML) {
+>>>>>>> 2e63eaf64497 (Use-after-free in reused inner/outerHTML DocumentFragment)
         fragment->parseHTML(markup, contextElement, parserContentPolicy, registry);
         return fragment;
     }
