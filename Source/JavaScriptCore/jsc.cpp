@@ -206,7 +206,15 @@ namespace JSC {
 // checked. Having one of these always present is what lets the runner know that the
 // binary does in fact support SAR3 recognition. Non-const external linkage plus
 // used/visibility keeps them in the symbol table.
+<<<<<<< HEAD
 __attribute__((used, visibility("default"))) bool SecAccel3Enabled = true;
+=======
+#ifdef RC_REMOVE_SEC_ACCEL_3
+__attribute__((used, visibility("default"))) bool SecAccel3Disabled = true;
+#else
+__attribute__((used, visibility("default"))) bool SecAccel3Enabled = true;
+#endif // RC_REMOVE_SEC_ACCEL_3
+>>>>>>> 3fc33e59b1bf ([JSC] Support marking JSTests to be skipped when SAR3 support is removed via the macro)
 }
 
 using namespace JSC;
