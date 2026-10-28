@@ -83,6 +83,17 @@ private func makeMTLTextureFromImageAsset(
 
     let pixelFormat = imageAsset.pixelFormat
 
+    // textureCubeDescriptor takes a single `size`, so a cube built from `width` has
+    // nowhere to put a different `height`. Reject the mismatch here rather than letting
+    // the upload region below describe an extent the texture does not have.
+    if imageAsset.textureType == .typeCube, imageAsset.width != imageAsset.height {
+        logError(
+            "rejecting cube image asset with non-square dimensions "
+                + "\(imageAsset.width)x\(imageAsset.height)"
+        )
+        return nil
+    }
+
     let (textureDescriptor, sliceCount) =
         switch imageAsset.textureType {
         case .typeCube:
@@ -128,17 +139,54 @@ private func makeMTLTextureFromImageAsset(
             return
         }
 
-        func uploadSlice(face: Int, mipLevel: Int, bytesOffset: Int, bytesPerRow: Int, bytesPerImage: Int) {
+        func uploadSlice(face: Int, mipLevel: Int, bytesOffset: Int, bytesPerRow: Int, bytesPerImage: Int) -> Bool {
             let mipWidth = mipDimension(imageAsset.width, level: mipLevel)
             let mipHeight = mipDimension(imageAsset.height, level: mipLevel)
+
+            // The region is derived from imageAsset but it is written into mtlTexture,
+            // whose extent came from textureDescriptor. replace(region:) does not bounds
+            // check in release builds, so the two must not be allowed to disagree.
+            let destinationWidth = mipDimension(mtlTexture.width, level: mipLevel)
+            let destinationHeight = mipDimension(mtlTexture.height, level: mipLevel)
+            guard mipLevel < mtlTexture.mipmapLevelCount,
+                mipWidth <= destinationWidth,
+                mipHeight <= destinationHeight
+            else {
+                logError(
+                    "rejecting texture level \(mipLevel) face \(face): region "
+                        + "\(mipWidth)x\(mipHeight) escapes the \(destinationWidth)x\(destinationHeight) "
+                        + "extent of destination level \(mipLevel) of "
+                        + "\(mtlTexture.mipmapLevelCount)"
+                )
+                return false
+            }
+
+            let (rowBytes, rowOverflow) = mipWidth.multipliedReportingOverflow(by: bytesPerPixel)
+            let (rowSpan, spanOverflow) = (mipHeight - 1).multipliedReportingOverflow(by: bytesPerRow)
+            let (lastRowStart, startOverflow) = bytesOffset.addingReportingOverflow(rowSpan)
+            let (windowEnd, endOverflow) = lastRowStart.addingReportingOverflow(rowBytes)
+            guard !rowOverflow, !spanOverflow, !startOverflow, !endOverflow,
+                bytesOffset >= 0,
+                bytesPerRow >= rowBytes,
+                windowEnd <= textureBytes.count
+            else {
+                logError(
+                    "rejecting texture level \(mipLevel) face \(face): source window "
+                        + "[\(bytesOffset), \(windowEnd)) (bytesPerRow \(bytesPerRow)) escapes the "
+                        + "\(textureBytes.count)-byte asset"
+                )
+                return false
+            }
+
             unsafe mtlTexture.replace(
                 region: MTLRegionMake2D(0, 0, mipWidth, mipHeight),
                 mipmapLevel: mipLevel,
                 slice: face,
                 withBytes: unsafe baseAddress.advanced(by: bytesOffset),
                 bytesPerRow: bytesPerRow,
-                bytesPerImage: bytesPerImage
+                bytesPerImage: 0
             )
+            return true
         }
 
         if !layout.isEmpty {
@@ -150,13 +198,21 @@ private func makeMTLTextureFromImageAsset(
                 for mipLevel in 0..<mipLevelsInData {
                     let info = layout[mipLevel]
                     // dataOffset covers all slices; advance by bytesPerImage per face.
-                    uploadSlice(
-                        face: face,
-                        mipLevel: mipLevel,
-                        bytesOffset: info.dataOffset + face * info.byteCountPerImage,
-                        bytesPerRow: info.byteCountPerRow,
-                        bytesPerImage: info.byteCountPerImage
-                    )
+                    let (faceOffset, faceOverflow) = face.multipliedReportingOverflow(by: info.byteCountPerImage)
+                    let (bytesOffset, offsetOverflow) = info.dataOffset.addingReportingOverflow(faceOffset)
+                    guard !faceOverflow, !offsetOverflow,
+                        uploadSlice(
+                            face: face,
+                            mipLevel: mipLevel,
+                            bytesOffset: bytesOffset,
+                            bytesPerRow: info.byteCountPerRow,
+                            bytesPerImage: info.byteCountPerImage
+                        )
+                    else {
+                        logError("aborting layout-driven texture upload after invalid level \(mipLevel) face \(face)")
+                        mipLevelsInData = 0
+                        return
+                    }
                 }
             }
         } else {
@@ -200,13 +256,23 @@ private func makeMTLTextureFromImageAsset(
                     let mipHeight = mipDimension(imageAsset.height, level: mipLevel)
                     let bytesPerRow = mipWidth * bytesPerPixel
                     let bytesPerImage = bytesPerRow * mipHeight
-                    uploadSlice(
-                        face: face,
-                        mipLevel: mipLevel,
-                        bytesOffset: offset,
-                        bytesPerRow: bytesPerRow,
-                        bytesPerImage: bytesPerImage
-                    )
+                    // The bounds uploadSlice checks are all implied by the byte accounting
+                    // above, but that reasoning lives in a different loop (and, for cubes, in
+                    // the square check before the descriptor is built), so do not silently
+                    // discard a rejection: a partial upload must not be reported as success.
+                    guard
+                        uploadSlice(
+                            face: face,
+                            mipLevel: mipLevel,
+                            bytesOffset: offset,
+                            bytesPerRow: bytesPerRow,
+                            bytesPerImage: bytesPerImage
+                        )
+                    else {
+                        logError("aborting texture upload after invalid level \(mipLevel) face \(face)")
+                        mipLevelsInData = 0
+                        return
+                    }
                     offset += bytesPerImage
                 }
             }
@@ -1145,7 +1211,10 @@ extension WKBridgeReceiver {
                     layout: textureData.layout
                 )
             else {
-                fatalError("Could not make metal texture from environment asset data")
+                // makeMTLTextureFromImageAsset rejects assets a compromised WebContent
+                // process can construct, so a rejection must not take down the GPU process.
+                logError("could not make metal texture from environment asset data")
+                return
             }
 
             let cubeMTLTextureDescriptor = try self.skyboxGenerator.makeDescriptor(

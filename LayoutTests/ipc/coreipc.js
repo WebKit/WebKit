@@ -213,6 +213,7 @@ const aliases = {
     'pid_t': 'uint32_t',
     'unsigned short': 'uint16_t',
     'unsigned char': 'uint8_t',
+    'long': 'int64_t',
     'long long': 'int64_t',
     'unsigned long long': 'uint64_t',
     'short': 'int16_t',
