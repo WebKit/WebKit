@@ -1482,6 +1482,153 @@ private:
         append(op, tmp(value->child(0)), tmp(value));
     }
 
+    // ARM64 has no instruction for wasm i32x4.dot_i16x8_s, so VectorDotProduct is built from three.
+    // Below, pK = a[K] * b[K] with both lanes sign-extended to i32.
+    //
+    //   SMULL Vd.4S, Vn.4H, Vm.4H multiplies the low four i16 lanes into four i32 lanes:
+    //
+    //       a: [a0 a1 a2 a3 | a4 a5 a6 a7]
+    //       b: [b0 b1 b2 b3 | b4 b5 b6 b7]
+    //           \_________/
+    //                v
+    //       d: [p0 | p1 | p2 | p3]
+    //
+    //   SMULL2 Vd.4S, Vn.8H, Vm.8H does the same on the high four lanes:
+    //
+    //       a: [a0 a1 a2 a3 | a4 a5 a6 a7]
+    //       b: [b0 b1 b2 b3 | b4 b5 b6 b7]
+    //                         \_________/
+    //                              v
+    //       d: [p4 | p5 | p6 | p7]
+    //
+    //   ADDP Vd.4S, Vn.4S, Vm.4S joins n and m into one eight-lane row and adds each adjacent pair:
+    //
+    //       n: [n0 n1 n2 n3]   m: [m0 m1 m2 m3]
+    //           \_/   \_/          \_/   \_/
+    //       d: [n0+n1  n2+n3      m0+m1  m2+m3]
+    //
+    // Output lane i of a dot product is a[2i]*b[2i] + a[2i+1]*b[2i+1], which is exactly what the
+    // three produce together:
+    //
+    //   SMULL  low, a, b        low  = [p0 p1 p2 p3]
+    //   SMULL2 high, a, b       high = [p4 p5 p6 p7]
+    //   ADDP   d, low, high     d    = [p0+p1, p2+p3, p4+p5, p6+p7] = dot(a, b)
+    //
+    // Unrolled quantized matmul kernels add many dot products together:
+    //
+    //   acc + dot(a0, b0) + dot(a1, b1) + dot(a2, b2) + dot(a3, b3)
+    //
+    // Each lane of ADDP is a wrapping i32 add of two input lanes, and wrapping adds are associative and
+    // commutative, so the lane-wise sums can be taken before the pairing instead of after it:
+    //
+    //   dot(a0, b0) + dot(a1, b1) + ... = ADDP(SMULL(a0, b0) + SMULL(a1, b1) + ..., SMULL2(a0, b0) + SMULL2(a1, b1) + ...)
+    //
+    // SMLAL and SMLAL2 compute the same products as SMULL and SMULL2 but add them into the destination:
+    //
+    //   d (before): [d0       | d1       | d2       | d3      ]
+    //             + [a0*b0    | a1*b1    | a2*b2    | a3*b3   ]   (SMLAL)
+    //   d (after):  [d0+a0*b0 | d1+a1*b1 | d2+a2*b2 | d3+a3*b3]
+    //
+    // So N dot products cost SMULL + SMULL2 for the first, SMLAL + SMLAL2 for each further one, and a
+    // single ADDP, instead of three instructions each plus the adds joining them.
+    //
+    // The adds form a tree whose leaves are dot products, widening multiplies (VectorMulLow and
+    // VectorMulHigh), or any other value. Because every add in it is an i32x4 add, the leaves can be
+    // summed in any order. The tree is flattened into its leaves, the dot products are fused as above,
+    // the widening multiplies are accumulated onto the paired sum with SMLAL/SMLAL2 (or UMLAL/UMLAL2),
+    // and the remaining leaves are added with ADD. A leaf or inner add is absorbed only when this tree
+    // is its sole user; otherwise it is computed on its own and joins as an ordinary leaf.
+    bool tryEmitSumOfDotProducts()
+    {
+        ASSERT(isARM64());
+
+        // Every i32x4 add retries this on its own subtree, so bounding the walk keeps lowering linear.
+        static constexpr unsigned maxVisitedAdds = 8;
+        // A fused dot product keeps both of its inputs live until the root add instead of until the dot product.
+        static constexpr unsigned maxDotProducts = 6;
+
+        Vector<Value*, 8> dotProducts;
+        Vector<Value*, 8> multiplies;
+        Vector<Value*, 8> otherAddends;
+        Vector<Value*, 8> internalAdds;
+        unsigned visitedAdds = 0;
+
+        auto isFusableMultiply = [&](Value* value) {
+            if (value->opcode() != B3::VectorMulLow && value->opcode() != B3::VectorMulHigh)
+                return false;
+            return value->as<SIMDValue>()->simdLane() == SIMDLane::i32x4;
+        };
+
+        auto collect = [&](auto& collect, Value* addend) -> void {
+            if (!canBeInternal(addend)) {
+                otherAddends.append(addend);
+                return;
+            }
+            if (addend->opcode() == B3::VectorDotProduct && dotProducts.size() < maxDotProducts) {
+                dotProducts.append(addend);
+                return;
+            }
+            if (isFusableMultiply(addend)) {
+                multiplies.append(addend);
+                return;
+            }
+            if (addend->opcode() == B3::VectorAdd && addend->as<SIMDValue>()->simdLane() == SIMDLane::i32x4 && visitedAdds < maxVisitedAdds) {
+                ++visitedAdds;
+                size_t fusedLeaves = dotProducts.size() + multiplies.size();
+                size_t internalAddsSize = internalAdds.size();
+                size_t otherAddendsSize = otherAddends.size();
+                internalAdds.append(addend);
+                collect(collect, addend->child(0));
+                collect(collect, addend->child(1));
+                // Flattening a subtree with nothing to fuse would turn its balanced adds into a serial chain.
+                if (dotProducts.size() + multiplies.size() == fusedLeaves) {
+                    internalAdds.shrink(internalAddsSize);
+                    otherAddends.shrink(otherAddendsSize);
+                    otherAddends.append(addend);
+                }
+                return;
+            }
+            otherAddends.append(addend);
+        };
+        collect(collect, m_value->child(0));
+        collect(collect, m_value->child(1));
+
+        if (dotProducts.size() < 2)
+            return false;
+
+        for (Value* value : internalAdds)
+            commitInternal(value);
+        for (Value* value : dotProducts)
+            commitInternal(value);
+        for (Value* value : multiplies)
+            commitInternal(value);
+
+        // The dot product's inputs are i16x8 and its products are widened to i32x4.
+        Arg info = Arg::simdInfo({ SIMDLane::i32x4, SIMDSignMode::Signed });
+        Tmp low = m_code.newTmp(FP);
+        Tmp high = m_code.newTmp(FP);
+        append(Air::VectorMulLow, info, tmp(dotProducts[0]->child(0)), tmp(dotProducts[0]->child(1)), low);
+        append(Air::VectorMulHigh, info, tmp(dotProducts[0]->child(0)), tmp(dotProducts[0]->child(1)), high);
+        for (unsigned i = 1; i < dotProducts.size(); ++i) {
+            append(Air::VectorMulAddLow, info, tmp(dotProducts[i]->child(0)), tmp(dotProducts[i]->child(1)), low);
+            append(Air::VectorMulAddHigh, info, tmp(dotProducts[i]->child(0)), tmp(dotProducts[i]->child(1)), high);
+        }
+
+        // Defining the result last lets it share a register with a loop-carried accumulator addend.
+        Tmp result = tmp(m_value);
+        Tmp sum = otherAddends.isEmpty() ? result : low;
+        append(Air::VectorAddPairwise, Arg::simdInfo({ SIMDLane::i32x4, SIMDSignMode::None }), low, high, sum);
+        for (Value* multiply : multiplies) {
+            Air::Opcode opcode = multiply->opcode() == B3::VectorMulHigh ? Air::VectorMulAddHigh : Air::VectorMulAddLow;
+            append(opcode, Arg::simdInfo(multiply->as<SIMDValue>()->simdInfo()), tmp(multiply->child(0)), tmp(multiply->child(1)), sum);
+        }
+        for (unsigned i = 0; i < otherAddends.size(); ++i) {
+            Tmp destination = i + 1 == otherAddends.size() ? result : sum;
+            append(Air::VectorAdd, Arg::simdInfo(m_value->as<SIMDValue>()->simdInfo()), sum, tmp(otherAddends[i]), destination);
+        }
+        return true;
+    }
+
     // i64x2 multiply has no native vector instruction on any of our targets.
     void emitVectorMulInt64(SIMDValue* value)
     {
@@ -5389,6 +5536,11 @@ private:
             return;
         case B3::VectorAdd:
             if (isARM64()) {
+                auto* outerValue = m_value->as<SIMDValue>();
+                SIMDLane outerLane = outerValue->simdLane();
+                if (outerLane == SIMDLane::i32x4 && tryEmitSumOfDotProducts())
+                    return;
+
                 // Try to fuse integer multiply-accumulate patterns into UMLAL/SMLAL
                 // and UMLAL2/SMLAL2. These compute `Vd = Vd + (Vn * Vm) widened` on
                 // the low (UMLAL/SMLAL) or upper (UMLAL2/SMLAL2) half of each input,
@@ -5405,8 +5557,6 @@ private:
                 // (i8x16 has no widening MLAL form). In case C the two operands can
                 // mix Low and High freely. This is the quantized-matmul pattern
                 // where a 16-byte load is consumed as extmul_low + extmul_high.
-                auto* outerValue = m_value->as<SIMDValue>();
-                SIMDLane outerLane = outerValue->simdLane();
                 if (outerLane == SIMDLane::i16x8 || outerLane == SIMDLane::i32x4 || outerLane == SIMDLane::i64x2) {
                     enum class MulKind : uint8_t { Low, High };
 

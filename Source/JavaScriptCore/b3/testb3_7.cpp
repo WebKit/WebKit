@@ -4110,6 +4110,277 @@ void testVectorReplaceLaneOfZeroWithLoad()
     test(SIMDLane::f64x2, B3::Double);
 }
 
+static v128_t dotProductI16x8(v128_t a, v128_t b)
+{
+    v128_t result { };
+    for (unsigned i = 0; i < 4; ++i) {
+        int32_t low = static_cast<int32_t>(static_cast<int16_t>(a.u16x8[2 * i])) * static_cast<int16_t>(b.u16x8[2 * i]);
+        int32_t high = static_cast<int32_t>(static_cast<int16_t>(a.u16x8[2 * i + 1])) * static_cast<int16_t>(b.u16x8[2 * i + 1]);
+        result.u32x4[i] = static_cast<uint32_t>(low) + static_cast<uint32_t>(high);
+    }
+    return result;
+}
+
+static v128_t extendedMultiplyI16x8(v128_t a, v128_t b, B3::Opcode half, SIMDSignMode signMode)
+{
+    v128_t result { };
+    for (unsigned i = 0; i < 4; ++i) {
+        unsigned lane = half == VectorMulHigh ? i + 4 : i;
+        if (signMode == SIMDSignMode::Signed)
+            result.u32x4[i] = static_cast<uint32_t>(static_cast<int32_t>(static_cast<int16_t>(a.u16x8[lane])) * static_cast<int16_t>(b.u16x8[lane]));
+        else
+            result.u32x4[i] = static_cast<uint32_t>(a.u16x8[lane]) * static_cast<uint32_t>(b.u16x8[lane]);
+    }
+    return result;
+}
+
+static v128_t addI32x4(v128_t a, v128_t b)
+{
+    v128_t result { };
+    for (unsigned i = 0; i < 4; ++i)
+        result.u32x4[i] = a.u32x4[i] + b.u32x4[i];
+    return result;
+}
+
+static v128_t splatI16x8(uint16_t value)
+{
+    v128_t result { };
+    for (unsigned i = 0; i < 8; ++i)
+        result.u16x8[i] = value;
+    return result;
+}
+
+void testVectorDotProductSum()
+{
+    constexpr unsigned numberOfInputs = 10;
+    using Inputs = std::array<v128_t, numberOfInputs>;
+
+    struct ExpectedCounts {
+        unsigned smull;
+        unsigned smull2;
+        unsigned smlal;
+        unsigned smlal2;
+        unsigned addp;
+    };
+
+    // Each builder appends to `block`, and may move it to a new block before returning the result.
+    auto test = [&](auto buildTree, auto computeExpected, ExpectedCounts counts) {
+        alignas(16) v128_t vectors[numberOfInputs + 1];
+        Procedure proc;
+        // Without this, Air spills V128 tmps to 8-byte slots.
+        proc.setUsesSIMD();
+        BasicBlock* block = proc.addBlock();
+        auto arguments = cCallArgumentValues<void*>(proc, block);
+        Value* address = arguments[0];
+        std::array<Value*, numberOfInputs> inputs;
+        for (unsigned i = 0; i < numberOfInputs; ++i)
+            inputs[i] = block->appendNew<MemoryValue>(proc, Load, V128, Origin(), address, static_cast<int32_t>(i * sizeof(v128_t)));
+        auto dot = [&](unsigned a, unsigned b) -> Value* {
+            return block->appendNew<SIMDValue>(proc, Origin(), VectorDotProduct, B3::V128, SIMDLane::i32x4, SIMDSignMode::Signed, inputs[a], inputs[b]);
+        };
+        auto add = [&](Value* a, Value* b) -> Value* {
+            return block->appendNew<SIMDValue>(proc, Origin(), VectorAdd, B3::V128, SIMDLane::i32x4, SIMDSignMode::None, a, b);
+        };
+        auto multiply = [&](B3::Opcode half, SIMDSignMode signMode, unsigned a, unsigned b) -> Value* {
+            return block->appendNew<SIMDValue>(proc, Origin(), half, B3::V128, SIMDLane::i32x4, signMode, inputs[a], inputs[b]);
+        };
+        Value* result = buildTree(proc, block, address, inputs, dot, add, multiply);
+        block->appendNew<MemoryValue>(proc, Store, Origin(), result, address, static_cast<int32_t>(numberOfInputs * sizeof(v128_t)));
+        block->appendNew<Value>(proc, Return, Origin());
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            checkInstructionCount(*code, "smull", counts.smull);
+            checkInstructionCount(*code, "smull2", counts.smull2);
+            checkInstructionCount(*code, "smlal", counts.smlal);
+            checkInstructionCount(*code, "smlal2", counts.smlal2);
+            checkInstructionCount(*code, "addp", counts.addp);
+        }
+
+        auto run = [&](const Inputs& values) {
+            for (unsigned i = 0; i < numberOfInputs; ++i)
+                vectors[i] = values[i];
+            vectors[numberOfInputs] = v128_t { };
+            invoke<void>(*code, vectors);
+            CHECK(bitEquals(vectors[numberOfInputs], computeExpected(values)));
+        };
+
+        auto operands = v128Operands();
+        for (unsigned seed = 0; seed < operands.size(); ++seed) {
+            Inputs values;
+            for (unsigned i = 0; i < numberOfInputs; ++i)
+                values[i] = operands[(seed + i * 3) % operands.size()].value;
+            run(values);
+        }
+
+        // Each product of INT16_MIN with itself is 2^30, so lane sums wrap around in i32.
+        Inputs minimums;
+        minimums.fill(splatI16x8(0x8000));
+        run(minimums);
+        Inputs mixed;
+        for (unsigned i = 0; i < numberOfInputs; ++i)
+            mixed[i] = splatI16x8(i % 2 ? 0x7fff : 0x8000);
+        run(mixed);
+    };
+
+    // A dot product is SMULL + SMULL2 + ADDP on its own. Fused, the first one is SMULL + SMULL2, each
+    // further one is SMLAL + SMLAL2, and the sum is paired once with ADDP.
+
+    // ((((acc + dot) + dot) + dot) + dot), the shape of an unrolled quantized matmul loop.
+    test([](Procedure&, BasicBlock*&, Value*, auto& in, auto dot, auto add, auto) {
+        return add(add(add(add(in[0], dot(1, 2)), dot(3, 4)), dot(5, 6)), dot(7, 8));
+    }, [](const Inputs& v) {
+        v128_t sum = v[0];
+        sum = addI32x4(sum, dotProductI16x8(v[1], v[2]));
+        sum = addI32x4(sum, dotProductI16x8(v[3], v[4]));
+        sum = addI32x4(sum, dotProductI16x8(v[5], v[6]));
+        return addI32x4(sum, dotProductI16x8(v[7], v[8]));
+    }, { 1, 1, 3, 3, 1 });
+
+    // Dot products alone, with no other addend.
+    test([](Procedure&, BasicBlock*&, Value*, auto&, auto dot, auto add, auto) {
+        return add(dot(1, 2), dot(3, 4));
+    }, [](const Inputs& v) {
+        return addI32x4(dotProductI16x8(v[1], v[2]), dotProductI16x8(v[3], v[4]));
+    }, { 1, 1, 1, 1, 1 });
+
+    // Several non-dot-product addends spread through the tree.
+    test([](Procedure&, BasicBlock*&, Value*, auto& in, auto dot, auto add, auto) {
+        return add(add(in[0], dot(1, 2)), add(dot(3, 4), add(in[9], dot(5, 5))));
+    }, [](const Inputs& v) {
+        v128_t sum = addI32x4(v[0], dotProductI16x8(v[1], v[2]));
+        sum = addI32x4(sum, dotProductI16x8(v[3], v[4]));
+        sum = addI32x4(sum, v[9]);
+        return addI32x4(sum, dotProductI16x8(v[5], v[5]));
+    }, { 1, 1, 2, 2, 1 });
+
+    // A subtree with no dot products is left as it is.
+    test([](Procedure&, BasicBlock*&, Value*, auto& in, auto dot, auto add, auto) {
+        return add(add(dot(1, 2), dot(3, 4)), add(add(in[0], in[5]), add(in[6], in[9])));
+    }, [](const Inputs& v) {
+        v128_t sum = addI32x4(dotProductI16x8(v[1], v[2]), dotProductI16x8(v[3], v[4]));
+        return addI32x4(sum, addI32x4(addI32x4(v[0], v[5]), addI32x4(v[6], v[9])));
+    }, { 1, 1, 1, 1, 1 });
+
+    // A dot product with more than one use cannot be folded into the sum.
+    test([](Procedure&, BasicBlock*&, Value*, auto& in, auto dot, auto add, auto) {
+        Value* shared = dot(1, 2);
+        return add(add(add(add(in[0], shared), dot(3, 4)), dot(5, 6)), shared);
+    }, [](const Inputs& v) {
+        v128_t shared = dotProductI16x8(v[1], v[2]);
+        v128_t sum = addI32x4(addI32x4(v[0], shared), dotProductI16x8(v[3], v[4]));
+        sum = addI32x4(sum, dotProductI16x8(v[5], v[6]));
+        return addI32x4(sum, shared);
+    }, { 2, 2, 1, 1, 2 });
+
+    // An intermediate sum with another use stays materialized, and fuses its own dot products.
+    test([](Procedure&, BasicBlock*&, Value*, auto&, auto dot, auto add, auto) {
+        Value* partial = add(dot(1, 2), dot(3, 4));
+        return add(add(add(partial, dot(5, 6)), dot(7, 8)), partial);
+    }, [](const Inputs& v) {
+        v128_t partial = addI32x4(dotProductI16x8(v[1], v[2]), dotProductI16x8(v[3], v[4]));
+        v128_t sum = addI32x4(addI32x4(partial, dotProductI16x8(v[5], v[6])), dotProductI16x8(v[7], v[8]));
+        return addI32x4(sum, partial);
+    }, { 2, 2, 2, 2, 2 });
+
+    // Widening multiplies next to the dot products are accumulated onto the paired sum.
+    test([](Procedure&, BasicBlock*&, Value*, auto& in, auto dot, auto add, auto multiply) {
+        Value* dots = add(add(in[0], dot(1, 2)), dot(3, 4));
+        Value* multiplies = add(multiply(VectorMulLow, SIMDSignMode::Signed, 5, 6), multiply(VectorMulHigh, SIMDSignMode::Signed, 5, 6));
+        return add(dots, add(multiplies, multiply(VectorMulHigh, SIMDSignMode::Unsigned, 7, 9)));
+    }, [](const Inputs& v) {
+        v128_t sum = addI32x4(addI32x4(v[0], dotProductI16x8(v[1], v[2])), dotProductI16x8(v[3], v[4]));
+        sum = addI32x4(sum, extendedMultiplyI16x8(v[5], v[6], VectorMulLow, SIMDSignMode::Signed));
+        sum = addI32x4(sum, extendedMultiplyI16x8(v[5], v[6], VectorMulHigh, SIMDSignMode::Signed));
+        return addI32x4(sum, extendedMultiplyI16x8(v[7], v[9], VectorMulHigh, SIMDSignMode::Unsigned));
+    }, { 1, 1, 2, 2, 1 });
+
+    // With no other addend, the widening multiplies accumulate into the result itself.
+    test([](Procedure&, BasicBlock*&, Value*, auto&, auto dot, auto add, auto multiply) {
+        return add(add(dot(1, 2), dot(3, 4)), multiply(VectorMulLow, SIMDSignMode::Signed, 5, 6));
+    }, [](const Inputs& v) {
+        v128_t sum = addI32x4(dotProductI16x8(v[1], v[2]), dotProductI16x8(v[3], v[4]));
+        return addI32x4(sum, extendedMultiplyI16x8(v[5], v[6], VectorMulLow, SIMDSignMode::Signed));
+    }, { 1, 1, 2, 1, 1 });
+
+    // At most six dot products are fused, and the rest are computed on their own.
+    static constexpr std::array<std::pair<unsigned, unsigned>, 10> distinctPairs { {
+        { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 }, { 9, 1 }, { 2, 3 }, { 4, 5 }, { 6, 7 }, { 8, 9 }, { 1, 3 },
+    } };
+    test([](Procedure&, BasicBlock*&, Value*, auto& in, auto dot, auto add, auto) {
+        Value* sum = in[0];
+        for (auto [a, b] : distinctPairs)
+            sum = add(sum, dot(a, b));
+        return sum;
+    }, [](const Inputs& v) {
+        v128_t sum = v[0];
+        for (auto [a, b] : distinctPairs)
+            sum = addI32x4(sum, dotProductI16x8(v[a], v[b]));
+        return sum;
+    }, { 5, 5, 5, 5, 5 });
+
+    // A dot product computed in a dominating block already has a register and stays out of the fusion.
+    test([](Procedure& proc, BasicBlock*& block, Value* address, auto& in, auto dot, auto add, auto) {
+        Value* early = dot(1, 2);
+        BasicBlock* next = proc.addBlock();
+        BasicBlock* unreached = proc.addBlock();
+        unreached->appendNew<Value>(proc, Return, Origin());
+        block->appendNew<Value>(proc, Branch, Origin(), address);
+        block->setSuccessors(FrequentedBlock(next), FrequentedBlock(unreached));
+        block = next;
+        return add(add(add(in[0], early), dot(3, 4)), dot(5, 6));
+    }, [](const Inputs& v) {
+        v128_t sum = addI32x4(v[0], dotProductI16x8(v[1], v[2]));
+        sum = addI32x4(sum, dotProductI16x8(v[3], v[4]));
+        return addI32x4(sum, dotProductI16x8(v[5], v[6]));
+    }, { 2, 2, 1, 1, 2 });
+
+    // A loop-carried accumulator. The dot products read the loop counter so they cannot be hoisted out.
+    static constexpr unsigned iterations = 2;
+    test([](Procedure& proc, BasicBlock*& block, Value* address, auto& in, auto, auto add, auto) {
+        BasicBlock* loop = proc.addBlock();
+        BasicBlock* exit = proc.addBlock();
+        UpsilonValue* initialAccumulator = block->appendNew<UpsilonValue>(proc, Origin(), in[0]);
+        UpsilonValue* initialCounter = block->appendNew<UpsilonValue>(proc, Origin(), block->appendNew<Const32Value>(proc, Origin(), 0));
+        block->appendNew<Value>(proc, Jump, Origin());
+        block->setSuccessors(FrequentedBlock(loop));
+
+        block = loop;
+        Value* accumulator = loop->appendNew<Value>(proc, Phi, B3::V128, Origin());
+        Value* counter = loop->appendNew<Value>(proc, Phi, Int32, Origin());
+        initialAccumulator->setPhi(accumulator);
+        initialCounter->setPhi(counter);
+        Value* base = loop->appendNew<Value>(proc, B3::Add, Origin(), address,
+            loop->appendNew<Value>(proc, Mul, Origin(),
+                loop->appendNew<Value>(proc, ZExt32, Origin(), counter),
+                loop->appendNew<Const64Value>(proc, Origin(), sizeof(v128_t))));
+        auto dot = [&](unsigned a, unsigned b) -> Value* {
+            Value* left = loop->appendNew<MemoryValue>(proc, Load, V128, Origin(), base, static_cast<int32_t>(a * sizeof(v128_t)));
+            Value* right = loop->appendNew<MemoryValue>(proc, Load, V128, Origin(), base, static_cast<int32_t>(b * sizeof(v128_t)));
+            return loop->appendNew<SIMDValue>(proc, Origin(), VectorDotProduct, B3::V128, SIMDLane::i32x4, SIMDSignMode::Signed, left, right);
+        };
+        Value* sum = add(add(add(add(accumulator, dot(1, 2)), dot(3, 4)), dot(5, 6)), dot(7, 8));
+        Value* nextCounter = loop->appendNew<Value>(proc, B3::Add, Origin(), counter, loop->appendNew<Const32Value>(proc, Origin(), 1));
+        loop->appendNew<UpsilonValue>(proc, Origin(), sum, accumulator);
+        loop->appendNew<UpsilonValue>(proc, Origin(), nextCounter, counter);
+        loop->appendNew<Value>(proc, Branch, Origin(),
+            loop->appendNew<Value>(proc, LessThan, Origin(), nextCounter, loop->appendNew<Const32Value>(proc, Origin(), iterations)));
+        loop->setSuccessors(FrequentedBlock(loop), FrequentedBlock(exit));
+
+        block = exit;
+        return sum;
+    }, [](const Inputs& v) {
+        v128_t sum = v[0];
+        for (unsigned i = 0; i < iterations; ++i) {
+            sum = addI32x4(sum, dotProductI16x8(v[i + 1], v[i + 2]));
+            sum = addI32x4(sum, dotProductI16x8(v[i + 3], v[i + 4]));
+            sum = addI32x4(sum, dotProductI16x8(v[i + 5], v[i + 6]));
+            sum = addI32x4(sum, dotProductI16x8(v[i + 7], v[i + 8]));
+        }
+        return sum;
+    }, { 1, 1, 3, 3, 1 });
+}
+
 // Test EOR3 (3-way XOR) pattern matching: VectorXor(VectorXor(a, b), c) -> EOR3(a, b, c)
 void testVectorXor3()
 {

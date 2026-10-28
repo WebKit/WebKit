@@ -303,6 +303,29 @@ inline void checkDoesNotUseInstruction(Compilation& compilation, const char* tex
         toUTF8CString("Did not expected to find ", text, " but it's there!"));
 }
 
+// Counts whole mnemonics, so "smull" does not also count "smull2" and "addp" does not count "faddp".
+inline void checkInstructionCount(Compilation& compilation, const char* mnemonic, unsigned expected)
+{
+    checkDisassembly(
+        compilation,
+        [&](UTF8CStringView disassembly) -> bool {
+            auto span = byteCast<char>(disassembly.span());
+            std::string_view haystack { span.data(), span.size() };
+            std::string_view needle { mnemonic };
+            unsigned count = 0;
+            for (size_t position = haystack.find(needle); position != std::string_view::npos; position = haystack.find(needle, position + 1)) {
+                size_t end = position + needle.size();
+                if (position && isASCIIAlphanumeric(haystack[position - 1]))
+                    continue;
+                if (end < haystack.size() && isASCIIAlphanumeric(haystack[end]))
+                    continue;
+                ++count;
+            }
+            return count == expected;
+        },
+        toUTF8CString("Expected ", expected, " occurrences of ", mnemonic));
+}
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 template<typename Type>
@@ -1572,6 +1595,7 @@ void testVectorXorRotateRight64ShiftKindAndAmount();
 void testVectorXor3();
 void testVectorDotProductSplatOne();
 void testVectorReplaceLaneOfZeroWithLoad();
+void testVectorDotProductSum();
 void testVectorShrZipToExtend();
 void testVectorShrZipToExtendI32();
 void testVectorShrZipToExtendI64();
