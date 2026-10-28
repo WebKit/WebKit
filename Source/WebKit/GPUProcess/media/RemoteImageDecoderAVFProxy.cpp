@@ -129,7 +129,9 @@ void RemoteImageDecoderAVFProxy::setData(ImageDecoderIdentifier identifier, cons
     }
 
     RefPtr imageDecoder = m_imageDecoders.get(identifier);
-    imageDecoder->setData(data.isNull() ? SharedBuffer::create() : data.unsafeBuffer().releaseNonNull(), allDataReceived);
+    imageDecoder->setData(
+        data.isNull() ? SharedBuffer::create() : SharedBuffer::create(data.span()),
+        allDataReceived);
 
     auto frameCount = imageDecoder->frameCount();
 
