@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "MediaPlayerPrivateGStreamer.h"
+#include "WebKitWebSourceGStreamer.h"
 #include "TrackPrivateBaseGStreamer.h"
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
@@ -362,6 +363,7 @@ void MediaPlayerPrivateGStreamer::load(const String& urlString)
         loadingFailed(MediaPlayer::NetworkState::FormatError, MediaPlayer::ReadyState::HaveNothing, true);
         return;
     }
+    webKitWebSrcRefreshUriProtocols();
 
     RefPtr player = m_player.get();
     if (!player) {

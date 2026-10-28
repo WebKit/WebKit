@@ -88,6 +88,7 @@ public:
 
     WEBCORE_EXPORT static void registerURLSchemeAsHandledBySchemeHandler(const String&);
     WEBCORE_EXPORT static bool schemeIsHandledBySchemeHandler(StringView);
+    WEBCORE_EXPORT static Vector<String> allURLSchemesRegisteredAsHandledBySchemeHandler();
 
     // Allow resources from some schemes to load on a page, regardless of its
     // Content Security Policy.
