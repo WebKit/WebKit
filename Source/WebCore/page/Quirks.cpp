@@ -101,6 +101,8 @@
 #include <JavaScriptCore/StackVisitor.h>
 #include <array>
 #include <ranges>
+#include <wtf/IndexedRange.h>
+#include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -124,9 +126,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Quirks);
 static QuirksData resolveSiteSpecificQuirks(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument documentIsTopDocument)
 {
     QuirksData quirksData;
-    for (auto& quirk : quirkTable().quirks) {
+    for (auto [row, quirk] : WTF::indexedRange(quirkTable().quirks)) {
         if (quirk.appliesTo(topContext, documentContext, documentIsTopDocument))
-            quirk.apply(quirksData);
+            quirk.apply(quirksData, row);
     }
     return quirksData;
 }
@@ -1317,6 +1319,16 @@ void Quirks::determineRelevantQuirks()
     m_quirksData = { };
     m_probedQuirks = { };
 
+    if (m_overridesTableGeneration != quirkTableGeneration()) {
+        m_overrides.parameterOverrides.clear();
+        m_overridesTableGeneration = quirkTableGeneration();
+    }
+
+    m_quirksData.applyDisabledBehaviors(m_overrides);
+    auto applyEnabledBehaviorsAndParameterOverrides = makeScopeExit([&] {
+        m_quirksData.applyEnabledBehaviorsAndParameterOverrides(m_overrides);
+    });
+
 #if PLATFORM(IOS_FAMILY)
     static const bool shouldDisableLazyIframeLoadingQuirk = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoUNIQLOLazyIframeLoadingQuirk) && WTF::IOSApplication::isUNIQLOApp();
     static const bool needsResettingTransitionCancelsRunningTransitionQuirk = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ResettingTransitionCancelsRunningTransitionQuirk) && WTF::IOSApplication::isDOFUSTouch();
@@ -1357,6 +1369,31 @@ void Quirks::determineRelevantQuirks()
     if (PAL::currentUserInterfaceIdiomIsSmallScreen())
         m_quirksData.setEnabled(QuirkBehaviorID::ShouldDisableElementFullscreenQuirk, document->safeAreaInsetOptIn() == Document::SafeAreaInsetOptIn::NotOptedIn);
 #endif
+}
+
+void Quirks::setOverrides(QuirkOverrides&& overrides)
+{
+    overrides.parameterOverrides.removeAllMatching([](const auto& parameterOverride) {
+        return !isValidQuirkBehaviorSource(parameterOverride.targetSource);
+    });
+
+    if (m_overrides == overrides && m_overridesTableGeneration == quirkTableGeneration())
+        return;
+
+    m_overrides = WTF::move(overrides);
+    m_overridesTableGeneration = quirkTableGeneration();
+    determineRelevantQuirks();
+    protect(m_document)->scheduleFullStyleRebuild();
+}
+
+Vector<QuirkParameterOverride> Quirks::dormantParameterOverrides() const
+{
+    Vector<QuirkParameterOverride> dormant;
+    for (auto& parameterOverride : m_overrides.parameterOverrides) {
+        if (!m_quirksData.hasBehaviorFrom(parameterOverride.targetSource))
+            dormant.append(parameterOverride);
+    }
+    return dormant;
 }
 
 void Quirks::urlsDidChange()

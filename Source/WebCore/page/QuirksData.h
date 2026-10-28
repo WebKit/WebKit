@@ -28,12 +28,73 @@
 #include <WebCore/QuirkBehaviors.h>
 #include <WebCore/QuirkMatchPattern.h>
 #include <algorithm>
+#include <optional>
 #include <span>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+// Indices into the current quirk table: valid for the table that produced them, so never persist them
+// without a table version or content hash.
+struct QuirkTablePosition {
+    size_t row;
+    size_t behavior;
+
+    friend bool operator==(const QuirkTablePosition&, const QuirkTablePosition&) = default;
+};
+
+struct QuirkPlatformSource {
+    QuirkBehaviorID id;
+
+    friend bool operator==(const QuirkPlatformSource&, const QuirkPlatformSource&) = default;
+};
+
+using QuirkBehaviorSource = Variant<QuirkTablePosition, QuirkPlatformSource>;
+
+struct QuirkParameterOverride {
+    QuirkBehaviorSource targetSource;
+
+    std::optional<String> script { };
+    std::optional<String> userAgent { };
+    std::optional<String> chromeCompatibilityVersion { };
+    std::optional<Vector<String>> cookieNames { };
+
+    friend bool operator==(const QuirkParameterOverride&, const QuirkParameterOverride&) = default;
+};
+
+struct QuirkOverrides {
+    QuirkBitSet disabledBehaviors;
+    Vector<QuirkBehavior> enabledBehaviors;
+    Vector<QuirkParameterOverride> parameterOverrides;
+
+    bool isEmpty() const { return disabledBehaviors.isEmpty() && enabledBehaviors.isEmpty() && parameterOverrides.isEmpty(); }
+
+    void upsertParameterOverride(QuirkParameterOverride&& edit)
+    {
+        for (auto& existing : parameterOverrides) {
+            if (existing.targetSource == edit.targetSource) {
+                existing = WTF::move(edit);
+                return;
+            }
+        }
+        parameterOverrides.append(WTF::move(edit));
+    }
+
+    friend bool operator==(const QuirkOverrides&, const QuirkOverrides&) = default;
+};
+
+struct ActiveQuirkBehavior : QuirkBehavior {
+    Vector<QuirkBehaviorSource, 1> sources;
+
+    void addSource(const QuirkBehaviorSource& source)
+    {
+        if (!sources.contains(source))
+            sources.append(source);
+    }
+};
 
 class QuirksData {
 public:
@@ -52,7 +113,7 @@ public:
         return m_behaviorFlags == other.m_behaviorFlags;
     }
 
-    inline const Vector<QuirkBehavior>& behaviors() const LIFETIME_BOUND
+    inline const Vector<ActiveQuirkBehavior>& behaviors() const LIFETIME_BOUND
     {
         return m_behaviors;
     }
@@ -77,19 +138,56 @@ public:
         });
     }
 
+    inline bool hasBehaviorFrom(const QuirkBehaviorSource& source) const
+    {
+        return std::ranges::any_of(m_behaviors, [&](const auto& behavior) {
+            return behavior.sources.contains(source);
+        });
+    }
+
+    inline void applyDisabledBehaviors(const QuirkOverrides& overrides)
+    {
+        m_maskedFlags.merge(overrides.disabledBehaviors);
+        overrides.disabledBehaviors.forEachSetBit([&](size_t index) {
+            removeBehaviorsMatching(static_cast<QuirkBehaviorID>(index));
+        });
+    }
+
+    inline void applyEnabledBehaviorsAndParameterOverrides(const QuirkOverrides& overrides)
+    {
+        for (auto& behavior : overrides.enabledBehaviors)
+            addBehavior(behavior);
+
+        for (auto& parameterOverride : overrides.parameterOverrides) {
+            for (auto& behavior : m_behaviors) {
+                if (!behavior.sources.contains(parameterOverride.targetSource))
+                    continue;
+                if (parameterOverride.script)
+                    behavior.script = *parameterOverride.script;
+                if (parameterOverride.userAgent)
+                    behavior.userAgent = *parameterOverride.userAgent;
+                if (parameterOverride.chromeCompatibilityVersion)
+                    behavior.chromeCompatibilityVersion = *parameterOverride.chromeCompatibilityVersion;
+                if (parameterOverride.cookieNames)
+                    behavior.cookieNames = *parameterOverride.cookieNames;
+            }
+        }
+    }
+
     inline void setEnabled(QuirkBehaviorID id, bool state)
     {
         if (state)
-            addBehavior(QuirkBehavior { .id = id });
+            addBehavior(QuirkBehavior { .id = id }, QuirkPlatformSource { id });
         else
             removeBehaviorsMatching(id);
     }
 
-    inline void addBehavior(const QuirkBehavior& behavior)
+    inline void addBehavior(const QuirkBehavior& behavior, std::optional<QuirkBehaviorSource> source = std::nullopt)
     {
-        m_behaviorFlags.set(static_cast<size_t>(behavior.id), true);
-        if (!m_behaviors.contains(behavior))
-            m_behaviors.append(behavior);
+        ActiveQuirkBehavior active { behavior, { } };
+        if (source)
+            active.addSource(*source);
+        addActiveBehavior(WTF::move(active));
     }
 
     inline void removeBehaviorsMatching(QuirkBehaviorID id)
@@ -101,12 +199,31 @@ public:
     void merge(const QuirksData& other)
     {
         for (auto& behavior : other.m_behaviors)
-            addBehavior(behavior);
+            addActiveBehavior(behavior);
     }
 
 private:
     QuirkBitSet m_behaviorFlags;
-    Vector<QuirkBehavior> m_behaviors;
+    QuirkBitSet m_maskedFlags;
+    Vector<ActiveQuirkBehavior> m_behaviors;
+
+    // An equal behavior that is already present gains the sources instead of being added twice.
+    inline void addActiveBehavior(const ActiveQuirkBehavior& incoming)
+    {
+        if (m_maskedFlags.get(static_cast<size_t>(incoming.id)))
+            return;
+        m_behaviorFlags.set(static_cast<size_t>(incoming.id), true);
+
+        auto existing = std::ranges::find_if(m_behaviors, [&](const auto& behavior) {
+            return static_cast<const QuirkBehavior&>(behavior) == static_cast<const QuirkBehavior&>(incoming);
+        });
+        if (existing == m_behaviors.end()) {
+            m_behaviors.append(incoming);
+            return;
+        }
+        for (auto& source : incoming.sources)
+            existing->addSource(source);
+    }
 };
 
 } // namespace WebCore

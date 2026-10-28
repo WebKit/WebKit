@@ -66,10 +66,10 @@ bool Quirk::appliesTo(const URLMatchContext& topContext, const URLMatchContext& 
     return !environment || evaluateURLEnvironment(*environment);
 }
 
-void Quirk::apply(QuirksData& quirksData) const
+void Quirk::apply(QuirksData& quirksData, size_t rowIndexInTable) const
 {
-    for (auto& behavior : behaviors)
-        quirksData.addBehavior(behavior);
+    for (auto [index, behavior] : WTF::indexedRange(behaviors))
+        quirksData.addBehavior(behavior, QuirkTablePosition { rowIndexInTable, index });
 }
 
 static constexpr std::array rowFields { "bugs"_s, "comment"_s, "matches"_s, "embeddedMatches"_s, "excludeMatches"_s, "queryContains"_s, "fragmentContains"_s, "environment"_s, "available"_s, "behaviors"_s };
@@ -108,6 +108,11 @@ static std::optional<Enum> enumeratorFromName(StringView name)
     if (entry == names.end())
         return std::nullopt;
     return static_cast<Enum>(WTF::enumNamesMin<Enum>() + std::distance(names.begin(), entry));
+}
+
+std::optional<QuirkBehaviorID> quirkBehaviorIDFromName(StringView name)
+{
+    return enumeratorFromName<QuirkBehaviorID>(name);
 }
 
 static bool isBugReference(StringView bug)
@@ -641,7 +646,10 @@ public:
     void install(QuirkTable&& table)
     {
         m_table = WTF::move(table);
+        ++m_generation;
     }
+
+    uint64_t generation() const { return m_generation; }
 
 private:
     friend class WTF::NeverDestroyed<QuirkTableHolder, WTF::MainThreadAccessTraits>;
@@ -649,6 +657,7 @@ private:
     QuirkTableHolder() = default;
 
     std::optional<QuirkTable> m_table;
+    uint64_t m_generation { 0 };
 };
 
 void setQuirkTable(QuirkTable&& table)
@@ -659,6 +668,23 @@ void setQuirkTable(QuirkTable&& table)
 const QuirkTable& quirkTable()
 {
     return QuirkTableHolder::singleton().table();
+}
+
+uint64_t quirkTableGeneration()
+{
+    return QuirkTableHolder::singleton().generation();
+}
+
+bool isValidQuirkBehaviorSource(const QuirkBehaviorSource& source)
+{
+    return WTF::switchOn(source,
+        [](const QuirkTablePosition& tableSource) {
+            auto& quirks = quirkTable().quirks;
+            return tableSource.row < quirks.size() && tableSource.behavior < quirks[tableSource.row].behaviors.size();
+        },
+        [](const QuirkPlatformSource& platformSource) {
+            return static_cast<size_t>(platformSource.id) < static_cast<size_t>(QuirkBehaviorID::NumberOfIDs);
+        });
 }
 
 } // namespace WebCore

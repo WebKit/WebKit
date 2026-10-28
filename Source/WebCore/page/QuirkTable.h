@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+WEBCORE_EXPORT std::optional<QuirkBehaviorID> quirkBehaviorIDFromName(StringView);
+
 struct Quirk {
     Vector<QuirkMatchPattern> matches;
     Vector<QuirkMatchPattern> embeddedMatches;
@@ -45,7 +47,7 @@ struct Quirk {
     Vector<QuirkBehavior> behaviors;
 
     WEBCORE_EXPORT bool appliesTo(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument) const;
-    void apply(QuirksData&) const;
+    void apply(QuirksData&, size_t rowIndexInTable) const;
 
     friend bool operator==(const Quirk&, const Quirk&) = default;
 };
@@ -103,5 +105,9 @@ WEBCORE_EXPORT String loadQuirkTableJSON();
 WEBCORE_EXPORT const QuirkTable& quirkTable();
 
 WEBCORE_EXPORT void setQuirkTable(QuirkTable&&);
+
+WEBCORE_EXPORT uint64_t quirkTableGeneration();
+
+WEBCORE_EXPORT bool isValidQuirkBehaviorSource(const QuirkBehaviorSource&);
 
 } // namespace WebCore

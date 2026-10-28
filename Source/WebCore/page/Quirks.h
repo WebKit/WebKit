@@ -189,6 +189,11 @@ public:
 
     void clearLogoutSurvivingIdentityCookiesIfNeeded(const URL& fetchURL, int httpStatusCode);
 
+    const Vector<ActiveQuirkBehavior>& activeBehaviors() const LIFETIME_BOUND { return m_quirksData.behaviors(); }
+    const QuirkOverrides& overrides() const LIFETIME_BOUND { return m_overrides; }
+    WEBCORE_EXPORT Vector<QuirkParameterOverride> dormantParameterOverrides() const;
+    WEBCORE_EXPORT void setOverrides(QuirkOverrides&&);
+
     void determineRelevantQuirks();
     void urlsDidChange();
     void logQuirksToConsoleIfNecessary() const;
@@ -200,6 +205,8 @@ private:
     mutable WeakPtr<const Element, WeakPtrImplWithEventTargetData> m_facebookStoriesCreationFormContainer;
 
     mutable QuirkBitSet m_probedQuirks;
+    QuirkOverrides m_overrides;
+    uint64_t m_overridesTableGeneration { 0 };
 
     template<typename Probe>
     bool isBehaviorEnabledAfterProbing(QuirkBehaviorID id, NOESCAPE const Probe& probe) const
