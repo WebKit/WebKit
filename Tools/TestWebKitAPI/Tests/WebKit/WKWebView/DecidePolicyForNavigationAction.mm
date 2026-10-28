@@ -27,7 +27,6 @@
 
 #if PLATFORM(MAC)
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/PlatformWebView.h"
@@ -61,7 +60,10 @@ static NSString *thirdURL = @"data:text/html,Third";
 @interface DecidePolicyForNavigationActionController : NSObject <WKNavigationDelegate, WKUIDelegate>
 @end
 
-@implementation DecidePolicyForNavigationActionController
+@implementation DecidePolicyForNavigationActionController {
+@package
+    bool _didCreateWebView;
+}
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
@@ -99,7 +101,7 @@ static NSString *thirdURL = @"data:text/html,Third";
     action = navigationAction;
     newWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
 
-    didCreateWebView = true;
+    _didCreateWebView = true;
     return newWebView.get();
 }
 
@@ -287,6 +289,7 @@ TEST(WebKit, DecidePolicyForNavigationActionCancelAfterDiscardingForwardItems)
     TestWebKitAPI::Util::run(&decidedPolicy);
     [webView waitForNextPresentationUpdate];
     [[webView backForwardList] currentItem];
+    shouldCancelNavigation = false;
 
     newWebView = nullptr;
     action = nullptr;
@@ -315,6 +318,7 @@ TEST(WebKit, DecidePolicyForNavigationActionCancelAfterDiscardingForwardItemsWit
     TestWebKitAPI::Util::run(&decidedPolicy);
     [webView waitForNextPresentationUpdate];
     [[webView backForwardList] currentItem];
+    shouldCancelNavigation = false;
 
     newWebView = nullptr;
     action = nullptr;
@@ -344,6 +348,7 @@ TEST(WebKit, DecidePolicyForNavigationActionCancelAfterDiscardingForwardItemsWit
     TestWebKitAPI::Util::run(&decidedPolicy);
     [webView waitForNextPresentationUpdate];
     [[webView backForwardList] currentItem];
+    shouldCancelNavigation = false;
 
     newWebView = nullptr;
     action = nullptr;
@@ -362,9 +367,8 @@ TEST(WebKit, DecidePolicyForNavigationActionOpenNewWindowAndDeallocSourceWebView
         [webView setNavigationDelegate:controller.get()];
         [webView setUIDelegate:controller.get()];
 
-        didCreateWebView = false;
         [webView loadHTMLString:@"<script>window.open('http://webkit.org/destination.html')</script>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-        TestWebKitAPI::Util::run(&didCreateWebView);
+        TestWebKitAPI::Util::run(&controller->_didCreateWebView);
     }
 
     decidedPolicy = false;
@@ -397,6 +401,7 @@ TEST(WebKit, DecidePolicyForNewWindowAction)
     };
     WKPageSetPagePolicyClient(webView.page(), &policyClient.base);
 
+    decidedPolicy = false;
     WKPageLoadHTMLString(webView.page(), adoptWK(WKStringCreateWithUTF8CString("<body onload='anchorTag.click()'><a href='https://webkit.org/' id='anchorTag' target=_blank>link</a></body>")).get(), nullptr);
 
     TestWebKitAPI::Util::run(&decidedPolicy);
@@ -418,9 +423,8 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedHyperlink)
     [webView loadHTMLString:@"<a style=\"display: block; height: 100%\" href=\"https://webkit.org/destination2.html\" target=\"B\">" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
     TestWebKitAPI::Util::run(&decidePolicyFinishedNavigation);
 
-    didCreateWebView = false;
     [webView evaluateJavaScript:@"window.open(\"https://webkit.org/destination1.html\", \"B\")" completionHandler:nil];
-    TestWebKitAPI::Util::run(&didCreateWebView);
+    TestWebKitAPI::Util::run(&controller->_didCreateWebView);
 
     EXPECT_EQ(WKNavigationTypeOther, [action navigationType]);
     EXPECT_TRUE([action sourceFrame] != [action targetFrame]);
@@ -512,9 +516,8 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedWindowOpen)
     [webView loadHTMLString:@"<a style=\"display: block; height: 100%\" href=\"javascript:window.open('https://webkit.org/destination2.html', 'B')\">" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
     TestWebKitAPI::Util::run(&decidePolicyFinishedNavigation);
 
-    didCreateWebView = false;
     [webView evaluateJavaScript:@"window.open(\"https://webkit.org/destination1.html\", \"B\")" completionHandler:nil];
-    TestWebKitAPI::Util::run(&didCreateWebView);
+    TestWebKitAPI::Util::run(&controller->_didCreateWebView);
 
     EXPECT_EQ(WKNavigationTypeOther, [action navigationType]);
     EXPECT_TRUE([action sourceFrame] != [action targetFrame]);
@@ -563,9 +566,8 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedFormSubmission)
     [webView loadHTMLString:@"<form action=\"https://webkit.org/destination1.html\" target=\"B\"><input type=\"submit\" name=\"submit\" value=\"Submit\" style=\"-webkit-appearance: none; height: 100%; width: 100%\"></form>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
     TestWebKitAPI::Util::run(&decidePolicyFinishedNavigation);
 
-    didCreateWebView = false;
     [webView evaluateJavaScript:@"window.open(\"https://webkit.org/destination2.html\", \"B\")" completionHandler:nil];
-    TestWebKitAPI::Util::run(&didCreateWebView);
+    TestWebKitAPI::Util::run(&controller->_didCreateWebView);
 
     EXPECT_EQ(WKNavigationTypeOther, [action navigationType]);
     EXPECT_TRUE([action sourceFrame] != [action targetFrame]);
@@ -835,6 +837,7 @@ TEST(WebKit, DecidePolicyForNavigationActionForPOSTFormSubmissionThatRedirectsTo
 TEST(WebKit, DelayDecidePolicyForNavigationAction)
 {
     shouldDelayDecision = true;
+    decidedPolicy = false;
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     RetainPtr controller = adoptNS([[DecidePolicyForNavigationActionController alloc] init]);
@@ -849,26 +852,29 @@ TEST(WebKit, DelayDecidePolicyForNavigationAction)
 
     shouldDelayDecision = false;
     delayedDecision(WKNavigationActionPolicyCancel);
+    delayedDecision = nullptr;
 }
-
-static size_t calls;
 
 @interface DecidePolicyForNavigationActionFragmentDelegate : NSObject <WKNavigationDelegate>
 @end
 
-@implementation DecidePolicyForNavigationActionFragmentDelegate
+@implementation DecidePolicyForNavigationActionFragmentDelegate {
+    size_t _calls;
+@package
+    bool _done;
+}
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
     decisionHandler(WKNavigationActionPolicyAllow);
     const char* url = navigationAction.request.URL.absoluteString.UTF8String;
-    switch (calls++) {
+    switch (_calls++) {
     case 0:
         EXPECT_STREQ(url, "http://webkit.org/");
         return;
     case 1:
         EXPECT_STREQ(url, "http://webkit.org/#fragment");
-        done = true;
+        _done = true;
         return;
     }
     ASSERT_NOT_REACHED();
@@ -882,7 +888,7 @@ TEST(WebKit, DecidePolicyForNavigationActionFragment)
     RetainPtr delegate = adoptNS([[DecidePolicyForNavigationActionFragmentDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
     [webView loadHTMLString:@"<script>window.location.href='#fragment';</script>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&delegate->_done);
 }
 
 TEST(WebKit, NavigationActionFrames)
