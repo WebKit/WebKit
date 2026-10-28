@@ -239,11 +239,19 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
         }
 
         gst_bin_add(GST_BIN_CAST(harnessedElement.get()), parserElement);
-        gst_element_link(parserElement, element.get());
+        if (!gst_element_link(parserElement, element.get())) {
+            GST_WARNING_OBJECT(element.get(), "Unable to link parser to decoder");
+            m_inputCaps.clear();
+            return;
+        }
         head = parserElement;
     }
 
-    gst_element_link_many(head.get(), audioconvert, outputCapsFilter, nullptr);
+    if (!gst_element_link_many(element.get(), audioconvert, outputCapsFilter, nullptr)) {
+        GST_WARNING_OBJECT(element.get(), "Unable to link %" GST_PTR_FORMAT " to audioconvert", head.get());
+        m_inputCaps.clear();
+        return;
+    }
 
     GRefPtr pad = adoptGRef(gst_element_get_static_pad(head.get(), "sink"));
     gst_element_add_pad(harnessedElement.get(), gst_ghost_pad_new("sink", pad.get()));
