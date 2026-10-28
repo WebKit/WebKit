@@ -267,6 +267,27 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #undef STRINGIFY_CIPHER
 }
 
+static bool isProxyTypeTCPOnly(nw_proxy_config_t proxyConfig)
+{
+    auto* getType = nw_proxy_config_get_type();
+    if (!getType)
+        return false;
+
+    switch (getType(proxyConfig)) {
+    case nw_proxy_type_http:
+    case nw_proxy_type_https:
+    case nw_proxy_type_socksv4:
+    case nw_proxy_type_socksv5:
+    case nw_proxy_type_shoes:
+    case nw_proxy_type_http_connect:
+    case nw_proxy_type_https_transparent:
+    case nw_proxy_type_http_connect_over_tls:
+        return true;
+    default:
+        return false;
+    }
+}
+
 @interface WKNetworkSessionDelegate : NSObject <NSURLSessionDataDelegate, NSURLSessionWebSocketDelegate> {
     WeakPtr<WebKit::NetworkSessionCocoa> _session;
     WeakPtr<WebKit::SessionWrapper> _sessionWrapper;
@@ -2113,6 +2134,26 @@ void NetworkSessionCocoa::applyProxyConfigurationToSessionConfiguration(NSURLSes
         configuration.proxyConfigurations = nwProxyConfigurations.get();
     } else
         configuration.proxyConfigurations = @[ ];
+}
+
+bool NetworkSessionCocoa::proxyConfigurationRequiresTCPProtocols() const
+{
+    if (m_nwProxyConfigs.isEmpty())
+        return false;
+    return std::ranges::all_of(m_nwProxyConfigs, [](auto& proxyConfig) {
+        return isProxyTypeTCPOnly(proxyConfig.get());
+    });
+}
+
+void NetworkSessionCocoa::applyProxyConfigurationToNWParametersForWebTransport(nw_parameters_t parameters)
+{
+    if (!m_nwProxyConfigs.isEmpty()) {
+        for (auto& proxyConfig : m_nwProxyConfigs) {
+            if (!isProxyTypeTCPOnly(proxyConfig.get()))
+                nw_parameters_add_custom_proxy_config(parameters, proxyConfig.get());
+        }
+    } else
+        nw_parameters_clear_custom_proxy_configs(parameters);
 }
 
 bool NetworkSessionCocoa::canPrefetchDNS() const
