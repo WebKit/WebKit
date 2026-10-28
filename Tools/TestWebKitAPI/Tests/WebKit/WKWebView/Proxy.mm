@@ -752,12 +752,6 @@ TEST(WebKit, SecureProxyConnection)
 
 TEST(WebKit, RelaxThirdPartyCookieBlocking)
 {
-    __block bool setDefaultCookieAcceptPolicy = false;
-    [[WKWebsiteDataStore defaultDataStore].httpCookieStore _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain completionHandler:^{
-        setDefaultCookieAcceptPolicy = true;
-    }];
-    Util::run(&setDefaultCookieAcceptPolicy);
-
     auto runTest = [] (bool shouldRelaxThirdPartyCookieBlocking) {
         HTTPServer server([connectionCount = 0, shouldRelaxThirdPartyCookieBlocking] (Connection connection) mutable {
             ++connectionCount;
@@ -827,6 +821,11 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
         [storeConfiguration setAllowsServerPreconnect:NO];
         RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
         [dataStore _setResourceLoadStatisticsEnabled:YES];
+        __block bool setCookieAcceptPolicy = false;
+        [[dataStore httpCookieStore] _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain completionHandler:^{
+            setCookieAcceptPolicy = true;
+        }];
+        Util::run(&setCookieAcceptPolicy);
         RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
         [viewConfiguration _setShouldRelaxThirdPartyCookieBlocking:shouldRelaxThirdPartyCookieBlocking];
         [viewConfiguration setWebsiteDataStore:dataStore.get()];
