@@ -100,6 +100,7 @@
 #include "WebsiteDataStoreParameters.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <WebCore/GamepadProvider.h>
+#include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformMediaSessionManager.h>
@@ -1877,6 +1878,7 @@ void WebProcessPool::registerURLSchemeAsEmptyDocument(const String& urlScheme)
 
 void WebProcessPool::registerURLSchemeAsSecure(const String& urlScheme)
 {
+    WebCore::LegacySchemeRegistry::registerURLSchemeAsSecure(urlScheme);
     LegacyGlobalSettings::singleton().registerURLSchemeAsSecure(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsSecure(urlScheme));
     for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
@@ -1899,6 +1901,7 @@ void WebProcessPool::setDomainRelaxationForbiddenForURLScheme(const String& urlS
 
 void WebProcessPool::registerURLSchemeAsLocal(const String& urlScheme)
 {
+    WebCore::LegacySchemeRegistry::registerURLSchemeAsLocal(urlScheme);
     LegacyGlobalSettings::singleton().registerURLSchemeAsLocal(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsLocal(urlScheme));
     for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
