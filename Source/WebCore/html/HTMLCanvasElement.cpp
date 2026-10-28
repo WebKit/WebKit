@@ -529,7 +529,12 @@ WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(WebGLVersion ty
 
     // TODO(WEBXR): ensure the context is created in a compatible graphics
     // adapter when there is an active immersive device.
-    m_context = WebGLRenderingContextBase::create(*this, attrs, type);
+    auto context = WebGLRenderingContextBase::create(*this, attrs, type);
+    // Note: due to re-entrancy, m_context may have been assigned in the error case.
+    if (!context)
+        return nullptr;
+    ASSERT(!m_context);
+    m_context = WTF::move(context);
     if (m_context) {
         // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
         invalidateStyleAndLayerComposition();
