@@ -153,22 +153,22 @@ ImageDrawResult Image::drawTiledUsingImpl(GraphicsContext& ctxt, NaturalDimensio
     return drawPattern(ctxt, concreteObjectSize, destRect, tileRect, patternTransform, oneTileRect.location(), spacing);
 }
 
-ImageDrawResult Image::drawTiledUsingImpl(GraphicsContext& ctxt, const ScopedLambda<TiledDrawPattern>& drawPattern, ConcreteObjectSize concreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, WebCore::Image::TileRule hRule, WebCore::Image::TileRule vRule)
+ImageDrawResult Image::drawTiledUsingImpl(GraphicsContext& ctxt, const ScopedLambda<TiledDrawPattern>& drawPattern, ConcreteObjectSize concreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, NinePieceImageRule horizontalRule, NinePieceImageRule verticalRule)
 {
     FloatSize tileScale = tileScaleFactor;
     FloatSize spacing;
 
     bool centerOnGapHorizonally = false;
     bool centerOnGapVertically = false;
-    switch (hRule) {
-    case WebCore::Image::RoundTile: {
+    switch (horizontalRule) {
+    case NinePieceImageRule::Round: {
         // https://drafts.csswg.org/css-backgrounds/#border-image-process
         float scaledSourceWidth = srcRect.width() * tileScale.width();
         int numItems = std::max<int>(roundf(dstRect.width() / scaledSourceWidth), 1);
         tileScale.setWidth(dstRect.width() / (srcRect.width() * numItems));
         break;
     }
-    case WebCore::Image::SpaceTile: {
+    case NinePieceImageRule::Space: {
         float scaledSourceWidth = srcRect.width() * tileScale.width();
         int numItems = floorf(dstRect.width() / scaledSourceWidth);
         if (!numItems)
@@ -177,20 +177,20 @@ ImageDrawResult Image::drawTiledUsingImpl(GraphicsContext& ctxt, const ScopedLam
         centerOnGapHorizonally = !(numItems & 1);
         break;
     }
-    case WebCore::Image::StretchTile:
-    case WebCore::Image::RepeatTile:
+    case NinePieceImageRule::Stretch:
+    case NinePieceImageRule::Repeat:
         break;
     }
 
-    switch (vRule) {
-    case WebCore::Image::RoundTile: {
+    switch (verticalRule) {
+    case NinePieceImageRule::Round: {
         // https://drafts.csswg.org/css-backgrounds/#border-image-process
         float scaledSourceHeight = srcRect.height() * tileScale.height();
         int numItems = std::max<int>(roundf(dstRect.height() / scaledSourceHeight), 1);
         tileScale.setHeight(dstRect.height() / (srcRect.height() * numItems));
         break;
     }
-    case WebCore::Image::SpaceTile: {
+    case NinePieceImageRule::Space: {
         float scaledSourceHeight = srcRect.height() * tileScale.height();
         int numItems = floorf(dstRect.height() / scaledSourceHeight);
         if (!numItems)
@@ -199,8 +199,8 @@ ImageDrawResult Image::drawTiledUsingImpl(GraphicsContext& ctxt, const ScopedLam
         centerOnGapVertically = !(numItems & 1);
         break;
     }
-    case WebCore::Image::StretchTile:
-    case WebCore::Image::RepeatTile:
+    case NinePieceImageRule::Stretch:
+    case NinePieceImageRule::Repeat:
         break;
     }
 
@@ -215,12 +215,12 @@ ImageDrawResult Image::drawTiledUsingImpl(GraphicsContext& ctxt, const ScopedLam
 
     if (centerOnGapHorizonally)
         hPhase -= spacing.width();
-    else if (hRule == WebCore::Image::RepeatTile || hRule == WebCore::Image::SpaceTile)
+    else if (horizontalRule == NinePieceImageRule::Repeat || horizontalRule == NinePieceImageRule::Space)
         hPhase -= (dstRect.width() - scaledTileWidth) / 2;
 
     if (centerOnGapVertically)
         vPhase -= spacing.height();
-    else if (vRule == WebCore::Image::RepeatTile || vRule == WebCore::Image::SpaceTile)
+    else if (verticalRule == NinePieceImageRule::Repeat || verticalRule == NinePieceImageRule::Space)
         vPhase -= (dstRect.height() - scaledTileHeight) / 2;
 
     FloatPoint patternPhase(dstRect.x() - hPhase, dstRect.y() - vPhase);
@@ -246,20 +246,20 @@ ImageDrawResult Image::drawNinePieceUsingImpl(GraphicsContext& context, const Sc
             continue;
         }
 
-        auto hRule = isHorizontalPiece(piece)
-            ? static_cast<WebCore::Image::TileRule>(geometry.horizontalRule)
-            : WebCore::Image::StretchTile;
+        auto horizontalRule = isHorizontalPiece(piece)
+            ? geometry.horizontalRule
+            : NinePieceImageRule::Stretch;
 
-        auto vRule = isVerticalPiece(piece)
-            ? static_cast<WebCore::Image::TileRule>(geometry.verticalRule)
-            : WebCore::Image::StretchTile;
+        auto verticalRule = isVerticalPiece(piece)
+            ? geometry.verticalRule
+            : NinePieceImageRule::Stretch;
 
-        if (hRule == WebCore::Image::StretchTile && vRule == WebCore::Image::StretchTile) {
+        if (horizontalRule == NinePieceImageRule::Stretch && verticalRule == NinePieceImageRule::Stretch) {
             updateResult(draw(context, concreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece]));
             continue;
         }
 
-        updateResult(drawTiledUsingImpl(context, drawPattern, concreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], geometry.tileScales[piece], hRule, vRule));
+        updateResult(drawTiledUsingImpl(context, drawPattern, concreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], geometry.tileScales[piece], horizontalRule, verticalRule));
     }
 
     return result;

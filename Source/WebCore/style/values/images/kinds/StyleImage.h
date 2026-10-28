@@ -55,6 +55,8 @@ struct NinePieceGeometry;
 struct PaintInfo;
 struct ResourceLoaderOptions;
 
+enum class NinePieceImageRule : uint8_t;
+
 namespace Style {
 
 class ComputedStyle;
@@ -190,11 +192,6 @@ protected:
         return drawTiledUsingImpl(context, naturalDimensions, draw, drawPattern, concreteObjectSize, destination, phase, tileSize, spacing, options);
     }
 
-    static ImageDrawResult drawTiledUsing(GraphicsContext& context, NOESCAPE auto&& drawPattern, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, WebCore::Image::TileRule horizontalRule, WebCore::Image::TileRule verticalRule)
-    {
-        return drawTiledUsingImpl(context, drawPattern, concreteObjectSize, destination, source, tileScaleFactor, horizontalRule, verticalRule);
-    }
-
     static ImageDrawResult drawNinePieceUsing(GraphicsContext& context, NOESCAPE auto&& draw, NOESCAPE auto&& drawPattern, ConcreteObjectSize concreteObjectSize, const NinePieceGeometry& geometry)
     {
         return drawNinePieceUsingImpl(context, draw, drawPattern, concreteObjectSize, geometry);
@@ -203,7 +200,7 @@ protected:
 private:
     static ImageDrawResult drawIntoDestinationImpl(GraphicsContext&, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions, const ScopedLambda<DestinationPaint>&);
     static ImageDrawResult drawTiledUsingImpl(GraphicsContext&, NaturalDimensions, const ScopedLambda<TiledDraw>&, const ScopedLambda<TiledDrawPattern>&, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions);
-    static ImageDrawResult drawTiledUsingImpl(GraphicsContext&, const ScopedLambda<TiledDrawPattern>&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, WebCore::Image::TileRule horizontalRule, WebCore::Image::TileRule verticalRule);
+    static ImageDrawResult drawTiledUsingImpl(GraphicsContext&, const ScopedLambda<TiledDrawPattern>&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, NinePieceImageRule horizontalRule, NinePieceImageRule verticalRule);
     static ImageDrawResult drawNinePieceUsingImpl(GraphicsContext&, const ScopedLambda<TiledDraw>&, const ScopedLambda<TiledDrawPattern>&, ConcreteObjectSize, const NinePieceGeometry&);
 
 protected:

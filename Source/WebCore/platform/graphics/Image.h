@@ -152,8 +152,6 @@ public:
     WEBCORE_EXPORT String mimeType() const;
     long long expectedContentLength() const;
 
-    enum TileRule { StretchTile, RoundTile, SpaceTile, RepeatTile };
-
     WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, FloatPoint destination = { }, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage }, const ImageDrawingExtras* = nullptr);
     WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage }, const ImageDrawingExtras* = nullptr);
     WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage }, const ImageDrawingExtras* = nullptr);
