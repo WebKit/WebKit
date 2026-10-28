@@ -176,6 +176,21 @@ macro(WEBKIT_OPTION_BEGIN)
         set(ENABLE_BACK_FORWARD_LIST_SWIFT_DEFAULT ${_swift_features_default})
     endif ()
 
+    if (NOT DEFINED ENABLE_JAVASCRIPTCORE_TOOLS)
+        # Currently, libJavaScriptCoreTools relies on Mach API (for the corpse code). Hence,
+        # only Apple platforms are supported. Simulators and MacCatalyst are not supported by design.
+        # FIXME: CMake does not currently build for MacCatalyst. If this changes, make sure to exclude
+        # MacCatalyst here too.
+        if (APPLE AND NOT WEBKIT_SDK_IS_SIMULATOR)
+            set(ENABLE_JAVASCRIPTCORE_TOOLS ON)
+        else ()
+            set(ENABLE_JAVASCRIPTCORE_TOOLS OFF)
+        endif ()
+    endif ()
+    if (NOT APPLE)
+        SET_AND_EXPOSE_TO_BUILD(ENABLE_LIB_JSC_TOOLS ${ENABLE_JAVASCRIPTCORE_TOOLS})
+    endif ()
+
     # Annotating WTF's ref-counted base classes for Swift needs Swift 6.4 or newer;
     # older toolchains don't apply the annotation to derived classes. Cocoa ports
     # gate this in PlatformEnable.h on the SDK version instead.

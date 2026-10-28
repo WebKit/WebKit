@@ -34,8 +34,10 @@ if (ENABLE_JAVASCRIPTCORE_TOOLS)
         $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
     )
 
-    # The corpse support mya uses lives in the tools static library.
-    set(mya_LIBRARIES JavaScriptCoreTools edit)
+    set(mya_LIBRARIES JavaScriptCoreTools)
+    if (APPLE)
+        list(APPEND mya_LIBRARIES edit)
+    endif ()
 endif ()
 
 WEBKIT_EXECUTABLE_DECLARE(jsc)
@@ -165,6 +167,17 @@ if (DEVELOPER_MODE)
         WEBKIT_ADD_TARGET_CXX_FLAGS(testb3 -Wno-array-bounds)
         WEBKIT_ADD_TARGET_CXX_FLAGS(testair -Wno-array-bounds)
         WEBKIT_ADD_TARGET_CXX_FLAGS(testb3 -Wno-error=stack-exhausted)
+    endif ()
+endif ()
+
+add_custom_target(jsc-all DEPENDS jsc)
+if (ENABLE_JAVASCRIPTCORE_TOOLS)
+    add_dependencies(jsc-all mya)
+endif ()
+if (DEVELOPER_MODE)
+    add_dependencies(jsc-all testapi testRegExp testmasm testb3 testair testdfg testwasmdebugger)
+    if (ENABLE_JAVASCRIPTCORE_TOOLS)
+        add_dependencies(jsc-all testLibJSCTools)
     endif ()
 endif ()
 
