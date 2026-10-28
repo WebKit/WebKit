@@ -1599,6 +1599,7 @@ ConsistentQueryParameterFilteringQuirkEnabled:
   humanReadableDescription: "Enable consistent query parameter filtering"
   defaultValue: true
 
+
 ContactPickerAPIEnabled:
   type: bool
   status: testable
@@ -1716,6 +1717,14 @@ CoreMathMLEnabled:
     WebKit:
       "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
+
+CorrectBeforeInputEventOrderEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "Correct firing order for the beforeinput event"
+  humanReadableDescription: "Enable correct firing order for the beforeinput event"
+  defaultValue: true
 
 CrossOriginEmbedderPolicyEnabled:
   type: bool
