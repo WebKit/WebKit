@@ -184,6 +184,7 @@
 #define NSAccessibilityFormValidationUnannouncedTextKey @"AXFormValidationUnannouncedText"
 #define NSAccessibilityFormValidationErrorFieldCountKey @"AXFormValidationErrorFieldCount"
 #define NSAccessibilityFormValidationTargetIsSubmitterKey @"AXFormValidationTargetIsSubmitter"
+#define NSAccessibilityFormValidationFieldsKey @"AXFormValidationFields"
 #define NSAccessibilityErrorMessageForAttribute @"AXErrorMessageFor"
 #define NSAccessibilityExpandedTextValueAttribute @"AXExpandedTextValue"
 #define NSAccessibilityFlowFromAttribute @"AXFlowFrom"

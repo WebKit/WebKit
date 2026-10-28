@@ -146,6 +146,8 @@ struct PossibleFormValidationErrorData {
     // Whether the notification is posted on the button the user pressed to submit, rather than on the form or a field,
     // so an assistive technology can offer that button alongside the fields.
     bool targetIsSubmitter { false };
+    // The form whose submission failed, or the element standing in for one, so its fields can be sent with the notification.
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> container;
 
     String debugDescription() const
     {
@@ -408,6 +410,8 @@ public:
     // The fields a form-error detection pass may pair with a message the author never associated (i.e. via
     // aria-errormessage). That is a form's listed elements, or the fields inside an element standing in for a form.
     Vector<Ref<Element>> fieldsForErrorPairing(Element& container);
+    // The accessibility objects for those fields, in page order, leaving out the ones that are ignored, since the user can't reach them.
+    Vector<Ref<AccessibilityObject>> formFieldObjects(Element& container);
     struct DetectedFormErrorPairing {
         Ref<Element> field;
         Ref<Element> message;
@@ -674,7 +678,7 @@ public:
 #endif
 #if PLATFORM(COCOA)
     void postLiveRegionNotification(AccessibilityObject&, LiveRegionStatus, const AttributedString&);
-    void postPossibleFormValidationErrorNotification(AccessibilityObject&, Vector<String>&& unannouncedText, unsigned errorFieldCount, bool targetIsSubmitter);
+    void postPossibleFormValidationErrorNotification(AccessibilityObject&, Vector<String>&& unannouncedText, unsigned errorFieldCount, bool targetIsSubmitter, Element* container);
     // Records text an announcement carried, so the form-activity monitor does not report it as unannounced.
     void onAnnouncedText(const String&);
 #else

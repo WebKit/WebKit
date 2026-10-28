@@ -1,0 +1,15 @@
+This tests that the possible form validation error notification lists the fields of a form that is hidden. The form has nothing in it and no accessibility object to search, so an assistive technology can only find the fields because the notification lists them.
+
+PASS: !axElement('checkout') === true
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'false'
+PASS: payload === 'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\nAXFormValidationErrorFieldCount: 2\n'
+PASS: fields === 'name, email'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Name
+Enter your name.
+Email
+Enter a valid email address.
+Place order

@@ -2692,9 +2692,9 @@ void AXObjectCache::onAnnouncedText(const String& text)
         m_formActivityMonitor->onAnnouncedText(text);
 }
 
-void AXObjectCache::postPossibleFormValidationErrorNotification(AccessibilityObject& object, Vector<String>&& unannouncedText, unsigned errorFieldCount, bool targetIsSubmitter)
+void AXObjectCache::postPossibleFormValidationErrorNotification(AccessibilityObject& object, Vector<String>&& unannouncedText, unsigned errorFieldCount, bool targetIsSubmitter, Element* container)
 {
-    enqueueNotificationToPost(Ref { object }, AXNotificationWithData(AXNotification::PossibleFormValidationError, PossibleFormValidationErrorData { WTF::move(unannouncedText), errorFieldCount, targetIsSubmitter }));
+    enqueueNotificationToPost(Ref { object }, AXNotificationWithData(AXNotification::PossibleFormValidationError, PossibleFormValidationErrorData { WTF::move(unannouncedText), errorFieldCount, targetIsSubmitter, container }));
 }
 #endif
 
@@ -8057,6 +8057,22 @@ Vector<Ref<Element>> AXObjectCache::fieldsForErrorPairing(Element& container)
             fields.append(element.releaseNonNull());
     }
     return fields;
+}
+
+Vector<Ref<AccessibilityObject>> AXObjectCache::formFieldObjects(Element& container)
+{
+    auto fields = fieldsForErrorPairing(container);
+    std::ranges::sort(fields, [](const Ref<Element>& a, const Ref<Element>& b) {
+        return is_lt(treeOrder<ComposedTree>(a.get(), b.get()));
+    });
+
+    Vector<Ref<AccessibilityObject>> objects;
+    objects.reserveInitialCapacity(fields.size());
+    for (Ref field : fields) {
+        if (RefPtr object = getOrCreate(field.get()); object && !object->isIgnored())
+            objects.append(object.releaseNonNull());
+    }
+    return objects;
 }
 
 void AXObjectCache::addDetectedFormErrors(Vector<DetectedFormErrorPairing>&& detectedErrors)

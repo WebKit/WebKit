@@ -46,6 +46,7 @@ enum class IsAccessibilityElement : uint8_t { No, Yes, Unknown };
     // Cached data to avoid frequent re-computation.
     IsAccessibilityElement m_isAccessibilityElement;
     uint64_t m_accessibilityTraitsFromAncestor;
+    RetainPtr<NSArray> m_formValidationFields;
 #if ENABLE(SPATIAL_IMAGE_CONTROLS)
     RetainPtr<id> m_cachedMockImageElement;
 #endif
@@ -73,6 +74,10 @@ enum class IsAccessibilityElement : uint8_t { No, Yes, Unknown };
 
 // This is called by the Accessibility system to relay back to the chrome.
 - (void)handleNotificationRelayToChrome:(NSString *)notificationName notificationData:(NSData *)notificationData;
+
+// While a possible form validation error is being processed, the fields of the form it is about, in page order.
+- (NSArray *)accessibilityFormValidationFields;
+- (void)_setAccessibilityFormValidationFields:(NSArray *)fields;
 
 // Private methods:
 - (void)_clearCachedIsAccessibilityElementState;

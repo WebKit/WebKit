@@ -262,11 +262,22 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return m_axObject.get();
 }
 
+- (NSArray *)accessibilityFormValidationFields
+{
+    return m_formValidationFields.get();
+}
+
+- (void)_setAccessibilityFormValidationFields:(NSArray *)fields
+{
+    m_formValidationFields = fields;
+}
+
 - (void)detach
 {
     // rdar://8798960 Make sure the object is gone early, so that anything _accessibilityUnregister
     // does can't call back into the render tree.
     [super detach];
+    m_formValidationFields = nil;
 
     if ([self respondsToSelector:@selector(_accessibilityUnregister)])
         [self _accessibilityUnregister];

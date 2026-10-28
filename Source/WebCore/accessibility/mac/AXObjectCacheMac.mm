@@ -442,17 +442,26 @@ void AXObjectCache::postPlatformPossibleFormValidationErrorNotification(Accessib
     RetainPtr unannouncedText = createNSArray(formData.unannouncedText, [] (const String& text) {
         return text.createNSString();
     });
-    NSDictionary *userInfo = @{
+    RetainPtr userInfo = adoptNS([[NSMutableDictionary alloc] initWithDictionary:@{
         NSAccessibilityFormValidationUnannouncedTextKey: unannouncedText.get(),
         NSAccessibilityFormValidationErrorFieldCountKey: @(formData.errorFieldCount),
         NSAccessibilityFormValidationTargetIsSubmitterKey: @(formData.targetIsSubmitter),
-    };
+    }]);
+
+    // Send the fields themselves, since an assistive technology searching the form misses fields associated by form="id"
+    // from outside it, and can't search a form that is hidden from accessibility at all.
+    if (RefPtr container = formData.container) {
+        RetainPtr fields = createNSArray(formFieldObjects(*container), [](const Ref<AccessibilityObject>& field) -> id {
+            return field->wrapper();
+        });
+        [userInfo setObject:fields.get() forKey:NSAccessibilityFormValidationFieldsKey];
+    }
 
     RetainPtr wrapper = object.wrapper();
-    NSAccessibilityPostNotificationWithUserInfo(wrapper, NSAccessibilityPossibleFormValidationErrorNotification, userInfo);
+    NSAccessibilityPostNotificationWithUserInfo(wrapper, NSAccessibilityPossibleFormValidationErrorNotification, userInfo.get());
 
     if (gShouldRepostNotificationsForTests) [[unlikely]]
-        [wrapper accessibilityPostedNotification:NSAccessibilityPossibleFormValidationErrorNotification userInfo:userInfo];
+        [wrapper accessibilityPostedNotification:NSAccessibilityPossibleFormValidationErrorNotification userInfo:userInfo.get()];
 }
 
 void AXObjectCache::onDocumentRenderTreeCreation(const Document& document)

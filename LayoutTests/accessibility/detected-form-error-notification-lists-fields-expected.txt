@@ -1,0 +1,15 @@
+This tests that the possible form validation error notification lists the fields of the form it is about, in the order they come on the page, so an assistive technology can offer them without searching the form for them. The list includes a field associated with the form by its form attribute from outside it and a field the page built itself, and leaves out a field that isn't rendered.
+
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'false'
+PASS: payload === 'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\nAXFormValidationErrorFieldCount: 2\n'
+PASS: fields === 'promo, gift-message, name, email'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Promo code
+Name
+Enter your name.
+Email
+Enter a valid email address.
+Company  Place order

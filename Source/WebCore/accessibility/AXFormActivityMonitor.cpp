@@ -940,7 +940,7 @@ void AXFormActivityMonitor::report()
     bool targetIsSubmitter = submitter && submitter == target->element() && !(submitterInput && submitterInput->isTextField());
 
     AXFORMLOG("Posting PossibleFormValidationError with errorFieldCount "_s, errorFieldCount, targetIsSubmitter ? ", on the button the user pressed."_s : "."_s);
-    CheckedRef { m_cache }->postPossibleFormValidationErrorNotification(*target, WTF::move(unannouncedText), errorFieldCount, targetIsSubmitter);
+    CheckedRef { m_cache }->postPossibleFormValidationErrorNotification(*target, WTF::move(unannouncedText), errorFieldCount, targetIsSubmitter, container.get());
 }
 
 } // namespace WebCore

@@ -218,15 +218,30 @@ void AXObjectCache::postPlatformPossibleFormValidationErrorNotification(Accessib
 
     NSError *error = nil;
     RetainPtr data = [NSKeyedArchiver archivedDataWithRootObject:userInfo requiringSecureCoding:YES error:&error];
+    // Elements cannot be archived, so the accessibility bundle asks the wrapper for the fields while it relays the notification.
+    RetainPtr<NSArray> fields;
+    if (RefPtr container = formData.container) {
+        fields = createNSArray(formFieldObjects(*container), [](const Ref<AccessibilityObject>& field) -> id {
+            return field->wrapper();
+        });
+    }
+
     // The wrapper must outlive the call chain. accessibilityOverrideProcessNotification re-enters WebKit and can
     // detach the AccessibilityObject, clearing m_wrapper mid-call.
     RetainPtr wrapper = object.wrapper();
-    if (data)
+    if (data) {
+        [wrapper _setAccessibilityFormValidationFields:fields.get()];
         [wrapper accessibilityOverrideProcessNotification:notificationName.get() notificationData:data.get()];
+        [wrapper _setAccessibilityFormValidationFields:nil];
+    }
 
     // For tests, also call the wrapper's accessibilityPostedNotification.
-    if (gShouldRepostNotificationsForTests) [[unlikely]]
-        [wrapper accessibilityPostedNotification:notificationName.get() userInfo:userInfo];
+    if (gShouldRepostNotificationsForTests) [[unlikely]] {
+        RetainPtr testUserInfo = adoptNS([[NSMutableDictionary alloc] initWithDictionary:userInfo]);
+        if (fields)
+            [testUserInfo setObject:fields.get() forKey:NSAccessibilityFormValidationFieldsKey];
+        [wrapper accessibilityPostedNotification:notificationName.get() userInfo:testUserInfo.get()];
+    }
 }
 
 void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent&, const VisibleSelection&)
