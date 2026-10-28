@@ -7231,6 +7231,7 @@
 		7BE005B52E5C4E050014F7CF /* RemoteDisplayListRecorderProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorderProxy.h; sourceTree = "<group>"; };
 		7BE005B62E5C4E050014F7CF /* RemoteDisplayListRecorderProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteDisplayListRecorderProxy.cpp; sourceTree = "<group>"; };
 		7BE005B72E5C4E390014F7CF /* RemoteDisplayListRecorder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorder.h; sourceTree = "<group>"; };
+		9D9DE5ECFE30691023F38FED /* RemoteDrawingBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDrawingBackend.h; sourceTree = "<group>"; };
 		7BE005B82E5C4E390014F7CF /* RemoteDisplayListRecorder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteDisplayListRecorder.cpp; sourceTree = "<group>"; };
 		7BE005B92E5C4E4A0014F7CF /* RemoteImageBufferGraphicsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteImageBufferGraphicsContext.h; sourceTree = "<group>"; };
 		7BE005BA2E5C4E4A0014F7CF /* RemoteImageBufferGraphicsContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteImageBufferGraphicsContext.cpp; sourceTree = "<group>"; };
@@ -14802,6 +14803,7 @@
 				7BE005B82E5C4E390014F7CF /* RemoteDisplayListRecorder.cpp */,
 				7BE005B72E5C4E390014F7CF /* RemoteDisplayListRecorder.h */,
 				7B72BB652E57419400D48E7D /* RemoteDisplayListRecorderIdentifier.h */,
+				9D9DE5ECFE30691023F38FED /* RemoteDrawingBackend.h */,
 				F48BB8E026F96392001C1C40 /* RemoteGraphicsContext.cpp */,
 				F48BB8DF26F96392001C1C40 /* RemoteGraphicsContext.h */,
 				F451C1002703D853002BA03B /* RemoteGraphicsContext.messages.in */,

@@ -38,14 +38,14 @@ namespace WebKit {
 // Used to create DisplayList instances.
 class RemoteDisplayListRecorder final : public RemoteGraphicsContext {
 public:
-    static Ref<RemoteDisplayListRecorder> create(RemoteDisplayListRecorderIdentifier, RemoteRenderingBackend&);
+    static Ref<RemoteDisplayListRecorder> create(RemoteDisplayListRecorderIdentifier, RemoteDrawingBackend&);
     ~RemoteDisplayListRecorder();
     void stopListeningForIPC();
 
     Ref<const WebCore::DisplayList::DisplayList> takeDisplayList() { return m_recorder->takeDisplayList(); }
 
 private:
-    RemoteDisplayListRecorder(Ref<WebCore::DisplayList::RecorderImpl>&&, RemoteDisplayListRecorderIdentifier, RemoteRenderingBackend&);
+    RemoteDisplayListRecorder(Ref<WebCore::DisplayList::RecorderImpl>&&, RemoteDisplayListRecorderIdentifier, RemoteDrawingBackend&);
     void startListeningForIPC();
 
     const Ref<WebCore::DisplayList::RecorderImpl> m_recorder;

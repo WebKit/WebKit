@@ -31,20 +31,20 @@
 #include "Logging.h"
 #include "RemoteGraphicsContextMessages.h"
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_renderingBackend->streamConnection());
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_drawingBackend->streamConnection());
 
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RemoteImageBufferGraphicsContext> RemoteImageBufferGraphicsContext::create(ImageBuffer& imageBuffer, RemoteGraphicsContextIdentifier identifier, RemoteRenderingBackend& renderingBackend)
+Ref<RemoteImageBufferGraphicsContext> RemoteImageBufferGraphicsContext::create(ImageBuffer& imageBuffer, RemoteGraphicsContextIdentifier identifier, RemoteDrawingBackend& drawingBackend)
 {
-    Ref instance = adoptRef(*new RemoteImageBufferGraphicsContext(imageBuffer, identifier, renderingBackend));
+    Ref instance = adoptRef(*new RemoteImageBufferGraphicsContext(imageBuffer, identifier, drawingBackend));
     instance->startListeningForIPC();
     return instance;
 }
 
-RemoteImageBufferGraphicsContext::RemoteImageBufferGraphicsContext(ImageBuffer& imageBuffer, RemoteGraphicsContextIdentifier identifier, RemoteRenderingBackend& renderingBackend)
-    : RemoteGraphicsContext(imageBuffer.context(), renderingBackend)
+RemoteImageBufferGraphicsContext::RemoteImageBufferGraphicsContext(ImageBuffer& imageBuffer, RemoteGraphicsContextIdentifier identifier, RemoteDrawingBackend& drawingBackend)
+    : RemoteGraphicsContext(imageBuffer.context(), drawingBackend)
     , m_imageBuffer(imageBuffer)
     , m_identifier(identifier)
 {
@@ -54,12 +54,12 @@ RemoteImageBufferGraphicsContext::~RemoteImageBufferGraphicsContext() = default;
 
 void RemoteImageBufferGraphicsContext::startListeningForIPC()
 {
-    m_renderingBackend->streamConnection().startReceivingMessages(*this, Messages::RemoteGraphicsContext::messageReceiverName(), m_identifier.toUInt64());
+    m_drawingBackend->streamConnection().startReceivingMessages(*this, Messages::RemoteGraphicsContext::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteImageBufferGraphicsContext::stopListeningForIPC()
 {
-    m_renderingBackend->streamConnection().stopReceivingMessages(Messages::RemoteGraphicsContext::messageReceiverName(), m_identifier.toUInt64());
+    m_drawingBackend->streamConnection().stopReceivingMessages(Messages::RemoteGraphicsContext::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteImageBufferGraphicsContext::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, ImageDrawingOptions options)

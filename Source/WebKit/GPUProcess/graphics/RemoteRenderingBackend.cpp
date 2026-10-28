@@ -32,6 +32,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
 #include "GPUProcessProxyMessages.h"
+#include "ImageBufferShareableAllocator.h"
 #include "ImageBufferShareableBitmapBackend.h"
 #include "Logging.h"
 #include "PrepareBackingStoreBuffersData.h"
@@ -55,6 +56,7 @@
 #include "RemoteTextDetectorMessages.h"
 #include "ShapeDetectionObjectHeap.h"
 #include "SharedFont.h"
+#include "SharedVideoFrame.h"
 #include "WebPageProxy.h"
 #include <WebCore/Filter.h>
 #include <WebCore/FontCustomPlatformData.h>
@@ -79,6 +81,10 @@
 #include "ImageBufferShareableMappedIOSurfaceBackend.h"
 #include "ImageBufferShareableMappedIOSurfaceBitmapBackend.h"
 #include <WebCore/IOSurfacePool.h>
+#endif
+
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+#include "RemoteVideoFrameObjectHeap.h"
 #endif
 
 #if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
@@ -804,6 +810,31 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::imageBuffer(RenderingResourceIdentif
         return nullptr;
     return remoteImageBuffer->imageBuffer();
 }
+
+std::unique_ptr<ImageBufferAllocator> RemoteRenderingBackend::createFilterImageBufferAllocator() const
+{
+#if HAVE(IOSURFACE)
+    bool useIOSurfaceWebKitBehavior = false;
+#if USE(APPLE_INTERNAL_SDK)
+    useIOSurfaceWebKitBehavior = m_sharedPreferencesForWebProcess.useIOSurfaceWebKitBehavior;
+#endif
+    return makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner(), &m_sharedResourceCache->ioSurfacePool(), useIOSurfaceWebKitBehavior);
+#else
+    return makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner());
+#endif
+}
+
+Ref<ControlFactory> RemoteRenderingBackend::createControlFactory() const
+{
+    return ControlFactory::create();
+}
+
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+std::unique_ptr<SharedVideoFrameReader> RemoteRenderingBackend::createSharedVideoFrameReader() const
+{
+    return makeUnique<SharedVideoFrameReader>(Ref { m_gpuConnectionToWebProcess->videoFrameObjectHeap() }, m_gpuConnectionToWebProcess->webProcessIdentity());
+}
+#endif
 
 #if PLATFORM(COCOA)
 bool RemoteRenderingBackend::shouldUseLockdownFontParser() const
