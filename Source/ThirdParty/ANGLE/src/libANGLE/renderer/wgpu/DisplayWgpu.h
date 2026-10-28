@@ -123,6 +123,9 @@ class DisplayWgpu : public DisplayImpl, public ThreadSafeDisplayWgpu
 
     const WGPULimits &getLimitsWgpu() const { return mLimitsWgpu; }
 
+    // Whether the device has one of the optional WebGPU features that the backend can use.
+    bool hasWgpuFeature(WGPUFeatureName feature) const;
+
     const gl::Caps &getGLCaps() const { return mGLCaps; }
     const gl::TextureCapsMap &getGLTextureCaps() const { return mGLTextureCaps; }
     const gl::Extensions &getGLExtensions() const { return mGLExtensions; }

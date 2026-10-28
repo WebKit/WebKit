@@ -39,6 +39,32 @@
 namespace rx
 {
 
+namespace
+{
+// The optional WebGPU features that the backend can use to implement GL extensions and ES 3.0
+// features. The backend requests the ones that the adapter supports.
+constexpr WGPUFeatureName kOptionalWgpuFeatures[] = {
+    WGPUFeatureName_CoreFeaturesAndLimits,
+    WGPUFeatureName_DepthClipControl,
+    WGPUFeatureName_Depth32FloatStencil8,
+    WGPUFeatureName_TextureCompressionBC,
+    WGPUFeatureName_TextureCompressionBCSliced3D,
+    WGPUFeatureName_TextureCompressionETC2,
+    WGPUFeatureName_TextureCompressionASTC,
+    WGPUFeatureName_TextureCompressionASTCSliced3D,
+    WGPUFeatureName_TimestampQuery,
+    WGPUFeatureName_IndirectFirstInstance,
+    WGPUFeatureName_ShaderF16,
+    WGPUFeatureName_RG11B10UfloatRenderable,
+    WGPUFeatureName_Float32Filterable,
+    WGPUFeatureName_Float32Blendable,
+    WGPUFeatureName_ClipDistances,
+    WGPUFeatureName_DualSourceBlending,
+    WGPUFeatureName_TextureFormatsTier1,
+    WGPUFeatureName_TextureComponentSwizzle,
+};
+}  // namespace
+
 #if !ANGLE_WEBGPU_HAS_WINDOW_SURFACE_TYPE
 WindowSurfaceWgpu *CreateWgpuWindowSurface(const egl::SurfaceState &surfaceState,
                                            EGLNativeWindowType window)
@@ -132,6 +158,13 @@ void DisplayWgpu::terminate()
     mInstance = nullptr;
     mDevice   = nullptr;
     mQueue    = nullptr;
+}
+
+bool DisplayWgpu::hasWgpuFeature(WGPUFeatureName feature) const
+{
+    // Query the device rather than remember what was requested, so that this works for a device
+    // that the embedder provides too.
+    return mProcTable.deviceHasFeature(mDevice.get(), feature);
 }
 
 egl::Error ThreadSafeDisplayWgpu::makeCurrent(egl::Surface *drawSurface,
@@ -496,7 +529,14 @@ egl::Error DisplayWgpu::createWgpuDevice()
 
     mAdapter = adapterResult.adapter;
 
-    std::vector<WGPUFeatureName> requiredFeatures;  // empty for now
+    std::vector<WGPUFeatureName> requiredFeatures;
+    for (WGPUFeatureName feature : kOptionalWgpuFeatures)
+    {
+        if (mProcTable.adapterHasFeature(mAdapter.get(), feature))
+        {
+            requiredFeatures.push_back(feature);
+        }
+    }
 
     // Request everything the adapter supports instead of the WebGPU default limits, which are
     // lower than what the hardware supports (e.g. 8192 for maxTextureDimension2D, 256 for

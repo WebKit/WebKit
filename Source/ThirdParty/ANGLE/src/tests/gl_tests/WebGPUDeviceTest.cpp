@@ -214,6 +214,48 @@ TEST_P(WebGPUDeviceTest, DeviceHasAdapterLimits)
               deviceLimits.maxColorAttachmentBytesPerSample);
 }
 
+// Tests that the backend creates its device with the optional features that the adapter supports
+// and that the backend can use.
+TEST_P(WebGPUDeviceTest, DeviceHasAdapterOptionalFeatures)
+{
+    constexpr std::pair<WGPUFeatureName, const char *> kFeatures[] = {
+        {WGPUFeatureName_CoreFeaturesAndLimits, "core-features-and-limits"},
+        {WGPUFeatureName_DepthClipControl, "depth-clip-control"},
+        {WGPUFeatureName_Depth32FloatStencil8, "depth32float-stencil8"},
+        {WGPUFeatureName_TextureCompressionBC, "texture-compression-bc"},
+        {WGPUFeatureName_TextureCompressionBCSliced3D, "texture-compression-bc-sliced-3d"},
+        {WGPUFeatureName_TextureCompressionETC2, "texture-compression-etc2"},
+        {WGPUFeatureName_TextureCompressionASTC, "texture-compression-astc"},
+        {WGPUFeatureName_TextureCompressionASTCSliced3D, "texture-compression-astc-sliced-3d"},
+        {WGPUFeatureName_TimestampQuery, "timestamp-query"},
+        {WGPUFeatureName_IndirectFirstInstance, "indirect-first-instance"},
+        {WGPUFeatureName_ShaderF16, "shader-f16"},
+        {WGPUFeatureName_RG11B10UfloatRenderable, "rg11b10ufloat-renderable"},
+        {WGPUFeatureName_Float32Filterable, "float32-filterable"},
+        {WGPUFeatureName_Float32Blendable, "float32-blendable"},
+        {WGPUFeatureName_ClipDistances, "clip-distances"},
+        {WGPUFeatureName_DualSourceBlending, "dual-source-blending"},
+        {WGPUFeatureName_TextureFormatsTier1, "texture-formats-tier1"},
+        {WGPUFeatureName_TextureComponentSwizzle, "texture-component-swizzle"},
+    };
+
+    WGPUAdapter adapter =
+        reinterpret_cast<WGPUAdapter>(queryDeviceAttrib(EGL_WEBGPU_ADAPTER_ANGLE));
+    WGPUDevice device = reinterpret_cast<WGPUDevice>(queryDeviceAttrib(EGL_WEBGPU_DEVICE_ANGLE));
+    ASSERT_NE(adapter, nullptr);
+    ASSERT_NE(device, nullptr);
+
+    for (const auto &[feature, name] : kFeatures)
+    {
+        EXPECT_EQ(wgpu().adapterHasFeature(adapter, feature),
+                  wgpu().deviceHasFeature(device, feature))
+            << name;
+    }
+
+    wgpu().deviceRelease(device);
+    wgpu().adapterRelease(adapter);
+}
+
 // Tests rendering to and sampling a texture as wide and as high as the adapter supports.
 TEST_P(WebGPUDeviceTest, RenderToAndSampleTextureOfAdapterMaxSize)
 {
