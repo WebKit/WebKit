@@ -265,13 +265,6 @@ class SubcommandsTest(SysprofTestCase):
         # at 560.6 ms, just inside its cycle, so the overrun would go unnoticed.
         self.assertEqual(frame_cycle["overrunning_composition_statistics"]["n"], 2)
 
-    def test_explain_is_rejected_for_the_json_format_by_the_module_api(self):
-        args = argparse.Namespace(
-            capture_file=SAMPLE_CAPTURE_FILE, format="json", timespan="-", explain=True
-        )
-        with self.assertRaises(UsageError):
-            analyze.analyze(args)
-
     def test_analyze_rejects_a_timespan_it_cannot_honour(self):
         # Silently analyzing the whole capture, or a window the argument never asked
         # for, reads as a result for the requested window.

@@ -123,8 +123,10 @@ STATISTICAL_DATA_EXTRACTORS: Dict[str, Callable[[Dict[str, Any]], Dict[str, Any]
 
 
 def analyze(args: argparse.Namespace) -> None:
-    if args.explain and args.format != "text":
-        raise UsageError("--explain only applies to the text format")
+    if args.format == "json" and args.explain:
+        # Json format explanations are capture-independent, so print right away.
+        print(json.dumps(explanations.JSON_EXPLAINED_REPORT))
+        return
     timespan_begin, timespan_end = parse_timespan_argument(args.timespan)
     parsed_data = parse(args.capture_file, marks=True, counters=False)
     capture_begin, capture_end = parsed_data["document"]["timespan"]
@@ -418,7 +420,7 @@ def _render_text_report(report: Dict[str, Any], explain: bool = False) -> None:
     for reason in sorted(report["rendering"]["frame_rendering_reasons"].keys()):
         print(
             "  - {}: {}".format(
-                explanations.UNNAMED_FRAME_RENDERING_REASONS.get(reason, reason),
+                explanations.TEXT_UNNAMED_FRAME_RENDERING_REASONS.get(reason, reason),
                 report["rendering"]["frame_rendering_reasons"][reason],
             )
         )
@@ -441,7 +443,7 @@ def _render_text_report(report: Dict[str, Any], explain: bool = False) -> None:
     _render_frame_cycle_numbers(report["frame_cycle"])
     if explain:
         print()
-        print(explanations.FRAME_CYCLE)
+        print(explanations.TEXT_FRAME_CYCLE)
 
     print()
     print("Statistics (durations):")
@@ -472,7 +474,7 @@ def _render_text_report(report: Dict[str, Any], explain: bool = False) -> None:
     )
     if explain:
         print()
-        print(explanations.MARK_STATISTICS)
+        print(explanations.TEXT_MARK_STATISTICS)
 
     print()
     print("Statistics (other):")
@@ -499,11 +501,11 @@ def _analyzed_duration_sec(report: Dict[str, Any]) -> float:
 def _theoretical_fps_explanation(report: Dict[str, Any]) -> str:
     rendering = report["rendering"]
     if rendering["theoretical_fps"] is None:
-        return explanations.UNKNOWN_THEORETICAL_FPS.format(
+        return explanations.TEXT_UNKNOWN_THEORETICAL_FPS.format(
             frames=rendering["frames_rendered"],
             refresh_rate=_refresh_rate_explanation(report),
         )
-    return explanations.THEORETICAL_FPS.format(
+    return explanations.TEXT_THEORETICAL_FPS.format(
         frames=rendering["frames_rendered"],
         duration=_analyzed_duration_sec(report),
         fps="{:.2f}".format(rendering["theoretical_fps"]),
@@ -516,15 +518,15 @@ def _refresh_rate_explanation(report: Dict[str, Any]) -> str:
     interval = rendering["vblank_interval_statistics"].get("median")
     vblanks = rendering["vblanks"]
     if interval:
-        refresh_rate = explanations.REFRESH_RATE.format(
+        refresh_rate = explanations.TEXT_REFRESH_RATE.format(
             rate=1 / msec_to_sec(interval), interval=interval
         )
     elif interval is None:
-        refresh_rate = explanations.REFRESH_RATE_WITHOUT_INTERVAL.format(
+        refresh_rate = explanations.TEXT_REFRESH_RATE_WITHOUT_INTERVAL.format(
             vblanks=vblanks, plural="" if vblanks == 1 else "s"
         )
     else:
-        refresh_rate = explanations.REFRESH_RATE_ZERO_INTERVAL.format(vblanks=vblanks)
+        refresh_rate = explanations.TEXT_REFRESH_RATE_ZERO_INTERVAL.format(vblanks=vblanks)
     return refresh_rate
 
 
