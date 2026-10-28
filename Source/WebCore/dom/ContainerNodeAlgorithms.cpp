@@ -182,6 +182,8 @@ void removeDetachedChildrenInContainer(ContainerNode& container)
             notifyChildNodeRemoved(container, *node);
         else if (node->refCount() > 1)
             node->updateShadowIncludingRootForSubtree();
+        else
+            node->resetShadowIncludingRoot();
         ASSERT_WITH_SECURITY_IMPLICATION(!node->isInTreeScope());
     }
 }

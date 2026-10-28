@@ -424,6 +424,8 @@ Node::~Node()
     ASSERT(!m_previousSibling);
     ASSERT(!m_next);
 
+    m_shadowIncludingRoot = nullptr;
+
     {
         SUPPRESS_UNCHECKED_LOCAL auto& document = this->document(); // Store document before clearing out m_treeScope.
 
@@ -1487,7 +1489,7 @@ ALWAYS_INLINE void Node::updateShadowIncludingRoot()
         m_shadowIncludingRoot = parent->m_shadowIncludingRoot;
     else if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(this)) [[unlikely]] {
         auto* host = shadowRoot->host();
-        auto* root = host ? host->m_shadowIncludingRoot : shadowRoot;
+        auto* root = host ? host->m_shadowIncludingRoot.get() : shadowRoot;
         shadowRoot->setShadowIncludingRoot(root);
         m_shadowIncludingRoot = root;
     } else

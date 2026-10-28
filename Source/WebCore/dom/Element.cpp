@@ -3517,6 +3517,11 @@ void Element::removeShadowRootSlow(ShadowRoot& oldRoot)
 
     oldRoot.setHost(nullptr);
     oldRoot.setParentTreeScope(protect(document()));
+
+    if (oldRoot.refCount() > 1)
+        oldRoot.updateShadowIncludingRootForSubtree();
+    else
+        oldRoot.resetShadowIncludingRoot();
 }
 
 static bool canAttachAuthorShadowRoot(const Element& element)
