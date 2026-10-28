@@ -381,11 +381,10 @@ bool TextUtil::mayBreakInBetween(const InlineTextItem& previousInlineItem, const
     // its text box we can pass the box content directly. Only when leading content was dropped (e.g.
     // white-space-trim moves start() past 0) do we take the item's substring and pay for the allocation.
     String nextContent = nextInlineItem.start() ? nextInlineItem.content() : nextInlineItem.inlineTextBox().content();
-    return mayBreakInBetween(previousInlineItem.inlineTextBox().content(), protect(previousInlineItem.style()), nextContent, protect(nextInlineItem.style()));
-}
+    String previousContent = previousInlineItem.inlineTextBox().content();
+    CheckedRef previousContentStyle = previousInlineItem.style();
+    CheckedRef nextContentStyle = nextInlineItem.style();
 
-bool TextUtil::mayBreakInBetween(String previousContent, const Style::ComputedStyle& previousContentStyle, String nextContent, const Style::ComputedStyle& nextContentStyle)
-{
     // Now we need to collect at least 3 adjacent characters to be able to make a decision whether the previous text item ends with breaking opportunity.
     // [ex-][ample] <- second to last[x] last[-] current[a]
     // We need at least 1 character in the current inline text item and 2 more from previous inline items.
@@ -394,11 +393,11 @@ bool TextUtil::mayBreakInBetween(String previousContent, const Style::ComputedSt
         // See the templated CharacterType in nextBreakablePosition for last and lastlast characters.
         nextContent.convertTo16Bit();
     }
-    auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { nextContent, Style::toPlatform(nextContentStyle.usedLocale()), TextUtil::lineBreakIteratorMode(nextContentStyle.lineBreak()), TextUtil::contentAnalysis(nextContentStyle.wordBreak()) };
+    auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { nextContent, Style::toPlatform(nextContentStyle->usedLocale()), TextUtil::lineBreakIteratorMode(nextContentStyle->lineBreak()), TextUtil::contentAnalysis(nextContentStyle->wordBreak()) };
     auto previousContentLength = previousContent.length();
     // FIXME: We should look into the entire uncommitted content for more text context.
     char16_t lastCharacter = previousContentLength ? previousContent[previousContentLength - 1] : 0;
-    if (lastCharacter == softHyphen && previousContentStyle.hyphens() == Hyphens::None)
+    if (lastCharacter == softHyphen && previousContentStyle->hyphens() == Hyphens::None)
         return false;
     char16_t secondToLastCharacter = previousContentLength > 1 ? previousContent[previousContentLength - 2] : 0;
     lineBreakIteratorFactory.priorContext().set({ secondToLastCharacter, lastCharacter });
