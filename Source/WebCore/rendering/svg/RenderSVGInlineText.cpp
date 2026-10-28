@@ -211,8 +211,6 @@ PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& po
 
 void RenderSVGInlineText::updateScaledFont()
 {
-    // FIXME: FontCascade comparison also compares the font list, which FontCascadeCache::invalidate() replaces,
-    // so the text metrics are dropped after complex text measurement even if the font did not change.
     float scalingFactor = 1;
     FontCascade scaledFont;
     if (computeNewScaledFontForStyle(*this, style(), scalingFactor, scaledFont))
