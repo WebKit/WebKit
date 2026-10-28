@@ -157,6 +157,18 @@ class TestBugzilla(unittest.TestCase):
             'https://bugs.example.com/show_bug.cgi?id=1234',
         )
 
+    def test_link_fragment(self):
+        tracker = bugzilla.Tracker(self.URL)
+        self.assertEqual(
+            tracker.from_string('https://bugs.example.com/show_bug.cgi?id=1234#').link,
+            'https://bugs.example.com/show_bug.cgi?id=1234',
+        )
+        self.assertEqual(
+            tracker.from_string('<https://bugs.example.com/show_bug.cgi?id=1234#c5>').link,
+            'https://bugs.example.com/show_bug.cgi?id=1234',
+        )
+        self.assertEqual(tracker.from_string('https://bugs.example.com/show_bug.cgi?id=1234&ctype=xml'), None)
+
     def test_title(self):
         with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES):
             tracker = bugzilla.Tracker(self.URL)
