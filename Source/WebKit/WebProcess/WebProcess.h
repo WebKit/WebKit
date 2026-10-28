@@ -679,6 +679,7 @@ private:
     void printSnapshotFrameWillBeDrawnByProcess(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
     void abandonPrintSnapshotFramesOwnedBy(WebCore::ProcessIdentifier);
     void waitForPrintSnapshot(RemoteSnapshotIdentifier, CompletionHandler<void()>&&);
+    void completedPrintSnapshotCountForTesting(CompletionHandler<void(uint64_t)>&&);
 #endif
 
     void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);
@@ -913,6 +914,7 @@ private:
     // In the other web processes, the connection to the print process with their Lockdown Mode.
     RefPtr<PrintProcessConnection> m_printProcessConnection;
     RefPtr<RemoteSnapshotRegistry> m_snapshotRegistry;
+    uint64_t m_completedPrintSnapshotCountForTesting { 0 };
 #endif
 
 #if ENABLE(MODEL_PROCESS)

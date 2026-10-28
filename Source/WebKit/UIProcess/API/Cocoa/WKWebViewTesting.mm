@@ -1007,6 +1007,14 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     protect(_page->configuration().processPool())->setPrintProcessIdleTimeoutForTesting(Seconds { timeout });
 }
 
+- (void)_printProcessCompletedSnapshotCountForTesting:(void(^)(NSUInteger))completionHandler
+{
+    auto lockdownMode = protect(_page->legacyMainFrameProcess())->lockdownMode();
+    protect(_page->configuration().processPool())->printProcessCompletedSnapshotCountForTesting(lockdownMode, [completionHandler = makeBlockPtr(completionHandler)](uint64_t count) {
+        completionHandler(count);
+    });
+}
+
 - (void)_connectFrameProcessesToPrintProcessForTesting:(void(^)(NSUInteger))completionHandler
 {
     RefPtr mainFrame = _page->mainFrame();

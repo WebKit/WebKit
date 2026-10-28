@@ -404,9 +404,11 @@ public:
     // connection, so that anything sent to the web process after that finds the connection, or with
     // false if either process went away first. Returns the reply that this waits for, if any.
     std::optional<IPC::Connection::AsyncReplyID> ensurePrintProcessConnection(WebProcessProxy& frameProcess, WebProcessProxy::LockdownMode, CompletionHandler<void(bool)>&&);
-    // Connects every process hosting a frame in the tree of the root frame, and completes with false
-    // if any of them could not be connected.
-    Vector<IPC::Connection::AsyncReplyID> ensurePrintProcessConnections(WebFrameProxy& rootFrame, WebProcessProxy::LockdownMode, CompletionHandler<void(bool)>&&);
+    // Connects every process hosting a frame in the tree of the root frame, and completes once they
+    // are, with false if the root's process could not be connected.
+    Vector<IPC::Connection::AsyncReplyID> ensurePrintProcessConnections(const WebFrameProxy& rootFrame, WebProcessProxy::LockdownMode, CompletionHandler<void(bool)>&&);
+    // Whether a reply that ensurePrintProcessConnection() returned has yet to come in.
+    bool isPrintProcessConnectionPending(WebProcessProxy::LockdownMode, IPC::Connection::AsyncReplyID) const;
     bool isPrintProcessClient(const WebProcessProxy& printProcess, WebCore::ProcessIdentifier) const;
     // The snapshot API of the print process with this Lockdown Mode, if it runs.
     RefPtr<PrintProcessProxy> printProcessProxy(WebProcessProxy::LockdownMode);
@@ -417,6 +419,7 @@ public:
     void didEndPrintSnapshot(RemoteSnapshotIdentifier);
     std::optional<WebProcessProxy::LockdownMode> printSnapshotLockdownMode(RemoteSnapshotIdentifier) const;
     void printProcessClientCountForTesting(WebProcessProxy::LockdownMode, CompletionHandler<void(uint64_t)>&&);
+    void printProcessCompletedSnapshotCountForTesting(WebProcessProxy::LockdownMode, CompletionHandler<void(uint64_t)>&&);
 #endif
 
 #if ENABLE(MODEL_PROCESS)

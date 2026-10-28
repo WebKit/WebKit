@@ -87,7 +87,7 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 #endif
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
     PrepareForPrinting() -> (bool success)
-    CreatePrintConnectionToWebProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentity webProcessIdentity, struct WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess, bool isLockdownModeEnabled) -> (std::optional<IPC::ConnectionHandle> connectionHandle)
+    CreatePrintConnectionToWebProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentity webProcessIdentity, struct WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess, bool isLockdownModeEnabled) -> (std::optional<IPC::ConnectionHandle> connectionHandle) ReplyCanDispatchOutOfOrder
     RemovePrintConnectionToWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
     UpdatePrintConnectionSharedPreferences(WebCore::ProcessIdentifier webProcessIdentifier, struct WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess)
     PrintConnectionToWebProcessCountForTesting() -> (uint64_t count)
@@ -100,6 +100,7 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     PrintSnapshotFrameWillBeDrawnByProcess(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier frameIdentifier, WebCore::ProcessIdentifier processIdentifier)
     AbandonPrintSnapshotFramesOwnedBy(WebCore::ProcessIdentifier processIdentifier)
     WaitForPrintSnapshot(WebKit::RemoteSnapshotIdentifier identifier) -> () Synchronous
+    CompletedPrintSnapshotCountForTesting() -> (uint64_t count)
 #endif
 
     GarbageCollectJavaScriptObjects()

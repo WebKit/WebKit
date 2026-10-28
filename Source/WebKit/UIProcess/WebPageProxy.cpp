@@ -124,6 +124,7 @@
 #include "PlatformXRSystem.h"
 #include "PolicyDecision.h"
 #include "PrintInfo.h"
+#include "PrintProcessProxy.h"
 #include "ProcessActivityGroup.h"
 #include "ProcessAssertion.h"
 #include "ProcessTerminationReason.h"
@@ -17709,12 +17710,13 @@ bool WebPageProxy::shouldUseRemoteSnapshotting(const WebFrameProxy* rootFrame)
     return false;
 }
 
+// Every remote snapshot printed to PDF is drawn in the print process, whether or not its frames have
+// PDF content: the frames record straight into the process that draws the snapshot, so it has to be
+// chosen before they record.
 bool WebPageProxy::shouldLaunchPrintProcess(const WebFrameProxy* rootFrame)
 {
     if (!protect(preferences())->remoteSnapshottingPrintProcessEnabled())
         return false;
-
-    // FIXME: Launch the print process only when the UI process knows that the frames have PDF content.
     return shouldUseRemoteSnapshotting(rootFrame);
 }
 
@@ -17723,22 +17725,72 @@ void WebPageProxy::launchPrintProcessIfNeeded(const WebFrameProxy* rootFrame)
     if (!shouldLaunchPrintProcess(rootFrame))
         return;
 
-    auto printProcessUseToken = protect(configuration().processPool())->ensurePrintProcess(protect(rootFrame->process())->lockdownMode());
+    auto lockdownMode = protect(rootFrame->process())->lockdownMode();
+    Ref processPool = configuration().processPool();
+    auto printProcessUseToken = processPool->ensurePrintProcess(lockdownMode);
+    // Connected ahead of drawing, so that UIKit's printing, which blocks the main thread to draw, finds
+    // the connections made.
+    processPool->ensurePrintProcessConnections(*rootFrame, lockdownMode, [](bool) { });
 #if PLATFORM(MAC)
     if (m_printingFrameID)
         internals().printProcessUseToken = WTF::move(printProcessUseToken);
 #endif
 }
 
-CompletionHandler<void(RefPtr<SharedBuffer>&&)> WebPageProxy::launchPrintProcessForDrawingIfNeeded(const WebFrameProxy* rootFrame, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
+// Draws a remote snapshot to PDF in the print process. The processes of the frames are connected
+// there first, then sendRootDraw() asks the root's process to record the root with the callback for
+// its reply. Returns what identifies the drawing to PendingSnapshotDrawing::wait().
+std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPrintSnapshotToPDF(WebFrameProxy& rootFrame, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler, Function<std::optional<IPC::Connection::AsyncReplyID>(RemoteSnapshotIdentifier, CompletionHandler<void(bool)>&&)>&& sendRootDraw)
 {
-    if (!shouldLaunchPrintProcess(rootFrame))
-        return WTF::move(completionHandler);
+    Ref processPool = configuration().processPool();
+    auto lockdownMode = protect(rootFrame.process())->lockdownMode();
+    auto printProcessUseToken = processPool->ensurePrintProcess(lockdownMode);
+    RefPtr printProcess = processPool->printProcessProxy(lockdownMode);
+    if (!printProcess) {
+        completionHandler(nullptr);
+        return std::nullopt;
+    }
 
-    auto printProcessUseToken = protect(configuration().processPool())->ensurePrintProcess(protect(rootFrame->process())->lockdownMode());
-    return [completionHandler = WTF::move(completionHandler), printProcessUseToken = WTF::move(printProcessUseToken)](RefPtr<SharedBuffer>&& data) mutable {
-        completionHandler(WTF::move(data));
+    auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
+    auto replyID = IPC::Connection::AsyncReplyID::generate();
+    Ref drawing = PendingSnapshotDrawing::create(snapshotIdentifier);
+    auto rootFrameIdentifier = rootFrame.frameID();
+    auto connectReplyIDs = processPool->ensurePrintProcessConnections(rootFrame, lockdownMode, [weakProcessPool = WeakPtr { processPool.get() }, printProcess, drawing, completionHandler = drawing->completionHandler(WTF::move(completionHandler)), sendRootDraw = WTF::move(sendRootDraw), printProcessUseToken = WTF::move(printProcessUseToken), snapshotIdentifier, rootFrameIdentifier, lockdownMode, replyID](bool success) mutable {
+        RefPtr processPool = weakProcessPool.get();
+        if (!success || !processPool) {
+            completionHandler(nullptr);
+            return;
+        }
+
+        processPool->didStartPrintSnapshot(snapshotIdentifier, lockdownMode);
+        auto sinkReplyID = printProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, rootFrameIdentifier, [weakProcessPool, completionHandler = WTF::move(completionHandler), snapshotIdentifier](RefPtr<SharedBuffer>&& data) mutable {
+            if (RefPtr processPool = weakProcessPool.get())
+                processPool->didEndPrintSnapshot(snapshotIdentifier);
+            completionHandler(WTF::move(data));
+        });
+        auto rootCallback = [weakProcessPool, releaseSnapshotIfRootFails = printProcess->releaseSnapshotIfRootFails(snapshotIdentifier), snapshotIdentifier](bool success) mutable {
+            RefPtr processPool = weakProcessPool.get();
+            if (!success && processPool)
+                processPool->didEndPrintSnapshot(snapshotIdentifier);
+            releaseSnapshotIfRootFails(success);
+        };
+        if (sendRootDraw(snapshotIdentifier, WTF::move(rootCallback)))
+            drawing->setReply<Messages::WebProcess::SinkCompletedPrintSnapshotToPDF>(*printProcess, sinkReplyID, replyID);
+    });
+
+    // When the connections are already made, the root has been asked to record by now. Otherwise a
+    // synchronous wait for the drawing waits for them first.
+    auto printProcessConnection = [weakPrintProcess = WeakPtr { printProcess->process() }](Seconds launchTimeout) -> RefPtr<IPC::Connection> {
+        RefPtr process = weakPrintProcess.get();
+        if (!process || !process->waitForLaunch(launchTimeout))
+            return nullptr;
+        return &process->connection();
     };
+    drawing->addPrerequisiteReplies<Messages::WebProcess::CreatePrintConnectionToWebProcess>(WTF::move(printProcessConnection), WTF::move(connectReplyIDs), [weakProcessPool = WeakPtr { processPool.get() }, lockdownMode](IPC::Connection::AsyncReplyID connectReplyID) {
+        RefPtr processPool = weakProcessPool.get();
+        return processPool && processPool->isPrintProcessConnectionPending(lockdownMode, connectReplyID);
+    }, replyID);
+    return replyID;
 }
 
 std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawRectToImage(WebFrameProxy& frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& callback)
@@ -17780,10 +17832,23 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPagesToPDF(WebFra
         return replyID;
     }
 
+    if (shouldLaunchPrintProcess(&frame)) {
+        return drawPrintSnapshotToPDF(frame, toAPIDataSharedBufferCallback(WTF::move(callback)), [weakThis = WeakPtr { *this }, frameID, printInfo, first, count](RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& rootCallback) -> std::optional<IPC::Connection::AsyncReplyID> {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis) {
+                rootCallback(false);
+                return std::nullopt;
+            }
+            if (protectedThis->m_isPerformingDOMPrintOperation)
+                return protectedThis->sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshotDuringDOMPrintOperation(snapshotIdentifier, frameID, printInfo, first, count, RemoteSnapshotHost::Print), WTF::move(rootCallback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+            return protectedThis->sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshot(snapshotIdentifier, frameID, printInfo, first, count, RemoteSnapshotHost::Print), WTF::move(rootCallback));
+        });
+    }
+
     auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
     Ref drawing = PendingSnapshotDrawing::create(snapshotIdentifier);
-    auto sinkReplyID = gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, frameID, drawing->completionHandler(launchPrintProcessForDrawingIfNeeded(&frame, toAPIDataSharedBufferCallback(WTF::move(callback)))));
+    auto sinkReplyID = gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, frameID, drawing->completionHandler(toAPIDataSharedBufferCallback(WTF::move(callback))));
     auto snapshotCallback = gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier);
 
     std::optional<IPC::Connection::AsyncReplyID> replyID;
@@ -17821,9 +17886,21 @@ void WebPageProxy::drawToPDF(const std::optional<FloatRect>& rect, bool allowTra
         return;
     }
 
+    if (shouldLaunchPrintProcess(protect(m_mainFrame).get())) {
+        drawPrintSnapshotToPDF(*protect(m_mainFrame), WTF::move(callback), [weakThis = WeakPtr { *this }, rect, allowTransparentBackground](RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& rootCallback) -> std::optional<IPC::Connection::AsyncReplyID> {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis) {
+                rootCallback(false);
+                return std::nullopt;
+            }
+            return protect(protectedThis->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::DrawToSnapshot(rect, allowTransparentBackground, snapshotIdentifier, RemoteSnapshotHost::Print), WTF::move(rootCallback), protectedThis->webPageIDInMainFrameProcess());
+        });
+        return;
+    }
+
     auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
-    gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, m_mainFrame->frameID(), launchPrintProcessForDrawingIfNeeded(protect(m_mainFrame).get(), WTF::move(callback)));
+    gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, m_mainFrame->frameID(), WTF::move(callback));
     sendWithAsyncReply(Messages::WebPage::DrawToSnapshot(rect, allowTransparentBackground, snapshotIdentifier, RemoteSnapshotHost::GPU), gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier));
 }
 

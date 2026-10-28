@@ -217,6 +217,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 // Connects the processes of this web view's frames to the print process with its Lockdown Mode, launching it if
 // needed. Reports how many web processes the print process then has connections from.
 - (void)_connectFrameProcessesToPrintProcessForTesting:(void(^)(NSUInteger printProcessClientCount))completionHandler;
+// The number of print snapshots that the print process with this web view's Lockdown Mode has drawn to PDF.
+- (void)_printProcessCompletedSnapshotCountForTesting:(void(^)(NSUInteger))completionHandler;
 
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected;
 

@@ -92,18 +92,27 @@ public:
 
     // Replies of the snapshot host that have to come in before the snapshot can be drawn, such as
     // those that connect the frame processes to the print process, whose completion handlers then ask
-    // the frames to record. Waited for first. Call before setReply().
+    // the root to record and call setReply(). Waited for first, as long as isPending() says that they
+    // have not come in yet, on the connection that connection() gets once the host has launched, which
+    // it may wait up to the timeout for. The drawing is identified to the caller by replyID meanwhile.
     template<typename M>
-    void addPrerequisiteReplies(RemoteSnapshotHostProxy& host, const Vector<IPC::AsyncReplyID>& replyIDs)
+    void addPrerequisiteReplies(Function<RefPtr<IPC::Connection>(Seconds launchTimeout)>&& connection, Vector<IPC::AsyncReplyID>&& prerequisiteReplyIDs, Function<bool(IPC::AsyncReplyID)>&& isPending, IPC::AsyncReplyID replyID)
     {
-        if (replyIDs.isEmpty() || m_isComplete)
+        if (prerequisiteReplyIDs.isEmpty() || m_isComplete)
             return;
-        m_waitForPrerequisites.append([connection = host.snapshotHostConnection(), replyIDs] {
+        m_waitForPrerequisites.append([getConnection = WTF::move(connection), prerequisiteReplyIDs = WTF::move(prerequisiteReplyIDs), isPending = WTF::move(isPending)] {
+            // Launched processes finish launching on the main thread, which the wait blocks.
+            RefPtr connection = getConnection(launchTimeout);
             if (!connection)
                 return;
-            for (auto replyID : replyIDs)
-                connection->waitForAsyncReplyAndDispatchImmediately<M>(replyID, prerequisiteTimeout);
+            for (auto prerequisiteReplyID : prerequisiteReplyIDs) {
+                if (!isPending(prerequisiteReplyID))
+                    continue;
+                if (connection->waitForAsyncReplyAndDispatchImmediately<M>(prerequisiteReplyID, prerequisiteTimeout) != IPC::Error::NoError)
+                    return;
+            }
         });
+        add(replyID);
     }
 
     template<typename... Arguments>
@@ -122,6 +131,7 @@ private:
     static constexpr Seconds replyTimeout = 1_s;
     // Answered by the print process without waiting for anything else.
     static constexpr Seconds prerequisiteTimeout = 15_s;
+    static constexpr Seconds launchTimeout = 15_s;
 
     explicit PendingSnapshotDrawing(std::optional<RemoteSnapshotIdentifier> snapshotIdentifier)
         : m_snapshotIdentifier(snapshotIdentifier)
@@ -137,7 +147,9 @@ private:
 
     void add(IPC::AsyncReplyID replyID)
     {
-        m_replyID = replyID;
+        if (m_replyIDs.contains(replyID))
+            return;
+        m_replyIDs.append(replyID);
         drawings().add(replyID, *this);
     }
 
@@ -163,12 +175,15 @@ private:
         m_waitForPrerequisites.clear();
         m_waitForSnapshot = nullptr;
         m_waitForReply = nullptr;
-        if (m_replyID)
-            drawings().remove(*m_replyID);
+        for (auto replyID : std::exchange(m_replyIDs, { })) {
+            auto iterator = drawings().find(replyID);
+            if (iterator != drawings().end() && iterator->value.ptr() == this)
+                drawings().remove(iterator);
+        }
     }
 
     const std::optional<RemoteSnapshotIdentifier> m_snapshotIdentifier;
-    std::optional<IPC::AsyncReplyID> m_replyID;
+    Vector<IPC::AsyncReplyID> m_replyIDs;
     Vector<Function<void()>> m_waitForPrerequisites;
     Function<void(Seconds)> m_waitForSnapshot;
     Function<void()> m_waitForReply;

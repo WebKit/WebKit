@@ -1623,16 +1623,21 @@ void WebProcessPool::didCreatePrintConnectionToWebProcess(WebProcessProxy& print
         completionHandler(success);
 }
 
-Vector<IPC::Connection::AsyncReplyID> WebProcessPool::ensurePrintProcessConnections(WebFrameProxy& rootFrame, WebProcessProxy::LockdownMode lockdownMode, CompletionHandler<void(bool)>&& completionHandler)
+Vector<IPC::Connection::AsyncReplyID> WebProcessPool::ensurePrintProcessConnections(const WebFrameProxy& rootFrame, WebProcessProxy::LockdownMode lockdownMode, CompletionHandler<void(bool)>&& completionHandler)
 {
     Ref aggregator = MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler));
     Vector<IPC::Connection::AsyncReplyID> replyIDs;
     HashSet<WebCore::ProcessIdentifier> processes;
-    for (RefPtr frame = &rootFrame; frame; frame = frame->traverseNext(&rootFrame)) {
+    for (RefPtr<const WebFrameProxy> frame = &rootFrame; frame; frame = frame->traverseNext(&rootFrame)) {
         Ref process = frame->process();
         if (!processes.add(process->coreProcessIdentifier()).isNewEntry)
             continue;
-        if (auto replyID = ensurePrintProcessConnection(process, lockdownMode, aggregator->chain()))
+        // Only the root has to be connected. A frame whose process cannot be is abandoned when it is
+        // asked to record.
+        auto connectionCallback = [callback = aggregator->chain(), isRoot = frame == &rootFrame](bool success) mutable {
+            callback(success || !isRoot);
+        };
+        if (auto replyID = ensurePrintProcessConnection(process, lockdownMode, WTF::move(connectionCallback)))
             replyIDs.append(*replyID);
     }
     return replyIDs;
@@ -1681,6 +1686,16 @@ RefPtr<PrintProcessProxy> WebProcessPool::printProcessProxy(WebProcessProxy::Loc
     return PrintProcessProxy::create(*this, *process);
 }
 
+bool WebProcessPool::isPrintProcessConnectionPending(WebProcessProxy::LockdownMode lockdownMode, IPC::Connection::AsyncReplyID replyID) const
+{
+    auto& state = lockdownMode == WebProcessProxy::LockdownMode::Enabled ? m_lockdownPrintProcessState : m_printProcessState;
+    for (auto& pendingClient : state.pendingClients.values()) {
+        if (pendingClient.replyID == replyID)
+            return true;
+    }
+    return false;
+}
+
 bool WebProcessPool::isPrintProcessClient(const WebProcessProxy& printProcess, WebCore::ProcessIdentifier clientIdentifier) const
 {
     auto& state = printProcess.lockdownMode() == WebProcessProxy::LockdownMode::Enabled ? m_lockdownPrintProcessState : m_printProcessState;
@@ -1695,6 +1710,16 @@ void WebProcessPool::printProcessClientCountForTesting(WebProcessProxy::Lockdown
         return;
     }
     process->sendWithAsyncReply(Messages::WebProcess::PrintConnectionToWebProcessCountForTesting(), WTF::move(completionHandler));
+}
+
+void WebProcessPool::printProcessCompletedSnapshotCountForTesting(WebProcessProxy::LockdownMode lockdownMode, CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    RefPtr process = printProcessState(lockdownMode).process;
+    if (!process) {
+        completionHandler(0);
+        return;
+    }
+    process->sendWithAsyncReply(Messages::WebProcess::CompletedPrintSnapshotCountForTesting(), WTF::move(completionHandler));
 }
 
 #endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)

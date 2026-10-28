@@ -1863,7 +1863,8 @@ void WebProcess::prepareForPrinting(CompletionHandler<void(bool)>&& completionHa
     // The print backends draw form controls on their work queues.
     ControlFactory::setDrawsControlsOffMainThread();
 #endif
-    completionHandler(protect(ensureGPUProcessConnection())->waitForDidInitialize());
+    // The print backends draw everything here, so the print process needs no GPU process.
+    completionHandler(true);
 }
 
 RemoteSnapshotRegistry& WebProcess::snapshotRegistry()
@@ -1963,7 +1964,11 @@ void WebProcess::printProcessConnectionDidClose(PrintProcessConnection& connecti
 void WebProcess::sinkCompletedPrintSnapshotToPDF(RemoteSnapshotIdentifier identifier, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
 {
     PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, completionHandler(nullptr));
-    protect(snapshotRegistry())->sinkCompletedSnapshotToPDF(identifier, rootFrameIdentifier, WTF::move(completionHandler));
+    protect(snapshotRegistry())->sinkCompletedSnapshotToPDF(identifier, rootFrameIdentifier, [completionHandler = WTF::move(completionHandler)](RefPtr<SharedBuffer>&& data) mutable {
+        if (data)
+            ++WebProcess::singleton().m_completedPrintSnapshotCountForTesting;
+        completionHandler(WTF::move(data));
+    });
 }
 
 void WebProcess::sinkCompletedPrintSnapshotToBitmap(RemoteSnapshotIdentifier identifier, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&)>&& completionHandler)
@@ -2000,6 +2005,11 @@ void WebProcess::waitForPrintSnapshot(RemoteSnapshotIdentifier identifier, Compl
 {
     PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, completionHandler());
     protect(snapshotRegistry())->waitForSnapshot(identifier, WTF::move(completionHandler));
+}
+
+void WebProcess::completedPrintSnapshotCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    completionHandler(m_completedPrintSnapshotCountForTesting);
 }
 
 #undef PRINT_PROCESS_MESSAGE_CHECK_COMPLETION

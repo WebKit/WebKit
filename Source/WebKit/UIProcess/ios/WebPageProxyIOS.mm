@@ -1064,10 +1064,21 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToPDFiOS(FrameIde
         return replyID;
     }
 
+    if (shouldLaunchPrintProcess(frame.get())) {
+        return drawPrintSnapshotToPDF(*frame, WTF::move(completionHandler), [weakThis = WeakPtr { *this }, frameID, printInfo, pageCount](RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& rootCallback) -> std::optional<IPC::Connection::AsyncReplyID> {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis) {
+                rootCallback(false);
+                return std::nullopt;
+            }
+            return protectedThis->sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshotiOS(snapshotIdentifier, frameID, printInfo, pageCount, RemoteSnapshotHost::Print), WTF::move(rootCallback));
+        });
+    }
+
     auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
     Ref drawing = PendingSnapshotDrawing::create(snapshotIdentifier);
-    auto sinkReplyID = gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, frameID, drawing->completionHandler(launchPrintProcessForDrawingIfNeeded(frame.get(), WTF::move(completionHandler))));
+    auto sinkReplyID = gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, frameID, drawing->completionHandler(WTF::move(completionHandler)));
     auto replyID = sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshotiOS(snapshotIdentifier, frameID, printInfo, pageCount, RemoteSnapshotHost::GPU), gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier));
     if (replyID)
         drawing->setReply<Messages::GPUProcess::SinkCompletedSnapshotToPDF>(gpuProcess.get(), sinkReplyID, *replyID);

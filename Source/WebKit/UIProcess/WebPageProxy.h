@@ -3335,7 +3335,7 @@ private:
     bool shouldUseRemoteSnapshotting(const WebFrameProxy* rootFrame);
     bool shouldLaunchPrintProcess(const WebFrameProxy* rootFrame);
     void launchPrintProcessIfNeeded(const WebFrameProxy* rootFrame);
-    CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)> launchPrintProcessForDrawingIfNeeded(const WebFrameProxy* rootFrame, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    std::optional<IPC::Connection::AsyncReplyID> drawPrintSnapshotToPDF(WebFrameProxy& rootFrame, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&, Function<std::optional<IPC::Connection::AsyncReplyID>(RemoteSnapshotIdentifier, CompletionHandler<void(bool)>&&)>&& sendRootDraw);
 #else
     void didGeneratePageLoadTiming(const WebPageLoadTiming&) { }
 #endif
