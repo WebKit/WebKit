@@ -1,0 +1,154 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true UsesBackForwardCache=true ] -->
+<html>
+<body>
+<pre id="log"></pre>
+<script>
+// The IPC forgery needs a ProvisionalPageProxy whose process() is a process we have script running in.
+// A back/forward-cache restore is one such case: the suspended page's process becomes the
+// provisional process for the back navigation, so the suspended page can message its own
+// ProvisionalPageProxy.
+
+const VICTIM = 'https://victim-bank.test/';
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(s) { document.getElementById('log').textContent += s + '\n'; }
+function finish() { if (window.testRunner) testRunner.notifyDone(); }
+
+function B(v)    { return {type: 'bool',     value: v}; }
+function U8(v)   { return {type: 'uint8_t',  value: v}; }
+function U64(v)  { return {type: 'uint64_t', value: v}; }
+function S(v)    { return {type: 'String',   value: v}; }
+function DBL(v)  { return {type: 'double',   value: v}; }
+function URLv(v) { return {type: 'URL',      value: v}; }
+
+function resourceRequest(url) {
+    return [
+        U8(0),              // Variant<RequestData, ResourceRequestPlatformData> index
+        URLv(url),          // m_url
+        URLv(url),          // m_firstPartyForCookies
+        DBL(60.0),          // m_timeoutInterval
+        S('GET'),           // m_httpMethod
+        U64(0n), U64(0n),   // m_httpHeaderFields: commonHeaders, uncommonHeaders sizes
+        U64(0n),            // m_responseContentDispositionEncodingFallbackArray size
+        U8(0),              // m_cachePolicy
+        U8(0),              // m_sameSiteDisposition
+        U8(0),              // m_priority
+        U8(0),              // m_requester
+        B(1),               // m_allowCookies
+        B(0),               // m_isTopSite
+        B(1),               // m_isAppInitiated
+        B(0),               // m_privacyProxyFailClosedForUnreachableNonMainHosts
+        B(0),               // m_useAdvancedPrivacyProtections
+        B(0),               // m_didFilterLinkDecoration
+        B(0),               // m_isPrivateTokenUsageByThirdPartyAllowed
+        B(0),               // m_wasSchemeOptimisticallyUpgraded
+        B(0),               // m_targetAddressSpace
+        B(0),               // shouldBlockThirdPartyStorage
+        B(0),               // hiddenFromInspector
+    ];
+}
+
+function takeInvalidMessageString() {
+    let reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);
+    return reply && reply.arguments && reply.arguments[0] ? reply.arguments[0].value : '';
+}
+
+let sent = false;
+let suspendedHits = 0;
+let sendError = null;
+let capturedError = null;
+let reported = false;
+
+function sendForgedDidStartProvisionalLoad() {
+    IPC.sendMessage('UI', IPC.pageID, IPC.messages.WebPageProxy_DidStartProvisionalLoadForFrame.name, [
+        {type: 'FrameID', value: IPC.frameID},   // frameID -- must equal ProvisionalPageProxy::m_mainFrame's
+        {type: 'FrameInfoData', value: IPC},     // frameInfo
+        ...resourceRequest(VICTIM),              // request
+        B(0),                                    // navigationID = nullopt -> validateInput() short-circuits
+        URLv(VICTIM),                            // url  <-- the forged provisional load URL
+        URLv(''),                                // unreachableURL
+        B(0),                                    // userData
+        DBL(0),                                  // WallTime timestamp
+    ]);
+
+    // Read the error string back right away rather than at pageshow. Messages on one connection are
+    // dispatched in order, so by the time this synchronous reply arrives the UIProcess has already
+    // handled the forged message.
+    capturedError = takeInvalidMessageString();
+}
+
+function report() {
+    if (reported)
+        return;
+    reported = true;
+
+    if (sendError) {
+        log('FAIL: could not send the forged message: ' + sendError);
+    } else if (!sent) {
+        log('FAIL: forged message never sent; no back/forward-cache restore happened' +
+            ' (suspendedHits=' + suspendedHits + ')');
+    } else if (!capturedError) {
+        log('FAIL: ProvisionalPageProxy::didStartProvisionalLoadForFrame accepted a WebContent-supplied provisional load URL');
+    } else if (capturedError.includes('Message check failed')) {
+        log('PASS: ProvisionalPageProxy::didStartProvisionalLoadForFrame rejected the forged provisional load URL');
+    } else {
+        log('FAIL: message rejected for an unexpected reason: ' + capturedError);
+    }
+    finish();
+}
+
+if (!window.IPC) {
+    finish();
+} else {
+    takeInvalidMessageString(); // Clear any pre-existing error string.
+
+    // The UIProcess sends WebPage_SetIsSuspended(true) when this page enters the back/forward cache
+    // after the cross-site navigation below, then SetIsSuspended(false) when it unsuspends the page
+    // for the back navigation. The second one is dispatched from the ProvisionalPageProxy
+    // constructor, after it has already called startReceivingMessages(), so a message sent from this
+    // listener reaches the new ProvisionalPageProxy while m_provisionalLoadURL is still null and
+    // ahead of the legitimate restore traffic.
+    IPC.addIncomingMessageListener('UI', function (m) {
+        try {
+            if (m.description !== 'WebPage_SetIsSuspended' || m.destinationID != IPC.pageID)
+                return;
+            if (sent || ++suspendedHits < 2)
+                return;
+            sent = true;
+            sendForgedDidStartProvisionalLoad();
+        } catch (e) {
+            sendError = String(e);
+        }
+    });
+
+    window.addEventListener('pageshow', function (e) {
+        if (e.persisted)
+            setTimeout(report, 0);
+    });
+
+    setTimeout(function () {
+        if (!reported) {
+            log('FAIL: timed out waiting for the back/forward-cache restore' +
+                ' (suspendedHits=' + suspendedHits + ', sent=' + sent + ')');
+            reported = true;
+            finish();
+        }
+    }, 10000);
+
+    // Cross-site navigation: 127.0.0.1 and localhost are distinct registrable domains, so this
+    // process-swaps and leaves this page suspended in the back/forward cache.
+    onload = function () {
+        setTimeout(function () {
+            location.href = location.href.replace('127.0.0.1', 'localhost')
+                .replace(/provisional-page-forged-provisional-url-message-check\.html.*/,
+                    'resources/provisional-page-forged-provisional-url-go-back.html');
+        }, 0);
+    };
+}
+</script>
+</body>
+</html>
