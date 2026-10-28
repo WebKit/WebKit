@@ -79,9 +79,28 @@ public:
         Meta    = 1 << 3
     };
 
+    class NetworkPolicyGuard {
+    public:
+        NetworkPolicyGuard(WebViewTest*, WebKitTLSErrorsPolicy);
+        ~NetworkPolicyGuard();
+
+        void setErrorPolicy(WebKitTLSErrorsPolicy);
+
+    private:
+        WebKitTLSErrorsPolicy m_originalPolicy;
+#if ENABLE(2022_GLIB_API)
+        WebViewTest* m_test;
+#else
+        WebKitWebsiteDataManager* m_manager;
+#endif
+    };
+
     void mouseMoveTo(int x, int y, OptionSet<Modifiers> = OptionSet<Modifiers>());
     void clickMouseButton(int x, int y, MouseButton = MouseButton::Primary, OptionSet<Modifiers> = OptionSet<Modifiers>());
     void keyStroke(unsigned keyVal, OptionSet<Modifiers> = OptionSet<Modifiers>());
+#if ENABLE(WPE_PLATFORM)
+    void tapTouchscreen(int x, int y);
+#endif
 
     void showInWindow(int width = 0, int height = 0);
 
@@ -124,22 +143,6 @@ public:
     static gboolean webProcessTerminated(WebKitWebView*, WebKitWebProcessTerminationReason, WebViewTest*);
 
     GRefPtr<GDBusProxy> extensionProxy();
-
-    class NetworkPolicyGuard {
-    public:
-        NetworkPolicyGuard(WebViewTest*, WebKitTLSErrorsPolicy);
-        ~NetworkPolicyGuard();
-
-        void setErrorPolicy(WebKitTLSErrorsPolicy);
-
-    private:
-        WebKitTLSErrorsPolicy m_originalPolicy;
-#if ENABLE(2022_GLIB_API)
-        WebViewTest* m_test;
-#else
-        WebKitWebsiteDataManager* m_manager;
-#endif
-    };
 
     GRefPtr<WebKitUserContentManager> m_userContentManager;
     GRefPtr<WebKitWebView> m_webView;

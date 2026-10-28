@@ -490,6 +490,10 @@ void ViewPlatform::handleGesture(WPEEvent* event)
         if (wpe_event_get_event_type(event) == WPE_EVENT_TOUCH_MOVE)
             return;
         if (double x, y; wpe_gesture_controller_get_gesture_position(gestureController, &x, &y)) {
+            // A tap ends the composition before it moves the caret, as a pointer press does in handleEvent().
+            // The simulated mouse events below go to the page directly and would skip that.
+            m_inputMethodFilter.cancelComposition();
+
             // Mouse motion towards the point of the click.
             {
                 GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_move_new(
