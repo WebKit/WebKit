@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WasmIPIntGenerator.h"
 #include <cstdint>
+#include <limits>
 
 #if ENABLE(WEBASSEMBLY)
 
@@ -39,6 +40,7 @@
 #include "WasmFunctionParser.h"
 #include "WasmModuleDebugInfo.h"
 #include <wtf/Assertions.h>
+#include <wtf/CheckedArithmetic.h>
 
 /*
  * WebAssembly in-place interpreter metadata generator
@@ -580,6 +582,20 @@ public:
         m_stackSize += delta;
         if (delta > 0)
             m_maxStackSize = std::max(m_maxStackSize, m_stackSize.value());
+    }
+
+    Expected<IPInt::BranchTargetMetadata, ErrorType> branchTargetMetadataFor(const ControlType& targetBlock, unsigned extraPops = 0)
+    {
+        using ToPopType = decltype(IPInt::BranchTargetMetadata::toPop);
+        Checked<uint32_t> toPop = m_stackSize - targetBlock.stackSize() - targetBlock.branchTargetArity() - extraPops;
+        if (!isInBounds<ToPopType>(toPop)) [[unlikely]]
+            return fail("Branch target would discard too many stack values: ", toPop.value(), " max: ", std::numeric_limits<ToPopType>::max());
+        return IPInt::BranchTargetMetadata {
+            .block = { .deltaPC = 0xbeef, .deltaMC = 0xbeef },
+            .toPop = safeCast<ToPopType>(toPop),
+            // Branch arity is bounded by maxFunctionParams / maxFunctionReturns, so it always fits.
+            .toKeep = safeCast<uint16_t>(targetBlock.branchTargetArity()),
+        };
     }
 
     void coalesceControlFlow(bool force = false);
@@ -2591,12 +2607,12 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     if (isBrIf)
         RECORD_NEXT_INSTRUCTION(here.pc, nextPC());
 
+    auto target = branchTargetMetadataFor(block);
+    if (!target) [[unlikely]]
+        return makeUnexpected(WTF::move(target.error()));
+
     IPInt::BranchMetadata branch {
-        .target = {
-            .block = { .deltaPC = 0xbeef, .deltaMC = 0xbeef },
-            .toPop = safeCast<uint16_t>(m_stackSize - block.stackSize() - block.branchTargetArity()),
-            .toKeep = safeCast<uint16_t>(block.branchTargetArity()),
-        },
+        .target = *target,
         .instructionLength = { .length = safeCast<uint8_t>(getCurrentInstructionLength()) }
     };
     m_metadata->appendMetadata(branch);
@@ -2612,18 +2628,13 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     IPIntLocation here = { curPC(), curMC() };
     RECORD_NEXT_INSTRUCTION(here.pc, nextPC());
 
-    unsigned toPop = m_stackSize - block.stackSize() - block.branchTargetArity();
-
     // if we branch_on_null, we'll pop the null first
-    if (!shouldNegate)
-        toPop -= 1;
+    auto target = branchTargetMetadataFor(block, shouldNegate ? 0 : 1);
+    if (!target) [[unlikely]]
+        return makeUnexpected(WTF::move(target.error()));
 
     IPInt::BranchMetadata branch {
-        .target = {
-            .block = { .deltaPC = 0xbeef, .deltaMC = 0xbeef },
-            .toPop = safeCast<uint16_t>(toPop),
-            .toKeep = safeCast<uint16_t>(block.branchTargetArity()),
-        },
+        .target = target.value(),
         .instructionLength = { .length = safeCast<uint8_t>(getCurrentInstructionLength()) }
     };
     m_metadata->appendMetadata(branch);
@@ -2644,12 +2655,12 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     IPIntLocation here = { curPC(), curMC() };
     RECORD_NEXT_INSTRUCTION(here.pc, nextPC());
 
+    auto target = branchTargetMetadataFor(block);
+    if (!target) [[unlikely]]
+        return makeUnexpected(WTF::move(target.error()));
+
     m_metadata->appendMetadata<IPInt::BranchMetadata>({
-        .target = {
-            .block = { .deltaPC = 0xbeef, .deltaMC = 0xbeef },
-            .toPop = safeCast<uint16_t>(m_stackSize - block.stackSize() - block.branchTargetArity()),
-            .toKeep = safeCast<uint16_t>(block.branchTargetArity()),
-        },
+        .target = target.value(),
         .instructionLength = { .length = safeCast<uint8_t>(getCurrentInstructionLength()) }
     });
 
@@ -2667,22 +2678,19 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     m_metadata->appendMetadata(mdSwitch);
 
     for (auto* block : jumps) {
-        IPInt::BranchTargetMetadata target {
-            .block = { .deltaPC = 0xbeef, .deltaMC = 0xbeef },
-            .toPop = safeCast<uint16_t>(m_stackSize - block->stackSize() - block->branchTargetArity()),
-            .toKeep = safeCast<uint16_t>(block->branchTargetArity())
-        };
+        auto target = branchTargetMetadataFor(*block);
+        if (!target) [[unlikely]]
+            return makeUnexpected(WTF::move(target.error()));
         IPIntLocation here = { curPC(), curMC() };
-        m_metadata->appendMetadata(target);
+        m_metadata->appendMetadata(target.value());
         tryToResolveBranchTarget(*block, here, m_metadata->m_metadata.mutableSpan().data());
     }
-    IPInt::BranchTargetMetadata defaultTarget {
-        .block = { .deltaPC = 0xbeef, .deltaMC = 0xbeef },
-        .toPop = safeCast<uint16_t>(m_stackSize - defaultJump.stackSize() - defaultJump.branchTargetArity()),
-        .toKeep = safeCast<uint16_t>(defaultJump.branchTargetArity())
-    };
+
+    auto defaultTarget = branchTargetMetadataFor(defaultJump);
+    if (!defaultTarget) [[unlikely]]
+        return makeUnexpected(WTF::move(defaultTarget.error()));
     IPIntLocation here = { curPC(), curMC() };
-    m_metadata->appendMetadata(defaultTarget);
+    m_metadata->appendMetadata(defaultTarget.value());
     tryToResolveBranchTarget(defaultJump, here, m_metadata->m_metadata.mutableSpan().data());
 
     return { };
