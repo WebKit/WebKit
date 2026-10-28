@@ -1138,6 +1138,13 @@ bool contains(std::span<T, TExtent> haystack, std::span<U, UExtent> needle)
     return find(haystack, needle) != notFound;
 }
 
+template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
+bool LEGACY_NODELETE spansOverlap(std::span<T, TExtent> a, std::span<U, UExtent> b)
+{
+    return static_cast<const void*>(a.data()) < static_cast<const void*>(std::to_address(b.end()))
+        && static_cast<const void*>(b.data()) < static_cast<const void*>(std::to_address(a.end()));
+}
+
 // memcpy() is not annotated LEGACY_NODELETE, but it runs no destructors, so the suppression is safe.
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
 SUPPRESS_NODELETE void LEGACY_NODELETE memcpySpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
@@ -1146,6 +1153,7 @@ SUPPRESS_NODELETE void LEGACY_NODELETE memcpySpan(std::span<T, TExtent> destinat
     static_assert(std::is_trivially_copyable_v<T> || std::is_floating_point_v<T>);
     static_assert(std::is_trivially_copyable_v<U> || std::is_floating_point_v<U>);
     RELEASE_ASSERT(destination.size() >= source.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(!spansOverlap(destination.first(source.size()), source));
     memcpy(destination.data(), source.data(), source.size_bytes()); // NOLINT
 }
 
@@ -1245,13 +1253,6 @@ template<typename DestinationType, typename SourceType>
 match_constness_t<SourceType, DestinationType>& consumeAndReinterpretCastTo(std::span<SourceType>& data) requires(sizeof(SourceType) == 1)
 {
     return spanReinterpretCast<match_constness_t<SourceType, DestinationType>>(consumeSpan(data, sizeof(DestinationType)))[0];
-}
-
-template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
-bool spansOverlap(std::span<T, TExtent> a, std::span<U, UExtent> b)
-{
-    return static_cast<const void*>(a.data()) < static_cast<const void*>(std::to_address(b.end()))
-        && static_cast<const void*>(b.data()) < static_cast<const void*>(std::to_address(a.end()));
 }
 
 /* SAFE_PRINTF */

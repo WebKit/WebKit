@@ -92,7 +92,8 @@ void WaveShaperDSPKernel::processCurveWithData(std::span<const float> source, st
     ASSERT(source.data() && destination.data());
 
     if (curveData.empty()) {
-        memcpySpan(destination, source);
+        if (destination.data() != source.data())
+            memcpySpan(destination, source);
         return;
     }
 
