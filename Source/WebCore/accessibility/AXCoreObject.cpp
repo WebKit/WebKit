@@ -1699,6 +1699,12 @@ bool AXCoreObject::supportsPressAction() const
     if (isImplicitlyInteractive())
         return true;
 
+#if PLATFORM(MAC)
+    // With media actions on, pressing a media element toggles playback.
+    if (AXObjectCache::isAXMediaActionsEnabled() && (isVideo() || role() == AccessibilityRole::Audio))
+        return true;
+#endif
+
     // But for anything else, pointer-events:none is an explicit signal that it isn't meant to be clicked.
     if (hasPointerEventsNone())
         return false;

@@ -1,0 +1,31 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityMediaActionsEnabled=false ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<video id="video" src="../resources/test.mp4" preload="auto"></video>
+
+<script>
+var output = "This test ensures that a video exposes no media custom actions when the feature is off.\n\n";
+
+var video = document.getElementById("video");
+var axVideo;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        await waitFor(() => video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA);
+        axVideo = await waitForElementById("video");
+        output += expect("axVideo.customActionNames()", "''");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

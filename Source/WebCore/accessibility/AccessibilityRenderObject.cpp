@@ -1913,6 +1913,11 @@ bool AccessibilityRenderObject::press()
         // because this method is only called from user interaction.
         return AccessibilityMediaHelpers::press(*mediaElement);
     }
+#elif PLATFORM(MAC) && ENABLE(VIDEO)
+    if (AXObjectCache::isAXMediaActionsEnabled()) {
+        if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(node()))
+            return AccessibilityMediaHelpers::perform(*mediaElement, AccessibilityMediaHelpers::Action::TogglePlayPause);
+    }
 #endif
 
     if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(element()); selectElement && selectElement->usesBaseAppearancePicker()) {

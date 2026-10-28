@@ -61,6 +61,11 @@ class SliderBase extends LayoutNode
         this._input.element.setAttribute("aria-valuetext", utils.formattedStringForDuration(timeValue));
     }
 
+    set inputAccessibleName(name)
+    {
+        this._input.element.setAttribute("aria-label", name);
+    }
+
     get disabled()
     {
         return this._disabled;

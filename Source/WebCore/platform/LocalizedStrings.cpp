@@ -1530,6 +1530,58 @@ String contextMenuItemTagShowMediaStats()
     return WEB_UI_STRING("Show Media Statistics", "Media statistics context menu item");
 }
 
+#if PLATFORM(MAC)
+String AXMediaPlayActionText()
+{
+    return WEB_UI_STRING_KEY("Play", "Play (accessibility action)", "accessibility action name to start playing a media element");
+}
+
+String AXMediaPauseActionText()
+{
+    return WEB_UI_STRING_KEY("Pause", "Pause (accessibility action)", "accessibility action name to pause a media element");
+}
+
+String AXMediaSkipBackActionText()
+{
+    return WEB_UI_STRING_KEY("Skip Back 15 Seconds", "Skip Back 15 Seconds (accessibility action)", "accessibility action name to skip a media element back 15 seconds");
+}
+
+String AXMediaSkipForwardActionText()
+{
+    return WEB_UI_STRING_KEY("Skip Forward 15 Seconds", "Skip Forward 15 Seconds (accessibility action)", "accessibility action name to skip a media element forward 15 seconds");
+}
+
+String AXMediaMuteActionText()
+{
+    return WEB_UI_STRING_KEY("Mute", "Mute (accessibility action)", "accessibility action name to mute a media element");
+}
+
+String AXMediaUnmuteActionText()
+{
+    return WEB_UI_STRING_KEY("Unmute", "Unmute (accessibility action)", "accessibility action name to unmute a media element");
+}
+
+String AXMediaShowCaptionsActionText()
+{
+    return WEB_UI_STRING_KEY("Show Captions", "Show Captions (accessibility action)", "accessibility action name to show captions on a media element");
+}
+
+String AXMediaHideCaptionsActionText()
+{
+    return WEB_UI_STRING_KEY("Hide Captions", "Hide Captions (accessibility action)", "accessibility action name to hide captions on a media element");
+}
+
+String AXMediaEnterFullScreenActionText()
+{
+    return WEB_UI_STRING_KEY("Enter Full Screen", "Enter Full Screen (accessibility action)", "accessibility action name to show a video in full screen");
+}
+
+String AXMediaExitFullScreenActionText()
+{
+    return WEB_UI_STRING_KEY("Exit Full Screen", "Exit Full Screen (accessibility action)", "accessibility action name to exit full screen video");
+}
+#endif // PLATFORM(MAC)
+
 #endif // ENABLE(VIDEO)
 
 #if PLATFORM(COCOA)

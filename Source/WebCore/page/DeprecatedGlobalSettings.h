@@ -109,6 +109,9 @@ public:
     static bool isAccessibilityIsolatedTreeEnabled() { return singleton().m_accessibilityIsolatedTree; }
 #endif
 
+    static void setAccessibilityMediaActionsEnabled(bool isEnabled) { singleton().m_accessibilityMediaActionsEnabled = isEnabled; }
+    static bool accessibilityMediaActionsEnabled() { return singleton().m_accessibilityMediaActionsEnabled; }
+
     static void setAccessibilityTextStitchingEnabled(bool isEnabled) { singleton().m_accessibilityTextStitchingEnabled = isEnabled; }
     static bool accessibilityTextStitchingEnabled() { return singleton().m_accessibilityTextStitchingEnabled; }
 
@@ -175,6 +178,7 @@ private:
     bool m_accessibilityIsolatedTree { false };
 #endif
 
+    bool m_accessibilityMediaActionsEnabled { false };
     bool m_accessibilityTextStitchingEnabled { false };
     bool m_accessibilityThreadHitTestingEnabled { false };
 

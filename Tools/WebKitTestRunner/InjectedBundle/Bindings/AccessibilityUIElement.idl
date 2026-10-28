@@ -160,6 +160,7 @@ interface AccessibilityUIElement {
     undefined showMenu();
     boolean dismiss();
     boolean invokeCustomActionAtIndex(unsigned long index);
+    DOMString customActionNames();
 
     // Attribute info.
     DOMString allAttributes();

@@ -1979,6 +1979,19 @@ bool AccessibilityUIElementMac::invokeCustomActionAtIndex(unsigned index)
     return action.handler();
 }
 
+RefPtr<OpaqueJSString> AccessibilityUIElementMac::customActionNames()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    RetainPtr<NSMutableArray> names = adoptNS([[NSMutableArray alloc] init]);
+    s_controller->executeOnAXThreadAndWait([this, &names] {
+        for (NSAccessibilityCustomAction *action in [m_element.get() accessibilityCustomActions])
+            [names addObject:action.name];
+    });
+    return [[names componentsJoinedByString:@", "] createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    return nullptr;
+}
+
 bool AccessibilityUIElementMac::setSelectedTextMarkerRange(AccessibilityTextMarkerRange* markerRange)
 {
     if (!markerRange)

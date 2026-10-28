@@ -28,7 +28,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
 
 namespace WebCore {
 
@@ -49,6 +49,22 @@ public:
     static void increment(HTMLMediaElement&);
     static void decrement(HTMLMediaElement&);
 
+#if PLATFORM(MAC)
+    // Actions VoiceOver lists for a media element. Each one is performed through an input path that
+    // already exists without assistive technology (media keys, or the media context menu), so a page
+    // can't tell that the user triggered it with an assistive technology.
+    enum class Action : uint8_t {
+        TogglePlayPause,
+        SkipBackward,
+        SkipForward,
+        ToggleMute,
+        ToggleCaptions,
+        ToggleFullscreen,
+    };
+    static Vector<std::pair<String, Action>> availableActions(HTMLMediaElement&);
+    static bool perform(HTMLMediaElement&, Action);
+#endif
+
 private:
     enum class AXSeekDirection : bool { Backward, Forward };
     static void mediaSeek(HTMLMediaElement&, AXSeekDirection);
@@ -56,4 +72,4 @@ private:
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(COCOA) && ENABLE(VIDEO)

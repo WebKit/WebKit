@@ -172,6 +172,7 @@ class VisionMediaControls extends MediaControls
         // Time Control.
 
         this.timeControl.scrubber = new VisionSlider(this.layoutDelegate, "scrubber");
+        this.timeControl.scrubber.inputAccessibleName = UIString("Timeline");
 
         // Controls Bars.
 
@@ -188,6 +189,7 @@ class VisionMediaControls extends MediaControls
         this._bottomBarRightContainer = new ButtonsContainer({ cssClassName: "right" });
 
         this.volumeSlider = new VisionSlider(this, "volume");
+        this.volumeSlider.inputAccessibleName = UIString("Volume");
         this.volumeSlider.width = 150;
         this.volumeSlider.recessed = true;
 

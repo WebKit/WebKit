@@ -41,6 +41,7 @@ class AdwaitaInlineMediaControls extends InlineMediaControls
         this._backgroundClickDelegateNotifier = new BackgroundClickDelegateNotifier(this);
 
         this.volumeSlider = new Slider(this, "volume");
+        this.volumeSlider.inputAccessibleName = UIString("Volume");
         this.volumeSlider.width = 60;
 
         this._volumeSliderContainer = new LayoutNode(`<div class="volume-slider-container"></div>`);

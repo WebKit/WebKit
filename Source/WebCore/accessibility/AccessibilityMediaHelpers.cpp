@@ -28,7 +28,7 @@
 
 #include "config.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
 #include "AccessibilityMediaHelpers.h"
 
 #include "AccessibilityNodeObjectInlines.h"
@@ -38,6 +38,8 @@
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
 #include "LocalizedStrings.h"
+#include "MediaElementSession.h"
+#include "UserGestureIndicator.h"
 
 namespace WebCore {
 
@@ -103,6 +105,72 @@ void AccessibilityMediaHelpers::mediaSeek(HTMLMediaElement& mediaElement, AXSeek
     mediaElement.setCurrentTime(time);
 }
 
+#if PLATFORM(MAC)
+// Matches the skip interval HTMLMediaElement uses for the skip media key.
+static constexpr double skipInterval = 15;
+
+Vector<std::pair<String, AccessibilityMediaHelpers::Action>> AccessibilityMediaHelpers::availableActions(HTMLMediaElement& mediaElement)
+{
+    Vector<std::pair<String, Action>> actions;
+    actions.append({ mediaElement.paused() ? AXMediaPlayActionText() : AXMediaPauseActionText(), Action::TogglePlayPause });
+
+    if (mediaElement.supportsSeeking() && std::isfinite(mediaElement.duration())) {
+        actions.append({ AXMediaSkipBackActionText(), Action::SkipBackward });
+        actions.append({ AXMediaSkipForwardActionText(), Action::SkipForward });
+    }
+
+    if (mediaElement.hasAudio())
+        actions.append({ mediaElement.muted() ? AXMediaUnmuteActionText() : AXMediaMuteActionText(), Action::ToggleMute });
+
+    if (mediaElement.hasClosedCaptions())
+        actions.append({ mediaElement.closedCaptionsVisible() ? AXMediaHideCaptionsActionText() : AXMediaShowCaptionsActionText(), Action::ToggleCaptions });
+
+    if (mediaElement.isVideo() && mediaElement.supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard))
+        actions.append({ mediaElement.isStandardFullscreen() ? AXMediaExitFullScreenActionText() : AXMediaEnterFullScreenActionText(), Action::ToggleFullscreen });
+
+    return actions;
+}
+
+bool AccessibilityMediaHelpers::perform(HTMLMediaElement& mediaElement, Action action)
+{
+    // Play, pause and skip go through the media session, exactly like the keyboard media keys or
+    // Control Center. That honors any navigator.mediaSession action handlers the page registered,
+    // so custom players see the same input they'd get from those controls.
+    auto sendRemoteCommand = [&](PlatformMediaSession::RemoteControlCommandType command, PlatformMediaSession::RemoteCommandArgument argument = { }) {
+        PlatformMediaSession& session = mediaElement.mediaSession();
+        session.didReceiveRemoteControlCommand(command, argument);
+        return true;
+    };
+
+    switch (action) {
+    case Action::TogglePlayPause:
+        return sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand);
+    case Action::SkipBackward:
+        return sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType::SkipBackwardCommand, { skipInterval, std::nullopt });
+    case Action::SkipForward:
+        return sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType::SkipForwardCommand, { skipInterval, std::nullopt });
+    case Action::ToggleMute:
+        // Same as the media context menu's Mute item.
+        mediaElement.setMuted(!mediaElement.muted());
+        return true;
+    case Action::ToggleCaptions:
+        if (!mediaElement.hasClosedCaptions())
+            return false;
+        mediaElement.setClosedCaptionsVisible(!mediaElement.closedCaptionsVisible());
+        return true;
+    case Action::ToggleFullscreen: {
+        // Same as the media context menu's Enter/Exit Full Screen item.
+        if (!mediaElement.isVideo() || !mediaElement.supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard))
+            return false;
+        UserGestureIndicator indicator(IsProcessingUserGesture::Yes, protect(mediaElement.document()).ptr());
+        mediaElement.toggleStandardFullscreenState();
+        return true;
+    }
+    }
+    return false;
+}
+#endif // PLATFORM(MAC)
+
 } // namespace WebCore
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(COCOA) && ENABLE(VIDEO)

@@ -47,6 +47,7 @@ class TimeControl extends LayoutItem
 
         this.elapsedTimeLabel = new TimeLabel(TimeLabel.Type.Elapsed);
         this.scrubber = new Slider(this.layoutDelegate, "scrubber");
+        this.scrubber.inputAccessibleName = UIString("Timeline");
         this.durationTimeLabel = new TimeLabel(TimeLabel.Type.Duration);
         this.remainingTimeLabel = new TimeLabel(TimeLabel.Type.Remaining);
 
