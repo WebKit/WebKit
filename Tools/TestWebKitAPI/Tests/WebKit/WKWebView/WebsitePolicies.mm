@@ -1527,6 +1527,8 @@ static bool calledShouldAllowDeviceOrientationAndMotionAccessDelegate = false;
 
 static void runWebsitePoliciesDeviceOrientationEventTest(_WKWebsiteDeviceOrientationAndMotionAccessPolicy accessPolicy)
 {
+    calledShouldAllowDeviceOrientationAndMotionAccessDelegate = false;
+
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
     RetainPtr schemeHandler = adoptNS([[DataMappingSchemeHandler alloc] init]);

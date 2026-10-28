@@ -50,6 +50,16 @@ static bool askedClientForPermission;
 @end
 
 @implementation DeviceOrientationMessageHandler
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    didReceiveMessage = false;
+    [receivedMessages removeAllObjects];
+    return self;
+}
+
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     if ([message body])
@@ -74,6 +84,7 @@ Function<bool()> _decisionHandler;
 {
     self = [super init];
     _decisionHandler = WTF::move(decisionHandler);
+    askedClientForPermission = false;
     return self;
 }
 
@@ -383,6 +394,15 @@ TEST(DeviceOrientation, PermissionSecureContextCheck)
 @implementation DeviceOrientationPermissionValidationDelegate {
 Function<void(WKSecurityOrigin*, WKFrameInfo*)> _validationHandler;
 }
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    askedClientForPermission = false;
+    return self;
+}
+
 - (void)setValidationHandler:(Function<void(WKSecurityOrigin*, WKFrameInfo*)>&&)validationHandler {
     _validationHandler = WTF::move(validationHandler);
 }
