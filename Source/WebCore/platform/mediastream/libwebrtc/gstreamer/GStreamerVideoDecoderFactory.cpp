@@ -109,21 +109,28 @@ public:
         GRefPtr sinkpad = adoptGRef(gst_element_get_static_pad(m_sink.get(), "sink"));
         g_signal_connect(decoder, "pad-added", G_CALLBACK(decodebinPadAddedCb), sinkpad.get());
 
-        auto& quirksManager = GStreamerQuirksManager::singleton();
-        if (quirksManager.isEnabled()) {
-            // Prevent auto-plugging of hardware-accelerated elements. Those will be used in the playback pipeline.
-            g_signal_connect(decoder, "autoplug-select", G_CALLBACK(+[](GstElement*, GstPad*, GstCaps*, GstElementFactory* factory, gpointer) -> unsigned {
-                static auto skipAutoPlug = gstGetAutoplugSelectResult("skip"_s);
-                static auto tryAutoPlug = gstGetAutoplugSelectResult("try"_s);
-                RELEASE_ASSERT(skipAutoPlug);
-                RELEASE_ASSERT(tryAutoPlug);
-                auto& quirksManager = GStreamerQuirksManager::singleton();
-                auto isHardwareAccelerated = quirksManager.isHardwareAccelerated(factory).value_or(false);
-                if (isHardwareAccelerated)
-                    return *skipAutoPlug;
+        g_signal_connect(decoder, "autoplug-select", G_CALLBACK(+[](GstElement*, GstPad*, GstCaps*, GstElementFactory* factory, gpointer) -> unsigned {
+            static auto skipAutoPlug = gstGetAutoplugSelectResult("skip"_s);
+            static auto tryAutoPlug = gstGetAutoplugSelectResult("try"_s);
+            RELEASE_ASSERT(skipAutoPlug);
+            RELEASE_ASSERT(tryAutoPlug);
+
+            // Prevent auto-plugging of the webkitthunderparser elements, those are needed only for
+            // EME playback, not WebRTC.
+            auto name = StringView::fromLatin1(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE_CAST(factory)));
+            if (name == "webkitthunderparser"_s)
+                return *skipAutoPlug;
+
+            auto& quirksManager = GStreamerQuirksManager::singleton();
+            if (!quirksManager.isEnabled())
                 return *tryAutoPlug;
-            }), nullptr);
-        }
+
+            // Prevent auto-plugging of hardware-accelerated elements. Those will be used in the playback pipeline.
+            auto isHardwareAccelerated = quirksManager.isHardwareAccelerated(factory).value_or(false);
+            if (isHardwareAccelerated)
+                return *skipAutoPlug;
+            return *tryAutoPlug;
+        }), nullptr);
 
         // Make the decoder output "parsed" frames only and let the main decodebin
         // do the real decoding. This allows us to have optimized decoding/rendering
