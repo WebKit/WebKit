@@ -22,6 +22,7 @@
 
 import getpass
 import os
+import shlex
 import sys
 import time
 
@@ -439,7 +440,9 @@ class Setup(Command):
             if username and password and not run([
                 repository.executable(), 'config',
                 'credential.{}.helper'.format('/'.join(rmt.url.split('/')[:3])),
-                '!f() {{ {} -C {} credentials; }}; f'.format(sys.argv[0], rmt.url),
+                '!f() {{ {} -C {} credentials; }}; f'.format(
+                    shlex.quote(os.path.abspath(sys.argv[0])), rmt.url,
+                ),
             ], capture_output=True, cwd=repository.root_path).returncode:
                 can_push = True
 
