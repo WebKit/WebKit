@@ -1065,8 +1065,8 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToPDFiOS(FrameIde
     }
 
     if (shouldLaunchPrintProcess(frame.get())) {
-        return drawPrintSnapshotToPDF(*frame, WTF::move(completionHandler), [weakThis = WeakPtr { *this }, frameID, printInfo, pageCount](RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& rootCallback) -> std::optional<IPC::Connection::AsyncReplyID> {
-            RefPtr protectedThis = weakThis.get();
+        return drawPrintSnapshot(*frame, WTF::move(completionHandler), [weakThis = WeakPtr { *this }, frameID, printInfo, pageCount](RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& rootCallback) -> std::optional<IPC::Connection::AsyncReplyID> {
+            RefPtr protectedThis = weakThis;
             if (!protectedThis) {
                 rootCallback(false);
                 return std::nullopt;
@@ -1099,6 +1099,18 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToImage(FrameIden
         if (replyID)
             drawing->setReply<Messages::WebPage::DrawToImage>(processContainingFrame(frameID), *replyID);
         return replyID;
+    }
+
+    // Drawn from the same snapshot as the printed pages, so that the preview shows what is printed.
+    if (shouldLaunchPrintProcess(frame.get())) {
+        return drawPrintSnapshot(*frame, WTF::move(completionHandler), [weakThis = WeakPtr { *this }, frameID, printInfo](RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& rootCallback) -> std::optional<IPC::Connection::AsyncReplyID> {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis) {
+                rootCallback(false);
+                return std::nullopt;
+            }
+            return protectedThis->sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingToSnapshotiOS(snapshotIdentifier, frameID, printInfo, RemoteSnapshotHost::Print), WTF::move(rootCallback));
+        });
     }
 
     auto snapshotIdentifier = generateRemoteSnapshotIdentifier();

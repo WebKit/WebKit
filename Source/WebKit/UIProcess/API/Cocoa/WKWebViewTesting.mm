@@ -994,6 +994,26 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     return result->autorelease();
 }
 
+- (void)_drawPrintPreviewForTesting:(_WKFrameHandle *)handle rect:(CGRect)rect imageSize:(CGSize)imageSize completionHandler:(void(^)(CGImageRef))completionHandler
+{
+    RefPtr frame = WebKit::WebFrameProxy::webFrame(*handle->_frameHandle->frameID());
+    if (!frame)
+        return completionHandler(nullptr);
+
+    WebKit::PrintInfo printInfo;
+    printInfo.pageSetupScaleFactor = 1;
+    printInfo.availablePaperWidth = 612;
+    printInfo.availablePaperHeight = 792;
+    _page->drawRectToImage(*frame, printInfo, WebCore::enclosingIntRect(WebCore::FloatRect { rect }), WebCore::expandedIntSize(WebCore::FloatSize { imageSize }), [completionHandler = makeBlockPtr(completionHandler)](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) {
+        if (!imageHandle)
+            return completionHandler(nullptr);
+        RefPtr bitmap = WebCore::ShareableBitmap::create(WTF::move(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
+        if (!bitmap)
+            return completionHandler(nullptr);
+        completionHandler(bitmap->createPlatformImage().get());
+    });
+}
+
 - (void)_printProcessIdentifierForTesting:(void(^)(pid_t))completionHandler
 {
     auto lockdownMode = protect(_page->legacyMainFrameProcess())->lockdownMode();

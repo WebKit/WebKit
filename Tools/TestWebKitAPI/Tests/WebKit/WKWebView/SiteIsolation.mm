@@ -29,6 +29,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/TestNotificationProvider.h"
 #import "Helpers/Utilities.h"
+#import "Helpers/cocoa/CGImagePixelReader.h"
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/cocoa/FindInPageUtilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
@@ -20809,6 +20810,55 @@ TEST(SiteIsolation, PrintProcessDrawsVideoInCrossSiteFrame)
     EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), 1u);
     // The frame is drawn as an image.
     EXPECT_FALSE(imageBitsPerComponentOnFirstPage(data.get()).isEmpty());
+}
+
+// The print preview of WKPrintingView is drawn from a snapshot as the printed pages are, and shows the
+// frames hosted in other processes as they do.
+static void drawPrintPreviewIncludesCrossSiteFrames(bool usePrintProcess)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'><iframe style='display:block;border:0;width:400px;height:300px' src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0;print-color-adjust:exact'><div style='width:400px;height:300px;background-color:rgb(0, 0, 255)'></div></body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server, usePrintProcess);
+
+    RetainPtr<WKFrameInfo> mainFrame = [webView mainFrame].info;
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:[mainFrame _handle] completionHandler:^{
+        computedPages = true;
+    }];
+    Util::run(&computedPages);
+
+    __block RetainPtr<CGImageRef> preview;
+    __block bool drewPreview = false;
+    [webView _drawPrintPreviewForTesting:[mainFrame _handle] rect:CGRectMake(0, 0, 612, 792) imageSize:CGSizeMake(612, 792) completionHandler:^(CGImageRef image) {
+        preview = image;
+        drewPreview = true;
+    }];
+    Util::run(&drewPreview);
+    ASSERT_NOT_NULL(preview.get());
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), usePrintProcess ? 1u : 0u);
+
+    CGImagePixelReader reader { preview.get() };
+    EXPECT_WK_STREQ("rgb(0, 0, 255)", reader.cssColorAt(100, 100));
+    EXPECT_WK_STREQ("rgb(0, 0, 255)", reader.cssColorAt(350, 250));
+
+    // As the printed page shows the frame.
+    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:[mainFrame _handle] pageCount:1];
+    ASSERT_NOT_NULL(data.get());
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), usePrintProcess ? 2u : 0u);
+    constexpr std::array<uint8_t, 3> blue { 0, 0, 255 };
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 1, CGPointMake(100, 100), blue));
+}
+
+TEST(SiteIsolation, DrawPrintPreviewIncludesCrossSiteFrames)
+{
+    drawPrintPreviewIncludesCrossSiteFrames(false);
+}
+
+TEST(SiteIsolation, DrawPrintPreviewIncludesCrossSiteFramesInPrintProcess)
+{
+    drawPrintPreviewIncludesCrossSiteFrames(true);
 }
 
 #endif // HAVE(PDFKIT)

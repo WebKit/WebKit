@@ -1974,7 +1974,11 @@ void WebProcess::sinkCompletedPrintSnapshotToPDF(RemoteSnapshotIdentifier identi
 void WebProcess::sinkCompletedPrintSnapshotToBitmap(RemoteSnapshotIdentifier identifier, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&)>&& completionHandler)
 {
     PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, completionHandler(std::nullopt));
-    protect(snapshotRegistry())->sinkCompletedSnapshotToBitmap(identifier, rootFrameIdentifier, WTF::move(completionHandler));
+    protect(snapshotRegistry())->sinkCompletedSnapshotToBitmap(identifier, rootFrameIdentifier, [completionHandler = WTF::move(completionHandler)](std::optional<ShareableBitmapHandle>&& handle) mutable {
+        if (handle)
+            ++WebProcess::singleton().m_completedPrintSnapshotCountForTesting;
+        completionHandler(WTF::move(handle));
+    });
 }
 
 void WebProcess::releasePrintSnapshot(RemoteSnapshotIdentifier identifier)

@@ -17737,45 +17737,86 @@ void WebPageProxy::launchPrintProcessIfNeeded(const WebFrameProxy* rootFrame)
 #endif
 }
 
-// Draws a remote snapshot to PDF in the print process. The processes of the frames are connected
-// there first, then sendRootDraw() asks the root's process to record the root with the callback for
-// its reply. Returns what identifies the drawing to PendingSnapshotDrawing::wait().
-std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPrintSnapshotToPDF(WebFrameProxy& rootFrame, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler, Function<std::optional<IPC::Connection::AsyncReplyID>(RemoteSnapshotIdentifier, CompletionHandler<void(bool)>&&)>&& sendRootDraw)
+// Calls the completion handler of a print snapshot that was not drawn.
+static void failPrintSnapshot(WebPageProxy::PrintSnapshotCompletionHandler&& completionHandler)
 {
+    WTF::switchOn(WTF::move(completionHandler), [](auto&& completionHandler) {
+        completionHandler({ });
+    });
+}
+
+// Draws a remote snapshot in the print process, to PDF or to a bitmap as the completion handler
+// takes. The processes of the frames are connected there first, then sendRootDraw() asks the root's
+// process to record the root with the callback for its reply. Returns what identifies the drawing to
+// PendingSnapshotDrawing::wait().
+std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPrintSnapshot(WebFrameProxy& rootFrame, PrintSnapshotCompletionHandler&& completionHandler, Function<std::optional<IPC::Connection::AsyncReplyID>(RemoteSnapshotIdentifier, CompletionHandler<void(bool)>&&)>&& sendRootDraw)
+{
+    // Callers learn what identifies the drawing only once this returns, so a drawing that fails before
+    // then completes later.
+    auto hasReturned = Box<bool>::create(false);
+    auto fail = [hasReturned](PrintSnapshotCompletionHandler&& completionHandler) {
+        if (*hasReturned) {
+            failPrintSnapshot(WTF::move(completionHandler));
+            return;
+        }
+        RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)] mutable {
+            failPrintSnapshot(WTF::move(completionHandler));
+        });
+    };
+
     Ref processPool = configuration().processPool();
     auto lockdownMode = protect(rootFrame.process())->lockdownMode();
     auto printProcessUseToken = processPool->ensurePrintProcess(lockdownMode);
     RefPtr printProcess = processPool->printProcessProxy(lockdownMode);
     if (!printProcess) {
-        completionHandler(nullptr);
+        fail(WTF::move(completionHandler));
         return std::nullopt;
     }
 
     auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     auto replyID = IPC::Connection::AsyncReplyID::generate();
     Ref drawing = PendingSnapshotDrawing::create(snapshotIdentifier);
+    auto drawingCompletionHandler = WTF::switchOn(WTF::move(completionHandler), [&](CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler) -> PrintSnapshotCompletionHandler {
+        return drawing->completionHandler(WTF::move(completionHandler));
+    }, [&](CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& completionHandler) -> PrintSnapshotCompletionHandler {
+        return drawing->completionHandler(WTF::move(completionHandler));
+    });
     auto rootFrameIdentifier = rootFrame.frameID();
-    auto connectReplyIDs = processPool->ensurePrintProcessConnections(rootFrame, lockdownMode, [weakProcessPool = WeakPtr { processPool.get() }, printProcess, drawing, completionHandler = drawing->completionHandler(WTF::move(completionHandler)), sendRootDraw = WTF::move(sendRootDraw), printProcessUseToken = WTF::move(printProcessUseToken), snapshotIdentifier, rootFrameIdentifier, lockdownMode, replyID](bool success) mutable {
+    auto connectReplyIDs = processPool->ensurePrintProcessConnections(rootFrame, lockdownMode, [weakProcessPool = WeakPtr { processPool.get() }, printProcess, drawing, completionHandler = WTF::move(drawingCompletionHandler), sendRootDraw = WTF::move(sendRootDraw), fail, printProcessUseToken = WTF::move(printProcessUseToken), snapshotIdentifier, rootFrameIdentifier, lockdownMode, replyID](bool success) mutable {
         RefPtr processPool = weakProcessPool.get();
         if (!success || !processPool) {
-            completionHandler(nullptr);
+            fail(WTF::move(completionHandler));
             return;
         }
 
         processPool->didStartPrintSnapshot(snapshotIdentifier, lockdownMode);
-        auto sinkReplyID = printProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, rootFrameIdentifier, [weakProcessPool, completionHandler = WTF::move(completionHandler), snapshotIdentifier](RefPtr<SharedBuffer>&& data) mutable {
+        auto didEndPrintSnapshot = [weakProcessPool, snapshotIdentifier] {
             if (RefPtr processPool = weakProcessPool.get())
                 processPool->didEndPrintSnapshot(snapshotIdentifier);
-            completionHandler(WTF::move(data));
+        };
+        bool drawsToPDF = std::holds_alternative<CompletionHandler<void(RefPtr<SharedBuffer>&&)>>(completionHandler);
+        auto sinkReplyID = WTF::switchOn(WTF::move(completionHandler), [&](CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler) {
+            return printProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, rootFrameIdentifier, [didEndPrintSnapshot, completionHandler = WTF::move(completionHandler)](RefPtr<SharedBuffer>&& data) mutable {
+                didEndPrintSnapshot();
+                completionHandler(WTF::move(data));
+            });
+        }, [&](CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& completionHandler) {
+            return printProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, rootFrameIdentifier, [didEndPrintSnapshot, completionHandler = WTF::move(completionHandler)](std::optional<ShareableBitmap::Handle>&& handle) mutable {
+                didEndPrintSnapshot();
+                completionHandler(WTF::move(handle));
+            });
         });
-        auto rootCallback = [weakProcessPool, releaseSnapshotIfRootFails = printProcess->releaseSnapshotIfRootFails(snapshotIdentifier), snapshotIdentifier](bool success) mutable {
-            RefPtr processPool = weakProcessPool.get();
-            if (!success && processPool)
-                processPool->didEndPrintSnapshot(snapshotIdentifier);
+        auto rootCallback = [didEndPrintSnapshot, releaseSnapshotIfRootFails = printProcess->releaseSnapshotIfRootFails(snapshotIdentifier)](bool success) mutable {
+            if (!success)
+                didEndPrintSnapshot();
             releaseSnapshotIfRootFails(success);
         };
-        if (sendRootDraw(snapshotIdentifier, WTF::move(rootCallback)))
+        if (!sendRootDraw(snapshotIdentifier, WTF::move(rootCallback)))
+            return;
+        if (drawsToPDF)
             drawing->setReply<Messages::WebProcess::SinkCompletedPrintSnapshotToPDF>(*printProcess, sinkReplyID, replyID);
+        else
+            drawing->setReply<Messages::WebProcess::SinkCompletedPrintSnapshotToBitmap>(*printProcess, sinkReplyID, replyID);
     });
 
     // When the connections are already made, the root has been asked to record by now. Otherwise a
@@ -17790,6 +17831,7 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPrintSnapshotToPD
         RefPtr processPool = weakProcessPool.get();
         return processPool && processPool->isPrintProcessConnectionPending(lockdownMode, connectReplyID);
     }, replyID);
+    *hasReturned = true;
     return replyID;
 }
 
@@ -17801,6 +17843,20 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawRectToImage(WebFr
         if (m_isPerformingDOMPrintOperation)
             return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawRectToImageDuringDOMPrintOperation(frameID, printInfo, rect, imageSize), WTF::move(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
         return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawRectToImage(frameID, printInfo, rect, imageSize), WTF::move(callback));
+    }
+
+    // Drawn from the same snapshot as the printed pages, so that the preview shows what is printed.
+    if (shouldLaunchPrintProcess(&frame)) {
+        return drawPrintSnapshot(frame, WTF::move(callback), [weakThis = WeakPtr { *this }, frameID, printInfo, rect, imageSize](RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& rootCallback) -> std::optional<IPC::Connection::AsyncReplyID> {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis) {
+                rootCallback(false);
+                return std::nullopt;
+            }
+            if (protectedThis->m_isPerformingDOMPrintOperation)
+                return protectedThis->sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingRectToSnapshotDuringDOMPrintOperation(snapshotIdentifier, frameID, printInfo, rect, imageSize, RemoteSnapshotHost::Print), WTF::move(rootCallback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+            return protectedThis->sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingRectToSnapshot(snapshotIdentifier, frameID, printInfo, rect, imageSize, RemoteSnapshotHost::Print), WTF::move(rootCallback));
+        });
     }
 
     auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
@@ -17833,8 +17889,8 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPagesToPDF(WebFra
     }
 
     if (shouldLaunchPrintProcess(&frame)) {
-        return drawPrintSnapshotToPDF(frame, toAPIDataSharedBufferCallback(WTF::move(callback)), [weakThis = WeakPtr { *this }, frameID, printInfo, first, count](RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& rootCallback) -> std::optional<IPC::Connection::AsyncReplyID> {
-            RefPtr protectedThis = weakThis.get();
+        return drawPrintSnapshot(frame, toAPIDataSharedBufferCallback(WTF::move(callback)), [weakThis = WeakPtr { *this }, frameID, printInfo, first, count](RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& rootCallback) -> std::optional<IPC::Connection::AsyncReplyID> {
+            RefPtr protectedThis = weakThis;
             if (!protectedThis) {
                 rootCallback(false);
                 return std::nullopt;
@@ -17887,8 +17943,8 @@ void WebPageProxy::drawToPDF(const std::optional<FloatRect>& rect, bool allowTra
     }
 
     if (shouldLaunchPrintProcess(protect(m_mainFrame).get())) {
-        drawPrintSnapshotToPDF(*protect(m_mainFrame), WTF::move(callback), [weakThis = WeakPtr { *this }, rect, allowTransparentBackground](RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& rootCallback) -> std::optional<IPC::Connection::AsyncReplyID> {
-            RefPtr protectedThis = weakThis.get();
+        drawPrintSnapshot(*protect(m_mainFrame), WTF::move(callback), [weakThis = WeakPtr { *this }, rect, allowTransparentBackground](RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& rootCallback) -> std::optional<IPC::Connection::AsyncReplyID> {
+            RefPtr protectedThis = weakThis;
             if (!protectedThis) {
                 rootCallback(false);
                 return std::nullopt;

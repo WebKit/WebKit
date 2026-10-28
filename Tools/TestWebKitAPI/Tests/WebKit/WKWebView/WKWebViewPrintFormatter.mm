@@ -29,6 +29,7 @@
 
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/CGImagePixelReader.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoaImageAndCocoaColor.h"
@@ -353,6 +354,65 @@ TEST(WKWebView, PrintFormatterLaunchesPrintProcess)
     EXPECT_NE(printProcess, 0);
     EXPECT_NE(printProcess, [webView mainFrame].info._processIdentifier);
     EXPECT_NE(printProcess, [webView mainFrame].childFrames.firstObject.info._processIdentifier);
+}
+
+// The image of the first page that a print formatter draws is a print snapshot, which shows the frames
+// hosted in other processes.
+static void printFormatterSnapshotIncludesCrossSiteFrames(bool usePrintProcess)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'><iframe style='display:block;border:0;width:400px;height:300px' src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0;print-color-adjust:exact'><div style='width:400px;height:300px;background-color:rgb(0, 0, 255)'></div></body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", usePrintProcess);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 400, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    RetainPtr<_WKWebViewPrintFormatter> printFormatter = [webView _webViewPrintFormatter];
+    [printFormatter setSnapshotFirstPage:YES];
+
+    CGRect pageRect = CGRectMake(0, 0, 612, 792);
+    RetainPtr printPageRenderer = adoptNS([[UIPrintPageRenderer alloc] init]);
+    [printPageRenderer addPrintFormatter:printFormatter.get() startingAtPageAtIndex:0];
+    [printPageRenderer setPaperRect:pageRect];
+    [printPageRenderer setPrintableRect:pageRect];
+    EXPECT_EQ([printFormatter _recalcPageCount], 1);
+
+    RetainPtr format = [UIGraphicsImageRendererFormat preferredFormat];
+    [format setScale:1];
+    RetainPtr graphicsRenderer = adoptNS([[UIGraphicsImageRenderer alloc] initWithSize:pageRect.size format:format.get()]);
+    RetainPtr image = [graphicsRenderer imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
+        UIGraphicsPushContext(rendererContext.CGContext);
+        [printFormatter drawInRect:pageRect forPageAtIndex:0];
+        UIGraphicsPopContext();
+    }];
+
+    CGImagePixelReader reader { [image CGImage] };
+    EXPECT_WK_STREQ("rgb(0, 0, 255)", reader.cssColorAt(100, 100));
+
+    __block NSUInteger completedSnapshotCount = 0;
+    __block bool done = false;
+    [webView _printProcessCompletedSnapshotCountForTesting:^(NSUInteger count) {
+        completedSnapshotCount = count;
+        done = true;
+    }];
+    Util::run(&done);
+    EXPECT_EQ(completedSnapshotCount, usePrintProcess ? 1u : 0u);
+}
+
+TEST(WKWebView, PrintFormatterSnapshotIncludesCrossSiteFrames)
+{
+    printFormatterSnapshotIncludesCrossSiteFrames(false);
+}
+
+TEST(WKWebView, PrintFormatterSnapshotIncludesCrossSiteFramesInPrintProcess)
+{
+    printFormatterSnapshotIncludesCrossSiteFrames(true);
 }
 
 #endif
