@@ -105,10 +105,13 @@ def find_ninja():
     p = shutil.which("ninja")
     if p:
         return p
+    p = subprocess.run(["xcrun", "-f", "ninja"], capture_output=True, text=True).stdout.strip()
+    if p:
+        return p
     for candidate in ("/opt/homebrew/bin/ninja", "/usr/local/bin/ninja"):
         if os.path.exists(candidate):
             return candidate
-    sys.exit("error: ninja not found on PATH")
+    sys.exit("error: ninja not found on PATH or via xcrun")
 
 
 @functools.lru_cache(maxsize=None)
