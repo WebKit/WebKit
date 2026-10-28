@@ -407,6 +407,87 @@ static CodePointsMap codePointsFromString(StringView stringView)
     return result;
 }
 
+static Ref<CSSSegmentedFontFace> buildSegmentedFontFace(FontSelectionRequest request, Vector<std::reference_wrapper<CSSFontFace>, 32>&& candidateFontFaces)
+{
+    Ref face = CSSSegmentedFontFace::create();
+    if (candidateFontFaces.isEmpty())
+        return face;
+
+    auto capabilities = candidateFontFaces.map([](auto& face) {
+        return face.get().fontSelectionCapabilities();
+    });
+    FontSelectionAlgorithm fontSelectionAlgorithm(request, WTF::move(capabilities));
+
+    // Per CSS Fonts 5.2.6: Only faces with the best-matching width, style, and weight are eligible
+    // to supply glyphs, even via unicode-range.
+    const auto& eliminated = fontSelectionAlgorithm.eliminatedCapabilities();
+    RELEASE_ASSERT(eliminated.size() == candidateFontFaces.size());
+    size_t eliminatedIndex = 0;
+    candidateFontFaces.removeAllMatching([&](auto&) {
+        return eliminated[eliminatedIndex++];
+    });
+    if (candidateFontFaces.isEmpty())
+        return face;
+
+    std::ranges::stable_sort(candidateFontFaces, [&fontSelectionAlgorithm](auto& first, auto& second) {
+        auto firstCapabilities = first.get().fontSelectionCapabilities();
+        auto secondCapabilities = second.get().fontSelectionCapabilities();
+
+        auto widthDistanceFirst = fontSelectionAlgorithm.widthDistance(firstCapabilities).distance;
+        auto widthDistanceSecond = fontSelectionAlgorithm.widthDistance(secondCapabilities).distance;
+        if (widthDistanceFirst < widthDistanceSecond)
+            return true;
+        if (widthDistanceFirst > widthDistanceSecond)
+            return false;
+
+        auto styleDistanceFirst = fontSelectionAlgorithm.styleDistance(firstCapabilities).distance;
+        auto styleDistanceSecond = fontSelectionAlgorithm.styleDistance(secondCapabilities).distance;
+        if (styleDistanceFirst < styleDistanceSecond)
+            return true;
+        if (styleDistanceFirst > styleDistanceSecond)
+            return false;
+
+        auto weightDistanceFirst = fontSelectionAlgorithm.weightDistance(firstCapabilities).distance;
+        auto weightDistanceSecond = fontSelectionAlgorithm.weightDistance(secondCapabilities).distance;
+        if (weightDistanceFirst < weightDistanceSecond)
+            return true;
+        return false;
+    });
+
+    RefPtr<CSSFontFace> previousCandidate;
+    for (auto& candidate : candidateFontFaces) {
+        if (&candidate.get() == previousCandidate.get())
+            continue;
+        previousCandidate = &candidate.get();
+        face->appendFontFace(candidate.get());
+    }
+
+    return face;
+}
+
+RefPtr<CSSSegmentedFontFace> CSSFontFaceSet::matchingFontFaceIncludingFailed(FontSelectionRequest request, const AtomString& family)
+{
+    auto iterator = m_facesLookupTable.find(family);
+    if (iterator == m_facesLookupTable.end())
+        return nullptr;
+    auto& familyFontFaces = iterator->value;
+
+    Vector<std::reference_wrapper<CSSFontFace>, 32> candidateFontFaces;
+    for (int i = familyFontFaces.size() - 1; i >= 0; --i)
+        candidateFontFaces.append(familyFontFaces[i]);
+
+    auto localIterator = m_locallyInstalledFacesLookupTable.find(family);
+    if (localIterator != m_locallyInstalledFacesLookupTable.end()) {
+        for (auto& candidate : localIterator->value)
+            candidateFontFaces.append(candidate);
+    }
+
+    if (candidateFontFaces.isEmpty())
+        return nullptr;
+
+    return buildSegmentedFontFace(request, WTF::move(candidateFontFaces));
+}
+
 ExceptionOr<Vector<Ref<CSSFontFace>>> CSSFontFaceSet::matchingFacesExcludingPreinstalledFonts(ScriptExecutionContext& context, const String& fontShorthand, const String& string)
 {
     auto font = CSSPropertyParserHelpers::parseUnresolvedFont(fontShorthand, context);
@@ -436,7 +517,7 @@ ExceptionOr<Vector<Ref<CSSFontFace>>> CSSFontFaceSet::matchingFacesExcludingPrei
     for (auto codePoint : codePointsFromString(string)) {
         bool found = false;
         for (auto& family : familyOrder) {
-            RefPtr faces = fontFace(request, family);
+            RefPtr faces = matchingFontFaceIncludingFailed(request, family);
             if (!faces)
                 continue;
             for (auto& constituentFace : faces->constituentFaces()) {
@@ -465,8 +546,7 @@ ExceptionOr<bool> CSSFontFaceSet::check(ScriptExecutionContext& context, const S
         return matchingFaces.releaseException();
 
     for (auto& face : matchingFaces.releaseReturnValue()) {
-        if (face.get().status() == CSSFontFace::Status::Pending
-            || face.get().status() == CSSFontFace::Status::Loading)
+        if (face.get().status() != CSSFontFace::Status::Success)
             return false;
     }
     return true;
@@ -482,8 +562,6 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
     auto& segmentedFontFaceCache = m_cache.add(family, FontSelectionHashMap()).iterator->value;
 
     return segmentedFontFaceCache.ensure(request, [&] {
-        Ref face = CSSSegmentedFontFace::create();
-
         Vector<std::reference_wrapper<CSSFontFace>, 32> candidateFontFaces;
         for (int i = familyFontFaces.size() - 1; i >= 0; --i) {
             Ref candidate = familyFontFaces[i];
@@ -501,58 +579,7 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
             }
         }
 
-        if (candidateFontFaces.isEmpty())
-            return face;
-
-        auto capabilities = candidateFontFaces.map([](auto& face) {
-            return face.get().fontSelectionCapabilities();
-        });
-        FontSelectionAlgorithm fontSelectionAlgorithm(request, WTF::move(capabilities));
-
-        // Per CSS Fonts 5.2.6: Only faces with the best-matching width, style, and weight are eligible
-        // to supply glyphs, even via unicode-range.
-        const auto& eliminated = fontSelectionAlgorithm.eliminatedCapabilities();
-        RELEASE_ASSERT(eliminated.size() == candidateFontFaces.size());
-        size_t eliminatedIndex = 0;
-        candidateFontFaces.removeAllMatching([&](auto&) {
-            return eliminated[eliminatedIndex++];
-        });
-        if (candidateFontFaces.isEmpty())
-            return face;
-
-        std::ranges::stable_sort(candidateFontFaces, [&fontSelectionAlgorithm](auto& first, auto& second) {
-            auto firstCapabilities = first.get().fontSelectionCapabilities();
-            auto secondCapabilities = second.get().fontSelectionCapabilities();
-
-            auto widthDistanceFirst = fontSelectionAlgorithm.widthDistance(firstCapabilities).distance;
-            auto widthDistanceSecond = fontSelectionAlgorithm.widthDistance(secondCapabilities).distance;
-            if (widthDistanceFirst < widthDistanceSecond)
-                return true;
-            if (widthDistanceFirst > widthDistanceSecond)
-                return false;
-
-            auto styleDistanceFirst = fontSelectionAlgorithm.styleDistance(firstCapabilities).distance;
-            auto styleDistanceSecond = fontSelectionAlgorithm.styleDistance(secondCapabilities).distance;
-            if (styleDistanceFirst < styleDistanceSecond)
-                return true;
-            if (styleDistanceFirst > styleDistanceSecond)
-                return false;
-
-            auto weightDistanceFirst = fontSelectionAlgorithm.weightDistance(firstCapabilities).distance;
-            auto weightDistanceSecond = fontSelectionAlgorithm.weightDistance(secondCapabilities).distance;
-            if (weightDistanceFirst < weightDistanceSecond)
-                return true;
-            return false;
-        });
-        RefPtr<CSSFontFace> previousCandidate;
-        for (auto& candidate : candidateFontFaces) {
-            if (&candidate.get() == previousCandidate.get())
-                continue;
-            previousCandidate = &candidate.get();
-            face->appendFontFace(candidate.get());
-        }
-
-        return face;
+        return buildSegmentedFontFace(request, WTF::move(candidateFontFaces));
     }).iterator->value.ptr();
 }
 

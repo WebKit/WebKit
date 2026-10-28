@@ -108,6 +108,8 @@ private:
 
     void ensureLocalFontFacesForFamilyRegistered(const AtomString&);
 
+    RefPtr<CSSSegmentedFontFace> matchingFontFaceIncludingFailed(FontSelectionRequest, const AtomString& family);
+
     static AtomString LEGACY_NODELETE familyName(const CSSValue&);
 
     using FontSelectionKey = std::optional<FontSelectionRequest>;
