@@ -1127,6 +1127,7 @@
 				WebKit/WKWebView/mac/ContextMenuMouseEvents.mm,
 				WebKit/WKWebView/mac/ContextMenuTests.mm,
 				WebKit/WKWebView/mac/CrossPartitionFileSchemeAccess.mm,
+				WebKit/WKWebView/mac/DataListTests.mm,
 				WebKit/WKWebView/mac/DateInputTests.mm,
 				WebKit/WKWebView/mac/DeviceScaleFactorOnBack.mm,
 				WebKit/WKWebView/mac/DisableAutomaticSpellingCorrection.mm,

@@ -1860,6 +1860,8 @@ void HTMLInputElement::didMoveToNewDocument(Document& oldDocument, Document& new
     }
 #endif
 
+    m_dataListMayHaveChangedTaskCancellationGroup.cancel();
+
     HTMLTextFormControlElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
@@ -1938,6 +1940,17 @@ void HTMLInputElement::dataListMayHaveChanged()
 {
     auto protectedInputType = m_inputType;
     protectedInputType->dataListMayHaveChanged();
+}
+
+void HTMLInputElement::scheduleDataListMayHaveChanged()
+{
+    if (m_dataListMayHaveChangedTaskCancellationGroup.hasPendingTask())
+        return;
+
+    protect(protect(document())->eventLoop())->queueTask(TaskSource::DOMManipulation, CancellableTask(m_dataListMayHaveChangedTaskCancellationGroup, [weakThis = WeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->dataListMayHaveChanged();
+    }));
 }
 
 bool HTMLInputElement::isFocusingWithDataListDropdown() const
@@ -2266,10 +2279,8 @@ ListAttributeTargetObserver::ListAttributeTargetObserver(const AtomString& id, H
 
 void ListAttributeTargetObserver::idTargetChanged(Element&)
 {
-    protect(protect(m_element->document())->eventLoop())->queueTask(TaskSource::DOMManipulation, [element = m_element] {
-        if (RefPtr protectedElement = element.get())
-            protectedElement->dataListMayHaveChanged();
-    });
+    if (RefPtr element = m_element)
+        element->scheduleDataListMayHaveChanged();
 }
 
 ExceptionOr<void> HTMLInputElement::setRangeText(StringView replacement, unsigned start, unsigned end, const String& selectionMode)

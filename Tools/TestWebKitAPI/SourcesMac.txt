@@ -40,6 +40,7 @@ Tests/WebKit/WKWebView/mac/ContextMenuDefaultItemsHaveTags.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/ContextMenuMouseEvents.mm @nonARC
 Tests/WebKit/WKWebView/mac/ContextMenuTests.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/CrossPartitionFileSchemeAccess.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/DataListTests.mm @nonARC
 Tests/WebKit/WKWebView/mac/DateInputTests.mm @nonARC
 Tests/WebKit/WKWebView/mac/DeviceScaleFactorOnBack.mm @nonARC
 Tests/WebKit/WKWebView/mac/DisableAutomaticSpellingCorrection.mm @nonARC

@@ -26,6 +26,7 @@
 
 #include <WebCore/HTMLTextFormControlElement.h>
 #include <memory>
+#include <wtf/CancellableTask.h>
 #include <wtf/ValueOrReference.h>
 
 namespace WebCore {
@@ -292,6 +293,7 @@ public:
     bool hasDataList() const;
     RefPtr<HTMLDataListElement> dataList() const;
     void dataListMayHaveChanged();
+    void scheduleDataListMayHaveChanged();
 
     Vector<Ref<HTMLInputElement>> radioButtonGroup() const;
     RefPtr<HTMLInputElement> checkedRadioButtonForGroup() const;
@@ -505,6 +507,7 @@ private:
     bool m_hasSwitchAttribute : 1 { false };
     bool m_hasEverBeenPasswordField : 1 { false };
     RefPtr<InputType> m_inputType;
+    TaskCancellationGroup m_dataListMayHaveChangedTaskCancellationGroup;
     // The ImageLoader must be owned by this element because the loader code assumes
     // that it lives as long as its owning element lives. If we move the loader into
     // the ImageInput object we may delete the loader while this element lives on.
