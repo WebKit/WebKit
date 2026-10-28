@@ -34,10 +34,9 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/WKWebsiteDataStorePrivate.h>
-#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 
 // The module service worker script imports a dependency that will never finish loading.
@@ -53,20 +52,8 @@ TEST(ServiceWorkers, ModuleUnregisterDuringLoadNoMainThreadCrash)
         { "/slow-dep.mjs"_s, { TestWebKitAPI::HTTPResponse::Behavior::NeverSendResponse } },
     });
 
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
-    RetainPtr storeConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
-    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
-
-    // Start with a clean slate data store.
-    __block bool cleanDone = false;
-    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^{
-        cleanDone = true;
-    }];
-    TestWebKitAPI::Util::run(&cleanDone);
-
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setWebsiteDataStore:dataStore.get()];
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
