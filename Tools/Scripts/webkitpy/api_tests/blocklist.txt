@@ -487,7 +487,6 @@ TestWebKitAPI.WKAttachmentTestsMac.PastedFileURLsUseAuthorizedPaths
 TestWebKitAPI.WKAttachmentTestsMac.RegisterAttachmentIdentifierFromFilePathWithUnauthorizedPathTerminatesProcess
 TestWebKitAPI.WKContentRuleListStoreTest.CrossOriginCookieBlocking
 TestWebKitAPI.WKHTTPCookieStore.CookiePolicy
-TestWebKitAPI.WKHTTPCookieStore.CreationTime
 TestWebKitAPI.WKInspectorAttachment.AppAddsViewNextToWebViewWhileAttached
 TestWebKitAPI.WKInspectorAttachment.AppReplacesConstraintWhileAttached
 TestWebKitAPI.WKInspectorAttachment.AttachmentViewUsingAutoresizingDockedOnSides
@@ -741,7 +740,6 @@ TestWebKitAPI.WebKit.BundleParameters
 TestWebKitAPI.WebKit.ConfigurationMaskedURLSchemes
 TestWebKitAPI.WebKit.ContextMenuDownloadHTMLDownloadAttribute
 TestWebKitAPI.WebKit.ContextMenuDownloadHTMLDownloadAttributeWithSlashes
-TestWebKitAPI.WebKit.CookieCacheSyncAcrossProcess
 TestWebKitAPI.WebKit.CreateOriginFileWhenNeeded
 TestWebKitAPI.WebKit.DefaultDeviceIdHashSaltsDirectory
 TestWebKitAPI.WebKit.DeleteDataAfterEnablingGeneralStorageDirectory
@@ -776,7 +774,6 @@ TestWebKitAPI.WebKit.PermissionDelegateParameters
 TestWebKitAPI.WebKit.PreferenceChanges
 TestWebKitAPI.WebKit.PreferenceObserverStartedOnActivation
 TestWebKitAPI.WebKit.QuotaDelegateHidden
-TestWebKitAPI.WebKit.RelaxThirdPartyCookieBlocking
 TestWebKitAPI.WebKit.ResponsivenessTimerCrash
 TestWebKitAPI.WebKit.RestoreLocalStorageFromEphemeralDataStoreThirdPartyIFrame
 TestWebKitAPI.WebKit.RestoreLocalStorageFromPersistentDataStore
@@ -795,7 +792,6 @@ TestWebKitAPI.WebKit.UploadFileFromIndexedDBThroughServiceWorker
 TestWebKitAPI.WebKit.UserInstalledFontsWork
 TestWebKitAPI.WebKit.WKContextRegisterURLSchemeAsCanDisplayOnlyIfCanRequest_CrossOriginLoad
 TestWebKitAPI.WebKit.WKContextRegisterURLSchemeAsCanDisplayOnlyIfCanRequest_SameOriginLoad
-TestWebKitAPI.WebKit.WKHTTPCookieStoreMultipleViews
 TestWebKitAPI.WebKit.WKPageIsPlayingAudio
 TestWebKitAPI.WebKit.WKWebProcessPlugInDoNotCrashWhenCopyingEmptyClientData
 TestWebKitAPI.WebKit.WKWebProcessPlugInEditingDelegate
@@ -1064,18 +1060,12 @@ TestWebKitAPI._WKDownload.DownloadMonitorReturnToForeground
 [ mac ] TestWebKitAPI.WKDownload.BlobDownload
 [ mac ] TestWebKitAPI.WKDownload.ResumeCantReconnect
 [ mac ] TestWebKitAPI.WKHTTPCookieStore.Basic
-[ mac ] TestWebKitAPI.WKHTTPCookieStore.CookieAccessAfterNetworkProcessTermination
-[ mac ] TestWebKitAPI.WKHTTPCookieStore.CookiesForURL
-[ mac ] TestWebKitAPI.WKHTTPCookieStore.HttpOnly
-[ mac ] TestWebKitAPI.WKHTTPCookieStore.ObserveCookiesReceivedFromHTTP
-[ mac ] TestWebKitAPI.WKHTTPCookieStore.ProcessPrivilege
 [ mac ] TestWebKitAPI.WKHTTPCookieStore.WebSocketCookies
 [ mac ] TestWebKitAPI.WKHTTPCookieStore.WebSocketCookies2
 [ mac ] TestWebKitAPI.WKHTTPCookieStore.WebSocketCookiesFromRedirect
 [ mac ] TestWebKitAPI.WKHTTPCookieStore.WebSocketCookiesThroughRedirect
 [ mac ] TestWebKitAPI.WKHTTPCookieStore.WebSocketSetCookiesThroughFirstPartyRedirect
 [ mac ] TestWebKitAPI.WKHTTPCookieStore.WebSocketSetCookiesThroughRedirectToThirdParty
-[ mac ] TestWebKitAPI.WKHTTPCookieStore.WithoutProcessPoolDuplicates
 [ mac ] TestWebKitAPI.WKNavigation.PreferredHTTPSPolicyAutomaticHTTPFallbackAfterTerminateProcess
 [ mac ] TestWebKitAPI.WKNavigation.ReloadRelatedViewsInProcessDidTerminate
 [ mac ] TestWebKitAPI.WKNavigation.WebProcessLimitPrefersUnloadingNonVisiblePages
@@ -1445,7 +1435,6 @@ TestWebKitAPI._WKDownload.DownloadMonitorReturnToForeground
 [ mac ] TestWebKitAPI.WebAuthenticationPanel.PanelHidCtapNoCredentialsFoundCancelNoCrash
 [ mac ] TestWebKitAPI.WebAuthenticationPanel.PanelTwice
 [ mac ] TestWebKitAPI.WebAuthenticationPanel.PanelU2fCtapNoCredentialsFound
-[ mac ] TestWebKitAPI.WebKit.CookieAcceptPolicy
 [ mac ] TestWebKitAPI.WebKit.CookieCachePruning
 [ mac ] TestWebKitAPI.WebKit.DefaultQuota
 [ mac ] TestWebKitAPI.WebKit.DownloadNavigationResponseFromMemoryCache
