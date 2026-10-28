@@ -25,6 +25,7 @@
 
 [
     Conditional=WK_WEB_EXTENSIONS,
+    UseCPPAPI
 ] interface WebExtensionAPIEvent {
 
     [NeedsFrameIdentifier] void addListener([CallbackHandler] function listener);
