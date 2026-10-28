@@ -291,7 +291,7 @@ void GPUVideoEncoderVTB::setRates(uint32_t bitRateKbps, uint32_t frameRate)
     setEncoderBitrateBps(m_targetBitrateBps);
 }
 
-void GPUVideoEncoderVTB::encodeFrame(CVPixelBufferRef pixelBuffer, int64_t timeStampNs, int64_t timeStamp, std::optional<uint64_t> duration, VideoFrame::Rotation rotation, bool isKeyframeRequired)
+void GPUVideoEncoderVTB::encodeFrame(CVPixelBufferRef pixelBuffer, int64_t timeStampNs, int64_t timeStamp, std::optional<uint64_t> duration, VideoFrame::Rotation rotation, bool isMirrored, bool isKeyframeRequired)
 {
     assertIsCurrent(queue());
 
@@ -316,7 +316,7 @@ void GPUVideoEncoderVTB::encodeFrame(CVPixelBufferRef pixelBuffer, int64_t timeS
     uint16_t width = m_width;
     uint16_t height = m_height;
 
-    auto status = protect(m_encoder)->encodeFrame(pixelBuffer, presentationTimeStamp, PAL::kCMTimeInvalid, frameProperties, makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, width, height, captureTimeMS, timeStamp, duration, rotation, colorSpace = m_colorSpace](OSStatus status, VTEncodeInfoFlags infoFlags, CMSampleBufferRef sampleBuffer) mutable {
+    auto status = protect(m_encoder)->encodeFrame(pixelBuffer, presentationTimeStamp, PAL::kCMTimeInvalid, frameProperties, makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, width, height, captureTimeMS, timeStamp, duration, rotation, isMirrored, colorSpace = m_colorSpace](OSStatus status, VTEncodeInfoFlags infoFlags, CMSampleBufferRef sampleBuffer) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -351,7 +351,7 @@ void GPUVideoEncoderVTB::encodeFrame(CVPixelBufferRef pixelBuffer, int64_t timeS
         if (protectedThis->m_creationInfo.scalabilityMode == VideoEncoderScalabilityMode::L1T2)
             temporalIndex = isBaseLayer ? 0 : 1;
 
-        GPUVideoEncoderFrameInfo info { width, height, timeStamp, duration, captureTimeMS, isKeyframe, rotation, false, -1, temporalIndex };
+        GPUVideoEncoderFrameInfo info { width, height, timeStamp, duration, captureTimeMS, isKeyframe, rotation, isMirrored, false, -1, temporalIndex };
         if (!protectedThis->convertAndNotify(sampleBuffer, WTF::move(info), colorSpace)) {
             protectedThis->notifyError();
             return;

@@ -94,6 +94,8 @@ private:
     int64_t m_timestamp { 0 };
     int64_t m_timestampOffset { 0 };
     std::optional<uint64_t> m_duration;
+    VideoFrameRotation m_rotation { VideoFrameRotation::None };
+    bool m_isMirrored { false };
     bool m_isClosed { false };
     VideoEncoder::Config m_config;
     bool m_isInitialized { false };
@@ -276,6 +278,8 @@ Ref<VideoEncoder::EncodePromise> LibWebRTCVPXInternalVideoEncoder::encode(VideoE
         m_timestampOffset = 1 - rawFrame.timestamp;
     m_timestamp = rawFrame.timestamp;
     m_duration = rawFrame.duration;
+    m_rotation = rawFrame.frame->rotation();
+    m_isMirrored = rawFrame.frame->isMirrored();
 
     auto frameType = (shouldGenerateKeyFrame || !m_hasEncoded) ? webrtc::VideoFrameType::kVideoFrameKey : webrtc::VideoFrameType::kVideoFrameDelta;
     std::vector<webrtc::VideoFrameType> frameTypes { frameType };
@@ -355,7 +359,9 @@ webrtc::EncodedImageCallback::Result LibWebRTCVPXInternalVideoEncoder::OnEncoded
         encodedImage._frameType == webrtc::VideoFrameType::kVideoFrameKey,
         m_timestamp,
         m_duration,
-        frameTemporalIndex
+        frameTemporalIndex,
+        m_rotation,
+        m_isMirrored
     };
 
     if (m_shouldCallDescriptionCallback) {

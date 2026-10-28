@@ -79,6 +79,7 @@ header: <WebCore/GPUVideoEncoder.h>
     int64_t captureTimeMS;
     bool isKeyFrame;
     WebCore::VideoFrameRotation rotation;
+    bool isMirrored;
     bool isScreenshare;
     int qp;
     std::optional<uint8_t> temporalIndex;
