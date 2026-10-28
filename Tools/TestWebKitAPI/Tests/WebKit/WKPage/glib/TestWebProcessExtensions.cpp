@@ -730,7 +730,10 @@ static void testWebProcessExtensionUserMessages(UserMessageTest* test, gconstpoi
             g_assert_error(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED);
             test->quitMainLoop();
         }, test);
+    Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
     g_main_loop_run(test->m_mainLoop);
+    webView = nullptr;
+    Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
 
     // Wait for received message.
     test->loadHtml("<html><body></body></html>", nullptr);
