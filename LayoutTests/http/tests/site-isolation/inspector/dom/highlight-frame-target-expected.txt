@@ -57,10 +57,11 @@ PASS: Frame document should have a BODY.
 PASS: Frame document should have #container.
 PASS: DOM.highlightQuad should reject a three-element quad.
 
--- Running test case: HighlightSelectorNotDispatchable
+-- Running test case: HighlightSelector
 PASS: Should find the frame target for highlight-frame.html.
 PASS: Frame target should have a document.
 PASS: Frame document should have a BODY.
 PASS: Frame document should have #container.
-PASS: Frame target should not expose DOM.highlightSelector.
+PASS: Frame target should expose DOM.highlightSelector.
+PASS: DOM.highlightSelector should be accepted by the frame target.
 

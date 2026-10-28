@@ -2303,6 +2303,17 @@ ExceptionOr<Ref<DOMRectList>> Internals::inspectorHighlightRects()
     return DOMRectList::create(highlight.quads);
 }
 
+ExceptionOr<Ref<DOMRectList>> Internals::inspectorFrameHighlightRects()
+{
+    RefPtr document { contextDocument() };
+    if (!document || !document->frame())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    InspectorOverlay::Highlight highlight;
+    protect(document->frame()->inspectorController())->getHighlight(highlight, InspectorOverlay::CoordinateSystem::Document);
+    return DOMRectList::create(highlight.quads);
+}
+
 ExceptionOr<unsigned> Internals::inspectorPaintRectCount()
 {
     RefPtr document = contextDocument();

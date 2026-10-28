@@ -1,0 +1,35 @@
+Tests for the DOM.highlightSelector command.
+
+
+
+== Running test suite: DOM.highlightSelector
+-- Running test case: Setup
+PASS: Should resolve a grid cell in the iframe.
+PASS: The iframe's grid cell should belong to the page target.
+PASS: The iframe's document should have a frame identifier.
+
+-- Running test case: NoHighlightYet
+PASS: Should not be a highlight yet.
+
+-- Running test case: MainFrameByDefault
+PASS: Should accept the selector.
+PASS: Should highlight the two cells of the main frame's grid.
+
+-- Running test case: ChildFrameById
+PASS: Should accept the selector.
+PASS: Should highlight the six cells of the iframe's grid.
+
+-- Running test case: PseudoElement
+PASS: Should accept the selector.
+PASS: Should highlight the one ::before pseudo-element.
+
+-- Running test case: InvalidSelector
+PASS: Should accept the selector.
+PASS: Should not highlight anything.
+
+-- Running test case: UnknownFrameId
+PASS: Should reject an unknown frameId.
+
+-- Running test case: StylesHoverUsesPageTarget
+PASS: Should highlight the six cells of the iframe's grid.
+

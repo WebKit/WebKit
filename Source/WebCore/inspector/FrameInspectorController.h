@@ -89,6 +89,7 @@ public:
     Vector<size_t> overlayOwnerFlexLineStarts(const RenderObject&) const final;
 
     WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
+    WEBCORE_EXPORT void getHighlight(InspectorOverlay::Highlight&, InspectorOverlay::CoordinateSystem) const;
 
     // True when this frame's own overlay holds the highlight state, not the page overlay.
     WEBCORE_EXPORT bool LEGACY_NODELETE hasOverlayContentToDraw() const;

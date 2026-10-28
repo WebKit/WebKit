@@ -5,8 +5,8 @@
 function test() {
     let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameHighlight");
 
-    // Geometry is not asserted: internals.inspectorHighlightRects() only reads the page overlay, so
-    // these cases check that each command reaches the frame target and is accepted.
+    // Geometry is not asserted here: these cases check that each command reaches the frame target and
+    // is accepted. highlight-selector-frame-target.html counts frame overlay quads.
 
     async function containerNodeForFrame(resourceName) {
         let target = await frameTargetForURLContaining(resourceName);
@@ -180,15 +180,19 @@ function test() {
     });
 
     suite.addTestCase({
-        name: "HighlightSelectorNotDispatchable",
-        description: "DOM.highlightSelector is page-only, so a frame target should not expose it.",
+        name: "HighlightSelector",
+        description: "DOM.highlightSelector should be accepted by a frame target.",
         async test() {
             let {target} = await containerNodeForFrame("highlight-frame.html");
 
-            // Unlike the other highlight commands, highlightSelector resolves a frameId through the
-            // page-level identifier registry, so it is still targetTypes ["page"] and still a stub.
-            // Asserted so that implementing it has to update this expectation deliberately.
-            InspectorTest.expectFalse(target.hasCommand("DOM.highlightSelector"), "Frame target should not expose DOM.highlightSelector.");
+            InspectorTest.expectThat(target.hasCommand("DOM.highlightSelector"), "Frame target should expose DOM.highlightSelector.");
+            if (!target.hasCommand("DOM.highlightSelector"))
+                return;
+
+            let error = await errorFrom(target.DOMAgent.highlightSelector.invoke({selectorString: "#container div", highlightConfig: highlightConfig()}));
+            InspectorTest.expectNull(error, "DOM.highlightSelector should be accepted by the frame target.");
+
+            await errorFrom(target.DOMAgent.hideHighlight());
         }
     });
 

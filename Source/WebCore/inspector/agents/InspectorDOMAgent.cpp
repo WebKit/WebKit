@@ -1532,16 +1532,27 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(co
     if (!document)
         return makeUnexpected("Missing document of frame for given frameId"_s);
 
-    auto selectorList = CSSSelectorParser::parseSelectorList(selectorString, CSSParserContext(*document));
-    if (!selectorList)
+    auto nodes { nodesMatchingSelectorForHighlight(*document, selectorString) };
+    if (!nodes)
         return { };
 
-    SelectorChecker selectorChecker(*document);
+    protect(overlay())->highlightNodeList(StaticNodeList::create(WTF::move(*nodes)), *highlightConfig, WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), showRulers && *showRulers);
+
+    return { };
+}
+
+std::optional<Vector<Ref<Node>>> InspectorDOMAgent::nodesMatchingSelectorForHighlight(Document& document, const String& selectorString)
+{
+    auto selectorList = CSSSelectorParser::parseSelectorList(selectorString, CSSParserContext(document));
+    if (!selectorList)
+        return std::nullopt;
+
+    SelectorChecker selectorChecker(document);
 
     Vector<Ref<Node>> nodeList;
     HashSet<Ref<Node>> seenNodes;
 
-    for (Ref descendant : composedTreeDescendants(*document)) {
+    for (Ref descendant : composedTreeDescendants(document)) {
         RefPtr descendantElement = dynamicDowncast<Element>(descendant);
         if (!descendantElement)
             continue;
@@ -1589,9 +1600,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(co
         }
     }
 
-    protect(overlay())->highlightNodeList(StaticNodeList::create(WTF::move(nodeList)), *highlightConfig, WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), showRulers && *showRulers);
-
-    return { };
+    return nodeList;
 }
 
 #if PLATFORM(IOS_FAMILY)

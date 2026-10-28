@@ -760,16 +760,12 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         // Inline styles, nested declarations rules, and keyframes have no selector of their own to match other nodes with.
         let selectorText = this._style.ownerRule?.selectors.length ? this._selectorElement.textContent.trim() : "";
-        // FIXME: DOM.highlightSelector can't resolve frames hosted in another process under Site Isolation.
-        if (!selectorText || node.owningTarget) {
+        if (!selectorText) {
             node.highlight();
             return;
         }
 
-        if (node.frame)
-            WI.domManager.highlightSelector(selectorText, node.frame.id);
-        else
-            WI.domManager.highlightSelector(selectorText);
+        WI.domManager.highlightSelector(selectorText, node);
     }
 
     _hideDOMNodeHighlight()
