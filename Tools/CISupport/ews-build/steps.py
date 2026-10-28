@@ -5917,6 +5917,8 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
             first_results_failing_tests = set(self.getProperty('api_first_run_failures', set()))
             second_results_failing_tests = set(self.getProperty('api_second_run_failures', set()))
             list_failed_tests_with_change = sorted(first_results_failing_tests.union(second_results_failing_tests))
+            if platform in ['gtk', 'wpe']:
+                list_failed_tests_with_change = sorted({test.split(':', 1)[0] for test in list_failed_tests_with_change})
             if list_failed_tests_with_change:
                 self.command = self.command + [quote(t) for t in list_failed_tests_with_change]
         if SHOULD_FILTER_LOGS is True:

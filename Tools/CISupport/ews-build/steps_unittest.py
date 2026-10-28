@@ -8323,6 +8323,30 @@ Ran 1296 tests of 1298 with 1293 successful
         self.expect_outcome(result=FAILURE, state_string='3 api tests failed or timed out')
         return self.run_step()
 
+    def test_glib_failures_run_whole_test_programs(self):
+        self.setup_step(RunAPITestsWithoutChange())
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('platform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.setProperty('buildername', 'API-Tests-GTK-EWS')
+        self.setProperty('buildnumber', '164882')
+        self.setProperty('workername', 'igalia14-gtk-wk2-ews')
+        self.setProperty('api_first_run_failures', ['TestWebsiteData:/webkit/WebKitWebsiteData/compression-dictionary', 'TestWTF.WTF_DateMath.calculateLocalTimeOffset'])
+        self.setProperty('api_second_run_failures', ['TestWebsiteData:/webkit/WebKitWebsiteData/compression-dictionary', 'TestWebsiteData:/webkit/WebKitWebsiteData/sizes'])
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-gtk-tests --release --json-output={self.jsonFileName} TestWTF.WTF_DateMath.calculateLocalTimeOffset TestWebsiteData 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        logfiles={'json': self.jsonFileName},
+                        timeout=20 * 60
+                        )
+            .log('stdio', stdout='Ran 12 tests of 12 with 12 successful\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='run-api-tests-without-change')
+        return self.run_step()
+
 
 class TestAnalyzeAPITestsResults(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
