@@ -189,6 +189,12 @@ AcceleratedSurface::RenderTargetShareableBuffer::RenderTargetShareableBuffer(Acc
     if (!m_surface->usesGL())
         return;
 
+    // Framebuffer objects aren't shared between GL contexts. Skia renders into the target from its own context, so the
+    // framebuffer has to be created, completed and deleted there, whichever context the caller has current.
+    std::optional<GLContext::ScopedGLContextCurrent> skiaContextCurrent;
+    if (m_surface->useSkia())
+        skiaContextCurrent.emplace(*PlatformDisplay::sharedDisplay().skiaGLContext());
+
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
@@ -204,6 +210,10 @@ AcceleratedSurface::RenderTargetShareableBuffer::~RenderTargetShareableBuffer()
 {
     m_skiaSurface = nullptr;
 
+    std::optional<GLContext::ScopedGLContextCurrent> skiaContextCurrent;
+    if (m_surface->usesGL() && m_surface->useSkia())
+        skiaContextCurrent.emplace(*PlatformDisplay::sharedDisplay().skiaGLContext());
+
     if (m_fbo)
         glDeleteFramebuffers(1, &m_fbo);
 
@@ -218,6 +228,12 @@ AcceleratedSurface::RenderTargetShareableBuffer::~RenderTargetShareableBuffer()
 
 void AcceleratedSurface::RenderTargetShareableBuffer::initializeColorBuffer(EGLImage image)
 {
+    std::optional<GLContext::ScopedGLContextCurrent> skiaContextCurrent;
+    if (m_surface->useSkia()) {
+        skiaContextCurrent.emplace(*PlatformDisplay::sharedDisplay().skiaGLContext());
+        glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    }
+
     glGenRenderbuffers(1, &m_colorBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, m_colorBuffer);
     if (image)
@@ -511,6 +527,12 @@ AcceleratedSurface::RenderTargetTexture::RenderTargetTexture(AcceleratedSurface&
     : RenderTargetShareableBuffer(surface, size)
     , m_texture(WTF::move(texture))
 {
+    std::optional<GLContext::ScopedGLContextCurrent> skiaContextCurrent;
+    if (m_surface->useSkia()) {
+        skiaContextCurrent.emplace(*PlatformDisplay::sharedDisplay().skiaGLContext());
+        glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    }
+
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->id(), 0);
     if (m_surface->useSkia())
         createSkiaSurfaceForFramebuffer(m_fbo);
