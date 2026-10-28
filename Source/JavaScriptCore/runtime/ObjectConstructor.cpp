@@ -25,6 +25,7 @@
 #include "JSArray.h"
 #include "JSCInlines.h"
 #include "JSCellButterfly.h"
+#include "NumberPrototype.h"
 #include "ObjectConstructorInlines.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
@@ -425,13 +426,21 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
     }
 
     {
+        Vector<unsigned, 8> indices;
         Vector<RefPtr<UniquedStringImpl>, 8> properties;
         MarkedArgumentBuffer values;
         bool canUseFastPath = false;
-        if (!target->canHaveExistingOwnIndexedProperties() && !target->hasNonReifiedStaticProperties()) {
+        if (!target->canHaveExistingOwnIndexedGetterSetterProperties() && !target->hasNonReifiedStaticProperties()) {
             Structure* targetStructure = target->structure();
             if (targetStructure->canPerformFastPropertyEnumerationCommon()) {
                 canUseFastPath = true;
+                if (target->canHaveExistingOwnIndexedProperties()) {
+                    target->forEachOwnIndexedProperty<JSObject::SortMode::Ascending>([&](unsigned index, JSValue value) {
+                        indices.append(index);
+                        values.appendWithCrashOnOverflow(value);
+                        return IterationStatus::Continue;
+                    });
+                }
                 targetStructure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
                     if (entry.attributes() & PropertyAttribute::DontEnum)
                         return true;
@@ -449,7 +458,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
 
         if (canUseFastPath) {
             Structure* arrayStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
-            JSArray* entries = JSArray::tryCreate(vm, arrayStructure, properties.size());
+            JSArray* entries = JSArray::tryCreate(vm, arrayStructure, values.size());
             if (!entries) [[unlikely]] {
                 throwOutOfMemoryError(globalObject, scope);
                 return { };
@@ -482,6 +491,18 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
                     targetStructure->setCachedPropertyNames(vm, CachedPropertyNamesKind::EnumerableStrings, StructureRareData::cachedPropertyNamesSentinel());
             }
 
+            unsigned index = 0;
+            auto append = [&](JSString* key) ALWAYS_INLINE_LAMBDA {
+                JSArray* entry = constructArrayPair(globalObject, key, values.at(index));
+                RETURN_IF_EXCEPTION(scope, void());
+                entries->putDirectIndex(globalObject, index++, entry);
+            };
+
+            for (unsigned propertyIndex : indices) {
+                append(numberToString(vm, propertyIndex, 10));
+                RETURN_IF_EXCEPTION(scope, { });
+            }
+
             for (size_t i = 0; i < properties.size(); ++i) {
                 JSString* key = nullptr;
                 if (cachedButterfly) {
@@ -493,9 +514,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
                 if (!key)
                     key = jsOwnedString(vm, properties[i].get());
 
-                JSArray* entry = constructArrayPair(globalObject, key, values.at(i));
-                RETURN_IF_EXCEPTION(scope, { });
-                entries->putDirectIndex(globalObject, i, entry);
+                append(key);
                 RETURN_IF_EXCEPTION(scope, { });
             }
 
