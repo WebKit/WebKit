@@ -66,6 +66,7 @@ fast/text-extraction/debug-text-extraction-ignore-autofilled-fields.html [ Pass 
 fast/text-extraction/debug-text-extraction-lightweight-discretionary.html [ Pass ]
 fast/text-extraction/debug-text-extraction-role-suppression.html [ Pass ]
 fast/visual-viewport/ios/interactive-widget/overlays-content-orientation-rotations.html  [ Pass ]
+webkit.org/b/329163 imported/w3c/web-platform-tests/FileAPI [ Pass ]
 
 ###
 ### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on iOS 26,
