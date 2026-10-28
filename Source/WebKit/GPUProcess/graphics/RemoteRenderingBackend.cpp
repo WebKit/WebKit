@@ -276,14 +276,14 @@ void RemoteRenderingBackend::takeTransferredBuffer(const ImageBufferTransferHand
 void RemoteRenderingBackend::createSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, FrameIdentifier rootFrameIdentifier, const FloatSize& size, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    GPUProcess::singleton().createSnapshot(snapshotIdentifier, rootFrameIdentifier, size, m_gpuConnectionToWebProcess->webProcessIdentifier());
+    GPUProcess::singleton().snapshotRegistry().createSnapshot(snapshotIdentifier, rootFrameIdentifier, size, m_gpuConnectionToWebProcess->webProcessIdentifier());
     completionHandler();
 }
 
 void RemoteRenderingBackend::createSnapshotRecorder(RemoteSnapshotRecorderIdentifier identifier, RemoteSnapshotIdentifier snapshotIdentifier)
 {
     assertIsCurrent(workQueue());
-    Ref snapshot = GPUProcess::singleton().snapshotForRecorder(snapshotIdentifier);
+    Ref snapshot = GPUProcess::singleton().snapshotRegistry().snapshotForRecorder(snapshotIdentifier);
     auto result = m_remoteSnapshotRecorders.add(identifier, RemoteSnapshotRecorder::create(identifier, snapshot, *this));
     MESSAGE_CHECK(result.isNewEntry, "Recorder already created");
 }

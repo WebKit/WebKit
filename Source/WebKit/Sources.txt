@@ -42,6 +42,7 @@ GPUProcess/graphics/RemoteRenderingBackend.cpp @cost:6
 GPUProcess/graphics/RemoteResourceCache.cpp
 GPUProcess/graphics/RemoteSnapshot.cpp
 GPUProcess/graphics/RemoteSnapshotRecorder.cpp
+GPUProcess/graphics/RemoteSnapshotRegistry.cpp
 GPUProcess/graphics/ScopedRenderingResourcesRequest.cpp
 GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
 GPUProcess/graphics/ShareablePixelBuffer.cpp
