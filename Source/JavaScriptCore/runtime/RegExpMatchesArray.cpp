@@ -131,12 +131,8 @@ JSArray* createRegExpMatchesArrayWithGroupsOrIndices(VM& vm, JSGlobalObject* glo
     };
 
     auto createIndexArray = [&] (GCDeferralContext& deferralContext, int start, int end) {
-        ObjectInitializationScope scope(vm);
-
-        JSArray* result = JSArray::tryCreateUninitializedRestricted(scope, &deferralContext, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 2);
-        result->initializeIndexWithoutBarrier(scope, 0, jsNumber(start));
-        result->initializeIndexWithoutBarrier(scope, 1, jsNumber(end));
-
+        JSArray* result = tryConstructArrayPair(globalObject, deferralContext, jsNumber(start), jsNumber(end));
+        RELEASE_ASSERT(result);
         return result;
     };
 

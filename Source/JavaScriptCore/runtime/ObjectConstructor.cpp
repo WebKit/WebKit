@@ -493,18 +493,8 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
                 if (!key)
                     key = jsOwnedString(vm, properties[i].get());
 
-                JSArray* entry = nullptr;
-                {
-                    ObjectInitializationScope initializationScope(vm);
-                    if ((entry = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 2))) [[likely]] {
-                        entry->initializeIndex(initializationScope, 0, key);
-                        entry->initializeIndex(initializationScope, 1, values.at(i));
-                    }
-                }
-                if (!entry) [[unlikely]] {
-                    throwOutOfMemoryError(globalObject, scope);
-                    return { };
-                }
+                JSArray* entry = constructArrayPair(globalObject, key, values.at(i));
+                RETURN_IF_EXCEPTION(scope, { });
                 entries->putDirectIndex(globalObject, i, entry);
                 RETURN_IF_EXCEPTION(scope, { });
             }
@@ -538,18 +528,8 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
         RETURN_IF_EXCEPTION(scope, void());
 
         JSString* key = jsOwnedString(vm, propertyName.uid());
-        JSArray* entry = nullptr;
-        {
-            ObjectInitializationScope initializationScope(vm);
-            if ((entry = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 2))) [[likely]] {
-                entry->initializeIndex(initializationScope, 0, key);
-                entry->initializeIndex(initializationScope, 1, value);
-            }
-        }
-        if (!entry) [[unlikely]] {
-            throwOutOfMemoryError(globalObject, scope);
-            return;
-        }
+        JSArray* entry = constructArrayPair(globalObject, key, value);
+        RETURN_IF_EXCEPTION(scope, void());
         entries->putDirectIndex(globalObject, index++, entry);
     };
 

@@ -2270,18 +2270,13 @@ JSArray* constructArrayPair(JSGlobalObject* globalObject, JSValue first, JSValue
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    ObjectInitializationScope initializationScope(vm);
 
-    Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
-
-    JSArray* array = JSArray::tryCreateUninitializedRestricted(initializationScope, structure, 2);
+    GCDeferralContext deferralContext(vm);
+    JSArray* array = tryConstructArrayPair(globalObject, deferralContext, first, second);
     if (!array) [[unlikely]] {
         throwOutOfMemoryError(globalObject, throwScope);
         return nullptr;
     }
-    array->initializeIndex(initializationScope, 0, first);
-    array->initializeIndex(initializationScope, 1, second);
-
     return array;
 }
 

@@ -318,6 +318,34 @@ inline JSArray* constructArrayNegativeIndexed(JSGlobalObject* globalObject, Arra
     return ArrayAllocationProfile::updateLastAllocationFor(profile, array);
 }
 
+ALWAYS_INLINE JSArray* tryConstructArrayPair(JSGlobalObject* globalObject, GCDeferralContext& deferralContext, JSValue first, JSValue second)
+{
+    VM& vm = globalObject->vm();
+    Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+    if (hasContiguous(structure->indexingType())) [[likely]] {
+        constexpr size_t propertyCapacity = 0;
+        ASSERT(structure->outOfLineCapacity() == propertyCapacity);
+        unsigned vectorLength = Butterfly::optimalContiguousVectorLength(propertyCapacity, 2);
+        Butterfly* butterfly = Butterfly::tryCreateUninitialized(vm, nullptr, 0, propertyCapacity, true, vectorLength * sizeof(EncodedJSValue), &deferralContext);
+        if (!butterfly) [[unlikely]]
+            return nullptr;
+        butterfly->setVectorLength(vectorLength);
+        butterfly->setPublicLength(2);
+        butterfly->contiguous().atUnsafe(0).setWithoutWriteBarrier(first);
+        butterfly->contiguous().atUnsafe(1).setWithoutWriteBarrier(second);
+        Butterfly::clearRange(ArrayWithContiguous, butterfly, 2, vectorLength);
+        return JSArray::createWithButterfly(vm, &deferralContext, structure, butterfly);
+    }
+
+    ObjectInitializationScope initializationScope(vm);
+    JSArray* array = JSArray::tryCreateUninitializedRestricted(initializationScope, &deferralContext, structure, 2);
+    if (!array) [[unlikely]]
+        return nullptr;
+    array->initializeIndex(initializationScope, 0, first);
+    array->initializeIndex(initializationScope, 1, second);
+    return array;
+}
+
 ALWAYS_INLINE JSArray* tryCreateContiguousArrayWithPattern(JSGlobalObject* globalObject, JSString* pattern, size_t initialLength)
 {
     if (initialLength >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)
