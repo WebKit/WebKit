@@ -49,6 +49,8 @@ private:
     void beginDrawSourceImage(GraphicsContext&, float = 1.f) override { }
     void endDrawSourceImage(GraphicsContext& destinationContext, const ColorSpace&) override;
 
+    FloatRect enclosingDevicePixelRect(const GraphicsContext&, const FloatRect&) const;
+
     const RefPtr<ImageBuffer> m_sourceImage;
     FloatRect m_sourceImageRect;
 
