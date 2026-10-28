@@ -1,0 +1,139 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if neither the GPU process nor the WebContent process crashes.</p>
+<script src="../resources/ipc.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+let CoreIPC;
+let currentIdentifier = 0x1000 + Math.floor(Math.random() * 0x1000000);
+function generateIdentifier() { return currentIdentifier++; }
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function createRemoteRenderingBackend() {
+    const streamConnection = CoreIPC.newStreamConnection();
+    const renderingBackendIdentifier = generateIdentifier();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+        renderingBackendIdentifier: renderingBackendIdentifier,
+        connectionHandle: streamConnection
+    });
+    const remoteRenderingBackend = streamConnection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+    const didInitializeReply = streamConnection.connection.waitForMessage(
+        renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1);
+    streamConnection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
+    return { streamConnection, remoteRenderingBackend };
+}
+
+const COLORSPACE_SRGB = { serializableColorSpace: { alias: { optionalValue: { m_cgColorSpace: { alias: { variantType: 'WebCore::ColorSpace', variant: 19 } } } } } };
+
+const RENDERING_MODE_UNACCELERATED = 0;
+const RENDERING_MODE_ACCELERATED = 1;
+
+function createRemoteImageBuffer(backend, renderingMode, w, h) {
+    const imageBufferIdentifier = generateIdentifier();
+    const graphicsContextIdentifier = generateIdentifier();
+    backend.remoteRenderingBackend.CreateImageBuffer({
+        logicalSize: { width: w, height: h },
+        renderingMode: renderingMode,
+        renderingPurpose: 0,
+        resolutionScale: 1.0,
+        colorSpace: COLORSPACE_SRGB,
+        bufferFormat: { pixelFormat: 2, useLosslessCompression: 1 },
+        identifier: imageBufferIdentifier,
+        contextIdentifier: graphicsContextIdentifier
+    });
+    return {
+        remoteGraphicsContext: backend.streamConnection.newInterface("RemoteGraphicsContext", graphicsContextIdentifier),
+        imageBufferIdentifier, graphicsContextIdentifier
+    };
+}
+
+// Hands an ImageBuffer owned by `from` over to `to`, and returns the adopted graphics context.
+function transferImageBuffer(from, to, imageBufferIdentifier) {
+    const serializedIdentifier = generateIdentifier();
+    from.remoteRenderingBackend.MoveToSerializedBuffer({
+        identifier: imageBufferIdentifier, serializedIdentifier: serializedIdentifier
+    });
+    const adoptedImageBufferIdentifier = generateIdentifier();
+    const adoptedContextIdentifier = generateIdentifier();
+    to.remoteRenderingBackend.MoveToImageBuffer({
+        identifier: serializedIdentifier,
+        imageBufferIdentifier: adoptedImageBufferIdentifier,
+        contextIdentifier: adoptedContextIdentifier
+    });
+    return {
+        remoteGraphicsContext: to.streamConnection.newInterface("RemoteGraphicsContext", adoptedContextIdentifier),
+        imageBufferIdentifier: adoptedImageBufferIdentifier
+    };
+}
+
+const RECT128 = { location: { x: 0, y: 0 }, size: { width: 128, height: 128 } };
+const RECT32 = { location: { x: 0, y: 0 }, size: { width: 32, height: 32 } };
+const IDENTITY = { span: [1.0, 0.0, 0.0, 1.0, 0.0, 0.0] };
+
+window.setTimeout(async () => {
+    if (!window.IPC)
+        return window.testRunner?.notifyDone();
+    try {
+        CoreIPC = (await import('../../ipc/coreipc.js')).CoreIPC;
+        CoreIPC.typeInfo['WebCore::PlatformColorSpace'] = [{ type: 'std::optional<WebKit::CoreIPCCGColorSpace>', name: 'alias' }];
+
+        // Three RemoteRenderingBackend instances => three GPU process work-queue threads.
+        const A = createRemoteRenderingBackend();
+        const B = createRemoteRenderingBackend();
+        const C = createRemoteRenderingBackend();
+
+        // Accelerated tiles owned by backend A. Only an accelerated backend supplies the
+        // IOSurface CGContext that resolving the pattern would race against.
+        const tile = createRemoteImageBuffer(A, RENDERING_MODE_ACCELERATED, 128, 128);
+        tile.remoteGraphicsContext.SetFillPackedColor({ color: { value: 0xff00ff00 } });
+        tile.remoteGraphicsContext.FillRect({ rect: RECT128, requiresClipToRect: 0 });
+
+        const raceTile = createRemoteImageBuffer(A, RENDERING_MODE_ACCELERATED, 128, 128);
+        raceTile.remoteGraphicsContext.SetFillPackedColor({ color: { value: 0xff00ff00 } });
+        raceTile.remoteGraphicsContext.FillRect({ rect: RECT128, requiresClipToRect: 0 });
+
+        // Unaccelerated carriers whose base-state fill brush references a tile. Their backend
+        // used to ignore releaseGraphicsContext(), so the reference survived the handover to
+        // another RemoteRenderingBackend.
+        function makeCarrier(adopter, tileToReference) {
+            const carrier = createRemoteImageBuffer(A, RENDERING_MODE_UNACCELERATED, 32, 32);
+            carrier.remoteGraphicsContext.SetFillPatternImageBuffer({
+                imageBufferIdentifier: tileToReference.imageBufferIdentifier,
+                pattern: { repeatX: true, repeatY: true, patternSpaceTransform: IDENTITY }
+            });
+            return transferImageBuffer(A, adopter, carrier.imageBufferIdentifier);
+        }
+
+        // Handing the carrier to B must not leave the carrier holding the tile: a surviving
+        // reference makes this transfer of the tile itself fail the "ImageBuffer in use" check,
+        // which terminates the WebContent process.
+        makeCarrier(B, tile);
+        transferImageBuffer(A, C, tile.imageBufferIdentifier);
+
+        // Race adopted pattern fills (which would dereference raceTile) against A's draws into it.
+        const carriers = [];
+        for (const adopter of [B, C]) {
+            for (let i = 0; i < 96; i++)
+                carriers.push(makeCarrier(adopter, raceTile));
+        }
+        for (let iter = 0; iter < 8; iter++) {
+            for (const carrier of carriers) {
+                carrier.remoteGraphicsContext.FillRect({ rect: RECT32, requiresClipToRect: 0 });
+                for (let k = 0; k < 8; k++) {
+                    raceTile.remoteGraphicsContext.FillRect({ rect: RECT128, requiresClipToRect: 0 });
+                    raceTile.remoteGraphicsContext.ClearRect({ rect: RECT128 });
+                }
+            }
+            await sleep(0);
+        }
+
+        A.streamConnection.connection.invalidate();
+        B.streamConnection.connection.invalidate();
+        C.streamConnection.connection.invalidate();
+    } catch (e) { }
+    window.testRunner?.notifyDone();
+}, 10);
+</script>
