@@ -155,6 +155,10 @@ static InlineLevelBox::AscentAndDescent layoutBoundsWithEdgeAdjustmentForInlineB
     if (inlineBox.isRootInlineBox())
         return { fontMetrics.ascent(fontBaseline), fontMetrics.descent(fontBaseline) };
 
+    // Vertical lines are aligned on the ideographic (central) baseline (see adjustIdeographicBaselineIfApplicable), but cap height,
+    // x-height and the alphabetic edge are measured from the alphabetic baseline, which sits this much below it.
+    auto alphabeticBaselineOffset = fontBaseline == FontBaseline::Ideographic ? fontMetrics.ascent(FontBaseline::Alphabetic) - fontMetrics.ascent(FontBaseline::Ideographic) : 0.f;
+
     auto ascent = [&] -> InlineLayoutUnit {
         return WTF::switchOn(inlineBox.lineFitEdge(),
             [&](CSS::Keyword::Leading) -> InlineLayoutUnit {
@@ -165,9 +169,9 @@ static InlineLevelBox::AscentAndDescent layoutBoundsWithEdgeAdjustmentForInlineB
                 case TextEdgeOver::Text:
                     return fontMetrics.ascent(fontBaseline);
                 case TextEdgeOver::Cap:
-                    return fontMetrics.capHeight().value_or(0.f);
+                    return fontMetrics.capHeight().value_or(0.f) - alphabeticBaselineOffset;
                 case TextEdgeOver::Ex:
-                    return fontMetrics.xHeight().value_or(0.f);
+                    return fontMetrics.xHeight().value_or(0.f) - alphabeticBaselineOffset;
                 case TextEdgeOver::Ideographic:
                     return fontMetrics.ascent(FontBaseline::Ideographic);
                 case TextEdgeOver::IdeographicInk:
@@ -189,7 +193,7 @@ static InlineLevelBox::AscentAndDescent layoutBoundsWithEdgeAdjustmentForInlineB
                 case TextEdgeUnder::Text:
                     return fontMetrics.descent(fontBaseline);
                 case TextEdgeUnder::Alphabetic:
-                    return 0.f;
+                    return alphabeticBaselineOffset;
                 case TextEdgeUnder::Ideographic:
                     return fontMetrics.descent(FontBaseline::Ideographic);
                 case TextEdgeUnder::IdeographicInk:
@@ -210,6 +214,10 @@ static InlineLevelBox::AscentAndDescent textBoxAdjustedInlineBoxHeight(const Inl
     if (inlineBox.isRootInlineBox())
         return { fontMetrics.ascent(fontBaseline), fontMetrics.descent(fontBaseline) };
 
+    // Vertical lines are aligned on the ideographic (central) baseline (see adjustIdeographicBaselineIfApplicable), but cap height,
+    // x-height and the alphabetic edge are measured from the alphabetic baseline, which sits this much below it.
+    auto alphabeticBaselineOffset = fontBaseline == FontBaseline::Ideographic ? fontMetrics.ascent(FontBaseline::Alphabetic) - fontMetrics.ascent(FontBaseline::Ideographic) : 0.f;
+
     auto inlineBoxTextBoxTrim = inlineBox.textBoxTrim();
     auto ascent = [&] -> InlineLayoutUnit {
         auto textBoxEdge = inlineBoxTextBoxTrim == TextBoxTrim::TrimStart || inlineBoxTextBoxTrim == TextBoxTrim::TrimBoth ? inlineBox.textBoxEdge().tryTextEdgePair() : std::nullopt;
@@ -220,9 +228,9 @@ static InlineLevelBox::AscentAndDescent textBoxAdjustedInlineBoxHeight(const Inl
         case TextEdgeOver::Text:
             return fontMetrics.ascent(fontBaseline);
         case TextEdgeOver::Cap:
-            return fontMetrics.capHeight().value_or(0.f);
+            return fontMetrics.capHeight().value_or(0.f) - alphabeticBaselineOffset;
         case TextEdgeOver::Ex:
-            return fontMetrics.xHeight().value_or(0.f);
+            return fontMetrics.xHeight().value_or(0.f) - alphabeticBaselineOffset;
         case TextEdgeOver::Ideographic:
             return fontMetrics.ascent(FontBaseline::Ideographic);
         case TextEdgeOver::IdeographicInk:
@@ -241,7 +249,7 @@ static InlineLevelBox::AscentAndDescent textBoxAdjustedInlineBoxHeight(const Inl
         case TextEdgeUnder::Text:
             return fontMetrics.descent(fontBaseline);
         case TextEdgeUnder::Alphabetic:
-            return 0.f;
+            return alphabeticBaselineOffset;
         case TextEdgeUnder::Ideographic:
             return fontMetrics.descent(FontBaseline::Ideographic);
         case TextEdgeUnder::IdeographicInk:
