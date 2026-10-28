@@ -39,7 +39,8 @@ onload = async () => {
     var selectObject = document.getElementById("selectId");
 
     var optionHeight =  selectObject.offsetHeight / selectObject.size;
-    var x = selectObject.offsetLeft + selectObject.offsetWidth / 2;
+    // The middle of the options, which are left of the scrollbar.
+    var x = selectObject.offsetLeft + selectObject.clientLeft + selectObject.clientWidth / 2;
     var y = selectObject.offsetTop + optionHeight / 2;
 
     eventSender.dragMode = false;
@@ -80,7 +81,8 @@ onload = async () => {
     debug("Test for select element without multiple attribute");
     var nonMultipleObject = document.getElementById("nonmultiple");
     var optionHeight =  nonMultipleObject.offsetHeight / nonMultipleObject.size;
-    x = nonMultipleObject.offsetLeft + nonMultipleObject.offsetWidth / 2;
+    // The middle of the options, which are left of the scrollbar.
+    x = nonMultipleObject.offsetLeft + nonMultipleObject.clientLeft + nonMultipleObject.clientWidth / 2;
     y = nonMultipleObject.offsetTop + optionHeight / 2;
 
     eventSender.dragMode = false;

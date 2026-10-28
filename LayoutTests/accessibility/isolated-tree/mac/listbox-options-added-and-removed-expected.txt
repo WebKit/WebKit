@@ -8,7 +8,7 @@ PASS: axSelect.childAtIndex(3)?.domIdentifier === 'date'
 PASS: axSelect.childrenCount === 7
 PASS: axSelect.childAtIndex(5)?.domIdentifier === 'elderberry'
 PASS: axSelect.childrenCount === 6
-PASS: axSelect.childAtIndex(0)?.domIdentifier === 'group'
+PASS: axSelect.childAtIndex(0)?.stringValue === 'AXValue: More'
 
 PASS successfullyParsed is true
 

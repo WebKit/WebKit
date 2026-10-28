@@ -114,7 +114,6 @@
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderLineBreak.h"
-#include "RenderListBox.h"
 #include "RenderListItem.h"
 #include "RenderListOutsideMarker.h"
 #include "RenderMathMLBlock.h"
@@ -2330,29 +2329,6 @@ RefPtr<AccessibilityObject> AccessibilityRenderObject::elementAccessibilityHitTe
     if (isSVGImage())
         return remoteSVGElementHitTest(point);
 
-    if (role() == AccessibilityRole::ListBox) {
-        if (CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(m_renderer.get())) {
-            LayoutRect parentRect = boundingBoxRect();
-
-            RefPtr<AccessibilityObject> listBoxOption;
-            const auto& children = const_cast<AccessibilityRenderObject*>(this)->unignoredChildren();
-            unsigned length = children.size();
-            for (unsigned i = 0; i < length; ++i) {
-                LayoutRect rect = renderListBox->itemBoundingBoxRect(parentRect.location(), i);
-                if (rect.contains(point)) {
-                    listBoxOption = downcast<AccessibilityObject>(children[i].get());
-                    break;
-                }
-            }
-
-            if (listBoxOption && !listBoxOption->isIgnored())
-                return listBoxOption.unsafeGet();
-
-            CheckedPtr cache = axObjectCache();
-            return cache ? cache->getOrCreate(*renderListBox) : nullptr;
-        }
-    }
-
     return AccessibilityObject::elementAccessibilityHitTest(point);
 }
 
@@ -2501,7 +2477,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (m_ariaRole != AccessibilityRole::Unknown && !shouldIgnoreAttributeRole())
         return m_ariaRole;
 
-    // An optgroup with base appearance is represented by its label, as an item of the list box or picker.
+    // An optgroup in a list box, or in a picker with base appearance, is represented by its label, as an item of the list box or picker.
     if (RefPtr optGroup = optGroupForLabel())
         return protect(optGroup->ownerSelectElement())->usesBaseAppearancePicker() ? AccessibilityRole::MenuItem : AccessibilityRole::ListBoxOption;
 
@@ -3021,19 +2997,6 @@ void AccessibilityRenderObject::addChildren()
             addChild(protect(cache->getOrCreate(*marker)));
     };
 
-    auto addListBoxChildrenIfNecessary = [&](Node& node) -> bool {
-        // Only a RenderListBox paints its list items itself.
-        if (role() == AccessibilityRole::ListBox && is<RenderListBox>(m_renderer)) {
-            if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node)) {
-                for (const auto& listItem : selectElement->listItems())
-                    addChild(protect(cache->getOrCreate(protect(listItem.get()))), AccessibilityObject::DescendIfIgnored::No);
-                return true;
-            }
-        }
-
-        return false;
-    };
-
     RefPtr node = dynamicDowncast<ContainerNode>(this->node());
 
 #if !USE(ATSPI)
@@ -3053,9 +3016,6 @@ void AccessibilityRenderObject::addChildren()
     addListItemMarker();
 
     if (node && !(element && element->isPseudoElement()) && cache) {
-        if (addListBoxChildrenIfNecessary(*node))
-            return;
-
         // If we have a DOM node, use the DOM to find accessible children.
         //
         // The ComposedTreeIterator is extremely large by default, and will cause a stack
@@ -3086,9 +3046,6 @@ void AccessibilityRenderObject::addChildren()
     addListItemMarker();
     // to build the accessibility tree.
     // FIXME: Consider removing this ATSPI-only branch with https://bugs.webkit.org/show_bug.cgi?id=282117.
-    if (node && addListBoxChildrenIfNecessary(*node))
-        return;
-
     for (auto& object : AXChildIterator(*this))
         addChildIfNeeded(object);
 

@@ -50,7 +50,8 @@ select[multiple]:-internal-select-preferred-size-one {
     gap: -internal-auto-base(revert-rule, 0.65em);
     min-block-size: -internal-auto-base(revert-rule, 24px);
     min-inline-size: -internal-auto-base(revert-rule, 4em);
-    overflow: -internal-auto-base(revert-rule, clip);
+    overflow-block: -internal-auto-base(revert-rule, clip);
+    overflow-inline: -internal-auto-base(revert-rule, clip);
     text-overflow: -internal-auto-base(revert-rule, ellipsis);
     white-space: -internal-auto-base(revert-rule, nowrap);
     cursor: -internal-auto-base(revert-rule, default);
@@ -95,7 +96,8 @@ select:not(:-internal-select-preferred-size-one) {
        rows here where the preferred size gives four. */
     block-size: -internal-auto-base(revert-rule, calc(max(24px, 1lh) * attr(size type(<number>), 4)));
     box-sizing: -internal-auto-base(revert-rule, content-box);
-    overflow: -internal-auto-base(revert-rule, auto);
+    overflow-block: -internal-auto-base(revert-rule, auto);
+    overflow-inline: -internal-auto-base(revert-rule, auto);
     padding-block: -internal-auto-base(revert-rule, 0);
     padding-inline: -internal-auto-base(revert-rule, 0);
     min-inline-size: -internal-auto-base(revert-rule, auto);

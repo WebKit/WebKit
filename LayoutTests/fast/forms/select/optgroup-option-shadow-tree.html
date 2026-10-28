@@ -29,11 +29,12 @@ if (!window.internals) {
     shouldBe('ogShadow.firstChild.textContent', '"Group"');
     shouldBe('ogShadow.lastChild.tagName', '"SLOT"');
 
-    // option without label attribute: no shadow root until label is set.
+    // option without label attribute: a shadow root whose label is the text of the option, which list boxes render.
     debug("");
     debug("Option without label attribute:");
     var opt1Shadow = internals.shadowRoot(opt1);
-    shouldBeTrue('opt1Shadow === null');
+    shouldBeTrue('opt1Shadow !== null');
+    shouldBe('opt1Shadow.firstChild.textContent', '"Child text"');
 
     // option with label attribute: should have a shadow root with a span (visible) and a slot (hidden).
     debug("");
@@ -43,12 +44,11 @@ if (!window.internals) {
     shouldBe('opt2Shadow.childNodes.length', '2');
     shouldBe('opt2Shadow.firstChild.textContent', '"Label text"');
 
-    // Dynamically add label attribute to opt1 - creates shadow root.
+    // Dynamically add label attribute to opt1.
     debug("");
     debug("After setting label attribute on option:");
     opt1.setAttribute("label", "Dynamic label");
-    opt1Shadow = internals.shadowRoot(opt1);
-    shouldBeTrue('opt1Shadow !== null');
+    shouldBeTrue('internals.shadowRoot(opt1) === opt1Shadow');
     shouldBe('opt1Shadow.firstChild.textContent', '"Dynamic label"');
 
     // Dynamically change label attribute.
@@ -63,14 +63,14 @@ if (!window.internals) {
     debug("After removing label attribute from option:");
     opt1.removeAttribute("label");
     select.offsetTop;
-    shouldBe('opt1Shadow.firstChild.textContent', '""');
+    shouldBe('opt1Shadow.firstChild.textContent', '"Child text"');
 
     // Dynamically remove label attribute from opt2.
     debug("");
     debug("After removing label attribute from option with initial label:");
     opt2.removeAttribute("label");
     select.offsetTop;
-    shouldBe('opt2Shadow.firstChild.textContent', '""');
+    shouldBe('opt2Shadow.firstChild.textContent', '"Hidden text"');
 
     // Dynamically change optgroup label.
     debug("");

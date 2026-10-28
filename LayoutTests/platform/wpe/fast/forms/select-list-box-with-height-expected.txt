@@ -7,5 +7,58 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 365x18
           text run at (0,0) width 365: "The select below has a size of 3, but a much larger height."
       RenderBlock (anonymous) at (0,34) size 784x250
-        RenderListBox {SELECT} at (0,0) size 68x250 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
+layer at (8,42) size 64x250 clip at (9,43) size 47x248
+  RenderBlock {SELECT} at (0,0) size 64x250 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+    RenderBlock {OPTION} at (1,1) size 47x19
+      RenderInline {SPAN} at (0,0) size 23x18
+        RenderText {#text} at (0,0) size 23x18
+          text run at (0,0) width 23: "one"
+    RenderBlock {OPTION} at (1,20) size 47x19
+      RenderInline {SPAN} at (0,0) size 24x18
+        RenderText {#text} at (0,0) size 24x18
+          text run at (0,0) width 24: "two"
+    RenderBlock {OPTION} at (1,39) size 47x19
+      RenderInline {SPAN} at (0,0) size 31x18
+        RenderText {#text} at (0,0) size 31x18
+          text run at (0,0) width 31: "three"
+    RenderBlock {OPTION} at (1,58) size 47x19
+      RenderInline {SPAN} at (0,0) size 26x18
+        RenderText {#text} at (0,0) size 26x18
+          text run at (0,0) width 26: "four"
+    RenderBlock {OPTION} at (1,77) size 47x19
+      RenderInline {SPAN} at (0,0) size 24x18
+        RenderText {#text} at (0,0) size 24x18
+          text run at (0,0) width 24: "five"
+    RenderBlock {OPTION} at (1,96) size 47x19
+      RenderInline {SPAN} at (0,0) size 18x18
+        RenderText {#text} at (0,0) size 18x18
+          text run at (0,0) width 18: "six"
+    RenderBlock {OPTION} at (1,115) size 47x19
+      RenderInline {SPAN} at (0,0) size 36x18
+        RenderText {#text} at (0,0) size 36x18
+          text run at (0,0) width 36: "seven"
+    RenderBlock {OPTION} at (1,134) size 47x19
+      RenderInline {SPAN} at (0,0) size 31x18
+        RenderText {#text} at (0,0) size 31x18
+          text run at (0,0) width 31: "eight"
+    RenderBlock {OPTION} at (1,153) size 47x19
+      RenderInline {SPAN} at (0,0) size 27x18
+        RenderText {#text} at (0,0) size 27x18
+          text run at (0,0) width 27: "nine"
+    RenderBlock {OPTION} at (1,172) size 47x19
+      RenderInline {SPAN} at (0,0) size 19x18
+        RenderText {#text} at (0,0) size 19x18
+          text run at (0,0) width 19: "ten"
+    RenderBlock {OPTION} at (1,191) size 47x19
+      RenderInline {SPAN} at (0,0) size 41x18
+        RenderText {#text} at (0,0) size 41x18
+          text run at (0,0) width 41: "eleven"
+    RenderBlock {OPTION} at (1,210) size 47x19
+      RenderInline {SPAN} at (0,0) size 42x18
+        RenderText {#text} at (0,0) size 42x18
+          text run at (0,0) width 42: "twelve"
+    RenderBlock {OPTION} at (1,229) size 47x19
+      RenderInline {SPAN} at (0,0) size 47x18
+        RenderText {#text} at (0,0) size 47x18
+          text run at (0,0) width 47: "thirteen"

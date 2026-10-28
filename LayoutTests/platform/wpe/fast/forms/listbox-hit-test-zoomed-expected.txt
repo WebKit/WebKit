@@ -4,7 +4,6 @@ layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (9,9) size 782x561
       RenderBlock (anonymous) at (0,0) size 781x162
-        RenderListBox {SELECT} at (0,0) size 145x162 [bgcolor=#FFFFFF] [border: (12px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,162) size 781x118
         RenderBlock (anonymous) at (0,0) size 781x66
@@ -23,3 +22,73 @@ layer at (0,0) size 800x585
           RenderBR {BR} at (1035,0) size 0x18
           RenderText {#text} at (0,18) size 1017x18
             text run at (0,18) width 1017: "     Actual: false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false"
+layer at (10,10) size 141x162 clip at (22,22) size 102x138 scrollHeight 412
+  RenderBlock {SELECT} at (0,0) size 141x162 [bgcolor=#FFFFFF] [border: (12px solid #000000)]
+    RenderBlock {OPTION} at (24,24) size 78x23
+      RenderInline {SPAN} at (0,0) size 29x22
+        RenderText {#text} at (0,0) size 29x22
+          text run at (0,0) width 29: "one"
+    RenderBlock {OPTION} at (24,46) size 78x24
+      RenderInline {SPAN} at (0,0) size 29x22
+        RenderText {#text} at (0,0) size 29x22
+          text run at (0,0) width 29: "two"
+    RenderBlock {OPTION} at (24,69) size 78x24
+      RenderInline {SPAN} at (0,0) size 39x22
+        RenderText {#text} at (0,0) size 39x22
+          text run at (0,0) width 39: "three"
+    RenderBlock {OPTION} at (24,92) size 78x24
+      RenderInline {SPAN} at (0,0) size 32x22
+        RenderText {#text} at (0,0) size 32x22
+          text run at (0,0) width 32: "four"
+    RenderBlock {OPTION} at (24,115) size 78x23 [color=#FFFFFF] [bgcolor=#3484E4]
+      RenderInline {SPAN} at (0,0) size 30x22
+        RenderText {#text} at (0,0) size 30x22
+          text run at (0,0) width 30: "five"
+    RenderBlock {OPTION} at (24,137) size 78x24
+      RenderInline {SPAN} at (0,0) size 22x22
+        RenderText {#text} at (0,0) size 22x22
+          text run at (0,0) width 22: "six"
+    RenderBlock {OPTION} at (24,160) size 78x24
+      RenderInline {SPAN} at (0,0) size 45x22
+        RenderText {#text} at (0,0) size 45x22
+          text run at (0,0) width 45: "seven"
+    RenderBlock {OPTION} at (24,183) size 78x24
+      RenderInline {SPAN} at (0,0) size 39x22
+        RenderText {#text} at (0,0) size 39x22
+          text run at (0,0) width 39: "eight"
+    RenderBlock {OPTION} at (24,206) size 78x24
+      RenderInline {SPAN} at (0,0) size 34x22
+        RenderText {#text} at (0,0) size 34x22
+          text run at (0,0) width 34: "nine"
+    RenderBlock {OPTION} at (24,229) size 78x23
+      RenderInline {SPAN} at (0,0) size 24x22
+        RenderText {#text} at (0,0) size 24x22
+          text run at (0,0) width 24: "ten"
+    RenderBlock {OPTION} at (24,251) size 78x24
+      RenderInline {SPAN} at (0,0) size 52x22
+        RenderText {#text} at (0,0) size 52x22
+          text run at (0,0) width 52: "eleven"
+    RenderBlock {OPTION} at (24,274) size 78x24
+      RenderInline {SPAN} at (0,0) size 52x22
+        RenderText {#text} at (0,0) size 52x22
+          text run at (0,0) width 52: "twelve"
+    RenderBlock {OPTION} at (24,297) size 78x24
+      RenderInline {SPAN} at (0,0) size 59x22
+        RenderText {#text} at (0,0) size 59x22
+          text run at (0,0) width 59: "thirteen"
+    RenderBlock {OPTION} at (24,320) size 78x24
+      RenderInline {SPAN} at (0,0) size 65x22
+        RenderText {#text} at (0,0) size 65x22
+          text run at (0,0) width 65: "fourteen"
+    RenderBlock {OPTION} at (24,343) size 78x23
+      RenderInline {SPAN} at (0,0) size 50x22
+        RenderText {#text} at (0,0) size 50x22
+          text run at (0,0) width 50: "fifteen"
+    RenderBlock {OPTION} at (24,365) size 78x24
+      RenderInline {SPAN} at (0,0) size 55x22
+        RenderText {#text} at (0,0) size 55x22
+          text run at (0,0) width 55: "sixteen"
+    RenderBlock {OPTION} at (24,388) size 78x24
+      RenderInline {SPAN} at (0,0) size 78x22
+        RenderText {#text} at (0,0) size 78x22
+          text run at (0,0) width 78: "seventeen"

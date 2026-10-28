@@ -3330,10 +3330,33 @@ void RenderBox::overrideLogicalHeightForSizeContainment()
     setLogicalHeight(intrinsicHeight + borderAndPadding + scrollbarLogicalHeight());
 }
 
+bool RenderBox::isDefaultAppearanceListBox() const
+{
+    auto* select = dynamicDowncast<HTMLSelectElement>(element());
+    return select && !select->isDropdownBox(&style()) && !select->isBaseListBox(&style());
+}
+
+std::optional<LayoutUnit> RenderBox::listBoxIntrinsicInnerLogicalHeight() const
+{
+    if (!isDefaultAppearanceListBox() || style().fieldSizing() == FieldSizing::Content)
+        return { };
+
+    // This has to match the size of a row in the user agent style sheet: a line of the normal height in whole pixels, and a pixel of spacing.
+    auto rowLogicalHeight = LayoutUnit { std::round(style().metricsOfPrimaryFont().lineSpacing()) } + 1;
+    return rowLogicalHeight * downcast<HTMLSelectElement>(*element()).preferredSize();
+}
+
 void RenderBox::updateLogicalHeight()
 {
-    if (shouldApplySizeContainment() && !isRenderGrid())
-        overrideLogicalHeightForSizeContainment();
+    // The rows of a list box do not depend on its content, so size containment only replaces them with an explicit height.
+    auto listBoxHeight = listBoxIntrinsicInnerLogicalHeight();
+    if (shouldApplySizeContainment() && (!listBoxHeight || explicitIntrinsicInnerLogicalHeight())) {
+        if (!isRenderGrid())
+            overrideLogicalHeightForSizeContainment();
+    } else if (listBoxHeight) {
+        auto borderAndPadding = RenderBox::borderBefore() + RenderBox::paddingBefore() + RenderBox::borderAfter() + RenderBox::paddingAfter();
+        setLogicalHeight(*listBoxHeight + borderAndPadding + scrollbarLogicalHeight());
+    }
 
     if (CheckedPtr flexContainer = dynamicDowncast<RenderFlexibleBox>(parent()))
         flexContainer->setFlexItemContentLogicalHeightFromLayout(*this, contentBoxLogicalHeight());

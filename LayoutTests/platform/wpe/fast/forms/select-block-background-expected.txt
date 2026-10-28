@@ -7,4 +7,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 539x18
           text run at (0,0) width 539: "This tests that backgrounds for list box items draw correctly when a list box is a block"
         RenderBR {BR} at (539,0) size 0x18
-      RenderListBox {SELECT} at (0,18) size 57x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+layer at (8,26) size 53x78 clip at (9,27) size 36x76
+  RenderBlock {SELECT} at (0,18) size 53x78 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+    RenderBlock {OPTION} at (1,1) size 36x19 [bgcolor=color(srgb 0 0 0 / 0.1)]
+      RenderInline {SPAN} at (0,0) size 36x18
+        RenderText {#text} at (0,0) size 36x18
+          text run at (0,0) width 36: "Item1"

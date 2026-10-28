@@ -115,10 +115,13 @@ form.innerHTML = '<select id="select-multiple" multiple required size="4">' +
 '</select>';
 mouseDownOnSelect('select-multiple', 0);
 mouseDownOnSelect('select-size4', 0);
+// The clicked options are highlighted as selected, but options are never :valid or :invalid.
 shouldBe('backgroundOf("select-multiple")', 'validColor');
-shouldBe('backgroundOf("multiple-empty")', 'transparentColor');
+shouldNotBe('backgroundOf("multiple-empty")', 'validColor');
+shouldNotBe('backgroundOf("multiple-empty")', 'invalidColor');
 shouldBe('backgroundOf("select-size4")', 'validColor');
-shouldBe('backgroundOf("size4-empty")', 'transparentColor');
+shouldNotBe('backgroundOf("size4-empty")', 'validColor');
+shouldNotBe('backgroundOf("size4-empty")', 'invalidColor');
 
 debug('Change the value with a placeholder label option:');
 el = makeInvalid();

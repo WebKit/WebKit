@@ -1,6 +1,6 @@
 
-PASS scroller.scrollTop is within 10 of 790
-PASS listbox.scrollTop is within 2 of 52
+PASS scroller.scrollTop is within 10 of 581
+PASS listbox.scrollTop is within 2 of 260
 PASS successfullyParsed is true
 
 TEST COMPLETE

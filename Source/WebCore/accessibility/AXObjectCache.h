@@ -385,6 +385,7 @@ public:
     void onRemoteFrameGainedFocus(RemoteFrame&);
     void onScrollbarFrameRectChange(const Scrollbar&);
     void onSelectedOptionChanged(Element&);
+    void onOptGroupLabelChanged(Element&);
     void onSelectedOptionChanged(HTMLSelectElement&, int optionIndex);
     void onSelectedTextChanged(const VisiblePositionRange&, AccessibilityObject* = nullptr);
 #if PLATFORM(MAC)

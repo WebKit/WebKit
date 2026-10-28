@@ -10,8 +10,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS successfullyParsed is true
 
 TEST COMPLETE
-div display height = 111
-Mouse moved to (28, 236)
+div display height = 112
+Mouse moved to (28, 237)
 PASS Page did not receive wheel events.
 (GraphicsLayer
   (anchor 0.00 0.00)

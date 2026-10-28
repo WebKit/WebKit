@@ -127,7 +127,6 @@ public:
     ScrollAnimationStatus serviceScrollAnimation(MonotonicTime);
 
 protected:
-    bool handleSteppedScrolling(const PlatformWheelEvent&);
 #if HAVE(RUBBER_BANDING)
     IntSize stretchAmount() const final;
 #endif

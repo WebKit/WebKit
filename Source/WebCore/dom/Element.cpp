@@ -127,7 +127,6 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
-#include "RenderListBox.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGModelObject.h"
@@ -1239,41 +1238,6 @@ inline ScrollAlignment LEGACY_NODELETE toScrollAlignmentForBlockDirection(std::o
     }
 }
 
-static HTMLSelectElement* LEGACY_NODELETE owningSelectElement(const Element& element)
-{
-    if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(element))
-        return optionElement->ownerSelectElement();
-
-    if (auto* optGroupElement = dynamicDowncast<HTMLOptGroupElement>(element))
-        return optGroupElement->ownerSelectElement();
-
-    return nullptr;
-}
-
-static HTMLSelectElement* LEGACY_NODELETE listBoxSelectElement(const Element& element)
-{
-    auto* selectElement = owningSelectElement(element);
-    return selectElement && is<RenderListBox>(selectElement->renderer()) ? selectElement : nullptr;
-}
-
-static std::optional<std::pair<SingleThreadWeakPtr<RenderElement>, LayoutRect>> listBoxElementScrollIntoView(const Element& element)
-{
-    RefPtr selectElement = listBoxSelectElement(element);
-    if (!selectElement)
-        return std::nullopt;
-
-    CheckedPtr renderListBox = downcast<RenderListBox>(selectElement->renderer());
-
-    auto itemIndex = selectElement->listItems().find(&element);
-    if (itemIndex != notFound)
-        renderListBox->scrollToRevealElementAtListIndex(itemIndex);
-    else
-        itemIndex = 0;
-
-    auto itemLocalRect = renderListBox->itemBoundingBoxRect({ }, itemIndex);
-    return std::pair<SingleThreadWeakPtr<RenderElement>, LayoutRect> { renderListBox.get(), itemLocalRect };
-}
-
 void Element::scrollIntoView(Variant<bool, ScrollIntoViewOptions>&& arg)
 {
     Ref document = this->document();
@@ -1285,19 +1249,11 @@ void Element::scrollIntoView(Variant<bool, ScrollIntoViewOptions>&& arg)
     bool insideFixed = false;
     LayoutRect absoluteBounds;
 
-    if (auto listBoxScrollResult = listBoxElementScrollIntoView(*this)) {
-        renderer = WTF::move(listBoxScrollResult->first);
-        absoluteBounds = listBoxScrollResult->second;
+    renderer = this->renderer();
+    if (!renderer)
+        return;
 
-        auto listBoxAbsoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
-        absoluteBounds.moveBy(listBoxAbsoluteBounds.location());
-    } else {
-        renderer = this->renderer();
-        if (!renderer)
-            return;
-
-        absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
-    }
+    absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
 
     auto options = WTF::switchOn(arg,
         [&](bool boolArg) -> ScrollIntoViewOptions {
@@ -2122,26 +2078,6 @@ LayoutRect Element::absoluteEventHandlerBounds(bool& includesFixedPositionElemen
     return absoluteEventBoundsOfElementAndDescendants(includesFixedPositionElements);
 }
 
-static std::optional<std::pair<CheckedRef<RenderListBox>, LayoutRect>> listBoxElementBoundingBox(const Element& element)
-{
-    RefPtr selectElement = listBoxSelectElement(element);
-    if (!selectElement)
-        return std::nullopt;
-
-    CheckedPtr listBoxRenderer = downcast<RenderListBox>(selectElement->renderer());
-
-    std::optional<LayoutRect> boundingBox;
-    if (RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(element))
-        boundingBox = listBoxRenderer->localBoundsOfOption(*optionElement);
-    else if (RefPtr optGroupElement = dynamicDowncast<HTMLOptGroupElement>(element))
-        boundingBox = listBoxRenderer->localBoundsOfOptGroup(*optGroupElement);
-
-    if (!boundingBox)
-        return { };
-
-    return std::pair<CheckedRef<RenderListBox>, LayoutRect> { listBoxRenderer.releaseNonNull(), boundingBox.value() };
-}
-
 Ref<DOMRectList> Element::getClientRects()
 {
     protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
@@ -2156,9 +2092,6 @@ Ref<DOMRectList> Element::getClientRects()
     if (RefPtr svgElement = elementWithSVGLayoutBox(*this)) {
         if (auto localRect = svgElement->getBoundingBox())
             quads.append(renderer->localToAbsoluteQuad(*localRect));
-    } else if (auto pair = listBoxElementBoundingBox(*this)) {
-        renderer = WTF::move(pair.value().first);
-        quads.append(renderer->localToAbsoluteQuad(FloatQuad { pair.value().second }));
     } else if (shouldObtainBoundsFromBoxModel(this))
         renderer->absoluteQuads(quads);
 
@@ -2181,9 +2114,6 @@ std::optional<std::pair<CheckedPtr<RenderElement>, FloatRect>> Element::bounding
     if (RefPtr svgElement = elementWithSVGLayoutBox(*this)) {
         if (auto localRect = svgElement->getBoundingBox())
             quads.append(renderer->localToAbsoluteQuad(*localRect));
-    } else if (auto pair = listBoxElementBoundingBox(*this)) {
-        renderer = WTF::move(pair.value().first);
-        quads.append(renderer->localToAbsoluteQuad(FloatQuad { pair.value().second }));
     } else if (shouldObtainBoundsFromBoxModel(this))
         renderer->absoluteQuads(quads);
 
@@ -2199,8 +2129,6 @@ FloatRect Element::boundingClientRect()
     OptionSet<DimensionsCheck> dimensionsCheck { DimensionsCheck::Left, DimensionsCheck::Top, DimensionsCheck::Width, DimensionsCheck::Height, DimensionsCheck::IgnoreOverflow };
     OptionSet<LayoutOptions> layoutOptions { LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible, LayoutOptions::CanDeferUpdateLayerPositions, LayoutOptions::IgnorePendingStylesheets };
     document->updateLayoutIfDimensionsOutOfDate(*this, dimensionsCheck, layoutOptions);
-    if (RefPtr selectElement = listBoxSelectElement(*this))
-        document->updateLayoutIfDimensionsOutOfDate(*selectElement, dimensionsCheck, layoutOptions);
     LocalFrameView::AutoPreventLayerAccess preventAccess(document->view());
     auto pair = boundingAbsoluteRectWithoutLayout();
     if (!pair)
@@ -4693,10 +4621,23 @@ ExceptionOr<void> Element::setInnerHTML(Variant<Ref<TrustedHTML>, String>&& html
     return replaceChildrenWithMarkup(stringValueHolder.releaseReturnValue(), { });
 }
 
+static HTMLSelectElement* LEGACY_NODELETE ownerSelectOfOptionOrOptGroup(const Element& element)
+{
+    if (auto* option = dynamicDowncast<HTMLOptionElement>(element))
+        return option->ownerSelectElement();
+    if (auto* optGroup = dynamicDowncast<HTMLOptGroupElement>(element))
+        return optGroup->ownerSelectElement();
+    return nullptr;
+}
+
 String Element::innerText()
 {
     // We need to update layout, since plainText uses line boxes in the render tree.
     protect(document())->updateLayoutIgnorePendingStylesheets();
+
+    // In a list box with the default appearance, options and optgroups render their labels rather than their content.
+    if (RefPtr select = ownerSelectOfOptionOrOptGroup(*this); select && select->rendersOptionLabels())
+        return textContent(true);
 
     if (!renderer()) {
         if (hasDisplayContents())
@@ -6628,8 +6569,7 @@ bool Element::checkVisibility(const CheckVisibilityOptions& options)
 {
     protect(document())->updateStyleIfNeeded();
 
-    // List box items are painted by the list box renderer and have no renderer of their own.
-    if (!renderer() && !listBoxSelectElement(*this))
+    if (!renderer())
         return false;
 
     CheckedPtr style = computedStyle();

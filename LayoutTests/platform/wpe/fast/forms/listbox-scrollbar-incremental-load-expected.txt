@@ -22,6 +22,35 @@ layer at (0,0) size 800x600
           text run at (493,0) width 287: "\x{201C}Seven\x{201D}. The scroller should be at the bottom"
           text run at (0,18) width 102: "of the scroll bar "
           text run at (102,18) width 85: "to reflect this."
-      RenderBlock (anonymous) at (0,104) size 784x73
-        RenderListBox {SELECT} at (0,0) size 60x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBlock (anonymous) at (0,104) size 784x78
         RenderText {#text} at (0,0) size 0x0
+layer at (8,112) size 56x78 clip at (9,113) size 39x76 scrollY 57 scrollHeight 133
+  RenderBlock {SELECT} at (0,0) size 56x78 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+    RenderBlock {OPTION} at (1,1) size 39x19
+      RenderInline {SPAN} at (0,0) size 27x18
+        RenderText {#text} at (0,0) size 27x18
+          text run at (0,0) width 27: "One"
+    RenderBlock {OPTION} at (1,20) size 39x19
+      RenderInline {SPAN} at (0,0) size 29x18
+        RenderText {#text} at (0,0) size 29x18
+          text run at (0,0) width 29: "Two"
+    RenderBlock {OPTION} at (1,39) size 39x19
+      RenderInline {SPAN} at (0,0) size 37x18
+        RenderText {#text} at (0,0) size 37x18
+          text run at (0,0) width 37: "Three"
+    RenderBlock {OPTION} at (1,58) size 39x19
+      RenderInline {SPAN} at (0,0) size 30x18
+        RenderText {#text} at (0,0) size 30x18
+          text run at (0,0) width 30: "Four"
+    RenderBlock {OPTION} at (1,77) size 39x19
+      RenderInline {SPAN} at (0,0) size 28x18
+        RenderText {#text} at (0,0) size 28x18
+          text run at (0,0) width 28: "Five"
+    RenderBlock {OPTION} at (1,96) size 39x19
+      RenderInline {SPAN} at (0,0) size 21x18
+        RenderText {#text} at (0,0) size 21x18
+          text run at (0,0) width 21: "Six"
+    RenderBlock {OPTION} at (1,115) size 39x19 [bgcolor=color(srgb 0 0 0 / 0.1)]
+      RenderInline {SPAN} at (0,0) size 39x18
+        RenderText {#text} at (0,0) size 39x18
+          text run at (0,0) width 39: "Seven"

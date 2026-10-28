@@ -122,7 +122,7 @@ public:
     Color scrollbarThumbColorStyle() const final;
     Color scrollbarTrackColorStyle() const final;
     Style::ScrollbarGutter LEGACY_NODELETE scrollbarGutterStyle() const final;
-    ScrollbarWidth LEGACY_NODELETE scrollbarWidthStyle() const final;
+    ScrollbarWidth scrollbarWidthStyle() const final;
     std::optional<ScrollbarColor> scrollbarColorStyle() const final;
 
     bool requiresScrollPositionReconciliation() const { return m_requiresScrollPositionReconciliation; }

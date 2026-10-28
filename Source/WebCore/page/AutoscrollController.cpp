@@ -36,7 +36,6 @@
 #include "MouseEventTypes.h"
 #include "Page.h"
 #include "RenderBox.h"
-#include "RenderListBox.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "ScrollView.h"
@@ -80,9 +79,6 @@ bool AutoscrollController::startAutoscrollForSelection(RenderObject* renderer)
         return true;
 
     CheckedPtr scrollable = RenderBox::findAutoscrollable(renderer);
-    if (!scrollable)
-        scrollable = renderer->isRenderListBox() ? downcast<RenderListBox>(renderer) : nullptr;
-
     if (!scrollable)
         return false;
 

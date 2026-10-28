@@ -34,6 +34,8 @@
             const x = selectBounds.right - 8;
             const y = selectBounds.top + 10;
 
+            // The state of the scrollbars of the list box reaches the UI process with the next rendering update.
+            await UIHelper.renderingUpdate();
             debug('Initial state');
             verticalScrollbarStateForSelect = await UIHelper.verticalScrollbarState(select);
             debug(verticalScrollbarStateForSelect);
@@ -42,7 +44,8 @@
             await UIHelper.mouseWheelScrollAt(x, y);
             await UIHelper.waitForConditionAsync(async () => {
                 let state = await UIHelper.verticalScrollbarState(select);
-                let expanded = state.indexOf('expanded') != -1;
+                // The thumb and track become visible as the scrollbar expands.
+                let expanded = state.indexOf('expanded') != -1 && state.indexOf('visible_thumb') != -1 && state.indexOf('visible_track') != -1;
                 if (expanded)
                     testPassed('Scrollbar state: ' + state);
                 return expanded;
