@@ -1109,6 +1109,7 @@ select:not(:-internal-uses-menulist) {
     background-color: Canvas;
     border-style: inset;
     border-color: gray;
+    vertical-align: -internal-auto-base(text-bottom, initial);
 }
 
 select:not(:-internal-uses-menulist):enabled {

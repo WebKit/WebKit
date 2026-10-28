@@ -12,13 +12,13 @@ layer at (0,0) size 800x600
       RenderMenuList {SELECT} at (0,90) size 66x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
       RenderBR {BR} at (66,96) size 0x18
       RenderListBox {SELECT} at (0,120) size 59x37 [color=#00000066] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderBR {BR} at (59,136) size 0x17
+      RenderBR {BR} at (59,140) size 0x17
       RenderListBox {SELECT} at (0,157) size 59x37 [color=#00000066] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderBR {BR} at (59,173) size 0x17
+      RenderBR {BR} at (59,177) size 0x17
       RenderListBox {SELECT} at (0,194) size 59x37 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderBR {BR} at (59,210) size 0x17
+      RenderBR {BR} at (59,214) size 0x17
       RenderListBox {SELECT} at (0,231) size 59x37 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderBR {BR} at (59,247) size 0x17
+      RenderBR {BR} at (59,251) size 0x17
       RenderText {#text} at (0,268) size 485x18
         text run at (0,268) width 485: "PASS: sel1 correctly set to selectedIndex 1 by sel1.options[1].selected = true."
       RenderBR {BR} at (484,268) size 1x18

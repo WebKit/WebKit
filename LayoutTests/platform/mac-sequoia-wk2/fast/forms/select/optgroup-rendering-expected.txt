@@ -6,7 +6,7 @@ layer at (0,0) size 800x316
       RenderBlock {FORM} at (0,0) size 784x301
         RenderListBox {SELECT} at (0,0) size 69x281 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (69,260) size 0x18
+        RenderBR {BR} at (69,263) size 0x18
         RenderMenuList {SELECT} at (0,282) size 74x19 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
 layer at (8,290) size 74x18

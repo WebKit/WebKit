@@ -7,18 +7,18 @@ layer at (0,0) size 800x600
         text run at (0,0) width 98: "initial selected:"
       RenderBR {BR} at (97,0) size 1x18
       RenderListBox {SELECT} at (0,18) size 139x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderBR {BR} at (139,54) size 0x18
+      RenderBR {BR} at (139,57) size 0x18
       RenderText {#text} at (0,75) size 165x18
         text run at (0,75) width 165: "dynamic selected change:"
       RenderBR {BR} at (164,75) size 1x18
       RenderListBox {SELECT} at (0,93) size 139x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (139,129) size 0x18
+      RenderBR {BR} at (139,132) size 0x18
       RenderText {#text} at (0,150) size 217x18
         text run at (0,150) width 217: "dynamic insert of selected option:"
       RenderBR {BR} at (216,150) size 1x18
       RenderListBox {SELECT} at (0,168) size 139x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderBR {BR} at (139,204) size 0x18
+      RenderBR {BR} at (139,207) size 0x18
       RenderText {#text} at (0,225) size 98x18
         text run at (0,225) width 98: "initial selected:"
       RenderBR {BR} at (97,225) size 1x18

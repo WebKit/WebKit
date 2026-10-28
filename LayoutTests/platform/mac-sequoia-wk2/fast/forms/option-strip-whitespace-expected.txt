@@ -7,15 +7,15 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 411x18
           text run at (0,0) width 411: "All of these selects should have the same amount of whitespace."
       RenderBlock (anonymous) at (0,34) size 784x245
-        RenderText {#text} at (0,36) size 71x18
-          text run at (0,36) width 71: "Five Tabs: "
+        RenderText {#text} at (0,39) size 71x18
+          text run at (0,39) width 71: "Five Tabs: "
         RenderListBox {SELECT} at (70,0) size 68x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderBR {BR} at (137,36) size 1x18
+        RenderBR {BR} at (137,39) size 1x18
         RenderBR {BR} at (0,57) size 0x18
-        RenderText {#text} at (0,111) size 86x18
-          text run at (0,111) width 86: "Five Spaces: "
+        RenderText {#text} at (0,114) size 86x18
+          text run at (0,114) width 86: "Five Spaces: "
         RenderListBox {SELECT} at (85,75) size 68x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderBR {BR} at (152,111) size 1x18
+        RenderBR {BR} at (152,114) size 1x18
         RenderBR {BR} at (0,132) size 0x18
         RenderText {#text} at (0,150) size 306x18
           text run at (0,150) width 306: "Five Spaces (with leading/trailing whitespace): "

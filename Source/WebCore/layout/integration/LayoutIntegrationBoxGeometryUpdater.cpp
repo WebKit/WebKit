@@ -54,7 +54,6 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
 #include "RenderLineBreak.h"
-#include "RenderListBox.h"
 #include "RenderListItem.h"
 #include "RenderListOutsideMarker.h"
 #include "RenderMathMLBlock.h"
@@ -399,13 +398,6 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
         return renderBox.lastLineBaseline();
     }
 
-    if (is<RenderListBox>(renderBox)) {
-        // FIXME: This hardcoded baselineAdjustment is what we used to do for the old
-        // widget, but I'm not sure this is right for the new control.
-        const int baselineAdjustment = 7;
-        return marginBoxBottom - baselineAdjustment;
-    }
-
     if (CheckedPtr textControl = dynamicDowncast<RenderTextControlSingleLine>(renderBox)) {
         if (auto* innerTextRenderer = textControl->innerTextRenderer()) {
             auto baseline = LayoutUnit { };
@@ -544,7 +536,6 @@ static inline void setIntegrationBaseline(const RenderBox& renderBox)
         // These are special RenderBlock renderers that override the default baseline position behavior of the inline block box.
 
         bool overrideDefaultBaselineBehavior = isAnyOf<
-            RenderListBox,
             RenderSlider,
             RenderTextControlMultiLine,
             RenderTable,
