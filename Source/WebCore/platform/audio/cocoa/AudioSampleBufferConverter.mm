@@ -27,6 +27,7 @@
 
 #if USE(AVFOUNDATION)
 
+#include "AudioUtilitiesCocoa.h"
 #include "CAAudioStreamDescription.h"
 #include "CMUtilities.h"
 #include "Logging.h"
@@ -275,6 +276,11 @@ OSStatus AudioSampleBufferConverter::initAudioConverterForSourceFormatDescriptio
             return false;
         }
     }(m_sourceFormat.mFormatID);
+
+    if (isPCM() && m_options.useWebAudioChannelOrder && m_sourceFormat.mChannelsPerFrame == m_destinationFormat.mChannelsPerFrame) {
+        if (const auto* audioFormatListItem = PAL::CMAudioFormatDescriptionGetRichestDecodableFormat(formatDescription))
+            setWebAudioChannelOrderIfNeeded(converter, audioFormatListItem->mChannelLayoutTag, m_destinationFormat.mChannelsPerFrame, ChannelReorderPolicy::All);
+    }
 
     if (!isPCM()) {
         bool shouldSetDefaultOutputBitRate = true;

@@ -85,6 +85,7 @@ public:
         std::optional<unsigned> packetlossperc { };
         std::optional<bool> useinbandfec { };
         std::optional<bool> usedtx { };
+        bool useWebAudioChannelOrder { false };
     };
     static RefPtr<AudioSampleBufferConverter> create(Function<void()>&&, const Options&);
     // Whether a converter created with these options can convert content described by the CMFormatDescription.
