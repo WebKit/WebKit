@@ -8935,10 +8935,15 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
     if (RefPtr automationSession = m_configuration->processPool().automationSession())
         automationSession->didDestroyFrame(frameID);
 
+    // The frame's process is kept out of the WebProcess cache until it finishes removing the frame. Keep its FrameProcess
+    // registered with the BrowsingContextGroup until then too, so frames created in the meantime join the process instead
+    // of launching a new one.
+    RefPtr frameProcess = frame ? &frame->frameProcess() : nullptr;
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (!webProcess.hasConnection() || &webProcess.connection() == &connection)
             return;
-        webProcess.sendWithAsyncReply(Messages::WebPage::FrameWasRemovedInAnotherProcess(frameID), [preventProcessShutdownScope = webProcess.shutdownPreventingScope()] { }, pageID);
+        RefPtr removedFrameProcess = frameProcess && &frameProcess->process() == &webProcess ? frameProcess : nullptr;
+        webProcess.sendWithAsyncReply(Messages::WebPage::FrameWasRemovedInAnotherProcess(frameID), [preventProcessShutdownScope = webProcess.shutdownPreventingScope(), removedFrameProcess = WTF::move(removedFrameProcess)] { }, pageID);
     });
 
     revokeOutstandingForcedUserActivationsForFrame(frameID);
