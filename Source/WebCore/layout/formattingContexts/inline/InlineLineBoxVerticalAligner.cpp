@@ -358,13 +358,12 @@ std::optional<InlineLevelBox::AscentAndDescent> LineBoxVerticalAligner::layoutBo
     auto maximumAscent = std::optional<InlineLayoutUnit> { };
     auto maximumDescent = std::optional<InlineLayoutUnit> { };
     auto& inlineBox = nonRootInlineLevelBoxes[inlineBoxIndex];
-    CheckedRef inlineBoxParent = inlineBox.layoutBox().parent();
+    CheckedRef inlineBoxLayoutBox = inlineBox.layoutBox();
     for (size_t index = inlineBoxIndex + 1; index < nonRootInlineLevelBoxes.size(); ++index) {
         auto& descendantInlineLevelBox = nonRootInlineLevelBoxes[index];
-        if (&descendantInlineLevelBox.layoutBox().parent() == inlineBoxParent.ptr()) {
-            // We are at the end of the descendant list.
+        CheckedRef descendantLayoutBox = descendantInlineLevelBox.layoutBox();
+        if (!descendantLayoutBox->isDescendantOfWithinFormattingContext(inlineBoxLayoutBox))
             break;
-        }
         if (!formattingUtils.inlineLevelBoxAffectsLineBox(descendantInlineLevelBox, lineBox) || descendantInlineLevelBox.hasLineBoxRelativeAlignment())
             continue;
 
