@@ -30,6 +30,7 @@
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "InstanceMethodSwizzler.h"
 #import "TestURLSchemeHandler.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
@@ -268,6 +269,24 @@ TEST(DragAndDropTests, DragImageForImageOrientation)
     EXPECT_EQ(DragImageColor::Red, dragImageColorAt(bitmap.get(), 0.9, 0.1));
     EXPECT_EQ(DragImageColor::Blue, dragImageColorAt(bitmap.get(), 0.9, 0.9));
     EXPECT_EQ(DragImageColor::Green, dragImageColorAt(bitmap.get(), 0.1, 0.9));
+}
+
+static NSColorSpace *extendedSRGBScreenColorSpace(id, SEL)
+{
+    return NSColorSpace.extendedSRGBColorSpace;
+}
+
+TEST(DragAndDropTests, DragImageForExtendedRangeScreenColorSpace)
+{
+    InstanceMethodSwizzler swizzler {
+        NSScreen.class, @selector(colorSpace),
+        reinterpret_cast<IMP>(extendedSRGBScreenColorSpace)
+    };
+    RetainPtr bitmap = dragImageBitmapForStripedImageWithStyle(@"");
+    ASSERT_TRUE(bitmap);
+    EXPECT_EQ([bitmap pixelsWide], [bitmap pixelsHigh]);
+    EXPECT_EQ(DragImageColor::Red, dragImageColorAt(bitmap, 0.1, 0.1));
+    EXPECT_EQ(DragImageColor::Yellow, dragImageColorAt(bitmap, 0.9, 0.9));
 }
 
 #endif // PLATFORM(MAC)
