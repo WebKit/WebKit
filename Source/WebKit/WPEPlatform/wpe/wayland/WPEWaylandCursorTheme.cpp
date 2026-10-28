@@ -67,7 +67,15 @@ WaylandCursorTheme::WaylandCursorTheme(std::unique_ptr<CursorTheme>&& theme, std
 
 }
 
-WaylandCursorTheme::~WaylandCursorTheme() = default;
+WaylandCursorTheme::~WaylandCursorTheme()
+{
+    for (auto& cursorList : m_cursors.values()) {
+        for (auto& image : cursorList) {
+            if (image.buffer)
+                wl_buffer_destroy(image.buffer);
+        }
+    }
+}
 
 const Vector<WaylandCursorTheme::Image>& WaylandCursorTheme::cursor(UTF8CStringView name, double scale, std::optional<uint32_t> maxImages)
 {
