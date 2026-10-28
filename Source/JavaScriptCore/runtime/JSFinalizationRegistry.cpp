@@ -117,6 +117,14 @@ void JSFinalizationRegistry::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionSc
         return false;
     });
 
+    m_deadRegistrations.removeIf([&] (auto& bucket) -> bool {
+        ASSERT(bucket.value.size());
+        if (vm.heap.isMarked(bucket.key))
+            return false;
+        m_noUnregistrationDead.appendVector(WTF::move(bucket.value));
+        return true;
+    });
+
     m_liveRegistrations.removeIf([&] (auto& bucket) -> bool {
         ASSERT(bucket.value.size());
 
