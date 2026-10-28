@@ -25,6 +25,9 @@
 
 #pragma once
 
+#if ENABLE(WEBDRIVER_BIDI)
+#include <WebCore/ProcessQualified.h>
+#endif
 #include <wtf/MonotonicObjectIdentifier.h>
 #include <wtf/ObjectIdentifier.h>
 
@@ -50,7 +53,8 @@ using FocusedElementInformationIdentifier = MonotonicObjectIdentifier<FocusedEle
 
 #if ENABLE(WEBDRIVER_BIDI)
 struct RealmIdentifierType;
-using RealmIdentifier = ObjectIdentifier<RealmIdentifierType>;
+using NonProcessQualifiedRealmIdentifier = ObjectIdentifier<RealmIdentifierType>;
+using RealmIdentifier = WebCore::ProcessQualified<NonProcessQualifiedRealmIdentifier>;
 #endif
 
 } // namespace WebKit

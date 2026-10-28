@@ -1895,6 +1895,11 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     if (isStandaloneServiceWorkerProcess())
         protect(processPool())->serviceWorkerProcessCrashed(*this, reason);
 
+#if ENABLE(WEBDRIVER_BIDI)
+    if (RefPtr automationSession = processPool().automationSession())
+        automationSession->webProcessDidTerminate(coreProcessIdentifier());
+#endif
+
     shutDown();
 
     // FIXME: Perhaps this should consider ProcessTerminationReasons ExceededMemoryLimit, ExceededCPULimit, Unresponsive as well.

@@ -49,6 +49,7 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
+#include "WebProcessProxy.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
@@ -1296,6 +1297,11 @@ void WebAutomationSession::willDestroyFrame(const WebFrameProxy& frame)
 #endif
 }
 
+void WebAutomationSession::webProcessDidTerminate(WebCore::ProcessIdentifier processIdentifier)
+{
+    m_bidiProcessor->scriptAgent().notifyRealmsDestroyedForProcess(processIdentifier);
+}
+
 void WebAutomationSession::contextCreatedForFrame(const WebFrameProxy& frame)
 {
     auto frameHandle = effectiveHandleForWebFrameProxy(frame);
@@ -1370,9 +1376,7 @@ void WebAutomationSession::contextDestroyedForPage(const WebPageProxy& page)
 
     auto [clientWindow, userContext] = getClientWindowAndUserContext(page);
 
-    // Ensure the active realm is destroyed even if the WebProcess terminates first.
-    if (auto realmID = m_bidiProcessor->scriptAgent().realmIdentifierForBrowsingContext(contextHandle))
-        m_bidiProcessor->scriptAgent().notifyRealmDestroyed(*realmID, contextHandle);
+    m_bidiProcessor->scriptAgent().notifyRealmsDestroyedForTopLevelContext(contextHandle);
 
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::ContextDestroyed, { }, [&]() {
         m_bidiProcessor->browsingContextDomainNotifier().contextDestroyed(contextHandle, url, originalOpenerHandle, parentContext, JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create(), clientWindow, userContext);
@@ -1398,6 +1402,8 @@ void WebAutomationSession::contextDestroyedForFrame(const WebFrameProxy& frame)
         clientWindow = windowId;
         userContext = contextId;
     }
+
+    m_bidiProcessor->scriptAgent().notifyRealmsDestroyedForFrame(frame.frameID());
 
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::ContextDestroyed, { }, [&]() {
         m_bidiProcessor->browsingContextDomainNotifier().contextDestroyed(contextHandle, url, "null"_s, parentHandle, JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create(), clientWindow, userContext);
@@ -2670,6 +2676,38 @@ void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automat
     } });
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSession::getBidiRealmInfo(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, CompletionHandler<void(std::optional<RealmIdentifier>&&)>&& completionHandler)
+{
+    RefPtr page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        return completionHandler(std::nullopt);
+
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    if (frameNotFound)
+        return completionHandler(std::nullopt);
+
+    auto expectedProcessIdentifier = page->processContainingFrame(frameID)->coreProcessIdentifier();
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::GetBidiRealmInfo(page->webPageIDInProcessForFrame(frameID), frameID), CompletionHandler<void(std::optional<RealmIdentifier>&&)> { [protectedThis = Ref { *this }, protectedPage = Ref { *page }, expectedTopLevelBrowsingContext = browsingContextHandle.isolatedCopy(), frameID, expectedProcessIdentifier, completionHandler = WTF::move(completionHandler)](std::optional<RealmIdentifier>&& realmIdentifier) mutable {
+        if (realmIdentifier && realmIdentifier->processIdentifier() != expectedProcessIdentifier)
+            return completionHandler(std::nullopt);
+
+        if (protectedThis->webPageProxyForHandle(expectedTopLevelBrowsingContext) != protectedPage.ptr())
+            return completionHandler(std::nullopt);
+
+        if (frameID) {
+            RefPtr frame = WebFrameProxy::webFrame(*frameID);
+            if (!frame || frame->page() != protectedPage.ptr() || frame->process().coreProcessIdentifier() != expectedProcessIdentifier)
+                return completionHandler(std::nullopt);
+        } else if (protectedPage->processContainingFrame(std::nullopt)->coreProcessIdentifier() != expectedProcessIdentifier)
+            return completionHandler(std::nullopt);
+
+        completionHandler(WTF::move(realmIdentifier));
+    } });
+}
+#endif
+
 void WebAutomationSession::performMouseInteraction(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, Ref<JSON::Object>&& requestedPosition, Inspector::Protocol::Automation::MouseButton mouseButton, Inspector::Protocol::Automation::MouseInteraction mouseInteraction, Ref<JSON::Array>&& keyModifierStrings, CommandCallback<Ref<Inspector::Protocol::Automation::Point>>&& callback)
 {
 #if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
@@ -3213,23 +3251,40 @@ void WebAutomationSession::logEntryAdded(const JSC::MessageSource& messageSource
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
-void WebAutomationSession::scriptRealmCreated(WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin)
+void WebAutomationSession::scriptRealmCreated(IPC::Connection& connection, WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin)
 {
-    // Not security sensitive because it labels a realm for the automation client which already has full control of the browser.
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_BASE(realmIdentifier.processIdentifier() == process->coreProcessIdentifier(), connection);
+
     RefPtr frame = WebFrameProxy::webFrame(frameID);
-    if (!frame)
+    if (!frame || &frame->process() != process.ptr())
+        return;
+
+    RefPtr page = frame->page();
+    if (!page || !page->isControlledByAutomation())
         return;
 
     auto browsingContext = effectiveHandleForWebFrameProxy(*frame);
     if (browsingContext.isEmpty())
         return;
+    auto topLevelContext = handleForWebPageProxy(*page);
 
-    m_bidiProcessor->scriptAgent().notifyRealmCreated(realmIdentifier, browsingContext, origin);
+    auto& scriptAgent = m_bidiProcessor->scriptAgent();
+    if (scriptAgent.activeRealms().contains(realmIdentifier)) {
+        MESSAGE_CHECK_BASE(scriptAgent.rebindRealmToBrowsingContext(realmIdentifier, frameID, browsingContext, topLevelContext), connection);
+        return;
+    }
+
+    // Not security sensitive because it labels a realm for the automation client which already has full control of the browser.
+    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
+    scriptAgent.notifyRealmCreatedFromBrowsingContext(realmIdentifier, frameID, browsingContext, topLevelContext, origin);
 }
 
-void WebAutomationSession::scriptRealmDestroyed(WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier)
+void WebAutomationSession::scriptRealmDestroyed(IPC::Connection& connection, WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier)
 {
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_BASE(realmIdentifier.processIdentifier() == process->coreProcessIdentifier(), connection);
+
     // Look up the realm in m_activeRealms to get its browsing context.
     // This avoids a race where the IPC message arrives after WebFrameProxy is destroyed
     // (common for iframe removal and cross-process navigations).
@@ -3238,8 +3293,11 @@ void WebAutomationSession::scriptRealmDestroyed(WebCore::FrameIdentifier frameID
     if (it == scriptAgent.activeRealms().end())
         return; // Realm not found or already destroyed.
 
+    MESSAGE_CHECK_BASE(it->value.type == Inspector::Protocol::BidiScript::RealmType::Window, connection);
+    MESSAGE_CHECK_BASE(it->value.frameIdentifier == frameID, connection);
+
     auto browsingContext = it->value.context;
-    scriptAgent.notifyRealmDestroyed(realmIdentifier, browsingContext);
+    scriptAgent.notifyRealmDestroyedFromBrowsingContext(realmIdentifier, browsingContext);
 }
 #endif
 
