@@ -177,10 +177,6 @@
 #import <WebCore/ParentalControlsContentFilter.h>
 #endif
 
-#if USE(EXTENSIONKIT)
-#import "WKProcessExtension.h"
-#endif
-
 #if ENABLE(THREADED_ANIMATIONS)
 #import <WebCore/AcceleratedEffectStackUpdater.h>
 #endif
@@ -278,22 +274,6 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
         WebCore::setImageSourceAllowableTypes(WebCore::allowableImageTypes());
     }
 }
-
-#if HAVE(SANDBOX_STATE_FLAGS)
-void WebPage::setHasLaunchedWebContentProcess()
-{
-    static bool hasSetLaunchVariable = false;
-    if (!hasSetLaunchVariable) {
-        auto auditToken = WebProcess::singleton().auditTokenForSelf();
-#if USE(EXTENSIONKIT)
-        if (WKProcessExtension.sharedInstance)
-            [WKProcessExtension.sharedInstance lockdownSandbox:@"2.0"];
-#endif
-        sandbox_enable_state_flag("local:WebContentProcessLaunched", *auditToken);
-        hasSetLaunchVariable = true;
-    }
-}
-#endif
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {

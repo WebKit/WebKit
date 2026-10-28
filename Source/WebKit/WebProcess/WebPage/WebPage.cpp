@@ -583,7 +583,7 @@ Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& 
     }
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-    setHasLaunchedWebContentProcess();
+    WebProcess::singleton().setHasLaunchedWebContentProcess();
 #endif
 
     return page;
@@ -769,14 +769,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if PLATFORM(COCOA)
 #if HAVE(SANDBOX_STATE_FLAGS)
     auto auditToken = WebProcess::singleton().auditTokenForSelf();
-    auto unifiedPDFEnabled = parameters.store.getBoolValueForKey(WebPreferencesKey::unifiedPDFEnabledKey());
-    if (unifiedPDFEnabled)
-        sandbox_enable_state_flag("UnifiedPDFEnabled", *auditToken);
-#if PLATFORM(MAC)
-    auto shouldAllowInstalledFonts = parameters.store.getBoolValueForKey(WebPreferencesKey::shouldAllowUserInstalledFontsKey());
-    if (!shouldAllowInstalledFonts || !WTF::MacApplication::isAppleMail())
-        sandbox_enable_state_flag("BlockUserInstalledFonts", *auditToken);
-#endif // PLATFORM(MAC)
+    WebProcess::singleton().enableContentSandboxStateFlags(parameters.store.getBoolValueForKey(WebPreferencesKey::unifiedPDFEnabledKey()), parameters.store.getBoolValueForKey(WebPreferencesKey::shouldAllowUserInstalledFontsKey()));
 #endif // HAVE(SANDBOX_STATE_FLAGS)
     auto shouldBlockIOKit = m_shouldRenderDOMInGPUProcess
 #if ENABLE(WEBGL)

@@ -484,6 +484,12 @@ public:
     // Blocks IOKit in the sandbox. The process cannot use IOKit after this, so call this only when the
     // rendering and the media use the GPU process.
     void blockIOKit();
+#if HAVE(SANDBOX_STATE_FLAGS)
+    // Tightens the sandbox once the process shows web content: when it creates its first page, or
+    // when the print process gets ready to print.
+    void setHasLaunchedWebContentProcess();
+    void enableContentSandboxStateFlags(bool unifiedPDFEnabled, bool shouldAllowUserInstalledFonts);
+#endif
 #endif
 
 #if ENABLE(GPU_PROCESS)

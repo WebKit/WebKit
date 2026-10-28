@@ -147,6 +147,10 @@
 #import <JavaScriptCore/RemoteInspector.h>
 #endif
 
+#if USE(EXTENSIONKIT)
+#import "WKProcessExtension.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import "AccessibilityUtilitiesSPI.h"
 #import "UIKitSPI.h"
@@ -738,6 +742,35 @@ void WebProcess::blockIOKit()
         ASSERT_UNUSED(ok, ok == noErr);
     }
 }
+
+#if HAVE(SANDBOX_STATE_FLAGS)
+void WebProcess::setHasLaunchedWebContentProcess()
+{
+    static bool hasSetLaunchVariable = false;
+    if (!hasSetLaunchVariable) {
+        auto auditToken = auditTokenForSelf();
+#if USE(EXTENSIONKIT)
+        if (WKProcessExtension.sharedInstance)
+            [WKProcessExtension.sharedInstance lockdownSandbox:@"2.0"];
+#endif
+        sandbox_enable_state_flag("local:WebContentProcessLaunched", *auditToken);
+        hasSetLaunchVariable = true;
+    }
+}
+
+void WebProcess::enableContentSandboxStateFlags(bool unifiedPDFEnabled, bool shouldAllowUserInstalledFonts)
+{
+    auto auditToken = auditTokenForSelf();
+    if (unifiedPDFEnabled)
+        sandbox_enable_state_flag("UnifiedPDFEnabled", *auditToken);
+#if PLATFORM(MAC)
+    if (!shouldAllowUserInstalledFonts || !WTF::MacApplication::isAppleMail())
+        sandbox_enable_state_flag("BlockUserInstalledFonts", *auditToken);
+#else
+    UNUSED_PARAM(shouldAllowUserInstalledFonts);
+#endif
+}
+#endif // HAVE(SANDBOX_STATE_FLAGS)
 
 std::optional<audit_token_t> WebProcess::auditTokenForSelf()
 {

@@ -1843,6 +1843,14 @@ void WebProcess::bindAccessibilityFrameWithData(WebCore::FrameIdentifier, std::s
 void WebProcess::prepareForPrinting(CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(m_isPrintProcess);
+    // The print process never creates a page, so it tightens its sandbox here as page creation does in
+    // other web processes: as for a page with UnifiedPDF that may not use the user's installed fonts,
+    // and without IOKit.
+#if HAVE(SANDBOX_STATE_FLAGS)
+    setHasLaunchedWebContentProcess();
+    enableContentSandboxStateFlags(true, false);
+#endif
+    blockIOKit();
     completionHandler(protect(ensureGPUProcessConnection())->waitForDidInitialize());
 }
 #endif
