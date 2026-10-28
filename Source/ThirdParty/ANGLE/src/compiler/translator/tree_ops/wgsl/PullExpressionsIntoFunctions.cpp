@@ -136,6 +136,22 @@ class PullExpressionsIntoFunctionsTraverser : public TIntermTraverser
         return true;
     }
 
+    bool visitUnary(Visit visit, TIntermUnary *unary) override
+    {
+        // WGSL cannot take the address of a multielement swizzle, so ++ and -- of one cannot be
+        // translated to the increment and decrement functions of the WGSL prelude, which take a
+        // pointer to the operand.
+        if (IsMultielementSwizzleAssignment(unary->getOp(), unary->getOperand()))
+        {
+            handleUntranslatableConstruct(
+                visit, UntranslatableConstructAndMetadata{
+                           UntranslatableMultiElementSwizzleIncOrDec{unary}, getParentNode(),
+                           mCurrentFunction});
+        }
+
+        return true;
+    }
+
     bool visitAggregate(Visit visit, TIntermAggregate *aggregate) override
     {
         const TFunction *calledFunction = aggregate->getFunction();
@@ -204,11 +220,16 @@ class PullExpressionsIntoFunctionsTraverser : public TIntermTraverser
     {
         TIntermBinary *multielementSwizzle;
     };
+    struct UntranslatableMultiElementSwizzleIncOrDec
+    {
+        TIntermUnary *incOrDec;
+    };
 
     using UntranslatableConstruct = std::variant<UntranslatableTernary,
                                                  UntranslatableCommaOperator,
                                                  UntranslatableFunctionCallWithOutparams,
-                                                 UntranslatableMultiElementSwizzle>;
+                                                 UntranslatableMultiElementSwizzle,
+                                                 UntranslatableMultiElementSwizzleIncOrDec>;
 
     struct UntranslatableConstructAndMetadata
     {
@@ -536,6 +557,76 @@ class PullExpressionsIntoFunctionsTraverser : public TIntermTraverser
         return substituteFunction;
     }
 
+    TFunction *replaceMultielementSwizzleIncOrDec(TIntermUnary *incOrDec,
+                                                  const TIntermFunctionDefinition *parentFunction,
+                                                  TIntermSequence &newFunctionPrototypes,
+                                                  TIntermSequence &newFunctionDefinitions)
+    {
+        // Pull into a function that takes the swizzle operand as an inout param and does the
+        // increment or decrement as a compound assignment to the swizzled param. That assignment
+        // is a statement, so RewriteMultielementSwizzleAssignment() can split it into
+        // single-element assignments later:
+        //   ++v.xy -> T f(inout V p) { p.xy += 1; return p.xy; }
+        //   v.xy++ -> T f(inout V p) { T old = p.xy; p.xy += 1; return old; }
+        TIntermSwizzle *oldSwizzle = incOrDec->getOperand()->getAsSwizzleNode();
+        ASSERT(oldSwizzle);
+
+        TType *paramType = new TType(oldSwizzle->getOperand()->getType());
+        paramType->setQualifier(EvqParamInOut);
+        TVariable *operandParam = new TVariable(mSymbolTable, kEmptyImmutableString, paramType,
+                                                SymbolType::AngleInternal);
+        auto createSwizzledParam = [&]() {
+            return new TIntermSwizzle(new TIntermSymbol(operandParam),
+                                      oldSwizzle->getSwizzleOffsets());
+        };
+
+        const TOperator op     = incOrDec->getOp();
+        const bool isIncrement = op == EOpPreIncrement || op == EOpPostIncrement;
+        const bool isPostfix   = op == EOpPostIncrement || op == EOpPostDecrement;
+
+        const TBasicType basicType = oldSwizzle->getBasicType();
+        ASSERT(basicType == EbtFloat || basicType == EbtInt || basicType == EbtUInt);
+        TIntermTyped *one = basicType == EbtFloat ? CreateFloatNode(1.0f, EbpHigh)
+                            : basicType == EbtInt ? CreateIndexNode(1)
+                                                  : CreateUIntNode(1);
+
+        const TType *resultType = GetHelperType(incOrDec->getType(), EvqTemporary);
+
+        TIntermSequence body;
+        TIntermTyped *result = nullptr;
+        if (isPostfix)
+        {
+            TVariable *oldValue = CreateTempVariable(mSymbolTable, resultType);
+            body.push_back(CreateTempInitDeclarationNode(oldValue, createSwizzledParam()));
+            result = CreateTempSymbolNode(oldValue);
+        }
+        body.push_back(new TIntermBinary(isIncrement ? EOpAddAssign : EOpSubAssign,
+                                         createSwizzledParam(), one));
+        if (!isPostfix)
+        {
+            result = createSwizzledParam();
+        }
+        body.push_back(new TIntermBranch(TOperator::EOpReturn, result));
+        TIntermBlock *substituteFunctionBody = new TIntermBlock(std::move(body));
+
+        TFunction *substituteFunction =
+            new TFunction(mSymbolTable, kEmptyImmutableString, SymbolType::AngleInternal,
+                          resultType, /*knownToNotHaveSideEffects=*/false);
+
+        substituteFunction->addParameter(operandParam);
+
+        // Make sure to insert new function definitions and prototypes.
+        newFunctionPrototypes.push_back(new TIntermFunctionPrototype(substituteFunction));
+        TIntermFunctionDefinition *substituteFunctionDef = new TIntermFunctionDefinition(
+            new TIntermFunctionPrototype(substituteFunction), substituteFunctionBody);
+        newFunctionDefinitions.push_back(substituteFunctionDef);
+
+        addParamsFromOtherFunctionAndReplace(substituteFunction, substituteFunctionDef,
+                                             parentFunction);
+
+        return substituteFunction;
+    }
+
     bool replaceTempVarsWithGlobals(TIntermBlock *root)
     {
         TIntermSequence globalDeclarations;
@@ -662,6 +753,17 @@ class PullExpressionsIntoFunctionsTraverser : public TIntermTraverser
                 args.push_back(multielementSwizzleAssignment->multielementSwizzle->getLeft()
                                    ->getAsSwizzleNode()
                                    ->getOperand());
+            }
+            else if (UntranslatableMultiElementSwizzleIncOrDec *multielementSwizzleIncOrDec =
+                         std::get_if<UntranslatableMultiElementSwizzleIncOrDec>(&construct))
+            {
+                TIntermUnary *incOrDec = multielementSwizzleIncOrDec->incOrDec;
+                untranslatableNode     = incOrDec;
+                substituteFunction     = replaceMultielementSwizzleIncOrDec(
+                    incOrDec, constructAndMetadata.parentFunction, newFunctionPrototypes,
+                    newFunctionDefinitions);
+
+                args.push_back(incOrDec->getOperand()->getAsSwizzleNode()->getOperand());
             }
             else
             {
