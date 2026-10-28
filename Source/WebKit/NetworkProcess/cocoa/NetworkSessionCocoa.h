@@ -174,8 +174,14 @@ public:
     void setProxyConfigData(const Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>&) final;
 
     void applyProxyConfigurationToSessionConfiguration(NSURLSessionConfiguration *);
+<<<<<<< HEAD
     void replacedSessionDidBecomeInvalid(NSURLSession *);
 
+=======
+    void applyProxyConfigurationToNWParametersForWebTransport(nw_parameters_t);
+    bool proxyConfigurationRequiresTCPProtocols() const;
+#endif
+>>>>>>> 1a56dddcac89 ([cocoa] WebTransport doesn't consider when proxy is configured, bypassing proxy)
     bool isLegacyTLSAllowed() const { return m_isLegacyTLSAllowed; }
 
 private:

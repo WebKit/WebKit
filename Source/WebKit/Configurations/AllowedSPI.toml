@@ -94,9 +94,15 @@ symbols = [
     "nw_connection_abort_reads",
     "nw_connection_abort_writes",
     "nw_http_fields_access_value_by_name",
+<<<<<<< HEAD
     "nw_http_fields_enumerate",
+=======
+    "nw_parameters_add_custom_proxy_config",
+    "nw_parameters_clear_custom_proxy_configs",
+>>>>>>> 1a56dddcac89 ([cocoa] WebTransport doesn't consider when proxy is configured, bypassing proxy)
     "nw_parameters_create_webtransport_http",
     "nw_protocol_copy_webtransport_definition",
+    "nw_proxy_config_get_type",
     "nw_webtransport_create_options",
     "nw_webtransport_metadata_get_is_peer_initiated",
     "nw_webtransport_metadata_get_is_unidirectional",

@@ -105,6 +105,43 @@ SOFT_LINK_CONSTANT_MAY_FAIL(SymptomPresentationLite, kSymptomAnalyticsServiceEnd
 void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 #endif
 
+<<<<<<< HEAD
+=======
+#if HAVE(NW_PROXY_CONFIG)
+#if __has_include(<Network/NSURLSession+Network.h>)
+#include <Network/NSURLSession+Network.h>
+#endif
+SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
+#define WebKit_libnetworkLibrary_SoftLinked
+SOFT_LINK_OPTIONAL(libnetwork, nw_context_add_proxy, void, __cdecl, (nw_context_t, nw_proxy_config_t))
+SOFT_LINK_OPTIONAL(libnetwork, nw_context_clear_proxies, void, __cdecl, (nw_context_t))
+SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_with_agent_data, nw_proxy_config_t, __cdecl, (const uint8_t*, size_t, const uuid_t))
+SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_stack_requires_http_protocols, bool, __cdecl, (nw_proxy_config_t))
+SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_get_type, nw_proxy_type_t, __cdecl, (nw_proxy_config_t))
+
+static bool isProxyTypeTCPOnly(nw_proxy_config_t proxyConfig)
+{
+    auto* getType = nw_proxy_config_get_typePtr();
+    if (!getType)
+        return false;
+
+    switch (getType(proxyConfig)) {
+    case nw_proxy_type_http:
+    case nw_proxy_type_https:
+    case nw_proxy_type_socksv4:
+    case nw_proxy_type_socksv5:
+    case nw_proxy_type_shoes:
+    case nw_proxy_type_http_connect:
+    case nw_proxy_type_https_transparent:
+    case nw_proxy_type_http_connect_over_tls:
+        return true;
+    default:
+        return false;
+    }
+}
+#endif
+
+>>>>>>> 1a56dddcac89 ([cocoa] WebTransport doesn't consider when proxy is configured, bypassing proxy)
 #import "DeviceManagementSoftLink.h"
 
 using WebKit::IsolatedSession;
@@ -2074,6 +2111,30 @@ void NetworkSessionCocoa::applyProxyConfigurationToSessionConfiguration(NSURLSes
     } else
         configuration.proxyConfigurations = @[ ];
 }
+<<<<<<< HEAD
+=======
+
+bool NetworkSessionCocoa::proxyConfigurationRequiresTCPProtocols() const
+{
+    if (m_nwProxyConfigs.isEmpty())
+        return false;
+    return std::ranges::all_of(m_nwProxyConfigs, [](auto& proxyConfig) {
+        return isProxyTypeTCPOnly(proxyConfig.get());
+    });
+}
+
+void NetworkSessionCocoa::applyProxyConfigurationToNWParametersForWebTransport(nw_parameters_t parameters)
+{
+    if (!m_nwProxyConfigs.isEmpty()) {
+        for (auto& proxyConfig : m_nwProxyConfigs) {
+            if (!isProxyTypeTCPOnly(proxyConfig.get()))
+                nw_parameters_add_custom_proxy_config(parameters, proxyConfig.get());
+        }
+    } else
+        nw_parameters_clear_custom_proxy_configs(parameters);
+}
+#endif // HAVE(NW_PROXY_CONFIG)
+>>>>>>> 1a56dddcac89 ([cocoa] WebTransport doesn't consider when proxy is configured, bypassing proxy)
 
 bool NetworkSessionCocoa::canPrefetchDNS() const
 {

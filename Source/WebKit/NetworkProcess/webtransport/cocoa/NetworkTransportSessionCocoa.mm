@@ -255,12 +255,45 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
 
     auto configureTCP = options.requireUnreliable ? NW_PARAMETERS_DISABLE_PROTOCOL : NW_PARAMETERS_DEFAULT_CONFIGURATION;
 
+<<<<<<< HEAD
     return adoptNS(MAYBE_SOFT_LINK(nw_parameters_create_webtransport_http)(configureWebTransport, configureTLS, configureQUIC, configureTCP));
+=======
+    RetainPtr parameters = adoptNS(softLink_Network_nw_parameters_create_webtransport_http(configureWebTransport, configureTLS, configureQUIC, configureTCP));
+    String bundleIdentifier = connectionToWebProcess.networkProcess().uiProcessBundleIdentifier();
+    if (CheckedPtr sessionCocoa = downcast<NetworkSessionCocoa>(connectionToWebProcess.networkProcess().networkSession(connectionToWebProcess.sessionID())))
+        bundleIdentifier = sessionCocoa->sourceApplicationBundleIdentifier();
+    setNWParametersApplicationIdentifiers(parameters.get(), bundleIdentifier.utf8().data(), connectionToWebProcess.networkProcess().sourceApplicationAuditToken(), emptyString());
+    bool isTracker = isKnownTracker(WebCore::RegistrableDomain { url });
+    bool isFirstParty = WebCore::RegistrableDomain { clientOrigin.clientOrigin } == WebCore::RegistrableDomain { clientOrigin.topOrigin };
+    setNWParametersTrackerOptions(parameters.get(), false, isFirstParty, isTracker, IsRTC::No);
+
+#if HAVE(NW_PROXY_CONFIG)
+    if (CheckedPtr sessionCocoa = downcast<NetworkSessionCocoa>(connectionToWebProcess.networkProcess().networkSession(connectionToWebProcess.sessionID())))
+        sessionCocoa->applyProxyConfigurationToNWParametersForWebTransport(parameters.get());
+#endif
+
+    return parameters;
+>>>>>>> 1a56dddcac89 ([cocoa] WebTransport doesn't consider when proxy is configured, bypassing proxy)
 }
 
 RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectionToWebProcess& connectionToWebProcess, WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, Vector<KeyValuePair<String, String>>&& additionalHeaders, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin)
 {
+<<<<<<< HEAD
     RetainPtr endpoint = adoptNS(nw_endpoint_create_url(url.string().utf8().legacyCStringPointer()));
+=======
+    if (!canLoad_Network_nw_parameters_create_webtransport_http()
+        || !canLoad_Network_nw_webtransport_options_set_is_unidirectional()
+        || !canLoad_Network_nw_webtransport_options_set_is_datagram()
+        || !canLoad_Network_nw_webtransport_options_add_connect_request_header())
+        return nullptr;
+
+#if HAVE(NW_PROXY_CONFIG)
+    if (CheckedPtr sessionCocoa = downcast<NetworkSessionCocoa>(connectionToWebProcess.networkProcess().networkSession(connectionToWebProcess.sessionID())); sessionCocoa && sessionCocoa->proxyConfigurationRequiresTCPProtocols())
+        return nullptr;
+#endif
+
+    RetainPtr endpoint = adoptNS(nw_endpoint_create_url(url.string().utf8().data()));
+>>>>>>> 1a56dddcac89 ([cocoa] WebTransport doesn't consider when proxy is configured, bypassing proxy)
     if (!endpoint) {
         ASSERT_NOT_REACHED();
         return nullptr;
