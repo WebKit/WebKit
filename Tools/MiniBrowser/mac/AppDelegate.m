@@ -63,8 +63,14 @@ static BOOL sShouldEnableSiteIsolation = NO;
 static BOOL sOpenWebInspector = NO;
 
 // When minidriver launches MiniBrowser, it passes one end of the automation connection as --automation-fd <descriptor>.
-static BOOL sControlledByAutomation = NO;
 static int sAutomationFileDescriptor = -1;
+
+// This reads the arguments itself, because MiniBrowserUserDefaults() needs it before -_parseArguments runs.
+static BOOL isControlledByAutomation(void)
+{
+    NSArray *arguments = [[NSProcessInfo processInfo] arguments];
+    return [arguments containsObject:kAutomationFileDescriptorArgumentString];
+}
 
 enum {
     WebKit1NewWindowTag = 1,
@@ -111,10 +117,30 @@ enum {
     return self;
 }
 
+NSUserDefaults *MiniBrowserUserDefaults(void)
+{
+    static NSUserDefaults *defaults;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        if (!isControlledByAutomation()) {
+            defaults = NSUserDefaults.standardUserDefaults;
+            return;
+        }
+
+        // Under automation, settings start from their defaults, so that a WebDriver session doesn't
+        // depend on how MiniBrowser was set up by hand. They are kept apart from the user's settings,
+        // and cleared at launch. Settings passed on the command line still apply.
+        NSString *automationSuiteName = @"org.webkit.MiniBrowser.Automation";
+        defaults = [[NSUserDefaults alloc] initWithSuiteName:automationSuiteName];
+        [defaults removePersistentDomainForName:automationSuiteName];
+    });
+    return defaults;
+}
+
 static BOOL enabledForFeature(_WKFeature *feature)
 {
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:feature.key])
-        return [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];
+    if ([MiniBrowserUserDefaults() objectForKey:feature.key])
+        return [MiniBrowserUserDefaults() boolForKey:feature.key];
     return [feature defaultValue];
 }
 
@@ -164,7 +190,7 @@ static BOOL enabledForFeature(_WKFeature *feature)
 
 - (NSDictionary<NSString *, NSNumber *> *)notificationPermissionsForWebsiteDataStore:(WKWebsiteDataStore *)dataStore
 {
-    return [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"NotificationPermissions"];
+    return [MiniBrowserUserDefaults() dictionaryForKey:@"NotificationPermissions"];
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler
@@ -296,14 +322,11 @@ static NSNumber *_currentBadge;
     sOpenWebInspector = (webInspectorIndex != NSNotFound);
 
     const NSUInteger automationFileDescriptorIndex = [args indexOfObject:kAutomationFileDescriptorArgumentString];
-    if (automationFileDescriptorIndex != NSNotFound) {
-        sControlledByAutomation = YES;
-        if (automationFileDescriptorIndex + 1 < args.count) {
-            NSScanner *scanner = [NSScanner scannerWithString:args[automationFileDescriptorIndex + 1]];
-            int fileDescriptor;
-            if ([scanner scanInt:&fileDescriptor] && scanner.isAtEnd && fileDescriptor >= 0)
-                sAutomationFileDescriptor = fileDescriptor;
-        }
+    if (automationFileDescriptorIndex != NSNotFound && automationFileDescriptorIndex + 1 < args.count) {
+        NSScanner *scanner = [NSScanner scannerWithString:args[automationFileDescriptorIndex + 1]];
+        int fileDescriptor;
+        if ([scanner scanInt:&fileDescriptor] && scanner.isAtEnd && fileDescriptor >= 0)
+            sAutomationFileDescriptor = fileDescriptor;
     }
 
     // Under automation, the automation session opens all windows.
@@ -313,7 +336,7 @@ static NSNumber *_currentBadge;
 
 - (BOOL)isControlledByAutomation
 {
-    return sControlledByAutomation;
+    return isControlledByAutomation();
 }
 
 - (WKWebViewConfiguration *)defaultConfiguration
