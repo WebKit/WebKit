@@ -84,7 +84,7 @@
 
 namespace WebCore {
 
-static bool isAllowedByContentSecurityPolicy(const URL& url, const Element* ownerElement, bool didReceiveRedirectResponse)
+static bool isAllowedByContentSecurityPolicy(const URL& url, const Element* ownerElement, bool didReceiveRedirectResponse, const URL& requestURL = URL())
 {
     if (!ownerElement)
         return true;
@@ -97,8 +97,13 @@ static bool isAllowedByContentSecurityPolicy(const URL& url, const Element* owne
     Ref ownerElementDocument = ownerElement->document();
     ASSERT(ownerElementDocument->contentSecurityPolicy());
     if (is<HTMLPlugInElement>(ownerElement))
+<<<<<<< HEAD
         return protect(ownerElementDocument->contentSecurityPolicy())->allowObjectFromSource(url, ownerElementDocument->currentParserSourcePosition(), redirectResponseReceived);
     return protect(ownerElementDocument->contentSecurityPolicy())->allowChildFrameFromSource(url, ownerElementDocument->currentParserSourcePosition(), redirectResponseReceived);
+=======
+        return ownerElement->protectedDocument()->checkedContentSecurityPolicy()->allowObjectFromSource(url, redirectResponseReceived, requestURL);
+    return ownerElement->protectedDocument()->checkedContentSecurityPolicy()->allowChildFrameFromSource(url, redirectResponseReceived);
+>>>>>>> 2f7972245008 (Fix cross-site info leak via CSP blockedURI for object and frame navigations with redirects)
 }
 
 static bool shouldExecuteJavaScriptURLSynchronously(const URL& url)
@@ -181,9 +186,14 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
     }
 
     RefPtr frameOwnerElement = frame->ownerElement();
+<<<<<<< HEAD
     // Only cross-document navigations are subject to the navigation CSP check; same-document (fragment) navigations aren't fetched.
     if (isSameDocumentNavigation == IsSameDocumentNavigation::No
         && !isAllowedByContentSecurityPolicy(request.url(), frameOwnerElement.get(), !redirectResponse.isNull())) {
+=======
+    URL requestURL = !redirectResponse.isNull() ? redirectResponse.url() : URL();
+    if (!isAllowedByContentSecurityPolicy(request.url(), frameOwnerElement.get(), !redirectResponse.isNull(), requestURL)) {
+>>>>>>> 2f7972245008 (Fix cross-site info leak via CSP blockedURI for object and frame navigations with redirects)
         if (frameOwnerElement) {
             // Fire a load event (even though we were blocked by CSP) as timing attacks would otherwise
             // reveal that the frame was blocked. This way, it looks like any other cross-origin page load.
