@@ -29,7 +29,6 @@
 
 #if ENABLE(NOTIFICATIONS)
 
-#include "BitmapImage.h"
 #include "ContextDestructionObserverInlines.h"
 #include "GraphicsContext.h"
 #include "NotificationResources.h"
@@ -175,11 +174,8 @@ void NotificationResourcesLoader::ResourceLoader::didFinishLoading(ScriptExecuti
     m_finished = true;
 
     RefPtr<NativeImage> nativeImage;
-    if (m_didReceiveDefaultResponse) {
-        Ref image = BitmapImage::create();
-        image->setData(m_buffer.takeBuffer(), true);
-        nativeImage = image->nativeImage();
-    }
+    if (m_didReceiveDefaultResponse)
+        nativeImage = NativeImage::create(m_buffer.takeBuffer().get());
 
     if (m_completionHandler)
         m_completionHandler(this, WTF::move(nativeImage));

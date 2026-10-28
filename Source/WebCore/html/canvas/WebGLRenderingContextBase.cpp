@@ -29,7 +29,6 @@
 #if ENABLE(WEBGL)
 
 #include "ANGLEInstancedArrays.h"
-#include "BitmapImage.h"
 #include "BufferSource.h"
 #include "CachedImage.h"
 #include "CanvasDrawImageSizing.h"
@@ -3371,13 +3370,8 @@ static TexImageSourceImage nativeImageForTexImageSource(Image& image, ConcreteOb
     if (!data)
         return { image.currentNativeImage(concreteObjectSize), AlphaPremultiplication::Premultiplied };
     bool hasAlpha = !image.currentFrameKnownToBeOpaque();
-    if (ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) {
-        auto decodedImage = BitmapImage::create(nullptr, premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
-        decodedImage->setData(WTF::move(data), true);
-        if (!decodedImage->frameCount())
-            return { };
-        return { decodedImage->currentNativeImage(), std::nullopt };
-    }
+    if (ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha))
+        return { NativeImage::create(*data, premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied), std::nullopt };
     return { image.currentNativeImage(concreteObjectSize), std::nullopt };
 }
 

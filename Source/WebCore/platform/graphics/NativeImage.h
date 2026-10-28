@@ -57,6 +57,7 @@ namespace WebCore {
 class Color;
 class ColorSpace;
 class FloatRect;
+class FragmentedSharedBuffer;
 class GraphicsContext;
 class IntSize;
 class NativeImageBackend;
@@ -86,6 +87,7 @@ public:
 #endif
     WEBCORE_EXPORT static RefPtr<NativeImage> create(Ref<PixelBuffer>&&);
     WEBCORE_EXPORT static std::optional<Ref<NativeImage>> create(RefPtr<ShareableBitmap>&&); // Uses `std::optional<Ref<...>>` to conform to the interface needed by IPC infrastructure.
+    WEBCORE_EXPORT static RefPtr<NativeImage> create(FragmentedSharedBuffer&, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
     WEBCORE_EXPORT static RefPtr<NativeImage> createFromPlatformResource(StringView name);
 
     WEBCORE_EXPORT virtual ~NativeImage();

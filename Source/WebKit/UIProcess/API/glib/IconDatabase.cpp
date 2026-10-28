@@ -21,8 +21,8 @@
 #include "IconDatabase.h"
 
 #include "Logging.h"
-#include <WebCore/BitmapImage.h>
 #include <WebCore/Image.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/SQLiteTransaction.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/FileSystem.h>
@@ -590,11 +590,7 @@ void IconDatabase::loadIconsForPageURL(const String& pageURL, AllowDatabaseWrite
 
                     auto addResult = m_loadedIcons.set(iconURL, std::make_pair<PlatformImagePtr, MonotonicTime>(nullptr, MonotonicTime::now()));
                     if (!iconData.isEmpty()) {
-                        auto image = BitmapImage::create();
-                        if (image->setData(SharedBuffer::create(WTF::move(iconData)), true) < EncodedDataStatus::SizeAvailable)
-                            return nullptr;
-
-                        auto nativeImage = image->currentNativeImage();
+                        RefPtr nativeImage = NativeImage::create(SharedBuffer::create(WTF::move(iconData)).get());
                         if (!nativeImage)
                             return nullptr;
 
@@ -632,9 +628,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, std::span<const uint
             Locker locker { m_loadedIconsLock };
             auto addResult = m_loadedIcons.set(iconURL, std::make_pair<PlatformImagePtr, MonotonicTime>(nullptr, { }));
             if (iconData.size()) {
-                RefPtr<NativeImage> nativeImage;
-                Ref image = BitmapImage::create();
-                if (image->setData(SharedBuffer::create(iconData), true) >= EncodedDataStatus::SizeAvailable && (nativeImage = image->currentNativeImage()))
+                if (RefPtr nativeImage = NativeImage::create(SharedBuffer::create(iconData).get()))
                     addResult.iterator->value.first = nativeImage->platformImage();
                 else
                     result = false;

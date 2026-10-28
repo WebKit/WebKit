@@ -8972,9 +8972,7 @@ void WebPage::loadAndDecodeImage(WebCore::ResourceRequest&& request, std::option
         if (!result)
             return completionHandler(makeUnexpected(WTF::move(result.error())));
 
-        Ref bitmapImage = WebCore::BitmapImage::create(nullptr);
-        bitmapImage->setData(result->ptr(), true);
-        RefPtr nativeImage = bitmapImage->primaryNativeImage();
+        RefPtr nativeImage = NativeImage::create(result->get());
         if (!nativeImage)
             return completionHandler(makeUnexpected(decodeError(url)));
 
