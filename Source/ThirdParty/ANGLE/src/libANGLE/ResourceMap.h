@@ -179,6 +179,7 @@ class ResourceMap final : angle::NonCopyable
                  GLuint flatIndex,
                  typename HashMap::const_iterator hashIndex,
                  bool skipNulls);
+        void skipNullHashedResources();
         void updateValue();
 
         const ResourceMap &mOrigin;
@@ -623,6 +624,7 @@ ResourceMap<ResourceType, IDType>::Iterator::Iterator(
     bool skipNulls)
     : mOrigin(origin), mFlatIndex(flatIndex), mHashIndex(hashIndex), mSkipNulls(skipNulls)
 {
+    skipNullHashedResources();
     updateValue();
 }
 
@@ -650,6 +652,7 @@ ResourceMap<ResourceType, IDType>::Iterator::operator++()
     {
         mHashIndex++;
     }
+    skipNullHashedResources();
     updateValue();
     return *this;
 }
@@ -666,6 +669,21 @@ const typename ResourceMap<ResourceType, IDType>::IndexAndResource &
 ResourceMap<ResourceType, IDType>::Iterator::operator*() const
 {
     return mValue;
+}
+
+template <typename ResourceType, typename IDType>
+void ResourceMap<ResourceType, IDType>::Iterator::skipNullHashedResources()
+{
+    // Reserved handles are stored as nullptr. nextResource() skips them in the flat arrays; skip
+    // them in the hash map here.
+    if (!mSkipNulls || mFlatIndex < mOrigin.getFlatEndIndex())
+    {
+        return;
+    }
+    while (mHashIndex != mOrigin.mHashedResources.end() && mHashIndex->second == nullptr)
+    {
+        mHashIndex++;
+    }
 }
 
 template <typename ResourceType, typename IDType>

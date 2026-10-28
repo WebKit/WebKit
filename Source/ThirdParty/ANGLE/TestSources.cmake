@@ -55,6 +55,7 @@ set(angle_unittests_sources
     "src/gpu_info_util/SystemInfo_unittest.cpp"
     "src/image_util/AstcDecompressor_unittest.cpp"
     "src/image_util/LoadToNative_unittest.cpp"
+    "src/libANGLE/ResourceMap_unittest.cpp"
     "src/libANGLE/TransformFeedback_unittest.cpp"
     "src/tests/angle_unittest_main.cpp"
     "src/tests/compiler_tests/API_test.cpp"

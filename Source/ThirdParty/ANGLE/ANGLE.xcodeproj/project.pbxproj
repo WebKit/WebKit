@@ -1352,6 +1352,7 @@
 		7BED4E072F98E33B00A240A7 /* GLSLValidationTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4E002F98E33B00A240A7 /* GLSLValidationTest.cpp */; };
 		7BED4E0B2F98E35C00A240A7 /* CompilerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4E0A2F98E35C00A240A7 /* CompilerTest.cpp */; };
 		7BED4E0C2F98E35C00A240A7 /* CompilerTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BED4E092F98E35C00A240A7 /* CompilerTest.h */; };
+		7BED5BEA2F99F81200A240A7 /* ResourceMap_unittest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED5BE92F99F81200A240A7 /* ResourceMap_unittest.cpp */; };
 		7BED5BE82F99F81200A240A7 /* TransformFeedback_unittest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED5BE72F99F81200A240A7 /* TransformFeedback_unittest.cpp */; };
 		7BED8E022F9A493200F15B70 /* AddDefaultReturnStatements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED8E012F9A493200F15B70 /* AddDefaultReturnStatements.cpp */; };
 		7BED8E042F9A493200F15B70 /* AddDefaultReturnStatements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED8E012F9A493200F15B70 /* AddDefaultReturnStatements.cpp */; };
@@ -3962,6 +3963,7 @@
 		7BED4E002F98E33B00A240A7 /* GLSLValidationTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GLSLValidationTest.cpp; sourceTree = "<group>"; };
 		7BED4E092F98E35C00A240A7 /* CompilerTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilerTest.h; sourceTree = "<group>"; };
 		7BED4E0A2F98E35C00A240A7 /* CompilerTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompilerTest.cpp; sourceTree = "<group>"; };
+		7BED5BE92F99F81200A240A7 /* ResourceMap_unittest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceMap_unittest.cpp; sourceTree = "<group>"; };
 		7BED5BE72F99F81200A240A7 /* TransformFeedback_unittest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFeedback_unittest.cpp; sourceTree = "<group>"; };
 		7BED8E002F9A493200F15B70 /* AddDefaultReturnStatements.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddDefaultReturnStatements.h; sourceTree = "<group>"; };
 		7BED8E012F9A493200F15B70 /* AddDefaultReturnStatements.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AddDefaultReturnStatements.cpp; sourceTree = "<group>"; };
@@ -5726,6 +5728,7 @@
 				5C1DBDB51B0438D200235552 /* ResourceManager.cpp */,
 				5C1DBDB61B0438D200235552 /* ResourceManager.h */,
 				315EBDE21FCE452D00AC7A89 /* ResourceMap.h */,
+				7BED5BE92F99F81200A240A7 /* ResourceMap_unittest.cpp */,
 				5C1DBDB71B0438D200235552 /* Sampler.cpp */,
 				5C1DBDB81B0438D200235552 /* Sampler.h */,
 				A303071C2305F7C4002DA972 /* Semaphore.cpp */,
@@ -11222,6 +11225,7 @@
 				7BFAF9022DE6ECA700327F7F /* MSLSymbolEnv_test.cpp in Sources */,
 				7BFAF8E62DE6EDE400327F7F /* Optional_unittest.cpp in Sources */,
 				7BFAF8F02DE6EDE400327F7F /* PoolAlloc_unittest.cpp in Sources */,
+				7BED5BEA2F99F81200A240A7 /* ResourceMap_unittest.cpp in Sources */,
 				7BFAF8F12DE6EDE400327F7F /* SimpleMutex_unittest.cpp in Sources */,
 				7BFAF8E12DE6EDE400327F7F /* span_unittest.cpp in Sources */,
 				7BFAF8E42DE6EDE400327F7F /* string_utils_unittest.cpp in Sources */,

@@ -595,4 +595,81 @@ TEST(ResourceMapTest, IteratorVisitsInitialFlatArrayAndHashMap)
 
     resourceMap.clear();
 }
+
+template <typename T>
+void IteratorSkipsReservedHandles(const std::vector<T> &reservedHandles,
+                                  const std::vector<T> &assignedHandles)
+{
+    ResourceMap<size_t, T> resourceMap;
+    std::vector<size_t> objects(assignedHandles.size(), 1);
+    for (T handle : reservedHandles)
+    {
+        resourceMap.assign(handle, nullptr);
+    }
+    for (size_t index = 0; index < assignedHandles.size(); ++index)
+    {
+        resourceMap.assign(assignedHandles[index], &objects[index]);
+    }
+
+    // The iterator must skip the reserved handles.
+    std::map<GLuint, size_t *> visitedHandleMap;
+    for (const auto &idValue : UnsafeResourceMapIter(resourceMap))
+    {
+        EXPECT_NE(idValue.second, nullptr) << "handle=" << idValue.first;
+        visitedHandleMap[idValue.first] = idValue.second;
+    }
+    EXPECT_EQ(visitedHandleMap.size(), assignedHandles.size());
+    for (size_t index = 0; index < assignedHandles.size(); ++index)
+    {
+        GLuint handle = GetIDValue(assignedHandles[index]);
+        EXPECT_EQ(visitedHandleMap.count(handle), 1u) << "handle=" << handle;
+        EXPECT_EQ(visitedHandleMap[handle], &objects[index]) << "handle=" << handle;
+    }
+
+    // The iterator with nulls must visit the reserved handles.
+    std::map<GLuint, size_t *> visitedWithNullHandleMap;
+    UnsafeResourceMapIter iter(resourceMap);
+    for (auto it = iter.beginWithNull(); it != iter.endWithNull(); ++it)
+    {
+        visitedWithNullHandleMap[it->first] = it->second;
+    }
+    EXPECT_EQ(visitedWithNullHandleMap.size(), reservedHandles.size() + assignedHandles.size());
+    for (T reservedHandle : reservedHandles)
+    {
+        GLuint handle = GetIDValue(reservedHandle);
+        EXPECT_EQ(visitedWithNullHandleMap.count(handle), 1u) << "handle=" << handle;
+        EXPECT_EQ(visitedWithNullHandleMap[handle], nullptr) << "handle=" << handle;
+    }
+
+    resourceMap.clear();
+}
+
+// Tests that the iterator skips reserved handles in the flat array and in the hash map.  Without
+// ANGLE_ENABLE_SHARE_CONTEXT_LOCK all maps are lockless and handles from 0x3000 up are in the hash
+// map, so every test also uses handles above that.
+TEST(ResourceMapTest, IteratorSkipsReservedHandlesLockless)
+{
+    IteratorSkipsReservedHandles<LocklessType>({1, 3, 0x3001, 0x3003, 0x3005}, {2, 0x3002, 0x3004});
+}
+
+TEST(ResourceMapTest, IteratorSkipsReservedHandlesLocked)
+{
+    IteratorSkipsReservedHandles<LockedType>({1, 3, 0xC1, 0xC3, 0x3001, 0x3003}, {2, 0xC2, 0x3002});
+}
+
+// Tests that the iterator skips reserved handles in the initial flat array, the additional flat
+// array and the hash map.
+TEST(ResourceMapTest, IteratorSkipsReservedHandlesAdditionalFlat)
+{
+    IteratorSkipsReservedHandles<AdditionalFlatType>({1, 4, 6, 11, 13, 0x3001, 0x3003},
+                                                     {2, 5, 12, 0x3002});
+}
+
+// Tests that the iterator skips reserved handles when the hash map contains only reserved handles.
+TEST(ResourceMapTest, IteratorSkipsReservedHandlesOnlyReservedInHashMap)
+{
+    IteratorSkipsReservedHandles<LocklessType>({0x3001, 0x3002}, {1});
+    IteratorSkipsReservedHandles<LockedType>({0x3001, 0x3002}, {1});
+    IteratorSkipsReservedHandles<AdditionalFlatType>({0x3001, 0x3002}, {1, 5});
+}
 }  // anonymous namespace
