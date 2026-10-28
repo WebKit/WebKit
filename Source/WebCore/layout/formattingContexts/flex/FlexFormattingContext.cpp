@@ -792,7 +792,7 @@ LayoutUnit FlexFormattingContext::placeFlexItems(LayoutUnit crossAxisOffset, std
 
         if (i != flexLayoutItems.size() - 1) {
             // The last item does not get extra space added.
-            mainAxisOffset += FlexFormattingUtils::justifyContentSpaceBetweenFlexItems(availableFreeSpace, distribution, flexLayoutItems.size()) + gapBetweenItems;
+            mainAxisOffset += FlexFormattingUtils::justifyContentSpaceBetweenFlexItems(availableFreeSpace, distribution, flexLayoutItems.size(), i) + gapBetweenItems;
         }
 
         // FIXME: Deal with pagination.

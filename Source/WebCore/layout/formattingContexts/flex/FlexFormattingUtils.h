@@ -145,11 +145,12 @@ public:
     static const StyleContentAlignmentData& LEGACY_NODELETE contentAlignmentNormalBehavior();
     static ContentPosition LEGACY_NODELETE resolveLeftRightAlignment(const StyleContentAlignmentData&, const Style::ComputedStyle&, bool isReversed);
     static LayoutUnit initialJustifyContentOffset(const Style::ComputedStyle&, LayoutUnit availableFreeSpace, unsigned numberOfFlexItems, bool isReversed);
-    static LayoutUnit LEGACY_NODELETE justifyContentSpaceBetweenFlexItems(LayoutUnit availableFreeSpace, ContentDistribution, unsigned numberOfFlexItems);
+    static LayoutUnit LEGACY_NODELETE justifyContentSpaceBetweenFlexItems(LayoutUnit availableFreeSpace, ContentDistribution, unsigned numberOfFlexItems, unsigned gapIndex);
     static LayoutUnit LEGACY_NODELETE alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition, std::optional<LayoutUnit> ascent, std::optional<LayoutUnit> maxAscent, bool isWrapReverse);
     static LayoutUnit LEGACY_NODELETE contentAlignmentStartOverflow(LayoutUnit availableFreeSpace, ContentPosition, ContentDistribution, OverflowAlignment safety, bool isReverse);
     static LayoutUnit LEGACY_NODELETE initialContentAlignmentOffset(LayoutUnit availableFreeSpace, ContentPosition, ContentDistribution, OverflowAlignment safety, unsigned numberOfAlignmentSubjects, bool isReversed);
     static LayoutUnit LEGACY_NODELETE alignContentSpaceBetweenFlexItems(LayoutUnit availableFreeSpace, ContentDistribution, unsigned numberOfLines);
+    static LayoutUnit LEGACY_NODELETE evenlyDistributedFreeSpace(LayoutUnit freeSpace, unsigned numberOfSpaces, unsigned spaceIndex);
 
 private:
     static bool isStretchedFlexItem(const RenderBox& flexItem);

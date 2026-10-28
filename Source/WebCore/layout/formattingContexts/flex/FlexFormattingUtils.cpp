@@ -716,15 +716,20 @@ LayoutUnit FlexFormattingUtils::initialJustifyContentOffset(const Style::Compute
     return initialContentAlignmentOffset(availableFreeSpace, position, distribution, resolvedJustifyContent.overflow(), numberOfFlexItems, isReversed);
 }
 
-LayoutUnit FlexFormattingUtils::justifyContentSpaceBetweenFlexItems(LayoutUnit availableFreeSpace, ContentDistribution justifyContentDistribution, unsigned numberOfFlexItems)
+LayoutUnit FlexFormattingUtils::justifyContentSpaceBetweenFlexItems(LayoutUnit availableFreeSpace, ContentDistribution justifyContentDistribution, unsigned numberOfFlexItems, unsigned gapIndex)
 {
+    // The free space is evenly distributed over spaces and each gap gets its spaces: space-between has one space per
+    // gap, space-evenly also has one before the first and one after the last item, and space-around has two half-size
+    // spaces per item, one on each side. initialContentAlignmentOffset is the space before the first item, so the
+    // offset and the gaps add up to exactly the free space.
+    ASSERT(gapIndex + 1 < numberOfFlexItems);
     if (availableFreeSpace > 0 && numberOfFlexItems > 1) {
         if (justifyContentDistribution == ContentDistribution::SpaceBetween)
-            return availableFreeSpace / (numberOfFlexItems - 1);
+            return evenlyDistributedFreeSpace(availableFreeSpace, numberOfFlexItems - 1, gapIndex);
         if (justifyContentDistribution == ContentDistribution::SpaceAround)
-            return availableFreeSpace / numberOfFlexItems;
+            return evenlyDistributedFreeSpace(availableFreeSpace, 2 * numberOfFlexItems, 2 * gapIndex + 1) + evenlyDistributedFreeSpace(availableFreeSpace, 2 * numberOfFlexItems, 2 * gapIndex + 2);
         if (justifyContentDistribution == ContentDistribution::SpaceEvenly)
-            return availableFreeSpace / (numberOfFlexItems + 1);
+            return evenlyDistributedFreeSpace(availableFreeSpace, numberOfFlexItems + 1, gapIndex + 1);
     }
     return 0;
 }
@@ -838,6 +843,15 @@ LayoutUnit FlexFormattingUtils::alignContentSpaceBetweenFlexItems(LayoutUnit ava
             return availableFreeSpace / (numberOfLines + 1);
     }
     return 0_lu;
+}
+
+LayoutUnit FlexFormattingUtils::evenlyDistributedFreeSpace(LayoutUnit freeSpace, unsigned numberOfItems, unsigned itemIndex)
+{
+    ASSERT(itemIndex < numberOfItems);
+    auto rawFreeSpace = static_cast<int64_t>(freeSpace.rawValue());
+    auto freeSpaceUpToAndIncludingItem = LayoutUnit::fromRawValue(static_cast<int>(rawFreeSpace * (itemIndex + 1) / numberOfItems));
+    auto freeSpaceBeforeItem = LayoutUnit::fromRawValue(static_cast<int>(rawFreeSpace * itemIndex / numberOfItems));
+    return freeSpaceUpToAndIncludingItem - freeSpaceBeforeItem;
 }
 
 // Instance forwarders for the formatting context, which holds a FlexFormattingUtils and so need not re-pass the container.
