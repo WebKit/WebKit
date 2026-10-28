@@ -65,6 +65,7 @@ TEST(WebKit, LayoutMilestonesWithAllContentInFrame)
     loaderClient.renderingProgressDidChange = renderingProgressDidChange;
 
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
+    didFirstVisuallyNonEmptyLayout = false;
 
     WKPageListenForLayoutMilestones(webView.page(), WKPageRenderingProgressEventFirstVisuallyNonEmptyLayout);
     WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("all-content-in-one-iframe", "html")).get());
@@ -89,6 +90,7 @@ TEST(WebKit, FirstVisuallyNonEmptyLayoutAfterPageCacheRestore)
     loaderClient.didFinishNavigation = didFinishNavigation;
 
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
+    didFirstVisuallyNonEmptyLayout = false;
 
     WKPageListenForLayoutMilestones(webView.page(), WKPageRenderingProgressEventFirstVisuallyNonEmptyLayout);
     WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple-tall", "html")).get());
