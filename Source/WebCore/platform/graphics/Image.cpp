@@ -253,11 +253,6 @@ ColorSpace Image::colorSpace()
     return ColorSpace::SRGB();
 }
 
-RefPtr<ShareableBitmap> Image::toShareableBitmap() const
-{
-    return toShareableBitmap(ConcreteObjectSize::fixed(size()));
-}
-
 RefPtr<ShareableBitmap> Image::toShareableBitmap(ConcreteObjectSize concreteObjectSize) const
 {
     RefPtr bitmap = ShareableBitmap::create({ IntSize(concreteObjectSize.size()) });
@@ -279,7 +274,13 @@ void Image::dump(TextStream& ts) const
     if (!hasSomethingToDraw())
         ts.dumpProperty("is-null-image"_s, true);
 
-    ts.dumpProperty("size"_s, size());
+    auto naturalDimensions = unorientedNaturalDimensions();
+    if (naturalDimensions.width)
+        ts.dumpProperty("width"_s, *naturalDimensions.width);
+    if (naturalDimensions.height)
+        ts.dumpProperty("height"_s, *naturalDimensions.height);
+    if (naturalDimensions.aspectRatio)
+        ts.dumpProperty("aspect-ratio"_s, *naturalDimensions.aspectRatio);
 }
 
 TextStream& operator<<(TextStream& ts, const Image& image)

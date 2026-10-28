@@ -91,6 +91,11 @@ Ref<BitmapImage> BitmapImage::createFromPlatformResource(StringView name)
     return image;
 }
 
+RefPtr<ShareableBitmap> BitmapImage::toShareableBitmap() const
+{
+    return Image::toShareableBitmap(ConcreteObjectSize::fixed(size()));
+}
+
 BitmapImage& BitmapImage::nullImage()
 {
     ASSERT(isMainThread());

@@ -607,8 +607,6 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
 
         protect(localMainFrame->document())->updateLayoutIgnorePendingStylesheets();
 
-        // Set the intrinsic size before a container size is available.
-        m_intrinsicSize = containerSize();
         reportApproximateMemoryCost();
     }
 

@@ -70,14 +70,11 @@ public:
     }
 
 #if USE(APPKIT)
-    WEBCORE_EXPORT NSImage *nsImage();
     WEBCORE_EXPORT NSImage *nsImage(ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
-    WEBCORE_EXPORT RetainPtr<NSImage> snapshotNSImage();
     WEBCORE_EXPORT RetainPtr<NSImage> snapshotNSImage(ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
 #endif
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT CFDataRef tiffRepresentation();
     WEBCORE_EXPORT CFDataRef tiffRepresentation(ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
 #endif
 

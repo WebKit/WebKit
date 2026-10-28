@@ -69,7 +69,7 @@ private:
 
     void destroyDecodedData(bool destroyAll = true) override;
 
-    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const override;
+    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const;
     NaturalDimensions unorientedNaturalDimensions() const override;
 
     bool hasSomethingToDraw() const final { return !size().isEmpty(); }

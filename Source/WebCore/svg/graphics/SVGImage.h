@@ -56,8 +56,6 @@ public:
 
     void subresourcesAreFinished(Document*, CompletionHandler<void()>&&) final;
 
-    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const final { return m_intrinsicSize; }
-
     bool hasSomethingToDraw() const final;
 
     bool renderingTaintsOrigin() const final;
@@ -130,7 +128,6 @@ private:
     void applyDocumentState(Document&, LocalFrameView&, const DocumentState&);
 
     RefPtr<Page> m_page;
-    FloatSize m_intrinsicSize;
 
     DocumentState m_appliedDocumentState;
 #if ENABLE(AX_CUSTOM_COLOR_MODE)

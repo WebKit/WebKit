@@ -87,7 +87,7 @@ public:
 
     // Image Metadata
     String uti() const final { return m_source->uti(); }
-    FloatSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const final { return m_source->size(orientation); }
+    FloatSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return m_source->size(orientation); }
     bool hasSomethingToDraw() const final { return !size().isEmpty(); }
     FloatSize density() const { return m_source->density(); }
     ColorSpace colorSpace() final { return m_source->colorSpace(); }
@@ -126,6 +126,8 @@ public:
     std::optional<SpatialImageEyeProperties> spatialEyePropertiesAtIndex(unsigned index) const { return m_source->spatialEyePropertiesAtIndex(index); }
     WEBCORE_EXPORT std::optional<ShareableSpatialImage> createShareableSpatialImage() const;
 #endif
+
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> toShareableBitmap() const;
 
 private:
     BitmapImage(ImageObserver*, AlphaOption, GammaAndColorProfileOption);

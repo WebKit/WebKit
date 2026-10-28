@@ -89,11 +89,7 @@ public:
 
     virtual bool hasSomethingToDraw() const = 0;
 
-    virtual FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const = 0;
     virtual bool hasDensityCorrectedSize() const { return false; }
-    FloatRect rect() const { return FloatRect(FloatPoint(), size()); }
-    float width() const { return size().width(); }
-    float height() const { return size().height(); }
     virtual std::optional<IntPoint> hotSpot() const { return std::nullopt; }
     virtual ImageOrientation orientation() const { return ImageOrientation::Orientation::FromImage; }
 
@@ -181,7 +177,6 @@ public:
     virtual void dump(WTF::TextStream&) const;
 
     WEBCORE_EXPORT RefPtr<ShareableBitmap> toShareableBitmap(ConcreteObjectSize) const;
-    WEBCORE_EXPORT RefPtr<ShareableBitmap> toShareableBitmap() const;
 
     // Supporting tiled drawing
     static void fillWithSolidColor(GraphicsContext&, const FloatRect& dstRect, const Color&, CompositeOperator);

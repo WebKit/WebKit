@@ -128,11 +128,6 @@ bool ImageAdapter::RasterizationKey::matches(ConcreteObjectSize otherConcreteObj
         && arePointingToEqualData<const ImageDrawingExtras*>(extras.get(), otherExtras);
 }
 
-CFDataRef ImageAdapter::tiffRepresentation()
-{
-    return tiffRepresentation(ConcreteObjectSize::fixed(protect(image())->size()));
-}
-
 CFDataRef ImageAdapter::tiffRepresentation(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
 {
     if (m_tiffRep && m_tiffRepKey && m_tiffRepKey->matches(concreteObjectSize, extras))
@@ -148,11 +143,6 @@ CFDataRef ImageAdapter::tiffRepresentation(ConcreteObjectSize concreteObjectSize
 }
 
 #if USE(APPKIT)
-NSImage* ImageAdapter::nsImage()
-{
-    return nsImage(ConcreteObjectSize::fixed(protect(image())->size()));
-}
-
 NSImage* ImageAdapter::nsImage(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
 {
     if (m_nsImage && m_nsImageKey && m_nsImageKey->matches(concreteObjectSize, extras))
@@ -165,11 +155,6 @@ NSImage* ImageAdapter::nsImage(ConcreteObjectSize concreteObjectSize, const Imag
     m_nsImage = adoptNS([[NSImage alloc] initWithData:(__bridge NSData *)data.get()]);
     m_nsImageKey.emplace(concreteObjectSize, extras);
     return m_nsImage.get();
-}
-
-RetainPtr<NSImage> ImageAdapter::snapshotNSImage()
-{
-    return snapshotNSImage(ConcreteObjectSize::fixed(protect(image())->size()));
 }
 
 RetainPtr<NSImage> ImageAdapter::snapshotNSImage(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)

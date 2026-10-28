@@ -6297,11 +6297,6 @@ header: <WebCore/AppleVisualEffect.h>
     WebCore::SpotLightSource
 }
 
-header: <WebCore/Image.h>
-[RefCounted] class WebCore::Image {
-    RefPtr<WebCore::ShareableBitmap> toShareableBitmap();
-};
-
 header: <WebCore/BitmapImage.h>
 [RefCounted] class WebCore::BitmapImage {
     RefPtr<WebCore::ShareableBitmap> toShareableBitmap();
