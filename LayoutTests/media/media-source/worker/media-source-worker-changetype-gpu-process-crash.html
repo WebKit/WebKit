@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+// Regression test for a potential cross-thread use-after-free of WebKit::GPUProcessConnection.
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const workerSource = `
+    if (!self.MediaSource || !MediaSource.canConstructInDedicatedWorker) {
+        postMessage({ topic: "done" });
+    } else {
+        const mediaSource = new MediaSource();
+        const handle = mediaSource.handle;
+        postMessage({ topic: "handle", arg: handle }, [handle]);
+
+        let stopped = false;
+        let probes = 0;
+        onmessage = event => {
+            if (event.data === "stop")
+                stopped = true;
+        };
+
+        mediaSource.addEventListener("sourceopen", () => {
+            let sourceBuffer;
+            try {
+                sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs="avc1.42E01E"');
+            } catch (e) {
+                postMessage({ topic: "done" });
+                return;
+            }
+            postMessage({ topic: "probing" });
+
+            const probeChunk = () => {
+                if (stopped || probes >= 2048) {
+                    postMessage({ topic: "done" });
+                    return;
+                }
+                for (let i = 0; i < 32; ++i) {
+                    try {
+                        // Unique fourcc every time => MIMETypeCache miss => the support
+                        // probe runs on this worker thread.
+                        sourceBuffer.changeType('video/mp4; codecs="jnk' + (++probes) + '"');
+                    } catch (e) {
+                        // NotSupportedError / InvalidStateError are both expected.
+                    }
+                }
+                setTimeout(probeChunk, 0);
+            };
+            probeChunk();
+        });
+    }
+`;
+
+const worker = new Worker(URL.createObjectURL(new Blob([workerSource], { type: "text/javascript" })));
+let finished = false;
+let kills = 0;
+
+function finish()
+{
+    if (finished)
+        return;
+    finished = true;
+    worker.terminate();
+    document.body.textContent = "PASS if no crash.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function killGPUProcess()
+{
+    if (finished)
+        return;
+    if (kills++ >= 8) {
+        worker.postMessage("stop");
+        // Do not depend on the worker answering; it may already be gone.
+        setTimeout(finish, 500);
+        return;
+    }
+    if (window.testRunner)
+        testRunner.terminateGPUProcess();
+    setTimeout(killGPUProcess, 250);
+}
+
+window.onload = () => {
+    const video = document.createElement("video");
+    video.disableRemotePlayback = true;
+    document.body.appendChild(video);
+
+    worker.onmessage = event => {
+        switch (event.data.topic) {
+        case "handle":
+            video.srcObject = event.data.arg;
+            break;
+        case "probing":
+            setTimeout(killGPUProcess, 100);
+            break;
+        case "done":
+            finish();
+            break;
+        }
+    };
+    // Bail out if the worker never gets as far as probing.
+    setTimeout(finish, 10000);
+};
+</script>
+</body>
+</html>

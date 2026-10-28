@@ -1861,6 +1861,9 @@ WebPage::~WebPage()
     WebStorageNamespaceProvider::decrementUseCount(sessionStorageNamespaceIdentifier());
 
 #if ENABLE(GPU_PROCESS) && HAVE(VISIBILITY_PROPAGATION_VIEW)
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    assertIsMainRunLoop();
+#endif
     if (RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
         gpuProcessConnection->destroyVisibilityPropagationContextForPage(*this);
 #endif // ENABLE(GPU_PROCESS)
@@ -5721,6 +5724,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_ipcTestingAPIEnabled = store.getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey());
 
     protect(WebProcess::singleton().parentProcessConnection())->setIgnoreInvalidMessageForTesting();
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    assertIsMainRunLoop();
+#endif
     if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
         gpuProcessConnection->connection().setIgnoreInvalidMessageForTesting();
 #if ENABLE(MODEL_PROCESS)
@@ -10101,6 +10107,9 @@ bool WebPage::usesEphemeralSession() const
 void WebPage::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
 {
 #if ENABLE(GPU_PROCESS)
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    assertIsMainRunLoop();
+#endif
     if (RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
         gpuProcessConnection->configureLoggingChannel(channelName, state, level);
 #endif
