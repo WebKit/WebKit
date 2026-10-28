@@ -646,18 +646,13 @@ if (CMAKE_OSX_SYSROOT)
     add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:-F${CMAKE_BINARY_DIR};-F${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks>")
 endif ()
 
-# Generate WebKit.xcodeproj and its lldbinit, for the macOS SDK alone because
-# its schemes launch their product on the build machine. --configure-time is
-# needed because CMakeCache.txt does not exist until configure finishes.
+# WebKit.xcodeproj and its lldbinit, on request: `ninja xcode-project`. Xcode
+# is only a debugger frontend here, so generating it from a configure or from
+# the default build would spend every engineer's build on a file most of them
+# never open. For the macOS SDK alone, because its schemes launch their
+# product on the build machine.
 if (WEBKIT_SDK_NAME STREQUAL "macosx"
         AND EXISTS ${TOOLS_DIR}/Scripts/generate-cmake-xcode-project)
-    execute_process(
-        COMMAND ${Python_EXECUTABLE}
-                ${TOOLS_DIR}/Scripts/generate-cmake-xcode-project
-                --configure-time
-                ${CMAKE_BINARY_DIR}
-        OUTPUT_QUIET)
-
     # Deferred: the executables it depends on, so that it runs after they are
     # linked, are not defined where this file is included.
     function(WEBKIT_ADD_XCODE_PROJECT_TARGET)
@@ -672,8 +667,9 @@ if (WEBKIT_SDK_NAME STREQUAL "macosx"
                 PROPERTY BUILDSYSTEM_TARGETS)
             foreach (_target IN LISTS _targets)
                 get_target_property(_type ${_target} TYPE)
-                # Depending on an EXCLUDE_FROM_ALL executable would add it to
-                # the default build.
+                # The schemes cover what the default build produces, so an
+                # EXCLUDE_FROM_ALL executable such as an ANGLE test binary is
+                # not something this target should build either.
                 get_target_property(_excluded ${_target} EXCLUDE_FROM_ALL)
                 if (_type STREQUAL "EXECUTABLE" AND NOT _excluded)
                     list(APPEND _executables ${_target})
@@ -681,20 +677,15 @@ if (WEBKIT_SDK_NAME STREQUAL "macosx"
             endforeach ()
         endwhile ()
 
-        # A target with no output is always out of date; the stamp lets a no-op
-        # build stay at zero actions.
-        set(_stamp ${CMAKE_BINARY_DIR}/CMakeFiles/generate-cmake-xcode-project.stamp)
-        add_custom_command(OUTPUT ${_stamp}
+        add_custom_target(xcode-project
             COMMAND ${Python_EXECUTABLE}
                     ${TOOLS_DIR}/Scripts/generate-cmake-xcode-project
                     --quiet
                     ${CMAKE_BINARY_DIR}
-            COMMAND ${CMAKE_COMMAND} -E touch ${_stamp}
-            DEPENDS ${_executables}
-                    ${TOOLS_DIR}/Scripts/generate-cmake-xcode-project
             COMMENT "Generating ${CMAKE_BINARY_DIR}/WebKit.xcodeproj"
             VERBATIM)
-        add_custom_target(xcode-project ALL DEPENDS ${_stamp})
+        # Its schemes name built products, so build them first.
+        add_dependencies(xcode-project ${_executables})
     endfunction()
 
     cmake_language(DEFER CALL WEBKIT_ADD_XCODE_PROJECT_TARGET)

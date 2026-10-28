@@ -42,8 +42,11 @@ overhead this project exists to avoid. Here ninja stays the build system;
 Xcode is purely the debugger frontend.
 
 Usage:
+    ninja -C <build-dir> xcode-project   # builds the products, then generates
     Tools/Scripts/generate-cmake-xcode-project [build-dir]
-    ninja -C <build-dir> xcode-project   # same thing, via the build system
+
+Neither a CMake configure nor the default build generates this project: it is
+a debugging aid, so it is produced only when one of the above asks for it.
 
 Output:
     <build-dir>/WebKit.xcodeproj
@@ -108,7 +111,18 @@ def find_ninja():
     for candidate in ("/opt/homebrew/bin/ninja", "/usr/local/bin/ninja"):
         if os.path.exists(candidate):
             return candidate
-    sys.exit("error: ninja not found on PATH")
+    # Xcode ships one, and Source/cmake/ninja-wrapper already falls back to
+    # it, so a build machine whose only ninja is in Xcode builds WebKit but
+    # could not generate this project.
+    try:
+        p = subprocess.run(["/usr/bin/xcrun", "-f", "ninja"], text=True,
+                           capture_output=True, check=True).stdout.strip()
+        if p:
+            return p
+    except (OSError, subprocess.CalledProcessError):
+        pass
+    sys.exit("error: ninja not found on PATH, in /opt/homebrew, in "
+             "/usr/local or in Xcode")
 
 
 @functools.lru_cache(maxsize=None)
@@ -596,10 +610,6 @@ def main():
                     help="CMake binary dir (default: first configured "
                          "WebKitBuild/cmake-mac/{ASan,Debug,RelWithDebInfo,"
                          "TSan,Release})")
-    ap.add_argument("--configure-time", action="store_true",
-                    help="Invoked from CMake's configure step, which writes "
-                         "CMakeCache.txt only once the whole configure "
-                         "finishes; skip the configured-directory check")
     ap.add_argument("--quiet", action="store_true",
                     help="Report in one line, for the build-time invocation")
     args = ap.parse_args()
@@ -611,7 +621,7 @@ def main():
     else:
         build_dir = default_build_dir(source_dir)
 
-    if not args.configure_time and not (build_dir / "CMakeCache.txt").exists():
+    if not (build_dir / "CMakeCache.txt").exists():
         sys.exit(f"error: {build_dir}/CMakeCache.txt not found -- run "
                  f"'cmake --preset <preset>' (see 'cmake --list-presets') first")
 
