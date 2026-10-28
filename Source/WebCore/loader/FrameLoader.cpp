@@ -3017,6 +3017,26 @@ void FrameLoader::willRestoreFromCachedPage()
     closeURL();
 }
 
+static void carryOverStickyActivationToReactivatedDocument(Document& reactivatedDocument, const CachedFrameBase& cachedFrame, const LocalDOMWindow& previousWindow, const SecurityOrigin& previousOrigin, const HistoryItem* targetItem)
+{
+    RefPtr reactivatedWindow = reactivatedDocument.window();
+    if (!reactivatedWindow || reactivatedWindow.get() == &previousWindow)
+        return;
+
+    RefPtr<SecurityOrigin> entryInitiatorOrigin;
+    if (targetItem && targetItem->initiatorOrigin())
+        entryInitiatorOrigin = targetItem->initiatorOrigin()->securityOrigin();
+
+    Ref targetOrigin = reactivatedDocument.securityOrigin();
+    reactivatedWindow->carryOverStickyActivationFromPreviousWindow(previousWindow, previousOrigin, targetOrigin,
+        cachedFrame.documentWasCreatedViaCrossOriginRedirects(),
+        // Only a traversal reactivates a document, and a traversal is never a
+        // reload.
+        /* isReload */ false,
+        entryInitiatorOrigin.get(),
+        targetItem && targetItem->wasEverPopulatedViaCrossOriginRedirects());
+}
+
 void FrameLoader::open(CachedFrameBase& cachedFrame)
 {
     // Don't re-emit the load event.
@@ -3031,6 +3051,13 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     started();
     Ref document = *cachedFrame.document();
     ASSERT(document->window());
+
+    // Snapshot the previous page before clear() detaches it; used for
+    // sticky-activation carry-over below.
+    RefPtr previousWindow = m_frame->window();
+    RefPtr<SecurityOrigin> previousOrigin;
+    if (RefPtr previousDocument = m_frame->document())
+        previousOrigin = &previousDocument->securityOrigin();
 
     clear(document.ptr(), true, true, cachedFrame.isMainFrame());
 
@@ -3068,6 +3095,11 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     frame->setDocument(document.copyRef());
 
     protect(document->window())->resumeFromBackForwardCache();
+
+    if (previousWindow && previousOrigin) {
+        RefPtr targetItem = history().currentItem();
+        carryOverStickyActivationToReactivatedDocument(document, cachedFrame, *previousWindow, *previousOrigin, targetItem.get());
+    }
 
     updateFirstPartyForCookies();
 

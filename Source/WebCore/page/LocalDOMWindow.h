@@ -58,6 +58,7 @@ namespace WebCore {
 
 class CloseWatcherManager;
 class JSDOMGlobalObject;
+class SecurityOrigin;
 class SecurityOriginData;
 class Viewport;
 struct ScrollToOptions;
@@ -155,6 +156,8 @@ public:
     void notifyActivated(UserGestureToken&);
     WEBCORE_EXPORT bool hasTransientActivation() const;
     bool LEGACY_NODELETE hasStickyActivation() const;
+
+    void carryOverStickyActivationFromPreviousWindow(const LocalDOMWindow& previousWindow, const SecurityOrigin& previousOrigin, const SecurityOrigin& targetOrigin, bool targetDocumentWasCreatedViaCrossOriginRedirects, bool isReload, const SecurityOrigin* entryInitiatorOrigin, bool entryWasEverPopulatedViaCrossOriginRedirects);
     WEBCORE_EXPORT bool consumeTransientActivation();
     WEBCORE_EXPORT bool LEGACY_NODELETE hasHistoryActionActivation() const;
     WEBCORE_EXPORT bool LEGACY_NODELETE consumeHistoryActionUserActivation();

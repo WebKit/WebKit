@@ -901,6 +901,13 @@ void HistoryController::initializeItem(HistoryItem& item, RefPtr<DocumentLoader>
 
     item.setIsInitialAboutBlank(documentLoader->isInitialAboutBlank());
 
+    if (!item.initiatorOrigin()) {
+        if (auto& requester = documentLoader->triggeringAction().requester())
+            item.setInitiatorOrigin(requester->securityOrigin->data());
+    }
+    if (documentLoader->hasCrossOriginRedirect())
+        item.markPopulatedViaCrossOriginRedirects();
+
     // Save form state if this is a POST
     item.setFormInfoFromRequest(documentLoader->request());
 }
@@ -1062,6 +1069,9 @@ void HistoryController::updateCurrentItem()
     RefPtr documentLoader = m_frame->loader().documentLoader();
     if (!documentLoader || !documentLoader->unreachableURL().isEmpty())
         return;
+
+    if (documentLoader->hasCrossOriginRedirect())
+        currentItem->markPopulatedViaCrossOriginRedirects();
 
     if (currentItem->url() != documentLoader->url()) {
         // We ended up on a completely different URL this time, so the HistoryItem

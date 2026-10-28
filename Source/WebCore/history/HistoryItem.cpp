@@ -92,6 +92,8 @@ HistoryItem::HistoryItem(const HistoryItem& item)
 #endif
     , m_itemID(item.m_itemID)
     , m_frameItemID(item.m_frameItemID)
+    , m_initiatorOrigin(item.m_initiatorOrigin)
+    , m_wasEverPopulatedViaCrossOriginRedirects(item.m_wasEverPopulatedViaCrossOriginRedirects)
     , m_client(item.m_client)
 {
 }

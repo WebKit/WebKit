@@ -44,7 +44,7 @@ FrameState::FrameState()
     RELEASE_ASSERT(RunLoop::isMain());
 }
 
-FrameState::FrameState(String&& urlString, String&& originalURLString, String&& referrer, AtomString&& target, std::optional<WebCore::FrameIdentifier> frameID, std::optional<Vector<uint8_t>>&& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, std::optional<HTTPBody>&& httpBody, std::optional<WebCore::BackForwardItemIdentifier> itemID, std::optional<WebCore::BackForwardFrameItemIdentifier> frameItemID, String&& title, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank isInitialAboutBlank, std::optional<WebCore::PolicyContainer>&& policyContainer,
+FrameState::FrameState(String&& urlString, String&& originalURLString, String&& referrer, AtomString&& target, std::optional<WebCore::FrameIdentifier> frameID, std::optional<Vector<uint8_t>>&& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, std::optional<HTTPBody>&& httpBody, std::optional<WebCore::BackForwardItemIdentifier> itemID, std::optional<WebCore::BackForwardFrameItemIdentifier> frameItemID, String&& title, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank isInitialAboutBlank, std::optional<WebCore::PolicyContainer>&& policyContainer, std::optional<WebCore::SecurityOriginData>&& initiatorOrigin, bool wasEverPopulatedViaCrossOriginRedirects,
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect exposedContentRect, WebCore::IntRect unobscuredContentRect, WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates, WebCore::IntSize contentSize, bool scaleIsInitial, WebCore::FloatBoxExtent obscuredInsets,
 #endif
@@ -72,6 +72,8 @@ FrameState::FrameState(String&& urlString, String&& originalURLString, String&& 
     , wasRestoredFromSession(wasRestoredFromSession)
     , isInitialAboutBlank(isInitialAboutBlank)
     , policyContainer(WTF::move(policyContainer))
+    , initiatorOrigin(WTF::move(initiatorOrigin))
+    , wasEverPopulatedViaCrossOriginRedirects(wasEverPopulatedViaCrossOriginRedirects)
 #if PLATFORM(IOS_FAMILY)
     , exposedContentRect(exposedContentRect)
     , unobscuredContentRect(unobscuredContentRect)
@@ -85,7 +87,7 @@ FrameState::FrameState(String&& urlString, String&& originalURLString, String&& 
 {
 }
 
-FrameState::FrameState(const String& urlString, const String& originalURLString, const String& referrer, const AtomString& target, std::optional<WebCore::FrameIdentifier> frameID, std::optional<Vector<uint8_t>> stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, const std::optional<HTTPBody>& httpBody, std::optional<WebCore::BackForwardItemIdentifier> itemID, std::optional<WebCore::BackForwardFrameItemIdentifier> frameItemID, const String& title, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank isInitialAboutBlank, const std::optional<WebCore::PolicyContainer>& policyContainer,
+FrameState::FrameState(const String& urlString, const String& originalURLString, const String& referrer, const AtomString& target, std::optional<WebCore::FrameIdentifier> frameID, std::optional<Vector<uint8_t>> stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, const std::optional<HTTPBody>& httpBody, std::optional<WebCore::BackForwardItemIdentifier> itemID, std::optional<WebCore::BackForwardFrameItemIdentifier> frameItemID, const String& title, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank isInitialAboutBlank, const std::optional<WebCore::PolicyContainer>& policyContainer, const std::optional<WebCore::SecurityOriginData>& initiatorOrigin, bool wasEverPopulatedViaCrossOriginRedirects,
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect exposedContentRect, WebCore::IntRect unobscuredContentRect, WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates, WebCore::IntSize contentSize, bool scaleIsInitial, WebCore::FloatBoxExtent obscuredInsets,
 #endif
@@ -113,6 +115,8 @@ FrameState::FrameState(const String& urlString, const String& originalURLString,
     , wasRestoredFromSession(wasRestoredFromSession)
     , isInitialAboutBlank(isInitialAboutBlank)
     , policyContainer(policyContainer)
+    , initiatorOrigin(initiatorOrigin)
+    , wasEverPopulatedViaCrossOriginRedirects(wasEverPopulatedViaCrossOriginRedirects)
 #if PLATFORM(IOS_FAMILY)
     , exposedContentRect(exposedContentRect)
     , unobscuredContentRect(unobscuredContentRect)
@@ -151,6 +155,8 @@ Ref<FrameState> FrameState::copy()
         wasRestoredFromSession,
         isInitialAboutBlank,
         policyContainer,
+        initiatorOrigin,
+        wasEverPopulatedViaCrossOriginRedirects,
 #if PLATFORM(IOS_FAMILY)
         exposedContentRect,
         unobscuredContentRect,
@@ -190,6 +196,8 @@ void FrameState::replacePayloadFrom(Ref<FrameState>&& other)
     wasRestoredFromSession = other->wasRestoredFromSession;
     isInitialAboutBlank = other->isInitialAboutBlank;
     policyContainer = WTF::move(other->policyContainer);
+    initiatorOrigin = WTF::move(other->initiatorOrigin);
+    wasEverPopulatedViaCrossOriginRedirects = other->wasEverPopulatedViaCrossOriginRedirects;
 #if PLATFORM(IOS_FAMILY)
     exposedContentRect = other->exposedContentRect;
     unobscuredContentRect = other->unobscuredContentRect;
