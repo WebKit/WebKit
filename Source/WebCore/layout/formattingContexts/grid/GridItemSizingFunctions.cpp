@@ -40,12 +40,10 @@ GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUti
 {
     return {
         [&integrationUtils](const PlacedGridItem& gridItem, std::optional<LayoutUnit> gridAreaBlockSize) {
-            UNUSED_PARAM(gridAreaBlockSize);
-            return GridLayoutUtils::inlineAxisMinContentContribution(gridItem, integrationUtils);
+            return GridLayoutUtils::inlineAxisMinContentContribution(gridItem, gridAreaBlockSize, integrationUtils);
         },
         [&integrationUtils](const PlacedGridItem& gridItem, std::optional<LayoutUnit> gridAreaBlockSize) {
-            UNUSED_PARAM(gridAreaBlockSize);
-            return GridLayoutUtils::inlineAxisMaxContentContribution(gridItem, integrationUtils);
+            return GridLayoutUtils::inlineAxisMaxContentContribution(gridItem, gridAreaBlockSize, integrationUtils);
         },
         // This mirrors GridLayoutUtils::inlineMinimumSize(), but is evaluated while track sizing is in
         // progress: the available space is not yet known, so it is absent for the automatic minimum size

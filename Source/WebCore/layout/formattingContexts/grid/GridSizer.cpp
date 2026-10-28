@@ -28,7 +28,6 @@
 
 #include "GridLayoutState.h"
 #include "GridLayoutUtils.h"
-#include "NotImplemented.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TrackSizingAlgorithm.h"
 #include "TrackSizingFunctions.h"
@@ -86,7 +85,8 @@ static Vector<std::optional<LayoutUnit>> definiteRowSizesForFirstIterationColumn
     });
 }
 
-static std::optional<LayoutUnit> gridAreaBlockSizeForFirstIterationColumnSizing(const PlacedGridItem& gridItem, const Vector<std::optional<LayoutUnit>>& definiteRowSizes, LayoutUnit rowGap)
+// The grid area block size used while sizing the columns, which is indefinite if any spanned row size is not known.
+static std::optional<LayoutUnit> gridAreaBlockSizeForColumnSizing(const PlacedGridItem& gridItem, const Vector<std::optional<LayoutUnit>>& definiteRowSizes, LayoutUnit rowGap)
 {
     auto spannedRowSizes = definiteRowSizes.subspan(gridItem.rowStartLine(), gridItem.rowEndLine() - gridItem.rowStartLine());
     if (std::ranges::any_of(spannedRowSizes, [](auto& rowSize) { return !rowSize; }))
@@ -98,23 +98,27 @@ static std::optional<LayoutUnit> gridAreaBlockSizeForFirstIterationColumnSizing(
     return sumOfRowSizes + GridLayoutUtils::totalGuttersSize(spannedRowSizes.size(), { }, rowGap);
 }
 
-// Runs the track sizing algorithm over the grid columns. Grid items whose inline-axis contribution
-// depends on the available space in the block axis are given an estimate derived from the row track
-// sizing functions, since the row sizes are not resolved yet.
-TrackSizes GridSizer::sizeColumnTracks(const PlacedGridItems& placedGridItems, const TrackSizingFunctionsList& columnTrackSizingFunctionsList,
+Vector<std::optional<LayoutUnit>> GridSizer::rowSizesForFirstIterationColumnSizing(const TrackSizingFunctionsList& rowTrackSizingFunctionsList) const
+{
+    auto& blockAxisConstraint = layoutState().gridLayoutConstraints.blockAxis;
+    std::optional<LayoutUnit> blockAxisAvailableSpace = blockAxisConstraint.scenario() == AxisConstraint::FreeSpaceScenario::Definite
+        ? std::optional(blockAxisConstraint.availableSpace())
+        : std::nullopt;
+    return definiteRowSizesForFirstIterationColumnSizing(rowTrackSizingFunctionsList, blockAxisAvailableSpace);
+}
+
+// Runs the track sizing algorithm over the grid columns. The given row sizes supply the block-axis
+// available space for grid items whose inline-axis contributions need it. A row whose size is not
+// known leaves the grid area block size of the items spanning it indefinite.
+TrackSizes GridSizer::sizeColumnTracks(const PlacedGridItems& placedGridItems, const Vector<std::optional<LayoutUnit>>& rowSizes, const TrackSizingFunctionsList& columnTrackSizingFunctionsList,
     const TrackSizingFunctionsList& rowTrackSizingFunctionsList) const
 {
     auto& layoutState = this->layoutState();
     auto& layoutConstraints = layoutState.gridLayoutConstraints;
 
-    std::optional<LayoutUnit> blockAxisAvailableSpace = layoutConstraints.blockAxis.scenario() == AxisConstraint::FreeSpaceScenario::Definite
-        ? std::optional(layoutConstraints.blockAxis.availableSpace())
-        : std::nullopt;
-    auto definiteRowSizesForFirstColumnSizing = definiteRowSizesForFirstIterationColumnSizing(rowTrackSizingFunctionsList, blockAxisAvailableSpace);
-
     auto columnTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
         auto usedInlineBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), { }).first;
-        auto gridAreaBlockSize = gridAreaBlockSizeForFirstIterationColumnSizing(gridItem, definiteRowSizesForFirstColumnSizing, layoutState.usedRowGap);
+        auto gridAreaBlockSize = gridAreaBlockSizeForColumnSizing(gridItem, rowSizes, layoutState.usedRowGap);
         auto gridAreaMaximumBlockSize = GridLayoutUtils::gridAreaMaximumSize(gridItem.rowStartLine(), gridItem.rowEndLine(), rowTrackSizingFunctionsList, layoutState.usedRowGap, layoutConstraints.blockAxis);
         return { gridItem, gridItem.inlineAxisSizes(), usedInlineBorderAndPadding, GridLayoutUtils::usedMarginsForAxis(gridItem, gridItem.inlineAxisSizes()),
             { gridItem.columnStartLine(), gridItem.columnEndLine() }, gridAreaBlockSize, gridAreaMaximumBlockSize };
@@ -146,12 +150,13 @@ TrackSizes GridSizer::sizeRowTracks(const PlacedGridItems& placedGridItems, cons
 }
 
 // https://drafts.csswg.org/css-grid-1/#algo-grid-sizing
-// Steps 2-4 cannot change the column sizes, so a caller that only needs those can stop after
+// When no grid item's inline-axis contributions depend on the available space in the block axis,
+// steps 2-4 cannot change the column sizes, so a caller that only needs those can stop after
 // step 1 and skip row sizing, grid-item layout, and alignment.
 TrackSizes GridSizer::sizeColumnsOnlyFastPath(const PlacedGridItems& placedGridItems, const TrackSizingFunctionsList& columnTrackSizingFunctionsList,
     const TrackSizingFunctionsList& rowTrackSizingFunctionsList) const
 {
-    return sizeColumnTracks(placedGridItems, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
+    return sizeColumnTracks(placedGridItems, rowSizesForFirstIterationColumnSizing(rowTrackSizingFunctionsList), columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
 }
 
 // https://drafts.csswg.org/css-grid-1/#algo-grid-sizing
@@ -165,7 +170,8 @@ UsedTrackSizes GridSizer::sizeGrid(const PlacedGridItems& placedGridItems, const
     // container and all tracks have definite sizes, also apply align-content to find the final
     // effective size of any gaps spanned by such items; otherwise ignore the effects of track
     // alignment in this estimation.
-    auto columnSizes = sizeColumnTracks(placedGridItems, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
+    auto firstIterationRowSizes = rowSizesForFirstIterationColumnSizing(rowTrackSizingFunctionsList);
+    auto columnSizes = sizeColumnTracks(placedGridItems, firstIterationRowSizes, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
 
     // 2. Next, the track sizing algorithm resolves the sizes of the grid rows. To find the
     // inline-axis available space for any items whose block-axis size contributions require it,
@@ -175,18 +181,30 @@ UsedTrackSizes GridSizer::sizeGrid(const PlacedGridItems& placedGridItems, const
     // 3. Then, if the min-content contribution of any grid item has changed based on the
     // row sizes and alignment calculated in step 2, re-resolve the sizes of the grid
     // columns with the new min-content and max-content contributions (once only).
-    auto resolveGridColumnSizesIfAnyMinContentContributionChanged = [] {
-        notImplemented();
-    };
-    UNUSED_VARIABLE(resolveGridColumnSizesIfAnyMinContentContributionChanged);
+    // FIXME: The row sizes do not include the effect of align-content on the gaps.
+    auto definiteRowSizes = rowSizes.map([](LayoutUnit rowSize) -> std::optional<LayoutUnit> {
+        return rowSize;
+    });
+    // A grid item's contributions can only have changed if they depend on the available space in
+    // the block axis, and its grid area block size differs from the one assumed in step 1.
+    auto containerWritingMode = formattingContext().writingMode();
+    auto rowGap = layoutState().usedRowGap;
+    auto anyInlineContributionMayHaveChanged = std::ranges::any_of(placedGridItems, [&](const PlacedGridItem& gridItem) {
+        if (!GridLayoutUtils::inlineContributionMayRequireFullSizingAlgorithmForIntrinsicWidth(gridItem.layoutBox(), containerWritingMode))
+            return false;
+        return gridAreaBlockSizeForColumnSizing(gridItem, firstIterationRowSizes, rowGap) != gridAreaBlockSizeForColumnSizing(gridItem, definiteRowSizes, rowGap);
+    });
+    if (!anyInlineContributionMayHaveChanged)
+        return { columnSizes, rowSizes };
+
+    auto previousColumnSizes = std::exchange(columnSizes, sizeColumnTracks(placedGridItems, definiteRowSizes, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList));
 
     // 4. Next, if the min-content contribution of any grid item has changed based on the
     // column sizes and alignment calculated in step 3, re-resolve the sizes of the grid
     // rows with the new min-content and max-content contributions (once only).
-    auto resolveGridRowSizesIfAnyMinContentContributionChanged = [] {
-        notImplemented();
-    };
-    UNUSED_VARIABLE(resolveGridRowSizesIfAnyMinContentContributionChanged);
+    // The block-axis contributions only depend on the column sizes through the grid area inline size.
+    if (columnSizes != previousColumnSizes)
+        rowSizes = sizeRowTracks(placedGridItems, columnSizes, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
 
     return { columnSizes, rowSizes };
 }
