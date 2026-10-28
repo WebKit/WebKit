@@ -20,18 +20,27 @@
 #include "config.h"
 #include "WebKitProtocolHandler.h"
 
+#include "APIArray.h"
 #include "APIPageConfiguration.h"
 #include "BuildRevision.h"
 #include "DRMMainDevice.h"
 #include "DisplayVBlankMonitor.h"
+#include "NetworkProcessProxy.h"
+#include "PageLoadState.h"
 #include "RenderProcessInfo.h"
 #include "RendererBufferTransportMode.h"
+#include "SuspendedPageProxy.h"
+#include "WebBackForwardList.h"
+#include "WebBackForwardListItem.h"
+#include "WebFrameProxy.h"
 #include "WebKitError.h"
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitVersion.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebPageMessages.h"
+#include "WebPageProxy.h"
 #include "WebProcessPool.h"
+#include "WebProcessProxy.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/IntRect.h>
@@ -40,12 +49,17 @@
 #include <epoxy/gl.h>
 #include <fcntl.h>
 #include <gio/gio.h>
+#include <wtf/FileSystem.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/ProcessID.h>
+#include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -97,7 +111,7 @@ WebKitProtocolHandler::WebKitProtocolHandler(WebKitWebContext* context)
 
     auto* manager = webkit_web_context_get_security_manager(context);
     webkit_security_manager_register_uri_scheme_as_display_isolated(manager, "webkit");
-    webkit_security_manager_register_uri_scheme_as_local(manager, "webkit");
+    webkit_security_manager_register_uri_scheme_as_secure(manager, "webkit");
 }
 
 void WebKitProtocolHandler::handleRequest(WebKitURISchemeRequest* request)
@@ -108,6 +122,11 @@ void WebKitProtocolHandler::handleRequest(WebKitURISchemeRequest* request)
         protect(page.legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::GetRenderProcessInfo(), [this, request = GRefPtr<WebKitURISchemeRequest>(request)](RenderProcessInfo&& info) {
             handleGPU(request.get(), WTF::move(info));
         }, page.webPageIDInMainFrameProcess());
+        return;
+    }
+
+    if (requestURL.host() == "processes"_s) {
+        handleProcesses(request);
         return;
     }
 
@@ -554,6 +573,27 @@ static unsigned refreshParameter(const URL& url)
     return 0;
 }
 
+static constexpr auto pageStyle = "  h1 { color: #babdb6; text-shadow: 0 1px 0 white; margin-bottom: 0; }"
+    "  html { font-family: -webkit-system-font; font-size: 9pt; color: #2e3436; padding: 20px 20px 0 20px; background-color: #f6f6f4; "
+    "         background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #eeeeec), color-stop(1, #f6f6f4));"
+    "         background-size: 100% 5em; background-repeat: no-repeat; "
+    "         color-scheme: light dark; }"
+    "  table { width: 100%; border-collapse: collapse; }"
+    "  table, td { border: 1px solid #d3d7cf; border-left: none; border-right: none; }"
+    "  @media (prefers-color-scheme: dark) {"
+    "      h1 { color: #babdb6; text-shadow: 0 1px 0 black; }"
+    "      html { color: #ffffff; background-color: #000000; background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #1e2224), color-stop(1, #000000)); }"
+    "      table, td { border-color: #555753; }"
+    "  }"_s;
+
+static void finishWithHTML(WebKitURISchemeRequest* request, const String& html)
+{
+    GMallocString utf8 { html.utf8() };
+    auto streamLength = utf8.lengthInBytes();
+    GRefPtr stream = gMemoryInputStreamNewFromData(WTF::move(utf8));
+    webkit_uri_scheme_request_finish(request, stream.get(), streamLength, "text/html");
+}
+
 void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderProcessInfo&& info)
 {
     URL requestURL = URL(String::fromLatin1(webkit_uri_scheme_request_get_uri(request)));
@@ -563,19 +603,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
         "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"_s);
     if (auto refresh = refreshParameter(requestURL))
         htmlBuilder.append("<meta http-equiv=\"refresh\" content=\""_s, refresh, "\" />"_s);
-    htmlBuilder.append("<style>"
-        "  h1 { color: #babdb6; text-shadow: 0 1px 0 white; margin-bottom: 0; }"
-        "  html { font-family: -webkit-system-font; font-size: 11pt; color: #2e3436; padding: 20px 20px 0 20px; background-color: #f6f6f4; "
-        "         background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #eeeeec), color-stop(1, #f6f6f4));"
-        "         background-size: 100% 5em; background-repeat: no-repeat; "
-        "         color-scheme: light dark; }"
-        "  table { width: 100%; border-collapse: collapse; }"
-        "  table, td { border: 1px solid #d3d7cf; border-left: none; border-right: none; }"
-        "  @media (prefers-color-scheme: dark) {"
-        "      h1 { color: #babdb6; text-shadow: 0 1px 0 black; }"
-        "      html { color: #ffffff; background-color: #000000; background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #1e2224), color-stop(1, #000000)); }"
-        "      table, td { border-color: #555753; }"
-        "  }"
+    htmlBuilder.append("<style>"_s, pageStyle,
         "  p { margin-bottom: 30px; }"
         "  table tr > td:first-child { width: 25% }"
         "  td { padding: 15px; }"
@@ -838,14 +866,348 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
     htmlBuilder.append("<button onclick=\"window.location.href='webkit://gpu/stdout'\">Print in stdout</button>"_s);
 
     htmlBuilder.append(tablesBuilder.toString(), "</body></html>"_s);
-
-    GMallocString html { htmlBuilder.toString().utf8() };
-    auto streamLength = html.lengthInBytes();
-    GRefPtr stream = gMemoryInputStreamNewFromData(WTF::move(html));
-    webkit_uri_scheme_request_finish(request, stream.get(), streamLength, "text/html");
+    finishWithHTML(request, htmlBuilder.toString());
 
     if (requestURL.path() == "/stdout"_s)
         SAFE_WTFLOGALWAYS("GPU information\n%s", prettyPrintJSON(infoAsString).utf8());
+}
+
+enum class SharedGPUMemory : bool { Include, Exclude };
+
+struct ProcessRow {
+    ASCIILiteral type;
+    ProcessID pid;
+    String details;
+    SharedGPUMemory sharedGPUMemory { SharedGPUMemory::Include };
+    std::optional<uint64_t> proportionalSetSize { };
+    std::optional<uint64_t> gpuMemory { };
+};
+
+static WorkQueue& processesQueueSingleton()
+{
+    static NeverDestroyed<Ref<WorkQueue>> workQueue = WorkQueue::create("WebKitProtocolHandler Processes"_s);
+    return workQueue.get();
+}
+
+static std::optional<uint64_t> readProportionalSetSize(ProcessID pid)
+{
+    auto contents = gFileGetContents(makeString("/proc/"_s, pid, "/smaps_rollup"_s).utf8());
+    if (!contents)
+        return std::nullopt;
+
+    auto smapsRollup = String::fromUTF8(contents->span());
+    for (auto line : StringView(smapsRollup).split('\n')) {
+        if (!line.startsWith("Pss:"_s))
+            continue;
+        if (auto kilobytes = parseIntegerAllowingTrailingJunk<uint64_t>(line.substring(4)))
+            return *kilobytes * KB;
+        break;
+    }
+    return std::nullopt;
+}
+
+static uint64_t parseDRMMemoryValue(StringView value)
+{
+    auto size = parseIntegerAllowingTrailingJunk<uint64_t>(value).value_or(0);
+    if (value.endsWith(" KiB"_s))
+        return size * KB;
+    if (value.endsWith(" MiB"_s))
+        return size * MB;
+    if (value.endsWith(" GiB"_s))
+        return size * GB;
+    return size;
+}
+
+static std::optional<uint64_t> readGPUMemory(ProcessID pid, SharedGPUMemory sharedGPUMemory)
+{
+    auto fdDirectory = makeString("/proc/"_s, pid, "/fd"_s);
+    auto fds = FileSystem::listDirectory(fdDirectory);
+    if (fds.isEmpty())
+        return std::nullopt;
+
+    uint64_t resident = 0;
+    uint64_t shared = 0;
+    bool hasDRMDevice = false;
+    bool hasMemoryStats = false;
+    HashSet<String> seenClients;
+    for (auto& fd : fds) {
+        if (!FileSystem::realPath(makeString(fdDirectory, '/', fd)).startsWith("/dev/dri/"_s))
+            continue;
+
+        hasDRMDevice = true;
+        auto contents = gFileGetContents(makeString("/proc/"_s, pid, "/fdinfo/"_s, fd).utf8());
+        if (!contents)
+            continue;
+
+        String device;
+        String client;
+        std::optional<uint64_t> clientResident;
+        std::optional<uint64_t> clientLegacyResident;
+        uint64_t clientShared = 0;
+        auto fdinfo = String::fromUTF8(contents->span());
+        for (auto line : StringView(fdinfo).split('\n')) {
+            auto separator = line.find(':');
+            if (separator == notFound)
+                continue;
+
+            auto key = line.left(separator);
+            auto value = line.substring(separator + 1);
+            if (key == "drm-pdev"_s)
+                device = value.toString();
+            else if (key == "drm-client-id"_s)
+                client = value.toString();
+            else if (key.startsWith("drm-resident-"_s))
+                clientResident = clientResident.value_or(0) + parseDRMMemoryValue(value);
+            else if (key.startsWith("drm-memory-"_s))
+                clientLegacyResident = clientLegacyResident.value_or(0) + parseDRMMemoryValue(value);
+            else if (key.startsWith("drm-shared-"_s))
+                clientShared += parseDRMMemoryValue(value);
+        }
+
+        if (client.isNull() || !seenClients.add(makeString(device, '/', client)).isNewEntry)
+            continue;
+
+        hasMemoryStats |= clientResident || clientLegacyResident;
+        resident += clientResident.value_or(clientLegacyResident.value_or(0));
+        shared += clientShared;
+    }
+
+    if (hasDRMDevice && !hasMemoryStats)
+        return std::nullopt;
+    if (sharedGPUMemory == SharedGPUMemory::Exclude)
+        return resident - std::min(shared, resident);
+    return resident;
+}
+
+static String formatSize(uint64_t bytes)
+{
+    GUniquePtr<char> size(g_format_size_full(bytes, G_FORMAT_SIZE_IEC_UNITS));
+    return String::fromUTF8(size.get());
+}
+
+static String escapeHTML(const String& string)
+{
+    auto result = makeStringByReplacingAll(string, '&', "&amp;"_s);
+    result = makeStringByReplacingAll(result, '<', "&lt;"_s);
+    return makeStringByReplacingAll(result, '>', "&gt;"_s);
+}
+
+static ASCIILiteral webProcessType(const WebProcessProxy& process, const Vector<Ref<SuspendedPageProxy>>& suspendedPages)
+{
+    if (process.isPrewarmed())
+        return "Web (prewarmed)"_s;
+    if (process.isInProcessCache())
+        return "Web (cached)"_s;
+    if (!process.pages().isEmpty() || !process.suspendedPageCount())
+        return "Web"_s;
+    bool onlyReusable = !suspendedPages.isEmpty() && std::ranges::all_of(suspendedPages, [](auto& suspendedPage) {
+        return suspendedPage->pageIsClosedOrClosing();
+    });
+    return onlyReusable ? "Web (cached)"_s : "Web (suspended)"_s;
+}
+
+static String siteName(const WebProcessProxy& process, const URL& fallbackURL)
+{
+    if (process.site())
+        return process.site()->domain().string();
+    return fallbackURL.host().toString();
+}
+
+static HashMap<Ref<WebProcessProxy>, Vector<Ref<SuspendedPageProxy>>> suspendedPagesByProcess(const WebProcessPool& processPool)
+{
+    HashMap<Ref<WebProcessProxy>, Vector<Ref<SuspendedPageProxy>>> suspendedPages;
+    HashSet<Ref<SuspendedPageProxy>> seenSuspendedPages;
+    auto addSuspendedPages = [&](API::Array& items) {
+        for (auto& element : items.elements()) {
+            RefPtr item = dynamicDowncast<WebBackForwardListItem>(element);
+            RefPtr suspendedPage = item ? item->suspendedPage() : nullptr;
+            if (!suspendedPage || !seenSuspendedPages.add(*suspendedPage).isNewEntry)
+                continue;
+            suspendedPages.ensure(Ref { suspendedPage->process() }, [] {
+                return Vector<Ref<SuspendedPageProxy>> { };
+            }).iterator->value.append(suspendedPage.releaseNonNull());
+        }
+    };
+
+    HashSet<WebPageProxyIdentifier> seenPages;
+    for (auto& process : processPool.processes()) {
+        for (auto& page : process->pages()) {
+            if (!seenPages.add(page->identifier()).isNewEntry)
+                continue;
+            Ref backForwardList = page->backForwardListWrapper();
+            addSuspendedPages(backForwardList->backList());
+            addSuspendedPages(backForwardList->forwardList());
+        }
+    }
+    return suspendedPages;
+}
+
+static String webProcessDetails(const WebProcessProxy& process, const Vector<Ref<SuspendedPageProxy>>& suspendedPages)
+{
+    StringBuilder builder;
+    HashSet<WebPageProxyIdentifier> seenPages;
+    for (auto& page : process.pages()) {
+        if (!seenPages.add(page->identifier()).isNewEntry)
+            continue;
+
+        auto& pageLoadState = page->pageLoadState();
+        if (!pageLoadState.title().isEmpty())
+            builder.append("<div>"_s, escapeHTML(pageLoadState.title()), "</div>"_s);
+        builder.append("<div class=\"url\">"_s, escapeHTML(pageLoadState.activeURL().string()), "</div>"_s);
+    }
+
+    if (process.isInProcessCache())
+        builder.append("<div>Cached for "_s, escapeHTML(siteName(process, { })), " (process cache)</div>"_s);
+    if (process.isRunningServiceWorkers())
+        builder.append("<div>Service workers</div>"_s);
+    if (process.isRunningSharedWorkers())
+        builder.append("<div>Shared workers</div>"_s);
+    for (auto& suspendedPage : suspendedPages) {
+        Ref mainFrame = suspendedPage->mainFrame();
+        if (suspendedPage->pageIsClosedOrClosing()) {
+            builder.append("<div>Cached for "_s, escapeHTML(siteName(process, mainFrame->url())), " (back/forward history)</div>"_s);
+            if (!mainFrame->title().isEmpty())
+                builder.append("<div class=\"note\">"_s, escapeHTML(mainFrame->title()), "</div>"_s);
+        } else {
+            builder.append("<div class=\"note\">Suspended page</div>"_s);
+            if (!mainFrame->title().isEmpty())
+                builder.append("<div>"_s, escapeHTML(mainFrame->title()), "</div>"_s);
+        }
+        builder.append("<div class=\"url\">"_s, escapeHTML(mainFrame->url().string()), "</div>"_s);
+    }
+
+    auto suspendedPageCount = process.suspendedPageCount();
+    if (suspendedPageCount > suspendedPages.size()) {
+        auto otherCount = suspendedPageCount - suspendedPages.size();
+        builder.append("<div class=\"note\">"_s, otherCount, otherCount == 1 ? " other suspended page"_s : " other suspended pages"_s, "</div>"_s);
+    }
+
+    return builder.toString();
+}
+
+static void finishProcessesRequest(WebKitURISchemeRequest* request, const Vector<ProcessRow>& rows)
+{
+    URL requestURL = URL(String::fromLatin1(webkit_uri_scheme_request_get_uri(request)));
+
+    StringBuilder tableBuilder;
+    tableBuilder.append("<table><thead><tr><th>Type</th><th>PID</th><th>Details</th><th class=\"memory\">Memory (PSS)</th>"
+        "<th class=\"memory\" title=\"Resident GPU memory. The UI process excludes buffers shared with other processes.\">GPU memory</th></tr></thead><tbody>"_s);
+
+    auto appendSizeCell = [&](std::optional<uint64_t> size, uint64_t& total) {
+        if (!size) {
+            tableBuilder.append("<td class=\"memory\" data-value=\"-1\">n/a</td>"_s);
+            return;
+        }
+        total += *size;
+        tableBuilder.append("<td class=\"memory\" data-value=\""_s, *size, "\">"_s, formatSize(*size), "</td>"_s);
+    };
+
+    uint64_t totalProportionalSetSize = 0;
+    uint64_t totalGPUMemory = 0;
+    for (const auto& row : rows) {
+        tableBuilder.append("<tr><td>"_s, row.type, "</td><td>"_s, row.pid, "</td><td>"_s, row.details, "</td>"_s);
+        appendSizeCell(row.proportionalSetSize, totalProportionalSetSize);
+        appendSizeCell(row.gpuMemory, totalGPUMemory);
+        tableBuilder.append("</tr>"_s);
+    }
+
+    tableBuilder.append("</tbody><tfoot><tr><th colspan=\"3\">Total</th><th class=\"memory\">"_s, formatSize(totalProportionalSetSize),
+        "</th><th class=\"memory\">"_s, formatSize(totalGPUMemory), "</th></tr></tfoot></table>"_s);
+
+    if (requestURL.path() == "/table"_s) {
+        finishWithHTML(request, tableBuilder.toString());
+        return;
+    }
+
+    auto refreshInterval = refreshParameter(requestURL);
+    if (!refreshInterval)
+        refreshInterval = 1;
+
+    StringBuilder htmlBuilder;
+    htmlBuilder.append("<html><head><title>Processes</title>"
+        "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
+        "<style>"_s, pageStyle,
+        "  th, td { padding: 15px; text-align: left; vertical-align: top; }"
+        "  td:first-child { white-space: nowrap; }"
+        "  thead th { cursor: pointer; user-select: none; }"
+        "  th[aria-sort=ascending]::after { content: ' \\25B2'; }"
+        "  th[aria-sort=descending]::after { content: ' \\25BC'; }"
+        "  .memory { text-align: right; white-space: nowrap; }"
+        "  .url, .note { color: #888a85; font-size: smaller; }"
+        "  .url { word-break: break-all; }"
+        "</style></head><body><h1>Processes</h1>"_s, tableBuilder.toString(),
+        "<script>"
+        "let sortColumn = -1;"
+        "let sortAscending = true;"
+        "const sortTable = () => {"
+        "    const table = document.querySelector('table');"
+        "    [...table.tHead.rows[0].cells].forEach((header, index) => {"
+        "        header.onclick = () => {"
+        "            sortAscending = sortColumn === index ? !sortAscending : true;"
+        "            sortColumn = index;"
+        "            sortTable();"
+        "        };"
+        "        if (index === sortColumn)"
+        "            header.setAttribute('aria-sort', sortAscending ? 'ascending' : 'descending');"
+        "        else"
+        "            header.removeAttribute('aria-sort');"
+        "    });"
+        "    if (sortColumn < 0)"
+        "        return;"
+        "    const key = row => row.cells[sortColumn].dataset.value ?? row.cells[sortColumn].innerText;"
+        "    const rows = [...table.tBodies[0].rows].sort((a, b) => {"
+        "        const [first, second] = [key(a), key(b)];"
+        "        const order = isNaN(first) || isNaN(second) ? first.localeCompare(second) : first - second;"
+        "        return sortAscending ? order : -order;"
+        "    });"
+        "    table.tBodies[0].append(...rows);"
+        "};"
+        "sortTable();"
+        "setInterval(async () => {"
+        "    const response = await fetch('/table');"
+        "    document.querySelector('table').outerHTML = await response.text();"
+        "    sortTable();"
+        "}, "_s, refreshInterval * 1000, ");"
+        "</script></body></html>"_s);
+
+    finishWithHTML(request, htmlBuilder.toString());
+}
+
+void WebKitProtocolHandler::handleProcesses(WebKitURISchemeRequest* request)
+{
+    Vector<ProcessRow> rows;
+    rows.append({ "UI"_s, getCurrentProcessID(), { }, SharedGPUMemory::Exclude });
+
+    for (auto& networkProcess : NetworkProcessProxy::allNetworkProcesses())
+        rows.append({ "Network"_s, networkProcess->processID(), { } });
+
+    Ref page = webkitURISchemeRequestGetWebPage(request);
+    Ref processPool = page->configuration().processPool();
+#if ENABLE(GPU_PROCESS)
+    if (RefPtr gpuProcess = processPool->gpuProcess())
+        rows.append({ "GPU"_s, gpuProcess->processID(), { } });
+#endif
+
+    auto suspendedPages = suspendedPagesByProcess(processPool);
+    for (auto& process : processPool->processes()) {
+        auto processSuspendedPages = suspendedPages.get(process);
+        rows.append({ webProcessType(process, processSuspendedPages), process->processID(), webProcessDetails(process, processSuspendedPages) });
+    }
+
+    rows.removeAllMatching([](const auto& row) {
+        return !row.pid;
+    });
+
+    processesQueueSingleton().dispatch([request = GRefPtr<WebKitURISchemeRequest>(request), rows = WTF::move(rows)] mutable {
+        for (auto& row : rows) {
+            row.proportionalSetSize = readProportionalSetSize(row.pid);
+            row.gpuMemory = readGPUMemory(row.pid, row.sharedGPUMemory);
+        }
+
+        RunLoop::mainSingleton().dispatch([request = WTF::move(request), rows = WTF::move(rows)] {
+            finishProcessesRequest(request.get(), rows);
+        });
+    });
 }
 
 } // namespace WebKit
