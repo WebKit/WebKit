@@ -8173,7 +8173,7 @@ webkit.org/b/290564 imported/w3c/web-platform-tests/css/css-viewport/computedSty
 
 webkit.org/b/290568 [ Debug ] fast/dynamic/link-href-change.html [ Pass Crash ]
 
-webkit.org/b/290580 webkit.org/b/328341 [ Debug ] fast/multicol/simple-line-layout-line-index-after-strut-2.html [ Pass Crash ImageOnlyFailure ]
+webkit.org/b/290580 [ Debug ] fast/multicol/simple-line-layout-line-index-after-strut-2.html [ Pass Crash ]
 
 webkit.org/b/290568 [ Debug ] compositing/child-layer-with-subpixel-gap-needs-repaint-when-parent-moves.html [ Pass Crash ]
 
@@ -10420,8 +10420,6 @@ webkit.org/b/327797 imported/w3c/web-platform-tests/css/css-scroll-anchoring/aft
 webkit.org/b/327798 [ Release ] compositing/backing/backface-visibility-flip.html [ Pass Failure ]
 
 webkit.org/b/328339 compositing/hdr/hdr-basic-image-dynamic-range-limit.html [ Pass Failure ]
-
-webkit.org/b/328341 [ Release ] fast/multicol/simple-line-layout-line-index-after-strut-2.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/328343 [ Debug ] http/tests/IndexedDB/transaction-abort-pending-requests-stop.html [ Failure ]
 
