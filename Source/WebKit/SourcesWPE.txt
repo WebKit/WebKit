@@ -206,6 +206,7 @@ UIProcess/API/glib/WebKitWebContext.cpp @no-unify
 UIProcess/API/glib/WebKitWebExtension.cpp @no-unify
 UIProcess/API/glib/WebKitWebExtensionContext.cpp @no-unify
 UIProcess/API/glib/WebKitWebExtensionMatchPattern.cpp @no-unify
+UIProcess/API/glib/WebKitWebExtensionManager.cpp @no-unify
 UIProcess/API/glib/WebKitWebResource.cpp @no-unify
 UIProcess/API/glib/WebKitWebResourceLoadManager.cpp @no-unify
 UIProcess/API/glib/WebKitWebView.cpp @no-unify
@@ -245,10 +246,12 @@ UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
 UIProcess/Extensions/glib/WebExtensionGLib.cpp
 UIProcess/Extensions/glib/WebExtensionContextGLib.cpp
-UIProcess/Extensions/glib/WebExtensionControllerConfigurationGLib.cpp
 UIProcess/Extensions/glib/WebExtensionControllerGLib.cpp
+UIProcess/Extensions/glib/WebExtensionControllerConfigurationGLib.cpp
 UIProcess/Extensions/glib/WebExtensionDeclarativeNetRequestSQLiteStoreGLib.cpp
 UIProcess/Extensions/glib/WebExtensionURLSchemeHandlerGLib.cpp
+
+UIProcess/Extensions/glib/API/WebExtensionControllerAPITestGLib.cpp
 
 UIProcess/Extensions/wpe/WebExtensionWPE.cpp
 

@@ -3,6 +3,7 @@ set(WebKitGLibAPITests_SOURCES
     ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/TestMain.cpp
     ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp
     ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/Helpers/Utilities.cpp
 )
 
 set(WebKitGLibAPITests_INCLUDE_DIRECTORIES
@@ -206,6 +207,7 @@ if (ENABLE_WK_WEB_EXTENSIONS)
 if (ENABLE_2022_GLIB_API)
     ADD_WK2_TEST(TestWebKitWebExtension ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitWebExtension.cpp)
     ADD_WK2_TEST(TestWebKitWebExtensionContext ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitWebExtensionContext.cpp)
+    ADD_WK2_TEST(TestWebKitWebExtensionManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitWebExtensionManager.cpp)
 endif ()
     ADD_WK2_TEST(TestWebKitWebExtensionMatchPattern ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitWebExtensionMatchPattern.cpp)
 endif ()
