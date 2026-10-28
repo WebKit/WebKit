@@ -337,7 +337,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
     auto& gridTemplateColumns = renderGridStyle->gridTemplateColumns();
     auto& gridTemplateColumnsTrackList = gridTemplateColumns.list;
-    if (gridTemplateColumnsTrackList.isEmpty() || hasUnsupportedGridTrackListEntry(gridTemplateColumnsTrackList))
+    if (hasUnsupportedGridTrackListEntry(gridTemplateColumnsTrackList))
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns, reasons, reasonCollectionMode);
 
     auto& gridTemplateRows = renderGridStyle->gridTemplateRows();
