@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<style>
+.container { width: 300px; }
+.isolated { unicode-bidi: isolate; }
+h3, .block { margin: 10px 0; height: 20px; font-size: 16px; }
+</style>
+<pre id="log"></pre>
+<div id="cases"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const log = document.getElementById("log");
+const cases = document.getElementById("cases");
+
+// Which of the container, the inline box and the block level child are unicode-bidi: isolate
+// should not change the geometry of an inline box wrapping a block.
+const markups = {
+    "span wrapping a div": '<div class="container {c}"><span class="{i}"><div class="block {b}"></div></span></div>',
+    "inline form wrapping an h3": '<div class="container {c}"><form class="{i}" style="display: inline"><h3 class="{b}"></h3></form></div>',
+};
+const variants = {
+    "inline isolated": { c: "", i: "isolated", b: "" },
+    "block isolated": { c: "", i: "", b: "isolated" },
+    "container isolated": { c: "isolated", i: "", b: "" },
+    "inline and block isolated": { c: "", i: "isolated", b: "isolated" },
+    "container and inline isolated": { c: "isolated", i: "isolated", b: "" },
+    "container and block isolated": { c: "isolated", i: "", b: "isolated" },
+    "container, inline and block isolated": { c: "isolated", i: "isolated", b: "isolated" },
+};
+
+function build(markup, classes) {
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = markup.replace("{c}", classes.c).replace("{i}", classes.i).replace("{b}", classes.b);
+    cases.append(wrapper);
+    return wrapper;
+}
+
+function rects(wrapper) {
+    const origin = wrapper.getBoundingClientRect();
+    const inlineBox = wrapper.querySelector("span, form");
+    const rects = Array.from(inlineBox.getClientRects()).map(r => [r.left - origin.left, r.top - origin.top, r.width, r.height].map(Math.round).join(" ")).join(" | ");
+    return `${rects} (wrapper height ${Math.round(origin.height)})`;
+}
+
+for (const [markupName, markup] of Object.entries(markups)) {
+    const expected = rects(build(markup, { c: "", i: "", b: "" }));
+    for (const [variantName, classes] of Object.entries(variants)) {
+        const actual = rects(build(markup, classes));
+        log.textContent += `${actual === expected ? "PASS" : "FAIL"}: ${markupName}, ${variantName}\n`;
+        if (actual !== expected)
+            log.textContent += `  expected: ${expected}\n  actual:   ${actual}\n`;
+    }
+}
+cases.remove();
+</script>

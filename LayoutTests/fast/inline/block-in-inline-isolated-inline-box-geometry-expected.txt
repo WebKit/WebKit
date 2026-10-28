@@ -1,0 +1,15 @@
+PASS: span wrapping a div, inline isolated
+PASS: span wrapping a div, block isolated
+PASS: span wrapping a div, container isolated
+PASS: span wrapping a div, inline and block isolated
+PASS: span wrapping a div, container and inline isolated
+PASS: span wrapping a div, container and block isolated
+PASS: span wrapping a div, container, inline and block isolated
+PASS: inline form wrapping an h3, inline isolated
+PASS: inline form wrapping an h3, block isolated
+PASS: inline form wrapping an h3, container isolated
+PASS: inline form wrapping an h3, inline and block isolated
+PASS: inline form wrapping an h3, container and inline isolated
+PASS: inline form wrapping an h3, container and block isolated
+PASS: inline form wrapping an h3, container, inline and block isolated
+
