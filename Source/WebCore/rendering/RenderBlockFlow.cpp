@@ -111,6 +111,7 @@ RenderBlockFlowRareData::RenderBlockFlowRareData(const RenderBlockFlow& block)
     : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
     , m_lineBreakToAvoidWidow(-1)
     , m_didBreakAtLineToAvoidWidow(false)
+    , m_hasPercentageBasisForDescendants(false)
 {
 }
 
@@ -559,8 +560,9 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
     // descendants with intrinsic aspect ratios. Our height may have changed, and those
     // descendants' preferred widths depend on our height transitively (via height: % and
     // aspect ratio). This must happen before recomputeLogicalWidthAndColumnWidth() so that
-    // a shrink-to-fit width (e.g., a float) picks up the updated preferred widths.
-    dirtyForLayoutFromPercentageHeightDescendants();
+    // a shrink-to-fit width (e.g., a float) picks up the updated preferred widths. Descendants that resolve their
+    // percentage against a basis that hasn't changed since they were last dirtied are left alone.
+    dirtyForLayoutFromPercentageHeightDescendantsIfBasisChanged();
 
     if (recomputeLogicalWidthAndColumnWidth())
         relayoutChildren = RelayoutChildren::Yes;
@@ -610,7 +612,7 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
         }
         if (!firstChild() && !isAnonymousBlock())
             setChildrenInline(true);
-        dirtyForLayoutFromPercentageHeightDescendants();
+        dirtyForLayoutFromPercentageHeightDescendantsIfBasisChanged();
         layoutInFlowChildren(relayoutChildren, previousHeight, repaintLogicalTop, repaintLogicalBottom, maxFloatLogicalBottom);
         // Expand our intrinsic height to encompass floats.
         LayoutUnit toAdd = borderAndPaddingAfter() + scrollbarLogicalHeight();
@@ -817,6 +819,50 @@ void RenderBlockFlow::dirtyForLayoutFromPercentageHeightDescendants()
 
     for (auto& descendant : *descendants)
         dirtyForLayoutFromPercentageHeightDescendant(descendant);
+}
+
+void RenderBlockFlow::dirtyForLayoutFromPercentageHeightDescendantsIfBasisChanged()
+{
+    auto* descendants = percentHeightDescendants();
+    if (!descendants) {
+        // Descendants registered later resolve against the basis at that time, so forget the recorded one.
+        if (hasRareBlockFlowData())
+            rareBlockFlowData()->m_hasPercentageBasisForDescendants = false;
+        return;
+    }
+
+    // Skip the descendants that resolve against this block's percentage basis when it is unchanged since they were last
+    // dirtied. Keep dirtying the ones that may depend on something else: those of table cells and of the RenderView (which
+    // also holds stretch and -webkit-fill-available boxes that resolve against other blocks), those across a writing-mode
+    // change, out-of-flow tables, and in quirks mode those that skipped a non-anonymous containing block.
+    auto percentageBasis = availableLogicalHeightForPercentageComputation();
+    auto& rareData = ensureRareBlockFlowData();
+    bool percentageBasisIsUnchanged = !isRenderTableCell() && !isRenderView() && rareData.m_hasPercentageBasisForDescendants && rareData.m_percentageBasisForDescendants == percentageBasis;
+    rareData.m_percentageBasisForDescendants = percentageBasis;
+    rareData.m_hasPercentageBasisForDescendants = true;
+    bool inQuirksMode = document().inQuirksMode();
+
+    auto resolvesOnlyAgainstPercentageBasis = [&](const RenderBox& descendant) {
+        // See RenderBox::computePercentageLogicalHeightGeneric().
+        if (descendant.isRenderTable() && descendant.isOutOfFlowPositioned())
+            return false;
+        bool isHorizontal = descendant.isHorizontalWritingMode();
+        for (CheckedPtr containingBlock = descendant.containingBlock(); containingBlock; containingBlock = containingBlock->containingBlock()) {
+            if (containingBlock->isHorizontalWritingMode() != isHorizontal)
+                return false;
+            if (containingBlock == this)
+                return true;
+            if (inQuirksMode && !containingBlock->isAnonymous())
+                return false;
+        }
+        return false;
+    };
+
+    for (auto& descendant : *descendants) {
+        if (percentageBasisIsUnchanged && resolvesOnlyAgainstPercentageBasis(descendant))
+            continue;
+        dirtyForLayoutFromPercentageHeightDescendant(descendant);
+    }
 }
 
 LayoutUnit RenderBlockFlow::shiftForAlignContent(LayoutUnit intrinsicLogicalHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)

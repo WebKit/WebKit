@@ -1,0 +1,8 @@
+Blocks with height: stretch and min-height: stretch should follow their container's height when it changes repeatedly.
+
+PASS: container 75px: stretchedBox height is 75
+PASS: container 75px: minStretchedBox height is 75
+PASS: container 100px: stretchedBox height is 100
+PASS: container 100px: minStretchedBox height is 100
+PASS: container 40px: stretchedBox height is 40
+PASS: container 40px: minStretchedBox height is 40

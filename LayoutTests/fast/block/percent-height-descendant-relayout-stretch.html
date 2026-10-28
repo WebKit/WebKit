@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<style>
+.container { width: 100px; height: 50px; }
+#stretchedBox { height: stretch; background: green; }
+#minStretchedBox { min-height: stretch; background: green; }
+</style>
+<p>Blocks with height: stretch and min-height: stretch should follow their container's height when it changes repeatedly.</p>
+<div class="container" id="stretchContainer"><div id="stretchedBox"></div></div>
+<div class="container" id="minStretchContainer"><div id="minStretchedBox"></div></div>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+const lines = [];
+function resizeAndCheck(height) {
+    document.getElementById("stretchContainer").style.height = height + "px";
+    document.getElementById("minStretchContainer").style.height = height + "px";
+    for (const id of ["stretchedBox", "minStretchedBox"]) {
+        const actual = document.getElementById(id).offsetHeight;
+        lines.push((actual === height ? "PASS" : "FAIL") + ": container " + height + "px: " + id + " height is " + actual + (actual === height ? "" : " (expected " + height + ")"));
+    }
+}
+document.body.offsetHeight;
+resizeAndCheck(75);
+resizeAndCheck(100);
+resizeAndCheck(40);
+document.getElementById("log").textContent = lines.join("\n");
+</script>

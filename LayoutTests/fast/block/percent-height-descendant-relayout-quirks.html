@@ -1,0 +1,36 @@
+<html>
+<style>
+body { font: 8px/1 sans-serif; }
+</style>
+<body>
+<div id="wrapper">
+    <div id="intermediate">
+        <div><div id="percent" style="height: 100%"></div></div>
+    </div>
+</div>
+<pre id="result"></pre>
+<script>
+// Quirks mode: percentages skip auto-height containing blocks, and subtract the margins, borders and padding of the body and the root.
+if (window.testRunner)
+    testRunner.dumpAsText();
+const percent = document.getElementById("percent");
+const results = [];
+function check(label, expected) {
+    const actual = percent.offsetHeight;
+    // The expected heights depend on the viewport, so only report them on failure.
+    results.push(actual === expected ? "PASS: " + label : "FAIL: " + label + ": height is " + actual + " (expected " + expected + ")");
+}
+document.body.offsetHeight;
+check("initial: viewport minus body margins", innerHeight - 16);
+document.documentElement.style.borderTop = "10px solid";
+check("after the root gets a border", innerHeight - 26);
+document.documentElement.style.paddingBottom = "4px";
+check("after the root gets padding", innerHeight - 30);
+document.getElementById("intermediate").style.height = "40px";
+check("after a skipped containing block gets a definite height", 40);
+document.getElementById("intermediate").style.height = "";
+check("after it becomes auto again", innerHeight - 30);
+document.getElementById("result").textContent = results.join("\n");
+</script>
+</body>
+</html>
