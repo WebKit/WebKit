@@ -327,10 +327,14 @@ void FlexFormattingContext::resolveFlexibleLengthsForLineItems(std::span<FlexLay
         }
 
         // Distribute the free space proportional to the flex factors (weighting the shrink factor by the flex base
-        // size). Round each item's share the way RenderBox layout does before adding it to the flex base.
+        // size). Rounding each item's share on its own can make the shares add up to more or less than the free space
+        // (seven flex-grow: 1 items in 55px each round 7.857px up to 7.859375px and overflow by 1/64px), so round the
+        // running total of the shares the way RenderBox layout does and give each item the difference.
         auto usedTotalFlexFactor = 0.0;
         for (auto index : nonFrozenSet)
             usedTotalFlexFactor += shouldUseFlexGrowFactor ? lineItems[index].style().flexGrow().value : lineItems[index].style().flexShrink().value * lineFlexBaseAndHypotheticalMainSizeList[index].flexBase;
+        double accumulatedExtraSpace = 0;
+        auto distributedExtraSpace = LayoutUnit { };
         for (auto index : nonFrozenSet) {
             auto& flexItemStyle = lineItems[index].style();
             double extraSpace = 0;
@@ -339,8 +343,12 @@ void FlexFormattingContext::resolveFlexibleLengthsForLineItems(std::span<FlexLay
             else if (remainingFreeSpace < 0 && !shouldUseFlexGrowFactor && usedTotalFlexFactor > 0 && std::isfinite(usedTotalFlexFactor) && !flexItemStyle.flexShrink().isZero())
                 extraSpace = remainingFreeSpace * flexItemStyle.flexShrink().value * lineFlexBaseAndHypotheticalMainSizeList[index].flexBase / usedTotalFlexFactor;
             auto flexItemSize = lineFlexBaseAndHypotheticalMainSizeList[index].flexBase;
-            if (std::isfinite(extraSpace))
-                flexItemSize += LayoutUnit::fromFloatRound(extraSpace);
+            if (std::isfinite(extraSpace)) {
+                accumulatedExtraSpace += extraSpace;
+                auto roundedAccumulatedExtraSpace = LayoutUnit::fromFloatRound(accumulatedExtraSpace);
+                flexItemSize += roundedAccumulatedExtraSpace - distributedExtraSpace;
+                distributedExtraSpace = roundedAccumulatedExtraSpace;
+            }
             flexItemsMainSizeList[index] = flexItemSize;
         }
 
