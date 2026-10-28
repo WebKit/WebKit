@@ -2952,8 +2952,12 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
     UNUSED_PARAM(specializationKind);
 
     if (!isOpcodeShape<OpCallShape>(m_currentInstruction)) {
-        VERBOSE_LOG("    Failing because instruction is not OpCallShape.\n");
-        return CallOptimizationResult::DidNothing;
+        // BoundFunctionCallIntrinsic does not consult m_currentInstruction and forwards kind to the target.
+        // Thus, it is fine not having OpCallShape.
+        if (!(intrinsic == BoundFunctionCallIntrinsic && (kind == InlineCallFrame::GetterCall || kind == InlineCallFrame::SetterCall))) {
+            VERBOSE_LOG("    Failing because instruction is not OpCallShape.\n");
+            return CallOptimizationResult::DidNothing;
+        }
     }
 
     // Natives from every realm share one executable, so the callee may come from a realm other than the calling code's.
