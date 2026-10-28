@@ -747,7 +747,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     if (!_needsDeferredEndScrollingSelectionUpdate)
         return;
 
-    [_textInteractionWrapper deactivateSelection];
+    [protect(_textInteractionWrapper) deactivateSelection];
 }
 
 - (CGRect)_computeUnobscuredContentRectRespectingInputViewBounds:(CGRect)unobscuredContentRect inputViewBounds:(CGRect)inputViewBounds

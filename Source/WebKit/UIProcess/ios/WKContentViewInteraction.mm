@@ -2083,8 +2083,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 if (![strongSelf _shouldActivateSelectionAfterBecomingFirstResponder])
                     return;
 
-                [strongSelf->_textInteractionWrapper setNeedsSelectionUpdate];
-                [strongSelf->_textInteractionWrapper activateSelection];
+                RetainPtr textInteractionWrapper = strongSelf->_textInteractionWrapper;
+                [textInteractionWrapper setNeedsSelectionUpdate];
+                [textInteractionWrapper activateSelection];
             });
         }
 
@@ -2164,7 +2165,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     }();
 
     if (shouldDeactivateSelection)
-        [_textInteractionWrapper deactivateSelection];
+        [protect(_textInteractionWrapper) deactivateSelection];
 
     [self stopDeferringInputViewUpdatesForAllSources];
 }
@@ -2699,7 +2700,7 @@ static void appendRecognizerIfNonNull(RetainPtr<NSMutableArray>& array, const Re
 
 - (void)_scrollingNodeScrollingWillBegin:(std::optional<WebCore::ScrollingNodeID>)scrollingNodeID
 {
-    [_textInteractionWrapper willStartScrollingOverflow:[self _scrollViewForScrollingNodeID:scrollingNodeID]];
+    [protect(_textInteractionWrapper) willStartScrollingOverflow:[self _scrollViewForScrollingNodeID:scrollingNodeID]];
 }
 
 - (void)_scrollingNodeScrollingDidEnd:(std::optional<WebCore::ScrollingNodeID>)scrollingNodeID
@@ -4060,7 +4061,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         _textInteractionWrapper = adoptNS([[WKTextInteractionWrapper alloc] initWithView:self]);
     else {
         // Reset the gesture recognizers in case editability has changed.
-        [_textInteractionWrapper setGestureRecognizers];
+        [protect(_textInteractionWrapper) setGestureRecognizers];
     }
 
     _cachedTextInteractionLoupeGestureRecognizer = nil;
@@ -4110,7 +4111,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_willStartScrollingOrZooming
 {
-    [_textInteractionWrapper willStartScrollingOrZooming];
+    [protect(_textInteractionWrapper) willStartScrollingOrZooming];
     protect(_page)->setIsScrollingOrZooming(true);
 
 #if HAVE(PEPPER_UI_CORE)
@@ -4130,7 +4131,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (void)_didEndScrollingOrZooming
 {
     if (!_needsDeferredEndScrollingSelectionUpdate)
-        [_textInteractionWrapper didEndScrollingOrZooming];
+        [protect(_textInteractionWrapper) didEndScrollingOrZooming];
     protect(_page)->setIsScrollingOrZooming(false);
 
     [self _resetPanningPreventionFlags];
@@ -4305,7 +4306,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
             return;
 
         // The editor state's selection rects are already in main-frame coordinates.
-        [view->_textInteractionWrapper showShareSheetFor:string.createNSString().get() fromRect:selectionGeometries.first().rect()];
+        [protect(view->_textInteractionWrapper) showShareSheetFor:string.createNSString().get() fromRect:selectionGeometries.first().rect()];
     });
 }
 
@@ -4334,7 +4335,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
             return;
 
         // selectionBoundingRectInRootViewCoordinates() is already in main-frame coordinates.
-        [strongSelf->_textInteractionWrapper translate:string.createNSString().get() fromRect:page->selectionBoundingRectInRootViewCoordinates()];
+        [protect(strongSelf->_textInteractionWrapper) translate:string.createNSString().get() fromRect:page->selectionBoundingRectInRootViewCoordinates()];
     });
 }
 
@@ -4355,7 +4356,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         return;
     RetainPtr selectedText = [self selectedText];
     // The editor state's selection rects are already in main-frame coordinates.
-    [_textInteractionWrapper showTextServiceFor:selectedText.get() fromRect:selectionGeometries.first().rect()];
+    [protect(_textInteractionWrapper) showTextServiceFor:selectedText.get() fromRect:selectionGeometries.first().rect()];
 }
 
 - (NSString *)selectedText
@@ -4429,7 +4430,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     if (wordAtSelection.isEmpty())
         return;
 
-    [_textInteractionWrapper scheduleReplacementsForText:wordAtSelection.createNSString().get()];
+    [protect(_textInteractionWrapper) scheduleReplacementsForText:wordAtSelection.createNSString().get()];
 }
 
 - (void)_transliterateChineseForWebView:(id)sender
@@ -4444,7 +4445,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     Ref page = *_page;
     if (!page->editorState().postLayoutData)
         return;
-    [_textInteractionWrapper scheduleChineseTransliterationForText:page->editorState().postLayoutData->wordAtSelection.createNSString().get()];
+    [protect(_textInteractionWrapper) scheduleChineseTransliterationForText:page->editorState().postLayoutData->wordAtSelection.createNSString().get()];
 }
 
 - (void)replaceForWebView:(id)sender
@@ -4669,11 +4670,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _cachedHasCustomTintColor = std::nullopt;
 
     BOOL shouldUpdateTextSelection = self.isFirstResponder && [self canShowNonEmptySelectionView];
+    RetainPtr textInteractionWrapper = _textInteractionWrapper;
     if (shouldUpdateTextSelection)
-        [_textInteractionWrapper deactivateSelection];
+        [textInteractionWrapper deactivateSelection];
     [self _updateTextInputTraitsForInteractionTintColor];
     if (shouldUpdateTextSelection)
-        [_textInteractionWrapper activateSelection];
+        [textInteractionWrapper activateSelection];
 
     protect(_page)->insertionPointColorDidChange();
 }
@@ -4983,7 +4985,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     _autocorrectionContextNeedsUpdate = YES;
-    [_textInteractionWrapper selectWord];
+    [protect(_textInteractionWrapper) selectWord];
     // We cannot use selectWord command, because we want to be able to select the word even when it is the last in the paragraph.
     protect(_page)->extendSelection(WebCore::TextGranularity::WordGranularity, [] { });
 }
@@ -4994,7 +4996,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     _autocorrectionContextNeedsUpdate = YES;
-    [_textInteractionWrapper selectAll:sender];
+    [protect(_textInteractionWrapper) selectAll:sender];
     protect(_page)->selectAll();
 }
 
@@ -5434,7 +5436,7 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     protect(_page)->selectWithGesture(std::nullopt, WebCore::IntPoint(point), toGestureType(gestureType), toGestureRecognizerState(state), self._hasFocusedElement, [self, strongSelf = retainPtr(self), state, flags](WebKit::SelectWithGestureResult result) {
-        selectionChangedWithGesture(_textInteractionWrapper.get(), result.point, result.gestureType, result.gestureState, toSelectionFlags(flags) | result.flags);
+        selectionChangedWithGesture(protect(_textInteractionWrapper).get(), result.point, result.gestureType, result.gestureState, toSelectionFlags(flags) | result.flags);
         if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
             _usingGestureForSelection = NO;
     });
@@ -5492,7 +5494,7 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
     protect(_page)->updateSelectionWithTouches(WebCore::IntPoint(point), toSelectionTouch(touch), baseIsStart, [self, strongSelf = retainPtr(self), flags](const WebCore::IntPoint& point, WebKit::SelectionTouch touch, OptionSet<WebKit::SelectionFlags> innerFlags) {
         if (_selectionInteractionType == SelectionInteractionType::Touch && innerFlags.contains(WebKit::SelectionFlags::SelectionFlipped))
             _lastSelectionTouch.baseIsStart = !_lastSelectionTouch.baseIsStart;
-        selectionChangedWithTouch(_textInteractionWrapper.get(), point, touch, toSelectionFlags(flags) | innerFlags);
+        selectionChangedWithTouch(protect(_textInteractionWrapper).get(), point, touch, toSelectionFlags(flags) | innerFlags);
         if (toWKBESelectionTouchPhase(touch) != WKBESelectionTouchPhaseStarted && toWKBESelectionTouchPhase(touch) != WKBESelectionTouchPhaseMoved)
             _usingGestureForSelection = NO;
     });
@@ -5505,7 +5507,7 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     protect(_page)->selectWithTwoTouches(std::nullopt, WebCore::IntPoint(from), WebCore::IntPoint(to), toGestureType(gestureType), toGestureRecognizerState(gestureState), [self, strongSelf = retainPtr(self)](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags) {
-        selectionChangedWithGesture(_textInteractionWrapper.get(), point, gestureType, gestureState, flags);
+        selectionChangedWithGesture(protect(_textInteractionWrapper).get(), point, gestureType, gestureState, flags);
         if (toUIGestureRecognizerState(gestureState) == UIGestureRecognizerStateEnded || toUIGestureRecognizerState(gestureState) == UIGestureRecognizerStateCancelled)
             _usingGestureForSelection = NO;
     });
@@ -8186,7 +8188,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     [self setUpTextSelectionAssistant];
     
     if (self.isFirstResponder && !_suppressSelectionAssistantReasons)
-        [_textInteractionWrapper activateSelection];
+        [protect(_textInteractionWrapper) activateSelection];
 
     [self reloadInputViews];
 }
@@ -8206,7 +8208,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     self.inputDelegate = nil;
     [self setUpTextSelectionAssistant];
 
-    [_textInteractionWrapper deactivateSelection];
+    [protect(_textInteractionWrapper) deactivateSelection];
     [protect(_formAccessoryView) hideAutoFillButton];
 
     // FIXME: Does it make sense to call -reloadInputViews on watchOS?
@@ -8600,7 +8602,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
     if (!_suppressSelectionAssistantReasons && requiresKeyboard && activityStateChanges.contains(WebCore::ActivityState::IsFocused)) {
         _treatAsContentEditableUntilNextEditorStateUpdate = YES;
-        [_textInteractionWrapper activateSelection];
+        [protect(_textInteractionWrapper) activateSelection];
         page->restoreSelectionInFocusedEditableElement();
         page->scheduleFullEditorStateUpdate();
     }
@@ -9450,14 +9452,15 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         _cachedSelectedTextRange = nil;
         _lastSelectionDrawingInfo = selectionDrawingInfo;
 
-        if (_textInteractionWrapper) {
+        RetainPtr textInteractionWrapper = _textInteractionWrapper;
+        if (textInteractionWrapper) {
             _markedText = editorState.hasComposition ? postLayoutData.markedText.createNSString().get() : @"";
             if (![_markedText length])
                 _isDeferringKeyEventsToInputMethod = NO;
             RetainPtr containerView = [self _selectionContainerViewInternal];
-            [_textInteractionWrapper prepareToMoveSelectionContainer:containerView.get()];
+            [textInteractionWrapper prepareToMoveSelectionContainer:containerView.get()];
             if (comparison == VisuallyDistinct)
-                [_textInteractionWrapper selectionChanged];
+                [textInteractionWrapper selectionChanged];
             _lastSelectionChildScrollViewContentOffset = [containerView] -> std::optional<WebCore::IntPoint> {
                 RetainPtr scrollView = [containerView _wk_parentScrollView];
                 if (is_objc<WKChildScrollView>(scrollView.get()))
@@ -9470,29 +9473,31 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
         _selectionNeedsUpdate = NO;
         if (_shouldRestoreSelection) {
-            [_textInteractionWrapper didEndScrollingOverflow];
+            [textInteractionWrapper didEndScrollingOverflow];
             _shouldRestoreSelection = NO;
         }
     } else {
+        RetainPtr textInteractionWrapper = _textInteractionWrapper;
         RetainPtr container = [self _selectionContainerViewInternal];
-        RetainPtr selectionHighlightContainer = [[_textInteractionWrapper selectionHighlightView] superview];
+        RetainPtr selectionHighlightContainer = [[textInteractionWrapper selectionHighlightView] superview];
         BOOL siblingChanged = _lastSiblingBeforeSelectionHighlight != [self _siblingBeforeSelectionHighlight];
         BOOL parentChanged = editorState.isEditableOrRanged() && selectionHighlightContainer != container;
         if (!siblingChanged && parentChanged)
             RELEASE_LOG(TextInteraction, "Selection highlight view was reparented");
 
         if (siblingChanged || parentChanged)
-            [_textInteractionWrapper prepareToMoveSelectionContainer:container.get()];
+            [textInteractionWrapper prepareToMoveSelectionContainer:container.get()];
 
         [self _updateSelectionViewsIfNeeded];
     }
 
     if (postLayoutData.isStableStateUpdate && _needsDeferredEndScrollingSelectionUpdate && protect(_page)->inStableState()) {
+        RetainPtr textInteractionWrapper = _textInteractionWrapper;
         auto firstResponder = self.firstResponder;
         if ((!firstResponder || self == firstResponder) && !_suppressSelectionAssistantReasons)
-            [_textInteractionWrapper activateSelection];
+            [textInteractionWrapper activateSelection];
 
-        [_textInteractionWrapper didEndScrollingOverflow];
+        [textInteractionWrapper didEndScrollingOverflow];
 
         _needsDeferredEndScrollingSelectionUpdate = NO;
     }
@@ -9538,7 +9543,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     BOOL needsUpdateDueToOriginChange = updateLastSelectionContainerViewOrigin();
 
     if (needsUpdateDueToScrolling || needsUpdateDueToOriginChange)
-        [_textInteractionWrapper setNeedsSelectionUpdate];
+        [protect(_textInteractionWrapper) setNeedsSelectionUpdate];
 }
 
 - (BOOL)shouldAllowHidingSelectionCommands
@@ -9587,7 +9592,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
             return completionHandler(false, { });
 
         if (shouldPresentMenu && ![strongSelf shouldSuppressEditMenu])
-            [strongSelf->_textInteractionWrapper activateSelection];
+            [protect(strongSelf->_textInteractionWrapper) activateSelection];
 
 #if ENABLE(IMAGE_ANALYSIS)
         [strongSelf doAfterComputingImageAnalysisResultsForBackgroundRemoval:[completionHandler, shouldPresentMenu, item, weakSelf] {
@@ -9622,7 +9627,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     _suppressSelectionAssistantReasons.add(reason);
 
     if (!wasSuppressingSelectionAssistant)
-        [_textInteractionWrapper deactivateSelection];
+        [protect(_textInteractionWrapper) deactivateSelection];
 }
 
 - (void)_stopSuppressingSelectionAssistantForReason:(WebKit::SuppressSelectionAssistantReason)reason
@@ -9631,7 +9636,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     _suppressSelectionAssistantReasons.remove(reason);
 
     if (wasSuppressingSelectionAssistant && !_suppressSelectionAssistantReasons)
-        [_textInteractionWrapper activateSelection];
+        [protect(_textInteractionWrapper) activateSelection];
 }
 
 - (BOOL)_isSuppressingSelectionAssistant
@@ -11292,7 +11297,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     if (_dragDropInteractionState.anyActiveDragSourceContainsSelection()) {
         [self cancelActiveTextInteractionGestures];
         if (!_shouldRestoreEditMenuAfterDrop) {
-            [_textInteractionWrapper willBeginDragLift];
+            [protect(_textInteractionWrapper) willBeginDragLift];
             _shouldRestoreEditMenuAfterDrop = YES;
         }
     }
@@ -14952,7 +14957,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(UICONTEXTMENU)
     if (self._shouldUseContextMenus) {
         _contextMenuHasRequestedLegacyData = NO;
-        [_textInteractionWrapper setExternalContextMenuInteractionDelegate:self];
+        [protect(_textInteractionWrapper) setExternalContextMenuInteractionDelegate:self];
 
         if (id<_UIClickInteractionDriving> driver = self.webView.configuration._clickInteractionDriverForTesting)
             [self.contextMenuInteraction presentationInteraction].overrideDrivers = @[driver];
