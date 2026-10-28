@@ -687,6 +687,7 @@ angle::Result VertexArrayWgpu::streamIndicesLineLoop(
         }
         stagingUploadsOut->push_back({*currentStagingDataPositionOut, stagingBufferPtr,
                                       &mStreamingIndexBuffer, 0, destIndexBufferSize});
+        *currentStagingDataPositionOut += destIndexBufferSize;
     }
     else if (sourceDrawElementsTypeOrInvalid == destDrawElementsTypeOrInvalid && elementArrayBuffer)
     {
