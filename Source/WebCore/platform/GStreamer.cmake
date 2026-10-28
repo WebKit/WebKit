@@ -205,11 +205,13 @@ if (ENABLE_SPEECH_SYNTHESIS)
             LibSpiel::LibSpiel
         )
     elseif (USE_FLITE)
+        # Flite is loaded with dlopen() when speech synthesis is first used, see
+        # WebKitFliteSourceGStreamer.cpp.
         list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
             ${Flite_INCLUDE_DIRS}
         )
         list(APPEND WebCore_LIBRARIES
-            ${Flite_LIBRARIES}
+            ${CMAKE_DL_LIBS}
         )
     endif ()
 endif ()
