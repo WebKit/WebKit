@@ -965,6 +965,9 @@ angle::Result ContextWgpu::syncState(const gl::Context *context,
                             break;
                         case gl::state::EXTENDED_DIRTY_BIT_FETCH_PER_SAMPLE_ENABLED:
                             break;
+                        case gl::state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
+                            // ANGLE_variable_rasterization_rate_metal is only supported by the Metal backend.
+                            break;
                         default:
                             UNREACHABLE();
                     }
