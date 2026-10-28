@@ -91,6 +91,10 @@ public:
     // the index of each completed one, which is then forgotten. False when the timeout passes
     // first. This can be called on a background thread.
     bool waitForAnyFuture(std::span<const uint64_t> futures, Seconds timeout, NOESCAPE const Function<void(size_t)>& didComplete);
+    // Calls the cancellation of a future of the C API when the instance is destroyed, unless the
+    // future is removed first. This can be called on a background thread.
+    void addCancellation(uint64_t future, Function<void()>&&);
+    void removeCancellation(uint64_t future);
 
 private:
     Instance(Function<void(WorkItem&&)>&& scheduleWork, const WTF::MachSendRight* webProcessResourceOwner);
@@ -104,6 +108,7 @@ private:
     Deque<WorkItem> m_pendingWork WTF_GUARDED_BY_LOCK(m_lock);
     uint64_t m_nextFuture WTF_GUARDED_BY_LOCK(m_lock) { 1 };
     HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_completedFutures WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<uint64_t, Function<void()>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_cancellations WTF_GUARDED_BY_LOCK(m_lock);
     // Signalled when work is appended to m_pendingWork or a future completes.
     Condition m_condition;
     using CommandBufferContainer = Vector<WeakObjCPtr<id<MTLCommandBuffer>>>;

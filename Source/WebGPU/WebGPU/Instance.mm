@@ -71,7 +71,18 @@ Instance::Instance()
 {
 }
 
-Instance::~Instance() = default;
+Instance::~Instance()
+{
+    // As Dawn does when its instance is destroyed, cancel the callbacks that wgpuInstanceProcessEvents()
+    // and wgpuInstanceWaitAny() can no longer call.
+    decltype(m_cancellations) cancellations;
+    {
+        Locker locker(m_lock);
+        cancellations = std::exchange(m_cancellations, { });
+    }
+    for (auto& cancellation : cancellations.values())
+        cancellation();
+}
 
 void Instance::waitForCommandBufferCompletions()
 {
@@ -126,6 +137,22 @@ void Instance::completeFuture(uint64_t future)
     Locker locker(m_lock);
     m_completedFutures.add(future);
     m_condition.notifyAll();
+}
+
+void Instance::addCancellation(uint64_t future, Function<void()>&& cancellation)
+{
+    Locker locker(m_lock);
+    m_cancellations.add(future, WTF::move(cancellation));
+}
+
+void Instance::removeCancellation(uint64_t future)
+{
+    // The cancellation can hold the last reference to an event, so it is destroyed outside the lock.
+    Function<void()> cancellation;
+    {
+        Locker locker(m_lock);
+        cancellation = m_cancellations.take(future);
+    }
 }
 
 bool Instance::waitForAnyFuture(std::span<const uint64_t> futures, Seconds timeout, NOESCAPE const Function<void(size_t)>& didComplete)

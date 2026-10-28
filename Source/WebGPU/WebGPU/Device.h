@@ -35,6 +35,7 @@
 #import <Metal/Metal.h>
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
+#import <atomic>
 #import <expected>
 #import <simd/matrix_types.h>
 #import <wtf/CompletionHandler.h>
@@ -216,6 +217,18 @@ public:
         return buffer;
     }
     void loseTheDevice(WebGPU::DeviceLostReason);
+    void loseTheDevice(WebGPU::DeviceLostReason, String&& message);
+
+    // The future of the device-lost event of the C API, for wgpuDeviceGetLostFuture().
+    WGPUFuture lostFuture() const { return m_lostFuture; }
+    void setLostFuture(WGPUFuture future) { m_lostFuture = future; }
+    // The references that the C API hands out to the devices that it creates. As in webgpu.h,
+    // releasing the last one destroys the device.
+    void countExternalReferences();
+    void addExternalReference();
+    // True when the reference was the last one.
+    bool releaseExternalReference();
+    bool hasExternalReferences() const;
     int LEGACY_NODELETE bufferIndexForICBContainer() const;
     void setOwnerWithIdentity(id<MTLResource>) const;
     struct ExternalTextureData {
@@ -328,6 +341,9 @@ private:
     CompletionHandler<void(WebGPU::DeviceLostReason, String&&)> m_deviceLostCallback;
     bool m_isLost { false };
     bool m_destroyed { false };
+    WGPUFuture m_lostFuture { };
+    bool m_countsExternalReferences { false };
+    std::atomic<unsigned> m_externalReferenceCount { 0 };
     id<NSObject> m_deviceObserver { nil };
 
     HardwareCapabilities m_capabilities { };
