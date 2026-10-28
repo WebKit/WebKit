@@ -1270,7 +1270,7 @@ bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
 
     Ref configuration = m_configuration;
 #if ENABLE(REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT)
-    if (configuration->lockdownModeEnabled())
+    if (shouldEnableLockdownMode())
         return true;
 #endif
 

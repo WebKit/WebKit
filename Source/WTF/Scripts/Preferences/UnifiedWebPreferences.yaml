@@ -2529,6 +2529,17 @@ ForceLockdownFontParserEnabled:
   defaultValue: false
   sharedPreferenceForWebProcess: true
 
+ForceLockdownMode:
+  type: bool
+  status: internal
+  category: security
+  defaultsOverridable: true
+  humanReadableName: "Force Lockdown Mode"
+  humanReadableDescription: "Force all web content processes to use Lockdown Mode"
+  webKitLegacyExposed: false
+  excludeFrom: [ WebCore ]
+  defaultValue: false
+
 ForceWebGLUsesLowPower:
   type: bool
   status: embedder
