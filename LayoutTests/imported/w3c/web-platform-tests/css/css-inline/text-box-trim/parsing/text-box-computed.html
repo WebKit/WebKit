@@ -20,10 +20,9 @@ test_computed_value('text-box', 'trim-both');
 
 // `<text-edge>`
 test_computed_value('text-box', 'text');
-test_computed_value('text-box', 'cap');
 test_computed_value('text-box', 'ideographic');
 test_computed_value('text-box', 'cap alphabetic');
-test_computed_value('text-box', 'text alphabetic');
+test_computed_value('text-box', 'text alphabetic', 'alphabetic');
 
 // Mix initial and non-initial values
 test_computed_value('text-box', 'trim-start auto', 'trim-start');
@@ -31,8 +30,8 @@ test_computed_value('text-box', 'trim-both auto', 'trim-both');
 test_computed_value('text-box', 'auto trim-both', 'trim-both');
 test_computed_value('text-box', 'none text', 'none text');
 test_computed_value('text-box', 'text text none', 'none text');
-test_computed_value('text-box', 'none cap', 'none cap');
-test_computed_value('text-box', 'cap ideographic none', 'none cap ideographic');
+test_computed_value('text-box', 'none cap text', 'none cap');
+test_computed_value('text-box', 'cap alphabetic none', 'none cap alphabetic');
 test_computed_value('text-box', 'ideographic none', 'none ideographic');
 
 // Both `<text-box-trim>` and `<text-box-edge>`
@@ -47,8 +46,11 @@ test_computed_value('text-box', 'trim-start ideographic ideographic', 'trim-star
 test_computed_value('text-box', 'trim-start ideographic-ink ideographic-ink', 'trim-start ideographic-ink');
 test_computed_value('text-box', 'trim-end cap text', 'trim-end cap');
 test_computed_value('text-box', 'trim-end ex text', 'trim-end ex');
+test_computed_value('text-box', 'trim-end text alphabetic', 'trim-end alphabetic');
 test_computed_value('text-box', 'cap text trim-end', 'trim-end cap');
 test_computed_value('text-box', 'ex text trim-end', 'trim-end ex');
+test_computed_value('text-box', 'text alphabetic trim-end', 'trim-end alphabetic');
 test_computed_value('text-box', 'cap text trim-both', 'cap');
 test_computed_value('text-box', 'ex text trim-both', 'ex');
+test_computed_value('text-box', 'text alphabetic trim-both', 'alphabetic');
 </script>

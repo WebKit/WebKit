@@ -1,8 +1,10 @@
-ApÃ‰x ApÃ‰x ApÃ‰x
-ApÃ‰x
+█BxIF █BxIF █BxIF
+█BxIF
 
 PASS .aqua 1
 PASS .aqua 2
-PASS .aqua 3
+FAIL .aqua 3 assert_equals:
+<span class="aqua" style="text-box: trim-end text alphabetic;" data-offset-y="0" data-expected-height="80">█BxIF</span>
+height expected 80 but got 81
 PASS .aqua 4
 

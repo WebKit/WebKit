@@ -17,7 +17,6 @@ PASS e.style['text-box-edge'] = "cap leading" should not set the property value
 PASS e.style['text-box-edge'] = "ex leading" should not set the property value
 PASS e.style['text-box-edge'] = "ideographic leading" should not set the property value
 PASS e.style['text-box-edge'] = "ideographic-ink leading" should not set the property value
-PASS e.style['text-box-edge'] = "alphabetic" should not set the property value
 PASS e.style['text-box-edge'] = "alphabetic text" should not set the property value
 PASS e.style['text-box-edge'] = "text cap" should not set the property value
 PASS e.style['text-box-edge'] = "text ex" should not set the property value

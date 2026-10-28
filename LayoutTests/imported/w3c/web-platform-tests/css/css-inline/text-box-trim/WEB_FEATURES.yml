@@ -1,3 +1,2 @@
-features:
-- name: text-box-trim
-  files: "**"
+rules:
+- "**": [text-box]
