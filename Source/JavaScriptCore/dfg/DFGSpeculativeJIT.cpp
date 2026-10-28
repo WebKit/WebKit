@@ -2741,7 +2741,7 @@ GeneratedOperandType SpeculativeJIT::checkGeneratedTypeForToInt32(Node* node)
         RELEASE_ASSERT_NOT_REACHED();
 
     case DataFormatCell:
-        terminateSpeculativeExecution(Uncountable, JSValueSource(), nullptr);
+        terminateSpeculativeExecution(BadType, JSValueSource(), nullptr);
         return GeneratedOperandTypeUnknown;
 
     case DataFormatNone:

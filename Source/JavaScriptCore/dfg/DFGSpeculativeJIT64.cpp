@@ -1135,7 +1135,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         if (!type)
             terminateUnreachableNode();
         else if (mayHaveTypeCheck(edge.useKind()))
-            terminateSpeculativeExecution(Uncountable, JSValueSource(), nullptr);
+            terminateSpeculativeExecution(BadType, JSValueSource(), nullptr);
         returnFormat = DataFormatInt32;
         return allocate();
     }
@@ -1280,7 +1280,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
         if (!type)
             terminateUnreachableNode();
         else if (mayHaveTypeCheck(edge.useKind()))
-            terminateSpeculativeExecution(Uncountable, JSValueSource(), nullptr);
+            terminateSpeculativeExecution(BadType, JSValueSource(), nullptr);
         return allocate();
     }
 
@@ -1388,7 +1388,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
                 return fpr;
             }
             if (mayHaveTypeCheck(edge.useKind()))
-                terminateSpeculativeExecution(Uncountable, JSValueSource(), nullptr);
+                terminateSpeculativeExecution(BadType, JSValueSource(), nullptr);
             return fprAllocate();
         }
         
@@ -1424,7 +1424,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
         if (!type)
             terminateUnreachableNode();
         else if (mayHaveTypeCheck(edge.useKind()))
-            terminateSpeculativeExecution(Uncountable, JSValueSource(), nullptr);
+            terminateSpeculativeExecution(BadType, JSValueSource(), nullptr);
         return allocate();
     }
 
@@ -1503,7 +1503,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
         if (!type)
             terminateUnreachableNode();
         else if (mayHaveTypeCheck(edge.useKind()))
-            terminateSpeculativeExecution(Uncountable, JSValueSource(), nullptr);
+            terminateSpeculativeExecution(BadType, JSValueSource(), nullptr);
         return allocate();
     }
 
