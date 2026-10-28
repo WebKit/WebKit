@@ -47,6 +47,68 @@ private import WebKit_Private._WKWebExtensionSidebar
 @MainActor
 struct WKWebExtensionAPIDeclarativeNetRequestTests {
     @Test
+    func resourceTypeEnum() async throws {
+        let backgroundScript = """
+            browser.test.assertEq(typeof browser.declarativeNetRequest.ResourceType, 'object', 'ResourceType should be an object')
+
+            browser.test.assertEq(browser.declarativeNetRequest.ResourceType.MAIN_FRAME, 'main_frame', 'MAIN_FRAME should be defined')
+            browser.test.assertEq(browser.declarativeNetRequest.ResourceType.SUB_FRAME, 'sub_frame', 'SUB_FRAME should be defined')
+            browser.test.assertEq(browser.declarativeNetRequest.ResourceType.STYLESHEET, 'stylesheet', 'STYLESHEET should be defined')
+            browser.test.assertEq(browser.declarativeNetRequest.ResourceType.SCRIPT, 'script', 'SCRIPT should be defined')
+            browser.test.assertEq(browser.declarativeNetRequest.ResourceType.IMAGE, 'image', 'IMAGE should be defined')
+            browser.test.assertEq(browser.declarativeNetRequest.ResourceType.FONT, 'font', 'FONT should be defined')
+            browser.test.assertEq(browser.declarativeNetRequest.ResourceType.XMLHTTPREQUEST, 'xmlhttprequest', 'XMLHTTPREQUEST should be defined')
+            browser.test.assertEq(browser.declarativeNetRequest.ResourceType.PING, 'ping', 'PING should be defined')
+            browser.test.assertEq(browser.declarativeNetRequest.ResourceType.MEDIA, 'media', 'MEDIA should be defined')
+            browser.test.assertEq(browser.declarativeNetRequest.ResourceType.WEBSOCKET, 'websocket', 'WEBSOCKET should be defined')
+            browser.test.assertEq(browser.declarativeNetRequest.ResourceType.OTHER, 'other', 'OTHER should be defined')
+
+            browser.test.assertDeepEq(Object.keys(browser.declarativeNetRequest.ResourceType).sort(), [ 'FONT', 'IMAGE', 'MAIN_FRAME', 'MEDIA', 'OTHER', 'PING', 'SCRIPT', 'STYLESHEET', 'SUB_FRAME', 'WEBSOCKET', 'XMLHTTPREQUEST' ], 'ResourceType should only define the supported values')
+
+            browser.test.notifyPass()
+            """
+
+        let declarativeNetRequestManifest: [String: Any] = [
+            "manifest_version": 3,
+            "permissions": ["declarativeNetRequest"],
+            "background": [
+                "scripts": ["background.js"],
+                "type": "module",
+                "persistent": false,
+            ],
+        ]
+
+        let manager = try loadWebExtension(manifest: declarativeNetRequestManifest, resources: ["background.js": backgroundScript])
+        try await manager.run()
+    }
+
+    @Test
+    func unsupportedRegexReasonEnum() async throws {
+        let backgroundScript = """
+            browser.test.assertEq(typeof browser.declarativeNetRequest.UnsupportedRegexReason, 'object', 'UnsupportedRegexReason should be an object')
+
+            browser.test.assertEq(browser.declarativeNetRequest.UnsupportedRegexReason.SYNTAX_ERROR, 'syntaxError', 'SYNTAX_ERROR should be defined')
+
+            browser.test.assertDeepEq(Object.keys(browser.declarativeNetRequest.UnsupportedRegexReason).sort(), [ 'SYNTAX_ERROR' ], 'UnsupportedRegexReason should only define the supported values')
+
+            browser.test.notifyPass()
+            """
+
+        let declarativeNetRequestManifest: [String: Any] = [
+            "manifest_version": 3,
+            "permissions": ["declarativeNetRequest"],
+            "background": [
+                "scripts": ["background.js"],
+                "type": "module",
+                "persistent": false,
+            ],
+        ]
+
+        let manager = try loadWebExtension(manifest: declarativeNetRequestManifest, resources: ["background.js": backgroundScript])
+        try await manager.run()
+    }
+
+    @Test
     func blockedLoadTest() async throws {
         var server = try HTTPServer(protocol: .http) {
             Route("/", headerFields: ["Content-Type": "text/html"]) {

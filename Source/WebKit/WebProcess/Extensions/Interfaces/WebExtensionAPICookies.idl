@@ -86,6 +86,8 @@ dictionary WebExtensionCookieSetDetails {
 
     void getAllCookieStores([Optional, CallbackHandler] function callback);
 
+    [ImplementedAs=sameSiteStatus] readonly attribute any SameSiteStatus;
+
     readonly attribute WebExtensionAPIEvent onChanged;
 
 };

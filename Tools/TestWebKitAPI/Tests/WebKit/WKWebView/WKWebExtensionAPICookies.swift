@@ -67,6 +67,24 @@ struct WKWebExtensionAPICookiesTests {
     }
 
     @Test
+    func sameSiteStatusEnum() async throws {
+        let backgroundScript = """
+            browser.test.assertEq(typeof browser.cookies.SameSiteStatus, 'object', 'SameSiteStatus should be an object')
+
+            browser.test.assertEq(browser.cookies.SameSiteStatus.NO_RESTRICTION, 'no_restriction', 'NO_RESTRICTION should be defined')
+            browser.test.assertEq(browser.cookies.SameSiteStatus.LAX, 'lax', 'LAX should be defined')
+            browser.test.assertEq(browser.cookies.SameSiteStatus.STRICT, 'strict', 'STRICT should be defined')
+
+            browser.test.assertDeepEq(Object.keys(browser.cookies.SameSiteStatus).sort(), [ 'LAX', 'NO_RESTRICTION', 'STRICT' ], 'SameSiteStatus should only define the supported values')
+
+            browser.test.notifyPass()
+            """
+
+        let manager = try loadWebExtension(manifest: cookiesManifest, resources: ["background.js": backgroundScript])
+        try await manager.run()
+    }
+
+    @Test
     func errorsRead() async throws {
         let backgroundScript = """
             browser.test.assertThrows(() => browser.cookies.get({ url: 123, name: 'Test' }), /'url' is expected to be a string, but a number was provided/i)

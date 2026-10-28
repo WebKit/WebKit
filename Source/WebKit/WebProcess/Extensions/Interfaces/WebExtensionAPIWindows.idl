@@ -95,6 +95,10 @@ dictionary WebExtensionWindowUpdateInfo {
     [ImplementedAs=windowIdentifierNone] readonly attribute double WINDOW_ID_NONE;
     [ImplementedAs=windowIdentifierCurrent] readonly attribute double WINDOW_ID_CURRENT;
 
+    [ImplementedAs=createType] readonly attribute any CreateType;
+    [ImplementedAs=windowState] readonly attribute any WindowState;
+    [ImplementedAs=windowType] readonly attribute any WindowType;
+
     readonly attribute WebExtensionAPIWindowsEvent onCreated;
     readonly attribute WebExtensionAPIWindowsEvent onRemoved;
     readonly attribute WebExtensionAPIWindowsEvent onFocusChanged;

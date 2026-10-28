@@ -41,6 +41,8 @@ dictionary WebExtensionViewFilter {
 
     [ImplementedAs=isInIncognitoContext, NeedsPage] readonly attribute boolean inIncognitoContext;
 
+    [ImplementedAs=viewType] readonly attribute any ViewType;
+
     [MainWorldOnly] void isAllowedIncognitoAccess([Optional, CallbackHandler] function callback);
     [MainWorldOnly] void isAllowedFileSchemeAccess([Optional, CallbackHandler] function callback);
 

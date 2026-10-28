@@ -4457,6 +4457,7 @@
 		1C5DC464290B23890061EC62 /* WebExtensionAPIRuntimeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIRuntimeCocoa.mm; sourceTree = "<group>"; };
 		1C5DC465290B23890061EC62 /* WebExtensionAPIExtensionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIExtensionCocoa.mm; sourceTree = "<group>"; };
 		1C5DC468290B239C0061EC62 /* WebExtensionAPIExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIExtension.h; sourceTree = "<group>"; };
+		494E978AB6C31C2D8B82464E /* WebExtensionAPIRuntime.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionAPIRuntime.cpp; sourceTree = "<group>"; };
 		1C5DC469290B239C0061EC62 /* WebExtensionAPIRuntime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIRuntime.h; sourceTree = "<group>"; };
 		1C627477288A1DDE00CED3A2 /* WebExtensionCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionCocoa.mm; sourceTree = "<group>"; };
 		1C62747B288B4C3E00CED3A2 /* CocoaHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaHelpers.h; sourceTree = "<group>"; };
@@ -11336,6 +11337,7 @@
 				3365E6723023E5C0003166AA /* WebExtensionAPIOffscreen.h */,
 				B65DA1D1294BC25300DB503A /* WebExtensionAPIPermissions.h */,
 				1C9A15C92ABDEF13002CC12A /* WebExtensionAPIPort.h */,
+				494E978AB6C31C2D8B82464E /* WebExtensionAPIRuntime.cpp */,
 				1C5DC469290B239C0061EC62 /* WebExtensionAPIRuntime.h */,
 				B62FB8622AA9180C00E61418 /* WebExtensionAPIScripting.h */,
 				029D6BAB2C4060920068CF99 /* WebExtensionAPISidebarAction.h */,

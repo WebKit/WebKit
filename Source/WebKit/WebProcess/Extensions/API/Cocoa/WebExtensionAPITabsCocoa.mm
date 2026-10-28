@@ -163,6 +163,30 @@ static bool parseTabIdentifiers(NSObject *tabIDs, Vector<WebExtensionTabIdentifi
     return true;
 }
 
+SUPPRESS_NODELETE NSDictionary *WebExtensionAPITabs::tabStatus()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/TabStatus
+
+    static NSDictionary *statuses = @{
+        @"LOADING": loadingKey,
+        @"COMPLETE": completeKey,
+    };
+
+    return statuses;
+}
+
+SUPPRESS_NODELETE NSDictionary *WebExtensionAPITabs::windowType()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/WindowType
+
+    static NSDictionary *types = @{
+        @"NORMAL": normalKey,
+        @"POPUP": popupKey,
+    };
+
+    return types;
+}
+
 bool WebExtensionAPITabs::parseTabCreateOptions(NSDictionary *options, WebExtensionTabParameters& parameters, NSString *sourceKey, NSString **outExceptionString)
 {
     if (!parseTabUpdateOptions(options, parameters, sourceKey, outExceptionString))

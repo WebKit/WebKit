@@ -153,6 +153,44 @@ static inline std::optional<WebExtensionWindow::State> toStateImpl(NSString *sta
     return std::nullopt;
 }
 
+SUPPRESS_NODELETE NSDictionary *WebExtensionAPIWindows::createType()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/CreateType
+
+    static NSDictionary *types = @{
+        @"NORMAL": normalKey,
+        @"POPUP": popupKey,
+    };
+
+    return types;
+}
+
+SUPPRESS_NODELETE NSDictionary *WebExtensionAPIWindows::windowState()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/WindowState
+
+    static NSDictionary *states = @{
+        @"NORMAL": normalKey,
+        @"MINIMIZED": minimizedKey,
+        @"MAXIMIZED": maximizedKey,
+        @"FULLSCREEN": fullscreenKey,
+    };
+
+    return states;
+}
+
+SUPPRESS_NODELETE NSDictionary *WebExtensionAPIWindows::windowType()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/WindowType
+
+    static NSDictionary *types = @{
+        @"NORMAL": normalKey,
+        @"POPUP": popupKey,
+    };
+
+    return types;
+}
+
 bool WebExtensionAPIWindows::parsePopulateTabs(NSDictionary *options, PopulateTabs& populate, NSString *sourceKey, NSString **outExceptionString)
 {
     static NSDictionary<NSString *, id> *types = @{

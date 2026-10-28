@@ -69,6 +69,9 @@ dictionary WebExtensionDNRTabUpdateOptions {
     [ImplementedAs=maxNumberOfEnabledRulesets] readonly attribute double MAX_NUMBER_OF_ENABLED_STATIC_RULESETS;
     [ImplementedAs=maxNumberOfDynamicAndSessionRules] readonly attribute double MAX_NUMBER_OF_DYNAMIC_AND_SESSION_RULES;
 
+    [ImplementedAs=resourceType] readonly attribute any ResourceType;
+    [ImplementedAs=unsupportedRegexReason] readonly attribute any UnsupportedRegexReason;
+
     // FIXME: <rdar://71865986> Define MAX_NUMBER_OF_RULES.
     // FIXME: <rdar://71868241> Define other constants.
 };

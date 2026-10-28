@@ -154,6 +154,18 @@ NSArray *WebExtensionAPIExtension::getViews(JSContextRef context, NSDictionary *
     return [result copy];
 }
 
+SUPPRESS_NODELETE NSDictionary *WebExtensionAPIExtension::viewType()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/ViewType
+
+    static NSDictionary *types = @{
+        @"POPUP": popupKey,
+        @"TAB": tabKey,
+    };
+
+    return types;
+}
+
 bool WebExtensionAPIExtension::isInIncognitoContext(WebPage& page)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/inIncognitoContext

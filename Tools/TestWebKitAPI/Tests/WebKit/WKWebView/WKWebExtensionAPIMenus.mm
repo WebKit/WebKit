@@ -68,6 +68,78 @@ static auto *menusManifest = @{
     },
 };
 
+TEST(WKWebExtensionAPIMenus, ContextType)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(typeof browser.menus.ContextType, 'object', 'ContextType should be an object')",
+
+        @"browser.test.assertEq(browser.menus.ContextType.ALL, 'all', 'ALL should be defined')",
+        @"browser.test.assertEq(browser.menus.ContextType.PAGE, 'page', 'PAGE should be defined')",
+        @"browser.test.assertEq(browser.menus.ContextType.FRAME, 'frame', 'FRAME should be defined')",
+        @"browser.test.assertEq(browser.menus.ContextType.SELECTION, 'selection', 'SELECTION should be defined')",
+        @"browser.test.assertEq(browser.menus.ContextType.LINK, 'link', 'LINK should be defined')",
+        @"browser.test.assertEq(browser.menus.ContextType.EDITABLE, 'editable', 'EDITABLE should be defined')",
+        @"browser.test.assertEq(browser.menus.ContextType.IMAGE, 'image', 'IMAGE should be defined')",
+        @"browser.test.assertEq(browser.menus.ContextType.VIDEO, 'video', 'VIDEO should be defined')",
+        @"browser.test.assertEq(browser.menus.ContextType.AUDIO, 'audio', 'AUDIO should be defined')",
+        @"browser.test.assertEq(browser.menus.ContextType.ACTION, 'action', 'ACTION should be defined')",
+        @"browser.test.assertEq(browser.menus.ContextType.BROWSER_ACTION, 'browser_action', 'BROWSER_ACTION should be defined')",
+        @"browser.test.assertEq(browser.menus.ContextType.PAGE_ACTION, 'page_action', 'PAGE_ACTION should be defined')",
+        @"browser.test.assertEq(browser.menus.ContextType.TAB, 'tab', 'TAB should be defined')",
+
+        @"browser.test.assertDeepEq(Object.keys(browser.menus.ContextType).sort(), [ 'ACTION', 'ALL', 'AUDIO', 'BROWSER_ACTION', 'EDITABLE', 'FRAME', 'IMAGE', 'LINK', 'PAGE', 'PAGE_ACTION', 'SELECTION', 'TAB', 'VIDEO' ], 'ContextType should only define the supported values')",
+
+        @"browser.test.assertEq(typeof browser.contextMenus.ContextType, 'object', 'ContextType should be an object')",
+
+        @"browser.test.assertEq(browser.contextMenus.ContextType.ALL, 'all', 'ALL should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ContextType.PAGE, 'page', 'PAGE should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ContextType.FRAME, 'frame', 'FRAME should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ContextType.SELECTION, 'selection', 'SELECTION should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ContextType.LINK, 'link', 'LINK should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ContextType.EDITABLE, 'editable', 'EDITABLE should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ContextType.IMAGE, 'image', 'IMAGE should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ContextType.VIDEO, 'video', 'VIDEO should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ContextType.AUDIO, 'audio', 'AUDIO should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ContextType.ACTION, 'action', 'ACTION should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ContextType.BROWSER_ACTION, 'browser_action', 'BROWSER_ACTION should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ContextType.PAGE_ACTION, 'page_action', 'PAGE_ACTION should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ContextType.TAB, 'tab', 'TAB should be defined')",
+
+        @"browser.test.assertDeepEq(Object.keys(browser.contextMenus.ContextType).sort(), [ 'ACTION', 'ALL', 'AUDIO', 'BROWSER_ACTION', 'EDITABLE', 'FRAME', 'IMAGE', 'LINK', 'PAGE', 'PAGE_ACTION', 'SELECTION', 'TAB', 'VIDEO' ], 'ContextType should only define the supported values')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIMenus, ItemType)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(typeof browser.menus.ItemType, 'object', 'ItemType should be an object')",
+
+        @"browser.test.assertEq(browser.menus.ItemType.NORMAL, 'normal', 'NORMAL should be defined')",
+        @"browser.test.assertEq(browser.menus.ItemType.CHECKBOX, 'checkbox', 'CHECKBOX should be defined')",
+        @"browser.test.assertEq(browser.menus.ItemType.RADIO, 'radio', 'RADIO should be defined')",
+        @"browser.test.assertEq(browser.menus.ItemType.SEPARATOR, 'separator', 'SEPARATOR should be defined')",
+
+        @"browser.test.assertDeepEq(Object.keys(browser.menus.ItemType).sort(), [ 'CHECKBOX', 'NORMAL', 'RADIO', 'SEPARATOR' ], 'ItemType should only define the supported values')",
+
+        @"browser.test.assertEq(typeof browser.contextMenus.ItemType, 'object', 'ItemType should be an object')",
+
+        @"browser.test.assertEq(browser.contextMenus.ItemType.NORMAL, 'normal', 'NORMAL should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ItemType.CHECKBOX, 'checkbox', 'CHECKBOX should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ItemType.RADIO, 'radio', 'RADIO should be defined')",
+        @"browser.test.assertEq(browser.contextMenus.ItemType.SEPARATOR, 'separator', 'SEPARATOR should be defined')",
+
+        @"browser.test.assertDeepEq(Object.keys(browser.contextMenus.ItemType).sort(), [ 'CHECKBOX', 'NORMAL', 'RADIO', 'SEPARATOR' ], 'ItemType should only define the supported values')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+}
+
 TEST(WKWebExtensionAPIMenus, Errors)
 {
     auto *backgroundScript = Util::constructScript(@[

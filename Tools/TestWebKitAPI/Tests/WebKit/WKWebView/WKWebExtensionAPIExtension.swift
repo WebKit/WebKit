@@ -81,6 +81,23 @@ struct WKWebExtensionAPIExtensionTests {
     ]
 
     @Test
+    func viewTypeEnum() async throws {
+        let backgroundScript = """
+            browser.test.assertEq(typeof browser.extension.ViewType, 'object', 'ViewType should be an object')
+
+            browser.test.assertEq(browser.extension.ViewType.POPUP, 'popup', 'POPUP should be defined')
+            browser.test.assertEq(browser.extension.ViewType.TAB, 'tab', 'TAB should be defined')
+
+            browser.test.assertDeepEq(Object.keys(browser.extension.ViewType).sort(), [ 'POPUP', 'TAB' ], 'ViewType should only define the supported values')
+
+            browser.test.notifyPass()
+            """
+
+        let manager = try loadWebExtension(manifest: extensionManifest, resources: ["background.js": backgroundScript])
+        try await manager.run()
+    }
+
+    @Test
     func getURL() async throws {
         let baseURLString = "test-extension://76C788B8-3374-400D-8259-40E5B9DF79D3"
 

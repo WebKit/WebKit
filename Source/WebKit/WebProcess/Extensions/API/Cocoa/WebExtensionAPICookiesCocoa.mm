@@ -180,6 +180,19 @@ std::optional<WebExtensionAPICookies::ParsedDetails> WebExtensionAPICookies::par
     return { { sessionID, name, url } };
 }
 
+SUPPRESS_NODELETE NSDictionary *WebExtensionAPICookies::sameSiteStatus()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/cookies/SameSiteStatus
+
+    static NSDictionary *statuses = @{
+        @"NO_RESTRICTION": noRestrictionKey,
+        @"LAX": laxKey,
+        @"STRICT": strictKey,
+    };
+
+    return statuses;
+}
+
 void WebExtensionAPICookies::get(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/cookies/get

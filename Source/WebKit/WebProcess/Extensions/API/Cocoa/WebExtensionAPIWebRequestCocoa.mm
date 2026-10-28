@@ -42,6 +42,29 @@
 
 namespace WebKit {
 
+SUPPRESS_NODELETE NSDictionary *WebExtensionAPIWebRequest::resourceType()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/ResourceType
+
+    static NSDictionary *types = @{
+        @"MAIN_FRAME": mainFrameKey,
+        @"SUB_FRAME": subFrameKey,
+        @"STYLESHEET": stylesheetKey,
+        @"SCRIPT": scriptKey,
+        @"IMAGE": imageKey,
+        @"FONT": fontKey,
+        @"OBJECT": objectKey,
+        @"XMLHTTPREQUEST": xmlhttprequestKey,
+        @"PING": pingKey,
+        @"CSP_REPORT": cspReportKey,
+        @"MEDIA": mediaKey,
+        @"WEBSOCKET": websocketKey,
+        @"OTHER": otherKey,
+    };
+
+    return types;
+}
+
 WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onBeforeRequest()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRequest

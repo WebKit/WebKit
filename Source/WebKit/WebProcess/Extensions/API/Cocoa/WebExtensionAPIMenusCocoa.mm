@@ -66,6 +66,43 @@ static id toMenuIdentifierWebAPI(const String& identifier)
     return identifier.createNSString().autorelease();
 }
 
+SUPPRESS_NODELETE NSDictionary *WebExtensionAPIMenus::contextType()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus/ContextType
+
+    static NSDictionary *types = @{
+        @"ALL": allKey,
+        @"PAGE": pageKey,
+        @"FRAME": frameKey,
+        @"SELECTION": selectionKey,
+        @"LINK": linkKey,
+        @"EDITABLE": editableKey,
+        @"IMAGE": imageKey,
+        @"VIDEO": videoKey,
+        @"AUDIO": audioKey,
+        @"ACTION": actionKey,
+        @"BROWSER_ACTION": browserActionKey,
+        @"PAGE_ACTION": pageActionKey,
+        @"TAB": tabKey,
+    };
+
+    return types;
+}
+
+SUPPRESS_NODELETE NSDictionary *WebExtensionAPIMenus::itemType()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus/ItemType
+
+    static NSDictionary *types = @{
+        @"NORMAL": normalKey,
+        @"CHECKBOX": checkboxKey,
+        @"RADIO": radioKey,
+        @"SEPARATOR": separatorKey,
+    };
+
+    return types;
+}
+
 bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, NSDictionary *properties, const URL& baseURL, std::optional<WebExtensionMenuItemParameters>& outParameters, RefPtr<WebExtensionCallbackHandler>& outClickCallback, NSString **outExceptionString)
 {
     static NSArray<NSString *> *requiredKeys = @[

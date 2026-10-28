@@ -56,6 +56,8 @@ public:
     NSURL *getURL(NSString *resourcePath, NSString **outExceptionString);
     JSValue *getBackgroundPage(JSContextRef);
     NSArray *getViews(JSContextRef, NSDictionary *filter, NSString **outExceptionString);
+
+    NSDictionary *LEGACY_NODELETE viewType();
 #endif
 
 private:

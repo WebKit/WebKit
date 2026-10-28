@@ -106,6 +106,38 @@ static auto *activeTabManifest = @{
     @"permissions": @[ @"activeTab" ],
 };
 
+TEST(WKWebExtensionAPITabs, TabStatus)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(typeof browser.tabs.TabStatus, 'object', 'TabStatus should be an object')",
+
+        @"browser.test.assertEq(browser.tabs.TabStatus.LOADING, 'loading', 'LOADING should be defined')",
+        @"browser.test.assertEq(browser.tabs.TabStatus.COMPLETE, 'complete', 'COMPLETE should be defined')",
+
+        @"browser.test.assertDeepEq(Object.keys(browser.tabs.TabStatus).sort(), [ 'COMPLETE', 'LOADING' ], 'TabStatus should only define the supported values')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPITabs, WindowType)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(typeof browser.tabs.WindowType, 'object', 'WindowType should be an object')",
+
+        @"browser.test.assertEq(browser.tabs.WindowType.NORMAL, 'normal', 'NORMAL should be defined')",
+        @"browser.test.assertEq(browser.tabs.WindowType.POPUP, 'popup', 'POPUP should be defined')",
+
+        @"browser.test.assertDeepEq(Object.keys(browser.tabs.WindowType).sort(), [ 'NORMAL', 'POPUP' ], 'WindowType should only define the supported values')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
+}
+
 TEST(WKWebExtensionAPITabs, Errors)
 {
     auto *backgroundScript = Util::constructScript(@[

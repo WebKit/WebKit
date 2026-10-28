@@ -63,6 +63,33 @@ static WKWebExtensionControllerConfiguration *configurationEnablingFeature(NSStr
 
 #if PLATFORM(MAC)
 
+TEST(WKWebExtensionAPIWebRequest, ResourceType)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(typeof browser.webRequest.ResourceType, 'object', 'ResourceType should be an object')",
+
+        @"browser.test.assertEq(browser.webRequest.ResourceType.MAIN_FRAME, 'main_frame', 'MAIN_FRAME should be defined')",
+        @"browser.test.assertEq(browser.webRequest.ResourceType.SUB_FRAME, 'sub_frame', 'SUB_FRAME should be defined')",
+        @"browser.test.assertEq(browser.webRequest.ResourceType.STYLESHEET, 'stylesheet', 'STYLESHEET should be defined')",
+        @"browser.test.assertEq(browser.webRequest.ResourceType.SCRIPT, 'script', 'SCRIPT should be defined')",
+        @"browser.test.assertEq(browser.webRequest.ResourceType.IMAGE, 'image', 'IMAGE should be defined')",
+        @"browser.test.assertEq(browser.webRequest.ResourceType.FONT, 'font', 'FONT should be defined')",
+        @"browser.test.assertEq(browser.webRequest.ResourceType.OBJECT, 'object', 'OBJECT should be defined')",
+        @"browser.test.assertEq(browser.webRequest.ResourceType.XMLHTTPREQUEST, 'xmlhttprequest', 'XMLHTTPREQUEST should be defined')",
+        @"browser.test.assertEq(browser.webRequest.ResourceType.PING, 'ping', 'PING should be defined')",
+        @"browser.test.assertEq(browser.webRequest.ResourceType.CSP_REPORT, 'csp_report', 'CSP_REPORT should be defined')",
+        @"browser.test.assertEq(browser.webRequest.ResourceType.MEDIA, 'media', 'MEDIA should be defined')",
+        @"browser.test.assertEq(browser.webRequest.ResourceType.WEBSOCKET, 'websocket', 'WEBSOCKET should be defined')",
+        @"browser.test.assertEq(browser.webRequest.ResourceType.OTHER, 'other', 'OTHER should be defined')",
+
+        @"browser.test.assertDeepEq(Object.keys(browser.webRequest.ResourceType).sort(), [ 'CSP_REPORT', 'FONT', 'IMAGE', 'MAIN_FRAME', 'MEDIA', 'OBJECT', 'OTHER', 'PING', 'SCRIPT', 'STYLESHEET', 'SUB_FRAME', 'WEBSOCKET', 'XMLHTTPREQUEST' ], 'ResourceType should only define the supported values')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(webRequestManifest, @{ @"background.js": backgroundScript });
+}
+
 TEST(WKWebExtensionAPIWebRequest, ManifestV2Persistent)
 {
     auto *backgroundScript = Util::constructScript(@[

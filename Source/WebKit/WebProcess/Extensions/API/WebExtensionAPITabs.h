@@ -85,6 +85,9 @@ public:
 
     double tabIdentifierNone() const { return -1; }
 
+    NSDictionary *LEGACY_NODELETE tabStatus();
+    NSDictionary *LEGACY_NODELETE windowType();
+
     WebExtensionAPIEvent& onActivated();
     WebExtensionAPIEvent& onAttached();
     WebExtensionAPIEvent& onCreated();

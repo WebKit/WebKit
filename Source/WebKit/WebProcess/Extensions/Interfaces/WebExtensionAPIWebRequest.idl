@@ -73,6 +73,8 @@ dictionary WebExtensionWebRequestDetails {
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPIWebRequest {
 
+    [ImplementedAs=resourceType] readonly attribute any ResourceType;
+
     readonly attribute WebExtensionAPIWebRequestEvent onBeforeRequest;
     readonly attribute WebExtensionAPIWebRequestEvent onBeforeSendHeaders;
     readonly attribute WebExtensionAPIWebRequestEvent onSendHeaders;

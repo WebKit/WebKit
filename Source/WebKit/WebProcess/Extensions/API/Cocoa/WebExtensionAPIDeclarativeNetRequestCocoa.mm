@@ -96,6 +96,38 @@ bool WebExtensionAPIDeclarativeNetRequest::isPropertyAllowed(const ASCIILiteral&
 }
 #endif
 
+SUPPRESS_NODELETE NSDictionary *WebExtensionAPIDeclarativeNetRequest::resourceType()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/declarativeNetRequest/ResourceType
+
+    static NSDictionary *types = @{
+        @"MAIN_FRAME": mainFrameKey,
+        @"SUB_FRAME": subFrameKey,
+        @"STYLESHEET": stylesheetKey,
+        @"SCRIPT": scriptKey,
+        @"IMAGE": imageKey,
+        @"FONT": fontKey,
+        @"XMLHTTPREQUEST": xmlhttprequestKey,
+        @"PING": pingKey,
+        @"MEDIA": mediaKey,
+        @"WEBSOCKET": websocketKey,
+        @"OTHER": otherKey,
+    };
+
+    return types;
+}
+
+SUPPRESS_NODELETE NSDictionary *WebExtensionAPIDeclarativeNetRequest::unsupportedRegexReason()
+{
+    // Documentation: https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest#type-UnsupportedRegexReason
+
+    static NSDictionary *reasons = @{
+        @"SYNTAX_ERROR": syntaxErrorKey,
+    };
+
+    return reasons;
+}
+
 void WebExtensionAPIDeclarativeNetRequest::updateEnabledRulesets(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     static NSDictionary<NSString *, id> *types = @{

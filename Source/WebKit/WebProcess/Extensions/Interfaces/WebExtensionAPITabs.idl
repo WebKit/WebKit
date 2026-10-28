@@ -108,6 +108,9 @@ dictionary WebExtensionTabCreateProperties {
 
     [ImplementedAs=tabIdentifierNone] readonly attribute double TAB_ID_NONE;
 
+    [ImplementedAs=tabStatus] readonly attribute any TabStatus;
+    [ImplementedAs=windowType] readonly attribute any WindowType;
+
     readonly attribute WebExtensionAPIEvent onActivated;
     readonly attribute WebExtensionAPIEvent onAttached;
     readonly attribute WebExtensionAPIEvent onCreated;

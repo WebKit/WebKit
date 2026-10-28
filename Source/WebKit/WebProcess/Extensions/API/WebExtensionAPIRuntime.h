@@ -77,6 +77,10 @@ public:
 
     JSValueRef LEGACY_NODELETE lastError();
 
+    JSValueRef onInstalledReason(JSContextRef);
+    JSValueRef platformArch(JSContextRef);
+    JSValueRef platformOS(JSContextRef);
+
     void sendMessage(WebPageProxyIdentifier, WebFrame&, const String& extensionID, const String& messageJSON, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
     RefPtr<WebExtensionAPIPort> connect(WebPageProxyIdentifier, WebFrame&, JSContextRef, const String& extensionID, RefPtr<JSON::Value> options, String& outExceptionString);
 

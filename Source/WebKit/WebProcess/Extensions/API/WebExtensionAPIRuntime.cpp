@@ -164,17 +164,17 @@ void WebExtensionAPIRuntime::getPlatformInfo(Ref<WebExtensionCallbackHandler>&& 
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getPlatformInfo
 
 #if PLATFORM(MAC)
-    static constexpr auto osValue = "mac"_s;
+    static constexpr auto osValue = macKey;
 #elif PLATFORM(IOS_FAMILY)
-    static constexpr auto osValue = "ios"_s;
+    static constexpr auto osValue = iosKey;
 #else
     static constexpr auto osValue = "unknown"_s;
 #endif
 
 #if CPU(X86_64)
-    static constexpr auto archValue = "x86-64"_s;
+    static constexpr auto archValue = x86_64Key;
 #elif CPU(ARM) || CPU(ARM64)
-    static constexpr auto archValue = "arm"_s;
+    static constexpr auto archValue = armKey;
 #else
     static constexpr auto archValue = "unknown"_s;
 #endif
@@ -292,6 +292,48 @@ JSValueRef WebExtensionAPIRuntime::lastError()
     m_lastErrorAccessed = true;
 
     return m_lastError.get();
+}
+
+static JSValueRef makeEnumObject(JSContextRef context, std::initializer_list<std::pair<ASCIILiteral, ASCIILiteral>> entries)
+{
+    auto globalContext = JSContextGetGlobalContext(context);
+
+    HashMap<String, Protected<JSValueRef>> object;
+    for (auto& [name, value] : entries)
+        object.add(String { name }, Protected(globalContext, JSValueMakeString(context, toJSString(value).get())));
+
+    return fromObject(context, WTF::move(object));
+}
+
+JSValueRef WebExtensionAPIRuntime::onInstalledReason(JSContextRef context)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/OnInstalledReason
+
+    return makeEnumObject(context, {
+        { "INSTALL"_s, installKey },
+        { "UPDATE"_s, updateKey },
+        { "BROWSER_UPDATE"_s, browserUpdateKey },
+    });
+}
+
+JSValueRef WebExtensionAPIRuntime::platformArch(JSContextRef context)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/PlatformArch
+
+    return makeEnumObject(context, {
+        { "ARM"_s, armKey },
+        { "X86_64"_s, x86_64Key },
+    });
+}
+
+JSValueRef WebExtensionAPIRuntime::platformOS(JSContextRef context)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/PlatformOs
+
+    return makeEnumObject(context, {
+        { "MAC"_s, macKey },
+        { "IOS"_s, iosKey },
+    });
 }
 
 void WebExtensionAPIRuntime::sendMessage(WebPageProxyIdentifier webPageProxyIdentifier, WebFrame& frame, const String& extensionID, const String& messageJSON, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
@@ -696,13 +738,13 @@ inline String toWebAPI(WebExtensionContext::InstallReason installReason)
         return nullString();
 
     case WebExtensionContext::InstallReason::ExtensionInstall:
-        return "install"_s;
+        return installKey;
 
     case WebExtensionContext::InstallReason::ExtensionUpdate:
-        return "update"_s;
+        return updateKey;
 
     case WebExtensionContext::InstallReason::BrowserUpdate:
-        return "browser_update"_s;
+        return browserUpdateKey;
     }
 
     ASSERT_NOT_REACHED();
