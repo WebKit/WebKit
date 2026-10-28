@@ -46,7 +46,6 @@
 #include "HTTPParsers.h"
 #include "HTTPStatusCodes.h"
 #include "InspectorNetworkAgent.h"
-#include "LinkLoader.h"
 #include "LoaderStrategy.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
@@ -519,9 +518,6 @@ void SubresourceLoader::didReceiveResponse(ResourceResponse&& response, Completi
         return;
 
     bool isResponseMultipart = response.isMultipart();
-    if (options().mode != FetchOptions::Mode::Navigate && frame && frame->document())
-        LinkLoader::loadLinksFromHeader(response.httpHeaderField(HTTPHeaderName::Link), response.url(), *protect(frame->document()), LinkLoader::MediaAttributeCheck::SkipMediaAttributeCheck);
-
     // https://wicg.github.io/nav-speculation/prefetch.html#clear-prefetch-cache
     if (frame && frame->settings().clearSiteDataHTTPHeaderEnabled()) {
         auto clearSiteDataValues = parseClearSiteDataHeader(response);

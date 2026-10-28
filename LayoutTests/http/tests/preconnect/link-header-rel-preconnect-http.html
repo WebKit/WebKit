@@ -5,18 +5,21 @@
 </head>
 <body>
 <script>
-description("Tests that Link header's rel=preconnect works as expected over HTTP.");
+description("Tests that Link header's rel=preconnect on a subresource is ignored.");
 jsTestIsAsync = true;
 
-// If the feature is not supported on this platform, fail without a timeout.
-if (!document.createElement("link").relList.supports("preconnect"))
-    finishJSTest();
-
+var preconnected = false;
 internals.setConsoleMessageListener(function() {
-    finishJSTest();
+    preconnected = true;
 });
 var script = document.createElement("script");
 script.src = "resources/header-preconnect.py";
+script.onload = script.onerror = function() {
+    setTimeout(function() {
+        shouldBeFalse("preconnected");
+        finishJSTest();
+    }, 500);
+};
 document.body.appendChild(script);
 </script>
 </body>

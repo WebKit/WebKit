@@ -1,4 +1,6 @@
 CONSOLE MESSAGE: Did not parse stylesheet at 'http://127.0.0.1:8000/preload/resources/dummy-preloads-subresource.css.py' because non CSS MIME types are not allowed in strict mode.
+PASS internals.isPreloaded("resources/dummy.js") is false
+PASS internals.isPreloaded("resources/dummy.js?media") is false
 PASS successfullyParsed is true
 
 TEST COMPLETE
