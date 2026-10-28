@@ -66,6 +66,15 @@ static bool didReceiveMessage = false;
 
 @implementation GamepadMessageHandler
 
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    didReceiveMessage = false;
+    return self;
+}
+
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     _messages.append(message.body);
@@ -472,7 +481,6 @@ TEST(Gamepad, Dualshock3Basic)
     [webView callAsyncJavaScript:@(pollGamepadStateFunction) arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:resultBlock];
 
     Util::run(&done);
-    didReceiveMessage = true;
 }
 
 // Disabled for now with GameController framework's handling because our virtual HID report isn't quite right
@@ -544,7 +552,6 @@ TEST(Gamepad, Stadia)
     [webView callAsyncJavaScript:@(pollGamepadStateFunction) arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:resultBlock];
 
     Util::run(&done);
-    didReceiveMessage = true;
 }
 #endif // #if !HAVE(WIDE_GAMECONTROLLER_SUPPORT)
 
@@ -635,7 +642,6 @@ TEST(Gamepad, LogitechBasic)
     [webView callAsyncJavaScript:@(pollGamepadStateFunction) arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:resultBlock];
 
     Util::run(&done);
-    didReceiveMessage = true;
 }
 
 TEST(Gamepad, FullInfoAfterConnection)
