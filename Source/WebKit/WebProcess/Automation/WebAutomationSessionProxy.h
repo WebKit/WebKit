@@ -120,7 +120,9 @@ private:
     void deleteCookie(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String cookieName, CompletionHandler<void(std::optional<String>)>&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
+    void getBidiRealmInfo(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<RealmIdentifier>&&)>&&);
     void addMessageToConsole(const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) override;
+    void sendScriptRealmCreated(WebCore::FrameIdentifier, RealmIdentifier, const WebCore::SecurityOriginData&);
     void scriptRealmCreated(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&) override;
     void scriptRealmDestroyed(WebCore::FrameIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
