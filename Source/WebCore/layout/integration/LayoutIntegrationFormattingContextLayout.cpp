@@ -99,15 +99,21 @@ static void updateGridItemBoxGeometry(const Layout::ElementBox& box, LayoutUnit 
     updater.updateBoxGeometryAfterIntegrationLayout(box, gridAreaInlineSize);
 }
 
-void layoutGridItemWithFormattingContext(const Layout::ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize, Layout::LayoutState& layoutState)
+void layoutGridItemWithFormattingContext(const Layout::ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize, std::optional<LayoutUnit> gridAreaBlockSize, Layout::LayoutState& layoutState)
 {
     ASSERT(box.isGridItem());
     CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
 
-    // A grid item's containing block is its grid area. Keep the grid area's inline size set on the renderer so
-    // descendants resolve percentage/calc sizes against it during layout, and resolve the item's own geometry
-    // against it below rather than against the grid container's content box.
+    // A grid item's containing block is its grid area. Keep the grid area's size set on the renderer so
+    // descendants resolve percentage/calc sizes and offsets against it during layout (including when the item
+    // computes its overflow), and resolve the item's own geometry against it below rather than against the grid
+    // container's content box.
     renderer->setGridAreaContentLogicalWidth(gridAreaInlineSize);
+    // A grid item measured while sizing the rows has no grid area block size yet. Leave it unset rather than
+    // set it to an indefinite size, which hasDefiniteLogicalHeightForPercentageResolutionFromStyle() would
+    // treat as definite.
+    if (gridAreaBlockSize)
+        renderer->setGridAreaContentLogicalHeight(*gridAreaBlockSize);
     layoutRendererWithOverridingBorderBoxSize(renderer.get(), overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight);
     updateGridItemBoxGeometry(box, gridAreaInlineSize, layoutState);
     renderer->clearGridAreaContentSize();

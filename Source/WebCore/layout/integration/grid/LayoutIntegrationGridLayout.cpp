@@ -30,6 +30,7 @@
 #include "GridFormattingContext.h"
 #include "GridItemRect.h"
 #include "GridLayoutConstraints.h"
+#include "GridLayoutUtils.h"
 #include "LayoutIntegrationBoxGeometryUpdater.h"
 #include "LayoutIntegrationBoxTreeUpdater.h"
 #include "RenderGrid.h"
@@ -59,6 +60,8 @@ GridLayout::~GridLayout()
 
 void GridLayout::updateFormattingContextGeometries()
 {
+    clearGridItemGridAreas();
+
     auto boxGeometryUpdater = BoxGeometryUpdater { protect(layoutState()), gridBox() };
     CheckedPtr gridBoxContainingBlock = CheckedRef { gridBoxRenderer() }->containingBlock();
 
@@ -204,6 +207,27 @@ void GridLayout::updateFormattingContextRootRendererBeforeLayout()
     gridBoxRenderer().currentGrid().setNeedsItemsPlacement(true);
 }
 
+void GridLayout::clearGridItemGridAreas()
+{
+    for (CheckedRef layoutBox : formattingContextBoxes(gridBox()))
+        CheckedRef { downcast<RenderBox>(*layoutBox->rendererForIntegration()) }->clearGridAreaContentSize();
+}
+
+// Some code (e.g. relative positioning) needs the grid areas after layout is done.
+void GridLayout::updateGridItemGridAreas(const Layout::UsedTrackSizes& usedTrackSizes, const Layout::GridItemRects& gridItemRects)
+{
+    CheckedRef renderGridStyle = gridBoxRenderer().style();
+    auto usedColumnGap = Layout::GridFormattingContext::usedGapValue(renderGridStyle->columnGap(), renderGridStyle.get());
+    auto usedRowGap = Layout::GridFormattingContext::usedGapValue(renderGridStyle->rowGap(), renderGridStyle.get());
+
+    for (auto& gridItemRect : gridItemRects) {
+        auto& lineNumbersForGridArea = gridItemRect.lineNumbersForGridArea;
+        CheckedRef renderer = downcast<RenderBox>(*gridItemRect.layoutBox->rendererForIntegration());
+        renderer->setGridAreaContentLogicalWidth(Layout::GridLayoutUtils::gridAreaDimensionSize(lineNumbersForGridArea.columnStartLine, lineNumbersForGridArea.columnEndLine, usedTrackSizes.columnSizes, usedColumnGap));
+        renderer->setGridAreaContentLogicalHeight(Layout::GridLayoutUtils::gridAreaDimensionSize(lineNumbersForGridArea.rowStartLine, lineNumbersForGridArea.rowEndLine, usedTrackSizes.rowSizes, usedRowGap));
+    }
+}
+
 void GridLayout::updateFormattingContextRootRenderer(LayoutUnit usedBlockContentSize, const Layout::GridItemRects& gridItemRects, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks)
 {
     CheckedRef renderGrid = gridBoxRenderer();
@@ -291,6 +315,7 @@ void GridLayout::layout()
         leadingImplicitColumnsCount, leadingImplicitRowsCount,
         collapsedColumnTracks, collapsedRowTracks ] = Layout::GridFormattingContext { gridBox(), protect(layoutState()) }.layout(gridLayoutConstraints);
     updateGridItemRenderers(previousGridItemRects);
+    updateGridItemGridAreas(usedTrackSizes, gridItemRects);
     updateFormattingContextRootRenderer(usedBlockContentSize, gridItemRects, autoRepeatColumnsCount, autoRepeatRowsCount, leadingImplicitColumnsCount, leadingImplicitRowsCount, collapsedColumnTracks, collapsedRowTracks);
     layoutOutOfFlowBoxes(usedTrackSizes, collapsedColumnTracks, collapsedRowTracks);
 
