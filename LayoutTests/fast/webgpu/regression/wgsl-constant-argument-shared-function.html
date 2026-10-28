@@ -1,0 +1,117 @@
+<script src="../../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("A function called both with a literal and with a runtime value is miscompiled on Apple GPU " +
+           "family 9 and later when the Metal frontend leaves it out of line: the literal call site comes " +
+           "out using the argument another call site passed. Runs the same compute shader twice over one " +
+           "16x16 workgroup, once with waveHeight's time argument written as the literal -10.0 and once as " +
+           "(inp.w - 12.0), which is also -10.0, and checks that every invocation agrees.");
+
+const shader = `
+@group(0) @binding(0) var<storage, read_write> out_buf : array<vec4f>;
+@group(0) @binding(1) var<uniform> inp : vec4f;
+
+fn wave(uv : vec2f, dir : vec2f, t : f32) -> f32 {
+    let v = sin(dot(uv, dir) * 10.0 + t * 1.2732395) * 0.5 + 0.5;
+    return v * v * 2.0 - 1.0;
+}
+
+fn waveHeight(uv_in : vec2f, time : f32, n : i32) -> f32 {
+    let uv = uv_in * 4.6;
+    let t = time - 8.0 * floor(time / 8.0);
+    var h = 0.0;
+    for (var i = 0; i < n; i++) {
+        let dir = vec2f(sin(f32(i)), cos(f32(i)));
+        h += mix(wave(uv, dir, t), wave(uv, dir, t - 8.0), clamp(t / 8.0, 0.0, 1.0));
+    }
+    return 0.5 + 0.5 * h;
+}
+
+fn waterHeight(p : vec3f, time : f32) -> f32 {
+    return waveHeight(p.xz * 0.1, time - 8.0 * floor(time / 8.0), 1);
+}
+
+fn normalAt(p : vec3f, time : f32) -> vec3f {
+    let a = vec3f(1.0, -1.0, -1.0);
+    return normalize(a * waterHeight(p + a * 0.001, time) + vec3f(waterHeight(p + 0.001, time)));
+}
+
+@compute @workgroup_size(16, 16)
+fn main(@builtin(global_invocation_id) gid : vec3u) {
+    let uv = (2.0 * (vec2f(gid.xy) + 0.5) - vec2f(840.0, 473.0)) / 473.0;
+    let ro = vec3f(0.0, 2.0, 0.0);
+    let cf = normalize(-ro);
+    let cr = normalize(cross(cf, vec3f(0.0, 0.0, 1.0)));
+    let rd = normalize(uv.x * cr + uv.y * normalize(cross(cr, cf)) + cf);
+    let p = ro + (-ro.y / rd.y) * rd;
+    let refr = refract(rd, normalAt(p, inp.w), 0.8333333);
+    let ground = (-0.1 + 1.8 * waveHeight(p.xz * 0.025 + 0.05, T_VALUE, 1)) / abs(refr.y);
+    out_buf[gid.y * 16u + gid.x] = vec4f(vec3f(ground), 1.0);
+}
+`;
+
+const invocationCount = 256;
+const bufferSize = invocationCount * 16;
+
+async function run(device, timeExpression)
+{
+    let module = device.createShaderModule({ code: shader.replace('T_VALUE', timeExpression) });
+    let pipeline = await device.createComputePipelineAsync({ layout: 'auto', compute: { module, entryPoint: 'main' } });
+    let out = device.createBuffer({ size: bufferSize, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+    let inp = device.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    let readback = device.createBuffer({ size: bufferSize, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(inp, 0, new Float32Array([0, 0, 0, 2]));
+    let bindGroup = device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(0),
+        entries: [
+            { binding: 0, resource: { buffer: out } },
+            { binding: 1, resource: { buffer: inp } },
+        ],
+    });
+    let commandEncoder = device.createCommandEncoder();
+    let computePassEncoder = commandEncoder.beginComputePass({});
+    computePassEncoder.setPipeline(pipeline);
+    computePassEncoder.setBindGroup(0, bindGroup);
+    computePassEncoder.dispatchWorkgroups(1, 1);
+    computePassEncoder.end();
+    commandEncoder.copyBufferToBuffer(out, 0, readback, 0, bufferSize);
+    device.queue.submit([commandEncoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    await readback.mapAsync(GPUMapMode.READ);
+    let values = [...new Float32Array(readback.getMappedRange())].filter((_, i) => i % 4 === 0);
+    readback.unmap();
+    return values;
+}
+
+async function main()
+{
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    let literal = await run(device, '-10.0');
+    let runtime = await run(device, '(inp.w - 12.0)');
+
+    window.literal = literal;
+    window.allFinite = literal.every(Number.isFinite) && runtime.every(Number.isFinite);
+    window.outputVaries = new Set(runtime.map(v => v.toFixed(4))).size > 1;
+    window.differingInvocations = literal.filter((v, i) => Math.abs(v - runtime[i]) > 1e-3).length;
+    shouldBe('literal.length', '256');
+    shouldBeTrue('allFinite');
+    shouldBeTrue('outputVaries');
+    shouldBe('differingInvocations', '0');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>
