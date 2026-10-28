@@ -172,6 +172,30 @@ static WebKitInputPurpose toWebKitPurpose(InputMethodState::Purpose purpose)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+static WebKitInputEnterKeyHint toWebKitEnterKeyHint(WebCore::EnterKeyHint hint)
+{
+    switch (hint) {
+    case WebCore::EnterKeyHint::Unspecified:
+        return WEBKIT_INPUT_ENTER_KEY_HINT_UNSPECIFIED;
+    case WebCore::EnterKeyHint::Enter:
+        return WEBKIT_INPUT_ENTER_KEY_HINT_ENTER;
+    case WebCore::EnterKeyHint::Done:
+        return WEBKIT_INPUT_ENTER_KEY_HINT_DONE;
+    case WebCore::EnterKeyHint::Go:
+        return WEBKIT_INPUT_ENTER_KEY_HINT_GO;
+    case WebCore::EnterKeyHint::Next:
+        return WEBKIT_INPUT_ENTER_KEY_HINT_NEXT;
+    case WebCore::EnterKeyHint::Previous:
+        return WEBKIT_INPUT_ENTER_KEY_HINT_PREVIOUS;
+    case WebCore::EnterKeyHint::Search:
+        return WEBKIT_INPUT_ENTER_KEY_HINT_SEARCH;
+    case WebCore::EnterKeyHint::Send:
+        return WEBKIT_INPUT_ENTER_KEY_HINT_SEND;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 static WebKitInputHints toWebKitHints(const OptionSet<InputMethodState::Hint>& hints)
 {
     unsigned wkHints = 0;
@@ -200,6 +224,7 @@ void InputMethodFilter::notifyContentType()
     g_object_freeze_notify(G_OBJECT(m_context.get()));
     webkit_input_method_context_set_input_purpose(m_context.get(), toWebKitPurpose(m_state->purpose));
     webkit_input_method_context_set_input_hints(m_context.get(), toWebKitHints(m_state->hints));
+    webkit_input_method_context_set_enter_key_hint(m_context.get(), toWebKitEnterKeyHint(m_state->enterKeyHint));
     g_object_thaw_notify(G_OBJECT(m_context.get()));
 }
 

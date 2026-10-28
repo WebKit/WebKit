@@ -584,6 +584,11 @@ public:
         return webkit_input_method_context_get_input_hints(WEBKIT_INPUT_METHOD_CONTEXT(m_context.get()));
     }
 
+    WebKitInputEnterKeyHint enterKeyHint() const
+    {
+        return webkit_input_method_context_get_enter_key_hint(WEBKIT_INPUT_METHOD_CONTEXT(m_context.get()));
+    }
+
     const char* surroundingText() const
     {
         return m_context->surroundingText;
@@ -2117,6 +2122,57 @@ static void testWebKitInputMethodContextReadOnlyChange(InputMethodTest* test, gc
     }
 }
 
+static void testWebKitInputMethodContextEnterKeyHint(InputMethodTest* test, gconstpointer)
+{
+    auto checkElement = [&](const char* element, WebKitInputEnterKeyHint enterKeyHint) {
+        test->loadHtml(element, nullptr);
+        test->waitUntilLoadFinished();
+        test->focusEditableAndWaitUntilInputMethodEnabled();
+        g_assert_cmpuint(test->enterKeyHint(), ==, enterKeyHint);
+        test->unfocusEditableAndWaitUntilInputMethodDisabled();
+    };
+
+    checkElement("<input id='editable' spellcheck='false'>", WEBKIT_INPUT_ENTER_KEY_HINT_UNSPECIFIED);
+    checkElement("<input id='editable' spellcheck='false' enterkeyhint='enter'>", WEBKIT_INPUT_ENTER_KEY_HINT_ENTER);
+    checkElement("<input id='editable' spellcheck='false' enterkeyhint='done'>", WEBKIT_INPUT_ENTER_KEY_HINT_DONE);
+    checkElement("<input id='editable' spellcheck='false' enterkeyhint='go'>", WEBKIT_INPUT_ENTER_KEY_HINT_GO);
+    checkElement("<input id='editable' spellcheck='false' enterkeyhint='next'>", WEBKIT_INPUT_ENTER_KEY_HINT_NEXT);
+    checkElement("<input id='editable' spellcheck='false' enterkeyhint='previous'>", WEBKIT_INPUT_ENTER_KEY_HINT_PREVIOUS);
+    checkElement("<input id='editable' spellcheck='false' enterkeyhint='search'>", WEBKIT_INPUT_ENTER_KEY_HINT_SEARCH);
+    checkElement("<input id='editable' spellcheck='false' enterkeyhint='send'>", WEBKIT_INPUT_ENTER_KEY_HINT_SEND);
+
+    // The attribute value is case-insensitive, and an invalid value is the same as a missing attribute.
+    checkElement("<input id='editable' spellcheck='false' enterkeyhint='SEARCH'>", WEBKIT_INPUT_ENTER_KEY_HINT_SEARCH);
+    checkElement("<input id='editable' spellcheck='false' enterkeyhint='invalid'>", WEBKIT_INPUT_ENTER_KEY_HINT_UNSPECIFIED);
+
+    // The hint is independent of the purpose.
+    checkElement("<input id='editable' type='search' spellcheck='false'>", WEBKIT_INPUT_ENTER_KEY_HINT_UNSPECIFIED);
+    checkElement("<input id='editable' type='email' spellcheck='false' enterkeyhint='send'>", WEBKIT_INPUT_ENTER_KEY_HINT_SEND);
+
+    checkElement("<textarea id='editable' spellcheck='false' enterkeyhint='send'></textarea>", WEBKIT_INPUT_ENTER_KEY_HINT_SEND);
+    checkElement("<div id='editable' contenteditable spellcheck='false' enterkeyhint='next'></div>", WEBKIT_INPUT_ENTER_KEY_HINT_NEXT);
+}
+
+static void testWebKitInputMethodContextEnterKeyHintFocusChange(InputMethodTest* test, gconstpointer)
+{
+    // The fields differ only in their enterkeyhint, so the embedder gets no focus out when the focus
+    // moves between them, but it should still get the hint of the new field.
+    test->loadHtml("<style>*{position:absolute;left:0;width:200px;height:30px;margin:0;padding:0;border:0}</style>"
+        "<input id='first' style='top:0' spellcheck='false' enterkeyhint='next'>"
+        "<input id='second' style='top:50px' spellcheck='false' enterkeyhint='search'>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->clickMouseButton(20, 15);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'first'");
+    test->waitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->enterKeyHint(), ==, WEBKIT_INPUT_ENTER_KEY_HINT_NEXT);
+
+    test->clickMouseButton(20, 65);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'second'");
+    test->waitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->enterKeyHint(), ==, WEBKIT_INPUT_ENTER_KEY_HINT_SEARCH);
+}
+
 static void testWebKitInputMethodContextInputModeChange(InputMethodTest* test, gconstpointer)
 {
     // The button changes the inputmode of the field from its click handler. It does not take the focus.
@@ -2329,6 +2385,8 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "read-only-change", testWebKitInputMethodContextReadOnlyChange);
     InputMethodTest::add("WebKitInputMethodContext", "input-mode", testWebKitInputMethodContextInputMode);
     InputMethodTest::add("WebKitInputMethodContext", "input-mode-change", testWebKitInputMethodContextInputModeChange);
+    InputMethodTest::add("WebKitInputMethodContext", "enter-key-hint", testWebKitInputMethodContextEnterKeyHint);
+    InputMethodTest::add("WebKitInputMethodContext", "enter-key-hint-focus-change", testWebKitInputMethodContextEnterKeyHintFocusChange);
     InputMethodTest::add("WebKitInputMethodContext", "type-change", testWebKitInputMethodContextTypeChange);
 }
 

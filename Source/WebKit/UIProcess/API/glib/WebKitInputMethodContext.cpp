@@ -51,6 +51,7 @@ enum {
     PROP_0,
     PROP_INPUT_PURPOSE,
     PROP_INPUT_HINTS,
+    PROP_ENTER_KEY_HINT,
     N_PROPERTIES,
 };
 
@@ -140,6 +141,7 @@ struct _WebKitInputMethodContextPrivate {
     WebKitWebView* webView;
     WebKitInputPurpose purpose;
     WebKitInputHints hints;
+    WebKitInputEnterKeyHint enterKeyHint;
 };
 
 static std::array<unsigned, LAST_SIGNAL> signals;
@@ -191,6 +193,9 @@ static void webkitInputMethodContextSetProperty(GObject* object, guint propId, c
     case PROP_INPUT_HINTS:
         webkit_input_method_context_set_input_hints(context, static_cast<WebKitInputHints>(g_value_get_flags(value)));
         break;
+    case PROP_ENTER_KEY_HINT:
+        webkit_input_method_context_set_enter_key_hint(context, static_cast<WebKitInputEnterKeyHint>(g_value_get_enum(value)));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -206,6 +211,9 @@ static void webkitInputMethodContextGetProperty(GObject* object, guint propId, G
         break;
     case PROP_INPUT_HINTS:
         g_value_set_flags(value, webkit_input_method_context_get_input_hints(context));
+        break;
+    case PROP_ENTER_KEY_HINT:
+        g_value_set_enum(value, webkit_input_method_context_get_enter_key_hint(context));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -248,6 +256,21 @@ static void webkit_input_method_context_class_init(WebKitInputMethodContextClass
             nullptr, nullptr,
             WEBKIT_TYPE_INPUT_HINTS,
             WEBKIT_INPUT_HINT_NONE,
+            WEBKIT_PARAM_READWRITE);
+
+    /**
+     * WebKitInputMethodContext:enter-key-hint:
+     *
+     * The #WebKitInputEnterKeyHint of the input associated with this context.
+     *
+     * Since: 2.56
+     */
+    sObjProperties[PROP_ENTER_KEY_HINT] =
+        g_param_spec_enum(
+            "enter-key-hint",
+            nullptr, nullptr,
+            WEBKIT_TYPE_INPUT_ENTER_KEY_HINT,
+            WEBKIT_INPUT_ENTER_KEY_HINT_UNSPECIFIED,
             WEBKIT_PARAM_READWRITE);
 
     g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
@@ -594,4 +617,41 @@ void webkit_input_method_context_set_input_hints(WebKitInputMethodContext* conte
 
     context->priv->hints = hints;
     g_object_notify_by_pspec(G_OBJECT(context), sObjProperties[PROP_INPUT_HINTS]);
+}
+
+/**
+ * webkit_input_method_context_get_enter_key_hint:
+ * @context: a #WebKitInputMethodContext
+ *
+ * Get the value of the #WebKitInputMethodContext:enter-key-hint property.
+ *
+ * Returns: the #WebKitInputEnterKeyHint of the input associated with @context
+ *
+ * Since: 2.56
+ */
+WebKitInputEnterKeyHint webkit_input_method_context_get_enter_key_hint(WebKitInputMethodContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_INPUT_METHOD_CONTEXT(context), WEBKIT_INPUT_ENTER_KEY_HINT_UNSPECIFIED);
+
+    return context->priv->enterKeyHint;
+}
+
+/**
+ * webkit_input_method_context_set_enter_key_hint:
+ * @context: a #WebKitInputMethodContext
+ * @hint: a #WebKitInputEnterKeyHint
+ *
+ * Set the value of the #WebKitInputMethodContext:enter-key-hint property.
+ *
+ * Since: 2.56
+ */
+void webkit_input_method_context_set_enter_key_hint(WebKitInputMethodContext* context, WebKitInputEnterKeyHint hint)
+{
+    g_return_if_fail(WEBKIT_IS_INPUT_METHOD_CONTEXT(context));
+
+    if (context->priv->enterKeyHint == hint)
+        return;
+
+    context->priv->enterKeyHint = hint;
+    g_object_notify_by_pspec(G_OBJECT(context), sObjProperties[PROP_ENTER_KEY_HINT]);
 }

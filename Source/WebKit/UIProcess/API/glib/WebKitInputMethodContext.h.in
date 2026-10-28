@@ -111,6 +111,42 @@ typedef enum {
     WEBKIT_INPUT_HINT_PRIVATE             = 1 << 6
 } WebKitInputHints;
 
+/**
+ * WebKitInputEnterKeyHint:
+ * @WEBKIT_INPUT_ENTER_KEY_HINT_UNSPECIFIED: No enter key action was requested
+ * @WEBKIT_INPUT_ENTER_KEY_HINT_ENTER: Insert a new line
+ * @WEBKIT_INPUT_ENTER_KEY_HINT_DONE: Nothing more to input, close the input method
+ * @WEBKIT_INPUT_ENTER_KEY_HINT_GO: Take the user to the target of the typed text
+ * @WEBKIT_INPUT_ENTER_KEY_HINT_NEXT: Take the user to the next field accepting text
+ * @WEBKIT_INPUT_ENTER_KEY_HINT_PREVIOUS: Take the user to the previous field accepting text
+ * @WEBKIT_INPUT_ENTER_KEY_HINT_SEARCH: Take the user to the results of the typed search terms
+ * @WEBKIT_INPUT_ENTER_KEY_HINT_SEND: Deliver the typed text to its target
+ *
+ * Enum values used to describe the action of the “Enter” key of the active
+ * editable element, as requested by its [`enterkeyhint` HTML
+ * attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/enterkeyhint).
+ * Input methods can use it to choose the label of the “Enter” key of an
+ * on-screen keyboard.
+ *
+ * Unlike [enum@InputPurpose], this does not indicate which characters the
+ * element expects. When the value is different from
+ * %WEBKIT_INPUT_ENTER_KEY_HINT_UNSPECIFIED, input methods should prefer it to
+ * any “Enter” key action they derive from the purpose, like the one of
+ * %WEBKIT_INPUT_PURPOSE_SEARCH.
+ *
+ * Since: 2.56
+ */
+typedef enum {
+    WEBKIT_INPUT_ENTER_KEY_HINT_UNSPECIFIED,
+    WEBKIT_INPUT_ENTER_KEY_HINT_ENTER,
+    WEBKIT_INPUT_ENTER_KEY_HINT_DONE,
+    WEBKIT_INPUT_ENTER_KEY_HINT_GO,
+    WEBKIT_INPUT_ENTER_KEY_HINT_NEXT,
+    WEBKIT_INPUT_ENTER_KEY_HINT_PREVIOUS,
+    WEBKIT_INPUT_ENTER_KEY_HINT_SEARCH,
+    WEBKIT_INPUT_ENTER_KEY_HINT_SEND
+} WebKitInputEnterKeyHint;
+
 typedef struct _WebKitInputMethodUnderline      WebKitInputMethodUnderline;
 
 struct _WebKitInputMethodContextClass {
@@ -264,6 +300,13 @@ webkit_input_method_context_get_input_hints    (WebKitInputMethodContext   *cont
 WEBKIT_API void
 webkit_input_method_context_set_input_hints    (WebKitInputMethodContext   *context,
                                                 WebKitInputHints            hints);
+
+WEBKIT_API WebKitInputEnterKeyHint
+webkit_input_method_context_get_enter_key_hint (WebKitInputMethodContext   *context);
+
+WEBKIT_API void
+webkit_input_method_context_set_enter_key_hint (WebKitInputMethodContext   *context,
+                                                WebKitInputEnterKeyHint     hint);
 
 
 G_END_DECLS

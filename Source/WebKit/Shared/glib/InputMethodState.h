@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/AutocapitalizeTypes.h>
+#include <WebCore/EnterKeyHint.h>
 #include <WebCore/InputMode.h>
 #include <wtf/OptionSet.h>
 
@@ -70,6 +71,7 @@ struct InputMethodState {
     friend bool operator==(const InputMethodState&, const InputMethodState&) = default;
 
     Purpose purpose { Purpose::FreeForm };
+    WebCore::EnterKeyHint enterKeyHint { WebCore::EnterKeyHint::Unspecified };
     OptionSet<Hint> hints;
 };
 

@@ -47,5 +47,6 @@ header: "InputMethodState.h"
 
 struct WebKit::InputMethodState {
     WebKit::InputMethodState::Purpose purpose;
+    WebCore::EnterKeyHint enterKeyHint;
     OptionSet<WebKit::InputMethodState::Hint> hints;
 };

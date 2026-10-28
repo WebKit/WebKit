@@ -209,6 +209,10 @@ static std::optional<InputMethodState> inputMethodStateForElement(Element* eleme
 #endif
     }
 
+    // enterkeyhint applies to any HTML element, including a contenteditable host.
+    if (auto* htmlElement = dynamicDowncast<HTMLElement>(*element))
+        state.enterKeyHint = htmlElement->canonicalEnterKeyHint();
+
     if (element->isSpellCheckingEnabled())
         state.hints.add(InputMethodState::Hint::Spellcheck);
 

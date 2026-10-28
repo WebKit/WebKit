@@ -160,6 +160,7 @@ struct _WPEInputMethodContextPrivate {
     GWeakPtr<WPEView> view;
     WPEInputPurpose purpose;
     WPEInputHints hints;
+    WPEInputEnterKeyHint enterKeyHint;
 };
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WPEInputMethodContext, wpe_input_method_context, G_TYPE_OBJECT)
@@ -178,6 +179,7 @@ enum {
     PROP_VIEW,
     PROP_INPUT_PURPOSE,
     PROP_INPUT_HINTS,
+    PROP_ENTER_KEY_HINT,
     N_PROPERTIES
 };
 
@@ -198,6 +200,9 @@ static void wpeInputMethodContextSetProperty(GObject* object, guint propId, cons
     case PROP_INPUT_HINTS:
         wpe_input_method_context_set_input_hints(ime, static_cast<WPEInputHints>(g_value_get_flags(value)));
         break;
+    case PROP_ENTER_KEY_HINT:
+        wpe_input_method_context_set_enter_key_hint(ime, static_cast<WPEInputEnterKeyHint>(g_value_get_enum(value)));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -216,6 +221,9 @@ static void wpeInputMethodContextGetProperty(GObject* object, guint propId, GVal
         break;
     case PROP_INPUT_HINTS:
         g_value_set_flags(value, wpe_input_method_context_get_input_hints(ime));
+        break;
+    case PROP_ENTER_KEY_HINT:
+        g_value_set_enum(value, wpe_input_method_context_get_enter_key_hint(ime));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -268,6 +276,25 @@ static void wpe_input_method_context_class_init(WPEInputMethodContextClass* klas
             nullptr, nullptr,
             WPE_TYPE_INPUT_HINTS,
             WPE_INPUT_HINT_NONE,
+            static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
+
+    /**
+     * WPEInputMethodContext:enter-key-hint:
+     *
+     * The action of the enter key of the text field that the #WPEInputMethodContext
+     * is connected to.
+     *
+     * For example, this property can be used by on-screen keyboards to choose
+     * the label of the “Enter” key.
+     *
+     * Since: 2.56
+     */
+    sObjProperties[PROP_ENTER_KEY_HINT] =
+        g_param_spec_enum(
+            "enter-key-hint",
+            nullptr, nullptr,
+            WPE_TYPE_INPUT_ENTER_KEY_HINT,
+            WPE_INPUT_ENTER_KEY_HINT_UNSPECIFIED,
             static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
 
     g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
@@ -471,6 +498,43 @@ void wpe_input_method_context_set_input_hints(WPEInputMethodContext* context, WP
 
     context->priv->hints = hints;
     g_object_notify_by_pspec(G_OBJECT(context), sObjProperties[PROP_INPUT_HINTS]);
+}
+
+/**
+ * wpe_input_method_context_get_enter_key_hint:
+ * @context: a #WPEInputMethodContext
+ *
+ * Get the action of the enter key of the text field that @context is connected to.
+ *
+ * Returns: a #WPEInputEnterKeyHint
+ *
+ * Since: 2.56
+ */
+WPEInputEnterKeyHint wpe_input_method_context_get_enter_key_hint(WPEInputMethodContext* context)
+{
+    g_return_val_if_fail(WPE_IS_INPUT_METHOD_CONTEXT(context), WPE_INPUT_ENTER_KEY_HINT_UNSPECIFIED);
+
+    return context->priv->enterKeyHint;
+}
+
+/**
+ * wpe_input_method_context_set_enter_key_hint:
+ * @context: a #WPEInputMethodContext
+ * @hint: a #WPEInputEnterKeyHint
+ *
+ * Set the action of the enter key of the text field that @context is connected to.
+ *
+ * Since: 2.56
+ */
+void wpe_input_method_context_set_enter_key_hint(WPEInputMethodContext* context, WPEInputEnterKeyHint hint)
+{
+    g_return_if_fail(WPE_IS_INPUT_METHOD_CONTEXT(context));
+
+    if (context->priv->enterKeyHint == hint)
+        return;
+
+    context->priv->enterKeyHint = hint;
+    g_object_notify_by_pspec(G_OBJECT(context), sObjProperties[PROP_ENTER_KEY_HINT]);
 }
 
 /**

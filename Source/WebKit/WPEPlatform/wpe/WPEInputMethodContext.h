@@ -133,6 +133,39 @@ typedef enum
   WPE_INPUT_HINT_PRIVATE             = 1 << 11,
 } WPEInputHints;
 
+/**
+ * WPEInputEnterKeyHint:
+ * @WPE_INPUT_ENTER_KEY_HINT_UNSPECIFIED: No enter key action was requested
+ * @WPE_INPUT_ENTER_KEY_HINT_ENTER: Insert a new line
+ * @WPE_INPUT_ENTER_KEY_HINT_DONE: Nothing more to input, close the input method
+ * @WPE_INPUT_ENTER_KEY_HINT_GO: Take the user to the target of the typed text
+ * @WPE_INPUT_ENTER_KEY_HINT_NEXT: Take the user to the next field accepting text
+ * @WPE_INPUT_ENTER_KEY_HINT_PREVIOUS: Take the user to the previous field accepting text
+ * @WPE_INPUT_ENTER_KEY_HINT_SEARCH: Take the user to the results of the typed search terms
+ * @WPE_INPUT_ENTER_KEY_HINT_SEND: Deliver the typed text to its target
+ *
+ * Describes the action of the “Enter” key for an HTML element.
+ *
+ * For example, on-screen keyboards can use it to choose the label of the “Enter” key.
+ * Unlike [enum@InputPurpose], this does not indicate which characters
+ * the input element expects. When the value is different from %WPE_INPUT_ENTER_KEY_HINT_UNSPECIFIED,
+ * input methods should prefer it to any “Enter” key action they derive from
+ * the [enum@InputPurpose], like the one of %WPE_INPUT_PURPOSE_SEARCH.
+ *
+ * Since: 2.56
+ */
+typedef enum
+{
+  WPE_INPUT_ENTER_KEY_HINT_UNSPECIFIED,
+  WPE_INPUT_ENTER_KEY_HINT_ENTER,
+  WPE_INPUT_ENTER_KEY_HINT_DONE,
+  WPE_INPUT_ENTER_KEY_HINT_GO,
+  WPE_INPUT_ENTER_KEY_HINT_NEXT,
+  WPE_INPUT_ENTER_KEY_HINT_PREVIOUS,
+  WPE_INPUT_ENTER_KEY_HINT_SEARCH,
+  WPE_INPUT_ENTER_KEY_HINT_SEND,
+} WPEInputEnterKeyHint;
+
 typedef struct _WPEInputMethodUnderline WPEInputMethodUnderline;
 
 struct _WPEInputMethodContextClass
@@ -171,6 +204,9 @@ WPE_API void                     wpe_input_method_context_set_input_purpose  (WP
 WPE_API WPEInputHints            wpe_input_method_context_get_input_hints    (WPEInputMethodContext   *context);
 WPE_API void                     wpe_input_method_context_set_input_hints    (WPEInputMethodContext   *context,
                                                                               WPEInputHints            hints);
+WPE_API WPEInputEnterKeyHint     wpe_input_method_context_get_enter_key_hint (WPEInputMethodContext   *context);
+WPE_API void                     wpe_input_method_context_set_enter_key_hint (WPEInputMethodContext   *context,
+                                                                              WPEInputEnterKeyHint     hint);
 WPE_API void                     wpe_input_method_context_get_preedit_string (WPEInputMethodContext   *context,
                                                                               char                    **text,
                                                                               GList                   **underlines,
