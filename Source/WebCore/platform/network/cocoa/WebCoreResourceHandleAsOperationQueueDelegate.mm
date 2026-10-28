@@ -117,7 +117,17 @@ static bool LEGACY_NODELETE scheduledWithCustomRunLoopMode(const std::optional<S
     [super dealloc];
 }
 
+<<<<<<< HEAD
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)originalRedirectResponse
+=======
+- (RefPtr<WebCore::ResourceHandle>)handle
+{
+    Locker locker { m_lock };
+    return m_handle.get();
+}
+
+- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+>>>>>>> 4165e14b23f4 (WebCoreResourceHandleAsOperationQueueDelegate reads m_handle without holding m_lock)
 {
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
@@ -130,14 +140,24 @@ static bool LEGACY_NODELETE scheduledWithCustomRunLoopMode(const std::optional<S
 
 #if !LOG_DISABLED
     if ([redirectResponse isKindOfClass:[NSHTTPURLResponse class]])
+<<<<<<< HEAD
         LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:%d, Location:<%@>", m_handle.get(), connection, [newRequest description], static_cast<int>([(id)redirectResponse.get() statusCode]), [[(id)redirectResponse.get() allHeaderFields] objectForKey:@"Location"]);
+=======
+        LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:%d, Location:<%@>", self.handle.get(), connection, [newRequest description], static_cast<int>([(id)redirectResponse statusCode]), [[(id)redirectResponse allHeaderFields] objectForKey:@"Location"]);
+>>>>>>> 4165e14b23f4 (WebCoreResourceHandleAsOperationQueueDelegate reads m_handle without holding m_lock)
     else
-        LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:non-HTTP", m_handle.get(), connection, [newRequest description]);
+        LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:non-HTTP", self.handle.get(), connection, [newRequest description]);
 #endif
 
     auto protectedSelf = retainPtr(self);
+<<<<<<< HEAD
     auto work = [protectedSelf, newRequest = retainPtr(newRequest), redirectResponse] mutable {
         if (!protectedSelf->m_handle) {
+=======
+    auto work = [protectedSelf, newRequest = retainPtr(newRequest), redirectResponse = retainPtr(redirectResponse)] mutable {
+        RefPtr handle = [protectedSelf handle];
+        if (!handle) {
+>>>>>>> 4165e14b23f4 (WebCoreResourceHandleAsOperationQueueDelegate reads m_handle without holding m_lock)
             protectedSelf->m_requestResult = nullptr;
             protectedSelf->m_semaphore.signal();
             return;
@@ -146,20 +166,20 @@ static bool LEGACY_NODELETE scheduledWithCustomRunLoopMode(const std::optional<S
         ResourceResponse response(redirectResponse.get());
         ResourceRequest redirectRequest = newRequest.get();
         if ([newRequest HTTPBodyStream]) {
-            ASSERT(protectedSelf->m_handle->firstRequest().httpBody());
-            redirectRequest.setHTTPBody(protectedSelf->m_handle->firstRequest().httpBody());
+            ASSERT(handle->firstRequest().httpBody());
+            redirectRequest.setHTTPBody(handle->firstRequest().httpBody());
         }
-        if (protectedSelf->m_handle->firstRequest().httpContentType().isEmpty())
+        if (handle->firstRequest().httpContentType().isEmpty())
             redirectRequest.clearHTTPContentType();
 
         // Check if the redirected url is allowed to access the redirecting url's timing information.
-        if (!protectedSelf->m_handle->hasCrossOriginRedirect() && !WebCore::SecurityOrigin::create(redirectRequest.url())->canRequest(redirectResponse.get().URL, OriginAccessPatternsForWebProcess::singleton()))
-            protectedSelf->m_handle->markAsHavingCrossOriginRedirect();
-        protect(protectedSelf->m_handle.get())->checkTAO(response);
+        if (!handle->hasCrossOriginRedirect() && !WebCore::SecurityOrigin::create(redirectRequest.url())->canRequest(redirectResponse.get().URL, OriginAccessPatternsForWebProcess::singleton()))
+            handle->markAsHavingCrossOriginRedirect();
+        handle->checkTAO(response);
 
-        protectedSelf->m_handle->incrementRedirectCount();
+        handle->incrementRedirectCount();
 
-        protect(protectedSelf->m_handle.get())->willSendRequest(WTF::move(redirectRequest), WTF::move(response), [protectedSelf = WTF::move(protectedSelf)](ResourceRequest&& request) {
+        handle->willSendRequest(WTF::move(redirectRequest), WTF::move(response), [protectedSelf = WTF::move(protectedSelf)](ResourceRequest&& request) {
             protectedSelf->m_requestResult = request.nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody);
             protectedSelf->m_semaphore.signal();
         });
@@ -168,8 +188,8 @@ static bool LEGACY_NODELETE scheduledWithCustomRunLoopMode(const std::optional<S
     [self callFunctionOnMainThread:WTF::move(work)];
     m_semaphore.wait();
 
-    Locker locker { m_lock };
-    if (!m_handle)
+    RefPtr handle = [self handle];
+    if (!handle)
         return nil;
 
     RetainPtr<NSURLRequest> requestResult = m_requestResult;
@@ -188,14 +208,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
 
-    LOG(Network, "Handle %p delegate connection:%p didReceiveAuthenticationChallenge:%p", m_handle.get(), connection, challenge);
+    LOG(Network, "Handle %p delegate connection:%p didReceiveAuthenticationChallenge:%p", self.handle.get(), connection, challenge);
 
     auto work = [protectedSelf = retainPtr(self), challenge = retainPtr(challenge)] mutable {
-        if (!protectedSelf->m_handle) {
+        RefPtr handle = [protectedSelf handle];
+        if (!handle) {
             [[challenge sender] cancelAuthenticationChallenge:challenge.get()];
             return;
         }
-        protect(protectedSelf->m_handle.get())->didReceiveAuthenticationChallenge(core(challenge.get()));
+        handle->didReceiveAuthenticationChallenge(core(challenge.get()));
     };
 
     [self callFunctionOnMainThread:WTF::move(work)];
@@ -208,16 +229,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
 
-    LOG(Network, "Handle %p delegate connection:%p canAuthenticateAgainstProtectionSpace:%@://%@:%zd realm:%@ method:%@ %@%@", m_handle.get(), connection, [protectionSpace protocol], [protectionSpace host], [protectionSpace port], [protectionSpace realm], [protectionSpace authenticationMethod], [protectionSpace isProxy] ? @"proxy:" : @"", [protectionSpace isProxy] ? [protectionSpace proxyType] : @"");
+    LOG(Network, "Handle %p delegate connection:%p canAuthenticateAgainstProtectionSpace:%@://%@:%zd realm:%@ method:%@ %@%@", self.handle.get(), connection, [protectionSpace protocol], [protectionSpace host], [protectionSpace port], [protectionSpace realm], [protectionSpace authenticationMethod], [protectionSpace isProxy] ? @"proxy:" : @"", [protectionSpace isProxy] ? [protectionSpace proxyType] : @"");
 
     auto protectedSelf = retainPtr(self);
     auto work = [protectedSelf, protectionSpace = retainPtr(protectionSpace)] mutable {
-        if (!protectedSelf->m_handle) {
+        RefPtr handle = [protectedSelf handle];
+        if (!handle) {
             protectedSelf->m_boolResult = NO;
             protectedSelf->m_semaphore.signal();
             return;
         }
-        protect(protectedSelf->m_handle.get())->canAuthenticateAgainstProtectionSpace(ProtectionSpace(protectionSpace.get()), [protectedSelf = WTF::move(protectedSelf)](bool result) mutable {
+        handle->canAuthenticateAgainstProtectionSpace(ProtectionSpace(protectionSpace.get()), [protectedSelf = WTF::move(protectedSelf)](bool result) mutable {
             protectedSelf->m_boolResult = result;
             protectedSelf->m_semaphore.signal();
         });
@@ -226,8 +248,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [self callFunctionOnMainThread:WTF::move(work)];
     m_semaphore.wait();
 
-    Locker locker { m_lock };
-    if (!m_handle)
+    RefPtr handle = [self handle];
+    if (!handle)
         return NO;
 
     auto boolResult = m_boolResult;
@@ -243,11 +265,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     ASSERT(!isMainThread());
 
-    LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %zd, reported MIMEType '%s')", m_handle.get(), connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String]);
+    LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %zd, reported MIMEType '%s')", self.handle.get(), connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String]);
 
     auto protectedSelf = retainPtr(self);
     auto work = [protectedSelf, r = retainPtr(r), connection = retainPtr(connection)] mutable {
-        RefPtr handle = protectedSelf->m_handle.get();
+        RefPtr handle = [protectedSelf handle];
         if (!handle || !handle->client()) {
             protectedSelf->m_semaphore.signal();
             return;
@@ -290,10 +312,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     UNUSED_PARAM(connection);
     UNUSED_PARAM(lengthReceived);
 
-    LOG(Network, "Handle %p delegate connection:%p didReceiveData:%p lengthReceived:%lld", m_handle.get(), connection, data, lengthReceived);
+    LOG(Network, "Handle %p delegate connection:%p didReceiveData:%p lengthReceived:%lld", self.handle.get(), connection, data, lengthReceived);
 
     auto work = [protectedSelf = retainPtr(self), data = retainPtr(data)] mutable {
-        if (!protectedSelf->m_handle || !protectedSelf->m_handle->client())
+        RefPtr handle = [protectedSelf handle];
+        if (!handle || !handle->client())
             return;
         // FIXME: If we get more than 2B bytes in a single chunk, this code won't do the right thing.
         // However, with today's computers and networking speeds, this won't happen in practice.
@@ -302,7 +325,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=19793
         // -1 means we do not provide any data about transfer size to inspector so it would use
         // Content-Length headers or content size to show transfer size.
-        protectedSelf->m_handle->client()->didReceiveData(protect(protectedSelf->m_handle.get()), SharedBuffer::create(data.get()), -1);
+        handle->client()->didReceiveData(handle.get(), SharedBuffer::create(data.get()), -1);
     };
 
     [self callFunctionOnMainThread:WTF::move(work)];
@@ -314,12 +337,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     UNUSED_PARAM(connection);
     UNUSED_PARAM(bytesWritten);
 
-    LOG(Network, "Handle %p delegate connection:%p didSendBodyData:%zd totalBytesWritten:%zd totalBytesExpectedToWrite:%zd", m_handle.get(), connection, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
+    LOG(Network, "Handle %p delegate connection:%p didSendBodyData:%zd totalBytesWritten:%zd totalBytesExpectedToWrite:%zd", self.handle.get(), connection, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
 
     auto work = [protectedSelf = retainPtr(self), totalBytesWritten = totalBytesWritten, totalBytesExpectedToWrite = totalBytesExpectedToWrite] mutable {
-        if (!protectedSelf->m_handle || !protectedSelf->m_handle->client())
+        RefPtr handle = [protectedSelf handle];
+        if (!handle || !handle->client())
             return;
-        protectedSelf->m_handle->client()->didSendData(protect(protectedSelf->m_handle.get()), totalBytesWritten, totalBytesExpectedToWrite);
+        handle->client()->didSendData(handle.get(), totalBytesWritten, totalBytesExpectedToWrite);
     };
 
     [self callFunctionOnMainThread:WTF::move(work)];
@@ -330,13 +354,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
 
-    LOG(Network, "Handle %p delegate connectionDidFinishLoading:%p", m_handle.get(), connection);
+    LOG(Network, "Handle %p delegate connectionDidFinishLoading:%p", self.handle.get(), connection);
 
     auto work = [protectedSelf = retainPtr(self), connection = retainPtr(connection), timingData = retainPtr([connection _timingData])] mutable {
-        if (!protectedSelf->m_handle || !protectedSelf->m_handle->client())
+        RefPtr handle = [protectedSelf handle];
+        if (!handle || !handle->client())
             return;
 
-        if (auto metrics = protectedSelf->m_handle->networkLoadMetrics()) {
+        if (auto metrics = handle->networkLoadMetrics()) {
             if (double responseEndTime = [[timingData objectForKey:@"_kCFNTimingDataResponseEnd"] doubleValue])
                 metrics->responseEnd = WallTime::fromRawSeconds(adoptNS([[NSDate alloc] initWithTimeIntervalSinceReferenceDate:responseEndTime]).get().timeIntervalSince1970).approximate<MonotonicTime>();
             else
@@ -345,11 +370,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             metrics->responseBodyBytesReceived = [[timingData objectForKey:@"_kCFNTimingDataResponseBodyBytesReceived"] unsignedLongLongValue];
             metrics->responseBodyDecodedSize = [[timingData objectForKey:@"_kCFNTimingDataResponseBodyBytesDecoded"] unsignedLongLongValue];
             metrics->markComplete();
-            protectedSelf->m_handle->client()->didFinishLoading(protect(protectedSelf->m_handle.get()), *metrics);
+            handle->client()->didFinishLoading(handle.get(), *metrics);
         } else {
             NetworkLoadMetrics emptyMetrics;
             emptyMetrics.markComplete();
-            protectedSelf->m_handle->client()->didFinishLoading(protect(protectedSelf->m_handle.get()), emptyMetrics);
+            handle->client()->didFinishLoading(handle.get(), emptyMetrics);
         }
 
         if (protectedSelf->m_messageQueue) {
@@ -366,13 +391,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
 
-    LOG(Network, "Handle %p delegate connection:%p didFailWithError:%@", m_handle.get(), connection, error);
+    LOG(Network, "Handle %p delegate connection:%p didFailWithError:%@", self.handle.get(), connection, error);
 
     auto work = [protectedSelf = retainPtr(self), error = retainPtr(error)] mutable {
-        if (!protectedSelf->m_handle || !protectedSelf->m_handle->client())
+        RefPtr handle = [protectedSelf handle];
+        if (!handle || !handle->client())
             return;
 
-        protectedSelf->m_handle->client()->didFail(protect(protectedSelf->m_handle.get()), error.get());
+        handle->client()->didFail(handle.get(), error.get());
         if (protectedSelf->m_messageQueue) {
             protect(protectedSelf->m_messageQueue)->kill();
             protectedSelf->m_messageQueue = nullptr;
@@ -388,17 +414,18 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
 
-    LOG(Network, "Handle %p delegate connection:%p willCacheResponse:%p", m_handle.get(), connection, cachedResponse);
+    LOG(Network, "Handle %p delegate connection:%p willCacheResponse:%p", self.handle.get(), connection, cachedResponse);
 
     auto protectedSelf = retainPtr(self);
     auto work = [protectedSelf, cachedResponse = retainPtr(cachedResponse)] mutable {
-        if (!protectedSelf->m_handle || !protectedSelf->m_handle->client()) {
+        RefPtr handle = [protectedSelf handle];
+        if (!handle || !handle->client()) {
             protectedSelf->m_cachedResponseResult = nullptr;
             protectedSelf->m_semaphore.signal();
             return;
         }
 
-        protectedSelf->m_handle->client()->willCacheResponseAsync(protect(protectedSelf->m_handle.get()), cachedResponse.get(), [protectedSelf = WTF::move(protectedSelf)](NSCachedURLResponse * response) mutable {
+        handle->client()->willCacheResponseAsync(handle.get(), cachedResponse.get(), [protectedSelf = WTF::move(protectedSelf)](NSCachedURLResponse * response) mutable {
             protectedSelf->m_cachedResponseResult = response;
             protectedSelf->m_semaphore.signal();
         });
@@ -407,8 +434,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [self callFunctionOnMainThread:WTF::move(work)];
     m_semaphore.wait();
 
-    Locker locker { m_lock };
-    if (!m_handle)
+    RefPtr handle = [self handle];
+    if (!handle)
         return nil;
 
     RetainPtr<NSCachedURLResponse> cachedResponseResult = m_cachedResponseResult;

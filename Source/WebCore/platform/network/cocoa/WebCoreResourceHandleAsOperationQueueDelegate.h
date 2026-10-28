@@ -54,6 +54,7 @@ class SynchronousLoaderMessageQueue;
 }
 
 - (void)detachHandle;
+- (RefPtr<WebCore::ResourceHandle>)handle;
 - (id)initWithHandle:(WebCore::ResourceHandle*)handle messageQueue:(RefPtr<WebCore::SynchronousLoaderMessageQueue>&&)messageQueue;
 @end
 
