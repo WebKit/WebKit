@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,20 +56,19 @@ class LockAlgorithm {
 public:
     static bool lockFastAssumingZero(Atomic<LockType>& lock)
     {
-        return lock.compareExchangeWeak(0, Hooks::lockHook(isHeldBit), std::memory_order_acquire);
+        return lock.template compareExchangeWeak<MemoryOrder::Acquire>(0, Hooks::lockHook(isHeldBit));
     }
     
     static bool lockFast(Atomic<LockType>& lock)
     {
-        return lock.transaction(
+        return lock.template transaction<MemoryOrder::Acquire>(
             [&] (LockType& value) -> bool {
                 if (value & isHeldBit)
                     return false;
                 value |= isHeldBit;
                 value = Hooks::lockHook(value);
                 return true;
-            },
-            std::memory_order_acquire);
+            });
     }
     
     static void lock(Atomic<LockType>& lock)
@@ -81,30 +80,29 @@ public:
     static bool tryLock(Atomic<LockType>& lock)
     {
         for (;;) {
-            LockType currentValue = lock.load(std::memory_order_relaxed);
+            LockType currentValue = lock.template load<MemoryOrder::Relaxed>();
             if (currentValue & isHeldBit)
                 return false;
-            if (lock.compareExchangeWeak(currentValue, Hooks::lockHook(currentValue | isHeldBit), std::memory_order_acquire))
+            if (lock.template compareExchangeWeak<MemoryOrder::Acquire>(currentValue, Hooks::lockHook(currentValue | isHeldBit)))
                 return true;
         }
     }
 
     static bool unlockFastAssumingZero(Atomic<LockType>& lock)
     {
-        return lock.compareExchangeWeak(isHeldBit, Hooks::unlockHook(0), std::memory_order_release);
+        return lock.template compareExchangeWeak<MemoryOrder::Release>(isHeldBit, Hooks::unlockHook(0));
     }
     
     static bool unlockFast(Atomic<LockType>& lock)
     {
-        return lock.transaction(
+        return lock.template transaction<MemoryOrder::Release>(
             [&] (LockType& value) -> bool {
                 if ((value & mask) != isHeldBit)
                     return false;
                 value &= ~isHeldBit;
                 value = Hooks::unlockHook(value);
                 return true;
-            },
-            std::memory_order_release);
+            });
     }
     
     static void unlock(Atomic<LockType>& lock)
@@ -122,7 +120,7 @@ public:
     static bool safepointFast(const Atomic<LockType>& lock)
     {
         WTF::compilerFence();
-        return !(lock.load(std::memory_order_relaxed) & hasParkedBit);
+        return !(lock.template load<MemoryOrder::Relaxed>() & hasParkedBit);
     }
     
     static void safepoint(Atomic<LockType>& lock)
@@ -133,7 +131,7 @@ public:
     
     static bool isLocked(const Atomic<LockType>& lock)
     {
-        return lock.load(std::memory_order_acquire) & isHeldBit;
+        return lock.template load<MemoryOrder::Acquire>() & isHeldBit;
     }
     
     NEVER_INLINE static void lockSlow(Atomic<LockType>& lock);

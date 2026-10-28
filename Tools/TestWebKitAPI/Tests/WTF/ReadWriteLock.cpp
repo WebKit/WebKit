@@ -86,13 +86,13 @@ TEST(WTF_ReadWriteLock, ManyWritersMakeProgress)
         for (unsigned i = 0; i < acquisitionsPerWriter && !deadline.expired(); ++i) {
             Locker locker { lock.write() };
             ++counter;
-            progress[index].store(i + 1, std::memory_order_relaxed);
+            progress[index].store<MemoryOrder::Relaxed>(i + 1);
         }
     });
     join(threads);
 
     for (unsigned i = 0; i < writerCount; ++i)
-        EXPECT_EQ(acquisitionsPerWriter, progress[i].load(std::memory_order_relaxed));
+        EXPECT_EQ(acquisitionsPerWriter, progress[i].load<MemoryOrder::Relaxed>());
     EXPECT_EQ(writerCount * acquisitionsPerWriter, counter);
     EXPECT_TRUE(lock.isQuiescentForTesting());
 }
@@ -112,7 +112,7 @@ TEST(WTF_ReadWriteLock, WritersDoNotStarveReaders)
     std::array<Atomic<unsigned>, readerCount> readsCompleted { };
 
     auto writers = spawn(writerCount, [&](unsigned) {
-        while (!readersDone.load(std::memory_order_relaxed) && !deadline.expired()) {
+        while (!readersDone.load<MemoryOrder::Relaxed>() && !deadline.expired()) {
             Locker locker { lock.write() };
             ++counter;
         }
@@ -121,16 +121,16 @@ TEST(WTF_ReadWriteLock, WritersDoNotStarveReaders)
     auto readers = spawn(readerCount, [&](unsigned index) {
         for (unsigned i = 0; i < readsPerReader && !deadline.expired(); ++i) {
             Locker locker { lock.read() };
-            readsCompleted[index].store(i + 1, std::memory_order_relaxed);
+            readsCompleted[index].store<MemoryOrder::Relaxed>(i + 1);
         }
     });
 
     join(readers);
-    readersDone.store(true, std::memory_order_relaxed);
+    readersDone.store<MemoryOrder::Relaxed>(true);
     join(writers);
 
     for (unsigned i = 0; i < readerCount; ++i)
-        EXPECT_EQ(readsPerReader, readsCompleted[i].load(std::memory_order_relaxed));
+        EXPECT_EQ(readsPerReader, readsCompleted[i].load<MemoryOrder::Relaxed>());
     EXPECT_TRUE(lock.isQuiescentForTesting());
 }
 
@@ -147,22 +147,22 @@ TEST(WTF_ReadWriteLock, ReadersDoNotStarveWriter)
     Atomic<unsigned> writesCompleted { 0 };
 
     auto readers = spawn(readerCount, [&](unsigned) {
-        while (!writerDone.load(std::memory_order_relaxed) && !deadline.expired())
+        while (!writerDone.load<MemoryOrder::Relaxed>() && !deadline.expired())
             Locker locker { lock.read() };
     });
 
     auto writer = spawn(1, [&](unsigned) {
         for (unsigned i = 0; i < writesToComplete && !deadline.expired(); ++i) {
             Locker locker { lock.write() };
-            writesCompleted.store(i + 1, std::memory_order_relaxed);
+            writesCompleted.store<MemoryOrder::Relaxed>(i + 1);
         }
     });
 
     join(writer);
-    writerDone.store(true, std::memory_order_relaxed);
+    writerDone.store<MemoryOrder::Relaxed>(true);
     join(readers);
 
-    EXPECT_EQ(writesToComplete, writesCompleted.load(std::memory_order_relaxed));
+    EXPECT_EQ(writesToComplete, writesCompleted.load<MemoryOrder::Relaxed>());
     EXPECT_TRUE(lock.isQuiescentForTesting());
 }
 
@@ -184,14 +184,14 @@ TEST(WTF_ReadWriteLock, WriterHandoffWithWritersAndReadersQueued)
         for (unsigned i = 0; i < iterations && !deadline.expired(); ++i) {
             Locker locker { lock.write() };
             ++counter;
-            progress[index].store(i + 1, std::memory_order_relaxed);
+            progress[index].store<MemoryOrder::Relaxed>(i + 1);
         }
     });
 
     auto readers = spawn(readerCount, [&](unsigned index) {
         for (unsigned i = 0; i < iterations && !deadline.expired(); ++i) {
             Locker locker { lock.read() };
-            progress[writerCount + index].store(i + 1, std::memory_order_relaxed);
+            progress[writerCount + index].store<MemoryOrder::Relaxed>(i + 1);
         }
     });
 
@@ -199,7 +199,7 @@ TEST(WTF_ReadWriteLock, WriterHandoffWithWritersAndReadersQueued)
     join(readers);
 
     for (unsigned i = 0; i < writerCount + readerCount; ++i)
-        EXPECT_EQ(iterations, progress[i].load(std::memory_order_relaxed));
+        EXPECT_EQ(iterations, progress[i].load<MemoryOrder::Relaxed>());
     EXPECT_EQ(writerCount * iterations, counter);
     EXPECT_TRUE(lock.isQuiescentForTesting());
 }
@@ -229,11 +229,11 @@ TEST(WTF_ReadWriteLock, LoneReaderAfterWriterBurst)
     Atomic<bool> acquired { false };
     auto reader = spawn(1, [&](unsigned) {
         Locker locker { lock.read() };
-        acquired.store(true, std::memory_order_relaxed);
+        acquired.store<MemoryOrder::Relaxed>(true);
     });
     join(reader);
 
-    EXPECT_TRUE(acquired.load(std::memory_order_relaxed));
+    EXPECT_TRUE(acquired.load<MemoryOrder::Relaxed>());
     EXPECT_TRUE(lock.isQuiescentForTesting());
 }
 
@@ -329,7 +329,7 @@ TEST(WTF_ReadWriteLock, WriterAnnouncesItselfBeforeBlocking)
 
     auto writer = spawn(1, [&](unsigned) {
         Locker locker { lock.write() };
-        writerHasLock.store(true, std::memory_order_relaxed);
+        writerHasLock.store<MemoryOrder::Relaxed>(true);
     });
 
     while (!lock.hasWriterPresentForTesting() && !deadline.expired())
@@ -337,12 +337,12 @@ TEST(WTF_ReadWriteLock, WriterAnnouncesItselfBeforeBlocking)
 
     // Announced, but it cannot have the lock: we still hold a read lock it has to drain.
     EXPECT_TRUE(lock.hasWriterPresentForTesting());
-    EXPECT_FALSE(writerHasLock.load(std::memory_order_relaxed));
+    EXPECT_FALSE(writerHasLock.load<MemoryOrder::Relaxed>());
 
     lock.readUnlock();
     join(writer);
 
-    EXPECT_TRUE(writerHasLock.load(std::memory_order_relaxed));
+    EXPECT_TRUE(writerHasLock.load<MemoryOrder::Relaxed>());
     EXPECT_TRUE(lock.isQuiescentForTesting());
 }
 
@@ -358,7 +358,7 @@ TEST(WTF_ReadWriteLock, WriterParkedBehindReaderIsWoken)
 
     auto writer = spawn(1, [&](unsigned) {
         Locker locker { lock.write() };
-        writerSawReaderLeave.store(readerLeaving.load(std::memory_order_relaxed), std::memory_order_relaxed);
+        writerSawReaderLeave.store<MemoryOrder::Relaxed>(readerLeaving.load<MemoryOrder::Relaxed>());
     });
 
     // The writer sets its parked bit only once it has stopped spinning, and cannot then decline to
@@ -367,11 +367,11 @@ TEST(WTF_ReadWriteLock, WriterParkedBehindReaderIsWoken)
         Thread::yield();
     EXPECT_TRUE(lock.hasParkedBitsForTesting());
 
-    readerLeaving.store(true, std::memory_order_relaxed);
+    readerLeaving.store<MemoryOrder::Relaxed>(true);
     lock.readUnlock();
     join(writer);
 
-    EXPECT_TRUE(writerSawReaderLeave.load(std::memory_order_relaxed));
+    EXPECT_TRUE(writerSawReaderLeave.load<MemoryOrder::Relaxed>());
     EXPECT_FALSE(lock.hasParkedBitsForTesting());
     EXPECT_TRUE(lock.isQuiescentForTesting());
 }
@@ -394,7 +394,7 @@ TEST(WTF_ReadWriteLock, ReadersParkedBehindWriterAreWoken)
         readers = spawn(readerCount, [&](unsigned index) {
             readersArrived.exchangeAdd(1);
             Locker locker { lock.read() };
-            readerSawWriterLeave[index].store(writerLeaving.load(std::memory_order_relaxed), std::memory_order_relaxed);
+            readerSawWriterLeave[index].store<MemoryOrder::Relaxed>(writerLeaving.load<MemoryOrder::Relaxed>());
         });
 
         while ((readersArrived.load() < readerCount || !lock.hasParkedBitsForTesting()) && !deadline.expired())
@@ -402,12 +402,12 @@ TEST(WTF_ReadWriteLock, ReadersParkedBehindWriterAreWoken)
         EXPECT_EQ(readerCount, readersArrived.load());
         EXPECT_TRUE(lock.hasParkedBitsForTesting());
 
-        writerLeaving.store(true, std::memory_order_relaxed);
+        writerLeaving.store<MemoryOrder::Relaxed>(true);
     }
     join(readers);
 
     for (unsigned i = 0; i < readerCount; ++i)
-        EXPECT_TRUE(readerSawWriterLeave[i].load(std::memory_order_relaxed));
+        EXPECT_TRUE(readerSawWriterLeave[i].load<MemoryOrder::Relaxed>());
 
     // A reader that stops spinning just as the writer leaves can set its parked bit too late to be
     // woken and then decline to park, leaving the bit for the next writer to clear.
@@ -437,7 +437,7 @@ TEST(WTF_ReadWriteLock, WokenReaderKeepsItsTurnWhenDescheduled)
     // One writer, looping as tightly as it can, so that it is always either holding the lock
     // or registered as waiting for it.
     auto writer = spawn(1, [&](unsigned) {
-        while (!readersDone.load(std::memory_order_relaxed) && !deadline.expired()) {
+        while (!readersDone.load<MemoryOrder::Relaxed>() && !deadline.expired()) {
             Locker locker { lock.write() };
             writesCompleted.exchangeAdd(1);
         }
@@ -446,7 +446,7 @@ TEST(WTF_ReadWriteLock, WokenReaderKeepsItsTurnWhenDescheduled)
     auto readers = spawn(readerCount, [&](unsigned index) {
         // Don't start until the writer is genuinely running, otherwise the readers can finish
         // before it ever contends and the test proves nothing.
-        while (writesCompleted.load(std::memory_order_relaxed) < 100 && !deadline.expired())
+        while (writesCompleted.load<MemoryOrder::Relaxed>() < 100 && !deadline.expired())
             Thread::yield();
 
         for (unsigned i = 0; i < readsPerReader && !deadline.expired(); ++i) {
@@ -456,18 +456,18 @@ TEST(WTF_ReadWriteLock, WokenReaderKeepsItsTurnWhenDescheduled)
                 // descheduled when this one releases, which is the shape of the race.
                 Thread::yield();
             }
-            readsCompleted[index].store(i + 1, std::memory_order_relaxed);
+            readsCompleted[index].store<MemoryOrder::Relaxed>(i + 1);
         }
     });
 
     join(readers);
-    readersDone.store(true, std::memory_order_relaxed);
+    readersDone.store<MemoryOrder::Relaxed>(true);
     join(writer);
 
     // If this is 0 the writer never contended and the test was vacuous.
-    EXPECT_GT(writesCompleted.load(std::memory_order_relaxed), 100u);
+    EXPECT_GT(writesCompleted.load<MemoryOrder::Relaxed>(), 100u);
     for (unsigned i = 0; i < readerCount; ++i)
-        EXPECT_EQ(readsPerReader, readsCompleted[i].load(std::memory_order_relaxed));
+        EXPECT_EQ(readsPerReader, readsCompleted[i].load<MemoryOrder::Relaxed>());
     EXPECT_TRUE(lock.isQuiescentForTesting());
 }
 

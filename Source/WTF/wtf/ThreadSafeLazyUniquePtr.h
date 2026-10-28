@@ -46,7 +46,7 @@ public:
 
     ~ThreadSafeLazyUniquePtr()
     {
-        delete m_pointer.load(std::memory_order_relaxed);
+        delete m_pointer.template load<MemoryOrder::Relaxed>();
     }
 
     // In general there is no need to fence in func the compareExchangeStrong will ensure any stores
@@ -54,22 +54,28 @@ public:
     template<typename Func>
     T& ensure(NOESCAPE const Func& func) const
     {
-        T* oldValue = m_pointer.load(std::memory_order_relaxed);
-        if (oldValue) [[likely]] {
-            // On all sensible CPUs, we get an implicit dependency-based load-load barrier when
-            // loading this.
-            return *oldValue;
-        }
+        T* oldValue;
+        Dependency dependency = m_pointer.loadAndFence(oldValue);
+        if (oldValue) [[likely]]
+            return *dependency.consume(oldValue);
 
         T* newValue = toRawOwned(func());
-        if (T* actual = m_pointer.compareExchangeStrong(nullptr, newValue, std::memory_order_release, std::memory_order_relaxed)) {
+        if (T* actual = m_pointer.template compareExchangeStrong<MemoryOrder::Release, MemoryOrder::Acquire>(nullptr, newValue)) {
             delete newValue;
             return *actual;
         }
         return *newValue;
     }
 
-    T* get() const { return m_pointer.load(std::memory_order_relaxed); }
+    // FIXME: This returns a plain T*, so a caller comparing it to a known pointer (e.g. get() == &object) lets
+    // the compiler substitute that pointer and lose the dependency for later accesses. ensure() has the same
+    // problem. We should return a wrapper that consumes the dependency on every dereference instead.
+    T* get() const
+    {
+        T* value;
+        Dependency dependency = m_pointer.loadAndFence(value);
+        return dependency.consume(value);
+    }
     explicit operator bool() const { return !!get(); }
 
 private:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,14 +124,14 @@ inline StreamClientConnectionBuffer::StreamClientConnectionBuffer(Ref<WebCore::S
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(sharedMemorySizeIsValid(m_sharedMemory->size()));
 
     // Read starts from 0 with limit of 0 and reader sleeping.
-    sharedClientOffset().store(ClientOffset::serverIsSleepingTag, std::memory_order_relaxed);
+    sharedClientOffset().store<MemoryOrder::Relaxed>(ClientOffset::serverIsSleepingTag);
     // Write starts from 0 with a limit of the whole buffer.
-    sharedClientLimit().store(static_cast<ClientLimit>(0), std::memory_order_relaxed);
+    sharedClientLimit().store<MemoryOrder::Relaxed>(static_cast<ClientLimit>(0));
 }
 
 inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::acquireNoWait()
 {
-    ClientLimit clientLimit = sharedClientLimit().load(std::memory_order_acquire);
+    ClientLimit clientLimit = sharedClientLimit().load<MemoryOrder::Acquire>();
     // This would mean we try to send messages after a timeout. It is a programming error.
     // Since the value is trusted, we only assert.
     ASSERT(clientLimit != ClientLimit::clientIsWaitingTag);
@@ -146,7 +146,7 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::acquireNo
 
 inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquire(Timeout timeout)
 {
-    ClientLimit clientLimit = sharedClientLimit().load(std::memory_order_acquire);
+    ClientLimit clientLimit = sharedClientLimit().load<MemoryOrder::Acquire>();
     // This would mean we try to send messages after a timeout. It is a programming error.
     // Since the value is trusted, we only assert.
     ASSERT(clientLimit != ClientLimit::clientIsWaitingTag);
@@ -159,11 +159,11 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
         }
         if (timeout.didTimeOut())
             break;
-        ClientLimit oldClientLimit = sharedClientLimit().compareExchangeStrong(clientLimit, ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel, std::memory_order_acquire);
+        ClientLimit oldClientLimit = sharedClientLimit().compareExchangeStrong<MemoryOrder::AcquireRelease, MemoryOrder::Acquire>(clientLimit, ClientLimit::clientIsWaitingTag);
         if (clientLimit == oldClientLimit) {
             if (!m_clientWait.waitFor(timeout))
                 return std::nullopt;
-            clientLimit = sharedClientLimit().load(std::memory_order_acquire);
+            clientLimit = sharedClientLimit().load<MemoryOrder::Acquire>();
         } else
             clientLimit = oldClientLimit;
         // The alignedMutableSpan uses the minimumMessageSize to calculate the next beginning position in the buffer,
@@ -179,7 +179,7 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
 {
     // This would mean we try to send messages after a timeout. It is a programming error.
     // Since the value is trusted, we only assert.
-    ASSERT(sharedClientLimit().load(std::memory_order_acquire) != ClientLimit::clientIsWaitingTag);
+    ASSERT(sharedClientLimit().load<MemoryOrder::Acquire>() != ClientLimit::clientIsWaitingTag);
 
     // The server acknowledges that sync message has been processed by setting clientOffset == clientLimit == 0.
     // Wait for this condition, or then the condition where server says that it started to sleep after setting that condition.
@@ -188,8 +188,8 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
     // If the transaction commits, server is guaranteed to signal.
 
     for (;;) {
-        ClientLimit clientLimit = sharedClientLimit().exchange(ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel);
-        ClientOffset clientOffset = sharedClientOffset().load(std::memory_order_acquire);
+        ClientLimit clientLimit = sharedClientLimit().exchange<MemoryOrder::AcquireRelease>(ClientLimit::clientIsWaitingTag);
+        ClientOffset clientOffset = sharedClientOffset().load<MemoryOrder::Acquire>();
         if (!clientLimit && (clientOffset == ClientOffset::serverIsSleepingTag || !clientOffset))
             break;
 
@@ -199,7 +199,7 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
             return std::nullopt;
     }
     // In case the transaction was cancelled, undo the transaction marker.
-    sharedClientLimit().store(static_cast<ClientLimit>(0), std::memory_order_release);
+    sharedClientLimit().store<MemoryOrder::Release>(static_cast<ClientLimit>(0));
     m_clientOffset = 0;
     return alignedMutableSpan(m_clientOffset, 0);
 }
@@ -210,7 +210,7 @@ inline StreamClientConnectionBuffer::WakeUpServer StreamClientConnectionBuffer::
     m_clientOffset = wrapOffset(alignOffset(m_clientOffset) + size);
     ASSERT(m_clientOffset < dataSize());
     // If the server wrote over the clientOffset with serverIsSleepingTag, we know it is sleeping.
-    ClientOffset oldClientOffset = sharedClientOffset().exchange(static_cast<ClientOffset>(m_clientOffset), std::memory_order_acq_rel);
+    ClientOffset oldClientOffset = sharedClientOffset().exchange<MemoryOrder::AcquireRelease>(static_cast<ClientOffset>(m_clientOffset));
     if (oldClientOffset == ClientOffset::serverIsSleepingTag)
         return WakeUpServer::Yes;
     ASSERT(!(oldClientOffset & ClientOffset::serverIsSleepingTag));

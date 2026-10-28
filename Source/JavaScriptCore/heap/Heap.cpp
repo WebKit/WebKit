@@ -811,7 +811,7 @@ void Heap::beginMarking()
     TimingScope timingScope(*this, "Heap::beginMarking"_s);
     ASSERT(isInPhase(CollectorPhase::Begin));
     ASSERT(m_collectionScope);
-    ASSERT(!m_bytesMarkedThisCycle.load(std::memory_order_relaxed));
+    ASSERT(!m_bytesMarkedThisCycle.load<MemoryOrder::Relaxed>());
     if (*m_collectionScope == CollectionScope::Full)
         m_mutatorMarkStack->clear();
     m_jitStubRoutines->clearMarks();
@@ -910,7 +910,7 @@ void Heap::endMarking()
     ASSERT(isInPhase(CollectorPhase::End));
     ASSERT(m_objectSpace.isMarking());
 
-    updateOldGenerationCellBytes(m_bytesMarkedThisCycle.exchange(0, std::memory_order_relaxed));
+    updateOldGenerationCellBytes(m_bytesMarkedThisCycle.exchange<MemoryOrder::Relaxed>(0));
 
     m_objectSpace.endMarking();
     setMutatorShouldBeFenced(Options::forceFencedBarrier());

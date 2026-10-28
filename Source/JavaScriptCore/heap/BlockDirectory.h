@@ -132,13 +132,13 @@ public:
 #define BLOCK_DIRECTORY_BIT_OWNERSHIP_BlockOwned WTF_REQUIRES_LOCK(m_blockOwnership)
 #define BLOCK_DIRECTORY_BIT_OWNERSHIP_Unowned
 #define BLOCK_DIRECTORY_BIT_ACCESSORS(lowerBitName, capitalBitName, ownership)     \
-    bool is ## capitalBitName(size_t index) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return m_bits.bit<BlockDirectoryBits::Kind::capitalBitName>(index).concurrentGet(std::memory_order_relaxed); } \
+    bool is ## capitalBitName(size_t index) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return m_bits.bit<BlockDirectoryBits::Kind::capitalBitName>(index).concurrentGet<MemoryOrder::Relaxed>(); } \
     bool is ## capitalBitName(MarkedBlock::Handle* block) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return is ## capitalBitName(block->index()); } \
     BlockDirectoryBits::BlockDirectoryBitVectorView<BlockDirectoryBits::Kind::capitalBitName> lowerBitName ## BitsView() const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return m_bits.lowerBitName(); } \
     \
-    void setIs ## capitalBitName(size_t index, bool value) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) BLOCK_DIRECTORY_BIT_OWNERSHIP_ ## ownership { m_bits.bit<BlockDirectoryBits::Kind::capitalBitName>(index).concurrentSet(value, std::memory_order_relaxed); } \
+    void setIs ## capitalBitName(size_t index, bool value) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) BLOCK_DIRECTORY_BIT_OWNERSHIP_ ## ownership { m_bits.bit<BlockDirectoryBits::Kind::capitalBitName>(index).concurrentSet<MemoryOrder::Relaxed>(value); } \
     void setIs ## capitalBitName(MarkedBlock::Handle* block, bool value) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) BLOCK_DIRECTORY_BIT_OWNERSHIP_ ## ownership { setIs ## capitalBitName(block->index(), value); } \
-    bool testAndClearIs ## capitalBitName(size_t index) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) BLOCK_DIRECTORY_BIT_OWNERSHIP_ ## ownership { return m_bits.bit<BlockDirectoryBits::Kind::capitalBitName>(index).concurrentTestAndClear(std::memory_order_relaxed); } \
+    bool testAndClearIs ## capitalBitName(size_t index) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) BLOCK_DIRECTORY_BIT_OWNERSHIP_ ## ownership { return m_bits.bit<BlockDirectoryBits::Kind::capitalBitName>(index).concurrentTestAndClear<MemoryOrder::Relaxed>(); } \
     BlockDirectoryBits::BlockDirectoryBitVectorRef<BlockDirectoryBits::Kind::capitalBitName> lowerBitName ## Bits() WTF_REQUIRES_LOCK(m_bitvectorLock) { return m_bits.lowerBitName(); }
 
     FOR_EACH_BLOCK_DIRECTORY_BIT(BLOCK_DIRECTORY_BIT_ACCESSORS)
@@ -150,7 +150,7 @@ public:
     // Callers that pick a block by scanning the bits must recheck those bits after this returns true.
     [[nodiscard]] bool claimInUse(size_t index) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock)
     {
-        return !m_bits.bit<BlockDirectoryBits::Kind::InUse>(index).concurrentTestAndSet(std::memory_order_acquire);
+        return !m_bits.bit<BlockDirectoryBits::Kind::InUse>(index).concurrentTestAndSet<MemoryOrder::Acquire>();
     }
 
     void claimInUseOrCrash(size_t index) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) WTF_ASSERTS_ACQUIRED_CAPABILITY(m_blockOwnership)
@@ -159,9 +159,10 @@ public:
         RELEASE_ASSERT(claimed);
     }
 
+    template<MemoryOrder order = MemoryOrder::Release>
     void releaseInUse(size_t index) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock)
     {
-        m_bits.bit<BlockDirectoryBits::Kind::InUse>(index).concurrentSet(false, std::memory_order_release);
+        m_bits.bit<BlockDirectoryBits::Kind::InUse>(index).concurrentSet<order>(false);
     }
 
     // A destructible block still owes its old owner a destructor pass over every one of its cells,

@@ -152,7 +152,8 @@ TEST(WTF_VersionedField, SetChangesValueWhenUnwatched)
 // uses m_emptyCursor. Searchers scan from the cursor and try to move it past what they claim. Releasers
 // make a slot available again and rewind the cursor to it. If a searcher could publish over a rewind it
 // never saw, a released slot would end up below the cursor.
-TEST(WTF_VersionedField, ConcurrentSearchersNeverHideReleasedSlots)
+template<bool fullyFenced>
+static void testConcurrentSearchersNeverHideReleasedSlots()
 {
     static constexpr unsigned slotCount = 8;
     static constexpr unsigned threadCount = 4;
@@ -167,22 +168,31 @@ TEST(WTF_VersionedField, ConcurrentSearchersNeverHideReleasedSlots)
     for (unsigned t = 0; t < threadCount; ++t) {
         threads.append(Thread::create("VersionedField test"_s, [&] {
             for (unsigned i = 0; i < iterations; ++i) {
-                auto watched = cursor.watch(std::memory_order_relaxed);
-                WTF::storeLoadFence();
+                VersionedField::Snapshot watched;
+                if constexpr (fullyFenced)
+                    watched = cursor.watch<MemoryOrder::FullyFenced>();
+                else {
+                    watched = cursor.watch<MemoryOrder::Relaxed>();
+                    WTF::storeLoadFence();
+                }
                 unsigned claimed = slotCount;
                 for (unsigned slot = watched.value; slot < slotCount; ++slot) {
-                    if (available[slot].load(std::memory_order_relaxed) && available[slot].exchange(false, std::memory_order_acquire)) {
+                    if (available[slot].load<MemoryOrder::Relaxed>() && available[slot].exchange<MemoryOrder::Acquire>(false)) {
                         claimed = slot;
                         break;
                     }
                 }
-                cursor.tryUpdateWatched(watched, claimed == slotCount ? slotCount : claimed + 1, std::memory_order_relaxed);
+                cursor.tryUpdateWatched<MemoryOrder::Relaxed>(watched, claimed == slotCount ? slotCount : claimed + 1);
                 if (claimed == slotCount)
                     continue;
 
-                available[claimed].store(true, std::memory_order_release);
-                WTF::storeLoadFence();
-                cursor.minimize(claimed, std::memory_order_relaxed);
+                if constexpr (fullyFenced)
+                    available[claimed].exchange<MemoryOrder::FullyFenced>(true);
+                else {
+                    available[claimed].store<MemoryOrder::Release>(true);
+                    WTF::storeLoadFence();
+                }
+                cursor.minimize<MemoryOrder::Relaxed>(claimed);
             }
         }));
     }
@@ -191,6 +201,16 @@ TEST(WTF_VersionedField, ConcurrentSearchersNeverHideReleasedSlots)
 
     // Every slot is available again, so nothing may be left behind the cursor.
     EXPECT_EQ(cursor.value(), 0u);
+}
+
+TEST(WTF_VersionedField, ConcurrentSearchersNeverHideReleasedSlots)
+{
+    testConcurrentSearchersNeverHideReleasedSlots<false>();
+}
+
+TEST(WTF_VersionedField, ConcurrentSearchersNeverHideReleasedSlotsFullyFenced)
+{
+    testConcurrentSearchersNeverHideReleasedSlots<true>();
 }
 
 } // namespace TestWebKitAPI

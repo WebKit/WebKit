@@ -100,7 +100,7 @@ public:
 
     void readLock() WTF_ACQUIRES_SHARED_LOCK()
     {
-        uint32_t previous = m_readersIn.exchangeAdd(s_readerIncrement, std::memory_order_acquire);
+        uint32_t previous = m_readersIn.exchangeAdd<MemoryOrder::Acquire>(s_readerIncrement);
         // We only have to worry about phases when there's a writer present on entry.
         if (previous & s_writerPresentBit) [[unlikely]]
             readLockSlow(previous & s_phaseFieldMask);
@@ -108,7 +108,7 @@ public:
 
     void readUnlock() WTF_RELEASES_SHARED_LOCK()
     {
-        uint64_t previous = m_readersOut.exchangeAdd(s_outIncrement, std::memory_order_release);
+        uint64_t previous = m_readersOut.exchangeAdd<MemoryOrder::Release>(s_outIncrement);
         if (previous & s_writerDrainParkedBit) [[unlikely]] {
             // The parked bit and the drain target both live in the word we just incremented, so if our ticket
             // matches the drain target we're expected to wake the writer.
@@ -124,7 +124,7 @@ public:
     {
         m_writerLock.lock();
         uint32_t target = beginPhase();
-        if (outCount(m_readersOut.load(std::memory_order_acquire)) != target) [[unlikely]]
+        if (outCount(m_readersOut.load<MemoryOrder::Acquire>()) != target) [[unlikely]]
             writeLockSlow(target);
     }
 
@@ -142,19 +142,19 @@ public:
 
     bool hasWriterPresentForTesting() const
     {
-        return m_readersIn.load(std::memory_order_relaxed) & s_writerPresentBit;
+        return m_readersIn.load<MemoryOrder::Relaxed>() & s_writerPresentBit;
     }
 
     bool hasParkedBitsForTesting() const
     {
-        return (m_readersIn.load(std::memory_order_relaxed) & s_hasParkedReadersBit)
-            || (m_readersOut.load(std::memory_order_relaxed) & s_writerDrainParkedBit);
+        return (m_readersIn.load<MemoryOrder::Relaxed>() & s_hasParkedReadersBit)
+            || (m_readersOut.load<MemoryOrder::Relaxed>() & s_writerDrainParkedBit);
     }
 
     bool isQuiescentForTesting() const
     {
-        uint32_t readersIn = m_readersIn.load(std::memory_order_relaxed);
-        uint64_t readersOut = m_readersOut.load(std::memory_order_relaxed);
+        uint32_t readersIn = m_readersIn.load<MemoryOrder::Relaxed>();
+        uint64_t readersOut = m_readersOut.load<MemoryOrder::Relaxed>();
         return !(readersIn & s_writerPresentBit)
             && inCount(readersIn) == outCount(readersOut)
             && !m_writerLock.isHeld();
@@ -172,12 +172,12 @@ private:
         // s_writerPresentBit should be zero from when the last writer did endPhase() and we want to flip the value of s_phaseIdBit.
         // So this is equivalent to doing: m_readersIn |= s_writerPresentBit; m_readersIn ^= s_phaseIdBit, atomically.
         ASSERT_WITH_MESSAGE(!(m_readersIn.loadRelaxed() & s_writerPresentBit), "endPhase should have left s_writerPresentBit zero");
-        return inCount(m_readersIn.exchangeXor(s_writerPresentBit | s_phaseIdBit, std::memory_order_acquire));
+        return inCount(m_readersIn.exchangeXor<MemoryOrder::Acquire>(s_writerPresentBit | s_phaseIdBit));
     }
 
     void endPhase() WTF_REQUIRES_LOCK(m_writerLock)
     {
-        uint32_t readersIn = m_readersIn.exchangeAnd(~s_writerPresentBit, std::memory_order_release);
+        uint32_t readersIn = m_readersIn.exchangeAnd<MemoryOrder::Release>(~s_writerPresentBit);
         ASSERT(readersIn & s_writerPresentBit);
         if (readersIn & s_hasParkedReadersBit) [[unlikely]]
             writeUnlockSlow();

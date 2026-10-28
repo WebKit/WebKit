@@ -40,8 +40,9 @@ namespace WTF {
 // when they don't change the value, so a soft writer can't publish over an update it never saw.
 //
 // Since this isn't a lock, users must provide their own ordering between this field and the data it tracks.
-// In particular, a Dekker-style pattern (both sides write the VersionedField, then read some other state)
-// needs a store-load fence on each side.
+// In particular, a Dekker-style pattern (a hard writer writes some other state then updates this field, while
+// a soft writer watches this field then reads that state) needs a full fence between the two accesses on each
+// side: either a storeLoadFence() or a FullyFenced read-modify-write, such as watch<MemoryOrder::FullyFenced>().
 //
 // FIXME: Make this a template over the value and version types if another user ever needs them. Both could
 // theoretically be a uintptr_t, we'd just have to add double-word atomics to WTF::Atomic.
@@ -62,61 +63,73 @@ public:
     {
     }
 
-    uint32_t value(std::memory_order order = std::memory_order_seq_cst) const { return std::bit_cast<Snapshot>(m_field.load(order)).value; }
+    template<MemoryOrder order = MemoryOrder::SeqCst>
+    uint32_t value() const { return std::bit_cast<Snapshot>(m_field.load<order>()).value; }
 
-    Snapshot watch(std::memory_order order = std::memory_order_seq_cst)
+    // An Acquire load suffices when the watched bit is already set, assuming multi-copy atomicity (see
+    // MemoryOrder), so callers must only race on ARM64 and x86_64. A hard writer fences between its other
+    // write and this field: if it reached this field before the watched bit was set, that write was visible to
+    // every thread before the bit; if after, it bumps the version, so tryUpdateWatched() fails.
+    template<MemoryOrder order = MemoryOrder::SeqCst>
+    Snapshot watch()
     {
         static constexpr uint64_t watchedMask = std::bit_cast<uint64_t>(Snapshot { 0, isWatchedBit });
 
-        ASSERT(order != std::memory_order_release && order != std::memory_order_acq_rel);
-        uint64_t bits = m_field.load(order);
+        static_assert(order != MemoryOrder::Release && order != MemoryOrder::AcquireRelease);
+        uint64_t bits = m_field.load<order == MemoryOrder::FullyFenced ? MemoryOrder::Acquire : order>();
         if (bits & watchedMask)
             return std::bit_cast<Snapshot>(bits);
         // We could do a transaction here but on ARM64 with LSE the exchangeOr is cheaper and can't fail.
-        return std::bit_cast<Snapshot>(m_field.exchangeOr(watchedMask, order) | watchedMask);
+        return std::bit_cast<Snapshot>(m_field.exchangeOr<order>(watchedMask) | watchedMask);
     }
 
     // We don't clear the isWatched here, this avoids an atomic RMW in watch() for subsequent watches.
-    bool tryUpdateWatched(Snapshot expected, uint32_t newValue, std::memory_order order = std::memory_order_seq_cst)
+    template<MemoryOrder order = MemoryOrder::SeqCst>
+    bool tryUpdateWatched(Snapshot expected, uint32_t newValue)
     {
         ASSERT_WITH_MESSAGE(expected.isWatched(), "The old expected value should have been watched.");
         Snapshot desired { newValue, expected.version + softVersionStep };
         uint64_t expectedBits = std::bit_cast<uint64_t>(expected);
-        return m_field.compareExchangeStrong(expectedBits, std::bit_cast<uint64_t>(desired), order) == expectedBits;
+        return m_field.compareExchangeStrong<order>(expectedBits, std::bit_cast<uint64_t>(desired)) == expectedBits;
     }
 
-    void minimize(uint32_t value, std::memory_order order = std::memory_order_seq_cst) { update(value, order, [](uint32_t a, uint32_t b) { return std::min(a, b); }); }
-    void maximize(uint32_t value, std::memory_order order = std::memory_order_seq_cst) { update(value, order, [](uint32_t a, uint32_t b) { return std::max(a, b); }); }
+    template<MemoryOrder order = MemoryOrder::SeqCst>
+    void minimize(uint32_t value) { update<order>(value, [](uint32_t a, uint32_t b) { return std::min(a, b); }); }
+    template<MemoryOrder order = MemoryOrder::SeqCst>
+    void maximize(uint32_t value) { update<order>(value, [](uint32_t a, uint32_t b) { return std::max(a, b); }); }
 
     // Unconditionally sets the value and invalidates any outstanding watch.
-    void set(uint32_t value, std::memory_order order = std::memory_order_seq_cst)
+    template<MemoryOrder order = MemoryOrder::SeqCst>
+    void set(uint32_t value)
     {
-        transaction([&](Snapshot& field) {
+        transaction<order>([&](Snapshot& field) {
             field.value = value;
             field.version = (field.version | isWatchedBit) + 1;
             ASSERT(!field.isWatched());
             return true;
-        }, order);
+        });
     }
 
 private:
     static constexpr uint32_t isWatchedBit = 1;
     static constexpr uint32_t softVersionStep = 2;
 
-    bool transaction(NOESCAPE const Invocable<bool(Snapshot&)> auto& func, std::memory_order order)
+    template<MemoryOrder order>
+    bool transaction(NOESCAPE const Invocable<bool(Snapshot&)> auto& func)
     {
-        return m_field.transaction([&](uint64_t& bits) {
+        return m_field.transaction<order>([&](uint64_t& bits) {
             auto field = std::bit_cast<Snapshot>(bits);
             if (!func(field))
                 return false;
             bits = std::bit_cast<uint64_t>(field);
             return true;
-        }, order);
+        });
     }
 
-    void update(uint32_t value, std::memory_order order, NOESCAPE const Invocable<uint32_t(uint32_t, uint32_t)> auto& combine)
+    template<MemoryOrder order>
+    void update(uint32_t value, NOESCAPE const Invocable<uint32_t(uint32_t, uint32_t)> auto& combine)
     {
-        transaction([&](Snapshot& field) {
+        transaction<order>([&](Snapshot& field) {
             uint32_t combined = combine(field.value, value);
             if (!field.isWatched()) {
                 if (combined == field.value)
@@ -129,7 +142,7 @@ private:
             field.version++;
             ASSERT(!field.isWatched());
             return true;
-        }, order);
+        });
     }
 
     Atomic<uint64_t> m_field;
