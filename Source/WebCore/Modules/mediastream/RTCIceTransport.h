@@ -65,6 +65,8 @@ public:
     const RTCIceTransportBackend& backend() const LIFETIME_BOUND { return m_backend.get(); }
     RefPtr<RTCPeerConnection> connection() const { return m_connection; }
 
+    void close() { stop(); }
+
     struct CandidatePair {
         RefPtr<RTCIceCandidate> local;
         RefPtr<RTCIceCandidate> remote;
