@@ -9,4 +9,11 @@ fn testForStatement() {
     var i = 0;
     for (i++; i <= 0; i--) {
     }
+
+    for ((i) = 0; (i) < 1; (i)++) {
+    }
+
+    let p = &i;
+    for (*p = 0; *p < 1; (*p)++) {
+    }
 }

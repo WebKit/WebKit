@@ -1369,6 +1369,14 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseForStatement(AST::Attribute::Lis
             maybeInitializer = &statement.get();
             break;
         }
+        case TokenType::ParenLeft:
+        case TokenType::And:
+        case TokenType::Star: {
+            // A variable_updating_statement whose lhs_expression starts with `(`, `&` or `*`.
+            PARSE(statement, VariableUpdatingStatement);
+            maybeInitializer = &statement.get();
+            break;
+        }
         case TokenType::Underbar: {
             // A phony assignment is a variable_updating_statement, so it is allowed here.
             PARSE(phonyAssignment, PhonyAssignmentStatement);
@@ -1388,15 +1396,26 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseForStatement(AST::Attribute::Lis
     CONSUME_TYPE(Semicolon);
 
     if (current().type != TokenType::ParenRight) {
-        if (current().type == TokenType::Underbar) {
-            PARSE(phonyAssignment, PhonyAssignmentStatement);
-            maybeUpdate = &phonyAssignment.get();
-        } else {
-            if (current().type != TokenType::Identifier)
-                FAIL("Invalid for-loop update clause"_s);
-
+        switch (current().type) {
+        case TokenType::Identifier: {
             PARSE(statement, CallOrVariableUpdatingStatement);
             maybeUpdate = &statement.get();
+            break;
+        }
+        case TokenType::ParenLeft:
+        case TokenType::And:
+        case TokenType::Star: {
+            PARSE(statement, VariableUpdatingStatement);
+            maybeUpdate = &statement.get();
+            break;
+        }
+        case TokenType::Underbar: {
+            PARSE(phonyAssignment, PhonyAssignmentStatement);
+            maybeUpdate = &phonyAssignment.get();
+            break;
+        }
+        default:
+            FAIL("Invalid for-loop update clause"_s);
         }
     }
     CONSUME_TYPE(ParenRight);
