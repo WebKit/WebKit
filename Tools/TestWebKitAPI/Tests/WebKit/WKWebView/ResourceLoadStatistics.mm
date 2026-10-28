@@ -234,8 +234,8 @@ static void cleanupITPDatabase(WKWebsiteDataStore *dataStore)
     [dataStore _setResourceLoadStatisticsEnabled:YES];
 
     // Make sure 'evil.com' is not in our data set.
-    static bool doneFlag;
-    static bool dataSyncCompleted;
+    __block bool doneFlag = false;
+    __block bool dataSyncCompleted = false;
     [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
         if (![message isEqualToString:@"Storage Synced"])
             return;
@@ -249,6 +249,7 @@ static void cleanupITPDatabase(WKWebsiteDataStore *dataStore)
     TestWebKitAPI::Util::run(&doneFlag);
 
     // Trigger ITP to process its data to force a sync to persistent storage.
+    doneFlag = false;
     [dataStore _processStatisticsAndDataRecords: ^(void) {
         doneFlag = true;
     }];
@@ -398,6 +399,7 @@ TEST(ResourceLoadStatistics, NetworkProcessRestart)
     }];
 
     // Tell ITP to process data so it will sync the new 'bad guy' to persistent storage:
+    doneFlag = false;
     [dataStore _processStatisticsAndDataRecords: ^(void) {
         doneFlag = true;
      }];
