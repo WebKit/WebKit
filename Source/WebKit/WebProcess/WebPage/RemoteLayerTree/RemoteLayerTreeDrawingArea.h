@@ -90,6 +90,7 @@ private:
     void triggerRenderingUpdate() final;
     bool scheduleRenderingUpdate() final;
     void renderingUpdateFramesPerSecondChanged() final;
+    bool usesRenderingUpdateBackpressure() const final { return false; }
     void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) final;
 
     void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) final;

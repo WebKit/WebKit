@@ -84,6 +84,8 @@ class RemoteLayerBackingStore;
 class RemoteImageBufferProxyFlushState;
 class RemoteImageBufferSetProxy;
 
+enum class UsesRenderingUpdateBackpressure : bool { No, Yes };
+
 namespace ShapeDetection {
 class RemoteBarcodeDetectorProxy;
 class RemoteTextDetectorProxy;
@@ -180,7 +182,7 @@ public:
     void prepareImageBufferSetForDisplay(LayerPrepareBuffersData&&);
 #endif
 
-    void finalizeRenderingUpdate();
+    void finalizeRenderingUpdate(UsesRenderingUpdateBackpressure);
     void didPaintLayers();
 
     RenderingUpdateID renderingUpdateID() const { return m_renderingUpdateID; }

@@ -690,12 +690,21 @@ void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(MarkSurfacesAsVolatile
     completionHandler(didMarkAllLayersAsVolatile);
 }
 
-void RemoteRenderingBackendProxy::finalizeRenderingUpdate()
+void RemoteRenderingBackendProxy::finalizeRenderingUpdate(UsesRenderingUpdateBackpressure usesBackpressure)
 {
     if (!m_connection)
         return;
-    send(Messages::RemoteRenderingBackend::FinalizeRenderingUpdate(m_renderingUpdateID));
+
     m_renderingUpdateID.increment();
+
+    if (usesBackpressure == UsesRenderingUpdateBackpressure::Yes) {
+        send(Messages::RemoteRenderingBackend::FinalizeRenderingUpdate(m_renderingUpdateID));
+        return;
+    }
+
+    if (RefPtr connection = this->connection())
+        connection->flushBatch();
+    m_didRenderingUpdateID = m_renderingUpdateID;
 }
 
 void RemoteRenderingBackendProxy::didPaintLayers()
