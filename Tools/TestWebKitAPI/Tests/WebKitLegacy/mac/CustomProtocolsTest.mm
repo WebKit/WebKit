@@ -27,7 +27,6 @@
 
 #if WK_HAVE_C_SPI && PLATFORM(MAC)
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/mac/TestBrowsingContextLoadDelegate.h"
@@ -98,6 +97,7 @@ static RetainPtr<WKWebView> wkView;
 @end
 
 static RetainPtr<ProcessPoolDestroyedDuringLoadingProtocol> processPoolProtocolInstance;
+static bool* processPoolProtocolIsDone;
 
 @implementation ProcessPoolDestroyedDuringLoadingProtocol
 
@@ -111,7 +111,8 @@ static RetainPtr<ProcessPoolDestroyedDuringLoadingProtocol> processPoolProtocolI
     [self.client URLProtocol:self didLoadData:data];
     
     processPoolProtocolInstance = self;
-    isDone = true;
+    if (processPoolProtocolIsDone)
+        *processPoolProtocolIsDone = true;
 }
 
 - (void)finishTheLoad
@@ -121,7 +122,8 @@ static RetainPtr<ProcessPoolDestroyedDuringLoadingProtocol> processPoolProtocolI
 
 - (void)stopLoading
 {
-    isDone = true;
+    if (processPoolProtocolIsDone)
+        *processPoolProtocolIsDone = true;
 }
 
 @end
@@ -130,6 +132,7 @@ namespace TestWebKitAPI {
 
 static void runTest()
 {
+    testFinished = false;
     wkView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     RetainPtr<CustomProtocolsLoadDelegate> loadDelegate = adoptNS([[CustomProtocolsLoadDelegate alloc] init]);
     wkView.get().navigationDelegate = loadDelegate.get();
@@ -154,6 +157,8 @@ TEST(WebKit2CustomProtocolsTest, CloseDuringCustomProtocolLoad)
 
 TEST(WebKit2CustomProtocolsTest, ProcessPoolDestroyedDuringLoading)
 {
+    bool isDone = false;
+    processPoolProtocolIsDone = &isDone;
     [ProcessPoolDestroyedDuringLoadingProtocol registerWithScheme:@"custom"];
 
     @autoreleasepool {
@@ -179,6 +184,7 @@ TEST(WebKit2CustomProtocolsTest, ProcessPoolDestroyedDuringLoading)
     Util::spinRunLoop(10);
 
     [ProcessPoolDestroyedDuringLoadingProtocol unregister];
+    processPoolProtocolIsDone = nullptr;
 }
 
 } // namespace TestWebKitAPI
