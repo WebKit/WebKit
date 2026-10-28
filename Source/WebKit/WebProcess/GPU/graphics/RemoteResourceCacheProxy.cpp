@@ -185,6 +185,9 @@ bool RemoteResourceCacheProxy::recordNativeImageUse(const NativeImage& image, co
 
 RemoteNativeImageReadReference RemoteResourceCacheProxy::recordSharedNativeImageUse(RemoteNativeImageProxy& image)
 {
+    // Only a backend in the GPU process can adopt a native image that the GPU process shares. Other
+    // backends are sent the pixels, with recordNativeImageUse().
+    ASSERT(m_drawingBackendProxy->canUseGPUProcessResources());
     // The image reports its destruction to this cache from now on, so that the rendering backend cache
     // entry created by the caller is released, and so that pixel read-back can be routed through here.
     image.attachResourceCache(m_remoteNativeImageProxyWeakFactory.createWeakPtr(*this).releaseNonNull());

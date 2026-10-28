@@ -323,6 +323,20 @@ void RemoteGraphicsContext::clipToImageBuffer(RenderingResourceIdentifier imageB
     context().clipToImageBuffer(*clipImage, destinationRect);
 }
 
+// For an image buffer of another backend, which the web process sent the pixels of.
+void RemoteGraphicsContext::clipToNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destinationRect)
+{
+    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier);
+    MESSAGE_CHECK(image);
+    // GraphicsContext clips only to image buffers, so draw the image into one.
+    auto imageSize = FloatSize { image->size() };
+    RefPtr clipImage = ImageBuffer::create(imageSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!clipImage)
+        return;
+    clipImage->context().drawNativeImage(*image, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
+    context().clipToImageBuffer(*clipImage, destinationRect);
+}
+
 void RemoteGraphicsContext::clipOutToPath(const Path& path)
 {
     context().clipOut(path);

@@ -73,6 +73,7 @@ public:
     RefPtr<IPC::StreamClientConnection> connection() final;
     void didBecomeUnresponsive() final;
     RemoteResourceCacheProxy& remoteResourceCacheProxy() const final { return m_remoteResourceCacheProxy; }
+    bool canUseGPUProcessResources() const final { return false; }
     RefPtr<RemoteImageBufferProxy> cachedImageBuffer(const WebCore::ImageBuffer&) const final { return nullptr; }
     RefPtr<WebCore::ImageBuffer> createImageBufferForContext(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::ColorSpace&, WebCore::ImageBufferFormat) final;
     void cacheNativeImage(WebCore::ShareableBitmapHandle&&, WebCore::RenderingResourceIdentifier) final;

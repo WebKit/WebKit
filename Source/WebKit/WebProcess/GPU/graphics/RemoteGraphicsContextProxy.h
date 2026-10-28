@@ -163,6 +163,7 @@ private:
 
     [[nodiscard]] bool recordResourceUse(const WebCore::NativeImage&);
     [[nodiscard]] bool recordResourceUse(WebCore::ImageBuffer&);
+    RefPtr<WebCore::NativeImage> copyNativeImageOfImageBufferFromOtherBackend(WebCore::ImageBuffer&);
     std::optional<RemotePathImplIdentifier> recordResourceUse(const WebCore::PathImpl&);
     bool recordResourceUse(const WebCore::SourceImage&);
     bool recordResourceUse(WebCore::FontBase&);

@@ -109,6 +109,7 @@ public:
     static bool canMapRemoteImageBufferBackendBackingStore();
 
     RemoteResourceCacheProxy& remoteResourceCacheProxy() const final { return m_remoteResourceCacheProxy; }
+    bool canUseGPUProcessResources() const final { return true; }
 
     void transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy>, WebCore::ImageBuffer&);
     std::unique_ptr<RemoteSerializedImageBufferProxy> moveToSerializedBuffer(RemoteImageBufferProxy&);

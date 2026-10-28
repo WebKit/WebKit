@@ -76,6 +76,9 @@ public:
     virtual RefPtr<IPC::StreamClientConnection> connection() = 0;
     virtual void didBecomeUnresponsive() = 0;
     virtual RemoteResourceCacheProxy& remoteResourceCacheProxy() const = 0;
+    // Whether the backend is in the GPU process, so that it can use the native images and video
+    // frames that the GPU process shares, and IOSurfaces.
+    virtual bool canUseGPUProcessResources() const = 0;
 
     // The remote image buffer of this backend for the image buffer, if there is one.
     virtual RefPtr<RemoteImageBufferProxy> cachedImageBuffer(const WebCore::ImageBuffer&) const = 0;
