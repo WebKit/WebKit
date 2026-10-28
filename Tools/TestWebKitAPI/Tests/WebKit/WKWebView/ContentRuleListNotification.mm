@@ -74,10 +74,28 @@ static Vector<Notification> notificationList;
 static RetainPtr<NSURL> notificationURL;
 static RetainPtr<NSString> notificationIdentifier;
 
+static void resetNotificationState()
+{
+    receivedNotification = false;
+    receivedAlert = false;
+    notificationList.clear();
+    notificationURL = nil;
+    notificationIdentifier = nil;
+}
+
 @interface ContentRuleListNotificationDelegate : NSObject <WKNavigationDelegatePrivate, WKURLSchemeHandler, WKUIDelegate>
 @end
 
 @implementation ContentRuleListNotificationDelegate
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    resetNotificationState();
+    return self;
+}
 
 - (void)_webView:(WKWebView *)webView URL:(NSURL *)url contentRuleListIdentifiers:(NSArray<NSString *> *)identifiers notifications:(NSArray<NSString *> *)notifications
 {
@@ -677,8 +695,7 @@ TEST(ContentRuleList, InterpretURLFilterCacheDoesNotConfuseSameStartDomains)
     };
 
     auto fetchIsBlocked = [](WKWebView *webView, NSString *urlString) -> bool {
-        notificationList.clear();
-        receivedAlert = false;
+        resetNotificationState();
         NSString *html = [NSString stringWithFormat:@"<script>fetch('%@',{mode:'no-cors'}).then(()=>alert('l')).catch(()=>alert('b'))</script>", urlString];
         [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"apitest:///"]];
         TestWebKitAPI::Util::run(&receivedAlert);
