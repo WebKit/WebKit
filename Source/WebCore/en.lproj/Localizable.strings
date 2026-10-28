@@ -1009,6 +1009,9 @@
 /* WKWebExtensionErrorInvalidBackgroundContent description for empty or invalid preferred environment key */
 "Manifest `background` entry has an empty or invalid `preferred_environment` key." = "Manifest `background` entry has an empty or invalid `preferred_environment` key.";
 
+/* WKWebExtensionErrorInvalidBackgroundContent description for both background page and scripts keys */
+"Manifest `background` entry has both `page` and `scripts` keys. The `page` key is used and `scripts` is ignored." = "Manifest `background` entry has both `page` and `scripts` keys. The `page` key is used and `scripts` is ignored.";
+
 /* WKWebExtensionErrorInvalidBackgroundContent description for missing background page or scripts keys */
 "Manifest `background` entry has missing or empty required `page` or `scripts` key for `preferred_environment` of `document`." = "Manifest `background` entry has missing or empty required `page` or `scripts` key for `preferred_environment` of `document`.";
 

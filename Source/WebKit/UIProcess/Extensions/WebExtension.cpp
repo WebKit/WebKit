@@ -1191,15 +1191,18 @@ void WebExtension::populateBackgroundPropertiesIfNeeded()
     }
 
     if (!preferredEnvironments.size()) {
-        // Page takes precedence over service worker.
-        if (!m_backgroundPagePath.isEmpty())
-            m_backgroundServiceWorkerPath = nullString();
+        // Page takes precedence over scripts and service worker.
+        if (!m_backgroundPagePath.isEmpty()) {
+            if (!m_backgroundScriptPaths.isEmpty())
+                recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has both `page` and `scripts` keys. The `page` key is used and `scripts` is ignored.", "WKWebExtensionErrorInvalidBackgroundContent description for both background page and scripts keys")));
 
-        // Scripts takes precedence over page and service worker.
-        if (!m_backgroundScriptPaths.isEmpty()) {
+            m_backgroundScriptPaths = { };
             m_backgroundServiceWorkerPath = nullString();
-            m_backgroundPagePath = nullString();
         }
+
+        // Scripts takes precedence over service worker.
+        if (!m_backgroundScriptPaths.isEmpty())
+            m_backgroundServiceWorkerPath = nullString();
 
         m_backgroundContentEnvironment = !m_backgroundServiceWorkerPath.isEmpty() ? Environment::ServiceWorker : Environment::Document;
 

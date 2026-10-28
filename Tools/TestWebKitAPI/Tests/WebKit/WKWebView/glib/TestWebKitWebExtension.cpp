@@ -676,7 +676,7 @@ static void testBackgroundParsing(Test*, gconstpointer)
     g_assert_false(webkit_web_extension_get_has_persistent_background_content(extension.get()));
     g_assert_false(webkit_web_extension_get_has_service_worker_background_content(extension.get()));
     g_assert_false(webkit_web_extension_get_has_modular_background_content(extension.get()));
-    g_assert_no_error(error.get());
+    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
 
     extension = parse("{ \"manifest_version\": 2, \"background\": { \"service_worker\": \"test.js\", \"persistent\": false }, \"name\": \"Test\", \"version\": \"1.0\", \"description\": \"Test description\" }");
     g_assert_true(webkit_web_extension_get_has_background_content(extension.get()));

@@ -32,6 +32,7 @@
 #import "Helpers/cocoa/TestCocoaImageAndCocoaColor.h"
 #import "Helpers/cocoa/WebExtensionUtilities.h"
 #import <WebKit/WKFoundation.h>
+#import <WebKit/WKWebExtensionContextPrivate.h>
 #import <WebKit/WKWebExtensionMatchPatternPrivate.h>
 #import <WebKit/WKWebExtensionPrivate.h>
 
@@ -1526,7 +1527,8 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
     EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
     EXPECT_FALSE(testExtension._hasModularBackgroundContent);
-    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_EQ(testExtension.errors.firstObject.code, WKWebExtensionErrorInvalidManifestEntry);
 
     testManifestDictionary[@"background"] = @{ @"service_worker": @"test.js", @"persistent": @NO };
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
@@ -1660,6 +1662,47 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidBackgroundPersistence));
+}
+
+TEST(WKWebExtension, BackgroundDefaultPrecedence)
+{
+    NSMutableDictionary *testManifestDictionary = [@{ @"manifest_version": @3, @"name": @"Test", @"description": @"Test", @"version": @"1.0" } mutableCopy];
+
+    testManifestDictionary[@"background"] = @{ @"page": @"background.html", @"scripts": @[ @"background.js" ] };
+
+    auto *testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    auto *testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
+
+    EXPECT_TRUE(testExtension.hasBackgroundContent);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
+    EXPECT_NS_EQUAL(testContext._backgroundContentURL.lastPathComponent, @"background.html");
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+    EXPECT_EQ(testExtension.errors.firstObject.code, WKWebExtensionErrorInvalidManifestEntry);
+
+    testManifestDictionary[@"background"] = @{ @"page": @"background.html", @"scripts": @[ @"background.js" ], @"service_worker": @"worker.js" };
+
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
+
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
+    EXPECT_NS_EQUAL(testContext._backgroundContentURL.lastPathComponent, @"background.html");
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+
+    testManifestDictionary[@"background"] = @{ @"page": @"background.html" };
+
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+
+    EXPECT_TRUE(testExtension.hasBackgroundContent);
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    testManifestDictionary[@"background"] = @{ @"scripts": @[ @"background.js" ], @"service_worker": @"worker.js" };
+
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
+
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
+    EXPECT_NS_EQUAL(testContext._backgroundContentURL.lastPathComponent, @"_generated_background_page.html");
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 }
 
 TEST(WKWebExtension, BackgroundPreferredEnvironmentParsing)
