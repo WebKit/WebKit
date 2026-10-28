@@ -483,7 +483,7 @@ void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadM
 
 void DocumentLoader::finishedLoading()
 {
-    // If the prefetch response was not successful, remove the failed prefetch from the memory cache and retry the navigation as a continuing load.
+    // If the prefetch response can't serve this navigation, remove the prefetch from the memory cache and retry the navigation as a continuing load.
     if (m_prefetchResponseFailed) {
         RefPtr frame = m_frame;
         if (!frame)
@@ -500,6 +500,8 @@ void DocumentLoader::finishedLoading()
         FrameLoadRequest frameLoadRequest { document.copyRef(), protect(document->securityOrigin()), WTF::move(request), { }, InitiatedByMainFrame::Unknown };
         frameLoadRequest.setIsRequestFromClientOrUserInput();
         frameLoadRequest.setShouldTreatAsContinuingLoad(ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted);
+        if (auto navigationID = takeNavigationID())
+            frameLoadRequest.setNavigationID(*navigationID);
         frame->loader().load(WTF::move(frameLoadRequest));
         return;
     }

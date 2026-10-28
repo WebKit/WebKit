@@ -54,6 +54,7 @@
 namespace TestWebKitAPI {
 
 class HTTPServer;
+struct HTTPResponse;
 
 void setFeatureEnabled(WKWebViewConfiguration *, NSString *featureName, bool enabled);
 void enableSiteIsolation(WKWebViewConfiguration *);
@@ -61,6 +62,9 @@ void enableSiteIsolation(WKWebViewConfiguration *);
 std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(RetainPtr<WKWebViewConfiguration>, CGRect, bool enable);
 std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(RetainPtr<WKWebViewConfiguration>, CGRect = CGRectZero);
 std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(const HTTPServer&, CGRect = CGRectZero);
+
+HTTPResponse documentIsolationPolicyResponse(const String& body);
+std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegateWithDocumentIsolationPolicy(const HTTPServer&);
 
 struct SiteIsolationParams {
     bool crossOrigin { false };

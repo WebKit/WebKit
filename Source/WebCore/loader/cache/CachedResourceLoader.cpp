@@ -1553,7 +1553,6 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
 
     // A navigation served from a prefetch stays in this process, so a document with a Document-Isolation-Policy can only use a
     // prefetch once its response shows the same policy (see DocumentPrefetcher::canServeNavigations()).
-    // FIXME: A document without a policy can still join a prefetch whose response turns out to have one.
     if (type == CachedResource::Type::MainResource && existingResource->options().cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch && existingResource->response().isNull()) {
         if (RefPtr document = frame() ? frame()->document() : nullptr; document && document->documentIsolationPolicy().value != DocumentIsolationPolicyValue::None)
             return Reload;

@@ -3138,4 +3138,66 @@ TEST(SiteIsolation, TranslatePopoverInCrossOriginIframe)
 
 #endif // PLATFORM(MAC)
 
+TEST(SiteIsolation, NavigationJoiningPrefetchWhoseResponseHasDocumentIsolationPolicy)
+{
+    auto speculationRules = "<script type='speculationrules'>{\"prefetch\":[{\"source\":\"list\",\"urls\":[\"/destination\"]}]}</script>"_s;
+    std::optional<Connection> prefetchConnection;
+    size_t navigationRequests = 0;
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/plain"_s) {
+                co_await connection.awaitableSend(HTTPResponse(speculationRules).serialize());
+                continue;
+            }
+            if (path == "/destination"_s) {
+                // Hold the prefetch, so the navigation finds it still loading.
+                if (contains(request.span(), "Sec-Purpose: prefetch"_span)) {
+                    prefetchConnection = connection;
+                    co_return;
+                }
+                navigationRequests++;
+                co_await connection.awaitableSend(documentIsolationPolicyResponse("destination"_s).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithDocumentIsolationPolicy(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/plain"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t plainProcess = [webView _webProcessIdentifier];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !!prefetchConnection;
+    }));
+
+    WKWebView *view = webView.get();
+    unsigned responseDecisions = 0;
+    std::optional<pid_t> provisionalProcessAtResponse;
+    navigationDelegate.get().decidePolicyForNavigationResponse = makeBlockPtr([&](WKNavigationResponse *, void (^decisionHandler)(WKNavigationResponsePolicy)) {
+        responseDecisions++;
+        provisionalProcessAtResponse = view._provisionalWebProcessIdentifier;
+        decisionHandler(WKNavigationResponsePolicyAllow);
+    }).get();
+
+    // The navigation joins the prefetch in the same task that reports its start, so the prefetch's response reaches it.
+    [webView evaluateJavaScript:@"location.href = '/destination'" completionHandler:nil];
+    [navigationDelegate waitForDidStartProvisionalNavigation];
+    prefetchConnection->send(HTTPResponse({ { "Content-Type"_s, "text/html"_s }, { "Document-Isolation-Policy"_s, "isolate-and-require-corp"_s }, { "Connection"_s, "close"_s } }, "prefetch"_s).serialize());
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // The prefetch can't serve the navigation, so the navigation makes its own request, whose response moves it to a
+    // cross-origin isolated process before the delegate decides on it.
+    EXPECT_EQ(navigationRequests, 1u);
+    EXPECT_EQ(responseDecisions, 1u);
+    pid_t destinationProcess = [webView _webProcessIdentifier];
+    EXPECT_NE(destinationProcess, plainProcess);
+    EXPECT_EQ(provisionalProcessAtResponse.value_or(-1), destinationProcess);
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.body.textContent"], "destination");
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"crossOriginIsolated"] boolValue]);
+}
+
 } // namespace TestWebKitAPI

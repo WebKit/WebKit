@@ -6480,18 +6480,6 @@ TEST(SiteIsolation, AlternateHTMLStringIsInTheAgentClusterOfSameOriginFrames)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "[object WebAssembly.Module]");
 }
 
-static HTTPResponse documentIsolationPolicyResponse(const String& body)
-{
-    return { { { "Content-Type"_s, "text/html"_s }, { "Document-Isolation-Policy"_s, "isolate-and-require-corp"_s } }, body };
-}
-
-static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegateWithDocumentIsolationPolicy(const HTTPServer& server)
-{
-    RetainPtr configuration = server.httpsProxyConfiguration();
-    setFeatureEnabled(configuration.get(), @"DocumentIsolationPolicyEnabled", true);
-    return siteIsolatedViewAndDelegate(configuration);
-}
-
 TEST(SiteIsolation, AlternateHTMLStringCannotAccessSameOriginFrameWithDocumentIsolationPolicy)
 {
     HTTPServer server({
