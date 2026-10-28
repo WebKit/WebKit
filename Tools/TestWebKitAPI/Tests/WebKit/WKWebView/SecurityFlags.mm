@@ -30,7 +30,9 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
 
@@ -57,6 +59,14 @@ static FlagState flagStateInNetworkProcess(WKWebsiteDataStore *dataStore, NSStri
     return [reply boolValue] ? FlagState::Enforced : FlagState::Disabled;
 }
 
+static FlagState flagStateInUIProcess(NSString *flagName)
+{
+    RetainPtr enabled = [WKWebsiteDataStore _isSecurityFlagEnabledInUIProcessForTesting:flagName];
+    if (!enabled)
+        return FlagState::NoSuchFlag;
+    return [enabled boolValue] ? FlagState::Enforced : FlagState::Disabled;
+}
+
 static RetainPtr<WKWebsiteDataStore> launchNetworkProcess()
 {
     RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
@@ -78,6 +88,16 @@ TEST_F(SecurityFlagsTest, SecureByDefault)
 {
     auto dataStore = launchNetworkProcess();
     EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Enforced);
+}
+
+TEST_F(SecurityFlagsTest, UIProcessReadsItsOwnValue)
+{
+    EXPECT_EQ(flagStateInUIProcess(testSecurityFlagName), FlagState::Enforced);
+    EXPECT_EQ(flagStateInUIProcess(@"radar99999999"), FlagState::NoSuchFlag);
+
+    [WKWebsiteDataStore _setDisabledSecurityFlagsForTesting:@[testSecurityFlagName]];
+
+    EXPECT_EQ(flagStateInUIProcess(testSecurityFlagName), FlagState::Disabled);
 }
 
 TEST_F(SecurityFlagsTest, DidChangeReachesRunningProcess)
@@ -126,6 +146,29 @@ public:
 
     void TearDown() final { [NSUserDefaults.standardUserDefaults removeObjectForKey:disabledSecurityFlagsDefaultsKey]; }
 };
+
+TEST_F(SecurityFlagsUserDefaultTest, UIProcessAppliesTheUserDefault)
+{
+    // Creating an API object is what initializes WebKit, which is what applies the user default.
+    RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+
+    EXPECT_EQ(flagStateInUIProcess(testSecurityFlagName), FlagState::Disabled);
+}
+
+TEST_F(SecurityFlagsUserDefaultTest, UIProcessValueIsReadableOffTheMainThread)
+{
+    RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+
+    auto state = FlagState::NoSuchFlag;
+    bool done = false;
+    dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_DEFAULT, 0), makeBlockPtr([&] {
+        state = flagStateInUIProcess(testSecurityFlagName);
+        done = true;
+    }).get());
+    Util::run(&done);
+
+    EXPECT_EQ(state, FlagState::Disabled);
+}
 
 TEST_F(SecurityFlagsUserDefaultTest, DisablesFlagAtStartup)
 {

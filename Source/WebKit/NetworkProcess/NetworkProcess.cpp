@@ -321,7 +321,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     CompletionHandlerCallingScope callCompletionHandler(WTF::move(completionHandler));
 
     applyProcessCreationParameters(WTF::move(parameters.auxiliaryProcessParameters));
-    m_securityFlags.replaceWith(parameters.securityFlags);
+    SecurityFlags::update(WTF::move(parameters.securityFlags));
 #if HAVE(SEC_KEY_PROXY)
     WTF::setProcessPrivileges({ ProcessPrivilege::CanAccessRawCookies });
 #else
@@ -475,7 +475,7 @@ void NetworkProcess::sharedPreferencesForWebProcessDidChange(WebCore::ProcessIde
 
 void NetworkProcess::securityFlagsDidChange(SecurityFlags&& securityFlags)
 {
-    m_securityFlags.replaceWith(securityFlags);
+    SecurityFlags::update(WTF::move(securityFlags));
 }
 
 void NetworkProcess::isSecurityFlagEnabledForTesting(const String& flagName, CompletionHandler<void(std::optional<bool>)>&& completionHandler)

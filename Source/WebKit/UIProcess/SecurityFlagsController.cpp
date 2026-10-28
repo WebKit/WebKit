@@ -43,12 +43,16 @@ SecurityFlagsController& SecurityFlagsController::singleton()
     return controller.get();
 }
 
-// No propagation: every path that launches a privileged child process reads this singleton, so nothing can
-// have launched yet.
+void SecurityFlagsController::initialize()
+{
+    singleton();
+}
+
+// No propagation: this runs while the UIProcess initializes, so no privileged child process can have launched yet.
 SecurityFlagsController::SecurityFlagsController()
     : m_persistentlyDisabledNames(platformPersistentlyDisabledFlagNames())
 {
-    m_securityFlags.replaceWith(flagsWithNamesDisabled({ }, IncludePersistentNames::Yes));
+    SecurityFlags::update(flagsWithNamesDisabled({ }, IncludePersistentNames::Yes));
 
     for (auto& name : borrow(m_persistentlyDisabledNames)) {
         UNUSED_VARIABLE(name);
@@ -88,15 +92,10 @@ void SecurityFlagsController::setDisabledFlagsNamedForTesting(const Vector<Strin
     apply(flagsWithNamesDisabled(names, IncludePersistentNames::No));
 }
 
-void SecurityFlagsController::apply(const SecurityFlags& newFlags)
+void SecurityFlagsController::apply(SecurityFlags&& newFlags)
 {
-    ASSERT(RunLoop::isMain());
-
-    if (newFlags == m_securityFlags)
-        return;
-
-    m_securityFlags.replaceWith(newFlags);
-    propagateToChildProcesses();
+    if (SecurityFlags::update(WTF::move(newFlags)))
+        propagateToChildProcesses();
 }
 
 #if !PLATFORM(COCOA)
@@ -112,16 +111,16 @@ void SecurityFlagsController::propagateToChildProcesses()
 
     // Processes launched after this point pick the new value up through their creation parameters instead.
     for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
-        networkProcess->securityFlagsDidChange(m_securityFlags);
+        networkProcess->securityFlagsDidChange(securityFlags());
 
 #if ENABLE(GPU_PROCESS)
     if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
-        gpuProcess->securityFlagsDidChange(m_securityFlags);
+        gpuProcess->securityFlagsDidChange(securityFlags());
 #endif
 
 #if ENABLE(MODEL_PROCESS)
     if (RefPtr modelProcess = ModelProcessProxy::singletonIfCreated())
-        modelProcess->securityFlagsDidChange(m_securityFlags);
+        modelProcess->securityFlagsDidChange(securityFlags());
 #endif
 }
 

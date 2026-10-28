@@ -46,6 +46,7 @@
 #import "ProcessThrottler.h"
 #import "SandboxExtension.h"
 #import "SandboxUtilities.h"
+#import "SecurityFlags.h"
 #import "TextChecker.h"
 #import "WKContentRuleListInternal.h"
 #import "WKContentRuleListStoreInternal.h"
@@ -632,6 +633,8 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 #if HAVE(ENHANCED_SECURITY_LINKS)
     parameters.enableEnhancedSecurityLinks = ![defaults objectForKey:WebPreferencesKey::enhancedSecurityLinksEnabledKey().createNSString().get()] || [defaults boolForKey:WebPreferencesKey::enhancedSecurityLinksEnabledKey().createNSString().get()];
 #endif
+
+    RELEASE_LOG(Process, "SecurityFlags: radar184485266 is %" PUBLIC_LOG_STRING, securityFlags().radar184485266() ? "enforced" : "disabled");
 }
 
 void WebProcessPool::platformInvalidateContext()

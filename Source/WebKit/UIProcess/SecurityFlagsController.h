@@ -34,14 +34,15 @@
 
 namespace WebKit {
 
-// One value for the whole UIProcess, because it comes from a single device-global list. Reading a flag is safe
-// from any thread; setting them is main run loop only, because propagateToChildProcesses() touches the proxies.
+// The UIProcess's owner of the value securityFlags() answers, because it comes from a single device-global list.
+// Setting the flags is main run loop only, because propagateToChildProcesses() touches the proxies.
 class SecurityFlagsController {
     WTF_MAKE_NONCOPYABLE(SecurityFlagsController);
 public:
     static SecurityFlagsController& singleton();
 
-    const SecurityFlags& securityFlags() const LIFETIME_BOUND { return m_securityFlags; }
+    // Applies the names from the user default. Called while the UIProcess initializes; does nothing after that.
+    static void initialize();
 
     // The list is the whole truth: every flag it does not name is enforced, so an empty list resets everything.
     // Flags named by the user default stay disabled regardless.
@@ -56,13 +57,12 @@ private:
 
     enum class IncludePersistentNames : bool { No, Yes };
     SecurityFlags flagsWithNamesDisabled(const Vector<String>&, IncludePersistentNames) const;
-    void apply(const SecurityFlags&);
+    void apply(SecurityFlags&&);
     void propagateToChildProcesses();
 
     static Vector<String> platformPersistentlyDisabledFlagNames();
 
     Vector<String> m_persistentlyDisabledNames;
-    SecurityFlags m_securityFlags;
 };
 
 } // namespace WebKit

@@ -1539,6 +1539,16 @@ struct WKWebsiteData {
 #endif // ENGINEERING_BUILD
 }
 
++ (NSNumber *)_isSecurityFlagEnabledInUIProcessForTesting:(NSString *)flagName
+{
+#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+    auto name = String { flagName };
+    if (auto enabled = WebKit::securityFlags().isFlagEnabledNamedForTesting(name))
+        return [NSNumber numberWithBool:*enabled];
+#endif // ENGINEERING_BUILD
+    return nil;
+}
+
 + (void)_setWebPushActionHandler:(WKWebsiteDataStore *(^)(_WKWebPushAction *))handler
 {
 #if PLATFORM(IOS)
