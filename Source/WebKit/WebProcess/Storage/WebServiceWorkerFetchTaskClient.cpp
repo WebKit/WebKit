@@ -64,9 +64,8 @@ void WebServiceWorkerFetchTaskClient::didReceiveRedirection(const WebCore::Resou
         return;
 
     m_didSendResponse = true;
-    connection->send(Messages::ServiceWorkerFetchTask::DidReceiveRedirectResponse { response }, m_fetchIdentifier);
-
     cleanup();
+    connection->send(Messages::ServiceWorkerFetchTask::DidReceiveRedirectResponse { response }, m_fetchIdentifier);
 }
 
 void WebServiceWorkerFetchTaskClient::didReceiveResponse(ResourceResponse&& response)
@@ -327,9 +326,7 @@ void WebServiceWorkerFetchTaskClient::continueDidReceiveResponse()
 void WebServiceWorkerFetchTaskClient::cleanup()
 {
     m_connection = nullptr;
-    ensureOnMainRunLoop([serviceWorkerIdentifier = m_serviceWorkerIdentifier, serverConnectionIdentifier = m_serverConnectionIdentifier, fetchIdentifier = m_fetchIdentifier, needsContinueDidReceiveResponseMessage = m_needsContinueDidReceiveResponseMessage] {
-        SWContextManager::singleton().removeFetch(serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier, needsContinueDidReceiveResponseMessage);
-    });
+    SWContextManager::singleton().removeFetch(m_serviceWorkerIdentifier, m_serverConnectionIdentifier, m_fetchIdentifier, m_needsContinueDidReceiveResponseMessage);
 }
 
 void WebServiceWorkerFetchTaskClient::contextIsStopping()
