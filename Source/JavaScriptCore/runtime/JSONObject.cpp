@@ -1208,6 +1208,7 @@ static ALWAYS_INLINE bool stringCopySameType(std::span<const CharType> span, Cha
         const auto* end = ptr + span.size();
         auto* cursorEnd = cursor + span.size();
         BulkType accumulated { };
+        BulkType accumulatedSurrogates { };
         for (; ptr + stride <= end; ptr += stride, cursor += stride) {
             auto input = SIMD::load(std::bit_cast<const UnsignedType*>(ptr));
             SIMD::store(input, std::bit_cast<UnsignedType*>(cursor));
@@ -1218,7 +1219,7 @@ static ALWAYS_INLINE bool stringCopySameType(std::span<const CharType> span, Cha
             if constexpr (sizeof(CharType) != 1) {
                 constexpr auto surrogateMask = SIMD::splat<UnsignedType>(0xf800);
                 constexpr auto surrogateCheckMask = SIMD::splat<UnsignedType>(0xd800);
-                accumulated = SIMD::bitOr(accumulated, SIMD::equal(SIMD::bitAnd(input, surrogateMask), surrogateCheckMask));
+                accumulatedSurrogates = SIMD::bitOr(accumulatedSurrogates, SIMD::equal(SIMD::bitAnd(input, surrogateMask), surrogateCheckMask));
             }
         }
         if (ptr < end) {
@@ -1231,10 +1232,16 @@ static ALWAYS_INLINE bool stringCopySameType(std::span<const CharType> span, Cha
             if constexpr (sizeof(CharType) != 1) {
                 constexpr auto surrogateMask = SIMD::splat<UnsignedType>(0xf800);
                 constexpr auto surrogateCheckMask = SIMD::splat<UnsignedType>(0xd800);
-                accumulated = SIMD::bitOr(accumulated, SIMD::equal(SIMD::bitAnd(input, surrogateMask), surrogateCheckMask));
+                accumulatedSurrogates = SIMD::bitOr(accumulatedSurrogates, SIMD::equal(SIMD::bitAnd(input, surrogateMask), surrogateCheckMask));
             }
         }
-        return SIMD::isNonZero(accumulated);
+        if (SIMD::isNonZero(accumulated))
+            return true;
+        if constexpr (sizeof(CharType) != 1) {
+            if (SIMD::isNonZero(accumulatedSurrogates))
+                return !WTF::isWellFormedUTF16(span);
+        }
+        return false;
     }
 #endif
     if constexpr (sizeof(CharType) == 1) {
