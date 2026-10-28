@@ -48,6 +48,8 @@ VisualViewport::VisualViewport(LocalDOMWindow& window)
 {
 }
 
+VisualViewport::~VisualViewport() = default;
+
 enum EventTargetInterfaceType VisualViewport::eventTargetInterface() const
 {
     return EventTargetInterfaceType::VisualViewport;

@@ -36,6 +36,20 @@
 
 namespace WebCore {
 
+SVGTransformList::SVGTransformList() = default;
+
+SVGTransformList::SVGTransformList(SVGPropertyOwner* owner, SVGPropertyAccess access)
+    : Base(owner, access)
+{
+}
+
+SVGTransformList::SVGTransformList(const SVGTransformList& other, SVGPropertyAccess access)
+    : Base(other, access)
+{
+}
+
+SVGTransformList::~SVGTransformList() = default;
+
 ExceptionOr<RefPtr<SVGTransform>> SVGTransformList::consolidate()
 {
     auto result = canAlterList();

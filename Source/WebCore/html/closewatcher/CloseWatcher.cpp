@@ -86,6 +86,8 @@ CloseWatcher::CloseWatcher(Document& document)
 {
 }
 
+CloseWatcher::~CloseWatcher() = default;
+
 ScriptExecutionContext* CloseWatcher::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();

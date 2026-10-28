@@ -40,6 +40,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSAnimation);
 
+CSSAnimation::~CSSAnimation() = default;
+
 Ref<CSSAnimation> CSSAnimation::create(const Styleable& owningElement, Style::Animation&& backingStyleAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext)
 {
     // CSSAnimation should only ever be created with non-"none" animation names.

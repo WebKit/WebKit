@@ -36,7 +36,7 @@ class CustomEffect final : public AnimationEffect {
     WTF_MAKE_TZONE_ALLOCATED(CustomEffect);
 public:
     static ExceptionOr<Ref<CustomEffect>> create(Document&, Ref<CustomEffectCallback>&&, std::optional<Variant<double, EffectTiming>>&&);
-    ~CustomEffect() { }
+    ~CustomEffect();
 
 private:
     CustomEffect(Ref<CustomEffectCallback>&&);

@@ -32,7 +32,6 @@ namespace WebCore {
 
 class SVGPointList final : public SVGValuePropertyList<SVGPoint> {
     using Base = SVGValuePropertyList<SVGPoint>;
-    using Base::Base;
 
 public:
     static Ref<SVGPointList> create()
@@ -50,8 +49,15 @@ public:
         return adoptRef(*new SVGPointList(other, access));
     }
 
+    ~SVGPointList();
+
     bool parse(StringView);
     String valueAsString() const override;
+
+private:
+    SVGPointList();
+    SVGPointList(SVGPropertyOwner*, SVGPropertyAccess);
+    SVGPointList(const SVGPointList&, SVGPropertyAccess);
 };
 
 }

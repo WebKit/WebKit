@@ -46,6 +46,8 @@ WakeLockSentinel::WakeLockSentinel(Document& document, WakeLockType type)
 {
 }
 
+WakeLockSentinel::~WakeLockSentinel() = default;
+
 void WakeLockSentinel::release(Ref<DeferredPromise>&& promise)
 {
     if (!m_wasReleased) {

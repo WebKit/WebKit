@@ -44,6 +44,8 @@ public:
         return adoptRef(*new GPUValidationError(WTF::move(backing)));
     }
 
+    ~GPUValidationError();
+
     const String& message() const;
 
     WebGPU::ValidationError* backing() { return m_backing.get(); }
@@ -51,15 +53,8 @@ public:
     String stack() const { return "_"_s; }
 
 private:
-    GPUValidationError(String&& message)
-        : m_message(WTF::move(message))
-    {
-    }
-
-    GPUValidationError(Ref<WebGPU::ValidationError>&& backing)
-        : m_backing(WTF::move(backing))
-    {
-    }
+    GPUValidationError(String&& message);
+    GPUValidationError(Ref<WebGPU::ValidationError>&&);
 
     String m_message;
     RefPtr<WebGPU::ValidationError> m_backing;

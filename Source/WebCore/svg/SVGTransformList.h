@@ -31,7 +31,6 @@ namespace WebCore {
 class SVGTransformList final : public SVGValuePropertyList<SVGTransform> {
     friend class SVGViewSpec;
     using Base = SVGValuePropertyList<SVGTransform>;
-    using Base::Base;
 
 public:
     static Ref<SVGTransformList> create()
@@ -49,6 +48,8 @@ public:
         return adoptRef(*new SVGTransformList(other, access));
     }
 
+    ~SVGTransformList();
+
     ExceptionOr<Ref<SVGTransform>> createSVGTransformFromMatrix(DOMMatrix2DInit&& matrixInit)
     {
         Ref svgTransform =  SVGTransform::create();
@@ -63,6 +64,9 @@ public:
     String valueAsString() const override;
 
 private:
+    SVGTransformList();
+    SVGTransformList(SVGPropertyOwner*, SVGPropertyAccess);
+    SVGTransformList(const SVGTransformList&, SVGPropertyAccess);
 
     enum class ListReplacement : bool {
         Append,

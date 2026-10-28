@@ -66,11 +66,8 @@ public:
     const Path& path() const { return m_path; }
 
 private:
-    Path2D() = default;
-    Path2D(const Path& path)
-        : CanvasPath(path)
-    {
-    }
+    Path2D();
+    Path2D(const Path&);
 };
 
 } // namespace WebCore

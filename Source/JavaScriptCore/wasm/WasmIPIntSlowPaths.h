@@ -46,7 +46,7 @@ namespace IPInt {
 
 extern "C" [[noreturn]] void SYSV_ABI wasm_log_crash(CallFrame*, JSWebAssemblyInstance* instance) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI slow_path_wasm_throw_exception(CallFrame*, JSWebAssemblyInstance* instance, Wasm::ExceptionType) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" UCPURegister SYSV_ABI slow_path_wasm_unwind_exception(CallFrame* callFrame, JSWebAssemblyInstance* instance);
+extern "C" UCPURegister SYSV_ABI slow_path_wasm_unwind_exception(CallFrame* callFrame, JSWebAssemblyInstance* instance) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI slow_path_wasm_popcount(const void* pc, uint32_t) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI slow_path_wasm_popcountll(const void* pc, uint64_t) REFERENCED_FROM_ASM WTF_INTERNAL;
 
@@ -140,7 +140,7 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait64, uint64_t, uint64_t, uint
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_notify, unsigned, unsigned, int32_t);
 
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(check_stack_and_vm_traps, void* candidateNewStackPointer, Wasm::IPIntCallee*);
-WASM_IPINT_EXTERN_CPP_DECL(unreachable_breakpoint_handler, CallFrame*, Register*);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(unreachable_breakpoint_handler, CallFrame*, Register*);
 
 } } // namespace JSC::IPInt
 
