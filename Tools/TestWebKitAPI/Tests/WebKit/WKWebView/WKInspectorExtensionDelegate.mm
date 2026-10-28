@@ -101,8 +101,6 @@ static bool extensionTabDidNavigateWasCalled;
 // FIXME: Re-enable this test once webkit.org/b/231847 is fixed.
 TEST(WKInspectorExtensionDelegate, DISABLED_ShowAndHideTabCallbacks)
 {
-    resetGlobalState();
-
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -171,8 +169,6 @@ TEST(WKInspectorExtensionDelegate, DISABLED_ShowAndHideTabCallbacks)
 // FIXME: Re-enable this test once webkit.org/b/257332 is fixed.
 TEST(WKInspectorExtensionDelegate, DISABLED_InspectedPageNavigatedCallbacks)
 {
-    resetGlobalState();
-
     // Hook up the test-resource: handler so that we can navigate to a different test file.
     if (!sharedURLSchemeHandler)
         sharedURLSchemeHandler = adoptNS([[TestInspectorURLSchemeHandler alloc] init]);
@@ -240,8 +236,6 @@ TEST(WKInspectorExtensionDelegate, DISABLED_InspectedPageNavigatedCallbacks)
 // FIXME: Re-enable this test once webkit.org/b/257332 is fixed.
 TEST(WKInspectorExtensionDelegate, DISABLED_ExtensionTabNavigatedCallbacks)
 {
-    resetGlobalState();
-
     // Hook up the test-resource: handler so that we can navigate to a different test file.
     if (!sharedURLSchemeHandler)
         sharedURLSchemeHandler = adoptNS([[TestInspectorURLSchemeHandler alloc] init]);
