@@ -32,6 +32,7 @@ public:
 
     WEBCORE_EXPORT HitTestLocation();
     HitTestLocation(const LayoutPoint&);
+    explicit HitTestLocation(const FloatPoint&);
     HitTestLocation(const FloatPoint&, const FloatQuad&, RectBased = RectBased::Yes);
 
     WEBCORE_EXPORT HitTestLocation(const LayoutRect&);
