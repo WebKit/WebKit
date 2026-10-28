@@ -81,7 +81,9 @@ void createNodeWrapperInDocumentRealmSlowCase(Node&, Document&);
 
 inline void willCreatePossiblyOrphanedTreeByRemoval(Node& root)
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (!root.wrapper() && root.hasChildNodes())
+<<<<<<< HEAD
         createNodeWrapperInDocumentRealmSlowCase(root, protect(root.document()));
 }
 
@@ -92,6 +94,12 @@ inline void ensureWrapperForAdoptedNodeWithForeignGlobalObjectIfNeeded(Node& nod
     if (&oldDocument.contextDocument() == &newDocument.contextDocument())
         return;
     createNodeWrapperInDocumentRealmSlowCase(node, oldDocument);
+=======
+#else
+    if (!root.wrapper() && (root.hasChildNodes() || root.shadowRoot()))
+#endif
+        willCreatePossiblyOrphanedTreeByRemovalSlowCase(root);
+>>>>>>> c01cc7d0deac (GC does not keep shadow host alive when only a node in its shadow tree is referenced by JS)
 }
 
 inline WebCoreOpaqueRoot root(Node&);

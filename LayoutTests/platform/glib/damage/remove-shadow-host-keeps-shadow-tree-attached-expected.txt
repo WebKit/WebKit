@@ -1,0 +1,21 @@
+This tests removing a shadow host element while there is a strong reference to a node within its shadow tree
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS innerElementA is not null
+PASS shadowRootA instanceof ShadowRoot is true
+PASS shadowRootB instanceof ShadowRoot is true
+PASS lightChildC instanceof Element is true
+PASS shadowRootA.host is not null
+PASS innerElementA.getRootNode({composed: true}) is not shadowRootA
+PASS innerElementA.getRootNode({composed: true}) is shadowRootA.host
+PASS shadowRootB.host is not null
+PASS shadowRootB.getRootNode({composed: true}) is not shadowRootB
+PASS shadowRootB.getRootNode({composed: true}) is shadowRootB.host
+PASS lightChildC.parentNode instanceof Element is true
+PASS lightChildC.getRootNode({composed: true}) is lightChildC.parentNode
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
