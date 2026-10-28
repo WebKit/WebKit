@@ -1137,6 +1137,101 @@ TEST_P(GLSLTest, SwizzledChainedAssign)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(37, 37, 25, 25));
 }
 
+// Increments, decrements and compound assignments of global array elements, used as values of
+// expressions.
+TEST_P(GLSLTest, IncrementAndCompoundAssignGlobalArrayElementInExpression)
+{
+    constexpr char kFS[] = R"(
+precision mediump float;
+float a[2];
+void main() {
+    a[0] = 10.0;
+    a[1] = 20.0;
+    float r = a[0]++;        // r = 10, a[0] = 11
+    float g = ++a[1];        // g = 21, a[1] = 21
+    float b = (a[0] += 4.0); // b = 15, a[0] = 15
+    float w = a[1]--;        // w = 21, a[1] = 20
+    int i = 1;
+    float t = --a[i];        // t = 19, a[1] = 19
+    gl_FragColor = vec4(r + a[0], g + a[1], b + t, w) / 255.0;  // 25, 40, 34, 21
+})";
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(25, 40, 34, 21));
+}
+
+// Increments, decrements and compound assignments of global struct fields, used as values of
+// expressions.
+TEST_P(GLSLTest, IncrementAndCompoundAssignGlobalStructFieldInExpression)
+{
+    constexpr char kFS[] = R"(
+precision mediump float;
+struct S { float f; int i; };
+S s;
+void main() {
+    s.f = 30.0;
+    s.i = 40;
+    float x = s.f++;         // x = 30, s.f = 31
+    int y = --s.i;           // y = 39, s.i = 39
+    float z = (s.f *= 2.0);  // z = 62, s.f = 62
+    int w = (s.i -= 9);      // w = 30, s.i = 30
+    gl_FragColor = vec4(x, float(y), z, float(w + s.i)) / 255.0;  // 30, 39, 62, 60
+})";
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(30, 39, 62, 60));
+}
+
+// Increments, decrements and compound assignments of global matrix columns, used as values of
+// expressions.
+TEST_P(GLSLTest, IncrementAndCompoundAssignGlobalMatrixColumnInExpression)
+{
+    constexpr char kFS[] = R"(
+precision mediump float;
+mat2 m;
+void main() {
+    m = mat2(1.0, 2.0, 3.0, 4.0);
+    vec2 c0 = m[0]++;                 // c0 = (1, 2), m[0] = (2, 3)
+    vec2 c1 = (m[1] += vec2(10.0));   // c1 = (13, 14), m[1] = (13, 14)
+    vec2 c2 = --m[1];                 // c2 = (12, 13), m[1] = (12, 13)
+    gl_FragColor = vec4(c0 + m[0], c1 + c2) / 255.0;  // 3, 5, 25, 27
+})";
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(3, 5, 25, 27));
+}
+
+// Increments and compound assignments of vertex shader output matrix columns, used as values of
+// expressions.
+TEST_P(GLSLTest, IncrementAndCompoundAssignVaryingMatrixColumnInExpression)
+{
+    constexpr char kVS[] = R"(
+attribute vec4 a_position;
+varying mat2 v_m;
+void main() {
+    gl_Position = a_position;
+    v_m = mat2(10.0, 20.0, 30.0, 40.0);
+    vec2 x = v_m[0]++;                  // x = (10, 20), v_m[0] = (11, 21)
+    vec2 y = (v_m[1] += vec2(5.0));     // y = (35, 45), v_m[1] = (35, 45)
+    vec2 z = --v_m[1];                  // z = (34, 44), v_m[1] = (34, 44)
+    v_m[0] += x;                        // v_m[0] = (21, 41)
+    v_m[1] += y + z;                    // v_m[1] = (103, 133)
+})";
+    constexpr char kFS[] = R"(
+precision mediump float;
+varying mat2 v_m;
+void main() {
+    gl_FragColor = vec4(v_m[0], v_m[1]) / 255.0;  // 21, 41, 103, 133
+})";
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    drawQuad(program, "a_position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(21, 41, 103, 133));
+}
+
 TEST_P(GLSLTest, NamelessScopedStructs)
 {
     constexpr char kFS[] = R"(precision mediump float;

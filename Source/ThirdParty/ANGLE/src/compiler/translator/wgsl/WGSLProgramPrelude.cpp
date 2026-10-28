@@ -61,87 +61,89 @@ uint64_t InsertIntoMapWithUniqueId(uint64_t &idCounter, TMap<T, uint64_t> &map, 
 }
 }  // namespace
 
-WGSLWrapperFunction WGSLProgramPrelude::preIncrement(const TType &incrementedType)
+WGSLWrapperFunction WGSLProgramPrelude::preIncrement(const TType &incrementedType,
+                                                     WgslPointerAddressSpace addressSpace)
 {
     ASSERT(incrementedType.getBasicType() == EbtInt || incrementedType.getBasicType() == EbtUInt ||
            incrementedType.getBasicType() == EbtFloat);
 
     uint64_t uniqueId =
         InsertIntoMapWithUniqueId(mUniqueFuncId, mPreIncrementedTypes, incrementedType);
-    switch (GetWgslAddressSpaceForPointer(incrementedType))
+    switch (addressSpace)
     {
         case WgslPointerAddressSpace::Function:
             return {BuildConcatenatedImmutableString(ConcatId("preIncFunc", uniqueId), "(&"),
                     kEndParanthesis};
         case WgslPointerAddressSpace::Private:
-            // EvqGlobal and various other shader outputs/builtins are all globals.
             return {BuildConcatenatedImmutableString(ConcatId("preIncPriv", uniqueId), "(&"),
                     kEndParanthesis};
     }
 }
 
-WGSLWrapperFunction WGSLProgramPrelude::preDecrement(const TType &decrementedType)
+WGSLWrapperFunction WGSLProgramPrelude::preDecrement(const TType &decrementedType,
+                                                     WgslPointerAddressSpace addressSpace)
 {
     uint64_t uniqueId =
         InsertIntoMapWithUniqueId(mUniqueFuncId, mPreDecrementedTypes, decrementedType);
 
-    switch (GetWgslAddressSpaceForPointer(decrementedType))
+    switch (addressSpace)
     {
         case WgslPointerAddressSpace::Function:
             return {BuildConcatenatedImmutableString(ConcatId("preDecFunc", uniqueId), "(&"),
                     kEndParanthesis};
         case WgslPointerAddressSpace::Private:
-            // EvqGlobal and various other shader outputs/builtins are all globals.
             return {BuildConcatenatedImmutableString(ConcatId("preDecPriv", uniqueId), "(&"),
                     kEndParanthesis};
     }
 }
 
-WGSLWrapperFunction WGSLProgramPrelude::postIncrement(const TType &incrementedType)
+WGSLWrapperFunction WGSLProgramPrelude::postIncrement(const TType &incrementedType,
+                                                      WgslPointerAddressSpace addressSpace)
 {
     uint64_t uniqueId =
         InsertIntoMapWithUniqueId(mUniqueFuncId, mPostIncrementedTypes, incrementedType);
 
-    switch (GetWgslAddressSpaceForPointer(incrementedType))
+    switch (addressSpace)
     {
         case WgslPointerAddressSpace::Function:
             return {BuildConcatenatedImmutableString(ConcatId("postIncFunc", uniqueId), "(&"),
                     kEndParanthesis};
         case WgslPointerAddressSpace::Private:
-            // EvqGlobal and various other shader outputs/builtins are all globals.
             return {BuildConcatenatedImmutableString(ConcatId("postIncPriv", uniqueId), "(&"),
                     kEndParanthesis};
     }
 }
 
-WGSLWrapperFunction WGSLProgramPrelude::postDecrement(const TType &decrementedType)
+WGSLWrapperFunction WGSLProgramPrelude::postDecrement(const TType &decrementedType,
+                                                      WgslPointerAddressSpace addressSpace)
 {
     uint64_t uniqueId =
         InsertIntoMapWithUniqueId(mUniqueFuncId, mPostDecrementedTypes, decrementedType);
 
-    switch (GetWgslAddressSpaceForPointer(decrementedType))
+    switch (addressSpace)
     {
         case WgslPointerAddressSpace::Function:
             return {BuildConcatenatedImmutableString(ConcatId("postDecFunc", uniqueId), "(&"),
                     kEndParanthesis};
         case WgslPointerAddressSpace::Private:
-            // EvqGlobal and various other shader outputs/builtins are all globals.
             return {BuildConcatenatedImmutableString(ConcatId("postDecPriv", uniqueId), "(&"),
                     kEndParanthesis};
     }
 }
 
-WGSLWrapperFunction WGSLProgramPrelude::assign(const TType &dest, const TType &src, TOperator op)
+WGSLWrapperFunction WGSLProgramPrelude::assign(const TType &dest,
+                                               const TType &src,
+                                               TOperator op,
+                                               WgslPointerAddressSpace addressSpace)
 {
     uint64_t uniqueId = InsertIntoMapWithUniqueId(mUniqueFuncId, mAssigned, {dest, src, op});
 
-    switch (GetWgslAddressSpaceForPointer(dest))
+    switch (addressSpace)
     {
         case WgslPointerAddressSpace::Function:
             return {BuildConcatenatedImmutableString(ConcatId("assignFunc", uniqueId), "(&"),
                     kEndParanthesis};
         case WgslPointerAddressSpace::Private:
-            // EvqGlobal and various other shader outputs/builtins are all globals.
             return {BuildConcatenatedImmutableString(ConcatId("assignPriv", uniqueId), "(&"),
                     kEndParanthesis};
     }
