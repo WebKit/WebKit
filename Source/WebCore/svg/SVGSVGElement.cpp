@@ -237,6 +237,20 @@ void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString
     SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
+void SVGSVGElement::resetOutOfRangeBaseValue(const QualifiedName& name)
+{
+    switch (name.nodeName()) {
+    case AttributeNames::widthAttr:
+        resetNegativeLengthToInitialValue(m_width, "100%"_s);
+        break;
+    case AttributeNames::heightAttr:
+        resetNegativeLengthToInitialValue(m_height, "100%"_s);
+        break;
+    default:
+        break;
+    }
+}
+
 void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (attrName == SVGNames::transformAttr && isOutermostSVGSVGElement()) {

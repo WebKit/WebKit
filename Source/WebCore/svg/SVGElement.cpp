@@ -622,8 +622,11 @@ void SVGElement::commitPropertyChange(SVGAnimatedPropertyBase& animatedProperty)
     // the attribute immediately. Otherwise it is okay to be lazy in this regard.
     if (!propertyRegistry().isAnimatedStylePropertyAttribute(attributeName))
         propertyRegistry().setAnimatedPropertyDirty(*this, attributeName, animatedProperty);
-    else
+    else {
         setSynchronizedLazyAttribute(attributeName, AtomString { animatedProperty.baseValAsString() });
+        // The attribute keeps what the script wrote, so this must come after the line above.
+        resetOutOfRangeBaseValue(attributeName);
+    }
 
     setAnimatedSVGAttributesAreDirty();
     svgAttributeChanged(attributeName);

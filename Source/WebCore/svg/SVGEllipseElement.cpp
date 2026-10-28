@@ -81,6 +81,20 @@ void SVGEllipseElement::attributeChanged(const QualifiedName& name, const AtomSt
     SVGGeometryElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
+void SVGEllipseElement::resetOutOfRangeBaseValue(const QualifiedName& name)
+{
+    switch (name.nodeName()) {
+    case AttributeNames::rxAttr:
+        resetNegativeLengthToInitialValue(m_rx);
+        break;
+    case AttributeNames::ryAttr:
+        resetNegativeLengthToInitialValue(m_ry);
+        break;
+    default:
+        break;
+    }
+}
+
 void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {

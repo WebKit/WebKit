@@ -67,6 +67,7 @@ private:
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
+    void resetOutOfRangeBaseValue(const QualifiedName&) final;
     void childrenChanged(const ChildChange&) final;
 
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;

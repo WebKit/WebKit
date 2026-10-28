@@ -1,0 +1,47 @@
+
+PASS rect rx: value = -20 takes the initial value
+PASS rect rx: value = -20 reads back like markup
+PASS rect rx: value = -20 reads back like markup through animVal
+PASS rect rx: valueAsString = "-20" takes the initial value
+PASS rect rx: valueAsString = "-20" reads back like markup
+PASS rect rx: valueAsString = "-20" reads back like markup through animVal
+PASS rect rx: newValueSpecifiedUnits(PX, -20) takes the initial value
+PASS rect rx: newValueSpecifiedUnits(PX, -20) reads back like markup
+PASS rect rx: newValueSpecifiedUnits(PX, -20) reads back like markup through animVal
+PASS rect ry: value = -20 takes the initial value
+PASS rect ry: value = -20 reads back like markup
+PASS rect ry: value = -20 reads back like markup through animVal
+PASS rect ry: valueAsString = "-20" takes the initial value
+PASS rect ry: valueAsString = "-20" reads back like markup
+PASS rect ry: valueAsString = "-20" reads back like markup through animVal
+PASS rect ry: newValueSpecifiedUnits(PX, -20) takes the initial value
+PASS rect ry: newValueSpecifiedUnits(PX, -20) reads back like markup
+PASS rect ry: newValueSpecifiedUnits(PX, -20) reads back like markup through animVal
+PASS ellipse rx: value = -20 takes the initial value
+PASS ellipse rx: value = -20 reads back like markup
+PASS ellipse rx: value = -20 reads back like markup through animVal
+PASS ellipse rx: valueAsString = "-20" takes the initial value
+PASS ellipse rx: valueAsString = "-20" reads back like markup
+PASS ellipse rx: valueAsString = "-20" reads back like markup through animVal
+PASS ellipse rx: newValueSpecifiedUnits(PX, -20) takes the initial value
+PASS ellipse rx: newValueSpecifiedUnits(PX, -20) reads back like markup
+PASS ellipse rx: newValueSpecifiedUnits(PX, -20) reads back like markup through animVal
+PASS ellipse ry: value = -20 takes the initial value
+PASS ellipse ry: value = -20 reads back like markup
+PASS ellipse ry: value = -20 reads back like markup through animVal
+PASS ellipse ry: valueAsString = "-20" takes the initial value
+PASS ellipse ry: valueAsString = "-20" reads back like markup
+PASS ellipse ry: valueAsString = "-20" reads back like markup through animVal
+PASS ellipse ry: newValueSpecifiedUnits(PX, -20) takes the initial value
+PASS ellipse ry: newValueSpecifiedUnits(PX, -20) reads back like markup
+PASS ellipse ry: newValueSpecifiedUnits(PX, -20) reads back like markup through animVal
+PASS circle r: value = -20 takes the initial value
+PASS circle r: value = -20 reads back like markup
+PASS circle r: value = -20 reads back like markup through animVal
+PASS circle r: valueAsString = "-20" takes the initial value
+PASS circle r: valueAsString = "-20" reads back like markup
+PASS circle r: valueAsString = "-20" reads back like markup through animVal
+PASS circle r: newValueSpecifiedUnits(PX, -20) takes the initial value
+PASS circle r: newValueSpecifiedUnits(PX, -20) reads back like markup
+PASS circle r: newValueSpecifiedUnits(PX, -20) reads back like markup through animVal
+

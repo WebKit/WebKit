@@ -108,6 +108,26 @@ void SVGRectElement::attributeChanged(const QualifiedName& name, const AtomStrin
     SVGGeometryElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
+void SVGRectElement::resetOutOfRangeBaseValue(const QualifiedName& name)
+{
+    switch (name.nodeName()) {
+    case AttributeNames::rxAttr:
+        resetNegativeLengthToInitialValue(m_rx);
+        break;
+    case AttributeNames::ryAttr:
+        resetNegativeLengthToInitialValue(m_ry);
+        break;
+    case AttributeNames::widthAttr:
+        resetNegativeLengthToInitialValue(m_width);
+        break;
+    case AttributeNames::heightAttr:
+        resetNegativeLengthToInitialValue(m_height);
+        break;
+    default:
+        break;
+    }
+}
+
 void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {

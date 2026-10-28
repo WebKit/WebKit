@@ -89,6 +89,17 @@ void SVGCircleElement::attributeChanged(const QualifiedName& name, const AtomStr
     SVGGeometryElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
+void SVGCircleElement::resetOutOfRangeBaseValue(const QualifiedName& name)
+{
+    switch (name.nodeName()) {
+    case AttributeNames::rAttr:
+        resetNegativeLengthToInitialValue(m_r);
+        break;
+    default:
+        break;
+    }
+}
+
 void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {

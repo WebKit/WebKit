@@ -55,6 +55,16 @@ using SVGAnimatedLength = SVGAnimatedValueProperty<SVGLength>;
 using SVGAnimatedRect = SVGAnimatedValueProperty<SVGRect>;
 using SVGAnimatedPreserveAspectRatio = SVGAnimatedValueProperty<SVGPreserveAspectRatio>;
 
+// For an attribute that forbids negative lengths: when a script wrote one, put the length back to the value
+// that markup gives, which is the initial value. Updates animVal too, and leaves the content attribute alone.
+inline void resetNegativeLengthToInitialValue(SVGAnimatedLength& length, ASCIILiteral initialValue = { })
+{
+    auto mode = length.baseVal()->value().lengthMode();
+    if (length.baseVal()->value().valueInSpecifiedUnits() >= 0)
+        return;
+    length.setBaseValInternal(initialValue.isNull() ? SVGLengthValue(mode) : SVGLengthValue(mode, initialValue));
+}
+
 using SVGAnimatedLengthList = SVGAnimatedPropertyList<SVGLengthList>;
 using SVGAnimatedNumberList = SVGAnimatedPropertyList<SVGNumberList>;
 using SVGAnimatedPointList = SVGAnimatedPropertyList<SVGPointList>;
