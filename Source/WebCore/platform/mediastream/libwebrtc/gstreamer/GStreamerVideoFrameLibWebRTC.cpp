@@ -46,7 +46,11 @@ GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSample(const webrtc::Vid
     if (frame.video_frame_buffer()->type() == webrtc::VideoFrameBuffer::Type::kNative)
         return static_cast<GStreamerVideoFrameLibWebRTC&>(*frame.video_frame_buffer().get()).sample();
 
-    auto* i420Buffer = frame.video_frame_buffer()->ToI420().release();
+    auto convertedFrameBuffer = frame.video_frame_buffer()->ToI420();
+    if (!convertedFrameBuffer)
+        return nullptr;
+
+    auto i420Buffer = static_cast<webrtc::I420Buffer*>(convertedFrameBuffer.release());
     int height = i420Buffer->height();
     int strides[3] = {
         i420Buffer->StrideY(),
@@ -56,7 +60,7 @@ GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSample(const webrtc::Vid
     size_t offsets[3] = {
         0,
         static_cast<gsize>(i420Buffer->StrideY() * height),
-        static_cast<gsize>(i420Buffer->StrideY() * height + i420Buffer->StrideU() * ((height + 1) / 2))
+        static_cast<gsize>(i420Buffer->StrideY() * height + i420Buffer->StrideU() * i420Buffer->ChromaHeight())
     };
     GstVideoInfo info;
     gst_video_info_set_format(&info, GST_VIDEO_FORMAT_I420, frame.width(), frame.height());
@@ -64,8 +68,9 @@ GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSample(const webrtc::Vid
     if (auto colorSpace = colorSpaceFromLibWebRTCVideoFrame(frame))
         fillVideoInfoColorimetryFromColorSpace(&info, *colorSpace);
 
+    auto dataSize = i420Buffer->StrideY() * height + (i420Buffer->StrideU() + i420Buffer->StrideV()) * i420Buffer->ChromaHeight();
     GRefPtr buffer = adoptGRef(gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(GST_MEMORY_FLAG_NO_SHARE | GST_MEMORY_FLAG_READONLY),
-        const_cast<gpointer>(reinterpret_cast<const void*>(i420Buffer->DataY())), info.size, 0, info.size, i420Buffer, [](gpointer buffer) {
+        i420Buffer->MutableDataY(), dataSize, 0, dataSize, i420Buffer, [](gpointer buffer) {
             reinterpret_cast<webrtc::I420Buffer*>(buffer)->Release();
     }));
 
