@@ -2017,7 +2017,7 @@ header: <WebCore/KeyboardScroll.h>
 
 header: <WebCore/NotificationResources.h>
 [RefCounted] class WebCore::NotificationResources {
-    RefPtr<WebCore::BitmapImage> icon();
+    RefPtr<WebCore::NativeImage> icon();
 };
 
 [RefCounted] class WebCore::IdentityTransformOperation {

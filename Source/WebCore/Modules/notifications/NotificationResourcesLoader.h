@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class BitmapImage;
+class NativeImage;
 class NetworkLoadMetrics;
 class NotificationResources;
 class ResourceError;
@@ -60,7 +60,7 @@ private:
     class ResourceLoader final : public ThreadableLoaderClient, public RefCounted<ResourceLoader> {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ResourceLoader, ResourceLoader);
     public:
-        static Ref<ResourceLoader> create(ScriptExecutionContext&, const URL&, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&&);
+        static Ref<ResourceLoader> create(ScriptExecutionContext&, const URL&, CompletionHandler<void(ResourceLoader*, RefPtr<NativeImage>&&)>&&);
         ~ResourceLoader();
 
         // ThreadableLoaderClient.
@@ -72,7 +72,7 @@ private:
         bool finished() const { return m_finished; }
 
     private:
-        ResourceLoader(ScriptExecutionContext&, const URL&, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&&);
+        ResourceLoader(ScriptExecutionContext&, const URL&, CompletionHandler<void(ResourceLoader*, RefPtr<NativeImage>&&)>&&);
 
         // ThreadableLoaderClient API.
         void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final;
@@ -81,10 +81,10 @@ private:
         void didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&) final;
 
         bool m_finished { false };
+        bool m_didReceiveDefaultResponse { false };
         SharedBufferBuilder m_buffer;
-        RefPtr<BitmapImage> m_image;
         RefPtr<ThreadableLoader> m_loader;
-        CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)> m_completionHandler;
+        CompletionHandler<void(ResourceLoader*, RefPtr<NativeImage>&&)> m_completionHandler;
     };
 
     void didFinishLoadingResource(ResourceLoader*);

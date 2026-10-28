@@ -80,7 +80,7 @@ void NotificationResourcesLoader::start(CompletionHandler<void(RefPtr<Notificati
         Ref notification = m_notification.get();
         const URL& iconURL = notification->icon();
         if (!iconURL.isEmpty()) {
-            Ref loader = ResourceLoader::create(*protect(notification->scriptExecutionContext()), iconURL, [this](ResourceLoader* loader, RefPtr<BitmapImage>&& image) {
+            Ref loader = ResourceLoader::create(*protect(notification->scriptExecutionContext()), iconURL, [this](ResourceLoader* loader, RefPtr<NativeImage>&& image) {
                 if (m_stopped)
                     return;
 
@@ -131,12 +131,12 @@ void NotificationResourcesLoader::didFinishLoadingResource(ResourceLoader* loade
     }
 }
 
-auto NotificationResourcesLoader::ResourceLoader::create(ScriptExecutionContext& context, const URL& url, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&& completionHandler) -> Ref<ResourceLoader>
+auto NotificationResourcesLoader::ResourceLoader::create(ScriptExecutionContext& context, const URL& url, CompletionHandler<void(ResourceLoader*, RefPtr<NativeImage>&&)>&& completionHandler) -> Ref<ResourceLoader>
 {
     return adoptRef(*new ResourceLoader(context, url, WTF::move(completionHandler)));
 }
 
-NotificationResourcesLoader::ResourceLoader::ResourceLoader(ScriptExecutionContext& context, const URL& url, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&& completionHandler)
+NotificationResourcesLoader::ResourceLoader::ResourceLoader(ScriptExecutionContext& context, const URL& url, CompletionHandler<void(ResourceLoader*, RefPtr<NativeImage>&&)>&& completionHandler)
     : m_completionHandler(WTF::move(completionHandler))
 {
     ThreadableLoaderOptions options;
@@ -161,27 +161,28 @@ void NotificationResourcesLoader::ResourceLoader::cancel()
 void NotificationResourcesLoader::ResourceLoader::didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse& response)
 {
     // If the response's internal response's type is "default", then attempt to decode the resource as image.
-    if (response.type() == ResourceResponse::Type::Default)
-        m_image = BitmapImage::create();
+    m_didReceiveDefaultResponse = response.type() == ResourceResponse::Type::Default;
 }
 
 void NotificationResourcesLoader::ResourceLoader::didReceiveData(const SharedBuffer& buffer)
 {
-    if (RefPtr image = m_image) {
+    if (m_didReceiveDefaultResponse)
         m_buffer.append(buffer);
-        image->setData(m_buffer.buffer(), false);
-    }
 }
 
 void NotificationResourcesLoader::ResourceLoader::didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&)
 {
     m_finished = true;
 
-    if (RefPtr image = m_image)
+    RefPtr<NativeImage> nativeImage;
+    if (m_didReceiveDefaultResponse) {
+        Ref image = BitmapImage::create();
         image->setData(m_buffer.takeBuffer(), true);
+        nativeImage = image->nativeImage();
+    }
 
     if (m_completionHandler)
-        m_completionHandler(this, WTF::move(m_image));
+        m_completionHandler(this, WTF::move(nativeImage));
 }
 
 void NotificationResourcesLoader::ResourceLoader::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&)

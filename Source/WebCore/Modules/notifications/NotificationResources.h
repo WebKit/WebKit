@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/BitmapImage.h>
+#include <WebCore/NativeImage.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -37,23 +37,23 @@ public:
         return adoptRef(*new NotificationResources());
     }
     
-    static Ref<NotificationResources> create(RefPtr<BitmapImage>&& image)
+    static Ref<NotificationResources> create(RefPtr<NativeImage>&& image)
     {
         return adoptRef(*new NotificationResources(WTF::move(image)));
     }
 
-    void setIcon(RefPtr<BitmapImage>&& icon) { m_icon = WTF::move(icon); }
-    const RefPtr<BitmapImage>& icon() const { return m_icon; }
+    void setIcon(RefPtr<NativeImage>&& icon) { m_icon = WTF::move(icon); }
+    const RefPtr<NativeImage>& icon() const { return m_icon; }
 
 private:
-    NotificationResources(RefPtr<BitmapImage>&& image)
+    NotificationResources(RefPtr<NativeImage>&& image)
         : m_icon(WTF::move(image))
     {
     }
 
     NotificationResources() = default;
 
-    RefPtr<BitmapImage> m_icon;
+    RefPtr<NativeImage> m_icon;
 };
 
 } // namespace WebCore

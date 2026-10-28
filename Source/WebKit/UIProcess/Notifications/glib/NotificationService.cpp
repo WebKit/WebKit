@@ -27,7 +27,6 @@
 #include "NotificationService.h"
 
 #include "WebNotification.h"
-#include <WebCore/Image.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/NotificationResources.h>
 #include <gio/gio.h>
@@ -131,17 +130,13 @@ public:
         removeUnusedIcons(true);
     }
 
-    const char* iconPath(const String& iconURL, const RefPtr<WebCore::Image>& icon)
+    const char* iconPath(const String& iconURL, const RefPtr<WebCore::NativeImage>& icon)
     {
         if (!icon)
             return nullptr;
 
-        auto writeIconToTemporaryFile = [](const RefPtr<WebCore::Image>& icon) -> UTF8CString {
-            auto nativeImage = icon->nativeImage(WebCore::ConcreteObjectSize::fixed(icon->size()));
-            if (!nativeImage)
-                return { };
-
-            const auto& surface = nativeImage->platformImage();
+        auto writeIconToTemporaryFile = [](const RefPtr<WebCore::NativeImage>& icon) -> UTF8CString {
+            const auto& surface = icon->platformImage();
             if (!surface)
                 return { };
 
@@ -177,17 +172,13 @@ public:
         return std::get<UTF8CString>(addResult.iterator->value.second).legacyCStringPointer();
     }
 
-    GBytes* iconBytes(const String& iconURL, const RefPtr<WebCore::Image>& icon)
+    GBytes* iconBytes(const String& iconURL, const RefPtr<WebCore::NativeImage>& icon)
     {
         if (!icon)
             return nullptr;
 
-        auto writeIconToBuffer = [](const RefPtr<WebCore::Image>& icon) -> GRefPtr<GBytes> {
-            auto nativeImage = icon->nativeImage(WebCore::ConcreteObjectSize::fixed(icon->size()));
-            if (!nativeImage)
-                return nullptr;
-
-            const auto& surface = nativeImage->platformImage();
+        auto writeIconToBuffer = [](const RefPtr<WebCore::NativeImage>& icon) -> GRefPtr<GBytes> {
+            const auto& surface = icon->platformImage();
             if (!surface)
                 return nullptr;
 
