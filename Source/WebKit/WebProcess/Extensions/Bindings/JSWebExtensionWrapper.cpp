@@ -223,6 +223,8 @@ String toString(JSContextRef context, JSValueRef value, NullStringPolicy nullStr
         RefPtr string = adoptRef(JSValueToStringCopy(context, value, 0));
         return toString(string.get());
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 String toString(JSStringRef string)
