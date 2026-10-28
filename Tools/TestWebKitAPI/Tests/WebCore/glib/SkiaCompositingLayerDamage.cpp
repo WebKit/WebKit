@@ -30,9 +30,13 @@
 #if ENABLE(DAMAGE_TRACKING) && USE(SKIA) && !USE(TEXTURE_MAPPER)
 #include "Helpers/Test.h"
 #include <WebCore/Color.h>
+#include <WebCore/CoordinatedPlatformLayer.h>
+#include <WebCore/CoordinatedPlatformLayerBuffer.h>
 #include <WebCore/Damage.h>
+#include <WebCore/GraphicsTypes.h>
 #include <WebCore/SkiaCompositingLayer.h>
 #include <WebCore/TransformationMatrix.h>
+#include <wtf/WorkQueue.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColor.h>
 #include <skia/core/SkPixmap.h>
@@ -398,6 +402,158 @@ TEST(SkiaCompositingLayerDamage, ReplicatedLayerIsDamagedWithItsReplica)
     auto moved = paintAndCollect(root, *surface->getCanvas());
     EXPECT_EQ(moved.bounds(), IntRect(100, 100, 240, 240));
     EXPECT_TRUE(paintAndCollect(root, *surface->getCanvas()).isEmpty());
+}
+
+// A 40x40 solid color CoordinatedPlatformLayer, changed on the main thread and flushed to its Skia target
+// on a compositing queue, which also builds, paints and destroys the Skia tree, as the threaded compositor
+// does. The constructor leaves the tree settled, so the next frames are damaged only by what a test changes.
+class CoordinatedScene {
+public:
+    CoordinatedScene()
+        : m_compositingQueue(WorkQueue::create("CoordinatedScene"_s))
+        , m_layer(CoordinatedPlatformLayer::create())
+    {
+        m_layer->setDamagePropagationEnabled(true);
+        {
+            Locker locker { m_layer->lock() };
+            m_layer->setSize({ 40, 40 });
+            m_layer->setAnchorPoint({ 0, 0, 0 });
+            m_layer->setContentsColor(Color::green);
+            m_layer->setContentsRect({ 0, 0, 40, 40 });
+        }
+        m_compositingQueue->dispatchSync([this] {
+            m_surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(800, 600));
+            m_root = SkiaCompositingLayer::create();
+            m_root->setDamagePropagationEnabled(true);
+            m_root->setSize({ 800, 600 });
+            m_layer->flushCompositingState({ CompositionReason::RenderingUpdate });
+            m_root->setChildren({ Ref { m_layer->ensureTarget() } });
+            paintAndCollect(*m_root, *m_surface->getCanvas());
+        });
+        EXPECT_TRUE(flushAndPaint({ }).isEmpty());
+    }
+
+    ~CoordinatedScene()
+    {
+        m_compositingQueue->dispatchSync([this] {
+            m_layer->invalidateTarget();
+            m_root = nullptr;
+            m_surface = nullptr;
+        });
+    }
+
+    CoordinatedPlatformLayer& layer() { return m_layer; }
+
+    Damage flushAndPaint(OptionSet<CompositionReason> reasons)
+    {
+        std::optional<Damage> damage;
+        m_compositingQueue->dispatchSync([&] {
+            m_layer->flushCompositingState(reasons);
+            damage = paintAndCollect(*m_root, *m_surface->getCanvas());
+        });
+        return WTF::move(*damage);
+    }
+
+private:
+    Ref<WorkQueue> m_compositingQueue;
+    Ref<CoordinatedPlatformLayer> m_layer;
+    RefPtr<SkiaCompositingLayer> m_root;
+    sk_sp<SkSurface> m_surface;
+};
+
+// Tiles and the properties flushed only on rendering updates must not damage the target on an async
+// scrolling composition: the target drawn then would repaint the area with the old contents, and nothing
+// would damage it again once the rendering update brings the new ones.
+static void expectDamageOnlyOnRenderingUpdate(CoordinatedScene& scene, const IntRect& expectedDamage)
+{
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::AsyncScrolling }).isEmpty());
+
+    auto damage = scene.flushAndPaint({ CompositionReason::RenderingUpdate });
+    EXPECT_FALSE(damage.isEmpty());
+    EXPECT_EQ(damage.bounds(), expectedDamage);
+
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::RenderingUpdate }).isEmpty());
+}
+
+TEST(SkiaCompositingLayerDamage, CoordinatedTileDamageWaitsForTheRenderingUpdate)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    {
+        Locker locker { layer.lock() };
+        Damage dirtyRegion(IntSize { 40, 40 });
+        dirtyRegion.add(IntRect { 10, 10, 20, 20 });
+        layer.setDirtyRegion(WTF::move(dirtyRegion));
+    }
+    expectDamageOnlyOnRenderingUpdate(scene, { 10, 10, 20, 20 });
+}
+
+TEST(SkiaCompositingLayerDamage, CoordinatedPropertyDamageWaitsForTheRenderingUpdate)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    {
+        Locker locker { layer.lock() };
+        layer.setBlendMode(BlendMode::Multiply);
+    }
+    expectDamageOnlyOnRenderingUpdate(scene, { 0, 0, 40, 40 });
+}
+
+// The contents rect is flushed on async scrolling compositions too, so its damage must come with it: the
+// target drawn then already shows the new rect.
+TEST(SkiaCompositingLayerDamage, CoordinatedContentsRectDamageComesWithTheContentsRect)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    {
+        Locker locker { layer.lock() };
+        layer.setContentsRect({ 0, 0, 20, 20 });
+    }
+    auto damage = scene.flushAndPaint({ CompositionReason::AsyncScrolling });
+    EXPECT_FALSE(damage.isEmpty());
+    EXPECT_EQ(damage.bounds(), IntRect(0, 0, 40, 40));
+
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::AsyncScrolling }).isEmpty());
+}
+
+// Flushing the contents rect damage on an async scrolling composition keeps the tile damage pending.
+TEST(SkiaCompositingLayerDamage, CoordinatedTileDamageStaysWhenTheContentsRectIsFlushed)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    {
+        Locker locker { layer.lock() };
+        layer.setContentsRect({ 0, 0, 20, 20 });
+        Damage dirtyRegion(IntSize { 40, 40 });
+        dirtyRegion.add(IntRect { 10, 10, 20, 20 });
+        layer.setDirtyRegion(WTF::move(dirtyRegion));
+    }
+    EXPECT_EQ(scene.flushAndPaint({ CompositionReason::AsyncScrolling }).bounds(), IntRect(0, 0, 40, 40));
+    EXPECT_EQ(scene.flushAndPaint({ CompositionReason::RenderingUpdate }).bounds(), IntRect(10, 10, 20, 20));
+}
+
+// A contents buffer, such as a video frame, without an image: the layer paints its solid color instead.
+class TestContentsBuffer final : public CoordinatedPlatformLayerBuffer {
+public:
+    TestContentsBuffer()
+        : CoordinatedPlatformLayerBuffer(Type::SkiaImage, { 40, 40 })
+    {
+    }
+};
+
+// Contents buffers are flushed on video frame compositions, so their damage comes with them.
+TEST(SkiaCompositingLayerDamage, CoordinatedContentsBufferDamageComesWithTheContentsBuffer)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    {
+        Locker locker { layer.lock() };
+        Damage dirtyRegion(IntSize { 40, 40 });
+        dirtyRegion.add(IntRect { 10, 10, 20, 20 });
+        layer.setContentsBuffer(makeUnique<TestContentsBuffer>(), WTF::move(dirtyRegion));
+    }
+    EXPECT_EQ(scene.flushAndPaint({ CompositionReason::VideoFrame }).bounds(), IntRect(10, 10, 20, 20));
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::VideoFrame }).isEmpty());
 }
 
 } // namespace TestWebKitAPI
