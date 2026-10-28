@@ -110,7 +110,11 @@ void SharedWorkerContextManager::registerSharedWorkerThread(Ref<SharedWorkerThre
     RELEASE_LOG(SharedWorker, "SharedWorkerContextManager::registerSharedWorkerThread: sharedWorkerIdentifier=%" PRIu64, proxy->identifier().toUInt64());
 
     auto result = m_workerMap.add(proxy->identifier(), proxy.copyRef());
-    ASSERT_UNUSED(result, result.isNewEntry);
+    if (!result.isNewEntry) {
+        // Nothing took ownership of this proxy, so its thread must not be started.
+        RELEASE_LOG_ERROR(SharedWorker, "SharedWorkerContextManager::registerSharedWorkerThread: sharedWorkerIdentifier=%" PRIu64 " is already registered", proxy->identifier().toUInt64());
+        return;
+    }
 
     proxy->thread().start([](const String& /*exceptionMessage*/) { });
 }
