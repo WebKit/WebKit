@@ -1560,7 +1560,12 @@ class CheckChangeRelevance(AnalyzeChange):
         re.compile(rb'^Tools/DumpRenderTree/', re.IGNORECASE),
         re.compile(rb'^Tools/Scripts/build-webkit', re.IGNORECASE),
         re.compile(rb'^Tools/Scripts/webkitdirs\.pm', re.IGNORECASE),
-        re.compile(rb'^Tools/(gtk|wpe)/', re.IGNORECASE),
+        re.compile(rb'^Tools/(gtk|wpe|glib|jhbuild)/', re.IGNORECASE),
+        re.compile(rb'^Configurations/', re.IGNORECASE),
+        re.compile(rb'^WebKitLibraries/', re.IGNORECASE),
+        re.compile(rb'^WebKit\.xcworkspace/', re.IGNORECASE),
+        re.compile(rb'^CMakePresets', re.IGNORECASE),
+        re.compile(rb'^\.wkdev-sdk-version', re.IGNORECASE),
         re.compile(rb'^GNUmakefile', re.IGNORECASE),
         re.compile(rb'^Makefile', re.IGNORECASE),
     ]
