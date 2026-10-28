@@ -57,6 +57,7 @@
 #import <source_location>
 #import <wtf/Assertions.h>
 #import <wtf/Function.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WallTime.h>
 #import <wtf/text/MakeString.h>
@@ -182,6 +183,12 @@ static void testAlertWithEnhancedSecurity(RetainPtr<TestUIDelegate> uiDelegate, 
 
 enum class UseSharedProcess : uint8_t { No, Yes, YesWithEnhancedSecurity };
 
+static NSURL *enhancedSecurityDataStoreDirectory()
+{
+    static NeverDestroyed<RetainPtr<NSURL>> directory = TestWebKitAPI::Util::temporaryDirectory();
+    return directory.get().get();
+}
+
 static RetainPtr<TestWKWebView> enhancedSecurityTestConfiguration(
     const TestWebKitAPI::HTTPServer* plaintextServer,
     const TestWebKitAPI::HTTPServer* secureServer = nullptr,
@@ -209,7 +216,7 @@ static RetainPtr<TestWKWebView> enhancedSecurityTestConfiguration(
 
     auto storeConfiguration = useNonPersistentStore
         ? adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration])
-        : adoptNS([_WKWebsiteDataStoreConfiguration new]);
+        : adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithDirectory:enhancedSecurityDataStoreDirectory()]);
 
     if (plaintextServer)
         [storeConfiguration setHTTPProxy:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", plaintextServer->port()]]];
@@ -2470,7 +2477,7 @@ enum class SeenOutsideEnhancedSecurity : bool { Seen, NotSeen };
 
 static NSURL *enhancedSecuritySitesPath()
 {
-    RetainPtr dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    RetainPtr dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithDirectory:enhancedSecurityDataStoreDirectory()]);
     NSURL *rootStorage = [dataStoreConfiguration.get().generalStorageDirectory URLByDeletingLastPathComponent];
     NSURL *enhancedSecurityDirectory = [rootStorage URLByAppendingPathComponent:@"EnhancedSecurity"];
     NSURL *enhancedSecurityFile = [enhancedSecurityDirectory URLByAppendingPathComponent:@"EnhancedSecuritySites.db"];
