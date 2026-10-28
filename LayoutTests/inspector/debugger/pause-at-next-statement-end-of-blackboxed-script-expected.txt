@@ -1,0 +1,14 @@
+Tests that pausing at the next statement skips a script blackboxed by URL, including the end of the script.
+
+
+== Running test suite: Debugger.PauseAtNextStatement.BlackboxedScript
+-- Running test setup.
+-- Running test case: Debugger.PauseAtNextStatement.BlackboxedScript.WholeScript
+PASS: Should pause in pageMessage.
+-- Running test teardown.
+
+-- Running test setup.
+-- Running test case: Debugger.PauseAtNextStatement.BlackboxedScript.SourceRangeToEndOfSource
+PASS: Should pause in pageMessage.
+-- Running test teardown.
+

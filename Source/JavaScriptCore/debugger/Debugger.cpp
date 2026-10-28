@@ -1039,10 +1039,13 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
     SourceID sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
     TextPosition position = DebuggerCallFrame::positionForCallFrame(vm, m_currentCallFrame);
 
+    // The end of a program is positioned at the end of its source, which a range reaching the end of the source must cover.
+    bool isAtEndOfProgram = m_reasonForPause == PausedAtEndOfProgram;
+
     BlackboxFlags relevantBlackboxFlags;
     if (const auto it = m_blackboxConfigurations.find(sourceID); it != m_blackboxConfigurations.end()) {
         for (const auto& [blackboxRange, blackboxFlags] : it->value) {
-            if (position < blackboxRange.first || position >= blackboxRange.second)
+            if (position < blackboxRange.first || (isAtEndOfProgram ? position > blackboxRange.second : position >= blackboxRange.second))
                 continue;
             relevantBlackboxFlags.add(blackboxFlags);
             if (relevantBlackboxFlags.contains(BlackboxFlag::Ignore))
