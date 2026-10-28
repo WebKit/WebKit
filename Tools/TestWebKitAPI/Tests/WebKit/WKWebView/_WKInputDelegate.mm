@@ -119,6 +119,7 @@ static NSString *documentWithFormHTML = @"<body onload='document.getElementById(
 
 TEST(WebKit, FormSubmission)
 {
+    willSubmitFormValuesCalled = false;
     RetainPtr delegate = adoptNS([[InputDelegate alloc] init]);
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
     [configuration setURLSchemeHandler:delegate.get() forURLScheme:@"test"];
@@ -130,10 +131,11 @@ TEST(WebKit, FormSubmission)
 
 TEST(WebKit, FormSubmissionNavigationAPI)
 {
+    willSubmitFormValuesCalled = false;
     RetainPtr inputDelegate = adoptNS([[InputDelegate alloc] init]);
     RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
 
-    static bool done = false;
+    __block bool done = false;
     navigationDelegate.get().willSubmitForm = ^(WKFormInfo *formInfo) {
         EXPECT_EQ(formInfo.formValues.count, 2u);
         EXPECT_STREQ([[formInfo.formValues objectForKey:@"testname1"] UTF8String], "testvalue1");
@@ -154,6 +156,7 @@ TEST(WebKit, FormSubmissionNavigationAPI)
 
 TEST(WebKit, FormSubmissionLegacyAPI)
 {
+    willSubmitFormValuesCalled = false;
     RetainPtr delegate = adoptNS([[InputDelegateLegacyAPI alloc] init]);
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
     [configuration setURLSchemeHandler:delegate.get() forURLScheme:@"test"];
