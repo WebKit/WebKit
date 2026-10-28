@@ -43,6 +43,7 @@
 #import "WebProcessProxy.h"
 #import <WebCore/ApplePayCouponCodeUpdate.h>
 #import <WebCore/ApplePayPaymentMethodUpdate.h>
+#import <WebCore/ApplePayReferenceRequest.h>
 #import <WebCore/ApplePayShippingContactUpdate.h>
 #import <WebCore/ApplePayShippingMethod.h>
 #import <WebCore/ApplePayShippingMethodUpdate.h>
@@ -567,6 +568,35 @@ void WebPaymentCoordinatorProxy::platformEndApplePaySetup()
 }
 
 #endif // ENABLE(APPLE_PAY_SETUP)
+
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+
+void WebPaymentCoordinatorProxy::platformPrepareReferenceSession(const WebCore::ApplePayReferenceRequest& request, bool shouldDiscloseCapability, CompletionHandler<void(std::optional<String>&&)>&& completionHandler)
+{
+#if HAVE(PASSKIT_PAYMENT_REFERENCE_SESSION)
+    if (!PAL::getPKPaymentReferenceSessionClassSingleton())
+        return completionHandler(std::nullopt);
+
+    RetainPtr session = adoptNS([PAL::allocPKPaymentReferenceSessionInstance() initWithClientIdentifier:request.clientIdentifier.createNSString().get()]);
+    [session setCapabilityDisclosureEnabled:shouldDiscloseCapability];
+    [session prepareWithCompletion:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSString *capabilityToken, NSError *error) mutable {
+        if (error)
+            LOG_ERROR("PKPaymentReferenceSession error %@", error);
+
+        RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler), capabilityToken = retainPtr(capabilityToken)] mutable {
+            if (!capabilityToken)
+                return completionHandler(std::nullopt);
+            completionHandler(String { capabilityToken.get() });
+        });
+    }).get()];
+#else
+    UNUSED_PARAM(request);
+    UNUSED_PARAM(shouldDiscloseCapability);
+    completionHandler(std::nullopt);
+#endif
+}
+
+#endif // ENABLE(APPLE_PAY_REFERENCE_SESSION)
 
 } // namespace WebKit
 

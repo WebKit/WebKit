@@ -370,3 +370,12 @@ symbols = [
     "$sScTss5NeverORs_rlE16startOnMainActor8priority_ScTyxABGScPSg_xyYaYbScMYccntFZ",
 ]
 requires = ["!HAVE_SWIFT_STDLIB_6_2"]
+
+[[staging]]
+request = "rdar://190237414"
+selectors = [
+    { name = "initWithClientIdentifier:", class = "PKPaymentReferenceSession" },
+    { name = "prepareWithCompletion:", class = "PKPaymentReferenceSession" },
+    { name = "setCapabilityDisclosureEnabled:", class = "PKPaymentReferenceSession" },
+]
+requires = ["ENABLE_APPLE_PAY_REFERENCE_SESSION", "HAVE_PASSKIT_PAYMENT_REFERENCE_SESSION"]

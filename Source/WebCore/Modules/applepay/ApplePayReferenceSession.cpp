@@ -28,34 +28,83 @@
 
 #if ENABLE(APPLE_PAY_REFERENCE_SESSION)
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
+#include "DocumentPage.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMPromiseDeferred.h"
+#include "Page.h"
+#include "PaymentCoordinator.h"
+#include "PaymentSession.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ApplePayReferenceSession);
 
-Ref<ApplePayReferenceSession> ApplePayReferenceSession::create(Document& document, ApplePayReferenceRequest&&)
+ExceptionOr<Ref<ApplePayReferenceSession>> ApplePayReferenceSession::create(Document& document, ApplePayReferenceRequest&& request)
 {
-    // FIXME: Validate the request and the document (rdar://188113857).
-    Ref session = adoptRef(*new ApplePayReferenceSession(document));
+    if (request.clientIdentifier.isEmpty())
+        return Exception { ExceptionCode::TypeError, "clientIdentifier must not be empty."_s };
+
+    auto canCall = PaymentSession::canCreateSession(document);
+    if (canCall.hasException())
+        return canCall.releaseException();
+
+    if (!document.page())
+        return Exception { ExceptionCode::InvalidAccessError, "Frame is detached"_s };
+
+    Ref session = adoptRef(*new ApplePayReferenceSession(document, WTF::move(request)));
     session->suspendIfNeeded();
     return session;
 }
 
-ApplePayReferenceSession::ApplePayReferenceSession(Document& document)
+ApplePayReferenceSession::ApplePayReferenceSession(Document& document, ApplePayReferenceRequest&& request)
     : ActiveDOMObject { document }
+    , m_request { WTF::move(request) }
 {
 }
 
 ApplePayReferenceSession::~ApplePayReferenceSession() = default;
 
-void ApplePayReferenceSession::prepare(Document&, PreparePromise&& promise)
+void ApplePayReferenceSession::prepare(Document& document, PreparePromise&& promise)
 {
-    // FIXME: Resolve with a token from the platform (rdar://188711233).
-    promise.reject(Exception { ExceptionCode::NotSupportedError, "Reference sessions are not supported yet."_s });
+    if (m_didCallPrepare) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "prepare() has already been called on this session."_s });
+        return;
+    }
+
+    RefPtr page = document.page();
+    if (!page || isContextStopped()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Frame is detached"_s });
+        return;
+    }
+
+    m_didCallPrepare = true;
+    m_preparePromise = makeUnique<PreparePromise>(WTF::move(promise));
+
+    protect(page->paymentCoordinator())->prepareReferenceSession(m_request, PaymentSession::shouldDiscloseApplePayCapability(document), [pendingActivity = makePendingActivity(*this)](std::optional<String>&& token) {
+        auto promise = std::exchange(pendingActivity->object().m_preparePromise, nullptr);
+        if (!promise)
+            return;
+
+        if (!token)
+            promise->reject(Exception { ExceptionCode::NotSupportedError, "Reference sessions are not supported."_s });
+        else
+            promise->resolve(WTF::move(*token));
+    });
+}
+
+void ApplePayReferenceSession::stop()
+{
+    if (auto promise = std::exchange(m_preparePromise, nullptr))
+        promise->reject(Exception { ExceptionCode::AbortError });
+}
+
+void ApplePayReferenceSession::suspend(ReasonForSuspension reason)
+{
+    if (reason == ReasonForSuspension::BackForwardCache)
+        stop();
 }
 
 } // namespace WebCore

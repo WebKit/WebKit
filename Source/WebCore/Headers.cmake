@@ -211,6 +211,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/applepay/ApplePayPaymentTokenContext.h
     Modules/applepay/ApplePayRecurringPaymentDateUnit.h
     Modules/applepay/ApplePayRecurringPaymentRequest.h
+    Modules/applepay/ApplePayReferenceRequest.h
     Modules/applepay/ApplePaySessionPaymentRequest.h
     Modules/applepay/ApplePaySetupConfiguration.h
     Modules/applepay/ApplePaySetupFeatureTypeWebCore.h

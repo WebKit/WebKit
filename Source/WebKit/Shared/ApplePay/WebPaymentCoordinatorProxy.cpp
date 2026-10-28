@@ -37,6 +37,7 @@
 #include <WebCore/ApplePayCouponCodeUpdate.h>
 #include <WebCore/ApplePayPaymentAuthorizationResult.h>
 #include <WebCore/ApplePayPaymentMethodUpdate.h>
+#include <WebCore/ApplePayReferenceRequest.h>
 #include <WebCore/ApplePayShippingContactUpdate.h>
 #include <WebCore/ApplePayShippingMethodUpdate.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -219,6 +220,22 @@ void WebPaymentCoordinatorProxy::cancelPaymentSession()
 
     didReachFinalState();
 }
+
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+
+void WebPaymentCoordinatorProxy::prepareReferenceSession(const WebCore::ApplePayReferenceRequest& request, bool shouldDiscloseCapability, CompletionHandler<void(std::optional<String>&&)>&& completionHandler)
+{
+    MESSAGE_CHECK_COMPLETION(!request.clientIdentifier.isEmpty(), completionHandler(std::nullopt));
+
+    // PassKit admits the network process for any app with a web view, so check that the app is a web browser.
+    CheckedPtr client = m_client;
+    if (!client || !client->paymentCoordinatorHostAppHasWebBrowserEntitlement(*this))
+        return completionHandler(std::nullopt);
+
+    platformPrepareReferenceSession(request, shouldDiscloseCapability, WTF::move(completionHandler));
+}
+
+#endif // ENABLE(APPLE_PAY_REFERENCE_SESSION)
 
 void WebPaymentCoordinatorProxy::presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL& url)
 {

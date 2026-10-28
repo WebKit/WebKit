@@ -528,6 +528,9 @@ public:
     const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) final;
     Ref<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) final;
 #endif
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+    bool paymentCoordinatorHostAppHasWebBrowserEntitlement(const WebPaymentCoordinatorProxy&) final;
+#endif
 #if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
     void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&) final;
     void notifyWillPresentPaymentUI(WebPageProxyIdentifier) final;
