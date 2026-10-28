@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 
 #include "FormattingContextBoxIterator.h"
 #include "InlineWalker.h"
-#include "LayoutDescendantIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutInlineTextBox.h"
 #include "RenderBlock.h"
@@ -39,7 +38,6 @@
 #include "RenderCombineText.h"
 #include "RenderCounter.h"
 #include "RenderElementInlines.h"
-#include "RenderFlexibleBox.h"
 #include "RenderGlyph.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
@@ -52,7 +50,6 @@
 #include "RenderSlider.h"
 #include "RenderTable.h"
 #include "RenderTextControl.h"
-#include "RenderView.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
@@ -101,30 +98,21 @@ static Layout::Box::ElementAttributes elementAttributes(const RenderElement& ren
 
 BoxTreeUpdater::BoxTreeUpdater(RenderBlock& rootRenderer)
     : m_rootRenderer(rootRenderer)
-    , m_document(rootRenderer.document())
-{
-}
-
-BoxTreeUpdater::BoxTreeUpdater(RenderBlock& rootRenderer, const Document& document)
-    : m_rootRenderer(rootRenderer)
-    , m_document(document)
 {
 }
 
 BoxTreeUpdater::~BoxTreeUpdater() = default;
 
-CheckedRef<Layout::ElementBox> BoxTreeUpdater::build()
+Layout::ElementBox& BoxTreeUpdater::rootLayoutBox()
 {
-    CheckedPtr rootBox = m_rootRenderer.layoutBox();
-    if (!rootBox) {
-        auto newRootBox = createLayoutBox(m_rootRenderer);
-        rootBox = downcast<Layout::ElementBox>(newRootBox.ptr());
-        m_rootRenderer.setLayoutBox(*rootBox);
-        initialContainingBlock().appendChild(WTF::move(newRootBox));
-    }
+    return m_rootRenderer.layoutBox();
+}
 
-    if (is<RenderBlockFlow>(m_rootRenderer))
-        rootBox->setIsInlineIntegrationRoot();
+void BoxTreeUpdater::build()
+{
+    // Another live formatting context that has the root as content keeps its box current.
+    if (!isInLiveFormattingContext(m_rootRenderer))
+        initializeLayoutBox(m_rootRenderer);
 
     auto isAnonymousTextIndentCandidateForIntegration = [&] {
         if (!m_rootRenderer.isAnonymousBlock())
@@ -134,47 +122,31 @@ CheckedRef<Layout::ElementBox> BoxTreeUpdater::build()
         // E.g. flex and grid items are not block boxes (they are block containers though).
         return m_rootRenderer.isBlockContainer();
     };
-    rootBox->setIsAnonymousTextIndentCandidateForIntegration(isAnonymousTextIndentCandidateForIntegration());
+    rootLayoutBox().setIsAnonymousTextIndentCandidateForIntegration(isAnonymousTextIndentCandidateForIntegration());
 
     if (is<RenderBlockFlow>(m_rootRenderer))
-        buildTreeForInlineContent();
-    else if (is<RenderFlexibleBox>(m_rootRenderer))
-        buildTreeForFlexContent();
+        initializeInlineContent(m_rootRenderer);
     else if (is<RenderGrid>(m_rootRenderer))
-        buildTreeForGridContent();
+        initializeGridContent();
     else
         ASSERT_NOT_IMPLEMENTED_YET();
-
-    return rootLayoutBox();
 }
 
 void BoxTreeUpdater::tearDown()
 {
-    if (m_document->renderTreeState() == Document::RenderTreeState::BeingDestroyed)
-        return rootLayoutBox().destroyChildren();
+    if (m_rootRenderer.renderTreeBeingDestroyed())
+        return;
 
-    Vector<CheckedRef<Layout::Box>> boxesToDetach;
-    for (CheckedRef constLayoutBox : formattingContextBoxes(rootLayoutBox())) {
-        CheckedRef layoutBox = const_cast<Layout::Box&>(constLayoutBox.get());
-        CheckedPtr renderer = layoutBox->rendererForIntegration();
-        if (!renderer)
+    for (CheckedRef layoutBox : formattingContextBoxes(rootLayoutBox())) {
+        // Nested formatting context roots keep what their own live layout needs.
+        if (layoutBox->isIntegrationRoot())
             continue;
-
-        CheckedPtr renderBlockFlow = dynamicDowncast<RenderBlockFlow>(*renderer);
-        auto isLFCInlineBlock = renderBlockFlow && renderBlockFlow->inlineLayout();
-        if (isLFCInlineBlock)
-            boxesToDetach.append(layoutBox);
+        const_cast<Layout::Box&>(layoutBox.get()).clearFormattingContextData();
     }
 
-    for (auto& toDetach : boxesToDetach) {
-        auto detachedBox = toDetach->removeFromParent();
-        initialContainingBlock().appendChild(WTF::move(detachedBox));
-    }
-
-    if (&rootLayoutBox().parent() == &initialContainingBlock())
-        rootLayoutBox().removeFromParent();
-    else
-        rootLayoutBox().destroyChildren();
+    if (!isInLiveFormattingContext(m_rootRenderer))
+        rootLayoutBox().clearFormattingContextData();
+    rootLayoutBox().setIsAnonymousTextIndentCandidateForIntegration(false);
 }
 
 static Layout::ElementBox::IsListMarkerImage isListMarkerImage(const RenderListOutsideMarker& listMarkerRenderer)
@@ -197,7 +169,7 @@ static bool synthesizesGlyph(const RenderText& textRenderer)
     return false;
 }
 
-UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
+void BoxTreeUpdater::initializeLayoutBox(RenderObject& renderer)
 {
     std::unique_ptr<Style::ComputedStyle> firstLineStyle = firstLineStyleFor(renderer);
 
@@ -244,65 +216,39 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
         if (synthesizesGlyph(*textRenderer))
             contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasSynthesizedGlyph);
 
-        return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, contentCharacteristic, WTF::move(style), WTF::move(firstLineStyle));
+        CheckedRef inlineTextBox = textRenderer->layoutBox();
+        inlineTextBox->setContent(text, contentCharacteristic);
+        inlineTextBox->setIsCombined(isCombinedText);
+        inlineTextBox->updateStyle(WTF::move(style), WTF::move(firstLineStyle));
+        return;
     }
 
+    // The element box shares the renderer's style.
     auto& renderElement = downcast<RenderElement>(renderer);
-
-    auto style = Style::ComputedStyle::clone(renderElement.style());
-
+    CheckedRef elementBox = renderElement.layoutBox();
+    elementBox->setElementAttributes(elementAttributes(renderElement));
+    elementBox->setFirstLineStyle(WTF::move(firstLineStyle));
     if (CheckedPtr listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(renderElement))
-        return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), isListMarkerImage(*listMarkerRenderer), WTF::move(style), WTF::move(firstLineStyle));
+        elementBox->setIsListMarkerImage(isListMarkerImage(*listMarkerRenderer));
+}
 
-    return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), WTF::move(style), WTF::move(firstLineStyle));
-};
-
-void BoxTreeUpdater::buildTreeForInlineContent()
+void BoxTreeUpdater::initializeInlineContent(const RenderElement& container)
 {
-    for (auto walker = InlineWalker(downcast<RenderBlockFlow>(m_rootRenderer)); !walker.atEnd(); walker.advance()) {
+    for (auto walker = InlineWalker(container); !walker.atEnd(); walker.advance()) {
         CheckedRef childRenderer = *walker.current();
-        if (childRenderer->isExcludedMarker())
+        if (Layout::isExcludedFromLayoutBoxNavigation(childRenderer) || childRenderer->layoutBox().isIntegrationRoot())
             continue;
-        auto childLayoutBox = [&] {
-            if (auto existingChildBox = childRenderer->layoutBox())
-                return existingChildBox->removeFromParent();
-            return createLayoutBox(childRenderer.get());
-        };
-        insertChild(childLayoutBox(), childRenderer.get(), childRenderer->previousSibling());
+        initializeLayoutBox(childRenderer);
     }
 }
 
-void BoxTreeUpdater::buildTreeForFlexContent()
-{
-    for (CheckedRef flexItemRenderer : childrenOfType<RenderElement>(m_rootRenderer)) {
-        if (auto existingChildBox = flexItemRenderer->layoutBox()) {
-            insertChild(existingChildBox->removeFromParent(), flexItemRenderer.get(), flexItemRenderer->previousSibling());
-            continue;
-        }
-        auto style = Style::ComputedStyle::clone(flexItemRenderer->style());
-        auto flexItemBox = makeUniqueRef<Layout::ElementBox>(elementAttributes(flexItemRenderer.get()), WTF::move(style));
-        insertChild(WTF::move(flexItemBox), flexItemRenderer.get(), flexItemRenderer->previousSibling());
-    }
-}
-
-void BoxTreeUpdater::buildTreeForGridContent()
+void BoxTreeUpdater::initializeGridContent()
 {
     for (CheckedRef gridItemRenderer : childrenOfType<RenderElement>(m_rootRenderer)) {
-        if (auto existingChildBox = gridItemRenderer->layoutBox()) {
-            insertChild(existingChildBox->removeFromParent(), gridItemRenderer.get(), gridItemRenderer->previousSibling());
+        if (gridItemRenderer->layoutBox().isIntegrationRoot())
             continue;
-        }
-        insertChild(createLayoutBox(gridItemRenderer.get()), gridItemRenderer.get(), gridItemRenderer->previousSibling());
+        initializeLayoutBox(gridItemRenderer);
     }
-}
-
-void BoxTreeUpdater::insertChild(UniqueRef<Layout::Box> childBox, RenderObject& childRenderer, const RenderObject* beforeChild)
-{
-    CheckedRef parentBox = *childRenderer.parent()->layoutBox();
-    CheckedPtr beforeChildBox = beforeChild ? beforeChild->layoutBox() : nullptr;
-
-    childRenderer.setLayoutBox(childBox);
-    parentBox->insertChild(WTF::move(childBox), const_cast<Layout::Box*>(beforeChildBox.get()));
 }
 
 static void updateContentCharacteristic(const RenderText& rendererText, Layout::InlineTextBox& inlineTextBox)
@@ -333,34 +279,23 @@ static void updateContentCharacteristic(const RenderText& rendererText, Layout::
 
 void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
 {
-    CheckedPtr layoutBox = const_cast<Layout::Box*>(renderer.layoutBox());
-    if (!layoutBox) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
     if (auto* renderText = dynamicDowncast<RenderText>(renderer)) {
-        if (CheckedPtr inlineTextBox = dynamicDowncast<Layout::InlineTextBox>(*layoutBox)) {
-            updateContentCharacteristic(*renderText, *inlineTextBox);
-            inlineTextBox->updateStyle(Style::ComputedStyle::createAnonymousStyleWithDisplay(renderText->style(), Style::DisplayType::InlineFlow), firstLineStyleFor(*renderText));
-            return;
-        }
-        ASSERT_NOT_REACHED();
+        CheckedRef inlineTextBox = const_cast<Layout::InlineTextBox&>(renderText->layoutBox());
+        updateContentCharacteristic(*renderText, inlineTextBox);
+        inlineTextBox->updateStyle(Style::ComputedStyle::createAnonymousStyleWithDisplay(renderText->style(), Style::DisplayType::InlineFlow), firstLineStyleFor(*renderText));
         return;
     }
 
-    auto firstLineNewStyle = firstLineStyleFor(renderer);
-    auto newStyle = Style::ComputedStyle::clone(downcast<RenderElement>(renderer).style());
-    layoutBox->updateStyle(WTF::move(newStyle), WTF::move(firstLineNewStyle));
-    if (auto* listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(renderer)) {
-        if (auto* elementBox = dynamicDowncast<Layout::ElementBox>(*layoutBox))
-            elementBox->setIsListMarkerImage(isListMarkerImage(*listMarkerRenderer));
-    }
+    // The element box shares the renderer's style.
+    CheckedRef elementBox = const_cast<Layout::ElementBox&>(downcast<RenderElement>(renderer).layoutBox());
+    elementBox->setFirstLineStyle(firstLineStyleFor(renderer));
+    if (auto* listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(renderer))
+        elementBox->setIsListMarkerImage(isListMarkerImage(*listMarkerRenderer));
 }
 
 void BoxTreeUpdater::updateContent(const RenderText& textRenderer)
 {
-    CheckedRef inlineTextBox = const_cast<Layout::InlineTextBox&>(*textRenderer.layoutBox());
+    CheckedRef inlineTextBox = const_cast<Layout::InlineTextBox&>(textRenderer.layoutBox());
     CheckedRef style = inlineTextBox->style();
     auto isCombinedText = [&] {
         auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(textRenderer);
@@ -394,48 +329,19 @@ void BoxTreeUpdater::updateContent(const RenderText& textRenderer)
     inlineTextBox->setContent(text, contentCharacteristic);
 }
 
-const Layout::Box& BoxTreeUpdater::insert(const RenderElement& parent, RenderObject& child, const RenderObject* beforeChild)
+void BoxTreeUpdater::insert(RenderObject& child)
 {
-    UNUSED_PARAM(parent);
-
-    insertChild(createLayoutBox(child), child, beforeChild);
-    return *child.layoutBox();
+    initializeLayoutBox(child);
+    // An inserted inline box may come with content.
+    if (CheckedPtr inlineBox = dynamicDowncast<RenderElement>(child); inlineBox && inlineBox->isInlineBox())
+        initializeInlineContent(*inlineBox);
 }
 
-void BoxTreeUpdater::remove(const RenderElement& parent, RenderObject& child)
+void BoxTreeUpdater::remove(RenderObject& child)
 {
-    UNUSED_PARAM(parent);
-    ASSERT(child.layoutBox());
-
-    auto removedBox = [&] {
-        CheckedPtr layoutBox = child.layoutBox();
-        child.clearLayoutBox();
-        return layoutBox->removeFromParent();
-    }();
-
-#if ASSERT_ENABLED
-    // Nothing may refer to the removed boxes, except the renderers in the subtree, which the boxes unlink on destruction.
-    ASSERT(!removedBox->checkedPtrCount());
-    if (CheckedPtr removedElementBox = dynamicDowncast<Layout::ElementBox>(removedBox.get())) {
-        for (auto& descendant : Layout::descendantsOfType<Layout::Box>(*removedElementBox))
-            ASSERT(descendant.checkedPtrCount() == (descendant.rendererForIntegration() ? 1u : 0u));
-    }
-#endif
-}
-
-const Layout::ElementBox& BoxTreeUpdater::rootLayoutBox() const
-{
-    return *m_rootRenderer.layoutBox();
-}
-
-Layout::ElementBox& BoxTreeUpdater::rootLayoutBox()
-{
-    return *m_rootRenderer.layoutBox();
-}
-
-Layout::InitialContainingBlock& BoxTreeUpdater::initialContainingBlock()
-{
-    return m_rootRenderer.view().initialContainingBlock();
+    // Only text and line breaks are removed without invalidating the whole formatting context.
+    ASSERT(!is<RenderElement>(child) || !downcast<RenderElement>(child).firstChild());
+    child.layoutBox().clearFormattingContextData();
 }
 
 #if ENABLE(TREE_DEBUGGING)

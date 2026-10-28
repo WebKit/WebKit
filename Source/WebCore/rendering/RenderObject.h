@@ -44,6 +44,10 @@ class TextStream;
 
 namespace WebCore {
 
+namespace Layout {
+class Box;
+}
+
 class AffineTransform;
 class Color;
 class ControlPart;
@@ -93,10 +97,6 @@ struct SimpleRange;
 struct VisibleRectContext;
 struct VisibleRectState;
 
-namespace Layout {
-class Box;
-}
-
 namespace Style {
 class ComputedStyle;
 class PseudoElementRequest;
@@ -114,6 +114,7 @@ enum class StyleColorOptions : uint8_t;
 typedef const void* WrappedImagePtr;
 
 // Base class for all rendering tree objects.
+// Only RenderElement and RenderText derive from RenderObject directly. Their second base is their layout box.
 class RenderObject : public CanMakeSingleThreadWeakPtr<RenderObject>, public CanMakeCheckedPtr<RenderObject> {
     WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED(RenderObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderObject);
@@ -348,10 +349,13 @@ public:
     virtual ~RenderObject();
 
     Type type() const { return m_type; }
-    Layout::Box* layoutBox() { return m_layoutBox.get(); }
-    const Layout::Box* layoutBox() const { return m_layoutBox.get(); }
-    void LEGACY_NODELETE setLayoutBox(Layout::Box&);
-    void LEGACY_NODELETE clearLayoutBox();
+
+    // The layout box is part of the renderer. Defined in RenderText.h.
+    ALWAYS_INLINE Layout::Box& layoutBox() LIFETIME_BOUND;
+    ALWAYS_INLINE const Layout::Box& layoutBox() const LIFETIME_BOUND;
+    // Not for the initial containing block, which has no renderer.
+    ALWAYS_INLINE static RenderObject& fromLayoutBox(Layout::Box&);
+    ALWAYS_INLINE static const RenderObject& fromLayoutBox(const Layout::Box&);
 
     WEBCORE_EXPORT RenderTheme& theme() const;
 
@@ -1294,7 +1298,6 @@ private:
     SingleThreadPackedWeakPtr<RenderObject> m_next;
     const TypeSpecificFlags m_typeSpecificFlags;
 
-    CheckedPtr<Layout::Box> m_layoutBox;
     const RefPtr<CachedImageListener> m_cachedImageClient;
 
     // FIXME: This should be RenderElementRareData.

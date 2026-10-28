@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,20 +26,13 @@
 #include "config.h"
 #include "LayoutInlineTextBox.h"
 
-#include "RenderObject.h"
 #include "StyleComputedStyle.h"
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineTextBox);
-
-InlineTextBox::InlineTextBox(String content, bool isCombined, EnumSet<ContentCharacteristic> contentCharacteristicSet, Style::ComputedStyle&& style, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle)
-: Box({ NodeType::Text, IsAnonymous::Yes }, WTF::move(style), WTF::move(firstLineStyle), Box::InlineTextBoxFlag)
-    , m_content(content)
-    , m_isCombined(isCombined)
-    , m_contentCharacteristicSet(contentCharacteristicSet)
+InlineTextBox::InlineTextBox(Style::ComputedStyle&& style)
+    : Box(WTF::move(style), Box::InlineTextBoxFlag)
 {
 }
 

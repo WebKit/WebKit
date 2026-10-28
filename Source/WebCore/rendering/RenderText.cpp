@@ -96,7 +96,7 @@ bool isDutchLocale(const AtomString& locale)
         && (locale.length() == 2 || locale[2] == '-');
 }
 
-struct SameSizeAsRenderText : public RenderObject {
+struct SameSizeAsRenderText : public RenderObject, private Layout::InlineTextBox {
     float candidateTextSize;
     float widths[4];
     String text;
@@ -436,6 +436,7 @@ static FontCascade::CodePath computeFontCodePath(const String& text, bool contai
 
 inline RenderText::RenderText(Type type, Node& node, const String& text)
     : RenderObject(type, node, TypeFlag::IsText, { })
+    , Layout::InlineTextBox(Style::ComputedStyle::create())
     , m_text(text)
     , m_containsOnlyASCII(text.impl()->containsOnlyASCII())
     , m_fontCodePath(computeFontCodePath(m_text, m_containsOnlyASCII))
@@ -458,16 +459,6 @@ RenderText::~RenderText()
 {
     // Do not add any code here. Add it to willBeDestroyed() instead.
     ASSERT(!originalTextMap().contains(this));
-}
-
-Layout::InlineTextBox* LEGACY_NODELETE RenderText::layoutBox()
-{
-    return downcast<Layout::InlineTextBox>(RenderObject::layoutBox());
-}
-
-const Layout::InlineTextBox* LEGACY_NODELETE RenderText::layoutBox() const
-{
-    return downcast<Layout::InlineTextBox>(RenderObject::layoutBox());
 }
 
 ASCIILiteral RenderText::renderName() const
@@ -573,7 +564,7 @@ void RenderText::styleDidChange(Style::Difference diff, const Style::ComputedSty
         updateRenderedText();
 
     // FIXME: First line change on the block comes in as equal on text.
-    auto needsLayoutBoxStyleUpdate = layoutBox() && (diff >= Style::DifferenceResult::RecompositeLayer || (&style() != &firstLineStyle()));
+    auto needsLayoutBoxStyleUpdate = LayoutIntegration::BoxTreeUpdater::isInLiveFormattingContext(*this) && (diff >= Style::DifferenceResult::RecompositeLayer || (&style() != &firstLineStyle()));
     if (needsLayoutBoxStyleUpdate)
         LayoutIntegration::LineLayout::updateStyle(*this);
 

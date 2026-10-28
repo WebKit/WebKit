@@ -44,7 +44,7 @@ public:
     uint32_t checkedPtrCountWithoutThreadCheck() const { return RenderFlexibleBox::checkedPtrCountWithoutThreadCheck(); }
     void incrementCheckedPtrCount() const { RenderFlexibleBox::incrementCheckedPtrCount(); }
     void decrementCheckedPtrCount() const { RenderFlexibleBox::decrementCheckedPtrCount(); }
-    void setDidBeginCheckedPtrDeletion() { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
+    void setDidBeginCheckedPtrDeletion() { RenderFlexibleBox::setDidBeginCheckedPtrDeletion(); }
 
     void setOptionsChanged(bool changed) { m_needsOptionsWidthUpdate = changed; }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,6 @@
 
 #include <WebCore/CachedImage.h>
 #include <WebCore/LayoutBox.h>
-#include <wtf/TZoneMalloc.h>
-#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
@@ -41,36 +39,24 @@ class ComputedStyle;
 namespace Layout {
 
 class ElementBox : public Box {
-    WTF_MAKE_TZONE_ALLOCATED(ElementBox);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ElementBox);
 public:
-    ElementBox(ElementAttributes&&, Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle = nullptr, EnumSet<BaseTypeFlag> = { ElementBoxFlag });
-
     enum class IsListMarkerImage : bool { No, Yes };
-    ElementBox(ElementAttributes&&, IsListMarkerImage, Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle = nullptr);
 
-    ~ElementBox();
-
-    const Box* firstChild() const { return m_firstChild.get(); }
+    // The render tree children, without excluded list markers. RenderView's box is the only child of the initial containing block.
+    // Defined in RenderElement.h.
+    inline const Box* firstChild() const;
     const Box* LEGACY_NODELETE firstInFlowChild() const;
     const Box* LEGACY_NODELETE firstInFlowOrFloatingChild() const;
     const Box* LEGACY_NODELETE firstOutOfFlowChild() const;
-    const Box* lastChild() const { return m_lastChild.get(); }
+    inline const Box* lastChild() const;
     const Box* LEGACY_NODELETE lastInFlowChild() const;
     const Box* LEGACY_NODELETE lastInFlowOrFloatingChild() const;
     const Box* LEGACY_NODELETE lastOutOfFlowChild() const;
-
-    // FIXME: This is currently needed for style updates.
-    Box* firstChild() { return m_firstChild.get(); }
 
     bool hasChild() const { return firstChild(); }
     bool hasInFlowChild() const { return firstInFlowChild(); }
     bool hasInFlowOrFloatingChild() const { return firstInFlowOrFloatingChild(); }
     bool LEGACY_NODELETE hasOutOfFlowChild() const;
-
-    void appendChild(UniqueRef<Box>);
-    void insertChild(UniqueRef<Box>, Box* beforeChild = nullptr);
-    void destroyChildren();
 
     void setBaselineForIntegration(LayoutUnit baseline) { m_baselineForIntegration = baseline; }
     std::optional<LayoutUnit> baselineForIntegration() const { return m_baselineForIntegration; }
@@ -87,7 +73,7 @@ public:
     LayoutUnit LEGACY_NODELETE intrinsicRatio() const;
     bool LEGACY_NODELETE hasAspectRatio() const;
 
-    void setIsListMarkerImage(IsListMarkerImage isListMarkerImage) { m_replacedData->isListMarkerImage = isListMarkerImage == IsListMarkerImage::Yes; }
+    void setIsListMarkerImage(IsListMarkerImage);
 
     bool isListMarkerImage() const { return m_replacedData && m_replacedData->isListMarkerImage; }
 
@@ -98,10 +84,17 @@ public:
     // FIXME: This doesn't belong.
     CachedImage* cachedImage() const { return m_replacedData ? m_replacedData->cachedImage : nullptr; }
 
-    RenderElement* LEGACY_NODELETE rendererForIntegration() const;
+    // Null only for the initial containing block. Defined in RenderElement.h.
+    inline RenderElement* rendererForIntegration() const;
+
+protected:
+    explicit ElementBox(Style::ComputedStyle&&, EnumSet<BaseTypeFlag> = { });
+    ~ElementBox();
 
 private:
     friend class Box;
+
+    const Box& LEGACY_NODELETE initialContainingBlockChild() const;
 
     struct ReplacedData {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ReplacedData);
@@ -114,10 +107,7 @@ private:
         WeakPtr<CachedImage> cachedImage;
     };
 
-    std::unique_ptr<Box> m_firstChild;
-    CheckedPtr<Box> m_lastChild;
-
-    const std::unique_ptr<ReplacedData> m_replacedData;
+    std::unique_ptr<ReplacedData> m_replacedData;
     std::optional<LayoutUnit> m_baselineForIntegration;
 };
 
@@ -126,3 +116,5 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(ElementBox, isElementBox())
 
+// For the inline functions that read the renderer. RenderElement.h includes this header first.
+#include <WebCore/RenderElement.h>

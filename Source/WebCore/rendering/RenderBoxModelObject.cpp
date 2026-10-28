@@ -1214,7 +1214,7 @@ LayoutRect RenderBoxModelObject::borderBoxRectInContainer() const
 {
     auto boundingBoxOfFragments = [&]() -> IntRect {
         if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
-            if (!layoutBox() || !layout->contains(*this)) {
+            if (!layout->contains(*this)) {
                 // Repaint may be issued on subtrees during content mutation with newly inserted renderers
                 // (or we just forgot to initiate layout before querying geometry on stale content after moving inline boxes between blocks).
                 ASSERT(needsLayout());
@@ -1276,14 +1276,9 @@ LayoutRect RenderBoxModelObject::rectWithOutlineForRepaint(const RenderLayerMode
 
 LayoutRect RenderBoxModelObject::visualOverflowRect() const
 {
-    if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
-        if (!layoutBox()) {
-            // Repaint may be issued on subtrees during content mutation with newly inserted renderers.
-            ASSERT(needsLayout());
-            return { };
-        }
+    // Newly inserted renderers have no display boxes yet, and get an empty rect.
+    if (auto* layout = LayoutIntegration::LineLayout::containing(*this))
         return layout->inkOverflowBoundingBoxRectFor(*this);
-    }
     return { };
 }
 

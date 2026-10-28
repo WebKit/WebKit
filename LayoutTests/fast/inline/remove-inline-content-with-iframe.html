@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<div id="removed">text <span>inline box</span> <iframe style="width: 10px; height: 10px"></iframe> <span>inline box</span> text</div>
+<div id="hidden">text <span>inline box</span> <iframe style="width: 10px; height: 10px"></iframe> <span>inline box</span> text</div>
+<p>PASS if no crash or assert.</p>
+<script>
+window.testRunner?.dumpAsText();
+document.body.offsetHeight;
+document.getElementById("removed").remove();
+document.getElementById("hidden").style.display = "none";
+document.body.offsetHeight;
+</script>

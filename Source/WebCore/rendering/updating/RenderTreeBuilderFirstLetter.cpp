@@ -36,6 +36,7 @@
 #include "RenderView.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleChange.h"
+#include "Text.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/unicode/CharacterNames.h>

@@ -54,6 +54,11 @@ Ref<Text> Text::createEditingText(Document& document, String&& data)
 
 Text::~Text() = default;
 
+RenderText* Text::renderer() const
+{
+    return downcast<RenderText>(Node::renderer());
+}
+
 ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
 {
     if (offset > length())

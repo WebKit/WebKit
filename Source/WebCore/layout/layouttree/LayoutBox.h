@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,9 @@
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/StyleComputedStyle.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/EnumSet.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -46,9 +48,8 @@ class InitialContainingBlock;
 class LayoutState;
 class TreeBuilder;
 
-class Box : public CanMakeCheckedPtr<Box> {
-    WTF_MAKE_TZONE_ALLOCATED(Box);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Box);
+// Boxes are base classes of the renderers. The initial containing block is the only box that is allocated on its own.
+class Box {
 public:
     enum class NodeType : uint8_t {
         Text,
@@ -80,7 +81,12 @@ public:
         InitialContainingBlockFlag,
     };
 
-    virtual ~Box();
+    // Counts CheckedPtrs to the box. RenderElement and RenderText add it to the RenderObject counter.
+    ALWAYS_INLINE uint32_t LEGACY_NODELETE checkedPtrCount() const { return m_checkedPtrCounter.checkedPtrCount(); }
+    ALWAYS_INLINE uint32_t checkedPtrCountWithoutThreadCheck() const { return m_checkedPtrCounter.checkedPtrCountWithoutThreadCheck(); }
+    ALWAYS_INLINE void LEGACY_NODELETE incrementCheckedPtrCount() const { m_checkedPtrCounter.incrementCheckedPtrCount(); }
+    SUPPRESS_NODELETE ALWAYS_INLINE void LEGACY_NODELETE decrementCheckedPtrCount() const { m_checkedPtrCounter.decrementCheckedPtrCount(); }
+    ALWAYS_INLINE void setDidBeginCheckedPtrDeletion() { m_checkedPtrCounter.setDidBeginCheckedPtrDeletion(); }
 
     bool establishesFormattingContext() const;
     bool establishesBlockFormattingContext() const;
@@ -158,24 +164,26 @@ public:
     bool LEGACY_NODELETE isGridItem() const;
     inline bool isListItem() const;
 
+    // Set while the box is the root of a live LineLayout or GridLayout.
     bool isInlineIntegrationRoot() const { return m_isInlineIntegrationRoot; }
+    bool isGridIntegrationRoot() const { return m_isGridIntegrationRoot; }
+    bool isIntegrationRoot() const { return m_isInlineIntegrationRoot || m_isGridIntegrationRoot; }
     bool isAnonymousTextIndentCandidateForIntegration() const { return m_isAnonymousTextIndentCandidateForIntegration; }
 
-    const ElementBox& parent() const { return *m_parent; }
-    const Box* nextSibling() const { return m_nextSibling.get(); }
+    // Navigation follows the render tree, skipping excluded list markers. The initial containing block is the parent of
+    // RenderView and of renderers without a parent. parent() is defined in RenderElement.h, the siblings in RenderText.h.
+    inline const ElementBox& parent() const;
+    inline const Box* nextSibling() const;
     const Box* LEGACY_NODELETE nextInFlowSibling() const;
     const Box* LEGACY_NODELETE nextInFlowOrFloatingSibling() const;
     const Box* LEGACY_NODELETE nextOutOfFlowSibling() const;
-    const Box* previousSibling() const { return m_previousSibling.get(); }
+    inline const Box* previousSibling() const;
     const Box* LEGACY_NODELETE previousInFlowSibling() const;
     const Box* LEGACY_NODELETE previousInFlowOrFloatingSibling() const;
     const Box* LEGACY_NODELETE previousOutOfFlowSibling() const;
     bool LEGACY_NODELETE isDescendantOf(const Box&) const;
     bool isDescendantOfWithinFormattingContext(const Box&) const;
     bool isInFormattingContextEstablishedBy(const ElementBox& formattingContextRoot) const;
-
-    // FIXME: This is currently needed for style updates.
-    Box* nextSibling() { return m_nextSibling.get(); }
 
     bool isElementBox() const { return baseTypeFlags().contains(ElementBoxFlag); }
     bool isInlineTextBox() const { return baseTypeFlags().contains(InlineTextBoxFlag); }
@@ -184,11 +192,14 @@ public:
     bool LEGACY_NODELETE isOverflowVisible() const;
 
     void updateStyle(Style::ComputedStyle&& newStyle, std::unique_ptr<Style::ComputedStyle>&& newFirstLineStyle);
-    const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
-    const Style::ComputedStyle& LEGACY_NODELETE firstLineStyle() const LIFETIME_BOUND { return hasRareData() && rareData().firstLineStyle ? *rareData().firstLineStyle : m_style; }
+    void setFirstLineStyle(std::unique_ptr<Style::ComputedStyle>&&);
+    // Always inlined so that RenderElement::style() costs the same in debug builds.
+    ALWAYS_INLINE const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
+    const Style::ComputedStyle& LEGACY_NODELETE firstLineStyle() const LIFETIME_BOUND { return hasBoxRareData() && boxRareData().firstLineStyle ? *boxRareData().firstLineStyle : m_style; }
     WritingMode writingMode() const { return style().writingMode(); }
 
-    void setIsInlineIntegrationRoot() { m_isInlineIntegrationRoot = true; }
+    void setIsInlineIntegrationRoot(bool value) { m_isInlineIntegrationRoot = value; }
+    void setIsGridIntegrationRoot(bool value) { m_isGridIntegrationRoot = value; }
     void setIsAnonymousTextIndentCandidateForIntegration(bool value) { m_isAnonymousTextIndentCandidateForIntegration = value; }
 
     const LayoutShape* LEGACY_NODELETE shape() const;
@@ -196,16 +207,22 @@ public:
 
     const ElementBox* LEGACY_NODELETE associatedRubyAnnotationBox() const;
 
-    RenderObject* rendererForIntegration() const { return m_renderer.get(); }
-    void setRendererForIntegration(RenderObject* renderer) { m_renderer = renderer; }
+    // Null only for the initial containing block. Defined in RenderText.h.
+    inline RenderObject* rendererForIntegration() const;
+
+    void setElementAttributes(ElementAttributes);
 
     UsedStyle LEGACY_NODELETE usedStyle() const;
     UsedStyle LEGACY_NODELETE firstLineUsedStyle() const;
 
-    UniqueRef<Box> removeFromParent();
+    // Clears what the formatting context stored on the box, when the box leaves it or the formatting context goes away.
+    void clearFormattingContextData();
 
 protected:
-    Box(ElementAttributes&&, Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle, EnumSet<BaseTypeFlag>);
+    Box(Style::ComputedStyle&&, EnumSet<BaseTypeFlag>);
+    ~Box();
+
+    ALWAYS_INLINE Style::ComputedStyle& mutableStyle() LIFETIME_BOUND { return m_style; }
 
 private:
     friend class ElementBox;
@@ -220,18 +237,24 @@ private:
         RefPtr<const LayoutShape> shape;
     };
 
-    bool hasRareData() const { return m_hasRareData; }
+    // RenderView and renderers that are being detached.
+    const ElementBox& LEGACY_NODELETE parentForRendererWithoutParent() const;
+
+    // Named apart from the RenderObject rare data functions, which renderer code calls unqualified.
+    bool hasBoxRareData() const { return m_hasRareData; }
     void setHasRareData(bool hasRareData) { m_hasRareData = hasRareData; }
-    const BoxRareData& LEGACY_NODELETE rareData() const;
-    Box::BoxRareData& rareData();
-    BoxRareData& ensureRareData();
-    void removeRareData();
+    const BoxRareData& LEGACY_NODELETE boxRareData() const;
+    Box::BoxRareData& boxRareData();
+    BoxRareData& ensureBoxRareData();
+    void removeBoxRareData();
     
     EnumSet<BaseTypeFlag> baseTypeFlags() const { return EnumSet<BaseTypeFlag>::fromRaw(m_baseTypeFlags); }
 
-    typedef HashMap<const Box*, std::unique_ptr<BoxRareData>> RareDataMap;
+    typedef HashMap<const Box*, std::unique_ptr<BoxRareData>> BoxRareDataMap;
 
-    static RareDataMap& LEGACY_NODELETE rareDataMap();
+    static BoxRareDataMap& LEGACY_NODELETE boxRareDataMap();
+
+    WTF::CanMakeCheckedPtrBase<WTF::SingleThreadIntegralWrapper<uint32_t>, uint32_t, bool, WTF::CheckedPtrDeleteCheckException::No> m_checkedPtrCounter;
 
     NodeType m_nodeType : 4;
     bool m_isAnonymous : 1;
@@ -239,22 +262,16 @@ private:
     unsigned m_baseTypeFlags : 4; // EnumSet<BaseTypeFlag>
     bool m_hasRareData : 1 { false };
     bool m_isInlineIntegrationRoot : 1 { false };
+    bool m_isGridIntegrationRoot : 1 { false };
     bool m_isAnonymousTextIndentCandidateForIntegration : 1 { false }; // Either first anonymous block box child or simple anonymous block container (e.g flex item).
 
     Style::ComputedStyle m_style;
-
-    CheckedPtr<ElementBox> m_parent;
-
-    std::unique_ptr<Box> m_nextSibling;
-    CheckedPtr<Box> m_previousSibling;
 
     // Primary LayoutState gets a direct cache.
 #if ASSERT_ENABLED
     mutable WeakPtr<LayoutState> m_primaryLayoutState;
 #endif
     mutable std::unique_ptr<BoxGeometry> m_cachedGeometryForPrimaryLayoutState;
-
-    CheckedPtr<RenderObject> m_renderer;
 };
 
 inline bool Box::isContainingBlockForInFlow() const

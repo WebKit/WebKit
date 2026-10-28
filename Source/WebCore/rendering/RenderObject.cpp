@@ -152,7 +152,6 @@ struct SameSizeAsRenderObject : public CanMakeSingleThreadWeakPtr<SameSizeAsRend
     SingleThreadPackedWeakPtr<RenderObject> m_next;
     uint8_t m_type;
     uint8_t m_typeSpecificFlags;
-    CheckedPtr<Layout::Box> layoutBox;
     void* cachedResourceClient;
 };
 
@@ -182,25 +181,7 @@ RenderObject::RenderObject(Type type, Node& node, OptionSet<TypeFlag> typeFlags,
 
 RenderObject::~RenderObject()
 {
-    clearLayoutBox();
     ASSERT(!hasRareData());
-}
-
-void RenderObject::setLayoutBox(Layout::Box& box)
-{
-    m_layoutBox = &box;
-    m_layoutBox->setRendererForIntegration(this);
-}
-
-void RenderObject::clearLayoutBox()
-{
-    if (!m_layoutBox)
-        return;
-
-    ASSERT(m_layoutBox->rendererForIntegration() == this);
-
-    m_layoutBox->setRendererForIntegration(nullptr);
-    m_layoutBox = nullptr;
 }
 
 RenderTheme& RenderObject::theme() const
@@ -1542,7 +1523,6 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
     }
 
     stream << " renderer (" << this << ")";
-    stream << " layout box (" << layoutBox() << ")";
 
     if (node())
         stream << " node (" << node() << ")";

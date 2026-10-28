@@ -113,7 +113,7 @@ void BoxGeometryUpdater::clear()
 
 void BoxGeometryUpdater::setListMarkerOffsetForMarkerOutside(const RenderListOutsideMarker& listMarker)
 {
-    CheckedRef layoutBox = *listMarker.layoutBox();
+    CheckedRef layoutBox = listMarker.layoutBox();
     ASSERT(layoutBox->isListMarkerBox());
     auto* ancestor = listMarker.containingBlock();
 
@@ -371,7 +371,7 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
         UNUSED_VARIABLE(renderImage);
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
         if (renderImage->isMultiRepresentationHEIC())
-            return marginBoxBottom - LayoutUnit::fromFloatRound(renderImage->style().fontCascade().primaryFont().metricsForMultiRepresentationHEIC().descent);
+            return marginBoxBottom - LayoutUnit::fromFloatRound(protect(renderImage->style().fontCascade().primaryFont())->metricsForMultiRepresentationHEIC().descent);
 #endif
         return { };
     }
@@ -584,13 +584,13 @@ static inline void setIntegrationBaseline(const RenderBox& renderBox)
 
             return rootWritingMode.prefersCentralBaseline() && !isWritingModeRoot ? marginBoxLogicalHeight / 2 : marginBoxLogicalHeight;
         };
-        const_cast<Layout::ElementBox&>(*renderBox.layoutBox()).setBaselineForIntegration(baselinePosition());
+        const_cast<Layout::ElementBox&>(renderBox.layoutBox()).setBaselineForIntegration(baselinePosition());
     }
 }
 
 void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
 {
-    auto& layoutBox = const_cast<Layout::ElementBox&>(*renderBox.layoutBox());
+    auto& layoutBox = const_cast<Layout::ElementBox&>(renderBox.layoutBox());
     auto& boxGeometry = layoutState().ensureGeometryForBox(layoutBox);
     auto writingMode = renderBox.parent()->writingMode();
 
@@ -632,12 +632,12 @@ void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, s
 void BoxGeometryUpdater::updateLineBreakBoxDimensions(const RenderLineBreak& lineBreakBox)
 {
     // This is just a box geometry reset (see InlineFormattingContext::layoutInFlowContent).
-    layoutState().ensureGeometryForBox(*lineBreakBox.layoutBox()).reset();
+    layoutState().ensureGeometryForBox(lineBreakBox.layoutBox()).reset();
 }
 
 void BoxGeometryUpdater::updateInlineBoxDimensions(const RenderBoxModelObject& inlineBox, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
 {
-    auto& boxGeometry = layoutState().ensureGeometryForBox(*inlineBox.layoutBox());
+    auto& boxGeometry = layoutState().ensureGeometryForBox(inlineBox.layoutBox());
 
     auto writingMode = inlineBox.writingMode();
 

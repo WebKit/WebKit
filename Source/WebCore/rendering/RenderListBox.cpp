@@ -197,7 +197,7 @@ void RenderListBox::layout()
     }
 
     if (m_scrollToRevealSelectionAfterLayout) {
-        LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext());
+        LayoutStateDisabler layoutStateDisabler(protect(view().frameView().layoutContext()));
         scrollToRevealSelection();
     }
 }

@@ -418,6 +418,10 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
 
 void RenderTreeBuilder::Block::dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child)
 {
+    // The children move without notifying the line layout of the child, which reads them through the render tree.
+    if (CheckedPtr childBlockFlow = dynamicDowncast<RenderBlockFlow>(child))
+        childBlockFlow->destroyLineLayout();
+
     parent.setNeedsLayoutAndInvalidateContentLogicalWidths();
     parent.setChildrenInline(child.childrenInline());
 

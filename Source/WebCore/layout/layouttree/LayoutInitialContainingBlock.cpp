@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,8 @@
 #include "config.h"
 #include "LayoutInitialContainingBlock.h"
 
-#include "RenderObject.h"
+#include "RenderObjectDocument.h"
+#include "RenderView.h"
 #include "StyleComputedStyle.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -35,19 +36,35 @@ namespace Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InitialContainingBlock);
 
-InitialContainingBlock::InitialContainingBlock(Style::ComputedStyle&& style, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle)
-    : ElementBox({ }, WTF::move(style), WTF::move(firstLineStyle), Box::InitialContainingBlockFlag)
+InitialContainingBlock::InitialContainingBlock(RenderView& renderView, Style::ComputedStyle&& style, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle)
+    : ElementBox(WTF::move(style), Box::InitialContainingBlockFlag)
+    , m_renderView(renderView)
 {
+    setFirstLineStyle(WTF::move(firstLineStyle));
+}
+
+InitialContainingBlock::~InitialContainingBlock() = default;
+
+RenderView& InitialContainingBlock::renderView() const
+{
+    return m_renderView.get();
+}
+
+const Box& ElementBox::initialContainingBlockChild() const
+{
+    return downcast<InitialContainingBlock>(*this).renderView().layoutBox();
+}
+
+const ElementBox& Box::parentForRendererWithoutParent() const
+{
+    return rendererForIntegration()->view().initialContainingBlock();
 }
 
 const InitialContainingBlock& initialContainingBlock(const Box& layoutBox)
 {
     if (auto* initialContainingBlock = dynamicDowncast<InitialContainingBlock>(layoutBox))
         return *initialContainingBlock;
-
-    auto* ancestor = &layoutBox.parent();
-    for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) { }
-    return downcast<InitialContainingBlock>(*ancestor);
+    return layoutBox.rendererForIntegration()->view().initialContainingBlock();
 }
 
 }

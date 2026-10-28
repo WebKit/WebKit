@@ -24,6 +24,7 @@
 
 #include <WebCore/BoxExtents.h>
 #include <WebCore/HitTestRequest.h>
+#include <WebCore/LayoutElementBox.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/RenderPtr.h>
 #include <WebCore/StyleComputedStyle.h>
@@ -50,21 +51,45 @@ struct MarginRect {
     LayoutRect anchorRect;
 };
 
-namespace Layout {
-class ElementBox;
-}
-
 namespace Style {
 class ComputedStyle;
 class Image;
 struct Content;
 }
 
-class RenderElement : public RenderObject {
+class RenderElement : public RenderObject, private Layout::ElementBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderElement);
 public:
     virtual ~RenderElement();
+
+    // RenderObject functions that the layout box base also has.
+    using RenderObject::isAnonymous;
+    using RenderObject::isDescendantOf;
+    using RenderObject::isFloatingOrOutOfFlowPositioned;
+    using RenderObject::isImage;
+    using RenderObject::isInFlow;
+    using RenderObject::isInFlowPositioned;
+    using RenderObject::isInlineBox;
+    using RenderObject::isOutOfFlowPositioned;
+    using RenderObject::isPositioned;
+    using RenderObject::isRelativelyPositioned;
+    using RenderObject::nextInFlowSibling;
+    using RenderObject::nextSibling;
+    using RenderObject::parent;
+    using RenderObject::previousInFlowSibling;
+    using RenderObject::previousSibling;
+
+    // CheckedPtr to the renderer uses the RenderObject counter, CheckedPtr to the layout box the box counter. Deletion checks both.
+    using RenderObject::checkedPtrCount;
+    using RenderObject::decrementCheckedPtrCount;
+    using RenderObject::incrementCheckedPtrCount;
+    ALWAYS_INLINE uint32_t checkedPtrCountWithoutThreadCheck() const { return RenderObject::checkedPtrCountWithoutThreadCheck() + Layout::ElementBox::checkedPtrCountWithoutThreadCheck(); }
+    void setDidBeginCheckedPtrDeletion()
+    {
+        RenderObject::setDidBeginCheckedPtrDeletion();
+        Layout::ElementBox::setDidBeginCheckedPtrDeletion();
+    }
 
     static bool isContentDataSupported(const Style::Content&);
 
@@ -78,14 +103,14 @@ public:
 
     bool hasInitializedStyle() const { return m_hasInitializedStyle; }
 
-    const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
+    const Style::ComputedStyle& style() const LIFETIME_BOUND { return Layout::ElementBox::style(); }
     inline UsedStyle usedStyle() const LIFETIME_BOUND;
     inline UsedStyle firstLineUsedStyle() const LIFETIME_BOUND;
-    const Style::ComputedStyle* parentStyle() const LIFETIME_BOUND { return !m_parent ? nullptr : &m_parent->style(); }
+    const Style::ComputedStyle* parentStyle() const LIFETIME_BOUND { return !RenderObject::m_parent ? nullptr : &RenderObject::m_parent->style(); }
     const Style::ComputedStyle& LEGACY_NODELETE firstLineStyle() const LIFETIME_BOUND;
 
     // FIXME: Style shouldn't be mutated.
-    Style::ComputedStyle& mutableStyle() LIFETIME_BOUND { return m_style; }
+    Style::ComputedStyle& mutableStyle() LIFETIME_BOUND { return Layout::ElementBox::mutableStyle(); }
 
     void initializeStyle();
 
@@ -108,8 +133,12 @@ public:
     RenderObject* firstInFlowChild() const;
     RenderObject* lastInFlowChild() const;
 
-    Layout::ElementBox* LEGACY_NODELETE layoutBox();
-    const Layout::ElementBox* LEGACY_NODELETE layoutBox() const;
+    // The layout box is part of the renderer.
+    ALWAYS_INLINE Layout::ElementBox& layoutBox() LIFETIME_BOUND { return *this; }
+    ALWAYS_INLINE const Layout::ElementBox& layoutBox() const LIFETIME_BOUND { return *this; }
+    // Every ElementBox except the initial containing block is the base of a RenderElement.
+    ALWAYS_INLINE static RenderElement& fromLayoutBox(Layout::ElementBox& box) { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<RenderElement&>(box); }
+    ALWAYS_INLINE static const RenderElement& fromLayoutBox(const Layout::ElementBox& box) { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<const RenderElement&>(box); }
 
     // Note that even if these 2 "canContain" functions return true for a particular renderer, it does not necessarily mean the renderer is the containing block (see containingBlockForAbsolute(Fixed)Position).
     inline bool isCanvasDrawable() const; // Defined in RenderElementStyleInlines.h.
@@ -505,8 +534,6 @@ private:
     unsigned m_mayHaveNonScalingStrokeInSubtree : 1 { false };
     unsigned m_lineClampState : 2 { static_cast<unsigned>(LineClampState::None) };
     // 8 bits free.
-
-    Style::ComputedStyle m_style;
 };
 
 WEBCORE_EXPORT float LEGACY_NODELETE opacity(const RenderElement&);
@@ -554,3 +581,54 @@ inline RenderElement* RenderObject::parent() const
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderElement, isRenderElement())
+
+namespace WebCore {
+namespace Layout {
+
+inline bool isExcludedFromLayoutBoxNavigation(const RenderObject& renderer)
+{
+    return renderer.isRenderListOutsideMarker() && renderer.isExcludedMarker();
+}
+
+inline RenderElement* ElementBox::rendererForIntegration() const
+{
+    if (isInitialContainingBlock()) [[unlikely]]
+        return nullptr;
+    return &RenderElement::fromLayoutBox(const_cast<ElementBox&>(*this));
+}
+
+inline const ElementBox& Box::parent() const
+{
+    SUPPRESS_UNCHECKED_LOCAL auto* parent = RenderObject::fromLayoutBox(*this).parent();
+    if (!parent) [[unlikely]]
+        return parentForRendererWithoutParent();
+    return parent->layoutBox();
+}
+
+inline const Box* ElementBox::firstChild() const
+{
+    if (isInitialContainingBlock()) [[unlikely]]
+        return &initialContainingBlockChild();
+    for (SUPPRESS_UNCHECKED_LOCAL auto* child = RenderElement::fromLayoutBox(*this).firstChild(); child; child = child->nextSibling()) {
+        if (!isExcludedFromLayoutBoxNavigation(*child)) [[likely]]
+            return &child->layoutBox();
+    }
+    return nullptr;
+}
+
+inline const Box* ElementBox::lastChild() const
+{
+    if (isInitialContainingBlock()) [[unlikely]]
+        return &initialContainingBlockChild();
+    for (SUPPRESS_UNCHECKED_LOCAL auto* child = RenderElement::fromLayoutBox(*this).lastChild(); child; child = child->previousSibling()) {
+        if (!isExcludedFromLayoutBoxNavigation(*child)) [[likely]]
+            return &child->layoutBox();
+    }
+    return nullptr;
+}
+
+} // namespace Layout
+} // namespace WebCore
+
+// For RenderObject::layoutBox() and fromLayoutBox(), which need both RenderElement and RenderText.
+#include <WebCore/RenderText.h>

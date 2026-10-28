@@ -117,7 +117,7 @@ static void invalidateLineLayout(RenderObject& renderer, IsRemoval isRemoval)
         // Certain mutations can make renderer to be removed before running layout. In such cases we don't have to try to
         // run invalidation only remove it from layout tree, unless the line layout asks for full invalidation.
         // One exception is for RenderMarquee, which may have run preferred width computation without performing layout.
-        if (auto* inlineLayout = container->inlineLayout(); inlineLayout && !inlineLayout->removedFromTree(*renderer.parent(), renderer))
+        if (auto* inlineLayout = container->inlineLayout(); inlineLayout && !inlineLayout->removedFromTree(renderer))
             container->invalidateLineLayout(RenderBlockFlow::InvalidationReason::InsertionOrRemoval);
         return;
     }
@@ -126,11 +126,20 @@ static void invalidateLineLayout(RenderObject& renderer, IsRemoval isRemoval)
         if (LayoutIntegration::LineLayout::shouldInvalidateLineLayoutAfterTreeMutation(*container, renderer, inlineLayout, isRemoval == IsRemoval::Yes))
             return true;
         if (isRemoval == IsRemoval::Yes)
-            return !inlineLayout.removedFromTree(*renderer.parent(), renderer);
-        return !inlineLayout.insertedIntoTree(*renderer.parent(), renderer);
+            return !inlineLayout.removedFromTree(renderer);
+        return !inlineLayout.insertedIntoTree(renderer);
     };
     if (auto* inlineLayout = container->inlineLayout(); inlineLayout && shouldInvalidateLineLayout(*inlineLayout))
         container->invalidateLineLayout(RenderBlockFlow::InvalidationReason::InsertionOrRemoval);
+}
+
+// The layout box is part of the renderer. When a removal doesn't go through the line layout, the line layout that refers to the box goes instead.
+static void destroyLineLayoutReferringTo(const RenderObject& renderer)
+{
+    if (!LayoutIntegration::BoxTreeUpdater::isInLiveFormattingContext(renderer))
+        return;
+    if (CheckedPtr container = LayoutIntegration::LineLayout::blockContainer(renderer))
+        container->destroyLineLayout();
 }
 
 static void LEGACY_NODELETE getInlineRun(RenderObject* start, RenderObject* boundary, RenderObject*& inlineRunStart, RenderObject*& inlineRunEnd)
@@ -1054,7 +1063,14 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     ASSERT(parent.canHaveChildren() || parent.canHaveGeneratedChildren());
     ASSERT(child.parent() == &parent);
 
+    // A line layout reads its content through the render tree, so it goes before its root leaves the tree for good.
+    if (willBeDestroyed == WillBeDestroyed::Yes) {
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(child))
+            blockFlow->destroyLineLayout();
+    }
+
     if (parent.renderTreeBeingDestroyed() || m_tearDownType == TearDownType::SubtreeWithRootAlreadyDetached) {
+        destroyLineLayoutReferringTo(child);
         if (parent.document().settings().layerBasedSVGEngineEnabled() && parent.isSVGLayerAwareRenderer()) {
             if (CheckedPtr parentLayer = parent.enclosingLayer())
                 parentLayer->dirtyChildrenInDOMOrderForSVG();
@@ -1072,8 +1088,10 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
 
     if (m_tearDownType == RenderTreeBuilder::TearDownType::Root || (m_subtreeDestroyRoot && m_subtreeDestroyRoot->isInlineBox())) {
         // In case of partial damage on the inline content (the block root is not going away), we need to initiate inline layout invalidation on leaf renderers too.
+        // Afterwards no line layout refers to the child: it either dropped the child's box or went away.
         invalidateLineLayout(child, IsRemoval::Yes);
-    }
+    } else
+        destroyLineLayoutReferringTo(child);
 
     // FIXME: Fragment state should not be such a special case.
     if (m_internalMovesType == IsInternalMove::No)

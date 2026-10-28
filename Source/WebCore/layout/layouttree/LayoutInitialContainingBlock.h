@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +26,25 @@
 #pragma once
 
 #include <WebCore/LayoutElementBox.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+
+class RenderView;
+
 namespace Layout {
 
+// The only box without a renderer. It is the root of the box tree, with RenderView's box as its only child.
+// RenderView itself can't be the initial containing block: it can be an inline formatting context root, which needs a parent.
 class InitialContainingBlock final : public ElementBox {
     WTF_MAKE_TZONE_ALLOCATED(InitialContainingBlock);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InitialContainingBlock);
 public:
-    InitialContainingBlock(Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle = nullptr);
-    virtual ~InitialContainingBlock() = default;
+    InitialContainingBlock(RenderView&, Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle = nullptr);
+    ~InitialContainingBlock();
+
+    RenderView& renderView() const;
 
 private:
     const ElementBox& parent() const = delete;
@@ -46,7 +54,8 @@ private:
     const Box* previousSibling() const = delete;
     const Box* previousInFlowSibling() const = delete;
     const Box* previousInFlowOrFloatingSibling() const = delete;
-    Box* nextSibling() = delete;
+
+    const CheckedRef<RenderView> m_renderView;
 };
 
 const InitialContainingBlock& LEGACY_NODELETE initialContainingBlock(const Box&);

@@ -7,7 +7,6 @@ layout/formattingContexts/inline/InlineQuirks.cpp
 layout/formattingContexts/inline/IntrinsicWidthHandler.cpp
 layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
-layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp

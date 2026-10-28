@@ -25,8 +25,8 @@
 
 #include <WebCore/Color.h>
 #include <WebCore/FontCascade.h>
+#include <WebCore/LayoutInlineTextBox.h>
 #include <WebCore/RenderElement.h>
-#include <WebCore/Text.h>
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
 #include <wtf/Platform.h>
@@ -35,19 +35,16 @@
 namespace WebCore {
 
 class Font;
+class Text;
 struct GlyphOverflow;
 struct WordTrailingSpace;
 enum class DocumentMarkerType : uint32_t;
-
-namespace Layout {
-class InlineTextBox;
-}
 
 namespace LayoutIntegration {
 class LineLayout;
 }
 
-class RenderText : public RenderObject {
+class RenderText : public RenderObject, private Layout::InlineTextBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderText);
 public:
@@ -56,8 +53,43 @@ public:
 
     virtual ~RenderText();
 
-    Layout::InlineTextBox* LEGACY_NODELETE layoutBox();
-    const Layout::InlineTextBox* LEGACY_NODELETE layoutBox() const;
+    // RenderObject functions that the layout box base also has.
+    using RenderObject::firstLineUsedStyle;
+    using RenderObject::isAnonymous;
+    using RenderObject::isDescendantOf;
+    using RenderObject::isFloatingOrOutOfFlowPositioned;
+    using RenderObject::isImage;
+    using RenderObject::isInFlow;
+    using RenderObject::isInFlowPositioned;
+    using RenderObject::isInlineBox;
+    using RenderObject::isOutOfFlowPositioned;
+    using RenderObject::isPositioned;
+    using RenderObject::isRelativelyPositioned;
+    using RenderObject::nextInFlowSibling;
+    using RenderObject::nextSibling;
+    using RenderObject::parent;
+    using RenderObject::previousInFlowSibling;
+    using RenderObject::previousSibling;
+    using RenderObject::usedStyle;
+    using RenderObject::writingMode;
+
+    // CheckedPtr to the renderer uses the RenderObject counter, CheckedPtr to the layout box the box counter. Deletion checks both.
+    using RenderObject::checkedPtrCount;
+    using RenderObject::decrementCheckedPtrCount;
+    using RenderObject::incrementCheckedPtrCount;
+    ALWAYS_INLINE uint32_t checkedPtrCountWithoutThreadCheck() const { return RenderObject::checkedPtrCountWithoutThreadCheck() + Layout::InlineTextBox::checkedPtrCountWithoutThreadCheck(); }
+    void setDidBeginCheckedPtrDeletion()
+    {
+        RenderObject::setDidBeginCheckedPtrDeletion();
+        Layout::InlineTextBox::setDidBeginCheckedPtrDeletion();
+    }
+
+    // The layout box is part of the renderer.
+    ALWAYS_INLINE Layout::InlineTextBox& layoutBox() LIFETIME_BOUND { return *this; }
+    ALWAYS_INLINE const Layout::InlineTextBox& layoutBox() const LIFETIME_BOUND { return *this; }
+    // Every InlineTextBox is the base of a RenderText.
+    ALWAYS_INLINE static RenderText& fromLayoutBox(Layout::InlineTextBox& box) { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<RenderText&>(box); }
+    ALWAYS_INLINE static const RenderText& fromLayoutBox(const Layout::InlineTextBox& box) { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<const RenderText&>(box); }
 
     WEBCORE_EXPORT Text* LEGACY_NODELETE textNode() const;
 
@@ -339,11 +371,6 @@ inline const Style::ComputedStyle* RenderText::targetTextPseudoStyle() const
     return nullptr;
 }
 
-inline RenderText* Text::renderer() const
-{
-    return downcast<RenderText>(Node::renderer());
-}
-
 inline void RenderText::resetMinMaxWidth()
 {
     m_minWidth = { };
@@ -353,3 +380,67 @@ inline void RenderText::resetMinMaxWidth()
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderText, isRenderText())
+
+namespace WebCore {
+
+// Both branches compute the same offset, so the branch folds away in optimized builds.
+inline Layout::Box& RenderObject::layoutBox()
+{
+    if (isRenderText())
+        return uncheckedDowncast<RenderText>(*this).layoutBox();
+    return uncheckedDowncast<RenderElement>(*this).layoutBox();
+}
+
+inline const Layout::Box& RenderObject::layoutBox() const
+{
+    if (isRenderText())
+        return uncheckedDowncast<RenderText>(*this).layoutBox();
+    return uncheckedDowncast<RenderElement>(*this).layoutBox();
+}
+
+inline RenderObject& RenderObject::fromLayoutBox(Layout::Box& box)
+{
+    ASSERT(!box.isInitialContainingBlock());
+    if (box.isInlineTextBox())
+        return RenderText::fromLayoutBox(uncheckedDowncast<Layout::InlineTextBox>(box));
+    return RenderElement::fromLayoutBox(uncheckedDowncast<Layout::ElementBox>(box));
+}
+
+inline const RenderObject& RenderObject::fromLayoutBox(const Layout::Box& box)
+{
+    ASSERT(!box.isInitialContainingBlock());
+    if (box.isInlineTextBox())
+        return RenderText::fromLayoutBox(uncheckedDowncast<Layout::InlineTextBox>(box));
+    return RenderElement::fromLayoutBox(uncheckedDowncast<Layout::ElementBox>(box));
+}
+
+inline RenderObject* Layout::Box::rendererForIntegration() const
+{
+    if (isInitialContainingBlock()) [[unlikely]]
+        return nullptr;
+    return &RenderObject::fromLayoutBox(const_cast<Box&>(*this));
+}
+
+namespace Layout {
+
+inline const Box* Box::nextSibling() const
+{
+    for (SUPPRESS_UNCHECKED_LOCAL auto* sibling = RenderObject::fromLayoutBox(*this).nextSibling(); sibling; sibling = sibling->nextSibling()) {
+        if (!isExcludedFromLayoutBoxNavigation(*sibling)) [[likely]]
+            return &sibling->layoutBox();
+    }
+    return nullptr;
+}
+
+inline const Box* Box::previousSibling() const
+{
+    for (SUPPRESS_UNCHECKED_LOCAL auto* sibling = RenderObject::fromLayoutBox(*this).previousSibling(); sibling; sibling = sibling->previousSibling()) {
+        if (!isExcludedFromLayoutBoxNavigation(*sibling)) [[likely]]
+            return &sibling->layoutBox();
+    }
+    return nullptr;
+}
+
+}
+
+} // namespace WebCore

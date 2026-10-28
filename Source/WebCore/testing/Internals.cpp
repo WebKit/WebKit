@@ -4309,7 +4309,7 @@ ExceptionOr<String> Internals::cachedGlyphDisplayListsForTextNode(Node& node, un
 
     protect(textNode->document())->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
-    if (!textNode->renderer())
+    if (!node.renderer())
         return Exception { ExceptionCode::InvalidAccessError };
 
     return TextPainter::cachedGlyphDisplayListsForTextNodeAsText(*textNode, toDisplayListFlags(flags));

@@ -87,7 +87,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderView);
 RenderView::RenderView(Document& document, Style::ComputedStyle&& style)
     : RenderBlockFlow(Type::View, document, WTF::move(style))
     , m_frameView(*document.view())
-    , m_initialContainingBlock(makeUniqueRef<Layout::InitialContainingBlock>(Style::ComputedStyle::clone(this->style())))
+    , m_initialContainingBlock(makeUniqueRef<Layout::InitialContainingBlock>(*this, Style::ComputedStyle::clone(this->style())))
     , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, m_initialContainingBlock, Layout::LayoutState::Type::Primary, LayoutIntegration::layoutWithFormattingContextForBox, LayoutIntegration::formattingContextRootLogicalWidthForType, LayoutIntegration::formattingContextRootLogicalHeightForType, LayoutIntegration::layoutWithFormattingContextForBlockInInline))
     , m_selection(*this)
 {

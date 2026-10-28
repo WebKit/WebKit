@@ -220,7 +220,7 @@ const RenderBlock& InlineContentPainter::root() const
 }
 
 LayerPaintScope::LayerPaintScope(const RenderBoxModelObject* inlineBoxWithLayer)
-    : m_inlineBoxWithLayer(inlineBoxWithLayer ? inlineBoxWithLayer->layoutBox() : nullptr)
+    : m_inlineBoxWithLayer(inlineBoxWithLayer ? &inlineBoxWithLayer->layoutBox() : nullptr)
 {
 }
 

@@ -6556,7 +6556,7 @@ void RenderLayer::createReflection()
     ASSERT(!m_reflection);
     m_reflection = createRenderer<RenderReplica>(renderer().document(), createReflectionStyle());
     // FIXME: A renderer should be a child of its parent!
-    m_reflection->m_parent = &renderer(); // We create a 1-way connection.
+    m_reflection->setParent(&renderer()); // We create a 1-way connection.
     m_reflection->initializeStyle();
 }
 
@@ -6567,7 +6567,7 @@ void RenderLayer::removeReflection()
             removeChild(*layer);
     }
 
-    m_reflection->m_parent = nullptr;
+    m_reflection->setParent(nullptr);
     m_reflection = nullptr;
 }
 

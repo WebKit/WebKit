@@ -182,6 +182,7 @@
 #import <WebCore/SharedMemory.h>
 #import <WebCore/StylePrimitiveNumericTypes+Evaluation.h>
 #import <WebCore/StyleProperties.h>
+#import <WebCore/Text.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/UserAgent.h>

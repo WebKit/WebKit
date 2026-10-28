@@ -44,6 +44,7 @@
 #include <WebCore/Range.h>
 #include <WebCore/RenderObjectStyle.h>
 #include <WebCore/RenderView.h>
+#include <WebCore/Text.h>
 #include <WebCore/TextIterator.h>
 #include <ranges>
 #include <wtf/HashCountedSet.h>
@@ -195,15 +196,17 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
         if (++numberOfIterations >= maximumNumberOfTextRunsToConsider)
             break;
 
-        RefPtr textNode = dynamicDowncast<Text>(documentTextIterator.node());
+        RefPtr node = documentTextIterator.node();
+        RefPtr textNode = dynamicDowncast<Text>(node);
         if (!textNode)
             continue;
 
         auto textLength = textNode->length();
-        if (!textLength || !textNode->renderer() || allTextNodes.contains(*textNode))
+        CheckedPtr renderer = node->renderer();
+        if (!textLength || !renderer || allTextNodes.contains(*textNode))
             continue;
 
-        unsigned fontSizeBin = fontSizeBinningInterval * round(textNode->renderer()->style().fontDescription().usedSize() / fontSizeBinningInterval);
+        unsigned fontSizeBin = fontSizeBinningInterval * round(renderer->style().fontDescription().usedSize() / fontSizeBinningInterval);
         if (!FontSizeCounter::isValidValue(fontSizeBin))
             continue;
 

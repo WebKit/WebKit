@@ -290,7 +290,7 @@ void RenderSVGText::computePerCharacterLayoutInformation()
     auto [boxes, fragmentsForBoxes] = lineLayout->resetSVGTextFragments();
     ASSERT(!boxes.isEmpty() && boxes[0].isRootInlineBox());
 
-    SVGTextLayoutAlgorithm { *layoutBox(), boxes, fragmentsForBoxes }.layout();
+    SVGTextLayoutAlgorithm { layoutBox(), boxes, fragmentsForBoxes }.layout();
     updatePositionAndOverflow(lineLayout->applySVGTextFragments());
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,30 +28,16 @@
 
 #include "RenderElement.h"
 #include "StyleComputedStyle+GettersInlines.h"
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ElementBox);
-
-ElementBox::ElementBox(ElementAttributes&& attributes, Style::ComputedStyle&& style, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle, EnumSet<BaseTypeFlag> baseTypeFlags)
-    : Box(WTF::move(attributes), WTF::move(style), WTF::move(firstLineStyle), baseTypeFlags | ElementBoxFlag)
+ElementBox::ElementBox(Style::ComputedStyle&& style, EnumSet<BaseTypeFlag> baseTypeFlags)
+    : Box(WTF::move(style), baseTypeFlags | ElementBoxFlag)
 {
 }
 
-ElementBox::ElementBox(ElementAttributes&& attributes, IsListMarkerImage isListMarkerImage, Style::ComputedStyle&& style, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle)
-    : Box(WTF::move(attributes), WTF::move(style), WTF::move(firstLineStyle), ElementBoxFlag)
-    , m_replacedData(makeUnique<ReplacedData>())
-{
-    ASSERT(isListMarkerBox());
-    m_replacedData->isListMarkerImage = isListMarkerImage == IsListMarkerImage::Yes;
-}
-
-ElementBox::~ElementBox()
-{
-    destroyChildren();
-}
+ElementBox::~ElementBox() = default;
 
 const Box* ElementBox::firstInFlowChild() const
 {
@@ -118,61 +104,12 @@ bool ElementBox::hasOutOfFlowChild() const
     return !!firstOutOfFlowChild();
 }
 
-void ElementBox::appendChild(UniqueRef<Box> childRef)
+void ElementBox::setIsListMarkerImage(IsListMarkerImage isListMarkerImage)
 {
-    insertChild(WTF::move(childRef), m_lastChild.get());
-}
-
-void ElementBox::insertChild(UniqueRef<Box> childRef, Box* beforeChild)
-{
-    auto childBox = childRef.moveToUniquePtr();
-    ASSERT(!childBox->m_parent);
-    ASSERT(!childBox->m_previousSibling);
-    ASSERT(!childBox->m_nextSibling);
-
-    childBox->m_parent = this;
-
-    if (!m_firstChild || (beforeChild && !beforeChild->m_nextSibling)) {
-        // Append as first and/or last.
-        childBox->m_previousSibling = m_lastChild;
-        auto& nextOrFirst = m_lastChild ? m_lastChild->m_nextSibling : m_firstChild;
-        ASSERT(!nextOrFirst);
-
-        m_lastChild = childBox.get();
-        nextOrFirst = WTF::move(childBox);
-        return;
-    }
-
-    if (!beforeChild) {
-        // Insert as first.
-        ASSERT(m_firstChild && m_lastChild);
-        m_firstChild->m_previousSibling = childBox.get();
-        childBox->m_nextSibling = WTF::move(m_firstChild);
-        m_firstChild = WTF::move(childBox);
-        return;
-    }
-
-    ASSERT(&beforeChild->parent() == this);
-    CheckedPtr nextSibling = beforeChild->m_nextSibling.get();
-    ASSERT(nextSibling);
-    childBox->m_previousSibling = beforeChild;
-    childBox->m_nextSibling = WTF::move(beforeChild->m_nextSibling);
-    nextSibling->m_previousSibling = childBox.get();
-    beforeChild->m_nextSibling = WTF::move(childBox);
-}
-
-void ElementBox::destroyChildren()
-{
-    m_lastChild = nullptr;
-
-    auto childToDestroy = std::exchange(m_firstChild, nullptr);
-    while (childToDestroy) {
-        childToDestroy->m_parent = nullptr;
-        childToDestroy->m_previousSibling = nullptr;
-        if (childToDestroy->m_nextSibling)
-            childToDestroy->m_nextSibling->m_previousSibling = nullptr;
-        childToDestroy = std::exchange(childToDestroy->m_nextSibling, nullptr);
-    }
+    ASSERT(isListMarkerBox());
+    if (!m_replacedData)
+        m_replacedData = makeUnique<ReplacedData>();
+    m_replacedData->isListMarkerImage = isListMarkerImage == IsListMarkerImage::Yes;
 }
 
 bool ElementBox::hasIntrinsicWidth() const
@@ -249,11 +186,6 @@ LayoutUnit ElementBox::intrinsicRatio() const
 bool ElementBox::hasAspectRatio() const
 {
     return isImage();
-}
-
-RenderElement* ElementBox::rendererForIntegration() const
-{
-    return downcast<RenderElement>(Box::rendererForIntegration());
 }
 
 }

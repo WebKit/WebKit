@@ -4224,6 +4224,12 @@ bool RenderBlockFlow::hasBlocksInInlineLayout() const
     return inlineLayout && inlineLayout->hasBlocks();
 }
 
+void RenderBlockFlow::destroyLineLayout()
+{
+    setLineLayoutPath(UndeterminedPath);
+    m_lineLayout = nullptr;
+}
+
 void RenderBlockFlow::invalidateLineLayout(InvalidationReason invalidationReason)
 {
     if (lineLayoutPath() == UndeterminedPath)

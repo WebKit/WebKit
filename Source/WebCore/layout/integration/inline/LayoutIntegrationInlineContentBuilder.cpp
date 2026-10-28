@@ -220,7 +220,7 @@ void InlineContentBuilder::updateInkOverflowForBoxes(InlineContent& inlineConten
     // group the boxes by the line index they carry.
     auto& displayContent = inlineContent.displayContent();
     auto boxes = displayContent.boxes.mutableSpan();
-    CheckedRef root = downcast<Layout::ElementBox>(*m_blockFlow.layoutBox());
+    CheckedRef root = m_blockFlow.layoutBox();
     auto initialContainingBlockSize = ceiledIntSize(LayoutSize { m_blockFlow.view().contentBoxWidth(), m_blockFlow.view().contentBoxHeight() });
 
     size_t firstBoxIndex = 0;

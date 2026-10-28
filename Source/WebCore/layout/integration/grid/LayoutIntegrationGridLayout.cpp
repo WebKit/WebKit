@@ -45,16 +45,17 @@ namespace WebCore {
 namespace LayoutIntegration {
 
 GridLayout::GridLayout(RenderGrid& renderGrid)
-    : m_gridBox(BoxTreeUpdater { renderGrid }.build())
+    : m_gridBox(&renderGrid.layoutBox())
     , m_layoutState(renderGrid.view().layoutState())
 {
+    gridBox().setIsGridIntegrationRoot(true);
+    BoxTreeUpdater { renderGrid }.build();
 }
 
 GridLayout::~GridLayout()
 {
-    CheckedRef renderer = gridBoxRenderer();
-    const_cast<CheckedPtr<Layout::ElementBox>&>(m_gridBox) = nullptr;
-    BoxTreeUpdater { renderer }.tearDown();
+    BoxTreeUpdater { protect(gridBoxRenderer()) }.tearDown();
+    gridBox().setIsGridIntegrationRoot(false);
 }
 
 void GridLayout::updateFormattingContextGeometries()

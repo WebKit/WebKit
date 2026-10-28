@@ -341,7 +341,11 @@ public:
         InsertionOrRemoval, // child renderer gets constructed/goes away
         ContentChange       // existing renderer gets changed (text content only atm)
     };
+    // Drops the line layout and issues the repaints and layout that the change needs.
     void invalidateLineLayout(InvalidationReason);
+    // Drops the line layout without repaints or layout. The line layout reads its content through the render tree, so it must
+    // go before its root is destroyed and before child list changes that it isn't notified of.
+    void destroyLineLayout();
     void LEGACY_NODELETE computeAndSetLineLayoutPath();
 
     enum LineLayoutPath { UndeterminedPath = 0, InlinePath };
