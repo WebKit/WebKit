@@ -1468,8 +1468,7 @@ PrintProcessUseCounter::Token WebProcessPool::ensurePrintProcess(WebProcessProxy
         state.dataStore = WebsiteDataStore::createNonPersistent();
     Ref dataStore = *state.dataStore;
 
-    Ref process = WebProcessProxy::create(*this, dataStore.ptr(), lockdownMode, EnhancedSecurity::EnabledPolicy, WebProcessProxy::IsPrewarmed::No);
-    process->setIsPrintProcess();
+    Ref process = WebProcessProxy::createPrintProcess(*this, dataStore.ptr(), lockdownMode);
     WEBPROCESSPOOL_RELEASE_LOG(Process, "ensurePrintProcess: Launching the print process (process=%p, lockdownMode=%d)", process.ptr(), lockdownMode == WebProcessProxy::LockdownMode::Enabled);
     initializeNewWebProcess(process, dataStore.ptr(), WebProcessProxy::IsPrewarmed::No, WebProcessProxy::EnableWebAssemblyDebugger::No, WebKit::jscOptionsForWebProcess(protect(m_defaultPageGroup->preferences())->store(), lockdownMode == WebProcessProxy::LockdownMode::Enabled));
     m_processes.append(process.copyRef());

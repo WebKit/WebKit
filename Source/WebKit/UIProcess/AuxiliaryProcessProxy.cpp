@@ -216,6 +216,14 @@ void AuxiliaryProcessProxy::connect()
     m_processLauncher = ProcessLauncher::create(this, WTF::move(launchOptions));
 }
 
+bool AuxiliaryProcessProxy::waitForLaunch(Seconds timeout)
+{
+    // Finishing the launch tells this right away, by way of didFinishLaunching().
+    if (RefPtr processLauncher = m_processLauncher; processLauncher && processLauncher->isLaunching())
+        processLauncher->waitForLaunch(timeout);
+    return state() == State::Running;
+}
+
 void AuxiliaryProcessProxy::terminate(std::optional<IPC::MessageName> invalidMessageName)
 {
     RELEASE_LOG(Process, "AuxiliaryProcessProxy::terminate: PID=%d", processID());

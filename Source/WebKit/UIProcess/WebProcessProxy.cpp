@@ -447,6 +447,17 @@ Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, Websit
     return proxy;
 }
 
+Ref<WebProcessProxy> WebProcessProxy::createPrintProcess(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, LockdownMode lockdownMode)
+{
+    // Known to be the print process before its launch options are taken.
+    Ref proxy = create(processPool, websiteDataStore, lockdownMode, EnhancedSecurity::EnabledPolicy, IsPrewarmed::No, ProcessCrossOriginIsolation::None, ShouldLaunchProcess::No);
+    proxy->m_isPrintProcess = true;
+    proxy->didStartRunningProcess();
+    proxy->connect();
+    scheduleReclaimProcessesIfNeeded();
+    return proxy;
+}
+
 void WebProcessProxy::scheduleReclaimProcessesIfNeeded()
 {
     if (!hasReachedProcessCountLimit())
@@ -849,6 +860,10 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
 
     if (isPrewarmed())
         launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("is-prewarmed"_s, "1"_s);
+
+    // UIKit printing blocks the main thread while the print process draws, so it may have to wait for
+    // the process to launch.
+    launchOptions.canWaitForLaunch = m_isPrintProcess;
 
 #if PLATFORM(PLAYSTATION)
     launchOptions.processPath = m_processPool->webProcessPath();

@@ -220,6 +220,9 @@ public:
 
     static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, EnhancedSecurity, IsPrewarmed, ProcessCrossOriginIsolation = ProcessCrossOriginIsolation::None, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
 
+    // A pageless process that draws print snapshots. Its launch can be waited for.
+    static Ref<WebProcessProxy> createPrintProcess(WebProcessPool&, WebsiteDataStore*, LockdownMode);
+
     static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::Site&&, WebsiteDataStore&, WebCore::CrossOriginMode, LockdownMode, EnhancedSecurity);
 
     ~WebProcessProxy();
@@ -345,7 +348,6 @@ public:
     bool LEGACY_NODELETE isDummyProcessProxy() const;
 
     bool isPrintProcess() const { return m_isPrintProcess; }
-    void setIsPrintProcess() { m_isPrintProcess = true; }
 
     void didCreateWebPageInProcess(WebCore::PageIdentifier);
 

@@ -45,6 +45,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/MachSendRight.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SoftLinking.h>
@@ -206,6 +207,23 @@ LaunchGrant::~LaunchGrant()
 }
 #endif
 
+// Where the replies to the bootstrap messages of launches that can be waited for come in, so that the
+// main thread can block waiting for one.
+static dispatch_queue_t bootstrapReplyQueue()
+{
+    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> queue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.ProcessLauncher.BootstrapReply", serialQueueWithAutoreleasePoolAttrSingleton()));
+    return queue.get().get();
+}
+
+void ProcessLauncher::callOnMainRunLoopForLaunch(LaunchSteps* launchSteps, Function<void()>&& function)
+{
+    if (launchSteps) {
+        launchSteps->append(WTF::move(function));
+        return;
+    }
+    callOnMainRunLoop(WTF::move(function));
+}
+
 void ProcessLauncher::platformDestroy()
 {
 #if USE(EXTENSIONKIT)
@@ -218,15 +236,19 @@ void ProcessLauncher::launchProcess()
 {
     ASSERT(!m_xpcConnection);
 
+    if (m_launchOptions.canWaitForLaunch && !m_launchSteps)
+        m_launchSteps = LaunchSteps::create();
+
 #if USE(EXTENSIONKIT)
-    auto handler = [](ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, ExtensionProcess&& process, ASCIILiteral name, NSError *error)
+    // Called on a queue of ExtensionKit's.
+    auto handler = [launchSteps = m_launchSteps](ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, ExtensionProcess&& process, ASCIILiteral name, NSError *error)
     {
         if (error) {
             RELEASE_LOG_FAULT(Process, "Error launching process, description '%s', reason '%s'", UTF8CString { error.localizedDescription }, UTF8CString { error.localizedFailureReason ?: @"" });
 #if PLATFORM(IOS)
             // Fallback to legacy extension identifiers
             // FIXME: this fallback is temporary and should be removed when possible. See rdar://120793705.
-            callOnMainRunLoop([weakProcessLauncher = weakProcessLauncher] {
+            callOnMainRunLoopForLaunch(launchSteps.get(), [weakProcessLauncher = weakProcessLauncher] {
                 auto launcher = weakProcessLauncher.get();
                 if (!launcher || launcher->isRetryingLaunch())
                     return;
@@ -235,7 +257,7 @@ void ProcessLauncher::launchProcess()
             });
 #else
             // Fallback to XPC service launch
-            callOnMainRunLoop([weakProcessLauncher = weakProcessLauncher] {
+            callOnMainRunLoopForLaunch(launchSteps.get(), [weakProcessLauncher = weakProcessLauncher] {
                 auto launcher = weakProcessLauncher.get();
                 if (!launcher)
                     return;
@@ -250,7 +272,7 @@ void ProcessLauncher::launchProcess()
 
         Ref launchGrant = LaunchGrant::create(process);
 
-        callOnMainRunLoop([weakProcessLauncher, name, process = WTF::move(process), launchGrant = WTF::move(launchGrant)] () mutable {
+        callOnMainRunLoopForLaunch(launchSteps.get(), [weakProcessLauncher, name, process = WTF::move(process), launchGrant = WTF::move(launchGrant)] mutable {
             RefPtr launcher = weakProcessLauncher.get();
             // If m_client is null, the Process launcher has been invalidated, and we should not proceed with the launch.
             if (!launcher || !launcher->m_client) {
@@ -490,10 +512,10 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
         onFailure();
     };
 
-    Function<void(xpc_object_t)> eventHandler = [errorHandlerImpl = WTF::move(errorHandlerImpl), xpcEventHandler = client->xpcEventHandler()] (xpc_object_t event) mutable {
+    Function<void(xpc_object_t)> eventHandler = [errorHandlerImpl = WTF::move(errorHandlerImpl), xpcEventHandler = client->xpcEventHandler(), launchSteps = m_launchSteps](xpc_object_t event) mutable {
 
         if (!event || xpc_get_type(event) == XPC_TYPE_ERROR) {
-            RunLoop::mainSingleton().dispatch([errorHandlerImpl = std::exchange(errorHandlerImpl, nullptr), event = OSObjectPtr<xpc_object_t> { event }] {
+            callOnMainRunLoopForLaunch(launchSteps.get(), [errorHandlerImpl = std::exchange(errorHandlerImpl, nullptr), event = OSObjectPtr<xpc_object_t> { event }] {
                 if (errorHandlerImpl)
                     errorHandlerImpl(event.get());
                 else if (event.get() != XPC_ERROR_CONNECTION_INVALID)
@@ -519,38 +541,86 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
         return;
     }
 
+    if (RefPtr launchSteps = m_launchSteps) {
+        ref();
+        xpc_connection_send_message_with_reply(m_xpcConnection.get(), bootstrapMessage.get(), bootstrapReplyQueue(), ^(xpc_object_t reply) {
+            launchSteps->append([this, reply = OSObjectPtr<xpc_object_t> { reply }, listeningPort] {
+                didReceiveBootstrapReply(reply.get(), listeningPort);
+                deref();
+            });
+        });
+        return;
+    }
+
     ref();
     xpc_connection_send_message_with_reply(m_xpcConnection.get(), bootstrapMessage.get(), mainDispatchQueueSingleton(), ^(xpc_object_t reply) {
-        // Errors are handled in the event handler.
-        // It is possible for this block to be called after the error event handler, in which case we're no longer
-        // launching and we already took care of cleaning things up.
-        if (isLaunching() && xpc_get_type(reply) != XPC_TYPE_ERROR) {
-            ASSERT(xpc_get_type(reply) == XPC_TYPE_DICTIONARY);
-            ASSERT(xpcDictionaryGetString(reply, "message-name"_s) == "process-finished-launching"_s);
-
-#if ASSERT_ENABLED
-            mach_port_urefs_t sendRightCount = 0;
-            mach_port_get_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_SEND, &sendRightCount);
-            ASSERT(sendRightCount >= 1);
-#endif
-
-            deallocateSendRightSafely(listeningPort);
-
-            if (!m_xpcConnection) {
-                // The process was terminated.
-                didFinishLaunchingProcess(0, IPC::Connection::Identifier());
-                return;
-            }
-
-            // The process has finished launching, grab the pid from the connection.
-            pid_t processIdentifier = xpc_connection_get_pid(m_xpcConnection.get());
-
-            didFinishLaunchingProcess(processIdentifier, IPC::Connection::Identifier(listeningPort, m_xpcConnection));
-            m_xpcConnection = nullptr;
-        }
-
+        didReceiveBootstrapReply(reply, listeningPort);
         deref();
     });
+}
+
+void ProcessLauncher::didReceiveBootstrapReply(xpc_object_t reply, mach_port_t listeningPort)
+{
+    ASSERT(RunLoop::isMain());
+
+    // Errors are handled in the event handler.
+    // It is possible for this to be called after the error event handler, in which case we're no longer
+    // launching and we already took care of cleaning things up.
+    if (!isLaunching() || xpc_get_type(reply) == XPC_TYPE_ERROR)
+        return;
+
+    ASSERT(xpc_get_type(reply) == XPC_TYPE_DICTIONARY);
+    ASSERT(xpcDictionaryGetString(reply, "message-name"_s) == "process-finished-launching"_s);
+
+#if ASSERT_ENABLED
+    mach_port_urefs_t sendRightCount = 0;
+    mach_port_get_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_SEND, &sendRightCount);
+    ASSERT(sendRightCount >= 1);
+#endif
+
+    deallocateSendRightSafely(listeningPort);
+
+    if (!m_xpcConnection) {
+        // The process was terminated.
+        didFinishLaunchingProcess(0, IPC::Connection::Identifier());
+        return;
+    }
+
+    // The process has finished launching, grab the pid from the connection.
+    pid_t processIdentifier = xpc_connection_get_pid(m_xpcConnection.get());
+
+    didFinishLaunchingProcess(processIdentifier, IPC::Connection::Identifier(listeningPort, m_xpcConnection));
+    m_xpcConnection = nullptr;
+}
+
+bool ProcessLauncher::waitForLaunch(Seconds timeout)
+{
+    ASSERT(RunLoop::isMain());
+
+    RefPtr launchSteps = m_launchSteps;
+    if (!launchSteps)
+        return !m_isLaunching;
+    // Waited for from within a step of the launch, which can not finish before that step does.
+    if (launchSteps->isRunningStep())
+        return !m_isLaunching;
+
+    // Through the launch of the extension, if there is one, and the bootstrap message, including the
+    // retries of failed launches. In slices, between which the messages that a synchronous wait would
+    // dispatch are dispatched, so that other processes do not wait for this thread meanwhile, such as
+    // web processes connecting to the GPU process.
+    static constexpr auto dispatchInterval = 20_ms;
+    auto deadline = MonotonicTime::now() + timeout;
+    while (m_isLaunching) {
+        auto now = MonotonicTime::now();
+        if (now >= deadline)
+            break;
+        if (launchSteps->waitForSteps(std::min(deadline, now + dispatchInterval)))
+            launchSteps->runPendingSteps();
+        if (!m_isLaunching)
+            break;
+        IPC::Connection::dispatchMessagesAllowedWhileWaitingForSyncReply();
+    }
+    return !m_isLaunching;
 }
 
 void ProcessLauncher::terminateProcess([[maybe_unused]] const String& reason)
