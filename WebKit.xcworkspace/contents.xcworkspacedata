@@ -35,6 +35,9 @@
       location = "group:Source/WebKit/WebKit.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Source/WebDriver/minidriver.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Tools/DumpRenderTree/DumpRenderTree.xcodeproj">
    </FileRef>
    <FileRef

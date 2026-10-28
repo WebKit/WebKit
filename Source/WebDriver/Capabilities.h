@@ -80,7 +80,11 @@ struct Capabilities {
     std::optional<uint64_t> processID;
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<String> browserBinary;
+#endif
+#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(COCOA)
     std::optional<Vector<String>> browserArguments;
+#endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<Vector<std::pair<String, String>>> certificates;
 #endif
 #if PLATFORM(GTK)

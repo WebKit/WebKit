@@ -33,12 +33,17 @@
 #include <wtf/glib/GRefPtr.h>
 typedef struct _SoupServer SoupServer;
 #elif USE(INSPECTOR_SOCKET_SERVER)
+// Windows and PlayStation build the remote inspector's socket transport (USE(INSPECTOR_SOCKET_SERVER)),
+// and the HTTP server uses its socket endpoint.
 #include "HTTPParser.h"
 #include <JavaScriptCore/RemoteInspectorSocketEndpoint.h>
 
 using Inspector::ConnectionID;
 using Inspector::PlatformSocketType;
 using Inspector::RemoteInspectorSocketEndpoint;
+#elif PLATFORM(COCOA)
+#include <Network/Network.h>
+#include <wtf/OSObjectPtr.h>
 #endif
 
 namespace WebDriver {
@@ -102,6 +107,10 @@ private:
     void didChangeStatus(RemoteInspectorSocketEndpoint&, ConnectionID, RemoteInspectorSocketEndpoint::Listener::Status) final;
 #endif
 
+#if PLATFORM(COCOA)
+    std::optional<uint16_t> startListener(ASCIILiteral address, uint16_t port);
+#endif
+
     HTTPRequestHandler& m_requestHandler;
     String m_visibleHost;
 
@@ -111,6 +120,10 @@ private:
 
 #if USE(INSPECTOR_SOCKET_SERVER)
     std::optional<ConnectionID> m_server;
+#endif
+
+#if PLATFORM(COCOA)
+    Vector<OSObjectPtr<nw_listener_t>> m_listeners;
 #endif
 };
 

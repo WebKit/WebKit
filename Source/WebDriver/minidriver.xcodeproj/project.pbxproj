@@ -1,0 +1,393 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		0974C6E6408C3673A30DC17A /* minidriver (Platform filters) */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = AA8259C7BC88199EE33DBD02 /* Build configuration list for PBXAggregateTarget "minidriver (Platform filters)" */;
+			buildPhases = (
+			);
+			dependencies = (
+				F92E066A8ED9097FBA749664 /* PBXTargetDependency */,
+			);
+			name = "minidriver (Platform filters)";
+			productName = "minidriver (Platform filters)";
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		94455DB85F58BBAC0B61873E /* CommandResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 665A4A9124917CA51564EA8F /* CommandResult.cpp */; };
+		39D71C4CA4150CA936581793 /* HTTPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8417633A60B5A5DA8243DD6E /* HTTPServer.cpp */; };
+		2D2DA7D22DD48A8DDED7A2DA /* LogInitialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5C57A266469E94F98CF30C2 /* LogInitialization.cpp */; };
+		DCBA2AD8DD5A1C772FB3B2D3 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22C4A9B561CA8CBE7C2942D /* Logging.cpp */; };
+		D2D44474FED742DB91687AD4 /* Session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F07C4DB9A12B209CFCC92A5 /* Session.cpp */; };
+		D9C6D0139512AE3CE848A0D3 /* SessionHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0F6068A1857495D90B054F1 /* SessionHost.cpp */; };
+		DB1E3E21F89868B8F04FF623 /* WebDriverMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C9E139666C0FC46D7563AEF /* WebDriverMain.cpp */; };
+		92BC91B152AB19721CB1B3FB /* WebDriverService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8D2C3914D6D4B0D4BB9F61D4 /* WebDriverService.cpp */; };
+		0DA21E23A27FB5BE8AE63C0C /* WebSocketServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9C84B8C152023CB87C43736 /* WebSocketServer.cpp */; };
+		D9A751AFC019323EE4969C28 /* unix/LoggingUnix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E33F0221F0AF12694CC4DD5 /* unix/LoggingUnix.cpp */; };
+		BBE657255DDD08169C5F4DD5 /* HTTPServerCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F67A8A01A5E637AD03049F89 /* HTTPServerCocoa.cpp */; };
+		13D7F5FE888EFBE371E31054 /* LoopbackCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B6A33E4FB39656E58A36457 /* LoopbackCocoa.cpp */; };
+		49C8A56F3EC29549DB48AB33 /* SessionHostCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0A0C563B380B7A3DB7AA47F0 /* SessionHostCocoa.cpp */; };
+		65790E81B5D15B2D0CA800D0 /* WebDriverServiceCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8763DA44B820A80AFC56B5B9 /* WebDriverServiceCocoa.cpp */; };
+		A1160CF9D7C5AB9A5D6E0625 /* WebSocketServerCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05CDA71C3BCC02C2114381B1 /* WebSocketServerCocoa.cpp */; };
+		07E58FB2B849351374D483B7 /* WebDriverAtoms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A79AD48A38DBF0A64C25AAB /* WebDriverAtoms.cpp */; };
+		9EC8C7082AD59DA6E6E0090E /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A1376B0D01C524C420CDC22 /* libWTF.a */; };
+		C7E89ADEBC27D7BB628D68FA /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6503460211FAA3E675BC57C6 /* libbmalloc.a */; };
+		BFE9F66BD30E99E9C35CC209 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6E3B986D43142E9ACDB2B92 /* libicucore.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9CD4ED2AD5746E5564D5940B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1C6DE4203F1CAAF7DC2E0C6A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0D2CBD4F0B4913D4BA7CD3FE;
+			remoteInfo = minidriver;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		665A4A9124917CA51564EA8F /* CommandResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandResult.cpp; sourceTree = "<group>"; };
+		8417633A60B5A5DA8243DD6E /* HTTPServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPServer.cpp; sourceTree = "<group>"; };
+		F5C57A266469E94F98CF30C2 /* LogInitialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogInitialization.cpp; sourceTree = "<group>"; };
+		B22C4A9B561CA8CBE7C2942D /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
+		2F07C4DB9A12B209CFCC92A5 /* Session.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Session.cpp; sourceTree = "<group>"; };
+		C0F6068A1857495D90B054F1 /* SessionHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionHost.cpp; sourceTree = "<group>"; };
+		4C9E139666C0FC46D7563AEF /* WebDriverMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDriverMain.cpp; sourceTree = "<group>"; };
+		8D2C3914D6D4B0D4BB9F61D4 /* WebDriverService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDriverService.cpp; sourceTree = "<group>"; };
+		E9C84B8C152023CB87C43736 /* WebSocketServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketServer.cpp; sourceTree = "<group>"; };
+		7E33F0221F0AF12694CC4DD5 /* unix/LoggingUnix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unix/LoggingUnix.cpp; sourceTree = "<group>"; };
+		986C4150C0F22287262930E2 /* Actions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Actions.h; sourceTree = "<group>"; };
+		B7ACEBE5D8EC6C7FDA1F7630 /* Capabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Capabilities.h; sourceTree = "<group>"; };
+		3A648280DAA675C570BEB32D /* CommandResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandResult.h; sourceTree = "<group>"; };
+		E653CE4DA441E42FD375A9B9 /* HTTPServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPServer.h; sourceTree = "<group>"; };
+		9A34169A4C731749C5EBEC41 /* LogInitialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInitialization.h; sourceTree = "<group>"; };
+		A0012E35459EA0736D00C80B /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
+		6A6BADF13284076F95130DA4 /* Session.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Session.h; sourceTree = "<group>"; };
+		71812BB2B2AD27F2B98352CB /* SessionHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionHost.h; sourceTree = "<group>"; };
+		E02FF34570ED52865CB3F1B6 /* WebDriverService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDriverService.h; sourceTree = "<group>"; };
+		6717BE3E88B0F7FF499BF998 /* WebSocketServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketServer.h; sourceTree = "<group>"; };
+		8CDA9C5C92FF3D70DF57A912 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		F67A8A01A5E637AD03049F89 /* HTTPServerCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPServerCocoa.cpp; sourceTree = "<group>"; };
+		0B6A33E4FB39656E58A36457 /* LoopbackCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoopbackCocoa.cpp; sourceTree = "<group>"; };
+		0A0C563B380B7A3DB7AA47F0 /* SessionHostCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionHostCocoa.cpp; sourceTree = "<group>"; };
+		8763DA44B820A80AFC56B5B9 /* WebDriverServiceCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDriverServiceCocoa.cpp; sourceTree = "<group>"; };
+		05CDA71C3BCC02C2114381B1 /* WebSocketServerCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketServerCocoa.cpp; sourceTree = "<group>"; };
+		B354953398C5CF93DA79893B /* LoopbackCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoopbackCocoa.h; sourceTree = "<group>"; };
+		FDD8BCA4C4213A68B9F8E350 /* WebDriverNetworkSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDriverNetworkSPI.h; sourceTree = "<group>"; };
+		2A79AD48A38DBF0A64C25AAB /* WebDriverAtoms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebDriverAtoms.cpp; path = DerivedSources/WebDriver/WebDriverAtoms.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0229726DB27991F1739F086 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		E68449638F0133A29E46F886 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		F29F7E9BC45E9BAF4308702E /* minidriver.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = minidriver.xcconfig; sourceTree = "<group>"; };
+		6A1376B0D01C524C420CDC22 /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libWTF.a; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		6503460211FAA3E675BC57C6 /* libbmalloc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbmalloc.a; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6E3B986D43142E9ACDB2B92 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		9285917DD4DAC4B3A80E8503 /* minidriver */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = minidriver; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		658CD1627B990154B9DC0FFF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C7E89ADEBC27D7BB628D68FA /* libbmalloc.a in Frameworks */,
+				BFE9F66BD30E99E9C35CC209 /* libicucore.dylib in Frameworks */,
+				9EC8C7082AD59DA6E6E0090E /* libWTF.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E289B039C473993FD43F28DE = {
+			isa = PBXGroup;
+			children = (
+				5CEC89AB72E3ECE98243FAD1 /* Configurations */,
+				F05874EA462CA153AE19434A /* minidriver */,
+				4E5EB69F7269B6BEFFDC170F /* cocoa */,
+				82A19FEB034A270C456BB345 /* Derived Sources */,
+				65A536486EEBF5EBE3861F09 /* Frameworks */,
+				4E7AC23685FB1CF88ED112B1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5CEC89AB72E3ECE98243FAD1 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				A0229726DB27991F1739F086 /* Base.xcconfig */,
+				E68449638F0133A29E46F886 /* DebugRelease.xcconfig */,
+				F29F7E9BC45E9BAF4308702E /* minidriver.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		F05874EA462CA153AE19434A /* minidriver */ = {
+			isa = PBXGroup;
+			children = (
+				986C4150C0F22287262930E2 /* Actions.h */,
+				B7ACEBE5D8EC6C7FDA1F7630 /* Capabilities.h */,
+				665A4A9124917CA51564EA8F /* CommandResult.cpp */,
+				3A648280DAA675C570BEB32D /* CommandResult.h */,
+				8CDA9C5C92FF3D70DF57A912 /* config.h */,
+				8417633A60B5A5DA8243DD6E /* HTTPServer.cpp */,
+				E653CE4DA441E42FD375A9B9 /* HTTPServer.h */,
+				B22C4A9B561CA8CBE7C2942D /* Logging.cpp */,
+				A0012E35459EA0736D00C80B /* Logging.h */,
+				F5C57A266469E94F98CF30C2 /* LogInitialization.cpp */,
+				9A34169A4C731749C5EBEC41 /* LogInitialization.h */,
+				2F07C4DB9A12B209CFCC92A5 /* Session.cpp */,
+				6A6BADF13284076F95130DA4 /* Session.h */,
+				C0F6068A1857495D90B054F1 /* SessionHost.cpp */,
+				71812BB2B2AD27F2B98352CB /* SessionHost.h */,
+				7E33F0221F0AF12694CC4DD5 /* unix/LoggingUnix.cpp */,
+				4C9E139666C0FC46D7563AEF /* WebDriverMain.cpp */,
+				8D2C3914D6D4B0D4BB9F61D4 /* WebDriverService.cpp */,
+				E02FF34570ED52865CB3F1B6 /* WebDriverService.h */,
+				E9C84B8C152023CB87C43736 /* WebSocketServer.cpp */,
+				6717BE3E88B0F7FF499BF998 /* WebSocketServer.h */,
+			);
+			name = minidriver;
+			sourceTree = "<group>";
+		};
+		4E5EB69F7269B6BEFFDC170F /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				F67A8A01A5E637AD03049F89 /* HTTPServerCocoa.cpp */,
+				0B6A33E4FB39656E58A36457 /* LoopbackCocoa.cpp */,
+				B354953398C5CF93DA79893B /* LoopbackCocoa.h */,
+				0A0C563B380B7A3DB7AA47F0 /* SessionHostCocoa.cpp */,
+				FDD8BCA4C4213A68B9F8E350 /* WebDriverNetworkSPI.h */,
+				8763DA44B820A80AFC56B5B9 /* WebDriverServiceCocoa.cpp */,
+				05CDA71C3BCC02C2114381B1 /* WebSocketServerCocoa.cpp */,
+			);
+			path = cocoa;
+			sourceTree = "<group>";
+		};
+		82A19FEB034A270C456BB345 /* Derived Sources */ = {
+			isa = PBXGroup;
+			children = (
+				2A79AD48A38DBF0A64C25AAB /* WebDriverAtoms.cpp */,
+			);
+			name = "Derived Sources";
+			sourceTree = "<group>";
+		};
+		65A536486EEBF5EBE3861F09 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6503460211FAA3E675BC57C6 /* libbmalloc.a */,
+				F6E3B986D43142E9ACDB2B92 /* libicucore.dylib */,
+				6A1376B0D01C524C420CDC22 /* libWTF.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4E7AC23685FB1CF88ED112B1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9285917DD4DAC4B3A80E8503 /* minidriver */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0D2CBD4F0B4913D4BA7CD3FE /* minidriver */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A5513C28121D6BF114193EF8 /* Build configuration list for PBXNativeTarget "minidriver" */;
+			buildPhases = (
+				37D3C0640F27307C32F2989D /* Generate Derived Sources */,
+				8524D8C0F5BB4F388093ECD5 /* Sources */,
+				658CD1627B990154B9DC0FFF /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = minidriver;
+			productName = minidriver;
+			productReference = 9285917DD4DAC4B3A80E8503 /* minidriver */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1C6DE4203F1CAAF7DC2E0C6A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 2700;
+			};
+			buildConfigurationList = C9C3B1425636AD5F2E345322 /* Build configuration list for PBXProject "minidriver" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = E289B039C473993FD43F28DE;
+			productRefGroup = 4E7AC23685FB1CF88ED112B1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0D2CBD4F0B4913D4BA7CD3FE /* minidriver */,
+				0974C6E6408C3673A30DC17A /* minidriver (Platform filters) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		37D3C0640F27307C32F2989D /* Generate Derived Sources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../WebKit/Scripts/generate-automation-atom.py",
+				"$(SRCROOT)/../JavaScriptCore/Scripts/make-js-file-arrays.py",
+				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/utils.js",
+				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/ElementAttribute.js",
+				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/ElementDisplayed.js",
+				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/ElementEnabled.js",
+				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/ElementText.js",
+				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/EnterFullscreen.js",
+				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/FindNodes.js",
+				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/FormElementClear.js",
+				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/FormSubmit.js",
+			);
+			name = "Generate Derived Sources";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/ElementAttribute.js",
+				"$(DERIVED_FILE_DIR)/ElementDisplayed.js",
+				"$(DERIVED_FILE_DIR)/ElementEnabled.js",
+				"$(DERIVED_FILE_DIR)/ElementText.js",
+				"$(DERIVED_FILE_DIR)/EnterFullscreen.js",
+				"$(DERIVED_FILE_DIR)/FindNodes.js",
+				"$(DERIVED_FILE_DIR)/FormElementClear.js",
+				"$(DERIVED_FILE_DIR)/FormSubmit.js",
+				"$(DERIVED_FILE_DIR)/WebDriverAtoms.h",
+				"$(DERIVED_FILE_DIR)/WebDriverAtoms.cpp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nmkdir -p \"${DERIVED_FILE_DIR}\"\nATOMS_DIR=\"${SRCROOT}/../WebKit/UIProcess/Automation/atoms\"\nATOMS=\"ElementAttribute ElementDisplayed ElementEnabled ElementText EnterFullscreen FindNodes FormElementClear FormSubmit\"\nfor ATOM in ${ATOMS}; do\n    python3 \"${SRCROOT}/../WebKit/Scripts/generate-automation-atom.py\" \"${ATOMS_DIR}/${ATOM}.js\" \"${DERIVED_FILE_DIR}/${ATOM}.js\"\ndone\npython3 \"${SRCROOT}/../JavaScriptCore/Scripts/make-js-file-arrays.py\" --fail-if-non-ascii -n WebDriver \"${DERIVED_FILE_DIR}/WebDriverAtoms.h\" \"${DERIVED_FILE_DIR}/WebDriverAtoms.cpp\" \"${DERIVED_FILE_DIR}/ElementAttribute.js\" \"${DERIVED_FILE_DIR}/ElementDisplayed.js\" \"${DERIVED_FILE_DIR}/ElementEnabled.js\" \"${DERIVED_FILE_DIR}/ElementText.js\" \"${DERIVED_FILE_DIR}/EnterFullscreen.js\" \"${DERIVED_FILE_DIR}/FindNodes.js\" \"${DERIVED_FILE_DIR}/FormElementClear.js\" \"${DERIVED_FILE_DIR}/FormSubmit.js\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8524D8C0F5BB4F388093ECD5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				94455DB85F58BBAC0B61873E /* CommandResult.cpp in Sources */,
+				39D71C4CA4150CA936581793 /* HTTPServer.cpp in Sources */,
+				BBE657255DDD08169C5F4DD5 /* HTTPServerCocoa.cpp in Sources */,
+				DCBA2AD8DD5A1C772FB3B2D3 /* Logging.cpp in Sources */,
+				2D2DA7D22DD48A8DDED7A2DA /* LogInitialization.cpp in Sources */,
+				13D7F5FE888EFBE371E31054 /* LoopbackCocoa.cpp in Sources */,
+				D2D44474FED742DB91687AD4 /* Session.cpp in Sources */,
+				D9C6D0139512AE3CE848A0D3 /* SessionHost.cpp in Sources */,
+				49C8A56F3EC29549DB48AB33 /* SessionHostCocoa.cpp in Sources */,
+				D9A751AFC019323EE4969C28 /* unix/LoggingUnix.cpp in Sources */,
+				07E58FB2B849351374D483B7 /* WebDriverAtoms.cpp in Sources */,
+				DB1E3E21F89868B8F04FF623 /* WebDriverMain.cpp in Sources */,
+				92BC91B152AB19721CB1B3FB /* WebDriverService.cpp in Sources */,
+				65790E81B5D15B2D0CA800D0 /* WebDriverServiceCocoa.cpp in Sources */,
+				0DA21E23A27FB5BE8AE63C0C /* WebSocketServer.cpp in Sources */,
+				A1160CF9D7C5AB9A5D6E0625 /* WebSocketServerCocoa.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F92E066A8ED9097FBA749664 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
+			target = 0D2CBD4F0B4913D4BA7CD3FE /* minidriver */;
+			targetProxy = 9CD4ED2AD5746E5564D5940B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		203827259AECA1BED7BFA4AD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E68449638F0133A29E46F886 /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		82AFD9797690B1427B57F367 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F29F7E9BC45E9BAF4308702E /* minidriver.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		6D0F8073153B3E92A6A4E87F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		8714568A1448E071BB439EC0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E68449638F0133A29E46F886 /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		1735391B71D45689BC41397A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F29F7E9BC45E9BAF4308702E /* minidriver.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		EDB7A4ADFA743BD28CD35350 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA8259C7BC88199EE33DBD02 /* Build configuration list for PBXAggregateTarget "minidriver (Platform filters)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6D0F8073153B3E92A6A4E87F /* Debug */,
+				EDB7A4ADFA743BD28CD35350 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A5513C28121D6BF114193EF8 /* Build configuration list for PBXNativeTarget "minidriver" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				82AFD9797690B1427B57F367 /* Debug */,
+				1735391B71D45689BC41397A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9C3B1425636AD5F2E345322 /* Build configuration list for PBXProject "minidriver" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				203827259AECA1BED7BFA4AD /* Debug */,
+				8714568A1448E071BB439EC0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1C6DE4203F1CAAF7DC2E0C6A /* Project object */;
+}

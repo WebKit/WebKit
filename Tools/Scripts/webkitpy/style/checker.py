@@ -442,7 +442,8 @@ _PATH_RULES_SPECIFIER = [
 
     ([  # libwebrtc source and some SPI headers have identifier names with underscores.
       os.path.join('Source', 'ThirdParty', 'libwebrtc', 'Source', 'webrtc'),
-      os.path.join('Source', 'WebCore', 'PAL', 'pal', 'spi')],
+      os.path.join('Source', 'WebCore', 'PAL', 'pal', 'spi'),
+      os.path.join('Source', 'WebDriver', 'cocoa', 'WebDriverNetworkSPI.h')],
      ["-readability/naming/underscores"]),
 
     ([  # c code with underscores in variable names and tabs for the Makefile
