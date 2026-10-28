@@ -680,20 +680,24 @@ static gboolean wpeToplevelWaylandSetMinimized(WPEToplevel* toplevel)
 static GRefPtr<WPEDRMDevice> wpeToplevelWaylandGetDRMDevice(WPEToplevel* toplevel, const dev_t* device)
 {
 #if USE(LIBDRM)
-    auto* display = wpe_toplevel_get_display(toplevel);
-    auto* displayDevice = display ? wpe_display_get_drm_device(display) : nullptr;
     drmDevicePtr drmDevice;
     if (drmGetDeviceFromDevId(*device, 0, &drmDevice))
         return nullptr;
 
-    if (!(drmDevice->available_nodes & (1 << DRM_NODE_PRIMARY)))
-        return nullptr;
+    GRefPtr<WPEDRMDevice> displayDevice;
+    if (drmDevice->available_nodes & (1 << DRM_NODE_PRIMARY)) {
+        auto* display = wpe_toplevel_get_display(toplevel);
+        displayDevice = display ? wpe_display_get_drm_device(display) : nullptr;
+        if (!displayDevice || g_strcmp0(drmDevice->nodes[DRM_NODE_PRIMARY], wpe_drm_device_get_primary_node(displayDevice.get()))) {
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+            displayDevice = adoptGRef(wpe_drm_device_new(drmDevice->nodes[DRM_NODE_PRIMARY],
+                drmDevice->available_nodes & (1 << DRM_NODE_RENDER) ? drmDevice->nodes[DRM_NODE_RENDER] : nullptr));
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        }
+    }
 
-    if (displayDevice && !g_strcmp0(drmDevice->nodes[DRM_NODE_PRIMARY], wpe_drm_device_get_primary_node(displayDevice)))
-        return displayDevice;
-
-    return adoptGRef(wpe_drm_device_new(drmDevice->nodes[DRM_NODE_PRIMARY],
-        drmDevice->available_nodes & (1 << DRM_NODE_RENDER) ? drmDevice->nodes[DRM_NODE_RENDER] : nullptr));
+    drmFreeDevice(&drmDevice);
+    return displayDevice;
 #else
     return nullptr;
 #endif
