@@ -91,6 +91,20 @@ https://www.dictionary.com/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
 https://www.disneyplus.com/
     ShouldHideCoarsePointerCharacteristicsQuirk
+https://englishtest.duolingo.com/
+    NeedsChromeCompatibilityUserAgentQuirk
+https://englishtest.duolingo.cn/
+    NeedsChromeCompatibilityUserAgentQuirk
+https://www.duolingo.com/
+    (none)
+https://duolingo.com/
+    (none)
+https://www.duolingo.cn/
+    (none)
+https://englishtest.duolingo.com.attacker.com/
+    (none)
+https://notenglishtest.duolingo.com/
+    (none)
 https://www.ea.com/
     ShouldPreventKeyframeEffectAccelerationQuirk
 https://www.espn.com/

@@ -463,6 +463,20 @@ TEST_F(QuirksTest, BaiduChatInputScriptGetsAChromeTokenInTheUserAgent)
         EXPECT_TRUE(scriptsForScriptURL(resolveQuirksForTopURL(topURL), chatInputScriptURL).isEmpty()) << topURL.characters();
 }
 
+TEST_F(QuirksTest, DuolingoEnglishTestGetsAChromeTokenInTheUserAgent)
+{
+    for (auto url : { "https://englishtest.duolingo.com/practice"_s, "https://englishtest.duolingo.com/test/practice"_s, "https://englishtest.duolingo.cn/practice"_s }) {
+#if PLATFORM(COCOA)
+        EXPECT_EQ(customUserAgentFor(url), String { "TestBase/1.0 (KHTML, like Gecko, like Chrome/157.) Trailer/1.0"_s }) << url.characters();
+#else
+        EXPECT_FALSE(customUserAgentFor(url).has_value()) << url.characters();
+#endif
+    }
+
+    for (auto url : { "https://www.duolingo.com/"_s, "https://duolingo.com/"_s, "https://www.duolingo.cn/"_s, "https://englishtest.duolingo.com.attacker.com/"_s, "https://notenglishtest.duolingo.com/"_s })
+        EXPECT_FALSE(customUserAgentFor(url).has_value()) << url.characters();
+}
+
 TEST_F(QuirksTest, DocumentsWithoutAScriptQuirkGetNoParameters)
 {
     auto quirks = resolveQuirksForTopURL("https://www.example.com/"_s);

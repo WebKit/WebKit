@@ -354,6 +354,11 @@
             "behaviors": [{ "id": "NeedsZeroMaxTouchPointsQuirk" }]
         },
         {
+            "bugs": ["rdar://190675819"],
+            "matches": ["*://englishtest.duolingo.com/*", "*://englishtest.duolingo.cn/*"],
+            "behaviors": [{ "id": "NeedsChromeCompatibilityUserAgentQuirk", "chromeCompatibilityVersion": "157" }]
+        },
+        {
             "matches": ["*://*.ea.com/*"],
             "behaviors": [{ "id": "ShouldPreventKeyframeEffectAccelerationQuirk", "elementSelector": "ea-network-nav" }]
         },

@@ -87,6 +87,20 @@ https://www.dictionary.com/
     (none)
 https://www.disneyplus.com/
     (none)
+https://englishtest.duolingo.com/
+    (none)
+https://englishtest.duolingo.cn/
+    (none)
+https://www.duolingo.com/
+    (none)
+https://duolingo.com/
+    (none)
+https://www.duolingo.cn/
+    (none)
+https://englishtest.duolingo.com.attacker.com/
+    (none)
+https://notenglishtest.duolingo.com/
+    (none)
 https://www.ea.com/
     ShouldPreventKeyframeEffectAccelerationQuirk
 https://www.espn.com/

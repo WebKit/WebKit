@@ -59,6 +59,15 @@ const urls = [
     "https://www.descript.com/",
     "https://www.dictionary.com/",
     "https://www.disneyplus.com/",
+    "https://englishtest.duolingo.com/",
+    "https://englishtest.duolingo.cn/",
+    // The Duolingo quirk is scoped to englishtest.duolingo.com and .cn, so the apex, other subdomains and look-alike
+    // hosts must not pick it up.
+    "https://www.duolingo.com/",
+    "https://duolingo.com/",
+    "https://www.duolingo.cn/",
+    "https://englishtest.duolingo.com.attacker.com/",
+    "https://notenglishtest.duolingo.com/",
     "https://www.ea.com/",
     "https://www.espn.com/",
     "https://www.facebook.com/",
