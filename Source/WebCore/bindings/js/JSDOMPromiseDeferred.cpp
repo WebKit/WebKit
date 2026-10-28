@@ -81,7 +81,11 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
             handleUncaughtException(scope, downcast<JSDOMGlobalObject>(lexicalGlobalObject));
     });
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (activeDOMObjectsAreSuspended() || !ScriptDisallowedScope::isScriptAllowedInMainThread()) {
+#else
+    if (activeDOMObjectsAreSuspended() || !ScriptDisallowedScope::isScriptAllowedInCurrentThread()) {
+#endif // RC_REMOVE_SEC_ACCEL_3
         JSC::Strong<JSC::Unknown, ShouldStrongDestructorGrabLock::Yes> strongResolution(lexicalGlobalObject.vm(), resolution);
         ASSERT(!activeDOMObjectsAreSuspended() || scriptExecutionContext()->eventLoop().isSuspended());
         protect(protect(scriptExecutionContext())->eventLoop())->queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, mode, strongResolution = WTF::move(strongResolution)] mutable {

@@ -47,6 +47,7 @@
 #include "FontFace.h"
 #include "FontPaletteValues.h"
 #include "SVGFontFaceElement.h"
+#include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "StyleFontMetricsOverride.h"
@@ -65,6 +66,9 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);
 
 static void iterateClients(WeakHashSet<CSSFontFaceClient>& clients, NOESCAPE const Function<void(CSSFontFaceClient&)>& callback)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    ScriptDisallowedScope scope;
+#endif // RC_REMOVE_SEC_ACCEL_3
     for (auto& client : copyToVectorOf<Ref<CSSFontFaceClient>>(clients)) {
         if (clients.contains(client))
             callback(client);
