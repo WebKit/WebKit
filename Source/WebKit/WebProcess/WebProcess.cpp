@@ -207,6 +207,11 @@
 #include "RemoteRenderingBackendProxy.h"
 #endif
 
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+#include "PrintConnectionToWebProcess.h"
+#include "PrintProcessConnection.h"
+#endif
+
 #if ENABLE(MODEL_PROCESS)
 #include "ModelConnectionToWebProcessMessages.h"
 #include "ModelProcessConnection.h"
@@ -1853,6 +1858,68 @@ void WebProcess::prepareForPrinting(CompletionHandler<void(bool)>&& completionHa
     blockIOKit();
     completionHandler(protect(ensureGPUProcessConnection())->waitForDidInitialize());
 }
+
+#define PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, protect(parentProcessConnection()), completion)
+
+// The print process creates the pair, as it is not allowed to send an end of one.
+void WebProcess::createPrintConnectionToWebProcess(ProcessIdentifier webProcessIdentifier, ProcessIdentity&& webProcessIdentity, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, bool isLockdownModeEnabled, CompletionHandler<void(std::optional<IPC::Connection::Handle>&&)>&& completionHandler)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, completionHandler(std::nullopt));
+    auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
+    if (!connectionIdentifiers) {
+        completionHandler(std::nullopt);
+        return;
+    }
+    Ref connection = PrintConnectionToWebProcess::create(webProcessIdentifier, WTF::move(connectionIdentifiers->server), WTF::move(webProcessIdentity), WTF::move(sharedPreferencesForWebProcess), isLockdownModeEnabled);
+    // A web process that is connected again replaces its connection.
+    if (RefPtr previousConnection = m_printConnectionsToWebProcesses.take(webProcessIdentifier))
+        previousConnection->invalidate();
+    m_printConnectionsToWebProcesses.add(webProcessIdentifier, WTF::move(connection));
+    completionHandler(WTF::move(connectionIdentifiers->client));
+}
+
+void WebProcess::removePrintConnectionToWebProcess(ProcessIdentifier webProcessIdentifier)
+{
+    if (!m_isPrintProcess) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    // Also for web processes that went away before they could connect, which the connection would not notice.
+    if (RefPtr connection = m_printConnectionsToWebProcesses.take(webProcessIdentifier))
+        connection->invalidate();
+}
+
+void WebProcess::printConnectionToWebProcessDidClose(PrintConnectionToWebProcess& connection)
+{
+    auto iterator = m_printConnectionsToWebProcesses.find(connection.webProcessIdentifier());
+    if (iterator != m_printConnectionsToWebProcesses.end() && iterator->value.ptr() == &connection)
+        m_printConnectionsToWebProcesses.remove(iterator);
+}
+
+void WebProcess::printConnectionToWebProcessCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    completionHandler(m_printConnectionsToWebProcesses.size());
+}
+
+void WebProcess::connectToPrintProcess(IPC::Connection::Handle&& connectionHandle)
+{
+    if (m_isPrintProcess) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    // A new print process replaces the one that went away.
+    if (RefPtr previousConnection = std::exchange(m_printProcessConnection, nullptr))
+        previousConnection->invalidate();
+    m_printProcessConnection = PrintProcessConnection::create(WTF::move(connectionHandle));
+}
+
+void WebProcess::printProcessConnectionDidClose(PrintProcessConnection& connection)
+{
+    if (m_printProcessConnection == &connection)
+        m_printProcessConnection = nullptr;
+}
+
+#undef PRINT_PROCESS_MESSAGE_CHECK_COMPLETION
 #endif
 
 // Received by the process rather than a page, because the frame's page may have gone here since the

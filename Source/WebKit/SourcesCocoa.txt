@@ -869,6 +869,9 @@ WebProcess/Plugins/PDF/UnifiedPDF/PDFPresentationController.mm @nonARC @cost:3
 WebProcess/Plugins/PDF/UnifiedPDF/PDFScrollingPresentationController.mm @nonARC @cost:3
 WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm @nonARC @cost:7
 
+WebProcess/Print/PrintConnectionToWebProcess.cpp
+WebProcess/Print/PrintProcessConnection.cpp
+
 WebProcess/WebCoreSupport/WebCaptionPreferencesDelegate.cpp
 WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
 

@@ -150,6 +150,8 @@ class LibWebRTCCodecs;
 class LibWebRTCNetwork;
 class ModelProcessConnection;
 class ModelProcessModelPlayerManager;
+class PrintConnectionToWebProcess;
+class PrintProcessConnection;
 class RemoteCDMFactory;
 class RemoteImageDecoderAVFManager;
 class RemoteLegacyCDMFactory;
@@ -337,6 +339,11 @@ public:
 #endif
     RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory();
 #endif // ENABLE(GPU_PROCESS)
+
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    void printConnectionToWebProcessDidClose(PrintConnectionToWebProcess&);
+    void printProcessConnectionDidClose(PrintProcessConnection&);
+#endif
 
 #if ENABLE(MODEL_PROCESS)
     ModelProcessConnection& ensureModelProcessConnection();
@@ -652,6 +659,10 @@ private:
 #endif
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
     void prepareForPrinting(CompletionHandler<void(bool)>&&);
+    void createPrintConnectionToWebProcess(WebCore::ProcessIdentifier, WebCore::ProcessIdentity&&, SharedPreferencesForWebProcess&&, bool isLockdownModeEnabled, CompletionHandler<void(std::optional<IPC::Connection::Handle>&&)>&&);
+    void removePrintConnectionToWebProcess(WebCore::ProcessIdentifier);
+    void printConnectionToWebProcessCountForTesting(CompletionHandler<void(uint64_t)>&&);
+    void connectToPrintProcess(IPC::Connection::Handle&&);
 #endif
 
     void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);
@@ -877,6 +888,13 @@ private:
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     const std::unique_ptr<AudioMediaStreamTrackRendererInternalUnitManager> m_audioMediaStreamTrackRendererInternalUnitManager;
 #endif
+#endif
+
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    // In the print process, the connections from the web processes that draw into it.
+    HashMap<WebCore::ProcessIdentifier, Ref<PrintConnectionToWebProcess>> m_printConnectionsToWebProcesses;
+    // In the other web processes, the connection to the print process with their Lockdown Mode.
+    RefPtr<PrintProcessConnection> m_printProcessConnection;
 #endif
 
 #if ENABLE(MODEL_PROCESS)

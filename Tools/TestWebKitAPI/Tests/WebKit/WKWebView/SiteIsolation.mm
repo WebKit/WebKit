@@ -20610,6 +20610,46 @@ TEST(SiteIsolation, PrintProcessIsRelaunchedAfterCrash)
     EXPECT_NE(newPrintProcess, printProcess);
 }
 
+static NSUInteger connectFrameProcessesToPrintProcess(WKWebView *webView)
+{
+    __block NSUInteger result = 0;
+    __block bool done = false;
+    [webView _connectFrameProcessesToPrintProcessForTesting:^(NSUInteger count) {
+        result = count;
+        done = true;
+    }];
+    Util::run(&done);
+    return result;
+}
+
+TEST(SiteIsolation, PrintProcessConnectsFrameProcesses)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>Mainframe<iframe src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body>Subframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server);
+    EXPECT_NE([webView mainFrame].info._processIdentifier, [webView mainFrame].childFrames.firstObject.info._processIdentifier);
+
+    EXPECT_EQ(connectFrameProcessesToPrintProcess(webView.get()), 2u);
+    auto printProcess = printProcessIdentifier(webView.get());
+    EXPECT_NE(printProcess, 0);
+
+    // The connections are made once.
+    EXPECT_EQ(connectFrameProcessesToPrintProcess(webView.get()), 2u);
+    EXPECT_EQ(printProcessIdentifier(webView.get()), printProcess);
+
+    // A new print process is connected again.
+    kill(printProcess, 9);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !printProcessIdentifier(webView.get());
+    }));
+    EXPECT_EQ(connectFrameProcessesToPrintProcess(webView.get()), 2u);
+    auto newPrintProcess = printProcessIdentifier(webView.get());
+    EXPECT_NE(newPrintProcess, 0);
+    EXPECT_NE(newPrintProcess, printProcess);
+}
+
 #endif // HAVE(PDFKIT)
 
 TEST(SiteIsolation, MultiProcessBFCacheIframeRendersAfterBackNavigation)

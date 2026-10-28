@@ -87,6 +87,10 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 #endif
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
     PrepareForPrinting() -> (bool success)
+    CreatePrintConnectionToWebProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentity webProcessIdentity, struct WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess, bool isLockdownModeEnabled) -> (std::optional<IPC::ConnectionHandle> connectionHandle)
+    RemovePrintConnectionToWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
+    PrintConnectionToWebProcessCountForTesting() -> (uint64_t count)
+    ConnectToPrintProcess(IPC::ConnectionHandle connectionHandle) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
 #endif
 
     GarbageCollectJavaScriptObjects()

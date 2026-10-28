@@ -1703,6 +1703,20 @@ void WebProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
 }
 #endif
 
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+// A web process connected to this print process sent it an invalid message.
+void WebProcessProxy::terminatePrintProcessClient(WebCore::ProcessIdentifier clientIdentifier, IPC::MessageName invalidMessageName)
+{
+    MESSAGE_CHECK(isPrintProcess());
+    // It may have gone away since it sent the message. Other processes are not this one's to terminate.
+    if (!protect(processPool())->isPrintProcessClient(*this, clientIdentifier))
+        return;
+    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "terminatePrintProcessClient: clientIdentifier=%" PRIu64, clientIdentifier.toUInt64());
+    if (RefPtr client = processForIdentifier(clientIdentifier))
+        client->requestTermination(ProcessTerminationReason::RequestedByPrintProcess, invalidMessageName);
+}
+#endif
+
 #if ENABLE(MODEL_PROCESS)
 void WebProcessProxy::createModelProcessConnection(IPC::Connection::Handle&& connectionIdentifier)
 {
@@ -3833,12 +3847,10 @@ TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)
     return ts;
 }
 
-#if ENABLE(WEBXR)
 const WebCore::ProcessIdentity& WebProcessProxy::processIdentity()
 {
     return m_processIdentity;
 }
-#endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
 void WebProcessProxy::requestResourceMonitorRuleLists(bool forTesting)

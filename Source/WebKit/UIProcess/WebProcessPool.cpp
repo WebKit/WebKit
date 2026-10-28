@@ -516,6 +516,7 @@ static bool LEGACY_NODELETE shouldReportNetworkOrGPUProcessCrash(ProcessTerminat
     case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::RequestedByModelProcess:
+    case ProcessTerminationReason::RequestedByPrintProcess:
         return false;
     case ProcessTerminationReason::GPUProcessCrashedTooManyTimes:
     case ProcessTerminationReason::ModelProcessCrashedTooManyTimes:
@@ -1296,6 +1297,8 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
     if (process.isPrintProcess())
         printProcessDidDisconnect(process);
+    else
+        printProcessClientDidDisconnect(process);
 #endif
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> Some of the invalidation calls of the other supplements are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
@@ -1547,6 +1550,123 @@ void WebProcessPool::printProcessDidDisconnect(WebProcessProxy& process)
     state.isReady = false;
     for (auto& callback : std::exchange(state.readyCallbacks, { }))
         callback(nullptr);
+
+    // The web processes find out that their connections closed.
+    state.clients.clear();
+    auto pendingClients = std::exchange(state.pendingClients, { });
+    for (auto& pendingClient : pendingClients.values()) {
+        for (auto& completionHandler : pendingClient.completionHandlers)
+            completionHandler(false);
+    }
+}
+
+std::optional<IPC::Connection::AsyncReplyID> WebProcessPool::ensurePrintProcessConnection(WebProcessProxy& frameProcess, WebProcessProxy::LockdownMode lockdownMode, CompletionHandler<void(bool)>&& completionHandler)
+{
+    // Frames draw only into the print process with the Lockdown Mode of their own process.
+    if (frameProcess.isPrintProcess() || frameProcess.lockdownMode() != lockdownMode || !frameProcess.canSendMessage()) {
+        completionHandler(false);
+        return std::nullopt;
+    }
+
+    auto useToken = ensurePrintProcess(lockdownMode);
+    auto& state = printProcessState(lockdownMode);
+    Ref printProcess = *state.process;
+    auto clientIdentifier = frameProcess.coreProcessIdentifier();
+    if (state.clients.contains(clientIdentifier)) {
+        completionHandler(true);
+        return std::nullopt;
+    }
+
+    auto addResult = state.pendingClients.add(clientIdentifier, PrintProcessState::PendingClient { });
+    addResult.iterator->value.completionHandlers.append(WTF::move(completionHandler));
+    if (!addResult.isNewEntry)
+        return addResult.iterator->value.replyID;
+
+    // The print process creates the pair, since only the client end of one can be sent to another
+    // process. The web process is sent the client end once the print process has the server end.
+    auto replyID = printProcess->sendWithAsyncReply(Messages::WebProcess::CreatePrintConnectionToWebProcess(clientIdentifier, WebCore::ProcessIdentity { frameProcess.processIdentity() }, frameProcess.sharedPreferencesForWebProcessValue(), lockdownMode == WebProcessProxy::LockdownMode::Enabled), [weakThis = WeakPtr { *this }, weakPrintProcess = WeakPtr { printProcess.get() }, clientIdentifier, useToken = WTF::move(useToken)](std::optional<IPC::Connection::Handle>&& connectionHandle) mutable {
+        RefPtr protectedThis = weakThis.get();
+        RefPtr printProcess = weakPrintProcess.get();
+        if (protectedThis && printProcess)
+            protectedThis->didCreatePrintConnectionToWebProcess(*printProcess, clientIdentifier, WTF::move(connectionHandle));
+    });
+    // Unless the reply has been given already, because the message could not be sent.
+    if (auto iterator = state.pendingClients.find(clientIdentifier); iterator != state.pendingClients.end())
+        iterator->value.replyID = replyID;
+    return replyID;
+}
+
+void WebProcessPool::didCreatePrintConnectionToWebProcess(WebProcessProxy& printProcess, WebCore::ProcessIdentifier clientIdentifier, std::optional<IPC::Connection::Handle>&& connectionHandle)
+{
+    auto& state = printProcessState(printProcess.lockdownMode());
+    // From a print process that has gone away since, which failed its pending clients then.
+    if (state.process != &printProcess)
+        return;
+
+    // Failed already, if the web process went away first.
+    auto pendingClient = state.pendingClients.takeOptional(clientIdentifier);
+    if (!pendingClient)
+        return;
+
+    RefPtr client = WebProcessProxy::processForIdentifier(clientIdentifier);
+    bool success = connectionHandle && client && client->canSendMessage();
+    if (success) {
+        // As DrawFrameToSnapshot is sent, so that it cannot overtake this.
+        client->send(Messages::WebProcess::ConnectToPrintProcess(WTF::move(*connectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+        state.clients.add(clientIdentifier);
+    } else if (connectionHandle)
+        printProcess.send(Messages::WebProcess::RemovePrintConnectionToWebProcess(clientIdentifier), 0);
+
+    for (auto& completionHandler : pendingClient->completionHandlers)
+        completionHandler(success);
+}
+
+Vector<IPC::Connection::AsyncReplyID> WebProcessPool::ensurePrintProcessConnections(WebFrameProxy& rootFrame, WebProcessProxy::LockdownMode lockdownMode, CompletionHandler<void(bool)>&& completionHandler)
+{
+    Ref aggregator = MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler));
+    Vector<IPC::Connection::AsyncReplyID> replyIDs;
+    HashSet<WebCore::ProcessIdentifier> processes;
+    for (RefPtr frame = &rootFrame; frame; frame = frame->traverseNext(&rootFrame)) {
+        Ref process = frame->process();
+        if (!processes.add(process->coreProcessIdentifier()).isNewEntry)
+            continue;
+        if (auto replyID = ensurePrintProcessConnection(process, lockdownMode, aggregator->chain()))
+            replyIDs.append(*replyID);
+    }
+    return replyIDs;
+}
+
+void WebProcessPool::printProcessClientDidDisconnect(WebProcessProxy& process)
+{
+    auto clientIdentifier = process.coreProcessIdentifier();
+    for (auto lockdownMode : { WebProcessProxy::LockdownMode::Disabled, WebProcessProxy::LockdownMode::Enabled }) {
+        auto& state = printProcessState(lockdownMode);
+        bool wasClient = state.clients.remove(clientIdentifier);
+        auto pendingClient = state.pendingClients.takeOptional(clientIdentifier);
+        // The print process would not notice a connection whose client end was never used.
+        if (RefPtr printProcess = state.process; printProcess && (wasClient || pendingClient))
+            printProcess->send(Messages::WebProcess::RemovePrintConnectionToWebProcess(clientIdentifier), 0);
+        if (pendingClient) {
+            for (auto& completionHandler : pendingClient->completionHandlers)
+                completionHandler(false);
+        }
+    }
+}
+
+bool WebProcessPool::isPrintProcessClient(const WebProcessProxy& printProcess, WebCore::ProcessIdentifier clientIdentifier) const
+{
+    auto& state = printProcess.lockdownMode() == WebProcessProxy::LockdownMode::Enabled ? m_lockdownPrintProcessState : m_printProcessState;
+    return state.process.get() == &printProcess && state.clients.contains(clientIdentifier);
+}
+
+void WebProcessPool::printProcessClientCountForTesting(WebProcessProxy::LockdownMode lockdownMode, CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    RefPtr process = printProcessState(lockdownMode).process;
+    if (!process) {
+        completionHandler(0);
+        return;
+    }
+    process->sendWithAsyncReply(Messages::WebProcess::PrintConnectionToWebProcessCountForTesting(), WTF::move(completionHandler));
 }
 
 #endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)

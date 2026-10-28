@@ -1292,6 +1292,7 @@ static _WKProcessTerminationReason wkProcessTerminationReason(ProcessTermination
     case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::RequestedByModelProcess:
+    case ProcessTerminationReason::RequestedByPrintProcess:
     case ProcessTerminationReason::Crash:
     case ProcessTerminationReason::NonMainFrameWebContentProcessCrash:
         return _WKProcessTerminationReasonCrash;

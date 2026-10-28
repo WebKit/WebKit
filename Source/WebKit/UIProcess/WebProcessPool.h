@@ -126,6 +126,7 @@ class WebAutomationSession;
 class WebBackForwardCache;
 class WebCompiledContentRuleList;
 class WebContextSupplement;
+class WebFrameProxy;
 class WebPageGroup;
 class WebPageProxy;
 class WebPreferences;
@@ -396,6 +397,17 @@ public:
     PrintProcessUseCounter::Token ensurePrintProcess(WebProcessProxy::LockdownMode);
     void whenPrintProcessReady(WebProcessProxy::LockdownMode, CompletionHandler<void(WebProcessProxy*)>&&);
     void setPrintProcessIdleTimeoutForTesting(Seconds timeout) { m_printProcessIdleTimeout = timeout; }
+
+    // Connects the web process to the print process with this Lockdown Mode, launching it if needed,
+    // unless they are connected already. Completes once the web process has been sent its end of the
+    // connection, so that anything sent to the web process after that finds the connection, or with
+    // false if either process went away first. Returns the reply that this waits for, if any.
+    std::optional<IPC::Connection::AsyncReplyID> ensurePrintProcessConnection(WebProcessProxy& frameProcess, WebProcessProxy::LockdownMode, CompletionHandler<void(bool)>&&);
+    // Connects every process hosting a frame in the tree of the root frame, and completes with false
+    // if any of them could not be connected.
+    Vector<IPC::Connection::AsyncReplyID> ensurePrintProcessConnections(WebFrameProxy& rootFrame, WebProcessProxy::LockdownMode, CompletionHandler<void(bool)>&&);
+    bool isPrintProcessClient(const WebProcessProxy& printProcess, WebCore::ProcessIdentifier) const;
+    void printProcessClientCountForTesting(WebProcessProxy::LockdownMode, CompletionHandler<void(uint64_t)>&&);
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -831,11 +843,22 @@ private:
         Vector<CompletionHandler<void(WebProcessProxy*)>> readyCallbacks;
         RunLoop::Timer idleTimer;
         PrintProcessUseCounter useCounter;
+
+        // The web processes that have been sent their end of a connection to the print process.
+        HashSet<WebCore::ProcessIdentifier> clients;
+        struct PendingClient {
+            std::optional<IPC::Connection::AsyncReplyID> replyID;
+            Vector<CompletionHandler<void(bool)>> completionHandlers;
+        };
+        // The web processes waiting for the print process to create their connection.
+        HashMap<WebCore::ProcessIdentifier, PendingClient> pendingClients;
     };
 
     PrintProcessState& printProcessState(WebProcessProxy::LockdownMode lockdownMode) { return lockdownMode == WebProcessProxy::LockdownMode::Enabled ? m_lockdownPrintProcessState : m_printProcessState; }
     void shutDownPrintProcess(WebProcessProxy::LockdownMode);
     void printProcessDidDisconnect(WebProcessProxy&);
+    void didCreatePrintConnectionToWebProcess(WebProcessProxy& printProcess, WebCore::ProcessIdentifier, std::optional<IPC::Connection::Handle>&&);
+    void printProcessClientDidDisconnect(WebProcessProxy&);
     void printProcessUseCountDidChange(WebProcessProxy::LockdownMode);
 #endif
 #if ENABLE(MODEL_PROCESS)

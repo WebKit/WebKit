@@ -43,6 +43,10 @@ messages -> WebProcessProxy WantsDispatchMessage {
     [EnabledBy=SiteIsolationEnabled] DrawFrameToSnapshot(WebCore::FrameIdentifier frameID, WebCore::IntRect rect, WebKit::RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode) AllowedWhenWaitingForSyncReply
 #endif
 
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    TerminatePrintProcessClient(WebCore::ProcessIdentifier webProcessIdentifier, enum:uint16_t IPC::MessageName invalidMessageName)
+#endif
+
 #if ENABLE(MODEL_PROCESS)
     [EnabledBy=ModelElementEnabled && ModelProcessEnabled] CreateModelProcessConnection(IPC::ConnectionHandle connectionIdentifier) AllowedWhenWaitingForSyncReply
 #endif

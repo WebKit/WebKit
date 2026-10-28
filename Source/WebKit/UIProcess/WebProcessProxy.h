@@ -648,9 +648,7 @@ public:
     Seconds totalBackgroundTime() const;
     Seconds totalSuspendedTime() const;
 
-#if ENABLE(WEBXR)
     const WebCore::ProcessIdentity& processIdentity() LIFETIME_BOUND;
-#endif
 
     bool isAlwaysOnLoggingAllowed() const;
 
@@ -791,6 +789,9 @@ private:
     void createGPUProcessConnection(GPUProcessConnectionIdentifier, IPC::Connection::Handle&&);
     void gpuProcessConnectionDidBecomeUnresponsive(GPUProcessConnectionIdentifier);
     void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, WebCore::RenderingMode);
+#endif
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    void terminatePrintProcessClient(WebCore::ProcessIdentifier, IPC::MessageName invalidMessageName);
 #endif
 
 #if HAVE(IOSURFACE)
