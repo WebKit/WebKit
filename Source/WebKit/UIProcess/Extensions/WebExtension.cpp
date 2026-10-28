@@ -2129,8 +2129,19 @@ RefPtr<JSON::Object> WebExtension::bestIconVariantJSONObject(RefPtr<JSON::Array>
     if (!variants || !variants->length())
         return nullptr;
 
-    if (variants->length() == 1)
-        return variants->get(0)->asObject();
+    // A variant with an unknown property is skipped entirely, so a later variant can match instead.
+    auto hasOnlyKnownProperties = [](const JSON::Object& variantObject) {
+        for (auto key : variantObject.keys()) {
+            if (key == anyManifestKey || key == colorSchemesManifestKey || key == colorSchemesAPIKey)
+                continue;
+
+            auto size = parseInteger<size_t>(key);
+            if (!size || !*size)
+                return false;
+        }
+
+        return true;
+    };
 
     RefPtr<JSON::Object> bestVariant;
     RefPtr<JSON::Object> fallbackVariant;
@@ -2141,10 +2152,10 @@ RefPtr<JSON::Object> WebExtension::bestIconVariantJSONObject(RefPtr<JSON::Array>
 
     // Pick the first variant matching color scheme and/or size.
     for (Ref variant : *variants) {
-        if (!variant)
+        RefPtr variantObject = variant->asObject();
+        if (!variantObject || !hasOnlyKnownProperties(*variantObject))
             continue;
 
-        RefPtr variantObject = variant->asObject();
         auto colorSchemes = toColorSchemes(variantObject ? variantObject->getValue(colorSchemesManifestKey) ?: variantObject->getValue(colorSchemesAPIKey) : nullptr);
         auto currentBestSize = bestIconSize(*variantObject, idealPixelSize);
 

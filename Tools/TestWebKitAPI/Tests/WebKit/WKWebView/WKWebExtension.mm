@@ -691,6 +691,61 @@ TEST(WKWebExtension, SingleIconVariant)
     EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(32, 32)));
 }
 
+TEST(WKWebExtension, IconVariantWithUnknownPropertyIsSkipped)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Unknown Property",
+        @"version": @"1.0",
+        @"description": @"Test with an unknown icon variant property",
+
+        @"icon_variants": @[
+            @{ @"32": @"unknown-32.png", @"contrast": @"high" },
+            @{ @"32": @"known-32.png" }
+        ]
+    };
+
+    auto *unknownIcon = Util::makePNGData(CGSizeMake(32, 32), @selector(whiteColor));
+    auto *knownIcon = Util::makePNGData(CGSizeMake(32, 32), @selector(blackColor));
+
+    auto *resources = @{
+        @"unknown-32.png": unknownIcon,
+        @"known-32.png": knownIcon,
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension iconForSize:CGSizeMake(32, 32)];
+    EXPECT_NOT_NULL(icon);
+    EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(32, 32)));
+    EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon), [CocoaColor blackColor]));
+}
+
+TEST(WKWebExtension, IconVariantWithOnlyUnknownPropertyHasNoIcon)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Only Unknown Property",
+        @"version": @"1.0",
+        @"description": @"Test with a single icon variant with an unknown property",
+
+        @"icon_variants": @[
+            @{ @"32": @"unknown-32.png", @"contrast": @"high" }
+        ]
+    };
+
+    auto *resources = @{
+        @"unknown-32.png": Util::makePNGData(CGSizeMake(32, 32), @selector(whiteColor)),
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+
+    EXPECT_NULL([testExtension iconForSize:CGSizeMake(32, 32)]);
+}
+
 TEST(WKWebExtension, AnySizeIconVariant)
 {
     auto *testManifestDictionary = @{
