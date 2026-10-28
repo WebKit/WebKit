@@ -23,7 +23,7 @@
 import os
 
 from webkitcorepy import testing
-from webkitscmpy import local, mocks
+from webkitscmpy import ScmBase, local, mocks
 
 
 class TestScm(testing.PathTestCase):
@@ -79,3 +79,49 @@ class TestScm(testing.PathTestCase):
         self.assertFalse(local.Scm.PROD_BRANCHES.match('webkitglib/main'))
         self.assertFalse(local.Scm.PROD_BRANCHES.match('integration/ci/stuff/safari-606-branch'))
         self.assertFalse(local.Scm.PROD_BRANCHES.match('clone/1234'))
+
+    class _Repository(ScmBase):
+        default_branch = 'main'
+
+    def test_branch_priority(self):
+        repository = self._Repository()
+        self.assertEqual(repository.branch_priority('main'), (0, 'main'))
+        self.assertEqual(repository.branch_priority('safari-7626-branch'), (1, 'safari-7626-branch'))
+        self.assertEqual(repository.branch_priority('webkitglib/2.52'), (1, 'webkitglib/2.52'))
+        self.assertEqual(repository.branch_priority('branch-a'), (2, 'branch-a'))
+        self.assertEqual(repository.branch_priority('eng/1234'), (4, 'eng/1234'))
+        self.assertEqual(repository.branch_priority('eng/1234', preferred_branch='eng/1234'), (3, 'eng/1234'))
+        self.assertEqual(repository.branch_priority('branch-a', preferred_branch='branch-a'), (2, 'branch-a'))
+
+    def test_branch_priority_sorted(self):
+        self.assertEqual(
+            sorted([
+                'eng/1234', 'branch-b', 'safari-7626.1-branch', 'dev/5678',
+                'main', 'branch-a', 'safari-7626-branch', 'rapid/safari-7624.1.16.110-branch',
+            ], key=self._Repository().branch_priority), [
+                'main',
+                'rapid/safari-7624.1.16.110-branch', 'safari-7626-branch', 'safari-7626.1-branch',
+                'branch-a', 'branch-b',
+                'dev/5678', 'eng/1234',
+            ],
+        )
+
+    def test_prioritize_branches(self):
+        repository = self._Repository()
+        self.assertEqual(repository.prioritize_branches([]), None)
+        self.assertEqual(repository.prioritize_branches(['eng/1234']), 'eng/1234')
+        self.assertEqual(repository.prioritize_branches(['eng/1234', 'main', 'safari-7626-branch']), 'main')
+        self.assertEqual(repository.prioritize_branches(['eng/1234', 'branch-a', 'safari-7626-branch']), 'safari-7626-branch')
+
+        # Branches branched from a production branch sort after it
+        self.assertEqual(repository.prioritize_branches(['safari-7626.1-branch', 'safari-7626-branch']), 'safari-7626-branch')
+
+    def test_prioritize_branches_preferred(self):
+        repository = self._Repository()
+        self.assertEqual(repository.prioritize_branches(['eng/b', 'eng/a']), 'eng/a')
+        self.assertEqual(repository.prioritize_branches(['eng/b', 'eng/a'], preferred_branch='eng/b'), 'eng/b')
+        self.assertEqual(repository.prioritize_branches(['eng/b', 'eng/a'], preferred_branch='eng/c'), 'eng/a')
+
+        # The preferred branch only matters when every candidate is a dev branch
+        self.assertEqual(repository.prioritize_branches(['eng/b', 'branch-a'], preferred_branch='eng/b'), 'branch-a')
+        self.assertEqual(repository.prioritize_branches(['branch-b', 'branch-a'], preferred_branch='branch-b'), 'branch-a')

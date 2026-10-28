@@ -29,7 +29,7 @@ import re
 import subprocess
 import sys
 import time
-from typing import Any, Iterator, TYPE_CHECKING, overload
+from typing import Any, Callable, Iterator, TYPE_CHECKING, overload
 
 from collections import defaultdict
 
@@ -62,41 +62,98 @@ class Git(Scm):
             try:
                 with open(self.path) as file:
                     content = json.load(file)
-                    self._ordered_commits = content['hashes']
-                    self._ordered_revisions = content['revisions']
+                hashes: dict[str, list[str]] = content['hashes']
+                revisions: dict[str, list[int | None]] = content['revisions']
 
-                default_branch = self.repo.default_branch
-                assert default_branch is not None  # _fill(None) raises a KeyError, which is also caught below
-                self._fill(default_branch)
-                for branch in self._ordered_commits.keys():
-                    if branch == self.repo.default_branch:
-                        continue
-                    if not self._ordered_commits[branch]:
-                        caches: list[dict[str, Any]] = [self._ordered_commits, self._ordered_revisions, self._last_populated]
-                        for d in caches:
-                            if branch in d:
-                                del d[branch]
-                        continue
-                    self._fill(branch)
+                # Only branches from canonical remotes are cached, discard anything else
+                for key in list(hashes.keys()):
+                    remote, _, branch = key.partition('/')
+                    if not hashes[key] or not self.is_cacheable(branch) or remote not in self._remotes_for(branch) or key not in revisions:
+                        del hashes[key]
             except BaseException:
-                pass
+                return
+
+            self._ordered_commits = hashes
+            self._ordered_revisions = {key: revisions[key] for key in hashes.keys()}
 
         @property
         def path(self) -> str:
             return os.path.join(self.repo.common_directory, 'identifiers.json')
 
-        def _fill(self, branch: str) -> None:
-            default_branch = self.repo.default_branch
-            if branch == default_branch:
-                branch_point = None
-            elif self._ordered_commits[branch] and self._ordered_commits[branch][0] in self._hash_to_identifiers:
-                branch_point = int(self._hash_to_identifiers[self._ordered_commits[branch][0]].split('@')[0])
-            else:
-                return
+        def is_cacheable(self, branch: str) -> bool:
+            # Production branches on canonical remotes never move backwards, so their identifiers can't go stale
+            return branch == self.repo.default_branch or bool(self.repo.prod_branches.match(branch))
 
-            index = len(self._ordered_commits[branch]) - 1
+        def _remotes_for(self, branch: str) -> list[str]:
+            if branch == self.repo.default_branch:
+                return [self.repo.default_remote]
+            return self.repo.source_remotes()
+
+        def _keys_for(self, branch: str) -> list[str]:
+            keys = ['{}/{}'.format(remote, branch) for remote in self._remotes_for(branch)]
+            return [key for key in keys if key in self._ordered_commits]
+
+        def _save(self) -> None:
+            try:
+                with open(self.path, 'w') as file:
+                    json.dump(dict(
+                        hashes=self._ordered_commits,
+                        revisions=self._ordered_revisions,
+                    ), file, indent=4)
+            except (IOError, OSError):
+                self.repo.log("Failed to write identifier cache to '{}'".format(self.path))
+
+        def _reset(self) -> None:
+            self._hash_to_identifiers = NestedFuzzyDict(primary_size=6)
+            self._revisions_to_identifiers = {}
+
+        def _fill_branch(self, branch: str) -> None:
+            # Identifiers are computed when a branch is needed, filling stops at the first commit we already know about
+            for key in self._keys_for(branch):
+                self._fill(key)
+
+        def _branch_point(self, hash: str) -> int | None:
+            default_branch = self.repo.default_branch
+            parsed = Commit._parse_identifier(self._hash_to_identifiers.get(hash), do_assert=False)
+            if parsed and parsed[2] == default_branch:
+                return parsed[1]
+
+            # The default branch is huge, the position of a commit is its identifier, so we don't need to compute every identifier
+            for key in self._keys_for(default_branch):
+                try:
+                    return self._ordered_commits[key].index(hash, 1)
+                except ValueError:
+                    continue
+            return None
+
+        def _search(self, get: Callable[[], str | None], branch: str | None) -> str | None:
+            # Compute identifiers one branch at a time until we find what we're looking for. The default branch is huge,
+            # so we check the caller's branch first. Without a branch, we check every cached branch in priority order.
+            default_branch = self.repo.default_branch
+            if branch:
+                candidates = [branch] if branch == default_branch else [branch, default_branch]
+            else:
+                candidates = sorted({key.partition('/')[2] for key in self._ordered_commits.keys()}, key=self.repo.branch_priority)
+
+            for candidate in candidates:
+                self._fill_branch(candidate)
+                result = get()
+                if result:
+                    return result
+            return None
+
+        def _fill(self, key: str) -> None:
+            default_branch = self.repo.default_branch
+            branch = key.partition('/')[2]
+            branch_point = None
+            if branch != default_branch:
+                branch_point = self._branch_point(self._ordered_commits[key][0]) if self._ordered_commits[key] else None
+                if branch_point is None:
+                    return
+
+            index = len(self._ordered_commits[key]) - 1
             while index:
-                identifier = self._hash_to_identifiers.get(self._ordered_commits[branch][index])
+                identifier = self._hash_to_identifiers.get(self._ordered_commits[key][index])
 
                 if identifier:
                     id_branch = identifier.split('@')[-1]
@@ -106,44 +163,96 @@ class Git(Scm):
                         break
 
                 identifier = '{}@{}'.format('{}.{}'.format(branch_point, index) if branch_point else index, branch)
-                self._hash_to_identifiers[self._ordered_commits[branch][index]] = identifier
-                revision = self._ordered_revisions[branch][index]
+                self._hash_to_identifiers[self._ordered_commits[key][index]] = identifier
+                revision = self._ordered_revisions[key][index]
                 if revision:
                     self._revisions_to_identifiers[revision] = identifier
                 index -= 1
 
-        def populate(self, branch: str | None = None, remote: str | None = None) -> None:
+        def populate(self, branch: str | None = None) -> None:
             branch = branch or self.repo.branch
-            if not branch:
-                return
+            # Branches we don't cache can still contain commits from the default branch
+            if not branch or not self.is_cacheable(branch):
+                branch = self.repo.default_branch
             if self._last_populated.get(branch, 0) + self._guranteed_for > time.time():
                 return
-            default_branch = self.repo.default_branch
-            is_default_branch = branch == default_branch
-            if branch not in self._ordered_commits:
-                self._ordered_commits[branch] = [''] if is_default_branch else []
-                self._ordered_revisions[branch] = [0] if is_default_branch else []
 
             # If we aren't on the default branch, we will need the default branch to determine when
             # our  branch  intersects with the default branch.
-            if not is_default_branch:
-                self.populate(branch=self.repo.default_branch, remote=self.repo.default_remote)
-                self.populate(branch=self.repo.default_branch)
+            default_branch = self.repo.default_branch
+            if branch != default_branch:
+                self.populate(branch=default_branch)
+                self._fill_branch(default_branch)
+            self._last_populated[branch] = time.time()
+            self._fill_branch(branch)
+
+            changed = False
+            stale = False
+            for remote in self._remotes_for(branch):
+                key = '{}/{}'.format(remote, branch)
+                existing = self._ordered_commits.get(key, [])
+                if not self._populate(key):
+                    continue
+                changed = True
+                stale |= existing != self._ordered_commits[key][:len(existing)]
+
+                # Other copies of this branch may share the history we just found
+                self._fill(key)
+
+            if not changed:
+                return
+
+            # Commits which are no longer on a branch (and anything branched from them) have stale identifiers
+            if stale:
+                self._reset()
+                self._fill_branch(branch)
+            self._save()
+
+        def _history_through(self, key: str, hash: str) -> tuple[list[str], list[int | None]] | None:
+            # Any copy of a branch which contains a commit shares that branch's history up to that commit, regardless of which remote it came from
+            branch = key.partition('/')[2]
+            parsed = Commit._parse_identifier(self._hash_to_identifiers.get(hash))
+            if not parsed or parsed[2] != branch:
+                return None
+            index = parsed[1]
+            for candidate in [key] + self._keys_for(branch):
+                commits = self._ordered_commits.get(candidate, [])
+                if len(commits) > index and commits[index] == hash:
+                    return commits[:index + 1], self._ordered_revisions[candidate][:index + 1]
+            return None
+
+        def _populate(self, key: str) -> bool:
+            remote, _, branch = key.partition('/')
+            default_branch = self.repo.default_branch
+            is_default_branch = branch == default_branch
+
+            tip = run(
+                [self.repo.executable(), 'rev-parse', 'refs/remotes/{}'.format(key)],
+                cwd=self.repo.root_path, capture_output=True, encoding='utf-8',
+            )
+            if tip.returncode:
+                return False
+            if self._ordered_commits.get(key, [None])[-1] == tip.stdout.strip():
+                return False
+
+            # If we already know about the tip, this copy of the branch is behind another copy and we don't need to walk it
+            shared = self._history_through(key, tip.stdout.strip())
+            if shared:
+                self._ordered_commits[key], self._ordered_revisions[key] = shared
+                return True
+
             hashes: list[str] = []
             revisions: list[int | None] = []
 
-            def _append(branch: str, hash: str, revision: int | None = None) -> bool:
+            def _append(hash: str, revision: int | None = None) -> bool:
                 hashes.append(hash)
                 revisions.append(revision)
-                identifier = self._hash_to_identifiers.get(hash, '')
-                assert identifier is not None  # get() returns the default we provided
-                assert default_branch is not None  # endswith(None) would raise a TypeError
-                return identifier.endswith(default_branch) or identifier.endswith(branch)
+                identifier = self._hash_to_identifiers.get(hash)
+                return identifier is not None and identifier.split('@')[-1] in (default_branch, branch)
 
             intersected = False
-            self._last_populated[branch] = time.time()
             with subprocess.Popen(
-                [self.repo.executable(), '--no-replace-objects', 'log', '{}/{}'.format(remote, branch) if remote else branch, '--no-decorate', '--date=unix', '--'],
+                [self.repo.executable(), '--no-replace-objects', 'log', 'refs/remotes/{}'.format(key), '--no-decorate', '--date=unix', '--'],
                 cwd=self.repo.root_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -151,7 +260,7 @@ class Git(Scm):
             ) as log:
                 try:
                     if log.poll():
-                        raise self.repo.Exception("Failed to construct branch history for '{}'".format(branch))
+                        raise self.repo.Exception("Failed to construct branch history for '{}'".format(key))
 
                     hash = None
                     revision = None
@@ -167,7 +276,7 @@ class Git(Scm):
                             line = log.stdout.readline()
                             continue
 
-                        if hash and _append(branch, hash, revision=revision):
+                        if hash and _append(hash, revision=revision):
                             hash = None
                             intersected = True
                             break
@@ -177,70 +286,42 @@ class Git(Scm):
                         line = log.stdout.readline()
 
                     if hash:
-                        intersected = _append(branch, hash, revision=revision)
+                        intersected = _append(hash, revision=revision)
 
                     if log.poll():
-                        return
+                        return False
                 finally:
                     log.kill()
 
-            if not hashes or intersected and len(hashes) <= 1:
-                return
-
+            if not hashes:
+                return False
             hashes.reverse()
             revisions.reverse()
 
-            intersected = False
-            order = len(self._ordered_commits[branch]) - 1
-            while order > 0:
-                if hashes[0] == self._ordered_commits[branch][order]:
-                    order -= 1
-                    intersected = True
-                    break
-                order -= 1
-            if intersected or branch == self.repo.default_branch:
-                self._ordered_commits[branch] = self._ordered_commits[branch][:order + 1] + hashes
-                self._ordered_revisions[branch] = self._ordered_revisions[branch][:order + 1] + revisions
-            else:
-                self._ordered_commits[branch] = hashes
-                self._ordered_revisions[branch] = revisions
-            self._fill(branch)
+            # We stopped at a commit we already know about, either the branch point of a production branch or a commit on another copy of this branch
+            prefix: list[str] = []
+            prefix_revisions: list[int | None] = []
+            if intersected:
+                shared = self._history_through(key, hashes[0])
+                if shared:
+                    prefix, prefix_revisions = shared[0][:-1], shared[1][:-1]
+                # Only a commit on the default branch can be a branch point, other intersections need shared history
+                elif (self._hash_to_identifiers.get(hashes[0]) or '').split('@')[-1] == branch:
+                    self.repo.log("Failed to find history shared with '{}'".format(key))
+                    return False
+            elif is_default_branch:
+                prefix = ['']
+                prefix_revisions = [0]
 
-            try:
-                with open(self.path, 'w') as file:
-                    json.dump(dict(
-                        hashes=self._ordered_commits,
-                        revisions=self._ordered_revisions,
-                    ), file, indent=4)
-            except (IOError, OSError):
-                self.repo.log("Failed to write identifier cache to '{}'".format(self.path))
+            self._ordered_commits[key] = prefix + hashes
+            self._ordered_revisions[key] = prefix_revisions + revisions
+            return True
 
-        def clear(self, branch: str | None) -> None:
-            caches: list[dict[str, Any]] = [self._ordered_commits, self._ordered_revisions, self._last_populated]
-            for d in caches:
-                if branch in d:
-                    del d[branch]
-
-            self._hash_to_identifiers = NestedFuzzyDict(primary_size=6)
-            self._revisions_to_identifiers = {}
-
-            default_branch = self.repo.default_branch
-            if default_branch not in self._ordered_commits:
-                return
-            self._fill(default_branch)
-            for branch in self._ordered_commits.keys():
-                if branch == default_branch:
-                    continue
-                self._fill(branch)
-
-            try:
-                with open(self.path, 'w') as file:
-                    json.dump(dict(
-                        hashes=self._ordered_commits,
-                        revisions=self._ordered_revisions,
-                    ), file, indent=4)
-            except (IOError, OSError):
-                self.repo.log("Failed to write identifier cache to '{}'".format(self.path))
+        def _lookup(self, table: dict[str, list[Any]], branch: str, b_count: int) -> Any:
+            for key in self._keys_for(branch):
+                if len(table.get(key, [])) > b_count:
+                    return table[key][b_count]
+            return None
 
         def to_hash(self, revision: int | str | None = None, identifier: str | None = None, populate: bool = True, branch: str | None = None) -> str | None:
             if revision:
@@ -250,14 +331,16 @@ class Git(Scm):
                 return None
 
             _, b_count, branch = parts
-            if b_count < 0:
+            if b_count < 0 or not branch:
                 return None
-            if branch in self._ordered_commits and len(self._ordered_commits[branch]) > b_count:
-                return self._ordered_commits[branch][b_count]
+            result: str | None = self._lookup(self._ordered_commits, branch, b_count)
+            if result:
+                return result
 
             self.load()
-            if branch in self._ordered_commits and len(self._ordered_commits[branch]) > b_count:
-                return self._ordered_commits[branch][b_count]
+            result = self._lookup(self._ordered_commits, branch, b_count)
+            if result:
+                return result
             if populate:
                 self.populate(branch=branch)
                 return self.to_hash(identifier=identifier, populate=False)
@@ -271,14 +354,16 @@ class Git(Scm):
                 return None
 
             _, b_count, branch = parts
-            if b_count < 0:
+            if b_count < 0 or not branch:
                 return None
-            if branch in self._ordered_revisions and len(self._ordered_revisions[branch]) > b_count:
-                return self._ordered_revisions[branch][b_count]
+            result: int | None = self._lookup(self._ordered_revisions, branch, b_count)
+            if result:
+                return result
 
             self.load()
-            if branch in self._ordered_revisions and len(self._ordered_revisions[branch]) > b_count:
-                return self._ordered_revisions[branch][b_count]
+            result = self._lookup(self._ordered_revisions, branch, b_count)
+            if result:
+                return result
             if populate:
                 self.populate(branch=branch)
                 return self.to_revision(identifier=identifier, populate=False)
@@ -287,33 +372,33 @@ class Git(Scm):
         def to_identifier(self, hash: str | None = None, revision: int | str | None = None, populate: bool = True, branch: str | None = None) -> str | None:
             revision = Commit._parse_revision(revision, do_assert=False)
             if revision:
-                if revision in self._revisions_to_identifiers:
-                    return self._revisions_to_identifiers[revision]
+                parsed_revision = revision
 
-                self.load()
-                if revision in self._revisions_to_identifiers:
-                    return self._revisions_to_identifiers[revision]
-                if populate:
-                    self.populate(branch=branch)
-                    return self.to_identifier(revision=revision, populate=False)
-                return None
+                def get() -> str | None:
+                    return self._revisions_to_identifiers.get(parsed_revision)
 
-            hash = Commit._parse_hash(hash, do_assert=False)
-            if hash:
-                try:
-                    candidate = self._hash_to_identifiers.get(hash)
-                except KeyError:  # Means the hash wasn't specific enough
+            else:
+                parsed_hash = Commit._parse_hash(hash, do_assert=False)
+                if not parsed_hash:
                     return None
-                if candidate:
-                    return candidate
 
-                self.load()
-                candidate = self._hash_to_identifiers.get(hash)
-                if candidate:
-                    return candidate
-                if populate:
-                    self.populate(branch=branch)
-                    return self.to_identifier(hash=hash, populate=False)
+                def get() -> str | None:
+                    try:
+                        return self._hash_to_identifiers.get(parsed_hash)
+                    except KeyError:  # Means the hash wasn't specific enough
+                        return None
+
+            candidate = self._search(get, branch)
+            if candidate:
+                return candidate
+
+            self.load()
+            candidate = self._search(get, branch)
+            if candidate:
+                return candidate
+            if populate:
+                self.populate(branch=branch)
+                return self.to_identifier(hash=hash, revision=revision, populate=False, branch=branch)
             return None
 
 
@@ -417,8 +502,8 @@ class Git(Scm):
             classifier=classifier,
         )
         self._branch: str | None = None
-        self.cache = self.Cache(self) if self.root_path and cached else None
         self.default_remote = 'origin'
+        self.cache = self.Cache(self) if self.root_path and cached else None
         if not self.root_path:
             raise OSError('Provided path {} is not a git repository'.format(path))
 
@@ -492,7 +577,7 @@ class Git(Scm):
 
     @property
     @decorators.Memoize()
-    def default_branch(self) -> str | None:
+    def default_branch(self) -> str:
         for name in ['HEAD', 'main', 'master']:
             result = run([self.executable(), 'rev-parse', '--symbolic-full-name', 'refs/remotes/{}/{}'.format(self.default_remote, name)],
                          cwd=self.path, capture_output=True, encoding='utf-8')
@@ -502,11 +587,9 @@ class Git(Scm):
                 return s[len('refs/remotes/{}/'.format(self.default_remote)):]
 
         candidates = self.branches
-        if 'main' in candidates:
-            return 'main'
-        if 'master' in candidates:
+        if 'master' in candidates and 'main' not in candidates:
             return 'master'
-        return None
+        return 'main'
 
     @property
     def branch(self) -> str | None:
@@ -1186,7 +1269,7 @@ class Git(Scm):
 
         # Map any candidate default branch to the one used by this repository
         if argument in self.DEFAULT_BRANCHES:
-            argument = self.default_branch or argument
+            argument = self.default_branch
 
         # See if the argument the user specified is a recognized commit format
         parsed_commit = Commit.parse(argument, do_assert=False)
@@ -1379,8 +1462,6 @@ class Git(Scm):
             command + ['rebase', '--onto', target_ref, base_ref or target_ref, head_ref],
             cwd=self.root_path,
         ).returncode
-        if self.cache:
-            self.cache.clear(head_ref if head_ref != 'HEAD' else self.branch)
         if code or not recommit:
             return code
 
@@ -1432,8 +1513,6 @@ class Git(Scm):
             elif rebase is False:
                 command += ['--rebase=False']
             code = run(command, cwd=self.root_path).returncode
-        if self.cache and rebase and branch != self.branch:
-            self.cache.clear(self.branch)
 
         if not code and branch and rebase:
             assert commit is not None  # Computed above, because branch is set
