@@ -97,6 +97,18 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& d
         return;
     }
 
+    // 3. Let document be the calling context's Document.
+    // 4. Let origin be the origin of document.
+    // 5. Let promise be a new promise.
+    // 6. Run the following steps in parallel:
+    // 6.1. If keySystem is not one of the Key Systems supported by the user agent, reject promise with a NotSupportedError.
+    //      String comparison is case-sensitive.
+    if (!CDM::supportsKeySystem(keySystem)) {
+        infoLog(logger, identifier, "Rejected: keySystem(", keySystem, ") not supported");
+        promise->reject(ExceptionCode::NotSupportedError);
+        return;
+    }
+
     auto request = MediaKeySystemRequest::create(document, keySystem, WTF::move(promise));
     request->setAllowCallback([keySystem, supportedConfigurations = WTF::move(supportedConfigurations), weakDocument = WeakPtr { document }, logger = WTF::move(logger), identifier = WTF::move(identifier)](String&& mediaKeysHashSalt, RefPtr<DeferredPromise>&& promise) mutable {
         RefPtr document = weakDocument.get();
@@ -107,19 +119,6 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& d
         }
 
         document->postTask([promise = WTF::move(promise), keySystem, logger = WTF::move(logger), identifier = WTF::move(identifier), supportedConfigurations = WTF::move(supportedConfigurations), mediaKeysHashSalt = WTF::move(mediaKeysHashSalt)] (ScriptExecutionContext& context) mutable {
-            // 3. Let document be the calling context's Document.
-            // 4. Let origin be the origin of document.
-            // 5. Let promise be a new promise.
-            // 6. Run the following steps in parallel:
-            // 6.1. If keySystem is not one of the Key Systems supported by the user agent, reject promise with a NotSupportedError.
-            //      String comparison is case-sensitive.
-            if (!CDM::supportsKeySystem(keySystem)) {
-                infoLog(logger, identifier, "Rejected: keySystem(", keySystem, ") not supported");
-                if (promise)
-                    promise->reject(ExceptionCode::NotSupportedError);
-                return;
-            }
-
             // 6.2. Let implementation be the implementation of keySystem.
             auto& document = downcast<Document>(context);
             auto implementation = CDM::create(document, keySystem, mediaKeysHashSalt);
