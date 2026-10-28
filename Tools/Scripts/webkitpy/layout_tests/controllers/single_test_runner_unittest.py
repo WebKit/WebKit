@@ -25,9 +25,28 @@ import unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.controllers.single_test_runner import SingleTestRunner
+from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test_input import Test, TestInput
+from webkitpy.layout_tests.run_webkit_tests import parse_args
 from webkitpy.port.driver import DriverOutput
 from webkitpy.port.test import TestPort
+
+
+class TimeoutRecordingDriver:
+    def __init__(self, outputs, host):
+        self.host = host
+        self.outputs = list(outputs)
+        self.events = []
+
+    def run_test(self, driver_input, stop_when_done):
+        self.events.append('run {}'.format(driver_input.timeout))
+        return self.outputs.pop(0)
+
+    def start(self):
+        pass
+
+    def stop(self):
+        self.events.append('stop')
 
 
 class TestDriver:
@@ -62,6 +81,79 @@ class SingleTestRunnerTest(unittest.TestCase):
 
         test_input = TestInput(Test(test_name))
         return SingleTestRunner(port, port._options, results_directory, worker_name, driver, test_input, True)
+
+    def _run_with_expected_failure_time_out(self, expected_results, outputs, baseline=b'PASS\n', extra_args=()):
+        options, _ = parse_args(['--expected-failure-time-out-ms', '6000'] + list(extra_args))
+        port = TestPort(MockHost(), options=options)
+        expected_text_path = None
+        if baseline is not None:
+            self._add_file(port, 'known/test-expected.txt', baseline)
+            expected_text_path = port.host.filesystem.join(port.layout_tests_dir(), 'known/test-expected.txt')
+        self.driver = TimeoutRecordingDriver(outputs, port.host)
+        test = Test('known/test.html', expected_text_path=expected_text_path)
+        test_input = TestInput(test, timeout='30000', expected_results=frozenset(expected_results))
+        result = SingleTestRunner(port, port._options, 'layout-test-results', '', self.driver, test_input, False).run()
+        self.actual_text_was_written = port.host.filesystem.exists('layout-test-results/known/test-actual.txt')
+        return [event.split()[1] for event in self.driver.events if event.startswith('run')], result
+
+    def test_expected_failure_runs_once_with_short_timeout(self):
+        timeouts, result = self._run_with_expected_failure_time_out({test_expectations.FAIL}, [DriverOutput('FAIL\n', None, None, None, test_time=1)])
+        self.assertEqual(timeouts, ['6000'])
+        self.assertEqual(test_expectations.TEXT, result.type)
+        self.assertTrue(self.actual_text_was_written)
+
+    def test_unexpected_result_cut_short_runs_again_with_full_timeout(self):
+        timeouts, result = self._run_with_expected_failure_time_out({test_expectations.FAIL}, [DriverOutput(None, None, None, None, timeout=True, test_time=6), DriverOutput('FAIL\n', None, None, None, test_time=20)])
+        self.assertEqual(timeouts, ['6000', '30000'])
+        self.assertEqual(test_expectations.TEXT, result.type)
+
+    def test_driver_restarts_after_short_timeout_before_running_again(self):
+        self._run_with_expected_failure_time_out({test_expectations.FAIL}, [DriverOutput(None, None, None, None, timeout=True, test_time=6), DriverOutput('FAIL\n', None, None, None, test_time=20)])
+        self.assertEqual(self.driver.events, ['run 6000', 'stop', 'run 30000'])
+
+    def test_unexpected_result_before_short_timeout_is_not_run_again(self):
+        timeouts, result = self._run_with_expected_failure_time_out({test_expectations.TIMEOUT}, [DriverOutput('PASS\n', None, None, None, test_time=1)])
+        self.assertEqual(timeouts, ['6000'])
+        self.assertEqual(test_expectations.PASS, result.type)
+
+    def test_crash_is_reported_without_running_again(self):
+        for test_time in (1, 5.9):
+            timeouts, result = self._run_with_expected_failure_time_out({test_expectations.FAIL}, [DriverOutput(None, None, None, None, crash=True, test_time=test_time), DriverOutput('FAIL\n', None, None, None, test_time=1)])
+            self.assertEqual(timeouts, ['6000'])
+            self.assertEqual(test_expectations.CRASH, result.type)
+
+    def test_run_again_keeps_no_results_from_short_attempt(self):
+        baseline = b'Harness Error (TIMEOUT), message = null\n'
+        timeouts, result = self._run_with_expected_failure_time_out({test_expectations.PASS}, [DriverOutput('Harness Error (TIMEOUT), message = different\n', None, None, None, test_time=5.5), DriverOutput(baseline.decode(), None, None, None, test_time=27)], baseline=baseline)
+        self.assertEqual(timeouts, ['6000', '30000'])
+        self.assertEqual(test_expectations.PASS, result.type)
+        self.assertFalse(self.actual_text_was_written)
+
+    def test_flaky_test_keeps_full_timeout(self):
+        timeouts, _ = self._run_with_expected_failure_time_out({test_expectations.PASS, test_expectations.TIMEOUT}, [DriverOutput('PASS\n', None, None, None)])
+        self.assertEqual(timeouts, ['30000'])
+
+    def test_passing_test_keeps_full_timeout(self):
+        timeouts, _ = self._run_with_expected_failure_time_out({test_expectations.PASS}, [DriverOutput('PASS\n', None, None, None)])
+        self.assertEqual(timeouts, ['30000'])
+
+    def test_recorded_harness_timeout_runs_with_short_timeout(self):
+        baseline = b'Harness Error (TIMEOUT), message = null\n'
+        timeouts, result = self._run_with_expected_failure_time_out({test_expectations.PASS}, [DriverOutput(baseline.decode(), None, None, None, test_time=5.5)], baseline=baseline)
+        self.assertEqual(timeouts, ['6000'])
+        self.assertEqual(test_expectations.PASS, result.type)
+
+    def test_full_timeout_when_resetting_results_without_timeouts_or_with_site_isolation(self):
+        baseline = b'Harness Error (TIMEOUT), message = null\n'
+        for extra_args in (['--reset-results'], ['--no-timeout'], ['--site-isolation']):
+            timeouts, _ = self._run_with_expected_failure_time_out({test_expectations.PASS}, [DriverOutput(baseline.decode(), None, None, None, test_time=27)] * 2, baseline=baseline, extra_args=extra_args)
+            self.assertEqual(set(timeouts), {'30000'}, extra_args)
+
+    def test_full_timeout_when_a_new_baseline_would_be_written(self):
+        timeouts, _ = self._run_with_expected_failure_time_out({test_expectations.FAIL}, [DriverOutput('FAIL\n', None, None, None, test_time=20)], baseline=None)
+        self.assertEqual(timeouts, ['30000'])
+        timeouts, _ = self._run_with_expected_failure_time_out({test_expectations.FAIL}, [DriverOutput('FAIL\n', None, None, None, test_time=1)], baseline=None, extra_args=['--no-new-test-results'])
+        self.assertEqual(timeouts, ['6000'])
 
     def test_fuzzy_matching_values(self):
         single_test_runner = self._make_test_runner('fuzzy-test.html')
