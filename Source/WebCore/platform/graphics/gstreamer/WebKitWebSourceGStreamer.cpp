@@ -1047,8 +1047,22 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
         && (contentLength = parseInteger<uint64_t>(response.httpHeaderField(HTTPHeaderName::ContentLength))))
         length = contentLength.value();
 
-    if (length > 0 && members->requestedPosition && response.httpStatusCode() == httpStatus206PartialContent)
+    // A 206 without Content-Length (for instance sent chunked) still carries the full resource size in
+    // Content-Range: bytes first-last/total. Use it, otherwise the resource is treated as unseekable.
+    bool isLengthFromContentRange = false;
+    if (!length && response.httpStatusCode() == httpStatus206PartialContent
+        && !response.httpHeaderFields().contains(HTTPHeaderName::ContentEncoding)) {
+        const auto& contentRange = response.contentRange();
+        if (contentRange.isValid() && contentRange.instanceLength() != ParsedContentRange::unknownLength) {
+            length = contentRange.instanceLength();
+            isLengthFromContentRange = true;
+        }
+    }
+
+    if (length > 0 && members->requestedPosition && response.httpStatusCode() == httpStatus206PartialContent
+        && !isLengthFromContentRange) {
         length += members->requestedPosition;
+    }
 
     GUniquePtr<GstStructure> httpHeaders(gst_structure_new_empty("http-headers"));
 
