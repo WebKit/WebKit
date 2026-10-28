@@ -751,22 +751,10 @@
 
     "imported/w3c/webdriver/tests/classic/perform_actions/pointer_mouse.py": {
         "subtests": {
-            "test_click_element_in_shadow_tree[inner-open]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_click_element_in_shadow_tree[outer-open]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_context_menu_at_coordinates": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
             "test_down_closes_browsing_context[with up]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
             "test_down_closes_browsing_context[without up]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_middle_click": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
             "test_move_to_origin_position_within_frame[pointer]": {

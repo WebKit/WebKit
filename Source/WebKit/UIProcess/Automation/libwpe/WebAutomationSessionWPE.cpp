@@ -88,7 +88,7 @@ OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(We
 }
 
 #if ENABLE(WPE_PLATFORM)
-static unsigned libWPEStateModifierForWPEButton(unsigned button)
+static unsigned stateModifierForWPEPlatformButton(unsigned button)
 {
     uint32_t state = 0;
 
@@ -118,7 +118,7 @@ static unsigned libWPEStateModifierForWPEButton(unsigned button)
 static void doMouseEvent(WebPageProxy& page, const WebCore::IntPoint& location, unsigned button, bool isPressed, uint32_t modifiers)
 {
     auto* view = page.wpeView();
-    auto buttonModifiers =  libWPEStateModifierForWPEButton(button);
+    auto buttonModifiers = stateModifierForWPEPlatformButton(button);
     if (isPressed)
         modifiers |= buttonModifiers;
     else
@@ -152,20 +152,20 @@ static uint32_t modifiersToEventState(OptionSet<WebEventModifier> modifiers)
     return state;
 }
 
-static unsigned libWPEMouseButtonToWPEButton(MouseButton button)
+static unsigned mouseButtonToWPEPlatformButton(MouseButton button)
 {
     // FIXME: Add support for the forward and backward mouse buttons.
 
     switch (button) {
     case MouseButton::None:
     case MouseButton::Left:
-        return 1;
+        return WPE_BUTTON_PRIMARY;
     case MouseButton::Middle:
-        return 3;
+        return WPE_BUTTON_MIDDLE;
     case MouseButton::Right:
-        return 2;
+        return WPE_BUTTON_SECONDARY;
     default:
-        return 1;
+        return WPE_BUTTON_PRIMARY;
     }
 }
 #endif // ENABLE(WPE_PLATFORM)
@@ -184,8 +184,8 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
 #endif
 
 #if ENABLE(WPE_PLATFORM)
-    unsigned wpeButton = libWPEMouseButtonToWPEButton(button);
-    auto modifier = libWPEStateModifierForWPEButton(wpeButton);
+    unsigned wpeButton = mouseButtonToWPEPlatformButton(button);
+    auto modifier = stateModifierForWPEPlatformButton(wpeButton);
     uint32_t state = modifiersToEventState(keyModifiers) | m_currentModifiers;
 
     switch (interaction) {

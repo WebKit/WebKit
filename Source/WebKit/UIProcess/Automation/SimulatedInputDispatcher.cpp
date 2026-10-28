@@ -409,9 +409,11 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
                         return;
                     }
 
+                    auto button = b.mouseInteraction == MouseInteraction::Up && !b.pressedMouseButton ? a.pressedMouseButton : b.pressedMouseButton;
+
 #if !LOG_DISABLED
                     String interactionName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.mouseInteraction.value());
-                    String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.pressedMouseButton.value_or(MouseButton::None));
+                    String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(button.value_or(MouseButton::None));
                     LOG_WITH_STREAM(Automation, stream << "SimulatedInputDispatcher["_s << this << "]: simulating "_s << pointerType << " "_s << interactionName << "[button="_s << mouseButtonName << "] @ ("_s << b.location.value().x() << ", "_s << b.location.value().y() << ") for transition to "_s << m_keyframeIndex << "."_s << m_inputSourceStateIndex);
 #endif
 
@@ -428,9 +430,10 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 #endif
                     } else {
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-                        m_client.simulateMouseInteraction(protect(m_page), b.mouseInteraction.value(), b.pressedMouseButton.value_or(MouseButton::None), b.location.value(), pointerType, WTF::move(eventDispatchFinished));
+                        m_client.simulateMouseInteraction(protect(m_page), b.mouseInteraction.value(), button.value_or(MouseButton::None), b.location.value(), pointerType, WTF::move(eventDispatchFinished));
 #else
                         UNUSED_VARIABLE(pointerType);
+                        UNUSED_VARIABLE(button);
 #endif
                     }
                 } else
