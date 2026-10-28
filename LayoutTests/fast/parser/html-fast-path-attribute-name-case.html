@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that the HTML parser keeps attribute names with '-', digits or '_' as written, and lowercases attribute names with upper case letters.");
+
+var container = document.createElement("div");
+
+function attributeNames(markup) {
+    container.innerHTML = markup;
+    if (!container.firstElementChild)
+        return "(no element)";
+    return container.firstElementChild.getAttributeNames().join(" ");
+}
+
+function attributeNames16Bit(markup) {
+    return attributeNames(markup + "\u2192");
+}
+
+debug("Names without upper case letters are kept as written.");
+shouldBeEqualToString("attributeNames('<button aria-expanded=false aria-controls=more-menu>More</button>')", "aria-expanded aria-controls");
+shouldBeEqualToString("attributeNames16Bit('<button aria-expanded=false aria-controls=more-menu>More</button>')", "aria-expanded aria-controls");
+shouldBeEqualToString("attributeNames('<input data-validate_on=blur data-step2=10>')", "data-validate_on data-step2");
+shouldBeEqualToString("attributeNames16Bit('<input data-validate_on=blur data-step2=10>')", "data-validate_on data-step2");
+shouldBeEqualToString("attributeNames('<div data-hidden></div>')", "data-hidden");
+shouldBeEqualToString("attributeNames16Bit('<div data-hidden></div>')", "data-hidden");
+shouldBeEqualToString("attributeNames('<input data-hidden/>')", "data-hidden");
+shouldBeEqualToString("attributeNames16Bit('<input data-hidden/>')", "data-hidden");
+
+debug("Names with upper case letters are lowercased.");
+shouldBeEqualToString("attributeNames('<div tabIndex=-1 ARIA-LABELLEDBY=title data-dismissOnEscape></div>')", "tabindex aria-labelledby data-dismissonescape");
+shouldBeEqualToString("attributeNames16Bit('<div tabIndex=-1 ARIA-LABELLEDBY=title data-dismissOnEscape></div>')", "tabindex aria-labelledby data-dismissonescape");
+shouldBeEqualToString("attributeNames('<input readOnly Data-Field_Name=\"nickname\"/>')", "readonly data-field_name");
+shouldBeEqualToString("attributeNames16Bit('<input readOnly Data-Field_Name=\"nickname\"/>')", "readonly data-field_name");
+
+debug("Markup that ends inside an attribute name creates no element.");
+shouldBeEqualToString("attributeNames('<div data-loading')", "(no element)");
+shouldBeEqualToString("attributeNames('<div data-Loading')", "(no element)");
+</script>
+</body>
+</html>

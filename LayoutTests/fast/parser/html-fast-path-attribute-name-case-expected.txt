@@ -1,0 +1,26 @@
+Tests that the HTML parser keeps attribute names with '-', digits or '_' as written, and lowercases attribute names with upper case letters.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Names without upper case letters are kept as written.
+PASS attributeNames('<button aria-expanded=false aria-controls=more-menu>More</button>') is "aria-expanded aria-controls"
+PASS attributeNames16Bit('<button aria-expanded=false aria-controls=more-menu>More</button>') is "aria-expanded aria-controls"
+PASS attributeNames('<input data-validate_on=blur data-step2=10>') is "data-validate_on data-step2"
+PASS attributeNames16Bit('<input data-validate_on=blur data-step2=10>') is "data-validate_on data-step2"
+PASS attributeNames('<div data-hidden></div>') is "data-hidden"
+PASS attributeNames16Bit('<div data-hidden></div>') is "data-hidden"
+PASS attributeNames('<input data-hidden/>') is "data-hidden"
+PASS attributeNames16Bit('<input data-hidden/>') is "data-hidden"
+Names with upper case letters are lowercased.
+PASS attributeNames('<div tabIndex=-1 ARIA-LABELLEDBY=title data-dismissOnEscape></div>') is "tabindex aria-labelledby data-dismissonescape"
+PASS attributeNames16Bit('<div tabIndex=-1 ARIA-LABELLEDBY=title data-dismissOnEscape></div>') is "tabindex aria-labelledby data-dismissonescape"
+PASS attributeNames('<input readOnly Data-Field_Name="nickname"/>') is "readonly data-field_name"
+PASS attributeNames16Bit('<input readOnly Data-Field_Name="nickname"/>') is "readonly data-field_name"
+Markup that ends inside an attribute name creates no element.
+PASS attributeNames('<div data-loading') is "(no element)"
+PASS attributeNames('<div data-Loading') is "(no element)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

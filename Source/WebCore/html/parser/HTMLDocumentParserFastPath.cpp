@@ -242,6 +242,11 @@ template<typename CharacterType> static inline bool LEGACY_NODELETE isValidAttri
     return isASCIIAlphanumeric(character) || character == '-' || character == '_';
 }
 
+template<typename CharacterType> static inline bool LEGACY_NODELETE isNonUppercaseAttributeNameChar(CharacterType character)
+{
+    return isASCIILower(character) || isASCIIDigit(character) || character == '-' || character == '_';
+}
+
 template<typename CharacterType> static inline bool LEGACY_NODELETE isCharAfterTagNameOrAttribute(CharacterType character)
 {
     return character == ' ' || character == '>' || isASCIIWhitespace(character) || character == '/';
@@ -750,18 +755,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     QualifiedName scanAttributeName()
     {
-        // First look for all lower case. This path doesn't require any mapping of
-        // input. This path could handle other valid attribute name chars, but they
-        // are not as common, so it only looks for lowercase.
+        // First look for a name without upper case. This path doesn't require any mapping of input.
         auto start = m_parsingBuffer.span();
-        skipWhile<isASCIILower>(m_parsingBuffer);
+        skipWhile<isNonUppercaseAttributeNameChar>(m_parsingBuffer);
         if (m_parsingBuffer.atEnd()) [[unlikely]]
             return didFail(HTMLFastPathResult::FailedEndOfInputReached, nullQName());
 
         CharacterSpan attributeName;
-        if (isValidAttributeNameChar(*m_parsingBuffer)) [[unlikely]] {
-            // At this point name does not contain lowercase. It may contain upper-case,
-            // which requires mapping. Assume it does.
+        if (isASCIIUpper(*m_parsingBuffer)) [[unlikely]] {
             m_parsingBuffer.setPosition(start);
             m_charBuffer.shrink(0);
             // isValidAttributeNameChar() returns false if end of input is reached.
