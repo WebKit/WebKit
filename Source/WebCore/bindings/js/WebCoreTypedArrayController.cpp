@@ -28,7 +28,9 @@
 
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMGlobalObject.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/JSArrayBuffer.h>
 #include <JavaScriptCore/JSCInlines.h>
 
@@ -61,7 +63,14 @@ bool WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots
     if (reason) [[unlikely]]
         *reason = "ArrayBuffer is opaque root"_s;
     auto& wrapper = *downcast<JSC::JSArrayBuffer>(handle.slot()->asCell());
-    return visitor.containsOpaqueRoot(wrapper.impl());
+    return containsWebCoreOpaqueRoot(visitor, WebCoreOpaqueRoot { wrapper.impl() });
+}
+
+bool WebCoreTypedArrayController::JSArrayBufferViewOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor& visitor, ASCIILiteral* reason)
+{
+    if (reason) [[unlikely]]
+        *reason = "ArrayBufferView is opaque root"_s;
+    return containsWebCoreOpaqueRoot(visitor, WebCoreOpaqueRoot { static_cast<JSC::ArrayBufferView*>(context) });
 }
 
 void WebCoreTypedArrayController::JSArrayBufferOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)

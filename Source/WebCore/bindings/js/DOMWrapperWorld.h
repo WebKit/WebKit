@@ -24,6 +24,11 @@
 #include <WebCore/JSDOMGlobalObject.h>
 #include <wtf/WeakHashSet.h>
 
+namespace JSC {
+class ArrayBufferView;
+class JSArrayBufferView;
+}
+
 namespace WebCore {
 
 class JSEventListener;
@@ -94,13 +99,20 @@ public:
     void addEventListener(JSEventListener&);
     void removeEventListener(JSEventListener&);
 
+    JSC::JSArrayBufferView* arrayBufferViewWrapper(JSC::ArrayBufferView&) const;
+    void cacheArrayBufferViewWrapper(JSC::ArrayBufferView&, JSC::JSArrayBufferView&);
+
 protected:
     DOMWrapperWorld(JSC::VM&, Type, const String& name);
 
 private:
+    struct ArrayBufferViewWrapper;
+    class ArrayBufferViewWrapperOwner;
+
     JSC::VM& m_vm;
     HashSet<WindowProxy*> m_jsWindowProxies;
     DOMObjectWrapperMap m_wrappers;
+    HashMap<void*, std::unique_ptr<ArrayBufferViewWrapper>> m_arrayBufferViewWrappers;
 
     WeakHashSet<JSEventListener> m_eventListeners;
 

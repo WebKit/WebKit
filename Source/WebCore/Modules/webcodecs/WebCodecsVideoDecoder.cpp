@@ -306,6 +306,10 @@ void WebCodecsVideoDecoder::isConfigSupported(ScriptExecutionContext& context, W
         return;
     }
 
+    // https://w3c.github.io/webcodecs/#clone-configuration
+    if (config.description)
+        config.description = BufferSource { config.description->span() };
+
     if (!isSupportedDecoderCodec(config.codec, context.settingsValues())) {
         promise->template resolve<IDLDictionary<WebCodecsVideoDecoderSupport>>(WebCodecsVideoDecoderSupport { false, WTF::move(config) });
         return;

@@ -45,6 +45,7 @@ public:
     bool isAtomicsWaitAllowedOnCurrentThread() override;
 
     JSC::WeakHandleOwner* wrapperOwner() LIFETIME_BOUND { return &m_owner; }
+    JSC::WeakHandleOwner* viewWrapperOwner() LIFETIME_BOUND { return &m_viewOwner; }
 
 private:
     bool isWebCoreTypedArrayController() const final { return true; }
@@ -55,7 +56,13 @@ private:
         void finalize(JSC::Handle<JSC::Unknown>, void* context) override;
     };
 
+    class JSArrayBufferViewOwner : public JSC::WeakHandleOwner {
+    public:
+        bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) override;
+    };
+
     JSArrayBufferOwner m_owner;
+    JSArrayBufferViewOwner m_viewOwner;
     bool m_allowAtomicsWait;
 };
 
