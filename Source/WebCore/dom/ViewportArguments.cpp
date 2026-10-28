@@ -29,6 +29,7 @@
 #include "ViewportArguments.h"
 
 #include "Document.h"
+#include "DocumentQuirks.h"
 #include "FrameDestructionObserverInlines.h"
 #include "IntSize.h"
 #include "LocalFrame.h"
@@ -418,7 +419,8 @@ void setViewportFeature(ViewportArguments& arguments, StringView key, StringView
 
 void setViewportFeature(ViewportArguments& arguments, Document& document, StringView key, StringView value)
 {
-    setViewportFeature(arguments, key, value, document.settings().metaViewportInteractiveWidgetEnabled(), [&](ViewportErrorCode errorCode, const String& message) {
+    bool interactiveWidgetEnabled = document.settings().metaViewportInteractiveWidgetEnabled() && !document.quirks().shouldIgnoreViewportInteractiveWidget();
+    setViewportFeature(arguments, key, value, interactiveWidgetEnabled, [&](ViewportErrorCode errorCode, const String& message) {
         reportViewportWarning(document, errorCode, message);
     });
 }

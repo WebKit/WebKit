@@ -632,6 +632,11 @@ ShouldIgnoreViewportArgumentsToAvoidEnlargedViewQuirk:
   accessor: shouldIgnoreViewportArgumentsToAvoidEnlargedView
   export: true
 
+# gemini.google.com rdar://190477522
+ShouldIgnoreViewportInteractiveWidgetQuirk:
+  available: metaViewport
+  accessor: shouldIgnoreViewportInteractiveWidget
+
 # slack.com rdar://171190689
 ShouldUseDynamicViewportUnitsAsDefaultQuirk:
   available: metaViewport

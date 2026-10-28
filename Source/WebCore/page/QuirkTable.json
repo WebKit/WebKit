@@ -519,6 +519,11 @@
             "behaviors": [{ "id": "NeedsGoogleMapsEmbedManipulationSurfaceQuirk" }]
         },
         {
+            "bugs": ["rdar://190477522"],
+            "matches": ["*://gemini.google.com/*"],
+            "behaviors": [{ "id": "ShouldIgnoreViewportInteractiveWidgetQuirk" }]
+        },
+        {
             "matches": ["*://docs.google.com/*"],
             "behaviors": [
                 { "id": "InputMethodUsesCorrectKeyEventOrder" },

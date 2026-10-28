@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Viewport argument key "interactive-widget" not recognized and ignored.
+PASS internals.layoutViewportRect().height is initialLayoutViewportHeight
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
