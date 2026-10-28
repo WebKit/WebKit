@@ -155,11 +155,12 @@ void SVGAnimateMotionElement::startAnimation()
 
 void SVGAnimateMotionElement::stopAnimation(SVGElement* targetElement)
 {
-    if (!targetElement)
+    RefPtr target = targetElement;
+    if (!target)
         return;
-    if (auto* transform = targetElement->ensureSupplementalTransform())
+    if (auto* transform = target->ensureSupplementalTransform())
         transform->makeIdentity();
-    applyResultsToTarget();
+    applyResultsToTarget(*target);
 }
 
 bool SVGAnimateMotionElement::setFromAndToValues(const String& fromString, const String& toString)
@@ -253,13 +254,8 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned 
     transform->rotate(angle);
 }
 
-void SVGAnimateMotionElement::applyResultsToTarget()
+void SVGAnimateMotionElement::applyResultsToTarget(SVGElement& targetElement)
 {
-    // We accumulate to the target element transform list so there is not much to do here.
-    RefPtr targetElement = this->targetElement();
-    if (!targetElement)
-        return;
-
     auto updateTargetElement = [](SVGElement& element) {
         if (element.document().settings().layerBasedSVGEngineEnabled()) {
             element.updateSVGRendererForElementChange(Style::SVGRendererUpdateType::TransformAttributeOnly);
@@ -270,20 +266,27 @@ void SVGAnimateMotionElement::applyResultsToTarget()
         element.updateSVGRendererForElementChange();
     };
 
-    updateTargetElement(*targetElement);
+    updateTargetElement(targetElement);
 
-    auto* targetSupplementalTransform = targetElement->ensureSupplementalTransform();
+    auto* targetSupplementalTransform = targetElement.ensureSupplementalTransform();
     if (!targetSupplementalTransform)
         return;
 
     // ...except in case where we have additional instances in <use> trees.
-    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(targetElement->instances())) {
+    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(targetElement.instances())) {
         auto* transform = instance->ensureSupplementalTransform();
         if (!transform || *transform == *targetSupplementalTransform)
             continue;
         *transform = *targetSupplementalTransform;
         updateTargetElement(instance);
     }
+}
+
+void SVGAnimateMotionElement::applyResultsToTarget()
+{
+    // We accumulate to the target element transform list so there is not much to do here.
+    if (RefPtr targetElement = this->targetElement())
+        applyResultsToTarget(*targetElement);
 }
 
 std::optional<float> SVGAnimateMotionElement::calculateDistance(const String& fromString, const String& toString)
