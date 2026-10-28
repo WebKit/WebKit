@@ -31,6 +31,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/SiteIsolationUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -3733,6 +3734,7 @@ TEST(ProcessSwap, ClearWebsiteDataWithSuspendedPage)
 
     RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
+    [webViewConfiguration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     RetainPtr handler = adoptNS([[PSONScheme alloc] init]);
     [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:pageCache1Bytes];
     [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:pageCache1Bytes];
@@ -3773,7 +3775,7 @@ TEST(ProcessSwap, ClearWebsiteDataWithSuspendedPage)
     EXPECT_NE(pidAfterLoad2, pidAfterLoad3);
 
     __block bool readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [[webViewConfiguration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -4205,6 +4207,7 @@ TEST(ProcessSwap, NumberOfCachedProcesses)
 
     RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
+    [webViewConfiguration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     RetainPtr handler = adoptNS([[PSONScheme alloc] init]);
 
     const unsigned maxSuspendedPageCount = [processPool _maximumSuspendedPageCount];
@@ -4243,7 +4246,7 @@ TEST(ProcessSwap, NumberOfCachedProcesses)
     EXPECT_FALSE([processPool _hasPrewarmedWebProcess]);
 
     static bool readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [[webViewConfiguration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -6311,8 +6314,7 @@ TEST(ProcessSwap, UseSessionCookiesAfterProcessSwapInNonDefaultPersistentSession
     processPoolConfiguration.get().pageCacheEnabled = NO;
     processPoolConfiguration.get().prewarmsProcessesAutomatically = NO;
 
-    RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    RetainPtr customDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    RetainPtr customDataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
 
     RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
