@@ -34,6 +34,7 @@
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSDictionary;
+OBJC_CLASS NSPresentationIntent;
 OBJC_CLASS NSTextList;
 
 namespace WebCore {
@@ -45,6 +46,24 @@ struct TextList {
 
 #if PLATFORM(COCOA)
     RetainPtr<NSTextList> createTextList() const;
+#endif
+};
+
+// A platform-neutral NSPresentationIntent for a block, without its identity or parent.
+struct BlockPresentationIntent {
+    enum class Kind : uint8_t { Paragraph, Header, OrderedList, UnorderedList, ListItem, CodeBlock, BlockQuote, ThematicBreak };
+
+    Kind kind { Kind::Paragraph };
+    uint8_t headerLevel { 0 };
+    int ordinal { 0 };
+    String languageHint;
+
+    friend bool operator==(const BlockPresentationIntent&, const BlockPresentationIntent&) = default;
+
+#if PLATFORM(COCOA)
+    // Uses the innermost intent, making a list item, or a paragraph in one, its list. Returns null for table kinds,
+    // invalid header levels and list items outside a list.
+    WEBCORE_EXPORT static std::optional<BlockPresentationIntent> fromPresentationIntent(NSPresentationIntent *);
 #endif
 };
 
@@ -63,6 +82,8 @@ struct FontAttributes {
     SubscriptOrSuperscript subscriptOrSuperscript { SubscriptOrSuperscript::None };
     HorizontalAlignment horizontalAlignment { HorizontalAlignment::Left };
     Vector<TextList> textLists;
+    // From the outermost block to the innermost.
+    Vector<BlockPresentationIntent> blockPresentationIntents;
     bool hasUnderline { false };
     bool hasStrikeThrough { false };
     bool hasMultipleFonts { false };

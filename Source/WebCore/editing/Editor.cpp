@@ -123,6 +123,7 @@
 #include "ReplaceSelectionCommand.h"
 #include "ScriptDisallowedScope.h"
 #include "SerializedAttachmentData.h"
+#include "SetBlockPresentationIntentCommand.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SharedBuffer.h"
@@ -1770,6 +1771,31 @@ void Editor::changeSelectionListType()
     Ref document = this->document();
     if (auto type = ChangeListTypeCommand::listConversionType(document))
         ChangeListTypeCommand::create(WTF::move(document), *type)->apply();
+}
+
+void Editor::setBlockPresentationIntent(const BlockPresentationIntent& intent)
+{
+    if (!canEditRichly())
+        return;
+
+    switch (intent.kind) {
+    case BlockPresentationIntent::Kind::Paragraph:
+    case BlockPresentationIntent::Kind::Header:
+    case BlockPresentationIntent::Kind::OrderedList:
+    case BlockPresentationIntent::Kind::UnorderedList:
+    case BlockPresentationIntent::Kind::CodeBlock:
+    case BlockPresentationIntent::Kind::BlockQuote:
+        SetBlockPresentationIntentCommand::create(protect(document()), intent)->apply();
+        revealSelectionAfterEditingOperation();
+        return;
+    case BlockPresentationIntent::Kind::ThematicBreak:
+        command("InsertHorizontalRule"_s).execute();
+        return;
+    case BlockPresentationIntent::Kind::ListItem:
+        // BlockPresentationIntent::fromPresentationIntent() makes a list item its list.
+        ASSERT_NOT_REACHED();
+        return;
+    }
 }
 
 void Editor::simplifyMarkup(Node* startNode, Node* endNode)
@@ -4827,6 +4853,9 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
     );
 
     attributes.textLists = editableTextListsAtPositionInDescendingOrder(document().selection().selection().start());
+#if PLATFORM(COCOA)
+    attributes.blockPresentationIntents = blockPresentationIntentsAtSelectionStart();
+#endif
 
     switch (style->textAlign()) {
     case Style::TextAlign::Right:

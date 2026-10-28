@@ -209,6 +209,24 @@ header: <WebCore/FontAttributes.h>
     bool ordered
 };
 
+[Nested] enum class WebCore::BlockPresentationIntent::Kind : uint8_t {
+    Paragraph,
+    Header,
+    OrderedList,
+    UnorderedList,
+    ListItem,
+    CodeBlock,
+    BlockQuote,
+    ThematicBreak
+};
+
+[CustomHeader] struct WebCore::BlockPresentationIntent {
+    WebCore::BlockPresentationIntent::Kind kind
+    [Validator='*kind == WebCore::BlockPresentationIntent::Kind::Header ? *headerLevel >= 1 && *headerLevel <= 6 : !*headerLevel'] uint8_t headerLevel
+    int ordinal
+    String languageHint
+};
+
 struct WebCore::FontShadow {
     WebCore::Color color;
     WebCore::FloatSize offset;
@@ -223,6 +241,7 @@ struct WebCore::FontShadow {
     WebCore::FontAttributes::SubscriptOrSuperscript subscriptOrSuperscript
     WebCore::FontAttributes::HorizontalAlignment horizontalAlignment
     Vector<WebCore::TextList> textLists
+    Vector<WebCore::BlockPresentationIntent> blockPresentationIntents
     bool hasUnderline
     bool hasStrikeThrough
     bool hasMultipleFonts

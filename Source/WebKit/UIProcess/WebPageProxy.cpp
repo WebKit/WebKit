@@ -4189,6 +4189,14 @@ void WebPageProxy::changeListType()
     sendToFocusedOrMainFrameProcess(Messages::WebPage::ChangeListType());
 }
 
+void WebPageProxy::setBlockPresentationIntent(const BlockPresentationIntent& intent)
+{
+    if (!hasRunningProcess())
+        return;
+
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::SetBlockPresentationIntent(intent));
+}
+
 void WebPageProxy::setBaseWritingDirection(WritingDirection direction)
 {
     if (!hasRunningProcess())
