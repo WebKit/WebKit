@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "QuirkBehaviorDeclarations.h"
+#include "QuirksData.h"
 #include <array>
 #include <wtf/EnumTraits.h>
 #include <wtf/HashSet.h>
@@ -108,6 +109,11 @@ static std::optional<Enum> enumeratorFromName(StringView name)
     if (entry == names.end())
         return std::nullopt;
     return static_cast<Enum>(WTF::enumNamesMin<Enum>() + std::distance(names.begin(), entry));
+}
+
+std::optional<QuirkBehaviorID> quirkBehaviorIDFromName(StringView name)
+{
+    return enumeratorFromName<QuirkBehaviorID>(name);
 }
 
 static bool isBugReference(StringView bug)

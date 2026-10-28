@@ -27,13 +27,33 @@
 
 #include <WebCore/QuirkBehaviors.h>
 #include <WebCore/QuirkMatchPattern.h>
+#include <WebCore/QuirkTable.h>
 #include <algorithm>
 #include <span>
+#include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+struct QuirkBehaviorReplacement {
+    QuirkBehavior target;
+    QuirkBehavior replacement;
+
+    friend bool operator==(const QuirkBehaviorReplacement&, const QuirkBehaviorReplacement&) = default;
+};
+
+struct QuirkOverrides {
+    QuirkBitSet disabledBehaviors;
+    Vector<QuirkBehavior> removedBehaviors;
+    Vector<QuirkBehaviorReplacement> replacedBehaviors;
+    RefPtr<const QuirkOverlay> overlay;
+
+    bool isEmpty() const { return disabledBehaviors.isEmpty() && removedBehaviors.isEmpty() && replacedBehaviors.isEmpty() && !overlay; }
+
+    friend bool operator==(const QuirkOverrides&, const QuirkOverrides&) = default;
+};
 
 class QuirksData {
 public:
@@ -77,6 +97,41 @@ public:
         });
     }
 
+    inline void applyDisabledBehaviors(const QuirkBitSet& disabledBehaviors)
+    {
+        m_maskedFlags.merge(disabledBehaviors);
+        disabledBehaviors.forEachSetBit([&](size_t index) {
+            removeBehaviorsMatching(static_cast<QuirkBehaviorID>(index));
+        });
+    }
+
+    inline void removeBehavior(const QuirkBehavior& target)
+    {
+        if (m_behaviors.removeFirst(target))
+            refreshBehaviorFlag(target.id);
+    }
+
+    inline void replaceBehavior(const QuirkBehavior& target, const QuirkBehavior& replacement)
+    {
+        auto index = m_behaviors.find(target);
+        if (index == notFound)
+            return;
+        if (m_maskedFlags.get(static_cast<size_t>(replacement.id)) || m_behaviors.contains(replacement))
+            m_behaviors.removeAt(index);
+        else
+            m_behaviors[index] = replacement;
+        refreshBehaviorFlag(target.id);
+        refreshBehaviorFlag(replacement.id);
+    }
+
+    inline void applyEdits(const QuirkOverrides& overrides)
+    {
+        for (auto& target : overrides.removedBehaviors)
+            removeBehavior(target);
+        for (auto& [target, replacement] : overrides.replacedBehaviors)
+            replaceBehavior(target, replacement);
+    }
+
     inline void setEnabled(QuirkBehaviorID id, bool state)
     {
         if (state)
@@ -87,6 +142,8 @@ public:
 
     inline void addBehavior(const QuirkBehavior& behavior)
     {
+        if (m_maskedFlags.get(static_cast<size_t>(behavior.id)))
+            return;
         m_behaviorFlags.set(static_cast<size_t>(behavior.id), true);
         if (!m_behaviors.contains(behavior))
             m_behaviors.append(behavior);
@@ -105,7 +162,13 @@ public:
     }
 
 private:
+    inline void refreshBehaviorFlag(QuirkBehaviorID id)
+    {
+        m_behaviorFlags.set(static_cast<size_t>(id), std::ranges::any_of(m_behaviors, [&](const auto& behavior) { return behavior.id == id; }));
+    }
+
     QuirkBitSet m_behaviorFlags;
+    QuirkBitSet m_maskedFlags;
     Vector<QuirkBehavior> m_behaviors;
 };
 

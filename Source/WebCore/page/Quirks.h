@@ -62,8 +62,6 @@ namespace Style {
 class ComputedStyle;
 }
 
-enum class IsTopDocument : bool { No, Yes };
-
 WEBCORE_EXPORT QuirksData resolveSiteSpecificQuirks(const URL& topURL, const URL& documentURL, IsTopDocument);
 
 // For callers with no Document, which therefore only see top-URL quirks.
@@ -189,6 +187,10 @@ public:
 
     void clearLogoutSurvivingIdentityCookiesIfNeeded(const URL& fetchURL, int httpStatusCode);
 
+    const Vector<QuirkBehavior>& activeBehaviors() const LIFETIME_BOUND { return m_quirksData.behaviors(); }
+    const QuirkOverrides& overrides() const LIFETIME_BOUND { return m_overrides; }
+    WEBCORE_EXPORT void setOverrides(QuirkOverrides&&);
+
     void determineRelevantQuirks();
     WEBCORE_EXPORT void urlsDidChange();
     void logQuirksToConsoleIfNecessary() const;
@@ -200,6 +202,7 @@ private:
     mutable WeakPtr<const Element, WeakPtrImplWithEventTargetData> m_facebookStoriesCreationFormContainer;
 
     mutable QuirkBitSet m_probedQuirks;
+    QuirkOverrides m_overrides;
 
     template<typename Probe>
     bool isBehaviorEnabledAfterProbing(QuirkBehaviorID id, NOESCAPE const Probe& probe) const

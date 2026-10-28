@@ -1559,6 +1559,283 @@ TEST_F(QuirksTest, SameDocumentNavigationReresolvesQuirks)
     EXPECT_FALSE(hasActiveQuirk(document, "ShouldDisableScrollAnchoringQuirk"_s));
 }
 
+static WebCore::QuirkOverrides overridesDisabling(WebCore::QuirkBehaviorID id)
+{
+    WebCore::QuirkOverrides overrides;
+    overrides.disabledBehaviors.set(static_cast<size_t>(id));
+    return overrides;
+}
+
+static Ref<const WebCore::QuirkOverlay> parseOverlay(StringView rowsJSON)
+{
+    auto result = WebCore::parseQuirkTable(makeString("{ \"quirks\": ["_s, rowsJSON, "] }"_s));
+    EXPECT_TRUE(result.errors.isEmpty());
+    return WebCore::QuirkOverlay::create(WTF::move(result.table));
+}
+
+static void installQuirkTable(StringView rowsJSON)
+{
+    auto result = WebCore::parseQuirkTable(makeString("{ \"quirks\": ["_s, rowsJSON, "] }"_s));
+    ASSERT_TRUE(result.errors.isEmpty());
+    WebCore::setQuirkTable(WTF::move(result.table));
+}
+
+static constexpr auto dupRowOne = R"({ "matches": ["*://dup.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "script": "rowOne", "secondaryURL": ["*://*/*"] }] })"_s;
+static constexpr auto dupRowTwo = R"({ "matches": ["*://dup.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "script": "rowTwo", "secondaryURL": ["*://*/*"] }] })"_s;
+static constexpr auto overlayRow = R"({ "matches": ["*://dup.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "script": "overlay", "secondaryURL": ["*://*/*"] }] })"_s;
+
+TEST_F(QuirksTest, QuirkOverridesMaskDisabledBehaviors)
+{
+    using enum WebCore::QuirkBehaviorID;
+
+    auto page = createPageWithQuirksEnabled();
+    page.loadHTML("<!DOCTYPE html>"_s);
+
+    Ref document = page.document();
+    document->setURL(URL { "https://www.apple.com/retail"_s });
+    EXPECT_TRUE(hasActiveQuirk(document, "ShouldDisableScrollAnchoringQuirk"_s));
+
+    document->quirks().setOverrides(overridesDisabling(ShouldDisableScrollAnchoringQuirk));
+    EXPECT_FALSE(hasActiveQuirk(document, "ShouldDisableScrollAnchoringQuirk"_s));
+
+    document->updateURLForPushOrReplaceState(URL { "https://www.apple.com/retail/store"_s });
+    EXPECT_FALSE(hasActiveQuirk(document, "ShouldDisableScrollAnchoringQuirk"_s));
+
+    document->quirks().setOverrides({ });
+    EXPECT_TRUE(hasActiveQuirk(document, "ShouldDisableScrollAnchoringQuirk"_s));
+}
+
+TEST_F(QuirksTest, QuirkBehaviorIDFromNameRoundTripsEveryID)
+{
+    for (size_t index = 0; index < static_cast<size_t>(WebCore::QuirkBehaviorID::NumberOfIDs); ++index) {
+        auto id = static_cast<WebCore::QuirkBehaviorID>(index);
+        EXPECT_EQ(WebCore::quirkBehaviorIDFromName(StringView { WTF::enumName(id) }), id);
+    }
+    EXPECT_FALSE(WebCore::quirkBehaviorIDFromName("NotARealQuirk"_s));
+    EXPECT_FALSE(WebCore::quirkBehaviorIDFromName(""_s));
+}
+
+TEST_F(QuirksTest, QuirksDataMaskBlocksLaterEnabling)
+{
+    using enum WebCore::QuirkBehaviorID;
+
+    WebCore::QuirksData data;
+    data.applyDisabledBehaviors(overridesDisabling(ShouldDisableScrollAnchoringQuirk).disabledBehaviors);
+    data.setEnabled(ShouldDisableScrollAnchoringQuirk, true);
+    data.merge(resolveQuirksForTopURL("https://www.apple.com/retail"_s));
+    EXPECT_FALSE(data.isBehaviorEnabled(ShouldDisableScrollAnchoringQuirk));
+}
+
+TEST_F(QuirksTest, OverlayEnablesBehaviorWithParametersOnMatchingSites)
+{
+    using enum WebCore::QuirkBehaviorID;
+
+    auto page = createPageWithQuirksEnabled();
+    page.loadHTML("<!DOCTYPE html>"_s);
+
+    Ref document = page.document();
+    document->setURL(URL { "https://example.org/"_s });
+    EXPECT_FALSE(hasActiveQuirk(document, "NeedsUserAgentStringOverrideQuirk"_s));
+
+    WebCore::QuirkOverrides overrides;
+    overrides.overlay = parseOverlay(R"({ "matches": ["*://example.org/*"], "behaviors": [{ "id": "NeedsUserAgentStringOverrideQuirk", "userAgent": "TestUA" }] })"_s);
+    document->quirks().setOverrides(WTF::move(overrides));
+    EXPECT_TRUE(hasActiveQuirk(document, "NeedsUserAgentStringOverrideQuirk"_s));
+
+    document->updateURLForPushOrReplaceState(URL { "https://example.org/other"_s });
+    EXPECT_TRUE(hasActiveQuirk(document, "NeedsUserAgentStringOverrideQuirk"_s));
+
+    document->setURL(URL { "https://example.com/"_s });
+    EXPECT_FALSE(hasActiveQuirk(document, "NeedsUserAgentStringOverrideQuirk"_s));
+
+    document->quirks().setOverrides({ });
+    document->setURL(URL { "https://example.org/"_s });
+    EXPECT_FALSE(hasActiveQuirk(document, "NeedsUserAgentStringOverrideQuirk"_s));
+}
+
+static WebCore::QuirkBehavior withScript(WebCore::QuirkBehavior behavior, ASCIILiteral script)
+{
+    behavior.script = String { script };
+    return behavior;
+}
+
+static Vector<WebCore::QuirkBehavior> scriptBehaviors(WebCore::Document& document)
+{
+    auto behaviors = document.quirks().activeBehaviors();
+    behaviors.removeAllMatching([](auto& behavior) {
+        return behavior.id != WebCore::QuirkBehaviorID::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk;
+    });
+    return behaviors;
+}
+
+static Vector<String> activeScripts(WebCore::Document& document)
+{
+    return scriptBehaviors(document).map([](auto& behavior) { return behavior.script; });
+}
+
+TEST_F(QuirksTest, OverlayAppendsAlongsideBaseBehaviorsWithTheSameID)
+{
+    installQuirkTable(dupRowOne);
+
+    auto page = createPageWithQuirksEnabled();
+    page.loadHTML("<!DOCTYPE html>"_s);
+    Ref document = page.document();
+    document->setURL(URL { "https://dup.example.com/"_s });
+    EXPECT_EQ(activeScripts(document), (Vector<String> { "rowOne"_s }));
+
+    WebCore::QuirkOverrides overrides;
+    overrides.overlay = parseOverlay(overlayRow);
+    document->quirks().setOverrides(WTF::move(overrides));
+    EXPECT_EQ(activeScripts(document), (Vector<String> { "rowOne"_s, "overlay"_s }));
+
+    document->quirks().setOverrides({ });
+    EXPECT_EQ(activeScripts(document), (Vector<String> { "rowOne"_s }));
+}
+
+TEST_F(QuirksTest, ReplacementChangesOnlyTheTargetedOneOfTwoSameIDBehaviors)
+{
+    installQuirkTable(makeString(dupRowOne, ", "_s, dupRowTwo));
+
+    auto page = createPageWithQuirksEnabled();
+    page.loadHTML("<!DOCTYPE html>"_s);
+    Ref document = page.document();
+    document->setURL(URL { "https://dup.example.com/"_s });
+    ASSERT_EQ(scriptBehaviors(document).size(), 2u);
+
+    WebCore::QuirkOverrides overrides;
+    auto target = scriptBehaviors(document)[1];
+    overrides.replacedBehaviors.append({ target, withScript(target, "edited"_s) });
+    document->quirks().setOverrides(WTF::move(overrides));
+    EXPECT_EQ(activeScripts(document), (Vector<String> { "rowOne"_s, "edited"_s }));
+
+    document->quirks().setOverrides({ });
+    EXPECT_EQ(activeScripts(document), (Vector<String> { "rowOne"_s, "rowTwo"_s }));
+}
+
+TEST_F(QuirksTest, RemovalDisablesOnlyTheTargetedOneOfTwoSameIDBehaviors)
+{
+    using enum WebCore::QuirkBehaviorID;
+
+    installQuirkTable(makeString(dupRowOne, ", "_s, dupRowTwo));
+
+    auto page = createPageWithQuirksEnabled();
+    page.loadHTML("<!DOCTYPE html>"_s);
+    Ref document = page.document();
+    document->setURL(URL { "https://dup.example.com/"_s });
+
+    WebCore::QuirkOverrides overrides;
+    overrides.removedBehaviors.append(scriptBehaviors(document)[0]);
+    document->quirks().setOverrides(WTF::move(overrides));
+    EXPECT_EQ(activeScripts(document), (Vector<String> { "rowTwo"_s }));
+    EXPECT_TRUE(hasActiveQuirk(document, "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk"_s));
+
+    WebCore::QuirkOverrides removeBoth;
+    removeBoth.removedBehaviors.append(withScript(scriptBehaviors(document)[0], "rowOne"_s));
+    removeBoth.removedBehaviors.append(scriptBehaviors(document)[0]);
+    document->quirks().setOverrides(WTF::move(removeBoth));
+    EXPECT_TRUE(scriptBehaviors(document).isEmpty());
+    EXPECT_FALSE(hasActiveQuirk(document, "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk"_s));
+}
+
+TEST_F(QuirksTest, EditsWithAnInactiveTargetAreDormantUntilTheTargetReturns)
+{
+    installQuirkTable(dupRowOne);
+
+    auto page = createPageWithQuirksEnabled();
+    page.loadHTML("<!DOCTYPE html>"_s);
+    Ref document = page.document();
+    document->setURL(URL { "https://dup.example.com/"_s });
+
+    WebCore::QuirkOverrides overrides;
+    auto target = scriptBehaviors(document)[0];
+    overrides.replacedBehaviors.append({ target, withScript(target, "edited"_s) });
+    document->quirks().setOverrides(WTF::move(overrides));
+    EXPECT_EQ(activeScripts(document), (Vector<String> { "edited"_s }));
+
+    document->setURL(URL { "https://other.example.com/"_s });
+    EXPECT_TRUE(scriptBehaviors(document).isEmpty());
+
+    document->setURL(URL { "https://dup.example.com/"_s });
+    EXPECT_EQ(activeScripts(document), (Vector<String> { "edited"_s }));
+
+    installQuirkTable(dupRowTwo);
+    document->setURL(URL { "https://dup.example.com/next"_s });
+    EXPECT_EQ(activeScripts(document), (Vector<String> { "rowTwo"_s }));
+}
+
+TEST_F(QuirksTest, OverlaySurvivesInstallingANewBaseTable)
+{
+    installQuirkTable(dupRowOne);
+
+    auto page = createPageWithQuirksEnabled();
+    page.loadHTML("<!DOCTYPE html>"_s);
+    Ref document = page.document();
+    document->setURL(URL { "https://dup.example.com/"_s });
+
+    WebCore::QuirkOverrides overrides;
+    overrides.overlay = parseOverlay(overlayRow);
+    document->quirks().setOverrides(WTF::move(overrides));
+
+    installQuirkTable(dupRowTwo);
+    document->setURL(URL { "https://dup.example.com/next"_s });
+    EXPECT_EQ(activeScripts(document), (Vector<String> { "rowTwo"_s, "overlay"_s }));
+}
+
+TEST_F(QuirksTest, QuirksDataReplacementCanTargetAPlatformBehavior)
+{
+    using enum WebCore::QuirkBehaviorID;
+
+    WebCore::QuirksData data;
+    data.setEnabled(NeedsUserAgentStringOverrideQuirk, true);
+
+    data.replaceBehavior(WebCore::QuirkBehavior { .id = NeedsUserAgentStringOverrideQuirk }, WebCore::QuirkBehavior { .id = NeedsUserAgentStringOverrideQuirk, .userAgent = "Changed"_s });
+    ASSERT_EQ(data.behaviors().size(), 1u);
+    EXPECT_EQ(data.behaviors()[0].userAgent, "Changed"_s);
+
+    data.replaceBehavior(WebCore::QuirkBehavior { .id = NeedsUserAgentStringOverrideQuirk }, WebCore::QuirkBehavior { .id = NeedsUserAgentStringOverrideQuirk, .userAgent = "Ignored"_s });
+    EXPECT_EQ(data.behaviors()[0].userAgent, "Changed"_s);
+}
+
+TEST_F(QuirksTest, QuirksDataReplacementKeepsFlagsAndUniquenessConsistent)
+{
+    using enum WebCore::QuirkBehaviorID;
+
+    WebCore::QuirkBehavior first { .id = NeedsUserAgentStringOverrideQuirk, .userAgent = "A"_s };
+    WebCore::QuirkBehavior second { .id = NeedsUserAgentStringOverrideQuirk, .userAgent = "B"_s };
+
+    WebCore::QuirksData data;
+    data.addBehavior(first);
+    data.addBehavior(second);
+
+    data.replaceBehavior(second, first);
+    EXPECT_EQ(data.behaviors().size(), 1u);
+
+    data.replaceBehavior(first, WebCore::QuirkBehavior { .id = ShouldDisableScrollAnchoringQuirk });
+    EXPECT_FALSE(data.isBehaviorEnabled(NeedsUserAgentStringOverrideQuirk));
+    EXPECT_TRUE(data.isBehaviorEnabled(ShouldDisableScrollAnchoringQuirk));
+
+    data.applyDisabledBehaviors(overridesDisabling(NeedsUserAgentStringOverrideQuirk).disabledBehaviors);
+    data.replaceBehavior(WebCore::QuirkBehavior { .id = ShouldDisableScrollAnchoringQuirk }, first);
+    EXPECT_TRUE(data.behaviors().isEmpty());
+    EXPECT_FALSE(data.isBehaviorEnabled(NeedsUserAgentStringOverrideQuirk));
+    EXPECT_FALSE(data.isBehaviorEnabled(ShouldDisableScrollAnchoringQuirk));
+}
+
+TEST_F(QuirksTest, DisabledWinsOverOverlay)
+{
+    using enum WebCore::QuirkBehaviorID;
+
+    auto overrides = overridesDisabling(NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk);
+    overrides.overlay = parseOverlay(overlayRow);
+
+    auto page = createPageWithQuirksEnabled();
+    page.loadHTML("<!DOCTYPE html>"_s);
+    Ref document = page.document();
+    document->setURL(URL { "https://dup.example.com/"_s });
+    document->quirks().setOverrides(WTF::move(overrides));
+    EXPECT_TRUE(scriptBehaviors(document).isEmpty());
+}
+
 #if PLATFORM(APPLETV)
 
 class ScopedHomeViewOverride {
