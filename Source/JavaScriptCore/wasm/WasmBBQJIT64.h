@@ -522,39 +522,6 @@ void BBQJIT::emitModOrDiv(Value& lhs, Location lhsLocation, Value& rhs, Location
 #define PREPARE_FOR_SHIFT
 #endif
 
-template<size_t N, typename OverflowHandler>
-void BBQJIT::emitShuffleMove(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector, Vector<ShuffleStatus, N, OverflowHandler>& statusVector, unsigned index)
-{
-    Location srcLocation = locationOf(srcVector[index]);
-    Location dst = dstVector[index];
-    if (srcLocation == dst)
-        return; // Easily eliminate redundant moves here.
-
-    uint32_t dstSize = srcVector[index].size();
-    statusVector[index] = ShuffleStatus::BeingMoved;
-    for (unsigned i = 0; i < srcVector.size(); i ++) {
-        // This check should handle constants too - constants always have location None, and no
-        // dst should ever be a constant. But we assume that's asserted in the caller.
-        if (Location::rangesOverlap(locationOf(srcVector[i]), srcVector[i].size(), dst, dstSize)) {
-            switch (statusVector[i]) {
-            case ShuffleStatus::ToMove:
-                emitShuffleMove(srcVector, dstVector, statusVector, i);
-                break;
-            case ShuffleStatus::BeingMoved: {
-                Location temp = srcVector[i].isFloat() ? Location::fromFPR(wasmScratchFPR) : Location::fromGPR(wasmScratchGPR);
-                emitMove(srcVector[i], temp);
-                srcVector[i] = Value::pinned(srcVector[i].type(), temp);
-                break;
-            }
-            case ShuffleStatus::Moved:
-                break;
-            }
-        }
-    }
-    emitMove(srcVector[index], dst);
-    statusVector[index] = ShuffleStatus::Moved;
-}
-
 template<typename Func>
 void BBQJIT::emitCCall(Func function, std::span<const Value> arguments)
 {

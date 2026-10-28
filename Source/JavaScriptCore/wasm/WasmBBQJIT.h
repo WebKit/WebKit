@@ -2193,9 +2193,6 @@ private:
     using ShuffleStatus = CCallHelpers::ShuffleStatus;
 
     template<size_t N, typename OverflowHandler>
-    void emitShuffleMove(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector, Vector<ShuffleStatus, N, OverflowHandler>& statusVector, unsigned index);
-
-    template<size_t N, typename OverflowHandler>
     void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector);
 
     ControlData& LEGACY_NODELETE currentControlData();
