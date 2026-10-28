@@ -402,7 +402,7 @@ builders:
   - name: iOS-26-Build-EWS
     shortname: ios
     icon: buildOnly
-    factory: iOSEmbeddedBuildFactory
+    factory: BuildFactory
     platform: ios-26
     configuration: release
     architectures: [arm64]
@@ -410,7 +410,7 @@ builders:
   - name: iOS-26-Simulator-Build-EWS
     shortname: ios-sim
     icon: buildOnly
-    factory: iOSBuildFactory
+    factory: BuildFactory
     platform: ios-simulator-26
     configuration: release
     architectures: [arm64]
@@ -473,7 +473,7 @@ builders:
   - name: macOS-Sequoia-Release-Build-EWS
     shortname: mac
     icon: buildOnly
-    factory: macOSBuildFactory
+    factory: BuildFactory
     platform: mac-sequoia
     configuration: release
     architectures: [x86_64, arm64]
@@ -544,7 +544,7 @@ builders:
   - name: watchOS-26-Build-EWS
     shortname: watch
     icon: buildOnly
-    factory: watchOSBuildFactory
+    factory: BuildFactory
     platform: watchos-26
     configuration: release
     architectures: [arm64_32, arm64]
@@ -552,7 +552,7 @@ builders:
   - name: watchOS-26-Simulator-Build-EWS
     shortname: watch-sim
     icon: buildOnly
-    factory: watchOSBuildFactory
+    factory: BuildFactory
     platform: watchos-simulator-26
     configuration: release
     architectures: [arm64]
@@ -560,7 +560,7 @@ builders:
   - name: tvOS-26-Build-EWS
     shortname: tv
     icon: buildOnly
-    factory: tvOSBuildFactory
+    factory: BuildFactory
     platform: tvos-26
     configuration: release
     architectures: [arm64]
@@ -568,7 +568,7 @@ builders:
   - name: tvOS-26-Simulator-Build-EWS
     shortname: tv-sim
     icon: buildOnly
-    factory: tvOSBuildFactory
+    factory: BuildFactory
     platform: tvos-simulator-26
     configuration: release
     architectures: [arm64]
@@ -576,7 +576,7 @@ builders:
   - name: visionOS-26-Build-EWS
     shortname: vision
     icon: buildOnly
-    factory: visionOSEmbeddedBuildFactory
+    factory: BuildFactory
     platform: visionos-26
     configuration: release
     architectures: [arm64]
@@ -584,7 +584,7 @@ builders:
   - name: visionOS-26-Simulator-Build-EWS
     shortname: vision-sim
     icon: buildOnly
-    factory: visionOSBuildFactory
+    factory: BuildFactory
     platform: visionos-simulator-26
     configuration: release
     architectures: [arm64]
@@ -655,7 +655,7 @@ builders:
   - name: GTK-GTK3-GCC-Build-EWS
     shortname: gtk3-gcc
     icon: buildOnly
-    factory: GTK3GCCBuildFactory
+    factory: GTKBuildFactory
     platform: gtk
     configuration: release
     architectures: [x86_64]

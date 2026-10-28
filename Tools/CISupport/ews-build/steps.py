@@ -3230,8 +3230,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
     APPLE_PLATFORMS = ('mac', 'ios', 'visionos', 'tvos', 'watchos')
     MAX_ERROR_LINES = 1000
 
-    def __init__(self, skipUpload=False, **kwargs):
-        self.skipUpload = skipUpload
+    def __init__(self, **kwargs):
         self.cancelled_due_to_huge_logs = False
         self.error_lines = collections.deque(maxlen=self.MAX_ERROR_LINES)
         super().__init__(timeout=60 * 60, logEnviron=False, **kwargs)
@@ -3350,7 +3349,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
             steps_to_add.append(AnalyzeCompileWebKitResults())
         else:
             triggers = self.getProperty('triggers', None)
-            if triggers or not self.skipUpload:
+            if triggers:
                 steps_to_add += [ArchiveBuiltProduct()]
                 if USE_S3 and CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES:
                     steps_to_add.extend([
@@ -3359,21 +3358,20 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
                     ])
                 else:
                     steps_to_add.extend([UploadBuiltProduct()])
-                if triggers:
-                    steps_to_add.append(Trigger(
-                        schedulerNames=triggers,
-                        pull_request=bool(self.getProperty('github.number')),
-                    ))
+                steps_to_add.append(Trigger(
+                    schedulerNames=triggers,
+                    pull_request=bool(self.getProperty('github.number')),
+                ))
 
-                    if self.getProperty('rebuild_without_change_on_builder', False):
-                        steps_to_add.extend([
-                            RevertAppliedChanges(),
-                            ValidateChange(verifyBugClosed=False, addURLs=False),
-                            CompileWebKitWithoutChange(),
-                            ArchiveBuiltProduct(),
-                            GenerateS3URL(f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}{SUFFIX_WITHOUT_CHANGE}"),
-                            UploadFileToS3(f"WebKitBuild/{self.getProperty('configuration')}.zip", links={self.name: 'Archive without change'}),
-                        ])
+                if self.getProperty('rebuild_without_change_on_builder', False):
+                    steps_to_add.extend([
+                        RevertAppliedChanges(),
+                        ValidateChange(verifyBugClosed=False, addURLs=False),
+                        CompileWebKitWithoutChange(),
+                        ArchiveBuiltProduct(),
+                        GenerateS3URL(f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}{SUFFIX_WITHOUT_CHANGE}"),
+                        UploadFileToS3(f"WebKitBuild/{self.getProperty('configuration')}.zip", links={self.name: 'Archive without change'}),
+                    ])
 
         # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
         self.build.addStepsAfterCurrentStep(steps_to_add)

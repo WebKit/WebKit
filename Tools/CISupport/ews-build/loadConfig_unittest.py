@@ -161,8 +161,8 @@ class ConfigDotJSONTest(unittest.TestCase):
         config = loadConfig.render_config()
         for builder in config['builders']:
             if builder.get('deployment_target'):
-                self.assertTrue(builder.get('factory') == 'macOSBuildFactory',
-                                f'custom deployment target only implemented for macOS builders, but found on "{builder["name"]}" with factory "{builder["factory"]}"')
+                self.assertTrue(builder.get('factory') == 'BuildFactory' and builder.get('platform', '').startswith('mac'),
+                                f'custom deployment target only implemented for macOS builders, but found on "{builder["name"]}" with factory "{builder["factory"]}" and platform "{builder.get("platform")}"')
 
 
 class TagsForBuilderTest(unittest.TestCase):
