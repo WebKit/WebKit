@@ -258,6 +258,10 @@
             "behaviors": [{ "id": "NeedsFormControlToBeMouseFocusableQuirk" }]
         },
         {
+            "matches": ["*://*.cnn.com/*"],
+            "behaviors": [{ "id": "RequiresUserGestureToPauseInFullscreenAfterOrientationChangeQuirk" }]
+        },
+        {
             "matches": ["*://codepen.io/*"],
             "behaviors": [{ "id": "ShouldEnableSpeakerSelectionPermissionsPolicyQuirk" }]
         },
