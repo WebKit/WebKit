@@ -28,13 +28,15 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <WebKit/WKWebsiteDataStore.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 
 @interface LocalStorageNullEntriesMessageHandler : NSObject <WKScriptMessageHandler>
@@ -58,11 +60,13 @@ TEST(WKWebView, LocalStorageNullEntries)
     [configuration _setNeedsStorageAccessFromFileURLsQuirk:NO];
     [configuration _setAllowUniversalAccessFromFileURLs:YES];
 
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
+
     // Copy the inconsistent database files to the LocalStorage directory
     NSURL *url1 = [NSBundle.test_resourcesBundle URLForResource:@"LocalStorageNullEntries" withExtension:@"localstorage"];
     NSURL *url2 = [NSBundle.test_resourcesBundle URLForResource:@"LocalStorageNullEntries" withExtension:@"localstorage-shm"];
 
-    NSURL *targetURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/LocalStorage/" stringByExpandingTildeInPath]];
+    NSURL *targetURL = [[[configuration websiteDataStore] _configuration] _webStorageDirectory];
     [[NSFileManager defaultManager] createDirectoryAtURL:targetURL withIntermediateDirectories:YES attributes:nil error:nil];
 
     NSURL *localStorageURL = [targetURL URLByAppendingPathComponent:@"file__0.localstorage"];
@@ -85,7 +89,7 @@ TEST(WKWebView, LocalStorageNullEntries)
 
     // Clean up using WKWebsiteDataStore to properly close the database.
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:localStorageURL.path]);
         EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:localStorageSHMURL.path]);
         readyToContinue = true;

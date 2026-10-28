@@ -28,6 +28,7 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -93,13 +94,14 @@ static RetainPtr<WKWebView> localStorageCreatedWebView;
 TEST(WKWebView, LocalStorageProcessCrashes)
 {
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [TestWebKitAPI::Util::temporaryPersistentDataStore() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 
     RetainPtr<LocalStorageMessageHandler> handler = adoptNS([[LocalStorageMessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     [configuration _setAllowUniversalAccessFromFileURLs:YES];
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -144,13 +146,14 @@ TEST(WKWebView, LocalStorageProcessCrashes)
 TEST(WKWebView, LocalStorageProcessSuspends)
 {
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [TestWebKitAPI::Util::temporaryPersistentDataStore() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 
     RetainPtr<LocalStorageMessageHandler> handler = adoptNS([[LocalStorageMessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     RetainPtr<WKProcessPool> processPool = adoptNS([[WKProcessPool alloc] init]);
     [configuration setProcessPool:processPool.get()];
@@ -197,7 +200,7 @@ TEST(WKWebView, LocalStorageProcessSuspends)
 TEST(WKWebView, LocalStorageEmptyString)
 {
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [TestWebKitAPI::Util::temporaryPersistentDataStore() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -205,6 +208,7 @@ TEST(WKWebView, LocalStorageEmptyString)
     @autoreleasepool {
         RetainPtr<LocalStorageMessageHandler> handler = adoptNS([[LocalStorageMessageHandler alloc] init]);
         RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
         [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
         [configuration _setAllowUniversalAccessFromFileURLs:YES];
     
@@ -227,6 +231,7 @@ TEST(WKWebView, LocalStorageEmptyString)
     
     RetainPtr<LocalStorageMessageHandler> handler = adoptNS([[LocalStorageMessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     [configuration _setAllowUniversalAccessFromFileURLs:YES];
     
@@ -267,7 +272,7 @@ TEST(WKWebView, PrivateBrowsingAffectsLocalStorage)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration _setAllowUniversalAccessFromFileURLs:YES];
-    [configuration setWebsiteDataStore:[WKWebsiteDataStore defaultDataStore]];
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     
     RetainPtr delegate = adoptNS([[LocalStorageNavigationDelegate alloc] init]);
@@ -340,8 +345,8 @@ TEST(WKWebView, PrivateBrowsingAffectsLocalStorage)
     finishedRunningScript = false;
     
     delegate->decidePolicyForNavigationActionHandler = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
-        // Switch back to the default session.
-        preferences._websiteDataStore = [WKWebsiteDataStore defaultDataStore];
+        // Switch back to the persistent session.
+        preferences._websiteDataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
         decisionHandler(WKNavigationActionPolicyAllow, preferences);
     };
     
@@ -478,7 +483,7 @@ TEST(WKWebView, LocalStorageDifferentPageGroupSameProcess)
 TEST(WKWebView, LocalStorageNoSizeOverflow)
 {
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [TestWebKitAPI::Util::temporaryPersistentDataStore() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -494,6 +499,7 @@ TEST(WKWebView, LocalStorageNoSizeOverflow)
         </script>";
     RetainPtr handler = adoptNS([[LocalStorageMessageHandler alloc] init]);
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -533,12 +539,11 @@ TEST(WKWebView, LocalStorageNoSizeOverflow)
 
 TEST(WebKit, LocalStorageCorruptedDatabase)
 {
-    NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *generalStorageDirectory = TestWebKitAPI::Util::temporaryDirectory();
     NSURL *resourceSalt = [NSBundle.test_resourcesBundle URLForResource:@"general-storage-directory" withExtension:@"salt"];
     NSURL *localStorageDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/LocalStorage"];
     NSURL *localStorageFile = [localStorageDirectory URLByAppendingPathComponent:@"localstorage.sqlite3"];
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    [fileManager removeItemAtURL:localStorageDirectory error:nil];
     [fileManager createDirectoryAtURL:localStorageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
     [fileManager copyItemAtURL:resourceSalt toURL:[generalStorageDirectory URLByAppendingPathComponent:@"salt"] error:nil];
     NSString* content = @"This is a string";

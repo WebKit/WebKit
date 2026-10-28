@@ -29,9 +29,11 @@
 
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import <wtf/RetainPtr.h>
 #import <wtf/text/TextStream.h>
 
 OBJC_CLASS WKWebsiteDataStore;
+OBJC_CLASS _WKWebsiteDataStoreConfiguration;
 
 namespace TestWebKitAPI {
 namespace Util {
@@ -44,6 +46,8 @@ static inline ::testing::AssertionResult assertNSObjectsAreEqual(const char* exp
     return ::testing::internal::EqFailure(expectedExpression, actualExpression, toSTD([expected description]), toSTD([actual description]), false /* ignoring_case */);
 }
 
+NSURL *temporaryDirectory();
+RetainPtr<_WKWebsiteDataStoreConfiguration> temporaryDataStoreConfiguration();
 WKWebsiteDataStore *temporaryPersistentDataStore();
 
 #if PLATFORM(IOS_FAMILY)

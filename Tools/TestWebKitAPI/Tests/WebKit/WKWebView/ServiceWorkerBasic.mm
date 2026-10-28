@@ -30,6 +30,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "ServiceWorkerPageProtocol.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestDownloadDelegate.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
@@ -2059,8 +2060,8 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration _setAllowTestOnlyIPC:YES];
     setConfigurationInjectedBundlePath(configuration.get());
-    RetainPtr dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
-    NSString* tempDirectory = @"/var/tmp";
+    RetainPtr dataStoreConfiguration = TestWebKitAPI::Util::temporaryDataStoreConfiguration();
+    NSString *tempDirectory = TestWebKitAPI::Util::temporaryDirectory().path;
     [dataStoreConfiguration _setServiceWorkerRegistrationDirectory:[NSURL fileURLWithPath:tempDirectory]];
     [dataStoreConfiguration _setCacheStorageDirectory:[NSURL fileURLWithPath:tempDirectory]];
     RetainPtr websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
@@ -2111,12 +2112,9 @@ TEST(ServiceWorkers, NonDefaultSessionID)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
-    NSURL *serviceWorkersPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/ServiceWorkers/" stringByExpandingTildeInPath] isDirectory:YES];
-    [[NSFileManager defaultManager] removeItemAtURL:serviceWorkersPath error:nil];
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:serviceWorkersPath.path]);
-    NSURL *idbPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/IndexedDB/" stringByExpandingTildeInPath] isDirectory:YES];
-    [[NSFileManager defaultManager] removeItemAtURL:idbPath error:nil];
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:idbPath.path]);
+    NSURL *dataDirectory = TestWebKitAPI::Util::temporaryDirectory();
+    NSURL *serviceWorkersPath = [dataDirectory URLByAppendingPathComponent:@"ServiceWorkers" isDirectory:YES];
+    NSURL *idbPath = [dataDirectory URLByAppendingPathComponent:@"IndexedDB" isDirectory:YES];
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr<_WKWebsiteDataStoreConfiguration> websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
@@ -2923,15 +2921,9 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
-    // Start with a clean slate data store
-    RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    RetainPtr websiteDataStoreConfiguration = TestWebKitAPI::Util::temporaryDataStoreConfiguration();
     websiteDataStoreConfiguration.get().unifiedOriginStorageLevel = _WKUnifiedOriginStorageLevelBasic;
     RetainPtr websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
-    [websiteDataStore.get() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
 
     // Disable ITP so it doesn't inadvertently delete our service worker registrations.
     [websiteDataStore _setResourceLoadStatisticsEnabled:NO];
@@ -2991,15 +2983,11 @@ TEST(WebKit, ServiceWorkerDatabaseWithRecordsTableButUnexpectedSchema)
     // Copy the baked database files to the database directory
     NSURL *url1 = [NSBundle.test_resourcesBundle URLForResource:@"BadServiceWorkerRegistrations-4" withExtension:@"sqlite3"];
 
-    NSURL *swPath = [NSURL fileURLWithPath:[@"~/Library/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/ServiceWorkers/" stringByExpandingTildeInPath]];
-    [[NSFileManager defaultManager] removeItemAtURL:swPath error:nil];
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:swPath.path]);
-
+    RetainPtr websiteDataStoreConfiguration = TestWebKitAPI::Util::temporaryDataStoreConfiguration();
+    NSURL *swPath = websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory;
     [[NSFileManager defaultManager] createDirectoryAtURL:swPath withIntermediateDirectories:YES attributes:nil error:nil];
     [[NSFileManager defaultManager] copyItemAtURL:url1 toURL:[swPath URLByAppendingPathComponent:serviceWorkerRegistrationFilename] error:nil];
 
-    RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = swPath;
     RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
 
     // Fetch SW records
@@ -3015,21 +3003,9 @@ TEST(WebKit, ServiceWorkerDatabaseWithRecordsTableButUnexpectedSchema)
 
 TEST(ServiceWorkers, V2DatabaseUpgrade)
 {
-    // Start with a clean slate data store
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    // Disable ITP so it doesn't inadvertently delete our service worker registrations.
-    [[WKWebsiteDataStore defaultDataStore] _setResourceLoadStatisticsEnabled:NO];
-
-    NSURL *swPath = [NSURL fileURLWithPath:[@"~/Library/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/ServiceWorkers/" stringByExpandingTildeInPath]];
-    [[NSFileManager defaultManager] removeItemAtURL:swPath error:nil];
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:swPath.path]);
-
-    NSURL *scriptDirectoyPath = [NSURL fileURLWithPath:[@"~/Library/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/ServiceWorkers/Scripts/V1/xPAvXL4WjRQdGV0mpfwak2b5_1GqLUx4U9UZRpYn2Jw/wc4tzUMAvirBHXPD6rEkc5sG5oyRXMuxJl04TscgvKI/" stringByExpandingTildeInPath]];
+    RetainPtr websiteDataStoreConfiguration = TestWebKitAPI::Util::temporaryDataStoreConfiguration();
+    NSURL *swPath = websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory;
+    NSURL *scriptDirectoyPath = [swPath URLByAppendingPathComponent:@"Scripts/V1/xPAvXL4WjRQdGV0mpfwak2b5_1GqLUx4U9UZRpYn2Jw/wc4tzUMAvirBHXPD6rEkc5sG5oyRXMuxJl04TscgvKI" isDirectory:YES];
     [[NSFileManager defaultManager] createDirectoryAtURL:scriptDirectoyPath withIntermediateDirectories:YES attributes:nil error:nil];
 
     // Copy the baked database files to the database directory
@@ -3038,15 +3014,13 @@ TEST(ServiceWorkers, V2DatabaseUpgrade)
 
     // Copy the salt file to have fixed hashed script filenames.
     NSURL *saltResource = [NSBundle.test_resourcesBundle URLForResource:@"ServiceWorkerRegistrationsVersion1Salt" withExtension:@"bin"];
-    NSURL *saltPath = [NSURL fileURLWithPath:[@"~/Library/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/ServiceWorkers/Scripts/V1/salt" stringByExpandingTildeInPath]];
+    NSURL *saltPath = [swPath URLByAppendingPathComponent:@"Scripts/V1/salt"];
     [[NSFileManager defaultManager] copyItemAtURL:saltResource toURL:saltPath error:nil];
 
     // Copy a fake script so that registration import is successful.
-    NSURL *scriptPath = [NSURL fileURLWithPath:[@"~/Library/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/ServiceWorkers/Scripts/V1/xPAvXL4WjRQdGV0mpfwak2b5_1GqLUx4U9UZRpYn2Jw/wc4tzUMAvirBHXPD6rEkc5sG5oyRXMuxJl04TscgvKI/bNUYH4V9T2WYLnx37jHP2cE6FjNkL078xwiNeE465Bs" stringByExpandingTildeInPath]];
+    NSURL *scriptPath = [scriptDirectoyPath URLByAppendingPathComponent:@"bNUYH4V9T2WYLnx37jHP2cE6FjNkL078xwiNeE465Bs"];
     [[NSFileManager defaultManager] copyItemAtURL:saltResource toURL:scriptPath error:nil];
 
-    RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = swPath;
     RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
 
     // Fetch SW records
@@ -3483,11 +3457,7 @@ TEST(ServiceWorkers, ClearDOMCacheAlsoIncludesServiceWorkerRegistrations)
 
 TEST(ServiceWorkers, CustomDataStorePathsVersusCompletionHandlers)
 {
-    NSURL *swPath = [NSURL fileURLWithPath:[@"~/Library/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/ServiceWorkers/" stringByExpandingTildeInPath]];
-    [[NSFileManager defaultManager] removeItemAtURL:swPath error:nil];
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:swPath.path]);
-
-    [[NSFileManager defaultManager] createDirectoryAtURL:swPath withIntermediateDirectories:YES attributes:nil error:nil];
+    NSURL *swPath = TestWebKitAPI::Util::temporaryDirectory();
 
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     websiteDataStoreConfiguration.get().unifiedOriginStorageLevel = _WKUnifiedOriginStorageLevelBasic;
