@@ -288,6 +288,22 @@ public:
         g_signal_handler_disconnect(editorState(), signalID);
     }
 
+    static void editorStateChangedWaitingForCopyCallback(EditorTest* test)
+    {
+        if (webkit_editor_state_is_copy_available(test->editorState()))
+            g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void waitUntilCopyIsAvailable()
+    {
+        if (webkit_editor_state_is_copy_available(editorState()))
+            return;
+
+        auto signalID = g_signal_connect_swapped(editorState(), "changed", G_CALLBACK(editorStateChangedWaitingForCopyCallback), this);
+        g_main_loop_run(m_mainLoop);
+        g_signal_handler_disconnect(editorState(), signalID);
+    }
+
     Clipboard m_clipboard;
     bool m_canExecuteEditingCommand { false };
     WebKitEditorState* m_editorState { nullptr };
@@ -314,7 +330,7 @@ static void testWebViewEditorCutCopyPasteNonEditable(EditorTest* test, gconstpoi
     GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, "false"));
     test->loadHtml(selectedSpanHTML.get(), nullptr);
     test->waitUntilLoadFinished();
-    test->flushEditorState();
+    test->waitUntilCopyIsAvailable();
 
     g_assert_true(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_COPY));
     // It's not possible to cut and paste when content is not editable
@@ -341,7 +357,7 @@ static void testWebViewEditorCutCopyPasteEditable(EditorTest* test, gconstpointe
     GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, "false"));
     test->loadHtml(selectedSpanHTML.get(), nullptr);
     test->waitUntilLoadFinished();
-    test->flushEditorState();
+    test->waitUntilCopyIsAvailable();
 
     // There's a selection.
     g_assert_true(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_CUT));
