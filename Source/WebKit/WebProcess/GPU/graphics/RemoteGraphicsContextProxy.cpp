@@ -29,9 +29,10 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Logging.h"
+#include "RemoteDrawingBackendProxy.h"
 #include "RemoteGraphicsContextMessages.h"
 #include "RemoteImageBufferProxy.h"
-#include "RemoteRenderingBackendProxy.h"
+#include "RemoteResourceCacheProxy.h"
 #include "RemoteSnapshotRecorderMessages.h"
 #include "SharedVideoFrame.h"
 #include "StreamClientConnection.h"
@@ -59,21 +60,21 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteGraphicsContextProxy);
 
-RemoteGraphicsContextProxy::RemoteGraphicsContextProxy(const FloatRect& initialClip, const AffineTransform& initialCTM, const ColorSpace& colorSpace, RenderingMode renderingMode, RemoteRenderingBackendProxy& renderingBackend)
-    : RemoteGraphicsContextProxy({ }, initialClip, initialCTM, colorSpace, DrawGlyphsMode::Deconstruct, std::nullopt, renderingMode, RemoteGraphicsContextIdentifier::generate(), renderingBackend)
+RemoteGraphicsContextProxy::RemoteGraphicsContextProxy(const FloatRect& initialClip, const AffineTransform& initialCTM, const ColorSpace& colorSpace, RenderingMode renderingMode, RemoteDrawingBackendProxy& drawingBackend)
+    : RemoteGraphicsContextProxy({ }, initialClip, initialCTM, colorSpace, DrawGlyphsMode::Deconstruct, std::nullopt, renderingMode, RemoteGraphicsContextIdentifier::generate(), drawingBackend)
 {
 }
 
-RemoteGraphicsContextProxy::RemoteGraphicsContextProxy(const FloatRect& initialClip, const AffineTransform& initialCTM, const ColorSpace& colorSpace, WebCore::ContentsFormat contentsFormat, RenderingMode renderingMode, RemoteGraphicsContextIdentifier identifier, RemoteRenderingBackendProxy& renderingBackend)
-    : RemoteGraphicsContextProxy({ }, initialClip, initialCTM, colorSpace, DrawGlyphsMode::Deconstruct, contentsFormat, renderingMode, identifier, renderingBackend)
+RemoteGraphicsContextProxy::RemoteGraphicsContextProxy(const FloatRect& initialClip, const AffineTransform& initialCTM, const ColorSpace& colorSpace, WebCore::ContentsFormat contentsFormat, RenderingMode renderingMode, RemoteGraphicsContextIdentifier identifier, RemoteDrawingBackendProxy& drawingBackend)
+    : RemoteGraphicsContextProxy({ }, initialClip, initialCTM, colorSpace, DrawGlyphsMode::Deconstruct, contentsFormat, renderingMode, identifier, drawingBackend)
 {
 }
 
-RemoteGraphicsContextProxy::RemoteGraphicsContextProxy(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const ColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode, std::optional<ContentsFormat> contentsFormat, RenderingMode renderingMode, RemoteGraphicsContextIdentifier identifier, RemoteRenderingBackendProxy& renderingBackend)
+RemoteGraphicsContextProxy::RemoteGraphicsContextProxy(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const ColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode, std::optional<ContentsFormat> contentsFormat, RenderingMode renderingMode, RemoteGraphicsContextIdentifier identifier, RemoteDrawingBackendProxy& drawingBackend)
     : DisplayList::Recorder(IsDeferred::No, state, initialClip, initialCTM, colorSpace, drawGlyphsMode)
     , m_renderingMode(renderingMode)
     , m_identifier(identifier)
-    , m_renderingBackend(renderingBackend)
+    , m_drawingBackend(drawingBackend)
     , m_contentsFormat(contentsFormat)
 {
 }
@@ -90,7 +91,7 @@ ALWAYS_INLINE void RemoteGraphicsContextProxy::send(T&& message)
     ASSERT(m_pendingLineStrokes.isEmpty() || (std::is_same_v<std::decay_t<T>, Messages::RemoteGraphicsContext::StrokeLinesWithColorAndThickness>));
     RefPtr connection = m_connection;
     if (!connection) [[unlikely]] {
-        if (RefPtr backend = m_renderingBackend.get())
+        if (RefPtr backend = m_drawingBackend)
             connection = backend->connection();
         if (!connection)
             return;
@@ -112,7 +113,7 @@ ALWAYS_INLINE void RemoteGraphicsContextProxy::send(T&& message)
 
 void RemoteGraphicsContextProxy::didBecomeUnresponsive() const
 {
-    RefPtr backend = m_renderingBackend.get();
+    RefPtr backend = m_drawingBackend;
     if (!backend) [[unlikely]]
         return;
     backend->didBecomeUnresponsive();
@@ -745,8 +746,8 @@ void RemoteGraphicsContextProxy::setURLForRect(const URL& link, const FloatRect&
 
 bool RemoteGraphicsContextProxy::recordResourceUse(const NativeImage& image)
 {
-    RefPtr renderingBackend = m_renderingBackend.get();
-    if (!renderingBackend) [[unlikely]] {
+    RefPtr drawingBackend = m_drawingBackend;
+    if (!drawingBackend) [[unlikely]] {
         ASSERT_NOT_REACHED();
         return false;
     }
@@ -770,17 +771,17 @@ bool RemoteGraphicsContextProxy::recordResourceUse(const NativeImage& image)
 #endif
     }
 
-    return renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(image, colorSpace);
+    return drawingBackend->remoteResourceCacheProxy().recordNativeImageUse(image, colorSpace);
 }
 
 bool RemoteGraphicsContextProxy::recordResourceUse(ImageBuffer& imageBuffer)
 {
-    RefPtr renderingBackend = m_renderingBackend.get();
-    if (!renderingBackend) [[unlikely]] {
+    RefPtr drawingBackend = m_drawingBackend;
+    if (!drawingBackend) [[unlikely]] {
         ASSERT_NOT_REACHED();
         return false;
     }
-    RefPtr cachedImageBuffer = renderingBackend->cachedImageBuffer(imageBuffer);
+    RefPtr cachedImageBuffer = drawingBackend->cachedImageBuffer(imageBuffer);
     if (!cachedImageBuffer)
         return false;
     // This draw consumes the source buffer's contents, so its buffered line
@@ -802,13 +803,13 @@ bool RemoteGraphicsContextProxy::recordResourceUse(const SourceImage& image)
 
 bool RemoteGraphicsContextProxy::recordResourceUse(FontBase& font)
 {
-    RefPtr renderingBackend = m_renderingBackend.get();
-    if (!renderingBackend) [[unlikely]] {
+    RefPtr drawingBackend = m_drawingBackend;
+    if (!drawingBackend) [[unlikely]] {
         ASSERT_NOT_REACHED();
         return false;
     }
 
-    renderingBackend->remoteResourceCacheProxy().recordFontUse(font);
+    drawingBackend->remoteResourceCacheProxy().recordFontUse(font);
     return true;
 }
 
@@ -816,52 +817,52 @@ std::optional<RemoteGradientIdentifier> RemoteGraphicsContextProxy::recordResour
 {
     if (gradient.isTransient())
         return std::nullopt;
-    RefPtr renderingBackend = m_renderingBackend.get();
-    if (!renderingBackend) [[unlikely]] {
+    RefPtr drawingBackend = m_drawingBackend;
+    if (!drawingBackend) [[unlikely]] {
         ASSERT_NOT_REACHED();
         return std::nullopt;
     }
 
-    return renderingBackend->remoteResourceCacheProxy().recordGradientUse(gradient);
+    return drawingBackend->remoteResourceCacheProxy().recordGradientUse(gradient);
 }
 
 std::optional<RemotePathImplIdentifier> RemoteGraphicsContextProxy::recordResourceUse(const WebCore::PathImpl& path)
 {
-    RefPtr renderingBackend = m_renderingBackend.get();
-    if (!renderingBackend) [[unlikely]] {
+    RefPtr drawingBackend = m_drawingBackend;
+    if (!drawingBackend) [[unlikely]] {
         ASSERT_NOT_REACHED();
         return std::nullopt;
     }
 
-    return renderingBackend->remoteResourceCacheProxy().recordPathImplUse(path);
+    return drawingBackend->remoteResourceCacheProxy().recordPathImplUse(path);
 }
 
 bool RemoteGraphicsContextProxy::recordResourceUse(Filter& filter)
 {
-    RefPtr renderingBackend = m_renderingBackend.get();
-    if (!renderingBackend) [[unlikely]] {
+    RefPtr drawingBackend = m_drawingBackend;
+    if (!drawingBackend) [[unlikely]] {
         ASSERT_NOT_REACHED();
         return false;
     }
 
-    renderingBackend->remoteResourceCacheProxy().recordFilterUse(filter);
+    drawingBackend->remoteResourceCacheProxy().recordFilterUse(filter);
     return true;
 }
 
 std::optional<RemoteDisplayListIdentifier> RemoteGraphicsContextProxy::recordResourceUse(const DisplayList::DisplayList& displayList)
 {
-    RefPtr renderingBackend = m_renderingBackend.get();
-    if (!renderingBackend) [[unlikely]] {
+    RefPtr drawingBackend = m_drawingBackend;
+    if (!drawingBackend) [[unlikely]] {
         ASSERT_NOT_REACHED();
         return { };
     }
-    return renderingBackend->remoteResourceCacheProxy().recordDisplayListUse(displayList);
+    return drawingBackend->remoteResourceCacheProxy().recordDisplayListUse(displayList);
 }
 
 RefPtr<ImageBuffer> RemoteGraphicsContextProxy::createImageBuffer(const FloatSize& size, float resolutionScale, const ColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod, WebCore::ImageBufferFormat pixelFormat) const
 {
-    RefPtr renderingBackend = m_renderingBackend.get();
-    if (!renderingBackend) [[unlikely]] {
+    RefPtr drawingBackend = m_drawingBackend;
+    if (!drawingBackend) [[unlikely]] {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
@@ -871,7 +872,7 @@ RefPtr<ImageBuffer> RemoteGraphicsContextProxy::createImageBuffer(const FloatSiz
 
     // FIXME: Ideally we'd plumb the purpose through for callers of GraphicsContext::createImageBuffer().
     RenderingPurpose purpose = RenderingPurpose::Unspecified;
-    return renderingBackend->createImageBuffer(size, renderingMode.value_or(this->renderingModeForCompatibleBuffer()), purpose, resolutionScale, colorSpace, pixelFormat);
+    return drawingBackend->createImageBufferForContext(size, renderingMode.value_or(this->renderingModeForCompatibleBuffer()), purpose, resolutionScale, colorSpace, pixelFormat);
 }
 
 RefPtr<ImageBuffer> RemoteGraphicsContextProxy::createAlignedImageBuffer(const FloatSize& size, const ColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const
@@ -1007,7 +1008,7 @@ void RemoteGraphicsContextProxy::disconnect()
 void RemoteGraphicsContextProxy::abandon()
 {
     disconnect();
-    m_renderingBackend = nullptr;
+    m_drawingBackend = nullptr;
 }
 
 // Instantiate the send() helper for the few subclass messages here to avoid listing it in the header.

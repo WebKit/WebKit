@@ -7229,6 +7229,7 @@
 		7BDE98AC2F0F33140091DCA3 /* RemotePageWebDeviceOrientationUpdateProviderProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePageWebDeviceOrientationUpdateProviderProxy.h; sourceTree = "<group>"; };
 		7BDE98AD2F0F33B20091DCA3 /* RemotePageWebDeviceOrientationUpdateProviderProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePageWebDeviceOrientationUpdateProviderProxy.cpp; sourceTree = "<group>"; };
 		7BE005B52E5C4E050014F7CF /* RemoteDisplayListRecorderProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorderProxy.h; sourceTree = "<group>"; };
+		8D6FF71C01B7189F5655EF7F /* RemoteDrawingBackendProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDrawingBackendProxy.h; sourceTree = "<group>"; };
 		7BE005B62E5C4E050014F7CF /* RemoteDisplayListRecorderProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteDisplayListRecorderProxy.cpp; sourceTree = "<group>"; };
 		7BE005B72E5C4E390014F7CF /* RemoteDisplayListRecorder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorder.h; sourceTree = "<group>"; };
 		9D9DE5ECFE30691023F38FED /* RemoteDrawingBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDrawingBackend.h; sourceTree = "<group>"; };
@@ -14763,6 +14764,7 @@
 				86D1967629A4E7B50083B077 /* PrepareBackingStoreBuffersData.serialization.in */,
 				7BE005B62E5C4E050014F7CF /* RemoteDisplayListRecorderProxy.cpp */,
 				7BE005B52E5C4E050014F7CF /* RemoteDisplayListRecorderProxy.h */,
+				8D6FF71C01B7189F5655EF7F /* RemoteDrawingBackendProxy.h */,
 				7BDC88012E705C5600C7A37F /* RemoteGradientIdentifier.h */,
 				7B904165254AFDEA006EEB8C /* RemoteGraphicsContextGLProxy.cpp */,
 				7B904166254AFDEB006EEB8C /* RemoteGraphicsContextGLProxy.h */,

@@ -36,8 +36,8 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSnapshotRecorderProxy);
 
-RemoteSnapshotRecorderProxy::RemoteSnapshotRecorderProxy(const FloatRect& initialClip, RenderingMode renderingMode, RemoteRenderingBackendProxy& renderingBackend)
-    : RemoteGraphicsContextProxy(GraphicsContextState::initialIndeterminate(), initialClip, { }, ColorSpace::SRGB(), DrawGlyphsMode::Normal, std::nullopt, renderingMode, RemoteGraphicsContextIdentifier::generate(), renderingBackend)
+RemoteSnapshotRecorderProxy::RemoteSnapshotRecorderProxy(const FloatRect& initialClip, RenderingMode renderingMode, RemoteDrawingBackendProxy& drawingBackend)
+    : RemoteGraphicsContextProxy(GraphicsContextState::initialIndeterminate(), initialClip, { }, ColorSpace::SRGB(), DrawGlyphsMode::Normal, std::nullopt, renderingMode, RemoteGraphicsContextIdentifier::generate(), drawingBackend)
 {
     ASSERT(renderingMode == RenderingMode::DisplayList || renderingMode == RenderingMode::PDFDocument);
 }

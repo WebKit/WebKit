@@ -49,9 +49,9 @@ struct FontCustomPlatformData;
 
 namespace WebKit {
 
+class RemoteDrawingBackendProxy;
 class RemoteImageBufferProxy;
 class RemoteNativeImageProxy;
-class RemoteRenderingBackendProxy;
 
 class RemoteResourceCacheProxy final : private WebCore::RenderingResourceObserver,  public CanMakeCheckedPtr<RemoteResourceCacheProxy> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteResourceCacheProxy);
@@ -59,7 +59,7 @@ class RemoteResourceCacheProxy final : private WebCore::RenderingResourceObserve
 
 public:
     using WeakValueType = RemoteResourceCacheProxy;
-    static UniqueRef<RemoteResourceCacheProxy> create(RemoteRenderingBackendProxy&);
+    static UniqueRef<RemoteResourceCacheProxy> create(RemoteDrawingBackendProxy&);
     ~RemoteResourceCacheProxy();
 
     Ref<RemoteNativeImageProxy> createNativeImage(const WebCore::IntSize&, WebCore::PlatformColorSpace&&, bool hasAlpha);
@@ -94,7 +94,7 @@ public:
     unsigned nativeImageCountForTesting() const { return m_nativeImages.size(); }
 
 private:
-    RemoteResourceCacheProxy(RemoteRenderingBackendProxy&);
+    RemoteResourceCacheProxy(RemoteDrawingBackendProxy&);
 
     // WebCore::RenderingResourceObserver overrides.
     void willDestroyNativeImage(const WebCore::NativeImage&) override;
@@ -128,7 +128,7 @@ private:
     unsigned m_numberOfFontsUsedInCurrentRenderingUpdate { 0 };
     unsigned m_numberOfFontCustomPlatformDatasUsedInCurrentRenderingUpdate { 0 };
 
-    const CheckedRef<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
+    const CheckedRef<RemoteDrawingBackendProxy> m_drawingBackendProxy;
     uint64_t m_renderingUpdateID;
 };
 
