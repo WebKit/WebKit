@@ -239,6 +239,22 @@ WGPUBool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
     }
 }
 
+// The features for which wgpuAdapterHasFeature() is true, freed with
+// wgpuSupportedFeaturesFreeMembers().
+void wgpuAdapterGetFeatures(WGPUAdapter adapter, WGPUSupportedFeatures* features)
+{
+    @autoreleasepool {
+        *features = WebGPU::Metal::toAPIAllocated(protect(WebGPU::Metal::fromAPI(adapter))->features());
+    }
+}
+
+void wgpuSupportedFeaturesFreeMembers(WGPUSupportedFeatures features)
+{
+    @autoreleasepool {
+        WebGPU::Metal::freeAllocated(features);
+    }
+}
+
 // The C API reports a device that could not be created with WGPURequestDeviceStatus_Error and no
 // device. A null descriptor is the default one.
 WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallbackInfo callbackInfo)

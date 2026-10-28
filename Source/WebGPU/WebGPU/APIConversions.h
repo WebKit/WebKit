@@ -53,6 +53,7 @@
 #import "XRProjectionLayer.h"
 #import "XRSubImage.h"
 #import "XRView.h"
+#import <algorithm>
 #import <wtf/BlockPtr.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TypeCasts.h>
@@ -383,6 +384,30 @@ inline WGPUStringView toAPIAllocated(const String& string)
 inline void freeAllocated(WGPUStringView string)
 {
     fastFree(const_cast<char*>(string.data));
+}
+
+// The C API features of a feature list, as wgpuAdapterGetFeatures() and wgpuDeviceGetFeatures()
+// return them: in increasing order of their WGPUFeatureName values, without duplicates and without
+// the features that have no C API equivalent. The caller of the C API frees the array with
+// wgpuSupportedFeaturesFreeMembers(). An empty list has no array.
+inline WGPUSupportedFeatures toAPIAllocated(const Vector<WebGPU::FeatureName>& features)
+{
+    Vector<WGPUFeatureName> apiFeatures;
+    for (auto feature : features) {
+        if (auto apiFeature = toAPI(feature); apiFeature && !apiFeatures.contains(*apiFeature))
+            apiFeatures.append(*apiFeature);
+    }
+    if (apiFeatures.isEmpty())
+        return { 0, nullptr };
+    std::ranges::sort(apiFeatures);
+    auto* data = static_cast<WGPUFeatureName*>(fastMalloc(apiFeatures.sizeInBytes()));
+    memcpySpan(unsafeMakeSpan(data, apiFeatures.size()), apiFeatures.span());
+    return { apiFeatures.size(), data };
+}
+
+inline void freeAllocated(WGPUSupportedFeatures features)
+{
+    fastFree(const_cast<WGPUFeatureName*>(features.features));
 }
 
 // A future of the C API on an instance. complete() is called after the callback it stands for
