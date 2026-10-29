@@ -226,9 +226,8 @@ class SourceFile:
         """
 
         assert not os.path.isabs(rel_path), rel_path
-        if os.name == "nt":
-            # do slash normalization on Windows
-            rel_path = rel_path.replace("/", "\\")
+        # do slash normalization for the native separator
+        rel_path = rel_path.replace("/", os.sep)
 
         dir_path, filename = os.path.split(rel_path)
         name, ext = os.path.splitext(filename)
