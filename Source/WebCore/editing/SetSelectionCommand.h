@@ -27,10 +27,12 @@
 
 #include "EditCommand.h"
 #include "FrameSelection.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SetSelectionCommand : public SimpleEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(SetSelectionCommand);
 public:
     static Ref<SetSelectionCommand> create(const VisibleSelection& selection, OptionSet<FrameSelection::SetSelectionOption> options)
     {

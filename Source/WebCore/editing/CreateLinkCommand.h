@@ -26,10 +26,12 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CreateLinkCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(CreateLinkCommand);
 public:
     static Ref<CreateLinkCommand> create(Ref<Document>&& document, const String& linkURL)
     {

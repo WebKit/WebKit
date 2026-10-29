@@ -38,8 +38,11 @@
 #include "RenderObjectInlines.h"
 #include "StyleComputedStyle.h"
 #include "StyleDifference.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SimplifyMarkupCommand);
 
 static bool mayAffectLayout(const RenderElement& renderer)
 {

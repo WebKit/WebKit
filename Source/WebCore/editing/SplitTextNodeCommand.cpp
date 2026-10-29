@@ -32,8 +32,11 @@
 #include "NodeDocument.h"
 #include "Text.h"
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SplitTextNodeCommand);
 
 SplitTextNodeCommand::SplitTextNodeCommand(Ref<Text>&& text, int offset)
     : SimpleEditCommand(text->document())

@@ -26,10 +26,12 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class BreakBlockquoteCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(BreakBlockquoteCommand);
 public:
     static Ref<BreakBlockquoteCommand> create(Ref<Document>&& document)
     {

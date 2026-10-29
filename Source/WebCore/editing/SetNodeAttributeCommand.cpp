@@ -30,8 +30,11 @@
 #include "Element.h"
 #include "NodeDocument.h"
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SetNodeAttributeCommand);
 
 SetNodeAttributeCommand::SetNodeAttributeCommand(Ref<Element>&& element, const QualifiedName& attribute, const AtomString& value)
     : SimpleEditCommand(element->document())

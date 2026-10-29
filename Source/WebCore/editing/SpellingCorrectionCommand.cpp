@@ -38,13 +38,18 @@
 #include "StaticRange.h"
 #include "TextIterator.h"
 #include "markup.h"
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpellingCorrectionCommand);
 
 #if USE(AUTOCORRECTION_PANEL)
 // On macOS, we use this command to keep track of user undoing a correction for the first time.
 // This information is needed by spell checking service to update user specific data.
 class SpellingCorrectionRecordUndoCommand : public SimpleEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(SpellingCorrectionRecordUndoCommand);
 public:
     static Ref<SpellingCorrectionRecordUndoCommand> create(Ref<Document>&& document, const String& corrected, const String& correction)
     {
@@ -82,6 +87,8 @@ private:
     String m_correction;
     bool m_hasBeenUndone;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpellingCorrectionRecordUndoCommand);
 #endif
 
 SpellingCorrectionCommand::SpellingCorrectionCommand(const SimpleRange& rangeToBeCorrected, const String& correction)

@@ -92,6 +92,10 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EditCommandComposition);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CompositeEditCommand);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilityUndoReplacedText);
 
 using namespace HTMLNames;

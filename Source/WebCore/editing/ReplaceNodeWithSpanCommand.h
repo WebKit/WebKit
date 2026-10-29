@@ -31,6 +31,7 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ class HTMLElement;
 
 // More accurately, this is ReplaceElementWithSpanPreservingChildrenAndAttributesCommand
 class ReplaceNodeWithSpanCommand : public SimpleEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(ReplaceNodeWithSpanCommand);
 public:
     static Ref<ReplaceNodeWithSpanCommand> create(Ref<HTMLElement>&& element)
     {

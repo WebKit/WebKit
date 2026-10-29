@@ -26,10 +26,12 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class InsertLineBreakCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(InsertLineBreakCommand);
 public:
     static Ref<InsertLineBreakCommand> create(Ref<Document>&& document)
     {

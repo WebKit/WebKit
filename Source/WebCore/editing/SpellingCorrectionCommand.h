@@ -28,10 +28,12 @@
 #include "CompositeEditCommand.h"
 #include "DocumentFragment.h"
 #include "SimpleRange.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SpellingCorrectionCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(SpellingCorrectionCommand);
 public:
     static Ref<SpellingCorrectionCommand> create(const SimpleRange& rangeToBeCorrected, const String& correction);
 

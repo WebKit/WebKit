@@ -38,8 +38,11 @@
 #include "LocalFrameInlines.h"
 #include "StylePropertiesInlines.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ChangeListTypeCommand);
 
 static std::optional<std::pair<ChangeListTypeCommand::Type, Ref<HTMLElement>>> listConversionTypeForSelection(const VisibleSelection& selection)
 {

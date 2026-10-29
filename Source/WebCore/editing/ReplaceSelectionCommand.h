@@ -29,6 +29,7 @@
 #include "CompositeEditCommand.h"
 #include "DocumentFragment.h"
 #include "NodeTraversal.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ class Range;
 class ReplacementFragment;
 
 class ReplaceSelectionCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(ReplaceSelectionCommand);
 public:
     enum CommandOption {
         SelectReplacement = 1 << 0,

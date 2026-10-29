@@ -37,8 +37,15 @@
 #include "LocalFrameInlines.h"
 #include "RenderObjectNode.h"
 #include "SimpleRange.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModifySelectionListLevelCommand);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IncreaseSelectionListLevelCommand);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DecreaseSelectionListLevelCommand);
 
 ModifySelectionListLevelCommand::ModifySelectionListLevelCommand(Ref<Document>&& document)
     : CompositeEditCommand(WTF::move(document))

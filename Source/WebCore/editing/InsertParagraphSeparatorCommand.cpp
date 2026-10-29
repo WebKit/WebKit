@@ -44,8 +44,11 @@
 #include "RenderText.h"
 #include "Text.h"
 #include "VisibleUnits.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InsertParagraphSeparatorCommand);
 
 using namespace HTMLNames;
 

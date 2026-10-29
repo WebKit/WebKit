@@ -38,8 +38,12 @@
 #include "LocalFrameInlines.h"
 #include "NodeDocument.h"
 #include "Text.h"
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DictationCommand);
 
 class DictationCommandLineOperation {
 public:
@@ -59,6 +63,7 @@ private:
 };
 
 class DictationMarkerSupplier : public TextInsertionMarkerSupplier {
+    WTF_MAKE_TZONE_ALLOCATED(DictationMarkerSupplier);
 public:
     static Ref<DictationMarkerSupplier> create(Vector<DictationAlternative>&& alternatives)
     {
@@ -84,6 +89,8 @@ protected:
 private:
     Vector<DictationAlternative> m_alternatives;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DictationMarkerSupplier);
 
 DictationCommand::DictationCommand(Ref<Document>&& document, const String& text, const Vector<DictationAlternative>& alternatives)
     : TextInsertionBaseCommand(WTF::move(document))

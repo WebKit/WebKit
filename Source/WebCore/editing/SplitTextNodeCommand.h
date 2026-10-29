@@ -26,12 +26,14 @@
 #pragma once
 
 #include "EditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class Text;
 
 class SplitTextNodeCommand : public SimpleEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(SplitTextNodeCommand);
 public:
     static Ref<SplitTextNodeCommand> create(Ref<Text>&& node, int offset)
     {

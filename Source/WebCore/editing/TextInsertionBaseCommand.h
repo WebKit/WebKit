@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -34,6 +35,7 @@ class Document;
 class VisibleSelection;
 
 class TextInsertionBaseCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(TextInsertionBaseCommand);
 public:
     virtual ~TextInsertionBaseCommand() { }
 

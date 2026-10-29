@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -47,6 +48,7 @@ struct SmartListUndoData {
 };
 
 class InsertTextCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(InsertTextCommand);
 public:
     enum RebalanceType {
         RebalanceLeadingAndTrailingWhitespaces,
