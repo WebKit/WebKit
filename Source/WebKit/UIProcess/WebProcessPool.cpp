@@ -1875,6 +1875,11 @@ void WebProcessPool::registerURLSchemeAsEmptyDocument(const String& urlScheme)
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsEmptyDocument(urlScheme));
 }
 
+bool WebProcessPool::isEmptyDocumentURL(const URL& url) const
+{
+    return url.protocolIsAbout() || m_schemesToRegisterAsEmptyDocument.contains(url.protocol().toString());
+}
+
 void WebProcessPool::registerURLSchemeAsSecure(const String& urlScheme)
 {
     LegacyGlobalSettings::singleton().registerURLSchemeAsSecure(urlScheme);
@@ -2743,7 +2748,7 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
     if (siteIsolationEnabled && sourceProcessSiteMatchesTarget && (sourceURLIsInvalid || !targetURL.isValid() || targetSite.matches(sourceURL)))
         return { WTF::move(sourceProcess), nullptr, "Navigation is same-site"_s };
 
-    if (sourceURL.protocolIsAbout()) {
+    if (isEmptyDocumentURL(sourceURL)) {
         if (auto sourceSite = sourceProcess->site()) {
             if (!siteIsolationEnabled && sourceSite->domain().matches(targetURL))
                 return { WTF::move(sourceProcess), nullptr, "Navigation is treated as same-site (matched domain)"_s };

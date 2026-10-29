@@ -9487,11 +9487,12 @@ void WebPageProxy::didExplicitOpenForFrame(IPC::Connection& connection, FrameIde
     if (frame->isMainFrame())
         pageLoadState->didExplicitOpen(transaction, url);
 
+    bool isEmptyDocument = protect(m_configuration->processPool())->isEmptyDocumentURL(url);
     frame->didExplicitOpen(WTF::move(url), WTF::move(mimeType));
 
     m_hasCommittedAnyProvisionalLoads = true;
     process->didCommitProvisionalLoad();
-    if (!url.protocolIsAbout())
+    if (!isEmptyDocument)
         process->didCommitMeaningfulProvisionalLoad();
 
     pageLoadState->commitChanges();
@@ -9925,7 +9926,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
 
     Ref process = WebProcessProxy::fromConnection(connection);
     process->didCommitProvisionalLoad();
-    if (!request.url().protocolIsAbout())
+    if (!protect(m_configuration->processPool())->isEmptyDocumentURL(request.url()))
         process->didCommitMeaningfulProvisionalLoad();
 
     if (frame->isMainFrame()) {
