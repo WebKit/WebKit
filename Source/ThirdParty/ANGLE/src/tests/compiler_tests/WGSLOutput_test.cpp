@@ -2672,6 +2672,10 @@ fn _umain()
   {
     ((ANGLE_output_global.gl_Position_).z) = ((((ANGLE_output_global.gl_Position_).z) + ((ANGLE_output_global.gl_Position_).w)) * (0.5f));
   }
+  if ((((ANGLEUniforms).depthRange).y) < (((ANGLEUniforms).depthRange).x))
+  {
+    ((ANGLE_output_global.gl_Position_).z) = (((ANGLE_output_global.gl_Position_).w) - ((ANGLE_output_global.gl_Position_).z));
+  }
 }
 @vertex
 fn wgslMain() -> ANGLE_Output_Annotated
@@ -2758,6 +2762,10 @@ fn _umain()
   if (bool((((ANGLEUniforms).misc) >> (20u)) & (1u)))
   {
     ((ANGLE_output_global.gl_Position_).z) = ((((ANGLE_output_global.gl_Position_).z) + ((ANGLE_output_global.gl_Position_).w)) * (0.5f));
+  }
+  if ((((ANGLEUniforms).depthRange).y) < (((ANGLEUniforms).depthRange).x))
+  {
+    ((ANGLE_output_global.gl_Position_).z) = (((ANGLE_output_global.gl_Position_).w) - ((ANGLE_output_global.gl_Position_).z));
   }
 }
 @vertex

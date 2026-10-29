@@ -1391,15 +1391,16 @@ angle::Result ContextWgpu::handleDirtyViewport(DirtyBits::Iterator *dirtyBitsIte
     float depthMin = mState.getNearPlane();
     float depthMax = mState.getFarPlane();
 
-    // This clamping should be done by the front end. WebGPU requires values in this range.
+    // The front end clamps the depth range to [0, 1], which WebGPU requires.
     ASSERT(depthMin >= 0 && depthMin <= 1);
-    ASSERT(depthMin >= 0 && depthMin <= 1);
+    ASSERT(depthMax >= 0 && depthMax <= 1);
 
-    // WebGPU requires that the maxDepth is at least minDepth. WebGL requires the same but core GL
-    // ES does not.
+    // WebGPU requires that maxDepth is at least minDepth. WebGL requires the same, but ES does not:
+    // a near value greater than the far value reverses the depth. Swap the range here; the vertex
+    // shader reverses the depth when the driver uniforms' depth range is reversed.
     if (depthMin > depthMax)
     {
-        UNIMPLEMENTED();
+        std::swap(depthMin, depthMax);
     }
 
     bool isDefaultViewport = (clampedViewport == framebufferRect) && depthMin == 0 && depthMax == 1;

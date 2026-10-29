@@ -64,6 +64,8 @@ class DriverUniform
 
     TIntermTyped *getAcbBufferOffsets() const;
     TIntermTyped *getDepthRange() const;
+    // Returns true if the depth range's near value is greater than its far value.
+    TIntermTyped *getDepthRangeReversed() const;
     TIntermTyped *getViewportZScale() const;
     TIntermTyped *getHalfRenderArea() const;
     TIntermTyped *getFlipXY(TSymbolTable *symbolTable, DriverUniformFlip stage) const;

@@ -475,4 +475,283 @@ ANGLE_INSTANTIATE_TEST_ES2_AND(ViewportTest, ES2_D3D11_PRESENT_PATH_FAST());
 // This test suite is not instantiated on some OSes.
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ViewportTest);
 
+struct DepthRange
+{
+    float zNear;
+    float zFar;
+};
+
+// Normal ranges, empty ranges and ranges whose near value is greater than their far value. ES
+// allows all of them, and maps the clip space z to the window depth n + (f - n) * (z + 1) / 2.
+constexpr DepthRange kDepthRanges[] = {
+    {0.0f, 1.0f}, {0.25f, 0.75f}, {0.5f, 0.5f}, {1.0f, 0.0f}, {0.75f, 0.25f},
+};
+
+class DepthRangeTest : public ANGLETest<>
+{
+  protected:
+    static constexpr int kSize = 32;
+
+    DepthRangeTest()
+    {
+        setWindowWidth(kSize);
+        setWindowHeight(kSize);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+        setConfigDepthBits(24);
+    }
+
+    void testSetUp() override
+    {
+        mColorProgram =
+            CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+        ASSERT_NE(0u, mColorProgram);
+        mColorLocation = glGetUniformLocation(mColorProgram, essl1_shaders::ColorUniform());
+        ASSERT_NE(-1, mColorLocation);
+
+        // Outputs the window depth, gl_FragCoord.z, in the red channel.
+        constexpr char kFragCoordZFS[] = R"(precision highp float;
+void main()
+{
+    gl_FragColor = vec4(gl_FragCoord.z, 0.0, 0.0, 1.0);
+})";
+        mFragCoordZProgram = CompileProgram(essl1_shaders::vs::Simple(), kFragCoordZFS);
+        ASSERT_NE(0u, mFragCoordZProgram);
+    }
+
+    void testTearDown() override
+    {
+        glDeleteProgram(mColorProgram);
+        glDeleteProgram(mFragCoordZProgram);
+    }
+
+    // Binds the default framebuffer, or a framebuffer object with an RGBA8 color texture and a
+    // 16-bit depth renderbuffer.
+    void bindFramebuffer(bool useFramebufferObject)
+    {
+        if (!useFramebufferObject)
+        {
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            return;
+        }
+        glBindTexture(GL_TEXTURE_2D, mColorTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     nullptr);
+        glBindRenderbuffer(GL_RENDERBUFFER, mDepthRenderbuffer);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, kSize, kSize);
+        glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mColorTexture,
+                               0);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+                                  mDepthRenderbuffer);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    }
+
+    void drawColorQuad(const GLColor &color, float z)
+    {
+        glUseProgram(mColorProgram);
+        const angle::Vector4 colorF = color.toNormalizedVector();
+        glUniform4f(mColorLocation, colorF[0], colorF[1], colorF[2], colorF[3]);
+        drawQuad(mColorProgram, essl1_shaders::PositionAttrib(), z, 1.0f, true);
+    }
+
+    void drawFragCoordZQuad(float z)
+    {
+        drawQuad(mFragCoordZProgram, essl1_shaders::PositionAttrib(), z, 1.0f, true);
+    }
+
+    static float WindowDepth(const DepthRange &range, float z)
+    {
+        return range.zNear + (range.zFar - range.zNear) * (z + 1.0f) * 0.5f;
+    }
+
+    // Expects the pixel to hold the window depth that drawFragCoordZQuad() wrote.
+    void expectFragCoordZ(int x, int y, float depth)
+    {
+        EXPECT_PIXEL_NEAR(x, y, depth * 255.0f, 0, 0, 255, 1);
+    }
+
+    GLuint mColorProgram      = 0;
+    GLint mColorLocation      = -1;
+    GLuint mFragCoordZProgram = 0;
+    GLTexture mColorTexture;
+    GLRenderbuffer mDepthRenderbuffer;
+    GLFramebuffer mFramebuffer;
+};
+
+// Tests that gl_FragCoord.z is the window depth for every depth range, including ranges whose
+// near value is greater than their far value.
+TEST_P(DepthRangeTest, FragCoordZ)
+{
+    for (bool useFramebufferObject : {false, true})
+    {
+        bindFramebuffer(useFramebufferObject);
+        for (const DepthRange &range : kDepthRanges)
+        {
+            glDepthRangef(range.zNear, range.zFar);
+            for (float z : {-0.5f, 0.0f, 0.5f})
+            {
+                glClearColor(0, 0, 1, 1);
+                glClear(GL_COLOR_BUFFER_BIT);
+                drawFragCoordZQuad(z);
+                ASSERT_GL_NO_ERROR();
+                SCOPED_TRACE(testing::Message()
+                             << "framebuffer object: " << useFramebufferObject << ", depth range: ("
+                             << range.zNear << ", " << range.zFar << "), z: " << z);
+                expectFragCoordZ(kSize / 2, kSize / 2, WindowDepth(range, z));
+            }
+        }
+    }
+}
+
+// Tests that the depth test compares window depths, so that a range whose near value is greater
+// than its far value reverses which of two overlapping quads is closer.
+TEST_P(DepthRangeTest, DepthTest)
+{
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    for (bool useFramebufferObject : {false, true})
+    {
+        bindFramebuffer(useFramebufferObject);
+        for (const DepthRange &range : kDepthRanges)
+        {
+            if (range.zNear == range.zFar)
+            {
+                continue;
+            }
+            glDepthRangef(range.zNear, range.zFar);
+            glClearColor(0, 0, 1, 1);
+            glClearDepthf(1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            drawColorQuad(GLColor::red, -0.5f);
+            drawColorQuad(GLColor::green, 0.5f);
+            ASSERT_GL_NO_ERROR();
+            SCOPED_TRACE(testing::Message() << "framebuffer object: " << useFramebufferObject
+                                            << ", depth range: (" << range.zNear << ", "
+                                            << range.zFar << ")");
+            const GLColor &closer = range.zNear < range.zFar ? GLColor::red : GLColor::green;
+            EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, closer);
+        }
+    }
+}
+
+// Tests draws with a normal and a reversed depth range in the same frame: the depth values they
+// store are the window depths, which later draws with a normal range are tested against.
+TEST_P(DepthRangeTest, NormalAndReversedRangesInOneFrame)
+{
+    constexpr int kHalf = kSize / 2;
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    for (bool useFramebufferObject : {false, true})
+    {
+        bindFramebuffer(useFramebufferObject);
+        glClearColor(0, 0, 1, 1);
+        glClearDepthf(1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // The left half stores 0.75, the right half 0.25.
+        glViewport(0, 0, kHalf, kSize);
+        glDepthRangef(0.0f, 1.0f);
+        drawColorQuad(GLColor::red, 0.5f);
+        glViewport(kHalf, 0, kHalf, kSize);
+        glDepthRangef(1.0f, 0.0f);
+        drawColorQuad(GLColor::red, 0.5f);
+
+        // A quad at depth 0.5 passes the depth test only on the left half.
+        glViewport(0, 0, kSize, kSize);
+        glDepthRangef(0.0f, 1.0f);
+        drawColorQuad(GLColor::green, 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        SCOPED_TRACE(testing::Message() << "framebuffer object: " << useFramebufferObject);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kHalf, kSize, GLColor::green);
+        EXPECT_PIXEL_RECT_EQ(kHalf, 0, kHalf, kSize, GLColor::red);
+    }
+}
+
+// Tests gl_FragCoord.z of draws with a normal and a reversed depth range in the same frame.
+TEST_P(DepthRangeTest, NormalAndReversedRangesInOneFrameFragCoordZ)
+{
+    constexpr int kHalf = kSize / 2;
+    for (bool useFramebufferObject : {false, true})
+    {
+        bindFramebuffer(useFramebufferObject);
+        glClearColor(0, 0, 1, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        constexpr DepthRange kNormal   = {0.25f, 0.75f};
+        constexpr DepthRange kReversed = {0.75f, 0.25f};
+        glViewport(0, 0, kHalf, kSize);
+        glDepthRangef(kNormal.zNear, kNormal.zFar);
+        drawFragCoordZQuad(0.5f);
+        glViewport(kHalf, 0, kHalf, kSize);
+        glDepthRangef(kReversed.zNear, kReversed.zFar);
+        drawFragCoordZQuad(0.5f);
+        glViewport(0, 0, kSize, kSize);
+        ASSERT_GL_NO_ERROR();
+
+        SCOPED_TRACE(testing::Message() << "framebuffer object: " << useFramebufferObject);
+        expectFragCoordZ(kHalf / 2, kSize / 2, WindowDepth(kNormal, 0.5f));
+        expectFragCoordZ(kHalf + kHalf / 2, kSize / 2, WindowDepth(kReversed, 0.5f));
+    }
+}
+
+// Tests that the depth range values are clamped to [0, 1] before a reversed range is applied.
+TEST_P(DepthRangeTest, ReversedRangeIsClamped)
+{
+    glDepthRangef(2.0f, -1.0f);
+    GLfloat depthRange[2] = {};
+    glGetFloatv(GL_DEPTH_RANGE, depthRange);
+    EXPECT_EQ(1.0f, depthRange[0]);
+    EXPECT_EQ(0.0f, depthRange[1]);
+
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawFragCoordZQuad(0.5f);
+    ASSERT_GL_NO_ERROR();
+    expectFragCoordZ(kSize / 2, kSize / 2, 0.25f);
+}
+
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(DepthRangeTest);
+
+class WebGLDepthRangeTest : public DepthRangeTest
+{
+  protected:
+    WebGLDepthRangeTest() { setWebGLCompatibilityEnabled(true); }
+};
+
+// Tests that WebGL rejects depth ranges whose near value is greater than their far value, and
+// keeps drawing with the previous range.
+TEST_P(WebGLDepthRangeTest, ReversedRangeIsRejected)
+{
+    constexpr DepthRange kNormal = {0.25f, 0.75f};
+    glDepthRangef(kNormal.zNear, kNormal.zFar);
+    ASSERT_GL_NO_ERROR();
+    glDepthRangef(kNormal.zFar, kNormal.zNear);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    GLfloat depthRange[2] = {};
+    glGetFloatv(GL_DEPTH_RANGE, depthRange);
+    EXPECT_EQ(kNormal.zNear, depthRange[0]);
+    EXPECT_EQ(kNormal.zFar, depthRange[1]);
+
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawFragCoordZQuad(0.5f);
+    ASSERT_GL_NO_ERROR();
+    expectFragCoordZ(kSize / 2, kSize / 2, WindowDepth(kNormal, 0.5f));
+
+    // An empty range is not reversed.
+    glDepthRangef(0.5f, 0.5f);
+    ASSERT_GL_NO_ERROR();
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawFragCoordZQuad(0.5f);
+    ASSERT_GL_NO_ERROR();
+    expectFragCoordZ(kSize / 2, kSize / 2, 0.5f);
+}
+
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLDepthRangeTest);
+
 }  // namespace
