@@ -451,56 +451,15 @@ void GridLayout::layout()
 void GridLayout::updateOverflow(RenderGrid& renderGrid)
 {
     ASSERT(renderGrid.style().isOverflowVisible());
-    renderGrid.clearOverflow();
 
-    CheckedRef layoutState = this->layoutState();
-    auto& gridBoxGeometry = layoutState->geometryForBox(gridBox());
-    auto contentBoxOffset = LayoutSize { gridBoxGeometry.contentBoxLeft(), gridBoxGeometry.contentBoxTop() };
-
-    // https://drafts.csswg.org/css-overflow-3/#scrollable
-    auto gridItemsLayoutOverflowRect = LayoutRect { };
-    auto gridItemsVisualOverflowRect = LayoutRect { };
-    for (CheckedRef layoutBox : formattingContextBoxes(gridBox())) {
-        LayoutRect gridItemBorderBoxRect = Layout::BoxGeometry::borderBoxRect(layoutState->geometryForBox(layoutBox));
-        gridItemBorderBoxRect.move(contentBoxOffset);
-        gridItemsVisualOverflowRect.unite(gridItemBorderBoxRect);
-
-        CheckedRef gridItemRenderer = downcast<RenderBox>(*layoutBox->rendererForIntegration());
-
-        // A grid item's content is laid out outside of this formatting context, so the overflow that
-        // its own subtree generates is only available from the renderer. The returned rect already
-        // includes the grid item's border box.
-        auto gridItemLayoutOverflowRect = gridItemRenderer->layoutOverflowRectForPropagation(renderGrid.writingMode());
-        gridItemLayoutOverflowRect.move(gridItemRenderer->locationOffset());
-        gridItemsLayoutOverflowRect.unite(gridItemLayoutOverflowRect);
-
-        if (gridItemRenderer->hasVisualOverflow()) {
-            auto gridItemVisualOverflowRect = gridItemRenderer->visualOverflowRectForPropagation(renderGrid.writingMode());
-            gridItemVisualOverflowRect.move(gridItemRenderer->locationOffset());
-            gridItemsVisualOverflowRect.unite(gridItemVisualOverflowRect);
-        }
-    }
-
-    renderGrid.addLayoutOverflow(gridItemsLayoutOverflowRect);
-
-    // Out-of-flow boxes whose containing block is the grid container are laid out by
-    // layoutOutOfFlowBoxes, also outside of this formatting context.
-    auto outOfFlowBoxesLayoutOverflowRect = LayoutRect { };
-    if (auto* outOfFlowDescendants = renderGrid.outOfFlowBoxes()) {
-        for (CheckedRef outOfFlowBox : *outOfFlowDescendants) {
-            // Fixed positioned boxes do not scroll with the content, so they never contribute to the
-            // scrollable overflow area.
-            if (outOfFlowBox->isFixedPositioned())
-                continue;
-            auto outOfFlowBoxLayoutOverflowRect = outOfFlowBox->layoutOverflowRectForPropagation(renderGrid.writingMode());
-            outOfFlowBoxLayoutOverflowRect.move(outOfFlowBox->locationOffset());
-            outOfFlowBoxesLayoutOverflowRect.unite(outOfFlowBoxLayoutOverflowRect);
-        }
-    }
-    renderGrid.addLayoutOverflow(outOfFlowBoxesLayoutOverflowRect);
-
-    if (!renderGrid.borderBoxRect().contains(gridItemsVisualOverflowRect))
-        renderGrid.addVisualOverflow(gridItemsVisualOverflowRect);
+    // https://drafts.csswg.org/css-overflow-3/#scrollable-overflow-calculation
+    // The grid items' and out-of-flow boxes' overflow, their transforms, the container's own visual effects
+    // (box-shadow, outline, filters, theme) are renderer concepts. Propagate them with the same generic code
+    // that simplified layout runs so that the result does not depend on which kind of layout ran last.
+    // FIXME: For scroll containers (GridHasNonVisibleOverflow), the content area has to be the grid itself
+    // (css-grid-1 5.3), computed from GFC's own track positions.
+    renderGrid.computeInFlowOverflow(renderGrid.flippedContentBoxRect(), RenderBox::ComputeOverflowOptions::MarginsExtendLayoutOverflow);
+    renderGrid.addOverflowFromOutOfFlowBoxes();
 }
 
 void GridLayout::layoutOutOfFlowBoxes()

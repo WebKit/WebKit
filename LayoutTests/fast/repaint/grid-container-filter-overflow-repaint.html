@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+body { margin: 0; }
+#host { position: absolute; left: 100px; top: 100px; }
+#grid { display: grid; width: 60px; grid-template-columns: 60px; grid-template-rows: 30px; background-color: blue; filter: drop-shadow(40px 0 0 green); }
+#item { background-color: yellow; }
+</style>
+</head>
+<body>
+<div id="host"><div id="grid"><div id="item"></div></div></div>
+<script>
+description("The repaint rect of a grid container with a filter includes the filter outset.");
+
+var grid = document.getElementById("grid");
+document.body.offsetTop;
+
+internals.startTrackingRepaints();
+grid.style.backgroundColor = "green";
+document.body.offsetTop;
+var repaintRects = internals.repaintRectsAsText();
+internals.stopTrackingRepaints();
+
+debug(repaintRects);
+shouldBeTrue("repaintRects.indexOf('(rect 100 100 100 30)') != -1");
+</script>
+</body>
+</html>
