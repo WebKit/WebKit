@@ -714,6 +714,67 @@ TEST_P(DepthRangeTest, ReversedRangeIsClamped)
     expectFragCoordZ(kSize / 2, kSize / 2, 0.25f);
 }
 
+// Tests gl_DepthRange in the vertex and in the fragment shader, including for ranges whose near
+// value is greater than their far value: gl_DepthRange holds the range that the application set,
+// clamped to [0, 1].
+TEST_P(DepthRangeTest, DepthRangeUniform)
+{
+    constexpr char kVertexVS[] = R"(precision highp float;
+attribute vec4 a_position;
+varying vec3 v_depthRange;
+void main()
+{
+    gl_Position  = a_position;
+    v_depthRange = vec3(gl_DepthRange.near, gl_DepthRange.far, gl_DepthRange.diff);
+})";
+    constexpr char kVertexFS[] = R"(precision highp float;
+varying vec3 v_depthRange;
+void main()
+{
+    gl_FragColor = vec4(v_depthRange.xy, v_depthRange.z * 0.5 + 0.5, 1.0);
+})";
+    constexpr char kFragmentFS[] = R"(precision highp float;
+void main()
+{
+    gl_FragColor = vec4(gl_DepthRange.near, gl_DepthRange.far, gl_DepthRange.diff * 0.5 + 0.5, 1.0);
+})";
+    ANGLE_GL_PROGRAM(vertexProgram, kVertexVS, kVertexFS);
+    ANGLE_GL_PROGRAM(fragmentProgram, essl1_shaders::vs::Simple(), kFragmentFS);
+
+    struct DepthRangeCase
+    {
+        DepthRange set;
+        DepthRange expected;
+    };
+    std::vector<DepthRangeCase> cases;
+    for (const DepthRange &range : kDepthRanges)
+    {
+        cases.push_back({range, range});
+    }
+    cases.push_back({{-1.0f, 2.0f}, {0.0f, 1.0f}});
+    cases.push_back({{2.0f, -1.0f}, {1.0f, 0.0f}});
+
+    for (GLuint program : {vertexProgram.get(), fragmentProgram.get()})
+    {
+        for (const DepthRangeCase &depthRangeCase : cases)
+        {
+            const DepthRange &set      = depthRangeCase.set;
+            const DepthRange &expected = depthRangeCase.expected;
+            SCOPED_TRACE(testing::Message()
+                         << (program == vertexProgram ? "vertex" : "fragment")
+                         << " shader, depth range: (" << set.zNear << ", " << set.zFar << ")");
+            glDepthRangef(set.zNear, set.zFar);
+            glClearColor(0, 0, 0, 0);
+            glClear(GL_COLOR_BUFFER_BIT);
+            drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
+            ASSERT_GL_NO_ERROR();
+            EXPECT_PIXEL_NEAR(kSize / 2, kSize / 2, expected.zNear * 255.0f,
+                              expected.zFar * 255.0f,
+                              ((expected.zFar - expected.zNear) * 0.5f + 0.5f) * 255.0f, 255, 1);
+        }
+    }
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(DepthRangeTest);
 
 class WebGLDepthRangeTest : public DepthRangeTest

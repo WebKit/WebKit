@@ -39,8 +39,10 @@
 #include "compiler/translator/tree_util/BuiltIn_autogen.h"
 #include "compiler/translator/tree_util/DriverUniform.h"
 #include "compiler/translator/tree_util/FindMain.h"
+#include "compiler/translator/tree_util/FindSymbolNode.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
+#include "compiler/translator/tree_util/ReplaceVariable.h"
 #include "compiler/translator/tree_util/RunAtTheEndOfShader.h"
 #include "compiler/translator/util.h"
 #include "compiler/translator/wgsl/OutputUniformBlocks.h"
@@ -320,10 +322,7 @@ void OutputWGSLTraverser::visitSymbol(TIntermSymbol *symbolNode)
 
     // Default uniforms should no longer be referenced--they should all be in an interface block by
     // now.
-    // TODO(anglebug.com/376553328): gl_DepthRange should be handled by referencing driver
-    // uniforms--then the check for builtin default uniforms can be removed here.
-    if (type.getBasicType() == TBasicType::EbtVoid ||
-        (IsDefaultUniform(type) && var.symbolType() != SymbolType::BuiltIn))
+    if (type.getBasicType() == TBasicType::EbtVoid || IsDefaultUniform(type))
     {
         UNREACHABLE();
     }
@@ -364,9 +363,7 @@ void OutputWGSLTraverser::visitSymbol(TIntermSymbol *symbolNode)
         if (var.symbolType() == SymbolType::BuiltIn)
         {
             ASSERT(mRewritePipelineVarOutput->IsInputVar(var.uniqueId()) ||
-                   mRewritePipelineVarOutput->IsOutputVar(var.uniqueId()) ||
-                   type.getQualifier() == EvqDepthRange);
-            // TODO(anglebug.com/376553328): support gl_DepthRange.
+                   mRewritePipelineVarOutput->IsOutputVar(var.uniqueId()));
             // Match the name of the struct field in `mRewritePipelineVarOutput`.
             mSink << "_";
         }
@@ -2769,6 +2766,15 @@ bool TranslatorWGSL::preTranslateTreeModifications(TIntermBlock *root,
     else
     {
         driverUniforms.addGraphicsDriverUniformsToShader(root, &getSymbolTable());
+    }
+
+    // Replace gl_DepthRange with the driver uniforms' depth range.
+    const TVariable *depthRange = static_cast<const TVariable *>(
+        getSymbolTable().findBuiltIn(ImmutableString("gl_DepthRange"), 0));
+    if (FindSymbolNode(root, depthRange->name()) != nullptr &&
+        !ReplaceVariableWithTyped(this, root, depthRange, driverUniforms.getDepthRange()))
+    {
+        return false;
     }
 
     if (getShaderType() == GL_VERTEX_SHADER)

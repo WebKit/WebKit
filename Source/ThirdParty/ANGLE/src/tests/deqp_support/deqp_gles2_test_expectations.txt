@@ -340,7 +340,6 @@
 356399840 WGPU : dEQP-GLES2.functional.rasterization.culling.*triangle_fan* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.rasterization.culling.*both_triangle* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.rasterization.interpolation.*triangle_fan* = FAIL
-356399840 WGPU : dEQP-GLES2.functional.shaders.builtin_variable.depth_range* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.builtin_variable.fragcoord_xyz = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.builtin_variable.pointcoord = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.conditionals.* = FAIL
