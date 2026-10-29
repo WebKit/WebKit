@@ -228,7 +228,7 @@ void GridLayout::updateGridItemGridAreas(const Layout::UsedTrackSizes& usedTrack
     }
 }
 
-void GridLayout::updateFormattingContextRootRenderer(LayoutUnit usedBlockContentSize, const Layout::GridItemRects& gridItemRects, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks)
+void GridLayout::updateFormattingContextRootRenderer(const Layout::UsedTrackSizes& usedTrackSizes, LayoutUnit usedBlockContentSize, const Layout::GridItemRects& gridItemRects, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks)
 {
     CheckedRef renderGrid = gridBoxRenderer();
     auto& currentGrid = renderGrid->currentGrid();
@@ -244,6 +244,11 @@ void GridLayout::updateFormattingContextRootRenderer(LayoutUnit usedBlockContent
         currentGrid.setGridItemArea(downcast<RenderBox>(*protect(gridItemRect.layoutBox->rendererForIntegration())), gridArea);
     }
     currentGrid.setNeedsItemsPlacement(false);
+
+    // The grid was emptied before layout, so this sizes it to the used tracks, whether or not there are out-of-flow boxes:
+    // gridAreaRangeForOutOfFlow relies on numTracks() to tell the last line from an interior one.
+    // This has to precede setAutoRepeatTracks, which asserts on the track count.
+    currentGrid.ensureGridSize(usedTrackSizes.rowSizes.size(), usedTrackSizes.columnSizes.size());
 
     // Out-of-flow boxes are placed by RenderGrid, which resolves their grid lines against the explicit
     // grid it computes from style plus these auto-repeated track counts, offset by the explicit grid start.
@@ -316,8 +321,9 @@ void GridLayout::layout()
         collapsedColumnTracks, collapsedRowTracks ] = Layout::GridFormattingContext { gridBox(), protect(layoutState()) }.layout(gridLayoutConstraints);
     updateGridItemRenderers(previousGridItemRects);
     updateGridItemGridAreas(usedTrackSizes, gridItemRects);
-    updateFormattingContextRootRenderer(usedBlockContentSize, gridItemRects, autoRepeatColumnsCount, autoRepeatRowsCount, leadingImplicitColumnsCount, leadingImplicitRowsCount, collapsedColumnTracks, collapsedRowTracks);
-    layoutOutOfFlowBoxes(usedTrackSizes, collapsedColumnTracks, collapsedRowTracks);
+    updateFormattingContextRootRenderer(usedTrackSizes, usedBlockContentSize, gridItemRects, autoRepeatColumnsCount, autoRepeatRowsCount, leadingImplicitColumnsCount, leadingImplicitRowsCount, collapsedColumnTracks, collapsedRowTracks);
+    populateGridPositions(usedTrackSizes, collapsedColumnTracks, collapsedRowTracks);
+    layoutOutOfFlowBoxes();
 
     CheckedRef renderGrid = gridBoxRenderer();
     renderGrid->updateLogicalHeight();
@@ -382,17 +388,17 @@ void GridLayout::updateOverflow(RenderGrid& renderGrid)
         renderGrid.addVisualOverflow(gridItemsVisualOverflowRect);
 }
 
-void GridLayout::layoutOutOfFlowBoxes(const Layout::UsedTrackSizes& usedTrackSizes, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks)
+void GridLayout::layoutOutOfFlowBoxes()
 {
     CheckedRef renderGrid = gridBoxRenderer();
     auto* outOfFlowDescendants = renderGrid->outOfFlowBoxes();
     if (!outOfFlowDescendants)
         return;
 
-    // Populate grid positions so that gridAreaRangeForOutOfFlow (called from
-    // PositionedLayoutConstraints::captureGridArea during positioned layout)
-    // can resolve grid lines to their positions in the grid.
-    populateGridPositionsForOutOfFlowLayout(usedTrackSizes, collapsedColumnTracks, collapsedRowTracks);
+    // gridAreaRangeForOutOfFlow (called from PositionedLayoutConstraints::captureGridArea) resolves grid lines
+    // against the positions, so they have to match the track counts.
+    ASSERT(renderGrid->positions(Style::GridTrackSizingDirection::Columns).size() == renderGrid->numTracks(Style::GridTrackSizingDirection::Columns) + 1);
+    ASSERT(renderGrid->positions(Style::GridTrackSizingDirection::Rows).size() == renderGrid->numTracks(Style::GridTrackSizingDirection::Rows) + 1);
 
     // FIXME: Determine whether we should conditionally use RelayoutChildren::No
     // based on whether the grid container size changed, matching the legacy path's
@@ -400,12 +406,11 @@ void GridLayout::layoutOutOfFlowBoxes(const Layout::UsedTrackSizes& usedTrackSiz
     renderGrid->layoutOutOfFlowBoxes(RelayoutChildren::Yes);
 }
 
-void GridLayout::populateGridPositionsForOutOfFlowLayout(const Layout::UsedTrackSizes& usedTrackSizes, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks)
+// Keep RenderGrid's grid state consistent with the result of layout, whether or not the grid has out-of-flow
+// boxes, since clients other than out-of-flow layout read it (e.g. getComputedStyle, the Web Inspector grid overlay).
+void GridLayout::populateGridPositions(const Layout::UsedTrackSizes& usedTrackSizes, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks)
 {
     CheckedRef renderGrid = gridBoxRenderer();
-
-    // Ensure numTracks() returns the correct value for each direction.
-    renderGrid->currentGrid().ensureGridSize(usedTrackSizes.rowSizes.size(), usedTrackSizes.columnSizes.size());
 
     auto populate = [&](Style::GridTrackSizingDirection direction) {
         bool isColumns = direction == Style::GridTrackSizingDirection::Columns;
