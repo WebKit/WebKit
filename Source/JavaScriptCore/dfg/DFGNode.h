@@ -1826,11 +1826,14 @@ public:
         }
     }
 
+private:
+    friend class Graph;
     void setTupleOffset(unsigned tupleOffset)
     {
         m_virtualRegister = virtualRegisterForLocal(tupleOffset);
     }
 
+public:
     // This is the start of the tuple in the graph's/phases' various tuple buffers.
     unsigned tupleOffset() const
     {

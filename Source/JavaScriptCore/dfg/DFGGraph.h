@@ -249,15 +249,38 @@ public:
         ASSERT(!child->replacement());
     }
 
+    void allocateTupleSlots(Node* node, const Node* copyFrom = nullptr)
+    {
+        ASSERT(node->isTuple());
+        ASSERT(!copyFrom || copyFrom->op() == node->op());
+        unsigned tupleSize = node->tupleSize();
+        unsigned offset = m_tupleData.size();
+        m_tupleData.grow(offset + tupleSize);
+        if (copyFrom) {
+            unsigned sourceOffset = copyFrom->tupleOffset();
+            // The destination is always freshly appended past the end, and slots are never
+            // recycled, so the two ranges are disjoint and a forward copy is fine.
+            ASSERT(sourceOffset + tupleSize <= offset);
+            for (unsigned i = 0; i < tupleSize; ++i)
+                m_tupleData.at(offset + i) = m_tupleData.at(sourceOffset + i);
+        }
+        node->setTupleOffset(offset);
+    }
+
     Node* cloneAndAdd(const Node& node)
     {
-        return m_nodes.cloneAndAdd(node);
+        Node* clone = m_nodes.cloneAndAdd(node);
+        if (clone->isTuple())
+            allocateTupleSlots(clone, &node);
+        return clone;
     }
 
     template<typename... Params>
     Node* addNode(Params... params)
     {
         Node* node = m_nodes.addNew(WTF::move(params)...);
+        if (node->isTuple())
+            allocateTupleSlots(node);
         return node;
     }
 

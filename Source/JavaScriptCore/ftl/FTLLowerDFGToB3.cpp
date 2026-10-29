@@ -18375,7 +18375,8 @@ IGNORE_CLANG_WARNINGS_END
     void compileExtractFromTuple()
     {
         auto& loweredNodeValue = m_tupleValues.at(m_node->tupleIndex());
-        ASSERT(isValid(loweredNodeValue));
+        if (!isValid(loweredNodeValue))
+            DFG_CRASH(m_graph, m_node, makeString("Tuple value not defined for slot "_s, m_node->tupleIndex()).utf8(), m_node->op(), m_node->tupleIndex(), m_graph.m_tupleData.at(m_node->tupleIndex()).resultFlags);
         LValue result = loweredNodeValue.value();
 
         switch (m_graph.m_tupleData.at(m_node->tupleIndex()).resultFlags) {
