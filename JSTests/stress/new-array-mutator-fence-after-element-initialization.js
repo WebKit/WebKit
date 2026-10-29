@@ -1,4 +1,3 @@
-//@ skip if $secAccel3Removed
 //@ runDefault("--useFTLJIT=0", "--thresholdForOptimizeAfterWarmUp=100", "--thresholdForOptimizeSoon=100", "--collectContinuously=1", "--useGenerationalGC=0", "--numberOfGCMarkers=3", "--minimumMutatorUtilization=0.9")
 
 // Stresses the DFG NewArray and MaterializeNewObject fast paths (both users of

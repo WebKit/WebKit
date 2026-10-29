@@ -1,5 +1,3 @@
-//@ skip if $secAccel3Removed
-
 // LICM must not hoist HasIndexedProperty out of a loop unless the abstract state at the
 // pre-header already proves the base has the indexing shape the node speculates. Otherwise
 // the hoisted Array::Int32 code indexes an ArrayStorage-layout butterfly out of bounds.
