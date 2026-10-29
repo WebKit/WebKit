@@ -183,7 +183,7 @@ static void fallbackFontsForRunWithIterator(SingleThreadWeakHashSet<const Font>&
     while (textIterator.consume(currentCharacter, clusterLength)) {
 
         auto addFallbackFontForCharacterIfApplicable = [&](auto character) {
-            if (isSmallCaps)
+            if (isSmallCaps && fontCascade.synthesizesSmallCapsForCharacter(character))
                 character = u_toupper(character);
 
             auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);
@@ -242,7 +242,7 @@ static TextUtil::EnclosingAscentDescent enclosingGlyphBoundsForRunWithIterator(c
     while (textIterator.consume(currentCharacter, clusterLength)) {
 
         auto computeTopAndBottomForCharacter = [&](auto character) {
-            if (isSmallCaps)
+            if (isSmallCaps && fontCascade.synthesizesSmallCapsForCharacter(character))
                 character = u_toupper(character);
 
             auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);

@@ -80,7 +80,7 @@ public:
 
     ExceptionOr<bool> check(ScriptExecutionContext&, const String& font, const String& text);
 
-    CSSSegmentedFontFace* fontFace(FontSelectionRequest, const AtomString& family);
+    CSSSegmentedFontFace* fontFace(FontSelectionRequest, FontVariantCaps, const AtomString& family);
 
     enum class Status { Loading, Loaded };
     Status status() const { return m_status; }
@@ -127,6 +127,7 @@ private:
     HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_facesLookupTable;
     HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_locallyInstalledFacesLookupTable;
     HashMap<String, FontSelectionHashMap, ASCIICaseInsensitiveHash> m_cache;
+    HashMap<String, FontSelectionHashMap, ASCIICaseInsensitiveHash> m_smallCapsCache;
     HashMap<StyleRuleFontFace*, CSSFontFace*> m_constituentCSSConnections;
     size_t m_facesPartitionIndex { 0 }; // All entries in m_faces before this index are CSS-connected.
     Status m_status { Status::Loaded };

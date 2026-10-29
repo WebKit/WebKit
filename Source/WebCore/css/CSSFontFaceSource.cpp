@@ -250,7 +250,9 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
         return nullptr;
     if (!m_inDocumentCustomPlatformData)
         return nullptr;
-    return Font::create(protect(*m_inDocumentCustomPlatformData)->fontPlatformData(fontDescription, fontCreationContext), Font::Origin::Remote);
+
+    auto isSmallCapsFace = protect(*m_svgFontFaceElement)->supportsVariantCaps(FontVariantCaps::Small) ? Font::IsSmallCapsFace::Yes : Font::IsSmallCapsFace::No;
+    return Font::create(protect(*m_inDocumentCustomPlatformData)->fontPlatformData(fontDescription, fontCreationContext), Font::Origin::Remote, Font::IsInterstitial::No, Font::Visibility::Visible, Font::IsOrientationFallback::No, isSmallCapsFace);
 }
 
 bool CSSFontFaceSource::isSVGFontFaceSource() const
@@ -259,6 +261,11 @@ bool CSSFontFaceSource::isSVGFontFaceSource() const
         return true;
     auto* fontRequest = dynamicDowncast<CachedFontLoadRequest>(m_fontRequest.get());
     return fontRequest && is<CachedSVGFont>(fontRequest->cachedFont());
+}
+
+SVGFontFaceElement* CSSFontFaceSource::svgFontFaceElement() const
+{
+    return m_svgFontFaceElement.get();
 }
 
 } // namespace WebCore
