@@ -6370,7 +6370,18 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
     navigation.setUnpartitionedStorageSite(unpartitionedStorageSiteForNavigation(frame, navigation.currentRequest().url()));
 
     Ref browsingContextGroup = browsingContextGroupForNavigation(frame, navigation, websiteDataStore, processSwapRequestedByClient);
-    if (frame.isMainFrame() && shouldUseEnhancedSecurityHeuristics(preferences))
+
+    auto isFragmentOnlyMainFrameNavigation = [&] {
+        if (!frame.isMainFrame())
+            return false;
+        auto& lastNavigationAction = navigation.lastNavigationAction();
+        if (lastNavigationAction && lastNavigationAction->navigationType == WebCore::NavigationType::BackForward)
+            return false;
+        auto& requestURL = navigation.currentRequest().url();
+        return requestURL.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(requestURL, frame.url());
+    };
+
+    if (frame.isMainFrame() && shouldUseEnhancedSecurityHeuristics(preferences) && !isFragmentOnlyMainFrameNavigation())
         internals().enhancedSecurityTracker.trackNavigation(navigation, hasOpenedPage(), internals().pageLoadState.httpFallbackInProgress());
 
     auto enhancedSecurity = securityRestrictionsSourceFrame ? securityRestrictionsSourceFrame->process().enhancedSecurity() : currentEnhancedSecurityState(websitePolicies.get());
