@@ -4265,7 +4265,7 @@ void WebPageProxy::propagateDragAndDrop(DragEventForwardingData&& forwardingData
     auto targetFrameID = forwardingData.targetFrameID;
 
     RefPtr frame = WebFrameProxy::webFrame(targetFrameID);
-    if (!frame) {
+    if (!frame || frame->page() != this) {
         protect(pageClient())->didPerformDragOperation(false);
         return;
     }
