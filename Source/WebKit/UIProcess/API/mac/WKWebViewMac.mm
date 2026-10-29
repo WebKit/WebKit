@@ -1962,7 +1962,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     BOOL expandsToFit = size.width > 0 && size.height > 0;
 
     _page->setSizeToContentAutoSizeMaximumSize(WebCore::IntSize(size.width, size.height));
-    _page->setMainFrameIsScrollable(!expandsToFit);
 
     _impl->setClipsToVisibleRect(expandsToFit);
 }

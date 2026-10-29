@@ -329,6 +329,34 @@ struct WKWebExtensionAPIActionTests {
         // A fresh web view for the second presentation confirms m_popupWebView was cleared.
         #expect(firstWebView !== secondWebView)
     }
+
+    @Test
+    func popupScrollsContentTallerThanMaximumSize() async throws {
+        let popupScript = """
+            window.scrollTo(0, 200)
+
+            browser.test.assertEq(window.scrollY, 200, 'The popup should scroll')
+
+            browser.test.notifyPass()
+            """
+
+        let resources: [String: Any] = [
+            "background.js": "browser.test.sendMessage('Open Popup')",
+            "popup.html": "<div style='height: 3000px'></div><script type='module' src='popup.js'></script>",
+            "popup.js": popupScript,
+        ]
+
+        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: resources)
+        let context = try #require(manager.context)
+
+        manager.internalDelegate.presentPopupForAction = { _ in }
+
+        try await manager.waitForTestMessage("Open Popup")
+
+        context.performAction(for: manager.defaultTab)
+
+        try await manager.run()
+    }
     #endif // WTF_PLATFORM_MAC
 
     @Test

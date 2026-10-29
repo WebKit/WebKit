@@ -2194,7 +2194,6 @@ void WebViewImpl::setSizeToContentAutoSizeMaximumSize(CGSize sizeToContentAutoSi
     bool expandsToFit = sizeToContentAutoSizeMaximumSize.width > 0 && sizeToContentAutoSizeMaximumSize.height > 0;
 
     m_page->setSizeToContentAutoSizeMaximumSize(WebCore::IntSize(sizeToContentAutoSizeMaximumSize));
-    m_page->setMainFrameIsScrollable(!expandsToFit);
 
     setClipsToVisibleRect(expandsToFit);
 }
