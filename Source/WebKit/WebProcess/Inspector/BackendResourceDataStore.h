@@ -156,6 +156,9 @@ public:
     BackendResourceDataStore(const Settings&);
     ~BackendResourceDataStore();
 
+    // Set from the page's InspectorMaximumResourcesContentSize setting, matching PageNetworkAgent.
+    void setMaximumResourcesContentSize(size_t size) { m_settings.maximumResourcesContentSize = size; }
+
     // Gates capture of each response's TLS certificate; set from the page's certificate-display setting.
     void setSupportsShowingCertificate(bool supports) { m_settings.supportsShowingCertificate = supports; }
 

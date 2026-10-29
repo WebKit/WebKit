@@ -282,10 +282,8 @@ void BackendResourceDataStore::maybeDecodeDataToContent(ResourceLoaderIdentifier
     // ensureFreeSpace(0) triggers eviction when m_contentSize exceeds the limit.
     m_contentSize += decodedByteCount;
     ensureFreeSpace(0);
-    // If we were evicted by ensureFreeSpace, m_contentSize was already adjusted.
-    if (resourceData->isContentEvicted())
-        m_contentSize -= decodedByteCount;
-    else
+    // If ensureFreeSpace evicted this resource, evictContent() already took its size out of m_contentSize.
+    if (!resourceData->isContentEvicted())
         m_resourceIdsDeque.appendOrMoveToLast(resourceID);
 }
 

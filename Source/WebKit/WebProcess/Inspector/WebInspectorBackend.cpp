@@ -406,8 +406,10 @@ void WebInspectorBackend::enableNetworkInstrumentation()
         corePage->settings().setDeveloperExtrasEnabled(true);
         corePage->inspectorController().connectRemoteInstrumentation();
 
-        // Buffer certificates only when the page opts in, matching PageNetworkAgent.
-        CheckedRef { m_resourceDataStore.get() }->setSupportsShowingCertificate(corePage->settings().inspectorSupportsShowingCertificate());
+        // Use the page's content size limit, and buffer certificates only when the page opts in, matching PageNetworkAgent.
+        CheckedRef resourceDataStore = m_resourceDataStore;
+        resourceDataStore->setMaximumResourcesContentSize(corePage->settings().inspectorMaximumResourcesContentSize() * MB);
+        resourceDataStore->setSupportsShowingCertificate(corePage->settings().inspectorSupportsShowingCertificate());
     }
 
     forEachLocalOrProvisionalFrame(*corePage, [&](LocalFrame& frame) {

@@ -1,0 +1,103 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true InspectorMaximumResourcesContentSize=1 ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addIFrame() {
+    iframe = document.createElement("iframe");
+    // localhost:8000 is cross-origin to the main page (127.0.0.1:8000), so under Site Isolation
+    // its loads are recorded by the iframe process's BackendResourceDataStore.
+    iframe.src = "http://localhost:8000/site-isolation/inspector/network/resources/decode-evicts-decoding-resource-iframe.html";
+    iframe.addEventListener("load", () => iframe.contentWindow.postMessage({type: "TriggerLoads"}, "*"));
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    // The store's limit is 1 MB (1,048,576 bytes). When A finishes, the store holds A's 440,000 raw
+    // bytes and B's 600,000 decoded bytes. Decoding A brings that to 1,400,000 bytes, so the store
+    // evicts from the front of its LRU list until it fits, which takes A itself. The store must then
+    // count only B's 600,000 bytes; if it takes A's size off twice, its size counter wraps around,
+    // and storing C's body makes the iframe's process crash.
+
+    function waitForResource(urlSubstring) {
+        return new Promise((resolve) => {
+            function onResourceAdded(event) {
+                let resource = event.data.resource;
+                if (!resource || !resource.url || !resource.url.includes(urlSubstring))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+                resolve(resource);
+            }
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+        });
+    }
+
+    async function waitForFinished(resource) {
+        if (!resource.finished && !resource.failed)
+            await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+    }
+
+    let resourceA;
+    let resourceB;
+    let resourceC;
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrame.DecodeEvictsDecodingResource");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.DecodeEvictsDecodingResource.LoadResources",
+        description: "Load A, then B synchronously when A completes, then C, all inside a cross-origin iframe.",
+        async test() {
+            let promiseA = waitForResource("resource=A");
+            let promiseB = waitForResource("resource=B");
+            let promiseC = waitForResource("resource=C");
+
+            InspectorTest.evaluateInPage("addIFrame()");
+
+            resourceA = await promiseA;
+            resourceB = await promiseB;
+            resourceC = await promiseC;
+
+            await waitForFinished(resourceA);
+            await waitForFinished(resourceB);
+            await waitForFinished(resourceC);
+
+            InspectorTest.expectThat(resourceA.finished, "A should finish loading.");
+            InspectorTest.expectThat(resourceB.finished, "B should finish loading.");
+            InspectorTest.expectThat(resourceC.finished, "C should finish loading.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.DecodeEvictsDecodingResource.ResourceBeingDecodedIsEvicted",
+        description: "A's body should be evicted when decoding it puts the store over its limit.",
+        async test() {
+            try {
+                await WI.backendTarget.NetworkAgent.getResponseBody(resourceA.requestIdentifier);
+                InspectorTest.fail("getResponseBody for A should have failed.");
+            } catch (e) {
+                InspectorTest.pass("getResponseBody for A should fail.");
+                InspectorTest.log(`Error: ${e.message || e}`);
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.DecodeEvictsDecodingResource.OtherBodiesAreKept",
+        description: "B's and C's bodies should still be available.",
+        async test() {
+            let responseB = await WI.backendTarget.NetworkAgent.getResponseBody(resourceB.requestIdentifier);
+            InspectorTest.expectEqual(responseB.body.length, 600000, "B's body should have 600,000 characters.");
+            InspectorTest.expectThat(/^B+$/.test(responseB.body), "B's body should be all 'B'.");
+
+            let responseC = await WI.backendTarget.NetworkAgent.getResponseBody(resourceC.requestIdentifier);
+            InspectorTest.expectEqual(responseC.body, "CCCCCCCCCC", "C's body should match the served content.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that when decoding a finished resource's body makes BackendResourceDataStore evict that same resource, the store's size accounting stays correct and later loads in the process are still recorded.</p>
+</body>
