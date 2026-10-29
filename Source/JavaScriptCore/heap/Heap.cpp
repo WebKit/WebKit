@@ -2854,6 +2854,10 @@ void Heap::releaseUnmarkedWasmCallees()
     // Realistically, this is probably not needed, since we're essentially guarenteed to make a syscall
     // that will syncronize the instruction cache during GC. That said, this happens so infrequently it's
     // better to just have the code be clear.
+    //
+    // Note that this fence only covers callsites that were already repatched but might not be visible
+    // here yet. It does not keep live Callee from holding a not yet repatched direct call to
+    // the code about to freed.
     if (!wasmCalleesToRelease.isEmpty())
         WTF::crossModifyingCodeFence();
 
