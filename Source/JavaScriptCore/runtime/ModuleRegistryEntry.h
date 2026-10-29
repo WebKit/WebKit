@@ -76,6 +76,8 @@ public:
     JSValue error(JSGlobalObject*) const;
     JSValue fetchError() const;
     Status status() const;
+    bool sourcePhase() const { return m_sourcePhase; }
+    void setSourcePhase(bool value) { m_sourcePhase = value; }
 
     void setRecord(VM&, AbstractModuleRecord*);
     void setLoadPromise(VM&, JSPromise*);
@@ -104,6 +106,7 @@ private:
     // disambiguates which kind m_error holds (FetchFailed / InstantiationFailed / EvaluationFailed).
     WriteBarrier<Unknown> m_error;
     Status m_status { Status::New };
+    bool m_sourcePhase { false };
 };
 
 } // namespace JSC
