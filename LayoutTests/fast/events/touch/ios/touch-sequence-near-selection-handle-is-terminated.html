@@ -1,0 +1,93 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="../../../../resources/basic-gestures.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+body {
+    margin: 0;
+}
+#target {
+    width: 300px;
+    padding: 10px;
+    font-size: 30px;
+    font-family: monospace;
+    background-color: silver;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+window.internals?.setTopDocumentURLForQuirks("https://outlook.live.com/");
+
+document.addEventListener("touchmove", event => event.preventDefault(), { passive: false });
+
+let pendingTouchEnd = null;
+let pendingPointerEnd = null;
+
+function expectSequenceToEnd()
+{
+    return Promise.all([
+        new Promise(resolve => pendingTouchEnd = resolve),
+        new Promise(resolve => pendingPointerEnd = resolve),
+    ]);
+}
+
+for (const type of ["touchend", "touchcancel"])
+    document.addEventListener(type, () => pendingTouchEnd?.());
+
+for (const type of ["pointerup", "pointercancel"])
+    document.addEventListener(type, () => pendingPointerEnd?.());
+
+function midPointOfRect(rect)
+{
+    return [rect.left + (rect.width / 2), rect.top + (rect.height / 2)];
+}
+
+addEventListener("load", async () => {
+    description("Verifies that touches that begin near a selection handle are still terminated with touchend/pointerup or touchcancel/pointercancel, even when the page cannot prevent the native selection gesture.");
+
+    if (!window.testRunner)
+        return;
+
+    const target = document.getElementById("target");
+    await longPressAtPoint(...midPointOfRect(target.getBoundingClientRect()));
+    await UIHelper.waitForSelectionToAppear();
+
+    initialSelectionLength = getSelection().toString().length;
+    shouldBeGreaterThan("initialSelectionLength", "0");
+
+    debug("\nDragging the selection end handle.");
+    let [grabberX, grabberY] = midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+    let sequenceEnded = expectSequenceToEnd();
+    await touchAndDragFromPointToPoint(grabberX, grabberY, grabberX, grabberY + 60);
+    await liftUpAtPoint(grabberX, grabberY + 60);
+    await sequenceEnded;
+    testPassed("Touch and pointer sequence ended after dragging the selection handle.");
+
+    expandedSelectionLength = getSelection().toString().length;
+    shouldBeGreaterThan("expandedSelectionLength", "initialSelectionLength");
+
+    debug("\nTapping near the selection end handle.");
+    [grabberX, grabberY] = midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+    sequenceEnded = expectSequenceToEnd();
+    await tapAtPoint(grabberX, grabberY);
+    await sequenceEnded;
+    testPassed("Touch and pointer sequence ended after tapping near the selection handle.");
+
+    target.remove();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div id="target">
+    <p>Here's to the crazy ones. The misfits. The rebels. The troublemakers.</p>
+    <p>The round pegs in the square holes. The ones who see things differently.</p>
+</div>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

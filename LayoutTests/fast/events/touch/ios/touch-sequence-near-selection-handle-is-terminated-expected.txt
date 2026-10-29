@@ -1,0 +1,16 @@
+Verifies that touches that begin near a selection handle are still terminated with touchend/pointerup or touchcancel/pointercancel, even when the page cannot prevent the native selection gesture.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS initialSelectionLength is > 0
+
+Dragging the selection end handle.
+PASS Touch and pointer sequence ended after dragging the selection handle.
+PASS expandedSelectionLength is > initialSelectionLength
+
+Tapping near the selection end handle.
+PASS Touch and pointer sequence ended after tapping near the selection handle.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

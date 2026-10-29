@@ -2285,6 +2285,8 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     [self _handleTouchActionsForTouchEvent:nativeWebTouchEvent];
 
     if (_touchStartedNearSelectionHandle && lastTouchEvent.type != WebKit::WKTouchEventType::Begin) {
+        nativeWebTouchEvent->setCanPreventNativeGestures(false);
+        _page->handleUnpreventableTouchEvent(nativeWebTouchEvent);
         if (lastTouchEvent.type == WebKit::WKTouchEventType::Change || lastTouchEvent.type == WebKit::WKTouchEventType::End)
             [self _doneDeferringTouchMove:NO];
     } else if (_touchEventsCanPreventNativeGestures)
