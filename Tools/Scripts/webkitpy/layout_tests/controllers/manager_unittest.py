@@ -258,6 +258,10 @@ class ComputeTestUrlFromFinderTest(unittest.TestCase):
         manager._options.slow_time_out_ms = 30000
         manager._options.pixel_tests = True
         manager._options.pixel_test_directories = None
+        manager._options.world_leaks = False
+        expectations = test_expectations.TestExpectations(self.port, [test.test_path])
+        expectations.parse_all_expectations()
+        manager._expectations[(manager._current_driver_name, None)] = expectations
         return manager._test_input_for_file(test, None)
 
     def test_test_input_has_test_and_reference_urls(self):
