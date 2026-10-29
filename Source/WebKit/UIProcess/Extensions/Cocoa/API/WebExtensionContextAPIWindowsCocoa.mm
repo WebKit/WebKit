@@ -94,8 +94,8 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
 
                 [tabs addObject:tab->delegate()];
             } else if (tabParameters.url) {
-                if (!canOpenURLInNewTabOrWindow(tabParameters.url.value())) {
-                    completionHandler(toWebExtensionError(apiName, @"url", unsupportedURLForNewTabOrWindowMessage(tabParameters.url.value())));
+                if (!canNavigateToURL(tabParameters.url.value())) {
+                    completionHandler(toWebExtensionError(apiName, @"url", unsupportedNavigationURLMessage(tabParameters.url.value())));
                     return;
                 }
 

@@ -161,7 +161,7 @@ bool WebExtensionContext::isURLForThisExtension(const URL& url) const
     return url.isValid() && protocolHostAndPortAreEqual(baseURL(), url);
 }
 
-bool WebExtensionContext::canOpenURLInNewTabOrWindow(const URL& url) const
+bool WebExtensionContext::canNavigateToURL(const URL& url) const
 {
     if (url.protocolIsJavaScript())
         return false;
@@ -172,11 +172,10 @@ bool WebExtensionContext::canOpenURLInNewTabOrWindow(const URL& url) const
     return true;
 }
 
-String WebExtensionContext::unsupportedURLForNewTabOrWindowMessage(const URL& url) const
+String WebExtensionContext::unsupportedNavigationURLMessage(const URL& url) const
 {
     if (url.protocolIsJavaScript())
         return "it cannot be a JavaScript URL"_s;
-
     return "it cannot be a local file URL"_s;
 }
 

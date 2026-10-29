@@ -667,6 +667,80 @@ TEST(WKWebExtensionAPITabs, Update)
     [manager run];
 }
 
+TEST(WKWebExtensionAPITabs, UpdateWithFileURLIsRejected)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const secondTab = allWindows[0].tabs[1]",
+
+        @"await browser.test.assertRejects(browser.tabs.update(secondTab.id, { url: 'file:///tmp/test.html' }), /it cannot be a local file URL/i)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    [manager.get().defaultWindow openNewTab];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, UpdateWithJavaScriptURLIsRejected)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const secondTab = allWindows[0].tabs[1]",
+
+        @"await browser.test.assertRejects(browser.tabs.update(secondTab.id, { url: 'javascript:void(0)' }), /it cannot be a JavaScript URL/i)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    [manager.get().defaultWindow openNewTab];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, UpdateWithFileURLWhenFileAccessIsAllowed)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const secondTab = allWindows[0].tabs[1]",
+
+        @"await browser.tabs.update(secondTab.id, { url: 'file:///tmp/test.html' })",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    manager.get().context._hasAccessToFileURLs = YES;
+
+    [manager.get().defaultWindow openNewTab];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, UpdateWithDataURL)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const secondTab = allWindows[0].tabs[1]",
+
+        @"await browser.tabs.update(secondTab.id, { url: 'data:text/html,<p>Hello</p>' })",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    [manager.get().defaultWindow openNewTab];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPITabs, UpdateWithoutTabId)
 {
     auto *backgroundScript = Util::constructScript(@[

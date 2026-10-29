@@ -110,8 +110,8 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
     }
 
     if (parameters.url) {
-        if (!canOpenURLInNewTabOrWindow(parameters.url.value())) {
-            completionHandler(toWebExtensionError(apiName, @"url", unsupportedURLForNewTabOrWindowMessage(parameters.url.value())));
+        if (!canNavigateToURL(parameters.url.value())) {
+            completionHandler(toWebExtensionError(apiName, @"url", unsupportedNavigationURLMessage(parameters.url.value())));
             return;
         }
 
@@ -149,6 +149,11 @@ void WebExtensionContext::tabsUpdate(WebPageProxyIdentifier webPageProxyIdentifi
     RefPtr tab = getTab(webPageProxyIdentifier, tabIdentifier, IncludeExtensionViews::Yes);
     if (!tab) {
         completionHandler(toWebExtensionError(@"tabs.update()", nullString(), @"tab not found"));
+        return;
+    }
+
+    if (parameters.url && !canNavigateToURL(parameters.url.value())) {
+        completionHandler(toWebExtensionError(@"tabs.update()", @"url", unsupportedNavigationURLMessage(parameters.url.value())));
         return;
     }
 
