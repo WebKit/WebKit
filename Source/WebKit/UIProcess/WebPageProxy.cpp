@@ -1361,7 +1361,7 @@ void WebPageProxy::setUIClient(std::unique_ptr<API::UIClient>&& uiClient)
 
     if (hasRunningProcess()) {
         bool canRunBeforeUnloadConfirmPanel = m_uiClient->canRunBeforeUnloadConfirmPanel();
-        forEachWebContentProcess([&](auto& process, auto pageID) {
+        forEachWebContentProcessIncludingProvisionalPage([&](auto& process, auto pageID) {
             process.send(Messages::WebPage::SetCanRunBeforeUnloadConfirmPanel(canRunBeforeUnloadConfirmPanel), pageID);
         });
     }
@@ -1453,7 +1453,7 @@ void WebPageProxy::setResourceLoadClient(std::unique_ptr<API::ResourceLoadClient
     if (hadResourceLoadClient == hasResourceLoadClient)
         return;
 
-    forEachWebContentProcess([&](auto& process, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& process, auto pageID) {
         process.send(Messages::WebPage::SetHasResourceLoadClient(hasResourceLoadClient), pageID);
     });
 }
@@ -3410,7 +3410,7 @@ void WebPageProxy::setControlledByAutomation(bool controlled)
     if (!hasRunningProcess())
         return;
 
-    forEachWebContentProcess([&](auto& process, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& process, auto pageID) {
         process.send(Messages::WebPage::SetControlledByAutomation(controlled), pageID);
     });
     protect(protect(websiteDataStore())->networkProcess())->send(Messages::NetworkProcess::SetSessionIsControlledByAutomation(m_websiteDataStore->sessionID(), m_controlledByAutomation), 0);
@@ -3540,8 +3540,8 @@ void WebPageProxy::setObscuredContentInsets(const WebCore::FloatBoxExtent& obscu
     send(Messages::WebPage::SetObscuredContentInsets(m_internals->obscuredContentInsets));
 #endif
 
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        if (&webProcess == &legacyMainFrameProcess())
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& webProcess, auto pageID) {
+        if (&webProcess == &legacyMainFrameProcess() && pageID == webPageIDInMainFrameProcess())
             return;
         webProcess.send(Messages::WebPage::SetObscuredContentInsets(m_internals->obscuredContentInsets), pageID);
     });
@@ -4239,7 +4239,7 @@ void WebPageProxy::setNeedsFontAttributes(bool needsFontAttributes)
     if (!hasRunningProcess())
         return;
 
-    forEachWebContentProcess([&](auto& process, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& process, auto pageID) {
         process.send(Messages::WebPage::SetNeedsFontAttributes(needsFontAttributes), pageID);
     });
 }
@@ -4381,7 +4381,7 @@ void WebPageProxy::setEditable(bool editable)
     if (!hasRunningProcess())
         return;
 
-    forEachWebContentProcess([&](auto& process, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& process, auto pageID) {
         process.send(Messages::WebPage::SetEditable(editable), pageID);
     });
 }
@@ -7203,7 +7203,7 @@ void WebPageProxy::setUserAgent(String&& userAgent, IsCustomUserAgent isCustomUs
 
     if (!hasRunningProcess())
         return;
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPage::SetUserAgent(m_userAgent), pageID);
         webProcess.send(Messages::WebPage::SetHasCustomUserAgent(m_hasCustomUserAgent), pageID);
     });
@@ -7399,7 +7399,7 @@ void WebPageProxy::setTextZoomFactor(double zoomFactor)
     if (!hasRunningProcess())
         return;
 
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPage::DidSetTextZoomFactor(m_textZoomFactor), pageID);
     });
 }
@@ -7416,7 +7416,7 @@ void WebPageProxy::setPageZoomFactor(double zoomFactor)
     if (!hasRunningProcess())
         return;
 
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPage::DidSetPageZoomFactor(m_pageZoomFactor), pageID);
     });
 }
@@ -7549,7 +7549,7 @@ void WebPageProxy::scaleView(double scale)
     if (!hasRunningProcess())
         return;
 
-    forEachWebContentProcess([&] (auto& process, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& process, auto pageID) {
         process.send(Messages::WebPage::DidScaleView(scale), pageID);
     });
 }
@@ -7591,7 +7591,7 @@ void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID)
     // FIXME (rdar://185159815): should we broadcast this to remote frame processes?
     send(Messages::EventDispatcher::PageScreenDidChange(m_webPageID, displayID, nominalFramesPerSecond));
 
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPage::WindowScreenDidChange(displayID, nominalFramesPerSecond), pageID);
     });
 #if HAVE(DISPLAY_LINK)
@@ -7659,7 +7659,7 @@ void WebPageProxy::setContentInversion(ContentInversion contentInversion)
     if (!hasRunningProcess())
         return;
 
-    forEachWebContentProcess([contentInversion](auto& process, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([contentInversion](auto& process, auto pageID) {
         process.send(Messages::WebPage::SetContentInversion(contentInversion), pageID);
     });
 }
@@ -8043,8 +8043,8 @@ void WebPageProxy::viewScaleFactorDidChange(IPC::Connection& connection, double 
         return;
     m_viewScaleFactor = scaleFactor;
 
-    forEachWebContentProcess([&] (auto& process, auto pageID) {
-        if (&process == &legacyMainFrameProcess())
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& process, auto pageID) {
+        if (&process == &legacyMainFrameProcess() && pageID == webPageIDInMainFrameProcess())
             return;
         process.send(Messages::WebPage::DidScaleView(scaleFactor), pageID);
     });
@@ -8886,7 +8886,7 @@ void WebPageProxy::preferencesDidChange()
     // even if nothing changed in UI process, so that overrides get removed.
 
     // Preferences need to be updated during synchronous printing to make "print backgrounds" preference work when toggled from a print dialog checkbox.
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& webProcess, auto pageID) {
         std::optional<uint64_t> sharedPreferencesVersion;
         if (auto sharedPreferences = webProcess.updateSharedPreferences(preferencesStore()))
             sharedPreferencesVersion = sharedPreferences->version;
@@ -10115,6 +10115,24 @@ void WebPageProxy::forEachWebContentProcess(NOESCAPE const Function<void(WebProc
         function(remotePageProxy.process(), remotePageProxy.pageID());
     });
     function(protect(legacyMainFrameProcess()), webPageIDInMainFrameProcess());
+}
+
+void WebPageProxy::forEachWebContentProcessIncludingProvisionalPage(NOESCAPE const Function<void(WebProcessProxy&, PageIdentifier)>& function)
+{
+    RefPtr provisionalPage = m_provisionalPage;
+    bool visitedProvisionalPage = false;
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        // A provisional page whose load failed under site isolation can already be one of the remote pages.
+        visitedProvisionalPage |= provisionalPage && provisionalPage->webPageID() == pageID;
+        function(webProcess, pageID);
+    });
+    if (!provisionalPage)
+        return;
+
+    if (!visitedProvisionalPage)
+        function(protect(provisionalPage->process()), provisionalPage->webPageID());
+    if (RefPtr takenRemotePage = provisionalPage->takenRemotePage())
+        function(takenRemotePage->process(), takenRemotePage->pageID());
 }
 
 void WebPageProxy::observeAndCreateRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame, const String& frameName)
@@ -13396,7 +13414,7 @@ void WebPageProxy::setMediaVolume(float volume)
     if (!hasRunningProcess())
         return;
 
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPage::SetMediaVolume(volume), pageID);
     });
 }
@@ -13480,7 +13498,7 @@ void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state, FromApp
     });
 
     auto aggregator = CallbackAggregator::create(WTF::move(completionHandler));
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& webProcess, auto pageID) {
         webProcess.sendWithAsyncReply(Messages::WebPage::SetMuted(newState), [aggregator] { }, pageID);
     });
 
@@ -13643,7 +13661,7 @@ void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)
     if (!hasRunningProcess())
         return;
 
-    forEachWebContentProcess([&](auto& process, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& process, auto pageID) {
         process.send(Messages::WebPage::SetMayStartMediaWhenInWindow(mayStartMedia), pageID);
     });
 }
@@ -17632,7 +17650,7 @@ void WebPageProxy::setCanRunModal(bool canRunModal)
     if (!hasRunningProcess())
         return;
 
-    forEachWebContentProcess([&](auto& process, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& process, auto pageID) {
         process.send(Messages::WebPage::SetCanRunModal(m_canRunModal), pageID);
     });
 }
@@ -18141,7 +18159,7 @@ void WebPageProxy::setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOver
     if (!hasRunningProcess())
         return;
 
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPage::SetScrollbarOverlayStyle(scrollbarStyle), pageID);
     });
 }
@@ -19361,7 +19379,7 @@ void WebPageProxy::setUseColorAppearance(bool useDarkAppearance, bool useElevate
     if (!hasRunningProcess())
         return;
 
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPage::SetUseColorAppearance(useDarkAppearance, useElevatedUserInterfaceLevel), pageID);
     });
 }
@@ -20221,7 +20239,7 @@ std::optional<RegistrableDomain> WebPageProxy::unpartitionedStorageSiteForNaviga
 void WebPageProxy::setOverriddenMediaType(const String& mediaType)
 {
     m_overriddenMediaType = mediaType;
-    forEachWebContentProcess([&](auto& process, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& process, auto pageID) {
         process.send(Messages::WebPage::SetOverriddenMediaType(mediaType), pageID);
     });
 }
