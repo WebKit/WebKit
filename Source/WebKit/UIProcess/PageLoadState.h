@@ -152,6 +152,7 @@ public:
     const URL& url() const LIFETIME_BOUND { return m_committedState.url; }
     const WebCore::SecurityOriginData& origin() const LIFETIME_BOUND { return m_committedState.origin; }
     const URL& unreachableURL() const LIFETIME_BOUND { return m_committedState.unreachableURL; }
+    const URL& baseURL() const LIFETIME_BOUND { return m_committedState.baseURL; }
 
     const URL& activeURL() const { return activeURL(m_committedState); }
 
@@ -191,6 +192,7 @@ public:
     void didSameDocumentNavigation(const Transaction::Token&, const URL&);
 
     void setUnreachableURL(const Transaction::Token&, const URL&);
+    void setBaseURL(const Transaction::Token&, const URL&);
 
     const String& LEGACY_NODELETE title() const LIFETIME_BOUND;
     void setTitle(const Transaction::Token&, String&&);
@@ -242,6 +244,7 @@ private:
         WebCore::SecurityOriginData origin;
 
         URL unreachableURL;
+        URL baseURL;
 
         String title;
         String titleFromBrowsingWarning;
