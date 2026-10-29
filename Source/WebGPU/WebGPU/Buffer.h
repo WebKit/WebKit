@@ -122,6 +122,7 @@ public:
     std::optional<DrawIndexCacheContainerIterator> canSkipDrawIndexedValidation(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> = nil) const;
     void drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, uint64_t validationGeneration, id<MTLIndirectCommandBuffer> = nil);
     void skippedDrawIndexedValidation(CommandEncoder&, DrawIndexCacheContainerIterator);
+    void skippedBundleIndirectDrawValidation(CommandEncoder&, ReusedIndirectIndexedDraw&&);
 
     bool didReadOOB(id<MTLIndirectCommandBuffer> = nil) const;
     void didReadOOB(uint32_t v, id<MTLIndirectCommandBuffer> = nil);
@@ -145,6 +146,7 @@ public:
     bool mustTakeSlowIndexValidationPath() const { return m_mustTakeSlowIndexValidationPath; }
     void clearMustTakeSlowIndexValidationPath();
     void takeSlowIndexValidationPath(CommandBuffer&, uint32_t firstIndex, uint32_t indexCount, MTLIndexType, uint32_t primitiveOffset, uint32_t vertexCount);
+    void takeSlowBundleIndirectDrawValidationPath(CommandBuffer&, const ReusedIndirectIndexedDraw&);
     bool needsIndexValidation(uint32_t, uint16_t);
 
 private:
@@ -160,6 +162,7 @@ private:
     void LEGACY_NODELETE setState(State);
     void incrementBufferMapCount();
     void decrementBufferMapCount();
+    void clearIndexBufferForCommandBuffer(CommandBuffer&);
 
     id<MTLBuffer> m_buffer { nil };
 
@@ -186,6 +189,9 @@ private:
     mutable HashMap<uint64_t, uint32_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_gpuResourceMap;
     HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_skippedValidationCommandEncoders;
     bool m_mustTakeSlowIndexValidationPath { false };
+    // Identity of the command buffer this buffer was last cleared for, so that several failed validations
+    // sharing one command buffer do not each capture a "prior" copy and queue a restore of it.
+    uintptr_t m_clearedForCommandBuffer { 0 }; // NOLINT
     uint64_t m_contentsGeneration { 0 }; // NOLINT
     uint64_t m_indexContentsGeneration { 0 }; // NOLINT
     uint32_t m_indexValueUpperBoundUint { 0 }; // NOLINT

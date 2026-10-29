@@ -1547,8 +1547,24 @@ void RenderPassEncoder::executeBundles(std::span<const Ref<WebGPU::RenderBundle>
 
                     uint64_t indirectGeneration = indirectBuffer->contentsGeneration();
                     uint64_t indexGeneration = indexBuffer ? indexBuffer->indexContentsGeneration() : 0;
-                    if (data.encodedAtLeastOnce && data.lastIndirectGeneration == indirectGeneration && data.lastIndexGeneration == indexGeneration)
+                    // Unlike the cache above, this needs no didReadOOB() check: the slot holds arguments the
+                    // encode kernel already clamped, not app-authored counts an OOB scan had to vet, so equal
+                    // generations mean the baked command is still in bounds.
+                    if (data.encodedAtLeastOnce && data.lastIndirectGeneration == indirectGeneration && data.lastIndexGeneration == indexGeneration) {
+                        if (data.isIndexed && indexBuffer) {
+                            indexBuffer->skippedBundleIndirectDrawValidation(m_parentEncoder, ReusedIndirectIndexedDraw {
+                                .indirectBuffer = indirectBuffer,
+                                .indirectOffset = data.indirectOffset,
+                                .indexBufferOffset = data.indexBufferOffset,
+                                .indirectGeneration = indirectGeneration,
+                                .indexGeneration = indexGeneration,
+                                .minVertexCount = data.minVertexCount,
+                                .indexType = data.indexType,
+                                .primitiveType = data.primitiveType,
+                            });
+                        }
                         continue;
+                    }
 
                     bool clamps = data.isIndexed || !(data.minVertexCount == RenderBundleEncoder::invalidVertexInstanceCount && data.minInstanceCount == RenderBundleEncoder::invalidVertexInstanceCount);
                     indirectWork.append(IndirectEncodeWork {

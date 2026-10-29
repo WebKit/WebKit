@@ -1,0 +1,12 @@
+Regression test for rdar://186003912: RenderPassEncoder::executeBundles() reuses the drawIndexedIndirect slot it already GPU-encoded into a render bundle's persistent MTLIndirectCommandBuffer when the source buffers' generations are unchanged, instead of re-running the clamp phases. The slot's baked drawIndexedPrimitives reaches the index buffer by GPU address, so a queue.writeBuffer() landing after the reusing command buffer is encoded but before it is submitted leaves those new index values unvalidated. frame1 rewrites the index buffer with far out-of-range indices in exactly that window; without the commit-time revalidation the slot fetches vertices 0x100000 * 8 bytes past a 24-byte vertex buffer.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frame0.join() is "0,255,0,255"
+PASS frame1.join() is "255,0,0,255"
+PASS frame2.join() is "0,255,0,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
