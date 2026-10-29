@@ -11038,14 +11038,15 @@ IGNORE_CLANG_WARNINGS_END
         m_out.branch(m_out.aboveOrEqual(index, length), unsure(continuation), unsure(commitBody));
 
         m_out.appendTo(commitBody, continuation);
-        LValue value = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, scratch, index, JSValue(), JSCellButterfly::offsetOfData()));
+        TypedPointer scratchSlot = m_out.baseIndex(m_heaps.indexedContiguousProperties, scratch, index, JSValue(), JSCellButterfly::offsetOfData());
+        LValue value = m_out.load64(scratchSlot);
         m_out.store64(value, m_out.baseIndex(targetHeap, butterfly, index));
+        m_out.store64(m_out.int64Zero, scratchSlot);
         LValue nextIndex = m_out.add(index, m_out.intPtrOne);
         m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
         m_out.jump(commitHeader);
 
         m_out.appendTo(continuation, lastNext);
-        splatWords(m_out.add(scratch, m_out.constIntPtr(JSCellButterfly::offsetOfData())), m_out.int32Zero, m_out.constInt32(sortScratchSlotCount), m_out.int64Zero, m_heaps.indexedContiguousProperties.atAnyIndex());
         m_out.storePtr(scratch, m_out.absolute(&vm().m_cachedSortScratch));
     }
 

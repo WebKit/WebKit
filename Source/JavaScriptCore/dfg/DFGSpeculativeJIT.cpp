@@ -15411,10 +15411,10 @@ void SpeculativeJIT::compileArraySortCommit(Node* node)
     auto loop = label();
     auto done = branchSub32(Signed, counterGPR, TrustedImm32(1), counterGPR);
     transfer64(BaseIndex(storageGPR, counterGPR, TimesEight, JSCellButterfly::offsetOfData()), BaseIndex(butterflyGPR, counterGPR, TimesEight, 0));
+    storeTrustedValue(JSValue(), BaseIndex(storageGPR, counterGPR, TimesEight, JSCellButterfly::offsetOfData()));
     jump().linkTo(loop, this);
 
     done.link(this);
-    emitFillStorageWithJSEmpty(storageGPR, JSCellButterfly::offsetOfData(), sortScratchSlotCount, counterGPR);
     storePtr(storageGPR, &vm().m_cachedSortScratch);
     noResult(node);
 }
