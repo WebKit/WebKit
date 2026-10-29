@@ -680,8 +680,7 @@ private:
     JS_EXPORT_PRIVATE void stopIfNecessarySlow();
     void stopIfNecessarySlow(unsigned extraStateBits);
     
-    template<typename Func>
-    void waitForCollector(NOESCAPE const Func&);
+    void waitForCollector(NOESCAPE const ConstInvocable<bool()> auto& isDone);
     
     JS_EXPORT_PRIVATE void acquireAccessSlow();
     JS_EXPORT_PRIVATE void releaseAccessSlow();

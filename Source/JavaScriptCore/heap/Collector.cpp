@@ -251,6 +251,15 @@ GCRequest::Ticket Collector::requestCollection(Heap& requester, GCRequest reques
     return m_lastGrantedTicket;
 }
 
+void Collector::didRelinquishConn()
+{
+    Locker locker { *m_threadLock };
+    if (!hasWorkWithLock())
+        return;
+    RELEASE_ASSERT(!m_threadShouldStop);
+    m_threadCondition->notifyOne(locker);
+}
+
 bool Collector::shouldCollectInCollectorThread()
 {
     dataLogLnIf(CollectorInternal::verbose, "Mutator has the conn = ", anyMutatorHasConnWithLock());

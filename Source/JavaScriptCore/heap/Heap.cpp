@@ -1486,39 +1486,29 @@ NEVER_INLINE void Heap::collectInMutatorThread()
     m_collector->collectInMutatorThread(*this);
 }
 
-template<typename Func>
-void Heap::waitForCollector(NOESCAPE const Func& func)
+void Heap::waitForCollector(NOESCAPE const ConstInvocable<bool()> auto& isDone)
 {
     for (;;) {
-        bool done;
-        {
-            Locker locker { *m_collector->m_threadLock };
-            done = func(locker);
-            if (!done) {
-                setMutatorWaiting();
-                
-                // At this point, the collector knows that we intend to wait, and he will clear the
-                // waiting bit and then unparkAll when the GC cycle finishes. Clearing the bit
-                // prevents us from parking except if there is also stop-the-world. Unparking after
-                // clearing means that if the clearing happens after we park, then we will unpark.
-            }
-        }
-        
-        // If we're in a stop-the-world scenario, we need to wait for that even if done is true.
+        // Set the waiting bit before checking, so that if what we wait for completes after the check, the Collector
+        // always sees that we're waiting, and clears the bit and wakes us.
+        setMutatorWaiting();
+        bool done = isDone();
+        if (done)
+            clearMutatorWaiting();
+
+        // We hold access, so the collector cannot stop us. If it handed us the conn, we must run the phase ourselves.
         unsigned oldState = m_worldState.load();
         stopIfNecessarySlow(oldState);
 
         m_mutatorDidRun = true;
-        // FIXME: We wouldn't need this if stopIfNecessarySlow() had a mode where it knew to just
-        // do the collection.
+        // Give the conn back so the collector thread can carry the collection forward, since we won't poll while parked.
+        // FIXME: Could conduct the whole collection here instead, since this thread has nothing else to do.
         relinquishConn();
 
-        if (done) {
-            clearMutatorWaiting(); // Clean up just in case.
+        if (done)
             return;
-        }
-        
-        // If mutatorWaitingBit is still set then we want to wait.
+
+        // Park only if the waiting bit is still set. The Collector clears it before unparking, so we cannot miss the unpark.
         ParkingLot::compareAndPark(&m_worldState, oldState | mutatorWaitingBit);
     }
 }
@@ -1598,14 +1588,10 @@ bool Heap::relinquishConn(unsigned oldState)
 void Heap::finishRelinquishingConn()
 {
     dataLogLnIf(HeapInternal::verbose, "Relinquished the conn.");
-    
+
     sanitizeStackForVM(vm());
-    
-    Locker locker { *m_collector->m_threadLock };
-    if (m_collector->hasWorkWithLock()) {
-        RELEASE_ASSERT(!m_collector->m_threadShouldStop);
-        m_collector->m_threadCondition->notifyOne(locker);
-    }
+
+    m_collector->didRelinquishConn();
     ParkingLot::unparkAll(&m_worldState);
 }
 
@@ -1734,26 +1720,23 @@ void Heap::runCollectionEpilogue()
 
 void Heap::waitForMembershipChange(Collector::MembershipChange::Ticket ticket)
 {
-    waitForCollector(
-        [&](const AbstractLocker&) WTF_REQUIRES_LOCK(*m_collector->m_threadLock) -> bool {
-            return m_collector->hasAppliedMembershipChangeWithLock(ticket);
-        });
+    waitForCollector([&] {
+        return m_collector->hasAppliedMembershipChange(ticket);
+    });
 }
 
 void Heap::waitForCollection(GCRequest::Ticket ticket)
 {
-    waitForCollector(
-        [&](const AbstractLocker&) WTF_REQUIRES_LOCK(*m_collector->m_threadLock) -> bool {
-            return m_collector->hasServedTicketWithLock(ticket);
-        });
+    waitForCollector([&] {
+        return m_collector->hasServedTicket(ticket);
+    });
 }
 
 void Heap::waitForAllCollections()
 {
-    waitForCollector(
-        [&](const AbstractLocker&) WTF_REQUIRES_LOCK(*m_collector->m_threadLock) -> bool {
-            return !m_collector->hasPendingGCRequestWithLock();
-        });
+    waitForCollector([&] {
+        return !m_collector->hasPendingGCRequest();
+    });
 }
 
 void Heap::sweepEagerlyInEpilogue()

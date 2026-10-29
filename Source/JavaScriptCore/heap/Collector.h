@@ -129,10 +129,23 @@ private:
     GCRequest::Ticket requestCollection(Heap& requester, GCRequest);
     bool isSubsumedByQueuedRequest(const GCRequest&);
 
+    // Call after a mutator gives up the conn, so that any work waiting for the conn can proceed.
+    void didRelinquishConn();
+
     bool hasPendingGCRequest()
     {
         Locker locker { *m_threadLock };
         return hasPendingGCRequestWithLock();
+    }
+    bool hasServedTicket(GCRequest::Ticket ticket)
+    {
+        Locker locker { *m_threadLock };
+        return m_lastServedTicket >= ticket;
+    }
+    bool hasAppliedMembershipChange(MembershipChange::Ticket ticket)
+    {
+        Locker locker { *m_threadLock };
+        return m_lastAppliedMembershipChange >= ticket;
     }
     bool hasPendingGCRequestWithLock() const WTF_REQUIRES_LOCK(*m_threadLock)
     {
@@ -141,10 +154,8 @@ private:
         ASSERT(m_requests.size() == m_lastGrantedTicket - m_lastServedTicket);
         return m_lastServedTicket < m_lastGrantedTicket;
     }
-    bool hasServedTicketWithLock(GCRequest::Ticket ticket) const WTF_REQUIRES_LOCK(*m_threadLock) { return m_lastServedTicket >= ticket; }
 
     bool hasPendingMembershipChangeWithLock() const WTF_REQUIRES_LOCK(*m_threadLock) { return !m_membershipChanges.isEmpty(); }
-    bool hasAppliedMembershipChangeWithLock(MembershipChange::Ticket ticket) const WTF_REQUIRES_LOCK(*m_threadLock) { return m_lastAppliedMembershipChange >= ticket; }
     void applyAllMembershipChangesWithLock(Vector<Heap*, 8>& changedHeaps) WTF_REQUIRES_LOCK(*m_threadLock);
     void applyMembershipChangeWithLock(MembershipChange&) WTF_REQUIRES_LOCK(*m_threadLock);
 
