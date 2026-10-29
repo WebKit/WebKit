@@ -32,9 +32,13 @@
 
 namespace WebCore {
 
+class GStreamerElementHarness;
+class VideoFrameGStreamer;
+
 class RealtimeOutgoingVideoSourceLibWebRTC final : public RealtimeOutgoingVideoSource {
 public:
     static Ref<RealtimeOutgoingVideoSourceLibWebRTC> create(Ref<MediaStreamTrackPrivate>&&);
+    ~RealtimeOutgoingVideoSourceLibWebRTC();
 
 private:
     explicit RealtimeOutgoingVideoSourceLibWebRTC(Ref<MediaStreamTrackPrivate>&&);
@@ -43,6 +47,13 @@ private:
 
     // RealtimeMediaSource::VideoFrameObserver API
     void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
+
+    void sendRawFrame(VideoFrameGStreamer&);
+    void decodeAndSend(VideoFrameGStreamer&);
+
+    RefPtr<GStreamerElementHarness> m_decoderHarness;
+    String m_decoderMediaType;
+    PlatformVideoColorSpace m_decoderColorSpace;
 };
 
 } // namespace WebCore

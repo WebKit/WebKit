@@ -30,7 +30,10 @@
 #if USE(LIBWEBRTC) && USE(GSTREAMER)
 #include "RealtimeOutgoingVideoSourceLibWebRTC.h"
 
+#include "GStreamerElementHarness.h"
+#include "GStreamerRegistryScanner.h"
 #include "GStreamerVideoFrameLibWebRTC.h"
+#include "RealtimeIncomingVideoSource.h"
 #include "VideoFrameGStreamer.h"
 
 namespace WebCore {
@@ -57,6 +60,8 @@ RealtimeOutgoingVideoSourceLibWebRTC::RealtimeOutgoingVideoSourceLibWebRTC(Ref<M
     });
 }
 
+RealtimeOutgoingVideoSourceLibWebRTC::~RealtimeOutgoingVideoSourceLibWebRTC() = default;
+
 void RealtimeOutgoingVideoSourceLibWebRTC::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata)
 {
     switch (videoFrame.rotation()) {
@@ -74,6 +79,17 @@ void RealtimeOutgoingVideoSourceLibWebRTC::videoFrameAvailable(VideoFrame& video
         break;
     }
 
+    auto& gstFrame = downcast<VideoFrameGStreamer>(videoFrame);
+    // A remote track whose codec the player decodes itself carries encoded frames.
+    if (gstFrame.isEncoded()) {
+        decodeAndSend(gstFrame);
+        return;
+    }
+    sendRawFrame(gstFrame);
+}
+
+void RealtimeOutgoingVideoSourceLibWebRTC::sendRawFrame(VideoFrameGStreamer& videoFrame)
+{
     auto colorSpace = [&] {
         if (auto pixelFormat = convertVideoFramePixelFormat(videoFrame.pixelFormat(), true)) {
             if (isRGBVideoPixelFormat(*pixelFormat))
@@ -82,13 +98,12 @@ void RealtimeOutgoingVideoSourceLibWebRTC::videoFrameAvailable(VideoFrame& video
         return videoFrame.colorSpace();
     }();
 
-    auto& gstFrame = downcast<VideoFrameGStreamer>(videoFrame);
-    auto frameSize = gstFrame.presentationSize();
+    auto frameSize = videoFrame.presentationSize();
     if (frameSize.isEmpty())
         return;
 
     frameSize.scale(this->videoFrameScaling());
-    auto sample = gstFrame.convert(GST_VIDEO_FORMAT_I420, frameSize, colorSpace);
+    auto sample = videoFrame.convert(GST_VIDEO_FORMAT_I420, frameSize, colorSpace);
     if (!sample)
         return;
 
@@ -98,6 +113,64 @@ void RealtimeOutgoingVideoSourceLibWebRTC::videoFrameAvailable(VideoFrame& video
     gst_sample_set_segment(writableSample.get(), nullptr);
     GST_TRACE("Sending video frame with caps %" GST_PTR_FORMAT, gst_sample_get_caps(writableSample.get()));
     sendFrame(GStreamerVideoFrameLibWebRTC::create(WTF::move(writableSample)), colorSpace);
+}
+
+void RealtimeOutgoingVideoSourceLibWebRTC::decodeAndSend(VideoFrameGStreamer& videoFrame)
+{
+    const auto& sample = videoFrame.sample();
+    auto* caps = gst_sample_get_caps(sample.get());
+    auto mediaType = String::fromLatin1(gstStructureGetName(gst_caps_get_structure(caps, 0)).utf8());
+    if (mediaType != m_decoderMediaType) {
+        m_decoderMediaType = mediaType;
+        m_decoderHarness = nullptr;
+        auto factory = GStreamerRegistryScanner::singleton().isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, mediaType).factory;
+        GRefPtr<GstElement> element = factory ? gst_element_factory_create(factory.get(), nullptr) : nullptr;
+        if (!element) {
+            GST_WARNING("No decoder for the source's %s frames, which are not sent", mediaType.ascii().data());
+            return;
+        }
+        configureVideoDecoderForHarnessing(element);
+        // A decoder that wants what a parser adds (stream format, profile) gets one in front, as WebCodecs' do.
+        static constexpr std::array<std::pair<ASCIILiteral, ASCIILiteral>, 4> parsers { {
+            { "video/x-h264"_s, "h264parse"_s },
+            { "video/x-h265"_s, "h265parse"_s },
+            { "video/x-vp9"_s, "vp9parse"_s },
+            { "video/x-av1"_s, "av1parse"_s },
+        } };
+        auto parser = std::ranges::find_if(parsers, [&](const auto& entry) {
+            return mediaType == entry.first;
+        });
+        if (parser != parsers.end() && !gst_element_factory_can_sink_all_caps(factory.get(), caps)) {
+            if (auto* parserElement = makeGStreamerElement(parser->second)) {
+                GRefPtr<GstElement> bin = gst_bin_new(nullptr);
+                gst_bin_add_many(GST_BIN_CAST(bin.get()), parserElement, element.get(), nullptr);
+                gst_element_link(parserElement, element.get());
+                GRefPtr sinkPad = adoptGRef(gst_element_get_static_pad(parserElement, "sink"));
+                gst_element_add_pad(bin.get(), gst_ghost_pad_new("sink", sinkPad.get()));
+                GRefPtr srcPad = adoptGRef(gst_element_get_static_pad(element.get(), "src"));
+                gst_element_add_pad(bin.get(), gst_ghost_pad_new("src", srcPad.get()));
+                element = WTF::move(bin);
+            }
+        }
+        // Decoded in the delivering thread: each frame is sent on as the decoder outputs it.
+        m_decoderHarness = GStreamerElementHarness::create(WTF::move(element), [this](auto&, GRefPtr<GstSample>&& outputSample) {
+            auto size = getVideoResolutionFromCaps(gst_sample_get_caps(outputSample.get())).value_or(FloatSize { });
+            Ref decodedFrame = VideoFrameGStreamer::create(WTF::move(outputSample), { IntSize(size) }, PlatformVideoColorSpace { m_decoderColorSpace });
+            sendRawFrame(decodedFrame.get());
+        }, std::nullopt, adoptGRef(gst_caps_new_empty_simple("video/x-raw")));
+        m_decoderHarness->setIsLive(true);
+        GST_DEBUG("Decoding the source's %s frames for sending", mediaType.ascii().data());
+        // Started mid-call, the decoder needs a key frame: a remote source asks its sender for one.
+        if (RefPtr incomingSource = dynamicDowncast<RealtimeIncomingVideoSource>(source().source()))
+            incomingSource->requestKeyFrame();
+    }
+    if (!m_decoderHarness)
+        return;
+
+    m_decoderColorSpace = videoFrame.colorSpace();
+    if (!m_decoderHarness->pushSample(GRefPtr { sample }))
+        GST_DEBUG("The decoder refused a frame");
+    m_decoderHarness->processOutputSamples();
 }
 
 webrtc::scoped_refptr<webrtc::VideoFrameBuffer> RealtimeOutgoingVideoSourceLibWebRTC::createBlackFrame(size_t width, size_t height)

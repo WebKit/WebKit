@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>A remote video track keeps playing when its codec switches between VP8 and H.264</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay playsInline width="320" height="240"></video>
+        <script src ="routines.js"></script>
+        <script>
+function codecs(mimeType)
+{
+    return RTCRtpSender.getCapabilities("video").codecs.filter(codec => codec.mimeType === mimeType);
+}
+
+async function receivedCodec(connection)
+{
+    const report = await connection.getStats();
+    for (const stats of report.values()) {
+        if (stats.type === "inbound-rtp" && stats.codecId)
+            return report.get(stats.codecId).mimeType;
+    }
+}
+
+async function waitForPresentedFrames(connection, mimeType)
+{
+    while (await receivedCodec(connection) !== mimeType)
+        await waitFor(50);
+    // Frames presented from then on, past the ones already on their way.
+    const presented = new Promise(resolve => {
+        let count = 0;
+        const next = () => {
+            if (++count === 30)
+                resolve();
+            else
+                video.requestVideoFrameCallback(next);
+        };
+        video.requestVideoFrameCallback(next);
+    });
+    await Promise.race([presented, waitFor(5000).then(() => assert_unreached(`no ${mimeType} frames presented`))]);
+}
+
+promise_test(async (test) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
+    const track = localStream.getVideoTracks()[0];
+    test.add_cleanup(() => track.stop());
+
+    let transceiver;
+    let receivingConnection;
+    video.srcObject = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            transceiver = firstConnection.addTransceiver(track, { direction: "sendonly", streams: [localStream] });
+            transceiver.setCodecPreferences(codecs("video/VP8"));
+        }, (secondConnection) => {
+            receivingConnection = secondConnection;
+            secondConnection.ontrack = (trackEvent) => resolve(trackEvent.streams[0]);
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+    test.add_cleanup(closeConnections);
+
+    await waitForPresentedFrames(receivingConnection, "video/VP8");
+
+    transceiver.setCodecPreferences(codecs("video/H264"));
+    await renegotiate(localConnection, remoteConnection);
+    await waitForPresentedFrames(receivingConnection, "video/H264");
+
+    transceiver.setCodecPreferences(codecs("video/VP8"));
+    await renegotiate(localConnection, remoteConnection);
+    await waitForPresentedFrames(receivingConnection, "video/VP8");
+}, "A call that starts on VP8 presents frames after switching to H.264 and back");
+        </script>
+    </body>
+</html>
