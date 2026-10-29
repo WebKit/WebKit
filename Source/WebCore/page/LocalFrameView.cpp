@@ -5326,6 +5326,10 @@ void LocalFrameView::performSizeToContentAutoSize()
     // FIXME: Use the final layout's result as the content size (webkit.org/b/173561).
     layoutWithAdjustedStyleIfNeeded();
     m_autoSizeContentSize = contentsSize();
+    if (RefPtr scrollbar = verticalScrollbar())
+        m_autoSizeContentSize.expand(scrollbar->occupiedWidth(), 0);
+    if (RefPtr scrollbar = horizontalScrollbar())
+        m_autoSizeContentSize.expand(0, scrollbar->occupiedHeight());
 }
 
 void LocalFrameView::setAutoSizeFixedMinimumHeight(int fixedMinimumHeight)

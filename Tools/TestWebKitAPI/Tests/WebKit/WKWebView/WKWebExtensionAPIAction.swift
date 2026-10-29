@@ -398,6 +398,32 @@ struct WKWebExtensionAPIActionTests {
 
         try await manager.run()
     }
+
+    @Test
+    func popupWidthIncludesScrollbar() async throws {
+        let resources: [String: Any] = [
+            "background.js": "browser.test.sendMessage('Open Popup')",
+            "popup.html": "<div style='width: 200px; height: 3000px'></div>",
+        ]
+
+        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: resources)
+        let context = try #require(manager.context)
+
+        try await manager.waitForTestMessage("Open Popup")
+
+        let action = try await manager.nextPresentedAction {
+            context.performAction(for: manager.defaultTab)
+        }
+
+        let popupWebView = try #require(action.popupWebView)
+        let innerWidth = try await popupWebView.evaluateJavaScript("window.innerWidth") as! Int
+        let clientWidth = try await popupWebView.evaluateJavaScript("document.documentElement.clientWidth") as! Int
+
+        #expect(innerWidth > clientWidth)
+        #expect(popupWebView.intrinsicContentSize.width == CGFloat(innerWidth))
+
+        action.closePopup()
+    }
     #endif // WTF_PLATFORM_MAC
 
     @Test
