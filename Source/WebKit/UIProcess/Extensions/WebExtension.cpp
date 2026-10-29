@@ -550,6 +550,16 @@ URL WebExtension::resourceFileURLForPath(const String& originalPath)
     return result;
 }
 
+String WebExtension::resourceKeyForPath(const String& originalPath)
+{
+    // Read the path as a URL, like resourceFileURLForPath(), so a query or fragment is dropped and percent-encoding is decoded.
+    auto path = URL { URL { "file:///"_s }, originalPath }.fileSystemPath();
+    if (path.startsWith('/'))
+        path = path.substring(1);
+
+    return path;
+}
+
 bool WebExtension::hasResourceForPath(const String& originalPath)
 {
     ASSERT(originalPath);
@@ -561,7 +571,8 @@ bool WebExtension::hasResourceForPath(const String& originalPath)
     if (path == generatedBackgroundPageFilename || path == generatedBackgroundServiceWorkerFilename)
         return true;
 
-    if (m_stringResources.contains(path) || m_dataResources.contains(path))
+    auto resourceKey = resourceKeyForPath(originalPath);
+    if (m_stringResources.contains(resourceKey) || m_dataResources.contains(resourceKey))
         return true;
 
     return !resourceFileURLForPath(path).isEmpty();
@@ -598,12 +609,14 @@ std::expected<String, RefPtr<API::Error>> WebExtension::resourceStringForPath(co
     if (path == generatedBackgroundPageFilename || path == generatedBackgroundServiceWorkerFilename)
         return generatedBackgroundContent();
 
-    if (auto maybeString = m_stringResources.getOptional(path))
+    auto resourceKey = resourceKeyForPath(originalPath);
+
+    if (auto maybeString = m_stringResources.getOptional(resourceKey))
         return *maybeString;
 
-    if (auto maybeData = m_dataResources.getOptional(path)) {
+    if (auto maybeData = m_dataResources.getOptional(resourceKey)) {
         auto string = String::fromUTF8(maybeData->get().span());
-        m_stringResources.set(path, string);
+        m_stringResources.set(resourceKey, string);
         return string;
     }
 
@@ -621,7 +634,7 @@ std::expected<String, RefPtr<API::Error>> WebExtension::resourceStringForPath(co
 
     auto result = decoder->decode(data->span());
     if (cacheResult == CacheResult::Yes)
-        m_stringResources.set(path, result);
+        m_stringResources.set(resourceKey, result);
 
     return result;
 }
