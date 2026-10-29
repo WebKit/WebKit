@@ -365,6 +365,7 @@ private:
     void generatePackingHelpers(AST::Structure&);
     bool emitPackedVector(const Types::Vector&, bool shouldPack);
     bool shouldForceInlining(AST::Function&) const;
+    void collectConstantFoldedCallSites(AST::Function&);
 
     bool outlineConstant(const Type*, AST::Expression&);
     void serializeConstant(const Type*, ConstantValue);
@@ -386,6 +387,9 @@ private:
     AST::Function* m_currentFunction { nullptr };
     AST::Continuing*m_continuing { nullptr };
     HashSet<AST::Function*> m_visitedFunctions;
+    HashSet<AST::Function*> m_collectedFunctions;
+    HashSet<AST::Function*> m_constantArgumentCallees;
+    HashMap<AST::Function*, unsigned> m_callSiteCounts;
     HashMap<const AST::Structure*, AST::Structure*> m_packedStructures;
     HashSet<const AST::Structure*> m_usedPackHelpers;
     HashSet<const AST::Structure*> m_usedUnpackHelpers;
@@ -425,6 +429,11 @@ void FunctionDefinitionWriter::write()
 
     m_output.append(m_body);
     m_body.clear();
+
+    for (auto& entryPoint : m_shaderModule.callGraph().entrypoints()) {
+        if (metalAppleGPUFamily() >= 9 && m_prepareResult.entryPoints.contains(entryPoint.originalName))
+            collectConstantFoldedCallSites(entryPoint.function);
+    }
 
     for (auto& entryPoint : m_shaderModule.callGraph().entrypoints()) {
         if (m_prepareResult.entryPoints.contains(entryPoint.originalName))
@@ -968,10 +977,32 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     m_shaderModule.clearUsesPackedVec3();
 }
 
+void FunctionDefinitionWriter::collectConstantFoldedCallSites(AST::Function& function)
+{
+    if (!m_collectedFunctions.add(&function).isNewEntry)
+        return;
+
+    for (auto& callee : m_shaderModule.callGraph().callees(function)) {
+        for (auto& callSite : callee.callSites) {
+            m_callSiteCounts.add(callee.target, 0u).iterator->value++;
+            for (auto& argument : std::get<1>(callSite)->arguments()) {
+                if (argument.constantValue()) {
+                    m_constantArgumentCallees.add(callee.target);
+                    break;
+                }
+            }
+        }
+        collectConstantFoldedCallSites(*callee.target);
+    }
+}
+
 bool FunctionDefinitionWriter::shouldForceInlining(AST::Function& functionDefinition) const
 {
     if (metalAppleGPUFamily() < 9 || m_entryPointStage)
         return false;
+
+    if (m_callSiteCounts.get(&functionDefinition) > 1 && m_constantArgumentCallees.contains(&functionDefinition))
+        return true;
 
     auto* returnType = functionDefinition.maybeReturnType();
     if (!returnType)
