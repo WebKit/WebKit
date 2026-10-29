@@ -2607,6 +2607,8 @@
 42266907 WGPU : IndexBufferOffsetTest.UInt8Index/* = SKIP
 42266907 WGPU : IndexBufferOffsetTest.UInt8IndexSmallUpdates/* = SKIP
 42266907 WGPU : IndexedPointsTest* = SKIP
+// The current values of disabled vertex attributes are unimplemented.
+42266907 WGPU : InstancingTest.LineLoop/* = SKIP
 42266907 WGPU : LinkAndRelinkTest.RenderingProgramFailsWithProgramInstalled/* = SKIP
 42266907 WGPU : LineLoopStateChangeTest.DrawElementsThenDrawArrays/* = SKIP
 42266907 WGPU : LineLoopStateChangeTest.DrawArraysThenDrawElements/* = SKIP

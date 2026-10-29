@@ -261,6 +261,11 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
     glExtensions->requiredInternalformatOES    = true;
     glExtensions->copyTextureCHROMIUM          = true;
 
+    // Per-instance vertex buffers have WebGPU's per-instance step mode. VertexArrayWgpu streams the
+    // attributes with a divisor above 1 with an element for each instance.
+    glExtensions->instancedArraysANGLE = true;
+    glExtensions->instancedArraysEXT   = true;
+
     // Depth/stencil extensions
     glExtensions->packedDepthStencilOES = true;
 
