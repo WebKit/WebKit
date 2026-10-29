@@ -724,18 +724,8 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainInParallel(MonotonicTime timeou
 SlotVisitor::SharedDrainResult SlotVisitor::drainInParallelPassively(MonotonicTime timeout)
 {
     ASSERT(m_isInParallelMode);
-    
-    ASSERT(Options::numberOfGCMarkers());
-    
-    JSC::Heap& heap = m_collector.heap();
-    if (Options::numberOfGCMarkers() == 1
-        || (heap.m_worldState.load() & Heap::mutatorWaitingBit)
-        || !heap.hasHeapAccess()
-        || heap.worldIsStopped()) {
-        // This is an optimization over drainInParallel() when we have a concurrent mutator but
-        // otherwise it is not profitable.
-        return drainInParallel(timeout);
-    }
+    // This thread counts as one of the markers but does not mark here, so there must be at least one other.
+    ASSERT(Options::numberOfGCMarkers() > 1);
 
     Locker locker { collector().m_markingMutex };
     donateAll(locker);

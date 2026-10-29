@@ -604,9 +604,18 @@ NEVER_INLINE bool Collector::runConcurrentPhase(GCConductor conn)
         return false;
     }
     case GCConductor::Collector: {
+        unsigned worldState = heap().m_worldState.load();
+        // FIXME: Heap access is only a proxy for whether the mutator's thread wants a core: a JSC API client drops
+        // access with the JSLock and may then run native code. And the choice below holds until this drain returns,
+        // even if the mutator takes or releases access meanwhile.
+        bool mutatorIsRunningWithHeapAccess = (worldState & Heap::hasAccessBit) && !(worldState & Heap::mutatorWaitingBit);
         {
             ParallelModeEnabler enabler(visitor);
-            visitor.drainInParallelPassively(m_scheduler->timeToStop());
+            // If the mutator is running, don't compete for a core.
+            if (Options::numberOfGCMarkers() > 1 && mutatorIsRunningWithHeapAccess)
+                visitor.drainInParallelPassively(m_scheduler->timeToStop());
+            else
+                visitor.drainInParallel(m_scheduler->timeToStop());
         }
         return changePhase(conn, CollectorPhase::Reloop);
     } }
