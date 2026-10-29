@@ -147,9 +147,15 @@ bool RemoteImageDecoderAVF::frameHasAlphaAtIndex(size_t index) const
     return m_frameInfos[index].hasAlpha;
 }
 
+WebCore::PlatformImagePtr RemoteImageDecoderAVF::frameImageAtIndex(size_t index) const
+{
+    Locker locker { m_frameImagesLock };
+    return m_frameImages.get(index);
+}
+
 PlatformImagePtr RemoteImageDecoderAVF::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
 {
-    if (PlatformImagePtr image = m_frameImages.get(index))
+    if (PlatformImagePtr image = frameImageAtIndex(index))
         return image;
 
     Ref protectedThis { *this };
@@ -165,13 +171,15 @@ PlatformImagePtr RemoteImageDecoderAVF::createFrameImageAtIndex(size_t index, Su
 
         imageHandle->takeOwnershipOfMemory(MemoryLedger::Graphics);
 
-        if (RefPtr bitmap = ShareableBitmap::create(WTF::move(*imageHandle)))
+        if (RefPtr bitmap = ShareableBitmap::create(WTF::move(*imageHandle))) {
+            Locker locker { protectedThis->m_frameImagesLock };
             protectedThis->m_frameImages.add(index, bitmap->createPlatformImage(DontCopyBackingStore));
+        }
     };
 
     callOnMainRunLoopAndWait(WTF::move(createFrameImage));
 
-    return m_frameImages.get(index);
+    return frameImageAtIndex(index);
 }
 
 void RemoteImageDecoderAVF::setExpectedContentSize(long long expectedContentSize)
@@ -208,8 +216,16 @@ void RemoteImageDecoderAVF::setData(const FragmentedSharedBuffer& data, bool all
 
 void RemoteImageDecoderAVF::clearFrameBufferCache(size_t index)
 {
-    for (size_t i = 0; i < std::min(index + 1, m_frameCount); ++i)
-        m_frameImages.remove(i);
+    Vector<PlatformImagePtr> removedImages;
+    {
+        Locker locker { m_frameImagesLock };
+        size_t count = std::min(index + 1, m_frameCount);
+        for (size_t i = 0; i < count; ++i) {
+            if (PlatformImagePtr image = m_frameImages.take(i))
+                removedImages.append(WTF::move(image));
+        }
+    }
+    removedImages.clear();
 
     if (auto gpuProcessConnection = m_gpuProcessConnection.get())
         gpuProcessConnection->connection().send(Messages::RemoteImageDecoderAVFProxy::ClearFrameBufferCache(m_identifier, index), 0);

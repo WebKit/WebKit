@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<body>
+<img id="image" width="100" height="75">
+<script>
+// Regression test for a heap-use-after-free of RemoteImageDecoderAVF::m_frameImages.
+//
+// Phase 1 lets the animation accumulate entries so that shrinking is possible at all;
+// phase 2 clears the cache repeatedly while decoding is still in flight.
+//
+// PASS means no crash.
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.internals)
+    internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+
+const canvas = document.createElement('canvas');
+canvas.width = 100;
+canvas.height = 75;
+const context = canvas.getContext('2d');
+
+const image = document.getElementById('image');
+
+function finish(message)
+{
+    document.body.appendChild(document.createTextNode(message));
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+image.onload = () => {
+    const draw = setInterval(() => context.drawImage(image, 0, 0, canvas.width, canvas.height), 15);
+
+    // Phase 1: accumulate frames so that removing them can shrink the HashMap.
+    setTimeout(() => {
+        // Phase 2: clear the decoder's frame cache while decoding is still in flight.
+        const destroy = setInterval(() => {
+            if (window.internals)
+                internals.destroyDecodedDataForAllImages();
+        }, 5);
+
+        setTimeout(() => {
+            clearInterval(draw);
+            clearInterval(destroy);
+            finish('PASS did not crash');
+        }, 3000);
+    }, 2000);
+};
+
+image.onerror = () => finish('FAIL could not load the image');
+
+image.src = '../../../media/content/counting.mp4';
+</script>
+</body>
+</html>

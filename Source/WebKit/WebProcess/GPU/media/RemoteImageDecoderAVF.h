@@ -33,6 +33,7 @@
 #include <WebCore/ImageDecoderIdentifier.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -85,6 +86,8 @@ public:
 private:
     Ref<RemoteImageDecoderAVFManager> manager() const;
 
+    WebCore::PlatformImagePtr frameImageAtIndex(size_t) const;
+
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     ThreadSafeWeakRef<RemoteImageDecoderAVFManager> m_manager;
     WebCore::ImageDecoderIdentifier m_identifier;
@@ -93,7 +96,8 @@ private:
     String m_uti;
     bool m_isAllDataReceived { false };
     WTF::Function<void(WebCore::EncodedDataStatus)> m_encodedDataStatusChangedCallback;
-    HashMap<int, WebCore::PlatformImagePtr, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> m_frameImages;
+    mutable Lock m_frameImagesLock;
+    HashMap<int, WebCore::PlatformImagePtr, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> m_frameImages WTF_GUARDED_BY_LOCK(m_frameImagesLock);
     Vector<ImageDecoder::FrameInfo> m_frameInfos;
     size_t m_frameCount { 0 };
     std::optional<WebCore::IntSize> m_size;
