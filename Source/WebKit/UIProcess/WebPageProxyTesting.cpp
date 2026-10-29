@@ -274,6 +274,8 @@ void WebPageProxyTesting::resetStateBetweenTests()
     if (auto* mainFrame = page->mainFrame())
         mainFrame->disownOpener();
 
+    page->setMuted({ }, WebPageProxy::FromApplication::Yes);
+
     page->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPageTesting::ResetStateBetweenTests(), pageID);
     });
