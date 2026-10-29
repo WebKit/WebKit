@@ -1199,8 +1199,7 @@ void WebProcessPool::clearPermanentCredentialsForProtectionSpace(WebCore::Protec
     RetainPtr sharedStorage = [NSURLCredentialStorage sharedCredentialStorage];
     RetainPtr space = protectionSpace.nsSpace();
     RetainPtr credentials = [sharedStorage credentialsForProtectionSpace:space.get()];
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString* user in credentials.get()) {
+    for (NSString* user in credentials.get()) {
         RetainPtr<NSURLCredential> credential = credentials.get()[user];
         if (credential.get().persistence == NSURLCredentialPersistencePermanent)
             [sharedStorage removeCredential:retainPtr(credentials.get()[user]).get() forProtectionSpace:space.get()];
@@ -1774,8 +1773,7 @@ void WebProcessPool::registerAdditionalFonts(NSArray *fontNames)
         m_sandboxExtensionURLs = Vector<URL>();
     }
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *nsFontName : fontNames) {
+    for (NSString *nsFontName : fontNames) {
         RetainPtr ctFont = adoptCF(CTFontCreateWithName(bridge_cast(nsFontName), 0.0, nullptr));
         RetainPtr downloaded = adoptCF(static_cast<CFBooleanRef>(CTFontCopyAttribute(ctFont.get(), kCTFontDownloadedAttribute)));
         if (downloaded == kCFBooleanFalse)

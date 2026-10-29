@@ -302,8 +302,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (traverse && layer.sublayers.count > 0) {
         TextStream::GroupScope scope(ts);
         ts << "sublayers"_s;
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL CALayer *sublayer in layer.sublayers) {
+        for (CALayer *sublayer in layer.sublayers) {
             TextStream::GroupScope scope(ts);
             dumpCALayer(ts, sublayer, true);
         }

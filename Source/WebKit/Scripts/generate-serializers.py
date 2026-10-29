@@ -1993,8 +1993,7 @@ def generate_webkit_secure_coding_impl(serialized_types, headers):
     result.append('    if (![array isKindOfClass:NSArray.class])')
     result.append('        return { };')
     result.append('    Vector<RetainPtr<T>> result;')
-    # FIXME: Remove SUPPRESS_UNRETAINED_LOCAL once the static analyzer false positive is fixed (rdar://189710680).
-    result.append('    for (SUPPRESS_UNRETAINED_LOCAL id element in array) {')
+    result.append('    for (id element in array) {')
     # FIXME: isKindOfClass call can cause a static analysis false positive (https://github.com/llvm/llvm-project/issues/162979).
     result.append('        SUPPRESS_UNRETAINED_ARG if ([element isKindOfClass:retainPtr(IPC::getClass<T>()).get()])')
     result.append('            result.append((T *)element);')

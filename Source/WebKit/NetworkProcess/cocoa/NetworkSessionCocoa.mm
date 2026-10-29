@@ -824,8 +824,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
             uint64_t requestHeaderBytesSent = 0;
             uint64_t responseHeaderBytesReceived = 0;
 
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSURLSessionTaskTransactionMetrics *transactionMetrics in metrics.transactionMetrics) {
+            for (NSURLSessionTaskTransactionMetrics *transactionMetrics in metrics.transactionMetrics) {
                 requestHeaderBytesSent += transactionMetrics.countOfRequestHeaderBytesSent;
                 responseHeaderBytesReceived += transactionMetrics.countOfResponseHeaderBytesReceived;
             }
@@ -1520,10 +1519,8 @@ HashSet<WebCore::SecurityOriginData> NetworkSessionCocoa::originsWithCredentials
     bool shouldHandleSessionCredentialsOnly = credentialStorage.get() == [NSURLCredentialStorage sharedCredentialStorage];
     HashSet<WebCore::SecurityOriginData> origins;
     RetainPtr credentials = [credentialStorage allCredentials];
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSURLProtectionSpace *space in credentials.get()) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSURLCredential *credential in [credentials.get()[space] allValues]) {
+    for (NSURLProtectionSpace *space in credentials.get()) {
+        for (NSURLCredential *credential in [credentials.get()[space] allValues]) {
             if (!shouldHandleSessionCredentialsOnly || credential.persistence == NSURLCredentialPersistenceForSession) {
                 origins.add(WebCore::SecurityOriginData { String(space.protocol), String(space.host), space.port });
                 break;
@@ -1547,10 +1544,8 @@ void NetworkSessionCocoa::removeCredentialsForOrigins(const Vector<WebCore::Secu
 
     bool shouldHandleSessionCredentialsOnly = credentialStorage.get() == [NSURLCredentialStorage sharedCredentialStorage];
     RetainPtr credentials = [credentialStorage allCredentials];
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSURLProtectionSpace *space in credentials.get()) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSURLCredential *credential in [credentials.get()[space] allValues]) {
+    for (NSURLProtectionSpace *space in credentials.get()) {
+        for (NSURLCredential *credential in [credentials.get()[space] allValues]) {
             if (shouldHandleSessionCredentialsOnly && credential.persistence != NSURLCredentialPersistenceForSession)
                 continue;
             auto origin = WebCore::SecurityOriginData { String(space.protocol), String(space.host), space.port };
@@ -1569,10 +1564,8 @@ void NetworkSessionCocoa::clearCredentials(WallTime modifiedSince)
     bool useSharedCredentialStorage = credentialStorage.get() == [NSURLCredentialStorage sharedCredentialStorage];
     bool shouldHandleSessionCredentialsOnly = useSharedCredentialStorage || (modifiedSince.secondsSinceEpoch().value() > 0.0);
     RetainPtr credentials = [credentialStorage allCredentials];
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSURLProtectionSpace *space in credentials.get()) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSURLCredential *credential in [credentials.get()[space] allValues]) {
+    for (NSURLProtectionSpace *space in credentials.get()) {
+        for (NSURLCredential *credential in [credentials.get()[space] allValues]) {
             if (shouldHandleSessionCredentialsOnly && credential.persistence != NSURLCredentialPersistenceForSession)
                 continue;
             [credentialStorage removeCredential:credential forProtectionSpace:space];
@@ -1888,8 +1881,7 @@ Vector<WebCore::SecurityOriginData> NetworkSessionCocoa::hostNamesWithAlternativ
     RetainPtr<_NSHTTPAlternativeServicesStorage> storage = m_defaultSessionSet->sessionWithCredentialStorage->session.get().configuration._alternativeServicesStorage;
     RetainPtr<NSArray<_NSHTTPAlternativeServiceEntry *>> entries = [storage HTTPServiceEntriesWithFilter:_NSHTTPAlternativeServicesFilter.emptyFilter];
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL _NSHTTPAlternativeServiceEntry* entry in entries.get()) {
+    for (_NSHTTPAlternativeServiceEntry* entry in entries.get()) {
         WebCore::SecurityOriginData origin = { "https"_s, entry.host, entry.port };
         origins.append(origin);
     }

@@ -2301,8 +2301,7 @@ static NSMutableSet *knownPluginMIMETypes()
     WebCore::LocalDOMWindow::dispatchAllPendingUnloadEvents();
 
     // This will close the WebViews in a random order. Change this if close order is important.
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL WebView *webView in [(__bridge NSSet *)allWebViewsSet().get() allObjects])
+    for (WebView *webView in [(__bridge NSSet *)allWebViewsSet().get() allObjects])
         [webView close];
 }
 
@@ -7648,8 +7647,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
         if ([view conformsToProtocol:@protocol(WebMultipleTextMatches)]) {
             RetainPtr<NSView<WebMultipleTextMatches>> documentView = (NSView <WebMultipleTextMatches> *)view;
             NSRect documentViewVisibleRect = [documentView.get() visibleRect];
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSValue *rect in [documentView.get() rectsForTextMatches]) {
+            for (NSValue *rect in [documentView.get() rectsForTextMatches]) {
                 NSRect r = [rect rectValue];
                 // Clip rect to document view's visible rect so rect is confined to subframe
                 r = NSIntersectionRect(r, documentViewVisibleRect);
@@ -7776,8 +7774,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
 - (void)addVisitedLinks:(NSArray *)visitedLinks
 {
     WebVisitedLinkStore& visitedLinkStore = _private->group->visitedLinkStore();
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *urlString in visitedLinks)
+    for (NSString *urlString in visitedLinks)
         visitedLinkStore.addVisitedLink(urlString);
 }
 
@@ -9302,16 +9299,14 @@ FORWARD(toggleUnderline)
 - (void)_dismissTextTouchBarPopoverItemWithIdentifier:(NSString *)identifier
 {
     NSTouchBarItem *foundItem = nil;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSTouchBarItem *item in self.textTouchBar.items) {
+    for (NSTouchBarItem *item in self.textTouchBar.items) {
         if ([item.identifier isEqualToString:identifier]) {
             foundItem = item;
             break;
         }
 
         if ([item.identifier isEqualToString:NSTouchBarItemIdentifierTextFormat]) {
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSTouchBarItem *childItem in [protect(checked_objc_cast<NSGroupTouchBarItem>(item)) groupTouchBar].items) {
+            for (NSTouchBarItem *childItem in [protect(checked_objc_cast<NSGroupTouchBarItem>(item)) groupTouchBar].items) {
                 if ([childItem.identifier isEqualToString:identifier]) {
                     foundItem = childItem;
                     break;

@@ -1084,8 +1084,7 @@ void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL
     auto blockPtr = makeBlockPtr([identifier = crossThreadCopy(identifier), registrationURL = crossThreadCopy(registrationURL), tag = crossThreadCopy(tag), completionHandler = WTF::move(completionHandler)](NSArray<UNNotification *> *notifications) mutable {
         ensureOnMainRunLoop([identifier = crossThreadCopy(identifier), notifications = RetainPtr { notifications }, registrationURL = crossThreadCopy(WTF::move(registrationURL)), tag = crossThreadCopy(WTF::move(tag)), completionHandler = WTF::move(completionHandler)] mutable {
             Vector<WebCore::NotificationData> notificationDatas;
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL UNNotification *notification in notifications.get()) {
+            for (UNNotification *notification in notifications.get()) {
                 auto notificationData = WebCore::NotificationData::fromDictionary(retainPtr(notification.request.content.userInfo).get());
                 if (!notificationData) {
                     RELEASE_LOG_ERROR(Push, "WebPushDaemon::getNotifications error: skipping notification with invalid Notification userInfo for subscription %{public}s", identifier.debugDescription().utf8());
