@@ -2007,6 +2007,9 @@ std::optional<LayoutUnit> RenderGrid::firstLineBaseline() const
     if ((isWritingModeRoot() && !isFlexItem()) || !currentGrid().hasGridItems() || shouldApplyLayoutContainment())
         return { };
 
+    if (m_hasGridFormattingContextLayout.value_or(false))
+        return m_gridFormattingContextFirstBaseline;
+
     // Finding the first grid item in grid order.
     CheckedPtr baselineGridItem = this->baselineGridItem(ItemPosition::Baseline);
 
@@ -2034,6 +2037,9 @@ std::optional<LayoutUnit> RenderGrid::lastLineBaseline() const
     if (isWritingModeRoot() || !currentGrid().hasGridItems() || shouldApplyLayoutContainment())
         return { };
 
+    if (m_hasGridFormattingContextLayout.value_or(false))
+        return m_gridFormattingContextLastBaseline;
+
     CheckedPtr baselineGridItem = this->baselineGridItem(ItemPosition::LastBaseline);
     if (!baselineGridItem)
         return { };
@@ -2054,6 +2060,8 @@ std::optional<LayoutUnit> RenderGrid::lastLineBaseline() const
 const RenderBox* RenderGrid::baselineGridItem(ItemPosition alignment) const
 {
     ASSERT(alignment == ItemPosition::Baseline || alignment == ItemPosition::LastBaseline);
+    // A grid laid out by GFC never fills the grid's cells. Its baselines come from m_gridFormattingContext*Baseline.
+    ASSERT(!m_hasGridFormattingContextLayout.value_or(false));
     const RenderBox* baselineGridItem = { };
     unsigned numColumns = currentGrid().numTracks(Style::GridTrackSizingDirection::Columns);
     auto rowIndexDeterminingBaseline = alignment == ItemPosition::Baseline ? 0 : currentGrid().numTracks(Style::GridTrackSizingDirection::Rows) - 1;

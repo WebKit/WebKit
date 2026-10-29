@@ -265,6 +265,78 @@ static BitVector collapsedRowTracksList(const ExplicitGridTrackSizes& explicitGr
     return collapsedTracksList(explicitGridTrackSizes.rowAutoRepeatTracksIndexes, leadingImplicitTracks.rowsCount, rowSpans);
 }
 
+// https://drafts.csswg.org/css-grid-1/#grid-baselines
+// The offsets are relative to the grid container's content box, the space gridItemRects is in.
+static GridContainerBaselines computeGridContainerBaselines(const GridItemRects& gridItemRects, const LogicalGridItems& logicalGridItems, const ElementBox& gridContainer, const IntegrationUtils& integrationUtils)
+{
+    // "If the grid container does not contain any grid items, the grid container has no first (last) baseline set".
+    if (gridItemRects.isEmpty())
+        return { };
+
+    // "Find the first (last) row of the grid container containing at least one grid item."
+    auto firstRow = std::numeric_limits<size_t>::max();
+    size_t lastRow = 0;
+    for (auto& gridItemRect : gridItemRects) {
+        firstRow = std::min(firstRow, gridItemRect.lineNumbersForGridArea.rowStartLine);
+        lastRow = std::max(lastRow, gridItemRect.lineNumbersForGridArea.rowEndLine - 1);
+    }
+
+    // FIXME: "If any of the grid items intersecting this row participate in baseline alignment in that row, the grid
+    // container's baseline set is generated from the shared alignment baseline of those grid items." This is unreachable
+    // for now: a grid item whose resolved align-self is baseline or last baseline gets
+    // GridItemHasUnsupportedBlockAxisAlignment (and one with such a justify-self gets
+    // GridItemHasUnsupportedInlineAxisAlignment), so it never reaches GFC. Only the second rule below is needed. The
+    // ASSERT in baselineOfItemInRow guards this.
+
+    // "Otherwise, the grid container's first (last) baseline set is generated from the alignment baseline of the first (last)
+    // grid item in row-major grid order."
+    // Row-major grid order visits the cells of the row front to back for the first baseline and back to front for the
+    // last one, so an item is encountered at the column where it starts (first) or ends (last).
+    // "If two items are encountered at the same time, they are taken in order-modified document order",
+    // which is the order of logicalGridItems. gridItemRects is in placement order, not in that order, so
+    // logicalGridItems is only consulted to break ties.
+    auto orderModifiedDocumentOrderIndex = [&](const ElementBox& gridItem) {
+        auto index = logicalGridItems.findIf([&](auto& logicalGridItem) {
+            return logicalGridItem.ptr() == &gridItem;
+        });
+        ASSERT(index != notFound);
+        return index;
+    };
+
+    auto baselineOfItemInRow = [&](size_t row, bool isFirst) -> std::optional<LayoutUnit> {
+        const GridItemRect* baselineItemRect = nullptr;
+        auto isEncounteredBefore = [&](const GridItemRect& a, const GridItemRect& b) {
+            auto& aLines = a.lineNumbersForGridArea;
+            auto& bLines = b.lineNumbersForGridArea;
+            auto aColumn = isFirst ? aLines.columnStartLine : aLines.columnEndLine;
+            auto bColumn = isFirst ? bLines.columnStartLine : bLines.columnEndLine;
+            if (aColumn != bColumn)
+                return aColumn < bColumn;
+            return orderModifiedDocumentOrderIndex(a.layoutBox) < orderModifiedDocumentOrderIndex(b.layoutBox);
+        };
+        CheckedRef gridContainerStyle = gridContainer.style();
+        for (auto& gridItemRect : gridItemRects) {
+            auto& lines = gridItemRect.lineNumbersForGridArea;
+            if (row < lines.rowStartLine || row >= lines.rowEndLine)
+                continue;
+            auto alignSelfPosition = gridItemRect.layoutBox->style().alignSelf().resolve(gridContainerStyle.ptr()).position();
+            ASSERT_UNUSED(alignSelfPosition, alignSelfPosition != ItemPosition::Baseline && alignSelfPosition != ItemPosition::LastBaseline);
+            if (!baselineItemRect || (isFirst ? isEncounteredBefore(gridItemRect, *baselineItemRect) : isEncounteredBefore(*baselineItemRect, gridItemRect)))
+                baselineItemRect = &gridItemRect;
+        }
+        ASSERT(baselineItemRect);
+
+        // "If the grid item has no alignment baseline in the grid's inline axis, then one is first synthesized from its border
+        // edges." Orthogonal items are gated by coverage. An orthogonal item has no baseline in the grid's inline axis, so one
+        // would be synthesized from its border box the same way.
+        auto& borderBoxRect = baselineItemRect->borderBoxRect;
+        auto itemBaseline = isFirst ? integrationUtils.firstLineBaselineForGridItem(baselineItemRect->layoutBox) : integrationUtils.lastLineBaselineForGridItem(baselineItemRect->layoutBox);
+        return borderBoxRect.y() + itemBaseline.value_or(borderBoxRect.height());
+    };
+
+    return { baselineOfItemInRow(firstRow, true), baselineOfItemInRow(lastRow, false) };
+}
+
 GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
 {
     auto logicalGridItems = constructLogicalGridItems(root());
@@ -372,12 +444,14 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
     mapGridItemLocationsToGrid();
     setGridItemGeometries(gridItemRects);
 
+    auto baselines = computeGridContainerBaselines(gridItemRects, logicalGridItems, root(), integrationUtils());
+
     auto autoRepeatColumnsCount = gridDefinition.explicitGridTrackSizes.columnAutoRepeatTracksIndexes.distance();
     auto autoRepeatRowsCount = gridDefinition.explicitGridTrackSizes.rowAutoRepeatTracksIndexes.distance();
     return { WTF::move(usedTrackSizes), WTF::move(gridItemRects), usedBlockContentSize,
         autoRepeatColumnsCount, autoRepeatRowsCount,
         leadingImplicitTracks.columnsCount, leadingImplicitTracks.rowsCount,
-        layoutState.collapsedColumnTracksList, layoutState.collapsedRowTracksList };
+        layoutState.collapsedColumnTracksList, layoutState.collapsedRowTracksList, baselines };
 }
 
 PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas& gridAreas) const

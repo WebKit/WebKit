@@ -62,6 +62,14 @@ struct GridAutoFlowOptions {
     GridAutoFlowDirection direction;
 };
 
+// The grid container's baselines, as logical block offsets from the block-start edge of the grid container's content box.
+// The caller adds the container's border and padding to make them relative to its border box.
+// https://drafts.csswg.org/css-grid-1/#grid-baselines
+struct GridContainerBaselines {
+    std::optional<LayoutUnit> first;
+    std::optional<LayoutUnit> last;
+};
+
 struct GridLayoutResult {
     UsedTrackSizes usedTrackSizes;
     GridItemRects gridItemRects;
@@ -75,6 +83,8 @@ struct GridLayoutResult {
 
     BitVector collapsedColumnTracks;
     BitVector collapsedRowTracks;
+
+    GridContainerBaselines baselines;
 };
 
 // The number of implicit tracks generated before the start of the explicit grid, per axis, because

@@ -398,6 +398,7 @@ void GridLayout::updateFormattingContextRootRenderer(const Layout::UsedTrackSize
 void GridLayout::invalidateFormattingContextRootRenderer(RenderGrid& renderGrid)
 {
     renderGrid.currentGrid().setNeedsItemsPlacement(true);
+    renderGrid.setGridFormattingContextBaselines({ }, { });
 }
 
 std::pair<LayoutUnit, LayoutUnit> GridLayout::computeIntrinsicWidths()
@@ -425,10 +426,17 @@ void GridLayout::layout()
     auto [ usedTrackSizes, gridItemRects, usedBlockContentSize,
         autoRepeatColumnsCount, autoRepeatRowsCount,
         leadingImplicitColumnsCount, leadingImplicitRowsCount,
-        collapsedColumnTracks, collapsedRowTracks ] = Layout::GridFormattingContext { gridBox(), protect(layoutState()) }.layout(gridLayoutConstraints);
+        collapsedColumnTracks, collapsedRowTracks, baselines ] = Layout::GridFormattingContext { gridBox(), protect(layoutState()) }.layout(gridLayoutConstraints);
     updateGridItemRenderers(previousGridItemRects);
     updateGridItemGridAreas(usedTrackSizes, gridItemRects);
     updateFormattingContextRootRenderer(usedTrackSizes, usedBlockContentSize, gridItemRects, autoRepeatColumnsCount, autoRepeatRowsCount, leadingImplicitColumnsCount, leadingImplicitRowsCount, collapsedColumnTracks, collapsedRowTracks);
+    auto contentBoxBlockStart = layoutState().geometryForBox(gridBox()).contentBoxTop();
+    auto borderBoxOffset = [&](std::optional<LayoutUnit> baseline) -> std::optional<LayoutUnit> {
+        if (!baseline)
+            return { };
+        return contentBoxBlockStart + *baseline;
+    };
+    gridBoxRenderer().setGridFormattingContextBaselines(borderBoxOffset(baselines.first), borderBoxOffset(baselines.last));
     populateGridPositions(usedTrackSizes, collapsedColumnTracks, collapsedRowTracks);
     layoutOutOfFlowBoxes();
 

@@ -344,9 +344,14 @@ private:
     mutable std::optional<GridItemSizeCache> m_intrinsicLogicalHeightsForRowSizingFirstPass;
 
     bool layoutUsingGridFormattingContext();
+    void setGridFormattingContextBaselines(std::optional<LayoutUnit> first, std::optional<LayoutUnit> last) { m_gridFormattingContextFirstBaseline = first; m_gridFormattingContextLastBaseline = last; }
 
     LayoutUnit m_gridLanesContentSizeForWebInspectorOverlay;
     std::optional<bool> m_hasGridFormattingContextLayout;
+    // The baselines GFC computed, as offsets from the border-box block-start. They are only meaningful while
+    // m_hasGridFormattingContextLayout is true: GFC grids never fill the legacy grid's cells that baselineGridItem walks.
+    std::optional<LayoutUnit> m_gridFormattingContextFirstBaseline;
+    std::optional<LayoutUnit> m_gridFormattingContextLastBaseline;
 
     mutable bool m_isComputingTrackSizes { false };
 };

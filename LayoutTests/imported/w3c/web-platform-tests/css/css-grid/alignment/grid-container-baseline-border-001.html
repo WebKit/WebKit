@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: Baselines of a grid container with a border and padding</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-baselines">
+<link rel="help" href="https://drafts.csswg.org/css-align-3/#baseline-export">
+<meta name="flags" content="ahem">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<meta name="assert" content="The baseline of a grid container is measured from its border box, so the container's border and padding before the content box are added to the baseline of the item providing it.">
+<style>
+body { margin: 0; font: 20px/20px Ahem; }
+.ref { width: 10px; height: 100px; background: gray; }
+.flex { display: flex; position: relative; align-items: baseline; margin-bottom: 10px; }
+.last { align-items: last baseline; }
+.fc { display: flex; }
+.grid { display: grid; grid-template-columns: 100px 100px; background: lightblue; }
+.grid > div { background: yellow; }
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.fc')">
+<div id="log"></div>
+<div class="flex">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="71">
+    <div class="grid" style="border: 6px solid; padding: 4px;">
+      <div style="padding-top: 3px;">A</div>
+    </div>
+  </div>
+</div>
+<div class="flex last">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="71">
+    <div class="grid" style="border: 6px solid; padding: 4px;">
+      <div style="padding-top: 3px;">A</div>
+    </div>
+  </div>
+</div>
+<!-- Different border and padding on each side, with two rows. -->
+<div class="flex">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="71">
+    <div class="grid" style="border-width: 8px 0 5px; border-style: solid; padding: 2px 0 7px;">
+      <div style="padding-top: 3px;">A</div>
+      <div style="grid-row: 2; padding-top: 10px;">B</div>
+    </div>
+  </div>
+</div>
+<div class="flex last">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="41">
+    <div class="grid" style="border-width: 8px 0 5px; border-style: solid; padding: 2px 0 7px;">
+      <div style="padding-top: 3px;">A</div>
+      <div style="grid-row: 2; padding-top: 10px;">B</div>
+    </div>
+  </div>
+</div>
