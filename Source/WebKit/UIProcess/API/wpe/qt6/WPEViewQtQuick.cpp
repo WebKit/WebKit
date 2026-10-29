@@ -298,8 +298,10 @@ void wpe_view_qtquick_did_update_scene(WPEViewQtQuick* view)
     auto previousCommittedBuffer = WTF::move(priv->previousCommittedBuffer);
     if (previousCommittedBuffer)
         wpe_view_buffer_released(WPE_VIEW(view), previousCommittedBuffer.get());
-    if (committedBuffer)
-        wpe_view_buffer_rendered(WPE_VIEW(view), committedBuffer.get());
+
+    // committedBuffer is non null because of the bufferAwaitingAck gaurd
+    wpe_view_buffer_rendered(WPE_VIEW(view), committedBuffer.get());
+
     if (priv->pendingBuffer)
         wpeViewQtQuickScheduleUpdate(priv);
 }
