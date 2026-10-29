@@ -3908,20 +3908,19 @@ private:
                 if (auto result = SIMDShuffle::isOnlyOneSideMask(pattern)) {
                     auto [child, newPattern] = result.value();
                     switch (child) {
-                    case 0: {
+                    case SIMDShuffleSide::Left: {
                         Value* newPatternValue = m_proc.addConstant(m_value->origin(), B3::V128, newPattern);
                         m_insertionSet.insertValue(m_index, newPatternValue);
                         replaceWithNew<SIMDValue>(m_value->origin(), VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, m_value->child(0), newPatternValue);
                         break;
                     }
-                    case 1: {
+                    case SIMDShuffleSide::Right: {
                         Value* newPatternValue = m_proc.addConstant(m_value->origin(), B3::V128, newPattern);
                         m_insertionSet.insertValue(m_index, newPatternValue);
                         replaceWithNew<SIMDValue>(m_value->origin(), VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, m_value->child(1), newPatternValue);
                         break;
                     }
-                    case 2: {
-                        // All OOB.
+                    case SIMDShuffleSide::AllOutOfBounds: {
                         replaceWithNewValue(m_proc.addConstant(m_value->origin(), B3::V128, vectorAllZeros()));
                         break;
                     }
@@ -3971,20 +3970,19 @@ private:
                     if (auto result = SIMDShuffle::isOnlyOneSideMask(newPattern)) {
                         auto [child, unaryPattern] = result.value();
                         switch (child) {
-                        case 0: {
+                        case SIMDShuffleSide::Left: {
                             Value* newPatternValue = m_proc.addConstant(m_value->origin(), B3::V128, unaryPattern);
                             m_insertionSet.insertValue(m_index, newPatternValue);
                             replaceWithNew<SIMDValue>(m_value->origin(), VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, newChild0, newPatternValue);
                             break;
                         }
-                        case 1: {
+                        case SIMDShuffleSide::Right: {
                             Value* newPatternValue = m_proc.addConstant(m_value->origin(), B3::V128, unaryPattern);
                             m_insertionSet.insertValue(m_index, newPatternValue);
                             replaceWithNew<SIMDValue>(m_value->origin(), VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, newChild1, newPatternValue);
                             break;
                         }
-                        case 2: {
-                            // All OOB.
+                        case SIMDShuffleSide::AllOutOfBounds: {
                             replaceWithNewValue(m_proc.addConstant(m_value->origin(), B3::V128, vectorAllZeros()));
                             break;
                         }

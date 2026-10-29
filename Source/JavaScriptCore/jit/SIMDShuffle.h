@@ -70,30 +70,36 @@ enum class CanonicalShuffle : uint8_t {
     S8x8Reverse,                   // REV64.16B
 };
 
+enum class SIMDShuffleSide : uint8_t {
+    Left,
+    Right,
+    AllOutOfBounds,
+};
+
 class SIMDShuffle {
 public:
-    static std::optional<std::tuple<unsigned, v128_t>> isOnlyOneSideMask(v128_t pattern)
+    static std::optional<std::tuple<SIMDShuffleSide, v128_t>> isOnlyOneSideMask(v128_t pattern)
     {
-        std::optional<unsigned> index;
+        std::optional<SIMDShuffleSide> side;
         for (unsigned i = 0; i < 16; ++i) {
             unsigned element = pattern.u8x16[i];
             if (element < 16) {
-                if (index && index.value() != 0)
+                if (side && side.value() != SIMDShuffleSide::Left)
                     return std::nullopt;
-                index = 0;
+                side = SIMDShuffleSide::Left;
             } else if (element < 32) {
-                if (index && index.value() != 1)
+                if (side && side.value() != SIMDShuffleSide::Right)
                     return std::nullopt;
-                index = 1;
+                side = SIMDShuffleSide::Right;
             } else {
                 // Accept OOB.
             }
         }
 
-        if (!index)
-            return std::tuple { 2, vectorAllOnes() };
+        if (!side)
+            return std::tuple { SIMDShuffleSide::AllOutOfBounds, vectorAllOnes() };
 
-        if (index.value() == 0) {
+        if (side.value() == SIMDShuffleSide::Left) {
             auto newPattern = pattern;
             for (unsigned i = 0; i < 16; ++i) {
                 unsigned element = pattern.u8x16[i];
@@ -102,10 +108,10 @@ public:
                 else
                     newPattern.u8x16[i] = 0xFF; // OOB
             }
-            return std::tuple { 0, newPattern };
+            return std::tuple { SIMDShuffleSide::Left, newPattern };
         }
 
-        ASSERT(index.value() == 1);
+        ASSERT(side.value() == SIMDShuffleSide::Right);
         auto newPattern = pattern;
         for (unsigned i = 0; i < 16; ++i) {
             unsigned element = pattern.u8x16[i];
@@ -114,7 +120,7 @@ public:
             else
                 newPattern.u8x16[i] = 0xFF; // OOB
         }
-        return std::tuple { 1, newPattern };
+        return std::tuple { SIMDShuffleSide::Right, newPattern };
     }
 
     static std::optional<uint8_t> isI8x16SameElement(v128_t pattern)

@@ -6354,7 +6354,7 @@ static void runBinarySwizzleAndCheck(v128_t pattern, v128_t aIn, v128_t bIn)
 }
 
 // Pattern reads only from `a` (no OOB). isOnlyOneSideMask must return
-// {child=0, normalized=pattern} and the binary VectorSwizzle must collapse
+// {Left, normalized=pattern} and the binary VectorSwizzle must collapse
 // to a unary VectorSwizzle on `a`. On x64 the lowering is PSHUFB(a, pattern).
 void testVectorSwizzleBinaryOnlyOneSideSide0()
 {
@@ -6392,7 +6392,7 @@ void testVectorSwizzleBinaryOnlyOneSideSide1()
     runBinarySwizzleAndCheck(pattern, a, b);
 }
 
-// Pattern reads from `a` for some bytes and is OOB (≥ 32) for others. Must
+// Pattern reads from `a` for some bytes and is OOB (>= 32) for others. Must
 // collapse to a unary VectorSwizzle on `a` whose pattern has 0xFF in the OOB
 // positions, producing zero bytes there.
 void testVectorSwizzleBinaryOnlyOneSideSide0WithOOB()
@@ -6401,7 +6401,7 @@ void testVectorSwizzleBinaryOnlyOneSideSide0WithOOB()
     for (unsigned i = 0; i < 8; ++i)
         pattern.u8x16[i] = static_cast<uint8_t>(2 * i); // {0, 2, 4, 6, 8, 10, 12, 14} from `a`
     for (unsigned i = 8; i < 16; ++i)
-        pattern.u8x16[i] = 0xFF; // OOB (≥ 32)
+        pattern.u8x16[i] = 0xFF; // OOB (>= 32)
     v128_t a, b;
     for (unsigned i = 0; i < 16; ++i) a.u8x16[i] = static_cast<uint8_t>(0x10 + i);
     for (unsigned i = 0; i < 16; ++i) b.u8x16[i] = static_cast<uint8_t>(0x80 + i);
@@ -6422,7 +6422,7 @@ void testVectorSwizzleBinaryOnlyOneSideSide1WithOOB()
     runBinarySwizzleAndCheck(pattern, a, b);
 }
 
-// All bytes are OOB (≥ 32). isOnlyOneSideMask returns {child=2, all-ones}
+// All bytes are OOB (>= 32). isOnlyOneSideMask returns {AllOutOfBounds, all-ones}
 // and the swizzle must collapse to a constant all-zero vector.
 void testVectorSwizzleBinaryOnlyOneSideAllOOB()
 {

@@ -3718,6 +3718,38 @@ void LEGACY_NODELETE BBQJIT::notifyFunctionUsesSIMD()
 
 [[nodiscard]] PartialResult BBQJIT::addSIMDShuffle(v128_t imm, ExpressionType a, ExpressionType b, ExpressionType& result)
 {
+#if CPU(ARM64)
+    // A shuffle reading from only one of its inputs needs neither the other input nor the
+    // adjacent register pair of the two-table TBL.
+    if (auto oneSide = SIMDShuffle::isOnlyOneSideMask(imm)) {
+        auto [side, pattern] = *oneSide;
+        // The parser rejects shuffle indices >= 32, so some lane always reads an input.
+        ASSERT(side != SIMDShuffleSide::AllOutOfBounds);
+        ExpressionType source = side == SIMDShuffleSide::Right ? b : a;
+        Location sourceLocation = loadIfNecessary(source);
+        consume(a);
+        consume(b);
+
+        result = topValue(TypeKind::V128);
+        Location resultLocation = allocate(result);
+        LOG_INSTRUCTION("VectorShuffle", a, b, source, sourceLocation, RESULT(result));
+
+        if (auto lane = SIMDShuffle::isI8x16DupElement(pattern))
+            m_jit.vectorDupElement(SIMDLane::i8x16, TrustedImm32(*lane), sourceLocation.asFPR(), resultLocation.asFPR());
+        else if (auto lane = SIMDShuffle::isI16x8DupElement(pattern))
+            m_jit.vectorDupElement(SIMDLane::i16x8, TrustedImm32(*lane), sourceLocation.asFPR(), resultLocation.asFPR());
+        else if (auto lane = SIMDShuffle::isI32x4DupElement(pattern))
+            m_jit.vectorDupElement(SIMDLane::i32x4, TrustedImm32(*lane), sourceLocation.asFPR(), resultLocation.asFPR());
+        else if (auto lane = SIMDShuffle::isI64x2DupElement(pattern))
+            m_jit.vectorDupElement(SIMDLane::i64x2, TrustedImm32(*lane), sourceLocation.asFPR(), resultLocation.asFPR());
+        else {
+            materializeVectorConstant(pattern, Location::fromFPR(wasmScratchFPR));
+            m_jit.vectorSwizzle(sourceLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
+        }
+        return { };
+    }
+#endif
+
 #if CPU(X86_64)
     ScratchScope<0, 1> scratches(*this);
 #elif CPU(ARM64)
