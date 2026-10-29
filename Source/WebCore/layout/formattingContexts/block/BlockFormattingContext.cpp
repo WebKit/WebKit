@@ -57,24 +57,21 @@ BlockFormattingContext::BlockFormattingContext(const RenderBlockFlow& root, Layo
 {
 }
 
-BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockContent& constraints)
+BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockContent& constraints, const BoxGeometry& rootGeometry)
 {
     ASSERT(m_blockLayoutState.containingBlockStates().isEmpty());
     auto result = BlockLayoutResult { };
-    m_blockLayoutState.containingBlockStates().append(containingBlockStateForRoot(constraints));
+    m_blockLayoutState.containingBlockStates().append(containingBlockStateForRoot(constraints, rootGeometry));
     m_blockLayoutState.marginCollapse().startBlockFormattingContextRoot(m_blockLayoutState.containingBlockStates().last());
     // The margins of a box that establishes a block formatting context do not collapse with its children's (CSS 2.2 §8.3.1).
     m_blockLayoutState.marginCollapse().resetAdjoiningMargins(m_blockLayoutState.containingBlockStates().last().contentBoxLogicalTop());
 
     // FIXME: Keep the block items across layouts and invalidate them on tree and formatting context participation changes.
     auto blockItems = BlockItemList { };
-    if (root().childrenInline()) {
-        // A root with only inline-level content establishes an inline formatting context for it (CSS Display 3), in the geometry its parent
-        // formatting context gave it.
-        auto& rootState = m_blockLayoutState.containingBlockStates().last();
-        rootState.geometry = LayoutIntegration::BlockIntegrationUtils::rootGeometry(root());
-        handleInlineContent(root(), rootState, m_blockLayoutState, result);
-    } else
+    // A root with only inline-level content establishes an inline formatting context for it (CSS Display 3).
+    if (root().childrenInline())
+        handleInlineContent(root(), result);
+    else
         blockItems = BlockItemsBuilder { root() }.build();
     layoutBlockItems(blockItems, result);
 
@@ -101,7 +98,7 @@ void BlockFormattingContext::layoutBlockItems(const BlockItemList& blockItems, B
             handleBlockContainerEnd(box, result);
             break;
         case BlockItem::Type::InlineContent:
-            handleInlineContent(box, m_blockLayoutState.containingBlockStates().last(), m_blockLayoutState, result);
+            handleInlineContent(box, result);
             break;
         case BlockItem::Type::IndependentFormattingContextRoot:
             handleIndependentFormattingContextRoot(box, result);
@@ -159,18 +156,18 @@ void BlockFormattingContext::handleBlockContainerEnd(const RenderBox& blockConta
     placeInContainingBlock(blockContainer, WTF::move(blockContainerState), result);
 }
 
-void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer, ContainingBlockState& blockContainerState, const BlockLayoutState& inlineContentBlockLayoutState, BlockLayoutResult& result)
+void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer, BlockLayoutResult& result)
 {
-    ASSERT(blockContainerState.blockContainer.ptr() == &blockContainer);
-    // The block-level boxes in the content of the innermost block container add states of their own while it is laid out, which can move its
-    // state, and the geometry with it.
     auto& containingBlockStates = m_blockLayoutState.containingBlockStates();
-    auto isInnermostState = !containingBlockStates.isEmpty() && &blockContainerState == &containingBlockStates.last();
+    auto& blockContainerState = containingBlockStates.last();
+    ASSERT(blockContainerState.blockContainer.ptr() == &blockContainer);
+    // The block-level boxes in the content add states of their own while it is laid out, which can move the block container's state, and the
+    // geometry with it.
     auto geometry = blockContainerState.geometry;
     // FIXME: Floats need the block container's top before the inline content is laid out; decide whether it has line boxes from its
     // inline items then.
-    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(downcast<RenderBlockFlow>(blockContainer), constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.relayoutChildren, inlineContentBlockLayoutState, *this, result);
-    auto& blockContainerStateAfterLayout = isInnermostState ? containingBlockStates.last() : blockContainerState;
+    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(downcast<RenderBlockFlow>(blockContainer), constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.relayoutChildren, m_blockLayoutState, *this, result);
+    auto& blockContainerStateAfterLayout = containingBlockStates.last();
     auto& marginCollapse = m_blockLayoutState.marginCollapse();
     if (auto& margins = inlineContentLayoutResult.marginsOfKeptBlockLevelBoxes) {
         // The content separates the block-start margin, with the margins at its start, from the margins at its end.
@@ -236,20 +233,16 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
     resolveBorderBoxLogicalTops(rootState);
 
     CheckedPtr root = dynamicDowncast<RenderBlockFlow>(box);
-    // Its content is in a formatting context of its own; a block formatting context gets a block layout state of its own.
-    auto blockLayoutState = BlockLayoutState { { } };
     if (!root || LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*root))
         layoutIndependentFormattingContextThroughRenderTree(box, rootState);
     else if (!root->firstChild())
         handleEmptyEditableContent(box, rootState);
-    else if (root->childrenInline()) {
+    else {
         LayoutIntegration::BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(*root);
-        // A block container with only inline-level content establishes an inline formatting context for it (CSS Display 3).
-        handleInlineContent(box, rootState, blockLayoutState, result);
-    } else {
-        LayoutIntegration::BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(*root);
+        // Its content is in a formatting context of its own; a block formatting context gets a block layout state of its own.
+        auto blockLayoutState = BlockLayoutState { { } };
         auto horizontalConstraints = HorizontalConstraints { rootState.inlineRange.min(), rootState.inlineRange.size() };
-        auto rootResult = BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, rootState.borderAndPaddingBefore }, rootState.contentBoxBlockSize, rootState.fillAvailableBlockSize, rootState.relayoutChildren });
+        auto rootResult = BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, rootState.borderAndPaddingBefore }, rootState.contentBoxBlockSize, rootState.fillAvailableBlockSize, rootState.relayoutChildren }, rootState.geometry);
         result.boxes.appendVector(WTF::move(rootResult.boxes));
         m_blockLayoutState.marginCollapse().resetAdjoiningMargins(rootState.contentBoxLogicalTop() + rootResult.intrinsicContentBlockSize);
         result.outOfFlowBoxes.appendVector(WTF::move(rootResult.outOfFlowBoxes));
@@ -395,36 +388,18 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
     geometry.setLeft(containingBlock.paddingBoxInlineStart + inlineAxis.borderBoxStart);
     auto contentBoxBlockSize = outOfFlowGeometry.definiteContentBoxBlockSize();
 
-    // The box establishes an independent formatting context for its content.
-    auto boxState = ContainingBlockState {
-        .blockContainer = box,
-        .geometry = geometry,
-        .inlineRange = { geometry.borderAndPaddingStart(), geometry.contentBoxWidth() },
-        .borderBoxLogicalTop = 0_lu,
-        .borderAndPaddingBefore = geometry.borderAndPaddingBefore(),
-        .contentBoxBlockSize = contentBoxBlockSize,
-        // Coverage keeps out the -webkit-fill-available block sizes inside.
-        .fillAvailableBlockSize = contentBoxBlockSize.value_or(0_lu),
-        .margins = { },
-        .isLaidOutThroughRenderTree = false,
-        .relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(box, geometry.contentBoxWidth()),
-        .lineCountThroughLastBlockLevelBox = 0
-    };
     auto intrinsicContentBlockSize = LayoutUnit { };
     if (box->firstChild()) {
-        // Its content is in a block formatting context of its own, with a block layout state of its own.
+        // The box establishes an independent formatting context for its content, a block formatting context with a block layout state of its own.
         auto blockLayoutState = BlockLayoutState { { } };
-        if (box->childrenInline()) {
-            auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(box.get(), constraintsForInlineContent(box, boxState), geometry, boxState.contentBoxBlockSize, boxState.relayoutChildren, blockLayoutState, *this, result);
-            if (inlineContentLayoutResult.hasLineBoxes)
-                intrinsicContentBlockSize = inlineContentLayoutResult.contentBlockSize;
-        } else {
-            auto horizontalConstraints = HorizontalConstraints { boxState.inlineRange.min(), boxState.inlineRange.size() };
-            auto contentResult = BlockFormattingContext { box, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, boxState.borderAndPaddingBefore }, contentBoxBlockSize, boxState.fillAvailableBlockSize, boxState.relayoutChildren });
-            intrinsicContentBlockSize = contentResult.intrinsicContentBlockSize;
-            result.boxes.appendVector(WTF::move(contentResult.boxes));
-            result.outOfFlowBoxes.appendVector(WTF::move(contentResult.outOfFlowBoxes));
-        }
+        auto horizontalConstraints = HorizontalConstraints { geometry.borderAndPaddingStart(), geometry.contentBoxWidth() };
+        // Coverage keeps out the -webkit-fill-available block sizes inside.
+        auto fillAvailableBlockSize = contentBoxBlockSize.value_or(0_lu);
+        auto relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(box, geometry.contentBoxWidth());
+        auto contentResult = BlockFormattingContext { box, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, geometry.borderAndPaddingBefore() }, contentBoxBlockSize, fillAvailableBlockSize, relayoutChildren }, geometry);
+        intrinsicContentBlockSize = contentResult.intrinsicContentBlockSize;
+        result.boxes.appendVector(WTF::move(contentResult.boxes));
+        result.outOfFlowBoxes.appendVector(WTF::move(contentResult.outOfFlowBoxes));
     } else if (auto contentBlockSize = BlockFormattingUtils::emptyEditableContentBlockSize(box))
         intrinsicContentBlockSize = *contentBlockSize;
 
@@ -442,12 +417,12 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
     return result;
 }
 
-ContainingBlockState BlockFormattingContext::containingBlockStateForRoot(const ConstraintsForBlockContent& constraints) const
+ContainingBlockState BlockFormattingContext::containingBlockStateForRoot(const ConstraintsForBlockContent& constraints, const BoxGeometry& rootGeometry) const
 {
     auto horizontalConstraints = constraints.horizontal();
     return {
         .blockContainer = root(),
-        .geometry = { },
+        .geometry = rootGeometry,
         .inlineRange = { horizontalConstraints.logicalLeft, horizontalConstraints.logicalWidth },
         .borderBoxLogicalTop = 0_lu,
         .borderAndPaddingBefore = constraints.logicalTop(),
