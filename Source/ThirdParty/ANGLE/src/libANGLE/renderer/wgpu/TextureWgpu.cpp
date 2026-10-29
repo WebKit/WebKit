@@ -593,10 +593,15 @@ angle::Result TextureWgpu::generateMipmap(const gl::Context *context)
             ComputeMipSize(baseLevelDesc.size, destLevel - baseLevel, mState.getType());
         gl::Rectangle destRect(0, 0, destSize.width, destSize.height);
 
-        ANGLE_TRY(contextWgpu->getUtils()->blit(
-            contextWgpu, srcView, dstView, sourceRect, destRect, gl_wgpu::GetExtent3D(sourceSize),
-            gl_wgpu::GetExtent3D(destSize), GL_LINEAR, false, false, 1, format.getIntendedFormat(),
-            format.getIntendedFormatID(), format.getActualImageFormatID(), nullptr));
+        webgpu::UtilsWgpu::BlitParams params;
+        params.dstArea    = destRect;
+        params.dstScissor = destRect;
+        params.srcArea    = gl::RectangleImpl<float>(sourceRect);
+        params.dstSize    = gl_wgpu::GetExtent3D(destSize);
+        params.filter     = GL_LINEAR;
+        ANGLE_TRY(contextWgpu->getUtils()->blitColor(
+            contextWgpu, params, srcView, 1, format.getIntendedFormat(), dstView,
+            format.getIntendedFormatID(), format.getActualImageFormatID()));
     }
 
     return angle::Result::Continue;
