@@ -29,25 +29,25 @@
 namespace WebCore::Style {
 
 // <'baseline-shift'> = baseline | sub | super | <length-percentage>
-struct SVGBaselineShift {
+struct BaselineShift {
     using LengthPercentage = Style::LengthPercentage<>;
 
-    SVGBaselineShift(CSS::Keyword::Baseline keyword)
+    BaselineShift(CSS::Keyword::Baseline keyword)
         : m_value { keyword }
     {
     }
 
-    SVGBaselineShift(CSS::Keyword::Sub keyword)
+    BaselineShift(CSS::Keyword::Sub keyword)
         : m_value { keyword }
     {
     }
 
-    SVGBaselineShift(CSS::Keyword::Super keyword)
+    BaselineShift(CSS::Keyword::Super keyword)
         : m_value { keyword }
     {
     }
 
-    SVGBaselineShift(LengthPercentage&& value)
+    BaselineShift(LengthPercentage&& value)
         : m_value { WTF::move(value) }
     {
     }
@@ -63,26 +63,28 @@ struct SVGBaselineShift {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }
 
-    bool operator==(const SVGBaselineShift&) const = default;
+    bool operator==(const BaselineShift&) const = default;
 
 private:
-    friend struct Blending<SVGBaselineShift>;
+    friend struct Blending<BaselineShift>;
 
     Variant<CSS::Keyword::Baseline, CSS::Keyword::Sub, CSS::Keyword::Super, LengthPercentage> m_value;
 };
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<SVGBaselineShift> { auto operator()(BuilderState&, const CSSValue&) -> SVGBaselineShift; };
+template<> struct CSSValueConversion<BaselineShift> {
+    auto operator()(BuilderState&, const CSSValue&) -> BaselineShift;
+};
 
 // MARK: - Blending
 
-template<> struct Blending<SVGBaselineShift> {
-    NODELETE bool canBlend(const SVGBaselineShift&, const SVGBaselineShift&);
-    auto requiresInterpolationForAccumulativeIteration(const SVGBaselineShift&, const SVGBaselineShift&) -> bool;
-    auto blend(const SVGBaselineShift&, const SVGBaselineShift&, const BlendingContext&) -> SVGBaselineShift;
+template<> struct Blending<BaselineShift> {
+    NODELETE bool canBlend(const BaselineShift&, const BaselineShift&);
+    auto requiresInterpolationForAccumulativeIteration(const BaselineShift&, const BaselineShift&) -> bool;
+    auto blend(const BaselineShift&, const BaselineShift&, const BlendingContext&) -> BaselineShift;
 };
 
 } // namespace WebCore::Style
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SVGBaselineShift)
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::BaselineShift)
