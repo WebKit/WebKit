@@ -289,16 +289,19 @@ static void testWebKitWebViewSessionState(BackForwardListTest* test, gconstpoint
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
     test->loadURI(uriPage1);
     test->waitUntilLoadFinished();
+    test->waitUntilTitleChangedTo("Page1");
 
     UTF8CString uriPage2 = kServer->getURIForPath("/Page2");
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
     test->loadURI(uriPage2);
     test->waitUntilLoadFinished();
+    test->waitUntilTitleChangedTo("Page2");
 
     UTF8CString uriPage3 = kServer->getURIForPath("/Page3");
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
     test->loadURI(uriPage3);
     test->waitUntilLoadFinished();
+    test->waitUntilTitleChangedTo("Page3");
 
     test->m_changedFlags = BackForwardListTest::CurrentItem;
     test->goBack();
