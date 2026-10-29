@@ -148,6 +148,9 @@ void MediaSessionManagerInterface::resetToConsistentStateForTesting()
 #endif
     setIsPlayingToAutomotiveHeadUnit(false);
 
+    if (m_currentInterruption)
+        endInterruption(PlatformMediaSession::EndInterruptionFlags::NoFlags);
+
 #if USE(AUDIO_SESSION)
     AudioSession::singleton().setCategoryOverride(AudioSessionCategory::None);
     AudioSession::singleton().tryToSetActive(false)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
