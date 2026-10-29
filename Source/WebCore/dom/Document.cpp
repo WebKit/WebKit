@@ -828,6 +828,9 @@ Document::~Document()
 {
     ASSERT(activeDOMObjectsAreStopped());
 
+    // RejectedPromiseTracker holds a CheckedRef to us, so it must be destroyed while the CheckedPtr counter is still alive.
+    removeRejectedPromiseTracker();
+
     if (m_logger)
         m_logger->removeObserver(*this);
 

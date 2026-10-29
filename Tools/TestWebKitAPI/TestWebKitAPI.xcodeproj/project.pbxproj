@@ -848,6 +848,7 @@
 				WebCore/DigitalCredentialsRequestDataBuilder.cpp,
 				WebCore/DisplayListRecorderTests.cpp,
 				WebCore/DisplayRefreshMonitorManager.cpp,
+				WebCore/DocumentCheckedPtr.cpp,
 				WebCore/DocumentOrder.cpp,
 				WebCore/FidoHidMessageTest.cpp,
 				WebCore/FileMonitor.cpp,

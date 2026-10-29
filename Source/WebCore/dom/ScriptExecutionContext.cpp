@@ -217,6 +217,10 @@ ScriptExecutionContext::~ScriptExecutionContext()
     }
 #endif // ASSERT_ENABLED
 
+    // Subclasses must destroy RejectedPromiseTracker since it holds a CheckedRef to us and the CheckedPtr counter
+    // lives in the subclass, which has already been destroyed at this point.
+    ASSERT(!m_rejectedPromiseTracker);
+
     m_inScriptExecutionContextDestructor = true;
 
     auto callbacks = WTF::move(m_notificationCallbacks);

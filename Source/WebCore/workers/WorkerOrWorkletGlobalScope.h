@@ -45,13 +45,16 @@ class WorkerOrWorkletThread;
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class NoiseInjectionPolicy : uint8_t;
 
-class WorkerOrWorkletGlobalScope : public RefCounted<WorkerOrWorkletGlobalScope>, public ScriptExecutionContext, public EventTarget {
+// This needs to be thread-safe because IDBActiveDOMObject can access it from the main thread (see IDBActiveDOMObject::performCallbackOnOriginThread).
+class WorkerOrWorkletGlobalScope : public RefCounted<WorkerOrWorkletGlobalScope>, public ScriptExecutionContext, public EventTarget, public CanMakeThreadSafeCheckedPtr<WorkerOrWorkletGlobalScope> {
     WTF_MAKE_TZONE_ALLOCATED(WorkerOrWorkletGlobalScope);
     WTF_MAKE_NONCOPYABLE(WorkerOrWorkletGlobalScope);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerOrWorkletGlobalScope);
 public:
     virtual ~WorkerOrWorkletGlobalScope();
 
     USING_CAN_MAKE_WEAKPTR(ScriptExecutionContext);
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeThreadSafeCheckedPtr);
 
     bool isClosing() const { return m_isClosing; }
     RefPtr<WorkerOrWorkletThread> LEGACY_NODELETE workerOrWorkletThread() const;

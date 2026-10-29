@@ -58,7 +58,12 @@ WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, PA
 {
 }
 
-WorkerOrWorkletGlobalScope::~WorkerOrWorkletGlobalScope() = default;
+WorkerOrWorkletGlobalScope::~WorkerOrWorkletGlobalScope()
+{
+    // RejectedPromiseTracker holds a CheckedRef to us, so it must be destroyed while the CheckedPtr counter is still alive.
+    // This is normally already done in prepareForDestruction().
+    removeRejectedPromiseTracker();
+}
 
 void WorkerOrWorkletGlobalScope::prepareForDestruction()
 {
