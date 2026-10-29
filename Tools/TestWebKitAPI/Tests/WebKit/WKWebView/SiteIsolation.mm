@@ -1008,7 +1008,7 @@ struct WebViewAndDelegates {
     RetainPtr<TestUIDelegate> uiDelegate;
 };
 
-static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(const HTTPServer& server, NSString *url = @"https://example.com/example", bool waitForOpenedNavigation = true, RetainPtr<WKProcessPool> processPool = nil)
+static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(const HTTPServer& server, NSString *url = @"https://example.com/example", bool waitForOpenedNavigation = true, RetainPtr<WKProcessPool> processPool = nil, void (^configure)(WKWebViewConfiguration *, bool isOpenedView) = nil)
 {
     __block WebViewAndDelegates opener;
     __block WebViewAndDelegates opened;
@@ -1016,6 +1016,8 @@ static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(
     [opener.navigationDelegate allowAnyTLSCertificate];
     auto configuration = server.httpsProxyConfiguration();
     enableSiteIsolation(configuration);
+    if (configure)
+        configure(configuration, false);
     if (processPool)
         configuration.processPool = processPool.get();
     opener.webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
@@ -1023,6 +1025,8 @@ static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(
     opener.uiDelegate = adoptNS([TestUIDelegate new]);
     opener.uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
         enableSiteIsolation(configuration);
+        if (configure)
+            configure(configuration, true);
         opened.webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
         opened.navigationDelegate = adoptNS([TestNavigationDelegate new]);
         [opened.navigationDelegate allowAnyTLSCertificate];
@@ -19299,6 +19303,240 @@ TEST(SiteIsolation, PushAndNotificationAPIPolicyInheritedByCrossSiteIframe)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:check], "false");
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:check inFrame:childFrame.get()], "false");
 }
+
+static HTTPServer::ResponseMap popupResponses(const String& openerHTML = "<script>w = window.open('https://webkit.org/popup')</script>"_s)
+{
+    HTTPServer::ResponseMap responses;
+    responses.add("/opener"_s, HTTPResponse(openerHTML));
+    responses.add("/popup"_s, HTTPResponse("popup"_s));
+    responses.add("/next"_s, HTTPResponse("next"_s));
+    responses.add("/frame"_s, HTTPResponse("frame"_s));
+    return responses;
+}
+
+class PopupWithOtherSecurityRestrictions : public testing::TestWithParam<SiteIsolationParams> {
+public:
+    static std::string testNameGenerator(testing::TestParamInfo<SiteIsolationParams> info)
+    {
+        return info.param.testName();
+    }
+
+protected:
+    using SetRestrictions = void (^)(WKWebpagePreferences *, bool isOpenedView);
+
+    std::pair<WebViewAndDelegates, WebViewAndDelegates> openPopup(const HTTPServer& server, SetRestrictions setRestrictions, RetainPtr<WKProcessPool> processPool = nil) const
+    {
+        SiteIsolationParams params { GetParam() };
+        return openerAndOpenedViews(server, @"https://example.com/opener", true, processPool, ^(WKWebViewConfiguration *configuration, bool isOpenedView) {
+            params.applyTo(configuration);
+            if (setRestrictions)
+                setRestrictions(configuration.defaultWebpagePreferences, isOpenedView);
+        });
+    }
+
+    RetainPtr<WKFrameInfo> appendOpenerIframe(const WebViewAndDelegates& opener) const
+    {
+        return appendIframe(opener.webView.get(), GetParam().subframeURL("/frame"_s).createNSString().get());
+    }
+
+    void checkPopupLeftOpenerGroup(const WebViewAndDelegates& opener, const WebViewAndDelegates& opened) const
+    {
+        EXPECT_WK_STREQ([opened.webView stringByEvaluatingJavaScript:@"String(!!window.opener)"], "false");
+        EXPECT_WK_STREQ([opener.webView stringByEvaluatingJavaScript:@"String(w.closed)"], "true");
+        if (GetParam().siteIsolationEnabled)
+            checkFrameTreesInProcesses(opened.webView.get(), { { "https://webkit.org"_s } });
+    }
+
+    void checkIframeKeepsOpenerRestrictions(const WebViewAndDelegates& opener, const WebViewAndDelegates& opened, WKFrameInfo *iframe) const
+    {
+        EXPECT_NE(iframe._processIdentifier, [opened.webView _webProcessIdentifier]);
+#if !PLATFORM(IOS_FAMILY)
+        EXPECT_WK_STREQ([opener.webView _webContentProcessVariantForFrame:iframe._handle], [opener.webView _webContentProcessVariantForFrame:nil]);
+#endif
+    }
+
+    void checkPopupIframeDoesNotJoinOpenerSharedProcess(SetRestrictions setRestrictions) const
+    {
+        HTTPServer server(popupResponses("<iframe src='https://apple.com/frame' onload=\"w = window.open('https://webkit.org/popup')\"></iframe>"_s), HTTPServer::Protocol::HttpsProxy);
+        auto [opener, opened] = openPopup(server, setRestrictions);
+
+        RetainPtr popupIframe { appendIframe(opened.webView.get(), @"https://w3.org/frame") };
+        EXPECT_NE([popupIframe _processIdentifier], [[opener.webView firstChildFrame] _processIdentifier]);
+#if !PLATFORM(IOS_FAMILY)
+        EXPECT_WK_STREQ([opened.webView _webContentProcessVariantForFrame:[popupIframe _handle]], [opened.webView _webContentProcessVariantForFrame:nil]);
+#endif
+    }
+
+    void checkRelatedWebViewDoesNotJoinOpenerGroup(WKWebpagePreferences *relatedViewPreferences) const
+    {
+        HTTPServer server(popupResponses(), HTTPServer::Protocol::HttpsProxy);
+        auto [opener, opened] = openPopup(server, nil);
+
+        RetainPtr configuration = adoptNS([[opener.webView configuration] copy]);
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        [configuration _setRelatedWebView:opener.webView.get()];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        [configuration setDefaultWebpagePreferences:relatedViewPreferences];
+        RetainPtr relatedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+        RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [navigationDelegate allowAnyTLSCertificate];
+        [relatedWebView setNavigationDelegate:navigationDelegate.get()];
+        [relatedWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/frame"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+
+        RetainPtr openerIframe { appendIframe(opener.webView.get(), @"https://apple.com/frame") };
+        EXPECT_NE([openerIframe _processIdentifier], [relatedWebView _webProcessIdentifier]);
+        RetainPtr relatedIframe { appendIframe(relatedWebView.get(), @"https://example.com/frame") };
+        EXPECT_NE([relatedIframe _processIdentifier], [opener.webView _webProcessIdentifier]);
+#if !PLATFORM(IOS_FAMILY)
+        EXPECT_WK_STREQ([opener.webView _webContentProcessVariantForFrame:[openerIframe _handle]], [opener.webView _webContentProcessVariantForFrame:nil]);
+        EXPECT_WK_STREQ([relatedWebView _webContentProcessVariantForFrame:[relatedIframe _handle]], [relatedWebView _webContentProcessVariantForFrame:nil]);
+#endif
+
+        [opener.webView evaluateJavaScript:@"location = 'https://w3.org/next'" completionHandler:nil];
+        [opener.navigationDelegate waitForDidFinishNavigation];
+        EXPECT_WK_STREQ([opened.webView stringByEvaluatingJavaScript:@"String(!!window.opener)"], "true");
+    }
+};
+
+TEST_P(PopupWithOtherSecurityRestrictions, EnhancedSecurityPopupLeavesOpenerGroup)
+{
+    HTTPServer server(popupResponses(), HTTPServer::Protocol::HttpsProxy);
+    auto [opener, opened] = openPopup(server, ^(WKWebpagePreferences *preferences, bool isOpenedView) {
+        preferences.securityRestrictionMode = isOpenedView ? WKSecurityRestrictionModeMaximizeCompatibility : WKSecurityRestrictionModeNone;
+    });
+
+    checkPopupLeftOpenerGroup(opener, opened);
+    checkIframeKeepsOpenerRestrictions(opener, opened, appendOpenerIframe(opener).get());
+}
+
+TEST_P(PopupWithOtherSecurityRestrictions, StandardPopupLeavesEnhancedSecurityOpenerGroup)
+{
+    HTTPServer server(popupResponses(), HTTPServer::Protocol::HttpsProxy);
+    auto [opener, opened] = openPopup(server, ^(WKWebpagePreferences *preferences, bool isOpenedView) {
+        preferences.securityRestrictionMode = isOpenedView ? WKSecurityRestrictionModeNone : WKSecurityRestrictionModeMaximizeCompatibility;
+    });
+
+    checkPopupLeftOpenerGroup(opener, opened);
+    checkIframeKeepsOpenerRestrictions(opener, opened, appendOpenerIframe(opener).get());
+}
+
+TEST_P(PopupWithOtherSecurityRestrictions, LockdownPopupLeavesOpenerGroup)
+{
+    HTTPServer server(popupResponses(), HTTPServer::Protocol::HttpsProxy);
+    auto [opener, opened] = openPopup(server, ^(WKWebpagePreferences *preferences, bool isOpenedView) {
+        if (isOpenedView)
+            preferences.lockdownModeEnabled = YES;
+    });
+
+#if !PLATFORM(IOS_FAMILY)
+    EXPECT_WK_STREQ([opened.webView _webContentProcessVariantForFrame:nil], @"lockdown");
+#endif
+    checkPopupLeftOpenerGroup(opener, opened);
+    checkIframeKeepsOpenerRestrictions(opener, opened, appendOpenerIframe(opener).get());
+}
+
+TEST_P(PopupWithOtherSecurityRestrictions, PopupMainFrameKeepsItsEnhancedSecurity)
+{
+    HTTPServer server(popupResponses(makeString("<iframe src='"_s, GetParam().subframeURL("/frame"_s), "' onload=\"w = window.open('https://webkit.org/popup')\"></iframe>"_s)), HTTPServer::Protocol::HttpsProxy);
+    auto [opener, opened] = openPopup(server, ^(WKWebpagePreferences *preferences, bool isOpenedView) {
+        preferences.securityRestrictionMode = isOpenedView ? WKSecurityRestrictionModeMaximizeCompatibility : WKSecurityRestrictionModeNone;
+    });
+
+#if !PLATFORM(IOS_FAMILY)
+    EXPECT_WK_STREQ([opened.webView _webContentProcessVariantForFrame:nil], @"security");
+#endif
+    checkPopupLeftOpenerGroup(opener, opened);
+    checkIframeKeepsOpenerRestrictions(opener, opened, [opener.webView firstChildFrame]);
+}
+
+TEST_P(PopupWithOtherSecurityRestrictions, LockdownChangeOnReloadLeavesOpenerGroup)
+{
+    HTTPServer server(popupResponses(), HTTPServer::Protocol::HttpsProxy);
+    auto [opener, opened] = openPopup(server, nil);
+
+    opened.navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences.lockdownModeEnabled = YES;
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    [opened.webView reload];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+
+#if !PLATFORM(IOS_FAMILY)
+    EXPECT_WK_STREQ([opened.webView _webContentProcessVariantForFrame:nil], @"lockdown");
+#endif
+    checkPopupLeftOpenerGroup(opener, opened);
+    checkIframeKeepsOpenerRestrictions(opener, opened, appendOpenerIframe(opener).get());
+}
+
+TEST_P(PopupWithOtherSecurityRestrictions, PopupIframeDoesNotJoinOpenerSharedProcessWithEnhancedSecurity)
+{
+    if (!GetParam().crossOrigin)
+        return;
+
+    checkPopupIframeDoesNotJoinOpenerSharedProcess(^(WKWebpagePreferences *preferences, bool isOpenedView) {
+        if (isOpenedView)
+            preferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+    });
+}
+
+TEST_P(PopupWithOtherSecurityRestrictions, PopupIframeDoesNotJoinOpenerSharedProcessWithLockdownMode)
+{
+    if (!GetParam().crossOrigin)
+        return;
+
+    checkPopupIframeDoesNotJoinOpenerSharedProcess(^(WKWebpagePreferences *preferences, bool isOpenedView) {
+        if (isOpenedView)
+            preferences.lockdownModeEnabled = YES;
+    });
+}
+
+TEST_P(PopupWithOtherSecurityRestrictions, BackForwardDoesNotRejoinGroupWithOtherRestrictions)
+{
+    if (!GetParam().crossOrigin)
+        return;
+
+    HTTPServer server(popupResponses(), HTTPServer::Protocol::HttpsProxy);
+    auto [opener, opened] = openPopup(server, nil, processPoolWithBackForwardCacheDisabled());
+
+    opened.navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    [opened.webView evaluateJavaScript:@"location = 'https://apple.com/next'" completionHandler:nil];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    [opened.webView goBack];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ([opened.webView URL].absoluteString, @"https://webkit.org/popup");
+    checkPopupLeftOpenerGroup(opener, opened);
+    RetainPtr iframe { appendOpenerIframe(opener) };
+#if !PLATFORM(IOS_FAMILY)
+    EXPECT_WK_STREQ([opener.webView _webContentProcessVariantForFrame:[iframe _handle]], [opener.webView _webContentProcessVariantForFrame:nil]);
+#endif
+}
+
+TEST_P(PopupWithOtherSecurityRestrictions, RelatedWebViewWithEnhancedSecurityDoesNotJoinOpenerGroup)
+{
+    if (!GetParam().crossOrigin)
+        return;
+
+    RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
+    [preferences setSecurityRestrictionMode:WKSecurityRestrictionModeMaximizeCompatibility];
+    checkRelatedWebViewDoesNotJoinOpenerGroup(preferences.get());
+}
+
+TEST_P(PopupWithOtherSecurityRestrictions, RelatedWebViewWithLockdownModeDoesNotJoinOpenerGroup)
+{
+    if (!GetParam().crossOrigin)
+        return;
+
+    RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
+    [preferences setLockdownModeEnabled:YES];
+    checkRelatedWebViewDoesNotJoinOpenerGroup(preferences.get());
+}
+
+INSTANTIATE_TEST_SUITE_P(SiteIsolation, PopupWithOtherSecurityRestrictions, testing::ValuesIn(siteIsolationParams), &PopupWithOtherSecurityRestrictions::testNameGenerator);
 
 TEST(SiteIsolation, NotificationFromCrossSiteIframeIsShown)
 {

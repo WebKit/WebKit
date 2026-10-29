@@ -29,6 +29,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
@@ -1956,6 +1957,70 @@ TEST(EnhancedSecurityPolicies, OpenDatabaseDoesNotCrashWhenMigrationFails)
 
     cleanUpEnhancedSecuritySites();
 }
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> relatedWebViewMovedToEnhancedSecurityByInsecureResponse(TestWKWebView *webView)
+{
+    RetainPtr configuration = adoptNS([[webView configuration] copy]);
+    [configuration _setRelatedWebView:webView];
+    RetainPtr relatedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1, 1) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [relatedWebView setNavigationDelegate:navigationDelegate.get()];
+
+    [relatedWebView loadHTMLString:@"<script>location = 'http://insecure.example.internal/'</script>" baseURL:[NSURL URLWithString:@"https://secure.different.internal/related"]];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[relatedWebView URL].absoluteString isEqualToString:@"http://insecure.example.internal/"] && ![relatedWebView isLoading];
+    }));
+    EXPECT_WK_STREQ([relatedWebView _webContentProcessVariantForFrame:nil], @"security");
+    return { WTF::move(relatedWebView), WTF::move(navigationDelegate) };
+}
+
+static void runInsecureResponseInRelatedWebViewDoesNotShareProcessWithOtherPage(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/"_s, { "insecure"_s } },
+        { "http://insecure.example.internal/frame"_s, { "frame"_s } },
+    });
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, useSiteIsolation);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadHTMLString:@"page" baseURL:[NSURL URLWithString:@"http://page.internal/"]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView _webContentProcessVariantForFrame:nil], @"standard");
+
+    auto [relatedWebView, relatedNavigationDelegate] = relatedWebViewMovedToEnhancedSecurityByInsecureResponse(webView.get());
+
+    RetainPtr iframe { appendIframe(webView.get(), @"http://insecure.example.internal/frame") };
+    EXPECT_NE([iframe _processIdentifier], [relatedWebView _webProcessIdentifier]);
+    EXPECT_WK_STREQ([webView _webContentProcessVariantForFrame:[iframe _handle]], @"standard");
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(InsecureResponseInRelatedWebViewDoesNotShareProcessWithOtherPage)
+
+static void runInsecureResponseInRelatedWebViewDoesNotJoinOtherPageSharedProcess(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/"_s, { "insecure"_s } },
+    });
+    HTTPServer secureServer({
+        { "/frame"_s, { "frame"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation, true, UseSharedProcess::Yes);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadHTMLString:@"page" baseURL:[NSURL URLWithString:@"https://secure.different.internal/"]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr iframe { appendIframe(webView.get(), @"https://thirdparty.internal/frame") };
+
+    auto [relatedWebView, relatedNavigationDelegate] = relatedWebViewMovedToEnhancedSecurityByInsecureResponse(webView.get());
+
+    RetainPtr relatedIframe { appendIframe(relatedWebView.get(), @"https://fourthparty.internal/frame") };
+    EXPECT_NE([relatedIframe _processIdentifier], [iframe _processIdentifier]);
+    EXPECT_WK_STREQ([relatedWebView _webContentProcessVariantForFrame:[relatedIframe _handle]], @"security");
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(InsecureResponseInRelatedWebViewDoesNotJoinOtherPageSharedProcess)
 
 #if HAVE(ENHANCED_SECURITY_LINKS)
 
