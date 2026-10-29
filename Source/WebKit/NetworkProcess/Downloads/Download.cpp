@@ -70,17 +70,18 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, Netw
 }
 
 #if PLATFORM(COCOA)
-Ref<Download> Download::create(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, NetworkSession& session, const String& suggestedName)
+Ref<Download> Download::create(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, NetworkSession& session, const String& suggestedName, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections)
 {
-    return adoptRef(*new Download(downloadManager, downloadID, download, session, suggestedName));
+    return adoptRef(*new Download(downloadManager, downloadID, download, session, suggestedName, advancedPrivacyProtections));
 }
 
-Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, NetworkSession& session, const String& suggestedName)
+Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, NetworkSession& session, const String& suggestedName, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections)
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
     , m_client(downloadManager.client())
     , m_downloadTask(download)
     , m_sessionID(session.sessionID())
+    , m_advancedPrivacyProtections(advancedPrivacyProtections)
     , m_testSpeedMultiplier(session.testSpeedMultiplier())
 {
     downloadManager.didCreateDownload();
@@ -181,9 +182,12 @@ void Download::didFail(const ResourceError& error, std::span<const uint8_t> resu
     DOWNLOAD_RELEASE_LOG("didFail: (id = %" PRIu64 ", isTimeout = %d, isCancellation = %d, errCode = %d)",
         downloadID().toUInt64(), error.isTimeout(), error.isCancellation(), error.errorCode());
 
+#if PLATFORM(COCOA)
+    auto updatedResumeData = resumeDataWithResumeInfo(resumeData, currentResumeInfo());
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    auto resumeDataWithPlaceholder = updateResumeDataWithPlaceholderURL(m_placeholderURL.get(), resumeData);
-    resumeData = resumeDataWithPlaceholder.span();
+    updatedResumeData = updateResumeDataWithPlaceholderURL(m_placeholderURL.get(), updatedResumeData.span());
+#endif
+    resumeData = updatedResumeData.span();
 #endif
 
     send(Messages::DownloadProxy::DidFail(error, resumeData));

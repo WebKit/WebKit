@@ -212,6 +212,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     , m_navigationLosesFrameSpecificStorageAccess(parameters.navigationLosesFrameSpecificStorageAccess)
     , m_sourceOrigin(parameters.sourceOrigin)
     , m_requiredCookiesVersion(parameters.requiredCookiesVersion)
+    , m_advancedPrivacyProtections(parameters.advancedPrivacyProtections)
 {
     auto request = parameters.request;
     auto url = request.url();

@@ -79,6 +79,7 @@ public:
     void convertTaskToDownload(PendingDownload&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, ResponseCompletionHandler&&);
     void LEGACY_NODELETE setPendingDownloadID(DownloadID);
     void setSuggestedFilename(const String&);
+    void setPendingDownloadLocation(const String& path, SandboxExtension::Handle&&, bool allowOverwrite);
     void LEGACY_NODELETE setPendingDownload(PendingDownload&);
     std::optional<DownloadID> pendingDownloadID() { return m_task->pendingDownloadID(); }
 

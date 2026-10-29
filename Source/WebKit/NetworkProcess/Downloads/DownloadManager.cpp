@@ -26,9 +26,11 @@
 #include "config.h"
 #include "DownloadManager.h"
 
+#include "APIError.h"
 #include "AuthenticationManager.h"
 #include "Download.h"
 #include "DownloadProxyMessages.h"
+#include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkLoad.h"
@@ -104,16 +106,52 @@ void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downlo
     CheckedPtr networkSession = m_client->networkSession(sessionID);
     if (!networkSession)
         return;
-    Ref download = Download::create(*this, downloadID, nullptr, *networkSession);
+    // If a download had been private-relayed when it was originally started, we have no way to
+    // force it to be private relayed when we resume it.
+    // This is especially imporant if advanced privacy protections are set to fail-closed
+    // and not allow falling back to non-relayed connections.
+    // So instead of resuming, start the download over with those protections applied, writing to
+    // the destination it was already using.
+    // FIXME: rdar://188118122 Once we have CFNetwork API to configure privacy relay use on a resume,
+    // use that instead of this mechanism.
+    auto resumeInfo = Download::resumeInfoFromResumeData(resumeData);
+    bool mustRestartToApplyProtections = resumeInfo.wasPrivateRelayed
+        && resumeInfo.advancedPrivacyProtections.containsAny({ WebCore::AdvancedPrivacyProtections::FailClosedForUnreachableHosts, WebCore::AdvancedPrivacyProtections::FailClosedForAllHosts, WebCore::AdvancedPrivacyProtections::StrictFailClosed });
 
-    download->resume(resumeData, path, WTF::move(sandboxExtensionHandle), activityAccessToken);
+    if (mustRestartToApplyProtections && resumeInfo.url.isValid()) {
+        startDownload(sessionID, downloadID, ResourceRequest { WTF::move(resumeInfo.url) }, std::nullopt, NavigatingToAppBoundDomain::No, resumeInfo.advancedPrivacyProtections);
+        if (RefPtr pendingDownload = m_pendingDownloads.get(downloadID))
+            pendingDownload->setPendingDownloadLocation(path, WTF::move(sandboxExtensionHandle), true);
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+        // Short-circuiting the client's destination decision also skips where progress is normally
+        // published, so republish it here from what the resume data already carries.
+        auto placeholderBookmarkData = Download::placeholderBookmarkDataFromResumeData(resumeData);
+        if (!placeholderBookmarkData.isEmpty())
+            publishDownloadProgress(downloadID, URL::fileURLWithFileSystemPath(path), placeholderBookmarkData.span(), UseDownloadPlaceholder::Yes, activityAccessToken);
+#endif
+        return;
+    }
+
+    Ref download = Download::create(*this, downloadID, nullptr, *networkSession);
 
     // For compatibility with the legacy download API, only send DidStart if we're using the new API.
     if (callDownloadDidStart == CallDownloadDidStart::Yes)
         download->send(Messages::DownloadProxy::DidStart({ }, { }));
 
     ASSERT(!m_downloads.contains(downloadID));
-    m_downloads.add(downloadID, WTF::move(download));
+    m_downloads.add(downloadID, download.copyRef());
+
+    // The download needs restarting but its resume blob records no URL to restart from.
+    // This should never happen for a resume blob that WebKit recorded, but resume blob data
+    // comes from disk and might be inconsistent to what WebKit would write.
+    // Handle this case with a log messasge and download failure for the client to address.
+    if (mustRestartToApplyProtections) {
+        RELEASE_LOG_ERROR(Network, "DownloadManager::resumeDownload: download %" PRIu64 " must fail closed but its resume data records no URL to restart from", downloadID.toUInt64());
+        download->didFail(ResourceError { API::Error::webKitErrorDomain(), API::Error::General::Internal, { }, { } }, { });
+        return;
+    }
+
+    download->resume(resumeData, path, WTF::move(sandboxExtensionHandle), activityAccessToken);
 #endif
 }
 

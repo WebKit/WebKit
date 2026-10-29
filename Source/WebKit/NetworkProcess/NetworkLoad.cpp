@@ -385,6 +385,12 @@ void NetworkLoad::setSuggestedFilename(const String& suggestedName)
     protect(m_task)->setSuggestedFilename(suggestedName);
 }
 
+void NetworkLoad::setPendingDownloadLocation(const String& path, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
+{
+    if (RefPtr task = m_task)
+        task->setPendingDownloadLocation(path, WTF::move(sandboxExtensionHandle), allowOverwrite);
+}
+
 void NetworkLoad::setPendingDownload(PendingDownload& pendingDownload)
 {
     if (auto* task = m_task.get())
