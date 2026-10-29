@@ -108,6 +108,13 @@ double defaultLayoutViewportHeightExpansionFactor()
 #endif
 }
 
+#if ENABLE(APPLE_PAY) && PLATFORM(APPLETV)
+bool defaultApplePayEnabled()
+{
+    return PAL::deviceClassIsHomeView();
+}
+#endif
+
 bool defaultAutomaticLiveResizeEnabled()
 {
 #if PLATFORM(VISION)

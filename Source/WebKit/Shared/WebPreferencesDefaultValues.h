@@ -140,6 +140,10 @@ bool LEGACY_NODELETE defaultGamepadVibrationActuatorEnabled();
 bool LEGACY_NODELETE defaultDigitalCredentialsEnabled();
 #endif
 
+#if ENABLE(APPLE_PAY) && PLATFORM(APPLETV)
+bool defaultApplePayEnabled();
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 bool defaultAutomaticLiveResizeEnabled();
 bool defaultAutomaticallyAdjustsViewScaleUsingMinimumEffectiveDeviceWidth();
