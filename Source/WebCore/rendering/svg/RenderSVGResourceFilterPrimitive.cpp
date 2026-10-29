@@ -54,11 +54,8 @@ RenderSVGResourceFilterPrimitive::RenderSVGResourceFilterPrimitive(Type type, SV
     ASSERT(isRenderSVGResourceFilterPrimitive());
 }
 
-void RenderSVGResourceFilterPrimitive::markFilterEffectForRepaint(FilterEffect* effect)
+void RenderSVGResourceFilterPrimitive::markFilterEffectForRepaint(FilterEffect*)
 {
-    if (!effect)
-        return;
-
     CheckedPtr parent = dynamicDowncast<RenderSVGResourceFilter>(this->parent());
     if (!parent)
         return;
