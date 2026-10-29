@@ -25,10 +25,13 @@
 
 #import "config.h"
 
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
+
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "InstanceMethodSwizzler.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/Test.h"
 #import "Helpers/mac/TestDraggingInfo.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
@@ -40,8 +43,6 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFeature.h>
 #import <wtf/FileSystem.h>
-
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
 TEST(DragAndDropTests, NumberOfValidItemsForDrop)
 {
@@ -868,6 +869,259 @@ TEST(DragAndDropTests, PasteboardPathnamesRequireDataAccess)
 
     [[NSFileManager defaultManager] removeItemAtPath:tempFile error:nil];
 }
+<<<<<<< HEAD
+=======
+
+TEST(DragAndDropTests, PromisedImageFileNameFromWebContentIsSanitized)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+    [configuration preferences]._largeImageAsyncDecodingEnabled = NO;
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:@R"TESTHTML(
+        <!DOCTYPE html>
+        <body style="margin: 0;">
+        <img src="icon.png">
+        <script>
+        var sendResult = "not sent";
+
+        function sendPromisedImageData(pasteboardName, imageBase64)
+        {
+            try {
+                const png = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0));
+                const image = IPC.createSharedMemory(png.length);
+                image.writeBytes(png);
+                const archive = IPC.createSharedMemory(16);
+                archive.writeBytes(new Uint8Array(16));
+
+                IPC.sendMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_SetPromisedDataForImage.name, [
+                    { type: 'String', value: pasteboardName },
+                    { type: 'SharedMemory', value: image, protection: 'ReadOnly' },
+                    { type: 'String', value: '' },
+                    { type: 'String', value: 'zshrc' },
+                    { type: 'String', value: 'title' },
+                    { type: 'String', value: 'https://webkit.org/' },
+                    { type: 'String', value: 'https://webkit.org/' },
+                    { type: 'SharedMemory', value: archive, protection: 'ReadOnly' },
+                    { type: 'String', value: '' }
+                ]);
+                sendResult = "sent";
+            } catch (ex) {
+                sendResult = "" + ex;
+            }
+        }
+        </script>
+        </body>
+        )TESTHTML"];
+
+    [simulator runFrom:NSMakePoint(25, 25) to:NSMakePoint(300, 300)];
+
+    RetainPtr iconURL = [NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"];
+    RetainPtr imageBase64 = [[NSData dataWithContentsOfURL:iconURL.get()] base64EncodedStringWithOptions:0];
+    RetainPtr script = [NSString stringWithFormat:@"sendPromisedImageData('%@', '%@'); sendResult", NSPasteboardNameDrag, imageBase64.get()];
+
+    EXPECT_WK_STREQ("sent", [webView stringByEvaluatingJavaScript:script]);
+
+    RetainPtr<NSArray<NSURL *>> urls = [simulator receivePromisedFiles];
+    EXPECT_EQ(1UL, [urls count]);
+
+    RetainPtr fileName = [[urls firstObject] lastPathComponent];
+    EXPECT_WK_STREQ("zshrc", fileName);
+    EXPECT_FALSE([fileName hasPrefix:@"."]);
+
+    for (NSURL *url in urls.get())
+        [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
+}
+
+TEST(DragAndDropTests, MidDragPromisedImageSubstitutionWithInvalidExtensionIsIgnored)
+{
+    static constexpr auto markup = R"TESTHTML(
+    <!DOCTYPE html>
+    <body style="margin: 0">
+    <img src="icon.png">
+    <script>
+    window.substitute = function() {
+        const payload = Uint8Array.from('substituted', character => character.charCodeAt(0));
+        const image = IPC.createSharedMemory(payload.length);
+        image.writeBytes(payload);
+        const archive = IPC.createSharedMemory(1);
+        archive.writeBytes(new Uint8Array([0]));
+        IPC.sendMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_SetPromisedDataForImage.name, [
+            { type: 'String', value: window.pasteboardName },
+            { type: 'SharedMemory', value: image, protection: 'ReadOnly' },
+            { type: 'String', value: 'photo' },
+            { type: 'String', value: 'command' },
+            { type: 'String', value: 'substituted title' },
+            { type: 'String', value: 'https://substituted.invalid/x.png' },
+            { type: 'String', value: 'https://substituted.invalid/x.png' },
+            { type: 'SharedMemory', value: archive, protection: 'ReadOnly' },
+            { type: 'String', value: '' },
+        ]);
+        return 'sent';
+    };
+    </script>
+    </body>
+    )TESTHTML";
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration preferences]._largeImageAsyncDecodingEnabled = NO;
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:@(markup)];
+    [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"window.pasteboardName = '%@'", NSPasteboardNameDrag]];
+
+    bool substitutionSent = false;
+    [simulator setWillEndDraggingHandler:[&substitutionSent, webView] {
+        EXPECT_WK_STREQ("sent", [webView stringByEvaluatingJavaScript:@"window.substitute()"]);
+        // Wait and let the UI process receive the message before the drop.
+        TestWebKitAPI::Util::runFor(0.1_s);
+        substitutionSent = true;
+    }];
+
+    [simulator runFrom:NSMakePoint(25, 25) to:NSMakePoint(300, 300)];
+    EXPECT_TRUE(substitutionSent);
+
+    RetainPtr imageURL = [NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"];
+    RetainPtr<NSArray<NSURL *>> urls = [simulator receivePromisedFiles];
+
+    EXPECT_EQ(1UL, [urls count]);
+    EXPECT_WK_STREQ("icon.png", [[urls firstObject] lastPathComponent]);
+    EXPECT_TRUE([[NSData dataWithContentsOfURL:[urls firstObject]] isEqualToData:[NSData dataWithContentsOfURL:imageURL]]);
+}
+
+TEST(DragAndDropTests, MidDragPromisedImageSubstitutionWithImageExtensionIsIgnored)
+{
+    static constexpr auto markup = R"TESTHTML(
+    <!DOCTYPE html>
+    <body style="margin: 0">
+    <img src="icon.png">
+    <script>
+    window.substitute = function() {
+        const payload = Uint8Array.from('substituted', character => character.charCodeAt(0));
+        const image = IPC.createSharedMemory(payload.length);
+        image.writeBytes(payload);
+        const archive = IPC.createSharedMemory(1);
+        archive.writeBytes(new Uint8Array([0]));
+        IPC.sendMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_SetPromisedDataForImage.name, [
+            { type: 'String', value: window.pasteboardName },
+            { type: 'SharedMemory', value: image, protection: 'ReadOnly' },
+            { type: 'String', value: 'substituted' },
+            { type: 'String', value: 'png' },
+            { type: 'String', value: 'substituted title' },
+            { type: 'String', value: 'https://substituted.invalid/x.png' },
+            { type: 'String', value: 'https://substituted.invalid/x.png' },
+            { type: 'SharedMemory', value: archive, protection: 'ReadOnly' },
+            { type: 'String', value: '' },
+        ]);
+        return 'sent';
+    };
+    </script>
+    </body>
+    )TESTHTML";
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration preferences]._largeImageAsyncDecodingEnabled = NO;
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:@(markup)];
+    [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"window.pasteboardName = '%@'", NSPasteboardNameDrag]];
+
+    bool substitutionSent = false;
+    [simulator setWillEndDraggingHandler:[&substitutionSent, webView] {
+        EXPECT_WK_STREQ("sent", [webView stringByEvaluatingJavaScript:@"window.substitute()"]);
+        // Wait and let the UI process receive the message before the drop.
+        TestWebKitAPI::Util::runFor(0.1_s);
+        substitutionSent = true;
+    }];
+
+    [simulator runFrom:NSMakePoint(25, 25) to:NSMakePoint(300, 300)];
+    EXPECT_TRUE(substitutionSent);
+
+    RetainPtr imageURL = [NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"];
+    RetainPtr<NSArray<NSURL *>> urls = [simulator receivePromisedFiles];
+
+    EXPECT_EQ(1UL, [urls count]);
+    EXPECT_WK_STREQ("icon.png", [[urls firstObject] lastPathComponent]);
+    EXPECT_TRUE([[NSData dataWithContentsOfURL:[urls firstObject]] isEqualToData:[NSData dataWithContentsOfURL:imageURL]]);
+}
+
+TEST(DragAndDropTests, PromisedImageWithNonImageExtensionIsIgnored)
+{
+    static constexpr auto markup = R"TESTHTML(
+    <!DOCTYPE html>
+    <body style="margin: 0">
+    <div id="draggable" draggable="true" style="width: 300px; height: 300px; background-color: yellow;">Drag me</div>
+    </body>
+    )TESTHTML"_s;
+
+    RetainPtr imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]];
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { markup } },
+        { "/icon.png"_s, { imageData } }
+    });
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration preferences]._largeImageAsyncDecodingEnabled = NO;
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadRequest:server.request()];
+
+    RetainPtr script = @R"JS(
+        const bytes = new Uint8Array(await (await fetch('/icon.png')).arrayBuffer());
+        const image = IPC.createSharedMemory(bytes.length);
+        image.writeBytes(bytes);
+        const archive = IPC.createSharedMemory(1);
+        archive.writeBytes(new Uint8Array([0]));
+        IPC.sendMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_SetPromisedDataForImage.name, [
+            { type: 'String', value: pasteboardName },
+            { type: 'SharedMemory', value: image, protection: 'ReadOnly' },
+            { type: 'String', value: 'photo' },
+            { type: 'String', value: 'command' },
+            { type: 'String', value: 'fabricated title' },
+            { type: 'String', value: 'https://fabricated.invalid/x.png' },
+            { type: 'String', value: 'https://fabricated.invalid/x.png' },
+            { type: 'SharedMemory', value: archive, protection: 'ReadOnly' },
+            { type: 'String', value: '' },
+        ]);
+    )JS";
+
+    NSError *error = nil;
+    [webView objectByCallingAsyncFunction:script withArguments:@{ @"pasteboardName": NSPasteboardNameDrag } error:&error];
+    EXPECT_NULL(error);
+
+    [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(100, 300)];
+
+    EXPECT_EQ(0U, [simulator receivePromisedFiles].count);
+}
+>>>>>>> 26ef3a8b4719 ([macOS] SetPromisedDataForImage may allow for mid-drag substitution leading to mismatch of dragged and dropped image)
 #endif // ENABLE(IPC_TESTING_API)
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

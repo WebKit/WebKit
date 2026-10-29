@@ -317,6 +317,16 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
 
 #if ENABLE(DRAG_SUPPORT)
 
+static bool isPromisedImageDragExtension(const String& extension)
+{
+    if (extension.isEmpty())
+        return false;
+
+    RetainPtr type = [UTType typeWithFilenameExtension:extension.createNSString()];
+
+    return [type conformsToType:UTTypeImage] || [type conformsToType:UTTypePDF];
+}
+
 void WebPageProxy::setPromisedDataForImage(IPC::Connection& connection, const String& pasteboardName, SharedMemory::Handle&& imageHandle, const String& filename, const String& extension,
     const String& title, const String& url, const String& visibleURL, SharedMemory::Handle&& archiveHandle, const String& originIdentifier)
 {
@@ -324,6 +334,7 @@ void WebPageProxy::setPromisedDataForImage(IPC::Connection& connection, const St
     MESSAGE_CHECK_URL(url);
     MESSAGE_CHECK_URL(visibleURL);
     MESSAGE_CHECK(extension == FileSystem::lastComponentOfPathIgnoringTrailingSlash(extension), connection);
+    MESSAGE_CHECK(isPromisedImageDragExtension(extension), connection);
 
     auto sharedMemoryImage = SharedMemory::map(WTF::move(imageHandle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryImage)

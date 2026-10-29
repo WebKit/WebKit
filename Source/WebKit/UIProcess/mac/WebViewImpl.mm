@@ -830,6 +830,48 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 @end
 
+@interface WKPromisedImageContext : NSObject
+- (instancetype)initWithFileName:(NSString *)fileName data:(NSData *)data url:(NSString *)url;
+
+@property (nonatomic, readonly) NSString *fileName;
+@property (nonatomic, readonly) NSData *data;
+@property (nonatomic, readonly) NSString *url;
+@end
+
+@implementation WKPromisedImageContext {
+    RetainPtr<NSString> _fileName;
+    RetainPtr<NSData> _data;
+    RetainPtr<NSString> _url;
+}
+
+- (instancetype)initWithFileName:(NSString *)fileName data:(NSData *)data url:(NSString *)url
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _fileName = fileName;
+    _data = data;
+    _url = url;
+    return self;
+}
+
+- (NSString *)fileName
+{
+    return _fileName;
+}
+
+- (NSData *)data
+{
+    return _data;
+}
+
+- (NSString *)url
+{
+    return _url;
+}
+
+@end
+
 #if HAVE(TOUCH_BAR)
 
 @interface WKTextListTouchBarViewController : NSViewController {
@@ -4913,8 +4955,8 @@ NSString *WebViewImpl::fileNameForFilePromiseProvider(NSFilePromiseProvider *pro
     if (RetainPtr userInfo = dynamic_objc_cast<WKPromisedAttachmentContext>(provider.userInfo))
         return [userInfo fileName];
 
-    if (m_promisedImageDragData)
-        return m_promisedImageDragData->filename.createNSString().autorelease();
+    if (RetainPtr imageContext = dynamic_objc_cast<WKPromisedImageContext>(provider.userInfo))
+        return [imageContext fileName];
 
     return nil;
 }
@@ -4947,20 +4989,18 @@ void WebViewImpl::writeToURLForFilePromiseProvider(NSFilePromiseProvider *provid
         return;
     }
 
-    if (m_promisedImageDragData) {
-        RetainPtr<NSData> data;
-        Ref image = m_promisedImageDragData->image;
-        if (image->data() && !image->data()->isEmpty())
-            data = protect(image->data())->makeContiguous()->createNSData();
-        if (!data && !m_promisedImageDragData->url.isEmpty()) {
-            RetainPtr imageURL = adoptNS([[NSURL alloc] initWithString:m_promisedImageDragData->url.createNSString().get()]);
+    if (RetainPtr imageContext = dynamic_objc_cast<WKPromisedImageContext>(provider.userInfo)) {
+        String imageURLString { [imageContext url] };
+        RetainPtr data = [imageContext data];
+        if (!data && !imageURLString.isEmpty()) {
+            RetainPtr imageURL = adoptNS([[NSURL alloc] initWithString:[imageContext url]]);
             data = [NSData dataWithContentsOfURL:imageURL.get()];
         }
         if (data) {
             NSError *error = nil;
             if ([data writeToURL:fileURL options:NSDataWritingAtomic error:&error]) {
-                if (!m_promisedImageDragData->url.isEmpty())
-                    FileSystem::setMetadataURL(fileURL.path, m_promisedImageDragData->url);
+                if (!imageURLString.isEmpty())
+                    FileSystem::setMetadataURL(fileURL.path, imageURLString);
                 completionHandler(nil);
             } else
                 completionHandler(error);
@@ -5109,6 +5149,7 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, ShareableBitmap::Hand
         } else {
             protectedThis->clearPromisedImageDragData();
 
+<<<<<<< HEAD
             // NSPasteboardItem here is a placeholder to satisfy the NSDraggingItem initializer.
             // The real data lives in the saved legacy state and is restored once the drag session starts.
             savedLegacyPasteboardTypes = adoptNS([[pasteboard types] copy]);
@@ -5124,6 +5165,83 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, ShareableBitmap::Hand
             [defaultDraggingItem setDraggingFrame:draggingFrame contents:dragNSImage];
             draggingItems = @[ defaultDraggingItem.get() ];
         }
+=======
+            auto startDraggingSessionWithItems = makeBlockPtr([weakThis, promisedAttachmentInfo, dragNSImage, draggingFrame, isImageDrag, canUseFilePromiseForImageDrag, pasteboard, lastMouseDownEvent, frameID](NSArray<NSDraggingItem *> *adjustedItems) {
+                BEGIN_BLOCK_OBJC_EXCEPTIONS
+
+                CheckedPtr protectedThis = weakThis.get();
+                if (!protectedThis)
+                    return;
+                RefPtr page = protectedThis->page();
+                RetainPtr view = protectedThis->view();
+                if (!page || !view) {
+                    protectedThis->cancelDrag();
+                    return;
+                }
+
+                bool delegateSubstituted = adjustedItems.count;
+                RetainPtr<NSArray<NSDraggingItem *>> draggingItems;
+
+                // beginDraggingSessionWithItems: clears the pasteboard and populates it with UTI-typed data
+                // from NSPasteboardItems. We restore the legacy-typed pasteboard data afterwards so that WP
+                // read paths (which expect legacy types) can find this data in the original order.
+                RetainPtr<NSArray<NSString *>> savedLegacyPasteboardTypes;
+                RetainPtr<NSMutableDictionary<NSString *, NSData *>> savedLegacyPasteboardData;
+
+                if (delegateSubstituted) {
+                    // The delegate supplied its own items and owns the pasteboard, so WebKit's promised-image
+                    // data (if any) is unused for this drag. Clear it so it cannot leak into a later drag.
+                    protectedThis->clearPromisedImageDragData();
+                    draggingItems = adjustedItems;
+                } else if (promisedAttachmentInfo) {
+                    RefPtr attachment = page->attachmentForIdentifier(promisedAttachmentInfo.attachmentIdentifier);
+                    if (!attachment) {
+                        protectedThis->cancelDrag();
+                        return;
+                    }
+                    RetainPtr utiType = attachment->utiType().createNSString();
+                    if (![utiType length]) {
+                        protectedThis->cancelDrag();
+                        return;
+                    }
+                    RetainPtr fileName = attachment->fileName().createNSString();
+                    RetainPtr provider = adoptNS([[NSFilePromiseProvider alloc] initWithFileType:utiType.get() delegate:(id<NSFilePromiseProviderDelegate>)view.get()]);
+                    RetainPtr context = adoptNS([[WKPromisedAttachmentContext alloc] initWithIdentifier:promisedAttachmentInfo.attachmentIdentifier.createNSString().get() fileName:fileName.get()]);
+                    [provider setUserInfo:context.get()];
+                    RetainPtr defaultDraggingItem = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:provider.get()]);
+                    [defaultDraggingItem setDraggingFrame:draggingFrame contents:dragNSImage];
+                    draggingItems = @[ defaultDraggingItem.get() ];
+                } else if (canUseFilePromiseForImageDrag) {
+                    auto& promisedImageDragData = *protectedThis->m_promisedImageDragData;
+                    RetainPtr imageUTI = promisedImageDragData.imageUTI.createNSString();
+                    RetainPtr provider = adoptNS([[NSFilePromiseProvider alloc] initWithFileType:imageUTI.get() delegate:(id<NSFilePromiseProviderDelegate>)view.get()]);
+                    RetainPtr<NSData> imageData;
+                    Ref image = promisedImageDragData.image;
+                    if (image->data() && !image->data()->isEmpty())
+                        imageData = protect(image->data())->makeContiguous()->createNSData();
+                    RetainPtr context = adoptNS([[WKPromisedImageContext alloc] initWithFileName:promisedImageDragData.filename.createNSString() data:imageData url:promisedImageDragData.url.createNSString()]);
+                    [provider setUserInfo:context];
+                    RetainPtr defaultDraggingItem = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:provider.get()]);
+                    [defaultDraggingItem setDraggingFrame:draggingFrame contents:dragNSImage];
+                    draggingItems = @[ defaultDraggingItem.get() ];
+                } else {
+                    protectedThis->clearPromisedImageDragData();
+
+                    // NSPasteboardItem here is a placeholder to satisfy the NSDraggingItem initializer.
+                    // The real data lives in the saved legacy state and is restored once the drag session starts.
+                    savedLegacyPasteboardTypes = adoptNS([[pasteboard types] copy]);
+                    savedLegacyPasteboardData = adoptNS([[NSMutableDictionary alloc] init]);
+                    for (NSString *type in [pasteboard types]) {
+                        if (RetainPtr data = [pasteboard dataForType:type])
+                            [savedLegacyPasteboardData setObject:data.get() forKey:type];
+                    }
+                    RetainPtr pasteboardItem = adoptNS([[NSPasteboardItem alloc] init]);
+                    [pasteboardItem setData:[NSData data] forType:UTTypeData.identifier];
+                    RetainPtr defaultDraggingItem = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:pasteboardItem.get()]);
+                    [defaultDraggingItem setDraggingFrame:draggingFrame contents:dragNSImage];
+                    draggingItems = @[ defaultDraggingItem.get() ];
+                }
+>>>>>>> 26ef3a8b4719 ([macOS] SetPromisedDataForImage may allow for mid-drag substitution leading to mismatch of dragged and dropped image)
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
         RetainPtr gestureController = protectedThis->appKitGestureController();
