@@ -5752,6 +5752,7 @@ void Document::processColorScheme(const String& colorSchemeString)
         colorScheme.add(ColorScheme::Light);
 
     m_colorScheme = colorScheme;
+    m_allowsColorSchemeTransformations = allowsTransformations;
 
     if (RefPtr page = this->page())
         page->updateStyleAfterChangeInEnvironment();

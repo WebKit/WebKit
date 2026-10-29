@@ -780,6 +780,7 @@ public:
     void appearanceDidChange();
 #if ENABLE(DARK_MODE_CSS)
     OptionSet<ColorScheme> resolvedColorScheme(const Style::ComputedStyle*) const;
+    bool allowsColorSchemeTransformations() const { return m_allowsColorSchemeTransformations; }
 #endif
 
     OptionSet<StyleColorOptions> styleColorOptions(const Style::ComputedStyle*, StyleColorOptionsPurpose) const;
@@ -2818,6 +2819,7 @@ private:
 
 #if ENABLE(DARK_MODE_CSS)
     OptionSet<ColorScheme> m_colorScheme;
+    bool m_allowsColorSchemeTransformations { true };
 #endif
 
     TextScaleMeta m_textScaleMeta { TextScaleMeta::Legacy };
