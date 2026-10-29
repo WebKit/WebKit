@@ -414,6 +414,9 @@ protected:
     GCGLenum LEGACY_NODELETE adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
     void setPackParameters(GCGLint alignment, GCGLint rowLength, GCGLboolean reverseRowOrder);
     bool LEGACY_NODELETE validateClearBufferv(GCGLenum buffer, size_t valuesSize);
+    // Returns true if the framebuffer bound to `target` is one of the internal FBOs that emulate
+    // the default framebuffer.
+    bool isDefaultFramebufferBound(GCGLenum target) const;
 
     HashSet<UTF8CString> m_allRequestableExtensions;
     HashSet<UTF8CString> m_allEnabledRequestableExtensions;
