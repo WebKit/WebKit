@@ -155,19 +155,10 @@ LayoutUnit RenderMathMLRow::preferredLogicalWidthOfRowItems()
     return preferredWidth;
 }
 
-void RenderMathMLRow::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderMathMLRow::computeIntrinsicLogicalWidthContributions()
 {
     ASSERT(hasInvalidContentLogicalWidths());
-
-    m_maxContentLogicalWidthContribution = preferredLogicalWidthOfRowItems();
-    m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
-
-    auto sizes = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth);
-    applySizeToMathContent(LayoutPhase::CalculatePreferredLogicalWidth, sizes);
-
-    adjustContentLogicalWidthsForBorderAndPadding();
-
-    clearContentLogicalWidthsInvalidation();
+    return intrinsicLogicalWidthContributionsForMathContent(preferredLogicalWidthOfRowItems());
 }
 
 void RenderMathMLRow::layoutRowItems(LayoutUnit width, LayoutUnit ascent)

@@ -1021,24 +1021,27 @@ std::pair<LayoutUnit, LayoutUnit> RenderReplaced::computeAspectRatioAdjustedIntr
     return { computedIntrinsicLogicalWidth, computedIntrinsicLogicalWidth };
 }
 
-void RenderReplaced::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderReplaced::computeIntrinsicLogicalWidthContributions()
 {
     ASSERT(hasInvalidContentLogicalWidths());
+
+    auto minContentLogicalWidth = LayoutUnit { };
+    auto maxContentLogicalWidth = LayoutUnit { };
 
     // We cannot resolve any percent logical width here as the available logical
     // width may not be set on our containing block.
     if (style().logicalWidth().isPercentOrCalculated())
-        std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeAspectRatioAdjustedIntrinsicLogicalWidths();
+        std::tie(minContentLogicalWidth, maxContentLogicalWidth) = computeAspectRatioAdjustedIntrinsicLogicalWidths();
     else {
-        m_maxContentLogicalWidthContribution = computeReplacedLogicalWidth(IsComputingIntrinsicSize::Yes);
-        m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
+        maxContentLogicalWidth = computeReplacedLogicalWidth(IsComputingIntrinsicSize::Yes);
+        minContentLogicalWidth = maxContentLogicalWidth;
         if (preferredAspectRatio() && !style().logicalWidth().isFixed())
-            applyTransferredMinMaxSizesFromAspectRatio(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
+            applyTransferredMinMaxSizesFromAspectRatio(minContentLogicalWidth, maxContentLogicalWidth);
     }
 
     auto& styleToUse = style();
     if (styleToUse.logicalWidth().isPercentOrCalculated() || styleToUse.logicalMaxWidth().isPercentOrCalculated())
-        m_minContentLogicalWidthContribution = 0_lu;
+        minContentLogicalWidth = 0_lu;
 
     auto applyExplicitMinMaxWidthConstraints = [&] {
         if (shouldIgnoreLogicalMinMaxWidthSizes())
@@ -1062,25 +1065,21 @@ void RenderReplaced::computeIntrinsicLogicalWidthContributions()
             if (auto fixedLogicalMinWidth = logicalMinWidth.tryFixed())
                 return adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalMinWidth);
             if (logicalMinWidth.isMaxContent())
-                return m_maxContentLogicalWidthContribution;
+                return maxContentLogicalWidth;
             if (logicalMinWidth.isMinContent())
-                return m_minContentLogicalWidthContribution;
+                return minContentLogicalWidth;
             return { };
         }();
 
-        m_maxContentLogicalWidthContribution = std::min(m_maxContentLogicalWidthContribution, usedMaxLogicalWidth);
-        m_minContentLogicalWidthContribution = std::min(m_minContentLogicalWidthContribution, usedMaxLogicalWidth);
+        maxContentLogicalWidth = std::min(maxContentLogicalWidth, usedMaxLogicalWidth);
+        minContentLogicalWidth = std::min(minContentLogicalWidth, usedMaxLogicalWidth);
 
-        m_maxContentLogicalWidthContribution = std::max(m_maxContentLogicalWidthContribution, usedMinLogicalWidth);
-        m_minContentLogicalWidthContribution = std::max(m_minContentLogicalWidthContribution, usedMinLogicalWidth);
+        maxContentLogicalWidth = std::max(maxContentLogicalWidth, usedMinLogicalWidth);
+        minContentLogicalWidth = std::max(minContentLogicalWidth, usedMinLogicalWidth);
     };
 
     applyExplicitMinMaxWidthConstraints();
-    auto borderAndPadding = borderAndPaddingLogicalWidth();
-    m_minContentLogicalWidthContribution += borderAndPadding;
-    m_maxContentLogicalWidthContribution += borderAndPadding;
-
-    clearContentLogicalWidthsInvalidation();
+    return { minContentLogicalWidth, maxContentLogicalWidth };
 }
 
 PositionWithAffinity RenderReplaced::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)

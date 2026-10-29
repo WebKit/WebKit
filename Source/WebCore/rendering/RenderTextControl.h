@@ -69,7 +69,7 @@ private:
 
     ASCIILiteral renderName() const override { return "RenderTextControl"_s; }
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
-    void computeIntrinsicLogicalWidthContributions() override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() override;
     bool canHaveGeneratedChildren() const override { return false; }
     bool canBeProgramaticallyScrolled() const override { return true; }
 };

@@ -48,7 +48,7 @@ private:
     ASCIILiteral renderName() const override { return "RenderSlider"_s; }
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
-    void computeIntrinsicLogicalWidthContributions() override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() override;
 
     bool isFlexibleBoxImpl() const override { return true; }
 };

@@ -2368,36 +2368,33 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::logicalWidthContributionsForSize(
     return { resolveCalcSizeLogicalWidth(calcSize, minContentLogicalWidth, 0_lu), resolveCalcSizeLogicalWidth(calcSize, maxContentLogicalWidth, 0_lu) };
 }
 
-void RenderBlock::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeIntrinsicLogicalWidthContributions()
 {
     ASSERT(hasInvalidContentLogicalWidths());
 
-    m_minContentLogicalWidthContribution = 0_lu;
-    m_maxContentLogicalWidthContribution = 0_lu;
-
     auto& styleToUse = style();
     auto logicalWidth = overridingLogicalWidthForFlexBasisComputation().value_or(styleToUse.logicalWidth());
-    if (auto contribution = fixedLogicalWidthContribution(logicalWidth)) {
-        m_minContentLogicalWidthContribution = *contribution;
-        m_maxContentLogicalWidthContribution = *contribution;
-    } else if (shouldComputeLogicalWidthFromAspectRatio()) {
-        m_maxContentLogicalWidthContribution = std::max(0_lu, computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
-        m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
-        applyAutomaticContentBasedMinimumSize(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
-    } else {
-        auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicLogicalWidths();
+    auto [minContentLogicalWidth, maxContentLogicalWidth] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
+        if (auto contribution = fixedLogicalWidthContribution(logicalWidth))
+            return { *contribution, *contribution };
 
-        if (overridingLogicalWidthForFlexBasisComputation() && logicalWidth.isCalcSize() && logicalWidth.isAuto()) {
-            // A flex-basis used as the main size, where `auto` means the width property rather than the width this box would otherwise take.
-            std::tie(minContentLogicalWidth, maxContentLogicalWidth) = logicalWidthContributionsForSize(styleToUse.logicalWidth(), minContentLogicalWidth, maxContentLogicalWidth);
+        if (shouldComputeLogicalWidthFromAspectRatio()) {
+            auto maxLogicalWidth = std::max(0_lu, computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
+            auto minLogicalWidth = maxLogicalWidth;
+            applyAutomaticContentBasedMinimumSize(minLogicalWidth, maxLogicalWidth);
+            return { minLogicalWidth, maxLogicalWidth };
         }
 
-        std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = logicalWidthContributionsForSize(logicalWidth, minContentLogicalWidth, maxContentLogicalWidth);
-    }
+        auto [minLogicalWidth, maxLogicalWidth] = computeIntrinsicLogicalWidths();
+        if (overridingLogicalWidthForFlexBasisComputation() && logicalWidth.isCalcSize() && logicalWidth.isAuto()) {
+            // A flex-basis used as the main size, where `auto` means the width property rather than the width this box would otherwise take.
+            std::tie(minLogicalWidth, maxLogicalWidth) = logicalWidthContributionsForSize(styleToUse.logicalWidth(), minLogicalWidth, maxLogicalWidth);
+        }
+        return logicalWidthContributionsForSize(logicalWidth, minLogicalWidth, maxLogicalWidth);
+    }();
 
-    constrainIntrinsicLogicalWidthsByMinMax(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
-
-    clearContentLogicalWidthsInvalidation();
+    constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
+    return { minContentLogicalWidth, maxContentLogicalWidth };
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeBlockIntrinsicLogicalWidths() const
@@ -2440,7 +2437,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeBlockIntrinsicLogicalWidth
         auto margin = marginStart + marginEnd;
 
         // An orthogonal child contributes its block-axis size (its logical height) to our inline axis
-        auto [childMinContentInParentInlineAxis, childMaxContentInParentInlineAxis] = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
+        auto [childMinContentInParentInlineAxis, childMaxContentInParentInlineAxis] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
             auto& box = const_cast<RenderBox&>(childBox);
             if (writingMode().isOrthogonal(box.writingMode())) {
                 auto intrinsicBlockSize = box.computeIntrinsicLogicalHeight();
@@ -3459,7 +3456,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeIntrinsicLogicalWidthsForF
 
     legend->setIsExcludedFromNormalLayout(true);
 
-    auto [legendMinContentInParentInlineAxis, legendMaxContentInParentInlineAxis] = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
+    auto [legendMinContentInParentInlineAxis, legendMaxContentInParentInlineAxis] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
         if (writingMode().isOrthogonal(legend->writingMode())) {
             auto intrinsicBlockSize = legend->computeIntrinsicLogicalHeight();
             return { intrinsicBlockSize, intrinsicBlockSize };

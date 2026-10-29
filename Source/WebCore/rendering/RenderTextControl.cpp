@@ -209,26 +209,22 @@ std::pair<LayoutUnit, LayoutUnit> RenderTextControl::computeIntrinsicLogicalWidt
     return { minLogicalWidth, maxLogicalWidth };
 }
 
-void RenderTextControl::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderTextControl::computeIntrinsicLogicalWidthContributions()
 {
     ASSERT(hasInvalidContentLogicalWidths());
-    if (style().fieldSizing() == FieldSizing::Content) {
-        RenderBlockFlow::computeIntrinsicLogicalWidthContributions();
-        return;
-    }
+    if (style().fieldSizing() == FieldSizing::Content)
+        return RenderBlockFlow::computeIntrinsicLogicalWidthContributions();
 
-    m_minContentLogicalWidthContribution = 0_lu;
-    m_maxContentLogicalWidthContribution = 0_lu;
+    auto [minContentLogicalWidth, maxContentLogicalWidth] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
+        if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero()) {
+            auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
+            return { logicalWidth, logicalWidth };
+        }
+        return computeIntrinsicLogicalWidths();
+    }();
 
-    if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero()) {
-        m_maxContentLogicalWidthContribution = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
-        m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
-    } else
-        std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
-
-    constrainIntrinsicLogicalWidthsByMinMax(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
-
-    clearContentLogicalWidthsInvalidation();
+    constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
+    return { minContentLogicalWidth, maxContentLogicalWidth };
 }
 
 void RenderTextControl::layoutExcludedChildren(RelayoutChildren relayoutChildren)

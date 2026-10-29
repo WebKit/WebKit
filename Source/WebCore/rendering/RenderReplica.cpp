@@ -60,11 +60,11 @@ void RenderReplica::layout()
     clearNeedsLayout();
 }
 
-void RenderReplica::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderReplica::computeIntrinsicLogicalWidthContributions()
 {
-    m_minContentLogicalWidthContribution = parentBox()->borderBoxWidth();
-    m_maxContentLogicalWidthContribution = m_minContentLogicalWidthContribution;
-    clearContentLogicalWidthsInvalidation();
+    // The reflection style has no border or padding.
+    auto logicalWidth = parentBox()->borderBoxWidth();
+    return { logicalWidth, logicalWidth };
 }
 
 void RenderReplica::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

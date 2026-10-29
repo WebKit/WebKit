@@ -49,7 +49,7 @@ private:
 
     void updateFromElement() override;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
-    void computeIntrinsicLogicalWidthContributions() override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() override;
     void paintObject(PaintInfo&, const LayoutPoint&) override;
     void paintControl(PaintInfo&, const LayoutPoint&);
 

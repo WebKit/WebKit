@@ -661,6 +661,8 @@ protected:
 
     static LayoutUnit blockSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, double aspectRatioValue, BoxSizing, LayoutUnit inlineSize, const Style::AspectRatio&, bool isRenderReplaced);
 
+    // Applies the min/max sizes transferred through the aspect ratio and the box's min-width and max-width to the min-content
+    // and max-content widths of its content box.
     void constrainIntrinsicLogicalWidthsByMinMax(LayoutUnit& minIntrinsicLogicalWidth, LayoutUnit& maxIntrinsicLogicalWidth) const;
 
     bool isAspectRatioDegenerate(double aspectRatio) const { return !aspectRatio || isnan(aspectRatio); }
@@ -712,10 +714,10 @@ private:
 
     LayoutUnit blockAxisMarginForStretch() const;
 
-    // This function calculates the minimum and maximum preferred widths for an object.
-    // These values are used in shrink-to-fit layout systems.
-    // These include tables, positioned objects, floats and flexible boxes.
-    virtual void computeIntrinsicLogicalWidthContributions();
+    // Computes the min-content and max-content contributions of the box's content box; border and padding are added by
+    // computeIntrinsicLogicalWidthContributionsIfNeeded(). These values are used in shrink-to-fit layout systems: tables,
+    // positioned objects, floats and flexible boxes.
+    virtual std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions();
 
 
     RepaintRects computeVisibleRectsUsingPaintOffset(const RepaintRects&) const final;
@@ -745,6 +747,8 @@ protected:
 
 private:
     RenderBoxOverridingSizes& ensureOverridingSizes();
+
+    void computeIntrinsicLogicalWidthContributionsIfNeeded();
 
     // Used to store state between styleWillChange and styleDidChange
     static bool s_hadNonVisibleOverflow;

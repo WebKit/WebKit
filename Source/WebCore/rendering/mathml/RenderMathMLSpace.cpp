@@ -51,19 +51,10 @@ MathMLSpaceElement& RenderMathMLSpace::element() const
     return downcast<MathMLSpaceElement>(nodeForNonAnonymous());
 }
 
-void RenderMathMLSpace::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderMathMLSpace::computeIntrinsicLogicalWidthContributions()
 {
     ASSERT(hasInvalidContentLogicalWidths());
-
-    m_maxContentLogicalWidthContribution = spaceWidth();
-    m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
-
-    auto sizes = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth);
-    applySizeToMathContent(LayoutPhase::CalculatePreferredLogicalWidth, sizes);
-
-    adjustContentLogicalWidthsForBorderAndPadding();
-
-    clearContentLogicalWidthsInvalidation();
+    return intrinsicLogicalWidthContributionsForMathContent(spaceWidth());
 }
 
 LayoutUnit RenderMathMLSpace::spaceWidth() const

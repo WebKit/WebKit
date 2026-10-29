@@ -86,7 +86,7 @@ public:
 private:
     void willBeDestroyed() final;
     ASCIILiteral renderName() const final { return "RenderListMarker"_s; }
-    void computeIntrinsicLogicalWidthContributions() final;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() final;
     bool canHaveChildren() const final { return true; }
     bool canHaveGeneratedChildren() const final { return true; }
     void paint(PaintInfo&, const LayoutPoint&) final;
@@ -103,6 +103,7 @@ private:
     void element() const = delete;
 
     void updateInlineMargins();
+    void updateInlineMargins(LayoutUnit logicalWidth);
     void updateContent();
     LayoutSize markerImageSize(const Style::Image&) const;
     void updateContentContainerText(const ListMarkerTextContent&);

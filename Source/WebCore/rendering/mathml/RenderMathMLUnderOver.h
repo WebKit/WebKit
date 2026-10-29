@@ -47,7 +47,7 @@ private:
     ASCIILiteral renderName() const final { return "RenderMathMLUnderOver"_s; }
     MathMLUnderOverElement& LEGACY_NODELETE element() const;
 
-    void computeIntrinsicLogicalWidthContributions() final;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() final;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
 
     void stretchHorizontalOperatorsAndLayoutChildren();

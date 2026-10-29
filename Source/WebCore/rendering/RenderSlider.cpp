@@ -88,20 +88,18 @@ std::pair<LayoutUnit, LayoutUnit> RenderSlider::computeIntrinsicLogicalWidths() 
     return { minLogicalWidth, maxLogicalWidth };
 }
 
-void RenderSlider::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderSlider::computeIntrinsicLogicalWidthContributions()
 {
-    m_minContentLogicalWidthContribution = 0_lu;
-    m_maxContentLogicalWidthContribution = 0_lu;
+    auto [minContentLogicalWidth, maxContentLogicalWidth] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
+        if (auto fixedLogicalWidth = style().logicalWidth().tryFixed()) {
+            auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
+            return { logicalWidth, logicalWidth };
+        }
+        return computeIntrinsicLogicalWidths();
+    }();
 
-    if (auto fixedLogicalWidth = style().logicalWidth().tryFixed()) {
-        m_maxContentLogicalWidthContribution = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
-        m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
-    } else
-        std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
-
-    constrainIntrinsicLogicalWidthsByMinMax(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
-
-    clearContentLogicalWidthsInvalidation();
+    constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
+    return { minContentLogicalWidth, maxContentLogicalWidth };
 }
 
 bool RenderSlider::inDragMode() const

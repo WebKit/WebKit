@@ -76,7 +76,6 @@ protected:
     void layoutFloatingChildren();
 
     void LEGACY_NODELETE shiftInFlowChildren(LayoutUnit left, LayoutUnit top);
-    void adjustContentLogicalWidthsForBorderAndPadding();
     void adjustLayoutForBorderAndPadding();
 
     enum class LayoutPhase : uint8_t {
@@ -92,6 +91,8 @@ protected:
     SizeAppliedToMathContent sizeAppliedToMathContent(LayoutPhase);
     // Whether math content should be centered on the inline axis if a different size is specified by the user.
     virtual bool isMathContentCentered() const { return false; }
+    // The min-content and max-content widths of math content of the given width, which a specified CSS width replaces.
+    std::pair<LayoutUnit, LayoutUnit> intrinsicLogicalWidthContributionsForMathContent(LayoutUnit mathContentLogicalWidth);
     // Apply the specified CSS width/height to the math content box and return inline shift for further adjustments.
     LayoutUnit applySizeToMathContent(LayoutPhase, const SizeAppliedToMathContent&);
 

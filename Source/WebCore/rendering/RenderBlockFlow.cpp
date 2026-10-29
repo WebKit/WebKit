@@ -345,11 +345,11 @@ void RenderBlockFlow::adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogi
     }
 }
 
-void RenderBlockFlow::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeIntrinsicLogicalWidthContributions()
 {
     if (auto* lineLayout = inlineLayout())
         lineLayout->resetIntrinsicWidthConstraints();
-    RenderBlock::computeIntrinsicLogicalWidthContributions();
+    return RenderBlock::computeIntrinsicLogicalWidthContributions();
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeIntrinsicLogicalWidths() const

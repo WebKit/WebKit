@@ -228,7 +228,7 @@ protected:
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths(TableIntrinsics) const;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const final;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicKeywordLogicalWidths() const final;
-    void computeIntrinsicLogicalWidthContributions() override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     std::optional<LayoutUnit> firstLineBaseline() const override;

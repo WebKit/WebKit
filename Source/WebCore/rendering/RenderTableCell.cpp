@@ -214,7 +214,7 @@ Style::PreferredSize RenderTableCell::logicalWidthFromColumns(RenderTableCol* fi
     return Style::PreferredSize::Fixed { colWidthSum };
 }
 
-void RenderTableCell::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderTableCell::computeIntrinsicLogicalWidthContributions()
 {
     // The child cells rely on the grids up in the sections to do their computeIntrinsicLogicalWidthContributions work.
     // Normally the sections are set up early, as table cells are added, but relayout can cause the cells to be freed, leaving stale pointers in the sections' grids.
@@ -228,20 +228,22 @@ void RenderTableCell::computeIntrinsicLogicalWidthContributions()
     auto overridingLogicalHeight = this->overridingBorderBoxLogicalHeight();
     if (overridingLogicalHeight)
         setOverridingBorderBoxLogicalHeight({ });
-    RenderBlockFlow::computeIntrinsicLogicalWidthContributions();
+    auto [minContentLogicalWidth, maxContentLogicalWidth] = RenderBlockFlow::computeIntrinsicLogicalWidthContributions();
     if (overridingLogicalHeight)
         setOverridingBorderBoxLogicalHeight(*overridingLogicalHeight);
 
     if (!element() || !document().inQuirksMode() || !element()->hasAttributeWithoutSynchronization(nowrapAttr))
-        return;
+        return { minContentLogicalWidth, maxContentLogicalWidth };
 
     auto [ logicalWidth, usedZoom ] = styleOrColLogicalWidth();
     if (auto fixedLogicalWidth = logicalWidth.tryFixed()) {
         // In quirks mode, when nowrap is set on a cell that also has an explicit fixed width,
         // WinIE/Moz treat the fixed width as the minimum width of the cell. Affected the top
         // of hiptop.com.
-        m_minContentLogicalWidthContribution = std::max(adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit(fixedLogicalWidth->resolveZoom(usedZoom))), m_minContentLogicalWidthContribution);
+        auto borderBoxLogicalWidth = adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit(fixedLogicalWidth->resolveZoom(usedZoom)));
+        minContentLogicalWidth = std::max(borderBoxLogicalWidth - borderAndPaddingLogicalWidth(), minContentLogicalWidth);
     }
+    return { minContentLogicalWidth, maxContentLogicalWidth };
 }
 
 

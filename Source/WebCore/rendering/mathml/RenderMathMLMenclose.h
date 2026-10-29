@@ -42,7 +42,7 @@ public:
 
 private:
     ASCIILiteral renderName() const final { return "RenderMathMLMenclose"_s; }
-    void computeIntrinsicLogicalWidthContributions() final;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() final;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     void paint(PaintInfo&, const LayoutPoint&) final;
 

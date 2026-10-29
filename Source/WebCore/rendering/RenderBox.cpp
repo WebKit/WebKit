@@ -1530,23 +1530,30 @@ bool RenderBox::applyCachedClipAndScrollPosition(RepaintRects& rects, const Rend
     return intersects;
 }
 
+void RenderBox::computeIntrinsicLogicalWidthContributionsIfNeeded()
+{
+    if (!hasInvalidContentLogicalWidths())
+        return;
+
+    SetLayoutNeededForbiddenScope layoutForbiddenScope(*this);
+    auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
+    auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicLogicalWidthContributions();
+
+    auto borderAndPadding = borderAndPaddingLogicalWidth();
+    m_minContentLogicalWidthContribution = minContentLogicalWidth + borderAndPadding;
+    m_maxContentLogicalWidthContribution = maxContentLogicalWidth + borderAndPadding;
+    clearContentLogicalWidthsInvalidation();
+}
+
 LayoutUnit RenderBox::minContentLogicalWidthContribution() const
 {
-    if (hasInvalidContentLogicalWidths()) {
-        SetLayoutNeededForbiddenScope layoutForbiddenScope(*this);
-        auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
-        const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributions();
-    }
+    const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributionsIfNeeded();
     return m_minContentLogicalWidthContribution;
 }
 
 LayoutUnit RenderBox::maxContentLogicalWidthContribution() const
 {
-    if (hasInvalidContentLogicalWidths()) {
-        SetLayoutNeededForbiddenScope layoutForbiddenScope(*this);
-        auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
-        const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributions();
-    }
+    const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributionsIfNeeded();
     return m_maxContentLogicalWidthContribution;
 }
 
@@ -4079,12 +4086,14 @@ std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Style:
     return computePercentageLogicalHeightGeneric(logicalHeight, updateDescendants);
 }
 
-void RenderBox::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderBox::computeIntrinsicLogicalWidthContributions()
 {
     ASSERT(hasInvalidContentLogicalWidths());
 
-    constrainIntrinsicLogicalWidthsByMinMax(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
-    clearContentLogicalWidthsInvalidation();
+    auto minContentLogicalWidth = LayoutUnit { };
+    auto maxContentLogicalWidth = LayoutUnit { };
+    constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
+    return { minContentLogicalWidth, maxContentLogicalWidth };
 }
 
 void RenderBox::constrainIntrinsicLogicalWidthsByMinMax(LayoutUnit& minIntrinsicLogicalWidth, LayoutUnit& maxIntrinsicLogicalWidth) const
@@ -4157,10 +4166,6 @@ void RenderBox::constrainIntrinsicLogicalWidthsByMinMax(LayoutUnit& minIntrinsic
 
     maxIntrinsicLogicalWidth = std::max(maxIntrinsicLogicalWidth, usedMinLogicalWidth);
     minIntrinsicLogicalWidth = std::max(minIntrinsicLogicalWidth, usedMinLogicalWidth);
-
-    auto borderAndPadding = borderAndPaddingLogicalWidth();
-    minIntrinsicLogicalWidth += borderAndPadding;
-    maxIntrinsicLogicalWidth += borderAndPadding;
 }
 
 LayoutUnit RenderBox::availableLogicalHeight(AvailableLogicalHeightType heightType) const

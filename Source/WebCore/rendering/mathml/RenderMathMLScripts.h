@@ -48,7 +48,7 @@ protected:
     bool isRenderMathMLScripts() const override { return true; }
     ASCIILiteral renderName() const override { return "RenderMathMLScripts"_s; }
     MathMLScriptsElement::ScriptType LEGACY_NODELETE scriptType() const;
-    void computeIntrinsicLogicalWidthContributions() override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() override;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
 
 private:

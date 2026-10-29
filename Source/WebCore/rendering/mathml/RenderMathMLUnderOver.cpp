@@ -188,19 +188,15 @@ RenderBox& RenderMathMLUnderOver::over() const
 }
 
 
-void RenderMathMLUnderOver::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderMathMLUnderOver::computeIntrinsicLogicalWidthContributions()
 {
     ASSERT(hasInvalidContentLogicalWidths());
 
-    if (!isValid()) {
-        RenderMathMLRow::computeIntrinsicLogicalWidthContributions();
-        return;
-    }
+    if (!isValid())
+        return RenderMathMLRow::computeIntrinsicLogicalWidthContributions();
 
-    if (shouldMoveLimits()) {
-        RenderMathMLScripts::computeIntrinsicLogicalWidthContributions();
-        return;
-    }
+    if (shouldMoveLimits())
+        return RenderMathMLScripts::computeIntrinsicLogicalWidthContributions();
 
     CheckedRef base = this->base();
     LayoutUnit preferredWidth = base->maxContentLogicalWidthContribution() + marginIntrinsicLogicalWidthForChild(base);
@@ -214,16 +210,7 @@ void RenderMathMLUnderOver::computeIntrinsicLogicalWidthContributions()
         CheckedRef over = this->over();
         preferredWidth = std::max(preferredWidth, over->maxContentLogicalWidthContribution() + marginIntrinsicLogicalWidthForChild(over));
     }
-
-    m_maxContentLogicalWidthContribution = preferredWidth;
-    m_minContentLogicalWidthContribution = preferredWidth;
-
-    auto sizes = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth);
-    applySizeToMathContent(LayoutPhase::CalculatePreferredLogicalWidth, sizes);
-
-    adjustContentLogicalWidthsForBorderAndPadding();
-
-    clearContentLogicalWidthsInvalidation();
+    return intrinsicLogicalWidthContributionsForMathContent(preferredWidth);
 }
 
 LayoutUnit RenderMathMLUnderOver::horizontalOffset(const RenderBox& child) const

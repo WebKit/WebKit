@@ -458,13 +458,13 @@ void RenderListItem::styleDidChange(Style::Difference diff, const Style::Compute
     }
 }
 
-void RenderListItem::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderListItem::computeIntrinsicLogicalWidthContributions()
 {
     // FIXME: RenderListOutsideMarker::updateInlineMargins() mutates margin style which affects preferred widths.
     if (CheckedPtr marker = markerBox(); marker && marker->hasInvalidContentLogicalWidths())
         marker->updateInlineMarginsAndContent();
 
-    RenderBlockFlow::computeIntrinsicLogicalWidthContributions();
+    return RenderBlockFlow::computeIntrinsicLogicalWidthContributions();
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderListItem::computeIntrinsicLogicalWidths() const

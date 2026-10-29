@@ -52,7 +52,7 @@ public:
 
 private:
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
-    void computeIntrinsicLogicalWidthContributions() override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() override;
     void layoutSingleClampedFlexItem();
     bool LEGACY_NODELETE hasClampingAndNoFlexing() const;
 

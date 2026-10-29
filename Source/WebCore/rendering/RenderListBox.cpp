@@ -246,33 +246,32 @@ std::pair<LayoutUnit, LayoutUnit> RenderListBox::computeIntrinsicLogicalWidths()
     return { minLogicalWidth, maxLogicalWidth };
 }
 
-void RenderListBox::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderListBox::computeIntrinsicLogicalWidthContributions()
 {
     // Nested style recal do not fire post recal callbacks. see webkit.org/b/153767
     ASSERT(!m_optionsChanged || Style::postResolutionCallbacksAreSuspended());
 
-    m_minContentLogicalWidthContribution = 0_lu;
-    m_maxContentLogicalWidthContribution = 0_lu;
+    auto [minContentLogicalWidth, maxContentLogicalWidth] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
+        if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositive()) {
+            auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
+            return { logicalWidth, logicalWidth };
+        }
 
-    if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositive()) {
-        m_maxContentLogicalWidthContribution = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
-        m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
-    } else {
-        std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
-
+        auto [minLogicalWidth, maxLogicalWidth] = computeIntrinsicLogicalWidths();
         auto& logicalWidth = style().logicalWidth();
         if (logicalWidth.isCalcSize() && (logicalWidth.isMinContent() || logicalWidth.isMaxContent())) {
             // A calc-size() contributes the result of its calculation, not the size of its basis.
-            auto keywordLogicalWidth = logicalWidth.isMaxContent() ? m_maxContentLogicalWidthContribution : m_minContentLogicalWidthContribution;
-            m_minContentLogicalWidthContribution = resolveCalcSizeLogicalWidth(logicalWidth.calcSize(), keywordLogicalWidth, 0_lu);
-            m_maxContentLogicalWidthContribution = m_minContentLogicalWidthContribution;
+            auto keywordLogicalWidth = logicalWidth.isMaxContent() ? maxLogicalWidth : minLogicalWidth;
+            auto calcSizeLogicalWidth = resolveCalcSizeLogicalWidth(logicalWidth.calcSize(), keywordLogicalWidth, 0_lu);
+            return { calcSizeLogicalWidth, calcSizeLogicalWidth };
         }
-    }
+        return { minLogicalWidth, maxLogicalWidth };
+    }();
 
-    constrainIntrinsicLogicalWidthsByMinMax(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
-
-    clearContentLogicalWidthsInvalidation();
+    constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
+    return { minContentLogicalWidth, maxContentLogicalWidth };
 }
+
 
 unsigned RenderListBox::size() const
 {

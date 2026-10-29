@@ -160,14 +160,12 @@ RenderMathMLRoot::VerticalParameters RenderMathMLRoot::verticalParameters() cons
     return parameters;
 }
 
-void RenderMathMLRoot::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderMathMLRoot::computeIntrinsicLogicalWidthContributions()
 {
     ASSERT(hasInvalidContentLogicalWidths());
 
-    if (!isValid()) {
-        RenderMathMLRow::computeIntrinsicLogicalWidthContributions();
-        return;
-    }
+    if (!isValid())
+        return RenderMathMLRow::computeIntrinsicLogicalWidthContributions();
 
     LayoutUnit preferredWidth = 0;
     if (rootType() == RootType::SquareRoot) {
@@ -185,15 +183,7 @@ void RenderMathMLRoot::computeIntrinsicLogicalWidthContributions()
         CheckedRef base = getBase();
         preferredWidth += base->maxContentLogicalWidthContribution() + marginIntrinsicLogicalWidthForChild(base);
     }
-    m_maxContentLogicalWidthContribution = preferredWidth;
-    m_minContentLogicalWidthContribution = preferredWidth;
-
-    auto sizes = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth);
-    applySizeToMathContent(LayoutPhase::CalculatePreferredLogicalWidth, sizes);
-
-    adjustContentLogicalWidthsForBorderAndPadding();
-
-    clearContentLogicalWidthsInvalidation();
+    return intrinsicLogicalWidthContributionsForMathContent(preferredWidth);
 }
 
 void RenderMathMLRoot::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)

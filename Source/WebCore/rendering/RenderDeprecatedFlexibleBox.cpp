@@ -264,21 +264,20 @@ std::pair<LayoutUnit, LayoutUnit> RenderDeprecatedFlexibleBox::computeIntrinsicL
     return { minLogicalWidth + scrollbarWidth, maxLogicalWidth + scrollbarWidth };
 }
 
-void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidthContributions()
+std::pair<LayoutUnit, LayoutUnit> RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidthContributions()
 {
     ASSERT(hasInvalidContentLogicalWidths());
 
-    m_minContentLogicalWidthContribution = 0_lu;
-    m_maxContentLogicalWidthContribution = 0_lu;
-    if (auto fixedWidth = style().width().tryFixed(); fixedWidth && fixedWidth->isPositive()) {
-        m_maxContentLogicalWidthContribution = adjustContentBoxLogicalWidthForBoxSizing(*fixedWidth);
-        m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
-    } else
-        std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
+    auto [minContentLogicalWidth, maxContentLogicalWidth] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
+        if (auto fixedWidth = style().width().tryFixed(); fixedWidth && fixedWidth->isPositive()) {
+            auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedWidth);
+            return { logicalWidth, logicalWidth };
+        }
+        return computeIntrinsicLogicalWidths();
+    }();
 
-    constrainIntrinsicLogicalWidthsByMinMax(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
-
-    clearContentLogicalWidthsInvalidation();
+    constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
+    return { minContentLogicalWidth, maxContentLogicalWidth };
 }
 
 // Use an inline capacity of 8, since flexbox containers usually have less than 8 children.

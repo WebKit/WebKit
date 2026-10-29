@@ -58,7 +58,7 @@ private:
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
 
-    void computeIntrinsicLogicalWidthContributions() final;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() final;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     void paint(PaintInfo&, const LayoutPoint&) final;
     std::optional<LayoutUnit> firstLineBaseline() const final;

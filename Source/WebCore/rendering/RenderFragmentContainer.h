@@ -129,7 +129,7 @@ protected:
 
     RenderOverflow* overflowForBox(const RenderBox&) const;
 
-    void computeIntrinsicLogicalWidthContributions() override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() override;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
 
     LayoutRect overflowRectForFragmentedFlowPortion(const LayoutRect& fragmentedFlowPortionRect, bool isFirstPortion, bool isLastPortion) const;
