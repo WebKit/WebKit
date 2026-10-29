@@ -529,6 +529,9 @@ static DrawIndexCacheContainerKey makeKey(uint32_t firstIndex, uint32_t indexCou
 
 std::optional<DrawIndexCacheContainerIterator> Buffer::canSkipDrawIndexedValidation(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, int32_t baseVertex, MTLIndexType indexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> icb) const
 {
+    if (hasPendingRecordedIndexWrite())
+        return std::nullopt;
+
     auto containerIt = m_drawIndexedCache.find(makeKey(firstIndex, indexCount, baseVertex, indexType, primitiveOffset, icb));
     if (containerIt != m_drawIndexedCache.end() && containerIt->value.indexContentsGeneration == m_indexContentsGeneration && containerIt->value.vertexCount <= vertexCount)
         return containerIt;
@@ -538,6 +541,9 @@ std::optional<DrawIndexCacheContainerIterator> Buffer::canSkipDrawIndexedValidat
 
 void Buffer::drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, int32_t baseVertex, MTLIndexType indexType, uint32_t primitiveOffset, uint64_t validationGeneration, id<MTLIndirectCommandBuffer> icb)
 {
+    if (hasPendingRecordedIndexWrite())
+        return;
+
     constexpr auto maxCacheSize = 1000000;
     if (m_drawIndexedCache.size() > maxCacheSize) {
         m_drawIndexedCache.clear();
@@ -688,12 +694,16 @@ void Buffer::indirectBufferInvalidated(CommandEncoder& commandEncoder)
 {
     indirectBufferInvalidated();
 
+    if (m_usage.containsAny({ WebGPU::BufferUsage::Indirect, WebGPU::BufferUsage::Index }))
+        CommandEncoder::trackEncoder(commandEncoder, m_pendingIndexWriteCommandEncoders);
+
     commandEncoder.addOnCommitHandler([weakThis = ThreadSafeWeakPtr { *this }, weakCommandEncoder = ThreadSafeWeakPtr { commandEncoder }](CommandBuffer&, CommandEncoder&) {
         if (!weakThis.get() || !weakCommandEncoder.get())
             return true;
 
         RefPtr protectedThis = weakThis.get();
         RefPtr commandEncoder = weakCommandEncoder.get();
+        protectedThis->m_pendingIndexWriteCommandEncoders.remove(commandEncoder->uniqueId());
         protectedThis->indirectBufferInvalidated(commandEncoder.get());
         return true;
     });
@@ -705,6 +715,11 @@ static size_t computeSize(HashSet<uint64_t, DefaultHash<uint64_t>, WTF::Unsigned
         return !device.commandEncoderFromIdentifier(encoderId);
     });
     return encoders.size();
+}
+
+bool Buffer::hasPendingRecordedIndexWrite() const
+{
+    return computeSize(m_pendingIndexWriteCommandEncoders, m_device.get());
 }
 
 bool Buffer::needsIndexValidation(uint32_t maxUnsignedIndex, uint16_t maxUshortIndex)
