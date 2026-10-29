@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='reporelaypy',
-    version='0.8.6',
+    version='0.9.0',
     description='Library for visualizing, processing and storing test results.',
     long_description=readme(),
     long_description_content_type='text/markdown',

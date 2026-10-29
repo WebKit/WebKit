@@ -24,6 +24,7 @@ import json
 import multiprocessing
 import os
 import shutil
+import subprocess
 import sys
 import time
 
@@ -35,6 +36,7 @@ NOTHING_TO_PUSH = 'nothing-to-push'
 
 class Checkout(object):
     REMOTE = 'origin'
+    REMOTE_QUERY_TIMEOUT = 60
 
     class Exception(RuntimeError):
         pass
@@ -301,6 +303,87 @@ class Checkout(object):
             [self.repository.executable(), 'fetch', remote, '--prune'],
             cwd=self.repository.root_path,
         ).returncode
+
+    def remote_sha(self, branch, remote):
+        """Tip of `branch` on `remote`, read with ls-remote.
+
+        Returns None if the ref is absent, and raises Checkout.Exception if the
+        mirror could not be queried.
+        """
+        try:
+            result = run(
+                [self.repository.executable(), 'ls-remote', remote, 'refs/heads/{}'.format(branch)],
+                cwd=self.repository.root_path,
+                capture_output=True,
+                encoding='utf-8',
+                timeout=self.REMOTE_QUERY_TIMEOUT,
+            )
+        except subprocess.TimeoutExpired:
+            raise self.Exception("Timed out querying '{}' for '{}'".format(remote, branch))
+        if result.returncode:
+            raise self.Exception("Failed to query '{}' for '{}'".format(remote, branch))
+        for line in (result.stdout or '').splitlines():
+            parts = line.split()
+            if len(parts) == 2 and parts[1] == 'refs/heads/{}'.format(branch):
+                return parts[0]
+        return None
+
+    def local_sha(self, branch):
+        result = run(
+            [self.repository.executable(), 'rev-parse', 'refs/heads/{}'.format(branch)],
+            cwd=self.repository.root_path,
+            capture_output=True,
+            encoding='utf-8',
+        )
+        if result.returncode:
+            return None
+        return (result.stdout or '').strip() or None
+
+    def reconcile(self, branches=None, remote=REMOTE):
+        """Push any mirror whose copy of one of `branches` disagrees with `remote`.
+
+        Returns {branch: 'source-unknown' | 'no-targets'} for branches that could not
+        be handled, and {(target, dest_branch): 'current' | 'pushed' | 'failed'}
+        otherwise.
+        """
+        if not self.repository:
+            sys.stderr.write('Cannot reconcile, clone still pending...\n')
+            return {}
+
+        branches = branches or [self.repository.default_branch]
+        results = {}
+
+        self.fetch(remote)
+        for branch in branches:
+            self.update_for(branch=branch, remote=remote)
+
+            expected = self.local_sha(branch)
+            if not expected:
+                results[branch] = 'source-unknown'
+                continue
+
+            targets = self.forwarding_targets(remote=remote, branch=branch)
+            if not targets:
+                results[branch] = 'no-targets'
+                continue
+
+            for target, dest_branch in targets:
+                dest = dest_branch or branch
+                try:
+                    actual = self.remote_sha(dest, target)
+                except self.Exception as e:
+                    sys.stderr.write('{}\n'.format(e))
+                    results[(target, dest)] = 'failed'
+                    continue
+                if actual == expected:
+                    results[(target, dest)] = 'current'
+                    continue
+                pushed = self.push_update(
+                    branch=branch, remote=target, track=True, dest_branch=dest_branch,
+                )
+                results[(target, dest)] = 'failed' if pushed is False else 'pushed'
+
+        return results
 
     def update_for(self, branch=None, remote=REMOTE, track=False):
         if not self.repository:
