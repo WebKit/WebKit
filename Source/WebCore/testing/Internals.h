@@ -295,7 +295,7 @@ public:
     Vector<BackgroundGradientCacheEntry> backgroundGradientCache(Element&);
     unsigned remoteImagesCountForTesting() const;
     void setAsyncDecodingEnabledForTesting(HTMLImageElement&, bool enabled);
-    void LEGACY_NODELETE setForceUpdateImageDataEnabledForTesting(HTMLImageElement&, bool enabled);
+    void setForceUpdateImageDataEnabledForTesting(HTMLImageElement&, bool enabled);
     void simulateImageDataReplacedForTesting(HTMLImageElement&);
     void setHasHDRContentForTesting(HTMLImageElement&);
 
