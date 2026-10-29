@@ -1282,8 +1282,11 @@ void Format::initialize(const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::R16G16B16_UNORM:
-            mIntendedGLFormat = GL_RGB16_EXT;
-
+            mIntendedGLFormat    = GL_RGB16_EXT;
+            mActualImageFormatID = angle::FormatID::R16G16B16A16_UNORM;
+            mImageInitializerFunction =
+                Initialize4ComponentData<GLushort, 0x0000, 0x0000, 0x0000, 0xFFFF>;
+            mIsRenderable         = true;
             mActualBufferFormatID = angle::FormatID::R16G16B16A16_UNORM;
             mVertexLoadFunction =
                 CopyNativeVertexData<GLushort, 3, 4, std::numeric_limits<GLushort>::max()>;

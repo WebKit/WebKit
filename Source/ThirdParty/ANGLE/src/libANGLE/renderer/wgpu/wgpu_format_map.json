@@ -403,6 +403,7 @@
         "buffer": "R32G32B32A32_FLOAT"
       },
       "R16G16B16_UNORM": {
+        "image": "R16G16B16A16_UNORM",
         "buffer": "R16G16B16A16_UNORM"
       },
       "R16G16B16_USCALED": {

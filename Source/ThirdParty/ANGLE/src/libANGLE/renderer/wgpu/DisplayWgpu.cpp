@@ -146,7 +146,7 @@ egl::Error DisplayWgpu::initialize(egl::Display *display)
 
     initializeFeatures();
 
-    webgpu::GenerateCaps(mLimitsWgpu, &mGLCaps, &mGLTextureCaps, &mGLExtensions, &mGLLimitations,
+    webgpu::GenerateCaps(*this, &mGLCaps, &mGLTextureCaps, &mGLExtensions, &mGLLimitations,
                          &mEGLCaps, &mEGLExtensions, &mMaxSupportedClientVersion);
 
     return egl::NoError();
