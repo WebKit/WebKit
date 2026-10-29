@@ -75,7 +75,7 @@ inline JSValue opEnumeratorGetByVal(JSGlobalObject* globalObject, JSValue baseVa
     }
     case JSPropertyNameEnumerator::OwnStructureMode: {
         if (baseValue.isCell()) [[likely]] {
-            if (baseValue.asCell()->structureID() == enumerator->cachedStructureID()) {
+            if (baseValue.asCell()->structureID() == enumerator->cachedStructureIDForOffsets()) {
                 // We'll only match the structure ID if the base is an object.
                 ASSERT(index < enumerator->endStructurePropertyIndex());
                 RELEASE_AND_RETURN(scope, baseValue.getObject()->getDirect(index < enumerator->cachedInlineCapacity() ? index : index - enumerator->cachedInlineCapacity() + firstOutOfLineOffset));

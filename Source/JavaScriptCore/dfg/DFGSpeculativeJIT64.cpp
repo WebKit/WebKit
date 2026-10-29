@@ -8420,7 +8420,7 @@ void SpeculativeJIT::compileEnumeratorPutByVal(Node* node)
             // FIXME: If we know there's only one structure for base we can just embed it here.
             load32(Address(baseGPR, JSCell::structureIDOffset()), scratchGPR);
 
-            genericOrRecoverCase.append(branch32(NotEqual, scratchGPR, Address(enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDOffset())));
+            genericOrRecoverCase.append(branch32(NotEqual, scratchGPR, Address(enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDForOffsetsOffset())));
             emitNonNullDecodeZeroExtendedStructureID(scratchGPR, scratchGPR);
             genericOrRecoverCase.append(branchTest32(NonZero, Address(scratchGPR, Structure::bitFieldOffset()), TrustedImm32(Structure::s_hasReadOnlyOrGetterSetterPropertiesExcludingProtoBits | Structure::s_isWatchingReplacementBits)));
 
