@@ -215,14 +215,31 @@ static bool gridItemHasValidWidth(const Style::PreferredSize& width)
     );
 }
 
+// GFC treats a box as replaced when its renderer is a RenderReplaced (img, video, canvas, iframe,
+// embed/object, outer svg, model, or any element whose content property produced an image), so the
+// renderer has to be consulted. The element check is conservative: it also rejects an element that
+// is replaced but whose renderer is not a RenderReplaced (e.g. an <object> showing its fallback
+// content, or <img style="content: 'x'">), since GFC's replaced sizing does not handle those either.
+// Works on any RenderBox, so it is used for grid items and for their children.
+static bool isReplacedBox(const RenderBox& box)
+{
+    if (box.isRenderReplaced())
+        return true;
+    RefPtr element = box.element();
+    return element && element->isReplaced();
+}
+
 // A grid item with an automatic size which is not stretched is sized to its fit-content size in
 // the axis. GFC does not implement the remaining cases from grid item sizing, where a replaced
 // item uses its natural size and an item with a preferred aspect ratio transfers its size through
 // that ratio.
+// Note: the per-item loop rejects replaced items with GridItemIsReplacedElement before it reaches
+// this check, so the replaced test here only matters when collecting every reason
+// (ReasonCollectionMode::All).
 // https://drafts.csswg.org/css-grid-1/#grid-item-sizing
 static bool canComputeAutomaticSize(const RenderBox& gridItem)
 {
-    return !protect(gridItem.element())->isReplaced()
+    return !isReplacedBox(gridItem)
         && !gridItem.style().aspectRatio().hasRatio();
 }
 
@@ -392,7 +409,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         if (!gridItemElement)
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemDoesNotHaveElement, reasons, reasonCollectionMode);
 
-        if (gridItemElement->isReplaced())
+        if (isReplacedBox(gridItem))
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemIsReplacedElement, reasons, reasonCollectionMode);
 
         // GFC has no subgrid support, so a subgrid item would fall through to the legacy
@@ -558,8 +575,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         auto gridItemHasChildWithInlineSizeComputedFromAspectRatio = [&] {
             for (CheckedRef gridItemChild : childrenOfType<RenderBox>(gridItem.get())) {
                 CheckedRef gridItemChildStyle = gridItemChild->style();
-                RefPtr gridItemChildElement = gridItemChild->element();
-                bool hasAspectRatio = (gridItemChildElement && gridItemChildElement->isReplaced()) || gridItemChildStyle->aspectRatio().hasRatio();
+                bool hasAspectRatio = isReplacedBox(gridItemChild) || gridItemChildStyle->aspectRatio().hasRatio();
                 if (hasAspectRatio && gridItemChildStyle->width().isAuto() && gridItemChildStyle->height().isPercent())
                     return true;
             }
