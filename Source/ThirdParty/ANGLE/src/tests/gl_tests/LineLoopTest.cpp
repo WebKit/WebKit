@@ -1514,6 +1514,69 @@ TEST_P(LineLoopPrimitiveRestartTest, LineLoopWithPrimitiveRestartClientMemoryVer
     EXPECT_TRUE(expectedPixels == renderedPixels) << "indices in client memory";
 }
 
+// Tests that a line loop of only primitive restart indices draws nothing, and that the draws after
+// it draw, with each index type and with the indices in a buffer and in client memory.
+TEST_P(LineLoopPrimitiveRestartTest, RestartOnlyIndicesThenDraw)
+{
+    ANGLE_GL_PROGRAM(redProgram, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    ANGLE_GL_PROGRAM(greenProgram, essl3_shaders::vs::Simple(), essl3_shaders::fs::Green());
+    const GLint positionLocation = glGetAttribLocation(redProgram, essl3_shaders::PositionAttrib());
+    ASSERT_NE(-1, positionLocation);
+
+    constexpr auto vertices = std::to_array<GLfloat>({-1, -1, 1, -1, 1, 1, -1, 1});
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
+
+    constexpr std::array<GLubyte, 4> kUnsignedByteIndices   = {0xFF, 0xFF, 0xFF, 0xFF};
+    constexpr std::array<GLushort, 4> kUnsignedShortIndices = {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
+    constexpr std::array<GLuint, 4> kUnsignedIntIndices     = {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
+                                                               0xFFFFFFFF};
+    const std::array<std::pair<GLenum, const void *>, 3> kIndices = {{
+        {GL_UNSIGNED_BYTE, kUnsignedByteIndices.data()},
+        {GL_UNSIGNED_SHORT, kUnsignedShortIndices.data()},
+        {GL_UNSIGNED_INT, kUnsignedIntIndices.data()},
+    }};
+
+    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+    GLBuffer indexBuffer;
+    for (const auto &[type, indices] : kIndices)
+    {
+        for (bool clientMemory : {false, true})
+        {
+            SCOPED_TRACE(testing::Message()
+                         << "type: " << type << ", indices in client memory: " << clientMemory);
+            glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            glUseProgram(redProgram);
+            glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+            glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+            glEnableVertexAttribArray(positionLocation);
+            const size_t indicesSize = 4 * (type == GL_UNSIGNED_BYTE    ? sizeof(GLubyte)
+                                            : type == GL_UNSIGNED_SHORT ? sizeof(GLushort)
+                                                                        : sizeof(GLuint));
+            if (clientMemory)
+            {
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+                glDrawElements(GL_LINE_LOOP, 4, type, indices);
+            }
+            else
+            {
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
+                glDrawElements(GL_LINE_LOOP, 4, type, nullptr);
+            }
+            ASSERT_GL_NO_ERROR();
+            EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::blue);
+
+            drawQuad(greenProgram, essl3_shaders::PositionAttrib(), 0.5f);
+            ASSERT_GL_NO_ERROR();
+            EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
+        }
+    }
+}
+
 class LineLoopPrimitiveRestartXfbTest : public ANGLETest<>
 {
   protected:

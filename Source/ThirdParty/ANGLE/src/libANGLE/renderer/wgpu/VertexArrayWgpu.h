@@ -113,7 +113,9 @@ class VertexArrayWgpu : public VertexArrayImpl
         gl::PrimitiveMode mode,
         gl::DrawElementsType *destDrawElementsTypeOrInvalidOut);
 
-    uint32_t calculateAdjustedIndexCount(gl::PrimitiveMode mode,
+    // Returns the number of indices that the draw draws, which for emulated primitives can be
+    // larger than 32-bit indices can index.
+    uint64_t calculateAdjustedIndexCount(gl::PrimitiveMode mode,
                                          bool primitiveRestartEnabled,
                                          gl::DrawElementsType sourceDrawElementsTypeOrInvalid,
                                          GLsizei count,
@@ -124,7 +126,7 @@ class VertexArrayWgpu : public VertexArrayImpl
                                              bool primitiveRestartEnabled,
                                              IndexDataNeedsStreaming indexDataNeedsStreaming,
                                              gl::DrawElementsType destDrawElementsTypeOrInvalid,
-                                             GLsizei adjustedCountForStreamedIndices,
+                                             size_t adjustedCountForStreamedIndices,
                                              GLsizei instanceCount,
                                              std::optional<gl::IndexRange> indexRange,
                                              size_t *stagingBufferSizeOut);
@@ -148,6 +150,19 @@ class VertexArrayWgpu : public VertexArrayImpl
                                         webgpu::BufferHelper *stagingBufferPtr,
                                         std::vector<BufferCopy> *stagingUploadsOut,
                                         size_t *currentStagingDataPositionOut);
+
+    // Writes the triangle list indices that emulate a triangle fan. For glDrawArrays, the indices
+    // are relative to the first vertex, which the draw passes as the base vertex.
+    void streamIndicesTriangleFan(gl::DrawElementsType sourceDrawElementsTypeOrInvalid,
+                                  gl::DrawElementsType destDrawElementsTypeOrInvalid,
+                                  GLsizei count,
+                                  uint32_t adjustedCount,
+                                  uint8_t *stagingData,
+                                  size_t destIndexBufferSize,
+                                  const uint8_t *srcIndexData,
+                                  webgpu::BufferHelper *stagingBufferPtr,
+                                  std::vector<BufferCopy> *stagingUploadsOut,
+                                  size_t *currentStagingDataPositionOut);
 
     angle::Result streamIndicesDefault(ContextWgpu *contextWgpu,
                                        gl::DrawElementsType sourceDrawElementsTypeOrInvalid,

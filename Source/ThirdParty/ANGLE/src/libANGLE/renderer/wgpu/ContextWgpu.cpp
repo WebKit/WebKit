@@ -278,12 +278,6 @@ angle::Result ContextWgpu::drawArrays(const gl::Context *context,
                                       GLint first,
                                       GLsizei count)
 {
-    if (mode == gl::PrimitiveMode::TriangleFan)
-    {
-        UNIMPLEMENTED();
-        return angle::Result::Continue;
-    }
-
     uint32_t firstIndex = 0;
     uint32_t indexCount = static_cast<uint32_t>(count);
     ANGLE_TRY(setupDraw(context, mode, first, count, 1, gl::DrawElementsType::InvalidEnum, nullptr,
@@ -291,6 +285,11 @@ angle::Result ContextWgpu::drawArrays(const gl::Context *context,
     if (mode == gl::PrimitiveMode::LineLoop)
     {
         mCommandBuffer.drawIndexed(indexCount, 1, firstIndex, 0, 0);
+    }
+    else if (mode == gl::PrimitiveMode::TriangleFan)
+    {
+        // The indices that emulate the fan are relative to the first vertex.
+        mCommandBuffer.drawIndexed(indexCount, 1, firstIndex, first, 0);
     }
     else
     {
@@ -305,12 +304,6 @@ angle::Result ContextWgpu::drawArraysInstanced(const gl::Context *context,
                                                GLsizei count,
                                                GLsizei instanceCount)
 {
-    if (mode == gl::PrimitiveMode::TriangleFan)
-    {
-        UNIMPLEMENTED();
-        return angle::Result::Continue;
-    }
-
     uint32_t firstIndex = 0;
     uint32_t indexCount = static_cast<uint32_t>(count);
     ANGLE_TRY(setupDraw(context, mode, first, count, instanceCount,
@@ -319,6 +312,12 @@ angle::Result ContextWgpu::drawArraysInstanced(const gl::Context *context,
     {
         mCommandBuffer.drawIndexed(indexCount, static_cast<uint32_t>(instanceCount), firstIndex, 0,
                                    0);
+    }
+    else if (mode == gl::PrimitiveMode::TriangleFan)
+    {
+        // The indices that emulate the fan are relative to the first vertex.
+        mCommandBuffer.drawIndexed(indexCount, static_cast<uint32_t>(instanceCount), firstIndex,
+                                   first, 0);
     }
     else
     {
@@ -335,12 +334,6 @@ angle::Result ContextWgpu::drawArraysInstancedBaseInstance(const gl::Context *co
                                                            GLsizei instanceCount,
                                                            GLuint baseInstance)
 {
-    if (mode == gl::PrimitiveMode::TriangleFan)
-    {
-        UNIMPLEMENTED();
-        return angle::Result::Continue;
-    }
-
     uint32_t firstIndex = 0;
     uint32_t indexCount = static_cast<uint32_t>(count);
     ANGLE_TRY(setupDraw(context, mode, first, count, instanceCount,
@@ -349,6 +342,12 @@ angle::Result ContextWgpu::drawArraysInstancedBaseInstance(const gl::Context *co
     {
         mCommandBuffer.drawIndexed(indexCount, static_cast<uint32_t>(instanceCount), firstIndex, 0,
                                    baseInstance);
+    }
+    else if (mode == gl::PrimitiveMode::TriangleFan)
+    {
+        // The indices that emulate the fan are relative to the first vertex.
+        mCommandBuffer.drawIndexed(indexCount, static_cast<uint32_t>(instanceCount), firstIndex,
+                                   first, baseInstance);
     }
     else
     {
@@ -366,13 +365,12 @@ angle::Result ContextWgpu::drawElements(const gl::Context *context,
 {
     uint32_t firstVertex = 0;
     uint32_t indexCount  = static_cast<uint32_t>(count);
-    if (mode == gl::PrimitiveMode::TriangleFan)
+    ANGLE_TRY(setupDraw(context, mode, 0, count, 1, type, indices, 0, &firstVertex, &indexCount));
+    if (indexCount == 0)
     {
-        UNIMPLEMENTED();
+        // The emulated primitives have no indices.
         return angle::Result::Continue;
     }
-
-    ANGLE_TRY(setupDraw(context, mode, 0, count, 1, type, indices, 0, &firstVertex, &indexCount));
     mCommandBuffer.drawIndexed(indexCount, 1, firstVertex, 0, 0);
     return angle::Result::Continue;
 }
@@ -386,14 +384,13 @@ angle::Result ContextWgpu::drawElementsBaseVertex(const gl::Context *context,
 {
     uint32_t firstVertex = 0;
     uint32_t indexCount  = static_cast<uint32_t>(count);
-    if (mode == gl::PrimitiveMode::TriangleFan)
-    {
-        UNIMPLEMENTED();
-        return angle::Result::Continue;
-    }
-
     ANGLE_TRY(setupDraw(context, mode, 0, count, 1, type, indices, baseVertex, &firstVertex,
                         &indexCount));
+    if (indexCount == 0)
+    {
+        // The emulated primitives have no indices.
+        return angle::Result::Continue;
+    }
     mCommandBuffer.drawIndexed(indexCount, 1, firstVertex, static_cast<uint32_t>(baseVertex), 0);
     return angle::Result::Continue;
 }
@@ -407,14 +404,13 @@ angle::Result ContextWgpu::drawElementsInstanced(const gl::Context *context,
 {
     uint32_t firstVertex = 0;
     uint32_t indexCount  = static_cast<uint32_t>(count);
-    if (mode == gl::PrimitiveMode::TriangleFan)
-    {
-        UNIMPLEMENTED();
-        return angle::Result::Continue;
-    }
-
     ANGLE_TRY(
         setupDraw(context, mode, 0, count, instances, type, indices, 0, &firstVertex, &indexCount));
+    if (indexCount == 0)
+    {
+        // The emulated primitives have no indices.
+        return angle::Result::Continue;
+    }
     mCommandBuffer.drawIndexed(indexCount, static_cast<uint32_t>(instances), firstVertex, 0, 0);
     return angle::Result::Continue;
 }
@@ -429,14 +425,13 @@ angle::Result ContextWgpu::drawElementsInstancedBaseVertex(const gl::Context *co
 {
     uint32_t firstVertex = 0;
     uint32_t indexCount  = static_cast<uint32_t>(count);
-    if (mode == gl::PrimitiveMode::TriangleFan)
-    {
-        UNIMPLEMENTED();
-        return angle::Result::Continue;
-    }
-
     ANGLE_TRY(setupDraw(context, mode, 0, count, instances, type, indices, baseVertex, &firstVertex,
                         &indexCount));
+    if (indexCount == 0)
+    {
+        // The emulated primitives have no indices.
+        return angle::Result::Continue;
+    }
     mCommandBuffer.drawIndexed(indexCount, static_cast<uint32_t>(instances), firstVertex,
                                static_cast<uint32_t>(baseVertex), 0);
     return angle::Result::Continue;
@@ -453,14 +448,13 @@ angle::Result ContextWgpu::drawElementsInstancedBaseVertexBaseInstance(const gl:
 {
     uint32_t firstVertex = 0;
     uint32_t indexCount  = static_cast<uint32_t>(count);
-    if (mode == gl::PrimitiveMode::TriangleFan)
-    {
-        UNIMPLEMENTED();
-        return angle::Result::Continue;
-    }
-
     ANGLE_TRY(setupDraw(context, mode, 0, count, instances, type, indices, baseVertex, &firstVertex,
                         &indexCount));
+    if (indexCount == 0)
+    {
+        // The emulated primitives have no indices.
+        return angle::Result::Continue;
+    }
     mCommandBuffer.drawIndexed(indexCount, static_cast<uint32_t>(instances), firstVertex,
                                static_cast<uint32_t>(baseVertex),
                                static_cast<uint32_t>(baseInstance));
@@ -1232,7 +1226,7 @@ angle::Result ContextWgpu::setupDraw(const gl::Context *context,
                                      uint32_t *indexCountOut)
 {
     gl::DrawElementsType dstIndexTypeOrInvalid = indexTypeOrInvalid;
-    if (mode == gl::PrimitiveMode::LineLoop &&
+    if ((mode == gl::PrimitiveMode::LineLoop || mode == gl::PrimitiveMode::TriangleFan) &&
         dstIndexTypeOrInvalid == gl::DrawElementsType::InvalidEnum)
     {
         if (vertexOrIndexCount >= std::numeric_limits<unsigned short>::max())
@@ -1274,6 +1268,12 @@ angle::Result ContextWgpu::setupDraw(const gl::Context *context,
     ANGLE_TRY(vertexArrayWgpu->syncClientArrays(
         context, mode, firstVertexOrInvalid, vertexOrIndexCount, instanceCount, indexTypeOrInvalid,
         indices, baseVertex, primitiveRestartEnabled, &adjustedIndicesPtr, indexCountOut));
+    if (*indexCountOut == 0)
+    {
+        // The emulated primitives have no indices, so the draw is a no-op, and the index buffer
+        // may not exist. Leave the state dirty for the next draw.
+        return angle::Result::Continue;
+    }
 
     bool reAddDirtyIndexBufferBit = false;
     if (dstIndexTypeOrInvalid != gl::DrawElementsType::InvalidEnum)

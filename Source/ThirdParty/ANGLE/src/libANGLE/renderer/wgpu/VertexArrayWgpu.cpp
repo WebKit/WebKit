@@ -10,6 +10,8 @@
 #include "libANGLE/renderer/wgpu/VertexArrayWgpu.h"
 
 #include <array>
+#include <sstream>
+#include <string>
 
 #include "common/unsafe_buffers.h"
 
@@ -106,6 +108,13 @@ CopyIndexFunction GetCopyIndexFunction(gl::DrawElementsType sourceType,
     return copyFunction;
 }
 
+std::string GetStagingBufferTooLargeMessage(size_t stagingBufferSize, uint64_t maxBufferSize)
+{
+    std::ostringstream message;
+    message << "The streamed vertex and index data of " << stagingBufferSize
+            << " bytes is larger than the maximum buffer size " << maxBufferSize << ".";
+    return message.str();
+}
 }  // namespace
 
 VertexArrayWgpu::VertexArrayWgpu(const gl::VertexArrayState &data,
@@ -464,30 +473,43 @@ angle::Result VertexArrayWgpu::syncClientArrays(
     ContextWgpu *contextWgpu       = webgpu::GetImpl(context);
     webgpu::DeviceHandle device    = webgpu::GetDevice(context);
     const uint8_t *srcIndexData    = static_cast<const uint8_t *>(indices);
-    // Only line loops with primitive restart read the indices on the CPU here. The element array
-    // buffer has no MapRead usage, so read the indices back through a staging buffer.
+    // Only line loops with primitive restart and triangle fans read the indices on the CPU here.
+    // The element array buffer has no MapRead usage, so read the indices back through a staging
+    // buffer.
+    const bool readsIndicesOnCpu =
+        sourceDrawElementsTypeOrInvalid != gl::DrawElementsType::InvalidEnum &&
+        ((mode == gl::PrimitiveMode::LineLoop && primitiveRestartEnabled) ||
+         mode == gl::PrimitiveMode::TriangleFan);
     webgpu::BufferReadback indexReadback;
-    if (elementArrayBuffer && mode == gl::PrimitiveMode::LineLoop && primitiveRestartEnabled)
+    if (elementArrayBuffer && readsIndicesOnCpu)
     {
         webgpu::BufferHelper &srcBuffer = GetImplAs<BufferWgpu>(elementArrayBuffer)->getBuffer();
         ANGLE_TRY(srcBuffer.readDataImmediate(
             contextWgpu, reinterpret_cast<uintptr_t>(indices),
-            count * gl::GetDrawElementsTypeSize(sourceDrawElementsTypeOrInvalid),
+            static_cast<size_t>(count) *
+                gl::GetDrawElementsTypeSize(sourceDrawElementsTypeOrInvalid),
             webgpu::RenderPassClosureReason::IndexRangeReadback, &indexReadback));
         srcIndexData = indexReadback.data;
     }
-    uint32_t adjustedCount = calculateAdjustedIndexCount(
+    const uint64_t adjustedCount64 = calculateAdjustedIndexCount(
         mode, primitiveRestartEnabled, sourceDrawElementsTypeOrInvalid, count, srcIndexData);
+    // The emulated primitives of a triangle fan can have more indices than 32-bit indices can
+    // index.
+    ANGLE_CHECK(contextWgpu, adjustedCount64 <= std::numeric_limits<uint32_t>::max(),
+                "The emulated primitives need more indices than 32-bit indices can index.",
+                GL_OUT_OF_MEMORY);
+    const uint32_t adjustedCount = static_cast<uint32_t>(adjustedCount64);
 
-    // If there aren't any client attributes to sync but the adjusted count is 0, that means
-    // there no indices outside the primitive restart index, so this is a no-op.
-    if (!hasStreamedAttributes && adjustedCount == 0)
-    {
-        return angle::Result::Continue;
-    }
     if (indexCountOut)
     {
         *indexCountOut = adjustedCount;
+    }
+    // An adjusted count of 0 means that the emulated primitives have no indices, for example a
+    // line loop of only primitive restart indices. The draw is a no-op, so there is nothing to
+    // stream.
+    if (adjustedCount == 0)
+    {
+        return angle::Result::Continue;
     }
 
     // If any attributes need to be streamed, we need to know the index range. We also need to know
@@ -505,7 +527,10 @@ angle::Result VertexArrayWgpu::syncClientArrays(
     else if (indexDataNeedsStreaming != IndexDataNeedsStreaming::None &&
              sourceDrawElementsTypeOrInvalid == gl::DrawElementsType::InvalidEnum)
     {
-        indexRange = gl::IndexRange(first, first + count - 1);
+        // first + count - 1 can overflow GLint, but not uint32_t, as first and count are not
+        // negative.
+        const uint32_t firstVertex = static_cast<uint32_t>(first);
+        indexRange = gl::IndexRange(firstVertex, firstVertex + static_cast<uint32_t>(count) - 1);
     }
 
     // Pre-compute the total size of all streamed vertex and index data so a single staging buffer
@@ -566,7 +591,10 @@ angle::Result VertexArrayWgpu::syncClientArrays(
                     srcIndexData, &stagingBuffer, &stagingUploads, &currentStagingDataPosition));
                 break;
             case IndexDataNeedsStreaming::TriangleFanStreaming:
-                UNIMPLEMENTED();
+                streamIndicesTriangleFan(
+                    sourceDrawElementsTypeOrInvalid, destDrawElementsTypeOrInvalid, count,
+                    adjustedCount, stagingData, destIndexBufferSize, srcIndexData, &stagingBuffer,
+                    &stagingUploads, &currentStagingDataPosition);
                 break;
             case IndexDataNeedsStreaming::NonEmulatedStreaming:
                 ANGLE_TRY(streamIndicesDefault(contextWgpu, sourceDrawElementsTypeOrInvalid,
@@ -773,7 +801,7 @@ IndexDataNeedsStreaming VertexArrayWgpu::determineIndexDataNeedsStreaming(
     return IndexDataNeedsStreaming::None;
 }
 
-uint32_t VertexArrayWgpu::calculateAdjustedIndexCount(
+uint64_t VertexArrayWgpu::calculateAdjustedIndexCount(
     gl::PrimitiveMode mode,
     bool primitiveRestartEnabled,
     gl::DrawElementsType sourceDrawElementsTypeOrInvalid,
@@ -787,7 +815,7 @@ uint32_t VertexArrayWgpu::calculateAdjustedIndexCount(
             return GetLineLoopWithRestartIndexCount(sourceDrawElementsTypeOrInvalid, count,
                                                     srcIndexData);
         }
-        return count + 1;
+        return static_cast<uint64_t>(count) + 1;
     }
     else if (mode == gl::PrimitiveMode::TriangleFan)
     {
@@ -796,9 +824,9 @@ uint32_t VertexArrayWgpu::calculateAdjustedIndexCount(
         if (primitiveRestartEnabled)
         {
             UNIMPLEMENTED();
-            return count;
+            return 0;
         }
-        return 3 * (count - 2);
+        return GetTriangleFanIndexCount(count);
     }
     return count;
 }
@@ -809,22 +837,28 @@ angle::Result VertexArrayWgpu::calculateStagingBufferSize(
     bool primitiveRestartEnabled,
     IndexDataNeedsStreaming indexDataNeedsStreaming,
     gl::DrawElementsType destDrawElementsTypeOrInvalid,
-    GLsizei adjustedCountForStreamedIndices,
+    size_t adjustedCountForStreamedIndices,
     GLsizei instanceCount,
     std::optional<gl::IndexRange> indexRange,
     size_t *stagingBufferSizeOut)
 {
+    const uint64_t maxBufferSize = contextWgpu->getDisplay()->getLimitsWgpu().maxBufferSize;
     if (indexDataNeedsStreaming != IndexDataNeedsStreaming::None)
     {
         size_t destIndexUnitSize =
             static_cast<size_t>(gl::GetDrawElementsTypeSize(destDrawElementsTypeOrInvalid));
-        size_t destIndexDataSize = destIndexUnitSize * adjustedCountForStreamedIndices;
+        size_t destIndexBufferSize =
+            rx::roundUpPow2(destIndexUnitSize * adjustedCountForStreamedIndices,
+                            webgpu::kBufferCopyToBufferAlignment);
+        // The streaming index buffer is as large.
+        ANGLE_CHECK(contextWgpu, destIndexBufferSize <= maxBufferSize,
+                    "The streamed indices are larger than the maximum buffer size.",
+                    GL_OUT_OF_MEMORY);
         // Allocating staging buffer space for indices is only needed when the indices are not
         // copied from the element array buffer on the GPU.
         if (!copyLineLoopIndicesOnGpu)
         {
-            *stagingBufferSizeOut +=
-                rx::roundUpPow2(destIndexDataSize, webgpu::kBufferCopyToBufferAlignment);
+            *stagingBufferSizeOut += destIndexBufferSize;
         }
     }
 
@@ -840,13 +874,10 @@ angle::Result VertexArrayWgpu::calculateStagingBufferSize(
         *stagingBufferSizeOut += rx::roundUpPow2(slotSize, webgpu::kBufferCopyToBufferAlignment);
     }
 
-    if (*stagingBufferSizeOut > contextWgpu->getDisplay()->getLimitsWgpu().maxBufferSize)
-    {
-        ERR() << "Staging buffer size of " << stagingBufferSizeOut
-              << " in sync client arrays is larger than the max buffer size "
-              << contextWgpu->getDisplay()->getLimitsWgpu().maxBufferSize;
-        return angle::Result::Stop;
-    }
+    // ANGLE_CHECK() evaluates the message only when the check fails.
+    ANGLE_CHECK(contextWgpu, *stagingBufferSizeOut <= maxBufferSize,
+                GetStagingBufferTooLargeMessage(*stagingBufferSizeOut, maxBufferSize).c_str(),
+                GL_OUT_OF_MEMORY);
     return angle::Result::Continue;
 }
 
@@ -967,6 +998,51 @@ angle::Result VertexArrayWgpu::streamIndicesLineLoop(
             stagingBufferPtr, stagingUploadsOut, currentStagingDataPositionOut));
     }
     return angle::Result::Continue;
+}
+
+void VertexArrayWgpu::streamIndicesTriangleFan(gl::DrawElementsType sourceDrawElementsTypeOrInvalid,
+                                               gl::DrawElementsType destDrawElementsTypeOrInvalid,
+                                               GLsizei count,
+                                               uint32_t adjustedCount,
+                                               uint8_t *stagingData,
+                                               size_t destIndexBufferSize,
+                                               const uint8_t *srcIndexData,
+                                               webgpu::BufferHelper *stagingBufferPtr,
+                                               std::vector<BufferCopy> *stagingUploadsOut,
+                                               size_t *currentStagingDataPositionOut)
+{
+    ASSERT(stagingData != nullptr);
+    uint8_t *destIndexData = ANGLE_UNSAFE_TODO(stagingData + *currentStagingDataPositionOut);
+    size_t writtenCount    = 0;
+    if (sourceDrawElementsTypeOrInvalid == gl::DrawElementsType::InvalidEnum)
+    {
+        // glDrawArrays: the indices are relative to the first vertex, so they do not depend on it
+        // and do not overflow the index type, which is chosen for the vertex count. The triangles
+        // are in the order of rx::CopyTriangleFanIndices().
+        const size_t destIndexUnitSize =
+            static_cast<size_t>(gl::GetDrawElementsTypeSize(destDrawElementsTypeOrInvalid));
+        for (uint32_t vertex = 2; vertex < static_cast<uint32_t>(count); vertex++)
+        {
+            const uint32_t triangle[] = {vertex, 0, vertex - 1};
+            for (uint32_t index : triangle)
+            {
+                ANGLE_UNSAFE_TODO(memcpy(destIndexData, &index, destIndexUnitSize));
+                destIndexData = ANGLE_UNSAFE_TODO(destIndexData + destIndexUnitSize);
+                writtenCount++;
+            }
+        }
+    }
+    else
+    {
+        writtenCount = rx::StreamEmulatedTriangleFanIndices(sourceDrawElementsTypeOrInvalid, count,
+                                                            srcIndexData, destIndexData);
+    }
+    // The staging buffer has space for adjustedCount indices.
+    ASSERT(writtenCount == adjustedCount);
+
+    stagingUploadsOut->push_back({*currentStagingDataPositionOut, stagingBufferPtr,
+                                  &mStreamingIndexBuffer, 0, destIndexBufferSize});
+    *currentStagingDataPositionOut += destIndexBufferSize;
 }
 
 angle::Result VertexArrayWgpu::streamIndicesDefault(
