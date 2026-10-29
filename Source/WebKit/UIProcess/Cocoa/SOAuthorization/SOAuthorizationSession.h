@@ -81,6 +81,8 @@ public:
     void complete(NSHTTPURLResponse *, NSData *);
     void presentViewController(SOAuthorizationViewController, UICallback);
 
+    bool isForAuthorization(SOAuthorization *authorization) const { return m_soAuthorization.get() == authorization; }
+
 protected:
     // FSM depends on derived classes.
     enum class State : uint8_t {

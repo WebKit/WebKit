@@ -51,6 +51,12 @@
         return;
     }
 
+    if (!session->isForAuthorization(authorization)) {
+        WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization: Authorization does not belong to the current session, so completing with NO as success state.");
+        completion(NO, nil);
+        return;
+    }
+
     if (!viewController) {
         WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization: No view controller to present, so completing with NO as success state.");
         completion(NO, nil);
@@ -72,6 +78,11 @@
         ASSERT_NOT_REACHED();
         return;
     }
+
+    if (!session->isForAuthorization(authorization)) {
+        WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidNotHandle: Authorization does not belong to the current session, so returning early.");
+        return;
+    }
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidNotHandle: Falling back to web path.");
     session->fallBackToWebPath();
 }
@@ -84,6 +95,11 @@
     if (!session) {
         WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidCancel: No session, so returning early.");
         ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (!session->isForAuthorization(authorization)) {
+        WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidCancel: Authorization does not belong to the current session, so returning early.");
         return;
     }
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidCancel: Aborting session.");
@@ -101,6 +117,11 @@
         ASSERT_NOT_REACHED();
         return;
     }
+
+    if (!session->isForAuthorization(authorization)) {
+        WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidComplete: Authorization does not belong to the current session, so returning early.");
+        return;
+    }
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidComplete: Falling back to web path.");
     session->fallBackToWebPath();
 }
@@ -114,6 +135,11 @@
     if (!session) {
         WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithHTTPAuthorizationHeaders: No session, so returning early.");
         ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (!session->isForAuthorization(authorization)) {
+        WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithHTTPAuthorizationHeaders: Authorization does not belong to the current session, so returning early.");
         return;
     }
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithHTTPAuthorizationHeaders: Falling back to web path.");
@@ -130,6 +156,11 @@
         ASSERT_NOT_REACHED();
         return;
     }
+
+    if (!session->isForAuthorization(authorization)) {
+        WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithHTTPResponse: Authorization does not belong to the current session, so returning early.");
+        return;
+    }
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithHTTPResponse: Completing.");
     session->complete(httpResponse, httpBody);
 }
@@ -144,6 +175,11 @@
     if (!session) {
         WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithError: No session, so returning early.");
         ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (!session->isForAuthorization(authorization)) {
+        WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithError: Authorization does not belong to the current session, so returning early.");
         return;
     }
 

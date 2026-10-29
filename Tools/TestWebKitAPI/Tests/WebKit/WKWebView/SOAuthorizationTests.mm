@@ -1452,6 +1452,51 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressActiveSession)
     EXPECT_WK_STREQ(redirectURL.get().absoluteString, finalURL);
 }
 
+TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressActiveSessionWithLateCancel)
+{
+    resetState();
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClassSingleton());
+
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    RetainPtr delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&authorizationPerformed);
+    checkAuthorizationOptions(false, emptyString(), 0);
+    EXPECT_TRUE(policyForAppSSOPerformed);
+
+    // Keep the first authorization alive so that it can deliver a callback after its session is gone.
+    RetainPtr<SOAuthorization> firstAuthorization = gAuthorization;
+
+    // Suppress the last active session.
+    authorizationPerformed = false;
+    policyForAppSSOPerformed = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&authorizationCancelled);
+    Util::run(&authorizationPerformed);
+    checkAuthorizationOptions(false, emptyString(), 0);
+    EXPECT_TRUE(policyForAppSSOPerformed);
+    EXPECT_NE(firstAuthorization.get(), gAuthorization);
+
+    // AppSSO delivers the cancellation of the suppressed authorization asynchronously, after the new session has started.
+    // It should not abort the new session.
+    [gDelegate authorizationDidCancel:firstAuthorization.get()];
+
+    RetainPtr<NSURL> redirectURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
+    RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Location" : [redirectURL absoluteString] }]);
+    [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
+    Util::run(&navigationCompleted);
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    navigationCompleted = false;
+    Util::run(&navigationCompleted);
+#endif
+    EXPECT_FALSE(appSSONavigationFailed);
+    EXPECT_WK_STREQ(redirectURL.get().absoluteString, finalURL);
+}
+
 TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressWaitingSession)
 {
     resetState();
