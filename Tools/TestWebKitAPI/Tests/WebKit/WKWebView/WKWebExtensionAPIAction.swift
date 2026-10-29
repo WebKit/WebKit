@@ -79,8 +79,12 @@ struct WKWebExtensionAPIActionTests {
             browser.test.assertThrows(() => browser.action.setPopup({windowId: 'bad', popup: 'popup.html'}), /'windowId' is expected to be a number or null, but a string was provided/i)
             browser.test.assertThrows(() => browser.action.setBadgeText({tabId: 1.2, text: '1'}), /'tabId' value is invalid, because it is not a tab identifier/i)
             browser.test.assertThrows(() => browser.action.setBadgeText({windowId: -3, text: '2'}), /'windowId' value is invalid, because it is not a window identifier/i)
-            browser.test.assertThrows(() => browser.action.enable('bad'), /'tabId' value is invalid, because a number is expected/i)
-            browser.test.assertThrows(() => browser.action.disable('bad'), /'tabId' value is invalid, because a number is expected/i)
+            browser.test.assertThrows(() => browser.action.enable('bad'), /'details' value is invalid, because a number or an object is expected/i)
+            browser.test.assertThrows(() => browser.action.disable('bad'), /'details' value is invalid, because a number or an object is expected/i)
+            browser.test.assertThrows(() => browser.action.enable({tabId: 'bad'}), /'tabId' is expected to be a number or null, but a string was provided/i)
+            browser.test.assertThrows(() => browser.action.disable({windowId: 'bad'}), /'windowId' is expected to be a number or null, but a string was provided/i)
+            browser.test.assertThrows(() => browser.action.enable({tabId: 1, windowId: 1}), /'details' value is invalid, because it cannot specify both 'tabId' and 'windowId'/i)
+            browser.test.assertThrows(() => browser.action.disable({tabId: 1, windowId: 1}), /'details' value is invalid, because it cannot specify both 'tabId' and 'windowId'/i)
             browser.test.assertThrows(() => browser.action.isEnabled({tabId: Infinity}), /'tabId' is expected to be a number or null, but Infinity was provided/i)
             browser.test.assertThrows(() => browser.action.isEnabled({windowId: NaN}), /'windowId' is expected to be a number or null, but NaN was provided/i)
 
@@ -104,6 +108,8 @@ struct WKWebExtensionAPIActionTests {
             await browser.test.assertRejects(browser.action.getBadgeText({windowId: 9999}), /window not found/i)
             await browser.test.assertRejects(browser.action.isEnabled({tabId: 9999}), /tab not found/i)
             await browser.test.assertRejects(browser.action.isEnabled({windowId: 9999}), /window not found/i)
+            await browser.test.assertRejects(browser.action.enable({tabId: 9999}), /tab not found/i)
+            await browser.test.assertRejects(browser.action.disable({windowId: 9999}), /window not found/i)
 
             browser.test.notifyPass()
             """
@@ -678,6 +684,64 @@ struct WKWebExtensionAPIActionTests {
 
         secondWindowAction.closePopup()
         action.closePopup()
+    }
+
+    @Test
+    func enableAndDisableWithDetails() async throws {
+        let backgroundScript = """
+            const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })
+            const currentWindowId = currentTab.windowId
+
+            browser.test.assertTrue(await browser.action.isEnabled({ windowId: currentWindowId }), 'Window action should start enabled')
+            browser.test.assertTrue(await browser.action.isEnabled({ tabId: currentTab.id }), 'Tab action should start enabled')
+
+            await browser.action.disable({ windowId: currentWindowId })
+            browser.test.assertFalse(await browser.action.isEnabled({ windowId: currentWindowId }), 'Window action should be disabled')
+            browser.test.assertTrue(await browser.action.isEnabled(), 'Default action should still be enabled')
+
+            await browser.action.enable({ windowId: currentWindowId })
+            browser.test.assertTrue(await browser.action.isEnabled({ windowId: currentWindowId }), 'Window action should be enabled again')
+
+            await browser.action.disable({ tabId: currentTab.id })
+            browser.test.assertFalse(await browser.action.isEnabled({ tabId: currentTab.id }), 'Tab action should be disabled')
+            browser.test.assertTrue(await browser.action.isEnabled(), 'Default action should still be enabled')
+
+            await browser.action.enable(currentTab.id)
+            browser.test.assertTrue(await browser.action.isEnabled({ tabId: currentTab.id }), 'Tab action should be enabled with a bare tab identifier')
+
+            await browser.action.disable({ tabId: null })
+            browser.test.assertFalse(await browser.action.isEnabled(), 'Default action should be disabled')
+
+            await browser.action.enable()
+            browser.test.assertTrue(await browser.action.isEnabled(), 'Default action should be enabled')
+
+            browser.test.notifyPass()
+            """
+
+        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: ["background.js": backgroundScript])
+        try await manager.run()
+    }
+
+    @Test
+    func isEnabledWithTabIdentifier() async throws {
+        let backgroundScript = """
+            const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })
+
+            browser.test.assertTrue(await browser.action.isEnabled(currentTab.id), 'Tab action should start enabled with a bare tab identifier')
+
+            await browser.action.disable(currentTab.id)
+            browser.test.assertFalse(await browser.action.isEnabled(currentTab.id), 'Tab action should be disabled with a bare tab identifier')
+            browser.test.assertFalse(await browser.action.isEnabled({ tabId: currentTab.id }), 'Tab action should be disabled with details')
+            browser.test.assertTrue(await browser.action.isEnabled(), 'Default action should still be enabled')
+
+            await browser.test.assertRejects(browser.action.isEnabled(9999), /tab not found/i)
+            browser.test.assertThrows(() => browser.action.isEnabled('invalid'), /'details' value is invalid, because a number or an object is expected/i)
+
+            browser.test.notifyPass()
+            """
+
+        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: ["background.js": backgroundScript])
+        try await manager.run()
     }
 
     @Test

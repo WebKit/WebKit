@@ -51,9 +51,9 @@ public:
     void getBadgeBackgroundColor(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void setBadgeBackgroundColor(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void enable(double tabIdentifier, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void disable(double tabIdentifier, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void isEnabled(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void enable(NSObject *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void disable(NSObject *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void isEnabled(NSObject *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     void setIcon(WebFrame&, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
@@ -76,6 +76,8 @@ private:
 #endif
 
     static std::expected<void, String> parseActionDetails(NSDictionary *, std::optional<WebExtensionWindowIdentifier>&, std::optional<WebExtensionTabIdentifier>&);
+    static bool parseTabIdentifierOrActionDetails(NSObject *details, std::optional<WebExtensionWindowIdentifier>&, std::optional<WebExtensionTabIdentifier>&, NSString **outExceptionString);
+    void setEnabled(NSObject *details, bool enabled, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     const RefPtr<WebExtensionAPIEvent> m_onClicked;
 #endif

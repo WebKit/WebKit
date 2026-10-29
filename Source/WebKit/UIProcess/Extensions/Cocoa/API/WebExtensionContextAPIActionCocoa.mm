@@ -277,9 +277,9 @@ void WebExtensionContext::actionGetEnabled(std::optional<WebExtensionWindowIdent
     completionHandler(Ref { action.value() }->isEnabled());
 }
 
-void WebExtensionContext::actionSetEnabled(std::optional<WebExtensionTabIdentifier> tabIdentifier, bool enabled, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionSetEnabled(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, bool enabled, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    auto action = getOrCreateActionWithIdentifiers(std::nullopt, tabIdentifier, *this, enabled ? @"action.enable()" : @"action.disable()");
+    auto action = getOrCreateActionWithIdentifiers(windowIdentifier, tabIdentifier, *this, enabled ? @"action.enable()" : @"action.disable()");
     if (!action) {
         completionHandler(makeUnexpected(action.error()));
         return;

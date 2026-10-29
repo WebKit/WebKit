@@ -78,9 +78,9 @@ dictionary WebExtensionActionOpenPopupOptions {
     [RaisesException] void getBadgeBackgroundColor([Optional, NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
     [RaisesException] void setBadgeBackgroundColor([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
 
-    [RaisesException] void enable([Optional] double tabId, [Optional, CallbackHandler] function callback);
-    [RaisesException] void disable([Optional] double tabId, [Optional, CallbackHandler] function callback);
-    [RaisesException] void isEnabled([Optional, NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
+    [RaisesException] void enable([Optional, NSObject=NullAllowed] any details, [Optional, CallbackHandler] function callback);
+    [RaisesException] void disable([Optional, NSObject=NullAllowed] any details, [Optional, CallbackHandler] function callback);
+    [RaisesException] void isEnabled([Optional, NSObject=NullAllowed] any details, [Optional, CallbackHandler] function callback);
 
     [RaisesException, NeedsFrame] void setIcon([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
 
