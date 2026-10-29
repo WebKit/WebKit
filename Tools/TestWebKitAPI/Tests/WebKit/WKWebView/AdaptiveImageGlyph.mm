@@ -205,6 +205,7 @@ TEST(AdaptiveImageGlyph, SupportsAdaptiveImageGlyphEditableView)
     RetainPtr webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView _setEditable:YES];
 
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
@@ -253,6 +254,7 @@ TEST(AdaptiveImageGlyph, SupportsAdaptiveImageGlyphEditableViewWithConfiguration
     RetainPtr webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configurationForAdaptiveImageGlyphWebView().get()]);
     [webView _setEditable:YES];
 
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
@@ -294,6 +296,7 @@ TEST(AdaptiveImageGlyph, InsertAdaptiveImageGlyphAsPictureElement)
     RetainPtr webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView _setEditable:YES];
 
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
@@ -335,6 +338,7 @@ TEST(AdaptiveImageGlyph, InsertAdaptiveImageGlyphAtLargerFontSize)
     RetainPtr webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView _setEditable:YES];
 
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<body style='font-size: 64px;'></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
@@ -352,6 +356,7 @@ TEST(AdaptiveImageGlyph, InsertAdaptiveImageGlyphMatchStyle)
     RetainPtr webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView _setEditable:YES];
 
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<body><span style='font-size: 64px;'>Test</span></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
@@ -383,6 +388,7 @@ TEST(AdaptiveImageGlyph, InsertAndRemoveWKAttachments)
     RetainPtr webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     [webView _setEditable:YES];
 
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
@@ -463,6 +469,7 @@ TEST(AdaptiveImageGlyph, InsertWKAttachmentsOnPaste)
     RetainPtr webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     [webView _setEditable:YES];
 
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
@@ -503,6 +510,7 @@ TEST(AdaptiveImageGlyph, InsertWKAttachmentsCopyFromWebViewPasteToWebView)
     RetainPtr copyWebView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     [copyWebView _setEditable:YES];
 
+    [copyWebView focusInWindow];
     [copyWebView synchronouslyLoadHTMLString:@"<body></body>"];
     [copyWebView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
@@ -517,6 +525,7 @@ TEST(AdaptiveImageGlyph, InsertWKAttachmentsCopyFromWebViewPasteToWebView)
     RetainPtr pasteWebView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     [pasteWebView _setEditable:YES];
 
+    [pasteWebView focusInWindow];
     [pasteWebView synchronouslyLoadHTMLString:@"<body></body>"];
     [pasteWebView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
@@ -555,6 +564,7 @@ TEST(AdaptiveImageGlyph, InsertWKAttachmentsMovingParagraphs)
     RetainPtr webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     [webView _setEditable:YES];
 
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<body dir='auto' role='textbox' aria-label='Message Body'><br><div id='AppleMailSignature' dir='ltr'><!-- signature open -->Sent from my iPhone <!-- signature close --></div></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
@@ -607,6 +617,7 @@ TEST(AdaptiveImageGlyph, InsertMultiple)
     RetainPtr webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 800)]);
     [webView _setEditable:YES];
 
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<body dir='auto' role='textbox' aria-label='Message Body'><div><br></div><div><br></div><div><br></div><div id='start'><br></div><div><br></div><div><br></div><div><br></div><div><br></div><br id='lineBreakAtBeginningOfSignature'><div id='AppleMailSignature' dir='ltr'><!-- signature open -->Sent from my iPhone<!-- signature close --></div></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
@@ -680,6 +691,7 @@ TEST(AdaptiveImageGlyph, InsertTextAfterAdaptiveImageGlyph)
     RetainPtr webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView _setEditable:YES];
 
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
@@ -711,6 +723,7 @@ TEST(AdaptiveImageGlyph, CopyRTF)
 
     [webView _setEditable:YES];
 
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
@@ -748,6 +761,7 @@ TEST(AdaptiveImageGlyph, ContentsAsAttributedString)
     RetainPtr webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView _setEditable:YES];
 
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
@@ -906,6 +920,7 @@ TEST(AdaptiveImageGlyph, AttributedStringDocumentEditingContext)
     RetainPtr webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView _setEditable:YES];
 
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<body style='font-family: Arial; font-size: 20px;'></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
     [[webView textInputContentView] insertText:@"Hello "];
