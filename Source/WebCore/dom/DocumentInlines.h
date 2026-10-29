@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/ActiveDOMObject.h>
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentParser.h>
@@ -140,6 +141,11 @@ inline ReportingScope& Document::reportingScope() const
 inline Ref<DocumentSyncData> Document::syncData()
 {
     return m_syncData.get();
+}
+
+inline bool Document::shouldDeferLifecycleEventForDebugger(const Event& event) const
+{
+    return (m_deferredLifecycleEventCount || reasonForSuspendingActiveDOMObjects() == ReasonForSuspension::JavaScriptDebuggerPaused) && isDeferrableLifecycleEventForDebugger(event);
 }
 
 } // namespace WebCore

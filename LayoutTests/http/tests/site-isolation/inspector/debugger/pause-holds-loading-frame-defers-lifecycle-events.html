@@ -1,0 +1,105 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+window.frameLoadEvents = [];
+
+function addFrame(name, stallFor)
+{
+    let iframe = document.createElement("iframe");
+    iframe.addEventListener("load", () => frameLoadEvents.push(name));
+    iframe.src = `http://localhost:8000/inspector/debugger/resources/lifecycle-events-frame.html?${name}&stallFor=${stallFor}`;
+    document.body.appendChild(iframe);
+}
+
+function pauseHere()
+{
+    debugger;
+    return "resumed";
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseHoldsLoadingFrameDefersLifecycleEvents");
+
+    let mainTarget;
+    let expectedEvents;
+
+    async function evaluate(target, expression) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
+        return result.value;
+    }
+
+    async function pause(target) {
+        let paused = new Promise((resolve) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                if (event.data.target !== target || !WI.debuggerManager.dataForTarget(target).paused)
+                    return;
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+                resolve();
+            });
+        });
+        target.RuntimeAgent.evaluate.invoke({expression: "pauseHere()", objectGroup: "test"}).catch(() => { });
+        await paused;
+    }
+
+    async function resume() {
+        let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+        await WI.debuggerManager.resume();
+        await resumed;
+    }
+
+    async function addFrameAndWaitUntilInteractive(name, stallFor) {
+        await evaluate(mainTarget, `addFrame("${name}", ${stallFor})`);
+        let frameTarget = await waitForFrameTargetForURLContaining(`lifecycle-events-frame.html?${name}`);
+        InspectorTest.expectNotNull(frameTarget, "Should find the cross-site frame target.");
+        InspectorTest.expectThat(await waitForExpressionInTarget(frameTarget, `document.readyState === "interactive"`, 50), "The frame should be parsed while its image is still loading.");
+        return frameTarget;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsLoadingFrameDefersLifecycleEvents.WithoutPause",
+        description: "Record the lifecycle events of a cross-site frame that loads without a pause.",
+        async test() {
+            mainTarget = InspectorTest.mainFrameTarget;
+            let frameTarget = await addFrameAndWaitUntilInteractive("unpaused", 3);
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameTarget, `events.some((event) => event.startsWith("pageshow"))`, 50), "The frame should finish loading.");
+            InspectorTest.expectThat(await waitForExpressionInTarget(mainTarget, `frameLoadEvents.includes("unpaused")`, 50), "The iframe element should get its load event.");
+            expectedEvents = await evaluate(frameTarget, "events.join(', ')");
+            InspectorTest.log(`Events: ${expectedEvents}`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsLoadingFrameDefersLifecycleEvents.LoadFinishesWhileHeld",
+        description: "A cross-site frame that finishes loading while it is held should get its lifecycle events after resuming, once each and in order.",
+        async test() {
+            let frameTarget = await addFrameAndWaitUntilInteractive("held", 3);
+
+            await pause(mainTarget);
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameTarget, `document.readyState === "complete"`, 80), "The held frame should finish loading.");
+            InspectorTest.expectEqual(await evaluate(frameTarget, "events.join(', ')"), "readystatechange:interactive, DOMContentLoaded", "The events after the frame was parsed should not be dispatched while it is held.");
+
+            let untrustedEventWasDispatched = await evaluate(frameTarget, `(() => {
+                let image = document.getElementById("image");
+                let event = new Event("load");
+                image.dispatchEvent(event);
+                return event.target === image;
+            })()`);
+            InspectorTest.expectThat(untrustedEventWasDispatched, "A load event dispatched by script should be dispatched at once while the frame is held.");
+
+            await resume();
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameTarget, `events.some((event) => event.startsWith("pageshow"))`, 50), "The frame's pageshow event should be dispatched after resuming.");
+            InspectorTest.expectThat(await waitForExpressionInTarget(mainTarget, `frameLoadEvents.includes("held")`, 50), "The iframe element should get its load event after resuming.");
+            InspectorTest.expectEqual(await evaluate(frameTarget, "events.join(', ')"), expectedEvents, "The frame should get each lifecycle event once, in the same order as without a pause.");
+            InspectorTest.expectEqual(await evaluate(frameTarget, "untrustedLoadEvents"), 0, "The load event dispatched by script while held should not be dispatched again.");
+            InspectorTest.expectEqual(await evaluate(mainTarget, "frameLoadEvents.join(', ')"), "unpaused, held", "Each iframe element should get one load event.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a cross-site frame that finishes loading while a debugger pause holds it gets its load, readystatechange, pageshow and image load events after resuming.</p>
+</body>

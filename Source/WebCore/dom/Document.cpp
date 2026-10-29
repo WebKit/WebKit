@@ -7453,6 +7453,42 @@ void Document::queueTaskToDispatchEventOnWindow(LocalDOMWindow& window, TaskSour
     });
 }
 
+bool Document::isDeferrableLifecycleEventForDebugger(const Event& event) const
+{
+    if (!event.isTrusted())
+        return false;
+
+    auto& eventNames = WebCore::eventNames();
+    auto& type = event.type();
+    // PageTransitionEvent is created cancelable, but nothing reads the result of dispatching pageshow. pagehide is left out because a deferred one would be dispatched after a back/forward cache restore.
+    bool isDeferrable = type == eventNames.pageshowEvent
+        || (!event.cancelable() && (type == eventNames.loadEvent || type == eventNames.errorEvent || type == eventNames.DOMContentLoadedEvent || type == eventNames.readystatechangeEvent));
+    if (!isDeferrable)
+        return false;
+
+    // A task queued after the event loop group is stopped is discarded, and the count would never come back down.
+    if (isEventLoopGroupStoppedPermanently())
+        return false;
+
+    // A lifecycle event dispatched after the release must not overtake the deferred ones that are still queued.
+    if (m_deferredLifecycleEventCount)
+        return true;
+
+    RefPtr frame = this->frame();
+    return frame && CheckedRef { frame->script() }->isPaused();
+}
+
+void Document::queueTaskToDispatchDeferredLifecycleEvent(Node& node, Function<void(Node&)>&& dispatch)
+{
+    ASSERT(&node.document() == this);
+    ++m_deferredLifecycleEventCount;
+    Node::queueTaskKeepingNodeAlive(node, TaskSource::DOMManipulation, [protectedThis = Ref { *this }, dispatch = WTF::move(dispatch)](Node& queuedNode) {
+        ASSERT(protectedThis->m_deferredLifecycleEventCount);
+        --protectedThis->m_deferredLifecycleEventCount;
+        dispatch(queuedNode);
+    });
+}
+
 ExceptionOr<Ref<Event>> Document::createEvent(const String& type)
 {
     // Please do *not* add new event classes to this function unless they are required

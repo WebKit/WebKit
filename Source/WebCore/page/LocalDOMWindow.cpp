@@ -2549,6 +2549,18 @@ void LocalDOMWindow::dispatchLoadEvent()
 
 void LocalDOMWindow::dispatchEvent(Event& event, EventTarget* target)
 {
+    if (RefPtr document = this->document(); document && document->shouldDeferLifecycleEventForDebugger(event)) [[unlikely]] {
+        document->queueTaskToDispatchDeferredLifecycleEvent(*document, [protectedThis = Ref { *this }, event = Ref { event }, target = RefPtr { target }](Node&) {
+            protectedThis->dispatchEventWithoutDebuggerDeferral(event, target.get());
+        });
+        return;
+    }
+
+    dispatchEventWithoutDebuggerDeferral(event, target);
+}
+
+void LocalDOMWindow::dispatchEventWithoutDebuggerDeferral(Event& event, EventTarget* target)
+{
     // FIXME: It's confusing to have both the inherited EventTarget::dispatchEvent function
     // and this function, which does something nearly identical but subtly different if
     // called with a target of null. Most callers pass the document as the target, though.
