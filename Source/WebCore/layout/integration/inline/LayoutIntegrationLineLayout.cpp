@@ -436,6 +436,11 @@ std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
     return { minimumContentSize, maximumContentSize };
 }
 
+void LineLayout::resetIntrinsicWidthConstraints()
+{
+    ensureInlineContentCache().resetMinimumMaximumContentSizes();
+}
+
 static inline std::optional<Layout::BlockLayoutState::LineClamp> LEGACY_NODELETE lineClamp(const RenderBlockFlow& rootRenderer)
 {
     auto& layoutState = *rootRenderer.view().frameView().layoutContext().layoutState();

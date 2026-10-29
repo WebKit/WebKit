@@ -409,6 +409,7 @@ protected:
     bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
+    void computeIntrinsicLogicalWidthContributions() override;
     
     bool pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustment, LayoutUnit logicalOffset, LayoutUnit minimumLogicalHeight) const;
 

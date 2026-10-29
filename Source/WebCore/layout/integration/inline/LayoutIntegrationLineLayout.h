@@ -92,6 +92,7 @@ public:
     bool boxContentWillChange(const RenderBox&);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
+    void resetIntrinsicWidthConstraints();
 
     enum class ForceFullLayout : bool { No, Yes };
     std::optional<LayoutRect> layout(RenderBlockFlow::MarginInfo&, ForceFullLayout = ForceFullLayout::No);
