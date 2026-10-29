@@ -184,6 +184,11 @@ void NetworkTaskCocoa::setCookieTransformForThirdPartyRequest(const WebCore::Res
 }
 #endif
 
+static bool isGoogleOwnedSite(const String& registrableDomainName)
+{
+    return registrableDomainName == "youtube.com"_s || registrableDomainName == "google.com"_s;
+}
+
 void NetworkTaskCocoa::setCookieTransformForFirstPartyRequest(const WebCore::ResourceRequest& request)
 {
     if (!shouldApplyCookiePolicyForThirdPartyCloaking())
@@ -265,7 +270,7 @@ void NetworkTaskCocoa::setCookieTransformForFirstPartyRequest(const WebCore::Res
         // CNAME cloaking is a first-party sub resource that resolves
         // through a CNAME that differs from the first-party domain and
         // also differs from the top frame host's CNAME, if one exists.
-        if (!cnameDomain.matches(firstPartyURL) && (!firstPartyHostCNAME || cnameDomain != *firstPartyHostCNAME)) {
+        if (!cnameDomain.matches(firstPartyURL) && (!firstPartyHostCNAME || cnameDomain != *firstPartyHostCNAME) && !(isGoogleOwnedSite(firstPartyRegistrableDomainName) && isGoogleOwnedSite(cnameDomain.string()))) {
             // Don't use RetainPtr here. This array has to be retained and
             // auto released to not be released before returned to the code
             // executing the block.
