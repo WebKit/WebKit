@@ -219,8 +219,15 @@ static InlineLevelBox::AscentAndDescent textBoxAdjustedInlineBoxHeight(const Inl
     auto alphabeticBaselineOffset = fontBaseline == FontBaseline::Ideographic ? fontMetrics.ascent(FontBaseline::Alphabetic) - fontMetrics.ascent(FontBaseline::Ideographic) : 0.f;
 
     auto inlineBoxTextBoxTrim = inlineBox.textBoxTrim();
+    auto trimsBlockStart = inlineBoxTextBoxTrim == TextBoxTrim::TrimStart || inlineBoxTextBoxTrim == TextBoxTrim::TrimBoth;
+    auto trimsBlockEnd = inlineBoxTextBoxTrim == TextBoxTrim::TrimEnd || inlineBoxTextBoxTrim == TextBoxTrim::TrimBoth;
+    // The block-start side is the line-under side when lines are inverted (e.g. vertical-lr).
+    auto isLineInverted = inlineBox.layoutBox().writingMode().isLineInverted();
+    auto trimsLineOver = isLineInverted ? trimsBlockEnd : trimsBlockStart;
+    auto trimsLineUnder = isLineInverted ? trimsBlockStart : trimsBlockEnd;
+
     auto ascent = [&] -> InlineLayoutUnit {
-        auto textBoxEdge = inlineBoxTextBoxTrim == TextBoxTrim::TrimStart || inlineBoxTextBoxTrim == TextBoxTrim::TrimBoth ? inlineBox.textBoxEdge().tryTextEdgePair() : std::nullopt;
+        auto textBoxEdge = trimsLineOver ? inlineBox.textBoxEdge().tryTextEdgePair() : std::nullopt;
         if (!textBoxEdge)
             return fontMetrics.ascent(fontBaseline);
 
@@ -241,7 +248,7 @@ static InlineLevelBox::AscentAndDescent textBoxAdjustedInlineBoxHeight(const Inl
     };
 
     auto descent = [&] -> InlineLayoutUnit {
-        auto textBoxEdge = inlineBoxTextBoxTrim == TextBoxTrim::TrimEnd || inlineBoxTextBoxTrim == TextBoxTrim::TrimBoth ? inlineBox.textBoxEdge().tryTextEdgePair() : std::nullopt;
+        auto textBoxEdge = trimsLineUnder ? inlineBox.textBoxEdge().tryTextEdgePair() : std::nullopt;
         if (!textBoxEdge)
             return fontMetrics.descent(fontBaseline);
 
