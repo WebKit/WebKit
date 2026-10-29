@@ -5722,7 +5722,7 @@ void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::opt
 void Page::opportunisticallyRunIdleCallbacks(MonotonicTime deadline)
 {
     forEachWindowEventLoop([&](auto& eventLoop) {
-        eventLoop.opportunisticallyRunIdleCallbacks(deadline);
+        eventLoop.opportunisticallyRunIdleCallbacks(deadline, false);
     });
 }
 
