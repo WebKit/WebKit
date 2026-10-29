@@ -129,7 +129,7 @@ static RetainPtr<CFArrayRef> createMVHEVCVideoLayersArray(CMVideoFormatDescripti
 
     RetainPtr tagCollectionArray = adoptCF(rawTagCollectionArray);
     // Get the layer IDs to decode
-    if (CFArrayGetCount(tagCollectionArray.get()) <= 1)
+    if (!tagCollectionArray || CFArrayGetCount(tagCollectionArray.get()) <= 1)
         return { };
 
     RetainPtr layersArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, 1, &kCFTypeArrayCallBacks));
@@ -158,7 +158,7 @@ static std::map<int64_t, uint64_t> createMVHEVCStereoViewMap(CMVideoFormatDescri
 
     RetainPtr tagCollectionArray = adoptCF(rawTagCollectionArray);
     // Get the layer IDs to decode
-    if (CFArrayGetCount(tagCollectionArray.get()) <= 1)
+    if (!tagCollectionArray || CFArrayGetCount(tagCollectionArray.get()) <= 1)
         return { };
 
     std::map<int64_t, uint64_t> stereoViewMap;
