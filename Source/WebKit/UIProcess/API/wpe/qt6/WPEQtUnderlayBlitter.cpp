@@ -57,7 +57,9 @@ static GLuint createProgram(QOpenGLFunctions* gl)
     )";
 
     static constexpr auto fragmentShaderSource = R"(
+        #ifdef GL_ES
         precision mediump float;
+        #endif
         varying vec2 vTexCoord;
         uniform sampler2D u_texture;
         uniform float u_opacity;
@@ -151,18 +153,17 @@ bool WPEQtUnderlayBlitter::initialize()
     return true;
 }
 
-bool WPEQtUnderlayBlitter::importEGLImage(EGLImage image)
+void WPEQtUnderlayBlitter::importEGLImage(EGLImage image)
 {
     ASSERT(isInitialized());
     ASSERT(image);
     if (image == m_importedImage)
-        return true;
+        return;
 
     m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
     m_imageTargetTexture2DOES(GL_TEXTURE_2D, image);
     m_gl->glBindTexture(GL_TEXTURE_2D, 0);
     m_importedImage = image;
-    return true;
 }
 
 bool WPEQtUnderlayBlitter::draw(const QMatrix4x4& matrix, float opacity, std::optional<QRect> scissorRect, std::optional<int> stencilValue)

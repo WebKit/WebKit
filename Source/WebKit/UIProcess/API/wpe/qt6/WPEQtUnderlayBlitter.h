@@ -44,7 +44,7 @@ public:
     // draw() runs during rendering. All methods require a current GL context.
     bool initialize();
     void invalidate();
-    bool importEGLImage(EGLImage);
+    void importEGLImage(EGLImage);
     bool draw(const QMatrix4x4&, float opacity, std::optional<QRect> scissorRect, std::optional<int> stencilValue);
     bool isInitialized() const { return m_program; }
 
