@@ -2546,6 +2546,9 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
             // Create scratch row buffer
             angle::MemoryBuffer conversionRow;
             ANGLE_CHECK_GL_ALLOC(contextMtl, conversionRow.resize(dstRowPitch));
+            // Zero it so that a converter which does not write every destination byte cannot
+            // disclose uninitialized heap contents through the texture.
+            conversionRow.fill(0);
 
             // Convert row by row:
             MTLRegion mtlRow   = mtlArea;
