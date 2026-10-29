@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: reference for A stretch max-width resolves against an orthogonal containing block that has an auto height for repeat(auto-fill)</title>
+<style>
+.containing-block {
+  writing-mode: vertical-rl;
+  width: 500px;
+}
+.grid {
+  display: grid;
+  writing-mode: horizontal-tb;
+  grid-auto-rows: 50px;
+  grid-template-columns: repeat(10, 50px);
+
+}
+.grid > div:nth-child(1) { grid-column: 1; background: green; }
+.grid > div:nth-child(2) { grid-column: 10; background: lime; }
+</style>
+<div class="containing-block">
+  <div class="grid"><div></div><div></div></div>
+</div>
