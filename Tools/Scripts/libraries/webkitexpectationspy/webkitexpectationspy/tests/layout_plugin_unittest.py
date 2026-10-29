@@ -24,6 +24,7 @@
 
 import unittest
 
+from webkitexpectationspy.manager import ExpectationsManager
 from webkitexpectationspy.suites.layout_tests import LayoutTestSuite, LayoutTestStatus
 
 PASS = LayoutTestStatus.PASS
@@ -97,10 +98,8 @@ class LayoutTestSuiteTest(unittest.TestCase):
         self.assertIn('sonoma', tokens)
         self.assertIn('ventura', tokens)
 
-    def test_version_order(self):
-        order = self.suite.version_order
-        self.assertTrue(order.index('monterey') < order.index('ventura'))
-        self.assertTrue(order.index('ventura') < order.index('sonoma'))
+    def test_version_order_requires_version_name_map(self):
+        self.assertEqual(self.suite.version_order, [])
 
     def test_is_wildcard_pattern(self):
         self.assertTrue(self.suite.is_wildcard_pattern('fast/css/*'))
@@ -202,6 +201,145 @@ fast/css/test.html [ Pass Fail ]''')
         self.assertEqual(len(warnings), 0)
         self.assertTrue(exp.skip)
         self.assertIn(LayoutTestStatus.IMAGE, exp.expected)
+
+
+class LayoutTestSemanticsTest(unittest.TestCase):
+
+    VERSION_NAME_MAP = {'sequoia': (15,), 'tahoe': (26,), 'tahoealias': (26,)}
+
+    def setUp(self):
+        self.manager = ExpectationsManager(suite=LayoutTestSuite(
+            version_name_map=self.VERSION_NAME_MAP,
+            version_tokens={'sequoia', 'tahoe', 'tahoealias', 'ios26', 'iosalias'},
+        ))
+
+    def load(self, content, filename='TestExpectations'):
+        return self.manager.load_content(filename, content)
+
+    def test_later_file_overrides_earlier_file(self):
+        self.load('fast/dom/a.html [ Skip ]\n', 'TestExpectations')
+        self.load('fast/dom [ Pass ]\n', 'platform/mac/TestExpectations')
+        exp = self.manager.get_expectation('fast/dom/a.html', {'mac'})
+        self.assertFalse(exp.skip)
+        self.assertEqual(exp.filename, 'platform/mac/TestExpectations')
+
+    def test_longer_pattern_wins_within_a_file(self):
+        self.load('fast/dom/a.html [ Pass ]\n[ mac ] fast/dom [ Skip ]\n')
+        self.assertFalse(self.manager.get_expectation('fast/dom/a.html', {'mac'}).skip)
+        self.assertTrue(self.manager.get_expectation('fast/dom/b.html', {'mac'}).skip)
+
+    def test_earlier_line_wins_for_same_pattern(self):
+        self.load('fast/a.html [ Skip ]\n[ mac ] fast/a.html [ Pass ]\n')
+        self.assertTrue(self.manager.get_expectation('fast/a.html', {'mac'}).skip)
+
+    def test_earlier_line_wins_for_overlapping_configurations(self):
+        self.load('[ mac ] fast/a.html [ Failure ]\n[ debug ] fast/a.html [ Crash ]\n')
+        self.assertEqual(self.manager.get_expectation('fast/a.html', {'mac', 'debug'}).expected, FAIL)
+        self.assertEqual(self.manager.get_expectation('fast/a.html', {'gtk', 'debug'}).expected, CRASH)
+
+    def test_overlapping_lines_are_a_warning(self):
+        warnings = self.load('[ mac ] fast/a.html [ Failure ]\n[ debug ] fast/a.html [ Crash ]\n[ gtk ] fast/a.html [ Pass ]\n')
+        self.assertEqual([(warning.line_number, warning.error) for warning in warnings], [
+            (2, 'Overlaps line 1, which takes precedence'),
+            (3, 'Overlaps line 2, which takes precedence'),
+        ])
+
+    def test_disjoint_lines_are_not_a_warning(self):
+        self.assertEqual(self.load('[ mac ] fast/a.html [ Failure ]\n[ gtk ] fast/a.html [ Crash ]\n[ Tahoe ] fast/b.html [ Failure ]\n[ Sequoia ] fast/b.html [ Pass ]\n'), [])
+
+    def test_platform_and_style_combinations(self):
+        self.load('[ mac gtk Debug Release ] fast/a.html [ Crash ]\n')
+        self.assertIsNotNone(self.manager.get_expectation('fast/a.html', {'gtk', 'release'}))
+        self.assertIsNotNone(self.manager.get_expectation('fast/a.html', {'mac', 'debug'}))
+        self.assertIsNone(self.manager.get_expectation('fast/a.html', {'ios', 'debug'}))
+
+    def test_multiple_versions_in_one_bracket(self):
+        self.load('[ Sequoia Tahoe ] fast/a.html [ Failure ]\n')
+        self.assertIsNotNone(self.manager.get_expectation('fast/a.html', {'mac'}, 'sequoia'))
+        self.assertIsNotNone(self.manager.get_expectation('fast/a.html', {'mac'}, 'tahoe'))
+
+    def test_bare_version_name(self):
+        self.load('[ Tahoe ] fast/a.html [ Failure ]\n')
+        self.assertIsNotNone(self.manager.get_expectation('fast/a.html', {'mac'}, 'tahoe'))
+        self.assertIsNone(self.manager.get_expectation('fast/a.html', {'mac'}, 'sequoia'))
+
+    def test_version_alias_matches_by_number(self):
+        self.load('[ TahoeAlias+ ] fast/a.html [ Failure ]\n')
+        self.assertIsNotNone(self.manager.get_expectation('fast/a.html', {'mac'}, 'tahoe'))
+        self.assertIsNone(self.manager.get_expectation('fast/a.html', {'mac'}, 'sequoia'))
+
+    def test_version_for_another_platform_parses_but_does_not_match(self):
+        self.assertEqual(self.load('[ ios iOSAlias+ ] fast/a.html [ Failure ]\n'), [])
+        self.assertIsNone(self.manager.get_expectation('fast/a.html', {'mac'}, 'tahoe'))
+
+    def test_version_for_another_platform_does_not_match_without_name_map(self):
+        manager = ExpectationsManager(suite=LayoutTestSuite())
+        manager.load_content('TestExpectations', '[ Sonoma+ ] fast/a.html [ Failure ]\n[ ios17- ] fast/b.html [ Failure ]\n')
+        self.assertIsNone(manager.get_expectation('fast/a.html', {'ios'}, 'ios18'))
+        self.assertIsNone(manager.get_expectation('fast/b.html', {'mac'}, 'sonoma', ['sonoma', 'sequoia', 'tahoe']))
+        self.assertIsNotNone(manager.get_expectation('fast/a.html', {'mac'}, 'tahoe', ['sonoma', 'sequoia', 'tahoe']))
+
+    def test_caller_version_order_is_not_overridden_by_suite_name_map(self):
+        self.load('[ Sequoia+ ] fast/a.html [ Failure ]\n')
+        self.assertIsNone(self.manager.get_expectation('fast/a.html', {'mac'}, 'tahoe', ['tahoe', 'sequoia']))
+        self.assertIsNotNone(self.manager.get_expectation('fast/a.html', {'mac'}, 'tahoe'))
+
+    def test_platform_shaped_token_is_a_platform(self):
+        self.assertEqual(self.load('[ mac xros ] fast/a.html [ Failure ]\n'), [])
+        self.assertIsNotNone(self.manager.get_expectation('fast/a.html', {'mac'}))
+        self.assertIsNotNone(self.manager.get_expectation('fast/a.html', {'xros'}))
+
+    def test_guard_malloc(self):
+        self.assertEqual(self.load('[ Guard-Malloc ] fast/a.html [ Crash ]\n'), [])
+        self.assertIsNotNone(self.manager.get_expectation('fast/a.html', {'mac', 'guardmalloc'}))
+        self.assertIsNone(self.manager.get_expectation('fast/a.html', {'mac', 'release'}))
+
+    def test_unknown_configuration_is_a_warning(self):
+        warnings = self.load('[ Tahoee ] fast/a.html [ Failure ]\n[ wk3 ] fast/b.html [ Failure ]\n')
+        self.assertEqual([warning.error for warning in warnings], [
+            'Unrecognized configuration "Tahoee"',
+            'Unrecognized configuration "wk3"',
+        ])
+
+    def test_known_flavor(self):
+        self.load('[ wk2 siteisolation ] fast/a.html [ Failure ]\n')
+        self.assertIsNotNone(self.manager.get_expectation('fast/a.html', {'mac', 'wk2', 'siteisolation'}))
+        self.assertIsNone(self.manager.get_expectation('fast/a.html', {'mac', 'wk2'}))
+
+    def test_custom_flavor_tokens(self):
+        manager = ExpectationsManager(suite=LayoutTestSuite(flavor_tokens={'legacyapi'}))
+        self.assertEqual(len(manager.load_content('TestExpectations', '[ wk2 ] fast/a.html [ Failure ]\n')), 1)
+        self.assertEqual(manager.load_content('TestExpectations', '[ legacyapi ] fast/b.html [ Failure ]\n'), [])
+
+    def test_dump_js_console_log_in_stderr(self):
+        self.assertEqual(self.load('fast/a.html [ DumpJSConsoleLogInStdErr ]\n'), [])
+        exp = self.manager.get_expectation('fast/a.html')
+        self.assertTrue(exp.modifiers.dump_js_console_log_in_stderr)
+        self.assertFalse(exp.skip)
+        self.assertEqual(exp.expected, PASS)
+
+    def test_line_without_expectations_is_pass(self):
+        self.load('fast/a.html\n')
+        exp = self.manager.get_expectation('fast/a.html')
+        self.assertFalse(exp.skip)
+        self.assertEqual(exp.expected, PASS)
+
+    def test_wontfix_skip(self):
+        self.load('fast/a.html [ WontFix Skip ]\n')
+        exp = self.manager.get_expectation('fast/a.html')
+        self.assertTrue(exp.skip)
+        self.assertTrue(exp.is_wontfix())
+
+    def test_wontfix_failure_reports_new_failure_modes(self):
+        self.load('fast/a.html [ WontFix Failure ]\n')
+        exp = self.manager.get_expectation('fast/a.html')
+        suite = LayoutTestSuite()
+        self.assertTrue(exp.is_wontfix())
+        self.assertTrue(suite.result_was_expected(LayoutTestStatus.TEXT, exp.expected, exp.modifiers))
+        self.assertFalse(suite.result_was_expected(CRASH, exp.expected, exp.modifiers))
+
+    def test_version_order_from_version_name_map(self):
+        self.assertEqual(LayoutTestSuite(version_name_map=self.VERSION_NAME_MAP).version_order, ['sequoia', 'tahoe', 'tahoealias'])
 
 
 if __name__ == '__main__':
