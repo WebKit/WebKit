@@ -120,7 +120,9 @@ std::vector<RtpPacketizerAv1::Obu> RtpPacketizerAv1::ParseObus(
       payload_reader.Consume(size);
     }
 #if WEBRTC_WEBKIT_BUILD
-    if (obu.payload.size() > static_cast<size_t>(std::numeric_limits<int>::max() - obu.size)) {
+    static constexpr int kMaxLeb128SizeForInt = 5;
+    static constexpr int kMaxObuEncodedSize = std::numeric_limits<int>::max() - kMaxLeb128SizeForInt;
+    if (obu.size > kMaxObuEncodedSize || obu.payload.size() > kMaxObuEncodedSize - obu.size) {
       RTC_DLOG(LS_ERROR) << "Malformed AV1 input: OBU payload size "
                          << obu.payload.size()
                          << " exceeds maximum supported size";
@@ -260,7 +262,11 @@ std::vector<RtpPacketizerAv1::Packet> RtpPacketizerAv1::PacketizeInternal(
     // packet capacity is always limits.max_payload_len.
     int obu_offset;
     for (obu_offset = first_fragment_size;
+#if WEBRTC_WEBKIT_BUILD
+         obu.size >= limits.max_payload_len && obu_offset < obu.size - limits.max_payload_len;
+#else
          obu_offset + limits.max_payload_len < obu.size;
+#endif
          obu_offset += limits.max_payload_len) {
       packets.emplace_back(/*first_obu_index=*/obu_index);
       Packet& middle_packet = packets.back();
