@@ -7765,6 +7765,8 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
 
         commands = [self.shell_command('rm .git/identifiers.json || {}'.format(self.shell_exit_0()))]
         if self.rebase_enabled:
+            if head_ref:
+                commands += [['git', 'checkout', '--progress', head_ref]]
             commands += [['git', 'pull', remote, base_ref, '--rebase']]
             self.verify_commit_count_command = self.shell_command(f'test "$(git rev-list --count FETCH_HEAD..HEAD)" -eq {self.getProperty("commit_count", 1)}')
             commands.append(self.verify_commit_count_command)
