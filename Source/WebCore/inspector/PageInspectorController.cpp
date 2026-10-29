@@ -428,7 +428,7 @@ bool PageInspectorController::shouldShowOverlay() const
 
 // The page DOM agent covers the main frame's document and the documents of the frames below it that live in
 // this process. A frame with a RemoteFrame ancestor is only reachable through its own FrameDOMAgent.
-static bool isCoveredByPageDOMAgent(const LocalFrame& frame)
+bool PageInspectorController::isCoveredByPageDOMAgent(const LocalFrame& frame)
 {
     for (RefPtr<const Frame> ancestor = &frame; ancestor; ancestor = ancestor->tree().parent()) {
         if (!is<LocalFrame>(*ancestor))

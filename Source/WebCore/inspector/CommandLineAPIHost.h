@@ -45,6 +45,7 @@ namespace WebCore {
 class Database;
 class EventTarget;
 class JSDOMGlobalObject;
+class Node;
 class Storage;
 
 #if ENABLE(WEB_RTC)
@@ -69,6 +70,7 @@ public:
     void addInspectedObject(std::unique_ptr<InspectableObject>);
     JSC::JSValue inspectedObject(JSC::JSGlobalObject&);
     void inspect(JSC::JSGlobalObject&, JSC::JSValue objectToInspect, JSC::JSValue hints);
+    bool inspectNode(Node&);
 
     struct ListenerEntry {
         JSC::Strong<JSC::JSObject> listener;

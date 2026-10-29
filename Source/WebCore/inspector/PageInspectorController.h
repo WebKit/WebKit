@@ -113,6 +113,7 @@ public:
     WEBCORE_EXPORT void disconnectRemoteInstrumentation();
 
     void inspect(Node*);
+    static bool isCoveredByPageDOMAgent(const LocalFrame&);
     WEBCORE_EXPORT bool LEGACY_NODELETE shouldShowOverlay() const;
     WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
     WEBCORE_EXPORT void getHighlight(InspectorOverlay::Highlight&, InspectorOverlay::CoordinateSystem) const;

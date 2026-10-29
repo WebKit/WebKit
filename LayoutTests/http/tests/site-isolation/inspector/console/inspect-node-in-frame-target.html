@@ -1,0 +1,185 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="../dom/resources/frame-document-splicing-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Console.InspectNodeInFrame");
+
+    let mainFrameTarget = null;
+    let sameSiteTarget = null;
+    let crossOriginTarget = null;
+    let nestedSameSiteTarget = null;
+
+    // Inspector.inspect is the path for a node the page DOM agent covers. Test.html has no
+    // WI.TabBrowser, which WI.DOMManager.prototype.inspectElement needs, so record the call instead.
+    let inspectorInspectObjects = [];
+    let didReceiveInspectorInspect = null;
+    WI.domManager.inspectNodeObject = (remoteObject) => {
+        inspectorInspectObjects.push(remoteObject);
+        didReceiveInspectorInspect?.(remoteObject);
+    };
+
+    // DOM.inspect from a frame target is the path for a node in any other frame.
+    let domInspectTargets = [];
+    let originalInspectElementInFrameTarget = WI.domManager.inspectElementInFrameTarget;
+    WI.domManager.inspectElementInFrameTarget = function(target, nodeId) {
+        domInspectTargets.push(target);
+        return originalInspectElementInFrameTarget.call(this, target, nodeId);
+    };
+
+    function evaluateInspect(target, expression) {
+        return target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", includeCommandLineAPI: true});
+    }
+
+    function targetName(target) {
+        if (target === mainFrameTarget)
+            return "main frame";
+        if (target === sameSiteTarget)
+            return "same-site frame";
+        if (target === crossOriginTarget)
+            return "cross-origin frame";
+        if (target === nestedSameSiteTarget)
+            return "nested same-site frame";
+        return "other";
+    }
+
+    function resetRecords() {
+        inspectorInspectObjects = [];
+        didReceiveInspectorInspect = null;
+        domInspectTargets = [];
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the frame targets of the main frame and the frames in the page.",
+        async test() {
+            mainFrameTarget = await waitForFrameTargetForURLContaining("inspect-node-in-frame-target.html");
+            sameSiteTarget = await waitForFrameTargetForURLContaining("inspect-node-same-site-frame.html");
+            crossOriginTarget = await waitForFrameTargetForURLContaining("inspect-node-cross-origin-frame.html");
+            nestedSameSiteTarget = await waitForFrameTargetForURLContaining("inspect-node-nested-same-site-frame.html");
+            InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame's target.");
+            InspectorTest.expectNotNull(sameSiteTarget, "Should find the same-site frame's target.");
+            InspectorTest.expectNotNull(crossOriginTarget, "Should find the cross-origin frame's target.");
+            InspectorTest.expectNotNull(nestedSameSiteTarget, "Should find the target of the same-site frame inside the cross-origin frame.");
+
+            // DOM.inspect needs the frame target's document in the frontend.
+            crossOriginTarget = await frameTargetForURLContainingWhenReady("inspect-node-cross-origin-frame.html");
+            nestedSameSiteTarget = await frameTargetForURLContainingWhenReady("inspect-node-nested-same-site-frame.html");
+            InspectorTest.expectNotNull(crossOriginTarget, "The cross-origin frame's target should have sent its document.");
+            InspectorTest.expectNotNull(nestedSameSiteTarget, "The nested same-site frame's target should have sent its document.");
+
+            let pageDocument = await WI.domManager.requestDocument();
+            InspectorTest.expectNotNull(pageDocument, "Should have the page document.");
+        }
+    });
+
+    function addFrameDOMAgentTestCase({name, description, getTarget, expectedTargetName, expectedId, expectedOwnerId}) {
+        suite.addTestCase({
+            name, description,
+            async test() {
+                resetRecords();
+
+                let nodeWasInspected = WI.domManager.awaitEvent(WI.DOMManager.Event.DOMNodeWasInspected);
+                await evaluateInspect(getTarget(), `inspect(document.querySelector("button"))`);
+
+                let node = (await nodeWasInspected).data.node;
+                InspectorTest.expectEqual(node.getAttribute("id"), expectedId, "The first <button> of the frame should be inspected.");
+                InspectorTest.expectEqual(targetName(node.owningTarget), expectedTargetName, "The node should belong to the frame's target.");
+
+                let owner = node.parentNode;
+                while (owner && owner.nodeName() !== "IFRAME")
+                    owner = owner.parentNode;
+                InspectorTest.expectEqual(owner?.getAttribute("id"), expectedOwnerId, "The node should sit below the frame's <iframe> element.");
+                InspectorTest.expectThat(WI.domManager._isInPageTree(node), "The node should be connected to the page document.");
+
+                InspectorTest.expectEqual(domInspectTargets.map(targetName).join(", "), expectedTargetName, "DOM.inspect should come from the frame's target only.");
+
+                // An Inspector.inspect sent during the evaluation would arrive before the reply to this command.
+                await WI.assumingMainTarget().DOMAgent.getSupportedEventNames();
+                InspectorTest.expectEqual(inspectorInspectObjects.length, 0, "Inspector.inspect should not be sent.");
+            }
+        });
+    }
+
+    addFrameDOMAgentTestCase({
+        name: "CrossOriginFrameNode",
+        description: "inspect() of a node in a cross-origin frame should send DOM.inspect and reveal the node in the page tree.",
+        getTarget: () => crossOriginTarget,
+        expectedTargetName: "cross-origin frame",
+        expectedId: "cross-origin-first-button",
+        expectedOwnerId: "cross-origin-frame",
+    });
+
+    // This frame lives in the main frame's process, where the page's Inspector agent exists, but the page DOM
+    // agent cannot reach it through the remote frame above it.
+    addFrameDOMAgentTestCase({
+        name: "NestedSameSiteFrameNode",
+        description: "inspect() of a node in a same-site frame inside a cross-origin frame should send DOM.inspect and reveal the node in the page tree.",
+        getTarget: () => nestedSameSiteTarget,
+        expectedTargetName: "nested same-site frame",
+        expectedId: "nested-same-site-first-button",
+        expectedOwnerId: "nested-same-site-frame",
+    });
+
+    function addOldPathTestCase({name, description, getTarget, expectedDescription}) {
+        suite.addTestCase({
+            name, description,
+            async test() {
+                resetRecords();
+
+                // Inspector.inspect comes from the page target, so it can arrive after the reply from the frame target.
+                // A DOM.inspect would come from the frame target, ahead of its reply.
+                let inspectorInspect = new Promise((resolve) => { didReceiveInspectorInspect = resolve; });
+                await evaluateInspect(getTarget(), `inspect(document.querySelector("button"))`);
+                await inspectorInspect;
+
+                InspectorTest.expectEqual(inspectorInspectObjects.length, 1, "Inspector.inspect should be sent once.");
+                InspectorTest.expectEqual(inspectorInspectObjects[0].subtype, "node", "The inspected object should be a node.");
+                InspectorTest.expectEqual(inspectorInspectObjects[0].description, expectedDescription, "The inspected object should be the first <button>.");
+                InspectorTest.expectEqual(domInspectTargets.length, 0, "DOM.inspect should not be sent.");
+            }
+        });
+    }
+
+    addOldPathTestCase({
+        name: "MainFrameNode",
+        description: "inspect() of a node in the main frame should still send Inspector.inspect.",
+        getTarget: () => mainFrameTarget,
+        expectedDescription: `<button id="main-first-button">`,
+    });
+
+    addOldPathTestCase({
+        name: "SameSiteFrameNode",
+        description: "inspect() of a node in a same-site frame should still send Inspector.inspect.",
+        getTarget: () => sameSiteTarget,
+        expectedDescription: `<button id="same-site-first-button">`,
+    });
+
+    suite.addTestCase({
+        name: "Teardown",
+        description: "Release the test object group.",
+        async test() {
+            delete WI.domManager.inspectNodeObject;
+            WI.domManager.inspectElementInFrameTarget = originalInspectElementInFrameTarget;
+
+            for (let target of [mainFrameTarget, sameSiteTarget, crossOriginTarget, nestedSameSiteTarget])
+                await target.RuntimeAgent.releaseObjectGroup("test");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that inspect() of a node in a cross-origin frame selects the node through the frame's DOM agent.</p>
+<button id="main-first-button">First</button>
+<button id="main-second-button">Second</button>
+<iframe id="same-site-frame" src="resources/inspect-node-same-site-frame.html"></iframe>
+<iframe id="cross-origin-frame" src="http://localhost:8000/site-isolation/inspector/console/resources/inspect-node-cross-origin-frame.html"></iframe>
+</body>
+</html>

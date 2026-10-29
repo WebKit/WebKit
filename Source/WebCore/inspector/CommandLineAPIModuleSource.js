@@ -37,6 +37,12 @@ injectedScript._inspectObject = function(object) {
     if (arguments.length === 0)
         return;
 
+    // FIXME: <https://webkit.org/b/328722> Objects that are not nodes are not routed, so they are dropped in a cross-origin frame.
+    // A node in a frame the page DOM agent does not cover is selected through the frame's DOM agent instead,
+    // before a RemoteObject mints an object ID the frontend could never resolve.
+    if (InjectedScriptHost.subtype(object) === "node" && CommandLineAPIHost.inspectNode(object))
+        return;
+
     let objectId = RemoteObject.create(object);
     let hints = {};
 

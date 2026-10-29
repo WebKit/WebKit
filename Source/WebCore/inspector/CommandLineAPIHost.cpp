@@ -39,6 +39,8 @@
 #include "JSCommandLineAPIHost.h"
 #include "JSDOMGlobalObject.h"
 #include "JSEventListener.h"
+#include "NodeDocument.h"
+#include "PageInspectorController.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
 #include "Storage.h"
@@ -97,6 +99,19 @@ static InstrumentingAgents* instrumentingAgentsForGlobalObject(JSC::JSGlobalObje
         return &downcast<WorkerGlobalScope>(executionContext)->inspectorController().instrumentingAgents();
 
     return nullptr;
+}
+
+// Frame targets have no Inspector domain to carry Inspector.inspect, so a node in a frame that the page DOM agent
+// does not cover is selected through its frame's DOM agent, which sends DOM.inspect.
+bool CommandLineAPIHost::inspectNode(Node& node)
+{
+    // FIXME: <https://webkit.org/b/328721> Nodes of frames the page DOM agent covers still use Inspector.inspect, whose object ID the frontend resolves on the page target, which fails under Site Isolation.
+    RefPtr frame = node.document().frame();
+    if (!frame || PageInspectorController::isCoveredByPageDOMAgent(*frame))
+        return false;
+
+    frame->inspectorController().inspect(node);
+    return true;
 }
 
 void CommandLineAPIHost::inspect(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue object, JSC::JSValue hints)

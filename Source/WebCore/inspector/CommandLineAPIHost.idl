@@ -36,6 +36,7 @@
     undefined copyText(DOMString text);
 
     [CallWith=CurrentGlobalObject] undefined inspect(any objectToInspect, any hints);
+    boolean inspectNode(Node node);
     [CallWith=CurrentGlobalObject] any inspectedObject();
 
     [CallWith=CurrentGlobalObject] record<DOMString, sequence<ListenerEntry>> getEventListeners(EventTarget target);
