@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 
+#import "Helpers/Utilities.h"
 #import <mach-o/dyld.h>
 #import <wtf/Vector.h>
 #import <wtf/darwin/XPCObjectPtr.h>
@@ -119,10 +120,34 @@ static OSObjectPtr<xpc_object_t> convertDictionaryToXPC(NSDictionary<NSString *,
     }
     return xpc;
 }
+#else
+static int runLaunchctl(NSArray<NSString *> *arguments)
+{
+    RetainPtr task = adoptNS([[NSTask alloc] init]);
+    [task setLaunchPath:@"/bin/launchctl"];
+    [task setArguments:arguments];
+    [task setStandardOutput:[NSFileHandle fileHandleWithNullDevice]];
+    [task setStandardError:[NSFileHandle fileHandleWithNullDevice]];
+    [task launch];
+    [task waitUntilExit];
+    return [task terminationStatus];
+}
+
+static NSString *domainTarget()
+{
+    return [NSString stringWithFormat:@"gui/%u", geteuid()];
+}
+
+static NSString *serviceTarget(NSString *label)
+{
+    return [NSString stringWithFormat:@"%@/%@", domainTarget(), label];
+}
 #endif
 
 void registerPlistWithLaunchD(NSDictionary<NSString *, id> *plist, NSURL *tempDir)
 {
+    stopTestDaemon(plist[@"Label"], [[plist[@"ProgramArguments"] firstObject] lastPathComponent]);
+
     NSError *error = nil;
 #if PLATFORM(IOS) || PLATFORM(VISION)
     auto xpcPlist = convertDictionaryToXPC(plist);
@@ -137,11 +162,12 @@ void registerPlistWithLaunchD(NSDictionary<NSString *, id> *plist, NSURL *tempDi
     EXPECT_FALSE(error);
     success = [plist writeToURL:plistLocation error:&error];
     EXPECT_TRUE(success);
-    system([NSString stringWithFormat:@"launchctl unload %@ 2> /dev/null", plistLocation.path].fileSystemRepresentation);
-    system([NSString stringWithFormat:@"launchctl load %@", plistLocation.path].fileSystemRepresentation);
+    EXPECT_EQ(runLaunchctl(@[@"bootstrap", domainTarget(), plistLocation.path]), EXIT_SUCCESS);
     EXPECT_FALSE(error);
 #endif
 }
+
+#if PLATFORM(IOS) || PLATFORM(VISION)
 
 static int pidOfFirstDaemonInstance(NSString *daemonExecutableName)
 {
@@ -176,7 +202,8 @@ static int pidOfFirstDaemonInstance(NSString *daemonExecutableName)
     return 0;
 }
 
-void killFirstInstanceOfDaemon(NSString *daemonExecutableName)
+// FIXME: <https://webkit.org/b/328547> Remove the job by label; in the simulator, ps lists host processes, so this can kill the host's daemon.
+static void killFirstInstanceOfDaemon(NSString *daemonExecutableName)
 {
     auto pid = pidOfFirstDaemonInstance(daemonExecutableName);
     if (!pid)
@@ -193,8 +220,6 @@ void killFirstInstanceOfDaemon(NSString *daemonExecutableName)
     [task waitUntilExit];
 }
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
-
 BOOL restartService(NSString *, NSString *daemonExecutableName)
 {
     killFirstInstanceOfDaemon(daemonExecutableName);
@@ -202,16 +227,27 @@ BOOL restartService(NSString *, NSString *daemonExecutableName)
     return YES;
 }
 
+BOOL stopTestDaemon(NSString *, NSString *daemonExecutableName)
+{
+    killFirstInstanceOfDaemon(daemonExecutableName);
+    return YES;
+}
+
 #else
 
-BOOL restartService(NSString *serviceName, NSString *)
+BOOL restartService(NSString *label, NSString *)
 {
-    RetainPtr task = adoptNS([[NSTask alloc] init]);
-    [task setLaunchPath:@"/bin/launchctl"];
-    [task setArguments:@[@"kickstart", @"-k", @"-p", [NSString stringWithFormat:@"gui/%u/%@", geteuid(), serviceName]]];
-    [task launch];
-    [task waitUntilExit];
-    return [task terminationStatus] == EXIT_SUCCESS;
+    return runLaunchctl(@[@"kickstart", @"-k", serviceTarget(label)]) == EXIT_SUCCESS;
+}
+
+BOOL stopTestDaemon(NSString *label, NSString *)
+{
+    if (runLaunchctl(@[@"bootout", serviceTarget(label)]) != EXIT_SUCCESS)
+        return NO;
+
+    return Util::waitFor([&] {
+        return runLaunchctl(@[@"print", serviceTarget(label)]) != EXIT_SUCCESS;
+    });
 }
 
 #endif

@@ -39,9 +39,9 @@ namespace TestWebKitAPI {
 
 RetainPtr<NSURL> currentExecutableDirectory();
 
-void killFirstInstanceOfDaemon(NSString *daemonExecutableName);
+BOOL restartService(NSString *label, NSString *daemonExecutableName);
 
-BOOL restartService(NSString *serviceName, NSString *daemonExecutableName);
+BOOL stopTestDaemon(NSString *label, NSString *daemonExecutableName);
 
 void registerPlistWithLaunchD(NSDictionary<NSString *, id> *plist, NSURL *tempDir);
 

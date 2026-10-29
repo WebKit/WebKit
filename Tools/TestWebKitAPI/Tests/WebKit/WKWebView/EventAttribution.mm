@@ -506,10 +506,12 @@ static RetainPtr<NSURL> testPCMDaemonLocation()
     return [currentExecutableDirectory() URLByAppendingPathComponent:@"adattributiond" isDirectory:NO];
 }
 
+static NSString * const testPCMDaemonLabel = @"org.webkit.pcmtestdaemon";
+
 static NSDictionary<NSString *, id> *testDaemonPList(NSURL *storageLocation)
 {
     return @{
-        @"Label" : @"org.webkit.pcmtestdaemon",
+        @"Label" : testPCMDaemonLabel,
         @"LaunchOnlyOnce" : @YES,
         @"StandardErrorPath" : [storageLocation URLByAppendingPathComponent:@"daemon_stderr"].path,
         @"EnvironmentVariables" : @{
@@ -536,8 +538,6 @@ static std::pair<NSURL *, WKWebViewConfiguration *> setUpDaemon(WKWebViewConfigu
         [fileManager removeItemAtURL:tempDir error:&error];
     EXPECT_NULL(error);
 
-    killFirstInstanceOfDaemon(@"adattributiond");
-
     registerPlistWithLaunchD(testDaemonPList(tempDir), tempDir);
 
     RetainPtr dataStoreConfiguration = temporaryDataStoreConfiguration();
@@ -549,7 +549,7 @@ static std::pair<NSURL *, WKWebViewConfiguration *> setUpDaemon(WKWebViewConfigu
 
 static void cleanUpDaemon(NSURL *tempDir)
 {
-    killFirstInstanceOfDaemon(@"adattributiond");
+    EXPECT_TRUE(stopTestDaemon(testPCMDaemonLabel, @"adattributiond"));
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:tempDir.path]);
     NSError *error = nil;

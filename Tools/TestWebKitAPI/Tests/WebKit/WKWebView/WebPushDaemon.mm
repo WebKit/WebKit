@@ -154,10 +154,12 @@ enum LaunchOnlyOnce : BOOL { No, Yes };
 enum class InstallDataStoreDelegate : bool { No, Yes };
 enum class BuiltInNotificationsEnabled : bool { No, Yes };
 
+static NSString * const testWebPushDaemonLabel = @"org.webkit.webpushtestdaemon";
+
 static NSDictionary<NSString *, id> *testWebPushDaemonPList(NSURL *storageLocation, LaunchOnlyOnce launchOnlyOnce)
 {
     return @{
-        @"Label" : @"org.webkit.webpushtestdaemon",
+        @"Label" : testWebPushDaemonLabel,
         @"LaunchOnlyOnce" : @(static_cast<BOOL>(launchOnlyOnce)),
         @"ThrottleInterval" : @(1),
         @"StandardErrorPath" : [storageLocation URLByAppendingPathComponent:@"daemon_stderr"].path,
@@ -188,10 +190,20 @@ static bool shouldSetupWebPushD()
     return shouldSetup;
 }
 
-static NSURL *setUpTestWebPushD(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes)
+class ScopedTestWebPushD {
+    WTF_MAKE_NONCOPYABLE(ScopedTestWebPushD);
+public:
+    explicit ScopedTestWebPushD(LaunchOnlyOnce = LaunchOnlyOnce::Yes);
+    ~ScopedTestWebPushD();
+
+private:
+    RetainPtr<NSURL> m_tempDirectory;
+};
+
+ScopedTestWebPushD::ScopedTestWebPushD(LaunchOnlyOnce launchOnlyOnce)
 {
     if (!shouldSetupWebPushD())
-        return nil;
+        return;
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"WebPushDaemonTest"] isDirectory:YES];
@@ -200,31 +212,29 @@ static NSURL *setUpTestWebPushD(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::
         [fileManager removeItemAtURL:tempDir error:&error];
     EXPECT_NULL(error);
 
-    killFirstInstanceOfDaemon(@"webpushd");
-
     registerPlistWithLaunchD(testWebPushDaemonPList(tempDir, launchOnlyOnce), tempDir);
 
-    return tempDir;
+    m_tempDirectory = tempDir;
 }
 
 // Only works if the test daemon was registered with LaunchOnlyOnce::No.
 static BOOL restartTestWebPushD()
 {
-    return restartService(@"org.webkit.webpushtestdaemon", @"webpushd");
+    return restartService(testWebPushDaemonLabel, @"webpushd");
 }
 
-static void cleanUpTestWebPushD(NSURL *tempDir)
+ScopedTestWebPushD::~ScopedTestWebPushD()
 {
     if (!shouldSetupWebPushD())
         return;
 
-    killFirstInstanceOfDaemon(@"webpushd");
+    EXPECT_TRUE(stopTestDaemon(testWebPushDaemonLabel, @"webpushd"));
 
-    if (![[NSFileManager defaultManager] fileExistsAtPath:tempDir.path])
+    if (![[NSFileManager defaultManager] fileExistsAtPath:m_tempDirectory.get().path])
         return;
 
     NSError *error = nil;
-    [[NSFileManager defaultManager] removeItemAtURL:tempDir error:&error];
+    [[NSFileManager defaultManager] removeItemAtURL:m_tempDirectory.get() error:&error];
 
     if (error)
         NSLog(@"Error removing tempDir URL: %@", error);
@@ -551,7 +561,7 @@ OSObjectPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* 
 
 TEST(WebPushD, BasicCommunication)
 {
-    NSURL *tempDir = setUpTestWebPushD();
+    ScopedTestWebPushD testDaemon;
 
     OSObjectPtr connection = adoptOSObject(xpc_connection_create_mach_service("org.webkit.webpushtestdaemon.service", mainDispatchQueueSingleton(), 0));
 
@@ -583,7 +593,6 @@ TEST(WebPushD, BasicCommunication)
 
     TestWebKitAPI::Util::run(&messageReplied);
     TestWebKitAPI::Util::run(&interrupted);
-    cleanUpTestWebPushD(tempDir);
 }
 
 static void clearWebsiteDataStore(WKWebsiteDataStore *store)
@@ -1415,11 +1424,11 @@ private:
 class WebPushDTest : public ::testing::Test {
 public:
     WebPushDTest(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes, ASCIILiteral html = htmlSource, InstallDataStoreDelegate installDataStoreDelegate = InstallDataStoreDelegate::No, BuiltInNotificationsEnabled builtInNotificationsEnabled = BuiltInNotificationsEnabled::No)
-        : m_html(html)
+        : m_testDaemon(launchOnlyOnce)
+        , m_html(html)
         , m_installDataStoreDelegate(installDataStoreDelegate)
         , m_builtInNotificationsEnabled(builtInNotificationsEnabled)
     {
-        m_tempDirectory = retainPtr(setUpTestWebPushD(launchOnlyOnce));
     }
 
     void SetUp() override
@@ -1445,11 +1454,6 @@ public:
         m_webViews.append(WTF::move(webViewWithPartitionAndIdentifier));
     }
 
-    ~WebPushDTest()
-    {
-        cleanUpTestWebPushD(m_tempDirectory.get());
-    }
-
     Vector<UniqueRef<WebPushDTestWebView>>& webViews() { return m_webViews; }
 
     std::pair<Vector<String>, Vector<String>> getPushTopics()
@@ -1472,7 +1476,7 @@ public:
     size_t subscribedTopicsCount() { return getPushTopics().first.size(); }
 
 protected:
-    RetainPtr<NSURL> m_tempDirectory;
+    ScopedTestWebPushD m_testDaemon;
     std::unique_ptr<TestWebKitAPI::TestNotificationProvider> m_notificationProvider;
     Vector<UniqueRef<WebPushDTestWebView>> m_webViews;
     ASCIILiteral m_html;
@@ -2765,7 +2769,7 @@ static size_t expectedSuccessfulMessages()
 // Directly message the daemon to do JSON parsing validation on the declarative message
 TEST(WebPushD, DeclarativeParsing)
 {
-    setUpTestWebPushD();
+    ScopedTestWebPushD testDaemon;
 
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
 
@@ -2816,7 +2820,7 @@ TEST(WebPushD, DeclarativeParsing)
 // back into the client for showing the notification, etc.
 TEST(WebPushD, DeclarativeWebPushHandling)
 {
-    setUpTestWebPushD();
+    ScopedTestWebPushD testDaemon;
 
     RetainPtr dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
@@ -2878,7 +2882,7 @@ TEST(WebPushD, DeclarativeWebPushHandling)
 
 TEST(WebPushD, WKWebPushDaemonConnectionRequestPushPermission)
 {
-    setUpTestWebPushD();
+    ScopedTestWebPushD testDaemon;
 
     RetainPtr configuration = adoptNS([[_WKWebPushDaemonConnectionConfiguration alloc] init]);
     configuration.get().machServiceName = @"org.webkit.webpushtestdaemon.service";
@@ -2911,7 +2915,7 @@ TEST(WebPushD, WKWebPushDaemonConnectionRequestPushPermission)
 
 TEST(WebPushD, WKWebPushDaemonConnectionPushNotifications)
 {
-    setUpTestWebPushD();
+    ScopedTestWebPushD testDaemon;
 
     RetainPtr configuration = adoptNS([[_WKWebPushDaemonConnectionConfiguration alloc] init]);
     configuration.get().machServiceName = @"org.webkit.webpushtestdaemon.service";
@@ -3078,7 +3082,7 @@ TEST(WebPushD, WKWebPushDaemonConnectionPushNotifications)
 
 TEST(WebPushD, WKWebPushDaemonConnectionSubscribeWithBadIPCVersionRaisesException)
 {
-    setUpTestWebPushD();
+    ScopedTestWebPushD testDaemon;
 
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
     auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
