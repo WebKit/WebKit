@@ -83,6 +83,11 @@ inline bool isInModelProcess()
 #endif
 }
 
+// The printing process is a WebContent process that draws print snapshots and hosts no page, so
+// isInWebProcess() is true in it too.
+WTF_EXPORT_PRIVATE void LEGACY_NODELETE setIsInPrintingProcess();
+WTF_EXPORT_PRIVATE bool LEGACY_NODELETE isInPrintingProcess();
+
 } // namespace WTF
 
 using WTF::checkAuxiliaryProcessType;
@@ -90,12 +95,14 @@ using WTF::isInAuxiliaryProcess;
 using WTF::isInGPUProcess;
 using WTF::isInModelProcess;
 using WTF::isInNetworkProcess;
+using WTF::isInPrintingProcess;
 using WTF::isInWebProcess;
 using WTF::legacyPresentingApplicationPID;
 using WTF::processType;
 using WTF::processTypeDescription;
 using WTF::setAuxiliaryProcessType;
 using WTF::setAuxiliaryProcessTypeForTesting;
+using WTF::setIsInPrintingProcess;
 using WTF::setLegacyPresentingApplicationPID;
 
 #if HAVE(AUDIT_TOKEN)

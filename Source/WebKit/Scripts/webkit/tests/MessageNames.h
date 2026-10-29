@@ -38,6 +38,7 @@ enum class ProcessName : uint8_t {
     GPU,
     WebContent,
     Model,
+    Printing,
     Unknown
 };
 

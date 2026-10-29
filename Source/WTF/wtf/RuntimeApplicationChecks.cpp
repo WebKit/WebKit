@@ -102,6 +102,23 @@ std::optional<AuxiliaryProcessType> processType()
     return auxiliaryProcessType();
 }
 
+static bool& LEGACY_NODELETE isPrintingProcess()
+{
+    static bool isPrintingProcess;
+    return isPrintingProcess;
+}
+
+void setIsInPrintingProcess()
+{
+    ASSERT(isInWebProcess());
+    isPrintingProcess() = true;
+}
+
+bool isInPrintingProcess()
+{
+    return isPrintingProcess();
+}
+
 ASCIILiteral processTypeDescription(std::optional<AuxiliaryProcessType> type)
 {
     if (!type)

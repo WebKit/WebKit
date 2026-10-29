@@ -512,6 +512,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
     ASSERT(m_pageMap.isEmpty());
 
     m_isPrintProcess = parameters.isPrintProcess;
+    // Before any message receiver of the print process can be created.
+    if (m_isPrintProcess)
+        setIsInPrintingProcess();
 
     if (parameters.websiteDataStoreParameters)
         setWebsiteDataStoreParameters(WTF::move(*parameters.websiteDataStoreParameters));
