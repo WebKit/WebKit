@@ -9601,9 +9601,18 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
 
     RefPtr protectedPageClient { pageClient() };
 
+#if ENABLE(WEBDRIVER_BIDI)
+    // Reported before the classic completion below, so that a pending browsingContext.navigate
+    // learns the navigation failed before that completion resolves it.
+    if (willInternallyHandleFailure == WillInternallyHandleFailure::No) {
+        if (RefPtr automationSession = activeAutomationSession())
+            automationSession->navigationFailedForFrame(frame, navigationID);
+    }
+#endif
+
     if (m_controlledByAutomation && willInternallyHandleFailure == WillInternallyHandleFailure::No) {
         if (RefPtr automationSession = process->processPool().automationSession())
-            automationSession->navigationOccurredForFrame(frame);
+            automationSession->navigationOccurredForFrame(frame, navigationID);
     }
 
     if (RefPtr failedNavigation = navigationID ? m_navigationState->navigation(*navigationID) : nullptr)
@@ -9643,12 +9652,6 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
     frame.didFailProvisionalLoad();
 
     protectedPageLoadState->commitChanges();
-#if ENABLE(WEBDRIVER_BIDI)
-    if (willInternallyHandleFailure == WillInternallyHandleFailure::No) {
-        if (RefPtr automationSession = activeAutomationSession())
-            automationSession->navigationFailedForFrame(frame, navigationID);
-    }
-#endif
 
     ASSERT(!m_failingProvisionalLoadURL);
     m_failingProvisionalLoadURL = WTF::move(provisionalURL);
@@ -10576,8 +10579,10 @@ void WebPageProxy::didFinishLoadForFrame(IPC::Connection& connection, FrameIdent
             protectedPageLoadState->didFinishLoad(transaction);
 
         if (RefPtr automationSession = activeAutomationSession()) {
-            automationSession->navigationOccurredForFrame(*frame);
+            // Emit browsingContext.load before completing a pending navigate/reload command, which must not
+            // return to the client ahead of the event it waited for.
             automationSession->loadCompletedForFrame(*frame, navigationID, WallTime::now());
+            automationSession->navigationOccurredForFrame(*frame, navigationID);
         }
 
         frame->didFinishLoad();
@@ -10659,17 +10664,20 @@ void WebPageProxy::didFailLoadForFrame(IPC::Connection& connection, FrameIdentif
         internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications = nullptr;
     }
 
+#if ENABLE(WEBDRIVER_BIDI)
+    // Reported before the classic completion below, so that a pending browsingContext.navigate
+    // learns the navigation failed before that completion resolves it.
+    if (RefPtr automationSession = activeAutomationSession())
+        automationSession->navigationFailedForFrame(*frame, navigationID);
+#endif
+
     if (m_controlledByAutomation) {
         if (RefPtr automationSession = m_configuration->processPool().automationSession())
-            automationSession->navigationOccurredForFrame(*frame);
+            automationSession->navigationOccurredForFrame(*frame, navigationID);
     }
 
     frame->didFailLoad();
     protectedPageLoadState->commitChanges();
-#if ENABLE(WEBDRIVER_BIDI)
-    if (RefPtr automationSession = activeAutomationSession())
-        automationSession->navigationFailedForFrame(*frame, navigationID);
-#endif
     if (m_loaderClient)
         m_loaderClient->didFailLoadWithErrorForFrame(*this, *frame, navigation.get(), error, process->transformHandlesToObjects(protect(userData.object()).get()).get());
     else {
@@ -10726,19 +10734,25 @@ void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection
     if (isMainFrame)
         protectedPageLoadState->didSameDocumentNavigation(transaction, url);
 
-    if (m_controlledByAutomation) {
-        if (RefPtr automationSession = m_configuration->processPool().automationSession())
-            automationSession->navigationOccurredForFrame(*frame);
-    }
-
     protectedPageLoadState->clearPendingAPIRequest(transaction);
+#if ENABLE(WEBDRIVER_BIDI)
+    RefPtr automationSession = activeAutomationSession();
+    URL previousURL = automationSession ? frame->url() : URL { };
+#endif
     frame->didSameDocumentNavigation(WTF::move(url));
 
     protectedPageLoadState->commitChanges();
 #if ENABLE(WEBDRIVER_BIDI)
-    if (RefPtr automationSession = activeAutomationSession())
-        automationSession->fragmentNavigatedForFrame(*frame, navigationID);
+    // Reported before the classic completion below, so that a pending browsingContext.navigate learns
+    // the navigation's id and the event precedes the command's reply.
+    if (automationSession)
+        automationSession->sameDocumentNavigationOccurredForFrame(*frame, navigationType, navigationID, previousURL);
 #endif
+
+    if (m_controlledByAutomation) {
+        if (RefPtr automationSession = m_configuration->processPool().automationSession())
+            automationSession->navigationOccurredForFrame(*frame, navigationID);
+    }
 
     if (isMainFrame)
         m_navigationClient->didSameDocumentNavigation(*this, navigation.get(), navigationType, process->transformHandlesToObjects(protect(userData.object()).get()).get());
@@ -10781,19 +10795,25 @@ void WebPageProxy::didSameDocumentNavigationForFrameViaJS(IPC::Connection& conne
     if (isMainFrame)
         protectedPageLoadState->didSameDocumentNavigation(transaction, url);
 
-    if (m_controlledByAutomation) {
-        if (RefPtr automationSession = m_configuration->processPool().automationSession())
-            automationSession->navigationOccurredForFrame(*frame);
-    }
-
     protectedPageLoadState->clearPendingAPIRequest(transaction);
+#if ENABLE(WEBDRIVER_BIDI)
+    RefPtr automationSession = activeAutomationSession();
+    URL previousURL = automationSession ? frame->url() : URL { };
+#endif
     frame->didSameDocumentNavigation(WTF::move(url));
 
     protectedPageLoadState->commitChanges();
 #if ENABLE(WEBDRIVER_BIDI)
-    if (RefPtr automationSession = activeAutomationSession())
-        automationSession->fragmentNavigatedForFrame(*frame, navigation ? std::optional(navigation->navigationID()) : std::nullopt);
+    // Reported before the classic completion below, so that a pending browsingContext.navigate learns
+    // the navigation's id and the event precedes the command's reply.
+    if (automationSession)
+        automationSession->sameDocumentNavigationOccurredForFrame(*frame, navigationType, navigation ? std::optional(navigation->navigationID()) : std::nullopt, previousURL);
 #endif
+
+    if (m_controlledByAutomation) {
+        if (RefPtr automationSession = m_configuration->processPool().automationSession())
+            automationSession->navigationOccurredForFrame(*frame);
+    }
 
     if (isMainFrame)
         m_navigationClient->didSameDocumentNavigation(*this, navigation.get(), navigationType, process->transformHandlesToObjects(protect(userData.object()).get()).get());

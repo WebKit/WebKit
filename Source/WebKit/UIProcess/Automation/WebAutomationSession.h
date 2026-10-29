@@ -107,6 +107,7 @@ class WebDriverBidiProcessor;
 #endif
 
 enum class ForceSoftwareCapturingViewportSnapshot : bool;
+enum class SameDocumentNavigationType : uint8_t;
 
 class AutomationCommandError {
 public:
@@ -181,7 +182,7 @@ public:
     WebProcessPool* LEGACY_NODELETE processPool() const;
     void setProcessPool(WebProcessPool*);
 
-    void navigationOccurredForFrame(const WebFrameProxy&);
+    void navigationOccurredForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier> = std::nullopt);
     void documentLoadedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>, WallTime timestamp);
     void loadCompletedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>, WallTime timestamp);
     void inspectorFrontendLoaded(const WebPageProxy&);
@@ -190,11 +191,16 @@ public:
     void wheelEventsFlushedForPage(const WebPageProxy&);
 #if ENABLE(WEBDRIVER_BIDI)
     void didCreatePage(WebPageProxy&);
+    // browsingContext.navigate: loads `url` in the page, or in `frameHandle`'s frame when it is not empty, and resolves with the
+    // requested URL and the navigation id. Unlike the classic command, a navigation that fails or whose context closes is an error.
+    void navigateBrowsingContextForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& url, Inspector::Protocol::Automation::PageLoadStrategy, Seconds pageLoadTimeout, Inspector::CommandCallbackOf<String, String>&&);
     void navigationStartedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void navigationCommittedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void navigationFailedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void navigationAbortedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void fragmentNavigatedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
+    void historyUpdatedForFrame(const WebFrameProxy&);
+    void sameDocumentNavigationOccurredForFrame(const WebFrameProxy&, SameDocumentNavigationType, std::optional<WebCore::NavigationIdentifier>, const URL& previousURL);
     void emitContextCreatedEvent(const WebPageProxy&);
     void didCreateFrame(const WebFrameProxy&);
     void willDestroyFrame(const WebFrameProxy&);
@@ -362,9 +368,19 @@ private:
     Ref<Inspector::Protocol::Automation::BrowsingContext> buildBrowsingContextForPage(WebPageProxy&, WebCore::FloatRect windowFrame);
     void getNextContext(Vector<Ref<WebPageProxy>>&&, Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>>&&);
 
-    void waitForNavigationToCompleteOnPage(WebPageProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&);
-    void waitForNavigationToCompleteOnFrame(WebFrameProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&);
-    void respondToPendingPageNavigationCallbacksWithTimeout(HashMap<WebPageProxyIdentifier, Vector<Inspector::CommandCallback<void>>>&);
+    // A wait registered by a command that started a navigation only completes for that navigation or a later
+    // one, so a load that was already in flight (e.g. the initial about:blank of a new tab) cannot end it early.
+    struct PendingPageNavigationCallback {
+        std::optional<WebCore::NavigationIdentifier> navigationID;
+        Inspector::CommandCallback<void> callback;
+    };
+    Vector<Inspector::CommandCallback<void>> takePendingPageNavigationCallbacks(HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>>&, const WebPageProxy&, std::optional<WebCore::NavigationIdentifier> finishedNavigationID);
+    void waitForNavigationToCompleteOnPage(WebPageProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&, std::optional<WebCore::NavigationIdentifier> = std::nullopt);
+    // A caller that has just started a load in the frame passes LoadStarted::Yes: the frame's load state does not
+    // change until the web process reports the load, so without it the wait would complete at once.
+    enum class LoadStarted : bool { No, Yes };
+    void waitForNavigationToCompleteOnFrame(WebFrameProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&, LoadStarted = LoadStarted::No);
+    void respondToPendingPageNavigationCallbacksWithTimeout(HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>>&);
     void respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<WebCore::FrameIdentifier, Vector<Inspector::CommandCallback<void>>>&);
     void respondToPendingNavigationCallbacksWithSuccess(Vector<Inspector::CommandCallback<void>>&&);
     void loadTimerFired();
@@ -449,6 +465,15 @@ private:
 
 #if ENABLE(WEBDRIVER_BIDI)
     const UniqueRef<WebDriverBidiProcessor> m_bidiProcessor;
+
+    // The browsingContext.navigate in flight for a frame: the id to report, filled in from the API::Navigation for a
+    // main frame or from WebCore's first navigationStarted/fragmentNavigated report for a child frame, and whether
+    // WebCore reported the navigation failed before the classic wait completed it.
+    struct BidiPendingNavigation {
+        std::optional<WebCore::NavigationIdentifier> navigationID;
+        bool failed { false };
+    };
+    HashMap<WebCore::FrameIdentifier, BidiPendingNavigation> m_bidiPendingNavigationPerFrame;
 #endif
 
     HashMap<WebPageProxyIdentifier, String> m_webPageHandleMap;
@@ -467,8 +492,8 @@ private:
     // reference reports "no such element" again instead of "stale element reference".
     HashMap<WebCore::FrameIdentifier, ListHashSet<String>> m_knownNodeReferences;
 
-    HashMap<WebPageProxyIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingNormalNavigationInBrowsingContextCallbacksPerPage;
-    HashMap<WebPageProxyIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingEagerNavigationInBrowsingContextCallbacksPerPage;
+    HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>> m_pendingNormalNavigationInBrowsingContextCallbacksPerPage;
+    HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>> m_pendingEagerNavigationInBrowsingContextCallbacksPerPage;
     HashMap<WebCore::FrameIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame;
     HashMap<WebCore::FrameIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame;
     HashMap<WebPageProxyIdentifier, Inspector::CommandCallback<void>> m_pendingInspectorCallbacksPerPage;
