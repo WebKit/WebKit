@@ -4588,6 +4588,7 @@ fast/harness/platform-layer-tree-as-text.html [ Skip ]
 
 http/tests/iframe-memory-monitor/media-video-autoplay-in-frames.html [ Skip ] # Timeout.
 media/media-source/media-source-rendering-update-count.html [ Skip ] # Timeout.
+media/media-source/media-source-detachable-collected-while-detached.html [ Pass ]
 
 http/tests/lockdown-mode/heic-shown-in-lockdown-mode.http.html [ Failure ]
 http/tests/lockdown-mode/no-heic-in-lockdown-mode.https.html [ Failure ]

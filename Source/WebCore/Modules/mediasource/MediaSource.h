@@ -199,6 +199,7 @@ private:
     void open();
 
     void removeSourceBufferWithOptionalDestruction(SourceBuffer&, bool withDestruction);
+    void removeAllSourceBuffersAndShutdownPrivate();
 
     using RendererType = MediaSourcePrivateClient::RendererType;
     void failedToCreateRenderer(RendererType);
