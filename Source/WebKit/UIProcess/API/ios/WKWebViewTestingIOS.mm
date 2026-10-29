@@ -522,6 +522,9 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
 
 - (void)_resetObscuredInsetsForTesting
 {
+    if (_isChangingObscuredInsetsInteractively)
+        [self _endInteractiveObscuredInsetsChange];
+
     if (self._haveSetObscuredInsets)
         [self _resetObscuredInsets];
 }
