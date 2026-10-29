@@ -294,6 +294,14 @@ angle::Result TextureWgpu::copySubImage(const gl::Context *context,
                                       mState.getBaseLevelDesc().size));
     }
 
+    // The copy overwrites the contents that are uploaded to the level, so the uploads must be
+    // written first.
+    const gl::LevelIndex level(index.getLevelIndex());
+    if (mImage->isTextureLevelInAllocatedImage(level))
+    {
+        ANGLE_TRY(mImage->flushSingleLevelUpdates(contextWgpu, level, nullptr, 0));
+    }
+
     CopySource copySource;
     gl::Rectangle clippedSourceArea;
     if (!GetCopySource(source, sourceArea, &copySource, &clippedSourceArea))
@@ -465,7 +473,8 @@ angle::Result TextureWgpu::copySubImageImpl(const gl::Context *context,
             dstView, WGPUTextureAspect_All, WGPUTextureFormat_Undefined));
 
         WGPUExtent3D srcSize = gl_wgpu::GetExtent3D(source.size);
-        WGPUExtent3D dstSize = mImage->getTextureDescriptor().size;
+        WGPUExtent3D dstSize =
+            mImage->getLevelSize(mImage->toWgpuLevel(gl::LevelIndex(index.getLevelIndex())));
         const angle::Format &srcFormat =
             angle::Format::Get(colorReadRT->getImage()->getIntendedFormatID());
         const angle::Format &dstAngleFormat = dstFormat.getIntendedFormat();

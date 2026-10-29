@@ -2714,7 +2714,6 @@
 42266907 WGPU : WebGLCompatibilityTest.DrawElementsOffsetRestriction/* = SKIP
 42266907 WGPU : WebGLCompatibilityTest.TextureCopyingFeedbackLoops/* = SKIP
 42266907 WGPU : WebGLCompatibilityTest.BuiltInInvariant/* = SKIP
-42266907 WGPU : WebGLReadOutsideFramebufferTest.CopyTexSubImage2D/* = SKIP
 42266907 WGPU : WebGLReadOutsideFramebufferTest.CopyTexImage2D/* = SKIP
 498271998 WGPU : WebGLGLSLTest.ComplexExpression/* = SKIP
 
@@ -2735,7 +2734,7 @@
 418022112 WGPU : ImageTest.RespecificationOfOtherLevel/* = SKIP
 418022112 WGPU : ImageTest.SourceCubeAndSameTargetTextureWithEachCubeFace/* = SKIP
 423702346 WGPU : SimpleUniformTestES3.PackUniformFP16Test/* = SKIP
-438268609 WGPU : CopyTexImageTest.CopyTex*Cube*/* = SKIP
+438268609 WGPU : CopyTexImageTest.CopyTexSubImageToNonCubeCompleteDestination/* = SKIP
 // Unimplemented format conversions for image copies
 438268609 WGPU : CopyTexImageTest.RGBAToL*/* = SKIP
 438268609 WGPU : CopyTexImageTest.RGBToL/* = SKIP
