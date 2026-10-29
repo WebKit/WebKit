@@ -125,10 +125,13 @@ struct PackedVertexAttribute final
     uint16_t offset : kAttributeOffsetMaxBits;
     uint16_t enabled : 1;
     uint8_t format : kVertexFormatBitCount;
-    uint8_t pad1 : 2;
+    // Whether the attribute's vertex buffer slot steps once per instance instead of once per
+    // vertex.
+    uint8_t perInstance : 1;
+    uint8_t pad1 : 1;
     uint8_t shaderLocation : kVertexAttributeIndexBits;
     // The vertex buffer slot of the attribute. Attributes that read the same buffer with the same
-    // stride share a slot.
+    // stride and step mode share a slot.
     uint8_t bufferSlot : kVertexAttributeIndexBits;
     // The array stride of the attribute's vertex buffer slot.
     uint16_t stride : kVertexAttributeStrideBits;

@@ -380,6 +380,7 @@ angle::Result RenderPipelineDesc::createPipeline(ContextWgpu *context,
     {
         const size_t firstSlotAttrib = attribCount;
         uint32_t slotStride          = 0;
+        bool slotPerInstance         = false;
         for (const PackedVertexAttribute &packedAttrib : mVertexAttributes)
         {
             if (!packedAttrib.enabled || packedAttrib.bufferSlot != slot)
@@ -393,16 +394,20 @@ angle::Result RenderPipelineDesc::createPipeline(ContextWgpu *context,
             newAttribute.offset               = packedAttrib.offset;
             newAttribute.shaderLocation       = packedAttrib.shaderLocation;
             ASSERT(attribCount == firstSlotAttrib || slotStride == packedAttrib.stride);
-            slotStride = packedAttrib.stride;
+            ASSERT(attribCount == firstSlotAttrib || slotPerInstance == packedAttrib.perInstance);
+            slotStride      = packedAttrib.stride;
+            slotPerInstance = packedAttrib.perInstance;
 
             attribCount++;
         }
         ASSERT(attribCount > firstSlotAttrib);
 
+        const WGPUVertexStepMode stepMode =
+            slotPerInstance ? WGPUVertexStepMode_Instance : WGPUVertexStepMode_Vertex;
         WGPUVertexBufferLayout &newBufferLayout = vertexBuffers[slot];
         newBufferLayout                         = WGPU_VERTEX_BUFFER_LAYOUT_INIT;
         newBufferLayout.arrayStride             = slotStride;
-        newBufferLayout.stepMode                = WGPUVertexStepMode_Undefined;
+        newBufferLayout.stepMode                = stepMode;
         newBufferLayout.attributeCount          = attribCount - firstSlotAttrib;
         newBufferLayout.attributes              = &vertexAttribs[firstSlotAttrib];
     }

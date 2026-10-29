@@ -337,7 +337,7 @@ angle::Result VertexArrayWgpu::updateVertexBufferSlots(ContextWgpu *contextWgpu,
     }
 
     gl::AttribArray<webgpu::PackedVertexAttribute> newAttribs;
-    auto initAttrib = [&](size_t attribIndex, size_t slot) {
+    auto initAttrib = [&](size_t attribIndex, size_t slot, bool perInstance) {
         const webgpu::Format &webgpuFormat =
             contextWgpu->getFormat(attribs[attribIndex].format->glInternalFormat);
         webgpu::PackedVertexAttribute &newAttrib = newAttribs[attribIndex];
@@ -345,6 +345,7 @@ angle::Result VertexArrayWgpu::updateVertexBufferSlots(ContextWgpu *contextWgpu,
         SetBitField(newAttrib.format, webgpuFormat.getActualWgpuVertexFormat());
         SetBitField(newAttrib.shaderLocation, attribIndex);
         SetBitField(newAttrib.bufferSlot, slot);
+        SetBitField(newAttrib.perInstance, perInstance);
         return webgpuFormat.getActualBufferFormat().pixelBytes;
     };
 
@@ -357,7 +358,7 @@ angle::Result VertexArrayWgpu::updateVertexBufferSlots(ContextWgpu *contextWgpu,
         for (size_t attribIndex : bufferSlot.attributes)
         {
             const gl::VertexAttribute &attrib = attribs[attribIndex];
-            initAttrib(attribIndex, slotCount);
+            initAttrib(attribIndex, slotCount, bufferSlot.divisor != 0);
             SetBitField(newAttribs[attribIndex].offset,
                         gl::ComputeVertexAttributeOffset(attrib, bindings[attrib.bindingIndex]) -
                             slotOffset);
@@ -379,7 +380,7 @@ angle::Result VertexArrayWgpu::updateVertexBufferSlots(ContextWgpu *contextWgpu,
             {
                 continue;
             }
-            const size_t destTypeSize = initAttrib(attribIndex, slotCount);
+            const size_t destTypeSize = initAttrib(attribIndex, slotCount, divisor != 0);
             SetBitField(newAttribs[attribIndex].offset, streamingSlot.stride);
             streamingSlot.stride +=
                 rx::roundUpPow2(destTypeSize, webgpu::kBufferCopyToBufferAlignment);
@@ -406,7 +407,8 @@ angle::Result VertexArrayWgpu::updateVertexBufferSlots(ContextWgpu *contextWgpu,
         }
         for (size_t attribIndex : zeroAttributes)
         {
-            const size_t destTypeSize = initAttrib(attribIndex, slotCount);
+            // The slot has a stride of 0, so per-vertex and per-instance attributes share it.
+            const size_t destTypeSize = initAttrib(attribIndex, slotCount, false);
             ASSERT(destTypeSize <= kZeroBufferSize);
             ANGLE_UNUSED_VARIABLE(destTypeSize);
             SetBitField(newAttribs[attribIndex].offset, 0);
