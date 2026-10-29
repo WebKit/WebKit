@@ -42,7 +42,6 @@ PACKAGES+=(
     # These are dependencies necessary for building the jhbuild.
     libgbm-dev
     libgnutls28-dev
-    libgpg-error-dev
     libpciaccess-dev
     libv4l-dev
     libunwind-dev

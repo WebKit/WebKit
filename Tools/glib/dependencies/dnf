@@ -26,7 +26,6 @@ PACKAGES=(
     lcms2-devel
     libepoxy-devel
     libevent-devel
-    libgcrypt-devel
     libinput-devel
     libjpeg-turbo-devel
     libjxl-devel
@@ -38,7 +37,6 @@ PACKAGES=(
     libsoup3-devel
     libsqlite3x-devel
     libsrtp-devel
-    libtasn1-devel
     libvorbis-devel
     libv4l-devel
     libva-devel

@@ -11,7 +11,6 @@ PACKAGES+=(
     gtk3
     gtk4
     libffi
-    libgcrypt
     libpulse
     librsvg
     libsecret
@@ -33,7 +32,6 @@ PACKAGES+=(
     hunspell
     hunspell-en_us
     hunspell-en_gb
-    libgpg-error
     weston
     xorg-server-xvfb
 

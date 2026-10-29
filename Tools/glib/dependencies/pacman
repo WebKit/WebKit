@@ -39,7 +39,6 @@ PACKAGES=(
     libseccomp
     libsysprof-capture
     libsystemd
-    libtasn1
     libtool
     libva
     libwebp
@@ -48,6 +47,7 @@ PACKAGES=(
     make
     ninja
     openjpeg2
+    openssl
     openxr
     patch
     perl-file-copy-recursive

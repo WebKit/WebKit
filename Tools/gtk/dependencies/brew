@@ -10,13 +10,11 @@ PACKAGES=(
     intltool
     itstool
     libcroco
-    libgcrypt
-    libgpg-error
-    libtasn1
     libtiff
     libtool
     little-cms2
     ninja
+    openssl@3
     pango
     pkg-config
     sqlite

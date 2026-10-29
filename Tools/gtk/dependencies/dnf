@@ -33,7 +33,6 @@ PACKAGES+=(
     bison
     flex
     libdrm-devel
-    libgpg-error-devel
     libpciaccess-devel
     libunwind-devel
 )
