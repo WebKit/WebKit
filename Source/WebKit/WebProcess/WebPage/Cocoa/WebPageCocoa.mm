@@ -338,13 +338,6 @@ bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) con
 
 void WebPage::performDictionaryLookupAtLocation(FrameIdentifier frameID, const FloatPoint& floatPoint, CompletionHandler<void(std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
-#if ENABLE(PDF_PLUGIN)
-    if (RefPtr pluginView = mainFramePlugIn()) {
-        if (pluginView->performDictionaryLookupAtLocation(floatPoint))
-            return completionHandler(std::nullopt);
-    }
-#endif
-
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     RefPtr localFrame = webFrame ? webFrame->coreLocalFrame() : nullptr;
     RefPtr view = localFrame ? localFrame->view() : nullptr;
@@ -358,6 +351,13 @@ void WebPage::performDictionaryLookupAtLocation(FrameIdentifier frameID, const F
 
     if (auto remoteUserInputEventData = remoteUserInputEventDataForHitTestResult(result, *view, point))
         return completionHandler(WTF::move(remoteUserInputEventData));
+
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr pluginView = result.isOverWidget() ? pluginViewForFrame(protect(result.innerNodeFrame()).get()) : nullptr) {
+        if (pluginView->performDictionaryLookupAtLocation(floatPoint))
+            return completionHandler(std::nullopt);
+    }
+#endif
 
     if (auto rangeResult = DictionaryLookup::rangeAtHitTestResult(result)) {
         if (RefPtr frame = rangeResult->start.document().frame())
