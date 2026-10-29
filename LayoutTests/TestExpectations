@@ -279,6 +279,12 @@ fast/shapes/shape-outside-floats/shape-outside-imagedata-overflow.html [ Skip ]
 [ Debug ] security/decode-buffer-size.html [ Skip ]
 [ Debug ] security/text-decode-long-strings.html [ Skip ]
 
+# These hit debug-only assertions in UniqueIDBDatabase teardown, so we skip them there.
+# <rdar://186427316>
+[ Debug ] storage/indexeddb/clear-data-with-stalled-abort-crash.html [ Skip ]
+[ Debug ] storage/indexeddb/close-database-with-stalled-abort-crash.html [ Skip ]
+[ Debug ] storage/indexeddb/delete-database-with-stalled-abort-crash.html [ Skip ]
+
 # Only iOS supports QuickLook
 quicklook [ Skip ]
 http/tests/quicklook [ Skip ]
