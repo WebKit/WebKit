@@ -35,6 +35,7 @@
 #include <WebCore/ImageOrientation.h>
 #include <WebCore/ImageTypes.h>
 #include <WebCore/NaturalDimensions.h>
+#include <WebCore/SourceImage.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
@@ -126,6 +127,7 @@ public:
 
     virtual ColorSpace colorSpace();
     virtual bool hasHDRContent() const { return false; }
+    virtual bool hasHDRContentForTesting() const { return false; }
 
     // Animation begins whenever someone draws the image, so startAnimation() is not normally called.
     // It will automatically pause once all observers no longer want to render the image anywhere.
@@ -160,7 +162,11 @@ public:
     virtual RefPtr<NativeImage> currentNativeImage(ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
     virtual RefPtr<NativeImage> currentPreTransformedNativeImage(ConcreteObjectSize, ImageOrientation = ImageOrientation::Orientation::FromImage, const ImageDrawingExtras* = nullptr);
 
-    virtual void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions = { }, const ImageDrawingExtras* = nullptr);
+    struct PatternTile {
+        SourceImage image;
+        FloatSize scale { 1, 1 };
+    };
+    virtual std::optional<PatternTile> currentPatternTile(GraphicsContext&, ConcreteObjectSize, ImageDrawingOptions, const ImageDrawingExtras* = nullptr);
 
 #if ASSERT_ENABLED
     virtual bool hasSolidColor() { return false; }

@@ -30,6 +30,7 @@
 #include "ImageBuffer.h"
 #include "ImageDrawingOptions.h"
 #include "ImageSizingContext.h"
+#include "NativeImage.h"
 #include "NinePieceGeometry.h"
 #include "RenderElement.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -37,9 +38,59 @@
 namespace WebCore {
 namespace Style {
 
+static std::optional<SourceImage> convertToLuminanceMask(GraphicsContext& context, SourceImage&& image)
+{
+    if (RefPtr imageBuffer = image.imageBufferIfExists()) {
+        imageBuffer->convertToLuminanceMask();
+        return WTF::move(image);
+    }
+
+    RefPtr nativeImage = image.nativeImageIfExists();
+    if (!nativeImage)
+        return std::nullopt;
+
+    RefPtr buffer = context.createImageBuffer(nativeImage->size());
+    if (!buffer)
+        return std::nullopt;
+
+    buffer->context().drawNativeImage(*nativeImage, FloatRect { { }, nativeImage->size() });
+    buffer->convertToLuminanceMask();
+    return SourceImage { buffer.releaseNonNull() };
+}
+
+static void drawPatternTile(GraphicsContext& context, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const WebCore::ImageDrawingExtras* extras)
+{
+    if (tile.isEmpty())
+        return;
+
+    if (options.headroom() == Headroom::FromImage && image.hasHDRContentForTesting()) {
+        WebCore::Image::fillWithSolidColor(context, destination, WebCore::Color::gold, options.compositeOperator());
+        return;
+    }
+
+    auto patternTile = image.currentPatternTile(context, concreteObjectSize, options, extras);
+    if (!patternTile)
+        return;
+
+    auto scaledTile = tile;
+    scaledTile.scale(patternTile->scale.width(), patternTile->scale.height());
+    auto scaledPatternTransform = patternTransform;
+    scaledPatternTransform.scale(1 / patternTile->scale.width(), 1 / patternTile->scale.height());
+
+    auto tileImage = WTF::move(patternTile->image);
+    if (options.drawLuminanceMask() == DrawLuminanceMask::Yes) {
+        auto mask = convertToLuminanceMask(context, WTF::move(tileImage));
+        if (!mask)
+            return;
+        tileImage = WTF::move(*mask);
+    }
+
+    context.drawPattern(tileImage, destination, scaledTile, scaledPatternTransform, phase, spacing, options);
+}
+
 static ImageDrawResult drawImageAsPattern(GraphicsContext& context, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const WebCore::ImageDrawingExtras* extras)
 {
-    image.drawPattern(context, concreteObjectSize, destination, tile, patternTransform, phase, spacing, options, extras);
+    drawPatternTile(context, image, concreteObjectSize, destination, tile, patternTransform, phase, spacing, options, extras);
     image.startAnimation();
     return ImageDrawResult::DidDraw;
 }

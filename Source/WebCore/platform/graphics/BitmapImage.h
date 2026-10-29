@@ -166,11 +166,10 @@ private:
     bool isBitmapImage() const final { return true; }
     bool isAnimating() const final { return m_source->isAnimating(); }
 
-    bool hasHDRContentForTesting() const { return m_source->hasHDRContentForTesting(); }
+    bool hasHDRContentForTesting() const final { return m_source->hasHDRContentForTesting(); }
 
     ImageDrawResult drawImage(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions, const ImageDrawingExtras*) final;
-    void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions = { }, const ImageDrawingExtras* = nullptr) final;
-    void drawLuminanceMaskPattern(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions);
+    std::optional<PatternTile> currentPatternTile(GraphicsContext&, ConcreteObjectSize, ImageDrawingOptions, const ImageDrawingExtras*) final;
 
     void dump(WTF::TextStream&) const final;
 

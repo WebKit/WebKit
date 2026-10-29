@@ -370,16 +370,16 @@ RefPtr<NativeImage> Image::currentPreTransformedNativeImage(ConcreteObjectSize c
     return currentNativeImage(concreteObjectSize, extras);
 }
 
-void Image::drawPattern(GraphicsContext& ctxt, ConcreteObjectSize concreteObjectSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const ImageDrawingExtras* extras)
+std::optional<Image::PatternTile> Image::currentPatternTile(GraphicsContext&, ConcreteObjectSize concreteObjectSize, ImageDrawingOptions options, const ImageDrawingExtras* extras)
 {
     RefPtr tileImage = currentPreTransformedNativeImage(concreteObjectSize, options.orientation(), extras);
     if (!tileImage)
-        return;
-
-    ctxt.drawPattern(*tileImage, destRect, tileRect, patternTransform, phase, spacing, options);
+        return std::nullopt;
 
     if (auto observer = imageObserver())
         observer->didDraw(*this);
+
+    return PatternTile { SourceImage { tileImage.releaseNonNull() } };
 }
 
 void Image::startAnimationAsynchronously()

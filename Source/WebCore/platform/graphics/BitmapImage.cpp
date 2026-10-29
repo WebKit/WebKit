@@ -225,39 +225,9 @@ ImageDrawResult BitmapImage::drawImage(GraphicsContext& context, ConcreteObjectS
     return ImageDrawResult::DidDraw;
 }
 
-void BitmapImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const ImageDrawingExtras*)
+std::optional<Image::PatternTile> BitmapImage::currentPatternTile(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, ImageDrawingOptions options, const ImageDrawingExtras* extras)
 {
-    if (tileRect.isEmpty())
-        return;
-
-    auto headroom = options.headroom();
-    if (headroom == Headroom::FromImage && hasHDRContentForTesting())
-        fillWithSolidColor(context, destinationRect, Color::gold, options.compositeOperator());
-    else if (options.drawLuminanceMask() == DrawLuminanceMask::Yes)
-        drawLuminanceMaskPattern(context, destinationRect, tileRect, transform, phase, spacing, options);
-    else
-        Image::drawPattern(context, concreteObjectSize, destinationRect, tileRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
-}
-
-void BitmapImage::drawLuminanceMaskPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options)
-{
-    ASSERT(!tileRect.isEmpty());
-    ASSERT(options.drawLuminanceMask() == DrawLuminanceMask::Yes);
-
-    auto buffer = context.createImageBuffer(expandedIntSize(tileRect.size()));
-    if (!buffer)
-        return;
-
-    auto bufferRect = FloatRect { { }, buffer->logicalSize() };
-    {
-        // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
-        ImageObserverDisableScope imageObserverDisabler(*this);
-        draw(buffer->context(), ConcreteObjectSize::fixed(size()), bufferRect, tileRect, { options, DecodingMode::Synchronous, ImageOrientation::Orientation::FromImage });
-    }
-
-    buffer->convertToLuminanceMask();
-
-    context.drawPattern(*buffer, destinationRect, bufferRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
+    return Image::currentPatternTile(context, concreteObjectSize, { options, ImageOrientation::Orientation::FromImage }, extras);
 }
 
 void BitmapImage::dump(TextStream& ts) const

@@ -35,6 +35,7 @@
 #include "ImageOrientation.h"
 #include "IntRect.h"
 #include "LayoutRoundedRect.h"
+#include "SourceImage.h"
 #include "SystemImage.h"
 #include "TextRun.h"
 #include "VideoFrame.h"
@@ -426,6 +427,14 @@ void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, const Fl
     scale({ 1 / filter.filterScale().width(), 1 / filter.filterScale().height() });
     drawImageBuffer(*imageBuffer, result->absoluteImageRect());
     scale(filter.filterScale());
+}
+
+void GraphicsContext::drawPattern(const SourceImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options)
+{
+    if (RefPtr nativeImage = image.nativeImageIfExists())
+        drawPattern(*nativeImage, destRect, tileRect, patternTransform, phase, spacing, options);
+    else if (RefPtr imageBuffer = image.imageBufferIfExists())
+        drawPattern(*imageBuffer, destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
 void GraphicsContext::drawPattern(ImageBuffer& image, const FloatRect& destRect, const FloatRect& source, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options)

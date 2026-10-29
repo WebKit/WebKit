@@ -315,8 +315,7 @@ RefPtr<NativeImage> SVGImage::currentPreTransformedNativeImage(ConcreteObjectSiz
     return nativeImage(concreteObjectSize, ColorSpace::SRGB(), extras);
 }
 
-void SVGImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect,
-    const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const ImageDrawingExtras* extras)
+std::optional<Image::PatternTile> SVGImage::currentPatternTile(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, ImageDrawingOptions options, const ImageDrawingExtras* extras)
 {
     FloatRect zoomedContainerRect = FloatRect(FloatPoint(), concreteObjectSize.size());
     zoomedContainerRect.scale(concreteObjectSize.zoom());
@@ -332,7 +331,7 @@ void SVGImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concrete
 
     RefPtr buffer = context.createImageBuffer(expandedIntSize(imageBufferSize.size()));
     if (!buffer)
-        return;
+        return std::nullopt;
 
     ImageDrawingOptions bufferOptions {
         options.ignoreRootPreserveAspectRatio(),
@@ -341,16 +340,8 @@ void SVGImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concrete
 #endif
     };
     draw(buffer->context(), concreteObjectSize, imageBufferSize, zoomedContainerRect, bufferOptions, extras);
-    if (options.drawLuminanceMask() == DrawLuminanceMask::Yes)
-        buffer->convertToLuminanceMask();
 
-    // Adjust the source rect and transform due to the image buffer's scaling.
-    FloatRect scaledSrcRect = srcRect;
-    scaledSrcRect.scale(imageBufferScale.width(), imageBufferScale.height());
-    AffineTransform unscaledPatternTransform(patternTransform);
-    unscaledPatternTransform.scale(1 / imageBufferScale.width(), 1 / imageBufferScale.height());
-
-    context.drawPattern(*buffer, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
+    return PatternTile { SourceImage { buffer.releaseNonNull() }, imageBufferScale };
 }
 
 ImageDrawResult SVGImage::drawImage(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImageDrawingOptions options, const ImageDrawingExtras* extras)
