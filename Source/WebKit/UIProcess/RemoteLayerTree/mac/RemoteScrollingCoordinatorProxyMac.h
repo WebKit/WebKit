@@ -70,6 +70,7 @@ private:
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>) override;
 
     void applyScrollingTreeLayerPositionsAfterCommit() override;
+    void flushLayerPositionsIfNeeded() override;
 
 #if ENABLE(THREADED_ANIMATIONS)
     void willCommitLayerAndScrollingTrees() override WTF_ACQUIRES_LOCK(m_eventDispatcher->m_animationLock);

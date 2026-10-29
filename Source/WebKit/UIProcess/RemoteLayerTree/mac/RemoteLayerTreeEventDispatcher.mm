@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "APIPageConfiguration.h"
+#import "AppKitSPI.h"
 #import "DisplayLink.h"
 #import "Logging.h"
 #import "NativeWebWheelEvent.h"
@@ -104,6 +105,15 @@ Ref<RemoteLayerTreeEventDispatcher> RemoteLayerTreeEventDispatcher::create(Remot
 }
 
 static constexpr Seconds wheelEventHysteresisDuration { 500_ms };
+
+bool RemoteLayerTreeEventDispatcher::mainThreadCommitsWaitForUpdateCycle()
+{
+#if HAVE(APPKIT_UPDATE_CYCLE)
+    return NSUpdateCycleEnabled();
+#else
+    return false;
+#endif
+}
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeEventDispatcher);
 
@@ -577,6 +587,7 @@ void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
     ASSERT(ScrollingThread::isCurrentThread());
     ASSERT(m_scrollingTreeLock.isLocked());
 
+    m_layerPositionsDeferredToRenderingUpdate = m_delayedRenderingUpdateDetectionTimer && m_delayedRenderingUpdateDetectionTimer->isActive();
     if (m_delayedRenderingUpdateDetectionTimer)
         m_delayedRenderingUpdateDetectionTimer->stop();
 
@@ -691,7 +702,18 @@ void RemoteLayerTreeEventDispatcher::renderingUpdateComplete()
     if (m_state == SynchronizationState::InRenderingUpdate)
         m_stateCondition.notifyOne();
 
+    if (std::exchange(m_layerPositionsDeferredToRenderingUpdate, false) && m_mainThreadCommitsWaitForUpdateCycle)
+        m_needsLayerPositionFlush = true;
+
     m_state = SynchronizationState::Idle;
+}
+
+void RemoteLayerTreeEventDispatcher::flushLayerPositionsIfNeeded()
+{
+    ASSERT(isMainRunLoop());
+
+    if (std::exchange(m_needsLayerPositionFlush, false))
+        [CATransaction flush];
 }
 
 #if ENABLE(THREADED_ANIMATIONS)

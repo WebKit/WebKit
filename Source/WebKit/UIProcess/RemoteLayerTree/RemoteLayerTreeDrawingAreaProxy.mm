@@ -335,8 +335,10 @@ void RemoteLayerTreeDrawingAreaProxy::notifyPendingCommitLayerTree(IPC::Connecti
 
 #if ENABLE(ASYNC_SCROLLING)
         if (RefPtr page = this->page()) {
-            if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
+            if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy()) {
                 scrollingCoordinatorProxy->applyScrollingTreeLayerPositionsAfterCommit();
+                scrollingCoordinatorProxy->flushLayerPositionsIfNeeded();
+            }
         }
 #endif
     }
@@ -487,6 +489,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
 
     updateSlowFrameIndicator();
     scheduleDisplayRefreshCallbacks();
+
+    if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
+        scrollingCoordinatorProxy->flushLayerPositionsIfNeeded();
 }
 
 #if ENABLE(TOUCH_EVENT_REGIONS)
