@@ -50,11 +50,8 @@
     - All files are converted to work in WebKit:
          1. All CSS properties requiring the -webkit-vendor prefix are prefixed - this current
             list of what needs prefixes is read from Source/WebCore/CSS/CSSProperties.in
-         2. Each reftest has its own copy of its reference file following the naming conventions
-            new-run-webkit-tests expects
-         3. If a reference files lives outside the directory of the test that uses it, it is checked
-            for paths to support files as it will be imported into a different relative position to the
-            test file (in the same directory)
+         2. Reftests keep the <link rel=match> and <link rel=mismatch> naming their references,
+            which run-webkit-tests reads; the references are imported where they are
 
      - Upon completion, script outputs the total number tests imported, broken down by test type
 
@@ -453,30 +450,11 @@ class TestImporter(object):
                     self._slow_tests.append(fullpath)
 
                 if 'match_reference' in test_info.keys() or 'mismatch_reference' in test_info.keys():
+                    # run-webkit-tests finds the references of imported reftests from their <link>s,
+                    # and the references themselves are imported like any other support file.
                     reftests += 1
                     total_tests += 1
-                    test_basename = self.filesystem.basename(test_info['test'])
-
-                    ref_files = []
-
-                    # Add the ref file, following WebKit style.
-                    # FIXME: Ideally we'd support reading the metadata
-                    # directly rather than relying  on a naming convention.
-                    # Using a naming convention creates duplicate copies of the
-                    # reference files.
-                    if 'match_reference' in test_info.keys():
-                        ref_file = self.filesystem.splitext(test_basename)[0] + '-expected'
-                        ref_file += self.filesystem.splitext(test_info['match_reference'])[1]
-                        copy_list.append({'src': test_info['match_reference'], 'dest': ref_file, 'reference_support_info': test_info['match_reference_support_info']})
-                        ref_files.append({'src': self.filesystem.split(test_info['match_reference'])[1], 'dest': self.filesystem.split(ref_file)[1]})
-
-                    if 'mismatch_reference' in test_info.keys():
-                        ref_file = self.filesystem.splitext(test_basename)[0] + '-expected-mismatch'
-                        ref_file += self.filesystem.splitext(test_info['mismatch_reference'])[1]
-                        copy_list.append({'src': test_info['mismatch_reference'], 'dest': ref_file, 'reference_support_info': test_info['mismatch_reference_support_info']})
-                        ref_files.append({'src': self.filesystem.split(test_info['mismatch_reference'])[1], 'dest': self.filesystem.split(ref_file)[1]})
-
-                    copy_list.append({'src': test_info['test'], 'dest': filename, 'reference_file_renames': ref_files})
+                    copy_list.append({'src': fullpath, 'dest': filename})
 
                 elif 'jstest' in test_info.keys():
                     jstests += 1

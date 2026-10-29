@@ -182,6 +182,19 @@ class SummarizedResultsTest(unittest.TestCase):
             summary = summarized_results(self.port, expected=False, passing=True, flaky=False, include_passes=True)
             self.assertEqual(summary['tests']['failures']['expected']['leak.html']['expected'], 'PASS')
 
+    def test_summarized_results_reftest_references(self):
+        with mocks.local.Git(path='/'), OutputCapture():
+            self.port._options.builder_name = 'dummy builder'
+            test_name = 'failures/expected/reftest.html'
+            expectations = test_expectations.TestExpectations(self.port, [test_name])
+            expectations.parse_all_expectations()
+            initial_results = test_run_results.TestRunResults(expectations, 1)
+            failure = test_failures.FailureReftestMismatch('/test.checkout/LayoutTests/failures/expected/reftest-ref.html', ImageDiffResult(passed=False, diff_image=None, difference=1))
+            result = test_results.TestResult(test_name, failures=[failure], reftest_type={'=='}, references=['failures/expected/reftest-ref.html'])
+            initial_results.add(result, True)
+            summary = test_run_results.summarize_results(self.port, {None: expectations}, initial_results, None, enabled_pixel_tests_in_retry=False)
+            self.assertEqual(summary['tests']['failures']['expected']['reftest.html']['references'], ['failures/expected/reftest-ref.html'])
+
     def test_summarized_run_metadata(self):
         with mocks.local.Git(path='/'), OutputCapture():
             self.port._options.builder_name = 'dummy builder'

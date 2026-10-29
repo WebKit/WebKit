@@ -25,7 +25,7 @@ import unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.controllers.single_test_runner import SingleTestRunner
-from webkitpy.layout_tests.models import test_expectations
+from webkitpy.layout_tests.models import test_expectations, test_failures
 from webkitpy.layout_tests.models.test_input import Test, TestInput
 from webkitpy.layout_tests.run_webkit_tests import parse_args
 from webkitpy.port.driver import DriverOutput
@@ -61,6 +61,19 @@ class TestDriver:
 
     def stop(self):
         """do nothing"""
+
+
+class ImageTestDriver(TestDriver):
+    """Records the tests run, outputting an image which only depends on whether the test is about:blank."""
+
+    def __init__(self, test_image):
+        self.test_names = []
+        self._test_image = test_image
+
+    def run_test(self, driver_input, stop_when_done):
+        self.test_names.append(driver_input.test_name)
+        image = b'blank-png' if driver_input.test_name == 'about:blank' else self._test_image
+        return DriverOutput('', image, image.decode() + '-checksum', None)
 
 
 class SingleTestRunnerTest(unittest.TestCase):
@@ -154,6 +167,40 @@ class SingleTestRunnerTest(unittest.TestCase):
         self.assertEqual(timeouts, ['30000'])
         timeouts, _ = self._run_with_expected_failure_time_out({test_expectations.FAIL}, [DriverOutput('FAIL\n', None, None, None, test_time=1)], baseline=None, extra_args=['--no-new-test-results'])
         self.assertEqual(timeouts, ['6000'])
+
+    def _make_reftest_runner(self, test_name, reference_files, driver):
+        options, _ = parse_args(['--platform', 'test'])
+        host = MockHost()
+        port = TestPort(host, options=options)
+        test_input = TestInput(Test(test_name, reference_files=reference_files), should_run_pixel_test=True)
+        return SingleTestRunner(port, options, '/tmp/layout-test-results', '', driver, test_input, True)
+
+    def test_reftest_about_blank_reference(self):
+        driver = ImageTestDriver(b'blank-png')
+        runner = self._make_reftest_runner('blank-test.html', (('==', 'about:blank'),), driver)
+        self._add_file(runner._port, 'blank-test.html', b'')
+        result = runner.run()
+        self.assertEqual(driver.test_names, ['blank-test.html', 'about:blank'])
+        self.assertEqual(result.references, ['about:blank'])
+        self.assertEqual(result.failures, [])
+
+    def test_reftest_about_blank_reference_failure(self):
+        driver = ImageTestDriver(b'red-png')
+        runner = self._make_reftest_runner('blank-test.html', (('==', 'about:blank'),), driver)
+        self._add_file(runner._port, 'blank-test.html', b'')
+        result = runner.run()
+        self.assertEqual(result.references, ['about:blank'])
+        self.assertEqual([type(failure) for failure in result.failures], [test_failures.FailureReftestMismatch])
+
+    def test_fuzzy_matching_values_for_about_blank_ref(self):
+        test_name = 'fuzzy-test.html'
+        single_test_runner = self._make_test_runner(test_name)
+        self._add_file(single_test_runner._port, test_name, """<html><head>
+            <meta name=fuzzy content="maxDifference=15;totalPixels=300">
+            <meta name=fuzzy content="about:blank:maxDifference=0-2;totalPixels=0-10">
+        """)
+        fuzzy_data = single_test_runner._fuzzy_tolerance_for_reference('about:blank')
+        self.assertEqual(fuzzy_data, {'max_difference': [0, 2], 'total_pixels': [0, 10]})
 
     def test_fuzzy_matching_values(self):
         single_test_runner = self._make_test_runner('fuzzy-test.html')

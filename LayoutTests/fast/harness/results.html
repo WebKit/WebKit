@@ -1474,11 +1474,11 @@ class FailuresSectionBuilder extends SectionBuilder {
             const variantParams = nameParts[2];
             
             if (testResult.isMismatchRefTest()) {
-                result += this._resultsController.resultLink(this._resultsController.layoutTestsBasePath() + testBase, '-expected-mismatch' + testExtension + variantParams, 'ref mismatch');
+                result += this.referenceLink(testResult, testBase, '-expected-mismatch' + testExtension + variantParams, 'ref mismatch');
                 result += this._resultsController.resultLink(testPrefix, '-actual.png', 'actual');
             } else {
                 if (testResult.isMatchRefTest())
-                    result += this._resultsController.resultLink(this._resultsController.layoutTestsBasePath() + testBase, '-expected' + testExtension + variantParams, 'reference');
+                    result += this.referenceLink(testResult, testBase, '-expected' + testExtension + variantParams, 'reference');
 
                 if (this._resultsController.shouldToggleImages)
                     result += this._resultsController.resultLink(testPrefix, '-diffs.html', 'images');
@@ -1496,6 +1496,19 @@ class FailuresSectionBuilder extends SectionBuilder {
             result += this._resultsController.resultLink(testPrefix, '-actual.png', 'png result');
 
         return result;
+    }
+
+    referenceLink(testResult, testBase, expectedSuffix, contents)
+    {
+        // WPT reftests name their references, so the last reference compared needn't be an -expected file.
+        const references = testResult.info.references;
+        if (!references || !references.length)
+            return this._resultsController.resultLink(this._resultsController.layoutTestsBasePath() + testBase, expectedSuffix, contents);
+
+        const reference = references[references.length - 1];
+        if (reference == 'about:blank')
+            return '<a class=result-link href="about:blank">' + contents + '</a> ';
+        return this._resultsController.resultLink(this._resultsController.layoutTestsBasePath() + reference, '', contents);
     }
 };
 

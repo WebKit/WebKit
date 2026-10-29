@@ -230,6 +230,9 @@ class TestResultWriter(object):
 
     def write_reftest(self, src_filepath):
         fs = self._filesystem
+        # There's nothing to copy for about:blank, or for a reference that doesn't exist.
+        if src_filepath == "about:blank" or not fs.exists(src_filepath):
+            return
         dst_dir = fs.dirname(fs.join(self._root_output_dir, self._test_name))
         dst_filepath = fs.join(dst_dir, fs.basename(src_filepath))
         self._make_output_directory()

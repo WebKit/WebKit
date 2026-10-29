@@ -21,8 +21,10 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import fnmatch
+import html
 import itertools
 import json
+import posixpath
 import re
 import urllib
 from collections import OrderedDict
@@ -63,6 +65,8 @@ assert len(supported_reference_extensions) == len(set(supported_reference_extens
 assert list(supported_reference_extensions) == sorted(supported_reference_extensions)
 assert set(supported_reference_extensions) < set(supported_test_extensions)
 
+mismatch_reference_suffixes = tuple("-mismatch" + ext for ext in supported_reference_extensions)
+
 
 skipped_directories = {
     ".svn",
@@ -86,6 +90,30 @@ skipped_test_suffixes = tuple(
 )
 
 digit_re = re.compile("([0-9]+)")
+
+# Searching with these is faster than with `in`, as the regex engine finds their first byte with memchr.
+variant_re = re.compile(rb"variant")
+match_re = re.compile(rb"match")
+testharness_re = re.compile(rb"/resources/testharness\.js")
+
+# A <link> start tag and its attributes, split the way the HTML tokenizer splits them.
+_link_attribute = (
+    rb"[^\t\n\f\r />][^\t\n\f\r />=]*"
+    rb"(?:[\t\n\f\r ]*=[\t\n\f\r ]*(?:\"[^\"]*\"|'[^']*'|[^\t\n\f\r >]*))?"
+)
+link_tag_re = re.compile(
+    rb"<(?:[A-Za-z][^\t\n\f\r />:]*:)?link(?=[\t\n\f\r />])((?:[\t\n\f\r /]*" + _link_attribute + rb")*)",
+    re.IGNORECASE,
+)
+link_attribute_re = re.compile(
+    rb"([^\t\n\f\r />][^\t\n\f\r />=]*)"
+    rb"(?:[\t\n\f\r ]*=[\t\n\f\r ]*(?:\"([^\"]*)\"|'([^']*)'|([^\t\n\f\r >]*)))?"
+)
+reference_link_types = {b"match": "==", b"mismatch": "!="}
+# The attributes of most reference <link>s, which needn't be split one by one.
+common_reference_link_re = re.compile(
+    rb'[\t\n\f\r ]+(?:rel="(match|mismatch)"[\t\n\f\r ]+href="([^"]*)"|href="([^"]*)"[\t\n\f\r ]+rel="(match|mismatch)")\Z'
+)
 
 
 def natsort(string_to_split):
@@ -116,6 +144,9 @@ class LayoutTestFinder(object):
 
         self.layout_tests_base_dir = layout_tests_base_dir
         self.baseline_search_paths = baseline_search_paths
+
+        self.wpt_dir_prefix = fs.join(layout_tests_base_dir, *IMPORTED_WPT_DIR.split("/"), "")
+        self._directory_contents = {}
 
         self.w3c_support_dirs, self.w3c_support_files = self._load_w3c_resource_data()
 
@@ -336,6 +367,10 @@ class LayoutTestFinder(object):
         finally:
             it.close()
 
+        # Most references are in their test's directory, so _reference_exists needn't list it again.
+        if (current_layout_tests_path + self.fs.sep).startswith(self.wpt_dir_prefix):
+            self._directory_contents[current_layout_tests_path] = non_test_files[current_layout_tests_path].union(test_files)
+
         for search_path in reversed(current_search_paths):
             if search_path is None or not self.fs.isdir(search_path):
                 continue
@@ -351,6 +386,13 @@ class LayoutTestFinder(object):
 
         dirs -= skipped_directories
         dirs -= self.w3c_support_dirs.get(path, set())
+
+        # The (specificity, directory) each expectation is in: the most specific directory with
+        # a file of that name, as non_test_files is ordered from the least specific.
+        expectation_dirs = {}
+        if test_files:
+            for specificity, (dirname, basenames) in enumerate(non_test_files.items()):
+                expectation_dirs.update(dict.fromkeys(basenames, (specificity, dirname)))
 
         merged_items = sorted(test_files + [d + "/" for d in dirs], key=natsort)
         found = []
@@ -368,7 +410,7 @@ class LayoutTestFinder(object):
                             path,
                             f,
                             [variant] if variant else None,
-                            non_test_files,
+                            expectation_dirs,
                         )
                     )
 
@@ -391,7 +433,7 @@ class LayoutTestFinder(object):
         return True
 
     def _tests_for_path(
-        self, dirname, basename, variants, non_test_files_by_search_path
+        self, dirname, basename, variants, expectation_dirs
     ):
         """Find tests for a given (dirname, basename)
 
@@ -399,40 +441,72 @@ class LayoutTestFinder(object):
         :param str basename: basename of the test
         :param Optional[List[str]] variants: a list of variants to create Test objects
             for, or None in which case all known variants are run
-        :param OrderedDict[str, Set[str]] non_test_files_by_search_path: an OrderedDict,
-            whose key is dirnames, starting with the current dirname above followed by
-            baseline search paths in increasing specificity, and whose value is sets of
-            basenames that exist in that dirname
+        :param Dict[str, Tuple[int, str]] expectation_dirs: for each basename of a non-test
+            file in dirname or its baseline search paths, the specificity and path of the
+            most specific of those directories it is in, where dirname is least specific
         :return Iterable[Test]: an iterator over Test objects
         """
         path = self.fs.join(self.layout_tests_base_dir, dirname, basename)
 
-        if variants is None:
-            variants = self._find_variants(path)
-        else:
+        trimmed_path = self._canonicalize_test_path(path)
+        if not self.fs.isabs(trimmed_path):
+            trimmed_path = trimmed_path.replace(self.fs.sep, "/")
+
+        is_imported_wpt_test = IMPORTED_WPT_DIR + "/" in trimmed_path
+        is_wpt_test = is_imported_wpt_test or LOCAL_WPT_PATH + "/" in trimmed_path
+        is_wpt_crash_test = self.is_wpt_crash_test(trimmed_path)
+
+        contents = None
+        if variants is not None:
             variants = [self._percent_encoded_variant(v) for v in variants]
+        elif "web-platform-tests" in path:
+            contents = self.fs.read_binary_file(path)
+            variants = self._find_variants(contents)
+        else:
+            variants = [""]
 
         assert len(variants) >= 1
 
-        for variant in variants:
-            trimmed_path = self._canonicalize_test_path(path)
-            if not self.fs.isabs(trimmed_path):
-                trimmed_path = trimmed_path.replace(self.fs.sep, "/")
+        reference_base = TestResultWriter.expected_filename(basename, self.fs, suffix="")
+        assert reference_base[-1] == "."
+        reference_base = reference_base[:-1]
 
+        # Imported WPT reftests name their references with <link>s, which take precedence over
+        # -expected references unless a <link>ed reference wasn't imported.
+        link_references = None
+        if is_imported_wpt_test and not is_wpt_crash_test:
+            if contents is None:
+                contents = self.fs.read_binary_file(path)
+            link_references = self._link_references(trimmed_path, contents)
+            if (
+                link_references
+                and self._has_expected_references(expectation_dirs, reference_base)
+                and not all(self._reference_exists(ref_path) for _, ref_path in link_references)
+            ):
+                link_references = None
+
+        for variant in variants:
             (
                 expected_text_path,
                 expected_image_path,
                 expected_audio_path,
                 reference_files,
             ) = self._expectations_for_test(
-                basename, variant, non_test_files_by_search_path
+                basename, variant, expectation_dirs, reference_base, find_references=not link_references
             )
+
+            if link_references:
+                reference_files = [
+                    (expectation, ref_path if ref_path == "about:blank" else ref_path + variant)
+                    for expectation, ref_path in link_references
+                ]
 
             assert expected_text_path is None or self.fs.isabs(expected_text_path)
             assert expected_image_path is None or self.fs.isabs(expected_image_path)
             assert expected_audio_path is None or self.fs.isabs(expected_audio_path)
             assert reference_files is None or all(
-                self.fs.isabs(ref_path) for (_, ref_path) in reference_files
+                ref_path == "about:blank" or self.fs.isabs(ref_path)
+                for (_, ref_path) in reference_files
             )
 
             yield Test(
@@ -449,21 +523,14 @@ class LayoutTestFinder(object):
                     or "http/test" in trimmed_path
                     and "websocket" in trimmed_path + variant
                 ),
-                is_wpt_test=(
-                    IMPORTED_WPT_DIR + "/" in trimmed_path
-                    or LOCAL_WPT_PATH + "/" in trimmed_path
-                ),
-                is_wpt_crash_test=self.is_wpt_crash_test(trimmed_path),
+                is_wpt_test=is_wpt_test,
+                is_wpt_crash_test=is_wpt_crash_test,
             )
 
-    def _find_variants(self, f):
-        """Find variants for path `f`"""
+    def _find_variants(self, contents):
+        """Find variants in the contents of a web-platform-tests test"""
         # This shouldn't exist, we should be reading the WPT manifest instead.
-        if "web-platform-tests" not in f:
-            return [""]
-
-        contents = self.fs.read_binary_file(f)
-        if b"variant" not in contents:
+        if not variant_re.search(contents):
             return [""]
 
         try:
@@ -549,66 +616,43 @@ class LayoutTestFinder(object):
             len(variant) > 1 and variant[0] in ("?", "#") and variant != "?#"
         )
 
-    def _expectations_for_test(self, basename, variant, non_test_files_by_search_path):
-        """Given a test basename, find expectations in non_test_files_by_search_path"""
+    def _expectations_for_test(self, basename, variant, expectation_dirs, reference_base, find_references=True):
+        """Given a test basename, find expectations in expectation_dirs
 
-        expected_without_ext = TestResultWriter.expected_filename(
-            basename + variant, self.fs, suffix=""
-        )
-        assert expected_without_ext[-1] == "."
-        expected_without_ext = expected_without_ext[:-1]
+        :param str reference_base: the expected filename for basename, without its extension
+        :param bool find_references: whether to find -expected references
+        """
 
-        expected_text_path = None
-        expected_webarchive_path = None
-        expected_image_path = None
-        expected_audio_path = None
+        if variant:
+            expected_without_ext = TestResultWriter.expected_filename(
+                basename + variant, self.fs, suffix=""
+            )
+            assert expected_without_ext[-1] == "."
+            expected_without_ext = expected_without_ext[:-1]
+        else:
+            expected_without_ext = reference_base
+
+        expected_paths = []
+        for extension in (".txt", ".webarchive", ".png", ".wav"):
+            name = expected_without_ext + extension
+            found = expectation_dirs.get(name)
+            expected_paths.append(self.fs.join(found[1], name) if found else None)
+        expected_text_path, expected_webarchive_path, expected_image_path, expected_audio_path = expected_paths
+
         reference_files = None
+        if find_references and self._has_expected_references(expectation_dirs, reference_base):
+            matches = tuple(map(reference_base.__add__, supported_reference_extensions))
+            mismatches = tuple(map(reference_base.__add__, mismatch_reference_suffixes))
+            keys = expectation_dirs.keys()
 
-        txt_name = expected_without_ext + ".txt"
-        webarchive_name = expected_without_ext + ".webarchive"
-        png_name = expected_without_ext + ".png"
-        wav_name = expected_without_ext + ".wav"
-
-        reference_base = TestResultWriter.expected_filename(
-            basename, self.fs, suffix=""
-        )
-        assert reference_base[-1] == "."
-        reference_base = reference_base[:-1]
-
-        match_reference_basenames = {
-            reference_base + ext for ext in supported_reference_extensions
-        }
-
-        mismatch_reference_basenames = {
-            "".join((reference_base, "-mismatch", ext))
-            for ext in supported_reference_extensions
-        }
-
-        # This is inefficient. We search all non-test files in the directory for each variant of each test!
-        for dirname, basename_set in reversed(non_test_files_by_search_path.items()):
-            if expected_text_path is None and txt_name in basename_set:
-                expected_text_path = self.fs.join(dirname, txt_name)
-
-            if expected_webarchive_path is None and webarchive_name in basename_set:
-                expected_webarchive_path = self.fs.join(dirname, webarchive_name)
-
-            if expected_image_path is None and png_name in basename_set:
-                expected_image_path = self.fs.join(dirname, png_name)
-
-            if expected_audio_path is None and wav_name in basename_set:
-                expected_audio_path = self.fs.join(dirname, wav_name)
-
-            if reference_files is None:
-                matches = basename_set & match_reference_basenames
-                mismatches = basename_set & mismatch_reference_basenames
-                if matches or mismatches:
-                    # For historic reasons, we return matches first, and we sort them by
-                    # the filename of the match. This is significant when we currently
-                    # only run the first reference
-                    # (https://bugs.webkit.org/show_bug.cgi?id=270794).
-                    reference_files = [
-                        ("==", self.fs.join(dirname, m + variant)) for m in sorted(matches)
-                    ] + [("!=", self.fs.join(dirname, m + variant)) for m in sorted(mismatches)]
+            # The references are those in the most specific directory with any. For historic
+            # reasons, we return matches first, and we sort them by the filename of the match.
+            # This is significant when we currently only run the first reference
+            # (https://bugs.webkit.org/show_bug.cgi?id=270794).
+            found = max(expectation_dirs[name] for name in matches + mismatches if name in keys)
+            reference_files = [
+                ("==", self.fs.join(found[1], name + variant)) for name in matches if expectation_dirs.get(name) == found
+            ] + [("!=", self.fs.join(found[1], name + variant)) for name in mismatches if expectation_dirs.get(name) == found]
 
         return (
             expected_text_path or expected_webarchive_path,
@@ -617,8 +661,148 @@ class LayoutTestFinder(object):
             reference_files,
         )
 
+    @staticmethod
+    def _has_expected_references(expectation_dirs, reference_base):
+        keys = expectation_dirs.keys()
+        return not keys.isdisjoint(map(reference_base.__add__, supported_reference_extensions)) or not keys.isdisjoint(
+            map(reference_base.__add__, mismatch_reference_suffixes)
+        )
+
+    def _link_references(self, test_path, contents):
+        """Find the references named by an imported WPT reftest's <link rel=match> and <link rel=mismatch>.
+
+        This finds the same references as the WPT manifest (tools/manifest/sourcefile.py) without
+        parsing the whole document, as it runs on every imported WPT test.
+
+        :param str test_path: the path of the test, relative to layout_tests_base_dir
+        :param bytes contents: the contents of the test
+        :return Optional[List[Tuple[str, str]]]: (expectation, path) pairs, matches first, where
+            path is absolute (with any query and fragment) or "about:blank"
+        """
+        if contents.startswith((b"\xff\xfe", b"\xfe\xff")):
+            contents = contents.decode("utf-16", "replace").encode("utf-8")
+
+        # Most tests don't contain "match", and "mismatch" contains it too.
+        first_match = match_re.search(contents)
+        if not first_match:
+            return None
+
+        # WPT considers a test with <script src="/resources/testharness.js"> to be a testharness test, even with references.
+        if b"/resources/testharness.js" in contents:
+            for script in testharness_re.finditer(contents):
+                if contents[script.start() - 1:script.start()] in (b'"', b"'", b"="):
+                    return None
+
+        test_url = "/" + test_path.split(IMPORTED_WPT_DIR + "/", 1)[1]
+
+        # Only <link>s containing "match" can be references, so look for those around each "match",
+        # unless one isn't within a <link> starting at the closest "<", when every <link> is checked.
+        links = []
+        for occurrence in match_re.finditer(contents, first_match.start()):
+            start = contents.rfind(b"<", 0, occurrence.start())
+            link = link_tag_re.match(contents, start) if start != -1 else None
+            if not link or link.end() <= occurrence.start():
+                links = [link for link in link_tag_re.finditer(contents) if b"match" in link.group(1)]
+                break
+            if not links or links[-1].start() != start:
+                links.append(link)
+
+        matches = []
+        mismatches = []
+        for link in links:
+            attributes = link.group(1)
+            common = common_reference_link_re.match(attributes)
+            if common:
+                rel = common.group(1) or common.group(4)
+                href = common.group(2) if common.group(1) else common.group(3)
+            else:
+                rel = href = None
+                for name, double_quoted, single_quoted, unquoted in link_attribute_re.findall(attributes):
+                    # Attribute names are case-insensitive, and the first of each name wins.
+                    name = name.lower()
+                    if name == b"rel":
+                        if rel is None:
+                            rel = double_quoted or single_quoted or unquoted
+                    elif name == b"href":
+                        if href is None:
+                            href = double_quoted or single_quoted or unquoted
+
+            if href is None or rel not in reference_link_types:
+                continue
+            comment_start = contents.rfind(b"<!--", 0, link.start())
+            if comment_start != -1 and self._is_in_comment(contents, comment_start, link.start()):
+                continue
+
+            href = href.decode("utf-8", "replace")
+            if "&" in href:
+                href = html.unescape(href)
+            ref_path = self._reference_path(test_url, href.strip("\t\n\f\r "))
+            if ref_path is not None:
+                (matches if rel == b"match" else mismatches).append((reference_link_types[rel], ref_path))
+
+        if not matches and not mismatches:
+            return None
+
+        return matches + mismatches
+
+    def _reference_exists(self, ref_path):
+        if ref_path == "about:blank":
+            return True
+        dirname, basename = ref_path.split("?", 1)[0].split("#", 1)[0].rsplit(self.fs.sep, 1)
+        # References share few directories, so list each once rather than checking each reference.
+        names = self._directory_contents.get(dirname)
+        if names is None:
+            try:
+                names = set(self.fs.listdir(dirname))
+            except OSError:
+                names = set()
+            self._directory_contents[dirname] = names
+        return basename in names
+
+    @staticmethod
+    def _is_in_comment(contents, start, index):
+        """Whether index is in the comment starting at start, the last "<!--" before index."""
+        start += 4
+        # "<!-->" and "<!--->" are complete comments; others end with "-->" or "--!>".
+        if contents.startswith((b">", b"->"), start):
+            return False
+        return contents.find(b"-->", start, index) == -1 and contents.find(b"--!>", start, index) == -1
+
+    def _reference_path(self, test_url, href):
+        """Resolve href against test_url as the WPT manifest does, then map it to a path.
+
+        :return Optional[str]: the absolute path (with any query and fragment) for a URL within
+            WPT, "about:blank", or None for any other URL
+        """
+        if not href or ":" in href or href.startswith(("?", "#", "//")):
+            href = urllib.parse.urljoin(test_url, href)
+            if href == "about:blank":
+                return href
+            url = urllib.parse.urlsplit(href)
+            if url.scheme or url.netloc:
+                return None
+
+        path_end = len(href)
+        for delimiter in "?#":
+            index = href.find(delimiter, 0, path_end)
+            if index != -1:
+                path_end = index
+
+        url_path = href[:path_end]
+        if not url_path.startswith("/"):
+            url_path = test_url[: test_url.rfind("/") + 1] + url_path
+        url_path = posixpath.normpath(url_path)
+        if "%" in url_path:
+            url_path = urllib.parse.unquote(url_path)
+
+        return self.wpt_dir_prefix + url_path[1:].replace("/", self.fs.sep) + href[path_end:]
+
     def is_wpt_crash_test(self, name):
         # This shouldn't exist, we should be reading the WPT manifest instead.
+        # Crash tests are named with a "-crash" flag or in a "crashtests" directory.
+        if "crash" not in name:
+            return False
+
         if IMPORTED_WPT_DIR + "/" in name:
             wpt_dir = IMPORTED_WPT_DIR
             url_base = "/"

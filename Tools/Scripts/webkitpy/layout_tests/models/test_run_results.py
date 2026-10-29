@@ -303,6 +303,8 @@ def summarize_results(port_obj, expectations_by_type, initial_results, retry_res
 
         if result.reftest_type:
             test_dict.update(reftest_type=list(result.reftest_type))
+            if result.references:
+                test_dict['references'] = result.references
 
         if expectations.model().has_modifier(test_name, test_expectations.WONTFIX):
             test_dict['wontfix'] = True

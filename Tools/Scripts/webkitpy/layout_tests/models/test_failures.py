@@ -274,7 +274,7 @@ class FailureReftestMismatchDidNotOccur(TestFailure):
 
     def write_failure(self, writer, driver_output, expected_driver_output, port):
         writer.write_image_files(driver_output.image, expected_image=None)
-        writer.write_reftest(self.reference_filename)
+        writer.write_reftest(Port.test_name_and_variant(self.reference_filename)[0])
 
 
 class FailureReftestNoImagesGenerated(TestFailure):

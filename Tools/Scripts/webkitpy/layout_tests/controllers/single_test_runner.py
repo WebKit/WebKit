@@ -412,7 +412,7 @@ class SingleTestRunner(object):
             failures.append(test_failures.FailureTimeout(bool(reference_filename)))
 
         if reference_filename:
-            testname = self._port.relative_test_filename(reference_filename)
+            testname = self._reference_test_name(reference_filename)
         else:
             testname = self._test_name
 
@@ -556,7 +556,7 @@ class SingleTestRunner(object):
         putAllMismatchBeforeMatch = sorted
         reference_test_names = []
         for expectation, reference_filename in putAllMismatchBeforeMatch(self._reference_files):
-            reference_test_name = self._port.relative_test_filename(reference_filename)
+            reference_test_name = self._reference_test_name(reference_filename)
             reference_test_names.append(reference_test_name)
             reference_output = self._driver.run_test(DriverInput(reference_test_name, self._timeout, None, should_run_pixel_test=True), self._stop_when_done)
             reference_output.strip_patterns(self._port.logging_patterns_to_strip())
@@ -577,6 +577,12 @@ class SingleTestRunner(object):
         test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, test_output, reference_output, test_result.failures)
         reftest_type = set([reference_file[0] for reference_file in self._reference_files])
         return TestResult(self._test_input, test_result.failures, total_test_time + test_result.test_run_time, test_result.has_stderr, reftest_type=reftest_type, pid=test_result.pid, references=reference_test_names)
+
+    def _reference_test_name(self, reference_filename):
+        # WPT reftests can use about:blank as a reference, which the driver loads as is.
+        if reference_filename == 'about:blank':
+            return reference_filename
+        return self._port.relative_test_filename(reference_filename)
 
     def _run_self_comparison_test(self, header):
         driver_input = self._driver_input()
@@ -680,6 +686,9 @@ class SingleTestRunner(object):
 
     @staticmethod
     def _relative_reference_path(test_full_path, reference_full_path):
+        if reference_full_path == 'about:blank':
+            return reference_full_path
+
         test_dir = os.path.split(test_full_path)[0]
         reference_dir, reference_file_name = os.path.split(reference_full_path)
         if test_dir == reference_dir:
