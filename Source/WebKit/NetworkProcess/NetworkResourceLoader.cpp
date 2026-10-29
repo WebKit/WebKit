@@ -408,7 +408,7 @@ void NetworkResourceLoader::retrieveCacheEntryInternal(std::unique_ptr<NetworkCa
     }
     if (entry->needsValidation() || request.cachePolicy() == WebCore::ResourceRequestCachePolicy::RefreshAnyCacheData) {
         LOADER_RELEASE_LOG("retrieveCacheEntryInternal: Cached entry needs revalidation");
-        validateCacheEntry(WTF::move(entry));
+        validateCacheEntry(WTF::move(request), WTF::move(entry));
         return;
     }
     LOADER_RELEASE_LOG("retrieveCacheEntryInternal: Cached entry is directly usable");
@@ -1401,15 +1401,15 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
     if (m_cacheEntryForValidation) {
         bool validationSucceeded = m_response.httpStatusCode() == httpStatus304NotModified;
-        LOADER_RELEASE_LOG("didReceiveResponse: Received revalidation response (validationSucceeded=%d, wasOriginalRequestConditional=%d)", validationSucceeded, originalRequest().isConditional());
+        LOADER_RELEASE_LOG("didReceiveResponse: Received revalidation response (validationSucceeded=%d, wasCachedEntryRequestConditional=%d)", validationSucceeded, m_requestForCacheEntryValidation.isConditional());
         if (validationSucceeded) {
-            m_cacheEntryForValidation = protect(m_cache)->update(originalRequest(), *m_cacheEntryForValidation, m_response, m_privateRelayed);
+            m_cacheEntryForValidation = protect(m_cache)->update(m_requestForCacheEntryValidation, *m_cacheEntryForValidation, m_response, m_privateRelayed);
             if (connectionToWebProcess().compressionDictionaryEnabled()) {
                 processUseAsDictionaryHeader(m_cacheEntryForValidation->response());
                 storeCompressionDictionaryIfNeeded(m_cacheEntryForValidation->response(), m_cacheEntryForValidation->buffer());
             }
             // If the request was conditional then this revalidation was not triggered by the network cache and we pass the 304 response to WebCore.
-            if (originalRequest().isConditional()) {
+            if (m_requestForCacheEntryValidation.isConditional()) {
                 // Add CORP header to the 304 response if previously set to avoid being blocked by load checker due to COEP.
                 auto crossOriginResourcePolicy = m_cacheEntryForValidation->response().httpHeaderField(HTTPHeaderName::CrossOriginResourcePolicy);
                 if (!crossOriginResourcePolicy.isEmpty())
@@ -1418,9 +1418,12 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
                 if (!crossOriginEmbedderPolicy.isEmpty())
                     m_response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicy, crossOriginEmbedderPolicy);
                 m_cacheEntryForValidation = nullptr;
+                m_requestForCacheEntryValidation = { };
             }
-        } else
+        } else {
             m_cacheEntryForValidation = nullptr;
+            m_requestForCacheEntryValidation = { };
+        }
     }
     if (m_cacheEntryForValidation)
         return completionHandler(PolicyAction::Use);
@@ -1769,6 +1772,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& originalN
         ASSERT(m_response.httpStatusCode() == httpStatus304NotModified);
         LOG(NetworkCache, "(NetworkProcess) revalidated");
         didRetrieveCacheEntry(WTF::move(m_cacheEntryForValidation));
+        m_requestForCacheEntryValidation = { };
         return;
     }
 
@@ -1833,6 +1837,7 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
     ASSERT(!error.isNull());
 
     m_cacheEntryForValidation = nullptr;
+    m_requestForCacheEntryValidation = { };
 
     if (isSynchronous()) {
         m_synchronousLoadData->error = error;
@@ -2626,14 +2631,15 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
     dispatchDidFinishResourceLoad();
 }
 
-void NetworkResourceLoader::validateCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
+void NetworkResourceLoader::validateCacheEntry(WebCore::ResourceRequest&& request, std::unique_ptr<NetworkCache::Entry> entry)
 {
     LOADER_RELEASE_LOG("validateCacheEntry:");
     ASSERT(!m_networkLoad);
 
     // If the request is already conditional then the revalidation was not triggered by the disk cache
     // and we should not overwrite the existing conditional headers.
-    ResourceRequest revalidationRequest = originalRequest();
+    ResourceRequest revalidationRequest = protocolHostAndPortAreEqual(originalRequest().url(), request.url()) ? originalRequest() : WTF::move(request);
+    m_requestForCacheEntryValidation = revalidationRequest;
     if (!revalidationRequest.isConditional()) {
         String eTag = entry->response().httpHeaderField(HTTPHeaderName::ETag);
         String lastModified = entry->response().httpHeaderField(HTTPHeaderName::LastModified);
