@@ -5697,6 +5697,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.PrivateClickMeasurement.SourceClickFraudPrevention
 [ ios ] TestWebKitAPI.ProcessSwap.CannotDisableLockdownModeWithoutBrowserEntitlement
 [ ios ] TestWebKitAPI.ProcessSwap.ChangeViewSizeDuringNavigationActionPolicyDecision
+[ ios ] TestWebKitAPI.ProcessSwap.ClearWebsiteDataWithSuspendedPage
 [ ios ] TestWebKitAPI.ProcessSwap.ContentModeInCaseOfCoopProcessSwap
 [ ios ] TestWebKitAPI.ProcessSwap.ContentModeInCaseOfPSONThenCoopProcessSwap
 [ ios ] TestWebKitAPI.ProcessSwap.CrossOriginSystemPreview
@@ -5705,6 +5706,8 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.ProcessSwap.PassMinimumDeviceWidthOnNewWebView
 [ ios ] TestWebKitAPI.ProcessSwap.QuickLookRequestsPasswordAfterSwap
 [ ios ] TestWebKitAPI.ProcessSwap.SameOriginSystemPreview
+[ ios ] TestWebKitAPI.ProcessSwap.UseSessionCookiesAfterProcessSwapInNonDefaultPersistentSession
+[ ios ] TestWebKitAPI.ProcessSwap.UseSessionCookiesAfterProcessSwapInPrivateBrowsing
 [ ios ] TestWebKitAPI.QuickLook.AllowResponseAfterLoadingPreview
 [ ios ] TestWebKitAPI.QuickLook.AllowResponseBeforeLoadingPreview
 [ ios ] TestWebKitAPI.QuickLook.AsyncAllowResponseAfterLoadingPreview
@@ -6982,6 +6985,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WebKit.InvokeShareWithoutSelection
 [ ios ] TestWebKitAPI.WebKit.IsNavigationActionTrusted
 [ ios ] TestWebKitAPI.WebKit.IsRemoteUIAppForAccessibility
+[ ios ] TestWebKitAPI.WebKit.LoadRequestWithSecPurposePrefetch
 [ ios ] TestWebKitAPI.WebKit.LocalStorageCorruptedDatabase
 [ ios ] TestWebKitAPI.WebKit.LockdownModeAskAgainFirstUseMessage
 [ ios ] TestWebKitAPI.WebKit.LockdownModeDefaultFirstUseMessage
@@ -7479,6 +7483,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.PrivateClickMeasurement.NetworkProcessPrivateRelayEnforcement
 [ mac ] TestWebKitAPI.PrivateClickMeasurement.SKAdNetworkWithoutNavigatingToAppStoreLink
 [ mac ] TestWebKitAPI.PrivateClickMeasurement.SourceClickFraudPrevention
+[ mac ] TestWebKitAPI.ProcessSwap.ClearWebsiteDataWithSuspendedPage
 [ mac ] TestWebKitAPI.ProcessSwap.CrashWithGestureController
 [ mac ] TestWebKitAPI.ProcessSwap.DoNotUseWebProcessCacheForCOOPSwapAfterCommittingOtherOrigin
 [ mac ] TestWebKitAPI.ProcessSwap.DoNotUseWebProcessCacheForCOOPSwapAfterCommittingOtherOriginWithSiteIsolation
@@ -7488,6 +7493,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.ProcessSwap.NavigateCrossOriginWithOpenee
 [ mac ] TestWebKitAPI.ProcessSwap.NavigateCrossOriginWithOpener
 [ mac ] TestWebKitAPI.ProcessSwap.NavigateCrossOriginWithOpenerViaClientInitiatedNavigation
+[ mac ] TestWebKitAPI.ProcessSwap.NumberOfCachedProcesses
 [ mac ] TestWebKitAPI.ProcessSwap.PageZoomLevelAfterSwap
 [ mac ] TestWebKitAPI.ProcessSwap.ProcessCrashedWhileInTheCache
 [ mac ] TestWebKitAPI.ProcessSwap.ProcessTerminatedWhileInTheCache
@@ -7496,6 +7502,8 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.ProcessSwap.SwapOnFormSubmissionWithFileUpload
 [ mac ] TestWebKitAPI.ProcessSwap.SwapWithGestureController
 [ mac ] TestWebKitAPI.ProcessSwap.UnloadEventsOnCrossSiteClientRedirect
+[ mac ] TestWebKitAPI.ProcessSwap.UseSessionCookiesAfterProcessSwapInNonDefaultPersistentSession
+[ mac ] TestWebKitAPI.ProcessSwap.UseSessionCookiesAfterProcessSwapInPrivateBrowsing
 [ mac ] TestWebKitAPI.ProcessSwap.UseWebProcessCacheAfterTermination
 [ mac ] TestWebKitAPI.ProcessSwap.UseWebProcessCacheForCOOPSwapFromCrossSitePage
 [ mac ] TestWebKitAPI.ProcessSwap.UseWebProcessCacheForCOOPSwapFromCrossSitePageWithSiteIsolation
@@ -8459,6 +8467,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WebKit.IsNavigationActionTrusted
 [ mac ] TestWebKitAPI.WebKit.IsRemoteUIAppForAccessibility
 [ mac ] TestWebKitAPI.WebKit.LayoutMilestonesWithAllContentInFrame
+[ mac ] TestWebKitAPI.WebKit.LoadRequestWithSecPurposePrefetch
 [ mac ] TestWebKitAPI.WebKit.ManagedMSEHasMediaStreamingActivityWithPolicy
 [ mac ] TestWebKitAPI.WebKit.MediaBufferingPolicyWhenSuspendedOrHidden
 [ mac ] TestWebKitAPI.WebKit.NavigateDuringDeviceEnumeration

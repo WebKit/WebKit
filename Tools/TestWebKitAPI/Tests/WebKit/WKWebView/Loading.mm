@@ -27,6 +27,7 @@
 
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <wtf/text/MakeString.h>
@@ -54,8 +55,9 @@ static bool isReady = false;
 
 TEST(WebKit, LoadRequestWithSecPurposePrefetch)
 {
+    auto *dataStore = Util::temporaryPersistentDataStore();
     __block bool removedAnyExistingData = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         removedAnyExistingData = true;
     }];
     TestWebKitAPI::Util::run(&removedAnyExistingData);
@@ -70,6 +72,7 @@ TEST(WebKit, LoadRequestWithSecPurposePrefetch)
     }, HTTPServer::Protocol::Http);
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
     RetainPtr messageHandler = adoptNS([[LoadingMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"loading"];
 
