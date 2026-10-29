@@ -29,6 +29,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestScriptMessageHandler.h"
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
@@ -218,8 +219,9 @@ TEST(IndexedDB, TransactionOfSuspendedProcessDoesNotBlockOtherProcesses)
         }; \
         </script>";
 
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -229,6 +231,7 @@ TEST(IndexedDB, TransactionOfSuspendedProcessDoesNotBlockOtherProcesses)
     RetainPtr firstHandler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr firstConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [firstConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [firstConfiguration setWebsiteDataStore:dataStore];
     [[firstConfiguration userContentController] addScriptMessageHandler:firstHandler.get() name:@"testHandler"];
     RetainPtr firstWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:firstConfiguration.get()]);
     [firstWebView loadHTMLString:firstClientString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
@@ -241,6 +244,7 @@ TEST(IndexedDB, TransactionOfSuspendedProcessDoesNotBlockOtherProcesses)
     RetainPtr secondHandler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr secondConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [secondConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [secondConfiguration setWebsiteDataStore:dataStore];
     [[secondConfiguration userContentController] addScriptMessageHandler:secondHandler.get() name:@"testHandler"];
     RetainPtr secondWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:secondConfiguration.get()]);
     [secondWebView loadHTMLString:secondClientString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
@@ -304,8 +308,9 @@ TEST(IndexedDB, ReadOnlyTransactionOfSuspendedProcessDoesNotBlockOtherProcesses)
         }; \
         </script>";
 
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -313,6 +318,7 @@ TEST(IndexedDB, ReadOnlyTransactionOfSuspendedProcessDoesNotBlockOtherProcesses)
     RetainPtr firstHandler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr firstConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [firstConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [firstConfiguration setWebsiteDataStore:dataStore];
     [[firstConfiguration userContentController] addScriptMessageHandler:firstHandler.get() name:@"testHandler"];
     RetainPtr firstWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:firstConfiguration.get()]);
     [firstWebView loadHTMLString:firstClientString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
@@ -326,6 +332,7 @@ TEST(IndexedDB, ReadOnlyTransactionOfSuspendedProcessDoesNotBlockOtherProcesses)
     RetainPtr secondHandler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr secondConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [secondConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [secondConfiguration setWebsiteDataStore:dataStore];
     [[secondConfiguration userContentController] addScriptMessageHandler:secondHandler.get() name:@"testHandler"];
     RetainPtr secondWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:secondConfiguration.get()]);
     [secondWebView loadHTMLString:secondClientString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
@@ -399,8 +406,9 @@ TEST(IndexedDB, UncontendedTransactionOfSuspendedProcessIsNotAborted)
         }; \
         </script>";
 
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -413,6 +421,7 @@ TEST(IndexedDB, UncontendedTransactionOfSuspendedProcessIsNotAborted)
     RetainPtr secondHandler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr secondConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [secondConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [secondConfiguration setWebsiteDataStore:dataStore];
     [[secondConfiguration userContentController] addScriptMessageHandler:secondHandler.get() name:@"testHandler"];
     RetainPtr secondWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:secondConfiguration.get()]);
     [secondWebView loadHTMLString:secondClientString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
@@ -422,6 +431,7 @@ TEST(IndexedDB, UncontendedTransactionOfSuspendedProcessIsNotAborted)
     RetainPtr firstHandler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr firstConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [firstConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [firstConfiguration setWebsiteDataStore:dataStore];
     [[firstConfiguration userContentController] addScriptMessageHandler:firstHandler.get() name:@"testHandler"];
     RetainPtr firstWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:firstConfiguration.get()]);
     [firstWebView loadHTMLString:firstClientString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
@@ -511,8 +521,9 @@ TEST(IndexedDB, AbortMultipleTransactionsOfSuspendedProcess)
         }; \
         </script>";
 
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -520,6 +531,7 @@ TEST(IndexedDB, AbortMultipleTransactionsOfSuspendedProcess)
     RetainPtr firstHandler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr firstConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [firstConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [firstConfiguration setWebsiteDataStore:dataStore];
     [[firstConfiguration userContentController] addScriptMessageHandler:firstHandler.get() name:@"testHandler"];
     RetainPtr firstWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:firstConfiguration.get()]);
     [firstWebView loadHTMLString:firstClientString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
@@ -530,6 +542,7 @@ TEST(IndexedDB, AbortMultipleTransactionsOfSuspendedProcess)
     RetainPtr secondHandler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr secondConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [secondConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [secondConfiguration setWebsiteDataStore:dataStore];
     [[secondConfiguration userContentController] addScriptMessageHandler:secondHandler.get() name:@"testHandler"];
     RetainPtr secondWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:secondConfiguration.get()]);
     [secondWebView loadHTMLString:secondClientString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
@@ -604,8 +617,9 @@ TEST(IndexedDB, ManyQueuedTransactionsOfSuspendedProcessAreDeferredNotAborted)
         }; \
         </script>";
 
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -613,12 +627,13 @@ TEST(IndexedDB, ManyQueuedTransactionsOfSuspendedProcessAreDeferredNotAborted)
     RetainPtr firstHandler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr firstConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [firstConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [firstConfiguration setWebsiteDataStore:dataStore];
     [[firstConfiguration userContentController] addScriptMessageHandler:firstHandler.get() name:@"testHandler"];
     RetainPtr firstWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:firstConfiguration.get()]);
     [firstWebView loadHTMLString:firstClientString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
     // This request is issued after every transaction, so its reply means the server has them all.
     EXPECT_WK_STREQ([firstHandler waitForMessage].body, @"first transactions queued");
-    pid_t networkProcessIdentifier = [[WKWebsiteDataStore defaultDataStore] _networkProcessIdentifier];
+    pid_t networkProcessIdentifier = [dataStore _networkProcessIdentifier];
     EXPECT_NE(networkProcessIdentifier, 0);
 
     [firstWebView _setThrottleStateForTesting:0];
@@ -626,6 +641,7 @@ TEST(IndexedDB, ManyQueuedTransactionsOfSuspendedProcessAreDeferredNotAborted)
     RetainPtr secondHandler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr secondConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [secondConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [secondConfiguration setWebsiteDataStore:dataStore];
     [[secondConfiguration userContentController] addScriptMessageHandler:secondHandler.get() name:@"testHandler"];
     RetainPtr secondWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:secondConfiguration.get()]);
     [secondWebView loadHTMLString:secondClientString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
@@ -634,7 +650,7 @@ TEST(IndexedDB, ManyQueuedTransactionsOfSuspendedProcessAreDeferredNotAborted)
     EXPECT_WK_STREQ([firstHandler waitForMessage].body, @"first transaction aborted");
 
     // The network process must not have crashed and relaunched.
-    EXPECT_EQ(networkProcessIdentifier, [[WKWebsiteDataStore defaultDataStore] _networkProcessIdentifier]);
+    EXPECT_EQ(networkProcessIdentifier, [dataStore _networkProcessIdentifier]);
 
     [firstWebView _setThrottleStateForTesting:2];
     EXPECT_WK_STREQ([firstHandler waitForMessage].body, @"queued transactions settled completed=99 aborted=0");
@@ -684,8 +700,9 @@ TEST(IndexedDB, TransactionOfSuspendedProcessIsNotAbortedByItsOwnQueuedTransacti
         }; \
         </script>";
 
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -700,6 +717,7 @@ TEST(IndexedDB, TransactionOfSuspendedProcessIsNotAbortedByItsOwnQueuedTransacti
     RetainPtr handler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [configuration setWebsiteDataStore:dataStore];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadHTMLString:clientString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
@@ -773,8 +791,9 @@ TEST(IndexedDB, TransactionOfSuspendedProcessIsAbortedWhenAnotherSuspendedProces
         }; \
         </script>";
 
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -782,6 +801,7 @@ TEST(IndexedDB, TransactionOfSuspendedProcessIsAbortedWhenAnotherSuspendedProces
     RetainPtr holderHandler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr holderConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [holderConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [holderConfiguration setWebsiteDataStore:dataStore];
     [[holderConfiguration userContentController] addScriptMessageHandler:holderHandler.get() name:@"testHandler"];
     RetainPtr holderWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:holderConfiguration.get()]);
     [holderWebView loadHTMLString:holderString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
@@ -792,6 +812,7 @@ TEST(IndexedDB, TransactionOfSuspendedProcessIsAbortedWhenAnotherSuspendedProces
     RetainPtr waiterHandler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr waiterConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [waiterConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [waiterConfiguration setWebsiteDataStore:dataStore];
     [[waiterConfiguration userContentController] addScriptMessageHandler:waiterHandler.get() name:@"testHandler"];
     RetainPtr waiterWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:waiterConfiguration.get()]);
     [waiterWebView loadHTMLString:waiterString baseURL:[NSURL URLWithString:@"http://webkit.org"]];

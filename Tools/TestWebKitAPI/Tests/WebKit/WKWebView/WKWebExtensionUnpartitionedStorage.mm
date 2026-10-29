@@ -29,6 +29,7 @@
 
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WebExtensionUtilities.h"
@@ -36,7 +37,6 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
-#import <wtf/NeverDestroyed.h>
 #import <wtf/SetForScope.h>
 #import <wtf/text/MakeString.h>
 
@@ -660,19 +660,9 @@ static TestWebKitAPI::HTTPServer storageTestServer(NSString *frameScript, NSStri
     return server;
 }
 
-static WKWebsiteDataStore *persistentDataStore()
-{
-    static NeverDestroyed<RetainPtr<WKWebsiteDataStore>> dataStore = [] {
-        RetainPtr directory = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString] isDirectory:YES];
-        RetainPtr configuration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithDirectory:directory.get()]);
-        return adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:configuration.get()]);
-    }();
-    return dataStore.get().get();
-}
-
 static WKWebExtensionControllerConfiguration *controllerConfigurationWithPersistentDataStore()
 {
-    auto *dataStore = persistentDataStore();
+    auto *dataStore = Util::temporaryPersistentDataStore();
 
     __block bool removedData = false;
     [dataStore removeDataOfTypes:WKWebsiteDataStore.allWebsiteDataTypes modifiedSince:NSDate.distantPast completionHandler:^{

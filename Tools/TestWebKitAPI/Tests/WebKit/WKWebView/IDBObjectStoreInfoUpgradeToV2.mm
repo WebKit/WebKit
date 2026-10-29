@@ -28,6 +28,7 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import <WebCore/SQLiteFileSystem.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
@@ -54,6 +55,7 @@ TEST(IndexedDB, IDBObjectStoreInfoUpgradeToV2)
 {
     RetainPtr<IDBObjectStoreInfoUpgradeToV2MessageHandler> handler = adoptNS([[IDBObjectStoreInfoUpgradeToV2MessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
     [configuration.get().websiteDataStore _terminateNetworkProcess];
@@ -62,9 +64,14 @@ TEST(IndexedDB, IDBObjectStoreInfoUpgradeToV2)
     NSURL *url1 = [NSBundle.test_resourcesBundle URLForResource:@"IDBObjectStoreInfoUpgrade" withExtension:@"sqlite3"];
 
     RetainPtr hash = WebCore::SQLiteFileSystem::computeHashForFileName("objectstoreinfo-upgrade-test"_s).createNSString();
-    NSString *originDirectory = @"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/IndexedDB/v1/file__0/";
-    NSString *databaseDirectory = [[originDirectory stringByAppendingString:hash.get()] stringByExpandingTildeInPath];
-    NSURL *targetURL = [NSURL fileURLWithPath:databaseDirectory];
+    RetainPtr originURL = [NSURL URLWithString:@"file://"];
+    __block RetainPtr<NSString> originDirectory;
+    [configuration.get().websiteDataStore _originDirectoryForTesting:originURL.get() topOrigin:originURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+        originDirectory = result;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    NSURL *targetURL = [[NSURL fileURLWithPath:originDirectory.get() isDirectory:YES] URLByAppendingPathComponent:hash.get()];
     [[NSFileManager defaultManager] removeItemAtURL:targetURL error:nil];
     [[NSFileManager defaultManager] createDirectoryAtURL:targetURL withIntermediateDirectories:YES attributes:nil error:nil];
 

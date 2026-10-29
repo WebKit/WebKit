@@ -29,6 +29,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -86,6 +87,7 @@ TEST(IndexedDB, IndexedDBPersistence)
 {
     RetainPtr<IndexedDBMessageHandler> handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -153,15 +155,16 @@ TEST(IndexedDB, IndexedDBPersistencePrivate)
 TEST(IndexedDB, IndexedDBDataRemoval)
 {
     RetainPtr websiteDataTypes = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeIndexedDBDatabases]]);
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
 
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes.get() modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:websiteDataTypes.get() modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+    [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
         readyToContinue = true;
         ASSERT_EQ(0u, dataRecords.count);
     }];
@@ -170,6 +173,7 @@ TEST(IndexedDB, IndexedDBDataRemoval)
     receivedScriptMessage = false;
     RetainPtr handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IndexedDBPersistence-1" withExtension:@"html"]];
@@ -177,16 +181,16 @@ TEST(IndexedDB, IndexedDBDataRemoval)
     TestWebKitAPI::Util::run(&receivedScriptMessage);
 
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+    [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
         ASSERT_EQ(1u, dataRecords.count);
-        [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes.get() forDataRecords:dataRecords completionHandler:^() {
+        [dataStore removeDataOfTypes:websiteDataTypes.get() forDataRecords:dataRecords completionHandler:^() {
             readyToContinue = true;
         }];
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+    [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
         readyToContinue = true;
         ASSERT_EQ(0u, dataRecords.count);
     }];
@@ -287,8 +291,9 @@ TEST(IndexedDB, IndexedDBThirdPartyFrameHasAccess)
 TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
 {
     RetainPtr websiteDataTypes = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeIndexedDBDatabases]]);
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes.get() modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:websiteDataTypes.get() modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -296,6 +301,7 @@ TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
     RetainPtr handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     RetainPtr schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
@@ -315,14 +321,14 @@ TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
     EXPECT_WK_STREQ( @"database is created - put item success", (NSString *)[getNextMessage() body]);
 
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+    [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
         EXPECT_EQ(2u, records.count);
         NSSortDescriptor *recordDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"displayName" ascending:YES];
         NSArray *sortDescriptors = @[recordDescriptor];
         NSArray *sortedRecords = [records sortedArrayUsingDescriptors:sortDescriptors];
         EXPECT_WK_STREQ("iframe", [[sortedRecords objectAtIndex:0] displayName]);
         EXPECT_WK_STREQ("webkit.org", [[sortedRecords objectAtIndex:1] displayName]);
-        [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes.get() forDataRecords:records completionHandler:^() {
+        [dataStore removeDataOfTypes:websiteDataTypes.get() forDataRecords:records completionHandler:^() {
             readyToContinue = true;
         }];
     }];
@@ -559,14 +565,16 @@ indexedDB.databases().then(postDatabases);
 
 TEST(IndexedDB, IndexedDBGetDatabases)
 {
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 
     RetainPtr handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     RetainPtr schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
@@ -593,7 +601,7 @@ TEST(IndexedDB, IndexedDBGetDatabases)
     RetainPtr webkitURL = [NSURL URLWithString:@"webkit://"];
     __block RetainPtr<NSString> appleDirectoryString;
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] _originDirectoryForTesting:appleURL.get() topOrigin:appleURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+    [dataStore _originDirectoryForTesting:appleURL.get() topOrigin:appleURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
         appleDirectoryString = result;
         readyToContinue = true;
     }];
@@ -602,7 +610,7 @@ TEST(IndexedDB, IndexedDBGetDatabases)
 
     readyToContinue = false;
     __block RetainPtr<NSString> webkitDirectoryString;
-    [[WKWebsiteDataStore defaultDataStore] _originDirectoryForTesting:webkitURL.get() topOrigin:webkitURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+    [dataStore _originDirectoryForTesting:webkitURL.get() topOrigin:webkitURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
         webkitDirectoryString = result;
         readyToContinue = true;
     }];
@@ -611,7 +619,7 @@ TEST(IndexedDB, IndexedDBGetDatabases)
 
     __block RetainPtr<NSString> appleWebkitDirectoryString;
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] _originDirectoryForTesting:webkitURL.get() topOrigin:appleURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+    [dataStore _originDirectoryForTesting:webkitURL.get() topOrigin:appleURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
         appleWebkitDirectoryString = result;
         readyToContinue = true;
     }];
@@ -737,14 +745,16 @@ static NSString *openFileHTMLString = @"<input style='width: 100vw; height: 100v
 
 TEST(IndexedDB, GetFileByIndex)
 {
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 
     RetainPtr<IndexedDBMessageHandler> handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     RetainPtr uiDelegate = adoptNS([[IndexedDBOpenPanelUIDelegate alloc] init]);

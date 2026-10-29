@@ -28,6 +28,7 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import <WebCore/SQLiteFileSystem.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -55,6 +56,7 @@ TEST(IndexedDB, StoreBlobThenRemoveData)
 {
     RetainPtr handler = adoptNS([[StoreBlobMessageHandler alloc] init]);
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"StoreBlobToBeDeleted" withExtension:@"html"]];
@@ -105,7 +107,7 @@ TEST(IndexedDB, StoreBlobThenRemoveData)
     [[NSFileManager defaultManager] copyItemAtURL:blobFileURL.get() toURL:otherBlob4.get() error:nil];
 
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [configuration.get().websiteDataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:blobFileURL.get().path]);
         EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:databaseFileURL.get().path]);
 

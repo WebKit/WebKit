@@ -26,6 +26,11 @@
 #import "config.h"
 #import "Helpers/cocoa/TestCocoa.h"
 
+#import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/FileSystem.h>
+#import <wtf/NeverDestroyed.h>
+
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
 #endif
@@ -81,6 +86,19 @@ bool operator==(const CGRect& a, const CGRect& b)
 }
 
 #endif
+
+WKWebsiteDataStore *TestWebKitAPI::Util::temporaryPersistentDataStore()
+{
+    static NeverDestroyed<RetainPtr<WKWebsiteDataStore>> dataStore = [] {
+        static NeverDestroyed<RetainPtr<NSString>> directory = FileSystem::createTemporaryDirectory(@"WebsiteData");
+        atexit([] {
+            [NSFileManager.defaultManager removeItemAtPath:directory.get().get() error:nil];
+        });
+        RetainPtr configuration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithDirectory:[NSURL fileURLWithPath:directory.get().get() isDirectory:YES]]);
+        return adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:configuration.get()]);
+    }();
+    return dataStore.get().get();
+}
 
 #if PLATFORM(IOS_FAMILY)
 

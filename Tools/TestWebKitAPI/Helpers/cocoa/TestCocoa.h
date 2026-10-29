@@ -31,6 +31,8 @@
 #import "Helpers/Test.h"
 #import <wtf/text/TextStream.h>
 
+OBJC_CLASS WKWebsiteDataStore;
+
 namespace TestWebKitAPI {
 namespace Util {
 
@@ -41,6 +43,8 @@ static inline ::testing::AssertionResult assertNSObjectsAreEqual(const char* exp
         return ::testing::AssertionSuccess();
     return ::testing::internal::EqFailure(expectedExpression, actualExpression, toSTD([expected description]), toSTD([actual description]), false /* ignoring_case */);
 }
+
+WKWebsiteDataStore *temporaryPersistentDataStore();
 
 #if PLATFORM(IOS_FAMILY)
 void instantiateUIApplicationIfNeeded(Class customApplicationClass = nil);
