@@ -86,6 +86,7 @@ protected:
     RemoteGraphicsContextProxy(const WebCore::GraphicsContextState&, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, const WebCore::ColorSpace&, DrawGlyphsMode, std::optional<WebCore::ContentsFormat>, WebCore::RenderingMode, RemoteGraphicsContextIdentifier, RemoteDrawingBackendProxy&);
 
     template<typename T> void send(T&& message);
+    RemoteDrawingBackendProxy* drawingBackend() const;
 
 private:
     void didBecomeUnresponsive() const;

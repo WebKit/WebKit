@@ -67,6 +67,10 @@ public:
     void createSnapshot(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, const WebCore::FloatSize&) final;
     UniqueRef<RemoteSnapshotRecorderProxy> createSnapshotRecorder(const WebCore::FloatRect& initialClip, RemoteSnapshotIdentifier, WebCore::RenderingMode) final;
     void sinkSnapshotRecorderIntoSnapshotFrame(UniqueRef<RemoteSnapshotRecorderProxy>&&, WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&) final;
+    bool canDrawPDFPages() const final { return true; }
+    bool cachePDFDocument(WebCore::RenderingResourceIdentifier, const WebCore::FragmentedSharedBuffer&) final;
+    void releasePDFDocument(WebCore::RenderingResourceIdentifier) final;
+    void drawPDFPage(RemoteSnapshotRecorderIdentifier, WebCore::RenderingResourceIdentifier documentIdentifier, unsigned pageIndex, const WebCore::FloatRect& source, const WebCore::FloatRect& destination, bool includeLinks) final;
     void releaseMemory();
 
     // RemoteDrawingBackendProxy.

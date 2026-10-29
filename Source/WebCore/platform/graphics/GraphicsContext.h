@@ -40,6 +40,7 @@
 #include <WebCore/Pattern.h>
 #include <WebCore/PlatformGraphicsContext.h>
 #include <WebCore/RenderingMode.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -50,6 +51,7 @@ class AffineTransform;
 class Filter;
 class FilterResults;
 class FloatRoundedRect;
+class FragmentedSharedBuffer;
 class Gradient;
 class ImageBuffer;
 class Path;
@@ -354,6 +356,15 @@ public:
     // Links
 
     virtual void setURLForRect(const URL&, const FloatRect&) { }
+
+    // Draws the part in source of a page of a PDF document into destination as vectors, text and links,
+    // where the recording of this context is drawn. Only contexts that record for a process that can,
+    // such as the print process, do. The source is in the coordinates of the page as it is displayed:
+    // its crop box, rotated as the page asks, with the origin at its top left. The identifier names the
+    // document across calls, and documentData is only called when the context does not have the
+    // document yet. The links of the page stay links in a PDF only if includeLinks is true, for pages
+    // whose links work where they are shown. False if the page has to be drawn some other way.
+    virtual bool drawPDFPage(RenderingResourceIdentifier /* documentIdentifier */, NOESCAPE const Function<RefPtr<FragmentedSharedBuffer>()>& /* documentData */, unsigned /* pageIndex */, const FloatRect& /* source */, const FloatRect& /* destination */, bool /* includeLinks */) { return false; }
 
     virtual void setDestinationForRect(const String&, const FloatRect&) { }
     virtual void addDestinationAtPoint(const String&, const FloatPoint&) { }

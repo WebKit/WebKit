@@ -31,6 +31,7 @@
 #include "RemoteGradientIdentifier.h"
 #include "RemotePathImplIdentifier.h"
 #include "RemoteSnapshotIdentifier.h"
+#include "RemoteSnapshotRecorderIdentifier.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/RenderingMode.h>
 #include <WebCore/RenderingResourceIdentifier.h>
@@ -48,6 +49,7 @@ class StreamClientConnection;
 namespace WebCore {
 class ColorSpace;
 class Filter;
+class FragmentedSharedBuffer;
 class FloatRect;
 class FloatSize;
 class Gradient;
@@ -110,6 +112,14 @@ public:
 
     // Remote snapshots, which the backend's process assembles.
     virtual void createSnapshot(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, const WebCore::FloatSize&) = 0;
+    // Whether the snapshots recorded here can draw the pages of PDF documents as vectors, as those of
+    // the print process can. Only then are the PDF document functions below used.
+    virtual bool canDrawPDFPages() const { return false; }
+    // False if the document could not be sent.
+    virtual bool cachePDFDocument(WebCore::RenderingResourceIdentifier, const WebCore::FragmentedSharedBuffer&) { return false; }
+    virtual void releasePDFDocument(WebCore::RenderingResourceIdentifier) { }
+    // As GraphicsContext::drawPDFPage(), into the recorder, from a cached document.
+    virtual void drawPDFPage(RemoteSnapshotRecorderIdentifier, WebCore::RenderingResourceIdentifier /* documentIdentifier */, unsigned /* pageIndex */, const WebCore::FloatRect& /* source */, const WebCore::FloatRect& /* destination */, bool /* includeLinks */) { }
     virtual UniqueRef<RemoteSnapshotRecorderProxy> createSnapshotRecorder(const WebCore::FloatRect& initialClip, RemoteSnapshotIdentifier, WebCore::RenderingMode) = 0;
     virtual void sinkSnapshotRecorderIntoSnapshotFrame(UniqueRef<RemoteSnapshotRecorderProxy>&&, WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&) = 0;
 };

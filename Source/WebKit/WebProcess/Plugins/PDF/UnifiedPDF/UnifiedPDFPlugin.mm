@@ -1028,11 +1028,14 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
 
             if (context.hasPlatformContext())
                 drawPage(context, pageDestinationRect.minXMaxYCorner());
-            else if (RefPtr pageBuffer = context.createAlignedImageBuffer(pageDestinationRect.size(), context.colorSpace(), RenderingMethod::Local)) {
-                // Recording contexts (e.g. for remote snapshotting) have no platform context for PDFKit to draw into,
-                // so render into a local (non-remote) buffer first.
-                drawPage(pageBuffer->context(), { 0, pageDestinationRect.height() });
-                context.drawImageBuffer(*pageBuffer, pageDestinationRect);
+            else if (!drawPageWhereRecordingIsDrawn(context, pageInfo.pageIndex, { { }, pageDestinationRect.size() }, pageDestinationRect)) {
+                // Recording contexts (e.g. for remote snapshotting) have no platform context for PDFKit to draw into.
+                // Unless the recording is drawn where the page can be drawn as vectors, as print snapshots are,
+                // render into a local (non-remote) buffer first.
+                if (RefPtr pageBuffer = context.createAlignedImageBuffer(pageDestinationRect.size(), context.colorSpace(), RenderingMethod::Local)) {
+                    drawPage(pageBuffer->context(), { 0, pageDestinationRect.height() });
+                    context.drawImageBuffer(*pageBuffer, pageDestinationRect);
+                }
             }
         }
 

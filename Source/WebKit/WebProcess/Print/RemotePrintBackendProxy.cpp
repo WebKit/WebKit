@@ -44,6 +44,8 @@
 #include <WebCore/FontPlatformData.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/SharedBuffer.h>
+#include <WebCore/SharedMemory.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -192,6 +194,32 @@ RefPtr<ImageBuffer> RemotePrintBackendProxy::createImageBufferForContext(const F
     // buffers, and the others draw without IOSurfaces.
     auto localRenderingMode = renderingMode == RenderingMode::DisplayList ? RenderingMode::DisplayList : RenderingMode::Unaccelerated;
     return ImageBuffer::create(size, localRenderingMode, purpose, resolutionScale, colorSpace, bufferFormat);
+}
+
+bool RemotePrintBackendProxy::cachePDFDocument(RenderingResourceIdentifier identifier, const FragmentedSharedBuffer& data)
+{
+    if (!connection())
+        return false;
+    RefPtr sharedMemory = SharedMemory::copyBuffer(data);
+    if (!sharedMemory)
+        return false;
+    auto handle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
+    if (!handle)
+        return false;
+    send(Messages::RemotePrintBackend::CachePDFDocument(identifier, WTF::move(*handle)));
+    return true;
+}
+
+void RemotePrintBackendProxy::releasePDFDocument(RenderingResourceIdentifier identifier)
+{
+    if (!m_connection)
+        return;
+    send(Messages::RemotePrintBackend::ReleasePDFDocument(identifier));
+}
+
+void RemotePrintBackendProxy::drawPDFPage(RemoteSnapshotRecorderIdentifier recorderIdentifier, RenderingResourceIdentifier documentIdentifier, unsigned pageIndex, const FloatRect& source, const FloatRect& destination, bool includeLinks)
+{
+    send(Messages::RemotePrintBackend::DrawPDFPage(recorderIdentifier, documentIdentifier, pageIndex, source, destination, includeLinks));
 }
 
 void RemotePrintBackendProxy::cacheNativeImage(ShareableBitmap::Handle&& handle, RenderingResourceIdentifier renderingResourceIdentifier)

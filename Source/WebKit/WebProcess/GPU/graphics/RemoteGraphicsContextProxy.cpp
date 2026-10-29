@@ -592,6 +592,11 @@ void RemoteGraphicsContextProxy::fillEllipse(const FloatRect& rect)
     send(Messages::RemoteGraphicsContext::FillEllipse(rect));
 }
 
+RemoteDrawingBackendProxy* RemoteGraphicsContextProxy::drawingBackend() const
+{
+    return m_drawingBackend.get();
+}
+
 #if ENABLE(VIDEO)
 void RemoteGraphicsContextProxy::drawVideoFrame(const VideoFrame& frame, const FloatRect& destination, ShouldDiscardAlpha shouldDiscardAlpha, ImageDrawingOptions options)
 {

@@ -30,6 +30,8 @@
 #include "RemoteGraphicsContextProxy.h"
 #include "RemoteSnapshotRecorderIdentifier.h"
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/RenderingResourceIdentifier.h>
+#include <wtf/HashMap.h>
 
 namespace WebKit {
 
@@ -42,9 +44,18 @@ class RemoteSnapshotRecorderProxy : public RemoteGraphicsContextProxy {
 public:
     // renderingMode is RenderingMode::PDFDocument when the snapshot will be sunk into a PDF, and RenderingMode::DisplayList otherwise.
     RemoteSnapshotRecorderProxy(const WebCore::FloatRect& initialClip, WebCore::RenderingMode, RemoteDrawingBackendProxy&);
+    ~RemoteSnapshotRecorderProxy();
     RemoteSnapshotRecorderIdentifier identifier() const { return RemoteSnapshotRecorderIdentifier { RemoteGraphicsContextProxy::identifier().toUInt64() }; }
 
     void drawSnapshotFrame(WebCore::FrameIdentifier);
+
+private:
+    bool drawPDFPage(WebCore::RenderingResourceIdentifier documentIdentifier, NOESCAPE const Function<RefPtr<WebCore::FragmentedSharedBuffer>()>& documentData, unsigned pageIndex, const WebCore::FloatRect& source, const WebCore::FloatRect& destination, bool includeLinks) final;
+
+    // The PDF documents sent for this recording, by the identifiers that the drawing gives them. They
+    // are sent with identifiers of their own, so that recordings drawing the same document do not
+    // depend on each other.
+    HashMap<WebCore::RenderingResourceIdentifier, WebCore::RenderingResourceIdentifier> m_cachedPDFDocuments;
 };
 
 }
