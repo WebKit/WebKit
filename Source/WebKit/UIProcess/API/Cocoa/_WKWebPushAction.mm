@@ -29,6 +29,7 @@
 #import "Logging.h"
 #import "UserNotificationsSPI.h"
 #import "WebPushDaemonConstants.h"
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS)
 #import "UIKitSPI.h"
