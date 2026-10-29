@@ -99,15 +99,20 @@ public:
             webkit_geolocation_manager_update_position(m_manager, m_checkPosition);
         }
 
-        g_main_loop_quit(m_mainLoop);
+        m_started = true;
     }
 
     void stop()
     {
         g_assert_true(m_updating);
         m_updating = false;
-        if (m_watching)
-            g_main_loop_quit(m_mainLoop);
+    }
+
+    void waitUntilStarted()
+    {
+        while (!m_started)
+            g_main_context_iteration(nullptr, TRUE);
+        m_started = false;
     }
 
     Position lastPosition()
@@ -177,7 +182,7 @@ public:
         GUniqueOutPtr<GError> error;
         runJavaScriptAndWaitUntilFinished(script.get(), &error.outPtr());
         g_assert_no_error(error.get());
-        g_main_loop_run(m_mainLoop);
+        waitUntilStarted();
         g_clear_pointer(&m_checkPosition, webkit_geolocation_position_free);
         g_assert_true(webkit_geolocation_manager_get_enable_high_accuracy(m_manager) == enableHighAccuracy);
 
@@ -196,7 +201,7 @@ public:
         GUniqueOutPtr<GError> error;
         auto* value = runJavaScriptAndWaitUntilFinished(getCurrentPosition, &error.outPtr());
         g_assert_no_error(error.get());
-        g_main_loop_run(m_mainLoop);
+        waitUntilStarted();
         m_errorMessage = nullptr;
 
         value = runJavaScriptAndWaitUntilFinished("error", &error.outPtr());
@@ -211,7 +216,6 @@ public:
         g_clear_pointer(&m_checkPosition, webkit_geolocation_position_free);
         m_errorMessage = nullptr;
 
-        m_watching = true;
         static const char watchPosition[] =
             "var position = null;\n"
             "var watchID = navigator.geolocation.watchPosition(function(p) {\n"
@@ -229,7 +233,7 @@ public:
         auto* value = runJavaScriptAndWaitUntilFinished(watchPosition, &error.outPtr());
         g_assert_nonnull(value);
         g_assert_no_error(error.get());
-        g_main_loop_run(m_mainLoop);
+        waitUntilStarted();
     }
 
     void stopWatch()
@@ -237,13 +241,13 @@ public:
         GUniqueOutPtr<GError> error;
         runJavaScriptAndWaitUntilFinished("navigator.geolocation.clearWatch(watchID)", &error.outPtr());
         g_assert_no_error(error.get());
-        g_main_loop_run(m_mainLoop);
-        m_watching = false;
+        while (m_updating)
+            g_main_context_iteration(nullptr, TRUE);
     }
 
     WebKitGeolocationManager* m_manager;
     bool m_updating { false };
-    bool m_watching { false };
+    bool m_started { false };
     WebKitGeolocationPosition* m_checkPosition { nullptr };
     GUniquePtr<char> m_errorMessage;
 };
