@@ -700,7 +700,6 @@ TestWebKitAPI.WKWebExtensionAPIWebNavigation.UpdateTabDuringCommittedEvent
 TestWebKitAPI.WKWebExtensionAPIWindowsTests/createTypeEnum()
 TestWebKitAPI.WKWebExtensionAPIWindowsTests/windowStateEnum()
 TestWebKitAPI.WKWebExtensionAPIWindowsTests/windowTypeEnum()
-TestWebKitAPI.WKWebExtensionContext
 TestWebKitAPI.WKWebExtensionController
 TestWebKitAPI.WKWebExtensionControllerConfigurationTests/copying()
 TestWebKitAPI.WKWebExtensionControllerConfigurationTests/defaultWebsiteDataStoreWithCopyAndCoding()
@@ -6676,6 +6675,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removeUnsupported()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removedEvent()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/update()
+[ ios ] TestWebKitAPI.WKWebExtensionContext
 [ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.AboutBlankChildOfHostPermittedFrameSeesItsCookies
 [ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.BroadcastChannelIsUnpartitionedInHostPermittedFrame
 [ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.CacheStorageIsUnpartitionedInHostPermittedFrame
@@ -7519,7 +7519,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.SafeBrowsing.AllModalTypesProperlyDeferred
 [ mac ] TestWebKitAPI.SafeBrowsing.CleanDownloadProceedsAfterSafeBrowsingCheck
 [ mac ] TestWebKitAPI.SafeBrowsing.DeferredModalShownWhenProceedingThroughWarning
-[ mac ] TestWebKitAPI.SafeBrowsing.DeferredModalSuppressedWhenGoingBack
 [ mac ] TestWebKitAPI.SafeBrowsing.DownloadDeferredAndBlockedBySafeBrowsing
 [ mac ] TestWebKitAPI.SafeBrowsing.DownloadDeferredAndBlockedBySafeBrowsingPostTimeout
 [ mac ] TestWebKitAPI.SafeBrowsing.GoBack
@@ -7549,7 +7548,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.SafeBrowsing.SubframeDownloadBlockedBySafeBrowsing
 [ mac ] TestWebKitAPI.SafeBrowsing.URLObservation
 [ mac ] TestWebKitAPI.SafeBrowsing.VisitUnsafeWebsite
-[ mac ] TestWebKitAPI.SafeBrowsing.WKWebViewGoBack
 [ mac ] TestWebKitAPI.SafeBrowsing.WKWebViewGoBackIFrame
 [ mac ] TestWebKitAPI.SafeBrowsing.WarningShownAfterCOOPProcessSwap
 [ mac ] TestWebKitAPI.SafeBrowsing.WarningShownAfterCOOPProcessSwapSlowLookup
@@ -8229,6 +8227,31 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removeUnsupported()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removedEvent()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/update()
+[ mac ] TestWebKitAPI.WKWebExtensionContext.CallingMissingBrowserAPIInBackground
+[ mac ] TestWebKitAPI.WKWebExtensionContext.CommandsParsing
+[ mac ] TestWebKitAPI.WKWebExtensionContext.ConsoleAssertWithMessage
+[ mac ] TestWebKitAPI.WKWebExtensionContext.ConsoleAssertWithoutMessage
+[ mac ] TestWebKitAPI.WKWebExtensionContext.ConsoleErrorDoesNotEvaluateArgumentsTwice
+[ mac ] TestWebKitAPI.WKWebExtensionContext.ConsoleErrorReportedNotLogOrWarn
+[ mac ] TestWebKitAPI.WKWebExtensionContext.ContentScriptsParsing
+[ mac ] TestWebKitAPI.WKWebExtensionContext.DefaultPermissionChecks
+[ mac ] TestWebKitAPI.WKWebExtensionContext.LoadNonExistentImage
+[ mac ] TestWebKitAPI.WKWebExtensionContext.NoErrorForCaughtExceptionsInBackground
+[ mac ] TestWebKitAPI.WKWebExtensionContext.OptionsPageURLParsing
+[ mac ] TestWebKitAPI.WKWebExtensionContext.PageScriptErrorNotReportedToExtension
+[ mac ] TestWebKitAPI.WKWebExtensionContext.PermissionGranting
+[ mac ] TestWebKitAPI.WKWebExtensionContext.ReferenceErrorInBackground
+[ mac ] TestWebKitAPI.WKWebExtensionContext.SyntaxErrorInBackground
+[ mac ] TestWebKitAPI.WKWebExtensionContext.TopLevelThrowInModuleBackground
+[ mac ] TestWebKitAPI.WKWebExtensionContext.TopLevelThrowInPopup
+[ mac ] TestWebKitAPI.WKWebExtensionContext.URLOverridesParsing
+[ mac ] TestWebKitAPI.WKWebExtensionContext.UncaughtScriptErrorInBackground
+[ mac ] TestWebKitAPI.WKWebExtensionContext.UncaughtScriptErrorInContentScript
+[ mac ] TestWebKitAPI.WKWebExtensionContext.UncaughtScriptErrorInEventListener
+[ mac ] TestWebKitAPI.WKWebExtensionContext.UncaughtScriptErrorInMainWorldContentScript
+[ mac ] TestWebKitAPI.WKWebExtensionContext.UncaughtScriptErrorInServiceWorkerBackground
+[ mac ] TestWebKitAPI.WKWebExtensionContext.UnhandledPromiseRejectionInBackground
+[ mac ] TestWebKitAPI.WKWebExtensionContext.UnhandledPromiseRejectionInServiceWorkerBackground
 [ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.AboutBlankChildOfHostPermittedFrameSeesItsCookies
 [ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.BroadcastChannelIsUnpartitionedInHostPermittedFrame
 [ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.CacheStorageIsUnpartitionedInHostPermittedFrame
