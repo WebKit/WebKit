@@ -674,6 +674,66 @@ TEST_P(ViewportOffsetTest, OutsideFramebuffer)
     }
 }
 
+// Tests that gl_FragCoord.xy are the window coordinates of the fragment, with the origin at the
+// lower left corner, whatever the viewport.
+TEST_P(ViewportOffsetTest, FragCoord)
+{
+    constexpr char kFS[] = R"(precision highp float;
+void main()
+{
+    gl_FragColor = vec4(gl_FragCoord.xy / 32.0, 0.0, 1.0);
+})";
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    static_assert(kSize == 32);
+
+    const Rect kViewports[] = {
+        {0, 0, kSize, kSize},
+        {kSize / 4, kSize / 8, kSize / 2, kSize / 2},
+        {kSize / 2, kSize / 2, kSize, kSize},
+    };
+    for (bool useFramebufferObject : {false, true})
+    {
+        bindFramebuffer(useFramebufferObject);
+        for (const Rect &viewport : kViewports)
+        {
+            clear();
+            glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+            drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
+            ASSERT_GL_NO_ERROR();
+
+            SCOPED_TRACE(testing::Message()
+                         << "framebuffer object: " << useFramebufferObject << ", viewport: ("
+                         << viewport.x << ", " << viewport.y << ", " << viewport.width << ", "
+                         << viewport.height << ")");
+            std::vector<GLColor> pixels(kSize * kSize);
+            glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+            int wrongPixels = 0;
+            for (int y = 0; y < kSize; ++y)
+            {
+                for (int x = 0; x < kSize; ++x)
+                {
+                    GLColor expected = GLColor::black;
+                    if (viewport.contains(x, y))
+                    {
+                        expected.R = static_cast<GLubyte>(std::round((x + 0.5f) / 32.0f * 255.0f));
+                        expected.G = static_cast<GLubyte>(std::round((y + 0.5f) / 32.0f * 255.0f));
+                    }
+                    const GLColor &actual = pixels[y * kSize + x];
+                    const bool near       = std::abs(actual.R - expected.R) <= 1 &&
+                                      std::abs(actual.G - expected.G) <= 1 &&
+                                      actual.B == expected.B && actual.A == expected.A;
+                    if (!near && wrongPixels++ == 0)
+                    {
+                        ADD_FAILURE() << "first wrong pixel: (" << x << ", " << y
+                                      << "), expected " << expected << ", actual " << actual;
+                    }
+                }
+            }
+            EXPECT_EQ(0, wrongPixels);
+        }
+    }
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ViewportOffsetTest);
 
 }  // namespace

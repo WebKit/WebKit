@@ -2586,7 +2586,6 @@
 42267100 WGPU : GLSLTest.SamplersInStructNoNameCollision2/* = SKIP
 42267100 WGPU : GLSLTest.PointCoordConsistency/* = SKIP
 42267100 WGPU : GLSLTest.ScreenFlipCauseStandardDerivativesWrong/* = SKIP
-42267100 WGPU : GLSLTest.FragCoordConsistency/* = SKIP
 42267100 WGPU : GLSLTest.FragData/* = SKIP
 42267100 WGPU : GLSLTest.FragData_AlphaToCoverage/* = SKIP
 42267100 WGPU : WebGLGLSLTest.FragDataIndexClampWithoutDrawBuffers/* = SKIP
