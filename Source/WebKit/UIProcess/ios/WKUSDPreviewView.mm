@@ -40,6 +40,7 @@
 #import <WebCore/UTIUtilities.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/ios/SystemPreviewSPI.h>
+#import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
@@ -62,7 +63,8 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
 
 @implementation WKUSDPreviewView {
     RetainPtr<NSItemProvider> _itemProvider;
-    RetainPtr<NSData> _data;
+    Lock _dataLock;
+    RetainPtr<NSData> _data WTF_GUARDED_BY_LOCK(_dataLock);
     RetainPtr<NSString> _suggestedFilename;
     RetainPtr<NSString> _mimeType;
     RetainPtr<QLItem> _item;
@@ -92,7 +94,12 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
 - (void)web_setContentProviderData:(NSData *)data suggestedFilename:(NSString *)filename completionHandler:(void (^)(void))completionHandler
 {
     _suggestedFilename = adoptNS([filename copy]);
-    _data = adoptNS([data copy]);
+
+    {
+        RetainPtr dataCopy = adoptNS([data copy]);
+        Locker locker { _dataLock };
+        _data = WTF::move(dataCopy);
+    }
 
     RetainPtr alert = WebKit::createUIAlertController(protect(WEB_UI_NSSTRING(@"View 3D Object?", "View 3D Object?")), protect(WEB_UI_NSSTRING(@"You can see a preview of this object before viewing in 3D.", "You can see a preview of this object before viewing in 3D.")));
 
@@ -224,7 +231,8 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
 
 - (NSData *)provideDataForItem:(QLItem *)item
 {
-    return _data.get();
+    Locker locker { _dataLock };
+    return _data.getAutoreleased();
 }
 
 @end
