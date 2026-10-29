@@ -37,17 +37,17 @@
 #import "UIKitSPIForTesting.h"
 #endif
 
-static bool focusDidStartInputSession;
 static const NSUInteger maxCount = 100;
 
 @interface WKWebViewFindStringInputDelegate : NSObject <_WKInputDelegate>
+@property (nonatomic, readonly) BOOL didStartInputSession;
 @end
 
 @implementation WKWebViewFindStringInputDelegate
 
 - (void)_webView:(WKWebView *)webView didStartInputSession:(id <_WKFormInputSession>)inputSession
 {
-    focusDidStartInputSession = YES;
+    _didStartInputSession = YES;
 }
 
 @end
@@ -100,7 +100,7 @@ TEST(WKWebViewFindString, DoNotFocusMatchWhenWebViewResignedAndHardwareKeyboardA
 
     EXPECT_FALSE(viewIsFirstResponder(firstWebView.get()));
     EXPECT_WK_STREQ("hello", [findDelegate findString]);
-    EXPECT_FALSE(focusDidStartInputSession);
+    EXPECT_FALSE([inputDelegate didStartInputSession]);
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -126,7 +126,7 @@ TEST(WKWebViewFindString, DoNotFocusMatchWhenWebViewResigned)
 
     EXPECT_FALSE([firstWebView isFirstResponder]);
     EXPECT_WK_STREQ("hello", [findDelegate findString]);
-    EXPECT_FALSE(focusDidStartInputSession);
+    EXPECT_FALSE([inputDelegate didStartInputSession]);
 }
 #endif
 
