@@ -143,7 +143,14 @@ public:
 #endif
 
     virtual bool isInUse() const { return false; }
+
+    // Destroys the GraphicsContext, dropping the state it holds. The state can
+    // reference resources owned by other objects, so this is how an ImageBuffer
+    // is detached from its surroundings.
     virtual void releaseGraphicsContext() { }
+    // Backends that cannot destroy their context must leave hasGraphicsContext() true;
+    // such an ImageBuffer must not be handed to a different owner.
+    virtual bool hasGraphicsContext() const { return true; }
 
     virtual void transferToNewContext(const ImageBufferCreationContext&) { }
 

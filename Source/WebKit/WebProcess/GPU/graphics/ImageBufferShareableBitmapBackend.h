@@ -68,7 +68,7 @@ public:
 
     size_t memoryCost() const final { return WebCore::ImageBufferBackend::calculateMemoryCost(size(), calculateBytesPerRow(size(), pixelFormat(), colorSpace())); }
     bool canMapBackingStore() const final;
-    WebCore::GraphicsContext& context() final { return *m_context; }
+    WebCore::GraphicsContext& context() final;
 
     std::optional<ImageBufferBackendHandle> createBackendHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) const final;
     RefPtr<WebCore::ShareableBitmap> bitmap() const final { return m_bitmap.ptr(); }
@@ -84,14 +84,17 @@ public:
     void putPixelBuffer(const WebCore::PixelBufferSourceView&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
 
 private:
+    void adoptGraphicsContext(std::unique_ptr<WebCore::GraphicsContext>&&);
+
     unsigned bytesPerRow() const final;
     String debugDescription() const final;
 
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
-    void releaseGraphicsContext() final { /* Do nothing. This is only relevant for IOSurface backends */ }
+    void releaseGraphicsContext() final;
+    bool hasGraphicsContext() const final { return !!m_context; }
 
     const Ref<WebCore::ShareableBitmap> m_bitmap;
-    const std::unique_ptr<WebCore::GraphicsContext> m_context;
+    std::unique_ptr<WebCore::GraphicsContext> m_context;
 };
 
 } // namespace WebKit

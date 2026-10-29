@@ -567,6 +567,13 @@ void ImageBuffer::releaseGraphicsContext()
         return backend->releaseGraphicsContext();
 }
 
+bool ImageBuffer::hasGraphicsContext() const
+{
+    if (auto* backend = m_backend.get())
+        return backend->hasGraphicsContext();
+    return false;
+}
+
 bool ImageBuffer::setVolatile()
 {
     if (auto* backend = m_backend.get())

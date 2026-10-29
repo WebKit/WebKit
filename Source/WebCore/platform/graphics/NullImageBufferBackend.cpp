@@ -47,7 +47,19 @@ size_t NullImageBufferBackend::memoryCost() const
 
 NullGraphicsContext& NullImageBufferBackend::context()
 {
-    return m_context;
+    if (!m_context)
+        m_context = makeUnique<NullGraphicsContext>();
+    return *m_context;
+}
+
+void NullImageBufferBackend::releaseGraphicsContext()
+{
+    m_context = nullptr;
+}
+
+bool NullImageBufferBackend::hasGraphicsContext() const
+{
+    return !!m_context;
 }
 
 RefPtr<NativeImage> NullImageBufferBackend::copyNativeImage()
