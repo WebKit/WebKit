@@ -678,6 +678,9 @@ void Internals::resetToConsistentState(Page& page)
     page.setSystemImageAnimationEnabled(true);
     if (!page.imageAnimationEnabled())
         page.setImageAnimationEnabled(true);
+#if ENABLE(MODEL_ELEMENT)
+    page.setModelLoadDelaysDisabledForTesting(false);
+#endif
 
     RefPtr localMainFrame = page.localMainFrame();
     if (!localMainFrame)
@@ -9541,7 +9544,7 @@ void Internals::disableModelLoadDelaysForTesting()
     if (!document || !document->page())
         return;
 
-    document->page()->disableModelLoadDelaysForTesting();
+    document->page()->setModelLoadDelaysDisabledForTesting(true);
 }
 
 String Internals::modelElementState(HTMLModelElement& element)
