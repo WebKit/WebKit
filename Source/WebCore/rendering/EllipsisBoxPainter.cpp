@@ -115,9 +115,9 @@ void EllipsisBoxPainter::paint()
 void EllipsisBoxPainter::paintSelection()
 {
     auto& context = m_paintInfo.context();
-    CheckedRef style = m_lineBox.style();
+    CheckedRef rootStyle = m_lineBox.formattingContextRoot().style();
 
-    auto textColor = style->visitedDependentColorApplyingColorFilter();
+    auto textColor = rootStyle->visitedDependentColorApplyingColorFilter();
     auto backgroundColor = m_selectionBackgroundColor;
     if (!backgroundColor.isVisible())
         return;
@@ -133,7 +133,7 @@ void EllipsisBoxPainter::paintSelection()
 
     auto ellipsisText = m_lineBox.ellipsisText();
     constexpr bool canUseSimplifiedTextMeasuring = false;
-    style->fontCascade().adjustSelectionRectForText(canUseSimplifiedTextMeasuring, ellipsisText, visualRect);
+    rootStyle->fontCascade().adjustSelectionRectForText(canUseSimplifiedTextMeasuring, ellipsisText, visualRect);
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(visualRect, m_lineBox.formattingContextRoot().document().deviceScaleFactor(), ellipsisText.ltr()), backgroundColor);
 }
 
