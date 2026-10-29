@@ -445,6 +445,7 @@ builders:
     configuration: debug
     architectures: [arm64]
     additionalArguments: [--cmake]
+    rebuild_without_change_on_builder: true
     triggers: [macos-tahoe-debug-api-tests-ews, macos-tahoe-debug-wk2-tests-ews]
     workernames:
       $flatten:
