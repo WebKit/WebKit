@@ -45,6 +45,7 @@
 #include "RenderElementStyleInlines.h"
 #include "RenderLayoutState.h"
 #include "RenderLineBreak.h"
+#include "RenderListItem.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -57,7 +58,7 @@ enum class BlockAvoidanceReason : uint8_t {
     BlockFormattingContextIntegrationDisabled,
     NotABlockFormattingContextRoot,
     RootIsRenderView,
-    RootIsListItem,
+    RootHasListMarker,
     RootIsTableCell,
     RootIsMultiColumnFlow,
     RootIsFieldset,
@@ -77,7 +78,7 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentIsHiddenByLineClamp,
     ContentHasOutOfFlowBox,
     ContentHasOutOfFlowNonBlockContainer,
-    ContentIsListItem,
+    ContentHasListMarker,
     ContentIsFormControl,
     ContentHasStretchedQuirksModeBody,
     ContentHasUnsupportedRenderer,
@@ -103,6 +104,14 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentHasBlockStepSize
 };
 
+// A list item lays out its content like any other block container (RenderListItem::layoutBlock), unless it has a marker: an outside one,
+// which it lays out and places itself (RenderListItem::layoutExcludedChildren, placeExcludedMarker), or an inside one, which is inline content.
+static bool hasListMarker(const RenderElement& renderer)
+{
+    CheckedPtr listItem = dynamicDowncast<RenderListItem>(renderer);
+    return listItem && listItem->markerRenderer();
+}
+
 // The -webkit-left, -webkit-right and -webkit-center values of text-align move block-level children too (RenderBox::computeInlineDirectionMargins).
 static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlockFlow& rootContainer)
 {
@@ -110,12 +119,12 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         return BlockAvoidanceReason::BlockFormattingContextIntegrationDisabled;
     if (!rootContainer.createsNewFormattingContext())
         return BlockAvoidanceReason::NotABlockFormattingContextRoot;
-    // Not RenderView, list items, table cells and captions, multi-column flows, fieldsets or form controls, which lay out their content their own way,
-    // nor marquees, whose children fit their content (RenderBox::sizesLogicalWidthToFitContent).
+    // Not RenderView, list items with a marker, table cells and captions, multi-column flows, fieldsets or form controls, which lay out their
+    // content their own way, nor marquees, whose children fit their content (RenderBox::sizesLogicalWidthToFitContent).
     if (rootContainer.isRenderView())
         return BlockAvoidanceReason::RootIsRenderView;
-    if (rootContainer.isRenderListItem())
-        return BlockAvoidanceReason::RootIsListItem;
+    if (hasListMarker(rootContainer))
+        return BlockAvoidanceReason::RootHasListMarker;
     if (rootContainer.isRenderTableCell())
         return BlockAvoidanceReason::RootIsTableCell;
     if (rootContainer.isRenderMultiColumnFlow())
@@ -124,7 +133,7 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         return BlockAvoidanceReason::RootIsFieldset;
     if (rootContainer.isHTMLMarquee())
         return BlockAvoidanceReason::RootIsMarquee;
-    if (rootContainer.type() != RenderObject::Type::BlockFlow)
+    if (rootContainer.type() != RenderObject::Type::BlockFlow && !rootContainer.isRenderListItem())
         return BlockAvoidanceReason::RootHasUnsupportedRenderer;
     // Percentage block sizes inside look through an anonymous block to the flex or grid container (RenderBox::skipContainingBlockForPercentHeightCalculation),
     // which the block formatting context does not give its content. A button's label has none.
@@ -279,9 +288,10 @@ static bool isLaidOutThroughRenderTree(const RenderObject& renderer)
     case RenderObject::Type::DeprecatedFlexibleBox:
     case RenderObject::Type::Grid:
         return true;
-    case RenderObject::Type::BlockFlow: {
+    case RenderObject::Type::BlockFlow:
+    case RenderObject::Type::ListItem: {
         auto& blockContainer = downcast<RenderBlockFlow>(renderer);
-        return blockContainer.createsNewFormattingContext() && !canUseForNestedBlockLayout(blockContainer);
+        return blockContainer.createsNewFormattingContext() && !hasListMarker(blockContainer) && !canUseForNestedBlockLayout(blockContainer);
     }
     default:
         return false;
@@ -355,7 +365,8 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
     // in its border.
     auto isReplaced = outOfFlowBox.isRenderReplaced() || outOfFlowBox.isRenderOrLegacyRenderSVGRoot();
     auto isFlexContainer = outOfFlowBox.type() == RenderObject::Type::FlexibleBox && !outOfFlowBox.isFieldset();
-    if (outOfFlowBox.type() != RenderObject::Type::BlockFlow && !isReplaced && !isFlexContainer)
+    auto isBlockContainer = outOfFlowBox.type() == RenderObject::Type::BlockFlow || (outOfFlowBox.isRenderListItem() && !hasListMarker(outOfFlowBox));
+    if (!isBlockContainer && !isReplaced && !isFlexContainer)
         return BlockAvoidanceReason::ContentHasOutOfFlowNonBlockContainer;
     // FIXME: An orthogonal replaced element, whose own formatting context gives its size in its writing mode, not in its containing block's.
     if (CheckedPtr containingBlock = outOfFlowBox.containingBlock(); isReplaced && containingBlock && outOfFlowBox.writingMode().isOrthogonal(containingBlock->writingMode()))
@@ -518,11 +529,11 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
             return outOfFlowBoxesInLeafAvoidanceReason(downcast<RenderBox>(renderer), rootContainer);
     } else if (renderer.isInline())
         return inlineContentAvoidanceReason(renderer, rootContainer);
-    // Block boxes only: not list items, replaced elements, tables, flex or grid containers or form controls.
+    // Block boxes only: not list items with a marker, replaced elements, tables, flex or grid containers or form controls.
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(renderer);
-    if (renderer.isRenderListItem())
-        return BlockAvoidanceReason::ContentIsListItem;
-    if (!blockContainer || blockContainer->type() != RenderObject::Type::BlockFlow)
+    if (hasListMarker(renderer))
+        return BlockAvoidanceReason::ContentHasListMarker;
+    if (!blockContainer || (blockContainer->type() != RenderObject::Type::BlockFlow && !blockContainer->isRenderListItem()))
         return BlockAvoidanceReason::ContentHasUnsupportedRenderer;
     // Form controls and legends treat an auto width as fit-content (RenderBox::sizesLogicalWidthToFitContent).
     if (isAnyOf<HTMLButtonElement, HTMLInputElement, HTMLLegendElement, HTMLSelectElement, HTMLTextAreaElement>(blockContainer->element()))
@@ -671,8 +682,8 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "not a root"_s;
     case BlockAvoidanceReason::RootIsRenderView:
         return "root: render view"_s;
-    case BlockAvoidanceReason::RootIsListItem:
-        return "root: list item"_s;
+    case BlockAvoidanceReason::RootHasListMarker:
+        return "root: list item with a marker"_s;
     case BlockAvoidanceReason::RootIsTableCell:
         return "root: table cell"_s;
     case BlockAvoidanceReason::RootIsMultiColumnFlow:
@@ -711,8 +722,8 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "out-of-flow box in inline or leaf content"_s;
     case BlockAvoidanceReason::ContentHasOutOfFlowNonBlockContainer:
         return "out-of-flow grid, table or other renderer"_s;
-    case BlockAvoidanceReason::ContentIsListItem:
-        return "list item"_s;
+    case BlockAvoidanceReason::ContentHasListMarker:
+        return "list item with a marker"_s;
     case BlockAvoidanceReason::ContentIsFormControl:
         return "form control or legend"_s;
     case BlockAvoidanceReason::ContentHasStretchedQuirksModeBody:
