@@ -1,0 +1,41 @@
+<!DOCTYPE html><!-- webkit-test-runner [ FilterLinkDecorationByDefaultEnabled=true ] -->
+<html>
+<head>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="setTimeout('runTest()', 0)">
+<div id="description">Test that a cross-site navigation from a prevalent resource whose link decoration was filtered is logged as filtered.</div>
+<div id="output"></div>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    function navigateCrossOrigin() {
+        document.location.href = destinationOrigin + "/resourceLoadStatistics/log-cross-site-load-with-filtered-link-decoration.html?trackingParam=abcdef&link=decoration";
+    }
+
+    const destinationOrigin = "http://localhost:8000";
+    const prevalentResourceOrigin = "http://127.0.0.1:8000";
+    function runTest() {
+        if (document.location.origin === prevalentResourceOrigin) {
+            setEnableFeature(true, function () {
+                testRunner.setStatisticsLinkDecorationFilteringData("trackingParam");
+                testRunner.setStatisticsPrevalentResource(prevalentResourceOrigin, true, function() {
+                    if (!testRunner.isStatisticsPrevalentResource(prevalentResourceOrigin))
+                        testFailed("Host did not get set as prevalent resource.");
+                    testRunner.statisticsUpdateCookieBlocking(navigateCrossOrigin);
+                });
+            });
+        } else {
+            output.innerText = "Destination URL query and fragment: " + document.location.search + document.location.hash;
+            testRunner.dumpResourceLoadStatistics();
+            setEnableFeature(false, function () {
+                testRunner.notifyDone();
+            });
+        }
+    }
+</script>
+</body>
+</html>

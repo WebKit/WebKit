@@ -294,6 +294,7 @@ public:
     void setStatisticsTopFrameUniqueRedirectTo(WKStringRef host, WKStringRef hostRedirectedTo);
     void setStatisticsTopFrameUniqueRedirectFrom(WKStringRef host, WKStringRef hostRedirectedFrom);
     void setStatisticsCrossSiteLoadWithLinkDecoration(WKStringRef fromHost, WKStringRef toHost, bool wasFiltered);
+    void setStatisticsLinkDecorationFilteringData(WKStringRef queryParameter);
 #if PLATFORM(COCOA)
     using SetStatisticsCrossSiteLoadWithLinkDecorationCallBack = void(*)(void* functionContext);
     void platformSetStatisticsCrossSiteLoadWithLinkDecoration(WKStringRef fromHost, WKStringRef toHost, bool wasFiltered, void* context, SetStatisticsCrossSiteLoadWithLinkDecorationCallBack);

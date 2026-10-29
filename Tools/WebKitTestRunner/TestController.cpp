@@ -1273,6 +1273,10 @@ void TestController::resumeBackgroundFetch(WKStringRef)
 {
 }
 
+void TestController::setStatisticsLinkDecorationFilteringData(WKStringRef)
+{
+}
+
 void TestController::simulateClickBackgroundFetch(WKStringRef)
 {
 }

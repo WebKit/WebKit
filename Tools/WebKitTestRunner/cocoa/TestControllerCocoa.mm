@@ -553,6 +553,15 @@ void TestController::platformSetStatisticsCrossSiteLoadWithLinkDecoration(WKStri
     }];
 }
 
+void TestController::setStatisticsLinkDecorationFilteringData(WKStringRef queryParameter)
+{
+    __block bool done = false;
+    [(__bridge WKWebsiteDataStore *)websiteDataStore() _setLinkDecorationFilteringDataForTesting:@[ toWTFString(queryParameter).createNSString().get() ] completionHandler:^{
+        done = true;
+    }];
+    runUntil(done, noTimeout);
+}
+
 void TestController::platformWillRunTest(const TestInvocation& testInvocation)
 {
     setCrashReportApplicationSpecificInformationToURL(testInvocation.url());
