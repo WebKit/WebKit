@@ -993,6 +993,27 @@ void main()
                                          instanceCount);
                     checkFansWithCulling(frontFace, instanceCount);
                 }
+
+                if (getClientMajorVersion() >= 3)
+                {
+                    // Two fans with primitive restart, with different first vertices.
+                    const std::vector<GLuint> restartFanIndices = {4, 1, 3, 5, kRestart,
+                                                                   5, 6, 1, 4};
+                    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+                    clear();
+                    drawElements<GLubyte>(GL_UNSIGNED_BYTE, restartFanIndices, Source::Buffer,
+                                          instanceCount);
+                    checkFansWithCulling(frontFace, instanceCount);
+                    clear();
+                    drawElements<GLushort>(GL_UNSIGNED_SHORT, restartFanIndices, Source::Buffer,
+                                           instanceCount);
+                    checkFansWithCulling(frontFace, instanceCount);
+                    clear();
+                    drawElements<GLuint>(GL_UNSIGNED_INT, restartFanIndices, Source::Buffer,
+                                         instanceCount);
+                    checkFansWithCulling(frontFace, instanceCount);
+                    glDisable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+                }
             }
         }
     }
@@ -1030,6 +1051,66 @@ void main()
         clear();
         drawArrays(2, 6, 0);
         checkFans(0);
+    }
+
+    // Draws two fans that cover the left half with primitive restart, with each source of the
+    // vertices and of the indices, and each instance count. Between and around the fans are
+    // primitive restart indices and fans with fewer than three vertices, which use the vertices of
+    // the right half.
+    template <typename T>
+    void testPrimitiveRestart(GLenum type)
+    {
+        // The two fans have different first vertices.
+        const std::vector<GLuint> fanIndices = {kRestart, kRestart, 4,        1,        3,       5,
+                                                kRestart, 0,        2,        kRestart, 5,       6,
+                                                1,        4,        kRestart, 2,        kRestart};
+        glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+        for (Source vertexSource : sources())
+        {
+            setPositions(std::vector<GLfloat>(kPositions.begin(), kPositions.end()), vertexSource);
+            for (Source indexSource : sources())
+            {
+                for (GLsizei instanceCount : instanceCounts())
+                {
+                    SCOPED_TRACE(
+                        testing::Message()
+                        << "vertices in client memory: " << (vertexSource == Source::ClientMemory)
+                        << ", indices in client memory: " << (indexSource == Source::ClientMemory)
+                        << ", instance count: " << instanceCount);
+                    clear();
+                    drawElements<T>(type, fanIndices, indexSource, instanceCount);
+                    checkFans(instanceCount);
+                }
+            }
+        }
+    }
+
+    // Draws fans with primitive restart that have fewer than three vertices, which draw nothing,
+    // and then the fan of kFanIndices.
+    template <typename T>
+    void testPrimitiveRestartNoTriangles(GLenum type)
+    {
+        const std::vector<GLuint> noTriangleIndices = {kRestart, 4, 1, kRestart, kRestart, 0,
+                                                       kRestart, 2, 2, kRestart, 5};
+        const std::vector<GLuint> fanIndices(kFanIndices.begin(), kFanIndices.end());
+        glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+        setPositions(std::vector<GLfloat>(kPositions.begin(), kPositions.end()), Source::Buffer);
+        for (Source indexSource : sources())
+        {
+            for (GLsizei instanceCount : instanceCounts())
+            {
+                SCOPED_TRACE(testing::Message() << "indices in client memory: "
+                                                << (indexSource == Source::ClientMemory)
+                                                << ", instance count: " << instanceCount);
+                clear();
+                drawElements<T>(type, noTriangleIndices, indexSource, instanceCount);
+                ASSERT_GL_NO_ERROR();
+                EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::blue);
+
+                drawElements<T>(type, fanIndices, indexSource, instanceCount);
+                checkFans(instanceCount);
+            }
+        }
     }
 
     bool mClientArraysEnabled = true;
@@ -1284,6 +1365,48 @@ void main()
     }
 }
 
+// Draws fans with primitive restart with 8-bit indices.
+TEST_P(TriangleFanTest, PrimitiveRestartUnsignedByte)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestart<GLubyte>(GL_UNSIGNED_BYTE);
+}
+
+// Draws fans with primitive restart with 16-bit indices.
+TEST_P(TriangleFanTest, PrimitiveRestartUnsignedShort)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestart<GLushort>(GL_UNSIGNED_SHORT);
+}
+
+// Draws fans with primitive restart with 32-bit indices.
+TEST_P(TriangleFanTest, PrimitiveRestartUnsignedInt)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestart<GLuint>(GL_UNSIGNED_INT);
+}
+
+// Draws fans with primitive restart and no triangles with 8-bit indices, then a fan.
+TEST_P(TriangleFanTest, PrimitiveRestartNoTrianglesUnsignedByte)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestartNoTriangles<GLubyte>(GL_UNSIGNED_BYTE);
+}
+
+// Draws fans with primitive restart and no triangles with 16-bit indices, then a fan.
+TEST_P(TriangleFanTest, PrimitiveRestartNoTrianglesUnsignedShort)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestartNoTriangles<GLushort>(GL_UNSIGNED_SHORT);
+}
+
+// Draws fans with primitive restart and no triangles with 32-bit indices, then a fan.
+TEST_P(TriangleFanTest, PrimitiveRestartNoTrianglesUnsignedInt)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestartNoTriangles<GLuint>(GL_UNSIGNED_INT);
+}
+
 // Draws a fan with glDrawArrays from a first vertex that is not 0, with client arrays disabled.
 TEST_P(WebGLTriangleFanTest, DrawArrays)
 {
@@ -1329,6 +1452,51 @@ TEST_P(WebGLTriangleFanTest, TooManyIndices)
     // Only the backends that emulate triangle fans with index buffers need the indices.
     ANGLE_SKIP_TEST_IF(!IsWebGPU() && !IsMetal());
     testTooManyIndices();
+}
+
+// Draws fans with primitive restart with 8-bit indices, with client arrays disabled.
+TEST_P(WebGLTriangleFanTest, PrimitiveRestartUnsignedByte)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestart<GLubyte>(GL_UNSIGNED_BYTE);
+}
+
+// Draws fans with primitive restart with 16-bit indices, with client arrays disabled.
+TEST_P(WebGLTriangleFanTest, PrimitiveRestartUnsignedShort)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestart<GLushort>(GL_UNSIGNED_SHORT);
+}
+
+// Draws fans with primitive restart with 32-bit indices, with client arrays disabled.
+TEST_P(WebGLTriangleFanTest, PrimitiveRestartUnsignedInt)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestart<GLuint>(GL_UNSIGNED_INT);
+}
+
+// Draws fans with primitive restart and no triangles with 8-bit indices, then a fan, with client
+// arrays disabled.
+TEST_P(WebGLTriangleFanTest, PrimitiveRestartNoTrianglesUnsignedByte)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestartNoTriangles<GLubyte>(GL_UNSIGNED_BYTE);
+}
+
+// Draws fans with primitive restart and no triangles with 16-bit indices, then a fan, with client
+// arrays disabled.
+TEST_P(WebGLTriangleFanTest, PrimitiveRestartNoTrianglesUnsignedShort)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestartNoTriangles<GLushort>(GL_UNSIGNED_SHORT);
+}
+
+// Draws fans with primitive restart and no triangles with 32-bit indices, then a fan, with client
+// arrays disabled.
+TEST_P(WebGLTriangleFanTest, PrimitiveRestartNoTrianglesUnsignedInt)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestartNoTriangles<GLuint>(GL_UNSIGNED_INT);
 }
 
 // Simple repeated draw and swap test.
@@ -2336,7 +2504,8 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     TriangleFanDrawTest,
     ES3_METAL().enable(Feature::ForceBufferGPUStorage),
-    ES3_METAL().disable(Feature::HasExplicitMemBarrier).disable(Feature::HasCheapRenderPass));
+    ES3_METAL().disable(Feature::HasExplicitMemBarrier).disable(Feature::HasCheapRenderPass),
+    ES3_WEBGPU());
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(TriangleFanTest, ES3_WEBGPU());
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(WebGLTriangleFanTest, ES3_WEBGPU());

@@ -157,6 +157,7 @@ class VertexArrayWgpu : public VertexArrayImpl
                                   gl::DrawElementsType destDrawElementsTypeOrInvalid,
                                   GLsizei count,
                                   uint32_t adjustedCount,
+                                  bool primitiveRestartEnabled,
                                   uint8_t *stagingData,
                                   size_t destIndexBufferSize,
                                   const uint8_t *srcIndexData,

@@ -593,8 +593,8 @@ angle::Result VertexArrayWgpu::syncClientArrays(
             case IndexDataNeedsStreaming::TriangleFanStreaming:
                 streamIndicesTriangleFan(
                     sourceDrawElementsTypeOrInvalid, destDrawElementsTypeOrInvalid, count,
-                    adjustedCount, stagingData, destIndexBufferSize, srcIndexData, &stagingBuffer,
-                    &stagingUploads, &currentStagingDataPosition);
+                    adjustedCount, primitiveRestartEnabled, stagingData, destIndexBufferSize,
+                    srcIndexData, &stagingBuffer, &stagingUploads, &currentStagingDataPosition);
                 break;
             case IndexDataNeedsStreaming::NonEmulatedStreaming:
                 ANGLE_TRY(streamIndicesDefault(contextWgpu, sourceDrawElementsTypeOrInvalid,
@@ -819,12 +819,10 @@ uint64_t VertexArrayWgpu::calculateAdjustedIndexCount(
     }
     else if (mode == gl::PrimitiveMode::TriangleFan)
     {
-        // TODO(crbug.com/401499251): implement helper to calculate the primitive restart count for
-        // triangle fans emulation.
         if (primitiveRestartEnabled)
         {
-            UNIMPLEMENTED();
-            return 0;
+            return GetTriangleFanWithRestartIndexCount(sourceDrawElementsTypeOrInvalid, count,
+                                                       srcIndexData);
         }
         return GetTriangleFanIndexCount(count);
     }
@@ -1004,6 +1002,7 @@ void VertexArrayWgpu::streamIndicesTriangleFan(gl::DrawElementsType sourceDrawEl
                                                gl::DrawElementsType destDrawElementsTypeOrInvalid,
                                                GLsizei count,
                                                uint32_t adjustedCount,
+                                               bool primitiveRestartEnabled,
                                                uint8_t *stagingData,
                                                size_t destIndexBufferSize,
                                                const uint8_t *srcIndexData,
@@ -1035,7 +1034,8 @@ void VertexArrayWgpu::streamIndicesTriangleFan(gl::DrawElementsType sourceDrawEl
     else
     {
         writtenCount = rx::StreamEmulatedTriangleFanIndices(sourceDrawElementsTypeOrInvalid, count,
-                                                            srcIndexData, destIndexData);
+                                                            srcIndexData, destIndexData,
+                                                            primitiveRestartEnabled);
     }
     // The staging buffer has space for adjustedCount indices.
     ASSERT(writtenCount == adjustedCount);
