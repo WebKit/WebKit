@@ -788,6 +788,36 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
     }
 
     @Test
+    func removeDuplicatedSessionRuleIDs() async throws {
+        let backgroundScript = """
+            await browser.declarativeNetRequest.updateSessionRules({ addRules: [{ id: 1, priority: 1, action: {type: 'block'}, condition: { urlFilter: 'foo' } }] })
+
+            let sessionRules = await browser.declarativeNetRequest.getSessionRules()
+            browser.test.assertEq(sessionRules.length, 1)
+
+            await browser.test.assertResolves(browser.declarativeNetRequest.updateSessionRules({ removeRuleIds: [1, 1] }))
+
+            sessionRules = await browser.declarativeNetRequest.getSessionRules()
+            browser.test.assertEq(sessionRules.length, 0)
+
+            browser.test.notifyPass()
+            """
+
+        let declarativeNetRequestManifest: [String: Any] = [
+            "manifest_version": 3,
+            "permissions": ["declarativeNetRequest"],
+            "background": [
+                "scripts": ["background.js"],
+                "type": "module",
+                "persistent": false,
+            ],
+        ]
+
+        let manager = try loadWebExtension(manifest: declarativeNetRequestManifest, resources: ["background.js": backgroundScript])
+        try await manager.run()
+    }
+
+    @Test
     func dynamicRules() async throws {
         var server = try HTTPServer(protocol: .http) {
             Route("/", headerFields: ["Content-Type": "text/html"]) {
@@ -951,6 +981,36 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
             await browser.declarativeNetRequest.updateDynamicRules({ removeRuleIds: [1, 2, 3] })
 
             dynamicRules = await browser.declarativeNetRequest.getDynamicRules({ })
+            browser.test.assertEq(dynamicRules.length, 0)
+
+            browser.test.notifyPass()
+            """
+
+        let declarativeNetRequestManifest: [String: Any] = [
+            "manifest_version": 3,
+            "permissions": ["declarativeNetRequest"],
+            "background": [
+                "scripts": ["background.js"],
+                "type": "module",
+                "persistent": false,
+            ],
+        ]
+
+        let manager = try loadWebExtension(manifest: declarativeNetRequestManifest, resources: ["background.js": backgroundScript])
+        try await manager.run()
+    }
+
+    @Test
+    func removeDuplicatedDynamicRuleIDs() async throws {
+        let backgroundScript = """
+            await browser.declarativeNetRequest.updateDynamicRules({ addRules: [{ id: 1, priority: 1, action: {type: 'block'}, condition: { urlFilter: 'foo' } }] })
+
+            let dynamicRules = await browser.declarativeNetRequest.getDynamicRules()
+            browser.test.assertEq(dynamicRules.length, 1)
+
+            await browser.test.assertResolves(browser.declarativeNetRequest.updateDynamicRules({ removeRuleIds: [1, 1] }))
+
+            dynamicRules = await browser.declarativeNetRequest.getDynamicRules()
             browser.test.assertEq(dynamicRules.length, 0)
 
             browser.test.notifyPass()

@@ -166,11 +166,11 @@ void WebExtensionContext::declarativeNetRequestUpdateDynamicRules(String&& rules
 {
     static constexpr auto apiName = "declarativeNetRequest.updateDynamicRules()"_s;
 
-    auto ruleIDsToDelete = compactMap(ruleIDsToDeleteVector, [&](auto& ruleID) -> std::optional<double> {
-        if (!m_dynamicRulesIDs.contains(ruleID))
-            return std::nullopt;
-        return ruleID;
-    });
+    HashSet<double> ruleIDsToDelete;
+    for (auto ruleID : ruleIDsToDeleteVector) {
+        if (m_dynamicRulesIDs.contains(ruleID))
+            ruleIDsToDelete.add(ruleID);
+    }
 
     Ref rulesToAdd = JSON::Array::create();
     if (!rulesToAddJSON.isEmpty()) {
@@ -180,18 +180,18 @@ void WebExtensionContext::declarativeNetRequestUpdateDynamicRules(String&& rules
         }
     }
 
-    if (!ruleIDsToDelete.size() && !rulesToAdd->length()) {
+    if (ruleIDsToDelete.isEmpty() && !rulesToAdd->length()) {
         completionHandler({ });
         return;
     }
 
     auto updatedDynamicRulesCount = m_dynamicRulesIDs.size() + rulesToAdd->length() - ruleIDsToDelete.size();
-    if (updatedDynamicRulesCount + m_dynamicRulesIDs.size() > webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules) {
+    if (updatedDynamicRulesCount + m_sessionRulesIDs.size() > webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules) {
         completionHandler(toWebExtensionError(apiName, nullString(), "Failed to add dynamic rules. Maximum number of dynamic and session rules exceeded."_s));
         return;
     }
 
-    updateDeclarativeNetRequestRulesInStorage(declarativeNetRequestDynamicRulesStore(), "dynamic"_s, apiName, rulesToAdd, ruleIDsToDelete, WTF::move(completionHandler));
+    updateDeclarativeNetRequestRulesInStorage(declarativeNetRequestDynamicRulesStore(), "dynamic"_s, apiName, rulesToAdd, copyToVector(ruleIDsToDelete), WTF::move(completionHandler));
 }
 
 void WebExtensionContext::declarativeNetRequestGetSessionRules(Vector<double>&& filter, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
@@ -217,11 +217,11 @@ void WebExtensionContext::declarativeNetRequestUpdateSessionRules(String&& rules
 {
     static constexpr auto apiName = "declarativeNetRequest.updateSessionRules()"_s;
 
-    auto ruleIDsToDelete = compactMap(ruleIDsToDeleteVector, [&](auto& ruleID) -> std::optional<double> {
-        if (!m_sessionRulesIDs.contains(ruleID))
-            return std::nullopt;
-        return ruleID;
-    });
+    HashSet<double> ruleIDsToDelete;
+    for (auto ruleID : ruleIDsToDeleteVector) {
+        if (m_sessionRulesIDs.contains(ruleID))
+            ruleIDsToDelete.add(ruleID);
+    }
 
     Ref rulesToAdd = JSON::Array::create();
     if (!rulesToAddJSON.isEmpty()) {
@@ -231,18 +231,18 @@ void WebExtensionContext::declarativeNetRequestUpdateSessionRules(String&& rules
         }
     }
 
-    if (!ruleIDsToDelete.size() && !rulesToAdd->length()) {
+    if (ruleIDsToDelete.isEmpty() && !rulesToAdd->length()) {
         completionHandler({ });
         return;
     }
 
     auto updatedSessionRulesCount = m_sessionRulesIDs.size() + rulesToAdd->length() - ruleIDsToDelete.size();
-    if (updatedSessionRulesCount + m_sessionRulesIDs.size() > webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules) {
+    if (updatedSessionRulesCount + m_dynamicRulesIDs.size() > webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules) {
         completionHandler(toWebExtensionError(apiName, nullString(), "Failed to add session rules. Maximum number of dynamic and session rules exceeded."_s));
         return;
     }
 
-    updateDeclarativeNetRequestRulesInStorage(declarativeNetRequestSessionRulesStore(), "session"_s, apiName, rulesToAdd, ruleIDsToDelete, WTF::move(completionHandler));
+    updateDeclarativeNetRequestRulesInStorage(declarativeNetRequestSessionRulesStore(), "session"_s, apiName, rulesToAdd, copyToVector(ruleIDsToDelete), WTF::move(completionHandler));
 }
 
 } // namespace WebKit
