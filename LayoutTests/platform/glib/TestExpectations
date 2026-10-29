@@ -2806,7 +2806,6 @@ http/tests/media/video-play-stall-seek.html [ Skip ] # Timeout
 
 fast/mediastream/video-rotation2.html [ Failure ]
 
-
 # Regressions introduced by https://commits.webkit.org/263750@main
 fast/mediastream/apply-constraints-advanced.html [ Failure ]
 fast/mediastream/apply-constraints-video.html [ Failure ]
@@ -2841,6 +2840,11 @@ imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenera
 # Also skipped on mac, timing out because relying on MediaStream::onactive event which is not exposed.
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
 
+webkit.org/b/311846 webrtc/h264-baseline.html [ Pass Timeout ]
+webkit.org/b/311846 webrtc/h264-high.html [ Pass Timeout ]
+webkit.org/b/310095 imported/w3c/web-platform-tests/webrtc/simulcast/screenshare.https.html [ Failure ]
+
+webkit.org/b/314659 webrtc/getDisplayMedia-pc-resolution.html [ Pass Failure Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs

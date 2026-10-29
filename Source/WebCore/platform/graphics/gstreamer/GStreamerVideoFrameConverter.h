@@ -22,6 +22,8 @@
 
 #include "GRefPtrGStreamer.h"
 #include <wtf/Forward.h>
+#include <wtf/Lock.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -60,29 +62,33 @@ private:
 
         GRefPtr<GstSample> run(const GRefPtr<GstSample>&, GstCaps*);
 
+        MonotonicTime lastUseTime() const { return m_lastUseTime; }
+        void setLastUseTime(MonotonicTime time) { m_lastUseTime = time; }
+
     private:
         Type m_type { Type::SystemMemory };
         GRefPtr<GstElement> m_pipeline;
         GRefPtr<GstElement> m_src;
         GRefPtr<GstElement> m_sink;
         GRefPtr<GstElement> m_capsfilter;
+        MonotonicTime m_lastUseTime;
     };
 
-    Pipeline& ensurePipeline(GstCaps*);
-    void releaseUnusedSystemMemoryPipelineTimerFired();
-#if USE(GSTREAMER_GL)
-    void releaseUnusedGLMemoryPipelineTimerFired();
-    void releaseUnusedDMABufMemoryPipelineTimerFired();
-#endif
+    Pipeline& ensurePipeline(GstCaps*) WTF_REQUIRES_LOCK(m_lock);
+    void scheduleReleaseUnusedPipelinesTimer() WTF_REQUIRES_LOCK(m_lock);
+    void releaseUnusedPipelinesTimerFired();
 
-    std::unique_ptr<Pipeline> m_systemMemoryPipeline;
-    std::unique_ptr<RunLoop::Timer> m_releaseUnusedSystemMemoryPipelineTimer;
+    // Conversions run on whichever thread needs them (capture, encoding, painting) and
+    // share the pipelines, so the whole conversion is serialized by this lock.
+    Lock m_lock;
+    std::unique_ptr<Pipeline> m_systemMemoryPipeline WTF_GUARDED_BY_LOCK(m_lock);
 #if USE(GSTREAMER_GL)
-    std::unique_ptr<Pipeline> m_glMemoryPipeline;
-    std::unique_ptr<RunLoop::Timer> m_releaseUnusedGLMemoryPipelineTimer;
-    std::unique_ptr<Pipeline> m_dmabufMemoryPipeline;
-    std::unique_ptr<RunLoop::Timer> m_releaseUnusedDMABufMemoryPipelineTimer;
+    std::unique_ptr<Pipeline> m_glMemoryPipeline WTF_GUARDED_BY_LOCK(m_lock);
+    std::unique_ptr<Pipeline> m_dmabufMemoryPipeline WTF_GUARDED_BY_LOCK(m_lock);
 #endif
+    bool m_isReleaseUnusedPipelinesTimerScheduled WTF_GUARDED_BY_LOCK(m_lock) { false };
+    // Main thread only.
+    std::unique_ptr<RunLoop::Timer> m_releaseUnusedPipelinesTimer;
 };
 
 } // namespace WebCore
