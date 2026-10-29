@@ -768,7 +768,9 @@ LayoutUnit FlexFormattingContext::placeFlexItems(LayoutUnit crossAxisOffset, std
 {
     // 9.5. (#12) Position the items along the main axis: first give any positive free space to main-axis auto
     // margins, then place each item per justify-content (the initial offset plus the spacing between items).
-    LayoutUnit autoMarginOffset = autoMarginOffsetInMainAxis(flexLayoutItems, availableFreeSpace);
+    auto numberOfAutoMargins = numberOfAutoMarginsInMainAxis(flexLayoutItems, availableFreeSpace);
+    auto freeSpaceForAutoMargins = numberOfAutoMargins ? std::exchange(availableFreeSpace, 0_lu) : 0_lu;
+    unsigned autoMarginIndex = 0;
     auto resolvedJustifyContent = m_constraints.style->justifyContent().resolve(FlexFormattingUtils::contentAlignmentNormalBehavior());
     auto justifyContentPosition = FlexFormattingUtils::resolveLeftRightAlignment(resolvedJustifyContent, m_constraints.style, m_constraints.isColumnOrRowReverse);
     auto distribution = resolvedJustifyContent.distribution();
@@ -786,7 +788,7 @@ LayoutUnit FlexFormattingContext::placeFlexItems(LayoutUnit crossAxisOffset, std
     auto gapBetweenItems = flexFormattingUtils().computeGap(FlexFormattingUtils::GapType::BetweenItems);
     for (size_t i = 0; i < flexLayoutItems.size(); ++i) {
         auto& flexLayoutItem = flexLayoutItems[i];
-        integrationUtils().updateAutoMarginsInMainAxis(flexLayoutItem, autoMarginOffset);
+        autoMarginIndex += integrationUtils().updateAutoMarginsInMainAxis(flexLayoutItem, freeSpaceForAutoMargins, numberOfAutoMargins, autoMarginIndex);
 
         mainAxisOffset += flexFormattingUtils().flowAwareMarginStartForFlexItem(flexLayoutItem);
 
@@ -1131,14 +1133,14 @@ bool FlexFormattingContext::flexItemHasComputableAspectRatioAndCrossSizeIsConsid
         && (flexItemCrossSizeIsDefinite(flexLayoutItem, flexFormattingUtils().preferredCrossSizeLengthForFlexItem(flexLayoutItem)) || flexFormattingUtils().hasDefiniteCrossSizeForFlexItem(flexLayoutItem));
 }
 
-LayoutUnit FlexFormattingContext::autoMarginOffsetInMainAxis(std::span<const FlexLayoutItem> flexLayoutItems, LayoutUnit& availableFreeSpace)
+unsigned FlexFormattingContext::numberOfAutoMarginsInMainAxis(std::span<const FlexLayoutItem> flexLayoutItems, LayoutUnit availableFreeSpace)
 {
     // 9.5. (#12) If the remaining free space is positive and at least one main-axis margin on the line is auto,
     // distribute the free space equally among those auto margins; otherwise they resolve to zero.
     if (availableFreeSpace <= 0_lu)
-        return 0_lu;
+        return 0;
 
-    int numberOfAutoMargins = 0;
+    unsigned numberOfAutoMargins = 0;
     bool isHorizontal = m_constraints.isHorizontalFlow;
     for (auto& flexLayoutItem : flexLayoutItems) {
         auto& flexItemStyle = flexLayoutItem.style();
@@ -1154,12 +1156,7 @@ LayoutUnit FlexFormattingContext::autoMarginOffsetInMainAxis(std::span<const Fle
                 ++numberOfAutoMargins;
         }
     }
-    if (!numberOfAutoMargins)
-        return 0_lu;
-
-    LayoutUnit sizeOfAutoMargin = availableFreeSpace / numberOfAutoMargins;
-    availableFreeSpace = 0_lu;
-    return sizeOfAutoMargin;
+    return numberOfAutoMargins;
 }
 
 LayoutUnit FlexFormattingContext::applyStretchAlignmentToFlexItem(const FlexLayoutItem& flexLayoutItem, LayoutUnit lineCrossAxisExtent, LayoutUnit crossContentExtent)

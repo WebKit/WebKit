@@ -62,7 +62,7 @@ public:
     void layoutFlexItemWithMainSize(FlexLayoutItem&, LayoutUnit mainSize);
     FlexContainerUsedExtents updateFlexContainerLogicalHeight(LayoutUnit flexContentBlockExtent);
     void LEGACY_NODELETE setFlexItemGeometry(const FlexLayoutItem&, const LayoutPoint& location, bool isHorizontalFlow);
-    void LEGACY_NODELETE updateAutoMarginsInMainAxis(FlexLayoutItem&, LayoutUnit autoMarginOffset);
+    unsigned LEGACY_NODELETE updateAutoMarginsInMainAxis(FlexLayoutItem&, LayoutUnit freeSpaceForAutoMargins, unsigned numberOfAutoMargins, unsigned autoMarginIndex);
     bool LEGACY_NODELETE updateAutoMarginsInCrossAxis(FlexLayoutItem&, LayoutUnit& crossOffset, LayoutUnit availableAlignmentSpace);
     void setFlexItemOverridingBorderBoxLogicalHeight(const FlexLayoutItem&, LayoutUnit);
 
