@@ -1,0 +1,17 @@
+This tests ChildNode.after() when a subframe pagehide listener, run by the detach step of "converting nodes into a node", re-parents the reference sibling into another container. This reaches the same window as before-after-with-reparented-reference-sibling-crash.html but through disconnectSubframesIfNeeded rather than DOMNodeRemoved, so it needs no mutation-event preference.
+WebKit should throw NotFoundError instead of splicing the new children into the other container's sibling chain.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS target.after(n1, n2) threw exception NotFoundError: The object can not be found here..
+PASS refSibling.parentNode is otherParent
+PASS parent.firstChild is target
+PASS parent.lastChild is target
+PASS n1.parentNode is null
+PASS n2.parentNode is null
+PASS otherParent.appendChild(document.createElement('span')) did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

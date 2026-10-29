@@ -1045,13 +1045,14 @@ ExceptionOr<void> ContainerNode::insertChildrenBeforeWithoutPreInsertionValidity
             if (nodeTypeResult.hasException())
                 return nodeTypeResult.releaseException();
         }
-        if (refChild && refChild->parentNode() != this)
-            return { };
         for (auto& child : newChildren) {
             if (child->parentNode())
                 return { };
         }
     }
+
+    if (refChild && refChild->parentNode() != this)
+        return { };
 
     InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
 

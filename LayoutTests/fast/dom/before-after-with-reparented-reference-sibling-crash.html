@@ -1,0 +1,128 @@
+<!DOCTYPE html><!-- webkit-test-runner [ MutationEventsEnabled=true ] -->
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description(`This tests ChildNode.before() and ChildNode.after() when a DOMNodeRemoved listener, run by the detach step of
+"converting nodes into a node", re-parents the reference sibling into another container.<br>
+Per step 4 of <a href="https://dom.spec.whatwg.org/#concept-node-ensure-pre-insertion-validity">ensure pre-insertion validity</a>
+WebKit should throw NotFoundError rather than splicing the new children into the other container's sibling chain.`);
+
+// Each case builds: parent[target, refSibling] and otherParent[stranger]. The reparent callback runs from
+// n1's DOMNodeRemoved listener, i.e. while target.after()/refSibling.before() is detaching its arguments.
+function buildTree(reparent)
+{
+    let root = document.createElement('div');
+    root.style.display = 'none';
+    let parent = document.createElement('div');
+    let otherParent = document.createElement('div');
+    let target = document.createElement('span');
+    let refSibling = document.createElement('span');
+    let stranger = document.createElement('span');
+    let n1 = document.createElement('span');
+    let n2 = document.createElement('span');
+
+    parent.append(target, refSibling);
+    otherParent.append(stranger);
+    root.append(parent, otherParent);
+    document.body.appendChild(root);
+
+    let t = { root, parent, otherParent, target, refSibling, stranger, n1, n2 };
+
+    // n1 must have a parent so convertNodesOrStringsIntoNodeVector's detach loop calls remove() on it.
+    document.createElement('div').appendChild(n1);
+    n1.addEventListener('DOMNodeRemoved', () => reparent(t), { once: true });
+
+    return t;
+}
+
+debug('');
+debug('after(): reference sibling moved into another container');
+// viableNextSibling is refSibling itself, so moving refSibling is enough.
+var t = buildTree(t => t.otherParent.appendChild(t.refSibling));
+shouldThrowErrorName(`t.target.after(t.n1, t.n2)`, 'NotFoundError');
+shouldBe('t.refSibling.parentNode', 't.otherParent');
+shouldBe('t.parent.firstChild', 't.target');
+shouldBe('t.parent.lastChild', 't.target');
+shouldBe('t.n1.parentNode', 'null');
+shouldBe('t.n2.parentNode', 'null');
+
+debug('');
+debug('before(): preceding sibling moved into another container');
+// before() saves viablePreviousSibling (= target) and later reads its nextSibling(), so moving target in
+// front of a node already parented to otherParent is what makes the stale reference point out of parent.
+t = buildTree(t => t.otherParent.insertBefore(t.target, t.stranger));
+shouldThrowErrorName(`t.refSibling.before(t.n1, t.n2)`, 'NotFoundError');
+shouldBe('t.target.nextSibling', 't.stranger');
+shouldBe('t.parent.firstChild', 't.refSibling');
+shouldBe('t.parent.lastChild', 't.refSibling');
+shouldBe('t.n1.parentNode', 'null');
+shouldBe('t.n2.parentNode', 'null');
+
+debug('');
+debug('after(): reference sibling detached without being re-parented');
+t = buildTree(t => t.refSibling.remove());
+shouldThrowErrorName(`t.target.after(t.n1, t.n2)`, 'NotFoundError');
+shouldBe('t.refSibling.parentNode', 'null');
+shouldBe('t.parent.firstChild', 't.target');
+shouldBe('t.parent.lastChild', 't.target');
+
+debug('');
+debug('The reference sibling staying put must keep working (the check must not be too strict)');
+
+// refChild is a live child of parent: the multi-argument detach path still inserts before it.
+t = buildTree(() => { });
+shouldNotThrow(`t.target.after(t.n1, t.n2)`);
+shouldBe('t.parent.childNodes[0]', 't.target');
+shouldBe('t.parent.childNodes[1]', 't.n1');
+shouldBe('t.parent.childNodes[2]', 't.n2');
+shouldBe('t.parent.childNodes[3]', 't.refSibling');
+
+t = buildTree(() => { });
+shouldNotThrow(`t.refSibling.before(t.n1, t.n2)`);
+shouldBe('t.parent.childNodes[0]', 't.target');
+shouldBe('t.parent.childNodes[1]', 't.n1');
+shouldBe('t.parent.childNodes[2]', 't.n2');
+shouldBe('t.parent.childNodes[3]', 't.refSibling');
+
+// refChild is null: after() on the last child, and before() on the first child, both append/prepend.
+t = buildTree(() => { });
+shouldNotThrow(`t.refSibling.after(t.n1, t.n2)`);
+shouldBe('t.parent.childNodes[2]', 't.n1');
+shouldBe('t.parent.childNodes[3]', 't.n2');
+
+t = buildTree(() => { });
+shouldNotThrow(`t.target.before(t.n1, t.n2)`);
+shouldBe('t.parent.childNodes[0]', 't.n1');
+shouldBe('t.parent.childNodes[1]', 't.n2');
+shouldBe('t.parent.childNodes[2]', 't.target');
+
+// Single-argument before()/after() skips the detach loop entirely, so no script runs.
+t = buildTree(() => { });
+shouldNotThrow(`t.target.after(t.n1)`);
+shouldBe('t.parent.childNodes[1]', 't.n1');
+
+// A listener that moves the reference sibling *within* parent must still be honoured: it stays a valid
+// reference node, so the new children go in front of it at its new position.
+t = buildTree(t => t.parent.insertBefore(t.refSibling, t.target));
+shouldNotThrow(`t.target.after(t.n1, t.n2)`);
+shouldBe('t.parent.childNodes[0]', 't.n1');
+shouldBe('t.parent.childNodes[1]', 't.n2');
+shouldBe('t.parent.childNodes[2]', 't.refSibling');
+shouldBe('t.parent.childNodes[3]', 't.target');
+
+debug('');
+debug('Walking the tree after the aborted insertions must not touch a freed node');
+if (window.internals)
+    internals.releaseMemoryNow();
+if (window.GCController)
+    GCController.collect();
+// Before the fix, parent and otherParent shared one sibling chain, so this reassigned
+// otherParent's CheckedPtr<Node> m_lastChild over a destroyed node.
+shouldNotThrow(`document.body.querySelectorAll('span').length`);
+shouldNotThrow(`t.otherParent.appendChild(document.createElement('span'))`);
+
+</script>
+</body>
+</html>
