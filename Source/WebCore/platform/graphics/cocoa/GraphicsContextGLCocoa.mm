@@ -835,6 +835,10 @@ void GraphicsContextGLCocoa::framebufferResolveRenderbuffer(GCGLenum target, GCG
 {
     if (!makeContextCurrent())
         return;
+    if (isDrawingBufferAttachment(target, attachment)) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_FramebufferResolveRenderbufferWEBKIT(target, attachment, renderbuffertarget, renderbuffer);
 }
 #endif

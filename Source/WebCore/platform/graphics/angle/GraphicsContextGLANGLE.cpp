@@ -1199,11 +1199,37 @@ void GraphicsContextGLANGLE::flush()
     GL_Flush();
 }
 
+bool GraphicsContextGLANGLE::isDrawingBufferAttachment(GCGLenum target, GCGLenum attachment) const
+{
+    // The default framebuffer is emulated with an internal FBO. Its color attachment is the drawing
+    // buffer, which is maintained by reshape() and read back through it, so it must not be modifiable
+    // through the API. The other attachments belong to the WebGL default framebuffer.
+    if (attachment != GL_COLOR_ATTACHMENT0)
+        return false;
+    GCGLuint fbo = 0;
+    switch (target) {
+    case GL_FRAMEBUFFER:
+    case GL_DRAW_FRAMEBUFFER:
+        fbo = m_state.boundDrawFBO;
+        break;
+    case GL_READ_FRAMEBUFFER:
+        fbo = m_state.boundReadFBO;
+        break;
+    default:
+        // Invalid target. Let the driver generate the error.
+        return false;
+    }
+    return fbo && fbo == m_fbo;
+}
+
 void GraphicsContextGLANGLE::framebufferRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject buffer)
 {
     if (!makeContextCurrent())
         return;
-
+    if (isDrawingBufferAttachment(target, attachment)) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_FramebufferRenderbuffer(target, attachment, renderbuffertarget, buffer);
 }
 
@@ -1211,7 +1237,10 @@ void GraphicsContextGLANGLE::framebufferTexture2D(GCGLenum target, GCGLenum atta
 {
     if (!makeContextCurrent())
         return;
-
+    if (isDrawingBufferAttachment(target, attachment)) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_FramebufferTexture2D(target, attachment, textarget, texture, level);
     invalidateKnownTextureContent(texture);
 }
@@ -2385,7 +2414,10 @@ void GraphicsContextGLANGLE::framebufferTextureLayer(GCGLenum target, GCGLenum a
 {
     if (!makeContextCurrent())
         return;
-
+    if (isDrawingBufferAttachment(target, attachment)) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_FramebufferTextureLayer(target, attachment, texture, level, layer);
 }
 

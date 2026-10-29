@@ -417,6 +417,9 @@ protected:
     NODELETE GCGLenum adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
     void setPackParameters(GCGLint alignment, GCGLint rowLength, GCGLboolean reverseRowOrder);
     NODELETE bool validateClearBufferv(GCGLenum buffer, size_t valuesSize);
+    // Returns true if `attachment` of the framebuffer bound to `target` is the drawing buffer of the
+    // internal FBO that emulates the default framebuffer.
+    bool isDrawingBufferAttachment(GCGLenum target, GCGLenum attachment) const;
 
     HashSet<UTF8CString> m_allRequestableExtensions;
     HashSet<UTF8CString> m_allEnabledRequestableExtensions;
