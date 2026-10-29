@@ -543,6 +543,8 @@ void WebProcessPool::networkProcessDidTerminate(NetworkProcessProxy& networkProc
 
 void WebProcessPool::serviceWorkerProcessCrashed(WebProcessProxy& proxy, ProcessTerminationReason reason)
 {
+    if (reason == ProcessTerminationReason::IdleExit)
+        return;
     m_client.serviceWorkerProcessDidCrash(this, proxy.processID(), reason);
 }
 
@@ -1862,6 +1864,14 @@ void WebProcessPool::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
     m_alwaysUsesComplexTextCodePath = alwaysUseComplexText;
     sendToAllProcesses(Messages::WebProcess::SetAlwaysUsesComplexTextCodePath(alwaysUseComplexText));
 }
+
+#if PLATFORM(COCOA)
+void WebProcessPool::sendMemoryPressureEventToWebProcessesForTesting(bool isCritical)
+{
+    // Rely on m_processes to include cached, prewarmed, and suspended-page processes until they terminate.
+    sendToAllProcesses(Messages::WebProcess::SimulateMemoryPressureForTesting(isCritical));
+}
+#endif
 
 void WebProcessPool::setDisableFontSubpixelAntialiasingForTesting(bool disable)
 {

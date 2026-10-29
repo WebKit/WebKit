@@ -459,6 +459,7 @@ public:
 
     void setTaskNamePort(MachSendRight&&);
     const MachSendRight& taskNamePort() const { return m_taskNamePort; }
+    void processIsReadyToExit();
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(UIPROCESS_PERIODIC_MEMORY_MONITOR)

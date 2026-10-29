@@ -2256,6 +2256,58 @@ TEST(ServiceWorkers, ProcessPerSite)
     EXPECT_EQ(0U, processPool._serviceWorkerProcessCount);
 }
 
+TEST(ServiceWorkers, WorkerOnlyProcessExitsAsIdleOnMemoryPressure)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Disable ITP so it doesn't inadvertently delete our service worker registrations.
+    [[WKWebsiteDataStore defaultDataStore] _setResourceLoadStatisticsEnabled:NO];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr messageHandler = adoptNS([[SWMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { serviceWorkerMainBytes } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerScriptBytes } }
+    });
+
+    RetainPtr processPool = retainPtr(configuration.get().processPool);
+    [processPool _setUseSeparateServiceWorkerProcess:YES];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(1U, [processPool _serviceWorkerProcessCount]);
+
+    pid_t serviceWorkerPID = 0;
+    for (_WKWebContentProcessInfo *info in [WKProcessPool _webContentProcessInfoForTesting]) {
+        if (info.runningServiceWorkers && !info.webViews.count)
+            serviceWorkerPID = info.pid;
+    }
+    EXPECT_NE(0, serviceWorkerPID);
+    EXPECT_NE([webView _webProcessIdentifier], serviceWorkerPID);
+
+    EXPECT_WK_STREQ(@"IdleExit", TestWebKitAPI::webProcessTerminationReasonAfterMemoryPressureEvent(processPool.get(), serviceWorkerPID).get());
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        for (_WKWebContentProcessInfo *info in [WKProcessPool _webContentProcessInfoForTesting]) {
+            if (info.pid == serviceWorkerPID)
+                return false;
+        }
+        return true;
+    }));
+}
+
 TEST(ServiceWorkers, ParallelProcessLaunch)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
