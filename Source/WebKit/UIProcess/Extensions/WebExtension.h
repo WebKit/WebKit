@@ -244,6 +244,7 @@ public:
 
     bool isWebAccessibleResource(const URL& resourceURL, const URL& pageURL);
 
+    bool hasResourceForPath(const String&);
     String resourceMIMETypeForPath(const String&);
 
     std::expected<String, RefPtr<API::Error>> resourceStringForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);

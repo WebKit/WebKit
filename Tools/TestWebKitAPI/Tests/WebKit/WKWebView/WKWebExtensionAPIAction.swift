@@ -136,8 +136,11 @@ struct WKWebExtensionAPIActionTests {
             await browser.action.setPopup({ popup: browser.runtime.getURL('alt-popup.html') })
             browser.test.assertEq(await browser.action.getPopup({ }), browser.runtime.getURL('alt-popup.html'), 'Full extension URL should be accepted')
 
-            await browser.action.setPopup({ popup: 'missing.html' })
-            browser.test.assertEq(await browser.action.getPopup({ }), 'missing.html', 'A path to a missing file should be accepted')
+            await browser.test.assertRejects(browser.action.setPopup({ popup: 'missing.html' }), /"missing.html" was not found in the extension/i)
+            browser.test.assertEq(await browser.action.getPopup({ }), browser.runtime.getURL('alt-popup.html'), 'Popup should be unchanged after a missing path is rejected')
+
+            await browser.action.setPopup({ popup: 'alt-popup.html?mode=compact#section' })
+            browser.test.assertEq(await browser.action.getPopup({ }), 'alt-popup.html?mode=compact#section', 'A path with a query and fragment should be accepted')
 
             await browser.action.setPopup({ popup: '' })
             browser.test.assertEq(await browser.action.getPopup({ }), '', 'Empty popup path should be accepted')
@@ -260,10 +263,38 @@ struct WKWebExtensionAPIActionTests {
     }
 
     @Test
+    func popupWithQueryAndFragmentLoads() async throws {
+        let backgroundScript = """
+            await browser.action.setPopup({ popup: 'popup.html?mode=compact#section' })
+
+            browser.test.sendMessage('Popup Set')
+            """
+
+        let resources: [String: Any] = [
+            "background.js": backgroundScript,
+            "popup.html": "<b>Hello World!</b>",
+        ]
+
+        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: resources)
+        let context = try #require(manager.context)
+
+        try await manager.waitForTestMessage("Popup Set")
+
+        let action = try await manager.nextPresentedAction {
+            context.performAction(for: manager.defaultTab)
+        }
+
+        let popupWebView = try #require(action.popupWebView)
+        #expect(popupWebView.url?.path == "/popup.html")
+        #expect(popupWebView.url?.query == "mode=compact")
+        #expect(popupWebView.url?.fragment == "section")
+
+        action.closePopup()
+    }
+
+    @Test
     func popupRecoversAfterPopupLoadFailure() async throws {
         let backgroundScript = """
-            await browser.action.setPopup({ popup: 'invalid.html' })
-
             browser.test.sendMessage('Invalid Popup Set')
 
             // Gives the failed provisional load time to finish before the popup path is restored.
@@ -279,7 +310,11 @@ struct WKWebExtensionAPIActionTests {
             "popup.html": "<b>Hello World!</b>",
         ]
 
-        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: resources)
+        // The manifest popup is checked only when the popup loads, so a missing file is how the load fails.
+        var manifest = actionPopupManifest
+        manifest["action"] = ["default_title": "Test Action", "default_popup": "invalid.html"]
+
+        let manager = try loadWebExtension(manifest: manifest, resources: resources)
         let context = try #require(manager.context)
 
         try await manager.waitForTestMessage("Invalid Popup Set")
@@ -952,9 +987,57 @@ struct WKWebExtensionAPIActionTests {
     }
 
     @Test
-    func setIconWithBadPath() async throws {
+    func setIconWithMissingPathIsRejected() async throws {
+        let backgroundScript = """
+            await browser.test.assertRejects(browser.action.setIcon({ path: 'bad.png' }), /"\\/bad.png" was not found in the extension/i)
+            await browser.test.assertRejects(browser.action.setIcon({ path: 'symbol:not.a.real.symbol' }), /"symbol:not.a.real.symbol" is not a known symbol/i)
+            await browser.test.assertRejects(browser.action.setIcon({ path: { '48': 'toolbar-48.png', '96': 'missing-96.png' } }), /"\\/missing-96.png" was not found in the extension/i)
+
+            browser.test.notifyPass()
+            """
+
         let resources: [String: Any] = [
-            "background.js": "await browser.action.setIcon({ path: 'bad.png' })",
+            "background.js": backgroundScript,
+            "toolbar-48.png": makePNGData(size: CGSize(width: 48, height: 48), color: .yellow),
+            "popup.html": "Hello world!",
+        ]
+
+        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: resources)
+        try await manager.run()
+
+        let action = try #require(manager.context?.action(for: nil))
+        #expect(action.icon(for: CGSize(width: 48, height: 48)) == nil)
+    }
+
+    @Test
+    func setIconRejectionKeepsPreviousIcon() async throws {
+        let backgroundScript = """
+            await browser.action.setIcon({ path: 'toolbar-48.png' })
+            await browser.test.assertRejects(browser.action.setIcon({ path: 'bad.png' }), /"\\/bad.png" was not found in the extension/i)
+
+            browser.test.sendMessage('Rejected')
+            """
+
+        let resources: [String: Any] = [
+            "background.js": backgroundScript,
+            "toolbar-48.png": makePNGData(size: CGSize(width: 48, height: 48), color: .yellow),
+            "popup.html": "Hello world!",
+        ]
+
+        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: resources)
+
+        let action = try await manager.nextUpdatedAction()
+        try await manager.waitForTestMessage("Rejected")
+
+        let icon = try #require(action.icon(for: CGSize(width: 48, height: 48)))
+        #expect(icon.size == CGSize(width: 48, height: 48))
+    }
+
+    @Test
+    func setIconWithQueryAndFragmentInPath() async throws {
+        let resources: [String: Any] = [
+            "background.js": "await browser.action.setIcon({ path: 'toolbar-48.png?v=2#icon' })",
+            "toolbar-48.png": makePNGData(size: CGSize(width: 48, height: 48), color: .yellow),
             "popup.html": "Hello world!",
         ]
 
@@ -962,7 +1045,7 @@ struct WKWebExtensionAPIActionTests {
 
         let action = try await manager.nextUpdatedAction()
 
-        #expect(action.icon(for: CGSize(width: 48, height: 48)) == nil)
+        #expect(action.icon(for: CGSize(width: 48, height: 48)) != nil)
     }
 
     @Test
@@ -1068,11 +1151,13 @@ struct WKWebExtensionAPIActionTests {
     }
 
     @Test
-    func setIconWithBadDataURL() async throws {
+    func setIconWithBadDataURLIsRejected() async throws {
         let backgroundScript = """
             const invalidDataURL = 'data:image/png;base64,INVALIDDATA'
 
-            await browser.action.setIcon({ path: invalidDataURL })
+            await browser.test.assertRejects(browser.action.setIcon({ path: invalidDataURL }), /the data URL is not a valid image/i)
+
+            browser.test.notifyPass()
             """
 
         let resources: [String: Any] = [
@@ -1081,10 +1166,7 @@ struct WKWebExtensionAPIActionTests {
         ]
 
         let manager = try loadWebExtension(manifest: actionPopupManifest, resources: resources)
-
-        let action = try await manager.nextUpdatedAction()
-
-        #expect(action.icon(for: CGSize(width: 48, height: 48)) == nil)
+        try await manager.run()
     }
 
     @Test
@@ -1227,6 +1309,29 @@ struct WKWebExtensionAPIActionTests {
     }
 
     #if ENABLE_WK_WEB_EXTENSIONS_ICON_VARIANTS
+    @Test
+    func setIconWithMissingVariantPathIsRejected() async throws {
+        let backgroundScript = """
+            await browser.test.assertRejects(browser.action.setIcon({
+                variants: [
+                    { 32: 'action-dark-32.png', 'colorSchemes': [ 'dark' ] },
+                    { 32: 'action-light-missing.png', 'colorSchemes': [ 'light' ] }
+                ]
+            }), /"\\/action-light-missing.png" was not found in the extension/i)
+
+            browser.test.notifyPass()
+            """
+
+        let resources: [String: Any] = [
+            "background.js": backgroundScript,
+            "popup.html": "Hello world!",
+            "action-dark-32.png": makePNGData(size: CGSize(width: 32, height: 32), color: .white),
+        ]
+
+        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: resources)
+        try await manager.run()
+    }
+
     @Test
     func setIconWithVariants() async throws {
         let backgroundScript = """

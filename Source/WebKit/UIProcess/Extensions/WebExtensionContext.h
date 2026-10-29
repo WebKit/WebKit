@@ -416,6 +416,7 @@ public:
     void setBaseURL(URL&&);
 
     bool isURLForThisExtension(const URL&) const;
+    bool hasResource(const String& path) const;
     bool canNavigateToURL(const URL&) const;
     String unsupportedNavigationURLMessage(const URL&) const;
 

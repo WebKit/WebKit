@@ -550,6 +550,23 @@ URL WebExtension::resourceFileURLForPath(const String& originalPath)
     return result;
 }
 
+bool WebExtension::hasResourceForPath(const String& originalPath)
+{
+    ASSERT(originalPath);
+
+    String path = originalPath;
+    if (path.startsWith('/'))
+        path = path.substring(1);
+
+    if (path == generatedBackgroundPageFilename || path == generatedBackgroundServiceWorkerFilename)
+        return true;
+
+    if (m_stringResources.contains(path) || m_dataResources.contains(path))
+        return true;
+
+    return !resourceFileURLForPath(path).isEmpty();
+}
+
 String WebExtension::resourceMIMETypeForPath(const String& path)
 {
     auto dataPrefix = "data:"_s;

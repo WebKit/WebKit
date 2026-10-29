@@ -161,6 +161,16 @@ bool WebExtensionContext::isURLForThisExtension(const URL& url) const
     return url.isValid() && protocolHostAndPortAreEqual(baseURL(), url);
 }
 
+bool WebExtensionContext::hasResource(const String& path) const
+{
+    URL url { baseURL(), path };
+    if (!isURLForThisExtension(url))
+        return false;
+
+    // The path excludes any query or fragment.
+    return extension().hasResourceForPath(url.path().toString());
+}
+
 bool WebExtensionContext::canNavigateToURL(const URL& url) const
 {
     if (url.protocolIsJavaScript())

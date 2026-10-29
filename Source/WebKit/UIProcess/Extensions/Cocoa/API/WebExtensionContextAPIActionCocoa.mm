@@ -39,6 +39,35 @@
 
 namespace WebKit {
 
+static std::optional<String> invalidIconPathMessage(WebExtensionContext& context, const String& path)
+{
+    if (path.startsWith("data:"_s)) {
+        if (context.extension().iconForPath(path))
+            return std::nullopt;
+        return "the data URL is not a valid image"_s;
+    }
+
+    if (path.startsWith("symbol:"_s)) {
+        if (context.extension().iconForPath(path))
+            return std::nullopt;
+        return makeString("\""_s, path, "\" is not a known symbol"_s);
+    }
+
+    if (context.hasResource(path))
+        return std::nullopt;
+
+    return makeString("\""_s, path, "\" was not found in the extension"_s);
+}
+
+static void collectIconPaths(const JSON::Object& object, Vector<String>& paths)
+{
+    for (auto key : object.keys()) {
+        auto path = object.getString(key);
+        if (!path.isEmpty())
+            paths.append(path);
+    }
+}
+
 static std::expected<Ref<WebExtensionAction>, WebExtensionError> getActionWithIdentifiers(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, WebExtensionContext& context, NSString *apiName)
 {
     if (windowIdentifier) {
@@ -126,6 +155,24 @@ void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifi
     }
 
     RefPtr parsedIcons = JSON::Value::parseJSON(iconsJSON) ?: JSON::Value::null();
+
+    Vector<String> iconPaths;
+    if (RefPtr object = parsedIcons->asObject())
+        collectIconPaths(*object, iconPaths);
+    else if (RefPtr array = parsedIcons->asArray()) {
+        for (Ref variant : *array) {
+            if (RefPtr variantObject = variant->asObject())
+                collectIconPaths(*variantObject, iconPaths);
+        }
+    }
+
+    for (auto& iconPath : iconPaths) {
+        if (auto message = invalidIconPathMessage(*this, iconPath)) {
+            completionHandler(toWebExtensionError(apiName, @"path", message.value()));
+            return;
+        }
+    }
+
     Ref webExtensionAction = action.value();
 
     if (RefPtr object = parsedIcons->asObject())
@@ -169,6 +216,11 @@ void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentif
 
     if (!popupPath.isEmpty() && !isURLForThisExtension(URL { baseURL(), popupPath })) {
         completionHandler(toWebExtensionError(apiName, @"popup", @"it must be a resource within the extension"));
+        return;
+    }
+
+    if (!popupPath.isEmpty() && !hasResource(popupPath)) {
+        completionHandler(toWebExtensionError(apiName, @"popup", makeString("\""_s, popupPath, "\" was not found in the extension"_s)));
         return;
     }
 
