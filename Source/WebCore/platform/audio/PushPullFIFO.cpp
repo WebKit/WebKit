@@ -125,6 +125,14 @@ size_t PushPullFIFO::pull(AudioBus& outputBus, size_t framesRequested)
     return framesRequested > m_framesAvailable ? framesRequested - m_framesAvailable : 0;
 }
 
+void PushPullFIFO::reset()
+{
+    m_framesAvailable = 0;
+    m_indexRead = 0;
+    m_indexWrite = 0;
+    m_fifoBus->zero();
+}
+
 unsigned PushPullFIFO::numberOfChannels() const
 {
     return m_fifoBus->numberOfChannels();

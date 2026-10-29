@@ -345,6 +345,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/PublicSuffix.cpp
         Tests/WebCore/PushDatabase.cpp
         Tests/WebCore/PushMessageCrypto.cpp
+        Tests/WebCore/PushPullFIFOTest.cpp
         Tests/WebCore/QuirkMatchPattern.cpp
         Tests/WebCore/Quirks.cpp
         Tests/WebCore/RegionTests.cpp
