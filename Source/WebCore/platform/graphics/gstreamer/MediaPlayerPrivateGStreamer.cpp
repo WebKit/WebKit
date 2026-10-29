@@ -619,7 +619,7 @@ bool MediaPlayerPrivateGStreamer::doSeek(const SeekTarget& target, float rate, b
         g_object_set(m_downloadBuffer.get(), "high-percent", 0, nullptr);
     }
 
-    auto flag = (player->isLooping() && isSegment) ? GST_SEEK_FLAG_SEGMENT : GST_SEEK_FLAG_FLUSH;
+    auto flag = ((player->isLooping() && isSegment) || m_isLoopRestartSeekPending) ? GST_SEEK_FLAG_SEGMENT : GST_SEEK_FLAG_FLUSH;
     if (paused() && !m_isEndReached && player->isLooping()) {
         GST_DEBUG_OBJECT(pipeline(), "Segment non-flushing seek attempt not supported on a paused pipeline, enabling flush");
         m_isSegmentSeekAllowed = false;
@@ -685,7 +685,7 @@ bool MediaPlayerPrivateGStreamer::doSeek(const SeekTarget& target, float rate, b
     }
 
     auto result = gst_element_send_event(m_pipeline.get(), event.leakRef());
-    if (isSegment || !isSeamlessSeekingEnabled() || !result)
+    if (isSegment || m_isLoopRestartSeekPending || !isSeamlessSeekingEnabled() || !result)
         return result;
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "Resuming segment playback");
@@ -794,6 +794,11 @@ bool MediaPlayerPrivateGStreamer::prepareSeek(const SeekTarget& target)
         if (!doSeek(target, player->rate())) {
             GST_DEBUG_OBJECT(pipeline(), "[Seek] seeking to %s failed", toString(target.time).utf8());
             return false;
+        }
+        if (std::exchange(m_isLoopRestartSeekPending, false)) {
+            // A seamless loop restart is a non-flushing segment seek with no async re-preroll to
+            // complete it, so finish it now; otherwise the seek promise and "seeked" never fire.
+            finishSeek();
         }
     }
 
@@ -3251,9 +3256,14 @@ void MediaPlayerPrivateGStreamer::updateStates()
             GST_DEBUG_OBJECT(pipeline(), "[Seek] committing pending seek to %s", toString(m_seekTarget.time).utf8());
             m_isSeekPending = false;
             m_isSeeking = doSeek(m_seekTarget, player->rate());
+            bool wasLoopRestart = std::exchange(m_isLoopRestartSeekPending, false);
             if (!m_isSeeking) {
                 invalidateCachedPosition();
                 GST_DEBUG_OBJECT(pipeline(), "[Seek] seeking to %s failed", toString(m_seekTarget.time).utf8());
+            } else if (wasLoopRestart) {
+                // A non-flushing segment seek has no async re-preroll to complete it, so finish the
+                // seek now; otherwise its promise and the "seeked" event would never fire.
+                finishSeek();
             }
         } else if (m_isSeeking && !(state == GST_STATE_PLAYING && pending == GST_STATE_PAUSED))
             finishSeek();
@@ -3746,6 +3756,10 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
             if (!mediaPlayer || !mediaPlayer->isLooping())
                 return;
             GST_DEBUG_OBJECT(player->pipeline(), "Handling segment-done message");
+            // The loop restart that didEnd() triggers must be a non-flushing segment seek so it keeps
+            // the buffered tail rather than discarding it. Mark it for doSeek(), which runs later from
+            // HTMLMediaElement's loop handling, on whichever seek path it takes.
+            player->m_isLoopRestartSeekPending = true;
             player->didEnd();
         });
     }), this);
