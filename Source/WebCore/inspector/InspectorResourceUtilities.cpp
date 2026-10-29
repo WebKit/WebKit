@@ -31,6 +31,8 @@
 #include "CachedScript.h"
 #include "CertificateInfo.h"
 #include "CertificateSummary.h"
+#include "Cookie.h"
+#include "CookieJar.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
@@ -49,11 +51,13 @@
 #include "MemoryCache.h"
 #include "NetworkLoadMetrics.h"
 #include "Page.h"
+#include "RegistrableDomain.h"
 #include "ResourceLoader.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptableDocumentParser.h"
+#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "ThreadableLoader.h"
 #include <JavaScriptCore/AsyncStackTrace.h>
@@ -190,6 +194,47 @@ Vector<CachedResource*> cachedResourcesForFrame(LocalFrame* frame)
     }
 
     return result;
+}
+
+static Vector<URL> allResourcesURLsForFrame(LocalFrame& frame)
+{
+    Vector<URL> result;
+
+    result.append(protect(frame.loader().documentLoader())->url());
+
+    for (RefPtr cachedResource : cachedResourcesForFrame(&frame))
+        result.append(cachedResource->url());
+
+    return result;
+}
+
+void collectRawCookiesForFrame(LocalFrame& frame, ListHashSet<Cookie>& cookies, SubresourceSites subresourceSites)
+{
+    RefPtr document = frame.document();
+    if (!document || !document->page())
+        return;
+
+    // The origin, not the URL, so about:blank and srcdoc frames get the site they inherit from their parent.
+    RegistrableDomain frameSite { document->securityOrigin().data() };
+    if (frameSite.isEmpty())
+        frameSite = RegistrableDomain { document->url() };
+
+    for (auto& url : allResourcesURLsForFrame(frame)) {
+        // Mirrors NetworkConnectionToWebProcess::validateCookieAccess, which under Site Isolation refuses (and logs) a
+        // lookup for a site this process doesn't host and skips the check for a URL without a site.
+        if (subresourceSites == SubresourceSites::FrameSiteOnly && !frameSite.isEmpty()) {
+            RegistrableDomain urlSite { url };
+            if (!urlSite.isEmpty() && urlSite != frameSite)
+                continue;
+        }
+
+        Vector<Cookie> rawCookiesForURLInDocument;
+        if (!protect(document->page()->cookieJar())->getRawCookies(*document, url, rawCookiesForURLInDocument))
+            continue;
+
+        for (auto& rawCookieForURLInDocument : rawCookiesForURLInDocument)
+            cookies.add(rawCookieForURLInDocument);
+    }
 }
 
 bool mainResourceContent(LocalFrame* frame, bool withBase64Encode, String* result)

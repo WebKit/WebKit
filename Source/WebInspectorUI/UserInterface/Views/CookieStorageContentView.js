@@ -57,9 +57,12 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             this._clearButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleClearNavigationItemClicked, this);
         }
 
-        // Under Site Isolation the authoritative cookie store can gain cookies from a cross-origin
-        // iframe that only just became its own out-of-process target, so refresh when one appears.
-        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, this._handleTargetAdded, this);
+        // Under Site Isolation the cookies the inspected page can access depend on the frames in its frame tree, which
+        // changes when a cross-origin iframe becomes its own out-of-process target or goes away. A new frame target is
+        // added before it navigates, so also refresh when its navigation commits.
+        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, this._handleFrameTreeChanged, this);
+        WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, this._handleFrameTreeChanged, this);
+        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._handleFrameTreeChanged, this);
     }
 
     // Public
@@ -86,7 +89,9 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
     closed()
     {
-        WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, this._handleTargetAdded, this);
+        WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, this._handleFrameTreeChanged, this);
+        WI.targetManager.removeEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, this._handleFrameTreeChanged, this);
+        WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, this._handleFrameTreeChanged, this);
 
         super.closed();
     }
@@ -377,9 +382,9 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         return this.representedObject.deleteCookie(cookie);
     }
 
-    _handleTargetAdded(event)
+    _handleFrameTreeChanged(event)
     {
-        // The represented object may serve cookies from targets that appear after the initial load
+        // The represented object may serve cookies from targets that appear or go away after the initial load
         // (e.g. a cross-origin iframe becoming its own target under Site Isolation); refresh if so.
         if (this.representedObject.reloadsCookiesOnTargetAdded)
             this._reloadCookies();
@@ -487,16 +492,18 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             return;
         }
 
-        let promises = [];
+        // Editing a cookie can change its identity (name/domain/path), so delete the original first. Run these in
+        // order: a delete that finishes after the set would remove the cookie that was just written when the
+        // identity is unchanged, and a reload that finishes early would show stale cookies. A failed delete must not
+        // drop the edit, and the table is reloaded either way.
+        try {
+            if (editingCookie)
+                await this._deleteCookie(editingCookie).catch((error) => { console.error(error); });
 
-        // Editing a cookie can change its identity (name/domain/path), so delete the original first.
-        if (editingCookie)
-            promises.push(this._deleteCookie(editingCookie));
-
-        promises.push(this._setCookie(cookieToSet, cookieProtocolPayload));
-
-        promises.push(this._reloadCookies());
-        await Promise.all(promises);
+            await this._setCookie(cookieToSet, cookieProtocolPayload);
+        } finally {
+            await this._reloadCookies();
+        }
 
         let index = this._filteredCookies.findIndex((existingCookie) => cookieToSet.equals(existingCookie));
         if (index >= 0)
@@ -530,7 +537,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
     _reloadCookies()
     {
-        // A refresh can be requested (e.g. by _handleTargetAdded) before initialLayout has created
+        // A refresh can be requested (e.g. by _handleFrameTreeChanged) before initialLayout has created
         // the table. There is nothing to populate yet; initialLayout does the first load itself.
         if (!this._table)
             return Promise.resolve();

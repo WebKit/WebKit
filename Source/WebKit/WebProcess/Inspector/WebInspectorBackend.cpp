@@ -839,6 +839,23 @@ void WebInspectorBackend::getFrameResourceData(Vector<WebCore::FrameIdentifier>&
     completionHandler(WTF::move(resourcesByFrame));
 }
 
+void WebInspectorBackend::getFrameCookies(Vector<WebCore::FrameIdentifier>&& frameIDs, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
+{
+    // Return the cookies each requested frame local to this WebContent process would send to its document's URL and to its
+    // cached same-site subresources' URLs, the lookup Page.getCookies does without Site Isolation. Cross-site subresource
+    // URLs are skipped because the NetworkProcess refuses them for this process; the Storage tab never listed their
+    // cookies, since it only has a section per frame host. The UIProcess InspectorStorageAgent asks each process only for
+    // the frames it hosts and merges the results.
+    ListHashSet<WebCore::Cookie> cookies;
+    for (auto frameID : frameIDs) {
+        RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+        if (RefPtr localFrame = webFrame ? webFrame->coreLocalFrame() : nullptr)
+            Inspector::ResourceUtilities::collectRawCookiesForFrame(*localFrame, cookies, Inspector::ResourceUtilities::SubresourceSites::FrameSiteOnly);
+    }
+
+    completionHandler(copyToVector(cookies));
+}
+
 void WebInspectorBackend::getFrameResourceContent(WebCore::FrameIdentifier frameID, String url, CompletionHandler<void(String content, bool base64Encoded, String errorString)>&& completionHandler)
 {
     // Return the content of a resource hosted by this WebContent process, for the UIProcess

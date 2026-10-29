@@ -19,7 +19,7 @@ function test()
 
     suite.addTestCase({
         name: "Storage.getCookies.Partitioned.Probe",
-        description: "Probe whether Storage.getCookies (which reads the flat authoritative store via API::HTTPCookieStore) surfaces a CHIPS partitioned cookie, and whether its partitionKey is populated. This settles whether partitioned cookies are visible now or genuinely need a separate per-partition read path.",
+        description: "Storage.getCookies should surface a CHIPS partitioned cookie in the top-level site's partition, with its partitionKey populated.",
         async test() {
             await WI.backendTarget.StorageAgent.enable();
             await InspectorTest.evaluateInPage(`if (window.testRunner) testRunner.setAlwaysAcceptCookies(true);`);
@@ -36,11 +36,10 @@ function test()
                     await new Promise((resolve) => setTimeout(resolve, 20));
             }
 
-            InspectorTest.expectNotNull(cookie, "Storage.getCookies should surface the partitioned cookie from the flat store.");
+            InspectorTest.expectNotNull(cookie, "Storage.getCookies should surface the partitioned cookie from the top-level site's partition.");
             if (cookie) {
                 InspectorTest.expectEqual(cookie.value, "PASS", "Partitioned cookie value should be 'PASS'.");
-                // The interesting bit: does the flat read carry the partition label through to the
-                // protocol object? Log presence explicitly so the expected output records reality.
+                // The partition label must be carried through to the protocol object.
                 InspectorTest.expectNotNull(cookie.partitionKey, "Partitioned cookie should carry a non-empty partitionKey.");
                 InspectorTest.log("Observed partitionKey is a non-empty string: " + (typeof cookie.partitionKey === "string" && cookie.partitionKey.length > 0));
             }
