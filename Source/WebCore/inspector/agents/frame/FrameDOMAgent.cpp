@@ -1925,8 +1925,8 @@ void FrameDOMAgent::setSearchingForNode(Inspector::Protocol::ErrorString& errorS
 bool FrameDOMAgent::ownsElementSelection() const
 {
     // The main frame belongs to the page target.
-    // FIXME: A nested local subframe's overlay is not hosted by any compositor, so the page agent
-    // keeps it too.
+    // FIXME: <https://webkit.org/b/329358> A local subframe nested under another local root still has
+    // no agent that selects its elements; the page agent reaches it only in the main frame's process.
     Ref frame = m_inspectedFrame;
     return m_searchingForNode && frame->isRootFrame() && !frame->isMainFrame();
 }

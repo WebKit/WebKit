@@ -135,6 +135,11 @@ void FrameInspectorController::drawHighlight(GraphicsContext& context) const
     m_overlay->paint(context);
 }
 
+void FrameInspectorController::getHighlight(InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
+{
+    m_overlay->getHighlight(highlight, coordinateSystem);
+}
+
 bool FrameInspectorController::hasOverlayContentToDraw() const
 {
     return m_overlay->shouldShowOverlay();

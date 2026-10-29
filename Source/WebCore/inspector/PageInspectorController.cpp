@@ -421,6 +421,11 @@ unsigned PageInspectorController::paintRectCount() const
     return m_overlay->paintRectCount();
 }
 
+Vector<FloatQuad> PageInspectorController::highlightQuadsForLocalRootForTesting(LocalFrame& rootFrame) const
+{
+    return m_inspectorBackendClient->highlightQuadsForLocalRootForTesting(rootFrame);
+}
+
 bool PageInspectorController::shouldShowOverlay() const
 {
     return m_overlay->shouldShowOverlay();

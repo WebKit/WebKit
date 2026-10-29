@@ -2303,6 +2303,16 @@ ExceptionOr<Ref<DOMRectList>> Internals::inspectorHighlightRects()
     return DOMRectList::create(highlight.quads);
 }
 
+ExceptionOr<Ref<DOMRectList>> Internals::inspectorLocalRootHighlightRects()
+{
+    RefPtr document { contextDocument() };
+    if (!document || !document->frame() || !document->page())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    Ref rootFrame { document->frame()->rootFrame() };
+    return DOMRectList::create(protect(document->page()->inspectorController())->highlightQuadsForLocalRootForTesting(rootFrame));
+}
+
 ExceptionOr<unsigned> Internals::inspectorPaintRectCount()
 {
     RefPtr document = contextDocument();

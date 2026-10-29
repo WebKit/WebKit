@@ -431,7 +431,7 @@ LocalFrame* InspectorOverlay::frameForGeometry() const
     // localMainFrame(), not localMainOrRootFrame(): the page overlay must not draw against a
     // subframe's geometry, matching PageOverlay::frameForGeometry() that this is named after.
     if (LocalFrame* ownerFrame = m_owner->overlayOwnerFrame())
-        return ownerFrame;
+        return &ownerFrame->rootFrame();
 
     Page* page = this->page();
     return page ? page->localMainFrame() : nullptr;
@@ -723,13 +723,14 @@ void InspectorOverlay::update()
     if (!client)
         return;
 
+    RefPtr ownerFrame { m_owner->overlayOwnerFrame() };
     RefPtr geometryFrame = frameForGeometry();
 
     // Dispatch on frame-scoped, not on whether a geometry frame exists, so the page path stays direct.
     if (!shouldShowOverlay()) {
         if (std::exchange(m_isVisible, false)) {
-            if (isFrameScoped() && geometryFrame)
-                client->hideHighlightForFrame(*geometryFrame);
+            if (ownerFrame)
+                client->hideHighlightForFrame(*ownerFrame);
             else
                 client->hideHighlight();
         }
@@ -741,8 +742,8 @@ void InspectorOverlay::update()
         return;
 
     m_isVisible = true;
-    if (isFrameScoped())
-        client->highlightFrame(*geometryFrame);
+    if (ownerFrame)
+        client->highlightFrame(*ownerFrame);
     else
         client->highlight();
 }
@@ -1369,7 +1370,7 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         obscuredContentInsets.setLeft(obscuredContentInsets.left() + rulerSize);
     }
 
-    // FIXME: For a frame overlay these clamps are against the frame's own viewport, so a tooltip for a
+    // FIXME: For a frame overlay these clamps are against its local root's viewport, so a tooltip for a
     // node near an iframe edge is confined to the iframe instead of the window. Fixing it needs the
     // label drawn into a surface that can extend past the frame, which a per-frame overlay cannot do
     // today -- it is the same constraint as <rdar://116202544>'s OverlayType::View work.

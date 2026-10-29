@@ -132,6 +132,7 @@ public:
     WEBCORE_EXPORT unsigned LEGACY_NODELETE gridOverlayCount() const;
     WEBCORE_EXPORT unsigned LEGACY_NODELETE flexOverlayCount() const;
     WEBCORE_EXPORT unsigned paintRectCount() const;
+    WEBCORE_EXPORT Vector<FloatQuad> highlightQuadsForLocalRootForTesting(LocalFrame& rootFrame) const;
 
     InspectorBackendClient* inspectorBackendClient() const LIFETIME_BOUND { return m_inspectorBackendClient.get(); }
     InspectorFrontendClient* inspectorFrontendClient() const { return m_inspectorFrontendClient; }
