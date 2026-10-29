@@ -377,6 +377,9 @@ interface TestRunner {
 
     undefined setHasMouseDeviceForTesting(boolean hasMouseDevice);
 
+    // Apple Pay
+    undefined setHasFakePaymentUIForTesting(boolean hasFakePaymentUI);
+
     // Immersive models
     undefined exitImmersive();
 };

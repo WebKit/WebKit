@@ -5900,6 +5900,12 @@ void TestController::setHasMouseDeviceForTesting(bool)
 }
 #endif
 
+#if !PLATFORM(MAC)
+void TestController::setHasFakePaymentUIForTesting(bool)
+{
+}
+#endif
+
 #if PLATFORM(MAC)
 // Client accessibility IPC implementation
 

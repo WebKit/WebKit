@@ -1,0 +1,62 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    if (testRunner.setCanOpenWindows)
+        testRunner.setCanOpenWindows();
+}
+
+let notifyPopupReady;
+const popupReady = new Promise(resolve => { notifyPopupReady = resolve; });
+window.addEventListener("message", event => {
+    if (event.data === "popup-ready")
+        notifyPopupReady();
+});
+
+function finish()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+async function runTest()
+{
+    if (!window.IPC || !window.testRunner || !testRunner.setHasFakePaymentUIForTesting) {
+        finish();
+        return;
+    }
+
+    testRunner.setHasFakePaymentUIForTesting(true);
+
+    const { sendShowPaymentUI } = await import("./resources/apple-pay-ipc.js");
+    const { IPCWireTap } = await import("../coreipc.js");
+
+    const popup = window.open("resources/apple-pay-popup.html", "_blank");
+    if (!popup) {
+        finish();
+        return;
+    }
+
+    await popupReady;
+
+    const uiOutgoingTap = new IPCWireTap("UI", "Outgoing");
+    const closePageSent = new Promise(resolve => {
+        uiOutgoingTap.tapNext(IPC.messages.WebPageProxy_ClosePage.name, () => resolve());
+    });
+    popup.close();
+    await closePageSent;
+
+    sendShowPaymentUI();
+
+    finish();
+}
+
+runTest();
+
+</script>
+This test passes if WebKit does not crash.
+</body>
+</html>

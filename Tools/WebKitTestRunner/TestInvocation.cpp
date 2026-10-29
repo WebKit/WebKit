@@ -1403,6 +1403,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetHasFakePaymentUIForTesting")) {
+        TestController::singleton().setHasFakePaymentUIForTesting(booleanValue(messageBody));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "GetGlobalPrivacyControl")) {
         bool value = TestController::singleton().globalPrivacyControl();
         return adoptWK(WKBooleanCreate(value)).leakRef();
