@@ -6512,6 +6512,15 @@ UnifiedMacZoomEnabled:
     default: true
     WebKitLegacy: false
 
+UnifiedModelRenderingEnabled:
+  type: bool
+  status: Unifiedmodelrendering_feature_status
+  category: dom
+  condition: ENABLE(UNIFIED_MODEL_RENDERING)
+  humanReadableName: "Unified <model> rendering"
+  humanReadableDescription: "Adopt a new cross-platform approach for rendering <model> on the web"
+  defaultValue: false
+
 UnifiedPDFEnabled:
   type: bool
   status: mature

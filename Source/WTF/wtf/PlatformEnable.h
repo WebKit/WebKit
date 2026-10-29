@@ -617,6 +617,10 @@
 #define ENABLE_UI_SIDE_COMPOSITING 0
 #endif
 
+#if !defined(ENABLE_UNIFIED_MODEL_RENDERING)
+#define ENABLE_UNIFIED_MODEL_RENDERING 0
+#endif
+
 #if !defined(ENABLE_VIDEO)
 #define ENABLE_VIDEO 0
 #endif
