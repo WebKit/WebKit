@@ -146,6 +146,17 @@ extension WKWebView {
         _ = try await __callAsyncJavaScript(functionBody(), arguments: arguments, inFrame: frame, in: contentWorld)
     }
 
+    /// Evaluates a script without a user gesture, and discards the result.
+    ///
+    /// The `callJavaScript` functions always run with a user gesture, which changes whether a page can open windows and
+    /// whether its navigations lock the history.
+    ///
+    /// - Parameter script: The script to evaluate.
+    /// - Throws: Any error raised while evaluating the script.
+    public func evaluateJavaScriptWithoutUserGesture(_ script: String) async throws {
+        _ = try await _evaluateJavaScriptWithoutUserGesture(script)
+    }
+
     /// Creates a handle for the first element matching a selector.
     ///
     /// - Parameters:

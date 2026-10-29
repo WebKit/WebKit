@@ -33,6 +33,7 @@ private import WebKit_Private.WKFrameInfoPrivate
 private import WebKit_Private.WKPreferencesPrivate
 public import WebKit_Private.WKWebViewPrivate
 private import WebKit_Private.WKWebsiteDataStorePrivate
+private import WebKit_Private._WKFeature
 private import WebKit_Private._WKFrameTreeNode
 private import WebKit_Private._WKWebsiteDataStoreConfiguration
 
@@ -53,6 +54,18 @@ extension WKWebViewConfiguration {
         let storeConfiguration = _WKWebsiteDataStoreConfiguration(nonPersistentConfiguration: ())
         storeConfiguration.httpsProxy = server.httpsProxy
         websiteDataStore = WKWebsiteDataStore._store(with: storeConfiguration)
+    }
+
+    /// Turns an experimental feature on or off for the web views created with the configuration.
+    ///
+    /// - Parameters:
+    ///   - key: The key of the feature, such as `IPCTestingAPIEnabled`.
+    ///   - enabled: Whether to turn the feature on.
+    public func setFeature(_ key: String, enabled: Bool) {
+        guard let feature = WKPreferences._features().first(where: { $0.key == key }) else {
+            fatalError("No experimental feature has the key \"\(key)\"")
+        }
+        preferences._setEnabled(enabled, for: feature)
     }
 }
 
@@ -348,6 +361,44 @@ extension WKWebView {
 /// - Returns: Whether the process is running.
 public func isProcessRunning(_ processIdentifier: pid_t) -> Bool {
     kill(processIdentifier, 0) == 0
+}
+
+// MARK: Opened windows
+
+/// A UI delegate that opens a site-isolated web view for each window a page opens, so that a test can wait for them in
+/// order.
+///
+/// The recorder keeps the windows that open before a test waits for them. A web view only holds its UI delegate weakly,
+/// so keep the recorder alive for as long as the web view can open windows.
+@MainActor
+public final class OpenedWebViewRecorder: NSObject, WKUIDelegate {
+    private var openedWebViews: [(webView: TestWKWebView, navigationDelegate: TestNavigationDelegate)] = []
+
+    /// Waits for the next window to open, if one hasn't already.
+    ///
+    /// - Parameter timeout: How long to wait for the window.
+    /// - Returns: The web view of the window and its navigation delegate, which trusts any server certificate.
+    /// - Throws: ``ConditionTimedOut`` if no window opens before the timeout.
+    public func nextOpenedWebView(
+        timeout: Duration = .seconds(10)
+    ) async throws -> (webView: TestWKWebView, navigationDelegate: TestNavigationDelegate) {
+        try await waitForCondition("a window to open", timeout: timeout) {
+            !openedWebViews.isEmpty
+        }
+        return openedWebViews.removeFirst()
+    }
+
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    public func webView(
+        _ webView: WKWebView,
+        createWebViewWith configuration: WKWebViewConfiguration,
+        for navigationAction: WKNavigationAction,
+        windowFeatures: WKWindowFeatures
+    ) -> WKWebView? {
+        let openedWebView = siteIsolatedWebViewAndDelegate(configuration: configuration)
+        openedWebViews.append(openedWebView)
+        return openedWebView.webView
+    }
 }
 
 // MARK: Alerts
