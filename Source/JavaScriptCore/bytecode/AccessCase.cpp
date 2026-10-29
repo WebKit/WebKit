@@ -1405,6 +1405,8 @@ bool AccessCase::isStillLive(VM& vm) const
     forEachDependentCell(vm, [&](JSCell* cell) {
         isValid &= vm.heap.isMarked(cell);
     });
+    if (m_identifier && m_identifier.isCell())
+        isValid &= vm.heap.isMarked(m_identifier.cell());
     return isValid;
 }
 
