@@ -1497,9 +1497,21 @@ void WebPageProxy::updateDisplayCaptureCapability()
         protect(processPool->extensionCapabilityGranter())->grant(*displayCaptureCapability, *this);
 }
 
+bool WebPageProxy::hasDisplayCaptureAuthorization() const
+{
+#if ENABLE(MEDIA_STREAM)
+    return m_isPromptingForDisplayCapture || m_hasGrantedDisplayCapture;
+#else
+    return false;
+#endif
+}
+
 bool WebPageProxy::shouldActivateDisplayCaptureCapability() const
 {
     if (!isViewVisible())
+        return false;
+
+    if (!hasDisplayCaptureAuthorization())
         return false;
 
     return internals().mediaState.containsAny(MediaProducer::DisplayCaptureMask | MediaProducer::IsPromptingForDisplayCaptureMask);
@@ -1510,6 +1522,9 @@ bool WebPageProxy::shouldDeactivateDisplayCaptureCapability() const
     RefPtr displayCaptureCapability = this->displayCaptureCapability();
     if (!displayCaptureCapability || !displayCaptureCapability->isActivatingOrActive())
         return false;
+
+    if (!hasDisplayCaptureAuthorization())
+        return true;
 
     if (internals().mediaState.containsAny(MediaProducer::DisplayCaptureMask | MediaProducer::IsPromptingForDisplayCaptureMask))
         return false;

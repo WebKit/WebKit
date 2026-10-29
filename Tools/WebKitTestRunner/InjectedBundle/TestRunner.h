@@ -448,6 +448,8 @@ public:
     bool didLoadAppInitiatedRequest();
     bool didLoadNonAppInitiatedRequest();
 
+    bool isDisplayCaptureCapabilityActive();
+
     size_t userScriptInjectedCount() const;
     void injectUserScript(JSStringRef);
 
