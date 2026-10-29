@@ -668,10 +668,12 @@ JSPromise* JSModuleLoader::hostLoadImportedModule(JSGlobalObject* globalObject, 
             ModuleRegistryEntry* loadedEntry = getRegisteredMayBeNull(loaded->moduleKey(), type);
             ASSERT(loadedEntry);
             ASSERT(loadedEntry->record() == loaded);
-            ASSERT(loadedEntry->loadPromise());
-            finishLoadingImportedModule(globalObject, referrer, moduleRequest, payload, loaded, scriptFetcher);
-            RETURN_IF_EXCEPTION(scope, nullptr);
-            return loadedEntry->loadPromise();
+            // A dependency's fetch failure clears the load promise, so the graph must be loaded again.
+            if (JSPromise* loadPromise = loadedEntry->loadPromise()) {
+                finishLoadingImportedModule(globalObject, referrer, moduleRequest, payload, loaded, scriptFetcher);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                return loadPromise;
+            }
         }
     }
 
@@ -722,22 +724,14 @@ JSPromise* JSModuleLoader::hostLoadImportedModule(JSGlobalObject* globalObject, 
     } else
         resolved = specifier;
 
+    // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script step 13.1.2.
+    if (mapEntry && mapEntry->fetchError()) {
+        removeFailedFetchEntry(mapEntry);
+        mapEntry = nullptr;
+    }
+
     if (mapEntry) {
         ASSERT(mapEntry->status() != ModuleRegistryEntry::Status::New);
-
-        // Only fetching errors should be checked here, not instantiation or evaluation errors.
-        // This allows fetch errors to propagate first because they're required to have priority.
-        // To avoid a race condition, instantiation errors need to be checked later, not here.
-        if (JSValue fetchError = mapEntry->fetchError()) {
-            if (auto* errorInstance = dynamicDowncast<ErrorInstance>(fetchError)) {
-                fetchError = JSModuleLoader::duplicateError(globalObject, errorInstance);
-                RETURN_IF_EXCEPTION(scope, nullptr);
-            }
-
-            finishLoadingImportedModule(globalObject, referrer, moduleRequest, payload, Exception::create(vm, fetchError), scriptFetcher);
-            RETURN_IF_EXCEPTION(scope, nullptr);
-            return JSPromise::rejectedPromise(globalObject, fetchError);
-        }
 
         JSPromise* promise = mapEntry->loadPromise();
         if (promise) {
