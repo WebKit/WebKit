@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<form id="checkout"></form>
+<script>
+description("Tests that a form control inserted into the document is disabled only when it has a disabled fieldset ancestor, while disabled fieldsets outside the document exist.");
+
+var form = document.getElementById("checkout");
+
+function controlState(control) {
+    if (control.matches(":disabled"))
+        return "disabled";
+    return "enabled";
+}
+
+function shouldBeDisabled(controlName) {
+    shouldBeEqualToString("controlState(" + controlName + ")", "disabled");
+}
+
+function shouldBeEnabled(controlName) {
+    shouldBeEqualToString("controlState(" + controlName + ")", "enabled");
+}
+
+function insertInputInto(parent) {
+    var input = parent.ownerDocument.createElement("input");
+    parent.appendChild(input);
+    return input;
+}
+
+debug("A disabled fieldset removed from the document does not disable inputs inserted elsewhere.");
+var removedFieldset = document.createElement("fieldset");
+form.appendChild(removedFieldset);
+removedFieldset.disabled = true;
+removedFieldset.remove();
+var emailInput = insertInputInto(form);
+shouldBeEnabled("emailInput");
+
+debug("An input inserted into a disabled fieldset in the document is disabled.");
+var shippingFieldset = document.createElement("fieldset");
+shippingFieldset.disabled = true;
+form.appendChild(shippingFieldset);
+var streetInput = insertInputInto(shippingFieldset);
+shouldBeDisabled("streetInput");
+
+debug("Moving a disabled fieldset to another document.");
+var otherDocument = document.implementation.createHTMLDocument("");
+otherDocument.body.appendChild(shippingFieldset);
+var otherInput = insertInputInto(shippingFieldset);
+shouldBeDisabled("otherInput");
+
+debug("Disabling a fieldset that is in the document.");
+var billingFieldset = document.createElement("fieldset");
+form.appendChild(billingFieldset);
+billingFieldset.disabled = true;
+var cardInput = insertInputInto(billingFieldset);
+shouldBeDisabled("cardInput");
+
+debug("Enabling a fieldset while it is outside the document, then disabling it again in the document.");
+billingFieldset.remove();
+billingFieldset.disabled = false;
+form.appendChild(billingFieldset);
+billingFieldset.disabled = true;
+var expiryInput = insertInputInto(billingFieldset);
+shouldBeDisabled("expiryInput");
+
+debug("Moving a disabled fieldset with moveBefore().");
+var addressSection = document.createElement("div");
+form.appendChild(addressSection);
+var postcodeRow = document.createElement("div");
+billingFieldset.appendChild(postcodeRow);
+addressSection.moveBefore(billingFieldset, null);
+var postcodeInput = insertInputInto(postcodeRow);
+shouldBeDisabled("postcodeInput");
+
+debug("Upgrading a form-associated custom element inside a disabled fieldset.");
+billingFieldset.innerHTML = "<star-rating></star-rating>";
+customElements.define("star-rating", class extends HTMLElement {
+    static formAssociated = true;
+});
+shouldBeDisabled("billingFieldset.firstElementChild");
+
+form.textContent = "";
+</script>
+</body>
+</html>

@@ -372,7 +372,8 @@ void ValidatedFormListedElement::syncWithFieldsetAncestors(ContainerNode* insert
     Ref element = asHTMLElement();
     if (matchesInvalidPseudoClass())
         addInvalidElementToAncestorFromInsertionPoint(element, insertionPoint);
-    if (element->document().hasDisabledFieldsetElement())
+    bool mayHaveDisabledFieldsetAncestor = element->isConnected() ? element->document().hasConnectedDisabledFieldsetElement() : element->document().hasDisabledFieldsetElement();
+    if (mayHaveDisabledFieldsetAncestor)
         setDisabledInternal(m_disabled, computeIsDisabledByFieldsetAncestor());
 }
 
