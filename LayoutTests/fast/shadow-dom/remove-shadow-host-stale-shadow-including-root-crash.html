@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('Removing a shadow host must not leave the surviving shadow tree pointing at the freed host. '
+    + 'This tests both the observability verdict for a removed shadow root and the shadow-including-root scrub in removeShadowRootSlow. '
+    + 'The test passes if it does not crash.');
+
+function detachedShadowRootOf(markup)
+{
+    const outer = document.createElement('div');
+    document.body.appendChild(outer);
+    const outerShadow = outer.attachShadow({mode: 'open'});
+
+    outerShadow.setHTMLUnsafe(markup);
+
+    const lightChild = outerShadow.getElementById('lightChild');
+    const shadowRoot = lightChild.assignedSlot.getRootNode();
+
+    lightChild.remove();
+    shadowRoot.replaceChildren();
+
+    outerShadow.replaceChildren();
+    if (window.GCController)
+        GCController.collect();
+    return shadowRoot;
+}
+
+const markup = '<div><template shadowrootmode="open"><slot></slot></template><span id="lightChild"></span></div>';
+
+const removedShadowRoot = detachedShadowRootOf(markup);
+shouldNotBe('removedShadowRoot.host', 'null');
+shouldBe('removedShadowRoot.getRootNode({composed: true})', 'removedShadowRoot.host');
+
+const shadowRootWithChild = detachedShadowRootOf(markup);
+const child = document.createElement('b');
+shadowRootWithChild.appendChild(child);
+shouldBe('child.getRootNode({composed: true})', 'shadowRootWithChild.host');
+
+gc();
+
+shouldBe('child.getRootNode({composed: true})', 'shadowRootWithChild.host');
+</script>
+</body>
+</html>
