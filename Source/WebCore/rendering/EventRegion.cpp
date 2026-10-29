@@ -145,7 +145,7 @@ void EventRegionContext::uniteInteractionRegions(const RenderObject& renderer, c
         return;
 
     if (auto renderedRegion = interactionRegionForRenderedRegion(renderer, layerBounds, clipOffset, transform)) {
-        auto& [interactionRegion, shapeIsInset] = *renderedRegion;
+        auto& [interactionRegion, shapeIsInset, hasNoVisualBorders] = *renderedRegion;
         auto rectForTracking = enclosingIntRect(interactionRegion.rectInLayerCoordinates);
 
         if (interactionRegion.type == InteractionRegion::Type::Occlusion) {
@@ -180,7 +180,6 @@ void EventRegionContext::uniteInteractionRegions(const RenderObject& renderer, c
         }
 
         // This region might be a container we can remove later.
-        bool hasNoVisualBorders = !renderer.hasVisibleBoxDecorations();
         if (hasNoVisualBorders) {
             if (auto* renderElement = dynamicDowncast<RenderElement>(renderer))
                 m_containerRemovalCandidates.add(renderElement->element()->nodeIdentifier());

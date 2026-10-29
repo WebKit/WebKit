@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body { margin: 0; }
+    .item {
+        position: absolute;
+        left: 20px;
+        width: fit-content;
+    }
+    #sibling-background { top: 20px; }
+    #inset-background { top: 100px; }
+    #hit-testable-background { top: 180px; }
+    #card-with-nested-button { top: 260px; }
+    #percentage-sized-background {
+        top: 360px;
+        display: flex;
+    }
+    #transparent-background { top: 20px; left: 300px; }
+    #hidden-background { top: 100px; left: 300px; }
+    #undecorated-background { top: 180px; left: 300px; }
+    #square-background { top: 260px; left: 300px; }
+    #padded-parent {
+        top: 340px;
+        left: 300px;
+        padding: 4px;
+    }
+    #clipped-background { top: 420px; left: 300px; }
+    #big-card { top: 20px; left: 460px; }
+
+    .background-layer {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+    #hit-testable-background .background-layer {
+        pointer-events: auto;
+    }
+    .background {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        border-radius: 28px;
+        background-color: lightgray;
+    }
+    #inset-background .background {
+        inset: 4px;
+    }
+    #percentage-sized-background .background-layer {
+        inset: auto;
+        width: 100%;
+        height: 100%;
+    }
+    #transparent-background .background {
+        opacity: 0;
+    }
+    #hidden-background .background {
+        visibility: hidden;
+    }
+    #undecorated-background .background {
+        background: none;
+    }
+    #square-background .background {
+        border-radius: 0;
+    }
+    #clipped-background .background {
+        clip-path: inset(0 round 28px);
+    }
+
+    button {
+        display: flex;
+        align-items: center;
+        height: 56px;
+        margin: 0;
+        padding: 0 32px 0 16px;
+        border: 0;
+        background: none;
+        cursor: pointer;
+    }
+    #percentage-sized-background button {
+        box-sizing: border-box;
+        width: 200px;
+    }
+    .label {
+        display: block;
+        width: 100px;
+        height: 24px;
+    }
+
+    .card {
+        position: relative;
+        display: block;
+        width: 200px;
+        height: 80px;
+    }
+    .big-card {
+        display: block;
+        box-sizing: border-box;
+        width: 330px;
+        height: 500px;
+        padding: 16px;
+    }
+    .close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        border-radius: 12px;
+        background-color: gray;
+    }
+</style>
+</head>
+<body>
+<!--
+    A transparent button whose only child is a label is a guard container: the label glows and the
+    button gets a Guard. Here the button's background is painted by a pointer-events: none layer next
+    to it that fills the same parent, so the button gets a single region with that background's shape.
+    The button stays a guard container when the background doesn't match its box, when the layer takes
+    hits, when the background isn't visible (fully transparent, hidden, or not painting anything), when
+    the button doesn't fill its parent, or when the background is shaped by a clip-path. A square
+    background keeps its square corners. A link painted the same way keeps its region when it contains
+    another control, as it would if it painted its own background. Another case sizes the layer with
+    percentages in a flex container. A card too big to get a region of its own stays a guard container,
+    so its label still glows.
+-->
+<div id="test">
+    <div id="sibling-background" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <button><span class="label"></span></button>
+    </div>
+    <div id="inset-background" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <button><span class="label"></span></button>
+    </div>
+    <div id="hit-testable-background" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <button><span class="label"></span></button>
+    </div>
+    <div id="card-with-nested-button" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <a class="card" href="#"><div><button class="close"></button></div></a>
+    </div>
+    <div id="percentage-sized-background" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <button><span class="label"></span></button>
+    </div>
+    <div id="transparent-background" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <button><span class="label"></span></button>
+    </div>
+    <div id="hidden-background" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <button><span class="label"></span></button>
+    </div>
+    <div id="undecorated-background" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <button><span class="label"></span></button>
+    </div>
+    <div id="square-background" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <button><span class="label"></span></button>
+    </div>
+    <div id="padded-parent" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <button><span class="label"></span></button>
+    </div>
+    <div id="clipped-background" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <button><span class="label"></span></button>
+    </div>
+    <div id="big-card" class="item">
+        <div class="background-layer"><span class="background"></span></div>
+        <a class="big-card" href="#"><span class="label"></span></a>
+    </div>
+</div>
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+        return;
+
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    document.getElementById("test").remove();
+};
+</script>
+</body>
+</html>

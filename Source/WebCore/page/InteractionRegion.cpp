@@ -60,6 +60,7 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
+#include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderImage.h"
 #include "RenderImageResource.h"
@@ -355,6 +356,47 @@ static bool isGuardContainer(const Element& element)
     return childRenderer && !hasTransparentBoxDecorations(protect(childRenderer->style()));
 }
 
+static bool fillsContainer(const RenderBox& box, const RenderBox& container)
+{
+    return box.container() == &container && box.borderBoxRectInContainer() == container.borderBoxRect();
+}
+
+static CheckedPtr<const RenderBox> backgroundPaintedBySibling(const RenderElement& renderer, float maximumArea)
+{
+    CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
+    if (!box)
+        return nullptr;
+
+    FloatSize size = box->borderBoxSize();
+    if (size.area() > maximumArea)
+        return nullptr;
+
+    CheckedPtr parent = dynamicDowncast<RenderBox>(box->parent());
+    if (!parent || !fillsContainer(*box, *parent))
+        return nullptr;
+
+    for (CheckedRef sibling : childrenOfType<RenderBox>(*parent)) {
+        if (sibling.ptr() == box.get())
+            continue;
+
+        CheckedPtr<const RenderBox> container = parent;
+        for (CheckedPtr candidate = sibling.ptr(); candidate && fillsContainer(*candidate, *container); candidate = childrenOfType<RenderBox>(*candidate).first()) {
+            // The region takes the background's border shape, which a clip-path would not match.
+            if (!candidate->style().clipPath().isNone())
+                break;
+
+            if (candidate->hasVisibleBoxDecorations()
+                && candidate->usedPointerEvents() == PointerEvents::None
+                && candidate->usedStyle().visibility() == UsedVisibility::Visible
+                && !candidate->style().isEffectivelyTransparent())
+                return candidate;
+            container = candidate;
+        }
+    }
+
+    return nullptr;
+}
+
 static FloatSize boundingSize(const RenderObject& renderer, const std::optional<AffineTransform>& transform)
 {
     Vector<LayoutRect> rects;
@@ -528,7 +570,8 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
     // FIXME: Remove suppression once rdar://189998444 is fixed.
     SUPPRESS_MEMORY_UNSAFE_CAST auto viewportSize = FloatSize(pageView->baseLayoutViewportSize());
     auto viewportArea = viewportSize.area();
-    bool isTooBigForInteraction = bounds.area() > viewportArea / 3;
+    auto maximumInteractionArea = viewportArea / 3;
+    bool isTooBigForInteraction = bounds.area() > maximumInteractionArea;
     bool isTooBigForOcclusion = bounds.area() > viewportArea * 3;
 
     auto nodeIdentifier = matchedElement->nodeIdentifier();
@@ -599,6 +642,11 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
 
     bool matchedElementIsGuardContainer = isGuardContainer(*matchedElement);
 
+    // A guard container lets its child shape the region, unless a sibling already paints its background.
+    CheckedPtr siblingBackground = matchedElementIsGuardContainer ? backgroundPaintedBySibling(renderer.get(), maximumInteractionArea) : nullptr;
+    if (siblingBackground)
+        matchedElementIsGuardContainer = false;
+
     if (isOriginalMatch && matchedElementIsGuardContainer) {
         return RenderedInteractionRegion { {
             InteractionRegion::Type::Guard,
@@ -629,6 +677,7 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
     std::optional<Path> clipPath;
     bool shapeIsInset = false;
 
+    CheckedPtr<const RenderBox> backgroundBox = isOriginalMatch ? siblingBackground.get() : nullptr;
     CheckedRef style = regionRenderer.style();
     CheckedPtr<const RenderBox> regionRendererBox;
 
@@ -690,7 +739,8 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
 
         clipPath = path;
     } else if ((regionRendererBox = dynamicDowncast<RenderBox>(regionRenderer))) {
-        auto borderShape = BorderShape::shapeForBorderRect(regionRendererBox->usedStyle(), regionRendererBox->borderBoxRect());
+        CheckedRef shapeBox = backgroundBox ? *backgroundBox : *regionRendererBox;
+        auto borderShape = BorderShape::shapeForBorderRect(shapeBox->usedStyle(), shapeBox->borderBoxRect());
         auto borderRadii = borderShape.radii();
         auto minRadius = borderRadii.minimumRadius();
         auto maxRadius = borderRadii.maximumRadius();
@@ -723,6 +773,7 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
 
     bool canTweakShape = !isPhoto
         && !clipPath
+        && !backgroundBox
         && canTweakShapeForStyle(style.get());
 
     auto adjustForTheme = false;
@@ -782,6 +833,9 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
             rect.inflate(regionRenderer.document().settings().interactionRegionInlinePadding());
     }
 
+    // A background painted by a sibling counts as the region's own decoration.
+    bool hasNoVisualBorders = !regionRenderer.hasVisibleBoxDecorations() && !backgroundBox;
+
     return RenderedInteractionRegion { {
         InteractionRegion::Type::Interaction,
         nodeIdentifier,
@@ -794,7 +848,7 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
 #if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
         interactionRegionTextContentForNode(*regionRenderer.node())
 #endif
-    }, shapeIsInset };
+    }, shapeIsInset, hasNoVisualBorders };
 }
 
 TextStream& operator<<(TextStream& ts, const InteractionRegion& interactionRegion)

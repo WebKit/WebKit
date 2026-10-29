@@ -90,6 +90,7 @@ inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
 struct RenderedInteractionRegion {
     InteractionRegion region;
     bool shapeIsInset { false };
+    bool hasNoVisualBorders { false };
 };
 
 WEBCORE_EXPORT std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(const RenderObject&, const FloatRect&, const FloatSize&, const std::optional<AffineTransform>&);
