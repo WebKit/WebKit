@@ -569,9 +569,11 @@ inline T opaque(T value)
     return value;
 }
 
+using InternalDependencyType = UCPURegister;
+
 // We use this primitive on ARM to express memory ordering efficiently.
 template<typename T>
-inline T* addOpaqueZero(T* pointer, unsigned opaqueZero)
+inline T* addOpaqueZero(T* pointer, InternalDependencyType opaqueZero)
 {
     ASSERT(!opaque(opaqueZero));
 
@@ -580,8 +582,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // @safe
     return std::bit_cast<T*>(std::bit_cast<char*>(pointer) + opaqueZero);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
-
-using InternalDependencyType = UCPURegister;
 
 template<typename T>
 inline InternalDependencyType toInternalDependencyType(T value)
