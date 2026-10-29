@@ -305,6 +305,29 @@ protected:
     };
     ChangePipelineStateResult changePipelineState(GstState);
 
+    struct VideoSinkStats {
+    public:
+        // This second videoSink reference is used to ensure access to a valid videoSink from any
+        // thread for statistics computing purposes. All the videoSink assignments happen on the
+        // main thread.
+        GRefPtr<GstElement> videoSink;
+        bool isProbeInstalled { false };
+        gulong videoSinkStatsProbeId { 0 };
+
+        // Used to avoid resetting during the mediaplayer load() that happens after restoring the
+        // player from suspend. The rest of the load() calls must reset the stats, as per the
+        // Media playback quality support spec.
+        bool isResetAllowed { true };
+
+        // Cached 3-state condition.
+        std::optional<bool> supportsLifetimeStats;
+
+        uint64_t totalDecodedVideoFrames { 0 };
+        uint64_t decodedVideoFrames { 0 };
+        uint64_t totalDroppedVideoFrames { 0 };
+        uint64_t droppedVideoFrames { 0 };
+    };
+
     static bool isAvailable();
 
     virtual void durationChanged();
@@ -414,6 +437,9 @@ protected:
     bool isSuspended() const { return m_isSuspended; };
 
     GRefPtr<GstElement> m_audioSink;
+    // If m_videoSink is changed, change also the videoSink reference in m_videoSinkStatsDataMutex.
+    // This is important to prevent access to a stale or cleared m_videoSink from a non-main thread
+    // in updateVideoSinkStatistics(), while m_videoSink is being cleared from the main thread.
     GRefPtr<GstElement> m_videoSink;
     GRefPtr<GstElement> m_pipeline;
     IntSize m_size;
@@ -434,6 +460,8 @@ protected:
     bool m_isBeingDestroyed WTF_GUARDED_BY_LOCK(m_drawLock) { false };
 
     ImageOrientation m_videoSourceOrientation;
+
+    DataMutex<VideoSinkStats> m_videoSinkStatsDataMutex;
 
 #if ENABLE(ENCRYPTED_MEDIA)
     Lock m_cdmAttachmentLock;
@@ -459,6 +487,7 @@ protected:
     String errorMessage() const override { return m_errorMessage; }
 
     bool updateVideoSinkStatistics();
+    void resetVideoSinkStatistics();
 
 private:
     class TaskAtMediaTimeScheduler {
@@ -505,6 +534,8 @@ private:
     GstElement* createVideoSink();
     GstElement* createAudioSink();
     GstElement* audioSink() const { return m_audioSink.get(); }
+    void installVideoSinkStatsProbe(const GRefPtr<GstElement>& videoSink);
+    void uninstallVideoSinkStatsProbe();
 
     friend class MediaPlayerFactoryGStreamer;
     static void getSupportedTypes(HashSet<String>&);
@@ -652,9 +683,6 @@ private:
     uint64_t m_httpResponseTotalSize { 0 };
     uint64_t m_networkReadPosition { 0 };
     mutable uint64_t m_readPositionAtLastDidLoadingProgress { 0 };
-
-    uint64_t m_totalVideoFrames { 0 };
-    uint64_t m_droppedVideoFrames { 0 };
 
     DataMutex<TaskAtMediaTimeScheduler> m_TaskAtMediaTimeSchedulerDataMutex;
 

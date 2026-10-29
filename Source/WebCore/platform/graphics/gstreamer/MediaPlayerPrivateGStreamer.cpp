@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MediaPlayerPrivateGStreamer.h"
 #include "TrackPrivateBaseGStreamer.h"
+#include <optional>
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
@@ -222,6 +223,8 @@ void MediaPlayerPrivateGStreamer::tearDown(bool clearMediaPlayer)
     MediaTelemetryReport::singleton().reportPlaybackState(MediaTelemetryReport::AVPipelineState::Stop);
 #endif
 
+    updateVideoSinkStatistics();
+
     m_sinkTaskQueue.startAborting();
 
     m_audioTracks.clear();
@@ -274,6 +277,8 @@ void MediaPlayerPrivateGStreamer::tearDown(bool clearMediaPlayer)
         g_signal_handlers_disconnect_matched(m_pipeline.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 
         m_source = nullptr;
+
+        uninstallVideoSinkStatsProbe();
         m_videoSink = nullptr;
         m_audioSink = nullptr;
         m_textSink = nullptr;
@@ -368,6 +373,8 @@ void MediaPlayerPrivateGStreamer::load(const String& urlString)
         loadingFailed(MediaPlayer::NetworkState::FormatError, MediaPlayer::ReadyState::HaveNothing, true);
         return;
     }
+
+    resetVideoSinkStatistics();
 
     registerWebKitGStreamerElements();
 
@@ -1204,6 +1211,8 @@ MediaPlayerPrivateGStreamer::ChangePipelineStateResult MediaPlayerPrivateGStream
 
     GST_DEBUG_OBJECT(pipeline(), "Changing state from %s to %s with %s pending", gst_state_get_name(currentState),
         gst_state_get_name(newState), gst_state_get_name(pending));
+
+    updateVideoSinkStatistics();
 
     change = gst_element_set_state(m_pipeline.get(), newState);
     GST_DEBUG_OBJECT(pipeline(), "Changing state returned %s", gst_state_change_return_get_name(change));
@@ -2348,6 +2357,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                     auto klassStr = UTF8CStringView::unsafeFromUTF8(gst_element_get_metadata(element, "klass"));
                     if (contains(klassStr.span(), "Sink"_s)  && contains(klassStr.span(), "Video"_s)) {
                         m_videoSink = element;
+                        installVideoSinkStatsProbe(m_videoSink);
 
                         // Ensure that there's a buffer with the transparent rectangle available when playback is going to start.
                         pushNextHolePunchBuffer();
@@ -3016,6 +3026,11 @@ void MediaPlayerPrivateGStreamer::finishSeek()
 
 void MediaPlayerPrivateGStreamer::didPreroll()
 {
+    // This ensures that the stats reset detection doesn't depend on the webpage voluntarily asking
+    // for a stats update. This avoids missing the detection if the stats are updated when playback
+    // took so long after seek that the new stats are now higher than the pre-seek ones.
+    updateVideoSinkStatistics();
+
     // A flush seek completes on GST_MESSAGE_ASYNC_DONE (re-preroll), which may not be followed by a
     // GST_MESSAGE_STATE_CHANGED reaching updateStates() — the only other place finishSeek() runs.
     // Complete the seek here so its promise resolves. Skip while the seek is still pending (not yet
@@ -4591,6 +4606,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
             m_videoSink = gst_element_factory_make("fakesink", nullptr);
             g_object_set(m_videoSink.get(), "sync", TRUE, nullptr);
         }
+        installVideoSinkStatsProbe(m_videoSink);
         player->renderingModeChanged();
 
         return m_videoSink.get();
@@ -4598,6 +4614,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
 
     if (isHolePunchRenderingEnabled()) {
         m_videoSink = createHolePunchVideoSink();
+        installVideoSinkStatsProbe(m_videoSink);
         // Do not check the m_videoSink value. The nullptr case will trigger auto-plugging in playbin.
         pushNextHolePunchBuffer();
         return m_videoSink.get();
@@ -4622,12 +4639,56 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
         }), this);
     }
 
+    installVideoSinkStatsProbe(m_videoSink);
+
     return m_videoSink.get();
+}
+
+// We ask for the videoSink as parameter as an extra safety measure to avoid bugs in case this
+// method is called before m_videoSink is assigned.
+void MediaPlayerPrivateGStreamer::installVideoSinkStatsProbe(const GRefPtr<GstElement>& videoSink)
+{
+    ASSERT(isMainThread());
+
+    DataMutexLocker<VideoSinkStats> videoSinkStats { m_videoSinkStatsDataMutex };
+    if (videoSinkStats->videoSink)
+        uninstallVideoSinkStatsProbe();
+    videoSinkStats->videoSink = videoSink;
+    GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(videoSinkStats->videoSink.get(), "sink"));
+    videoSinkStats->videoSinkStatsProbeId = gst_pad_add_probe(videoSinkPad.get(),
+        static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_EVENT_FLUSH | GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM),
+        (GstPadProbeCallback)(+[](GstPad*, GstPadProbeInfo* info, MediaPlayerPrivateGStreamer* player) {
+        GstEvent* event = gst_pad_probe_info_get_event(info);
+        if (!event || !(event->type == GST_EVENT_FLUSH_START || event->type == GST_EVENT_SEGMENT))
+            return GST_PAD_PROBE_OK;
+        GST_TRACE("videoSinkStatsProbe: %" GST_PTR_FORMAT, event);
+        player->updateVideoSinkStatistics();
+        return GST_PAD_PROBE_OK;
+    }), this, nullptr);
+    videoSinkStats->isProbeInstalled = true;
+}
+
+void MediaPlayerPrivateGStreamer::uninstallVideoSinkStatsProbe()
+{
+    ASSERT(isMainThread());
+
+    DataMutexLocker<VideoSinkStats> videoSinkStats { m_videoSinkStatsDataMutex };
+    if (!videoSinkStats->isProbeInstalled || !videoSinkStats->videoSink)
+        return;
+    GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
+    gst_pad_remove_probe(videoSinkPad.get(), videoSinkStats->videoSinkStatsProbeId);
+    videoSinkStats->isProbeInstalled = false;
+    videoSinkStats->videoSink.clear();
 }
 
 bool MediaPlayerPrivateGStreamer::updateVideoSinkStatistics()
 {
-    if (!m_videoSink)
+    // This method can be called from the main thread or from a non-main thread.
+    // The locker guarantees that videoSink won't be cleared, because all the methods that can clear
+    // or set it are locked by the DataMutex. The locker also protects the video frame counters.
+    DataMutexLocker videoSinkStats { m_videoSinkStatsDataMutex };
+
+    if (!videoSinkStats->videoSink)
         return false;
 
     GUniqueOutPtr<GstStructure> stats;
@@ -4635,19 +4696,75 @@ bool MediaPlayerPrivateGStreamer::updateVideoSinkStatistics()
     if (!stats)
         return false;
 
-    auto totalVideoFrames = gstStructureGet<uint64_t>(stats.get(), "rendered"_s);
-    auto droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "dropped"_s);
+    // The total-* stats might not be available until https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/12704
+    // lands, so we have code in place to fall back to the partial versions in that case.
+    // Still, the codepath to compute deltas is needed anyway, because the video sink (and its stats) can be
+    // recreated if the player goes to suspend and the whole pipeline is destroyed and recreated.
+    // We don't want to be asking for the total and partial families of fields every time, so we cache
+    // the support (or lack of it) in supportsLifetimeStats tri-state boolean.
+    std::optional<uint64_t> decodedVideoFrames;
+    std::optional<uint64_t> droppedVideoFrames;
 
-    if (!totalVideoFrames || !droppedVideoFrames)
+    // Force this branch the first time we don't know if the total-* fields are supported.
+    if (videoSinkStats->supportsLifetimeStats.value_or(true)) {
+        decodedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "total-rendered"_s);
+        droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "total-dropped"_s);
+        videoSinkStats->supportsLifetimeStats = decodedVideoFrames.has_value();
+    }
+
+    // Default to partial stats if the support for totals is not conclusive.
+    if (!videoSinkStats->supportsLifetimeStats.value_or(false)) {
+        decodedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "rendered"_s);
+        droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "dropped"_s);
+    }
+
+    if (!decodedVideoFrames || !droppedVideoFrames) {
+        GST_DEBUG("No stats available on video sink");
         return false;
+    }
 
-    // Caching is required so that metrics queries performed after EOS still return valid values.
-    if (*totalVideoFrames)
-        m_totalVideoFrames = *totalVideoFrames;
-    if (*droppedVideoFrames)
-        m_droppedVideoFrames = *droppedVideoFrames;
+    bool isUsingTotals = videoSinkStats->supportsLifetimeStats.value_or(false);
+    bool isResetDetected = false;
+    uint64_t previousTotals = videoSinkStats->totalDecodedVideoFrames + videoSinkStats->totalDroppedVideoFrames;
+    // Caching is required so that metrics queries performed after EOS still return valid values, and to
+    // avoid resetting the count after seek/flush/pause/etc when using an old implementation of basesink
+    // that doesn't support lifetime stat counters.
+    // In this complex case we need to measure differences and account for stats reset.
+
+    // Seek/flush/pause has reset the count if the figure is now lower.
+    if (*decodedVideoFrames < videoSinkStats->decodedVideoFrames) {
+        isResetDetected = true;
+        videoSinkStats->decodedVideoFrames = 0;
+    }
+    videoSinkStats->totalDecodedVideoFrames += *decodedVideoFrames - videoSinkStats->decodedVideoFrames;
+    videoSinkStats->decodedVideoFrames = *decodedVideoFrames;
+    if (*droppedVideoFrames < videoSinkStats->droppedVideoFrames)
+        videoSinkStats->droppedVideoFrames = 0;
+    videoSinkStats->totalDroppedVideoFrames += *droppedVideoFrames - videoSinkStats->droppedVideoFrames;
+    videoSinkStats->droppedVideoFrames = *droppedVideoFrames;
+
+    // Don't log the same message multiple times.
+    if (videoSinkStats->totalDecodedVideoFrames + videoSinkStats->totalDroppedVideoFrames != previousTotals
+        || isResetDetected) {
+        GST_TRACE("Total frames decoded: %" PRIu64 ", total dropped frames: %" PRIu64 ", computed from %s%s",
+            videoSinkStats->totalDecodedVideoFrames, videoSinkStats->totalDroppedVideoFrames,
+            isUsingTotals ? "totals" : "partials", isResetDetected ? " (count reset detected)" : "");
+    }
 
     return true;
+}
+
+void MediaPlayerPrivateGStreamer::resetVideoSinkStatistics()
+{
+    DataMutexLocker videoSinkStats { m_videoSinkStatsDataMutex };
+    if (!videoSinkStats->isResetAllowed)
+        return;
+
+    GST_DEBUG("Resetting statistics on load()");
+    videoSinkStats->totalDecodedVideoFrames = 0;
+    videoSinkStats->decodedVideoFrames = 0;
+    videoSinkStats->totalDroppedVideoFrames = 0;
+    videoSinkStats->droppedVideoFrames = 0;
 }
 
 std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateGStreamer::videoPlaybackQualityMetrics()
@@ -4655,12 +4772,13 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateGStreamer::videoPla
     if (!m_isEndReached && !updateVideoSinkStatistics())
         return std::nullopt;
 
+    DataMutexLocker<VideoSinkStats> videoSinkStats { m_videoSinkStatsDataMutex };
     uint32_t corruptedVideoFrames = 0;
     double totalFrameDelay = 0;
     uint32_t displayCompositedVideoFrames = 0;
     return VideoPlaybackQualityMetrics {
-        static_cast<uint32_t>(m_totalVideoFrames),
-        static_cast<uint32_t>(m_droppedVideoFrames),
+        static_cast<uint32_t>(videoSinkStats->totalDecodedVideoFrames + videoSinkStats->totalDroppedVideoFrames),
+        static_cast<uint32_t>(videoSinkStats->totalDroppedVideoFrames),
         corruptedVideoFrames,
         totalFrameDelay,
         displayCompositedVideoFrames,

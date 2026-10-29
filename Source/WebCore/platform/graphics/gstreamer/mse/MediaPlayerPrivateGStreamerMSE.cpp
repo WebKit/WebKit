@@ -417,6 +417,9 @@ void MediaPlayerPrivateGStreamerMSE::mediaSourceHasRetrievedAllData()
 void MediaPlayerPrivateGStreamerMSE::didPreroll()
 {
     ASSERT(GST_STATE(m_pipeline.get()) >= GST_STATE_PAUSED);
+
+    updateVideoSinkStatistics();
+
     // There are three circumstances in which a preroll can occur:
     // a) At the begining of playback. This is the point where we propagate >=HaveCurrentData to the player.
     // b) At the end of a seek. We emit the "seeked" event as well.
@@ -592,7 +595,23 @@ void MediaPlayerPrivateGStreamerMSE::rebuildPipeline()
 
     GST_DEBUG("Re-building the pipeline");
     m_isEndReached = false;
+
+    {
+        DataMutexLocker<VideoSinkStats> videoSinkStats { m_videoSinkStatsDataMutex };
+        GST_DEBUG("Disabling videosink stats resetting on load()");
+        videoSinkStats->isResetAllowed = false;
+    }
+
+    // This isn't a regular load(). In this specific case, the stats shouldn't be reset, since we're
+    // technically still playing the same video from the perspective of the webpage.
     MediaPlayerPrivateGStreamer::load(m_url.string());
+
+    {
+        DataMutexLocker<VideoSinkStats> videoSinkStats { m_videoSinkStatsDataMutex };
+        GST_DEBUG("Reenabling videosink stats resetting on load()");
+        videoSinkStats->isResetAllowed = true;
+    }
+
     changePipelineState(GST_STATE_PAUSED);
 }
 
