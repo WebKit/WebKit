@@ -71,6 +71,8 @@ static bool didWriteToPasteboard;
 
 TEST(WebKit, WKWebProcessPlugInEditingDelegate)
 {
+    didWriteToPasteboard = false;
+
     RetainPtr<WKWebViewConfiguration> configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"]);
     [[configuration processPool] _setObject:@NO forBundleParameter:@"EditingDelegateShouldInsertText"];
     
@@ -117,6 +119,8 @@ TEST(WebKit, WKWebProcessPlugInEditingDelegate)
 
 TEST(WebKit, WKWebProcessPlugInDoNotCrashWhenCopyingEmptyClientData)
 {
+    didWriteToPasteboard = false;
+
     auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"]);
     [[configuration processPool] _setObject:@YES forBundleParameter:@"EditingDelegateShouldWriteEmptyData"];
 
