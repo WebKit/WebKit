@@ -1,0 +1,57 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true MediaCapabilityGrantsEnabled=true ScreenCaptureEnabled=true ] -->
+<html>
+<head>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const IsPromptingForScreenCapture = 1 << 29;
+const syncMessageTimeoutInSeconds = 5;
+
+const failures = [];
+
+function expect(description, actual, expected)
+{
+    if (actual !== expected)
+        failures.push("FAIL: " + description + " (expected " + expected + ", got " + actual + ")");
+}
+
+function waitForUIProcessToDispatchQueuedMessages()
+{
+    IPC.sendSyncMessage("UI", IPC.webPageProxyID, IPC.messages.WebPageProxy_GetWindowFrame.name,
+        syncMessageTimeoutInSeconds, []);
+}
+
+function main()
+{
+    if (!window.IPC || !window.testRunner || testRunner.isDisplayCaptureCapabilityActive === undefined)
+        return;
+
+    expect("the capability is inactive before the forgery", testRunner.isDisplayCaptureCapabilityActive(), false);
+
+    IPC.sendMessage("UI", IPC.webPageProxyID, IPC.messages.WebPageProxy_IsPlayingMediaDidChange.name,
+        [{ type: "uint32_t", value: IsPromptingForScreenCapture }]);
+
+    waitForUIProcessToDispatchQueuedMessages();
+
+    expect("the forged media state does not activate the capability",
+        testRunner.isDisplayCaptureCapabilityActive(), false);
+}
+
+window.onload = () => {
+    try {
+        main();
+        document.body.textContent = failures.length ? failures.join("\n") : "PASS";
+    } catch (error) {
+        document.body.textContent = "FAIL: " + error;
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+</head>
+<body></body>
+</html>
