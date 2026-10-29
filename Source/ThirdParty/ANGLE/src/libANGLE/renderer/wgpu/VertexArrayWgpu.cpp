@@ -213,6 +213,19 @@ angle::Result VertexArrayWgpu::syncClientArrays(
     IndexDataNeedsStreaming indexDataNeedsStreaming = determineIndexDataNeedsStreaming(
         sourceDrawElementsTypeOrInvalid, count, mode, &destDrawElementsTypeOrInvalid);
 
+    // An earlier draw may have streamed the indices of the element array buffer. Draw from the
+    // element array buffer again when this draw does not stream them.
+    if (indexDataNeedsStreaming == IndexDataNeedsStreaming::None && getElementArrayBuffer())
+    {
+        webgpu::BufferHelper *elementArrayBuffer =
+            &GetImplAs<BufferWgpu>(getElementArrayBuffer())->getBuffer();
+        if (mCurrentIndexBuffer != elementArrayBuffer)
+        {
+            mCurrentIndexBuffer = elementArrayBuffer;
+            webgpu::GetImpl(context)->invalidateIndexBuffer();
+        }
+    }
+
     if (!clientAttributesToSync.any() && indexDataNeedsStreaming == IndexDataNeedsStreaming::None)
     {
         return angle::Result::Continue;
@@ -222,22 +235,17 @@ angle::Result VertexArrayWgpu::syncClientArrays(
     ContextWgpu *contextWgpu       = webgpu::GetImpl(context);
     webgpu::DeviceHandle device    = webgpu::GetDevice(context);
     const uint8_t *srcIndexData    = static_cast<const uint8_t *>(indices);
-    if (elementArrayBuffer)
+    // Only line loops with primitive restart read the indices on the CPU here. The element array
+    // buffer has no MapRead usage, so read the indices back through a staging buffer.
+    webgpu::BufferReadback indexReadback;
+    if (elementArrayBuffer && mode == gl::PrimitiveMode::LineLoop && primitiveRestartEnabled)
     {
-        BufferWgpu *elementArrayBufferWgpu = GetImplAs<BufferWgpu>(elementArrayBuffer);
-        size_t sourceOffset =
-            rx::roundDownPow2(reinterpret_cast<size_t>(indices), webgpu::kBufferMapOffsetAlignment);
-        ASSERT(sourceOffset < elementArrayBufferWgpu->getBuffer().actualSize());
-        size_t mapReadSize = rx::roundUpPow2(
-            static_cast<size_t>(elementArrayBufferWgpu->getBuffer().actualSize()) - sourceOffset,
-            webgpu::kBufferCopyToBufferAlignment);
-        if (!elementArrayBufferWgpu->getBuffer().isMappedForRead())
-        {
-            ANGLE_TRY(elementArrayBufferWgpu->getBuffer().mapImmediate(
-                contextWgpu, WGPUMapMode_Read, sourceOffset, mapReadSize));
-        }
-        srcIndexData =
-            elementArrayBufferWgpu->getBuffer().getMapReadPointer(sourceOffset, mapReadSize);
+        webgpu::BufferHelper &srcBuffer = GetImplAs<BufferWgpu>(elementArrayBuffer)->getBuffer();
+        ANGLE_TRY(srcBuffer.readDataImmediate(
+            contextWgpu, reinterpret_cast<uintptr_t>(indices),
+            count * gl::GetDrawElementsTypeSize(sourceDrawElementsTypeOrInvalid),
+            webgpu::RenderPassClosureReason::IndexRangeReadback, &indexReadback));
+        srcIndexData = indexReadback.data;
     }
     uint32_t adjustedCount = calculateAdjustedIndexCount(
         mode, primitiveRestartEnabled, sourceDrawElementsTypeOrInvalid, count, srcIndexData);
@@ -522,9 +530,10 @@ angle::Result VertexArrayWgpu::ensureBufferCreated(const gl::Context *context,
         }
     }
 
-    if (bufferType == BufferType::IndexBuffer)
+    if (bufferType == BufferType::IndexBuffer && mCurrentIndexBuffer != &buffer)
     {
         mCurrentIndexBuffer = &buffer;
+        contextWgpu->invalidateIndexBuffer();
     }
     return angle::Result::Continue;
 }
@@ -549,9 +558,10 @@ IndexDataNeedsStreaming VertexArrayWgpu::determineIndexDataNeedsStreaming(
         return IndexDataNeedsStreaming::TriangleFanStreaming;
     }
     else if (sourceDrawElementsTypeOrInvalid != gl::DrawElementsType::InvalidEnum &&
-             !getElementArrayBuffer())
+             (!getElementArrayBuffer() ||
+              sourceDrawElementsTypeOrInvalid == gl::DrawElementsType::UnsignedByte))
     {
-        // Index data needs to be uploaded to the GPU
+        // Index data needs to be uploaded to the GPU, or converted, as WebGPU has no 8-bit indices
         *destDrawElementsTypeOrInvalidOut =
             calculateDrawElementsType(sourceDrawElementsTypeOrInvalid, count);
         return IndexDataNeedsStreaming::NonEmulatedStreaming;
@@ -699,11 +709,6 @@ angle::Result VertexArrayWgpu::streamIndicesLineLoop(
         rx::StreamEmulatedLineLoopIndices(sourceDrawElementsTypeOrInvalid, count, srcIndexData,
                                           stagingData,
                                           /* shouldConvertUint8= */ true);
-        if (elementArrayBuffer)
-        {
-            BufferWgpu *elementArrayBufferWgpu = GetImplAs<BufferWgpu>(elementArrayBuffer);
-            ANGLE_TRY(elementArrayBufferWgpu->getBuffer().unmap());
-        }
         stagingUploadsOut->push_back({*currentStagingDataPositionOut, stagingBufferPtr,
                                       &mStreamingIndexBuffer, 0, destIndexBufferSize});
         *currentStagingDataPositionOut += destIndexBufferSize;
@@ -718,6 +723,12 @@ angle::Result VertexArrayWgpu::streamIndicesLineLoop(
         size_t sourceOffset                = reinterpret_cast<size_t>(indices);
         BufferWgpu *elementArrayBufferWgpu = GetImplAs<BufferWgpu>(elementArrayBuffer);
         webgpu::BufferHelper *sourceBuffer = &elementArrayBufferWgpu->getBuffer();
+        // A buffer can stay mapped after its data was written. A command buffer that uses a
+        // buffer that is still mapped fails to submit, which loses all the work recorded in it.
+        if (sourceBuffer->getMappedState())
+        {
+            ANGLE_TRY(sourceBuffer->unmap());
+        }
 
         size_t copySize =
             rx::roundUpPow2(destIndexUnitSize * count, webgpu::kBufferCopyToBufferAlignment);

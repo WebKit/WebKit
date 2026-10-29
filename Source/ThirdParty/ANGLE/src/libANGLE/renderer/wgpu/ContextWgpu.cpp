@@ -1252,7 +1252,8 @@ angle::Result ContextWgpu::setupDraw(const gl::Context *context,
     }
 
     const void *adjustedIndicesPtr = indices;
-    if (mState.areClientArraysEnabled())
+    // Streaming is also needed when client arrays are disabled, for indices and attributes that
+    // WebGPU cannot read from their buffers.
     {
         VertexArrayWgpu *vertexArrayWgpu = GetImplAs<VertexArrayWgpu>(mState.getVertexArray());
         // Pass in original indexTypeOrInvalid into syncClientArrays because the method will need to
@@ -1343,13 +1344,12 @@ angle::Result ContextWgpu::setupDraw(const gl::Context *context,
             }
         }
 
+        mDirtyBits.reset();
         if (reAddDirtyIndexBufferBit)
         {
             // Re-add the index buffer dirty bit for a future indexed draw call.
-            mDirtyBits.reset(DIRTY_BIT_INDEX_BUFFER);
+            mDirtyBits.set(DIRTY_BIT_INDEX_BUFFER);
         }
-
-        mDirtyBits.reset();
     }
 
     return angle::Result::Continue;
