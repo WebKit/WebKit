@@ -2723,6 +2723,7 @@
 42266907 WGPU : VertexAttributeTest.MixedUsingBufferAndClientMemoryPointer/* = SKIP
 42266907 WGPU : VertexAttributeTest.NegativeUsingDifferentFormatAndSameBuffer/* = SKIP
 42266907 WGPU : VertexAttributeTest.NegativeUsingDifferentFormatAndSameClientMemoryPointer/* = SKIP
+42266907 WGPU : VertexAttributeTest.OutOfBoundsOffsetNoFormatConversion/* = SKIP
 42266907 WGPU : VertexAttributeTest.ShortNormalized/* = SKIP
 42266907 WGPU : VertexAttributeTest.SimpleBindAttribLocation/* = SKIP
 42266907 WGPU : VertexAttributeTest.UnusedVertexAttribWorks/* = SKIP
