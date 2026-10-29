@@ -30,6 +30,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/SiteIsolationUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -82,13 +83,14 @@ static bool resourceLoadStatisticsFinishedNavigation = false;
 
 @end
 
-static void ensureITPFileIsCreated()
+static void ensureITPFileIsCreated(WKWebsiteDataStore *dataStore)
 {
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
-    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [dataStore _setResourceLoadStatisticsEnabled:YES];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
     [dataStore _setResourceLoadStatisticsEnabled:NO];
+    NSURL *fileURL = [dataStore._configuration._resourceLoadStatisticsDirectory URLByAppendingPathComponent:@"observations.db"];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:fileURL.path])
+        return;
+    [[NSFileManager defaultManager] createDirectoryAtURL:[fileURL URLByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:nil];
+    EXPECT_TRUE([[NSFileManager defaultManager] copyItemAtURL:[NSBundle.test_resourcesBundle URLForResource:@"basicITPDatabase" withExtension:@"db"] toURL:fileURL error:nil]);
 }
 
 // FIXME when rdar://172325390 is resolved
@@ -152,9 +154,9 @@ TEST(ResourceLoadStatistics, DISABLED_GrandfatherCallback)
 
 TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartup)
 {
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
 
-    ensureITPFileIsCreated();
+    ensureITPFileIsCreated(dataStore);
 
     __block bool callbackFlag = false;
 
@@ -164,7 +166,9 @@ TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartup)
     }];
 
     // We need an active NetworkProcess to perform ResourceLoadStatistics operations.
-    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore;
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [dataStore _setResourceLoadStatisticsEnabled:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
 
@@ -178,12 +182,11 @@ TEST(ResourceLoadStatistics, ChildProcessesNotLaunched)
 
     EXPECT_EQ((size_t)0, [sharedProcessPool _pluginProcessCount]);
 
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
 
-    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
-    NSURL *targetURL = [statisticsDirectoryURL URLByAppendingPathComponent:@"observations.db"];
+    NSURL *targetURL = [dataStore._configuration._resourceLoadStatisticsDirectory URLByAppendingPathComponent:@"observations.db"];
 
-    ensureITPFileIsCreated();
+    ensureITPFileIsCreated(dataStore);
 
     __block bool callbackFlag = false;
 
@@ -194,7 +197,9 @@ TEST(ResourceLoadStatistics, ChildProcessesNotLaunched)
     }];
 
     // We need an active NetworkProcess to perform ResourceLoadStatistics operations.
-    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore;
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [dataStore _setResourceLoadStatisticsEnabled:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
 
@@ -265,7 +270,7 @@ TEST(ResourceLoadStatistics, EnableDisableITP)
 {
     // Ensure the shared process pool exists so the data store operations we're about to do work with it.
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setProcessPool: sharedProcessPool];
@@ -342,7 +347,7 @@ TEST(ResourceLoadStatistics, NetworkProcessRestart)
 {
     // Ensure the shared process pool exists so the data store operations we're about to do work with it.
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setProcessPool: sharedProcessPool];
@@ -581,7 +586,7 @@ TEST(ResourceLoadStatistics, NoMessagesWhenNotTesting)
 TEST(ResourceLoadStatistics, FlushObserverWhenWebPageIsClosedByJavaScript)
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setProcessPool: sharedProcessPool];
@@ -644,7 +649,7 @@ TEST(ResourceLoadStatistics, FlushObserverWhenWebPageIsClosedByJavaScript)
 TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setProcessPool: sharedProcessPool];
@@ -1349,11 +1354,9 @@ static Vector<String> columnsForTable(WebCore::SQLiteDatabase& database, ASCIILi
 
 TEST(ResourceLoadStatistics, DatabaseSchemeUpdate)
 {
-    RetainPtr dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    RetainPtr dataStoreConfiguration = TestWebKitAPI::Util::temporaryDataStoreConfiguration();
 
     NSError *error = nil;
-    [[NSFileManager defaultManager] removeItemAtURL:dataStoreConfiguration.get()._resourceLoadStatisticsDirectory error:&error];
-    EXPECT_NULL(error);
     bool createdDirectory = [[NSFileManager defaultManager] createDirectoryAtURL:dataStoreConfiguration.get()._resourceLoadStatisticsDirectory withIntermediateDirectories:YES attributes:nil error:&error];
     EXPECT_TRUE(createdDirectory);
     EXPECT_NULL(error);
