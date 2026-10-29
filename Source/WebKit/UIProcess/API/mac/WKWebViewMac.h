@@ -34,7 +34,53 @@
 _WKOverlayScrollbarStyle LEGACY_NODELETE toAPIScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle>);
 std::optional<WebCore::ScrollbarOverlayStyle> LEGACY_NODELETE toCoreScrollbarStyle(_WKOverlayScrollbarStyle);
 
-@interface WKWebView (WKInternalMac) <WebViewImplDelegate>
+@interface WKWebView (WKInternalMac)
+
+- (NSTextInputContext *)_web_superInputContext;
+- (void)_web_superQuickLookWithEvent:(NSEvent *)event;
+- (void)_web_superRemoveTrackingRect:(NSTrackingRectTag)tag;
+- (void)_web_superSwipeWithEvent:(NSEvent *)event;
+- (void)_web_superMagnifyWithEvent:(NSEvent *)event;
+- (void)_web_superSmartMagnifyWithEvent:(NSEvent *)event;
+- (id)_web_superAccessibilityAttributeValue:(NSString *)attribute;
+- (void)_web_superDoCommandBySelector:(SEL)selector;
+- (BOOL)_web_superPerformKeyEquivalent:(NSEvent *)event;
+- (void)_web_superKeyDown:(NSEvent *)event;
+- (NSView *)_web_superHitTest:(NSPoint)point;
+
+- (id)_web_immediateActionAnimationControllerForHitTestResultInternal:(API::HitTestResult*)hitTestResult withType:(uint32_t)type userData:(API::Object*)userData;
+- (void)_web_prepareForImmediateActionAnimation;
+- (void)_web_cancelImmediateActionAnimation;
+- (void)_web_completeImmediateActionAnimation;
+
+- (void)_web_dismissContentRelativeChildWindows;
+- (void)_web_dismissContentRelativeChildWindowsWithAnimation:(BOOL)animate;
+- (void)_web_editorStateDidChange;
+
+- (void)_web_gestureEventWasNotHandledByWebCore:(NSEvent *)event;
+- (void)_web_magnificationGestureEventWasNotHandledByWebCoreWithPhase:(NSEventPhase)phase magnification:(CGFloat)magnification locationInWindow:(NSPoint)locationInWindow;
+
+- (void)_web_didChangeContentSize:(NSSize)newSize;
+
+#if ENABLE(DRAG_SUPPORT)
+- (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
+- (void)_web_didPerformDragOperation:(BOOL)handled;
+#if ENABLE(DRAG_SOURCE_CUSTOMIZATION)
+- (void)_web_draggingItemsForDraggingItem:(NSDraggingItem *)draggingItem atLocation:(NSPoint)viewLocation completionHandler:(void (^)(NSArray<NSDraggingItem *> *draggingItems))completionHandler;
+- (NSDragOperation)_web_dragSourceOperationMaskForDraggingContext:(NSDraggingContext)context defaultMask:(NSDragOperation)defaultMask;
+- (void)_web_draggingSession:(NSDraggingSession *)session willBeginAtPoint:(NSPoint)point;
+- (void)_web_draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)point operation:(NSDragOperation)operation;
+#endif
+#endif
+
+#if HAVE(TOUCH_BAR)
+- (void)_web_didAddMediaControlsManager:(id)controlsManager;
+- (void)_web_didRemoveMediaControlsManager;
+#endif
+
+- (BOOL)_web_hasActiveIntelligenceTextEffects;
+- (void)_web_suppressContentRelativeChildViews;
+- (void)_web_restoreContentRelativeChildViews;
 
 - (void)_takeFindStringFromSelectionInternal:(id)sender;
 - (void)insertText:(id)string replacementRange:(NSRange)replacementRange;

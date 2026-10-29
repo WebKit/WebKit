@@ -1174,16 +1174,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _impl->candidateListTouchBarItem();
 }
 
-- (void)_web_didAddMediaControlsManager:(id)controlsManager
-{
-    [self _addMediaPlaybackControlsView:controlsManager];
-}
-
-- (void)_web_didRemoveMediaControlsManager
-{
-    [self _removeMediaPlaybackControlsView];
-}
-
 - (void)_interactWithMediaControlsForTesting
 {
     [self _setWantsMediaPlaybackControlsView:YES];
@@ -1467,6 +1457,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     _lastContentSize = newSize;
 }
+
+#if HAVE(TOUCH_BAR)
+
+- (void)_web_didAddMediaControlsManager:(id)controlsManager
+{
+    [self _addMediaPlaybackControlsView:controlsManager];
+}
+
+- (void)_web_didRemoveMediaControlsManager
+{
+    [self _removeMediaPlaybackControlsView];
+}
+
+#endif // HAVE(TOUCH_BAR)
 
 - (BOOL)_web_hasActiveIntelligenceTextEffects
 {

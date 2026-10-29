@@ -28,7 +28,6 @@
 
 #if PLATFORM(MAC)
 
-#import "APIHitTestResult.h"
 #import "APIIconLoadingClient.h"
 #import "APIPageConfiguration.h"
 #import "AppKitSPI.h"
@@ -41,11 +40,9 @@
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import "WebProcessPool.h"
-#import "WebViewImpl.h"
 #import "_WKLinkIconParametersInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebViewVisualIdentificationOverlay.h>
-#import <WebKit/WKDragDestinationAction.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/BlockPtr.h>
@@ -54,9 +51,6 @@
 @end
 
 @implementation WKViewData
-@end
-
-@interface WKView () <WebViewImplDelegate>
 @end
 
 #if HAVE(TOUCH_BAR)
@@ -807,138 +801,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return nil;
 }
 
-- (NSTextInputContext *)_web_superInputContext
-{
-    return nil;
-}
-
-- (void)_web_superQuickLookWithEvent:(NSEvent *)event
-{
-}
-
-- (void)_web_superSwipeWithEvent:(NSEvent *)event
-{
-}
-
-- (void)_web_superMagnifyWithEvent:(NSEvent *)event
-{
-}
-
-- (void)_web_superSmartMagnifyWithEvent:(NSEvent *)event
-{
-}
-
-- (void)_web_superRemoveTrackingRect:(NSTrackingRectTag)tag
-{
-}
-
-- (id)_web_superAccessibilityAttributeValue:(NSString *)attribute
-{
-    return nil;
-}
-
-- (void)_web_superDoCommandBySelector:(SEL)selector
-{
-}
-
-- (BOOL)_web_superPerformKeyEquivalent:(NSEvent *)event
-{
-    return NO;
-}
-
-- (void)_web_superKeyDown:(NSEvent *)event
-{
-}
-
-- (NSView *)_web_superHitTest:(NSPoint)point
-{
-    return nil;
-}
-
-- (id)_web_immediateActionAnimationControllerForHitTestResultInternal:(API::HitTestResult*)hitTestResult withType:(uint32_t)type userData:(API::Object*)userData
-{
-    return nil;
-}
-
-- (void)_web_prepareForImmediateActionAnimation
-{
-}
-
-- (void)_web_cancelImmediateActionAnimation
-{
-}
-
-- (void)_web_completeImmediateActionAnimation
-{
-}
-
-- (void)_web_didChangeContentSize:(NSSize)newSize
-{
-}
-
-#if ENABLE(DRAG_SUPPORT)
-
-- (void)_web_didPerformDragOperation:(BOOL)handled
-{
-}
-
-- (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
-{
-    return 0;
-}
-
-#if ENABLE(DRAG_SOURCE_CUSTOMIZATION)
-
-- (void)_web_draggingItemsForDraggingItem:(NSDraggingItem *)draggingItem atLocation:(NSPoint)viewLocation completionHandler:(void (^)(NSArray<NSDraggingItem *> *draggingItems))completionHandler
-{
-    completionHandler(nil);
-}
-
-- (NSDragOperation)_web_dragSourceOperationMaskForDraggingContext:(NSDraggingContext)context defaultMask:(NSDragOperation)defaultMask
-{
-    return defaultMask;
-}
-
-- (void)_web_draggingSession:(NSDraggingSession *)session willBeginAtPoint:(NSPoint)point
-{
-}
-
-- (void)_web_draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)point operation:(NSDragOperation)operation
-{
-}
-
-#endif
-
-#endif
-
-- (void)_web_dismissContentRelativeChildWindows
-{
-}
-
-- (void)_web_dismissContentRelativeChildWindowsWithAnimation:(BOOL)withAnimation
-{
-}
-
-- (void)_web_editorStateDidChange
-{
-}
-
-- (void)_web_gestureEventWasNotHandledByWebCore:(NSEvent *)event
-{
-}
-
-- (void)_web_magnificationGestureEventWasNotHandledByWebCoreWithPhase:(NSEventPhase)phase magnification:(CGFloat)magnification locationInWindow:(NSPoint)locationInWindow
-{
-}
-
-- (void)_didHandleAcceptedCandidate
-{
-}
-
-- (void)_didUpdateCandidateListVisibility:(BOOL)visible
-{
-}
-
 #if HAVE(TOUCH_BAR)
 
 @dynamic touchBar;
@@ -951,14 +813,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (NSCandidateListTouchBarItem *)candidateListTouchBarItem
 {
     return nil;
-}
-
-- (void)_web_didAddMediaControlsManager:(id)controlsManager
-{
-}
-
-- (void)_web_didRemoveMediaControlsManager
-{
 }
 
 #endif // HAVE(TOUCH_BAR)
