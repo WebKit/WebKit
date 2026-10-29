@@ -21,6 +21,7 @@
 #  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import optparse
 import sys
 import time
@@ -34,7 +35,7 @@ from webkitpy.port import Port
 from webkitpy.tool.mocktool import MockOptions
 
 from webkitpy.layout_tests.servers.http_server_base import ServerError
-from webkitpy.layout_tests.servers.web_platform_test_server import WebPlatformTestServer
+from webkitpy.layout_tests.servers.web_platform_test_server import WebPlatformTestServer, wpt_config_json
 
 
 class TestWebPlatformTestServer(unittest.TestCase):
@@ -118,3 +119,28 @@ class TestWebPlatformTestServer(unittest.TestCase):
             server.stop()
             server._process.poll = lambda: 1
             self.assertRaises(ServerError, server.start)
+
+    def _make_port_with_wpt_config(self):
+        host = MockHost()
+        options = optparse.Values()
+        options.ensure_value("results_directory", "/mock/output_dir")
+        port = Port(host, "test", options)
+        config = {"ssl": {"openssl": {}}, "aliases": [{"url-path": "/WebKit/", "local-dir": "../../../http/wpt/"}]}
+        host.filesystem.write_text_file("/mock-checkout/LayoutTests/imported/w3c/resources/config.json", json.dumps(config))
+        return port
+
+    def test_wpt_config_mounts_sar3_root_when_present(self):
+        port = self._make_port_with_wpt_config()
+        # sar3/http/wpt is a staging area; mount it only when it exists on disk.
+        port.host.filesystem.write_text_file("/mock-checkout/LayoutTests/sar3/http/wpt/loading/test.html", "XXX")
+
+        aliases = wpt_config_json(port)["aliases"]
+        self.assertIn({"url-path": "/sar3/WebKit/", "local-dir": "../../../sar3/http/wpt/"}, aliases)
+        # The committed /WebKit/ alias for the default root is left untouched.
+        self.assertIn({"url-path": "/WebKit/", "local-dir": "../../../http/wpt/"}, aliases)
+
+    def test_wpt_config_skips_absent_sar3_root(self):
+        port = self._make_port_with_wpt_config()
+
+        aliases = wpt_config_json(port)["aliases"]
+        self.assertNotIn({"url-path": "/sar3/WebKit/", "local-dir": "../../../sar3/http/wpt/"}, aliases)
