@@ -639,6 +639,12 @@ static std::optional<bool>& trackingPreventionEnabledBeforeTest()
     return enabled;
 }
 
+NODELETE static HashSet<String>& schemesRegisteredAsBypassingContentSecurityPolicy()
+{
+    static NeverDestroyed<HashSet<String>> schemes;
+    return schemes;
+}
+
 Ref<Internals> Internals::create(Document& document)
 {
     return adoptRef(*new Internals(document));
@@ -665,6 +671,9 @@ void Internals::resetToConsistentState(Page& page)
 
     if (auto enabled = std::exchange(trackingPreventionEnabledBeforeTest(), std::nullopt))
         DeprecatedGlobalSettings::setTrackingPreventionEnabled(*enabled);
+
+    for (auto& scheme : std::exchange(schemesRegisteredAsBypassingContentSecurityPolicy(), { }))
+        LegacySchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(scheme);
 
     page.setDefersLoading(false);
     page.setResourceCachingDisabledByWebInspector(false);
@@ -4644,11 +4653,13 @@ bool Internals::doesCanvasHavePendingCanvasNoiseInjection(HTMLCanvasElement& ele
 
 void Internals::registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme)
 {
+    schemesRegisteredAsBypassingContentSecurityPolicy().add(scheme);
     LegacySchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(scheme);
 }
 
 void Internals::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme)
 {
+    schemesRegisteredAsBypassingContentSecurityPolicy().remove(scheme);
     LegacySchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(scheme);
 }
 
