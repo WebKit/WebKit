@@ -1,0 +1,118 @@
+<script src="../../../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+// https://www.w3.org/TR/WGSL/#scope: the scope of a function-scope declaration starts just after
+// the declaration, so its own initializer resolves names against the enclosing scope. Two of WGSL's
+// visitors introduced the name before visiting the declaration, which made a module-scope
+// declaration invisible to them whenever a local shadowed it. This test covers the two
+// consequences that are not about resource bindings; repro_186926179.html covers that one.
+
+// The `w` in the initializer is the module-scope workgroup variable, so this vertex entry point uses
+// workgroup storage and has to be rejected. It used to be accepted, and the emitted Metal declared
+// a threadgroup variable and a threadgroup_barrier inside a [[vertex]] function, which the Metal
+// compiler rejects.
+const workgroupInVertex = `
+var<workgroup> w : u32;
+@vertex fn main() -> @builtin(position) vec4<f32> {
+    var w : u32 = w;
+    return vec4<f32>(f32(w));
+}`;
+
+// The same reference without the shadowing local. This was always rejected, so it shows the check
+// itself is present rather than the test passing because every module is refused.
+const workgroupInVertexUnshadowed = `
+var<workgroup> w : u32;
+@vertex fn main() -> @builtin(position) vec4<f32> {
+    let v : u32 = w;
+    return vec4<f32>(f32(v));
+}`;
+
+// A compute entry point may use workgroup storage, shadowing local or not.
+const workgroupInCompute = `
+var<workgroup> w : u32;
+@group(0) @binding(0) var<storage, read_write> out : array<u32>;
+@compute @workgroup_size(1) fn main() {
+    var w : u32 = w;
+    out[0] = w;
+}`;
+
+// `g` in the initializer is the module-scope function, so `f` depends on `g` and `g` has to be
+// sorted before it. The dependency edge used to be dropped, `g` stayed after `f`, and this valid
+// module was rejected with "unresolved call target 'g'".
+const forwardDependency = `
+fn f() -> u32 { var g : u32 = g(); return g; }
+fn g() -> u32 { return 7u; }
+@compute @workgroup_size(1) fn main() { _ = f(); }`;
+
+// The same module with `g` already ahead of `f`, which compiled either way: it isolates the failure
+// above to the sorting rather than to name resolution.
+const forwardDependencyPresorted = `
+fn g() -> u32 { return 7u; }
+fn f() -> u32 { var g : u32 = g(); return g; }
+@compute @workgroup_size(1) fn main() { _ = f(); }`;
+
+// The same lost edge for a module-scope variable rather than a function. This was rejected with
+// "unresolved identifier 'g'".
+const forwardVariableDependency = `
+fn f() -> u32 { var g : u32 = g; return g; }
+var<private> g : u32 = 7u;
+@compute @workgroup_size(1) fn main() { _ = f(); }`;
+
+let device;
+
+async function compile(code)
+{
+    device.pushErrorScope('validation');
+    const module = device.createShaderModule({ code });
+    const messages = (await module.getCompilationInfo()).messages;
+    const error = await device.popErrorScope();
+    const errors = messages.filter(message => message.type === 'error').map(message => message.message);
+    if (error && !errors.length)
+        errors.push(error.message);
+    return errors;
+}
+
+async function shouldReject(description, code, expectedSubstring)
+{
+    const errors = await compile(code);
+    if (errors.some(message => message.includes(expectedSubstring)))
+        testPassed(description);
+    else
+        testFailed(`${description}: expected an error containing "${expectedSubstring}", got ${JSON.stringify(errors)}`);
+}
+
+async function shouldCompile(description, code)
+{
+    const errors = await compile(code);
+    if (!errors.length)
+        testPassed(description);
+    else
+        testFailed(`${description}: ${JSON.stringify(errors)}`);
+}
+
+onload = async () => {
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        device = await adapter.requestDevice();
+
+        const workgroupInVertexError = 'cannot be used by `vertex` pipeline stage';
+        await shouldReject('a shadowing local does not hide workgroup storage from a vertex entry point',
+            workgroupInVertex, workgroupInVertexError);
+        await shouldReject('workgroup storage in a vertex entry point is rejected without shadowing',
+            workgroupInVertexUnshadowed, workgroupInVertexError);
+        await shouldCompile('workgroup storage in a compute entry point still compiles',
+            workgroupInCompute);
+
+        await shouldCompile('a shadowing local does not drop the dependency on the declaration it shadows',
+            forwardDependency);
+        await shouldCompile('the same module compiles when the dependency is already declared first',
+            forwardDependencyPresorted);
+        await shouldCompile('a shadowing local does not drop the dependency on a later module-scope variable',
+            forwardVariableDependency);
+    } catch (e) {
+        testFailed(`${e}`);
+    }
+    finishJSTest();
+};
+</script>

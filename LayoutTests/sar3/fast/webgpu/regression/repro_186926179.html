@@ -1,0 +1,107 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+// `big` and `tiny` are both declared at @group(0) @binding(0). A function-scope declaration is not
+// in scope inside its own initializer, so the `big` in `arrayLength(&big)` is the module-scope
+// buffer and this entry point uses both of them, which must be rejected. It used to be accepted:
+// the validator resolved that `big` to the local being declared and never counted the buffer, while
+// the rewriter counted both and emitted a four field argument buffer struct. The layout derived
+// from the same shader collapsed the duplicate down to two slots, so the shader read its 24 byte
+// struct out of a 16 byte argument buffer and picked up the bound buffer's size where it expected
+// a device pointer.
+const duplicateBindingCode = `
+@group(0) @binding(0) var<storage, read_write> big  : array<u32>;
+@group(0) @binding(0) var<storage, read_write> tiny : array<u32>;
+
+@compute @workgroup_size(1)
+fn main() {
+    tiny[0] = 1u;
+    var big : u32 = arrayLength(&big);
+    tiny[1] = big;
+}`;
+
+// Two resources may share a binding as long as no single entry point uses both, so this must keep
+// compiling and running. Without it the test could pass by rejecting everything.
+const singleBindingCode = `
+@group(0) @binding(0) var<storage, read_write> big  : array<u32>;
+@group(0) @binding(0) var<storage, read_write> tiny : array<u32>;
+
+@compute @workgroup_size(1)
+fn main() {
+    tiny[0] = arrayLength(&tiny);
+}`;
+
+let device;
+
+async function compile(code)
+{
+    device.pushErrorScope('validation');
+    const module = device.createShaderModule({ code });
+    const messages = (await module.getCompilationInfo()).messages;
+    const error = await device.popErrorScope();
+    return { module, messages: [...messages], error };
+}
+
+// 0xBEE0 is the u32 the layout writes into the argument buffer where the shader's struct expects
+// the low half of a device pointer, so a surviving mismatch stores through address 0xBEE0.
+async function dispatch(module)
+{
+    device.pushErrorScope('validation');
+    const pipeline = device.createComputePipeline({ layout: 'auto', compute: { module, entryPoint: 'main' } });
+    const buffer = device.createBuffer({ size: 0xBEE0, usage: GPUBufferUsage.STORAGE });
+    const bindGroup = device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(0),
+        entries: [{ binding: 0, resource: { buffer } }],
+    });
+    const encoder = device.createCommandEncoder();
+    const pass = encoder.beginComputePass();
+    pass.setPipeline(pipeline);
+    pass.setBindGroup(0, bindGroup);
+    pass.dispatchWorkgroups(1);
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+    const error = await device.popErrorScope();
+    await device.queue.onSubmittedWorkDone();
+    return error;
+}
+
+onload = async () => {
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        device = await adapter.requestDevice();
+
+        const duplicate = await compile(duplicateBindingCode);
+        const reported = duplicate.messages.some(message => message.type === 'error'
+            && message.message.includes('same resource binding: @group(0) @binding(0)'));
+        if (reported)
+            testPassed('the duplicate resource binding was reported');
+        else
+            testFailed(`the duplicate resource binding was not reported: ${JSON.stringify(duplicate.messages.map(m => m.message))}`);
+
+        // Run it anyway. On an implementation that accepted the module this is where the undersized
+        // argument buffer is read, which Metal shader validation reports as an invalid device load.
+        try {
+            await dispatch(duplicate.module);
+        } catch (e) {
+        }
+        testPassed('dispatching the invalid module did not crash the GPU process');
+
+        const single = await compile(singleBindingCode);
+        const singleCompiled = !single.error && !single.messages.some(message => message.type === 'error');
+        if (!singleCompiled)
+            testFailed(`an entry point using only one of the two bindings did not compile: ${single.error ? single.error.message : JSON.stringify(single.messages.map(m => m.message))}`);
+        else {
+            const error = await dispatch(single.module);
+            if (error)
+                testFailed(`an entry point using only one of the two bindings was rejected: ${error.message}`);
+            else
+                testPassed('an entry point using only one of the two bindings still runs');
+        }
+    } catch (e) {
+        testFailed(`${e}`);
+    }
+    finishJSTest();
+};
+</script>

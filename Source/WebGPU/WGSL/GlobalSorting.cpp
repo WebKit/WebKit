@@ -216,14 +216,14 @@ GraphBuilder::GraphBuilder(Graph& graph, Graph::Node& node)
 
 void GraphBuilder::visit(AST::Parameter& parameter)
 {
-    introduceVariable(parameter.name());
     Base::visit(parameter);
+    introduceVariable(parameter.name());
 }
 
 void GraphBuilder::visit(AST::VariableStatement& variable)
 {
-    introduceVariable(variable.variable().name());
     Base::visit(variable);
+    introduceVariable(variable.variable().name());
 }
 
 void GraphBuilder::visit(AST::Expression& expression)

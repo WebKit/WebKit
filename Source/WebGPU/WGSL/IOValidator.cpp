@@ -157,14 +157,14 @@ void IOValidator::visit(AST::Function& function)
 
 void IOValidator::visit(AST::VariableStatement& statement)
 {
-    introduceVariable(statement.variable().name(), nullptr);
     AST::Visitor::visit(statement);
+    introduceVariable(statement.variable().name(), nullptr);
 }
 
 void IOValidator::visit(AST::Parameter& parameter)
 {
-    introduceVariable(parameter.name(), nullptr);
     AST::Visitor::visit(parameter);
+    introduceVariable(parameter.name(), nullptr);
 }
 
 void IOValidator::visit(AST::IdentifierExpression& identifier)

@@ -42,6 +42,8 @@ inline void expectTypeError(const String& wgsl, const String& errorMessage)
         .supportedFeatures = { "shader-f16"_s, "clip-distances"_s, "primitive-index"_s }
     });
     EXPECT_TRUE(std::holds_alternative<WGSL::FailedCheck>(result));
+    if (!std::holds_alternative<WGSL::FailedCheck>(result))
+        return;
     auto error = std::get<WGSL::FailedCheck>(result);
     EXPECT_EQ(error.errors.size(), 1u);
     EXPECT_EQ(error.errors[0].message(), errorMessage);
@@ -719,6 +721,80 @@ TEST(WGSLTypeCheckingTests, RequiredAlignment)
         "struct T { x: i32, y: i32, }"
         "@group(0) @binding(1) var<uniform> x1: S1;"_s,
         "uniform address space requires that the number of bytes between S1::y3 and S1::z3 must be at least 16 bytes, but it is 8 bytes"_s);
+}
+
+inline void expectStaticCheckErrorContaining(const String& wgsl, const String& errorMessageSubstring)
+{
+    auto result = staticCheck(wgsl);
+    EXPECT_TRUE(std::holds_alternative<WGSL::FailedCheck>(result));
+    if (!std::holds_alternative<WGSL::FailedCheck>(result))
+        return;
+    auto error = std::get<WGSL::FailedCheck>(result);
+    EXPECT_EQ(error.errors.size(), 1u);
+    EXPECT_TRUE(error.errors[0].message().contains(errorMessageSubstring));
+}
+
+TEST(WGSLTypeCheckingTests, ResourceBinding)
+{
+    expectStaticCheckErrorContaining(
+        "@group(0) @binding(0) var<storage, read_write> big: array<u32>;"
+        "@group(0) @binding(0) var<storage, read_write> tiny: array<u32>;"
+        "@compute @workgroup_size(1) fn main() {"
+            "tiny[0] = 1u;"
+            "var big: u32 = arrayLength(&big);"
+            "tiny[1] = big;"
+        "}"_s,
+        "both which use the same resource binding: @group(0) @binding(0)"_s);
+
+    expectStaticCheckErrorContaining(
+        "@group(0) @binding(0) var<storage, read_write> big: array<u32>;"
+        "@group(0) @binding(0) var<storage, read_write> tiny: array<u32>;"
+        "@compute @workgroup_size(1) fn main() {"
+            "tiny[0] = arrayLength(&big);"
+        "}"_s,
+        "both which use the same resource binding: @group(0) @binding(0)"_s);
+
+    expectNoError(
+        "@group(0) @binding(0) var<storage, read_write> big: array<u32>;"
+        "@group(0) @binding(0) var<storage, read_write> tiny: array<u32>;"
+        "@compute @workgroup_size(1) fn main() {"
+            "tiny[0] = arrayLength(&tiny);"
+        "}"_s);
+
+    expectNoError(
+        "@group(0) @binding(0) var<storage, read_write> big: array<u32>;"
+        "@group(0) @binding(0) var<storage, read_write> tiny: array<u32>;"
+        "@compute @workgroup_size(1) fn main() {"
+            "var big: u32 = 0u;"
+            "big = big + 1u;"
+            "tiny[0] = big;"
+        "}"_s);
+}
+
+TEST(WGSLTypeCheckingTests, DeclarationScope)
+{
+    expectTypeError(
+        "var<workgroup> w: u32;"
+        "@vertex fn main() -> @builtin(position) vec4<f32> {"
+            "var w: u32 = w;"
+            "return vec4<f32>(f32(w));"
+        "}"_s,
+        "var with `workgroup` address space cannot be used by `vertex` pipeline stage"_s);
+
+    expectNoError(
+        "fn f() -> u32 { var g: u32 = g(); return g; }"
+        "fn g() -> u32 { return 7u; }"
+        "@compute @workgroup_size(1) fn main() { _ = f(); }"_s);
+
+    expectNoError(
+        "fn f() -> u32 { var g: u32 = g; return g; }"
+        "var<private> g: u32 = 7u;"
+        "@compute @workgroup_size(1) fn main() { _ = f(); }"_s);
+
+    expectTypeError(
+        "fn f() -> u32 { var f: u32 = f(); return f; }"
+        "@compute @workgroup_size(1) fn main() { _ = f(); }"_s,
+        "encountered a dependency cycle: f -> f"_s);
 }
 
 TEST(WGSLTypeCheckingTests, Return)

@@ -1,0 +1,10 @@
+PASS a shadowing local does not hide workgroup storage from a vertex entry point
+PASS workgroup storage in a vertex entry point is rejected without shadowing
+PASS workgroup storage in a compute entry point still compiles
+PASS a shadowing local does not drop the dependency on the declaration it shadows
+PASS the same module compiles when the dependency is already declared first
+PASS a shadowing local does not drop the dependency on a later module-scope variable
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
