@@ -84,7 +84,7 @@ static inline void appendToNodeSet(const HitTestResult::NodeSet& source, HitTest
 HitTestResult::HitTestResult() = default;
 
 HitTestResult::HitTestResult(const IntPoint& point)
-    : m_hitTestLocation(point)
+    : m_hitTestLocation(LayoutPoint { point })
     , m_doublePointInInnerNodeFrame(point)
 {
 }

@@ -1,0 +1,6 @@
+SELECT
+foo
+
+PASS Hit-test of <text> does not hit-test the "background" (w/ small font size)
+PASS crbug.com/1295031
+
