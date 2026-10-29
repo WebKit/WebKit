@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/Weak.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ProcessQualified.h>
 #include <wtf/Markable.h>
@@ -60,6 +61,7 @@ private:
 
     const JSHandleIdentifier m_identifier;
     const Markable<FrameIdentifier> m_windowFrameIdentifier;
+    JSC::Weak<JSC::JSObject> m_object;
 };
 
 } // namespace WebCore
