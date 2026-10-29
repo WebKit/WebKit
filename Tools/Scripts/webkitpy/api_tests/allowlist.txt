@@ -299,6 +299,12 @@ TestWebKitAPI.AudioStreamDescriptionCocoa/EachSampleTypeTest/1
 TestWebKitAPI.AudioStreamDescriptionCocoa/EachSampleTypeTest/2
 TestWebKitAPI.AudioStreamDescriptionCocoa/EachSampleTypeTest/3
 TestWebKitAPI.AutocorrectionTests
+TestWebKitAPI.AutomationControlledByExternalAgentTests/flagDefaultsToFalseWhenUnset()
+TestWebKitAPI.AutomationControlledByExternalAgentTests/flagRoundTripsThroughSessionWhenSet()
+TestWebKitAPI.AutomationControlledByExternalAgentTests/flagSurvivesCopyWithZone()
+TestWebKitAPI.AutomationSendInspectorMessageTests/deniedWhenGateReturnsFalse()
+TestWebKitAPI.AutomationSendInspectorMessageTests/roundTripTargetSetPauseOnStart()
+TestWebKitAPI.AutomationSendInspectorMessageTests/windowNotFoundForUnknownHandle()
 TestWebKitAPI.BifurcatedGraphicsContextTests
 TestWebKitAPI.CARingBufferTest
 TestWebKitAPI.CBORReaderTest
@@ -316,6 +322,7 @@ TestWebKitAPI.Coding
 TestWebKitAPI.Color
 TestWebKitAPI.ColorInputTests
 TestWebKitAPI.ComplexTextControllerTest
+TestWebKitAPI.ContentExtensionTest.RequestMethodWithConditions
 TestWebKitAPI.ContentSecurityPolicy
 TestWebKitAPI.ContentWorld
 TestWebKitAPI.ContextMenuElementInfoWithQRCodeDetectionCrash
@@ -331,8 +338,10 @@ TestWebKitAPI.DataListTextSuggestionTestView
 TestWebKitAPI.DatabaseTracker
 TestWebKitAPI.DateInputTests
 TestWebKitAPI.Decimal
+TestWebKitAPI.DecodedMediaSamplesBlock
 TestWebKitAPI.DeviceOrientation
 TestWebKitAPI.DisableAutomaticSpellingCorrection
+TestWebKitAPI.DisplayListRecorderTest.DeconstructedEmojiGlyphsShareNativeImages
 TestWebKitAPI.DisplayListRecorderTest/DisplayListRecorderResultStateTest/0
 TestWebKitAPI.DisplayListRecorderTest/DisplayListRecorderResultStateTest/1
 TestWebKitAPI.DisplayListRecorderTest/DisplayListRecorderResultStateTest/10
@@ -348,11 +357,14 @@ TestWebKitAPI.DisplayListRecorderTest/DisplayListRecorderResultStateTest/6
 TestWebKitAPI.DisplayListRecorderTest/DisplayListRecorderResultStateTest/7
 TestWebKitAPI.DisplayListRecorderTest/DisplayListRecorderResultStateTest/8
 TestWebKitAPI.DisplayListRecorderTest/DisplayListRecorderResultStateTest/9
+TestWebKitAPI.DisplayRefreshMonitorManager
 TestWebKitAPI.DocumentOrder
 TestWebKitAPI.DynamicDeviceScaleFactor
 TestWebKitAPI.EditorStateTests
 TestWebKitAPI.ElementActionTests
 TestWebKitAPI.ElementTextPreview
+TestWebKitAPI.EnhancedSecurityTests/securityRestrictionModeFromConfiguration(mode:expected:)
+TestWebKitAPI.EnhancedSecurityTests/securityRestrictionModeFromNavigationDecider(enabled:)
 TestWebKitAPI.EnterKeyHintTests
 TestWebKitAPI.FidoHidMessageTest
 TestWebKitAPI.FileMonitorTest
@@ -374,6 +386,17 @@ TestWebKitAPI.GraphicsContextGLCocoaTest
 TestWebKitAPI.GraphicsContextGLCocoaTest/AnyContextAttributeTest
 TestWebKitAPI.GraphicsContextTests
 TestWebKitAPI.GridPositionTest
+TestWebKitAPI.HTTP2ServerTests/multipleCookiesSetBeforeLoad()
+TestWebKitAPI.HTTP2ServerTests/multipleRequestsOverOneConnection()
+TestWebKitAPI.HTTP2ServerTests/nonDefaultStatusCodeAndResponseHeader()
+TestWebKitAPI.HTTP2ServerTests/postBody()
+TestWebKitAPI.HTTP2ServerTests/requestMethodPathAndHeaders()
+TestWebKitAPI.HTTP2ServerTests/roundTrip()
+TestWebKitAPI.HTTP2ServerTests/throughProxy()
+TestWebKitAPI.HTTP3ServerTests/multipleRequestsOverOneConnection()
+TestWebKitAPI.HTTP3ServerTests/nonDefaultStatusCodeAndResponseHeader()
+TestWebKitAPI.HTTP3ServerTests/postBody()
+TestWebKitAPI.HTTP3ServerTests/requestMethodPathAndHeaders()
 TestWebKitAPI.HTTPHeaderField
 TestWebKitAPI.HTTPHeaderMap
 TestWebKitAPI.HTTPParsers
@@ -395,9 +418,17 @@ TestWebKitAPI.IntPoint
 TestWebKitAPI.IntRect
 TestWebKitAPI.IntSize
 TestWebKitAPI.JSHandle
+TestWebKitAPI.JSHandleTests/basic()
 TestWebKitAPI.JavaScriptCore
 TestWebKitAPI.JavaScriptCore_DisallowVMEntry
 TestWebKitAPI.JavaScriptCore_PropertySlot
+TestWebKitAPI.JavaScriptExpressionTests/getSelectionReturnsCollapsedAfterCollapsedIsSet()
+TestWebKitAPI.JavaScriptExpressionTests/getSelectionReturnsRangeAfterRangeIsSet()
+TestWebKitAPI.JavaScriptExpressionTests/selectionBoundingClientRectReturnsNonEmptyRectForRangeSelection()
+TestWebKitAPI.JavaScriptExpressionTests/selectionBoundingClientRectReturnsZeroWidthRectForCollapsedSelection()
+TestWebKitAPI.JavaScriptExpressionTests/setAndGetSelectionRangeRoundTrip()
+TestWebKitAPI.JavaScriptExpressionTests/setAndGetSelectionWithCollapsedPositionRoundTrip()
+TestWebKitAPI.JavaScriptExpressionTests/setSelectionAppliesRangeSelection()
 TestWebKitAPI.KeyboardEventTests
 TestWebKitAPI.KeyedCoding
 TestWebKitAPI.LegacyDragAndDropTests
@@ -408,8 +439,11 @@ TestWebKitAPI.MIMESniffer
 TestWebKitAPI.MIMETypeRegistry
 TestWebKitAPI.MarkedText
 TestWebKitAPI.MediaCaptureDisabledTest
+TestWebKitAPI.MediaCapturePermissionPrompt
 TestWebKitAPI.MediaDocument
 TestWebKitAPI.MediaReorderQueue
+TestWebKitAPI.MediaSamplesBlock.CMSampleBufferRoundTripKeepsTrims
+TestWebKitAPI.MediaSamplesDecoder
 TestWebKitAPI.MediaSessionCoordinatorTest
 TestWebKitAPI.MemoryFootprintThreshold
 TestWebKitAPI.MessagePort
@@ -420,11 +454,22 @@ TestWebKitAPI.NSResponderTests
 TestWebKitAPI.NSTextPlaceholderTests/insertAndRemoveTextPlaceholder(willInsertText:)
 TestWebKitAPI.NativeImageTests/AnyPixelBufferFormatTest
 TestWebKitAPI.Navigation
+TestWebKitAPI.NavigatorWebDriverOverrideTests/navigatorWebDriverReflectsPolicy(controlledByAutomation:policy:expected:)
 TestWebKitAPI.Notification
 TestWebKitAPI.NowPlayingInfoArtwork
+TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysLeftToRightOverflow
+TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysLeftToRightOverflowWithFixedHeader
+TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysLeftToRightOverflowWithFixedHeaderAndSidebar
+TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysNoOverflow
+TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysRightToLeftOverflow
+TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysRightToLeftOverflowWithFixedHeader
+TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysRightToLeftOverflowWithFixedHeaderAndSidebar
+TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysSystemBackgroundColorTracksAppearance
 TestWebKitAPI.OverflowScrollViewTests
 TestWebKitAPI.PAL
 TestWebKitAPI.PDFSnapshot
+TestWebKitAPI.PacedMediaSamplesDecoder
+TestWebKitAPI.ParentalControlsContentFilteringTests
 TestWebKitAPI.ParsedContentType
 TestWebKitAPI.Path
 TestWebKitAPI.PlatformCAAnimation
@@ -432,10 +477,12 @@ TestWebKitAPI.PlatformDynamicRangeLimit
 TestWebKitAPI.PreferredContentMode
 TestWebKitAPI.ProcessInfo
 TestWebKitAPI.ProcessSuspension
+TestWebKitAPI.ProcessSwap.COOPSwapDoesNotAbortNavigationAPINavigation
 TestWebKitAPI.PublicSuffix
 TestWebKitAPI.PushDatabase
 TestWebKitAPI.PushDatabaseTest
 TestWebKitAPI.PushMessageCrypto
+TestWebKitAPI.QuirksTest.BaiduChatInputScriptGetsAChromeTokenInTheUserAgent
 TestWebKitAPI.RFC8941
 TestWebKitAPI.RTCRtpSFrameTransformer
 TestWebKitAPI.RegionTests
@@ -450,6 +497,11 @@ TestWebKitAPI.RunScriptAfterDocumentLoad
 TestWebKitAPI.SOAuthorizationPopUp
 TestWebKitAPI.STUNMessageParsing
 TestWebKitAPI.SampleMapTest
+TestWebKitAPI.ScreenTime.IdentifierNil
+TestWebKitAPI.ScreenTime.IdentifierString
+TestWebKitAPI.ScreenTime.IdentifierStringWithRemoveData
+TestWebKitAPI.ScreenTime.RemoveDataWithTimeInterval
+TestWebKitAPI.ScreenTime.WKWebViewFillsStackView
 TestWebKitAPI.ScrollbarWidthCrash
 TestWebKitAPI.ScrollingCoordinatorTests
 TestWebKitAPI.SecurityOriginTest
@@ -457,7 +509,34 @@ TestWebKitAPI.SelectionTests
 TestWebKitAPI.ShareSheetTests
 TestWebKitAPI.ShouldOpenAppLinks
 TestWebKitAPI.SimulateClickOverText
+TestWebKitAPI.SimulateClickOverTextTests/clickTargets(afterScrolling:)
 TestWebKitAPI.Site
+TestWebKitAPI.SiteIsolation.AboutBlankIframesStayInProcessAfterCrossSiteNavigation
+TestWebKitAPI.SiteIsolation.BFCacheRestoredIframeWaitsForMainFrameCommit
+TestWebKitAPI.SiteIsolation.CrossSiteIframeWithPendingNavigationIsRemovedWhenMainFrameCommitsInAnotherProcess
+TestWebKitAPI.SiteIsolation.DrawPagesToPDFDoesNotCarryTransformIntoNextPage
+TestWebKitAPI.SiteIsolation.DrawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit
+TestWebKitAPI.SiteIsolation.DrawPagesToPDFSynchronouslyDuringDOMPrintIncludesCrossSiteFrames
+TestWebKitAPI.SiteIsolation.DrawToPDFIncludesSameSiteFrames
+TestWebKitAPI.SiteIsolation.FrameUnderTopLevelDataURLIgnoresOriginAgentCluster
+TestWebKitAPI.SiteIsolation.HistoryTraversalAfterProvisionalProcessTerminatesBeforeCommit
+TestWebKitAPI.SiteIsolation.HistoryTraversalSupersedesUncommittedCrossDocumentTraversal
+TestWebKitAPI.SiteIsolation.MainFrameRedirectBackToCommittedProcessKeepsBackForwardCache
+TestWebKitAPI.SiteIsolation.PrintProcessExitsWhenIdle
+TestWebKitAPI.SiteIsolation.PrintProcessFollowsLockdownMode
+TestWebKitAPI.SiteIsolation.PrintProcessIsDedicated
+TestWebKitAPI.SiteIsolation.PrintProcessIsNotLaunchedForDisplaySnapshots
+TestWebKitAPI.SiteIsolation.PrintProcessIsNotLaunchedWithoutCrossSiteFrames
+TestWebKitAPI.SiteIsolation.PrintProcessIsNotLaunchedWithoutPreference
+TestWebKitAPI.SiteIsolation.PrintProcessIsRelaunchedAfterCrash
+TestWebKitAPI.SiteIsolation.SameDocumentHistoryTraversalsInSeparateTasksAreNotCoalesced
+TestWebKitAPI.SiteIsolation.SpeechRecognitionInCrossSiteIframe
+TestWebKitAPI.SiteIsolation.TakeSnapshotOfCrossOriginIframeElement
+TestWebKitAPI.SiteIsolation.TextSearchInCrossOriginIframeTargetsIframeElement
+TestWebKitAPI.SiteIsolation.TextSearchInSameSiteIframeNestedInCrossOriginIframeTargetsIframeElement
+TestWebKitAPI.SiteIsolationContentsOfAllFramesTests/contentsOfAllFramesIncludesCrossSiteAndSameSiteIframes()
+TestWebKitAPI.SiteIsolationNavigationTests/childNavigatingToNewDomain()
+TestWebKitAPI.SiteIsolationTextFragmentTests/textFragmentDirectiveFromSelectionInFocusedCrossOriginIframe()
 TestWebKitAPI.SleepDisabler
 TestWebKitAPI.SnapshotStore
 TestWebKitAPI.SpellCheckerDocumentTag
@@ -470,6 +549,33 @@ TestWebKitAPI.TextAlternatives
 TestWebKitAPI.TextAutosizingBoost
 TestWebKitAPI.TextBoundariesTest
 TestWebKitAPI.TextCodec
+TestWebKitAPI.TextExtractionTests/classifierFiltersOutText(filterOptions:)
+TestWebKitAPI.TextExtractionTests/excludingSameOriginSubframesLeavesOutTheirContent()
+TestWebKitAPI.TextExtractionTests/extractFromPDFAsHTML()
+TestWebKitAPI.TextExtractionTests/extractFromPDFAsMarkdown()
+TestWebKitAPI.TextExtractionTests/extractFromPDFAsTextTree()
+TestWebKitAPI.TextExtractionTests/extractFromPDFLink()
+TestWebKitAPI.TextExtractionTests/interactionClicksThroughOccludingOverlay()
+TestWebKitAPI.TextExtractionTests/interactionDescriptionIncludesAssociatedLabelText()
+TestWebKitAPI.TextExtractionTests/interactionDescriptionUsesAdjacentTextForUnlabeledIcon()
+TestWebKitAPI.TextExtractionTests/interactionWithSearchTextSpanningBlockBoundary()
+TestWebKitAPI.TextExtractionTests/replacementStringsAppliedToInteractionDescription()
+TestWebKitAPI.TextExtractionTests/replacementStringsCaseAndQuoteInsensitive()
+TestWebKitAPI.TextExtractionTests/replacementStringsDiacriticInsensitive()
+TestWebKitAPI.TextExtractionTests/replacementStringsForEmailAddresses()
+TestWebKitAPI.TextExtractionTests/replacementStringsLongestMatchWins()
+TestWebKitAPI.TextExtractionTests/replacementStringsWordBoundaries()
+TestWebKitAPI.TextExtractionTests/requestContainerJSHandleForSearchTextsFallsBackToBodyWhenTargetMisses()
+TestWebKitAPI.TextExtractionTests/requestFrameInfoForNodeIdentifier()
+TestWebKitAPI.TextExtractionTests/requestJSHandleForNodeInDetachedSubframe()
+TestWebKitAPI.TextExtractionTests/requestJSHandleForStaleNodeIdentifier()
+TestWebKitAPI.TextExtractionTests/sameOriginSubframeInAdditionalFramesIsExtractedWhenNotIncludedByDefault()
+TestWebKitAPI.TextExtractionTests/scrollToRevealFallsBackToFullDocumentWhenNodeMisses()
+TestWebKitAPI.TextExtractionTests/subframeOriginInDebugText()
+TestWebKitAPI.TextExtractionTests/targetNodeWithSameOriginSubframe()
+TestWebKitAPI.TextManipulationTests/completeTextManipulationAvoidExtractingManipulatedTextAfterManipulation()
+TestWebKitAPI.TextManipulationTests/completeTextManipulationForTitleElement()
+TestWebKitAPI.TextMeasurementCacheTest
 TestWebKitAPI.TextServicesTests
 TestWebKitAPI.TextStyleFontSize
 TestWebKitAPI.TimeRanges
@@ -479,6 +585,8 @@ TestWebKitAPI.U2fCommandConstructorTest
 TestWebKitAPI.UIFocusTests
 TestWebKitAPI.URLExtras
 TestWebKitAPI.URLParserTextEncodingTest
+TestWebKitAPI.URLSchemeHandlerTests/basicSchemeHandling()
+TestWebKitAPI.URLSchemeHandlerTests/basicSchemeValidation()
 TestWebKitAPI.UTIRegistry
 TestWebKitAPI.UTIUtilities
 TestWebKitAPI.UnifiedPDF/UnifiedPDFPrintWithJSExecutionOptionTests
@@ -493,13 +601,25 @@ TestWebKitAPI.WEBKIT
 TestWebKitAPI.WKApplicationManifest
 TestWebKitAPI.WKAttachmentTestsIOS
 TestWebKitAPI.WKBackForwardList
+TestWebKitAPI.WKBackForwardListTests/removeAllItemsAfterCloseDoesNothing()
 TestWebKitAPI.WKBrowsingContextLoadDelegateTest
+TestWebKitAPI.WKHTTPCookieStore.DeletePartitionedCookie
+TestWebKitAPI.WKHTTPCookieStore.PartitionedCookieShouldHavePartitionProperty
 TestWebKitAPI.WKInspectorExtensionDelegate
+TestWebKitAPI.WKNavigation.PartitionedCookieAfterRedirect
+TestWebKitAPI.WKNavigation.PartitionedCookieSentOnTopLevelRedirect
+TestWebKitAPI.WKNavigation.PartitionedCookieSentWhenNetworkProcessExistsBeforePage
 TestWebKitAPI.WKPreferencesPrivate
 TestWebKitAPI.WKProcessPoolConfiguration
 TestWebKitAPI.WKScrollGeometry
 TestWebKitAPI.WKScrollViewTests
 TestWebKitAPI.WKWebExtension
+TestWebKitAPI.WKWebExtensionAPIActionTests/popupCanCreateJSHandle()
+TestWebKitAPI.WKWebExtensionAPIActionTests/setDefaultActionPropertiesWithNullIdentifiers()
+TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithEmptyDetails()
+TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithWindowIdNotifiesWindowAction()
+TestWebKitAPI.WKWebExtensionAPIActionTests/setPopupRejectsPathsOutsideTheExtension()
+TestWebKitAPI.WKWebExtensionAPIActionTests/windowOpenWithBlockedSchemeDoesNotOpenNewTabOrWindow()
 TestWebKitAPI.WKWebExtensionAPIAlarmsTests/clearAllAlarms()
 TestWebKitAPI.WKWebExtensionAPIAlarmsTests/clearSingleAlarm()
 TestWebKitAPI.WKWebExtensionAPIAlarmsTests/createAlarms()
@@ -529,9 +649,14 @@ TestWebKitAPI.WKWebExtensionAPICookiesTests/errorsRead()
 TestWebKitAPI.WKWebExtensionAPICookiesTests/errorsWrite()
 TestWebKitAPI.WKWebExtensionAPICookiesTests/getAllCookieStores()
 TestWebKitAPI.WKWebExtensionAPICookiesTests/getAllCookieStoresWithPrivateAccess()
+TestWebKitAPI.WKWebExtensionAPICookiesTests/sameSiteStatusEnum()
 TestWebKitAPI.WKWebExtensionAPIDOMTests/openOrClosedShadowRoot()
 TestWebKitAPI.WKWebExtensionAPIDOMTests/openOrClosedShadowRootIgnoresUserAgentShadowRoot()
 TestWebKitAPI.WKWebExtensionAPIDOMTests/openOrClosedShadowRootViaElement()
+TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/resourceTypeEnum()
+TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/staticRulesetThatIsNotAnArray()
+TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/staticRulesetWithMalformedJSON()
+TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/unsupportedRegexReasonEnum()
 TestWebKitAPI.WKWebExtensionAPIEventTests/errors()
 TestWebKitAPI.WKWebExtensionAPIEventTests/testEventListener()
 TestWebKitAPI.WKWebExtensionAPIExtensionTests/getBackgroundPageForServiceWorker()
@@ -551,6 +676,7 @@ TestWebKitAPI.WKWebExtensionAPIExtensionTests/inIncognitoContextWithoutPrivateAc
 TestWebKitAPI.WKWebExtensionAPIExtensionTests/isAllowedFileSchemeAccess()
 TestWebKitAPI.WKWebExtensionAPIExtensionTests/isAllowedIncognitoAccess()
 TestWebKitAPI.WKWebExtensionAPIExtensionTests/isAllowedIncognitoAccessWithoutPrivateAccess()
+TestWebKitAPI.WKWebExtensionAPIExtensionTests/viewTypeEnum()
 TestWebKitAPI.WKWebExtensionAPILocalization
 TestWebKitAPI.WKWebExtensionAPINamespaceTests/browserNamespaceIsAvailableInContentScripts()
 TestWebKitAPI.WKWebExtensionAPINamespaceTests/noNotificationsObjectWithoutPermission()
@@ -559,6 +685,21 @@ TestWebKitAPI.WKWebExtensionAPINamespaceTests/notificationsObjectWithPermission(
 TestWebKitAPI.WKWebExtensionAPINamespaceTests/notificationsUnsupported()
 TestWebKitAPI.WKWebExtensionAPINamespaceTests/objectEquality()
 TestWebKitAPI.WKWebExtensionAPINamespaceTests/webNavigationObjectWithPermission()
+TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentCanCreateJSHandle()
+TestWebKitAPI.WKWebExtensionAPITabs.CreateWithDataURL
+TestWebKitAPI.WKWebExtensionAPITabs.CreateWithFileURLIsRejected
+TestWebKitAPI.WKWebExtensionAPITabs.CreateWithFileURLWhenFileAccessIsAllowed
+TestWebKitAPI.WKWebExtensionAPITabs.CreateWithJavaScriptURLIsRejected
+TestWebKitAPI.WKWebExtensionAPITabs.CreateWithMailtoURL
+TestWebKitAPI.WKWebExtensionAPITabs.TabStatus
+TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventOmitsUnchangedProperties
+TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventReportsRapidToggles
+TestWebKitAPI.WKWebExtensionAPITabs.WindowType
+TestWebKitAPI.WKWebExtensionAPITest
+TestWebKitAPI.WKWebExtensionAPIWebNavigation.UpdateTabDuringCommittedEvent
+TestWebKitAPI.WKWebExtensionAPIWindowsTests/createTypeEnum()
+TestWebKitAPI.WKWebExtensionAPIWindowsTests/windowStateEnum()
+TestWebKitAPI.WKWebExtensionAPIWindowsTests/windowTypeEnum()
 TestWebKitAPI.WKWebExtensionContext
 TestWebKitAPI.WKWebExtensionController
 TestWebKitAPI.WKWebExtensionControllerConfigurationTests/copying()
@@ -580,8 +721,10 @@ TestWebKitAPI.WKWebExtensionMatchPatternTests/patternCacheAndEquality()
 TestWebKitAPI.WKWebExtensionMatchPatternTests/patternDescriptions()
 TestWebKitAPI.WKWebExtensionMatchPatternTests/patternValidity()
 TestWebKitAPI.WKWebExtensionTabTests/openTabs()
+TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectOutOfHostPermittedFrameDoesNotUseItsCookiePartition
 TestWebKitAPI.WKWebExtensionWindowTests/focusedWindow()
 TestWebKitAPI.WKWebExtensionWindowTests/openWindows()
+TestWebKitAPI.WKWebView.SnapshotNodeWithPendingStylesheet
 TestWebKitAPI.WKWebViewAutoFillTests
 TestWebKitAPI.WKWebViewCandidateTests
 TestWebKitAPI.WKWebViewConfiguration
@@ -594,12 +737,21 @@ TestWebKitAPI.WKWebViewSuspendAllMediaPlayback
 TestWebKitAPI.WKWebViewThemeColor
 TestWebKitAPI.WKWebViewTitlebarSeparatorTests
 TestWebKitAPI.WTF
+TestWebKitAPI.WebArchive
 TestWebKitAPI.WebContentRestrictions
 TestWebKitAPI.WebCore
 TestWebKitAPI.WebCoreHTMLParser
 TestWebKitAPI.WebCoreHTMLParserIdioms
 TestWebKitAPI.WebCoreLayoutUnit
 TestWebKitAPI.WebCoreNSURLSessionTest
+TestWebKitAPI.WebKit.CanPrefetchDNSWithProxyConfigured
+TestWebKitAPI.WebKit.DecodeImageDataSVGSizing
+TestWebKitAPI.WebKit.PrefetchDNSSkippedWhenProxyConfigured
+TestWebKitAPI.WebKit.ProxyRemovalAfterNetworkProcessCrash
+TestWebKitAPI.WebKit.SOCKS5ProxyChangeAppliesToConnectedHost
+TestWebKitAPI.WebKit.SOCKS5ProxyChangeLetsLoadInFlightFinish
+TestWebKitAPI.WebKit.SOCKS5ProxyRemovalAppliesToConnectedHost
+TestWebKitAPI.WebKit.WebSocketOpenAcrossSOCKS5ProxyChange
 TestWebKitAPI.WebKit2TextFieldBeginAndEditEditingTest
 TestWebKitAPI.WebKit2UserContentTest
 TestWebKitAPI.WebKit2UserMessageRoundTripTest
@@ -609,11 +761,40 @@ TestWebKitAPI.WebKit2_CommandBackForwardTestWKWebView
 TestWebKitAPI.WebKit2_WeakObjCPtr
 TestWebKitAPI.WebKitLegacyStringWidth
 TestWebKitAPI.WebLocks
+TestWebKitAPI.WebPageNavigationTests/backForwardListItemIdentifiersAreStableAcrossSnapshots()
+TestWebKitAPI.WebPageNavigationTests/backForwardListItemsReflectUpdatesToTheirContents()
+TestWebKitAPI.WebPageNavigationTests/backForwardListNotifiesObserversOfEveryChange()
+TestWebKitAPI.WebPageNavigationTests/backForwardListSubscriptAccessesItemsRelativeToCurrentItem()
+TestWebKitAPI.WebPageNavigationTests/backForwardListsWithDifferingHistoriesAreNotEqual()
+TestWebKitAPI.WebPageNavigationTests/basicNavigationProducesExpectedNavigationEvents()
+TestWebKitAPI.WebPageNavigationTests/explicitlyStopLoadingProgrammaticNavigation()
+TestWebKitAPI.WebPageNavigationTests/failedNavigationProducesExpectedNavigationError()
+TestWebKitAPI.WebPageNavigationTests/failedNavigationWithWebContentProcessTerminated()
+TestWebKitAPI.WebPageNavigationTests/navigatingToBackForwardListItemNotifiesObservers()
+TestWebKitAPI.WebPageNavigationTests/stopLoadingProgrammaticNavigationViaTaskCancellation()
+TestWebKitAPI.WebPageTests/allowsJSHandleCreationInPageWorld(enabled:)
+TestWebKitAPI.WebPageTests/clearContentWorld()
+TestWebKitAPI.WebPageTests/decidePolicyForNavigationActionFragment()
+TestWebKitAPI.WebPageTests/decidePolicyForNavigationResponse()
+TestWebKitAPI.WebPageTests/globalPrivacyControlEnabledForNavigation(enabled:)
+TestWebKitAPI.WebPageTests/javaScriptEvaluation()
+TestWebKitAPI.WebPageTests/observableProperties()
+TestWebKitAPI.WebPageTests/qualifiedServerTrust()
+TestWebKitAPI.WebPageTransferableTests/exportToPDFWithFullContent()
+TestWebKitAPI.WebPageTransferableTests/exportToPDFWithSubRegion()
+TestWebKitAPI.WebPageTransferableTests/exportToPDFWithoutLoadingAnyWebContentFails()
+TestWebKitAPI.WebPageTransferableTests/exportToPlainText(type:)
+TestWebKitAPI.WebPageTransferableTests/exportToRichText(type:)
+TestWebKitAPI.WebPageTransferableTests/exportToURL()
+TestWebKitAPI.WebPageTransferableTests/transferableContentTypes()
 TestWebKitAPI.WebSQL
+TestWebKitAPI.WebViewTests/applyingContentEnvironmentAffectsPageSemantics()
+TestWebKitAPI.WebViewTests/onAttachmentActivityPhaseAffectsListeners()
 TestWebKitAPI.Webkit
 TestWebKitAPI.WellKnownOriginList
 TestWebKitAPI.WritingMode
 TestWebKitAPI.WritingSuggestionsWebAPI
+TestWebKitAPI.WritingTools.ProofreadingWithImageFromContentProperty
 TestWebKitAPI.WritingToolsContextGeneration
 TestWebKitAPI.XMLParsing
 TestWebKitAPI.YouTubePluginReplacementTest
@@ -1857,10 +2038,6 @@ TestWebKitAPI.ObscuredContentInsets.TopOverhangColorExtensionLayerAppearsImmedia
 TestWebKitAPI.ObscuredContentInsets.TopOverhangColorExtensionLayerRemovedQuicklyAfterNavigatingToPageWithoutFixedHeader
 TestWebKitAPI.ObscuredContentInsets.TopScrollPocketKVO
 TestWebKitAPI.PODIntervalTree
-TestWebKitAPI.ParentalControlsContentFilteringTests.BlockedURLAfterMultipleRedirections_BlockFinal
-TestWebKitAPI.ParentalControlsContentFilteringTests.BlockedURLAfterMultipleRedirections_BlockMiddle
-TestWebKitAPI.ParentalControlsContentFilteringTests.BlockedURLAfterMultipleRedirections_BlockStart
-TestWebKitAPI.ParentalControlsContentFilteringTests.BlockedURLAfterRedirect
 TestWebKitAPI.ParserYieldTokenTests.DeferredScriptExecutesBeforeDocumentLoadWhenTakingParserYieldToken
 TestWebKitAPI.ParserYieldTokenTests.PreventDocumentLoadByTakingParserYieldToken
 TestWebKitAPI.ParserYieldTokenTests.ReleaseAndRetakeYieldTokenDoesNotCrash
@@ -4175,9 +4352,6 @@ TestWebKitAPI.WKWebsiteDataStoreConfiguration.SetPathOnConfigurationWithIdentifi
 TestWebKitAPI.WKWebsiteDataStoreConfiguration.TotalQuotaRatioInvalidValue
 TestWebKitAPI.WebAVPlayerControllerLeak.DynamicForwarderClassReleasesIvar
 TestWebKitAPI.WebAVPlayerControllerLeak.NormalForwarderClassReleasesIvar
-TestWebKitAPI.WebArchive.ApplicationXWebarchiveMIMETypeDoesNotLoadHTML
-TestWebKitAPI.WebArchive.ArchiveWithConfigurationLinkIcon
-TestWebKitAPI.WebArchive.CreateCustomScheme
 TestWebKitAPI.WebAuthenticationPanel.EncodeCTAPAssertion
 TestWebKitAPI.WebAuthenticationPanel.EncodeCTAPCreation
 TestWebKitAPI.WebAuthenticationPanel.EncodeCTAPCreationTrimmedParametersGetInfoNoneES256
@@ -4871,12 +5045,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.AutocorrectionTests.FontAtCaretWhenUsingUICTFontTextStyle
 [ ios ] TestWebKitAPI.AutocorrectionTests.MultiWordAutocorrectionFromStartOfText
 [ ios ] TestWebKitAPI.AutocorrectionTests.RequestAutocorrectionContextAfterClosingPage
-[ ios ] TestWebKitAPI.AutomationControlledByExternalAgentTests/flagDefaultsToFalseWhenUnset()
-[ ios ] TestWebKitAPI.AutomationControlledByExternalAgentTests/flagRoundTripsThroughSessionWhenSet()
-[ ios ] TestWebKitAPI.AutomationControlledByExternalAgentTests/flagSurvivesCopyWithZone()
-[ ios ] TestWebKitAPI.AutomationSendInspectorMessageTests/deniedWhenGateReturnsFalse()
-[ ios ] TestWebKitAPI.AutomationSendInspectorMessageTests/roundTripTargetSetPauseOnStart()
-[ ios ] TestWebKitAPI.AutomationSendInspectorMessageTests/windowNotFoundForUnknownHandle()
 [ ios ] TestWebKitAPI.Badging
 [ ios ] TestWebKitAPI.Badging.APIWindow
 [ ios ] TestWebKitAPI.Badging.DedicatedWorker
@@ -5056,6 +5224,8 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.DragAndDropTests.DraggableElementWithTinyDragImageDoesNotCrash
 [ ios ] TestWebKitAPI.DragAndDropTests.DropColor
 [ ios ] TestWebKitAPI.DragAndDropTests.ExposeMultipleURLsInDataTransfer
+[ ios ] TestWebKitAPI.DragAndDropTests.ExternalSourcePlainTextToCrossOriginOffsetIFrame
+[ ios ] TestWebKitAPI.DragAndDropTests.ExternalSourcePlainTextToSameSiteOffsetIFrame
 [ ios ] TestWebKitAPI.DragAndDropTests.ModernWebArchiveType
 [ ios ] TestWebKitAPI.DragAndDropTests.NumberOfValidItemsForDrop
 [ ios ] TestWebKitAPI.DragAndDropTests.PerformDropAfterWebProcessTermination
@@ -5123,8 +5293,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.EnhancedSecurityPolicies.HttpThenNavigateToHttpsSiteWithCookiesViaAPIAndSeenOutsideEnhancedSecurity
 [ ios ] TestWebKitAPI.EnhancedSecurityPolicies.HttpThenNavigateToHttpsSiteWithCookiesViaAPIAndSeenOutsideEnhancedSecurityWithSiteIsolation
 [ ios ] TestWebKitAPI.EnhancedSecurityPolicies.NonPersistentDataStoreCookieNotification
-[ ios ] TestWebKitAPI.EnhancedSecurityTests/securityRestrictionModeFromConfiguration(mode:expected:)
-[ ios ] TestWebKitAPI.EnhancedSecurityTests/securityRestrictionModeFromNavigationDecider(enabled:)
 [ ios ] TestWebKitAPI.EnterKeyHintTests.EnterKeyHintInContentEditableElement
 [ ios ] TestWebKitAPI.EnterKeyHintTests.EnterKeyHintInTextArea
 [ ios ] TestWebKitAPI.EnterKeyHintTests.EnterKeyHintInTextInput
@@ -5245,17 +5413,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.GetDisplayMediaTest.SystemCanPrompt
 [ ios ] TestWebKitAPI.GetDisplayMediaTestWithMediaCaptureDelegate.BasicPrompt
 [ ios ] TestWebKitAPI.HSTS.Preconnect
-[ ios ] TestWebKitAPI.HTTP2ServerTests/multipleCookiesSetBeforeLoad()
-[ ios ] TestWebKitAPI.HTTP2ServerTests/multipleRequestsOverOneConnection()
-[ ios ] TestWebKitAPI.HTTP2ServerTests/nonDefaultStatusCodeAndResponseHeader()
-[ ios ] TestWebKitAPI.HTTP2ServerTests/postBody()
-[ ios ] TestWebKitAPI.HTTP2ServerTests/requestMethodPathAndHeaders()
-[ ios ] TestWebKitAPI.HTTP2ServerTests/roundTrip()
-[ ios ] TestWebKitAPI.HTTP2ServerTests/throughProxy()
-[ ios ] TestWebKitAPI.HTTP3ServerTests/multipleRequestsOverOneConnection()
-[ ios ] TestWebKitAPI.HTTP3ServerTests/nonDefaultStatusCodeAndResponseHeader()
-[ ios ] TestWebKitAPI.HTTP3ServerTests/postBody()
-[ ios ] TestWebKitAPI.HTTP3ServerTests/requestMethodPathAndHeaders()
 [ ios ] TestWebKitAPI.HistoryDelegate.NonpersistentDataStoreDoesNotSendHistoryEvents
 [ ios ] TestWebKitAPI.HistoryDelegate.NonpersistentDataStoreSendsHistoryEventsWhenAllowingPrivacySensitiveOperations
 [ ios ] TestWebKitAPI.IPC.SharedMemoryFallback
@@ -5383,14 +5540,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.JSBuffer.Data
 [ ios ] TestWebKitAPI.JSBuffer.EvaluateScript
 [ ios ] TestWebKitAPI.JSBuffer.IDLExposed
-[ ios ] TestWebKitAPI.JSHandleTests/basic()
-[ ios ] TestWebKitAPI.JavaScriptExpressionTests/getSelectionReturnsCollapsedAfterCollapsedIsSet()
-[ ios ] TestWebKitAPI.JavaScriptExpressionTests/getSelectionReturnsRangeAfterRangeIsSet()
-[ ios ] TestWebKitAPI.JavaScriptExpressionTests/selectionBoundingClientRectReturnsNonEmptyRectForRangeSelection()
-[ ios ] TestWebKitAPI.JavaScriptExpressionTests/selectionBoundingClientRectReturnsZeroWidthRectForCollapsedSelection()
-[ ios ] TestWebKitAPI.JavaScriptExpressionTests/setAndGetSelectionRangeRoundTrip()
-[ ios ] TestWebKitAPI.JavaScriptExpressionTests/setAndGetSelectionWithCollapsedPositionRoundTrip()
-[ ios ] TestWebKitAPI.JavaScriptExpressionTests/setSelectionAppliesRangeSelection()
 [ ios ] TestWebKitAPI.KeyboardInputTests
 [ ios ] TestWebKitAPI.KeyboardInputTests.AllowKeypressForBMPEmoji
 [ ios ] TestWebKitAPI.KeyboardInputTests.AllowKeypressForRegularCharacters
@@ -5446,7 +5595,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.NavigationSwipeTests.DoNotAssertWhenSnapshottingZeroSizeView
 [ ios ] TestWebKitAPI.NavigationSwipeTests.DoNotBecomeFirstResponderAfterNavigationSwipeIfWebViewIsUnparented
 [ ios ] TestWebKitAPI.NavigationSwipeTests.RestoreFirstResponderAfterNavigationSwipe
-[ ios ] TestWebKitAPI.NavigatorWebDriverOverrideTests/navigatorWebDriverReflectsPolicy(controlledByAutomation:policy:expected:)
 [ ios ] TestWebKitAPI.NetworkActivityTracker.NavigationCancelReportsCancel
 [ ios ] TestWebKitAPI.NetworkActivityTracker.PageLoadCompletedReportsSuccess
 [ ios ] TestWebKitAPI.NetworkProcess
@@ -5454,23 +5602,11 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.NowPlayingTest.VideoElementWithMutedAudio
 [ ios ] TestWebKitAPI.NowPlayingTest.VideoElementWithoutAudio
 [ ios ] TestWebKitAPI.NowPlayingTest.VideoElementWithoutAudioPlayWithUserGesture
-[ ios ] TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysLeftToRightOverflow
-[ ios ] TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysLeftToRightOverflowWithFixedHeader
-[ ios ] TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysLeftToRightOverflowWithFixedHeaderAndSidebar
-[ ios ] TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysNoOverflow
-[ ios ] TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysRightToLeftOverflow
-[ ios ] TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysRightToLeftOverflowWithFixedHeader
-[ ios ] TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysRightToLeftOverflowWithFixedHeaderAndSidebar
-[ ios ] TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysSystemBackgroundColorTracksAppearance
+[ ios ] TestWebKitAPI.ObscuredContentInsets
 [ ios ] TestWebKitAPI.OverflowScrollViewTests.CompositingChangeMaintainsCustomView
 [ ios ] TestWebKitAPI.OverflowScrollViewTests.ContentChangeMaintainsScrollbars
 [ ios ] TestWebKitAPI.PageVisibilityStateWithWindowChanges.WebKit
 [ ios ] TestWebKitAPI.PageVisibilityStateWithWindowChanges.WebKit2
-[ ios ] TestWebKitAPI.ParentalControlsContentFilteringTests
-[ ios ] TestWebKitAPI.ParentalControlsContentFilteringTests.BlockedURLAfterMultipleRedirections_BlockFinal
-[ ios ] TestWebKitAPI.ParentalControlsContentFilteringTests.BlockedURLAfterMultipleRedirections_BlockMiddle
-[ ios ] TestWebKitAPI.ParentalControlsContentFilteringTests.BlockedURLAfterMultipleRedirections_BlockStart
-[ ios ] TestWebKitAPI.ParentalControlsContentFilteringTests.BlockedURLAfterRedirect
 [ ios ] TestWebKitAPI.PasteHTML
 [ ios ] TestWebKitAPI.PasteHTML.DoesNotAddStandardFontFamily
 [ ios ] TestWebKitAPI.PasteHTML.DoesNotSanitizeHTMLWhenCustomPasteboardDataIsDisabled
@@ -5539,7 +5675,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.PointerLockTests.Simple
 [ ios ] TestWebKitAPI.Preconnect.HTTP
 [ ios ] TestWebKitAPI.Preconnect.HTTPS
-[ ios ] TestWebKitAPI.Printing.PrintPageBorders
+[ ios ] TestWebKitAPI.Printing
 [ ios ] TestWebKitAPI.PrivateClickMeasurement.Basic
 [ ios ] TestWebKitAPI.PrivateClickMeasurement.BasicWithEphemeralIOSSPI
 [ ios ] TestWebKitAPI.PrivateClickMeasurement.BasicWithIOSSPI
@@ -5689,11 +5825,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.SampledPageTopColor.TopColorExtensionHeightIncreasesWithRubberBandAmount
 [ ios ] TestWebKitAPI.SampledPageTopColor.TopColorExtensionWhenRubberBanding
 [ ios ] TestWebKitAPI.ScreenTime
-[ ios ] TestWebKitAPI.ScreenTime.IdentifierNil
-[ ios ] TestWebKitAPI.ScreenTime.IdentifierString
-[ ios ] TestWebKitAPI.ScreenTime.IdentifierStringWithRemoveData
-[ ios ] TestWebKitAPI.ScreenTime.RemoveDataWithTimeInterval
-[ ios ] TestWebKitAPI.ScreenTime.WKWebViewFillsStackView
 [ ios ] TestWebKitAPI.ScriptTrackingPrivacyTests.AudioSamples
 [ ios ] TestWebKitAPI.ScriptTrackingPrivacyTests.Canvas2D
 [ ios ] TestWebKitAPI.ScriptTrackingPrivacyTests.ConsistentQueryParameters
@@ -5792,7 +5923,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.ServiceWorkers.WaitForPolicyDelegate
 [ ios ] TestWebKitAPI.ServiceWorkers.WebProcessCache
 [ ios ] TestWebKitAPI.ShareSheetTests.ShareAnchorElementAsURL
-[ ios ] TestWebKitAPI.SimulateClickOverTextTests/clickTargets(afterScrolling:)
 [ ios ] TestWebKitAPI.SiteIsolation.AccessibilityRectsAtSelectionOffsetInCrossOriginIframe
 [ ios ] TestWebKitAPI.SiteIsolation.AccessibilityRectsEnclosingSelectionOffsetInCrossOriginIframe
 [ ios ] TestWebKitAPI.SiteIsolation.ApplyAutocorrectionInCrossOriginIframe
@@ -5865,6 +5995,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.SiteIsolation.RequestTextInputContextsInRectCoveringCrossOriginIframe
 [ ios ] TestWebKitAPI.SiteIsolation.RequestTextInputContextsInRectCoveringOffsetCrossOriginIframes
 [ ios ] TestWebKitAPI.SiteIsolation.ScreenCaptureStateReachesCrossSiteIframeProcesses
+[ ios ] TestWebKitAPI.SiteIsolation.ScreenOrientationChangeEventsContinueWhenFrameInAnotherProcessStopsListening
 [ ios ] TestWebKitAPI.SiteIsolation.ScrollTextRangeToVisibleIOS
 [ ios ] TestWebKitAPI.SiteIsolation.SelectAllAndCopyInCrossOriginIframe
 [ ios ] TestWebKitAPI.SiteIsolation.SelectMultiplePickerLocationInCrossOriginIframe
@@ -5894,7 +6025,9 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.SiteIsolation.SynchronousPositionInformationForTextInCrossOriginIframe
 [ ios ] TestWebKitAPI.SiteIsolation.URLSchemeTask
 [ ios ] TestWebKitAPI.SiteIsolation.ZoomToRevealFocusedElementRect
-[ ios ] TestWebKitAPI.SiteIsolationNavigationTests/childNavigatingToNewDomain()
+[ ios ] TestWebKitAPI.SiteIsolationDataDetectionTests/detectAndRemoveDataInAllFrames()
+[ ios ] TestWebKitAPI.SiteIsolationEditableRegionTests/requestingTextInputContextsBuildsEditableRegionInCrossOriginIframe()
+[ ios ] TestWebKitAPI.SiteIsolationLinkIndicatorTests/linkIndicatorForLinkInIframeIsAroundLinkInMainFrameCoordinates(iframeURL:)
 [ ios ] TestWebKitAPI.SkipAdInPictureInPicture.VideoHasAd
 [ ios ] TestWebKitAPI.SkipAdInPictureInPicture.VideoHasNoAd
 [ ios ] TestWebKitAPI.SmartLists.EnablementIsLogicallyConsistentWhenInterfacedThroughResponder
@@ -5912,35 +6045,10 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.TextAlternatives.AddTextAlternativesWithoutMatch
 [ ios ] TestWebKitAPI.TextAlternatives.InsertDictationResultsAsAlternatives
 [ ios ] TestWebKitAPI.TextAutosizingBoost.ChangeAutosizingBoostAtRuntime
-[ ios ] TestWebKitAPI.TextExtractionTests/classifierFiltersOutText(filterOptions:)
 [ ios ] TestWebKitAPI.TextExtractionTests/desktopClassHardwareEmulationInDesktopContentMode()
-[ ios ] TestWebKitAPI.TextExtractionTests/excludingSameOriginSubframesLeavesOutTheirContent()
-[ ios ] TestWebKitAPI.TextExtractionTests/extractFromPDFAsHTML()
 [ ios ] TestWebKitAPI.TextExtractionTests/extractFromPDFAsJSON()
-[ ios ] TestWebKitAPI.TextExtractionTests/extractFromPDFAsMarkdown()
 [ ios ] TestWebKitAPI.TextExtractionTests/extractFromPDFAsPlainText()
-[ ios ] TestWebKitAPI.TextExtractionTests/extractFromPDFAsTextTree()
-[ ios ] TestWebKitAPI.TextExtractionTests/extractFromPDFLink()
-[ ios ] TestWebKitAPI.TextExtractionTests/interactionClicksThroughOccludingOverlay()
-[ ios ] TestWebKitAPI.TextExtractionTests/interactionDescriptionIncludesAssociatedLabelText()
-[ ios ] TestWebKitAPI.TextExtractionTests/interactionDescriptionUsesAdjacentTextForUnlabeledIcon()
-[ ios ] TestWebKitAPI.TextExtractionTests/interactionWithSearchTextSpanningBlockBoundary()
-[ ios ] TestWebKitAPI.TextExtractionTests/replacementStringsAppliedToInteractionDescription()
-[ ios ] TestWebKitAPI.TextExtractionTests/replacementStringsCaseAndQuoteInsensitive()
-[ ios ] TestWebKitAPI.TextExtractionTests/replacementStringsDiacriticInsensitive()
-[ ios ] TestWebKitAPI.TextExtractionTests/replacementStringsForEmailAddresses()
-[ ios ] TestWebKitAPI.TextExtractionTests/replacementStringsLongestMatchWins()
-[ ios ] TestWebKitAPI.TextExtractionTests/replacementStringsWordBoundaries()
-[ ios ] TestWebKitAPI.TextExtractionTests/requestContainerJSHandleForSearchTextsFallsBackToBodyWhenTargetMisses()
-[ ios ] TestWebKitAPI.TextExtractionTests/requestFrameInfoForNodeIdentifier()
-[ ios ] TestWebKitAPI.TextExtractionTests/requestJSHandleForNodeInDetachedSubframe()
-[ ios ] TestWebKitAPI.TextExtractionTests/requestJSHandleForStaleNodeIdentifier()
-[ ios ] TestWebKitAPI.TextExtractionTests/sameOriginSubframeInAdditionalFramesIsExtractedWhenNotIncludedByDefault()
-[ ios ] TestWebKitAPI.TextExtractionTests/scrollToRevealFallsBackToFullDocumentWhenNodeMisses()
-[ ios ] TestWebKitAPI.TextExtractionTests/subframeOriginInDebugText()
-[ ios ] TestWebKitAPI.TextExtractionTests/targetNodeWithSameOriginSubframe()
 [ ios ] TestWebKitAPI.TextFragmentTests/getTextFragmentMatch()
-[ ios ] TestWebKitAPI.TextManipulationTests/completeTextManipulationAvoidExtractingManipulatedTextAfterManipulation()
 [ ios ] TestWebKitAPI.TextServicesTests.LookUpPresentationRect
 [ ios ] TestWebKitAPI.TextStyleFontSize.AfterCrash
 [ ios ] TestWebKitAPI.TextStyleFontSize.Startup
@@ -6003,8 +6111,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.URLSchemeHandler.Threads
 [ ios ] TestWebKitAPI.URLSchemeHandler.XHRPost
 [ ios ] TestWebKitAPI.URLSchemeHandler.isSecureContext
-[ ios ] TestWebKitAPI.URLSchemeHandlerTests/basicSchemeHandling()
-[ ios ] TestWebKitAPI.URLSchemeHandlerTests/basicSchemeValidation()
 [ ios ] TestWebKitAPI.UnifiedPDF
 [ ios ] TestWebKitAPI.UnifiedPDF.PDFHUDIFrame3DTransform
 [ ios ] TestWebKitAPI.UnifiedPDF.PDFHUDLoadPDFTypeWithPluginsBlocked
@@ -6138,10 +6244,8 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKHTTPCookieStore.Basic
 [ ios ] TestWebKitAPI.WKHTTPCookieStore.CookieAccessAfterNetworkProcessTermination
 [ ios ] TestWebKitAPI.WKHTTPCookieStore.CookiesForURL
-[ ios ] TestWebKitAPI.WKHTTPCookieStore.DeletePartitionedCookie
 [ ios ] TestWebKitAPI.WKHTTPCookieStore.HttpOnly
 [ ios ] TestWebKitAPI.WKHTTPCookieStore.ObserveCookiesReceivedFromHTTP
-[ ios ] TestWebKitAPI.WKHTTPCookieStore.PartitionedCookieShouldHavePartitionProperty
 [ ios ] TestWebKitAPI.WKHTTPCookieStore.ProcessPrivilege
 [ ios ] TestWebKitAPI.WKHTTPCookieStore.SetCookies
 [ ios ] TestWebKitAPI.WKHTTPCookieStore.WebSocketCookies
@@ -6162,9 +6266,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKNavigation.FailureToStartWebProcessAfterCrashRecovery
 [ ios ] TestWebKitAPI.WKNavigation.FailureToStartWebProcessRecovery
 [ ios ] TestWebKitAPI.WKNavigation.MultipleProcessCrashesRelatedWebViews
-[ ios ] TestWebKitAPI.WKNavigation.PartitionedCookieAfterRedirect
-[ ios ] TestWebKitAPI.WKNavigation.PartitionedCookieSentOnTopLevelRedirect
-[ ios ] TestWebKitAPI.WKNavigation.PartitionedCookieSentWhenNetworkProcessExistsBeforePage
 [ ios ] TestWebKitAPI.WKNavigation.PreferredHTTPSPolicyAutomaticHTTPFallbackAfterSessionRestore
 [ ios ] TestWebKitAPI.WKNavigation.PreferredHTTPSPolicyAutomaticHTTPFallbackAfterTerminateProcess
 [ ios ] TestWebKitAPI.WKNavigation.PreferredHTTPSPolicyAutomaticHTTPFallbackHTTPDowngrade
@@ -6334,43 +6435,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/setExtensionActionOptions()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDevTools.Basics
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDevTools.PortMessagePassingFromPanelToBackground
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.ActionMenus
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.ActionMenusWithActiveTab
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.ActionSubmenus
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.ActionSubmenusUpdate
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.ClearMenuItemIconVariantsWithEmpty
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.ClearMenuItemIconVariantsWithNull
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.ClickedMenuItemAndPermissionsRequest
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.ContextMenusNamespace
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.CreateMenuWithDeprecatedKeys
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.Errors
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MacActiveTabContextMenuItems
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MacAudioContextMenuItems
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MacContextMenuItems
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MacEditableContextMenuItems
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MacFrameContextMenuItems
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MacImageContextMenuItems
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MacLinkContextMenuItems
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MacSelectionContextMenuItems
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MacURLPatternContextMenuItems
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MacVideoContextMenuItems
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuCreateWithVariousIds
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemProperties
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemPropertiesUpdate
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithAnySizeVariantAndSVGDataURL
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithIconVariants
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithImageDataVariants
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithMixedValidAndInvalidIconVariants
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithSymbolImageIcon
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithSymbolImageIconVariants
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithWithNoValidVariants
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.OnClick
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.OnClickAfterUpdate
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.RadioItemGrouping
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.RemoveAfterBackgroundPageReload
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.TabMenus
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.ToggleCheckboxMenuItems
-[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus.UpdateMenuItemWithIconVariants
+[ ios ] TestWebKitAPI.WKWebExtensionAPIMenus
 [ ios ] TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentImmediatelyVisibleToClientsMatchAllWhenWokenByTabMessage()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentRemovedFromClientsMatchAllAfterClose()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentVisibleToClientsMatchAll()
@@ -6541,33 +6606,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventWithoutPrivateAccess
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.UserGestureWithoutActiveTab
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Zoom
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.AddAnonymousAsyncTest
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.AddAnonymousTest
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.AddAsyncTestThatFails
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.AddAsyncTestThatPasses
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.AddAsyncTestThatThrows
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.AddMultipleAsyncTestsThatPass
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.AddMultipleAsyncTestsWithFailure
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.AddMultipleTestsThatPass
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.AddMultipleTestsWithFailure
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.AddTestThatFails
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.AddTestThatPasses
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.AddTestThatThrows
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.MessageEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.MessageEventInContentScript
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.MessageEventInWebPage
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.MessageEventWithSendMessageReply
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.RunAnonymousTests
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.RunTestsThatPass
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.RunTestsVerifyFailedTestAborts
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.RunTestsWithAsyncTestThatFails
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.RunTestsWithTestThatFails
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.SendMessage
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.SendMessageBeforeListenerAdded
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.SendMessageMultipleTimes
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.SendMessageOutOfOrder
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.TestFinishedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPITest.TestStartedEvent
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.AllEventsFired
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.AllowedFilter
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.BeforeNavigateEvent
@@ -6650,7 +6688,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.NonExtensionPageDoesNotGiveSubframesUnpartitionedAccess
 [ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectIntoHostPermittedFrameIsUnpartitioned
 [ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectIntoHostPermittedFrameIsUnpartitionedWithSiteIsolation
-[ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectOutOfHostPermittedFrameDoesNotUseItsCookiePartition
 [ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectOutOfHostPermittedFrameIsPartitioned
 [ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectOutOfHostPermittedFrameIsPartitionedWithSiteIsolation
 [ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SameSiteCookiesAreSentToHostPermittedFrame
@@ -6696,6 +6733,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebView.PageZoomAfterPDF
 [ ios ] TestWebKitAPI.WKWebView.PrintFormatterCanRecalcPageCountWhilePrinting
 [ ios ] TestWebKitAPI.WKWebView.PrintFormatterHangsIfWebProcessCrashesBeforeWaiting
+[ ios ] TestWebKitAPI.WKWebView.PrintFormatterLaunchesPrintProcess
 [ ios ] TestWebKitAPI.WKWebView.PrintToPDFShouldPrintBackgrounds
 [ ios ] TestWebKitAPI.WKWebView.PrintToPDFUsingMultiplePrintInteractionControllers
 [ ios ] TestWebKitAPI.WKWebView.PrintToPDFUsingPrintInteractionController
@@ -6724,6 +6762,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebViewCloseAllMediaPresentations.PictureInPicture
 [ ios ] TestWebKitAPI.WKWebViewCloseAllMediaPresentations.RemovedCloseAllMediaPresentationAPIs
 [ ios ] TestWebKitAPI.WKWebViewCloseAllMediaPresentationsInternal.PictureInPicture
+[ ios ] TestWebKitAPI.WKWebViewContentInversion
 [ ios ] TestWebKitAPI.WKWebViewEditActions
 [ ios ] TestWebKitAPI.WKWebViewEditActions.ChangeFontSize
 [ ios ] TestWebKitAPI.WKWebViewEditActions.CopyFontAtCaretSelection
@@ -6756,33 +6795,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebsiteDataStorePrivate.ThirdPartyCookieBlockingModeUnchangedBetweenViews
 [ ios ] TestWebKitAPI.WebAVPlayerControllerLeak.DynamicForwarderClassReleasesIvar
 [ ios ] TestWebKitAPI.WebAVPlayerControllerLeak.NormalForwarderClassReleasesIvar
-[ ios ] TestWebKitAPI.WebArchive.CookieAccessAfterLoadData
-[ ios ] TestWebKitAPI.WebArchive.CookieAccessAfterLoadRequest
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesBasic
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesBlobURL
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesCSSImportRule
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesCSSMediaRule
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesCSSSupportsRule
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesCrossOriginLink
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesDataURL
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesDeclarativeShadowDOM
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesEmptyStyleSheet
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesExcludeBaseElement
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesExcludeCrossOriginAttribute
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesExclusionRules
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesFrame
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesIframe
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesIframeInIframe
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesIframesWithSameURL
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesInlineStyle
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesLink
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesLinksWithSameURL
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesResponsiveImages
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesShadowDOM
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesStyle
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesStyleWithUnloadedResources
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesValidFileName
-[ ios ] TestWebKitAPI.WebArchive.SaveResourcesWithUTF8Encoding
 [ ios ] TestWebKitAPI.WebAuthenticationPanel.CloseHidCancel
 [ ios ] TestWebKitAPI.WebAuthenticationPanel.DeleteOneCredential
 [ ios ] TestWebKitAPI.WebAuthenticationPanel.ExportImportCredential
@@ -7021,6 +7033,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WebKit.ShouldOpenExternalURLsInWindowOpen
 [ ios ] TestWebKitAPI.WebKit.SlowBeforeUnloadPromptAllow
 [ ios ] TestWebKitAPI.WebKit.SlowBeforeUnloadPromptReject
+[ ios ] TestWebKitAPI.WebKit.SystemPreviewCanonicalWebPageURLIsPageURL
 [ ios ] TestWebKitAPI.WebKit.TabOutOfWebView
 [ ios ] TestWebKitAPI.WebKit.TintColorAffectsInteractionColor
 [ ios ] TestWebKitAPI.WebKit.UIViewTreeAsTextDumpsLayerPositionYCoordinate
@@ -7117,32 +7130,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WebKitLegacy.WebViewCanPasteURL
 [ ios ] TestWebKitAPI.WebKitLegacy.WebViewCanPasteZeroPng
 [ ios ] TestWebKitAPI.WebKitLegacy.WindowlessWebViewWithMedia
-[ ios ] TestWebKitAPI.WebPageNavigationTests/backForwardListItemIdentifiersAreStableAcrossSnapshots()
-[ ios ] TestWebKitAPI.WebPageNavigationTests/backForwardListItemsReflectUpdatesToTheirContents()
-[ ios ] TestWebKitAPI.WebPageNavigationTests/backForwardListNotifiesObserversOfEveryChange()
-[ ios ] TestWebKitAPI.WebPageNavigationTests/backForwardListSubscriptAccessesItemsRelativeToCurrentItem()
-[ ios ] TestWebKitAPI.WebPageNavigationTests/backForwardListsWithDifferingHistoriesAreNotEqual()
-[ ios ] TestWebKitAPI.WebPageNavigationTests/basicNavigationProducesExpectedNavigationEvents()
-[ ios ] TestWebKitAPI.WebPageNavigationTests/explicitlyStopLoadingProgrammaticNavigation()
-[ ios ] TestWebKitAPI.WebPageNavigationTests/failedNavigationProducesExpectedNavigationError()
-[ ios ] TestWebKitAPI.WebPageNavigationTests/failedNavigationWithWebContentProcessTerminated()
-[ ios ] TestWebKitAPI.WebPageNavigationTests/navigatingToBackForwardListItemNotifiesObservers()
-[ ios ] TestWebKitAPI.WebPageNavigationTests/stopLoadingProgrammaticNavigationViaTaskCancellation()
-[ ios ] TestWebKitAPI.WebPageTests/allowsJSHandleCreationInPageWorld(enabled:)
-[ ios ] TestWebKitAPI.WebPageTests/clearContentWorld()
-[ ios ] TestWebKitAPI.WebPageTests/decidePolicyForNavigationActionFragment()
-[ ios ] TestWebKitAPI.WebPageTests/decidePolicyForNavigationResponse()
-[ ios ] TestWebKitAPI.WebPageTests/globalPrivacyControlEnabledForNavigation(enabled:)
-[ ios ] TestWebKitAPI.WebPageTests/javaScriptEvaluation()
-[ ios ] TestWebKitAPI.WebPageTests/observableProperties()
-[ ios ] TestWebKitAPI.WebPageTests/qualifiedServerTrust()
-[ ios ] TestWebKitAPI.WebPageTransferableTests/exportToPDFWithFullContent()
-[ ios ] TestWebKitAPI.WebPageTransferableTests/exportToPDFWithSubRegion()
-[ ios ] TestWebKitAPI.WebPageTransferableTests/exportToPDFWithoutLoadingAnyWebContentFails()
-[ ios ] TestWebKitAPI.WebPageTransferableTests/exportToPlainText(type:)
-[ ios ] TestWebKitAPI.WebPageTransferableTests/exportToRichText(type:)
-[ ios ] TestWebKitAPI.WebPageTransferableTests/exportToURL()
-[ ios ] TestWebKitAPI.WebPageTransferableTests/transferableContentTypes()
 [ ios ] TestWebKitAPI.WebPushD.DeclarativeParsing
 [ ios ] TestWebKitAPI.WebPushDBuiltInTest.ImplicitSilentPushTimerCancelledOnShowingNotification
 [ ios ] TestWebKitAPI.WebPushDBuiltInTest.ImplicitSilentPushTimerCausesUnsubscribe
@@ -7170,8 +7157,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WebSocket.BlockedWithSubresources
 [ ios ] TestWebKitAPI.WebSocket.LongMessageNoDeflate
 [ ios ] TestWebKitAPI.WebTransport
-[ ios ] TestWebKitAPI.WebViewTests/applyingContentEnvironmentAffectsPageSemantics()
-[ ios ] TestWebKitAPI.WebViewTests/onAttachmentActivityPhaseAffectsListeners()
 [ ios ] TestWebKitAPI.WebViewTests/overrideViewportArgumentsAffectsPageViewport()
 [ ios ] TestWebKitAPI.WebpagePreferences.CustomHeaderFields
 [ ios ] TestWebKitAPI.WebpagePreferences.ExtensionPageAdvancedPrivacyProtectionsReferrer
@@ -7303,12 +7288,14 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.AdvancedPrivacyProtections.AddNoiseToWebAudioAPIs
 [ mac ] TestWebKitAPI.AdvancedPrivacyProtections.AddNoiseToWebAudioAPIsAfterMultiplePSON
 [ mac ] TestWebKitAPI.AdvancedPrivacyProtections.VerifyPixelsFromNoisyCanvas2DAPI
+[ mac ] TestWebKitAPI.AppleVisualEffect
 [ mac ] TestWebKitAPI.Badging.APIWindow
 [ mac ] TestWebKitAPI.Badging.CrossOrigin
 [ mac ] TestWebKitAPI.Badging.DedicatedWorker
 [ mac ] TestWebKitAPI.Badging.SameOrigin
 [ mac ] TestWebKitAPI.Badging.ServiceWorker
 [ mac ] TestWebKitAPI.Badging.ServiceWorkerOverride
+[ mac ] TestWebKitAPI.Badging.WebArchive
 [ mac ] TestWebKitAPI.Challenge.BasicPersistentCredential
 [ mac ] TestWebKitAPI.Challenge.DeallocateDuringChallenge
 [ mac ] TestWebKitAPI.ContentFiltering.LoadAlternateAfterAddDataWK1
@@ -7317,57 +7304,25 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.ContentFiltering.LoadAlternateAfterResponseWK1
 [ mac ] TestWebKitAPI.ContentFiltering.LoadAlternateAfterWillSendRequestWK1
 [ mac ] TestWebKitAPI.ContextMenuTests.HitTestResultImageURLNotDoubleEncoded
+[ mac ] TestWebKitAPI.ContextMenuTests.NoContextMenuWhenPageOverlayHandlesMouseDown
+[ mac ] TestWebKitAPI.ContextMenuTests.NoSimulatedContextMenuWhenPageOverlayHandlesMouseDown
 [ mac ] TestWebKitAPI.ContextMenuTests.ProposedMenuContainsSubstitutionsMenu
 [ mac ] TestWebKitAPI.ContextMenuTests.SharePopoverDoesNotClearSelection
 [ mac ] TestWebKitAPI.ContextMenuTests.ShowColorPanel
 [ mac ] TestWebKitAPI.ContextMenuTests.ShowSharePopoverForImage
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAccountForMainFrameScroll/CrossOrigin_SiteIsolationDisabled_SiteIsolationSharedProcessDisabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAccountForMainFrameScroll/SameOrigin_SiteIsolationDisabled_SiteIsolationSharedProcessDisabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAccountForMainFrameScroll/SameOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessDisabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAccountForMainFrameScroll/SameOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessEnabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAccountForSubframeScroll/CrossOrigin_SiteIsolationDisabled_SiteIsolationSharedProcessDisabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAccountForSubframeScroll/SameOrigin_SiteIsolationDisabled_SiteIsolationSharedProcessDisabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAccountForSubframeScroll/SameOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessDisabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAccountForSubframeScroll/SameOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessEnabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAreAtTheTelephoneNumber/CrossOrigin_SiteIsolationDisabled_SiteIsolationSharedProcessDisabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAreAtTheTelephoneNumber/SameOrigin_SiteIsolationDisabled_SiteIsolationSharedProcessDisabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAreAtTheTelephoneNumber/SameOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessDisabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAreAtTheTelephoneNumber/SameOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessEnabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAreAtTheTelephoneNumberInNestedFrame/CrossOrigin_SiteIsolationDisabled_SiteIsolationSharedProcessDisabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAreAtTheTelephoneNumberInNestedFrame/SameOrigin_SiteIsolationDisabled_SiteIsolationSharedProcessDisabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAreAtTheTelephoneNumberInNestedFrame/SameOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessDisabled
-[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe.HighlightAndMenuAreAtTheTelephoneNumberInNestedFrame/SameOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessEnabled
+[ mac ] TestWebKitAPI.DataDetection/SelectionServicesInSubframe
+[ mac ] TestWebKitAPI.DataDetection/TelephoneNumberInSubframe
+[ mac ] TestWebKitAPI.DataListTests.CoalesceSuggestionUpdatesWhenAddingManyOptions
 [ mac ] TestWebKitAPI.DrawingToPDF.BackgroundClipText
 [ mac ] TestWebKitAPI.DrawingToPDF.BackgroundClipTextWithRemoteSnapshotting
 [ mac ] TestWebKitAPI.DrawingToPDF.CSSFilterInvertAppliedOnPDF
 [ mac ] TestWebKitAPI.DrawingToPDF.CSSFilterInvertAppliedOnPDFWithRemoteSnapshotting
+[ mac ] TestWebKitAPI.DrawingToPDF.DisplayListData
 [ mac ] TestWebKitAPI.DrawingToPDF.GradientIntoPDF
+[ mac ] TestWebKitAPI.EditingFontSizeTests/fontSizeMatchingLegacySizePreservesCSSValue()
 [ mac ] TestWebKitAPI.ElementFullscreen.EnterVideoFullscreenWhileAnimating
 [ mac ] TestWebKitAPI.ElementFullscreen.IntersectionObserver
-[ mac ] TestWebKitAPI.EnhancedSecurity.CaptivePortalProcessCanLaunch
-[ mac ] TestWebKitAPI.EnhancedSecurity.EnhancedSecurityDisablesJIT
-[ mac ] TestWebKitAPI.EnhancedSecurity.EnhancedSecurityEnableFalse
-[ mac ] TestWebKitAPI.EnhancedSecurity.EnhancedSecurityEnablesTrue
-[ mac ] TestWebKitAPI.EnhancedSecurity.EnhancedSecurityNavigationStaysEnabledAfterNavigation
-[ mac ] TestWebKitAPI.EnhancedSecurity.EnhancedSecurityRequestedWhenLockdownModeActive
-[ mac ] TestWebKitAPI.EnhancedSecurity.ForceDisabledOverridesPlatformDefault
-[ mac ] TestWebKitAPI.EnhancedSecurity.LockdownModeTakesPrecedenceOverEnhancedSecurity
-[ mac ] TestWebKitAPI.EnhancedSecurity.LockdownModeTakesPrecedenceOverPlatformDefault
-[ mac ] TestWebKitAPI.EnhancedSecurity.NavigationLockdownModeTakesPrecedenceOverPlatformDefault
-[ mac ] TestWebKitAPI.EnhancedSecurity.PSONToEnhancedSecurity
-[ mac ] TestWebKitAPI.EnhancedSecurity.PSONToEnhancedSecuritySamePage
-[ mac ] TestWebKitAPI.EnhancedSecurity.PSONToEnhancedSecuritySharedProcessPool
-[ mac ] TestWebKitAPI.EnhancedSecurity.PSONToEnhancedSecuritySharedProcessPoolReverse
-[ mac ] TestWebKitAPI.EnhancedSecurity.PlatformDefaultDisabledByDefaultUsesStandardProcess
-[ mac ] TestWebKitAPI.EnhancedSecurity.PlatformDefaultEnablesEnhancedSecurity
-[ mac ] TestWebKitAPI.EnhancedSecurity.PlatformDefaultOverridesNavigationSecurityRestrictionModeNone
-[ mac ] TestWebKitAPI.EnhancedSecurity.PlatformDefaultOverridesSecurityRestrictionModeNone
-[ mac ] TestWebKitAPI.EnhancedSecurity.ProcessVariantMatchesConfiguration
-[ mac ] TestWebKitAPI.EnhancedSecurity.SystemLockdownModeEnablesEnhancedSecurityWhenBothAPIOptsOut
-[ mac ] TestWebKitAPI.EnhancedSecurity.SystemLockdownModeEnablesEnhancedSecurityWhenLockdownOptsOut
-[ mac ] TestWebKitAPI.EnhancedSecurity.SystemLockdownModeEnablesEnhancedSecurityWhenMaximizeCompatibilitySet
-[ mac ] TestWebKitAPI.EnhancedSecurity.SystemLockdownModeEnablesEnhancedSecurityWhenSecurityRestrictionModeNone
-[ mac ] TestWebKitAPI.EnhancedSecurity.SystemLockdownModeTakesPrecedenceOverPlatformDefault
+[ mac ] TestWebKitAPI.EnhancedSecurity
 [ mac ] TestWebKitAPI.EnhancedSecurityPolicies.HistoryEventsUseCorrectOriginalRequest
 [ mac ] TestWebKitAPI.EnhancedSecurityPolicies.HttpFragmentNavigation
 [ mac ] TestWebKitAPI.EnhancedSecurityPolicies.HttpFragmentNavigationWithSiteIsolation
@@ -7391,46 +7346,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.EnhancedSecurityPolicies.SameSiteHttpsUpgradeJavascript
 [ mac ] TestWebKitAPI.EnhancedSecurityPolicies.SameSiteHttpsUpgradeJavascriptWithSiteIsolation
 [ mac ] TestWebKitAPI.FindInPage/FindCAPI
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.FindAllAcrossCrossOriginFrames/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.FindAllAcrossCrossOriginFrames/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.FindAllInPDF/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.FindAllInPDF/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.FindAllInSameOriginChild/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.FindAllInSameOriginChild/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.FindAllMatches/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.FindAllMatches/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.FindAllMatchesWithoutPlatformFindUIHasNoRects/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.FindAllMatchesWithoutPlatformFindUIHasNoRects/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.ImageForMatchInCrossOriginFrame/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.ImageForMatchInCrossOriginFrame/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.MatchRemovedAfterFindAll/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.MatchRemovedAfterFindAll/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.MaxResultsIsCappedAt1000/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.MaxResultsIsCappedAt1000/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.ReplaceMatches/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.ReplaceMatches/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.ReplaceMatchesInCrossOriginFrame/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.ReplaceMatchesInCrossOriginFrame/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.ReplaceSelectionInCrossOriginFrame/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.ReplaceSelectionInCrossOriginFrame/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.ScrollMatchToVisibleInCrossOriginFrame/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.ScrollMatchToVisibleInCrossOriginFrame/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.SelectMatch/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.SelectMatch/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.SelectMatchInCrossOriginFrame/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.SelectMatchInCrossOriginFrame/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.ShadowDOM/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.ShadowDOM/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.StartsWith/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.StartsWith/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.StepAcrossCrossOriginFrames/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.StepAcrossCrossOriginFrames/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.StepReportsWrap/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.StepReportsWrap/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.StepWithoutWrapFindsNothingAtEnd/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.StepWithoutWrapFindsNothingAtEnd/SiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.TextControls/NoSiteIsolation
-[ mac ] TestWebKitAPI.FindInPage/FindTextFinder.TextControls/SiteIsolation
+[ mac ] TestWebKitAPI.FindInPage/FindTextFinder
 [ mac ] TestWebKitAPI.FocusWebView.AdvanceFocusRelinquishToChrome
 [ mac ] TestWebKitAPI.FocusWebView.DoNotFocusWebViewWhenUnparented
 [ mac ] TestWebKitAPI.FocusWebView.FocusNavigationIntoFrameWithNestedRemoteFrame
@@ -7529,9 +7445,19 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.NetworkProcess.URLSchemeHandlerWasPrivateRelayed
 [ mac ] TestWebKitAPI.NowPlayingMetadataObserver.VideoTitle
 [ mac ] TestWebKitAPI.NowPlayingTest
+[ mac ] TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysEnableSystemBackgroundColorExtensionsForEdges
+[ mac ] TestWebKitAPI.ObscuredContentInsets.HorizontalBannerOverlaysFixedColorExtensionFillsInsetWhenSystemBackgroundDisabled
+[ mac ] TestWebKitAPI.ObscuredContentInsets.ResizeScrollPocketWithHorizontalBannerView
+[ mac ] TestWebKitAPI.ObscuredContentInsets.ResizeScrollPocketWithoutHorizontalBannerView
+[ mac ] TestWebKitAPI.ObscuredContentInsets.ScrollPocketRemainsWhenScrolledToTopInEditableWebView
+[ mac ] TestWebKitAPI.ObscuredContentInsets.TopOverhangColorExtensionLayerAppliesColorFilter
+[ mac ] TestWebKitAPI.ObscuredContentInsets.TopOverhangColorExtensionLayerResolvesRelativeColor
 [ mac ] TestWebKitAPI.PasteHTML.QuotedContentOnPunchedOutBackgroundRemainsLegible
 [ mac ] TestWebKitAPI.PictureInPicture.AudioCannotTogglePictureInPicture
 [ mac ] TestWebKitAPI.PlatformPasteboard
+[ mac ] TestWebKitAPI.PresentationIntents
+[ mac ] TestWebKitAPI.Printing.DrawPagesToPDFSynchronously
+[ mac ] TestWebKitAPI.Printing.DrawPagesToPDFSynchronouslyDuringDOMPrint
 [ mac ] TestWebKitAPI.Printing/PrintWithJSExecutionOptionTests
 [ mac ] TestWebKitAPI.PrivateClickMeasurement.Basic
 [ mac ] TestWebKitAPI.PrivateClickMeasurement.DaemonBasicFunctionality
@@ -7631,6 +7557,34 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.SafeBrowsing.WarningShownAfterCOOPProcessSwapWithSkippedResponseSlowLookup
 [ mac ] TestWebKitAPI.SafeBrowsing.WarningShownAfterRedirectWithLateResult
 [ mac ] TestWebKitAPI.SafeBrowsing.WarningShownWhenLookupCompletesBeforeResponse
+[ mac ] TestWebKitAPI.ScreenTime.CreateControllerAfterOffscreenWebViewBecomesInWindow
+[ mac ] TestWebKitAPI.ScreenTime.FetchData
+[ mac ] TestWebKitAPI.ScreenTime.IsBlockedByScreenTimeFalse
+[ mac ] TestWebKitAPI.ScreenTime.IsBlockedByScreenTimeKVO
+[ mac ] TestWebKitAPI.ScreenTime.IsBlockedByScreenTimeMultiple
+[ mac ] TestWebKitAPI.ScreenTime.IsBlockedByScreenTimeTrue
+[ mac ] TestWebKitAPI.ScreenTime.NonPersistentSession
+[ mac ] TestWebKitAPI.ScreenTime.OffscreenBlurredScreenTimeBlockingView
+[ mac ] TestWebKitAPI.ScreenTime.OffscreenSystemScreenTimeBlockingView
+[ mac ] TestWebKitAPI.ScreenTime.RemoveData
+[ mac ] TestWebKitAPI.ScreenTime.RemoveDataDoesNotMatchUnanchoredHostSuffix
+[ mac ] TestWebKitAPI.ScreenTime.ScreenTimeControllerInstalledAfterRestoreFromSessionState
+[ mac ] TestWebKitAPI.ScreenTime.ScreenTimeControllerNotInstalledForNoChildRestrictions
+[ mac ] TestWebKitAPI.ScreenTime.ScreenTimeControllerSetsURLWhenOffscreenWebViewBecomesInWindow
+[ mac ] TestWebKitAPI.ScreenTime.ScreenTimeControllerViewOnlyInstalledForHTTPFamily
+[ mac ] TestWebKitAPI.ScreenTime.ShowSystemScreenTimeBlockingFalse
+[ mac ] TestWebKitAPI.ScreenTime.ShowSystemScreenTimeBlockingFalseAndRemoved
+[ mac ] TestWebKitAPI.ScreenTime.ShowSystemScreenTimeBlockingTrue
+[ mac ] TestWebKitAPI.ScreenTime.URLIsPlayingVideo
+[ mac ] TestWebKitAPI.ScreenTime.WebContentIsNotClickableBehindBlurredBlockingView
+[ mac ] TestWebKitAPI.ScreenTime.WebContentIsNotClickableBehindSystemScreenTimeBlockingView
+[ mac ] TestWebKitAPI.ScrollbarTests/detectsCustomScrollbarInSubscroller()
+[ mac ] TestWebKitAPI.ScrollbarTests/detectsHorizontalScrollbarInSubscroller(inset:expectHit:)
+[ mac ] TestWebKitAPI.ScrollbarTests/detectsVerticalScrollbarInSubframe(inset:expectHit:)
+[ mac ] TestWebKitAPI.ScrollbarTests/detectsVerticalScrollbarInSubscroller(inset:expectHit:)
+[ mac ] TestWebKitAPI.ScrollbarTests/ignoresScrollbarHiddenByStyleInSubscroller()
+[ mac ] TestWebKitAPI.ScrollbarTests/ignoresSubscrollerScrollbarClippedByAncestor()
+[ mac ] TestWebKitAPI.ScrollbarTests/ignoresSubscrollerScrollbarCoveredByOtherContent()
 [ mac ] TestWebKitAPI.ServiceWorker.ExtensionServiceWorkerFailureBadScript
 [ mac ] TestWebKitAPI.ServiceWorker.ExtensionServiceWorkerFailureBadURL
 [ mac ] TestWebKitAPI.ServiceWorker.ExtensionServiceWorkerFailureViewClosed
@@ -7659,6 +7613,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.SiteIsolation.AttachmentIconInCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.AttributedSubstringInCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.CandidateRectInCrossOriginIframe
+[ mac ] TestWebKitAPI.SiteIsolation.CaptionDisplaySettingsPreviewInCrossSiteIframe
 [ mac ] TestWebKitAPI.SiteIsolation.CenterSelectionInVisibleAreaInCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.ChangeFontAttributesInCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.ChangeSpellingInCrossOriginIframe
@@ -7714,10 +7669,13 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.SiteIsolation.OpenPanelTranscodedImageReachesCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.OverlayScrollbarStyleChangeUpdatesCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.PopunderPreventedByConsumedAction
+[ mac ] TestWebKitAPI.SiteIsolation.PrintProcessIsKeptUntilPrintingEnds
 [ mac ] TestWebKitAPI.SiteIsolation.ReadSelectionFromPasteboardInCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.RemoteFrameMediaInheritsUserGestureFromMainFrame
 [ mac ] TestWebKitAPI.SiteIsolation.RemoveIframeWithActiveScrollProxyNodes
 [ mac ] TestWebKitAPI.SiteIsolation.ScrollerStyleChangeUpdatesCrossOriginIframe
+[ mac ] TestWebKitAPI.SiteIsolation.ScrollerStyleChangeUpdatesNestedIframes
+[ mac ] TestWebKitAPI.SiteIsolation.ScrollerStyleChangeUpdatesNestedIframesWithoutSiteIsolation
 [ mac ] TestWebKitAPI.SiteIsolation.SelectElementPopupAfterFocusChangesDuringTracking
 [ mac ] TestWebKitAPI.SiteIsolation.SelectPopupMenuLocationInCrossSiteIframe
 [ mac ] TestWebKitAPI.SiteIsolation.SelectPopupMenuLocationInCrossSiteIframeWithScrolledMainFrame
@@ -7735,6 +7693,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.SiteIsolation.ShouldDelayWindowOrderingOverSelectionInFocusedCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.StorageAccessUnderOpenerWithRemoteFrameOpener
 [ mac ] TestWebKitAPI.SiteIsolation.TransientActivationFromUserGestureIsPreservedAfterForcedUserGestureInCrossOriginIframe
+[ mac ] TestWebKitAPI.SiteIsolation.TranslatePopoverInCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.TypingAttributesInCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.URLSchemeTask
 [ mac ] TestWebKitAPI.SiteIsolation.UndoAfterCrossOriginIframeProcessCrashesDoesNotOfferRedo
@@ -7745,6 +7704,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.SiteIsolation.ValidationMessageAnchorInScrolledCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.ValidationMessageAnchorInScrolledCrossOriginIframeWithScrolledMainFrame
 [ mac ] TestWebKitAPI.SiteIsolation.WindowFeaturesOnlyAppliedInMainFrameProcess
+[ mac ] TestWebKitAPI.SiteIsolation.WindowFrameChangeUpdatesCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.WriteSelectionToPasteboardInCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolationLookUpTests/lookUpAtPointOverCrossOriginIframeFindsWordInIframe()
 [ mac ] TestWebKitAPI.TextExtractionTests/keyPressInsertsBracketCharacters()
@@ -7781,7 +7741,9 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.UnifiedPDF.PDFHUDMultipleIFrames
 [ mac ] TestWebKitAPI.UnifiedPDF.PDFHUDMultiplePluginsDoNotInterceptHitTesting
 [ mac ] TestWebKitAPI.UnifiedPDF.PDFHUDNestedIFrames
+[ mac ] TestWebKitAPI.UnifiedPDF.PageZoomBeyondPluginMaximumDoesNotTerminateWebProcess
 [ mac ] TestWebKitAPI.UnifiedPDF.RemoteSnapshotPaintsPageContent
+[ mac ] TestWebKitAPI.UnifiedPDF.TextZoomBeyondPluginMaximumDoesNotTerminateWebProcess
 [ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFDataDetection.HighlightAndMenuAccountForMainFrameScroll/CrossOrigin_SiteIsolationDisabled_SiteIsolationSharedProcessDisabled
 [ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFDataDetection.HighlightAndMenuAccountForMainFrameScroll/CrossOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessDisabled
 [ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFDataDetection.HighlightAndMenuAccountForMainFrameScroll/CrossOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessEnabled
@@ -7800,6 +7762,12 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFDataDetection.HighlightAndMenuAreAtThePhoneNumberInNestedFrame/SameOrigin_SiteIsolationDisabled_SiteIsolationSharedProcessDisabled
 [ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFDataDetection.HighlightAndMenuAreAtThePhoneNumberInNestedFrame/SameOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessDisabled
 [ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFDataDetection.HighlightAndMenuAreAtThePhoneNumberInNestedFrame/SameOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessEnabled
+[ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFDataDetection.HighlightButtonStaysInViewWhenFrameIsPartlyOutOfView/CrossOrigin_SiteIsolationDisabled_SiteIsolationSharedProcessDisabled
+[ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFDataDetection.HighlightButtonStaysInViewWhenFrameIsPartlyOutOfView/CrossOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessDisabled
+[ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFDataDetection.HighlightButtonStaysInViewWhenFrameIsPartlyOutOfView/CrossOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessEnabled
+[ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFDataDetection.HighlightButtonStaysInViewWhenFrameIsPartlyOutOfView/SameOrigin_SiteIsolationDisabled_SiteIsolationSharedProcessDisabled
+[ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFDataDetection.HighlightButtonStaysInViewWhenFrameIsPartlyOutOfView/SameOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessDisabled
+[ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFDataDetection.HighlightButtonStaysInViewWhenFrameIsPartlyOutOfView/SameOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessEnabled
 [ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFHUDAfterPinch.HUDScalesWithPinchZoom/Embed_CrossOrigin_SiteIsolationDisabled_SiteIsolationSharedProcessDisabled_UnifiedMacZoomDisabled
 [ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFHUDAfterPinch.HUDScalesWithPinchZoom/Embed_CrossOrigin_SiteIsolationEnabled_SiteIsolationSharedProcessDisabled_UnifiedMacZoomDisabled
 [ mac ] TestWebKitAPI.UnifiedPDF/EmbeddedPDFHUDAfterPinch.HUDScalesWithPinchZoom/IFrame_CrossOrigin_SiteIsolationDisabled_SiteIsolationSharedProcessDisabled_UnifiedMacZoomDisabled
@@ -8080,8 +8048,10 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ClearMenuItemIconVariantsWithNull
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ClickedMenuItemAndPermissionsRequest
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ContextMenusNamespace
+[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ContextType
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.CreateMenuWithDeprecatedKeys
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.Errors
+[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ItemType
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MacActiveTabContextMenuItems
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MacAudioContextMenuItems
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MacContextMenuItems
@@ -8124,6 +8094,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecuteScriptWithoutUserGesture
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecutionWorld
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.GetContentScripts
+[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.InjectExtensionScriptElementWithStrictDynamicReportOnlyCSP
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.InjectScriptWithTrustedTypesCSP
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.InjectedOnlyOnce
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.InsertAndRemoveCSS
@@ -8216,33 +8187,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventWithoutPrivateAccess
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.UserGestureWithoutActiveTab
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Zoom
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.AddAnonymousAsyncTest
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.AddAnonymousTest
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.AddAsyncTestThatFails
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.AddAsyncTestThatPasses
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.AddAsyncTestThatThrows
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.AddMultipleAsyncTestsThatPass
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.AddMultipleAsyncTestsWithFailure
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.AddMultipleTestsThatPass
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.AddMultipleTestsWithFailure
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.AddTestThatFails
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.AddTestThatPasses
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.AddTestThatThrows
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.MessageEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.MessageEventInContentScript
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.MessageEventInWebPage
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.MessageEventWithSendMessageReply
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.RunAnonymousTests
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.RunTestsThatPass
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.RunTestsVerifyFailedTestAborts
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.RunTestsWithAsyncTestThatFails
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.RunTestsWithTestThatFails
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.SendMessage
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.SendMessageBeforeListenerAdded
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.SendMessageMultipleTimes
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.SendMessageOutOfOrder
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.TestFinishedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITest.TestStartedEvent
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.AllEventsFired
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.AllowedFilter
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.BeforeNavigateEvent
@@ -8263,6 +8207,10 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/create()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createIncognitoWithPrivateAccess()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createIncognitoWithoutPrivateAccess()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createWithDataURL()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createWithFileURLIsRejected()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createWithFileURLWhenFileAccessIsAllowed()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createWithJavaScriptURLIsRejected()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createWithRelativeURL()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createWithRelativeURLs()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createdEvent()
@@ -8363,33 +8311,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebsiteDataStore.SessionSetCount
 [ mac ] TestWebKitAPI.WKWebsiteDataStorePrivate.CompletionHandlerForRemovalFromNetworkProcess
 [ mac ] TestWebKitAPI.WKWebsiteDataStorePrivate.ThirdPartyCookieBlockingModeUnchangedBetweenViews
-[ mac ] TestWebKitAPI.WebArchive.CookieAccessAfterLoadData
-[ mac ] TestWebKitAPI.WebArchive.CookieAccessAfterLoadRequest
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesBasic
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesBlobURL
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesCSSImportRule
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesCSSMediaRule
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesCSSSupportsRule
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesCrossOriginLink
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesDataURL
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesDeclarativeShadowDOM
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesEmptyStyleSheet
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesExcludeBaseElement
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesExcludeCrossOriginAttribute
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesExclusionRules
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesFrame
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesIframe
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesIframeInIframe
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesIframesWithSameURL
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesInlineStyle
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesLink
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesLinksWithSameURL
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesResponsiveImages
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesShadowDOM
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesStyle
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesStyleWithUnloadedResources
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesValidFileName
-[ mac ] TestWebKitAPI.WebArchive.SaveResourcesWithUTF8Encoding
 [ mac ] TestWebKitAPI.WebAuthenticationPanel.CloseHidCancel
 [ mac ] TestWebKitAPI.WebAuthenticationPanel.LocationChangeHidCancel
 [ mac ] TestWebKitAPI.WebAuthenticationPanel.MakeCredentialInternalUV
@@ -8608,6 +8529,25 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WebKitLegacy.SetDocumentURITestURL
 [ mac ] TestWebKitAPI.WebKitLegacy.WindowlessWebViewWithMedia
 [ mac ] TestWebKitAPI.WebKitLegacy.WordBoundaryTypingAttributes
+[ mac ] TestWebKitAPI.WebPageMouseEventsTests/mouseDownUpFiresClickHandler()
+[ mac ] TestWebKitAPI.WebPageMouseEventsTests/mouseMoveFiresMouseMoveHandler()
+[ mac ] TestWebKitAPI.WebPageMouseEventsTests/sendingMouseMovedToWebViewDoesNotReachPage()
+[ mac ] TestWebKitAPI.WebTransport.AllowedNetworkHosts
+[ mac ] TestWebKitAPI.WebTransport.BackForwardCache
+[ mac ] TestWebKitAPI.WebTransport.CSP
+[ mac ] TestWebKitAPI.WebTransport.ClientBidirectional
+[ mac ] TestWebKitAPI.WebTransport.ClientBidirectionalBYOB
+[ mac ] TestWebKitAPI.WebTransport.CreateStreamsBeforeReady
+[ mac ] TestWebKitAPI.WebTransport.Datagram
+[ mac ] TestWebKitAPI.WebTransport.ExportKeyingMaterial
+[ mac ] TestWebKitAPI.WebTransport.NetworkProcessCrash
+[ mac ] TestWebKitAPI.WebTransport.ServerBidirectional
+[ mac ] TestWebKitAPI.WebTransport.ServerCertificateHashes
+[ mac ] TestWebKitAPI.WebTransport.ServerConnectionTermination
+[ mac ] TestWebKitAPI.WebTransport.ServerDrain
+[ mac ] TestWebKitAPI.WebTransport.Unidirectional
+[ mac ] TestWebKitAPI.WebTransport.Worker
+[ mac ] TestWebKitAPI.WebTransport.WorkerAfterNetworkProcessCrash
 [ mac ] TestWebKitAPI.WebpagePreferences.CustomHeaderFields
 [ mac ] TestWebKitAPI.WebpagePreferences.ExtensionPageAdvancedPrivacyProtectionsReferrer
 [ mac ] TestWebKitAPI.WebpagePreferences.LoadHTMLString
