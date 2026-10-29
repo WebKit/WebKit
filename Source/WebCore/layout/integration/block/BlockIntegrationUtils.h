@@ -105,6 +105,7 @@ public:
         struct MarginsOfKeptBlockLevelBoxes {
             Layout::AdjoiningMargins before;
             Layout::AdjoiningMargins after;
+            bool afterAreQuirky { false };
         };
         std::optional<MarginsOfKeptBlockLevelBoxes> marginsOfKeptBlockLevelBoxes { };
     };
