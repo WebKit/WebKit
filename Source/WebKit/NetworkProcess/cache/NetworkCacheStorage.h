@@ -109,6 +109,7 @@ public:
     void remove(const Key&);
     void remove(const Vector<Key>&, CompletionHandler<void()>&&);
     void clear(String&& type, WallTime modifiedSinceTime, CompletionHandler<void()>&&);
+    Vector<Key> pendingWriteKeys(const String& type, const std::optional<String>& partition) const;
 
     struct RecordInfo {
         size_t bodySize;

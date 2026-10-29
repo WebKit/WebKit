@@ -1,0 +1,15 @@
+Test that Clear-Site-Data: "cache" removes resources that have not been written to the disk cache yet
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Loading resource
+Clearing the cache with Clear-Site-Data before the resource is written to disk
+Loading resource again
+response headers: {"Cache-control":"max-age=100"}
+response source: Network
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

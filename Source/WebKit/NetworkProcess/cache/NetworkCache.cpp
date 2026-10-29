@@ -715,6 +715,14 @@ Vector<Key> Cache::compressionDictionaryKeys(const String& partition) const
     });
 }
 
+Vector<Key> Cache::pendingKeys(OptionSet<RecordType> types, const std::optional<String>& partition) const
+{
+    Vector<Key> keys;
+    for (auto type : types)
+        keys.appendVector(m_storage->pendingWriteKeys(recordTypeName(type), partition));
+    return keys;
+}
+
 void Cache::populateCompressionDictionaryIndex()
 {
     m_compressionDictionaryIndexPopulation.emplace();
@@ -1076,14 +1084,20 @@ void Cache::deleteData(const Vector<WebCore::SecurityOriginData>& origins, Compl
     for (auto& origin : borrow(origins))
         originSet.add(origin);
 
+    auto matches = [originSet = WTF::move(originSet)](const URL& url) {
+        return originSet.contains(WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(url));
+    };
+
     Vector<NetworkCache::Key> keysToDelete;
-    traverseRecords([this, protectedThis = Ref { *this }, originSet = WTF::move(originSet), completionHandler = WTF::move(completionHandler), keysToDelete = WTF::move(keysToDelete)](auto* traversalRecord) mutable {
+    for (auto& key : pendingKeys({ RecordType::Resource, RecordType::CompressionDictionary })) {
+        if (matches(URL { key.identifier() }))
+            keysToDelete.append(key);
+    }
+
+    traverseRecords([this, protectedThis = Ref { *this }, matches = WTF::move(matches), completionHandler = WTF::move(completionHandler), keysToDelete = WTF::move(keysToDelete)](auto* traversalRecord) mutable {
         if (traversalRecord) {
             auto url = traversalRecord->url();
-            if (!url)
-                return;
-
-            if (originSet.contains(WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(*url)))
+            if (url && matches(*url))
                 keysToDelete.append(traversalRecord->record.key);
             return;
         }
@@ -1098,18 +1112,31 @@ void Cache::deleteDataForRegistrableDomains(const Vector<WebCore::RegistrableDom
     for (auto& domain : borrow(domains))
         domainSet.add(domain);
 
+    auto matchingDomain = [domainSet = WTF::move(domainSet)](const URL& url) -> std::optional<WebCore::RegistrableDomain> {
+        WebCore::RegistrableDomain domain { url };
+        if (!domainSet.contains(domain))
+            return std::nullopt;
+        return domain;
+    };
+
     Vector<NetworkCache::Key> keysToDelete;
     HashSet<WebCore::RegistrableDomain> domainsDeleted;
-    traverseRecords([this, protectedThis = Ref { *this }, domainSet = WTF::move(domainSet), completionHandler = WTF::move(completionHandler), keysToDelete = WTF::move(keysToDelete), domainsDeleted = WTF::move(domainsDeleted)](auto* traversalRecord) mutable {
+    for (auto& key : pendingKeys({ RecordType::Resource, RecordType::CompressionDictionary })) {
+        if (auto domain = matchingDomain(URL { key.identifier() })) {
+            keysToDelete.append(key);
+            domainsDeleted.add(WTF::move(*domain));
+        }
+    }
+
+    traverseRecords([this, protectedThis = Ref { *this }, matchingDomain = WTF::move(matchingDomain), completionHandler = WTF::move(completionHandler), keysToDelete = WTF::move(keysToDelete), domainsDeleted = WTF::move(domainsDeleted)](auto* traversalRecord) mutable {
         if (traversalRecord) {
             auto url = traversalRecord->url();
             if (!url)
                 return;
 
-            auto domain = WebCore::RegistrableDomain { *url };
-            if (domainSet.contains(domain)) {
+            if (auto domain = matchingDomain(*url)) {
                 keysToDelete.append(traversalRecord->record.key);
-                domainsDeleted.add(domain);
+                domainsDeleted.add(WTF::move(*domain));
             }
             return;
         }

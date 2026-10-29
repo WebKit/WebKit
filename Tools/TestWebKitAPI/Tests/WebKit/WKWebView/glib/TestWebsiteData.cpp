@@ -530,6 +530,55 @@ static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
     g_assert_null(dataList);
 }
 
+static void testWebsiteDataCacheClearPendingWrites(WebsiteDataTest* test, gconstpointer)
+{
+    static const WebKitWebsiteDataTypes cacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
+
+    test->clear(cacheTypes, 0);
+    g_assert_null(test->fetch(cacheTypes));
+
+    test->loadURI(kServer->getURIForPath("/empty"));
+    test->waitUntilLoadFinished();
+
+    // The disk cache delays its first write by 1 second, so the resource is still waiting to be
+    // stored when the cache is cleared.
+    test->clear(WEBKIT_WEBSITE_DATA_DISK_CACHE, 0);
+    test->wait(2);
+    g_assert_null(test->fetch(WEBKIT_WEBSITE_DATA_DISK_CACHE));
+
+    test->clear(cacheTypes, 0);
+    test->loadURI(kServer->getURIForPath("/empty"));
+    test->waitUntilLoadFinished();
+
+    // Clearing data modified since the last microsecond does not cancel an older pending write.
+    test->clear(WEBKIT_WEBSITE_DATA_DISK_CACHE, 1);
+    GList* dataList = waitUntilSingleEntryHasTypes(test, WEBKIT_WEBSITE_DATA_DISK_CACHE, WEBKIT_WEBSITE_DATA_DISK_CACHE);
+    g_assert_nonnull(dataList);
+
+    test->clear(cacheTypes, 0);
+}
+
+static void testWebsiteDataCacheRemovePendingWrites(WebsiteDataTest* test, gconstpointer)
+{
+    static const WebKitWebsiteDataTypes cacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
+
+    test->clear(cacheTypes, 0);
+    g_assert_null(test->fetch(cacheTypes));
+
+    test->loadURI(kServer->getURIForPath("/empty"));
+    test->waitUntilLoadFinished();
+
+    // The resource is still waiting to be stored in the disk cache, so the origin is only listed
+    // for the memory cache when its cache data is removed.
+    GList* dataList = test->fetch(cacheTypes);
+    g_assert_nonnull(dataList);
+    test->remove(cacheTypes, dataList);
+    test->wait(2);
+    g_assert_null(test->fetch(WEBKIT_WEBSITE_DATA_DISK_CACHE));
+
+    test->clear(cacheTypes, 0);
+}
+
 static guint64 diskCacheSize(WebsiteDataTest* test)
 {
     GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_DISK_CACHE);
@@ -663,6 +712,28 @@ static void testWebsiteDataCompressionDictionaryOtherOrigin(WebsiteDataTest* tes
     guint64 sizeAfter = waitUntilDiskCacheSizeIsAtMost(test, sizeWithBoth - kCompressionDictionaryLength);
     g_assert_cmpuint(sizeWithBoth - sizeAfter, >=, kCompressionDictionaryLength);
     g_assert_cmpuint(sizeAfter, >=, 3 * kCompressionDictionaryLength);
+
+    test->clear(cacheTypes, 0);
+}
+
+static void testWebsiteDataCompressionDictionaryRemovePendingWrites(WebsiteDataTest* test, gconstpointer)
+{
+    static const WebKitWebsiteDataTypes cacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
+
+    test->clear(cacheTypes, 0);
+    g_assert_null(test->fetch(cacheTypes));
+
+    WebViewTest::NetworkPolicyGuard guard(test, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+    enableCompressionDictionary(test);
+
+    // The dictionary record and the regular cache entry are still waiting to be stored in the disk
+    // cache, so the origin is only listed for the memory cache when its cache data is removed.
+    loadCompressionDictionaryPage(test, kHttpsServer, "1");
+    GList* dataList = test->fetch(cacheTypes);
+    g_assert_nonnull(dataList);
+    test->remove(cacheTypes, dataList);
+    test->wait(2);
+    g_assert_null(test->fetch(WEBKIT_WEBSITE_DATA_DISK_CACHE));
 
     test->clear(cacheTypes, 0);
 }
@@ -1194,9 +1265,12 @@ void beforeAll()
     WebsiteDataTest::add("WebKitWebsiteData", "configuration", testWebsiteDataConfiguration);
     WebViewTest::add("WebKitWebsiteData", "ephemeral", testWebsiteDataEphemeral);
     WebsiteDataTest::add("WebKitWebsiteData", "cache", testWebsiteDataCache);
+    WebsiteDataTest::add("WebKitWebsiteData", "cache-clear-pending-writes", testWebsiteDataCacheClearPendingWrites);
+    WebsiteDataTest::add("WebKitWebsiteData", "cache-remove-pending-writes", testWebsiteDataCacheRemovePendingWrites);
     WebsiteDataTest::add("WebKitWebsiteData", "compression-dictionary", testWebsiteDataCompressionDictionary);
     WebsiteDataTest::add("WebKitWebsiteData", "compression-dictionary-foreign-match", testWebsiteDataCompressionDictionaryForeignMatch);
     WebsiteDataTest::add("WebKitWebsiteData", "compression-dictionary-other-origin", testWebsiteDataCompressionDictionaryOtherOrigin);
+    WebsiteDataTest::add("WebKitWebsiteData", "compression-dictionary-remove-pending-writes", testWebsiteDataCompressionDictionaryRemovePendingWrites);
     WebsiteDataTest::add("WebKitWebsiteData", "storage", testWebsiteDataStorage);
     WebsiteDataTest::add("WebKitWebsiteData", "databases", testWebsiteDataDatabases);
     WebsiteDataTest::add("WebKitWebsiteData", "cookies", testWebsiteDataCookies);

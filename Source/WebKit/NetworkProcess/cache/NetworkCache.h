@@ -221,6 +221,7 @@ public:
     };
     std::optional<CompressionDictionaryMatch> bestCompressionDictionaryMatch(const WebCore::ResourceRequest&, WebCore::FetchOptions::Destination);
     Vector<Key> compressionDictionaryKeys(const String& partition) const;
+    Vector<Key> pendingKeys(OptionSet<RecordType>, const std::optional<String>& partition = std::nullopt) const;
     void retrieveCompressionDictionary(const Key&, const CompressionDictionaryHash&, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 
     std::unique_ptr<Entry> update(const WebCore::ResourceRequest&, const Entry&, const WebCore::ResourceResponse& validatingResponse, PrivateRelayed);
