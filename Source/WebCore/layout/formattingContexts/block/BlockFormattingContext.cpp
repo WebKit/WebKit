@@ -180,7 +180,7 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
         }
         auto contentLogicalBottom = blockContainerStateAfterLayout.contentBoxLogicalTop() + inlineContentLayoutResult.contentBlockSize;
         if (inlineContentLayoutResult.endsWithBlockLevelBox)
-            marginCollapse.resetAdjoiningMargins(contentLogicalBottom, margins->after);
+            marginCollapse.resetAdjoiningMargins(contentLogicalBottom, margins->after, margins->afterAreQuirky);
         else
             marginCollapse.resetAdjoiningMarginsAfterLineBoxes(contentLogicalBottom);
         return;
@@ -205,7 +205,7 @@ BlockLevelBoxInInlineContent BlockFormattingContext::layoutBlockLevelBoxInInline
     if (lineCount > blockContainerState.lineCountThroughLastBlockLevelBox) {
         if (!blockContainerState.borderBoxLogicalTop)
             resolveBorderBoxLogicalTops(blockContainerState);
-        m_blockLayoutState.marginCollapse().resetAdjoiningMargins(*blockContainerState.borderBoxLogicalTop + lineLogicalTop);
+        m_blockLayoutState.marginCollapse().separateMarginsAtLineBox(*blockContainerState.borderBoxLogicalTop + lineLogicalTop);
     }
     // Its own line is one more line with content.
     blockContainerState.lineCountThroughLastBlockLevelBox = lineCount + 1;

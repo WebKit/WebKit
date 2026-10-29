@@ -1,0 +1,9 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<body style="position: absolute; margin: 0; border: 2px solid">
+<div id="before" style="height: 10px"></div>
+<div><span><p>the quirky block-end margin of this paragraph does not count, also when the lines it is in stay</p></span></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("before").style.height = "20px";
+</script>
+</body>
