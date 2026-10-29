@@ -54,7 +54,7 @@ class WebKitWebResourceLoadManager;
 
 WebKit::WebPageProxy& webkitWebViewGetPage(WebKitWebView*);
 void webkitWebViewWillStartLoad(WebKitWebView*);
-void webkitWebViewLoadChanged(WebKitWebView*, WebKitLoadEvent);
+void webkitWebViewLoadChanged(WebKitWebView*, WebKitLoadEvent, API::Navigation* = nullptr);
 void webkitWebViewLoadFailed(WebKitWebView*, WebKitLoadEvent, const String& failingURI, GError*);
 void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView*, const String& failingURI, GError*, GTlsCertificateFlags, GTlsCertificate*);
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)

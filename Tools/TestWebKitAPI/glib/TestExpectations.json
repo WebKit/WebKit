@@ -1,13 +1,4 @@
 {
-    "TestAuthentication": {
-        "subtests": {
-            "/webkit/Authentication/authentication-success": {
-                "expected": {
-                    "wpe": {"status": ["PASS", "TIMEOUT", "FAIL"], "bug": "webkit.org/b/281822"}
-                }
-            }
-        }
-    },
     "TestBackForwardList": {
         "subtests": {
             "/webkit/BackForwardList/list-limit-and-cache": {

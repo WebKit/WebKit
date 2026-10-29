@@ -451,6 +451,7 @@ struct _WebKitWebViewPrivate {
 #endif
 
     GRefPtr<WebKitAuthenticationRequest> authenticationRequest;
+    Markable<WebCore::NavigationIdentifier> authenticationRequestNavigationID;
 
 #if ENABLE(2022_GLIB_API)
     GRefPtr<WebKitNetworkSession> networkSession;
@@ -2775,6 +2776,11 @@ static void webkitWebViewCompleteAuthenticationRequest(WebKitWebView* webView)
     priv->authenticationRequest = nullptr;
 }
 
+static bool webkitWebViewAuthenticationRequestIsForNavigation(WebKitWebView* webView, API::Navigation* navigation)
+{
+    return navigation && webView->priv->authenticationRequest && navigation->navigationID() == webView->priv->authenticationRequestNavigationID;
+}
+
 WebPageProxy& webkitWebViewGetPage(WebKitWebView* webView)
 {
     return getPage(webView);
@@ -2802,7 +2808,7 @@ void webkitWebViewWillStartLoad(WebKitWebView* webView)
         error.get());
 }
 
-void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
+void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, API::Navigation* navigation)
 {
     WebKitWebViewPrivate* priv = webView->priv;
     switch (loadEvent) {
@@ -2811,7 +2817,8 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
         webkitWebViewCancelFaviconRequest(webView);
         webkitWebViewWatchForChangesInFavicon(webView);
 #endif
-        webkitWebViewCompleteAuthenticationRequest(webView);
+        if (!webkitWebViewAuthenticationRequestIsForNavigation(webView, navigation))
+            webkitWebViewCompleteAuthenticationRequest(webView);
         priv->mainResource = nullptr;
         webView->priv->isActiveURIChangeBlocked = false;
         break;
@@ -3269,6 +3276,7 @@ void webkitWebViewHandleAuthenticationChallenge(WebKitWebView* webView, Authenti
     bool credentialStorageEnabled = webkit_website_data_manager_get_persistent_credential_storage_enabled(websiteDataManager);
 #endif
     webView->priv->authenticationRequest = adoptGRef(webkitAuthenticationRequestCreate(authenticationChallenge, webkitWebViewIsEphemeral(webView), credentialStorageEnabled));
+    webView->priv->authenticationRequestNavigationID = getPage(webView).pageLoadState().pendingAPIRequest().navigationID;
     gboolean returnValue;
     g_signal_emit(webView, signals[AUTHENTICATE], 0, webView->priv->authenticationRequest.get(), &returnValue);
 }

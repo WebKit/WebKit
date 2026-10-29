@@ -51,9 +51,9 @@ public:
     }
 
 private:
-    void didStartProvisionalNavigation(WebPageProxy&, const ResourceRequest&, API::Navigation*, API::Object* /* userData */) override
+    void didStartProvisionalNavigation(WebPageProxy&, const ResourceRequest&, API::Navigation* navigation, API::Object* /* userData */) override
     {
-        webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_STARTED);
+        webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_STARTED, navigation);
     }
 
     void didReceiveServerRedirectForProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object* /* userData */) override
