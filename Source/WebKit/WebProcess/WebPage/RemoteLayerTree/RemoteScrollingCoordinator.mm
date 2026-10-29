@@ -117,6 +117,7 @@ RemoteScrollingCoordinatorTransaction RemoteScrollingCoordinator::buildTransacti
         protect(ensureScrollingStateTreeForRootFrameID(rootFrameID))->commit(LayerRepresentation::PlatformLayerIDRepresentation),
         std::exchange(m_clearScrollLatchingInNextTransaction, false),
         { },
+        m_rootFramesNeedingFullCommit.remove(rootFrameID),
         RemoteScrollingCoordinatorTransaction::FromDeserialization::No
     };
 }
@@ -229,7 +230,7 @@ void RemoteScrollingCoordinator::scrollUpdateForNode(ScrollUpdate&& update, Comp
 
             LOG_WITH_STREAM(Scrolling, stream << " identifier " << requestIdentifier << " is the last sent; updating scroll position to " << update.scrollPosition << ". firing scrollend " << (fireScrollEnd == ShouldFireScrollEnd::Yes));
 
-            if (responseData.requestType == ScrollRequestType::PositionUpdate) {
+            if (responseData.requestType == ScrollRequestType::PositionUpdate && !responseData.wasDiscarded) {
                 auto scrollUpdate = ScrollUpdate {
                     .nodeID = update.nodeID,
                     .scrollPosition = update.scrollPosition,
@@ -344,6 +345,7 @@ void RemoteScrollingCoordinator::requestFullScrollingTreeCommit(FrameIdentifier 
 {
     // The UI process dropped the subtree we contributed to its scrolling tree, so the properties we
     // would send in an ordinary incremental commit are no longer enough to rebuild it.
+    m_rootFramesNeedingFullCommit.add(rootFrameID);
     setAllScrollingStatePropertiesChangedForRootFrameID(rootFrameID);
 }
 

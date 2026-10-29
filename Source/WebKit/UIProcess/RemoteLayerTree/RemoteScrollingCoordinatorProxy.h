@@ -244,8 +244,11 @@ protected:
     void sendUIStateChangedIfNecessary();
 
 private:
+    void respondToScrollRequestsInDiscardedCommit(const WebCore::ScrollingStateTree&, WebCore::FrameIdentifier);
+
     WeakRef<WebPageProxy> m_webPageProxy;
     const Ref<RemoteScrollingTree> m_scrollingTree;
+    HashSet<WebCore::FrameIdentifier> m_framesAwaitingFullScrollingTreeCommit;
 
 protected:
     WebCore::ScrollRequestData m_scrollRequestData;

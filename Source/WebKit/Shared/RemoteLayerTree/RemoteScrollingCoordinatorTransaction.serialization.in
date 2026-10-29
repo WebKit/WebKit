@@ -26,6 +26,7 @@ class WebKit::RemoteScrollingCoordinatorTransaction {
     std::unique_ptr<WebCore::ScrollingStateTree> scrollingStateTree()
     bool clearScrollLatching()
     std::optional<WebCore::FrameIdentifier> rootFrameIdentifier()
+    bool isFullCommit()
 }
 
 [CreateUsing=createAfterReconstruction] class WebCore::ScrollingStateTree {

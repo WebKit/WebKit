@@ -41,7 +41,7 @@ class RemoteScrollingCoordinatorTransaction {
 public:
     enum class FromDeserialization : bool { No, Yes };
     RemoteScrollingCoordinatorTransaction();
-    RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&&, bool, std::optional<WebCore::FrameIdentifier> = std::nullopt, FromDeserialization = FromDeserialization::Yes);
+    RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&&, bool, std::optional<WebCore::FrameIdentifier> = std::nullopt, bool isFullCommit = false, FromDeserialization = FromDeserialization::Yes);
     RemoteScrollingCoordinatorTransaction(RemoteScrollingCoordinatorTransaction&&);
     RemoteScrollingCoordinatorTransaction& operator=(RemoteScrollingCoordinatorTransaction&&);
     ~RemoteScrollingCoordinatorTransaction();
@@ -53,6 +53,7 @@ public:
     void setFrameIdentifier(WebCore::FrameIdentifier identifier) { m_rootFrameID = identifier; }
 
     bool clearScrollLatching() const { return m_clearScrollLatching; }
+    bool isFullCommit() const { return m_isFullCommit; }
 
 #if !defined(NDEBUG) || !LOG_DISABLED
     String description() const;
@@ -65,6 +66,7 @@ private:
     // Data encoded here should be "imperative" (valid just for one transaction). Stateful things should live on scrolling tree nodes.
     // Maybe RequestedScrollData should move here.
     bool m_clearScrollLatching { false };
+    bool m_isFullCommit { false };
 
     // Frame Identifier for the root frame of this transaction
     Markable<WebCore::FrameIdentifier> m_rootFrameID;

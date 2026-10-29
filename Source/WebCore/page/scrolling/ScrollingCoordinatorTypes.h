@@ -186,6 +186,7 @@ struct ScrollUpdateData {
 struct ScrollRequestResponseData {
     ScrollRequestType requestType { ScrollRequestType::PositionUpdate };
     Markable<ScrollRequestIdentifier> responseIdentifier { };
+    bool wasDiscarded { false };
 };
 
 struct ScrollUpdate {

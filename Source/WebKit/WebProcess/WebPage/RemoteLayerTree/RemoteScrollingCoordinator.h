@@ -121,7 +121,8 @@ private:
     NodeAndGestureState m_currentWheelGestureInfo;
 
     bool m_clearScrollLatchingInNextTransaction { false };
-    
+    HashSet<WebCore::FrameIdentifier> m_rootFramesNeedingFullCommit;
+
     std::optional<bool> m_currentWheelEventWillStartSwipe;
 };
 
