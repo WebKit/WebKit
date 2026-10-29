@@ -24,11 +24,12 @@ import os
 import time
 from unittest.mock import Mock, patch
 
-from webkitbugspy import mocks as bmocks
+from webkitbugspy import Issue, mocks as bmocks
 from webkitcorepy import OutputCapture, testing
 from webkitcorepy.mocks import Time as MockTime
 
 from webkitscmpy import Commit, Contributor, local, mocks, program
+from webkitscmpy.program.conflict import Conflict
 
 
 class TestConflict(testing.PathTestCase):
@@ -48,12 +49,22 @@ class TestConflict(testing.PathTestCase):
 
         self.assertEqual(captured.stderr.getvalue(), 'No repository provided\n')
 
-    def _mock_radar_response(self, *args, **kwargs):
+    @staticmethod
+    def _mock_radar_response(*args, **kwargs):
         rdar = bmocks.Radar()
         rdar.sourceChanges = 'WebKit, merge, sha123'
         rdar.source_changes = rdar.sourceChanges.splitlines()
         rdar.id = 1234
+        rdar.comments = []
         return rdar
+
+    @staticmethod
+    def _pr(number, title='Cherry-pick(s)', body='Cherry-pick(s). rdar://1234', head='integration/conflict/sha_sha', base='main', state='open'):
+        return dict(
+            number=number, state=state, title=title, user=dict(login='tcontributor'), body=body,
+            head=dict(ref=head, repo=dict(full_name='tcontributor')),
+            base=dict(ref=base), requested_reviews=[], reviews=[], draft=False,
+        )
 
     def test_conflict_not_found(self):
         with (
@@ -67,7 +78,92 @@ class TestConflict(testing.PathTestCase):
                 path=self.path,
             ))
 
-            self.assertEqual(captured.stderr.getvalue(), 'No conflict pull request found with branch integration/conflict/1234\n')
+            self.assertEqual(captured.stderr.getvalue(), 'No conflict pull request found for rdar://1234, check out the conflict pull request linked in the merge conflict alert instead\n')
+
+    def test_conflict_no_radar_access(self):
+        with (
+            OutputCapture() as captured,
+            mocks.remote.GitHub() as remote,
+            mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)),
+            patch('webkitscmpy.program.conflict.Tracker.from_string', lambda *args, **kwargs: None)
+        ):
+            self.assertEqual(1, program.main(
+                args=('conflict', '1234'),
+                path=self.path,
+            ))
+
+            self.assertEqual(captured.stderr.getvalue(), 'Unable to access rdar://1234, check out the conflict pull request linked in the merge conflict alert instead\n')
+
+    def test_conflict_via_comments_validates_radar_reference(self):
+        radar_obj = Mock(id=1234)
+        with mocks.remote.GitHub() as remote:
+            remote.pull_requests = [
+                self._pr(1, title='Unrelated change', body='No radar reference here.', head='eng/unrelated'),
+                self._pr(2),
+            ]
+            radar_obj.comments = [
+                Issue.Comment(user=None, timestamp=200, content='See also https://{}/pull/1'.format(remote.remote)),
+                Issue.Comment(user=None, timestamp=100, content='Conflict PR: https://{}/pull/2'.format(remote.remote)),
+            ]
+
+            self.assertEqual(Conflict.find_conflict_pr_via_comments(radar_obj).number, 2)
+
+    def test_conflict_via_comments_prefers_most_recent_open(self):
+        radar_obj = Mock(id=1234)
+        with mocks.remote.GitHub() as remote:
+            remote.pull_requests = [self._pr(1), self._pr(2), self._pr(3, state='closed')]
+            radar_obj.comments = [
+                Issue.Comment(user=None, timestamp=100, content='Conflict PR: https://{}/pull/1'.format(remote.remote)),
+                Issue.Comment(user=None, timestamp=200, content='Conflict PR: https://{}/pull/2'.format(remote.remote)),
+                Issue.Comment(user=None, timestamp=300, content='Conflict PR: https://{}/pull/3'.format(remote.remote)),
+            ]
+
+            self.assertEqual(Conflict.find_conflict_pr_via_comments(radar_obj).number, 2)
+
+    def test_conflict_via_comments_filters_by_branch(self):
+        radar_obj = Mock(id=1234)
+        with mocks.remote.GitHub() as remote:
+            remote.pull_requests = [self._pr(1, base='safari-7626-branch'), self._pr(2)]
+            radar_obj.comments = [
+                Issue.Comment(user=None, timestamp=100, content='Conflict PR: https://{}/pull/1'.format(remote.remote)),
+                Issue.Comment(user=None, timestamp=200, content='Conflict PR: https://{}/pull/2'.format(remote.remote)),
+            ]
+
+            self.assertEqual(Conflict.find_conflict_pr_via_comments(radar_obj, branch='safari-7626-branch').number, 1)
+
+    def test_conflict_via_comments_no_matching_pr(self):
+        radar_obj = Mock(id=1234)
+        with mocks.remote.GitHub() as remote:
+            remote.pull_requests = [self._pr(1, title='Unrelated change', body='No radar reference here.', head='eng/unrelated')]
+            radar_obj.comments = [
+                Issue.Comment(user=None, timestamp=100, content='See also https://{}/pull/1'.format(remote.remote)),
+            ]
+
+            self.assertIsNone(Conflict.find_conflict_pr_via_comments(radar_obj))
+
+    def test_conflict_multiple_matches(self):
+        with (
+            OutputCapture() as captured,
+            mocks.remote.GitHub() as remote,
+            mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)),
+            patch('webkitscmpy.program.conflict.Tracker.from_string', TestConflict._mock_radar_response)
+        ):
+            remote.pull_requests = [
+                self._pr(1, head='integration/conflict/sha123_sha123_main'),
+                self._pr(2, head='integration/conflict/sha123_sha123_safari-7626-branch', base='safari-7626-branch'),
+            ]
+            self.assertEqual(1, program.main(
+                args=('conflict', '1234'),
+                path=self.path,
+            ))
+
+            self.assertEqual(
+                captured.stderr.getvalue(),
+                'Multiple conflict pull requests found for rdar://1234:\n'
+                '    tcontributor/WebKit:integration/conflict/sha123_sha123_main (targeting main)\n'
+                '    tcontributor/WebKit:integration/conflict/sha123_sha123_safari-7626-branch (targeting safari-7626-branch)\n'
+                'Re-run with --branch <target branch> to pick one\n',
+            )
 
     def test_conflict_found(self):
         with (
@@ -76,7 +172,6 @@ class TestConflict(testing.PathTestCase):
             mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo,
             mocks.local.Svn(),
             patch('webkitscmpy.program.conflict.Tracker.from_string', TestConflict._mock_radar_response),
-            patch('webkitscmpy.program.conflict.Conflict.get_open_integration_prs', lambda x: [Mock(head='integration/conflict/sha123_sha123/target_branch', _metadata={'full_name': 'tcontributor'})])
         ):
             remote.users = dict(
                 rreviewer=Contributor('Ricky Reviewer', ['rreviewer@webkit.org'], github='rreviewer'),
@@ -100,12 +195,12 @@ class TestConflict(testing.PathTestCase):
             Reviewed by NOBODY (OOPS!).
             </pre>
             ''',
-                head=dict(ref='tcontributor:integration/conflict/sha123_sha123/target_branch'),
+                head=dict(ref='integration/conflict/sha123_sha123/target_branch', repo=dict(full_name='tcontributor')),
                 base=dict(ref='main'),
                 requested_reviews=[dict(login='rreviewer')],
                 reviews=[dict(user=dict(login='rreviewer'), state='CHANGES_REQUESTED')],
                 draft=False,
-            )]
+            ), self._pr(2, head='integration/conflict/sha123_sha123_safari-7626-branch', base='safari-7626-branch')]
             repo.edit_config('remote.tcontributor.url', 'https://github.com/tcontributor/WebKit')
             repo.commits['remotes/tcontributor/integration/conflict/sha123_sha123/target_branch'] = [
                 repo.commits[repo.default_branch][2],
@@ -120,7 +215,7 @@ class TestConflict(testing.PathTestCase):
             self.assertEqual('d8bce26fa65c6fc8f39c17927abb77f69fab82fc', local.Git(self.path).commit().hash)
 
             self.assertEqual('integration/conflict/sha123_sha123/target_branch', program.main(
-                args=('conflict', '1234'),
+                args=('conflict', '1234', '--branch', 'main'),
                 path=self.path,
             ).branch)
 
