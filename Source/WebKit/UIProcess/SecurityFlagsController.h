@@ -56,8 +56,8 @@ private:
     SecurityFlagsController();
 
     enum class IncludePersistentNames : bool { No, Yes };
-    SecurityFlags flagsWithNamesDisabled(const Vector<String>&, IncludePersistentNames) const;
-    void apply(SecurityFlags&&);
+    SecurityFlags::Storage flagsWithNamesDisabled(const Vector<String>&, IncludePersistentNames) const;
+    void apply(SecurityFlags::Storage&&);
     void propagateToChildProcesses();
 
     static Vector<String> platformPersistentlyDisabledFlagNames();

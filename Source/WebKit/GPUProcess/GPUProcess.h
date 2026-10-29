@@ -260,7 +260,7 @@ private:
     void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
     void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
-    void securityFlagsDidChange(SecurityFlags&&);
+    void securityFlagsDidChange(SecurityFlags::Storage&&);
     void addSession(PAL::SessionID, GPUProcessSessionParameters&&);
     void removeSession(PAL::SessionID);
     void updateSandboxAccess(const Vector<SandboxExtension::Handle>&);

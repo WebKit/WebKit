@@ -174,7 +174,7 @@ void ModelProcessProxy::sharedPreferencesForWebProcessDidChange(WebProcessProxy&
     sendWithAsyncReply(Messages::ModelProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTF::move(sharedPreferencesForWebProcess) }, WTF::move(completionHandler));
 }
 
-void ModelProcessProxy::securityFlagsDidChange(const SecurityFlags& securityFlags)
+void ModelProcessProxy::securityFlagsDidChange(const SecurityFlags::Storage& securityFlags)
 {
     send(Messages::ModelProcess::SecurityFlagsDidChange { securityFlags }, 0);
 }

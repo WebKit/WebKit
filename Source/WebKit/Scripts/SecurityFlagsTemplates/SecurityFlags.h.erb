@@ -30,21 +30,30 @@
 #include <array>
 #include <optional>
 #include <wtf/BitSet.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/text/StringView.h>
 
-namespace WebKit {
+namespace WebKit::SecurityFlags {
 
 // Generated from Source/WTF/Scripts/Preferences/SecurityFlags.yaml. Stores the *disabled* flags, so zero means every fix is enforced.
 // Reads are atomic per flag, so a check may run on any thread. Never send this to the WebContent process.
-struct SecurityFlags {
+struct Storage {
     // A flag's bit is its sorted position and is not stable across versions; the wire form carries names, not bits.
     static constexpr size_t flagCount = <%= @securityFlags.size %>;
 
-    SecurityFlags() = default;
-    SecurityFlags(const SecurityFlags&) = default;
+    Storage() = default;
+    Storage(const Storage&) = default;
 
     // Overwriting the words in place is not safe against a reader on another thread, so replaceWith() is the only way.
-    SecurityFlags& operator=(const SecurityFlags&) = delete;
+    Storage& operator=(const Storage&) = delete;
+
+    // The value for this process. Inline so that a Swift caller resolves the read here, rather than through a symbol
+    // this framework does not export.
+    static const Storage& forProcess()
+    {
+        ASSERT(!isInWebProcess());
+        return s_forProcess;
+    }
 
 <% @securityFlags.each do |flag| -%>
 <%- if flag.condition -%>
@@ -61,12 +70,12 @@ struct SecurityFlags {
     bool disableFlagNamed(StringView);
 
     // Applies one flag at a time, so a reader on another thread always sees a well-defined value for the flag it asked about.
-    void replaceWith(const SecurityFlags&);
+    void replaceWith(const Storage&);
 
-    // Replaces the value securityFlags() answers for this process; true when that value changed.
-    static bool update(SecurityFlags&&);
+    // Replaces the value forProcess() answers; true when that value changed.
+    static bool update(Storage&&);
 
-    bool operator==(const SecurityFlags&) const = default;
+    bool operator==(const Storage&) const = default;
 
     // Nullopt if this build has no flag by that name.
     std::optional<bool> isFlagEnabledNamedForTesting(StringView) const;
@@ -84,7 +93,7 @@ struct SecurityFlags {
         return words;
     }
 
-    static std::optional<SecurityFlags> fromDisabledFlagsForIPC(std::array<uint64_t, ipcWordCount> words)
+    static std::optional<Storage> fromDisabledFlagsForIPC(std::array<uint64_t, ipcWordCount> words)
     {
         // A bit belonging to no flag can only be a sender bug, so reject rather than quietly dropping it.
         for (size_t index = flagCount; index < ipcWordCount * 64; ++index) {
@@ -92,7 +101,7 @@ struct SecurityFlags {
                 return std::nullopt;
         }
 
-        SecurityFlags flags;
+        Storage flags;
         for (size_t index = 0; index < flagCount; ++index) {
             if (words[index / 64] & (1ULL << (index % 64)))
                 flags.m_disabledFlags.set(index);
@@ -101,14 +110,27 @@ struct SecurityFlags {
     }
 
 private:
-    friend const SecurityFlags& securityFlags();
-
-    static SecurityFlags s_flagsForProcess;
+    static Storage s_forProcess;
 
     WTF::BitSet<flagCount> m_disabledFlags;
 };
 
-// The one value for this process. The WebContent process is never given one, so reading there is a bug.
-const SecurityFlags& securityFlags();
+// A flag check, in C++ and in Swift alike: SecurityFlags::radarNNNNNN().
+<% @securityFlags.each do |flag| -%>
+<%- if flag.condition -%>
+#if <%= flag.condition %>
+<%- end -%>
+inline bool <%= flag.name %>() { return Storage::forProcess().<%= flag.name %>(); }
+<%- if flag.condition -%>
+#endif
+<%- end -%>
+<% end -%>
+
+} // namespace WebKit::SecurityFlags
+
+namespace WebKit {
+
+// For the code that hands the whole value on, such as process creation parameters.
+inline const SecurityFlags::Storage& securityFlags() { return SecurityFlags::Storage::forProcess(); }
 
 } // namespace WebKit

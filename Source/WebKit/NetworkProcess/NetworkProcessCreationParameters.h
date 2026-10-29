@@ -49,7 +49,7 @@ struct WebsiteDataStoreParameters;
 struct NetworkProcessCreationParameters {
     AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
 
-    SecurityFlags securityFlags;
+    SecurityFlags::Storage securityFlags;
 
     CacheModel cacheModel { CacheModel::DocumentViewer };
 

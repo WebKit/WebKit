@@ -554,7 +554,7 @@ void GPUProcessProxy::sharedPreferencesForWebProcessDidChange(WebProcessProxy& w
     sendWithAsyncReply(Messages::GPUProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTF::move(sharedPreferencesForWebProcess) }, WTF::move(completionHandler));
 }
 
-void GPUProcessProxy::securityFlagsDidChange(const SecurityFlags& securityFlags)
+void GPUProcessProxy::securityFlagsDidChange(const SecurityFlags::Storage& securityFlags)
 {
     send(Messages::GPUProcess::SecurityFlagsDidChange { securityFlags }, 0);
 }

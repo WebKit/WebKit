@@ -407,7 +407,7 @@ void NetworkProcessProxy::sharedPreferencesForWebProcessDidChange(WebProcessProx
     sendWithAsyncReply(Messages::NetworkProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTF::move(sharedPreferencesForWebProcess) }, WTF::move(completionHandler));
 }
 
-void NetworkProcessProxy::securityFlagsDidChange(const SecurityFlags& securityFlags)
+void NetworkProcessProxy::securityFlagsDidChange(const SecurityFlags::Storage& securityFlags)
 {
     send(Messages::NetworkProcess::SecurityFlagsDidChange { securityFlags }, 0);
 }

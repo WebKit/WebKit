@@ -783,23 +783,23 @@ TEST(ArgumentCoderShareableResourceHandle, OverflowingOffsetAndSizeIsRejectedNot
 TEST(ArgumentCoderSecurityFlags, SecureDefaultRoundTrips)
 {
     IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);
-    encoder << WebKit::SecurityFlags { };
+    encoder << WebKit::SecurityFlags::Storage { };
 
     auto decoder = IPC::Decoder::create(encoder.span(), { });
     ASSERT_TRUE(decoder);
 
-    auto flags = decoder->decode<WebKit::SecurityFlags>();
+    auto flags = decoder->decode<WebKit::SecurityFlags::Storage>();
     ASSERT_TRUE(flags.has_value());
-    EXPECT_TRUE(*flags == WebKit::SecurityFlags { });
+    EXPECT_TRUE(*flags == WebKit::SecurityFlags::Storage { });
 }
 
 TEST(ArgumentCoderSecurityFlags, DisabledFlagRoundTrips)
 {
-    std::array<uint64_t, WebKit::SecurityFlags::ipcWordCount> words { };
+    std::array<uint64_t, WebKit::SecurityFlags::Storage::ipcWordCount> words { };
     words[0] |= 1ULL;
-    auto original = WebKit::SecurityFlags::fromDisabledFlagsForIPC(words);
+    auto original = WebKit::SecurityFlags::Storage::fromDisabledFlagsForIPC(words);
     ASSERT_TRUE(original.has_value());
-    EXPECT_FALSE(*original == WebKit::SecurityFlags { });
+    EXPECT_FALSE(*original == WebKit::SecurityFlags::Storage { });
 
     IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);
     encoder << *original;
@@ -807,7 +807,7 @@ TEST(ArgumentCoderSecurityFlags, DisabledFlagRoundTrips)
     auto decoder = IPC::Decoder::create(encoder.span(), { });
     ASSERT_TRUE(decoder);
 
-    auto flags = decoder->decode<WebKit::SecurityFlags>();
+    auto flags = decoder->decode<WebKit::SecurityFlags::Storage>();
     ASSERT_TRUE(flags.has_value());
     EXPECT_TRUE(*flags == *original);
     EXPECT_EQ(flags->disabledFlagsForIPC(), words);
@@ -817,11 +817,11 @@ TEST(ArgumentCoderSecurityFlags, BitBelongingToNoFlagIsRejectedNotCrashed)
 {
     // A flag count that fills the last word leaves no bit for this test to set, and flagCount / 64 would then
     // index one past the end.
-    if constexpr (!(WebKit::SecurityFlags::flagCount % 64))
+    if constexpr (!(WebKit::SecurityFlags::Storage::flagCount % 64))
         GTEST_SKIP() << "every bit belongs to a flag at this flag count";
     else {
-        std::array<uint64_t, WebKit::SecurityFlags::ipcWordCount> words { };
-        words[WebKit::SecurityFlags::flagCount / 64] |= 1ULL << (WebKit::SecurityFlags::flagCount % 64);
+        std::array<uint64_t, WebKit::SecurityFlags::Storage::ipcWordCount> words { };
+        words[WebKit::SecurityFlags::Storage::flagCount / 64] |= 1ULL << (WebKit::SecurityFlags::Storage::flagCount % 64);
 
         IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);
         encoder << words;
@@ -829,7 +829,7 @@ TEST(ArgumentCoderSecurityFlags, BitBelongingToNoFlagIsRejectedNotCrashed)
         auto decoder = IPC::Decoder::create(encoder.span(), { });
         ASSERT_TRUE(decoder);
 
-        auto flags = decoder->decode<WebKit::SecurityFlags>();
+        auto flags = decoder->decode<WebKit::SecurityFlags::Storage>();
         EXPECT_FALSE(flags.has_value());
     }
 }

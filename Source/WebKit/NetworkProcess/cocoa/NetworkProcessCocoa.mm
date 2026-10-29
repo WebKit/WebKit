@@ -124,7 +124,7 @@ static void blockNetworkAccessIfNeeded(IPC::Connection* parentProcessConnection)
 
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
-    RELEASE_LOG(Process, "SecurityFlags: radar184485266 is %" PUBLIC_LOG_STRING, securityFlags().radar184485266() ? "enforced" : "disabled");
+    RELEASE_LOG(Process, "SecurityFlags: radar184485266 is %" PUBLIC_LOG_STRING, SecurityFlags::radar184485266() ? "enforced" : "disabled");
 
     m_isParentProcessFullWebBrowserOrRunningTest = parameters.isParentProcessFullWebBrowserOrRunningTest;
 #if PLATFORM(IOS_FAMILY)

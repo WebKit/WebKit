@@ -563,7 +563,7 @@ private:
     void initializeNetworkProcess(NetworkProcessCreationParameters&&, CompletionHandler<void()>&&);
     void createNetworkConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&,  CompletionHandler<void(std::optional<IPC::Connection::Handle>&&, WebCore::HTTPCookieAcceptPolicy)>&&);
     void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
-    void securityFlagsDidChange(SecurityFlags&&);
+    void securityFlagsDidChange(SecurityFlags::Storage&&);
     void isSecurityFlagEnabledForTesting(const String&, CompletionHandler<void(std::optional<bool>)>&&);
 
     void fetchWebsitesWithUserInteractions(PAL::SessionID, CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>&&)>&&);

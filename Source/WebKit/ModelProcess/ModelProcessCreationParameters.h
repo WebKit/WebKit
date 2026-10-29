@@ -35,7 +35,7 @@ namespace WebKit {
 
 struct ModelProcessCreationParameters {
     AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
-    SecurityFlags securityFlags;
+    SecurityFlags::Storage securityFlags;
     ProcessID parentPID;
     String applicationVisibleName;
     bool restrictiveRenderingMode { false };

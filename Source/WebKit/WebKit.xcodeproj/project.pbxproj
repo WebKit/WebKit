@@ -3700,6 +3700,7 @@
 		07EF07582745A8160066EA04 /* DisplayCaptureSessionManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayCaptureSessionManager.mm; sourceTree = "<group>"; };
 		07EF07592745A8160066EA04 /* DisplayCaptureSessionManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayCaptureSessionManager.h; sourceTree = "<group>"; };
 		07EF24BE2E309EFE004429B6 /* WebKitInternalCxx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitInternalCxx.h; sourceTree = "<group>"; };
+		5E55104200000000000C0001 /* SecurityFlagsForSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecurityFlagsForSwift.h; sourceTree = "<group>"; };
 		07F0337B30107D3900B69551 /* WKFastScrollTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKFastScrollTracker.swift; sourceTree = "<group>"; };
 		07F0337D3B2E1A0044AABBCC /* WKDirectionalScrollLockTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKDirectionalScrollLockTracker.swift; sourceTree = "<group>"; };
 		07F1A2B52F900F010000DA03 /* WKWebView+RefreshControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKWebView+RefreshControl.swift"; sourceTree = "<group>"; };
@@ -9720,6 +9721,7 @@
 			isa = PBXGroup;
 			children = (
 				0744DA532CE05F9500AACC81 /* module.modulemap */,
+				5E55104200000000000C0001 /* SecurityFlagsForSwift.h */,
 				07EF24BE2E309EFE004429B6 /* WebKitInternalCxx.h */,
 			);
 			path = Internal;

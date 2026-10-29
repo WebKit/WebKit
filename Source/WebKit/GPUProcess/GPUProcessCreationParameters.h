@@ -49,7 +49,7 @@ namespace WebKit {
 
 struct GPUProcessCreationParameters {
     AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
-    SecurityFlags securityFlags;
+    SecurityFlags::Storage securityFlags;
 #if ENABLE(MEDIA_STREAM)
     bool useMockCaptureDevices { false };
 #if PLATFORM(MAC)

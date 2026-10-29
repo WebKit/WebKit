@@ -124,7 +124,7 @@ enum class WebsiteDataType : uint32_t;
 
 struct FrameInfoData;
 struct NetworkProcessCreationParameters;
-struct SecurityFlags;
+namespace SecurityFlags { struct Storage; }
 struct ResourceLoadInfo;
 struct WebPushMessage;
 struct WebsiteData;
@@ -156,7 +156,7 @@ public:
     void getNetworkProcessConnection(WebProcessProxy&, CompletionHandler<void(NetworkProcessConnectionInfo&&)>&&);
 
     void sharedPreferencesForWebProcessDidChange(WebProcessProxy&, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
-    void securityFlagsDidChange(const SecurityFlags&);
+    void securityFlagsDidChange(const SecurityFlags::Storage&);
     void isSecurityFlagEnabledForTesting(const String&, CompletionHandler<void(std::optional<bool>)>&&);
 
     Ref<DownloadProxy> createDownloadProxy(WebsiteDataStore&, Ref<API::DownloadClient>&&, const WebCore::ResourceRequest&, const std::optional<FrameInfoData>&, WebPageProxy* originatingPage);
