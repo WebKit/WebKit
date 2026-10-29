@@ -1009,6 +1009,30 @@ TEST_F(FileSystemTest, isAncestor)
     );
 }
 
+TEST_F(FileSystemTest, pathIsSameOrDescendantOf)
+{
+    EXPECT_TRUE(FileSystem::pathIsSameOrDescendantOf("/Users/x/Downloads"_s, "/Users/x/Downloads"_s));
+    EXPECT_TRUE(FileSystem::pathIsSameOrDescendantOf("/Users/x/Downloads/"_s, "/Users/x/Downloads"_s));
+    EXPECT_TRUE(FileSystem::pathIsSameOrDescendantOf("/Users/x/Downloads"_s, "/Users/x/Downloads/"_s));
+    EXPECT_TRUE(FileSystem::pathIsSameOrDescendantOf("/Users/x/Downloads/file.html"_s, "/Users/x/Downloads"_s));
+    EXPECT_TRUE(FileSystem::pathIsSameOrDescendantOf("/Users/x/Downloads/a/b/file.html"_s, "/Users/x/Downloads"_s));
+
+    EXPECT_FALSE(FileSystem::pathIsSameOrDescendantOf("/Users/x/Downloads-evil/secret"_s, "/Users/x/Downloads"_s));
+    EXPECT_FALSE(FileSystem::pathIsSameOrDescendantOf("/Users/x/Downloadsx"_s, "/Users/x/Downloads"_s));
+    EXPECT_FALSE(FileSystem::pathIsSameOrDescendantOf("/Users/x"_s, "/Users/x/Downloads"_s));
+    EXPECT_FALSE(FileSystem::pathIsSameOrDescendantOf("/Users/y/Downloads"_s, "/Users/x/Downloads"_s));
+
+    EXPECT_TRUE(FileSystem::pathIsSameOrDescendantOf("/Users/x/Downloads/"_s, "/Users/x/Downloads/"_s));
+    EXPECT_TRUE(FileSystem::pathIsSameOrDescendantOf("/Users/x/Downloads/file.html"_s, "/Users/x/Downloads/"_s));
+    EXPECT_FALSE(FileSystem::pathIsSameOrDescendantOf("/Users/x/Downloads-evil/secret"_s, "/Users/x/Downloads/"_s));
+    EXPECT_TRUE(FileSystem::pathIsSameOrDescendantOf("/"_s, "/"_s));
+    EXPECT_TRUE(FileSystem::pathIsSameOrDescendantOf("/Users/x/file.html"_s, "/"_s));
+
+    EXPECT_FALSE(FileSystem::pathIsSameOrDescendantOf("/Users/x/file.html"_s, ""_s));
+    EXPECT_FALSE(FileSystem::pathIsSameOrDescendantOf(""_s, ""_s));
+    EXPECT_FALSE(FileSystem::pathIsSameOrDescendantOf(""_s, "/Users/x/Downloads"_s));
+}
+
 #if !OS(WINDOWS)
 // The third parameter to WTF::openTemporaryFile() is ignored on Windows.
 TEST_F(FileSystemTest, createTemporaryFileInDirectory)

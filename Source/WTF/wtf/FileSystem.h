@@ -238,6 +238,16 @@ WTF_EXPORT_PRIVATE MappedFileData mapToFile(const String& path, size_t bytesSize
 WTF_EXPORT_PRIVATE MappedFileData createMappedFileData(const String&, size_t, FileHandle* = nullptr);
 WTF_EXPORT_PRIVATE void finalizeMappedFileData(MappedFileData&, size_t);
 
+// Purely lexical: unlike isAncestor(), "." and ".." components are not resolved.
+inline bool pathIsSameOrDescendantOf(StringView path, StringView ancestor)
+{
+    if (ancestor.length() > 1 && ancestor.endsWith('/'))
+        ancestor = ancestor.left(ancestor.length() - 1);
+    if (ancestor.isEmpty() || !path.startsWith(ancestor))
+        return false;
+    return path.length() == ancestor.length() || ancestor.endsWith('/') || path[ancestor.length()] == '/';
+}
+
 } // namespace FileSystemImpl
 } // namespace WTF
 

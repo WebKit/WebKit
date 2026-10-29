@@ -19773,7 +19773,7 @@ bool WebPageProxy::checkURLReceivedFromCurrentOrPreviousWebProcess(WebProcessPro
 
     String path = url.fileSystemPath();
     auto startsWithURLPath = [&path](const String& visitedPath) {
-        return path.startsWith(visitedPath);
+        return FileSystem::pathIsSameOrDescendantOf(path, visitedPath);
     };
 
     if (std::ranges::find_if(m_previouslyVisitedPaths, startsWithURLPath) != m_previouslyVisitedPaths.end())
