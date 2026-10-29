@@ -314,6 +314,7 @@ private:
     void updateCallFrame(JSC::JSGlobalObject*, JSC::CallFrame*, CallFrameUpdateAction);
     void updateCallFrameInternal(JSC::CallFrame*);
     void pauseIfNeeded(JSC::JSGlobalObject*);
+    BlackboxFlags blackboxFlagsAtPosition(SourceID, const TextPosition&) const;
     void resetImmediatePauseState();
     void LEGACY_NODELETE resetEventualPauseState();
     void resetAsyncPauseState();

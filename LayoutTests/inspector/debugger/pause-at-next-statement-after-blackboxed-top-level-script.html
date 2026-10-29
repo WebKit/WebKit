@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+window.addEventListener("message", function pageMessage(event) {
+    TestPage.dispatchEventToFrontend(event.data);
+});
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.PauseAtNextStatement.BlackboxedTopLevelScript");
+
+    const url = "BlackboxedScript.js";
+
+    suite.addTestCase({
+        name: "Debugger.PauseAtNextStatement.BlackboxedTopLevelScript",
+        description: "Pausing at the next statement should stop in the page code that follows a script blackboxed by URL, also when that script ran from the event loop.",
+        async setup() {
+            await InspectorTest.mainFrameTarget.DebuggerAgent.setShouldBlackboxURL.invoke({url, shouldBlackbox: true});
+        },
+        async test() {
+            let postMessagePromise = InspectorTest.awaitEvent("blackboxed-program-complete");
+            let pausePromise = WI.debuggerManager.pause();
+            let evaluatePromise = InspectorTest.evaluateInPage(`//# sourceURL=${url}
+                setTimeout("window.postMessage('blackboxed-program-complete', '*');\\n//# sourceURL=${url}");
+            `);
+
+            await pausePromise;
+            InspectorTest.expectEqual(WI.debuggerManager.activeCallFrame.functionName, "pageMessage", "Should pause in pageMessage.");
+
+            await WI.debuggerManager.resume();
+            await evaluatePromise;
+            await postMessagePromise;
+        },
+        async teardown() {
+            await InspectorTest.mainFrameTarget.DebuggerAgent.setShouldBlackboxURL.invoke({url, shouldBlackbox: false});
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that pausing at the next statement is kept while a script blackboxed by URL runs from the event loop.</p>
+</body>
+</html>

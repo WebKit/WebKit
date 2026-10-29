@@ -1021,6 +1021,24 @@ void Debugger::updateCallFrameInternal(CallFrame* callFrame)
     }
 }
 
+Debugger::BlackboxFlags Debugger::blackboxFlagsAtPosition(SourceID sourceID, const TextPosition& position) const
+{
+    // The end of a program is positioned at the end of its source, which a range reaching the end of the source must cover.
+    bool isAtEndOfProgram = m_reasonForPause == PausedAtEndOfProgram;
+
+    BlackboxFlags relevantBlackboxFlags;
+    if (const auto it = m_blackboxConfigurations.find(sourceID); it != m_blackboxConfigurations.end()) {
+        for (const auto& [blackboxRange, blackboxFlags] : it->value) {
+            if (position < blackboxRange.first || (isAtEndOfProgram ? position > blackboxRange.second : position >= blackboxRange.second))
+                continue;
+            relevantBlackboxFlags.add(blackboxFlags);
+            if (relevantBlackboxFlags.contains(BlackboxFlag::Ignore))
+                break;
+        }
+    }
+    return relevantBlackboxFlags;
+}
+
 void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
 {
     VM& vm = m_vm;
@@ -1039,19 +1057,9 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
     SourceID sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
     TextPosition position = DebuggerCallFrame::positionForCallFrame(vm, m_currentCallFrame);
 
-    // The end of a program is positioned at the end of its source, which a range reaching the end of the source must cover.
-    bool isAtEndOfProgram = m_reasonForPause == PausedAtEndOfProgram;
-
-    BlackboxFlags relevantBlackboxFlags;
-    if (const auto it = m_blackboxConfigurations.find(sourceID); it != m_blackboxConfigurations.end()) {
-        for (const auto& [blackboxRange, blackboxFlags] : it->value) {
-            if (position < blackboxRange.first || (isAtEndOfProgram ? position > blackboxRange.second : position >= blackboxRange.second))
-                continue;
-            relevantBlackboxFlags.add(blackboxFlags);
-            if (relevantBlackboxFlags.contains(BlackboxFlag::Ignore))
-                return;
-        }
-    }
+    BlackboxFlags relevantBlackboxFlags = blackboxFlagsAtPosition(sourceID, position);
+    if (relevantBlackboxFlags.contains(BlackboxFlag::Ignore))
+        return;
 
     bool afterBlackboxedScript = m_afterBlackboxedScript;
     bool pauseNow = false;
@@ -1439,6 +1447,12 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
     if (!m_currentCallFrame)
         return;
 
+    // A blackboxed program does not take a pending pause, so the next program still wants it.
+    SourceID sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
+    TextPosition position = DebuggerCallFrame::positionForCallFrame(m_vm, m_currentCallFrame);
+    bool shouldKeepPause = m_pauseAtNextOpportunity && !blackboxFlagsAtPosition(sourceID, position).isEmpty();
+    bool wasAfterBlackboxedScript = m_afterBlackboxedScript;
+
     EntryFrame* topEntryFrame = m_vm.topEntryFrame;
     CallFrame* callerFrame = m_currentCallFrame->callerFrame(topEntryFrame);
 
@@ -1458,6 +1472,11 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
         resetImmediatePauseState();
         resetEventualPauseState();
         m_deferredBreakpoints.clear();
+
+        if (shouldKeepPause) {
+            schedulePauseAtNextOpportunity();
+            m_afterBlackboxedScript = wasAfterBlackboxedScript;
+        }
     }
 }
 

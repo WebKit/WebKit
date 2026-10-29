@@ -1,0 +1,9 @@
+Tests that pausing at the next statement is kept while a script blackboxed by URL runs from the event loop.
+
+
+== Running test suite: Debugger.PauseAtNextStatement.BlackboxedTopLevelScript
+-- Running test setup.
+-- Running test case: Debugger.PauseAtNextStatement.BlackboxedTopLevelScript
+PASS: Should pause in pageMessage.
+-- Running test teardown.
+
