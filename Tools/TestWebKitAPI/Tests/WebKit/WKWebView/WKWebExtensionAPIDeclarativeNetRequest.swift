@@ -291,6 +291,38 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
     }
 
     @Test
+    func updateRulesWithEmptyOptions() async throws {
+        let backgroundScript = """
+            await browser.test.assertSafeResolve(() => browser.declarativeNetRequest.updateDynamicRules({ }))
+            await browser.test.assertSafeResolve(() => browser.declarativeNetRequest.updateSessionRules({ }))
+            await browser.test.assertSafeResolve(() => browser.declarativeNetRequest.updateEnabledRulesets({ }))
+            await browser.test.assertSafeResolve(() => browser.declarativeNetRequest.setExtensionActionOptions({ }))
+
+            browser.test.assertEq((await browser.declarativeNetRequest.getDynamicRules()).length, 0, 'Dynamic rules should be unchanged')
+            browser.test.assertEq((await browser.declarativeNetRequest.getEnabledRulesets()).length, 0, 'Enabled rulesets should be unchanged')
+
+            browser.test.notifyPass()
+            """
+
+        let declarativeNetRequestManifest: [String: Any] = [
+            "manifest_version": 3,
+            "permissions": ["declarativeNetRequest"],
+            "background": [
+                "scripts": ["background.js"],
+                "type": "module",
+                "persistent": false,
+            ],
+        ]
+
+        let manager = try loadWebExtension(manifest: declarativeNetRequestManifest, resources: ["background.js": backgroundScript])
+        let context = try #require(manager.context)
+
+        context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.declarativeNetRequest)
+
+        try await manager.run()
+    }
+
+    @Test
     func updateEnabledRulesets() async throws {
         let backgroundScript = """
             // Test invalid argument types

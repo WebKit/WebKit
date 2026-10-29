@@ -53,6 +53,22 @@ struct WKWebExtensionAPIWindowsTests {
     ]
 
     @Test
+    func updateWithEmptyProperties() async throws {
+        let backgroundScript = """
+            const currentWindow = await browser.windows.getCurrent()
+
+            const updatedWithEmptyProperties = await browser.test.assertSafeResolve(() => browser.windows.update(currentWindow.id, { }))
+            browser.test.assertEq(updatedWithEmptyProperties?.id, currentWindow.id, 'update({ }) should return the window')
+            browser.test.assertEq(updatedWithEmptyProperties?.state, currentWindow.state, 'The window should be unchanged')
+
+            browser.test.notifyPass()
+            """
+
+        let manager = try loadWebExtension(manifest: windowsManifest, resources: ["background.js": backgroundScript])
+        try await manager.run()
+    }
+
+    @Test
     func createTypeEnum() async throws {
         let backgroundScript = """
             browser.test.assertEq(typeof browser.windows.CreateType, 'object', 'CreateType should be an object')

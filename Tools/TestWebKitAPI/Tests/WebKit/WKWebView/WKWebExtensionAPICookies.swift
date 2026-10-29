@@ -203,6 +203,22 @@ struct WKWebExtensionAPICookiesTests {
     }
 
     @Test
+    func getAllWithoutDetails() async throws {
+        let backgroundScript = """
+            const withoutDetails = await browser.test.assertSafeResolve(() => browser.cookies.getAll())
+            const withEmptyDetails = await browser.test.assertSafeResolve(() => browser.cookies.getAll({ }))
+
+            browser.test.assertTrue(Array.isArray(withoutDetails), 'Cookies should be an array')
+            browser.test.assertEq(withoutDetails?.length, withEmptyDetails?.length, 'getAll() should match getAll({ })')
+
+            browser.test.notifyPass()
+            """
+
+        let manager = try loadWebExtension(manifest: cookiesManifest, resources: ["background.js": backgroundScript])
+        try await manager.run()
+    }
+
+    @Test
     func getAll() async throws {
         let backgroundScript = """
             const cookies = await browser.test.assertSafeResolve(() => browser.cookies.getAll({ }))
