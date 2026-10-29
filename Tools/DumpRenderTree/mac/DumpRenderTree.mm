@@ -2036,6 +2036,7 @@ static void runTest(const std::string& inputLine)
     lastMousePosition = NSZeroPoint;
     lastClickPosition = NSZeroPoint;
     lastButtonDown = 0;
+    [EventSendingController clearPressedMouseButtons];
 
     prevTestBFItem() = [[[mainFrame webView] backForwardList] currentItem];
 
