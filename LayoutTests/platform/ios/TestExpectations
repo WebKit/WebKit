@@ -8578,8 +8578,6 @@ fast/events/selection-clear-on-click-fractional-coordinates.html [ Skip ]
 
 webkit.org/b/261344 requestidlecallback/requestidlecallback-does-not-block-timer.html [ Pass Failure ] # rdar://178748996
 
-webkit.org/b/297669 http/tests/site-isolation/edge-sampling-viewport-constrained-object.html [ Pass Failure Crash ] # rdar://178675260
-
 webkit.org/b/295435 compositing/layer-creation/overlap-animation-container.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/css/css-break/block-in-inline-012.html [ ImageOnlyFailure ]
