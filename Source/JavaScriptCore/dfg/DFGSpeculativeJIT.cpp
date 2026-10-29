@@ -17858,7 +17858,7 @@ void SpeculativeJIT::compileStringStartsOrEndsWithConstant(Node* node, bool isSt
     JumpList slowCase;
 
     loadPtr(Address(baseGPR, JSString::offsetOfValue()), implGPR);
-    slowCase.append(branchIfRopeStringImpl(implGPR));
+    Jump isRope = branchIfRopeStringImpl(implGPR);
 
     load32(Address(implGPR, StringImpl::lengthMemoryOffset()), lengthGPR);
     falseCase.append(branch32(Below, lengthGPR, TrustedImm32(searchLength)));
@@ -17869,6 +17869,7 @@ void SpeculativeJIT::compileStringStartsOrEndsWithConstant(Node* node, bool isSt
     // Anchor implGPR at the start of the matched window: data[0] for startsWith, or
     // data[length - searchLength] for endsWith.
     loadPtr(Address(implGPR, StringImpl::dataOffset()), implGPR);
+    Label haveCharacters = label();
     if (!isStartsWith) {
         addPtr(lengthGPR, implGPR);
         subPtr(TrustedImm32(searchLength), implGPR);
@@ -17909,6 +17910,19 @@ void SpeculativeJIT::compileStringStartsOrEndsWithConstant(Node* node, bool isSt
         falseCase.append(branch32(NotEqual, scratchGPR, TrustedImm32(search[0])));
     }
     trueCase.append(jump());
+
+    isRope.link(this);
+    load32(Address(baseGPR, JSRopeString::offsetOfLength()), lengthGPR);
+    falseCase.append(branch32(Below, lengthGPR, TrustedImm32(searchLength)));
+    slowCase.append(branchTestPtr(Zero, implGPR, TrustedImm32(JSRopeString::isSubstringInPointer)));
+    load64(Address(baseGPR, JSRopeString::offsetOfFiber1Lower()), implGPR);
+    and64(TrustedImm64(JSRopeString::CompactFibers::addressMask), implGPR);
+    loadPtr(Address(implGPR, JSString::offsetOfValue()), implGPR);
+    slowCase.append(branchTest32(Zero, Address(implGPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit())));
+    loadPtr(Address(implGPR, StringImpl::dataOffset()), implGPR);
+    load32(Address(baseGPR, JSRopeString::offsetOfFiber2Lower()), scratchGPR);
+    addPtr(scratchGPR, implGPR);
+    jump().linkTo(haveCharacters, this);
 
     falseCase.link(this);
     move(TrustedImm32(0), implGPR);

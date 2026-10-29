@@ -12609,30 +12609,51 @@ IGNORE_CLANG_WARNINGS_END
 
         LBasicBlock notRopeCase = m_out.newBlock();
         LBasicBlock lengthOKCase = m_out.newBlock();
+        LBasicBlock ropeCase = m_out.newBlock();
+        LBasicBlock ropeLengthOKCase = m_out.newBlock();
+        LBasicBlock substringCase = m_out.newBlock();
         LBasicBlock is8BitCase = m_out.newBlock();
         LBasicBlock trueCase = m_out.newBlock();
         LBasicBlock falseCase = m_out.newBlock();
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        m_out.branch(isRopeString(base, m_node->child1()), rarely(slowCase), usually(notRopeCase));
+        m_out.branch(isRopeString(base, m_node->child1()), rarely(ropeCase), usually(notRopeCase));
 
         LBasicBlock lastNext = m_out.appendTo(notRopeCase, lengthOKCase);
         LValue impl = m_out.loadPtr(base, m_heaps.JSString_value);
         LValue length = m_out.load32(impl, m_heaps.StringImpl_length);
         m_out.branch(m_out.below(length, m_out.constInt32(searchLength)), unsure(falseCase), unsure(lengthOKCase));
 
-        m_out.appendTo(lengthOKCase, is8BitCase);
+        m_out.appendTo(lengthOKCase, ropeCase);
+        ValueFromBlock resolvedData = m_out.anchor(m_out.loadPtr(impl, m_heaps.StringImpl_data));
+        ValueFromBlock resolvedLength = m_out.anchor(length);
         m_out.branch(
             m_out.testIsZero32(m_out.load32(impl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIs8Bit())),
             rarely(slowCase), usually(is8BitCase));
 
+        m_out.appendTo(ropeCase, ropeLengthOKCase);
+        LValue ropeLength = m_out.load32NonNegative(base, m_heaps.JSRopeString_length);
+        m_out.branch(m_out.below(ropeLength, m_out.constInt32(searchLength)), unsure(falseCase), unsure(ropeLengthOKCase));
+
+        m_out.appendTo(ropeLengthOKCase, substringCase);
+        m_out.branch(
+            m_out.testIsZeroPtr(m_out.loadPtr(base, m_heaps.JSRopeString_fiber0), m_out.constIntPtr(JSRopeString::isSubstringInPointer)),
+            unsure(slowCase), unsure(substringCase));
+
+        m_out.appendTo(substringCase, is8BitCase);
+        auto [baseImpl, substringOffset] = substringRopeBaseImplAndOffset(base);
+        ValueFromBlock substringData = m_out.anchor(m_out.add(m_out.loadPtr(baseImpl, m_heaps.StringImpl_data), substringOffset));
+        ValueFromBlock substringLength = m_out.anchor(ropeLength);
+        m_out.branch(isNot8BitStringImpl(baseImpl), rarely(slowCase), usually(is8BitCase));
+
         m_out.appendTo(is8BitCase, trueCase);
         // Anchor the window at data[0] for startsWith, or data[length - searchLength] for endsWith.
-        LValue data = m_out.loadPtr(impl, m_heaps.StringImpl_data);
+        LValue data = m_out.phi(pointerType(), resolvedData, substringData);
+        LValue dataLength = m_out.phi(Int32, resolvedLength, substringLength);
         LValue windowBase = isStartsWith
             ? data
-            : m_out.add(data, m_out.zeroExtPtr(m_out.sub(length, m_out.constInt32(searchLength))));
+            : m_out.add(data, m_out.zeroExtPtr(m_out.sub(dataLength, m_out.constInt32(searchLength))));
 
         // Encode the search bytes as little-endian immediates so the comparison is a few
         // wide loads + compares, with overlap when searchLength isn't a power of two.
