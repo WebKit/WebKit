@@ -67,7 +67,7 @@ public:
         virtual void startDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID) = 0;
         virtual void stopDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID) = 0;
 
-        virtual void didEndSyntheticMomentumScrolling() = 0;
+        virtual void didEndSyntheticMomentumScrolling() { }
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
         virtual void flushMomentumEventLoggingSoon() = 0;
@@ -91,7 +91,7 @@ public:
 
 private:
     void didStartMomentumPhase(WebCore::PageIdentifier, const WebWheelEvent&);
-    void didEndMomentumPhase();
+    void didEndMomentumPhase(WebWheelEvent::MomentumEndType);
 
     bool eventShouldStartSyntheticMomentumPhase(WebCore::PageIdentifier, const WebWheelEvent&) const;
 
@@ -106,7 +106,7 @@ private:
     };
     std::optional<DisplayProperties> LEGACY_NODELETE displayProperties(WebCore::PageIdentifier) const;
 
-    void dispatchSyntheticMomentumEvent(WebWheelEvent::Phase, WebCore::FloatSize delta);
+    void dispatchSyntheticMomentumEvent(WebWheelEvent::Phase, WebCore::FloatSize delta, WebWheelEvent::MomentumEndType = WebWheelEvent::MomentumEndType::Unknown);
 
     void buildOffsetTableWithInitialDelta(WebCore::FloatSize);
     void equalizeTailGaps();

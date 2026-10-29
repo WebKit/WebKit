@@ -172,7 +172,6 @@ private:
     void handleSyntheticWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges);
     void startDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID);
     void stopDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID);
-    void didEndSyntheticMomentumScrolling();
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     void flushMomentumEventLoggingSoon();
 #endif

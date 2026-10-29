@@ -40,8 +40,7 @@ struct WKFastScrollTracker {
     private var lastVerticalDirection: Direction = .negative
 
     // Set when this gesture begins atop a live (decelerating) momentum. Unlike _caughtDeceleratingScroll it
-    // is not cleared by the async didEndSyntheticMomentumScrolling callback, so it remains valid until the
-    // gesture ends and consumes it.
+    // is not cleared when the momentum ends, so it remains valid until the gesture ends and consumes it.
     private var caughtMomentum = false
 
     private var gestureStartLocation = CGPoint.zero

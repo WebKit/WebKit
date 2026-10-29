@@ -2676,13 +2676,6 @@ void WebViewImpl::pageDidScroll(const IntPoint& scrollOffset)
     }
 }
 
-void WebViewImpl::didEndSyntheticMomentumScrolling()
-{
-#if HAVE(APPKIT_GESTURES_SUPPORT)
-    [appKitGestureController() didEndSyntheticMomentumScrolling];
-#endif
-}
-
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 
 void WebViewImpl::updateScrollPocketVisibilityWhenScrolledToTopAndNonEditable()
@@ -5732,6 +5725,10 @@ void WebViewImpl::scrollWheel(NSEvent *event)
 
     if (event.phase == NSEventPhaseBegan)
         dismissContentRelativeChildWindowsWithAnimation(false);
+
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    [m_appKitGestureController interruptMomentumForScrollWheelEvent];
+#endif
 
 #if HAVE(NSREFRESHCONTROLLER)
     updateRefreshControllerForWheelEvent(event);

@@ -29,11 +29,13 @@
 #if HAVE(APPKIT_GESTURES_SUPPORT)
 
 #import "AppKitSPI.h"
+#import "DrawingAreaProxy.h"
 #import "GestureTypes.h"
 #import "IdentifierTypes.h"
 #import "ImageAnalysisUtilities.h"
 #import "InteractionInformationAtPosition.h"
 #import "InteractionInformationRequest.h"
+#import "MomentumEventDispatcher.h"
 #import "NativeWebGestureEvent.h"
 #import "NativeWebWheelEvent.h"
 #import "PositionInformationManager.h"
@@ -57,6 +59,7 @@
 #import "WebViewImpl.h"
 #import "WebWheelEvent.h"
 #import <Carbon/Carbon.h>
+#import <QuartzCore/CADisplayLink.h>
 #import <WebCore/Color.h>
 #import <WebCore/ElementContext.h>
 #import <WebCore/FloatPoint.h>
@@ -236,6 +239,166 @@ private:
 
 } // namespace WebKit
 
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+
+@interface WKAppKitGestureController (MomentumEventGeneration)
+- (void)_generatedMomentumDidEnd;
+@end
+
+namespace WebKit {
+class AppKitGestureMomentumEventGenerator;
+}
+
+@interface WKAppKitGestureMomentumDisplayLinkTarget : NSObject
+- (instancetype)initWithGenerator:(WebKit::AppKitGestureMomentumEventGenerator&)generator;
+- (void)invalidate;
+@end
+
+namespace WebKit {
+
+class AppKitGestureMomentumEventGenerator final : public MomentumEventDispatcher::Client {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AppKitGestureMomentumEventGenerator);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AppKitGestureMomentumEventGenerator);
+public:
+    explicit AppKitGestureMomentumEventGenerator(WKAppKitGestureController *controller)
+        : m_controller(controller)
+        , m_dispatcher(makeUnique<MomentumEventDispatcher>(*this))
+    {
+    }
+
+    bool isActive() const { return m_isActive; }
+
+    void start(WebPageProxy& page, const NativeWebWheelEvent& event)
+    {
+        ASSERT(event.momentumPhase() == WebWheelEvent::Phase::Began);
+
+        interrupt();
+
+        m_pageIdentifier = page.webPageIDInMainFrameProcess();
+        m_displayID = page.displayID().value_or(0);
+
+        auto curve = ScrollingAccelerationCurve::fromNativeWheelEvent(event).or_else([] {
+            return ScrollingAccelerationCurve::fallbackCurve();
+        });
+        m_dispatcher->setScrollingAccelerationCurve(*m_pageIdentifier, WTF::move(curve));
+
+        RefPtr drawingArea = page.drawingArea();
+        m_dispatcher->pageScreenDidChange(*m_pageIdentifier, m_displayID, drawingArea ? drawingArea->displayNominalFramesPerSecond() : std::nullopt);
+
+        m_dispatcher->handleWheelEvent(*m_pageIdentifier, event, { });
+    }
+
+    void interrupt()
+    {
+        if (!m_isActive)
+            return;
+
+        auto timestamp = MonotonicTime::now();
+        Ref event = WebWheelEvent::create({ WebEventType::Wheel, { }, timestamp }, {
+            .granularity = WebWheelEvent::Granularity::ScrollByPixelWheelEvent,
+            .directionInvertedFromDevice = false,
+            .phase = WebWheelEvent::Phase::Cancelled,
+            .momentumPhase = WebWheelEvent::Phase::None,
+            .hasPreciseScrollingDeltas = true,
+            .scrollCount = 1,
+            .ioHIDEventTimestamp = timestamp,
+            .rawPlatformDelta = std::nullopt,
+            .momentumEndType = WebWheelEvent::MomentumEndType::Interrupted,
+            .inputSource = WebEventInputSource::Automation,
+        });
+        m_dispatcher->handleWheelEvent(*m_pageIdentifier, event, { });
+        ASSERT(!m_isActive);
+    }
+
+    void displayDidRefresh()
+    {
+        m_dispatcher->displayDidRefresh(m_displayID);
+    }
+
+private:
+    void handleSyntheticWheelEvent(WebCore::PageIdentifier, const WebWheelEvent& event, WebCore::RectEdges<WebCore::RubberBandingBehavior>) final
+    {
+        // The controller sends the momentum Began event itself, since the scrolling thread needs its
+        // rawPlatformDelta to start its own curve.
+        if (event.momentumPhase() == WebWheelEvent::Phase::Began)
+            return;
+
+        RetainPtr webView = [m_controller.get() webView];
+        if (!webView)
+            return;
+
+        [webView _protectedPage]->handleNativeWheelEvent(NativeWebWheelEvent::create(event));
+    }
+
+    void startDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID) final
+    {
+        m_isActive = true;
+
+        RetainPtr webView = [m_controller.get() webView];
+        if (!webView || m_displayLink)
+            return;
+
+        m_displayLinkTarget = adoptNS([[WKAppKitGestureMomentumDisplayLinkTarget alloc] initWithGenerator:*this]);
+        m_displayLink = [webView displayLinkWithTarget:m_displayLinkTarget.get() selector:@selector(displayLinkFired:)];
+        [m_displayLink addToRunLoop:NSRunLoop.mainRunLoop forMode:NSRunLoopCommonModes];
+    }
+
+    void stopDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID) final
+    {
+        [std::exchange(m_displayLink, nil) invalidate];
+        [std::exchange(m_displayLinkTarget, nil) invalidate];
+    }
+
+    void didEndSyntheticMomentumScrolling() final
+    {
+        m_isActive = false;
+        [m_controller.get() _generatedMomentumDidEnd];
+    }
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
+    void flushMomentumEventLoggingSoon() final { }
+#endif
+
+    WeakObjCPtr<WKAppKitGestureController> m_controller;
+    Markable<WebCore::PageIdentifier> m_pageIdentifier;
+    WebCore::PlatformDisplayID m_displayID { 0 };
+    bool m_isActive { false };
+    RetainPtr<WKAppKitGestureMomentumDisplayLinkTarget> m_displayLinkTarget;
+    RetainPtr<CADisplayLink> m_displayLink;
+    const std::unique_ptr<MomentumEventDispatcher> m_dispatcher;
+};
+
+} // namespace WebKit
+
+// The display link retains its target, so this keeps it from retaining the gesture controller.
+@implementation WKAppKitGestureMomentumDisplayLinkTarget {
+    CheckedPtr<WebKit::AppKitGestureMomentumEventGenerator> _generator;
+}
+
+- (instancetype)initWithGenerator:(WebKit::AppKitGestureMomentumEventGenerator&)generator
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _generator = &generator;
+    return self;
+}
+
+- (void)invalidate
+{
+    _generator = nullptr;
+}
+
+- (void)displayLinkFired:(CADisplayLink *)displayLink
+{
+    if (CheckedPtr generator = _generator)
+        generator->displayDidRefresh();
+}
+
+@end
+
+#endif // ENABLE(MOMENTUM_EVENT_DISPATCHER)
+
 static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 {
     return [WKAppKitGestureController loggingDescriptionForGestureRecognizer:gesture];
@@ -263,6 +426,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     RetainPtr<WKDeferringGestureRecognizer> _dragDeferringGestureRecognizer;
 
     bool _isMomentumActive;
+    bool _lastPanWheelEventWasHandledByViewGestureController;
     bool _caughtDeceleratingScroll;
     bool _suppressNextPanScrollDelta;
 
@@ -310,6 +474,9 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     std::unique_ptr<WebKit::PositionInformationManager> _positionInformationManager;
     std::unique_ptr<WebKit::WKFastScrollTracker> _fastScrollTracker;
     std::unique_ptr<WebKit::WKDirectionalScrollLockTracker> _directionalScrollLockTracker;
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    std::unique_ptr<WebKit::AppKitGestureMomentumEventGenerator> _momentumEventGenerator;
+#endif
 
     RetainPtr<NSMagnificationGestureRecognizer> _magnificationGestureRecognizer;
 #if ENABLE(MAC_GESTURE_EVENTS)
@@ -2064,7 +2231,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     bool forwardToGestureController = impl->allowsBackForwardNavigationGestures() && [self prefersForwardingToGestureController:gesture];
     auto dispatchWheelEvent = [&](WebCore::FloatSize delta) {
-        if (forwardToGestureController && protect(impl->ensureGestureController())->handleScrollWheelEvent(makeWheelEvent(delta))) {
+        [self interruptMomentumForScrollWheelEvent];
+
+        _lastPanWheelEventWasHandledByViewGestureController = forwardToGestureController && protect(impl->ensureGestureController())->handleScrollWheelEvent(makeWheelEvent(delta));
+        if (_lastPanWheelEventWasHandledByViewGestureController) {
             WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "View gesture controller handled gesture");
             return;
         }
@@ -2102,6 +2272,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     // Momentum started now would scroll out of sight and then show up all at once.
     if ([self _isTransformGestureActiveOrEnding]) {
+        _fastScrollTracker->reset();
+        return;
+    }
+
+    // A swipe navigates instead of scrolling, so it has no momentum. Momentum would scroll the page navigated to.
+    if (_lastPanWheelEventWasHandledByViewGestureController) {
         _fastScrollTracker->reset();
         return;
     }
@@ -2171,10 +2347,17 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     protect([webView _impl])->clearRefreshControllerTracking();
 #endif
 
-    [webView _protectedPage]->handleNativeWheelEvent(WTF::move(nativeMomentumEvent));
+    RefPtr page = [webView _protectedPage];
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    // Started first, so that any momentum it ends is ended before this momentum begins.
+    if (!_momentumEventGenerator)
+        _momentumEventGenerator = makeUnique<WebKit::AppKitGestureMomentumEventGenerator>(self);
+    _momentumEventGenerator->start(*page, nativeMomentumEvent);
+#endif
+    page->handleNativeWheelEvent(WTF::move(nativeMomentumEvent));
     _isMomentumActive = true;
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Started momentum scrolling with velocity %.2f pts/s", velocityMagnitude);
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "Started momentum scrolling with velocity %.2f pts/s", velocityMagnitude);
 }
 
 - (void)interruptMomentumIfNeeded
@@ -2193,12 +2376,25 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     _positionInformationManager->invalidate();
 
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    if (_momentumEventGenerator)
+        _momentumEventGenerator->interrupt();
+#endif
+
     RefPtr page = [webView _protectedPage];
     page->interruptSyntheticMomentumScrolling();
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "Interrupted momentum scrolling");
 }
 
-- (void)didEndSyntheticMomentumScrolling
+- (void)interruptMomentumForScrollWheelEvent
+{
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    if (_momentumEventGenerator)
+        _momentumEventGenerator->interrupt();
+#endif
+}
+
+- (void)_generatedMomentumDidEnd
 {
     _isMomentumActive = false;
 
@@ -2390,6 +2586,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _mouseTrackingIsSuppressedForTransformGesture = false;
     _contentDeclinedTransformGesture = false;
     _lastTransformGestureDriveTime = MonotonicTime();
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    _momentumEventGenerator = nullptr;
+#endif
     _isMomentumActive = false;
     [self _resetCaughtDeceleratingScroll];
     [self resetDOMDoubleClickGestureRecognizer];

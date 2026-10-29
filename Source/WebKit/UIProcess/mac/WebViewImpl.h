@@ -355,7 +355,6 @@ public:
     void activeSpaceDidChange();
 
     void pageDidScroll(const WebCore::IntPoint&);
-    void didEndSyntheticMomentumScrolling();
 
     NSRect scrollViewFrame();
     bool LEGACY_NODELETE hasScrolledContentsUnderTitlebar();

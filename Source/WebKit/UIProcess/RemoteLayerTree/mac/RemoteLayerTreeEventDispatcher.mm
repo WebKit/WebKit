@@ -919,14 +919,6 @@ void RemoteLayerTreeEventDispatcher::stopDisplayDidRefreshCallbacks(PlatformDisp
         startOrStopDisplayLink();
 }
 
-void RemoteLayerTreeEventDispatcher::didEndSyntheticMomentumScrolling()
-{
-    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }] {
-        if (RefPtr scrollingCoordinator = protectedThis->m_scrollingCoordinator)
-            protect(scrollingCoordinator->webPageProxy())->didEndSyntheticMomentumScrolling();
-    });
-}
-
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
 void RemoteLayerTreeEventDispatcher::flushMomentumEventLoggingSoon()
 {

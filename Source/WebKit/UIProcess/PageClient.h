@@ -767,8 +767,6 @@ public:
 
     virtual void pageDidScroll(const WebCore::IntPoint& scrollOffset) { }
 
-    virtual void didEndSyntheticMomentumScrolling() { }
-
     virtual void didRestoreScrollPosition() = 0;
     virtual void pageScaleFactorDidChange() { }
 

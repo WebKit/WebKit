@@ -70,8 +70,8 @@ NS_SWIFT_UI_ACTOR
 - (void)setTextSelectionDragGesture:(NSGestureRecognizer *)gesture completionHandler:(void (^)(NSDraggingSession *))completionHandler;
 - (void)positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info;
 - (void)didCommitLoadForMainFrame;
-- (void)didEndSyntheticMomentumScrolling;
 - (void)transformGestureWasNotHandledByContent;
+- (void)interruptMomentumForScrollWheelEvent;
 - (void)reset;
 
 @property (nonatomic, readonly) BOOL everMagnifiedDuringCurrentGesture;

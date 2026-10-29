@@ -1147,11 +1147,6 @@ void PageClientImpl::pageDidScroll(const WebCore::IntPoint& scrollOffset)
     protect(m_impl)->pageDidScroll(scrollOffset);
 }
 
-void PageClientImpl::didEndSyntheticMomentumScrolling()
-{
-    protect(m_impl)->didEndSyntheticMomentumScrolling();
-}
-
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
 void PageClientImpl::pageScaleFactorDidChange()
 {

@@ -3751,6 +3751,93 @@ extension AppKitGesturesTests.Basic {
         #expect(settled.y < dragDistance * 1.5)
     }
 
+    @Test
+    func momentumScrollingDispatchesWheelEvents() async throws {
+        let html = """
+            <body style="margin: 0; width: 100%; height: 200000px;
+                         background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
+            <script>
+              window.totalWheelDeltaY = 0;
+              document.addEventListener("wheel", event => totalWheelDeltaY += event.deltaY, { passive: true });
+            </script>
+            </body>
+            """
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        // Start low enough that the flick stays within the web view.
+        let dragDistance = 200.0
+        let start = screenBounds(ofPointInWindowCoordinates: CGPoint(x: window.frame.width / 2, y: window.frame.height / 4))
+        let end = CGPoint(x: start.x, y: start.y - dragDistance)
+
+        await page.withWheelEventMonitoring(expectingMomentumEnd: true) {
+            await recap.play { composer in
+                composer._wk_scroll(withStart: start, end: end, duration: .seconds(0.1))
+            }
+        }
+
+        let settled = try await settledScrollPosition()
+
+        // The gesture itself only accounts for `dragDistance`; anything well beyond it came from momentum.
+        try #require(settled.y > dragDistance * 2, "the flick did not start momentum scrolling")
+
+        // Momentum scrolling should be reported to the page as wheel events, just like the gesture before it.
+        // Without them, the wheel events would only account for the gesture, less than half of the scroll.
+        let totalWheelDeltaY = try await page.callJavaScript(returning: Double.self) {
+            "return totalWheelDeltaY;"
+        }
+        #expect(
+            abs(totalWheelDeltaY - settled.y) < settled.y * 0.1,
+            "wheel events accounted for \(totalWheelDeltaY)px of a \(settled.y)px scroll"
+        )
+    }
+
+    @Test
+    func momentumScrollingDispatchesWheelEventsToPageHandlingScrolling() async throws {
+        let html = """
+            <body style="margin: 0; width: 100%; height: 200000px;
+                         background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
+            <script>
+              window.totalWheelDeltaY = 0;
+              window.allWheelEventsWereCancelable = true;
+              document.addEventListener("wheel", event => {
+                  allWheelEventsWereCancelable &&= event.cancelable;
+                  totalWheelDeltaY += event.deltaY;
+                  event.preventDefault();
+              }, { passive: false });
+            </script>
+            </body>
+            """
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        // Start low enough that the flick stays within the web view.
+        let dragDistance = 200.0
+        let start = screenBounds(ofPointInWindowCoordinates: CGPoint(x: window.frame.width / 2, y: window.frame.height / 4))
+        let end = CGPoint(x: start.x, y: start.y - dragDistance)
+
+        await page.withWheelEventMonitoring(expectingMomentumEnd: true) {
+            await recap.play { composer in
+                composer._wk_scroll(withStart: start, end: end, duration: .seconds(0.1))
+            }
+        }
+
+        let settled = try await settledScrollPosition()
+        #expect(settled.y == 0)
+
+        // A page that handles scrolling itself should be told about momentum.
+        // The gesture itself only accounts for `dragDistance`; anything well beyond it came from momentum.
+        let totalWheelDeltaY = try await page.callJavaScript(returning: Double.self) {
+            "return totalWheelDeltaY;"
+        }
+        #expect(totalWheelDeltaY > dragDistance * 2, "wheel events only accounted for \(totalWheelDeltaY)px")
+
+        let allWheelEventsWereCancelable = try await page.callJavaScript(returning: Bool.self) {
+            "return allWheelEventsWereCancelable;"
+        }
+        #expect(allWheelEventsWereCancelable)
+    }
+
     @Test(.disabled("This test takes an unavoidable ~10 seconds to run"))
     func consecutiveQuickFlicksAccelerateScrolling() async throws {
         let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)

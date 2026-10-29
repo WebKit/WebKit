@@ -103,7 +103,7 @@ bool MomentumEventDispatcher::handleWheelEvent(WebCore::PageIdentifier pageIdent
 
         if (pageIdentifierChanged || eventShouldInterruptGesture) {
             RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher interrupting synthetic momentum phase");
-            didEndMomentumPhase();
+            didEndMomentumPhase(WebWheelEvent::MomentumEndType::Interrupted);
         }
     }
 
@@ -163,7 +163,7 @@ static float appKitScrollMultiplierForEvent(const WebWheelEvent& event)
     return multiplier;
 }
 
-void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phase phase, WebCore::FloatSize delta)
+void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phase phase, WebCore::FloatSize delta, WebWheelEvent::MomentumEndType momentumEndType)
 {
     tracePoint(SyntheticMomentumEvent, std::to_underlying(phase), std::abs(delta.width()), std::abs(delta.height()));
 
@@ -192,7 +192,7 @@ void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phas
         .unacceleratedScrollingDelta = delta,
         .ioHIDEventTimestamp = time,
         .rawPlatformDelta = { },
-        .momentumEndType = WebWheelEvent::MomentumEndType::Unknown,
+        .momentumEndType = momentumEndType,
         .inputSource = initiatingEvent->inputSource(),
     });
 
@@ -237,11 +237,11 @@ void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier page
     dispatchSyntheticMomentumEvent(WebWheelEvent::Phase::Began, event.delta());
 }
 
-void MomentumEventDispatcher::didEndMomentumPhase()
+void MomentumEventDispatcher::didEndMomentumPhase(WebWheelEvent::MomentumEndType momentumEndType)
 {
     ASSERT(m_currentGesture.active);
 
-    dispatchSyntheticMomentumEvent(WebWheelEvent::Phase::Ended, { });
+    dispatchSyntheticMomentumEvent(WebWheelEvent::Phase::Ended, { }, momentumEndType);
 
     m_client->didEndSyntheticMomentumScrolling();
 
@@ -370,7 +370,7 @@ void MomentumEventDispatcher::displayDidRefresh(WebCore::PlatformDisplayID displ
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
         RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher completed synthetic momentum phase");
 #endif
-        didEndMomentumPhase();
+        didEndMomentumPhase(WebWheelEvent::MomentumEndType::Natural);
         return;
     }
 
