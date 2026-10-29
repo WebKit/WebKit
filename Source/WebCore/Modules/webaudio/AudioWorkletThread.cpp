@@ -53,11 +53,19 @@ RefPtr<WorkerOrWorkletGlobalScope> AudioWorkletThread::createGlobalScope()
 
 void AudioWorkletThread::clearProxies()
 {
+    Locker locker { m_messagingProxyLock };
     m_messagingProxy = nullptr;
+}
+
+RefPtr<AudioWorkletMessagingProxy> AudioWorkletThread::messagingProxy() const
+{
+    Locker locker { m_messagingProxyLock };
+    return m_messagingProxy.get();
 }
 
 WorkerLoaderProxy* AudioWorkletThread::workerLoaderProxy() const
 {
+    Locker locker { m_messagingProxyLock };
     return m_messagingProxy.get();
 }
 

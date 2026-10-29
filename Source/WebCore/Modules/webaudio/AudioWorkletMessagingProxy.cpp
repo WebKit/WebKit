@@ -86,7 +86,14 @@ AudioWorkletMessagingProxy::AudioWorkletMessagingProxy(AudioWorklet& worklet)
 
 AudioWorkletMessagingProxy::~AudioWorkletMessagingProxy()
 {
+    ASSERT(isMainThread());
+
     m_workletThread->stop();
+}
+
+void AudioWorkletMessagingProxy::detachFromThread()
+{
+    ASSERT(isMainThread());
     m_workletThread->clearProxies();
 }
 
