@@ -924,7 +924,7 @@ void NetworkResourceLoader::didReceiveInformationalResponse(ResourceResponse&& r
         return;
 
     if (!m_earlyHintsResourceLoader)
-        m_earlyHintsResourceLoader = WTF::makeUnique<EarlyHintsResourceLoader>(*this);
+        lazyInitialize(m_earlyHintsResourceLoader, EarlyHintsResourceLoader::create(*this));
     m_earlyHintsResourceLoader->handleEarlyHintsResponse(WTF::move(response));
 }
 

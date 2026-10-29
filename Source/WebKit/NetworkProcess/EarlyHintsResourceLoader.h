@@ -26,6 +26,7 @@
 #pragma once
 
 #include "NetworkResourceLoader.h"
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -34,23 +35,29 @@ class LinkHeader;
 
 namespace WebKit {
 
-class EarlyHintsResourceLoader
-    : public WebCore::ContentSecurityPolicyClient {
+struct NetworkLoadParameters;
+
+class EarlyHintsResourceLoader : public WebCore::ContentSecurityPolicyClient, public RefCountedAndCanMakeWeakPtr<EarlyHintsResourceLoader> {
     WTF_MAKE_TZONE_ALLOCATED(EarlyHintsResourceLoader);
     WTF_MAKE_NONCOPYABLE(EarlyHintsResourceLoader);
 public:
-    explicit EarlyHintsResourceLoader(NetworkResourceLoader&);
+    static Ref<EarlyHintsResourceLoader> create(NetworkResourceLoader&);
     virtual ~EarlyHintsResourceLoader();
 
     void handleEarlyHintsResponse(WebCore::ResourceResponse&&);
 
 private:
+    explicit EarlyHintsResourceLoader(NetworkResourceLoader&);
+
     // ContentSecurityPolicyClient
     void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long requestIdentifier = 0) final;
     void enqueueSecurityPolicyViolationEvent(WebCore::SecurityPolicyViolationEventInit&&) final;
 
     WebCore::ResourceRequest constructPreconnectRequest(const WebCore::ResourceRequest&, const URL&);
     void startPreconnectTask(const URL& baseURL, const WebCore::LinkHeader&, const WebCore::ContentSecurityPolicy&);
+
+    void startPreconnectTaskAfterContentRuleListCheck(NetworkLoadParameters&&, const URL& mainDocumentURL);
+    void startPreconnectTaskIgnoringContentRuleLists(NetworkLoadParameters&&);
 
     WeakPtr<NetworkResourceLoader> m_loader;
     bool m_hasReceivedEarlyHints { false };
