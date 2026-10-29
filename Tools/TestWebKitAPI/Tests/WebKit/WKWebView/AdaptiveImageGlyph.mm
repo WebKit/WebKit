@@ -109,6 +109,15 @@ RetainPtr<NSAdaptiveImageGlyph> createAdaptiveImageGlyphForTesting()
     return self;
 }
 
+- (void)_setEditable:(BOOL)editable
+{
+    [super _setEditable:editable];
+#if PLATFORM(IOS_FAMILY)
+    if (editable)
+        [self focusInWindow];
+#endif
+}
+
 - (void)focusElementAndEnsureEditorStateUpdate:(NSString *)element
 {
     NSString *script = [NSString stringWithFormat:@"%@.focus()", element];
