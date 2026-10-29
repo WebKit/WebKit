@@ -108,13 +108,27 @@ CopyIndexFunction GetCopyIndexFunction(gl::DrawElementsType sourceType,
     return copyFunction;
 }
 
-std::string GetStagingBufferTooLargeMessage(size_t stagingBufferSize, uint64_t maxBufferSize)
+std::string GetStagingBufferTooLargeMessage(uint64_t stagingBufferSize, uint64_t maxBufferSize)
 {
     std::ostringstream message;
     message << "The streamed vertex and index data of " << stagingBufferSize
             << " bytes is larger than the maximum buffer size " << maxBufferSize << ".";
     return message.str();
 }
+
+// The number of elements of a streamed vertex buffer slot: the vertices of the draw, or its
+// instances.
+uint64_t GetStreamedElementCount(bool perInstance,
+                                 const std::optional<gl::IndexRange> &indexRange,
+                                 GLsizei instanceCount)
+{
+    if (perInstance)
+    {
+        return static_cast<uint64_t>(std::max(instanceCount, 1));
+    }
+    return indexRange->vertexCount();
+}
+
 }  // namespace
 
 VertexArrayWgpu::VertexArrayWgpu(const gl::VertexArrayState &data,
@@ -207,7 +221,7 @@ angle::Result VertexArrayWgpu::updateVertexBufferSlots(ContextWgpu *contextWgpu,
     {
         webgpu::BufferHelper *buffer;
         size_t stride;
-        GLuint divisor;
+        bool perInstance;
         uintptr_t firstOffset;
         uintptr_t endOffset;
         gl::AttributesMask attributes;
@@ -243,7 +257,10 @@ angle::Result VertexArrayWgpu::updateVertexBufferSlots(ContextWgpu *contextWgpu,
             }
         }
 
-        if (mForcedStreamingAttributes[attribIndex])
+        // WebGPU steps per-instance vertex buffers once per instance, so the attributes with a
+        // divisor above 1 are streamed with an element for each instance, like the Vulkan
+        // backend does when the device does not support the divisor.
+        if (mForcedStreamingAttributes[attribIndex] || binding.getDivisor() > 1)
         {
             streamedAttributes.set(attribIndex);
             continue;
@@ -252,7 +269,7 @@ angle::Result VertexArrayWgpu::updateVertexBufferSlots(ContextWgpu *contextWgpu,
         ASSERT(bufferGl);
         webgpu::BufferHelper *buffer = &webgpu::GetImpl(bufferGl)->getBuffer();
         const size_t stride          = binding.getStride();
-        const GLuint divisor         = binding.getDivisor();
+        const bool perInstance       = binding.getDivisor() != 0;
         // WebGPU requires that an attribute ends within the array stride, or within
         // maxVertexBufferArrayStride when the stride is 0.
         const size_t maxElementSize = stride == 0 ? maxArrayStride : stride;
@@ -267,7 +284,7 @@ angle::Result VertexArrayWgpu::updateVertexBufferSlots(ContextWgpu *contextWgpu,
         bool shared = false;
         for (BufferSlot &slot : bufferSlots)
         {
-            if (slot.buffer != buffer || slot.stride != stride || slot.divisor != divisor)
+            if (slot.buffer != buffer || slot.stride != stride || slot.perInstance != perInstance)
             {
                 continue;
             }
@@ -293,30 +310,33 @@ angle::Result VertexArrayWgpu::updateVertexBufferSlots(ContextWgpu *contextWgpu,
             streamedAttributes.set(attribIndex);
             continue;
         }
-        BufferSlot newSlot = {buffer, stride, divisor, offset, offset + size, {}};
+        BufferSlot newSlot = {buffer, stride, perInstance, offset, offset + size, {}};
         newSlot.attributes.set(attribIndex);
         bufferSlots.push_back(newSlot);
     }
 
-    // The streamed attributes are interleaved into one slot for each divisor.
-    auto getStreamedDivisors = [&]() {
-        angle::FixedVector<GLuint, gl::MAX_VERTEX_ATTRIBS> divisors;
+    // The streamed attributes are interleaved into a per-vertex slot and a per-instance slot.
+    // syncClientArrays() expands the per-instance attributes to an element for each instance.
+    auto getStreamedAttributes = [&](bool perInstance) {
+        gl::AttributesMask attributes;
         for (size_t attribIndex : streamedAttributes)
         {
-            const GLuint divisor = bindings[attribs[attribIndex].bindingIndex].getDivisor();
-            if (std::find(divisors.begin(), divisors.end(), divisor) == divisors.end())
+            if ((bindings[attribs[attribIndex].bindingIndex].getDivisor() != 0) == perInstance)
             {
-                divisors.push_back(divisor);
+                attributes.set(attribIndex);
             }
         }
-        return divisors;
+        return attributes;
+    };
+    auto getStreamedSlotCount = [&]() {
+        return (getStreamedAttributes(false).any() ? 1 : 0) +
+               (getStreamedAttributes(true).any() ? 1 : 0);
     };
 
     // When there are more slots than the device has, stream the attributes of the buffer slots
     // that have the fewest attributes. The attributes that read zeros share one slot.
     const size_t zeroSlotCount = zeroAttributes.any() ? 1 : 0;
-    angle::FixedVector<GLuint, gl::MAX_VERTEX_ATTRIBS> streamedDivisors = getStreamedDivisors();
-    while (bufferSlots.size() + streamedDivisors.size() + zeroSlotCount > maxSlotCount)
+    while (bufferSlots.size() + getStreamedSlotCount() + zeroSlotCount > maxSlotCount)
     {
         ANGLE_CHECK(contextWgpu, !bufferSlots.empty(),
                     "The vertex attributes need more vertex buffers than the device has.",
@@ -333,7 +353,6 @@ angle::Result VertexArrayWgpu::updateVertexBufferSlots(ContextWgpu *contextWgpu,
         streamedAttributes |= bufferSlots[streamedSlot].attributes;
         bufferSlots[streamedSlot] = bufferSlots.back();
         bufferSlots.pop_back();
-        streamedDivisors = getStreamedDivisors();
     }
 
     gl::AttribArray<webgpu::PackedVertexAttribute> newAttribs;
@@ -358,7 +377,7 @@ angle::Result VertexArrayWgpu::updateVertexBufferSlots(ContextWgpu *contextWgpu,
         for (size_t attribIndex : bufferSlot.attributes)
         {
             const gl::VertexAttribute &attrib = attribs[attribIndex];
-            initAttrib(attribIndex, slotCount, bufferSlot.divisor != 0);
+            initAttrib(attribIndex, slotCount, bufferSlot.perInstance);
             SetBitField(newAttribs[attribIndex].offset,
                         gl::ComputeVertexAttributeOffset(attrib, bindings[attrib.bindingIndex]) -
                             slotOffset);
@@ -369,18 +388,19 @@ angle::Result VertexArrayWgpu::updateVertexBufferSlots(ContextWgpu *contextWgpu,
         slotCount++;
     }
 
-    for (GLuint divisor : streamedDivisors)
+    for (bool perInstance : {false, true})
     {
+        const gl::AttributesMask slotAttributes = getStreamedAttributes(perInstance);
+        if (slotAttributes.none())
+        {
+            continue;
+        }
         StreamingVertexBufferSlot &streamingSlot = mStreamingSlots[slotCount];
         streamingSlot                            = {};
-        streamingSlot.divisor                    = divisor;
-        for (size_t attribIndex : streamedAttributes)
+        streamingSlot.perInstance                = perInstance;
+        for (size_t attribIndex : slotAttributes)
         {
-            if (bindings[attribs[attribIndex].bindingIndex].getDivisor() != divisor)
-            {
-                continue;
-            }
-            const size_t destTypeSize = initAttrib(attribIndex, slotCount, divisor != 0);
+            const size_t destTypeSize = initAttrib(attribIndex, slotCount, perInstance);
             SetBitField(newAttribs[attribIndex].offset, streamingSlot.stride);
             streamingSlot.stride +=
                 rx::roundUpPow2(destTypeSize, webgpu::kBufferCopyToBufferAlignment);
@@ -447,6 +467,11 @@ angle::Result VertexArrayWgpu::syncClientArrays(
     *adjustedIndicesPtr = indices;
 
     const bool hasStreamedAttributes = mStreamingVertexBufferSlots.any();
+    bool hasStreamedPerVertexAttributes = false;
+    for (size_t slot : mStreamingVertexBufferSlots)
+    {
+        hasStreamedPerVertexAttributes |= !mStreamingSlots[slot].perInstance;
+    }
 
     gl::DrawElementsType destDrawElementsTypeOrInvalid = sourceDrawElementsTypeOrInvalid;
 
@@ -514,10 +539,11 @@ angle::Result VertexArrayWgpu::syncClientArrays(
         return angle::Result::Continue;
     }
 
-    // If any attributes need to be streamed, we need to know the index range. We also need to know
-    // the index range if there is a draw arrays call and we have to stream the index data for it.
+    // If any per-vertex attributes need to be streamed, we need to know the index range. We also
+    // need to know the index range if there is a draw arrays call and we have to stream the index
+    // data for it. The per-instance attributes are streamed for the instances of the draw.
     std::optional<gl::IndexRange> indexRange;
-    if (hasStreamedAttributes)
+    if (hasStreamedPerVertexAttributes)
     {
         GLint startVertex  = 0;
         size_t vertexCount = 0;
@@ -616,12 +642,13 @@ angle::Result VertexArrayWgpu::syncClientArrays(
     {
         const StreamingVertexBufferSlot &streamingSlot = mStreamingSlots[slot];
 
-        size_t streamedVertexCount = gl::ComputeVertexBindingElementCount(
-            streamingSlot.divisor, indexRange->vertexCount(), std::max(instanceCount, 1), 0);
-
-        // Vertices do not apply the 'start' offset when the divisor is non-zero even when doing
-        // a non-instanced draw call
-        const size_t firstIndex = (streamingSlot.divisor == 0) ? indexRange->start() : 0;
+        // A per-vertex slot has the elements of the vertices of the draw, at their indices. A
+        // per-instance slot has an element for each instance. Vertices do not apply the 'start'
+        // offset to per-instance attributes, even in a non-instanced draw call.
+        // calculateStagingBufferSize() checked that the slot fits in a buffer.
+        const size_t streamedVertexCount = static_cast<size_t>(
+            GetStreamedElementCount(streamingSlot.perInstance, indexRange, instanceCount));
+        const size_t firstIndex = streamingSlot.perInstance ? 0 : indexRange->start();
 
         // The attributes of the slot are interleaved.
         const size_t destStride = streamingSlot.stride;
@@ -637,6 +664,12 @@ angle::Result VertexArrayWgpu::syncClientArrays(
             const size_t sourceStride   = ComputeVertexAttributeStride(attrib, binding);
             const size_t sourceTypeSize = gl::ComputeVertexAttributeTypeSize(attrib);
 
+            // Instance i reads the element i / divisor of a per-instance attribute, so each of its
+            // elements is copied to divisor consecutive elements of the slot.
+            const size_t divisor = streamingSlot.perInstance ? binding.getDivisor() : 1;
+            ASSERT(divisor > 0);
+            size_t sourceElementCount = (streamedVertexCount - 1) / divisor + 1;
+
             // Attributes using client memory ignore the VERTEX_ATTRIB_BINDING state.
             // https://www.opengl.org/registry/specs/ARB/vertex_attrib_binding.txt
             const uint8_t *inputPointer = static_cast<const uint8_t *>(attrib.pointer);
@@ -644,11 +677,28 @@ angle::Result VertexArrayWgpu::syncClientArrays(
             webgpu::BufferReadback readbackBuffer;
             if (buffer)
             {
-                webgpu::BufferHelper &srcBuffer = webgpu::GetImpl(buffer)->getBuffer();
-                const uintptr_t sourceOffset    = gl::ComputeVertexAttributeOffset(attrib, binding);
-                size_t sourceVertexDataSize =
-                    sourceStride * (firstIndex + streamedVertexCount - 1) + sourceTypeSize;
+                // Read only the elements that are in the buffer. The values of the others are
+                // undefined in ES, and they stay zero in the staging buffer. The attributes that
+                // have no element in the buffer read zeros from another slot.
+                const uintptr_t sourceOffset = gl::ComputeVertexAttributeOffset(attrib, binding);
+                const size_t bufferSize      = static_cast<size_t>(buffer->getSize());
+                ASSERT(bufferSize >= sourceOffset + sourceTypeSize);
+                if (sourceStride != 0)
+                {
+                    const size_t bufferElementCount =
+                        (bufferSize - sourceOffset - sourceTypeSize) / sourceStride + 1;
+                    sourceElementCount = std::min(
+                        sourceElementCount,
+                        bufferElementCount > firstIndex ? bufferElementCount - firstIndex : 0);
+                }
+                if (sourceElementCount == 0)
+                {
+                    continue;
+                }
+                const size_t sourceVertexDataSize =
+                    sourceStride * (firstIndex + sourceElementCount - 1) + sourceTypeSize;
 
+                webgpu::BufferHelper &srcBuffer = webgpu::GetImpl(buffer)->getBuffer();
                 ANGLE_TRY(srcBuffer.readDataImmediate(
                     contextWgpu, 0, sourceOffset + sourceVertexDataSize,
                     webgpu::RenderPassClosureReason::IndexRangeReadback, &readbackBuffer));
@@ -659,21 +709,33 @@ angle::Result VertexArrayWgpu::syncClientArrays(
                 contextWgpu->getFormat(attrib.format->glInternalFormat);
             VertexCopyFunction copyFunction = vertexFormat.getVertexLoadFunction();
             ASSERT(copyFunction != nullptr);
+            const size_t destTypeSize = vertexFormat.getActualBufferFormat().pixelBytes;
             const uint8_t *sourceData = ANGLE_UNSAFE_TODO(inputPointer + sourceStride * firstIndex);
             uint8_t *destData =
                 ANGLE_UNSAFE_TODO(slotStagingData + mCurrentAttribs[attribIndex].offset);
-            if (vertexFormat.getActualBufferFormat().pixelBytes == destStride)
+            if (divisor == 1 && destTypeSize == destStride)
             {
                 // The attribute is the only one in the slot, so its data is tightly packed.
-                copyFunction(sourceData, sourceStride, streamedVertexCount, destData);
+                copyFunction(sourceData, sourceStride, sourceElementCount, destData);
             }
             else
             {
-                for (size_t vertex = 0; vertex < streamedVertexCount; ++vertex)
+                for (size_t sourceElement = 0; sourceElement < sourceElementCount; ++sourceElement)
                 {
-                    copyFunction(ANGLE_UNSAFE_TODO(sourceData + sourceStride * vertex),
-                                 sourceStride, 1,
-                                 ANGLE_UNSAFE_TODO(destData + destStride * vertex));
+                    // sourceElement * divisor < streamedVertexCount.
+                    const size_t firstElement = sourceElement * divisor;
+                    uint8_t *firstDestData =
+                        ANGLE_UNSAFE_TODO(destData + destStride * firstElement);
+                    copyFunction(ANGLE_UNSAFE_TODO(sourceData + sourceStride * sourceElement),
+                                 sourceStride, 1, firstDestData);
+                    // The divisor can be as large as UINT_MAX, so compute the end in 64 bits.
+                    const size_t endElement = static_cast<size_t>(std::min<uint64_t>(
+                        static_cast<uint64_t>(firstElement) + divisor, streamedVertexCount));
+                    for (size_t element = firstElement + 1; element < endElement; ++element)
+                    {
+                        ANGLE_UNSAFE_TODO(memcpy(destData + destStride * element, firstDestData,
+                                                 destTypeSize));
+                    }
                 }
             }
         }
@@ -862,22 +924,35 @@ angle::Result VertexArrayWgpu::calculateStagingBufferSize(
         }
     }
 
+    // The sizes are computed in 64 bits: a per-instance slot has an element for each instance, so
+    // with a large instance count its size does not fit in 32 bits. The stride is at most
+    // MAX_VERTEX_ATTRIBS times the largest vertex format, and the element count is at most 2^32, so
+    // the products do not overflow.
+    uint64_t stagingBufferSize = *stagingBufferSizeOut;
     for (size_t slot : mStreamingVertexBufferSlots)
     {
         const StreamingVertexBufferSlot &streamingSlot = mStreamingSlots[slot];
         ASSERT(streamingSlot.stride > 0);
 
-        size_t elementCount = gl::ComputeVertexBindingElementCount(
-            streamingSlot.divisor, indexRange->vertexCount(), std::max(instanceCount, 1), 0);
-
-        size_t slotSize = streamingSlot.stride * elementCount;
-        *stagingBufferSizeOut += rx::roundUpPow2(slotSize, webgpu::kBufferCopyToBufferAlignment);
+        const uint64_t stride = streamingSlot.stride;
+        const uint64_t elementCount =
+            GetStreamedElementCount(streamingSlot.perInstance, indexRange, instanceCount);
+        const uint64_t slotSize =
+            rx::roundUpPow2<uint64_t>(stride * elementCount, webgpu::kBufferCopyToBufferAlignment);
+        // The streaming vertex buffer of a per-vertex slot also has room for the vertices before
+        // the first vertex of the draw.
+        const uint64_t firstElement = streamingSlot.perInstance ? 0 : indexRange->start();
+        ANGLE_CHECK(contextWgpu, stride * firstElement + slotSize <= maxBufferSize,
+                    "The streamed vertex data is larger than the maximum buffer size.",
+                    GL_OUT_OF_MEMORY);
+        stagingBufferSize += slotSize;
     }
 
     // ANGLE_CHECK() evaluates the message only when the check fails.
-    ANGLE_CHECK(contextWgpu, *stagingBufferSizeOut <= maxBufferSize,
-                GetStagingBufferTooLargeMessage(*stagingBufferSizeOut, maxBufferSize).c_str(),
+    ANGLE_CHECK(contextWgpu, stagingBufferSize <= maxBufferSize,
+                GetStagingBufferTooLargeMessage(stagingBufferSize, maxBufferSize).c_str(),
                 GL_OUT_OF_MEMORY);
+    *stagingBufferSizeOut = static_cast<size_t>(stagingBufferSize);
     return angle::Result::Continue;
 }
 

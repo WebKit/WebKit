@@ -51,9 +51,11 @@ class VertexArrayWgpu : public VertexArrayImpl
 
     // Assigns the enabled attributes that the program uses to WebGPU vertex buffer slots, and sets
     // them in the context's render pipeline description. Attributes that read the same buffer with
-    // the same stride and divisor share a slot when their offsets fit in one element of the slot.
-    // The other attributes, and the attributes of the buffers that do not fit in the device's
-    // vertex buffer slots, are streamed into one interleaved slot for each divisor.
+    // the same stride and step mode (per-vertex, or per-instance with a divisor of 1) share a slot
+    // when their offsets fit in one element of the slot.
+    // The other attributes, the attributes with a divisor above 1, and the attributes of the
+    // buffers that do not fit in the device's vertex buffer slots, are streamed into an interleaved
+    // per-vertex slot and an interleaved per-instance slot.
     angle::Result updateVertexBufferSlots(ContextWgpu *contextWgpu,
                                           const gl::AttributesMask &activeAttributes);
 
@@ -86,12 +88,14 @@ class VertexArrayWgpu : public VertexArrayImpl
         uint64_t size;
     };
 
-    // The attributes of a vertex buffer slot whose data is streamed by syncClientArrays().
+    // The attributes of a vertex buffer slot whose data is streamed by syncClientArrays(). A
+    // per-instance slot has an element for each instance: the element of an attribute with a
+    // divisor of d at instance i is the element i / d of the attribute.
     struct StreamingVertexBufferSlot
     {
         gl::AttributesMask attributes;
-        GLuint divisor = 0;
-        size_t stride  = 0;
+        bool perInstance = false;
+        size_t stride    = 0;
     };
 
     void syncDirtyAttrib(ContextWgpu *contextWgpu,
