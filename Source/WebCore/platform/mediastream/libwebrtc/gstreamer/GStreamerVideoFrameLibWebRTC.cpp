@@ -74,8 +74,15 @@ GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSample(const webrtc::Vid
             reinterpret_cast<webrtc::I420Buffer*>(buffer)->Release();
     }));
 
+    GstClockTime pts;
+    if (frame.render_parameters().use_low_latency_rendering) {
+        GRefPtr clock = adoptGRef(gst_system_clock_obtain());
+        pts = gst_clock_get_time(clock.get());
+    } else
+        pts = toGstClockTime(WTF::MediaTime(frame.render_time_ms(), G_USEC_PER_SEC * 1000));
+
     gst_buffer_add_video_meta_full(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_I420, frame.width(), frame.height(), 3, offsets, strides);
-    GST_BUFFER_PTS(buffer.get()) = toGstClockTime(WTF::MediaTime(frame.render_time_ms(), G_USEC_PER_SEC * 1000));
+    GST_BUFFER_PTS(buffer.get()) = pts;
     GRefPtr caps = adoptGRef(gst_video_info_to_caps(&info));
     GRefPtr sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
     return sample;
