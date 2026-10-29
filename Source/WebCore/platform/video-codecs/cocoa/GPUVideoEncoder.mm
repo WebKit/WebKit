@@ -41,142 +41,21 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-#if USE(LIBWEBRTC)
-static inline webrtc::VideoRotation LEGACY_NODELETE toWebRTCVideoRotation(VideoFrame::Rotation rotation)
-{
-    switch (rotation) {
-    case VideoFrame::Rotation::None:
-        return webrtc::kVideoRotation_0;
-    case VideoFrame::Rotation::UpsideDown:
-        return webrtc::kVideoRotation_180;
-    case VideoFrame::Rotation::Right:
-        return webrtc::kVideoRotation_90;
-    case VideoFrame::Rotation::Left:
-        return webrtc::kVideoRotation_270;
-    }
-    ASSERT_NOT_REACHED();
-    return webrtc::kVideoRotation_0;
-}
-
-static inline VideoFrame::Rotation LEGACY_NODELETE fromWebRTCEncodedVideoRotation(webrtc::WebKitEncodedVideoRotation rotation)
-{
-    switch (rotation) {
-    case webrtc::WebKitEncodedVideoRotation::kVideoRotation_0:
-        return VideoFrame::Rotation::None;
-    case webrtc::WebKitEncodedVideoRotation::kVideoRotation_180:
-        return VideoFrame::Rotation::UpsideDown;
-    case webrtc::WebKitEncodedVideoRotation::kVideoRotation_90:
-        return VideoFrame::Rotation::Right;
-    case webrtc::WebKitEncodedVideoRotation::kVideoRotation_270:
-        return VideoFrame::Rotation::Left;
-    }
-    ASSERT_NOT_REACHED();
-    return VideoFrame::Rotation::None;
-}
-
-static inline GPUVideoEncoderFrameInfo LEGACY_NODELETE toGPUVideoEncoderFrameInfo(const webrtc::WebKitEncodedFrameInfo& info)
-{
-    return {
-        .width = info.width,
-        .height = info.height,
-        .timeStamp = info.timeStamp,
-        .duration = info.duration,
-        .captureTimeMS = info.captureTimeMS,
-        .isKeyFrame = info.frameType == webrtc::VideoFrameType::kVideoFrameKey,
-        .rotation = fromWebRTCEncodedVideoRotation(info.rotation),
-        .isScreenshare = info.contentType == webrtc::VideoContentType::SCREENSHARE,
-        .qp = info.qp,
-        .temporalIndex = info.temporalIndex >= 0 ? std::make_optional<uint8_t>(info.temporalIndex) : std::nullopt
-    };
-}
-
-class GPULocalVideoEncoder final : public GPUVideoEncoder {
-    WTF_MAKE_TZONE_ALLOCATED_INLINE(GPULocalVideoEncoder);
-public:
-    static Ref<GPULocalVideoEncoder> LEGACY_NODELETE create(webrtc::LocalEncoder encoder) { return adoptRef(*new GPULocalVideoEncoder(encoder)); }
-
-    ~GPULocalVideoEncoder()
-    {
-        webrtc::releaseLocalEncoder(m_encoder);
-    }
-
-private:
-    explicit GPULocalVideoEncoder(webrtc::LocalEncoder encoder)
-        : m_encoder(encoder)
-    {
-    }
-
-    void initialize(uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate) final { webrtc::initializeLocalEncoder(m_encoder, width, height, startBitrate, maxBitrate, minBitrate, maxFramerate); }
-    void encodeFrame(CVPixelBufferRef pixelBuffer, int64_t timeStampNs, int64_t timeStamp, std::optional<uint64_t> duration, VideoFrame::Rotation rotation, bool isKeyframeRequired) final { webrtc::encodeLocalEncoderFrame(m_encoder, pixelBuffer, timeStampNs, timeStamp, duration, toWebRTCVideoRotation(rotation), isKeyframeRequired); }
-    void setRates(uint32_t bitRate, uint32_t frameRate) final { webrtc::setLocalEncoderRates(m_encoder, bitRate, frameRate); }
-    void flush() final { webrtc::flushLocalEncoder(m_encoder); }
-
-    webrtc::LocalEncoder m_encoder;
-};
-#endif
-
 RefPtr<GPUVideoEncoder> GPUVideoEncoder::create(CreationInfo&& creationInfo, const Vector<std::pair<String, String>>& parameters, GPUVideoEncoderCallback&& callback, GPUVideoEncoderDescriptionCallback&& descriptionCallback, GPUVideoEncoderErrorCallback&& errorCallback)
 {
-    if (creationInfo.useWebCoreEncoder) {
 #if USE(AVFOUNDATION)
-        if (creationInfo.codecType == VideoCodecType::H265) {
-            // We only support L1T1 for H265.
-            creationInfo.scalabilityMode = VideoEncoderScalabilityMode::L1T1;
-            return GPUVideoEncoderVTBH265::create(WTF::move(creationInfo), WTF::move(callback), WTF::move(descriptionCallback), WTF::move(errorCallback));
-        }
-
-        if (creationInfo.codecType == VideoCodecType::H264) {
-            if (creationInfo.scalabilityMode == VideoEncoderScalabilityMode::L1T3)
-                return nullptr;
-            return GPUVideoEncoderVTBH264::create(WTF::move(creationInfo), parameters, WTF::move(callback), WTF::move(descriptionCallback), WTF::move(errorCallback));
-        }
-        return nullptr;
-#endif
+    if (creationInfo.codecType == VideoCodecType::H265) {
+        // We only support L1T1 for H265.
+        creationInfo.scalabilityMode = VideoEncoderScalabilityMode::L1T1;
+        return GPUVideoEncoderVTBH265::create(WTF::move(creationInfo), WTF::move(callback), WTF::move(descriptionCallback), WTF::move(errorCallback));
     }
 
-#if USE(LIBWEBRTC)
-    ASSERT(creationInfo.codecType == VideoCodecType::H264 || creationInfo.codecType == VideoCodecType::H265);
-
-    std::map<std::string, std::string> rtcParameters;
-    for (auto& parameter : parameters)
-        rtcParameters.emplace(parameter.first.utf8().toStdString(), parameter.second.utf8().toStdString());
-
-    webrtc::LocalEncoderScalabilityMode rtcScalabilityMode;
-    switch (creationInfo.scalabilityMode) {
-    case VideoEncoderScalabilityMode::L1T1:
-        rtcScalabilityMode = webrtc::LocalEncoderScalabilityMode::L1T1;
-        break;
-    case VideoEncoderScalabilityMode::L1T2:
-        rtcScalabilityMode = webrtc::LocalEncoderScalabilityMode::L1T2;
-        break;
-    case VideoEncoderScalabilityMode::L1T3:
-        return nullptr;
+    if (creationInfo.codecType == VideoCodecType::H264) {
+        if (creationInfo.scalabilityMode == VideoEncoderScalabilityMode::L1T3)
+            return nullptr;
+        return GPUVideoEncoderVTBH264::create(WTF::move(creationInfo), parameters, WTF::move(callback), WTF::move(descriptionCallback), WTF::move(errorCallback));
     }
-
-    auto newFrameBlock = makeBlockPtr([callback = WTF::move(callback)](const uint8_t* buffer, size_t size, const webrtc::WebKitEncodedFrameInfo& info) {
-        callback(unsafeMakeSpan(buffer, size), toGPUVideoEncoderFrameInfo(info));
-    });
-    auto newConfigurationBlock = makeBlockPtr([descriptionCallback = WTF::move(descriptionCallback)](const uint8_t* buffer, size_t size) {
-        // This backend has no way to report the color space it actually encoded with, so we report a fixed default.
-        PlatformVideoColorSpace colorSpace {
-            .primaries = PlatformVideoColorPrimaries::Bt709,
-            .transfer = PlatformVideoTransferCharacteristics::Iec6196621,
-            .matrix = PlatformVideoMatrixCoefficients::Bt709,
-            .fullRange = true
-        };
-        descriptionCallback(unsafeMakeSpan(buffer, size), colorSpace);
-    });
-    auto errorBlock = makeBlockPtr([errorCallback = WTF::move(errorCallback)](bool isFrameDropped) {
-        errorCallback(isFrameDropped);
-    });
-
-    auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { creationInfo.codecType == VideoCodecType::H264 ? "H264" : "H265", rtcParameters }, creationInfo.useAnnexB, rtcScalabilityMode, newFrameBlock.get(), newConfigurationBlock.get(), errorBlock.get());
-    if (!encoder)
-        return nullptr;
-
-    webrtc::setLocalEncoderLowLatency(encoder, creationInfo.isLowLatencyEnabled);
-
-    return GPULocalVideoEncoder::create(encoder);
+    return nullptr;
 #else
     UNUSED_PARAM(creationInfo);
     UNUSED_PARAM(parameters);

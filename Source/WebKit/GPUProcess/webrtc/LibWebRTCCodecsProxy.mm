@@ -165,9 +165,9 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
     };
 }
 
-std::unique_ptr<WebCore::GPUVideoDecoder> LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation rotation, bool isMirrored)
+std::unique_ptr<WebCore::GPUVideoDecoder> LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation rotation, bool isMirrored)
 {
-    return GPUVideoDecoder::create(codecType, m_sharedPreferencesForWebProcess.webRTCWebCoreVideoCodecsEnabled, makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging, rotation, isMirrored)).get(), Ref { workQueue() }, WTF::move(colorSpaceOverride));
+    return GPUVideoDecoder::create(makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging, rotation, isMirrored)).get(), Ref { workQueue() }, WTF::move(colorSpaceOverride));
 }
 
 static bool validateCodecString(WebCore::VideoCodecType codecType, const String& codecString)
@@ -208,7 +208,7 @@ void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, WebC
         return;
     }
 
-    auto decoder = createLocalDecoder(identifier, codecType, useRemoteFrames, enableAdditionalLogging, WTF::move(colorSpaceOverride), rotation, isMirrored);
+    auto decoder = createLocalDecoder(identifier, useRemoteFrames, enableAdditionalLogging, WTF::move(colorSpaceOverride), rotation, isMirrored);
     if (!decoder) {
         callback(false);
         return;
@@ -366,10 +366,8 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebC
         connection->send(Messages::LibWebRTCCodecs::SetEncodingConfiguration { identifier, buffer, encoderColorSpace }, 0);
     };
 
-    bool useWebCoreEncoder = m_sharedPreferencesForWebProcess.webRTCWebCoreVideoCodecsEnabled;
     auto encoder = WebCore::GPUVideoEncoder::create({
         .codecType = codecType,
-        .useWebCoreEncoder = useWebCoreEncoder,
         .useAnnexB = useAnnexB,
         .scalabilityMode = scalabilityMode,
         .isLowLatencyEnabled = useLowLatency,

@@ -462,10 +462,7 @@ void LibWebRTCCodecs::setDecoderFormatDescription(Decoder& decoder, std::span<co
     if (!decoder.connection)
         return;
 
-    RefPtr<WebCore::VideoInfo> videoInfo;
-    if (WebProcess::singleton().sharedPreferencesForWebProcessValue().webRTCWebCoreVideoCodecsEnabled)
-        videoInfo = videoInfoFromFormatDescription(decoder.type, data, width, height);
-
+    RefPtr videoInfo = videoInfoFromFormatDescription(decoder.type, data, width, height);
     Ref { *decoder.connection }->send(Messages::LibWebRTCCodecsProxy::SetDecoderFormatDescription { decoder.identifier, data, videoInfo, width, height }, 0);
 }
 
@@ -498,7 +495,7 @@ Ref<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::sendFrameToDecode(Decoder& d
     switch (decoder.type) {
     case WebCore::VideoCodecType::H264:
     case WebCore::VideoCodecType::H265:
-        if (decoder.isAnnexB && WebProcess::singleton().sharedPreferencesForWebProcessValue().webRTCWebCoreVideoCodecsEnabled) {
+        if (decoder.isAnnexB) {
             auto naluIndices = WebCore::findNaluIndices(data);
             // FIXME: Skip rebuilding the VideoInfo when the parameter sets are unchanged from the previous frame.
             videoInfo = videoInfoFromAnnexBFrame(decoder.type, data, naluIndices);
@@ -952,9 +949,6 @@ static webrtc::WebKitEncodedFrameInfo toWebKitEncodedFrameInfo(const WebCore::GP
         .qp = info.qp,
         .temporalIndex = info.temporalIndex ? static_cast<int>(*info.temporalIndex) : -1,
     };
-
-    if (!WebProcess::singleton().sharedPreferencesForWebProcessValue().webRTCWebCoreVideoCodecsEnabled)
-        return webrtcInfo;
 
     switch (encoder.type) {
     case WebCore::VideoCodecType::H264:

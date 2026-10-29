@@ -81,7 +81,7 @@ private:
     explicit LibWebRTCCodecsProxy(GPUConnectionToWebProcess&, SharedPreferencesForWebProcess&);
     void initialize();
     auto createDecoderCallback(VideoDecoderIdentifier, bool useRemoteFrames, bool enableAdditionalLogging, WebCore::VideoFrameRotation, bool isMirrored);
-    std::unique_ptr<WebCore::GPUVideoDecoder> createLocalDecoder(VideoDecoderIdentifier, WebCore::VideoCodecType, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation, bool isMirrored);
+    std::unique_ptr<WebCore::GPUVideoDecoder> createLocalDecoder(VideoDecoderIdentifier, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation, bool isMirrored);
     WorkQueue& workQueue() const { return m_queue; }
 
     // IPC::WorkQueueMessageReceiver overrides.

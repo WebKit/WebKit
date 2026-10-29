@@ -47,7 +47,7 @@ class GPUVideoDecoder {
 public:
     virtual ~GPUVideoDecoder() = default;
 
-    WEBCORE_EXPORT static std::unique_ptr<GPUVideoDecoder> create(VideoCodecType, bool useWebCoreDecoder, GPUVideoDecoderCallback, Ref<WorkQueue>&&, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride);
+    WEBCORE_EXPORT static std::unique_ptr<GPUVideoDecoder> create(GPUVideoDecoderCallback, Ref<WorkQueue>&&, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride);
 
     virtual void flush() = 0;
     virtual void setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height, RefPtr<VideoInfo>&&) = 0;

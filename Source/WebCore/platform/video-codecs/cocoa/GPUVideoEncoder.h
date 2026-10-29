@@ -63,7 +63,6 @@ public:
 
     struct CreationInfo {
         VideoCodecType codecType;
-        bool useWebCoreEncoder;
         bool useAnnexB;
         VideoEncoderScalabilityMode scalabilityMode;
         bool isLowLatencyEnabled;
