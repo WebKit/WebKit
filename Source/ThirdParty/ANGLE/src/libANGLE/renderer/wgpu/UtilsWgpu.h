@@ -30,6 +30,8 @@ enum class WgpuPipelineOp : uint8_t
 {
     ImageCopy,
     ColorBlit,
+    DepthBlit,
+    StencilBlit,
 };
 
 struct CopyVertex
@@ -105,15 +107,19 @@ struct BlitKey
     bool srcIntendedFormatHasAlphaBits;
     bool dstIntentedFormatHasAlphaBits;
     GLenum filter;
+    // For stencil blits, the stencil bit that the pipeline writes, or 0xFF for the pipeline that
+    // sets the stencil to 0.
+    uint8_t stencilWriteMask;
 
     bool operator<(const BlitKey &other) const
     {
         return std::tie(op, srcComponentType, srcUnfilterable, dstActualFormatID, srcSamples,
-                        srcIntendedFormatHasAlphaBits, dstIntentedFormatHasAlphaBits,
-                        filter) < std::tie(other.op, other.srcComponentType, other.srcUnfilterable,
-                                           other.dstActualFormatID, other.srcSamples,
-                                           other.srcIntendedFormatHasAlphaBits,
-                                           other.dstIntentedFormatHasAlphaBits, other.filter);
+                        srcIntendedFormatHasAlphaBits, dstIntentedFormatHasAlphaBits, filter,
+                        stencilWriteMask) <
+               std::tie(other.op, other.srcComponentType, other.srcUnfilterable,
+                        other.dstActualFormatID, other.srcSamples,
+                        other.srcIntendedFormatHasAlphaBits, other.dstIntentedFormatHasAlphaBits,
+                        other.filter, other.stencilWriteMask);
     }
 };
 
@@ -207,6 +213,15 @@ class UtilsWgpu : angle::NonCopyable
                             angle::FormatID dstIntendedFormatID,
                             angle::FormatID dstActualFormatID);
 
+    // Blits depth, stencil or both by sampling them in draws. A null source view means that the
+    // aspect is not blitted. dst is a view of all the aspects of the destination.
+    angle::Result blitDepthStencil(ContextWgpu *context,
+                                   const BlitParams &params,
+                                   const webgpu::TextureViewHandle &srcDepth,
+                                   const webgpu::TextureViewHandle &srcStencil,
+                                   const webgpu::TextureViewHandle &dst,
+                                   angle::FormatID dstActualFormatID);
+
     angle::Result clear(ContextWgpu *context, ClearParams params);
 
   private:
@@ -230,9 +245,11 @@ class UtilsWgpu : angle::NonCopyable
                                    const ClearPipelineKey &key,
                                    const CachedPipeline **cachedPipelineOut);
 
-    // The vertices are CopyVertex, or BlitVertex with blitVertexLayout.
+    // A dstFormatID of NONE means no color target. The vertices are CopyVertex, or BlitVertex with
+    // blitVertexLayout.
     angle::Result createPipeline(ContextWgpu *context,
                                  angle::FormatID dstFormatID,
+                                 const WGPUDepthStencilState *depthStencilState,
                                  const webgpu::ShaderModuleHandle &shader,
                                  webgpu::BindGroupLayoutHandle bindGroupLayout,
                                  bool blitVertexLayout,

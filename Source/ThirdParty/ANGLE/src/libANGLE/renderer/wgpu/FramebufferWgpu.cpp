@@ -662,6 +662,9 @@ angle::Result FramebufferWgpu::blit(const gl::Context *context,
         }
     }
 
+    // Depth and stencil are blitted only if both framebuffers have them.
+    blitDepth   = blitDepth && readFramebuffer->getState().hasDepth() && mState.hasDepth();
+    blitStencil = blitStencil && readFramebuffer->getState().hasStencil() && mState.hasStencil();
     if (blitDepth || blitStencil)
     {
         RenderTargetWgpu *readRT = readFBOWgpu->mRenderTargetCache.getDepthStencil();
@@ -669,22 +672,8 @@ angle::Result FramebufferWgpu::blit(const gl::Context *context,
 
         if (readRT && drawRT)
         {
-            WGPUTextureAspect aspect = WGPUTextureAspect_All;
-            if (blitDepth && blitStencil)
-            {
-                aspect = WGPUTextureAspect_All;
-            }
-            else if (blitDepth)
-            {
-                aspect = WGPUTextureAspect_DepthOnly;
-            }
-            else if (blitStencil)
-            {
-                aspect = WGPUTextureAspect_StencilOnly;
-            }
-
-            ANGLE_TRY(
-                blitDepthStencilAttachment(context, geometry, readRT, srcFlipY, drawRT, aspect));
+            ANGLE_TRY(blitDepthStencilAttachment(context, geometry, readRT, srcFlipY, drawRT,
+                                                 blitDepth, blitStencil));
         }
     }
 
@@ -1150,7 +1139,8 @@ angle::Result FramebufferWgpu::blitDepthStencilAttachment(const gl::Context *con
                                                           RenderTargetWgpu *readRenderTarget,
                                                           bool srcFlipY,
                                                           RenderTargetWgpu *drawRenderTarget,
-                                                          WGPUTextureAspect aspect)
+                                                          bool blitDepth,
+                                                          bool blitStencil)
 {
     ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
     webgpu::ImageHelper *srcImage;
@@ -1165,17 +1155,57 @@ angle::Result FramebufferWgpu::blitDepthStencilAttachment(const gl::Context *con
         geometry.dstArea, geometry.dstScissor, geometry.srcArea, geometry.callSrcArea,
         geometry.callDstArea, srcFlipY, srcLevelSize, flipY(), dstLevelSize, GL_NEAREST);
 
-    const WGPUTextureFormat wgpuFormat = srcImage->toWgpuTextureFormat();
-    if (wgpuFormat != WGPUTextureFormat_Depth24Plus &&
+    // WebGPU copies depth and stencil only for whole subresources and all their aspects, and
+    // doesn't copy depth24plus.
+    const angle::Format &format        = angle::Format::Get(dstImage->getActualFormatID());
+    const WGPUTextureFormat wgpuFormat = dstImage->toWgpuTextureFormat();
+    const gl::Rectangle dstLevelArea(0, 0, dstLevelSize.width, dstLevelSize.height);
+    if (srcImage->getActualFormatID() == dstImage->getActualFormatID() &&
+        srcImage->getSamples() <= 1 && wgpuFormat != WGPUTextureFormat_Depth24Plus &&
         wgpuFormat != WGPUTextureFormat_Depth24PlusStencil8 &&
-        srcImage->getActualFormatID() == dstImage->getActualFormatID() &&
-        srcImage->getSamples() <= 1 && IsBlitUnscaledAndUnflipped(params))
+        (blitDepth || format.depthBits == 0) && (blitStencil || format.stencilBits == 0) &&
+        IsBlitUnscaledAndUnflipped(params) && params.dstScissor == dstLevelArea &&
+        params.srcArea.x == 0 && params.srcArea.y == 0 &&
+        srcLevelSize.width == dstLevelSize.width && srcLevelSize.height == dstLevelSize.height)
     {
-        return blitWithDirectCopy(contextWgpu, readRenderTarget, drawRenderTarget, params, aspect);
+        return blitWithDirectCopy(contextWgpu, readRenderTarget, drawRenderTarget, params,
+                                  WGPUTextureAspect_All);
     }
 
-    UNIMPLEMENTED();
-    return angle::Result::Continue;
+    // Not implemented: resolving multisampled depth and stencil, and blits within one image, which
+    // need a copy of the source, because a render pass can't sample its attachment.
+    const bool sameSubresource =
+        srcImage == dstImage &&
+        readRenderTarget->getLevelIndex() == drawRenderTarget->getLevelIndex() &&
+        readRenderTarget->getLayer() == drawRenderTarget->getLayer();
+    if (srcImage->getSamples() > 1 || sameSubresource)
+    {
+        UNIMPLEMENTED();
+        return angle::Result::Continue;
+    }
+
+    // Sample the aspects separately.
+    const angle::Format &srcFormat = angle::Format::Get(srcImage->getActualFormatID());
+    webgpu::TextureViewHandle srcDepthView;
+    webgpu::TextureViewHandle srcStencilView;
+    if (blitDepth)
+    {
+        ANGLE_TRY(srcImage->createTextureViewSingleLevel(
+            readRenderTarget->getGlLevel(), readRenderTarget->getLayer(), srcDepthView,
+            srcFormat.stencilBits > 0 ? WGPUTextureAspect_DepthOnly : WGPUTextureAspect_All,
+            WGPUTextureFormat_Undefined));
+    }
+    if (blitStencil)
+    {
+        ANGLE_TRY(srcImage->createTextureViewSingleLevel(
+            readRenderTarget->getGlLevel(), readRenderTarget->getLayer(), srcStencilView,
+            srcFormat.depthBits > 0 ? WGPUTextureAspect_StencilOnly : WGPUTextureAspect_All,
+            WGPUTextureFormat_Undefined));
+    }
+
+    return contextWgpu->getUtils()->blitDepthStencil(
+        contextWgpu, params, srcDepthView, srcStencilView, drawRenderTarget->getTextureView(),
+        dstImage->getActualFormatID());
 }
 
 angle::Result FramebufferWgpu::blitWithDirectCopy(ContextWgpu *contextWgpu,

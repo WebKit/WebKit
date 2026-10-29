@@ -193,9 +193,51 @@ webgpu::ShaderModuleHandle UtilsWgpu::getBlitShaderModule(ContextWgpu *context, 
 {
     std::stringstream ss;
 
-    const angle::Format &dstFormat = angle::Format::Get(key.dstActualFormatID);
-
     ss << kBlitVertexMain;
+
+    if (key.op == WgpuPipelineOp::DepthBlit || key.op == WgpuPipelineOp::StencilBlit)
+    {
+        ss << "@group(0) @binding(0)\n var t_source: "
+           << (key.op == WgpuPipelineOp::DepthBlit ? "texture_depth_2d" : "texture_2d<u32>")
+           << ";\n";
+        if (key.op == WgpuPipelineOp::DepthBlit)
+        {
+            ss << "@fragment\nfn " << kFragmentEntryPoint
+               << "(in: VertexOutput) -> @builtin(frag_depth) f32 {\n";
+        }
+        else
+        {
+            ss << "@fragment\nfn " << kFragmentEntryPoint << "(in: VertexOutput) {\n";
+        }
+        // The pipeline that sets the stencil to 0 doesn't read the source.
+        if (key.op == WgpuPipelineOp::DepthBlit || key.stencilWriteMask != 0xFF)
+        {
+            ss << "    let maxCoord = vec2<i32>(textureDimensions(t_source)) - vec2<i32>(1);\n";
+            ss << "    let coord = clamp(nearestTexel(in), vec2<i32>(0), maxCoord);\n";
+        }
+        if (key.op == WgpuPipelineOp::DepthBlit)
+        {
+            ss << "    return textureLoad(t_source, coord, 0);\n";
+        }
+        else if (key.stencilWriteMask != 0xFF)
+        {
+            // Only fragments whose source has the bit set the bit.
+            ss << "    if ((textureLoad(t_source, coord, 0).r & "
+               << static_cast<uint32_t>(key.stencilWriteMask) << "u) == 0u) {\n";
+            ss << "        discard;\n";
+            ss << "    }\n";
+        }
+        ss << "}\n";
+
+        if (kLogShaders)
+        {
+            ANGLE_LOG(INFO) << ss.str();
+        }
+
+        return getShaderModule(context, ss.str());
+    }
+
+    const angle::Format &dstFormat = angle::Format::Get(key.dstActualFormatID);
     ss << "@group(0) @binding(0)\n var t_source: texture_2d<"
        << GetWgslTextureComponentTypeFromGlComponent(key.srcComponentType) << ">;\n";
     ss << "@group(0) @binding(1)\n var t_sampler: sampler;\n";
@@ -273,6 +315,7 @@ webgpu::ShaderModuleHandle UtilsWgpu::getShaderModule(ContextWgpu *context,
 
 angle::Result UtilsWgpu::createPipeline(ContextWgpu *context,
                                         angle::FormatID dstFormatID,
+                                        const WGPUDepthStencilState *depthStencilState,
                                         const webgpu::ShaderModuleHandle &shader,
                                         webgpu::BindGroupLayoutHandle bindGroupLayout,
                                         bool blitVertexLayout,
@@ -324,11 +367,15 @@ angle::Result UtilsWgpu::createPipeline(ContextWgpu *context,
     fragmentState.entryPoint              = {kFragmentEntryPoint, sizeof(kFragmentEntryPoint) - 1};
     WGPUColorTargetState colorTargetState = WGPU_COLOR_TARGET_STATE_INIT;
 
-    colorTargetState.format   = webgpu::GetWgpuTextureFormatFromFormatID(dstFormatID);
-    fragmentState.targetCount = 1;
-    fragmentState.targets     = &colorTargetState;
+    if (dstFormatID != angle::FormatID::NONE)
+    {
+        colorTargetState.format   = webgpu::GetWgpuTextureFormatFromFormatID(dstFormatID);
+        fragmentState.targetCount = 1;
+        fragmentState.targets     = &colorTargetState;
+    }
 
     pipelineDesc.fragment     = &fragmentState;
+    pipelineDesc.depthStencil = depthStencilState;
 
     WGPUPipelineLayoutDescriptor plDesc = WGPU_PIPELINE_LAYOUT_DESCRIPTOR_INIT;
     plDesc.bindGroupLayoutCount         = 1;
@@ -371,7 +418,7 @@ angle::Result UtilsWgpu::getCopyPipeline(ContextWgpu *context,
     bindGroupLayout = webgpu::BindGroupLayoutHandle::Acquire(
         wgpu, wgpu->deviceCreateBindGroupLayout(device, &bglDesc));
 
-    return createPipeline(context, dstFormatID, shader, std::move(bindGroupLayout),
+    return createPipeline(context, dstFormatID, nullptr, shader, std::move(bindGroupLayout),
                           /*blitVertexLayout=*/false, cachedPipelineOut);
 }
 
@@ -410,6 +457,44 @@ angle::Result UtilsWgpu::getBlitPipeline(ContextWgpu *context,
     bglDesc.entryCount                    = 2;
     bglDesc.entries                       = bglEntries;
 
+    // Depth and stencil blits load the source and write the depth/stencil attachment only.
+    angle::FormatID colorFormatID               = key.dstActualFormatID;
+    WGPUDepthStencilState depthStencilState     = WGPU_DEPTH_STENCIL_STATE_INIT;
+    WGPUDepthStencilState *depthStencilStatePtr = nullptr;
+    if (key.op == WgpuPipelineOp::DepthBlit || key.op == WgpuPipelineOp::StencilBlit)
+    {
+        bglEntries[0].texture.sampleType = key.op == WgpuPipelineOp::DepthBlit
+                                               ? WGPUTextureSampleType_Depth
+                                               : WGPUTextureSampleType_Uint;
+        bglDesc.entryCount               = 1;
+        colorFormatID                    = angle::FormatID::NONE;
+
+        const angle::Format &dstFormat = angle::Format::Get(key.dstActualFormatID);
+        depthStencilState.format = webgpu::GetWgpuTextureFormatFromFormatID(key.dstActualFormatID);
+        if (dstFormat.depthBits > 0)
+        {
+            depthStencilState.depthWriteEnabled = key.op == WgpuPipelineOp::DepthBlit
+                                                      ? WGPUOptionalBool_True
+                                                      : WGPUOptionalBool_False;
+            depthStencilState.depthCompare      = WGPUCompareFunction_Always;
+        }
+        depthStencilState.stencilWriteMask = 0;
+        if (key.op == WgpuPipelineOp::StencilBlit)
+        {
+            for (WGPUStencilFaceState *face :
+                 {&depthStencilState.stencilFront, &depthStencilState.stencilBack})
+            {
+                face->compare     = WGPUCompareFunction_Always;
+                face->failOp      = WGPUStencilOperation_Keep;
+                face->depthFailOp = WGPUStencilOperation_Keep;
+                face->passOp      = WGPUStencilOperation_Replace;
+            }
+            depthStencilState.stencilReadMask  = 0xFF;
+            depthStencilState.stencilWriteMask = key.stencilWriteMask;
+        }
+        depthStencilStatePtr = &depthStencilState;
+    }
+
     WGPUDevice device         = context->getDevice().get();
     const DawnProcTable *wgpu = webgpu::GetProcs(context);
     webgpu::BindGroupLayoutHandle bindGroupLayout;
@@ -418,7 +503,7 @@ angle::Result UtilsWgpu::getBlitPipeline(ContextWgpu *context,
 
     webgpu::ShaderModuleHandle shaderModule = getBlitShaderModule(context, key);
     CachedPipeline newCachedPipeline;
-    ANGLE_TRY(createPipeline(context, key.dstActualFormatID, shaderModule,
+    ANGLE_TRY(createPipeline(context, colorFormatID, depthStencilStatePtr, shaderModule,
                              std::move(bindGroupLayout), /*blitVertexLayout=*/true,
                              &newCachedPipeline));
     std::pair<BlitPipelineCache::iterator, bool> inserted =
@@ -764,6 +849,96 @@ angle::Result UtilsWgpu::blitColor(ContextWgpu *context,
     commandBuffer.setPipeline(cachedPipeline->pipeline);
     commandBuffer.setBindGroup(0, bindGroup);
     commandBuffer.draw(4, 1, 0, 0);
+
+    return context->endRenderPass(webgpu::RenderPassClosureReason::CopyImage);
+}
+
+angle::Result UtilsWgpu::blitDepthStencil(ContextWgpu *context,
+                                          const BlitParams &params,
+                                          const webgpu::TextureViewHandle &srcDepth,
+                                          const webgpu::TextureViewHandle &srcStencil,
+                                          const webgpu::TextureViewHandle &dst,
+                                          angle::FormatID dstActualFormatID)
+{
+    const DawnProcTable *wgpu      = webgpu::GetProcs(context);
+    const angle::Format &dstFormat = angle::Format::Get(dstActualFormatID);
+
+    // A WebGPU shader can't write the stencil. Set the stencil of the area to 0 with the first
+    // stencil pipeline, then each of the others sets one bit where the source has it.
+    constexpr size_t kStencilPipelineCount = 9;
+    struct BlitDraw
+    {
+        const CachedPipeline *pipeline;
+        webgpu::BindGroupHandle bindGroup;
+        uint32_t stencilReference;
+    };
+    angle::FixedVector<BlitDraw, 1 + kStencilPipelineCount> draws;
+
+    auto addDraw = [&](const BlitKey &key, const webgpu::TextureViewHandle &src,
+                       uint32_t stencilReference) -> angle::Result {
+        const CachedPipeline *pipeline = nullptr;
+        ANGLE_TRY(getBlitPipeline(context, key, &pipeline));
+
+        WGPUBindGroupEntry bgEntry     = WGPU_BIND_GROUP_ENTRY_INIT;
+        bgEntry.binding                = 0;
+        bgEntry.textureView            = src.get();
+        WGPUBindGroupDescriptor bgDesc = WGPU_BIND_GROUP_DESCRIPTOR_INIT;
+        bgDesc.entryCount              = 1;
+        bgDesc.entries                 = &bgEntry;
+        bgDesc.layout                  = pipeline->bindGroupLayout.get();
+
+        draws.push_back(
+            {pipeline,
+             webgpu::BindGroupHandle::Acquire(
+                 wgpu, wgpu->deviceCreateBindGroup(context->getDevice().get(), &bgDesc)),
+             stencilReference});
+        return angle::Result::Continue;
+    };
+
+    BlitKey key           = {};
+    key.dstActualFormatID = dstActualFormatID;
+    key.srcSamples        = 1;
+    key.filter            = GL_NEAREST;
+    if (srcDepth)
+    {
+        key.op = WgpuPipelineOp::DepthBlit;
+        ANGLE_TRY(addDraw(key, srcDepth, 0));
+    }
+    if (srcStencil)
+    {
+        key.op = WgpuPipelineOp::StencilBlit;
+        for (size_t i = 0; i < kStencilPipelineCount; ++i)
+        {
+            key.stencilWriteMask = i == 0 ? 0xFF : static_cast<uint8_t>(1u << (i - 1));
+            ANGLE_TRY(addDraw(key, srcStencil, i == 0 ? 0 : 0xFF));
+        }
+    }
+
+    webgpu::PackedRenderPassDescriptor renderPassDesc;
+    webgpu::PackedRenderPassDepthStencilAttachment depthStencilAttachment;
+    depthStencilAttachment.view = dst;
+    if (dstFormat.depthBits > 0)
+    {
+        depthStencilAttachment.depthLoadOp  = WGPULoadOp_Load;
+        depthStencilAttachment.depthStoreOp = WGPUStoreOp_Store;
+    }
+    if (dstFormat.stencilBits > 0)
+    {
+        depthStencilAttachment.stencilLoadOp  = WGPULoadOp_Load;
+        depthStencilAttachment.stencilStoreOp = WGPUStoreOp_Store;
+    }
+    renderPassDesc.depthStencilAttachment = std::move(depthStencilAttachment);
+
+    ANGLE_TRY(startBlitRenderPass(context, params, renderPassDesc));
+
+    webgpu::CommandBuffer &commandBuffer = context->getCommandBuffer();
+    for (const BlitDraw &draw : draws)
+    {
+        commandBuffer.setPipeline(draw.pipeline->pipeline);
+        commandBuffer.setBindGroup(0, draw.bindGroup);
+        commandBuffer.setStencilReference(draw.stencilReference);
+        commandBuffer.draw(4, 1, 0, 0);
+    }
 
     return context->endRenderPass(webgpu::RenderPassClosureReason::CopyImage);
 }

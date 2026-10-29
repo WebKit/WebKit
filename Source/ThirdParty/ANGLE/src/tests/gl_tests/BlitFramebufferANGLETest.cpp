@@ -5487,6 +5487,309 @@ TEST_P(BlitFramebufferTest, ScaledBlitsFromFloatFormats)
     }
 }
 
+// Writes per-pixel stencil values and depths into the bound framebuffer: the stencil value of a
+// pixel is |stencilOf(x, y)| unless !|hasStencil|, and its depth is |depthOf(x, y)| in normalized
+// device coordinates. |drawQuadAt(z)| draws a quad that covers the framebuffer at depth z.
+template <typename DrawQuadAt, typename StencilOf, typename DepthOf>
+void DrawBlitDepthStencilPattern(DrawQuadAt drawQuadAt,
+                                 GLsizei width,
+                                 GLsizei height,
+                                 bool hasStencil,
+                                 StencilOf stencilOf,
+                                 DepthOf depthOf)
+{
+    glEnable(GL_SCISSOR_TEST);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    glDepthMask(GL_TRUE);
+    if (hasStencil)
+    {
+        glEnable(GL_STENCIL_TEST);
+        glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+        glStencilMask(0xFF);
+    }
+    for (GLint y = 0; y < height; ++y)
+    {
+        for (GLint x = 0; x < width; ++x)
+        {
+            glScissor(x, y, 1, 1);
+            glStencilFunc(GL_ALWAYS, stencilOf(x, y), 0xFF);
+            drawQuadAt(depthOf(x, y));
+        }
+    }
+    glDisable(GL_SCISSOR_TEST);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_STENCIL_TEST);
+}
+
+// Reads the stencil values of the bound framebuffer through its color buffer: one additive draw
+// per stencil bit puts the stencil value in the red channel. Without |hasStencil|, the red channel
+// is 0.
+//
+// The depth is read into the green channel. With |exactDepths|, one draw per depth in it, with the
+// GL_EQUAL depth test, adds the index of the depth plus 1, so that the green channel is 0 for a
+// depth that isn't in |exactDepths|. Without it, the green channel is 0 for a depth of at most 0.5,
+// 1 for at most 0.9 and 2 above that.
+//
+// |drawQuadAt| is as above, with |program|, whose color is the uniform at |colorLoc|.
+template <typename DrawQuadAt>
+std::vector<GLColor> ReadBlitDepthStencilAsColor(DrawQuadAt drawQuadAt,
+                                                 GLuint program,
+                                                 GLint colorLoc,
+                                                 bool hasStencil,
+                                                 const std::vector<float> *exactDepths,
+                                                 GLsizei width,
+                                                 GLsizei height)
+{
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    glUseProgram(program);
+
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    for (GLuint bit = 0; hasStencil && bit < 8; ++bit)
+    {
+        glStencilFunc(GL_EQUAL, 1u << bit, 1u << bit);
+        glUniform4f(colorLoc, (1u << bit) / 255.0f, 0.0f, 0.0f, 0.0f);
+        drawQuadAt(0.0f);
+    }
+    glDisable(GL_STENCIL_TEST);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+    if (exactDepths)
+    {
+        glDepthFunc(GL_EQUAL);
+        for (size_t i = 0; i < exactDepths->size(); ++i)
+        {
+            glUniform4f(colorLoc, 0.0f, (i + 1) / 255.0f, 0.0f, 0.0f);
+            drawQuadAt((*exactDepths)[i]);
+        }
+    }
+    else
+    {
+        glDepthFunc(GL_LESS);
+        glUniform4f(colorLoc, 0.0f, 1.0f / 255.0f, 0.0f, 0.0f);
+        // Window depths 0.5 and 0.9.
+        drawQuadAt(0.0f);
+        drawQuadAt(0.8f);
+    }
+    glDepthMask(GL_TRUE);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+
+    return ReadBlitPixels(width, height);
+}
+
+// Test scaled, flipped, clipped and scissored depth and stencil blits pixel by pixel. Every source
+// pixel has another depth, and the destination depths must equal them exactly.
+TEST_P(BlitFramebufferTest, ScaledDepthStencilBlitsPixelByPixel)
+{
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint colorLoc = glGetUniformLocation(drawColor, essl1_shaders::ColorUniform());
+    ASSERT_NE(-1, colorLoc);
+    auto drawQuadAt = [&](float z) { drawQuad(drawColor, essl1_shaders::PositionAttrib(), z); };
+
+    constexpr GLsizei kPixelCount = kBlitPatternWidth * kBlitPatternHeight;
+    std::vector<float> depths(kPixelCount);
+    for (GLsizei i = 0; i < kPixelCount; ++i)
+    {
+        depths[i] = -0.9f + 1.8f * i / (kPixelCount - 1);
+    }
+    auto stencilOf = [](GLint x, GLint y) { return (x * kBlitPatternHeight + y + 1) & 0xFF; };
+    auto depthOf   = [&](GLint x, GLint y) { return depths[y * kBlitPatternWidth + x]; };
+
+    struct Format
+    {
+        GLenum format;
+        GLenum attachment;
+        bool hasStencil;
+    };
+    constexpr Format kFormats[] = {
+        {GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, true},
+        {GL_DEPTH_COMPONENT32F, GL_DEPTH_ATTACHMENT, false},
+    };
+
+    for (const Format &format : kFormats)
+    {
+        GLFramebuffer srcFBO;
+        GLRenderbuffer srcColor, srcDepthStencil;
+        glBindFramebuffer(GL_FRAMEBUFFER, srcFBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, srcColor);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kBlitPatternWidth, kBlitPatternHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, srcColor);
+        glBindRenderbuffer(GL_RENDERBUFFER, srcDepthStencil);
+        glRenderbufferStorage(GL_RENDERBUFFER, format.format, kBlitPatternWidth,
+                              kBlitPatternHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, format.attachment, GL_RENDERBUFFER,
+                                  srcDepthStencil);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        glViewport(0, 0, kBlitPatternWidth, kBlitPatternHeight);
+        glUseProgram(drawColor);
+        DrawBlitDepthStencilPattern(drawQuadAt, kBlitPatternWidth, kBlitPatternHeight,
+                                    format.hasStencil, stencilOf, depthOf);
+        ASSERT_GL_NO_ERROR();
+
+        // The expected result of reading the source with ReadBlitDepthStencilAsColor.
+        std::vector<GLColor> pattern(kPixelCount);
+        for (GLint y = 0; y < kBlitPatternHeight; ++y)
+        {
+            for (GLint x = 0; x < kBlitPatternWidth; ++x)
+            {
+                pattern[y * kBlitPatternWidth + x] = MakeGLColor(
+                    format.hasStencil ? stencilOf(x, y) : 0, y * kBlitPatternWidth + x + 1, 0, 0);
+            }
+        }
+
+        GLFramebuffer dstFBO;
+        GLRenderbuffer dstColor, dstDepthStencil;
+        glBindFramebuffer(GL_FRAMEBUFFER, dstFBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, dstColor);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kBlitTargetWidth, kBlitTargetHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, dstColor);
+        glBindRenderbuffer(GL_RENDERBUFFER, dstDepthStencil);
+        glRenderbufferStorage(GL_RENDERBUFFER, format.format, kBlitTargetWidth, kBlitTargetHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, format.attachment, GL_RENDERBUFFER,
+                                  dstDepthStencil);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Cleared to stencil 200 and depth 1.0, which isn't any of the source depths.
+        const std::vector<GLColor> cleared(kBlitTargetWidth * kBlitTargetHeight,
+                                           GLColor(format.hasStencil ? 200 : 0, 0, 0, 0));
+        constexpr BlitCorners kScissor = {6, 4, 25, 11};
+        const GLbitfield mask =
+            GL_DEPTH_BUFFER_BIT | (format.hasStencil ? GL_STENCIL_BUFFER_BIT : 0);
+
+        std::vector<BlitCase> cases(std::begin(kScaledBlitCases), std::end(kScaledBlitCases));
+        cases.insert(cases.end(), std::begin(kClippedBlitCases), std::end(kClippedBlitCases));
+        for (bool scissored : {false, true})
+        {
+            for (const BlitCase &blit : cases)
+            {
+                glBindFramebuffer(GL_FRAMEBUFFER, dstFBO);
+                glViewport(0, 0, kBlitTargetWidth, kBlitTargetHeight);
+                glClearDepthf(1.0f);
+                glClearStencil(200);
+                glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+                if (scissored)
+                {
+                    glEnable(GL_SCISSOR_TEST);
+                    glScissor(kScissor.x0, kScissor.y0, kScissor.x1 - kScissor.x0,
+                              kScissor.y1 - kScissor.y0);
+                }
+                glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFBO);
+                glBlitFramebuffer(blit.src.x0, blit.src.y0, blit.src.x1, blit.src.y1, blit.dst.x0,
+                                  blit.dst.y0, blit.dst.x1, blit.dst.y1, mask, GL_NEAREST);
+                glDisable(GL_SCISSOR_TEST);
+                ASSERT_GL_NO_ERROR();
+
+                glBindFramebuffer(GL_FRAMEBUFFER, dstFBO);
+                std::stringstream label;
+                label << blit << (scissored ? " with scissor" : "") << ", format " << format.format;
+                ExpectBlitPixelsEqual(
+                    ReferenceNearestBlit(pattern, kBlitPatternWidth, kBlitPatternHeight, cleared,
+                                         kBlitTargetWidth, kBlitTargetHeight, blit,
+                                         scissored ? &kScissor : nullptr),
+                    ReadBlitDepthStencilAsColor(drawQuadAt, drawColor, colorLoc, format.hasStencil,
+                                                &depths, kBlitTargetWidth, kBlitTargetHeight),
+                    kBlitTargetWidth, label.str());
+            }
+        }
+    }
+}
+
+// Test that a depth blit keeps the stencil values and a stencil blit keeps the depth values, and
+// that blits of part of a depth-only buffer work.
+TEST_P(BlitFramebufferTest, PartialDepthOrStencilBlits)
+{
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint colorLoc = glGetUniformLocation(drawColor, essl1_shaders::ColorUniform());
+    ASSERT_NE(-1, colorLoc);
+    auto drawQuadAt = [&](float z) { drawQuad(drawColor, essl1_shaders::PositionAttrib(), z); };
+
+    constexpr GLsizei kSize = 16;
+    struct Format
+    {
+        GLenum format;
+        GLenum attachment;
+        bool hasStencil;
+    };
+    constexpr Format kFormats[] = {
+        {GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, true},
+        {GL_DEPTH_COMPONENT16, GL_DEPTH_ATTACHMENT, false},
+        {GL_DEPTH_COMPONENT24, GL_DEPTH_ATTACHMENT, false},
+        {GL_DEPTH_COMPONENT32F, GL_DEPTH_ATTACHMENT, false},
+    };
+
+    for (const Format &format : kFormats)
+    {
+        GLFramebuffer fbos[2];
+        GLRenderbuffer colors[2], depthStencils[2];
+        for (int i = 0; i < 2; ++i)
+        {
+            glBindFramebuffer(GL_FRAMEBUFFER, fbos[i]);
+            glBindRenderbuffer(GL_RENDERBUFFER, colors[i]);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                      colors[i]);
+            glBindRenderbuffer(GL_RENDERBUFFER, depthStencils[i]);
+            glRenderbufferStorage(GL_RENDERBUFFER, format.format, kSize, kSize);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, format.attachment, GL_RENDERBUFFER,
+                                      depthStencils[i]);
+            ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+            // The source has depth 0.25 and stencil 0x5A, the destination depth 1.0 and stencil
+            // 200.
+            glClearDepthf(i == 0 ? 0.25f : 1.0f);
+            glClearStencil(i == 0 ? 0x5A : 200);
+            glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        }
+        glViewport(0, 0, kSize, kSize);
+
+        auto expectDepthStencil = [&](GLint x, GLint stencil, GLint depthLevel, const char *what) {
+            const std::vector<GLColor> actual = ReadBlitDepthStencilAsColor(
+                drawQuadAt, drawColor, colorLoc, format.hasStencil, nullptr, kSize, kSize);
+            for (GLint y = 0; y < kSize; ++y)
+            {
+                const GLColor &pixel = actual[y * kSize + x];
+                EXPECT_EQ(format.hasStencil ? stencil : 0, pixel.R)
+                    << what << ", format " << format.format << " pixel (" << x << ", " << y << ")";
+                EXPECT_EQ(depthLevel, pixel.G)
+                    << what << ", format " << format.format << " pixel (" << x << ", " << y << ")";
+            }
+        };
+
+        // Blit the depth of the left half to the right half.
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fbos[0]);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbos[1]);
+        glBlitFramebuffer(0, 0, kSize / 2, kSize, kSize / 2, 0, kSize, kSize, GL_DEPTH_BUFFER_BIT,
+                          GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+        glBindFramebuffer(GL_FRAMEBUFFER, fbos[1]);
+        expectDepthStencil(kSize / 2 - 1, 200, 2, "left of the depth blit");
+        expectDepthStencil(kSize / 2, 200, 0, "right of the depth blit");
+
+        if (!format.hasStencil)
+        {
+            continue;
+        }
+
+        // Blit the stencil of the right half to the left half.
+        glClearDepthf(1.0f);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fbos[0]);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbos[1]);
+        glBlitFramebuffer(kSize / 2, 0, kSize, kSize, 0, 0, kSize / 2, kSize, GL_STENCIL_BUFFER_BIT,
+                          GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+        glBindFramebuffer(GL_FRAMEBUFFER, fbos[1]);
+        expectDepthStencil(kSize / 2 - 1, 0x5A, 2, "left of the stencil blit");
+        expectDepthStencil(kSize / 2, 200, 2, "right of the stencil blit");
+    }
+}
+
 // Test that glBlitFramebuffer works when the framebuffer attachment level is not zero.  At the same
 // time, the texture's base level is also non-zero.
 TEST_P(BlitFramebufferTestES31, BlitNonZeroLevelSource)

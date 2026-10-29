@@ -2507,7 +2507,6 @@
 42267012 WGPU : ClearTest.ChangeFramebufferAttachmentFromRGBAtoRGB* = SKIP
 42267012 WGPU : ClearTestES3.ClearAndReadPixels3DTexture/* = SKIP
 42267012 WGPU : ClearTestES3.DrawAfterClearWithGaps/* = SKIP
-42267012 WGPU : ClearTestES3.*WithBlit*/* = SKIP
 // Some tests use too many attachments
 483423899 WGPU : ClearTestES3.ClearStencilAfterDraw/* = SKIP
 483423899 WGPU : ClearTestES3.ClearMaxAttachments*/* = SKIP
@@ -2540,24 +2539,14 @@
 42266907 WGPU : AttributeLayoutNonIndexed.Test/* = SKIP
 42266907 WGPU : BindUniformLocationTest.Compositor/* = SKIP
 42266907 WGPU : BlitFramebufferANGLETest.BlitWithMissingAttachments/* = SKIP
-42266907 WGPU : BlitFramebufferANGLETest.BlitWithDepthUserToDefault/* = SKIP
-42266907 WGPU : BlitFramebufferANGLETest.BlitWithDepthDefaultToUser/* = SKIP
-42266907 WGPU : BlitFramebufferANGLETest.BlitStencil/* = SKIP
 42266907 WGPU : BlitFramebufferTest.*Multisample* = SKIP
 42266907 WGPU : BlitFramebufferTest.*Multisampled* = SKIP
-42266907 WGPU : BlitFramebufferTest.BlitStencilToDefault/* = SKIP
 42266907 WGPU : BlitFramebufferTest.NonZeroBaseDestination* = SKIP
-42266907 WGPU : BlitFramebufferTest.NonZeroBaseSourceStencil/* = SKIP
 42266907 WGPU : BlitFramebufferTest.NonZeroBaseSource/* = SKIP
-42266907 WGPU : BlitFramebufferTest.drawBlitAndDrawAgain/* = SKIP
-42266907 WGPU : BlitFramebufferTest.scissorDrawBlitAndDrawAgain/* = SKIP
-42266907 WGPU : BlitFramebufferTest.FlippedBlits/* = SKIP
-42266907 WGPU : BlitFramebufferTest.BlitDepthStencilPixelByPixel/* = SKIP
 42266907 WGPU : BlitFramebufferTest.*Resolve* = SKIP
 42266907 WGPU : BlitFramebufferTest.Blit3D/* = SKIP
 42266907 WGPU : BlitFramebufferTest.BlitLargeColorSmallDepthAttachments/* = SKIP
 42266907 WGPU : BlitFramebufferTest.BlitSmallColorLargeDepthAttachments/* = SKIP
-42266907 WGPU : BlitFramebufferTest.BlitStencilScissoredScaled/* = SKIP
 42266907 WGPU : BlitFramebufferTest.Blit3DTo2DArray/* = SKIP
 42266907 WGPU : BlitFramebufferTest.Blit2DArrayTo3D/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.TexSubImageOnTextureBoundToFrambuffer/* = SKIP

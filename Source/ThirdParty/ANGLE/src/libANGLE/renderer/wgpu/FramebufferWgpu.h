@@ -167,7 +167,8 @@ class FramebufferWgpu : public FramebufferImpl
                                              RenderTargetWgpu *readRenderTarget,
                                              bool srcFlipY,
                                              RenderTargetWgpu *drawRenderTarget,
-                                             WGPUTextureAspect aspect);
+                                             bool blitDepth,
+                                             bool blitStencil);
 
     angle::Result blitWithDirectCopy(ContextWgpu *contextWgpu,
                                      RenderTargetWgpu *readRenderTarget,
