@@ -128,9 +128,6 @@
 359729255 METAL : VertexAttributeTest.VertexAttribPointerCopyBufferFromInvalid* = SKIP
 359729255 WGPU : VertexAttributeTest.VertexAttribPointerCopyBufferFromInvalid* = SKIP
 
-// Using a non-zero offset non-aligned with the stride.
-468923885 WGPU : VertexAttributeTest.BufferOffsetNonAlignedWithStride/* = SKIP
-
 // Propagate buffer changes to VertexArray fail on some desktop drivers
 433331119 LINUX NVIDIA OPENGL : ValidationStateChangeTest.RebindBufferShouldPickupBufferChange/* = SKIP
 433331119 LINUX NVIDIA OPENGL : ValidationStateChangeTestES31.RebindVertexBufferShouldPickupBufferChange/* = SKIP
@@ -2532,9 +2529,6 @@
 0 WGPU : ViewportTest.ReversedDepthRangeAfterViewportAndFramebufferChanges/* = SKIP
 
 42266907 WGPU : AddMockTextureNoRenderTargetTest.NoProgramOutputWorkaround/* = SKIP
-42266907 WGPU : AttributeLayoutBufferIndexed.Test/* = SKIP
-42266907 WGPU : AttributeLayoutMemoryIndexed.Test/* = SKIP
-42266907 WGPU : AttributeLayoutNonIndexed.Test/* = SKIP
 42266907 WGPU : BindUniformLocationTest.Compositor/* = SKIP
 42266907 WGPU : BlitFramebufferANGLETest.BlitWithMissingAttachments/* = SKIP
 42266907 WGPU : BlitFramebufferANGLETest.BlitWithDepthUserToDefault/* = SKIP
@@ -2637,7 +2631,6 @@
 42266907 WGPU : SimpleStateChangeTest.DrawWithTextureTexSubImageThenDrawAgain/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.FboEarlyCullFaceBackCCWState/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.FboEarlyCullFaceBackCWState/* = SKIP
-42266907 WGPU : SimpleStateChangeTest.RebindTranslatedAttribute/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.RedefineTextureInUse/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.UpdateBoundElementArrayBuffer/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.UpdateBufferInUse/* = SKIP
@@ -2675,12 +2668,13 @@
 42266907 WGPU : UnpackAlignmentTest.Alignment8LUByte/* = SKIP
 42266907 WGPU : VertexAttributeCachingTest.BufferMulticaching/* = SKIP
 42266907 WGPU : VertexAttributeCachingTest.BufferMulticachingWithOneUnchangedAttrib/* = SKIP
+42266907 WGPU : VertexAttributeTest.AliasingAttribNaming/* = SKIP
+42266907 WGPU : VertexAttributeTest.AliasingMatrixAttribLocations/* = SKIP
+42266907 WGPU : VertexAttributeTest.AliasingVectorAttribLocations/* = SKIP
 42266907 WGPU : VertexAttributeTest.AliasingVectorAttribLocationsDifferingPrecisions/* = SKIP
 42266907 WGPU : VertexAttributeTest.DisabledAttribArrays/* = SKIP
 42266907 WGPU : VertexAttributeTest.DisabledAttribUpdates/* = SKIP
-42266907 WGPU : VertexAttributeTest.DrawArraysWithAlignedAndUnalignedBufferOffset/* = SKIP
 42266907 WGPU : VertexAttributeTest.DrawArraysWithOverlapBufferSubData/* = SKIP
-42266907 WGPU : VertexAttributeTest.DrawArraysWithUnalignedBufferOffset/* = SKIP
 42266907 WGPU : VertexAttributeTest.MaxAttribs/* = SKIP
 42266907 WGPU : VertexAttributeTest.MixedMatrixSources/* = SKIP
 42266907 WGPU : VertexAttributeTest.MixedUsingBufferAndClientMemoryPointer/* = SKIP

@@ -322,6 +322,9 @@ class ContextWgpu : public ContextImpl
 
     void invalidateVertexBuffer(size_t slot);
     void invalidateVertexBuffers();
+    // The vertex array's attributes or the program's active attributes changed, so the attributes
+    // need new vertex buffer slots before the next draw.
+    void invalidateVertexBufferSlots();
     void invalidateIndexBuffer();
     void invalidateCurrentTextures();
     void invalidateDriverUniforms();
@@ -426,7 +429,7 @@ class ContextWgpu : public ContextImpl
 
     webgpu::RenderPipelineDesc mRenderPipelineDesc;
     webgpu::RenderPipelineHandle mCurrentGraphicsPipeline;
-    gl::AttributesMask mCurrentRenderPipelineAllAttributes;
+    bool mVertexBufferSlotsDirty = true;
 
     gl::DrawElementsType mCurrentIndexBufferType = gl::DrawElementsType::InvalidEnum;
 

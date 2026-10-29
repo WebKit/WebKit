@@ -113,15 +113,24 @@ constexpr uint32_t kAttributeOffsetMaxBits = 15;
 // In WebGPU, the maxVertexBufferArrayStride will be at least 2048.
 constexpr uint32_t kVertexAttributeStrideBits = 16;
 
+// Attribute locations and vertex buffer slots both fit in 4 bits.
+constexpr uint32_t kVertexAttributeIndexBits = 4;
+static_assert(gl::MAX_VERTEX_ATTRIBS <= (1u << kVertexAttributeIndexBits));
+
 struct PackedVertexAttribute final
 {
     PackedVertexAttribute();
 
+    // The offset of the attribute in an element of its vertex buffer slot.
     uint16_t offset : kAttributeOffsetMaxBits;
     uint16_t enabled : 1;
     uint8_t format : kVertexFormatBitCount;
     uint8_t pad1 : 2;
-    uint8_t shaderLocation;
+    uint8_t shaderLocation : kVertexAttributeIndexBits;
+    // The vertex buffer slot of the attribute. Attributes that read the same buffer with the same
+    // stride share a slot.
+    uint8_t bufferSlot : kVertexAttributeIndexBits;
+    // The array stride of the attribute's vertex buffer slot.
     uint16_t stride : kVertexAttributeStrideBits;
 };
 
