@@ -29,10 +29,12 @@
 #if ENABLE(VIDEO)
 
 #include "VTTRegion.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class VTTRegionList : public RefCounted<VTTRegionList> {
+    WTF_MAKE_TZONE_ALLOCATED(VTTRegionList);
 public:
     static Ref<VTTRegionList> create();
 

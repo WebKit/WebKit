@@ -30,6 +30,7 @@
 #include <WebCore/GraphicsContextGL.h>
 #include <WebCore/WebGLObject.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -47,6 +48,7 @@ class WebGLBuffer;
 class WebGLProgram;
 
 class WebGLTransformFeedback final : public WebGLObject {
+    WTF_MAKE_TZONE_ALLOCATED(WebGLTransformFeedback);
 public:
     virtual ~WebGLTransformFeedback();
     static Ref<WebGLTransformFeedback> LEGACY_NODELETE createLost();

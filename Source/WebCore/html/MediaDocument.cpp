@@ -56,6 +56,7 @@
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "UserScriptTypes.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -67,6 +68,7 @@ using namespace HTMLNames;
 
 // FIXME: Share more code with PluginDocumentParser.
 class MediaDocumentParser final : public RawDataDocumentParser {
+    WTF_MAKE_TZONE_ALLOCATED(MediaDocumentParser);
 public:
     static Ref<MediaDocumentParser> create(MediaDocument& document)
     {
@@ -86,6 +88,8 @@ private:
     WeakPtr<HTMLMediaElement> m_mediaElement;
     String m_outgoingReferrer;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaDocumentParser);
     
 void MediaDocumentParser::createDocumentStructure()
 {

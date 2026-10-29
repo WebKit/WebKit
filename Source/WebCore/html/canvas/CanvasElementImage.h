@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/DisplayList.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ struct CanvasElementSnapshot {
 };
 
 class CanvasElementImage : public RefCounted<CanvasElementImage> {
+    WTF_MAKE_TZONE_ALLOCATED(CanvasElementImage);
 public:
     static Ref<CanvasElementImage> LEGACY_NODELETE create(CanvasElementSnapshot&&);
 

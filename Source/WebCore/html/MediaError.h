@@ -28,11 +28,13 @@
 #if ENABLE(VIDEO)
 
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class MediaError : public RefCounted<MediaError> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaError);
 public:
     enum Code {
         MEDIA_ERR_ABORTED = 1,

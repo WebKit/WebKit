@@ -28,10 +28,12 @@
 #if ENABLE(WEBGL)
 
 #include <WebCore/WebGLVertexArrayObjectBase.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebGLVertexArrayObjectOES final : public WebGLVertexArrayObjectBase {
+    WTF_MAKE_TZONE_ALLOCATED(WebGLVertexArrayObjectOES);
 public:
     static Ref<WebGLVertexArrayObjectOES> LEGACY_NODELETE createLost();
     static Ref<WebGLVertexArrayObjectOES> LEGACY_NODELETE createDefault(WebGLRenderingContextBase&);

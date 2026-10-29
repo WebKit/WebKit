@@ -29,12 +29,14 @@
 #if ENABLE(VIDEO)
 
 #include "TextTrackCue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class Document;
 
 class TextTrackCueList : public RefCounted<TextTrackCueList> {
+    WTF_MAKE_TZONE_ALLOCATED(TextTrackCueList);
 public:
     static Ref<TextTrackCueList> LEGACY_NODELETE create();
 

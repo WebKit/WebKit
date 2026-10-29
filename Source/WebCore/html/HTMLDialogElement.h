@@ -28,6 +28,7 @@
 #include "CloseWatcher.h"
 #include "HTMLElement.h"
 #include "ToggleEventTask.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -75,6 +76,7 @@ public:
 
 private:
     class DialogCloseWatcherEventListener final : public EventListener {
+        WTF_MAKE_TZONE_ALLOCATED(DialogCloseWatcherEventListener);
     public:
         static Ref<DialogCloseWatcherEventListener> create(HTMLDialogElement& dialog)
         {

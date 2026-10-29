@@ -28,11 +28,13 @@
 #if ENABLE(WEBGL)
 
 #include "WebGLObject.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class WebGLShader final : public WebGLObject {
+    WTF_MAKE_TZONE_ALLOCATED(WebGLShader);
 public:
     static Ref<WebGLShader> LEGACY_NODELETE createLost(GCGLenum);
     static Ref<WebGLShader> create(WebGLRenderingContextBase&, GCGLenum);

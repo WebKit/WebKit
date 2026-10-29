@@ -33,6 +33,7 @@
 #include <WebCore/VideoFrameRequestCallback.h>
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -226,7 +227,7 @@ private:
 #endif
 
     struct VideoFrameRequest {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(VideoFrameRequest);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(VideoFrameRequest);
         VideoFrameRequest(unsigned identifier, Ref<VideoFrameRequestCallback>&& callback)
             : identifier(identifier)
             , callback(WTF::move(callback))

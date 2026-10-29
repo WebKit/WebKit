@@ -31,9 +31,12 @@
 #include "FileList.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DirectoryFileListCreator);
 
 DirectoryFileListCreator::~DirectoryFileListCreator()
 {

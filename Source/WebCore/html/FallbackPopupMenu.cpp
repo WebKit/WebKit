@@ -47,6 +47,7 @@
 #include "UserAgentParts.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -54,6 +55,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FallbackPopupMenu);
 
 class FallbackPopupMenuItemEventListener final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED(FallbackPopupMenuItemEventListener);
 public:
     static Ref<FallbackPopupMenuItemEventListener> LEGACY_NODELETE create(FallbackPopupMenu& menu, int listIndex)
     {
@@ -79,6 +81,8 @@ private:
     WeakPtr<FallbackPopupMenu> m_menu;
     int m_listIndex;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FallbackPopupMenuItemEventListener);
 
 static void applyFontCascade(HTMLElement& element, const FontCascade& font)
 {
@@ -137,6 +141,7 @@ static void applyMenuStyle(HTMLElement& container, const PopupMenuStyle& style)
 }
 
 class FallbackPopupMenuDismissListener final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED(FallbackPopupMenuDismissListener);
 public:
     static Ref<FallbackPopupMenuDismissListener> LEGACY_NODELETE create(FallbackPopupMenu& menu)
     {
@@ -177,6 +182,8 @@ private:
 
     WeakPtr<FallbackPopupMenu> m_menu;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FallbackPopupMenuDismissListener);
 
 FallbackPopupMenu::FallbackPopupMenu(HTMLSelectElement& element)
     : m_element(element)

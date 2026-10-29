@@ -58,6 +58,7 @@
 #include "UserScriptTypes.h"
 #include <pal/text/TextEncoding.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -69,6 +70,7 @@ using namespace HTMLNames;
 
 #if !PLATFORM(IOS_FAMILY)
 class ImageEventListener final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED(ImageEventListener);
 public:
     static Ref<ImageEventListener> LEGACY_NODELETE create(ImageDocument& document) { return adoptRef(*new ImageEventListener(document)); }
 
@@ -84,9 +86,12 @@ private:
 
     WeakPtr<ImageDocument, WeakPtrImplWithEventTargetData> m_document;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageEventListener);
 #endif
 
 class ImageDocumentParser final : public RawDataDocumentParser {
+    WTF_MAKE_TZONE_ALLOCATED(ImageDocumentParser);
 public:
     static Ref<ImageDocumentParser> create(ImageDocument& document)
     {
@@ -104,6 +109,8 @@ private:
     void appendBytes(DocumentWriter&, std::span<const uint8_t>) override;
     void finish() override;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageDocumentParser);
 
 class ImageDocumentElement final : public HTMLImageElement {
     WTF_MAKE_TZONE_ALLOCATED(ImageDocumentElement);

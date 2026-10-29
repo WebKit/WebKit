@@ -29,8 +29,11 @@
 #if ENABLE(WEBGL)
 
 #include "WebGLUniformLocation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGLUniformLocation);
 
 Ref<WebGLUniformLocation> WebGLUniformLocation::create(WebGLProgram& program, GCGLint location)
 {

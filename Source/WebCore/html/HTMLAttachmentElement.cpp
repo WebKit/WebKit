@@ -60,6 +60,7 @@
 #include "UserAgentStyleSheets.h"
 #include <pal/FileSizeFormatter.h>
 #include <unicode/ubidi.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/URLParser.h>
@@ -281,6 +282,7 @@ String HTMLAttachmentElement::shadowUserAgentStyleSheetText()
 }
 
 class AttachmentImageEventsListener final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED(AttachmentImageEventsListener);
 public:
     static void addToImageForAttachment(HTMLImageElement& image, HTMLAttachmentElement& attachment)
     {
@@ -309,6 +311,8 @@ private:
 
     WeakPtr<HTMLAttachmentElement, WeakPtrImplWithEventTargetData> m_attachment;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AttachmentImageEventsListener);
 
 template <typename ElementType>
 static Ref<ElementType> createContainedElement(HTMLElement& container, const AtomString& id, String&& textContent = { })
@@ -415,6 +419,7 @@ void HTMLAttachmentElement::addSelectionClasses(HighlightState state)
 }
 
 class AttachmentSaveEventListener final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED(AttachmentSaveEventListener);
 public:
     static Ref<AttachmentSaveEventListener> LEGACY_NODELETE create(HTMLAttachmentElement& attachment) { return adoptRef(*new AttachmentSaveEventListener(attachment)); }
 
@@ -444,6 +449,8 @@ private:
 
     WeakPtr<HTMLAttachmentElement, WeakPtrImplWithEventTargetData> m_attachment;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AttachmentSaveEventListener);
 
 void HTMLAttachmentElement::updateProgress(const AtomString& progress)
 {

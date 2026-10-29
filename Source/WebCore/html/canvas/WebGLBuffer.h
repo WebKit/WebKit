@@ -29,6 +29,7 @@
 
 #include <WebCore/WebGLObject.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -38,6 +39,7 @@ class ArrayBufferView;
 namespace WebCore {
 
 class WebGLBuffer final : public WebGLObject {
+    WTF_MAKE_TZONE_ALLOCATED(WebGLBuffer);
 public:
     static Ref<WebGLBuffer> create(WebGLRenderingContextBase&);
     static Ref<WebGLBuffer> LEGACY_NODELETE createLost();
