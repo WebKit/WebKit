@@ -1,0 +1,24 @@
+
+PASS RemoteMesh::UpdateModel rejects a 4-byte stride with 12-byte attributes and indices at vertexCapacity - 1.
+PASS RemoteMesh::UpdateModel rejects a negative bufferStride.
+PASS RemoteMesh::UpdateModel rejects a vertexCapacity whose buffer size overflows.
+PASS RemoteMesh::UpdateModel rejects a part whose index range runs past indexCapacity.
+PASS RemoteMesh::UpdateModel rejects a deformed position narrower than the float3 the deformation writes.
+PASS RemoteMesh::UpdateModel rejects a delta update for an identifier that has no mesh resource.
+PASS RemoteMesh::UpdateModel rejects a second initial update that narrows the geometry of an existing mesh.
+PASS RemoteMesh::UpdateModel rejects a delta update whose part index range runs past the first indexCapacity.
+PASS RemoteMesh::UpdateModel rejects a delta update carrying a malformed descriptor it does not use.
+PASS RemoteMesh::UpdateModel rejects a delta update for a mesh resource that was removed.
+PASS RemoteMesh::UpdateModel accepts a Float32 position with no deformation.
+PASS RemoteMesh::UpdateModel accepts an interleaved buffer packed to its stride.
+PASS RemoteMesh::UpdateModel accepts an attribute offset past the end of the stride.
+PASS RemoteMesh::UpdateModel accepts one vertex buffer per attribute.
+PASS RemoteMesh::UpdateModel accepts a bufferOffset covered by slack in the stride.
+PASS RemoteMesh::UpdateModel accepts a bufferOffset larger than the stride.
+PASS RemoteMesh::UpdateModel accepts a per-instance vertex layout.
+PASS RemoteMesh::UpdateModel accepts a vertexBufferCount larger than the vertexLayouts declare.
+PASS RemoteMesh::UpdateModel accepts valid geometry with no vertex data.
+PASS RemoteMesh::UpdateModel accepts a second initial update that redeclares the same geometry.
+PASS RemoteMesh::UpdateModel accepts a deformation over float3 and float2 attributes.
+PASS RemoteMesh::UpdateModel accepts a delta update that deforms a position wide enough for the float3 it writes.
+
