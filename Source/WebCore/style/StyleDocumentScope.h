@@ -64,11 +64,16 @@ public:
     EnvironmentVariables& environmentVariables() const LIFETIME_BOUND;
 
     struct LayoutDependencyUpdateContext {
+<<<<<<< HEAD
         HashSet<CheckedRef<const Element>> invalidatedContainers;
         HashSet<CheckedRef<const Element>> invalidatedAnchorPositioned;
 #if ENABLE(SMART_IMAGE_RESIZER)
         bool didUpdateForSmartImageResizer { false };
 #endif
+=======
+        WeakHashSet<const Element, WeakPtrImplWithEventTargetData> invalidatedContainers;
+        WeakHashSet<const Element, WeakPtrImplWithEventTargetData> invalidatedAnchorPositioned;
+>>>>>>> a101d8d7b295 (CheckedPtr crash in LocalFrameViewLayoutContext::layout() tearing down LayoutDependencyUpdateContext)
     };
     bool invalidateForLayoutDependencies(LayoutDependencyUpdateContext&);
     bool invalidateForAnchorDependencies(LayoutDependencyUpdateContext&);
