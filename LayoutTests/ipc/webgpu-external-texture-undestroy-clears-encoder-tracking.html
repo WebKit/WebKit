@@ -1,0 +1,154 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true WebGPUEnabled=true ] -->
+<body>
+<p>This test passes if RemoteExternalTexture::Undestroy() on a non-destroyed external texture does not disarm the open-encoder guard in BindGroup::updateExternalTextures().</p>
+<pre id="log"></pre>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+
+function log(s)
+{
+    document.getElementById('log').textContent += s + '\n';
+}
+
+async function run()
+{
+    if (!window.IPC)
+        return 'PASS';
+
+    const { CoreIPC } = await import('./coreipc.js');
+    CoreIPC.default_timeout = 10;
+
+    // The GPU process only exposes WebGPU once the page has negotiated an adapter.
+    if (!await navigator.gpu?.requestAdapter())
+        return 'PASS';
+
+    let nextId = (Math.floor(Math.random() * 100000) + 1) * 100000;
+    const freshId = () => ++nextId;
+
+    const renderingBackend = freshId();
+    const renderingBackendStream = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+        renderingBackendIdentifier: renderingBackend,
+        connectionHandle: renderingBackendStream,
+    });
+
+    const gpu = freshId();
+    const gpuStream = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateGPU(0, {
+        identifier: gpu,
+        renderingBackendIdentifier: renderingBackend,
+        serverConnection: gpuStream,
+    });
+    const wasCreated = gpuStream.connection.waitForMessage(gpu, IPC.messages.RemoteGPUProxy_WasCreated.name, 5);
+    if (!wasCreated)
+        return 'FAIL: no RemoteGPUProxy::WasCreated';
+
+    const adapter = freshId();
+    let gotAdapter = false;
+    gpuStream.newInterface('RemoteGPU', gpu).RequestAdapter({
+        options: { alias: { powerPreference: {}, forceFallbackAdapter: false, xrCompatible: false } },
+        identifier: adapter,
+    }, () => { gotAdapter = true; });
+    if (!gotAdapter)
+        return 'PASS';
+
+    const device = freshId();
+    let gotDevice = false;
+    gpuStream.newInterface('RemoteAdapter', adapter).RequestDevice({
+        deviceDescriptor: { label: '', requiredFeatures: [], requiredLimits: [] },
+        identifier: device,
+        queueIdentifier: freshId(),
+    }, () => { gotDevice = true; });
+    if (!gotDevice)
+        return 'PASS';
+    const remoteDevice = gpuStream.newInterface('RemoteDevice', device);
+
+    // PredefinedColorSpace is an alias-struct in some configurations and a bare enum in others.
+    const srgb = IPC.serializedTypeInfo['WebCore::WebGPU::PredefinedColorSpace'] ? { alias: 0 } : 0;
+
+    // An external texture with a null pixel buffer is enough to exercise the guard.
+    const externalTexture = freshId();
+    remoteDevice.ImportExternalTextureFromVideoFrame({
+        descriptor: { label: '', mediaIdentifier: {}, colorSpace: srgb, visibleSize: { width: 0, height: 0 }, sharedFrame: {} },
+        identifier: externalTexture,
+    });
+
+    const bindGroupLayout = freshId();
+    remoteDevice.CreateBindGroupLayout({
+        descriptor: {
+            label: '',
+            entries: [{
+                alias: {
+                    binding: 0,
+                    visibility: 4, // ShaderStage::Compute
+                    buffer: {},
+                    sampler: {},
+                    texture: {},
+                    storageTexture: {},
+                    externalTexture: { optionalValue: {} },
+                },
+            }],
+        },
+        identifier: bindGroupLayout,
+    });
+
+    const bindGroup = freshId();
+    remoteDevice.CreateBindGroup({
+        descriptor: {
+            label: '',
+            bindGroupLayout,
+            entries: [{
+                binding: 0,
+                bufferBinding: { buffer: externalTexture, offset: 0, size: {} },
+                identifier: externalTexture,
+                type: 4, // BindingResourceType::ExternalTexture
+            }],
+        },
+        identifier: bindGroup,
+    });
+
+    const remoteBindGroup = gpuStream.newInterface('RemoteBindGroup', bindGroup);
+    function updateExternalTextures()
+    {
+        let succeeded = '<no reply>';
+        remoteBindGroup.UpdateExternalTextures({ externalTextureIdentifier: externalTexture }, (reply) => { succeeded = reply?.success; });
+        return succeeded;
+    }
+
+    // With no encoder holding the argument buffers, rewriting them in place is allowed.
+    const withoutEncoder = updateExternalTextures();
+
+    // ComputePassEncoder::setBindGroup() tracks the command encoder against the external
+    // texture, which arms the guard.
+    const commandEncoder = freshId();
+    remoteDevice.CreateCommandEncoder({ descriptor: { optionalValue: { alias: { label: '' } } }, identifier: commandEncoder });
+    const computePass = freshId();
+    gpuStream.newInterface('RemoteCommandEncoder', commandEncoder).BeginComputePass({ descriptor: {}, identifier: computePass });
+    gpuStream.newInterface('RemoteComputePassEncoder', computePass).SetBindGroup({
+        index: 0,
+        identifier: { optionalValue: bindGroup },
+        dynamicOffsets: {},
+    });
+
+    const withEncoder = updateExternalTextures();
+
+    // Undestroy() on a texture that was never destroyed must not drop the tracked encoders:
+    // the encoder above is still open and still references the current MTLTextures.
+    gpuStream.newInterface('RemoteExternalTexture', externalTexture).Undestroy({});
+
+    const afterUndestroy = updateExternalTextures();
+
+    if (withoutEncoder !== true)
+        return `FAIL: update without an open encoder should succeed, got ${withoutEncoder}`;
+    if (withEncoder !== false)
+        return `FAIL: update with an open encoder should be refused, got ${withEncoder}`;
+    if (afterUndestroy !== false)
+        return `FAIL: update after Undestroy() with an open encoder should be refused, got ${afterUndestroy}`;
+    return 'PASS';
+}
+
+run().then(log, (error) => log(`FAIL: ${error}`)).then(() => testRunner?.notifyDone());
+</script>
+</body>
+</html>
