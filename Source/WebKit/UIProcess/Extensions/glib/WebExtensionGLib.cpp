@@ -84,12 +84,14 @@ std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForP
     if (path == generatedBackgroundPageFilename || path  == generatedBackgroundServiceWorkerFilename)
         return API::Data::create(generatedBackgroundContent().utf8().span());
 
-    if (auto maybeData = m_dataResources.getOptional(path))
+    auto resourceKey = resourceKeyForPath(originalPath);
+
+    if (auto maybeData = m_dataResources.getOptional(resourceKey))
         return *maybeData;
 
-    if (auto maybeString = m_stringResources.getOptional(path)) {
+    if (auto maybeString = m_stringResources.getOptional(resourceKey)) {
         auto data = API::Data::create(maybeString->utf8().span());
-        m_dataResources.set(path, data);
+        m_dataResources.set(resourceKey, data);
         return data;
     }
 
@@ -109,7 +111,7 @@ std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForP
 
     Ref data = API::Data::create(*rawData);
     if (cacheResult == CacheResult::Yes)
-        m_dataResources.set(path, data);
+        m_dataResources.set(resourceKey, data);
 
     return data;
 }

@@ -362,6 +362,7 @@ public:
 private:
     static DataResources toDataResources(const Resources&);
     static StringResources toStringResources(const Resources&);
+    static String resourceKeyForPath(const String&);
 
     static String processFileAndExtractZipArchive(const String&);
 
