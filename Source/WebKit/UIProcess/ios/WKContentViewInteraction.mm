@@ -2077,6 +2077,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         protect(_page)->activityStateDidChange(WebCore::ActivityState::IsFocused, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
 
+        // If the file upload panel kept the keyboard up for the menu and then resigned when a picker was presented,
+        // becoming first responder again brings the keyboard back for the focused element without going through
+        // -_elementDidFocus:, so reveal the element once the keyboard has shown so that it does not overlap the content.
+        if (!_revealFocusedElementDeferrer && [_fileUploadPanel didDeferResigningFirstResponderUntilPickerIsPresented])
+            _revealFocusedElementDeferrer = WebKit::RevealFocusedElementDeferrer::create(self, WebKit::RevealFocusedElementDeferralReason::KeyboardDidShow);
+
         if (self._shouldActivateSelectionAfterBecomingFirstResponder) {
             protect(_page)->callAfterNextPresentationUpdate([weakSelf = WeakObjCPtr<WKContentView>(self)] {
                 RetainPtr strongSelf = weakSelf.get();
@@ -8283,6 +8289,40 @@ static bool mayContainSelectableText(WebKit::InputType type)
 - (BOOL)_shouldShowKeyboardForElementIgnoringInputMode:(const WebKit::FocusedElementInformation&)information
 {
     return mayContainSelectableText(information.elementType) || [self _elementTypeRequiresAccessoryView:information.elementType];
+}
+
+- (BOOL)_focusedElementUsesSoftwareKeyboard
+{
+    if (!self._hasFocusedElement || UIKeyboard.isInHardwareKeyboardMode || self._suppressSoftwareKeyboard)
+        return NO;
+
+    switch (_focusedElementInformation.elementType) {
+    case WebKit::InputType::ContentEditable:
+    case WebKit::InputType::Text:
+    case WebKit::InputType::Password:
+    case WebKit::InputType::TextArea:
+    case WebKit::InputType::Search:
+    case WebKit::InputType::Email:
+    case WebKit::InputType::URL:
+    case WebKit::InputType::Phone:
+    case WebKit::InputType::Number:
+    case WebKit::InputType::NumberPad:
+        // Even for these types, the keyboard isn't shown for e.g. read-only fields or inputmode="none".
+        return self.shouldShowAutomaticKeyboardUI;
+    case WebKit::InputType::None:
+    case WebKit::InputType::Date:
+    case WebKit::InputType::DateTimeLocal:
+    case WebKit::InputType::Month:
+    case WebKit::InputType::Week:
+    case WebKit::InputType::Time:
+    case WebKit::InputType::Select:
+    case WebKit::InputType::Drawing:
+    case WebKit::InputType::Color:
+        return NO;
+    }
+
+    ASSERT_NOT_REACHED();
+    return NO;
 }
 
 static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebKit::InputType type, WKContentView *view)

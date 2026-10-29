@@ -23,7 +23,7 @@ async function waitForContextMenuToBePresentedAboveInputView()
 }
 
 addEventListener("load", async () => {
-    description("This test verifies that when programmatically clicking a file input while focusing an editable control with a software keyboard attached, the file upload context menu is presented above the software keyboard. To manually test, click the 'Show file picker' button without a hardware keyboard attached, and verify that the context menu is visible.");
+    description("This test verifies that when programmatically clicking a file input while focusing an editable control with a software keyboard attached, the file upload context menu is presented above the software keyboard, and that the keyboard stays up while the menu is shown and after it is dismissed. To manually test, click the 'Show file picker' button without a hardware keyboard attached, and verify that the context menu is visible and that the keyboard stays up.");
 
     let fileInput = document.querySelector("input[type=file]");
     let textInput = document.querySelector("input[type=text]");
@@ -37,7 +37,17 @@ addEventListener("load", async () => {
     await UIHelper.activateElementAndWaitForInputSession(chooseFileButton);
     await waitForContextMenuToBePresentedAboveInputView();
     testPassed("Context menu was presented above the keyboard");
-    await UIHelper.dismissMenu();
+
+    await UIHelper.ensurePresentationUpdate();
+    isShowingKeyboard = await UIHelper.isShowingKeyboard();
+    shouldBeTrue("isShowingKeyboard");
+
+    await UIHelper.activateAt(innerWidth / 2, innerHeight / 3);
+    await UIHelper.waitForContextMenuToHide();
+    await UIHelper.ensurePresentationUpdate();
+    isShowingKeyboard = await UIHelper.isShowingKeyboard();
+    shouldBeTrue("isShowingKeyboard");
+
     textInput.blur();
     await UIHelper.waitForKeyboardToHide();
     finishJSTest();
