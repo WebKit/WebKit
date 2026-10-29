@@ -2702,12 +2702,8 @@
 42266907 WGPU : VertexAttributeTest.UsingDifferentFormatAndSameBuffer/* = SKIP
 42266907 WGPU : VertexAttributeTest.UsingDifferentFormatAndSameClientMemoryPointer/* = SKIP
 42266907 WGPU : VertexAttributeTest.VertexFormatConversionOfNonExistingAttribute/* = SKIP
-42266907 WGPU : ViewportTest.DoubleWindow/* = SKIP
-42266907 WGPU : ViewportTest.DoubleWindowCentered/* = SKIP
-42266907 WGPU : ViewportTest.FullWindowOffCenter/* = SKIP
+// Draws with a disabled vertex attribute array, whose current value is unimplemented.
 42266907 WGPU : ViewportTest.Overflow/* = SKIP
-42266907 WGPU : ViewportTest.TripleWindowCentered/* = SKIP
-42266907 WGPU : ViewportTest.TripleWindowOffCenter/* = SKIP
 42266907 WGPU : WebGLGLSLTest.MaxVaryingVec4PlusPointCoord/* = SKIP
 42266907 WGPU : WebGLGLSLTest.MaxPlusOneVaryingVec3Array/* = SKIP
 42266907 WGPU : WebGLGLSLTest.MaxVaryingVec3ArrayAndMaxPlusOneFloatArray/* = SKIP
