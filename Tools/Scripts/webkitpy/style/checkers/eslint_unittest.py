@@ -87,15 +87,16 @@ class ESLintCheckerTest(LoggingTestCase):
 
     def test_missing_eslint_is_skipped(self):
         with patch('webkitpy.style.checkers.eslint.shutil.which', return_value=None):
-            ESLintChecker.check(
-                {_absolute_path(JAVASCRIPT_FILE): [1]},
-                self.configuration,
-                CWD,
-                self.increment_error_count,
-                host=self.host,
-            )
+            with self.assertLogs('webkitpy.style.checkers.eslint', level='INFO') as logs:
+                ESLintChecker.check(
+                    {_absolute_path(JAVASCRIPT_FILE): [1]},
+                    self.configuration,
+                    CWD,
+                    self.increment_error_count,
+                    host=self.host,
+                )
 
-        self.assertLog(['INFO: ESLint was not found in PATH; skipping WebInspectorUI lint.\n'])
+        self.assertEqual(logs.output, ['INFO:webkitpy.style.checkers.eslint:ESLint was not found in PATH; skipping WebInspectorUI lint.'])
         self.host.executive.run_command.assert_not_called()
         self.increment_error_count.assert_not_called()
 
