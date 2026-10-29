@@ -3369,12 +3369,6 @@ void Element::setInvokedPopover(RefPtr<Element>&& element)
     invalidateStyle();
 }
 
-inline void ShadowRoot::setHost(Element* host)
-{
-    m_host = host;
-    m_shadowIncludingRoot = host ? &host->shadowIncludingRoot() : this;
-}
-
 void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 {
     ASSERT(!newShadowRoot->hasChildNodes());
@@ -3389,7 +3383,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 
         m_shadowRoot = WTF::move(newShadowRoot);
 
-        shadowRoot->setHost(this);
+        shadowRoot->setHost(*this);
         shadowRoot->setParentTreeScope(protect(treeScope()));
 
         NodeVector postInsertionNotificationTargets;
@@ -3426,6 +3420,11 @@ void Element::removeShadowRootSlow(ShadowRoot& oldRoot)
 
     oldRoot.setHost(nullptr);
     oldRoot.setParentTreeScope(protect(document()));
+    // Nodes in the shadow tree cached Node::m_shadowIncludingRoot pointing at this host (or at an
+    // ancestor host). Now that the shadow tree is detached, those pointers would dangle if anything
+    // outside of ElementRareData keeps the shadow tree alive past this element's destruction.
+    if (!oldRoot.hasOneRef())
+        oldRoot.updateShadowIncludingRootForSubtree();
 }
 
 static bool canAttachAuthorShadowRoot(const Element& element)

@@ -1483,9 +1483,7 @@ ALWAYS_INLINE void Node::updateShadowIncludingRoot()
         m_shadowIncludingRoot = parent->m_shadowIncludingRoot;
     else if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(this)) [[unlikely]] {
         auto* host = shadowRoot->host();
-        auto* root = host ? host->m_shadowIncludingRoot : shadowRoot;
-        shadowRoot->setShadowIncludingRoot(root);
-        m_shadowIncludingRoot = root;
+        m_shadowIncludingRoot = host ? host->m_shadowIncludingRoot : shadowRoot;
     } else
         m_shadowIncludingRoot = this;
     ASSERT(traverseToShadowIncludingRoot(this) == m_shadowIncludingRoot);
