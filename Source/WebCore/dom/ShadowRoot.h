@@ -57,6 +57,11 @@ class ShadowRoot final : public DocumentFragment, public TreeScope {
     WTF_MAKE_TZONE_ALLOCATED(ShadowRoot);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ShadowRoot);
 public:
+    using DocumentFragment::checkedPtrCount;
+    using DocumentFragment::checkedPtrCountWithoutThreadCheck;
+    using DocumentFragment::decrementCheckedPtrCount;
+    using DocumentFragment::incrementCheckedPtrCount;
+    using DocumentFragment::setDidBeginCheckedPtrDeletion;
 
     enum class Clonable : bool { No, Yes };
 

@@ -835,7 +835,7 @@ private:
     mutable OptionSet<StateFlag> m_stateFlags;
 
     CheckedPtr<ContainerNode> m_parentNode;
-    TreeScope* m_treeScope { nullptr };
+    CheckedPtr<TreeScope> m_treeScope;
     CheckedPtr<Node> m_shadowIncludingRoot;
     CheckedPtr<Node> m_previousSibling;
     CheckedPtr<Node> m_next;

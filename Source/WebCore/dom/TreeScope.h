@@ -76,6 +76,12 @@ public:
     WEBCORE_EXPORT void LEGACY_NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
 
+    uint32_t checkedPtrCount() const;
+    uint32_t checkedPtrCountWithoutThreadCheck() const;
+    void incrementCheckedPtrCount() const;
+    void decrementCheckedPtrCount() const;
+    void setDidBeginCheckedPtrDeletion();
+
     Element* LEGACY_NODELETE focusedElementInScope();
     Element* LEGACY_NODELETE pointerLockElement() const;
 
