@@ -31,6 +31,7 @@
 #include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "JSCJSValueInlines.h"
+#include "JSGenerator.h"
 
 namespace JSC { namespace DFG {
 
@@ -52,9 +53,18 @@ public:
             // other entrypoints have already been populated with their predictions.
             auto& arguments = m_graph.m_rootToArguments.find(m_graph.block(0))->value;
 
+            // The frame and value arguments are typically undefined on the first entry and something else
+            // on every resume. A resume usually overwrites the single-sample argument profile before the
+            // first entry's value is merged into it, so speculating on the sample alone exits on the next
+            // first entry.
+            bool isGeneratorBody = isGeneratorOrAsyncFunctionBodyParseMode(codeBlock()->unlinkedCodeBlock()->parseMode());
+
             for (size_t arg = 0; arg < static_cast<size_t>(codeBlock()->numParameters()); ++arg) {
                 ArgumentValueProfile& profile = profiledBlock()->valueProfileForArgument(arg);
-                arguments[arg]->variableAccessData()->predict(profile.computeUpdatedPrediction());
+                SpeculatedType prediction = profile.computeUpdatedPrediction();
+                if (isGeneratorBody && (arg == static_cast<size_t>(JSGenerator::Argument::Frame) || arg == static_cast<size_t>(JSGenerator::Argument::Value)))
+                    prediction |= SpecOther;
+                arguments[arg]->variableAccessData()->predict(prediction);
             }
         }
         
