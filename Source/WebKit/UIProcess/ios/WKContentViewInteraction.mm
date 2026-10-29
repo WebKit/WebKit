@@ -10980,7 +10980,9 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
     RetainPtr<NSString> utiType;
     RetainPtr<NSString> fileName;
-    if (auto attachment = protect(_page)->attachmentForIdentifier(info.attachmentIdentifier)) {
+    RefPtr attachment = protect(_page)->attachmentForIdentifier(info.attachmentIdentifier);
+    RetainPtr attachmentIdentifier = info.attachmentIdentifier.createNSString();
+    if (attachment) {
         utiType = attachment->utiType().createNSString();
         fileName = attachment->fileName().createNSString();
     }
@@ -10994,19 +10996,18 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         [registrationList addData:nsData.get() forType:info.additionalTypesAndData[index].first.createNSString().get()];
     }
 
-    [registrationList addPromisedType:utiType.get() fileCallback:[session = WTF::move(session), weakSelf = WeakObjCPtr<WKContentView>(self), info] (WebItemProviderFileCallback callback) {
-        auto strongSelf = weakSelf.get();
-        if (!strongSelf) {
-            callback(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorWebViewInvalidated userInfo:nil]);
-            return;
-        }
+    [registrationList addPromisedType:utiType fileCallback:[session = WTF::move(session), attachment = WTF::move(attachment), attachmentIdentifier = WTF::move(attachmentIdentifier)] (WebItemProviderFileCallback callback) {
 
         RetainPtr temporaryBlobDirectory = FileSystem::createTemporaryDirectory(@"blobs");
         RetainPtr destinationURL = [NSURL fileURLWithPath:[temporaryBlobDirectory.get() stringByAppendingPathComponent:[NSUUID UUID].UUIDString] isDirectory:NO];
 
-        if (auto attachment = protect(strongSelf->_page)->attachmentForIdentifier(info.attachmentIdentifier); attachment && !attachment->isEmpty()) {
+        ensureOnMainRunLoop([session, temporaryBlobDirectory] {
+            [protect(ensureLocalDragSessionContext(session)) addTemporaryDirectory:temporaryBlobDirectory];
+        });
+
+        if (attachment && !attachment->isEmpty()) {
             attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
-                RELEASE_LOG(DragAndDrop, "Drag session: %p delivering promised attachment: %s at path: %@", session.get(), info.attachmentIdentifier.utf8(), destinationURL.get().path);
+                RELEASE_LOG(DragAndDrop, "Drag session: %p delivering promised attachment: %@ at path: %@", session.get(), attachmentIdentifier.get(), destinationURL.get().path);
                 NSError *fileWrapperError = nil;
                 if ([fileWrapper writeToURL:destinationURL.get() options:0 originalContentsURL:nil error:&fileWrapperError])
                     callback(destinationURL.get(), nil);
@@ -11015,8 +11016,6 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
             });
         } else
             callback(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorWebViewInvalidated userInfo:nil]);
-
-        [protect(ensureLocalDragSessionContext(session.get())) addTemporaryDirectory:temporaryBlobDirectory.get()];
     }];
 
     WebItemProviderPasteboard *pasteboard = [WebItemProviderPasteboard sharedInstance];
