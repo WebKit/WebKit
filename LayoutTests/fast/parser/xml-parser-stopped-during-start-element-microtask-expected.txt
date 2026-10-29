@@ -1,0 +1,5 @@
+Tests that the XML parser handles a microtask run from XMLDocumentParser::startElementNs() detaching the frame and stopping the parser.
+
+PASS if no crash
+
+
