@@ -333,8 +333,10 @@ float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineB
 
 float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBox, const Style::ComputedStyle& style)
 {
-    if (!style.writingMode().isVerticalTypographic())
-        return { };
+    if (!style.writingMode().isVerticalTypographic()) {
+        // Like the underline, the overline stays where it would be without text-box-trim, even though the decorating box is moved to the trimmed edge.
+        return !inlineBox.isRootInlineBox() ? -textBoxEdgeAdjustmentForUnderline(style) : 0.f;
+    }
 
     // If 'right' causes the underline to be drawn on the "over" side of the text, then an overline also switches sides and is drawn on the "under" side.
     auto underlinePosition = style.textUnderlinePosition();
