@@ -906,10 +906,6 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     return _shouldBypassPermissions;
 }
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionUtilitiesAdditionsImpl.mm>)
-#import <WebKitAdditions/WebExtensionUtilitiesAdditionsImpl.mm>
-#endif
-
 @end
 
 @implementation TestWebExtensionWindow {

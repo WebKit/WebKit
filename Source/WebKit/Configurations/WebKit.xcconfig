@@ -323,9 +323,8 @@ REEXPORTED_FRAMEWORK_NAMES = WebKitLegacy;
 REEXPORTED_LIBRARY_NAMES[sdk=macosx*] = objc;
 
 // FIXME: Remove -reexport_install_name once rdar://problem/30820233 is fixed.
-OTHER_TAPI_FLAGS = $(inherited) -reexport_install_name $(NORMAL_UMBRELLA_FRAMEWORKS_DIR)/WebKitLegacy.framework/$(WK_FRAMEWORK_VERSION_PREFIX)WebKitLegacy -extra-private-header $(SRCROOT)/Platform/ExtraPrivateSymbolsForTAPI.h -extra-private-header $(SRCROOT)/Shared/Cocoa/XPCEndpoint.h -extra-private-header $(SRCROOT)/Shared/Cocoa/XPCEndpointClient.h $(WK_TAPI_ADDITIONS_PRIVATE_HEADERS_$(USE_INTERNAL_SDK)) -extra-public-header $(SRCROOT)/Platform/ExtraPublicSymbolsForTAPI.h -extra-project-header $(SRCROOT)/UIProcess/Cocoa/WebKitSwiftOverlayMacros.h -Xparser -include -Xparser config.h $(OTHER_TAPI_FLAGS_SPI_CHECKING_$(WK_AUDIT_SPI));
+OTHER_TAPI_FLAGS = $(inherited) -reexport_install_name $(NORMAL_UMBRELLA_FRAMEWORKS_DIR)/WebKitLegacy.framework/$(WK_FRAMEWORK_VERSION_PREFIX)WebKitLegacy -extra-private-header $(SRCROOT)/Platform/ExtraPrivateSymbolsForTAPI.h -extra-private-header $(SRCROOT)/Shared/Cocoa/XPCEndpoint.h -extra-private-header $(SRCROOT)/Shared/Cocoa/XPCEndpointClient.h -extra-public-header $(SRCROOT)/Platform/ExtraPublicSymbolsForTAPI.h -extra-project-header $(SRCROOT)/UIProcess/Cocoa/WebKitSwiftOverlayMacros.h -Xparser -include -Xparser config.h $(OTHER_TAPI_FLAGS_SPI_CHECKING_$(WK_AUDIT_SPI));
 OTHER_TAPI_FLAGS_SPI_CHECKING_YES = -sdkdb-output-dir $(BUILT_PRODUCTS_DIR)/SDKDB;
-WK_TAPI_ADDITIONS_PRIVATE_HEADERS_YES = -extra-private-header $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/WebExtensionAdditionsPrivate.h;
 
 WK_EXCLUDED_WEBPUSHD_SANDBOX = $(WK_EXCLUDED_WEBPUSHD_SANDBOX_$(WK_RELOCATABLE_WEBPUSHD));
 WK_EXCLUDED_WEBPUSHD_SANDBOX_NO = com.apple.WebKit.webpushd.relocatable.mac.sb

@@ -213,10 +213,6 @@ public:
 
     bool shouldGrantPermissionsOnUserGesture() const;
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionTabAdditions.h>)
-#include <WebKitAdditions/WebExtensionTabAdditions.h>
-#endif
-
     WebProcessProxySet processes(WebExtensionEventListenerType, WebExtensionContentWorldType) const;
 
 #ifdef __OBJC__

@@ -2073,7 +2073,6 @@
 		A1798B4C222F1BD4000764BD /* WebPaymentCoordinatorProxyCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = A1798B4B222F1BD4000764BD /* WebPaymentCoordinatorProxyCocoa.h */; };
 		A1798B512230A10E000764BD /* PaymentAuthorizationController.h in Headers */ = {isa = PBXBuildFile; fileRef = A1798B4F2230A0FE000764BD /* PaymentAuthorizationController.h */; };
 		A181A79821ACC74B0059A316 /* WebKitAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = A181A79721ACAC610059A316 /* WebKitAdditions.mm */; };
-		1CB0A0010000000000000002 /* WebExtensionAdditionsHook.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CB0A0010000000000000001 /* WebExtensionAdditionsHook.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		A183494224EF467800BDC9A8 /* SharedBufferReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC5DB9121488E16006CB8A8 /* SharedBufferReference.h */; };
 		A188D2E52B6B0F4E00E65A08 /* WKVisibilityPropagationView.h in Headers */ = {isa = PBXBuildFile; fileRef = A188D2E22B6B0F4E00E65A08 /* WKVisibilityPropagationView.h */; };
 		A190E9422F3DB703009615AD /* WKAVContentSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = A190E9412F3DB703009615AD /* WKAVContentSource.mm */; };
@@ -2886,11 +2885,6 @@
 				"$(WK_WEBKITADDITIONS_WKWEBVIEW_INPUT)",
 				"$(WK_WEBKITADDITIONS_WKWEBVIEW_PRIVATE_INPUT)",
 				"$(WK_WEBKITADDITIONS_WKPREFERENCES_PRIVATE_INPUT)",
-				"$(WK_WEBKITADDITIONS_WEBKIT_PRIVATE_INPUT)",
-				"$(WK_WEBKITADDITIONS_WKWEBEXTENSIONCONTEXT_PRIVATE_INPUT)",
-				"$(WK_WEBKITADDITIONS_WKWEBEXTENSIONCONTROLLERDELEGATE_PRIVATE_INPUT)",
-				"$(WK_WEBKITADDITIONS_WKWEBEXTENSIONCONTROLLERDELEGATE_FORWARD_DECLARATIONS_INPUT)",
-				"$(WK_WEBKITADDITIONS_WKWEBEXTENSIONPERMISSION_PRIVATE_INPUT)",
 				"$(SHARED_DERIVED_FILE_DIR)/WebKit-header-postprocess-config.sh",
 			);
 			isEditable = 1;
@@ -7880,7 +7874,6 @@
 		A1798B502230A0FE000764BD /* PaymentAuthorizationController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PaymentAuthorizationController.mm; sourceTree = "<group>"; };
 		A1798B5722332203000764BD /* NetworkConnectionToWebProcessIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkConnectionToWebProcessIOS.mm; sourceTree = "<group>"; };
 		A181A79721ACAC610059A316 /* WebKitAdditions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitAdditions.mm; sourceTree = "<group>"; };
-		1CB0A0010000000000000001 /* WebExtensionAdditionsHook.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAdditionsHook.mm; sourceTree = "<group>"; };
 		A188D2E22B6B0F4E00E65A08 /* WKVisibilityPropagationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKVisibilityPropagationView.h; sourceTree = "<group>"; };
 		A188D2E32B6B0F4E00E65A08 /* WKVisibilityPropagationView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKVisibilityPropagationView.mm; sourceTree = "<group>"; };
 		A190E9402F3DB703009615AD /* WKAVContentSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKAVContentSource.h; sourceTree = "<group>"; };
@@ -14258,7 +14251,6 @@
 				A1798B4A222F133A000764BD /* PaymentAuthorizationPresenter.mm */,
 				A1798B3F222D98B6000764BD /* PaymentAuthorizationViewController.h */,
 				A1798B40222D98B6000764BD /* PaymentAuthorizationViewController.mm */,
-				1CB0A0010000000000000001 /* WebExtensionAdditionsHook.mm */,
 				A181A79721ACAC610059A316 /* WebKitAdditions.mm */,
 				F4648E90296E81F500744170 /* WebPrivacyHelpers.h */,
 				F4648E91296E81F500744170 /* WebPrivacyHelpers.mm */,
@@ -22735,7 +22727,6 @@
 				99A514682D5ACF1800937177 /* WebDriverBidiFrontendDispatchers.cpp in Sources */,
 				99A5146A2D5ACF1800937177 /* WebDriverBidiProcessor.cpp in Sources */,
 				99A514692D5ACF1800937177 /* WebDriverBidiProtocolObjects.cpp in Sources */,
-				1CB0A0010000000000000002 /* WebExtensionAdditionsHook.mm in Sources */,
 				1C974FE72AFAD17D009DE8FC /* WebExtensionCommand.cpp in Sources */,
 				1CC1A36C2B0D9A0900373759 /* WebExtensionMenuItem.cpp in Sources */,
 				C18F3A152563334300797E66 /* WebInspectorPreferenceObserver.mm in Sources */,

@@ -42,10 +42,6 @@
 #import <WebKit/WKWebExtensionWindowConfiguration.h>
 #import <WebKit/WebKit.h>
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/TestWebExtensionsDelegateAdditionsPrefix.h>)
-#import <WebKitAdditions/TestWebExtensionsDelegateAdditionsPrefix.h>
-#endif
-
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 NS_SWIFT_UI_ACTOR
@@ -94,10 +90,6 @@ NS_SWIFT_UI_ACTOR
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/TestWebExtensionsDelegateAdditions.h>)
-#include <WebKitAdditions/TestWebExtensionsDelegateAdditions.h>
-#endif
 
 #endif // __OBJC__
 

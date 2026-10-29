@@ -131,12 +131,6 @@ to-pattern = $(join $(basename $1), $(subst .,%,$(suffix $1)))
 # use the file from the build.
 find-webkitadditions-file = $(firstword $(wildcard $(addsuffix /$1,$(WEBKITADDITIONS_HEADER_SEARCH_PATHS))))
 
-WEBKITADDITIONS_SERIALIZATION_IN_FILES :=
-WEBKITADDITIONS_EXTENSION_INTERFACES :=
-WEBKITADDITIONS_EXTENSION_PARTIAL_IDLS :=
-WEBKITADDITIONS_MESSAGES_IN_FILES :=
--include $(call find-webkitadditions-file,WebExtensionAdditions.make)
-
 MESSAGE_RECEIVERS = \
 	LogStream \
 	NetworkProcess/Authentication/AuthenticationManager \
@@ -450,7 +444,9 @@ all : $(GENERATED_MESSAGES_FILES)
 # A receiver may be extended by a <Receiver>Additions.messages.in fragment in WebKitAdditions; see
 # splice_additions() in generate-message-receiver.py. The script finds them by receiver name, but
 # they are listed here as well so make and DerivedSources-input.xcfilelist both track them.
-WEBKITADDITIONS_MESSAGES_IN_FILES += WebPageProxyAdditions.messages.in
+WEBKITADDITIONS_MESSAGES_IN_FILES = \
+	WebPageProxyAdditions.messages.in \
+#
 
 MESSAGES_IN_ADDITIONS_ARGS := $(foreach D,$(WEBKITADDITIONS_HEADER_SEARCH_PATHS),--additions-dir $D)
 MESSAGES_IN_ADDITIONS_FILES := $(foreach I,$(WEBKITADDITIONS_MESSAGES_IN_FILES),$(call find-webkitadditions-file,$I))
@@ -1074,11 +1070,8 @@ GENERATED_SERIALIZERS_OUTPUT_FILES = \
 
 GENERATED_SERIALIZERS_OUTPUT_PATTERNS = $(call to-pattern, $(GENERATED_SERIALIZERS_OUTPUT_FILES))
 
-SERIALIZATION_ADDITIONS_FILES := $(foreach I,$(WEBKITADDITIONS_SERIALIZATION_IN_FILES),$(call find-webkitadditions-file,$I))
-OPAQUE_IPC_TYPES_ADDITIONS_FILES := $(call find-webkitadditions-file,OpaqueIPCTypesAdditions.tracking.in)
-
-$(GENERATED_SERIALIZERS_OUTPUT_PATTERNS) : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(SERIALIZATION_ADDITIONS_FILES) $(OPAQUE_IPC_TYPES_ADDITIONS_FILES) $(WebKit2)/DerivedSources.make $(WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH) $(WebKit2)/Scripts/webkit/opaque_ipc_types.py $(WebKit2)/Scripts/webkit/opaque_ipc_types.tracking.in
-	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py mm --split-by-directory --output-dir=IPC $(addprefix --opaque-ipc-types-tracking-file=,$(OPAQUE_IPC_TYPES_ADDITIONS_FILES)) $(filter %.serialization.in,$^)
+$(GENERATED_SERIALIZERS_OUTPUT_PATTERNS) : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make $(WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH) $(WebKit2)/Scripts/webkit/opaque_ipc_types.py $(WebKit2)/Scripts/webkit/opaque_ipc_types.tracking.in
+	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py mm --split-by-directory --output-dir=IPC $(filter %.serialization.in,$^)
 
 EXTENSIONS_DIR = $(WebKit2)/WebProcess/Extensions
 EXTENSIONS_SCRIPTS_DIR = $(EXTENSIONS_DIR)/Bindings/Scripts
@@ -1127,13 +1120,6 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIWindowsEvent \
 #
 
-EXTENSION_INTERFACES += $(foreach I,$(WEBKITADDITIONS_EXTENSION_INTERFACES),$(if $(call find-webkitadditions-file,$I.idl),$I))
-
-partial-idl-files-for-target = $(foreach P,$(filter $1:%,$(WEBKITADDITIONS_EXTENSION_PARTIAL_IDLS)),$(call find-webkitadditions-file,$(lastword $(subst :, ,$P))))
-WEBKITADDITIONS_PARTIAL_IDL_TARGETS := $(sort $(foreach P,$(WEBKITADDITIONS_EXTENSION_PARTIAL_IDLS),$(firstword $(subst :, ,$P))))
-WEBKITADDITIONS_PARTIAL_IDL_FILES := $(foreach T,$(WEBKITADDITIONS_PARTIAL_IDL_TARGETS),$(call partial-idl-files-for-target,$T))
-SUPPLEMENTAL_DEPENDENCY_FILE = WebExtensionSupplementalDependencies.txt
-
 CPP_EXTENSION_INTERFACES = \
 	WebExtensionAPIAlarms \
 	WebExtensionAPINamespace \
@@ -1145,23 +1131,19 @@ CPP_EXTENSION_INTERFACES = \
     WebExtensionAPIWebPageRuntime \
 #
 
-$(SUPPLEMENTAL_DEPENDENCY_FILE) : $(WebKit2)/DerivedSources.make $(WEBKITADDITIONS_PARTIAL_IDL_FILES)
-	: > $@
-	$(foreach T,$(WEBKITADDITIONS_PARTIAL_IDL_TARGETS),$(if $(call partial-idl-files-for-target,$T),echo "$T.idl $(call partial-idl-files-for-target,$T)" >> $@;))
-
 $(IDL_FILE_NAMES_LIST) : $(EXTENSION_INTERFACES:%=%.idl)
 	echo $^ | tr " " "\n" > $@
 
 $(CPP_IDL_FILE_NAMES_LIST) : $(CPP_EXTENSION_INTERFACES:%=%.idl)
 	echo $^ | tr " " "\n" > $@
 
-JS%.h JS%.mm : %.idl $(BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PLATFORM_FLAGS_RESPONSE_FILE) $(IDL_FILE_NAMES_LIST) $(SUPPLEMENTAL_DEPENDENCY_FILE) $(WEBKITADDITIONS_PARTIAL_IDL_FILES)
+JS%.h JS%.mm : %.idl $(BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PLATFORM_FLAGS_RESPONSE_FILE) $(IDL_FILE_NAMES_LIST)
 	@echo Generating bindings for $*...
-	$(PERL) -I $(WebCorePrivateHeaders) -I $(EXTENSIONS_SCRIPTS_DIR) $(WebCorePrivateHeaders)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --outputDir . --generator Extensions --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --idlFileNamesList $(IDL_FILE_NAMES_LIST) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
+	$(PERL) -I $(WebCorePrivateHeaders) -I $(EXTENSIONS_SCRIPTS_DIR) $(WebCorePrivateHeaders)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --outputDir . --generator Extensions --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --idlFileNamesList $(IDL_FILE_NAMES_LIST) $<
 
-JS%.h JS%.cpp : %.idl $(BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PLATFORM_FLAGS_RESPONSE_FILE) $(CPP_IDL_FILE_NAMES_LIST) $(SUPPLEMENTAL_DEPENDENCY_FILE) $(WEBKITADDITIONS_PARTIAL_IDL_FILES)
+JS%.h JS%.cpp : %.idl $(BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PLATFORM_FLAGS_RESPONSE_FILE) $(CPP_IDL_FILE_NAMES_LIST)
 	@echo Generating bindings for $*...
-	$(PERL) -I $(WebCorePrivateHeaders) -I $(EXTENSIONS_SCRIPTS_DIR) $(WebCorePrivateHeaders)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --outputDir . --generator Extensions --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --idlFileNamesList $(CPP_IDL_FILE_NAMES_LIST) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
+	$(PERL) -I $(WebCorePrivateHeaders) -I $(EXTENSIONS_SCRIPTS_DIR) $(WebCorePrivateHeaders)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --outputDir . --generator Extensions --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --idlFileNamesList $(CPP_IDL_FILE_NAMES_LIST) $<
 
 JSWebExtensionAPIUnified.mm: $(BINDINGS_SCRIPTS) $(EXTENSION_INTERFACES:%=JS%.mm)
 	@echo "Generating $@..."

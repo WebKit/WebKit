@@ -71,10 +71,6 @@ using CocoaMenuItem = UIMenuElement;
 
 @implementation WKWebExtensionContext
 
-#if __has_include(<WebKitAdditions/WKWebExtensionContextAdditions.mm>)
-#import <WebKitAdditions/WKWebExtensionContextAdditions.mm>
-#endif
-
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionContext, WebExtensionContext, Ref { *_webExtensionContext });

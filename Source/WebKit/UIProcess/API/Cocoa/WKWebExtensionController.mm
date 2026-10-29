@@ -45,10 +45,6 @@
 
 @implementation WKWebExtensionController
 
-#if __has_include(<WebKitAdditions/WKWebExtensionControllerAdditions.mm>)
-#import <WebKitAdditions/WKWebExtensionControllerAdditions.mm>
-#endif
-
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionController, WebExtensionController, Ref { *_webExtensionController });

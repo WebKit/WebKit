@@ -360,10 +360,6 @@ std::expected<bool, RefPtr<API::Error>> WebExtensionContext::unload()
 
     m_privilegedIdentifier = std::nullopt;
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionContextAdditions.h>)
-    additionsDidUnload();
-#endif
-
     m_actionsToPerformAfterBackgroundContentLoads.clear();
     m_backgroundContentEventListeners.clear();
     m_backgroundContentHasLoadedOnce = false;
@@ -1472,10 +1468,6 @@ void WebExtensionContext::didCloseTab(WebExtensionTab& tab, WindowIsClosing wind
     tab.didClose();
     forgetTab(tab.identifier());
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionContextAdditions.h>)
-    additionsDidCloseTab(tab);
-#endif
-
     if (!isLoaded() || !tab.extensionHasAccess() || suppressEvents == SuppressEvents::Yes)
         return;
 
@@ -1735,10 +1727,6 @@ void WebExtensionContext::didCommitLoadForFrame(WebPageProxyIdentifier pageID, c
         // Clear tab action customizations.
         if (RefPtr tabAction = m_actionTabMap.get(*tab))
             tabAction->clearCustomizations();
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionContextAdditions.h>)
-        additionsDidCommitLoad(*tab);
-#endif
 
         // Clear activeTab permissions and user gesture if the site changed.
         auto temporaryPattern = tab->temporaryPermissionMatchPattern();

@@ -29,7 +29,7 @@ import os
 import re
 import sys
 
-from webkit.opaque_ipc_types import OPAQUE_TYPES, is_opaque_type, opaque_ipc_types
+from webkit.opaque_ipc_types import is_opaque_type, opaque_ipc_types
 
 # Generated serializers are split into per-bundle translation units to keep
 # any single .{mm,cpp} from dominating the critical path. Each
@@ -2157,16 +2157,10 @@ def main(argv):
     parser.add_argument('file_extension', help='File extension for output files')
     parser.add_argument('input_files', nargs='+', help='Input files to process')
     parser.add_argument('--output-dir', help='Directory for output files')
-    parser.add_argument('--opaque-ipc-types-tracking-file', action='append', default=[],
-                        help='Additional opaque_ipc_types tracking file, for example one supplied by WebKitAdditions.')
     parser.add_argument('--split-by-directory', action='store_true',
                         help='Emit per-domain GeneratedSerializers<Domain>.{ext} files instead of a single GeneratedSerializers.{ext}.')
 
     args = parser.parse_args(argv[1:])
-
-    for tracking_file_path in args.opaque_ipc_types_tracking_file:
-        opaque_ipc_types.load_tracking_file(tracking_file_path)
-        OPAQUE_TYPES.update(opaque_ipc_types.alias_params.keys())
 
     serialized_types = []
     serialized_enums = []

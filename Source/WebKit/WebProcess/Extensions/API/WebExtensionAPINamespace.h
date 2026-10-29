@@ -28,9 +28,6 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "JSWebExtensionAPINamespace.h"
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionAPINamespaceAdditionsPrefix.h>)
-#include <WebKitAdditions/WebExtensionAPINamespaceAdditionsPrefix.h>
-#endif
 #include "WebExtensionAPIAction.h"
 #include "WebExtensionAPIAlarms.h"
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
@@ -148,10 +145,6 @@ private:
     const RefPtr<WebExtensionAPIWindows> m_windows;
     const RefPtr<WebExtensionAPIWebNavigation> m_webNavigation;
     const RefPtr<WebExtensionAPIWebRequest> m_webRequest;
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionAPINamespaceAdditions.h>)
-#include <WebKitAdditions/WebExtensionAPINamespaceAdditions.h>
-#endif
 };
 
 } // namespace WebKit

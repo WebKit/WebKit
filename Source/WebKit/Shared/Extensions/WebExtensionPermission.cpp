@@ -137,10 +137,6 @@ String WebExtensionPermission::webRequest()
     return "webRequest"_s;
 }
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionPermissionAdditionsImpl.cpp>)
-#include <WebKitAdditions/WebExtensionPermissionAdditionsImpl.cpp>
-#endif
-
 } // namespace WebKit
 
 #endif

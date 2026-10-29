@@ -30,10 +30,6 @@
 @class _WKWebExtensionBookmark;
 @protocol _WKWebExtensionBookmark;
 
-#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
-#import <WebKitAdditions/WKWebExtensionControllerDelegatePrivateForwardDeclarations.h>
-#endif
-
 /*! @abstract Indicates the side of the browser window on which the extension sidebar is displayed. */
 typedef NS_ENUM(NSInteger, _WKWebExtensionSidebarSide) {
     _WKWebExtensionSidebarSideLeft,
@@ -270,7 +266,3 @@ WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
 @end
 
 WK_HEADER_AUDIT_END(nullability, sendability)
-
-#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
-#import <WebKitAdditions/WKWebExtensionControllerDelegatePrivateAdditions.h>
-#endif

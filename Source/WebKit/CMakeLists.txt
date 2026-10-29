@@ -792,13 +792,6 @@ if (USE_APPLE_INTERNAL_SDK)
         ${WebKitAdditions_HEADERS_DIR}/WebPageProxyAdditions.messages.in
     )
     set(WebKitAdditions_MESSAGES_IN_ARGS --additions-dir ${WebKitAdditions_HEADERS_DIR})
-
-    set(WebKitAdditions_SERIALIZATION_IN_FILES)
-    set(WebKitAdditions_BINDINGS_IN_FILES)
-    set(WebKitAdditions_EXTENSION_PARTIAL_IDLS)
-    if (EXISTS ${WebKitAdditions_HEADERS_DIR}/WebExtensionAdditions.cmake)
-        include(${WebKitAdditions_HEADERS_DIR}/WebExtensionAdditions.cmake)
-    endif ()
 endif ()
 
 set(WebKit_FRAMEWORKS
@@ -1158,8 +1151,6 @@ macro(GENERATE_IDL_BINDINGS _output_source _inputs _cpp_inputs)
     unset(_cpp_input_files)
     unset(_outputs)
     unset(_import_names)
-    unset(_supplemental_arguments)
-    unset(_supplemental_files)
     foreach (_file IN ITEMS ${_inputs})
         get_filename_component(_name ${_file} NAME_WE)
         list(APPEND _input_files ${WEBKIT_DIR}/${_file}.idl)
@@ -1170,18 +1161,6 @@ macro(GENERATE_IDL_BINDINGS _output_source _inputs _cpp_inputs)
         )
         list(APPEND _import_names JS${_name}.mm)
         list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/JS${_name}.h)
-    endforeach ()
-    foreach (_file IN ITEMS ${WebKitAdditions_BINDINGS_IN_FILES})
-        if (EXISTS ${WebKitAdditions_HEADERS_DIR}/${_file}.idl)
-            list(APPEND _input_files ${WebKitAdditions_HEADERS_DIR}/${_file}.idl)
-            list(APPEND _outputs
-                ${WebKit_DERIVED_SOURCES_DIR}/JS${_file}.mm
-
-                ${WebKit_DERIVED_SOURCES_DIR}/JS${_file}.h
-            )
-            list(APPEND _import_names JS${_file}.mm)
-            list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/JS${_file}.h)
-        endif ()
     endforeach ()
     foreach (_file IN ITEMS ${_cpp_inputs})
         get_filename_component(_name ${_file} NAME_WE)
@@ -1196,30 +1175,6 @@ macro(GENERATE_IDL_BINDINGS _output_source _inputs _cpp_inputs)
         list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/JS${_name}.h)
     endforeach ()
 
-    set(_supplemental_content)
-    set(_partial_targets)
-    foreach (_pair IN ITEMS ${WebKitAdditions_EXTENSION_PARTIAL_IDLS})
-        string(REPLACE ":" ";" _pair_parts ${_pair})
-        list(GET _pair_parts 0 _partial_target)
-        list(GET _pair_parts 1 _partial_file)
-        if (EXISTS ${WebKitAdditions_HEADERS_DIR}/${_partial_file})
-            list(APPEND _partial_targets ${_partial_target})
-            list(APPEND _partial_files_${_partial_target} ${WebKitAdditions_HEADERS_DIR}/${_partial_file})
-            list(APPEND _supplemental_files ${WebKitAdditions_HEADERS_DIR}/${_partial_file})
-        endif ()
-    endforeach ()
-    list(REMOVE_DUPLICATES _partial_targets)
-    foreach (_partial_target IN ITEMS ${_partial_targets})
-        list(JOIN _partial_files_${_partial_target} " " _partial_line)
-        string(APPEND _supplemental_content "${_partial_target}.idl ${_partial_line}\n")
-    endforeach ()
-    if (_supplemental_content)
-        set(_supplemental_dependency_file ${WebKit_DERIVED_SOURCES_DIR}/WebExtensionSupplementalDependencies.txt)
-        file(GENERATE OUTPUT ${_supplemental_dependency_file} CONTENT "${_supplemental_content}")
-        list(APPEND _supplemental_files ${_supplemental_dependency_file})
-        set(_supplemental_arguments --supplementalDependencyFile ${_supplemental_dependency_file})
-    endif ()
-
     add_custom_command(
         OUTPUT
             ${_outputs}
@@ -1228,14 +1183,13 @@ macro(GENERATE_IDL_BINDINGS _output_source _inputs _cpp_inputs)
         MAIN_DEPENDENCY ${WEBCORE_DIR}/bindings/scripts/generate-bindings-all.pl
         DEPENDS
             ${_input_files}
-            ${_supplemental_files}
            "${WEBCORE_DIR}/bindings/scripts/CodeGenerator.pm"
            "${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl"
            "${WEBCORE_DIR}/bindings/scripts/IDLParser.pm"
            "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts/CodeGeneratorExtensions.pm"
            "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts/GenerateImports.pl"
            "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts/IDLAttributes.json"
-        COMMAND ${PERL_EXECUTABLE} -I "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts" ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --outputDir . --generator Extensions --idlAttributesFile "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts/IDLAttributes.json" --idlFileNamesList WebExtensionIDLFileNamesList.txt ${_supplemental_arguments} ${_input_files}
+        COMMAND ${PERL_EXECUTABLE} -I "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts" ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --outputDir . --generator Extensions --idlAttributesFile "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts/IDLAttributes.json" --idlFileNamesList WebExtensionIDLFileNamesList.txt ${_input_files}
         COMMAND ${PERL_EXECUTABLE} "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts/GenerateImports.pl" --output=JSWebExtensionAPIUnified.mm -- ${_import_names}
         COMMAND ${PERL_EXECUTABLE} "${WEBKIT_DIR}/WebProcess/Extensions/Bindings/Scripts/GenerateImports.pl" --cpp --output=JSWebExtensionAPIUnified.cpp -- ${_cpp_import_names}
         WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
@@ -1255,19 +1209,6 @@ foreach (in_file ${WebCore_SERIALIZATION_IN_FILES})
 endforeach ()
 list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebKit_DERIVED_SOURCES_DIR}/SharedPreferencesForWebProcess.serialization.in")
 list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebKit_DERIVED_SOURCES_DIR}/SecurityFlags.serialization.in")
-set(WebKit_OPAQUE_IPC_TYPES_ADDITIONS_FILES)
-set(WebKit_OPAQUE_IPC_TYPES_ADDITIONS_ARGS)
-if (USE_APPLE_INTERNAL_SDK)
-    foreach (in_file ${WebKitAdditions_SERIALIZATION_IN_FILES})
-        if (EXISTS "${WebKitAdditions_HEADERS_DIR}/${in_file}")
-            list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebKitAdditions_HEADERS_DIR}/${in_file}")
-        endif ()
-    endforeach ()
-    if (EXISTS "${WebKitAdditions_HEADERS_DIR}/OpaqueIPCTypesAdditions.tracking.in")
-        list(APPEND WebKit_OPAQUE_IPC_TYPES_ADDITIONS_FILES "${WebKitAdditions_HEADERS_DIR}/OpaqueIPCTypesAdditions.tracking.in")
-        list(APPEND WebKit_OPAQUE_IPC_TYPES_ADDITIONS_ARGS "--opaque-ipc-types-tracking-file=${WebKitAdditions_HEADERS_DIR}/OpaqueIPCTypesAdditions.tracking.in")
-    endif ()
-endif ()
 
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
@@ -1328,7 +1269,7 @@ foreach (_rel IN LISTS _serializers_outputs)
     list(APPEND _serializers_copy_commands COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_serializers_stage_dir}/${_rel} ${WebKit_DERIVED_SOURCES_DIR}/${_rel})
 endforeach ()
 set(_serializers_input_files_rsp ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersInputFiles.rsp)
-string(JOIN "\n" _serializers_input_files_rsp_content ${WebKit_SERIALIZATION_DEPENDENCIES} ${WebKit_OPAQUE_IPC_TYPES_ADDITIONS_ARGS})
+string(JOIN "\n" _serializers_input_files_rsp_content ${WebKit_SERIALIZATION_DEPENDENCIES})
 file(GENERATE OUTPUT ${_serializers_input_files_rsp} CONTENT "${_serializers_input_files_rsp_content}\n")
 add_custom_command(
     OUTPUT
@@ -1337,7 +1278,6 @@ add_custom_command(
     DEPENDS
         ${WEBKIT_DIR}/Scripts/webkit/opaque_ipc_types.py
         ${WebKit_SERIALIZATION_DEPENDENCIES}
-        ${WebKit_OPAQUE_IPC_TYPES_ADDITIONS_FILES}
         ${_serializers_input_files_rsp}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${_serializers_stage_dir}
     COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-serializers.py ${WebKit_GENERATED_SERIALIZERS_SUFFIX} --split-by-directory @${_serializers_input_files_rsp} --output-dir ${_serializers_stage_dir}

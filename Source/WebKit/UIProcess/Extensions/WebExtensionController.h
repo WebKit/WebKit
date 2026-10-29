@@ -300,10 +300,6 @@ private:
 
     std::unique_ptr<RunLoop::Timer> m_purgeOldMatchedRulesTimer;
     RefPtr<HTTPCookieStoreObserver> m_cookieStoreObserver;
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionControllerAdditions.h>)
-#include <WebKitAdditions/WebExtensionControllerAdditions.h>
-#endif
 };
 
 template<typename T>

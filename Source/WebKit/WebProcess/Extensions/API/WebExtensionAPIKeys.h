@@ -269,10 +269,6 @@ static NSString * const reasonsKey = @"reasons";
 static NSString * const xmlhttprequestKey = @"xmlhttprequest";
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionAPIKeysAdditions.h>)
-#include <WebKitAdditions/WebExtensionAPIKeysAdditions.h>
-#endif
-
 #else
 
 static constexpr auto nameKey = "name"_s;

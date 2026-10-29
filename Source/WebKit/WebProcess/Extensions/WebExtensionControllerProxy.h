@@ -96,10 +96,6 @@ private:
 
     WebExtensionContextProxySet m_extensionContexts;
     WebExtensionContextProxyBaseURLMap m_extensionContextBaseURLMap;
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionControllerProxyAdditions.h>)
-#include <WebKitAdditions/WebExtensionControllerProxyAdditions.h>
-#endif
 };
 
 } // namespace WebKit

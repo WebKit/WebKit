@@ -8,7 +8,6 @@ $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalFeatureDefines
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalPlatform.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalPlatformHave.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AppKitGesturesExtras.swift.in
-$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/OpaqueIPCTypesAdditions.tracking.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/TestWebKitAPILibraryAdditions.swift.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKWebView+SystemTextExtraction.swift.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKWebView+WKBannerViewOverlay.swift.in
