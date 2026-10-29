@@ -30,12 +30,16 @@
 #include "Logging.h"
 #include "ModelProcessProxy.h"
 #include "NetworkProcessProxy.h"
+#include <array>
 #include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
+
+static constexpr Seconds remoteListReplyTimeout { 30_s };
+static constexpr std::array<Seconds, 3> remoteListRetryDelays { 1_s, 5_s, 30_s };
 
 SecurityFlagsController& SecurityFlagsController::singleton()
 {
@@ -58,6 +62,13 @@ SecurityFlagsController::SecurityFlagsController()
         UNUSED_VARIABLE(name);
         RELEASE_LOG(Process, "SecurityFlagsController: security flag %" PUBLIC_LOG_STRING " is disabled by a user default and cannot be enforced again at runtime", name.utf8());
     }
+
+    // Deferred because singleton() is still under construction here. A privileged child process launched before the
+    // reply lands learns the value over SecurityFlagsDidChange.
+    RunLoop::mainSingleton().dispatch([] {
+        singleton().platformObserveRemoteListChanges();
+        singleton().requestRemoteList();
+    });
 }
 
 SecurityFlags::Storage SecurityFlagsController::flagsWithNamesDisabled(const Vector<String>& names, IncludePersistentNames includePersistentNames) const
@@ -89,7 +100,94 @@ void SecurityFlagsController::setDisabledFlagsNamed(const Vector<String>& names)
 
 void SecurityFlagsController::setDisabledFlagsNamedForTesting(const Vector<String>& names)
 {
+    m_remoteListSuppressedForTesting = true;
+    m_remoteListState = RemoteListState::Idle;
+    ++m_remoteListRequestGeneration;
     apply(flagsWithNamesDisabled(names, IncludePersistentNames::No));
+}
+
+void SecurityFlagsController::requestRemoteListForTesting()
+{
+    m_remoteListSuppressedForTesting = false;
+    m_remoteListFailureCount = 0;
+    requestRemoteList();
+}
+
+void SecurityFlagsController::requestRemoteList()
+{
+    ASSERT(RunLoop::isMain());
+
+    if (m_remoteListSuppressedForTesting)
+        return;
+
+    // Remembered rather than dropped: the request in flight may already have been answered with the value this
+    // change replaced, and nothing else would come along to ask again.
+    if (m_remoteListState != RemoteListState::Idle) {
+        m_remoteListState = RemoteListState::RequestedAndStale;
+        return;
+    }
+
+    m_remoteListState = RemoteListState::Requested;
+    auto generation = ++m_remoteListRequestGeneration;
+
+    if (!platformRequestRemoteList(generation)) {
+        m_remoteListState = RemoteListState::Idle;
+        return;
+    }
+
+    // A reply that never lands would otherwise coalesce every later change into a request that is over.
+    RunLoop::mainSingleton().dispatchAfter(remoteListReplyTimeout, [generation] {
+        singleton().remoteListRequestTimedOut(generation);
+    });
+}
+
+void SecurityFlagsController::remoteListRequestTimedOut(uint64_t generation)
+{
+    if (m_remoteListState == RemoteListState::Idle || generation != m_remoteListRequestGeneration)
+        return;
+
+    RELEASE_LOG_ERROR(Process, "SecurityFlagsController: no answer with the disabled security flags after %.0f seconds", remoteListReplyTimeout.seconds());
+    didReceiveRemoteList(generation, std::nullopt);
+}
+
+void SecurityFlagsController::didReceiveRemoteList(uint64_t generation, std::optional<Vector<String>>&& names)
+{
+    ASSERT(RunLoop::isMain());
+
+    // A reply the watchdog already gave up on, or one belonging to a request that a later one replaced.
+    if (m_remoteListState == RemoteListState::Idle || generation != m_remoteListRequestGeneration)
+        return;
+
+    bool changeWasAnnounced = m_remoteListState == RemoteListState::RequestedAndStale;
+    m_remoteListState = RemoteListState::Idle;
+
+    if (names) {
+        m_remoteListFailureCount = 0;
+        setDisabledFlagsNamed(*names);
+    }
+
+    if (changeWasAnnounced) {
+        requestRemoteList();
+        return;
+    }
+
+    if (!names)
+        scheduleRemoteListRetry();
+}
+
+// A failure to reach the list service can also mean it never armed its change notification, so without a retry
+// nothing would ask again.
+void SecurityFlagsController::scheduleRemoteListRetry()
+{
+    if (m_remoteListFailureCount >= remoteListRetryDelays.size()) {
+        RELEASE_LOG_ERROR(Process, "SecurityFlagsController: giving up on the disabled security flags until a change is announced");
+        return;
+    }
+
+    auto delay = remoteListRetryDelays[m_remoteListFailureCount++];
+    RunLoop::mainSingleton().dispatchAfter(delay, [] {
+        singleton().requestRemoteList();
+    });
 }
 
 void SecurityFlagsController::apply(SecurityFlags::Storage&& newFlags)
@@ -102,6 +200,15 @@ void SecurityFlagsController::apply(SecurityFlags::Storage&& newFlags)
 Vector<String> SecurityFlagsController::platformPersistentlyDisabledFlagNames()
 {
     return { };
+}
+
+bool SecurityFlagsController::platformRequestRemoteList(uint64_t)
+{
+    return false;
+}
+
+void SecurityFlagsController::platformObserveRemoteListChanges()
+{
 }
 #endif
 

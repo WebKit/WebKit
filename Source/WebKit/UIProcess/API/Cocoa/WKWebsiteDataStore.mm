@@ -1535,12 +1535,22 @@ struct WKWebsiteData {
 #endif // ENGINEERING_BUILD
 }
 
++ (void)_requestDisabledSecurityFlagsForTesting
+{
+#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+    WebKit::SecurityFlagsController::singleton().requestRemoteListForTesting();
+#endif // ENGINEERING_BUILD
+}
+
 - (void)_isSecurityFlagEnabledInNetworkProcessForTesting:(NSString *)flagName completionHandler:(void(^)(NSNumber *))completionHandler
 {
 #if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
     protect(protect(*_websiteDataStore)->networkProcess())->isSecurityFlagEnabledForTesting(flagName, [completionHandlerCopy = makeBlockPtr(completionHandler)] (std::optional<bool> enabled) {
         completionHandlerCopy(enabled ? [NSNumber numberWithBool:*enabled] : nil);
     });
+#else
+    UNUSED_PARAM(flagName);
+    completionHandler(nil);
 #endif // ENGINEERING_BUILD
 }
 

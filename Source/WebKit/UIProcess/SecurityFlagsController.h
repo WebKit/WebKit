@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SecurityFlags.h"
+#include <optional>
 #include <wtf/Forward.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
@@ -51,6 +52,14 @@ public:
     // Ignores the user default, so a test gets the state it asked for on a device that has one set.
     void setDisabledFlagsNamedForTesting(const Vector<String>&);
 
+    // Asks the platform's list service for the list. Done once while the UIProcess initializes, and again whenever
+    // that service says the list changed.
+    void requestRemoteList();
+
+    // Gives the list back the ownership setDisabledFlagsNamedForTesting() took, so that tests of the two paths can
+    // run in either order in one process.
+    void requestRemoteListForTesting();
+
 private:
     friend class WTF::NeverDestroyed<SecurityFlagsController>;
     SecurityFlagsController();
@@ -60,9 +69,30 @@ private:
     void apply(SecurityFlags::Storage&&);
     void propagateToChildProcesses();
 
+    // Nullopt is no answer at all, which leaves the flags as they are rather than resetting them to the list.
+    void didReceiveRemoteList(uint64_t generation, std::optional<Vector<String>>&&);
+    void remoteListRequestTimedOut(uint64_t generation);
+    void scheduleRemoteListRetry();
+
+    // True when a reply is coming; false when there is no service to ask.
+    bool platformRequestRemoteList(uint64_t generation);
+    void platformObserveRemoteListChanges();
+
     static Vector<String> platformPersistentlyDisabledFlagNames();
 
+    // One request at a time, so that an older list cannot be applied after a newer one. Stale means a change was
+    // announced after the request went out, which that request may be too early to carry.
+    enum class RemoteListState : uint8_t { Idle, Requested, RequestedAndStale };
+
     Vector<String> m_persistentlyDisabledNames;
+    RemoteListState m_remoteListState { RemoteListState::Idle };
+
+    // Tells a reply, or a watchdog, from the request that replaced the one it belongs to.
+    uint64_t m_remoteListRequestGeneration { 0 };
+    unsigned m_remoteListFailureCount { 0 };
+
+    // A test that sets the flags owns them until it asks for the list again.
+    bool m_remoteListSuppressedForTesting { false };
 };
 
 } // namespace WebKit

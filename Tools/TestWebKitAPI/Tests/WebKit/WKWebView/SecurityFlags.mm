@@ -31,8 +31,16 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
+#import <wtf/Vector.h>
 #import <wtf/darwin/DispatchExtras.h>
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+#import <objc/runtime.h>
+#import <pal/cocoa/WebPrivacySoftLink.h>
+#endif
 
 #if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
 
@@ -184,6 +192,263 @@ TEST_F(SecurityFlagsUserDefaultTest, TestingSPIIgnoresTheUserDefault)
     [WKWebsiteDataStore _setDisabledSecurityFlagsForTesting:@[]];
     EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Enforced);
 }
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+
+// Stands in for WebPrivacy. A reply is answered asynchronously, as the real service does, and can be held so that a
+// test can act while a request is in flight; a held reply carries the answer that was set when it was requested.
+class MockDisabledSecurityFlagsService {
+public:
+    static MockDisabledSecurityFlagsService& singleton()
+    {
+        static NeverDestroyed<MockDisabledSecurityFlagsService> service;
+        return service.get();
+    }
+
+    void answerWith(NSArray<NSString *> *names, NSError *error = nil)
+    {
+        m_names = names;
+        m_error = error;
+    }
+
+    void holdReplies() { m_holdReplies = true; }
+
+    void releaseHeldReplies()
+    {
+        m_holdReplies = false;
+        for (auto& reply : std::exchange(m_heldReplies, { }))
+            answer(reply);
+    }
+
+    unsigned requestCount() const { return m_requestCount; }
+    unsigned replyCount() const { return m_replyCount; }
+
+    using Completion = void (^)(NSArray<NSString *> *, NSError *);
+
+    void handleRequest(Completion completion)
+    {
+        ++m_requestCount;
+
+        Reply reply { makeBlockPtr(completion), m_names, m_error };
+        if (m_holdReplies) {
+            m_heldReplies.append(WTF::move(reply));
+            return;
+        }
+
+        RunLoop::mainSingleton().dispatch([this, reply = WTF::move(reply)] {
+            answer(reply);
+        });
+    }
+
+private:
+    struct Reply {
+        BlockPtr<void(NSArray<NSString *> *, NSError *)> completion;
+        RetainPtr<NSArray<NSString *>> names;
+        RetainPtr<NSError> error;
+    };
+
+    // Counted after the answer, so that a test waiting on the count knows the flags have been applied.
+    void answer(const Reply& reply)
+    {
+        reply.completion(reply.names.get(), reply.error.get());
+        ++m_replyCount;
+    }
+
+    RetainPtr<NSArray<NSString *>> m_names;
+    RetainPtr<NSError> m_error;
+    Vector<Reply> m_heldReplies;
+    unsigned m_requestCount { 0 };
+    unsigned m_replyCount { 0 };
+    bool m_holdReplies { false };
+};
+
+static void installMockDisabledSecurityFlagsService()
+{
+    static bool installed = false;
+    if (installed)
+        return;
+    installed = true;
+
+    Class resourcesClass = PAL::getWPResourcesClassSingleton();
+    ASSERT(resourcesClass);
+
+    IMP implementation = imp_implementationWithBlock([](WPResources *, MockDisabledSecurityFlagsService::Completion completion) {
+        MockDisabledSecurityFlagsService::singleton().handleRequest(completion);
+    });
+
+    // Added where the installed WebPrivacy predates the API and there is nothing to swizzle, replaced where it does not.
+    if (!class_addMethod(resourcesClass, @selector(requestDisabledSecurityFlags:), implementation, "v@:@?"))
+        class_replaceMethod(resourcesClass, @selector(requestDisabledSecurityFlags:), implementation, "v@:@?");
+}
+
+static bool waitForFlagStateInUIProcess(NSString *flagName, FlagState state)
+{
+    return Util::waitFor([&] {
+        return flagStateInUIProcess(flagName) == state;
+    });
+}
+
+static bool waitForReplyCountAbove(unsigned count)
+{
+    return Util::waitFor([&] {
+        return MockDisabledSecurityFlagsService::singleton().replyCount() > count;
+    });
+}
+
+static bool waitForRequestCount(unsigned count)
+{
+    return Util::waitFor([&] {
+        return MockDisabledSecurityFlagsService::singleton().requestCount() == count;
+    });
+}
+
+// A test that cannot run here returns rather than calling GTEST_SKIP(), because TestsController prints **FAIL** for
+// anything that did not pass, and a skipped test is not passed.
+static bool canMockDisabledSecurityFlagsRequests()
+{
+    return PAL::isWebPrivacyFrameworkAvailable() && PAL::getWPResourcesClassSingleton();
+}
+
+class SecurityFlagsRemoteListTest : public testing::Test {
+public:
+    void SetUp() final
+    {
+        if (canMockDisabledSecurityFlagsRequests())
+            installMockDisabledSecurityFlagsService();
+    }
+};
+
+TEST_F(SecurityFlagsRemoteListTest, ListDisablesFlag)
+{
+    if (!canMockDisabledSecurityFlagsRequests())
+        return;
+
+    MockDisabledSecurityFlagsService::singleton().answerWith(@[testSecurityFlagName]);
+
+    auto dataStore = launchNetworkProcess();
+
+    EXPECT_TRUE(waitForReplyCountAbove(0));
+    EXPECT_EQ(flagStateInUIProcess(testSecurityFlagName), FlagState::Disabled);
+    EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Disabled);
+}
+
+TEST_F(SecurityFlagsRemoteListTest, EmptyListEnforcesTheFlagAgain)
+{
+    if (!canMockDisabledSecurityFlagsRequests())
+        return;
+
+    auto& service = MockDisabledSecurityFlagsService::singleton();
+    service.answerWith(@[testSecurityFlagName]);
+
+    auto dataStore = launchNetworkProcess();
+    EXPECT_TRUE(waitForFlagStateInUIProcess(testSecurityFlagName, FlagState::Disabled));
+
+    service.answerWith(@[]);
+    auto repliesBefore = service.replyCount();
+    [WKWebsiteDataStore _requestDisabledSecurityFlagsForTesting];
+
+    EXPECT_TRUE(waitForReplyCountAbove(repliesBefore));
+    EXPECT_EQ(flagStateInUIProcess(testSecurityFlagName), FlagState::Enforced);
+    EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Enforced);
+}
+
+TEST_F(SecurityFlagsRemoteListTest, FailureLeavesTheFlagsAsTheyAre)
+{
+    if (!canMockDisabledSecurityFlagsRequests())
+        return;
+
+    auto& service = MockDisabledSecurityFlagsService::singleton();
+    service.answerWith(@[testSecurityFlagName]);
+
+    auto dataStore = launchNetworkProcess();
+    EXPECT_TRUE(waitForFlagStateInUIProcess(testSecurityFlagName, FlagState::Disabled));
+
+    service.answerWith(nil, [NSError errorWithDomain:@"WebPrivacyErrorDomain" code:1 userInfo:nil]);
+    auto repliesBefore = service.replyCount();
+    [WKWebsiteDataStore _requestDisabledSecurityFlagsForTesting];
+
+    EXPECT_TRUE(waitForReplyCountAbove(repliesBefore));
+    EXPECT_EQ(flagStateInUIProcess(testSecurityFlagName), FlagState::Disabled);
+    EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Disabled);
+}
+
+TEST_F(SecurityFlagsRemoteListTest, ChangeNotificationAsksForTheListAgain)
+{
+    if (!canMockDisabledSecurityFlagsRequests() || !PAL::canLoad_WebPrivacy_WPDisabledSecurityFlagsChangedNotificationName())
+        return;
+
+    auto& service = MockDisabledSecurityFlagsService::singleton();
+    service.answerWith(@[]);
+
+    auto dataStore = launchNetworkProcess();
+    EXPECT_TRUE(waitForReplyCountAbove(0));
+    EXPECT_EQ(flagStateInUIProcess(testSecurityFlagName), FlagState::Enforced);
+
+    service.answerWith(@[testSecurityFlagName]);
+    [[NSNotificationCenter defaultCenter] postNotificationName:PAL::get_WebPrivacy_WPDisabledSecurityFlagsChangedNotificationNameSingleton() object:nil];
+
+    EXPECT_TRUE(waitForFlagStateInUIProcess(testSecurityFlagName, FlagState::Disabled));
+    EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Disabled);
+}
+
+TEST_F(SecurityFlagsRemoteListTest, ChangeAnnouncedWhileRequestingIsAskedForAgain)
+{
+    if (!canMockDisabledSecurityFlagsRequests())
+        return;
+
+    auto& service = MockDisabledSecurityFlagsService::singleton();
+    service.answerWith(@[]);
+
+    auto dataStore = launchNetworkProcess();
+    EXPECT_TRUE(waitForReplyCountAbove(0));
+    EXPECT_EQ(flagStateInUIProcess(testSecurityFlagName), FlagState::Enforced);
+
+    auto requestsBefore = service.requestCount();
+    service.holdReplies();
+    service.answerWith(@[testSecurityFlagName]);
+    [WKWebsiteDataStore _requestDisabledSecurityFlagsForTesting];
+    EXPECT_TRUE(waitForRequestCount(requestsBefore + 1));
+
+    [WKWebsiteDataStore _requestDisabledSecurityFlagsForTesting];
+    Util::spinRunLoop(10);
+    EXPECT_EQ(service.requestCount(), requestsBefore + 1) << "a request while one is in flight must not issue a second one";
+
+    service.answerWith(@[]);
+    service.releaseHeldReplies();
+
+    EXPECT_TRUE(waitForRequestCount(requestsBefore + 2));
+    EXPECT_TRUE(waitForFlagStateInUIProcess(testSecurityFlagName, FlagState::Enforced));
+    EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Enforced);
+}
+
+class SecurityFlagsRemoteListUserDefaultTest : public testing::Test {
+public:
+    void SetUp() final
+    {
+        if (canMockDisabledSecurityFlagsRequests())
+            installMockDisabledSecurityFlagsService();
+
+        [NSUserDefaults.standardUserDefaults setObject:@[testSecurityFlagName] forKey:disabledSecurityFlagsDefaultsKey];
+    }
+
+    void TearDown() final { [NSUserDefaults.standardUserDefaults removeObjectForKey:disabledSecurityFlagsDefaultsKey]; }
+};
+
+TEST_F(SecurityFlagsRemoteListUserDefaultTest, EmptyListKeepsTheUserDefaultNames)
+{
+    if (!canMockDisabledSecurityFlagsRequests())
+        return;
+
+    MockDisabledSecurityFlagsService::singleton().answerWith(@[]);
+
+    auto dataStore = launchNetworkProcess();
+
+    EXPECT_TRUE(waitForReplyCountAbove(0));
+    EXPECT_EQ(flagStateInUIProcess(testSecurityFlagName), FlagState::Disabled);
+    EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Disabled);
+}
+
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
 } // namespace TestWebKitAPI
 

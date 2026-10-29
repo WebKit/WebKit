@@ -199,6 +199,15 @@ selectors = [
     { name = "loadDefaultContentRuleListForStore:completionHandler:", class = "?" },
 ]
 
+[[not-web-essential]]
+# Same request as above: this is WebPrivacy, which audit-spi should stop
+# tracking as SPI.
+request = "rdar://157886589"
+selectors = [
+    {name = "requestDisabledSecurityFlags:", class = "?"},
+]
+requires = ["ENABLE_ADVANCED_PRIVACY_PROTECTIONS"]
+
 [[temporary-usage]]
 request = "rdar://157888734"
 cleanup = "rdar://157888769"

@@ -240,10 +240,21 @@ typedef NS_OPTIONS(NSUInteger, WPScriptAccessCategories) {
 
 #endif // !defined(WP_SUPPORTS_SCRIPT_ACCESS_CATEGORY)
 
+#if !defined(HAS_WEB_PRIVACY_DISABLED_SECURITY_FLAGS_API)
+
+typedef void (^WPDisabledSecurityFlagsCompletionHandler)(NSArray<NSString *> *, NSError *);
+
+@interface WPResources (Staging_185129222)
+- (void)requestDisabledSecurityFlags:(WPDisabledSecurityFlagsCompletionHandler)completion;
+@end
+
+#endif
+
 WTF_EXTERN_C_BEGIN
 
 extern NSString *const WPNotificationUserInfoResourceTypeKey;
 extern NSNotificationName const WPResourceDataChangedNotificationName;
+extern NSNotificationName const WPDisabledSecurityFlagsChangedNotificationName;
 
 WTF_EXTERN_C_END
 
