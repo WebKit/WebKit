@@ -701,7 +701,7 @@ String Interpreter::stackTraceAsString(VM& vm, const Vector<StackFrame>& stackTr
         if (i != stackTrace.size() - 1)
             builder.append('\n');
     }
-    return builder.toString();
+    return WTF::move(builder).toString();
 }
 
 ALWAYS_INLINE static HandlerInfo* findExceptionHandler(StackVisitor& visitor, CodeBlock* codeBlock, RequiredHandler requiredHandler)

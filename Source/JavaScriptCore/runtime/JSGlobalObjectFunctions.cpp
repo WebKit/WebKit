@@ -134,7 +134,7 @@ static JSValue encode(JSGlobalObject* globalObject, const WTF::BitSet<256>& doNo
 
     if (builder.hasOverflowed()) [[unlikely]]
         return throwOutOfMemoryError(globalObject, scope);
-    return jsString(vm, builder.toString());
+    return jsString(vm, WTF::move(builder).toString());
 }
 
 static JSValue encode(JSGlobalObject* globalObject, JSValue argument, const WTF::BitSet<256>& doNotEscape)
@@ -218,7 +218,7 @@ static JSValue decode(JSGlobalObject* globalObject, std::span<const CharType> ch
     }
     if (builder.hasOverflowed()) [[unlikely]]
         return throwOutOfMemoryError(globalObject, scope);
-    RELEASE_AND_RETURN(scope, jsString(vm, builder.toString()));
+    RELEASE_AND_RETURN(scope, jsString(vm, WTF::move(builder).toString()));
 }
 
 static JSValue decode(JSGlobalObject* globalObject, JSValue argument, const WTF::BitSet<256>& doNotUnescape, bool strict)
@@ -648,7 +648,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEscape, (JSGlobalObject* globalObject, CallFr
             throwOutOfMemoryError(globalObject, scope);
             return { };
         }
-        return jsString(vm, builder.toString());
+        return jsString(vm, WTF::move(builder).toString());
     }));
 }
 
@@ -711,7 +711,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncUnescape, (JSGlobalObject* globalObject, Call
             throwOutOfMemoryError(globalObject, scope);
             return { };
         }
-        return jsString(vm, builder.toString());
+        return jsString(vm, WTF::move(builder).toString());
     }));
 }
 

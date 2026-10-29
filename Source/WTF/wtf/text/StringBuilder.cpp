@@ -87,8 +87,8 @@ void StringBuilder::shrink(unsigned newLength)
 
     if (m_buffer) {
         m_string = { }; // Clear the string to remove the reference to m_buffer if any before checking the reference count of m_buffer.
-        if (m_buffer->hasOneRef()) {
-            // If the old buffer had only the one ref, we can just reduce the length and keep using the buffer.
+        if (m_buffer->hasOneRef() && !m_buffer->hasHash()) {
+            // If the old buffer had only the one ref and no hash, we can just reduce the length and keep using the buffer.
             return;
         }
         // Allocate a fresh buffer, with a copy of the characters we are keeping.
@@ -185,10 +185,15 @@ bool LEGACY_NODELETE StringBuilder::shouldShrinkToFit() const
 
 void StringBuilder::shrinkToFit()
 {
-    if (shouldShrinkToFit()) {
+    if (hasOverflowed() || !m_buffer)
+        return;
+    if (shouldShrinkToFit())
         reallocateBuffer(m_length);
-        m_string = std::exchange(m_buffer, nullptr);
-    }
+    else if (m_buffer->hasOneRef())
+        m_buffer->m_length = m_length;
+    else if (m_length < m_buffer->length())
+        return;
+    m_string = std::exchange(m_buffer, nullptr);
 }
 
 bool StringBuilder::containsOnlyASCII() const

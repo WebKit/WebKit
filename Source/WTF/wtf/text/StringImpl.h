@@ -187,6 +187,7 @@ class StringImpl : private StringImplShape, public NoVirtualDestructorBase {
     friend class JSC::LLIntOffsetsExtractor;
     friend class PrivateSymbolImpl;
     friend class RegisteredSymbolImpl;
+    friend class StringBuilder;
     friend class SymbolImpl;
     friend class ExternalStringImpl;
 
@@ -390,7 +391,7 @@ public:
         // In order to make StaticStringImpl thread safe, we also need to ensure that the rest of
         // the fields are never mutated by threads. We have this guarantee because:
         //
-        // 1. m_length is only set on construction and never mutated thereafter.
+        // 1. m_length is only mutated by StringBuilder when hasOneRef(), which is never true for a StaticStringImpl.
         //
         // 2. m_data8 and m_data16 are only set on construction and never mutated thereafter.
         //    We also know that a StringImpl never changes from 8 bit to 16 bit because there

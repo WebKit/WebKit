@@ -177,7 +177,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpConstructorEscape, (JSGlobalObject* globalObject,
         throwOutOfMemoryError(globalObject, scope);
         return { };
     }
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, builder.toString())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTF::move(builder).toString())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(regExpConstructorDollar, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))

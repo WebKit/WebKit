@@ -297,7 +297,7 @@ JSString* JSBoundFunction::nameSlow(VM& vm)
             if (builder.hasOverflowed())
                 terminal = jsEmptyString(vm);
             else
-                terminal = jsNontrivialString(vm, builder.toString());
+                terminal = jsNontrivialString(vm, WTF::move(builder).toString());
         }
     }
 
@@ -343,7 +343,7 @@ String JSBoundFunction::nameStringWithoutGCSlow(VM& vm)
     builder.append(WTF::move(terminal));
     if (builder.hasOverflowed())
         return emptyString();
-    return builder.toString();
+    return WTF::move(builder).toString();
 }
 
 double JSBoundFunction::lengthSlow(VM& vm)
