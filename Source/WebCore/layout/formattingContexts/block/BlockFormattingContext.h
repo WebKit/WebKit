@@ -111,7 +111,8 @@ class BlockFormattingContext {
 public:
     BlockFormattingContext(const RenderBlockFlow& root, LayoutIntegration::BlockIntegrationUtils&, BlockLayoutState&);
 
-    BlockLayoutResult layout(const ConstraintsForBlockContent&);
+    // The root's geometry is the one the formatting context it is in gave it.
+    BlockLayoutResult layout(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry);
     // A block-level box in the inline content of the innermost block container being laid out, on the line the inline formatting context
     // reached it on, below lineCount lines with content. It and its content join the result.
     BlockLevelBoxInInlineContent layoutBlockLevelBoxInInlineContent(const RenderBox&, LayoutUnit lineLogicalTop, size_t lineCount, BlockLayoutResult&);
@@ -126,13 +127,13 @@ private:
     void handleBlockContainerStart(const RenderBox&);
     void handleEmptyEditableContent(const RenderBox& blockContainer, ContainingBlockState&);
     void handleBlockContainerEnd(const RenderBox&, BlockLayoutResult&);
-    void handleInlineContent(const RenderBox& blockContainer, ContainingBlockState& blockContainerState, const BlockLayoutState& inlineContentBlockLayoutState, BlockLayoutResult&);
+    void handleInlineContent(const RenderBox& blockContainer, BlockLayoutResult&);
     void handleIndependentFormattingContextRoot(const RenderBox&, BlockLayoutResult&);
     void layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState);
     BlockLayoutResult layoutOutOfFlowIndependentFormattingContext(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&);
     void handleOutOfFlowBox(const RenderBox&, BlockLayoutResult&);
 
-    ContainingBlockState containingBlockStateForRoot(const ConstraintsForBlockContent&) const;
+    ContainingBlockState containingBlockStateForRoot(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry) const;
     ContainingBlockState containingBlockStateFor(const RenderBox& blockContainer, const BoxGeometry&, const ContainingBlockState& parentState) const;
 
     BoxGeometry computeBorderAndPadding(const RenderBox&, LayoutUnit containingBlockInlineSize) const;
