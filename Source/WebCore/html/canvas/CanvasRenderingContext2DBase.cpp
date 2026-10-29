@@ -2117,6 +2117,23 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Im
     return { };
 }
 
+// "When the source rectangle is outside the source image, the source rectangle must be clipped to the source image
+// and the destination rectangle must be clipped in the same proportion."
+// Both rects must be normalized. Returns false if the source rect is entirely outside the source image.
+static bool clipToSourceImage(FloatRect& srcRect, FloatRect& dstRect, const FloatSize& sourceImageSize)
+{
+    auto clippedSrcRect = intersection(srcRect, FloatRect { { }, sourceImageSize });
+    if (clippedSrcRect.isEmpty())
+        return false;
+    if (clippedSrcRect == srcRect)
+        return true;
+
+    auto scale = dstRect.size() / srcRect.size();
+    dstRect = { dstRect.location() + (clippedSrcRect.location() - srcRect.location()) * scale, clippedSrcRect.size() * scale };
+    srcRect = clippedSrcRect;
+    return true;
+}
+
 ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanvas, const FloatRect& srcRect, const FloatRect& dstRect)
 {
     // Let usability be the result of checking the usability of image.
@@ -2138,6 +2155,9 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
         return { };
 
     if (normalizedDstRect.isEmpty())
+        return { };
+
+    if (!clipToSourceImage(normalizedSrcRect, normalizedDstRect, FloatSize { sourceCanvas.size() }))
         return { };
 
     auto targetSwitcher = CanvasFilterContextSwitcher::create(*this, normalizedDstRect);
@@ -2274,16 +2294,18 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
         return { };
 
     auto normalizedSrcRect = normalizeRect(srcRect);
+    auto normalizedDstRect = normalizeRect(dstRect);
 
     if (normalizedSrcRect.isEmpty())
         return { };
 
-    FloatRect srcBitmapRect = FloatRect(FloatPoint(), FloatSize(imageBitmap.width(), imageBitmap.height()));
-
-    if (!srcBitmapRect.contains(normalizedSrcRect) || !dstRect.width() || !dstRect.height())
+    if (normalizedDstRect.isEmpty())
         return { };
 
-    auto targetSwitcher = CanvasFilterContextSwitcher::create(*this, dstRect);
+    if (!clipToSourceImage(normalizedSrcRect, normalizedDstRect, FloatSize(imageBitmap.width(), imageBitmap.height())))
+        return { };
+
+    auto targetSwitcher = CanvasFilterContextSwitcher::create(*this, normalizedDstRect);
 
     GraphicsContext* c = effectiveDrawingContext();
     if (!c)
@@ -2297,21 +2319,21 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
 
     checkOrigin(&imageBitmap);
 
-    if (rectContainsCanvas(dstRect)) {
+    if (rectContainsCanvas(normalizedDstRect)) {
         willUpdateEntireContents(defaultWillUpdateContentsOptionsWithoutPostProcessing());
-        c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
+        c->drawImageBuffer(*buffer, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
     } else if (isFullCanvasCompositeMode(state().globalComposite)) {
         willUpdateEntireContents(defaultWillUpdateContentsOptionsWithoutPostProcessing());
-        fullCanvasCompositedDraw(dstRect, state().globalComposite, [&](GraphicsContext& context, const FloatRect& destination) {
-            context.drawImageBuffer(*buffer, destination, srcRect);
+        fullCanvasCompositedDraw(normalizedDstRect, state().globalComposite, [&](GraphicsContext& context, const FloatRect& destination) {
+            context.drawImageBuffer(*buffer, destination, normalizedSrcRect);
         });
     } else if (state().globalComposite == CompositeOperator::Copy) {
         willUpdateEntireContents(defaultWillUpdateContentsOptionsWithoutPostProcessing());
         clearCanvas();
-        c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
+        c->drawImageBuffer(*buffer, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
     } else {
-        willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : dstRect, defaultWillUpdateContentsOptionsWithoutPostProcessing());
-        c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
+        willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : normalizedDstRect, defaultWillUpdateContentsOptionsWithoutPostProcessing());
+        c->drawImageBuffer(*buffer, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
     }
 
     return { };
