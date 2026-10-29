@@ -870,8 +870,27 @@ NetworkStorageSession* NetworkConnectionToWebProcess::storageSession()
     return NetworkProcess::singleton().storageSession(m_sessionID);
 }
 
+bool NetworkConnectionToWebProcess::consumeDownloadAuthorization(DownloadID downloadID)
+{
+    auto authorizedProcess = NetworkProcess::singleton().authorizedProcessForDownload(downloadID);
+
+    if (!authorizedProcess) {
+        CONNECTION_RELEASE_LOG_ERROR(Loading, "consumeDownloadAuthorization: refusing to start download %" PRIu64 " because it is not authorized", downloadID.toUInt64());
+        return false;
+    }
+
+    // FIXME: add runtime feature flag in follow-up.
+    MESSAGE_CHECK_WITH_RETURN_VALUE(*authorizedProcess == m_webProcessIdentifier, false);
+
+    NetworkProcess::singleton().removeAuthorizedDownload(downloadID);
+    return true;
+}
+
 void NetworkConnectionToWebProcess::startDownload(DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID)
 {
+    if (!consumeDownloadAuthorization(downloadID))
+        return;
+
     if (!request.firstPartyForCookies().isEmpty())
         MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies()) == NetworkProcess::AllowCookieAccess::Allow);
 
@@ -886,6 +905,9 @@ void NetworkConnectionToWebProcess::loadCancelledDownloadRedirectRequestInFrame(
 void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, const ResourceResponse& response, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
     RELEASE_ASSERT(RunLoop::isMain());
+
+    if (!consumeDownloadAuthorization(downloadID))
+        return;
 
     if (!request.firstPartyForCookies().isEmpty())
         MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, request.firstPartyForCookies()) == NetworkProcess::AllowCookieAccess::Allow);
