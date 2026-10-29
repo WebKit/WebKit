@@ -5701,6 +5701,29 @@ void Element::clearLastRememberedLogicalHeight()
     elementRareData()->clearLastRememberedLogicalHeight();
 }
 
+std::optional<TransformationMatrix> Element::canvasTransform() const
+{
+    return hasRareData() ? elementRareData()->canvasTransform() : std::nullopt;
+}
+
+void Element::setCanvasTransform(const std::optional<TransformationMatrix>& transform)
+{
+    std::optional<TransformationMatrix> canvasTransform = transform;
+
+    if (canvasTransform && canvasTransform->isIdentity())
+        canvasTransform = std::nullopt;
+
+    if (!hasRareData() && !canvasTransform)
+        return;
+
+    ensureElementRareData().setCanvasTransform(canvasTransform);
+
+    invalidateStyleAndLayerComposition();
+
+    if (CheckedPtr renderer = this->renderer())
+        renderer->setNeedsLayout();
+}
+
 bool Element::isSpellCheckingEnabled() const
 {
     for (SUPPRESS_UNCHECKED_LOCAL auto* ancestor = this; ancestor; ancestor = ancestor->parentOrShadowHostElement()) {

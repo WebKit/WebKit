@@ -500,7 +500,7 @@ private:
 #endif
 
     ExceptionOr<void> drawElementImage(CanvasElementImageSource&&, const FloatRect& srcRect, const FloatRect& dstRect, std::optional<CanvasDrawElementImageOptions>);
-    ExceptionOr<void> drawSnapshot(const CanvasElementSnapshot&, const FloatRect& srcRect, const FloatRect& dstRect, std::optional<CanvasDrawElementImageOptions>);
+    ExceptionOr<void> drawElementSnapshot(const CanvasElementSnapshot&, const FloatRect& srcRect, const FloatRect& dstRect);
 
     void beginCompositeLayer();
     void endCompositeLayer();

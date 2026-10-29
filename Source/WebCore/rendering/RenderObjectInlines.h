@@ -53,7 +53,7 @@ inline bool RenderObject::isAtomicInlineLevelBox() const
 
 inline bool RenderObject::isTransformed() const
 {
-    return hasTransformRelatedProperty() && (style().affectsTransform() || hasSVGTransform());
+    return hasTransformRelatedProperty() && (style().affectsTransform() || hasSVGTransform() || hasCanvasTransform());
 }
 
 inline LocalFrameViewLayoutContext& RenderObject::layoutContext() const

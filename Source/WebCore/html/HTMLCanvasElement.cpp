@@ -40,6 +40,7 @@
 #include "DOMMatrix.h"
 #include "DocumentQuirks.h"
 #include "DocumentView.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
@@ -283,19 +284,66 @@ ExceptionOr<Ref<CanvasElementImage>> HTMLCanvasElement::captureElementImage(Elem
     return Exception { ExceptionCode::InvalidStateError };
 }
 
-ExceptionOr<void> HTMLCanvasElement::updateElementGeometry(const CanvasElementImageSource&, std::optional<UpdateElementGeometryOptions>)
+ExceptionOr<Ref<Element>> HTMLCanvasElement::canvasDrawableElement(const CanvasElementImageSource& source) const
 {
-    return Exception { ExceptionCode::NotSupportedError };
+    RefPtr<Element> element = WTF::switchOn(source,
+        [](const Ref<Element>& element) -> RefPtr<Element> {
+            return element.ptr();
+        },
+        [](const Ref<CanvasElementImage>&) -> RefPtr<Element> {
+            return nullptr;
+        }
+    );
+
+    if (!element)
+        return Exception { ExceptionCode::InvalidStateError, "The element image no longer refers to an element."_s };
+
+    if (!element->isCanvasDrawable() || ancestorsOfType<HTMLCanvasElement>(*element).first() != this)
+        return Exception { ExceptionCode::InvalidStateError, "The element is not a drawable child of the canvas."_s };
+
+    return element.releaseNonNull();
 }
 
-ExceptionOr<void> HTMLCanvasElement::clearElementGeometry(const CanvasElementImageSource&)
+ExceptionOr<void> HTMLCanvasElement::updateElementGeometry(const CanvasElementImageSource& source, const std::optional<TransformationMatrix>& transform)
 {
-    return Exception { ExceptionCode::NotSupportedError };
+    auto element = canvasDrawableElement(source);
+    if (element.hasException())
+        return element.releaseException();
+
+    Ref protectedElement = element.releaseReturnValue();
+
+    if (transform)
+        protectedElement->setCanvasTransform(*transform);
+
+    return { };
 }
 
-ExceptionOr<Ref<DOMMatrix>> HTMLCanvasElement::getElementTransform(const Element&)
+ExceptionOr<void> HTMLCanvasElement::updateElementGeometry(const CanvasElementImageSource& source, const UpdateElementGeometryOptions& options)
 {
-    return Exception { ExceptionCode::NotSupportedError };
+    std::optional<TransformationMatrix> transform;
+    if (auto canvasTransform = options.canvasTransform) {
+        auto matrix = DOMMatrixReadOnly::fromMatrix(WTF::move(*canvasTransform));
+        if (matrix.hasException())
+            return matrix.releaseException();
+        transform = matrix.returnValue()->transformationMatrix();
+    }
+
+    return updateElementGeometry(source, transform);
+}
+
+ExceptionOr<void> HTMLCanvasElement::clearElementGeometry(const CanvasElementImageSource& source)
+{
+    return updateElementGeometry(source, std::nullopt);
+}
+
+ExceptionOr<Ref<DOMMatrix>> HTMLCanvasElement::getElementTransform(const Element& element)
+{
+    Ref protectedElement = element;
+
+    if (auto transform = protectedElement->canvasTransform())
+        return DOMMatrix::create(WTF::move(*transform), DOMMatrixReadOnly::Is2D::Yes);
+
+    return DOMMatrix::create(TransformationMatrix::identity, DOMMatrixReadOnly::Is2D::Yes);
 }
 
 void HTMLCanvasElement::setSizeForControllingContext(IntSize newSize)

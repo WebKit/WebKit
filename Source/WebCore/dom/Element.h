@@ -896,6 +896,9 @@ public:
     void setLastRememberedLogicalHeight(LayoutUnit);
     void LEGACY_NODELETE clearLastRememberedLogicalHeight();
 
+    std::optional<TransformationMatrix> canvasTransform() const;
+    void setCanvasTransform(const std::optional<TransformationMatrix>&);
+
     RefPtr<Element> findAnchorElementForLink(String& outAnchorName);
 
     ExceptionOr<Ref<WebAnimation>> animate(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, Variant<double, KeyframeAnimationOptions>&&);
