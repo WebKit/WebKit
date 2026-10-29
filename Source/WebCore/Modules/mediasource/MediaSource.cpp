@@ -240,6 +240,7 @@ MediaSource::~MediaSource()
     }
 #endif
     detachFromElement();
+    removeAllSourceBuffersAndShutdownPrivate();
 
     ASSERT(isClosed());
 }
@@ -1098,17 +1099,26 @@ void MediaSource::detachFromElement()
         return;
     }
 
+    removeAllSourceBuffersAndShutdownPrivate();
+
+    m_mediaElement = nullptr;
+    m_isAttached = false;
+}
+
+void MediaSource::removeAllSourceBuffersAndShutdownPrivate()
+{
     // 5. Remove all the SourceBuffer objects from sourceBuffers.
     // 6. Queue a task to fire a simple event named removesourcebuffer at sourceBuffers.
     // can be called from the destructor, where we may no longer have a scriptExecutionContext.
     if (scriptExecutionContext()) {
         while (m_sourceBuffers->length())
             removeSourceBuffer(*m_sourceBuffers->item(0));
-    } else
+    } else {
+        m_activeSourceBuffers->replaceWith({ });
+        for (Ref sourceBuffer : m_sourceBuffers.get())
+            sourceBuffer->removedFromMediaSource();
         m_sourceBuffers->replaceWith({ });
-
-    m_mediaElement = nullptr;
-    m_isAttached = false;
+    }
 
     if (RefPtr msp = m_private) {
         msp->shutdown();

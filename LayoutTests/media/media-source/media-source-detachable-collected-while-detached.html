@@ -1,0 +1,59 @@
+<!-- webkit-test-runner [ DetachableMediaSourceEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-detachable-collected-while-detached</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    async function detachSourceWithBuffersInFrame(frameWindow) {
+        let video = frameWindow.document.createElement('video');
+        frameWindow.document.body.appendChild(video);
+
+        let source = new frameWindow.MediaSource({ detachable: true });
+        video.srcObject = source;
+        await waitFor(source, 'sourceopen');
+
+        let sourceBuffer = source.addSourceBuffer('video/mock; codecs=mock');
+        sourceBuffer.appendBuffer(makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]));
+        await waitFor(sourceBuffer, 'updateend');
+
+        video.srcObject = null;
+        await waitFor(source, 'sourceclose');
+
+        // Make the detached SourceBuffer active again.
+        sourceBuffer.videoTracks[0].selected = false;
+        sourceBuffer.videoTracks[0].selected = true;
+
+        return new WeakRef(source);
+    }
+
+    async function runTest() {
+        let iframe = document.createElement('iframe');
+        document.body.appendChild(iframe);
+        let sourceRef = await detachSourceWithBuffersInFrame(iframe.contentWindow);
+        iframe.remove();
+        iframe = null;
+
+        for (let i = 0; i < 20; ++i) {
+            await new Promise(resolve => setTimeout(resolve, 0));
+            if (window.GCController)
+                GCController.collect();
+        }
+
+        if (sourceRef.deref()) {
+            failTest('The MediaSource was not collected.');
+            return;
+        }
+
+        consoleWrite('PASS: Collecting a detached detachable MediaSource with SourceBuffers did not crash.');
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest().catch(failTest)">
+</body>
+</html>
