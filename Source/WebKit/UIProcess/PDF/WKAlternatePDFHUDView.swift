@@ -113,6 +113,7 @@ struct PDFHUDControls: View {
         #if USE_APPLE_INTERNAL_SDK && HAVE_NSGLASSEFFECTVIEW_EFFECT_IS_INTERACTIVE
         .controlGroupStyle(.toolbar)
         #endif
+        .controlSize(.extraLarge)
         .padding(Self.hoverMargin)
         .contentShape(.rect)
         .onHover {
