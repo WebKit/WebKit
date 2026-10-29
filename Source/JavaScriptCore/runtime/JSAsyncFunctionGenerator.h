@@ -25,10 +25,14 @@
 
 #pragma once
 
+#include "BytecodeIndex.h"
 #include "JSGenerator.h"
 #include "JSInternalFieldObjectImpl.h"
+#include <optional>
 
 namespace JSC {
+
+class CodeBlock;
 
 class JSAsyncFunctionGenerator final : public JSInternalFieldObjectImpl<5> {
 public:
@@ -107,6 +111,8 @@ public:
     {
         return Base::internalField(static_cast<unsigned>(Field::Context)).get();
     }
+
+    std::optional<BytecodeIndex> suspendedBytecodeIndex(CodeBlock&) const;
 
     DECLARE_EXPORT_INFO;
 
