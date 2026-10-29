@@ -67,6 +67,12 @@ class TestDriver:
 
 class SingleTestRunnerTest(unittest.TestCase):
 
+    def _add_file(self, port, file_path, contents):
+        filesystem = port.host.filesystem
+        dirname = filesystem.join(port.layout_tests_dir(), filesystem.dirname(file_path))
+        filesystem.maybe_make_directory(dirname)
+        filesystem.write_binary_file(filesystem.join(dirname, filesystem.basename(file_path)), contents)
+
     def _make_test_runner(self, test_name, fuzzy=None, test=None, host=None):
         host = host or MockHost()
         port = TestPort(host)
