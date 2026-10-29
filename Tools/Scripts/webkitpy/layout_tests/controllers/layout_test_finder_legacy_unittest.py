@@ -1125,7 +1125,7 @@ class LayoutTestFinderTestsBase(object):
         fs.maybe_make_directory("/crashtests")
         fs.chdir("/crashtests")
 
-        self.assertFalse(finder.find_tests_by_path([test], with_expectations=True)[0].is_wpt_crash_test)
+        self.assertFalse(finder.find_tests_by_path([test], with_expectations=True)[0].is_crash_test)
 
     def test_is_wpt_test(self):
         finder = self.finder

@@ -54,7 +54,7 @@ class TestInstance(object):
         self.error = ''
         self.timeout = False
         self.is_reftest = False
-        self.is_wpt_crash_test = False
+        self.is_crash_test = False
 
         # The values of each field are treated as raw byte strings. They
         # will be converted to unicode strings where appropriate using
@@ -283,24 +283,24 @@ layer at (0,0) size 800x34
     tests.add('imported/w3c/web-platform-tests/some/new.html',
         expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None)
     tests.add('imported/w3c/web-platform-tests/some/test-pass-crash.html',
-        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/some/test-pass-crash.https.html',
-        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/some/test-pass-crash.tentative.html',
-        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/some/test-timeout-crash.html',
-        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_wpt_crash_test=True)
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/some/test-crash-crash.html',
-        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, is_wpt_crash_test=True, crash=True, error='mock-crash-stderr')
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, is_crash_test=True, crash=True, error='mock-crash-stderr')
 
     tests.add('imported/w3c/web-platform-tests/crashtests/pass.html',
-        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/crashtests/timeout.html',
-        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_wpt_crash_test=True)
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/crashtests/crash.html',
-        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, crash=True, is_wpt_crash_test=True)
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, crash=True, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/crashtests/dir/test.html',
-        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_crash_test=True)
 
     tests.add('variant/variant.any.html')
 
@@ -409,7 +409,7 @@ Bug(test) corner-cases/multiple-failures/failure-timeout.html [ Pass Timeout ]
         add_file(test, test.name[test.name.rfind('.'):], '')
         if test.is_reftest:
             continue
-        if test.is_wpt_crash_test:
+        if test.is_crash_test:
             continue
         if test.actual_audio:
             add_file(test, '-expected.wav', test.expected_audio)
