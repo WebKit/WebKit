@@ -1576,21 +1576,26 @@ class CheckChangeRelevance(AnalyzeChange):
         'webdriver': webdriver_path_regexes,
     }
 
+    # Groups here use skip-list semantics: skip only if every file matches an entry.
+    inverted_groups = set()
+
     def _patch_is_relevant(self, patch, builderName, timeout=30):
         group = [group for group in self.group_to_paths_mapping.keys() if group.lower() in builderName.lower()]
         if not group:
-            # This builder doesn't have paths defined, all patches are relevant.
             return True
 
         relevant_path_regexes = self.group_to_paths_mapping.get(group[0], [])
+        inverted = group[0] in self.inverted_groups
         start = time.time()
 
         for change in patch.splitlines():
-            for regex in relevant_path_regexes:
-                if type(change) == str:
-                    change = change.encode(encoding='utf-8', errors='replace')
-                if regex.search(change[:self.MAX_LINE_SIZE]):
-                    return True
+            if isinstance(change, str):
+                change = change.encode(encoding='utf-8', errors='replace')
+            if not change.strip():
+                continue
+            matches_any = any(regex.search(change[:self.MAX_LINE_SIZE]) for regex in relevant_path_regexes)
+            if matches_any != inverted:
+                return True
             if time.time() > start + timeout:
                 return False
         return False
