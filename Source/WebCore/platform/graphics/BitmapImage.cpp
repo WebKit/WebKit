@@ -60,21 +60,6 @@ RefPtr<BitmapImage> BitmapImage::create(RefPtr<NativeImage>&& nativeImage)
     return adoptRef(*new BitmapImage(nativeImage.releaseNonNull()));
 }
 
-std::optional<Ref<BitmapImage>> BitmapImage::create(RefPtr<ShareableBitmap>&& bitmap)
-{
-    if (!bitmap)
-        return std::nullopt;
-    RefPtr image = create(*bitmap);
-    if (!image)
-        return std::nullopt;
-    return image.releaseNonNull();
-}
-
-RefPtr<BitmapImage> BitmapImage::create(ShareableBitmap& bitmap)
-{
-    return create(bitmap.createNativeImage());
-}
-
 RefPtr<BitmapImage> BitmapImage::create(PlatformImagePtr&& platformImage)
 {
     return create(NativeImage::create(WTF::move(platformImage)));
@@ -89,11 +74,6 @@ Ref<BitmapImage> BitmapImage::createFromPlatformResource(StringView name)
     auto image = create();
     image->setData(data.releaseNonNull(), true);
     return image;
-}
-
-RefPtr<ShareableBitmap> BitmapImage::toShareableBitmap() const
-{
-    return Image::toShareableBitmap(ConcreteObjectSize::fixed(size()));
 }
 
 BitmapImage& BitmapImage::nullImage()

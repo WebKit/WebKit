@@ -28,8 +28,8 @@
 #include <wtf/Platform.h>
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-#include <WebCore/BitmapImage.h>
 #include <WebCore/HTMLElement.h>
+#include <WebCore/NativeImage.h>
 
 namespace WebCore {
 
@@ -64,7 +64,7 @@ public:
 
     WEBCORE_EXPORT void updateAttributes(std::optional<uint64_t>&& newFileSize, const AtomString& newContentType, const AtomString& newFilename);
     WEBCORE_EXPORT void updateAssociatedElementWithData(const String& contentType, Ref<FragmentedSharedBuffer>&& data);
-    WEBCORE_EXPORT void updateIconForNarrowLayout(const RefPtr<BitmapImage>& icon, const WebCore::FloatSize&);
+    WEBCORE_EXPORT void updateIconForNarrowLayout(const RefPtr<NativeImage>& icon, const WebCore::FloatSize&);
     WEBCORE_EXPORT void updateIconForWideLayout(Vector<uint8_t>&&);
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
@@ -81,7 +81,7 @@ public:
     const AtomString& LEGACY_NODELETE attachmentSubtitleForDisplay() const;
     WEBCORE_EXPORT String LEGACY_NODELETE attachmentType() const;
     String LEGACY_NODELETE attachmentPath() const;
-    RefPtr<BitmapImage> icon() const { return m_icon; }
+    RefPtr<NativeImage> icon() const { return m_icon; }
     void requestIconIfNeededWithSize(const FloatSize&);
     void requestWideLayoutIconIfNeeded();
     FloatSize iconSize() const { return m_iconSize; }
@@ -141,7 +141,7 @@ private:
 
     RefPtr<File> m_file;
     String m_uniqueIdentifier;
-    RefPtr<BitmapImage> m_icon;
+    RefPtr<NativeImage> m_icon;
     FloatSize m_iconSize;
 
     Vector<uint8_t> m_iconForWideLayout;

@@ -6297,11 +6297,6 @@ header: <WebCore/AppleVisualEffect.h>
     WebCore::SpotLightSource
 }
 
-header: <WebCore/BitmapImage.h>
-[RefCounted] class WebCore::BitmapImage {
-    RefPtr<WebCore::ShareableBitmap> toShareableBitmap();
-};
-
 header: <WebCore/NativeImage.h>
 [RefCounted] class WebCore::NativeImage {
     RefPtr<WebCore::ShareableBitmap> toShareableBitmap();
@@ -6428,7 +6423,7 @@ header: <WebCore/TextAttachmentForSerialization.h>
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
 [CustomHeader] struct WebCore::MultiRepresentationHEICAttachmentSingleImage {
-    RefPtr<WebCore::BitmapImage> image;
+    RefPtr<WebCore::NativeImage> image;
     WebCore::FloatSize size;
 }
 

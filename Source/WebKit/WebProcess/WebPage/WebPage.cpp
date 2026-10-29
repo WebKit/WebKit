@@ -188,7 +188,6 @@
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/BackForwardCache.h>
 #include <WebCore/BackForwardController.h>
-#include <WebCore/BitmapImage.h>
 #include <WebCore/CSSValueKeywords.h>
 #include <WebCore/CachedImage.h>
 #include <WebCore/CachedPage.h>
@@ -9841,7 +9840,7 @@ void WebPage::updateAttachmentIcon(const String& identifier, std::optional<Share
                     return;
                 }
             } else {
-                attachment->updateIconForNarrowLayout(BitmapImage::create(*icon), size);
+                attachment->updateIconForNarrowLayout(icon->createNativeImage(), size);
                 return;
             }
         }

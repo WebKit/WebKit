@@ -27,8 +27,8 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)
 
-#include "BitmapImage.h"
 #include "FloatRect.h"
+#include "NativeImage.h"
 #include "RenderAttachment.h"
 #include <wtf/RetainPtr.h>
 
@@ -90,8 +90,7 @@ struct AttachmentLayout {
     AttachmentLayoutStyle style;
     float progress { 0 };
     bool excludeTypographicLeading { false };
-    RefPtr<BitmapImage> icon;
-    RefPtr<BitmapImage> thumbnailIcon;
+    RefPtr<NativeImage> icon;
     Vector<CGPoint> origins;
     int baseline { 0 };
     bool hasProgress { false };

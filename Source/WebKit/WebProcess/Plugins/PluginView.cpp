@@ -43,7 +43,6 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebWheelEvent.h"
-#include <WebCore/BitmapImage.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContainerNodeInlines.h>
 #include <WebCore/CookieJar.h>
@@ -70,6 +69,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/MouseEventTypes.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/NodeDocument.h>
 #include <WebCore/OriginAccessPatterns.h>
@@ -566,10 +566,10 @@ void PluginView::paint(GraphicsContext& context, const IntRect& dirtyRect, Widge
 
     if (RefPtr transientPaintingSnapshot = m_transientPaintingSnapshot) {
         if (!context.hasPlatformContext()) {
-            RefPtr image = BitmapImage::create(*transientPaintingSnapshot);
+            RefPtr image = transientPaintingSnapshot->createNativeImage();
             if (!image)
                 return;
-            image->draw(context, frameRect());
+            context.drawNativeImage(*image, frameRect());
         } else {
             auto deviceScaleFactor = 1;
             if (auto* page = m_pluginElement->document().page())

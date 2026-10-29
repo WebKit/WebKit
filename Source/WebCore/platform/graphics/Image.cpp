@@ -124,16 +124,6 @@ RefPtr<Image> Image::create(ImageObserver& observer)
     return BitmapImage::create(&observer);
 }
 
-std::optional<Ref<Image>> Image::create(RefPtr<ShareableBitmap>&& bitmap)
-{
-    if (!bitmap)
-        return std::nullopt;
-    RefPtr image = BitmapImage::create(*bitmap);
-    if (!image)
-        return std::nullopt;
-    return image.releaseNonNull();
-}
-
 bool Image::supportsType(const String& type)
 {
     return MIMETypeRegistry::isSupportedImageMIMEType(type);

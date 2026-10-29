@@ -44,9 +44,6 @@ public:
     WEBCORE_EXPORT static Ref<BitmapImage> LEGACY_NODELETE create(Ref<NativeImage>&&);
     WEBCORE_EXPORT static RefPtr<BitmapImage> create(RefPtr<NativeImage>&&);
     WEBCORE_EXPORT static RefPtr<BitmapImage> create(PlatformImagePtr&&);
-    WEBCORE_EXPORT static std::optional<Ref<BitmapImage>> create(RefPtr<ShareableBitmap>&&); // Uses `std::optional<Ref<...>>` to conform to the interface needed by IPC infrastructure.
-    // The image directly references the shared bitmap data, so the bitmap's contents must not change.
-    WEBCORE_EXPORT static RefPtr<BitmapImage> create(ShareableBitmap&);
     WEBCORE_EXPORT static Ref<BitmapImage> createFromPlatformResource(StringView name);
 
     WEBCORE_EXPORT static BitmapImage& nullImage();
@@ -126,8 +123,6 @@ public:
     std::optional<SpatialImageEyeProperties> spatialEyePropertiesAtIndex(unsigned index) const { return m_source->spatialEyePropertiesAtIndex(index); }
     WEBCORE_EXPORT std::optional<ShareableSpatialImage> createShareableSpatialImage() const;
 #endif
-
-    WEBCORE_EXPORT RefPtr<ShareableBitmap> toShareableBitmap() const;
 
 private:
     BitmapImage(ImageObserver*, AlphaOption, GammaAndColorProfileOption);

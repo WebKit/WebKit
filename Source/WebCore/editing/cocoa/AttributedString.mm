@@ -26,11 +26,11 @@
 #import "config.h"
 #import "AttributedString.h"
 
-#import "BitmapImage.h"
 #import "ColorCocoa.h"
 #import "Font.h"
 #import "LoaderNSURLExtras.h"
 #import "Logging.h"
+#import "NativeImage.h"
 #import "PlatformNSAdaptiveImageGlyph.h"
 #import "UTIRegistry.h"
 #import "WebCoreTextAttachment.h"
@@ -303,8 +303,7 @@ static MultiRepresentationHEICAttachmentData toMultiRepresentationHEICAttachment
 
     for (NSEmojiImageStrike *strike in attachment.strikes) {
         MultiRepresentationHEICAttachmentSingleImage image;
-        RefPtr nativeImage = NativeImage::create(strike.cgImage);
-        image.image = BitmapImage::create(WTF::move(nativeImage));
+        image.image = NativeImage::create(strike.cgImage);
         image.size = FloatSize { strike.alignmentInset };
         attachmentData.images.append(image);
     }
@@ -342,10 +341,10 @@ static RetainPtr<NSAdaptiveImageGlyph> toWebMultiRepresentationHEICAttachment(co
     NSMutableArray *images = [NSMutableArray arrayWithCapacity:attachmentData.images.size()];
     for (auto& singleImage : attachmentData.images) {
 #if HAVE(NS_EMOJI_IMAGE_STRIKE_PROVENANCE)
-        RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:singleImage.image->nativeImage()->platformImage().get() alignmentInset:singleImage.size provenanceInfo:provenanceInfo.get()]);
+        RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:singleImage.image->platformImage().get() alignmentInset:singleImage.size provenanceInfo:provenanceInfo.get()]);
 #else
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:singleImage.image->nativeImage()->platformImage().get() alignmentInset:singleImage.size]);
+        RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:singleImage.image->platformImage().get() alignmentInset:singleImage.size]);
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
