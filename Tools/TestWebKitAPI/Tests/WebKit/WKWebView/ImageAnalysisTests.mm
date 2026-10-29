@@ -149,11 +149,6 @@ static void processRequestWithResults(id, SEL, VKImageAnalyzerRequest *request, 
     completion(createImageAnalysisWithSimpleFixedResults().get(), nil);
 }
 
-static VKImageAnalyzerRequest *makeFakeRequest(id, SEL, CGImageRef image, VKImageOrientation orientation, VKAnalysisTypes requestTypes)
-{
-    return createRequest(image, orientation, requestTypes).leakRef();
-}
-
 template <typename FunctionType>
 std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMethodSwizzler>> imageAnalysisMakeRequestSwizzler(FunctionType function)
 {

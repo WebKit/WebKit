@@ -115,8 +115,6 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 #import "Helpers/cocoa/ImageAnalysisTestingUtilities.h"
-#import <pal/spi/cocoa/VisionKitCoreSPI.h>
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
 #endif
 
 @interface WKWebView ()
@@ -261,42 +259,20 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-static unsigned gDidProcessRequestCount = 0;
-
-static void processRequestWithResults(id, SEL, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *, NSError *))
-{
-    gDidProcessRequestCount++;
-    completion(TestWebKitAPI::createImageAnalysisWithSimpleFixedResults().get(), nil);
-}
-
-static VKImageAnalyzerRequest *makeFakeRequest(id, SEL, CGImageRef image, VKImageOrientation orientation, VKAnalysisTypes requestTypes)
-{
-    return TestWebKitAPI::createRequest(image, orientation, requestTypes).leakRef();
-}
-
-template <typename FunctionType>
-std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMethodSwizzler>> makeImageAnalysisRequestSwizzler(FunctionType function)
-{
-    return std::pair {
-        makeUnique<InstanceMethodSwizzler>(PAL::getVKImageAnalyzerClassSingleton(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(function)),
-        makeUnique<InstanceMethodSwizzler>(PAL::getVKImageAnalyzerRequestClassSingleton(), @selector(initWithCGImage:orientation:requestType:), reinterpret_cast<IMP>(makeFakeRequest))
-    };
-}
-
 @interface TestWKWebViewImageAnalysisTests : TestWKWebView
-- (void)waitForImageAnalysisRequests:(unsigned)numberOfRequests;
+- (void)waitForImageAnalysisRequests:(unsigned)numberOfRequests swizzler:(const TestWebKitAPI::ImageAnalysisRequestSwizzler&)requestSwizzler;
 @end
 
 @implementation TestWKWebViewImageAnalysisTests
 
-- (void)waitForImageAnalysisRequests:(unsigned)numberOfRequests
+- (void)waitForImageAnalysisRequests:(unsigned)numberOfRequests swizzler:(const TestWebKitAPI::ImageAnalysisRequestSwizzler&)requestSwizzler
 {
     TestWebKitAPI::Util::waitForConditionWithLogging([&] {
-        return gDidProcessRequestCount == numberOfRequests;
-    }, 3, @"Timed out waiting for %u image analysis requests to complete, got %u", numberOfRequests, gDidProcessRequestCount);
+        return requestSwizzler.processedRequestCount() == numberOfRequests;
+    }, 3, @"Timed out waiting for %u image analysis requests to complete, got %u", numberOfRequests, requestSwizzler.processedRequestCount());
 
     [self waitForNextPresentationUpdate];
-    EXPECT_EQ(gDidProcessRequestCount, numberOfRequests);
+    EXPECT_EQ(requestSwizzler.processedRequestCount(), numberOfRequests);
 }
 
 @end
@@ -15811,7 +15787,7 @@ static RetainPtr<WKWebViewConfiguration> createWebViewConfigurationWithTextRecog
 
 TEST(SiteIsolation, IframeImageTranslation)
 {
-    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+    ImageAnalysisRequestSwizzler requestSwizzler;
 
     HTTPServer server({
         { "/example"_s, { "<iframe src='https://apple.com/multiple-images.html'></iframe>"_s } },
@@ -15840,13 +15816,12 @@ TEST(SiteIsolation, IframeImageTranslation)
     [navigationDelegate waitForDidFinishNavigation];
 
     [webView _startImageAnalysis:nil target:nil];
-    [webView waitForImageAnalysisRequests:5];
-    gDidProcessRequestCount = 0;
+    [webView waitForImageAnalysisRequests:5 swizzler:requestSwizzler];
 }
 
 TEST(SiteIsolation, IframeImageTranslationIfIframeIsAddedAfterTranslationCall)
 {
-    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+    ImageAnalysisRequestSwizzler requestSwizzler;
 
     HTTPServer server({
         { "/example"_s, {
@@ -15888,14 +15863,12 @@ TEST(SiteIsolation, IframeImageTranslationIfIframeIsAddedAfterTranslationCall)
     [webView _startImageAnalysis:nil target:nil];
 
     [webView evaluateJavaScript: @"addCrossDomainIframe();" completionHandler:nil];
-    [webView waitForImageAnalysisRequests:5];
+    [webView waitForImageAnalysisRequests:5 swizzler:requestSwizzler];
 
     NSArray<NSString *> *overlaysAsText = [webView objectByEvaluatingJavaScript:@"imageOverlaysAsText();" inFrame:[webView firstChildFrame]];
     EXPECT_EQ(overlaysAsText.count, 5U);
     for (NSString *overlayText in overlaysAsText)
         EXPECT_WK_STREQ(overlayText, @"Foo bar");
-
-    gDidProcessRequestCount = 0;
 }
 
 #if ENABLE(SERVICE_CONTROLS)
