@@ -197,7 +197,14 @@ private:
     void consumeDeclarationList(CSSParserTokenRange, StyleRuleType);
     void consumeDeclarationRuleList(CSSParserTokenRange, StyleRuleType);
     void consumeStyleBlock(CSSParserTokenRange, StyleRuleType, ParsingStyleDeclarationsInRuleList = ParsingStyleDeclarationsInRuleList::No);
-    bool consumeDeclaration(CSSParserTokenRange, StyleRuleType);
+
+    // For the inspector, an invalid declaration that may instead be consumed as a nested style rule.
+    struct DeferredInvalidDeclaration {
+        unsigned startOffset { 0 };
+        unsigned endOffset { 0 };
+        bool isImportant { false };
+    };
+    bool consumeDeclaration(CSSParserTokenRange, StyleRuleType, std::optional<DeferredInvalidDeclaration>* = nullptr);
     void consumeDeclarationValue(CSSParserTokenRange, CSSPropertyID, IsImportant, StyleRuleType);
     void consumeCustomPropertyValue(CSSParserTokenRange, const AtomString& propertyName, IsImportant);
 

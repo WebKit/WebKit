@@ -1670,7 +1670,7 @@ void CSSParser::consumeBlockContent(CSSParserTokenRange range, StyleRuleType rul
     while (!range.atEnd()) {
         const auto initialRange = range;
 
-        auto consumeNestedRuleOrInvalidSyntax = [&] {
+        auto consumeNestedRuleOrInvalidSyntax = [&] -> bool {
             if (blockAllowedRules.contains(BlockAllowedRule::QualifiedRules)) {
                 ASSERT(isStyleNestedContext());
                 // For block, we try to consume a qualified rule (~= a style rule).
@@ -1678,17 +1678,19 @@ void CSSParser::consumeBlockContent(CSSParserTokenRange range, StyleRuleType rul
                 // in the case of invalid syntax.
                 RefPtr rule = consumeQualifiedRule(range, AllowedRules::RegularRules);
                 if (!rule)
-                    return;
+                    return false;
                 if (!rule->isStyleRule())
-                    return;
+                    return false;
                 storeDeclarations();
                 topContext().m_parsedRules.append(rule.releaseNonNull());
-            } else {
-                // https://drafts.csswg.org/css-syntax/#typedef-declaration-list
-                // For declaration list, we consume invalid tokens until next recovery point.
-                range = initialRange;
-                consumeUntilSemicolon();
+                return true;
             }
+
+            // https://drafts.csswg.org/css-syntax/#typedef-declaration-list
+            // For declaration list, we consume invalid tokens until next recovery point.
+            range = initialRange;
+            consumeUntilSemicolon();
+            return false;
         };
 
         switch (range.peek().type()) {
@@ -1706,7 +1708,12 @@ void CSSParser::consumeBlockContent(CSSParserTokenRange range, StyleRuleType rul
             consumeUntilSemicolon();
 
             auto declarationRange = declarationStart.rangeUntil(range);
-            auto isValidDeclaration = consumeDeclaration(declarationRange, ruleType);
+
+            // Text like `a:hover { ... }` starts like a declaration but may be consumed as a nested style rule instead.
+            // Only notify the observer of an invalid declaration once we know it was not consumed as a nested style rule.
+            std::optional<DeferredInvalidDeclaration> deferredInvalidDeclaration;
+            bool shouldDeferInvalidDeclaration = useObserver && blockAllowedRules.contains(BlockAllowedRule::QualifiedRules);
+            auto isValidDeclaration = consumeDeclaration(declarationRange, ruleType, shouldDeferInvalidDeclaration ? &deferredInvalidDeclaration : nullptr);
 
             if (useObserver)
                 observerWrapper->skipCommentsBefore(range, false);
@@ -1714,7 +1721,9 @@ void CSSParser::consumeBlockContent(CSSParserTokenRange range, StyleRuleType rul
             if (!isValidDeclaration) {
                 // If it's not a valid declaration, we rewind the parser and try to parse it as a nested style rule.
                 range = initialRange;
-                consumeNestedRuleOrInvalidSyntax();
+                bool didConsumeNestedRule = consumeNestedRuleOrInvalidSyntax();
+                if (deferredInvalidDeclaration && !didConsumeNestedRule)
+                    observerWrapper->observer().observeProperty(deferredInvalidDeclaration->startOffset, deferredInvalidDeclaration->endOffset, deferredInvalidDeclaration->isImportant, false);
             }
             break;
         }
@@ -1830,7 +1839,7 @@ static bool LEGACY_NODELETE ruleDoesNotAllowImportant(StyleRuleType type)
 }
 
 // https://drafts.csswg.org/css-syntax/#consume-declaration
-bool CSSParser::consumeDeclaration(CSSParserTokenRange range, StyleRuleType ruleType)
+bool CSSParser::consumeDeclaration(CSSParserTokenRange range, StyleRuleType ruleType, std::optional<DeferredInvalidDeclaration>* deferredInvalidDeclaration)
 {
     CSSParserTokenRange rangeCopy = range; // For inspector callbacks
 
@@ -1871,9 +1880,13 @@ bool CSSParser::consumeDeclaration(CSSParserTokenRange range, StyleRuleType rule
 
     RefPtr observerWrapper = m_observerWrapper.get();
     if (observerWrapper&& (ruleType == StyleRuleType::Style || ruleType == StyleRuleType::Keyframe || ruleType == StyleRuleType::Page)) {
-        observerWrapper->observer().observeProperty(
-            observerWrapper->startOffset(rangeCopy), observerWrapper->endOffset(rangeCopy),
-            important == IsImportant::Yes, didParseNewProperties());
+        auto startOffset = observerWrapper->startOffset(rangeCopy);
+        auto endOffset = observerWrapper->endOffset(rangeCopy);
+        bool isImportant = important == IsImportant::Yes;
+        if (deferredInvalidDeclaration && !didParseNewProperties())
+            *deferredInvalidDeclaration = DeferredInvalidDeclaration { startOffset, endOffset, isImportant };
+        else
+            observerWrapper->observer().observeProperty(startOffset, endOffset, isImportant, didParseNewProperties());
     }
 
     return didParseNewProperties();

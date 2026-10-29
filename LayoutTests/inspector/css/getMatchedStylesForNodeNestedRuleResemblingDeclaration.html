@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getMatchedStyleForNode.NestedRuleResemblingDeclaration");
+
+    function addTestCase({name, description, selector, expectedRules})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(domNodeStyles, `Should find CSS Styles for DOM Node.`);
+                await domNodeStyles.refresh();
+
+                let authoredRules = domNodeStyles.matchedRules.filter((rule) => rule.type === WI.CSSStyleSheet.Type.Author);
+                InspectorTest.expectEqual(authoredRules.length, expectedRules.length, `Should have ${expectedRules.length} authored ${expectedRules.length === 1 ? "rule" : "rules"}.`);
+
+                for (let i = 0; i < expectedRules.length; ++i) {
+                    let rule = authoredRules[i];
+                    let {selectorText, properties} = expectedRules[i];
+                    InspectorTest.log(`Testing rule #${i}`);
+                    InspectorTest.expectEqual(rule.selectorText, selectorText, `Selector text should be "${selectorText}".`);
+                    InspectorTest.expectShallowEqual(rule.style.properties.map((property) => `${property.name}: ${property.value}`), properties, `Rule should have properties: ${JSON.stringify(properties)}.`);
+                }
+            },
+        });
+    }
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestedRuleResemblingDeclaration.ParentRule",
+        description: "Nested rules with a selector that starts like a declaration (e.g. `a:hover`) should not appear as properties of the parent rule.",
+        selector: "#parent",
+        expectedRules: [
+            {selectorText: "#parent", properties: ["color: red"]},
+        ],
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestedRuleResemblingDeclaration.ChildRule",
+        description: "Nested rules should have their own properties.",
+        selector: "#parent > b",
+        expectedRules: [
+            {selectorText: "& b:not(.child)", properties: ["color: green"]},
+        ],
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestedRuleResemblingDeclaration.FollowingRule",
+        description: "Rules following nested rules with a selector that starts like a declaration should have the correct properties.",
+        selector: "#after-parent",
+        expectedRules: [
+            {selectorText: "#after-parent", properties: ["color: purple"]},
+        ],
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestedRuleResemblingDeclaration.GroupingRuleParent",
+        description: "Nested rules inside a nested grouping rule with a selector that starts like a declaration should not appear as properties of the parent rule.",
+        selector: "#grouping-parent",
+        expectedRules: [
+            {selectorText: "#grouping-parent", properties: ["color: red"]},
+        ],
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestedRuleResemblingDeclaration.FollowingGroupingRule",
+        description: "Rules following nested grouping rules containing a nested rule with a selector that starts like a declaration should have the correct properties.",
+        selector: "#after-grouping-parent",
+        expectedRules: [
+            {selectorText: "#after-grouping-parent", properties: ["color: purple"]},
+        ],
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    #parent {
+        color: red;
+
+        .child {
+            color: blue;
+        }
+
+        a:hover {
+            color: yellow;
+        }
+
+        b:not(.child) {
+            color: green;
+        }
+
+        i::before {
+            content: "i";
+        }
+    }
+
+    #after-parent {
+        color: purple;
+    }
+</style>
+<style>
+    #grouping-parent {
+        color: red;
+
+        @media screen {
+            a:hover {
+                color: yellow;
+            }
+        }
+    }
+
+    #after-grouping-parent {
+        color: purple;
+    }
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.getMatchedStyleForNode command with nested rules whose selector starts like a declaration (e.g. `a:hover`).</p>
+    <div id="parent"><b></b></div>
+    <div id="after-parent"></div>
+    <div id="grouping-parent"></div>
+    <div id="after-grouping-parent"></div>
+</body>
+</html>
