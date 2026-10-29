@@ -122,7 +122,8 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
     case MarkedText::Type::FragmentHighlight: {
         if (CheckedPtr renderStyle = renderer.targetTextPseudoStyle()) {
             computeStyleForPseudoElementStyle(style, renderStyle.get(), viewportSize, paintInfo);
-            break;
+            if (renderStyle->hasAuthorHighlightColors())
+                break;
         }
 
         style.backgroundColor = renderer.theme().annotationHighlightBackgroundColor(systemAppearanceOptions);

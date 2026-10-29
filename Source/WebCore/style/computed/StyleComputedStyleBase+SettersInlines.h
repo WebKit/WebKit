@@ -105,6 +105,11 @@ inline void ComputedStyleBase::setHasExplicitlyInheritedProperties()
     m_nonInheritedFlags.hasExplicitlyInheritedProperties = true;
 }
 
+inline void ComputedStyleBase::setHasAuthorHighlightColors()
+{
+    m_nonInheritedFlags.hasAuthorHighlightColors = true;
+}
+
 inline void ComputedStyleBase::setDisallowsFastPathInheritance()
 {
     m_nonInheritedFlags.disallowsFastPathInheritance = true;

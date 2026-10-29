@@ -500,6 +500,9 @@ public:
     inline bool hasExplicitlyInheritedProperties() const;
     inline void setHasExplicitlyInheritedProperties();
 
+    inline bool hasAuthorHighlightColors() const;
+    inline void setHasAuthorHighlightColors();
+
     inline bool disallowsFastPathInheritance() const;
     inline void setDisallowsFastPathInheritance();
 
@@ -808,6 +811,7 @@ public:
         PREFERRED_TYPE(bool) unsigned isContainerDependent : 1;
         PREFERRED_TYPE(bool) unsigned useTreeCountingFunctions : 1;
         PREFERRED_TYPE(bool) unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.
+        PREFERRED_TYPE(bool) unsigned hasAuthorHighlightColors : 1; // A highlight pseudo-element whose color or background-color is not the UA default.
         PREFERRED_TYPE(bool) unsigned disallowsFastPathInheritance : 1;
         PREFERRED_TYPE(bool) unsigned hasZeroEffectiveBorderWidths : 1; // Maintained by the border setters.
         PREFERRED_TYPE(bool) unsigned hasZeroPadding : 1; // Maintained by the padding setters.

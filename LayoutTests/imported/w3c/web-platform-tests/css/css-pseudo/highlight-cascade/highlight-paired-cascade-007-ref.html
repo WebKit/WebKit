@@ -1,0 +1,15 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../support/highlights.css">
+<style>
+    main {
+        font-size: 7em;
+        margin: 0.5em;
+    }
+    /*
+        UA default highlight colors for ::selection.
+    */
+</style>
+<p>Test passes if the text below appears to be highlighted.
+<main class="highlight_reftest">quick</main>
+<script>getSelection().selectAllChildren(document.querySelector("main"));</script>

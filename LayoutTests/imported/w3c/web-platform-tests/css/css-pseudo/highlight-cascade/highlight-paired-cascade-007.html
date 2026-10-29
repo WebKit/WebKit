@@ -1,0 +1,20 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CSS Pseudo-Elements Test: paired cascade: UA default highlight colors are used when an ancestor's highlight pseudo cascade yields only custom properties</title>
+<link rel="help" href="https://drafts.csswg.org/css-pseudo-4/#highlight-cascade">
+<link rel="help" href="https://drafts.csswg.org/css-pseudo-4/#paired-defaults">
+<link rel="match" href="highlight-paired-cascade-007-ref.html">
+<meta name="assert" value="This test verifies that setting only custom properties on :root::selection does not suppress the UA default highlight colors in descendants, which inherit from it through the highlight cascade. Custom properties are not highlight colors, so paired cascade does not apply.">
+<link rel="stylesheet" href="../support/highlights.css">
+<style>
+    :root::selection {
+        --highlight-color: green;
+    }
+    main {
+        font-size: 7em;
+        margin: 0.5em;
+    }
+</style>
+<p>Test passes if the text below appears to be highlighted.
+<main class="highlight_reftest">quick</main>
+<script>getSelection().selectAllChildren(document.querySelector("main"));</script>

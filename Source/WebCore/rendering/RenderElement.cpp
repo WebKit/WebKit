@@ -2051,7 +2051,7 @@ Color RenderElement::selectionColor() const
         || (view().frameView().paintBehavior().containsAny({ PaintBehavior::SelectionOnly, PaintBehavior::SelectionAndBackgroundsOnly })))
         return Color();
 
-    if (CheckedPtr pseudoStyle = selectionPseudoStyle()) {
+    if (CheckedPtr pseudoStyle = selectionPseudoStyle(); pseudoStyle && pseudoStyle->hasAuthorHighlightColors()) {
         Style::ColorPropertyResolver<Style::ColorPropertyTraits<Property>> colorPropertyResolver { *pseudoStyle };
         auto color = colorPropertyResolver.visitedDependentColorApplyingColorFilter();
         if (!color.isValid())
@@ -2097,7 +2097,7 @@ Color RenderElement::selectionBackgroundColor() const
 
     if (pseudoStyleCandidate) {
         CheckedPtr pseudoStyle = pseudoStyleCandidate->selectionPseudoStyle();
-        if (pseudoStyle && pseudoStyle->visitedDependentUsedBackgroundColorApplyingColorFilter().isValid())
+        if (pseudoStyle && pseudoStyle->hasAuthorHighlightColors() && pseudoStyle->visitedDependentUsedBackgroundColorApplyingColorFilter().isValid())
             return theme().transformSelectionBackgroundColor(pseudoStyle->visitedDependentUsedBackgroundColorApplyingColorFilter(), styleColorOptions);
     }
 

@@ -133,6 +133,9 @@ void Builder::applyHighlightInheritance()
     ASSERT(m_state->isBuildingHighlightStyle());
 
     BuilderGenerated::applyHighlightInheritAllProperties(m_state);
+
+    if (CheckedPtr parentHighlightStyle = m_state->parentHighlightStyle(); parentHighlightStyle && parentHighlightStyle->hasAuthorHighlightColors())
+        m_state->style().setHasAuthorHighlightColors();
 }
 
 // Top priority properties affect resolution of high priority properties.
@@ -483,6 +486,13 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     };
 
     apply(valueType);
+
+    // https://drafts.csswg.org/css-pseudo-4/#paired-defaults
+    // The UA default highlight colors are used only if neither color nor background-color comes from
+    // a non-UA declaration. A revert that reaches this point found nothing to roll back to.
+    if (m_state->isBuildingHighlightStyle() && !isAnyRevert && cascadeOrigin != PropertyCascade::Origin::UserAgent
+        && (id == CSSPropertyID::Color || id == CSSPropertyID::BackgroundColor))
+        style.setHasAuthorHighlightColors();
 
     if (!isAnyRevert)
         m_state->disableNativeAppearanceIfNeeded(id, cascadeOrigin);
