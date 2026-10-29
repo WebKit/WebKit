@@ -557,7 +557,21 @@ void WebViewTest::NetworkPolicyGuard::setErrorPolicy(WebKitTLSErrorsPolicy polic
 {
 #if ENABLE(2022_GLIB_API)
     webkit_network_session_set_tls_errors_policy(m_test->m_networkSession.get(), policy);
+    auto* manager = webkit_network_session_get_website_data_manager(m_test->m_networkSession.get());
 #else
     webkit_website_data_manager_set_tls_errors_policy(m_manager, policy);
+    auto* manager = m_manager;
 #endif
+
+    // The policy is sent to the network process without waiting for a reply. Fetching
+    // website data is a round trip on the same connection, so once it completes the
+    // network process has applied the policy and later requests from the web process use it.
+    bool didFetch = false;
+    webkit_website_data_manager_fetch(manager, WEBKIT_WEBSITE_DATA_COOKIES, nullptr, [](GObject* manager, GAsyncResult* result, gpointer userData) {
+        GList* dataList = webkit_website_data_manager_fetch_finish(WEBKIT_WEBSITE_DATA_MANAGER(manager), result, nullptr);
+        g_list_free_full(dataList, reinterpret_cast<GDestroyNotify>(webkit_website_data_unref));
+        *static_cast<bool*>(userData) = true;
+    }, &didFetch);
+    while (!didFetch)
+        g_main_context_iteration(nullptr, TRUE);
 }
