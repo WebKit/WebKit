@@ -101,14 +101,14 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector)
     RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -135,14 +135,14 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object atIndex:3];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -169,14 +169,14 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, NSRect r
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&rect atIndex:3];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -204,14 +204,14 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     [invocation setArgument:&object1 atIndex:3];
     [invocation setArgument:&object2 atIndex:4];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -239,14 +239,14 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     [invocation setArgument:&object atIndex:3];
     [invocation setArgument:&boolean atIndex:4];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -275,14 +275,14 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     [invocation setArgument:&object2 atIndex:4];
     [invocation setArgument:&object3 atIndex:5];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -310,14 +310,14 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     [invocation setArgument:&object atIndex:3];
     [invocation setArgument:&integer atIndex:4];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -534,14 +534,14 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -568,14 +568,14 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&integer atIndex:3];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -602,14 +602,14 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object atIndex:3];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -688,14 +688,14 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     [invocation setArgument:&object1 atIndex:3];
     [invocation setArgument:&object2 atIndex:4];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -714,14 +714,14 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     [invocation setArgument:&object atIndex:3];
     [invocation setArgument:&double1 atIndex:4];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -750,14 +750,14 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     [invocation setArgument:&object2 atIndex:4];
     [invocation setArgument:&object3 atIndex:5];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -787,14 +787,14 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     [invocation setArgument:&object3 atIndex:5];
     [invocation setArgument:&object4 atIndex:6];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -823,14 +823,14 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     [invocation setArgument:&integer atIndex:4];
     [invocation setArgument:&object2 atIndex:5];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -888,14 +888,14 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     [invocation setArgument:&integer atIndex:5];
     [invocation setArgument:&object3 atIndex:6];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -982,14 +982,14 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     [invocation setArgument:&object2 atIndex:5];
     [invocation setArgument:&object3 atIndex:6];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1391,14 +1391,14 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2)
     [invocation setArgument:&object1 atIndex:2];
     [invocation setArgument:&object2 atIndex:3];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1428,14 +1428,14 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id obje
     [invocation setArgument:&object2 atIndex:3];
     [invocation setArgument:&object3 atIndex:4];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -1467,14 +1467,14 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id obje
     [invocation setArgument:&object4 atIndex:5];
     [invocation setArgument:&object5 atIndex:6];
 
-    id returnValue;
+    void* returnValue;
     @try {
         WebThreadCallDelegate(invocation);
         if ([[invocation methodSignature] methodReturnLength] == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
-        return returnValue;
+        return (__bridge id)returnValue;
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }

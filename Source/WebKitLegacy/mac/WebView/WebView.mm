@@ -1676,7 +1676,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     // do this on the current thread on iOS, since the web thread could be blocked on the main thread,
     // and prefs need to be changed synchronously <rdar://problem/5841558>
     [self _preferencesChanged:prefs];
-    _private->page->settings().setFontFallbackPrefersPictographs(true);
+    protect(_private->page->settings())->setFontFallbackPrefersPictographs(true);
 #endif
 
     WebInstallMemoryPressureHandler();
@@ -1854,22 +1854,23 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     // We are ignoring the preferences object on fast path and just using Settings defaults (everything fancy off).
     // This matches how UIKit sets up the preferences. We need to set  default values for fonts though, <rdar://problem/6850611>.
     // This should be revisited later. There is some risk involved, _preferencesChanged used to show up badly in Shark.
-    _private->page->settings().setMinimumLogicalFontSize(9);
-    _private->page->settings().setDefaultFontSize([_private->preferences defaultFontSize]);
-    _private->page->settings().setDefaultFixedFontSize(13);
+    Ref settings = _private->page->settings();
+    settings->setMinimumLogicalFontSize(9);
+    settings->setDefaultFontSize([_private->preferences defaultFontSize]);
+    settings->setDefaultFixedFontSize(13);
     _private->page->settings().setAcceleratedDrawingEnabled([preferences acceleratedDrawingEnabled]);
 
-    _private->page->settings().setFontFallbackPrefersPictographs(true);
-    _private->page->settings().setPictographFontFamily("AppleColorEmoji"_s);
+    settings->setFontFallbackPrefersPictographs(true);
+    settings->setPictographFontFamily("AppleColorEmoji"_s);
 
     _private->page->settings().setScriptMarkupEnabled(false);
-    _private->page->settings().setScriptEnabled(true);
+    settings->setScriptEnabled(true);
 
     // FIXME: this is a workaround for <rdar://problem/11518688> REGRESSION: Quoted text font changes when replying to certain email
-    _private->page->settings().setStandardFontFamily([_private->preferences standardFontFamily]);
+    settings->setStandardFontFamily([_private->preferences standardFontFamily]);
 
     // FIXME: this is a workaround for <rdar://problem/11820090> Quoted text changes in size when replying to certain email
-    _private->page->settings().setMinimumFontSize([_private->preferences minimumFontSize]);
+    settings->setMinimumFontSize([_private->preferences minimumFontSize]);
 
     // This is a workaround for <rdar://problem/21309911>.
     _private->page->settings().setHttpEquivEnabled([_private->preferences httpEquivEnabled]);
@@ -3737,11 +3738,8 @@ IGNORE_WARNINGS_END
     }
 
     // Ask plug-ins in child frames
-    NSArray *childFrames = [frame childFrames];
-    unsigned childCount = [childFrames count];
-    unsigned childIndex;
-    for (childIndex = 0; childIndex < childCount; childIndex++) {
-        if ([self _locked_plugInsAreRunningInFrame:[childFrames objectAtIndex:childIndex]])
+    for (RetainPtr childFrame : makeVector<RetainPtr<WebFrame>>([frame childFrames])) {
+        if ([self _locked_plugInsAreRunningInFrame:childFrame])
             return YES;
     }
 
@@ -3762,12 +3760,8 @@ IGNORE_WARNINGS_END
         [[(WebHTMLView *)documentView _pluginController] performSelector:selector];
 
     // Send the message to plug-ins in child frames
-    NSArray *childFrames = [frame childFrames];
-    unsigned childCount = [childFrames count];
-    unsigned childIndex;
-    for (childIndex = 0; childIndex < childCount; childIndex++) {
-        [self _locked_recursivelyPerformPlugInSelector:selector inFrame:[childFrames objectAtIndex:childIndex]];
-    }
+    for (RetainPtr childFrame : makeVector<RetainPtr<WebFrame>>([frame childFrames]))
+        [self _locked_recursivelyPerformPlugInSelector:selector inFrame:childFrame];
 }
 
 - (void)_destroyAllPlugIns
@@ -4331,7 +4325,7 @@ IGNORE_WARNINGS_END
 {
     if (_private && _private->page)
 #if PLATFORM(IOS_FAMILY)
-        _private->page->focusController().setActive([[self window] isKeyWindow]);
+        protect(_private->page->focusController())->setActive([[self window] isKeyWindow]);
 #else
         protect(_private->page->focusController())->setActive([[self window] _hasKeyAppearance]);
 #endif
@@ -6000,7 +5994,7 @@ static bool needsWebViewInitThreadWorkaround()
     return protect(_private->page->backForward())->goBack();
 #if PLATFORM(IOS_FAMILY)
     WebThreadRun(^{
-        _private->page->backForward().goBack();
+        protect(_private->page->backForward())->goBack();
     });
     // FIXME: <rdar://problem/9157572> -[WebView goBack] and -goForward always return YES when called from the main thread
     return YES;
@@ -6018,7 +6012,7 @@ static bool needsWebViewInitThreadWorkaround()
     return protect(_private->page->backForward())->goForward();
 #if PLATFORM(IOS_FAMILY)
     WebThreadRun(^{
-        _private->page->backForward().goForward();
+        protect(_private->page->backForward())->goForward();
     });
     // FIXME: <rdar://problem/9157572> -[WebView goBack] and -goForward always return YES when called from the main thread
     return YES;
@@ -7784,7 +7778,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
 #if PLATFORM(IOS_FAMILY)
 - (void)removeVisitedLink:(NSURL *)url
 {
-    _private->group->visitedLinkStore().removeVisitedLink(URL(url).string().createNSString().get());
+    protect(_private->group->visitedLinkStore())->removeVisitedLink(URL(url).string().createNSString().get());
 }
 #endif
 

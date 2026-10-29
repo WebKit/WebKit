@@ -63,6 +63,7 @@
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -254,8 +255,8 @@ static RetainPtr<NSMutableSet>& LEGACY_NODELETE pluginViews()
     if (viewsCount > 0)
         LOG(Plugins, "stopping WebKit plugins for PageCache: %@", [views description]);
 
-    for (NSUInteger i = 0; i < viewsCount; ++i)
-        [self stopOnePluginForPageCache:[views objectAtIndex:i]];
+    for (RetainPtr view : makeVector<RetainPtr<NSView>>(views.get()))
+        [self stopOnePluginForPageCache:view];
 
     _started = NO;
 }

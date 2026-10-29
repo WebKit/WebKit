@@ -31,6 +31,7 @@
 #import "Logging.h"
 #import "WKContentViewInteraction.h"
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 
@@ -82,7 +83,7 @@ void GestureRecognizerConsistencyEnforcer::timerFired()
     if (touchEventState == UIGestureRecognizerStatePossible || touchEventState == UIGestureRecognizerStateBegan || touchEventState == UIGestureRecognizerStateChanged)
         return;
 
-    for (WKDeferringGestureRecognizer *gesture in possibleDeferringGestures)
+    for (RetainPtr gesture : makeVector<RetainPtr<WKDeferringGestureRecognizer>>(possibleDeferringGestures))
         [gesture setState:UIGestureRecognizerStateEnded];
 
     RELEASE_LOG_FAULT(ViewGestures, "Touch event gesture recognizer failed to reset after ending gesture deferral: %@", possibleDeferringGestures);

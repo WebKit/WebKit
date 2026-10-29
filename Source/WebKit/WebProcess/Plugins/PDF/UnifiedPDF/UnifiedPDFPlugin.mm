@@ -2249,7 +2249,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebCore::PlatformMouseEvent& event
                     if (!frame || !frame->coreLocalFrame())
                         return true;
 #if USE(UICONTEXTMENU)
-                    if (RefPtr webPage = frame->page(); webPage && webPage->hasActiveContextMenuInteraction())
+                    if (RefPtr webPage = protect(frame)->page(); webPage && webPage->hasActiveContextMenuInteraction())
                         return false;
 #endif
                     auto immediateActionStage = frame->coreLocalFrame()->eventHandler().immediateActionStage();

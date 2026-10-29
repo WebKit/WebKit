@@ -98,7 +98,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  If the mouse event was synthesized, for example by JavaScript calling `click()` on an element, its location might not be over the element that was activated.
  The domNodeHandle of the result can be used in WKContentWorld.pageWorld.
  */
-@property (nonatomic, readonly, nullable) WKHitTestResult *hitTestResult WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly, strong, nullable) WKHitTestResult *hitTestResult WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 #if TARGET_OS_IPHONE
 

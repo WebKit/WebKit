@@ -47,8 +47,7 @@
 #if PLATFORM(IOS_FAMILY)
 - (void)_removeAllLayers
 {
-    for (CAShapeLayer *layer in _layers.get())
-        [layer removeFromSuperlayer];
+    [_layers makeObjectsPerformSelector:@selector(removeFromSuperlayer)];
     [_layers removeAllObjects];
 }
 #endif

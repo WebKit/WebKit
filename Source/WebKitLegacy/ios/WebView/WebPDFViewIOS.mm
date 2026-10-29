@@ -295,7 +295,7 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
 
     if (title && CFStringGetLength(title.get())) {
         _title = bridge_cast(title.get());
-        core([self _frame])->loader().client().dispatchDidReceiveTitle({ _title.get(), TextDirection::LTR });
+        protect(core([self _frame])->loader().client())->dispatchDidReceiveTitle({ _title.get(), TextDirection::LTR });
     }
 }
 

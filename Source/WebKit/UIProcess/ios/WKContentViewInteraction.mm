@@ -1073,10 +1073,10 @@ inline static RetainPtr<NSString> textRelativeToSelectionStart(WKRelativeTextRan
 
 - (void)cleanUpTemporaryDirectories
 {
-    for (NSString *directory in _temporaryDirectories.get()) {
+    for (RetainPtr directory : makeVector<RetainPtr<NSString>>(_temporaryDirectories.get())) {
         NSError *error = nil;
         [[NSFileManager defaultManager] removeItemAtPath:directory error:&error];
-        RELEASE_LOG(DragAndDrop, "Removed temporary download directory: %@ with error: %@", directory, error);
+        RELEASE_LOG(DragAndDrop, "Removed temporary download directory: %@ with error: %@", directory.get(), error);
     }
     _temporaryDirectories = nil;
 }
@@ -2215,7 +2215,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 - (void)cancelPointersForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
     NSMapTable<NSNumber *, UITouch *> *activeTouches = [_touchEventGestureRecognizer activeTouchesByIdentifier];
-    for (NSNumber *touchIdentifier in activeTouches) {
+    for (RetainPtr touchIdentifier : makeVector<RetainPtr<NSNumber>>([activeTouches keyEnumerator].allObjects)) {
         UITouch *touch = [activeTouches objectForKey:touchIdentifier];
         if ([touch.gestureRecognizers containsObject:gestureRecognizer])
             protect(_page)->cancelPointer([touchIdentifier unsignedIntValue], WebCore::roundedIntPoint([touch locationInView:self]));
@@ -2225,7 +2225,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 - (std::optional<unsigned>)activeTouchIdentifierForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
     NSMapTable<NSNumber *, UITouch *> *activeTouches = [_touchEventGestureRecognizer activeTouchesByIdentifier];
-    for (NSNumber *touchIdentifier in activeTouches) {
+    for (RetainPtr touchIdentifier : makeVector<RetainPtr<NSNumber>>([activeTouches keyEnumerator].allObjects)) {
         UITouch *touch = [activeTouches objectForKey:touchIdentifier];
         if ([touch.gestureRecognizers containsObject:gestureRecognizer])
             return [touchIdentifier unsignedIntValue];
@@ -6465,8 +6465,8 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
     if ([_dataListTextSuggestions count] && ![[_formInputSession suggestions] count]) {
         RetainPtr inputText = [textSuggestion inputText];
-        for (WKBETextSuggestion *dataListTextSuggestion in _dataListTextSuggestions.get()) {
-            if ([inputText isEqualToString:dataListTextSuggestion.inputText]) {
+        for (RetainPtr dataListTextSuggestion : makeVector<RetainPtr<WKBETextSuggestion>>(_dataListTextSuggestions.get())) {
+            if ([inputText isEqualToString:[dataListTextSuggestion inputText]]) {
                 page->setFocusedElementValue(_focusedElementInformation.frameID(), _focusedElementInformation.elementContext, inputText.get());
                 return;
             }
@@ -6480,7 +6480,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
             if (auto beTextSuggestion = dynamic_objc_cast<BETextSuggestion>(textSuggestion))
                 return beTextSuggestion._uikitTextSuggestion;
 #endif
-            return textSuggestion;
+            return dynamic_objc_cast<UITextSuggestion>(textSuggestion);
         }();
         [inputDelegate _webView:self.webView insertTextSuggestion:uiTextSuggestion.get() inInputSession:_formInputSession.get()];
     }
@@ -7051,14 +7051,14 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
         RefPtr page = strongSelf->_page;
         Vector<WebCore::DictationContext> contextsToRemove;
         for (auto context : contexts) {
-            auto alternatives = protect(page->pageClient())->platformDictationAlternatives(context);
+            RetainPtr alternatives = protect(page->pageClient())->platformDictationAlternatives(context);
             if (!alternatives)
                 continue;
 
-            auto originalAlternatives = alternatives.alternativeStrings;
+            auto originalAlternatives = alternatives.get().alternativeStrings;
             auto nonEmojiAlternatives = [NSMutableArray arrayWithCapacity:originalAlternatives.count];
-            for (NSString *alternative in originalAlternatives) {
-                if (!alternative._containsEmojiOnly)
+            for (RetainPtr alternative : makeVector<RetainPtr<NSString>>(originalAlternatives)) {
+                if (!alternative.get()._containsEmojiOnly)
                     [nonEmojiAlternatives addObject:alternative];
             }
 
@@ -7067,7 +7067,7 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 
             RetainPtr<NSTextAlternatives> nsReplacement;
             if (nonEmojiAlternatives.count)
-                nsReplacement = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:alternatives.primaryString alternativeStrings:nonEmojiAlternatives isLowConfidence:alternatives.isLowConfidence]);
+                nsReplacement = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:alternatives.get().primaryString alternativeStrings:nonEmojiAlternatives isLowConfidence:alternatives.get().isLowConfidence]);
             else
                 contextsToRemove.append(context);
 
@@ -7479,7 +7479,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     }
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
-    auto checkFocusedElement = [weakSelf = WeakObjCPtr<WKContentView> { self }, context = adoptNS([context copy]), completionHandler = makeBlockPtr(completionHandler)] (bool success) {
+    auto checkFocusedElement = [weakSelf = WeakObjCPtr<WKContentView> { self }, context = checked_objc_cast<_WKTextInputContext>(adoptNS([context copy])), completionHandler = makeBlockPtr(completionHandler)] (bool success) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf) {
             completionHandler(nil);
@@ -10012,8 +10012,8 @@ static String fallbackLabelTextForUnlabeledInputFieldInZoomedFormControls(WebCor
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer isInterruptingMomentumScrollingWithEvent:(UIEvent *)event
 {
     NSSet<UITouch *> *touches = [event touchesForGestureRecognizer:gestureRecognizer];
-    for (UITouch *touch in touches) {
-        if (dynamic_objc_cast<UIScrollView>(touch.view)._wk_isInterruptingDeceleration)
+    for (RetainPtr touch : makeVector<RetainPtr<UITouch>>(touches.allObjects)) {
+        if (dynamic_objc_cast<UIScrollView>(touch.get().view)._wk_isInterruptingDeceleration)
             return YES;
     }
     return self._scroller._wk_isInterruptingDeceleration;
@@ -11093,8 +11093,8 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     }
 
     NSMutableArray *dragItems = [NSMutableArray arrayWithCapacity:adjustedItemProviders.count];
-    for (NSItemProvider *itemProvider in adjustedItemProviders) {
-        auto item = adoptNS([[UIDragItem alloc] initWithItemProvider:itemProvider]);
+    for (RetainPtr itemProvider : makeVector<RetainPtr<NSItemProvider>>(adjustedItemProviders)) {
+        RetainPtr item = adoptNS([[UIDragItem alloc] initWithItemProvider:itemProvider.get()]);
         [item _setPrivateLocalContext:@(stagedDragSource.itemIdentifier)];
         [dragItems addObject:item.get()];
     }
@@ -12021,7 +12021,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
     auto webRequest = toWebRequest(request);
     auto options = webRequest.options;
     protect(_page)->requestDocumentEditingContext(WTF::move(webRequest), [useAsyncInteractions = self.shouldUseAsyncInteractions, completionHandler = makeBlockPtr(completionHandler), options] (auto&& editingContext) {
-        completionHandler(useAsyncInteractions ? editingContext.toPlatformContext(options) : editingContext.toLegacyPlatformContext(options));
+        completionHandler(protect(useAsyncInteractions ? editingContext.toPlatformContext(options) : editingContext.toLegacyPlatformContext(options)));
     });
 }
 
@@ -12335,17 +12335,17 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
 
 - (void)mouseInteraction:(WKMouseInteraction *)interaction changedWithEvent:(Ref<WebKit::NativeWebMouseEvent>&&)eventRef
 {
-    const auto& event = eventRef.get();
+    Ref event = eventRef.copyRef();
     Ref page = *_page;
     if (!page->hasRunningProcess())
         return;
 
-    if (event.type() == WebKit::WebEventType::MouseDown) {
+    if (event->type() == WebKit::WebEventType::MouseDown) {
         _layerTreeTransactionIdAtLastInteractionStart = protect(downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*page->drawingArea()))->lastCommittedMainFrameLayerTreeTransactionID();
 
         if (auto lastLocation = interaction.lastLocation)
             _lastInteractionLocation = *lastLocation;
-    } else if (event.type() == WebKit::WebEventType::MouseUp) {
+    } else if (event->type() == WebKit::WebEventType::MouseUp) {
         _usingMouseDragForSelection = NO;
 
         if (self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
@@ -12936,7 +12936,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)requestRectForFoundTextRange:(UITextRange *)range completionHandler:(void (^)(CGRect))completionHandler
 {
-    if (auto* foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range)) {
+    if (RetainPtr foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range)) {
         protect(_page)->requestRectForFoundTextRange([foundTextRange webFoundTextRange], [completionHandler = makeBlockPtr(completionHandler)] (WebCore::FloatRect rect) {
             completionHandler(rect);
         });
@@ -13398,7 +13398,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(VKCImageAnal
                 foundShowTextItem = YES;
         }];
 
-        auto adjustedChildren = adoptNS(menu.children.mutableCopy);
+        RetainPtr adjustedChildren = checked_objc_cast<NSMutableArray>(adoptNS(menu.children.mutableCopy));
         auto newItems = adoptNS([NSMutableArray<UIMenuElement *> new]);
 
         for (UIMenuElement *child in adjustedChildren.get()) {
@@ -14039,13 +14039,13 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
         ? WebKit::NotifyInputDelegate::No
         : WebKit::NotifyInputDelegate::Yes;
 
-    for (NSString *command in deleteSelectionCommands(direction, granularity))
+    for (RetainPtr command : makeVector<RetainPtr<NSString>>(deleteSelectionCommands(direction, granularity)))
         [self _executeEditCommand:command notifyDelegate:notifyDelegate];
 }
 
 - (void)moveInStorageDirection:(UITextStorageDirection)direction byGranularity:(UITextGranularity)granularity
 {
-    for (NSString *command in moveSelectionCommand(direction, granularity))
+    for (RetainPtr command : makeVector<RetainPtr<NSString>>(moveSelectionCommand(direction, granularity)))
         [self _executeEditCommand:command];
 }
 
@@ -14056,7 +14056,7 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 - (void)extendInStorageDirection:(UITextStorageDirection)direction byGranularity:(UITextGranularity)granularity
 {
-    for (NSString *command in extendSelectionCommand(direction, granularity))
+    for (RetainPtr command : makeVector<RetainPtr<NSString>>(extendSelectionCommand(direction, granularity)))
         [self _executeEditCommand:command];
 }
 
@@ -15047,8 +15047,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
     auto actions = [NSMutableArray arrayWithCapacity:previewActions.count];
 
-    for (UIPreviewAction *previewAction in previewActions)
-        [actions addObject:protect(uiActionForLegacyPreviewAction(previewAction, previewViewController)).get()];
+    for (RetainPtr previewAction : makeVector<RetainPtr<UIPreviewAction>>(previewActions))
+        [actions addObject:protect(uiActionForLegacyPreviewAction(previewAction.get(), previewViewController))];
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     return actions;
@@ -15143,7 +15143,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         auto uiImage = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
 
         if ([uiDelegate respondsToSelector:@selector(_webView:alternateURLFromImage:userInfo:)]) {
-            NSDictionary *userInfo;
+            NSDictionary *userInfo = nil;
             nsURL = [uiDelegate _webView:self.webView alternateURLFromImage:uiImage.get() userInfo:&userInfo];
             imageInfo = userInfo;
         }
@@ -15820,7 +15820,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             // We cannot use a RetainPtr since this is an out-parameter for [DDDetectionController resultForURL:].
             SUPPRESS_UNRETAINED_LOCAL NSDictionary *rawNewContext = nil;
             RetainPtr<NSMutableDictionary> extendedContext;
-            RetainPtr ddResult = [controller resultForURL:dataForPreview.get()[UIPreviewDataLink] identifier:_positionInformation.dataDetectorIdentifier.createNSString().get() selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() context:context extendedContext:&rawNewContext];
+            RetainPtr ddResult = [controller resultForURL:checked_objc_cast<NSURL>(dataForPreview.get()[UIPreviewDataLink]) identifier:_positionInformation.dataDetectorIdentifier.createNSString().get() selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() context:context extendedContext:&rawNewContext];
             RetainPtr newContext = rawNewContext;
             if (ddResult)
                 dataForPreview.get()[UIPreviewDataDDResult] = (__bridge id)ddResult.get();
@@ -15930,7 +15930,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         RetainPtr<CGImageRef> cgImage = protect(_positionInformation.image)->createPlatformImage();
         RetainPtr<UIImage> uiImage = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
         if ([uiDelegate respondsToSelector:@selector(_webView:alternateURLFromImage:userInfo:)]) {
-            NSDictionary *userInfo;
+            NSDictionary *userInfo = nil;
             alternateURL = [uiDelegate _webView:self.webView alternateURLFromImage:uiImage.get() userInfo:&userInfo];
             imageInfo = userInfo;
         }

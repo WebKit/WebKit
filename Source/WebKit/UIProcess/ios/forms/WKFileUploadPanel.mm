@@ -462,7 +462,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     NSUInteger imageCount = mediaItems.count - videoCount;
 
-    NSString *displayString;
+    RetainPtr<NSString> displayString;
     if (mediaItems.count == 1)
         displayString = mediaItems.firstObject.fileURL.lastPathComponent;
     else
@@ -765,7 +765,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
             [strongSelf _showPhotoPicker];
         }];
 
-        NSArray *actions;
+        RetainPtr<NSArray> actions;
         if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
             NSString *cameraString = [strongSelf _cameraButtonLabel];
             RetainPtr cameraAction = [UIAction actionWithTitle:cameraString image:[UIImage systemImageNamed:@"camera"] identifier:@"camera" handler:^(__kindof UIAction *action) {

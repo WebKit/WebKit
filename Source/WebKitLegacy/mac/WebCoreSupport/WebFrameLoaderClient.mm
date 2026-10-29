@@ -490,7 +490,7 @@ void WebFrameLoaderClient::willCacheResponse(WebCore::DocumentLoader* loader, We
 #if PLATFORM(IOS_FAMILY)
     if (implementations->webThreadWillCacheResponseFunc) {
         if (id resource = [webView.get() _objectForIdentifier:identifier])
-            return completionHandler(protect(CallResourceLoadDelegateInWebThread(implementations->webThreadWillCacheResponseFunc, webView.get(), @selector(webThreadWebView:resource:willCacheResponse:fromDataSource:), resource, response, protect(dataSource(loader)))));
+            return completionHandler(dynamic_objc_cast<NSCachedURLResponse>(protect(CallResourceLoadDelegateInWebThread(implementations->webThreadWillCacheResponseFunc, webView.get(), @selector(webThreadWebView:resource:willCacheResponse:fromDataSource:), resource, response, protect(dataSource(loader))))));
     } else
 #endif
     if (implementations->willCacheResponseFunc) {

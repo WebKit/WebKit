@@ -75,22 +75,23 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
     lazyInitialize(m_presenter, adoptNS([allocASCAuthorizationPresenterInstance() init]));
     [m_presenter setDelegate:m_presenterDelegate.get()];
 
-    auto completionHandler = makeBlockPtr([manager = m_manager] (id<ASCCredentialProtocol> credential, NSError *error) mutable {
+    auto completionHandler = makeBlockPtr([weakManager = m_manager](id<ASCCredentialProtocol> credential, NSError *error) mutable {
         if (credential || !error)
             return;
 
         LOG_ERROR("Couldn't complete the authenticator presentation context: %@", error);
         // This block can be executed in another thread.
-        RunLoop::mainSingleton().dispatch([manager] () mutable {
-            if (manager)
+        RunLoop::mainSingleton().dispatch([weakManager = WTF::move(weakManager)] mutable {
+            if (RefPtr manager = weakManager)
                 manager->cancel();
         });
     });
 
     if (type == ClientDataType::Get && transports.contains(AuthenticatorTransport::Internal)) {
         m_delayedPresentationNeedsSecurityKey = (transports.contains(AuthenticatorTransport::Usb) || transports.contains(AuthenticatorTransport::Nfc));
-        m_delayedPresentation = [completionHandler = WTF::move(completionHandler), this] {
-            [m_presenter presentAuthorizationWithContext:m_context.get() completionHandler:completionHandler.get()];
+        m_delayedPresentation = [completionHandler = WTF::move(completionHandler), weakThis = WeakPtr { *this }] {
+            if (RefPtr protectedThis = weakThis)
+                [protectedThis->m_presenter presentAuthorizationWithContext:protectedThis->m_context.get() completionHandler:completionHandler.get()];
         };
         return;
     }
@@ -152,9 +153,9 @@ void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus 
         }
 
         auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorNoCredentialsFound userInfo:nil]);
-        [m_presenter presentError:error.get() forService:[m_context serviceName] completionHandler:makeBlockPtr([manager = m_manager] {
-            RunLoop::mainSingleton().dispatch([manager] () mutable {
-                if (manager)
+        [m_presenter presentError:error.get() forService:[m_context serviceName] completionHandler:makeBlockPtr([weakManager = m_manager] {
+            RunLoop::mainSingleton().dispatch([weakManager] mutable {
+                if (RefPtr manager = weakManager)
                     manager->cancel();
             });
         }).get()];

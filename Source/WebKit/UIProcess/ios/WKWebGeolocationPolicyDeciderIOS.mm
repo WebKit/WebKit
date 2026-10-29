@@ -252,7 +252,7 @@ static RetainPtr<NSMutableDictionary> createChallengeDictionary(NSData *data)
 {
     NSError *error = nil;
     NSPropertyListFormat dbFormat = NSPropertyListBinaryFormat_v1_0;
-    return [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListMutableContainersAndLeaves format:&dbFormat error:&error];
+    return dynamic_objc_cast<NSMutableDictionary>([NSPropertyListSerialization propertyListWithData:data options:NSPropertyListMutableContainersAndLeaves format:&dbFormat error:&error]);
 }
 
 - (void)_loadWithCompletionHandler:(void (^)())completionHandler

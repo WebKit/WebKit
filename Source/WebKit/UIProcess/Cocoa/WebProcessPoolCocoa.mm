@@ -999,7 +999,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto notificationName = adoptNS([[NSString alloc] initWithCString:kGSEventHardwareKeyboardAvailabilityChangedNotification encoding:NSUTF8StringEncoding]);
     addCFNotificationObserver(hardwareKeyboardAvailabilityChangedCallback, (__bridge CFStringRef)notificationName.get(), CFNotificationCenterGetDarwinNotifyCenterSingleton());
 
-    lazyInitialize(m_accessibilityEnabledObserver, RetainPtr<NSObject> { [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
+    lazyInitialize(m_accessibilityEnabledObserver, RetainPtr<NSObject> { [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge NSString *)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
         if (!_AXSApplicationAccessibilityEnabled())
             return;
         for (auto& process : m_processes)

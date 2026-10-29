@@ -51,15 +51,6 @@
 
 #import <pal/cocoa/CoreMaterialSoftLink.h>
 
-namespace WTF {
-
-static std::optional<RetainPtr<UIView>> makeVectorElement(const RetainPtr<UIView>*, UIView *arrayElement)
-{
-    return { retainPtr(arrayElement) };
-}
-
-} // namespace WTF
-
 namespace WebKit {
 
 static void collectDescendantViewsAtPoint(Vector<RetainPtr<UIView>, 16>& viewsAtPoint, UIView *parent, CGPoint point, UIEvent *event)

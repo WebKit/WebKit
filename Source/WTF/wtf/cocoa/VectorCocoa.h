@@ -34,6 +34,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/cocoa/SpanCocoa.h>
+#include <wtf/cocoa/TypeCastsCocoa.h>
 #include <wtf/darwin/DispatchExtras.h>
 #include <wtf/darwin/DispatchOSObject.h>
 
@@ -52,6 +53,9 @@ namespace WTF {
 //    id makeNSArrayElement(const VectorElementType& vectorElement);
 //
 //    std::optional<VectorElementType> makeVectorElement(const VectorElementType*, id arrayElement);
+//
+// For RetainPtr<T>, makeVector drops array elements that are not a kind of T. For RetainPtr<id>,
+// every element is kept.
 
 template<typename CollectionType> RetainPtr<NSMutableArray> createNSArray(CollectionType&&);
 template<typename VectorElementType> Vector<VectorElementType> makeVector(NSArray *);
@@ -91,6 +95,18 @@ template<typename CollectionType, typename MapFunctionType> RetainPtr<NSMutableA
             addUnlessNil(array.get(), getPtr(function(element)));
     }
     return array;
+}
+
+template<typename T> std::optional<RetainPtr<T>> makeVectorElement(const RetainPtr<T>*, id arrayElement)
+{
+    if (RetainPtr element = dynamic_objc_cast<T>(arrayElement))
+        return { WTF::move(element) };
+    return std::nullopt;
+}
+
+inline std::optional<RetainPtr<id>> makeVectorElement(const RetainPtr<id>*, id arrayElement)
+{
+    return { RetainPtr<id> { arrayElement } };
 }
 
 template<typename VectorElementType> Vector<VectorElementType> makeVector(NSArray *array)

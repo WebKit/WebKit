@@ -1738,8 +1738,8 @@ struct WKWebsiteData {
 {
     RetainPtr unhandled = adoptNS([[NSMutableSet alloc] init]);
 
-    for (BSAction *action in applicationActions) {
-        NSDictionary *object = [action.info objectForSetting:WebKit::WebPushD::pushActionSetting];
+    for (RetainPtr action : makeVector<RetainPtr<BSAction>>(applicationActions.allObjects)) {
+        NSDictionary *object = [action.get().info objectForSetting:WebKit::WebPushD::pushActionSetting];
         _WKWebPushAction *pushAction = [_WKWebPushAction webPushActionWithDictionary:object];
         if (!pushAction) {
             [unhandled addObject:action];
@@ -1749,11 +1749,11 @@ struct WKWebsiteData {
         RetainPtr dataStoreForPushAction = _webPushActionHandler.get()(pushAction);
         if (dataStoreForPushAction) {
             [dataStoreForPushAction _handleWebPushAction:pushAction];
-            if (action.canSendResponse)
+            if (action.get().canSendResponse)
                 [action sendResponse:BSActionResponse.response];
         } else {
             RELEASE_LOG_ERROR(Push, "Unable to handle a _WKWebPushAction: Client did not return a valid WKWebsiteDataStore");
-            if (action.canSendResponse)
+            if (action.get().canSendResponse)
                 [action sendResponse:[BSActionResponse responseForError:adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]).get()]];
         }
     }

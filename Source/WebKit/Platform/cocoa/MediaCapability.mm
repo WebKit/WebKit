@@ -31,6 +31,7 @@
 #import "XPCUtilities.h"
 #import <BrowserEngineKit/BECapability.h>
 #import <WebCore/SecurityOrigin.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/XPCExtras.h>
 #import <wtf/text/WTFString.h>
 
@@ -60,7 +61,7 @@ static RetainPtr<BEProcessCapability> processCapabilityForKind(MediaCapability::
         return [BEProcessCapability mediaPlaybackAndCaptureWithEnvironment:environment];
     case MediaCapability::Kind::DisplayCapture:
         if ([BEProcessCapability respondsToSelector:@selector(screenCaptureWithEnvironment:)])
-            return [BEProcessCapability screenCaptureWithEnvironment:environment];
+            return checked_objc_cast<BEProcessCapability>([BEProcessCapability screenCaptureWithEnvironment:environment]);
     }
 
     return nil;

@@ -208,9 +208,9 @@ void WebPushDaemon::startPushService(const String& incomingPushServiceName, cons
             return;
         }
 
-        auto& pushServiceRef = *pushService;
+        Ref pushServiceRef = *pushService;
         auto allowedBundleIdentifier = getAllowedBundleIdentifier();
-        pushServiceRef.updateSubscriptionSetState(allowedBundleIdentifier, daemon.ensureWebClipCache().visibleWebClipIdentifiers(allowedBundleIdentifier), [pushService = WTF::move(pushService)]() mutable {
+        pushServiceRef->updateSubscriptionSetState(allowedBundleIdentifier, daemon.ensureWebClipCache().visibleWebClipIdentifiers(allowedBundleIdentifier), [pushService = WTF::move(pushService)] mutable {
             WebPushDaemon::singleton().setPushService(WTF::move(pushService));
         });
 #else

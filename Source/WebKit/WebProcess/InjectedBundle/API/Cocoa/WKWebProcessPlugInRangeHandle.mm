@@ -68,7 +68,7 @@
 - (NSArray *)detectDataWithTypes:(WKDataDetectorTypes)types context:(NSDictionary *)context
 {
 #if ENABLE(DATA_DETECTION)
-    return WebCore::DataDetection::detectContentInRange(makeSimpleRange(_rangeHandle->coreRange()), fromWKDataDetectorTypes(types), WebCore::DataDetection::extractReferenceDate(context));
+    return WebCore::DataDetection::detectContentInRange(makeSimpleRange(protect(_rangeHandle->coreRange())), fromWKDataDetectorTypes(types), WebCore::DataDetection::extractReferenceDate(context));
 #else
     return nil;
 #endif

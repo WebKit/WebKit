@@ -338,8 +338,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [leftItems insertObject:_autoFillButtonItem.get() atIndex:indexAfterNextItem + 1];
     }
 
-    [_leftToolbar setItems:leftItems.get()];
-    [_rightToolbar setItems:rightItems.get()];
+    [_leftToolbar setItems:checked_objc_cast<NSArray>(leftItems)];
+    [_rightToolbar setItems:checked_objc_cast<NSArray>(rightItems)];
 }
 
 - (void)_applyTreatmentToAutoFillLabel
@@ -374,7 +374,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     auto leftItems = adoptNS([[_leftToolbar items] mutableCopy]);
     [leftItems removeObject:_autoFillButtonItem.get()];
-    [_leftToolbar setItems:leftItems.get()];
+    [_leftToolbar setItems:checked_objc_cast<NSArray>(leftItems)];
 
     if (_usesUniversalControlBar)
         [_buttonGroupAutoFill setHidden:YES];
@@ -448,7 +448,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             [newLeftToolbarItems removeObject:_nextItem.get()];
     }
 
-    [_leftToolbar setItems:newLeftToolbarItems.get()];
+    [_leftToolbar setItems:checked_objc_cast<NSArray>(newLeftToolbarItems)];
 
     [self setNeedsLayout];
 }

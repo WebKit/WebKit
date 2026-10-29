@@ -32,6 +32,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/GraphicsContextCG.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 @implementation WKInspectorHighlightView
 
@@ -53,7 +54,7 @@
 
 - (void)_removeAllLayers
 {
-    for (CAShapeLayer *layer in _layers.get())
+    for (RetainPtr layer : makeVector<RetainPtr<CAShapeLayer>>(_layers.get()))
         [layer removeFromSuperlayer];
     [_layers removeAllObjects];
 }
@@ -273,7 +274,7 @@ static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
     if (!_highlight)
         return;
 
-    auto context = WebCore::GraphicsContextCG(UIGraphicsGetCurrentContext());
+    auto context = WebCore::GraphicsContextCG(protect(UIGraphicsGetCurrentContext()));
     context.clip({ dirtyRect });
     context.translate(-self.frame.origin.x, -self.frame.origin.y);
 

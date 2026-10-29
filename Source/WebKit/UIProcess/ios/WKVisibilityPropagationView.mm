@@ -104,7 +104,7 @@ using ProcessAndVisibilityPropagatorPair = std::pair<WeakPtr<AuxiliaryProcessPro
 - (void)stopPropagatingVisibilityToProcess:(WebKit::AuxiliaryProcessProxy&)process
 {
     _processesAndVisibilityPropagators.removeAllMatching([&](auto& processAndVisibilityPropagator) {
-        auto existingProcess = processAndVisibilityPropagator.first.get();
+        RefPtr existingProcess = processAndVisibilityPropagator.first;
         if (existingProcess && existingProcess != &process)
             return false;
 

@@ -1,5 +1,0 @@
-[ iOS ] UIProcess/API/Cocoa/WKHTTPCookieStore.mm
-[ iOS ] UIProcess/API/ios/WKWebViewIOS.mm
-[ iOS ] UIProcess/Inspector/ios/WKInspectorHighlightView.mm
-[ iOS ] UIProcess/ios/WKContentViewInteraction.mm
-[ iOS ] UIProcess/ios/forms/WKFormSelectPicker.mm

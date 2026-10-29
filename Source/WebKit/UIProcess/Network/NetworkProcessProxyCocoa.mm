@@ -123,12 +123,12 @@ bool NetworkProcessProxy::sendXPCEndpointToProcess(AuxiliaryProcessProxy& proces
 void NetworkProcessProxy::addBackgroundStateObservers()
 {
     lazyInitialize(m_backgroundObserver, retainPtr([[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = WeakPtr { *this }](NSNotification *) {
-        if (weakThis)
-            weakThis->applicationDidEnterBackground();
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->applicationDidEnterBackground();
     }).get()]));
     lazyInitialize(m_foregroundObserver, retainPtr([[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = WeakPtr { *this }](NSNotification *) {
-        if (weakThis)
-            weakThis->applicationWillEnterForeground();
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->applicationWillEnterForeground();
     }).get()]));
 }
 

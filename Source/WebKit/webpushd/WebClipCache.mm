@@ -34,6 +34,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebPushD {
 
@@ -67,17 +68,17 @@ static String webClipIdentifierForOrigin(const String& bundleIdentifier, const W
     @autoreleasepool {
         NSArray *webClips = [UIWebClip webClips];
 
-        for (UIWebClip *webClip in webClips) {
-            NSString *identifier = webClip.identifier;
+        for (RetainPtr webClip : makeVector<RetainPtr<UIWebClip>>(webClips)) {
+            NSString *identifier = webClip.get().identifier;
             if (!identifier)
                 continue;
 
-            auto clipOrigin = WebCore::SecurityOriginData::fromURL(webClip.pageURL);
+            auto clipOrigin = WebCore::SecurityOriginData::fromURL(webClip.get().pageURL);
             if (origin != clipOrigin)
                 continue;
 
             if (bundleIdentifier != "com.apple.SafariViewService"_s && [webClip respondsToSelector:@selector(trustedClientBundleIdentifiers)]) {
-                if (![webClip.trustedClientBundleIdentifiers containsObject:bundleIdentifier.createNSString().get()])
+                if (![webClip.get().trustedClientBundleIdentifiers containsObject:bundleIdentifier.createNSString().get()])
                     continue;
             }
 
@@ -223,13 +224,13 @@ HashSet<String> WebClipCache::visibleWebClipIdentifiers(const String& bundleIden
         NSArray *webClips = [UIWebClip webClips];
 
         RetainPtr nsBundleIdentifier = bundleIdentifier.createNSString();
-        for (UIWebClip *webClip in webClips) {
-            NSString *identifier = webClip.identifier;
+        for (RetainPtr webClip : makeVector<RetainPtr<UIWebClip>>(webClips)) {
+            NSString *identifier = webClip.get().identifier;
             if (!identifier)
                 continue;
 
             // FIXME: Remove -respondsToSelector: check once we finish staging rdar://131961097.
-            if (bundleIdentifier == "com.apple.SafariViewService"_s || ![webClip respondsToSelector:@selector(trustedClientBundleIdentifiers)] || [webClip.trustedClientBundleIdentifiers containsObject:nsBundleIdentifier.get()]) {
+            if (bundleIdentifier == "com.apple.SafariViewService"_s || ![webClip respondsToSelector:@selector(trustedClientBundleIdentifiers)] || [webClip.get().trustedClientBundleIdentifiers containsObject:nsBundleIdentifier.get()]) {
                 result.add(String { identifier });
                 continue;
             }

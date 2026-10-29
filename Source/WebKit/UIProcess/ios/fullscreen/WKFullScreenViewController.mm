@@ -947,7 +947,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _topGuide = adoptNS([[UILayoutGuide alloc] init]);
     [self.view addLayoutGuide:_topGuide.get()];
     NSLayoutYAxisAnchor *topAnchor = [_topGuide topAnchor];
-    NSLayoutConstraint *stackViewToTopGuideConstraint;
+    RetainPtr<NSLayoutConstraint> stackViewToTopGuideConstraint;
     if (alternateFullScreenControlDesignEnabled)
         stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToSystemSpacingBelowAnchor:topAnchor multiplier:3];
     else
@@ -959,7 +959,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     [NSLayoutConstraint activateConstraints:@[
         _topConstraint.get(),
-        stackViewToTopGuideConstraint,
+        stackViewToTopGuideConstraint.get(),
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
         [[_banner topAnchor] constraintEqualToSystemSpacingBelowAnchor:[_stackView bottomAnchor] multiplier:3],
         [[_banner centerXAnchor] constraintEqualToAnchor:self.view.centerXAnchor],

@@ -429,7 +429,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 
 - (void)_setupVisibilityPropagationForWebProcess:(WebKit::WebProcessProxy&)process contextID:(WebKit::LayerHostingContextID)contextID
 {
-    for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
+    for (RetainPtr visibilityPropagationView : makeVector<RetainPtr<WKVisibilityPropagationView>>([_visibilityPropagationViews allObjects]))
         [visibilityPropagationView propagateVisibilityToProcess:process contextID:contextID];
 #if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
     for (auto& propagator : _layerHostingVisibilityPropagators)
@@ -439,7 +439,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 
 - (void)_removeVisibilityPropagationForWebProcess:(WebKit::WebProcessProxy&)process
 {
-    for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
+    for (RetainPtr visibilityPropagationView : makeVector<RetainPtr<WKVisibilityPropagationView>>([_visibilityPropagationViews allObjects]))
         [visibilityPropagationView stopPropagatingVisibilityToProcess:process];
 #if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
     for (auto& propagator : _layerHostingVisibilityPropagators)
@@ -475,7 +475,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     if (!gpuProcess)
         return;
 
-    for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
+    for (RetainPtr visibilityPropagationView : makeVector<RetainPtr<WKVisibilityPropagationView>>([_visibilityPropagationViews allObjects]))
         [visibilityPropagationView propagateVisibilityToProcess:*gpuProcess contextID:page->contextIDForVisibilityPropagationInGPUProcess()];
 #if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
     for (auto& propagator : _layerHostingVisibilityPropagators)
@@ -495,7 +495,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     if (!modelProcess)
         return;
 
-    for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
+    for (RetainPtr visibilityPropagationView : makeVector<RetainPtr<WKVisibilityPropagationView>>([_visibilityPropagationViews allObjects]))
         [visibilityPropagationView propagateVisibilityToProcess:*modelProcess contextID:page->contextIDForVisibilityPropagationInModelProcess()];
 #if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
     for (auto& propagator : _layerHostingVisibilityPropagators)
@@ -528,7 +528,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     if (!gpuProcess)
         return;
 
-    for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
+    for (RetainPtr visibilityPropagationView : makeVector<RetainPtr<WKVisibilityPropagationView>>([_visibilityPropagationViews allObjects]))
         [visibilityPropagationView stopPropagatingVisibilityToProcess:*gpuProcess];
 #if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
     for (auto& propagator : _layerHostingVisibilityPropagators)
@@ -547,7 +547,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     if (!modelProcess)
         return;
 
-    for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
+    for (RetainPtr visibilityPropagationView : makeVector<RetainPtr<WKVisibilityPropagationView>>([_visibilityPropagationViews allObjects]))
         [visibilityPropagationView stopPropagatingVisibilityToProcess:*modelProcess];
 #if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
     for (auto& propagator : _layerHostingVisibilityPropagators)
@@ -935,7 +935,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     _printRenderingCallbackID = std::nullopt;
 
     Locker locker { _pendingBackgroundPrintFormattersLock };
-    for (_WKWebViewPrintFormatter *printFormatter in _pendingBackgroundPrintFormatters.get())
+    for (RetainPtr printFormatter : makeVector<RetainPtr<_WKWebViewPrintFormatter>>([_pendingBackgroundPrintFormatters allObjects]))
         [printFormatter _invalidatePrintRenderingState];
     [_pendingBackgroundPrintFormatters removeAllObjects];
 }
@@ -991,7 +991,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 - (void)_resetVisibilityPropagation
 {
-    for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
+    for (RetainPtr visibilityPropagationView : makeVector<RetainPtr<WKVisibilityPropagationView>>([_visibilityPropagationViews allObjects]))
         [visibilityPropagationView clear];
 #if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
     for (auto& propagator : _layerHostingVisibilityPropagators)

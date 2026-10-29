@@ -42,6 +42,8 @@
 #import <numbers>
 #import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 using namespace WebKit;
 
@@ -87,7 +89,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
     RetainPtr trimmedText = adoptNS([item.text.createNSString() mutableCopy]);
     CFStringTrimWhitespace((CFMutableStringRef)trimmedText.get());
 
-    [[self titleLabel] setText:trimmedText.get()];
+    [[self titleLabel] setText:checked_objc_cast<NSString>(trimmedText)];
     [self setChecked:item.isSelected];
     [self setDisabled:item.disabled];
     if (_disabled)
@@ -113,7 +115,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
     RetainPtr trimmedText = adoptNS([item.text.createNSString() mutableCopy]);
     CFStringTrimWhitespace((CFMutableStringRef)trimmedText.get());
 
-    [[self titleLabel] setText:trimmedText.get()];
+    [[self titleLabel] setText:checked_objc_cast<NSString>(trimmedText)];
     [self setChecked:NO];
     [[self titleLabel] setTextColor:[UIColor colorWithWhite:0.0 alpha:GroupOptionTextColorAlpha]];
     [self setDisabled:YES];
@@ -439,7 +441,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr trimmedText = adoptNS([option.text.createNSString() mutableCopy]);
     CFStringTrimWhitespace((CFMutableStringRef)trimmedText.get());
 
-    auto attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:trimmedText.get()]);
+    RetainPtr attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:checked_objc_cast<NSString>(trimmedText)]);
     if (option.disabled)
         [attributedString addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithWhite:0.0 alpha:DisabledOptionAlpha] range:NSMakeRange(0, [trimmedText length])];
 
@@ -659,7 +661,7 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
     NSInteger currentIndex = 0;
 
     NSArray<UIMenuElement *> *menuElements = [_selectMenu children];
-    for (UIMenuElement *menuElement in menuElements) {
+    for (RetainPtr menuElement : makeVector<RetainPtr<UIMenuElement>>(menuElements)) {
         if ([menuElement isKindOfClass:UIAction.class]) {
             if (currentIndex == optionIndex)
                 return checked_objc_cast<UIAction>(menuElement);
@@ -1228,7 +1230,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)next:(id)sender
 {
-    [self dismissViewControllerAnimated:YES completion:[weakContentView = WeakObjCPtr<WKContentView>(_contentView)] {
+    [self dismissViewControllerAnimated:YES completion:[weakContentView = WeakObjCPtr<WKContentView>(protect(_contentView))] {
         auto strongContentView = weakContentView.get();
         if (strongContentView)
             [strongContentView accessoryTab:YES];
@@ -1237,7 +1239,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)previous:(id)sender
 {
-    [self dismissViewControllerAnimated:YES completion:[weakContentView = WeakObjCPtr<WKContentView>(_contentView)] {
+    [self dismissViewControllerAnimated:YES completion:[weakContentView = WeakObjCPtr<WKContentView>(protect(_contentView))] {
         auto strongContentView = weakContentView.get();
         if (strongContentView)
             [strongContentView accessoryTab:NO];
@@ -1246,7 +1248,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)close:(id)sender
 {
-    [self dismissViewControllerAnimated:YES completion:[weakContentView = WeakObjCPtr<WKContentView>(_contentView)] {
+    [self dismissViewControllerAnimated:YES completion:[weakContentView = WeakObjCPtr<WKContentView>(protect(_contentView))] {
         auto strongContentView = weakContentView.get();
         if (strongContentView)
             [strongContentView accessoryDone];

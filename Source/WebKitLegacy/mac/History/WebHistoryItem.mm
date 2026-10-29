@@ -348,7 +348,7 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
         core(_private)->setScale([scaleValue floatValue], [scaleIsInitialValue boolValue]);
 
     if (id viewportArguments = [dict objectForKey:@"WebViewportArguments"])
-        [self _setViewportArguments:viewportArguments];
+        [self _setViewportArguments:dynamic_objc_cast<NSDictionary>(viewportArguments)];
 
     NSNumber *scrollPointXValue = [dict objectForKey:scrollPointXKey];
     NSNumber *scrollPointYValue = [dict objectForKey:scrollPointYKey];

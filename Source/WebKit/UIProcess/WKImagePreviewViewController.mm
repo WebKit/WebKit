@@ -31,6 +31,8 @@
 #import <UIKitSPI.h>
 #import <WebCore/IntSize.h>
 #import <_WKElementAction.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 @implementation WKImagePreviewViewController {
     RetainPtr<CGImageRef> _image;
@@ -98,11 +100,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray<UIPreviewAction *> *)previewActionItems
 {
     NSMutableArray<UIPreviewAction *> *previewActions = [NSMutableArray array];
-    for (_WKElementAction *imageAction in _imageActions.get()) {
-        RetainPtr previewAction = [UIPreviewAction actionWithTitle:imageAction.title style:UIPreviewActionStyleDefault handler:^(UIPreviewAction *action, UIViewController *previewViewController) {
+    for (RetainPtr imageAction : makeVector<RetainPtr<_WKElementAction>>(_imageActions.get())) {
+        RetainPtr previewAction = [UIPreviewAction actionWithTitle:imageAction.get().title style:UIPreviewActionStyleDefault handler:^(UIPreviewAction *action, UIViewController *previewViewController) {
             [imageAction runActionWithElementInfo:_activatedElementInfo.get()];
         }];
-        previewAction.get().image = [_WKElementAction imageForElementActionType:imageAction.type];
+        previewAction.get().image = [_WKElementAction imageForElementActionType:imageAction.get().type];
 
         [previewActions addObject:previewAction.get()];
     }

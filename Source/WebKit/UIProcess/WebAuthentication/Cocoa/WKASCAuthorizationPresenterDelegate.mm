@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
     }];
 
     if ([loginChoice isKindOfClass:WebKit::getASCPlatformPublicKeyCredentialLoginChoiceClassSingleton()]) {
-        auto *platformLoginChoice = (ASCPlatformPublicKeyCredentialLoginChoice *)loginChoice;
+        RetainPtr platformLoginChoice = (ASCPlatformPublicKeyCredentialLoginChoice *)loginChoice;
 
         if ([platformLoginChoice isRegistrationRequest]) {
             [self dispatchCoordinatorCallback:[context = retainPtr(context)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
             return;
         }
 
-        String loginChoiceName = platformLoginChoice.name;
+        String loginChoiceName = platformLoginChoice.get().name;
         [self dispatchCoordinatorCallback:[loginChoiceName = WTF::move(loginChoiceName), context = retainPtr(context)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
             coordinator.didSelectAssertionResponse(loginChoiceName, context.get());
         }];
@@ -76,10 +76,10 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if ([loginChoice isKindOfClass:WebKit::getASCSecurityKeyPublicKeyCredentialLoginChoiceClassSingleton()]) {
-        auto *securityKeyLoginChoice = (ASCSecurityKeyPublicKeyCredentialLoginChoice *)loginChoice;
+        RetainPtr securityKeyLoginChoice = (ASCSecurityKeyPublicKeyCredentialLoginChoice *)loginChoice;
 
         if ([securityKeyLoginChoice credentialKind] == ASCSecurityKeyPublicKeyCredentialKindAssertion) {
-            String loginChoiceName = securityKeyLoginChoice.name;
+            String loginChoiceName = securityKeyLoginChoice.get().name;
             [self dispatchCoordinatorCallback:[loginChoiceName = WTF::move(loginChoiceName)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
                 coordinator.didSelectAssertionResponse(loginChoiceName, nil);
             }];
@@ -107,10 +107,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)dispatchCoordinatorCallback:(Function<void(WebKit::AuthenticatorPresenterCoordinator&)>&&)callback
 {
     ASSERT(!RunLoop::isMain());
-    RunLoop::mainSingleton().dispatch([coordinator = _coordinator, callback = WTF::move(callback)] {
-        if (!coordinator)
-            return;
-        callback(*coordinator);
+    RunLoop::mainSingleton().dispatch([weakCoordinator = _coordinator, callback = WTF::move(callback)] {
+        if (RefPtr coordinator = weakCoordinator)
+            callback(*coordinator);
     });
 }
 

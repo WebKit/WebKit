@@ -327,9 +327,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)dataTask:(_WKDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response decisionHandler:(void (^)(_WKDataTaskResponsePolicy))decisionHandler
 {
     RefPtr previewController = _previewController.get();
-    if (auto *HTTPResponse = dynamic_objc_cast<NSHTTPURLResponse>(response)) {
-        if ([NSHTTPURLResponse isErrorStatusCode:HTTPResponse.statusCode]) {
-            RELEASE_LOG(SystemPreview, "cancelling subresource load due to error status code: %ld", (long)HTTPResponse.statusCode);
+    if (RetainPtr HTTPResponse = dynamic_objc_cast<NSHTTPURLResponse>(response)) {
+        if ([NSHTTPURLResponse isErrorStatusCode:HTTPResponse.get().statusCode]) {
+            RELEASE_LOG(SystemPreview, "cancelling subresource load due to error status code: %ld", (long)HTTPResponse.get().statusCode);
             decisionHandler(_WKDataTaskResponsePolicyCancel);
             if (previewController)
                 previewController->loadFailed();

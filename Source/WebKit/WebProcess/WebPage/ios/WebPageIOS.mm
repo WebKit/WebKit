@@ -2344,7 +2344,7 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Com
         selectionGeometries = RenderObject::collectSelectionGeometries(*range).geometries;
 
     auto rootViewSelectionRects = selectionGeometries.map([&](const auto& selectionGeometry) -> FloatRect {
-        return frame->view()->contentsToMainFrameView(selectionGeometry.rect());
+        return protect(frame->view())->contentsToMainFrameView(selectionGeometry.rect());
     });
 
     bool multipleFonts = false;
@@ -3302,7 +3302,7 @@ void WebPage::updateTextAutosizingEnablementFromInitialScale(double initialScale
     if (shouldEnable == m_page->settings().textAutosizingEnabled())
         return;
 
-    m_page->settings().setTextAutosizingEnabled(shouldEnable);
+    protect(m_page->settings())->setTextAutosizingEnabled(shouldEnable);
 }
 
 void WebPage::resetIdempotentTextAutosizingIfNeeded(double previousInitialScale)
@@ -4527,7 +4527,7 @@ void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementCo
 
     // FIXME: Do not focus an element if it moved or the caret point is outside its bounds
     // because we only want to do so if the caret can be placed.
-    UserGestureIndicator gestureIndicator { IsProcessingUserGesture::Yes, &target->document() };
+    UserGestureIndicator gestureIndicator { IsProcessingUserGesture::Yes, protect(target->document()).ptr() };
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
     protect(corePage())->focusController().setFocusedElement(target.get(), targetFrame.ptr());
 
@@ -4698,7 +4698,7 @@ void WebPage::computeEnclosingLayerID(EditorState& state, const VisibleSelection
 
     auto scrollOffsetAndNodeIDForLayer = [](RenderLayer* layer) -> std::pair<ScrollOffset, std::optional<ScrollingNodeID>> {
         CheckedRef renderer = layer->renderer();
-        WeakPtr scrollableArea = [&] -> ScrollableArea* {
+        CheckedPtr scrollableArea = [&] -> ScrollableArea* {
             if (renderer->isRenderView())
                 return protect(renderer->document())->isTopDocument() ? nullptr : renderer->frame().view();
 

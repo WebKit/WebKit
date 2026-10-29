@@ -45,6 +45,7 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <wtf/FileSystem.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/MakeString.h>
 
 #if PLATFORM(MAC)
@@ -469,7 +470,7 @@ RefPtr<WebCore::Icon> WebExtension::bestIcon(RefPtr<JSON::Object> icons, WebCore
     });
 
     if (images.count == 1)
-        return WebCore::Icon::create(images.allValues.firstObject);
+        return WebCore::Icon::create(checked_objc_cast<UIImage>(images.allValues.firstObject));
 
     auto *sortedImageScales = [images.allKeys sortedArrayUsingSelector:@selector(compare:)];
 

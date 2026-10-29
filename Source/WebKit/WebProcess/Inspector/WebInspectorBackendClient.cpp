@@ -189,7 +189,7 @@ void WebInspectorBackendClient::highlight()
     }
 #else
     InspectorOverlay::Highlight highlight;
-    page->corePage()->inspectorController().getHighlight(highlight, InspectorOverlay::CoordinateSystem::Document);
+    protect(page->corePage()->inspectorController())->getHighlight(highlight, InspectorOverlay::CoordinateSystem::Document);
     page->showInspectorHighlight(highlight);
 #endif
 }

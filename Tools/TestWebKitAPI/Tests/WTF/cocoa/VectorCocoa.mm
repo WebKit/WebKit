@@ -30,6 +30,7 @@
 
 #import <Foundation/Foundation.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace TestWebKitAPI {
 
@@ -50,6 +51,44 @@ TEST(WTF_Vector, CompactMapStaticFunctionReturnRetainPtr)
         EXPECT_TRUE([mapped[0] isEqualToString:@"one"]);
         EXPECT_TRUE([mapped[1] isEqualToString:@"two"]);
         EXPECT_TRUE([mapped[2] isEqualToString:@"three"]);
+    }
+}
+
+TEST(WTF_Vector, MakeVectorRetainPtrFiltersByType)
+{
+    @autoreleasepool {
+        RetainPtr<NSArray> array = @[ @"one", @1, @"two", [NSNull null], @"three" ];
+
+        auto strings = makeVector<RetainPtr<NSString>>(array.get());
+        EXPECT_EQ(3U, strings.size());
+        EXPECT_TRUE([strings[0] isEqualToString:@"one"]);
+        EXPECT_TRUE([strings[1] isEqualToString:@"two"]);
+        EXPECT_TRUE([strings[2] isEqualToString:@"three"]);
+    }
+}
+
+TEST(WTF_Vector, MakeVectorRetainPtrIdKeepsAllElements)
+{
+    @autoreleasepool {
+        RetainPtr<NSArray> array = @[ @"one", @1, @"two", [NSNull null], @"three" ];
+
+        auto elements = makeVector<RetainPtr<id>>(array.get());
+        EXPECT_EQ(5U, elements.size());
+        for (size_t i = 0; i < elements.size(); ++i)
+            EXPECT_EQ(array.get()[i], elements[i].get());
+    }
+}
+
+TEST(WTF_Vector, MakeVectorRetainPtrAcceptsSubclasses)
+{
+    @autoreleasepool {
+        RetainPtr<NSMutableString> mutableString = [NSMutableString stringWithString:@"mutable"];
+        RetainPtr<NSArray> array = @[ mutableString.get(), @"immutable" ];
+
+        auto strings = makeVector<RetainPtr<NSString>>(array.get());
+        EXPECT_EQ(2U, strings.size());
+        EXPECT_EQ(mutableString.get(), strings[0].get());
+        EXPECT_TRUE([strings[1] isEqualToString:@"immutable"]);
     }
 }
 

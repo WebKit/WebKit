@@ -30,6 +30,7 @@
 
 #import <UIKit/UIGestureRecognizerSubclass.h>
 #import <wtf/HashMap.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 @implementation WKTouchActionGestureRecognizer {
     HashMap<unsigned, OptionSet<WebCore::TouchAction>> _touchActionsByTouchIdentifier;
@@ -104,7 +105,7 @@
     // any touch-action specified for it, and then check for each type of interaction whether the touch-action property has a
     // value that should prevent the interaction.
     auto* activeTouches = [touchActionDelegate touchActionActiveTouches];
-    for (NSNumber *touchIdentifier in activeTouches) {
+    for (RetainPtr touchIdentifier : makeVector<RetainPtr<NSNumber>>([activeTouches keyEnumerator].allObjects)) {
         auto iterator = _touchActionsByTouchIdentifier.find([touchIdentifier unsignedIntegerValue]);
         if (iterator != _touchActionsByTouchIdentifier.end() && [[activeTouches objectForKey:touchIdentifier].gestureRecognizers containsObject:preventedGestureRecognizer]) {
             // Panning is only allowed if "pan-x", "pan-y" or "manipulation" is specified. Additional work is needed to respect individual values, but this takes

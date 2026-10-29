@@ -53,7 +53,7 @@ RefPtr<ProcessStateMonitor> ProcessStateMonitor::create(Function<void(bool)>&& b
 
 ProcessStateMonitor::ProcessStateMonitor(Function<void(bool)>&& becomeSuspendedHandler)
     : m_becomeSuspendedHandler(WTF::move(becomeSuspendedHandler))
-    , m_suspendTimer(RunLoop::mainSingleton(), "ProcessStateMonitor::SuspendTimer"_s, [this] { suspendTimerFired(); })
+    , m_suspendTimer(RunLoop::mainSingleton(), "ProcessStateMonitor::SuspendTimer"_s, this, &ProcessStateMonitor::suspendTimerFired)
 {
     RELEASE_LOG(ProcessSuspension, "%p - ProcessStateMonitor::ProcessStateMonitor", this);
     RELEASE_ASSERT(RunLoop::isMain());

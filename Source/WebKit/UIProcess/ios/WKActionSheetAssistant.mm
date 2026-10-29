@@ -382,12 +382,12 @@ static bool isJavaScriptURL(NSURL *url)
         // <rdar://problem/17049781> Configure the UIAlertController's title appropriately.
     }
 
-    for (_WKElementAction *action in actions) {
+    for (RetainPtr action : makeVector<RetainPtr<_WKElementAction>>(actions)) {
         [_interactionSheet _addActionWithTitle:[action title] style:UIAlertActionStyleDefault handler:^{
             [action _runActionWithElementInfo:_elementInfo.get() forActionSheetAssistant:self];
             [self cleanupSheet];
         } shouldDismissHandler:^{
-            return (BOOL)(!action.dismissalHandler || action.dismissalHandler());
+            return (BOOL)(![action dismissalHandler] || [action dismissalHandler]());
         }];
     }
 

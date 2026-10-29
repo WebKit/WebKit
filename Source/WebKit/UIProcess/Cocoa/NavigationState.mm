@@ -468,10 +468,11 @@ static void interceptMarketplaceKitNavigation(Ref<API::NavigationAction>&& actio
         sourceFrameID = sourceFrame->handle()->frameID();
 
     auto addConsoleError = [sourceFrameID, url = action->request().url(), weakPage = WeakPtr { page }](const String& error) {
-        if (!sourceFrameID || !weakPage)
+        RefPtr page = weakPage;
+        if (!sourceFrameID || !page)
             return;
 
-        weakPage->addConsoleMessage(*sourceFrameID, MessageSource::Network, MessageLevel::Error, makeString("Can't handle MarketplaceKit link "_s, url.string(), " due to error: "_s, error));
+        page->addConsoleMessage(*sourceFrameID, MessageSource::Network, MessageLevel::Error, makeString("Can't handle MarketplaceKit link "_s, url.string(), " due to error: "_s, error));
     };
 
     RefPtr mainFrame = page.mainFrame();

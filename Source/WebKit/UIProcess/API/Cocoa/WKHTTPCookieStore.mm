@@ -41,10 +41,11 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
-static NSHTTPCookie *clearCookiePartitionPropertyIfNeeded(NSHTTPCookie *cookie, bool isCookiePartitioningEnabled)
+static RetainPtr<NSHTTPCookie> clearCookiePartitionPropertyIfNeeded(RetainPtr<NSHTTPCookie>&& cookie, bool isCookiePartitioningEnabled)
 {
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
     if (!cookie)
@@ -53,10 +54,10 @@ static NSHTTPCookie *clearCookiePartitionPropertyIfNeeded(NSHTTPCookie *cookie, 
     if (!isCookiePartitioningEnabled)
         return cookie;
 
-    if (!cookie._storagePartition)
+    if (!cookie.get()._storagePartition)
         return cookie;
 
-    auto properties = adoptNS([[cookie properties] mutableCopy]);
+    RetainPtr properties = checked_objc_cast<NSMutableDictionary>(adoptNS([[cookie properties] mutableCopy]));
     [properties removeObjectForKey:@"StoragePartition"];
     return [NSHTTPCookie cookieWithProperties:properties.get()];
 #else
@@ -71,7 +72,7 @@ static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Coo
     return createNSArray(coreCookies, [isCookiePartitioningEnabled] (auto& cookie) -> NSHTTPCookie * {
 #if PLATFORM(IOS_FAMILY)
         if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExposePartitionFromWKHTTPCookieStoreAPI) && WTF::IOSApplication::isTableau())
-            return clearCookiePartitionPropertyIfNeeded(cookie.createNSHTTPCookie().autorelease(), isCookiePartitioningEnabled);
+            return clearCookiePartitionPropertyIfNeeded(cookie.createNSHTTPCookie(), isCookiePartitioningEnabled).autorelease();
 #else
         UNUSED_PARAM(isCookiePartitioningEnabled);
 #endif
