@@ -368,7 +368,8 @@ void RealtimeMediaSource::videoFrameAvailable(VideoFrame& videoFrame, VideoFrame
     auto deliverFrame = [&] (Ref<VideoFrame>&& frame, VideoFrameTimeMetadata&& frameMetadata,
         HashMap<VideoFrameObserver*, std::unique_ptr<VideoFrameAdaptor>>& videoFrameObservers) {
         for (auto& [key, value] : videoFrameObservers) {
-            if (auto* adaptor = value.get()) {
+            // An observer decodes encoded frames itself, and needs every one of them as it is.
+            if (auto* adaptor = frame->isEncoded() ? nullptr : value.get()) {
                 if (adaptor->frameDecimation > 1 && ++adaptor->frameDecimationCounter % adaptor->frameDecimation)
                     continue;
 

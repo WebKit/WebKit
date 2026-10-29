@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="timeout" content="long">
+        <title>A remote video track sent on through another connection presents frames, whatever its codec</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video1" autoplay playsInline width="320" height="240"></video>
+        <video id="video2" autoplay playsInline width="320" height="240"></video>
+        <script src ="routines.js"></script>
+        <script>
+if (window.internals)
+    window.internals.setWebRTCVP9Support(true, false);
+
+function codecs(mimeType)
+{
+    return RTCRtpSender.getCapabilities("video").codecs.filter(codec => codec.mimeType === mimeType);
+}
+
+function connect(track, stream, codecPreferences)
+{
+    return new Promise((resolve, reject) => {
+        const connections = createConnections((firstConnection) => {
+            const transceiver = firstConnection.addTransceiver(track, { direction: "sendonly", streams: [stream] });
+            if (codecPreferences)
+                transceiver.setCodecPreferences(codecPreferences);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => resolve({ connections, stream: trackEvent.streams[0] });
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+}
+
+async function presentFrames(video, stream, what)
+{
+    video.srcObject = stream;
+    await video.play();
+    const presented = new Promise(resolve => {
+        let count = 0;
+        const next = () => {
+            if (++count === 10)
+                resolve();
+            else
+                video.requestVideoFrameCallback(next);
+        };
+        video.requestVideoFrameCallback(next);
+    });
+    await Promise.race([presented, waitFor(5000).then(() => assert_unreached(`no ${what} frames presented`))]);
+
+    // The camera's picture, not the black frames a sender makes when it has none.
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const context = canvas.getContext("2d");
+    context.drawImage(video, 0, 0);
+    const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+    let brightest = 0;
+    for (let i = 0; i < pixels.length; i += 4)
+        brightest = Math.max(brightest, pixels[i], pixels[i + 1], pixels[i + 2]);
+    assert_greater_than(brightest, 64, `the ${what} picture`);
+}
+
+for (const mimeType of ["video/VP8", "video/VP9", "video/H264"]) {
+    promise_test(async (test) => {
+        const preferred = codecs(mimeType);
+        assert_greater_than(preferred.length, 0, `${mimeType} codecs`);
+
+        const localStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
+        const track = localStream.getVideoTracks()[0];
+        test.add_cleanup(() => track.stop());
+
+        const call = await connect(track, localStream, preferred);
+        test.add_cleanup(() => call.connections.forEach(connection => connection.close()));
+        await presentFrames(video1, call.stream, `received ${mimeType}`);
+
+        const relay = await connect(call.stream.getVideoTracks()[0], call.stream);
+        test.add_cleanup(() => relay.connections.forEach(connection => connection.close()));
+        await presentFrames(video2, relay.stream, `relayed ${mimeType}`);
+    }, `A remote ${mimeType} track sent on through another connection presents frames`);
+}
+        </script>
+    </body>
+</html>

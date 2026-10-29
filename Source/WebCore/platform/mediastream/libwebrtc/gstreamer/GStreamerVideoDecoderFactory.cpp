@@ -28,9 +28,11 @@
 #include "GStreamerVideoFrameLibWebRTC.h"
 #include "IntSize.h"
 #include "LibWebRTCUtils.h"
+#include "LibWebRTCVideoFrameUtilities.h"
 #include "webrtc/modules/video_coding/codecs/vp8/libvpx_vp8_decoder.h"
 #include "webrtc/modules/video_coding/include/video_error_codes.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/glib/GMallocString.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtcdec_debug);
 #define GST_CAT_DEFAULT webkit_webrtcdec_debug
@@ -62,8 +64,14 @@ public:
         DEC_DEBUG("Size changed to %dx%d", newSize.width(), newSize.height());
         m_size = WTF::move(newSize);
         m_caps = adoptGRef(gst_caps_new_simple(mediaType(), "width", G_TYPE_INT, m_size.width(), "height", G_TYPE_INT, m_size.height(), nullptr));
+        if (m_colorimetry)
+            gst_caps_set_simple(m_caps.get(), "colorimetry", G_TYPE_STRING, m_colorimetry.utf8(), nullptr);
         return true;
     }
+
+    // A codec whose bitstream does not carry its colors (VP8) has those of the RTP header extension in its caps, which
+    // the decoder downstream would otherwise guess from the picture size.
+    virtual bool colorimetryFromHeaderExtension() const { return false; }
 
     virtual ASCIILiteral mediaType() = 0;
     virtual webrtc::VideoCodecType codecType() = 0;
@@ -112,6 +120,9 @@ private:
         if (inputImage._encodedWidth && inputImage._encodedHeight)
             updateCapsFromImageSize({ static_cast<int>(inputImage._encodedWidth), static_cast<int>(inputImage._encodedHeight) });
 
+        if (colorimetryFromHeaderExtension())
+            updateCapsColorimetry(inputImage.ColorSpace());
+
         if (!m_caps) [[unlikely]] {
             DEC_ERROR("Encoded image caps not set");
             ASSERT_NOT_REACHED();
@@ -139,11 +150,29 @@ private:
         return WEBRTC_VIDEO_CODEC_OK;
     }
 
+    void updateCapsColorimetry(const webrtc::ColorSpace* webrtcColorSpace)
+    {
+        auto colorSpace = colorSpaceFromLibWebRTCColorSpace(webrtcColorSpace);
+        if (!colorSpace || !m_caps)
+            return;
+
+        auto gstColorimetry = colorimetryFromColorSpace(*colorSpace);
+        auto colorimetry = GMallocString::unsafeAdoptFromUTF8(gst_video_colorimetry_to_string(&gstColorimetry));
+        if (!colorimetry || colorimetry == m_colorimetry)
+            return;
+
+        DEC_DEBUG("Colorimetry changed to %s", colorimetry.utf8());
+        m_colorimetry = WTF::move(colorimetry);
+        m_caps = adoptGRef(gst_caps_make_writable(m_caps.leakRef()));
+        gst_caps_set_simple(m_caps.get(), "colorimetry", G_TYPE_STRING, m_colorimetry.utf8(), nullptr);
+    }
+
     int32_t Release() final { return WEBRTC_VIDEO_CODEC_OK; }
 
     ASCIICString m_id;
     bool m_needsKeyframe { true };
     IntSize m_size;
+    GMallocString m_colorimetry;
     webrtc::DecodedImageCallback* m_imageReadyCb { nullptr };
     GRefPtr<GstClock> m_clock;
 };
@@ -188,16 +217,11 @@ public:
             return std::unique_ptr<webrtc::VideoDecoder>(new webrtc::LibvpxVp8Decoder(environment));
         }
 
-        auto factoryName = UTF8CStringView::unsafeFromUTF8(GST_OBJECT_NAME(GST_OBJECT(factory.get())));
-        if (equal(factoryName.span(), "vp8dec"_s) || equal(factoryName.span(), "vp8alphadecodebin"_s)) {
-            GST_INFO("Our best GStreamer VP8 decoder is vp8dec, better use the one from LibWebRTC");
-            return std::unique_ptr<webrtc::VideoDecoder>(new webrtc::LibvpxVp8Decoder(environment));
-        }
-
         return std::unique_ptr<webrtc::VideoDecoder>(new VP8Decoder());
     }
 
 private:
+    bool colorimetryFromHeaderExtension() const final { return true; }
     ASCIILiteral mediaType() final { return "video/x-vp8"_s; }
     ASCIILiteral name() final { return "vp8"_s; }
     webrtc::SdpVideoFormat sdpVideoFormat() final { return webrtc::SdpVideoFormat::VP8(); }
