@@ -3716,9 +3716,10 @@ webkit.org/b/303133 [ Debug ] fast/mediastream/video-rotation-clone.html [ Pass 
 # testRunner.webHistoryItemCount implementation is not implemented in WTR
 webkit.org/b/100238 fast/history/window-open.html [ Skip ]
 
-# Lockdown Mode does not apply
+# Lockdown Mode and Enhanced Security do not apply
 dom/xsl/lockdown-mode [ Skip ]
 http/tests/lockdown-mode [ Skip ]
+http/tests/enhanced-security [ Skip ]
 js/dom/lockdown-mode [ Skip ]
 
 # Feature disabled, see: https://bugs.webkit.org/show_bug.cgi?id=85425
@@ -3734,7 +3735,7 @@ webkit.org/b/98925 fast/viewport/viewport-legacy-xhtmlmp.html [ Skip ]
 # Expects a particular fixed size ofr layer tiles.
 fast/images/low-memory-decode.html [ Skip ]
 
-# Lockdown Mode does not apply
+# Lockdown Mode and Enhanced Security do not apply
 fast/speechsynthesis/lockdown-mode [ Skip ]
 
 # ManagedMediaSource is not supported

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that SharedArrayBuffer is available to a cross-origin isolated page in Enhanced Security.");
+
+shouldBeTrue("self.crossOriginIsolated");
+shouldBe("typeof SharedArrayBuffer", "'function'");
+shouldBe("new SharedArrayBuffer(8).byteLength", "8");
+shouldBe("new Int32Array(new SharedArrayBuffer(16)).length", "4");
+</script>
+</body>
+</html>

@@ -330,6 +330,9 @@ void TestInvocation::dumpResults()
     });
     testController.runUntil(flushedNetworkProcessMessages, TestController::noTimeout);
 
+    if (m_options.enhancedSecurityEnabled() && !testController.isEnhancedSecurity())
+        m_textOutput.append("FAIL: Enhanced Security was requested for this test but is not enabled in the web process\n"_s);
+
     if (!m_savedResourceLoadCallbacks.isEmpty()) {
         m_textOutput.append(m_savedResourceLoadCallbacks.toString());
         m_savedResourceLoadCallbacks.clear();

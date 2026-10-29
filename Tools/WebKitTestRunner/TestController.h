@@ -438,6 +438,7 @@ public:
     void abortModal();
 
     bool isDoingMediaCapture() const;
+    bool isEnhancedSecurity() const;
 
     String dumpPrivateClickMeasurement();
     void clearPrivateClickMeasurement();
