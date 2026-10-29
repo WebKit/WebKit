@@ -11,10 +11,8 @@
     window.jsTestIsAsync = true;
 
     var speech = window.speechSynthesis;
-    var timeoutID;
 
     function runTest() {
-        clearTimeout(timeoutID);
         var list = speech.getVoices();
 
         foundDefaultVoice = false;
@@ -37,12 +35,8 @@
     }
 
     speech.onvoiceschanged = runTest;
-
-    var list = speech.getVoices();
-    if (list.length > 0)
+    if (speech.getVoices().length > 0)
         runTest();
-    else
-        timeoutID = setTimeout(runTest, 1000);
 
 </script>
 
