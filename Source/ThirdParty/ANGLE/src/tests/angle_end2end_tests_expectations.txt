@@ -2568,7 +2568,6 @@
 42266907 WGPU : FramebufferFormatsTest.RGB565Renderbuffer/* = SKIP
 42266907 WGPU : FramebufferFormatsTest.RGB8AndRGBA8Renderbuffers/* = SKIP
 42266907 WGPU : FramebufferFormatsTest.RGB8Renderbuffer/* = SKIP
-42267100 WGPU : GLSLTest.SwizzledChainedAssignIncrement/* = SKIP
 42267100 WGPU : GLSLTest.NamelessScopedStructs/* = SKIP
 42267100 WGPU : GLSLTest.ScopedStructsOrderBug/* = SKIP
 42267100 WGPU : GLSLTest.ScopedStructsOrderBug2/* = SKIP
