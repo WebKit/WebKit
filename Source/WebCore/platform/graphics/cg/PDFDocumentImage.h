@@ -29,6 +29,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/GraphicsTypes.h>
 #include <WebCore/Image.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/Platform.h>
 #include <wtf/RuntimeApplicationChecks.h>
 
@@ -81,6 +82,7 @@ private:
 
     ImageDrawResult drawPDFDocument(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions);
     ImageDrawResult drawFromCachedSubimage(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions);
+    ImageDrawResult drawWhereRecordingIsDrawn(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions);
     ImageDrawResult drawImage(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions, const ImageDrawingExtras*) override;
 
     // FIXME: Implement this to be less conservative.
@@ -106,6 +108,8 @@ private:
     FloatRect m_cropBox;
     int m_rotationDegrees { 0 }; // Can only be 0, 90, 180, or 270 degrees.
     bool m_hasPage { false };
+    // Identifies the document to the recordings that draw its page where they are drawn.
+    const RenderingResourceIdentifier m_documentIdentifierForRecordings { RenderingResourceIdentifier::generate() };
 
     std::unique_ptr<CachedSubimage> m_cachedSubimage;
     unsigned m_cachedSubimageCreateCountForTesting { 0 };
