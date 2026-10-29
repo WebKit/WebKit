@@ -14061,15 +14061,6 @@ IGNORE_CLANG_WARNINGS_END
                     shuffleData.numParameters = jit.codeBlock()->numParameters();
                     shuffleData.setupCalleeSaveRegisters(state->jitCode->calleeSaveRegisters());
 
-                    if (nativeFunction && !vm->isDebuggerHookInjected()) {
-                        jit.store32(
-                            CCallHelpers::TrustedImm32(callSiteIndex.bits()),
-                            CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
-                        CallFrameShuffler(jit, shuffleData).prepareForTailCall();
-                        emitCallTarget();
-                        jit.ret();
-                        return;
-                    }
 
                     auto* callLinkInfo = state->jitCode->common.m_directCallLinkInfos.add(semanticNodeOrigin, CallLinkInfo::UseDataIC::No, state->graph.m_codeBlock, executable);
                     callLinkInfo->setCallType(CallLinkInfo::DirectTailCall);
