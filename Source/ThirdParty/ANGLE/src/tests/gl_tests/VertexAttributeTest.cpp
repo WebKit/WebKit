@@ -6432,6 +6432,29 @@ void main()
         checkGreen();
     }
 
+    // Draws line loops with an odd number of 16-bit indices from an element array buffer, at
+    // offsets that are and are not multiples of 4, each followed by the quad as triangles.
+    void drawOddLineLoopsThenTriangles()
+    {
+        std::array<GLushort, 10> indices = {0, 1, 2, 3, 4, 5, 0, 1, 2, 3};
+        GLBuffer indexBuffer;
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices.data(), GL_STATIC_DRAW);
+
+        for (size_t lineLoopOffset : {12u, 14u})
+        {
+            SCOPED_TRACE(lineLoopOffset);
+            clear();
+            glDrawElements(GL_LINE_LOOP, 3, GL_UNSIGNED_SHORT,
+                           reinterpret_cast<const void *>(lineLoopOffset));
+            ASSERT_GL_NO_ERROR();
+
+            clear();
+            glDrawElements(GL_TRIANGLES, kVertexCount, GL_UNSIGNED_SHORT, nullptr);
+            checkGreen();
+        }
+    }
+
     GLProgram mProgram;
     GLint mPositionLocation = -1;
     GLint mValueLocation    = -1;
@@ -6536,6 +6559,23 @@ TEST_P(WebGLIndexedDrawStreamingTest, LineLoopThenDrawArraysThenTriangles)
     createProgram();
     setupAttribs(false);
     drawLineLoopThenArraysThenTriangles();
+}
+
+// Draws line loops with an odd number of indices from a buffer, then triangles.
+TEST_P(IndexedDrawStreamingTest, OddLineLoopsThenTriangles)
+{
+    createProgram();
+    setupAttribs(false);
+    drawOddLineLoopsThenTriangles();
+}
+
+// Draws line loops with an odd number of indices from a buffer, then triangles, with client arrays
+// disabled.
+TEST_P(WebGLIndexedDrawStreamingTest, OddLineLoopsThenTriangles)
+{
+    createProgram();
+    setupAttribs(false);
+    drawOddLineLoopsThenTriangles();
 }
 
 // Draws with an attribute whose format the backend may need to convert, with client arrays

@@ -104,7 +104,7 @@ class VertexArrayWgpu : public VertexArrayImpl
                                          const uint8_t *srcIndexData);
 
     angle::Result calculateStagingBufferSize(ContextWgpu *contextWgpu,
-                                             bool srcDestDrawElementsTypeEqual,
+                                             bool copyLineLoopIndicesOnGpu,
                                              bool primitiveRestartEnabled,
                                              IndexDataNeedsStreaming indexDataNeedsStreaming,
                                              gl::DrawElementsType destDrawElementsTypeOrInvalid,
@@ -125,6 +125,7 @@ class VertexArrayWgpu : public VertexArrayImpl
                                         GLsizei adjustedCount,
                                         const void *indices,
                                         bool primitiveRestartEnabled,
+                                        bool copyLineLoopIndicesOnGpu,
                                         uint8_t *stagingData,
                                         size_t destIndexBufferSize,
                                         std::optional<gl::IndexRange> indexRange,

@@ -377,6 +377,73 @@ TEST_P(LineLoopTest, LineLoopUIntIndexBufferNoBlend)
     runTestNoBlend(GL_UNSIGNED_INT, buf, reinterpret_cast<const void *>(sizeof(GLuint)));
 }
 
+// Line loop test with unsigned short indices in an index buffer, with odd and even counts at
+// offsets that are and are not multiples of 4. Draws each line loop and the same lines as a line
+// strip, and checks that the pixels are the same. Also checks that a clear after the line loop is
+// not lost.
+TEST_P(LineLoopTest, LineLoopUShortIndexBufferOffsetsAndCounts)
+{
+    static const GLfloat positions[] = {-0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f};
+
+    glDisable(GL_BLEND);
+    glUseProgram(mProgram);
+    glEnableVertexAttribArray(mPositionLocation);
+    glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, positions);
+    glUniform4f(mColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+
+    struct Case
+    {
+        GLsizei count;
+        size_t offset;
+    };
+    for (const Case &testCase : {Case{3, 2}, Case{3, 4}, Case{4, 0}, Case{4, 4}})
+    {
+        SCOPED_TRACE(testCase.count);
+        SCOPED_TRACE(testCase.offset);
+
+        // The loop 1, 2, 3 or 0, 1, 2, 3 at the offset, after indices of vertices that do not
+        // exist.
+        std::vector<GLushort> indices(testCase.offset / sizeof(GLushort), 9);
+        std::vector<GLushort> stripIndices;
+        for (GLsizei index = 0; index < testCase.count; ++index)
+        {
+            indices.push_back(static_cast<GLushort>(4 - testCase.count + index));
+            stripIndices.push_back(indices.back());
+        }
+        stripIndices.push_back(stripIndices.front());
+        indices.push_back(9);
+        indices.push_back(9);
+
+        std::vector<GLColor> expectedPixels(getWindowWidth() * getWindowHeight());
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawElements(GL_LINE_STRIP, static_cast<GLsizei>(stripIndices.size()), GL_UNSIGNED_SHORT,
+                       stripIndices.data());
+        glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                     expectedPixels.data());
+        ASSERT_GL_NO_ERROR();
+
+        GLBuffer indexBuffer;
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLushort), indices.data(),
+                     GL_STATIC_DRAW);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawElements(GL_LINE_LOOP, testCase.count, GL_UNSIGNED_SHORT,
+                       reinterpret_cast<const void *>(testCase.offset));
+        std::vector<GLColor> renderedPixels(getWindowWidth() * getWindowHeight());
+        glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                     renderedPixels.data());
+        ASSERT_GL_NO_ERROR();
+        EXPECT_EQ(expectedPixels, renderedPixels);
+
+        glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    }
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
 // Test that drawing elements between line loop arrays using the same array buffer does not result
 // in incorrect rendering.
 TEST_P(LineLoopTest, DrawTriangleElementsBetweenArrays)

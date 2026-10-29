@@ -283,10 +283,23 @@ angle::Result VertexArrayWgpu::syncClientArrays(
     // can be used
     size_t stagingBufferSize = 0;
 
+    // A line loop with indices in an element array buffer copies them on the GPU when the copies
+    // are 4-byte aligned, as copyBufferToBuffer() requires.
+    const size_t destIndexUnitSize =
+        indexDataNeedsStreaming != IndexDataNeedsStreaming::None
+            ? static_cast<size_t>(gl::GetDrawElementsTypeSize(destDrawElementsTypeOrInvalid))
+            : 0;
+    const bool copyLineLoopIndicesOnGpu =
+        indexDataNeedsStreaming == IndexDataNeedsStreaming::LineLoopStreaming &&
+        !primitiveRestartEnabled && elementArrayBuffer &&
+        sourceDrawElementsTypeOrInvalid == destDrawElementsTypeOrInvalid &&
+        reinterpret_cast<uintptr_t>(indices) % webgpu::kBufferCopyToBufferAlignment == 0 &&
+        (destIndexUnitSize * count) % webgpu::kBufferCopyToBufferAlignment == 0;
+
     ANGLE_TRY(calculateStagingBufferSize(
-        contextWgpu, sourceDrawElementsTypeOrInvalid == destDrawElementsTypeOrInvalid,
-        primitiveRestartEnabled, indexDataNeedsStreaming, destDrawElementsTypeOrInvalid,
-        adjustedCount, clientAttributesToSync, instanceCount, indexRange, &stagingBufferSize));
+        contextWgpu, copyLineLoopIndicesOnGpu, primitiveRestartEnabled, indexDataNeedsStreaming,
+        destDrawElementsTypeOrInvalid, adjustedCount, clientAttributesToSync, instanceCount,
+        indexRange, &stagingBufferSize));
 
     ASSERT(stagingBufferSize % webgpu::kBufferSizeAlignment == 0);
     webgpu::BufferHelper stagingBuffer;
@@ -308,9 +321,7 @@ angle::Result VertexArrayWgpu::syncClientArrays(
         // Indices are streamed to the start of the buffer. Tell the draw call command to use 0 for
         // firstIndex.
         *adjustedIndicesPtr = 0;
-        size_t destIndexDataSize =
-            static_cast<size_t>(gl::GetDrawElementsTypeSize(destDrawElementsTypeOrInvalid)) *
-            adjustedCount;
+        size_t destIndexDataSize = destIndexUnitSize * adjustedCount;
         size_t destIndexBufferSize =
             rx::roundUpPow2(destIndexDataSize, webgpu::kBufferCopyToBufferAlignment);
         ANGLE_TRY(ensureBufferCreated(context, mStreamingIndexBuffer, destIndexBufferSize, 0,
@@ -321,9 +332,9 @@ angle::Result VertexArrayWgpu::syncClientArrays(
             case IndexDataNeedsStreaming::LineLoopStreaming:
                 ANGLE_TRY(streamIndicesLineLoop(
                     contextWgpu, sourceDrawElementsTypeOrInvalid, destDrawElementsTypeOrInvalid,
-                    count, adjustedCount, indices, primitiveRestartEnabled, stagingData,
-                    destIndexBufferSize, indexRange, srcIndexData, &stagingBuffer, &stagingUploads,
-                    &currentStagingDataPosition));
+                    count, adjustedCount, indices, primitiveRestartEnabled,
+                    copyLineLoopIndicesOnGpu, stagingData, destIndexBufferSize, indexRange,
+                    srcIndexData, &stagingBuffer, &stagingUploads, &currentStagingDataPosition));
                 break;
             case IndexDataNeedsStreaming::TriangleFanStreaming:
                 UNIMPLEMENTED();
@@ -601,7 +612,7 @@ uint32_t VertexArrayWgpu::calculateAdjustedIndexCount(
 
 angle::Result VertexArrayWgpu::calculateStagingBufferSize(
     ContextWgpu *contextWgpu,
-    bool srcDestDrawElementsTypeEqual,
+    bool copyLineLoopIndicesOnGpu,
     bool primitiveRestartEnabled,
     IndexDataNeedsStreaming indexDataNeedsStreaming,
     gl::DrawElementsType destDrawElementsTypeOrInvalid,
@@ -616,9 +627,9 @@ angle::Result VertexArrayWgpu::calculateStagingBufferSize(
         size_t destIndexUnitSize =
             static_cast<size_t>(gl::GetDrawElementsTypeSize(destDrawElementsTypeOrInvalid));
         size_t destIndexDataSize = destIndexUnitSize * adjustedCountForStreamedIndices;
-        // Allocating staging buffer space for indices is only needed when there is no source index
-        // buffer or index data conversion is needed
-        if (primitiveRestartEnabled || !getElementArrayBuffer() || !srcDestDrawElementsTypeEqual)
+        // Allocating staging buffer space for indices is only needed when the indices are not
+        // copied from the element array buffer on the GPU.
+        if (!copyLineLoopIndicesOnGpu)
         {
             *stagingBufferSizeOut +=
                 rx::roundUpPow2(destIndexDataSize, webgpu::kBufferCopyToBufferAlignment);
@@ -691,6 +702,7 @@ angle::Result VertexArrayWgpu::streamIndicesLineLoop(
     GLsizei adjustedCount,
     const void *indices,
     bool primitiveRestartEnabled,
+    bool copyLineLoopIndicesOnGpu,
     uint8_t *stagingData,
     size_t destIndexBufferSize,
     std::optional<gl::IndexRange> indexRange,
@@ -713,7 +725,7 @@ angle::Result VertexArrayWgpu::streamIndicesLineLoop(
                                       &mStreamingIndexBuffer, 0, destIndexBufferSize});
         *currentStagingDataPositionOut += destIndexBufferSize;
     }
-    else if (sourceDrawElementsTypeOrInvalid == destDrawElementsTypeOrInvalid && elementArrayBuffer)
+    else if (copyLineLoopIndicesOnGpu)
     {
         // Use the element array buffer as the source for the new streaming index buffer. This
         // condition is only hit when an indexed draw call has an element array buffer and is
@@ -730,13 +742,16 @@ angle::Result VertexArrayWgpu::streamIndicesLineLoop(
             ANGLE_TRY(sourceBuffer->unmap());
         }
 
-        size_t copySize =
-            rx::roundUpPow2(destIndexUnitSize * count, webgpu::kBufferCopyToBufferAlignment);
+        // The caller checked that the copies are 4-byte aligned.
+        size_t copySize = destIndexUnitSize * count;
+        ASSERT(sourceOffset % webgpu::kBufferCopyToBufferAlignment == 0);
+        ASSERT(copySize % webgpu::kBufferCopyToBufferAlignment == 0);
         stagingUploadsOut->push_back(
             {sourceOffset, sourceBuffer, &mStreamingIndexBuffer, 0, copySize});
 
         // Emulate line loops with an additional copy of the first index at the end of the
-        // buffer
+        // buffer. The copy is 4 bytes, which for 16-bit indices also copies the second index
+        // after the end of the line loop.
         size_t lastOffset = copySize;
         stagingUploadsOut->push_back(
             {sourceOffset, sourceBuffer, &mStreamingIndexBuffer, lastOffset,
