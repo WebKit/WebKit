@@ -662,6 +662,7 @@ void Internals::resetToConsistentState(Page& page)
     page.setPagination(Pagination());
 
     CachedMatchFinder::setMaximumRunCountForTesting(std::nullopt);
+    ScrollingMomentumCalculator::setPlatformMomentumScrollingPredictionEnabled(true);
 
     if (auto enabled = std::exchange(trackingPreventionEnabledBeforeTest(), std::nullopt))
         DeprecatedGlobalSettings::setTrackingPreventionEnabled(*enabled);
