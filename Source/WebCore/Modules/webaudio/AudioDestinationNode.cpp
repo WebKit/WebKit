@@ -39,7 +39,6 @@
 #include "AudioWorkletGlobalScope.h"
 #include "AudioWorkletMessagingProxy.h"
 #include "AudioWorkletThread.h"
-#include "DenormalDisabler.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -60,11 +59,6 @@ AudioDestinationNode::~AudioDestinationNode()
 
 void AudioDestinationNode::renderQuantum(AudioBus& destinationBus, size_t numberOfFrames, const AudioIOPosition& outputPosition)
 {
-    // We don't want denormals slowing down any of the audio processing
-    // since they can very seriously hurt performance.
-    // This will take care of all AudioNodes because they all process within this scope.
-    DenormalDisabler denormalDisabler;
-    
     context().setAudioThread(currentThreadID());
 
     // For performance reasons, we forbid heap allocations while doing rendering on the audio thread.

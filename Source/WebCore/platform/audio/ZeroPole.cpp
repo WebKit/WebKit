@@ -32,7 +32,8 @@
 
 #include "ZeroPole.h"
 
-#include "DenormalDisabler.h"
+#include "AudioUtilities.h"
+
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -68,8 +69,8 @@ void ZeroPole::process(std::span<const float> source, std::span<float> destinati
     
     // Locals to member variables. Flush denormals here so we don't
     // slow down the inner loop above.
-    m_lastX = DenormalDisabler::flushDenormalFloatToZero(lastX);
-    m_lastY = DenormalDisabler::flushDenormalFloatToZero(lastY);
+    m_lastX = AudioUtilities::flushDenormalFloatToZero(lastX);
+    m_lastY = AudioUtilities::flushDenormalFloatToZero(lastY);
 }
 
 } // namespace WebCore
