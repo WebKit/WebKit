@@ -1,0 +1,55 @@
+<!doctype html>
+<title>SVGPathElement.setPathData() invalidates geometry and use instances</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/paths/#__svg__SVGPathData__setPathData">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<svg id="canvas" width="200" height="200"></svg>
+<script>
+// setPathData() is specified as equivalent to setAttribute("d", ...), so it has to
+// take the same invalidation path rather than only updating an internal value.
+//
+// Every path here is deliberately diagonal. A path whose bounding box has zero
+// width or zero height makes a <use> referencing it report 0x0 in some engines,
+// which would break the precondition of the use test for a reason that has
+// nothing to do with setPathData.
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+function append(tag, attributes) {
+  const element = document.createElementNS(SVG_NS, tag);
+  for (const name in attributes)
+    element.setAttribute(name, attributes[name]);
+  document.getElementById("canvas").appendChild(element);
+  return element;
+}
+
+const lineTo = (x, y) => [{ type: "M", values: [0, 0] }, { type: "L", values: [x, y] }];
+
+test(() => {
+  const path = append("path", { d: "M 0 0 L 10 10" });
+  assert_equals(path.getBBox().width, 10, "before");
+  path.setPathData(lineTo(40, 10));
+  assert_equals(path.getBBox().width, 40, "after");
+}, "setPathData() updates the element's own geometry");
+
+test(() => {
+  const path = append("path", { d: "M 0 0 L 10 10" });
+  path.setPathData([{ type: "M", values: [0, 0] }, { type: "L", values: [0, 25] }]);
+  assert_equals(path.getTotalLength(), 25);
+}, "setPathData() updates getTotalLength()");
+
+test(() => {
+  const source = append("path", { id: "useSource", d: "M 0 0 L 10 10" });
+  const instance = append("use", { href: "#useSource" });
+  assert_equals(instance.getBBox().width, 10, "before");
+  source.setPathData(lineTo(60, 10));
+  assert_equals(instance.getBBox().width, 60, "the use instance follows the source");
+}, "setPathData() on a referenced path updates its use instances");
+
+test(() => {
+  const path = append("path", { d: "M 0 0 L 10 10" });
+  path.setPathData([]);
+  assert_equals(path.getAttribute("d"), null, "the attribute is removed");
+  assert_equals(path.getTotalLength(), 0, "and the geometry is empty");
+}, "setPathData([]) clears the geometry");
+</script>

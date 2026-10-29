@@ -1,0 +1,6 @@
+
+PASS setPathData() updates the element's own geometry
+PASS setPathData() updates getTotalLength()
+PASS setPathData() on a referenced path updates its use instances
+PASS setPathData([]) clears the geometry
+

@@ -1,0 +1,6 @@
+
+PASS path.getPathData() on #hiddenPath
+PASS path.getPathData() on #pathInHiddenGroup
+PASS path.getPathData() on #invisiblePath
+PASS path.setPathData() on a display:none path
+

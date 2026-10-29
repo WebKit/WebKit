@@ -1,0 +1,43 @@
+<!doctype html>
+<title>SVGPathElement.getPathSegmentAtLength(): distance zero and the leading moveto</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/paths/#__svg__SVGPathElement__getPathSegmentAtLength">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="support/getPathData-helpers.js"></script>
+
+<svg></svg>
+<script>
+// TENTATIVE. The spec says a distance falling exactly on a boundary returns the
+// later segment, but it never says whether a zero-length leading moveto counts as
+// a segment you can be "at". Distance 0 is the boundary between that moveto and
+// the first drawto, so the rule as written selects the drawto. Implementations
+// disagree: Gecko returns the moveto, because its loop takes the first segment
+// whose accumulated length is >= the distance, and 0 >= 0.
+//
+// Filed against https://w3c.github.io/svgwg/specs/paths/
+const D = "M 0 0 L 0 5 L 5 5 L 5 0";
+
+test(() => {
+  const path = createPath(D);
+  const segment = path.getPathSegmentAtLength(0);
+  assert_not_equals(segment, null);
+  // Reading the boundary rule literally: the later of the two segments meeting
+  // at distance 0, which is the first lineto rather than the moveto.
+  assert_path_data_equals([segment], [{ type: "L", values: [0, 5] }]);
+}, "getPathSegmentAtLength(0) returns the segment after the leading moveto");
+
+test(() => {
+  const path = createPath(D);
+  // Clamped to 0, so this must agree with the case above whatever that answer is.
+  assert_path_data_equals([path.getPathSegmentAtLength(-1)],
+                          [path.getPathSegmentAtLength(0)]);
+}, "getPathSegmentAtLength() with a negative distance clamps to zero");
+
+test(() => {
+  // A path that is only a moveto has zero total length, so every distance clamps
+  // to 0 and there is no later segment to fall through to.
+  const path = createPath("M 10 20");
+  assert_path_data_equals([path.getPathSegmentAtLength(0)],
+                          [{ type: "M", values: [10, 20] }]);
+}, "getPathSegmentAtLength() on a moveto-only path returns the moveto");
+</script>
