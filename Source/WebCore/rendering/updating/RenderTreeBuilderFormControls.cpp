@@ -95,7 +95,7 @@ void RenderTreeBuilder::FormControls::updateAfterDescendants(RenderElement& rend
         RefPtr container = selectElement->optionContainer();
         CheckedPtr containerRenderer = container ? container->renderer() : nullptr;
         if (containerRenderer)
-            updatePseudoElement(PseudoElementType::Checkmark, renderer, containerRenderer->style().usedAppearance(), renderer.firstChild());
+            updatePseudoElement(PseudoElementType::Checkmark, renderer, containerRenderer->style().usedAppearance(), PseudoElementPosition::FirstChild);
 
         return;
     }
@@ -106,7 +106,7 @@ void RenderTreeBuilder::FormControls::updateAfterDescendants(RenderElement& rend
     }
 }
 
-void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type, RenderElement& renderer, StyleAppearance usedAppearance, RenderObject* beforeChild)
+void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type, RenderElement& renderer, StyleAppearance usedAppearance, PseudoElementPosition position)
 {
     WeakPtr existingPseudoElement = renderer.pseudoElementRenderer(type);
 
@@ -135,8 +135,6 @@ void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type
     }
 
     if (existingPseudoElement) {
-        if (beforeChild == existingPseudoElement)
-            beforeChild = existingPseudoElement->nextSibling();
         m_builder.destroy(*existingPseudoElement);
     }
 
@@ -157,6 +155,7 @@ void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type
 
     renderer.setPseudoElementRenderer(type, *pseudoElement.get());
 
+    auto* beforeChild = position == PseudoElementPosition::FirstChild ? renderer.firstChild() : nullptr;
     m_builder.attach(renderer, WTF::move(pseudoElement), beforeChild);
 }
 
