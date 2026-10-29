@@ -4333,7 +4333,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             // we exit from DFG / FTL. Plus, we keep ordering of these two ToObject because clobberizing rule says clobberTop. So,
             // we can say exitOK for each ToObject.
             unsigned errorStringIndex = UINT32_MAX;
-            Node* target = addToGraph(ToObject, OpInfo(errorStringIndex), OpInfo(SpecNone), get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
+            Node* target = addToGraph(ToObject, OpInfo(errorStringIndex), OpInfo(prediction), get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
             emitExitOK();
             addToGraph(ObjectAssign, Edge(target, KnownCellUse), Edge(get(virtualRegisterForArgumentIncludingThis(2, registerOffset))));
             setResult(target);
