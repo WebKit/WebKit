@@ -31,6 +31,8 @@ namespace WebKit {
 
 // MARK: Alarms
 static constexpr auto webExtensionMinimumAlarmInterval = 30_s;
+static constexpr size_t webExtensionMaximumNumberOfAlarms = 500;
+static constexpr size_t webExtensionMaximumAlarmNameLength = 1024;
 
 // MARK: Message Passing
 /// This matches the maximum message length enforced by Chromium in its `MessageFromJSONString()` function.

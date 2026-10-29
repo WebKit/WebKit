@@ -49,7 +49,7 @@ messages -> WebExtensionContext {
 #endif
 
     // Alarms APIs
-    [Validator=isAlarmsMessageAllowed] AlarmsCreate(String name, Seconds initialInterval, Seconds repeatInterval) -> ()
+    [Validator=isAlarmsMessageAllowed] AlarmsCreate(String name, Seconds initialInterval, Seconds repeatInterval) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isAlarmsMessageAllowed] AlarmsGet(String name) -> (struct std::optional<WebKit::WebExtensionAlarmParameters> alarmInfo)
     [Validator=isAlarmsMessageAllowed] AlarmsClear(String name) -> (bool success)
     [Validator=isAlarmsMessageAllowed] AlarmsGetAll() -> (Vector<WebKit::WebExtensionAlarmParameters> alarms)

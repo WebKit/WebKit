@@ -29,8 +29,11 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "WebExtensionAlarm.h"
+#include "WebExtensionConstants.h"
 #include "WebExtensionContextProxyMessages.h"
 #include "WebExtensionPermission.h"
+#include "WebExtensionUtilities.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 
@@ -39,8 +42,21 @@ bool WebExtensionContext::isAlarmsMessageAllowed(IPC::Decoder& message)
     return isLoadedAndPrivilegedMessage(message) && hasPermission(WebExtensionPermission::alarms());
 }
 
-void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval, CompletionHandler<void()>&& completionHandler)
+void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    static constexpr auto apiName = "alarms.create()"_s;
+
+    if (name.utf8().length() > webExtensionMaximumAlarmNameLength) {
+        completionHandler(toWebExtensionError(apiName, nullString(), makeString("the alarm name exceeds the limit of "_s, webExtensionMaximumAlarmNameLength, " bytes"_s)));
+        return;
+    }
+
+    // Replacing an existing alarm does not add to the count.
+    if (!m_alarmMap.contains(name) && m_alarmMap.size() >= webExtensionMaximumNumberOfAlarms) {
+        completionHandler(toWebExtensionError(apiName, nullString(), makeString("an extension cannot have more than "_s, webExtensionMaximumNumberOfAlarms, " active alarms"_s)));
+        return;
+    }
+
     m_alarmMap.set(name, WebExtensionAlarm::create(name, initialInterval, repeatInterval, [this, protectedThis = Ref { *this }](const WebExtensionAlarm& alarm) {
         fireAlarmsEventIfNeeded(alarm);
 
@@ -48,7 +64,7 @@ void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterv
             m_alarmMap.remove(alarm.name());
     }));
 
-    completionHandler();
+    completionHandler({ });
 }
 
 void WebExtensionContext::alarmsGet(const String& name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>&&)>&& completionHandler)
