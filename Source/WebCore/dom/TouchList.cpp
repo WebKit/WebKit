@@ -28,8 +28,11 @@
 #if ENABLE(TOUCH_EVENTS)
 
 #include "TouchList.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TouchList);
 
 Touch* TouchList::item(unsigned index)
 {

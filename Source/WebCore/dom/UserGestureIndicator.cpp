@@ -53,6 +53,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserGestureToken);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(UserGestureIndicator);
 
 static UserGestureToken* LEGACY_NODELETE currentToken(JSC::VM& vm)

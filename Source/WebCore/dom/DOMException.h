@@ -29,6 +29,7 @@
 #pragma once
 
 #include <WebCore/ExceptionCode.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -36,6 +37,7 @@ namespace WebCore {
 class Exception;
 
 class DOMException : public RefCounted<DOMException> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DOMException, WEBCORE_EXPORT);
 public:
     static Ref<DOMException> create(ExceptionCode, const String& message = emptyString());
     static Ref<DOMException> create(const Exception&);

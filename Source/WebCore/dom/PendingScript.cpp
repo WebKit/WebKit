@@ -30,8 +30,11 @@
 #include "Element.h"
 #include "PendingScriptClient.h"
 #include "ScriptElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PendingScript);
 
 Ref<PendingScript> PendingScript::create(ScriptElement& element, LoadableScript& loadableScript)
 {

@@ -29,8 +29,11 @@
 #include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "ScriptElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineClassicScript);
 
 Ref<InlineClassicScript> InlineClassicScript::create(ScriptElement& scriptElement)
 {

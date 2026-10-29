@@ -28,9 +28,12 @@
 #include "ExceptionOr.h"
 #include <pal/text/TextCodec.h>
 #include <pal/text/TextEncodingRegistry.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextDecoder);
 
 TextDecoder::TextDecoder(StringView label, Options options)
     : m_textEncoding(label)

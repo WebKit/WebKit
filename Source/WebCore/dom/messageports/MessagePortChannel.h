@@ -32,6 +32,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
@@ -43,6 +44,7 @@ class MessagePortChannelRegistry;
 enum class MessagePortStatus : uint8_t { Open, Unclaimed, Closed };
 
 class MessagePortChannel : public RefCountedAndCanMakeWeakPtr<MessagePortChannel> {
+    WTF_MAKE_TZONE_ALLOCATED(MessagePortChannel);
 public:
     static Ref<MessagePortChannel> create(MessagePortChannelRegistry&, const MessagePortIdentifier& port1, const MessagePortIdentifier& port2);
 

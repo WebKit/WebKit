@@ -29,6 +29,7 @@
 #include <WebCore/SpaceSplitString.h>
 #include <wtf/IndexedRange.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 
@@ -165,6 +166,7 @@ public:
 };
 
 class UniqueElementData : public ElementData {
+    WTF_MAKE_TZONE_ALLOCATED(UniqueElementData);
 public:
     static Ref<UniqueElementData> LEGACY_NODELETE create();
     Ref<ShareableElementData> makeShareableCopy() const;

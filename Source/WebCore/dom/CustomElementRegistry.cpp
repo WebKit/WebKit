@@ -40,9 +40,12 @@
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomElementRegistry);
 
 Ref<CustomElementRegistry> CustomElementRegistry::create(ScriptExecutionContext& scriptExecutionContext, LocalDOMWindow& window)
 {

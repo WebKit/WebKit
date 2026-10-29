@@ -36,8 +36,11 @@
 #include "StaticNodeList.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ChildListMutationAccumulator);
 
 using AccumulatorMap = HashMap<WeakRef<ContainerNode, WeakPtrImplWithEventTargetData>, SingleThreadWeakRef<ChildListMutationAccumulator>>;
 static AccumulatorMap& LEGACY_NODELETE accumulatorMap()

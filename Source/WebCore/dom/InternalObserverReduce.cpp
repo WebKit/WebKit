@@ -42,10 +42,13 @@
 #include "Subscriber.h"
 #include "SubscriberCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class InternalObserverReduce final : public InternalObserver {
+    WTF_MAKE_TZONE_ALLOCATED(InternalObserverReduce);
 public:
     static Ref<InternalObserverReduce> create(ScriptExecutionContext& context, Ref<AbortSignal>&& signal, Ref<ReducerCallback>&& callback, JSC::JSValue initialValue, Ref<DeferredPromise>&& promise)
     {
@@ -130,6 +133,8 @@ private:
     JSValueInWrappedObject m_accumulator;
     const Ref<DeferredPromise> m_promise;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalObserverReduce);
 
 void createInternalObserverOperatorReduce(ScriptExecutionContext& context, Observable& observable, Ref<ReducerCallback>&& callback, JSC::JSValue initialValue, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {

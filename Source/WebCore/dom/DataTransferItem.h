@@ -35,6 +35,7 @@
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 
@@ -47,6 +48,7 @@ class ScriptExecutionContext;
 class StringCallback;
 
 class DataTransferItem : public RefCounted<DataTransferItem> {
+    WTF_MAKE_TZONE_ALLOCATED(DataTransferItem);
 public:
     enum class Kind : uint8_t { String, File };
 

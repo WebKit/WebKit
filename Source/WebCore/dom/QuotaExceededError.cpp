@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "QuotaExceededError.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(QuotaExceededError);
 
 Ref<QuotaExceededError> QuotaExceededError::create(const String& message, QuotaExceededErrorOptions&& options)
 {

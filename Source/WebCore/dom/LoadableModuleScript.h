@@ -27,6 +27,7 @@
 
 #include "LoadableScript.h"
 #include "LoadableScriptError.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ class ScriptSourceCode;
 class ModuleFetchParameters;
 
 class LoadableModuleScript final : public LoadableScript {
+    WTF_MAKE_TZONE_ALLOCATED(LoadableModuleScript);
 public:
     virtual ~LoadableModuleScript();
 

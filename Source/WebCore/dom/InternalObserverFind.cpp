@@ -41,10 +41,13 @@
 #include "Subscriber.h"
 #include "SubscriberCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class InternalObserverFind final : public InternalObserver {
+    WTF_MAKE_TZONE_ALLOCATED(InternalObserverFind);
 public:
     static Ref<InternalObserverFind> create(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, Ref<AbortSignal>&& signal, Ref<DeferredPromise>&& promise)
     {
@@ -120,6 +123,8 @@ private:
     const Ref<AbortSignal> m_signal;
     const Ref<DeferredPromise> m_promise;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalObserverFind);
 
 void createInternalObserverOperatorFind(ScriptExecutionContext& context, Observable& observable, Ref<PredicateCallback>&& callback, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {

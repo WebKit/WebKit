@@ -36,10 +36,13 @@
 #include "SubscriberCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/TopExceptionScope.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class InternalObserverFilter final : public InternalObserver {
+    WTF_MAKE_TZONE_ALLOCATED(InternalObserverFilter);
 public:
     static Ref<InternalObserverFilter> create(ScriptExecutionContext& context, Ref<Subscriber> subscriber, Ref<PredicateCallback> predicate)
     {
@@ -49,6 +52,7 @@ public:
     }
 
     class SubscriberCallbackFilter final : public SubscriberCallback {
+        WTF_MAKE_TZONE_ALLOCATED(SubscriberCallbackFilter);
     public:
         static Ref<SubscriberCallbackFilter> create(ScriptExecutionContext& context, Ref<Observable> source, Ref<PredicateCallback> predicate)
         {
@@ -151,6 +155,10 @@ private:
     const Ref<PredicateCallback> m_predicate;
     uint64_t m_idx { 0 };
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalObserverFilter);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalObserverFilter::SubscriberCallbackFilter);
 
 Ref<SubscriberCallback> createSubscriberCallbackFilter(ScriptExecutionContext& context, Ref<Observable> observable, Ref<PredicateCallback> predicate)
 {

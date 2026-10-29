@@ -38,12 +38,14 @@
 #include <WebCore/LayoutPoint.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class LocalFrame;
 
 class Touch : public RefCounted<Touch> {
+    WTF_MAKE_TZONE_ALLOCATED(Touch);
 public:
     static Ref<Touch> create(LocalFrame* frame, EventTarget* target,
         int identifier, const DoublePoint& screenPos, const DoublePoint& pagePos,

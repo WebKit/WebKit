@@ -27,6 +27,7 @@
 
 #include "WebCoreOpaqueRoot.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -35,6 +36,7 @@ namespace WebCore {
 // FIXME: Some consumers of this class may benefit from lazily fetching items rather
 //        than creating the list statically as is currently the only option.
 class DOMStringList : public RefCounted<DOMStringList> {
+    WTF_MAKE_TZONE_ALLOCATED(DOMStringList);
 public:
     static Ref<DOMStringList> create()
     {

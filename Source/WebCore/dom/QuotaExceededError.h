@@ -28,11 +28,13 @@
 #include <WebCore/DOMException.h>
 #include <WebCore/QuotaExceededErrorOptions.h>
 #include <wtf/Markable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // https://webidl.spec.whatwg.org/#idl-QuotaExceededError
 class QuotaExceededError final : public DOMException {
+    WTF_MAKE_TZONE_ALLOCATED(QuotaExceededError);
 public:
     static Ref<QuotaExceededError> LEGACY_NODELETE create(const String& message = { }, QuotaExceededErrorOptions&& = { });
 

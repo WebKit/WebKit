@@ -32,8 +32,11 @@
 #include "ModuleFetchParameters.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LoadableModuleScript);
 
 Ref<LoadableModuleScript> LoadableModuleScript::create(IsInline isInline, const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, RequestPriority fetchPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
 {

@@ -28,11 +28,13 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class TextEncoderStreamEncoder : public RefCounted<TextEncoderStreamEncoder> {
+    WTF_MAKE_TZONE_ALLOCATED(TextEncoderStreamEncoder);
 public:
     static Ref<TextEncoderStreamEncoder> create() { return adoptRef(*new TextEncoderStreamEncoder); }
 
