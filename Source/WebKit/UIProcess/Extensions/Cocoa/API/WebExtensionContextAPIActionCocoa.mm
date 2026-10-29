@@ -201,7 +201,13 @@ void WebExtensionContext::actionGetPopup(std::optional<WebExtensionWindowIdentif
         return;
     }
 
-    completionHandler(Ref { action.value() }->popupPath());
+    auto popupPath = Ref { action.value() }->popupPath();
+    if (popupPath.isEmpty()) {
+        completionHandler(String { });
+        return;
+    }
+
+    completionHandler(URL { baseURL(), popupPath }.string());
 }
 
 void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& popupPath, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
