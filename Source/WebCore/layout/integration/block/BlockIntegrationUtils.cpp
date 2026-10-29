@@ -103,14 +103,16 @@ std::optional<BlockIntegrationUtils::InlineContentLayoutResult> BlockIntegration
     auto result = inlineContentLayoutResult(lineLayout);
     auto marginsBefore = Layout::AdjoiningMargins { blockContainer.maxPositiveMarginBefore(), blockContainer.maxNegativeMarginBefore() };
     auto marginsAfter = Layout::AdjoiningMargins { };
+    auto marginsAfterAreQuirky = false;
     if (CheckedPtr box = lineLayout.blockLevelBoxAtEnd()) {
         CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*box);
         if (!blockFlow || box->isSelfCollapsingBlock())
             return { };
         result.contentBlockSize = blockFlow->logicalBottom() - blockContainer.borderAndPaddingBefore();
         marginsAfter = { blockFlow->maxPositiveMarginAfter(), blockFlow->maxNegativeMarginAfter() };
+        marginsAfterAreQuirky = blockFlow->hasMarginAfterQuirk();
     }
-    result.marginsOfKeptBlockLevelBoxes = { marginsBefore, marginsAfter };
+    result.marginsOfKeptBlockLevelBoxes = { marginsBefore, marginsAfter, marginsAfterAreQuirky };
     return result;
 }
 

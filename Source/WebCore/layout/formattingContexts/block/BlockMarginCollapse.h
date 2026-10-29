@@ -82,10 +82,13 @@ public:
     // Whether the margin after the last box that did not collapse through is quirky (RenderBlockFlow::MarginInfo::hasMarginAfterQuirk).
     bool endsWithQuirk() const { return m_endsWithQuirk.value_or(false); }
 
-    void resetAdjoiningMargins(LayoutUnit logicalTop, const AdjoiningMargins& = { });
+    void resetAdjoiningMargins(LayoutUnit logicalTop, const AdjoiningMargins& = { }, bool marginsAreQuirky = false);
     // The same at the bottom of the last line box of inline content. WebKit compatibility: like on the render tree path, the block-end margin
     // of its block container keeps its own quirk.
     void resetAdjoiningMarginsAfterLineBoxes(LayoutUnit logicalTop);
+    // A line box in the content of a block container separates the margins before it from the ones after it (CSS 2.2 §8.3.1), and ends the
+    // block-start side of the quirk container whose content it is in.
+    void separateMarginsAtLineBox(LayoutUnit lineBoxLogicalTop);
     // Content kept from its last layout: the margins that collapsed with the block container's block-start edge then still do.
     void addKeptContentMarginsBefore(ContainingBlockState& blockContainerState, const AdjoiningMargins&);
     // The block-start margin of a block container joins the adjoining margins, which collapse with its block-start edge until something

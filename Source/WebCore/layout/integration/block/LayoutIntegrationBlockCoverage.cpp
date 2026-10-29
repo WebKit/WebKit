@@ -494,11 +494,10 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
 // The inline formatting context hands a block-level box in inline content back to the block formatting context laying out the block container
 // the content is in (BlockFormattingContext::layoutBlockLevelBoxInInlineContent), which has to be on its stack: the root or one of its in-flow
 // block containers that does not establish a formatting context of its own.
-// FIXME: Quirks mode, whose margins and percentage heights look past the block container, anonymous boxes, and the inline content of out-of-flow
-// boxes and of nested roots, which get a block layout state of their own.
+// FIXME: Anonymous boxes, and the inline content of out-of-flow boxes and of nested roots, which get a block layout state of their own.
 static std::optional<BlockAvoidanceReason> blockLevelBoxInInlineContentAvoidanceReason(const RenderBlockFlow& box, const RenderBlockFlow& rootContainer)
 {
-    if (box.document().inQuirksMode() || box.isAnonymous())
+    if (box.isAnonymous())
         return BlockAvoidanceReason::ContentHasBlockInInline;
     CheckedPtr blockContainer = box.containingBlock();
     if (blockContainer != &rootContainer && (blockContainer->createsNewFormattingContext() || blockContainer->isOutOfFlowPositioned()))
