@@ -501,5 +501,11 @@ void RecorderImpl::drawPlaceholder(Function<void(GraphicsContext&)>&& function)
     m_items.append(DrawPlaceholder(WTF::move(function)));
 }
 
+void RecorderImpl::drawPlaceholderWithCurrentState(Function<void(GraphicsContext&)>&& function)
+{
+    appendStateChangeItemIfNecessary();
+    m_items.append(DrawPlaceholder(WTF::move(function)));
+}
+
 } // namespace DisplayList
 } // namespace WebCore

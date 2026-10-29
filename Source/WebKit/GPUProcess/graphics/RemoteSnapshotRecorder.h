@@ -46,6 +46,8 @@ public:
     void stopListeningForIPC();
     Ref<RemoteSnapshot> LEGACY_NODELETE snapshot() const;
     Ref<const WebCore::DisplayList::DisplayList> takeDisplayList() { return m_recorder->takeDisplayList(); }
+    // Records a drawing that is done when the snapshot is drawn, with the state the recorder has now.
+    void drawPlaceholder(Function<void(WebCore::GraphicsContext&)>&& function) { m_recorder->drawPlaceholderWithCurrentState(WTF::move(function)); }
 
 private:
     RemoteSnapshotRecorder(Ref<WebCore::DisplayList::RecorderImpl>&&, RemoteSnapshotRecorderIdentifier, RemoteSnapshot&, RemoteDrawingBackend&);

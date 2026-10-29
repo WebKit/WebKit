@@ -61,6 +61,7 @@ struct FontPlatformDataAttributes;
 namespace WebKit {
 
 class PrintConnectionToWebProcess;
+class PrintPDFDocument;
 class RemoteDisplayListRecorder;
 class RemoteSnapshotRecorder;
 class RemoteSnapshotRegistry;
@@ -120,6 +121,9 @@ private:
     void releaseGradient(RemoteGradientIdentifier);
     void cacheFilter(Ref<WebCore::Filter>&&);
     void releaseFilter(WebCore::RenderingResourceIdentifier);
+    void cachePDFDocument(WebCore::RenderingResourceIdentifier, WebCore::SharedMemory::Handle&&);
+    void releasePDFDocument(WebCore::RenderingResourceIdentifier);
+    void drawPDFPage(RemoteSnapshotRecorderIdentifier, WebCore::RenderingResourceIdentifier documentIdentifier, uint32_t pageIndex, const WebCore::FloatRect& source, const WebCore::FloatRect& destination, bool includeLinks);
     void releaseMemory();
 
     bool shouldUseLockdownFontParser() const;
@@ -135,6 +139,8 @@ private:
     RemoteResourceCache m_remoteResourceCache;
     HashMap<RemoteDisplayListRecorderIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteDisplayListRecorder>> m_remoteDisplayListRecorders WTF_GUARDED_BY_CAPABILITY(workQueue());
     HashMap<RemoteSnapshotRecorderIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteSnapshotRecorder>> m_remoteSnapshotRecorders WTF_GUARDED_BY_CAPABILITY(workQueue());
+    // Null for data that is not a PDF document, whose pages draw nothing.
+    HashMap<WebCore::RenderingResourceIdentifier, RefPtr<PrintPDFDocument>> m_pdfDocuments WTF_GUARDED_BY_CAPABILITY(workQueue());
 };
 
 } // namespace WebKit

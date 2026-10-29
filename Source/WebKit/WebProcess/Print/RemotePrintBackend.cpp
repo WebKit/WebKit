@@ -30,6 +30,7 @@
 
 #include "Logging.h"
 #include "PrintConnectionToWebProcess.h"
+#include "PrintPDFDocument.h"
 #include "RemoteDisplayListRecorder.h"
 #include "RemotePrintBackendMessages.h"
 #include "RemoteSnapshot.h"
@@ -118,6 +119,7 @@ void RemotePrintBackend::workQueueUninitialize()
     assertIsCurrent(workQueue());
     m_remoteDisplayListRecorders.clear();
     m_remoteSnapshotRecorders.clear();
+    m_pdfDocuments.clear();
     // Released on the work queue, since it is populated there.
     m_remoteResourceCache.releaseAllResources();
 
@@ -310,6 +312,42 @@ void RemotePrintBackend::releaseFilter(RenderingResourceIdentifier identifier)
     assertIsCurrent(workQueue());
     bool success = m_remoteResourceCache.releaseFilter(identifier);
     MESSAGE_CHECK(success, "Filter released before being cached.");
+}
+
+void RemotePrintBackend::cachePDFDocument(RenderingResourceIdentifier identifier, SharedMemory::Handle&& handle)
+{
+    assertIsCurrent(workQueue());
+    RefPtr data = SharedMemory::map(WTF::move(handle), SharedMemory::Protection::ReadOnly);
+    MESSAGE_CHECK(data, "PDF document data could not be mapped.");
+    // Bytes that do not parse are content, not a fault of the web process, so they just draw nothing.
+    RefPtr document = PrintPDFDocument::create(*data);
+    if (!document)
+        RELEASE_LOG_ERROR(Printing, "RemotePrintBackend::cachePDFDocument: The data is not a PDF document");
+    bool success = m_pdfDocuments.add(identifier, WTF::move(document)).isNewEntry;
+    MESSAGE_CHECK(success, "PDF document already cached.");
+}
+
+void RemotePrintBackend::releasePDFDocument(RenderingResourceIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    bool success = m_pdfDocuments.remove(identifier);
+    MESSAGE_CHECK(success, "PDF document released before being cached.");
+}
+
+void RemotePrintBackend::drawPDFPage(RemoteSnapshotRecorderIdentifier recorderIdentifier, RenderingResourceIdentifier documentIdentifier, uint32_t pageIndex, const FloatRect& source, const FloatRect& destination, bool includeLinks)
+{
+    assertIsCurrent(workQueue());
+    RefPtr recorder = m_remoteSnapshotRecorders.get(recorderIdentifier);
+    MESSAGE_CHECK(recorder, "PDF page drawn into a recorder that was not created.");
+    auto documentIterator = m_pdfDocuments.find(documentIdentifier);
+    MESSAGE_CHECK(documentIterator != m_pdfDocuments.end(), "PDF page drawn from a document that was not cached.");
+    RefPtr document = documentIterator->value;
+    if (!document)
+        return;
+    // Drawn when the snapshot is, by PDFKit, so that the page stays vectors, text and links.
+    recorder->drawPlaceholder([document = document.releaseNonNull(), pageIndex, source, destination, includeLinks](GraphicsContext& context) {
+        document->drawPage(context, pageIndex, source, destination, includeLinks);
+    });
 }
 
 void RemotePrintBackend::releaseMemory()

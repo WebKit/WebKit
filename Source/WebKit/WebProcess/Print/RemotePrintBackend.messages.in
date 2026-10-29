@@ -47,6 +47,9 @@ messages -> RemotePrintBackend Stream {
     ReleaseGradient(WebKit::RemoteGradientIdentifier identifier)
     CacheFilter(Ref<WebCore::Filter> filter) NotStreamEncodable
     ReleaseFilter(WebCore::RenderingResourceIdentifier identifier)
+    CachePDFDocument(WebCore::RenderingResourceIdentifier identifier, WebCore::SharedMemory::Handle data) NotStreamEncodable
+    ReleasePDFDocument(WebCore::RenderingResourceIdentifier identifier)
+    DrawPDFPage(WebKit::RemoteSnapshotRecorderIdentifier recorderIdentifier, WebCore::RenderingResourceIdentifier documentIdentifier, uint32_t pageIndex, WebCore::FloatRect source, WebCore::FloatRect destination, bool includeLinks)
     ReleaseMemory()
 }
 

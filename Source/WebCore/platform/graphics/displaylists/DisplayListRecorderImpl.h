@@ -127,6 +127,9 @@ public:
     // The function may be called from an arbitrary thread.
     // The function should always produce the same GraphicsContext calls.
     WEBCORE_EXPORT void drawPlaceholder(Function<void(GraphicsContext&)>&&);
+    // As drawPlaceholder(), but the function is called with the state that the recorder has now, such
+    // as its alpha and compositing, which otherwise is only recorded with the next drawing.
+    WEBCORE_EXPORT void drawPlaceholderWithCurrentState(Function<void(GraphicsContext&)>&&);
 
 private:
     WEBCORE_EXPORT RecorderImpl(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const ColorSpace&, DrawGlyphsMode);

@@ -873,6 +873,7 @@ WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm @nonARC @cost:7
 
 WebProcess/Print/PrintConnectionToWebProcess.cpp
 WebProcess/Print/PrintProcessConnection.cpp
+WebProcess/Print/PrintPDFDocument.mm
 WebProcess/Print/RemotePrintBackend.cpp
 WebProcess/Print/RemotePrintBackendProxy.cpp
 

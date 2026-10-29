@@ -484,6 +484,10 @@
     # frames copyExternalImageToTexture copies from a video element or a WebCodecs frame.
     [Legacy] MessageParam RemoteQueue.SetSharedVideoFrameMemory storageHandle
 
+    # The bytes of a PDF document that a web process prints, which the print process parses with PDFKit
+    # in its sandbox to draw the pages of as vectors.
+    [NeedsReview] MessageParam RemotePrintBackend.CachePDFDocument data
+
     [NotSentFromWebContent] MessageParam VisitedLinkTableController.SetVisitedLinkTable handle
     [NotSentFromWebContent] MessageParam WebSWClientConnection.SetSWOriginTableSharedMemory handle
     [NotSentFromWebContent] MessageParam RemoteVideoFrameObjectHeapProxyProcessor.SetSharedVideoFrameMemory storageHandle
