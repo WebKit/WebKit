@@ -1,0 +1,24 @@
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async t => {
+    const dir = await navigator.storage.getDirectory();
+    const handle = await dir.getFileHandle("file", {create: true});
+    const stream = await handle.createWritable();
+    const writer = stream.getWriter();
+
+    if (!window.testRunner)
+        return;
+
+    const promise = writer.write(new Uint8Array(64 * 1024 * 1024));
+    testRunner.terminateNetworkProcess();
+
+    return promise_rejects_dom(t, "UnknownError", promise);
+}, "Validate pending write gets rejected in case of network process crash");
+</script>
+</body>
+</html>

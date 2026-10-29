@@ -39,6 +39,13 @@ template<> struct AsyncReplyError<WebKit::FileSystemStorageError> {
     }
 };
 
+template<> struct AsyncReplyError<std::optional<WebKit::FileSystemStorageError>> {
+    static std::optional<WebKit::FileSystemStorageError> create()
+    {
+        return WebKit::FileSystemStorageError::Unknown;
+    }
+};
+
 }
 
 namespace WebCore {
