@@ -155,7 +155,33 @@ void main()
 };
 
 class WebGPUDeviceTestES3 : public WebGPUDeviceTest
-{};
+{
+  protected:
+    // Draws green to the default framebuffer if the texel (0, 0) of the given unsigned integer
+    // texture is the expected value, and red if it isn't.
+    void drawUintTexelMatches(GLuint texture, const GLuint expected[4])
+    {
+        constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+uniform highp usampler2D tex;
+uniform highp uvec4 expected;
+out vec4 color;
+void main()
+{
+    uvec4 texel = texelFetch(tex, ivec2(0), 0);
+    color = texel == expected ? vec4(0.0, 1.0, 0.0, 1.0) : vec4(1.0, 0.0, 0.0, 1.0);
+})";
+        ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+        glUseProgram(program);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glUniform1i(glGetUniformLocation(program, "tex"), 0);
+        glUniform4uiv(glGetUniformLocation(program, "expected"), 1, expected);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glViewport(0, 0, getWindowWidth(), getWindowHeight());
+        drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    }
+};
 
 // Tests that the backend creates its device with the limits of the adapter rather than with the
 // WebGPU default limits.
@@ -306,6 +332,70 @@ void main()
         EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), color);
     }
     ASSERT_GL_NO_ERROR();
+}
+
+// Tests uploading and sampling an RGB32F texture, which the backend implements with an RGBA32Float
+// WebGPU texture.
+TEST_P(WebGPUDeviceTestES3, RGB32FTexture)
+{
+    constexpr GLfloat kFloatData[] = {0.25f, 0.5f, 0.75f};
+    GLTexture floatTexture;
+    glBindTexture(GL_TEXTURE_2D, floatTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, 1, 1, 0, GL_RGB, GL_FLOAT, kFloatData);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr char kSampleFloatFS[] = R"(#version 300 es
+precision highp float;
+uniform highp sampler2D tex;
+out vec4 color;
+void main()
+{
+    color = texture(tex, vec2(0.5));
+})";
+    ANGLE_GL_PROGRAM(sampleFloat, essl3_shaders::vs::Simple(), kSampleFloatFS);
+    drawQuad(sampleFloat, essl3_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(64, 128, 191, 255), 1);
+}
+
+// Tests uploading and sampling an RGB32UI texture, which the backend implements with an RGBA32Uint
+// WebGPU texture. The alpha of the texels is the integer one.
+TEST_P(WebGPUDeviceTestES3, RGB32UITexture)
+{
+    constexpr GLuint kData[] = {1u, 0x12345678u, 0xFFFFFFFFu};
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32UI, 1, 1, 0, GL_RGB_INTEGER, GL_UNSIGNED_INT, kData);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr GLuint kExpected[] = {1u, 0x12345678u, 0xFFFFFFFFu, 1u};
+    drawUintTexelMatches(texture, kExpected);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Tests uploading and sampling an RGB10_A2UI texture, which the backend implements with an
+// RGB10A2Uint WebGPU texture.
+TEST_P(WebGPUDeviceTestES3, RGB10A2UITexture)
+{
+    // Red 1023, green 512, blue 3 and alpha 2.
+    constexpr GLuint kData = 1023u | (512u << 10) | (3u << 20) | (2u << 30);
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB10_A2UI, 1, 1, 0, GL_RGBA_INTEGER,
+                 GL_UNSIGNED_INT_2_10_10_10_REV, &kData);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr GLuint kExpected[] = {1023u, 512u, 3u, 2u};
+    drawUintTexelMatches(texture, kExpected);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
 }  // anonymous namespace
