@@ -36,7 +36,7 @@ from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.port.config import apple_additions
 from webkitpy.port.device import Device
 from webkitpy.xcode.device_type import DeviceType
-from webkitpy.xcode.simulator_daemons import disabled_launchd_jobs, quiet_logging_preferences
+from webkitpy.xcode.simulator_daemons import disabled_launchd_jobs, keyboard_preferences, quiet_logging_preferences
 
 try:
     from plistlib import load as readPlist
@@ -582,6 +582,8 @@ class SimulatedDeviceManager(object):
         deadline = time.time() + timeout
         for device in SimulatedDeviceManager.INITIALIZED_DEVICES:
             cls._wait_until_device_is_usable(device, deadline)
+            if device.platform_device.booted_by_script:
+                device.platform_device.write_keyboard_preferences()
             device.set_up_environment_extras()
 
         return SimulatedDeviceManager.INITIALIZED_DEVICES
@@ -713,6 +715,15 @@ class SimulatedDevice(object):
             _log.debug(u'Wrote the logging configuration for {}'.format(self.udid))
         except OSError as error:
             _log.warning(u'Could not write the logging configuration for {}: {}'.format(self.udid, error))
+
+    def write_keyboard_preferences(self):
+        """Makes WebKitTestRunner's keyboard the current one on a booted device, since a device discards preferences written before its first boot."""
+        for arguments in keyboard_preferences():
+            command = [SimulatedDeviceManager.xcrun, 'simctl', 'spawn', self.udid, 'defaults', 'write'] + arguments
+            if self.executive.run_command(command, return_exit_code=True):
+                _log.warning(u'Could not write the {} keyboard preference for {}, continuing'.format(arguments[1], self.udid))
+            else:
+                _log.debug(u'Wrote the {} keyboard preference for {}'.format(arguments[1], self.udid))
 
     def state(self, force_update=False):
         # Don't allow state to get stale

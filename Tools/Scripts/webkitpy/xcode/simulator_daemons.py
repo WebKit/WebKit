@@ -248,3 +248,15 @@ QUIET_LOG_SUBSYSTEMS = [
 def quiet_logging_preferences():
     """The subsystems above in the form `log config --mode level:off` writes them."""
     return {'{}.plist'.format(subsystem): {'DEFAULT-OPTIONS': {'Level': {'Enable': 'off', 'Persist': 'off'}}} for subsystem in QUIET_LOG_SUBSYSTEMS}
+
+
+# Keep this the input mode that TestController::restoreDefaultKeyboardInputModeIfNeeded() in WebKitTestRunner restores.
+KEYBOARD_INPUT_MODE = 'en_US@sw=QWERTY;hw=US'
+
+
+def keyboard_preferences():
+    """The `defaults write` arguments that make the keyboard above the current one, so WebKitTestRunner need not switch to it."""
+    return [
+        ['-g', 'AppleKeyboards', '-array', KEYBOARD_INPUT_MODE, 'emoji@sw=Emoji'],
+        ['com.apple.keyboard.preferences', 'KeyboardLastUsed', '-string', KEYBOARD_INPUT_MODE],
+    ]

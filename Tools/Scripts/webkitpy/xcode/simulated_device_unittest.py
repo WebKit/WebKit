@@ -22,16 +22,19 @@
 
 import json
 import plistlib
+import re
 import unittest
 from unittest import mock
 
 from webkitcorepy import Version
 
 from webkitpy.common.system.executive_mock import MockExecutive2
+from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.systemhost_mock import MockSystemHost
+from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.xcode.device_type import DeviceType
-from webkitpy.xcode import simulated_device
+from webkitpy.xcode import simulated_device, simulator_daemons
 from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager, SimulatedDevice
 from webkitpy.xcode.simulator_daemons import disabled_launchd_jobs, quiet_logging_preferences
 
@@ -797,6 +800,86 @@ class LoggingConfigurationTest(unittest.TestCase):
 
         host.filesystem.write_binary_file = refuse
         device.write_quiet_logging_preferences()
+
+
+class KeyboardPreferencesTest(unittest.TestCase):
+    """WebKitTestRunner switches to a US keyboard before each test and rebuilds the keyboard to do it, so webkitpy makes
+    that keyboard current on the simulators it boots. The writes must follow the boot, which discards earlier ones."""
+
+    SHUT_DOWN_UDID = '0045E516-F2E1-484E-B95D-73E8AA7663A4'
+    BOOTED_UDID = '34FB476C-6FA0-43C8-8945-1BD7A4EBF0DE'
+
+    @staticmethod
+    def _expected_commands(udid):
+        spawn = ['/usr/bin/xcrun', 'simctl', 'spawn', udid, 'defaults', 'write']
+        return [
+            spawn + ['-g', 'AppleKeyboards', '-array', 'en_US@sw=QWERTY;hw=US', 'emoji@sw=Emoji'],
+            spawn + ['com.apple.keyboard.preferences', 'KeyboardLastUsed', '-string', 'en_US@sw=QWERTY;hw=US'],
+        ]
+
+    @staticmethod
+    def _defaults_calls(host):
+        return [call for call in host.executive.calls if 'defaults' in call]
+
+    def setUp(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+
+    def tearDown(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+
+    def _initialize(self, host, udids=None):
+        def boot(device, host=None):
+            device.platform_device.booted_by_script = True
+            SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
+
+        def wait_until_usable(device, deadline):
+            host.executive.calls.append(['<usable>', device.udid])
+
+        with mock.patch.object(SimulatedDeviceManager, '_boot_device', side_effect=boot), \
+                mock.patch.object(SimulatedDeviceManager, '_wait_until_device_is_usable', side_effect=wait_until_usable):
+            SimulatedDeviceManager.initialize_devices(
+                DeviceRequest(DeviceType.from_string('iPhone', Version(11))),
+                host=host, simulator_ui=False, keep_alive=True, udids=udids)
+
+    def test_keyboard_preferences_are_written_once_a_booted_device_is_usable(self):
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        SimulatedDeviceManager.available_devices(host)
+
+        self._initialize(host, udids=self.SHUT_DOWN_UDID)
+
+        self.assertEqual([self.SHUT_DOWN_UDID], [device.udid for device in SimulatedDeviceManager.INITIALIZED_DEVICES])
+        self.assertEqual(self._expected_commands(self.SHUT_DOWN_UDID), self._defaults_calls(host))
+        usable = host.executive.calls.index(['<usable>', self.SHUT_DOWN_UDID])
+        first_write = host.executive.calls.index(self._expected_commands(self.SHUT_DOWN_UDID)[0])
+        self.assertLess(usable, first_write, 'a simulator discards preferences written before it has booted')
+
+    def test_keyboard_preferences_are_not_written_to_an_already_booted_device(self):
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        SimulatedDeviceManager.available_devices(host)
+
+        self._initialize(host)
+
+        self.assertEqual([self.BOOTED_UDID], [device.udid for device in SimulatedDeviceManager.INITIALIZED_DEVICES])
+        self.assertEqual([], self._defaults_calls(host), 'webkitpy did not boot this simulator, so its keyboard is left alone')
+
+    def test_failure_to_write_keyboard_preferences_is_not_fatal(self):
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        device = SimulatedDeviceManager.available_devices(host)[0].platform_device
+        device.executive = MockExecutive2(exit_code=1)
+
+        with self.assertLogs(simulated_device._log, level='WARNING') as captured:
+            device.write_keyboard_preferences()
+
+        self.assertEqual(self._expected_commands(device.udid), device.executive.calls)
+        self.assertEqual(2, len(captured.records))
+
+    def test_keyboard_input_mode_matches_webkittestrunner(self):
+        filesystem = FileSystem()
+        path = WebKitFinder(filesystem).path_from_webkit_base('Tools', 'WebKitTestRunner', 'ios', 'TestControllerIOS.mm')
+        source = filesystem.read_text_file(path)
+        function = source[source.index('void TestController::restoreDefaultKeyboardInputModeIfNeeded()'):]
+        identifier = re.search(r'keyboardInputModeWithIdentifier:@"([^"]+)"', function).group(1)
+        self.assertEqual(identifier, simulator_daemons.KEYBOARD_INPUT_MODE)
 
 
 class SimulatorUIAppTest(unittest.TestCase):
