@@ -91,11 +91,9 @@ public:
     };
 
     const UnitData* units() const { return m_units; }
-    unsigned fractionalDigits() const { return m_fractionalDigits; }
-    const String& numberingSystem() const LIFETIME_BOUND;
-    const ASCIICString& dataLocaleWithExtensions() const LIFETIME_BOUND { return m_dataLocaleWithExtensions; }
+    const String& timeSeparator() const LIFETIME_BOUND;
 
-    UNumberFormatter* createNumberFormatterIfNecessary(JSGlobalObject*, TemporalUnit, const String& skeleton) const;
+    UNumberFormatter* createNumberFormatterIfNecessary(JSGlobalObject*, TemporalUnit) const;
 
 private:
     IntlDurationFormat(VM&, Structure*);
@@ -104,6 +102,8 @@ private:
     static ASCIILiteral styleString(Style);
     static ASCIILiteral unitStyleString(UnitStyle);
     static ASCIILiteral displayString(Display);
+
+    const String& numberingSystem() const LIFETIME_BOUND;
 
     struct FormatterCache {
         WTF_MAKE_TZONE_ALLOCATED(FormatterCache);
@@ -116,6 +116,7 @@ private:
     String m_locale;
     String m_dataLocale;
     mutable String m_numberingSystem;
+    mutable String m_timeSeparator;
     ASCIICString m_dataLocaleWithExtensions;
     unsigned m_fractionalDigits { 0 };
     Style m_style { Style::Long };
