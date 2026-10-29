@@ -56,12 +56,14 @@ class WebGeolocationManagerProxy : public API::ObjectImpl<API::Object::Type::Geo
 #endif
 {
 public:
+    USING_CAN_MAKE_WEAKPTR(IPC::MessageReceiver);
+
     static ASCIILiteral supplementName();
 
     static Ref<WebGeolocationManagerProxy> create(WebProcessPool*);
     ~WebGeolocationManagerProxy();
 
-    // WebContextSupplement, IPC::MessageReceiver.
+    // WebContextSupplement, IPC::MessageReceiver, CoreLocationGeolocationProvider::Client.
     void ref() const final { API::ObjectImpl<API::Object::Type::GeolocationManager>::ref(); }
     void deref() const final { API::ObjectImpl<API::Object::Type::GeolocationManager>::deref(); }
 

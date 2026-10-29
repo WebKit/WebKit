@@ -55,7 +55,7 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
 
 @implementation WebCLLocationManager {
     RetainPtr<CLLocationManager> _locationManager;
-    WebCore::CoreLocationGeolocationProvider::Client* _client;
+    WeakPtr<WebCore::CoreLocationGeolocationProvider::Client> _client;
     String _websiteIdentifier;
     BOOL _isWaitingForAuthorization;
     WebCore::CoreLocationGeolocationProvider::Mode _mode;
@@ -78,7 +78,7 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
 #endif
     if (!_locationManager)
         _locationManager = adoptNS([allocCLLocationManagerInstance() init]);
-    _client = &client;
+    _client = client;
     _websiteIdentifier = websiteIdentifier;
     [_locationManager setDelegate:self];
     return self;
@@ -92,6 +92,8 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
 
 - (void)stop
 {
+    _client = nullptr;
+    [_locationManager setDelegate:nil];
     [_locationManager stopUpdatingLocation];
 }
 
@@ -102,6 +104,9 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
 
 - (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager
 {
+    // Our owner holds the only reference to us, and clients may destroy it re-entrantly below.
+    RetainPtr protectedSelf = self;
+
     auto status = [_locationManager authorizationStatus];
     if (_isWaitingForAuthorization) {
         switch (status) {
@@ -111,20 +116,24 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
         case kCLAuthorizationStatusDenied:
         case kCLAuthorizationStatusRestricted:
             _isWaitingForAuthorization = NO;
-            _client->geolocationAuthorizationDenied(_websiteIdentifier);
+            if (RefPtr client = _client)
+                client->geolocationAuthorizationDenied(_websiteIdentifier);
             break;
         case kCLAuthorizationStatusAuthorizedAlways:
         case kCLAuthorizationStatusAuthorizedWhenInUse:
             _isWaitingForAuthorization = NO;
-            _client->geolocationAuthorizationGranted(_websiteIdentifier);
-            if (_mode != WebCore::CoreLocationGeolocationProvider::Mode::AuthorizationOnly)
+            if (RefPtr client = _client)
+                client->geolocationAuthorizationGranted(_websiteIdentifier);
+            // A null _client means -stop ran: our owner was destroyed by the call above.
+            if (_client && _mode != WebCore::CoreLocationGeolocationProvider::Mode::AuthorizationOnly)
                 [_locationManager startUpdatingLocation];
             break;
         }
     } else {
         if (status == kCLAuthorizationStatusDenied || status == kCLAuthorizationStatusRestricted) {
             [_locationManager stopUpdatingLocation];
-            _client->resetGeolocation(_websiteIdentifier);
+            if (RefPtr client = _client)
+                client->resetGeolocation(_websiteIdentifier);
         }
     }
 }
@@ -132,15 +141,20 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     UNUSED_PARAM(manager);
+    RetainPtr protectedSelf = self;
+    RefPtr client = _client;
+    if (!client)
+        return;
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL CLLocation *location in locations)
-        _client->positionChanged(_websiteIdentifier, WebCore::GeolocationPositionData { location });
+        client->positionChanged(_websiteIdentifier, WebCore::GeolocationPositionData { location });
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
     ASSERT(error);
     UNUSED_PARAM(manager);
+    RetainPtr protectedSelf = self;
 
     if ([error code] == kCLErrorDenied) {
         // Ignore the error here and let locationManager:didChangeAuthorizationStatus: handle the permission.
@@ -148,7 +162,8 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
     }
 
     RetainPtr<NSString> errorMessage = [error localizedDescription];
-    _client->errorOccurred(_websiteIdentifier, errorMessage.get());
+    if (RefPtr client = _client)
+        client->errorOccurred(_websiteIdentifier, errorMessage.get());
 }
 
 @end
@@ -178,6 +193,9 @@ public:
     {
         return adoptRef(*new AuthorizationChecker);
     }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void check(const RegistrableDomain& registrableDomain, CompletionHandler<void(bool)>&& completionHandler)
     {
