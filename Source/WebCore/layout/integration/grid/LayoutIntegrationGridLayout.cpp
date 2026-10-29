@@ -245,6 +245,11 @@ void GridLayout::updateFormattingContextRootRenderer(const Layout::UsedTrackSize
     }
     currentGrid.setNeedsItemsPlacement(false);
 
+    // gridAreaRangeForOutOfFlow reads the content-distribution offsets, which only legacy layout computes. Drop what a
+    // previous legacy layout left behind (e.g. for justify-content: space-between).
+    renderGrid->offsetBetweenTracks(Style::GridTrackSizingDirection::Columns) = { };
+    renderGrid->offsetBetweenTracks(Style::GridTrackSizingDirection::Rows) = { };
+
     // The grid was emptied before layout, so this sizes it to the used tracks, whether or not there are out-of-flow boxes:
     // gridAreaRangeForOutOfFlow relies on numTracks() to tell the last line from an interior one.
     // This has to precede setAutoRepeatTracks, which asserts on the track count.
