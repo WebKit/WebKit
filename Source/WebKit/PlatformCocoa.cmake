@@ -2363,6 +2363,8 @@ add_custom_command(
     VERBATIM
 )
 
+endif ()
+
 # Headers which import WebKitAdditions fragments have to be run through the
 # replacement script rather than being copied verbatim. The processed copy takes
 # the source header's place in the list, so that the header maps resolve
@@ -2436,6 +2438,8 @@ if (WebKit_WEBKITADDITIONS_HEADERS)
             ${CMAKE_CURRENT_BINARY_DIR}/WebKit-webkitadditions-source-headers.hmap)
     endif ()
 endif ()
+
+if (NOT WEBKIT_SDK_IS_IOS_FAMILY)
 
 # LINKER:-u forces a symbol reference so -dead_strip_dylibs won't prune the weak framework.
 target_link_options(WebKit PRIVATE
