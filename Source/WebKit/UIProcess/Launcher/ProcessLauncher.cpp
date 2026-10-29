@@ -57,6 +57,11 @@ ProcessLauncher::~ProcessLauncher()
 void ProcessLauncher::platformDestroy()
 {
 }
+
+bool ProcessLauncher::waitForLaunch(Seconds)
+{
+    return !m_isLaunching;
+}
 #endif
 
 void ProcessLauncher::didFinishLaunchingProcess(ProcessID processIdentifier, IPC::Connection::Identifier&& identifier)

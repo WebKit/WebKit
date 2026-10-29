@@ -81,6 +81,18 @@ ControlFactoryMac& ControlFactoryMac::singleton()
     return downcast<ControlFactoryMac>(ControlFactory::singleton());
 }
 
+static std::atomic<bool> processDrawsControlsOffMainThread;
+
+void ControlFactory::setDrawsControlsOffMainThread()
+{
+    processDrawsControlsOffMainThread = true;
+}
+
+bool ControlFactoryMac::drawsControlsOffMainThread()
+{
+    return processDrawsControlsOffMainThread;
+}
+
 NSView *ControlFactoryMac::drawingView(const FloatRect& rect, const ControlStyle& style) const
 {
     if (!m_drawingView)

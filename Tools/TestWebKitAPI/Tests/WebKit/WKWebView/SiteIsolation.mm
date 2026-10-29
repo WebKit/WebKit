@@ -29,9 +29,11 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/TestNotificationProvider.h"
 #import "Helpers/Utilities.h"
+#import "Helpers/cocoa/CGImagePixelReader.h"
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/cocoa/FindInPageUtilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/PDFTestHelpers.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestDownloadDelegate.h"
@@ -20062,10 +20064,22 @@ TEST(SiteIsolation, EndPrintingIsRoutedToTheFrameThatStartedPrinting)
 
 #if HAVE(PDFKIT)
 
+static NSUInteger printProcessCompletedSnapshotCount(WKWebView *webView)
+{
+    __block NSUInteger result = 0;
+    __block bool done = false;
+    [webView _printProcessCompletedSnapshotCountForTesting:^(NSUInteger count) {
+        result = count;
+        done = true;
+    }];
+    Util::run(&done);
+    return result;
+}
+
 // UIKit prints on the main thread and blocks it until the document has been drawn. The frames hosted in
 // other processes are asked to record by way of the UI process, including one only found by painting
 // another, so the blocked UI process still has to route those requests.
-TEST(SiteIsolation, DrawPagesToPDFSynchronouslyIncludesCrossSiteFrames)
+static void drawPagesToPDFSynchronouslyIncludesCrossSiteFrames(bool usePrintProcess)
 {
     HTTPServer server({
         { "/mainframe"_s, { "<body style='margin:0'>Mainframe<br><iframe style='border:0;width:400px;height:200px' src='https://b.com/subframe'></iframe></body>"_s } },
@@ -20075,6 +20089,7 @@ TEST(SiteIsolation, DrawPagesToPDFSynchronouslyIncludesCrossSiteFrames)
 
     RetainPtr configuration = server.httpsProxyConfiguration();
     setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", usePrintProcess);
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigation];
@@ -20099,9 +20114,63 @@ TEST(SiteIsolation, DrawPagesToPDFSynchronouslyIncludesCrossSiteFrames)
     EXPECT_TRUE([text containsString:@"Mainframe"]);
     EXPECT_TRUE([text containsString:@"Subframe"]);
     EXPECT_TRUE([text containsString:@"Nested"]);
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), (usePrintProcess ? 1u : 0u));
 }
 
-TEST(SiteIsolation, DrawToPDFIncludesSameSiteFrames)
+TEST(SiteIsolation, DrawPagesToPDFSynchronouslyIncludesCrossSiteFrames)
+{
+    drawPagesToPDFSynchronouslyIncludesCrossSiteFrames(false);
+}
+
+TEST(SiteIsolation, DrawPagesToPDFSynchronouslyIncludesCrossSiteFramesInPrintProcess)
+{
+    drawPagesToPDFSynchronouslyIncludesCrossSiteFrames(true);
+}
+
+// The processes of the cross-site frames are only connected to the print process once they are asked
+// to record, while the UI process is blocked waiting for the document, so that has to go on without
+// the main thread of the UI process.
+TEST(SiteIsolation, DrawPagesToPDFSynchronouslyConnectsCrossSiteFramesWhileDrawing)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'>Mainframe<br><iframe style='border:0;width:400px;height:200px' src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0'>Subframe<br><iframe style='border:0;width:300px;height:100px' src='https://c.com/nested'></iframe></body>"_s } },
+        { "/nested"_s, { "<body style='margin:0'>Nested</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView _setConnectsFramesToPrintProcessAheadOfDrawingForTesting:NO];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_TRUE(Util::waitFor([&] {
+        RetainPtr<WKFrameInfo> nested = [webView mainFrame].childFrames.firstObject.childFrames.firstObject.info;
+        return nested && [[webView objectByEvaluatingJavaScript:@"document.readyState" inFrame:nested.get()] isEqualToString:@"complete"];
+    }));
+
+    RetainPtr<WKFrameInfo> mainFrame = [webView mainFrame].info;
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:[mainFrame _handle] completionHandler:^{
+        computedPages = true;
+    }];
+    Util::run(&computedPages);
+
+    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:[mainFrame _handle] pageCount:1];
+    [webView _setConnectsFramesToPrintProcessAheadOfDrawingForTesting:YES];
+    ASSERT_NOT_NULL(data.get());
+
+    RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
+    EXPECT_EQ([document pageCount], 1);
+    RetainPtr text = [[document pageAtIndex:0] text];
+    EXPECT_TRUE([text containsString:@"Mainframe"]);
+    EXPECT_TRUE([text containsString:@"Subframe"]);
+    EXPECT_TRUE([text containsString:@"Nested"]);
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), 1u);
+}
+
+static void drawToPDFIncludesSameSiteFrames(bool usePrintProcess)
 {
     HTTPServer server({
         { "/mainframe"_s, { "<body style='margin:0'>Mainframe<br><iframe style='border:0;width:400px;height:200px' src='https://a.com/subframe'></iframe></body>"_s } },
@@ -20110,6 +20179,7 @@ TEST(SiteIsolation, DrawToPDFIncludesSameSiteFrames)
 
     RetainPtr configuration = server.httpsProxyConfiguration();
     setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", usePrintProcess);
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
@@ -20129,9 +20199,21 @@ TEST(SiteIsolation, DrawToPDFIncludesSameSiteFrames)
         done = true;
     }];
     Util::run(&done);
+    // Only remote snapshots are drawn in the print process.
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), 0u);
 }
 
-TEST(SiteIsolation, DrawPagesToPDFSynchronouslyDuringDOMPrintIncludesCrossSiteFrames)
+TEST(SiteIsolation, DrawToPDFIncludesSameSiteFrames)
+{
+    drawToPDFIncludesSameSiteFrames(false);
+}
+
+TEST(SiteIsolation, DrawToPDFIncludesSameSiteFramesInPrintProcess)
+{
+    drawToPDFIncludesSameSiteFrames(true);
+}
+
+static void drawPagesToPDFSynchronouslyDuringDOMPrintIncludesCrossSiteFrames(bool usePrintProcess)
 {
     HTTPServer server({
         { "/mainframe"_s, { "<body style='margin:0'>Mainframe<br><iframe style='border:0;width:400px;height:200px' src='https://b.com/subframe'></iframe></body>"_s } },
@@ -20140,6 +20222,7 @@ TEST(SiteIsolation, DrawPagesToPDFSynchronouslyDuringDOMPrintIncludesCrossSiteFr
 
     RetainPtr configuration = server.httpsProxyConfiguration();
     setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", usePrintProcess);
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
     RetainPtr uiDelegate = adoptNS([DeferredPrintUIDelegate new]);
     [webView setUIDelegate:uiDelegate.get()];
@@ -20164,6 +20247,17 @@ TEST(SiteIsolation, DrawPagesToPDFSynchronouslyDuringDOMPrintIncludesCrossSiteFr
     RetainPtr text = [[document pageAtIndex:0] text];
     EXPECT_TRUE([text containsString:@"Mainframe"]);
     EXPECT_TRUE([text containsString:@"Subframe"]);
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), (usePrintProcess ? 1u : 0u));
+}
+
+TEST(SiteIsolation, DrawPagesToPDFSynchronouslyDuringDOMPrintIncludesCrossSiteFrames)
+{
+    drawPagesToPDFSynchronouslyDuringDOMPrintIncludesCrossSiteFrames(false);
+}
+
+TEST(SiteIsolation, DrawPagesToPDFSynchronouslyDuringDOMPrintIncludesCrossSiteFramesInPrintProcess)
+{
+    drawPagesToPDFSynchronouslyDuringDOMPrintIncludesCrossSiteFrames(true);
 }
 
 // The sRGB color of the pixel at a point, measured from the top left of a page. Unlike TestPDFPage's
@@ -20202,7 +20296,7 @@ static bool pdfPageHasColorAtPoint(NSData *data, size_t pageNumber, CGPoint poin
 
 // An iframe taller than a page straddles the page break, so printing paints it once on each page. Its
 // process records it once, and each page shows the part of it that falls on that page.
-TEST(SiteIsolation, DrawPagesToPDFIncludesCrossSiteFrameOnEveryPageItSpans)
+static void drawPagesToPDFIncludesCrossSiteFrameOnEveryPageItSpans(bool usePrintProcess)
 {
     HTTPServer server({
         { "/mainframe"_s, { "<body style='margin:0'><iframe style='display:block;border:0;width:400px;height:1200px' src='https://b.com/subframe'></iframe></body>"_s } },
@@ -20211,6 +20305,7 @@ TEST(SiteIsolation, DrawPagesToPDFIncludesCrossSiteFrameOnEveryPageItSpans)
 
     RetainPtr configuration = server.httpsProxyConfiguration();
     setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", usePrintProcess);
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
@@ -20239,9 +20334,20 @@ TEST(SiteIsolation, DrawPagesToPDFIncludesCrossSiteFrameOnEveryPageItSpans)
     EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(100, 100), blue));
     EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(100, 500), white));
     EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(500, 100), white));
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), (usePrintProcess ? 1u : 0u));
 }
 
-TEST(SiteIsolation, DrawPagesToPDFDoesNotCarryTransformIntoNextPage)
+TEST(SiteIsolation, DrawPagesToPDFIncludesCrossSiteFrameOnEveryPageItSpans)
+{
+    drawPagesToPDFIncludesCrossSiteFrameOnEveryPageItSpans(false);
+}
+
+TEST(SiteIsolation, DrawPagesToPDFIncludesCrossSiteFrameOnEveryPageItSpansInPrintProcess)
+{
+    drawPagesToPDFIncludesCrossSiteFrameOnEveryPageItSpans(true);
+}
+
+static void drawPagesToPDFDoesNotCarryTransformIntoNextPage(bool usePrintProcess)
 {
     HTTPServer server({
         { "/mainframe"_s, { "<body style='margin:0;print-color-adjust:exact'>"
@@ -20254,6 +20360,7 @@ TEST(SiteIsolation, DrawPagesToPDFDoesNotCarryTransformIntoNextPage)
 
     RetainPtr configuration = server.httpsProxyConfiguration();
     setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", usePrintProcess);
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
@@ -20275,6 +20382,17 @@ TEST(SiteIsolation, DrawPagesToPDFDoesNotCarryTransformIntoNextPage)
 
     constexpr std::array<uint8_t, 3> green { 0, 128, 0 };
     EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(100, 100), green));
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), (usePrintProcess ? 1u : 0u));
+}
+
+TEST(SiteIsolation, DrawPagesToPDFDoesNotCarryTransformIntoNextPage)
+{
+    drawPagesToPDFDoesNotCarryTransformIntoNextPage(false);
+}
+
+TEST(SiteIsolation, DrawPagesToPDFDoesNotCarryTransformIntoNextPageInPrintProcess)
+{
+    drawPagesToPDFDoesNotCarryTransformIntoNextPage(true);
 }
 
 static void collectImageBitsPerComponent(CGPDFDictionaryRef resources, Vector<CGPDFInteger>& bitsPerComponent, unsigned depth = 0)
@@ -20340,7 +20458,7 @@ static RetainPtr<NSData> solidColorImageData(CGColorSpaceRef colorSpace, std::sp
 
 // Images in other color models than RGB are sent to the GPU process as pixels drawn into an RGB bitmap.
 // 8-bit images stay 8-bit there, and look the same as when the page is printed without remote snapshotting.
-TEST(SiteIsolation, DrawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit)
+static void drawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit(bool usePrintProcess)
 {
     RetainPtr grayColorSpace = adoptCF(CGColorSpaceCreateDeviceGray());
     constexpr std::array<CGFloat, 2> gray { 0.5, 1 };
@@ -20359,6 +20477,7 @@ TEST(SiteIsolation, DrawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit)
     auto print = [&](bool siteIsolationAndRemoteSnapshotting) -> RetainPtr<NSData> {
         RetainPtr configuration = server.httpsProxyConfiguration();
         setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", siteIsolationAndRemoteSnapshotting);
+        setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", siteIsolationAndRemoteSnapshotting && usePrintProcess);
         auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600), siteIsolationAndRemoteSnapshotting);
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
         [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
@@ -20372,7 +20491,9 @@ TEST(SiteIsolation, DrawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit)
             computedPages = true;
         }];
         Util::run(&computedPages);
-        return [webView _drawPagesToPDFSynchronouslyForTesting:[mainFrame _handle] pageCount:1];
+        RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:[mainFrame _handle] pageCount:1];
+        EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), (siteIsolationAndRemoteSnapshotting && usePrintProcess) ? 1u : 0u);
+        return data;
     };
 
     RetainPtr localData = print(false);
@@ -20390,6 +20511,16 @@ TEST(SiteIsolation, DrawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit)
         ASSERT_TRUE(localColor);
         EXPECT_TRUE(pdfPageHasColorAtPoint(remoteData.get(), 1, point, *localColor));
     }
+}
+
+TEST(SiteIsolation, DrawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit)
+{
+    drawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit(false);
+}
+
+TEST(SiteIsolation, DrawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8BitInPrintProcess)
+{
+    drawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit(true);
 }
 
 static pid_t printProcessIdentifier(WKWebView *webView)
@@ -20608,6 +20739,314 @@ TEST(SiteIsolation, PrintProcessIsRelaunchedAfterCrash)
     auto newPrintProcess = printProcessIdentifier(webView.get());
     EXPECT_NE(newPrintProcess, 0);
     EXPECT_NE(newPrintProcess, printProcess);
+}
+
+static NSUInteger connectFrameProcessesToPrintProcess(WKWebView *webView)
+{
+    __block NSUInteger result = 0;
+    __block bool done = false;
+    [webView _connectFrameProcessesToPrintProcessForTesting:^(NSUInteger count) {
+        result = count;
+        done = true;
+    }];
+    Util::run(&done);
+    return result;
+}
+
+TEST(SiteIsolation, PrintProcessConnectsFrameProcesses)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>Mainframe<iframe src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body>Subframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server);
+    EXPECT_NE([webView mainFrame].info._processIdentifier, [webView mainFrame].childFrames.firstObject.info._processIdentifier);
+
+    EXPECT_EQ(connectFrameProcessesToPrintProcess(webView.get()), 2u);
+    auto printProcess = printProcessIdentifier(webView.get());
+    EXPECT_NE(printProcess, 0);
+
+    // The connections are made once.
+    EXPECT_EQ(connectFrameProcessesToPrintProcess(webView.get()), 2u);
+    EXPECT_EQ(printProcessIdentifier(webView.get()), printProcess);
+
+    // A new print process is connected again.
+    kill(printProcess, 9);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !printProcessIdentifier(webView.get());
+    }));
+    EXPECT_EQ(connectFrameProcessesToPrintProcess(webView.get()), 2u);
+    auto newPrintProcess = printProcessIdentifier(webView.get());
+    EXPECT_NE(newPrintProcess, 0);
+    EXPECT_NE(newPrintProcess, printProcess);
+}
+
+static RetainPtr<NSData> drawMainFramePageToPDFSynchronously(TestWKWebView *webView)
+{
+    RetainPtr<WKFrameInfo> mainFrame = [webView mainFrame].info;
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:[mainFrame _handle] completionHandler:^{
+        computedPages = true;
+    }];
+    Util::run(&computedPages);
+    return [webView _drawPagesToPDFSynchronouslyForTesting:[mainFrame _handle] pageCount:1];
+}
+
+// The canvas lives in the GPU process, and is drawn into the print snapshot from there.
+TEST(SiteIsolation, PrintProcessDrawsCanvasInCrossSiteFrame)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'><iframe style='display:block;border:0;width:400px;height:300px' src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0'><canvas id='canvas' width='200' height='200' style='display:block'></canvas><script>"
+            "const context = document.getElementById('canvas').getContext('2d');"
+            "context.fillStyle = 'rgb(255, 0, 0)';"
+            "context.fillRect(0, 0, 200, 200);"
+            "</script></body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server);
+
+    RetainPtr data = drawMainFramePageToPDFSynchronously(webView.get());
+    ASSERT_NOT_NULL(data.get());
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), 1u);
+    constexpr std::array<uint8_t, 3> red { 255, 0, 0 };
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 1, CGPointMake(100, 100), red));
+}
+
+// A canvas of the GPU process tiles a background drawn into the print snapshot.
+TEST(SiteIsolation, PrintProcessDrawsCanvasPatternInCrossSiteFrame)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'><iframe style='display:block;border:0;width:400px;height:300px' src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0;print-color-adjust:exact'><div style='width:200px;height:200px;background-image:-webkit-canvas(tile)'></div><script>"
+            "const context = document.getCSSCanvasContext('2d', 'tile', 10, 10);"
+            "context.fillStyle = 'rgb(0, 128, 0)';"
+            "context.fillRect(0, 0, 10, 10);"
+            "</script></body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server);
+
+    RetainPtr data = drawMainFramePageToPDFSynchronously(webView.get());
+    ASSERT_NOT_NULL(data.get());
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), 1u);
+    constexpr std::array<uint8_t, 3> green { 0, 128, 0 };
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 1, CGPointMake(55, 55), green));
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 1, CGPointMake(155, 155), green));
+}
+
+// The video frames live in the GPU process, and are drawn into the print snapshot from their pixels.
+TEST(SiteIsolation, PrintProcessDrawsVideoInCrossSiteFrame)
+{
+    RetainPtr videoData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"mp4"]];
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'><iframe style='display:block;border:0;width:400px;height:300px' src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0'><video id='video' src='/test.mp4' muted playsinline preload='auto' style='display:block;width:320px;height:240px'></video></body>"_s } },
+        { "/test.mp4"_s, { { { "Content-Type"_s, "video/mp4"_s } }, videoData.get() } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server);
+
+    RetainPtr<WKFrameInfo> subframe = [webView mainFrame].childFrames.firstObject.info;
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.getElementById('video').readyState" inFrame:subframe.get()] intValue] >= 2;
+    }));
+
+    RetainPtr data = drawMainFramePageToPDFSynchronously(webView.get());
+    ASSERT_NOT_NULL(data.get());
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), 1u);
+    // The frame is drawn as an image.
+    EXPECT_FALSE(imageBitsPerComponentOnFirstPage(data.get()).isEmpty());
+}
+
+// The print preview of WKPrintingView is drawn from a snapshot as the printed pages are, and shows the
+// frames hosted in other processes as they do.
+static void drawPrintPreviewIncludesCrossSiteFrames(bool usePrintProcess)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'><iframe style='display:block;border:0;width:400px;height:300px' src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0;print-color-adjust:exact'><div style='width:400px;height:300px;background-color:rgb(0, 0, 255)'></div></body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server, usePrintProcess);
+
+    RetainPtr<WKFrameInfo> mainFrame = [webView mainFrame].info;
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:[mainFrame _handle] completionHandler:^{
+        computedPages = true;
+    }];
+    Util::run(&computedPages);
+
+    __block RetainPtr<CGImageRef> preview;
+    __block bool drewPreview = false;
+    [webView _drawPrintPreviewForTesting:[mainFrame _handle] rect:CGRectMake(0, 0, 612, 792) imageSize:CGSizeMake(612, 792) completionHandler:^(CGImageRef image) {
+        preview = image;
+        drewPreview = true;
+    }];
+    Util::run(&drewPreview);
+    ASSERT_NOT_NULL(preview.get());
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), usePrintProcess ? 1u : 0u);
+
+    CGImagePixelReader reader { preview.get() };
+    EXPECT_WK_STREQ("rgb(0, 0, 255)", reader.cssColorAt(100, 100));
+    EXPECT_WK_STREQ("rgb(0, 0, 255)", reader.cssColorAt(350, 250));
+
+    // As the printed page shows the frame.
+    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:[mainFrame _handle] pageCount:1];
+    ASSERT_NOT_NULL(data.get());
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), usePrintProcess ? 2u : 0u);
+    constexpr std::array<uint8_t, 3> blue { 0, 0, 255 };
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 1, CGPointMake(100, 100), blue));
+}
+
+TEST(SiteIsolation, DrawPrintPreviewIncludesCrossSiteFrames)
+{
+    drawPrintPreviewIncludesCrossSiteFrames(false);
+}
+
+TEST(SiteIsolation, DrawPrintPreviewIncludesCrossSiteFramesInPrintProcess)
+{
+    drawPrintPreviewIncludesCrossSiteFrames(true);
+}
+
+// The text of the PDF document that the tests below embed in a cross-site frame. The printed document
+// has it as text only if the print process drew the embedded document as vectors.
+static NSString * const embeddedPDFDocumentText = @"Visit our website for details";
+
+static RetainPtr<NSURL> embeddedPDFDocumentLinkURL()
+{
+    return [NSURL URLWithString:@"https://www.example.com/"];
+}
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> loadPageWithEmbeddedPDFDocument(const HTTPServer& server, bool usePrintProcess)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", usePrintProcess);
+    setFeatureEnabled(configuration.get(), @"UnifiedPDFEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+    RetainPtr<WKFrameInfo> mainFrame = [webView mainFrame].info;
+    RetainPtr<WKFrameInfo> subframe = [webView mainFrame].childFrames.firstObject.info;
+    EXPECT_NE([mainFrame _processIdentifier], [subframe _processIdentifier]);
+    return { webView, navigationDelegate };
+}
+
+// Whether a page has a pixel as dark as text, which only the embedded document has in these tests.
+static bool pdfPageHasDarkPixel(NSData *data, size_t pageNumber)
+{
+    RetainPtr provider = adoptCF(CGDataProviderCreateWithCFData(bridge_cast(data)));
+    RetainPtr document = adoptCF(CGPDFDocumentCreateWithProvider(provider.get()));
+    CGPDFPageRef page = CGPDFDocumentGetPage(document.get(), pageNumber);
+    if (!page)
+        return false;
+    auto bounds = CGPDFPageGetBoxRect(page, kCGPDFMediaBox);
+    size_t width = bounds.size.width;
+    size_t height = bounds.size.height;
+    RetainPtr colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    RetainPtr context = adoptCF(CGBitmapContextCreate(nullptr, width, height, 8, width * 4, colorSpace.get(), kCGImageAlphaPremultipliedLast));
+    CGContextSetRGBFillColor(context.get(), 1, 1, 1, 1);
+    CGContextFillRect(context.get(), CGRectMake(0, 0, width, height));
+    CGContextDrawPDFPage(context.get(), page);
+    auto pixels = unsafeMakeSpan(static_cast<const uint8_t*>(CGBitmapContextGetData(context.get())), width * height * 4);
+    for (size_t offset = 0; offset + 4 <= pixels.size(); offset += 4) {
+        if (pixels[offset] < 64 && pixels[offset + 1] < 64 && pixels[offset + 2] < 64)
+            return true;
+    }
+    return false;
+}
+
+// The embedded document draws nothing until its frame has laid it out, so the page is drawn to PDF
+// until the document shows.
+static RetainPtr<NSData> createPDFOnceEmbeddedPDFDocumentIsDrawn(WKWebView *webView)
+{
+    RetainPtr<NSData> result;
+    bool isDrawn = Util::waitFor([&] {
+        __block RetainPtr<NSData> pdfData;
+        __block bool done = false;
+        [webView createPDFWithConfiguration:nil completionHandler:^(NSData *data, NSError *error) {
+            EXPECT_NULL(error);
+            pdfData = data;
+            done = true;
+        }];
+        Util::run(&done);
+        result = WTF::move(pdfData);
+        return result && pdfPageHasDarkPixel(result.get(), 1);
+    });
+    EXPECT_TRUE(isDrawn);
+    return result;
+}
+
+static bool pdfPageHasLinkToURL(TestPDFPage *page, NSURL *url)
+{
+    for (TestPDFAnnotation *annotation in page.annotations) {
+        if (annotation.isLink && [annotation.linkURL isEqual:url])
+            return true;
+    }
+    return false;
+}
+
+#if ENABLE(UNIFIED_PDF)
+
+// A PDF document in a cross-site frame is drawn by the print process as vectors, so that the printed
+// document keeps its text and links. Recorded for the GPU process, it is an image.
+static void createPDFDrawsPDFDocumentInCrossSiteFrame(bool usePrintProcess)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'><iframe style='display:block;border:0;width:600px;height:400px' src='https://b.com/document.pdf'></iframe></body>"_s } },
+        { "/document.pdf"_s, { { { "Content-Type"_s, "application/pdf"_s } }, testPDFDataWithLink().get() } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageWithEmbeddedPDFDocument(server, usePrintProcess);
+
+    RetainPtr data = createPDFOnceEmbeddedPDFDocumentIsDrawn(webView.get());
+    ASSERT_NOT_NULL(data.get());
+    RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
+    EXPECT_EQ([document pageCount], 1);
+    RetainPtr page = [document pageAtIndex:0];
+    EXPECT_EQ(!![[page text] containsString:embeddedPDFDocumentText], usePrintProcess);
+    EXPECT_EQ(pdfPageHasLinkToURL(page.get(), embeddedPDFDocumentLinkURL().get()), usePrintProcess);
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()) > 0, usePrintProcess);
+}
+
+TEST(SiteIsolation, CreatePDFDrawsPDFDocumentInCrossSiteFrameAsImage)
+{
+    createPDFDrawsPDFDocumentInCrossSiteFrame(false);
+}
+
+TEST(SiteIsolation, CreatePDFDrawsPDFDocumentInCrossSiteFrameAsVectorsInPrintProcess)
+{
+    createPDFDrawsPDFDocumentInCrossSiteFrame(true);
+}
+
+#endif // ENABLE(UNIFIED_PDF)
+
+// As a PDF document in a frame, a PDF image in a cross-site frame is drawn by the print process as
+// vectors, and is an image when recorded for the GPU process. The links of an image cannot be followed
+// on the page, so they are not links in the printed document either.
+static void createPDFDrawsPDFImageInCrossSiteFrame(bool usePrintProcess)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'><iframe style='display:block;border:0;width:600px;height:400px' src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0'><img style='display:block;width:400px;height:200px' src='document.pdf'></body>"_s } },
+        { "/document.pdf"_s, { { { "Content-Type"_s, "application/pdf"_s } }, testPDFDataWithLink().get() } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageWithEmbeddedPDFDocument(server, usePrintProcess);
+
+    RetainPtr data = createPDFOnceEmbeddedPDFDocumentIsDrawn(webView.get());
+    ASSERT_NOT_NULL(data.get());
+    RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
+    EXPECT_EQ([document pageCount], 1);
+    RetainPtr page = [document pageAtIndex:0];
+    EXPECT_EQ(!![[page text] containsString:embeddedPDFDocumentText], usePrintProcess);
+    EXPECT_FALSE(pdfPageHasLinkToURL(page.get(), embeddedPDFDocumentLinkURL().get()));
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()) > 0, usePrintProcess);
+}
+
+TEST(SiteIsolation, CreatePDFDrawsPDFImageInCrossSiteFrameAsImage)
+{
+    createPDFDrawsPDFImageInCrossSiteFrame(false);
+}
+
+TEST(SiteIsolation, CreatePDFDrawsPDFImageInCrossSiteFrameAsVectorsInPrintProcess)
+{
+    createPDFDrawsPDFImageInCrossSiteFrame(true);
 }
 
 #endif // HAVE(PDFKIT)

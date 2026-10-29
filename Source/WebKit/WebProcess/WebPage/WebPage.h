@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "RemoteSnapshotHost.h"
 #include "RemoteSnapshotIdentifier.h"
 #include "RunJavaScriptResult.h"
 #include "SandboxExtension.h"
@@ -1544,10 +1545,10 @@ public:
 
     void drawPrintContextPagesToGraphicsContext(WebCore::GraphicsContext&, const WebCore::FloatRect& pageRect, uint32_t first, uint32_t count);
 
-    void drawPrintingRectToSnapshot(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(bool)>&&);
-    void drawPrintingRectToSnapshotDuringDOMPrintOperation(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, const WebCore::IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(bool)>&& completionHandler) { drawPrintingRectToSnapshot(snapshotIdentifier, frameID, printInfo, rect, imageSize, WTF::move(completionHandler)); }
-    void drawPrintingPagesToSnapshot(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, const PrintInfo&, uint32_t first, uint32_t count, CompletionHandler<void(bool)>&&);
-    void drawPrintingPagesToSnapshotDuringDOMPrintOperation(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(bool)>&& completionHandler) { drawPrintingPagesToSnapshot(snapshotIdentifier, frameID, printInfo, first, count, WTF::move(completionHandler)); }
+    void drawPrintingRectToSnapshot(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, RemoteSnapshotHost, CompletionHandler<void(bool)>&&);
+    void drawPrintingRectToSnapshotDuringDOMPrintOperation(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, const WebCore::IntRect& rect, const WebCore::IntSize& imageSize, RemoteSnapshotHost host, CompletionHandler<void(bool)>&& completionHandler) { drawPrintingRectToSnapshot(snapshotIdentifier, frameID, printInfo, rect, imageSize, host, WTF::move(completionHandler)); }
+    void drawPrintingPagesToSnapshot(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, const PrintInfo&, uint32_t first, uint32_t count, RemoteSnapshotHost, CompletionHandler<void(bool)>&&);
+    void drawPrintingPagesToSnapshotDuringDOMPrintOperation(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, RemoteSnapshotHost host, CompletionHandler<void(bool)>&& completionHandler) { drawPrintingPagesToSnapshot(snapshotIdentifier, frameID, printInfo, first, count, host, WTF::move(completionHandler)); }
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -1555,8 +1556,8 @@ public:
     void drawToPDFiOS(WebCore::FrameIdentifier, const PrintInfo&, uint64_t, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
     void drawToImage(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 
-    void drawPrintingPagesToSnapshotiOS(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, const PrintInfo&, uint64_t, CompletionHandler<void(bool)>&&);
-    void drawPrintingToSnapshotiOS(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(bool)>&&);
+    void drawPrintingPagesToSnapshotiOS(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, const PrintInfo&, uint64_t, RemoteSnapshotHost, CompletionHandler<void(bool)>&&);
+    void drawPrintingToSnapshotiOS(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, const PrintInfo&, RemoteSnapshotHost, CompletionHandler<void(bool)>&&);
 #endif
 
 #if PLATFORM(GTK)
@@ -1566,10 +1567,10 @@ public:
 
     // Starts the process of drawing the whole page to a snapshot.
     // The completion is either error or rect of the content. If the nullopt rect was passed in, the snapshot rect is resolved from the content.
-    void drawToSnapshot(const std::optional<WebCore::FloatRect>&, bool allowTransparentBackground, RemoteSnapshotIdentifier, CompletionHandler<void(bool)>&&);
+    void drawToSnapshot(const std::optional<WebCore::FloatRect>&, bool allowTransparentBackground, RemoteSnapshotIdentifier, RemoteSnapshotHost, CompletionHandler<void(bool)>&&);
 
     // Submessage for a frame delivered during web page snapshot draw.
-    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, WebCore::RenderingMode);
+    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, WebCore::RenderingMode, RemoteSnapshotHost);
 
     void addResourceRequest(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceRequest&, const WebCore::DocumentLoader*, WebCore::LocalFrame*);
     void removeResourceRequest(WebCore::ResourceLoaderIdentifier, WebCore::LocalFrame*);
@@ -2318,12 +2319,12 @@ public:
     // root of the snapshot creates it; a frame asked to paint into one records into what exists.
     // False if another recording is already painting into this page.
     enum class RemoteSnapshotRole : bool { Frame, Root };
-    // A root is drawn at rootSize, which is unused for a frame.
-    bool recordRemoteSnapshot(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, RemoteSnapshotRole, WebCore::RenderingMode, const WebCore::FloatRect& initialClip, const WebCore::FloatSize& rootSize, Ref<MainRunLoopSuccessCallbackAggregator>&&, NOESCAPE const Function<void(WebCore::GraphicsContext&)>& paint);
+    // A root is drawn at rootSize, which is unused for a frame. Recorded into the backend of the host.
+    bool recordRemoteSnapshot(RemoteSnapshotIdentifier, RemoteSnapshotHost, WebCore::FrameIdentifier, RemoteSnapshotRole, WebCore::RenderingMode, const WebCore::FloatRect& initialClip, const WebCore::FloatSize& rootSize, Ref<MainRunLoopSuccessCallbackAggregator>&&, NOESCAPE const Function<void(WebCore::GraphicsContext&)>& paint);
     // For the reply to a request to record the root of a snapshot the UI process minted. The UI process
     // may be blocked waiting for the snapshot in the GPU process, where it cannot hear of the root
     // failing, so the GPU process is told directly.
-    static CompletionHandler<void(bool)> failRemoteSnapshotIfRootFails(RemoteSnapshotIdentifier, CompletionHandler<void(bool)>&&);
+    static CompletionHandler<void(bool)> failRemoteSnapshotIfRootFails(RemoteSnapshotIdentifier, RemoteSnapshotHost, CompletionHandler<void(bool)>&&);
 #endif
 
 #if ENABLE(VIDEO)
@@ -2910,10 +2911,6 @@ private:
     void updateTextExtractionFilterRules(Vector<WebCore::TextExtraction::FilterRuleData>&&);
     void applyTextExtractionFilter(const String& input, CompletionHandler<void(const String&)>&&);
 
-#if HAVE(SANDBOX_STATE_FLAGS)
-    static void setHasLaunchedWebContentProcess();
-#endif
-
     template<typename T> T contentsToRootView(WebCore::FrameIdentifier, T);
     template<typename T> T rootViewToContents(WebCore::FrameIdentifier, T);
     void contentsToRootViewRect(WebCore::FrameIdentifier, WebCore::FloatRect, CompletionHandler<void(WebCore::FloatRect)>&&);
@@ -3449,6 +3446,7 @@ private:
 #if ENABLE(GPU_PROCESS)
     struct RemoteSnapshotState {
         RemoteSnapshotIdentifier identifier;
+        RemoteSnapshotHost host;
         UniqueRef<RemoteSnapshotRecorderProxy> recorder;
         Ref<MainRunLoopSuccessCallbackAggregator> callback;
         // Frames hosted elsewhere that were painted into the recording, and the parts painted.

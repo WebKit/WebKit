@@ -33,15 +33,15 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RemoteDisplayListRecorder> RemoteDisplayListRecorder::create(RemoteDisplayListRecorderIdentifier identifier, RemoteRenderingBackend& renderingBackend)
+Ref<RemoteDisplayListRecorder> RemoteDisplayListRecorder::create(RemoteDisplayListRecorderIdentifier identifier, RemoteDrawingBackend& drawingBackend)
 {
-    Ref instance = adoptRef(*new RemoteDisplayListRecorder(DisplayList::RecorderImpl::create(FloatRect { }), identifier, renderingBackend));
+    Ref instance = adoptRef(*new RemoteDisplayListRecorder(DisplayList::RecorderImpl::create(FloatRect { }), identifier, drawingBackend));
     instance->startListeningForIPC();
     return instance;
 }
 
-RemoteDisplayListRecorder::RemoteDisplayListRecorder(Ref<DisplayList::RecorderImpl>&& recorder, RemoteDisplayListRecorderIdentifier identifier, RemoteRenderingBackend& renderingBackend)
-    : RemoteGraphicsContext(recorder, renderingBackend)
+RemoteDisplayListRecorder::RemoteDisplayListRecorder(Ref<DisplayList::RecorderImpl>&& recorder, RemoteDisplayListRecorderIdentifier identifier, RemoteDrawingBackend& drawingBackend)
+    : RemoteGraphicsContext(recorder, drawingBackend)
     , m_recorder(WTF::move(recorder))
     , m_identifier(identifier)
 {
@@ -51,12 +51,12 @@ RemoteDisplayListRecorder::~RemoteDisplayListRecorder() = default;
 
 void RemoteDisplayListRecorder::startListeningForIPC()
 {
-    m_renderingBackend->streamConnection().startReceivingMessages(*this, Messages::RemoteGraphicsContext::messageReceiverName(), m_identifier.toUInt64());
+    m_drawingBackend->streamConnection().startReceivingMessages(*this, Messages::RemoteGraphicsContext::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteDisplayListRecorder::stopListeningForIPC()
 {
-    m_renderingBackend->streamConnection().stopReceivingMessages(Messages::RemoteGraphicsContext::messageReceiverName(), m_identifier.toUInt64());
+    m_drawingBackend->streamConnection().stopReceivingMessages(Messages::RemoteGraphicsContext::messageReceiverName(), m_identifier.toUInt64());
 }
 
 } // namespace WebKit

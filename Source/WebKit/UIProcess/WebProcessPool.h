@@ -126,6 +126,9 @@ class WebAutomationSession;
 class WebBackForwardCache;
 class WebCompiledContentRuleList;
 class WebContextSupplement;
+class PrintProcessConnectionBroker;
+class PrintProcessProxy;
+class WebFrameProxy;
 class WebPageGroup;
 class WebPageProxy;
 class WebPreferences;
@@ -396,6 +399,32 @@ public:
     PrintProcessUseCounter::Token ensurePrintProcess(WebProcessProxy::LockdownMode);
     void whenPrintProcessReady(WebProcessProxy::LockdownMode, CompletionHandler<void(WebProcessProxy*)>&&);
     void setPrintProcessIdleTimeoutForTesting(Seconds timeout) { m_printProcessIdleTimeout = timeout; }
+
+    // Starts connecting the web process to the print process with this Lockdown Mode, launching it if
+    // needed, unless they are connected already. That goes on without the main thread, and the web
+    // process waits for its connection if it is asked to record before it has it. False if the web
+    // process cannot be connected. The completion handler, if any, is called once the web process has
+    // been sent its end of the connection, or with false if either process went away first.
+    bool ensurePrintProcessConnection(WebProcessProxy& frameProcess, WebProcessProxy::LockdownMode, CompletionHandler<void(bool)>&& = nullptr);
+    // Starts connecting every process hosting a frame in the tree of the root frame. False if the
+    // root's process cannot be connected. The completion handler, if any, is called once they are
+    // connected, with false if the root's process could not be.
+    bool ensurePrintProcessConnections(const WebFrameProxy& rootFrame, WebProcessProxy::LockdownMode, CompletionHandler<void(bool)>&& = nullptr);
+    // Whether frames are connected to the print process before they are asked to record, at the start
+    // of printing and of each drawing, rather than only once they are.
+    bool connectsFramesToPrintProcessAheadOfDrawing() const { return m_connectsFramesToPrintProcessAheadOfDrawing; }
+    void setConnectsFramesToPrintProcessAheadOfDrawingForTesting(bool connects) { m_connectsFramesToPrintProcessAheadOfDrawing = connects; }
+    bool isPrintProcessClient(const WebProcessProxy& printProcess, WebCore::ProcessIdentifier) const;
+    // The snapshot API of the print process with this Lockdown Mode, if it runs.
+    RefPtr<PrintProcessProxy> printProcessProxy(WebProcessProxy::LockdownMode);
+
+    // The snapshots being drawn in a print process, with its Lockdown Mode. The other snapshots are
+    // drawn in the GPU process.
+    void didStartPrintSnapshot(RemoteSnapshotIdentifier, WebProcessProxy::LockdownMode);
+    void didEndPrintSnapshot(RemoteSnapshotIdentifier);
+    std::optional<WebProcessProxy::LockdownMode> printSnapshotLockdownMode(RemoteSnapshotIdentifier) const;
+    void printProcessClientCountForTesting(WebProcessProxy::LockdownMode, CompletionHandler<void(uint64_t)>&&);
+    void printProcessCompletedSnapshotCountForTesting(WebProcessProxy::LockdownMode, CompletionHandler<void(uint64_t)>&&);
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -831,11 +860,14 @@ private:
         Vector<CompletionHandler<void(WebProcessProxy*)>> readyCallbacks;
         RunLoop::Timer idleTimer;
         PrintProcessUseCounter useCounter;
+
+        RefPtr<PrintProcessConnectionBroker> connectionBroker;
     };
 
     PrintProcessState& printProcessState(WebProcessProxy::LockdownMode lockdownMode) { return lockdownMode == WebProcessProxy::LockdownMode::Enabled ? m_lockdownPrintProcessState : m_printProcessState; }
     void shutDownPrintProcess(WebProcessProxy::LockdownMode);
     void printProcessDidDisconnect(WebProcessProxy&);
+    void printProcessClientDidDisconnect(WebProcessProxy&);
     void printProcessUseCountDidChange(WebProcessProxy::LockdownMode);
 #endif
 #if ENABLE(MODEL_PROCESS)
@@ -944,8 +976,10 @@ private:
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
     Seconds m_printProcessIdleTimeout { 1_min };
+    bool m_connectsFramesToPrintProcessAheadOfDrawing { true };
     PrintProcessState m_printProcessState;
     PrintProcessState m_lockdownPrintProcessState;
+    HashMap<RemoteSnapshotIdentifier, WebProcessProxy::LockdownMode> m_printSnapshots;
 #endif
 
 #if ENABLE(MODEL_PROCESS)

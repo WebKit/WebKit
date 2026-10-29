@@ -28,7 +28,9 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteDrawingBackendProxy.h"
 #include "RemoteSnapshotRecorderMessages.h"
+#include <WebCore/SharedBuffer.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -36,10 +38,20 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSnapshotRecorderProxy);
 
-RemoteSnapshotRecorderProxy::RemoteSnapshotRecorderProxy(const FloatRect& initialClip, RenderingMode renderingMode, RemoteRenderingBackendProxy& renderingBackend)
-    : RemoteGraphicsContextProxy(GraphicsContextState::initialIndeterminate(), initialClip, { }, ColorSpace::SRGB(), DrawGlyphsMode::Normal, std::nullopt, renderingMode, RemoteGraphicsContextIdentifier::generate(), renderingBackend)
+RemoteSnapshotRecorderProxy::RemoteSnapshotRecorderProxy(const FloatRect& initialClip, RenderingMode renderingMode, RemoteDrawingBackendProxy& drawingBackend)
+    : RemoteGraphicsContextProxy(GraphicsContextState::initialIndeterminate(), initialClip, { }, ColorSpace::SRGB(), DrawGlyphsMode::Normal, std::nullopt, renderingMode, RemoteGraphicsContextIdentifier::generate(), drawingBackend)
 {
     ASSERT(renderingMode == RenderingMode::DisplayList || renderingMode == RenderingMode::PDFDocument);
+}
+
+RemoteSnapshotRecorderProxy::~RemoteSnapshotRecorderProxy()
+{
+    // What the recording drew of the documents keeps them alive in the snapshot.
+    RefPtr drawingBackend = this->drawingBackend();
+    if (!drawingBackend)
+        return;
+    for (auto identifier : m_cachedPDFDocuments.values())
+        drawingBackend->releasePDFDocument(identifier);
 }
 
 void RemoteSnapshotRecorderProxy::drawSnapshotFrame(FrameIdentifier frameIdentifier)
@@ -47,6 +59,33 @@ void RemoteSnapshotRecorderProxy::drawSnapshotFrame(FrameIdentifier frameIdentif
     sendPendingDrawsIfNecessary();
     appendStateChangeItemIfNecessary();
     send(Messages::RemoteSnapshotRecorder::DrawSnapshotFrame(frameIdentifier));
+}
+
+bool RemoteSnapshotRecorderProxy::drawPDFPage(RenderingResourceIdentifier documentIdentifier, NOESCAPE const Function<RefPtr<FragmentedSharedBuffer>()>& documentData, unsigned pageIndex, const FloatRect& source, const FloatRect& destination, bool includeLinks)
+{
+    RefPtr drawingBackend = this->drawingBackend();
+    if (!drawingBackend || !drawingBackend->canDrawPDFPages())
+        return false;
+
+    // The document is sent once for each recording, so that a recording draws the data the document
+    // has when it is recorded.
+    auto cachedIdentifier = m_cachedPDFDocuments.getOptional(documentIdentifier);
+    if (!cachedIdentifier) {
+        RefPtr data = documentData();
+        if (!data)
+            return false;
+        auto identifier = RenderingResourceIdentifier::generate();
+        if (!drawingBackend->cachePDFDocument(identifier, *data))
+            return false;
+        m_cachedPDFDocuments.add(documentIdentifier, identifier);
+        cachedIdentifier = identifier;
+    }
+
+    // The page is drawn with the state that this has now.
+    sendPendingDrawsIfNecessary();
+    appendStateChangeItemIfNecessary();
+    drawingBackend->drawPDFPage(identifier(), *cachedIdentifier, pageIndex, source, destination, includeLinks);
+    return true;
 }
 
 }

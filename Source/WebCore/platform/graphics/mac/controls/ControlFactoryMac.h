@@ -47,6 +47,7 @@ public:
     ~ControlFactoryMac();
 
     static ControlFactoryMac& singleton();
+    static bool drawsControlsOffMainThread();
 
     NSView *drawingView(const FloatRect&, const ControlStyle&) const;
 

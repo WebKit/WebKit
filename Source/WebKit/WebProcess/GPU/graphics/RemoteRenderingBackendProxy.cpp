@@ -312,6 +312,11 @@ RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::createImageBuffer(co
     return imageBuffer;
 }
 
+RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBufferForContext(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const ColorSpace& colorSpace, ImageBufferFormat bufferFormat)
+{
+    return createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, bufferFormat);
+}
+
 void RemoteRenderingBackendProxy::releaseImageBuffer(RemoteImageBufferProxy& imageBuffer)
 {
     auto identifier = imageBuffer.renderingResourceIdentifier();

@@ -35,14 +35,14 @@ namespace WebKit {
 // Used to create renderings to the ImageBuffer.
 class RemoteImageBufferGraphicsContext final : public RemoteGraphicsContext {
 public:
-    static Ref<RemoteImageBufferGraphicsContext> create(WebCore::ImageBuffer&, RemoteGraphicsContextIdentifier, RemoteRenderingBackend&);
+    static Ref<RemoteImageBufferGraphicsContext> create(WebCore::ImageBuffer&, RemoteGraphicsContextIdentifier, RemoteDrawingBackend&);
     ~RemoteImageBufferGraphicsContext();
     void stopListeningForIPC();
 
     void drawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect, const WebCore::FloatRect& srcRect, WebCore::ImageDrawingOptions) final;
 
 private:
-    RemoteImageBufferGraphicsContext(WebCore::ImageBuffer&, RemoteGraphicsContextIdentifier, RemoteRenderingBackend&);
+    RemoteImageBufferGraphicsContext(WebCore::ImageBuffer&, RemoteGraphicsContextIdentifier, RemoteDrawingBackend&);
     void startListeningForIPC();
 
     const Ref<WebCore::ImageBuffer> m_imageBuffer;

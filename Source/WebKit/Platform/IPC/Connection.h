@@ -432,6 +432,10 @@ public:
     static RefPtr<Connection> connection(UniqueID);
     UniqueID uniqueID() const { return m_uniqueID; }
 
+    // Dispatches the messages that the current thread dispatches while it waits for a synchronous reply,
+    // for a thread that has to block waiting for something else.
+    static void dispatchMessagesAllowedWhileWaitingForSyncReply();
+
     void LEGACY_NODELETE setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool);
     void LEGACY_NODELETE setShouldExitOnSyncMessageSendFailure(bool);
 

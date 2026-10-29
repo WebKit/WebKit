@@ -197,9 +197,45 @@ ImageDrawResult PDFDocumentImage::drawFromCachedSubimage(GraphicsContext& contex
     return ImageDrawResult::DidDraw;
 }
 
+ImageDrawResult PDFDocumentImage::drawWhereRecordingIsDrawn(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions options)
+{
+    if (context.hasPlatformContext() || !m_document || !m_hasPage)
+        return ImageDrawResult::DidNothing;
+
+    // The state is only changed when it has to be, since most recording contexts cannot draw the page.
+    auto interpolationQuality = options.interpolationQuality();
+    bool changesInterpolationQuality = interpolationQuality != InterpolationQuality::Default && interpolationQuality != context.imageInterpolationQuality();
+    bool changesState = options.compositeOperator() != context.compositeOperation() || context.blendMode() != BlendMode::Normal || changesInterpolationQuality;
+    GraphicsContextStateSaver stateSaver(context, changesState);
+    if (changesState) {
+        context.setCompositeOperation(options.compositeOperator());
+        if (changesInterpolationQuality)
+            context.setImageInterpolationQuality(interpolationQuality);
+    }
+
+    // The source is in the coordinates of the page as it is displayed, as drawPDFPage() takes it. The
+    // links of an image cannot be followed, so they are not drawn as links.
+    constexpr bool includeLinks = false;
+    if (!context.drawPDFPage(m_documentIdentifierForRecordings, [&] {
+        return RefPtr { data() };
+    }, 0, sourceRect, destinationRect, includeLinks))
+        return ImageDrawResult::DidNothing;
+
+    if (auto observer = imageObserver())
+        observer->didDraw(*this);
+
+    return ImageDrawResult::DidDraw;
+}
+
 ImageDrawResult PDFDocumentImage::drawImage(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options, const ImageDrawingExtras*)
 {
-    auto result = drawFromCachedSubimage(context, destination, source, options);
+    // Recordings that are drawn in another process that can, such as print snapshots, draw the page
+    // there as vectors.
+    auto result = drawWhereRecordingIsDrawn(context, destination, source, options);
+    if (result != ImageDrawResult::DidNothing)
+        return result;
+
+    result = drawFromCachedSubimage(context, destination, source, options);
     if (result != ImageDrawResult::DidNothing)
         return result;
 

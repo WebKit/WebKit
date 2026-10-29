@@ -207,6 +207,14 @@
 #include "RemoteRenderingBackendProxy.h"
 #endif
 
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+#include "PrintConnectionToWebProcess.h"
+#include "PrintConnectionToWebProcessMessages.h"
+#include "PrintProcessConnection.h"
+#include "RemoteSnapshotRegistry.h"
+#include <WebCore/ControlFactory.h>
+#endif
+
 #if ENABLE(MODEL_PROCESS)
 #include "ModelConnectionToWebProcessMessages.h"
 #include "ModelProcessConnection.h"
@@ -512,6 +520,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
     ASSERT(m_pageMap.isEmpty());
 
     m_isPrintProcess = parameters.isPrintProcess;
+    // Before any message receiver of the print process can be created.
+    if (m_isPrintProcess)
+        setIsInPrintingProcess();
 
     if (parameters.websiteDataStoreParameters)
         setWebsiteDataStoreParameters(WTF::move(*parameters.websiteDataStoreParameters));
@@ -1840,32 +1851,230 @@ void WebProcess::bindAccessibilityFrameWithData(WebCore::FrameIdentifier, std::s
 void WebProcess::prepareForPrinting(CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(m_isPrintProcess);
-    completionHandler(protect(ensureGPUProcessConnection())->waitForDidInitialize());
+    // The print process never creates a page, so it tightens its sandbox here as page creation does in
+    // other web processes: as for a page with UnifiedPDF that may not use the user's installed fonts,
+    // and without IOKit.
+#if HAVE(SANDBOX_STATE_FLAGS)
+    setHasLaunchedWebContentProcess();
+    enableContentSandboxStateFlags(true, false);
+#endif
+    blockIOKit();
+#if PLATFORM(MAC)
+    // The print backends draw form controls on their work queues.
+    ControlFactory::setDrawsControlsOffMainThread();
+#endif
+    // The print backends draw everything here, so the print process needs no GPU process.
+    completionHandler(true);
 }
+
+RemoteSnapshotRegistry& WebProcess::snapshotRegistry()
+{
+    ASSERT(m_isPrintProcess);
+    if (!m_snapshotRegistry)
+        m_snapshotRegistry = RemoteSnapshotRegistry::create();
+    return *m_snapshotRegistry;
+}
+
+#define PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, protect(parentProcessConnection()), completion)
+
+// The print process creates the pair, as it is not allowed to send an end of one.
+void WebProcess::createPrintConnectionToWebProcess(ProcessIdentifier webProcessIdentifier, ProcessIdentity&& webProcessIdentity, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, bool isLockdownModeEnabled, CompletionHandler<void(std::optional<IPC::Connection::Handle>&&)>&& completionHandler)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, completionHandler(std::nullopt));
+    auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
+    if (!connectionIdentifiers) {
+        completionHandler(std::nullopt);
+        return;
+    }
+    Ref connection = PrintConnectionToWebProcess::create(webProcessIdentifier, WTF::move(connectionIdentifiers->server), WTF::move(webProcessIdentity), WTF::move(sharedPreferencesForWebProcess), isLockdownModeEnabled);
+    // A web process that is connected again replaces its connection.
+    if (RefPtr previousConnection = m_printConnectionsToWebProcesses.take(webProcessIdentifier))
+        previousConnection->invalidate();
+    m_printConnectionsToWebProcesses.add(webProcessIdentifier, WTF::move(connection));
+    completionHandler(WTF::move(connectionIdentifiers->client));
+}
+
+void WebProcess::removePrintConnectionToWebProcess(ProcessIdentifier webProcessIdentifier)
+{
+    if (!m_isPrintProcess) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    // Also for web processes that went away before they could connect, which the connection would not notice.
+    if (RefPtr connection = m_printConnectionsToWebProcesses.take(webProcessIdentifier)) {
+        connection->invalidate();
+        printClientDidGoAway(webProcessIdentifier);
+    }
+}
+
+// As the GPU process does when a web process goes away: nothing waits for its frames, and nobody can
+// ask for the snapshots it minted.
+void WebProcess::printClientDidGoAway(ProcessIdentifier webProcessIdentifier)
+{
+    if (RefPtr snapshotRegistry = m_snapshotRegistry) {
+        snapshotRegistry->abandonSnapshotFramesOwnedBy(webProcessIdentifier);
+        snapshotRegistry->removeSnapshotsForProcess(webProcessIdentifier);
+    }
+}
+
+void WebProcess::updatePrintConnectionSharedPreferences(ProcessIdentifier webProcessIdentifier, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess)
+{
+    if (!m_isPrintProcess) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    if (RefPtr connection = m_printConnectionsToWebProcesses.get(webProcessIdentifier))
+        connection->updateSharedPreferencesForWebProcess(WTF::move(sharedPreferencesForWebProcess));
+}
+
+void WebProcess::printConnectionToWebProcessDidClose(PrintConnectionToWebProcess& connection)
+{
+    auto iterator = m_printConnectionsToWebProcesses.find(connection.webProcessIdentifier());
+    if (iterator == m_printConnectionsToWebProcesses.end() || iterator->value.ptr() != &connection)
+        return;
+    m_printConnectionsToWebProcesses.remove(iterator);
+    printClientDidGoAway(connection.webProcessIdentifier());
+}
+
+void WebProcess::printConnectionToWebProcessCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    completionHandler(m_printConnectionsToWebProcesses.size());
+}
+
+void WebProcess::connectToPrintProcess(IPC::Connection::Handle&& connectionHandle)
+{
+    if (m_isPrintProcess) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    // A new print process replaces the one that went away.
+    if (RefPtr previousConnection = std::exchange(m_printProcessConnection, nullptr))
+        previousConnection->invalidate();
+    m_printProcessConnection = PrintProcessConnection::create(WTF::move(connectionHandle));
+}
+
+RefPtr<PrintProcessConnection> WebProcess::waitForPrintProcessConnection()
+{
+    // Less than the print process waits for the frames of a snapshot.
+    static constexpr Seconds printProcessConnectionTimeout = 5_s;
+    if (!m_printProcessConnection && !m_isPrintProcess) {
+        if (RefPtr connection = parentProcessConnection())
+            connection->waitForAndDispatchImmediately<Messages::WebProcess::ConnectToPrintProcess>(0, printProcessConnectionTimeout);
+        if (!m_printProcessConnection)
+            RELEASE_LOG_ERROR(Process, "WebProcess::waitForPrintProcessConnection: The UI process did not connect this process to the print process");
+    }
+    return m_printProcessConnection;
+}
+
+void WebProcess::printProcessConnectionDidClose(PrintProcessConnection& connection)
+{
+    if (m_printProcessConnection == &connection)
+        m_printProcessConnection = nullptr;
+}
+
+// The UI process's control of the print snapshots, as of the GPU process's snapshots.
+
+void WebProcess::sinkCompletedPrintSnapshotToPDF(RemoteSnapshotIdentifier identifier, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, completionHandler(nullptr));
+    protect(snapshotRegistry())->sinkCompletedSnapshotToPDF(identifier, rootFrameIdentifier, [completionHandler = WTF::move(completionHandler)](RefPtr<SharedBuffer>&& data) mutable {
+        if (data)
+            ++WebProcess::singleton().m_completedPrintSnapshotCountForTesting;
+        completionHandler(WTF::move(data));
+    });
+}
+
+void WebProcess::sinkCompletedPrintSnapshotToBitmap(RemoteSnapshotIdentifier identifier, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&)>&& completionHandler)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, completionHandler(std::nullopt));
+    protect(snapshotRegistry())->sinkCompletedSnapshotToBitmap(identifier, rootFrameIdentifier, [completionHandler = WTF::move(completionHandler)](std::optional<ShareableBitmapHandle>&& handle) mutable {
+        if (handle)
+            ++WebProcess::singleton().m_completedPrintSnapshotCountForTesting;
+        completionHandler(WTF::move(handle));
+    });
+}
+
+void WebProcess::releasePrintSnapshot(RemoteSnapshotIdentifier identifier)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, (void)0);
+    protect(snapshotRegistry())->releaseSnapshot(identifier);
+}
+
+void WebProcess::abandonPrintSnapshotFrame(RemoteSnapshotIdentifier identifier, FrameIdentifier frameIdentifier)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, (void)0);
+    protect(snapshotRegistry())->abandonSnapshotFrame(identifier, frameIdentifier);
+}
+
+void WebProcess::printSnapshotFrameWillBeDrawnByProcess(RemoteSnapshotIdentifier identifier, FrameIdentifier frameIdentifier, ProcessIdentifier processIdentifier)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, (void)0);
+    protect(snapshotRegistry())->snapshotFrameWillBeDrawnByProcess(identifier, frameIdentifier, processIdentifier);
+}
+
+void WebProcess::abandonPrintSnapshotFramesOwnedBy(ProcessIdentifier processIdentifier)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, (void)0);
+    protect(snapshotRegistry())->abandonSnapshotFramesOwnedBy(processIdentifier);
+}
+
+void WebProcess::waitForPrintSnapshot(RemoteSnapshotIdentifier identifier, CompletionHandler<void()>&& completionHandler)
+{
+    PRINT_PROCESS_MESSAGE_CHECK_COMPLETION(m_isPrintProcess, completionHandler());
+    protect(snapshotRegistry())->waitForSnapshot(identifier, WTF::move(completionHandler));
+}
+
+void WebProcess::completedPrintSnapshotCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    completionHandler(m_completedPrintSnapshotCountForTesting);
+}
+
+#undef PRINT_PROCESS_MESSAGE_CHECK_COMPLETION
 #endif
 
 // Received by the process rather than a page, because the frame's page may have gone here since the
 // frame was painted, and a request that reached nothing would leave the snapshot waiting for it.
-void WebProcess::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, const WebCore::IntRect& rect, RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode)
+void WebProcess::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, const WebCore::IntRect& rect, RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode, RemoteSnapshotHost host)
 {
     RefPtr frame = webFrame(frameID);
     RefPtr page = frame ? frame->page() : nullptr;
     if (!page) {
-        abandonSnapshotFrame(snapshotIdentifier, frameID);
+        abandonSnapshotFrame(snapshotIdentifier, frameID, host);
         return;
     }
-    page->drawFrameToSnapshot(frameID, rect, snapshotIdentifier, renderingMode);
+    page->drawFrameToSnapshot(frameID, rect, snapshotIdentifier, renderingMode, host);
 }
 
-void WebProcess::abandonSnapshotFrame(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID)
+// Not through a page's backend, since there may be no page left to have one. For the print process,
+// nothing is sent without a connection to it: it has gone away, and the snapshot failed with it.
+void WebProcess::abandonSnapshotFrame(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, RemoteSnapshotHost host)
 {
-    // Not through a page's rendering backend, since there may be no page left to have one.
-    protect(ensureGPUProcessConnection().connection())->send(Messages::GPUConnectionToWebProcess::AbandonSnapshotFrame(snapshotIdentifier, frameID), 0);
+    switch (host) {
+    case RemoteSnapshotHost::GPU:
+        protect(ensureGPUProcessConnection().connection())->send(Messages::GPUConnectionToWebProcess::AbandonSnapshotFrame(snapshotIdentifier, frameID), 0);
+        return;
+    case RemoteSnapshotHost::Print:
+#if PLATFORM(COCOA)
+        if (RefPtr printProcessConnection = m_printProcessConnection)
+            protect(printProcessConnection->connection())->send(Messages::PrintConnectionToWebProcess::AbandonSnapshotFrame(snapshotIdentifier, frameID), 0);
+#endif
+        return;
+    }
 }
 
-void WebProcess::failSnapshot(RemoteSnapshotIdentifier snapshotIdentifier)
+void WebProcess::failSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, RemoteSnapshotHost host)
 {
-    protect(ensureGPUProcessConnection().connection())->send(Messages::GPUConnectionToWebProcess::FailSnapshot(snapshotIdentifier), 0);
+    switch (host) {
+    case RemoteSnapshotHost::GPU:
+        protect(ensureGPUProcessConnection().connection())->send(Messages::GPUConnectionToWebProcess::FailSnapshot(snapshotIdentifier), 0);
+        return;
+    case RemoteSnapshotHost::Print:
+#if PLATFORM(COCOA)
+        if (RefPtr printProcessConnection = m_printProcessConnection)
+            protect(printProcessConnection->connection())->send(Messages::PrintConnectionToWebProcess::FailSnapshot(snapshotIdentifier), 0);
+#endif
+        return;
+    }
 }
 
 #endif

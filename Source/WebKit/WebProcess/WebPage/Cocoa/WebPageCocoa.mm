@@ -177,10 +177,6 @@
 #import <WebCore/ParentalControlsContentFilter.h>
 #endif
 
-#if USE(EXTENSIONKIT)
-#import "WKProcessExtension.h"
-#endif
-
 #if ENABLE(THREADED_ANIMATIONS)
 #import <WebCore/AcceleratedEffectStackUpdater.h>
 #endif
@@ -278,22 +274,6 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
         WebCore::setImageSourceAllowableTypes(WebCore::allowableImageTypes());
     }
 }
-
-#if HAVE(SANDBOX_STATE_FLAGS)
-void WebPage::setHasLaunchedWebContentProcess()
-{
-    static bool hasSetLaunchVariable = false;
-    if (!hasSetLaunchVariable) {
-        auto auditToken = WebProcess::singleton().auditTokenForSelf();
-#if USE(EXTENSIONKIT)
-        if (WKProcessExtension.sharedInstance)
-            [WKProcessExtension.sharedInstance lockdownSandbox:@"2.0"];
-#endif
-        sandbox_enable_state_flag("local:WebContentProcessLaunched", *auditToken);
-        hasSetLaunchVariable = true;
-    }
-}
-#endif
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {
@@ -2049,9 +2029,9 @@ void WebPage::drawPrintContextPagesToGraphicsContext(GraphicsContext& context, c
     }
 }
 
-void WebPage::drawPrintingRectToSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, const WebCore::IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::drawPrintingRectToSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, const WebCore::IntRect& rect, const WebCore::IntSize& imageSize, RemoteSnapshotHost host, CompletionHandler<void(bool)>&& completionHandler)
 {
-    completionHandler = failRemoteSnapshotIfRootFails(snapshotIdentifier, WTF::move(completionHandler));
+    completionHandler = failRemoteSnapshotIfRootFails(snapshotIdentifier, host, WTF::move(completionHandler));
 
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame) {
@@ -2073,7 +2053,7 @@ void WebPage::drawPrintingRectToSnapshot(RemoteSnapshotIdentifier snapshotIdenti
     ASSERT(coreFrame->document()->printing());
     PrintContextAccessScope scope { *this };
 
-    recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Root, RenderingMode::DisplayList, rect, imageSize, MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
+    recordRemoteSnapshot(snapshotIdentifier, host, frameID, RemoteSnapshotRole::Root, RenderingMode::DisplayList, rect, imageSize, MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
         float printingScale = static_cast<float>(imageSize.width()) / rect.width();
         context.scale(printingScale);
 
@@ -2081,9 +2061,9 @@ void WebPage::drawPrintingRectToSnapshot(RemoteSnapshotIdentifier snapshotIdenti
     });
 }
 
-void WebPage::drawPrintingPagesToSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::drawPrintingPagesToSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, RemoteSnapshotHost host, CompletionHandler<void(bool)>&& completionHandler)
 {
-    completionHandler = failRemoteSnapshotIfRootFails(snapshotIdentifier, WTF::move(completionHandler));
+    completionHandler = failRemoteSnapshotIfRootFails(snapshotIdentifier, host, WTF::move(completionHandler));
 
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame) {
@@ -2113,7 +2093,7 @@ void WebPage::drawPrintingPagesToSnapshot(RemoteSnapshotIdentifier snapshotIdent
 
     FloatRect mediaBox = (m_printContext && m_printContext->pageCount()) ? m_printContext->pageRect(0) : FloatRect { 0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight };
 
-    recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Root, RenderingMode::PDFDocument, mediaBox, mediaBox.size(), MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
+    recordRemoteSnapshot(snapshotIdentifier, host, frameID, RemoteSnapshotRole::Root, RenderingMode::PDFDocument, mediaBox, mediaBox.size(), MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
         drawPrintContextPagesToGraphicsContext(context, mediaBox, first, count);
     });
 }

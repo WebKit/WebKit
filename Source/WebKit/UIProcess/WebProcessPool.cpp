@@ -59,6 +59,8 @@
 #include "OverrideLanguages.h"
 #include "PageLoadState.h"
 #include "PerActivityStateCPUUsageSampler.h"
+#include "PrintProcessConnectionBroker.h"
+#include "PrintProcessProxy.h"
 #include "ProcessTerminationReason.h"
 #include "RemotePageProxy.h"
 #include "RemoteWorkerType.h"
@@ -516,6 +518,7 @@ static bool LEGACY_NODELETE shouldReportNetworkOrGPUProcessCrash(ProcessTerminat
     case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::RequestedByModelProcess:
+    case ProcessTerminationReason::RequestedByPrintProcess:
         return false;
     case ProcessTerminationReason::GPUProcessCrashedTooManyTimes:
     case ProcessTerminationReason::ModelProcessCrashedTooManyTimes:
@@ -1229,6 +1232,14 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy& process)
 {
     ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == &process; }));
 
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    if (process.isPrintProcess()) {
+        auto& state = printProcessState(process.lockdownMode());
+        if (RefPtr connectionBroker = state.connectionBroker; connectionBroker && state.process == &process)
+            connectionBroker->printProcessDidFinishLaunching(process.connection());
+    }
+#endif
+
     if (!m_visitedLinksPopulated) {
         populateVisitedLinks();
         m_visitedLinksPopulated = true;
@@ -1296,6 +1307,8 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
     if (process.isPrintProcess())
         printProcessDidDisconnect(process);
+    else
+        printProcessClientDidDisconnect(process);
 #endif
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> Some of the invalidation calls of the other supplements are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
@@ -1464,12 +1477,12 @@ PrintProcessUseCounter::Token WebProcessPool::ensurePrintProcess(WebProcessProxy
         state.dataStore = WebsiteDataStore::createNonPersistent();
     Ref dataStore = *state.dataStore;
 
-    Ref process = WebProcessProxy::create(*this, dataStore.ptr(), lockdownMode, EnhancedSecurity::EnabledPolicy, WebProcessProxy::IsPrewarmed::No);
-    process->setIsPrintProcess();
+    Ref process = WebProcessProxy::createPrintProcess(*this, dataStore.ptr(), lockdownMode);
     WEBPROCESSPOOL_RELEASE_LOG(Process, "ensurePrintProcess: Launching the print process (process=%p, lockdownMode=%d)", process.ptr(), lockdownMode == WebProcessProxy::LockdownMode::Enabled);
     initializeNewWebProcess(process, dataStore.ptr(), WebProcessProxy::IsPrewarmed::No, WebProcessProxy::EnableWebAssemblyDebugger::No, WebKit::jscOptionsForWebProcess(protect(m_defaultPageGroup->preferences())->store(), lockdownMode == WebProcessProxy::LockdownMode::Enabled));
     m_processes.append(process.copyRef());
     state.process = process.copyRef();
+    state.connectionBroker = PrintProcessConnectionBroker::create(lockdownMode == WebProcessProxy::LockdownMode::Enabled);
 
     // The print process has no pages, so nothing else keeps it from being terminated or suspended.
     state.shutdownPreventingScope = process->shutdownPreventingScope();
@@ -1547,6 +1560,110 @@ void WebProcessPool::printProcessDidDisconnect(WebProcessProxy& process)
     state.isReady = false;
     for (auto& callback : std::exchange(state.readyCallbacks, { }))
         callback(nullptr);
+
+    if (RefPtr connectionBroker = std::exchange(state.connectionBroker, nullptr))
+        connectionBroker->invalidate();
+}
+
+bool WebProcessPool::ensurePrintProcessConnection(WebProcessProxy& frameProcess, WebProcessProxy::LockdownMode lockdownMode, CompletionHandler<void(bool)>&& completionHandler)
+{
+    // Frames draw only into the print process with the Lockdown Mode of their own process. A process
+    // still launching has painted nothing yet.
+    if (frameProcess.isPrintProcess() || frameProcess.lockdownMode() != lockdownMode || !frameProcess.hasConnection()) {
+        if (completionHandler)
+            completionHandler(false);
+        return false;
+    }
+
+    auto useToken = ensurePrintProcess(lockdownMode);
+    Ref connectionBroker = *printProcessState(lockdownMode).connectionBroker;
+    connectionBroker->connect({ frameProcess.coreProcessIdentifier(), frameProcess.connection(), WebCore::ProcessIdentity { frameProcess.processIdentity() }, frameProcess.sharedPreferencesForWebProcessValue() }, WTF::move(completionHandler));
+    return true;
+}
+
+bool WebProcessPool::ensurePrintProcessConnections(const WebFrameProxy& rootFrame, WebProcessProxy::LockdownMode lockdownMode, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RefPtr aggregator = completionHandler ? RefPtr { MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)) } : nullptr;
+    bool connectsRoot = false;
+    HashSet<WebCore::ProcessIdentifier> processes;
+    for (RefPtr<const WebFrameProxy> frame = &rootFrame; frame; frame = frame->traverseNext(&rootFrame)) {
+        Ref process = frame->process();
+        if (!processes.add(process->coreProcessIdentifier()).isNewEntry)
+            continue;
+        bool isRoot = frame == &rootFrame;
+        // Only the root has to be connected. A frame whose process cannot be is abandoned when it is
+        // asked to record.
+        CompletionHandler<void(bool)> connectionCallback;
+        if (aggregator) {
+            connectionCallback = [callback = aggregator->chain(), isRoot](bool success) mutable {
+                callback(success || !isRoot);
+            };
+        }
+        bool connects = ensurePrintProcessConnection(process, lockdownMode, WTF::move(connectionCallback));
+        if (isRoot)
+            connectsRoot = connects;
+    }
+    return connectsRoot;
+}
+
+void WebProcessPool::printProcessClientDidDisconnect(WebProcessProxy& process)
+{
+    for (auto lockdownMode : { WebProcessProxy::LockdownMode::Disabled, WebProcessProxy::LockdownMode::Enabled }) {
+        if (RefPtr connectionBroker = printProcessState(lockdownMode).connectionBroker)
+            connectionBroker->clientDidDisconnect(process.coreProcessIdentifier());
+    }
+}
+
+void WebProcessPool::didStartPrintSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, WebProcessProxy::LockdownMode lockdownMode)
+{
+    m_printSnapshots.set(snapshotIdentifier, lockdownMode);
+}
+
+void WebProcessPool::didEndPrintSnapshot(RemoteSnapshotIdentifier snapshotIdentifier)
+{
+    m_printSnapshots.remove(snapshotIdentifier);
+}
+
+std::optional<WebProcessProxy::LockdownMode> WebProcessPool::printSnapshotLockdownMode(RemoteSnapshotIdentifier snapshotIdentifier) const
+{
+    auto iterator = m_printSnapshots.find(snapshotIdentifier);
+    if (iterator == m_printSnapshots.end())
+        return std::nullopt;
+    return iterator->value;
+}
+
+RefPtr<PrintProcessProxy> WebProcessPool::printProcessProxy(WebProcessProxy::LockdownMode lockdownMode)
+{
+    RefPtr process = printProcessState(lockdownMode).process;
+    if (!process)
+        return nullptr;
+    return PrintProcessProxy::create(*this, *process);
+}
+
+bool WebProcessPool::isPrintProcessClient(const WebProcessProxy& printProcess, WebCore::ProcessIdentifier clientIdentifier) const
+{
+    auto& state = printProcess.lockdownMode() == WebProcessProxy::LockdownMode::Enabled ? m_lockdownPrintProcessState : m_printProcessState;
+    return state.process.get() == &printProcess && state.connectionBroker && state.connectionBroker->isClient(clientIdentifier);
+}
+
+void WebProcessPool::printProcessClientCountForTesting(WebProcessProxy::LockdownMode lockdownMode, CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    RefPtr process = printProcessState(lockdownMode).process;
+    if (!process) {
+        completionHandler(0);
+        return;
+    }
+    process->sendWithAsyncReply(Messages::WebProcess::PrintConnectionToWebProcessCountForTesting(), WTF::move(completionHandler));
+}
+
+void WebProcessPool::printProcessCompletedSnapshotCountForTesting(WebProcessProxy::LockdownMode lockdownMode, CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    RefPtr process = printProcessState(lockdownMode).process;
+    if (!process) {
+        completionHandler(0);
+        return;
+    }
+    process->sendWithAsyncReply(Messages::WebProcess::CompletedPrintSnapshotCountForTesting(), WTF::move(completionHandler));
 }
 
 #endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)

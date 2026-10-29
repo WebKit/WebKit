@@ -29,20 +29,25 @@
 
 #include "ArrayReferenceTuple.h"
 #include "RemoteDisplayListIdentifier.h"
+#include "RemoteDrawingBackend.h"
 #include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextIdentifier.h"
 #include "RemotePathImplIdentifier.h"
-#include "RemoteRenderingBackend.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
 #include <WebCore/ControlFactory.h>
+#include <WebCore/GlyphBufferMembers.h>
+#include <WebCore/GraphicsStyle.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class FilterResults;
+}
+
 namespace WebKit {
 
-class RemoteRenderingBackend;
 class RemoteResourceCache;
 class SharedVideoFrameReader;
 struct SharedPreferencesForWebProcess;
@@ -93,6 +98,7 @@ public:
     void clipOut(const WebCore::FloatRect&);
     void clipOutRoundedRect(const WebCore::FloatRoundedRect&);
     void clipToImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::FloatRect& destinationRect);
+    void clipToNativeImage(WebCore::RenderingResourceIdentifier, const WebCore::FloatRect& destinationRect);
     void clipOutToPath(const WebCore::Path&);
     void clipPath(const WebCore::Path&, WebCore::WindRule);
     void clipCachedPath(RemotePathImplIdentifier, WebCore::WindRule);
@@ -156,9 +162,6 @@ public:
 #endif
     void applyDeviceScaleFactor(float);
     std::optional<WebKit::SharedPreferencesForWebProcess> LEGACY_NODELETE sharedPreferencesForWebProcess() const;
-#if HAVE(IOSURFACE)
-    bool useIOSurfaceWebKitBehavior() const;
-#endif
 
     void beginPage(const WebCore::FloatRect&);
     void endPage();
@@ -166,7 +169,7 @@ public:
     void setURLForRect(const URL&, const WebCore::FloatRect&);
 
 protected:
-    RemoteGraphicsContext(WebCore::GraphicsContext&, RemoteRenderingBackend&);
+    RemoteGraphicsContext(WebCore::GraphicsContext&, RemoteDrawingBackend&);
 
     Ref<WebCore::ControlFactory> controlFactory();
 
@@ -186,8 +189,7 @@ protected:
 #endif
 
     WebCore::GraphicsContext& m_context;
-    const Ref<RemoteRenderingBackend> m_renderingBackend;
-    const Ref<RemoteSharedResourceCache> m_sharedResourceCache;
+    const Ref<RemoteDrawingBackend> m_drawingBackend;
     const RefPtr<WebCore::ControlFactory> m_controlFactory;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     const std::unique_ptr<SharedVideoFrameReader> m_sharedVideoFrameReader;

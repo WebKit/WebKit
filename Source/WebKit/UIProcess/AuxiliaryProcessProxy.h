@@ -109,6 +109,10 @@ public:
     virtual Type type() const = 0;
 
     void connect();
+    // Blocks the main thread until the process has finished launching and is connected, or until the
+    // timeout. Only for processes whose launch options allow waiting for the launch. Returns whether
+    // the process is connected.
+    bool waitForLaunch(Seconds timeout);
     virtual void terminate(std::optional<IPC::MessageName> invalidMessageName = std::nullopt);
 
     ProcessThrottler& throttler() { return m_throttler; }

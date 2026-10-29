@@ -25,7 +25,7 @@
 [
     ExceptionForEnabledBy,
     DispatchedFrom=WebContent,
-    DispatchedTo=GPU
+    DispatchedTo=GPU|Printing
 ]
 messages -> RemoteGraphicsContext Stream {
     Save() StreamBatched
@@ -70,6 +70,7 @@ messages -> RemoteGraphicsContext Stream {
     ClipOut(WebCore::FloatRect rect) StreamBatched
     ClipOutRoundedRect(WebCore::FloatRoundedRect rect) StreamBatched
     ClipToImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, WebCore::FloatRect destinationRect) StreamBatched
+    ClipToNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destinationRect) StreamBatched
     ClipOutToPath(WebCore::Path path) StreamBatched
     ClipPath(WebCore::Path path, enum:bool WebCore::WindRule windRule) StreamBatched
     ClipCachedPath(WebKit::RemotePathImplIdentifier identifier, enum:bool WebCore::WindRule windRule) StreamBatched

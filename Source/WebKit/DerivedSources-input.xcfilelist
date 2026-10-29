@@ -548,7 +548,6 @@ $(PROJECT_DIR)/Shared/cf/CoreIPCSecAccessControl.serialization.in
 $(PROJECT_DIR)/Shared/cf/CoreIPCSecCertificate.serialization.in
 $(PROJECT_DIR)/Shared/cf/CoreIPCSecKeychainItem.serialization.in
 $(PROJECT_DIR)/Shared/cf/CoreIPCSecTrust.serialization.in
-$(PROJECT_DIR)/Shared/graphics/DisplayListData.serialization.in
 $(PROJECT_DIR)/Shared/graphics/DoubleGeometry.serialization.in
 $(PROJECT_DIR)/Shared/graphics/HostingContext.serialization.in
 $(PROJECT_DIR)/Shared/graphics/RemoteImageBufferSetConfiguration.serialization.in
@@ -733,6 +732,8 @@ $(PROJECT_DIR)/WebProcess/Network/webrtc/WebMDNSRegister.messages.in
 $(PROJECT_DIR)/WebProcess/Network/webrtc/WebRTCMonitor.messages.in
 $(PROJECT_DIR)/WebProcess/Network/webrtc/WebRTCResolver.messages.in
 $(PROJECT_DIR)/WebProcess/Notifications/WebNotificationManager.messages.in
+$(PROJECT_DIR)/WebProcess/Print/PrintConnectionToWebProcess.messages.in
+$(PROJECT_DIR)/WebProcess/Print/RemotePrintBackend.messages.in
 $(PROJECT_DIR)/WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.messages.in
 $(PROJECT_DIR)/WebProcess/Storage/WebSWClientConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Storage/WebSWContextManagerConnection.messages.in

@@ -29,10 +29,18 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/AbstractCanMakeCheckedPtr.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/Condition.h>
+#include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
+#include <wtf/Seconds.h>
+#include <wtf/SetForScope.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/WeakPtr.h>
@@ -91,6 +99,8 @@ struct ProcessLaunchOptions {
     HashMap<String, String> extraInitializationData { };
     bool nonValidInjectedCodeAllowed { false };
     bool shouldMakeProcessLaunchFailForTesting { false };
+    // Whether ProcessLauncher::waitForLaunch() can wait for the launch, which only Cocoa supports.
+    bool canWaitForLaunch { false };
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     HashMap<UTF8CString, SandboxPermission> extraSandboxPaths { };
@@ -153,6 +163,11 @@ public:
     void terminateProcess(const String& reason = { });
     void invalidate();
 
+    // Blocks the main thread until the process has finished launching, or until the timeout, and
+    // tells the client right away if it has. Only for processes launched with canWaitForLaunch.
+    // Returns whether the launch has finished.
+    bool waitForLaunch(Seconds timeout);
+
 #if USE(EXTENSIONKIT)
     const std::optional<ExtensionProcess>& extensionProcess() const LIFETIME_BOUND { return m_process; }
     void setIsRetryingLaunch() { m_isRetryingLaunch = true; }
@@ -175,12 +190,19 @@ private:
 
 #if PLATFORM(COCOA)
     void terminateXPCConnection();
+
+    class LaunchSteps;
+    // On the main thread, by way of the launch steps if the launch can be waited for.
+    static void callOnMainRunLoopForLaunch(LaunchSteps*, Function<void()>&&);
+    void didReceiveBootstrapReply(xpc_object_t reply, mach_port_t listeningPort);
 #endif
 
     CheckedPtr<Client> m_client;
 
 #if PLATFORM(COCOA)
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
+    // Set for the whole of a launch that can be waited for.
+    RefPtr<LaunchSteps> m_launchSteps;
 #endif
 
 #if USE(EXTENSIONKIT)
@@ -205,5 +227,77 @@ private:
     GSocketMonitor m_socketMonitor;
 #endif
 };
+
+#if PLATFORM(COCOA)
+// The steps of a launch that can be waited for that run on the main thread: those after the extension
+// has launched, and the handling of the reply to the bootstrap message and of errors. They come in on
+// other queues, and run in order on the main thread, either on its own turn or while waitForLaunch()
+// blocks it.
+class ProcessLauncher::LaunchSteps : public ThreadSafeRefCounted<LaunchSteps> {
+public:
+    static Ref<LaunchSteps> create()
+    {
+        return adoptRef(*new LaunchSteps);
+    }
+
+    // From any thread.
+    void append(Function<void()>&& step)
+    {
+        {
+            Locker locker { m_lock };
+            m_steps.append(WTF::move(step));
+            m_condition.notifyAll();
+        }
+        RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }] {
+            protectedThis->runPendingSteps();
+        });
+    }
+
+    void runPendingSteps()
+    {
+        ASSERT(RunLoop::isMain());
+        // The steps run in order, so not from within one, such as from a message it dispatches.
+        if (m_isRunningStep)
+            return;
+        while (auto step = takeStep()) {
+            SetForScope isRunningStep { m_isRunningStep, true };
+            step();
+        }
+    }
+
+    bool isRunningStep() const
+    {
+        ASSERT(RunLoop::isMain());
+        return m_isRunningStep;
+    }
+
+    // Whether there are steps to run before the deadline.
+    bool waitForSteps(MonotonicTime deadline)
+    {
+        ASSERT(RunLoop::isMain());
+        Locker locker { m_lock };
+        return m_condition.waitUntil(m_lock, deadline, [&] {
+            assertIsHeld(m_lock);
+            return !m_steps.isEmpty();
+        });
+    }
+
+private:
+    LaunchSteps() = default;
+
+    Function<void()> takeStep()
+    {
+        Locker locker { m_lock };
+        if (m_steps.isEmpty())
+            return nullptr;
+        return m_steps.takeFirst();
+    }
+
+    Lock m_lock;
+    Condition m_condition;
+    Deque<Function<void()>> m_steps WTF_GUARDED_BY_LOCK(m_lock);
+    bool m_isRunningStep { false };
+};
+#endif
 
 } // namespace WebKit

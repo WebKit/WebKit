@@ -128,6 +128,7 @@ set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/OriginData"
     "${WEBKIT_DIR}/WebProcess/Plugins"
     "${WEBKIT_DIR}/WebProcess/Plugins/Netscape"
+    "${WEBKIT_DIR}/WebProcess/Print"
     "${WEBKIT_DIR}/WebProcess/ResourceCache"
     "${WEBKIT_DIR}/WebProcess/Speech"
     "${WEBKIT_DIR}/WebProcess/Storage"
@@ -726,7 +727,6 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/XR/PlatformXR.serialization.in
     Shared/XR/XRSystem.serialization.in
 
-    Shared/graphics/DisplayListData.serialization.in
     Shared/graphics/RemoteImageBufferSetConfiguration.serialization.in
 
     UIProcess/Extensions/WebExtension.serialization.in

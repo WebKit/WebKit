@@ -50,6 +50,7 @@ class StreamClientConnection;
 namespace WebKit {
 
 class RemoteImageBufferSetProxyFlushFence;
+class RemoteRenderingBackendProxy;
 struct BufferSetBackendHandle;
 
 // FIXME: We should have a generic 'ImageBufferSet' class that contains

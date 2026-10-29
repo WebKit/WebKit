@@ -64,7 +64,7 @@ CAN_DISPATCH_OUT_OF_ORDER_ATTRIBUTE = 'CanDispatchOutOfOrder'
 REPLY_CAN_DISPATCH_OUT_OF_ORDER_ATTRIBUTE = 'ReplyCanDispatchOutOfOrder'
 NOT_USING_IPC_CONNECTION_ATTRIBUTE = 'NotUsingIPCConnection'
 
-PROCESS_NAMES = ["UI", "Networking", "GPU", "WebContent", "Model"]
+PROCESS_NAMES = ["UI", "Networking", "GPU", "WebContent", "Model", "Printing"]
 
 attributes_to_generate_validators = {
     "messageAllowedWhenWaitingForSyncReply": [ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, STREAM_ATTRIBUTE],
@@ -1261,7 +1261,7 @@ def async_message_statement(receiver, message):
     result = []
     message_runtime_enablement = True if message.enabled_by or message.enabled_by_exception else False
     receiver_runtime_enablement = True if receiver.receiver_enabled_by or receiver.receiver_enabled_by_exception else False
-    receiver_dispatched_to_webcontent = True if receiver.receiver_dispatched_to == 'WebContent' else False
+    receiver_dispatched_to_webcontent = receiver.receiver_dispatched_to in ('WebContent', 'Printing')
     if not message_runtime_enablement and not receiver_runtime_enablement and not receiver_dispatched_to_webcontent:
         return '#error "Receiver %s or message %s must be annotated with \'EnabledBy=[FeatureFlag]\' in messages.in file\n' % (receiver.name, message.name)
 
@@ -1307,7 +1307,7 @@ def sync_message_statement(receiver, message):
     result = []
     message_runtime_enablement = True if message.enabled_by or message.enabled_by_exception else False
     receiver_runtime_enablement = True if receiver.receiver_enabled_by or receiver.receiver_enabled_by_exception else False
-    receiver_dispatched_to_webcontent = True if receiver.receiver_dispatched_to == 'WebContent' else False
+    receiver_dispatched_to_webcontent = receiver.receiver_dispatched_to in ('WebContent', 'Printing')
     if not message_runtime_enablement and not receiver_runtime_enablement and not receiver_dispatched_to_webcontent:
         return '#error "Receiver %s or message %s must be annotated with \'EnabledBy=[FeatureFlag]\' in messages.in file\n' % (receiver.name, message.name)
 
@@ -2061,6 +2061,7 @@ PROCESS_NAME_PREDICATES = {
     "GPU": "isInGPUProcess()",
     "WebContent": "isInWebProcess()",
     "Model": "isInModelProcess()",
+    "Printing": "isInPrintingProcess()",
 }
 
 

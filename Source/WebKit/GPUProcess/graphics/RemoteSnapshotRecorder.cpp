@@ -36,15 +36,15 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RemoteSnapshotRecorder> RemoteSnapshotRecorder::create(RemoteSnapshotRecorderIdentifier identifier, RemoteSnapshot& snapshot, RemoteRenderingBackend& renderingBackend)
+Ref<RemoteSnapshotRecorder> RemoteSnapshotRecorder::create(RemoteSnapshotRecorderIdentifier identifier, RemoteSnapshot& snapshot, RemoteDrawingBackend& drawingBackend)
 {
-    Ref instance = adoptRef(*new RemoteSnapshotRecorder(DisplayList::RecorderImpl::create(FloatRect { }), identifier, snapshot, renderingBackend));
+    Ref instance = adoptRef(*new RemoteSnapshotRecorder(DisplayList::RecorderImpl::create(FloatRect { }), identifier, snapshot, drawingBackend));
     instance->startListeningForIPC();
     return instance;
 }
 
-RemoteSnapshotRecorder::RemoteSnapshotRecorder(Ref<DisplayList::RecorderImpl>&& recorder, RemoteSnapshotRecorderIdentifier identifier, RemoteSnapshot& snapshot, RemoteRenderingBackend& renderingBackend)
-    : RemoteGraphicsContext(recorder, renderingBackend)
+RemoteSnapshotRecorder::RemoteSnapshotRecorder(Ref<DisplayList::RecorderImpl>&& recorder, RemoteSnapshotRecorderIdentifier identifier, RemoteSnapshot& snapshot, RemoteDrawingBackend& drawingBackend)
+    : RemoteGraphicsContext(recorder, drawingBackend)
     , m_snapshot(snapshot)
     , m_recorder(WTF::move(recorder))
     , m_identifier(identifier)
@@ -55,14 +55,14 @@ RemoteSnapshotRecorder::~RemoteSnapshotRecorder() = default;
 
 void RemoteSnapshotRecorder::startListeningForIPC()
 {
-    m_renderingBackend->streamConnection().startReceivingMessages(*this, Messages::RemoteGraphicsContext::messageReceiverName(), m_identifier.toUInt64());
-    m_renderingBackend->streamConnection().startReceivingMessages(*this, Messages::RemoteSnapshotRecorder::messageReceiverName(), m_identifier.toUInt64());
+    m_drawingBackend->streamConnection().startReceivingMessages(*this, Messages::RemoteGraphicsContext::messageReceiverName(), m_identifier.toUInt64());
+    m_drawingBackend->streamConnection().startReceivingMessages(*this, Messages::RemoteSnapshotRecorder::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteSnapshotRecorder::stopListeningForIPC()
 {
-    m_renderingBackend->streamConnection().stopReceivingMessages(Messages::RemoteGraphicsContext::messageReceiverName(), m_identifier.toUInt64());
-    m_renderingBackend->streamConnection().stopReceivingMessages(Messages::RemoteSnapshotRecorder::messageReceiverName(), m_identifier.toUInt64());
+    m_drawingBackend->streamConnection().stopReceivingMessages(Messages::RemoteGraphicsContext::messageReceiverName(), m_identifier.toUInt64());
+    m_drawingBackend->streamConnection().stopReceivingMessages(Messages::RemoteSnapshotRecorder::messageReceiverName(), m_identifier.toUInt64());
 }
 
 Ref<RemoteSnapshot> RemoteSnapshotRecorder::snapshot() const

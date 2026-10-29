@@ -4040,6 +4040,18 @@
 		1A6FA21D1BD0435B00AAA650 /* WKFrameInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFrameInfoPrivate.h; sourceTree = "<group>"; };
 		1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginView.cpp; sourceTree = "<group>"; };
 		1A6FB7AD11E64B6800DB1371 /* PluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginView.h; sourceTree = "<group>"; };
+		7CFC6A94FFD342711DC736D1 /* PrintConnectionToWebProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrintConnectionToWebProcess.cpp; sourceTree = "<group>"; };
+		DE1FFEC0F1EEBE7B816AA40D /* PrintConnectionToWebProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintConnectionToWebProcess.h; sourceTree = "<group>"; };
+		30C478FBFF7C4E6515CF2972 /* PrintConnectionToWebProcess.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrintConnectionToWebProcess.messages.in; sourceTree = "<group>"; };
+		0A325BB44CD263CD146CD3BC /* PrintProcessConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrintProcessConnection.cpp; sourceTree = "<group>"; };
+		6E5AAF1198DBEFB9AA9CEF2F /* PrintProcessConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintProcessConnection.h; sourceTree = "<group>"; };
+		8A3ADF53E4AF0938BA7A674B /* PrintPDFDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintPDFDocument.h; sourceTree = "<group>"; };
+		5A298EF073532DDB70B5DF77 /* PrintPDFDocument.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PrintPDFDocument.mm; sourceTree = "<group>"; };
+		4F79F6EACD0E0E0C39D97C31 /* RemotePrintBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePrintBackend.cpp; sourceTree = "<group>"; };
+		79F97A3650B242483B2F3DBE /* RemotePrintBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePrintBackend.h; sourceTree = "<group>"; };
+		B0C6A689097C16A360C1DC2A /* RemotePrintBackend.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemotePrintBackend.messages.in; sourceTree = "<group>"; };
+		6B73F57D18FFCD3D831623F6 /* RemotePrintBackendProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePrintBackendProxy.cpp; sourceTree = "<group>"; };
+		86A5444E304AEA8670B33947 /* RemotePrintBackendProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePrintBackendProxy.h; sourceTree = "<group>"; };
 		1A7284441959ED100007BCE5 /* SessionStateConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionStateConversion.cpp; sourceTree = "<group>"; };
 		1A7284451959ED100007BCE5 /* SessionStateConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionStateConversion.h; sourceTree = "<group>"; };
 		1A7C0DF41B7D1F1000A9B848 /* WKWindowFeaturesRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWindowFeaturesRef.cpp; sourceTree = "<group>"; };
@@ -4955,9 +4967,6 @@
 		2BBCCE232EB2B3F500FE7E5A /* RemotePageScreenOrientationManagerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePageScreenOrientationManagerProxy.h; sourceTree = "<group>"; };
 		2D0035221BC7414800DA8716 /* PDFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPlugin.h; path = PDF/PDFPlugin.h; sourceTree = "<group>"; };
 		2D0035231BC7414800DA8716 /* PDFPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPlugin.mm; path = PDF/PDFPlugin.mm; sourceTree = "<group>"; };
-		C6FBB12BD68DF71E6257D37B /* DisplayListData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayListData.cpp; sourceTree = "<group>"; };
-		830A771F4F5CC222E58BB08A /* DisplayListData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayListData.h; sourceTree = "<group>"; };
-		2AE2FB885072066C4BD4DAE0 /* DisplayListData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = DisplayListData.serialization.in; sourceTree = "<group>"; };
 		2D0440922D58810D00E98A2E /* RemoteImageBufferSetConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteImageBufferSetConfiguration.h; sourceTree = "<group>"; };
 		2D0440932D58810D00E98A2E /* RemoteImageBufferSetConfiguration.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteImageBufferSetConfiguration.serialization.in; sourceTree = "<group>"; };
 		2D0C56FB229F1DEA00BD33E7 /* DeviceManagementSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceManagementSoftLink.h; sourceTree = "<group>"; };
@@ -6051,6 +6060,11 @@
 		4C8E2A203D5F60718293A4D6 /* WKPortalVolumetricGestureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKPortalVolumetricGestureController.swift; sourceTree = "<group>"; };
 		4CAECB5E27465AE300AB78D0 /* UnifiedSource114.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource114.cpp; sourceTree = "<group>"; };
 		4D1A2B3C4E5F60718293A4B5 /* PendingSnapshotDrawing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PendingSnapshotDrawing.h; sourceTree = "<group>"; };
+		34E5A953C46413A3441CCB4D /* PrintProcessConnectionBroker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrintProcessConnectionBroker.cpp; sourceTree = "<group>"; };
+		D549BA93F918450425D521A1 /* PrintProcessConnectionBroker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintProcessConnectionBroker.h; sourceTree = "<group>"; };
+		1F05A5C0FE8B30047A1446DC /* PrintProcessProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrintProcessProxy.cpp; sourceTree = "<group>"; };
+		D2F1995290C439244D48DC0F /* PrintProcessProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintProcessProxy.h; sourceTree = "<group>"; };
+		EDD91B7CE0F3F3D90CA88E13 /* RemoteSnapshotHostProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSnapshotHostProxy.h; sourceTree = "<group>"; };
 		51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClientMac.mm; sourceTree = "<group>"; };
 		5104F5A11F19D7CF004CF821 /* CookieStorageUtilsCF.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieStorageUtilsCF.mm; sourceTree = "<group>"; };
 		510523711C73D22B007993CB /* WebIDBConnectionToServer.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebIDBConnectionToServer.messages.in; sourceTree = "<group>"; };
@@ -7069,8 +7083,6 @@
 		72440D33287CCC0500FADBC4 /* RemoteImageBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteImageBuffer.cpp; sourceTree = "<group>"; };
 		72440D3A287CF58900FADBC4 /* RemoteImageBufferProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteImageBufferProxy.cpp; sourceTree = "<group>"; };
 		724DCF21284862FC0026ACF4 /* ImageBufferShareableAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableAllocator.h; sourceTree = "<group>"; };
-		6741DCABDB6A2ED332C01DDD /* DisplayListDataTester.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayListDataTester.cpp; sourceTree = "<group>"; };
-		B4848398B0965F2C40442DED /* DisplayListDataTester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayListDataTester.h; sourceTree = "<group>"; };
 		724DCF22284862FC0026ACF4 /* ImageBufferShareableAllocator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableAllocator.cpp; sourceTree = "<group>"; };
 		726952DF2B7F4636009E5F0C /* WebExtensionAPIWebPageRuntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIWebPageRuntime.h; sourceTree = "<group>"; };
 		726D56DD253A64810002EF90 /* RemoteResourceCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteResourceCache.cpp; sourceTree = "<group>"; };
@@ -7217,18 +7229,23 @@
 		7BDC880C2E72D80500C7A37F /* RemoteSnapshotRecorderProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSnapshotRecorderProxy.h; sourceTree = "<group>"; };
 		7BDC880D2E72D80500C7A37F /* RemoteSnapshotRecorderProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSnapshotRecorderProxy.cpp; sourceTree = "<group>"; };
 		7BDC880E2E72DA2100C7A37F /* RemoteSnapshotRecorder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSnapshotRecorder.h; sourceTree = "<group>"; };
+		291D20CCFF44B66698A84C96 /* RemoteSnapshotRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSnapshotRegistry.cpp; sourceTree = "<group>"; };
+		7768BB10F8913220B9B4D9EB /* RemoteSnapshotRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSnapshotRegistry.h; sourceTree = "<group>"; };
 		7BDC880F2E72DA2100C7A37F /* RemoteSnapshotRecorder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSnapshotRecorder.cpp; sourceTree = "<group>"; };
 		7BDC88112E734E2F00C7A37F /* RemoteSnapshot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSnapshot.h; sourceTree = "<group>"; };
 		7BDC88122E734E2F00C7A37F /* RemoteSnapshot.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSnapshot.cpp; sourceTree = "<group>"; };
 		7BDC88132E734E2F00C7A37F /* RemoteSnapshotIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSnapshotIdentifier.h; sourceTree = "<group>"; };
+		0761D0999530511E39089C0A /* RemoteSnapshotHost.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSnapshotHost.h; sourceTree = "<group>"; };
 		7BDD9DDA28D205C6004CDF48 /* MessageObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageObserver.h; sourceTree = "<group>"; };
 		7BDD9DDB28D205C6004CDF48 /* WorkQueueMessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueueMessageReceiver.h; sourceTree = "<group>"; };
 		7BDDA33F275652EA0038659E /* AuxiliaryProcessCreationParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuxiliaryProcessCreationParameters.h; sourceTree = "<group>"; };
 		7BDE98AC2F0F33140091DCA3 /* RemotePageWebDeviceOrientationUpdateProviderProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePageWebDeviceOrientationUpdateProviderProxy.h; sourceTree = "<group>"; };
 		7BDE98AD2F0F33B20091DCA3 /* RemotePageWebDeviceOrientationUpdateProviderProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePageWebDeviceOrientationUpdateProviderProxy.cpp; sourceTree = "<group>"; };
 		7BE005B52E5C4E050014F7CF /* RemoteDisplayListRecorderProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorderProxy.h; sourceTree = "<group>"; };
+		8D6FF71C01B7189F5655EF7F /* RemoteDrawingBackendProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDrawingBackendProxy.h; sourceTree = "<group>"; };
 		7BE005B62E5C4E050014F7CF /* RemoteDisplayListRecorderProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteDisplayListRecorderProxy.cpp; sourceTree = "<group>"; };
 		7BE005B72E5C4E390014F7CF /* RemoteDisplayListRecorder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorder.h; sourceTree = "<group>"; };
+		9D9DE5ECFE30691023F38FED /* RemoteDrawingBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDrawingBackend.h; sourceTree = "<group>"; };
 		7BE005B82E5C4E390014F7CF /* RemoteDisplayListRecorder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteDisplayListRecorder.cpp; sourceTree = "<group>"; };
 		7BE005B92E5C4E4A0014F7CF /* RemoteImageBufferGraphicsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteImageBufferGraphicsContext.h; sourceTree = "<group>"; };
 		7BE005BA2E5C4E4A0014F7CF /* RemoteImageBufferGraphicsContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteImageBufferGraphicsContext.cpp; sourceTree = "<group>"; };
@@ -10397,6 +10414,25 @@
 				5C46C0AD21B7198C00BC5991 /* WebsiteDataStoreConfiguration.h */,
 			);
 			path = WebsiteData;
+			sourceTree = "<group>";
+		};
+		C9534E44B1DEDE04F5E0A557 /* Print */ = {
+			isa = PBXGroup;
+			children = (
+				7CFC6A94FFD342711DC736D1 /* PrintConnectionToWebProcess.cpp */,
+				DE1FFEC0F1EEBE7B816AA40D /* PrintConnectionToWebProcess.h */,
+				30C478FBFF7C4E6515CF2972 /* PrintConnectionToWebProcess.messages.in */,
+				8A3ADF53E4AF0938BA7A674B /* PrintPDFDocument.h */,
+				5A298EF073532DDB70B5DF77 /* PrintPDFDocument.mm */,
+				0A325BB44CD263CD146CD3BC /* PrintProcessConnection.cpp */,
+				6E5AAF1198DBEFB9AA9CEF2F /* PrintProcessConnection.h */,
+				4F79F6EACD0E0E0C39D97C31 /* RemotePrintBackend.cpp */,
+				79F97A3650B242483B2F3DBE /* RemotePrintBackend.h */,
+				B0C6A689097C16A360C1DC2A /* RemotePrintBackend.messages.in */,
+				6B73F57D18FFCD3D831623F6 /* RemotePrintBackendProxy.cpp */,
+				86A5444E304AEA8670B33947 /* RemotePrintBackendProxy.h */,
+			);
+			path = Print;
 			sourceTree = "<group>";
 		};
 		1A6FB7AA11E64B4900DB1371 /* Plugins */ = {
@@ -14760,6 +14796,7 @@
 				86D1967629A4E7B50083B077 /* PrepareBackingStoreBuffersData.serialization.in */,
 				7BE005B62E5C4E050014F7CF /* RemoteDisplayListRecorderProxy.cpp */,
 				7BE005B52E5C4E050014F7CF /* RemoteDisplayListRecorderProxy.h */,
+				8D6FF71C01B7189F5655EF7F /* RemoteDrawingBackendProxy.h */,
 				7BDC88012E705C5600C7A37F /* RemoteGradientIdentifier.h */,
 				7B904165254AFDEA006EEB8C /* RemoteGraphicsContextGLProxy.cpp */,
 				7B904166254AFDEB006EEB8C /* RemoteGraphicsContextGLProxy.h */,
@@ -14791,8 +14828,6 @@
 			children = (
 				0D078EB72E7387FA00A9B266 /* Model */,
 				1C98C01C27446926002CCB78 /* WebGPU */,
-				6741DCABDB6A2ED332C01DDD /* DisplayListDataTester.cpp */,
-				B4848398B0965F2C40442DED /* DisplayListDataTester.h */,
 				724DCF22284862FC0026ACF4 /* ImageBufferShareableAllocator.cpp */,
 				724DCF21284862FC0026ACF4 /* ImageBufferShareableAllocator.h */,
 				723C90A22A377AB400038126 /* PathSegment.serialization.in */,
@@ -14800,6 +14835,7 @@
 				7BE005B82E5C4E390014F7CF /* RemoteDisplayListRecorder.cpp */,
 				7BE005B72E5C4E390014F7CF /* RemoteDisplayListRecorder.h */,
 				7B72BB652E57419400D48E7D /* RemoteDisplayListRecorderIdentifier.h */,
+				9D9DE5ECFE30691023F38FED /* RemoteDrawingBackend.h */,
 				F48BB8E026F96392001C1C40 /* RemoteGraphicsContext.cpp */,
 				F48BB8DF26F96392001C1C40 /* RemoteGraphicsContext.h */,
 				F451C1002703D853002BA03B /* RemoteGraphicsContext.messages.in */,
@@ -14831,11 +14867,14 @@
 				966F42B3BF3CA9AFEE64F9BF /* RemoteSerializedImageBufferIdentifier.h */,
 				7BDC88122E734E2F00C7A37F /* RemoteSnapshot.cpp */,
 				7BDC88112E734E2F00C7A37F /* RemoteSnapshot.h */,
+				0761D0999530511E39089C0A /* RemoteSnapshotHost.h */,
 				7BDC88132E734E2F00C7A37F /* RemoteSnapshotIdentifier.h */,
 				7BDC880F2E72DA2100C7A37F /* RemoteSnapshotRecorder.cpp */,
 				7BDC880E2E72DA2100C7A37F /* RemoteSnapshotRecorder.h */,
 				A76EFA982E7244510022429C /* RemoteSnapshotRecorder.messages.in */,
 				7BDC880B2E72D80500C7A37F /* RemoteSnapshotRecorderIdentifier.h */,
+				291D20CCFF44B66698A84C96 /* RemoteSnapshotRegistry.cpp */,
+				7768BB10F8913220B9B4D9EB /* RemoteSnapshotRegistry.h */,
 				7BCF70CA2614935E00E4FB70 /* ScopedRenderingResourcesRequest.cpp */,
 				7BCF70CD2614935F00E4FB70 /* ScopedRenderingResourcesRequest.h */,
 				7BCF70CB2614935E00E4FB70 /* ScopedRenderingResourcesRequestCocoa.mm */,
@@ -15911,9 +15950,6 @@
 		A71DC05D2B266DA3001C3075 /* graphics */ = {
 			isa = PBXGroup;
 			children = (
-				C6FBB12BD68DF71E6257D37B /* DisplayListData.cpp */,
-				830A771F4F5CC222E58BB08A /* DisplayListData.h */,
-				2AE2FB885072066C4BD4DAE0 /* DisplayListData.serialization.in */,
 				A7D5005A2B266DF200D3497E /* ImageBufferSet.cpp */,
 				A7D5005C2B266E0600D3497E /* ImageBufferSet.h */,
 				2D0440922D58810D00E98A2E /* RemoteImageBufferSetConfiguration.h */,
@@ -16119,6 +16155,7 @@
 				5105B0D2162F7A5E00E27709 /* Network */,
 				31099974146C8AA80029DEB9 /* Notifications (User) */,
 				1A6FB7AA11E64B4900DB1371 /* Plugins */,
+				C9534E44B1DEDE04F5E0A557 /* Print */,
 				93AB9B482574C5CE0098B10E /* Speech */,
 				5118E9981F295259003EF9F5 /* Storage */,
 				1AAF08AA1926930B00B6390C /* UserContent */,
@@ -16410,6 +16447,10 @@
 				4D1A2B3C4E5F60718293A4B5 /* PendingSnapshotDrawing.h */,
 				832ED1891E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.cpp */,
 				832ED18A1E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.h */,
+				34E5A953C46413A3441CCB4D /* PrintProcessConnectionBroker.cpp */,
+				D549BA93F918450425D521A1 /* PrintProcessConnectionBroker.h */,
+				1F05A5C0FE8B30047A1446DC /* PrintProcessProxy.cpp */,
+				D2F1995290C439244D48DC0F /* PrintProcessProxy.h */,
 				E3EA8F0D2F439059006CC6B3 /* ProcessActivityGroup.cpp */,
 				E3EA8F0C2F439059006CC6B3 /* ProcessActivityGroup.h */,
 				37716A59195B910500EE8B1B /* ProcessAssertion.cpp */,
@@ -16438,6 +16479,7 @@
 				729F145827DA4BFB83A7C750 /* RemotePageWebAuthenticatorCoordinatorProxy.h */,
 				7BDE98AD2F0F33B20091DCA3 /* RemotePageWebDeviceOrientationUpdateProviderProxy.cpp */,
 				7BDE98AC2F0F33140091DCA3 /* RemotePageWebDeviceOrientationUpdateProviderProxy.h */,
+				EDD91B7CE0F3F3D90CA88E13 /* RemoteSnapshotHostProxy.h */,
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
 				5E55104200000000000B0001 /* SecurityFlagsController.cpp */,

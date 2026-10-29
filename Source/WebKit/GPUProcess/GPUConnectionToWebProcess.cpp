@@ -855,7 +855,7 @@ void GPUConnectionToWebProcess::abandonSnapshotFrame(RemoteSnapshotIdentifier sn
 
 void GPUConnectionToWebProcess::failSnapshot(RemoteSnapshotIdentifier snapshotIdentifier)
 {
-    m_gpuProcess->failSnapshot(snapshotIdentifier);
+    m_gpuProcess->snapshotRegistry().failSnapshot(snapshotIdentifier);
 }
 
 void GPUConnectionToWebProcess::setNowPlayingInfoForPage(NowPlayingInfo&& nowPlayingInfo, std::optional<WebCore::PageIdentifier> pageIdentifier)

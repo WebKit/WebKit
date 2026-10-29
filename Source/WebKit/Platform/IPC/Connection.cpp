@@ -82,6 +82,7 @@ static Lock s_connectionMapLock;
 class Connection::SyncMessageState final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SyncMessageState> {
 public:
     static Ref<SyncMessageState> getOrCreate(SerialFunctionDispatcher&);
+    static RefPtr<SyncMessageState> getIfExists(SerialFunctionDispatcher&);
     Ref<SerialFunctionDispatcher> dispatcher() const { return m_dispatcher.get(); }
     ~SyncMessageState();
 
@@ -162,6 +163,12 @@ Ref<Connection::SyncMessageState> Connection::SyncMessageState::getOrCreate(Seri
     Ref newState = adoptRef(*new SyncMessageState(dispatcher));
     addResult.iterator->value = newState.get();
     return newState;
+}
+
+RefPtr<Connection::SyncMessageState> Connection::SyncMessageState::getIfExists(SerialFunctionDispatcher& dispatcher)
+{
+    Locker locker { syncMessageStateMapLock };
+    return syncMessageStateMap().get(&dispatcher).get();
 }
 
 Connection::SyncMessageState::~SyncMessageState()
@@ -357,6 +364,12 @@ RefPtr<Connection> Connection::connection(UniqueID uniqueID)
     // FIXME(https://bugs.webkit.org/show_bug.cgi?id=238493): Removing with lock in destructor is not thread-safe.
     Locker locker { s_connectionMapLock };
     return connectionMap().get(uniqueID).get();
+}
+
+void Connection::dispatchMessagesAllowedWhileWaitingForSyncReply()
+{
+    if (RefPtr syncState = SyncMessageState::getIfExists(RunLoop::currentSingleton()))
+        syncState->dispatchMessages();
 }
 
 void Connection::setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool flag)

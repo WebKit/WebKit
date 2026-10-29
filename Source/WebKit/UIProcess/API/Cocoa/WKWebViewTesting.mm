@@ -994,6 +994,26 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     return result->autorelease();
 }
 
+- (void)_drawPrintPreviewForTesting:(_WKFrameHandle *)handle rect:(CGRect)rect imageSize:(CGSize)imageSize completionHandler:(void(^)(CGImageRef))completionHandler
+{
+    RefPtr frame = WebKit::WebFrameProxy::webFrame(*handle->_frameHandle->frameID());
+    if (!frame)
+        return completionHandler(nullptr);
+
+    WebKit::PrintInfo printInfo;
+    printInfo.pageSetupScaleFactor = 1;
+    printInfo.availablePaperWidth = 612;
+    printInfo.availablePaperHeight = 792;
+    _page->drawRectToImage(*frame, printInfo, WebCore::enclosingIntRect(WebCore::FloatRect { rect }), WebCore::expandedIntSize(WebCore::FloatSize { imageSize }), [completionHandler = makeBlockPtr(completionHandler)](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) {
+        if (!imageHandle)
+            return completionHandler(nullptr);
+        RefPtr bitmap = WebCore::ShareableBitmap::create(WTF::move(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
+        if (!bitmap)
+            return completionHandler(nullptr);
+        completionHandler(bitmap->createPlatformImage().get());
+    });
+}
+
 - (void)_printProcessIdentifierForTesting:(void(^)(pid_t))completionHandler
 {
     auto lockdownMode = protect(_page->legacyMainFrameProcess())->lockdownMode();
@@ -1005,6 +1025,35 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 - (void)_setPrintProcessIdleTimeoutForTesting:(NSTimeInterval)timeout
 {
     protect(_page->configuration().processPool())->setPrintProcessIdleTimeoutForTesting(Seconds { timeout });
+}
+
+- (void)_printProcessCompletedSnapshotCountForTesting:(void(^)(NSUInteger))completionHandler
+{
+    auto lockdownMode = protect(_page->legacyMainFrameProcess())->lockdownMode();
+    protect(_page->configuration().processPool())->printProcessCompletedSnapshotCountForTesting(lockdownMode, [completionHandler = makeBlockPtr(completionHandler)](uint64_t count) {
+        completionHandler(count);
+    });
+}
+
+- (void)_setConnectsFramesToPrintProcessAheadOfDrawingForTesting:(BOOL)connects
+{
+    protect(_page->configuration().processPool())->setConnectsFramesToPrintProcessAheadOfDrawingForTesting(connects);
+}
+
+- (void)_connectFrameProcessesToPrintProcessForTesting:(void(^)(NSUInteger))completionHandler
+{
+    RefPtr mainFrame = _page->mainFrame();
+    if (!mainFrame) {
+        completionHandler(0);
+        return;
+    }
+    auto lockdownMode = protect(_page->legacyMainFrameProcess())->lockdownMode();
+    Ref processPool = _page->configuration().processPool();
+    processPool->ensurePrintProcessConnections(*mainFrame, lockdownMode, [processPool, lockdownMode, completionHandler = makeBlockPtr(completionHandler)](bool) mutable {
+        processPool->printProcessClientCountForTesting(lockdownMode, [completionHandler = WTF::move(completionHandler)](uint64_t count) {
+            completionHandler(count);
+        });
+    });
 }
 
 - (void)_endPrintingForTesting:(void(^)(void))completionHandler
@@ -1025,18 +1074,6 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     gpuProcess->webProcessConnectionCountForTesting([completionHandler = makeBlockPtr(completionHandler)](uint64_t count) {
         completionHandler(count);
     });
-}
-
-- (void)_runDisplayListDataTestsInGPUProcessForTesting:(void(^)(NSArray<NSString *> *))completionHandler
-{
-#if ENABLE(GPU_PROCESS)
-    Ref gpuProcess = WebKit::GPUProcessProxy::getOrCreate();
-    gpuProcess->runDisplayListDataTestsForTesting([completionHandler = makeBlockPtr(completionHandler)](Vector<String>&& failures) {
-        completionHandler(createNSArray(failures).get());
-    });
-#else
-    completionHandler(@[ @"The GPU process is not enabled" ]);
-#endif
 }
 
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected

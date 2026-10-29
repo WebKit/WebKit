@@ -284,7 +284,7 @@ def parse_enabled_by_string(enabled_by_string):
 def parse_process_name_string(value):
     names = [name.strip() for name in value.split('|')]
     for name in names:
-        if name not in ["UI", "Networking", "GPU", "WebContent", "Model"]:
+        if name not in ["UI", "Networking", "GPU", "WebContent", "Model", "Printing"]:
             raise Exception('ERROR: Invalid Process Name found')
     return '|'.join(names)
 

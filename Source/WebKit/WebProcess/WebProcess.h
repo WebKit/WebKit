@@ -30,6 +30,7 @@
 #include "EventDispatcher.h"
 #include "IdentifierTypes.h"
 #include "NetworkProcessConnection.h"
+#include "RemoteSnapshotHost.h"
 #include "RemoteSnapshotIdentifier.h"
 #include "ScriptTrackingPrivacyFilter.h"
 #include "SharedPreferencesForWebProcess.h"
@@ -115,6 +116,8 @@ class CPUMonitor;
 class Frame;
 class PageGroup;
 class SecurityOriginData;
+class ShareableBitmapHandle;
+class SharedBuffer;
 class Site;
 class UserGestureToken;
 
@@ -150,11 +153,14 @@ class LibWebRTCCodecs;
 class LibWebRTCNetwork;
 class ModelProcessConnection;
 class ModelProcessModelPlayerManager;
+class PrintConnectionToWebProcess;
+class PrintProcessConnection;
 class RemoteCDMFactory;
 class RemoteImageDecoderAVFManager;
 class RemoteLegacyCDMFactory;
 class RemoteMediaEngineConfigurationFactory;
 class RemoteMediaPlayerManager;
+class RemoteSnapshotRegistry;
 class StorageAreaMap;
 class UserData;
 class WebAutomationSessionProxy;
@@ -314,9 +320,9 @@ public:
 #if ENABLE(GPU_PROCESS)
     GPUProcessConnection& ensureGPUProcessConnection();
     // Resolves a frame of a snapshot that will not be recorded, so that the snapshot does not wait for it.
-    void abandonSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier);
+    void abandonSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, RemoteSnapshotHost);
     // Fails a snapshot whose root will not be recorded, so that nothing waits for it.
-    void failSnapshot(RemoteSnapshotIdentifier);
+    void failSnapshot(RemoteSnapshotIdentifier, RemoteSnapshotHost);
     GPUProcessConnection* existingGPUProcessConnection() { return m_gpuProcessConnection.get(); }
     // Returns timeout duration for GPU process connections. Thread-safe.
     Seconds LEGACY_NODELETE gpuProcessTimeoutDuration() const;
@@ -337,6 +343,17 @@ public:
 #endif
     RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory();
 #endif // ENABLE(GPU_PROCESS)
+
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    void printConnectionToWebProcessDidClose(PrintConnectionToWebProcess&);
+    void printProcessConnectionDidClose(PrintProcessConnection&);
+    // In the print process, the snapshots that the print backends record into.
+    RemoteSnapshotRegistry& snapshotRegistry();
+    PrintProcessConnection* printProcessConnection() const { return m_printProcessConnection.get(); }
+    // The connection to the print process, waiting a while for the UI process to send it if there is
+    // none yet, as there may not be when this is first asked to record into the print process.
+    RefPtr<PrintProcessConnection> waitForPrintProcessConnection();
+#endif
 
 #if ENABLE(MODEL_PROCESS)
     ModelProcessConnection& ensureModelProcessConnection();
@@ -484,6 +501,12 @@ public:
     // Blocks IOKit in the sandbox. The process cannot use IOKit after this, so call this only when the
     // rendering and the media use the GPU process.
     void blockIOKit();
+#if HAVE(SANDBOX_STATE_FLAGS)
+    // Tightens the sandbox once the process shows web content: when it creates its first page, or
+    // when the print process gets ready to print.
+    void setHasLaunchedWebContentProcess();
+    void enableContentSandboxStateFlags(bool unifiedPDFEnabled, bool shouldAllowUserInstalledFonts);
+#endif
 #endif
 
 #if ENABLE(GPU_PROCESS)
@@ -642,10 +665,24 @@ private:
     void bindAccessibilityFrameWithData(WebCore::FrameIdentifier, std::span<const uint8_t>);
 
 #if ENABLE(GPU_PROCESS)
-    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, WebCore::RenderingMode);
+    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, WebCore::RenderingMode, RemoteSnapshotHost);
 #endif
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
     void prepareForPrinting(CompletionHandler<void(bool)>&&);
+    void createPrintConnectionToWebProcess(WebCore::ProcessIdentifier, WebCore::ProcessIdentity&&, SharedPreferencesForWebProcess&&, bool isLockdownModeEnabled, CompletionHandler<void(std::optional<IPC::Connection::Handle>&&)>&&);
+    void removePrintConnectionToWebProcess(WebCore::ProcessIdentifier);
+    void updatePrintConnectionSharedPreferences(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&);
+    void printClientDidGoAway(WebCore::ProcessIdentifier);
+    void printConnectionToWebProcessCountForTesting(CompletionHandler<void(uint64_t)>&&);
+    void connectToPrintProcess(IPC::Connection::Handle&&);
+    void sinkCompletedPrintSnapshotToPDF(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    void sinkCompletedPrintSnapshotToBitmap(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
+    void releasePrintSnapshot(RemoteSnapshotIdentifier);
+    void abandonPrintSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier);
+    void printSnapshotFrameWillBeDrawnByProcess(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
+    void abandonPrintSnapshotFramesOwnedBy(WebCore::ProcessIdentifier);
+    void waitForPrintSnapshot(RemoteSnapshotIdentifier, CompletionHandler<void()>&&);
+    void completedPrintSnapshotCountForTesting(CompletionHandler<void(uint64_t)>&&);
 #endif
 
     void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);
@@ -747,6 +784,7 @@ private:
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) final;
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -871,6 +909,15 @@ private:
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     const std::unique_ptr<AudioMediaStreamTrackRendererInternalUnitManager> m_audioMediaStreamTrackRendererInternalUnitManager;
 #endif
+#endif
+
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    // In the print process, the connections from the web processes that draw into it.
+    HashMap<WebCore::ProcessIdentifier, Ref<PrintConnectionToWebProcess>> m_printConnectionsToWebProcesses;
+    // In the other web processes, the connection to the print process with their Lockdown Mode.
+    RefPtr<PrintProcessConnection> m_printProcessConnection;
+    RefPtr<RemoteSnapshotRegistry> m_snapshotRegistry;
+    uint64_t m_completedPrintSnapshotCountForTesting { 0 };
 #endif
 
 #if ENABLE(MODEL_PROCESS)

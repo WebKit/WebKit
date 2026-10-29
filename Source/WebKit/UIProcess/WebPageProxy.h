@@ -2092,6 +2092,8 @@ public:
     std::optional<IPC::AsyncReplyID> computePagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&&);
     void getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&&);
 #if PLATFORM(COCOA)
+    // Takes a print snapshot drawn to PDF, or to a bitmap.
+    using PrintSnapshotCompletionHandler = Variant<CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>>;
     std::optional<IPC::AsyncReplyID> drawRectToImage(WebFrameProxy&, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
     std::optional<IPC::AsyncReplyID> drawPagesToPDF(WebFrameProxy&, const PrintInfo&, uint32_t first, uint32_t count, CompletionHandler<void(API::Data*)>&&);
     void drawToPDF(const std::optional<WebCore::FloatRect>&, bool allowTransparentBackground, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
@@ -3335,7 +3337,7 @@ private:
     bool shouldUseRemoteSnapshotting(const WebFrameProxy* rootFrame);
     bool shouldLaunchPrintProcess(const WebFrameProxy* rootFrame);
     void launchPrintProcessIfNeeded(const WebFrameProxy* rootFrame);
-    CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)> launchPrintProcessForDrawingIfNeeded(const WebFrameProxy* rootFrame, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    std::optional<IPC::Connection::AsyncReplyID> drawPrintSnapshot(WebFrameProxy& rootFrame, PrintSnapshotCompletionHandler&&, Function<std::optional<IPC::Connection::AsyncReplyID>(RemoteSnapshotIdentifier, CompletionHandler<void(bool)>&&)>&& sendRootDraw);
 #else
     void didGeneratePageLoadTiming(const WebPageLoadTiming&) { }
 #endif

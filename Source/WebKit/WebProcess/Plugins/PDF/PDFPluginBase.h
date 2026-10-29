@@ -41,6 +41,7 @@
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/PluginViewBase.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/ScrollableArea.h>
 #include <WebCore/TextIndicator.h>
@@ -193,6 +194,10 @@ public:
     void updateControlTints(WebCore::GraphicsContext&);
 
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const;
+
+    // Draws the part in source of a page into destination where the recording of the context is drawn,
+    // as GraphicsContext::drawPDFPage() does. False if the page has to be drawn some other way.
+    bool drawPageWhereRecordingIsDrawn(WebCore::GraphicsContext&, unsigned pageIndex, const WebCore::FloatRect& source, const WebCore::FloatRect& destination);
 
     virtual bool wantsWheelEvents() const = 0;
     virtual bool handleMouseEvent(const WebMouseEvent&) = 0;
@@ -543,6 +548,8 @@ protected:
     RefPtr<WebCore::Scrollbar> m_verticalScrollbar;
 
     bool m_documentFinishedLoading { false };
+    // Identifies the document to the recordings that draw its pages where they are drawn.
+    std::optional<WebCore::RenderingResourceIdentifier> m_documentIdentifierForRecordings;
     bool m_isBeingDestroyed { false };
     std::atomic<bool> m_hasBeenDestroyed { false };
     bool m_didRunScripts { false };

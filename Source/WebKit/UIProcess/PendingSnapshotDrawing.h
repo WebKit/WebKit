@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUProcessProxy.h"
+#include "RemoteSnapshotHostProxy.h"
 #include "RemoteSnapshotIdentifier.h"
 #include "WebProcessProxy.h"
 #include <wtf/CompletionHandler.h>
@@ -41,7 +42,8 @@ namespace WebKit {
 
 // A drawing that a caller may have to block the main thread for, as UIKit printing does. With remote
 // snapshotting, frames hosted in other processes are asked to record by way of this process, so waiting
-// for the drawing means waiting on the GPU process in a way that still dispatches those requests.
+// for the drawing means waiting on the snapshot host, the GPU process or the print process, in a way
+// that still dispatches those requests.
 class PendingSnapshotDrawing : public RefCounted<PendingSnapshotDrawing> {
     WTF_MAKE_TZONE_ALLOCATED(PendingSnapshotDrawing);
 public:
@@ -64,7 +66,7 @@ public:
     {
         if (m_isComplete)
             return;
-        m_waitForReply = [weakProcess = WeakPtr { process }, replyID] {
+        m_waitForReply = [weakProcess = WeakPtr { process }, replyID](IPC::Connection*) {
             RefPtr process = weakProcess.get();
             if (process && process->hasConnection())
                 protect(process->connection())->waitForAsyncReplyAndDispatchImmediately<M>(replyID, Seconds::infinity());
@@ -72,19 +74,23 @@ public:
         add(replyID);
     }
 
-    // With remote snapshotting, the GPU process replies with the drawing once the snapshot is complete.
-    // Identified to the caller by the root's reply, which comes before.
+    // With remote snapshotting, the snapshot host replies with the drawing once the snapshot is complete.
+    // Identified to the caller by replyID, such as the reply of the root, which comes before. The host
+    // may still be launching, which the wait waits for first, since processes finish launching on the
+    // main thread that the wait blocks.
     template<typename M>
-    void setReply(GPUProcessProxy& gpuProcess, std::optional<IPC::AsyncReplyID> sinkReplyID, IPC::AsyncReplyID rootReplyID)
+    void setReply(RemoteSnapshotHostProxy& host, std::optional<IPC::AsyncReplyID> sinkReplyID, IPC::AsyncReplyID replyID)
     {
         if (!sinkReplyID || m_isComplete)
             return;
-        m_waitForReply = [weakGPUProcess = WeakPtr { gpuProcess }, sinkReplyID = *sinkReplyID] {
-            RefPtr gpuProcess = weakGPUProcess.get();
-            if (gpuProcess && gpuProcess->hasConnection())
-                protect(gpuProcess->connection())->waitForAsyncReplyAndDispatchImmediately<M>(sinkReplyID, replyTimeout);
+        m_snapshotHostConnection = host.snapshotHostConnectionWaiter();
+        if (m_snapshotIdentifier)
+            m_waitForSnapshot = host.snapshotWaiter(*m_snapshotIdentifier);
+        m_waitForReply = [sinkReplyID = *sinkReplyID](IPC::Connection* connection) {
+            if (connection)
+                connection->waitForAsyncReplyAndDispatchImmediately<M>(sinkReplyID, replyTimeout);
         };
-        add(rootReplyID);
+        add(replyID);
     }
 
     template<typename... Arguments>
@@ -101,6 +107,7 @@ private:
     static constexpr Seconds snapshotTimeout = 15_s;
     // Sent before the GPU process answered the wait, so it has already come in.
     static constexpr Seconds replyTimeout = 1_s;
+    static constexpr Seconds launchTimeout = 15_s;
 
     explicit PendingSnapshotDrawing(std::optional<RemoteSnapshotIdentifier> snapshotIdentifier)
         : m_snapshotIdentifier(snapshotIdentifier)
@@ -116,7 +123,9 @@ private:
 
     void add(IPC::AsyncReplyID replyID)
     {
-        m_replyID = replyID;
+        if (m_replyIDs.contains(replyID))
+            return;
+        m_replyIDs.append(replyID);
         drawings().add(replyID, *this);
     }
 
@@ -126,29 +135,35 @@ private:
         if (m_isComplete)
             return;
 
-        if (m_snapshotIdentifier) {
-            RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
-            if (!gpuProcess)
-                return;
-            if (!gpuProcess->waitForSnapshot(*m_snapshotIdentifier, snapshotTimeout))
-                gpuProcess->releaseSnapshot(*m_snapshotIdentifier);
-        }
+        RefPtr<IPC::Connection> snapshotHostConnection;
+        if (auto getSnapshotHostConnection = std::exchange(m_snapshotHostConnection, nullptr))
+            snapshotHostConnection = getSnapshotHostConnection(launchTimeout);
+
+        if (auto waitForSnapshot = std::exchange(m_waitForSnapshot, nullptr))
+            waitForSnapshot(snapshotTimeout);
 
         if (auto waitForReply = std::exchange(m_waitForReply, nullptr))
-            waitForReply();
+            waitForReply(snapshotHostConnection.get());
     }
 
     void didComplete()
     {
         m_isComplete = true;
+        m_snapshotHostConnection = nullptr;
+        m_waitForSnapshot = nullptr;
         m_waitForReply = nullptr;
-        if (m_replyID)
-            drawings().remove(*m_replyID);
+        for (auto replyID : std::exchange(m_replyIDs, { })) {
+            auto iterator = drawings().find(replyID);
+            if (iterator != drawings().end() && iterator->value.ptr() == this)
+                drawings().remove(iterator);
+        }
     }
 
     const std::optional<RemoteSnapshotIdentifier> m_snapshotIdentifier;
-    std::optional<IPC::AsyncReplyID> m_replyID;
-    Function<void()> m_waitForReply;
+    Vector<IPC::AsyncReplyID> m_replyIDs;
+    Function<RefPtr<IPC::Connection>(Seconds launchTimeout)> m_snapshotHostConnection;
+    Function<void(Seconds)> m_waitForSnapshot;
+    Function<void(IPC::Connection*)> m_waitForReply;
     bool m_isComplete { false };
 };
 

@@ -33,6 +33,7 @@
 #include "MarkSurfacesAsVolatileRequestIdentifier.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "RemoteDrawingBackendProxy.h"
 #include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextMessages.h"
 #include "RemoteImageBufferProxy.h"
@@ -91,7 +92,7 @@ class RemoteFaceDetectorProxy;
 }
 
 class RemoteRenderingBackendProxy
-    : public IPC::Connection::Client, public RefCounted<RemoteRenderingBackendProxy>, SerialFunctionDispatcher {
+    : public IPC::Connection::Client, public RefCounted<RemoteRenderingBackendProxy>, SerialFunctionDispatcher, public RemoteDrawingBackendProxy {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RemoteRenderingBackendProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteRenderingBackendProxy);
 public:
@@ -100,12 +101,15 @@ public:
 
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(IPC::MessageReceiver);
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(IPC::Connection::Client);
 
     ~RemoteRenderingBackendProxy();
 
     static bool canMapRemoteImageBufferBackendBackingStore();
 
-    RemoteResourceCacheProxy& remoteResourceCacheProxy() const { return m_remoteResourceCacheProxy; }
+    RemoteResourceCacheProxy& remoteResourceCacheProxy() const final { return m_remoteResourceCacheProxy; }
+    bool canUseGPUProcessResources() const final { return true; }
 
     void transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy>, WebCore::ImageBuffer&);
     std::unique_ptr<RemoteSerializedImageBufferProxy> moveToSerializedBuffer(RemoteImageBufferProxy&);
@@ -113,39 +117,40 @@ public:
     std::optional<WebCore::ImageBufferTransferIdentifier> moveSerializedBufferToTransferHeap(RemoteSerializedImageBufferProxy&);
     RefPtr<RemoteImageBufferProxy> takeTransferredBuffer(const WebCore::ImageBufferTransferHandle&);
 
-    RefPtr<RemoteImageBufferProxy> cachedImageBuffer(const WebCore::ImageBuffer&) const;
+    RefPtr<RemoteImageBufferProxy> cachedImageBuffer(const WebCore::ImageBuffer&) const final;
 
     RefPtr<RemoteImageBufferProxy> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::ColorSpace&, WebCore::ImageBufferFormat);
+    RefPtr<WebCore::ImageBuffer> createImageBufferForContext(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::ColorSpace&, WebCore::ImageBufferFormat) final;
     void releaseImageBuffer(RemoteImageBufferProxy&);
     bool getPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect, std::span<uint8_t> result);
     // Returns backing store bitmap for the RemoteNativeImageProxy.
-    RefPtr<WebCore::ShareableBitmap> nativeImageBitmap(const RemoteNativeImageProxy&);
-    void cacheNativeImage(WebCore::ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
+    RefPtr<WebCore::ShareableBitmap> nativeImageBitmap(const RemoteNativeImageProxy&) final;
+    void cacheNativeImage(WebCore::ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier) final;
     // Adopts a shared NativeImage (whose contents the GPU process publishes in the shared resource
     // cache) into this backend's cache, so that drawing it needs no further set up.
     void cacheNativeImageFromSharedNativeImage(RemoteNativeImageProxy&);
-    void releaseNativeImage(WebCore::RenderingResourceIdentifier);
-    void cachePathImpl(Ref<WebCore::PathImpl>&&, RemotePathImplIdentifier);
-    void releasePathImpl(RemotePathImplIdentifier);
-    void cacheFont(const WebCore::Font::Attributes&, const WebCore::FontPlatformDataAttributes&, std::optional<WebCore::RenderingResourceIdentifier>);
-    void releaseFont(WebCore::RenderingResourceIdentifier);
-    void cacheFontCustomPlatformData(Ref<const WebCore::FontCustomPlatformData>&&);
-    void releaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier);
-    void cacheGradient(Ref<WebCore::Gradient>&&, RemoteGradientIdentifier);
-    void releaseGradient(RemoteGradientIdentifier);
-    void cacheFilter(Ref<WebCore::Filter>&&);
-    void releaseFilter(WebCore::RenderingResourceIdentifier);
-    void cacheDisplayList(RemoteDisplayListIdentifier, const WebCore::DisplayList::DisplayList&);
-    void releaseDisplayList(RemoteDisplayListIdentifier);
+    void releaseNativeImage(WebCore::RenderingResourceIdentifier) final;
+    void cachePathImpl(Ref<WebCore::PathImpl>&&, RemotePathImplIdentifier) final;
+    void releasePathImpl(RemotePathImplIdentifier) final;
+    void cacheFont(const WebCore::Font::Attributes&, const WebCore::FontPlatformDataAttributes&, std::optional<WebCore::RenderingResourceIdentifier>) final;
+    void releaseFont(WebCore::RenderingResourceIdentifier) final;
+    void cacheFontCustomPlatformData(Ref<const WebCore::FontCustomPlatformData>&&) final;
+    void releaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier) final;
+    void cacheGradient(Ref<WebCore::Gradient>&&, RemoteGradientIdentifier) final;
+    void releaseGradient(RemoteGradientIdentifier) final;
+    void cacheFilter(Ref<WebCore::Filter>&&) final;
+    void releaseFilter(WebCore::RenderingResourceIdentifier) final;
+    void cacheDisplayList(RemoteDisplayListIdentifier, const WebCore::DisplayList::DisplayList&) final;
+    void releaseDisplayList(RemoteDisplayListIdentifier) final;
     void releaseMemory();
     void markSurfacesVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&&, CompletionHandler<void(bool madeAllVolatile)>&&, bool forcePurge);
     Ref<RemoteImageBufferSetProxy> createImageBufferSet(ImageBufferSetClient&);
     void releaseImageBufferSet(RemoteImageBufferSetProxy&);
     void getImageBufferResourceLimitsForTesting(CompletionHandler<void(WebCore::ImageBufferResourceLimits)>&&);
 
-    void createSnapshot(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, const WebCore::FloatSize&);
-    UniqueRef<RemoteSnapshotRecorderProxy> createSnapshotRecorder(const WebCore::FloatRect& initialClip, RemoteSnapshotIdentifier, WebCore::RenderingMode);
-    void sinkSnapshotRecorderIntoSnapshotFrame(UniqueRef<RemoteSnapshotRecorderProxy>&&, WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&);
+    void createSnapshot(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, const WebCore::FloatSize&) final;
+    UniqueRef<RemoteSnapshotRecorderProxy> createSnapshotRecorder(const WebCore::FloatRect& initialClip, RemoteSnapshotIdentifier, WebCore::RenderingMode) final;
+    void sinkSnapshotRecorderIntoSnapshotFrame(UniqueRef<RemoteSnapshotRecorderProxy>&&, WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&) final;
 
     Ref<ShapeDetection::RemoteBarcodeDetectorProxy> createBarcodeDetector(const WebCore::ShapeDetection::BarcodeDetectorOptions&);
     void releaseBarcodeDetector(ShapeDetection::RemoteBarcodeDetectorProxy&);
@@ -192,12 +197,12 @@ public:
 
     bool isGPUProcessConnectionClosed() const { return !m_connection; }
 
-    RefPtr<IPC::StreamClientConnection> connection();
+    RefPtr<IPC::StreamClientConnection> connection() final;
 
     bool isCurrent() const final;
     Ref<WorkQueue> workQueue() { return m_queue; }
 
-    void didBecomeUnresponsive();
+    void didBecomeUnresponsive() final;
 
     static constexpr Seconds defaultTimeout = 15_s;
 

@@ -37,6 +37,7 @@
 #include "ProcessCrossOriginIsolation.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
+#include "RemoteSnapshotHost.h"
 #include "RemoteSnapshotIdentifier.h"
 #include "RemoteWorkerInitializationData.h"
 #include "ResponsivenessTimer.h"
@@ -219,6 +220,9 @@ public:
 
     static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, EnhancedSecurity, IsPrewarmed, ProcessCrossOriginIsolation = ProcessCrossOriginIsolation::None, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
 
+    // A pageless process that draws print snapshots. Its launch can be waited for.
+    static Ref<WebProcessProxy> createPrintProcess(WebProcessPool&, WebsiteDataStore*, LockdownMode);
+
     static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::Site&&, WebsiteDataStore&, WebCore::CrossOriginMode, LockdownMode, EnhancedSecurity);
 
     ~WebProcessProxy();
@@ -344,7 +348,6 @@ public:
     bool LEGACY_NODELETE isDummyProcessProxy() const;
 
     bool isPrintProcess() const { return m_isPrintProcess; }
-    void setIsPrintProcess() { m_isPrintProcess = true; }
 
     void didCreateWebPageInProcess(WebCore::PageIdentifier);
 
@@ -648,9 +651,7 @@ public:
     Seconds totalBackgroundTime() const;
     Seconds totalSuspendedTime() const;
 
-#if ENABLE(WEBXR)
     const WebCore::ProcessIdentity& processIdentity() LIFETIME_BOUND;
-#endif
 
     bool isAlwaysOnLoggingAllowed() const;
 
@@ -790,7 +791,10 @@ private:
 #if ENABLE(GPU_PROCESS)
     void createGPUProcessConnection(GPUProcessConnectionIdentifier, IPC::Connection::Handle&&);
     void gpuProcessConnectionDidBecomeUnresponsive(GPUProcessConnectionIdentifier);
-    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, WebCore::RenderingMode);
+    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, WebCore::RenderingMode, RemoteSnapshotHost);
+#endif
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    void terminatePrintProcessClient(WebCore::ProcessIdentifier, IPC::MessageName invalidMessageName);
 #endif
 
 #if HAVE(IOSURFACE)

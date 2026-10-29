@@ -34,6 +34,7 @@
 #include <WebCore/ColorSpace.h>
 #include <WebCore/ImageBufferTransferIdentifier.h>
 #include "RemoteSnapshotIdentifier.h"
+#include "RemoteSnapshotRegistry.h"
 #include "SandboxExtension.h"
 #include "SecurityFlags.h"
 #include "WebPageProxyIdentifier.h"
@@ -169,7 +170,6 @@ public:
     const String& applicationVisibleName() const LIFETIME_BOUND { return m_applicationVisibleName; }
 
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
-    void runDisplayListDataTestsForTesting(CompletionHandler<void(Vector<String>&&)>&&);
 
 #if USE(EXTENSIONKIT)
     void resolveBookmarkDataForCacheDirectory(std::span<const uint8_t> bookmarkData);
@@ -187,14 +187,7 @@ public:
     void setPresentingApplicationAuditToken(WebCore::ProcessIdentifier, WebCore::PageIdentifier, std::optional<CoreIPCAuditToken>&&);
 #endif
 
-    // Created by the process painting its root, or by whoever asks to draw it if that comes first.
-    // Neither can come after it is released. A frame recording into one that does not exist records
-    // into nothing, so none can bring back a snapshot that was released.
-    void createSnapshot(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, const WebCore::FloatSize&, WebCore::ProcessIdentifier rootProcessIdentifier);
-    // For a root that could not be recorded.
-    void failSnapshot(RemoteSnapshotIdentifier);
-    Ref<RemoteSnapshot> snapshotForRecorder(RemoteSnapshotIdentifier);
-    RefPtr<RemoteSnapshot> snapshot(RemoteSnapshotIdentifier);
+    RemoteSnapshotRegistry& snapshotRegistry() const { return m_snapshotRegistry.get(); }
     void abandonSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier);
 
     // Hands an ImageBuffer from one web process's rendering backend to another's. Unlike
@@ -306,12 +299,7 @@ private:
     void releaseSnapshot(RemoteSnapshotIdentifier);
     void snapshotFrameWillBeDrawnByProcess(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
     void waitForSnapshot(RemoteSnapshotIdentifier, CompletionHandler<void()>&&);
-    Ref<RemoteSnapshot> ensureSnapshot(RemoteSnapshotIdentifier, std::optional<WebCore::FrameIdentifier> rootFrameIdentifier);
-    void snapshotDeadlineExpired(RemoteSnapshotIdentifier);
-    // Takes the snapshot once it is complete, or passes null if it failed.
-    void takeSnapshotWhenComplete(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<RemoteSnapshot>&&)>&&);
     void abandonSnapshotFramesOwnedBy(WebCore::ProcessIdentifier);
-    void removeSnapshotsForProcess(WebCore::ProcessIdentifier);
 
 #if USE(OS_STATE)
     RetainPtr<NSDictionary> additionalStateForDiagnosticReport() const final;
@@ -367,7 +355,7 @@ private:
     // the protocols are insecure and prone to id guessing and content stuffing.
     // Do not add more globally shared resources.
     Lock m_globalResourceLocker;
-    HashMap<RemoteSnapshotIdentifier, Ref<RemoteSnapshot>> m_snapshots WTF_GUARDED_BY_LOCK(m_globalResourceLocker);
+    const Ref<RemoteSnapshotRegistry> m_snapshotRegistry { RemoteSnapshotRegistry::create() };
 
     struct TransferredImageBuffer {
         Markable<WebCore::ProcessIdentifier> owner;

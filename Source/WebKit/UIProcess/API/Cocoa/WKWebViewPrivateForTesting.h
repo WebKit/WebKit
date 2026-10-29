@@ -198,7 +198,6 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 - (void)_createMediaSessionCoordinatorForTesting:(id <_WKMediaSessionCoordinator>)privateCoordinator completionHandler:(void(^)(BOOL))completionHandler;
 - (void)_gpuToWebProcessConnectionCountForTesting:(void(^)(NSUInteger))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
-- (void)_runDisplayListDataTestsInGPUProcessForTesting:(void(^)(NSArray<NSString *> *failures))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_isLayerTreeFrozenForTesting:(void (^)(BOOL frozen))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
@@ -211,9 +210,18 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (void)_endPrintingForTesting:(void(^)(void))completionHandler;
 // Blocks the main thread until the pages have been drawn, as UIKit printing does. Needs printing to have begun.
 - (NSData *)_drawPagesToPDFSynchronouslyForTesting:(_WKFrameHandle *)handle pageCount:(NSUInteger)pageCount;
+// Draws a print preview of the rect of the printed pages, as WKPrintingView does. Needs printing to have begun.
+- (void)_drawPrintPreviewForTesting:(_WKFrameHandle *)handle rect:(CGRect)rect imageSize:(CGSize)imageSize completionHandler:(void(^)(CGImageRef))completionHandler;
 // Waits for the print process with this web view's Lockdown Mode to be ready. Reports 0 if there is no such process.
 - (void)_printProcessIdentifierForTesting:(void(^)(pid_t))completionHandler;
 - (void)_setPrintProcessIdleTimeoutForTesting:(NSTimeInterval)timeout;
+// Connects the processes of this web view's frames to the print process with its Lockdown Mode, launching it if
+// needed. Reports how many web processes the print process then has connections from.
+- (void)_connectFrameProcessesToPrintProcessForTesting:(void(^)(NSUInteger printProcessClientCount))completionHandler;
+// The number of print snapshots that the print process with this web view's Lockdown Mode has drawn to PDF or to a bitmap.
+- (void)_printProcessCompletedSnapshotCountForTesting:(void(^)(NSUInteger))completionHandler;
+// Whether the processes of frames are connected to the print process when printing begins and before each drawing, or only once they are asked to record.
+- (void)_setConnectsFramesToPrintProcessAheadOfDrawingForTesting:(BOOL)connects;
 
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected;
 

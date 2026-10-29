@@ -28,12 +28,10 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "GPUConnectionToWebProcess.h"
-#include "ImageBufferShareableAllocator.h"
 #include "Logging.h"
 #include "RemoteGraphicsContextMessages.h"
 #include "RemoteImageBuffer.h"
-#include "RemoteSharedResourceCache.h"
+#include "RemoteResourceCache.h"
 #include "SharedFont.h"
 #include "SharedPreferencesForWebProcess.h"
 #include "SharedVideoFrame.h"
@@ -49,18 +47,16 @@
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 #include "IPCSemaphore.h"
-#include "RemoteVideoFrameObjectHeap.h"
 #endif
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_renderingBackend->streamConnection());
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_drawingBackend->streamConnection());
 
 namespace WebKit {
 using namespace WebCore;
 
-RemoteGraphicsContext::RemoteGraphicsContext(GraphicsContext& context, RemoteRenderingBackend& renderingBackend)
+RemoteGraphicsContext::RemoteGraphicsContext(GraphicsContext& context, RemoteDrawingBackend& drawingBackend)
     : m_context(context)
-    , m_renderingBackend(renderingBackend)
-    , m_sharedResourceCache(renderingBackend.sharedResourceCache())
+    , m_drawingBackend(drawingBackend)
 {
 }
 
@@ -69,18 +65,18 @@ RemoteGraphicsContext::~RemoteGraphicsContext() = default;
 Ref<ControlFactory> RemoteGraphicsContext::controlFactory()
 {
     if (!m_controlFactory)
-        lazyInitialize(m_controlFactory, ControlFactory::create());
+        lazyInitialize(m_controlFactory, m_drawingBackend->createControlFactory());
     return *m_controlFactory;
 }
 
 RemoteResourceCache& RemoteGraphicsContext::resourceCache() const
 {
-    return m_renderingBackend->remoteResourceCache();
+    return m_drawingBackend->remoteResourceCache();
 }
 
 RefPtr<ImageBuffer> RemoteGraphicsContext::imageBuffer(RenderingResourceIdentifier identifier) const
 {
-    return m_renderingBackend->imageBuffer(identifier);
+    return m_drawingBackend->imageBuffer(identifier);
 }
 
 std::optional<SourceImage> RemoteGraphicsContext::sourceImage(RenderingResourceIdentifier identifier) const
@@ -327,6 +323,20 @@ void RemoteGraphicsContext::clipToImageBuffer(RenderingResourceIdentifier imageB
     context().clipToImageBuffer(*clipImage, destinationRect);
 }
 
+// For an image buffer of another backend, which the web process sent the pixels of.
+void RemoteGraphicsContext::clipToNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destinationRect)
+{
+    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier);
+    MESSAGE_CHECK(image);
+    // GraphicsContext clips only to image buffers, so draw the image into one.
+    auto imageSize = FloatSize { image->size() };
+    RefPtr clipImage = ImageBuffer::create(imageSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!clipImage)
+        return;
+    clipImage->context().drawNativeImage(*image, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
+    context().clipToImageBuffer(*clipImage, destinationRect);
+}
+
 void RemoteGraphicsContext::clipOutToPath(const Path& path)
 {
     context().clipOut(path);
@@ -376,11 +386,7 @@ void RemoteGraphicsContext::drawFilteredImageBuffer(std::optional<RenderingResou
     RefPtr svgFilter = dynamicDowncast<SVGFilterRenderer>(filter);
 
     if (!svgFilter || !svgFilter->hasValidRenderingResourceIdentifier()) {
-#if HAVE(IOSURFACE)
-        FilterResults results(makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner(), &m_sharedResourceCache->ioSurfacePool(), useIOSurfaceWebKitBehavior()));
-#else
-        FilterResults results(makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner()));
-#endif
+        FilterResults results(m_drawingBackend->createFilterImageBufferAllocator());
         drawFilteredImageBufferInternal(sourceImageIdentifier, sourceImageRect, filter, results);
         return;
     }
@@ -392,12 +398,7 @@ void RemoteGraphicsContext::drawFilteredImageBuffer(std::optional<RenderingResou
     cachedSVGFilter->mergeEffects(svgFilter->effects());
 
     auto& results = cachedSVGFilter->ensureResults([&]() {
-#if HAVE(IOSURFACE)
-        auto allocator = makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner(), &m_sharedResourceCache->ioSurfacePool(), useIOSurfaceWebKitBehavior());
-#else
-        auto allocator = makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner());
-#endif
-        return makeUnique<FilterResults>(WTF::move(allocator));
+        return makeUnique<FilterResults>(m_drawingBackend->createFilterImageBufferAllocator());
     });
 
     drawFilteredImageBufferInternal(sourceImageIdentifier, sourceImageRect, *cachedSVGFilter, results);
@@ -610,10 +611,8 @@ void RemoteGraphicsContext::fillEllipse(const FloatRect& rect)
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 SharedVideoFrameReader& RemoteGraphicsContext::sharedVideoFrameReader()
 {
-    if (!m_sharedVideoFrameReader) {
-        Ref gpuConnectionToWebProcess = m_renderingBackend->gpuConnectionToWebProcess();
-        lazyInitialize(m_sharedVideoFrameReader, makeUnique<SharedVideoFrameReader>(Ref { gpuConnectionToWebProcess->videoFrameObjectHeap() }, gpuConnectionToWebProcess->webProcessIdentity()));
-    }
+    if (!m_sharedVideoFrameReader)
+        lazyInitialize(m_sharedVideoFrameReader, m_drawingBackend->createSharedVideoFrameReader());
     return *m_sharedVideoFrameReader;
 }
 
@@ -747,20 +746,8 @@ void RemoteGraphicsContext::setURLForRect(const URL& link, const FloatRect& dest
 
 std::optional<SharedPreferencesForWebProcess> RemoteGraphicsContext::sharedPreferencesForWebProcess() const
 {
-    return m_renderingBackend->sharedPreferencesForWebProcess();
+    return m_drawingBackend->sharedPreferencesForWebProcess();
 }
-
-#if HAVE(IOSURFACE)
-bool RemoteGraphicsContext::useIOSurfaceWebKitBehavior() const
-{
-#if USE(APPLE_INTERNAL_SDK)
-    auto preferences = sharedPreferencesForWebProcess();
-    return preferences && preferences->useIOSurfaceWebKitBehavior;
-#else
-    return false;
-#endif
-}
-#endif
 
 } // namespace WebKit
 

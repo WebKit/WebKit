@@ -43,15 +43,15 @@ class StreamClientConnection;
 
 namespace WebKit {
 
-class RemoteRenderingBackendProxy;
+class RemoteDrawingBackendProxy;
 class RemoteImageBufferProxy;
 class SharedVideoFrameWriter;
 
 class RemoteGraphicsContextProxy : public WebCore::DisplayList::Recorder {
     WTF_MAKE_TZONE_ALLOCATED(RemoteGraphicsContextProxy);
 public:
-    RemoteGraphicsContextProxy(const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, const WebCore::ColorSpace&, WebCore::RenderingMode, RemoteRenderingBackendProxy&);
-    RemoteGraphicsContextProxy(const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, const WebCore::ColorSpace&, WebCore::ContentsFormat, WebCore::RenderingMode, RemoteGraphicsContextIdentifier, RemoteRenderingBackendProxy&);
+    RemoteGraphicsContextProxy(const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, const WebCore::ColorSpace&, WebCore::RenderingMode, RemoteDrawingBackendProxy&);
+    RemoteGraphicsContextProxy(const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, const WebCore::ColorSpace&, WebCore::ContentsFormat, WebCore::RenderingMode, RemoteGraphicsContextIdentifier, RemoteDrawingBackendProxy&);
     ~RemoteGraphicsContextProxy();
     RemoteGraphicsContextIdentifier identifier() const { return m_identifier; }
 
@@ -83,9 +83,10 @@ public:
     }
 
 protected:
-    RemoteGraphicsContextProxy(const WebCore::GraphicsContextState&, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, const WebCore::ColorSpace&, DrawGlyphsMode, std::optional<WebCore::ContentsFormat>, WebCore::RenderingMode, RemoteGraphicsContextIdentifier, RemoteRenderingBackendProxy&);
+    RemoteGraphicsContextProxy(const WebCore::GraphicsContextState&, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, const WebCore::ColorSpace&, DrawGlyphsMode, std::optional<WebCore::ContentsFormat>, WebCore::RenderingMode, RemoteGraphicsContextIdentifier, RemoteDrawingBackendProxy&);
 
     template<typename T> void send(T&& message);
+    RemoteDrawingBackendProxy* drawingBackend() const;
 
 private:
     void didBecomeUnresponsive() const;
@@ -163,6 +164,7 @@ private:
 
     [[nodiscard]] bool recordResourceUse(const WebCore::NativeImage&);
     [[nodiscard]] bool recordResourceUse(WebCore::ImageBuffer&);
+    RefPtr<WebCore::NativeImage> copyNativeImageOfImageBufferFromOtherBackend(WebCore::ImageBuffer&);
     std::optional<RemotePathImplIdentifier> recordResourceUse(const WebCore::PathImpl&);
     bool recordResourceUse(const WebCore::SourceImage&);
     bool recordResourceUse(WebCore::FontBase&);
@@ -206,7 +208,7 @@ private:
     const WebCore::RenderingMode m_renderingMode;
     const RemoteGraphicsContextIdentifier m_identifier;
     RefPtr<IPC::StreamClientConnection> m_connection;
-    WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
+    WeakPtr<RemoteDrawingBackendProxy> m_drawingBackend;
     std::optional<WebCore::ContentsFormat> m_contentsFormat;
     ThreadSafeWeakPtr<RemoteImageBufferProxy> m_client;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)

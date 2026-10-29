@@ -41,6 +41,7 @@ enum class ProcessTerminationReason : uint8_t {
     RequestedByNetworkProcess,
     RequestedByGPUProcess,
     RequestedByModelProcess,
+    RequestedByPrintProcess,
     GPUProcessCrashedTooManyTimes,
     ModelProcessCrashedTooManyTimes,
     NonMainFrameWebContentProcessCrash,

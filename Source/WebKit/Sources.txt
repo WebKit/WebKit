@@ -29,7 +29,6 @@ GPUProcess/ShapeDetection/RemoteBarcodeDetector.cpp
 GPUProcess/ShapeDetection/RemoteFaceDetector.cpp
 GPUProcess/ShapeDetection/RemoteTextDetector.cpp
 GPUProcess/ShapeDetection/ShapeDetectionObjectHeap.cpp
-GPUProcess/graphics/DisplayListDataTester.cpp
 GPUProcess/graphics/ImageBufferShareableAllocator.cpp
 GPUProcess/graphics/RemoteDisplayListRecorder.cpp
 GPUProcess/graphics/RemoteGraphicsContext.cpp @cost:3
@@ -42,6 +41,7 @@ GPUProcess/graphics/RemoteRenderingBackend.cpp @cost:6
 GPUProcess/graphics/RemoteResourceCache.cpp
 GPUProcess/graphics/RemoteSnapshot.cpp
 GPUProcess/graphics/RemoteSnapshotRecorder.cpp
+GPUProcess/graphics/RemoteSnapshotRegistry.cpp
 GPUProcess/graphics/ScopedRenderingResourcesRequest.cpp
 GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
 GPUProcess/graphics/ShareablePixelBuffer.cpp
@@ -329,7 +329,6 @@ Shared/Extensions/WebExtensionRegisteredScriptsSQLiteStore.cpp
 
 Shared/Gamepad/GamepadData.cpp
 
-Shared/graphics/DisplayListData.cpp
 Shared/graphics/ImageBufferSet.cpp
 
 Shared/WebGPU/WebGPUBindGroupDescriptor.cpp

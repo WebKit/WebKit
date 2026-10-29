@@ -36,7 +36,7 @@ class RemoteDisplayListRecorderProxy : public RemoteGraphicsContextProxy {
     WTF_MAKE_TZONE_ALLOCATED(RemoteDisplayListRecorderProxy);
 
 public:
-    RemoteDisplayListRecorderProxy(RemoteRenderingBackendProxy&);
+    RemoteDisplayListRecorderProxy(RemoteDrawingBackendProxy&);
     RemoteDisplayListRecorderIdentifier identifier() const { return RemoteDisplayListRecorderIdentifier { RemoteGraphicsContextProxy::identifier().toUInt64() }; }
 };
 

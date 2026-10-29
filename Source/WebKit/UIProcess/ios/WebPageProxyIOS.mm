@@ -59,6 +59,7 @@
 #import "RemoteLayerTreeTransaction.h"
 #import "RemotePageProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
+#import "RemoteSnapshotHost.h"
 #import "RevealItem.h"
 #import "TapHandlingResult.h"
 #import "UIKitSPI.h"
@@ -1063,11 +1064,22 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToPDFiOS(FrameIde
         return replyID;
     }
 
+    if (shouldLaunchPrintProcess(frame.get())) {
+        return drawPrintSnapshot(*frame, WTF::move(completionHandler), [weakThis = WeakPtr { *this }, frameID, printInfo, pageCount](RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& rootCallback) -> std::optional<IPC::Connection::AsyncReplyID> {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis) {
+                rootCallback(false);
+                return std::nullopt;
+            }
+            return protectedThis->sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshotiOS(snapshotIdentifier, frameID, printInfo, pageCount, RemoteSnapshotHost::Print), WTF::move(rootCallback));
+        });
+    }
+
     auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
     Ref drawing = PendingSnapshotDrawing::create(snapshotIdentifier);
-    auto sinkReplyID = gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, frameID, drawing->completionHandler(launchPrintProcessForDrawingIfNeeded(frame.get(), WTF::move(completionHandler))));
-    auto replyID = sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshotiOS(snapshotIdentifier, frameID, printInfo, pageCount), gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier));
+    auto sinkReplyID = gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, frameID, drawing->completionHandler(WTF::move(completionHandler)));
+    auto replyID = sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshotiOS(snapshotIdentifier, frameID, printInfo, pageCount, RemoteSnapshotHost::GPU), gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier));
     if (replyID)
         drawing->setReply<Messages::GPUProcess::SinkCompletedSnapshotToPDF>(gpuProcess.get(), sinkReplyID, *replyID);
     return replyID;
@@ -1089,11 +1101,23 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToImage(FrameIden
         return replyID;
     }
 
+    // Drawn from the same snapshot as the printed pages, so that the preview shows what is printed.
+    if (shouldLaunchPrintProcess(frame.get())) {
+        return drawPrintSnapshot(*frame, WTF::move(completionHandler), [weakThis = WeakPtr { *this }, frameID, printInfo](RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& rootCallback) -> std::optional<IPC::Connection::AsyncReplyID> {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis) {
+                rootCallback(false);
+                return std::nullopt;
+            }
+            return protectedThis->sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingToSnapshotiOS(snapshotIdentifier, frameID, printInfo, RemoteSnapshotHost::Print), WTF::move(rootCallback));
+        });
+    }
+
     auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
     Ref drawing = PendingSnapshotDrawing::create(snapshotIdentifier);
     auto sinkReplyID = gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, frameID, drawing->completionHandler(WTF::move(completionHandler)));
-    auto replyID = sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingToSnapshotiOS(snapshotIdentifier, frameID, printInfo), gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier));
+    auto replyID = sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingToSnapshotiOS(snapshotIdentifier, frameID, printInfo, RemoteSnapshotHost::GPU), gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier));
     if (replyID)
         drawing->setReply<Messages::GPUProcess::SinkCompletedSnapshotToBitmap>(gpuProcess.get(), sinkReplyID, *replyID);
     return replyID;

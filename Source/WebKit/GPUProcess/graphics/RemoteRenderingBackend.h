@@ -37,6 +37,7 @@
 #include "MessageSender.h"
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteDisplayListRecorderIdentifier.h"
+#include "RemoteDrawingBackend.h"
 #include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextIdentifier.h"
 #include "RemotePathImplIdentifier.h"
@@ -102,7 +103,7 @@ namespace ShapeDetection {
 class ObjectHeap;
 }
 
-class RemoteRenderingBackend : public CanMakeWeakPtr<RemoteRenderingBackend>, public IPC::StreamServerConnection::Client {
+class RemoteRenderingBackend : public CanMakeWeakPtr<RemoteRenderingBackend>, public IPC::StreamServerConnection::Client, public RemoteDrawingBackend {
     WTF_MAKE_TZONE_ALLOCATED(RemoteRenderingBackend);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteRenderingBackend);
 
@@ -111,9 +112,13 @@ public:
     virtual ~RemoteRenderingBackend();
     void stopListeningForIPC();
 
-    std::optional<SharedPreferencesForWebProcess> LEGACY_NODELETE sharedPreferencesForWebProcess() const;
+    // RemoteDrawingBackend.
+    void ref() const final { IPC::StreamServerConnection::Client::ref(); }
+    void deref() const final { IPC::StreamServerConnection::Client::deref(); }
 
-    RemoteResourceCache& remoteResourceCache() LIFETIME_BOUND { return m_remoteResourceCache; }
+    std::optional<SharedPreferencesForWebProcess> LEGACY_NODELETE sharedPreferencesForWebProcess() const final;
+
+    RemoteResourceCache& remoteResourceCache() LIFETIME_BOUND final { return m_remoteResourceCache; }
     RemoteSharedResourceCache& sharedResourceCache() { return m_sharedResourceCache; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
@@ -121,16 +126,21 @@ public:
     // Runs Function in RemoteRenderingBackend task queue.
     void dispatch(Function<void()>&&);
 
-    IPC::StreamServerConnection& streamConnection() const { return m_streamConnection.get(); }
+    IPC::StreamServerConnection& streamConnection() const final { return m_streamConnection.get(); }
 
     GPUConnectionToWebProcess& gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
 
     void setSharedMemoryForGetPixelBuffer(RefPtr<WebCore::SharedMemory> memory) { m_getPixelBufferSharedMemory = WTF::move(memory); }
     RefPtr<WebCore::SharedMemory> sharedMemoryForGetPixelBuffer() const { return m_getPixelBufferSharedMemory; }
 
-    IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
+    IPC::StreamConnectionWorkQueue& workQueue() const final { return m_workQueue; }
 
-    RefPtr<WebCore::ImageBuffer> imageBuffer(WebCore::RenderingResourceIdentifier);
+    RefPtr<WebCore::ImageBuffer> imageBuffer(WebCore::RenderingResourceIdentifier) final;
+    std::unique_ptr<WebCore::ImageBufferAllocator> createFilterImageBufferAllocator() const final;
+    Ref<WebCore::ControlFactory> createControlFactory() const final;
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    std::unique_ptr<SharedVideoFrameReader> createSharedVideoFrameReader() const final;
+#endif
 
     RefPtr<WebCore::ImageBuffer> allocateImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::ColorSpace&, WebCore::ImageBufferFormat, WebCore::ImageBufferCreationContext, std::optional<ImageBufferBackendHandle>&& providedBackingStore = std::nullopt);
 

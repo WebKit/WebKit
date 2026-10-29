@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,13 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
-#include <wtf/ObjectIdentifier.h>
-
 namespace WebKit {
 
-// RemoteSnapshotRecorderIdentifier has conceptual subclass relationship with
-// RemoteGraphicsContextIdentifier.
-struct RemoteSnapshotRecorderIdentifierType;
-using RemoteSnapshotRecorderIdentifier = AtomicObjectIdentifier<RemoteSnapshotRecorderIdentifierType>;
+// The process that a remote snapshot is assembled in: the GPU process, or the print process for
+// printing.
+enum class RemoteSnapshotHost : bool {
+    GPU,
+    Print,
+};
 
 } // namespace WebKit
-
-#endif

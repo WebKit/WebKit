@@ -577,6 +577,7 @@ void GPUProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
     case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::RequestedByModelProcess:
+    case ProcessTerminationReason::RequestedByPrintProcess:
     case ProcessTerminationReason::GPUProcessCrashedTooManyTimes:
     case ProcessTerminationReason::ModelProcessCrashedTooManyTimes:
     case ProcessTerminationReason::NonMainFrameWebContentProcessCrash:
@@ -624,11 +625,6 @@ void GPUProcessProxy::terminateForTesting()
 void GPUProcessProxy::webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::GPUProcess::WebProcessConnectionCountForTesting(), WTF::move(completionHandler));
-}
-
-void GPUProcessProxy::runDisplayListDataTestsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
-{
-    sendWithAsyncReply(Messages::GPUProcess::RunDisplayListDataTestsForTesting(), WTF::move(completionHandler));
 }
 
 void GPUProcessProxy::didClose(IPC::Connection&)
@@ -1074,6 +1070,29 @@ bool GPUProcessProxy::waitForSnapshot(RemoteSnapshotIdentifier identifier, Secon
     // messages, from any web process, that ask the remaining frames to record. Kept behind the sink,
     // so that the sink's reply is sent first.
     return sendSync(Messages::GPUProcess::WaitForSnapshot(identifier), 0, timeout, IPC::SendSyncOption::MaintainOrderingWithAsyncMessages).succeeded();
+}
+
+Function<RefPtr<IPC::Connection>(Seconds)> GPUProcessProxy::snapshotHostConnectionWaiter()
+{
+    return [](Seconds) -> RefPtr<IPC::Connection> {
+        // The GPU process at the time of the wait, as there is one at a time.
+        RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
+        if (!gpuProcess || !gpuProcess->hasConnection())
+            return nullptr;
+        return &gpuProcess->connection();
+    };
+}
+
+Function<void(Seconds)> GPUProcessProxy::snapshotWaiter(RemoteSnapshotIdentifier identifier)
+{
+    return [identifier](Seconds timeout) {
+        // The GPU process at the time of the wait, as there is one at a time.
+        RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
+        if (!gpuProcess)
+            return;
+        if (!gpuProcess->waitForSnapshot(identifier, timeout))
+            gpuProcess->releaseSnapshot(identifier);
+    };
 }
 
 #if HAVE(IOSURFACE)

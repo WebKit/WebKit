@@ -30,9 +30,9 @@
 
 #include "ArgumentCoders.h"
 #include "Logging.h"
+#include "RemoteDrawingBackendProxy.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteNativeImageProxy.h"
-#include "RemoteRenderingBackendProxy.h"
 #include "RemoteSharedResourceCacheProxy.h"
 #include "WebProcess.h"
 #include <WebCore/FontCustomPlatformData.h>
@@ -86,13 +86,13 @@ static std::optional<CreateShareableBitmapResult> createShareableBitmapForNative
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteResourceCacheProxy);
 
-UniqueRef<RemoteResourceCacheProxy> RemoteResourceCacheProxy::create(RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+UniqueRef<RemoteResourceCacheProxy> RemoteResourceCacheProxy::create(RemoteDrawingBackendProxy& drawingBackendProxy)
 {
-    return UniqueRef<RemoteResourceCacheProxy> { *new RemoteResourceCacheProxy(remoteRenderingBackendProxy) };
+    return UniqueRef<RemoteResourceCacheProxy> { *new RemoteResourceCacheProxy(drawingBackendProxy) };
 }
 
-RemoteResourceCacheProxy::RemoteResourceCacheProxy(RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
-    : m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
+RemoteResourceCacheProxy::RemoteResourceCacheProxy(RemoteDrawingBackendProxy& drawingBackendProxy)
+    : m_drawingBackendProxy(drawingBackendProxy)
 {
 }
 
@@ -114,7 +114,7 @@ RemoteGradientIdentifier RemoteResourceCacheProxy::recordGradientUse(Gradient& g
     auto identifier = result.iterator->value;
     if (result.isNewEntry) {
         gradient.addObserver(m_resourceObserverWeakFactory.createWeakPtr(static_cast<RenderingResourceObserver&>(*this)).releaseNonNull());
-        m_remoteRenderingBackendProxy->cacheGradient(gradient, identifier);
+        m_drawingBackendProxy->cacheGradient(gradient, identifier);
     }
     return identifier;
 }
@@ -127,7 +127,7 @@ RemotePathImplIdentifier RemoteResourceCacheProxy::recordPathImplUse(const PathI
     auto identifier = result.iterator->value;
     if (result.isNewEntry) {
         path.addObserver(m_resourceObserverWeakFactory.createWeakPtr(static_cast<RenderingResourceObserver&>(*this)).releaseNonNull());
-        m_remoteRenderingBackendProxy->cachePathImpl(const_cast<PathImpl&>(path), identifier);
+        m_drawingBackendProxy->cachePathImpl(const_cast<PathImpl&>(path), identifier);
     }
     return identifier;
 }
@@ -136,7 +136,7 @@ void RemoteResourceCacheProxy::recordFilterUse(Filter& filter)
 {
     if (m_filters.add(filter.renderingResourceIdentifier()).isNewEntry) {
         filter.addObserver(m_resourceObserverWeakFactory.createWeakPtr(static_cast<RenderingResourceObserver&>(*this)).releaseNonNull());
-        m_remoteRenderingBackendProxy->cacheFilter(filter);
+        m_drawingBackendProxy->cacheFilter(filter);
     }
 }
 
@@ -179,12 +179,15 @@ bool RemoteResourceCacheProxy::recordNativeImageUse(const NativeImage& image, co
             << " ShareableBitmap could not be created; bailing.");
         return false;
     }
-    m_remoteRenderingBackendProxy->cacheNativeImage(WTF::move(*handle), image.renderingResourceIdentifier());
+    m_drawingBackendProxy->cacheNativeImage(WTF::move(*handle), image.renderingResourceIdentifier());
     return true;
 }
 
 RemoteNativeImageReadReference RemoteResourceCacheProxy::recordSharedNativeImageUse(RemoteNativeImageProxy& image)
 {
+    // Only a backend in the GPU process can adopt a native image that the GPU process shares. Other
+    // backends are sent the pixels, with recordNativeImageUse().
+    ASSERT(m_drawingBackendProxy->canUseGPUProcessResources());
     // The image reports its destruction to this cache from now on, so that the rendering backend cache
     // entry created by the caller is released, and so that pixel read-back can be routed through here.
     image.attachResourceCache(m_remoteNativeImageProxyWeakFactory.createWeakPtr(*this).releaseNonNull());
@@ -201,7 +204,7 @@ void RemoteResourceCacheProxy::recordFontUse(FontBase& font)
 
     if (result.isNewEntry) {
         auto renderingResourceIdentifier = font.platformData().customPlatformData() ? std::optional(font.platformData().customPlatformData()->m_renderingResourceIdentifier) : std::nullopt;
-        m_remoteRenderingBackendProxy->cacheFont(font.attributes(), font.platformData().attributes(), renderingResourceIdentifier);
+        m_drawingBackendProxy->cacheFont(font.attributes(), font.platformData().attributes(), renderingResourceIdentifier);
         ++m_numberOfFontsUsedInCurrentRenderingUpdate;
         return;
     }
@@ -218,7 +221,7 @@ void RemoteResourceCacheProxy::recordFontCustomPlatformDataUse(const FontCustomP
     auto result = m_fontCustomPlatformDatas.add(customPlatformData.m_renderingResourceIdentifier, m_renderingUpdateID);
 
     if (result.isNewEntry) {
-        m_remoteRenderingBackendProxy->cacheFontCustomPlatformData(customPlatformData);
+        m_drawingBackendProxy->cacheFontCustomPlatformData(customPlatformData);
         ++m_numberOfFontCustomPlatformDatasUsedInCurrentRenderingUpdate;
         return;
     }
@@ -240,7 +243,7 @@ RemoteDisplayListIdentifier RemoteResourceCacheProxy::recordDisplayListUse(const
         displayList.addObserver(m_resourceObserverWeakFactory.createWeakPtr(static_cast<RenderingResourceObserver&>(*this)).releaseNonNull());
         // Note: this might recurse back to RemoteResourceCacheProxy::recordDisplayListUse().
         // thus we must ensure that we are not in m_displayLists.ensure.. call stack.
-        m_remoteRenderingBackendProxy->cacheDisplayList(identifier, displayList);
+        m_drawingBackendProxy->cacheDisplayList(identifier, displayList);
         // result.iterator is not valid anymore.
     }
     return identifier;
@@ -252,7 +255,7 @@ void RemoteResourceCacheProxy::willDestroyNativeImage(const NativeImage& image)
     RELEASE_ASSERT(entry);
     if (!entry->existsInRemote)
         return;
-    m_remoteRenderingBackendProxy->releaseNativeImage(image.renderingResourceIdentifier());
+    m_drawingBackendProxy->releaseNativeImage(image.renderingResourceIdentifier());
 }
 
 void RemoteResourceCacheProxy::willDestroyRemoteNativeImageProxy(const RemoteNativeImageProxy& image)
@@ -268,7 +271,7 @@ PlatformImagePtr RemoteResourceCacheProxy::platformImage(const RemoteNativeImage
     if (!entry.existsInRemote)
         return nullptr;
     if (!entry.bitmap) {
-        auto bitmap = m_remoteRenderingBackendProxy->nativeImageBitmap(image);
+        auto bitmap = m_drawingBackendProxy->nativeImageBitmap(image);
         if (!bitmap)
             return nullptr;
         entry.bitmap = WTF::move(bitmap);
@@ -280,28 +283,28 @@ void RemoteResourceCacheProxy::willDestroyGradient(const Gradient& gradient)
 {
     auto identifier = m_gradients.take(&gradient);
     RELEASE_ASSERT(identifier);
-    m_remoteRenderingBackendProxy->releaseGradient(*identifier);
+    m_drawingBackendProxy->releaseGradient(*identifier);
 }
 
 void RemoteResourceCacheProxy::willDestroyPathImpl(const PathImpl& path)
 {
     auto identifier = m_paths.take(&path);
     RELEASE_ASSERT(identifier);
-    m_remoteRenderingBackendProxy->releasePathImpl(*identifier);
+    m_drawingBackendProxy->releasePathImpl(*identifier);
 }
 
 void RemoteResourceCacheProxy::willDestroyFilter(RenderingResourceIdentifier identifier)
 {
     bool removed = m_filters.remove(identifier);
     RELEASE_ASSERT(removed);
-    m_remoteRenderingBackendProxy->releaseFilter(identifier);
+    m_drawingBackendProxy->releaseFilter(identifier);
 }
 
 void RemoteResourceCacheProxy::willDestroyDisplayList(const DisplayList::DisplayList& displayList)
 {
     auto identifier = m_displayLists.take(&displayList);
     RELEASE_ASSERT(identifier);
-    m_remoteRenderingBackendProxy->releaseDisplayList(*identifier);
+    m_drawingBackendProxy->releaseDisplayList(*identifier);
 }
 
 void RemoteResourceCacheProxy::prepareForNextRenderingUpdate()
@@ -334,7 +337,7 @@ void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
         for (auto& item : m_fonts) {
             if (renderingUpdateID - item.value >= minimumRenderingUpdateCountToKeepFontAlive) {
                 toRemove.add(item.key);
-                m_remoteRenderingBackendProxy->releaseFont(item.key);
+                m_drawingBackendProxy->releaseFont(item.key);
             }
         }
 
@@ -351,7 +354,7 @@ void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
         for (auto& item : m_fontCustomPlatformDatas) {
             if (renderingUpdateID - item.value >= minimumRenderingUpdateCountToKeepFontAlive) {
                 toRemove.add(item.key);
-                m_remoteRenderingBackendProxy->releaseFontCustomPlatformData(item.key);
+                m_drawingBackendProxy->releaseFontCustomPlatformData(item.key);
             }
         }
 

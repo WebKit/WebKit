@@ -310,6 +310,20 @@ RefPtr<FragmentedSharedBuffer> PDFPluginBase::liveResourceData() const
     return SharedBuffer::create(pdfData.get());
 }
 
+bool PDFPluginBase::drawPageWhereRecordingIsDrawn(GraphicsContext& context, unsigned pageIndex, const FloatRect& source, const FloatRect& destination)
+{
+    // Only once the document has loaded, so that the whole document is sent.
+    if (!m_documentFinishedLoading)
+        return false;
+    if (!m_documentIdentifierForRecordings)
+        m_documentIdentifierForRecordings = RenderingResourceIdentifier::generate();
+    // The links of the document can be followed in the plugin, so they stay links.
+    constexpr bool includeLinks = true;
+    return context.drawPDFPage(*m_documentIdentifierForRecordings, [&] {
+        return liveResourceData();
+    }, pageIndex, source, destination, includeLinks);
+}
+
 NSData *PDFPluginBase::liveData() const
 {
 #if PLATFORM(MAC)
