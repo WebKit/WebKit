@@ -111,6 +111,10 @@ public:
 
     virtual void svgAttributeChanged(const QualifiedName&);
 
+    // Called once a script has written an animated property and the content attribute has been reserialized.
+    // Elements whose attribute forbids a negative length put it back to its initial value, as for markup.
+    virtual void resetOutOfRangeBaseValue(const QualifiedName&) { }
+
     void sendLoadEventIfPossible();
 
     virtual AffineTransform* ensureSupplementalTransform() { return nullptr; }

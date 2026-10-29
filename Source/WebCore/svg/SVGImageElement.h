@@ -77,6 +77,7 @@ private:
     
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
+    void resetOutOfRangeBaseValue(const QualifiedName&) final;
 
     void didAttachRenderers() final;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;

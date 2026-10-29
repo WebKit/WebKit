@@ -113,6 +113,20 @@ void SVGPatternElement::attributeChanged(const QualifiedName& name, const AtomSt
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
+void SVGPatternElement::resetOutOfRangeBaseValue(const QualifiedName& name)
+{
+    switch (name.nodeName()) {
+    case AttributeNames::widthAttr:
+        resetNegativeLengthToInitialValue(m_width);
+        break;
+    case AttributeNames::heightAttr:
+        resetNegativeLengthToInitialValue(m_height);
+        break;
+    default:
+        break;
+    }
+}
+
 void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName) || SVGFitToViewBox::isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName)) {

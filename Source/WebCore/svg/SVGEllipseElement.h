@@ -50,6 +50,7 @@ private:
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
+    void resetOutOfRangeBaseValue(const QualifiedName&) final;
 
     bool isValid() const final { return SVGTests::isValid(); }
     bool selfHasRelativeLengths() const final { return true; }

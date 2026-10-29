@@ -195,6 +195,20 @@ void SVGUseElement::transferSizeAttributesToTargetClone(SVGElement& shadowElemen
     shadowElement.setAttribute(SVGNames::heightAttr, height().valueInSpecifiedUnits() ? height().valueAsAtomString() : (correspondingElement ? correspondingElement->getAttribute(SVGNames::heightAttr) : nullAtom()));
 }
 
+void SVGUseElement::resetOutOfRangeBaseValue(const QualifiedName& name)
+{
+    switch (name.nodeName()) {
+    case AttributeNames::widthAttr:
+        resetNegativeLengthToInitialValue(m_width);
+        break;
+    case AttributeNames::heightAttr:
+        resetNegativeLengthToInitialValue(m_height);
+        break;
+    default:
+        break;
+    }
+}
+
 void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     InstanceInvalidationGuard guard(*this);
