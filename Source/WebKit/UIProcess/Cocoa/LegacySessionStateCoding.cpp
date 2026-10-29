@@ -504,29 +504,20 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     if (!CFWriteStreamOpen(writeStream.get()))
         return nullptr;
 
+    uint32_t versionNumber = CFSwapInt32HostToBig(sessionStateDataVersion);
+    auto versionBytes = asByteSpan(versionNumber);
+    if (CFWriteStreamWrite(writeStream.get(), versionBytes.data(), versionBytes.size()) != static_cast<CFIndex>(versionBytes.size()))
+        return nullptr;
+
     if (!CFPropertyListWrite(stateDictionary.get(), writeStream.get(), kCFPropertyListBinaryFormat_v1_0, 0, nullptr))
         return nullptr;
 
     auto data = adoptCF(checked_cf_cast<CFDataRef>(CFWriteStreamCopyProperty(writeStream.get(), kCFStreamPropertyDataWritten)));
-
-    CFIndex length = CFDataGetLength(data.get());
-
-    size_t bufferSize = length + sizeof(uint32_t);
-    auto mallocBuffer = MallocSpan<uint8_t, HistoryEntryDataEncoderMalloc>::tryMalloc(bufferSize);
-    if (!mallocBuffer)
+    if (!data)
         return nullptr;
-    auto buffer = mallocBuffer.mutableSpan();
 
-    // Put the session state version number at the start of the buffer
-    buffer[0] = (sessionStateDataVersion & 0xff000000) >> 24;
-    buffer[1] = (sessionStateDataVersion & 0x00ff0000) >> 16;
-    buffer[2] = (sessionStateDataVersion & 0x0000ff00) >> 8;
-    buffer[3] = (sessionStateDataVersion & 0x000000ff);
-
-    // Copy in the actual session state data
-    CFDataGetBytes(data.get(), CFRangeMake(0, length), buffer.subspan(sizeof(uint32_t)).data());
-
-    return API::Data::createWithoutCopying(buffer, [mallocBuffer = WTF::move(mallocBuffer)] { });
+    auto bytes = span(data.get());
+    return API::Data::createWithoutCopying(bytes, [data = WTF::move(data)] { });
 }
 
 class HistoryEntryDataDecoder {
