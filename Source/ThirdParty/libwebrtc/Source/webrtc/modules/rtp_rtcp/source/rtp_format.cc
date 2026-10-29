@@ -99,6 +99,16 @@ absl_nonnull std::unique_ptr<RtpPacketizer> RtpPacketizer::Create(
 std::vector<int> RtpPacketizer::SplitAboutEqually(
     size_t payload_size,
     const PayloadSizeLimits& limits) {
+<<<<<<< HEAD
+=======
+#ifdef WEBRTC_WEBKIT_BUILD
+  // payload_len is coming from a size_t given via RTCEncodedVideoFrame, let's reject oversized payloads.
+  if (payload_len <= 0)
+    return { };
+#else
+  RTC_DCHECK_GT(payload_len, 0);
+#endif
+>>>>>>> b5757b7c0e87 (VP8 Packetizer Heap Overflow via size_t-to-int Truncation in SplitAboutEqually)
   // First or last packet larger than normal are unsupported.
   RTC_DCHECK_GE(limits.first_packet_reduction_len, 0);
   RTC_DCHECK_GE(limits.last_packet_reduction_len, 0);
