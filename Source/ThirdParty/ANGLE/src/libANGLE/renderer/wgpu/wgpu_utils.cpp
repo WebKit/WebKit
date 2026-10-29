@@ -268,6 +268,9 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
     glExtensions->framebufferBlitANGLE = true;
     glExtensions->framebufferBlitNV    = true;
 
+    // GL_MIN and GL_MAX blending, which WebGPU supports, is core in ES 3.0.
+    glExtensions->blendMinmaxEXT = true;
+
     // Explicit context entry points are supported.
     glExtensions->explicitContextANGLE = true;
 
