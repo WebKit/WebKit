@@ -1,0 +1,39 @@
+
+RUN(video.src = URL.createObjectURL(source))
+RUN(video.muted = true)
+RUN(video.playsInline = true)
+RUN(video.disableRemotePlayback = true)
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer('video/mp4; codecs="avc1.4d401e"'))
+RUN(sourceBuffer.appendBuffer(MP4.concat(init, makeSegment(1, 0, 100))))
+EVENT(updateend)
+RUN(video.play())
+EVENT(playing)
+
+Test: seek into unbuffered range while playing
+RUN(video.currentTime = 100.5)
+EVENT(seeking)
+EXPECTED (video.readyState <= '1') OK
+EXPECTED (waitingFired == 'true') OK
+EXPECTED (video.seeking == 'true') OK
+RUN(sourceBuffer.appendBuffer(makeSegment(2, 100000, 100)))
+EXPECTED (video.seeking == 'false') OK
+EXPECTED (video.readyState >= '3') OK
+
+Test: play() while paused and seeking into unbuffered range
+RUN(video.pause())
+EVENT(pause)
+RUN(video.currentTime = 200.5)
+EVENT(seeking)
+EXPECTED (video.readyState <= '1') OK
+RUN(video.play().then(() => { playPromiseResolved = true; }))
+EXPECTED (waitingFired == 'true') OK
+EXPECTED (playingFired == 'false') OK
+EXPECTED (playPromiseResolved == 'false') OK
+EXPECTED (video.seeking == 'true') OK
+RUN(sourceBuffer.appendBuffer(makeSegment(3, 200000, 100)))
+EXPECTED (playingFired == 'true') OK
+EXPECTED (playPromiseResolved == 'true') OK
+
+END OF TEST
+

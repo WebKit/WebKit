@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="timeout" content="long">
+    <title>media-source-seek-unbuffered-readystate</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Seeking into an unbuffered position must lower readyState to HAVE_METADATA and, if playing,
+    // fire 'waiting' while the seek waits for data to be appended. Calling play() on a paused
+    // element during such a seek must fire 'waiting' rather than 'playing', and the play() promise
+    // must stay pending until data is available.
+    // https://w3c.github.io/media-source/#mediasource-seeking
+    var source;
+    var sourceBuffer;
+    var init;
+    var waitingFired = false;
+    var playingFired = false;
+    var playPromiseResolved = false;
+
+    function makeSegment(seq, baseDecodeTime, count) {
+        const samples = [];
+        for (let i = 0; i < count; i++)
+            samples.push({ duration: 100, compositionTimeOffset: 0, isSync: true });
+        return MP4.mediaSegment({
+            sequenceNumber: seq,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime, samples }],
+        });
+    }
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!ManagedMediaSource.isTypeSupported(MP4.VIDEO_TYPE)) {
+            failTest(`${MP4.VIDEO_TYPE} is not supported`);
+            return;
+        }
+
+        source = new ManagedMediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        run('video.muted = true');
+        run('video.playsInline = true');
+        run('video.disableRemotePlayback = true');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+
+        run(`sourceBuffer = source.addSourceBuffer('${MP4.VIDEO_TYPE}')`);
+        source.duration = 1000;
+
+        init = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }],
+        });
+
+        run('sourceBuffer.appendBuffer(MP4.concat(init, makeSegment(1, 0, 100)))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('video.play()');
+        await waitFor(video, 'playing');
+
+        consoleWrite('');
+        consoleWrite('Test: seek into unbuffered range while playing');
+        video.addEventListener('waiting', () => { waitingFired = true; });
+
+        run('video.currentTime = 100.5');
+        await waitFor(video, 'seeking');
+
+        // No data is appended yet: the element must report that it has no data at the new position.
+        await testExpectedEventually('video.readyState', HTMLMediaElement.HAVE_METADATA, '<=', 250);
+        await testExpectedEventually('waitingFired', true, '==', 250);
+        testExpected('video.seeking', true);
+
+        const seeked = waitFor(video, 'seeked', true);
+        run('sourceBuffer.appendBuffer(makeSegment(2, 100000, 100))');
+        await Promise.all([waitFor(sourceBuffer, 'updateend', true), seeked]);
+
+        testExpected('video.seeking', false);
+        await testExpectedEventually('video.readyState', HTMLMediaElement.HAVE_FUTURE_DATA, '>=', 250);
+
+        consoleWrite('');
+        consoleWrite('Test: play() while paused and seeking into unbuffered range');
+        run('video.pause()');
+        await waitFor(video, 'pause');
+
+        run('video.currentTime = 200.5');
+        await waitFor(video, 'seeking');
+        await testExpectedEventually('video.readyState', HTMLMediaElement.HAVE_METADATA, '<=', 250);
+
+        waitingFired = false;
+        video.addEventListener('playing', () => { playingFired = true; });
+        run('video.play().then(() => { playPromiseResolved = true; })');
+
+        // With no data at the new position, play() must fire 'waiting', not 'playing', and the
+        // promise must stay pending until data is available.
+        await testExpectedEventually('waitingFired', true, '==', 250);
+        await sleepFor(500);
+        testExpected('playingFired', false);
+        testExpected('playPromiseResolved', false);
+        testExpected('video.seeking', true);
+
+        const seekedAfterPlay = waitFor(video, 'seeked', true);
+        run('sourceBuffer.appendBuffer(makeSegment(3, 200000, 100))');
+        await Promise.all([waitFor(sourceBuffer, 'updateend', true), seekedAfterPlay]);
+
+        await testExpectedEventually('playingFired', true, '==', 250);
+        await testExpectedEventually('playPromiseResolved', true, '==', 250);
+
+        consoleWrite('');
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

@@ -1,0 +1,5 @@
+
+PASS Test seeking to an unbuffered position while playing sets readyState to HAVE_METADATA and fires waiting.
+PASS Test calling play() while seeking to an unbuffered position fires waiting and keeps the play() promise pending.
+PASS Test seeking to an unbuffered position right after pause() does not complete the seek before data is available.
+

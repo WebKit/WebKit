@@ -640,6 +640,9 @@ webkit.org/b/329007 media/media-source/media-source-loop-toggle-during-playback.
 
 webkit.org/b/315030 media/media-source/media-source-webm-seek-singlekeyframe.html [ Timeout Pass ]
 
+webkit.org/b/329406 media/media-source/media-source-seek-unbuffered-readystate.html [ Failure Timeout Pass ]
+webkit.org/b/329406 imported/w3c/web-platform-tests/media-source/mediasource-seek-unbuffered-readystate.html [ Failure Timeout Pass ]
+
 # NOTIFICATION_EVENT tests
 http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
 http/tests/workers/service/shownotification-icon-from-worker.html [ Pass ]

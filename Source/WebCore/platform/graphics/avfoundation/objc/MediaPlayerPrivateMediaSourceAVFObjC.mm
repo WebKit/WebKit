@@ -693,9 +693,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::completeSeek(const MediaTime& seekedT
         setHasAvailableVideoFrame(true);
     m_seeking = false;
 
-    // Propagate readyState/playback; this also resolves the seek promise (the target position is
-    // buffered and, for video, its frame is available by this point).
+    // Apply the playback state and deliver any pending readyState change before resolving the seek,
+    // so that 'seeked' follows the resulting readyState events.
     updateStateFromReadyState();
+
+    if (auto promise = std::exchange(m_seekPromise, std::nullopt))
+        promise->resolve(m_lastSeekTime);
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::seeking() const
@@ -1216,16 +1219,15 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState
 void MediaPlayerPrivateMediaSourceAVFObjC::updateStateFromReadyState()
 {
     assertIsMainThread();
-    // Seek owns renderer rate and event sequencing from prepareToSeek through completeSeek.
-    if (seeking())
-        return;
-
-    if (shouldBePlaying()) {
-        dispatchToRendererQueue([](auto& renderer) {
-            renderer.play();
-        });
-    } else
-        stall();
+    // Seek owns the renderer rate from prepareToSeek through completeSeek.
+    if (!seeking()) {
+        if (shouldBePlaying()) {
+            dispatchToRendererQueue([](auto& renderer) {
+                renderer.play();
+            });
+        } else
+            stall();
+    }
 
     if (readyState() >= MediaPlayer::ReadyState::HaveCurrentData && hasVideo() && !m_hasAvailableVideoFrame) {
         m_readyStateIsWaitingForAvailableFrame = true;
@@ -1234,13 +1236,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateStateFromReadyState()
 
     if (RefPtr player = m_player.get())
         player->readyStateChanged();
-
-    // Complete any pending seek now that readyState has been propagated, so
-    // loadeddata/canplay/canplaythrough are queued before the 'seeked' event. Reaching here means
-    // the renderer seek finished (!m_seeking) with the target data buffered and, for video, a
-    // frame available.
-    if (auto promise = std::exchange(m_seekPromise, std::nullopt))
-        promise->resolve(m_lastSeekTime);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setNetworkState(MediaPlayer::NetworkState networkState)
