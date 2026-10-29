@@ -184,7 +184,7 @@ ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, 
     return RefPtr<Range> { createLiveRange(*range) };
 }
 
-void Internals::setUsesOverlayScrollbars(bool enabled)
+static bool updateOverlayScrollbarsState(bool enabled)
 {
     WebCore::DeprecatedGlobalSettings::setUsesOverlayScrollbars(enabled);
 
@@ -192,12 +192,19 @@ void Internals::setUsesOverlayScrollbars(bool enabled)
 
     ScrollbarTheme& theme = ScrollbarTheme::theme();
     if (theme.isMockTheme())
-        return;
+        return false;
 
     downcast<ScrollbarThemeMac>(theme).preferencesChanged();
 
     NSScrollerStyle style = enabled ? NSScrollerStyleOverlay : NSScrollerStyleLegacy;
     [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:style];
+    return true;
+}
+
+void Internals::setUsesOverlayScrollbars(bool enabled)
+{
+    if (!updateOverlayScrollbarsState(enabled))
+        return;
 
     RefPtr document = contextDocument();
     if (!document || !document->frame())
@@ -208,6 +215,14 @@ void Internals::setUsesOverlayScrollbars(bool enabled)
         return;
 
     protect(localFrame->view())->scrollbarStyleDidChange();
+}
+
+void Internals::resetUsesOverlayScrollbars()
+{
+    if (!WebCore::DeprecatedGlobalSettings::usesOverlayScrollbars())
+        return;
+
+    updateOverlayScrollbarsState(false);
 }
 
 #endif

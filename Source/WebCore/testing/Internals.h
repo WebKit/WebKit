@@ -1830,6 +1830,8 @@ private:
     static void resetPresentationIntentHTMLInterchangeEnabled();
 #endif
 
+    static void resetUsesOverlayScrollbars();
+
     CachedResource* resourceFromMemoryCache(const String& url);
 
     bool hasMarkerFor(DocumentMarkerType, int from, int length);
