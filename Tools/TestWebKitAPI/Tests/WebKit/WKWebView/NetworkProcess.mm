@@ -304,6 +304,49 @@ TEST(NetworkProcess, CORSPreflightCachePartitioned)
         TestWebKitAPI::Util::spinRunLoop();
 }
 
+TEST(NetworkProcess, DistinctStoredCredentialsPolicyPartitionsConnections)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/prime"_s, HTTPResponse({ { "Access-Control-Allow-Origin"_s, "*"_s } }, "prime"_s) },
+        { "/api"_s, HTTPResponse({ { "Access-Control-Allow-Origin"_s, "*"_s } }, "api"_s) },
+    });
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+
+    RetainPtr origin = server.origin().createNSString();
+    RetainPtr script = [NSString stringWithFormat:
+        @"await fetch('%@/prime', { mode: 'no-cors', credentials: 'include' });"
+        "const response = await fetch('%@/api', { mode: 'cors', credentials: 'omit' });"
+        "return await response.text();", origin.get(), origin.get()];
+
+    EXPECT_WK_STREQ("api", [webView objectByCallingAsyncFunction:script.get() withArguments:@{ }]);
+    EXPECT_EQ(server.totalRequests(), 2u);
+    EXPECT_EQ(server.totalConnections(), 2u);
+}
+
+TEST(NetworkProcess, SameStoredCredentialsPolicyReusesConnections)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/one"_s, HTTPResponse({ { "Access-Control-Allow-Origin"_s, "*"_s } }, "one"_s) },
+        { "/two"_s, HTTPResponse({ { "Access-Control-Allow-Origin"_s, "*"_s } }, "two"_s) },
+    });
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+
+    RetainPtr origin = server.origin().createNSString();
+    RetainPtr script = [NSString stringWithFormat:
+        @"await fetch('%@/one', { mode: 'cors', credentials: 'omit' });"
+        "const response = await fetch('%@/two', { mode: 'cors', credentials: 'omit' });"
+        "return await response.text();", origin.get(), origin.get()];
+
+    EXPECT_WK_STREQ("two", [webView objectByCallingAsyncFunction:script.get() withArguments:@{ }]);
+    EXPECT_EQ(server.totalRequests(), 2u);
+    EXPECT_EQ(server.totalConnections(), 1u);
+}
 
 static Vector<RetainPtr<WKScriptMessage>> networkProcessReceivedMessagesVector;
 static bool networkProcessReceivedMessage = false;

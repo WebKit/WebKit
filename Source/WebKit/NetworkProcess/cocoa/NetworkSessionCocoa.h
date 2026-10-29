@@ -83,9 +83,13 @@ struct IsolatedSession {
 public:
     IsolatedSession()
         : sessionWithCredentialStorage(makeUniqueRef<SessionWrapper>())
+        , sessionWithoutCredentialStorage(makeUniqueRef<SessionWrapper>())
     { }
 
+    SessionWrapper& initializeSessionWithoutCredentialStorageIfNeeded(NavigatingToAppBoundDomain, NetworkSessionCocoa&);
+
     UniqueRef<SessionWrapper> sessionWithCredentialStorage;
+    UniqueRef<SessionWrapper> sessionWithoutCredentialStorage;
     WallTime lastUsed;
 };
 
@@ -97,6 +101,7 @@ public:
     }
 
     SessionWrapper& initializeEphemeralStatelessSessionIfNeeded(NavigatingToAppBoundDomain, NetworkSessionCocoa&);
+    SessionWrapper& initializeSessionWithoutCredentialStorageIfNeeded(NavigatingToAppBoundDomain, NetworkSessionCocoa&);
 
     CheckedRef<SessionWrapper> isolatedSession(WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain&, NavigatingToAppBoundDomain, NetworkSessionCocoa&);
     HashMap<WebCore::RegistrableDomain, std::unique_ptr<IsolatedSession>> isolatedSessions;
@@ -104,12 +109,14 @@ public:
     std::unique_ptr<IsolatedSession> appBoundSession;
 
     UniqueRef<SessionWrapper> sessionWithCredentialStorage;
+    UniqueRef<SessionWrapper> sessionWithoutCredentialStorage;
     UniqueRef<SessionWrapper> ephemeralStatelessSession;
 
 private:
 
     SessionSet()
         : sessionWithCredentialStorage(makeUniqueRef<SessionWrapper>())
+        , sessionWithoutCredentialStorage(makeUniqueRef<SessionWrapper>())
         , ephemeralStatelessSession(makeUniqueRef<SessionWrapper>())
     { }
 };

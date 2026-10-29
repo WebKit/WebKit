@@ -64,6 +64,7 @@ enum class DownloadCallback : uint8_t {
 @property (nonatomic, copy) void (^decidePlaceholderPolicy)(WKDownload *, void (^)(WKDownloadPlaceholderPolicy, NSURL *));
 #endif
 
+- (void)allowAnyTLSCertificate;
 - (void)waitForDownloadDidFinish;
 #ifdef __cplusplus
 - (Vector<DownloadCallback>)takeCallbackRecord;

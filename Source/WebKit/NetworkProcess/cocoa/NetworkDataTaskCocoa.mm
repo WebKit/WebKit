@@ -338,9 +338,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         ASSERT(!m_sessionWrapper->session.get().configuration.URLCredentialStorage);
         break;
     case WebCore::StoredCredentialsPolicy::DoNotUse:
-        RetainPtr<NSURLSessionConfiguration> effectiveConfiguration = m_sessionWrapper->session.get().configuration;
-        effectiveConfiguration.get().URLCredentialStorage = nil;
-        [m_task _adoptEffectiveConfiguration:effectiveConfiguration.get()];
+        ASSERT(!m_sessionWrapper->session.get().configuration.URLCredentialStorage);
         break;
     };
 

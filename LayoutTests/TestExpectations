@@ -8362,3 +8362,7 @@ webkit.org/b/327137 imported/w3c/web-platform-tests/resource-timing/resource-tim
 
 # IPC testing is disabled in Release builds
 [ Release ] http/tests/ipc/provisional-page-forged-provisional-url-message-check.html [ Skip ]
+
+# BackgroundFetchAPI is not stable yet
+imported/w3c/web-platform-tests/background-fetch/abort.https.window.html [ Skip ]
+imported/w3c/web-platform-tests/background-fetch/match.https.window.html [ Failure ]

@@ -186,7 +186,6 @@ selectors = [
     { name = "_accessibilityDidGetSelectionRects:withGranularity:atOffset:", class = "?" },
     { name = "_addActionWithTitle:style:handler:shouldDismissHandler:", class = "?" },
     { name = "_addCompletion:", class = "?" },
-    { name = "_adoptEffectiveConfiguration:", class = "?" },
     { name = "_allowsHSTSWithUntrustedRootCertificate", class = "?" },
     { name = "_alternativeServicesStorage", class = "?" },
     { name = "_backlightLevel", class = "?" },

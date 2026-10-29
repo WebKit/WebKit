@@ -232,7 +232,11 @@ TEST(Preconnect, ConnectionCount)
     [webView loadRequest:server.request()];
     Util::run(&requested);
 
-    EXPECT_EQ(connectionCount, 1u);
+    // The preconnect to the server will use the default setting of "use the credential store",
+    // and therefore use the credential-store-blessed NSURLSession. Then the loadRequest
+    // will *not* use the credential store, therefore using a different NSURLSession that
+    // doesn't know about the above preconnect, triggering a second connection to the server.
+    EXPECT_EQ(connectionCount, 2u);
 }
 
 TEST(Preconnect, HTTPS)

@@ -3676,6 +3676,8 @@ TEST(WKDownload, OriginatingFrameHostWhenDownloadComesFromGoBackNavigation)
     [navigationDelegate waitForDidFinishNavigation];
 
     RetainPtr downloadDelegate = adoptNS([TestDownloadDelegate new]);
+    [downloadDelegate allowAnyTLSCertificate];
+
     RetainPtr expectedDownloadFile = tempFileThatDoesNotExist();
     __block bool downloadDestinationDecided = false;
 
@@ -3728,6 +3730,8 @@ TEST(WKDownload, OriginatingFrameHostWhenDownloadComesFromClientInputNavigation)
     [navigationDelegate waitForDidFinishNavigation];
 
     RetainPtr downloadDelegate = adoptNS([TestDownloadDelegate new]);
+    [downloadDelegate allowAnyTLSCertificate];
+
     __block bool downloadDestinationDecided = false;
 
     downloadDelegate.get().decideDestinationUsingResponse = ^(WKDownload *download, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
