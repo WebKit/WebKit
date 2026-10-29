@@ -122,6 +122,35 @@ void WebPage::sendMessageToWebProcessExtension(UserMessage&& message)
     sendMessageToWebProcessExtensionWithReply(WTF::move(message), [](UserMessage&&) { });
 }
 
+// The input method only uses the text near the selection, and sending the whole editable content would
+// take time linear in its length on every change. The Wayland text-input protocols truncate it to 4000 bytes anyway.
+static constexpr unsigned maxSurroundingTextLength = 1000;
+
+static BoundaryPoint surroundingTextStart(const BoundaryPoint& editableStart, const BoundaryPoint& position)
+{
+    BackwardsCharacterIterator iterator({ editableStart, position });
+    if (!iterator.atEnd())
+        iterator.advance(maxSurroundingTextLength);
+    return iterator.atEnd() ? editableStart : iterator.range().end;
+}
+
+static BoundaryPoint surroundingTextEnd(const BoundaryPoint& position, const BoundaryPoint& editableEnd)
+{
+    return resolveCharacterLocation({ position, editableEnd }, maxSurroundingTextLength);
+}
+
+// The limits can split a surrogate pair at the ends of the text. Only the ends cut by the limits are checked, so that an unpaired
+// surrogate at the ends of the editable content is kept. Returns the number of code units removed from the start.
+static unsigned removeSplitSurrogatePairs(String& text, bool isStartTruncated, bool isEndTruncated)
+{
+    if (isEndTruncated && !text.isEmpty() && U16_IS_LEAD(text[text.length() - 1]))
+        text = text.left(text.length() - 1);
+    if (!isStartTruncated || text.isEmpty() || !U16_IS_TRAIL(text[0]))
+        return 0;
+    text = text.substring(1);
+    return 1;
+}
+
 void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) const
 {
     if (!result.hasPostLayoutAndVisualData() || !frame.view() || frame.view()->needsLayout())
@@ -160,21 +189,27 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
 
     if (selection.isContentEditable()) {
         auto selectionStart = selection.visibleStart();
-        auto surroundingStart = startOfEditableContent(selectionStart);
-        auto surroundingRange = makeSimpleRange(surroundingStart, endOfEditableContent(selectionStart));
+        auto editableRange = makeSimpleRange(startOfEditableContent(selectionStart), endOfEditableContent(selectionStart));
         auto compositionRange = frame.editor().compositionRange();
-        if (surroundingRange && compositionRange && contains<ComposedTree>(*surroundingRange, *compositionRange)) {
-            auto beforeText = plainText({ surroundingRange->start, compositionRange->start });
-            postLayoutData.surroundingContext = makeString(beforeText, plainText({ compositionRange->end, surroundingRange->end }));
-            postLayoutData.surroundingContextCursorPosition = beforeText.length();
+        if (editableRange && compositionRange && contains<ComposedTree>(*editableRange, *compositionRange)) {
+            auto surroundingStart = surroundingTextStart(editableRange->start, compositionRange->start);
+            auto surroundingEnd = surroundingTextEnd(compositionRange->end, editableRange->end);
+            auto beforeText = plainText({ surroundingStart, compositionRange->start });
+            auto text = makeString(beforeText, plainText({ compositionRange->end, surroundingEnd }));
+            auto removedLength = removeSplitSurrogatePairs(text, surroundingStart != editableRange->start, surroundingEnd != editableRange->end);
+            postLayoutData.surroundingContext = WTF::move(text);
+            postLayoutData.surroundingContextCursorPosition = beforeText.length() - removedLength;
             postLayoutData.surroundingContextSelectionPosition = postLayoutData.surroundingContextCursorPosition;
-        } else {
-            auto cursorPositionRange = makeSimpleRange(surroundingStart, selectionStart);
-            auto selectionPositionRange = makeSimpleRange(surroundingStart, selection.visibleEnd());
-            postLayoutData.surroundingContext = surroundingRange ? plainText(*surroundingRange) : emptyString();
-            postLayoutData.surroundingContextCursorPosition = cursorPositionRange ? characterCount(*cursorPositionRange) : 0;
-            postLayoutData.surroundingContextSelectionPosition = selectionPositionRange ? characterCount(*selectionPositionRange): 0;
-        }
+        } else if (auto selectionRange = makeSimpleRange(selectionStart, selection.visibleEnd()); editableRange && selectionRange) {
+            auto surroundingStart = surroundingTextStart(editableRange->start, selectionRange->start);
+            auto surroundingEnd = surroundingTextEnd(selectionRange->end, editableRange->end);
+            auto text = plainText({ surroundingStart, surroundingEnd });
+            auto removedLength = removeSplitSurrogatePairs(text, surroundingStart != editableRange->start, surroundingEnd != editableRange->end);
+            postLayoutData.surroundingContext = WTF::move(text);
+            postLayoutData.surroundingContextCursorPosition = characterCount({ surroundingStart, selectionRange->start }) - removedLength;
+            postLayoutData.surroundingContextSelectionPosition = characterCount({ surroundingStart, selectionRange->end }) - removedLength;
+        } else
+            postLayoutData.surroundingContext = emptyString();
     }
 }
 
