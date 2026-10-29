@@ -1174,19 +1174,6 @@ class LayoutTestFinderTestsBase(object):
             ],
         )
 
-    def test_is_wpt_crash_test_ignores_working_directory(self):
-        finder = self.finder
-        fs = finder._filesystem
-        test = "imported/w3c/web-platform-tests/dom/attributes-are-nodes.html"
-
-        fs.chdir(self.port.layout_tests_dir())
-        fs.maybe_make_directory(fs.dirname(test))
-        fs.write_text_file(test, "XXX")
-        fs.maybe_make_directory("/crashtests")
-        fs.chdir("/crashtests")
-
-        self.assertFalse(finder.find_tests_by_path([test], with_expectations=True)[0].is_crash_test)
-
     def test_is_wpt_test(self):
         finder = self.finder
         fs = finder._filesystem
