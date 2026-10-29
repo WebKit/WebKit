@@ -28,6 +28,7 @@
 namespace WebCore {
 
 struct CSSPropertiesBitSet;
+class Settings;
 
 namespace Style {
 
@@ -40,7 +41,7 @@ class ComputedStyle;
 enum class AnimatablePropertiesCollectionQuirks : uint8_t {
     ComparareUsedValuesForBorderWidth
 };
-void conservativelyCollectChangedAnimatableProperties(const Style::ComputedStyle&, const Style::ComputedStyle&, CSSPropertiesBitSet&, EnumSet<AnimatablePropertiesCollectionQuirks>);
+void conservativelyCollectChangedAnimatableProperties(const Style::ComputedStyle&, const Style::ComputedStyle&, CSSPropertiesBitSet&, const Settings&, EnumSet<AnimatablePropertiesCollectionQuirks>);
 
 } // namespace Style
 } // namespace WebCore

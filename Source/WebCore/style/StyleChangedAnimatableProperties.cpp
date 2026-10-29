@@ -27,13 +27,14 @@
 #include "config.h"
 #include "StyleChangedAnimatableProperties.h"
 
+#include "Settings.h"
 #include "StyleChangedAnimatablePropertiesGenerated.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace Style {
 
-void conservativelyCollectChangedAnimatableProperties(const Style::ComputedStyle& a, const Style::ComputedStyle& b, CSSPropertiesBitSet& changingProperties, EnumSet<AnimatablePropertiesCollectionQuirks> quirks)
+void conservativelyCollectChangedAnimatableProperties(const Style::ComputedStyle& a, const Style::ComputedStyle& b, CSSPropertiesBitSet& changingProperties, const Settings& settings, EnumSet<AnimatablePropertiesCollectionQuirks> quirks)
 {
     // Check property values on ComputedStyle for changes.
 
@@ -66,6 +67,9 @@ void conservativelyCollectChangedAnimatableProperties(const Style::ComputedStyle
         if (Style::effectiveBorderWidths(a).left() == Style::effectiveBorderWidths(b).left())
             changingProperties.m_properties.clear(std::to_underlying(CSSPropertyID::BorderLeftWidth));
     }
+
+    if (!settings.colorFilterEnabled())
+        changingProperties.m_properties.clear(std::to_underlying(CSSPropertyID::AppleColorFilter));
 }
 
 } // namespace Style

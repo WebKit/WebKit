@@ -820,7 +820,7 @@ void Styleable::updateCSSTransitions(const Style::ComputedStyle& currentStyle, c
             return quirks;
         }();
 
-        Style::conservativelyCollectChangedAnimatableProperties(*targetStyle, newStyle, transitionProperties, collectionQuirks);
+        Style::conservativelyCollectChangedAnimatableProperties(*targetStyle, newStyle, transitionProperties, protect(element.document())->settings(), collectionQuirks);
 
         // When we have keyframeEffectStack, it can affect on properties. So we just add them.
         if (keyframeEffectStack()) {
