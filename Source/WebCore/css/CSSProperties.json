@@ -1809,8 +1809,7 @@
                 }
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_svgData", "nonInheritedFlags"],
-                "computed-style-storage-container": "struct",
+                "computed-style-storage-path": ["m_nonInheritedData", "boxData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "AlignmentBaseline",
                 "parser-grammar": "<<values>>"
@@ -2487,14 +2486,16 @@
                 "super"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_svgData", "miscData"],
+                "computed-style-storage-path": ["m_nonInheritedData", "boxData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::BaselineShift",
                 "parser-grammar": "baseline | sub | super | <length-percentage>"
             },
             "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/text.html#BaselineShiftProperty"
+                "category": "css-inline",
+                "url": "https://drafts.csswg.org/css-inline-3/#propdef-baseline-shift",
+                "obsolete-category": "svg",
+                "obsolete-url": "https://www.w3.org/TR/SVG11/text.html#BaselineShiftProperty"
             }
         },
         "baseline-source": {
