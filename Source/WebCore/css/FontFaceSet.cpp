@@ -263,7 +263,7 @@ void FontFaceSet::startedLoading()
 {
     if (m_readyPromise->isFulfilled())
         m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &FontFaceSet::readyPromiseResolve);
-    queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().loadingEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    queueTaskToDispatchEvent(*this, TaskSource::FontLoading, Event::create(eventNames().loadingEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void FontFaceSet::documentDidFinishLoading()
@@ -275,8 +275,10 @@ void FontFaceSet::documentDidFinishLoading()
 
 void FontFaceSet::completedLoading()
 {
-    if (m_isDocumentLoaded && !m_readyPromise->isFulfilled())
-        m_readyPromise->resolve(*this);
+    queueTaskKeepingObjectAlive(*this, TaskSource::FontLoading, [](auto& set) {
+        if (set.m_isDocumentLoaded && !set.m_readyPromise->isFulfilled())
+            set.m_readyPromise->resolve(set);
+    });
 }
 
 FontFaceSet& FontFaceSet::readyPromiseResolve()
