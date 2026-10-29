@@ -42,6 +42,7 @@
 #include "FrameDebuggerAgent.h"
 #include "FrameIndexedDBAgent.h"
 #include "FrameInlines.h"
+#include "FrameLayerTreeAgent.h"
 #include "FrameRuntimeAgent.h"
 #include "FrameWorkerAgent.h"
 #include "InspectorBackendClient.h"
@@ -211,6 +212,7 @@ void FrameInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<FrameRuntimeAgent>(context));
     m_agents.append(makeUniqueRef<FrameCSSAgent>(context));
     m_agents.append(makeUniqueRef<FrameCanvasAgent>(context));
+    m_agents.append(makeUniqueRef<FrameLayerTreeAgent>(context));
     m_agents.append(makeUniqueRef<FrameWorkerAgent>(context));
 }
 

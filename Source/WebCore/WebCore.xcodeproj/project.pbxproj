@@ -2645,6 +2645,8 @@
 		5E3DD8092F903C9A00250DF5 /* FrameDOMAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E3DD8062F903C9A00250DF5 /* FrameDOMAgent.h */; };
 		5E3DD80C2F903C9A00250DF5 /* FrameDOMStorageAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E3DD80A2F903C9A00250DF5 /* FrameDOMStorageAgent.h */; };
 		C29A677B6FFF4FA53C6C54D3 /* FrameCanvasAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 518D45FAE796E9227D55E5E1 /* FrameCanvasAgent.h */; };
+		5E3DD80F2F903C9A00250DF5 /* FrameLayerTreeAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E3DD80D2F903C9A00250DF5 /* FrameLayerTreeAgent.h */; };
+		5E3DD8122F903C9A00250DF5 /* LayerTreeInspectionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E3DD8102F903C9A00250DF5 /* LayerTreeInspectionState.h */; };
 		5E5E2B141CFC3E75000C0D85 /* RTCRtpTransceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E5E2B111CFC3E4B000C0D85 /* RTCRtpTransceiver.h */; };
 		5EA725D31ACABD4700EAD17B /* MediaDevices.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EA725CE1ACABCD900EAD17B /* MediaDevices.h */; };
 		5EA725D61ACABD5700EAD17B /* NavigatorMediaDevices.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EA725CB1ACABCB500EAD17B /* NavigatorMediaDevices.h */; };
@@ -13692,6 +13694,10 @@
 		518D45FAE796E9227D55E5E1 /* FrameCanvasAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameCanvasAgent.h; sourceTree = "<group>"; };
 		400C21138DBC3903728D8422 /* FrameCanvasAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FrameCanvasAgent.cpp; sourceTree = "<group>"; };
 		5E3DD80B2F903C9A00250DF5 /* FrameDOMStorageAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FrameDOMStorageAgent.cpp; sourceTree = "<group>"; };
+		5E3DD80D2F903C9A00250DF5 /* FrameLayerTreeAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameLayerTreeAgent.h; sourceTree = "<group>"; };
+		5E3DD80E2F903C9A00250DF5 /* FrameLayerTreeAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FrameLayerTreeAgent.cpp; sourceTree = "<group>"; };
+		5E3DD8102F903C9A00250DF5 /* LayerTreeInspectionState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayerTreeInspectionState.h; sourceTree = "<group>"; };
+		5E3DD8112F903C9A00250DF5 /* LayerTreeInspectionState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayerTreeInspectionState.cpp; sourceTree = "<group>"; };
 		5E5E2B101CFC3E4B000C0D85 /* RTCRtpTransceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCRtpTransceiver.cpp; sourceTree = "<group>"; };
 		5E5E2B111CFC3E4B000C0D85 /* RTCRtpTransceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpTransceiver.h; sourceTree = "<group>"; };
 		5E5E2B121CFC3E4B000C0D85 /* RTCRtpTransceiver.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCRtpTransceiver.idl; sourceTree = "<group>"; };
@@ -34674,6 +34680,8 @@
 				A5B81C8B1FAA44260037D1E6 /* InspectorTimelineAgent.h */,
 				A5B81C981FAA44260037D1E6 /* InspectorWorkerAgent.cpp */,
 				A5B81C8A1FAA44260037D1E6 /* InspectorWorkerAgent.h */,
+				5E3DD8112F903C9A00250DF5 /* LayerTreeInspectionState.cpp */,
+				5E3DD8102F903C9A00250DF5 /* LayerTreeInspectionState.h */,
 				A54A18118837979935B3492A /* RuntimeAgentUtilities.h */,
 				A5B81C991FAA44260037D1E6 /* WebConsoleAgent.cpp */,
 				A5B81C8E1FAA44260037D1E6 /* WebConsoleAgent.h */,
@@ -41823,6 +41831,8 @@
 				5E3DD80A2F903C9A00250DF5 /* FrameDOMStorageAgent.h */,
 				0970201322E546E9A5B1334A /* FrameIndexedDBAgent.cpp */,
 				D4D9D4D70C1F40D88DBFCA80 /* FrameIndexedDBAgent.h */,
+				5E3DD80E2F903C9A00250DF5 /* FrameLayerTreeAgent.cpp */,
+				5E3DD80D2F903C9A00250DF5 /* FrameLayerTreeAgent.h */,
 				5EAA0A2B2F47C803009CAB0D /* FrameRuntimeAgent.cpp */,
 				5EAA0A2A2F47C803009CAB0D /* FrameRuntimeAgent.h */,
 				5EAA1A372F4FC900009CAB0D /* FrameWorkerAgent.cpp */,
@@ -45893,6 +45903,7 @@
 				A4C507AADDFB428EA96A5E75 /* FrameIndexedDBAgent.h in Headers */,
 				9B46C04B2DC4A867002E22C4 /* FrameInlines.h in Headers */,
 				F30EE46B2E721BA800935B60 /* FrameInspectorController.h in Headers */,
+				5E3DD80F2F903C9A00250DF5 /* FrameLayerTreeAgent.h in Headers */,
 				656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */,
 				FAA4E2FD2A156D57003F5E50 /* FrameLoaderClient.h in Headers */,
 				D000EBA311BDAFD400C47726 /* FrameLoaderStateMachine.h in Headers */,
@@ -47373,6 +47384,7 @@
 				580371641A66F1D300BAF519 /* LayerFragment.h in Headers */,
 				5C5CD2EB29897A7900D10877 /* LayerHostingContextIdentifier.h in Headers */,
 				0F4D5D1826CCC4AE00A9DFC1 /* LayerTreeAsTextOptions.h in Headers */,
+				5E3DD8122F903C9A00250DF5 /* LayerTreeInspectionState.h in Headers */,
 				115CFA97208B952B001E6991 /* LayoutBox.h in Headers */,
 				07E9C65B2E5061F4001DFE83 /* LayoutBoxGeometry.h in Headers */,
 				9331BAC329EC916C00137ED2 /* LayoutBoxInlines.h in Headers */,

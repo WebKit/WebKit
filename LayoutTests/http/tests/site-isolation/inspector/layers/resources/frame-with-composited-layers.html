@@ -1,0 +1,39 @@
+<!doctype html>
+<style>
+    body {
+        margin: 0;
+    }
+
+    #composited {
+        width: 100px;
+        height: 100px;
+        background-color: rgb(0, 128, 0);
+        will-change: transform;
+    }
+
+    #with-before::before {
+        content: "";
+        display: block;
+        width: 50px;
+        height: 50px;
+        will-change: transform;
+    }
+</style>
+<div id="composited"></div>
+<div id="with-before"></div>
+<script>
+function addCompositedElement()
+{
+    let element = document.createElement("div");
+    element.id = "added";
+    element.style.cssText = "width: 20px; height: 20px; will-change: transform;";
+    document.body.appendChild(element);
+    return document.body.offsetTop;
+}
+
+function removeCompositedElement()
+{
+    document.getElementById("added").remove();
+    return document.body.offsetTop;
+}
+</script>
