@@ -5257,6 +5257,7 @@ webkit.org/b/320053 [ Debug ] fast/dom/move-embedded-during-update.html [ Failur
 webkit.org/b/316419 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/src_object_blob.html [ Failure Pass ]
 webkit.org/b/329158 http/tests/media/video-redirect.html [ Pass Timeout ]
 
+webkit.org/b/329458 ipc/webgpu-bind-group-update-external-textures-open-encoder.html [ Pass Timeout ]
 # The ideographic and ideographic-ink text box edges are not implemented
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-end-001.html?class=ideographic [ Crash ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-end-001.html?class=ideographic-ink [ Crash ]
