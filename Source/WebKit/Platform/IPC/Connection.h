@@ -716,7 +716,6 @@ private:
     enum class SendMessageResult : uint8_t { Success, Failure, MessageTooLarge };
     enum class IsRetryDueToLargeSize : bool { No, Yes };
     SendMessageResult sendMessage(std::unique_ptr<MachMessage>&, IsRetryDueToLargeSize = IsRetryDueToLargeSize::No);
-    bool retrySendMessageWithSharedMemory(std::unique_ptr<MachMessage> failedMessage, UniqueRef<Encoder>&);
 #endif
     template<typename F>
     void dispatchToClient(F&& clientRunLoopTask) WTF_EXCLUDES_LOCK(m_incomingMessagesLock);
