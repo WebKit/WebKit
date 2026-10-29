@@ -599,6 +599,7 @@
 				WebKit/WKWebView/CodingTests.swift,
 				WebKit/WKWebView/HTTP2Server.swift,
 				WebKit/WKWebView/HTTP3Server.swift,
+				WebKit/WKWebView/NavigationResponseProcessSwapTests.swift,
 				WebKit/WKWebView/PDFLookUpTests.swift,
 				WebKit/WKWebView/SiteIsolationContentsOfAllFramesTests.swift,
 				WebKit/WKWebView/SiteIsolationCookieTests.swift,

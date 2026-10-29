@@ -64,4 +64,9 @@ bool LoaderStrategy::startKeepAliveLoadForWebKitLegacy(FrameLoader&, const Resou
     return false;
 }
 
+bool LoaderStrategy::hasExistingNetworkLoadToResume() const
+{
+    return false;
+}
+
 } // namespace WebCore

@@ -1545,6 +1545,11 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     if (!existingResource)
         return Load;
 
+    if (type == CachedResource::Type::MainResource && platformStrategies()->loaderStrategy()->hasExistingNetworkLoadToResume()) {
+        LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading because the navigation continues a network load from another process.");
+        return Reload;
+    }
+
     if (request.cachePolicy() == ResourceRequestCachePolicy::DoNotUseAnyCache || request.cachePolicy() == ResourceRequestCachePolicy::ReloadIgnoringCacheData)
         return Load;
 
