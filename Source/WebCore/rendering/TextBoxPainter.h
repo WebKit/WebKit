@@ -65,7 +65,7 @@ protected:
 
     void paintBackgroundFill();
     enum class BackgroundStyle : bool { Normal, Rounded };
-    void paintBackgroundFillForRange(unsigned startOffset, unsigned endOffset, const Color&, BackgroundStyle);
+    void paintBackgroundFillForRange(unsigned startOffset, unsigned endOffset, float logicalTop, float logicalBottom, const Color&, BackgroundStyle);
 
     void paintForegroundAndDecorations();
     void paintCompositionUnderlines();
@@ -82,7 +82,7 @@ protected:
     void paintCompositionUnderline(const CompositionUnderline&, const CornerRadii&, bool hasLiveConversion);
     void fillCompositionUnderline(float start, float width, const CompositionUnderline&, const CornerRadii&, bool hasLiveConversion) const;
     void paintPlatformDocumentMarker(const MarkedText&);
-    LayoutRect selectionRectForRange(unsigned startOffset, unsigned endOffset) const;
+    LayoutRect backgroundRectForRange(unsigned startOffset, unsigned endOffset, float logicalTop, float logicalBottom) const;
 
     float textPosition();
     FloatRect computePaintRect(const LayoutPoint& paintOffset);

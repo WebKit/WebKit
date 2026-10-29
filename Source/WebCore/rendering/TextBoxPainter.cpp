@@ -557,6 +557,11 @@ void TextBoxPainter::paintForegroundAndDecorations()
 
 void TextBoxPainter::paintBackgroundFill()
 {
+    // Composition, highlights and other marked text cover the content, while the selection uses the line's selection extent.
+    auto lineBox = makeIterator()->lineBox();
+    auto contentLogicalTop = lineBox.contentLogicalTopAdjustedForPrecedingLineBox();
+    auto contentLogicalBottom = lineBox.contentLogicalBottomAdjustedForFollowingLineBox();
+
     if (m_containsComposition && !m_compositionWithCustomUnderlines) {
         Ref editor = protect(m_renderer->frame())->editor();
 
@@ -572,14 +577,14 @@ void TextBoxPainter::paintBackgroundFill()
                     break;
 
                 auto [clampedStart, clampedEnd] = m_selectableRange.clamp(highlight.startOffset, highlight.endOffset);
-                paintBackgroundFillForRange(clampedStart, clampedEnd, *highlight.backgroundColor, BackgroundStyle::Rounded);
+                paintBackgroundFillForRange(clampedStart, clampedEnd, contentLogicalTop, contentLogicalBottom, *highlight.backgroundColor, BackgroundStyle::Rounded);
 
                 if (highlight.endOffset > textBox().end())
                     break;
             }
         } else {
             auto [clampedStart, clampedEnd] = m_selectableRange.clamp(editor->compositionStart(), editor->compositionEnd());
-            paintBackgroundFillForRange(clampedStart, clampedEnd, CompositionHighlight::defaultCompositionFillColor, BackgroundStyle::Normal);
+            paintBackgroundFillForRange(clampedStart, clampedEnd, contentLogicalTop, contentLogicalBottom, CompositionHighlight::defaultCompositionFillColor, BackgroundStyle::Normal);
         }
     }
 
@@ -592,40 +597,37 @@ void TextBoxPainter::paintBackgroundFill()
     // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
     auto coalescedStyledMarkedTexts = StyledMarkedText::coalesceAdjacentWithEqualBackground(styledMarkedTexts);
     for (auto& markedText : coalescedStyledMarkedTexts)
-        paintBackgroundFillForRange(markedText.startOffset, markedText.endOffset, markedText.style.backgroundColor, BackgroundStyle::Normal);
+        paintBackgroundFillForRange(markedText.startOffset, markedText.endOffset, contentLogicalTop, contentLogicalBottom, markedText.style.backgroundColor, BackgroundStyle::Normal);
 
 #if ENABLE(TEXT_SELECTION)
     auto hasSelectionWithNonCustomUnderline = m_haveSelection && !m_compositionWithCustomUnderlines;
     if (hasSelectionWithNonCustomUnderline && !m_paintInfo.context().paintingDisabled()) {
         auto selectionMarkedText = createMarkedTextFromSelectionInBox();
         if (!selectionMarkedText.isEmpty()) {
+            auto selectionLogicalTop = LineSelection::logicalTopAdjustedForPrecedingBlock(lineBox);
+            auto selectionLogicalBottom = LineSelection::logicalBottom(lineBox);
             auto selectionMarkedTexts = Vector<MarkedText>::from(WTF::move(selectionMarkedText));
             for (auto& markedText : StyledMarkedText::subdivideAndResolve(selectionMarkedTexts, m_renderer, m_isFirstLine, m_paintInfo))
-                paintBackgroundFillForRange(markedText.startOffset, markedText.endOffset, markedText.style.backgroundColor, BackgroundStyle::Normal);
+                paintBackgroundFillForRange(markedText.startOffset, markedText.endOffset, selectionLogicalTop, selectionLogicalBottom, markedText.style.backgroundColor, BackgroundStyle::Normal);
         }
     }
 #endif
 }
 
-LayoutRect TextBoxPainter::selectionRectForRange(unsigned startOffset, unsigned endOffset) const
+LayoutRect TextBoxPainter::backgroundRectForRange(unsigned startOffset, unsigned endOffset, float logicalTop, float logicalBottom) const
 {
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own highlight.
-    auto lineBox = makeIterator()->lineBox();
-    auto selectionBottom = LineSelection::logicalBottom(lineBox);
-    auto selectionTop = LineSelection::logicalTopAdjustedForPrecedingBlock(lineBox);
-    // Use same y positioning and height as for selection, so that when the selection and this subrange are on
-    // the same word there are no pieces sticking out.
-    auto deltaY = LayoutUnit { writingMode().isLineInverted() ? selectionBottom - m_logicalRect.maxY() : m_logicalRect.y() - selectionTop };
-    auto selectionHeight = LayoutUnit { std::max(0.f, selectionBottom - selectionTop) };
-    auto selectionRect = LayoutRect { LayoutUnit(m_paintRect.x()), LayoutUnit(m_paintRect.y() - deltaY), LayoutUnit(m_logicalRect.width()), selectionHeight };
+    auto deltaY = LayoutUnit { writingMode().isLineInverted() ? logicalBottom - m_logicalRect.maxY() : m_logicalRect.y() - logicalTop };
+    auto logicalHeight = LayoutUnit { std::max(0.f, logicalBottom - logicalTop) };
+    auto rect = LayoutRect { LayoutUnit(m_paintRect.x()), LayoutUnit(m_paintRect.y() - deltaY), LayoutUnit(m_logicalRect.width()), logicalHeight };
 
     if (isInsideShapedContent()) {
         auto shapedContent = ShapedContent { };
 
         buildTextForShaping(shapedContent, makeIterator(), true);
-        selectionRect.setX(selectionRect.x() - shapedContent.textBoxVisualLeft);
-        auto selectionLength = endOffset - startOffset;
+        rect.setX(rect.x() - shapedContent.textBoxVisualLeft);
+        auto rangeLength = endOffset - startOffset;
         auto adjustedStartOffset = shapedContent.textBoxStartOffset + startOffset;
 
         auto characterScanForCodePath = true;
@@ -634,15 +636,15 @@ LayoutRect TextBoxPainter::selectionRectForRange(unsigned startOffset, unsigned 
         paintRect.shiftXEdgeTo(shapedContent.visualLeft);
         auto run = TextRun { shapedContent.text, paintRect.x(), expansion.horizontalExpansion, expansion.behavior, m_textBox.direction(), m_style->rtlOrdering() == Order::Visual, characterScanForCodePath };
 
-        fontCascade().adjustSelectionRectForText(false, run, selectionRect, adjustedStartOffset, adjustedStartOffset + selectionLength);
-        return selectionRect;
+        fontCascade().adjustSelectionRectForText(false, run, rect, adjustedStartOffset, adjustedStartOffset + rangeLength);
+        return rect;
     }
 
-    fontCascade().adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring().value_or(false), m_paintTextRun, selectionRect, startOffset, endOffset);
-    return selectionRect;
+    fontCascade().adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring().value_or(false), m_paintTextRun, rect, startOffset, endOffset);
+    return rect;
 }
 
-void TextBoxPainter::paintBackgroundFillForRange(unsigned startOffset, unsigned endOffset, const Color& color, BackgroundStyle backgroundStyle)
+void TextBoxPainter::paintBackgroundFillForRange(unsigned startOffset, unsigned endOffset, float logicalTop, float logicalBottom, const Color& color, BackgroundStyle backgroundStyle)
 {
     if (startOffset >= endOffset)
         return;
@@ -651,21 +653,21 @@ void TextBoxPainter::paintBackgroundFillForRange(unsigned startOffset, unsigned 
     GraphicsContextStateSaver stateSaver { context };
     updateGraphicsContext(context, TextPaintStyle { color }); // Don't draw text at all!
 
-    auto selectionRect = selectionRectForRange(startOffset, endOffset);
+    auto rect = backgroundRectForRange(startOffset, endOffset, logicalTop, logicalBottom);
 
     if (m_paintTextRun.length() == endOffset - startOffset) {
         // FIXME: We should reconsider re-measuring the content when non-whitespace runs are joined together (see webkit.org/b/251318).
-        auto unAdjustedSelectionRectMaxX = LayoutUnit { m_paintRect.x() + m_logicalRect.width() };
-        auto visualRight = std::max(selectionRect.maxX(), unAdjustedSelectionRectMaxX);
-        selectionRect.shiftMaxXEdgeTo(visualRight);
+        auto unAdjustedRectMaxX = LayoutUnit { m_paintRect.x() + m_logicalRect.width() };
+        auto visualRight = std::max(rect.maxX(), unAdjustedRectMaxX);
+        rect.shiftMaxXEdgeTo(visualRight);
     }
 
     // FIXME: Support painting combined text. See <https://bugs.webkit.org/show_bug.cgi?id=180993>.
-    auto backgroundRect = snapRectToDevicePixels(selectionRect, m_document->deviceScaleFactor());
+    auto backgroundRect = snapRectToDevicePixels(rect, m_document->deviceScaleFactor());
     if (!writingMode().isHorizontal()) {
         auto ctm = context.getCTM();
         if (auto inverseCTM = ctm.inverse())
-            backgroundRect = inverseCTM->mapRect(snapRectToDevicePixels(LayoutRect { ctm.mapRect(FloatRect { selectionRect }) }, 1));
+            backgroundRect = inverseCTM->mapRect(snapRectToDevicePixels(LayoutRect { ctm.mapRect(FloatRect { rect }) }, 1));
     }
     if (backgroundStyle == BackgroundStyle::Rounded) {
         backgroundRect.expand(-1, -1);

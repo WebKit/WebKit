@@ -366,7 +366,9 @@ static LayoutRect LEGACY_NODELETE snappedSelectionRect(const LayoutRect& selecti
     };
 }
 
-static LayoutRect selectionRectForTextBox(const InlineIterator::TextBox& textBox, unsigned rangeStart, unsigned rangeEnd)
+// Painting uses the line's selection extent, while selection geometry and text quads match the text so they agree with its character rects.
+enum class LineExtent : bool { Content, Selection };
+static LayoutRect selectionRectForTextBox(const InlineIterator::TextBox& textBox, unsigned rangeStart, unsigned rangeEnd, LineExtent lineExtent = LineExtent::Content)
 {
     if (auto* svgTextBox = dynamicDowncast<InlineIterator::SVGTextBox>(textBox))
         return svgTextBox->localSelectionRect(rangeStart, rangeEnd);
@@ -398,8 +400,9 @@ static LayoutRect selectionRectForTextBox(const InlineIterator::TextBox& textBox
         }
     }
 
-    auto lineSelectionRect = LineSelection::logicalRect(textBox.lineBox());
-    auto selectionRect = LayoutRect { 0, lineSelectionRect.y(), textBox.logicalWidth(), lineSelectionRect.height() };
+    auto lineBox = textBox.lineBox();
+    auto lineRect = lineExtent == LineExtent::Selection ? LineSelection::logicalRect(lineBox) : lineBox.contentLogicalRectAdjustedForAdjacentLineBoxes();
+    auto selectionRect = LayoutRect { 0, lineRect.y(), textBox.logicalWidth(), lineRect.height() };
 
     auto textRun = textBox.textRun();
     if (clampedStart || clampedEnd != textRun.length())
@@ -761,8 +764,8 @@ static Vector<LayoutRect> characterRects(const InlineIterator::TextBox& run, uns
         });
     }
 
-    auto lineSelectionRect = LineSelection::logicalRect(run.lineBox());
-    auto selectionRect = LayoutRect { run.logicalLeftIgnoringInlineDirection(), lineSelectionRect.y(), run.logicalWidth(), lineSelectionRect.height() };
+    auto lineRect = run.lineBox().contentLogicalRectAdjustedForAdjacentLineBoxes();
+    auto selectionRect = LayoutRect { run.logicalLeftIgnoringInlineDirection(), lineRect.y(), run.logicalWidth(), lineRect.height() };
     return run.fontCascade().characterSelectionRectsForText(run.textRun(), selectionRect, clampedStart, clampedEnd).map([&](auto& characterRect) {
         return snappedSelectionRect(characterRect, run.logicalRightIgnoringInlineDirection(), run.writingMode());
     });
@@ -1002,7 +1005,7 @@ PositionWithAffinity RenderText::positionForPoint(const LayoutPoint& point, HitT
         auto lineBox = run->lineBox();
         auto top = LayoutUnit { std::min(previousLineBoxContentBottomOrBorderAndPadding(lineBox), lineBox.contentLogicalTop()) };
         if (logicalPoint.y() > top || (!blocksAreFlipped && logicalPoint.y() == top)) {
-            auto bottom = LayoutUnit { LineSelection::logicalBottom(lineBox) };
+            auto bottom = LayoutUnit { lineBox.contentLogicalBottomAdjustedForFollowingLineBox() };
             if (auto nextLineBox = lineBox.next())
                 bottom = std::min(bottom, LayoutUnit { nextLineBox->contentLogicalTop() });
 
@@ -2090,7 +2093,7 @@ LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerM
 
     for (auto& textBox : InlineIterator::textBoxesFor(*this)) {
         LayoutRect rect;
-        rect.unite(selectionRectForTextBox(textBox, startOffset, endOffset));
+        rect.unite(selectionRectForTextBox(textBox, startOffset, endOffset, LineExtent::Selection));
         rect.unite(ellipsisRectForTextBox(textBox, startOffset, endOffset).value_or(IntRect { }));
         if (rect.isEmpty())
             continue;

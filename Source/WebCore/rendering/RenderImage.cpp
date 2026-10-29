@@ -51,7 +51,6 @@
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
-#include "LineSelection.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "LogicalSelectionOffsetCachesInlines.h"
@@ -141,9 +140,9 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
             lineExtentRect.setHeight(containingBlock->borderBoxHeight());
         }
     } else {
-        auto selectionLogicalRect = LineSelection::logicalRect(run->lineBox());
-        int selectionTop = !containingBlock->writingMode().isBlockFlipped() ? selectionLogicalRect.y() - logicalTop() : logicalBottom() - selectionLogicalRect.maxY();
-        int selectionHeight = selectionLogicalRect.height();
+        auto lineRect = run->lineBox().contentLogicalRectAdjustedForAdjacentLineBoxes();
+        int selectionTop = !containingBlock->writingMode().isBlockFlipped() ? lineRect.y() - logicalTop() : logicalBottom() - lineRect.maxY();
+        int selectionHeight = lineRect.height();
         imageRect = IntRect { 0,  selectionTop, logicalWidth(), selectionHeight };
         isFirstOnLine = !run->nextLineLeftwardOnLine();
         isLastOnLine = !run->nextLineRightwardOnLine();

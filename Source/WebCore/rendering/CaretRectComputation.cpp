@@ -32,7 +32,6 @@
 #include "InlineIteratorTextBox.h"
 #include "InlineIteratorSVGTextBox.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "LineSelection.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -132,10 +131,10 @@ static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxI
 {
     CheckedRef root = lineBox->formattingContextRoot();
     auto writingMode = root->writingMode();
-    auto lineSelectionRect = LineSelection::logicalRect(*lineBox);
+    auto lineRect = lineBox->contentLogicalRectAdjustedForAdjacentLineBoxes();
 
-    int height = lineSelectionRect.height();
-    int top = lineSelectionRect.y();
+    int height = lineRect.height();
+    int top = lineRect.y();
 
     // Distribute the caret's width to either side of the offset.
     float left = logicalLeftPosition;
@@ -144,8 +143,8 @@ static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxI
     int caretWidthRightOfOffset = caretWidth() - caretWidthLeftOfOffset;
     left = roundf(left);
 
-    float lineLeft = lineSelectionRect.x();
-    float lineRight = lineSelectionRect.maxX();
+    float lineLeft = lineRect.x();
+    float lineRight = lineRect.maxX();
 
     bool rightAligned = false;
     switch (root->style().textAlign()) {
