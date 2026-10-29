@@ -196,4 +196,4 @@ TEST_P(BlendMinMaxTest, RGBA16F)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(BlendMinMaxTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(BlendMinMaxTest, ES3_WEBGPU());
