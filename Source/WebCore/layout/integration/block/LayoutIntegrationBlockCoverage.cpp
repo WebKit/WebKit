@@ -491,20 +491,6 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     return outOfFlowBoxesInLeafAvoidanceReason(box, rootContainer);
 }
 
-// The inline formatting context hands a block-level box in inline content back to the block formatting context laying out the block container
-// the content is in (BlockFormattingContext::layoutBlockLevelBoxInInlineContent), which has to be on its stack: the root or one of its in-flow
-// block containers that does not establish a formatting context of its own.
-// FIXME: Anonymous boxes, and the inline content of out-of-flow boxes and of nested roots, which get a block layout state of their own.
-static std::optional<BlockAvoidanceReason> blockLevelBoxInInlineContentAvoidanceReason(const RenderBlockFlow& box, const RenderBlockFlow& rootContainer)
-{
-    if (box.isAnonymous())
-        return BlockAvoidanceReason::ContentHasBlockInInline;
-    CheckedPtr blockContainer = box.containingBlock();
-    if (blockContainer != &rootContainer && (blockContainer->createsNewFormattingContext() || blockContainer->isOutOfFlowPositioned()))
-        return BlockAvoidanceReason::ContentHasBlockInInline;
-    return { };
-}
-
 static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer)
 {
     // A box a line-clamp container hid after its clamp point stays hidden until the render tree path lays it out again
@@ -543,8 +529,9 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         return BlockAvoidanceReason::ContentIsFormControl;
     if (!blockContainer->isOutOfFlowPositioned()) {
         if (blockContainer->parent()->isInlineBox()) {
-            if (auto reason = blockLevelBoxInInlineContentAvoidanceReason(*blockContainer, rootContainer))
-                return reason;
+            // FIXME: Anonymous block-level boxes in inline content.
+            if (blockContainer->isAnonymous())
+                return BlockAvoidanceReason::ContentHasBlockInInline;
         } else if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(blockContainer->parent()); !parent || parent->childrenInline())
             return BlockAvoidanceReason::ContentHasBlockInInline;
     }
