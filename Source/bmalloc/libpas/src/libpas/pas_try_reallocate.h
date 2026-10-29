@@ -311,7 +311,7 @@ pas_try_reallocate(void* old_ptr,
             
             PAS_ASSERT(free_mode == pas_reallocate_free_if_successful);
 
-            if (config.allow_mte_tagging)
+            if (pas_heap_config_allows_mte_tagging(config))
                 raw_result = pas_system_heap_realloc(old_ptr, new_size);
             else
                 raw_result = pas_system_heap_realloc_untagged(old_ptr, new_size);
