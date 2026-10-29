@@ -1,0 +1,1 @@
+script ran during font selection: false, face.status: loaded FontFace.loaded resolved after a turn: true

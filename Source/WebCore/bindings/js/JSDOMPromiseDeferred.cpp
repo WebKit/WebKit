@@ -81,7 +81,7 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
             handleUncaughtException(scope, downcast<JSDOMGlobalObject>(lexicalGlobalObject));
     });
 
-    if (activeDOMObjectsAreSuspended() || !ScriptDisallowedScope::isScriptAllowedInMainThread()) {
+    if (activeDOMObjectsAreSuspended() || !ScriptDisallowedScope::isScriptAllowedInCurrentThread()) {
         JSC::Strong<JSC::Unknown, ShouldStrongDestructorGrabLock::Yes> strongResolution(lexicalGlobalObject.vm(), resolution);
         ASSERT(!activeDOMObjectsAreSuspended() || scriptExecutionContext()->eventLoop().isSuspended());
         protect(protect(scriptExecutionContext())->eventLoop())->queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, mode, strongResolution = WTF::move(strongResolution)] mutable {
