@@ -30,7 +30,6 @@
 #include "APIWebsitePolicies.h"
 #include "WebPreferences.h"
 #include <WebCore/IPAddressSpace.h>
-#include <WebCore/SecurityOrigin.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 
@@ -175,7 +174,7 @@ void EnhancedSecurityTracking::trackSameSiteNavigation(const API::Navigation& na
 
 static bool isURLCandidateForEnhancedSecurity(const URL& url)
 {
-    return url.protocolIs("http"_s) && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(url.host());
+    return url.protocolIs("http"_s) && !isLoopbackOrLinkLocalAddress(url);
 }
 
 bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigation, bool httpFallbackInProgress)
