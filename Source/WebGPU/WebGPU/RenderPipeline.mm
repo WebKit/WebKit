@@ -1811,7 +1811,7 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
         // Compile the pipeline state now rather than leaving it to the first draw. This is only an
         // optimization: nothing here can invalidate the pipeline, and if the compile fails the lazy
         // renderPipelineState() path still runs, and reports the failure, at first use.
-        createRenderPipelineStateAsync(protectedThis->m_device, *protectedInstance, renderPipelineDescriptor.get(), [pipeline = WTF::move(pipeline), callback = WTF::move(callback)](id<MTLRenderPipelineState> renderPipelineState, NSError *) mutable {
+        createRenderPipelineStateAsync(protectedThis, renderPipelineDescriptor.get(), [pipeline = WTF::move(pipeline), callback = WTF::move(callback)](id<MTLRenderPipelineState> renderPipelineState, NSError *) mutable {
             if (renderPipelineState)
                 pipeline->setPrecompiledRenderPipelineState(renderPipelineState);
             callback(std::make_pair(WTF::move(pipeline), nil));

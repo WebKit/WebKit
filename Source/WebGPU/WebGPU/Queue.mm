@@ -53,10 +53,30 @@ constexpr bool skipMemoryAttribution = true;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Queue);
 
+void CommittedCommandBuffers::add(id<MTLCommandBuffer> commandBuffer)
+{
+    Locker locker { m_lock };
+    [m_commandBuffers addObject:commandBuffer];
+}
+
+void CommittedCommandBuffers::remove(id<MTLCommandBuffer> commandBuffer)
+{
+    Locker locker { m_lock };
+    [m_commandBuffers removeObject:commandBuffer];
+}
+
+id<MTLCommandBuffer> CommittedCommandBuffers::first()
+{
+    Locker locker { m_lock };
+    return m_commandBuffers.firstObject;
+}
+
 Queue::Queue(id<MTLCommandQueue> commandQueue, Adapter& adapter, Device& device)
     : m_commandQueue(commandQueue)
     , m_device(device)
+    , m_committedNotCompletedBuffers(CommittedCommandBuffers::create())
     , m_instance(adapter.weakInstance())
+    , m_workScheduler(adapter.workScheduler())
 {
     m_createdNotCommittedBuffers = [NSMutableOrderedSet orderedSet];
     m_openCommandEncoders = [NSMapTable strongToStrongObjectsMapTable];
@@ -65,7 +85,9 @@ Queue::Queue(id<MTLCommandQueue> commandQueue, Adapter& adapter, Device& device)
 
 Queue::Queue(Adapter& adapter, Device& device)
     : m_device(device)
+    , m_committedNotCompletedBuffers(CommittedCommandBuffers::create())
     , m_instance(adapter.weakInstance())
+    , m_workScheduler(adapter.workScheduler())
 {
 }
 
@@ -374,10 +396,7 @@ void Queue::waitForAllCommitedWorkToComplete()
 {
     id<MTLCommandBuffer> commandBuffer = nil;
     do {
-        {
-            Locker locker { m_committedNotCompletedBuffersLock };
-            commandBuffer = m_committedNotCompletedBuffers.firstObject;
-        }
+        commandBuffer = m_committedNotCompletedBuffers->first();
         [commandBuffer waitUntilCompleted];
     } while (commandBuffer);
 }
@@ -397,14 +416,20 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
     }
 
     ASSERT(commandBuffer.commandQueue == m_commandQueue);
-    [commandBuffer addScheduledHandler:[protectedThis = protect(*this)](id<MTLCommandBuffer>) {
-        protectedThis->scheduleWork([protectedThis = protectedThis.copyRef()]() {
+    // Metal runs these handlers on its own threads. They don't reference the queue strongly, lest
+    // they destroy it there. The instance keeps the device, and so the queue, alive as long as the
+    // Metal command buffer, which the work they schedule therefore keeps alive.
+    [commandBuffer addScheduledHandler:[weakThis = ThreadSafeWeakPtr { *this }, workScheduler = m_workScheduler](id<MTLCommandBuffer> mtlCommandBuffer) {
+        workScheduler->scheduleWork([weakThis, mtlCommandBuffer = RetainPtr { mtlCommandBuffer }] {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
+                return;
             ++(protectedThis->m_scheduledCommandBufferCount);
             for (auto& callback : protectedThis->m_onSubmittedWorkScheduledCallbacks.take(protectedThis->m_scheduledCommandBufferCount))
                 callback();
         });
     }];
-    [commandBuffer addCompletedHandler:[protectedThis = protect(*this)](id<MTLCommandBuffer> mtlCommandBuffer) {
+    [commandBuffer addCompletedHandler:[weakThis = ThreadSafeWeakPtr { *this }, workScheduler = m_workScheduler, committedNotCompletedBuffers = m_committedNotCompletedBuffers](id<MTLCommandBuffer> mtlCommandBuffer) {
         MTLCommandBufferStatus status = mtlCommandBuffer.status;
         bool loseTheDevice = false;
         if (NSError *error = mtlCommandBuffer.error; status != MTLCommandBufferStatusCompleted) {
@@ -431,12 +456,12 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
             }
         }
 
-        {
-            Locker locker { protectedThis->m_committedNotCompletedBuffersLock };
-            [protectedThis->m_committedNotCompletedBuffers removeObject:mtlCommandBuffer];
-        }
+        committedNotCompletedBuffers->remove(mtlCommandBuffer);
 
-        protectedThis->scheduleWork([loseTheDevice, protectedThis = protectedThis.copyRef()]() {
+        workScheduler->scheduleWork([loseTheDevice, weakThis, mtlCommandBuffer = RetainPtr { mtlCommandBuffer }] {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
+                return;
             ++(protectedThis->m_completedCommandBufferCount);
             for (auto& callback : protectedThis->m_onSubmittedWorkDoneCallbacks.take(protectedThis->m_completedCommandBufferCount))
                 callback(true);
@@ -449,10 +474,7 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
     }];
 
     [commandBuffer commit];
-    {
-        Locker locker { m_committedNotCompletedBuffersLock };
-        [m_committedNotCompletedBuffers addObject:commandBuffer];
-    }
+    m_committedNotCompletedBuffers->add(commandBuffer);
     removeMTLCommandBufferInternal(commandBuffer);
     ++m_submittedCommandBufferCount;
 }
@@ -2131,8 +2153,7 @@ void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::s
 
 void Queue::scheduleWork(Instance::WorkItem&& workItem)
 {
-    if (auto instance = m_instance.get())
-        instance->scheduleWork(WTF::move(workItem));
+    m_workScheduler->scheduleWork(WTF::move(workItem));
 }
 
 void Queue::clearTextureViewIfNeeded(TextureView& textureView)

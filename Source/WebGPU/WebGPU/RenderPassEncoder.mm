@@ -864,13 +864,18 @@ RenderPassEncoder::DrawIndexResult RenderPassEncoder::clampIndexBufferToValidVal
 
     auto encoderHandle = device.getQueue()->retainCounterSampleBuffer(encoder.parentEncoder());
     uint64_t validationGeneration = apiIndexBuffer->indexContentsGeneration();
-    [encoder.parentEncoder().commandBuffer() addCompletedHandler:[encoderHandle, protectedDevice = protect(device), firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, validationGeneration, refIndexBuffer = protect(*apiIndexBuffer), indexedIndirectBuffer, indexedIndirectBufferOffset](id<MTLCommandBuffer> completedCommandBuffer) mutable {
-        if (completedCommandBuffer.status != MTLCommandBufferStatusCompleted) {
+    // Metal runs this handler on its own thread. It doesn't reference the device or the buffer
+    // strongly, lest it destroys them there.
+    [encoder.parentEncoder().commandBuffer() addCompletedHandler:[encoderHandle, weakDevice = ThreadSafeWeakPtr { device }, workScheduler = Ref { device.workScheduler() }, firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, validationGeneration, weakIndexBuffer = ThreadSafeWeakPtr { *apiIndexBuffer }, indexedIndirectBuffer, indexedIndirectBufferOffset](id<MTLCommandBuffer> completedCommandBuffer) mutable {
+        bool completed = completedCommandBuffer.status == MTLCommandBufferStatusCompleted;
+        workScheduler->scheduleWork([completed, encoderHandle, weakDevice = WTF::move(weakDevice), firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, validationGeneration, weakIndexBuffer = WTF::move(weakIndexBuffer), indexedIndirectBuffer, indexedIndirectBufferOffset] mutable {
+            RefPtr protectedDevice = weakDevice;
+            if (!protectedDevice)
+                return;
             protectedDevice->getQueue()->releaseCounterSampleBuffer(encoderHandle);
-            return;
-        }
-        protectedDevice->getQueue()->scheduleWork([encoderHandle, protectedDevice, firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, validationGeneration, refIndexBuffer = WTF::move(refIndexBuffer), indexedIndirectBuffer, indexedIndirectBufferOffset]() mutable {
-            protectedDevice->getQueue()->releaseCounterSampleBuffer(encoderHandle);
+            RefPtr refIndexBuffer = weakIndexBuffer;
+            if (!completed || !refIndexBuffer)
+                return;
             if (!indexedIndirectBuffer.contents || indexedIndirectBuffer.length < sizeof(WebKitMTLDrawIndexedPrimitivesIndirectArguments) + indexedIndirectBufferOffset)
                 return;
 
@@ -897,13 +902,17 @@ void RenderPassEncoder::trackIndirectDeviceLostCheck(id<MTLBuffer> scratch, uint
     if (!m_indirectDeviceLostChecks) {
         m_indirectDeviceLostChecks = adoptRef(*new IndirectDeviceLostChecks);
         auto encoderHandle = m_device->getQueue()->retainCounterSampleBuffer(m_parentEncoder);
-        [m_parentEncoder->commandBuffer() addCompletedHandler:[encoderHandle, protectedDevice = protect(m_device.get()), checks = m_indirectDeviceLostChecks](id<MTLCommandBuffer> completedCommandBuffer) {
-            if (completedCommandBuffer.status != MTLCommandBufferStatusCompleted) {
+        // Metal runs this handler on its own thread. It doesn't reference the device strongly, lest
+        // it destroys it there.
+        [m_parentEncoder->commandBuffer() addCompletedHandler:[encoderHandle, weakDevice = ThreadSafeWeakPtr { m_device.get() }, workScheduler = Ref { m_device->workScheduler() }, checks = m_indirectDeviceLostChecks](id<MTLCommandBuffer> completedCommandBuffer) {
+            bool completed = completedCommandBuffer.status == MTLCommandBufferStatusCompleted;
+            workScheduler->scheduleWork([completed, encoderHandle, checks, weakDevice] mutable {
+                RefPtr protectedDevice = weakDevice;
+                if (!protectedDevice)
+                    return;
                 protectedDevice->getQueue()->releaseCounterSampleBuffer(encoderHandle);
-                return;
-            }
-            protectedDevice->getQueue()->scheduleWork([encoderHandle, checks, protectedDevice]() mutable {
-                protectedDevice->getQueue()->releaseCounterSampleBuffer(encoderHandle);
+                if (!completed)
+                    return;
                 for (auto& entry : checks->entries) {
                     id<MTLBuffer> buffer = entry.scratch.get();
                     auto checkedEnd = checkedSum<uint64_t>(entry.offset, sizeof(WebKitMTLDrawPrimitivesIndirectArguments));
@@ -1517,14 +1526,18 @@ void RenderPassEncoder::executeBundles(std::span<const Ref<WebGPU::RenderBundle>
 
                     auto encoderHandle = m_device->getQueue()->retainCounterSampleBuffer(m_parentEncoder);
                     uint64_t validationGeneration = indexBuffer->indexContentsGeneration();
-                    [m_parentEncoder->commandBuffer() addCompletedHandler:[encoderHandle, protectedDevice = protect(m_device), firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, validationGeneration, refIndexBuffer = protect(*indexBuffer), icb](id<MTLCommandBuffer> completedCommandBuffer) mutable {
-                        if (completedCommandBuffer.status != MTLCommandBufferStatusCompleted) {
+                    // Metal runs this handler on its own thread. It doesn't reference the device or
+                    // the buffer strongly, lest it destroys them there.
+                    [m_parentEncoder->commandBuffer() addCompletedHandler:[encoderHandle, weakDevice = ThreadSafeWeakPtr { m_device.get() }, workScheduler = Ref { m_device->workScheduler() }, firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, validationGeneration, weakIndexBuffer = ThreadSafeWeakPtr { *indexBuffer }, icb](id<MTLCommandBuffer> completedCommandBuffer) mutable {
+                        bool completed = completedCommandBuffer.status == MTLCommandBufferStatusCompleted;
+                        workScheduler->scheduleWork([completed, encoderHandle, weakDevice = WTF::move(weakDevice), icb, firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, validationGeneration, weakIndexBuffer = WTF::move(weakIndexBuffer)] mutable {
+                            RefPtr protectedDevice = weakDevice;
+                            if (!protectedDevice)
+                                return;
                             protectedDevice->getQueue()->releaseCounterSampleBuffer(encoderHandle);
-                            return;
-                        }
-
-                        protectedDevice->getQueue()->scheduleWork([encoderHandle, protectedDevice, icb, firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, validationGeneration, refIndexBuffer = WTF::move(refIndexBuffer)]() mutable {
-                            protectedDevice->getQueue()->releaseCounterSampleBuffer(encoderHandle);
+                            RefPtr refIndexBuffer = weakIndexBuffer;
+                            if (!completed || !refIndexBuffer)
+                                return;
                             id<MTLBuffer> outOfBoundsReadFlag = icb.outOfBoundsReadFlag;
                             refIndexBuffer->didReadOOB(*static_cast<uint32_t*>(outOfBoundsReadFlag.contents), icb.indirectCommandBuffer);
                             refIndexBuffer->drawIndexedValidated(firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, validationGeneration, icb.indirectCommandBuffer);

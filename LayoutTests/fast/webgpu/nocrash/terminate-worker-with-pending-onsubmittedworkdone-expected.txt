@@ -1,0 +1,10 @@
+Terminating a worker while its queue's onSubmittedWorkDone() calls are still in flight in the GPU process should not crash it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The GPU process is still alive.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
