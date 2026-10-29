@@ -38,6 +38,7 @@
 #include "libANGLE/EGLSync.h"
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/Image.h"
+#include "libANGLE/LoggingAnnotator.h"
 #include "libANGLE/ResourceManager.h"
 #include "libANGLE/Stream.h"
 #include "libANGLE/Surface.h"
@@ -1075,6 +1076,35 @@ void SyncSet::clearPools()
     mSyncPools.clear();
 }
 
+// ScratchBuffers implementation:
+angle::ScratchBuffer ScratchBuffers::requestScratchBuffer()
+{
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
+    if (!mScratchBuffers.empty())
+    {
+        angle::ScratchBuffer buffer = std::move(mScratchBuffers.back());
+        mScratchBuffers.pop_back();
+        return buffer;
+    }
+
+    return angle::ScratchBuffer(kScratchBufferLifetime);
+}
+
+void ScratchBuffers::returnScratchBuffer(angle::ScratchBuffer scratchBuffer)
+{
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
+    mScratchBuffers.push_back(std::move(scratchBuffer));
+}
+
+void ScratchBuffers::tick()
+{
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
+    for (angle::ScratchBuffer &scratchBuffer : mScratchBuffers)
+    {
+        scratchBuffer.tick();
+    }
+}
+
 // DisplayState
 DisplayState::DisplayState(EGLNativeDisplayType nativeDisplayId)
     : label(nullptr),
@@ -1144,6 +1174,49 @@ bool ThreadSafeDisplay::isValidSync(SyncID syncID) const
     return getSync(syncID).get() != nullptr;
 }
 
+ScopedSurfaceRef ThreadSafeDisplay::getSurfaceRef(egl::SurfaceID surfaceID) const
+{
+    return mState.surfaceMap.getSurfaceRef(this, surfaceID);
+}
+
+ScopedSurfaceLockAndRef ThreadSafeDisplay::getSurface(egl::SurfaceID surfaceID) const
+{
+    return mState.surfaceMap.getSurface(this, surfaceID);
+}
+
+Error ThreadSafeDisplay::destroySurfaceImpl(Surface *surface)
+{
+    if (surface->getType() == EGL_WINDOW_BIT)
+    {
+        WindowSurfaceMap *windowSurfaces = GetWindowSurfaces();
+        ASSERT(windowSurfaces);
+
+        bool surfaceRemoved = false;
+        for (WindowSurfaceMap::iterator iter = windowSurfaces->begin();
+             iter != windowSurfaces->end(); iter++)
+        {
+            if (iter->second == surface)
+            {
+                windowSurfaces->erase(iter);
+                surfaceRemoved = true;
+                break;
+            }
+        }
+
+        ASSERT(surfaceRemoved);
+    }
+
+    ANGLE_TRY(surface->releaseRef(this));
+    return NoError();
+}
+
+Error ThreadSafeDisplay::destroySurface(Surface *surface)
+{
+    bool surfaceFound = mState.surfaceMap.erase(surface->id());
+    ASSERT(surfaceFound);
+    return destroySurfaceImpl(surface);
+}
+
 void ThreadSafeDisplay::releaseSync(Sync *sync)
 {
     mSyncSet.releaseSync(this, sync);
@@ -1183,6 +1256,31 @@ Error ThreadSafeDisplay::restoreLostDevice() const
         return egl::Error(EGL_CONTEXT_LOST);
     }
     return mThreadSafeImpl->restoreLostDevice(this);
+}
+
+const gl::Context *ThreadSafeDisplay::getContext(gl::ContextID contextID) const
+{
+    return mState.contextMap.find(contextID);
+}
+
+gl::Context *ThreadSafeDisplay::getContext(gl::ContextID contextID)
+{
+    return mState.contextMap.find(contextID);
+}
+
+bool ThreadSafeDisplay::isValidContext(const gl::ContextID contextID) const
+{
+    return getContext(contextID) != nullptr;
+}
+
+void ThreadSafeDisplay::onPendingInternalCleanup() const
+{
+    if (mPendingInternalCleanup.exchange(false, std::memory_order_acq_rel))
+    {
+        Display *display = const_cast<Display *>(static_cast<const Display *>(this));
+        ScopedDisplayLockAndRef lockAndRef(*display);
+        (void)display->terminate(nullptr, Display::TerminateReason::InternalCleanup);
+    }
 }
 
 // Note that ANGLE support on Ozone platform is limited. Our preferred support Matrix for
@@ -1317,7 +1415,6 @@ Display::Display(EGLenum platform, EGLNativeDisplayType displayId, Device *eglDe
       mInvalidContextMap(),
       mInvalidImageMap(),
       mInvalidStreamSet(),
-      mInvalidSurfaceMap(),
       mCaps(),
       mDisplayExtensionString(),
       mVendorString(),
@@ -1333,10 +1430,7 @@ Display::Display(EGLenum platform, EGLNativeDisplayType displayId, Device *eglDe
       mMemoryShaderCache(mBlobCache),
       mGlobalTextureShareGroupUsers(0),
       mGlobalSemaphoreShareGroupUsers(0),
-      mImageHandleAllocator(gl::IMPLEMENTATION_MAX_OBJECT_HANDLES),
-      mSurfaceHandleAllocator(gl::IMPLEMENTATION_MAX_OBJECT_HANDLES, 64),
-      mTerminatedByApi(false),
-      mPendingInternalCleanup(false)
+      mImageHandleAllocator(gl::IMPLEMENTATION_MAX_OBJECT_HANDLES)
 {}
 
 Display::~Display()
@@ -1488,9 +1582,9 @@ Error Display::initialize()
         mBlobCache.resize(1024 * 1024);
     }
 
-    setGlobalDebugAnnotator();
-
     gl::InitializeDebugMutexIfNeeded();
+
+    angle::SetGlobalDebugAnnotator();
 
     ANGLE_TRACE_EVENT0("gpu.angle", "egl::Display::initialize");
 
@@ -1602,7 +1696,9 @@ Error Display::destroyInvalidEglObjects()
         // Need AddRefLock because there may be ContextMutex destruction.
         ScopedContextMutexAddRefLock lock(context->getContextMutex());
         context->setIsDestroyed();
-        ANGLE_TRY(releaseContextImpl(std::unique_ptr<gl::Context>(context)));
+        std::unique_ptr<gl::Context> uniqueContextPtr(context);
+        releaseDisplayShareGroupResource(*uniqueContextPtr);
+        ANGLE_TRY(uniqueContextPtr->onDestroy(this));
     }
 
     while (!mInvalidImageMap.empty())
@@ -1615,10 +1711,7 @@ Error Display::destroyInvalidEglObjects()
         destroyStreamImpl(*mInvalidStreamSet.begin(), &mInvalidStreamSet);
     }
 
-    for (Surface *surface : mInvalidSurfaceMap.extractAll())
-    {
-        ANGLE_TRY(destroySurfaceImpl(surface, nullptr));
-    }
+    ANGLE_TRY(mState.surfaceMap.destroyAllInvalidSurfaces(this));
 
     mSyncSet.destroyAllInvalidSyncs(this);
 
@@ -1687,7 +1780,7 @@ Error Display::terminate(Thread *thread, TerminateReason terminateReason)
     mInvalidStreamSet.insert(mStreamSet.begin(), mStreamSet.end());
     mStreamSet.clear();
 
-    mState.surfaceMap.moveTo(&mInvalidSurfaceMap);
+    mState.surfaceMap.invalidateAll();
 
     mSyncSet.invalidateAllSyncs();
 
@@ -1818,7 +1911,7 @@ Error Display::createWindowSurface(const Config *configuration,
     }
 
     SurfaceID id;
-    if (!mSurfaceHandleAllocator.allocate(&id.value))
+    if (!mState.surfaceMap.allocateHandle(&id))
     {
         return Error(EGL_BAD_ALLOC, gl::err::kHandleExhaustion);
     }
@@ -1853,7 +1946,7 @@ Error Display::createPbufferSurface(const Config *configuration,
     }
 
     SurfaceID id;
-    if (!mSurfaceHandleAllocator.allocate(&id.value))
+    if (!mState.surfaceMap.allocateHandle(&id))
     {
         return Error(EGL_BAD_ALLOC, gl::err::kHandleExhaustion);
     }
@@ -1884,7 +1977,7 @@ Error Display::createPbufferFromClientBuffer(const Config *configuration,
     }
 
     SurfaceID id;
-    if (!mSurfaceHandleAllocator.allocate(&id.value))
+    if (!mState.surfaceMap.allocateHandle(&id))
     {
         return Error(EGL_BAD_ALLOC, gl::err::kHandleExhaustion);
     }
@@ -1915,7 +2008,7 @@ Error Display::createPixmapSurface(const Config *configuration,
     }
 
     SurfaceID id;
-    if (!mSurfaceHandleAllocator.allocate(&id.value))
+    if (!mState.surfaceMap.allocateHandle(&id))
     {
         return Error(EGL_BAD_ALLOC, gl::err::kHandleExhaustion);
     }
@@ -2021,8 +2114,35 @@ Error Display::createContext(const Config *configuration,
     // This display texture sharing will allow the first context to create the texture share group.
     bool usingDisplayTextureShareGroup =
         attribs.get(EGL_DISPLAY_TEXTURE_SHARE_GROUP_ANGLE, EGL_FALSE) == EGL_TRUE;
-    gl::TextureManager *shareTextures = nullptr;
+    // This display semaphore sharing will allow the first context to create the semaphore share
+    // group.
+    bool usingDisplaySemaphoreShareGroup =
+        attribs.get(EGL_DISPLAY_SEMAPHORE_SHARE_GROUP_ANGLE, EGL_FALSE) == EGL_TRUE;
 
+    // mManagersMutex must taken before modifying mTextureManager.
+    ScopedContextMutexLock mutexLock;
+    ContextMutex *sharedContextMutex = nullptr;
+    if (kIsContextMutexEnabled)
+    {
+        ASSERT(mManagersMutex != nullptr);
+        if (shareContext != nullptr)
+        {
+            sharedContextMutex = shareContext->getContextMutex().getRoot();
+        }
+        else if (usingDisplayTextureShareGroup || usingDisplaySemaphoreShareGroup)
+        {
+            mutexLock          = ScopedContextMutexLock(mManagersMutex);
+            sharedContextMutex = mManagersMutex->getRoot();
+        }
+        // When using shareTextures/Semaphores all Contexts in the Group must use mManagersMutex.
+        ASSERT((!usingDisplayTextureShareGroup && !usingDisplaySemaphoreShareGroup) ||
+               sharedContextMutex == mManagersMutex->getRoot());
+        ASSERT(shareContext == nullptr ||
+               (!usingDisplayTextureShareGroup && !usingDisplaySemaphoreShareGroup) ||
+               shareContext->getContextMutex().getRoot() == mManagersMutex->getRoot());
+    }
+
+    gl::TextureManager *shareTextures = nullptr;
     if (usingDisplayTextureShareGroup)
     {
         ASSERT((mTextureManager == nullptr) == (mGlobalTextureShareGroupUsers == 0));
@@ -2035,10 +2155,6 @@ Error Display::createContext(const Config *configuration,
         shareTextures = mTextureManager;
     }
 
-    // This display semaphore sharing will allow the first context to create the semaphore share
-    // group.
-    bool usingDisplaySemaphoreShareGroup =
-        attribs.get(EGL_DISPLAY_SEMAPHORE_SHARE_GROUP_ANGLE, EGL_FALSE) == EGL_TRUE;
     gl::SemaphoreManager *shareSemaphores = nullptr;
     if (usingDisplaySemaphoreShareGroup)
     {
@@ -2050,25 +2166,6 @@ Error Display::createContext(const Config *configuration,
 
         mGlobalSemaphoreShareGroupUsers++;
         shareSemaphores = mSemaphoreManager;
-    }
-
-    ScopedContextMutexLock mutexLock;
-    ContextMutex *sharedContextMutex = nullptr;
-    if (kIsContextMutexEnabled)
-    {
-        ASSERT(mManagersMutex != nullptr);
-        if (shareContext != nullptr)
-        {
-            sharedContextMutex = shareContext->getContextMutex().getRoot();
-        }
-        else if (shareTextures != nullptr || shareSemaphores != nullptr)
-        {
-            mutexLock          = ScopedContextMutexLock(mManagersMutex);
-            sharedContextMutex = mManagersMutex->getRoot();
-        }
-        // When using shareTextures/Semaphores all Contexts in the Group must use mManagersMutex.
-        ASSERT((shareTextures == nullptr && shareSemaphores == nullptr) ||
-               sharedContextMutex == mManagersMutex->getRoot());
     }
 
     gl::MemoryProgramCache *programCachePointer = &mMemoryProgramCache;
@@ -2118,11 +2215,11 @@ Error Display::createContext(const Config *configuration,
     return NoError();
 }
 
-Error Display::makeCurrent(Thread *thread,
-                           gl::Context *previousContext,
-                           egl::Surface *drawSurface,
-                           egl::Surface *readSurface,
-                           gl::Context *context)
+Error ThreadSafeDisplay::makeCurrent(Thread *thread,
+                                     gl::Context *previousContext,
+                                     egl::Surface *drawSurface,
+                                     egl::Surface *readSurface,
+                                     gl::Context *context)
 {
     if (!isInitialized())
     {
@@ -2138,11 +2235,11 @@ Error Display::makeCurrent(Thread *thread,
         previousContext->release();
         thread->setCurrent(nullptr);
 
-        auto error = previousContext->unMakeCurrent(this);
+        auto error = previousContext->unMakeCurrent();
         if (!previousContext->isReferenced() && previousContext->isDestroyed())
         {
             // The previous Context may have been created with a different Display.
-            Display *previousDisplay = previousContext->getDisplay();
+            ThreadSafeDisplay *previousDisplay = previousContext->getDisplay();
             ANGLE_TRY(previousDisplay->releaseContext(previousContext, thread));
         }
         ANGLE_TRY(error);
@@ -2154,7 +2251,7 @@ Error Display::makeCurrent(Thread *thread,
         thread->setCurrent(context);
         ScopedResetThreadContextOnError resetOnError(thread, contextChanged);
 
-        ANGLE_TRY(mImplementation->makeCurrent(this, drawSurface, readSurface, context));
+        ANGLE_TRY(mThreadSafeImpl->makeCurrent(drawSurface, readSurface, context));
 
         if (context != nullptr)
         {
@@ -2170,59 +2267,17 @@ Error Display::makeCurrent(Thread *thread,
 
     // Tick all the scratch buffers to make sure they get cleaned up eventually if they stop being
     // used.
-    {
-        std::lock_guard<angle::SimpleMutex> lock(mScratchBufferMutex);
-
-        for (angle::ScratchBuffer &scatchBuffer : mScratchBuffers)
-        {
-            scatchBuffer.tick();
-        }
-        for (angle::ScratchBuffer &zeroFilledBuffer : mZeroFilledBuffers)
-        {
-            zeroFilledBuffer.tick();
-        }
-    }
+    mScratchBuffers.tick();
+    mZeroFilledBuffers.tick();
 
     // If eglTerminate() has previously been called and Context was changed, schedule
     // InternalCleanup to invalidate any non-current Contexts, and possibly fully terminate the
     // Display and release all of its resources once the entry point's surface locks are released.
-    if (mTerminatedByApi && contextChanged)
+    if (mTerminatedByApi.load(std::memory_order_acquire) && contextChanged)
     {
-        mPendingInternalCleanup = true;
+        mPendingInternalCleanup.store(true, std::memory_order_release);
     }
 
-    return NoError();
-}
-
-Error Display::destroySurfaceImpl(Surface *surface, SurfaceMap *surfaces)
-{
-    if (surface->getType() == EGL_WINDOW_BIT)
-    {
-        WindowSurfaceMap *windowSurfaces = GetWindowSurfaces();
-        ASSERT(windowSurfaces);
-
-        bool surfaceRemoved = false;
-        for (WindowSurfaceMap::iterator iter = windowSurfaces->begin();
-             iter != windowSurfaces->end(); iter++)
-        {
-            if (iter->second == surface)
-            {
-                windowSurfaces->erase(iter);
-                surfaceRemoved = true;
-                break;
-            }
-        }
-
-        ASSERT(surfaceRemoved);
-    }
-
-    if (surfaces)
-    {
-        bool surfaceFound = surfaces->erase(surface->id());
-        ASSERT(surfaceFound);
-    }
-    mSurfaceHandleAllocator.release(surface->id().value);
-    ANGLE_TRY(surface->releaseRef(this));
     return NoError();
 }
 
@@ -2249,14 +2304,16 @@ void Display::destroyStreamImpl(Stream *stream, StreamSet *streams)
 // To do that we can only call this in two places, Display::makeCurrent at the point where this
 // context is being made uncurrent and in Display::destroyContext where we make the context current
 // as part of destruction.
-Error Display::releaseContext(gl::Context *context, Thread *thread)
+Error ThreadSafeDisplay::releaseContext(gl::Context *context, Thread *thread)
 {
     // Use scoped_ptr to make sure the context is always freed.
     std::unique_ptr<gl::Context> uniqueContextPtr = eraseContextImpl(context, &mState.contextMap);
-    return releaseContextImpl(std::move(uniqueContextPtr));
+    releaseDisplayShareGroupResource(*uniqueContextPtr);
+    return uniqueContextPtr->onDestroy(this);
 }
 
-std::unique_ptr<gl::Context> Display::eraseContextImpl(gl::Context *context, ContextMap *contexts)
+std::unique_ptr<gl::Context> ThreadSafeDisplay::eraseContextImpl(gl::Context *context,
+                                                                 ContextMap *contexts)
 {
     ASSERT(!context->isReferenced());
     bool contextFound = contexts->erase(context->id());
@@ -2264,9 +2321,20 @@ std::unique_ptr<gl::Context> Display::eraseContextImpl(gl::Context *context, Con
     return std::unique_ptr<gl::Context>(context);
 }
 
-Error Display::releaseContextImpl(std::unique_ptr<gl::Context> &&context)
+void Display::releaseDisplayShareGroupResource(const gl::Context &context)
 {
-    if (context->usingDisplayTextureShareGroup())
+    if (!context.usingDisplayTextureShareGroup() && !context.usingDisplaySemaphoreShareGroup())
+    {
+        return;
+    }
+
+    if (mManagersMutex != nullptr)
+    {
+        // Display share group resources are protected by mManagersMutex.
+        mManagersMutex->assertLocked();
+    }
+
+    if (context.usingDisplayTextureShareGroup())
     {
         ASSERT(mGlobalTextureShareGroupUsers >= 1 && mTextureManager != nullptr);
         if (mGlobalTextureShareGroupUsers == 1)
@@ -2274,13 +2342,13 @@ Error Display::releaseContextImpl(std::unique_ptr<gl::Context> &&context)
             // If this is the last context using the global share group, destroy the global
             // texture manager so that the textures can be destroyed while a context still
             // exists
-            mTextureManager->release(context.get());
+            mTextureManager->release(&context);
             mTextureManager = nullptr;
         }
         mGlobalTextureShareGroupUsers--;
     }
 
-    if (context->usingDisplaySemaphoreShareGroup())
+    if (context.usingDisplaySemaphoreShareGroup())
     {
         ASSERT(mGlobalSemaphoreShareGroupUsers >= 1 && mSemaphoreManager != nullptr);
         if (mGlobalSemaphoreShareGroupUsers == 1)
@@ -2288,15 +2356,11 @@ Error Display::releaseContextImpl(std::unique_ptr<gl::Context> &&context)
             // If this is the last context using the global share group, destroy the global
             // semaphore manager so that the semaphores can be destroyed while a context still
             // exists
-            mSemaphoreManager->release(context.get());
+            mSemaphoreManager->release(&context);
             mSemaphoreManager = nullptr;
         }
         mGlobalSemaphoreShareGroupUsers--;
     }
-
-    ANGLE_TRY(context->onDestroy(this));
-
-    return NoError();
 }
 
 Error Display::destroyContext(Thread *thread, gl::Context *context)
@@ -2305,13 +2369,16 @@ Error Display::destroyContext(Thread *thread, gl::Context *context)
     auto *currentDrawSurface = thread->getCurrentDrawSurface();
     auto *currentReadSurface = thread->getCurrentReadSurface();
 
-    context->setIsDestroyed();
-
-    // If the context is still current on at least 1 thread, just return since it'll be released
-    // once no threads have it current anymore.
-    if (context->isReferenced())
     {
-        return NoError();
+        ScopedContextMutexLock lock(context->getContextMutex());
+        context->setIsDestroyed();
+
+        // If the context is still current on at least 1 thread, just return since it'll be
+        // released once no threads have it current anymore.
+        if (context->isReferenced())
+        {
+            return NoError();
+        }
     }
 
     // For external context, we cannot change the current native context, and the API user should
@@ -2347,11 +2414,6 @@ void Display::destroyImage(Image *image)
 void Display::destroyStream(Stream *stream)
 {
     return destroyStreamImpl(stream, &mStreamSet);
-}
-
-Error Display::destroySurface(Surface *surface)
-{
-    return destroySurfaceImpl(surface, &mState.surfaceMap);
 }
 
 bool Display::testDeviceLost()
@@ -2423,16 +2485,6 @@ const Caps &Display::getCaps() const
 bool Display::isValidConfig(const Config *config) const
 {
     return mConfigSet.contains(config);
-}
-
-bool Display::isValidContext(const gl::ContextID contextID) const
-{
-    return getContext(contextID) != nullptr;
-}
-
-bool Display::isValidSurface(SurfaceID surfaceID) const
-{
-    return getSurfaceRef(surfaceID).get() != nullptr;
 }
 
 bool Display::isValidImage(ImageID imageID) const
@@ -2607,6 +2659,20 @@ void Display::initDisplayExtensions()
 bool Display::isValidNativeWindow(EGLNativeWindowType window) const
 {
     return mImplementation->isValidNativeWindow(window);
+}
+
+EGLNativeWindowType Display::getNativeWindowForCreatePlatformWindowSurface(
+    const void *nativeWindow) const
+{
+    // In X11, eglCreatePlatformWindowSurface and its EXT variant are passed a pointer to an X11
+    // Window, while EGLNativeWindowType for X11 is the Window (XID) itself.
+    // https://www.khronos.org/registry/EGL/extensions/KHR/EGL_KHR_platform_x11.txt
+    const void *actualNativeWindow =
+        mImplementation->getWindowSystem() == angle::NativeWindowSystem::X11
+            ? *reinterpret_cast<const void *const *>(nativeWindow)
+            : nativeWindow;
+
+    return reinterpret_cast<EGLNativeWindowType>(const_cast<void *>(actualNativeWindow));
 }
 
 Error Display::validateClientBuffer(const Config *configuration,
@@ -2911,47 +2977,6 @@ EGLAttrib Display::queryAttrib(const EGLint attribute)
     return value;
 }
 
-angle::ScratchBuffer Display::requestScratchBuffer()
-{
-    return requestScratchBufferImpl(&mScratchBuffers);
-}
-
-void Display::returnScratchBuffer(angle::ScratchBuffer scratchBuffer)
-{
-    returnScratchBufferImpl(std::move(scratchBuffer), &mScratchBuffers);
-}
-
-angle::ScratchBuffer Display::requestZeroFilledBuffer()
-{
-    return requestScratchBufferImpl(&mZeroFilledBuffers);
-}
-
-void Display::returnZeroFilledBuffer(angle::ScratchBuffer zeroFilledBuffer)
-{
-    returnScratchBufferImpl(std::move(zeroFilledBuffer), &mZeroFilledBuffers);
-}
-
-angle::ScratchBuffer Display::requestScratchBufferImpl(
-    std::vector<angle::ScratchBuffer> *bufferVector)
-{
-    std::lock_guard<angle::SimpleMutex> lock(mScratchBufferMutex);
-    if (!bufferVector->empty())
-    {
-        angle::ScratchBuffer buffer = std::move(bufferVector->back());
-        bufferVector->pop_back();
-        return buffer;
-    }
-
-    return angle::ScratchBuffer(kScratchBufferLifetime);
-}
-
-void Display::returnScratchBufferImpl(angle::ScratchBuffer scratchBuffer,
-                                      std::vector<angle::ScratchBuffer> *bufferVector)
-{
-    std::lock_guard<angle::SimpleMutex> lock(mScratchBufferMutex);
-    bufferVector->push_back(std::move(scratchBuffer));
-}
-
 Error Display::handleGPUSwitch()
 {
     ANGLE_TRY(mImplementation->handleGPUSwitch());
@@ -3028,30 +3053,10 @@ angle::ImageLoadContext Display::getImageLoadContext() const
     return imageLoadContext;
 }
 
-const gl::Context *Display::getContext(gl::ContextID contextID) const
-{
-    return mState.contextMap.find(contextID);
-}
-
-ScopedSurfaceRef Display::getSurfaceRef(egl::SurfaceID surfaceID) const
-{
-    return mState.surfaceMap.getSurfaceRef(this, surfaceID);
-}
-
-ScopedSurfaceLockAndRef Display::getSurface(egl::SurfaceID surfaceID) const
-{
-    return mState.surfaceMap.getSurface(this, surfaceID);
-}
-
 const egl::Image *Display::getImage(egl::ImageID imageID) const
 {
     auto iter = mImageMap.find(imageID.value);
     return iter != mImageMap.end() ? iter->second : nullptr;
-}
-
-gl::Context *Display::getContext(gl::ContextID contextID)
-{
-    return mState.contextMap.find(contextID);
 }
 
 egl::Image *Display::getImage(egl::ImageID imageID)

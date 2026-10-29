@@ -421,20 +421,4 @@ uint8_t *TraceLibrary::LoadBinaryData(const char *fileName)
 
     return mBinaryData.data();
 }
-
-FrameCaptureBinaryData *TraceLibrary::ConfigureBinaryDataLoader(const char *fileName)
-{
-    std::ostringstream pathBuffer;
-    pathBuffer << mBinaryDataDir << "/" << fileName;
-
-    FrameCaptureBinaryData *binaryData = new FrameCaptureBinaryData;
-
-    binaryData->configureBinaryDataLoader(
-        mTraceInfo.isBinaryDataCompressed, mTraceInfo.binaryBlockCount,
-        static_cast<size_t>(mTraceInfo.binaryBlockSize),
-        static_cast<size_t>(mTraceInfo.binaryResidentSize),
-        static_cast<size_t>(mTraceInfo.binaryIndexOffset), pathBuffer.str());
-
-    return binaryData;
-}
 }  // namespace angle

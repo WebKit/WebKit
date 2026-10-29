@@ -165,7 +165,8 @@ def _AdbShell(cmd):
 
 def _AdbShellWithRunAs(cmd):
     if _Global.use_run_as:
-        cmd = "run-as com.android.angle.test sh -c '{cmd}'".format(cmd=cmd)
+        user_arg = f"--user {_Global.current_user} " if _Global.IsMultiUser() else ""
+        cmd = f"run-as com.android.angle.test {user_arg}sh -c '{cmd}'"
     return _AdbShell(cmd)
 
 
@@ -198,9 +199,15 @@ def _GetRunAs(data_permissions):
         logging.warning('run-as not available due to /data permissions')
         return False
 
+    # Check if run-as works for the current user
+    user_flag = f"--user {_Global.current_user} " if _Global.IsMultiUser() else ""
+    probe_cmd = f"run-as com.android.angle.test {user_flag}id -u 2>/dev/null || true".strip()
+    out = _AdbShell(probe_cmd).decode('ascii', errors='replace').strip()
+    if out.isdigit():
+        return True
+
     if _Global.IsMultiUser():
-        # run-as is failing is the presence of multiple users
-        logging.warning('Disabling run-as for non-default user')
+        logging.warning('run-as not available for non-default user %s', _Global.current_user)
         return False
 
     return True
@@ -271,7 +278,10 @@ def _AddDeqpFiles(suite_name):
 
 
 def _GetDeviceApkPath():
-    pm_path = _AdbShell('pm path com.android.angle.test || true').decode().strip()
+    user_flag = f"--user {_Global.current_user} " if _Global.IsMultiUser() else ""
+    pm_path = _AdbShell(
+        f"pm path {user_flag}com.android.angle.test || pm path com.android.angle.test || true"
+    ).decode().strip()
     if not pm_path:
         logging.debug('No installed path found for com.android.angle.test')
         return None
@@ -306,7 +316,8 @@ def _CompareHashes(local_path, device_path):
 
     if _Global.use_run_as and device_path.startswith('/data'):
         # Use run-as for files that reside on /data, which aren't accessible without root
-        cmd = "run-as com.android.angle.test sh -c '{cmd}'".format(cmd=cmd)
+        user_arg = f"--user {_Global.current_user} " if _Global.IsMultiUser() else ""
+        cmd = f"run-as com.android.angle.test {user_arg}sh -c '{cmd}'"
 
     device_hash = _AdbShell(cmd).decode().strip()
     if not device_hash:
@@ -379,9 +390,12 @@ def PrepareRestrictedTraces(traces):
     # of the trace on the device, so keep that in mind as space becomes a problem in the future.
     app_tmp_path = '/data/local/tmp/angle_traces/'
 
+    user_arg = f"--user {_Global.current_user} " if _Global.IsMultiUser() else ""
+
     if _Global.use_run_as:
-        _AdbShell('mkdir -p ' + app_tmp_path +
-                  ' && run-as com.android.angle.test mkdir -p angle_traces')
+        _AdbShell(
+            f"mkdir -p {app_tmp_path} && run-as com.android.angle.test {user_arg}mkdir -p angle_traces"
+        )
     else:
         _AdbShell('mkdir -p ' + app_tmp_path + ' ' + _Global.base_dir + 'angle_traces/')
 
@@ -415,7 +429,7 @@ def PrepareRestrictedTraces(traces):
             logging.debug('_PushToAppDir: Pushing %s to %s' % (local_path, tmp_path))
             try:
                 _AdbRun(['push', local_path, tmp_path])
-                _AdbShell('run-as com.android.angle.test cp ' + tmp_path + ' ./angle_traces/')
+                _AdbShell(f"run-as com.android.angle.test {user_arg}cp {tmp_path} ./angle_traces/")
                 _AdbShell('rm ' + tmp_path)
             finally:
                 _RemoveDeviceFile(tmp_path)

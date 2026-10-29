@@ -121,8 +121,8 @@ set(libangle_common_cl_sources
 )
 
 set(xxhash_sources
-    "src/common/third_party/xxhash/xxhash.c"
-    "src/common/third_party/xxhash/xxhash.h"
+    "src/common/third_party/xxhash/src/xxhash.c"
+    "src/common/third_party/xxhash/src/xxhash.h"
 )
 
 if(is_android AND angle_enable_unwind_backtrace_support)

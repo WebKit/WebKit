@@ -32,6 +32,10 @@ class ThreadSafeDisplayNULL : public ThreadSafeDisplayImpl
     bool testDeviceLost() override;
     egl::Error restoreLostDevice(const egl::ThreadSafeDisplay *display) override;
 
+    egl::Error makeCurrent(egl::Surface *drawSurface,
+                           egl::Surface *readSurface,
+                           gl::Context *context) override;
+
   private:
 };
 
@@ -43,11 +47,6 @@ class DisplayNULL : public DisplayImpl, public ThreadSafeDisplayNULL
 
     egl::Error initialize(egl::Display *display) override;
     void terminate() override;
-
-    egl::Error makeCurrent(egl::Display *display,
-                           egl::Surface *drawSurface,
-                           egl::Surface *readSurface,
-                           gl::Context *context) override;
 
     egl::ConfigSet generateConfigs() override;
 

@@ -14,6 +14,7 @@
 #include "libANGLE/BlobCache.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
+#include "libANGLE/LoggingAnnotator.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/DeviceVk.h"
@@ -31,6 +32,8 @@ namespace rx
 
 namespace
 {
+constexpr uint32_t kDisplayVkScratchBufferLifetime = 1000u;
+
 // Query surface format and colorspace support.
 void GetSupportedFormatColorspaces(VkPhysicalDevice physicalDevice,
                                    const angle::FeaturesVk &featuresVk,
@@ -135,7 +138,7 @@ angle::vk::ICD ChooseICDFromAttribs(const egl::AttributeMap &attribs)
     return angle::vk::ICD::Default;
 }
 
-void InstallDebugAnnotator(egl::Display *display, vk::Renderer *renderer)
+void InstallDebugAnnotator(vk::Renderer *renderer)
 {
     bool installedAnnotator = false;
 
@@ -145,8 +148,7 @@ void InstallDebugAnnotator(egl::Display *display, vk::Renderer *renderer)
 
     if (!installedAnnotator)
     {
-        std::unique_lock<angle::SimpleMutex> lock(gl::GetDebugMutex());
-        display->setGlobalDebugAnnotator();
+        angle::SetGlobalDebugAnnotator();
     }
 }
 }  // namespace
@@ -154,8 +156,7 @@ void InstallDebugAnnotator(egl::Display *display, vk::Renderer *renderer)
 DisplayVk::DisplayVk(const egl::DisplayState &state)
     : DisplayImpl(state),
       ThreadSafeDisplayVk(new vk::Renderer()),
-      mScratchBuffer(1000u),
-      mSupportedColorspaceFormatsMap{}
+      mScratchBuffer(kDisplayVkScratchBufferLifetime)
 {}
 
 DisplayVk::~DisplayVk()
@@ -189,7 +190,7 @@ egl::Error DisplayVk::initialize(egl::Display *display)
 
     mDeviceQueueIndex = mRenderer->getDeviceQueueIndex(egl::ContextPriority::Medium);
 
-    InstallDebugAnnotator(display, mRenderer);
+    InstallDebugAnnotator(mRenderer);
 
     // Query and cache supported surface format and colorspace for later use.
     initSupportedSurfaceFormatColorspaces();
@@ -204,12 +205,11 @@ void DisplayVk::terminate()
     mRenderer->onDestroy(this);
 }
 
-egl::Error DisplayVk::makeCurrent(egl::Display *display,
-                                  egl::Surface * /*drawSurface*/,
-                                  egl::Surface * /*readSurface*/,
-                                  gl::Context * /*context*/)
+egl::Error ThreadSafeDisplayVk::makeCurrent(egl::Surface * /*drawSurface*/,
+                                            egl::Surface * /*readSurface*/,
+                                            gl::Context * /*context*/)
 {
-    InstallDebugAnnotator(display, mRenderer);
+    InstallDebugAnnotator(mRenderer);
     return egl::NoError();
 }
 
@@ -319,7 +319,7 @@ ShareGroupImpl *DisplayVk::createShareGroup(const egl::ShareGroupState &state)
     return new ShareGroupVk(state, mRenderer);
 }
 
-bool DisplayVk::isConfigFormatSupported(VkFormat format) const
+bool ThreadSafeDisplayVk::isConfigFormatSupported(VkFormat format) const
 {
     // Requires VK_GOOGLE_surfaceless_query extension to be supported.
     ASSERT(mRenderer->getFeatures().supportsSurfacelessQueryExtension.enabled);
@@ -338,9 +338,9 @@ bool DisplayVk::isConfigFormatSupported(VkFormat format) const
     return false;
 }
 
-bool DisplayVk::isSurfaceFormatColorspacePairSupported(VkSurfaceKHR surface,
-                                                       VkFormat format,
-                                                       VkColorSpaceKHR colorspace) const
+bool ThreadSafeDisplayVk::isSurfaceFormatColorspacePairSupported(VkSurfaceKHR surface,
+                                                                 VkFormat format,
+                                                                 VkColorSpaceKHR colorspace) const
 {
     if (mSupportedColorspaceFormatsMap.size() > 0)
     {
@@ -376,12 +376,12 @@ bool DisplayVk::isSurfaceFormatColorspacePairSupported(VkSurfaceKHR surface,
     return false;
 }
 
-bool DisplayVk::isColorspaceSupported(VkColorSpaceKHR colorspace) const
+bool ThreadSafeDisplayVk::isColorspaceSupported(VkColorSpaceKHR colorspace) const
 {
     return mSupportedColorspaceFormatsMap.count(colorspace) > 0;
 }
 
-void DisplayVk::initSupportedSurfaceFormatColorspaces()
+void ThreadSafeDisplayVk::initSupportedSurfaceFormatColorspaces()
 {
     const angle::FeaturesVk &featuresVk = mRenderer->getFeatures();
     if (featuresVk.supportsSurfacelessQueryExtension.enabled &&
@@ -535,10 +535,10 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->glTexture2DImage      = true;
     outExtensions->glTextureCubemapImage = true;
     outExtensions->glTexture3DImage      = getFeatures().supportsSampler2dViewOf3d.enabled;
-    outExtensions->glRenderbufferImage = true;
+    outExtensions->glRenderbufferImage   = true;
     outExtensions->imageNativeBuffer     = getFeatures().supportsAndroidHardwareBuffer.enabled;
-    outExtensions->surfacelessContext = true;
-    outExtensions->glColorspace       = true;
+    outExtensions->surfacelessContext    = true;
+    outExtensions->glColorspace          = true;
     outExtensions->imageGlColorspace     = outExtensions->glColorspace;
 
 #if defined(ANGLE_PLATFORM_ANDROID)
@@ -672,7 +672,18 @@ void DisplayVk::putBlob(const angle::BlobCacheKey &key, const angle::MemoryBuffe
 
 bool DisplayVk::getBlob(const angle::BlobCacheKey &key, angle::BlobCacheValue *valueOut)
 {
-    return getBlobCache()->get(nullptr, &mScratchBuffer, key, valueOut);
+    // Note: The value handed back is a view into the scratch buffer, not a copy.  This is why the
+    // scratch buffer is per thread.
+    angle::ScratchBuffer *scratchBuffer = nullptr;
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mBlobScratchBuffersMutex);
+        scratchBuffer =
+            &mBlobScratchBuffers
+                 .try_emplace(std::this_thread::get_id(), kDisplayVkScratchBufferLifetime)
+                 .first->second;
+    }
+
+    return getBlobCache()->get(nullptr, scratchBuffer, key, valueOut);
 }
 
 std::shared_ptr<angle::WaitableEvent> DisplayVk::postMultiThreadWorkerTask(
@@ -726,8 +737,8 @@ egl::Error DisplayVk::querySupportedCompressionRates(const egl::Config *configur
     imageFormatInfo.type   = VK_IMAGE_TYPE_2D;
     imageFormatInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageFormatInfo.usage  = vk::kImageUsageTransferBits | VK_IMAGE_USAGE_SAMPLED_BIT |
-                            VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
-                            VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+                             VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
+                             VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
 
     VkImageCompressionPropertiesEXT compressionProperties = {};
     compressionProperties.sType = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_PROPERTIES_EXT;

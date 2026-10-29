@@ -812,6 +812,12 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo recreateFboOnAttachmentRespecification = {
+        "recreateFboOnAttachmentRespecification",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
 };
 
 inline FeaturesGL::FeaturesGL()  = default;

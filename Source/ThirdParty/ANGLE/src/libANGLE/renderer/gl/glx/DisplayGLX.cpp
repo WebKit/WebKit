@@ -339,18 +339,21 @@ egl::Error DisplayGLX::createRenderer(glx::Context shareContext,
     outRenderer->reset(
         new RendererGLX(std::move(functionsGL), eglAttributes, mGLX, this, context, pbuffer));
 
-    NativeContext &currentContext = mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mCurrentNativeContextsMutex);
+        NativeContext &currentContext = mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
 
-    if (makeNewContextCurrent)
-    {
-        currentContext = {context, pbuffer};
-    }
-    else
-    {
-        // Reset the current context back to the previous state
-        if (mGLX.makeCurrent(currentContext.drawable, currentContext.context) == EGL_FALSE)
+        if (makeNewContextCurrent)
         {
-            return egl::Error(EGL_CONTEXT_LOST, "Failed to make the previous context current");
+            currentContext = {context, pbuffer};
+        }
+        else
+        {
+            // Reset the current context back to the previous state
+            if (mGLX.makeCurrent(currentContext.drawable, currentContext.context) == EGL_FALSE)
+            {
+                return egl::Error(EGL_CONTEXT_LOST, "Failed to make the previous context current");
+            }
         }
     }
 
@@ -361,7 +364,10 @@ void DisplayGLX::terminate()
 {
     DisplayGL::terminate();
 
-    mCurrentNativeContexts.clear();
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mCurrentNativeContextsMutex);
+        mCurrentNativeContexts.clear();
+    }
 
     mRenderer.reset();
 
@@ -373,37 +379,39 @@ void DisplayGLX::terminate()
     }
 }
 
-egl::Error DisplayGLX::makeCurrent(egl::Display *display,
-                                   egl::Surface *drawSurface,
+egl::Error DisplayGLX::makeCurrent(egl::Surface *drawSurface,
                                    egl::Surface *readSurface,
                                    gl::Context *context)
 {
-    NativeContext &currentContext = mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
-    glx::Context newContext       = 0;
-    glx::Drawable newDrawable     = 0;
-    if (context)
     {
-        ContextGLX *newContextGLX = GetImplAs<ContextGLX>(context);
-        newContext                = newContextGLX->getContext();
-        if (drawSurface)
+        std::lock_guard<angle::SimpleMutex> lock(mCurrentNativeContextsMutex);
+        NativeContext &currentContext = mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
+        glx::Context newContext       = 0;
+        glx::Drawable newDrawable     = 0;
+        if (context)
         {
-            newDrawable = GetImplAs<SurfaceGLX>(drawSurface)->getDrawable();
+            ContextGLX *newContextGLX = GetImplAs<ContextGLX>(context);
+            newContext                = newContextGLX->getContext();
+            if (drawSurface)
+            {
+                newDrawable = GetImplAs<SurfaceGLX>(drawSurface)->getDrawable();
+            }
+            else
+            {
+                newDrawable = newContextGLX->getPbuffer();
+            }
         }
-        else
+        if (newDrawable != currentContext.drawable || newContext != currentContext.context)
         {
-            newDrawable = newContextGLX->getPbuffer();
+            if (mGLX.makeCurrent(newDrawable, newContext) != True)
+            {
+                return egl::Error(EGL_CONTEXT_LOST, "Failed to make the GLX context current");
+            }
+            currentContext = {newContext, newDrawable};
         }
-    }
-    if (newDrawable != currentContext.drawable || newContext != currentContext.context)
-    {
-        if (mGLX.makeCurrent(newDrawable, newContext) != True)
-        {
-            return egl::Error(EGL_CONTEXT_LOST, "Failed to make the GLX context current");
-        }
-        currentContext = {newContext, newDrawable};
     }
 
-    return DisplayGL::makeCurrent(display, drawSurface, readSurface, context);
+    return ThreadSafeDisplayGL::makeCurrent(drawSurface, readSurface, context);
 }
 
 SurfaceImpl *DisplayGLX::createWindowSurface(const egl::SurfaceState &state,

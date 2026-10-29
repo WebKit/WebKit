@@ -763,7 +763,7 @@ pub enum OpCode {
     // Create a register alias for another id.  Produced by transformations, makes it possible to
     // make an existing register id use a different value (such as a constant, or another
     // pre-existing register id).
-    //   Alias %new %old
+    //  %new = Alias %old
     Alias(TypedId),
 
     // Call a function, optionally returning a result.

@@ -2,11 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// This pass adds a function call to every loop that cannot be proven to be finite.  The function
-// call is a pretend built-in that the MSL generator implements (with a volatile access) to
-// work around a metal compiler crash in the presence of infinite loops.
+// This pass adds instructions to every loop that cannot be proven to be finite, working around
+// compiler crashes in the presence of infinite loops.  The instruction can either be a function
+// call to a pretend built-in that the MSL generator implements (with a volatile access), or a
+// counter that practically never wraps around, but the loop breaks on wrap-around.
 use crate::ir::*;
 use crate::*;
+
+pub struct Options {
+    // If true, use BuiltInOpCode::LoopForwardProgress, otherwise use a counter and `break`.
+    pub supports_loop_forward_progress_built_in: bool,
+}
 
 struct State<'a> {
     ir_meta: &'a mut IRMeta,
@@ -14,7 +20,7 @@ struct State<'a> {
     variable_store_count: Vec<u32>,
 }
 
-pub fn run(ir: &mut IR) {
+pub fn run(ir: &mut IR, options: &Options) {
     let variable_store_count = vec![0; ir.meta.all_variables().len()];
     let mut state = State { ir_meta: &mut ir.meta, variable_store_count };
 
@@ -38,7 +44,7 @@ pub fn run(ir: &mut IR) {
                 state,
                 entry,
                 &|state, block| {
-                    add_forward_progress(state, block);
+                    add_forward_progress(state, options, block);
                     block
                 },
                 &|_, block| block,
@@ -324,6 +330,13 @@ fn matches_finite_loop_continue(
 }
 
 fn is_possibly_infinite_loop(state: &State, block: &Block) -> bool {
+    // Always consider `DoLoop`s infinite for simplicity.  The goal of this check is to avoid adding
+    // overhead to the very common `for (var = 0; var < N; ++var)` and similar loops, and do-while
+    // loops are not that common.
+    if matches!(block.get_terminating_op(), OpCode::DoLoop) {
+        return true;
+    }
+
     // The block must end in a `Loop`.
     if !matches!(block.get_terminating_op(), OpCode::Loop) {
         return false;
@@ -356,15 +369,49 @@ fn is_possibly_infinite_loop(state: &State, block: &Block) -> bool {
     true
 }
 
-fn add_forward_progress(state: &mut State, block: &mut Block) {
+fn add_forward_progress(state: &mut State, options: &Options, block: &mut Block) {
     if is_possibly_infinite_loop(state, block) {
-        // Prepend the following to the body of the loop:
-        //
-        //     LoopForwardProgress
-        block.get_loop_body_block_mut().prepend_instruction(instruction::built_in(
-            state.ir_meta,
-            BuiltInOpCode::LoopForwardProgress,
-            vec![],
-        ));
+        if options.supports_loop_forward_progress_built_in {
+            // Prepend the following to the body of the loop:
+            //
+            //     LoopForwardProgress
+            block.get_loop_body_block_mut().prepend_instruction(instruction::built_in(
+                state.ir_meta,
+                BuiltInOpCode::LoopForwardProgress,
+                vec![],
+            ));
+        } else {
+            // Declare a counter variable in the loop init block, initialized with INT_MIN
+            let int_min = state.ir_meta.get_constant_int(i32::MIN);
+            let int_max = state.ir_meta.get_constant_int_typed(i32::MAX, Precision::High);
+            let (counter_id, counter) = state.ir_meta.declare_private_variable(
+                Name::new_temp("progressCounter"),
+                TYPE_ID_INT,
+                Precision::High,
+                Some(int_min),
+                VariableScope::Local,
+            );
+            block.variables.push(counter_id);
+
+            // Prepend the following to the body of the loop:
+            //
+            //              PrefixIncrement counter
+            //     value  = Load counter
+            //     is_max = Equal value INT_MAX
+            //              If is_max
+            //
+            //              True block:
+            //                Break
+            let mut progress_block = Block::new();
+            let mut builder = instruction::Builder::<&mut Block>::new(&mut progress_block);
+            builder.prefix_increment(state.ir_meta, counter);
+            let counter_value = builder.load(state.ir_meta, counter);
+            let is_zero = builder.equal(state.ir_meta, counter_value, int_max);
+            builder.if_then(state.ir_meta, is_zero, |then_builder, _| {
+                then_builder.branch_break();
+            });
+
+            block.get_loop_body_block_mut().prepend_code(progress_block);
+        }
     }
 }

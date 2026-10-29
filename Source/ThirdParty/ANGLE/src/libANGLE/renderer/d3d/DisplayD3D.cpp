@@ -185,8 +185,7 @@ ShareGroupImpl *DisplayD3D::createShareGroup(const egl::ShareGroupState &state)
     return new ShareGroupD3D(state);
 }
 
-egl::Error DisplayD3D::makeCurrent(egl::Display *display,
-                                   egl::Surface *drawSurface,
+egl::Error DisplayD3D::makeCurrent(egl::Surface *drawSurface,
                                    egl::Surface *readSurface,
                                    gl::Context *context)
 {

@@ -1601,6 +1601,61 @@ egl::Error Renderer11::getD3DTextureInfo(const egl::Config *configuration,
         ASSERT(textureAngleFormat);
         sizedInternalFormat = textureAngleFormat->glInternalFormat;
     }
+    else if (desc.Format == DXGI_FORMAT_Y410 || desc.Format == DXGI_FORMAT_Y210)
+    {
+        // Packed 10-bit YUV is sample-only: the texture keeps its native DXGI
+        // format and is sampled through the documented view alias
+        // (see GetPackedYUVFormat), exposed as GL_RGB10_A2 (Y410) or
+        // GL_RGBA16_EXT (Y210, half width).
+        if (configuration)
+        {
+            // Pbuffers require a renderable surface; packed YUV has no
+            // renderable view.
+            return egl::Error(EGL_BAD_PARAMETER, "Packed YUV textures are not valid for pbuffers.");
+        }
+
+        if (attribs.contains(EGL_D3D11_TEXTURE_PLANE_ANGLE))
+        {
+            return egl::Error(
+                EGL_BAD_PARAMETER,
+                "EGL_D3D11_TEXTURE_PLANE_ANGLE is not valid for packed YUV textures.");
+        }
+
+        textureAngleFormat = desc.Format == DXGI_FORMAT_Y410
+                                 ? &angle::Format::Get(angle::FormatID::R10G10B10A2_UNORM)
+                                 : &angle::Format::Get(angle::FormatID::R16G16B16A16_UNORM);
+        ASSERT(textureAngleFormat);
+        sizedInternalFormat = textureAngleFormat->glInternalFormat;
+
+        // Y210 packs two pixels per word pair: the width must be even, and the
+        // RGBA16 view covers a pair of words, halving the texture width.
+        if (desc.Format == DXGI_FORMAT_Y210)
+        {
+            if (desc.Width % 2 != 0)
+            {
+                return egl::Error(EGL_BAD_PARAMETER,
+                                  "Y210 client buffer textures must have an even width.");
+            }
+            imageWidth /= 2;
+        }
+
+        // The internal format must match the packed format's bit layout.
+        // GL_RGB10_A2_EXT has the same value as GL_RGB10_A2, so both are accepted.
+        if (attribs.contains(EGL_TEXTURE_INTERNAL_FORMAT_ANGLE))
+        {
+            const GLenum internalFormat =
+                static_cast<GLenum>(attribs.get(EGL_TEXTURE_INTERNAL_FORMAT_ANGLE));
+            const GLenum expectedInternalFormat =
+                desc.Format == DXGI_FORMAT_Y410 ? GL_RGB10_A2 : GL_RGBA16_EXT;
+            if (internalFormat != expectedInternalFormat)
+            {
+                std::ostringstream err;
+                err << "Invalid client buffer texture internal format: " << std::hex
+                    << internalFormat;
+                return egl::Error(EGL_BAD_PARAMETER, err.str());
+            }
+        }
+    }
     else
     {
         switch (desc.Format)

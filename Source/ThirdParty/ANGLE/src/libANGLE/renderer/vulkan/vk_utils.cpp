@@ -1234,6 +1234,19 @@ PFN_vkCmdSetPatchControlPointsEXT vkCmdSetPatchControlPointsEXT           = null
 PFN_vkCmdSetPrimitiveRestartEnableEXT vkCmdSetPrimitiveRestartEnableEXT   = nullptr;
 PFN_vkCmdSetRasterizerDiscardEnableEXT vkCmdSetRasterizerDiscardEnableEXT = nullptr;
 
+// VK_EXT_extended_dynamic_state3
+PFN_vkCmdSetColorWriteMaskEXT vkCmdSetColorWriteMaskEXT                       = nullptr;
+PFN_vkCmdSetColorBlendEnableEXT vkCmdSetColorBlendEnableEXT                   = nullptr;
+PFN_vkCmdSetColorBlendEquationEXT vkCmdSetColorBlendEquationEXT               = nullptr;
+PFN_vkCmdSetSampleMaskEXT vkCmdSetSampleMaskEXT                               = nullptr;
+PFN_vkCmdSetAlphaToCoverageEnableEXT vkCmdSetAlphaToCoverageEnableEXT         = nullptr;
+PFN_vkCmdSetRasterizationSamplesEXT vkCmdSetRasterizationSamplesEXT           = nullptr;
+PFN_vkCmdSetAlphaToOneEnableEXT vkCmdSetAlphaToOneEnableEXT                   = nullptr;
+PFN_vkCmdSetDepthClipNegativeOneToOneEXT vkCmdSetDepthClipNegativeOneToOneEXT = nullptr;
+PFN_vkCmdSetDepthClampEnableEXT vkCmdSetDepthClampEnableEXT                   = nullptr;
+PFN_vkCmdSetPolygonModeEXT vkCmdSetPolygonModeEXT                             = nullptr;
+PFN_vkCmdSetLogicOpEnableEXT vkCmdSetLogicOpEnableEXT                         = nullptr;
+
 // VK_EXT_vertex_input_dynamic_state
 PFN_vkCmdSetVertexInputEXT vkCmdSetVertexInputEXT = nullptr;
 
@@ -1367,6 +1380,22 @@ void InitExtendedDynamicState2EXTFunctions(VkDevice device)
     GET_DEVICE_FUNC(vkCmdSetPatchControlPointsEXT);
     GET_DEVICE_FUNC(vkCmdSetPrimitiveRestartEnableEXT);
     GET_DEVICE_FUNC(vkCmdSetRasterizerDiscardEnableEXT);
+}
+
+// VK_EXT_extended_dynamic_state3
+void InitExtendedDynamicState3EXTFunctions(VkDevice device)
+{
+    GET_DEVICE_FUNC(vkCmdSetColorWriteMaskEXT);
+    GET_DEVICE_FUNC(vkCmdSetColorBlendEnableEXT);
+    GET_DEVICE_FUNC(vkCmdSetColorBlendEquationEXT);
+    GET_DEVICE_FUNC(vkCmdSetSampleMaskEXT);
+    GET_DEVICE_FUNC(vkCmdSetAlphaToCoverageEnableEXT);
+    GET_DEVICE_FUNC(vkCmdSetRasterizationSamplesEXT);
+    GET_DEVICE_FUNC(vkCmdSetAlphaToOneEnableEXT);
+    GET_DEVICE_FUNC(vkCmdSetDepthClipNegativeOneToOneEXT);
+    GET_DEVICE_FUNC(vkCmdSetDepthClampEnableEXT);
+    GET_DEVICE_FUNC(vkCmdSetPolygonModeEXT);
+    GET_DEVICE_FUNC(vkCmdSetLogicOpEnableEXT);
 }
 
 // VK_EXT_vertex_input_dynamic_state

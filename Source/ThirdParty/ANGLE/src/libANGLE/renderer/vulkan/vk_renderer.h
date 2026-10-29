@@ -213,6 +213,11 @@ class Renderer : angle::NonCopyable
     {
         return mHostImageCopyProperties;
     }
+    const VkPhysicalDeviceExtendedDynamicState3PropertiesEXT &
+    getPhysicalDeviceExtendedDynamicState3Properties() const
+    {
+        return mExtendedDynamicState3Properties;
+    }
     const VkPhysicalDeviceShaderIntegerDotProductProperties &
     getPhysicalDeviceShaderIntegerDotProductProperties() const
     {
@@ -909,6 +914,8 @@ class Renderer : angle::NonCopyable
     VkPhysicalDeviceSamplerYcbcrConversionFeatures mSamplerYcbcrConversionFeatures;
     VkPhysicalDeviceExtendedDynamicStateFeaturesEXT mExtendedDynamicStateFeatures;
     VkPhysicalDeviceExtendedDynamicState2FeaturesEXT mExtendedDynamicState2Features;
+    VkPhysicalDeviceExtendedDynamicState3FeaturesEXT mExtendedDynamicState3Features;
+    VkPhysicalDeviceExtendedDynamicState3PropertiesEXT mExtendedDynamicState3Properties;
     VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT mGraphicsPipelineLibraryFeatures;
     VkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT mGraphicsPipelineLibraryProperties;
     VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT mVertexInputDynamicStateFeatures;

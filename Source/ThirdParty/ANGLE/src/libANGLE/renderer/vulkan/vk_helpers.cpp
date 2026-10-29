@@ -8383,9 +8383,53 @@ angle::Result ImageHelper::CopyImageSubData(const gl::Context *context,
         ASSERT(dstImage->getCurrentImageAccess() == ImageAccess::TransferDst ||
                dstImage->getCurrentImageAccess() == ImageAccess::TransferSrcDst);
 
-        commandBuffer->copyImage(srcImage->getImage(), srcImage->getCurrentLayout(renderer),
-                                 dstImage->getImage(), dstImage->getCurrentLayout(renderer), 1,
-                                 &region);
+        // Some drivers copy wrong data when the formats differ and the region covers more than
+        // one layer; issue one copy per layer instead.  No barriers are needed between them.
+        const bool splitPerLayer =
+            renderer->getFeatures().splitCrossFormatLayeredImageCopy.enabled &&
+            srcImage->getActualFormatID() != dstImage->getActualFormatID() &&
+            !srcImage->getActualFormat().isBlock && !dstImage->getActualFormat().isBlock &&
+            srcDepth > 1 && !(isSrc3D && isDst3D);
+
+        if (!splitPerLayer)
+        {
+            commandBuffer->copyImage(srcImage->getImage(), srcImage->getCurrentLayout(renderer),
+                                     dstImage->getImage(), dstImage->getCurrentLayout(renderer), 1,
+                                     &region);
+        }
+        else
+        {
+            VkImageCopy layerRegion               = region;
+            layerRegion.srcSubresource.layerCount = 1;
+            layerRegion.dstSubresource.layerCount = 1;
+            layerRegion.extent.depth              = 1;
+
+            for (uint32_t layer = 0; layer < static_cast<uint32_t>(srcDepth); ++layer)
+            {
+                // copyImage() records a single region, so issue one call per layer.
+                commandBuffer->copyImage(srcImage->getImage(), srcImage->getCurrentLayout(renderer),
+                                         dstImage->getImage(), dstImage->getCurrentLayout(renderer),
+                                         1, &layerRegion);
+
+                if (isSrc3D)
+                {
+                    ++layerRegion.srcOffset.z;
+                }
+                else
+                {
+                    ++layerRegion.srcSubresource.baseArrayLayer;
+                }
+
+                if (isDst3D)
+                {
+                    ++layerRegion.dstOffset.z;
+                }
+                else
+                {
+                    ++layerRegion.dstSubresource.baseArrayLayer;
+                }
+            }
+        }
     }
     else if (!srcImage->getIntendedFormat().isBlock && !dstImage->getIntendedFormat().isBlock)
     {
@@ -11456,7 +11500,7 @@ angle::Result ImageHelper::copyImageDataToBuffer(ContextVk *contextVk,
     return angle::Result::Continue;
 }
 
-angle::Result ImageHelper::copySurfaceImageToBuffer(DisplayVk *displayVk,
+angle::Result ImageHelper::copySurfaceImageToBuffer(ErrorContext *context,
                                                     gl::OwnerLevel sourceLevelGL,
                                                     uint32_t layerCount,
                                                     gl::OwnerLayer baseLayer,
@@ -11465,7 +11509,7 @@ angle::Result ImageHelper::copySurfaceImageToBuffer(DisplayVk *displayVk,
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "ImageHelper::copySurfaceImageToBuffer");
 
-    Renderer *renderer = displayVk->getRenderer();
+    Renderer *renderer = context->getRenderer();
 
     VkBufferImageCopy region               = {};
     region.bufferOffset                    = 0;
@@ -11483,31 +11527,31 @@ angle::Result ImageHelper::copySurfaceImageToBuffer(DisplayVk *displayVk,
     region.imageSubresource.mipLevel       = toVkLevel(sourceLevelGL).get();
 
     ScopedPrimaryCommandBuffer scopedCommandBuffer(renderer->getDevice());
-    ANGLE_TRY(renderer->getCommandBufferOneOff(displayVk, ProtectionType::Unprotected,
+    ANGLE_TRY(renderer->getCommandBufferOneOff(context, ProtectionType::Unprotected,
                                                &scopedCommandBuffer));
     PrimaryCommandBuffer &primaryCommandBuffer = scopedCommandBuffer.get();
 
     VkSemaphore acquireNextImageSemaphore;
     recordBarrierOneOffImpl(renderer, getAspectFlags(), ImageAccess::TransferSrc,
-                            displayVk->getDeviceQueueIndex(), &primaryCommandBuffer,
+                            context->getDeviceQueueIndex(), &primaryCommandBuffer,
                             &acquireNextImageSemaphore);
     primaryCommandBuffer.copyImageToBuffer(mImage, getCurrentLayout(renderer),
                                            bufferHelper->getBuffer().getHandle(), 1, &region);
 
     renderer->insertSubmitDebugMarkerInCommandBuffer(primaryCommandBuffer,
                                                      QueueSubmitReason::CopySurfaceImageToBuffer);
-    ANGLE_VK_TRY(displayVk, primaryCommandBuffer.end());
+    ANGLE_VK_TRY(context, primaryCommandBuffer.end());
 
     QueueSerial submitQueueSerial;
     ANGLE_TRY(renderer->queueSubmitOneOff(
-        displayVk, std::move(scopedCommandBuffer), ProtectionType::Unprotected,
+        context, std::move(scopedCommandBuffer), ProtectionType::Unprotected,
         egl::ContextPriority::Medium, acquireNextImageSemaphore,
         kSwapchainAcquireImageWaitStageFlags, &submitQueueSerial));
 
-    return renderer->finishQueueSerial(displayVk, submitQueueSerial);
+    return renderer->finishQueueSerial(context, submitQueueSerial);
 }
 
-angle::Result ImageHelper::copyBufferToSurfaceImage(DisplayVk *displayVk,
+angle::Result ImageHelper::copyBufferToSurfaceImage(ErrorContext *context,
                                                     gl::OwnerLevel sourceLevelGL,
                                                     uint32_t layerCount,
                                                     gl::OwnerLayer baseLayer,
@@ -11516,7 +11560,7 @@ angle::Result ImageHelper::copyBufferToSurfaceImage(DisplayVk *displayVk,
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "ImageHelper::copyBufferToSurfaceImage");
 
-    Renderer *renderer = displayVk->getRenderer();
+    Renderer *renderer = context->getRenderer();
 
     VkBufferImageCopy region               = {};
     region.bufferOffset                    = 0;
@@ -11534,28 +11578,28 @@ angle::Result ImageHelper::copyBufferToSurfaceImage(DisplayVk *displayVk,
     region.imageSubresource.mipLevel       = toVkLevel(sourceLevelGL).get();
 
     ScopedPrimaryCommandBuffer scopedCommandBuffer(renderer->getDevice());
-    ANGLE_TRY(renderer->getCommandBufferOneOff(displayVk, ProtectionType::Unprotected,
+    ANGLE_TRY(renderer->getCommandBufferOneOff(context, ProtectionType::Unprotected,
                                                &scopedCommandBuffer));
     PrimaryCommandBuffer &commandBuffer = scopedCommandBuffer.get();
 
     VkSemaphore acquireNextImageSemaphore;
     recordBarrierOneOffImpl(renderer, getAspectFlags(), ImageAccess::TransferDst,
-                            displayVk->getDeviceQueueIndex(), &commandBuffer,
+                            context->getDeviceQueueIndex(), &commandBuffer,
                             &acquireNextImageSemaphore);
     commandBuffer.copyBufferToImage(bufferHelper->getBuffer().getHandle(), mImage,
                                     getCurrentLayout(renderer), 1, &region);
 
     renderer->insertSubmitDebugMarkerInCommandBuffer(commandBuffer,
                                                      QueueSubmitReason::CopyBufferToSurfaceImage);
-    ANGLE_VK_TRY(displayVk, commandBuffer.end());
+    ANGLE_VK_TRY(context, commandBuffer.end());
 
     QueueSerial submitQueueSerial;
     ANGLE_TRY(renderer->queueSubmitOneOff(
-        displayVk, std::move(scopedCommandBuffer), ProtectionType::Unprotected,
+        context, std::move(scopedCommandBuffer), ProtectionType::Unprotected,
         egl::ContextPriority::Medium, acquireNextImageSemaphore,
         kSwapchainAcquireImageWaitStageFlags, &submitQueueSerial));
 
-    return renderer->finishQueueSerial(displayVk, submitQueueSerial);
+    return renderer->finishQueueSerial(context, submitQueueSerial);
 }
 
 // static

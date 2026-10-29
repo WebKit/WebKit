@@ -33,7 +33,7 @@ class SurfaceVk : public SurfaceImpl, public angle::ObserverInterface, public vk
     SurfaceVk(const egl::SurfaceState &surfaceState);
     ~SurfaceVk() override;
 
-    void destroy(const egl::Display *display) override;
+    void destroy(const egl::ThreadSafeDisplay *display) override;
     // We monitor the staging buffer for changes. This handles staged data from outside this class.
     virtual void onSubjectStateChange(angle::SubjectIndex index,
                                       angle::SubjectMessage message) override;
@@ -54,8 +54,8 @@ class OffscreenSurfaceVk : public SurfaceVk
     OffscreenSurfaceVk(const egl::SurfaceState &surfaceState, vk::Renderer *renderer);
     ~OffscreenSurfaceVk() override;
 
-    egl::Error initialize(const egl::Display *display) override;
-    void destroy(const egl::Display *display) override;
+    egl::Error initialize(const egl::ThreadSafeDisplay *display) override;
+    void destroy(const egl::ThreadSafeDisplay *display) override;
 
     egl::Error unMakeCurrent(const gl::Context *context) override;
     const vk::ImageHelper *getColorImage() const { return &mColorAttachment.image; }
@@ -73,7 +73,7 @@ class OffscreenSurfaceVk : public SurfaceVk
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) override;
     egl::Error getMscRate(EGLint *numerator, EGLint *denominator) override;
-    void setSwapInterval(const egl::Display *display, EGLint interval) override;
+    void setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval) override;
 
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
@@ -84,12 +84,12 @@ class OffscreenSurfaceVk : public SurfaceVk
 
     vk::ImageHelper *getColorAttachmentImage();
 
-    egl::Error lockSurface(const egl::Display *display,
+    egl::Error lockSurface(const egl::ThreadSafeDisplay *display,
                            EGLint usageHint,
                            bool preservePixels,
                            uint8_t **bufferPtrOut,
                            EGLint *bufferPitchOut) override;
-    egl::Error unlockSurface(const egl::Display *display, bool preservePixels) override;
+    egl::Error unlockSurface(const egl::ThreadSafeDisplay *display, bool preservePixels) override;
     EGLint origin() const override;
 
   protected:
@@ -98,7 +98,7 @@ class OffscreenSurfaceVk : public SurfaceVk
         AttachmentImage(SurfaceVk *surfaceVk);
         ~AttachmentImage();
 
-        angle::Result initialize(DisplayVk *displayVk,
+        angle::Result initialize(ThreadSafeDisplayVk *displayVk,
                                  EGLint width,
                                  EGLint height,
                                  const vk::Format &vkFormat,
@@ -106,14 +106,14 @@ class OffscreenSurfaceVk : public SurfaceVk
                                  bool isRobustResourceInitEnabled,
                                  bool hasProtectedContent);
 
-        void destroy(const egl::Display *display);
+        void destroy(const egl::ThreadSafeDisplay *display);
 
         vk::ImageHelper image;
         vk::ImageViewHelper imageViews;
         angle::ObserverBinding imageObserverBinding;
     };
 
-    virtual angle::Result initializeImpl(DisplayVk *displayVk);
+    virtual angle::Result initializeImpl(ThreadSafeDisplayVk *displayVk);
 
     AttachmentImage mColorAttachment;
     AttachmentImage mDepthStencilAttachment;
@@ -282,9 +282,9 @@ class WindowSurfaceVk : public SurfaceVk
     WindowSurfaceVk(const egl::SurfaceState &surfaceState, EGLNativeWindowType window);
     ~WindowSurfaceVk() override;
 
-    void destroy(const egl::Display *display) override;
+    void destroy(const egl::ThreadSafeDisplay *display) override;
 
-    egl::Error initialize(const egl::Display *display) override;
+    egl::Error initialize(const egl::ThreadSafeDisplay *display) override;
 
     egl::Error makeCurrent(const gl::Context *context) override;
     egl::Error unMakeCurrent(const gl::Context *context) override;
@@ -312,7 +312,7 @@ class WindowSurfaceVk : public SurfaceVk
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) override;
     egl::Error getMscRate(EGLint *numerator, EGLint *denominator) override;
-    void setSwapInterval(const egl::Display *display, EGLint interval) override;
+    void setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval) override;
     void setSwapBehavior(EGLenum behavior) override;
 
     // Explicitly resolves surface size to use before state synchronization (e.g. validation).
@@ -320,7 +320,9 @@ class WindowSurfaceVk : public SurfaceVk
     gl::Extents getSize() const final;
 
     // Unresolved Surface size until render target is first accessed (e.g. after draw).
-    egl::Error getUserSize(const egl::Display *display, EGLint *width, EGLint *height) const final;
+    egl::Error getUserSize(const egl::ThreadSafeDisplay *display,
+                           EGLint *width,
+                           EGLint *height) const final;
 
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
@@ -360,12 +362,12 @@ class WindowSurfaceVk : public SurfaceVk
         return IsSharedPresentMode(getDesiredSwapchainPresentMode());
     }
 
-    egl::Error lockSurface(const egl::Display *display,
+    egl::Error lockSurface(const egl::ThreadSafeDisplay *display,
                            EGLint usageHint,
                            bool preservePixels,
                            uint8_t **bufferPtrOut,
                            EGLint *bufferPitchOut) override;
-    egl::Error unlockSurface(const egl::Display *display, bool preservePixels) override;
+    egl::Error unlockSurface(const egl::ThreadSafeDisplay *display, bool preservePixels) override;
     EGLint origin() const override;
 
     void attachToFramebuffer(const gl::Context *context, gl::Framebuffer *framebuffer) override;
@@ -378,7 +380,7 @@ class WindowSurfaceVk : public SurfaceVk
     void setTimestampsEnabled(bool enabled) override;
     egl::Error setPresentationTime(EGLnsecsANDROID time) override;
 
-    egl::Error getCompressionRate(const egl::Display *display,
+    egl::Error getCompressionRate(const egl::ThreadSafeDisplay *display,
                                   const gl::Context *context,
                                   EGLint *rate) override;
 
@@ -420,7 +422,7 @@ class WindowSurfaceVk : public SurfaceVk
     void setDesiredSwapchainPresentMode(vk::PresentMode presentMode);
     void setDesiredSwapInterval(EGLint interval);
 
-    angle::Result initializeImpl(DisplayVk *displayVk, bool *anyMatchesOut);
+    angle::Result initializeImpl(ThreadSafeDisplayVk *displayVk, bool *anyMatchesOut);
     // Invalidates the swapchain pointer, releases images, and defers acquire next swapchain image.
     void invalidateSwapchain(vk::Renderer *renderer);
     angle::Result recreateSwapchain(vk::ErrorContext *context);
@@ -437,7 +439,7 @@ class WindowSurfaceVk : public SurfaceVk
     angle::Result prepareSwapchainForAcquireNextImage(vk::ErrorContext *context);
     void createSwapchainImages(uint32_t imageCount);
     void releaseSwapchainImages(vk::Renderer *renderer);
-    void destroySwapchainImages(DisplayVk *displayVk);
+    void destroySwapchainImages(ThreadSafeDisplayVk *displayVk);
     angle::Result createAncillaryColorImage(vk::ErrorContext *context);
     // Called when a swapchain image whose acquisition was deferred must be acquired or unlocked
     // ANI result processed.  This method will recreate the swapchain (if needed due to surface size
@@ -483,7 +485,7 @@ class WindowSurfaceVk : public SurfaceVk
 
     bool supportsPresentMode(vk::PresentMode presentMode) const;
 
-    bool updateColorSpace(DisplayVk *displayVk);
+    bool updateColorSpace(ThreadSafeDisplayVk *displayVk);
 
     angle::FormatID getIntendedFormatID(vk::Renderer *renderer);
     angle::FormatID getActualFormatID(vk::Renderer *renderer);

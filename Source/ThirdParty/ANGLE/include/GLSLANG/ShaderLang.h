@@ -82,10 +82,6 @@ struct ShCompileOptionsMetal
     int defaultUniformsBindingIndex = 0;
     // Binding index for UBO's argument buffer
     int UBOArgumentBufferBindingIndex = 0;
-
-    // Insert asm("") instructions into loop bodies, telling the compiler that all loops have side
-    // effects and cannot be optimized out.
-    bool injectAsmStatementIntoLoopBodies = false;
 };
 
 // For ANGLE_shader_pixel_local_storage.

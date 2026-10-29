@@ -512,7 +512,7 @@ config("angle_asserts_config") {
 config("angle_common_config") {
   include_dirs = [
     "src/common/base",
-    "src/common/third_party/xxhash",
+    "src/common/third_party/xxhash/src",
   ]
   libs = []
   if (is_android) {
@@ -558,6 +558,7 @@ angle_source_set("xxhash") {
 if (angle_has_build) {
   fuzzer_test("xxhash_fuzzer") {
     sources = [ "src/common/third_party/xxhash/xxhash_fuzzer.cpp" ]
+    include_dirs = [ "src/common/third_party/xxhash/src" ]
     deps = [ ":xxhash" ]
   }
 }

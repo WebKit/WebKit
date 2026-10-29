@@ -77,7 +77,7 @@ static int GetWGLTextureTarget(EGLenum eglTextureTarget)
     }
 }
 
-egl::Error PbufferSurfaceWGL::initialize(const egl::Display *display)
+egl::Error PbufferSurfaceWGL::initialize(const egl::ThreadSafeDisplay *display)
 {
     const int pbufferCreationAttributes[] = {
         WGL_PBUFFER_LARGEST_ARB,
@@ -190,7 +190,7 @@ egl::Error PbufferSurfaceWGL::releaseTexImage(const gl::Context *context, EGLint
     return egl::NoError();
 }
 
-void PbufferSurfaceWGL::setSwapInterval(const egl::Display *display, EGLint interval) {}
+void PbufferSurfaceWGL::setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval) {}
 
 gl::Extents PbufferSurfaceWGL::getSize() const
 {

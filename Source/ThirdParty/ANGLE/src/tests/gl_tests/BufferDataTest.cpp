@@ -583,6 +583,78 @@ TEST_P(BufferDataTestES3, BufferResizing)
     EXPECT_GL_NO_ERROR();
 }
 
+// Tests that allocating and accessing a large number of small buffers works correctly.
+TEST_P(BufferDataTestES3, MapWriteAndReadManySmallDynamicBuffers)
+{
+    // Allocate a large number of small buffers.
+    constexpr size_t kBufferCount = 5000;
+    constexpr size_t kBufferSize  = 64;
+
+    std::vector<GLBuffer> bufs(kBufferCount);
+    for (size_t i = 0; i < kBufferCount; i++)
+    {
+        glBindBuffer(GL_COPY_READ_BUFFER, bufs[i]);
+        glBufferData(GL_COPY_READ_BUFFER, kBufferSize, nullptr, GL_DYNAMIC_READ);
+        EXPECT_GL_NO_ERROR();
+    }
+
+    // Write to the buffers via mapping. Skip once every few buffers.
+    constexpr size_t kBufferSkipFactor = 17;
+    auto getValueFunc                  = [](size_t bufferIdx, size_t byteIdx) {
+        return static_cast<uint8_t>((bufferIdx + byteIdx) % 200);
+    };
+
+    std::vector<uint8_t> src(kBufferSize);
+    for (size_t i = 0; i < kBufferCount; i++)
+    {
+        if (i % kBufferSkipFactor == 0)
+        {
+            continue;
+        }
+
+        glBindBuffer(GL_COPY_READ_BUFFER, bufs[i]);
+        void *mapPtr = glMapBufferRange(GL_COPY_READ_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+        ASSERT_NE(mapPtr, nullptr);
+
+        for (size_t j = 0; j < kBufferSize; j++)
+        {
+            src[j] = getValueFunc(i, j);
+        }
+
+        memcpy(mapPtr, src.data(), kBufferSize);
+        glUnmapBuffer(GL_COPY_READ_BUFFER);
+        EXPECT_GL_NO_ERROR();
+    }
+
+    // Read back from the filled buffers via mapping and validate.
+    std::vector<uint8_t> dst(kBufferSize);
+    for (size_t i = 0; i < kBufferCount; i++)
+    {
+        if (i % kBufferSkipFactor == 0)
+        {
+            continue;
+        }
+
+        glBindBuffer(GL_COPY_READ_BUFFER, bufs[i]);
+        void *mapPtr = glMapBufferRange(GL_COPY_READ_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+        ASSERT_NE(mapPtr, nullptr);
+
+        memcpy(dst.data(), mapPtr, kBufferSize);
+        glUnmapBuffer(GL_COPY_READ_BUFFER);
+        EXPECT_GL_NO_ERROR();
+
+        for (size_t j = 0; j < kBufferSize; j++)
+        {
+            uint8_t expectedValue = getValueFunc(i, j);
+            if (dst[j] != expectedValue)
+            {
+                EXPECT_EQ(dst[j], expectedValue) << "Buffer " << i << ", Index " << j;
+                return;
+            }
+        }
+    }
+}
+
 // Test to verify mapping a buffer after copying to it contains flushed/updated data
 TEST_P(BufferDataTestES3, CopyBufferSubDataMapReadTest)
 {

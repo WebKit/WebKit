@@ -229,6 +229,7 @@ class BufferVk : public BufferImpl
 
     bool isBufferValid() const { return mBuffer.valid(); }
     bool isCurrentlyInUse(vk::Renderer *renderer) const;
+    bool hasValidData() const { return mHasValidData; }
 
     angle::Result mapForReadAccessOnly(ContextVk *contextVk, void **mapPtr)
     {

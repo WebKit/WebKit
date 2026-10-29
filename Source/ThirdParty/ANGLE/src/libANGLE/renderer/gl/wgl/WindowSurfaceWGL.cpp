@@ -38,7 +38,7 @@ WindowSurfaceWGL::~WindowSurfaceWGL()
     mDeviceContext = nullptr;
 }
 
-egl::Error WindowSurfaceWGL::initialize(const egl::Display *display)
+egl::Error WindowSurfaceWGL::initialize(const egl::ThreadSafeDisplay *display)
 {
     mDeviceContext = GetDC(mWindow);
     if (!mDeviceContext)
@@ -141,7 +141,7 @@ egl::Error WindowSurfaceWGL::releaseTexImage(const gl::Context *context, EGLint 
     return egl::NoError();
 }
 
-void WindowSurfaceWGL::setSwapInterval(const egl::Display *display, EGLint interval)
+void WindowSurfaceWGL::setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval)
 {
     if (mFunctionsWGL->swapIntervalEXT)
     {

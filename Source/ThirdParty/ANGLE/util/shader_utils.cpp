@@ -127,36 +127,6 @@ void KHRONOS_APIENTRY DebugMessageCallback(GLenum source,
         callbackChain(source, type, id, severity, length, message, gCallbackChainUserParam);
     }
 }
-
-void GetPerfCounterValue(const CounterNameToIndexMap &counterIndexMap,
-                         std::vector<angle::PerfMonitorTriplet> &triplets,
-                         const char *name,
-                         GLuint64 *counterOut)
-{
-    auto iter = counterIndexMap.find(name);
-    ASSERT(iter != counterIndexMap.end());
-    GLuint counterIndex = iter->second;
-
-    for (const angle::PerfMonitorTriplet &triplet : triplets)
-    {
-        ASSERT(triplet.group == 0);
-        if (triplet.counter == counterIndex)
-        {
-            *counterOut = triplet.value;
-            return;
-        }
-    }
-
-    // Additional logs for b/382094011
-    std::cerr << "GetPerfCounterValue missing counter: " << name << "; index: " << counterIndex
-              << "; triplets: " << std::endl;
-    for (const angle::PerfMonitorTriplet &triplet : triplets)
-    {
-        std::cerr << triplet.counter << " " << triplet.value << std::endl;
-    }
-
-    UNREACHABLE();
-}
 }  // namespace
 
 GLuint CompileShader(GLenum type, const char *source)
@@ -392,87 +362,6 @@ void EnableDebugCallback(GLDEBUGPROC callbackChain, const void *userParam)
     glDebugMessageControlKHR(GL_DONT_CARE, GL_DEBUG_TYPE_PERFORMANCE, GL_DONT_CARE, 0, nullptr,
                              GL_FALSE);
     glDebugMessageCallbackKHR(DebugMessageCallback, reinterpret_cast<const void *>(callbackChain));
-}
-
-CounterNameToIndexMap BuildCounterNameToIndexMap()
-{
-    GLint numCounters = 0;
-    glGetPerfMonitorCountersAMD(0, &numCounters, nullptr, 0, nullptr);
-    if (glGetError() != GL_NO_ERROR)
-    {
-        std::cerr << "glGetPerfMonitorCountersAMD failed (count)" << std::endl;
-        return {};
-    }
-
-    std::vector<GLuint> counterIndexes(numCounters, 0);
-    glGetPerfMonitorCountersAMD(0, nullptr, nullptr, numCounters, counterIndexes.data());
-    if (glGetError() != GL_NO_ERROR)
-    {
-        std::cerr << "glGetPerfMonitorCountersAMD failed (data)" << std::endl;
-        return {};
-    }
-
-    CounterNameToIndexMap indexMap;
-
-    for (GLuint counterIndex : counterIndexes)
-    {
-        static constexpr size_t kBufSize = 1000;
-        char buffer[kBufSize]            = {};
-        glGetPerfMonitorCounterStringAMD(0, counterIndex, kBufSize, nullptr, buffer);
-        if (glGetError() != GL_NO_ERROR)
-        {
-            std::cerr << "glGetPerfMonitorCounterStringAMD failed" << std::endl;
-            return {};
-        }
-
-        indexMap[buffer] = counterIndex;
-    }
-
-    return indexMap;
-}
-
-std::vector<angle::PerfMonitorTriplet> GetPerfMonitorTriplets()
-{
-    GLuint resultSize = 0;
-    glGetPerfMonitorCounterDataAMD(0, GL_PERFMON_RESULT_SIZE_AMD, sizeof(GLuint), &resultSize,
-                                   nullptr);
-    if (glGetError() != GL_NO_ERROR || resultSize == 0)
-    {
-        std::cerr << "glGetPerfMonitorCounterDataAMD failed (count)" << std::endl;
-        return {};
-    }
-
-    std::vector<angle::PerfMonitorTriplet> perfResults(resultSize /
-                                                       sizeof(angle::PerfMonitorTriplet));
-    GLint bytesWritten = 0;
-    glGetPerfMonitorCounterDataAMD(
-        0, GL_PERFMON_RESULT_AMD, static_cast<GLsizei>(perfResults.size() * sizeof(perfResults[0])),
-        &perfResults.data()->group, &bytesWritten);
-
-    if (glGetError() != GL_NO_ERROR)
-    {
-        std::cerr << "glGetPerfMonitorCounterDataAMD failed (data)" << std::endl;
-        return {};
-    }
-    ASSERT(static_cast<GLuint>(bytesWritten) == resultSize);
-
-    return perfResults;
-}
-
-angle::VulkanPerfCounters GetPerfCounters(const CounterNameToIndexMap &indexMap)
-{
-    std::vector<angle::PerfMonitorTriplet> perfResults = GetPerfMonitorTriplets();
-
-    angle::VulkanPerfCounters counters;
-
-#define ANGLE_UNPACK_PERF_COUNTER(COUNTER) \
-    GetPerfCounterValue(indexMap, perfResults, #COUNTER, &counters.COUNTER);
-
-    ANGLE_VK_PERF_COUNTERS_X(ANGLE_UNPACK_PERF_COUNTER)
-
-#undef ANGLE_UNPACK_PERF_COUNTER
-
-    return counters;
 }
 
 namespace angle

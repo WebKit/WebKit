@@ -322,6 +322,50 @@ void main() {
     ASSERT_EGL_TRUE(SafeDestroyContext(display, mContexts[0]));
 }
 
+// Tests the creation of contexts using EGL_ANGLE_display_texture_share_group, with uninitialized
+// context being passed in as shared context.
+TEST_P(EGLContextSharingTest, DisplayShareGroupContextCreationWithUninitializedContext)
+{
+    EGLDisplay display = getEGLWindow()->getDisplay();
+    EGLConfig config   = getEGLWindow()->getConfig();
+
+    const EGLint inShareGroupContextAttribs[] = {
+        EGL_CONTEXT_CLIENT_VERSION, 2, EGL_DISPLAY_TEXTURE_SHARE_GROUP_ANGLE, EGL_TRUE, EGL_NONE};
+
+    // Check whether extension's supported to avoid clearing the EGL error state
+    // after failed context creation.
+    bool extensionEnabled =
+        IsEGLDisplayExtensionEnabled(display, "EGL_ANGLE_display_texture_share_group");
+
+    // Test creating two contexts in the global share group. Passing in un-initialized context as
+    // shared context. It should not crash.
+    mContexts[0] = eglCreateContext(display, config, nullptr, inShareGroupContextAttribs);
+    mContexts[1] = eglCreateContext(display, config, mContexts[1], inShareGroupContextAttribs);
+
+    if (!extensionEnabled)
+    {
+        // Make sure an error is generated and early-exit
+        ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
+        ASSERT_EQ(EGL_NO_CONTEXT, mContexts[0]);
+        return;
+    }
+
+    ASSERT_EGL_SUCCESS();
+
+    ASSERT_NE(EGL_NO_CONTEXT, mContexts[0]);
+    ASSERT_NE(EGL_NO_CONTEXT, mContexts[1]);
+    eglDestroyContext(display, mContexts[0]);
+    mContexts[0] = EGL_NO_CONTEXT;
+
+    // Try creating a context that is not in the global share group but tries to share with a
+    // context that is
+    const EGLint notInShareGroupContextAttribs[] = {
+        EGL_CONTEXT_CLIENT_VERSION, 2, EGL_DISPLAY_TEXTURE_SHARE_GROUP_ANGLE, EGL_FALSE, EGL_NONE};
+    mContexts[0] = eglCreateContext(display, config, mContexts[1], notInShareGroupContextAttribs);
+    ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
+    ASSERT_TRUE(mContexts[0] == EGL_NO_CONTEXT);
+}
+
 // Tests the creation of contexts using EGL_ANGLE_display_texture_share_group
 TEST_P(EGLContextSharingTest, DisplayShareGroupContextCreation)
 {
@@ -338,7 +382,7 @@ TEST_P(EGLContextSharingTest, DisplayShareGroupContextCreation)
 
     // Test creating two contexts in the global share group
     mContexts[0] = eglCreateContext(display, config, nullptr, inShareGroupContextAttribs);
-    mContexts[1] = eglCreateContext(display, config, mContexts[1], inShareGroupContextAttribs);
+    mContexts[1] = eglCreateContext(display, config, mContexts[0], inShareGroupContextAttribs);
 
     if (!extensionEnabled)
     {

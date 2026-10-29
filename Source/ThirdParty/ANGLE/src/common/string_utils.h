@@ -55,6 +55,10 @@ std::string GetPrefix(const std::string &input, size_t offset, char delimiter);
 
 bool HexStringToUInt(const std::string_view &input, unsigned int *uintOut);
 
+// Parses a decimal integer.  Returns false, leaving *valueOut unchanged, if input is empty, has any
+// characters other than an optional leading '-' and digits, or is out of range.
+bool StringToInt64(const std::string_view &input, int64_t *valueOut);
+
 bool ReadFileToString(const std::string &path, std::string *stringOut);
 
 // Check if the string str begins with the given prefix.

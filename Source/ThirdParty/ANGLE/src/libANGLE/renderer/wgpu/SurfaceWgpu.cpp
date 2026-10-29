@@ -70,9 +70,9 @@ OffscreenSurfaceWgpu::OffscreenSurfaceWgpu(const egl::SurfaceState &surfaceState
 
 OffscreenSurfaceWgpu::~OffscreenSurfaceWgpu() {}
 
-egl::Error OffscreenSurfaceWgpu::initialize(const egl::Display *display)
+egl::Error OffscreenSurfaceWgpu::initialize(const egl::ThreadSafeDisplay *display)
 {
-    return angle::ResultToEGL(initializeImpl(display));
+    return angle::ResultToEGL(initializeImpl(static_cast<const egl::Display *>(display)));
 }
 
 egl::Error OffscreenSurfaceWgpu::swap(const gl::Context *context, SurfaceSwapFeedback *feedback)
@@ -95,7 +95,8 @@ egl::Error OffscreenSurfaceWgpu::releaseTexImage(const gl::Context *context, EGL
     return egl::NoError();
 }
 
-void OffscreenSurfaceWgpu::setSwapInterval(const egl::Display *display, EGLint interval) {}
+void OffscreenSurfaceWgpu::setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval)
+{}
 
 gl::Extents OffscreenSurfaceWgpu::getSize() const
 {
@@ -215,12 +216,12 @@ WindowSurfaceWgpu::WindowSurfaceWgpu(const egl::SurfaceState &surfaceState,
 
 WindowSurfaceWgpu::~WindowSurfaceWgpu() {}
 
-egl::Error WindowSurfaceWgpu::initialize(const egl::Display *display)
+egl::Error WindowSurfaceWgpu::initialize(const egl::ThreadSafeDisplay *display)
 {
-    return angle::ResultToEGL(initializeImpl(display));
+    return angle::ResultToEGL(initializeImpl(static_cast<const egl::Display *>(display)));
 }
 
-void WindowSurfaceWgpu::destroy(const egl::Display *display)
+void WindowSurfaceWgpu::destroy(const egl::ThreadSafeDisplay *display)
 {
     mSurface   = nullptr;
     mColorAttachment.renderTarget.reset();
@@ -248,7 +249,7 @@ egl::Error WindowSurfaceWgpu::releaseTexImage(const gl::Context *context, EGLint
     return egl::NoError();
 }
 
-void WindowSurfaceWgpu::setSwapInterval(const egl::Display *display, EGLint interval)
+void WindowSurfaceWgpu::setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval)
 {
     UNIMPLEMENTED();
 }

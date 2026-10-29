@@ -24,7 +24,7 @@ WindowSurfaceWgpuMetalLayer::WindowSurfaceWgpuMetalLayer(const egl::SurfaceState
     : WindowSurfaceWgpu(surfaceState, window)
 {}
 
-egl::Error WindowSurfaceWgpuMetalLayer::initialize(const egl::Display *display)
+egl::Error WindowSurfaceWgpuMetalLayer::initialize(const egl::ThreadSafeDisplay *display)
 {
     // TODO: Use the same Metal device as wgpu
     mMetalDevice = MTLCreateSystemDefaultDevice();
@@ -32,7 +32,7 @@ egl::Error WindowSurfaceWgpuMetalLayer::initialize(const egl::Display *display)
     return WindowSurfaceWgpu::initialize(display);
 }
 
-void WindowSurfaceWgpuMetalLayer::destroy(const egl::Display *display)
+void WindowSurfaceWgpuMetalLayer::destroy(const egl::ThreadSafeDisplay *display)
 {
     WindowSurfaceWgpu::destroy(display);
     [mMetalDevice release];

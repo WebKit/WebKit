@@ -270,6 +270,24 @@ class EGLSurfaceTest : public ANGLETest<>
         initializeSurface(defaultConfig);
     }
 
+    // Makes |surface| current with a new context and clears it, to verify that a successfully
+    // created window surface is actually usable.
+    void clearAndSwapWindowSurface(EGLSurface surface)
+    {
+        initializeMainContext();
+        ASSERT_NE(mContext, EGL_NO_CONTEXT);
+
+        ASSERT_EGL_TRUE(eglMakeCurrent(mDisplay, surface, surface, mContext));
+        ASSERT_EGL_SUCCESS();
+
+        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ASSERT_GL_NO_ERROR();
+
+        EXPECT_EGL_TRUE(eglSwapBuffers(mDisplay, surface));
+        EXPECT_EGL_SUCCESS();
+    }
+
     GLuint createProgram(const char *fs = angle::essl1_shaders::fs::Red())
     {
         return CompileProgram(angle::essl1_shaders::vs::Simple(), fs);
@@ -4708,6 +4726,57 @@ TEST_P(EGLSurfaceTest, ClearThenPreserve)
 
     // Verify that the clear color is visible after swap.
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+}
+
+// Test that a window surface can be created with the core EGL 1.5 eglCreatePlatformWindowSurface.
+// The native window argument is a void * whose interpretation is platform specific, so it is
+// obtained from OSWindow::getPlatformExtension(); on X11 that is a pointer to the Window, while
+// EGLNativeWindowType for X11 is the Window itself.
+// Regression test for http://anglebug.com/542047310
+TEST_P(EGLSurfaceTest, CreatePlatformWindowSurface)
+{
+    // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
+    setWindowVisible(mOSWindow, true);
+
+    initializeDisplay();
+
+    mConfig = chooseDefaultConfig(/*requireWindowSurface=*/true);
+    ASSERT_NE(mConfig, nullptr);
+
+    constexpr EGLAttrib kSurfaceAttributes[] = {EGL_NONE};
+    mWindowSurface                           = eglCreatePlatformWindowSurface(
+        mDisplay, mConfig, mOSWindow->getPlatformExtension(), kSurfaceAttributes);
+    ASSERT_EGL_SUCCESS();
+    ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
+
+    clearAndSwapWindowSurface(mWindowSurface);
+}
+
+// Same as CreatePlatformWindowSurface, but for eglCreatePlatformWindowSurfaceEXT from
+// EGL_EXT_platform_base.  Both entry points must interpret the native window identically.
+TEST_P(EGLSurfaceTest, CreatePlatformWindowSurfaceEXT)
+{
+    // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
+    setWindowVisible(mOSWindow, true);
+
+    initializeDisplay();
+
+    // eglCreatePlatformWindowSurfaceEXT comes from the EGL_EXT_platform_base client extension.
+    auto createPlatformWindowSurfaceEXT =
+        reinterpret_cast<PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC>(
+            eglGetProcAddress("eglCreatePlatformWindowSurfaceEXT"));
+    ANGLE_SKIP_TEST_IF(createPlatformWindowSurfaceEXT == nullptr);
+
+    mConfig = chooseDefaultConfig(/*requireWindowSurface=*/true);
+    ASSERT_NE(mConfig, nullptr);
+
+    constexpr EGLint kSurfaceAttributes[] = {EGL_NONE};
+    mWindowSurface                        = createPlatformWindowSurfaceEXT(
+        mDisplay, mConfig, mOSWindow->getPlatformExtension(), kSurfaceAttributes);
+    ASSERT_EGL_SUCCESS();
+    ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
+
+    clearAndSwapWindowSurface(mWindowSurface);
 }
 
 }  // anonymous namespace

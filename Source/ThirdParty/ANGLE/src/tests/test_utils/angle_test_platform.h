@@ -7,8 +7,11 @@
 #ifndef ANGLE_TESTS_ANGLE_TEST_PLATFORM_H_
 #define ANGLE_TESTS_ANGLE_TEST_PLATFORM_H_
 
+#include <map>
 #include <string>
+#include <vector>
 
+#include "common/angleutils.h"
 #include "util/util_gl.h"
 
 // Driver vendors
@@ -35,5 +38,10 @@ bool IsEGLDeviceExtensionEnabled(EGLDeviceEXT device, const std::string &extName
 bool IsEGLDisplayExtensionEnabled(EGLDisplay display, const std::string &extName);
 bool IsGLExtensionEnabled(const std::string &extName);
 bool IsGLExtensionRequestable(const std::string &extName);
+
+using CounterNameToIndexMap = std::map<std::string, GLuint>;
+
+CounterNameToIndexMap BuildCounterNameToIndexMap();
+std::vector<angle::PerfMonitorTriplet> GetPerfMonitorTriplets();
 
 #endif  // ANGLE_TESTS_ANGLE_TEST_PLATFORM_H_

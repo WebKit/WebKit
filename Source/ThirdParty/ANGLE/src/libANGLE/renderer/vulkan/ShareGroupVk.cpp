@@ -149,7 +149,7 @@ angle::Result ShareGroupVk::updateContextsPriority(ContextVk *contextVk,
     return angle::Result::Continue;
 }
 
-void ShareGroupVk::onDestroy(const egl::Display *display)
+void ShareGroupVk::onDestroy(const egl::ThreadSafeDisplay *display)
 {
     mRefCountedEventsGarbageRecycler.destroy(mRenderer);
 

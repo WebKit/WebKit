@@ -104,9 +104,9 @@ EGLBoolean EGLAPIENTRY EGL_GetCompositorTimingSupportedANDROID(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(GetCompositorTimingSupportedANDROID,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", name = %d", (uintptr_t)dpy,
@@ -129,7 +129,7 @@ EGLBoolean EGLAPIENTRY EGL_GetCompositorTimingSupportedANDROID(EGLDisplay dpy,
             {
             }
 
-            returnValue = GetCompositorTimingSupportedANDROID(thread, dpyPacked,
+            returnValue = GetCompositorTimingSupportedANDROID(thread, validDisplay,
                                                               surfacePackedObject, namePacked);
         }
 
@@ -151,9 +151,9 @@ EGLBoolean EGLAPIENTRY EGL_GetCompositorTimingANDROID(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(GetCompositorTimingANDROID,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
@@ -177,7 +177,7 @@ EGLBoolean EGLAPIENTRY EGL_GetCompositorTimingANDROID(EGLDisplay dpy,
             {
             }
 
-            returnValue = GetCompositorTimingANDROID(thread, dpyPacked, surfacePackedObject,
+            returnValue = GetCompositorTimingANDROID(thread, validDisplay, surfacePackedObject,
                                                      numTimestamps, names, values);
         }
 
@@ -197,9 +197,9 @@ EGLBoolean EGLAPIENTRY EGL_GetNextFrameIdANDROID(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(GetNextFrameIdANDROID,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", frameId = 0x%016" PRIxPTR
@@ -222,7 +222,7 @@ EGLBoolean EGLAPIENTRY EGL_GetNextFrameIdANDROID(EGLDisplay dpy,
             {
             }
 
-            returnValue = GetNextFrameIdANDROID(thread, dpyPacked, surfacePackedObject, frameId);
+            returnValue = GetNextFrameIdANDROID(thread, validDisplay, surfacePackedObject, frameId);
         }
 
         ANGLE_CAPTURE_EGL(GetNextFrameIdANDROID, true, thread, dpyPacked, surfacePacked, frameId,
@@ -241,9 +241,9 @@ EGLBoolean EGLAPIENTRY EGL_GetFrameTimestampSupportedANDROID(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(GetFrameTimestampSupportedANDROID,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", timestamp = %d",
@@ -266,8 +266,8 @@ EGLBoolean EGLAPIENTRY EGL_GetFrameTimestampSupportedANDROID(EGLDisplay dpy,
             {
             }
 
-            returnValue = GetFrameTimestampSupportedANDROID(thread, dpyPacked, surfacePackedObject,
-                                                            timestampPacked);
+            returnValue = GetFrameTimestampSupportedANDROID(thread, validDisplay,
+                                                            surfacePackedObject, timestampPacked);
         }
 
         ANGLE_CAPTURE_EGL(GetFrameTimestampSupportedANDROID, true, thread, dpyPacked, surfacePacked,
@@ -289,9 +289,9 @@ EGLBoolean EGLAPIENTRY EGL_GetFrameTimestampsANDROID(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(GetFrameTimestampsANDROID,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
@@ -317,8 +317,8 @@ EGLBoolean EGLAPIENTRY EGL_GetFrameTimestampsANDROID(EGLDisplay dpy,
             {
             }
 
-            returnValue = GetFrameTimestampsANDROID(thread, dpyPacked, surfacePackedObject, frameId,
-                                                    numTimestamps, timestamps, values);
+            returnValue = GetFrameTimestampsANDROID(thread, validDisplay, surfacePackedObject,
+                                                    frameId, numTimestamps, timestamps, values);
         }
 
         ANGLE_CAPTURE_EGL(GetFrameTimestampsANDROID, true, thread, dpyPacked, surfacePacked,
@@ -409,9 +409,9 @@ EGLBoolean EGLAPIENTRY EGL_PresentationTimeANDROID(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(PresentationTimeANDROID,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", time = %llu",
@@ -433,7 +433,7 @@ EGLBoolean EGLAPIENTRY EGL_PresentationTimeANDROID(EGLDisplay dpy,
             {
             }
 
-            returnValue = PresentationTimeANDROID(thread, dpyPacked, surfacePackedObject, time);
+            returnValue = PresentationTimeANDROID(thread, validDisplay, surfacePackedObject, time);
         }
 
         ANGLE_CAPTURE_EGL(PresentationTimeANDROID, true, thread, dpyPacked, surfacePacked, time,
@@ -575,9 +575,9 @@ void EGLAPIENTRY EGL_AcquireExternalContextANGLE(EGLDisplay dpy, EGLSurface draw
     Thread *thread = egl::GetCurrentThread();
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(AcquireExternalContextANGLE,
                   "dpy = 0x%016" PRIxPTR ", drawAndRead = 0x%016" PRIxPTR "", (uintptr_t)dpy,
@@ -602,7 +602,7 @@ void EGLAPIENTRY EGL_AcquireExternalContextANGLE(EGLDisplay dpy, EGLSurface draw
             {
             }
 
-            AcquireExternalContextANGLE(thread, dpyPacked, drawAndReadPackedObject);
+            AcquireExternalContextANGLE(thread, validDisplay, drawAndReadPackedObject);
         }
 
         ANGLE_CAPTURE_EGL(AcquireExternalContextANGLE, true, thread, dpyPacked, drawAndReadPacked);
@@ -924,9 +924,9 @@ EGLBoolean EGLAPIENTRY EGL_PrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurface su
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(PrepareSwapBuffersANGLE, "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR "",
                   (uintptr_t)dpy, (uintptr_t)surface);
@@ -947,7 +947,7 @@ EGLBoolean EGLAPIENTRY EGL_PrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurface su
             {
             }
 
-            returnValue = PrepareSwapBuffersANGLE(thread, dpyPacked, surfacePackedObject);
+            returnValue = PrepareSwapBuffersANGLE(thread, validDisplay, surfacePackedObject);
         }
 
         ANGLE_CAPTURE_EGL(PrepareSwapBuffersANGLE, true, thread, dpyPacked, surfacePacked,
@@ -1119,9 +1119,9 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurfacePointerANGLE(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(QuerySurfacePointerANGLE,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
@@ -1144,8 +1144,8 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurfacePointerANGLE(EGLDisplay dpy,
             {
             }
 
-            returnValue =
-                QuerySurfacePointerANGLE(thread, dpyPacked, surfacePackedObject, attribute, value);
+            returnValue = QuerySurfacePointerANGLE(thread, validDisplay, surfacePackedObject,
+                                                   attribute, value);
         }
 
         ANGLE_CAPTURE_EGL(QuerySurfacePointerANGLE, true, thread, dpyPacked, surfacePacked,
@@ -1256,9 +1256,9 @@ EGLBoolean EGLAPIENTRY EGL_GetMscRateANGLE(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(GetMscRateANGLE,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", numerator = 0x%016" PRIxPTR
@@ -1282,7 +1282,7 @@ EGLBoolean EGLAPIENTRY EGL_GetMscRateANGLE(EGLDisplay dpy,
             }
 
             returnValue =
-                GetMscRateANGLE(thread, dpyPacked, surfacePackedObject, numerator, denominator);
+                GetMscRateANGLE(thread, validDisplay, surfacePackedObject, numerator, denominator);
         }
 
         ANGLE_CAPTURE_EGL(GetMscRateANGLE, true, thread, dpyPacked, surfacePacked, numerator,
@@ -1381,9 +1381,9 @@ EGLBoolean EGLAPIENTRY EGL_GetSyncValuesCHROMIUM(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(GetSyncValuesCHROMIUM,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", ust = 0x%016" PRIxPTR
@@ -1408,7 +1408,7 @@ EGLBoolean EGLAPIENTRY EGL_GetSyncValuesCHROMIUM(EGLDisplay dpy,
             }
 
             returnValue =
-                GetSyncValuesCHROMIUM(thread, dpyPacked, surfacePackedObject, ust, msc, sbc);
+                GetSyncValuesCHROMIUM(thread, validDisplay, surfacePackedObject, ust, msc, sbc);
         }
 
         ANGLE_CAPTURE_EGL(GetSyncValuesCHROMIUM, true, thread, dpyPacked, surfacePacked, ust, msc,
@@ -2169,9 +2169,9 @@ EGLBoolean EGLAPIENTRY EGL_LockSurfaceKHR(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(LockSurfaceKHR,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
@@ -2196,7 +2196,8 @@ EGLBoolean EGLAPIENTRY EGL_LockSurfaceKHR(EGLDisplay dpy,
                 attrib_listPacked.initializeWithoutValidation();
             }
 
-            returnValue = LockSurfaceKHR(thread, dpyPacked, surfacePackedObject, attrib_listPacked);
+            returnValue =
+                LockSurfaceKHR(thread, validDisplay, surfacePackedObject, attrib_listPacked);
         }
 
         ANGLE_CAPTURE_EGL(LockSurfaceKHR, true, thread, dpyPacked, surfacePacked, attrib_listPacked,
@@ -2219,9 +2220,9 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurface64KHR(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(QuerySurface64KHR,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
@@ -2245,7 +2246,7 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurface64KHR(EGLDisplay dpy,
             }
 
             returnValue =
-                QuerySurface64KHR(thread, dpyPacked, surfacePackedObject, attribute, value);
+                QuerySurface64KHR(thread, validDisplay, surfacePackedObject, attribute, value);
         }
 
         ANGLE_CAPTURE_EGL(QuerySurface64KHR, true, thread, dpyPacked, surfacePacked, attribute,
@@ -2262,9 +2263,9 @@ EGLBoolean EGLAPIENTRY EGL_UnlockSurfaceKHR(EGLDisplay dpy, EGLSurface surface)
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(UnlockSurfaceKHR, "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR "",
                   (uintptr_t)dpy, (uintptr_t)surface);
@@ -2285,7 +2286,7 @@ EGLBoolean EGLAPIENTRY EGL_UnlockSurfaceKHR(EGLDisplay dpy, EGLSurface surface)
             {
             }
 
-            returnValue = UnlockSurfaceKHR(thread, dpyPacked, surfacePackedObject);
+            returnValue = UnlockSurfaceKHR(thread, validDisplay, surfacePackedObject);
         }
 
         ANGLE_CAPTURE_EGL(UnlockSurfaceKHR, true, thread, dpyPacked, surfacePacked, returnValue);
@@ -2305,9 +2306,9 @@ EGLBoolean EGLAPIENTRY EGL_SetDamageRegionKHR(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(SetDamageRegionKHR,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", rects = 0x%016" PRIxPTR
@@ -2331,7 +2332,7 @@ EGLBoolean EGLAPIENTRY EGL_SetDamageRegionKHR(EGLDisplay dpy,
             }
 
             returnValue =
-                SetDamageRegionKHR(thread, dpyPacked, surfacePackedObject, rects, n_rects);
+                SetDamageRegionKHR(thread, validDisplay, surfacePackedObject, rects, n_rects);
         }
 
         ANGLE_CAPTURE_EGL(SetDamageRegionKHR, true, thread, dpyPacked, surfacePacked, rects,
@@ -2712,9 +2713,9 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffersWithDamageKHR(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(SwapBuffersWithDamageKHR,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", rects = 0x%016" PRIxPTR
@@ -2740,7 +2741,7 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffersWithDamageKHR(EGLDisplay dpy,
             }
 
             returnValue =
-                SwapBuffersWithDamageKHR(thread, dpyPacked, surfacePackedObject, rects, n_rects);
+                SwapBuffersWithDamageKHR(thread, validDisplay, surfacePackedObject, rects, n_rects);
         }
 
         ANGLE_CAPTURE_EGL(SwapBuffersWithDamageKHR, true, thread, dpyPacked, surfacePacked, rects,
@@ -2802,9 +2803,9 @@ EGLBoolean EGLAPIENTRY EGL_PostSubBufferNV(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(PostSubBufferNV,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
@@ -2828,7 +2829,7 @@ EGLBoolean EGLAPIENTRY EGL_PostSubBufferNV(EGLDisplay dpy,
             }
 
             returnValue =
-                PostSubBufferNV(thread, dpyPacked, surfacePackedObject, x, y, width, height);
+                PostSubBufferNV(thread, validDisplay, surfacePackedObject, x, y, width, height);
         }
 
         ANGLE_CAPTURE_EGL(PostSubBufferNV, true, thread, dpyPacked, surfacePacked, x, y, width,

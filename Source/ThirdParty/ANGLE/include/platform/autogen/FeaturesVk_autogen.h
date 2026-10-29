@@ -446,6 +446,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo splitCrossFormatLayeredImageCopy = {
+        "splitCrossFormatLayeredImageCopy",
+        FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
     FeatureInfo supportsImageFormatList = {
         "supportsImageFormatList",
         FeatureCategory::VulkanFeatures,
@@ -796,6 +802,12 @@ struct FeaturesVk : FeatureSetBase
 
     FeatureInfo supportsExtendedDynamicState2 = {
         "supportsExtendedDynamicState2",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo supportsExtendedDynamicState3 = {
+        "supportsExtendedDynamicState3",
         FeatureCategory::VulkanFeatures,
         &members,
     };

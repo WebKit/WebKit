@@ -499,11 +499,11 @@ void DeriveRenderingInfo(Renderer *renderer,
             // corresponding attachment is invalidated.
             const bool resolveDepth =
                 angleFormat.depthBits != 0 &&
-                (desc.hasDepthResolveAttachment() || desc.isRenderToTexture()) &&
+                (desc.hasDepthResolveAttachment() || isRenderToTextureThroughExtension) &&
                 !(desc.isRenderToTexture() && ops[attachmentCount].isInvalidated);
             const bool resolveStencil =
                 angleFormat.stencilBits != 0 &&
-                (desc.hasStencilResolveAttachment() || desc.isRenderToTexture()) &&
+                (desc.hasStencilResolveAttachment() || isRenderToTextureThroughExtension) &&
                 !(desc.isRenderToTexture() && ops[attachmentCount].isStencilInvalidated);
 
             const ImageAccess imageAccess =

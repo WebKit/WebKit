@@ -136,30 +136,35 @@ enum ArgHandling
     Preserve,
 };
 
-bool ParseIntArg(const char *flag, int *argc, char **argv, int argIndex, int *valueOut);
-bool ParseFlag(const char *flag, int *argc, char **argv, int argIndex, bool *flagOut);
-bool ParseStringArg(const char *flag, int *argc, char **argv, int argIndex, std::string *valueOut);
-bool ParseStringArgWithHandling(const char *flag,
-                                int *argc,
-                                char **argv,
-                                int argIndex,
-                                std::string *valueOut,
-                                ArgHandling handling);
-bool ParseCStringArg(const char *flag, int *argc, char **argv, int argIndex, const char **valueOut);
-
-// Note: return value is always false with ArgHandling::Preserve handling
-bool ParseIntArgWithHandling(const char *flag,
+// Functions for parsing command line arguments. On a match, the output is always populated.
+// - ParseAndDelete*: removes the argument from argv and returns true.
+// - ParseAndPreserve*: leaves argv unchanged and returns false, so callers keep the argument
+//   (for example, to forward it to child processes).
+bool ParseAndDeleteFlag(const char *flag, int *argc, char **argv, int argIndex, bool *flagOut);
+bool ParseAndDeleteIntArg(const char *flag, int *argc, char **argv, int argIndex, int *valueOut);
+bool ParseAndDeleteStringArg(const char *flag,
                              int *argc,
                              char **argv,
                              int argIndex,
-                             int *valueOut,
-                             ArgHandling handling);
-bool ParseCStringArgWithHandling(const char *flag,
-                                 int *argc,
-                                 char **argv,
-                                 int argIndex,
-                                 const char **valueOut,
-                                 ArgHandling handling);
+                             std::string *valueOut);
+bool ParseAndDeleteCStringArg(const char *flag,
+                              int *argc,
+                              char **argv,
+                              int argIndex,
+                              const char **valueOut);
+
+bool ParseAndPreserveFlag(const char *flag, int *argc, char **argv, int argIndex, bool *flagOut);
+bool ParseAndPreserveIntArg(const char *flag, int *argc, char **argv, int argIndex, int *valueOut);
+bool ParseAndPreserveStringArg(const char *flag,
+                               int *argc,
+                               char **argv,
+                               int argIndex,
+                               std::string *valueOut);
+bool ParseAndPreserveCStringArg(const char *flag,
+                                int *argc,
+                                char **argv,
+                                int argIndex,
+                                const char **valueOut);
 
 void AddArg(int *argc, char **argv, const char *arg);
 

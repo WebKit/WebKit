@@ -1685,6 +1685,19 @@ TEST_P(SimpleOperationTest, NullParameterInGetShaderPrecisionFormat)
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
 }
 
+// Test that glGetShaderPrecisionFormat only accepts GL_VERTEX_SHADER and GL_FRAGMENT_SHADER, and
+// generates GL_INVALID_ENUM for other shader types, including GL_COMPUTE_SHADER.
+TEST_P(SimpleOperationTest, InvalidShaderTypeInGetShaderPrecisionFormat)
+{
+    GLint range[2], precision;
+
+    glGetShaderPrecisionFormat(GL_COMPUTE_SHADER, GL_LOW_FLOAT, range, &precision);
+    EXPECT_GL_ERROR(GL_INVALID_ENUM);
+
+    glGetShaderPrecisionFormat(GL_GEOMETRY_SHADER, GL_LOW_FLOAT, range, &precision);
+    EXPECT_GL_ERROR(GL_INVALID_ENUM);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(

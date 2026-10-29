@@ -89,7 +89,6 @@ struct TraceFunctions
 struct TraceCallbacks
 {
     virtual uint8_t *LoadBinaryData(const char *fileName) = 0;
-    virtual FrameCaptureBinaryData *ConfigureBinaryDataLoader(const char *fileName) = 0;
     virtual ~TraceCallbacks() {}
 };
 

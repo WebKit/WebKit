@@ -1724,18 +1724,6 @@ void main()
         return IsEGLDisplayExtensionEnabled(getEGLWindow()->getDisplay(), kWebGPUTextureExt);
     }
 
-    angle::VulkanPerfCounters getPerfCounters()
-    {
-        ASSERT(IsVulkan());
-
-        if (mCounterNameToIndexMap.empty())
-        {
-            mCounterNameToIndexMap = BuildCounterNameToIndexMap();
-        }
-
-        return GetPerfCounters(mCounterNameToIndexMap);
-    }
-
     void externalTextureTracerTestHelper(const EGLint *attribsToRecoverInMEC)
     {
         const EGLWindow *eglWindow = getEGLWindow();
@@ -1906,8 +1894,6 @@ void main()
     GLuint mRenderYUVProgram        = 0;
     GLuint mRenderYUVProgram2       = 0;
     GLint mRenderYUVUniformLocation = -1;
-
-    CounterNameToIndexMap mCounterNameToIndexMap;
 };
 
 class ImageTestES3 : public ImageTest

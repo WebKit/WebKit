@@ -5367,7 +5367,12 @@ bool OutputSPIRVTraverser::visitTernary(Visit visit, TIntermTernary *node)
         {
             // SPIR-V prior to 1.4 requires that the condition value have as many components as the
             // result.  So when selecting between vectors, we must replicate the condition scalar.
-            if (!mCompileOptions.emitSPIRV14 && type.isVector())
+            //
+            // With SPIR-V 1.4, some drivers have been observed to crash if the condition has a
+            // single component and the values are constants.
+            if (type.isVector() && !conditionType.isVector() &&
+                (!mCompileOptions.emitSPIRV14 || (node->getTrueExpression()->hasConstantValue() &&
+                                                  node->getFalseExpression()->hasConstantValue())))
             {
                 const TType &boolVectorType =
                     *StaticType::GetForVec<EbtBool, EbpUndefined>(EvqGlobal, type.getNominalSize());

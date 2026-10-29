@@ -126,7 +126,7 @@ IOSurfaceSurfaceCGL::~IOSurfaceSurfaceCGL()
     }
 }
 
-egl::Error IOSurfaceSurfaceCGL::initialize(const egl::Display *display)
+egl::Error IOSurfaceSurfaceCGL::initialize(const egl::ThreadSafeDisplay *display)
 {
     return egl::NoError();
 }
@@ -200,7 +200,7 @@ egl::Error IOSurfaceSurfaceCGL::releaseTexImage(const gl::Context *context, EGLi
     return egl::NoError();
 }
 
-void IOSurfaceSurfaceCGL::setSwapInterval(const egl::Display *display, EGLint interval)
+void IOSurfaceSurfaceCGL::setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval)
 {
     UNREACHABLE();
 }

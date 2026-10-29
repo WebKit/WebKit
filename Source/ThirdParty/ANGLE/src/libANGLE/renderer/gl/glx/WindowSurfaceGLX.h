@@ -31,7 +31,7 @@ class WindowSurfaceGLX : public SurfaceGLX
                      glx::FBConfig fbConfig);
     ~WindowSurfaceGLX() override;
 
-    egl::Error initialize(const egl::Display *display) override;
+    egl::Error initialize(const egl::ThreadSafeDisplay *display) override;
     egl::Error makeCurrent(const gl::Context *context) override;
 
     egl::Error swap(const gl::Context *context, SurfaceSwapFeedback *feedback) override;
@@ -45,7 +45,7 @@ class WindowSurfaceGLX : public SurfaceGLX
                             gl::Texture *texture,
                             EGLint buffer) override;
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
-    void setSwapInterval(const egl::Display *display, EGLint interval) override;
+    void setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval) override;
 
     gl::Extents getSize() const override;
 

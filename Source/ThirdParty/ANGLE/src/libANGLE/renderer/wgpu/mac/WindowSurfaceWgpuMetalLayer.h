@@ -22,8 +22,8 @@ class WindowSurfaceWgpuMetalLayer : public WindowSurfaceWgpu
   public:
     WindowSurfaceWgpuMetalLayer(const egl::SurfaceState &surfaceState, EGLNativeWindowType window);
 
-    egl::Error initialize(const egl::Display *display) override;
-    void destroy(const egl::Display *display) override;
+    egl::Error initialize(const egl::ThreadSafeDisplay *display) override;
+    void destroy(const egl::ThreadSafeDisplay *display) override;
 
   private:
     angle::Result createWgpuSurface(const egl::Display *display,

@@ -519,20 +519,7 @@ class MultisampleTexture2DTestES31 : public Texture2DTest
 };
 
 class Texture2DMemoryTestES3 : public Texture2DTestES3
-{
-  protected:
-    angle::VulkanPerfCounters getPerfCounters()
-    {
-        if (mIndexMap.empty())
-        {
-            mIndexMap = BuildCounterNameToIndexMap();
-        }
-
-        return GetPerfCounters(mIndexMap);
-    }
-
-    CounterNameToIndexMap mIndexMap;
-};
+{};
 
 class Texture2DTestES3YUV : public Texture2DTestES3
 {};
@@ -4489,6 +4476,64 @@ TEST_P(Texture2DTest, CallKHRDebugLabelBeforeTexStorageCreation)
     glGetObjectLabelKHR(GL_TEXTURE, texture2D, static_cast<GLsizei>(labelBuf.size()),
                         &labelLengthBuf, labelBuf.data());
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
+}
+
+// Tests that shader read stage masks are accumulated properly when a texture is used in different
+// shader stages in different render passes.
+TEST_P(Texture2DTest, TextureReadStageAccumulationDifferentRenderPass)
+{
+    GLFramebuffer fbo;
+    GLTexture colorTex;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glBindTexture(GL_TEXTURE_2D, colorTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth(), getWindowHeight(), 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTex, 0);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::green);
+    ASSERT_GL_NO_ERROR();
+
+    // For the first draw, the texture sampler is in the fragment shader.
+    setUpProgram();
+
+    glUseProgram(mProgram);
+    glUniform1i(mTexture2DUniformLocation, 0);
+    drawQuad(mProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Switch to the second FBO to end the render pass.
+    // For the second draw, the texture sampler is in the vertex shader.
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    constexpr char kVS[] = R"(attribute vec4 position;
+uniform sampler2D tex;
+varying vec4 color;
+void main() {
+    gl_Position = position;
+    color = texture2D(tex, vec2(0.5, 0.5));
+})";
+    constexpr char kFS[] = R"(precision highp float;
+varying vec4 color;
+void main() {
+    gl_FragColor = color;
+})";
+
+    ANGLE_GL_PROGRAM(vertexProgram, kVS, kFS);
+    glUseProgram(vertexProgram);
+    GLint vertexTexLoc = glGetUniformLocation(vertexProgram, "tex");
+    ASSERT_NE(-1, vertexTexLoc);
+    glUniform1i(vertexTexLoc, 0);
+
+    drawQuad(vertexProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Write to the texture before reading the output.
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::red);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
 // Test that glTexSubImage2D combined with a PBO works properly when glTexStorage2D has
@@ -21886,6 +21931,8 @@ class CopyImageTestES31 : public ANGLETest<>
         setConfigBlueBits(8);
         setConfigAlphaBits(8);
     }
+
+    void testCrossFormatLayeredCopy(GLenum srcTarget, GLenum dstTarget);
 };
 
 // Test validation of target
@@ -22582,6 +22629,78 @@ TEST_P(CopyImageTestES31, Texture3DSelfCopyImageSubData)
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 1, 1);
     EXPECT_PIXEL_RECT_EQ(0, 0, kWidth >> 1, kHeight >> 1, GLColor::blue);
     ASSERT_GL_NO_ERROR();
+}
+
+// Copy layers 1-3 of a 4-layer RGBA8UI texture into layers 0-2 of a 3-layer RGBA8 texture with a
+// single glCopyImageSubData call, and verify every destination layer.  The two formats are
+// different but size-compatible, so the copy is a bit-wise reinterpretation.
+void CopyImageTestES31::testCrossFormatLayeredCopy(GLenum srcTarget, GLenum dstTarget)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+
+    constexpr GLsizei kWidth                      = 16;
+    constexpr GLsizei kHeight                     = 16;
+    constexpr GLsizei kSrcLayers                  = 4;
+    constexpr GLsizei kDstLayers                  = 3;
+    const std::array<GLColor, kSrcLayers> kColors = {GLColor::white, GLColor::red, GLColor::green,
+                                                     GLColor::blue};
+
+    GLTexture srcTex;
+    glBindTexture(srcTarget, srcTex);
+    glTexStorage3D(srcTarget, 1, GL_RGBA8UI, kWidth, kHeight, kSrcLayers);
+    for (GLsizei layer = 0; layer < kSrcLayers; ++layer)
+    {
+        std::vector<GLColor> pixels(kWidth * kHeight, kColors[layer]);
+        glTexSubImage3D(srcTarget, 0, 0, 0, layer, kWidth, kHeight, 1, GL_RGBA_INTEGER,
+                        GL_UNSIGNED_BYTE, pixels.data());
+    }
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture dstTex;
+    glBindTexture(dstTarget, dstTex);
+    glTexStorage3D(dstTarget, 1, GL_RGBA8, kWidth, kHeight, kDstLayers);
+    std::vector<GLColor> blackPixels(kWidth * kHeight * kDstLayers, GLColor::black);
+    glTexSubImage3D(dstTarget, 0, 0, 0, 0, kWidth, kHeight, kDstLayers, GL_RGBA, GL_UNSIGNED_BYTE,
+                    blackPixels.data());
+    ASSERT_GL_NO_ERROR();
+
+    glCopyImageSubDataEXT(srcTex, srcTarget, 0, 0, 0, 1, dstTex, dstTarget, 0, 0, 0, 0, kWidth,
+                          kHeight, kDstLayers);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    for (GLsizei layer = 0; layer < kDstLayers; ++layer)
+    {
+        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, dstTex, 0, layer);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, kColors[layer + 1]);
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
+// Verify a multi-layer copy between 2D array textures of different formats.
+TEST_P(CopyImageTestES31, CrossFormatLayeredCopy2DArrayTo2DArray)
+{
+    testCrossFormatLayeredCopy(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_2D_ARRAY);
+}
+
+// Verify a multi-layer copy from a 2D array texture to a 3D texture of a different format.
+TEST_P(CopyImageTestES31, CrossFormatLayeredCopy2DArrayTo3D)
+{
+    testCrossFormatLayeredCopy(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_3D);
+}
+
+// Verify a multi-layer copy from a 3D texture to a 2D array texture of a different format.
+TEST_P(CopyImageTestES31, CrossFormatLayeredCopy3DTo2DArray)
+{
+    testCrossFormatLayeredCopy(GL_TEXTURE_3D, GL_TEXTURE_2D_ARRAY);
+}
+
+// Verify a multi-slice copy between 3D textures of different formats.
+TEST_P(CopyImageTestES31, CrossFormatLayeredCopy3DTo3D)
+{
+    testCrossFormatLayeredCopy(GL_TEXTURE_3D, GL_TEXTURE_3D);
 }
 
 // Verify that copying between multisample renderbuffer work
@@ -26706,7 +26825,8 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TextureTestES31);
 ANGLE_INSTANTIATE_TEST_ES31(TextureTestES31);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyImageTestES31);
-ANGLE_INSTANTIATE_TEST_ES31(CopyImageTestES31);
+ANGLE_INSTANTIATE_TEST_ES31_AND(CopyImageTestES31,
+                                ES31_VULKAN().enable(Feature::SplitCrossFormatLayeredImageCopy));
 
 ANGLE_INSTANTIATE_TEST_ES3(TextureChangeStorageUploadTest);
 

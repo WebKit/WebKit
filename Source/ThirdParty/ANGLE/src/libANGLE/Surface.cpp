@@ -172,7 +172,7 @@ rx::FramebufferAttachmentObjectImpl *Surface::getAttachmentImpl() const
     return mImplementation;
 }
 
-Error Surface::destroyImpl(const Display *display)
+Error Surface::destroyImpl(const ThreadSafeDisplay *display)
 {
     if (mImplementation)
     {
@@ -206,7 +206,7 @@ void Surface::postSwap(const gl::Context *context, const rx::SurfaceSwapFeedback
     mIsDamageRegionSet = false;
 }
 
-Error Surface::initialize(const Display *display)
+Error Surface::initialize(const ThreadSafeDisplay *display)
 {
     GLenum overrideRenderTargetFormat = mState.config->renderTargetFormat;
 
@@ -299,7 +299,7 @@ Error Surface::unMakeCurrent(const gl::Context *context)
     return releaseRef(context->getDisplay());
 }
 
-Error Surface::releaseRef(const Display *display)
+Error Surface::releaseRef(const ThreadSafeDisplay *display)
 {
     ASSERT(mRefCount > 0);
     if (mRefCount.fetch_sub(1, std::memory_order_acq_rel) == 1)
@@ -312,7 +312,7 @@ Error Surface::releaseRef(const Display *display)
     return NoError();
 }
 
-Error Surface::onDestroy(const Display *display)
+Error Surface::onDestroy(const ThreadSafeDisplay *display)
 {
     ASSERT(mRefCount == 0);
     return destroyImpl(display);
@@ -410,7 +410,7 @@ void Surface::setRequestedSwapInterval(EGLint interval)
     mRequestedSwapInterval = interval;
 }
 
-void Surface::setSwapInterval(const Display *display, EGLint interval)
+void Surface::setSwapInterval(const ThreadSafeDisplay *display, EGLint interval)
 {
     mMutex.assertLocked();
     mImplementation->setSwapInterval(display, interval);
@@ -572,7 +572,9 @@ gl::Extents Surface::getSize() const
                : mImplementation->getSize();
 }
 
-egl::Error Surface::getUserSize(const egl::Display *display, EGLint *width, EGLint *height) const
+egl::Error Surface::getUserSize(const egl::ThreadSafeDisplay *display,
+                                EGLint *width,
+                                EGLint *height) const
 {
     ASSERT(width != nullptr || height != nullptr);
     mMutex.assertLocked();
@@ -958,7 +960,7 @@ EGLAttribKHR Surface::getBitmapPointer() const
     return static_cast<EGLAttribKHR>((intptr_t)mLockBufferPtr);
 }
 
-egl::Error Surface::getCompressionRate(const egl::Display *display,
+egl::Error Surface::getCompressionRate(const egl::ThreadSafeDisplay *display,
                                        const gl::Context *context,
                                        EGLint *rate)
 {
@@ -966,7 +968,8 @@ egl::Error Surface::getCompressionRate(const egl::Display *display,
     return mImplementation->getCompressionRate(display, context, rate);
 }
 
-egl::Error Surface::lockSurfaceKHR(const egl::Display *display, const AttributeMap &attributes)
+egl::Error Surface::lockSurfaceKHR(const egl::ThreadSafeDisplay *display,
+                                   const AttributeMap &attributes)
 {
     mMutex.assertLocked();
     EGLint lockBufferUsageHint = attributes.getAsInt(
@@ -979,7 +982,7 @@ egl::Error Surface::lockSurfaceKHR(const egl::Display *display, const AttributeM
                                         &mLockBufferPtr, &mLockBufferPitch);
 }
 
-egl::Error Surface::unlockSurfaceKHR(const egl::Display *display)
+egl::Error Surface::unlockSurfaceKHR(const egl::ThreadSafeDisplay *display)
 {
     mMutex.assertLocked();
     mLockBufferPtr   = nullptr;
@@ -1046,13 +1049,29 @@ PixmapSurface::~PixmapSurface() {}
 
 // SurfaceDeleter implementation.
 
-SurfaceDeleter::SurfaceDeleter(const Display *display) : mDisplay(display) {}
+SurfaceDeleter::SurfaceDeleter(const ThreadSafeDisplay *display) : mDisplay(display) {}
 
 SurfaceDeleter::~SurfaceDeleter() {}
 
 void SurfaceDeleter::operator()(Surface *surface)
 {
     ANGLE_SWALLOW_ERR(surface->onDestroy(mDisplay));
+}
+
+// SurfaceMap implementation.
+
+Error SurfaceMap::destroyAllInvalidSurfaces(ThreadSafeDisplay *display)
+{
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
+    while (!mInvalidSurfaces.empty())
+    {
+        Surface *surface = mInvalidSurfaces.back();
+        mInvalidSurfaces.pop_back();
+        mHandleAllocator.release(surface->id().value);
+        ANGLE_TRY(display->destroySurfaceImpl(surface));
+    }
+
+    return NoError();
 }
 
 }  // namespace egl

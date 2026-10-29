@@ -893,6 +893,7 @@ angle::Result ContextWgpu::syncState(const gl::Context *context,
                 break;
             case gl::state::DIRTY_BIT_PROGRAM_BINDING:
             case gl::state::DIRTY_BIT_PROGRAM_EXECUTABLE:
+                updatePipelineColorMasks();
                 invalidateCurrentRenderPipeline();
                 iter.setLaterBit(gl::state::DIRTY_BIT_TEXTURE_BINDINGS);
                 break;
@@ -986,27 +987,25 @@ angle::Result ContextWgpu::syncState(const gl::Context *context,
 
 void ContextWgpu::updatePipelineColorMasks()
 {
-
     FramebufferWgpu *framebufferWgpu      = webgpu::GetImpl(mState.getDrawFramebuffer());
     gl::DrawBufferMask enabledDrawBuffers = framebufferWgpu->getState().getEnabledDrawBuffers();
+
+    const gl::ProgramExecutable *executable = mState.getProgramExecutable();
+    if (executable)
+    {
+        enabledDrawBuffers &= executable->getActiveOutputVariablesMask();
+    }
 
     bool changed = false;
 
     const gl::BlendStateExt &blendStateExt = mState.getBlendStateExt();
     for (size_t i = 0; i < blendStateExt.getDrawBufferCount(); i++)
     {
-        bool r, g, b, a;
+        // Disabled/inactive draw buffers have their color mask set to 0.
+        bool r = 0, g = 0, b = 0, a = 0;
         if (enabledDrawBuffers.test(i))
         {
             blendStateExt.getColorMaskIndexed(i, &r, &g, &b, &a);
-        }
-        else
-        {
-            // Disabled draw buffers just have their color mask set to 0.
-            r = 0;
-            g = 0;
-            b = 0;
-            a = 0;
         }
         changed = mRenderPipelineDesc.setColorWriteMask(i, r, g, b, a) || changed;
     }

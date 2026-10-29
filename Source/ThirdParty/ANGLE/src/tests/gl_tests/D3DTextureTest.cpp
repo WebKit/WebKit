@@ -1793,6 +1793,262 @@ class D3DTextureYUVTestES3 : public D3DTextureTest
         eglDestroyImageKHR(display, uvImage);
     }
 
+    void RunPackedYUVSamplerTest(DXGI_FORMAT format)
+    {
+        ASSERT(format == DXGI_FORMAT_Y410 || format == DXGI_FORMAT_Y210);
+        UINT formatSupport;
+        ANGLE_SKIP_TEST_IF(!valid() || !IsD3D11() ||
+                           FAILED(mD3D11Device->CheckFormatSupport(format, &formatSupport)));
+        // Skip rather than assert when either flag is missing.
+        ANGLE_SKIP_TEST_IF((formatSupport & (D3D11_FORMAT_SUPPORT_TEXTURE2D |
+                                             D3D11_FORMAT_SUPPORT_SHADER_SAMPLE)) !=
+                           (D3D11_FORMAT_SUPPORT_TEXTURE2D | D3D11_FORMAT_SUPPORT_SHADER_SAMPLE));
+
+        const bool isY410           = (format == DXGI_FORMAT_Y410);
+        const GLenum internalFormat = isY410 ? GL_RGB10_A2 : GL_RGBA16_EXT;
+
+        // 10-bit values are MSB-aligned. The aliased RGBA16 view maps a word
+        // pair to R=Y0, G=U, B=Y1, A=V.
+        const uint32_t kY410U = 0x234;
+        const uint32_t kY410Y = 0x123;
+        const uint32_t kY410V = 0x345;
+        const uint32_t kY410A = 3;
+        const uint32_t kY0    = 0x1234;
+        const uint32_t kY1    = 0x5678;
+        const uint32_t kU     = 0x2345;
+        const uint32_t kV     = 0x3456;
+
+        EGLWindow *window  = getEGLWindow();
+        EGLDisplay display = window->getDisplay();
+
+        window->makeCurrent();
+
+        const UINT bufferSize = 32;
+        EXPECT_TRUE(mD3D11Device != nullptr);
+        Microsoft::WRL::ComPtr<ID3D11Texture2D> d3d11Texture;
+        CD3D11_TEXTURE2D_DESC desc(format, bufferSize, bufferSize, 1, 1,
+                                   D3D11_BIND_SHADER_RESOURCE);
+
+        std::vector<uint32_t> imageData(bufferSize * bufferSize);
+        for (UINT y = 0; y < bufferSize; ++y)
+        {
+            for (UINT x = 0; x < bufferSize; ++x)
+            {
+                imageData[y * bufferSize + x] =
+                    isY410 ? kY410U | (kY410Y << 10) | (kY410V << 20) | (kY410A << 30)
+                           : (x % 2 == 0 ? kY0 : kY1) | ((x % 2 == 0 ? kU : kV) << 16);
+            }
+        }
+
+        D3D11_SUBRESOURCE_DATA data = {};
+        data.pSysMem                = static_cast<const void *>(imageData.data());
+        data.SysMemPitch            = bufferSize * 4;
+
+        EXPECT_TRUE(SUCCEEDED(mD3D11Device->CreateTexture2D(&desc, &data, &d3d11Texture)));
+
+        // Some devices report SHADER_SAMPLE but reject the aliased view; skip
+        // in that case.
+        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
+        D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+        srvDesc.Format = isY410 ? DXGI_FORMAT_R10G10B10A2_UNORM : DXGI_FORMAT_R16G16B16A16_UNORM;
+        srvDesc.ViewDimension       = D3D11_SRV_DIMENSION_TEXTURE2D;
+        srvDesc.Texture2D.MipLevels = 1;
+        ANGLE_SKIP_TEST_IF(
+            FAILED(mD3D11Device->CreateShaderResourceView(d3d11Texture.Get(), &srvDesc, &srv)));
+
+        // The internal format is derived from the DXGI format, so create the
+        // sampled image without the attribute.
+        EGLImage image =
+            eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
+                              static_cast<EGLClientBuffer>(d3d11Texture.Get()), nullptr);
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(image, EGL_NO_IMAGE_KHR);
+
+        // Specifying the matching internal format must also succeed.
+        {
+            const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE,
+                                      static_cast<EGLint>(internalFormat), EGL_NONE};
+            EGLImage imageWithAttrib =
+                eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
+                                  static_cast<EGLClientBuffer>(d3d11Texture.Get()), attribs);
+            ASSERT_EGL_SUCCESS();
+            ASSERT_NE(imageWithAttrib, EGL_NO_IMAGE_KHR);
+            eglDestroyImageKHR(display, imageWithAttrib);
+        }
+
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+        ASSERT_GL_NO_ERROR();
+
+        GLRenderbuffer rbo;
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA16_EXT, bufferSize, bufferSize);
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+        EXPECT_EQ(glCheckFramebufferStatus(GL_FRAMEBUFFER),
+                  static_cast<unsigned>(GL_FRAMEBUFFER_COMPLETE));
+        ASSERT_GL_NO_ERROR();
+
+        glUseProgram(mTextureProgram);
+        glUniform1i(mTextureUniformLocation, 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        ASSERT_GL_NO_ERROR();
+
+        glViewport(0, 0, bufferSize, bufferSize);
+        drawQuad(mTextureProgram, "position", 1.0f);
+        ASSERT_GL_NO_ERROR();
+
+        const GLint halfSize = static_cast<GLint>(bufferSize) / 2;
+
+        if (isY410)
+        {
+            // Sampled through the R10G10B10A2 alias: R=U, G=Y, B=V, A=A.
+            EXPECT_PIXEL_16_NEAR(halfSize, halfSize, kY410U << 6, kY410Y << 6, kY410V << 6, 0xffff,
+                                 128);
+        }
+        else
+        {
+            // Sampled through the RGBA16 alias: each texel covers a word pair,
+            // R=Y0, G=U, B=Y1, A=V.
+            EXPECT_PIXEL_16_NEAR(0, halfSize, kY0, kU, kY1, kV, 0);
+            EXPECT_PIXEL_16_NEAR(1, halfSize, kY0, kU, kY1, kV, 0);
+        }
+        ASSERT_GL_NO_ERROR();
+
+        eglDestroyImageKHR(display, image);
+    }
+
+    void RunPackedYUVInvalidAttribTest(DXGI_FORMAT format)
+    {
+        ASSERT(format == DXGI_FORMAT_Y410 || format == DXGI_FORMAT_Y210);
+        UINT formatSupport;
+        ANGLE_SKIP_TEST_IF(!valid() || !IsD3D11() ||
+                           FAILED(mD3D11Device->CheckFormatSupport(format, &formatSupport)));
+        ANGLE_SKIP_TEST_IF(!(formatSupport & D3D11_FORMAT_SUPPORT_TEXTURE2D));
+
+        EGLWindow *window  = getEGLWindow();
+        EGLDisplay display = window->getDisplay();
+
+        window->makeCurrent();
+
+        const UINT bufferSize = 32;
+        EXPECT_TRUE(mD3D11Device != nullptr);
+        Microsoft::WRL::ComPtr<ID3D11Texture2D> d3d11Texture;
+        CD3D11_TEXTURE2D_DESC desc(format, bufferSize, bufferSize, 1, 1,
+                                   D3D11_BIND_SHADER_RESOURCE);
+        EXPECT_TRUE(SUCCEEDED(mD3D11Device->CreateTexture2D(&desc, nullptr, &d3d11Texture)));
+
+        // Packed YUV has no planes; the plane attribute must be rejected.
+        {
+            const EGLint attribs[] = {EGL_D3D11_TEXTURE_PLANE_ANGLE, 0, EGL_NONE};
+            EGLImage image =
+                eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
+                                  static_cast<EGLClientBuffer>(d3d11Texture.Get()), attribs);
+            EXPECT_EQ(image, EGL_NO_IMAGE_KHR);
+            EXPECT_EGL_ERROR(EGL_BAD_PARAMETER);
+        }
+
+        // Packed YUV is sample-only and cannot back pbuffers.
+        {
+            EGLSurface surface = eglCreatePbufferFromClientBuffer(
+                display, EGL_D3D_TEXTURE_ANGLE, static_cast<EGLClientBuffer>(d3d11Texture.Get()),
+                window->getConfig(), nullptr);
+            EXPECT_EQ(surface, EGL_NO_SURFACE);
+            EXPECT_EGL_ERROR(EGL_BAD_PARAMETER);
+        }
+
+        // The internal format must match the packed format's bit layout.
+        {
+            const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_RGBA, EGL_NONE};
+            EGLImage image =
+                eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
+                                  static_cast<EGLClientBuffer>(d3d11Texture.Get()), attribs);
+            EXPECT_EQ(image, EGL_NO_IMAGE_KHR);
+            EXPECT_EGL_ERROR(EGL_BAD_PARAMETER);
+        }
+
+        // The other packed format's internal format must also be rejected.
+        {
+            const GLenum otherPackedFormat =
+                (format == DXGI_FORMAT_Y410) ? GL_RGBA16_EXT : GL_RGB10_A2;
+            const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE,
+                                      static_cast<EGLint>(otherPackedFormat), EGL_NONE};
+            EGLImage image =
+                eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
+                                  static_cast<EGLClientBuffer>(d3d11Texture.Get()), attribs);
+            EXPECT_EQ(image, EGL_NO_IMAGE_KHR);
+            EXPECT_EGL_ERROR(EGL_BAD_PARAMETER);
+        }
+    }
+
+    void RunPackedYUVNotRenderableTest(DXGI_FORMAT format)
+    {
+        ASSERT(format == DXGI_FORMAT_Y410 || format == DXGI_FORMAT_Y210);
+        UINT formatSupport;
+        ANGLE_SKIP_TEST_IF(!valid() || !IsD3D11() ||
+                           FAILED(mD3D11Device->CheckFormatSupport(format, &formatSupport)));
+        ANGLE_SKIP_TEST_IF(!(formatSupport & D3D11_FORMAT_SUPPORT_TEXTURE2D));
+
+        EGLWindow *window  = getEGLWindow();
+        EGLDisplay display = window->getDisplay();
+
+        window->makeCurrent();
+
+        const UINT bufferSize = 32;
+        EXPECT_TRUE(mD3D11Device != nullptr);
+        Microsoft::WRL::ComPtr<ID3D11Texture2D> d3d11Texture;
+        CD3D11_TEXTURE2D_DESC desc(format, bufferSize, bufferSize, 1, 1,
+                                   D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET);
+        // Some devices reject render-target bind flags for packed YUV; the
+        // renderability check is only observable where creation succeeds.
+        ANGLE_SKIP_TEST_IF(FAILED(mD3D11Device->CreateTexture2D(&desc, nullptr, &d3d11Texture)));
+
+        const bool isY410           = (format == DXGI_FORMAT_Y410);
+        const GLenum internalFormat = isY410 ? GL_RGB10_A2 : GL_RGBA16_EXT;
+
+        // Image binding allocates the aliased SRV; apply the same gate.
+        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
+        D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+        srvDesc.Format = isY410 ? DXGI_FORMAT_R10G10B10A2_UNORM : DXGI_FORMAT_R16G16B16A16_UNORM;
+        srvDesc.ViewDimension       = D3D11_SRV_DIMENSION_TEXTURE2D;
+        srvDesc.Texture2D.MipLevels = 1;
+        ANGLE_SKIP_TEST_IF(
+            FAILED(mD3D11Device->CreateShaderResourceView(d3d11Texture.Get(), &srvDesc, &srv)));
+        const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE,
+                                  static_cast<EGLint>(internalFormat), EGL_NONE};
+        EGLImage image =
+            eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
+                              static_cast<EGLClientBuffer>(d3d11Texture.Get()), attribs);
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(image, EGL_NO_IMAGE_KHR);
+
+        // No renderable view: the image must not be framebuffer-attachable.
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        EXPECT_EQ(glCheckFramebufferStatus(GL_FRAMEBUFFER),
+                  static_cast<unsigned>(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT));
+        ASSERT_GL_NO_ERROR();
+
+        eglDestroyImageKHR(display, image);
+    }
+
     void RunYUVRenderTest(DXGI_FORMAT format)
     {
         ASSERT(format == DXGI_FORMAT_NV12 || format == DXGI_FORMAT_P010 ||
@@ -2415,6 +2671,48 @@ TEST_P(D3DTextureYUVTestES3, P010TextureImageWritePixel)
 TEST_P(D3DTextureYUVTestES3, P016TextureImageWritePixel)
 {
     RunYUVWritePixelTest<uint16_t>(DXGI_FORMAT_P016);
+}
+
+// Test that a Y410 D3D11 texture can be imported as an EGLImage and sampled
+// through the GL_RGB10_A2 alias.
+TEST_P(D3DTextureYUVTestES3, Y410TextureImageSampler)
+{
+    RunPackedYUVSamplerTest(DXGI_FORMAT_Y410);
+}
+
+// Test that a Y210 D3D11 texture can be imported as an EGLImage and sampled
+// through the GL_RGBA16_EXT alias.
+TEST_P(D3DTextureYUVTestES3, Y210TextureImageSampler)
+{
+    RunPackedYUVSamplerTest(DXGI_FORMAT_Y210);
+}
+
+// Test that a Y410 D3D11 texture rejects the plane attribute and mismatched
+// internal formats.
+TEST_P(D3DTextureYUVTestES3, Y410TextureImageInvalidAttribs)
+{
+    RunPackedYUVInvalidAttribTest(DXGI_FORMAT_Y410);
+}
+
+// Test that a Y210 D3D11 texture rejects the plane attribute and mismatched
+// internal formats.
+TEST_P(D3DTextureYUVTestES3, Y210TextureImageInvalidAttribs)
+{
+    RunPackedYUVInvalidAttribTest(DXGI_FORMAT_Y210);
+}
+
+// Test that packed YUV textures are not framebuffer-attachable even when the
+// D3D texture claims render-target usage.
+TEST_P(D3DTextureYUVTestES3, Y410TextureImageNotRenderable)
+{
+    RunPackedYUVNotRenderableTest(DXGI_FORMAT_Y410);
+}
+
+// Test that packed YUV textures are not framebuffer-attachable even when the
+// D3D texture claims render-target usage.
+TEST_P(D3DTextureYUVTestES3, Y210TextureImageNotRenderable)
+{
+    RunPackedYUVNotRenderableTest(DXGI_FORMAT_Y210);
 }
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these

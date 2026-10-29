@@ -38,7 +38,7 @@ class ShareGroupVk : public ShareGroupImpl
 {
   public:
     ShareGroupVk(const egl::ShareGroupState &state, vk::Renderer *renderer);
-    void onDestroy(const egl::Display *display) override;
+    void onDestroy(const egl::ThreadSafeDisplay *display) override;
 
     void onContextAdd() override;
 

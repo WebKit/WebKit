@@ -695,7 +695,6 @@ inline constexpr const char *kUniformBufferUnbound = "It is undefined behaviour 
 inline constexpr const char *kUniformNameNull = "Uniform name is null.";
 inline constexpr const char *kUniformSizeMismatch = "Uniform size does not match uniform method.";
 inline constexpr const char *kUniformTypeMismatch = "Uniform type does not match uniform method.";
-inline constexpr const char *kUnimplementedComputeShaderPrecision = "Compute shader precision not yet implemented.";
 inline constexpr const char *kUnimplementedPaletteLevels = "Multi-level paletted textures are not implemented.";
 inline constexpr const char *kUnknownParameter = "Unknown parameter value.";
 inline constexpr const char *kUnsizedInternalFormatUnsupported = "Internalformat is one of the unsupported unsized base internalformats.";

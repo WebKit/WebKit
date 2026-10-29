@@ -7,7 +7,11 @@ use crate::*;
 
 pub fn generate(ir: &mut IR, options: &compile::Options) {
     if options.ensure_loop_forward_progress {
-        transform::msl::ensure_loop_forward_progress::run(ir);
+        let transform_options = transform::ensure_loop_forward_progress::Options {
+            // MSL supports BuiltInOpCode::LoopForwardProgress
+            supports_loop_forward_progress_built_in: true,
+        };
+        transform::run!(ensure_loop_forward_progress, ir, &transform_options);
     }
 
     {

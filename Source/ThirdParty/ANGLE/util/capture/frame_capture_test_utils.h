@@ -112,7 +112,6 @@ class TraceLibrary : angle::NonCopyable, angle::TraceCallbacks
         return typedFunc(args...);
     }
 
-    FrameCaptureBinaryData *ConfigureBinaryDataLoader(const char *fileName) override;
     uint8_t *LoadBinaryData(const char *fileName) override;
 
     std::unique_ptr<Library> mTraceLibrary;

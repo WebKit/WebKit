@@ -10,6 +10,9 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_DISPLAYVK_H_
 #define LIBANGLE_RENDERER_VULKAN_DISPLAYVK_H_
 
+#include <thread>
+#include <unordered_map>
+
 #include "common/MemoryBuffer.h"
 #include "libANGLE/renderer/DisplayImpl.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
@@ -20,11 +23,17 @@ namespace rx
 class ThreadSafeDisplayVk : public ThreadSafeDisplayImpl, public vk::ErrorContext
 {
   public:
-    ThreadSafeDisplayVk(vk::Renderer *renderer) : vk::ErrorContext(renderer) {}
+    ThreadSafeDisplayVk(vk::Renderer *renderer)
+        : vk::ErrorContext(renderer), mSupportedColorspaceFormatsMap{}
+    {}
     ~ThreadSafeDisplayVk() override = default;
 
     bool testDeviceLost() override;
     egl::Error restoreLostDevice(const egl::ThreadSafeDisplay *display) override;
+
+    egl::Error makeCurrent(egl::Surface *drawSurface,
+                           egl::Surface *readSurface,
+                           gl::Context *context) override;
 
     EGLSyncImpl *createSync() override;
 
@@ -32,6 +41,21 @@ class ThreadSafeDisplayVk : public ThreadSafeDisplayImpl, public vk::ErrorContex
                      const char *file,
                      const char *function,
                      unsigned int line) override;
+
+    bool isConfigFormatSupported(VkFormat format) const;
+    bool isSurfaceFormatColorspacePairSupported(VkSurfaceKHR surface,
+                                                VkFormat format,
+                                                VkColorSpaceKHR colorspace) const;
+
+  protected:
+    bool isColorspaceSupported(VkColorSpaceKHR colorspace) const;
+    void initSupportedSurfaceFormatColorspaces();
+
+  private:
+    // Map of supported colorspace and associated surface format set. This is thread-safe because
+    // it's populated once during initialization under the display lock and is only ever queried
+    // afterwards.
+    angle::HashMap<VkColorSpaceKHR, std::unordered_set<VkFormat>> mSupportedColorspaceFormatsMap;
 };
 
 class DisplayVk : public DisplayImpl, public vk::GlobalOps, public ThreadSafeDisplayVk
@@ -42,11 +66,6 @@ class DisplayVk : public DisplayImpl, public vk::GlobalOps, public ThreadSafeDis
 
     egl::Error initialize(egl::Display *display) override;
     void terminate() override;
-
-    egl::Error makeCurrent(egl::Display *display,
-                           egl::Surface *drawSurface,
-                           egl::Surface *readSurface,
-                           gl::Context *context) override;
 
     std::string getRendererDescription() override;
     std::string getVendorString() override;
@@ -114,11 +133,6 @@ class DisplayVk : public DisplayImpl, public vk::GlobalOps, public ThreadSafeDis
 
     ShareGroupImpl *createShareGroup(const egl::ShareGroupState &state) override;
 
-    bool isConfigFormatSupported(VkFormat format) const;
-    bool isSurfaceFormatColorspacePairSupported(VkSurfaceKHR surface,
-                                                VkFormat format,
-                                                VkColorSpaceKHR colorspace) const;
-
     void lockVulkanQueue() override;
     void unlockVulkanQueue() override;
 
@@ -140,9 +154,6 @@ class DisplayVk : public DisplayImpl, public vk::GlobalOps, public ThreadSafeDis
 
     virtual angle::Result waitNativeImpl();
 
-    bool isColorspaceSupported(VkColorSpaceKHR colorspace) const;
-    void initSupportedSurfaceFormatColorspaces();
-
     // vk::GlobalOps
     void putBlob(const angle::BlobCacheKey &key, const angle::MemoryBuffer &value) override;
     bool getBlob(const angle::BlobCacheKey &key, angle::BlobCacheValue *valueOut) override;
@@ -153,8 +164,11 @@ class DisplayVk : public DisplayImpl, public vk::GlobalOps, public ThreadSafeDis
 
     angle::ScratchBuffer mScratchBuffer;
 
-    // Map of supported colorspace and associated surface format set.
-    angle::HashMap<VkColorSpaceKHR, std::unordered_set<VkFormat>> mSupportedColorspaceFormatsMap;
+    // Scratch storage for getBlob(), one buffer per calling thread to support concurrent getBlob()
+    // calls.  std::unordered_map is used instead of angle::HashMap because references to map values
+    // should remain valid after modification.  The lock thus only protects the map itself.
+    angle::SimpleMutex mBlobScratchBuffersMutex;
+    std::unordered_map<std::thread::id, angle::ScratchBuffer> mBlobScratchBuffers;
 };
 
 }  // namespace rx

@@ -8175,8 +8175,19 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             if (isCaptureActive() && existingBinding != textureIDToImageTable.end() &&
                 existingBinding->second != imageID)
             {
-                mResourceTracker.getExternalImageBindingsToRestore()[context->id()].insert(
-                    textureID);
+                const ResourceSet &startingTextures =
+                    mResourceTracker.getTrackedResource(context->id(), ResourceIDType::Texture)
+                        .getStartingResources();
+                const ResourceSet &startingImages =
+                    mResourceTracker.getTrackedResource(context->id(), ResourceIDType::Image)
+                        .getStartingResources();
+                // Only restore bindings between a starting texture and starting image
+                if (startingTextures.count(textureID) > 0 &&
+                    startingImages.count(existingBinding->second.value) > 0)
+                {
+                    mResourceTracker.getExternalImageBindingsToRestore()[context->id()].insert(
+                        textureID);
+                }
             }
             textureIDToImageTable.insert(std::pair<GLuint, egl::ImageID>(textureID, imageID));
             break;
@@ -9077,7 +9088,7 @@ void FrameCaptureShared::runMidExecutionCapture(gl::Context *mainContext)
             // reference. Otherwise surface's isCurrentOnAnyContext() stays true and the app's other
             // thread gets EGL_BAD_ACCESS "Surface can only be current on one thread" when trying to
             // get the surface on capture start, leading to lost context/bad glBindFramebuffer calls
-            egl::Error unmakeError = shareContext->unMakeCurrent(display);
+            egl::Error unmakeError = shareContext->unMakeCurrent();
             if (unmakeError.isError())
             {
                 INFO() << "MEC unMakeCurrent failed on secondary context "

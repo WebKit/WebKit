@@ -59,18 +59,6 @@ class VulkanMemoryTest : public ANGLETest<>
 
     bool compatibleMemorySizesForDeviceOOMTest(VkPhysicalDevice physicalDevice,
                                                VkDeviceSize *totalDeviceMemorySizeOut);
-
-    angle::VulkanPerfCounters getPerfCounters()
-    {
-        if (mIndexMap.empty())
-        {
-            mIndexMap = BuildCounterNameToIndexMap();
-        }
-
-        return GetPerfCounters(mIndexMap);
-    }
-
-    CounterNameToIndexMap mIndexMap;
 };
 
 bool VulkanMemoryTest::compatibleMemorySizesForDeviceOOMTest(VkPhysicalDevice physicalDevice,

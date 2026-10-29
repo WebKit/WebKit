@@ -209,7 +209,7 @@ egl::Error D3DTextureSurfaceWGL::ValidateD3DTextureClientBuffer(EGLenum buftype,
                              nullptr, nullptr, nullptr);
 }
 
-egl::Error D3DTextureSurfaceWGL::initialize(const egl::Display *display)
+egl::Error D3DTextureSurfaceWGL::initialize(const egl::ThreadSafeDisplay *display)
 {
     angle::ComPtr<IUnknown> device;
     ANGLE_TRY(GetD3DTextureInfo(mBuftype, mClientBuffer, mDisplayD3D11Device, mDisplayD3D11Device1,
@@ -376,7 +376,7 @@ egl::Error D3DTextureSurfaceWGL::releaseTexImage(const gl::Context *context, EGL
     return egl::NoError();
 }
 
-void D3DTextureSurfaceWGL::setSwapInterval(const egl::Display *display, EGLint interval)
+void D3DTextureSurfaceWGL::setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval)
 {
     UNIMPLEMENTED();
 }

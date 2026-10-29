@@ -32,7 +32,7 @@ class IOSurfaceSurfaceVkMac : public OffscreenSurfaceVk
                           vk::Renderer *renderer);
     ~IOSurfaceSurfaceVkMac() override;
 
-    egl::Error initialize(const egl::Display *display) override;
+    egl::Error initialize(const egl::ThreadSafeDisplay *display) override;
 
     egl::Error unMakeCurrent(const gl::Context *context) override;
 
@@ -46,7 +46,7 @@ class IOSurfaceSurfaceVkMac : public OffscreenSurfaceVk
                                    const egl::AttributeMap &attribs);
 
   protected:
-    angle::Result initializeImpl(DisplayVk *displayVk) override;
+    angle::Result initializeImpl(ThreadSafeDisplayVk *displayVk) override;
 
   private:
     int computeAlignment() const;

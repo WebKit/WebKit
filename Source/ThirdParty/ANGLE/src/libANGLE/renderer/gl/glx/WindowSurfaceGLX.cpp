@@ -62,7 +62,7 @@ WindowSurfaceGLX::~WindowSurfaceGLX()
     mGLXDisplay->syncXCommands(true);
 }
 
-egl::Error WindowSurfaceGLX::initialize(const egl::Display *display)
+egl::Error WindowSurfaceGLX::initialize(const egl::ThreadSafeDisplay *display)
 {
     mUseChildWindow = !mGLXDisplay->isWindowVisualIdSpecified();
 
@@ -200,7 +200,7 @@ egl::Error WindowSurfaceGLX::releaseTexImage(const gl::Context *context, EGLint 
     return egl::NoError();
 }
 
-void WindowSurfaceGLX::setSwapInterval(const egl::Display *display, EGLint interval)
+void WindowSurfaceGLX::setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval)
 {
     mSwapControl.targetSwapInterval = interval;
 }

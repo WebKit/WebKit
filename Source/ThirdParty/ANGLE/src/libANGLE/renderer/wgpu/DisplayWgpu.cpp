@@ -15,6 +15,7 @@
 #include "common/platform.h"
 
 #include "libANGLE/Display.h"
+#include "libANGLE/LoggingAnnotator.h"
 #include "libANGLE/renderer/wgpu/ContextWgpu.h"
 #include "libANGLE/renderer/wgpu/DeviceWgpu.h"
 #include "libANGLE/renderer/wgpu/DisplayWgpu_api.h"
@@ -133,14 +134,13 @@ void DisplayWgpu::terminate()
     mQueue    = nullptr;
 }
 
-egl::Error DisplayWgpu::makeCurrent(egl::Display *display,
-                                    egl::Surface *drawSurface,
-                                    egl::Surface *readSurface,
-                                    gl::Context *context)
+egl::Error ThreadSafeDisplayWgpu::makeCurrent(egl::Surface *drawSurface,
+                                              egl::Surface *readSurface,
+                                              gl::Context *context)
 {
     // Ensure that the correct global DebugAnnotator is installed when the end2end tests change
     // the ANGLE back-end (done frequently).
-    display->setGlobalDebugAnnotator();
+    angle::SetGlobalDebugAnnotator();
 
     return egl::NoError();
 }

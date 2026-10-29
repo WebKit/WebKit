@@ -7599,6 +7599,70 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that redefining a vertex attribute buffer as a large buffer without initial data does not
+// result in underflow or crash.
+TEST_P(VertexAttributeTestES3, RedefineAttributeBufferAsLargeNoData)
+{
+    constexpr char kVS[] = R"(#version 300 es
+layout(location=0) in vec2 posIn;
+void main()
+{
+    gl_Position = vec4(posIn, 0.0, 1.0);
+    gl_PointSize = 1.0;
+})";
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 outColor;
+void main()
+{
+    outColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    glViewport(0, 0, 1, 1);
+
+    // Use an RGBA framebuffer for the draw.
+    GLTexture fboTexture;
+    glBindTexture(GL_TEXTURE_2D, fboTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTexture, 0);
+    glViewport(0, 0, 1, 1);
+    glDisable(GL_DEPTH_TEST);
+
+    // Define small buffer for vertex attribute.
+    constexpr size_t kSmallSize = 256;
+    std::vector<uint32_t> initData(kSmallSize, 0);
+    GLBuffer buf;
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+    glBufferData(GL_ARRAY_BUFFER, initData.size() * sizeof(GLuint), initData.data(),
+                 GL_STATIC_DRAW);
+
+    // glVertexAttribPointer() would convert integer values to float for the shader.
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_UNSIGNED_INT, GL_FALSE, 0, nullptr);
+
+    glDrawArrays(GL_POINTS, 0, 1);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Clear the framebuffer for the next draw.
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Expand the buffer with no input data, and redraw with a new large offset.
+    constexpr size_t kLargeSize = 16 * 1024 * 1024;
+    glBufferData(GL_ARRAY_BUFFER, kLargeSize, nullptr, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_UNSIGNED_INT, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(kLargeSize / 2));
+
+    glDrawArrays(GL_POINTS, 0, 1);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
 class VertexAttributeTestES31_Basic : public ANGLETest<>
 {
   protected:

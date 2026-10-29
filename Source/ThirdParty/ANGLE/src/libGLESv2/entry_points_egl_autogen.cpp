@@ -80,9 +80,9 @@ EGLBoolean EGLAPIENTRY EGL_CopyBuffers(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(CopyBuffers,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", target = 0x%016" PRIxPTR
@@ -105,7 +105,7 @@ EGLBoolean EGLAPIENTRY EGL_CopyBuffers(EGLDisplay dpy,
             {
             }
 
-            returnValue = CopyBuffers(thread, dpyPacked, surfacePackedObject, target);
+            returnValue = CopyBuffers(thread, validDisplay, surfacePackedObject, target);
         }
 
         ANGLE_CAPTURE_EGL(CopyBuffers, true, thread, dpyPacked, surfacePacked, target, returnValue);
@@ -342,9 +342,9 @@ EGLBoolean EGLAPIENTRY EGL_DestroySurface(EGLDisplay dpy, EGLSurface surface)
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked                    = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayLockAndRef dpyPackedLock = GetDisplayAndLockIfValid(dpyPacked);
-        const egl::Display *validDisplay           = dpyPackedLock.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(DestroySurface, "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR "",
                   (uintptr_t)dpy, (uintptr_t)surface);
@@ -368,12 +368,12 @@ EGLBoolean EGLAPIENTRY EGL_DestroySurface(EGLDisplay dpy, EGLSurface surface)
             {
             }
 
-            returnValue = DestroySurface(thread, dpyPacked, surfacePackedObject);
+            returnValue = DestroySurface(thread, validDisplay, surfacePackedObject);
         }
 
         ANGLE_CAPTURE_EGL(DestroySurface, true, thread, dpyPacked, surfacePacked, returnValue);
     }
-    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -638,9 +638,9 @@ EGLBoolean EGLAPIENTRY EGL_MakeCurrent(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked                    = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayLockAndRef dpyPackedLock = GetDisplayAndLockIfValid(dpyPacked);
-        const egl::Display *validDisplay           = dpyPackedLock.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(MakeCurrent,
                   "dpy = 0x%016" PRIxPTR ", draw = 0x%016" PRIxPTR ", read = 0x%016" PRIxPTR
@@ -672,13 +672,13 @@ EGLBoolean EGLAPIENTRY EGL_MakeCurrent(EGLDisplay dpy,
             }
 
             returnValue =
-                MakeCurrent(thread, dpyPacked, drawPackedObject, readPackedObject, ctxPacked);
+                MakeCurrent(thread, validDisplay, drawPackedObject, readPackedObject, ctxPacked);
         }
 
         ANGLE_CAPTURE_EGL(MakeCurrent, true, thread, dpyPacked, drawPacked, readPacked, ctxPacked,
                           returnValue);
     }
-    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -771,9 +771,9 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurface(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(QuerySurface,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
@@ -796,7 +796,7 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurface(EGLDisplay dpy,
             {
             }
 
-            returnValue = QuerySurface(thread, dpyPacked, surfacePackedObject, attribute, value);
+            returnValue = QuerySurface(thread, validDisplay, surfacePackedObject, attribute, value);
         }
 
         ANGLE_CAPTURE_EGL(QuerySurface, true, thread, dpyPacked, surfacePacked, attribute, value,
@@ -813,9 +813,9 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffers(EGLDisplay dpy, EGLSurface surface)
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(SwapBuffers, "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR "",
                   (uintptr_t)dpy, (uintptr_t)surface);
@@ -838,7 +838,7 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffers(EGLDisplay dpy, EGLSurface surface)
             {
             }
 
-            returnValue = SwapBuffers(thread, dpyPacked, surfacePackedObject);
+            returnValue = SwapBuffers(thread, validDisplay, surfacePackedObject);
         }
 
         ANGLE_CAPTURE_EGL(SwapBuffers, true, thread, dpyPacked, surfacePacked, returnValue);
@@ -945,9 +945,9 @@ EGLBoolean EGLAPIENTRY EGL_BindTexImage(EGLDisplay dpy, EGLSurface surface, EGLi
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(BindTexImage, "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", buffer = %d",
                   (uintptr_t)dpy, (uintptr_t)surface, buffer);
@@ -968,7 +968,7 @@ EGLBoolean EGLAPIENTRY EGL_BindTexImage(EGLDisplay dpy, EGLSurface surface, EGLi
             {
             }
 
-            returnValue = BindTexImage(thread, dpyPacked, surfacePackedObject, buffer);
+            returnValue = BindTexImage(thread, validDisplay, surfacePackedObject, buffer);
         }
 
         ANGLE_CAPTURE_EGL(BindTexImage, true, thread, dpyPacked, surfacePacked, buffer,
@@ -985,9 +985,9 @@ EGLBoolean EGLAPIENTRY EGL_ReleaseTexImage(EGLDisplay dpy, EGLSurface surface, E
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(ReleaseTexImage,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", buffer = %d",
@@ -1009,7 +1009,7 @@ EGLBoolean EGLAPIENTRY EGL_ReleaseTexImage(EGLDisplay dpy, EGLSurface surface, E
             {
             }
 
-            returnValue = ReleaseTexImage(thread, dpyPacked, surfacePackedObject, buffer);
+            returnValue = ReleaseTexImage(thread, validDisplay, surfacePackedObject, buffer);
         }
 
         ANGLE_CAPTURE_EGL(ReleaseTexImage, true, thread, dpyPacked, surfacePacked, buffer,
@@ -1029,9 +1029,9 @@ EGLBoolean EGLAPIENTRY EGL_SurfaceAttrib(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     EGLBoolean returnValue;
     {
-        egl::Display *dpyPacked            = PackParam<egl::Display *>(dpy);
-        egl::ScopedDisplayRef dpyPackedRef = GetDisplayIfValid(dpyPacked);
-        const egl::Display *validDisplay   = dpyPackedRef.get();
+        egl::Display *dpyPacked                      = PackParam<egl::Display *>(dpy);
+        egl::ScopedThreadSafeDisplayRef dpyPackedRef = GetThreadSafeDisplayIfValid(dpyPacked);
+        egl::ThreadSafeDisplay *validDisplay         = dpyPackedRef.get();
 
         EGL_EVENT(SurfaceAttrib,
                   "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
@@ -1054,7 +1054,8 @@ EGLBoolean EGLAPIENTRY EGL_SurfaceAttrib(EGLDisplay dpy,
             {
             }
 
-            returnValue = SurfaceAttrib(thread, dpyPacked, surfacePackedObject, attribute, value);
+            returnValue =
+                SurfaceAttrib(thread, validDisplay, surfacePackedObject, attribute, value);
         }
 
         ANGLE_CAPTURE_EGL(SurfaceAttrib, true, thread, dpyPacked, surfacePacked, attribute, value,

@@ -98,6 +98,14 @@
             ]
         },
         {
+            "name": "ensure_loop_forward_progress",
+            "category": "Features",
+            "description": [
+                "Inject statements into loop bodies when needed to ensure infinite loops are not optimized out."
+            ],
+            "issue": "http://crbug.com/41486305"
+        },
+        {
             "name": "enable_program_binary_for_capture",
             "category": "Features",
             "description": [

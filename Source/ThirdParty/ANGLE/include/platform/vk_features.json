@@ -572,6 +572,15 @@
             "issue": "https://issuetracker.google.com/161903006"
         },
         {
+            "name": "split_cross_format_layered_image_copy",
+            "category": "Workarounds",
+            "description": [
+                "Issue one vkCmdCopyImage per layer for multi-layer copies between ",
+                "different formats, which some drivers copy incorrectly"
+            ],
+            "issue": "https://anglebug.com/573420557"
+        },
+        {
             "name": "supports_image_format_list",
             "category": "Features",
             "description": [
@@ -1031,6 +1040,14 @@
             "category": "Features",
             "description": [
                 "VkDevice supports VK_EXT_extended_dynamic_state2 extension"
+            ],
+            "issue": "http://anglebug.com/42264446"
+        },
+        {
+            "name": "supports_extended_dynamic_state3",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_extended_dynamic_state3 extension"
             ],
             "issue": "http://anglebug.com/42264446"
         },

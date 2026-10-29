@@ -20,7 +20,7 @@ SurfaceNULL::SurfaceNULL(const egl::SurfaceState &surfaceState) : SurfaceImpl(su
 
 SurfaceNULL::~SurfaceNULL() {}
 
-egl::Error SurfaceNULL::initialize(const egl::Display *display)
+egl::Error SurfaceNULL::initialize(const egl::ThreadSafeDisplay *display)
 {
     return egl::NoError();
 }
@@ -69,7 +69,7 @@ egl::Error SurfaceNULL::getMscRate(EGLint *numerator, EGLint *denominator)
     return egl::Error(EGL_BAD_ACCESS);
 }
 
-void SurfaceNULL::setSwapInterval(const egl::Display *display, EGLint interval) {}
+void SurfaceNULL::setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval) {}
 
 gl::Extents SurfaceNULL::getSize() const
 {

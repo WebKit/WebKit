@@ -13,7 +13,7 @@ namespace
 
 // To inspect current behavior, run the tests in following manner:
 // clang-format off
-// ANGLE_FEATURE_OVERRIDES_DISABLED=injectAsmStatementIntoLoopBodies GMD_STDOUT=1 ./out/Debug/angle_end2end_tests --gtest_also_run_disabled_tests --gtest_filter=TimeoutDrawTest.DISABLED_DynamicInfiniteLoop2VS/ES3_Metal
+// GMD_STDOUT=1 ./out/Debug/angle_end2end_tests --gtest_also_run_disabled_tests --gtest_filter=TimeoutDrawTest.DISABLED_DynamicInfiniteLoop2VS/ES3_Metal
 // GMD_STDOUT=1 ./out/Debug/angle_end2end_tests --gtest_also_run_disabled_tests --gtest_filter=TimeoutDrawTest.DISABLED_DynamicInfiniteLoop2VS/ES3_Metal_EnsureLoopForwardProgress
 // clang-format on
 
@@ -195,7 +195,5 @@ ANGLE_INSTANTIATE_TEST(
     TimeoutDrawTest,
     WithRobustness(ES2_METAL()),
     WithRobustness(ES3_METAL()),
-    WithRobustness(ES2_METAL().enable(Feature::InjectAsmStatementIntoLoopBodies)),
-    WithRobustness(ES3_METAL().enable(Feature::InjectAsmStatementIntoLoopBodies)),
     WithRobustness(ES2_METAL().enable(Feature::EnsureLoopForwardProgress)),
     WithRobustness(ES3_METAL().enable(Feature::EnsureLoopForwardProgress)));

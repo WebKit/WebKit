@@ -57,9 +57,13 @@ struct ValidationContext
 };
 
 // Object validation
-bool ValidateSurface(const ValidationContext *val, const Display *display, const Surface *surface);
+bool ValidateSurface(const ValidationContext *val,
+                     const ThreadSafeDisplay *display,
+                     const Surface *surface);
 bool ValidateConfig(const ValidationContext *val, const Display *display, const Config *config);
-bool ValidateContext(const ValidationContext *val, const Display *display, gl::ContextID contextID);
+bool ValidateContext(const ValidationContext *val,
+                     const ThreadSafeDisplay *display,
+                     gl::ContextID contextID);
 bool ValidateImage(const ValidationContext *val, const Display *display, ImageID imageID);
 bool ValidateDevice(const ValidationContext *val, const Device *device);
 bool ValidateSync(const ValidationContext *val, const ThreadSafeDisplay *display, const Sync *sync);
@@ -68,15 +72,15 @@ bool ValidateSync(const ValidationContext *val, const ThreadSafeDisplay *display
 const Thread *GetThreadIfValid(const Thread *thread);
 ScopedConstDisplayRef GetDisplayIfValid(const Display *display);
 ScopedDisplayRef GetDisplayIfValid(Display *display);
-ScopedThreadSafeDisplayRef GetThreadSafeDisplayIfValid(ThreadSafeDisplay *display);
+ScopedThreadSafeDisplayRef GetThreadSafeDisplayIfValid(Display *display);
 ScopedConstDisplayLockAndRef GetDisplayAndLockIfValid(const Display *display);
 ScopedDisplayLockAndRef GetDisplayAndLockIfValid(Display *display);
-ScopedSurfaceRef GetSurfaceRefIfValid(const Display *display, SurfaceID surfaceID);
-ScopedSurfaceLockAndRef GetSurfaceIfValid(const Display *display, SurfaceID surfaceID);
+ScopedSurfaceRef GetSurfaceRefIfValid(const ThreadSafeDisplay *display, SurfaceID surfaceID);
+ScopedSurfaceLockAndRef GetSurfaceIfValid(const ThreadSafeDisplay *display, SurfaceID surfaceID);
 const Image *GetImageIfValid(const Display *display, ImageID imageID);
 const Stream *GetStreamIfValid(const Display *display, const Stream *stream);
-const gl::Context *GetContextIfValid(const Display *display, gl::ContextID contextID);
-gl::Context *GetContextIfValid(Display *display, gl::ContextID contextID);
+const gl::Context *GetContextIfValid(const ThreadSafeDisplay *display, gl::ContextID contextID);
+gl::Context *GetContextIfValid(ThreadSafeDisplay *display, gl::ContextID contextID);
 const Device *GetDeviceIfValid(const Device *device);
 ScopedSyncRef GetSyncIfValid(const ThreadSafeDisplay *display, SyncID sync);
 const LabeledObject *GetLabeledObjectIfValid(Thread *thread,

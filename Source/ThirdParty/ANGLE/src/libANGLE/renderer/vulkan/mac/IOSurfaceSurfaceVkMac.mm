@@ -95,14 +95,14 @@ IOSurfaceSurfaceVkMac::~IOSurfaceSurfaceVkMac()
     }
 }
 
-egl::Error IOSurfaceSurfaceVkMac::initialize(const egl::Display *display)
+egl::Error IOSurfaceSurfaceVkMac::initialize(const egl::ThreadSafeDisplay *display)
 {
-    DisplayVk *displayVk = vk::GetImpl(display);
-    angle::Result result = initializeImpl(displayVk);
+    ThreadSafeDisplayVk *displayVk = vk::GetImpl(display);
+    angle::Result result           = initializeImpl(displayVk);
     return angle::ToEGL(result, EGL_BAD_SURFACE);
 }
 
-angle::Result IOSurfaceSurfaceVkMac::initializeImpl(DisplayVk *displayVk)
+angle::Result IOSurfaceSurfaceVkMac::initializeImpl(ThreadSafeDisplayVk *displayVk)
 {
     vk::Renderer *renderer    = displayVk->getRenderer();
     const egl::Config *config = mState.config;

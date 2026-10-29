@@ -193,7 +193,8 @@ void BufferSuballocation::flush(Renderer *renderer)
         mappedRange.offset              = getOffset();
         mappedRange.size                = roundUp<VkDeviceSize>(mSize, nonCoherentAtomSize);
 
-        ASSERT(mappedRange.size <= mBufferBlock->getAllocatedBufferSize());
+        ASSERT(mappedRange.offset % nonCoherentAtomSize == 0);
+        ASSERT(mappedRange.offset + mappedRange.size <= mBufferBlock->getAllocatedBufferSize());
         mBufferBlock->getDeviceMemory().flush(renderer->getDevice(), mappedRange);
     }
 }
@@ -211,7 +212,8 @@ void BufferSuballocation::invalidate(Renderer *renderer)
         mappedRange.offset              = getOffset();
         mappedRange.size                = roundUp<VkDeviceSize>(mSize, nonCoherentAtomSize);
 
-        ASSERT(mappedRange.size <= mBufferBlock->getAllocatedBufferSize());
+        ASSERT(mappedRange.offset % nonCoherentAtomSize == 0);
+        ASSERT(mappedRange.offset + mappedRange.size <= mBufferBlock->getAllocatedBufferSize());
         mBufferBlock->getDeviceMemory().invalidate(renderer->getDevice(), mappedRange);
     }
 }

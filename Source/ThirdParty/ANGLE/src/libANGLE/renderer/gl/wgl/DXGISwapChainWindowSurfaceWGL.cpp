@@ -83,7 +83,7 @@ DXGISwapChainWindowSurfaceWGL::~DXGISwapChainWindowSurfaceWGL()
 
 }
 
-egl::Error DXGISwapChainWindowSurfaceWGL::initialize(const egl::Display *display)
+egl::Error DXGISwapChainWindowSurfaceWGL::initialize(const egl::ThreadSafeDisplay *display)
 {
     if (mOrientation != EGL_SURFACE_ORIENTATION_INVERT_Y_ANGLE)
     {
@@ -254,7 +254,8 @@ egl::Error DXGISwapChainWindowSurfaceWGL::releaseTexImage(const gl::Context *con
     return egl::NoError();
 }
 
-void DXGISwapChainWindowSurfaceWGL::setSwapInterval(const egl::Display *display, EGLint interval)
+void DXGISwapChainWindowSurfaceWGL::setSwapInterval(const egl::ThreadSafeDisplay *display,
+                                                    EGLint interval)
 {
     mSwapInterval = interval;
 }

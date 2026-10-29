@@ -358,6 +358,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
     void flushCommandBuffer(mtl::CommandBufferFinishOperation operation);
     void present(const gl::Context *context, id<CAMetalDrawable> presentationDrawable);
     angle::Result finishCommandBuffer();
+    angle::Result checkCommandBufferError();
 
     void addCommandBufferScheduledCallback(std::function<void()> callback);
 
@@ -546,8 +547,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                          bool xfbPass,
                                          bool *pipelineDescChanged);
 
-    angle::Result checkCommandBufferError();
-
     // Dirty bits.
     enum DirtyBitType : size_t
     {
@@ -667,6 +666,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
     id<MTLTexture> mRasterizationRateMapTexture;
 
     mtl::ContextDevice mContextDevice;
+
+    bool mContextLost = false;
 
     mtl::BufferRef mOcclusionQueryResultBuffer;
     bool mOcclusionQueryIsEnabledInRenderPass{false};

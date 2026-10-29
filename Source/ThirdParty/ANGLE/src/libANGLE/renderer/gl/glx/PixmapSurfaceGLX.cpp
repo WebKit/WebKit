@@ -91,7 +91,7 @@ PixmapSurfaceGLX::~PixmapSurfaceGLX()
     }
 }
 
-egl::Error PixmapSurfaceGLX::initialize(const egl::Display *display)
+egl::Error PixmapSurfaceGLX::initialize(const egl::ThreadSafeDisplay *display)
 {
     DisplayGLX *displayGLX = GetImplAs<DisplayGLX>(display);
 
@@ -180,7 +180,7 @@ egl::Error PixmapSurfaceGLX::releaseTexImage(const gl::Context *context, EGLint 
     return egl::NoError();
 }
 
-void PixmapSurfaceGLX::setSwapInterval(const egl::Display *display, EGLint interval) {}
+void PixmapSurfaceGLX::setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval) {}
 
 gl::Extents PixmapSurfaceGLX::getSize() const
 {

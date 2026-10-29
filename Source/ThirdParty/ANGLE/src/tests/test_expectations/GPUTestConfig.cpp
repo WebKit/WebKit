@@ -586,9 +586,11 @@ GPUTestConfig::GPUTestConfig(bool isSwiftShader)
 #ifdef ANGLE_IR
     // The IR can be disabled at runtime, but we can't detect that.  For the purposes of test
     // expectations, especially for deqp, assume that if the IR is built, it's used.
-    mConditions[kConditionIR] = true;
+    mConditions[kConditionIR]  = true;
+    mConditions[kConditionAST] = false;
 #else
-    mConditions[kConditionIR] = false;
+    mConditions[kConditionIR]  = false;
+    mConditions[kConditionAST] = true;
 #endif
 }
 

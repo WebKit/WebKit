@@ -11,6 +11,7 @@
 
 #include <unordered_map>
 
+#include "common/SimpleMutex.h"
 #include "libANGLE/renderer/gl/DisplayGL.h"
 
 #include <GL/wglext.h>
@@ -61,8 +62,7 @@ class DisplayWGL : public DisplayGL, public ThreadSafeDisplayGL
     egl::Error waitClient(const gl::Context *context) override;
     egl::Error waitNative(const gl::Context *context, EGLint engine) override;
 
-    egl::Error makeCurrent(egl::Display *display,
-                           egl::Surface *drawSurface,
+    egl::Error makeCurrent(egl::Surface *drawSurface,
                            egl::Surface *readSurface,
                            gl::Context *context) override;
 
@@ -104,6 +104,7 @@ class DisplayWGL : public DisplayGL, public ThreadSafeDisplayGL
         HDC dc     = nullptr;
         HGLRC glrc = nullptr;
     };
+    angle::SimpleMutex mCurrentNativeContextsMutex;
     angle::HashMap<uint64_t, CurrentNativeContext> mCurrentNativeContexts;
 
     HMODULE mOpenGLModule;

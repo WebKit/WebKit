@@ -702,6 +702,8 @@ if (angle_standalone || build_with_chromium ||
       if (angle_has_rapidjson) {
         sources += [
           "$angle_root/src/tests/test_utils/runner/HistogramWriter.h",
+          "$angle_root/src/tests/test_utils/runner/PartitionAllocSupport.cpp",
+          "$angle_root/src/tests/test_utils/runner/PartitionAllocSupport.h",
           "$angle_root/src/tests/test_utils/runner/TestSuite.cpp",
           "$angle_root/src/tests/test_utils/runner/TestSuite.h",
         ]

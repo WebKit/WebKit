@@ -115,6 +115,7 @@ enum Token
     kConfigUBSan,
     // Translator
     kConfigIR,
+    kConfigAST,
     // expectation
     kExpectationPass,
     kExpectationFail,
@@ -240,6 +241,7 @@ constexpr std::array<TokenInfo, kNumberOfTokens> kTokenData = {{
     {"tsan", GPUTestConfig::kConditionTSan},
     {"ubsan", GPUTestConfig::kConditionUBSan},
     {"ir", GPUTestConfig::kConditionIR},
+    {"ast", GPUTestConfig::kConditionAST},
     {"pass", GPUTestConfig::kConditionNone, GPUTestExpectationsParser::kGpuTestPass},
     {"fail", GPUTestConfig::kConditionNone, GPUTestExpectationsParser::kGpuTestFail},
     {"flaky", GPUTestConfig::kConditionNone, GPUTestExpectationsParser::kGpuTestFlaky},
@@ -623,6 +625,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
             case kConfigTSan:
             case kConfigUBSan:
             case kConfigIR:
+            case kConfigAST:
                 // MODIFIERS, check each condition and add accordingly.
                 if (stage != kLineParserConfigs && stage != kLineParserBugID)
                 {

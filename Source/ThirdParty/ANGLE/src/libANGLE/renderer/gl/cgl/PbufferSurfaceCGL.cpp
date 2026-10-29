@@ -52,7 +52,7 @@ PbufferSurfaceCGL::~PbufferSurfaceCGL()
     }
 }
 
-egl::Error PbufferSurfaceCGL::initialize(const egl::Display *display)
+egl::Error PbufferSurfaceCGL::initialize(const egl::ThreadSafeDisplay *display)
 {
     mFunctions->genRenderbuffers(1, &mColorRenderbuffer);
     mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mColorRenderbuffer);
@@ -104,7 +104,7 @@ egl::Error PbufferSurfaceCGL::releaseTexImage(const gl::Context *context, EGLint
     return egl::NoError();
 }
 
-void PbufferSurfaceCGL::setSwapInterval(const egl::Display *display, EGLint interval) {}
+void PbufferSurfaceCGL::setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval) {}
 
 gl::Extents PbufferSurfaceCGL::getSize() const
 {

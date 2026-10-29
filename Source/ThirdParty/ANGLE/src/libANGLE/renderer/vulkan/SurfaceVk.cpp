@@ -188,7 +188,7 @@ bool IsKnownAnglePresentMode(VkPresentModeKHR mode)
     }
 }
 
-angle::Result InitImageHelper(DisplayVk *displayVk,
+angle::Result InitImageHelper(ThreadSafeDisplayVk *displayVk,
                               EGLint width,
                               EGLint height,
                               const vk::Format &vkFormat,
@@ -266,7 +266,7 @@ VkColorSpaceKHR MapEglColorSpaceToVkColorSpace(vk::Renderer *renderer, EGLenum E
     }
 }
 
-angle::Result LockSurfaceImpl(DisplayVk *displayVk,
+angle::Result LockSurfaceImpl(ThreadSafeDisplayVk *displayVk,
                               vk::ImageHelper *image,
                               vk::BufferHelper &lockBufferHelper,
                               EGLint width,
@@ -336,7 +336,7 @@ angle::Result LockSurfaceImpl(DisplayVk *displayVk,
     return angle::Result::Continue;
 }
 
-angle::Result UnlockSurfaceImpl(DisplayVk *displayVk,
+angle::Result UnlockSurfaceImpl(ThreadSafeDisplayVk *displayVk,
                                 vk::ImageHelper *image,
                                 vk::BufferHelper &lockBufferHelper,
                                 EGLint width,
@@ -390,7 +390,7 @@ VkRectLayerKHR ToVkRectLayer(const EGLint *eglRect,
     return rect;
 }
 
-angle::Result GetPresentModes(DisplayVk *displayVk,
+angle::Result GetPresentModes(ThreadSafeDisplayVk *displayVk,
                               VkPhysicalDevice physicalDevice,
                               VkSurfaceKHR surface,
                               std::vector<vk::PresentMode> *outPresentModes)
@@ -600,10 +600,10 @@ SurfaceVk::SurfaceVk(const egl::SurfaceState &surfaceState)
 
 SurfaceVk::~SurfaceVk() {}
 
-void SurfaceVk::destroy(const egl::Display *display)
+void SurfaceVk::destroy(const egl::ThreadSafeDisplay *display)
 {
-    DisplayVk *displayVk   = vk::GetImpl(display);
-    vk::Renderer *renderer = displayVk->getRenderer();
+    ThreadSafeDisplayVk *displayVk = vk::GetImpl(display);
+    vk::Renderer *renderer         = displayVk->getRenderer();
 
     mColorRenderTarget.destroy(renderer);
     mDepthStencilRenderTarget.destroy(renderer);
@@ -649,7 +649,7 @@ OffscreenSurfaceVk::AttachmentImage::AttachmentImage(SurfaceVk *surfaceVk)
 
 OffscreenSurfaceVk::AttachmentImage::~AttachmentImage() = default;
 
-angle::Result OffscreenSurfaceVk::AttachmentImage::initialize(DisplayVk *displayVk,
+angle::Result OffscreenSurfaceVk::AttachmentImage::initialize(ThreadSafeDisplayVk *displayVk,
                                                               EGLint width,
                                                               EGLint height,
                                                               const vk::Format &vkFormat,
@@ -675,10 +675,10 @@ angle::Result OffscreenSurfaceVk::AttachmentImage::initialize(DisplayVk *display
     return angle::Result::Continue;
 }
 
-void OffscreenSurfaceVk::AttachmentImage::destroy(const egl::Display *display)
+void OffscreenSurfaceVk::AttachmentImage::destroy(const egl::ThreadSafeDisplay *display)
 {
-    DisplayVk *displayVk   = vk::GetImpl(display);
-    vk::Renderer *renderer = displayVk->getRenderer();
+    ThreadSafeDisplayVk *displayVk = vk::GetImpl(display);
+    vk::Renderer *renderer         = displayVk->getRenderer();
     // Front end must ensure all usage has been submitted.
     imageViews.release(renderer, image.getResourceUse());
     image.releaseImage(renderer);
@@ -699,14 +699,14 @@ OffscreenSurfaceVk::OffscreenSurfaceVk(const egl::SurfaceState &surfaceState,
 
 OffscreenSurfaceVk::~OffscreenSurfaceVk() {}
 
-egl::Error OffscreenSurfaceVk::initialize(const egl::Display *display)
+egl::Error OffscreenSurfaceVk::initialize(const egl::ThreadSafeDisplay *display)
 {
-    DisplayVk *displayVk = vk::GetImpl(display);
-    angle::Result result = initializeImpl(displayVk);
+    ThreadSafeDisplayVk *displayVk = vk::GetImpl(display);
+    angle::Result result           = initializeImpl(displayVk);
     return angle::ToEGL(result, EGL_BAD_SURFACE);
 }
 
-angle::Result OffscreenSurfaceVk::initializeImpl(DisplayVk *displayVk)
+angle::Result OffscreenSurfaceVk::initializeImpl(ThreadSafeDisplayVk *displayVk)
 {
     vk::Renderer *renderer    = displayVk->getRenderer();
     const egl::Config *config = mState.config;
@@ -755,7 +755,7 @@ angle::Result OffscreenSurfaceVk::initializeImpl(DisplayVk *displayVk)
     return angle::Result::Continue;
 }
 
-void OffscreenSurfaceVk::destroy(const egl::Display *display)
+void OffscreenSurfaceVk::destroy(const egl::ThreadSafeDisplay *display)
 {
     mColorAttachment.destroy(display);
     mDepthStencilAttachment.destroy(display);
@@ -826,7 +826,8 @@ egl::Error OffscreenSurfaceVk::getMscRate(EGLint * /*numerator*/, EGLint * /*den
     return egl::Error(EGL_BAD_ACCESS);
 }
 
-void OffscreenSurfaceVk::setSwapInterval(const egl::Display *display, EGLint /*interval*/) {}
+void OffscreenSurfaceVk::setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint /*interval*/)
+{}
 
 EGLint OffscreenSurfaceVk::isPostSubBufferSupported() const
 {
@@ -874,7 +875,7 @@ vk::ImageHelper *OffscreenSurfaceVk::getColorAttachmentImage()
     return &mColorAttachment.image;
 }
 
-egl::Error OffscreenSurfaceVk::lockSurface(const egl::Display *display,
+egl::Error OffscreenSurfaceVk::lockSurface(const egl::ThreadSafeDisplay *display,
                                            EGLint usageHint,
                                            bool preservePixels,
                                            uint8_t **bufferPtrOut,
@@ -891,7 +892,8 @@ egl::Error OffscreenSurfaceVk::lockSurface(const egl::Display *display,
     return angle::ToEGL(result, EGL_BAD_ACCESS);
 }
 
-egl::Error OffscreenSurfaceVk::unlockSurface(const egl::Display *display, bool preservePixels)
+egl::Error OffscreenSurfaceVk::unlockSurface(const egl::ThreadSafeDisplay *display,
+                                             bool preservePixels)
 {
     vk::ImageHelper *image = &mColorAttachment.image;
     ASSERT(image->valid());
@@ -1078,12 +1080,12 @@ WindowSurfaceVk::~WindowSurfaceVk()
     ASSERT(mLastSwapchain == VK_NULL_HANDLE);
 }
 
-void WindowSurfaceVk::destroy(const egl::Display *display)
+void WindowSurfaceVk::destroy(const egl::ThreadSafeDisplay *display)
 {
-    DisplayVk *displayVk   = vk::GetImpl(display);
-    vk::Renderer *renderer = displayVk->getRenderer();
-    VkDevice device        = renderer->getDevice();
-    VkInstance instance    = renderer->getInstance();
+    ThreadSafeDisplayVk *displayVk = vk::GetImpl(display);
+    vk::Renderer *renderer         = displayVk->getRenderer();
+    VkDevice device                = renderer->getDevice();
+    VkInstance instance            = renderer->getInstance();
 
     // flush the pipe.
     (void)finish(displayVk);
@@ -1133,41 +1135,19 @@ void WindowSurfaceVk::destroy(const egl::Display *display)
     // Call parent class to destroy any resources parent owns.
     SurfaceVk::destroy(display);
 
-    // Destroy the surface without holding the EGL lock.  This works around a specific deadlock
-    // in Android.  On this platform:
-    //
-    // - For EGL applications, parts of surface creation and destruction are handled by the
-    //   platform, and parts of it are done by the native EGL driver.  Namely, on surface
-    //   destruction, native_window_api_disconnect is called outside the EGL driver.
-    // - For Vulkan applications, vkDestroySurfaceKHR takes full responsibility for destroying
-    //   the surface, including calling native_window_api_disconnect.
-    //
-    // Unfortunately, native_window_api_disconnect may use EGL sync objects and can lead to
-    // calling into the EGL driver.  For ANGLE, this is particularly problematic because it is
-    // simultaneously a Vulkan application and the EGL driver, causing `vkDestroySurfaceKHR` to
-    // call back into ANGLE and attempt to reacquire the EGL lock.
-    //
-    // Since there are no users of the surface when calling vkDestroySurfaceKHR, it is safe for
-    // ANGLE to destroy it without holding the EGL lock, effectively simulating the situation
-    // for EGL applications, where native_window_api_disconnect is called after the EGL driver
-    // has returned.
     if (mSurface)
     {
-        egl::Display::GetCurrentThreadUnlockedTailCall()->add(
-            [surface = mSurface, instance](void *resultOut) {
-                ANGLE_TRACE_EVENT0("gpu.angle", "WindowSurfaceVk::destroy:vkDestroySurfaceKHR");
-                ANGLE_UNUSED_VARIABLE(resultOut);
-                VK_CALL(vkDestroySurfaceKHR, instance, surface, nullptr);
-            });
+        ANGLE_TRACE_EVENT0("gpu.angle", "WindowSurfaceVk::destroy:vkDestroySurfaceKHR");
+        VK_CALL(vkDestroySurfaceKHR, instance, mSurface, nullptr);
         mSurface = VK_NULL_HANDLE;
     }
 }
 
-egl::Error WindowSurfaceVk::initialize(const egl::Display *display)
+egl::Error WindowSurfaceVk::initialize(const egl::ThreadSafeDisplay *display)
 {
-    DisplayVk *displayVk = vk::GetImpl(display);
-    bool anyMatches      = false;
-    angle::Result result = initializeImpl(displayVk, &anyMatches);
+    ThreadSafeDisplayVk *displayVk = vk::GetImpl(display);
+    bool anyMatches                = false;
+    angle::Result result           = initializeImpl(displayVk, &anyMatches);
     if (result == angle::Result::Continue && !anyMatches)
     {
         return angle::ToEGL(angle::Result::Stop, EGL_BAD_MATCH);
@@ -1236,7 +1216,7 @@ angle::FormatID WindowSurfaceVk::getActualFormatID(vk::Renderer *renderer)
     return actualFormatID;
 }
 
-bool WindowSurfaceVk::updateColorSpace(DisplayVk *displayVk)
+bool WindowSurfaceVk::updateColorSpace(ThreadSafeDisplayVk *displayVk)
 {
     vk::Renderer *renderer = displayVk->getRenderer();
 
@@ -1260,7 +1240,7 @@ bool WindowSurfaceVk::updateColorSpace(DisplayVk *displayVk)
                                                              mSurfaceColorSpace);
 }
 
-angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk, bool *anyMatchesOut)
+angle::Result WindowSurfaceVk::initializeImpl(ThreadSafeDisplayVk *displayVk, bool *anyMatchesOut)
 {
     mRenderer = displayVk->getRenderer();
 
@@ -2266,7 +2246,7 @@ angle::Result WindowSurfaceVk::finish(vk::ErrorContext *context)
     return renderer->finishResourceUse(context, mUse);
 }
 
-void WindowSurfaceVk::destroySwapchainImages(DisplayVk *displayVk)
+void WindowSurfaceVk::destroySwapchainImages(ThreadSafeDisplayVk *displayVk)
 {
     vk::Renderer *renderer = displayVk->getRenderer();
     VkDevice device        = displayVk->getDevice();
@@ -3351,7 +3331,7 @@ void WindowSurfaceVk::setDesiredSwapInterval(EGLint interval)
     // swapchain will be recreated.
 }
 
-void WindowSurfaceVk::setSwapInterval(const egl::Display *display, EGLint interval)
+void WindowSurfaceVk::setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval)
 {
     // Don't let setSwapInterval change presentation mode if using SHARED present.
     if (!isSharedPresentModeDesired())
@@ -3406,7 +3386,7 @@ gl::Extents WindowSurfaceVk::getSize() const
     return gl::Extents(mWidth, mHeight, 1);
 }
 
-egl::Error WindowSurfaceVk::getUserSize(const egl::Display *display,
+egl::Error WindowSurfaceVk::getUserSize(const egl::ThreadSafeDisplay *display,
                                         EGLint *width,
                                         EGLint *height) const
 {
@@ -3741,7 +3721,7 @@ bool WindowSurfaceVk::supportsSingleRenderBuffer() const
     return supportsPresentMode(vk::PresentMode::SharedDemandRefreshKHR);
 }
 
-egl::Error WindowSurfaceVk::lockSurface(const egl::Display *display,
+egl::Error WindowSurfaceVk::lockSurface(const egl::ThreadSafeDisplay *display,
                                         EGLint usageHint,
                                         bool preservePixels,
                                         uint8_t **bufferPtrOut,
@@ -3749,7 +3729,7 @@ egl::Error WindowSurfaceVk::lockSurface(const egl::Display *display,
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "WindowSurfaceVk::lockSurface");
 
-    DisplayVk *displayVk = vk::GetImpl(display);
+    ThreadSafeDisplayVk *displayVk = vk::GetImpl(display);
 
     if (mAcquireOperation.state != ImageAcquireState::Ready)
     {
@@ -3768,7 +3748,8 @@ egl::Error WindowSurfaceVk::lockSurface(const egl::Display *display,
     return angle::ToEGL(result, EGL_BAD_ACCESS);
 }
 
-egl::Error WindowSurfaceVk::unlockSurface(const egl::Display *display, bool preservePixels)
+egl::Error WindowSurfaceVk::unlockSurface(const egl::ThreadSafeDisplay *display,
+                                          bool preservePixels)
 {
     ASSERT(mAcquireOperation.state == ImageAcquireState::Ready);
 
@@ -3800,16 +3781,16 @@ void WindowSurfaceVk::detachFromFramebuffer(gl::Framebuffer *framebuffer)
     framebufferVk->setBackbuffer(nullptr);
 }
 
-egl::Error WindowSurfaceVk::getCompressionRate(const egl::Display *display,
+egl::Error WindowSurfaceVk::getCompressionRate(const egl::ThreadSafeDisplay *display,
                                                const gl::Context *context,
                                                EGLint *rate)
 {
     ASSERT(mSwapchain != VK_NULL_HANDLE);
     ASSERT(!mSwapchainImages.empty());
 
-    DisplayVk *displayVk   = vk::GetImpl(display);
-    ContextVk *contextVk   = vk::GetImpl(context);
-    vk::Renderer *renderer = displayVk->getRenderer();
+    ThreadSafeDisplayVk *displayVk = vk::GetImpl(display);
+    ContextVk *contextVk           = vk::GetImpl(context);
+    vk::Renderer *renderer         = displayVk->getRenderer();
 
     ANGLE_TRACE_EVENT0("gpu.angle", "getCompressionRate");
 

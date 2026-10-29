@@ -179,6 +179,33 @@ TEST(StringUtilsTest, HexStringToUIntBasic)
     EXPECT_FALSE(HexStringToUInt(testStringD, &uintValue));
 }
 
+// Basic functionality tests for StringToInt64
+TEST(StringUtilsTest, StringToInt64Basic)
+{
+    int64_t value = 0;
+
+    EXPECT_TRUE(StringToInt64("134217728", &value));
+    EXPECT_EQ(134217728, value);
+
+    EXPECT_TRUE(StringToInt64("-1", &value));
+    EXPECT_EQ(-1, value);
+
+    EXPECT_TRUE(StringToInt64("9223372036854775807", &value));
+    EXPECT_EQ(INT64_MAX, value);
+
+    // Failures leave the value unchanged.
+    value = 42;
+    EXPECT_FALSE(StringToInt64("", &value));
+    EXPECT_FALSE(StringToInt64("Baklava", &value));
+    EXPECT_FALSE(StringToInt64("16.1", &value));
+    EXPECT_FALSE(StringToInt64("12abc", &value));
+    EXPECT_FALSE(StringToInt64(" 12", &value));
+    EXPECT_FALSE(StringToInt64("+12", &value));
+    EXPECT_FALSE(StringToInt64("-", &value));
+    EXPECT_FALSE(StringToInt64("9223372036854775808", &value));
+    EXPECT_EQ(42, value);
+}
+
 // Tests for ToCamelCase
 TEST(StringUtilsTest, ToCamelCase)
 {

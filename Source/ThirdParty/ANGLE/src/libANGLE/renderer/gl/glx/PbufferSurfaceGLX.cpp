@@ -38,7 +38,7 @@ PbufferSurfaceGLX::~PbufferSurfaceGLX()
     }
 }
 
-egl::Error PbufferSurfaceGLX::initialize(const egl::Display *display)
+egl::Error PbufferSurfaceGLX::initialize(const egl::ThreadSafeDisplay *display)
 {
     // Avoid creating 0-sized PBuffers as it fails on the Intel Mesa driver
     // as commented on https://bugs.freedesktop.org/show_bug.cgi?id=38869 so we
@@ -103,7 +103,7 @@ egl::Error PbufferSurfaceGLX::releaseTexImage(const gl::Context *context, EGLint
     return egl::NoError();
 }
 
-void PbufferSurfaceGLX::setSwapInterval(const egl::Display *display, EGLint interval) {}
+void PbufferSurfaceGLX::setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval) {}
 
 gl::Extents PbufferSurfaceGLX::getSize() const
 {

@@ -21,7 +21,7 @@ class SurfaceNULL : public SurfaceImpl
     SurfaceNULL(const egl::SurfaceState &surfaceState);
     ~SurfaceNULL() override;
 
-    egl::Error initialize(const egl::Display *display) override;
+    egl::Error initialize(const egl::ThreadSafeDisplay *display) override;
     egl::Error swap(const gl::Context *context, SurfaceSwapFeedback *feedback) override;
     egl::Error postSubBuffer(const gl::Context *context,
                              EGLint x,
@@ -35,7 +35,7 @@ class SurfaceNULL : public SurfaceImpl
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) override;
     egl::Error getMscRate(EGLint *numerator, EGLint *denominator) override;
-    void setSwapInterval(const egl::Display *display, EGLint interval) override;
+    void setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval) override;
 
     // size can change with client window resizing
     gl::Extents getSize() const override;

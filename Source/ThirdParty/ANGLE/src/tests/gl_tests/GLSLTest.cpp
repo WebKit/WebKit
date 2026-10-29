@@ -10224,6 +10224,44 @@ void main()
 
     EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::green);
 }
+
+// Test corner case involving comma and passing struct with sampler to function
+TEST_P(GLSLTest_ES3, SamplerInStructAsFunctionArgInCommaCornerCase)
+{
+    // The monomorphization AST pass run by multiple backends does not correctly handle comma
+    // expressions.
+    ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::UseIr));
+
+    const char kFragmentShader[] = R"(#version 300 es
+precision mediump float;
+struct S
+{
+    sampler2D s;
+    int f;
+};
+uniform S u;
+int global = 0;
+
+out vec4 color;
+
+float sampleTex(S s) { ++global; return texture(s.s, vec2(0)).x; }
+float forwardToSample(S s) { return sampleTex(s); }
+
+// Need to forward `u` to `broken` via an intermediate call to cause multiple passes of
+// monomorphization in some backends before the tricky expression is handled.
+void broken(S s) { sampleTex((forwardToSample(s), u)); }
+void forward(S s) { broken(s); }
+
+void main() {
+    forward(u);
+    color = vec4(float(global) / 2.0, 0, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFragmentShader);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
+}
+
 // Test that a global variable declared after main() works. This is a regression test for an issue
 // in global variable initialization.
 TEST_P(WebGLGLSLTest, GlobalVariableDeclaredAfterMain)
@@ -10849,6 +10887,69 @@ void main()
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
     drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test switch/case where a variable is declared inside one of the cases and is accessed by a
+// subsequent case.  The variable shadows another outside the switch.
+TEST_P(GLSLTest_ES3, SwitchWithShadowVariableDeclaration)
+{
+    constexpr char kFS[] = R"(#version 300 es
+
+precision highp float;
+out vec4 my_FragColor;
+
+uniform int u_zero;
+
+void main()
+{
+    vec4 result = vec4(0, 0, 0, 1);
+    switch (u_zero)
+    {
+        case 0:
+            result.x = 1.0;
+            // Shadow the variable that is outside the switch
+            vec4 result = vec4(0, 1, 0, 0);
+        default:
+            result.w = 1.0;
+    }
+    my_FragColor = result;
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test switch/case where a variable is declared inside one of the cases after branch and is
+// accessed by a subsequent case.  The variable shadows another outside the switch.
+TEST_P(GLSLTest_ES3, SwitchWithShadowVariableDeclarationInDeadCode)
+{
+    constexpr char kFS[] = R"(#version 300 es
+
+precision highp float;
+out vec4 my_FragColor;
+
+uniform int u_zero;
+
+void main()
+{
+    vec4 result = vec4(0, 0, 0, 1);
+    switch (u_zero)
+    {
+        case 0:
+            result.x = 1.0;
+            break;
+            // Shadow the variable that is outside the switch
+            vec4 result = vec4(0, 1, 0, 0);
+        default:
+            result.w = 1.0;
+    }
+    my_FragColor = result;
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
 
 // Test that an empty switch/case statement is translated in a way that compiles and executes the
@@ -12603,6 +12704,40 @@ void main()
     drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor::yellow, 1);
     ASSERT_GL_NO_ERROR();
+}
+
+// Test that gl_FragCoord.zw are correct.  The translator replaces gl_FragCoord with a flipped copy,
+// and the .zw components must be carried over unchanged.
+TEST_P(GLSLTest_ES3, FragCoordZW)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in vec4 a_position;
+void main()
+{
+    // Clip-space w of 4 gives gl_FragCoord.w = 0.25.  z = 0 gives gl_FragCoord.z = 0.5.
+    gl_Position = vec4(a_position.xy * 4.0, 0.0, 4.0);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 colorOut;
+void main()
+{
+    colorOut = vec4(gl_FragCoord.z, gl_FragCoord.w, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    drawQuad(program, "a_position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    const GLColor kExpected(128, 64, 0, 255);
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, kExpected, 1);
+    EXPECT_PIXEL_COLOR_NEAR(w - 1, 0, kExpected, 1);
+    EXPECT_PIXEL_COLOR_NEAR(0, h - 1, kExpected, 1);
+    EXPECT_PIXEL_COLOR_NEAR(w - 1, h - 1, kExpected, 1);
+    EXPECT_PIXEL_COLOR_NEAR(w / 2, h / 2, kExpected, 1);
 }
 
 bool SubrectEquals(const std::vector<GLColor> &bigArray,
@@ -28888,6 +29023,25 @@ void main()
     glUniform4f(glGetUniformLocation(program, "u[2]"), 0.25, 0.75, 0.5, 1.0);
     drawQuad(program, "position", 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(63, 191, 127, 255), 1);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test `bool_var ? bvec4(true) : bvec4(false)`
+TEST_P(GLSLTest_ES3, BoolSelectorBVecConstantValues)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+uniform bool b;
+out vec4 color;
+void main()
+{
+    bvec4 result = b ? bvec4(true) : bvec4(false);
+    color = vec4(!result.x, result.yz, !result.w);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
     ASSERT_GL_NO_ERROR();
 }
 }  // anonymous namespace

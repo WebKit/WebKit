@@ -2880,14 +2880,14 @@ class ImageHelper final : public Resource, public angle::Subject
                                         BufferHelper *dstBuffer,
                                         uint8_t **outDataPtr);
 
-    angle::Result copySurfaceImageToBuffer(DisplayVk *displayVk,
+    angle::Result copySurfaceImageToBuffer(ErrorContext *context,
                                            gl::OwnerLevel sourceLevelGL,
                                            uint32_t layerCount,
                                            gl::OwnerLayer baseLayer,
                                            const gl::Box &sourceArea,
                                            vk::BufferHelper *bufferHelperOut);
 
-    angle::Result copyBufferToSurfaceImage(DisplayVk *displayVk,
+    angle::Result copyBufferToSurfaceImage(ErrorContext *context,
                                            gl::OwnerLevel destLevelGL,
                                            uint32_t layerCount,
                                            gl::OwnerLayer baseLayer,

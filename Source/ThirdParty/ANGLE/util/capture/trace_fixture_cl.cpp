@@ -19,6 +19,20 @@ namespace
 
 angle::TraceCallbacks *gTraceCallbacks = nullptr;
 
+angle::FrameCaptureBinaryData *ConfigureBinaryDataLoader(const std::string &binaryDataDir,
+                                                         const angle::TraceInfo &traceInfo,
+                                                         const char *binaryDataFileName)
+{
+    std::string dataFilepath = binaryDataDir + "/" + binaryDataFileName;
+
+    angle::FrameCaptureBinaryData *binaryData = new angle::FrameCaptureBinaryData;
+    binaryData->configureBinaryDataLoader(
+        traceInfo.isBinaryDataCompressed, traceInfo.binaryBlockCount,
+        static_cast<size_t>(traceInfo.binaryBlockSize),
+        static_cast<size_t>(traceInfo.binaryResidentSize),
+        static_cast<size_t>(traceInfo.binaryIndexOffset), dataFilepath);
+    return binaryData;
+}
 }
 
 cl_platform_id *clPlatformsMap;
@@ -51,6 +65,8 @@ uint8_t *gBinaryData;
 uint8_t *gReadBuffer;
 angle::FrameCaptureBinaryData *gFrameCaptureBinaryData;
 std::string gBinaryDataDir = ".";
+angle::TraceInfo gTraceInfo;
+std::string gTraceGzPath;
 
 template <typename T>
 T *AllocateZeroedValues(size_t count)
@@ -79,7 +95,8 @@ void InitializeReplayCL2(const char *binaryDataFileName,
                          uint32_t maxCLSamplers,
                          uint32_t maxCLVoidPointer)
 {
-    gFrameCaptureBinaryData = gTraceCallbacks->ConfigureBinaryDataLoader(binaryDataFileName);
+    gFrameCaptureBinaryData =
+        ConfigureBinaryDataLoader(gBinaryDataDir, gTraceInfo, binaryDataFileName);
 }
 
 void InitializeReplayCL(const char *binaryDataFileName,
@@ -133,13 +150,9 @@ void FinishReplay()
     if (gFrameCaptureBinaryData)
     {
         gFrameCaptureBinaryData->closeBinaryDataLoader();
-        delete gFrameCaptureBinaryData;
-        gFrameCaptureBinaryData = nullptr;
+        SafeDelete(gFrameCaptureBinaryData);
     }
 }
-
-angle::TraceInfo gTraceInfo;
-std::string gTraceGzPath;
 
 struct TraceFunctionsImplCL : angle::TraceFunctions
 {

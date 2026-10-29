@@ -4928,13 +4928,22 @@ ANGLE_INLINE void ContextVk::updateTopology(gl::PrimitiveMode mode)
     //
     // Note: VK_EXT_extended_dynamic_state3's dynamicPrimitiveTopologyUnrestricted property
     // indicates that the dynamically set primitive topology doesn't need to match even the topology
-    // class used to create the pipeline.  That property seems to only be set on Nvidia.
+    // class used to create the pipeline.  That property is rarely set however.
     if (getFeatures().usePrimitiveTopologyDynamicState.enabled)
     {
         // Update the exact mode dynamically
         mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_PRIMITIVE_TOPOLOGY);
 
-        // Only update the pipeline desc if the primitive class has changed
+        // Nothing to do if dynamicPrimitiveTopologyUnrestricted is set.
+        if (getFeatures().supportsExtendedDynamicState3.enabled &&
+            getRenderer()
+                ->getPhysicalDeviceExtendedDynamicState3Properties()
+                .dynamicPrimitiveTopologyUnrestricted)
+        {
+            return;
+        }
+
+        // Only update the pipeline desc if the primitive class has changed.
         pipelineTopology = kPrimitiveTopologyClass[mode];
         const bool isTopologyClassChanged =
             pipelineTopology != kPrimitiveTopologyClass[currentMode];

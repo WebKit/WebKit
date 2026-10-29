@@ -463,10 +463,9 @@ EGLSyncImpl *ThreadSafeDisplayMtl::createSync()
     return new EGLSyncMtl();
 }
 
-egl::Error DisplayMtl::makeCurrent(egl::Display *display,
-                                   egl::Surface *drawSurface,
-                                   egl::Surface *readSurface,
-                                   gl::Context *context)
+egl::Error ThreadSafeDisplayMtl::makeCurrent(egl::Surface *drawSurface,
+                                             egl::Surface *readSurface,
+                                             gl::Context *context)
 {
     if (!context)
     {
@@ -525,6 +524,10 @@ void DisplayMtl::initializeFrontendFeatures(angle::FrontendFeatures *features) c
     ANGLE_FEATURE_CONDITION(features, linkJobIsThreadSafe, true);
 
     ANGLE_FEATURE_CONDITION(features, setNeedInitOnInvalidation, true);
+
+    // Metal compiler optimizations may remove infinite loops causing crashes later in shader
+    // execution. http://crbug.com/41486305
+    ANGLE_FEATURE_CONDITION(features, ensureLoopForwardProgress, true);
 }
 
 void DisplayMtl::populateFeatureList(angle::FeatureList *features)
@@ -1339,10 +1342,6 @@ void DisplayMtl::initializeFeatures()
     // the textureGrad shadow sampler emulation. The latter is used only on AMD.
     ASSERT(!mFeatures.preTransformTextureCubeGradDerivatives.enabled ||
            mFeatures.allowSamplerCompareGradient.enabled);
-
-    // Metal compiler optimizations may remove infinite loops causing crashes later in shader
-    // execution. http://crbug.com/41486305
-    ANGLE_FEATURE_CONDITION((&mFeatures), ensureLoopForwardProgress, true);
 }
 
 angle::Result DisplayMtl::initializeShaderLibrary()

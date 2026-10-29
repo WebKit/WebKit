@@ -74,7 +74,7 @@ EGLint DupNativeFenceFDANDROID(Thread *thread,
                                egl::ThreadSafeDisplay *dpyPacked,
                                egl::Sync *syncPacked);
 EGLBoolean GetMscRateANGLE(Thread *thread,
-                           egl::Display *dpyPacked,
+                           egl::ThreadSafeDisplay *dpyPacked,
                            egl::Surface *surfacePacked,
                            EGLint *numerator,
                            EGLint *denominator);
@@ -94,40 +94,40 @@ EGLint LabelObjectKHR(Thread *thread,
                       EGLObjectKHR object,
                       EGLLabelKHR label);
 EGLBoolean LockSurfaceKHR(Thread *thread,
-                          egl::Display *dpyPacked,
+                          egl::ThreadSafeDisplay *dpyPacked,
                           egl::Surface *surfacePacked,
                           const AttributeMap &attrib_listPacked);
 EGLBoolean PostSubBufferNV(Thread *thread,
-                           egl::Display *dpyPacked,
+                           egl::ThreadSafeDisplay *dpyPacked,
                            egl::Surface *surfacePacked,
                            EGLint x,
                            EGLint y,
                            EGLint width,
                            EGLint height);
 EGLBoolean PresentationTimeANDROID(Thread *thread,
-                                   egl::Display *dpyPacked,
+                                   egl::ThreadSafeDisplay *dpyPacked,
                                    egl::Surface *surfacePacked,
                                    EGLnsecsANDROID time);
 EGLBoolean GetCompositorTimingSupportedANDROID(Thread *thread,
-                                               egl::Display *dpyPacked,
+                                               egl::ThreadSafeDisplay *dpyPacked,
                                                egl::Surface *surfacePacked,
                                                CompositorTiming namePacked);
 EGLBoolean GetCompositorTimingANDROID(Thread *thread,
-                                      egl::Display *dpyPacked,
+                                      egl::ThreadSafeDisplay *dpyPacked,
                                       egl::Surface *surfacePacked,
                                       EGLint numTimestamps,
                                       const EGLint *names,
                                       EGLnsecsANDROID *values);
 EGLBoolean GetNextFrameIdANDROID(Thread *thread,
-                                 egl::Display *dpyPacked,
+                                 egl::ThreadSafeDisplay *dpyPacked,
                                  egl::Surface *surfacePacked,
                                  EGLuint64KHR *frameId);
 EGLBoolean GetFrameTimestampSupportedANDROID(Thread *thread,
-                                             egl::Display *dpyPacked,
+                                             egl::ThreadSafeDisplay *dpyPacked,
                                              egl::Surface *surfacePacked,
                                              Timestamp timestampPacked);
 EGLBoolean GetFrameTimestampsANDROID(Thread *thread,
-                                     egl::Display *dpyPacked,
+                                     egl::ThreadSafeDisplay *dpyPacked,
                                      egl::Surface *surfacePacked,
                                      EGLuint64KHR frameId,
                                      EGLint numTimestamps,
@@ -173,12 +173,12 @@ EGLBoolean QuerySupportedCompressionRatesEXT(Thread *thread,
                                              EGLint rate_size,
                                              EGLint *num_rates);
 EGLBoolean QuerySurface64KHR(Thread *thread,
-                             egl::Display *dpyPacked,
+                             egl::ThreadSafeDisplay *dpyPacked,
                              egl::Surface *surfacePacked,
                              EGLint attribute,
                              EGLAttribKHR *value);
 EGLBoolean QuerySurfacePointerANGLE(Thread *thread,
-                                    egl::Display *dpyPacked,
+                                    egl::ThreadSafeDisplay *dpyPacked,
                                     egl::Surface *surfacePacked,
                                     EGLint attribute,
                                     void **value);
@@ -187,7 +187,7 @@ void SetBlobCacheFuncsANDROID(Thread *thread,
                               EGLSetBlobFuncANDROID set,
                               EGLGetBlobFuncANDROID get);
 EGLBoolean SetDamageRegionKHR(Thread *thread,
-                              egl::Display *dpyPacked,
+                              egl::ThreadSafeDisplay *dpyPacked,
                               egl::Surface *surfacePacked,
                               EGLint *rects,
                               EGLint n_rects);
@@ -214,11 +214,13 @@ EGLBoolean StreamConsumerReleaseKHR(Thread *thread,
                                     egl::Display *dpyPacked,
                                     egl::Stream *streamPacked);
 EGLBoolean SwapBuffersWithDamageKHR(Thread *thread,
-                                    egl::Display *dpyPacked,
+                                    egl::ThreadSafeDisplay *dpyPacked,
                                     egl::Surface *surfacePacked,
                                     const EGLint *rects,
                                     EGLint n_rects);
-EGLBoolean UnlockSurfaceKHR(Thread *thread, egl::Display *dpyPacked, egl::Surface *surfacePacked);
+EGLBoolean UnlockSurfaceKHR(Thread *thread,
+                            egl::ThreadSafeDisplay *dpyPacked,
+                            egl::Surface *surfacePacked);
 EGLint WaitSyncKHR(Thread *thread,
                    egl::ThreadSafeDisplay *dpyPacked,
                    egl::Sync *syncPacked,
@@ -238,7 +240,7 @@ EGLBoolean StreamPostD3DTextureANGLE(Thread *thread,
                                      void *texture,
                                      const AttributeMap &attrib_listPacked);
 EGLBoolean GetSyncValuesCHROMIUM(Thread *thread,
-                                 egl::Display *dpyPacked,
+                                 egl::ThreadSafeDisplay *dpyPacked,
                                  egl::Surface *surfacePacked,
                                  EGLuint64KHR *ust,
                                  EGLuint64KHR *msc,
@@ -260,13 +262,13 @@ void ProgramCachePopulateANGLE(Thread *thread,
 EGLint ProgramCacheResizeANGLE(Thread *thread, egl::Display *dpyPacked, EGLint limit, EGLint mode);
 const char *QueryStringiANGLE(Thread *thread, egl::Display *dpyPacked, EGLint name, EGLint index);
 void AcquireExternalContextANGLE(Thread *thread,
-                                 egl::Display *dpyPacked,
+                                 egl::ThreadSafeDisplay *dpyPacked,
                                  egl::Surface *drawAndReadPacked);
 void ReleaseExternalContextANGLE(Thread *thread, egl::Display *dpyPacked);
 void LockVulkanQueueANGLE(Thread *thread, egl::Display *dpyPacked);
 void UnlockVulkanQueueANGLE(Thread *thread, egl::Display *dpyPacked);
 EGLBoolean PrepareSwapBuffersANGLE(Thread *thread,
-                                   egl::Display *dpyPacked,
+                                   egl::ThreadSafeDisplay *dpyPacked,
                                    egl::Surface *surfacePacked);
 void ReleaseHighPowerGPUANGLE(Thread *thread, egl::Display *dpyPacked, gl::ContextID ctxPacked);
 void ReacquireHighPowerGPUANGLE(Thread *thread, egl::Display *dpyPacked, gl::ContextID ctxPacked);

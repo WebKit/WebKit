@@ -932,7 +932,7 @@ void Context::initializeDefaultResources()
     mTilingDirtyObjects |= kTilingDirtyObjectsBase;
 }
 
-egl::Error Context::onDestroy(const egl::Display *display)
+egl::Error Context::onDestroy(const egl::ThreadSafeDisplay *display)
 {
     if (!mHasBeenCurrent)
     {
@@ -949,7 +949,7 @@ egl::Error Context::onDestroy(const egl::Display *display)
     // that still have it current.
     ASSERT(mIsDestroyed == true && mRefCount == 0);
 
-    ANGLE_TRY(unMakeCurrent(display));
+    ANGLE_TRY(unMakeCurrent());
 
     // Dump frame capture if enabled.
     getShareGroup()->getFrameCaptureShared()->onDestroyContext(this);
@@ -1073,11 +1073,12 @@ EGLLabelKHR Context::getLabel() const
     return mLabel;
 }
 
-egl::Error Context::makeCurrent(egl::Display *display,
+// Make sure this function only uses ThreadSafeDisplay since caller will not take display lock.
+egl::Error Context::makeCurrent(egl::ThreadSafeDisplay *display,
                                 egl::Surface *drawSurface,
                                 egl::Surface *readSurface)
 {
-    mDisplay = display;
+    mDisplay = static_cast<egl::Display *>(display);
 
     EGLint width  = 0;
     EGLint height = 0;
@@ -1127,8 +1128,10 @@ egl::Error Context::makeCurrent(egl::Display *display,
     return egl::NoError();
 }
 
-egl::Error Context::unMakeCurrent(const egl::Display *display)
+// Make sure this function only uses ThreadSafeDisplay since caller will not take display lock.
+egl::Error Context::unMakeCurrent()
 {
+    egl::ThreadSafeDisplay *display = mDisplay;
     ANGLE_TRY(angle::ResultToEGL(mImplementation->onUnMakeCurrent(this)));
 
     ANGLE_TRY(unsetDefaultFramebuffer());
@@ -1137,11 +1140,11 @@ egl::Error Context::unMakeCurrent(const egl::Display *display)
     // this one is not current.
     if (mScratchBuffer.valid())
     {
-        mDisplay->returnScratchBuffer(mScratchBuffer.release());
+        display->returnScratchBuffer(mScratchBuffer.release());
     }
     if (mZeroFilledBuffer.valid())
     {
-        mDisplay->returnZeroFilledBuffer(mZeroFilledBuffer.release());
+        display->returnZeroFilledBuffer(mZeroFilledBuffer.release());
     }
 
     return egl::NoError();

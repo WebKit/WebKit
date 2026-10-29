@@ -48,13 +48,13 @@ class OffscreenSurfaceWgpu : public SurfaceWgpu
                          EGLClientBuffer clientBuffer);
     ~OffscreenSurfaceWgpu() override;
 
-    egl::Error initialize(const egl::Display *display) override;
+    egl::Error initialize(const egl::ThreadSafeDisplay *display) override;
     egl::Error swap(const gl::Context *context, SurfaceSwapFeedback *feedback) override;
     egl::Error bindTexImage(const gl::Context *context,
                             gl::Texture *texture,
                             EGLint buffer) override;
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
-    void setSwapInterval(const egl::Display *display, EGLint interval) override;
+    void setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval) override;
 
     // size can change with client window resizing
     gl::Extents getSize() const override;
@@ -90,14 +90,14 @@ class WindowSurfaceWgpu : public SurfaceWgpu
     WindowSurfaceWgpu(const egl::SurfaceState &surfaceState, EGLNativeWindowType window);
     ~WindowSurfaceWgpu() override;
 
-    egl::Error initialize(const egl::Display *display) override;
-    void destroy(const egl::Display *display) override;
+    egl::Error initialize(const egl::ThreadSafeDisplay *display) override;
+    void destroy(const egl::ThreadSafeDisplay *display) override;
     egl::Error swap(const gl::Context *context, SurfaceSwapFeedback *feedback) override;
     egl::Error bindTexImage(const gl::Context *context,
                             gl::Texture *texture,
                             EGLint buffer) override;
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
-    void setSwapInterval(const egl::Display *display, EGLint interval) override;
+    void setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval) override;
 
     // size can change with client window resizing
     gl::Extents getSize() const override;

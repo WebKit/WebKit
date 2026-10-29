@@ -66,59 +66,70 @@ bool gCapturedFrameCountOnly       = false;
 
 namespace
 {
+// Perf and trace test args stay in argv so that, in bot mode, TestSuite forwards them to the
+// child processes that run the tests.
 bool PerfTestArg(int *argc, char **argv, int argIndex)
 {
-    return ParseFlag("--run-to-key-frame", argc, argv, argIndex, &gRunToKeyFrame) ||
-           ParseFlag("--enable-trace", argc, argv, argIndex, &gEnableTrace) ||
-           ParseFlag("-v", argc, argv, argIndex, &gVerboseLogging) ||
-           ParseFlag("--verbose", argc, argv, argIndex, &gVerboseLogging) ||
-           ParseFlag("--verbose-logging", argc, argv, argIndex, &gVerboseLogging) ||
-           ParseFlag("--no-finish", argc, argv, argIndex, &gNoFinish) ||
-           ParseFlag("--warmup", argc, argv, argIndex, &gWarmup) ||
-           ParseCStringArg("--trace-file", argc, argv, argIndex, &gTraceFile) ||
-           ParseCStringArg("--perf-counters", argc, argv, argIndex, &gPerfCounters) ||
-           ParseIntArg("--steps-per-trial", argc, argv, argIndex, &gStepsPerTrial) ||
-           ParseIntArg("--max-steps-performed", argc, argv, argIndex, &gMaxStepsPerformed) ||
-           ParseIntArg("--fixed-test-time", argc, argv, argIndex, &gFixedTestTime) ||
-           ParseIntArg("--fixed-test-time-with-warmup", argc, argv, argIndex,
-                       &gFixedTestTimeWithWarmup) ||
-           ParseIntArg("--trial-time", argc, argv, argIndex, &gTrialTimeSeconds) ||
-           ParseIntArg("--max-trial-time", argc, argv, argIndex, &gTrialTimeSeconds) ||
-           ParseIntArg("--trials", argc, argv, argIndex, &gTestTrials) ||
-           ParseIntArg("--sleep-between-trials", argc, argv, argIndex, &gSleepBetweenTrialMs);
+    return ParseAndPreserveFlag("--run-to-key-frame", argc, argv, argIndex, &gRunToKeyFrame) ||
+           ParseAndPreserveFlag("--enable-trace", argc, argv, argIndex, &gEnableTrace) ||
+           ParseAndPreserveFlag("-v", argc, argv, argIndex, &gVerboseLogging) ||
+           ParseAndPreserveFlag("--verbose", argc, argv, argIndex, &gVerboseLogging) ||
+           ParseAndPreserveFlag("--verbose-logging", argc, argv, argIndex, &gVerboseLogging) ||
+           ParseAndPreserveFlag("--no-finish", argc, argv, argIndex, &gNoFinish) ||
+           ParseAndPreserveFlag("--warmup", argc, argv, argIndex, &gWarmup) ||
+           ParseAndPreserveCStringArg("--trace-file", argc, argv, argIndex, &gTraceFile) ||
+           ParseAndPreserveCStringArg("--perf-counters", argc, argv, argIndex, &gPerfCounters) ||
+           ParseAndPreserveIntArg("--steps-per-trial", argc, argv, argIndex, &gStepsPerTrial) ||
+           ParseAndPreserveIntArg("--max-steps-performed", argc, argv, argIndex,
+                                  &gMaxStepsPerformed) ||
+           ParseAndPreserveIntArg("--fixed-test-time", argc, argv, argIndex, &gFixedTestTime) ||
+           ParseAndPreserveIntArg("--fixed-test-time-with-warmup", argc, argv, argIndex,
+                                  &gFixedTestTimeWithWarmup) ||
+           ParseAndPreserveIntArg("--trial-time", argc, argv, argIndex, &gTrialTimeSeconds) ||
+           ParseAndPreserveIntArg("--max-trial-time", argc, argv, argIndex, &gTrialTimeSeconds) ||
+           ParseAndPreserveIntArg("--trials", argc, argv, argIndex, &gTestTrials) ||
+           ParseAndPreserveIntArg("--sleep-between-trials", argc, argv, argIndex,
+                                  &gSleepBetweenTrialMs);
 }
 
 bool TraceTestArg(int *argc, char **argv, int argIndex)
 {
-    return ParseFlag("--retrace-mode", argc, argv, argIndex, &gRetraceMode) ||
-           ParseFlag("--validation", argc, argv, argIndex, &gTraceTestValidation) ||
-           ParseFlag("--save-screenshots", argc, argv, argIndex, &gSaveScreenshots) ||
-           ParseFlag("--offscreen", argc, argv, argIndex, &gOffscreen) ||
-           ParseFlag("--vsync", argc, argv, argIndex, &gVsync) ||
-           ParseFlag("--minimize-gpu-work", argc, argv, argIndex, &gMinimizeGPUWork) ||
-           ParseFlag("--skip-blit-in-offscreen", argc, argv, argIndex, &gSkipBlitInOffscreen) ||
-           ParseCStringArg("--trace-interpreter", argc, argv, argIndex, &gTraceInterpreter) ||
-           ParseIntArg("--screenshot-frame", argc, argv, argIndex, &gScreenshotFrame) ||
-           ParseIntArg("--fps-limit", argc, argv, argIndex, &gFpsLimit) ||
-           ParseFlag("--fps-limit-uses-busy-wait", argc, argv, argIndex, &gFpsLimitUsesBusyWait) ||
-           ParseCStringArgWithHandling("--render-test-output-dir", argc, argv, argIndex,
-                                       &gRenderTestOutputDir, ArgHandling::Preserve) ||
-           ParseCStringArg("--screenshot-dir", argc, argv, argIndex, &gScreenshotDir) ||
-           ParseCStringArg("--use-angle", argc, argv, argIndex, &gUseANGLE) ||
-           ParseCStringArg("--use-gl", argc, argv, argIndex, &gUseGL) ||
-           ParseCStringArg("--print-extensions-to-file", argc, argv, argIndex,
-                           &gPrintExtensionsToFile) ||
-           ParseCStringArg("--request-extensions", argc, argv, argIndex, &gRequestedExtensions) ||
-           ParseFlag("--include-inactive-resources", argc, argv, argIndex,
-                     &gIncludeInactiveResources) ||
-           ParseFlag("--track-gpu-time", argc, argv, argIndex, &gTrackGPUTime) ||
-           ParseFlag("--add-swap-into-gpu-time", argc, argv, argIndex, &gAddSwapIntoGPUTime) ||
-           ParseFlag("--track-frame-wall-time", argc, argv, argIndex, &gTrackFrameWallTime) ||
-           ParseFlag("--add-swap-into-frame-wall-time", argc, argv, argIndex,
-                     &gAddSwapIntoFrameWallTime) ||
-           ParseIntArg("--track-vulkan-api-wall-time", argc, argv, argIndex,
-                       &gTrackVulkanApiWallTime) ||
-           ParseFlag("--captured-framecount-only", argc, argv, argIndex, &gCapturedFrameCountOnly);
+    return ParseAndPreserveFlag("--retrace-mode", argc, argv, argIndex, &gRetraceMode) ||
+           ParseAndPreserveFlag("--validation", argc, argv, argIndex, &gTraceTestValidation) ||
+           ParseAndPreserveFlag("--save-screenshots", argc, argv, argIndex, &gSaveScreenshots) ||
+           ParseAndPreserveFlag("--offscreen", argc, argv, argIndex, &gOffscreen) ||
+           ParseAndPreserveFlag("--vsync", argc, argv, argIndex, &gVsync) ||
+           ParseAndPreserveFlag("--minimize-gpu-work", argc, argv, argIndex, &gMinimizeGPUWork) ||
+           ParseAndPreserveFlag("--skip-blit-in-offscreen", argc, argv, argIndex,
+                                &gSkipBlitInOffscreen) ||
+           ParseAndPreserveCStringArg("--trace-interpreter", argc, argv, argIndex,
+                                      &gTraceInterpreter) ||
+           ParseAndPreserveIntArg("--screenshot-frame", argc, argv, argIndex, &gScreenshotFrame) ||
+           ParseAndPreserveIntArg("--fps-limit", argc, argv, argIndex, &gFpsLimit) ||
+           ParseAndPreserveFlag("--fps-limit-uses-busy-wait", argc, argv, argIndex,
+                                &gFpsLimitUsesBusyWait) ||
+           ParseAndPreserveCStringArg("--render-test-output-dir", argc, argv, argIndex,
+                                      &gRenderTestOutputDir) ||
+           ParseAndPreserveCStringArg("--screenshot-dir", argc, argv, argIndex, &gScreenshotDir) ||
+           ParseAndPreserveCStringArg("--use-angle", argc, argv, argIndex, &gUseANGLE) ||
+           ParseAndPreserveCStringArg("--use-gl", argc, argv, argIndex, &gUseGL) ||
+           ParseAndPreserveCStringArg("--print-extensions-to-file", argc, argv, argIndex,
+                                      &gPrintExtensionsToFile) ||
+           ParseAndPreserveCStringArg("--request-extensions", argc, argv, argIndex,
+                                      &gRequestedExtensions) ||
+           ParseAndPreserveFlag("--include-inactive-resources", argc, argv, argIndex,
+                                &gIncludeInactiveResources) ||
+           ParseAndPreserveFlag("--track-gpu-time", argc, argv, argIndex, &gTrackGPUTime) ||
+           ParseAndPreserveFlag("--add-swap-into-gpu-time", argc, argv, argIndex,
+                                &gAddSwapIntoGPUTime) ||
+           ParseAndPreserveFlag("--track-frame-wall-time", argc, argv, argIndex,
+                                &gTrackFrameWallTime) ||
+           ParseAndPreserveFlag("--add-swap-into-frame-wall-time", argc, argv, argIndex,
+                                &gAddSwapIntoFrameWallTime) ||
+           ParseAndPreserveIntArg("--track-vulkan-api-wall-time", argc, argv, argIndex,
+                                  &gTrackVulkanApiWallTime) ||
+           ParseAndPreserveFlag("--captured-framecount-only", argc, argv, argIndex,
+                                &gCapturedFrameCountOnly);
 }
 }  // namespace
 }  // namespace angle

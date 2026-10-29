@@ -6,6 +6,14 @@ use crate::ir::*;
 use crate::*;
 
 pub fn generate(ir: &mut IR, options: &compile::Options) {
+    if options.ensure_loop_forward_progress {
+        let transform_options = transform::ensure_loop_forward_progress::Options {
+            // ESSL does not support BuiltInOpCode::LoopForwardProgress
+            supports_loop_forward_progress_built_in: false,
+        };
+        transform::run!(ensure_loop_forward_progress, ir, &transform_options);
+    }
+
     {
         let transform_options = transform::monomorphize_unsupported_functions::Options {
             struct_containing_samplers: false,

@@ -362,16 +362,6 @@ class VulkanPerformanceCounterTest : public ANGLETest<>
     void partialBufferUpdateShouldNotBreakRenderPass(BufferUpdate update);
     void bufferSubDataShouldNotTriggerSyncState(BufferUpdate update);
 
-    angle::VulkanPerfCounters getPerfCounters()
-    {
-        if (mIndexMap.empty())
-        {
-            mIndexMap = BuildCounterNameToIndexMap();
-        }
-
-        return GetPerfCounters(mIndexMap);
-    }
-
     // Support status for ANGLE features.
     bool isFeatureEnabled(Feature feature) const
     {
@@ -525,7 +515,6 @@ class VulkanPerformanceCounterTest : public ANGLETest<>
     }
 
     GLuint monitor;
-    CounterNameToIndexMap mIndexMap;
 };
 
 class VulkanPerformanceCounterTest_DepthStencilLoadStoreOps : public VulkanPerformanceCounterTest

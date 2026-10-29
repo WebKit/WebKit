@@ -5,6 +5,9 @@
 
 #include "angle_test_platform.h"
 
+#include <iostream>
+
+#include "common/debug.h"
 #include "common/platform.h"
 #include "gpu_info_util/SystemInfo.h"
 
@@ -124,4 +127,69 @@ bool IsGLExtensionRequestable(const std::string &extName)
 {
     return CheckExtensionExists(
         reinterpret_cast<const char *>(glGetString(GL_REQUESTABLE_EXTENSIONS_ANGLE)), extName);
+}
+
+CounterNameToIndexMap BuildCounterNameToIndexMap()
+{
+    GLint numCounters = 0;
+    glGetPerfMonitorCountersAMD(0, &numCounters, nullptr, 0, nullptr);
+    if (glGetError() != GL_NO_ERROR)
+    {
+        std::cerr << "glGetPerfMonitorCountersAMD failed (count)" << std::endl;
+        return {};
+    }
+
+    std::vector<GLuint> counterIndexes(numCounters, 0);
+    glGetPerfMonitorCountersAMD(0, nullptr, nullptr, numCounters, counterIndexes.data());
+    if (glGetError() != GL_NO_ERROR)
+    {
+        std::cerr << "glGetPerfMonitorCountersAMD failed (data)" << std::endl;
+        return {};
+    }
+
+    CounterNameToIndexMap indexMap;
+
+    for (GLuint counterIndex : counterIndexes)
+    {
+        static constexpr size_t kBufSize = 1000;
+        char buffer[kBufSize]            = {};
+        glGetPerfMonitorCounterStringAMD(0, counterIndex, kBufSize, nullptr, buffer);
+        if (glGetError() != GL_NO_ERROR)
+        {
+            std::cerr << "glGetPerfMonitorCounterStringAMD failed" << std::endl;
+            return {};
+        }
+
+        indexMap[buffer] = counterIndex;
+    }
+
+    return indexMap;
+}
+
+std::vector<angle::PerfMonitorTriplet> GetPerfMonitorTriplets()
+{
+    GLuint resultSize = 0;
+    glGetPerfMonitorCounterDataAMD(0, GL_PERFMON_RESULT_SIZE_AMD, sizeof(GLuint), &resultSize,
+                                   nullptr);
+    if (glGetError() != GL_NO_ERROR || resultSize == 0)
+    {
+        std::cerr << "glGetPerfMonitorCounterDataAMD failed (count)" << std::endl;
+        return {};
+    }
+
+    std::vector<angle::PerfMonitorTriplet> perfResults(resultSize /
+                                                       sizeof(angle::PerfMonitorTriplet));
+    GLint bytesWritten = 0;
+    glGetPerfMonitorCounterDataAMD(
+        0, GL_PERFMON_RESULT_AMD, static_cast<GLsizei>(perfResults.size() * sizeof(perfResults[0])),
+        &perfResults.data()->group, &bytesWritten);
+
+    if (glGetError() != GL_NO_ERROR)
+    {
+        std::cerr << "glGetPerfMonitorCounterDataAMD failed (data)" << std::endl;
+        return {};
+    }
+    ASSERT(static_cast<GLuint>(bytesWritten) == resultSize);
+
+    return perfResults;
 }

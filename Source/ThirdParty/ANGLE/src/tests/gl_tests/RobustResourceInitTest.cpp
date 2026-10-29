@@ -681,6 +681,71 @@ TEST_P(RobustResourceInitTest, CompressedTexImagePVRTC1)
     }
 }
 
+// Test that redefining a vertex attribute buffer with no data and same size in robust mode
+// results in zeroed data and does not reuse stale data from conversion buffers.
+TEST_P(RobustResourceInitTestES3, BufferDataRedefinedSameSizeNoData)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    constexpr char kVS[] = R"(#version 300 es
+layout(location=0) in float valueIn;
+out vec4 vColor;
+void main()
+{
+    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    gl_PointSize = 1.0;
+    vColor = vec4(valueIn, 0.0, 0.0, 1.0);
+})";
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+in vec4 vColor;
+out vec4 outColor;
+void main()
+{
+    outColor = vColor;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    glViewport(0, 0, 1, 1);
+
+    // Use an RGBA framebuffer for the draw.
+    GLTexture fboTexture;
+    glBindTexture(GL_TEXTURE_2D, fboTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTexture, 0);
+    glViewport(0, 0, 1, 1);
+    glDisable(GL_DEPTH_TEST);
+
+    // Define small buffer for vertex attribute. Using fixed point values will trigger conversion in
+    // the Vulkan backend.
+    constexpr size_t kSize           = 4 * sizeof(GLfixed);
+    constexpr GLfixed kFixedPointOne = 0x00010000;
+    std::vector<GLfixed> initData(4, kFixedPointOne);
+
+    GLBuffer buf;
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+    glBufferData(GL_ARRAY_BUFFER, kSize, initData.data(), GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 1, GL_FIXED, GL_FALSE, 0, nullptr);
+
+    glDrawArrays(GL_POINTS, 0, 1);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Clear the framebuffer for the next draw.
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Redefine with same size and no data and redraw. The buffer data should now be cleared.
+    glBufferData(GL_ARRAY_BUFFER, kSize, nullptr, GL_STATIC_DRAW);
+    glDrawArrays(GL_POINTS, 0, 1);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+}
+
 // Regression test for images being recovered from storage not re-syncing to storage after being
 // initialized
 TEST_P(RobustResourceInitTestES3, D3D11RecoverFromStorageBug)

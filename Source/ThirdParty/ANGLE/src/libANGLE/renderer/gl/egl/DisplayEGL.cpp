@@ -407,7 +407,10 @@ void DisplayEGL::terminate()
     mRenderer.reset();
     mVirtualizationGroups.clear();
 
-    mCurrentNativeContexts.clear();
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mCurrentNativeContextsMutex);
+        mCurrentNativeContexts.clear();
+    }
 
     egl::Error result = mEGL->terminate();
     if (result.isError())
@@ -459,10 +462,12 @@ class ExternalSurfaceEGL : public SurfaceEGL
     {}
     ~ExternalSurfaceEGL() override = default;
 
-    egl::Error initialize(const egl::Display *display) override { return egl::NoError(); }
+    egl::Error initialize(const egl::ThreadSafeDisplay *display) override { return egl::NoError(); }
     EGLint getSwapBehavior() const override { return EGL_BUFFER_DESTROYED; }
     gl::Extents getSize() const final { return gl::Extents(mWidth, mHeight, 1); }
-    egl::Error getUserSize(const egl::Display *display, EGLint *width, EGLint *height) const final
+    egl::Error getUserSize(const egl::ThreadSafeDisplay *display,
+                           EGLint *width,
+                           EGLint *height) const final
     {
         if (width != nullptr)
         {
@@ -736,80 +741,80 @@ egl::Error DisplayEGL::waitNative(const gl::Context *context, EGLint engine)
     return egl::NoError();
 }
 
-egl::Error DisplayEGL::makeCurrent(egl::Display *display,
-                                   egl::Surface *drawSurface,
-                                   egl::Surface *readSurface,
-                                   gl::Context *context)
+egl::Error ThreadSafeDisplayEGL::makeCurrent(egl::Surface *drawSurface,
+                                             egl::Surface *readSurface,
+                                             gl::Context *context)
 {
-    CurrentNativeContext &currentContext =
-        mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
-
-    EGLSurface newSurface = EGL_NO_SURFACE;
-    if (drawSurface)
     {
-        SurfaceEGL *drawSurfaceEGL = GetImplAs<SurfaceEGL>(drawSurface);
-        newSurface                 = drawSurfaceEGL->getSurface();
-    }
+        std::lock_guard<angle::SimpleMutex> lock(mCurrentNativeContextsMutex);
+        CurrentNativeContext &currentContext =
+            mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
 
-    EGLContext newContext = EGL_NO_CONTEXT;
-    if (context)
-    {
-        ContextEGL *contextEGL = GetImplAs<ContextEGL>(context);
-        newContext             = contextEGL->getContext();
-    }
-
-    if (currentContext.isExternalContext || (context && context->isExternal()))
-    {
-        ASSERT(currentContext.surface == EGL_NO_SURFACE);
-        if (!currentContext.isExternalContext)
+        EGLSurface newSurface = EGL_NO_SURFACE;
+        if (drawSurface)
         {
-            // Switch to an ANGLE external context.
-            ASSERT(context);
-            ASSERT(currentContext.context == EGL_NO_CONTEXT);
-            currentContext.context           = newContext;
-            currentContext.isExternalContext = true;
-
-            // We only support using external surface with external context.
-            ASSERT(GetImplAs<SurfaceEGL>(drawSurface)->isExternal());
-            ASSERT(GetImplAs<SurfaceEGL>(drawSurface)->getSurface() == EGL_NO_SURFACE);
+            SurfaceEGL *drawSurfaceEGL = GetImplAs<SurfaceEGL>(drawSurface);
+            newSurface                 = drawSurfaceEGL->getSurface();
         }
-        else if (context)
+
+        EGLContext newContext = EGL_NO_CONTEXT;
+        if (context)
         {
-            // For external contexts, the underlying native EGLContext might have been destroyed
-            // and recreated by the OS without ANGLE being told to unbind.
+            ContextEGL *contextEGL = GetImplAs<ContextEGL>(context);
+            newContext             = contextEGL->getContext();
+        }
+
+        if (currentContext.isExternalContext || (context && context->isExternal()))
+        {
+            ASSERT(currentContext.surface == EGL_NO_SURFACE);
+            if (!currentContext.isExternalContext)
+            {
+                // Switch to an ANGLE external context.
+                ASSERT(context);
+                ASSERT(currentContext.context == EGL_NO_CONTEXT);
+                currentContext.context           = newContext;
+                currentContext.isExternalContext = true;
+
+                // We only support using external surface with external context.
+                ASSERT(GetImplAs<SurfaceEGL>(drawSurface)->isExternal());
+                ASSERT(GetImplAs<SurfaceEGL>(drawSurface)->getSurface() == EGL_NO_SURFACE);
+            }
+            else if (context)
+            {
+                // For external contexts, the underlying native EGLContext might have been destroyed
+                // and recreated by the OS without ANGLE being told to unbind.
+                currentContext.context = newContext;
+                ASSERT(newSurface == EGL_NO_SURFACE);
+                ASSERT(newContext != EGL_NO_CONTEXT);
+                // We only support using external surface with external context.
+                ASSERT(GetImplAs<SurfaceEGL>(drawSurface)->isExternal());
+                ASSERT(GetImplAs<SurfaceEGL>(drawSurface)->getSurface() == EGL_NO_SURFACE);
+            }
+            else
+            {
+                // Release the ANGLE external context.
+                ASSERT(newSurface == EGL_NO_SURFACE);
+                ASSERT(newContext == EGL_NO_CONTEXT);
+                ASSERT(currentContext.context != EGL_NO_CONTEXT);
+                currentContext.context           = EGL_NO_CONTEXT;
+                currentContext.isExternalContext = false;
+            }
+
+            // Do not need to call eglMakeCurrent(), since we don't support switching EGLSurface for
+            // external context.
+        }
+        else if (newSurface != currentContext.surface || newContext != currentContext.context)
+        {
+            if (mEGL->makeCurrent(newSurface, newContext) == EGL_FALSE)
+            {
+                return egl::Error(mEGL->getError(), "eglMakeCurrent failed");
+            }
+            currentContext.surface = newSurface;
             currentContext.context = newContext;
-            ASSERT(newSurface == EGL_NO_SURFACE);
-            ASSERT(newContext != EGL_NO_CONTEXT);
-            // We only support using external surface with external context.
-            ASSERT(GetImplAs<SurfaceEGL>(drawSurface)->isExternal());
-            ASSERT(GetImplAs<SurfaceEGL>(drawSurface)->getSurface() == EGL_NO_SURFACE);
         }
-        else
-        {
-            // Release the ANGLE external context.
-            ASSERT(newSurface == EGL_NO_SURFACE);
-            ASSERT(newContext == EGL_NO_CONTEXT);
-            ASSERT(currentContext.context != EGL_NO_CONTEXT);
-            currentContext.context           = EGL_NO_CONTEXT;
-            currentContext.isExternalContext = false;
-        }
-
-        // Do not need to call eglMakeCurrent(), since we don't support switching EGLSurface for
-        // external context.
-        return DisplayGL::makeCurrent(display, drawSurface, readSurface, context);
     }
 
-    if (newSurface != currentContext.surface || newContext != currentContext.context)
-    {
-        if (mEGL->makeCurrent(newSurface, newContext) == EGL_FALSE)
-        {
-            return egl::Error(mEGL->getError(), "eglMakeCurrent failed");
-        }
-        currentContext.surface = newSurface;
-        currentContext.context = newContext;
-    }
-
-    return DisplayGL::makeCurrent(display, drawSurface, readSurface, context);
+    return ThreadSafeDisplayGL::makeCurrent(drawSurface, readSurface, context);
 }
 
 gl::Version DisplayEGL::getMaxSupportedESVersion() const
@@ -821,12 +826,15 @@ void DisplayEGL::destroyNativeContext(EGLContext context)
 {
     // If this context is current, remove it from the tracking of current contexts to make sure we
     // don't try to make it current again.
-    for (auto &currentContext : mCurrentNativeContexts)
     {
-        if (currentContext.second.context == context)
+        std::lock_guard<angle::SimpleMutex> lock(mCurrentNativeContextsMutex);
+        for (auto &currentContext : mCurrentNativeContexts)
         {
-            currentContext.second.surface = EGL_NO_SURFACE;
-            currentContext.second.context = EGL_NO_CONTEXT;
+            if (currentContext.second.context == context)
+            {
+                currentContext.second.surface = EGL_NO_SURFACE;
+                currentContext.second.context = EGL_NO_CONTEXT;
+            }
         }
     }
 
@@ -933,7 +941,7 @@ void DisplayEGL::setBlobCacheFuncs(EGLSetBlobFuncANDROID set, EGLGetBlobFuncANDR
     }
 }
 
-egl::Error DisplayEGL::makeCurrentSurfaceless(gl::Context *context)
+egl::Error ThreadSafeDisplayEGL::makeCurrentSurfaceless(gl::Context *context)
 {
     // Nothing to do because EGL always uses the same context and the previous surface can be left
     // current.
@@ -975,21 +983,24 @@ egl::Error DisplayEGL::createRenderer(EGLContext shareContext,
     outRenderer->reset(new RendererEGL(std::move(functionsGL), mDisplayAttributes, this, context,
                                        isExternalContext));
 
-    CurrentNativeContext &currentContext =
-        mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
-    if (makeNewContextCurrent)
     {
-        currentContext.surface = mMockPbuffer;
-        currentContext.context = context;
-    }
-    else if (!isExternalContext)
-    {
-        // Reset the current context back to the previous state
-        if (mEGL->makeCurrent(currentContext.surface, currentContext.context) == EGL_FALSE)
+        std::lock_guard<angle::SimpleMutex> lock(mCurrentNativeContextsMutex);
+        CurrentNativeContext &currentContext =
+            mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
+        if (makeNewContextCurrent)
         {
-            std::ostringstream err;
-            err << "eglMakeCurrent failed with " << egl::Error(mEGL->getError());
-            return egl::Error(EGL_NOT_INITIALIZED, err.str());
+            currentContext.surface = mMockPbuffer;
+            currentContext.context = context;
+        }
+        else if (!isExternalContext)
+        {
+            // Reset the current context back to the previous state
+            if (mEGL->makeCurrent(currentContext.surface, currentContext.context) == EGL_FALSE)
+            {
+                std::ostringstream err;
+                err << "eglMakeCurrent failed with " << egl::Error(mEGL->getError());
+                return egl::Error(EGL_NOT_INITIALIZED, err.str());
+            }
         }
     }
 

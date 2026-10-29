@@ -1806,6 +1806,53 @@ void ANGLETestBase::ignoreD3D11SDKLayersWarnings()
     mIgnoreD3D11SDKLayersWarnings = true;
 }
 
+angle::VulkanPerfCounters ANGLETestBase::getPerfCounters()
+{
+    ASSERT(IsVulkan());
+    if (mPerfCounterIndexMap.empty())
+    {
+        mPerfCounterIndexMap = BuildCounterNameToIndexMap();
+    }
+
+    std::vector<angle::PerfMonitorTriplet> perfResults = GetPerfMonitorTriplets();
+
+    auto getPerfCounterValue = [&](const char *name, GLuint64 *counterOut) {
+        auto iter = mPerfCounterIndexMap.find(name);
+        ASSERT(iter != mPerfCounterIndexMap.end());
+        GLuint counterIndex = iter->second;
+
+        for (const angle::PerfMonitorTriplet &triplet : perfResults)
+        {
+            ASSERT(triplet.group == 0);
+            if (triplet.counter == counterIndex)
+            {
+                *counterOut = triplet.value;
+                return;
+            }
+        }
+
+        // Additional logs for b/382094011
+        std::cerr << "GetPerfCounterValue missing counter: " << name << "; index: " << counterIndex
+                  << "; triplets: " << std::endl;
+        for (const angle::PerfMonitorTriplet &triplet : perfResults)
+        {
+            std::cerr << triplet.counter << " " << triplet.value << std::endl;
+        }
+
+        ASSERT(false);
+    };
+
+    angle::VulkanPerfCounters counters = {};
+
+#define ANGLE_UNPACK_PERF_COUNTER(COUNTER) getPerfCounterValue(#COUNTER, &counters.COUNTER);
+
+    ANGLE_VK_PERF_COUNTERS_X(ANGLE_UNPACK_PERF_COUNTER)
+
+#undef ANGLE_UNPACK_PERF_COUNTER
+
+    return counters;
+}
+
 ANGLETestBase::ScopedIgnorePlatformMessages::ScopedIgnorePlatformMessages()
 {
     gPlatformContext.ignoreMessages = true;

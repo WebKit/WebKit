@@ -85,7 +85,7 @@ set(ANGLE_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/KHR"
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/common/base"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/common/third_party/xxhash"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/common/third_party/xxhash/src"
     "${CMAKE_CURRENT_SOURCE_DIR}/third_party/zlib/google"
     "${CMAKE_CURRENT_BINARY_DIR}/include"
 )

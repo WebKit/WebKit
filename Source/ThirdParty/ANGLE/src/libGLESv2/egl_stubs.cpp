@@ -50,7 +50,10 @@ EGLBoolean BindAPI(Thread *thread, EGLenum api)
     return EGL_TRUE;
 }
 
-EGLBoolean BindTexImage(Thread *thread, Display *display, Surface *eglSurface, EGLint buffer)
+EGLBoolean BindTexImage(Thread *thread,
+                        ThreadSafeDisplay *display,
+                        Surface *eglSurface,
+                        EGLint buffer)
 {
     gl::Context *context = thread->getContext();
     if (context && !context->isContextLost())
@@ -116,7 +119,7 @@ EGLint ClientWaitSync(Thread *thread,
 }
 
 EGLBoolean CopyBuffers(Thread *thread,
-                       Display *display,
+                       ThreadSafeDisplay *display,
                        Surface *eglSurface,
                        EGLNativePixmapType target)
 {
@@ -228,8 +231,10 @@ EGLSurface CreatePlatformWindowSurface(Thread *thread,
                                        void *win,
                                        const AttributeMap &attributes)
 {
-    Surface *surface                 = nullptr;
-    EGLNativeWindowType nativeWindow = reinterpret_cast<EGLNativeWindowType>(win);
+    Surface *surface = nullptr;
+
+    EGLNativeWindowType nativeWindow = display->getNativeWindowForCreatePlatformWindowSurface(win);
+
     ANGLE_EGL_TRY_RETURN(
         thread, display->createWindowSurface(configuration, nativeWindow, attributes, &surface),
         "eglCreatePlatformWindowSurface", display, EGL_NO_SURFACE);
@@ -287,7 +292,7 @@ EGLBoolean DestroyImage(Thread *thread, Display *display, ImageID imageID)
     return EGL_TRUE;
 }
 
-EGLBoolean DestroySurface(Thread *thread, Display *display, Surface *eglSurface)
+EGLBoolean DestroySurface(Thread *thread, ThreadSafeDisplay *display, Surface *eglSurface)
 {
     // Workaround https://issuetracker.google.com/292285899
     // When destroying surface, if the surface
@@ -462,7 +467,7 @@ EGLBoolean Initialize(Thread *thread, Display *display, EGLint *major, EGLint *m
 }
 
 EGLBoolean MakeCurrent(Thread *thread,
-                       Display *display,
+                       ThreadSafeDisplay *display,
                        Surface *drawSurface,
                        Surface *readSurface,
                        gl::ContextID contextID)
@@ -546,7 +551,7 @@ const char *QueryString(Thread *thread, Display *display, EGLint name)
 }
 
 EGLBoolean QuerySurface(Thread *thread,
-                        Display *display,
+                        ThreadSafeDisplay *display,
                         Surface *eglSurface,
                         EGLint attribute,
                         EGLint *value)
@@ -575,7 +580,10 @@ EGLBoolean QuerySurface(Thread *thread,
     return EGL_TRUE;
 }
 
-EGLBoolean ReleaseTexImage(Thread *thread, Display *display, Surface *eglSurface, EGLint buffer)
+EGLBoolean ReleaseTexImage(Thread *thread,
+                           ThreadSafeDisplay *display,
+                           Surface *eglSurface,
+                           EGLint buffer)
 {
     gl::Context *context = thread->getContext();
     if (context && !context->isContextLost())
@@ -626,7 +634,7 @@ EGLBoolean ReleaseThread(Thread *thread)
 }
 
 EGLBoolean SurfaceAttrib(Thread *thread,
-                         Display *display,
+                         ThreadSafeDisplay *display,
                          Surface *eglSurface,
                          EGLint attribute,
                          EGLint value)
@@ -638,7 +646,7 @@ EGLBoolean SurfaceAttrib(Thread *thread,
     return EGL_TRUE;
 }
 
-EGLBoolean SwapBuffers(Thread *thread, Display *display, Surface *eglSurface)
+EGLBoolean SwapBuffers(Thread *thread, ThreadSafeDisplay *display, Surface *eglSurface)
 {
     ANGLE_EGL_TRY_RETURN(thread, eglSurface->swap(thread->getContext()), "eglSwapBuffers",
                          eglSurface, EGL_FALSE);

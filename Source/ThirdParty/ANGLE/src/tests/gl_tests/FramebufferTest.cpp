@@ -11048,3 +11048,194 @@ ANGLE_INSTANTIATE_TEST_ES31_AND(FramebufferTest_ES31_MSAA,
                                 ES31_VULKAN().enable(Feature::EmulatedPrerotation90),
                                 ES31_VULKAN().enable(Feature::EmulatedPrerotation180),
                                 ES31_VULKAN().enable(Feature::EmulatedPrerotation270));
+
+class FramebufferTest_RecreateFboOnAttachmentRespecification : public ANGLETest<>
+{
+  protected:
+    FramebufferTest_RecreateFboOnAttachmentRespecification()
+    {
+        setWindowWidth(128);
+        setWindowHeight(128);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+};
+
+// Verify that respecifying attachments on an already-synced FBO recreates the native FBO and
+// renders cleanly with recreateFboOnAttachmentRespecification enabled. Crashes on
+// PowerVR devices without the recreateFboOnAttachmentRespecification workaround enabled.
+TEST_P(FramebufferTest_RecreateFboOnAttachmentRespecification, RespecifyCollidingAttachments)
+{
+    GLint maxColorAttachments = 0;
+    GLint maxDrawBuffers      = 0;
+    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
+    ANGLE_SKIP_TEST_IF(maxColorAttachments < 8 || maxDrawBuffers < 8);
+
+    constexpr char kVS[]      = R"(#version 300 es
+void main() {
+    vec2 p[3] = vec2[3](vec2(-1.0, -1.0), vec2(3.0, -1.0), vec2(-1.0, 3.0));
+    gl_Position = vec4(p[gl_VertexID], 0.0, 1.0);
+})";
+    constexpr char kFSFloat[] = R"(#version 300 es
+precision highp float;
+uniform vec4 uc;
+layout(location = 0) out vec4 o0;
+void main() {
+    o0 = uc;
+})";
+    constexpr char kFSUint[]  = R"(#version 300 es
+precision highp int;
+uniform uvec4 uc;
+layout(location = 0) out uvec4 o0;
+void main() {
+    o0 = uc;
+})";
+
+    ANGLE_GL_PROGRAM(progFloat, kVS, kFSFloat);
+    ANGLE_GL_PROGRAM(progUint, kVS, kFSUint);
+
+    auto attachStorageTex = [](GLenum internalFormat, GLenum attachmentPoint, GLTexture &tex) {
+        glBindTexture(GL_TEXTURE_2D, tex);
+        glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, 16, 16);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentPoint, GL_TEXTURE_2D, tex, 0);
+    };
+
+    // Same-FBO respecification with colliding layouts CA -> CB (Carrier 1 ch=C).
+    const GLenum layoutCA[6] = {GL_RG32UI, GL_RG32UI, GL_RGBA16UI, GL_R8UI, GL_R32UI, GL_RG8UI};
+    const GLenum layoutCB[7] = {GL_R32UI, GL_RGBA16UI, GL_RG32UI, GL_R16UI,
+                                GL_RGBA8, GL_RGBA32UI, GL_R16UI};
+
+    GLFramebuffer fboRespec;
+    GLTexture texC0Float;
+    std::array<GLTexture, 6> texCADisabled;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboRespec);
+    attachStorageTex(GL_RGBA8, GL_COLOR_ATTACHMENT0, texC0Float);
+    for (size_t i = 0; i < 6; ++i)
+    {
+        attachStorageTex(layoutCA[i], static_cast<GLenum>(GL_COLOR_ATTACHMENT1 + i),
+                         texCADisabled[i]);
+    }
+    const GLenum drawBuf0 = GL_COLOR_ATTACHMENT0;
+    glDrawBuffers(1, &drawBuf0);
+    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+    glViewport(0, 0, 16, 16);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    glUseProgram(progFloat);
+    glUniform4f(glGetUniformLocation(progFloat, "uc"), 1.0f, 0.0f, 0.0f, 1.0f);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDisable(GL_BLEND);
+
+    GLTexture texC0Uint;
+    std::array<GLTexture, 7> texCBDisabled;
+    attachStorageTex(GL_RGBA32UI, GL_COLOR_ATTACHMENT0, texC0Uint);
+    for (size_t i = 0; i < 7; ++i)
+    {
+        attachStorageTex(layoutCB[i], static_cast<GLenum>(GL_COLOR_ATTACHMENT1 + i),
+                         texCBDisabled[i]);
+    }
+    glDrawBuffers(1, &drawBuf0);
+    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+    const GLuint clearVals[4] = {7u, 7u, 7u, 7u};
+    glClearBufferuiv(GL_COLOR, 0, clearVals);
+    glUseProgram(progUint);
+    glUniform4ui(glGetUniformLocation(progUint, "uc"), 0x11u, 0x22u, 0x33u, 0x44u);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    EXPECT_PIXEL_RECT32UI_EQ(0, 0, 1, 1, GLColor32UI(0x11u, 0x22u, 0x33u, 0x44u));
+    ASSERT_GL_NO_ERROR();
+}
+
+// Verify drawing across FBOs with colliding MRT hashes caused by disabled draw buffers (and reading
+// back disabled attachments via glReadBuffer) renders cleanly with
+// recreateFboOnAttachmentRespecification enabled. Crashes on PowerVR devices without the
+// recreateFboOnAttachmentRespecification workaround enabled.
+TEST_P(FramebufferTest_RecreateFboOnAttachmentRespecification,
+       DisabledDrawBufferCollidingAttachments)
+{
+    GLint maxColorAttachments = 0;
+    GLint maxDrawBuffers      = 0;
+    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
+    ANGLE_SKIP_TEST_IF(maxColorAttachments < 8 || maxDrawBuffers < 8);
+
+    constexpr char kVS[]      = R"(#version 300 es
+void main() {
+    vec2 p[3] = vec2[3](vec2(-1.0, -1.0), vec2(3.0, -1.0), vec2(-1.0, 3.0));
+    gl_Position = vec4(p[gl_VertexID], 0.0, 1.0);
+})";
+    constexpr char kFSFloat[] = R"(#version 300 es
+precision highp float;
+uniform vec4 uc;
+layout(location = 0) out vec4 o0;
+void main() {
+    o0 = uc;
+})";
+
+    ANGLE_GL_PROGRAM(progFloat1, kVS, kFSFloat);
+    ANGLE_GL_PROGRAM(progFloat2, kVS, kFSFloat);
+
+    auto attachStorageTex = [](GLenum internalFormat, GLenum attachmentPoint, GLTexture &tex) {
+        glBindTexture(GL_TEXTURE_2D, tex);
+        glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, 16, 16);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentPoint, GL_TEXTURE_2D, tex, 0);
+    };
+
+    // Colliding disabled draw-buffer layouts A and B (Carrier 1 ch=A, hash = 0xbcc863eb).
+    const GLenum layoutA[6] = {GL_R32UI, GL_RG32UI, GL_RG32UI, GL_RGBA32UI, GL_RGBA16UI, GL_RG32UI};
+    const GLenum layoutB[7] = {GL_R8,      GL_R32UI, GL_RG8UI,  GL_R32UI,
+                               GL_RGBA8UI, GL_R32UI, GL_RGBA8UI};
+
+    GLFramebuffer fboA;
+    GLTexture texA0;
+    std::array<GLTexture, 6> texADisabled;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboA);
+    attachStorageTex(GL_RGBA8, GL_COLOR_ATTACHMENT0, texA0);
+    for (size_t i = 0; i < 6; ++i)
+    {
+        attachStorageTex(layoutA[i], static_cast<GLenum>(GL_COLOR_ATTACHMENT1 + i),
+                         texADisabled[i]);
+    }
+    const GLenum drawBuf0 = GL_COLOR_ATTACHMENT0;
+    glDrawBuffers(1, &drawBuf0);
+    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+    glViewport(0, 0, 16, 16);
+    glUseProgram(progFloat1);
+    glUniform4f(glGetUniformLocation(progFloat1, "uc"), 0.0f, 1.0f, 0.0f, 1.0f);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    GLFramebuffer fboB;
+    GLTexture texB0;
+    std::array<GLTexture, 7> texBDisabled;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboB);
+    attachStorageTex(GL_RGBA8, GL_COLOR_ATTACHMENT0, texB0);
+    for (size_t i = 0; i < 7; ++i)
+    {
+        attachStorageTex(layoutB[i], static_cast<GLenum>(GL_COLOR_ATTACHMENT1 + i),
+                         texBDisabled[i]);
+    }
+    glDrawBuffers(1, &drawBuf0);
+    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+    glUseProgram(progFloat2);
+    glUniform4f(glGetUniformLocation(progFloat2, "uc"), 0.0f, 0.0f, 1.0f, 1.0f);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+}
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(
+    FramebufferTest_RecreateFboOnAttachmentRespecification);
+ANGLE_INSTANTIATE_TEST_ES3_AND(
+    FramebufferTest_RecreateFboOnAttachmentRespecification,
+    ES3_OPENGL().enable(Feature::RecreateFboOnAttachmentRespecification),
+    ES3_OPENGLES().enable(Feature::RecreateFboOnAttachmentRespecification));

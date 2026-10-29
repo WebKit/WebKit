@@ -481,6 +481,21 @@ void AtomicSerial::storeMaxValue(uint64_t value)
     }
 }
 
+// AtomicCommandBufferError implementation
+void AtomicCommandBufferError::store(MTLCommandBufferError value)
+{
+    // Do not overwrite an existing non-OOM GPU fault error (e.g. Timeout, PageFault,
+    // DeviceRemoved) with a subsequent error (such as NotPermitted from rejected follow-up
+    // submissions or OutOfMemory) so the root-cause fault is preserved until popped.
+    MTLCommandBufferError prevError = mValue.load(std::memory_order_relaxed);
+    while (
+        (prevError == MTLCommandBufferErrorNone || prevError == MTLCommandBufferErrorOutOfMemory) &&
+        !mValue.compare_exchange_weak(prevError, value, std::memory_order_release,
+                                      std::memory_order_consume))
+    {
+    }
+}
+
 // CommandQueue implementation
 void CommandQueue::reset()
 {

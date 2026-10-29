@@ -403,7 +403,7 @@ def _CheckTabsInSourceFiles(input_api, output_api):
     for f in input_api.AffectedSourceFiles(implementation_and_headers_including_third_party):
         for (num, line) in f.ChangedContents():
             if '\t' in line:
-                files_with_tabs.append(f)
+                files_with_tabs.append(f.LocalPath())
                 break
 
     if files_with_tabs:

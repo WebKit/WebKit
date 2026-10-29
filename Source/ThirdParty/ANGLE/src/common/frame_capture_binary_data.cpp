@@ -299,6 +299,7 @@ void FrameCaptureBinaryData::clear()
     mFileIndex.clear();
     mReplayBlockDescriptions.clear();
     mData.clear();
+    SafeDelete(mFileStream);
 }
 
 // Helper class for compression/decompression operations

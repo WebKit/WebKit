@@ -13,6 +13,7 @@
 #include "common/utilities.h"
 #include "libANGLE/Config.h"
 #include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/Image.h"
 #include "libANGLE/State.h"

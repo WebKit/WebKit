@@ -41,7 +41,7 @@ class D3DTextureSurfaceWGL : public SurfaceWGL
                                                      ID3D11Device *d3d11Device,
                                                      ID3D11Device1 *d3d11Device1);
 
-    egl::Error initialize(const egl::Display *display) override;
+    egl::Error initialize(const egl::ThreadSafeDisplay *display) override;
     egl::Error makeCurrent(const gl::Context *context) override;
     egl::Error unMakeCurrent(const gl::Context *context) override;
 
@@ -56,7 +56,7 @@ class D3DTextureSurfaceWGL : public SurfaceWGL
                             gl::Texture *texture,
                             EGLint buffer) override;
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
-    void setSwapInterval(const egl::Display *display, EGLint interval) override;
+    void setSwapInterval(const egl::ThreadSafeDisplay *display, EGLint interval) override;
 
     gl::Extents getSize() const override;
 

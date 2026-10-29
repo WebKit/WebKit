@@ -381,24 +381,64 @@ TEST_P(GLSLOutputGLSLVerifyIRUseTest, Basic)
     }
 }
 
-class GLSLOutputMSLTest_EnsureLoopForwardProgress : public GLSLOutputTest
-{};
+class GLSLOutputTest_EnsureLoopForwardProgress : public GLSLOutputTest
+{
+  protected:
+    // The implementation of EnsureLoopForwardProgress is different for Metal.  It uses a helper
+    // named loopForwardProgress.  Elsewhere, it's implemented with a counter and a break.  The
+    // counter counts up to 2147483647.
+    void verifyNoLoopForwardProgress()
+    {
+        if (IsMetal())
+        {
+            verifyIsNotInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
+        }
+        else
+        {
+            verifyIsNotInTranslation(GL_FRAGMENT_SHADER, "2147483647");
+        }
+    }
+    void verifyLoopForwardProgress()
+    {
+        if (IsMetal())
+        {
+            verifyIsInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
+        }
+        else
+        {
+            verifyIsInTranslation(GL_FRAGMENT_SHADER, "2147483647");
+        }
+    }
+    void verifyLoopForwardProgressCount(uint32_t expect)
+    {
+        if (IsMetal())
+        {
+            // One occurrence for defining |loopForwardProgress()|, and a number of calls in the
+            // loop.
+            verifyCountInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress", expect + 1);
+        }
+        else
+        {
+            verifyCountInTranslation(GL_FRAGMENT_SHADER, "2147483647", expect);
+        }
+    }
+};
 
 // Test that loopForwardProgress() is not inserted when the for loop is obviously not an infinite
 // loop.
-TEST_P(GLSLOutputMSLTest_EnsureLoopForwardProgress, FiniteBasicFor)
+TEST_P(GLSLOutputTest_EnsureLoopForwardProgress, FiniteBasicFor)
 {
     constexpr char kFS[] = R"(#version 300 es
 void main() {
     for (highp int i = 0; i < 100; ++i) { }
 })";
     compileShader(GL_FRAGMENT_SHADER, kFS);
-    verifyIsNotInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
+    verifyNoLoopForwardProgress();
 }
 
 // Test that loopForwardProgress() is not inserted when the for loop is obviously not an infinite
 // loop, where the condition involves read-only variables.
-TEST_P(GLSLOutputMSLTest_EnsureLoopForwardProgress, FiniteForWithReadOnlyComparator)
+TEST_P(GLSLOutputTest_EnsureLoopForwardProgress, FiniteForWithReadOnlyComparator)
 {
     // Uniform comparator is read-only and like a constant.
     {
@@ -408,7 +448,7 @@ void main() {
     for (highp int i = 0; i < c; ++i) { }
 })";
         compileShader(GL_FRAGMENT_SHADER, kFS);
-        verifyIsNotInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
+        verifyNoLoopForwardProgress();
     }
 
     // Uniform from a UBO is read-only and like a constant.
@@ -421,7 +461,7 @@ void main() {
     for (highp int i = 0; i < c; ++i) { }
 })";
         compileShader(GL_FRAGMENT_SHADER, kFS);
-        verifyIsNotInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
+        verifyNoLoopForwardProgress();
     }
 
     // Uniform from a UBO, even if indexed and nested, is read-only and like a constant.
@@ -440,7 +480,7 @@ void main() {
         // The AST transformation does not detect this as finite loop.
         if (getEGLWindow()->isFeatureEnabled(Feature::UseIr))
         {
-            verifyIsNotInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
+            verifyNoLoopForwardProgress();
         }
     }
 
@@ -452,12 +492,12 @@ void main() {
     for (highp int i = 0; i < v; ++i) { }
 })";
         compileShader(GL_FRAGMENT_SHADER, kFS);
-        verifyIsNotInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
+        verifyNoLoopForwardProgress();
     }
 }
 
 // Test that loopForwardProgress() is inserted when the for loop is an infinite loop.
-TEST_P(GLSLOutputMSLTest_EnsureLoopForwardProgress, InfiniteFor)
+TEST_P(GLSLOutputTest_EnsureLoopForwardProgress, InfiniteFor)
 {
     // Loop counter resets in the loop body
     {
@@ -466,8 +506,7 @@ void main() {
     for (highp int i = 0; i < 100; i++) { i = 0; }
 })";
         compileShader(GL_FRAGMENT_SHADER, kFS);
-        // One occurrence for defining |loopForwardProgress()|, and one call in the loop.
-        verifyCountInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress", 1 + 1);
+        verifyLoopForwardProgressCount(1);
     }
 
     // Loop condition is always false
@@ -478,8 +517,7 @@ void main() {
     gl_FragColor = vec4(1);
 })";
         compileShader(GL_FRAGMENT_SHADER, kFS);
-        // One occurrence for defining |loopForwardProgress()|, and one call in the loop.
-        verifyCountInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress", 1 + 1);
+        verifyLoopForwardProgressCount(1);
     }
 
     // Loop variable is modified inside the index of a read-only variable.
@@ -505,14 +543,13 @@ void main(void) {
         // doesn't realize it modifies |i|.
         if (getEGLWindow()->isFeatureEnabled(Feature::UseIr))
         {
-            // One occurrence for defining |loopForwardProgress()|, and one call in the loop.
-            verifyCountInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress", 1 + 1);
+            verifyLoopForwardProgressCount(1);
         }
     }
 }
 
 // Test that loopForwardProgress() is inserted when nested for loops are infinite loops.
-TEST_P(GLSLOutputMSLTest_EnsureLoopForwardProgress, InfiniteNestedFor)
+TEST_P(GLSLOutputTest_EnsureLoopForwardProgress, InfiniteNestedFor)
 {
     constexpr char kFS[] = R"(#version 300 es
 void main() {
@@ -526,12 +563,11 @@ void main() {
     }
 })";
     compileShader(GL_FRAGMENT_SHADER, kFS);
-    // One occurrence for defining |loopForwardProgress()|, and one call in each loop.
-    verifyCountInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress", 2 + 1);
+    verifyLoopForwardProgressCount(2);
 }
 
 // Test that loopForwardProgress() is inserted when the loop variable is global.
-TEST_P(GLSLOutputMSLTest_EnsureLoopForwardProgress, InfiniteForWithGlobal)
+TEST_P(GLSLOutputTest_EnsureLoopForwardProgress, InfiniteForWithGlobal)
 {
     constexpr char kFS[] = R"(#version 300 es
 highp int i;
@@ -550,13 +586,12 @@ void main() {
     }
 })";
     compileShader(GL_FRAGMENT_SHADER, kFS);
-    // One occurrence for defining |loopForwardProgress()|, and one call in each loop.
-    verifyCountInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress", 2 + 1);
+    verifyLoopForwardProgressCount(2);
 }
 
 // Test that loopForwardProgress() is not inserted when the for loop is not an infinite loop,
 // testing various tricky loops.
-TEST_P(GLSLOutputMSLTest_EnsureLoopForwardProgress, FiniteFors)
+TEST_P(GLSLOutputTest_EnsureLoopForwardProgress, FiniteFors)
 {
     const char kShaderPrefix[] = R"(#version 300 es
 precision highp int;
@@ -599,13 +634,13 @@ void main() {
     {
         std::string shader = (std::stringstream() << kShaderPrefix << test << kShaderSuffix).str();
         compileShader(GL_FRAGMENT_SHADER, shader.c_str());
-        verifyIsNotInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
+        verifyNoLoopForwardProgress();
     }
 }
 
 // Test that loopForwardProgress() is inserted when the for loop is an infinite loop,
 // testing various tricky loops.
-TEST_P(GLSLOutputMSLTest_EnsureLoopForwardProgress, InfiniteFors)
+TEST_P(GLSLOutputTest_EnsureLoopForwardProgress, InfiniteFors)
 {
     const char kShaderPrefix[] = R"(#version 300 es
 precision highp int;
@@ -660,7 +695,55 @@ void main() {
         SCOPED_TRACE(testing::Message() << "test: " << test);
         std::string shader = (std::stringstream() << kShaderPrefix << test << kShaderSuffix).str();
         compileShader(GL_FRAGMENT_SHADER, shader.c_str());
-        verifyIsInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
+        verifyLoopForwardProgress();
+    }
+}
+
+// Test that loopForwardProgress() is inserted in while loops, the translator currently doesn't
+// bother trying to figure out if they can be proven finite.
+TEST_P(GLSLOutputTest_EnsureLoopForwardProgress, While)
+{
+    const char kShaderPrefix[] = R"(#version 300 es
+precision highp int;
+void main() {
+
+)";
+    const char kShaderSuffix[] = "}\n";
+    const char *kTests[]{
+        "while (true) { }",
+        "while (true) { break; }",
+        "uint i = 0u; while (i < 10u) { ++i; }",
+    };
+
+    for (const char *test : kTests)
+    {
+        std::string shader = (std::stringstream() << kShaderPrefix << test << kShaderSuffix).str();
+        compileShader(GL_FRAGMENT_SHADER, shader.c_str());
+        verifyLoopForwardProgress();
+    }
+}
+
+// Test that loopForwardProgress() is inserted in do-while loops, the translator currently doesn't
+// bother trying to figure out if they can be proven finite.
+TEST_P(GLSLOutputTest_EnsureLoopForwardProgress, DoWhile)
+{
+    const char kShaderPrefix[] = R"(#version 300 es
+precision highp int;
+void main() {
+
+)";
+    const char kShaderSuffix[] = "}\n";
+    const char *kTests[]{
+        "do { } while(true);",
+        "do { } while(false);",
+        "do { break; } while(true);",
+    };
+
+    for (const char *test : kTests)
+    {
+        std::string shader = (std::stringstream() << kShaderPrefix << test << kShaderSuffix).str();
+        compileShader(GL_FRAGMENT_SHADER, shader.c_str());
+        verifyLoopForwardProgress();
     }
 }
 
@@ -954,6 +1037,7 @@ ANGLE_INSTANTIATE_TEST(GLSLOutputGLSLVerifyIRUseTest,
                        ES2_OPENGL().disable(Feature::UseIr),
                        ES2_OPENGLES().disable(Feature::UseIr));
 
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GLSLOutputMSLTest_EnsureLoopForwardProgress);
-ANGLE_INSTANTIATE_TEST(GLSLOutputMSLTest_EnsureLoopForwardProgress,
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GLSLOutputTest_EnsureLoopForwardProgress);
+ANGLE_INSTANTIATE_TEST(GLSLOutputTest_EnsureLoopForwardProgress,
+                       ES3_OPENGLES().enable(Feature::EnsureLoopForwardProgress),
                        ES3_METAL().enable(Feature::EnsureLoopForwardProgress));

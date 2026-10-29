@@ -101,6 +101,21 @@ std::vector<std::string> *LoadRequestedExtensions()
     }
     return requestedExtensions;
 }
+
+angle::FrameCaptureBinaryData *ConfigureBinaryDataLoader(const std::string &binaryDataDir,
+                                                         const angle::TraceInfo &traceInfo,
+                                                         const char *binaryDataFileName)
+{
+    std::string dataFilepath = binaryDataDir + "/" + binaryDataFileName;
+
+    angle::FrameCaptureBinaryData *binaryData = new angle::FrameCaptureBinaryData;
+    binaryData->configureBinaryDataLoader(
+        traceInfo.isBinaryDataCompressed, traceInfo.binaryBlockCount,
+        static_cast<size_t>(traceInfo.binaryBlockSize),
+        static_cast<size_t>(traceInfo.binaryResidentSize),
+        static_cast<size_t>(traceInfo.binaryIndexOffset), dataFilepath);
+    return binaryData;
+}
 }  // namespace
 
 GLint **gUniformLocations;
@@ -204,6 +219,8 @@ EGLSync *gEGLSyncMap;
 EGLDisplay gEGLDisplay;
 
 std::string gBinaryDataDir = ".";
+angle::TraceInfo gTraceInfo;
+std::string gTraceGzPath;
 
 angle::ReplayResourceMode gReplayResourceMode = angle::ReplayResourceMode::Active;
 
@@ -244,7 +261,8 @@ void InitializeReplay5(const char *binaryDataFileName,
                        uint32_t maxVertexArray,
                        GLuint maxEGLSyncID)
 {
-    gFrameCaptureBinaryData = gTraceCallbacks->ConfigureBinaryDataLoader(binaryDataFileName);
+    gFrameCaptureBinaryData =
+        ConfigureBinaryDataLoader(gBinaryDataDir, gTraceInfo, binaryDataFileName);
 
     InitializeReplay4(binaryDataFileName, maxClientArraySize, readBufferSize, resourceIDBufferSize,
                       contextId, maxBuffer, maxContext, maxFenceNV, maxFramebuffer, maxImage,
@@ -455,8 +473,7 @@ void FinishReplay()
     if (gFrameCaptureBinaryData)
     {
         gFrameCaptureBinaryData->closeBinaryDataLoader();
-        delete gFrameCaptureBinaryData;
-        gFrameCaptureBinaryData = nullptr;
+        SafeDelete(gFrameCaptureBinaryData);
     }
 }
 
@@ -464,9 +481,6 @@ void SetValidateSerializedStateCallback(ValidateSerializedStateCallback callback
 {
     gValidateSerializedStateCallback = callback;
 }
-
-angle::TraceInfo gTraceInfo;
-std::string gTraceGzPath;
 
 struct TraceFunctionsImpl : angle::TraceFunctions
 {

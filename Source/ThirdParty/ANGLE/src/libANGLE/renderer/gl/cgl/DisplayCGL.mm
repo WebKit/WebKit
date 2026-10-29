@@ -293,13 +293,12 @@ egl::Error DisplayCGL::releaseThread()
     return egl::NoError();
 }
 
-egl::Error DisplayCGL::makeCurrent(egl::Display *display,
-                                   egl::Surface *drawSurface,
+egl::Error DisplayCGL::makeCurrent(egl::Surface *drawSurface,
                                    egl::Surface *readSurface,
                                    gl::Context *context)
 {
     checkDiscreteGPUStatus();
-    return DisplayGL::makeCurrent(display, drawSurface, readSurface, context);
+    return ThreadSafeDisplayGL::makeCurrent(drawSurface, readSurface, context);
 }
 
 SurfaceImpl *DisplayCGL::createWindowSurface(const egl::SurfaceState &state,

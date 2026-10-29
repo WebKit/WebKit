@@ -521,7 +521,14 @@ angle::Result BufferVk::setDataWithMemoryType(const gl::Context *context,
         return angle::Result::Continue;
     }
 
-    if (!mVertexConversionBuffers.empty())
+    // In case of redefinition with no data, the conversion buffers will be released if the new
+    // buffer size is larger or if robust resource init is enabled.
+    if (data == nullptr &&
+        (size > static_cast<size_t>(mState.getSize()) || context->isRobustResourceInitEnabled()))
+    {
+        releaseConversionBuffers(contextVk);
+    }
+    else if (!mVertexConversionBuffers.empty())
     {
         for (ConversionBuffer &buffer : mVertexConversionBuffers)
         {

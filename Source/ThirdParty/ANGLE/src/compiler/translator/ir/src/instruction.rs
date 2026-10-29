@@ -3253,9 +3253,10 @@ mod promote {
             UnaryOpCode::UnpackUnorm4x8 | UnaryOpCode::UnpackSnorm4x8 => TYPE_ID_VEC4,
             UnaryOpCode::Length | UnaryOpCode::Determinant => TYPE_ID_FLOAT,
             UnaryOpCode::Transpose => get_transposed_type(ir_meta, operand_type),
-            UnaryOpCode::Isnan | UnaryOpCode::Isinf | UnaryOpCode::Any | UnaryOpCode::All => {
-                TYPE_ID_BOOL
+            UnaryOpCode::Isnan | UnaryOpCode::Isinf => {
+                change_base_type(ir_meta, operand_type, BasicType::Bool)
             }
+            UnaryOpCode::Any | UnaryOpCode::All => TYPE_ID_BOOL,
             UnaryOpCode::BitCount | UnaryOpCode::FindLSB | UnaryOpCode::FindMSB => {
                 change_base_type(ir_meta, operand_type, BasicType::Int)
             }

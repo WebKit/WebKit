@@ -8,6 +8,7 @@
 //
 
 #include "TestSuite.h"
+#include "PartitionAllocSupport.h"
 #include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
@@ -1185,6 +1186,9 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
     ASSERT(mInstance == nullptr);
     mInstance = this;
 
+    InitializePartitionAllocForTesting();
+    InitializeDanglingPointerDetectorForTesting();
+
     Optional<int> filterArgIndex;
     bool alsoRunDisabledTests = false;
 
@@ -1508,40 +1512,42 @@ TestSuite::~TestSuite()
 bool TestSuite::parseSingleArg(int *argc, char **argv, int argIndex)
 {
     // Note: Flags should be documented in README.md.
-    return ParseIntArg("--shard-count", argc, argv, argIndex, &mShardCount) ||
-           ParseIntArg("--shard-index", argc, argv, argIndex, &mShardIndex) ||
-           ParseIntArg("--batch-size", argc, argv, argIndex, &mBatchSize) ||
-           ParseIntArg("--max-processes", argc, argv, argIndex, &mMaxProcesses) ||
-           ParseIntArg(kTestTimeoutArg, argc, argv, argIndex, &mTestTimeout) ||
-           ParseIntArg("--batch-timeout", argc, argv, argIndex, &mBatchTimeout) ||
-           ParseIntArg("--flaky-retries", argc, argv, argIndex, &mFlakyRetries) ||
-           ParseIntArg("--max-failures", argc, argv, argIndex, &mMaxFailures) ||
+    return ParseAndDeleteIntArg("--shard-count", argc, argv, argIndex, &mShardCount) ||
+           ParseAndDeleteIntArg("--shard-index", argc, argv, argIndex, &mShardIndex) ||
+           ParseAndDeleteIntArg("--batch-size", argc, argv, argIndex, &mBatchSize) ||
+           ParseAndDeleteIntArg("--max-processes", argc, argv, argIndex, &mMaxProcesses) ||
+           ParseAndDeleteIntArg(kTestTimeoutArg, argc, argv, argIndex, &mTestTimeout) ||
+           ParseAndDeleteIntArg("--batch-timeout", argc, argv, argIndex, &mBatchTimeout) ||
+           ParseAndDeleteIntArg("--flaky-retries", argc, argv, argIndex, &mFlakyRetries) ||
+           ParseAndDeleteIntArg("--max-failures", argc, argv, argIndex, &mMaxFailures) ||
            // Other test functions consume the batch ID, so keep it in the list.
-           ParseIntArgWithHandling(kBatchId, argc, argv, argIndex, &mBatchId,
-                                   ArgHandling::Preserve) ||
-           ParseStringArg("--results-directory", argc, argv, argIndex, &mResultsDirectory) ||
-           ParseStringArg(kResultFileArg, argc, argv, argIndex, &mResultsFile) ||
-           ParseStringArg("--isolated-script-test-output", argc, argv, argIndex, &mResultsFile) ||
-           ParseStringArg(kFilterFileArg, argc, argv, argIndex, &mFilterFile) ||
-           ParseStringArg("--histogram-json-file", argc, argv, argIndex, &mHistogramJsonFile) ||
+           ParseAndPreserveIntArg(kBatchId, argc, argv, argIndex, &mBatchId) ||
+           ParseAndDeleteStringArg("--results-directory", argc, argv, argIndex,
+                                   &mResultsDirectory) ||
+           ParseAndDeleteStringArg(kResultFileArg, argc, argv, argIndex, &mResultsFile) ||
+           ParseAndDeleteStringArg("--isolated-script-test-output", argc, argv, argIndex,
+                                   &mResultsFile) ||
+           ParseAndDeleteStringArg(kFilterFileArg, argc, argv, argIndex, &mFilterFile) ||
+           ParseAndDeleteStringArg("--histogram-json-file", argc, argv, argIndex,
+                                   &mHistogramJsonFile) ||
            // We need these overloads to work around technical debt in the Android test runner.
-           ParseStringArg("--isolated-script-test-perf-output", argc, argv, argIndex,
-                          &mHistogramJsonFile) ||
-           ParseStringArg("--isolated_script_test_perf_output", argc, argv, argIndex,
-                          &mHistogramJsonFile) ||
-           ParseStringArg("--render-test-output-dir", argc, argv, argIndex,
-                          &mTestArtifactDirectory) ||
-           ParseStringArg("--isolated-outdir", argc, argv, argIndex, &mTestArtifactDirectory) ||
-           ParseStringArgWithHandling("--gtest_output", argc, argv, argIndex, &mGTestOutput,
-                                      ArgHandling::Preserve) ||
-           ParseFlag("--test-launcher-bot-mode", argc, argv, argIndex, &mBotMode) ||
-           ParseFlag("--bot-mode", argc, argv, argIndex, &mBotMode) ||
-           ParseFlag("--debug-test-groups", argc, argv, argIndex, &mDebugTestGroups) ||
-           ParseFlag("--gtest_list_tests", argc, argv, argIndex, &mGTestListTests) ||
-           ParseFlag("--list-tests", argc, argv, argIndex, &mListTests) ||
-           ParseFlag("--print-test-stdout", argc, argv, argIndex, &mPrintTestStdout) ||
-           ParseFlag(kDisableCrashHandler, argc, argv, argIndex, &mDisableCrashHandler) ||
-           ParseFlag(kDisableDebugLayers, argc, argv, argIndex, &mDisableDebugLayers);
+           ParseAndDeleteStringArg("--isolated-script-test-perf-output", argc, argv, argIndex,
+                                   &mHistogramJsonFile) ||
+           ParseAndDeleteStringArg("--isolated_script_test_perf_output", argc, argv, argIndex,
+                                   &mHistogramJsonFile) ||
+           ParseAndDeleteStringArg("--render-test-output-dir", argc, argv, argIndex,
+                                   &mTestArtifactDirectory) ||
+           ParseAndDeleteStringArg("--isolated-outdir", argc, argv, argIndex,
+                                   &mTestArtifactDirectory) ||
+           ParseAndPreserveStringArg("--gtest_output", argc, argv, argIndex, &mGTestOutput) ||
+           ParseAndDeleteFlag("--test-launcher-bot-mode", argc, argv, argIndex, &mBotMode) ||
+           ParseAndDeleteFlag("--bot-mode", argc, argv, argIndex, &mBotMode) ||
+           ParseAndDeleteFlag("--debug-test-groups", argc, argv, argIndex, &mDebugTestGroups) ||
+           ParseAndDeleteFlag("--gtest_list_tests", argc, argv, argIndex, &mGTestListTests) ||
+           ParseAndDeleteFlag("--list-tests", argc, argv, argIndex, &mListTests) ||
+           ParseAndDeleteFlag("--print-test-stdout", argc, argv, argIndex, &mPrintTestStdout) ||
+           ParseAndDeleteFlag(kDisableCrashHandler, argc, argv, argIndex, &mDisableCrashHandler) ||
+           ParseAndDeleteFlag(kDisableDebugLayers, argc, argv, argIndex, &mDisableDebugLayers);
 }
 
 void TestSuite::onCrashOrTimeout(TestResultType crashOrTimeout)

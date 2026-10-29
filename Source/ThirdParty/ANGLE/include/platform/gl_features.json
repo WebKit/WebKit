@@ -1070,6 +1070,15 @@
                 "Defer glDeleteBuffers calls until previous GPU work has completed."
             ],
             "issue": "http://crbug.com/558870371"
+        },
+        {
+            "name": "recreate_fbo_on_attachment_respecification",
+            "category": "Workarounds",
+            "description": [
+                "Recreate native FBOs on attachment, draw buffers, or read buffer respecification. ",
+                "Prevents driver hash collisions on PowerVR hardware."
+            ],
+            "issue": "http://crbug.com/551065275"
         }
     ]
 }

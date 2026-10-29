@@ -1113,6 +1113,10 @@ gl::GraphicsResetStatus ContextMtl::getResetStatus()
     }
 #endif
 
+    if (mContextLost)
+    {
+        return gl::GraphicsResetStatus::UnknownContextReset;
+    }
     return gl::GraphicsResetStatus::NoError;
 }
 
@@ -3054,9 +3058,19 @@ angle::Result ContextMtl::checkIfPipelineChanged(const gl::Context *context,
 
 angle::Result ContextMtl::checkCommandBufferError()
 {
-    ANGLE_CHECK_GL_ALLOC(
-        this, mCmdBuffer.cmdQueue().popCmdBufferError() != MTLCommandBufferErrorOutOfMemory);
-    return angle::Result::Continue;
+    switch (mCmdBuffer.cmdQueue().popCmdBufferError())
+    {
+        case MTLCommandBufferErrorNone:
+            return angle::Result::Continue;
+        case MTLCommandBufferErrorOutOfMemory:
+            ANGLE_CHECK_GL_ALLOC(this, false);
+            return angle::Result::Stop;
+        default:
+            mContextLost = true;
+            ANGLE_CHECK(this, false, "Metal command buffer execution failed.",
+                        GL_INVALID_OPERATION);
+            return angle::Result::Stop;
+    }
 }
 
 }  // namespace rx

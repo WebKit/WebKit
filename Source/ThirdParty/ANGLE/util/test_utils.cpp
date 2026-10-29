@@ -151,6 +151,8 @@ void ProcessHandle::reset()
     }
 }
 
+namespace
+{
 bool ParseIntArgWithHandling(const char *flag,
                              int *argc,
                              char **argv,
@@ -184,18 +186,21 @@ bool ParseIntArgWithHandling(const char *flag,
     return handling == ArgHandling::Delete;
 }
 
-bool ParseIntArg(const char *flag, int *argc, char **argv, int argIndex, int *valueOut)
-{
-    return ParseIntArgWithHandling(flag, argc, argv, argIndex, valueOut, ArgHandling::Delete);
-}
-
-bool ParseFlag(const char *flag, int *argc, char **argv, int argIndex, bool *flagOut)
+bool ParseFlagWithHandling(const char *flag,
+                           int *argc,
+                           char **argv,
+                           int argIndex,
+                           bool *flagOut,
+                           ArgHandling handling)
 {
     if (ANGLE_UNSAFE_TODO(strcmp(flag, argv[argIndex])) == 0)
     {
         *flagOut = true;
-        DeleteArg(argc, argv, argIndex);
-        return true;
+        if (handling == ArgHandling::Delete)
+        {
+            DeleteArg(argc, argv, argIndex);
+            return true;
+        }
     }
     return false;
 }
@@ -217,11 +222,6 @@ bool ParseStringArgWithHandling(const char *flag,
     return handling == ArgHandling::Delete;
 }
 
-bool ParseStringArg(const char *flag, int *argc, char **argv, int argIndex, std::string *valueOut)
-{
-    return ParseStringArgWithHandling(flag, argc, argv, argIndex, valueOut, ArgHandling::Delete);
-}
-
 bool ParseCStringArgWithHandling(const char *flag,
                                  int *argc,
                                  char **argv,
@@ -239,10 +239,62 @@ bool ParseCStringArgWithHandling(const char *flag,
     // Note: return value is always false with ArgHandling::Preserve handling
     return handling == ArgHandling::Delete;
 }
+}  // anonymous namespace
 
-bool ParseCStringArg(const char *flag, int *argc, char **argv, int argIndex, const char **valueOut)
+bool ParseAndDeleteFlag(const char *flag, int *argc, char **argv, int argIndex, bool *flagOut)
+{
+    return ParseFlagWithHandling(flag, argc, argv, argIndex, flagOut, ArgHandling::Delete);
+}
+
+bool ParseAndDeleteIntArg(const char *flag, int *argc, char **argv, int argIndex, int *valueOut)
+{
+    return ParseIntArgWithHandling(flag, argc, argv, argIndex, valueOut, ArgHandling::Delete);
+}
+
+bool ParseAndDeleteStringArg(const char *flag,
+                             int *argc,
+                             char **argv,
+                             int argIndex,
+                             std::string *valueOut)
+{
+    return ParseStringArgWithHandling(flag, argc, argv, argIndex, valueOut, ArgHandling::Delete);
+}
+
+bool ParseAndDeleteCStringArg(const char *flag,
+                              int *argc,
+                              char **argv,
+                              int argIndex,
+                              const char **valueOut)
 {
     return ParseCStringArgWithHandling(flag, argc, argv, argIndex, valueOut, ArgHandling::Delete);
+}
+
+bool ParseAndPreserveFlag(const char *flag, int *argc, char **argv, int argIndex, bool *flagOut)
+{
+    return ParseFlagWithHandling(flag, argc, argv, argIndex, flagOut, ArgHandling::Preserve);
+}
+
+bool ParseAndPreserveIntArg(const char *flag, int *argc, char **argv, int argIndex, int *valueOut)
+{
+    return ParseIntArgWithHandling(flag, argc, argv, argIndex, valueOut, ArgHandling::Preserve);
+}
+
+bool ParseAndPreserveStringArg(const char *flag,
+                               int *argc,
+                               char **argv,
+                               int argIndex,
+                               std::string *valueOut)
+{
+    return ParseStringArgWithHandling(flag, argc, argv, argIndex, valueOut, ArgHandling::Preserve);
+}
+
+bool ParseAndPreserveCStringArg(const char *flag,
+                                int *argc,
+                                char **argv,
+                                int argIndex,
+                                const char **valueOut)
+{
+    return ParseCStringArgWithHandling(flag, argc, argv, argIndex, valueOut, ArgHandling::Preserve);
 }
 
 void AddArg(int *argc, char **argv, const char *arg)

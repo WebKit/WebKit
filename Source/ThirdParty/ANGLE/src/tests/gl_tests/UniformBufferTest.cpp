@@ -4854,20 +4854,7 @@ TEST_P(UniformBufferTest, BufferDataInLoop)
 }
 
 class UniformBufferMemoryTest : public UniformBufferTest
-{
-  protected:
-    angle::VulkanPerfCounters getPerfCounters()
-    {
-        if (mIndexMap.empty())
-        {
-            mIndexMap = BuildCounterNameToIndexMap();
-        }
-
-        return GetPerfCounters(mIndexMap);
-    }
-
-    CounterNameToIndexMap mIndexMap;
-};
+{};
 
 // Calling BufferData and drawing with it in a loop without glFlush() should still work. Driver is
 // supposedly to issue flush if needed.
@@ -5274,6 +5261,94 @@ void main() {
     glUnmapBuffer(GL_COPY_READ_BUFFER);
 
     ASSERT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Verify that binding a uniform buffer range with a size exceeding the buffer size or
+// GL_MAX_UNIFORM_BLOCK_SIZE (including at a non-zero aligned offset) properly binds the new buffer
+// and never leaves a previously bound uniform buffer active in the backend constant buffer slot.
+TEST_P(UniformBufferTest, OversizedBindBufferRangeDoesNotExposePreviousBuffer)
+{
+    GLint alignment = 256;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
+    constexpr size_t kVec4Size = 4 * sizeof(float);
+    const size_t alignBytes    = std::max<size_t>(static_cast<size_t>(alignment), kVec4Size);
+
+    GLint64 maxUniformBlockSize = 65536;
+    glGetInteger64v(GL_MAX_UNIFORM_BLOCK_SIZE, &maxUniformBlockSize);
+    const size_t maxBlockBytes = static_cast<size_t>(maxUniformBlockSize);
+
+    // Populate a previous uniform buffer with red (1, 0, 0, 1) across its entire range.
+    GLBuffer previousBuffer;
+    std::vector<GLColor32F> previousData(maxBlockBytes / sizeof(GLColor32F), kFloatRed);
+    glBindBuffer(GL_UNIFORM_BUFFER, previousBuffer);
+    glBufferData(GL_UNIFORM_BUFFER, previousData.size() * sizeof(GLColor32F), previousData.data(),
+                 GL_STATIC_DRAW);
+
+    glUniformBlockBinding(mProgram, mUniformBufferIndex, 0);
+
+    auto primePreviousBuffer = [&]() {
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, previousBuffer);
+        drawQuad(mProgram, essl3_shaders::PositionAttrib(), 0.5f);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    };
+
+    // Small uniform buffer (2 * alignment bytes) filled with green (0, 1, 0, 1).
+    GLBuffer smallGreenBuffer;
+    std::vector<GLColor32F> smallGreenData((2 * alignBytes) / sizeof(GLColor32F), kFloatGreen);
+    glBindBuffer(GL_UNIFORM_BUFFER, smallGreenBuffer);
+    glBufferData(GL_UNIFORM_BUFFER, smallGreenData.size() * sizeof(GLColor32F),
+                 smallGreenData.data(), GL_STATIC_DRAW);
+
+    const GLintptr nonZeroOffset      = static_cast<GLintptr>(alignBytes);
+    const GLsizeiptr oversizedRange   = static_cast<GLsizeiptr>(maxBlockBytes + alignBytes);
+    const GLsizeiptr exactMaxRange    = static_cast<GLsizeiptr>(maxBlockBytes);
+    const GLsizeiptr largerThanBuffer = static_cast<GLsizeiptr>(4 * alignBytes);
+
+    struct RangeCase
+    {
+        GLintptr offset;
+        GLsizeiptr size;
+    };
+    const std::array<RangeCase, 6> kSmallBufferCases = {{
+        {0, largerThanBuffer},
+        {0, exactMaxRange},
+        {0, oversizedRange},
+        {nonZeroOffset, largerThanBuffer},
+        {nonZeroOffset, exactMaxRange},
+        {nonZeroOffset, oversizedRange},
+    }};
+
+    for (const RangeCase &testCase : kSmallBufferCases)
+    {
+        primePreviousBuffer();
+        glBindBufferRange(GL_UNIFORM_BUFFER, 0, smallGreenBuffer, testCase.offset, testCase.size);
+        drawQuad(mProgram, essl3_shaders::PositionAttrib(), 0.5f);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    }
+
+    // Large uniform buffer (2 * maxUniformBlockSize bytes) filled with green (0, 1, 0, 1).
+    GLBuffer largeGreenBuffer;
+    std::vector<GLColor32F> largeGreenData((2 * maxBlockBytes) / sizeof(GLColor32F), kFloatGreen);
+    glBindBuffer(GL_UNIFORM_BUFFER, largeGreenBuffer);
+    glBufferData(GL_UNIFORM_BUFFER, largeGreenData.size() * sizeof(GLColor32F),
+                 largeGreenData.data(), GL_STATIC_DRAW);
+
+    const std::array<RangeCase, 3> kLargeBufferCases = {{
+        {0, oversizedRange},
+        {nonZeroOffset, exactMaxRange},
+        {nonZeroOffset, oversizedRange},
+    }};
+
+    for (const RangeCase &testCase : kLargeBufferCases)
+    {
+        primePreviousBuffer();
+        glBindBufferRange(GL_UNIFORM_BUFFER, 0, largeGreenBuffer, testCase.offset, testCase.size);
+        drawQuad(mProgram, essl3_shaders::PositionAttrib(), 0.5f);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    }
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(SimpleUniformBufferTest);

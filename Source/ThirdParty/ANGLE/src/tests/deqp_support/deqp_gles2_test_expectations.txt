@@ -312,7 +312,6 @@
 42267100 WGPU : dEQP-GLES2.functional.negative_api.shader.uniform* = FAIL
 42267100 WGPU : dEQP-GLES2.functional.state_query.shader.program_active_uniform_* = FAIL
 42267100 WGPU : dEQP-GLES2.functional.attribute_location.bind_aliasing.* = FAIL
-42267100 WGPU : dEQP-GLES2.functional.light_amount.* = FAIL
 // These tests crash because redeclarations of gl_ variables as invariant are not yet supported in the WGSL translator.
 42267100 WGPU : dEQP-GLES2.functional.shaders.invariance.* = SKIP
 // Other WebGPU failures.
@@ -325,10 +324,6 @@
 356399840 WGPU : dEQP-GLES2.functional.depth_range.*.one_to_half = FAIL
 356399840 WGPU : dEQP-GLES2.functional.depth_range.*.0_8_to_third = FAIL
 356399840 WGPU : dEQP-GLES2.functional.draw.* = FAIL
-356399840 WGPU : dEQP-GLES2.functional.fbo.api.attachment_query_tex2d = FAIL
-356399840 WGPU : dEQP-GLES2.functional.fbo.api.delete_tex_2d_attached_to_bound_fbo = FAIL
-356399840 WGPU : dEQP-GLES2.functional.fbo.api.delete_tex_2d_attached_to_not_bound_fbo = FAIL
-356399840 WGPU : dEQP-GLES2.functional.fbo.api.texture_levels = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fbo.completeness.renderable.texture.stencil.stencil_index8 = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fbo.render.stencil.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fbo.render.color.* = FAIL
@@ -343,9 +338,6 @@
 370690274 WGPU MAC INTEL : dEQP-GLES2.functional.fragment_ops.blend.* = FAIL
 370690274 WGPU : dEQP-GLES2.functional.fragment_ops.random.* = FAIL
 370690274 WGPU : dEQP-GLES2.functional.fragment_ops.interaction.* = FAIL
-356399840 WGPU : dEQP-GLES2.functional.lifetime.attach.deleted_input.renderbuffer_framebuffer = FAIL
-356399840 WGPU : dEQP-GLES2.functional.lifetime.attach.deleted_input.shader_program = FAIL
-356399840 WGPU : dEQP-GLES2.functional.lifetime.attach.deleted_output.renderbuffer_framebuffer = FAIL
 356399840 WGPU : dEQP-GLES2.functional.negative_api.texture.generatemipmap_npot_wdt_hgt = FAIL
 356399840 WGPU : dEQP-GLES2.functional.polygon_offset.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.rasterization.primitives.* = FAIL
@@ -354,7 +346,6 @@
 356399840 WGPU : dEQP-GLES2.functional.rasterization.interpolation.*triangle_fan* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.builtin_variable.depth_range* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.builtin_variable.fragcoord_xyz = FAIL
-356399840 WGPU : dEQP-GLES2.functional.shaders.builtin_variable.frontfacing = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.builtin_variable.pointcoord = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.conditionals.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.constant_expressions.* = FAIL
