@@ -68,8 +68,6 @@ static void wpeViewQtQuickScheduleUpdate(WPEViewQtQuickPrivate* priv)
         return;
 
     priv->wpeQtView->update();
-    if (auto* window = priv->wpeQtView->window())
-        window->update();
 }
 
 static void wpeViewQtQuickDispose(GObject* object)
