@@ -33,6 +33,7 @@
 #include "GridLayoutUtils.h"
 #include "LayoutIntegrationBoxGeometryUpdater.h"
 #include "LayoutIntegrationBoxTreeUpdater.h"
+#include "LocalFrameViewInlines.h"
 #include "RenderGrid.h"
 #include "RenderView.h"
 #include "StyleKeyword+Logging.h"
@@ -91,10 +92,25 @@ static std::optional<LayoutUnit> minimumSizeConstraint(const Style::MinimumSize&
         [](const CSS::Keyword::Auto&) -> std::optional<LayoutUnit> {
             return 0_lu;
         },
-        [](const auto&) -> std::optional<LayoutUnit> {
-            ASSERT_NOT_IMPLEMENTED_YET();
-            return { };
-        }
+        [&percentageResolutionSize, &gridContainerZoom](const Style::MinimumSize::CalcSize& calcSizeValue) -> std::optional<LayoutUnit> {
+            if (calcSizeValue.hasPercentage()) {
+                if (!percentageResolutionSize)
+                    return { };
+                return Style::evaluate<LayoutUnit>(calcSizeValue, *percentageResolutionSize, gridContainerZoom);
+            }
+            return Style::evaluate<LayoutUnit>(calcSizeValue, 0_lu, gridContainerZoom);
+        },
+        // https://drafts.csswg.org/css-grid-1/#auto-repeat
+        // The intrinsic keywords are not definite sizes, so they give no constraint to the number of auto-repeat tracks.
+        // RenderBox applies them to the used size once the content size is known. stretch and -webkit-fill-available
+        // are resolved by inlineAxisMinMaxSizeConstraints and blockAxisMinMaxSizeConstraints.
+        [](const CSS::Keyword::MinContent&) -> std::optional<LayoutUnit> { return { }; },
+        [](const CSS::Keyword::MaxContent&) -> std::optional<LayoutUnit> { return { }; },
+        [](const CSS::Keyword::FitContent&) -> std::optional<LayoutUnit> { return { }; },
+        [](const CSS::Keyword::Intrinsic&) -> std::optional<LayoutUnit> { return { }; },
+        [](const CSS::Keyword::MinIntrinsic&) -> std::optional<LayoutUnit> { return { }; },
+        [](const CSS::Keyword::Stretch&) -> std::optional<LayoutUnit> { return { }; },
+        [](const CSS::Keyword::WebkitFillAvailable&) -> std::optional<LayoutUnit> { return { }; }
     );
     return minimumSize.transform([&](LayoutUnit size) {
         if (boxSizing == BoxSizing::BorderBox)
@@ -122,16 +138,116 @@ static std::optional<LayoutUnit> maximumSizeConstraint(const Style::MaximumSize&
         [](const CSS::Keyword::None&) -> std::optional<LayoutUnit> {
             return { };
         },
-        [](const auto&) -> std::optional<LayoutUnit> {
-            ASSERT_NOT_IMPLEMENTED_YET();
-            return { };
-        }
+        [&percentageResolutionSize, &gridContainerZoom](const Style::MaximumSize::CalcSize& calcSizeValue) -> std::optional<LayoutUnit> {
+            if (calcSizeValue.hasPercentage()) {
+                if (!percentageResolutionSize)
+                    return { };
+                return Style::evaluate<LayoutUnit>(calcSizeValue, *percentageResolutionSize, gridContainerZoom);
+            }
+            return Style::evaluate<LayoutUnit>(calcSizeValue, 0_lu, gridContainerZoom);
+        },
+        // https://drafts.csswg.org/css-grid-1/#auto-repeat
+        // The intrinsic keywords are not definite sizes, so they give no constraint to the number of auto-repeat tracks.
+        // RenderBox applies them to the used size once the content size is known. stretch and -webkit-fill-available
+        // are resolved by inlineAxisMinMaxSizeConstraints and blockAxisMinMaxSizeConstraints.
+        [](const CSS::Keyword::MinContent&) -> std::optional<LayoutUnit> { return { }; },
+        [](const CSS::Keyword::MaxContent&) -> std::optional<LayoutUnit> { return { }; },
+        [](const CSS::Keyword::FitContent&) -> std::optional<LayoutUnit> { return { }; },
+        [](const CSS::Keyword::Intrinsic&) -> std::optional<LayoutUnit> { return { }; },
+        [](const CSS::Keyword::MinIntrinsic&) -> std::optional<LayoutUnit> { return { }; },
+        [](const CSS::Keyword::Stretch&) -> std::optional<LayoutUnit> { return { }; },
+        [](const CSS::Keyword::WebkitFillAvailable&) -> std::optional<LayoutUnit> { return { }; }
     );
     return maximumSize.transform([&](LayoutUnit size) {
         if (boxSizing == BoxSizing::BorderBox)
             size -= borderAndPadding;
         return std::max({ }, size);
     });
+}
+
+struct MinMaxSizeConstraints {
+    std::optional<LayoutUnit> minimum;
+    std::optional<LayoutUnit> maximum;
+};
+
+// https://drafts.csswg.org/css-sizing-3/#cyclic-percentage-contribution
+static bool containingBlockInlineSizeDependsOnContent(const RenderGrid& gridContainerRenderer)
+{
+    CheckedRef layoutContext = gridContainerRenderer.view().frameView().layoutContext();
+    for (CheckedPtr ancestor = gridContainerRenderer.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+        // The walk measures physical widths, so it ends at an ancestor with a different writing mode: an
+        // orthogonal grid resolves against the containing block's block size (inlineAxisContainingBlockSize),
+        // which layout computes from content, so no cycle goes through it.
+        if (ancestor->isHorizontalWritingMode() != gridContainerRenderer.isHorizontalWritingMode())
+            return false;
+        auto& ancestorWidth = ancestor->style().logicalWidth();
+        if (ancestorWidth.isFixed())
+            return false;
+        if (!ancestorWidth.isSpecified() && layoutContext->isComputingIntrinsicLogicalWidthFor(*ancestor))
+            return true;
+    }
+    return false;
+}
+
+static std::optional<LayoutUnit> inlineAxisContainingBlockSize(const RenderGrid& gridContainerRenderer)
+{
+    if (gridContainerRenderer.isHorizontalWritingMode() != protect(gridContainerRenderer.containingBlock())->isHorizontalWritingMode()) {
+        // The inline axis is the containing block's block axis.
+        return gridContainerRenderer.perpendicularContainingBlockLogicalHeight();
+    }
+    if (gridContainerRenderer.isGridItem()) {
+        // containingBlockLogicalWidthForContent() returns 0 for a grid area that is not resolved yet.
+        if (auto gridAreaWidth = gridContainerRenderer.gridAreaContentLogicalWidth(); gridAreaWidth && !*gridAreaWidth)
+            return { };
+    }
+    return gridContainerRenderer.containingBlockLogicalWidthForContent();
+}
+
+static MinMaxSizeConstraints inlineAxisMinMaxSizeConstraints(const RenderGrid& gridContainerRenderer, IsComputingIntrinsicSize isComputingIntrinsicSize)
+{
+    CheckedRef gridContainerStyle = gridContainerRenderer.style();
+    auto gridContainerZoom = gridContainerStyle->usedZoomForLength();
+    auto boxSizing = gridContainerStyle->boxSizing();
+
+    auto& minWidthStyle = gridContainerStyle->minWidth();
+    auto& maxWidthStyle = gridContainerStyle->maxWidth();
+
+    // Only a percentage, calc(), stretch or calc-size() resolves against the containing block, so only those can be cyclic.
+    auto resolvesAgainstContainingBlock = [](auto& size) {
+        return size.isStretch() || size.isPercentOrCalculated() || size.isCalcSize();
+    };
+    auto containingBlockSize = [&] -> std::optional<LayoutUnit> {
+        if (isComputingIntrinsicSize == IsComputingIntrinsicSize::Yes && (resolvesAgainstContainingBlock(minWidthStyle) || resolvesAgainstContainingBlock(maxWidthStyle)) && containingBlockInlineSizeDependsOnContent(gridContainerRenderer))
+            return { };
+        return inlineAxisContainingBlockSize(gridContainerRenderer);
+    }();
+    auto borderAndPaddingWidth = gridContainerRenderer.borderAndPaddingLogicalWidth();
+
+    auto stretchedContentBoxWidth = [&](auto& size) -> LayoutUnit {
+        return std::max(0_lu, gridContainerRenderer.computeSizingKeywordLogicalWidthUsing(size, *containingBlockSize, borderAndPaddingWidth) - borderAndPaddingWidth);
+    };
+    // Without a known size a percentage in a minimum size resolves against zero, and one in a maximum size is no constraint.
+    auto constraint = [&](auto& size, std::optional<LayoutUnit> percentageResolutionSize) -> std::optional<LayoutUnit> {
+        if (size.isStretch()) {
+            if (!containingBlockSize)
+                return { };
+            return stretchedContentBoxWidth(size);
+        }
+        if constexpr (std::same_as<std::remove_cvref_t<decltype(size)>, Style::MinimumSize>)
+            return minimumSizeConstraint(size, percentageResolutionSize.value_or(0_lu), boxSizing, borderAndPaddingWidth, gridContainerZoom);
+        else
+            return maximumSizeConstraint(size, percentageResolutionSize, boxSizing, borderAndPaddingWidth, gridContainerZoom);
+    };
+    return { constraint(minWidthStyle, containingBlockSize), constraint(maxWidthStyle, containingBlockSize) };
+}
+
+static MinMaxSizeConstraints blockAxisMinMaxSizeConstraints(const RenderGrid& gridContainerRenderer)
+{
+    CheckedRef gridContainerStyle = gridContainerRenderer.style();
+    return {
+        gridContainerRenderer.computeContentLogicalHeight(gridContainerStyle->minHeight(), { }),
+        gridContainerRenderer.computeContentLogicalHeight(gridContainerStyle->maxHeight(), { })
+    };
 }
 
 static inline Layout::GridLayoutConstraints constraintsForGridContent(const Layout::ElementBox& gridContainer)
@@ -145,25 +261,13 @@ static inline Layout::GridLayoutConstraints constraintsForGridContent(const Layo
     }();
     auto availableBlockSpace = gridContainerRenderer->availableLogicalHeightForContentBox();
 
-    CheckedRef gridContainerStyle = gridContainerRenderer->style();
-    auto gridContainerZoom = gridContainerStyle->usedZoomForLength();
-    auto boxSizing = gridContainerStyle->boxSizing();
+    auto [ minWidth, maxWidth ] = inlineAxisMinMaxSizeConstraints(gridContainerRenderer, IsComputingIntrinsicSize::No);
+    auto inlineAxisConstraint = Layout::AxisConstraint::definite(availableInlineSpace, minWidth, maxWidth);
 
-    auto containingBlockWidth = gridContainerRenderer->containingBlockLogicalWidthForContent();
-    auto borderAndPaddingWidth = gridContainerRenderer->borderAndPaddingLogicalWidth();
-    auto inlineAxisConstraint = Layout::AxisConstraint::definite(availableInlineSpace,
-        minimumSizeConstraint(gridContainerStyle->minWidth(), containingBlockWidth, boxSizing, borderAndPaddingWidth, gridContainerZoom),
-        maximumSizeConstraint(gridContainerStyle->maxWidth(), containingBlockWidth, boxSizing, borderAndPaddingWidth, gridContainerZoom));
-
-    auto blockAxisConstraint = [&]() -> Layout::AxisConstraint {
-        auto containingBlockHeight = protect(gridContainerRenderer->containingBlock())->availableLogicalHeightForPercentageComputation();
-        auto borderAndPaddingHeight = gridContainerRenderer->borderAndPaddingLogicalHeight();
-        auto minHeight = minimumSizeConstraint(gridContainerStyle->minHeight(), containingBlockHeight, boxSizing, borderAndPaddingHeight, gridContainerZoom);
-        auto maxHeight = maximumSizeConstraint(gridContainerStyle->maxHeight(), containingBlockHeight, boxSizing, borderAndPaddingHeight, gridContainerZoom);
-        if (availableBlockSpace)
-            return Layout::AxisConstraint::definite(*availableBlockSpace, minHeight, maxHeight);
-        return Layout::AxisConstraint::maxContent(minHeight, maxHeight);
-    }();
+    auto [ minHeight, maxHeight ] = blockAxisMinMaxSizeConstraints(gridContainerRenderer);
+    auto blockAxisConstraint = availableBlockSpace
+        ? Layout::AxisConstraint::definite(*availableBlockSpace, minHeight, maxHeight)
+        : Layout::AxisConstraint::maxContent(minHeight, maxHeight);
 
     return { inlineAxisConstraint, blockAxisConstraint };
 }
@@ -284,21 +388,11 @@ void GridLayout::invalidateFormattingContextRootRenderer(RenderGrid& renderGrid)
 std::pair<LayoutUnit, LayoutUnit> GridLayout::computeIntrinsicWidths()
 {
     CheckedRef gridContainerRenderer = gridBoxRenderer();
-    CheckedRef gridContainerStyle = gridContainerRenderer->style();
-    auto gridContainerZoom = gridContainerStyle->usedZoomForLength();
-    auto boxSizing = gridContainerStyle->boxSizing();
+    auto [ minWidth, maxWidth ] = inlineAxisMinMaxSizeConstraints(gridContainerRenderer, IsComputingIntrinsicSize::Yes);
+    auto inlineAxisAutoRepeatConstraint = Layout::AutoRepeatConstraint { { }, minWidth, maxWidth };
 
-    auto containingBlockWidth = gridContainerRenderer->containingBlockLogicalWidthForContent();
-    auto borderAndPaddingWidth = gridContainerRenderer->borderAndPaddingLogicalWidth();
-    auto inlineAxisAutoRepeatConstraint = Layout::AutoRepeatConstraint { { },
-        minimumSizeConstraint(gridContainerStyle->minWidth(), containingBlockWidth, boxSizing, borderAndPaddingWidth, gridContainerZoom),
-        maximumSizeConstraint(gridContainerStyle->maxWidth(), containingBlockWidth, boxSizing, borderAndPaddingWidth, gridContainerZoom) };
-
-    auto containingBlockHeight = protect(gridContainerRenderer->containingBlock())->availableLogicalHeightForPercentageComputation();
-    auto borderAndPaddingHeight = gridContainerRenderer->borderAndPaddingLogicalHeight();
-    auto blockAxisAutoRepeatConstraint = Layout::AutoRepeatConstraint { gridContainerRenderer->availableLogicalHeightForContentBox(),
-        minimumSizeConstraint(gridContainerStyle->minHeight(), containingBlockHeight, boxSizing, borderAndPaddingHeight, gridContainerZoom),
-        maximumSizeConstraint(gridContainerStyle->maxHeight(), containingBlockHeight, boxSizing, borderAndPaddingHeight, gridContainerZoom) };
+    auto [ minHeight, maxHeight ] = blockAxisMinMaxSizeConstraints(gridContainerRenderer);
+    auto blockAxisAutoRepeatConstraint = Layout::AutoRepeatConstraint { gridContainerRenderer->availableLogicalHeightForContentBox(), minHeight, maxHeight };
 
     auto gridFormattingContext = Layout::GridFormattingContext { gridBox(), protect(layoutState()) };
     auto intrinsicWidths = gridFormattingContext.computeIntrinsicWidths(inlineAxisAutoRepeatConstraint, blockAxisAutoRepeatConstraint);
