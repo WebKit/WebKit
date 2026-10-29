@@ -138,7 +138,7 @@ class Git(Scm):
                 identifier = self._hash_to_identifiers.get(hash, '')
                 assert identifier is not None  # get() returns the default we provided
                 assert default_branch is not None  # endswith(None) would raise a TypeError
-                return identifier.endswith(default_branch) or identifier.endswith(branch)
+                return identifier.endswith('@' + default_branch) or identifier.endswith('@' + branch)
 
             intersected = False
             self._last_populated[branch] = time.time()

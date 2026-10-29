@@ -432,6 +432,15 @@ CommitDate: {time_c}
                 self.assertEqual(repo.cache.to_identifier(hash='badc0dd1f'), None)
                 self.assertEqual(repo.cache.to_hash(identifier='6@main'), None)
 
+    def test_cache_branch_suffixed_with_default(self):
+        with mocks.local.Git(self.path), OutputCapture():
+            repo = local.Git(self.path, cached=True)
+            repo.cache.populate(branch='main')
+            repo.cache._hash_to_identifiers['3cd32e352410565bb543821fbf856a6d3caad1c4'] = '2.2@integration/conflict/abc_def_main'
+
+            repo.cache.populate(branch='branch-b')
+            self.assertEqual(repo.cache.to_identifier(hash='790725a6d79e'), '2.3@branch-b')
+
     def test_revision_cache(self):
         with mocks.local.Git(self.path, git_svn=True), OutputCapture():
             repo = local.Git(self.path, cached=True)
