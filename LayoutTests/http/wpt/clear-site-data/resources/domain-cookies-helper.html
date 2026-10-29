@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<body>
+<script>
+function expireVisibleCookies()
+{
+    const labels = location.hostname.split(".");
+    const domains = [];
+    for (let i = 0; i < labels.length - 1; ++i)
+        domains.push(labels.slice(i).join("."));
+    const expiry = "; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    for (const name of document.cookie.split(";").map((cookie) => cookie.split("=")[0].trim()).filter((name) => name)) {
+        document.cookie = name + "=" + expiry;
+        for (const domain of domains)
+            document.cookie = name + "=" + expiry + "; domain=" + domain;
+    }
+}
+
+window.addEventListener("message", async (event) => {
+    const { id, command, cookies } = event.data;
+    let result;
+    if (command === "set") {
+        for (const cookie of cookies)
+            document.cookie = cookie;
+    } else if (command === "get")
+        result = document.cookie;
+    else if (command === "reset")
+        expireVisibleCookies();
+    else if (command === "clear")
+        await fetch("clear-cookies.html", { cache: "no-store" });
+    opener.postMessage({ id, result }, "*");
+});
+opener.postMessage({ ready: true }, "*");
+</script>
+</body>
