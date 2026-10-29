@@ -2052,8 +2052,6 @@ webkit.org/b/297613 [ Debug ] fast/scrolling/mac/stateless-user-scroll-scrollend
 [ Debug ] ipc/send-filter.html [ Skip ]
 [ Debug ] ipc/send-ignored-network-message.html [ Skip ]
 
-webkit.org/b/297860 http/tests/site-isolation/edge-sampling-viewport-constrained-object.html [ Skip ]
-
 webkit.org/b/297006 [ Debug ] http/tests/media/media-element-frame-destroyed-crash.html [ Skip ]
 
 webkit.org/b/267778 [ Release ] fast/forms/listbox-padding-clip-selected.html [ Pass ImageOnlyFailure ]
