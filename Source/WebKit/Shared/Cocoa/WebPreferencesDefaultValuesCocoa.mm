@@ -37,6 +37,10 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/WTFString.h>
 
+#if PLATFORM(APPLETV)
+#import <pal/system/ios/Device.h>
+#endif
+
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPreferencesDefaultValuesCocoaAdditions.mm>)
 #import <WebKitAdditions/WebPreferencesDefaultValuesCocoaAdditions.mm>
 #else
@@ -217,6 +221,8 @@ bool LEGACY_NODELETE defaultUnifiedPDFEnabled()
 {
 #if ENABLE(UNIFIED_PDF_BY_DEFAULT)
     return true;
+#elif PLATFORM(APPLETV)
+    return PAL::deviceClassIsHomeView();
 #else
     return false;
 #endif
