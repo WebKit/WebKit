@@ -203,6 +203,11 @@ IPC::Connection* PendingDownload::messageSenderConnection() const
     return m_parentProcessConnection.get();
 }
 
+void PendingDownload::setPendingDownloadLocation(const String& path, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
+{
+    m_networkLoad->setPendingDownloadLocation(path, WTF::move(sandboxExtensionHandle), allowOverwrite);
+}
+
 void PendingDownload::didReceiveResponse(WebCore::ResourceResponse&& response, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
 {
     completionHandler(WebCore::PolicyAction::Download);
