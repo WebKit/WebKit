@@ -666,6 +666,8 @@ void Internals::resetToConsistentState(Page& page)
     if (auto enabled = std::exchange(trackingPreventionEnabledBeforeTest(), std::nullopt))
         DeprecatedGlobalSettings::setTrackingPreventionEnabled(*enabled);
 
+    mainThreadNormalWorldSingleton().clearAllowAutofillForTesting();
+
     page.setDefersLoading(false);
     page.setResourceCachingDisabledByWebInspector(false);
     page.setConsoleMessageListenerForTesting(nullptr);
