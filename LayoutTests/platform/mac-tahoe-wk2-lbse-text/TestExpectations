@@ -21,9 +21,6 @@ svg/batik/text/smallFonts.svg                                                   
 svg/batik/text/textFeatures.svg                                                        [ ImageOnlyFailure ]
 svg/crash-svg-filter-empty-viewport.svg                                                [ Failure ]
 svg/filters/filter-on-filter-for-text.svg                                              [ ImageOnlyFailure ]
-svg/filters/sourceAlpha.svg                                                            [ ImageOnlyFailure ]
-svg/filters/subRegion-one-effect.svg                                                   [ ImageOnlyFailure ]
-svg/filters/subRegion-two-effects.svg                                                  [ ImageOnlyFailure ]
 svg/filters/svg-gaussianblur-edgeMode-duplicate.svg                                    [ ImageOnlyFailure ]
 #  Dynamic updates to filter input should render correctly (bugs.webkit.org/b/275844)
 svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr.html                         [ ImageOnlyFailure ]
@@ -31,12 +28,6 @@ svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr.html                
 svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop.html                        [ ImageOnlyFailure ]
 svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html                      [ ImageOnlyFailure ]
 svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html                    [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEOffsetElement-dom-dx-attr.html                                [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEOffsetElement-dom-dy-attr.html                                [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEOffsetElement-dom-in-attr.html                                [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEOffsetElement-svgdom-dx-prop.html                             [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEOffsetElement-svgdom-dy-prop.html                             [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEOffsetElement-svgdom-in-prop.html                             [ ImageOnlyFailure ]
 svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg       [ ImageOnlyFailure ]
 svg/filters/feImage-late-indirect-update.svg                                           [ ImageOnlyFailure ]
 svg/filters/feImage-reference-svg-primitive.svg                                        [ ImageOnlyFailure ]
@@ -51,7 +42,7 @@ svg/zoom/zoomed-inline-svg-getscreenctm.html [ Failure ]
 svg/custom/pattern-content-inheritance-cycle.svg  [ ImageOnlyFailure ]
 
 # Clipping problems
-svg/batik/text/textProperties.svg                             [ ImageOnlyFailure ]
+svg/batik/text/textProperties.svg [ ImageOnlyFailure ]
 
 # Failing WPT reftests
 imported/w3c/web-platform-tests/svg/painting/marker-009.svg                                                    [ ImageOnlyFailure ]
@@ -64,7 +55,10 @@ imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-smal
 imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-002.html                               [ ImageOnlyFailure ]
 
 # <foreignObject> issues
-svg/foreignObject/vertical-foreignObject.html                  [ ImageOnlyFailure ]
+svg/foreignObject/vertical-foreignObject.html [ ImageOnlyFailure ]
+
+# Animation problems
+svg/animations/animateMotion-remove-or-retarget-resets-previous-target.html [ Failure ]
 
 # Overflow/scrollbar handling issues
 svg/in-html/overflow-svg-root-attr.html  [ ImageOnlyFailure ]
