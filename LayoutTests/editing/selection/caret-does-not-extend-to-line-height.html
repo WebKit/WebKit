@@ -38,19 +38,6 @@ function logicalHeightOfRect(element, rect) {
     return getComputedStyle(element).writingMode.startsWith("vertical") ? rect.width : rect.height;
 }
 
-function testLogicalHeightOfSelection(elementID) {
-    const element = document.getElementById(elementID);
-    element.focus();
-    document.execCommand("SelectAll");
-
-    const height = logicalHeightOfRect(element, internals.selectionBounds());
-    if (height < 25)
-        testPassed(`Logical selection height in #${elementID} did not extend to line height.`);
-    else
-        testFailed(`Logical selection height in #${elementID} was too tall (observed: ${height}).`);
-    element.blur();
-}
-
 function testLogicalHeightOfCaret(elementID) {
     const element = document.getElementById(elementID);
     element.focus();
@@ -63,10 +50,8 @@ function testLogicalHeightOfCaret(elementID) {
     element.blur();
 }
 
-description("This test verifies that caret and selection heights do not extend to match line height (or part of line height). To run the test manually, focus each of the editable elements and make sure that the caret roughly matches the font size in each editable element. Then select text in each of the elements with text and verify that the selection height also matches the font size.");
+description("This test verifies that caret heights do not extend to match line height (or part of line height). To run the test manually, focus each of the editable elements and make sure that the caret roughly matches the font size in each editable element.");
 if (window.testRunner) {
-    testLogicalHeightOfSelection("horizontal");
-    testLogicalHeightOfSelection("vertical");
     testLogicalHeightOfCaret("horizontal");
     testLogicalHeightOfCaret("horizontal-empty");
     testLogicalHeightOfCaret("vertical");

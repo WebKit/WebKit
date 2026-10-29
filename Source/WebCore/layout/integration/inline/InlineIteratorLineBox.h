@@ -59,6 +59,10 @@ public:
     float contentLogicalBottomAdjustedForFollowingLineBox() const;
     FloatRect contentLogicalRectAdjustedForAdjacentLineBoxes() const;
 
+    // The line box grown to fit overflowing content. Adjacent lines share their boundary so that selection has no gaps or overlaps.
+    float selectionLogicalTop() const;
+    float selectionLogicalBottom() const;
+
     float inkOverflowLogicalTop() const;
     float inkOverflowLogicalBottom() const;
     float scrollableOverflowTop() const;
@@ -294,6 +298,20 @@ inline FloatRect LineBox::contentLogicalRectAdjustedForAdjacentLineBoxes() const
     return { FloatPoint { contentLogicalLeft(), contentLogicalTopAdjustedForPrecedingLineBox() }, FloatPoint { contentLogicalRight(), contentLogicalBottomAdjustedForFollowingLineBox() } };
 }
 
+inline float LineBox::selectionLogicalTop() const
+{
+    if (auto precedingLineBox = precedingLineBoxForSelection())
+        return std::max(precedingLineBox->contentLogicalBottom(), precedingLineBox->logicalBottom());
+    return std::min(contentLogicalTop(), logicalTop());
+}
+
+inline float LineBox::selectionLogicalBottom() const
+{
+    if (auto followingLineBox = followingLineBoxForSelection())
+        return std::min(followingLineBox->contentLogicalTop(), followingLineBox->logicalTop());
+    return std::max(contentLogicalBottom(), logicalBottom());
+}
+
 inline float LineBox::logicalTop() const
 {
     return line().lineBoxLogicalRect().y();
@@ -345,8 +363,8 @@ inline FloatRect LineBox::ellipsisVisualRect(AdjustedForSelection adjustedForSel
         formattingContextRoot().flipForWritingMode(visualRect);
         return visualRect;
     }
-    auto selectionTop = formattingContextRoot().adjustEnclosingTopForPrecedingBlock(LayoutUnit { contentLogicalTopAdjustedForPrecedingLineBox() });
-    auto selectionBottom = contentLogicalBottomAdjustedForFollowingLineBox();
+    auto selectionTop = formattingContextRoot().adjustEnclosingTopForPrecedingBlock(LayoutUnit { selectionLogicalTop() });
+    auto selectionBottom = selectionLogicalBottom();
 
     visualRect.setY(selectionTop);
     visualRect.setHeight(selectionBottom - selectionTop);

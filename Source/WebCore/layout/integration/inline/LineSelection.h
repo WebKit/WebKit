@@ -33,12 +33,14 @@ namespace WebCore {
 
 class LineSelection {
 public:
-    static float logicalTop(const InlineIterator::LineBox& lineBox) { return lineBox.contentLogicalTopAdjustedForPrecedingLineBox(); }
-    static float logicalBottom(const InlineIterator::LineBox& lineBox) { return lineBox.contentLogicalBottomAdjustedForFollowingLineBox(); }
+    // The line box grown to fit overflowing content. The caret and hit-testing use the content instead (webkit.org/b/210622),
+    // see LineBox::contentLogicalRectAdjustedForAdjacentLineBoxes.
+    static float logicalTop(const InlineIterator::LineBox& lineBox) { return lineBox.selectionLogicalTop(); }
+    static float logicalBottom(const InlineIterator::LineBox& lineBox) { return lineBox.selectionLogicalBottom(); }
 
     static FloatRect logicalRect(const InlineIterator::LineBox& lineBox)
     {
-        return { FloatPoint { lineBox.contentLogicalLeft(), lineBox.contentLogicalTopAdjustedForPrecedingLineBox() }, FloatPoint { lineBox.contentLogicalRight(), lineBox.contentLogicalBottomAdjustedForFollowingLineBox() } };
+        return { FloatPoint { lineBox.contentLogicalLeft(), lineBox.selectionLogicalTop() }, FloatPoint { lineBox.contentLogicalRight(), lineBox.selectionLogicalBottom() } };
     }
 
     static FloatRect physicalRect(const InlineIterator::LineBox& lineBox)
@@ -55,7 +57,7 @@ public:
         if (auto blockLevelBox = lineBox.blockLevelBox())
             return blockLevelBox->logicalTop();
         // FIXME: Move adjustEnclosingTopForPrecedingBlock from RenderBlockFlow to here.
-        return protect(lineBox.formattingContextRoot())->adjustEnclosingTopForPrecedingBlock(LayoutUnit { lineBox.contentLogicalTopAdjustedForPrecedingLineBox() });
+        return protect(lineBox.formattingContextRoot())->adjustEnclosingTopForPrecedingBlock(LayoutUnit { logicalTop(lineBox) });
     }
 
     static RenderObject::HighlightState selectionState(const InlineIterator::LineBox& lineBox)
