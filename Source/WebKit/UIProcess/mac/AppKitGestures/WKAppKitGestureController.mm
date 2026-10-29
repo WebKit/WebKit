@@ -252,6 +252,7 @@ class AppKitGestureMomentumEventGenerator;
 @interface WKAppKitGestureMomentumDisplayLinkTarget : NSObject
 - (instancetype)initWithGenerator:(WebKit::AppKitGestureMomentumEventGenerator&)generator;
 - (void)invalidate;
+- (void)displayLinkFired:(CADisplayLink *)displayLink;
 @end
 
 namespace WebKit {
