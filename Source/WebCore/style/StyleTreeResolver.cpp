@@ -1452,7 +1452,7 @@ void TreeResolver::resolveComposedTree()
             resetStyleForNonRenderedDescendants(element.get());
 
         auto queryContainerAction = updateStateForQueryContainer(element.get(), style, descendantsToResolve);
-        auto anchorPositionedElementAction = updateAnchorPositioningState(element.get(), style);
+        auto anchorPositionedElementAction = updateAnchorPositioningState(element.get(), style, resolutionType.has_value());
 
         resumeDescendantResolutionIfNeeded(element.get(), changes, descendantsToResolve);
 
@@ -1672,13 +1672,38 @@ std::unique_ptr<Update> TreeResolver::resolve()
     return WTF::move(m_update);
 }
 
-auto TreeResolver::updateAnchorPositioningState(Element& element, const Style::ComputedStyle* style) -> LayoutInterleavingAction
+// A reused style went through anchor resolution when it was computed. Seeding fresh resolution state for it
+// forces an unresolved, interleaved layout, resolved round trip on every style update of the document.
+// Changes to its anchors reach it through invalidation instead (anchor geometry and anchor box loss in
+// DocumentScope::invalidateForAnchorDependencies, anchor-name changes, scroll snapshots).
+// These invalidations do not cover all position-visibility and position-try changes, so keep their eager evaluation.
+static bool reusedStyleNeedsAnchorReevaluation(const Style::ComputedStyle& style)
+{
+    if (!style.positionTryFallbacks().isNone())
+        return true;
+
+    auto positionVisibility = style.positionVisibility();
+    if (positionVisibility.isAlways())
+        return false;
+
+    if (positionVisibility.contains(PositionVisibilityValue::NoOverflow)
+        || positionVisibility.contains(PositionVisibilityValue::AnchorValid)
+        || positionVisibility.contains(PositionVisibilityValue::AnchorsValid))
+        return true;
+
+    // anchor-visible (the initial value) only hides a box that has a default anchor.
+    return AnchorPositionEvaluator::defaultAnchorName(style).has_value();
+}
+
+auto TreeResolver::updateAnchorPositioningState(Element& element, const Style::ComputedStyle* style, bool didResolveStyle) -> LayoutInterleavingAction
 {
     if (!style)
         return LayoutInterleavingAction::None;
 
     auto update = [&](const Style::ComputedStyle* style) {
         if (!style)
+            return;
+        if (!didResolveStyle && !reusedStyleNeedsAnchorReevaluation(*style))
             return;
         AnchorPositionEvaluator::updateAnchorPositionedStateForDefaultAnchorAndPositionVisibility(element, *style, m_treeResolutionState.anchorPositionedStates);
     };
