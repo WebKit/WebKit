@@ -521,7 +521,7 @@ private:
 
     FloatRect LEGACY_NODELETE inflatedStrokeRect(const FloatRect&) const;
 
-    template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator, ImageDrawingOptions = { });
+    void fullCanvasCompositedDraw(const FloatRect& destination, CompositeOperator, const auto& draw);
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
     RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;

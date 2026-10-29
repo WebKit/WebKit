@@ -98,7 +98,6 @@
 #include "ScriptTrackingPrivacyCategory.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include "SizedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleLengthResolution.h"
 #include "StyleProperties.h"
@@ -2048,21 +2047,22 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Im
     if (!hasInvertibleTransform()) [[unlikely]]
         return { };
 
-    RefPtr<Image> image = &sourceImage;
+    ImageObserverDisableScope imageObserverDisabler(sourceImage, sourceImage.isSVGImage());
 
-    ImageObserverDisableScope imageObserverDisabler(*image, image->isSVGImage());
+    RefPtr<NativeImage> firstFrame;
     auto shouldPostProcess { true };
 
-    if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(*image)) {
+    if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(sourceImage)) {
         // Drawing an animated image to a canvas should draw the first frame (except for a few layout tests)
-        if (image->isAnimated() && !document.settings().animatedImageDebugCanvasDrawingEnabled()) {
-            // FIXME: This draws the SDR base image, so an animated HDR image loses its HDR
-            // content: the copy is backed by a NativeImageSource, which never reports a gain
-            // map and always prefers DecodingDestination::Base.
-            bitmapImage = BitmapImage::create(bitmapImage->nativeImage());
-            if (!bitmapImage)
+        if (bitmapImage->isAnimated() && !document.settings().animatedImageDebugCanvasDrawingEnabled()) {
+            // FIXME: This draws the SDR base image, so an animated HDR image loses its HDR content.
+            firstFrame = bitmapImage->nativeImage();
+            if (!firstFrame)
                 return { };
-            image = bitmapImage.copyRef();
+
+            // FIXME: This ignores the orientation of the first frame.
+            if (orientation == ImageOrientation::Orientation::FromImage)
+                orientation = ImageOrientation::Orientation::None;
         }
 
         shouldPostProcess = false;
@@ -2080,27 +2080,37 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Im
 #endif
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
         ,
-        (isHDR() && image->hasHDRContent()) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
+        (isHDR() && !firstFrame && sourceImage.hasHDRContent()) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
         document.settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No
 #endif
+    };
+
+    auto draw = [&](GraphicsContext& context, const FloatRect& destination, ImageDrawingOptions options) {
+        if (!firstFrame)
+            sourceImage.draw(context, concreteObjectSize, destination, normalizedSrcRect, options);
+        else if (auto color = firstFrame->singlePixelSolidColor())
+            Image::fillWithSolidColor(context, destination, *color, options.compositeOperator());
+        else
+            context.drawNativeImage(*firstFrame, destination, normalizedSrcRect, options);
     };
 
     auto willUpdateContentsOptions = shouldPostProcess ? defaultWillUpdateContentsOptions() : defaultWillUpdateContentsOptionsWithoutPostProcessing();
 
     if (rectContainsCanvas(normalizedDstRect)) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        image->draw(*c, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
+        draw(*c, normalizedDstRect, options);
     } else if (isFullCanvasCompositeMode(op)) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        auto sizedImage = SizedImage { *image, concreteObjectSize };
-        fullCanvasCompositedDrawImage(sizedImage, normalizedDstRect, normalizedSrcRect, op, options);
+        fullCanvasCompositedDraw(normalizedDstRect, op, [&](GraphicsContext& context, const FloatRect& destination) {
+            draw(context, destination, { options, CompositeOperator::SourceOver });
+        });
     } else if (op == CompositeOperator::Copy) {
         willUpdateEntireContents(willUpdateContentsOptions);
         clearCanvas();
-        image->draw(*c, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
+        draw(*c, normalizedDstRect, options);
     } else {
         willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : normalizedDstRect, willUpdateContentsOptions);
-        image->draw(*c, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
+        draw(*c, normalizedDstRect, options);
     }
 
     return { };
@@ -2168,7 +2178,9 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
         c->drawNativeImage(*image, normalizedDstRect, normalizedImageSrcRect, { state().globalComposite, state().globalBlend });
     } else if (isFullCanvasCompositeMode(state().globalComposite)) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        fullCanvasCompositedDrawImage(*image, normalizedDstRect, normalizedImageSrcRect, state().globalComposite);
+        fullCanvasCompositedDraw(normalizedDstRect, state().globalComposite, [&](GraphicsContext& context, const FloatRect& destination) {
+            context.drawNativeImage(*image, destination, normalizedImageSrcRect);
+        });
     } else if (state().globalComposite == CompositeOperator::Copy) {
         willUpdateEntireContents(willUpdateContentsOptions);
         clearCanvas();
@@ -2289,7 +2301,9 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
         c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
     } else if (isFullCanvasCompositeMode(state().globalComposite)) {
         willUpdateEntireContents(defaultWillUpdateContentsOptionsWithoutPostProcessing());
-        fullCanvasCompositedDrawImage(*buffer, dstRect, srcRect, state().globalComposite);
+        fullCanvasCompositedDraw(dstRect, state().globalComposite, [&](GraphicsContext& context, const FloatRect& destination) {
+            context.drawImageBuffer(*buffer, destination, srcRect);
+        });
     } else if (state().globalComposite == CompositeOperator::Copy) {
         willUpdateEntireContents(defaultWillUpdateContentsOptionsWithoutPostProcessing());
         clearCanvas();
@@ -2465,22 +2479,7 @@ void CanvasRenderingContext2DBase::compositeBuffer(ImageBuffer& buffer, const In
     c->restore();
 }
 
-static void drawImageToContext(const SizedImage& sizedImage, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImageDrawingOptions options)
-{
-    protect(sizedImage.image)->draw(context, sizedImage.concreteObjectSize, dest, src, options);
-}
-
-static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImageDrawingOptions options)
-{
-    context.drawImageBuffer(imageBuffer, dest, src, options);
-}
-
-static void drawImageToContext(NativeImage& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImageDrawingOptions options)
-{
-    context.drawNativeImage(image, dest, src, options);
-}
-
-template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawImage(T& image, const FloatRect& dest, const FloatRect& src, CompositeOperator op, ImageDrawingOptions options)
+void CanvasRenderingContext2DBase::fullCanvasCompositedDraw(const FloatRect& dest, CompositeOperator op, const auto& draw)
 {
     ASSERT(isFullCanvasCompositeMode(op));
 
@@ -2506,7 +2505,7 @@ template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawIma
     buffer->context().translate(-transformedAdjustedRect.location());
     buffer->context().translate(croppedOffset);
     buffer->context().concatCTM(effectiveTransform);
-    drawImageToContext(image, buffer->context(), adjustedDest, src, { options, CompositeOperator::SourceOver });
+    draw(buffer->context(), adjustedDest);
 
     compositeBuffer(*buffer, bufferRect, op);
 }
