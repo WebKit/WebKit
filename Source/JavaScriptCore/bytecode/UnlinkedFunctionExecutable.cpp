@@ -206,6 +206,8 @@ FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, ScriptExecutable* t
     FunctionExecutable* result = FunctionExecutable::create(vm, topLevelExecutable, source, this, intrinsic, isInsideOrdinaryFunction);
     if (m_singletonHasBeenInvalidated)
         result->singleton().invalidate(vm, StringFireDetail("Singleton was previously invalidated"));
+    else if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode()))
+        result->singleton().invalidate(vm, StringFireDetail("Generator and async function bodies are created per wrapper call"));
     if (overrideLineNumber)
         result->setOverrideLineNumber(*overrideLineNumber);
 
