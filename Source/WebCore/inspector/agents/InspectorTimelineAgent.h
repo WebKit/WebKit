@@ -48,6 +48,7 @@ namespace WebCore {
 class Element;
 class Event;
 class FloatQuad;
+class Node;
 class RenderObject;
 
 enum class TimelineRecordType {
@@ -146,7 +147,10 @@ protected:
     virtual void internalStop();
 
     virtual bool shouldStartHeapInstrument() const { return true; }
+    virtual bool shouldToggleInstrument(Inspector::Protocol::Timeline::Instrument) const { return true; }
     void autoCaptureStarted() const;
+
+    virtual Inspector::Protocol::DOM::NodeId nodeIdForNode(Node*);
 
     const Vector<Inspector::Protocol::Timeline::Instrument>& instruments() const LIFETIME_BOUND { return m_instruments; }
 

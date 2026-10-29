@@ -67,7 +67,7 @@ function test() {
     }
 
     // Records an empty recording. Its start and end times come from the targets that have the Timeline domain: the
-    // page target, whose clock is in the main frame's process, and the worker target.
+    // page target, the frame targets and the worker target, whose clocks are in two different processes.
     async function recordTimeBounds() {
         let startTime = await startCapturing();
         let endTime = await stopCapturing();

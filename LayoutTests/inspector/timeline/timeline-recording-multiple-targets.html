@@ -46,6 +46,9 @@ function makeExtraWorkerBusy(index) {
 
 function test()
 {
+    // Under Site Isolation, records for the page's document come from its main frame target.
+    let mainFrameTarget = InspectorTest.mainFrameTarget;
+
     let initialWorkerTarget = WI.targetManager.workerTargets[0];
     if (!initialWorkerTarget) {
         InspectorTest.fail("Missing Worker target.");
@@ -183,7 +186,7 @@ function test()
         async test() {
             await startCapturing();
 
-            let pageRecordPromise = awaitTimerFiredRecord(WI.mainTarget);
+            let pageRecordPromise = awaitTimerFiredRecord(mainFrameTarget);
             let workerRecordPromise = awaitTimerFiredRecord(initialWorkerTarget);
             await InspectorTest.evaluateInPage(`fireTimerInPage()`);
             await InspectorTest.evaluateInPage(`initialWorker.postMessage("fire-timer")`);
@@ -196,6 +199,10 @@ function test()
             expectTrackingStopped(trackingEvents, WI.mainTarget, "Page target");
             expectTrackingStopped(trackingEvents, initialWorkerTarget, "Worker target");
             expectEveryStartedDomainStopped(trackingEvents);
+
+            let scriptTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Script);
+            InspectorTest.expectThat(scriptTimeline.targets.includes(mainFrameTarget), "The Script timeline should include the target of the page's records.");
+            InspectorTest.expectThat(scriptTimeline.targets.includes(initialWorkerTarget), "The Script timeline should include the Worker target.");
         },
     });
 
@@ -372,7 +379,7 @@ function test()
             await restartedPromise;
             InspectorTest.pass("Capturing stopped and started again.");
 
-            let pageRecordPromise = awaitTimerFiredRecord(WI.mainTarget);
+            let pageRecordPromise = awaitTimerFiredRecord(mainFrameTarget);
             await InspectorTest.evaluateInPage(`fireTimerInPage()`);
             await pageRecordPromise;
             InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Active, "The second capture should still be active after recording a timer from the page.");
@@ -417,7 +424,7 @@ function test()
             WI.timelineManager.startCapturing();
             await activePromise;
 
-            let pageRecordPromise = awaitTimerFiredRecord(WI.mainTarget);
+            let pageRecordPromise = awaitTimerFiredRecord(mainFrameTarget);
             await InspectorTest.evaluateInPage(`fireTimerInPage()`);
             await pageRecordPromise;
             InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Active, "The restarted capture should still be active after recording a timer from the page.");
@@ -474,17 +481,21 @@ function test()
             WI.timelineManager.enabledTimelineTypes = [...originalTimelineTypes, WI.TimelineRecord.Type.HeapAllocations];
 
             // Heap starts after the domain that makes capturing active, so wait for it too.
-            let heapStartedPromise = awaitTrackingEvent("capturingStarted", WI.mainTarget, "Heap");
+            let heapStartedPromise = Promise.resolve();
+            // FIXME: <https://webkit.org/b/298984> Under Site Isolation, `console.profile()` in the main frame reaches
+            // its frame target's Timeline agent, which does not start Heap yet.
+            if (!(mainFrameTarget instanceof WI.FrameTarget))
+                heapStartedPromise = awaitTrackingEvent("capturingStarted", WI.mainTarget, "Heap");
             let activePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
             await InspectorTest.evaluateInPage(`console.profile("first")`);
             await Promise.all([activePromise, heapStartedPromise]);
 
-            let secondCapturePromise = awaitTrackingEvent("capturingStarted", WI.mainTarget, "Timeline");
+            let secondCapturePromise = awaitTrackingEvent("capturingStarted", mainFrameTarget, "Timeline");
             await InspectorTest.evaluateInPage(`console.profileEnd("first"); console.profile("second")`);
             await secondCapturePromise;
             InspectorTest.pass("The page started a second capture.");
 
-            let pageRecordPromise = awaitTimerFiredRecord(WI.mainTarget);
+            let pageRecordPromise = awaitTimerFiredRecord(mainFrameTarget);
             await InspectorTest.evaluateInPage(`fireTimerInPage()`);
             await pageRecordPromise;
             InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Active, "The second capture should be active after recording a timer from the page.");

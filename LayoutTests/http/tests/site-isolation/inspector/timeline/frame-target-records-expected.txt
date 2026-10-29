@@ -1,0 +1,42 @@
+Test that under Site Isolation, Timeline records are reported by the frame target of the frame that did the work, including a cross-origin iframe.
+
+
+
+== Running test suite: SiteIsolation.Timeline.FrameTargetRecords
+-- Running test case: SiteIsolation.Timeline.FrameTargetRecords.Domain
+PASS: Should find the cross-origin iframe target.
+PASS: The cross-origin iframe target should not be the main frame target.
+PASS: The main frame target should have the Timeline domain.
+PASS: The main frame target should not have Timeline.setAutoCaptureEnabled.
+PASS: The cross-origin iframe target should have the Timeline domain.
+PASS: The cross-origin iframe target should not have Timeline.setAutoCaptureEnabled.
+PASS: The page target should still have Timeline.setAutoCaptureEnabled.
+
+-- Running test case: SiteIsolation.Timeline.FrameTargetRecords.Timers
+PASS: Both frame targets started tracking.
+PASS: Recorded a timer from the main frame target.
+PASS: Recorded a timer from the cross-origin iframe target.
+PASS: Capturing stopped.
+PASS: The main frame target should report that Timeline stopped.
+PASS: The cross-origin iframe target should report that Timeline stopped.
+PASS: Record from the main frame target should have a non-zero start time.
+PASS: Record from the main frame target should be within the recording.
+PASS: Record from the cross-origin iframe target should have a non-zero start time.
+PASS: Record from the cross-origin iframe target should be within the recording.
+PASS: No script records other than garbage collections should come from the page target.
+PASS: The Script timeline should include the main frame target.
+PASS: The Script timeline should include the cross-origin iframe target.
+
+-- Running test case: SiteIsolation.Timeline.FrameTargetRecords.EventDispatch
+PASS: Recorded the dispatch of the test event from the cross-origin iframe target.
+PASS: Capturing stopped.
+PASS: Record from the cross-origin iframe target should have a non-zero start time.
+PASS: Record from the cross-origin iframe target should be within the recording.
+PASS: No script records other than garbage collections should come from the page target.
+
+-- Running test case: SiteIsolation.Timeline.FrameTargetRecords.NoFallbackToPageTarget
+PASS: The main frame target should not be tracking.
+PASS: A timer fired in the main frame.
+PASS: Capturing stopped.
+PASS: The page target should not record the main frame's timer.
+
