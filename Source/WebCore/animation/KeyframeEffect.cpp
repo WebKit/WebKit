@@ -66,6 +66,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
+#include "ScriptDisallowedScope.h"
 #include "ScrollTimeline.h"
 #include "Settings.h"
 #include "StyleAdjuster.h"
@@ -241,6 +242,8 @@ static std::optional<KeyframeEffect::KeyframeOffset> validateKeyframeOffset(cons
 
 static double computedOffset(Style::SingleAnimationRangeName rangeName, Style::Percentage<> offset, const ScrollTimeline* scrollTimeline, WebAnimation* animation)
 {
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
     if ((rangeName == Style::SingleAnimationRangeName::Normal || rangeName == Style::SingleAnimationRangeName::Omitted))
         return Style::evaluate<double>(offset);
 
@@ -3431,8 +3434,13 @@ void KeyframeEffect::updateComputedKeyframeOffsetsIfNeeded()
     if (scrollTimeline && !scrollTimeline->currentTime())
         return;
 
-    if (!m_parsedKeyframes.isEmpty())
-        computeMissingKeyframeOffsets(m_parsedKeyframes, scrollTimeline.get(), animation.get());
+    if (!m_parsedKeyframes.isEmpty()) {
+        // Make a copy of m_parsedKeyframes to be processed by computeMissingKeyframeOffsets() to
+        // guarantee we don't modify this member variable with a potential getKeyframes() re-entrancy.
+        auto parsedKeyframes = m_parsedKeyframes;
+        computeMissingKeyframeOffsets(parsedKeyframes, scrollTimeline.get(), animation.get());
+        m_parsedKeyframes = WTF::move(parsedKeyframes);
+    }
 
     m_blendingKeyframes.updatedComputedOffsets([&](auto& specifiedOffset) {
         return computedOffset(specifiedOffset.name, specifiedOffset.value, scrollTimeline.get(), animation.get());
