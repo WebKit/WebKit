@@ -870,17 +870,20 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> LEGACY_NODEL
 {
     NSParameterAssert([message isKindOfClass:NSString.class]);
 
-    protect(*_webExtensionContext)->sendTestMessage(message, argument);
+    String argumentJSON = encodeJSONString(argument, WebKit::JSONOptions::FragmentsAllowed);
+    protect(*_webExtensionContext)->sendTestMessage(message, argumentJSON);
 }
 
 - (void)_sendTestStartedWithArgument:(id)argument
 {
-    protect(*_webExtensionContext)->sendTestStarted(argument);
+    String argumentJSON = encodeJSONString(argument, WebKit::JSONOptions::FragmentsAllowed);
+    protect(*_webExtensionContext)->sendTestStarted(argumentJSON);
 }
 
 - (void)_sendTestFinishedWithArgument:(id)argument
 {
-    protect(*_webExtensionContext)->sendTestFinished(argument);
+    String argumentJSON = encodeJSONString(argument, WebKit::JSONOptions::FragmentsAllowed);
+    protect(*_webExtensionContext)->sendTestFinished(argumentJSON);
 }
 
 - (void)_reloadBackgroundContentForTesting

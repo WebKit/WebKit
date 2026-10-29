@@ -1107,7 +1107,6 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIDevToolsNetwork \
     WebExtensionAPIDevToolsPanels \
     WebExtensionAPIDOM \
-    WebExtensionAPIEvent \
     WebExtensionAPIExtension \
     WebExtensionAPILocalization \
     WebExtensionAPIMenus \
@@ -1136,6 +1135,7 @@ SUPPLEMENTAL_DEPENDENCY_FILE = WebExtensionSupplementalDependencies.txt
 
 CPP_EXTENSION_INTERFACES = \
 	WebExtensionAPIAlarms \
+    WebExtensionAPIEvent \
 	WebExtensionAPINamespace \
     WebExtensionAPIRuntime \
     WebExtensionAPIStorage \
