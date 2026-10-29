@@ -37,7 +37,6 @@ svg/dynamic-updates/SVGFEOffsetElement-dom-in-attr.html                         
 svg/dynamic-updates/SVGFEOffsetElement-svgdom-dx-prop.html                             [ ImageOnlyFailure ]
 svg/dynamic-updates/SVGFEOffsetElement-svgdom-dy-prop.html                             [ ImageOnlyFailure ]
 svg/dynamic-updates/SVGFEOffsetElement-svgdom-in-prop.html                             [ ImageOnlyFailure ]
-svg/filters/css-filter-specified-on-svg-root.html                                      [ ImageOnlyFailure ]
 svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg       [ ImageOnlyFailure ]
 svg/filters/feImage-late-indirect-update.svg                                           [ ImageOnlyFailure ]
 svg/filters/feImage-reference-svg-primitive.svg                                        [ ImageOnlyFailure ]
@@ -59,6 +58,8 @@ imported/w3c/web-platform-tests/svg/painting/marker-009.svg                     
 imported/w3c/web-platform-tests/svg/painting/scripted/marker-element-added.html                                [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-template-pattern-removed.svg         [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/render/reftests/blending-svg-foreign-object.html                           [ ImageOnlyFailure ]
+# The outline of the outermost <svg> is painted at twice its offset (RenderSVGRoot::paintObject()).
+imported/w3c/web-platform-tests/svg/render/reftests/outer-svg-transform-outline.html                           [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size.svg                [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-002.html                               [ ImageOnlyFailure ]
 

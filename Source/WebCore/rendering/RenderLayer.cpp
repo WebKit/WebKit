@@ -3572,20 +3572,6 @@ void RenderLayer::paintLayerWithEffects(GraphicsContext& context, const LayerPai
             if (paintFlags.contains(PaintLayerFlag::PaintingOverflowContents))
                 paintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
 
-            // Always apply SVG viewport clipping in coordinate system before the SVG viewBox transformation is applied.
-            if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer())) {
-                if (svgRoot->shouldApplyViewportClip()) {
-                    auto newRect = svgRoot->borderBoxRect();
-
-                    auto offsetFromParent = offsetFromAncestor(clipRectsContext.rootLayer);
-                    auto offsetForThisLayer = offsetFromParent + paintingInfo.subpixelOffset;
-                    auto devicePixelSnappedOffsetForThisLayer = toFloatSize(roundPointToDevicePixels(toLayoutPoint(offsetForThisLayer), renderer().document().deviceScaleFactor()));
-                    newRect.move(devicePixelSnappedOffsetForThisLayer.width(), devicePixelSnappedOffsetForThisLayer.height());
-
-                    clipRect.intersect(newRect);
-                }
-            }
-
             // Push the parent coordinate space's clip.
             parent()->clipToRect(context, stateSaver, regionContextStateSaver, paintingInfo, paintBehavior, clipRect);
         }
