@@ -36,3 +36,7 @@ WK_EXTERN WKWebExtensionPermission const WKWebExtensionPermissionNotifications N
 /*! @abstract The `sidePanel` permission requests access to the `browser.sidePanel` APIs. */
 WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
 WK_EXTERN WKWebExtensionPermission const WKWebExtensionPermissionSidePanel NS_SWIFT_NONISOLATED;
+
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
+#import <WebKitAdditions/WKWebExtensionPermissionPrivateAdditions.h>
+#endif

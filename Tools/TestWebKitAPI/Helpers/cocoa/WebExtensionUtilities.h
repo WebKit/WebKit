@@ -188,6 +188,10 @@ NS_SWIFT_UI_ACTOR
 
 NS_HEADER_AUDIT_END(nullability, sendability)
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionUtilitiesAdditions.h>)
+#include <WebKitAdditions/WebExtensionUtilitiesAdditions.h>
+#endif
+
 #else // not __OBJC__
 
 OBJC_CLASS TestWebExtensionManager;

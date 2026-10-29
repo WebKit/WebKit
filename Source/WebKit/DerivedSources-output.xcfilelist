@@ -645,6 +645,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDriverBidiProtocolObjects.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDriverBidiProtocolObjects.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionCPPIDLFileNamesList.txt
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionIDLFileNamesList.txt
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionSupplementalDependencies.txt
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKitLogClientDeclarations.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKitLogDefinitions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageUpdatePreferences.cpp

@@ -1658,6 +1658,9 @@ const WebExtension::PermissionsSet& WebExtension::supportedPermissions()
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
         WebExtensionPermission::offscreen(),
 #endif
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionSupportedPermissionsAdditions.h>)
+#include <WebKitAdditions/WebExtensionSupportedPermissionsAdditions.h>
+#endif
     };
     return permissions;
 }

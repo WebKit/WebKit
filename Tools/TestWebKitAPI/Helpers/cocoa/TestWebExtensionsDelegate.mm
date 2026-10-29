@@ -34,6 +34,10 @@
 #import <WebKit/WKWebExtensionPermission.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/TestWebExtensionsDelegateAdditionsPrefix.mm>)
+#import <WebKitAdditions/TestWebExtensionsDelegateAdditionsPrefix.mm>
+#endif
+
 @implementation TestWebExtensionsDelegate
 
 - (BOOL)respondsToSelector:(SEL)selector
@@ -157,6 +161,10 @@
     else
         replyHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"runtime.sendNativeMessage() not implemented" }]);
 }
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/TestWebExtensionsDelegateAdditionsImpl.mm>)
+#import <WebKitAdditions/TestWebExtensionsDelegateAdditionsImpl.mm>
+#endif
 
 - (void)webExtensionController:(WKWebExtensionController *)controller connectUsingMessagePort:(WKWebExtensionMessagePort *)port forExtensionContext:(WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSError *error))completionHandler
 {

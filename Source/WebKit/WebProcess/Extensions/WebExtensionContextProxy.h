@@ -287,6 +287,10 @@ private:
 #endif
     WeakPageTabWindowMap m_popupPageMap;
     WeakPageTabWindowMap m_tabPageMap;
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionContextProxyAdditions.h>)
+#include <WebKitAdditions/WebExtensionContextProxyAdditions.h>
+#endif
 };
 
 } // namespace WebKit

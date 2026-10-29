@@ -60,6 +60,10 @@ public:
     static String unlimitedStorage();
     static String webNavigation();
     static String webRequest();
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionPermissionAdditions.h>)
+#include <WebKitAdditions/WebExtensionPermissionAdditions.h>
+#endif
 };
 
 } // namespace WebKit

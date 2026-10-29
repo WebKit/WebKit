@@ -111,6 +111,7 @@ Platform/cocoa/MediaPlaybackTargetSerialized.cpp
 Platform/cocoa/PaymentAuthorizationPresenter.mm @nonARC
 Platform/cocoa/PaymentAuthorizationViewController.mm @nonARC
 Platform/cocoa/WKPaymentAuthorizationDelegate.mm @nonARC
+Platform/cocoa/WebExtensionAdditionsHook.mm @no-unify // Includes WebKitAdditions sources.
 Platform/cocoa/WebKitAdditions.mm @nonARC @no-unify // #includes opaque WebKitAdditions sources.
 Platform/cocoa/WebPrivacyHelpers.mm @nonARC
 

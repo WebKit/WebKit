@@ -64,3 +64,7 @@
 #import <WebKit/_WKWebPushDaemonConnection.h>
 #import <WebKit/_WKWebPushMessage.h>
 #import <WebKit/_WKWebPushSubscriptionData.h>
+
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
+#import <WebKitAdditions/WebExtensionAdditionsPrivate.h>
+#endif

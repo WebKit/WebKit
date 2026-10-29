@@ -383,6 +383,9 @@ class OpaqueIPCTypes(object):
         self.alias_params = {}
         self.structure_params = {}
 
+        self.load_tracking_file(tracking_file_path)
+
+    def load_tracking_file(self, tracking_file_path):
         # State for tracking groups
         current_group_type = None
         current_group_attributes = None

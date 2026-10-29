@@ -145,6 +145,10 @@ namespace PAL {
 class SessionID;
 }
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionContextAdditionsPrefix.h>)
+#include <WebKitAdditions/WebExtensionContextAdditionsPrefix.h>
+#endif
+
 namespace WebKit {
 
 #if ENABLE(2022_GLIB_API)
@@ -1299,6 +1303,10 @@ private:
     RefPtr<WebExtensionStorageSQLiteStore> m_localStorageStore;
     RefPtr<WebExtensionStorageSQLiteStore> m_sessionStorageStore;
     RefPtr<WebExtensionStorageSQLiteStore> m_syncStorageStore;
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionContextAdditions.h>)
+#include <WebKitAdditions/WebExtensionContextAdditions.h>
+#endif
 
     struct TestMessage {
         String message;

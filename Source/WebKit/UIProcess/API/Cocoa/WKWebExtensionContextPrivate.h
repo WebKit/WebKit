@@ -120,3 +120,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 @end
 
 WK_HEADER_AUDIT_END(nullability, sendability)
+
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
+#import <WebKitAdditions/WKWebExtensionContextPrivateAdditions.h>
+#endif
