@@ -69,9 +69,10 @@ inline bool WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::contains(const K
 template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
 NEVER_INLINE void WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope collectionScope)
 {
+    HeapVersion markingVersion = vm.heap.objectSpace().markingVersion();
     if (collectionScope == CollectionScope::Full) {
         m_map.removeIf([&](const typename HashMapType::KeyValuePairType& entry) {
-            return !entry.value || !vm.heap.isMarked(entry.value);
+            return !entry.value || !Heap::isMarked(markingVersion, entry.value);
         });
         return;
     }
@@ -80,7 +81,7 @@ NEVER_INLINE void WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::reconcileW
     // collection frees little enough that it is not worth it. Leave a zombie entry for the next
     // full collection to remove.
     for (auto& entry : m_map) {
-        if (entry.value && !vm.heap.isMarked(entry.value))
+        if (entry.value && !Heap::isMarked(markingVersion, entry.value))
             entry.value = nullptr;
     }
 }

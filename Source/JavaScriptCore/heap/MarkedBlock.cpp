@@ -172,10 +172,11 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList, StopAllocatin
 
     ASSERT(freeList.cellSize() == m_atomsPerCell * atomSize);
     bool needsZapping = m_attributes.destruction != DoesNotNeedDestruction;
+    size_t cellSize = freeList.cellSize();
     freeList.forEachInterval(
         [&](char* intervalStart, char* intervalEnd) {
             if (needsZapping || MarkedBlockInternal::verbose) {
-                for (char* cell = intervalStart; cell < intervalEnd; cell += freeList.cellSize()) {
+                for (char* cell = intervalStart; cell < intervalEnd; cell += cellSize) {
                     if constexpr (MarkedBlockInternal::verbose)
                         dataLog("Free cell: ", RawPointer(cell), "\n");
                     if (needsZapping)

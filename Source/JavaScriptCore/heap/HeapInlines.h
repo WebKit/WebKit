@@ -69,6 +69,14 @@ ALWAYS_INLINE bool Heap::isMarked(const void* rawCell)
     return block.isMarked(m_objectSpace.markingVersion(), cell);
 }
 
+ALWAYS_INLINE bool Heap::isMarked(HeapVersion markingVersion, const void* rawCell)
+{
+    HeapCell* cell = std::bit_cast<HeapCell*>(rawCell);
+    if (cell->isPreciseAllocation())
+        return cell->preciseAllocation().isMarked();
+    return cell->markedBlock().isMarked(markingVersion, cell);
+}
+
 ALWAYS_INLINE bool Heap::testAndSetMarked(HeapVersion markingVersion, const void* rawCell)
 {
     HeapCell* cell = std::bit_cast<HeapCell*>(rawCell);

@@ -52,8 +52,9 @@ void CodeBlockSet::clearCurrentlyExecutingAndRemoveDeadCodeBlocks(VM& vm)
 {
     ASSERT(vm.heap.isInPhase(CollectorPhase::End));
     m_currentlyExecuting.clear();
+    HeapVersion markingVersion = vm.heap.objectSpace().markingVersion();
     m_codeBlocks.removeIf([&](CodeBlock* codeBlock) {
-        return !vm.heap.isMarked(codeBlock);
+        return !Heap::isMarked(markingVersion, codeBlock);
     });
 }
 
