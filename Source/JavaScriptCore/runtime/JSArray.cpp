@@ -2086,6 +2086,24 @@ void JSArray::fillArgList(JSGlobalObject* globalObject, MarkedArgumentBuffer& ar
     }
 }
 
+static NEVER_INLINE unsigned copyToArgumentsFillingHoles(JSArray* array, JSValue* firstElementDest, unsigned offset, unsigned i, unsigned length)
+{
+    Butterfly* butterfly = array->butterfly();
+    IndexingType indexingType = array->indexingType();
+    unsigned end = std::min(length, hasAnyArrayStorage(indexingType) ? butterfly->arrayStorage()->vectorLength() : butterfly->publicLength());
+    if (i >= end)
+        return i;
+
+    auto* buffer = std::bit_cast<WriteBarrier<Unknown>*>(firstElementDest);
+    if (hasAnyArrayStorage(indexingType))
+        copyArrayElements<ArrayFillMode::Undefined, NeedsGCSafeOps::No>(buffer, i - offset, butterfly->arrayStorage()->m_vector, i, end - i, indexingType);
+    else if (indexingType == ArrayWithDouble)
+        copyArrayElements<ArrayFillMode::Undefined, NeedsGCSafeOps::No>(buffer, i - offset, butterfly->contiguousDouble().data(), i, end - i, indexingType);
+    else
+        copyArrayElements<ArrayFillMode::Undefined, NeedsGCSafeOps::No>(buffer, i - offset, butterfly->contiguous().data(), i, end - i, indexingType);
+    return end;
+}
+
 void JSArray::copyToArguments(JSGlobalObject* globalObject, JSValue* firstElementDest, unsigned offset, unsigned length)
 {
     VM& vm = globalObject->vm();
@@ -2153,6 +2171,9 @@ void JSArray::copyToArguments(JSGlobalObject* globalObject, JSValue* firstElemen
         firstElementDest[i - offset] = v.get();
     }
     
+    if (i < length && canDoFastIndexedAccess())
+        i = copyToArgumentsFillingHoles(this, firstElementDest, offset, i, length);
+
     for (; i < length; ++i) {
         firstElementDest[i - offset] = get(globalObject, i);
         RETURN_IF_EXCEPTION(scope, void());
