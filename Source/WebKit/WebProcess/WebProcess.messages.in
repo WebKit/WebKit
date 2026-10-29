@@ -91,7 +91,7 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     RemovePrintConnectionToWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
     UpdatePrintConnectionSharedPreferences(WebCore::ProcessIdentifier webProcessIdentifier, struct WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess)
     PrintConnectionToWebProcessCountForTesting() -> (uint64_t count)
-    ConnectToPrintProcess(IPC::ConnectionHandle connectionHandle) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+    ConnectToPrintProcess(IPC::ConnectionHandle connectionHandle) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC CanDispatchOutOfOrder
 
     SinkCompletedPrintSnapshotToPDF(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier rootFrameIdentifier) -> (RefPtr<WebCore::SharedBuffer> result) ReplyCanDispatchOutOfOrder
     SinkCompletedPrintSnapshotToBitmap(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier rootFrameIdentifier) -> (std::optional<WebCore::ShareableBitmapHandle> image) ReplyCanDispatchOutOfOrder

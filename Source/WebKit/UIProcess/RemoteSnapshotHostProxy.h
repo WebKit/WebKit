@@ -65,9 +65,9 @@ public:
     // frames hosted in other processes to record into it are dispatched meanwhile. False on timeout.
     virtual bool waitForSnapshot(RemoteSnapshotIdentifier, Seconds timeout) = 0;
 
-    // For PendingSnapshotDrawing, which may outlive this. The connection that the replies of this
-    // host come on.
-    virtual RefPtr<IPC::Connection> snapshotHostConnection() const = 0;
+    // For PendingSnapshotDrawing, which may outlive this. Gets the connection that the replies of this
+    // host come on, once the host has launched, waiting up to the timeout for that if it can.
+    virtual Function<RefPtr<IPC::Connection>(Seconds launchTimeout)> snapshotHostConnectionWaiter() = 0;
     // Waits for the snapshot as waitForSnapshot() does, and releases it on timeout.
     virtual Function<void(Seconds timeout)> snapshotWaiter(RemoteSnapshotIdentifier) = 0;
 };

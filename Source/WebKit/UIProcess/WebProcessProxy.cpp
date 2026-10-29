@@ -1686,24 +1686,18 @@ void WebProcessProxy::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, cons
     snapshotHost->snapshotFrameWillBeDrawnByProcess(snapshotIdentifier, frameID, frameProcess->coreProcessIdentifier());
 
 #if PLATFORM(COCOA)
-    if (printProcess) {
-        // The frame's process records into the print process, so it is connected there first. A
-        // frame whose process has another Lockdown Mode is not drawn.
-        protect(processPool())->ensurePrintProcessConnection(frameProcess, *printLockdownMode, [weakFrameProcess = WeakPtr { frameProcess.get() }, printProcess, frameID, rect, snapshotIdentifier, renderingMode](bool success) {
-            RefPtr frameProcess = weakFrameProcess.get();
-            if (!success || !frameProcess || !frameProcess->canSendMessage()) {
-                printProcess->abandonSnapshotFrame(snapshotIdentifier, frameID);
-                return;
-            }
-            frameProcess->send(Messages::WebProcess::DrawFrameToSnapshot(frameID, rect, snapshotIdentifier, renderingMode, RemoteSnapshotHost::Print), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
-        });
+    // The frame's process records into the print process, so it is connected there. Not waited for,
+    // since this may be blocked waiting for the snapshot: the frame's process waits for its connection
+    // instead. A frame whose process has another Lockdown Mode is not drawn.
+    if (printProcess && !protect(processPool())->ensurePrintProcessConnection(frameProcess, *printLockdownMode)) {
+        printProcess->abandonSnapshotFrame(snapshotIdentifier, frameID);
         return;
     }
 #endif
 
     // Also while the frame's process is waiting on this one, as it does for alert(), since this
     // process may itself be blocked waiting for the snapshot.
-    frameProcess->send(Messages::WebProcess::DrawFrameToSnapshot(frameID, rect, snapshotIdentifier, renderingMode, RemoteSnapshotHost::GPU), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    frameProcess->send(Messages::WebProcess::DrawFrameToSnapshot(frameID, rect, snapshotIdentifier, renderingMode, host), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
 }
 
 #if HAVE(IOSURFACE)

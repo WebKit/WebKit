@@ -129,12 +129,14 @@ bool PrintProcessProxy::waitForSnapshot(RemoteSnapshotIdentifier identifier, Sec
     return process->sendSync(Messages::WebProcess::WaitForPrintSnapshot(identifier), 0, timeout, IPC::SendSyncOption::MaintainOrderingWithAsyncMessages).succeeded();
 }
 
-RefPtr<IPC::Connection> PrintProcessProxy::snapshotHostConnection() const
+Function<RefPtr<IPC::Connection>(Seconds)> PrintProcessProxy::snapshotHostConnectionWaiter()
 {
-    RefPtr process = m_process.get();
-    if (!process || !process->hasConnection())
-        return nullptr;
-    return &process->connection();
+    return [process = m_process](Seconds launchTimeout) -> RefPtr<IPC::Connection> {
+        RefPtr protectedProcess = process;
+        if (!protectedProcess || !protectedProcess->waitForLaunch(launchTimeout))
+            return nullptr;
+        return &protectedProcess->connection();
+    };
 }
 
 Function<void(Seconds)> PrintProcessProxy::snapshotWaiter(RemoteSnapshotIdentifier identifier)

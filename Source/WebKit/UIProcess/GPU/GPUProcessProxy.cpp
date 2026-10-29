@@ -1072,11 +1072,15 @@ bool GPUProcessProxy::waitForSnapshot(RemoteSnapshotIdentifier identifier, Secon
     return sendSync(Messages::GPUProcess::WaitForSnapshot(identifier), 0, timeout, IPC::SendSyncOption::MaintainOrderingWithAsyncMessages).succeeded();
 }
 
-RefPtr<IPC::Connection> GPUProcessProxy::snapshotHostConnection() const
+Function<RefPtr<IPC::Connection>(Seconds)> GPUProcessProxy::snapshotHostConnectionWaiter()
 {
-    if (!hasConnection())
-        return nullptr;
-    return &connection();
+    return [](Seconds) -> RefPtr<IPC::Connection> {
+        // The GPU process at the time of the wait, as there is one at a time.
+        RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
+        if (!gpuProcess || !gpuProcess->hasConnection())
+            return nullptr;
+        return &gpuProcess->connection();
+    };
 }
 
 Function<void(Seconds)> GPUProcessProxy::snapshotWaiter(RemoteSnapshotIdentifier identifier)

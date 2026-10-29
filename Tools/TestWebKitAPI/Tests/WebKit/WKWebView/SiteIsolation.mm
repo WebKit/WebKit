@@ -20126,6 +20126,49 @@ TEST(SiteIsolation, DrawPagesToPDFSynchronouslyIncludesCrossSiteFramesInPrintPro
     drawPagesToPDFSynchronouslyIncludesCrossSiteFrames(true);
 }
 
+// The processes of the cross-site frames are only connected to the print process once they are asked
+// to record, while the UI process is blocked waiting for the document, so that has to go on without
+// the main thread of the UI process.
+TEST(SiteIsolation, DrawPagesToPDFSynchronouslyConnectsCrossSiteFramesWhileDrawing)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'>Mainframe<br><iframe style='border:0;width:400px;height:200px' src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0'>Subframe<br><iframe style='border:0;width:300px;height:100px' src='https://c.com/nested'></iframe></body>"_s } },
+        { "/nested"_s, { "<body style='margin:0'>Nested</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView _setConnectsFramesToPrintProcessAheadOfDrawingForTesting:NO];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_TRUE(Util::waitFor([&] {
+        RetainPtr<WKFrameInfo> nested = [webView mainFrame].childFrames.firstObject.childFrames.firstObject.info;
+        return nested && [[webView objectByEvaluatingJavaScript:@"document.readyState" inFrame:nested.get()] isEqualToString:@"complete"];
+    }));
+
+    RetainPtr<WKFrameInfo> mainFrame = [webView mainFrame].info;
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:[mainFrame _handle] completionHandler:^{
+        computedPages = true;
+    }];
+    Util::run(&computedPages);
+
+    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:[mainFrame _handle] pageCount:1];
+    [webView _setConnectsFramesToPrintProcessAheadOfDrawingForTesting:YES];
+    ASSERT_NOT_NULL(data.get());
+
+    RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
+    EXPECT_EQ([document pageCount], 1);
+    RetainPtr text = [[document pageAtIndex:0] text];
+    EXPECT_TRUE([text containsString:@"Mainframe"]);
+    EXPECT_TRUE([text containsString:@"Subframe"]);
+    EXPECT_TRUE([text containsString:@"Nested"]);
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()), 1u);
+}
+
 static void drawToPDFIncludesSameSiteFrames(bool usePrintProcess)
 {
     HTTPServer server({

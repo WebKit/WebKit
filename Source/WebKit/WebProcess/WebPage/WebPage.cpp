@@ -7516,8 +7516,9 @@ static RefPtr<RemoteDrawingBackendProxy> remoteSnapshotBackend(WebPage& page, Re
         return &page.ensureRemoteRenderingBackendProxy();
     case RemoteSnapshotHost::Print:
 #if PLATFORM(COCOA)
-        // Without a connection, the print process has gone away along with its snapshots.
-        if (RefPtr printProcessConnection = WebProcess::singleton().printProcessConnection())
+        // The UI process sends the connection without waiting for it, so it may not be here yet.
+        // Without one, the print process has gone away along with its snapshots.
+        if (RefPtr printProcessConnection = WebProcess::singleton().waitForPrintProcessConnection())
             return &printProcessConnection->printBackendProxy();
 #endif
         return nullptr;

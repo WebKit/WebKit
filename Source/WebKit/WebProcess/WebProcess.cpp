@@ -1953,6 +1953,19 @@ void WebProcess::connectToPrintProcess(IPC::Connection::Handle&& connectionHandl
     m_printProcessConnection = PrintProcessConnection::create(WTF::move(connectionHandle));
 }
 
+RefPtr<PrintProcessConnection> WebProcess::waitForPrintProcessConnection()
+{
+    // Less than the print process waits for the frames of a snapshot.
+    static constexpr Seconds printProcessConnectionTimeout = 5_s;
+    if (!m_printProcessConnection && !m_isPrintProcess) {
+        if (RefPtr connection = parentProcessConnection())
+            connection->waitForAndDispatchImmediately<Messages::WebProcess::ConnectToPrintProcess>(0, printProcessConnectionTimeout);
+        if (!m_printProcessConnection)
+            RELEASE_LOG_ERROR(Process, "WebProcess::waitForPrintProcessConnection: The UI process did not connect this process to the print process");
+    }
+    return m_printProcessConnection;
+}
+
 void WebProcess::printProcessConnectionDidClose(PrintProcessConnection& connection)
 {
     if (m_printProcessConnection == &connection)

@@ -209,7 +209,7 @@ public:
     void abandonSnapshotFramesOwnedBy(WebCore::ProcessIdentifier) final;
     CompletionHandler<void(bool)> releaseSnapshotIfRootFails(RemoteSnapshotIdentifier) final;
     bool waitForSnapshot(RemoteSnapshotIdentifier, Seconds timeout) final;
-    RefPtr<IPC::Connection> snapshotHostConnection() const final;
+    Function<RefPtr<IPC::Connection>(Seconds launchTimeout)> snapshotHostConnectionWaiter() final;
     Function<void(Seconds timeout)> snapshotWaiter(RemoteSnapshotIdentifier) final;
 
 private:

@@ -66,7 +66,7 @@ public:
     {
         if (m_isComplete)
             return;
-        m_waitForReply = [weakProcess = WeakPtr { process }, replyID] {
+        m_waitForReply = [weakProcess = WeakPtr { process }, replyID](IPC::Connection*) {
             RefPtr process = weakProcess.get();
             if (process && process->hasConnection())
                 protect(process->connection())->waitForAsyncReplyAndDispatchImmediately<M>(replyID, Seconds::infinity());
@@ -75,43 +75,21 @@ public:
     }
 
     // With remote snapshotting, the snapshot host replies with the drawing once the snapshot is complete.
-    // Identified to the caller by replyID, such as the reply of the root, which comes before.
+    // Identified to the caller by replyID, such as the reply of the root, which comes before. The host
+    // may still be launching, which the wait waits for first, since processes finish launching on the
+    // main thread that the wait blocks.
     template<typename M>
     void setReply(RemoteSnapshotHostProxy& host, std::optional<IPC::AsyncReplyID> sinkReplyID, IPC::AsyncReplyID replyID)
     {
         if (!sinkReplyID || m_isComplete)
             return;
+        m_snapshotHostConnection = host.snapshotHostConnectionWaiter();
         if (m_snapshotIdentifier)
             m_waitForSnapshot = host.snapshotWaiter(*m_snapshotIdentifier);
-        m_waitForReply = [connection = host.snapshotHostConnection(), sinkReplyID = *sinkReplyID] {
+        m_waitForReply = [sinkReplyID = *sinkReplyID](IPC::Connection* connection) {
             if (connection)
                 connection->waitForAsyncReplyAndDispatchImmediately<M>(sinkReplyID, replyTimeout);
         };
-        add(replyID);
-    }
-
-    // Replies of the snapshot host that have to come in before the snapshot can be drawn, such as
-    // those that connect the frame processes to the print process, whose completion handlers then ask
-    // the root to record and call setReply(). Waited for first, as long as isPending() says that they
-    // have not come in yet, on the connection that connection() gets once the host has launched, which
-    // it may wait up to the timeout for. The drawing is identified to the caller by replyID meanwhile.
-    template<typename M>
-    void addPrerequisiteReplies(Function<RefPtr<IPC::Connection>(Seconds launchTimeout)>&& connection, Vector<IPC::AsyncReplyID>&& prerequisiteReplyIDs, Function<bool(IPC::AsyncReplyID)>&& isPending, IPC::AsyncReplyID replyID)
-    {
-        if (prerequisiteReplyIDs.isEmpty() || m_isComplete)
-            return;
-        m_waitForPrerequisites.append([getConnection = WTF::move(connection), prerequisiteReplyIDs = WTF::move(prerequisiteReplyIDs), isPending = WTF::move(isPending)] {
-            // Launched processes finish launching on the main thread, which the wait blocks.
-            RefPtr connection = getConnection(launchTimeout);
-            if (!connection)
-                return;
-            for (auto prerequisiteReplyID : prerequisiteReplyIDs) {
-                if (!isPending(prerequisiteReplyID))
-                    continue;
-                if (connection->waitForAsyncReplyAndDispatchImmediately<M>(prerequisiteReplyID, prerequisiteTimeout) != IPC::Error::NoError)
-                    return;
-            }
-        });
         add(replyID);
     }
 
@@ -129,8 +107,6 @@ private:
     static constexpr Seconds snapshotTimeout = 15_s;
     // Sent before the GPU process answered the wait, so it has already come in.
     static constexpr Seconds replyTimeout = 1_s;
-    // Answered by the print process without waiting for anything else.
-    static constexpr Seconds prerequisiteTimeout = 15_s;
     static constexpr Seconds launchTimeout = 15_s;
 
     explicit PendingSnapshotDrawing(std::optional<RemoteSnapshotIdentifier> snapshotIdentifier)
@@ -159,20 +135,21 @@ private:
         if (m_isComplete)
             return;
 
-        for (auto& waitForPrerequisites : std::exchange(m_waitForPrerequisites, { }))
-            waitForPrerequisites();
+        RefPtr<IPC::Connection> snapshotHostConnection;
+        if (auto getSnapshotHostConnection = std::exchange(m_snapshotHostConnection, nullptr))
+            snapshotHostConnection = getSnapshotHostConnection(launchTimeout);
 
         if (auto waitForSnapshot = std::exchange(m_waitForSnapshot, nullptr))
             waitForSnapshot(snapshotTimeout);
 
         if (auto waitForReply = std::exchange(m_waitForReply, nullptr))
-            waitForReply();
+            waitForReply(snapshotHostConnection.get());
     }
 
     void didComplete()
     {
         m_isComplete = true;
-        m_waitForPrerequisites.clear();
+        m_snapshotHostConnection = nullptr;
         m_waitForSnapshot = nullptr;
         m_waitForReply = nullptr;
         for (auto replyID : std::exchange(m_replyIDs, { })) {
@@ -184,9 +161,9 @@ private:
 
     const std::optional<RemoteSnapshotIdentifier> m_snapshotIdentifier;
     Vector<IPC::AsyncReplyID> m_replyIDs;
-    Vector<Function<void()>> m_waitForPrerequisites;
+    Function<RefPtr<IPC::Connection>(Seconds launchTimeout)> m_snapshotHostConnection;
     Function<void(Seconds)> m_waitForSnapshot;
-    Function<void()> m_waitForReply;
+    Function<void(IPC::Connection*)> m_waitForReply;
     bool m_isComplete { false };
 };
 

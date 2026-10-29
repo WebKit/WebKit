@@ -1035,6 +1035,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     });
 }
 
+- (void)_setConnectsFramesToPrintProcessAheadOfDrawingForTesting:(BOOL)connects
+{
+    protect(_page->configuration().processPool())->setConnectsFramesToPrintProcessAheadOfDrawingForTesting(connects);
+}
+
 - (void)_connectFrameProcessesToPrintProcessForTesting:(void(^)(NSUInteger))completionHandler
 {
     RefPtr mainFrame = _page->mainFrame();

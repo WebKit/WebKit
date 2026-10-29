@@ -6058,6 +6058,8 @@
 		4C8E2A203D5F60718293A4D6 /* WKPortalVolumetricGestureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKPortalVolumetricGestureController.swift; sourceTree = "<group>"; };
 		4CAECB5E27465AE300AB78D0 /* UnifiedSource114.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource114.cpp; sourceTree = "<group>"; };
 		4D1A2B3C4E5F60718293A4B5 /* PendingSnapshotDrawing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PendingSnapshotDrawing.h; sourceTree = "<group>"; };
+		34E5A953C46413A3441CCB4D /* PrintProcessConnectionBroker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrintProcessConnectionBroker.cpp; sourceTree = "<group>"; };
+		D549BA93F918450425D521A1 /* PrintProcessConnectionBroker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintProcessConnectionBroker.h; sourceTree = "<group>"; };
 		1F05A5C0FE8B30047A1446DC /* PrintProcessProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrintProcessProxy.cpp; sourceTree = "<group>"; };
 		D2F1995290C439244D48DC0F /* PrintProcessProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintProcessProxy.h; sourceTree = "<group>"; };
 		EDD91B7CE0F3F3D90CA88E13 /* RemoteSnapshotHostProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSnapshotHostProxy.h; sourceTree = "<group>"; };
@@ -16441,6 +16443,8 @@
 				4D1A2B3C4E5F60718293A4B5 /* PendingSnapshotDrawing.h */,
 				832ED1891E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.cpp */,
 				832ED18A1E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.h */,
+				34E5A953C46413A3441CCB4D /* PrintProcessConnectionBroker.cpp */,
+				D549BA93F918450425D521A1 /* PrintProcessConnectionBroker.h */,
 				1F05A5C0FE8B30047A1446DC /* PrintProcessProxy.cpp */,
 				D2F1995290C439244D48DC0F /* PrintProcessProxy.h */,
 				E3EA8F0D2F439059006CC6B3 /* ProcessActivityGroup.cpp */,

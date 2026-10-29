@@ -350,6 +350,9 @@ public:
     // In the print process, the snapshots that the print backends record into.
     RemoteSnapshotRegistry& snapshotRegistry();
     PrintProcessConnection* printProcessConnection() const { return m_printProcessConnection.get(); }
+    // The connection to the print process, waiting a while for the UI process to send it if there is
+    // none yet, as there may not be when this is first asked to record into the print process.
+    RefPtr<PrintProcessConnection> waitForPrintProcessConnection();
 #endif
 
 #if ENABLE(MODEL_PROCESS)
