@@ -229,6 +229,7 @@ WK_EXPORT void WKPagePermissionChanged(WKStringRef permissionName, WKStringRef o
 
 WK_EXPORT void WKPageExecuteCommandForTesting(WKPageRef pageRef, WKStringRef command, WKStringRef value);
 WK_EXPORT bool WKPageIsEditingCommandEnabledForTesting(WKPageRef page, WKStringRef command);
+WK_EXPORT bool WKPageIsDisplayCaptureCapabilityActiveForTesting(WKPageRef page);
 typedef void (*WKPageGetStorageAreaMapCountForTestingFunction)(uint64_t count, void* functionContext);
 // Sizes are in whole CSS pixels.
 typedef void (*WKPageTakeCSSPageBoxesSnapshotForTestingFunction)(WKImageRef image, void* functionContext);
