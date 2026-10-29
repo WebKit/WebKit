@@ -43,7 +43,6 @@ SVGNonInheritedMiscData::SVGNonInheritedMiscData()
     : floodOpacity(ComputedStyle::initialFloodOpacity())
     , floodColor(ComputedStyle::initialFloodColor())
     , lightingColor(ComputedStyle::initialLightingColor())
-    , baselineShift(ComputedStyle::initialBaselineShift())
 {
 }
 
@@ -52,7 +51,6 @@ inline SVGNonInheritedMiscData::SVGNonInheritedMiscData(const SVGNonInheritedMis
     , floodOpacity(other.floodOpacity)
     , floodColor(other.floodColor)
     , lightingColor(other.lightingColor)
-    , baselineShift(other.baselineShift)
 {
 }
 
@@ -65,8 +63,7 @@ bool SVGNonInheritedMiscData::operator==(const SVGNonInheritedMiscData& other) c
 {
     return floodOpacity == other.floodOpacity
         && floodColor == other.floodColor
-        && lightingColor == other.lightingColor
-        && baselineShift == other.baselineShift;
+        && lightingColor == other.lightingColor;
 }
 
 #if !LOG_DISABLED
@@ -75,7 +72,6 @@ void SVGNonInheritedMiscData::dumpDifferences(TextStream& ts, const SVGNonInheri
     LOG_IF_DIFFERENT(floodOpacity);
     LOG_IF_DIFFERENT(floodColor);
     LOG_IF_DIFFERENT(lightingColor);
-    LOG_IF_DIFFERENT(baselineShift);
 }
 #endif
 
@@ -84,7 +80,6 @@ TextStream& operator<<(TextStream& ts, const SVGNonInheritedMiscData& data)
     ts.dumpProperty("flood-opacity"_s, data.floodOpacity);
     ts.dumpProperty("flood-color"_s, data.floodColor);
     ts.dumpProperty("lighting-color"_s, data.lightingColor);
-    ts.dumpProperty("baseline-shift"_s, data.baselineShift);
     return ts;
 }
 

@@ -29,7 +29,6 @@
 
 #pragma once
 
-#include <WebCore/StyleBaselineShift.h>
 #include <WebCore/StyleColor.h>
 #include <WebCore/StyleOpacity.h>
 #include <wtf/Ref.h>
@@ -53,7 +52,6 @@ public:
     Opacity floodOpacity;
     Color floodColor;
     Color lightingColor;
-    BaselineShift baselineShift;
 
 private:
     SVGNonInheritedMiscData();

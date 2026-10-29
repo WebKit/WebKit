@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/RenderStyleConstants.h>
+#include <WebCore/StyleBaselineShift.h>
 #include <WebCore/StyleMaximumSize.h>
 #include <WebCore/StyleMinimumSize.h>
 #include <WebCore/StylePreferredSize.h>
@@ -59,11 +60,13 @@ public:
     MaximumSize maxHeight;
 
     VerticalAlign verticalAlign;
+    BaselineShift baselineShift;
 
     PREFERRED_TYPE(bool) uint8_t hasAutoSpecifiedZIndex : 1;
     PREFERRED_TYPE(bool) uint8_t hasAutoUsedZIndex : 1;
     PREFERRED_TYPE(BoxDecorationBreak) uint8_t boxDecorationBreak : 1;
     PREFERRED_TYPE(BaselineSource) uint8_t baselineSource : 2;
+    PREFERRED_TYPE(AlignmentBaseline) uint8_t alignmentBaseline : 4;
 
     ZIndex::Value specifiedZIndexValue;
     ZIndex::Value usedZIndexValue;
@@ -75,5 +78,7 @@ private:
     BoxData();
     BoxData(const BoxData&);
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, const BoxData&);
 
 } // namespace WebCore::Style
