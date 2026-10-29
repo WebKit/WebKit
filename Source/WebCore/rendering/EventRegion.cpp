@@ -381,6 +381,11 @@ void EventRegionContext::shrinkWrapInteractionRegions()
                     Path path;
                     path.addContinuousRoundedRect(discoveredRegion.rectInLayerCoordinates, discoveredRegion.cornerRadius);
                     discoveredClipPaths.append(path);
+                } else if (discoveredRegion.cornerRadius != region.cornerRadius && discoveredRegion.maskedCorners.isEmpty()) {
+                    // Shrink wrapping uses the merged region's corner radius.
+                    Path path;
+                    path.addRoundedRect(rect, { discoveredRegion.cornerRadius, discoveredRegion.cornerRadius });
+                    discoveredClipPaths.append(path);
                 } else
                     discoveredRects.append(rect);
             }
