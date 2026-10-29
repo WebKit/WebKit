@@ -1,0 +1,17 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ] -->
+<html>
+<style>
+    .portal { spatial: portal; width: 300px; height: 300px; }
+    #host { scale: 0.5 0.5 0.5; }
+    #child { scale: 0.5 0.5 0.5; rotate: 0 0 1 45deg; }
+</style>
+<body>
+<div class="portal">
+    <model id="host"><source src="../../model-element/resources/2x2x2-center.usdz"></model>
+    <model id="child"><source src="../../model-element/resources/2x2x2-center.usdz"></model>
+</div>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<script>snapshotOnceModelsRender();</script>
+</body>
+</html>

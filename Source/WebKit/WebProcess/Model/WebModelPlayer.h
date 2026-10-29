@@ -93,6 +93,10 @@ private:
 
         bool isPlaying() const { return pauseState == PauseState::Playing; }
 
+#if ENABLE(SPATIAL_PORTAL)
+        WebCore::TransformationMatrix anchorPlacementTransform(const HostedModel& anchor);
+#endif
+
         RetainPtr<WKBridgeModelLoader> loader;
         RetainPtr<NSData> retainedData;
 
@@ -111,6 +115,9 @@ private:
         std::optional<WebCore::ModelPlayerAnimationState> animationStateToRestore;
 #if ENABLE(SPATIAL_PORTAL)
         std::optional<WebCore::TransformationMatrix> childTransform;
+        std::optional<WebCore::NodeIdentifier> anchorNode;
+        String anchorPlacementName;
+        std::optional<WebCore::TransformationMatrix> anchorCorrection;
 #endif
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
         RefPtr<WebCore::Model> cachedModelSource;
@@ -199,6 +206,10 @@ private:
     void setPortalAction(WebCore::PortalActionKind) final;
     bool isSpatialPortal() const { return !!m_portalTransform; }
     void notifyPortalTransformUpdated();
+    void setAnchor(WebCore::NodeIdentifier, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement) final;
+    bool isAnchoredTo(const HostedModel&, WebCore::NodeIdentifier ancestorNode) const;
+    void pushPortalChildTransform(WebCore::NodeIdentifier);
+    void pushAnchoredPortalChildTransforms(WebCore::NodeIdentifier anchorNode);
 #endif
 
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)

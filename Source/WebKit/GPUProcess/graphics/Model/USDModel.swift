@@ -32,6 +32,7 @@ typealias NodeIdentifier = UInt64
 import USDKit
 import DirectResource
 import RealityKit
+internal import Spatial
 import UniformTypeIdentifiers
 
 extension MTLCaptureDescriptor {
@@ -2304,6 +2305,8 @@ final class USDModelLoader {
     private let objcLoader: WKBridgeModelLoader
     private let gpuFamily: MTLGPUFamily
     private var rootJointIndicesCache: [String: [UInt32]] = [:]
+    private var primsByName: [String: USDPrim] = [:]
+    private var missingPrimNames: Set<String> = []
 
     // TextureID → shader parameter name (e.g. "diffuseColor"). Populated from
     // MaterialData.assignedTextures so we can set WKBridgeUpdateTexture.hashString
@@ -2353,6 +2356,8 @@ final class USDModelLoader {
 
     private func resetLoaderState() {
         rootJointIndicesCache.removeAll()
+        primsByName.removeAll()
+        missingPrimNames.removeAll()
         textureIdToParameterName.removeAll()
         deformationDataById.removeAll()
         deformationOverridesById.removeAll()
@@ -2404,6 +2409,44 @@ final class USDModelLoader {
 
     func currentTime() -> Double {
         time - startTime
+    }
+
+    private func prim(named name: String, in stage: USDStage) -> USDPrim? {
+        if let cachedPrim = primsByName[name] {
+            return cachedPrim
+        }
+
+        guard !missingPrimNames.contains(name) else {
+            return nil
+        }
+
+        guard let prim = stage.descendants.first(where: { $0.path.name.string == name }) else {
+            logError("the model has no prim named '\(name)'")
+            missingPrimNames.insert(name)
+            return nil
+        }
+
+        primsByName[name] = prim
+        return prim
+    }
+
+    func localToWorldTransform(ofPrimNamed name: String) -> simd_float4x4? {
+        guard let stage, let prim = prim(named: name, in: stage) else {
+            return nil
+        }
+
+        let timeCode = USDStage.TimeCode(time * timeCodePerSecond)
+
+        var transform = matrix_identity_float4x4
+        var current: USDPrim? = prim
+        while let ancestor = current, ancestor.isValid {
+            if let local = ancestor.transform(at: timeCode) {
+                transform = simd_float4x4(local.projectiveTransform) * transform
+            }
+            current = ancestor.parent
+        }
+
+        return transform
     }
 
     func setCurrentTime(_ newTime: Double) {
@@ -2766,6 +2809,10 @@ extension WKBridgeModelLoader {
         return loader.currentTime()
     }
 
+    func anchorPlacementNamed(_ name: String) -> simd_float4x4 {
+        loader?.localToWorldTransform(ofPrimNamed: name) ?? matrix_identity_float4x4
+    }
+
     func setCurrentTime(_ newTime: Double) {
         loader?.setCurrentTime(newTime)
     }
@@ -3040,6 +3087,10 @@ extension WKBridgeModelLoader {
 
     func currentTime() -> Double {
         0.0
+    }
+
+    func anchorPlacementNamed(_ name: String) -> simd_float4x4 {
+        matrix_identity_float4x4
     }
 
     func setCurrentTime(_ newTime: Double) {

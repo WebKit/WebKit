@@ -29,6 +29,7 @@
 
 #if ENABLE(GPU_PROCESS_MODEL)
 
+#import "Logging.h"
 #import "Mesh.h"
 #import "ModelInlineConverters.h"
 #import "ModelProcessModelPlayerTransformState.h"
@@ -61,11 +62,15 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/threads/BinarySemaphore.h>
 
-#import "WebKitSwiftSoftLink.h"
-
 #if PLATFORM(COCOA)
 #import <Metal/Metal.h>
 #endif
+
+#if ENABLE(SPATIAL_PORTAL)
+#import <WebCore/CSSUnits.h>
+#endif
+
+#import "WebKitSwiftSoftLink.h"
 
 namespace WebKit {
 
@@ -341,6 +346,9 @@ void WebModelPlayer::setLoaderCallbacks(WebCore::NodeIdentifier nodeID, WKBridge
                 if (auto animationStateToRestore = std::exchange(hosted.animationStateToRestore, std::nullopt)) {
                     player.play(nodeID, hosted, !animationStateToRestore->paused());
                     [hosted.loader setCurrentTime:std::clamp(animationStateToRestore->currentTime().seconds(), 0.0, [hosted.loader duration])];
+#if ENABLE(SPATIAL_PORTAL)
+                    player.pushAnchoredPortalChildTransforms(nodeID);
+#endif
                 } else if (hosted.autoplay && hosted.pauseState == HostedModel::PauseState::None)
                     player.play(nodeID, hosted, true);
                 hosted.pendingClientFinishLoadingNotification = true;
@@ -421,15 +429,22 @@ void WebModelPlayer::loadHostedModel(WebCore::NodeIdentifier nodeID, WebCore::Mo
     setLoaderCallbacks(nodeID, hosted.loader.get());
 
 #if ENABLE(SPATIAL_PORTAL)
-    if (hosted.childTransform)
-        protect(m_currentModel)->setPortalChildTransform(nodeID, static_cast<simd_float4x4>(*hosted.childTransform));
+    if (hosted.childTransform || hosted.anchorNode)
+        pushPortalChildTransform(nodeID);
 #endif
 
     hosted.retainedData = modelSource.data()->createNSData();
     Ref protectedThis { *this };
-    if ([hosted.loader loadModel:hosted.retainedData.get() mimeType:modelSource.mimeType().createNSString().get()])
+    if ([hosted.loader loadModel:hosted.retainedData.get() mimeType:modelSource.mimeType().createNSString().get()]) {
+#if ENABLE(SPATIAL_PORTAL)
+        for (auto& dependent : m_hostedModels.values()) {
+            if (dependent->anchorNode == nodeID)
+                dependent->anchorCorrection = std::nullopt;
+        }
+        pushAnchoredPortalChildTransforms(nodeID);
+#endif
         startUpdateLoopIfNeeded();
-    else if (RefPtr client = m_client)
+    } else if (RefPtr client = m_client)
         client->didFailLoading(protectedThis.get(), nodeID, { });
 }
 
@@ -463,6 +478,10 @@ void WebModelPlayer::unload(WebCore::NodeIdentifier nodeID)
         releaseModelResources();
         return;
     }
+
+#if ENABLE(SPATIAL_PORTAL)
+    pushAnchoredPortalChildTransforms(nodeID);
+#endif
 
     notifyEntityTransformUpdated();
     startUpdateLoopIfNeeded();
@@ -810,6 +829,11 @@ void WebModelPlayer::update()
         if (!hosted)
             continue;
 
+#if ENABLE(SPATIAL_PORTAL)
+        if (wasPlaying)
+            pushAnchoredPortalChildTransforms(nodeID);
+#endif
+
         if (wasPlaying && hosted->didFinishLoading && !hosted->isLooping) {
             double currentTime = [loader currentTime];
             bool reachedEnd = hosted->playbackRate < 0 ? currentTime <= 0 : currentTime >= [loader duration];
@@ -1029,8 +1053,12 @@ void WebModelPlayer::setCurrentTime(WebCore::NodeIdentifier nodeID, Seconds curr
     if (CheckedPtr hosted = hostedModel(nodeID)) {
         if (hosted->animationStateToRestore)
             hosted->animationStateToRestore->setCurrentTime(Seconds(clamped), MonotonicTime::now());
-        else
+        else {
             [hosted->loader setCurrentTime:clamped];
+#if ENABLE(SPATIAL_PORTAL)
+            pushAnchoredPortalChildTransforms(nodeID);
+#endif
+        }
     }
     startUpdateLoopIfNeeded();
     completion();
@@ -1116,6 +1144,115 @@ void WebModelPlayer::notifyPortalTransformUpdated()
     if (auto transform = model->resolvedPortalTransform())
         client->didUpdatePortalTransform(*this, WebCore::TransformationMatrix(static_cast<simd_float4x4>(*transform)));
 }
+
+void WebModelPlayer::setAnchor(WebCore::NodeIdentifier nodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
+{
+    auto& hosted = ensureHostedModel(nodeID);
+    if (hosted.anchorNode == anchorNode && hosted.anchorPlacementName == placement)
+        return;
+
+    hosted.anchorNode = anchorNode;
+    hosted.anchorPlacementName = placement;
+    hosted.anchorCorrection = std::nullopt;
+
+    if (!m_currentModel)
+        return;
+
+    pushPortalChildTransform(nodeID);
+    pushAnchoredPortalChildTransforms(nodeID);
+    startUpdateLoopIfNeeded();
+}
+
+WebCore::TransformationMatrix WebModelPlayer::HostedModel::anchorPlacementTransform(const HostedModel& anchor)
+{
+    RetainPtr anchorLoader = anchor.loader;
+    if (!anchorLoader || anchorPlacementName.isEmpty())
+        return { };
+
+    static constexpr float cssPixelsPerMeter = WebCore::CSS::pixelsPerCm * 100;
+    simd_float4x4 placementMatrix = [anchorLoader anchorPlacementNamed:anchorPlacementName.createNSString().get()];
+    placementMatrix.columns[3] = simd_make_float4(simd_make_float3(placementMatrix.columns[3]) * cssPixelsPerMeter, 1);
+
+    WebCore::TransformationMatrix placement { placementMatrix };
+    WebCore::TransformationMatrix::Decomposed4Type decomposition;
+    if (!placement.decompose4(decomposition))
+        return { };
+
+    if (!anchorCorrection) {
+        auto& rotation = decomposition.quaternion;
+        anchorCorrection = WebCore::TransformationMatrix::fromQuaternion({ -rotation.x, -rotation.y, -rotation.z, rotation.w });
+    }
+
+    return placement * (*anchorCorrection);
+}
+
+static WebCore::TransformationMatrix childTransformInAnchorFrame(WebCore::TransformationMatrix childTransform, const WebCore::TransformationMatrix& anchorFrame)
+{
+    WebCore::TransformationMatrix::Decomposed4Type decomposition;
+    if (!anchorFrame.decompose4(decomposition))
+        return childTransform;
+
+    double scale = std::max({ std::abs(decomposition.scaleX), std::abs(decomposition.scaleY), std::abs(decomposition.scaleZ) });
+    if (scale <= std::numeric_limits<float>::epsilon())
+        return childTransform;
+
+    childTransform.setM41(childTransform.m41() / scale);
+    childTransform.setM42(childTransform.m42() / scale);
+    childTransform.setM43(childTransform.m43() / scale);
+    return childTransform;
+}
+
+void WebModelPlayer::pushPortalChildTransform(WebCore::NodeIdentifier nodeID)
+{
+    RefPtr model = m_currentModel;
+    CheckedPtr hosted = hostedModel(nodeID);
+    if (!model || !hosted || !isSpatialPortal())
+        return;
+
+    auto resolvedAnchor = [&](const HostedModel& model) -> CheckedPtr<HostedModel> {
+        CheckedPtr anchor = model.anchorNode ? hostedModel(*model.anchorNode) : nullptr;
+        return anchor && anchor->loader ? anchor : nullptr;
+    };
+
+    Vector<CheckedPtr<HostedModel>> chain { hosted };
+    for (CheckedPtr anchor = resolvedAnchor(*hosted); anchor; anchor = resolvedAnchor(*anchor)) {
+        if (chain.size() >= m_hostedModels.size()) {
+            RELEASE_LOG_ERROR(ModelElement, "%p - WebModelPlayer::pushPortalChildTransform: refusing to anchor nodeID=%" PRIu64 " because its anchor chain leads back to it", this, nodeID.toUInt64());
+            chain = { hosted };
+            break;
+        }
+        chain.append(anchor);
+    }
+
+    WebCore::TransformationMatrix transform;
+    for (size_t index = chain.size(); index--;) {
+        CheckedPtr current = chain[index];
+        if (index + 1 < chain.size())
+            transform = transform * current->anchorPlacementTransform(*chain[index + 1]);
+        transform = transform * childTransformInAnchorFrame(current->childTransform.value_or(WebCore::TransformationMatrix { }), transform);
+    }
+    model->setPortalChildTransform(nodeID, static_cast<simd_float4x4>(transform));
+}
+
+bool WebModelPlayer::isAnchoredTo(const HostedModel& hosted, WebCore::NodeIdentifier ancestorNode) const
+{
+    auto anchorNode = hosted.anchorNode;
+    for (size_t step = 0; anchorNode && step < m_hostedModels.size(); ++step) {
+        if (*anchorNode == ancestorNode)
+            return true;
+        CheckedPtr anchor = hostedModel(*anchorNode);
+        anchorNode = anchor ? anchor->anchorNode : std::nullopt;
+    }
+    return false;
+}
+
+void WebModelPlayer::pushAnchoredPortalChildTransforms(WebCore::NodeIdentifier anchorNode)
+{
+    for (auto& [nodeID, hosted] : m_hostedModels) {
+        if (isAnchoredTo(hosted.get(), anchorNode))
+            pushPortalChildTransform(nodeID);
+    }
+}
 #endif
 
 void WebModelPlayer::setEntityTransform(WebCore::NodeIdentifier nodeID, WebCore::TransformationMatrix transform)
@@ -1124,8 +1261,9 @@ void WebModelPlayer::setEntityTransform(WebCore::NodeIdentifier nodeID, WebCore:
     if (isSpatialPortal()) {
         ensureHostedModel(nodeID).childTransform = transform;
 
-        if (RefPtr model = m_currentModel) {
-            model->setPortalChildTransform(nodeID, static_cast<simd_float4x4>(transform));
+        if (m_currentModel) {
+            pushPortalChildTransform(nodeID);
+            pushAnchoredPortalChildTransforms(nodeID);
             startUpdateLoopIfNeeded();
         }
         return;
