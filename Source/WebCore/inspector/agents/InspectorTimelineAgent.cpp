@@ -355,11 +355,14 @@ void InspectorTimelineAgent::didEnqueueFirstContentfulPaint()
 
 void InspectorTimelineAgent::didEnqueueLargestContentfulPaint(Element* element, unsigned area)
 {
-    Inspector::Protocol::DOM::NodeId nodeID = 0;
-    if (CheckedPtr domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent())
-        nodeID = domAgent->pushNodeToFrontend(element);
+    appendRecord(TimelineRecordFactory::createLargestContentfulPaintData(nodeIdForNode(element), area), TimelineRecordType::LargestContentfulPaint, false);
+}
 
-    appendRecord(TimelineRecordFactory::createLargestContentfulPaintData(nodeID, area), TimelineRecordType::LargestContentfulPaint, false);
+Inspector::Protocol::DOM::NodeId InspectorTimelineAgent::nodeIdForNode(Node* node)
+{
+    if (CheckedPtr domAgent = protect(m_instrumentingAgents)->persistentDOMAgent())
+        return domAgent->pushNodeToFrontend(node);
+    return 0;
 }
 
 void InspectorTimelineAgent::startProgrammaticCapture()
@@ -430,6 +433,9 @@ void InspectorTimelineAgent::toggleInstruments(InstrumentState state)
 
 void InspectorTimelineAgent::toggleScriptProfilerInstrument(InstrumentState state)
 {
+    if (!shouldToggleInstrument(Inspector::Protocol::Timeline::Instrument::ScriptProfiler))
+        return;
+
     if (CheckedPtr scriptProfilerAgent = Ref { m_instrumentingAgents.get() }->persistentScriptProfilerAgent()) {
         if (state == InstrumentState::Start)
             std::ignore = scriptProfilerAgent->startTracking(true);
@@ -440,6 +446,9 @@ void InspectorTimelineAgent::toggleScriptProfilerInstrument(InstrumentState stat
 
 void InspectorTimelineAgent::toggleHeapInstrument(InstrumentState state)
 {
+    if (!shouldToggleInstrument(Inspector::Protocol::Timeline::Instrument::Heap))
+        return;
+
     if (CheckedPtr heapAgent = Ref { m_instrumentingAgents.get() }->persistentWebHeapAgent()) {
         if (state == InstrumentState::Start) {
             if (shouldStartHeapInstrument())
@@ -451,6 +460,9 @@ void InspectorTimelineAgent::toggleHeapInstrument(InstrumentState state)
 
 void InspectorTimelineAgent::toggleCPUInstrument(InstrumentState state)
 {
+    if (!shouldToggleInstrument(Inspector::Protocol::Timeline::Instrument::CPU))
+        return;
+
 #if ENABLE(RESOURCE_USAGE)
     if (CheckedPtr cpuProfilerAgent = Ref { m_instrumentingAgents.get() }->persistentCPUProfilerAgent()) {
         if (state == InstrumentState::Start)
@@ -465,6 +477,9 @@ void InspectorTimelineAgent::toggleCPUInstrument(InstrumentState state)
 
 void InspectorTimelineAgent::toggleMemoryInstrument(InstrumentState state)
 {
+    if (!shouldToggleInstrument(Inspector::Protocol::Timeline::Instrument::Memory))
+        return;
+
 #if ENABLE(RESOURCE_USAGE)
     if (CheckedPtr memoryAgent = Ref { m_instrumentingAgents.get() }->persistentMemoryAgent()) {
         if (state == InstrumentState::Start)
@@ -490,6 +505,9 @@ void InspectorTimelineAgent::toggleTimelineInstrument(InstrumentState state)
 
 void InspectorTimelineAgent::toggleAnimationInstrument(InstrumentState state)
 {
+    if (!shouldToggleInstrument(Inspector::Protocol::Timeline::Instrument::Animation))
+        return;
+
     if (CheckedPtr animationAgent = Ref { m_instrumentingAgents.get() }->persistentAnimationAgent()) {
         if (state == InstrumentState::Start)
             std::ignore = animationAgent->startTracking();

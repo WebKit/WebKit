@@ -25,6 +25,9 @@ function createExtraWorker() {
 
 function test()
 {
+    // Under Site Isolation, records for the page's document come from its main frame target.
+    let mainFrameTarget = InspectorTest.mainFrameTarget;
+
     let initialWorkerTarget = WI.targetManager.workerTargets[0];
     if (!initialWorkerTarget) {
         InspectorTest.fail("Missing Worker target.");
@@ -155,7 +158,7 @@ function test()
         async test() {
             await startCapturing();
 
-            let pageRecordPromise = awaitTimerFiredRecord(WI.mainTarget);
+            let pageRecordPromise = awaitTimerFiredRecord(mainFrameTarget);
             let workerRecordPromise = awaitTimerFiredRecord(initialWorkerTarget);
             await InspectorTest.evaluateInPage(`fireTimerInPage()`);
             await InspectorTest.evaluateInPage(`initialWorker.postMessage("fire-timer")`);
@@ -168,6 +171,10 @@ function test()
             expectTrackingStopped(trackingEvents, WI.mainTarget, "Page target");
             expectTrackingStopped(trackingEvents, initialWorkerTarget, "Worker target");
             expectEveryStartedDomainStopped(trackingEvents);
+
+            let scriptTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Script);
+            InspectorTest.expectThat(scriptTimeline.targets.includes(mainFrameTarget), "The Script timeline should include the target of the page's records.");
+            InspectorTest.expectThat(scriptTimeline.targets.includes(initialWorkerTarget), "The Script timeline should include the Worker target.");
         },
     });
 
@@ -344,7 +351,7 @@ function test()
             await restartedPromise;
             InspectorTest.pass("Capturing stopped and started again.");
 
-            let pageRecordPromise = awaitTimerFiredRecord(WI.mainTarget);
+            let pageRecordPromise = awaitTimerFiredRecord(mainFrameTarget);
             await InspectorTest.evaluateInPage(`fireTimerInPage()`);
             await pageRecordPromise;
             InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Active, "The second capture should still be active after recording a timer from the page.");

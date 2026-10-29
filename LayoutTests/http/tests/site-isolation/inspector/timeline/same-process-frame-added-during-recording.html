@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-timeline-test-utilities.js"></script>
+<script>
+function addSameOriginIFrameAndInstallTimer()
+{
+    let iframe = document.createElement("iframe");
+    iframe.src = "resources/timeline-frame.html";
+    document.body.appendChild(iframe);
+
+    // This runs in the new frame before its frame target can connect to the frontend.
+    iframe.contentWindow.setTimeout(() => {}, 0);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.SameProcessFrameAddedDuringRecording");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.SameProcessFrameAddedDuringRecording.NoFallbackToPageTarget",
+        description: "Records from a same-process iframe added during a recording should be reported by the iframe's frame target, and never by the page target, even before the iframe's frame target has started.",
+        async test() {
+            let mainFrameTarget = InspectorTest.mainFrameTarget;
+            await FrameTimelineTest.startCapturing([WI.mainTarget, mainFrameTarget]);
+            InspectorTest.pass("The page target and the main frame target started tracking.");
+
+            let recording = WI.timelineManager.activeRecording;
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "addSameOriginIFrameAndInstallTimer()");
+            let iframeTarget = await waitForFrameTargetForURLContaining("timeline-frame.html");
+            InspectorTest.expectNotNull(iframeTarget, "Should find the frame target of the same-origin iframe.");
+            await FrameTimelineTest.awaitTrackingEvent("capturingStarted", iframeTarget);
+            InspectorTest.pass("The frame target of the added iframe started tracking.");
+
+            await waitForExpressionInTarget(iframeTarget, "typeof fireTimer === 'function'");
+            let recordPromise = FrameTimelineTest.awaitScriptRecord(iframeTarget, WI.ScriptTimelineRecord.EventType.TimerFired);
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, "fireTimer()");
+            await recordPromise;
+            InspectorTest.pass("Recorded a timer from the frame target of the added iframe.");
+
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+
+            let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
+            let timerRecordsFromPageTarget = scriptTimeline.records.filter((record) => record.target === WI.mainTarget && record.eventType === WI.ScriptTimelineRecord.EventType.TimerInstalled);
+            InspectorTest.expectEqual(timerRecordsFromPageTarget.length, 0, "The page target should not record the timer installed in the new iframe.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, records from a same-process iframe added during a Timeline recording are reported by the iframe's frame target, and never by the page target, even before the iframe's frame target has started.</p>
+</body>
