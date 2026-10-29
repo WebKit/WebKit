@@ -37,21 +37,25 @@ namespace WTF {
 // provide this in hardware, so code that relies on it must only race on those CPUs. ARMv7, for example,
 // doesn't guarantee it.
 enum class MemoryOrder : uint8_t {
+    // No ordering relative to other memory accesses.
     Relaxed,
     // Loads and read-modify-writes only. Later loads and stores can't move above it, even without a paired
     // Release.
     Acquire,
     // Stores and read-modify-writes only. Earlier loads and stores can't move below it, even without a paired
     // Acquire. Release and Acquire are RCpc: a Release store followed by an Acquire load of a different
-    // location may be reordered.
+    // location may be reordered, including the reads and writes of read-modify-writes.
     Release,
-    // Read-modify-writes only. Both Acquire and Release, but an earlier access and a later access can both
-    // move between its read and its write, and then be reordered with each other.
+    // Read-modify-writes only. Acquire on its read and Release on its write, so an earlier access and a later
+    // access can both move between them (as in a load/store-exclusive loop), and then be reordered with each
+    // other.
     AcquireRelease,
-    // Adds a single total order of all SeqCst operations (RCsc: a SeqCst store followed by a SeqCst load
-    // is never reordered). Non-SeqCst accesses are ordered only by the Acquire/Release part: an earlier
-    // store can still move below a later SeqCst load, and accesses around a SeqCst read-modify-write can
-    // be reordered as with AcquireRelease. Use FullyFenced when nothing may move across an access.
+    // Acquire for loads, Release for stores, and AcquireRelease for read-modify-writes. All SeqCst operations
+    // also have a single total order (RCsc: a SeqCst store followed by a SeqCst load is never reordered, but
+    // if either is only Release or Acquire, the pair is RCpc). Non-SeqCst accesses are ordered only by the
+    // Acquire/Release part: an earlier store can still move below a later SeqCst load, and accesses around a
+    // SeqCst read-modify-write can be reordered as with AcquireRelease. Use FullyFenced when nothing may move
+    // across an access.
     SeqCst,
     // Read-modify-writes only. No load or store, atomic or not, can move across it in either direction.
     // Unlike SeqCst, this also keeps its own write and any earlier store above a later load, which
@@ -711,7 +715,8 @@ private:
     InternalDependencyType m_value;
 };
 
-// See Dependency::loadAndFence(). Keep this in sync with it.
+// Despite the name, this isn't a fence: it only orders later accesses made through dependency.consume().
+// Keep this in sync with Dependency::loadAndFence().
 template<typename T>
 ALWAYS_INLINE Dependency Atomic<T>::loadAndFence(T& output) const
 {
