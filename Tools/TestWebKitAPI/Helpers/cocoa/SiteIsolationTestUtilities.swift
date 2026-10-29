@@ -31,6 +31,7 @@ public import TestWebKitAPILibrary.Helpers.cocoa.TestWKWebView
 public import WebKit
 private import WebKit_Private.WKFrameInfoPrivate
 private import WebKit_Private.WKPreferencesPrivate
+public import WebKit_Private.WKUIDelegatePrivate
 public import WebKit_Private.WKWebViewPrivate
 private import WebKit_Private.WKWebsiteDataStorePrivate
 private import WebKit_Private._WKFeature
@@ -411,7 +412,7 @@ public final class OpenedWebViewRecorder: NSObject, WKUIDelegate {
 ///
 /// It can also present the dialogs of a `WebPage`.
 @MainActor
-public final class AlertRecorder: NSObject, WKUIDelegate {
+public class AlertRecorder: NSObject, WKUIDelegate {
     private var messages: [String] = []
 
     /// Waits for the next alert, if it hasn't already been shown.
@@ -433,6 +434,22 @@ public final class AlertRecorder: NSObject, WKUIDelegate {
         initiatedByFrame frame: WKFrameInfo
     ) async {
         messages.append(message)
+    }
+}
+
+/// An ``AlertRecorder`` that also lets the page run beforeunload panels, and answers each one by leaving the page.
+///
+/// A frame only dispatches beforeunload if its page can run a beforeunload panel, which takes a UI delegate that
+/// implements the panel method.
+@MainActor
+public final class BeforeUnloadAlertRecorder: AlertRecorder, WKUIDelegatePrivate {
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation, NoLeadingUnderscores
+    public func _webView(
+        _ webView: WKWebView,
+        runBeforeUnloadConfirmPanelWithMessage message: String,
+        initiatedByFrame frame: WKFrameInfo
+    ) async -> Bool {
+        true
     }
 }
 

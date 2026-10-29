@@ -1729,6 +1729,14 @@ bool FrameLoader::isNavigationAllowed() const
     return m_pageDismissalEventBeingDispatched == PageDismissalType::None && !m_frame->script().willReplaceWithResultOfExecutingJavascriptURL() && NavigationDisabler::isNavigationAllowed(m_frame.get());
 }
 
+bool FrameLoader::currentDocumentPassedBeforeUnload(const DocumentLoader& loader) const
+{
+    RefPtr document = m_frame->document();
+    if (!document || !m_navigationThatPassedBeforeUnload)
+        return false;
+    return m_navigationThatPassedBeforeUnload->navigationID == loader.navigationID() && m_navigationThatPassedBeforeUnload->documentID == document->identifier();
+}
+
 bool FrameLoader::isStopLoadingAllowed() const
 {
     return m_pageDismissalEventBeingDispatched == PageDismissalType::None;
@@ -2182,6 +2190,8 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     protect(frame->navigationScheduler())->cancel(NewLoadInProgress::Yes);
 
     if (shouldTreatCurrentLoadAsContinuingLoad()) {
+        if (currentDocumentPassedBeforeUnload(*loader))
+            loader->triggeringAction().setDispatchedEventsBeforeNavigationPolicy({ });
         continueLoadAfterNavigationPolicy(loader->request(), formSubmission.get(), NavigationPolicyDecision::ContinueLoad, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache);
         return;
     }
@@ -4450,6 +4460,12 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     } else {
         // For non-Navigation API traversals, use original behavior with short-circuit evaluation
         shouldCloseResult = (navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad && !urlIsDisallowed) ? (dispatchedEventsBeforeNavigationPolicy || shouldClose()) : false;
+    }
+
+    if (dispatchedEventsBeforeNavigationPolicy || shouldCloseResult) {
+        RefPtr document = frame->document();
+        if (auto navigationID = policyDocumentLoader ? policyDocumentLoader->navigationID() : std::nullopt; navigationID && document)
+            m_navigationThatPassedBeforeUnload = NavigationThatPassedBeforeUnload { *navigationID, document->identifier() };
     }
 
     bool canContinue = navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad && shouldCloseResult && !navigateEventAborted && !urlIsDisallowed;
