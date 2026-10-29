@@ -33,6 +33,7 @@
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/cocoa/FindInPageUtilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/PDFTestHelpers.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestDownloadDelegate.h"
@@ -20902,6 +20903,150 @@ TEST(SiteIsolation, DrawPrintPreviewIncludesCrossSiteFrames)
 TEST(SiteIsolation, DrawPrintPreviewIncludesCrossSiteFramesInPrintProcess)
 {
     drawPrintPreviewIncludesCrossSiteFrames(true);
+}
+
+// The text of the PDF document that the tests below embed in a cross-site frame. The printed document
+// has it as text only if the print process drew the embedded document as vectors.
+static NSString * const embeddedPDFDocumentText = @"Visit our website for details";
+
+static RetainPtr<NSURL> embeddedPDFDocumentLinkURL()
+{
+    return [NSURL URLWithString:@"https://www.example.com/"];
+}
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> loadPageWithEmbeddedPDFDocument(const HTTPServer& server, bool usePrintProcess)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", usePrintProcess);
+    setFeatureEnabled(configuration.get(), @"UnifiedPDFEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+    RetainPtr<WKFrameInfo> mainFrame = [webView mainFrame].info;
+    RetainPtr<WKFrameInfo> subframe = [webView mainFrame].childFrames.firstObject.info;
+    EXPECT_NE([mainFrame _processIdentifier], [subframe _processIdentifier]);
+    return { webView, navigationDelegate };
+}
+
+// Whether a page has a pixel as dark as text, which only the embedded document has in these tests.
+static bool pdfPageHasDarkPixel(NSData *data, size_t pageNumber)
+{
+    RetainPtr provider = adoptCF(CGDataProviderCreateWithCFData(bridge_cast(data)));
+    RetainPtr document = adoptCF(CGPDFDocumentCreateWithProvider(provider.get()));
+    CGPDFPageRef page = CGPDFDocumentGetPage(document.get(), pageNumber);
+    if (!page)
+        return false;
+    auto bounds = CGPDFPageGetBoxRect(page, kCGPDFMediaBox);
+    size_t width = bounds.size.width;
+    size_t height = bounds.size.height;
+    RetainPtr colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    RetainPtr context = adoptCF(CGBitmapContextCreate(nullptr, width, height, 8, width * 4, colorSpace.get(), kCGImageAlphaPremultipliedLast));
+    CGContextSetRGBFillColor(context.get(), 1, 1, 1, 1);
+    CGContextFillRect(context.get(), CGRectMake(0, 0, width, height));
+    CGContextDrawPDFPage(context.get(), page);
+    auto pixels = unsafeMakeSpan(static_cast<const uint8_t*>(CGBitmapContextGetData(context.get())), width * height * 4);
+    for (size_t offset = 0; offset + 4 <= pixels.size(); offset += 4) {
+        if (pixels[offset] < 64 && pixels[offset + 1] < 64 && pixels[offset + 2] < 64)
+            return true;
+    }
+    return false;
+}
+
+// The embedded document draws nothing until its frame has laid it out, so the page is drawn to PDF
+// until the document shows.
+static RetainPtr<NSData> createPDFOnceEmbeddedPDFDocumentIsDrawn(WKWebView *webView)
+{
+    RetainPtr<NSData> result;
+    bool isDrawn = Util::waitFor([&] {
+        __block RetainPtr<NSData> pdfData;
+        __block bool done = false;
+        [webView createPDFWithConfiguration:nil completionHandler:^(NSData *data, NSError *error) {
+            EXPECT_NULL(error);
+            pdfData = data;
+            done = true;
+        }];
+        Util::run(&done);
+        result = WTF::move(pdfData);
+        return result && pdfPageHasDarkPixel(result.get(), 1);
+    });
+    EXPECT_TRUE(isDrawn);
+    return result;
+}
+
+static bool pdfPageHasLinkToURL(TestPDFPage *page, NSURL *url)
+{
+    for (TestPDFAnnotation *annotation in page.annotations) {
+        if (annotation.isLink && [annotation.linkURL isEqual:url])
+            return true;
+    }
+    return false;
+}
+
+#if ENABLE(UNIFIED_PDF)
+
+// A PDF document in a cross-site frame is drawn by the print process as vectors, so that the printed
+// document keeps its text and links. Recorded for the GPU process, it is an image.
+static void createPDFDrawsPDFDocumentInCrossSiteFrame(bool usePrintProcess)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'><iframe style='display:block;border:0;width:600px;height:400px' src='https://b.com/document.pdf'></iframe></body>"_s } },
+        { "/document.pdf"_s, { { { "Content-Type"_s, "application/pdf"_s } }, testPDFDataWithLink().get() } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageWithEmbeddedPDFDocument(server, usePrintProcess);
+
+    RetainPtr data = createPDFOnceEmbeddedPDFDocumentIsDrawn(webView.get());
+    ASSERT_NOT_NULL(data.get());
+    RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
+    EXPECT_EQ([document pageCount], 1);
+    RetainPtr page = [document pageAtIndex:0];
+    EXPECT_EQ(!![[page text] containsString:embeddedPDFDocumentText], usePrintProcess);
+    EXPECT_EQ(pdfPageHasLinkToURL(page.get(), embeddedPDFDocumentLinkURL().get()), usePrintProcess);
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()) > 0, usePrintProcess);
+}
+
+TEST(SiteIsolation, CreatePDFDrawsPDFDocumentInCrossSiteFrameAsImage)
+{
+    createPDFDrawsPDFDocumentInCrossSiteFrame(false);
+}
+
+TEST(SiteIsolation, CreatePDFDrawsPDFDocumentInCrossSiteFrameAsVectorsInPrintProcess)
+{
+    createPDFDrawsPDFDocumentInCrossSiteFrame(true);
+}
+
+#endif // ENABLE(UNIFIED_PDF)
+
+// As a PDF document in a frame, a PDF image in a cross-site frame is drawn by the print process as
+// vectors, and is an image when recorded for the GPU process. The links of an image cannot be followed
+// on the page, so they are not links in the printed document either.
+static void createPDFDrawsPDFImageInCrossSiteFrame(bool usePrintProcess)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'><iframe style='display:block;border:0;width:600px;height:400px' src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0'><img style='display:block;width:400px;height:200px' src='document.pdf'></body>"_s } },
+        { "/document.pdf"_s, { { { "Content-Type"_s, "application/pdf"_s } }, testPDFDataWithLink().get() } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageWithEmbeddedPDFDocument(server, usePrintProcess);
+
+    RetainPtr data = createPDFOnceEmbeddedPDFDocumentIsDrawn(webView.get());
+    ASSERT_NOT_NULL(data.get());
+    RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
+    EXPECT_EQ([document pageCount], 1);
+    RetainPtr page = [document pageAtIndex:0];
+    EXPECT_EQ(!![[page text] containsString:embeddedPDFDocumentText], usePrintProcess);
+    EXPECT_FALSE(pdfPageHasLinkToURL(page.get(), embeddedPDFDocumentLinkURL().get()));
+    EXPECT_EQ(printProcessCompletedSnapshotCount(webView.get()) > 0, usePrintProcess);
+}
+
+TEST(SiteIsolation, CreatePDFDrawsPDFImageInCrossSiteFrameAsImage)
+{
+    createPDFDrawsPDFImageInCrossSiteFrame(false);
+}
+
+TEST(SiteIsolation, CreatePDFDrawsPDFImageInCrossSiteFrameAsVectorsInPrintProcess)
+{
+    createPDFDrawsPDFImageInCrossSiteFrame(true);
 }
 
 #endif // HAVE(PDFKIT)
