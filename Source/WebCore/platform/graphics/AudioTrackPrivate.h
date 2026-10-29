@@ -48,8 +48,13 @@ public:
         notifyClients([enabled](auto& client) {
             downcast<AudioTrackPrivateClient>(client).enabledChanged(enabled);
         });
-        if (m_enabledChangedCallback)
-            m_enabledChangedCallback(*this, m_enabled);
+        RefPtr<SharedEnabledChangedCallback> enabledChangedCallback;
+        {
+            Locker locker { m_lock };
+            enabledChangedCallback = m_enabledChangedCallback;
+        }
+        if (enabledChangedCallback)
+            enabledChangedCallback->get()(*this, m_enabled);
     }
 
     bool enabled() const { return m_enabled; }
@@ -60,7 +65,18 @@ public:
     virtual bool isBackedByMediaStreamTrack() const { return false; }
 
     using EnabledChangedCallback = Function<void(AudioTrackPrivate&, bool enabled)>;
-    void setEnabledChangedCallback(EnabledChangedCallback&& callback) { m_enabledChangedCallback = WTF::move(callback); }
+    void setEnabledChangedCallback(EnabledChangedCallback&& callback)
+    {
+        RefPtr<SharedEnabledChangedCallback> sharedCallback;
+        if (callback)
+            sharedCallback = SharedEnabledChangedCallback::create(WTF::move(callback));
+        RefPtr<SharedEnabledChangedCallback> previousCallback;
+        {
+            Locker locker { m_lock };
+            previousCallback = std::exchange(m_enabledChangedCallback, WTF::move(sharedCallback));
+        }
+        // Release the previous callback outside of m_lock; an in-flight setEnabled() may still hold it.
+    }
 
     const PlatformAudioTrackConfiguration& configuration() const LIFETIME_BOUND { return m_configuration; }
     void setConfiguration(PlatformAudioTrackConfiguration&& configuration)
@@ -94,7 +110,8 @@ protected:
 private:
     bool m_enabled { false };
     PlatformAudioTrackConfiguration m_configuration;
-    EnabledChangedCallback m_enabledChangedCallback;
+    using SharedEnabledChangedCallback = Shared<EnabledChangedCallback>;
+    RefPtr<SharedEnabledChangedCallback> m_enabledChangedCallback WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace WebCore

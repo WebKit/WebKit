@@ -48,8 +48,13 @@ public:
         notifyClients([selected](auto& client) {
             downcast<VideoTrackPrivateClient>(client).selectedChanged(selected);
         });
-        if (m_selectedChangedCallback)
-            m_selectedChangedCallback(*this, m_selected);
+        RefPtr<SharedSelectedChangedCallback> selectedChangedCallback;
+        {
+            Locker locker { m_lock };
+            selectedChangedCallback = m_selectedChangedCallback;
+        }
+        if (selectedChangedCallback)
+            selectedChangedCallback->get()(*this, m_selected);
     }
     virtual bool selected() const { return m_selected; }
 
@@ -61,7 +66,18 @@ public:
 #endif
 
     using SelectedChangedCallback = Function<void(VideoTrackPrivate&, bool selected)>;
-    void setSelectedChangedCallback(SelectedChangedCallback&& callback) { m_selectedChangedCallback = WTF::move(callback); }
+    void setSelectedChangedCallback(SelectedChangedCallback&& callback)
+    {
+        RefPtr<SharedSelectedChangedCallback> sharedCallback;
+        if (callback)
+            sharedCallback = SharedSelectedChangedCallback::create(WTF::move(callback));
+        RefPtr<SharedSelectedChangedCallback> previousCallback;
+        {
+            Locker locker { m_lock };
+            previousCallback = std::exchange(m_selectedChangedCallback, WTF::move(sharedCallback));
+        }
+        // Release the previous callback outside of m_lock; an in-flight setSelected() may still hold it.
+    }
 
     const PlatformVideoTrackConfiguration& configuration() const LIFETIME_BOUND { return m_configuration; }
     void setConfiguration(PlatformVideoTrackConfiguration&& configuration)
@@ -92,7 +108,8 @@ private:
     bool m_selected { false };
     PlatformVideoTrackConfiguration m_configuration;
 
-    SelectedChangedCallback m_selectedChangedCallback;
+    using SharedSelectedChangedCallback = Shared<SelectedChangedCallback>;
+    RefPtr<SharedSelectedChangedCallback> m_selectedChangedCallback WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace WebCore

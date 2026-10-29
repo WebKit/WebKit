@@ -367,6 +367,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/TextIterator.cpp
         Tests/WebCore/TextMeasurementCache.cpp
         Tests/WebCore/TimeRanges.cpp
+        Tests/WebCore/TrackPrivateChangedCallbacks.cpp
         Tests/WebCore/TransformationMatrix.cpp
         Tests/WebCore/U2fCommandConstructorTest.cpp
         Tests/WebCore/URLParserTextEncoding.cpp

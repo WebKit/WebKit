@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-track-change-callback-reassign-race</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Every re-appended initialization segment makes the MSE work queue install a
+    // new track change callback on the shared VideoTrackPrivate/AudioTrackPrivate,
+    // destroying the callable the main thread may be executing right now for a
+    // videoTracks[0].selected / audioTracks[0].enabled flip. Test passes if it
+    // does not crash.
+
+    var source;
+    var sourceBuffer;
+    var initData;
+    var flipping = false;
+
+    function flipTracks()
+    {
+        if (!flipping)
+            return;
+        if (video.audioTracks.length)
+            video.audioTracks[0].enabled = !video.audioTracks[0].enabled;
+        if (video.videoTracks.length)
+            video.videoTracks[0].selected = !video.videoTracks[0].selected;
+        setTimeout(flipTracks, 0);
+    }
+
+    async function runTest()
+    {
+        findMediaElement();
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run(`sourceBuffer = source.addSourceBuffer('${MP4.AV_TYPE}')`);
+
+        initData = MP4.initSegment({
+            timescale: 1000,
+            tracks: [
+                { id: 1, type: 'video', timescale: 1000 },
+                { id: 2, type: 'audio', timescale: 1000 },
+            ]
+        });
+
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('video.videoTracks.length', 1);
+        testExpected('video.audioTracks.length', 1);
+
+        flipping = true;
+        flipTracks();
+
+        for (var i = 0; i < 20; ++i) {
+            sourceBuffer.appendBuffer(initData);
+            await waitFor(sourceBuffer, 'updateend', true);
+        }
+
+        flipping = false;
+        consoleWrite('PASS: did not crash');
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>
