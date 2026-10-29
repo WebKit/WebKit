@@ -3552,7 +3552,7 @@ LayoutUnit RenderBox::computeIntrinsicLogicalHeight()
     }
 
     // Lay the box out to compute its content-based logical height, then setNeedsLayout() so it lays
-    // out again during the normal layout pass. Marking only this box (MarkOnlyThis), and not its
+    // out again during the normal layout pass. Marking only this box (OnlyThis), and not its
     // descendants, is enough: a descendant whose logical height resolves against this box (a
     // percentage/calc logical height, or stretch/fill-available) is added to this box's
     // percentHeightDescendants while laying out here, so dirtyForLayoutFromPercentageHeightDescendants()
@@ -3560,7 +3560,7 @@ LayoutUnit RenderBox::computeIntrinsicLogicalHeight()
     // height. A descendant that does not resolve against this box's logical height is unaffected and need not lay out again.
     layoutIfNeeded();
     auto blockSize = logicalHeight();
-    setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    setNeedsLayout(MarkingBehavior::OnlyThis);
     return blockSize;
 }
 

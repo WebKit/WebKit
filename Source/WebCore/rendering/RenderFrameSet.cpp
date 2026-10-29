@@ -510,7 +510,7 @@ void RenderFrameSet::positionFrames()
             child->setBorderBoxHeight(height);
 #if PLATFORM(IOS_FAMILY)
             // FIXME: Is this iOS-specific?
-            child->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            child->setNeedsLayout(MarkingBehavior::OnlyThis);
 #else
             child->setNeedsLayout();
 #endif
@@ -651,11 +651,11 @@ CursorDirective RenderFrameSet::getCursor(const LayoutPoint& point, Cursor& curs
     IntPoint roundedPoint = roundedIntPoint(point);
     if (canResizeRow(roundedPoint)) {
         cursor = rowResizeCursor();
-        return CursorDirective::SetCursor;
+        return CursorDirective::Set;
     }
     if (canResizeColumn(roundedPoint)) {
         cursor = columnResizeCursor();
-        return CursorDirective::SetCursor;
+        return CursorDirective::Set;
     }
     return RenderBox::getCursor(point, cursor);
 }

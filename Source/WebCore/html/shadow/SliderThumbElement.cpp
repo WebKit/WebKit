@@ -153,7 +153,7 @@ void RenderSliderContainer::layout()
     // Force a layout to reset the position of the thumb so the code below doesn't move the thumb to the wrong place.
     // FIXME: Make a custom Render class for the track and move the thumb positioning code there.
     if (track)
-        track->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        track->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
     RenderFlexibleBox::layout();
 

@@ -161,7 +161,7 @@ void RenderTableRow::layout()
 
     for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell()) {
         if (!cell->needsLayout() && paginated && (layoutState->pageLogicalHeightChanged() || (layoutState->pageLogicalHeight() && layoutState->pageLogicalOffset(cell, cell->logicalTop()) != cell->pageLogicalOffset())))
-            cell->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            cell->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
         if (cell->needsLayout())
             cell->layout();

@@ -108,7 +108,7 @@ public:
     bool LEGACY_NODELETE hasMarginBeforeQuirk(const RenderBox& child) const;
     bool LEGACY_NODELETE hasMarginAfterQuirk(const RenderBox& child) const;
 
-    void markOutOfFlowBoxesForLayout(MarkingBehavior = MarkingBehavior::MarkContainingBlockChain);
+    void markOutOfFlowBoxesForLayout(MarkingBehavior = MarkingBehavior::ContainingBlockChain);
     void markForPaginationRelayoutIfNeeded() override;
     
     // FIXME-BLOCKFLOW: Remove virtualizaion when all of the line layout code has been moved out of RenderBlock

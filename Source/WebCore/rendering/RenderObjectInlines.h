@@ -94,7 +94,7 @@ inline void RenderObject::setNeedsLayout(MarkingBehavior markParents)
     if (InspectorInstrumentationPublic::hasFrontends()) [[unlikely]]
         notifyInspectorOfLayoutInvalidate();
     m_stateBitfields.setFlag(StateFlag::NeedsLayout);
-    if (markParents == MarkingBehavior::MarkContainingBlockChain)
+    if (markParents == MarkingBehavior::ContainingBlockChain)
         scheduleLayout(CheckedPtr { markContainingBlocksForLayout() });
     if (hasLayer())
         setLayerNeedsFullRepaint();

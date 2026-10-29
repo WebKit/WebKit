@@ -1679,7 +1679,7 @@ void RenderGrid::updateGridAreaLogicalSize(RenderBox& gridItem, std::optional<La
     bool gridAreaWidthChanged = overrideSizeChanged(gridItem, Style::GridTrackSizingDirection::Columns, width, height);
     bool gridAreaHeightChanged = overrideSizeChanged(gridItem, Style::GridTrackSizingDirection::Rows, width, height);
     if (gridAreaWidthChanged || (gridAreaHeightChanged && hasRelativeBlockAxisSize(*this, gridItem)))
-        gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        gridItem.setNeedsLayout(MarkingBehavior::OnlyThis);
 
     gridItem.setGridAreaContentLogicalWidth(width);
     gridItem.setGridAreaContentLogicalHeight(height);
@@ -1712,7 +1712,7 @@ void RenderGrid::layoutGridItems(RenderGridLayoutState& gridLayoutState, GridLan
 
         auto* renderGrid = dynamicDowncast<RenderGrid>(gridItem);
         if (renderGrid && (renderGrid->isSubgridColumns() || renderGrid->isSubgridRows()))
-            gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            gridItem.setNeedsLayout(MarkingBehavior::OnlyThis);
 
         // Setting the definite grid area's sizes. It may imply that the
         // item must perform a layout if its area differs from the one
@@ -1778,7 +1778,7 @@ void RenderGrid::layoutOutOfFlowBox(RenderBox& gridItem, RelayoutChildren relayo
 
     // Mark for layout as we're resetting the position before and we relay in generic layout logic
     // for positioned items in order to get the offsets properly resolved.
-    gridItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    gridItem.setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
     RenderBlock::layoutOutOfFlowBox(gridItem, relayoutChildren, fixedPositionObjectsOnly);
 }
@@ -1923,7 +1923,7 @@ void RenderGrid::stretchBlockSizeForGridItem(RenderBox& gridItem, LayoutUnit ali
     // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
     if (itemNeedsRelayoutForStretchAlignment) {
         gridItem.setLogicalHeight(0_lu);
-        gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        gridItem.setNeedsLayout(MarkingBehavior::OnlyThis);
     }
 }
 
@@ -1933,7 +1933,7 @@ void RenderGrid::stretchInlineSizeForGridItem(RenderBox& gridItem, LayoutUnit al
     auto desiredLogicalWidth = gridItem.constrainLogicalWidthByMinMax(stretchedLogicalWidth, contentBoxWidth(), *this);
     gridItem.setOverridingBorderBoxLogicalWidth(desiredLogicalWidth);
     if (desiredLogicalWidth != gridItem.logicalWidth())
-        gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        gridItem.setNeedsLayout(MarkingBehavior::OnlyThis);
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.

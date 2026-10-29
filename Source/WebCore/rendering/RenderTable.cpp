@@ -548,7 +548,7 @@ void RenderTable::layout()
         updateLogicalWidth();
         if (logicalWidth() != oldLogicalWidth) {
             for (auto& caption : m_captions)
-                caption->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                caption->setNeedsLayout(MarkingBehavior::OnlyThis);
         }
         resetLogicalHeightBeforeLayoutIfNeeded();
         // FIXME: The optimisation below doesn't work since the internal table
@@ -571,7 +571,7 @@ void RenderTable::layout()
         for (auto& child : childrenOfType<RenderElement>(*this)) {
             if (CheckedPtr section = dynamicDowncast<RenderTableSection>(child)) {
                 if (m_columnLogicalWidthChanged)
-                    section->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                    section->setChildNeedsLayout(MarkingBehavior::OnlyThis);
                 section->layoutIfNeeded();
                 totalSectionLogicalHeight += section->calcRowLogicalHeight();
                 if (collapsing)
@@ -1819,10 +1819,10 @@ void RenderTable::markForPaginationRelayoutIfNeeded()
         return;
     
     // When a table moves, we have to dirty all of the sections too.
-    setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    setChildNeedsLayout(MarkingBehavior::OnlyThis);
     for (auto& child : childrenOfType<RenderTableSection>(*this)) {
         if (!child.needsLayout())
-            child.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            child.setChildNeedsLayout(MarkingBehavior::OnlyThis);
     }
 }
 

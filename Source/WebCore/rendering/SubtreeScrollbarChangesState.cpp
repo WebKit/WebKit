@@ -150,15 +150,15 @@ SubtreeScrollbarChangesHandler::~SubtreeScrollbarChangesHandler()
         CheckedRef renderer = rendererScrollbarChange.renderer;
         ASSERT(renderer->isDescendantOf(subtreeRoot.ptr()));
         if (rendererScrollbarChange.sizesAffectedFromScrollbarChanges.contains(LogicalBoxAxis::Block)) {
-            renderer->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            renderer->setNeedsLayout(MarkingBehavior::OnlyThis);
             renderer->markContainingBlocksForLayout(subtreeRoot.ptr());
         }
         if (rendererScrollbarChange.sizesAffectedFromScrollbarChanges.contains(LogicalBoxAxis::Inline))
-            renderer->invalidateContentLogicalWidths(MarkingBehavior::MarkContainingBlockChain, protect(subtreeRoot->containingBlock()));
+            renderer->invalidateContentLogicalWidths(MarkingBehavior::ContainingBlockChain, protect(subtreeRoot->containingBlock()));
     }
     descendantsWithScrollbarChange.clear();
 
-    subtreeRoot->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    subtreeRoot->setNeedsLayout(MarkingBehavior::OnlyThis);
     subtreeRoot->layoutBlock(RelayoutChildren::Yes);
 }
 

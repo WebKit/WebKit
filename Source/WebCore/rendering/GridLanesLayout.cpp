@@ -121,7 +121,7 @@ void GridLanesLayout::setItemContainingBlockToGridArea(const GridTrackSizingAlgo
     }
 
     // FIXME(249230): Try to cache grid lanes layout sizes
-    gridItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    gridItem.setChildNeedsLayout(MarkingBehavior::OnlyThis);
 }
 
 GridLanesLayout::StackingAxisPlacement GridLanesLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem, const GridArea& area, Phase layoutPhase)

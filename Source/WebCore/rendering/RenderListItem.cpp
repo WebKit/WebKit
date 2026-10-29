@@ -518,7 +518,7 @@ void RenderListItem::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 
     excludedMarker->setIsExcludedFromNormalLayout(true);
     if (relayoutChildren == RelayoutChildren::Yes)
-        excludedMarker->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        excludedMarker->setNeedsLayout(MarkingBehavior::OnlyThis);
     auto oldLayoutBounds = excludedMarker->layoutBounds();
     excludedMarker->layoutIfNeeded();
 

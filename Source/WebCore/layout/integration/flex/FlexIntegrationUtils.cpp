@@ -80,7 +80,7 @@ void FlexIntegrationUtils::layoutFlexItemForStretchedCrossSize(const FlexLayoutI
         renderer->setOverridingBorderBoxLogicalHeight(crossSize);
     else
         renderer->setOverridingBorderBoxLogicalWidth(crossSize);
-    renderer->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    renderer->setChildNeedsLayout(MarkingBehavior::OnlyThis);
     renderer->layoutIfNeeded();
 }
 
@@ -139,7 +139,7 @@ void FlexIntegrationUtils::layoutFlexItemWithMainSize(FlexLayoutItem& flexLayout
     };
 
     if (shouldMarkFlexItemForLayout())
-        flexItem->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        flexItem->setChildNeedsLayout(MarkingBehavior::OnlyThis);
     else
         flexItem->markForPaginationRelayoutIfNeeded();
 
@@ -285,7 +285,7 @@ void FlexIntegrationUtils::invalidateFlexItemContentLogicalWidthsIfNeeded(const 
 {
     CheckedRef flexItem = flexLayoutItem.renderer;
     if (flexItem->shouldInvalidateContentWidths())
-        flexItem->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
+        flexItem->invalidateContentLogicalWidths(MarkingBehavior::OnlyThis);
 }
 
 LayoutUnit FlexIntegrationUtils::adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth) const
@@ -388,7 +388,7 @@ LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(const Fl
     // where we want percentages to be treated as auto. For flex-basis itself, this is not a problem because
     // by definition we have an indefinite flex basis here and thus percentages should not resolve.
     auto percentResolveDisableScope = FlexPercentResolveDisabler { protect(flexBox().view().frameView().layoutContext()), renderer };
-    renderer->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    renderer->setChildNeedsLayout(MarkingBehavior::OnlyThis);
     renderer->layoutIfNeeded();
     flexLayoutState().setFlexItemHasCompletedLayout(renderer);
 
@@ -750,7 +750,7 @@ FlexItemDefiniteCrossSizeScope::FlexItemDefiniteCrossSizeScope(RenderBox& flexIt
     }
 
     if (invalidateContentWidths == InvalidateContentWidths::Yes) {
-        flexItem.invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
+        flexItem.invalidateContentLogicalWidths(MarkingBehavior::OnlyThis);
 #if ASSERT_ENABLED
         m_didInvalidateContentLogicalWidths = true;
 #endif

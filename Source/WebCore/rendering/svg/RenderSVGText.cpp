@@ -273,7 +273,7 @@ bool RenderSVGText::layoutInlineChildrenWithoutLineLayout()
     setLogicalHeight(borderAndPaddingLogicalHeight() + contentLogicalHeight());
 
     // Makes LayoutRepainter issue a full repaint.
-    setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    setNeedsLayout(MarkingBehavior::OnlyThis);
 
     if (cache)
         cache->onLaidOutInlineContent(*this);

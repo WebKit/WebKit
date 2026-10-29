@@ -383,7 +383,7 @@ void RenderTableCell::setCellLogicalWidth(LayoutUnit logicalWidthInTableDirectio
     if (logicalWidthInTableDirection == logicalSizeInTableDirection)
         return;
 
-    setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    setNeedsLayout(MarkingBehavior::OnlyThis);
     setCellWidthChanged(true);
 
     if (!isOrthogonal()) {
@@ -413,7 +413,7 @@ void RenderTableCell::layout()
     if (isBaselineAligned() && section()->rowBaseline(rowIndex()) && cellBaselinePosition() > section()->rowBaseline(rowIndex())) {
         LayoutUnit newIntrinsicPaddingBefore = std::max<LayoutUnit>(0, intrinsicPaddingBefore() - std::max<LayoutUnit>(0, cellBaselinePosition() - oldCellBaseline));
         setIntrinsicPaddingBefore(newIntrinsicPaddingBefore);
-        setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        setNeedsLayout(MarkingBehavior::OnlyThis);
         layoutBlock(cellWidthChanged() ? RelayoutChildren::Yes : RelayoutChildren::No);
     }
     invalidateHasEmptyCollapsedBorders();
@@ -505,7 +505,7 @@ LayoutUnit RenderTableCell::minLogicalWidthForColumnSizing()
         return RenderBlockFlow::minContentLogicalWidthContribution();
 
     auto computingPreferredSize = SetForScope<bool> { m_isComputingPreferredSize, true };
-    setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    setNeedsLayout(MarkingBehavior::OnlyThis);
     layoutIfNeeded();
     ASSERT(m_orthogonalCellContentIntrinsicHeight.has_value());
     return std::max(logicalHeight(), m_orthogonalCellContentIntrinsicHeight.value_or(0_lu));
@@ -517,7 +517,7 @@ LayoutUnit RenderTableCell::maxLogicalWidthForColumnSizing()
         return RenderBlockFlow::maxContentLogicalWidthContribution();
 
     auto computingPreferredSize = SetForScope<bool> { m_isComputingPreferredSize, true };
-    setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    setNeedsLayout(MarkingBehavior::OnlyThis);
     layoutIfNeeded();
     ASSERT(m_orthogonalCellContentIntrinsicHeight.has_value());
     return std::max(logicalHeight(), m_orthogonalCellContentIntrinsicHeight.value_or(0_lu));

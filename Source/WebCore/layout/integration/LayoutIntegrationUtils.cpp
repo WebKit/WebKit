@@ -57,12 +57,12 @@ static LayoutUnit inlineWidthForGridItemWithGridArea(const LayoutState& layoutSt
     // item placement which is present until we have resolved the actual grid area
     // inline size.
     renderer->setGridAreaContentLogicalWidth(gridAreaInlineSize.value_or(0_lu));
-    renderer->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
+    renderer->invalidateContentLogicalWidths(MarkingBehavior::OnlyThis);
 
     auto width = layoutState.logicalWidthWithFormattingContextForBox(box, logicalWidthType);
 
     renderer->clearGridAreaContentSize();
-    renderer->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
+    renderer->invalidateContentLogicalWidths(MarkingBehavior::OnlyThis);
 
     return width;
 }
@@ -151,7 +151,7 @@ static LayoutUnit blockSizeForGridItem(const LayoutState& layoutState, const Ele
     case LayoutIntegration::LogicalHeightType::MaxContent:
     case LayoutIntegration::LogicalHeightType::MinContentContribution:
     case LayoutIntegration::LogicalHeightType::MaxContentContribution: {
-        renderer->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        renderer->setNeedsLayout(MarkingBehavior::OnlyThis);
 
         LayoutIntegration::layoutGridItemWithFormattingContext(box, { }, { }, gridAreaInlineSize, const_cast<LayoutState&>(layoutState));
 

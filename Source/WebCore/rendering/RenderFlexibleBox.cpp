@@ -192,7 +192,7 @@ void RenderFlexibleBox::styleDidChange(Style::Difference diff, const Style::Comp
         // stretching since other alignment values don't change the size of the
         // box.
         if (alignItemsStretchChanged && flexItem.style().alignSelf().isAuto())
-            flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            flexItem.setChildNeedsLayout(MarkingBehavior::OnlyThis);
     }
 }
 

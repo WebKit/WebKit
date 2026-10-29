@@ -643,7 +643,7 @@ RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layout
 
 void RenderObject::invalidateContentLogicalWidths(MarkingBehavior markParents, const RenderBlock* ancestorUpdateBoundary)
 {
-    ASSERT_IMPLIES(ancestorUpdateBoundary, markParents == MarkingBehavior::MarkContainingBlockChain);
+    ASSERT_IMPLIES(ancestorUpdateBoundary, markParents == MarkingBehavior::ContainingBlockChain);
 
     if (hasInvalidContentLogicalWidths() && (!hasRareData() || !rareData().contentLogicalWidthsInvalidationIsMarkOnlyThis)) {
         // Both this and our ancestor chain are already marked dirty.
@@ -656,7 +656,7 @@ void RenderObject::invalidateContentLogicalWidths(MarkingBehavior markParents, c
         return;
     }
 
-    if (markParents == MarkingBehavior::MarkOnlyThis) {
+    if (markParents == MarkingBehavior::OnlyThis) {
         ensureRareData().contentLogicalWidthsInvalidationIsMarkOnlyThis = true;
         return;
     }
@@ -2152,7 +2152,7 @@ PositionWithAffinity RenderObject::createPositionWithAffinity(const Position& po
 
 CursorDirective RenderObject::getCursor(const LayoutPoint&, Cursor&) const
 {
-    return CursorDirective::SetCursorBasedOnStyle;
+    return CursorDirective::SetBasedOnStyle;
 }
 
 bool RenderObject::useDarkAppearance() const

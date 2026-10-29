@@ -28,9 +28,9 @@
 namespace WebCore {
 
 enum class CursorDirective : uint8_t {
-    SetCursorBasedOnStyle,
-    SetCursor,
-    DoNotSetCursor
+    SetBasedOnStyle,
+    Set,
+    DoNotSet
 };
 
 enum class HitTestFilter : uint8_t {
@@ -47,9 +47,9 @@ enum class HitTestAction : uint8_t {
     Foreground
 };
 
-enum class MarkingBehavior : uint8_t {
-    MarkOnlyThis,
-    MarkContainingBlockChain,
+enum class MarkingBehavior : bool {
+    OnlyThis,
+    ContainingBlockChain,
 };
 
 enum class MapCoordinatesMode : uint8_t {

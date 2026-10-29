@@ -201,7 +201,7 @@ void RenderListOutsideMarker::layoutContentContainer(RenderBlockFlow& container)
     // inline-block, then adopt the resulting size and baseline.
     auto contentLogicalWidth = container.maxContentLogicalWidthContribution();
     container.setOverridingBorderBoxLogicalWidth(contentLogicalWidth);
-    container.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    container.setNeedsLayout(MarkingBehavior::OnlyThis);
     container.layoutIfNeeded();
     container.clearOverridingBorderBoxLogicalWidth();
 

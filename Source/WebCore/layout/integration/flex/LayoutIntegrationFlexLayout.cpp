@@ -58,14 +58,14 @@ void FlexLayout::prepareOutOfFlowBoxForPositionedLayout(RenderBox& outOfFlowBox)
     if (layer->staticInlinePosition() != staticInlinePosition) {
         layer->setStaticInlinePosition(staticInlinePosition);
         if (outOfFlowBox.style().hasStaticInlinePosition(flexBox().writingMode().isHorizontal()))
-            outOfFlowBox.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            outOfFlowBox.setChildNeedsLayout(MarkingBehavior::OnlyThis);
     }
 
     LayoutUnit staticBlockPosition = flexBox().borderAndPaddingBefore();
     if (layer->staticBlockPosition() != staticBlockPosition) {
         layer->setStaticBlockPosition(staticBlockPosition);
         if (outOfFlowBox.style().hasStaticBlockPosition(flexBox().writingMode().isHorizontal()))
-            outOfFlowBox.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            outOfFlowBox.setChildNeedsLayout(MarkingBehavior::OnlyThis);
     }
 }
 
@@ -133,7 +133,7 @@ FlexLayoutItems FlexLayout::buildFlexLayoutItems(RelayoutChildren relayoutChildr
 
         auto everHadLayout = flexItem->everHadLayout();
         if (flexItem->shouldInvalidateContentWidths())
-            flexItem->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
+            flexItem->invalidateContentLogicalWidths(MarkingBehavior::OnlyThis);
         flexBox().updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, flexItem.get());
         flexLayoutItems.append({ flexItem.get(), constraints.isHorizontalFlow, margins, everHadLayout, relayoutChildren == RelayoutChildren::Yes });
     }
@@ -347,7 +347,7 @@ FlexLayout::FlexItemsAtMaxContentWidthScope::~FlexItemsAtMaxContentWidthScope()
             flexItem->setOverridingBorderBoxLogicalHeight(*height);
 
         if (flexLayoutState().hasFlexItemCompletedLayout(flexItem)) {
-            flexItem->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            flexItem->setChildNeedsLayout(MarkingBehavior::OnlyThis);
             flexItemsNeedLayout = true;
         }
     }

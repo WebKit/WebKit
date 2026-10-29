@@ -192,7 +192,7 @@ public:
     bool mayHaveNonScalingStrokeInSubtree() const { return m_mayHaveNonScalingStrokeInSubtree; }
     void LEGACY_NODELETE setMayHaveNonScalingStrokeInSubtreeIncludingAncestors();
 
-    void setChildNeedsLayout(MarkingBehavior = MarkingBehavior::MarkContainingBlockChain);
+    void setChildNeedsLayout(MarkingBehavior = MarkingBehavior::ContainingBlockChain);
     void setOutOfFlowChildNeedsStaticPositionLayout();
     void LEGACY_NODELETE clearChildNeedsLayout();
     void setNeedsOutOfFlowMovementLayout(const Style::ComputedStyle* oldStyle);
@@ -544,7 +544,7 @@ inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
     if (normalChildNeedsLayout())
         return;
     setNormalChildNeedsLayoutBit(true);
-    if (markParents == MarkingBehavior::MarkContainingBlockChain)
+    if (markParents == MarkingBehavior::ContainingBlockChain)
         scheduleLayout(markContainingBlocksForLayout());
 }
 

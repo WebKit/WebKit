@@ -1245,7 +1245,7 @@ void RenderReplaced::layoutShadowContent(const LayoutSize& oldSize)
         renderBox.mutableStyle().setHeight(Style::PreferredSize::Fixed { newSize.height() / usedZoom.value });
         renderBox.mutableStyle().setWidth(Style::PreferredSize::Fixed { newSize.width() / usedZoom.value });
 
-        renderBox.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        renderBox.setNeedsLayout(MarkingBehavior::OnlyThis);
         renderBox.layout();
     }
 

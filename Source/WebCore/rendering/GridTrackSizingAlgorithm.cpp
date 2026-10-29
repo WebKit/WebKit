@@ -1070,7 +1070,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::logicalHeightForGridItem(RenderBox&
     if (gridLayoutState.containsLayoutRequirementForGridItem(gridItem, intrinsicLogicalHeightRequirement)) {
         gridLayoutState.clearLayoutRequirementForGridItem(gridItem, intrinsicLogicalHeightRequirement);
         if (!gridItem.needsLayout())
-            gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            gridItem.setNeedsLayout(MarkingBehavior::OnlyThis);
     }
 
     // If |gridItem| has a relative logical height, we shouldn't let it override its intrinsic height, which is
@@ -1082,7 +1082,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::logicalHeightForGridItem(RenderBox&
     };
     if (hasOverridingContainingBlockContentSizeForGridItem() && shouldClearOverridingContainingBlockContentSizeForGridItem(gridItem, Style::GridTrackSizingDirection::Rows)) {
         setOverridingContainingBlockContentSizeForGridItem(*renderGrid(), gridItem, gridItemBlockDirection, std::nullopt);
-        gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        gridItem.setNeedsLayout(MarkingBehavior::OnlyThis);
 
         if (renderGrid()->canSetColumnAxisStretchRequirementForItem(gridItem))
             gridLayoutState.setLayoutRequirementForGridItem(gridItem, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
@@ -1156,7 +1156,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minContentContributionForGridItem(R
     }
 
     if (updateOverridingContainingBlockContentSizeForGridItem(gridItem, gridItemInlineDirection)) {
-        gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        gridItem.setNeedsLayout(MarkingBehavior::OnlyThis);
 
         // For a grid item with relative width constraints to the grid area, such as percentaged paddings, we reset the overridingContainingBlockContentSizeForGridItem value for columns when we are executing a definite strategy
         // for columns. Since we have updated the overridingContainingBlockContentSizeForGridItem inline-axis/width value here, we might need to recompute the grid item's relative width. For some cases, we probably will not
@@ -1201,7 +1201,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::maxContentContributionForGridItem(R
     }
 
     if (updateOverridingContainingBlockContentSizeForGridItem(gridItem, gridItemInlineDirection))
-        gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        gridItem.setNeedsLayout(MarkingBehavior::OnlyThis);
     return logicalHeightForGridItem(gridItem, gridLayoutState);
 }
 
@@ -1484,7 +1484,7 @@ private:
 void IndefiniteSizeStrategy::layoutGridItemForMinSizeComputation(RenderBox& gridItem, bool overrideSizeHasChanged) const
 {
     if (overrideSizeHasChanged && direction() != Style::GridTrackSizingDirection::Columns)
-        gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        gridItem.setNeedsLayout(MarkingBehavior::OnlyThis);
     gridItem.layoutIfNeeded();
 }
 
@@ -1690,7 +1690,7 @@ void DefiniteSizeStrategy::maximizeTracks(Vector<UniqueRef<GridTrack>>& tracks, 
 void DefiniteSizeStrategy::layoutGridItemForMinSizeComputation(RenderBox& gridItem, bool overrideSizeHasChanged) const
 {
     if (overrideSizeHasChanged)
-        gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        gridItem.setNeedsLayout(MarkingBehavior::OnlyThis);
     gridItem.layoutIfNeeded();
 }
 

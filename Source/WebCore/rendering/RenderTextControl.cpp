@@ -244,7 +244,7 @@ void RenderTextControl::layoutExcludedChildren(RelayoutChildren relayoutChildren
     if (style().fieldSizing() == FieldSizing::Content) {
         // In order to take placeholder height into account while computing the size of the input box, we need to
         // layout the placeholder too (which is how excluded content normally works).
-        placeholderRenderer->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        placeholderRenderer->setChildNeedsLayout(MarkingBehavior::OnlyThis);
         placeholderRenderer->layoutIfNeeded();
     }
 
@@ -252,7 +252,7 @@ void RenderTextControl::layoutExcludedChildren(RelayoutChildren relayoutChildren
         // The markParents arguments should be false because this function is
         // called from layout() of the parent and the placeholder layout doesn't
         // affect the parent layout.
-        placeholderRenderer->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        placeholderRenderer->setChildNeedsLayout(MarkingBehavior::OnlyThis);
     }
 }
 

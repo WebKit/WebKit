@@ -58,12 +58,12 @@ static void layoutRendererWithOverridingBorderBoxSize(RenderBox& renderer, std::
 {
     if (overridingBorderBoxLogicalWidth) {
         renderer.setOverridingBorderBoxLogicalWidth(*overridingBorderBoxLogicalWidth);
-        renderer.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        renderer.setNeedsLayout(MarkingBehavior::OnlyThis);
     }
 
     if (overridingBorderBoxLogicalHeight) {
         renderer.setOverridingBorderBoxLogicalHeight(*overridingBorderBoxLogicalHeight);
-        renderer.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        renderer.setNeedsLayout(MarkingBehavior::OnlyThis);
     }
 
     renderer.layoutIfNeeded();

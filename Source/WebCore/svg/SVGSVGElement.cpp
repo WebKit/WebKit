@@ -264,7 +264,7 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
             // FIXME: try to get rid of this custom handling of embedded SVG invalidation, maybe through abstraction.
             if (CheckedPtr renderer = this->renderer()) {
                 if (isEmbeddedThroughFrameContainingSVGDocument(*renderer)) {
-                    protect(renderer->view())->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                    protect(renderer->view())->setNeedsLayout(MarkingBehavior::OnlyThis);
                     if (RefPtr frame = document().frame()) {
                         if (CheckedPtr ownerRenderer = frame->ownerRenderer())
                             ownerRenderer->setNeedsLayoutAndInvalidateContentLogicalWidths();

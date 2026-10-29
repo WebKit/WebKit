@@ -332,7 +332,7 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
         }
 
         if (needsLayout)
-            child.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            child.setNeedsLayout(MarkingBehavior::OnlyThis);
 
         if (child.needsLayout()) {
             CheckedRef childElement = downcast<RenderElement>(child);

@@ -307,7 +307,7 @@ static void setIsForceHiddenByLineClamp(RenderElement& renderer, const RenderEle
     renderer.setIsForceHiddenByLineClamp(isHidden);
     // Invisible boxes are not laid out (see skipLayoutForForcedHidden), so a box that becomes visible again needs layout.
     if (!isHidden)
-        renderer.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        renderer.setNeedsLayout(MarkingBehavior::OnlyThis);
     for (CheckedRef child : childrenOfType<RenderElement>(renderer)) {
         if (isInsideInvisibleBox(child, invisibleBox))
             setIsForceHiddenByLineClamp(child, invisibleBox, isHidden);

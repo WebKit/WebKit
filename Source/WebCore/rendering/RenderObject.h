@@ -767,10 +767,10 @@ public:
     bool isAncestorContainerOfRenderer(const RenderObject&) const;
 
     RenderElement* markContainingBlocksForLayout(RenderElement* layoutRoot = nullptr);
-    inline void setNeedsLayout(MarkingBehavior = MarkingBehavior::MarkContainingBlockChain);
+    inline void setNeedsLayout(MarkingBehavior = MarkingBehavior::ContainingBlockChain);
     enum class HadSkippedLayout { No, Yes };
     void clearNeedsLayout(HadSkippedLayout = HadSkippedLayout::No);
-    void invalidateContentLogicalWidths(MarkingBehavior = MarkingBehavior::MarkContainingBlockChain, const RenderBlock* ancestorUpdateBoundary = nullptr);
+    void invalidateContentLogicalWidths(MarkingBehavior = MarkingBehavior::ContainingBlockChain, const RenderBlock* ancestorUpdateBoundary = nullptr);
     void clearContentLogicalWidthsInvalidation() { m_stateBitfields.setFlag(StateFlag::ContentLogicalWidthsInvalidated, { }); }
 
     void notifyInspectorOfLayoutInvalidate();
@@ -1309,7 +1309,7 @@ private:
 
         bool hasReflection { false };
         bool hasOutlineAutoAncestor { false };
-        // Dirty bit was set with MarkingBehavior::MarkOnlyThis
+        // Dirty bit was set with MarkingBehavior::OnlyThis
         bool contentLogicalWidthsInvalidationIsMarkOnlyThis { false };
         bool isYouTubeReplacement { false };
 

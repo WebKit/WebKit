@@ -82,7 +82,7 @@ static void resetOverriddenHeight(RenderBox* box, const RenderObject* ancestor)
     box->mutableStyle().setLogicalHeight(CSS::Keyword::Auto { });
     for (RenderObject* renderer = box; renderer != ancestor; renderer = renderer->parent()) {
         ASSERT(renderer);
-        renderer->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        renderer->setNeedsLayout(MarkingBehavior::OnlyThis);
     }
 }
 
@@ -143,13 +143,13 @@ void RenderTextControlSingleLine::layout()
             return;
 
         if (inputContentBoxLogicalHeight != innerTextLogicalHeight)
-            setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            setNeedsLayout(MarkingBehavior::OnlyThis);
 
         innerTextRenderer->mutableStyle().setLogicalHeight(Style::PreferredSize::Fixed { inputContentBoxLogicalHeight });
-        innerTextRenderer->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        innerTextRenderer->setNeedsLayout(MarkingBehavior::OnlyThis);
         if (innerBlockRenderer) {
             innerBlockRenderer->mutableStyle().setLogicalHeight(Style::PreferredSize::Fixed { inputContentBoxLogicalHeight });
-            innerBlockRenderer->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            innerBlockRenderer->setNeedsLayout(MarkingBehavior::OnlyThis);
         }
         innerTextLogicalHeight = inputContentBoxLogicalHeight;
     };
@@ -182,13 +182,13 @@ void RenderTextControlSingleLine::layout()
                 newContainerHeight = std::max<LayoutUnit>(newContainerHeight, autoFillStrongPasswordButtonRenderer->logicalHeight());
 
             containerRenderer->mutableStyle().setLogicalHeight(Style::PreferredSize::Fixed { newContainerHeight / usedZoomForLength });
-            setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            setNeedsLayout(MarkingBehavior::OnlyThis);
         } else if (containerLogicalHeight > logicalHeightLimit) {
             containerRenderer->mutableStyle().setLogicalHeight(Style::PreferredSize::Fixed { logicalHeightLimit / usedZoomForLength });
-            setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            setNeedsLayout(MarkingBehavior::OnlyThis);
         } else if (containerRenderer->logicalHeight() < contentBoxLogicalHeight()) {
             containerRenderer->mutableStyle().setLogicalHeight(Style::PreferredSize::Fixed { contentBoxLogicalHeight() / usedZoomForLength });
-            setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            setNeedsLayout(MarkingBehavior::OnlyThis);
         } else
             containerRenderer->mutableStyle().setLogicalHeight(Style::PreferredSize::Fixed { containerLogicalHeight / usedZoomForLength });
     }
@@ -236,7 +236,7 @@ void RenderTextControlSingleLine::layout()
         bool placeholderBoxEverHadLayout = placeholderBox->everHadLayout();
         if (innerTextSizeChanged) {
             // The caps lock indicator was hidden. Layout the placeholder. Its layout does not affect its parent.
-            placeholderBox->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            placeholderBox->setChildNeedsLayout(MarkingBehavior::OnlyThis);
         }
         placeholderBox->layoutIfNeeded();
         auto placeholderTopLeft = containerRenderer ? containerRenderer->location() : LayoutPoint { };
@@ -328,10 +328,10 @@ void RenderTextControlSingleLine::styleDidChange(Style::Difference diff, const S
     }
     if (diff == Style::DifferenceResult::Layout) {
         if (CheckedPtr innerTextRenderer = this->innerTextRenderer())
-            innerTextRenderer->setNeedsLayout(MarkingBehavior::MarkContainingBlockChain);
+            innerTextRenderer->setNeedsLayout(MarkingBehavior::ContainingBlockChain);
         if (RefPtr placeholder = protect(inputElement())->placeholderElement()) {
             if (placeholder->renderer())
-                placeholder->renderer()->setNeedsLayout(MarkingBehavior::MarkContainingBlockChain);
+                placeholder->renderer()->setNeedsLayout(MarkingBehavior::ContainingBlockChain);
         }
     }
     setHasNonVisibleOverflow(false);

@@ -299,7 +299,7 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
                 if (cell->overridingBorderBoxLogicalHeight() && !cell->isOrthogonal()) {
                     cell->clearIntrinsicPadding();
                     cell->clearOverridingSize();
-                    cell->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                    cell->setChildNeedsLayout(MarkingBehavior::OnlyThis);
                     cell->layoutIfNeeded();
                 }
 
@@ -398,12 +398,12 @@ void RenderTableSection::layout()
             auto cellHadSelfNeedsLayout = cell->selfNeedsLayout();
             cell->setCellLogicalWidth(cellLogicalWidthInTableDirectionIncludingColumnSpan(*cell, startColumn, numberOfColumns));
             if (!cellHadSelfNeedsLayout && cell->selfNeedsLayout() && rowRenderer)
-                rowRenderer->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                rowRenderer->setChildNeedsLayout(MarkingBehavior::OnlyThis);
         }
 
         if (rowRenderer) {
             if (!rowRenderer->needsLayout() && paginated && view().frameView().layoutContext().layoutState()->pageLogicalHeightChanged())
-                rowRenderer->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                rowRenderer->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
             rowRenderer->layoutIfNeeded();
         }
@@ -586,7 +586,7 @@ void RenderTableSection::relayoutCellIfFlexed(RenderTableCell& cell, int rowInde
     if (!cellChildrenFlex)
         return;
 
-    cell.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    cell.setChildNeedsLayout(MarkingBehavior::OnlyThis);
     // Alignment within a cell is based off the calculated
     // height, which becomes irrelevant once the cell has
     // been resized based off its percentage.
@@ -639,7 +639,7 @@ void RenderTableSection::layoutRows()
                 auto logicalHeightForIntrinsicPadding = !cell->isOrthogonal() ? rowHeight : cellLogicalWidthInTableDirectionIncludingColumnSpan(*cell, columnIndex, numberOfEffectiveColumns);
                 if (cell->computeIntrinsicPadding(logicalHeightForIntrinsicPadding)) {
                     // FIXME: Changing an intrinsic padding shouldn't trigger a relayout as it only shifts the cell inside the row but doesn't change the logical height.
-                    cell->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                    cell->setChildNeedsLayout(MarkingBehavior::OnlyThis);
                 }
 
                 LayoutRect oldCellRect = cell->borderBoxRectInContainer();
@@ -648,10 +648,10 @@ void RenderTableSection::layoutRows()
 
                 auto* layoutState = view().frameView().layoutContext().layoutState();
                 if (!cell->needsLayout() && layoutState->pageLogicalHeight() && layoutState->pageLogicalOffset(cell, cell->logicalTop()) != cell->pageLogicalOffset())
-                    cell->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                    cell->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
                 if (cell->isOrthogonal()) {
-                    cell->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                    cell->setNeedsLayout(MarkingBehavior::OnlyThis);
                     cell->setOverridingBorderBoxLogicalWidth(rowHeight);
                 }
                 cell->layoutIfNeeded();

@@ -432,7 +432,7 @@ static void gatherFlexChildrenInfo(FlexBoxIterator& iterator, RelayoutChildren r
             // may have changed, and we need to reallocate space.
             child->clearOverridingSize();
             if (relayoutChildren == RelayoutChildren::No)
-                child->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
             haveFlex = true;
             unsigned flexGroup = child->style().boxFlexGroup().value;
             if (lowestFlexGroup == 0)
@@ -504,7 +504,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(RelayoutChildren relayoutC
         LayoutUnit maxAscent, maxDescent;
         for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
             if (relayoutChildren == RelayoutChildren::Yes)
-                child->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
             if (child->isOutOfFlowPositioned())
                 continue;
@@ -562,7 +562,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(RelayoutChildren relayoutC
                 if (childLayer->staticBlockPosition() != yPos) {
                     childLayer->setStaticBlockPosition(yPos);
                     if (child->style().hasStaticBlockPosition(writingMode().isHorizontal()))
-                        child->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                        child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
                 }
                 continue;
             }
@@ -575,7 +575,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(RelayoutChildren relayoutC
             LayoutUnit oldChildHeight = child->borderBoxHeight();
             child->updateLogicalHeight();
             if (oldChildHeight != child->borderBoxHeight())
-                child->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
             child->markForPaginationRelayoutIfNeeded();
 
@@ -824,7 +824,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(RelayoutChildren relayoutChi
         for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
             // Make sure we relayout children if we need it.
             if (!haveLegacyLineClamp && relayoutChildren == RelayoutChildren::Yes)
-                child->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
             if (child->isOutOfFlowPositioned()) {
                 child->containingBlock()->addOutOfFlowBox(*child);
@@ -833,7 +833,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(RelayoutChildren relayoutChi
                 if (childLayer->staticBlockPosition() != borderBoxHeight()) {
                     childLayer->setStaticBlockPosition(borderBoxHeight());
                     if (child->style().hasStaticBlockPosition(writingMode().isHorizontal()))
-                        child->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                        child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
                 }
                 continue;
             }
@@ -1062,13 +1062,13 @@ std::optional<LegacyLineClampUpdater::ClampedContent> RenderDeprecatedFlexibleBo
             child->clearOverridingSize();
             if (relayoutChildren == RelayoutChildren::Yes || (child->isBlockLevelReplacedOrAtomicInline() && (child->style().width().isPercentOrCalculated() || child->style().height().isPercentOrCalculated()))
                 || (child->style().height().isAuto() && is<RenderBlockFlow>(*child))) {
-                child->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+                child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
                 // Dirty all the positioned objects. The child lays them out when it lays out below, so marking their
                 // containing block chain would only dirty ancestors, some of which may have finished layout already
                 // (e.g. this runs as part of the scrollbar relayout a flex or grid ancestor issues after its children are done).
                 if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*child))
-                    blockFlow->markOutOfFlowBoxesForLayout(MarkingBehavior::MarkOnlyThis);
+                    blockFlow->markOutOfFlowBoxesForLayout(MarkingBehavior::OnlyThis);
             }
         }
     };
