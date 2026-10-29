@@ -30,6 +30,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "ServiceWorkerPageProtocol.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestDownloadDelegate.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
@@ -854,18 +855,20 @@ TEST(ServiceWorkers, ImportRegistrationsForOriginWithEmptyDatabase)
 TEST(ServiceWorkers, UpdateCheckAfterRestoreFromDisk)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
 
     // Start with a clean slate data store
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     // Disable ITP so it doesn't inadvertently delete our service worker registrations.
-    [[WKWebsiteDataStore defaultDataStore] _setResourceLoadStatisticsEnabled:NO];
+    [dataStore _setResourceLoadStatisticsEnabled:NO];
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
 
     RetainPtr<SWMessageHandlerForRestoreFromDiskTest> messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Registration was successful and service worker was activated"]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
@@ -885,7 +888,7 @@ TEST(ServiceWorkers, UpdateCheckAfterRestoreFromDisk)
 
     // Flush registrations to disk and terminate the network process so that Phase 2 will
     // import registrations from disk (with lazy script loading) in a fresh network process.
-    [[WKWebsiteDataStore defaultDataStore] _storeServiceWorkerRegistrations:^{
+    [dataStore _storeServiceWorkerRegistrations:^{
         done = true;
     }];
     done = false;
@@ -896,7 +899,7 @@ TEST(ServiceWorkers, UpdateCheckAfterRestoreFromDisk)
     configuration = nullptr;
     messageHandler = nullptr;
 
-    [[WKWebsiteDataStore defaultDataStore] _terminateNetworkProcess];
+    [dataStore _terminateNetworkProcess];
 
     // Phase 2: Create a new web view, restoring registrations from disk with lazy script loading.
     // Navigate to /second.html which is OUTSIDE the SW scope (/scope/) so the navigation does not
@@ -905,6 +908,7 @@ TEST(ServiceWorkers, UpdateCheckAfterRestoreFromDisk)
     // is true), scripts are loaded from disk before the comparison. After comparison succeeds (same
     // script), no new worker is installed.
     configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
     messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Update completed without installing a new worker"]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
@@ -919,17 +923,19 @@ TEST(ServiceWorkers, UpdateCheckAfterRestoreFromDisk)
 TEST(ServiceWorkers, CheckRegistrationWithoutMainScript)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
 
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     // Disable ITP so it doesn't inadvertently delete our service worker registrations.
-    [[WKWebsiteDataStore defaultDataStore] _setResourceLoadStatisticsEnabled:NO];
+    [dataStore _setResourceLoadStatisticsEnabled:NO];
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
 
     RetainPtr<SWMessageHandlerForRestoreFromDiskTest> messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Registration was successful and service worker was activated"]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
@@ -948,7 +954,7 @@ TEST(ServiceWorkers, CheckRegistrationWithoutMainScript)
 
     // Flush registrations to disk and terminate the network process so that Phase 2 will
     // import registrations from disk (with lazy script loading) in a fresh network process.
-    [[WKWebsiteDataStore defaultDataStore] _storeServiceWorkerRegistrations:^{
+    [dataStore _storeServiceWorkerRegistrations:^{
         done = true;
     }];
     done = false;
@@ -962,16 +968,16 @@ TEST(ServiceWorkers, CheckRegistrationWithoutMainScript)
     // Verify there is a registration
     RetainPtr websiteDataTypes = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeServiceWorkerRegistrations]]);
     done = false;
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+    [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
         EXPECT_EQ(1U, dataRecords.count);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
 
-    [[WKWebsiteDataStore defaultDataStore] _terminateNetworkProcess];
+    [dataStore _terminateNetworkProcess];
 
     // We remove the registration script stored on disk. We do this by finding the Scripts folders and removing them.
-    NSURL *path = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/Default/" stringByExpandingTildeInPath]];
+    NSURL *path = dataStore._configuration.generalStorageDirectory;
     NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:path includingPropertiesForKeys:@[NSURLIsDirectoryKey] options:NSDirectoryEnumerationSkipsHiddenFiles errorHandler:nil];
     for (NSURL *url in enumerator) {
         NSNumber *isDirectory;
@@ -983,6 +989,7 @@ TEST(ServiceWorkers, CheckRegistrationWithoutMainScript)
     // Create a new web view, restoring registration from disk with lazy script loading.
     // Try launching the service worker, removal of main script should trigger unregistration of the service worker.
     configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
     messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"FAIL: No registrations found"]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
@@ -992,7 +999,7 @@ TEST(ServiceWorkers, CheckRegistrationWithoutMainScript)
     TestWebKitAPI::Util::run(&done);
 
     done = false;
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+    [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
         EXPECT_EQ(0U, dataRecords.count);
         done = true;
     }];
@@ -1002,17 +1009,19 @@ TEST(ServiceWorkers, CheckRegistrationWithoutMainScript)
 TEST(ServiceWorkers, CheckRegistrationWithoutImportedScript)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
 
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     // Disable ITP so it doesn't inadvertently delete our service worker registrations.
-    [[WKWebsiteDataStore defaultDataStore] _setResourceLoadStatisticsEnabled:NO];
+    [dataStore _setResourceLoadStatisticsEnabled:NO];
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
 
     RetainPtr<SWMessageHandlerForRestoreFromDiskTest> messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Registration was successful and service worker was activated"]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
@@ -1032,7 +1041,7 @@ TEST(ServiceWorkers, CheckRegistrationWithoutImportedScript)
 
     // Flush registrations to disk and terminate the network process so that we will
     // import registrations from disk (with lazy script loading) in a fresh network process.
-    [[WKWebsiteDataStore defaultDataStore] _storeServiceWorkerRegistrations:^{
+    [dataStore _storeServiceWorkerRegistrations:^{
         done = true;
     }];
     done = false;
@@ -1046,16 +1055,16 @@ TEST(ServiceWorkers, CheckRegistrationWithoutImportedScript)
     // Verify there is a registration
     RetainPtr websiteDataTypes = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeServiceWorkerRegistrations]]);
     done = false;
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+    [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
         EXPECT_EQ(1U, dataRecords.count);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
 
-    [[WKWebsiteDataStore defaultDataStore] _terminateNetworkProcess];
+    [dataStore _terminateNetworkProcess];
 
     // We remove the registration imported script stored on disk. We do this by finding the Scripts folders and removing files in that folder whose size matches the imported script size.
-    NSURL *path = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/Default/" stringByExpandingTildeInPath]];
+    NSURL *path = dataStore._configuration.generalStorageDirectory;
     NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:path includingPropertiesForKeys:@[NSURLIsDirectoryKey] options:NSDirectoryEnumerationSkipsHiddenFiles errorHandler:nil];
     for (NSURL *url in enumerator) {
         NSNumber *isDirectory;
@@ -1075,6 +1084,7 @@ TEST(ServiceWorkers, CheckRegistrationWithoutImportedScript)
     // Create a new web view, restoring registration from disk with lazy script loading.
     // Try launching the service worker, removal of imported script should trigger unregistration of the service worker.
     configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
     messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"FAIL: No registrations found"]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
@@ -1084,7 +1094,7 @@ TEST(ServiceWorkers, CheckRegistrationWithoutImportedScript)
     TestWebKitAPI::Util::run(&done);
 
     done = false;
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+    [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
         EXPECT_EQ(0U, dataRecords.count);
         done = true;
     }];

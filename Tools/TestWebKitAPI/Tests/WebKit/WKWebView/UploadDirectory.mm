@@ -28,6 +28,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -369,19 +370,10 @@ registerServiceWorkerAndRunTest();
         }
     });
 
-    auto removeServiceWorkerRegistrations = [] {
-        __block bool done = false;
-        [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] modifiedSince:[NSDate distantPast] completionHandler:^{
-            done = true;
-        }];
-        Util::run(&done);
-    };
-    removeServiceWorkerRegistrations();
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:Util::temporaryPersistentDataStore()];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "PASS");
     EXPECT_TRUE(uploadReceived);
-
-    removeServiceWorkerRegistrations();
 }

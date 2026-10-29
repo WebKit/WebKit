@@ -5779,6 +5779,8 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.ServiceWorkers.CacheStorageNetworkProcessCrash
 [ ios ] TestWebKitAPI.ServiceWorkers.CacheStorageRestoreFromDisk
 [ ios ] TestWebKitAPI.ServiceWorkers.ChangeOfServerCertificate
+[ ios ] TestWebKitAPI.ServiceWorkers.CheckRegistrationWithoutImportedScript
+[ ios ] TestWebKitAPI.ServiceWorkers.CheckRegistrationWithoutMainScript
 [ ios ] TestWebKitAPI.ServiceWorkers.ClearDOMCacheAlsoIncludesServiceWorkerRegistrations
 [ ios ] TestWebKitAPI.ServiceWorkers.ContentRuleList
 [ ios ] TestWebKitAPI.ServiceWorkers.InterceptFirstLoadAfterRestoreFromDisk
@@ -5789,6 +5791,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.ServiceWorkers.ServiceWorkerCacheReference
 [ ios ] TestWebKitAPI.ServiceWorkers.ServiceWorkerStorageTiming
 [ ios ] TestWebKitAPI.ServiceWorkers.ThrottleCrash
+[ ios ] TestWebKitAPI.ServiceWorkers.UpdateCheckAfterRestoreFromDisk
 [ ios ] TestWebKitAPI.ServiceWorkers.WaitForPolicyDelegate
 [ ios ] TestWebKitAPI.ServiceWorkers.WebProcessCache
 [ ios ] TestWebKitAPI.ShareSheetTests.ShareAnchorElementAsURL
@@ -7024,6 +7027,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WebKit.TabOutOfWebView
 [ ios ] TestWebKitAPI.WebKit.TintColorAffectsInteractionColor
 [ ios ] TestWebKitAPI.WebKit.UIViewTreeAsTextDumpsLayerPositionYCoordinate
+[ ios ] TestWebKitAPI.WebKit.UploadFileFromIndexedDBThroughServiceWorker
 [ ios ] TestWebKitAPI.WebKit.UseSelectionAsFindString
 [ ios ] TestWebKitAPI.WebKit.VisibleContentRect_ClippedBoundsWhenClippedByEnclosingView
 [ ios ] TestWebKitAPI.WebKit.VisibleContentRect_ClippedBoundsWhenClippedByScrollView
@@ -7642,14 +7646,18 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.ServiceWorkers.CacheStorageInPrivateBrowsingMode
 [ mac ] TestWebKitAPI.ServiceWorkers.CacheStorageRestoreFromDisk
 [ mac ] TestWebKitAPI.ServiceWorkers.ChangeOfServerCertificate
+[ mac ] TestWebKitAPI.ServiceWorkers.CheckRegistrationWithoutImportedScript
+[ mac ] TestWebKitAPI.ServiceWorkers.CheckRegistrationWithoutMainScript
 [ mac ] TestWebKitAPI.ServiceWorkers.DifferentSessionsUseDifferentRegistrations
 [ mac ] TestWebKitAPI.ServiceWorkers.InterceptFirstLoadAfterRestoreFromDisk
+[ mac ] TestWebKitAPI.ServiceWorkers.ModuleUnregisterDuringLoadNoMainThreadCrash
 [ mac ] TestWebKitAPI.ServiceWorkers.ParallelProcessLaunch
 [ mac ] TestWebKitAPI.ServiceWorkers.SWProcessConnectionCreation
 [ mac ] TestWebKitAPI.ServiceWorkers.ServiceWorkerAndCacheStorageDefaultDirectories
 [ mac ] TestWebKitAPI.ServiceWorkers.ServiceWorkerCacheAccessEphemeralSession
 [ mac ] TestWebKitAPI.ServiceWorkers.ServiceWorkerProcessCreation
 [ mac ] TestWebKitAPI.ServiceWorkers.ThrottleCrash
+[ mac ] TestWebKitAPI.ServiceWorkers.UpdateCheckAfterRestoreFromDisk
 [ mac ] TestWebKitAPI.ServiceWorkers.WaitForPolicyDelegate
 [ mac ] TestWebKitAPI.SiteIsolation.AcceptsFirstMouseOverSelectionInFocusedCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.AirPlayPickerLocationInCrossSiteIframe
@@ -8549,6 +8557,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WebKit.SuggestedFilenameWithMIMEType
 [ mac ] TestWebKitAPI.WebKit.TabOutOfWebView
 [ mac ] TestWebKitAPI.WebKit.URLCanonicalization
+[ mac ] TestWebKitAPI.WebKit.UploadFileFromIndexedDBThroughServiceWorker
 [ mac ] TestWebKitAPI.WebKit.UseSelectionAsFindString
 [ mac ] TestWebKitAPI.WebKit.ViewScaleFactorAfterShrinkToFit
 [ mac ] TestWebKitAPI.WebKit.WKPageConfigurationBasic
