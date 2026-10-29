@@ -74,6 +74,17 @@ void JIT::compileSetupFrame(const Op& bytecode)
         int firstFreeRegister = bytecode.m_firstFree.offset(); // FIXME: Why is this a virtual register if we never use it as one...
         int firstVarArgOffset = bytecode.m_firstVarArg;
 
+        if constexpr (opcodeID == op_call_varargs || opcodeID == op_tail_call_varargs) {
+            if (bytecode.m_isFunctionApply) {
+                using ThrowOperation = void(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue);
+                constexpr GPRReg globalObjectGPR = preferredArgumentGPR<ThrowOperation, 0>();
+                constexpr GPRReg calleeGPR = preferredArgumentGPR<ThrowOperation, 1>();
+                emitGetVirtualRegister(bytecode.m_callee, calleeGPR);
+                loadGlobalObject(globalObjectGPR);
+                callOperation(operationThrowIfNotFunctionApplyCallee, globalObjectGPR, calleeGPR);
+            }
+        }
+
         {
             constexpr GPRReg globalObjectGPR = preferredArgumentGPR<S_JITOperation_GJZZ, 0>();
             constexpr GPRReg argumentsGPR = preferredArgumentGPR<S_JITOperation_GJZZ, 1>();

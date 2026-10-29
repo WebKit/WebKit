@@ -230,6 +230,15 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     RELEASE_AND_RETURN(scope, vm.interpreter.executeEval(eval, thisValue, callerScopeChain));
 }
 
+void throwIfNotFunctionApplyCallee(JSGlobalObject* globalObject, JSValue callee)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    if (callee.isCallable())
+        return;
+    throwTypeError(globalObject, scope, "|this| is not a function inside Function.prototype.apply"_s);
+}
+
 unsigned sizeOfVarargs(JSGlobalObject* globalObject, JSValue arguments, uint32_t firstVarArgOffset)
 {
     VM& vm = globalObject->vm();

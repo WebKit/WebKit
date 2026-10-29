@@ -4330,6 +4330,16 @@ JSC_DEFINE_JIT_OPERATION(operationSizeFrameForForwardArguments, size_t, (JSGloba
     OPERATION_RETURN(scope, sizeFrameForForwardArguments(globalObject, callFrame, vm, numUsedStackSlots));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationThrowIfNotFunctionApplyCallee, void, (JSGlobalObject* globalObject, EncodedJSValue encodedCallee))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    throwIfNotFunctionApplyCallee(globalObject, JSValue::decode(encodedCallee));
+    OPERATION_RETURN(scope);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationSizeFrameForVarargs, size_t, (JSGlobalObject* globalObject, EncodedJSValue encodedArguments, int32_t numUsedStackSlots, int32_t firstVarArgOffset))
 {
     VM& vm = globalObject->vm();

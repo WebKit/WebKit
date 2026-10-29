@@ -272,6 +272,7 @@ struct EntrySwitchData {
 
 struct CallVarargsData {
     int firstVarArgOffset;
+    bool isFunctionApply { false };
 };
 
 struct LoadVarargsData {
