@@ -37,7 +37,10 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <pal/spi/mac/NSTextInputContextSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/Vector.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 @interface OverrideMouseLocation : NSObject
@@ -56,7 +59,235 @@ static NSPoint overrideMouseLocation = { 0, 0 };
 }
 @end
 
+@interface DeferredMouseTextInputContext : NSTextInputContext {
+    Vector<BlockPtr<void(BOOL)>> _mouseEventCompletions;
+}
+@property (nonatomic, readonly) NSUInteger mouseEventCount;
+- (BlockPtr<void(BOOL)>)takeMouseEventCompletionAtIndex:(NSUInteger)index;
+@end
+
+@implementation DeferredMouseTextInputContext
+
+- (void)handleEvent:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler
+{
+    switch (event.type) {
+    case NSEventTypeLeftMouseDown:
+    case NSEventTypeLeftMouseUp:
+    case NSEventTypeLeftMouseDragged:
+        _mouseEventCompletions.append(makeBlockPtr(completionHandler));
+        break;
+    default:
+        completionHandler(NO);
+        break;
+    }
+}
+
+- (NSUInteger)mouseEventCount
+{
+    return _mouseEventCompletions.size();
+}
+
+- (BlockPtr<void(BOOL)>)takeMouseEventCompletionAtIndex:(NSUInteger)index
+{
+    return std::exchange(_mouseEventCompletions[index], nullptr);
+}
+
+@end
+
+@interface DeferredMouseInputWebView : TestWKWebView {
+    RetainPtr<DeferredMouseTextInputContext> _deferredMouseInputContext;
+}
+@property (nonatomic) BOOL suppressInputContext;
+@property (nonatomic, readonly) DeferredMouseTextInputContext *deferredMouseInputContext;
+@end
+
+@implementation DeferredMouseInputWebView
+
+- (NSTextInputContext *)inputContext
+{
+    return self.suppressInputContext ? nil : self.deferredMouseInputContext;
+}
+
+- (DeferredMouseTextInputContext *)deferredMouseInputContext
+{
+    if (!_deferredMouseInputContext)
+        _deferredMouseInputContext = adoptNS([[DeferredMouseTextInputContext alloc] initWithClient:(id<NSTextInputClient>)self]);
+    return _deferredMouseInputContext.get();
+}
+
+@end
+
 namespace TestWebKitAPI {
+
+static void loadDeferredMouseInputPage(DeferredMouseInputWebView *webView)
+{
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<style>body { margin: 0; } #editor { height: 50px; }"
+        "input, a { position: absolute; left: 100px; top: 100px; width: 100px; height: 100px; }"
+        "a { left: 250px; }</style>"
+        "<div id='editor' contenteditable>Editable content</div><input id='target'>"
+        "<a id='link' href='#destination'>Navigate</a>"
+        "<script>"
+        "let events = [];"
+        "for (let type of ['pointerdown', 'mousedown', 'blur', 'focusout', 'pointerup', 'mouseup', 'click'])"
+        "    document.addEventListener(type, event => events.push(event.type), true);"
+        "editor.focus();"
+        "</script>"];
+    [webView focus];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ(@"editor", [webView stringByEvaluatingJavaScript:@"document.activeElement.id"]);
+    [webView stringByEvaluatingJavaScript:@"events = []; ''"];
+}
+
+static RetainPtr<DeferredMouseInputWebView> createDeferredMouseInputWebView()
+{
+    RetainPtr webView = adoptNS([[DeferredMouseInputWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    loadDeferredMouseInputPage(webView.get());
+    return webView;
+}
+
+static void expectOrderedMouseClick(TestWKWebView *webView)
+{
+    [webView waitForPendingMouseEvents];
+    EXPECT_WK_STREQ(@"pointerdown,mousedown,blur,focusout,pointerup,mouseup,click", [webView stringByEvaluatingJavaScript:@"events.join(',')"]);
+    EXPECT_WK_STREQ(@"target", [webView stringByEvaluatingJavaScript:@"document.activeElement.id"]);
+}
+
+TEST(MouseEventTests, InputMethodMouseUpCompletesBeforeMouseDown)
+{
+    RetainPtr webView = createDeferredMouseInputWebView();
+    RetainPtr context = [webView deferredMouseInputContext];
+    [webView mouseDownAtPoint:NSMakePoint(150, 250) simulatePressure:NO];
+    [webView mouseUpAtPoint:NSMakePoint(150, 250)];
+    ASSERT_EQ(context.get().mouseEventCount, 2U);
+
+    [context takeMouseEventCompletionAtIndex:1](false);
+    [webView waitForPendingMouseEvents];
+    EXPECT_WK_STREQ(@"", [webView stringByEvaluatingJavaScript:@"events.join(',')"]);
+    [context takeMouseEventCompletionAtIndex:0](false);
+    expectOrderedMouseClick(webView.get());
+}
+
+TEST(MouseEventTests, InputContextDisappearsDuringPendingMouseDown)
+{
+    RetainPtr webView = createDeferredMouseInputWebView();
+    RetainPtr context = [webView deferredMouseInputContext];
+    [webView mouseDownAtPoint:NSMakePoint(150, 250) simulatePressure:NO];
+    [webView setSuppressInputContext:YES];
+    [webView mouseUpAtPoint:NSMakePoint(150, 250)];
+    ASSERT_EQ(context.get().mouseEventCount, 1U);
+
+    [webView waitForPendingMouseEvents];
+    EXPECT_WK_STREQ(@"", [webView stringByEvaluatingJavaScript:@"events.join(',')"]);
+    [context takeMouseEventCompletionAtIndex:0](false);
+    expectOrderedMouseClick(webView.get());
+}
+
+TEST(MouseEventTests, InputMethodMouseCompletionsAcrossSuccessiveClicks)
+{
+    RetainPtr webView = createDeferredMouseInputWebView();
+    RetainPtr context = [webView deferredMouseInputContext];
+    for (unsigned i = 0; i < 2; ++i) {
+        [webView mouseDownAtPoint:NSMakePoint(150, 250) simulatePressure:NO];
+        [webView mouseUpAtPoint:NSMakePoint(150, 250)];
+    }
+    ASSERT_EQ(context.get().mouseEventCount, 4U);
+
+    [context takeMouseEventCompletionAtIndex:3](false);
+    [context takeMouseEventCompletionAtIndex:2](false);
+    [context takeMouseEventCompletionAtIndex:0](false);
+    [webView waitForPendingMouseEvents];
+    EXPECT_WK_STREQ(@"pointerdown,mousedown,blur,focusout", [webView stringByEvaluatingJavaScript:@"events.join(',')"]);
+
+    [context takeMouseEventCompletionAtIndex:1](false);
+    [webView waitForPendingMouseEvents];
+    EXPECT_WK_STREQ(@"pointerdown,mousedown,blur,focusout,pointerup,mouseup,click,pointerdown,mousedown,pointerup,mouseup,click", [webView stringByEvaluatingJavaScript:@"events.join(',')"]);
+}
+
+TEST(MouseEventTests, InputMethodMouseUpCompletesBeforeMouseDownOnLink)
+{
+    RetainPtr webView = createDeferredMouseInputWebView();
+    RetainPtr context = [webView deferredMouseInputContext];
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    __block bool navigated = false;
+    [navigationDelegate setDidSameDocumentNavigation:^(WKWebView *, WKNavigation *) {
+        navigated = true;
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView mouseDownAtPoint:NSMakePoint(300, 250) simulatePressure:NO];
+    [webView mouseUpAtPoint:NSMakePoint(300, 250)];
+    ASSERT_EQ(context.get().mouseEventCount, 2U);
+
+    [context takeMouseEventCompletionAtIndex:1](false);
+    [webView waitForPendingMouseEvents];
+    EXPECT_WK_STREQ(@"", [webView stringByEvaluatingJavaScript:@"location.hash"]);
+
+    [context takeMouseEventCompletionAtIndex:0](false);
+    [webView waitForPendingMouseEvents];
+    EXPECT_WK_STREQ(@"pointerdown,mousedown,pointerup,mouseup,click", [webView stringByEvaluatingJavaScript:@"events.filter(type => !['blur', 'focusout'].includes(type)).join(',')"]);
+    ASSERT_EQ(1, [[webView objectByEvaluatingJavaScript:@"events.filter(type => type === 'click').length"] intValue]);
+    Util::run(&navigated);
+    EXPECT_WK_STREQ(@"#destination", [webView stringByEvaluatingJavaScript:@"location.hash"]);
+}
+
+TEST(MouseEventTests, InputMethodConsumesPendingMouseDown)
+{
+    RetainPtr webView = createDeferredMouseInputWebView();
+    RetainPtr context = [webView deferredMouseInputContext];
+    [webView mouseDownAtPoint:NSMakePoint(150, 250) simulatePressure:NO];
+    [webView mouseUpAtPoint:NSMakePoint(150, 250)];
+    ASSERT_EQ(context.get().mouseEventCount, 2U);
+
+    [context takeMouseEventCompletionAtIndex:1](false);
+    [context takeMouseEventCompletionAtIndex:0](true);
+    [webView waitForPendingMouseEvents];
+    EXPECT_WK_STREQ(@"pointerup,mouseup", [webView stringByEvaluatingJavaScript:@"events.join(',')"]);
+
+    [webView mouseDownAtPoint:NSMakePoint(150, 250) simulatePressure:NO];
+    [webView mouseUpAtPoint:NSMakePoint(150, 250)];
+    ASSERT_EQ(context.get().mouseEventCount, 4U);
+    [context takeMouseEventCompletionAtIndex:2](false);
+    [context takeMouseEventCompletionAtIndex:3](false);
+    [webView waitForPendingMouseEvents];
+    EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"events.filter(type => type === 'click').length"] intValue]);
+}
+
+TEST(MouseEventTests, InputMethodMouseCompletionAfterViewDestruction)
+{
+    BlockPtr<void(BOOL)> completion;
+    @autoreleasepool {
+        RetainPtr webView = createDeferredMouseInputWebView();
+        [webView mouseDownAtPoint:NSMakePoint(150, 250) simulatePressure:NO];
+        RetainPtr context = [webView deferredMouseInputContext];
+        ASSERT_EQ(context.get().mouseEventCount, 1U);
+        completion = [context takeMouseEventCompletionAtIndex:0];
+        [webView removeFromSuperview];
+    }
+    completion(false);
+}
+
+TEST(MouseEventTests, InputMethodMouseCompletionAfterProcessTermination)
+{
+    RetainPtr webView = createDeferredMouseInputWebView();
+    RetainPtr context = [webView deferredMouseInputContext];
+    [webView mouseDownAtPoint:NSMakePoint(150, 250) simulatePressure:NO];
+    [webView mouseUpAtPoint:NSMakePoint(150, 250)];
+    ASSERT_EQ(context.get().mouseEventCount, 2U);
+    [context takeMouseEventCompletionAtIndex:1](false);
+
+    [webView _killWebContentProcessAndResetState];
+    loadDeferredMouseInputPage(webView.get());
+    [webView mouseDownAtPoint:NSMakePoint(150, 250) simulatePressure:NO];
+    [webView mouseUpAtPoint:NSMakePoint(150, 250)];
+    ASSERT_EQ(context.get().mouseEventCount, 4U);
+    [context takeMouseEventCompletionAtIndex:3](false);
+    [context takeMouseEventCompletionAtIndex:2](false);
+    expectOrderedMouseClick(webView.get());
+
+    // Completing an event for the terminated process must not dispatch it to the new page.
+    [context takeMouseEventCompletionAtIndex:0](false);
+    expectOrderedMouseClick(webView.get());
+}
 
 TEST(MouseEventTests, SendMouseMoveEventStream)
 {
