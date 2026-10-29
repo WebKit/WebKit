@@ -57,9 +57,9 @@ static GLuint createProgram(QOpenGLFunctions* gl)
     )";
 
     static constexpr auto fragmentShaderSource = R"(
-        #ifdef GL_ES
+#ifdef GL_ES
         precision mediump float;
-        #endif
+#endif
         varying vec2 vTexCoord;
         uniform sampler2D u_texture;
         uniform float u_opacity;
