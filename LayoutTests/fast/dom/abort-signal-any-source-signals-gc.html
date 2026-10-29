@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Dependent signals created by AbortSignal.any() must survive the GC's parallel weak-sets pass once all of their source signals have been collected. JSAbortSignalOwner::isReachableFromOpaqueRoots() inspects AbortSignal::m_sourceSignals on every GC marker thread, so inspecting it must not free it.");
+jsTestIsAsync = true;
+
+const worldCount = 4;
+let dependents = [];
+
+function makeDependents() {
+    let controller = new AbortController();
+    for (let i = 0; i < 8; ++i) {
+        let dependent = AbortSignal.any([controller.signal]);
+        dependent.addEventListener("abort", function () { });
+        dependents.push(dependent);
+        document.dispatchEvent(new MouseEvent("ferry", { relatedTarget: dependent }));
+    }
+}
+
+function step(round) {
+    if (round >= 10) {
+        testPassed("No crash.");
+        finishJSTest();
+        return;
+    }
+    makeDependents();
+    gc();
+    dependents = [];
+    gc();
+    setTimeout(() => step(round + 1), 0);
+}
+
+function runTest() {
+    for (let world = 1; world <= worldCount; ++world) {
+        testRunner.evaluateScriptInIsolatedWorld(world, `
+            document.addEventListener("ferry", function (event) {
+                if (event.relatedTarget)
+                    event.relatedTarget.addEventListener("abort", function () { });
+            });
+        `);
+    }
+    step(0);
+}
+
+if (!window.testRunner || !testRunner.evaluateScriptInIsolatedWorld) {
+    testFailed("Requires testRunner.evaluateScriptInIsolatedWorld().");
+    finishJSTest();
+} else
+    runTest();
+</script>
+</body>
+</html>

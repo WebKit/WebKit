@@ -2321,6 +2321,41 @@ TEST(WTF_WeakPtr, WeakListHashSetRemoveIf)
     EXPECT_EQ(s_baseWeakReferences, 0u);
 }
 
+TEST(WTF_WeakPtr, WeakListHashSetIsEmptyIgnoringNullReferencesWithoutCleanup)
+{
+    // Unlike isEmptyIgnoringNullReferences(), this must be a pure read. Its callers are DOM
+    // wrapper owners' isReachableFromOpaqueRoots() callbacks, which JavaScriptCore runs unlocked
+    // on every parallel GC marker thread. Two visitors observing the same set would otherwise
+    // double-free its ListHashSetNodes and its hash table buffer.
+    WeakListHashSet<Base> weakListHashSet;
+    {
+        Base object1;
+        Base object2;
+        weakListHashSet.add(object1);
+        weakListHashSet.add(object2);
+        EXPECT_EQ(s_baseWeakReferences, 2u);
+        EXPECT_FALSE(weakListHashSet.isEmptyIgnoringNullReferencesWithoutCleanup());
+    }
+
+    // The set is now non-empty but contains only null references.
+    EXPECT_EQ(s_baseWeakReferences, 2u);
+    unsigned capacityBeforeQuery = weakListHashSet.capacity();
+    EXPECT_GT(capacityBeforeQuery, 0u);
+
+    // Querying it must not tear it down, however many times it is queried.
+    EXPECT_TRUE(weakListHashSet.isEmptyIgnoringNullReferencesWithoutCleanup());
+    EXPECT_EQ(weakListHashSet.capacity(), capacityBeforeQuery);
+    EXPECT_EQ(s_baseWeakReferences, 2u);
+    EXPECT_TRUE(weakListHashSet.isEmptyIgnoringNullReferencesWithoutCleanup());
+    EXPECT_EQ(weakListHashSet.capacity(), capacityBeforeQuery);
+    EXPECT_EQ(s_baseWeakReferences, 2u);
+
+    // isEmptyIgnoringNullReferences() still reclaims the dead entries.
+    EXPECT_TRUE(weakListHashSet.isEmptyIgnoringNullReferences());
+    EXPECT_EQ(s_baseWeakReferences, 0u);
+    EXPECT_EQ(weakListHashSet.capacity(), 0u);
+}
+
 TEST(WTF_WeakPtr, WeakListHashSetRemoveIterator)
 {
     WeakListHashSet<Base> weakListHashSet;
