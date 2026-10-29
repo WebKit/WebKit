@@ -539,7 +539,7 @@ public:
     {
         return m_parser->offset() - m_parser->currentOpcodeStartingOffset();
     }
-    void addTailCallCommonData(const RTT&, const CallInformation&);
+    void addTailCallCommonData(const RTT&);
     void LEGACY_NODELETE didFinishParsingLocals()
     {
         m_metadata->m_bytecodeOffset = m_parser->offset();
@@ -615,15 +615,6 @@ public:
         }
     }
 
-    ALWAYS_INLINE const CallInformation& cachedCallInformationFor(const RTT& signature)
-    {
-        if (m_cachedSignature != &signature) {
-            m_cachedSignature = &signature;
-            m_cachedCallInformation = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
-        }
-        return m_cachedCallInformation;
-    }
-
     static constexpr bool LEGACY_NODELETE tierSupportsSIMD() { return true; }
     static constexpr bool validateFunctionBodySize = true;
 
@@ -681,9 +672,6 @@ private:
         Checked<int32_t> dMC = static_cast<int64_t>(to.mc) - static_cast<int64_t>(from.mc);
         return { dPC, dMC };
     }
-
-    CallInformation m_cachedCallInformation { };
-    const RTT* m_cachedSignature { nullptr };
 
     Checked<int32_t> m_argumentAndResultsStackSize;
 
@@ -2806,9 +2794,13 @@ auto IPIntGenerator::endTopLevel(std::span<const TypedExpression>) -> PartialRes
 
 // Calls
 
-void IPIntGenerator::addTailCallCommonData(const RTT&, const CallInformation& callConvention)
+void IPIntGenerator::addTailCallCommonData(const RTT& signature)
 {
-    size_t stackArgumentsAndResultsInBytes = roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes) - callConvention.headerIncludingThisSizeInBytes;
+    size_t headerAndArgumentStackSizeInBytes = wasmCallingConvention().headerAndArgumentStackSizeInBytes(signature, CallRole::Caller);
+    Checked<uint32_t> tailCallFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(headerAndArgumentStackSizeInBytes + sizeof(CallerFrameAndPC));
+    m_metadata->m_maxCalleeStackSize = std::max(static_cast<unsigned>(tailCallFrameSize), m_metadata->m_maxCalleeStackSize);
+
+    size_t stackArgumentsAndResultsInBytes = headerAndArgumentStackSizeInBytes - WasmCallingConvention::headerIncludingThisSizeInBytes(CallRole::Caller);
     // The WASM stack slots are always 16-bytes.
     size_t extraWasmStackInBytes = roundUpToMultipleOf<16>(stackArgumentsAndResultsInBytes);
     if (m_stackSize + extraWasmStackInBytes / 16 > m_maxStackSize)
@@ -2819,7 +2811,6 @@ void IPIntGenerator::addTailCallCommonData(const RTT&, const CallInformation& ca
 
 [[nodiscard]] PartialResult IPIntGenerator::addCall(unsigned callProfileIndex, FunctionSpaceIndex index, const RTT& signature, ArgumentList&, ResultList& results, CallType callType)
 {
-    const CallInformation& callConvention = cachedCallInformationFor(signature);
     m_metadata->addCallTarget(callProfileIndex, index);
 
     if (callType == CallType::TailCall) {
@@ -2828,8 +2819,6 @@ void IPIntGenerator::addTailCallCommonData(const RTT&, const CallInformation& ca
         // put arguments into registers / sp (reutilize mINT)
         // jump to entrypoint
         changeStackSize(-signature.argumentCount());
-        Checked<uint32_t> tailCallFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes + sizeof(CallerFrameAndPC));
-        m_metadata->m_maxCalleeStackSize = std::max(static_cast<unsigned>(tailCallFrameSize), m_metadata->m_maxCalleeStackSize);
 
         IPInt::TailCallMetadata functionIndexMetadata {
             .length = safeCast<uint8_t>(getCurrentInstructionLength()),
@@ -2839,7 +2828,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT&, const CallInformation& ca
             .callerStackArgSize = static_cast<int32_t>(m_argumentAndResultsStackSize),
         };
         m_metadata->appendMetadata(functionIndexMetadata);
-        addTailCallCommonData(signature, callConvention);
+        addTailCallCommonData(signature);
         return { };
     }
 
@@ -2848,7 +2837,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT&, const CallInformation& ca
     });
     changeStackSize(signature.returnCount() - signature.argumentCount());
 
-    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes);
+    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallingConvention().headerAndArgumentStackSizeInBytes(signature, CallRole::Caller));
     m_metadata->m_maxCalleeStackSize = std::max(static_cast<unsigned>(frameSize), m_metadata->m_maxCalleeStackSize);
     IPInt::CallMetadata functionIndexMetadata {
         .length = safeCast<uint8_t>(getCurrentInstructionLength()),
@@ -2867,15 +2856,11 @@ void IPIntGenerator::addTailCallCommonData(const RTT&, const CallInformation& ca
 
 [[nodiscard]] PartialResult IPIntGenerator::addCallIndirect(unsigned callProfileIndex, unsigned tableIndex, const RTT& signature, ArgumentList&, ResultList& results, CallType callType)
 {
-    const CallInformation& callConvention = cachedCallInformationFor(signature);
     m_metadata->addCallTarget(callProfileIndex, { });
 
     if (callType == CallType::TailCall) {
         const unsigned callIndex = 1;
         changeStackSize(-signature.argumentCount() - callIndex);
-
-        Checked<uint32_t> tailCallFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes + sizeof(CallerFrameAndPC));
-        m_metadata->m_maxCalleeStackSize = std::max(static_cast<unsigned>(tailCallFrameSize), m_metadata->m_maxCalleeStackSize);
 
         // on a tail call, we need to:
         // roll back to old SP, shift SP to accommodate arguments
@@ -2889,7 +2874,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT&, const CallInformation& ca
             .callerStackArgSize = static_cast<int32_t>(m_argumentAndResultsStackSize),
         };
         m_metadata->appendMetadata(functionIndexMetadata);
-        addTailCallCommonData(signature, callConvention);
+        addTailCallCommonData(signature);
         return { };
     }
 
@@ -2899,7 +2884,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT&, const CallInformation& ca
     const unsigned callIndex = 1;
     changeStackSize(signature.returnCount() - signature.argumentCount() - callIndex);
 
-    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes);
+    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallingConvention().headerAndArgumentStackSizeInBytes(signature, CallRole::Caller));
     m_metadata->m_maxCalleeStackSize = std::max(static_cast<unsigned>(frameSize), m_metadata->m_maxCalleeStackSize);
     IPInt::CallIndirectMetadata functionIndexMetadata {
         .length = safeCast<uint8_t>(getCurrentInstructionLength()),
@@ -2919,15 +2904,11 @@ void IPIntGenerator::addTailCallCommonData(const RTT&, const CallInformation& ca
 
 [[nodiscard]] PartialResult IPIntGenerator::addCallRef(unsigned callProfileIndex, const RTT& signature, ArgumentList&, ResultList& results, CallType callType)
 {
-    const CallInformation& callConvention = cachedCallInformationFor(signature);
     m_metadata->addCallTarget(callProfileIndex, { });
 
     if (callType == CallType::TailCall) {
         const unsigned callIndex = 1;
         changeStackSize(-signature.argumentCount() - callIndex);
-
-        Checked<uint32_t> tailCallFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes + sizeof(CallerFrameAndPC));
-        m_metadata->m_maxCalleeStackSize = std::max(static_cast<unsigned>(tailCallFrameSize), m_metadata->m_maxCalleeStackSize);
 
         // on a tail call, we need to:
         // roll back to old SP, shift SP to accommodate arguments
@@ -2940,7 +2921,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT&, const CallInformation& ca
             .callerStackArgSize = static_cast<int32_t>(m_argumentAndResultsStackSize),
         };
         m_metadata->appendMetadata(callMetadata);
-        addTailCallCommonData(signature, callConvention);
+        addTailCallCommonData(signature);
         return { };
     }
 
@@ -2950,7 +2931,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT&, const CallInformation& ca
     const unsigned callRef = 1;
     changeStackSize(signature.returnCount() - signature.argumentCount() - callRef);
 
-    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes);
+    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallingConvention().headerAndArgumentStackSizeInBytes(signature, CallRole::Caller));
     m_metadata->m_maxCalleeStackSize = std::max(static_cast<unsigned>(frameSize), m_metadata->m_maxCalleeStackSize);
     IPInt::CallRefMetadata callMetadata {
         .length = safeCast<uint8_t>(getCurrentInstructionLength()),

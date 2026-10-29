@@ -157,12 +157,9 @@ public:
     {
         size_t gpArgumentCount = 0;
         size_t fpArgumentCount = 0;
-        size_t headerSize = headerSizeInBytes;
-        if (role == CallRole::Caller)
-            headerSize -= sizeof(CallerFrameAndPC);
-
-        ArgumentLocation thisArgument = { role == CallRole::Caller ? ValueLocation::stackArgument(headerSize) : ValueLocation::stack(headerSize), widthForBytes(sizeof(void*)) };
-        headerSize += sizeof(Register); // thisArgument
+        size_t headerSize = headerIncludingThisSizeInBytes(role);
+        size_t thisOffset = headerSize - sizeof(Register);
+        ArgumentLocation thisArgument = { role == CallRole::Caller ? ValueLocation::stackArgument(thisOffset) : ValueLocation::stack(thisOffset), widthForBytes(sizeof(void*)) };
 
         size_t argStackOffset = headerSize;
         Vector<ArgumentLocation, 8> params(signature.argumentCount(),
@@ -182,6 +179,35 @@ public:
         size_t totalFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(std::max(argStackOffset, resultStackOffset));
 
         return { thisArgument, WTF::move(params), WTF::move(results), totalFrameSize, headerSize };
+    }
+
+    // Equal to callInformationFor(signature, role).headerIncludingThisSizeInBytes.
+    static constexpr size_t headerIncludingThisSizeInBytes(CallRole role)
+    {
+        size_t headerSize = headerSizeInBytes;
+        if (role == CallRole::Caller)
+            headerSize -= sizeof(CallerFrameAndPC);
+        return headerSize + sizeof(Register); // thisArgument
+    }
+
+    // Equal to callInformationFor(signature, role).headerAndArgumentStackSizeInBytes.
+    size_t headerAndArgumentStackSizeInBytes(const RTT& signature, CallRole role) const
+    {
+        size_t headerSize = headerIncludingThisSizeInBytes(role);
+
+        size_t gpArgumentCount = 0;
+        size_t fpArgumentCount = 0;
+        size_t argStackOffset = headerSize;
+        for (unsigned index = 0; index < signature.argumentCount(); ++index)
+            marshallLocation(role, signature.argumentType(index), gpArgumentCount, fpArgumentCount, argStackOffset);
+
+        gpArgumentCount = 0;
+        fpArgumentCount = 0;
+        size_t resultStackOffset = headerSize;
+        for (unsigned index = 0; index < signature.returnCount(); ++index)
+            marshallLocation(role, signature.returnType(index), gpArgumentCount, fpArgumentCount, resultStackOffset);
+
+        return WTF::roundUpToMultipleOf<stackAlignmentBytes()>(std::max(argStackOffset, resultStackOffset));
     }
 
     RegisterSet argumentGPRs() const { return RegisterSet::argumentGPRs(); }
