@@ -1,0 +1,26 @@
+Tests that deleteCookie is blocked by ITP when called from a third-party context.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+
+
+--------
+Frame: '<!--frame2-->'
+--------
+
+
+--------
+Frame: '<!--frame3-->'
+--------
+Cross-site delete result:
+Received cookie named 'crossSiteCookie'.
+Client-side document.cookie: crossSiteCookie=testValue

@@ -1,0 +1,21 @@
+Tests that setRawCookie is blocked by ITP when called from a third-party context.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+
+
+--------
+Frame: '<!--frame2-->'
+--------
+Cross-site cookie result:
+Did not receive cookie named 'crossSiteCookie'.
+Client-side document.cookie:

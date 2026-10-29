@@ -69,7 +69,7 @@ public:
     // Lets WebKit2 compare header values without sending the header to a web process.
     virtual std::optional<SHA1::Digest> cookieRequestHeaderFieldValueDigest(const URL& firstParty, const SameSiteInfo&, const URL&, IncludeSecureCookies) const;
     virtual bool getRawCookies(Document&, const URL&, Vector<Cookie>&) const;
-    virtual void setRawCookie(const Document&, const Cookie&, ShouldPartitionCookie);
+    virtual void setRawCookie(const Document&, const URL&, const Cookie&, ShouldPartitionCookie);
     virtual void deleteCookie(const Document&, const URL&, const String& cookieName, CompletionHandler<void()>&&);
 
     virtual void getCookiesAsync(Document&, const URL&, const CookieStoreGetOptions&, CompletionHandler<void(std::optional<Vector<Cookie>>&&)>&&) const;

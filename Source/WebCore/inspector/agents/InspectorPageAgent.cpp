@@ -554,11 +554,9 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setCookie(Ref<JSON:
         RefPtr page = document->page();
         if (!page)
             continue;
-        if (!RegistrableDomain::uncheckedCreateFromHost(cookie->domain).matches(document->firstPartyForCookies()))
+        if (!RegistrableDomain::uncheckedCreateFromHost(cookie->domain).matches(document->cookieURL()))
             continue;
-        if (!RegistrableDomain(document->cookieURL()).matches(document->firstPartyForCookies()))
-            continue;
-        page->cookieJar().setRawCookie(*document, cookie.value(), shouldPartitionCookie);
+        page->cookieJar().setRawCookie(*document, document->cookieURL(), cookie.value(), shouldPartitionCookie);
     }
 
     return { };

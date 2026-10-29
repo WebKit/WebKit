@@ -93,15 +93,15 @@ bool NetworkStorageSession::shouldBlockThirdPartyCookiesButKeepFirstPartyCookies
 }
 
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
-void NetworkStorageSession::setCookie(const URL& firstParty, const Cookie& cookie, ShouldPartitionCookie shouldPartitionCookie)
+void NetworkStorageSession::setCookie(const Cookie& cookie, const URL& url, const URL& mainDocumentURL, ShouldPartitionCookie shouldPartitionCookie)
 {
     if (!isOptInCookiePartitioningEnabled() || shouldPartitionCookie != ShouldPartitionCookie::Yes || !cookie.partitionKey.isEmpty()) {
-        setCookie(cookie);
+        setCookie(cookie, url, mainDocumentURL);
         return;
     }
     auto partitionedCookie = cookie;
-    partitionedCookie.partitionKey = cookiePartitionIdentifier(firstParty);
-    setCookie(partitionedCookie);
+    partitionedCookie.partitionKey = cookiePartitionIdentifier(mainDocumentURL);
+    setCookie(partitionedCookie, url, mainDocumentURL);
 }
 #endif
 
