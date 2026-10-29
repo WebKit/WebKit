@@ -23,6 +23,46 @@ def frame_cycle_report(data, begin_msec=0, end_msec=1000, vblank_interval=None):
     )
 
 
+def composition(begin_msec, end_msec, reasons=None, pid=1):
+    """A RenderLayerTree mark, and the DidRenderFrame it emitted naming its reasons.
+
+    Without reasons it emitted none, as in a capture made before the mark existed.
+    """
+    marks = [mark("RenderLayerTree", begin_msec, end_msec, pid=pid)]
+    if reasons is not None:
+        marks.append(
+            mark(
+                "DidRenderFrame",
+                end_msec - 1,
+                end_msec - 1,
+                pid=pid,
+                message="reasons: " + reasons,
+            )
+        )
+    return marks
+
+
+def compositor_animating_after_the_frame(with_frame_marks=True):
+    """Two cycles: the first composites its frame and then three animation frames.
+
+    The last of those is still running when the second cycle begins.
+    """
+
+    def reasons(value):
+        return value if with_frame_marks else None
+
+    return sysprof_data(
+        [mark("LayerTreeHostRenderingUpdate", 0, 5)]
+        + composition(7, 14, reasons("RenderingUpdate"))
+        + composition(23, 30, reasons("Animation"))
+        + composition(40, 47, reasons("Animation"))
+        + composition(57, 64, reasons("Animation"))
+        + [mark("LayerTreeHostRenderingUpdate", 60, 65)]
+        + composition(67, 74, reasons("RenderingUpdate, Animation"))
+        + [mark("LayerTreeHostRenderingUpdate", 80, 85)]
+    )
+
+
 class FrameCyclesTest(SysprofTestCase):
     def test_phases_partition_every_resolved_cycle(self):
         data = sysprof_data(
@@ -671,6 +711,162 @@ class FrameCyclesTest(SysprofTestCase):
         self.assertEqual(
             report["overrunning_composition_statistics"]["median"], approx(50.0)
         )
+
+    def test_compositions_after_the_frame_are_idle_rather_than_compositing(self):
+        cycles = calculate_frame_cycles(compositor_animating_after_the_frame())
+
+        # The frame is out at 14 ms. The three animation frames after it are the
+        # compositor's own, so the cycle composited for 7 ms and then idled.
+        self.assertEqual(
+            cycles[0]["phases"],
+            {
+                "rendering_update": approx(5.0),
+                "waiting_for_compositing": approx(2.0),
+                "compositing": approx(7.0),
+                "idle": approx(46.0),
+            },
+        )
+        self.assertEqual(cycles[0]["compositions_after_frame"], 3)
+        self.assertEqual(cycles[0]["compositing_after_frame"], approx(17.0))
+        # The animation frame running into the second cycle is not this frame
+        # overrunning it.
+        self.assertEqual(cycles[0]["composition_overrun"], approx(0.0))
+        # Nor is it the second cycle's compositing, which is its own frame alone.
+        self.assertEqual(cycles[1]["phases"]["compositing"], approx(7.0))
+        self.assertEqual(cycles[1]["phases"]["idle"], approx(6.0))
+        self.assertEqual(cycles[1]["compositions_after_frame"], 0)
+        for cycle in cycles:
+            self.assertEqual(sum(cycle["phases"].values()), approx(cycle["duration"]))
+
+    def test_without_frame_marks_every_composition_of_the_cycle_counts(self):
+        cycles = calculate_frame_cycles(
+            compositor_animating_after_the_frame(with_frame_marks=False)
+        )
+
+        # Nothing tells the frame apart from the animation frames after it.
+        self.assertEqual(cycles[0]["phases"]["compositing"], approx(24.0))
+        self.assertEqual(cycles[0]["phases"]["idle"], approx(0.0))
+        self.assertEqual(cycles[0]["composition_overrun"], approx(4.0))
+        self.assertIsNone(cycles[0]["compositions_after_frame"])
+        self.assertIsNone(cycles[0]["compositing_after_frame"])
+
+    def test_a_composition_before_the_frame_is_still_compositing(self):
+        # The first composition after the update ran while its tiles were still being
+        # painted, so the compositor kept the update for the next one.
+        data = sysprof_data(
+            [mark("LayerTreeHostRenderingUpdate", 0, 5)]
+            + composition(7, 10, "Animation")
+            + composition(12, 20, "RenderingUpdate, Animation")
+            + composition(24, 28, "Animation")
+            + [mark("LayerTreeHostRenderingUpdate", 32, 35)]
+        )
+
+        cycle = calculate_frame_cycles(data)[0]
+        self.assertEqual(
+            cycle["phases"],
+            {
+                "rendering_update": approx(5.0),
+                "waiting_for_compositing": approx(4.0),
+                "compositing": approx(11.0),
+                "idle": approx(12.0),
+            },
+        )
+        self.assertEqual(cycle["compositions_after_frame"], 1)
+        self.assertEqual(cycle["compositing_after_frame"], approx(4.0))
+
+    def test_an_update_that_asked_for_no_composition_is_shown_by_the_next(self):
+        # Nothing names RenderingUpdate: the update had nothing to commit. The
+        # composition already running beside it cannot show it, the next one does.
+        data = sysprof_data(
+            [mark("LayerTreeHostRenderingUpdate", 0, 5)]
+            + composition(2, 6, "Animation")
+            + composition(8, 14, "Animation")
+            + composition(18, 24, "Animation")
+            + [mark("LayerTreeHostRenderingUpdate", 30, 35)]
+        )
+
+        cycle = calculate_frame_cycles(data)[0]
+        self.assertEqual(
+            cycle["phases"],
+            {
+                "rendering_update": approx(5.0),
+                "waiting_for_compositing": approx(2.0),
+                "compositing": approx(7.0),
+                "idle": approx(16.0),
+            },
+        )
+        self.assertEqual(cycle["compositions_after_frame"], 1)
+        self.assertEqual(cycle["compositing_after_frame"], approx(6.0))
+
+    def test_the_frame_of_an_overrunning_composition_stays_with_its_cycle(self):
+        # The first frame is still being handed over when the second rendering update
+        # begins, after the DidRenderFrame mark that named RenderingUpdate.
+        data = sysprof_data(
+            [mark("LayerTreeHostRenderingUpdate", 0, 5)]
+            + composition(6, 25, "RenderingUpdate")
+            + [mark("LayerTreeHostRenderingUpdate", 18, 21)]
+            + composition(26, 33, "RenderingUpdate")
+            + [mark("LayerTreeHostRenderingUpdate", 40, 42)]
+        )
+
+        cycles = calculate_frame_cycles(data)
+        self.assertEqual(cycles[0]["composition_overrun"], approx(7.0))
+        self.assertEqual(cycles[0]["compositions_after_frame"], 0)
+        # The second cycle runs the tail of the first frame, waits a millisecond
+        # and composites its own: its frame is the one that began within it.
+        self.assertEqual(
+            cycles[1]["phases"],
+            {
+                "rendering_update": approx(3.0),
+                "waiting_for_compositing": approx(1.0),
+                "compositing": approx(11.0),
+                "idle": approx(7.0),
+            },
+        )
+        self.assertEqual(cycles[1]["composition_overrun"], approx(0.0))
+
+    def test_compositions_after_the_frame_beside_the_update_are_not_idle(self):
+        # The update asked for its composition and then went on waiting for its tiles,
+        # so its frame and the next composition both ran beside it.
+        data = sysprof_data(
+            [mark("LayerTreeHostRenderingUpdate", 0, 20)]
+            + composition(3, 8, "RenderingUpdate")
+            + composition(10, 14, "Animation")
+            + composition(22, 26, "Animation")
+            + [mark("LayerTreeHostRenderingUpdate", 30, 35)]
+        )
+
+        cycle = calculate_frame_cycles(data)[0]
+        self.assertEqual(cycle["phases"]["compositing"], approx(0.0))
+        self.assertEqual(cycle["phases"]["idle"], approx(10.0))
+        # Only the one after the update is idle time.
+        self.assertEqual(cycle["compositions_after_frame"], 1)
+        self.assertEqual(cycle["compositing_after_frame"], approx(4.0))
+
+    def test_compositions_after_the_frame_are_reported_beside_the_phases(self):
+        report = frame_cycle_report(compositor_animating_after_the_frame())
+        self.assertEqual(report["compositions_after_frame_statistics"]["n"], 2)
+        self.assertEqual(
+            report["compositions_after_frame_statistics"]["max"], approx(3.0)
+        )
+        self.assertEqual(
+            report["compositing_after_frame_statistics"]["max"], approx(17.0)
+        )
+        self.assertEqual(report["overrunning_composition_statistics"], {})
+
+        analyze._render_frame_cycle_numbers(report)
+        self.assertIn(
+            "- compositions after the frame, in idle: 1.5 per cycle", self.stdout()
+        )
+
+    def test_compositions_after_the_frame_are_unknown_without_frame_marks(self):
+        report = frame_cycle_report(
+            compositor_animating_after_the_frame(with_frame_marks=False)
+        )
+        self.assertEqual(report["compositions_after_frame_statistics"], {})
+
+        analyze._render_frame_cycle_numbers(report)
+        self.assertIn("- compositions after the frame, in idle: -", self.stdout())
 
     def test_an_unknown_refresh_rate_is_not_reported_as_zero(self):
         report = {

@@ -55,6 +55,16 @@ def mark_begin(mark: Dict[str, Any]) -> int:
     return int(mark["end_time"] - mark["duration"])
 
 
+# DidRenderFrame messages look like "reasons: RenderingUpdate, Animation".
+REASONS_RE = re.compile(r"^reasons:([^|\n]*)")
+
+
+def frame_rendering_reason(message: str) -> str:
+    """Why a frame was composited, as the DidRenderFrame message tells it."""
+    match = REASONS_RE.match(message.strip())
+    return (match.group(1).strip() if match is not None else "") or "_none"
+
+
 def parse_timespan_argument(arg: str) -> Tuple[Optional[int], Optional[int]]:
     """Parse "<begin>-<end>" in milliseconds, either side of which may be empty.
 

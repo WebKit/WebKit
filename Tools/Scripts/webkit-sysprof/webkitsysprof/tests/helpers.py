@@ -117,12 +117,12 @@ def build_minimal_elf(symbols, code_size=0x2000):
     return bytes(ehdr) + phdr + code + strtab + shstrtab + symtab + sections
 
 
-def mark(name, begin_msec, end_msec, group="WebKit (Web)", pid=1):
+def mark(name, begin_msec, end_msec, group="WebKit (Web)", pid=1, message=""):
     return {
         "group": group,
         "pid": pid,
         "name": name,
-        "message": "",
+        "message": message,
         "duration": msec_to_nsec(end_msec - begin_msec),
         "end_time": msec_to_nsec(end_msec),
     }

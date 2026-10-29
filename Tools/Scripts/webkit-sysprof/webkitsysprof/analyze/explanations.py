@@ -41,28 +41,41 @@ FRAME_CYCLE = """\
       compositing update.
     - compositing: the time after the rendering update spent in
       RenderLayerTree, FlushCompositingState, PaintToGLContext or
-      WaitForCompositionCompletion. They are merged as spans rather than
-      added up, since they nest and a cycle can composite twice with a
-      wait in between. On GTK and WPE the wait for the GPU and the buffer
+      WaitForCompositionCompletion, up to the end of the composition that
+      presented the frame of the cycle. They are merged as spans rather
+      than added up, since they nest and a cycle can composite twice with
+      a wait in between. On GTK and WPE the wait for the GPU and the buffer
       handover after it both happen inside RenderLayerTree, so getting the
       frame out is counted here too.
+      The composition that presented the frame is the one the rendering
+      update asked for, whose DidRenderFrame names RenderingUpdate among
+      its reasons. An update that had nothing to commit asks for none, and
+      the first composition to begin after it is then the one showing the
+      page as that update left it. Until the next rendering update the
+      compositor can also composite on its own, for compositor-side
+      animations, video frames or asynchronous scrolling, and those
+      compositions are not part of this frame: their time is idle, and is
+      reported apart as compositions after the frame. Without DidRenderFrame
+      marks the frame cannot be told apart, and every composition of the
+      cycle counts as its compositing.
     - waiting for compositing: what is left of the cycle once the other
       phases are taken off it, mostly spent waiting for the painting
       threads to finish their tiles.
     - idle: from the end of compositing until the next rendering update
-      begins.
+      begins, compositions after the frame included.
   Each phase is its own median over the cycles it could be read from, so
   the shares need not total 100%.
   The loop is vblank-driven, but it does not wait for a refresh it has
   already missed: a cycle that runs past its vblank deadline schedules
   the next rendering update as soon as compositing is far enough along
   rather than at the following refresh, so a cycle longer than one vblank
-  interval means frames cannot be presented on every vblank. Compositing
-  that began in one cycle can then still be running when the next
+  interval means frames cannot be presented on every vblank. The
+  composition of one cycle can then still be running when the next
   rendering update opens the following one, and since the phases add up
   to the cycle exactly, that part of it past the cycle end is reported on
   its own as composition overrunning the cycle rather than as a fifth
-  phase.
+  phase. A composition after the frame that is still running then is not
+  an overrun.
   Implied FPS is the rate of the median cycle, while theoretical FPS
   averages over the whole analyzed duration, so the two differ by the
   time no cycle spans, which coverage reports, plus the time the cycles
@@ -95,7 +108,7 @@ MARK_STATISTICS = """\
 
 
 # What the report says of a frame whose message named no reason for compositing it,
-# keyed by the token _frame_rendering_reason() buckets it under.
+# keyed by the token frame_rendering_reason() buckets it under.
 UNNAMED_FRAME_RENDERING_REASONS = {
     "_none": "none given",
 }

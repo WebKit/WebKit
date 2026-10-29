@@ -12,6 +12,7 @@ from ..cycles import PHASES, calculate_frame_cycles
 from ..utils import (
     UsageError,
     check_timespan_holds_data,
+    frame_rendering_reason,
     mark_begin,
     median_vblank_interval,
     msec_to_sec,
@@ -74,16 +75,9 @@ MARKS_RELEVANT_FOR_STATISTICS = [
 # PaintTile messages look like "Skia/CPU threaded, dirty region 768x512+256+56",
 # where the geometry is "<x>x<y>+<width>+<height>".
 DIRTY_REGION_RE = re.compile(r"(\d+)x(\d+)\+(\d+)\+(\d+)")
-REASONS_RE = re.compile(r"^reasons:([^|\n]*)")
 TASKS_RE = re.compile(r"^tasks:\s*(\d+)")
 SUBTREES_RE = re.compile(r"^subtrees:\s*(\d+)")
 TILES_RE = re.compile(r"^dirty tiles:\s*(\d+)")
-
-
-def _frame_rendering_reason(message: str) -> str:
-    """Why a frame was composited, as the DidRenderFrame message tells it."""
-    match = REASONS_RE.match(message.strip())
-    return (match.group(1).strip() if match is not None else "") or "_none"
 
 
 def _counted(message: str, pattern: "re.Pattern[str]") -> Optional[int]:
@@ -215,7 +209,7 @@ def _prepare_rendering_report(
             else None
         ),
         "frame_rendering_reasons": collections.Counter(
-            [_frame_rendering_reason(mark["message"]) for mark in did_render_frames]
+            [frame_rendering_reason(mark["message"]) for mark in did_render_frames]
         ),
         "frame_compositions_per_vblank_statistics": _calculate_statistics(
             _calculate_frame_compositions_per_vblank(vblanks, did_render_frames)
@@ -280,6 +274,10 @@ def _prepare_frame_cycle_report(
     median_duration = duration_statistics.get("median", 0.0)
     analyzed_duration = nsec_to_msec(timespan_end - timespan_begin)
     overrunning = [cycle for cycle in resolved if cycle["composition_overrun"] > 0]
+    # Only the cycles whose frame a composition can be told to have presented.
+    with_frame = [
+        cycle for cycle in resolved if cycle["compositions_after_frame"] is not None
+    ]
     intervals_per_cycle, unknown_reason = _cycle_in_vblank_intervals(
         len(cycles), median_duration, vblank_interval
     )
@@ -303,6 +301,12 @@ def _prepare_frame_cycle_report(
         "resolved_duration_statistics": _calculate_statistics(resolved_durations),
         "overrunning_composition_statistics": _calculate_statistics(
             [cycle["composition_overrun"] for cycle in overrunning]
+        ),
+        "compositions_after_frame_statistics": _calculate_statistics(
+            [cycle["compositions_after_frame"] for cycle in with_frame]
+        ),
+        "compositing_after_frame_statistics": _calculate_statistics(
+            [cycle["compositing_after_frame"] for cycle in with_frame]
         ),
     }
 
@@ -650,6 +654,20 @@ def _render_frame_cycle_numbers(frame_cycle: Dict[str, Any]) -> None:
         print(
             "- composition overrunning the cycle: in none of {} analyzed"
             " cycles".format(_analyzed_cycles(frame_cycle))
+        )
+    # Absent from reports made before it was, so read as unknown rather than failing.
+    after_frame_statistics = frame_cycle.get("compositions_after_frame_statistics", {})
+    if not after_frame_statistics:
+        print("- compositions after the frame, in idle: -")
+    else:
+        print(
+            "- compositions after the frame, in idle: {:.4g} per cycle taking"
+            " {:.4f} ms (median, {} of {} analyzed cycles)".format(
+                after_frame_statistics["median"],
+                frame_cycle["compositing_after_frame_statistics"]["median"],
+                after_frame_statistics["n"],
+                _analyzed_cycles(frame_cycle),
+            )
         )
 
 
