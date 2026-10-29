@@ -62,6 +62,8 @@ DASHBOARD_QUERY.forEach(query => {
     ));
 });
 
+const PLACE_SETTLE_DELAY = 300;
+
 class SearchView {
     constructor() {    
         this.currentParams = queryToParams(document.URL.split('?')[1]);
@@ -267,17 +269,24 @@ class SearchView {
     updateTimelinesKeepingPlace() {
         const headerBottom = document.querySelector('.header.fixed')?.getBoundingClientRect().bottom ?? 0;
         const sections = [...this.ref.element.children];
-        const topOf = section => section.getBoundingClientRect().top;
-        const isTopOnScreen = section => topOf(section) >= headerBottom && topOf(section) < window.innerHeight;
+        const topOf = element => element.getBoundingClientRect().top;
+        const isTopOnScreen = element => topOf(element) >= headerBottom && topOf(element) < window.innerHeight;
         const isTopAboveScreen = section => topOf(section) < headerBottom;
-        const anchor = sections.find(isTopOnScreen) || sections.filter(isTopAboveScreen).pop();
+        const selections = this.ref.state.children.map(child => child.timeline.selectionToGoTo()).filter(Boolean);
+        const newestSelection = selections.reduce((newest, selection) => selection.order > newest.order ? selection : newest, selections[0]);
+        const selectedRun = newestSelection?.element ? newestSelection : null;
+        const anchor = selectedRun ? selectedRun.element : sections.find(isTopOnScreen) || sections.filter(isTopAboveScreen).pop();
         const anchorBoxBefore = anchor ? anchor.getBoundingClientRect() : null;
+        const anchorWasOnScreen = Boolean(anchor) && isTopOnScreen(anchor);
         const keepAnchorInPlace = () => {
-            if (!anchor)
+            const anchorNow = selectedRun ? selectedRun.counterpart() : anchor;
+            if (!anchorNow || !anchorNow.getClientRects().length)
                 return;
-            const anchorBox = anchor.getBoundingClientRect();
+            const anchorBox = anchorNow.getBoundingClientRect();
             const anchorHeightChanged = anchorBox.height !== anchorBoxBefore.height;
-            const targetTop = anchorHeightChanged ? Math.max(anchorBoxBefore.top, headerBottom) : anchorBoxBefore.top;
+            let targetTop = anchorHeightChanged ? Math.max(anchorBoxBefore.top, headerBottom) : anchorBoxBefore.top;
+            if (selectedRun)
+                targetTop = anchorWasOnScreen ? anchorBoxBefore.top : (headerBottom + window.innerHeight - anchorBox.height) / 2;
             window.scrollBy(0, anchorBox.top - targetTop);
         };
         const sectionResizeObserver = new ResizeObserver(keepAnchorInPlace);
@@ -288,7 +297,7 @@ class SearchView {
         });
         setTimeout(() => setTimeout(() => {
             keepAnchorInPlace();
-            sectionResizeObserver.disconnect();
+            setTimeout(() => sectionResizeObserver.disconnect(), PLACE_SETTLE_DELAY);
         }));
     }
 }

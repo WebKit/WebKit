@@ -47,6 +47,8 @@ let showTestTimes = false;
 let showTestFlakiness = false;
 let showNumberOfFlakyTests = false;
 let showCondensedView = false;
+let hasCondensedViewSwitch = false;
+let selectionsMade = 0;
 const condensedViewQuery = new QueryModifier('condensed');
 
 const BUG_TRACKER_COLORS = {
@@ -165,6 +167,20 @@ function repositoriesForCommits(commits) {
         repositories = ['?'];
     repositories.sort();
     return repositories;
+}
+
+function commitMatchingSearch(scale, repositories, searchValue) {
+    for (let currentScale of scale) {
+        for (let repo of repositories) {
+            if (!currentScale[repo]) {
+                continue;
+            }
+            if (currentScale[repo].hash && currentScale[repo].hash.indexOf(searchValue) === 0 ||
+                currentScale[repo].identifier && currentScale[repo].identifier.indexOf(searchValue) === 0)
+                return {commit: currentScale[repo], newestUuid: currentScale.uuid};
+        }
+    }
+    return null;
 }
 
 function xAxisFromScale(scale, repository, updatesArray, isTop=false, viewport=null)
@@ -387,6 +403,9 @@ class TimelineFromEndpoint {
         this.notifyRerender = () => {};
         this.applyCondensedViewSwitch = () => {};
         this.condensedViewSettings = null;
+        this.selection = null;
+        this.showSelection = () => {};
+        this.selectionToGoTo = () => null;
         this.repositories = [];
         this.viewport = viewport;
 
@@ -792,28 +811,27 @@ class TimelineFromEndpoint {
             </div>`);
     }
 
+    select(selection) {
+        if (!hasCondensedViewSwitch)
+            return;
+        this.selection = selection ? {...selection, order: ++selectionsMade, isNew: true} : null;
+        this.showSelection();
+    }
+
     onSearch(searchValue) {
         if (!searchValue || !searchValue.length) {
             this.searchScale(null);
+            this.searchCondensedView(null);
+            if (this.selection?.kind === 'search')
+                this.select(null);
+            return;
         }
-        let found = false;
-        for (let currentScale of this.scale) {
-            for (let repo of this.repositories) {
-                if (!currentScale[repo]) {
-                    continue;
-                }
-                if (currentScale[repo].hash && currentScale[repo].hash.indexOf(searchValue) === 0 || 
-                    currentScale[repo].identifier && currentScale[repo].identifier.indexOf(searchValue) === 0) {
-                    found = true;
-                    this.searchScale(currentScale[repo]);
-                    break;
-                }
-            }
-            if (found)
-                break;
-        }
-        if (!found)
-            this.searchScale(null);
+        const found = commitMatchingSearch(this.scale, this.repositories, searchValue);
+        this.searchScale(found ? found.commit : null);
+        if (this.searchCondensedView(searchValue))
+            this.select({kind: 'search', value: searchValue});
+        else if (this.selection?.kind === 'search')
+            this.select(null);
     };
 
     highlightRange(baseDotRenderer, seriesResults, uuidRange) {
@@ -1152,8 +1170,9 @@ class TimelineFromEndpoint {
                 queueParams['suite'] = [this.suite];
                 if (branch)
                     queueParams['branch'] = branch;
-                const queueLink = `<a href="/urls/queue?${paramsToQuery(queueParams)}" target="_blank">${config}</a>`;
-                condensedRows.push({configuration: config, label: queueLink, results: resultsForConfig});
+                const queueUrl = `/urls/queue?${paramsToQuery(queueParams)}`;
+                const queueLink = `<a href="${queueUrl}" target="_blank">${config}</a>`;
+                condensedRows.push({configuration: config, label: queueLink, queueUrl, results: resultsForConfig});
                 if (showCondensedView)
                     return;
                 allResults = combineResults(allResults, resultsForConfig);
@@ -1254,10 +1273,33 @@ class TimelineFromEndpoint {
         const condensedRunWidth = () => parseInt(getComputedStyle(document.body).getPropertyValue('--smallSize')) + 2 * CONDENSED_DOT_MARGIN;
         const condensedRunsPerLine = element => Math.max(1, Math.floor((element.getBoundingClientRect().width - CONDENSED_CLICKED_COMMIT_GAP) / condensedRunWidth()));
         let drawnRunsPerLine = null;
+        const loadedCommits = () => commitsForResults(this.results, limit, this.allCommits);
+        const repositoryNameFor = (commit, repositories) => commit && repositories.length > 1 ? commit.repository_id : null;
+        const failureTypeFor = (result) => this.getTestResultStatus(result, willFilterExpected).failureType;
+        const markRun = (uuid) => {
+            const commit = CommitBank.commitsDuring(uuid).find(candidate => candidate.uuid === uuid);
+            return {source: 'click', uuid, commit, repository: repositoryNameFor(commit, repositoriesForCommits(loadedCommits()))};
+        };
+        const markSearch = (searchValue) => {
+            const commits = loadedCommits();
+            const repositories = repositoriesForCommits(commits);
+            const found = searchValue && commitMatchingSearch(scaleForCommits(commits), repositories, searchValue);
+            return found ? {source: 'search', uuid: found.commit.uuid, newestUuid: found.newestUuid, commit: found.commit, repository: repositoryNameFor(found.commit, repositories)} : null;
+        };
+        const markForSelection = (selection) => {
+            if (!selection)
+                return null;
+            return selection.kind === 'search' ? markSearch(selection.value) : markRun(selection.uuid);
+        };
         const condensedViewSettings = this.condensedViewSettings;
         this.condensedViewSettings = null;
+        if (!condensedViewSettings)
+            this.selection = null;
+        const carriedRun = condensedViewSettings?.clickedRun;
+        const carriedRunRow = carriedRun?.row && condensedRows.find(row => row.queueUrl === carriedRun.row.queueUrl);
         const condensedViewRef = REF.createRef({
-            state: {show: showCondensedView, runCount: null, lineCount: null, expanded: false, clickedRun: null, ...condensedViewSettings},
+            state: {show: showCondensedView, runCount: null, lineCount: null, expanded: false, markedCommit: null, ...condensedViewSettings,
+                clickedRun: carriedRunRow ? {row: carriedRunRow, uuid: carriedRun.uuid} : null},
             onStateUpdate: (element, stateDiff, state) => {
                 const show = 'show' in stateDiff ? stateDiff.show : state.show;
                 if (!element.isConnected || (!show && !state.show))
@@ -1265,12 +1307,22 @@ class TimelineFromEndpoint {
                 const runWidth = condensedRunWidth();
                 const runsPerLine = condensedRunsPerLine(element);
                 const view = {...state, ...stateDiff, runsPerLine, lineWidth: runsPerLine * runWidth + CONDENSED_CLICKED_COMMIT_GAP};
+                view.goToLabel = commitLabelOf(view.clickedRun ? markRun(view.clickedRun.uuid) : view.markedCommit);
                 drawnRunsPerLine = view.show ? runsPerLine : null;
                 DOM.inject(element, view.show ? CondensedView(condensedRows, minimumUuid, view, {
-                    failureTypeFor: (result) => this.getTestResultStatus(result, willFilterExpected).failureType,
+                    failureTypeFor,
                     commitLinksFor,
-                    handlersFor: (configuration) => ({onDotEnter: onDotEnterFactory(configuration)}),
-                    setView: (viewDiff) => condensedViewRef.setState(viewDiff),
+                    handlersFor: (configuration) => ({onDotEnter: onDotEnterFactory(configuration), onDotClick: onDotClickFactory(configuration)}),
+                    setView: (viewDiff) => {
+                        condensedViewRef.setState(viewDiff);
+                        if (viewDiff.clickedRun)
+                            this.select({kind: 'run', queueUrl: viewDiff.clickedRun.row.queueUrl, uuid: viewDiff.clickedRun.uuid});
+                    },
+                    bringStripIntoView: (row) => setTimeout(() => {
+                        const strip = stripWithQueueUrl(condensedViewRef.element, row.queueUrl);
+                        if (strip)
+                            scrollToMiddleIfOffScreen(strip);
+                    }),
                 }) : '');
             },
             onElementMount: (element) => {
@@ -1296,17 +1348,34 @@ class TimelineFromEndpoint {
                 resizeObserver.observe(element);
             },
         });
+        this.searchCondensedView = (searchValue) => {
+            const markedCommit = markSearch(searchValue);
+            if (markedCommit)
+                condensedViewRef.setState({clickedRun: null, markedCommit});
+            else if (condensedViewRef.state.markedCommit?.source === 'search')
+                condensedViewRef.setState({markedCommit: null});
+            return markedCommit;
+        };
+        this.selectionToGoTo = () => {
+            const selection = this.selection;
+            if (!selection?.isNew || showCondensedView === condensedViewRef.state.show)
+                return null;
+            if (selection.kind !== 'run')
+                return {order: selection.order, element: null, counterpart: null};
+            return {order: selection.order, element: stripWithQueueUrl(this.ref.element, selection.queueUrl), counterpart: () => rowWithQueueUrl(this.ref.element, selection.queueUrl)};
+        };
         if (showCondensedView) {
             this.xaxisUpdates = [];
             this.timelineUpdate = null;
             this.notifyRerender = () => {};
             this.searchScale = () => {};
+            this.showSelection = () => {};
             this.applyCondensedViewSwitch = () => {
                 if (showCondensedView)
                     condensedViewRef.setState({show: true});
                 else if (condensedViewRef.element?.isConnected) {
-                    const {runCount, lineCount, expanded} = condensedViewRef.state;
-                    this.condensedViewSettings = {runCount, lineCount, expanded};
+                    const {runCount, lineCount, expanded, clickedRun, markedCommit} = condensedViewRef.state;
+                    this.condensedViewSettings = {runCount, lineCount, expanded, clickedRun, markedCommit};
                     this.rerender();
                 }
             };
@@ -1501,6 +1570,55 @@ class TimelineFromEndpoint {
             jumpPreviousRegressPoint();
         });
 
+        const goToSelection = () => {
+            const selection = this.selection;
+            if (!selection)
+                return;
+            const scrollArea = containnerRef.element?.querySelector('.timeline > .content');
+            if (scrollArea)
+                this.notifyRerender(scrollArea.getBoundingClientRect().width);
+            if (selection.kind === 'search') {
+                searchDot(null);
+                const found = commitMatchingSearch(this.scale, this.repositories, selection.value);
+                this.searchScale(found ? found.commit : null);
+                return;
+            }
+            this.searchScale(null);
+            searchDot({uuid: selection.uuid});
+        };
+        const showTimelineFromStrips = () => {
+            if (!this.selection?.isNew)
+                return;
+            this.selection.isNew = false;
+            goToSelection();
+        };
+        const stripsStateFromTimeline = () => {
+            const selection = this.selection;
+            if (!selection?.isNew)
+                return {};
+            selection.isNew = false;
+            const markedCommit = markForSelection(selection);
+            const viewDiff = {clickedRun: null, markedCommit};
+            const view = {...condensedViewRef.state, ...viewDiff, runsPerLine: condensedRunsPerLine(condensedViewRef.element)};
+            if (markedCommit)
+                Object.assign(viewDiff, condensedViewDiffToShow(condensedRows, minimumUuid, view, failureTypeFor, markedCommit));
+            return viewDiff;
+        };
+        const goToSelectionButtonRef = REF.createRef({
+            state: {label: commitLabelOf(markForSelection(this.selection))},
+            onStateUpdate: (element, stateDiff) => {
+                element.style.display = stateDiff.label ? '' : 'none';
+                element.innerText = `Go to ${stateDiff.label}`;
+            },
+        });
+        goToSelectionButtonRef.fromEvent('click').action(e => {
+            goToSelection();
+            const row = this.selection?.kind === 'run' ? rowWithQueueUrl(this.ref.element, this.selection.queueUrl) : null;
+            if (row)
+                scrollToMiddleIfOffScreen(row);
+        });
+        this.showSelection = () => goToSelectionButtonRef.setState({label: commitLabelOf(markForSelection(this.selection))});
+
         const searchBarRef = REF.createRef({
             state: {
                 float: false
@@ -1553,12 +1671,15 @@ class TimelineFromEndpoint {
                 if (stateDiff.show) {
                     onResizeAction();
                     this.notifyRerender();
+                    showTimelineFromStrips();
                 }
             },
             onElementMount: (element) => {
                 window.addEventListener("scroll", onScrollAction);
                 window.addEventListener("resize", onResizeAction);
                 onResizeAction();
+                if (condensedViewSettings)
+                    setTimeout(showTimelineFromStrips);
             },
             onElementUnmount: (element) => {
                 window.removeEventListener("scroll", onScrollAction);
@@ -1566,7 +1687,10 @@ class TimelineFromEndpoint {
             }
         });
         this.applyCondensedViewSwitch = () => {
-            condensedViewRef.setState({show: showCondensedView});
+            if (showCondensedView && !condensedViewRef.state.show)
+                condensedViewRef.setState({show: true, ...stripsStateFromTimeline()});
+            else
+                condensedViewRef.setState({show: showCondensedView});
             containnerRef.setState({show: !showCondensedView});
         };
         return `<div ref="${condensedViewRef}"></div>
@@ -1586,6 +1710,7 @@ class TimelineFromEndpoint {
                         Close
                     </button>
                 </div>
+                <button class="button" ref="${goToSelectionButtonRef}" style="display: none"></button>
             </div>
             <div class="row" ref="${placeHolderRef}">
                 <div class="col-12" style="height: 40px; padding: 0"></div>
@@ -1663,7 +1788,48 @@ function isUnderToolTipArrow(dot) {
     return !!(elementOverDotCenter && elementOverDotCenter.closest('.tooltip'));
 }
 
-function CondensedView(rows, minimumUuid, view, {failureTypeFor, commitLinksFor, handlersFor, setView}) {
+function condensedViewDiffToShow(rows, minimumUuid, view, failureTypeFor, {row = null, uuid, newestUuid = uuid}) {
+    const maxLines = Math.floor(MAX_CONDENSED_RUN_COUNT / view.runsPerLine);
+    let runCount = view.runCount || Math.min(view.lineCount || 1, maxLines) * view.runsPerLine;
+    const runsOf = candidate => candidate.results.filter(result => result.uuid >= minimumUuid);
+    const runsToShow = 1 + Math.max(-1, ...(row ? [row] : rows).map(candidate => runsOf(candidate).findIndex(result => result.uuid >= uuid && result.uuid <= newestUuid)));
+    const viewDiff = {};
+    if (runsToShow > runCount) {
+        viewDiff.runCount = null;
+        viewDiff.lineCount = Math.min(Math.ceil(runsToShow / view.runsPerLine), maxLines);
+        runCount = viewDiff.lineCount * view.runsPerLine;
+    }
+    if (row && !view.expanded && runsOf(row).slice(0, runCount).every(result => (failureTypeFor(result) || 'success') === 'success'))
+        viewDiff.expanded = true;
+    return viewDiff;
+}
+
+function stripWithQueueUrl(root, queueUrl) {
+    const link = root ? [...root.querySelectorAll('.condensed-view .strip a')].find(candidate => candidate.getAttribute('href') === queueUrl) : null;
+    return link ? link.closest('.strip') : null;
+}
+
+function rowWithQueueUrl(root, queueUrl) {
+    const rows = root ? [...root.querySelectorAll('.timeline > .header .series')] : [];
+    const index = rows.findIndex(row => [...row.querySelectorAll('a')].some(link => link.getAttribute('href') === queueUrl));
+    return index < 0 ? null : rows.slice(0, index + 1).reverse().find(row => row.getClientRects().length) || null;
+}
+
+function scrollToMiddleIfOffScreen(element) {
+    const headerBottom = document.querySelector('.header.fixed')?.getBoundingClientRect().bottom ?? 0;
+    const box = element.getBoundingClientRect();
+    if (box.top < headerBottom || box.top >= window.innerHeight)
+        window.scrollBy(0, box.top - (headerBottom + window.innerHeight - box.height) / 2);
+}
+
+function commitLabelOf(markedCommit) {
+    if (!markedCommit?.commit)
+        return '';
+    const repository = markedCommit.repository;
+    return `${repository ? `${repository.charAt(0).toUpperCase()}${repository.slice(1)} ` : ''}${markedCommit.commit.label()}`;
+}
+
+function CondensedView(rows, minimumUuid, view, {failureTypeFor, commitLinksFor, handlersFor, setView, bringStripIntoView}) {
     const maxLines = Math.floor(MAX_CONDENSED_RUN_COUNT / view.runsPerLine);
     const runCount = view.runCount || Math.min(view.lineCount || 1, maxLines) * view.runsPerLine;
     const strips = rows.map(row => {
@@ -1694,20 +1860,21 @@ function CondensedView(rows, minimumUuid, view, {failureTypeFor, commitLinksFor,
         },
     });
     const highlightClassFor = (row, runs, index) => {
-        const clickedRun = view.clickedRun;
-        if (!clickedRun)
+        const highlight = view.clickedRun || view.markedCommit;
+        if (!highlight)
             return '';
-        const isOlderThanClickedRun = run => run.uuid < clickedRun.uuid;
+        const isOlderThanHighlight = run => run.uuid < highlight.uuid;
+        const carriesHighlightedCommit = run => !isOlderThanHighlight(run) && run.uuid <= (highlight.newestUuid || highlight.uuid);
         const run = runs[index];
         const nextOlderRun = runs[index + 1];
-        if (run.uuid === clickedRun.uuid)
-            return row === clickedRun.row ? ' selected' : ' highlighted';
-        if (isOlderThanClickedRun(run))
+        if (carriesHighlightedCommit(run))
+            return row === view.clickedRun?.row ? ' selected' : ' highlighted';
+        if (isOlderThanHighlight(run))
             return index ? '' : ' line-before';
-        return nextOlderRun && !isOlderThanClickedRun(nextOlderRun) ? '' : ' line-after';
+        return nextOlderRun && !isOlderThanHighlight(nextOlderRun) ? '' : ' line-after';
     };
     const Strip = ({row, runs, types}) => {
-        const {onDotEnter} = handlersFor(row.configuration);
+        const {onDotEnter, onDotClick} = handlersFor(row.configuration);
         const runsRef = REF.createRef({
             onElementMount: (element) => {
                 [...element.children].forEach((dot, index) => {
@@ -1728,7 +1895,8 @@ function CondensedView(rows, minimumUuid, view, {failureTypeFor, commitLinksFor,
                     };
                     dot.onclick = () => {
                         closeToolTip();
-                        setView({clickedRun: {row, uuid: runs[index].uuid}});
+                        setView({clickedRun: {row, uuid: runs[index].uuid}, markedCommit: null});
+                        onDotClick(runs[index]);
                     };
                 });
             },
@@ -1759,14 +1927,33 @@ function CondensedView(rows, minimumUuid, view, {failureTypeFor, commitLinksFor,
             </div>
             ${view.expanded ? stripsWithoutFailures.map(Strip).join('') : ''}`;
     };
+    const GoToBar = () => {
+        if (!view.goToLabel)
+            return '';
+        const goToButtonRef = REF.createRef({
+            onElementMount: (element) => {
+                element.onclick = () => {
+                    const {clickedRun, markedCommit} = view;
+                    setView(condensedViewDiffToShow(rows, minimumUuid, view, failureTypeFor, clickedRun || markedCommit));
+                    if (clickedRun)
+                        bringStripIntoView(clickedRun.row);
+                };
+            },
+        });
+        return `<div class="next-regress-bar">
+                <button class="button" ref="${goToButtonRef}">Go to ${escapeHTML(view.goToLabel)}</button>
+            </div>`;
+    };
+    const markedCommitLabel = commitLabelOf(view.markedCommit);
 
     return `<div class="condensed-view">
-            <div class="text tiny">Up to ${runCount} run${runCount === 1 ? '' : 's'} per configuration, newest first. Click a run to mark its commit on every strip.</div>
+            <div class="text tiny">Up to ${runCount} run${runCount === 1 ? '' : 's'} per configuration, newest first. Click a run to mark its commit on every strip.${markedCommitLabel ? ` · marked: ${escapeHTML(markedCommitLabel)}` : ''}</div>
             <div class="input text tiny">
                 <label>Runs:</label>
                 <input type="range" min="${view.runsPerLine}" max="${maxLines * view.runsPerLine}" step="${view.runsPerLine}" value="${runCount}" ref="${runCountSliderRef}" style="--notches: ${maxLines}">
                 <input type="number" min="1" max="${MAX_CONDENSED_RUN_COUNT}" value="${runCount}" ref="${runCountNumberRef}">
             </div>
+            ${GoToBar()}
             ${stripsWithFailures.map(Strip).join('')}
             ${stripsWithoutFailures.length ? StripsWithoutFailures() : ''}
         </div>`;
@@ -1792,8 +1979,10 @@ function LegendLabel(eventStream, filterExpectedText, filterUnexpectedText) {
 function Legend(callback=null, plural=false, defaultWillFilterExpected=false, flakinessSwitch=false, numberOfFlakySwitch=false, condensedViewSwitch=false) {
     willFilterExpected = defaultWillFilterExpected;
     InvestigateDrawer.willFilterExpected = willFilterExpected;
-    if (condensedViewSwitch)
+    if (condensedViewSwitch) {
+        hasCondensedViewSwitch = true;
         showCondensedView = isCondensedViewInAddress();
+    }
     let updateLabelEvents = new EventStream();
     const legendDetails = {
         success: {
@@ -1906,7 +2095,6 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false, fl
                     if (element.checked) {
                         showCondensedView = true;
                         condensedViewQuery.replace(true);
-                        InvestigateDrawer.collapse();
                     } else {
                         showCondensedView = false;
                         condensedViewQuery.remove();
@@ -1918,8 +2106,6 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false, fl
                         return;
                     showCondensedView = !showCondensedView;
                     element.checked = showCondensedView;
-                    if (showCondensedView)
-                        InvestigateDrawer.collapse();
                     callback();
                 };
                 window.addEventListener('popstate', onCondensedViewPopState);
