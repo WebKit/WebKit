@@ -172,6 +172,7 @@ class Tracker(GenericTracker):
         password = Environment.instance().get('RADAR_PASSWORD')
         totp_secret = Environment.instance().get('RADAR_TOTP_SECRET')
         totp_id = Environment.instance().get('RADAR_TOTP_ID') or 1
+        interactivity_type = Environment.instance().get('RADAR_INTERACTIVITY_TYPE')
 
         try:
             if identity and os.path.isdir(identity):
@@ -180,6 +181,8 @@ class Tracker(GenericTracker):
                 self._authentication = self.library.AuthenticationStrategySystemAccountOAuth(
                     username, password, totp_secret, totp_id,
                 )
+            elif interactivity_type:
+                self._authentication = self.library.AuthenticationStrategyAppleConnect(interactivity_type=interactivity_type)
             else:
                 self._authentication = self.library.AuthenticationStrategyAppleConnect()
         except Exception:
