@@ -417,7 +417,9 @@ bool JSDOMGlobalObject::canCompileStrings(JSGlobalObject* globalObject, Compilat
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto& thisObject = *downcast<JSDOMGlobalObject>(globalObject);
-    CheckedPtr scriptExecutionContext = thisObject.scriptExecutionContext();
+    RefPtr scriptExecutionContext = thisObject.scriptExecutionContext();
+    if (!scriptExecutionContext) [[unlikely]]
+        return false;
 
     auto result = canCompile(*scriptExecutionContext, compilationType, codeString, args);
 
