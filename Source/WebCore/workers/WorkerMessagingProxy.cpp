@@ -433,13 +433,13 @@ void WorkerMessagingProxy::workerObjectDestroyed()
         return;
     }
 
-    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }](auto&) {
+    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, { ScriptExecutionContext::Task::CleanupTask, [this, protectedThis = Ref { *this }](auto&) {
         m_mayBeDestroyed = true;
         if (m_workerThread)
             terminateWorkerGlobalScope();
         else
             workerGlobalScopeDestroyedInternal();
-    });
+    } });
 }
 
 void WorkerMessagingProxy::notifyNetworkStateChange(bool isOnline)
@@ -462,9 +462,9 @@ void WorkerMessagingProxy::workerGlobalScopeDestroyed()
     if (!m_scriptExecutionContextIdentifier)
         return;
 
-    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }](auto&) {
+    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, { ScriptExecutionContext::Task::CleanupTask, [this, protectedThis = Ref { *this }](auto&) {
         workerGlobalScopeDestroyedInternal();
-    });
+    } });
 }
 
 void WorkerMessagingProxy::workerGlobalScopeClosed()

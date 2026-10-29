@@ -386,7 +386,11 @@ void WorkerDedicatedRunLoop::runCleanupTasks(WorkerOrWorkletGlobalScope* context
     ASSERT(m_messageQueue.killed());
 
     while (true) {
-        auto task = m_messageQueue.tryGetMessageIgnoringKilled();
+        // A child posts its destruction notification to this queue. Keep the
+        // parent's thread alive to process it, even after termination was requested.
+        auto task = context->workerOrWorkletThread()->hasChildThreads()
+            ? m_messageQueue.waitForMessageIgnoringKilled()
+            : m_messageQueue.tryGetMessageIgnoringKilled();
         if (!task)
             return;
         task->performTask(context);

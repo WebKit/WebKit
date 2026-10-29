@@ -1,0 +1,3 @@
+Terminating a worker while its child is starting releases both workers.
+
+PASS: both workers released

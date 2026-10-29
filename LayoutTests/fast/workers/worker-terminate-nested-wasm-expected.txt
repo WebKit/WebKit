@@ -1,0 +1,3 @@
+Terminating a worker releases its child blocked in WASM atomic wait.
+
+PASS: both workers released

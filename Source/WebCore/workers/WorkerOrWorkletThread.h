@@ -81,6 +81,7 @@ public:
 
     void addChildThread(WorkerOrWorkletThread&);
     void removeChildThread(WorkerOrWorkletThread&);
+    bool hasChildThreads() const { return !m_childThreads.isEmptyIgnoringNullReferences(); }
 
     virtual bool isWorkerThread() const { return false; }
     virtual bool isDedicatedWorkerThread() const { return false; }
@@ -111,7 +112,6 @@ private:
     Function<void()> m_stoppedCallback;
     BinarySemaphore m_suspensionSemaphore;
     ThreadSafeWeakHashSet<WorkerOrWorkletThread> m_childThreads;
-    Function<void()> m_runWhenLastChildThreadIsGone;
     bool m_isSuspended { false };
     bool m_pausedForDebugger { false };
 };
