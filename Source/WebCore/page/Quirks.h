@@ -190,7 +190,7 @@ public:
     void clearLogoutSurvivingIdentityCookiesIfNeeded(const URL& fetchURL, int httpStatusCode);
 
     void determineRelevantQuirks();
-    void urlsDidChange();
+    WEBCORE_EXPORT void urlsDidChange();
     void logQuirksToConsoleIfNecessary() const;
 
 private:

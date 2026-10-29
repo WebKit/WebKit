@@ -1,0 +1,5 @@
+Before: []
+After custom table: ["ShouldExposeShowModalDialog"]
+Invalid table: SyntaxError
+After invalid table: ["ShouldExposeShowModalDialog"]
+

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>internals.setQuirkTableForTesting() replaces the quirk table</title>
+</head>
+<body>
+<pre id="output"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+let output = "";
+function log(message) { output += message + "\n"; }
+
+if (!window.internals)
+    log("FAIL: this test requires window.internals.");
+else {
+    const url = "https://custom-quirk-table.test/";
+
+    internals.setTopDocumentURLForQuirks(url);
+    log("Before: " + JSON.stringify(internals.activeQuirks()));
+
+    internals.setQuirkTableForTesting({ quirks: [{
+        matches: ["*://custom-quirk-table.test/*"],
+        behaviors: [{ id: "ShouldExposeShowModalDialog" }]
+    }] });
+    internals.setTopDocumentURLForQuirks(url);
+    log("After custom table: " + JSON.stringify(internals.activeQuirks()));
+
+    try {
+        internals.setQuirkTableForTesting({ quirks: [{ matches: ["*://*.example.com/*"] }] });
+        log("FAIL: invalid table was accepted.");
+    } catch (e) {
+        log("Invalid table: " + e.name);
+    }
+    internals.setTopDocumentURLForQuirks(url);
+    log("After invalid table: " + JSON.stringify(internals.activeQuirks()));
+}
+document.getElementById("output").textContent = output;
+</script>
+</body>
+</html>

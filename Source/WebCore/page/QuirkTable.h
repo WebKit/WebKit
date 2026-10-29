@@ -104,4 +104,9 @@ WEBCORE_EXPORT const QuirkTable& quirkTable();
 
 WEBCORE_EXPORT void setQuirkTable(QuirkTable&&);
 
+struct QuirkTableOverride {
+    WEBCORE_EXPORT static void install(QuirkTable&&);
+    WEBCORE_EXPORT static void restore();
+};
+
 } // namespace WebCore

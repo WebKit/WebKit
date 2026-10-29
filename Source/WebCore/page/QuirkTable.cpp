@@ -661,4 +661,27 @@ const QuirkTable& quirkTable()
     return QuirkTableHolder::singleton().table();
 }
 
+static std::optional<QuirkTable>& originalQuirkTable()
+{
+    static MainThreadNeverDestroyed<std::optional<QuirkTable>> table;
+    return table.get();
+}
+
+void QuirkTableOverride::install(QuirkTable&& table)
+{
+    auto& original = originalQuirkTable();
+    if (!original)
+        original = quirkTable();
+    setQuirkTable(WTF::move(table));
+}
+
+void QuirkTableOverride::restore()
+{
+    auto& original = originalQuirkTable();
+    if (!original)
+        return;
+    setQuirkTable(WTF::move(*original));
+    original = std::nullopt;
+}
+
 } // namespace WebCore

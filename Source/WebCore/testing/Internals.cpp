@@ -208,6 +208,7 @@
 #include "PseudoElement.h"
 #include "PushSubscription.h"
 #include "PushSubscriptionData.h"
+#include "QuirkTable.h"
 #include "RTCController.h"
 #include "RTCNetworkManager.h"
 #include "Range.h"
@@ -305,6 +306,7 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCellInlines.h>
+#include <JavaScriptCore/JSONObject.h>
 #include <JavaScriptCore/MarkedSpaceInlines.h>
 #include <JavaScriptCore/SourceTaintedness.h>
 #include <wtf/FileHandle.h>
@@ -653,6 +655,7 @@ void Internals::resetToConsistentState(Page& page)
     page.setConsoleMessageListenerForTesting(nullptr);
     page.setQuirksSubframeURLForTesting({ });
     page.setQuirksTopDocumentHostForTesting({ });
+    QuirkTableOverride::restore();
 #if ENABLE(SERVICE_CONTROLS)
     page.servicesOverlayController().setHasRelevantSelectionServicesForTesting(std::nullopt);
 #endif
@@ -9207,6 +9210,32 @@ void Internals::setTopDocumentHostForQuirks(const String& host)
     Ref page = *protect(document->page());
     page->settings().setNeedsSiteSpecificQuirks(true);
     page->setQuirksTopDocumentHostForTesting(String { host });
+}
+
+ExceptionOr<void> Internals::setQuirkTableForTesting(JSDOMGlobalObject& globalObject, JSC::JSValue table)
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->page())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    auto& vm = globalObject.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    String json = JSC::JSONStringify(&globalObject, table, 0u);
+    RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
+
+    auto result = parseQuirkTable(json);
+    if (!result.errors.isEmpty()) {
+        StringBuilder message;
+        for (auto& error : result.errors)
+            message.append(error.description(), '\n');
+        return Exception { ExceptionCode::SyntaxError, message.toString() };
+    }
+
+    QuirkTableOverride::install(WTF::move(result.table));
+
+    protect(document->page())->settings().setNeedsSiteSpecificQuirks(true);
+    document->quirks().urlsDidChange();
+    return { };
 }
 
 Vector<String> Internals::activeQuirks() const
