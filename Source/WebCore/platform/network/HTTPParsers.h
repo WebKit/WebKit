@@ -130,6 +130,12 @@ bool isSafeMethod(const String&);
 
 WEBCORE_EXPORT CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView);
 
+// The delimiter placed between values when appending to a request header, or nullopt if appending isn't supported.
+WEBCORE_EXPORT std::optional<ASCIILiteral> requestHeaderAppendDelimiter(const String& header);
+
+// Request headers, and header values, that an extension can't set or append to, because the network stack manages them.
+WEBCORE_EXPORT bool isRequestHeaderUnsafeToModify(const String& header, StringView value);
+
 template<class HashType>
 bool addToAccessControlAllowList(const String& string, unsigned start, unsigned end, HashSet<String, HashType>& set)
 {

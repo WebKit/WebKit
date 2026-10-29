@@ -576,4 +576,95 @@ TEST(RFC8941, ParseDictionaryStructuredFieldValue)
     EXPECT_TRUE(*paramBoolean);
 }
 
+TEST(HTTPParsers, RequestHeaderAppendDelimiter)
+{
+    static constexpr std::pair<ASCIILiteral, ASCIILiteral> appendableHeaders[] {
+        { "Accept"_s, ", "_s },
+        { "Accept-Encoding"_s, ", "_s },
+        { "Accept-Language"_s, ", "_s },
+        { "Access-Control-Request-Headers"_s, ", "_s },
+        { "Cache-Control"_s, ", "_s },
+        { "Connection"_s, ", "_s },
+        { "Content-Language"_s, ", "_s },
+        { "Cookie"_s, "; "_s },
+        { "Forwarded"_s, ", "_s },
+        { "If-Match"_s, ", "_s },
+        { "If-None-Match"_s, ", "_s },
+        { "Keep-Alive"_s, ", "_s },
+        { "Range"_s, ", "_s },
+        { "TE"_s, ", "_s },
+        { "Trailer"_s, ""_s },
+        { "Transfer-Encoding"_s, ", "_s },
+        { "Upgrade"_s, ", "_s },
+        { "User-Agent"_s, " "_s },
+        { "Via"_s, ", "_s },
+        { "Want-Digest"_s, ", "_s },
+        { "X-Forwarded-For"_s, ", "_s }
+    };
+
+    for (auto& [name, delimiter] : appendableHeaders) {
+        auto result = requestHeaderAppendDelimiter(String { name });
+        EXPECT_TRUE(result.has_value());
+        EXPECT_STREQ(result.value_or("missing"_s).characters(), delimiter.characters());
+    }
+
+    EXPECT_STREQ(requestHeaderAppendDelimiter("accept-language"_s)->characters(), ", ");
+    EXPECT_STREQ(requestHeaderAppendDelimiter("X-FORWARDED-FOR"_s)->characters(), ", ");
+
+    EXPECT_FALSE(requestHeaderAppendDelimiter("Content-Type"_s).has_value());
+    EXPECT_FALSE(requestHeaderAppendDelimiter("Authorization"_s).has_value());
+    EXPECT_FALSE(requestHeaderAppendDelimiter("X-Custom"_s).has_value());
+    EXPECT_FALSE(requestHeaderAppendDelimiter(" Accept"_s).has_value());
+    EXPECT_FALSE(requestHeaderAppendDelimiter(emptyString()).has_value());
+}
+
+TEST(HTTPParsers, RequestHeaderUnsafeToModify)
+{
+    for (auto name : { "Available-Dictionary"_s, "Content-Length"_s, "Cookie2"_s, "Host"_s, "Keep-Alive"_s, "Set-Cookie"_s, "TE"_s, "Trailer"_s, "Transfer-Encoding"_s, "Upgrade"_s })
+        EXPECT_TRUE(isRequestHeaderUnsafeToModify(String { name }, "1"_s));
+
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("host"_s, "example.com"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("CONTENT-LENGTH"_s, "0"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Proxy-Authorization"_s, "Basic abc"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("proxy-connection"_s, "close"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Proxy-"_s, "1"_s));
+
+    for (auto name : { "Accept"_s, "Authorization"_s, "Cookie"_s, "Origin"_s, "Referer"_s, "User-Agent"_s, "Via"_s, "Sec-GPC"_s, "X-Request-Id"_s, "Proxy"_s, "X-Proxy-Id"_s })
+        EXPECT_FALSE(isRequestHeaderUnsafeToModify(String { name }, "1"_s));
+
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify(emptyString(), "1"_s));
+}
+
+TEST(HTTPParsers, RequestHeaderUnsafeToModifyValues)
+{
+    // Connection only allows close and keep-alive.
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Connection"_s, "close"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Connection"_s, "keep-alive"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("connection"_s, "Close, Keep-Alive"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Connection"_s, ""_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Connection"_s, "upgrade"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Connection"_s, "close, X-Secret"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Connection"_s, "Authorization"_s));
+
+    // Accept-Encoding can't use shared dictionary encodings or a wildcard.
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Accept-Encoding"_s, "gzip, deflate, br"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Accept-Encoding"_s, "gzip;q=1.0, identity; q=0.5"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Accept-Encoding"_s, ""_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Accept-Encoding"_s, "*"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Accept-Encoding"_s, "identity;q=1, *;q=0"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("accept-encoding"_s, "gzip, DCB"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Accept-Encoding"_s, "dcz;q=0.9, gzip"_s));
+
+    // Method override headers can't name a forbidden method.
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("X-HTTP-Method-Override"_s, "PUT"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("X-Method-Override"_s, "patch, delete"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("X-HTTP-Method-Override"_s, "TRACE"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("x-http-method"_s, "get, connect"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("X-Method-Override"_s, "Track"_s));
+
+    // The same values are fine on other headers.
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("X-Custom"_s, "TRACE"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Accept"_s, "*"_s));
+}
+
 } // namespace TestWebKitAPI

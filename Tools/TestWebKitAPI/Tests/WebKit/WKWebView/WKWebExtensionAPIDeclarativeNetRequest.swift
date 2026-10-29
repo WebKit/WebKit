@@ -4762,6 +4762,7 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
         try testModifyHeaders("responseHeaders", [["header": "accept", "operation": "remove", "value": "v1"]], nil, nil)
         try testModifyHeaders("requestHeaders", [["operation": "set", "value": "v1"]], nil, nil)
         try testModifyHeaders("requestHeaders", [["header": "ellie's custom header", "operation": "set", "value": "v1"]], nil, nil)
+        try testModifyHeaders("requestHeaders", [["header": "authorization", "operation": "append", "value": "v1"]], nil, nil)
 
         try testModifyHeaders(
             "requestHeaders",
@@ -4783,6 +4784,63 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
         )
         try testModifyHeaders(
             "requestHeaders",
+            [["header": "cookie", "operation": "append", "value": "a=1"]],
+            "request-headers",
+            [["header": "cookie", "operation": "append", "value": "a=1"]]
+        )
+        try testModifyHeaders(
+            "requestHeaders",
+            [["header": "authorization", "operation": "set", "value": "v1"]],
+            "request-headers",
+            [["header": "authorization", "operation": "set", "value": "v1"]]
+        )
+        try testModifyHeaders("requestHeaders", [["header": "host", "operation": "set", "value": "example.com"]], nil, nil)
+        try testModifyHeaders("requestHeaders", [["header": "Content-Length", "operation": "set", "value": "0"]], nil, nil)
+        try testModifyHeaders("requestHeaders", [["header": "Proxy-Authorization", "operation": "set", "value": "v1"]], nil, nil)
+        try testModifyHeaders("requestHeaders", [["header": "Transfer-Encoding", "operation": "append", "value": "chunked"]], nil, nil)
+        try testModifyHeaders(
+            "requestHeaders",
+            [["header": "host", "operation": "remove"]],
+            "request-headers",
+            [["header": "host", "operation": "remove"]]
+        )
+        try testModifyHeaders(
+            "responseHeaders",
+            [["header": "content-length", "operation": "set", "value": "0"]],
+            "response-headers",
+            [["header": "content-length", "operation": "set", "value": "0"]]
+        )
+        try testModifyHeaders("requestHeaders", [["header": "connection", "operation": "set", "value": "upgrade"]], nil, nil)
+        try testModifyHeaders("requestHeaders", [["header": "accept-encoding", "operation": "set", "value": "*"]], nil, nil)
+        try testModifyHeaders("requestHeaders", [["header": "accept-encoding", "operation": "append", "value": "dcb"]], nil, nil)
+        try testModifyHeaders("requestHeaders", [["header": "X-HTTP-Method-Override", "operation": "set", "value": "TRACE"]], nil, nil)
+        try testModifyHeaders("responseHeaders", [["header": "x-test", "operation": "set", "value": "a\r\nb: c"]], nil, nil)
+        try testModifyHeaders(
+            "requestHeaders",
+            [["header": "connection", "operation": "set", "value": "close"]],
+            "request-headers",
+            [["header": "connection", "operation": "set", "value": "close"]]
+        )
+        try testModifyHeaders(
+            "requestHeaders",
+            [["header": "accept-encoding", "operation": "set", "value": "gzip, deflate"]],
+            "request-headers",
+            [["header": "accept-encoding", "operation": "set", "value": "gzip, deflate"]]
+        )
+        try testModifyHeaders(
+            "requestHeaders",
+            [["header": "X-HTTP-Method-Override", "operation": "set", "value": "PUT"]],
+            "request-headers",
+            [["header": "X-HTTP-Method-Override", "operation": "set", "value": "PUT"]]
+        )
+        try testModifyHeaders(
+            "responseHeaders",
+            [["header": "authorization", "operation": "append", "value": "v1"]],
+            "response-headers",
+            [["header": "authorization", "operation": "append", "value": "v1"]]
+        )
+        try testModifyHeaders(
+            "requestHeaders",
             [["header": "accept", "operation": "append", "value": "v1"], ["header": "accept", "operation": "set", "value": "v1"]],
             "request-headers",
             [["header": "accept", "operation": "append", "value": "v1"], ["header": "accept", "operation": "set", "value": "v1"]]
@@ -4793,6 +4851,100 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
             "response-headers",
             [["header": "accept", "operation": "set", "value": "v1"]]
         )
+    }
+
+    @Test
+    func ruleConversionWithModifyHeadersWithCustomHeaderNames() throws {
+        func convertedRule(
+            headerName: String,
+            operation: String = "set",
+            value: String? = "1",
+            headerKey: String = "requestHeaders"
+        ) -> [String: Any]? {
+            var headerInfo: [String: Any] = ["header": headerName, "operation": operation]
+            if let value {
+                headerInfo["value"] = value
+            }
+
+            let rule: [String: Any] = [
+                "id": 10,
+                "priority": 2,
+                "action": [
+                    "type": "modifyHeaders",
+                    headerKey: [headerInfo],
+                ],
+                "condition": [
+                    "urlFilter": "*",
+                    "resourceTypes": ["script"],
+                ],
+            ]
+
+            return unsafe _WKWebExtensionDeclarativeNetRequestRule(
+                dictionary: rule,
+                rulesetID: "Test Ruleset",
+                errorString: nil
+            )?
+            .ruleInWebKitFormat.first
+        }
+
+        #expect(convertedRule(headerName: "X-Custom-Header") != nil)
+        #expect(convertedRule(headerName: "Foo") != nil)
+        #expect(convertedRule(headerName: "X-Custom-Header", operation: "remove", value: nil) != nil)
+        #expect(convertedRule(headerName: "X-Request-Id", operation: "append", headerKey: "responseHeaders") != nil)
+
+        #expect(convertedRule(headerName: "X-Request-Id", operation: "append") == nil)
+        #expect(convertedRule(headerName: "") == nil)
+        #expect(convertedRule(headerName: "Foo:Bar") == nil)
+        #expect(convertedRule(headerName: "X Custom Header") == nil)
+        #expect(convertedRule(headerName: "X-Custom-Header", value: nil) == nil)
+    }
+
+    @Test
+    func translatingRulesDropsOnlyRulesAppendingToUnsupportedRequestHeaders() {
+        let rules: [String: [[String: Any]]] = [
+            "Test Ruleset": [
+                [
+                    "id": 1,
+                    "priority": 1,
+                    "action": ["type": "block"],
+                    "condition": [
+                        "urlFilter": "foo",
+                        "resourceTypes": ["script"],
+                    ],
+                ],
+                [
+                    "id": 2,
+                    "priority": 1,
+                    "action": [
+                        "type": "modifyHeaders",
+                        "requestHeaders": [["header": "authorization", "operation": "append", "value": "Bearer token"]],
+                    ],
+                    "condition": [
+                        "urlFilter": "bar",
+                        "resourceTypes": ["script"],
+                    ],
+                ],
+                [
+                    "id": 3,
+                    "priority": 1,
+                    "action": [
+                        "type": "modifyHeaders",
+                        "responseHeaders": [["header": "authorization", "operation": "append", "value": "Bearer token"]],
+                    ],
+                    "condition": [
+                        "urlFilter": "baz",
+                        "resourceTypes": ["script"],
+                    ],
+                ],
+            ]
+        ]
+
+        var errorStrings: NSArray?
+        let translatedRules = unsafe _WKWebExtensionDeclarativeNetRequestTranslator.translateRules(rules, errorStrings: &errorStrings)
+
+        #expect(translatedRules.count == 2)
+        #expect(errorStrings?.count == 1)
+        #expect((errorStrings?.firstObject as? String)?.contains("Rule with id 2 is invalid") == true)
     }
 
     @Test

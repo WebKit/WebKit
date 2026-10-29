@@ -38,6 +38,7 @@ NSString * const dynamicRulesetID = @"_dynamic";
 #import "CocoaHelpers.h"
 #import "WKContentRuleListInternal.h"
 #import "WebExtensionUtilities.h"
+#import <WebCore/HTTPParsers.h>
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -543,7 +544,7 @@ using namespace WebKit;
         }
 
         for (NSDictionary *headerInfo in requestHeadersInfo) {
-            NSString *errorString = [self _validateHeaderInfoDictionary:headerInfo];
+            NSString *errorString = [self _validateHeaderInfoDictionary:headerInfo isRequestHeader:YES];
             if (errorString) {
                 if (outErrorString)
                     *outErrorString = errorString;
@@ -553,7 +554,7 @@ using namespace WebKit;
         }
 
         for (NSDictionary *headerInfo in responseHeadersInfo) {
-            NSString *errorString = [self _validateHeaderInfoDictionary:headerInfo];
+            NSString *errorString = [self _validateHeaderInfoDictionary:headerInfo isRequestHeader:NO];
             if (errorString) {
                 if (outErrorString)
                     *outErrorString = errorString;
@@ -566,7 +567,7 @@ using namespace WebKit;
     return self;
 }
 
-- (NSString *)_validateHeaderInfoDictionary:(NSDictionary *)headerInfo
+- (NSString *)_validateHeaderInfoDictionary:(NSDictionary *)headerInfo isRequestHeader:(BOOL)isRequestHeader
 {
     static NSArray *requiredKeysInModifyHeadersDictionary = @[
         declarativeNetRequestRuleHeaderKey,
@@ -602,108 +603,33 @@ using namespace WebKit;
     if ((isSetOperation || isAppendOperation) && !headerValue)
         return [[NSString alloc] initWithFormat:@"Rule with id %ld is invalid. You must provide a value when modifying a header.", (long)_ruleID];
 
+    if (headerValue && !isHeaderValueValid(headerValue))
+        return [[NSString alloc] initWithFormat:@"Rule with id %ld is invalid. The value for the header `%@` is not valid.", (long)_ruleID, headerName];
+
+    if (isRequestHeader && (isSetOperation || isAppendOperation) && WebCore::isRequestHeaderUnsafeToModify(headerName, String(headerValue)))
+        return [[NSString alloc] initWithFormat:@"Rule with id %ld is invalid. The request header `%@` cannot be modified.", (long)_ruleID, headerName];
+
+    if (isRequestHeader && isAppendOperation && !WebCore::requestHeaderAppendDelimiter(headerName))
+        return [[NSString alloc] initWithFormat:@"Rule with id %ld is invalid. The request header `%@` does not support the `append` operation.", (long)_ruleID, headerName];
+
     return nil;
 }
 
 static BOOL isHeaderNameValid(NSString *headerName)
 {
-    static NSArray<NSString *> *acceptedHeaderNames = @[
-        @"accept",
-        @"accept-charset",
-        @"accept-language",
-        @"accept-encoding",
-        @"accept-ranges",
-        @"access-control-allow-credentials",
-        @"access-control-allow-headers",
-        @"access-control-allow-methods",
-        @"access-control-allow-origin",
-        @"access-control-expose-headers",
-        @"access-control-max-age",
-        @"access-control-request-headers",
-        @"access-control-request-method",
-        @"age",
-        @"authorization",
-        @"cache-control",
-        @"connection",
-        @"content-disposition",
-        @"content-encoding",
-        @"content-language",
-        @"content-length",
-        @"content-location",
-        @"content-security-policy",
-        @"content-security-policy-report-only",
-        @"content-type",
-        @"content-range",
-        @"cookie",
-        @"cookie2",
-        @"cross-origin-embedder-policy",
-        @"cross-origin-embedder-policy-report-only",
-        @"cross-origin-opener-policy",
-        @"cross-origin-opener-policy-report-only",
-        @"cross-origin-resource-policy",
-        @"date",
-        @"dnt",
-        @"default-style",
-        @"etag",
-        @"expect",
-        @"expires",
-        @"host",
-        @"if-match",
-        @"if-modified-since",
-        @"if-none-match",
-        @"if-range",
-        @"if-unmodified-since",
-        @"keep-alive",
-        @"last-event-id",
-        @"last-modified",
-        @"link",
-        @"location",
-        @"origin",
-        @"ping-from",
-        @"ping-to",
-        @"purpose",
-        @"pragma",
-        @"proxy-authorization",
-        @"range",
-        @"referer",
-        @"referrer-policy",
-        @"refresh",
-        @"report-to",
-        @"reporting-endpoints",
-        @"sec-fetch-dest",
-        @"sec-fetch-mode",
-        @"sec-gpc",
-        @"sec-websocket-accept",
-        @"sec-websocket-extensions",
-        @"sec-websocket-key",
-        @"sec-websocket-protocol",
-        @"sec-websocket-version",
-        @"server-timing",
-        @"service-worker",
-        @"service-worker-allowed",
-        @"service-worker-navigation-preload",
-        @"set-cookie",
-        @"set-cookie2",
-        @"sourcemap",
-        @"te",
-        @"timing-allow-origin",
-        @"trailer",
-        @"transfer-encoding",
-        @"upgrade",
-        @"upgrade-insecure-requests",
-        @"user-agent",
-        @"vary",
-        @"via",
-        @"x-content-type-options",
-        @"x-frame-options",
-        @"x-sourcemap",
-        @"x-xss-protection",
-        @"x-temp-tablet",
-        @"icy-metaint",
-        @"icy-metadata",
-    ];
+    return WebCore::isValidHTTPToken(String(headerName));
+}
 
-    return [acceptedHeaderNames containsObject:headerName.lowercaseString];
+static BOOL isHeaderValueValid(NSString *headerValue)
+{
+    // A header value can't contain NUL, CR or LF.
+    for (NSUInteger i = 0; i < headerValue.length; ++i) {
+        unichar character = [headerValue characterAtIndex:i];
+        if (!character || character == '\r' || character == '\n')
+            return NO;
+    }
+
+    return YES;
 }
 
 static BOOL isArrayOfDomainsValid(NSArray<NSString *> *domains)

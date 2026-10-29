@@ -843,18 +843,23 @@ bool isForbiddenHeaderName(const String& name)
     return startsWithLettersIgnoringASCIICase(name, "sec-"_s) || startsWithLettersIgnoringASCIICase(name, "proxy-"_s);
 }
 
+static bool isForbiddenMethodOverrideHeader(const String& name, StringView value)
+{
+    if (!equalLettersIgnoringASCIICase(name, "x-http-method-override"_s) && !equalLettersIgnoringASCIICase(name, "x-http-method"_s) && !equalLettersIgnoringASCIICase(name, "x-method-override"_s))
+        return false;
+
+    for (auto methodValue : StringView(value).split(',')) {
+        auto method = methodValue.trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
+        if (isForbiddenMethod(method))
+            return true;
+    }
+
+    return false;
+}
+
 bool isForbiddenHeader(const String& name, StringView value)
 {
-    if (isForbiddenHeaderName(name))
-        return true;
-    if (equalLettersIgnoringASCIICase(name, "x-http-method-override"_s) || equalLettersIgnoringASCIICase(name, "x-http-method"_s) || equalLettersIgnoringASCIICase(name, "x-method-override"_s)) {
-        for (auto methodValue : StringView(value).split(',')) {
-            auto method = methodValue.trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
-            if (isForbiddenMethod(method))
-                return true;
-        }
-    }
-    return false;
+    return isForbiddenHeaderName(name) || isForbiddenMethodOverrideHeader(name, value);
 }
 
 // Implements <https://fetch.spec.whatwg.org/#no-cors-safelisted-request-header-name>.
@@ -1014,6 +1019,88 @@ CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView header
         return CrossOriginResourcePolicy::CrossOrigin;
 
     return CrossOriginResourcePolicy::Invalid;
+}
+
+// Request headers that can be appended to, and the delimiter placed between values.
+std::optional<ASCIILiteral> requestHeaderAppendDelimiter(const String& header)
+{
+    static constexpr std::pair<ASCIILiteral, ASCIILiteral> appendableHeaders[] {
+        { "accept"_s, ", "_s },
+        { "accept-encoding"_s, ", "_s },
+        { "accept-language"_s, ", "_s },
+        { "access-control-request-headers"_s, ", "_s },
+        { "cache-control"_s, ", "_s },
+        { "connection"_s, ", "_s },
+        { "content-language"_s, ", "_s },
+        { "cookie"_s, "; "_s },
+        { "forwarded"_s, ", "_s },
+        { "if-match"_s, ", "_s },
+        { "if-none-match"_s, ", "_s },
+        { "keep-alive"_s, ", "_s },
+        { "range"_s, ", "_s },
+        { "te"_s, ", "_s },
+        { "trailer"_s, ""_s },
+        { "transfer-encoding"_s, ", "_s },
+        { "upgrade"_s, ", "_s },
+        { "user-agent"_s, " "_s },
+        { "via"_s, ", "_s },
+        { "want-digest"_s, ", "_s },
+        { "x-forwarded-for"_s, ", "_s }
+    };
+
+    for (auto& [name, delimiter] : appendableHeaders) {
+        if (equalIgnoringASCIICase(header, name))
+            return delimiter;
+    }
+
+    return std::nullopt;
+}
+
+bool isRequestHeaderUnsafeToModify(const String& header, StringView value)
+{
+    static constexpr ASCIILiteral unsafeHeaders[] {
+        "available-dictionary"_s,
+        "content-length"_s,
+        "cookie2"_s,
+        "host"_s,
+        "keep-alive"_s,
+        "set-cookie"_s,
+        "te"_s,
+        "trailer"_s,
+        "transfer-encoding"_s,
+        "upgrade"_s
+    };
+
+    if (startsWithLettersIgnoringASCIICase(header, "proxy-"_s))
+        return true;
+
+    for (auto name : unsafeHeaders) {
+        if (equalIgnoringASCIICase(header, name))
+            return true;
+    }
+
+    // Shared dictionary encodings and wildcards can't be negotiated by an extension.
+    if (equalLettersIgnoringASCIICase(header, "accept-encoding"_s)) {
+        for (auto encodingValue : value.split(',')) {
+            auto encoding = encodingValue.left(encodingValue.find(';')).trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
+            if (equalLettersIgnoringASCIICase(encoding, "dcb"_s) || equalLettersIgnoringASCIICase(encoding, "dcz"_s) || encoding == "*"_s)
+                return true;
+        }
+    }
+
+    // Only the connection options that the network stack itself uses are allowed.
+    if (equalLettersIgnoringASCIICase(header, "connection"_s)) {
+        for (auto tokenValue : value.split(',')) {
+            auto token = tokenValue.trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
+            if (token.isEmpty())
+                continue;
+
+            if (!equalLettersIgnoringASCIICase(token, "close"_s) && !equalLettersIgnoringASCIICase(token, "keep-alive"_s))
+                return true;
+        }
+    }
+
+    return isForbiddenMethodOverrideHeader(header, value);
 }
 
 }
