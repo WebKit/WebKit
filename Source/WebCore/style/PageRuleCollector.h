@@ -49,7 +49,7 @@ private:
     WTF::String LEGACY_NODELETE pageName(int pageIndex) const;
 
     void matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName);
-    void matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>& rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName);
+    void matchPageRulesForList(Vector<Ref<StyleRulePage>>& matchedRules, const Vector<Ref<StyleRulePage>>& rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName);
 
     ScopeRuleSets& m_ruleSets;
     WritingMode m_rootWritingMode;

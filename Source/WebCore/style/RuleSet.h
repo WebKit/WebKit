@@ -132,7 +132,7 @@ public:
     PseudoElementBoxGeneration universalHTMLPseudoElementBoxGeneration() const { return m_universalHTMLPseudoElementBoxGeneration; }
     PseudoElementBoxGeneration universalPseudoElementBoxGeneration() const { return m_universalPseudoElementBoxGeneration; }
 
-    const Vector<StyleRulePage*>& pageRules() const LIFETIME_BOUND { return m_pageRules; }
+    const Vector<Ref<StyleRulePage>>& pageRules() const LIFETIME_BOUND { return m_pageRules; }
 
     unsigned ruleCount() const { return m_ruleCount; }
 
@@ -250,7 +250,7 @@ private:
     EnumSet<PseudoElementType> m_universalPseudoElementTypes;
     PseudoElementBoxGeneration m_universalHTMLPseudoElementBoxGeneration { PseudoElementBoxGeneration::NotForBeforeOrAfter };
     PseudoElementBoxGeneration m_universalPseudoElementBoxGeneration { PseudoElementBoxGeneration::NotForBeforeOrAfter };
-    Vector<StyleRulePage*> m_pageRules;
+    Vector<Ref<StyleRulePage>> m_pageRules;
     RefPtr<StyleRuleViewTransition> m_viewTransitionRule;
     RuleFeatureSet m_features;
     Vector<DynamicMediaQueryRules> m_dynamicMediaQueryRules;
