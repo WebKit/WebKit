@@ -4771,11 +4771,19 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
         Checked<int32_t> topSourceOffsetFromFP = static_cast<int32_t>(roundUpToMultipleOf<stackAlignmentBytes()>(topSource));
 
         m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfTargetInstance()), wasmScratchGPR);
-        Jump isSameInstance = m_jit.branchPtr(RelationalCondition::Equal, wasmScratchGPR, GPRInfo::wasmContextInstancePointer);
+        // We need a restore frame if the wasm instance is different or if the call goes out to JS.
+        // In the latter case JS can grow wasm memory, invalidating memory base cached in a callee save register.
+        Jump needsRestoreFrame = m_jit.branchPtr(RelationalCondition::NotEqual, wasmScratchGPR, GPRInfo::wasmContextInstancePointer);
+        // FIXME: consider overloading WasmCallableFunction::targetInstance to hold a JSFunction when the
+        // callee exits to JS. The instance comparison above would then fail for a JS import on its own and
+        // this second test could go away. See also OMGIRGenerator::emitIndirectCall().
+        m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfBoxedCallee()), wasmScratchGPR);
+        Jump skipRestoreFrame = branchIfCalleeNotWasmToJS(m_jit, wasmScratchGPR);
+        needsRestoreFrame.link(m_jit);
         emitRestoreInstanceFrameIfNeeded(m_jit, GPRInfo::wasmContextInstancePointer, callerStackSize, m_frameSize, topSourceOffsetFromFP, wasmScratchGPR, wasmBaseMemoryPointer);
         m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfTargetInstance()), GPRInfo::wasmContextInstancePointer);
         loadWebAssemblyGlobalState(wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
-        isSameInstance.link(m_jit);
+        skipRestoreFrame.link(m_jit);
     }
 
     m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfBoxedCallee()), wasmScratchGPR);

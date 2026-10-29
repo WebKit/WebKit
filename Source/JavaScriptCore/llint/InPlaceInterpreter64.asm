@@ -11767,7 +11767,7 @@ end
     jmp .ipint_mint_arg_dispatch
 
 .ipint_tail_call_common:
-    # Check if we need to insert a restore frame for cross-instance tail calls.
+    # Check whether this tail call needs a restore frame inserted.
     # Registers on entry:
     #   r0 = entrypoint, r1 = targetInstance, wasmInstance = current instance,
     #   t3 = callerStackArgSize, IPIntCallCallee = callee, IPIntCallFunctionSlot = func info
@@ -11775,7 +11775,13 @@ end
     # On x86_64 r1==t2 (both rdx) and on ARM64 r1==t1, so neither t2 nor t1
     # may be used freely. The ARM64 copy loop uses t2 for pair loads; that is
     # safe because r1==t1 there (t2 is a distinct register).
-    bpeq r1, wasmInstance, .ipint_tail_call_no_restore_frame
+    bpneq r1, wasmInstance, .ipint_tail_call_check_existing_frame
+    # If the call goes out to JS we need a restore frame because JS may grow
+    # wasm memory, invalidating the memory base cached in a callee save register.
+    leap _g_wasmToJSCalleeBoxed, t4
+    loadp [t4], t4
+    bpneq IPIntCallCallee, t4, .ipint_tail_call_no_restore_frame
+.ipint_tail_call_check_existing_frame:
 
     loadp ReturnPC[cfr], t4
     removeCodePtrTag t4

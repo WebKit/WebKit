@@ -224,6 +224,12 @@ static inline void prepareForTailCall(CCallHelpers& jit, const B3::StackmapGener
 
 #endif // ENABLE(WEBASSEMBLY_OMGJIT)
 
+inline CCallHelpers::Jump branchIfCalleeNotWasmToJS(CCallHelpers& jit, GPRReg boxedCalleeGPR)
+{
+    return jit.branchPtr(CCallHelpers::NotEqual, boxedCalleeGPR,
+        CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(&WasmToJSCallee::singleton())));
+}
+
 // Emits a RestoreInstanceCallee frame to restore our instance when returning from a
 // cross instance tail call chain. This is done lazily for performance of intra-module
 // tail call chains.
