@@ -599,9 +599,6 @@ TextShapingResultAndDisplayList* FontCascadeFonts::getOrCreateCachedShapedText(c
         unsigned destination = to.value_or(run.length());
         if (from || destination != run.length() || forTextEmphasis == ForTextEmphasis::Yes)
             return false;
-        // These properties are not keyed in the cache. We could add it directly to TextMeasurementCache but this is not relevant for width
-        if (run.rtl() || run.directionalOverride())
-            return false;
         // Expansion distributes extra space across glyphs in the presence of expansion
         if (run.expansion())
             return false;
