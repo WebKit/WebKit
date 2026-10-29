@@ -29,9 +29,12 @@
 
 #include "AffineTransform.h"
 #include "BitmapImage.h"
+#include "DefaultSizing.h"
 #include "DeprecatedGlobalSettings.h"
 #include "GraphicsContext.h"
 #include "ImageAdapter.h"
+#include "ImageBuffer.h"
+#include "ImageDecoder.h"
 #include "ImageDrawingExtras.h"
 #include "ImageObserver.h"
 #include "MIMETypeRegistry.h"
@@ -48,6 +51,7 @@
 
 #if USE(CG)
 #include "PDFDocumentImage.h"
+#include "UTIRegistry.h"
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
@@ -133,6 +137,145 @@ std::optional<Ref<Image>> Image::create(RefPtr<ShareableBitmap>&& bitmap)
 bool Image::supportsType(const String& type)
 {
     return MIMETypeRegistry::isSupportedImageMIMEType(type);
+}
+
+static RefPtr<NativeImage> tryCreateNativeImageFromBitmapImageData(std::span<const uint8_t> data, std::optional<FloatSize> preferredSize)
+{
+    Ref buffer = SharedBuffer::create(data);
+    RefPtr imageDecoder = ImageDecoder::create(buffer.get(), { }, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+    if (!imageDecoder)
+        return nullptr;
+
+    imageDecoder->setData(buffer.get(), true);
+    if (imageDecoder->encodedDataStatus() == EncodedDataStatus::Error)
+        return nullptr;
+
+#if USE(CG)
+    if (!isSupportedImageType(imageDecoder->uti()))
+        return nullptr;
+#endif
+
+    auto preferredIndex = [&] -> size_t {
+        if (!preferredSize)
+            return imageDecoder->primaryFrameIndex();
+        size_t frameCount = imageDecoder->frameCount();
+        for (size_t index = 0; index < frameCount; ++index) {
+            if (imageDecoder->frameSizeAtIndex(index) == *preferredSize)
+                return index;
+        }
+        return imageDecoder->primaryFrameIndex();
+    };
+    auto image = imageDecoder->createFrameImageAtIndex(preferredIndex());
+    if (!image)
+        return nullptr;
+
+    return NativeImage::create(WTF::move(image));
+}
+
+static void tryCreateNativeImageFromData(std::span<const uint8_t> data, std::optional<FloatSize> preferredSize, CompletionHandler<void(RefPtr<NativeImage>&&)>&& completionHandler)
+{
+    if (RefPtr nativeImage = tryCreateNativeImageFromBitmapImageData(data, preferredSize)) {
+        completionHandler(WTF::move(nativeImage));
+        return;
+    }
+    SVGImage::tryCreateFromData(data, [preferredSize, completionHandler = WTF::move(completionHandler)](auto svgImage) mutable {
+        if (!svgImage) {
+            completionHandler(nullptr);
+            return;
+        }
+        completionHandler(svgImage->nativeImage(DefaultSizing { preferredSize }.resolve(svgImage->naturalDimensions()).size()));
+    });
+}
+
+static Vector<Ref<ShareableBitmap>> createBitmapsFromNativeImage(NativeImage& image, std::span<const unsigned> lengths)
+{
+    Vector<Ref<ShareableBitmap>> bitmaps;
+    auto sourceColorSpace = image.colorSpace();
+    // The conversion could lead to loss of HDR contents.
+    auto destinationColorSpace = sourceColorSpace.supportsOutput() ? sourceColorSpace : ColorSpace::SRGB();
+    for (auto length : lengths) {
+        RefPtr bitmap = ShareableBitmap::createFromImageDraw(image, destinationColorSpace, { (int)length, (int)length }, image.size());
+        if (!bitmap)
+            return { };
+
+        bitmaps.append(bitmap.releaseNonNull());
+    }
+
+    return bitmaps;
+}
+
+static RefPtr<NativeImage> createNativeImageFromSVGImage(SVGImage& image, const IntSize& size)
+{
+    RefPtr buffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!buffer)
+        return nullptr;
+
+    image.draw(buffer->context(), ConcreteObjectSize::fixed(size));
+
+    return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
+}
+
+static Vector<Ref<ShareableBitmap>> createBitmapsFromSVGImage(SVGImage& image, std::span<const unsigned> lengths)
+{
+    Vector<Ref<ShareableBitmap>> bitmaps;
+    for (auto length : lengths) {
+        IntSize size { (int)length, (int)length };
+        RefPtr nativeImage = createNativeImageFromSVGImage(image, size);
+        if (!nativeImage)
+            return { };
+
+        RefPtr bitmap = ShareableBitmap::createFromImageDraw(*nativeImage, ColorSpace::SRGB());
+        if (!bitmap)
+            return { };
+
+        bitmaps.append(bitmap.releaseNonNull());
+    }
+
+    return bitmaps;
+}
+
+void Image::decodeToShareableBitmaps(std::span<const uint8_t> data, std::span<const unsigned> lengths, CompletionHandler<void(Vector<Ref<ShareableBitmap>>&&)>&& completionHandler)
+{
+    if (RefPtr nativeImage = tryCreateNativeImageFromBitmapImageData(data, std::nullopt)) {
+        completionHandler(createBitmapsFromNativeImage(*nativeImage, lengths));
+        return;
+    }
+
+    SVGImage::tryCreateFromData(data, [lengthsVector = Vector<unsigned> { lengths }, completionHandler = WTF::move(completionHandler)](auto svgImage) mutable {
+        if (!svgImage) {
+            completionHandler({ });
+            return;
+        }
+        completionHandler(createBitmapsFromSVGImage(*svgImage, lengthsVector.span()));
+    });
+}
+
+void Image::decodeToShareableBitmap(std::span<const uint8_t> data, std::optional<FloatSize> preferredSize, CompletionHandler<void(RefPtr<ShareableBitmap>&&)>&& completionHandler)
+{
+    tryCreateNativeImageFromData(data, preferredSize, [completionHandler = WTF::move(completionHandler)](auto nativeImage) mutable {
+        if (!nativeImage) {
+            completionHandler(nullptr);
+            return;
+        }
+
+        auto sourceColorSpace = nativeImage->colorSpace();
+        auto destinationColorSpace = sourceColorSpace.supportsOutput() ? sourceColorSpace : ColorSpace::SRGB();
+        RefPtr bitmap = ShareableBitmap::create({ nativeImage->size(), destinationColorSpace });
+        if (!bitmap) {
+            completionHandler(nullptr);
+            return;
+        }
+
+        auto context = bitmap->createGraphicsContext();
+        if (!context) {
+            completionHandler(nullptr);
+            return;
+        }
+
+        FloatRect rect { { }, nativeImage->size() };
+        context->drawNativeImage(*nativeImage, rect, rect, { CompositeOperator::Copy });
+        completionHandler(WTF::move(bitmap));
+    });
 }
 
 void Image::subresourcesAreFinished(Document*, CompletionHandler<void()>&& completionHandler)

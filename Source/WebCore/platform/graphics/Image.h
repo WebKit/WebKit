@@ -66,6 +66,9 @@ public:
     WEBCORE_EXPORT static std::optional<Ref<Image>> create(RefPtr<ShareableBitmap>&&); // Uses `std::optional<Ref<...>>` to conform to the interface needed by IPC infrastructure.
     WEBCORE_EXPORT static bool supportsType(const String&);
 
+    WEBCORE_EXPORT static void decodeToShareableBitmaps(std::span<const uint8_t>, std::span<const unsigned> lengths, CompletionHandler<void(Vector<Ref<ShareableBitmap>>&&)>&&);
+    WEBCORE_EXPORT static void decodeToShareableBitmap(std::span<const uint8_t>, std::optional<FloatSize> preferredSize, CompletionHandler<void(RefPtr<ShareableBitmap>&&)>&&);
+
     virtual bool isBitmapImage() const { return false; }
     virtual bool LEGACY_NODELETE isSVGImage() const { return false; }
     virtual bool isPDFDocumentImage() const { return false; }

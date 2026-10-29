@@ -114,6 +114,7 @@
 #import <WebCore/HTMLUListElement.h>
 #import <WebCore/HandleUserInputEventResult.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/Image.h>
 #import <WebCore/ImageOverlay.h>
 #import <WebCore/ImageUtilities.h>
 #import <WebCore/JSNode.h>
@@ -1631,12 +1632,12 @@ void WebPage::createTextIndicatorForElementWithID(const String& elementID, Compl
 
 void WebPage::createBitmapsFromImageData(Ref<WebCore::SharedBuffer>&& buffer, const Vector<unsigned>& lengths, CompletionHandler<void(Vector<Ref<WebCore::ShareableBitmap>>&&)>&& completionHandler)
 {
-    WebCore::createBitmapsFromImageData(buffer->span(), borrow(lengths)->span(), WTF::move(completionHandler));
+    WebCore::Image::decodeToShareableBitmaps(buffer->span(), borrow(lengths)->span(), WTF::move(completionHandler));
 }
 
 void WebPage::decodeImageData(Ref<WebCore::SharedBuffer>&& buffer, std::optional<WebCore::FloatSize> preferredSize, CompletionHandler<void(RefPtr<WebCore::ShareableBitmap>&&)>&& completionHandler)
 {
-    decodeImageWithSize(buffer->span(), preferredSize, WTF::move(completionHandler));
+    WebCore::Image::decodeToShareableBitmap(buffer->span(), preferredSize, WTF::move(completionHandler));
 }
 
 #if HAVE(PDFKIT)
