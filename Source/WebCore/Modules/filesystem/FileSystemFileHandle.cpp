@@ -193,12 +193,14 @@ void FileSystemFileHandle::createWritable(const CreateWritableOptions& options, 
     });
 }
 
-void FileSystemFileHandle::closeWritable(FileSystemWritableFileStreamIdentifier streamIdentifier, FileSystemWriteCloseReason reason)
+void FileSystemFileHandle::closeWritable(FileSystemWritableFileStreamIdentifier streamIdentifier, FileSystemWriteCloseReason reason, FileSystemStorageConnection::VoidCallback&& completionHandler)
 {
     Ref connection = this->connection();
     connection->unregisterFileSystemWritable(streamIdentifier);
-    if (!isClosed())
-        connection->closeWritable(identifier(), streamIdentifier, reason, [](auto) { });
+    if (isClosed())
+        return completionHandler(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });
+
+    connection->closeWritable(identifier(), streamIdentifier, reason, WTF::move(completionHandler));
 }
 
 void FileSystemFileHandle::executeCommandForWritable(FileSystemWritableFileStreamIdentifier streamIdentifier, FileSystemWriteCommandType type, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, DOMPromiseDeferred<void>&& promise)

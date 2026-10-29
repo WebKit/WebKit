@@ -194,8 +194,9 @@ void FileSystemWritableFileStreamSink::close(JSDOMGlobalObject&, DOMPromiseDefer
     ASSERT(!m_isClosed);
 
     m_isClosed = true;
-    protect(m_source)->closeWritable(m_identifier, FileSystemWriteCloseReason::Completed);
-    promise.resolve();
+    protect(m_source)->closeWritable(m_identifier, FileSystemWriteCloseReason::Completed, [promise = WTF::move(promise)](auto&& result) mutable {
+        promise.settle(WTF::move(result));
+    });
 }
 
 void FileSystemWritableFileStreamSink::abort(JSDOMGlobalObject&, JSC::JSValue, DOMPromiseDeferred<void>&& promise)

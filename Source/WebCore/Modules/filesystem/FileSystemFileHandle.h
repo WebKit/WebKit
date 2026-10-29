@@ -56,7 +56,7 @@ public:
     };
     void createWritable(const CreateWritableOptions&, DOMPromiseDeferred<IDLInterface<FileSystemWritableFileStream>>&&);
 
-    void closeWritable(FileSystemWritableFileStreamIdentifier, FileSystemWriteCloseReason);
+    void closeWritable(FileSystemWritableFileStreamIdentifier, FileSystemWriteCloseReason, FileSystemStorageConnection::VoidCallback&& = [](auto&&) { });
     void executeCommandForWritable(FileSystemWritableFileStreamIdentifier, FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, DOMPromiseDeferred<void>&&);
 
 private:
