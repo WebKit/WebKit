@@ -266,7 +266,7 @@ bool RenderTableCell::computeIntrinsicPadding(LayoutUnit heightConstraint)
     auto borderBoxLogicalHeightWithoutIntrinsicPadding = borderBoxLogicalHeight - (oldIntrinsicPaddingBefore + oldIntrinsicPaddingAfter);
 
     auto intrinsicPaddingBefore = oldIntrinsicPaddingBefore;
-    auto alignment = style().verticalAlign();
+    auto alignment = Style::effectiveVerticalAlign(style());
     if (auto alignContent = style().alignContent(); !alignContent.isNormal()) {
         auto resolveAlignedContent = alignContent.resolve();
         // align-content overrides vertical-align
@@ -649,7 +649,7 @@ void RenderTableCell::styleDidChange(Style::Difference diff, const Style::Comput
 
     // Our intrinsic padding pushes us down to align with the baseline of other cells on the row. If our vertical-align
     // has changed then so will the padding needed to align with other cells - clear it so we can recalculate it from scratch.
-    if (oldStyle && (style().verticalAlign() != oldStyle->verticalAlign() || style().alignContent() != oldStyle->alignContent()))
+    if (oldStyle && (Style::effectiveVerticalAlign(style()) != Style::effectiveVerticalAlign(*oldStyle) || style().alignContent() != oldStyle->alignContent()))
         clearIntrinsicPadding();
 
     if (CheckedPtr table = this->table(); table && oldStyle) {
@@ -1699,7 +1699,7 @@ void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool ve
         return;
 
     // Shrink our intrinsic padding as much as possible to accommodate the scrollbar.
-    if ((WTF::holdsAlternative<CSS::Keyword::Middle>(style().verticalAlign()) && style().alignContent().isNormal())
+    if ((WTF::holdsAlternative<CSS::Keyword::Middle>(Style::effectiveVerticalAlign(style())) && style().alignContent().isNormal())
         || style().alignContent().resolve().isCentered()) {
         LayoutUnit totalHeight = logicalHeight();
         LayoutUnit heightWithoutIntrinsicPadding = totalHeight - intrinsicPaddingBefore() - intrinsicPaddingAfter();

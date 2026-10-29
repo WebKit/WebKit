@@ -245,13 +245,13 @@ Color AccessibilityObject::backgroundColor() const
 bool AccessibilityObject::isSubscript() const
 {
     const CheckedPtr style = this->style();
-    return style && WTF::holdsAlternative<CSS::Keyword::Sub>(style->verticalAlignOutOfLine());
+    return style && WTF::holdsAlternative<CSS::Keyword::Sub>(Style::effectiveVerticalAlign(*style));
 }
 
 bool AccessibilityObject::isSuperscript() const
 {
     const CheckedPtr style = this->style();
-    return style && WTF::holdsAlternative<CSS::Keyword::Super>(style->verticalAlignOutOfLine());
+    return style && WTF::holdsAlternative<CSS::Keyword::Super>(Style::effectiveVerticalAlign(*style));
 }
 
 bool AccessibilityObject::hasTextShadow() const
@@ -272,7 +272,7 @@ AttributedStringStyle AccessibilityObject::stylesForAttributedString() const
     if (!style)
         return { };
 
-    auto& alignment = style->verticalAlignOutOfLine();
+    auto alignment = Style::effectiveVerticalAlign(*style);
     return {
         fontFrom(*style),
         textColorFrom(*style),

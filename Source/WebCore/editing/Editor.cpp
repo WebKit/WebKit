@@ -4813,7 +4813,7 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
         }
     );
 
-    attributes.subscriptOrSuperscript = WTF::switchOn(style->verticalAlign(),
+    attributes.subscriptOrSuperscript = WTF::switchOn(Style::effectiveVerticalAlign(*style),
         [](const CSS::Keyword::Baseline&) { return FontAttributes::SubscriptOrSuperscript::None; },
         [](const CSS::Keyword::Sub&) { return FontAttributes::SubscriptOrSuperscript::Subscript; },
         [](const CSS::Keyword::Super&) { return FontAttributes::SubscriptOrSuperscript::Superscript; },
