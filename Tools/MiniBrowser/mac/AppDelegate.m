@@ -329,9 +329,13 @@ static NSNumber *_currentBadge;
             sAutomationFileDescriptor = fileDescriptor;
     }
 
-    // Under automation, the automation session opens all windows.
-    if (self.isControlledByAutomation)
+    if (self.isControlledByAutomation) {
+        // Under automation, the automation session opens all windows.
         _openNewWindowAtStartup = false;
+        // AppKit animates a sheet on the main thread, which blocks for about a quarter of a second
+        // whenever a JavaScript dialog opens or closes.
+        [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSSheetAnimationTime": @0 }];
+    }
 }
 
 - (BOOL)isControlledByAutomation
@@ -818,6 +822,53 @@ static NSNumber *_currentBadge;
 - (_WKAutomationSessionBrowsingContextPresentation)_automationSession:(_WKAutomationSession *)automationSession currentPresentationForWebView:(WKWebView *)webView
 {
     return webView.window.tabGroup.windows.count > 1 ? _WKAutomationSessionBrowsingContextPresentationTab : _WKAutomationSessionBrowsingContextPresentationWindow;
+}
+
+- (WK2BrowserWindowController *)_controllerForAutomationWebView:(WKWebView *)webView
+{
+    id controller = webView.UIDelegate;
+    return [controller isKindOfClass:[WK2BrowserWindowController class]] ? controller : nil;
+}
+
+- (_WKAutomationSessionJavaScriptDialogType)_automationSession:(_WKAutomationSession *)automationSession typeOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView
+{
+    WK2BrowserWindowController *controller = [self _controllerForAutomationWebView:webView];
+    return controller ? controller.automationDialogType : _WKAutomationSessionJavaScriptDialogTypeNone;
+}
+
+- (BOOL)_automationSession:(_WKAutomationSession *)automationSession isShowingJavaScriptDialogForWebView:(WKWebView *)webView
+{
+    return [self _automationSession:automationSession typeOfCurrentJavaScriptDialogForWebView:webView] != _WKAutomationSessionJavaScriptDialogTypeNone;
+}
+
+- (NSString *)_automationSession:(_WKAutomationSession *)automationSession messageOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView
+{
+    return [self _controllerForAutomationWebView:webView].automationDialogMessage;
+}
+
+- (NSString *)_automationSession:(_WKAutomationSession *)automationSession defaultTextOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView
+{
+    return [self _controllerForAutomationWebView:webView].automationDialogDefaultText;
+}
+
+- (NSString *)_automationSession:(_WKAutomationSession *)automationSession userInputOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView
+{
+    return [self _controllerForAutomationWebView:webView].automationDialogUserInput;
+}
+
+- (void)_automationSession:(_WKAutomationSession *)automationSession setUserInput:(NSString *)value forCurrentJavaScriptDialogForWebView:(WKWebView *)webView
+{
+    [self _controllerForAutomationWebView:webView].automationDialogUserInput = value;
+}
+
+- (void)_automationSession:(_WKAutomationSession *)automationSession acceptCurrentJavaScriptDialogForWebView:(WKWebView *)webView
+{
+    [[self _controllerForAutomationWebView:webView] completeAutomationDialogAccepting:YES];
+}
+
+- (void)_automationSession:(_WKAutomationSession *)automationSession dismissCurrentJavaScriptDialogForWebView:(WKWebView *)webView
+{
+    [[self _controllerForAutomationWebView:webView] completeAutomationDialogAccepting:NO];
 }
 
 - (void)_automationSession:(_WKAutomationSession *)automationSession requestSwitchToWebView:(WKWebView *)webView completionHandler:(void (^)(void))completionHandler

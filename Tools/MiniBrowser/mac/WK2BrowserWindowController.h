@@ -24,6 +24,7 @@
  */
 
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKAutomationSessionDelegate.h>
 #import "BrowserWindowController.h"
 
 @interface WK2BrowserWindowController : BrowserWindowController
@@ -32,5 +33,13 @@
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration;
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration windowFeatures:(WKWindowFeatures *)windowFeatures;
+
+// The JavaScript dialog that's showing, for WebDriver. WebDriver answers it through its sheet.
+@property (readonly) _WKAutomationSessionJavaScriptDialogType automationDialogType;
+@property (readonly) NSString *automationDialogMessage;
+@property (readonly) NSString *automationDialogDefaultText;
+// The text in the field of a prompt.
+@property (copy) NSString *automationDialogUserInput;
+- (void)completeAutomationDialogAccepting:(BOOL)accepted;
 
 @end
