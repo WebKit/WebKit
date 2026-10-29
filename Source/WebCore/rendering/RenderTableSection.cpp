@@ -745,7 +745,7 @@ void RenderTableSection::layoutRows()
 
 bool RenderTableSection::hasOverflowingCell() const
 {
-    return m_overflowingCells.computeSize() || m_forceSlowPaintPathWithOverflowingCell;
+    return m_overflowingCells.computeSizeNoShrink() || m_forceSlowPaintPathWithOverflowingCell;
 }
 
 void RenderTableSection::computeOverflowFromCells()

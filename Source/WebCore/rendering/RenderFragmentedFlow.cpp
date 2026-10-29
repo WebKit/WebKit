@@ -305,10 +305,10 @@ RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const Rende
 {
     ASSERT(!m_fragmentsInvalidated);
 
-    if (m_fragmentList.isEmptyIgnoringNullReferences())
+    if (m_fragmentList.isEmptyIgnoringNullReferencesNoShrink())
         return nullptr;
 
-    if (m_fragmentList.computeSize() == 1 && extendLastFragment) {
+    if (m_fragmentList.computeSizeNoShrink() == 1 && extendLastFragment) {
         return const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
     }
 
@@ -589,7 +589,7 @@ bool RenderFragmentedFlow::getFragmentRangeForBox(const RenderBox& box, RenderFr
     if (!hasValidFragmentInfo()) // We clear the ranges when we invalidate the fragments.
         return false;
 
-    if (m_fragmentList.computeSize() == 1) {
+    if (m_fragmentList.computeSizeNoShrink() == 1) {
         startFragment = endFragment = const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
         return true;
     }

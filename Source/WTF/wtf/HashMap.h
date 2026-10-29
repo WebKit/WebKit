@@ -192,7 +192,7 @@ public:
     MappedTakeType takeFirst();
 
     // Useful when the key type is WeakPtr
-    size_t computeSize() const requires (KeyTraits::hasIsWeakNullValueFunction);
+    size_t computeSize() requires (KeyTraits::hasIsWeakNullValueFunction);
     bool isEmptyIgnoringNullReferences() const requires (KeyTraits::hasIsWeakNullValueFunction);
     void removeWeakNullEntries() requires (KeyTraits::hasIsWeakNullValueFunction);
 
@@ -593,7 +593,7 @@ auto HashMap<T, U, V, W, MappedTraits, Y, shouldValidateKey, M>::takeFirst() -> 
 }
 
 template<typename T, typename U, typename V, typename KeyTraits, typename MappedTraits, typename Y, ShouldValidateKey shouldValidateKey, typename M>
-inline size_t HashMap<T, U, V, KeyTraits, MappedTraits, Y, shouldValidateKey, M>::computeSize() const requires (KeyTraits::hasIsWeakNullValueFunction)
+inline size_t HashMap<T, U, V, KeyTraits, MappedTraits, Y, shouldValidateKey, M>::computeSize() requires (KeyTraits::hasIsWeakNullValueFunction)
 {
     return m_impl.computeSize();
 }

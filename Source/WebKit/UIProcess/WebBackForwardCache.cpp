@@ -83,7 +83,7 @@ void WebBackForwardCache::setCapacity(WebProcessPool& pool, unsigned capacity)
 
 unsigned WebBackForwardCache::size() const
 {
-    return m_itemsWithCachedPage.computeSize();
+    return m_itemsWithCachedPage.computeSizeNoShrink();
 }
 
 void WebBackForwardCache::addEntry(WebBackForwardListItem& item, Ref<WebBackForwardCacheEntry>&& backForwardCacheEntry)

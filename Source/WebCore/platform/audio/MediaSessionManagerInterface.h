@@ -164,7 +164,7 @@ public:
     // ignore the result. The base implementation applies the category synchronously and returns an
     // already-resolved promise; RemoteMediaSessionManager settles it from its async IPC reply.
     virtual Ref<GenericPromise> audioCaptureSourceStateChanged(IsCaptureStarting);
-    virtual size_t audioCaptureSourceCount() const { return m_audioCaptureSources.computeSize(); }
+    virtual size_t audioCaptureSourceCount() const { return m_audioCaptureSources.computeSizeNoShrink(); }
 
     bool processDidReceiveRemoteControlCommand(PlatformMediaSessionRemoteControlCommandType, const PlatformMediaSessionRemoteCommandArgument&, std::optional<MediaSessionIdentifier> targetSession = std::nullopt);
     virtual bool processIsSuspended() const { return m_processIsSuspended; };

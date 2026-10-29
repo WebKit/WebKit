@@ -2507,7 +2507,7 @@ void AXObjectCache::deferReRenderedContent(Node& node)
 
 bool AXObjectCache::isReRenderedContent(const AccessibilityObject& object) const
 {
-    if (m_deferredReRenderedContent.isEmptyIgnoringNullReferences())
+    if (m_deferredReRenderedContent.isEmptyIgnoringNullReferencesNoShrink())
         return false;
 
     RefPtr document = m_document.get();

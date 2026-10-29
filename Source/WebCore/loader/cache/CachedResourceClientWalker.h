@@ -39,7 +39,7 @@ class CachedResourceClientWalker {
 public:
     CachedResourceClientWalker(const CachedResource& resource)
         : m_resource(const_cast<CachedResource*>(&resource))
-        , m_clientVector(resource.m_clients.computeSize())
+        , m_clientVector(resource.m_clients.computeSizeNoShrink())
     {
         size_t clientIndex = 0;
         for (auto client : resource.m_clients)

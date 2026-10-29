@@ -307,27 +307,22 @@ public:
     }
 
     unsigned capacity() const { return m_set.capacity(); }
+    unsigned sizeIncludingNullReferences() const { return m_set.size(); }
 
-    // Reclaims null references as a side effect, so this must not be called concurrently. Callers
-    // that may race with each other (e.g. GC marker threads) must use
-    // isEmptyIgnoringNullReferencesWithoutCleanup() instead.
-    bool isEmptyIgnoringNullReferences() const
+    bool isEmptyIgnoringNullReferencesNoShrink() const
+    {
+        return m_set.isEmpty() || begin() == end();
+    }
+
+    bool isEmptyIgnoringNullReferences()
     {
         if (m_set.isEmpty())
             return true;
 
         auto onlyContainsNullReferences = begin() == end();
         if (onlyContainsNullReferences) [[unlikely]]
-            const_cast<WeakListHashSet&>(*this).clear();
+            clear();
         return onlyContainsNullReferences;
-    }
-
-    bool isEmptyIgnoringNullReferencesWithoutCleanup() const
-    {
-        if (m_set.isEmpty())
-            return true;
-
-        return begin() == end();
     }
 
     bool hasNullReferences() const
@@ -346,9 +341,19 @@ public:
         return result;
     }
 
-    unsigned computeSize() const
+    unsigned computeSizeNoShrink() const
     {
-        const_cast<WeakListHashSet&>(*this).removeNullReferences();
+        unsigned count = 0;
+        for (auto& _ : *this) {
+            UNUSED_VARIABLE(_);
+            ++count;
+        }
+        return count;
+    }
+
+    unsigned computeSize()
+    {
+        removeNullReferences();
         return m_set.size();
     }
 
@@ -419,11 +424,11 @@ private:
         return currentCount;
     }
 
-    ALWAYS_INLINE void amortizedCleanupIfNeeded(unsigned count = 1) const
+    ALWAYS_INLINE void amortizedCleanupIfNeeded(unsigned count = 1)
     {
         unsigned currentCount = increaseOperationCountSinceLastCleanup(count);
         if (currentCount > m_maxOperationCountWithoutCleanup)
-            const_cast<WeakListHashSet&>(*this).removeNullReferences();
+            removeNullReferences();
     }
 
     SetType m_set;
@@ -432,7 +437,7 @@ private:
 };
 
 template<typename T, typename WeakPtrImplType>
-size_t containerSize(const WeakListHashSet<T, WeakPtrImplType>& container) { return container.computeSize(); }
+size_t containerSize(const WeakListHashSet<T, WeakPtrImplType>& container) { return container.sizeIncludingNullReferences(); }
 
 template<typename T, typename WeakPtrImplType>
 inline auto copyToVector(const WeakListHashSet<T, WeakPtrImplType>& collection) -> Vector<typename WeakListHashSet<T, WeakPtrImplType>::KeyType> {

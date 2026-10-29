@@ -187,7 +187,7 @@ public:
     void clear();
 
     // Useful when the key type is WeakPtr
-    size_t computeSize() const requires (ValueTraits::hasIsWeakNullValueFunction);
+    size_t computeSize() requires (ValueTraits::hasIsWeakNullValueFunction);
     bool isEmptyIgnoringNullReferences() const requires (ValueTraits::hasIsWeakNullValueFunction);
     void removeWeakNullEntries() requires (ValueTraits::hasIsWeakNullValueFunction);
 
@@ -837,7 +837,7 @@ inline bool ListHashSet<T, U>::remove(const ValueType& value)
 }
 
 template<typename T, typename U>
-inline size_t ListHashSet<T, U>::computeSize() const requires (ValueTraits::hasIsWeakNullValueFunction)
+inline size_t ListHashSet<T, U>::computeSize() requires (ValueTraits::hasIsWeakNullValueFunction)
 {
     return m_impl.computeSize();
 }

@@ -242,13 +242,13 @@ void AXLogger::log(const String& collectionName, const AXObjectCache::DeferredCo
         [&size] (const Vector<AXObjectCache::AttributeChange>& typedCollection) { size = typedCollection.size(); },
         [&size] (const Vector<AXObjectCache::CanvasFocusPathBoundsChange>& typedCollection) { size = typedCollection.size(); },
         [&size] (const Vector<std::pair<Node*, Node*>>& typedCollection) { size = typedCollection.size(); },
-        [&size] (const WeakHashSet<Element, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSize(); },
-        [&size] (const WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSize(); },
-        [&size] (const WeakHashSet<AccessibilityObject>& typedCollection) { size = typedCollection.computeSize(); },
-        [&size] (const WeakHashSet<AccessibilityNodeObject>& typedCollection) { size = typedCollection.computeSize(); },
-        [&size] (const WeakListHashSet<Node, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSize(); },
-        [&size] (const WeakListHashSet<Element, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSize(); },
-        [&size] (const WeakHashMap<Element, String, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSize(); },
+        [&size] (const WeakHashSet<Element, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSizeNoShrink(); },
+        [&size] (const WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSizeNoShrink(); },
+        [&size] (const WeakHashSet<AccessibilityObject>& typedCollection) { size = typedCollection.computeSizeNoShrink(); },
+        [&size] (const WeakHashSet<AccessibilityNodeObject>& typedCollection) { size = typedCollection.computeSizeNoShrink(); },
+        [&size] (const WeakListHashSet<Node, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSizeNoShrink(); },
+        [&size] (const WeakListHashSet<Element, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSizeNoShrink(); },
+        [&size] (const WeakHashMap<Element, String, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSizeNoShrink(); },
         [] (auto&) {
             AX_ASSERT_NOT_REACHED();
             return;

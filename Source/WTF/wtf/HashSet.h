@@ -88,7 +88,7 @@ public:
     bool isEmpty() const;
 
     // Useful when the key type is WeakPtr
-    size_t computeSize() const requires (ValueTraits::hasIsWeakNullValueFunction);
+    size_t computeSize() requires (ValueTraits::hasIsWeakNullValueFunction);
     bool isEmptyIgnoringNullReferences() const requires (ValueTraits::hasIsWeakNullValueFunction);
     void removeWeakNullEntries() requires (ValueTraits::hasIsWeakNullValueFunction);
 
@@ -293,7 +293,7 @@ inline bool HashSet<T, U, V, W, shouldValidateKey>::isEmpty() const
 }
 
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
-inline size_t HashSet<T, U, V, W, shouldValidateKey>::computeSize() const requires (ValueTraits::hasIsWeakNullValueFunction)
+inline size_t HashSet<T, U, V, W, shouldValidateKey>::computeSize() requires (ValueTraits::hasIsWeakNullValueFunction)
 {
     return m_impl.computeSize();
 }

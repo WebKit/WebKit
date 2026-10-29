@@ -643,9 +643,9 @@ static_assert(std::is_trivial_v<StatusBytes>);
         void clear();
 
         // Useful when the key type is WeakPtr
-        size_t computeSize() const requires (KeyTraits::hasIsWeakNullValueFunction);
+        size_t computeSize() requires (KeyTraits::hasIsWeakNullValueFunction);
         bool isEmptyIgnoringNullReferences() const requires (KeyTraits::hasIsWeakNullValueFunction);
-        void removeWeakNullEntries() const requires (KeyTraits::hasIsWeakNullValueFunction);
+        void removeWeakNullEntries() requires (KeyTraits::hasIsWeakNullValueFunction);
 
         template<size_t inlineCapacity>
         Vector<TakeType, inlineCapacity> takeIf(NOESCAPE const Invocable<bool(const ValueType&)> auto&);
@@ -1168,7 +1168,7 @@ static_assert(std::is_trivial_v<StatusBytes>);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
-    inline size_t HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::computeSize() const requires (KeyTraits::hasIsWeakNullValueFunction)
+    inline size_t HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::computeSize() requires (KeyTraits::hasIsWeakNullValueFunction)
     {
         removeWeakNullEntries();
         return size();
@@ -1182,9 +1182,9 @@ static_assert(std::is_trivial_v<StatusBytes>);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
-    inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::removeWeakNullEntries() const requires (KeyTraits::hasIsWeakNullValueFunction)
+    inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::removeWeakNullEntries() requires (KeyTraits::hasIsWeakNullValueFunction)
     {
-        const_cast<HashTable&>(*this).removeIf([](ValueType&) {
+        removeIf([](ValueType&) {
             return false;
         });
     }

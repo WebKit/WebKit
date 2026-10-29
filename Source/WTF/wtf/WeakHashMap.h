@@ -330,15 +330,21 @@ public:
     }
 
     unsigned capacity() const { return m_map.capacity(); }
+    unsigned sizeIncludingNullReferences() const { return m_map.size(); }
 
-    bool isEmptyIgnoringNullReferences() const
+    bool isEmptyIgnoringNullReferencesNoShrink() const
+    {
+        return m_map.isEmpty() || begin() == end();
+    }
+
+    bool isEmptyIgnoringNullReferences()
     {
         if (m_map.isEmpty())
             return true;
 
         auto onlyContainsNullReferences = begin() == end();
         if (onlyContainsNullReferences) [[unlikely]]
-            const_cast<WeakHashMap&>(*this).clear();
+            clear();
         return onlyContainsNullReferences;
     }
 
@@ -359,9 +365,19 @@ public:
         return result;
     }
 
-    unsigned computeSize() const
+    unsigned computeSizeNoShrink() const
     {
-        const_cast<WeakHashMap&>(*this).removeNullReferences();
+        unsigned count = 0;
+        for (auto& _ : *this) {
+            UNUSED_VARIABLE(_);
+            ++count;
+        }
+        return count;
+    }
+
+    unsigned computeSize()
+    {
+        removeNullReferences();
         return m_map.size();
     }
 
@@ -391,11 +407,11 @@ private:
         return currentCount;
     }
 
-    ALWAYS_INLINE void amortizedCleanupIfNeeded(unsigned operationsPerformed = 1) const
+    ALWAYS_INLINE void amortizedCleanupIfNeeded(unsigned operationsPerformed = 1)
     {
         unsigned currentCount = increaseOperationCountSinceLastCleanup(operationsPerformed);
         if (currentCount > m_maxOperationCountWithoutCleanup)
-            const_cast<WeakHashMap&>(*this).removeNullReferences();
+            removeNullReferences();
     }
 
     MapType m_map;

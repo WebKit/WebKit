@@ -50,8 +50,11 @@ public:
     const_iterator find(const ValueType& value) const { return m_impl.find(value); }
     bool contains(const ValueType& value) const { return m_impl.contains(value); }
 
-    bool isEmptyIgnoringNullReferences() const { return m_impl.isEmptyIgnoringNullReferences(); }
-    unsigned computeSize() const { return m_impl.computeSize(); }
+    bool isEmptyIgnoringNullReferencesNoShrink() const { return m_impl.isEmptyIgnoringNullReferencesNoShrink(); }
+    unsigned computeSizeNoShrink() const { return m_impl.computeSizeNoShrink(); }
+    bool isEmptyIgnoringNullReferences() { return m_impl.isEmptyIgnoringNullReferences(); }
+    unsigned computeSize() { return m_impl.computeSize(); }
+    unsigned sizeIncludingNullReferences() const { return m_impl.sizeIncludingNullReferences(); }
 
     // Increments the count if an equal value is already present.
     // The return value includes both an iterator to the value's location,
@@ -133,7 +136,7 @@ inline bool WeakHashCountedSet<Value, WeakPtrImpl>::removeAll(iterator it)
 }
 
 template<typename Value, typename WeakMapImpl>
-size_t containerSize(const WeakHashCountedSet<Value, WeakMapImpl>& container) { return container.computeSize(); }
+size_t containerSize(const WeakHashCountedSet<Value, WeakMapImpl>& container) { return container.sizeIncludingNullReferences(); }
 
 template<typename Value>
 using SingleThreadWeakHashCountedSet = WeakHashCountedSet<Value, SingleThreadWeakPtrImpl>;

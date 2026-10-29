@@ -336,7 +336,7 @@ Vector<Ref<WebPageProxy>> WebProcessProxy::mainPages() const
 
 unsigned WebProcessProxy::provisionalPageCount() const
 {
-    return m_provisionalPages.computeSize();
+    return m_provisionalPages.computeSizeNoShrink();
 }
 
 bool WebProcessProxy::hasVisiblePage() const
@@ -362,7 +362,7 @@ Vector<WeakPtr<RemotePageProxy>> WebProcessProxy::remotePages() const
 
 unsigned WebProcessProxy::remotePageCount() const
 {
-    return m_remotePages.computeSize();
+    return m_remotePages.computeSizeNoShrink();
 }
 
 void WebProcessProxy::accessibilityModeDidChange(WebCore::AccessibilityMode mode)
@@ -2978,7 +2978,7 @@ void WebProcessProxy::didStartUsingProcessForSiteIsolation(const std::optional<W
 
 unsigned WebProcessProxy::suspendedPageCount() const
 {
-    return m_suspendedPages.computeSize();
+    return m_suspendedPages.computeSizeNoShrink();
 }
 
 void WebProcessProxy::addSuspendedPageProxy(SuspendedPageProxy& suspendedPage)

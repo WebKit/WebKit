@@ -37,7 +37,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RadioButtonGroups);
 class RadioButtonGroup {
     WTF_MAKE_TZONE_ALLOCATED(RadioButtonGroup);
 public:
-    NODELETE bool isEmpty() const { return m_members.isEmptyIgnoringNullReferences(); }
+    NODELETE bool isEmpty() const { return m_members.isEmptyIgnoringNullReferencesNoShrink(); }
     NODELETE bool isRequired() const { return m_requiredCount; }
     NODELETE RefPtr<HTMLInputElement> checkedButton() const { return m_checkedButton; }
     void add(HTMLInputElement&);

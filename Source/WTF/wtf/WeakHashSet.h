@@ -168,6 +168,7 @@ public:
     bool contains(const T& value) const { return contains(&value); }
 
     unsigned capacity() const { return m_set.capacity(); }
+    unsigned sizeIncludingNullReferences() const { return m_set.size(); }
 
     bool isEmptyIgnoringNullReferences() const
     {
@@ -193,9 +194,19 @@ public:
         return result;
     }
 
-    unsigned computeSize() const
+    unsigned computeSizeNoShrink() const
     {
-        const_cast<WeakHashSet&>(*this).removeNullReferences();
+        unsigned count = 0;
+        for (auto& _ : *this) {
+            UNUSED_VARIABLE(_);
+            ++count;
+        }
+        return count;
+    }
+
+    unsigned computeSize()
+    {
+        removeNullReferences();
         return m_set.size();
     }
 
@@ -242,11 +253,11 @@ private:
         return currentCount;
     }
 
-    ALWAYS_INLINE void amortizedCleanupIfNeeded() const
+    ALWAYS_INLINE void amortizedCleanupIfNeeded()
     {
         unsigned currentCount = increaseOperationCountSinceLastCleanup();
         if (currentCount > m_maxOperationCountWithoutCleanup)
-            const_cast<WeakHashSet&>(*this).removeNullReferences();
+            removeNullReferences();
     }
 
     SetType m_set;
@@ -255,7 +266,7 @@ private:
 };
 
 template<typename T, typename U>
-size_t containerSize(const WeakHashSet<T, U>& container) { return container.computeSize(); }
+size_t containerSize(const WeakHashSet<T, U>& container) { return container.sizeIncludingNullReferences(); }
 
 template<typename T, typename U>
 inline auto copyToVector(const WeakHashSet<T, U>& collection) -> Vector<typename WeakHashSet<T, U>::KeyType>

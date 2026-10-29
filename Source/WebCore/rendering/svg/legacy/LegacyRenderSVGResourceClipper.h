@@ -87,7 +87,7 @@ public:
     inline SVGUnitTypes::SVGUnitType clipPathUnits() const;
 
 private:
-    bool selfNeedsClientInvalidation() const override { return (everHadLayout() || !m_clipperMap.isEmptyIgnoringNullReferences()) && selfNeedsLayout(); }
+    bool selfNeedsClientInvalidation() const override { return (everHadLayout() || !m_clipperMap.isEmptyIgnoringNullReferencesNoShrink()) && selfNeedsLayout(); }
 
     void element() const = delete;
 

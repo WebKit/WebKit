@@ -381,7 +381,7 @@ void ContentChangeObserver::didRemoveTransition(const CSSTransition& transition)
 
 bool ContentChangeObserver::hasObservedTransition() const
 {
-    return !m_observedTransitions.isEmptyIgnoringNullReferences();
+    return !m_observedTransitions.isEmptyIgnoringNullReferencesNoShrink();
 }
 
 void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds timeout, bool singleShot)

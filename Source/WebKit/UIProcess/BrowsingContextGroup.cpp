@@ -417,7 +417,7 @@ void BrowsingContextGroup::closeRemotePagesForPage(WebPageProxy& page, ShouldSen
 
 bool BrowsingContextGroup::hasMultiplePages() const
 {
-    return m_pages.computeSize() > 1;
+    return m_pages.computeSizeNoShrink() > 1;
 }
 
 bool BrowsingContextGroup::hasPageOtherThan(const WebPageProxy& page) const

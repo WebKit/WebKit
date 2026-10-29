@@ -3147,7 +3147,7 @@ bool WebsiteDataStore::builtInNotificationsEnabled() const
     if (serviceWorkerPreferences && serviceWorkerPreferences->builtInNotificationsEnabled())
         return true;
 
-    if (!m_pages.computeSize())
+    if (!m_pages.computeSizeNoShrink())
         return DEFAULT_VALUE_FOR_BuiltInNotificationsEnabled;
 
     for (Ref page : m_pages) {

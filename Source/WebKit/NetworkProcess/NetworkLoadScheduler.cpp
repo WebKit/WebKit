@@ -50,7 +50,7 @@ public:
 
 private:
     void start(NetworkLoad&);
-    bool shouldDelayLowPriority() const { return m_activeLoads.computeSize() >= maximumActiveCountForLowPriority; }
+    bool shouldDelayLowPriority() const { return m_activeLoads.computeSizeNoShrink() >= maximumActiveCountForLowPriority; }
 
     WeakHashSet<NetworkLoad> m_activeLoads;
     WeakListHashSet<NetworkLoad> m_pendingLoads;

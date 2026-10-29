@@ -520,7 +520,7 @@ void PageOverlayController::didChangeOverlayBackgroundColor(PageOverlay& overlay
 
 int PageOverlayController::overlayCount() const
 {
-    return m_overlayGraphicsLayers.computeSize();
+    return m_overlayGraphicsLayers.computeSizeNoShrink();
 }
 
 bool PageOverlayController::shouldSkipLayerInDump(const GraphicsLayer*, OptionSet<LayerTreeAsTextOptions> options) const

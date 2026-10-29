@@ -3824,7 +3824,7 @@ unsigned Internals::numberOfScrollableAreas()
     unsigned count = 0;
     RefPtr frame = document->frame();
     if (frame->view()->scrollableAreas())
-        count += frame->view()->scrollableAreas()->computeSize();
+        count += frame->view()->scrollableAreas()->computeSizeNoShrink();
 
     for (RefPtr child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         RefPtr localChild = dynamicDowncast<LocalFrame>(child);
@@ -3834,7 +3834,7 @@ unsigned Internals::numberOfScrollableAreas()
         if (!frameView)
             continue;
         if (frameView->scrollableAreas())
-            count += frameView->scrollableAreas()->computeSize();
+            count += frameView->scrollableAreas()->computeSizeNoShrink();
     }
 
     return count;
