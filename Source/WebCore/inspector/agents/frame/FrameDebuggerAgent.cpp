@@ -92,6 +92,9 @@ void FrameDebuggerAgent::internalDisable(bool isBeingDestroyed)
 {
     Ref { m_instrumentingAgents.get() }->setEnabledFrameDebuggerAgent(nullptr);
 
+    // The frame's debugger outlives the agent, and a navigation that suppressed its pauses may end after this.
+    setSuppressAllPauses(false);
+
     WebDebuggerAgent::internalDisable(isBeingDestroyed);
 }
 

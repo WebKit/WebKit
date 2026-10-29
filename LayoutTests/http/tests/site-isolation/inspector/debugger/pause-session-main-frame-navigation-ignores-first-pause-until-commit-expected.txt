@@ -1,0 +1,9 @@
+Tests that the first pause of the page during a navigation of the main frame does not hold the new document.
+
+
+== Running test suite: SiteIsolation.Debugger.MainFrameNavigationWhileStopped
+-- Running test case: SiteIsolation.Debugger.MainFrameNavigationWhileStopped.FirstPauseDuringNavigation
+PASS: Should find the frame target of the cross-site frame.
+PASS: The new document loaded.
+PASS: The new document's load listener should run.
+

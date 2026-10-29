@@ -53,6 +53,7 @@ class BrowsingContextGroup;
 class DebuggerPauseCoordinator;
 class InspectorBrowserAgent;
 class ProvisionalPageProxy;
+enum class ProvisionalLoadIsReplaced : bool;
 struct WebPageAgentContext;
 
 class WebPageInspectorController {
@@ -72,6 +73,10 @@ public:
     void frameDidContinueForDebugger(WebProcessProxy&, WebCore::FrameIdentifier);
     static void pageWasAddedToProcess(BrowsingContextGroup&, WebProcessProxy&, WebCore::PageIdentifier);
     void frameDidChangeProcess(WebCore::FrameIdentifier, WebCore::ProcessIdentifier newProcessID);
+    void mainFrameDidStartProvisionalLoad();
+    void mainFrameDidCommitLoad();
+    void mainFrameProvisionalLoadDidEnd(ProvisionalLoadIsReplaced);
+    bool isMainFrameNavigating() const { return m_isMainFrameNavigating; }
     void processDidTerminate(WebProcessProxy&);
 
     void connectFrontend(Inspector::FrontendChannel&, bool isAutomaticInspection = false, bool immediatelyPause = false);
@@ -139,6 +144,7 @@ private:
 
     bool m_didCreateLazyAgents { false };
     std::unique_ptr<DebuggerPauseCoordinator> m_debuggerPauseCoordinator;
+    bool m_isMainFrameNavigating { false };
 };
 
 } // namespace WebKit

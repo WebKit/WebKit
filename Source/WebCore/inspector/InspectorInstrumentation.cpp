@@ -1016,7 +1016,8 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
     if (!instrumentingAgents.developerExtrasEnabled()) [[likely]]
         return;
 
-    if (!frame.page())
+    RefPtr page = frame.page();
+    if (!page)
         return;
 
     if (!loader)
@@ -1048,6 +1049,8 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
 
         if (CheckedPtr enabledPageHeapAgent = instrumentingAgents.enabledPageHeapAgent())
             enabledPageHeapAgent->mainFrameNavigated();
+
+        page->inspectorController().endPauseSuppressionForNavigation();
     }
 
     // Only one provider may report a commit: a second report makes the frontend re-initialize the
@@ -1132,6 +1135,8 @@ void InspectorInstrumentation::frameStartedLoadingImpl(InstrumentingAgents& inst
             pageDebuggerAgent->mainFrameStartedLoading();
         if (CheckedPtr pageTimelineAgent = instrumentingAgents.enabledPageTimelineAgent())
             pageTimelineAgent->mainFrameStartedLoading();
+        if (RefPtr page = frame.page())
+            page->inspectorController().mainFrameStartedLoading();
     }
 }
 
@@ -1147,6 +1152,10 @@ void InspectorInstrumentation::frameStoppedLoadingImpl(InstrumentingAgents& inst
         if (CheckedPtr pageDebuggerAgent = instrumentingAgents.enabledPageDebuggerAgent())
             pageDebuggerAgent->mainFrameStoppedLoading();
     }
+
+    // The progress of the page can end on a subframe, for example when the navigation of the main frame does not commit.
+    if (RefPtr page = frame.page())
+        page->inspectorController().endPauseSuppressionForNavigation();
 }
 
 void InspectorInstrumentation::accessibilitySettingsDidChangeImpl(InstrumentingAgents& instrumentingAgents)

@@ -29,22 +29,26 @@
 #if PLATFORM(MAC)
 
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/RunLoop.h>
 
 namespace WebCore {
 
 bool FrameDebugger::platformShouldContinueRunningEventLoopWhilePaused()
 {
-    if (!NSApp.isRunning) {
-        [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
-        return true;
+    @autoreleasepool {
+        if (!NSApp.isRunning) {
+            // Returns after each input source, so that a resume takes effect before the next one is handled.
+            RunLoop::cycle();
+            return true;
+        }
+
+        ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+
+        [NSApp setWindowsNeedUpdate:YES];
+
+        if (NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny untilDate:[NSDate dateWithTimeIntervalSinceNow:0.05] inMode:NSDefaultRunLoopMode dequeue:YES])
+            [NSApp sendEvent:event];
     }
-
-    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-
-    [NSApp setWindowsNeedUpdate:YES];
-
-    if (NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny untilDate:[NSDate dateWithTimeIntervalSinceNow:0.05] inMode:NSDefaultRunLoopMode dequeue:YES])
-        [NSApp sendEvent:event];
 
     return true;
 }

@@ -57,10 +57,13 @@ public:
     void frameDidChangeProcess(WebCore::FrameIdentifier, WebCore::ProcessIdentifier newProcessID);
     void frameWillBeDestroyed(WebCore::FrameIdentifier);
     void processDidTerminate(WebProcessProxy&);
+    void mainFrameDidStartProvisionalLoad();
+    void openSessionIfFramesAreStopping();
     void closeSession();
 
 private:
     void openSession();
+    void releaseSuspendedPages();
     void suspendPage(WebProcessProxy&, WebCore::PageIdentifier);
     template<typename Predicate> void removeStoppingFramesIf(NOESCAPE const Predicate&);
 

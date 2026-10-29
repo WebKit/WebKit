@@ -1,0 +1,38 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="/inspector/resources/inspector-test.js"></script>
+<script>
+function pauseHere() {
+    debugger;
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.MainFrameNavigationWhileStopped");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.MainFrameNavigationWhileStopped.ResumesWhenNavigationStarts",
+        description: "A navigation of the main frame should resume the stopped main frame when it starts, as without site isolation, not when the new document arrives.",
+        async test() {
+            let paused = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            InspectorTest.evaluateInPage("setTimeout(pauseHere)");
+            await paused;
+
+            let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+            let loaded = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+            InspectorTest.deferOutputUntilTestPageIsReloaded();
+
+            let navigationStartTime = Date.now();
+            InspectorTest.evaluateInPage(`location.href = "/resources/load-and-stall.py?name=../site-isolation/inspector/debugger/pause-session-main-frame-navigation-resumes-when-it-starts.html&mimeType=text/html&stallAt=0&stallFor=6&rand=${Math.random()}"`);
+            await resumed;
+            let resumeTime = Date.now() - navigationStartTime;
+            await loaded;
+
+            InspectorTest.expectLessThan(resumeTime, 3000, "The main frame should resume before the response of the navigation arrives.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that a navigation of the main frame resumes the stopped main frame when the navigation starts.</p>
+</body>

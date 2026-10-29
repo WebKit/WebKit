@@ -30,6 +30,7 @@
 #include "MessageSenderInlines.h"
 #include "ProvisionalPageProxy.h"
 #include "WebInspectorBackendMessages.h"
+#include "WebPageInspectorController.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -51,7 +52,7 @@ DebuggerPauseCoordinator::~DebuggerPauseCoordinator()
 void DebuggerPauseCoordinator::frameDidPause(WebProcessProxy& process, WebCore::FrameIdentifier frameID)
 {
     m_stoppingFrames.add({ process.coreProcessIdentifier(), frameID });
-    if (!m_sessionID)
+    if (!m_sessionID && !protect(m_page.get())->inspectorController().isMainFrameNavigating())
         openSession();
 }
 
@@ -131,10 +132,26 @@ void DebuggerPauseCoordinator::suspendPage(WebProcessProxy& process, WebCore::Pa
         m_suspendedPages.append({ process, pageID });
 }
 
+void DebuggerPauseCoordinator::mainFrameDidStartProvisionalLoad()
+{
+    releaseSuspendedPages();
+}
+
+void DebuggerPauseCoordinator::openSessionIfFramesAreStopping()
+{
+    if (!m_sessionID && !m_stoppingFrames.isEmpty() && !protect(m_page.get())->inspectorController().isMainFrameNavigating())
+        openSession();
+}
+
 void DebuggerPauseCoordinator::closeSession()
 {
-    auto sessionID = std::exchange(m_sessionID, std::nullopt);
     m_stoppingFrames.clear();
+    releaseSuspendedPages();
+}
+
+void DebuggerPauseCoordinator::releaseSuspendedPages()
+{
+    auto sessionID = std::exchange(m_sessionID, std::nullopt);
     if (!sessionID)
         return;
 

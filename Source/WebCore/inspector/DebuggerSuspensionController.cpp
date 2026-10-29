@@ -118,6 +118,11 @@ void DebuggerSuspensionController::frameDebuggerDidContinue()
     });
 }
 
+bool DebuggerSuspensionController::isFrameDebuggerPaused()
+{
+    return s_isFrameDebuggerPaused;
+}
+
 bool DebuggerSuspensionController::addSessionHold(DebuggerPauseSessionIdentifier sessionID)
 {
     if (!m_sessionHolds.add(sessionID).isNewEntry)

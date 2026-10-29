@@ -1,0 +1,47 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+window.loadListenerRan = false;
+addEventListener("load", () => { window.loadListenerRan = true; });
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.MainFrameNavigationWhileStopped");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.MainFrameNavigationWhileStopped.CrossSiteFrameStopped",
+        description: "A navigation of the main frame while a cross-site frame is stopped should not hold the new document.",
+        async test() {
+            let frameTarget = await waitForFrameTargetForURLContaining("same-process-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the frame target of the cross-site frame.");
+            if (!frameTarget)
+                return;
+
+            let paused = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            frameTarget.RuntimeAgent.evaluate.invoke({expression: "setTimeout(pauseHere)", objectGroup: "test"});
+            await paused;
+
+            let loaded = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+            InspectorTest.deferOutputUntilTestPageIsReloaded();
+            InspectorTest.evaluateInPage(`location.search = "navigated"`);
+            await loaded;
+
+            InspectorTest.pass("The new document loaded.");
+            InspectorTest.expectThat(await InspectorTest.evaluateInPage("window.loadListenerRan"), "The new document's load listener should run.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that a navigation of the main frame releases the page when a cross-site frame is stopped in the debugger.</p>
+<script>
+// The new document has no frame of its own, so that it finishes loading before the stopped frame goes away.
+if (!location.search.includes("navigated")) {
+    let iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html";
+    document.body.appendChild(iframe);
+}
+</script>
+</body>

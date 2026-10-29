@@ -1,0 +1,42 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+window.mainTicks = 0;
+setInterval(() => { window.mainTicks++; }, 50);
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.MainFrameNavigationWhileStopped");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.MainFrameNavigationWhileStopped.NavigationCancelled",
+        description: "A navigation of the main frame should release the page while a cross-site frame is stopped, and the page should be held again if the navigation does not commit.",
+        async test() {
+            let frameTarget = await waitForFrameTargetForURLContaining("same-process-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the frame target of the cross-site frame.");
+            if (!frameTarget)
+                return;
+
+            await GlobalPause.pause(frameTarget);
+            await GlobalPause.expectHeld(InspectorTest.mainFrameTarget, "window.mainTicks", "The main frame's interval");
+
+            GlobalPause.evaluate(InspectorTest.mainFrameTarget, `location.href = "/resources/load-and-stall.py?name=../site-isolation/inspector/debugger/resources/same-process-frame.html&mimeType=text/html&stallAt=0&stallFor=10&rand=" + Math.random()`);
+            await GlobalPause.expectRunning(InspectorTest.mainFrameTarget, "window.mainTicks", await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.mainTicks"), "The main frame's interval while the navigation is pending");
+
+            await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.stop()");
+            await GlobalPause.sleep(200);
+            let before = await GlobalPause.expectHeld(InspectorTest.mainFrameTarget, "window.mainTicks", "The main frame's interval", "after the navigation was cancelled");
+
+            await GlobalPause.resumeAll();
+            await GlobalPause.expectRunning(InspectorTest.mainFrameTarget, "window.mainTicks", before, "The main frame's interval after resuming");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that a navigation of the main frame that does not commit leaves the page held while a cross-site frame is stopped in the debugger.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html"></iframe>
+</body>

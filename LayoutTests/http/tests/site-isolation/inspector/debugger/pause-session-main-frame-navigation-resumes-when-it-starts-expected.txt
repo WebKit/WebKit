@@ -1,0 +1,7 @@
+Tests that a navigation of the main frame resumes the stopped main frame when the navigation starts.
+
+
+== Running test suite: SiteIsolation.Debugger.MainFrameNavigationWhileStopped
+-- Running test case: SiteIsolation.Debugger.MainFrameNavigationWhileStopped.ResumesWhenNavigationStarts
+PASS: The main frame should resume before the response of the navigation arrives.
+

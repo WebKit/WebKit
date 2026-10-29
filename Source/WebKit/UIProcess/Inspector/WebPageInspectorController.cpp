@@ -413,6 +413,30 @@ void WebPageInspectorController::frameDidChangeProcess(WebCore::FrameIdentifier 
         CheckedPtr { m_debuggerPauseCoordinator }->frameDidChangeProcess(frameID, newProcessID);
 }
 
+void WebPageInspectorController::mainFrameDidStartProvisionalLoad()
+{
+    m_isMainFrameNavigating = true;
+    if (m_debuggerPauseCoordinator)
+        CheckedPtr { m_debuggerPauseCoordinator }->mainFrameDidStartProvisionalLoad();
+}
+
+void WebPageInspectorController::mainFrameDidCommitLoad()
+{
+    m_isMainFrameNavigating = false;
+    if (m_debuggerPauseCoordinator)
+        CheckedPtr { m_debuggerPauseCoordinator }->closeSession();
+}
+
+void WebPageInspectorController::mainFrameProvisionalLoadDidEnd(ProvisionalLoadIsReplaced isReplaced)
+{
+    if (isReplaced == ProvisionalLoadIsReplaced::Yes)
+        return;
+
+    m_isMainFrameNavigating = false;
+    if (m_debuggerPauseCoordinator)
+        CheckedPtr { m_debuggerPauseCoordinator }->openSessionIfFramesAreStopping();
+}
+
 void WebPageInspectorController::processDidTerminate(WebProcessProxy& process)
 {
     if (m_debuggerPauseCoordinator)

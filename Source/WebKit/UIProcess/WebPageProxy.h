@@ -757,6 +757,7 @@ enum class PasteboardAccessIntent : bool;
 enum class ProcessSwapRequestedByClient : bool;
 enum class ProcessTerminationReason : uint8_t;
 enum class ProcessThrottlerActivityType : bool;
+enum class ProvisionalLoadIsReplaced : bool;
 enum class QuickLookPreviewActivity : uint8_t;
 enum class RespectSelectionAnchor : bool;
 enum class RotationMonitoringReason : uint8_t;
@@ -2503,7 +2504,7 @@ public:
 
     // Logic shared between the WebPageProxy and the ProvisionalPageProxy.
     void didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, URL&&, URL&& unreachableURL, const UserData&, WallTime);
-    void didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&&, WebFrameProxy&, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& provisionalURL, WebCore::ResourceError&&, WebCore::WillContinueLoading, const UserData&, WebCore::WillInternallyHandleFailure);
+    void didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&&, WebFrameProxy&, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& provisionalURL, WebCore::ResourceError&&, WebCore::WillContinueLoading, const UserData&, WebCore::WillInternallyHandleFailure, ProvisionalLoadIsReplaced);
     void didReceiveServerRedirectForProvisionalLoadForFrameShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, std::optional<WebCore::NavigationIdentifier>, WebCore::ResourceRequest&&, const UserData&);
     void didPerformServerRedirectShared(Ref<WebProcessProxy>&&, String&& sourceURLString, String&& destinationURLString, WebCore::FrameIdentifier);
     void didPerformClientRedirectShared(Ref<WebProcessProxy>&&, String&& sourceURLString, String&& destinationURLString, WebCore::FrameIdentifier);

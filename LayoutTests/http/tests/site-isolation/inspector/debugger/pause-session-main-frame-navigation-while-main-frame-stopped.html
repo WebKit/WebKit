@@ -1,0 +1,38 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+window.loadListenerRan = false;
+addEventListener("load", () => { window.loadListenerRan = true; });
+
+function pauseHere() {
+    debugger;
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.MainFrameNavigationWhileStopped");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.MainFrameNavigationWhileStopped.MainFrameStopped",
+        description: "Reloading the page while its main frame is stopped should resume the frame and load the new document, as without site isolation.",
+        async test() {
+            let paused = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            InspectorTest.evaluateInPage("setTimeout(pauseHere)");
+            await paused;
+
+            let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+            let loaded = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+            InspectorTest.reloadPage();
+            await resumed;
+            await loaded;
+
+            InspectorTest.pass("The stopped main frame resumed and the new document loaded.");
+            InspectorTest.expectThat(await InspectorTest.evaluateInPage("window.loadListenerRan"), "The new document's load listener should run.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that a navigation of the main frame resumes the main frame when it is stopped in the debugger.</p>
+</body>

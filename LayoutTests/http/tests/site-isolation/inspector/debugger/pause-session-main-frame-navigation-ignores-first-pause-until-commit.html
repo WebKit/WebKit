@@ -1,0 +1,47 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="/inspector/resources/inspector-test.js"></script>
+<script src="/site-isolation/inspector/debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="/site-isolation/inspector/debugger/resources/global-pause-test-utilities.js"></script>
+<script>
+window.loadListenerRan = false;
+addEventListener("load", () => { window.loadListenerRan = true; });
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.MainFrameNavigationWhileStopped");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.MainFrameNavigationWhileStopped.FirstPauseDuringNavigation",
+        description: "The first pause of the page, in a frame of the old document during a navigation of the main frame, should not hold the new document.",
+        async test() {
+            let frameTarget = await waitForFrameTargetForURLContaining("same-process-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the frame target of the cross-site frame.");
+            if (!frameTarget)
+                return;
+
+            let paused = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            let loaded = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+            InspectorTest.deferOutputUntilTestPageIsReloaded();
+            GlobalPause.evaluate(InspectorTest.mainFrameTarget, `location.href = "/resources/load-and-stall.py?name=../site-isolation/inspector/debugger/pause-session-main-frame-navigation-ignores-first-pause-until-commit.html&mimeType=text/html&stallAt=0&stallFor=2&rand=" + Math.random()`);
+            await GlobalPause.sleep(500);
+            frameTarget.RuntimeAgent.evaluate.invoke({expression: "setTimeout(pauseHere)", objectGroup: "test"});
+            await paused;
+            await loaded;
+
+            InspectorTest.pass("The new document loaded.");
+            InspectorTest.expectThat(await InspectorTest.evaluateInPage("window.loadListenerRan"), "The new document's load listener should run.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that the first pause of the page during a navigation of the main frame does not hold the new document.</p>
+<script>
+if (!location.pathname.includes("load-and-stall")) {
+    let iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html";
+    document.body.appendChild(iframe);
+}
+</script>
+</body>

@@ -1,0 +1,61 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="/inspector/resources/inspector-test.js"></script>
+<script src="/site-isolation/inspector/debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="/site-isolation/inspector/debugger/resources/global-pause-test-utilities.js"></script>
+<script>
+window.loadListenerRan = false;
+addEventListener("load", () => { window.loadListenerRan = true; });
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.MainFrameNavigationWhileStopped");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.MainFrameNavigationWhileStopped.PauseDuringNavigation",
+        description: "A frame of the old document that pauses during a navigation of the main frame should not hold the new document.",
+        async test() {
+            let firstTarget = await waitForFrameTargetForURLContaining("same-process-frame.html?first");
+            let secondTarget = await waitForFrameTargetForURLContaining("same-process-frame.html?second");
+            InspectorTest.expectNotNull(firstTarget, "Should find the frame target of the first cross-site frame.");
+            InspectorTest.expectNotNull(secondTarget, "Should find the frame target of the second cross-site frame.");
+            if (!firstTarget || !secondTarget)
+                return;
+
+            await GlobalPause.pause(firstTarget);
+
+            // The second frame is held now. It pauses once it runs again, which is when the navigation starts.
+            await GlobalPause.evaluate(secondTarget, "window.stopOnce = true; setInterval(() => { if (window.stopOnce) { window.stopOnce = false; debugger; } }, 20); 0");
+            let secondPaused = new Promise((resolve) => {
+                let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                    if (event.data.target !== secondTarget || !WI.debuggerManager.dataForTarget(secondTarget).paused)
+                        return;
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+                    resolve();
+                });
+            });
+
+            let loaded = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+            InspectorTest.deferOutputUntilTestPageIsReloaded();
+            GlobalPause.evaluate(InspectorTest.mainFrameTarget, `location.href = "/resources/load-and-stall.py?name=../site-isolation/inspector/debugger/pause-session-main-frame-navigation-ignores-pauses-until-commit.html&mimeType=text/html&stallAt=0&stallFor=2&rand=" + Math.random()`);
+            await secondPaused;
+            await loaded;
+
+            InspectorTest.pass("The new document loaded.");
+            InspectorTest.expectThat(await InspectorTest.evaluateInPage("window.loadListenerRan"), "The new document's load listener should run.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that a frame that pauses during a navigation of the main frame does not hold the new document.</p>
+<script>
+if (!location.pathname.includes("load-and-stall")) {
+    for (let [name, origin] of [["first", "http://localhost:8000"], ["second", "https://localhost:8443"]]) {
+        let iframe = document.createElement("iframe");
+        iframe.src = `${origin}/site-isolation/inspector/debugger/resources/same-process-frame.html?${name}`;
+        document.body.appendChild(iframe);
+    }
+}
+</script>
+</body>

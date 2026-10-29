@@ -123,15 +123,52 @@ void PageInspectorController::suspendForDebuggerSession(DebuggerPauseSessionIden
     if (!CheckedRef { m_debuggerSuspensionController }->addSessionHold(sessionID))
         return;
 
-    protect(m_page.get())->forEachLocalFrame([](LocalFrame& frame) {
-        if (CheckedPtr debuggerAgent = frame.inspectorController().instrumentingAgents().enabledFrameDebuggerAgent())
-            debuggerAgent->cancelPauseAtNextOpportunity();
+    forEachEnabledFrameDebuggerAgent([](FrameDebuggerAgent& debuggerAgent) {
+        debuggerAgent.cancelPauseAtNextOpportunity();
     });
 }
 
 void PageInspectorController::resumeFromDebuggerSession(DebuggerPauseSessionIdentifier sessionID)
 {
     CheckedRef { m_debuggerSuspensionController.get() }->removeSessionHold(sessionID);
+}
+
+void PageInspectorController::mainFrameStartedLoading()
+{
+    if (!DebuggerSuspensionController::isFrameDebuggerPaused())
+        return;
+
+    bool hasPausedAgent = false;
+    forEachEnabledFrameDebuggerAgent([&](FrameDebuggerAgent& debuggerAgent) {
+        hasPausedAgent |= debuggerAgent.isPaused();
+    });
+    if (!hasPausedAgent)
+        return;
+
+    m_isSuppressingPausesForNavigation = true;
+    forEachEnabledFrameDebuggerAgent([](FrameDebuggerAgent& debuggerAgent) {
+        debuggerAgent.setSuppressAllPauses(true);
+        if (debuggerAgent.isPaused())
+            std::ignore = debuggerAgent.resume();
+    });
+}
+
+void PageInspectorController::endPauseSuppressionForNavigation()
+{
+    if (!std::exchange(m_isSuppressingPausesForNavigation, false))
+        return;
+
+    forEachEnabledFrameDebuggerAgent([](FrameDebuggerAgent& debuggerAgent) {
+        debuggerAgent.setSuppressAllPauses(false);
+    });
+}
+
+void PageInspectorController::forEachEnabledFrameDebuggerAgent(NOESCAPE const Function<void(FrameDebuggerAgent&)>& function)
+{
+    protect(m_page.get())->forEachLocalFrame([&](LocalFrame& frame) {
+        if (CheckedPtr debuggerAgent = frame.inspectorController().instrumentingAgents().enabledFrameDebuggerAgent())
+            function(*debuggerAgent);
+    });
 }
 
 PageInspectorController::~PageInspectorController()
