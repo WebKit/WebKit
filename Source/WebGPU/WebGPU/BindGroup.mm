@@ -1738,7 +1738,24 @@ bool BindGroup::updateExternalTextures(WebGPU::ExternalTexture& apiExternalTextu
 {
     // Every WebGPU::ExternalTexture that reaches a WebGPU::Metal::BindGroup is a WebGPU::Metal::ExternalTexture.
     auto& externalTexture = downcast<ExternalTexture>(apiExternalTexture);
-    if (!m_bindGroupLayout || externalTexture.openCommandEncoderCount())
+    if (!m_bindGroupLayout)
+        return false;
+
+    bool foundBoundExternalTexture = false;
+    for (auto& resource : m_resources) {
+        for (auto& resourceUsage : resource.resourceUsages) {
+            auto* boundExternalTexture = std::get_if<RefPtr<const ExternalTexture>>(&resourceUsage.resource);
+            if (!boundExternalTexture || !*boundExternalTexture)
+                continue;
+
+            if (boundExternalTexture->get() != &externalTexture || (*boundExternalTexture)->openCommandEncoderCount())
+                return false;
+
+            foundBoundExternalTexture = true;
+        }
+    }
+
+    if (!foundBoundExternalTexture)
         return false;
 
     Ref device = m_device;
