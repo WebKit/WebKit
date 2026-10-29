@@ -227,6 +227,9 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
             obscuredInset.left = newObscuredInsetLeft;
             [webView _setObscuredContentInsets:obscuredInset immediate:YES];
         }
+
+        [webView _setAlwaysBounceVertical:YES];
+        [webView _setAlwaysBounceHorizontal:YES];
     }
 
     if (m_defaultAppAccentColor && ![NSApp._effectiveAccentColor isEqual:m_defaultAppAccentColor.get()])

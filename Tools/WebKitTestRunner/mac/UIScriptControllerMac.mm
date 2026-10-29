@@ -53,13 +53,6 @@
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
-@interface WKWebView (Internal_RubberBandingBehavior)
-
-@property (nonatomic, setter=_setAlwaysBounceVertical:) BOOL _alwaysBounceVertical;
-@property (nonatomic, setter=_setAlwaysBounceHorizontal:) BOOL _alwaysBounceHorizontal;
-
-@end
-
 namespace WTR {
 
 Ref<UIScriptController> UIScriptController::create(UIScriptContext& context)

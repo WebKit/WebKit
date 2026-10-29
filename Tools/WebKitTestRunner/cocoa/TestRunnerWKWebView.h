@@ -33,6 +33,13 @@
 - (IBAction)toggleContinuousSpellChecking:(id)sender;
 @end
 
+#if PLATFORM(MAC)
+@interface WKWebView (Internal_RubberBandingBehavior)
+@property (nonatomic, setter=_setAlwaysBounceVertical:) BOOL _alwaysBounceVertical;
+@property (nonatomic, setter=_setAlwaysBounceHorizontal:) BOOL _alwaysBounceHorizontal;
+@end
+#endif
+
 @interface TestRunnerWKWebView : WKWebView
 
 #if PLATFORM(IOS_FAMILY)
