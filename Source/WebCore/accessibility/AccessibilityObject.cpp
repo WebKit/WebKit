@@ -2547,7 +2547,7 @@ int AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) cons
     // top document.
     while (true) {
         savedVisiblePos = currentVisiblePos;
-        currentVisiblePos = previousLinePosition(currentVisiblePos, 0, HasEditableAXRole);
+        currentVisiblePos = previousLinePosition(currentVisiblePos, 0, EditableType::AXRole);
         if (currentVisiblePos.isNull() || inSameLine(currentVisiblePos, savedVisiblePos))
             break;
         // Count lines rather than steps, because one step can cross more than one. The start of a

@@ -56,8 +56,8 @@ WEBCORE_EXPORT VisiblePosition nextSentencePosition(const VisiblePosition&);
 // lines
 WEBCORE_EXPORT VisiblePosition startOfLine(const VisiblePosition&);
 WEBCORE_EXPORT VisiblePosition endOfLine(const VisiblePosition&);
-WEBCORE_EXPORT VisiblePosition previousLinePosition(const VisiblePosition&, LayoutUnit lineDirectionPoint, EditableType = ContentIsEditable);
-WEBCORE_EXPORT VisiblePosition nextLinePosition(const VisiblePosition&, LayoutUnit lineDirectionPoint, EditableType = ContentIsEditable);
+WEBCORE_EXPORT VisiblePosition previousLinePosition(const VisiblePosition&, LayoutUnit lineDirectionPoint, EditableType = EditableType::Content);
+WEBCORE_EXPORT VisiblePosition nextLinePosition(const VisiblePosition&, LayoutUnit lineDirectionPoint, EditableType = EditableType::Content);
 WEBCORE_EXPORT bool inSameLine(const VisiblePosition&, const VisiblePosition&);
 WEBCORE_EXPORT bool isStartOfLine(const VisiblePosition&);
 WEBCORE_EXPORT bool isEndOfLine(const VisiblePosition&);
@@ -68,19 +68,19 @@ VisiblePosition leftBoundaryOfLine(const VisiblePosition&, TextDirection, bool* 
 VisiblePosition rightBoundaryOfLine(const VisiblePosition&, TextDirection, bool* reachedBoundary);
 
 // paragraphs (perhaps a misnomer, can be divided by line break elements)
-WEBCORE_EXPORT VisiblePosition startOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
-WEBCORE_EXPORT VisiblePosition endOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+WEBCORE_EXPORT VisiblePosition startOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross);
+WEBCORE_EXPORT VisiblePosition endOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross);
 VisiblePosition startOfNextParagraph(const VisiblePosition&);
 WEBCORE_EXPORT VisiblePosition previousParagraphPosition(const VisiblePosition&, LayoutUnit x);
 WEBCORE_EXPORT VisiblePosition nextParagraphPosition(const VisiblePosition&, LayoutUnit x);
-WEBCORE_EXPORT bool isStartOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
-WEBCORE_EXPORT bool isEndOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
-bool inSameParagraph(const VisiblePosition&, const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+WEBCORE_EXPORT bool isStartOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross);
+WEBCORE_EXPORT bool isEndOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross);
+bool inSameParagraph(const VisiblePosition&, const VisiblePosition&, EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross);
 bool isBlankParagraph(const VisiblePosition&);
 
 // blocks (true paragraphs; line break elements don't break blocks)
-VisiblePosition startOfBlock(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
-VisiblePosition endOfBlock(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+VisiblePosition startOfBlock(const VisiblePosition&, EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross);
+VisiblePosition endOfBlock(const VisiblePosition&, EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross);
 bool inSameBlock(const VisiblePosition&, const VisiblePosition&);
 bool isStartOfBlock(const VisiblePosition&);
 bool isEndOfBlock(const VisiblePosition&);

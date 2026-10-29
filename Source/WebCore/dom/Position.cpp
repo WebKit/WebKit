@@ -510,11 +510,11 @@ bool Position::atLastEditingPositionForNode() const
 //    positions are both non editable.
 bool Position::atEditingBoundary() const
 {
-    Position nextPosition = downstream(CanCrossEditingBoundary);
+    Position nextPosition = downstream(EditingBoundaryCrossingRule::CanCross);
     if (atFirstEditingPositionForNode() && nextPosition.isNotNull() && !protect(nextPosition.deprecatedNode())->hasEditableStyle())
         return true;
 
-    Position prevPosition = upstream(CanCrossEditingBoundary);
+    Position prevPosition = upstream(EditingBoundaryCrossingRule::CanCross);
     if (atLastEditingPositionForNode() && prevPosition.isNotNull() && !protect(prevPosition.deprecatedNode())->hasEditableStyle())
         return true;
 
@@ -717,7 +717,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
             // Don't change editability.
             bool currentEditable = currentNode->hasEditableStyle();
             if (startEditable != currentEditable) {
-                if (rule == CannotCrossEditingBoundary)
+                if (rule == EditingBoundaryCrossingRule::CannotCross)
                     break;
                 boundaryCrossed = true;
             }
@@ -738,7 +738,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         if (!renderer || renderer->style().visibility() != Visibility::Visible)
             continue;
 
-        if (rule == CanCrossEditingBoundary && boundaryCrossed) {
+        if (rule == EditingBoundaryCrossingRule::CanCross && boundaryCrossed) {
             lastVisible = currentPosition;
             break;
         }
@@ -825,7 +825,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
             // Don't change editability.
             bool currentEditable = currentNode->hasEditableStyle();
             if (startEditable != currentEditable) {
-                if (rule == CannotCrossEditingBoundary)
+                if (rule == EditingBoundaryCrossingRule::CannotCross)
                     break;
                 boundaryCrossed = true;
             }
@@ -856,7 +856,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         if (!renderer || renderer->style().visibility() != Visibility::Visible)
             continue;
 
-        if (rule == CanCrossEditingBoundary && boundaryCrossed) {
+        if (rule == EditingBoundaryCrossingRule::CanCross && boundaryCrossed) {
             lastVisible = currentPosition;
             break;
         }
@@ -1184,9 +1184,10 @@ Position Position::trailingWhitespacePosition(Affinity, bool considerNonCollapsi
     VisiblePosition v(*this);
     char16_t c = v.characterAfter();
     // The space must not be in another paragraph and it must be editable.
-    if (!isEndOfParagraph(v) && v.next(CannotCrossEditingBoundary).isNotNull())
+    if (!isEndOfParagraph(v) && v.next(EditingBoundaryCrossingRule::CannotCross).isNotNull()) {
         if (considerNonCollapsibleWhitespace ? (isASCIIWhitespace(c) || c == noBreakSpace) : deprecatedIsCollapsibleWhitespace(c))
             return *this;
+    }
     
     return { };
 }
@@ -1227,7 +1228,7 @@ static Position downstreamIgnoringEditingBoundaries(Position position)
     Position lastPosition;
     while (position != lastPosition) {
         lastPosition = position;
-        position = position.downstream(CanCrossEditingBoundary);
+        position = position.downstream(EditingBoundaryCrossingRule::CanCross);
     }
     return position;
 }
@@ -1237,7 +1238,7 @@ static Position upstreamIgnoringEditingBoundaries(Position position)
     Position lastPosition;
     while (position != lastPosition) {
         lastPosition = position;
-        position = position.upstream(CanCrossEditingBoundary);
+        position = position.upstream(EditingBoundaryCrossingRule::CanCross);
     }
     return position;
 }

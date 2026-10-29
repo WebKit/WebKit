@@ -338,7 +338,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
                 c = pos.characterBefore();
                 if (!CFCharacterSetIsLongCharacterMember(set, c))
                     break;
-                pos = pos.previous(CannotCrossEditingBoundary);  // stay in editable content
+                pos = pos.previous(EditingBoundaryCrossingRule::CannotCross); // stay in editable content
             }
         }
         else {
@@ -351,7 +351,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
                 c = pos.characterBefore();
                 if (CFCharacterSetIsLongCharacterMember(set, c))
                     break;
-                pos = pos.previous(CannotCrossEditingBoundary);  // stay in editable content
+                pos = pos.previous(EditingBoundaryCrossingRule::CannotCross); // stay in editable content
                 index++;
                 if (index > 1)
                     break;
@@ -365,7 +365,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
                     c = pos.characterAfter();
                     if (CFCharacterSetIsLongCharacterMember(set, c))
                         break;
-                    pos = pos.next(CannotCrossEditingBoundary);  // stay in editable content
+                    pos = pos.next(EditingBoundaryCrossingRule::CannotCross); // stay in editable content
                 }
             }
         }

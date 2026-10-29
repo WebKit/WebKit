@@ -571,8 +571,8 @@ static VisibleSelection expandSelectionToRespectSelectOnMouseDown(Node& targetNo
         return selection;
 
     VisibleSelection newSelection(selection);
-    newSelection.setBase(positionBeforeNode(*nodeToSelect).upstream(CanCrossEditingBoundary));
-    newSelection.setExtent(positionAfterNode(*nodeToSelect).downstream(CanCrossEditingBoundary));
+    newSelection.setBase(positionBeforeNode(*nodeToSelect).upstream(EditingBoundaryCrossingRule::CanCross));
+    newSelection.setExtent(positionAfterNode(*nodeToSelect).downstream(EditingBoundaryCrossingRule::CanCross));
 
     return newSelection;
 }
@@ -1178,21 +1178,21 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
 
     RefPtr rootUserSelectAllForMousePressNode = Position::rootUserSelectAllForNode(m_mousePressNode);
     if (rootUserSelectAllForMousePressNode && rootUserSelectAllForMousePressNode == Position::rootUserSelectAllForNode(target.get())) {
-        newSelection.setBase(positionBeforeNode(*rootUserSelectAllForMousePressNode).upstream(CanCrossEditingBoundary));
-        newSelection.setExtent(positionAfterNode(*rootUserSelectAllForMousePressNode).downstream(CanCrossEditingBoundary));
+        newSelection.setBase(positionBeforeNode(*rootUserSelectAllForMousePressNode).upstream(EditingBoundaryCrossingRule::CanCross));
+        newSelection.setExtent(positionAfterNode(*rootUserSelectAllForMousePressNode).downstream(EditingBoundaryCrossingRule::CanCross));
     } else {
         CheckedPtr targetRenderer = target->renderer();
         CheckedPtr mousePressRenderer = m_mousePressNode ? m_mousePressNode->renderer() : nullptr;
 
         // Reset base for user select all when base is inside user-select-all area and extent < base.
         if (rootUserSelectAllForMousePressNode && targetRenderer->visiblePositionForPoint(hitTestResult.localPoint(), HitTestSource::User) < mousePressRenderer->visiblePositionForPoint(m_dragStartPosition, HitTestSource::User))
-            newSelection.setBase(positionAfterNode(*rootUserSelectAllForMousePressNode).downstream(CanCrossEditingBoundary));
+            newSelection.setBase(positionAfterNode(*rootUserSelectAllForMousePressNode).downstream(EditingBoundaryCrossingRule::CanCross));
 
         RefPtr rootUserSelectAllForTarget = Position::rootUserSelectAllForNode(target.get());
         if (rootUserSelectAllForTarget && mousePressRenderer && targetRenderer->visiblePositionForPoint(hitTestResult.localPoint(), HitTestSource::User) < mousePressRenderer->visiblePositionForPoint(m_dragStartPosition, HitTestSource::User))
-            newSelection.setExtent(positionBeforeNode(*rootUserSelectAllForTarget).upstream(CanCrossEditingBoundary));
+            newSelection.setExtent(positionBeforeNode(*rootUserSelectAllForTarget).upstream(EditingBoundaryCrossingRule::CanCross));
         else if (rootUserSelectAllForTarget && mousePressRenderer)
-            newSelection.setExtent(positionAfterNode(*rootUserSelectAllForTarget).downstream(CanCrossEditingBoundary));
+            newSelection.setExtent(positionAfterNode(*rootUserSelectAllForTarget).downstream(EditingBoundaryCrossingRule::CanCross));
         else
             newSelection.setExtent(targetPosition);
     }
@@ -4070,7 +4070,7 @@ bool EventHandler::sendContextMenuEventForKey()
             targetRange = selection.toNormalizedRange();
         else {
             auto endPosition = selection.visibleEnd();
-            targetRange = VisibleSelection { endPosition.previous(CannotCrossEditingBoundary), endPosition }.toNormalizedRange();
+            targetRange = VisibleSelection { endPosition.previous(EditingBoundaryCrossingRule::CannotCross), endPosition }.toNormalizedRange();
         }
         if (targetRange) {
             IntRect targetRect = protect(frame->editor())->firstRectForRange(*targetRange);
