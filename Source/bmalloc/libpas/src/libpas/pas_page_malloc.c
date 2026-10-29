@@ -31,12 +31,14 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #if !PAS_OS(WINDOWS)
 #include <sys/mman.h>
 #include <unistd.h>
 #endif
 #if PAS_OS(DARWIN)
+#include <Availability.h>
 #include <mach/vm_statistics.h>
 #endif
 #if PAS_OS(LINUX)
@@ -77,6 +79,24 @@ void pas_page_malloc_populate(void* base, size_t size)
 }
 
 #if PAS_USE_MADV_ZERO
+#if PAS_OS(DARWIN)
+/* Prefer MADV_ZERO over the mmap fallback from this version onwards. */
+#define PAS_MADV_ZERO_MIN_APPLE_OS 270200
+
+#if (PAS_PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= PAS_MADV_ZERO_MIN_APPLE_OS) \
+    || (PAS_PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= PAS_MADV_ZERO_MIN_APPLE_OS) \
+    || (PAS_PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= PAS_MADV_ZERO_MIN_APPLE_OS) \
+    || (PAS_PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= PAS_MADV_ZERO_MIN_APPLE_OS) \
+    || (PAS_PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED >= PAS_MADV_ZERO_MIN_APPLE_OS)
+#define PAS_PREFER_MADV_ZERO 1
+#else
+#define PAS_PREFER_MADV_ZERO 0
+#endif
+#else /* !PAS_OS(DARWIN) */
+/* No Apple OS floor applies here. */
+#define PAS_PREFER_MADV_ZERO 1
+#endif /* PAS_OS(DARWIN) */
+
 /* It is possible that MADV_ZERO is defined but still not supported by the
  * running OS. In this case, we check once to see if we get ENOSUP, and if
  * we thereafter short-circuit to the fallback (mmap), thus avoiding the
@@ -329,8 +349,23 @@ pas_page_malloc_try_allocate_without_deallocating_padding(
 }
 
 #if PAS_USE_MADV_ZERO
+static bool should_try_madv_zero(void)
+{
+    /* madvise preserves the range's tagged status; remapping does not. */
+    if (pas_mte_is_mte_enabled())
+        return true;
+    if (getenv("LibpasForceMadvZero"))
+        return true;
+    return PAS_PREFER_MADV_ZERO;
+}
+
 static void pas_page_malloc_zero_fill_latch_if_madv_zero_is_supported(void)
 {
+    if (!should_try_madv_zero()) {
+        madv_zero_supported = false;
+        return;
+    }
+
     /* It is possible that the MADV_ZERO macro is defined but that the kernel
      * does not actually support it. In this case we want to avoid calling madvise
      * since it will just return -1 every time, and so just short-circuit
