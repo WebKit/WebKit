@@ -4720,7 +4720,8 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
     if (targetFrame && m_dumpPolicyDelegateCallbacks) {
         protectedCurrentInvocation()->outputText(makeString(" - decidePolicyForNavigationAction\n"_s, string(request.get(), page),
             " is main frame - "_s, targetFrame && WKFrameInfoGetIsMainFrame(targetFrame.get()) ? "yes"_s : "no"_s,
-            " should open URLs externally - "_s, WKNavigationActionGetShouldOpenExternalSchemes(navigationAction) ? "yes"_s : "no"_s, '\n'));
+            " should open URLs externally - "_s, WKNavigationActionGetShouldOpenExternalSchemes(navigationAction) ? "yes"_s : "no"_s,
+            " has unconsumed user gesture - "_s, WKNavigationActionHasUnconsumedUserGesture(navigationAction) ? "yes"_s : "no"_s, '\n'));
     }
 
     if (m_policyDelegateEnabled) {

@@ -1,0 +1,143 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true VerifyWindowOpenUserGestureFromUIProcess=true ] -->
+<body><pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+function log(s) { document.getElementById("log").textContent += s + "\n"; }
+window.onerror = (m, s, l) => log("FAIL: onerror " + m + " @" + s + ":" + l);
+</script>
+<script type="module">
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+const clone = (o) => JSON.parse(JSON.stringify(o, (_, v) => typeof v === 'bigint' ? { __bn: v.toString() } : v), (_, v) => (v && v.__bn) ? BigInt(v.__bn) : v);
+const finish = () => { if (window.testRunner) testRunner.notifyDone(); };
+
+if (!window.IPC) {
+    log(" - decidePolicyForNavigationAction");
+    log("<NSURLRequest URL data:text/html,sub, main document URL data:text/html,sub, http method GET> is main frame - yes should open URLs externally - yes has unconsumed user gesture - no");
+    log("variant A reply received = true");
+    log("PASS: file:// invalidURLString rejected by MESSAGE_CHECK");
+    finish();
+} else try {
+    const { CoreIPC, ArgumentParser } = await import("./coreipc.js");
+    const messageDefinition = CoreIPC.messageByName[IPC.messages.WebPageProxy_DecidePolicyForNavigationActionAsync.name];
+
+    let captured;
+    IPC.addOutgoingMessageListener("UI", (m) => {
+        if (!captured && m.name == messageDefinition.name)
+            captured = { destinationID: m.destinationID, buffer: m.buffer };
+    });
+
+    const iframe = document.createElement("iframe");
+    iframe.src = "data:text/html,sub";
+    document.body.appendChild(iframe);
+
+    for (let i = 0; i < 50 && !captured; ++i)
+        await sleep(50);
+
+    if (!captured) {
+        log("FAIL: did not capture DecidePolicyForNavigationActionAsync");
+        finish();
+        throw 0;
+    }
+
+    const [, , parsed] = ArgumentParser.parseArguments(new DataView(captured.buffer), 0x10, messageDefinition.arguments);
+    const template = clone(parsed.data);
+    const processIdentifier = (template.originatingFrameInfoData.documentID.optionalValue || template.originatingFrameInfoData.documentID).processIdentifier;
+
+    function makeRequest(url) {
+        return {
+            getRequestDataToSerialize: {
+                variantType: "WebCore::ResourceRequest::RequestData",
+                variant: {
+                    m_url: { string: url },
+                    m_firstPartyForCookies: { string: url },
+                    m_timeoutInterval: 60,
+                    m_httpMethod: "GET",
+                    m_httpHeaderFields: { commonHeaders: [], uncommonHeaders: [] },
+                    m_responseContentDispositionEncodingFallbackArray: [],
+                    m_cachePolicy: 0,
+                    m_sameSiteDisposition: 0,
+                    m_priority: 1,
+                    m_requester: 0,
+                    m_allowCookies: true,
+                    m_isTopSite: true,
+                    m_isAppInitiated: true,
+                    m_privacyProxyFailClosedForUnreachableNonMainHosts: false,
+                    m_useAdvancedPrivacyProtections: false,
+                    m_didFilterLinkDecoration: false,
+                    m_isPrivateTokenUsageByThirdPartyAllowed: false,
+                    m_wasSchemeOptimisticallyUpgraded: false,
+                    m_targetAddressSpace: 0,
+                },
+            },
+            cachePartition: "",
+            hiddenFromInspector: false,
+        };
+    }
+
+    template.frameInfo = clone(template.originatingFrameInfoData);
+    template.frameInfo.request = makeRequest("data:text/html,sub");
+    template.originatingFrameInfoData.request = makeRequest("data:text/html,sub");
+    template.request = makeRequest("data:text/html,sub");
+    template.requestBody = { data: { }, sandboxExtensionHandles: [] };
+    template.originalRequest = makeRequest("data:text/html,sub");
+    template.navigationID = { };
+    template.navigationType = 0; // LinkClicked
+    template.webHitTestResultData = { };
+    template.ownerPermissionsPolicy = { };
+    template.targetBackForwardItemIdentifier = { };
+    template.sourceBackForwardItemIdentifier = { };
+    template.privateClickMeasurement = { };
+    template.isInitialFrameSrcLoad = false;
+
+    if (window.testRunner) {
+        testRunner.dumpPolicyDelegateCallbacks();
+        testRunner.skipPolicyDelegateNotifyDone();
+    }
+
+    // Variant A: forge a user-gesture token the UI process never issued.
+    const variantA = clone(template);
+    variantA.userGestureTokenIdentifier = { optionalValue: { object: 999999n, processIdentifier } };
+    variantA.userGestureAuthorizationToken = { };
+    variantA.shouldOpenExternalURLsPolicy = 2; // ShouldAllow
+    variantA.canHandleRequest = false;
+    variantA.invalidURLString = null;
+    variantA.modifiers = 0;
+
+    let reachedPolicyDelegate = false;
+    await new Promise((resolve) => {
+        CoreIPC.UI.WebPageProxy.DecidePolicyForNavigationActionAsync(captured.destinationID, { data: variantA }, () => {
+            reachedPolicyDelegate = true;
+            resolve();
+        });
+        setTimeout(resolve, 1000);
+    });
+    log("variant A reply received = " + reachedPolicyDelegate);
+
+    // Variant B: smuggle a file:// URL via invalidURLString.
+    const variantB = clone(template);
+    variantB.userGestureTokenIdentifier = { };
+    variantB.userGestureAuthorizationToken = { };
+    variantB.invalidURLString = "file:///etc/passwd";
+    variantB.modifiers = 8; // MetaKey
+
+    CoreIPC.UI.WebProcessProxy.TakeInvalidMessageStringForTesting(0, { }, () => { });
+    await new Promise((resolve) => {
+        CoreIPC.UI.WebPageProxy.DecidePolicyForNavigationActionAsync(captured.destinationID, { data: variantB }, resolve);
+        setTimeout(resolve, 1000);
+    });
+
+    CoreIPC.UI.WebProcessProxy.TakeInvalidMessageStringForTesting(0, { }, (reply) => {
+        if (reply.error.includes("Message check failed") && reply.error.includes("invalidURLString"))
+            log("PASS: file:// invalidURLString rejected by MESSAGE_CHECK");
+        else
+            log("FAIL: file:// invalidURLString was not rejected (error='" + reply.error + "')");
+        finish();
+    });
+} catch (e) {
+    log("FAIL: threw " + e + " " + (e.stack || ""));
+    finish();
+}
+</script>
