@@ -37,9 +37,11 @@
 #import "TextureView.h"
 #import <simd/simd.h>
 #import <wtf/Borrow.h>
+#import <wtf/Box.h>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if ENABLE(WEBGPU_SWIFT)
 #import "CxxBridging.h"
@@ -383,9 +385,19 @@ void Queue::waitForAllCommitedWorkToComplete()
 }
 
 template<unsigned errorCode>
-[[noreturn]] void crashGPUProcess(NSError* error, NSError* underlyingError)
+[[noreturn]] void crashGPUProcess(const RefPtr<Device>& device, NSError* error, NSError* underlyingError)
 {
     WTFLogAlways("Encountered fatal command buffer error %@, underlying error %@", error, underlyingError); // NOLINT
+    if (device)
+        device->loseTheDevice(WebGPU::DeviceLostReason::Unknown);
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+[[noreturn]] static void crashGPUProcess(const RefPtr<Device>& device, NSString *error)
+{
+    WTFLogAlways("Encountered fatal GPU error %@", error); // NOLINT
+    if (device)
+        device->loseTheDevice(WebGPU::DeviceLostReason::Unknown);
     RELEASE_ASSERT_NOT_REACHED();
 }
 
@@ -404,7 +416,9 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
                 callback();
         });
     }];
-    [commandBuffer addCompletedHandler:[protectedThis = protect(*this)](id<MTLCommandBuffer> mtlCommandBuffer) {
+    auto didComplete = Box<std::atomic<bool>>::create(false);
+    [commandBuffer addCompletedHandler:[protectedThis = protect(*this), didComplete](id<MTLCommandBuffer> mtlCommandBuffer) {
+        didComplete->store(true, std::memory_order_relaxed);
         MTLCommandBufferStatus status = mtlCommandBuffer.status;
         bool loseTheDevice = false;
         if (NSError *error = mtlCommandBuffer.error; status != MTLCommandBufferStatusCompleted) {
@@ -414,7 +428,8 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
                 if (underlyingError.code == 0x10a || underlyingError.code == 0x5)
                     loseTheDevice = false;
                 else {
-#define makeCase(N) case N: crashGPUProcess<N>(error, underlyingError);
+                    RefPtr device = protectedThis->m_device.get();
+#define makeCase(N) case N: crashGPUProcess<N>(device, error, underlyingError);
                     switch (underlyingError.code) {
                         makeCase(9); // kIOGPUCommandBufferCallbackErrorInvalidResource = 9,
                         makeCase(10); // kIOGPUCommandBufferCallbackErrorInvalidInput = 10,
@@ -455,6 +470,13 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
     }
     removeMTLCommandBufferInternal(commandBuffer);
     ++m_submittedCommandBufferCount;
+
+    NSString *label = commandBuffer.label;
+    ThreadSafeWeakPtr weakDevice = m_device;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if (!didComplete->load(std::memory_order_relaxed))
+            crashGPUProcess(weakDevice.get(), [NSString stringWithFormat:@"WebGPU: command buffer %@ did not complete within 3s timeout", label]);
+    });
 }
 
 static void invalidateCommandBuffers(Vector<Ref<WebGPU::Metal::CommandBuffer>>&& commands, auto&& makeInvalidFunc)
