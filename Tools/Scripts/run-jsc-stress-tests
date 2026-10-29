@@ -609,6 +609,48 @@ def determineOS
     end
 end
 
+# BEGIN support for '#ifndef RC_REMOVE_SEC_ACCEL_3'
+
+# jsc defines exactly one of these, according to whether RC_REMOVE_SEC_ACCEL_3 was defined when it
+# was built. Matched as substrings of raw nm output, without the leading underscore Mach-O nm
+# prints, so one match covers Mach-O and ELF alike.
+SEC_ACCEL_3_ENABLED_SYMBOL = "_ZN3JSC16SecAccel3EnabledE"
+SEC_ACCEL_3_DISABLED_SYMBOL = "_ZN3JSC17SecAccel3DisabledE"
+
+def determineSecAccel3Removed
+    # A bundle replays a runlist whose skip decisions were made when it was built, and the
+    # replaying machine need not have nm at all.
+    return true if $bundle
+
+    symbols = nil
+    begin
+        output = `nm #{Shellwords.shellescape($jscPath.to_s)}`
+        symbols = output if $?.success?
+    rescue
+        # Ruby execs nm directly for a path shellescape leaves unquoted, so a missing nm raises
+        # here instead of failing the status check above.
+    end
+    if not symbols
+        $stderr.puts "Error: unable to probe #{$jscPath} for security acceleration release 3."
+        exit 1
+    end
+
+    enabled = symbols.include?(SEC_ACCEL_3_ENABLED_SYMBOL)
+    disabled = symbols.include?(SEC_ACCEL_3_DISABLED_SYMBOL)
+    # Either answer would be a guess, and a wrong guess silently runs or silently skips tests.
+    if enabled and disabled
+        $stderr.puts "Error: #{$jscPath} defines both JSC::SecAccel3Enabled and JSC::SecAccel3Disabled."
+        exit 1
+    end
+    if not enabled and not disabled
+        $stderr.puts "Error: #{$jscPath} defines neither JSC::SecAccel3Enabled nor JSC::SecAccel3Disabled; it was built without security acceleration release 3 tracking, or its symbol table was stripped."
+        exit 1
+    end
+    disabled
+end
+
+# END support for '#ifndef RC_REMOVE_SEC_ACCEL_3'
+
 if $cloop
     $jitTests = false
     $runJITlessWasm = false
@@ -622,6 +664,13 @@ $isFTLPlatform = !($architecture == "x86" || $architecture == "mips" || $archite
 $isWasmPlatform = (not $cloop) && $jitTests && ($isFTLPlatform || ($hostOS == "windows" && $architecture == "x86_64"))
 $isOMGPlatform = $isFTLPlatform
 $isSIMDPlatform = $isWasmPlatform && ($architecture == "arm64" || $architecture == "x86_64")
+
+# BEGIN support for '#ifndef RC_REMOVE_SEC_ACCEL_3'
+# Tests gate on this flag with `//@ skip if $secAccel3Removed`. Probed here because
+# prepareBundle rewrites $jscPath to the staged copy before it walks any collection, so a
+# later probe would inspect a different file.
+$secAccel3Removed = determineSecAccel3Removed
+# END support for '#ifndef RC_REMOVE_SEC_ACCEL_3'
 
 $skipLockdown = false
 $skipMiniMode = false
