@@ -2576,6 +2576,93 @@ void ExpectReadFramebufferPixels(GLsizei size, const std::vector<GLColor> &expec
 }
 }  // namespace
 
+// Test glCopyTexImage2D redefining, with a new size, the texture level that the read framebuffer
+// reads from.
+TEST_P(CopyTexImageTest, CopyTexImageFromSameLevelNewSize)
+{
+    constexpr GLsizei kSize     = 16;
+    constexpr GLsizei kCopySize = kSize / 2;
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 MakeQuadrantImage(kSize, 255).data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // The center of a quadrant image is a smaller quadrant image.
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize / 4, kSize / 4, kCopySize, kCopySize, 0);
+    ASSERT_GL_NO_ERROR();
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ExpectReadFramebufferPixels(kCopySize, MakeQuadrantImage(kCopySize, 255));
+}
+
+// Test glCopyTexImage2D redefining, with a new format, the texture level that the read framebuffer
+// reads from.
+TEST_P(CopyTexImageTest, CopyTexImageFromSameLevelNewFormat)
+{
+    constexpr GLsizei kSize = 16;
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 MakeQuadrantImage(kSize, 128).data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, kSize, kSize, 0);
+    ASSERT_GL_NO_ERROR();
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ExpectReadFramebufferPixels(kSize, MakeQuadrantImage(kSize, 255));
+}
+
+// Test glCopyTexSubImage2D between two regions of the texture level that the read framebuffer reads
+// from.  The regions don't overlap.
+TEST_P(CopyTexImageTest, CopyTexSubImageWithinSameLevel)
+{
+    constexpr GLsizei kSize = 16;
+    constexpr GLsizei kHalf = kSize / 2;
+
+    std::vector<GLColor> expected = MakeQuadrantImage(kSize, 255);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 expected.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Copy the left half over the right half.
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, kHalf, 0, 0, 0, kHalf, kSize);
+    ASSERT_GL_NO_ERROR();
+    FillImageRect(&expected, kSize, kHalf, 0, kHalf, kHalf, GLColor::red);
+    FillImageRect(&expected, kSize, kHalf, kHalf, kHalf, kHalf, GLColor::blue);
+    ExpectReadFramebufferPixels(kSize, expected);
+
+    // Copy a part of the bottom left quadrant over the top left quadrant.
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 2, kHalf + 2, 1, 1, 4, 4);
+    ASSERT_GL_NO_ERROR();
+    FillImageRect(&expected, kSize, 2, kHalf + 2, 4, 4, GLColor::red);
+    ExpectReadFramebufferPixels(kSize, expected);
+}
+
 // Test glCopyTexImage2D and glCopyTexSubImage2D from one level of a texture into another level of
 // the same texture.
 TEST_P(CopyTexImageTest, CopyTexImageFromOtherLevelOfSameTexture)
@@ -2624,6 +2711,173 @@ TEST_P(CopyTexImageTest, CopyTexImageFromOtherLevelOfSameTexture)
     ExpectReadFramebufferPixels(kLevel1Size, expectedLevel1);
 }
 
+// Test that glCopyTexImage2D from partly outside the framebuffer zeroes the texels that it doesn't
+// write when the framebuffer reads the level being redefined.
+TEST_P(CopyTexImageTestRobustResourceInit, CopyTexImageFromSameLevelOutOfBounds)
+{
+    constexpr GLsizei kSize = 16;
+    constexpr GLsizei kHalf = kSize / 2;
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 MakeQuadrantImage(kSize, 255).data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Only the top right quadrant is inside the framebuffer.
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kHalf, kHalf, kSize, kSize, 0);
+    ASSERT_GL_NO_ERROR();
+
+    std::vector<GLColor> expected(kSize * kSize, GLColor::transparentBlack);
+    FillImageRect(&expected, kSize, 0, 0, kHalf, kHalf, GLColor::yellow);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ExpectReadFramebufferPixels(kSize, expected);
+}
+
+// Test that glCopyTexImage2D from partly outside the framebuffer zeroes the texels that it doesn't
+// write when the framebuffer reads another level of the same texture.
+TEST_P(CopyTexImageTestRobustResourceInit, CopyTexImageFromOtherLevelOutOfBounds)
+{
+    constexpr GLsizei kSize       = 16;
+    constexpr GLsizei kLevel1Size = kSize / 2;
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 MakeQuadrantImage(kSize, 255).data());
+    for (GLint level = 1; (kSize >> level) > 0; ++level)
+    {
+        const GLsizei levelSize = kSize >> level;
+        std::vector<GLColor> levelData(levelSize * levelSize, GLColor::cyan);
+        glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, levelSize, levelSize, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, levelData.data());
+    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Sample level 1 by minifying the texture by two.
+    glUseProgram(mTextureProgram);
+    glUniform1i(mTextureUniformLocation, 0);
+    auto drawLevel1 = [&]() {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glViewport(0, 0, kLevel1Size, kLevel1Size);
+        drawQuad(mTextureProgram, essl1_shaders::PositionAttrib(), 0.5f);
+        ASSERT_GL_NO_ERROR();
+    };
+    drawLevel1();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kLevel1Size, kLevel1Size, GLColor::cyan);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Only a part of the top left quadrant of level 0 is inside the framebuffer.
+    glCopyTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, -4, kSize - 4, kLevel1Size, kLevel1Size, 0);
+    ASSERT_GL_NO_ERROR();
+
+    std::vector<GLColor> expectedLevel1(kLevel1Size * kLevel1Size, GLColor::transparentBlack);
+    FillImageRect(&expectedLevel1, kLevel1Size, 4, 0, 4, 4, GLColor::blue);
+
+    drawLevel1();
+    ExpectReadFramebufferPixels(kLevel1Size, expectedLevel1);
+}
+
+// Test that glCopyTexImage2D from partly outside the framebuffer initializes the texels that it
+// doesn't write to opaque black when the texture has no alpha channel, and the framebuffer reads
+// the level being redefined.
+TEST_P(CopyTexImageTestRobustResourceInit, CopyTexImageFromSameLevelOutOfBoundsRGB)
+{
+    constexpr GLsizei kSize = 16;
+    constexpr GLsizei kHalf = kSize / 2;
+
+    std::vector<GLubyte> rgbData;
+    for (const GLColor &color : MakeQuadrantImage(kSize, 255))
+    {
+        rgbData.insert(rgbData.end(), {color.R, color.G, color.B});
+    }
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, kSize, kSize, 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 rgbData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Only the top right quadrant is inside the framebuffer.
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, kHalf, kHalf, kSize, kSize, 0);
+    ASSERT_GL_NO_ERROR();
+
+    std::vector<GLColor> expected(kSize * kSize, GLColor::black);
+    FillImageRect(&expected, kSize, 0, 0, kHalf, kHalf, GLColor::yellow);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ExpectReadFramebufferPixels(kSize, expected);
+
+    // Sample the texture.
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, kSize, kSize);
+    glUseProgram(mTextureProgram);
+    glUniform1i(mTextureUniformLocation, 0);
+    drawQuad(mTextureProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    ExpectReadFramebufferPixels(kSize, expected);
+}
+
+class CopyTexImageTestWebGL : public CopyTexImageTest
+{
+  protected:
+    CopyTexImageTestWebGL() : CopyTexImageTest() { setWebGLCompatibilityEnabled(true); }
+};
+
+// Test that glCopyTexImage2D from partly outside the framebuffer zeroes the texels that it doesn't
+// write in WebGL without robust resource initialization, when the texture already has contents.
+TEST_P(CopyTexImageTestWebGL, CopyTexImageOutOfBoundsIntoUsedTexture)
+{
+    constexpr GLsizei kSize = 16;
+    constexpr GLsizei kHalf = kSize / 2;
+
+    GLTexture sourceTexture;
+    glBindTexture(GL_TEXTURE_2D, sourceTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 MakeQuadrantImage(kSize, 255).data());
+    GLFramebuffer sourceFramebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, sourceFramebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sourceTexture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    std::vector<GLColor> cyanData(kSize * kSize, GLColor::cyan);
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 cyanData.data());
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ExpectReadFramebufferPixels(kSize, cyanData);
+
+    // Only the top right quadrant of the source is inside the framebuffer.
+    glBindFramebuffer(GL_FRAMEBUFFER, sourceFramebuffer);
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kHalf, kHalf, kSize, kSize, 0);
+    ASSERT_GL_NO_ERROR();
+
+    std::vector<GLColor> expected(kSize * kSize, GLColor::transparentBlack);
+    FillImageRect(&expected, kSize, 0, 0, kHalf, kHalf, GLColor::yellow);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ExpectReadFramebufferPixels(kSize, expected);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     CopyTexImageTest,
     ES2_D3D11_PRESENT_PATH_FAST(),
@@ -2657,6 +2911,8 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2D),
     ES2_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
     ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers));
+
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(CopyTexImageTestWebGL);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTexImagePreRotationTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND(CopyTexImagePreRotationTest,
