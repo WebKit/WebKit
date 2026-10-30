@@ -29,24 +29,22 @@ def redirectAndPrefixCommand(prefix)
     prefixCommand(prefix) + " 2>&1"
 end
 
-def pipeAndPrefixCommand(outputFilename, prefix)
-    "tee " + Shellwords.shellescape(outputFilename.to_s) + " | " + prefixCommand(prefix)
+def outputFilenameFor(name)
+    Shellwords.shellescape((Pathname("..") + (name + ".out")).to_s)
 end
 
 # Output handler for tests that are expected to be silent.
 def silentOutputHandler
     Proc.new {
         | name |
-        pipeAndPrefixCommand((Pathname("..") + (name + ".out")).to_s, name)
+        outputFilename = outputFilenameFor(name)
+        "if test -s #{outputFilename}; then #{prefixCommand(name)} < #{outputFilename}; fi"
     }
 end
 
 # Output handler for tests that are expected to produce meaningful output.
 def noisyOutputHandler
-    Proc.new {
-        | name |
-        "cat > " + Shellwords.shellescape((Pathname("..") + (name + ".out")).to_s)
-    }
+    Proc.new { | name | }
 end
 
 def getFailCondition(plan)
@@ -62,6 +60,10 @@ def getAndTestExitCode(plan, condition)
 EOF
 end
 
+def catUnshownOutputCommand(plan)
+    plan.outputHandler.call(plan.name) ? "" : "cat #{outputFilenameFor(plan.name)} && "
+end
+
 # Error handler for tests that fail exactly when they return non-zero exit status.
 # This is useful when a test is expected to fail.
 def simpleErrorHandler
@@ -69,7 +71,7 @@ def simpleErrorHandler
         | outp, plan |
         outp.puts getAndTestExitCode(plan, getFailCondition(plan))
         outp.puts "then"
-        outp.puts "    (echo ERROR: Unexpected exit code: $exitCode) | " + redirectAndPrefixCommand(plan.name)
+        outp.puts "    (#{catUnshownOutputCommand(plan)}echo ERROR: Unexpected exit code: $exitCode) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "else"
         outp.puts "    " + plan.successCommand
@@ -85,7 +87,7 @@ def expectedFailErrorHandler
         outp.puts "then"
         outp.puts "    " + plan.successCommand
         outp.puts "else"
-        outp.puts "    (echo ERROR: Unexpected exit code: 0) | " + redirectAndPrefixCommand(plan.name)
+        outp.puts "    (#{catUnshownOutputCommand(plan)}echo ERROR: Unexpected exit code: 0) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "fi"
     }
@@ -96,7 +98,7 @@ end
 def noisyErrorHandler
     Proc.new {
         | outp, plan |
-        outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
+        outputFilename = outputFilenameFor(plan.name)
 
         outp.puts getAndTestExitCode(plan, getFailCondition(plan))
         outp.puts "then"
@@ -112,7 +114,7 @@ end
 def diffErrorHandler(expectedFilename)
     Proc.new {
         | outp, plan |
-        outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
+        outputFilename = outputFilenameFor(plan.name)
         diffFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".diff")).to_s)
 
         outp.puts getAndTestExitCode(plan, getFailCondition(plan))
@@ -141,7 +143,7 @@ end
 def mozillaErrorHandler
     Proc.new {
         | outp, plan |
-        outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
+        outputFilename = outputFilenameFor(plan.name)
 
         outp.puts getAndTestExitCode(plan, getFailCondition(plan))
         outp.puts "then"
@@ -162,7 +164,7 @@ end
 def mozillaFailErrorHandler
     Proc.new {
         | outp, plan |
-        outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
+        outputFilename = outputFilenameFor(plan.name)
 
         outp.puts getAndTestExitCode(plan, getFailCondition(plan))
         outp.puts "then"
@@ -171,7 +173,7 @@ def mozillaFailErrorHandler
         outp.puts "then"
         outp.puts "    " + plan.successCommand
         outp.puts "else"
-        outp.puts "    (echo NOTICE: You made this test pass, but it was expected to fail) | " + redirectAndPrefixCommand(plan.name)
+        outp.puts "    (#{catUnshownOutputCommand(plan)}echo NOTICE: You made this test pass, but it was expected to fail) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "fi"
     }
@@ -182,7 +184,7 @@ end
 def mozillaExit3ErrorHandler
     Proc.new {
         | outp, plan |
-        outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
+        outputFilename = outputFilenameFor(plan.name)
 
         outp.puts getAndTestExitCode(plan, getFailCondition(plan))
         outp.puts "then"
@@ -211,7 +213,7 @@ end
 def chakraPassFailErrorHandler
     Proc.new {
         | outp, plan |
-        outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
+        outputFilename = outputFilenameFor(plan.name)
 
         outp.puts getAndTestExitCode(plan, getFailCondition(plan))
         outp.puts "then"
@@ -232,9 +234,9 @@ class Plan < BasePlan
         # It's important to remember that the test is actually run in a subshell, so if we change directory
         # in the subshell when we return we will be in our original directory. This is nice because we don't
         # have to bend over backwards to do things relative to the root.
-        script = "(cd ../#{Shellwords.shellescape(@directory.to_s)} && ("
+        script = "(cd ../#{Shellwords.shellescape(@directory.to_s)} && { "
         ($envVars + additionalEnv).each { |var| script += "export " << var << "; " }
-        script += "\"$@\" " + escapeAll(@arguments) + "))"
+        script += "exec \"$@\" " + escapeAll(@arguments) + "; })"
         return script
     end
     
@@ -274,43 +276,13 @@ class Plan < BasePlan
             end
             verboseSuffix = $verbosity >= 1 ? " with cmd: #{Shellwords.shellescape(@arguments.join(' '))}" : ""
             outp.puts "echo Running #{Shellwords.shellescape(@name)}#{verboseSuffix}"
-            outp.puts "trap 'echo \"Killing #{@name}\" 1>&2' INT"
-            #
-            # +--------------------------------------------------------------------+
-            # | +-----------------------------------------------+                  |
-            # | | +--------------+     +-------------------+    |                  |
-            # | | | cmd 1 ----> 1|---> |0 --> outH 1 ---> 4|-> 4|---------------> 1|
-            # | | |     2 /      |     +-------------------+    |   +-----------+  |
-            # | | |echo $? 0 -> 3|---------------------------> 1|-> |0 read xs  |  |
-            # | | +--------------+                              |   |  exit $xs |  |
-            # | |                                               |   +-----------+  |
-            # | +-----------------------------------------------+                  |
-            # +--------------------------------------------------------------------+
-            # From the top down (i.e. reading from the outer expression inwards):
-            #
-            # - Redirect FD 4 to our stdout
-            #
-            # - Build a pipe of two command sequences. The
-            #   right-hand-side sequence reads a number from stdin and
-            #   exits with it. Since it's the last command in the
-            #   pipeline, this will be the value of $? after the
-            #   pipeline completes.
-            #
-            # - In the left-hand-side sequence, redirect FD 3 to FD 1.
-            #
-            # - Build a pipe of two commands
-            #   - run shellCommand, writing its exit code to FD 3.
-            #   - run the outputHandler, with its stdin coming from
-            #     the pipe, redirecting its output to FD 4. The
-            #     outputHandler needs to be in a command sequence
-            #     (i.e. in { cmd; ...}) as it may do its own
-            #     redirections.
-            #
-            # We do all this
-            # - to avoid having to use a temporary file for the exit code
-            # - to keep within the bounds of POSIX sh (i.e. can't use
-            #   PIPESTATUS)
-            cmd = "{ { { { #{shellCommand} 2>&1; echo $? >&3; } | { #{outputHandler.call(@name)} ;} >&4; } 3>&1; } | { read xs; exit $xs; } } 4>&1\nexitCode=$?\n"
+            outp.puts "exec 3>&2"
+            outp.puts "trap 'echo \"Killing #{@name}\" 1>&3' INT"
+            # Redirect a brace group, not the subshell, so that bash's report of a
+            # signal-killed test is also written to the output file.
+            cmd = "{ #{shellCommand} 3>&-; } > #{outputFilenameFor(@name)} 2>&1\nexitCode=$?\n"
+            outputHandlerCommand = outputHandler.call(@name)
+            cmd += outputHandlerCommand + "\n" if outputHandlerCommand
             if $verbosity >= 3
                 outp.puts "echo #{Shellwords.shellescape(cmd)}"
             end
@@ -358,13 +330,16 @@ class TestRunnerMake < TestRunner
         # creates a dummy directory ("$outputDir/.runner") in which we
         # create a dummy Makefile. The Makefile has a 'parallel' rule that
         # depends all tests, other than the ones marked 'serial' or
-        # 'exclusive'. The serial tests are arranged in a chain; the last
+        # 'exclusive'. The serial tests are arranged in a chain; the first
         # target in the serial chain depends on 'parallel' and 'all'
-        # depends on the head of the chain. The exclusive tests are
+        # depends on the last. The exclusive tests are
         # arranged in their own chain, independent of 'parallel', so they
         # can run concurrently with parallel tests but only one exclusive
-        # test runs at a time. Running 'make -j <whatever>' on this
-        # Makefile results in 'make' doing all of the hard work:
+        # test runs at a time. The exclusive chain runs in a sub-make because a
+        # single make instance would walk all of 'parallel' before advancing
+        # dependent targets in the exclusive chain. Running
+        # 'make -j <whatever>' on this Makefile results in 'make' doing all
+        # of the hard work:
         #
         # - Load balancing just works. Most systems have a great load balancer in
         #   'make'. If your system doesn't then just install a real 'make'.
@@ -408,9 +383,14 @@ class TestRunnerMake < TestRunner
             end
         }
 
-        File.open(@runnerDir + "Makefile.#{remoteIndex}", "w") {
+        makefileName = "Makefile.#{remoteIndex}"
+        File.open(@runnerDir + makefileName, "w") {
             | outp |
             all_deps = []
+
+            if !exclusiveRunPlans.empty?
+                all_deps << "exclusive"
+            end
 
             if serialRunPlans.empty?
                 all_deps << "parallel"
@@ -418,11 +398,13 @@ class TestRunnerMake < TestRunner
                 all_deps << "test_done_#{serialRunPlans[-1].index}"
             end
 
-            if !exclusiveRunPlans.empty?
-                all_deps << "test_done_#{exclusiveRunPlans[-1].index}"
-            end
-
             outp.puts("all: " + all_deps.join(" "))
+            outp.puts(".PHONY: all exclusive parallel")
+
+            if !exclusiveRunPlans.empty?
+                outp.puts "exclusive:"
+                outp.puts "\t$(MAKE) -f #{makefileName} test_done_#{exclusiveRunPlans[-1].index}"
+            end
 
             if !serialRunPlans.empty?
                 prev_target = "parallel"
