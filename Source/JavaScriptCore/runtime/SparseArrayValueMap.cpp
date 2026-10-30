@@ -148,6 +148,47 @@ JSValue SparseArrayValueMap::getConcurrently(unsigned i)
     return iterator->getConcurrently();
 }
 
+void SparseArrayValueMap::seal()
+{
+    auto end = this->end();
+    for (auto iterator = begin(); iterator != end; ++iterator) {
+        auto& entry = entryFor(iterator);
+        entry.forceSet(this, entry.attributes() | PropertyAttribute::DontDelete);
+    }
+}
+
+void SparseArrayValueMap::freeze()
+{
+    auto end = this->end();
+    for (auto iterator = begin(); iterator != end; ++iterator) {
+        auto& entry = entryFor(iterator);
+        unsigned attributes = entry.attributes() | PropertyAttribute::DontDelete;
+        if (!(attributes & PropertyAttribute::Accessor))
+            attributes |= PropertyAttribute::ReadOnly;
+        entry.forceSet(this, attributes);
+    }
+}
+
+bool SparseArrayValueMap::isSealed() const
+{
+    for (auto& entry : m_set) {
+        if (!(entry.attributes() & PropertyAttribute::DontDelete))
+            return false;
+    }
+    return true;
+}
+
+bool SparseArrayValueMap::isFrozen() const
+{
+    for (auto& entry : m_set) {
+        if (!(entry.attributes() & PropertyAttribute::DontDelete))
+            return false;
+        if (!(entry.attributes() & (PropertyAttribute::ReadOnly | PropertyAttribute::Accessor)))
+            return false;
+    }
+    return true;
+}
+
 void SparseArrayEntry::forceSet(SparseArrayValueMap* map, unsigned attributes)
 {
     // FIXME: We can expand this for non x86 environments. Currently, loading ReadOnly | DontDelete property
