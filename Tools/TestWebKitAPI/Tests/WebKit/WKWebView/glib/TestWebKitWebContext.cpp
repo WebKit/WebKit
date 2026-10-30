@@ -25,6 +25,7 @@
 #include <libsoup/soup.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
@@ -612,20 +613,13 @@ static void testWebContextSecurityPolicy(SecurityPolicyTest* test, gconstpointer
 }
 
 #if ENABLE(2022_GLIB_API)
-static void xhrMessageReceivedCallback(WebKitUserContentManager*, JSCValue* message, JSCValue** result)
+static void xhrMessageReceivedCallback(WebKitUserContentManager*, JSCValue* message, Deque<GUniquePtr<char>>* messages)
 #else
-static void xhrMessageReceivedCallback(WebKitUserContentManager*, WebKitJavascriptResult* message, JSCValue** result)
+static void xhrMessageReceivedCallback(WebKitUserContentManager*, WebKitJavascriptResult* message, Deque<GUniquePtr<char>>* messages)
 #endif
 {
     g_assert_nonnull(message);
-    g_assert_nonnull(result);
-    g_assert_null(*result);
-
-#if ENABLE(2022_GLIB_API)
-    *result = JSC_VALUE(g_object_ref(message));
-#else
-    *result = JSC_VALUE(g_object_ref(webkit_javascript_result_get_js_value(message)));
-#endif
+    messages->append(GUniquePtr<char>(WebViewTest::javascriptResultToCString(message)));
 }
 
 static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
@@ -637,23 +631,21 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
     GUniquePtr<char> jsonURL(SAFE_G_STRDUP_PRINTF("file://%s/simple.json", Test::getResourcesDir()));
     GUniquePtr<char> xhr(g_strdup_printf("var xhr = new XMLHttpRequest; xhr.open(\"GET\", \"%s\"); xhr.onreadystatechange = ()=> { if (xhr.readyState == 4) { setTimeout(() => { window.webkit.messageHandlers.xhr.postMessage('DONE'); }, 0)} }; xhr.onerror = () => { window.webkit.messageHandlers.xhr.postMessage('ERROR'); }; xhr.send();", jsonURL.get()));
 
-    JSCValue* xhrMessage = nullptr;
+    Deque<GUniquePtr<char>> xhrMessages;
 #if !ENABLE(2022_GLIB_API)
     webkit_user_content_manager_register_script_message_handler(test->m_userContentManager.get(), "xhr");
 #else
     webkit_user_content_manager_register_script_message_handler(test->m_userContentManager.get(), "xhr", nullptr);
 #endif
-    g_signal_connect(test->m_userContentManager.get(), "script-message-received::xhr", G_CALLBACK(xhrMessageReceivedCallback), &xhrMessage);
+    g_signal_connect(test->m_userContentManager.get(), "script-message-received::xhr", G_CALLBACK(xhrMessageReceivedCallback), &xhrMessages);
 
     auto waitUntilXHRDone = [&]() -> bool {
         bool didFail = false;
         while (true) {
-            while (!xhrMessage)
+            while (xhrMessages.isEmpty())
                 g_main_context_iteration(nullptr, TRUE);
 
-            GUniquePtr<char> messageString(WebViewTest::javascriptResultToCString(xhrMessage));
-            g_clear_object(&xhrMessage);
-
+            auto messageString = xhrMessages.takeFirst();
             if (!g_strcmp0(messageString.get(), "ERROR"))
                 didFail = true;
             else if (!g_strcmp0(messageString.get(), "DONE"))
@@ -687,7 +679,7 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
     g_assert_no_error(error.get());
     g_assert_false(waitUntilXHRDone());
 
-    g_signal_handlers_disconnect_matched(test->m_userContentManager.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, &xhrMessage);
+    g_signal_handlers_disconnect_matched(test->m_userContentManager.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, &xhrMessages);
 #if !ENABLE(2022_GLIB_API)
     webkit_user_content_manager_unregister_script_message_handler(test->m_userContentManager.get(), "xhr");
 #else
