@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -89,6 +89,9 @@ class Build(models.Model):
         if build.number != number:
             _log.error('build number {} does not match with number {}. Ignoring new data.'.format(build.number, number))
             return ERR_UNEXPECTED
+        if (build.result is not None or build.complete_at is not None) and result is None and complete_at is None:
+            _log.info('Ignored stale build start event for already completed build {}, change_id: {}'.format(uid, change_id))
+            return SUCCESS
         build.result = result
         build.state_string = state_string
         build.started_at = started_at

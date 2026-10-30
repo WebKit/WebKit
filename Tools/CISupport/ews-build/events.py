@@ -52,6 +52,8 @@ class Events(service.BuildbotService):
 
     EVENT_SERVER_ENDPOINT = load_password('EVENT_SERVER_ENDPOINT', default=f'https://ews.webkit{custom_suffix}.org/results/')
     MAX_GITHUB_DESCRIPTION = 140
+    EWS_REQUEST_TIMEOUT = 60
+    EWS_RETRY_DELAYS = [5, 30, 120, 600, 1800]
     STEPS_TO_REPORT = [
         'analyze-api-tests-results', 'analyze-compile-webkit-results', 'analyze-jsc-tests-results',
         'analyze-layout-tests-results', 'configuration', 'checkout-pull-request',
@@ -85,19 +87,53 @@ class Events(service.BuildbotService):
         self.type_prefix = type_prefix
         self.master_hostname = master_hostname
 
-    def sendDataToEWS(self, data):
-        if load_password('EWS_API_KEY'):
-            data['EWS_API_KEY'] = load_password('EWS_API_KEY')
+    @classmethod
+    def _describeEWSEvent(cls, data):
+        description = '{} {}'.format(data.get('type'), data.get('status'))
+        if data.get('step_id') is not None:
+            description += ' step_id={}'.format(data.get('step_id'))
+        if data.get('build_id') is not None:
+            description += ' build_id={}'.format(data.get('build_id'))
+        return description
 
-        if DEBUG_EWS_EVENTS:
-            log.msg('Sending data to EWS')
+    @defer.inlineCallbacks
+    def sendDataToEWS(self, data, retry=False):
+        try:
+            if load_password('EWS_API_KEY'):
+                data['EWS_API_KEY'] = load_password('EWS_API_KEY')
 
-        TwistedAdditions.request(
-            url=self.EVENT_SERVER_ENDPOINT,
-            type=b'POST',
-            headers={'Content-Type': ['application/json']},
-            json=data,
-        )
+            if DEBUG_EWS_EVENTS:
+                log.msg('Sending data to EWS')
+
+            description = self._describeEWSEvent(data)
+            retry_delays = self.EWS_RETRY_DELAYS if retry else []
+            for attempt in range(len(retry_delays) + 1):
+                if attempt:
+                    yield task.deferLater(reactor, retry_delays[attempt - 1], lambda: None)
+
+                response = yield TwistedAdditions.request(
+                    url=self.EVENT_SERVER_ENDPOINT,
+                    type=b'POST',
+                    headers={'Content-Type': ['application/json']},
+                    json=data,
+                    logger=lambda message: log.msg(message.rstrip('\n')),
+                    timeout=self.EWS_REQUEST_TIMEOUT,
+                )
+                if response is not None and response.status_code < 500:
+                    if response.status_code >= 400:
+                        log.msg(f'EWS rejected {description} with status {response.status_code}, not retrying')
+                    return response.status_code < 400
+
+                failure_reason = 'no response' if response is None else f'status {response.status_code}'
+                if attempt < len(retry_delays):
+                    log.msg(f'Failed to send {description} to EWS ({failure_reason}), retrying in {retry_delays[attempt]} seconds')
+                elif retry_delays:
+                    log.msg(f'Giving up sending {description} to EWS after {attempt + 1} attempts ({failure_reason})')
+                else:
+                    log.msg(f'Failed to send {description} to EWS ({failure_reason})')
+        except Exception as e:
+            log.msg(f'Unexpected {type(e).__name__} while sending event to EWS: {e}')
+        return False
 
     def sendDataToGitHub(self, repository, sha, data, user=None):
         username, access_token = GitHub.credentials(user=user)
@@ -231,7 +267,7 @@ class Events(service.BuildbotService):
             "builder_display_name": builder.get('description', '') if isinstance(builder, dict) else builder.description,
         }
 
-        self.sendDataToEWS(data)
+        self.sendDataToEWS(data, retry=True)
 
     def stepStarted(self, key, step):
         if step.get('name') not in self.STEPS_TO_REPORT:
