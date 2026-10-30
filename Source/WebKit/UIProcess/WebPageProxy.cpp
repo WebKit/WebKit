@@ -17990,7 +17990,9 @@ void WebPageProxy::setViewportSegments(const WebCore::ViewportSegments& segments
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::SetViewportSegments(internals().viewportSegments));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetViewportSegments(segments), pageID);
+    });
 }
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
