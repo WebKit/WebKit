@@ -486,6 +486,7 @@ else ()
         Tests/WebKit/WKWebView/ios/FullscreenLayoutParameters.mm
         Tests/WebKit/WKWebView/ios/GestureRecognizerTests.mm
         Tests/WebKit/WKWebView/ios/GrantAccessToMobileAssets.mm
+        Tests/WebKit/WKWebView/ios/InspectorFrameHighlightIOS.mm
         Tests/WebKit/WKWebView/ios/InteractiveWidget.mm
         Tests/WebKit/WKWebView/ios/KeyboardInputTestsIOS.mm
         Tests/WebKit/WKWebView/ios/ModalDialogDuringOverlappingFocus.mm

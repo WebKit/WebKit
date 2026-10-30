@@ -464,6 +464,9 @@ void InspectorOverlay::paint(GraphicsContext& context)
     if (isFrameScoped() && !pageView->delegatesScrollingToNativeView())
         context.translate(pageView->documentScrollPositionRelativeToViewOrigin() - pageView->scrollOrigin());
 
+    // Without the translate this draws in contents coordinates, so offset grid viewport bounds as getHighlight() does.
+    bool offsetBoundsByScroll { isFrameScoped() && pageView->delegatesScrollingToNativeView() };
+
     context.clearRect({ FloatPoint::zero(), viewportSize });
 
     GraphicsContextStateSaver stateSaver(context);
@@ -490,7 +493,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
                 rulerExclusion.bounds.unite(nodeRulerExclusion.bounds);
 
                 if (m_nodeGridOverlayConfig) {
-                    if (auto gridHighlightOverlay = buildGridOverlay({ *node, *m_nodeGridOverlayConfig }))
+                    if (auto gridHighlightOverlay = buildGridOverlay({ *node, *m_nodeGridOverlayConfig }, offsetBoundsByScroll))
                         drawGridOverlay(context, *gridHighlightOverlay);
                 }
 
@@ -508,7 +511,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
         rulerExclusion.titlePath = nodeRulerExclusion.titlePath;
 
         if (m_nodeGridOverlayConfig) {
-            if (auto gridHighlightOverlay = buildGridOverlay({ *m_highlightNode, *m_nodeGridOverlayConfig }))
+            if (auto gridHighlightOverlay = buildGridOverlay({ *m_highlightNode, *m_nodeGridOverlayConfig }, offsetBoundsByScroll))
                 drawGridOverlay(context, *gridHighlightOverlay);
         }
 
@@ -526,7 +529,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
                 continue;
         }
 
-        if (auto gridHighlightOverlay = buildGridOverlay(gridOverlay))
+        if (auto gridHighlightOverlay = buildGridOverlay(gridOverlay, offsetBoundsByScroll))
             drawGridOverlay(context, *gridHighlightOverlay);
     }
 
@@ -894,14 +897,21 @@ InspectorOverlay::RulerExclusion InspectorOverlay::drawNodeHighlight(GraphicsCon
 
     drawFragmentHighlight(context, node, m_nodeHighlightConfig, rulerExclusion.bounds);
 
-    if (m_nodeHighlightConfig.showInfo)
+#if PLATFORM(IOS_FAMILY)
+    // Match iOS page highlights, which the UI process draws without node info.
+    bool showInfo { false };
+#else
+    bool showInfo { m_nodeHighlightConfig.showInfo };
+#endif
+
+    if (showInfo)
         drawShapeHighlight(context, node, rulerExclusion.bounds);
 
     if (shouldDrawRulers())
         drawBounds(context, rulerExclusion.bounds);
 
     // Ensure that the title information is drawn after the bounds.
-    if (m_nodeHighlightConfig.showInfo)
+    if (showInfo)
         rulerExclusion.titlePath = drawElementTitle(context, node, rulerExclusion.bounds);
 
     // Note: since grid overlays may cover the entire viewport with little lines, grid overlay bounds
