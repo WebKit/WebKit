@@ -12,7 +12,7 @@ Tests are run in a variety of different JSC configurations, for example with var
 
 ## Adding Tests
 
-Put tests that only target JS behavior in `JSTests/stress` and tests that involve wasm in `JSTests/wasm/stress`.
+Put tests that only target JS behavior in `JSTests/stress` and tests that involve wasm in `JSTests/wasm/stress`. Performance tests go in `JSTests/microbenchmarks`, which has its own `README.md` covering how to run them and the rules they follow.
 
 New tests are *required* to adhere to the following rules:
 
