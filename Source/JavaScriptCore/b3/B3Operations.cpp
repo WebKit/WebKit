@@ -27,6 +27,9 @@
 #include "B3Operations.h"
 
 #include "GCMemoryOperations.h"
+#include "SIMDInfo.h"
+#include <algorithm>
+#include <span>
 #include <wtf/Int128.h>
 #include <wtf/UnalignedAccess.h>
 
@@ -54,6 +57,30 @@ ALWAYS_INLINE void fillOverlappingEnds(uint8_t* dst, T value, size_t count)
         WTF::unalignedStore<T>(dst + count - (unitsPerEnd - i) * sizeof(T), value);
 }
 
+template<typename Element>
+ALWAYS_INLINE void fillElements(void* dst, Element element, size_t count)
+{
+#if OS(DARWIN)
+    // memset_pattern* truncates a trailing partial instance of the pattern, so widening a narrow
+    // element to a wider pattern never writes past the end.
+    // https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/memset_pattern4.3.html
+    size_t byteCount = count * sizeof(Element);
+    if constexpr (sizeof(Element) == sizeof(uint16_t)) {
+        uint32_t pattern = (static_cast<uint32_t>(element) << 16) | element;
+        memset_pattern4(dst, &pattern, byteCount);
+    } else if constexpr (sizeof(Element) == sizeof(uint32_t))
+        memset_pattern4(dst, &element, byteCount);
+    else if constexpr (sizeof(Element) == sizeof(uint64_t))
+        memset_pattern8(dst, &element, byteCount);
+    else {
+        static_assert(sizeof(Element) == 16);
+        memset_pattern16(dst, &element, byteCount);
+    }
+#else
+    std::ranges::fill(std::span { static_cast<Element*>(dst), count }, element);
+#endif
+}
+
 } // namespace
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryMove, void, (void* dst, const void* src, size_t count))
@@ -69,7 +96,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryMove, void, (void* dst, const v
     memmove(dst, src, count);
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryFill, void, (void* dst, int32_t target, size_t count))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryFill8, void, (void* dst, int32_t target, size_t count))
 {
     if (count - 1 <= maxFastFillCount - 1) {
         auto* to = static_cast<uint8_t*>(dst);
@@ -97,6 +124,31 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryFill, void, (void* dst, int32_t
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationGCSafeMemoryMove, void, (void* dst, const void* src, size_t byteCount))
 {
     gcSafeMemmove(static_cast<uint64_t*>(dst), static_cast<const uint64_t*>(src), byteCount);
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryFill16, void, (void* dst, uint32_t pattern, size_t count))
+{
+    fillElements(dst, static_cast<uint16_t>(pattern), count);
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryFill32, void, (void* dst, uint32_t pattern, size_t count))
+{
+    fillElements(dst, pattern, count);
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryFill64, void, (void* dst, uint64_t pattern, size_t count))
+{
+    fillElements(dst, pattern, count);
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationGCSafeMemoryFill64, void, (void* dst, uint64_t pattern, size_t count))
+{
+    gcSafeMemfill(static_cast<uint64_t*>(dst), pattern, count * sizeof(uint64_t));
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryFill128, void, (void* dst, uint64_t lane0, uint64_t lane1, size_t count))
+{
+    fillElements(dst, v128_t { lane0, lane1 }, count);
 }
 
 } // namespace JSC::B3

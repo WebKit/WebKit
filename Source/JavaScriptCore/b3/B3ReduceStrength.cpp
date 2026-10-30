@@ -2906,62 +2906,39 @@ private:
             break;
         }
 
-        case MemoryFill: {
-            if (m_value->child(1)->hasInt() && m_value->child(2)->hasInt()) {
-                auto* memoryFill = m_value->as<BulkMemoryValue>();
-                uint64_t target = static_cast<uint8_t>(m_value->child(1)->asInt());
-                uint64_t count = m_value->child(2)->asInt();
-                constexpr uint64_t threshold = 128;
-                if (count <= threshold) {
-                    int32_t offset = 0;
-                    if (count >= 16 && m_proc.usesSIMD()) {
-                        uint64_t mask64 = target << 56 | target << 48 | target << 40 | target << 32 | target << 24 | target << 16 | target << 8 | target << 0;
-                        v128_t mask { mask64, mask64 };
-                        auto* maskValue = m_insertionSet.insert<Const128Value>(m_index, m_value->origin(), mask);
-                        while (count >= 16) {
-                            m_insertionSet.insert<MemoryValue>(m_index, Store, m_value->origin(), maskValue, m_value->child(0), offset, memoryFill->writeRange());
-                            offset += 16;
-                            count -= 16;
-                        }
-                    }
+        case MemoryFill8:
+        case MemoryFill16:
+        case MemoryFill32:
+        case MemoryFill64:
+        case MemoryFill128: {
+            if (!m_value->child(2)->hasInt())
+                break;
+            auto* memoryFill = m_value->as<BulkMemoryValue>();
+            unsigned elementSize = bytesForWidth(memoryFill->fillWidth());
+            uint64_t count = m_value->child(2)->asInt();
+            constexpr uint64_t threshold = 128;
+            if (count > threshold / elementSize)
+                break;
 
-                    if (count >= 8) {
-                        uint64_t mask = target << 56 | target << 48 | target << 40 | target << 32 | target << 24 | target << 16 | target << 8 | target << 0;
-                        auto* maskValue = m_insertionSet.insert<Const64Value>(m_index, m_value->origin(), mask);
-                        while (count >= 8) {
-                            m_insertionSet.insert<MemoryValue>(m_index, Store, m_value->origin(), maskValue, m_value->child(0), offset, memoryFill->writeRange());
-                            offset += 8;
-                            count -= 8;
-                        }
-                    }
-
-                    {
-                        uint32_t mask = target << 24 | target << 16 | target << 8 | target << 0;
-                        auto* maskValue = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), mask);
-                        while (count >= 4) {
-                            m_insertionSet.insert<MemoryValue>(m_index, Store, m_value->origin(), maskValue, m_value->child(0), offset, memoryFill->writeRange());
-                            offset += 4;
-                            count -= 4;
-                        }
-
-                        while (count >= 2) {
-                            m_insertionSet.insert<MemoryValue>(m_index, Store16, m_value->origin(), maskValue, m_value->child(0), offset, memoryFill->writeRange());
-                            offset += 2;
-                            count -= 2;
-                        }
-
-                        while (count >= 1) {
-                            m_insertionSet.insert<MemoryValue>(m_index, Store8, m_value->origin(), maskValue, m_value->child(0), offset, memoryFill->writeRange());
-                            offset += 1;
-                            count -= 1;
-                        }
-                    }
-
-                    m_value->replaceWithNop();
-                    m_changed = true;
-                    break;
-                }
+            // Fill with the widest stores that fit and let the last one overlap the one before it,
+            // which is harmless since every store writes the same repeating pattern.
+            int32_t byteCount = count * elementSize;
+            if (byteCount) {
+                Width storeWidth = std::min(memoryFill->widestFillStoreWidth(m_proc), widthForBytes(std::bit_floor(static_cast<unsigned>(byteCount))));
+                int32_t storeSize = bytesForWidth(storeWidth);
+                Value* pattern = memoryFill->splatFillPattern(m_proc, storeWidth, [&](Value* value) {
+                    m_insertionSet.insertValue(m_index, value);
+                });
+                Opcode store = storeOpcode(storeWidth == Width128 ? FP : GP, storeWidth);
+                int32_t offset = 0;
+                for (; offset + storeSize <= byteCount; offset += storeSize)
+                    m_insertionSet.insert<MemoryValue>(m_index, store, m_value->origin(), pattern, m_value->child(0), offset, memoryFill->writeRange());
+                if (offset < byteCount)
+                    m_insertionSet.insert<MemoryValue>(m_index, store, m_value->origin(), pattern, m_value->child(0), byteCount - storeSize, memoryFill->writeRange());
             }
+
+            m_value->replaceWithNop();
+            m_changed = true;
             break;
         }
 
