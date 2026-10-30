@@ -1,0 +1,79 @@
+Test that a frame target's DOM breakpoints pause for script of that frame, whether it sets a property or calls a method of the node, and do not pause for script of another frame in the same process.
+
+
+
+== Running test suite: SiteIsolation.DOMDebugger.DOMBreakpoint.SameProcessFrames
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.SameProcessFrames.Setup
+PASS: Should find the cross-origin frame target.
+PASS: Frame document should be spliced under the iframe element.
+PASS: Should find the nested frame's target.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.SameProcessFrames.NestedFrameNode
+Adding "attribute-modified" DOM Breakpoint on the nested frame's #nested-target...
+PASS: Node should belong to the nested frame's target.
+PASS: Breakpoint should be listed for the node.
+Script of the nested frame sets a property of the node, then calls a method of it...
+PASS: Should pause exactly once.
+PASS: Should pause in the nested frame's target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "attribute-modified".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause should have no targetNodeId.
+PASS: Pause should not be for an insertion.
+PASS: Top call frame should be "modifyOwnAttribute".
+PASS: Pause data should lead to the breakpoint.
+PASS: Should pause exactly once.
+PASS: Should pause in the nested frame's target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "attribute-modified".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause should have no targetNodeId.
+PASS: Pause should not be for an insertion.
+PASS: Top call frame should be "setOwnAttributeByMethod".
+PASS: Pause data should lead to the breakpoint.
+Script of the parent frame sets a property of the node, then calls a method of it...
+PASS: Should not pause when script of the parent frame sets a property of the node.
+PASS: Should not pause when script of the parent frame calls a method of the node.
+Script of the parent frame calls a function of the nested frame...
+PASS: Should pause exactly once.
+PASS: Should pause in the nested frame's target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "attribute-modified".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause should have no targetNodeId.
+PASS: Pause should not be for an insertion.
+PASS: Top call frame should be "modifyOwnAttribute".
+PASS: Pause data should lead to the breakpoint.
+Setting a "subtree-modified" DOM Breakpoint on the same node in the cross-origin frame target directly...
+PASS: Should produce an exception.
+Error: Not supported for nodes outside the frame's document
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.SameProcessFrames.ScriptOfNestedFrame
+Adding "attribute-modified" DOM Breakpoint on #attribute-target...
+Script of the nested frame sets a property of the node, then calls a method of it...
+PASS: Should not pause when script of the nested frame sets a property of the node.
+PASS: Should not pause when script of the nested frame calls a method of the node.
+Script of the nested frame calls a function of the cross-origin iframe...
+PASS: Should pause exactly once.
+PASS: Should pause in the cross-origin frame target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "attribute-modified".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause should have no targetNodeId.
+PASS: Pause should not be for an insertion.
+PASS: Top call frame should be "modifyAttribute".
+PASS: Pause data should lead to the breakpoint.
+Script of the cross-origin iframe calls a method of the node...
+PASS: Should pause exactly once.
+PASS: Should pause in the cross-origin frame target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "attribute-modified".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause should have no targetNodeId.
+PASS: Pause should not be for an insertion.
+PASS: Top call frame should be "setAttributeByMethod".
+PASS: Pause data should lead to the breakpoint.
+-- Running test teardown.
+

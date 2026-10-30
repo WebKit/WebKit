@@ -43,6 +43,7 @@
 #include "FrameCSSAgent.h"
 #include "FrameCanvasAgent.h"
 #include "FrameDOMAgent.h"
+#include "FrameDOMDebuggerAgent.h"
 #include "FrameDOMStorageAgent.h"
 #include "FrameDebuggerAgent.h"
 #include "FrameInspectorController.h"
@@ -183,6 +184,10 @@ void InspectorInstrumentation::willInsertDOMNodeImpl(InstrumentingAgents& instru
 {
     if (CheckedPtr pageDOMDebuggerAgent = instrumentingAgents.enabledPageDOMDebuggerAgent())
         pageDOMDebuggerAgent->willInsertDOMNode(parent);
+    if (RefPtr frame = parent.document().frame()) {
+        if (CheckedPtr frameDOMDebuggerAgent = frame->inspectorController().instrumentingAgents().enabledFrameDOMDebuggerAgent())
+            frameDOMDebuggerAgent->willInsertDOMNode(parent);
+    }
 }
 
 void InspectorInstrumentation::didInsertDOMNodeImpl(InstrumentingAgents& instrumentingAgents, Node& node)
@@ -203,11 +208,17 @@ void InspectorInstrumentation::willRemoveDOMNodeImpl(InstrumentingAgents& instru
 {
     if (CheckedPtr pageDOMDebuggerAgent = instrumentingAgents.enabledPageDOMDebuggerAgent())
         pageDOMDebuggerAgent->willRemoveDOMNode(node);
+    if (RefPtr frame = node.document().frame()) {
+        if (CheckedPtr frameDOMDebuggerAgent = frame->inspectorController().instrumentingAgents().enabledFrameDOMDebuggerAgent())
+            frameDOMDebuggerAgent->willRemoveDOMNode(node);
+    }
 }
 
 void InspectorInstrumentation::didRemoveDOMNodeImpl(InstrumentingAgents& instrumentingAgents, Node& node)
 {
     if (RefPtr frame = node.document().frame()) {
+        if (CheckedPtr frameDOMDebuggerAgent = frame->inspectorController().instrumentingAgents().enabledFrameDOMDebuggerAgent())
+            frameDOMDebuggerAgent->didRemoveDOMNode(node);
         if (CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
             frameDOMAgent->didRemoveDOMNode(node);
         if (CheckedPtr frameCSSAgent = frame->inspectorController().instrumentingAgents().enabledFrameCSSAgent())
@@ -282,6 +293,8 @@ void InspectorInstrumentation::willModifyDOMAttrImpl(InstrumentingAgents& instru
     if (CheckedPtr pageDOMDebuggerAgent = instrumentingAgents.enabledPageDOMDebuggerAgent())
         pageDOMDebuggerAgent->willModifyDOMAttr(element);
     if (RefPtr frame = element.document().frame()) {
+        if (CheckedPtr frameDOMDebuggerAgent = frame->inspectorController().instrumentingAgents().enabledFrameDOMDebuggerAgent())
+            frameDOMDebuggerAgent->willModifyDOMAttr(element);
         if (CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
             frameDOMAgent->willModifyDOMAttr(element, oldValue, newValue);
     }
@@ -321,6 +334,10 @@ void InspectorInstrumentation::willInvalidateStyleAttrImpl(InstrumentingAgents& 
 {
     if (CheckedPtr pageDOMDebuggerAgent = instrumentingAgents.enabledPageDOMDebuggerAgent())
         pageDOMDebuggerAgent->willInvalidateStyleAttr(element);
+    if (RefPtr frame = element.document().frame()) {
+        if (CheckedPtr frameDOMDebuggerAgent = frame->inspectorController().instrumentingAgents().enabledFrameDOMDebuggerAgent())
+            frameDOMDebuggerAgent->willModifyDOMAttr(element);
+    }
 }
 
 void InspectorInstrumentation::didInvalidateStyleAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element)
@@ -1120,6 +1137,9 @@ void InspectorInstrumentation::frameDocumentUpdatedImpl(InstrumentingAgents& ins
 
     if (CheckedPtr pageDOMDebuggerAgent = instrumentingAgents.enabledPageDOMDebuggerAgent())
         pageDOMDebuggerAgent->frameDocumentUpdated(frame);
+
+    if (CheckedPtr frameDOMDebuggerAgent = instrumentingAgents.enabledFrameDOMDebuggerAgent())
+        frameDOMDebuggerAgent->frameDocumentUpdated();
 }
 
 void InspectorInstrumentation::loaderDetachedFromFrameImpl(InstrumentingAgents& instrumentingAgents, DocumentLoader& loader)

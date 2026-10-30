@@ -1891,19 +1891,12 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (!pauseData || !pauseData.nodeId)
                 break;
 
-            let domNode = WI.domManager.nodeForId(pauseData.nodeId);
-            let domBreakpoints = WI.domDebuggerManager.domBreakpointsForNode(domNode);
-            let domBreakpoint;
-            for (let breakpoint of domBreakpoints) {
-                if (breakpoint.type === pauseData.type) {
-                    domBreakpoint = breakpoint;
-                    break;
-                }
-            }
-
-            console.assert(domBreakpoint, "Missing DOM breakpoint of type for node", pauseData.type, domNode);
+            let domBreakpoint = WI.domDebuggerManager.domBreakpointForPauseData(pauseData, target);
+            console.assert(domBreakpoint, "Missing DOM breakpoint of type for node", pauseData.type, pauseData.nodeId);
             if (!domBreakpoint)
                 break;
+
+            let domNode = domBreakpoint.domNode;
 
             if (!this._updatePauseReasonForBreakpoint(domBreakpoint, WI.DOMBreakpoint.displayNameForType(domBreakpoint.type))) {
                 console.assert(false, "not reached");
@@ -1917,7 +1910,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 if (!nodeId)
                     return;
 
-                let node = WI.domManager.nodeForId(nodeId);
+                // The target node id is in the same id space as the breakpoint node's.
+                let node = domNode.owningTarget ? WI.domManager.nodeForIdInFrameTarget(nodeId, domNode.owningTarget) : WI.domManager.nodeForId(nodeId);
                 console.assert(node, "Missing node for id.", nodeId);
                 if (!node)
                     return;
@@ -1944,7 +1938,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
             if (pauseData.targetNodeId) {
                 console.assert(domBreakpoint.type === WI.DOMBreakpoint.Type.SubtreeModified || domBreakpoint.type === WI.DOMBreakpoint.Type.NodeRemoved);
-                console.assert(pauseData.targetNodeId !== domBreakpoint.domNode.id, pauseData.targetNodeId, domBreakpoint);
+                console.assert(pauseData.targetNodeId !== domNode.backendNodeId, pauseData.targetNodeId, domBreakpoint);
                 updateTargetDescription(pauseData.targetNodeId);
             } else if (pauseData.targetNode) { // COMPATIBILITY (iOS 13): `targetNode` was renamed to `targetNodeId` and was changed from a `Runtime.RemoteObject` to a `DOM.NodeId`.
                 console.assert(domBreakpoint.type === WI.DOMBreakpoint.Type.SubtreeModified);

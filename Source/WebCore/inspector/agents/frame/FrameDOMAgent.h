@@ -167,6 +167,7 @@ public:
 
     // Public accessors
     Node* nodeForId(Inspector::Protocol::DOM::NodeId);
+    RefPtr<Node> assertNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     Inspector::Protocol::DOM::NodeId boundNodeId(const Node*);
     Vector<Ref<Node>> boundNodes() const;
     Inspector::Protocol::DOM::NodeId pushNodePathToFrontend(Node*);
@@ -179,7 +180,6 @@ private:
     void unbind(Node&);
     void discardBindings();
 
-    RefPtr<Node> assertNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     RefPtr<Element> assertElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     RefPtr<Node> assertEditableNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     RefPtr<Element> assertEditableElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);

@@ -431,6 +431,9 @@ WI.appendContextMenuItemsForDOMNodeBreakpoints = function(contextMenu, domNode, 
     if (contextMenu.__domBreakpointItemsAdded)
         return;
 
+    if (!WI.domDebuggerManager.supportsDOMBreakpointsForNode(domNode))
+        return;
+
     contextMenu.__domBreakpointItemsAdded = true;
 
     let breakpoints = WI.domDebuggerManager.domBreakpointsForNode(domNode);

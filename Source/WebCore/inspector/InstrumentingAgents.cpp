@@ -35,6 +35,7 @@
 #include "FrameCSSAgent.h"
 #include "FrameCanvasAgent.h"
 #include "FrameDOMAgent.h"
+#include "FrameDOMDebuggerAgent.h"
 #include "FrameDOMStorageAgent.h"
 #include "FrameDebuggerAgent.h"
 #include "FrameRuntimeAgent.h"

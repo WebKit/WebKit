@@ -1,0 +1,211 @@
+Test that DOM breakpoints on nodes in a cross-origin iframe pause exactly once, in that iframe's frame target, that DOM breakpoints on the page's own nodes still pause exactly once, and that breakpoints the frame target cannot serve are refused.
+
+
+
+== Running test suite: SiteIsolation.DOMDebugger.DOMBreakpoint
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.Setup
+PASS: Should find the cross-origin frame target.
+PASS: Frame document should be spliced under the iframe element.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.AttributeModified
+Adding "attribute-modified" DOM Breakpoint on #attribute-target...
+PASS: Breakpoint should be listed for the node.
+PASS: Should pause exactly once.
+PASS: Should pause in the cross-origin frame target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "attribute-modified".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause should have no targetNodeId.
+PASS: Pause should not be for an insertion.
+PASS: Top call frame should be "modifyAttribute".
+PASS: Pause data should lead to the breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.AttributeModified.Style
+Adding "attribute-modified" DOM Breakpoint on #attribute-target...
+PASS: Should pause exactly once.
+PASS: Should pause in the cross-origin frame target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "attribute-modified".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause should have no targetNodeId.
+PASS: Pause should not be for an insertion.
+PASS: Top call frame should be "modifyStyle".
+PASS: Pause data should lead to the breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.SubtreeModified.ChildAdded
+Adding "subtree-modified" DOM Breakpoint on #subtree-target...
+PASS: Should pause exactly once.
+PASS: Should pause in the cross-origin frame target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "subtree-modified".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause should have no targetNodeId.
+PASS: Pause should be for an insertion.
+PASS: Top call frame should be "addChild".
+PASS: Pause data should lead to the breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.SubtreeModified.ChildRemoved
+Adding "subtree-modified" DOM Breakpoint on #subtree-target...
+PASS: Should pause exactly once.
+PASS: Should pause in the cross-origin frame target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "subtree-modified".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause targetNodeId should be the removed node.
+PASS: Pause should not be for an insertion.
+PASS: Top call frame should be "removeChild".
+PASS: Pause data should lead to the breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.SubtreeModified.GrandchildModified
+Adding "subtree-modified" DOM Breakpoint on #subtree-target...
+PASS: Should pause exactly once.
+PASS: Should pause in the cross-origin frame target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "subtree-modified".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause should have no targetNodeId.
+PASS: Pause should be for an insertion.
+PASS: Top call frame should be "addToGrandchild".
+PASS: Pause data should lead to the breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.SubtreeModified.NearestOwner
+Adding "subtree-modified" DOM Breakpoint on #subtree-target...
+Adding "subtree-modified" DOM Breakpoint on #subtree-grandchild...
+PASS: Should pause exactly once.
+PASS: Should pause in the cross-origin frame target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "subtree-modified".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause should have no targetNodeId.
+PASS: Pause should be for an insertion.
+PASS: Top call frame should be "addToGrandchild".
+PASS: Pause data should lead to the breakpoint.
+PASS: Should pause exactly once.
+PASS: Should pause in the cross-origin frame target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "subtree-modified".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause should have no targetNodeId.
+PASS: Pause should be for an insertion.
+PASS: Top call frame should be "addChild".
+PASS: Pause data should lead to the breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.NodeRemoved
+Adding "node-removed" DOM Breakpoint on #removal-target...
+PASS: Should pause exactly once.
+PASS: Should pause in the cross-origin frame target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "node-removed".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause should have no targetNodeId.
+PASS: Pause should not be for an insertion.
+PASS: Top call frame should be "removeNode".
+PASS: Pause data should lead to the breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.NodeRemoved.Ancestor
+Adding "node-removed" DOM Breakpoint on #removal-descendant...
+PASS: Should pause exactly once.
+PASS: Should pause in the cross-origin frame target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "node-removed".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause targetNodeId should be the removed node.
+PASS: Pause should not be for an insertion.
+PASS: Top call frame should be "removeAncestor".
+PASS: Pause data should lead to the breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.NodeRemoved.BeatsSubtreeModified
+Adding "node-removed" DOM Breakpoint on #precedence-descendant...
+Adding "subtree-modified" DOM Breakpoint on #precedence-ancestor...
+PASS: Should pause exactly once.
+PASS: Should pause in the cross-origin frame target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "node-removed".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause targetNodeId should be the removed node.
+PASS: Pause should not be for an insertion.
+PASS: Top call frame should be "removePrecedenceAncestor".
+PASS: Pause data should lead to the breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.Disabled
+Adding "attribute-modified" DOM Breakpoint on #attribute-target...
+Disabling breakpoint...
+PASS: Should not pause for a disabled breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.Removed
+Adding "attribute-modified" DOM Breakpoint on #attribute-target...
+Removing breakpoint...
+PASS: Should not pause for a removed breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.Condition
+Adding "attribute-modified" DOM Breakpoint on #attribute-target...
+Setting condition to 'false'...
+PASS: Should not pause when the condition is false.
+Setting condition to 'true'...
+PASS: Should pause exactly once.
+PASS: Should pause in the cross-origin frame target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "attribute-modified".
+PASS: Pause nodeId should be the breakpoint node, in the frame target's id space.
+PASS: Pause should have no targetNodeId.
+PASS: Pause should not be for an insertion.
+PASS: Top call frame should be "modifyAttribute".
+PASS: Pause data should lead to the breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.BreakpointsInactive
+Adding "attribute-modified" DOM Breakpoint on #attribute-target...
+Deactivating breakpoints in the frame target...
+PASS: Should not pause while breakpoints are inactive.
+Reactivating breakpoints in the frame target...
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.NotSaved
+Adding "attribute-modified" DOM Breakpoint on #attribute-target...
+PASS: Breakpoint on a frame target node should not be saved.
+Adding "attribute-modified" DOM Breakpoint on #main-attribute-target...
+PASS: Breakpoint on a page node should be saved.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.PageTree
+Adding "attribute-modified" DOM Breakpoint on #main-attribute-target...
+PASS: Should pause exactly once.
+PASS: Should pause in the main frame's target.
+PASS: Pause reason should be DOM.
+PASS: Pause type should be "attribute-modified".
+PASS: Pause nodeId should be the breakpoint node, in the page target's id space.
+PASS: Pause should have no targetNodeId.
+PASS: Pause should not be for an insertion.
+PASS: Top call frame should be "modifyMainAttribute".
+PASS: Pause data should lead to the breakpoint.
+Removing breakpoint...
+PASS: Should not pause for a removed breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.TemplateContent
+PASS: Template content node should be in the cross-origin frame target's tree.
+Adding "attribute-modified" DOM Breakpoint on the template content node...
+PASS: Breakpoint should not be listed for the node.
+Setting a "subtree-modified" DOM Breakpoint on the template content node directly...
+PASS: Should produce an exception.
+Error: Not supported for nodes outside the frame's document
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.FrameTargetWithoutDOMBreakpoints
+PASS: Frame target node should not support DOM breakpoints.
+Adding "attribute-modified" DOM Breakpoint on #attribute-target...
+PASS: Breakpoint should not be listed for the node.
+-- Running test teardown.
+
