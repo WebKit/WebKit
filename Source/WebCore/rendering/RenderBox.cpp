@@ -4101,6 +4101,11 @@ void RenderBox::constrainIntrinsicLogicalWidthsByMinMax(LayoutUnit& minIntrinsic
     auto& minLogicalWidth = style().logicalMinWidth();
     auto& maxLogicalWidth = style().logicalMaxWidth();
 
+    // A keyword bound below is the box's own min-content/max-content size, which includes the min/max sizes transferred
+    // through the aspect ratio: an indefinite maximum doesn't cap those (CSS Sizing 4 section 5.3).
+    if (!style().logicalWidth().isFixed() && shouldComputeLogicalHeightFromAspectRatio())
+        applyTransferredMinMaxSizesFromAspectRatio(minIntrinsicLogicalWidth, maxIntrinsicLogicalWidth);
+
     // A fixed inline width has already replaced the incoming contributions with itself in
     // computeIntrinsicLogicalWidthContributions(), so a keyword minimum or maximum cannot read the
     // content based size back out of them and has to measure it again.
@@ -4157,9 +4162,6 @@ void RenderBox::constrainIntrinsicLogicalWidthsByMinMax(LayoutUnit& minIntrinsic
 
         return { };
     }();
-
-    if (!style().logicalWidth().isFixed() && shouldComputeLogicalHeightFromAspectRatio())
-        applyTransferredMinMaxSizesFromAspectRatio(minIntrinsicLogicalWidth, maxIntrinsicLogicalWidth);
 
     maxIntrinsicLogicalWidth = std::min(maxIntrinsicLogicalWidth, usedMaxLogicalWidth);
     minIntrinsicLogicalWidth = std::min(minIntrinsicLogicalWidth, usedMaxLogicalWidth);
