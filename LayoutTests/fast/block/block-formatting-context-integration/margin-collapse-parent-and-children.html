@@ -1,0 +1,47 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; }
+.root div { background: rgba(0, 128, 0, 0.3); }
+</style>
+<div class="root">
+  <div style="margin-top: 10px">
+    <div style="margin-top: 20px">
+      <div style="height: 10px; margin-top: 15px; margin-bottom: 30px"></div>
+    </div>
+  </div>
+  <div style="height: 5px"></div>
+</div>
+<div class="root">
+  <div style="margin-top: 10px; border-top: 2px solid">
+    <div style="height: 10px; margin-top: 20px"></div>
+  </div>
+  <div style="margin-top: 10px; padding-top: 3px">
+    <div style="height: 10px; margin-top: 20px"></div>
+  </div>
+</div>
+<div class="root">
+  <div style="margin-bottom: 10px">
+    <div style="height: 10px; margin-bottom: 25px"></div>
+  </div>
+  <div style="height: 5px; margin-top: 5px"></div>
+  <div style="margin-bottom: 10px; border-bottom: 2px solid">
+    <div style="height: 10px; margin-bottom: 25px"></div>
+  </div>
+  <div style="height: 5px"></div>
+  <div style="margin-bottom: 10px; padding-bottom: 4px">
+    <div style="height: 10px; margin-bottom: 25px"></div>
+  </div>
+  <div style="height: 5px"></div>
+  <div style="margin-bottom: 10px; height: 20px">
+    <div style="height: 10px; margin-bottom: 25px"></div>
+  </div>
+  <div style="height: 5px"></div>
+</div>
+<div class="root">
+  <div style="margin-top: -10px">
+    <div style="margin-top: 30px">
+      <div style="height: 10px; margin-top: -5px; margin-bottom: -30px"></div>
+    </div>
+  </div>
+  <div style="height: 5px; margin-top: 10px"></div>
+</div>
