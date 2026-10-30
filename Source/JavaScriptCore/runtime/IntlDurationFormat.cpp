@@ -348,7 +348,7 @@ struct Element {
     bool m_valueSignBit;
     TemporalUnit m_unit;
     String m_string;
-    std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>> m_formattedNumber;
+    std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter> m_fieldIterator;
 };
 
 enum class DurationSignType : uint8_t {
@@ -404,7 +404,7 @@ static String buildDecimalFormat(TemporalUnit unit, Int128 ns)
     return makeString(int128ToString(ns), exponent);
 }
 
-static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlDurationFormat* durationFormat, ISO8601::Duration duration)
+static void partitionDurationFormatPattern(JSGlobalObject* globalObject, const IntlDurationFormat* durationFormat, ISO8601::Duration duration, NOESCAPE const Invocable<void(bool, TemporalUnit, StringView, UFormattedNumber*)> auto& elementFunctor, NOESCAPE const Invocable<void(bool, TemporalUnit, const String&)> auto& literalFunctor)
 {
     // https://tc39.es/proposal-intl-duration-format/#sec-partitiondurationformatpattern
 
@@ -413,9 +413,16 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    UErrorCode status = U_ZERO_ERROR;
+    auto formattedNumber = std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>>(unumf_openResult(&status));
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format a number."_s);
+        return;
+    }
+
+    Vector<char16_t, 32> buffer;
     bool done = false;
     bool needsSignDisplay = false;
-    Vector<Element> elements;
     std::optional<DurationSignType> durationSign;
     for (unsigned index = 0; index < numberOfTemporalUnits && !done; ++index) {
         TemporalUnit unit = static_cast<TemporalUnit>(index);
@@ -452,18 +459,16 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
         value = purifyNaN(value);
         bool isZero = totalNanosecondsValue ? !totalNanosecondsValue.value() : !value;
         if (!isZero || unitData.display() != IntlDurationFormat::Display::Auto || style == IntlDurationFormat::UnitStyle::TwoDigit || style ==  IntlDurationFormat::UnitStyle::Numeric) {
-            auto formatToString = [&](UFormattedNumber* formattedNumber) -> String {
+            auto formatToString = [&] -> StringView {
                 auto scope = DECLARE_THROW_SCOPE(vm);
 
-                UErrorCode status = U_ZERO_ERROR;
-                Vector<char16_t, 32> buffer;
-                status = callBufferProducingFunction(unumf_resultToString, formattedNumber, buffer);
+                auto status = callBufferProducingFunction(unumf_resultToString, formattedNumber.get(), buffer);
                 if (U_FAILURE(status)) {
                     throwTypeError(globalObject, scope, "Failed to format a number."_s);
                     return { };
                 }
 
-                return String(WTF::move(buffer));
+                return buffer.span();
             };
 
             // Only the first displayed unit shows the sign. Rather than building a sign-never (" +_") skeleton
@@ -481,28 +486,23 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                 }
             };
 
-            auto formatDouble = [&] -> std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>> {
+            auto formatDouble = [&] -> StringView {
                 auto scope = DECLARE_THROW_SCOPE(vm);
 
                 auto* numberFormatter = durationFormat->createNumberFormatterIfNecessary(globalObject, unit);
                 RETURN_IF_EXCEPTION(scope, { });
 
                 UErrorCode status = U_ZERO_ERROR;
-                auto formattedNumber = std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>>(unumf_openResult(&status));
-                if (U_FAILURE(status)) {
-                    throwTypeError(globalObject, scope, "Failed to format a number."_s);
-                    return { };
-                }
                 unumf_formatDouble(numberFormatter, suppressSign ? std::abs(value) : value, formattedNumber.get(), &status);
                 if (U_FAILURE(status)) {
                     throwTypeError(globalObject, scope, "Failed to format a number."_s);
                     return { };
                 }
 
-                return formattedNumber;
+                RELEASE_AND_RETURN(scope, formatToString());
             };
 
-            auto formatIntl128AsDecimal = [&] -> std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>> {
+            auto formatIntl128AsDecimal = [&] -> StringView {
                 ASSERT(totalNanosecondsValue);
                 ASSERT(unit == TemporalUnit::Second || unit == TemporalUnit::Millisecond || unit == TemporalUnit::Microsecond);
 
@@ -512,12 +512,6 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                 RETURN_IF_EXCEPTION(scope, { });
 
                 UErrorCode status = U_ZERO_ERROR;
-                auto formattedNumber = std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>>(unumf_openResult(&status));
-                if (U_FAILURE(status)) {
-                    throwTypeError(globalObject, scope, "Failed to format a number."_s);
-                    return { };
-                }
-
                 Int128 decimalValue = totalNanosecondsValue.value();
                 if (suppressSign && decimalValue < 0)
                     decimalValue = -decimalValue;
@@ -530,7 +524,7 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                     return { };
                 }
 
-                return formattedNumber;
+                RELEASE_AND_RETURN(scope, formatToString());
             };
 
             switch (style) {
@@ -554,17 +548,15 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                 if (needsFormat) {
                     adjustSignDisplay();
 
-                    auto formattedNumber = totalNanosecondsValue ? formatIntl128AsDecimal() : formatDouble();
-                    RETURN_IF_EXCEPTION(scope, { });
+                    auto formatted = totalNanosecondsValue ? formatIntl128AsDecimal() : formatDouble();
+                    RETURN_IF_EXCEPTION(scope, void());
 
-                    auto formatted = formatToString(formattedNumber.get());
-                    RETURN_IF_EXCEPTION(scope, { });
-
-                    elements.append({ ElementType::Element, std::signbit(value), unit, WTF::move(formatted), WTF::move(formattedNumber) });
+                    elementFunctor(std::signbit(value), unit, formatted, formattedNumber.get());
+                    RETURN_IF_EXCEPTION(scope, void());
                 }
 
                 if (needsSeparator)
-                    elements.append({ ElementType::Literal, std::signbit(value), unit, durationFormat->timeSeparator(), nullptr });
+                    literalFunctor(std::signbit(value), unit, durationFormat->timeSeparator());
 
                 break;
             }
@@ -574,13 +566,11 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
             case IntlDurationFormat::UnitStyle::Narrow: {
                 adjustSignDisplay();
 
-                auto formattedNumber = totalNanosecondsValue ? formatIntl128AsDecimal() : formatDouble();
-                RETURN_IF_EXCEPTION(scope, { });
+                auto formatted = totalNanosecondsValue ? formatIntl128AsDecimal() : formatDouble();
+                RETURN_IF_EXCEPTION(scope, void());
 
-                auto formatted = formatToString(formattedNumber.get());
-                RETURN_IF_EXCEPTION(scope, { });
-
-                elements.append({ ElementType::Element, std::signbit(value), unit, WTF::move(formatted), WTF::move(formattedNumber) });
+                elementFunctor(std::signbit(value), unit, formatted, formattedNumber.get());
+                RETURN_IF_EXCEPTION(scope, void());
                 break;
             }
             }
@@ -588,8 +578,6 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                 needsSignDisplay = true;
         }
     }
-
-    return elements;
 }
 
 UNumberFormatter* IntlDurationFormat::createNumberFormatterIfNecessary(JSGlobalObject* globalObject, TemporalUnit unit) const
@@ -677,41 +665,41 @@ JSValue IntlDurationFormat::format(JSGlobalObject* globalObject, ISO8601::Durati
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto elements = collectElements(globalObject, this, WTF::move(duration));
+    Vector<char16_t, 128> buffer;
+    Vector<int32_t, numberOfTemporalUnits> stringLengths;
+    bool followsLiteral = false;
+    auto appendElement = [&](bool, TemporalUnit, StringView string, UFormattedNumber*) {
+        append(buffer, string);
+        if (followsLiteral)
+            stringLengths.last() += string.length();
+        else
+            stringLengths.append(string.length());
+        followsLiteral = false;
+    };
+    auto appendLiteral = [&](bool, TemporalUnit, const String& separator) {
+        append(buffer, separator);
+        stringLengths.last() += separator.length();
+        followsLiteral = true;
+    };
+    partitionDurationFormatPattern(globalObject, this, WTF::move(duration), appendElement, appendLiteral);
     RETURN_IF_EXCEPTION(scope, { });
 
-    Vector<String, 4> stringList;
-    for (unsigned index = 0; index < elements.size(); ++index) {
-        StringBuilder builder;
-        builder.append(elements[index].m_string);
-        do {
-            unsigned nextIndex = index + 1;
-            if (!(nextIndex < elements.size()))
-                break;
-            if (elements[nextIndex].m_type != ElementType::Literal)
-                break;
-            builder.append(elements[nextIndex].m_string);
-            ++index;
-            ++nextIndex;
-            if (!(nextIndex < elements.size()))
-                break;
-            if (elements[nextIndex].m_type != ElementType::Element)
-                break;
-            builder.append(elements[nextIndex].m_string);
-            ++index;
-        } while (true);
+    if (stringLengths.size() <= 1)
+        return jsString(vm, StringImpl::create8BitIfPossible(buffer.span()));
 
-        stringList.append(builder.toString());
+    Vector<const char16_t*, numberOfTemporalUnits> stringPointers;
+    const char16_t* stringPointer = buffer.span().data();
+    for (int32_t stringLength : stringLengths) {
+        stringPointers.append(stringPointer);
+        stringPointer += stringLength;
     }
 
-    ListFormatInput input(WTF::move(stringList));
-
-    Vector<char16_t, 32> result;
-    auto status = callBufferProducingFunction(ulistfmt_format, m_listFormat.get(), input.stringPointers(), input.stringLengths(), input.size(), result);
+    Vector<char16_t, 128> result;
+    auto status = callBufferProducingFunction(ulistfmt_format, m_listFormat.get(), stringPointers.span().data(), stringLengths.span().data(), static_cast<int32_t>(stringLengths.size()), result);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
 
-    return jsString(vm, String(WTF::move(result)));
+    return jsString(vm, StringImpl::create8BitIfPossible(result.span()));
 }
 
 // https://tc39.es/proposal-intl-duration-format/#sec-Intl.DurationFormat.prototype.formatToParts
@@ -720,31 +708,36 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto elements = collectElements(globalObject, this, WTF::move(duration));
+    Vector<Vector<Element, 1>, 4> groupedElements;
+    bool followsLiteral = false;
+    auto appendElement = [&](bool valueSignBit, TemporalUnit unit, StringView string, UFormattedNumber* formattedNumber) {
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        UErrorCode status = U_ZERO_ERROR;
+        auto fieldIterator = std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter>(ufieldpositer_open(&status));
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
+            return;
+        }
+        unumf_resultGetAllFieldPositions(formattedNumber, fieldIterator.get(), &status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "Failed to format a number."_s);
+            return;
+        }
+        if (!followsLiteral)
+            groupedElements.constructAndAppend();
+        groupedElements.last().append({ ElementType::Element, valueSignBit, unit, string.toString(), WTF::move(fieldIterator) });
+        followsLiteral = false;
+    };
+    auto appendLiteral = [&](bool valueSignBit, TemporalUnit unit, const String& separator) {
+        groupedElements.last().append({ ElementType::Literal, valueSignBit, unit, separator, nullptr });
+        followsLiteral = true;
+    };
+    partitionDurationFormatPattern(globalObject, this, WTF::move(duration), appendElement, appendLiteral);
     RETURN_IF_EXCEPTION(scope, { });
 
     Vector<String, 4> stringList;
-    Vector<Vector<Element, 1>, 4> groupedElements;
-    for (unsigned index = 0; index < elements.size(); ++index) {
-        Vector<Element, 1> group;
-        group.append(WTF::move(elements[index]));
-        do {
-            unsigned nextIndex = index + 1;
-            if (!(nextIndex < elements.size()))
-                break;
-            if (elements[nextIndex].m_type != ElementType::Literal)
-                break;
-            group.append(WTF::move(elements[nextIndex]));
-            ++index;
-            ++nextIndex;
-            if (!(nextIndex < elements.size()))
-                break;
-            if (elements[nextIndex].m_type != ElementType::Element)
-                break;
-            group.append(WTF::move(elements[nextIndex]));
-            ++index;
-        } while (true);
-
+    for (auto& group : groupedElements) {
         if (group.size() == 1)
             stringList.append(group[0].m_string);
         else {
@@ -753,7 +746,6 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
                 builder.append(element.m_string);
             stringList.append(builder.toString());
         }
-        groupedElements.append(WTF::move(group));
     }
     ASSERT(stringList.size() == groupedElements.size());
 
@@ -805,18 +797,7 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
             for (auto& element : elements) {
                 switch (element.m_type) {
                 case ElementType::Element: {
-                    UErrorCode status = U_ZERO_ERROR;
-                    auto fieldItr = std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter>(ufieldpositer_open(&status));
-                    if (U_FAILURE(status)) {
-                        throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
-                        return;
-                    }
-                    unumf_resultGetAllFieldPositions(element.m_formattedNumber.get(), fieldItr.get(), &status);
-                    if (U_FAILURE(status)) {
-                        throwTypeError(globalObject, scope, "Failed to format a number."_s);
-                        return;
-                    }
-                    IntlFieldIterator iterator(*fieldItr.get());
+                    IntlFieldIterator iterator(*element.m_fieldIterator);
                     JSString* type = jsString(vm, String(temporalUnitSingularPropertyName(vm, element.m_unit).uid()));
                     IntlNumberFormat::formatToPartsInternal(globalObject, IntlNumberFormat::Style::Unit, element.m_valueSignBit, IntlMathematicalValue::NumberType::Integer, element.m_string, iterator, parts, nullptr, type);
                     RETURN_IF_EXCEPTION(scope, void());
