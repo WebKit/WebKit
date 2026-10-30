@@ -110,7 +110,8 @@ private:
     CachedImage(URL&&, Ref<CSSImageValue>&&, float, OptionSet<SVGReferencingMode>);
 
     RefPtr<WebCore::Image> resolvedImage() const;
-    ConcreteObjectSize concreteSizeToDrawAt(const WebCore::Image&, const RenderElement&, ConcreteObjectSize) const;
+    WebCore::ImageOrientation usedOrientation(WebCore::ImageOrientation) const;
+    ConcreteObjectSize concreteSizeToDrawAt(const WebCore::Image&, const RenderElement&, ConcreteObjectSize, WebCore::ImageOrientation) const;
     NaturalDimensions tileNaturalDimensions(const WebCore::Image&) const;
     Vector<CSS::ParamFunction> urlLinkParameters(const CSSParserContext&, StringView fragmentDirective) const;
 

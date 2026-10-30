@@ -270,7 +270,12 @@ NaturalDimensions CachedImage::naturalDimensions(const RenderElement& renderer, 
     if (!cachedImage)
         return NaturalDimensions::none();
 
-    return cachedImage->naturalDimensions(cachedImage->allowsOrientationOverride() ? renderer.imageOrientation() : WebCore::ImageOrientation { WebCore::ImageOrientation::Orientation::FromImage });
+    return cachedImage->naturalDimensions(usedOrientation(renderer.imageOrientation()));
+}
+
+WebCore::ImageOrientation CachedImage::usedOrientation(WebCore::ImageOrientation orientation) const
+{
+    return (m_cachedImage && protect(m_cachedImage)->allowsOrientationOverride()) ? orientation : WebCore::ImageOrientation::Orientation::FromImage;
 }
 
 ImageDrawingExtras CachedImage::drawingExtrasForRenderer(const RenderElement& renderer) const
@@ -379,9 +384,9 @@ static ConcreteObjectSize LEGACY_NODELETE viewportSize(const RenderElement& rend
     return ConcreteObjectSize::fixed(concreteObjectSize.size() * concreteObjectSize.zoom() / zoom, zoom);
 }
 
-ConcreteObjectSize CachedImage::concreteSizeToDrawAt(const WebCore::Image& image, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize) const
+ConcreteObjectSize CachedImage::concreteSizeToDrawAt(const WebCore::Image& image, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, WebCore::ImageOrientation orientation) const
 {
-    if (auto size = fixedContentSize(image))
+    if (auto size = fixedContentSize(image, orientation))
         return ConcreteObjectSize::fixed(*size);
     return viewportSize(renderer, concreteObjectSize);
 }
@@ -405,6 +410,7 @@ ImageDrawResult CachedImage::draw(GraphicsContext& context, const RenderElement&
     if (!image || !image->hasSomethingToDraw())
         return ImageDrawResult::DidNothing;
 
+    options = { options, usedOrientation(options.orientation()) };
     if (auto size = fixedContentSize(*image, options.orientation()))
         return drawResolved(context, renderer, *image, ConcreteObjectSize::fixed(*size), destination, mapSourceToSize(source, concreteObjectSize, *size), options);
     return drawResolved(context, renderer, *image, viewportSize(renderer, concreteObjectSize), destination, source, options);
@@ -422,7 +428,8 @@ ImageDrawResult CachedImage::drawAsPattern(GraphicsContext& context, const Rende
     if (!image)
         return ImageDrawResult::DidNothing;
 
-    return drawResolvedAsPattern(context, renderer, *image, concreteSizeToDrawAt(*image, renderer, concreteObjectSize), destination, tile, patternTransform, phase, spacing, options);
+    options = { options, usedOrientation(options.orientation()) };
+    return drawResolvedAsPattern(context, renderer, *image, concreteSizeToDrawAt(*image, renderer, concreteObjectSize, options.orientation()), destination, tile, patternTransform, phase, spacing, options);
 }
 
 ImageDrawResult CachedImage::drawTiled(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions options, bool) const
@@ -442,7 +449,8 @@ ImageDrawResult CachedImage::drawTiled(GraphicsContext& context, const RenderEle
     if (!image)
         return ImageDrawResult::DidNothing;
 
-    return drawResolvedTiled(context, renderer, *image, tileNaturalDimensions(*image), concreteSizeToDrawAt(*image, renderer, concreteObjectSize), destination, phase, tileSize, spacing, options);
+    options = { options, usedOrientation(options.orientation()) };
+    return drawResolvedTiled(context, renderer, *image, tileNaturalDimensions(*image), concreteSizeToDrawAt(*image, renderer, concreteObjectSize, options.orientation()), destination, phase, tileSize, spacing, options);
 }
 
 ImageDrawResult CachedImage::drawNinePiece(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const NinePieceGeometry& geometry, ImageDrawingOptions options) const
@@ -462,7 +470,8 @@ ImageDrawResult CachedImage::drawNinePiece(GraphicsContext& context, const Rende
     if (!image)
         return ImageDrawResult::DidNothing;
 
-    return drawResolvedNinePiece(context, renderer, *image, concreteSizeToDrawAt(*image, renderer, concreteObjectSize), geometry, options);
+    options = { options, usedOrientation(options.orientation()) };
+    return drawResolvedNinePiece(context, renderer, *image, concreteSizeToDrawAt(*image, renderer, concreteObjectSize, options.orientation()), geometry, options);
 }
 
 bool CachedImage::currentFrameIsComplete(const RenderElement*) const
@@ -564,7 +573,7 @@ FloatRect CachedImage::mapChangedRectToSource(const RenderElement& renderer, Con
     if (!image)
         return Image::mapChangedRectToSource(renderer, concreteObjectSize, changedRect);
 
-    if (auto size = fixedContentSize(*image, renderer.imageOrientation()))
+    if (auto size = fixedContentSize(*image, usedOrientation(renderer.imageOrientation())))
         return mapSizeToSource(changedRect, *size, concreteObjectSize);
     return mapSizeToSource(changedRect, viewportSize(renderer, concreteObjectSize).size(), concreteObjectSize);
 }

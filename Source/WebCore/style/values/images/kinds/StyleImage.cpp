@@ -410,7 +410,7 @@ ImageDrawResult Image::drawResolvedNinePiece(GraphicsContext& context, const Ren
             WebCore::Image::fillWithSolidColor(context, destination, *singlePixelSolidColor, options.compositeOperator());
             return ImageDrawResult::DidDraw;
         }
-        return drawImageAsPattern(context, image, pieceConcreteObjectSize, destination, tile, patternTransform, phase, spacing, { options.compositeOperator(), options.interpolationQuality() }, &extras);
+        return drawImageAsPattern(context, image, pieceConcreteObjectSize, destination, tile, patternTransform, phase, spacing, { options.compositeOperator(), options.interpolationQuality(), options.orientation() }, &extras);
     }, concreteObjectSize, pieceGeometry);
 }
 
@@ -435,7 +435,7 @@ ImageDrawResult Image::drawNinePiece(GraphicsContext& context, const RenderEleme
     return drawNinePieceUsing(context, [&](GraphicsContext& context, ConcreteObjectSize pieceConcreteObjectSize, const FloatRect& destination, const FloatRect& source) {
         return draw(context, renderer, pieceConcreteObjectSize, destination, source, options, false);
     }, [&](GraphicsContext& context, ConcreteObjectSize pieceConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
-        return drawAsPattern(context, renderer, pieceConcreteObjectSize, destination, tile, patternTransform, phase, spacing, { options.compositeOperator(), options.interpolationQuality() }, false);
+        return drawAsPattern(context, renderer, pieceConcreteObjectSize, destination, tile, patternTransform, phase, spacing, { options.compositeOperator(), options.interpolationQuality(), options.orientation() }, false);
     }, ConcreteObjectSize::fixed(size), geometry);
 }
 

@@ -205,11 +205,6 @@ ImageDrawResult BitmapImage::drawImage(GraphicsContext& context, ConcreteObjectS
     return ImageDrawResult::DidDraw;
 }
 
-std::optional<Image::PatternTile> BitmapImage::currentPatternTile(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, ImageDrawingOptions options, const ImageDrawingExtras* extras)
-{
-    return Image::currentPatternTile(context, concreteObjectSize, { options, ImageOrientation::Orientation::FromImage }, extras);
-}
-
 void BitmapImage::dump(TextStream& ts) const
 {
     Image::dump(ts);

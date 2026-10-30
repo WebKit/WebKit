@@ -164,7 +164,6 @@ private:
     bool hasHDRContentForTesting() const final { return m_source->hasHDRContentForTesting(); }
 
     ImageDrawResult drawImage(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions, const ImageDrawingExtras*) final;
-    std::optional<PatternTile> currentPatternTile(GraphicsContext&, ConcreteObjectSize, ImageDrawingOptions, const ImageDrawingExtras*) final;
 
     void dump(WTF::TextStream&) const final;
 
