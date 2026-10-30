@@ -1,0 +1,654 @@
+Accname computation tests for input elements that support a placeholder attribute
+
+HTML-AAM computation steps
+
+input[type="email"] expecting name from 2 aria-labelledby refs
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+
+<h2>input[type="email"] expecting name from 2 aria-labelledby refs</h2>
+<label for="el-1">associated label #1 text contents</label>
+<label for="el-1">associated label #2 text contents</label>
+<p id="el-1-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-1-label-2">aria-labelledby ref element #2 text contents</p>
+<input type="email" id="el-1" class="ex-label" data-testname="input[type=&quot;email&quot;] expecting name from 2 aria-labelledby refs" value="input value attribute value" aria-labelledby="el-1-label-1 el-1-label-2" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+input[type="email"] expecting name from 1 aria-labelledby ref
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+
+<h2>input[type="email"] expecting name from 1 aria-labelledby ref</h2>
+<label for="el-2">associated label #1 text contents</label>
+<label for="el-2">associated label #2 text contents</label>
+<p id="el-2-label-1">aria-labelledby ref element #1 text contents</p>
+<input type="email" id="el-2" class="ex-label" data-testname="input[type=&quot;email&quot;] expecting name from 1 aria-labelledby ref" value="input value attribute value" aria-labelledby="el-2-label-1" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+input[type="email"] expecting name from aria-label
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="email"] expecting name from aria-label</h2>
+<label for="el-3">associated label #1 text contents</label>
+<label for="el-3">associated label #2 text contents</label>
+<input type="email" id="el-3" class="ex-label" data-testname="input[type=&quot;email&quot;] expecting name from aria-label" value="input value attribute value" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input aria-label attribute value">
+input[type="email"] expecting name from 2 labels
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="email"] expecting name from 2 labels</h2>
+<label for="el-4">associated label #1 text contents</label>
+<label for="el-4">associated label #2 text contents</label>
+<input type="email" id="el-4" class="ex-label" data-testname="input[type=&quot;email&quot;] expecting name from 2 labels" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="associated label #1 text contents associated label #2 text contents">
+input[type="email"] expecting name from 1 label
+
+associated label #1 text contents
+<h2>input[type="email"] expecting name from 1 label</h2>
+<label for="el-5">associated label #1 text contents</label>
+<input type="email" id="el-5" class="ex-label" data-testname="input[type=&quot;email&quot;] expecting name from 1 label" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="associated label #1 text contents">
+input[type="email"] expecting name from encapsulating label
+
+encapsulating label text contents
+<h2>input[type="email"] expecting name from encapsulating label</h2>
+<label>encapsulating label text contents<input type="email" id="el-6" class="ex-label" data-testname="input[type=&quot;email&quot;] expecting name from encapsulating label" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="encapsulating label text contents">
+</label>
+input[type="email"] expecting name from title
+
+
+<h2>input[type="email"] expecting name from title</h2>
+<input type="email" id="el-7" class="ex-label" data-testname="input[type=&quot;email&quot;] expecting name from title" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input title attribute value">
+input[type="email"] expecting name from placeholder
+
+
+<h2>input[type="email"] expecting name from placeholder</h2>
+<input type="email" id="el-8" class="ex-label" data-testname="input[type=&quot;email&quot;] expecting name from placeholder" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input placeholder attribute value">
+input[type="email"] expecting name from aria-placeholder
+
+
+<h2>input[type="email"] expecting name from aria-placeholder</h2>
+<input type="email" id="el-9" class="ex-label" data-testname="input[type=&quot;email&quot;] expecting name from aria-placeholder" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" data-expectedlabel="input aria-placeholder attribute value">
+input[type="email"] expecting name to be empty
+
+
+<h2>input[type="email"] expecting name to be empty</h2>
+<input type="email" id="el-10" class="ex-label" data-testname="input[type=&quot;email&quot;] expecting name to be empty" value="input value attribute value" data-expectedlabel="">
+input[type="number"] expecting name from 2 aria-labelledby refs
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+
+<h2>input[type="number"] expecting name from 2 aria-labelledby refs</h2>
+<label for="el-11">associated label #1 text contents</label>
+<label for="el-11">associated label #2 text contents</label>
+<p id="el-11-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-11-label-2">aria-labelledby ref element #2 text contents</p>
+<input type="number" id="el-11" class="ex-label" data-testname="input[type=&quot;number&quot;] expecting name from 2 aria-labelledby refs" value="input value attribute value" aria-labelledby="el-11-label-1 el-11-label-2" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+input[type="number"] expecting name from 1 aria-labelledby ref
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+
+<h2>input[type="number"] expecting name from 1 aria-labelledby ref</h2>
+<label for="el-12">associated label #1 text contents</label>
+<label for="el-12">associated label #2 text contents</label>
+<p id="el-12-label-1">aria-labelledby ref element #1 text contents</p>
+<input type="number" id="el-12" class="ex-label" data-testname="input[type=&quot;number&quot;] expecting name from 1 aria-labelledby ref" value="input value attribute value" aria-labelledby="el-12-label-1" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+input[type="number"] expecting name from aria-label
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="number"] expecting name from aria-label</h2>
+<label for="el-13">associated label #1 text contents</label>
+<label for="el-13">associated label #2 text contents</label>
+<input type="number" id="el-13" class="ex-label" data-testname="input[type=&quot;number&quot;] expecting name from aria-label" value="input value attribute value" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input aria-label attribute value">
+input[type="number"] expecting name from 2 labels
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="number"] expecting name from 2 labels</h2>
+<label for="el-14">associated label #1 text contents</label>
+<label for="el-14">associated label #2 text contents</label>
+<input type="number" id="el-14" class="ex-label" data-testname="input[type=&quot;number&quot;] expecting name from 2 labels" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="associated label #1 text contents associated label #2 text contents">
+input[type="number"] expecting name from 1 label
+
+associated label #1 text contents
+<h2>input[type="number"] expecting name from 1 label</h2>
+<label for="el-15">associated label #1 text contents</label>
+<input type="number" id="el-15" class="ex-label" data-testname="input[type=&quot;number&quot;] expecting name from 1 label" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="associated label #1 text contents">
+input[type="number"] expecting name from encapsulating label
+
+encapsulating label text contents
+<h2>input[type="number"] expecting name from encapsulating label</h2>
+<label>encapsulating label text contents<input type="number" id="el-16" class="ex-label" data-testname="input[type=&quot;number&quot;] expecting name from encapsulating label" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="encapsulating label text contents">
+</label>
+input[type="number"] expecting name from title
+
+
+<h2>input[type="number"] expecting name from title</h2>
+<input type="number" id="el-17" class="ex-label" data-testname="input[type=&quot;number&quot;] expecting name from title" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input title attribute value">
+input[type="number"] expecting name from placeholder
+
+
+<h2>input[type="number"] expecting name from placeholder</h2>
+<input type="number" id="el-18" class="ex-label" data-testname="input[type=&quot;number&quot;] expecting name from placeholder" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input placeholder attribute value">
+input[type="number"] expecting name from aria-placeholder
+
+
+<h2>input[type="number"] expecting name from aria-placeholder</h2>
+<input type="number" id="el-19" class="ex-label" data-testname="input[type=&quot;number&quot;] expecting name from aria-placeholder" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" data-expectedlabel="input aria-placeholder attribute value">
+input[type="number"] expecting name to be empty
+
+
+<h2>input[type="number"] expecting name to be empty</h2>
+<input type="number" id="el-20" class="ex-label" data-testname="input[type=&quot;number&quot;] expecting name to be empty" value="input value attribute value" data-expectedlabel="">
+input[type="password"] expecting name from 2 aria-labelledby refs
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+
+<h2>input[type="password"] expecting name from 2 aria-labelledby refs</h2>
+<label for="el-21">associated label #1 text contents</label>
+<label for="el-21">associated label #2 text contents</label>
+<p id="el-21-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-21-label-2">aria-labelledby ref element #2 text contents</p>
+<input type="password" id="el-21" class="ex-label" data-testname="input[type=&quot;password&quot;] expecting name from 2 aria-labelledby refs" value="input value attribute value" aria-labelledby="el-21-label-1 el-21-label-2" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+input[type="password"] expecting name from 1 aria-labelledby ref
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+
+<h2>input[type="password"] expecting name from 1 aria-labelledby ref</h2>
+<label for="el-22">associated label #1 text contents</label>
+<label for="el-22">associated label #2 text contents</label>
+<p id="el-22-label-1">aria-labelledby ref element #1 text contents</p>
+<input type="password" id="el-22" class="ex-label" data-testname="input[type=&quot;password&quot;] expecting name from 1 aria-labelledby ref" value="input value attribute value" aria-labelledby="el-22-label-1" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+input[type="password"] expecting name from aria-label
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="password"] expecting name from aria-label</h2>
+<label for="el-23">associated label #1 text contents</label>
+<label for="el-23">associated label #2 text contents</label>
+<input type="password" id="el-23" class="ex-label" data-testname="input[type=&quot;password&quot;] expecting name from aria-label" value="input value attribute value" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input aria-label attribute value">
+input[type="password"] expecting name from 2 labels
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="password"] expecting name from 2 labels</h2>
+<label for="el-24">associated label #1 text contents</label>
+<label for="el-24">associated label #2 text contents</label>
+<input type="password" id="el-24" class="ex-label" data-testname="input[type=&quot;password&quot;] expecting name from 2 labels" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="associated label #1 text contents associated label #2 text contents">
+input[type="password"] expecting name from 1 label
+
+associated label #1 text contents
+<h2>input[type="password"] expecting name from 1 label</h2>
+<label for="el-25">associated label #1 text contents</label>
+<input type="password" id="el-25" class="ex-label" data-testname="input[type=&quot;password&quot;] expecting name from 1 label" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="associated label #1 text contents">
+input[type="password"] expecting name from encapsulating label
+
+encapsulating label text contents
+<h2>input[type="password"] expecting name from encapsulating label</h2>
+<label>encapsulating label text contents<input type="password" id="el-26" class="ex-label" data-testname="input[type=&quot;password&quot;] expecting name from encapsulating label" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="encapsulating label text contents">
+</label>
+input[type="password"] expecting name from title
+
+
+<h2>input[type="password"] expecting name from title</h2>
+<input type="password" id="el-27" class="ex-label" data-testname="input[type=&quot;password&quot;] expecting name from title" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input title attribute value">
+input[type="password"] expecting name from placeholder
+
+
+<h2>input[type="password"] expecting name from placeholder</h2>
+<input type="password" id="el-28" class="ex-label" data-testname="input[type=&quot;password&quot;] expecting name from placeholder" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input placeholder attribute value">
+input[type="password"] expecting name from aria-placeholder
+
+
+<h2>input[type="password"] expecting name from aria-placeholder</h2>
+<input type="password" id="el-29" class="ex-label" data-testname="input[type=&quot;password&quot;] expecting name from aria-placeholder" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" data-expectedlabel="input aria-placeholder attribute value">
+input[type="password"] expecting name to be empty
+
+
+<h2>input[type="password"] expecting name to be empty</h2>
+<input type="password" id="el-30" class="ex-label" data-testname="input[type=&quot;password&quot;] expecting name to be empty" value="input value attribute value" data-expectedlabel="">
+input[type="search"] expecting name from 2 aria-labelledby refs
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+
+<h2>input[type="search"] expecting name from 2 aria-labelledby refs</h2>
+<label for="el-31">associated label #1 text contents</label>
+<label for="el-31">associated label #2 text contents</label>
+<p id="el-31-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-31-label-2">aria-labelledby ref element #2 text contents</p>
+<input type="search" id="el-31" class="ex-label" data-testname="input[type=&quot;search&quot;] expecting name from 2 aria-labelledby refs" value="input value attribute value" aria-labelledby="el-31-label-1 el-31-label-2" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+input[type="search"] expecting name from 1 aria-labelledby ref
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+
+<h2>input[type="search"] expecting name from 1 aria-labelledby ref</h2>
+<label for="el-32">associated label #1 text contents</label>
+<label for="el-32">associated label #2 text contents</label>
+<p id="el-32-label-1">aria-labelledby ref element #1 text contents</p>
+<input type="search" id="el-32" class="ex-label" data-testname="input[type=&quot;search&quot;] expecting name from 1 aria-labelledby ref" value="input value attribute value" aria-labelledby="el-32-label-1" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+input[type="search"] expecting name from aria-label
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="search"] expecting name from aria-label</h2>
+<label for="el-33">associated label #1 text contents</label>
+<label for="el-33">associated label #2 text contents</label>
+<input type="search" id="el-33" class="ex-label" data-testname="input[type=&quot;search&quot;] expecting name from aria-label" value="input value attribute value" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input aria-label attribute value">
+input[type="search"] expecting name from 2 labels
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="search"] expecting name from 2 labels</h2>
+<label for="el-34">associated label #1 text contents</label>
+<label for="el-34">associated label #2 text contents</label>
+<input type="search" id="el-34" class="ex-label" data-testname="input[type=&quot;search&quot;] expecting name from 2 labels" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="associated label #1 text contents associated label #2 text contents">
+input[type="search"] expecting name from 1 label
+
+associated label #1 text contents
+<h2>input[type="search"] expecting name from 1 label</h2>
+<label for="el-35">associated label #1 text contents</label>
+<input type="search" id="el-35" class="ex-label" data-testname="input[type=&quot;search&quot;] expecting name from 1 label" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="associated label #1 text contents">
+input[type="search"] expecting name from encapsulating label
+
+encapsulating label text contents
+<h2>input[type="search"] expecting name from encapsulating label</h2>
+<label>encapsulating label text contents<input type="search" id="el-36" class="ex-label" data-testname="input[type=&quot;search&quot;] expecting name from encapsulating label" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="encapsulating label text contents">
+</label>
+input[type="search"] expecting name from title
+
+
+<h2>input[type="search"] expecting name from title</h2>
+<input type="search" id="el-37" class="ex-label" data-testname="input[type=&quot;search&quot;] expecting name from title" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input title attribute value">
+input[type="search"] expecting name from placeholder
+
+
+<h2>input[type="search"] expecting name from placeholder</h2>
+<input type="search" id="el-38" class="ex-label" data-testname="input[type=&quot;search&quot;] expecting name from placeholder" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input placeholder attribute value">
+input[type="search"] expecting name from aria-placeholder
+
+
+<h2>input[type="search"] expecting name from aria-placeholder</h2>
+<input type="search" id="el-39" class="ex-label" data-testname="input[type=&quot;search&quot;] expecting name from aria-placeholder" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" data-expectedlabel="input aria-placeholder attribute value">
+input[type="search"] expecting name to be empty
+
+
+<h2>input[type="search"] expecting name to be empty</h2>
+<input type="search" id="el-40" class="ex-label" data-testname="input[type=&quot;search&quot;] expecting name to be empty" value="input value attribute value" data-expectedlabel="">
+input[type="tel"] expecting name from 2 aria-labelledby refs
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+
+<h2>input[type="tel"] expecting name from 2 aria-labelledby refs</h2>
+<label for="el-41">associated label #1 text contents</label>
+<label for="el-41">associated label #2 text contents</label>
+<p id="el-41-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-41-label-2">aria-labelledby ref element #2 text contents</p>
+<input type="tel" id="el-41" class="ex-label" data-testname="input[type=&quot;tel&quot;] expecting name from 2 aria-labelledby refs" value="input value attribute value" aria-labelledby="el-41-label-1 el-41-label-2" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+input[type="tel"] expecting name from 1 aria-labelledby ref
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+
+<h2>input[type="tel"] expecting name from 1 aria-labelledby ref</h2>
+<label for="el-42">associated label #1 text contents</label>
+<label for="el-42">associated label #2 text contents</label>
+<p id="el-42-label-1">aria-labelledby ref element #1 text contents</p>
+<input type="tel" id="el-42" class="ex-label" data-testname="input[type=&quot;tel&quot;] expecting name from 1 aria-labelledby ref" value="input value attribute value" aria-labelledby="el-42-label-1" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+input[type="tel"] expecting name from aria-label
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="tel"] expecting name from aria-label</h2>
+<label for="el-43">associated label #1 text contents</label>
+<label for="el-43">associated label #2 text contents</label>
+<input type="tel" id="el-43" class="ex-label" data-testname="input[type=&quot;tel&quot;] expecting name from aria-label" value="input value attribute value" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input aria-label attribute value">
+input[type="tel"] expecting name from 2 labels
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="tel"] expecting name from 2 labels</h2>
+<label for="el-44">associated label #1 text contents</label>
+<label for="el-44">associated label #2 text contents</label>
+<input type="tel" id="el-44" class="ex-label" data-testname="input[type=&quot;tel&quot;] expecting name from 2 labels" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="associated label #1 text contents associated label #2 text contents">
+input[type="tel"] expecting name from 1 label
+
+associated label #1 text contents
+<h2>input[type="tel"] expecting name from 1 label</h2>
+<label for="el-45">associated label #1 text contents</label>
+<input type="tel" id="el-45" class="ex-label" data-testname="input[type=&quot;tel&quot;] expecting name from 1 label" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="associated label #1 text contents">
+input[type="tel"] expecting name from encapsulating label
+
+encapsulating label text contents
+<h2>input[type="tel"] expecting name from encapsulating label</h2>
+<label>encapsulating label text contents<input type="tel" id="el-46" class="ex-label" data-testname="input[type=&quot;tel&quot;] expecting name from encapsulating label" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="encapsulating label text contents">
+</label>
+input[type="tel"] expecting name from title
+
+
+<h2>input[type="tel"] expecting name from title</h2>
+<input type="tel" id="el-47" class="ex-label" data-testname="input[type=&quot;tel&quot;] expecting name from title" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input title attribute value">
+input[type="tel"] expecting name from placeholder
+
+
+<h2>input[type="tel"] expecting name from placeholder</h2>
+<input type="tel" id="el-48" class="ex-label" data-testname="input[type=&quot;tel&quot;] expecting name from placeholder" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input placeholder attribute value">
+input[type="tel"] expecting name from aria-placeholder
+
+
+<h2>input[type="tel"] expecting name from aria-placeholder</h2>
+<input type="tel" id="el-49" class="ex-label" data-testname="input[type=&quot;tel&quot;] expecting name from aria-placeholder" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" data-expectedlabel="input aria-placeholder attribute value">
+input[type="tel"] expecting name to be empty
+
+
+<h2>input[type="tel"] expecting name to be empty</h2>
+<input type="tel" id="el-50" class="ex-label" data-testname="input[type=&quot;tel&quot;] expecting name to be empty" value="input value attribute value" data-expectedlabel="">
+input[type="text"] expecting name from 2 aria-labelledby refs
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+
+<h2>input[type="text"] expecting name from 2 aria-labelledby refs</h2>
+<label for="el-51">associated label #1 text contents</label>
+<label for="el-51">associated label #2 text contents</label>
+<p id="el-51-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-51-label-2">aria-labelledby ref element #2 text contents</p>
+<input type="text" id="el-51" class="ex-label" data-testname="input[type=&quot;text&quot;] expecting name from 2 aria-labelledby refs" value="input value attribute value" aria-labelledby="el-51-label-1 el-51-label-2" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+input[type="text"] expecting name from 1 aria-labelledby ref
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+
+<h2>input[type="text"] expecting name from 1 aria-labelledby ref</h2>
+<label for="el-52">associated label #1 text contents</label>
+<label for="el-52">associated label #2 text contents</label>
+<p id="el-52-label-1">aria-labelledby ref element #1 text contents</p>
+<input type="text" id="el-52" class="ex-label" data-testname="input[type=&quot;text&quot;] expecting name from 1 aria-labelledby ref" value="input value attribute value" aria-labelledby="el-52-label-1" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+input[type="text"] expecting name from aria-label
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="text"] expecting name from aria-label</h2>
+<label for="el-53">associated label #1 text contents</label>
+<label for="el-53">associated label #2 text contents</label>
+<input type="text" id="el-53" class="ex-label" data-testname="input[type=&quot;text&quot;] expecting name from aria-label" value="input value attribute value" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input aria-label attribute value">
+input[type="text"] expecting name from 2 labels
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="text"] expecting name from 2 labels</h2>
+<label for="el-54">associated label #1 text contents</label>
+<label for="el-54">associated label #2 text contents</label>
+<input type="text" id="el-54" class="ex-label" data-testname="input[type=&quot;text&quot;] expecting name from 2 labels" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="associated label #1 text contents associated label #2 text contents">
+input[type="text"] expecting name from 1 label
+
+associated label #1 text contents
+<h2>input[type="text"] expecting name from 1 label</h2>
+<label for="el-55">associated label #1 text contents</label>
+<input type="text" id="el-55" class="ex-label" data-testname="input[type=&quot;text&quot;] expecting name from 1 label" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="associated label #1 text contents">
+input[type="text"] expecting name from encapsulating label
+
+encapsulating label text contents
+<h2>input[type="text"] expecting name from encapsulating label</h2>
+<label>encapsulating label text contents<input type="text" id="el-56" class="ex-label" data-testname="input[type=&quot;text&quot;] expecting name from encapsulating label" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="encapsulating label text contents">
+</label>
+input[type="text"] expecting name from title
+
+
+<h2>input[type="text"] expecting name from title</h2>
+<input type="text" id="el-57" class="ex-label" data-testname="input[type=&quot;text&quot;] expecting name from title" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input title attribute value">
+input[type="text"] expecting name from placeholder
+
+
+<h2>input[type="text"] expecting name from placeholder</h2>
+<input type="text" id="el-58" class="ex-label" data-testname="input[type=&quot;text&quot;] expecting name from placeholder" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input placeholder attribute value">
+input[type="text"] expecting name from aria-placeholder
+
+
+<h2>input[type="text"] expecting name from aria-placeholder</h2>
+<input type="text" id="el-59" class="ex-label" data-testname="input[type=&quot;text&quot;] expecting name from aria-placeholder" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" data-expectedlabel="input aria-placeholder attribute value">
+input[type="text"] expecting name to be empty
+
+
+<h2>input[type="text"] expecting name to be empty</h2>
+<input type="text" id="el-60" class="ex-label" data-testname="input[type=&quot;text&quot;] expecting name to be empty" value="input value attribute value" data-expectedlabel="">
+input[type="url"] expecting name from 2 aria-labelledby refs
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+
+<h2>input[type="url"] expecting name from 2 aria-labelledby refs</h2>
+<label for="el-61">associated label #1 text contents</label>
+<label for="el-61">associated label #2 text contents</label>
+<p id="el-61-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-61-label-2">aria-labelledby ref element #2 text contents</p>
+<input type="url" id="el-61" class="ex-label" data-testname="input[type=&quot;url&quot;] expecting name from 2 aria-labelledby refs" value="input value attribute value" aria-labelledby="el-61-label-1 el-61-label-2" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+input[type="url"] expecting name from 1 aria-labelledby ref
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+
+<h2>input[type="url"] expecting name from 1 aria-labelledby ref</h2>
+<label for="el-62">associated label #1 text contents</label>
+<label for="el-62">associated label #2 text contents</label>
+<p id="el-62-label-1">aria-labelledby ref element #1 text contents</p>
+<input type="url" id="el-62" class="ex-label" data-testname="input[type=&quot;url&quot;] expecting name from 1 aria-labelledby ref" value="input value attribute value" aria-labelledby="el-62-label-1" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+input[type="url"] expecting name from aria-label
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="url"] expecting name from aria-label</h2>
+<label for="el-63">associated label #1 text contents</label>
+<label for="el-63">associated label #2 text contents</label>
+<input type="url" id="el-63" class="ex-label" data-testname="input[type=&quot;url&quot;] expecting name from aria-label" value="input value attribute value" aria-label="input aria-label attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input aria-label attribute value">
+input[type="url"] expecting name from 2 labels
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="url"] expecting name from 2 labels</h2>
+<label for="el-64">associated label #1 text contents</label>
+<label for="el-64">associated label #2 text contents</label>
+<input type="url" id="el-64" class="ex-label" data-testname="input[type=&quot;url&quot;] expecting name from 2 labels" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="associated label #1 text contents associated label #2 text contents">
+input[type="url"] expecting name from 1 label
+
+associated label #1 text contents
+<h2>input[type="url"] expecting name from 1 label</h2>
+<label for="el-65">associated label #1 text contents</label>
+<input type="url" id="el-65" class="ex-label" data-testname="input[type=&quot;url&quot;] expecting name from 1 label" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="associated label #1 text contents">
+input[type="url"] expecting name from encapsulating label
+
+encapsulating label text contents
+<h2>input[type="url"] expecting name from encapsulating label</h2>
+<label>encapsulating label text contents<input type="url" id="el-66" class="ex-label" data-testname="input[type=&quot;url&quot;] expecting name from encapsulating label" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="encapsulating label text contents">
+</label>
+input[type="url"] expecting name from title
+
+
+<h2>input[type="url"] expecting name from title</h2>
+<input type="url" id="el-67" class="ex-label" data-testname="input[type=&quot;url&quot;] expecting name from title" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" title="input title attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input title attribute value">
+input[type="url"] expecting name from placeholder
+
+
+<h2>input[type="url"] expecting name from placeholder</h2>
+<input type="url" id="el-68" class="ex-label" data-testname="input[type=&quot;url&quot;] expecting name from placeholder" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" placeholder="input placeholder attribute value" data-expectedlabel="input placeholder attribute value">
+input[type="url"] expecting name from aria-placeholder
+
+
+<h2>input[type="url"] expecting name from aria-placeholder</h2>
+<input type="url" id="el-69" class="ex-label" data-testname="input[type=&quot;url&quot;] expecting name from aria-placeholder" value="input value attribute value" aria-placeholder="input aria-placeholder attribute value" data-expectedlabel="input aria-placeholder attribute value">
+input[type="url"] expecting name to be empty
+
+
+<h2>input[type="url"] expecting name to be empty</h2>
+<input type="url" id="el-70" class="ex-label" data-testname="input[type=&quot;url&quot;] expecting name to be empty" value="input value attribute value" data-expectedlabel="">
+textarea expecting name from 2 aria-labelledby refs
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+
+<h2>textarea expecting name from 2 aria-labelledby refs</h2>
+<label for="el-71">associated label #1 text contents</label>
+<label for="el-71">associated label #2 text contents</label>
+<p id="el-71-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-71-label-2">aria-labelledby ref element #2 text contents</p>
+<textarea id="el-71" class="ex-label" data-testname="textarea expecting name from 2 aria-labelledby refs" aria-labelledby="el-71-label-1 el-71-label-2" aria-label="textarea aria-label attribute value" aria-placeholder="textarea aria-placeholder attribute value" title="textarea title attribute value" placeholder="textarea placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">textarea text node contents</textarea>
+textarea expecting name from 1 aria-labelledby ref
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+
+<h2>textarea expecting name from 1 aria-labelledby ref</h2>
+<label for="el-72">associated label #1 text contents</label>
+<label for="el-72">associated label #2 text contents</label>
+<p id="el-72-label-1">aria-labelledby ref element #1 text contents</p>
+<textarea id="el-72" class="ex-label" data-testname="textarea expecting name from 1 aria-labelledby ref" aria-labelledby="el-72-label-1" aria-label="textarea aria-label attribute value" aria-placeholder="textarea aria-placeholder attribute value" title="textarea title attribute value" placeholder="textarea placeholder attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">textarea text node contents</textarea>
+textarea expecting name from aria-label
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>textarea expecting name from aria-label</h2>
+<label for="el-73">associated label #1 text contents</label>
+<label for="el-73">associated label #2 text contents</label>
+<textarea id="el-73" class="ex-label" data-testname="textarea expecting name from aria-label" aria-label="textarea aria-label attribute value" aria-placeholder="textarea aria-placeholder attribute value" title="textarea title attribute value" placeholder="textarea placeholder attribute value" data-expectedlabel="textarea aria-label attribute value">textarea text node contents</textarea>
+textarea expecting name from 2 labels
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>textarea expecting name from 2 labels</h2>
+<label for="el-74">associated label #1 text contents</label>
+<label for="el-74">associated label #2 text contents</label>
+<textarea id="el-74" class="ex-label" data-testname="textarea expecting name from 2 labels" aria-placeholder="textarea aria-placeholder attribute value" title="textarea title attribute value" placeholder="textarea placeholder attribute value" data-expectedlabel="associated label #1 text contents associated label #2 text contents">textarea text node contents</textarea>
+textarea expecting name from 1 label
+
+associated label #1 text contents
+<h2>textarea expecting name from 1 label</h2>
+<label for="el-75">associated label #1 text contents</label>
+<textarea id="el-75" class="ex-label" data-testname="textarea expecting name from 1 label" aria-placeholder="textarea aria-placeholder attribute value" title="textarea title attribute value" placeholder="textarea placeholder attribute value" data-expectedlabel="associated label #1 text contents">textarea text node contents</textarea>
+textarea expecting name from encapsulating label
+
+encapsulating label text contents
+<h2>textarea expecting name from encapsulating label</h2>
+<label>encapsulating label text contents<textarea id="el-76" class="ex-label" data-testname="textarea expecting name from encapsulating label" aria-placeholder="textarea aria-placeholder attribute value" title="textarea title attribute value" placeholder="textarea placeholder attribute value" data-expectedlabel="encapsulating label text contents">textarea text node contents</textarea>
+</label>
+textarea expecting name from title
+
+
+<h2>textarea expecting name from title</h2>
+<textarea id="el-77" class="ex-label" data-testname="textarea expecting name from title" aria-placeholder="textarea aria-placeholder attribute value" title="textarea title attribute value" placeholder="textarea placeholder attribute value" data-expectedlabel="textarea title attribute value">textarea text node contents</textarea>
+textarea expecting name from placeholder
+
+
+<h2>textarea expecting name from placeholder</h2>
+<textarea id="el-78" class="ex-label" data-testname="textarea expecting name from placeholder" aria-placeholder="textarea aria-placeholder attribute value" placeholder="textarea placeholder attribute value" data-expectedlabel="textarea placeholder attribute value">textarea text node contents</textarea>
+textarea expecting name from aria-placeholder
+
+
+<h2>textarea expecting name from aria-placeholder</h2>
+<textarea id="el-79" class="ex-label" data-testname="textarea expecting name from aria-placeholder" aria-placeholder="textarea aria-placeholder attribute value" data-expectedlabel="textarea aria-placeholder attribute value">textarea text node contents</textarea>
+textarea expecting name to be empty
+
+
+<h2>textarea expecting name to be empty</h2>
+<textarea id="el-80" class="ex-label" data-testname="textarea expecting name to be empty" data-expectedlabel="">textarea text node contents</textarea>
+
+PASS input[type="email"] expecting name from 2 aria-labelledby refs
+PASS input[type="email"] expecting name from 1 aria-labelledby ref
+PASS input[type="email"] expecting name from aria-label
+PASS input[type="email"] expecting name from 2 labels
+PASS input[type="email"] expecting name from 1 label
+PASS input[type="email"] expecting name from encapsulating label
+PASS input[type="email"] expecting name from title
+PASS input[type="email"] expecting name from placeholder
+PASS input[type="email"] expecting name from aria-placeholder
+PASS input[type="email"] expecting name to be empty
+PASS input[type="number"] expecting name from 2 aria-labelledby refs
+PASS input[type="number"] expecting name from 1 aria-labelledby ref
+PASS input[type="number"] expecting name from aria-label
+PASS input[type="number"] expecting name from 2 labels
+PASS input[type="number"] expecting name from 1 label
+PASS input[type="number"] expecting name from encapsulating label
+PASS input[type="number"] expecting name from title
+PASS input[type="number"] expecting name from placeholder
+PASS input[type="number"] expecting name from aria-placeholder
+PASS input[type="number"] expecting name to be empty
+PASS input[type="password"] expecting name from 2 aria-labelledby refs
+PASS input[type="password"] expecting name from 1 aria-labelledby ref
+PASS input[type="password"] expecting name from aria-label
+PASS input[type="password"] expecting name from 2 labels
+PASS input[type="password"] expecting name from 1 label
+PASS input[type="password"] expecting name from encapsulating label
+PASS input[type="password"] expecting name from title
+PASS input[type="password"] expecting name from placeholder
+PASS input[type="password"] expecting name from aria-placeholder
+PASS input[type="password"] expecting name to be empty
+PASS input[type="search"] expecting name from 2 aria-labelledby refs
+PASS input[type="search"] expecting name from 1 aria-labelledby ref
+PASS input[type="search"] expecting name from aria-label
+PASS input[type="search"] expecting name from 2 labels
+PASS input[type="search"] expecting name from 1 label
+PASS input[type="search"] expecting name from encapsulating label
+PASS input[type="search"] expecting name from title
+PASS input[type="search"] expecting name from placeholder
+PASS input[type="search"] expecting name from aria-placeholder
+PASS input[type="search"] expecting name to be empty
+PASS input[type="tel"] expecting name from 2 aria-labelledby refs
+PASS input[type="tel"] expecting name from 1 aria-labelledby ref
+PASS input[type="tel"] expecting name from aria-label
+PASS input[type="tel"] expecting name from 2 labels
+PASS input[type="tel"] expecting name from 1 label
+PASS input[type="tel"] expecting name from encapsulating label
+PASS input[type="tel"] expecting name from title
+PASS input[type="tel"] expecting name from placeholder
+PASS input[type="tel"] expecting name from aria-placeholder
+PASS input[type="tel"] expecting name to be empty
+PASS input[type="text"] expecting name from 2 aria-labelledby refs
+PASS input[type="text"] expecting name from 1 aria-labelledby ref
+PASS input[type="text"] expecting name from aria-label
+PASS input[type="text"] expecting name from 2 labels
+PASS input[type="text"] expecting name from 1 label
+PASS input[type="text"] expecting name from encapsulating label
+PASS input[type="text"] expecting name from title
+PASS input[type="text"] expecting name from placeholder
+PASS input[type="text"] expecting name from aria-placeholder
+PASS input[type="text"] expecting name to be empty
+PASS input[type="url"] expecting name from 2 aria-labelledby refs
+PASS input[type="url"] expecting name from 1 aria-labelledby ref
+PASS input[type="url"] expecting name from aria-label
+PASS input[type="url"] expecting name from 2 labels
+PASS input[type="url"] expecting name from 1 label
+PASS input[type="url"] expecting name from encapsulating label
+PASS input[type="url"] expecting name from title
+PASS input[type="url"] expecting name from placeholder
+PASS input[type="url"] expecting name from aria-placeholder
+PASS input[type="url"] expecting name to be empty
+PASS textarea expecting name from 2 aria-labelledby refs
+PASS textarea expecting name from 1 aria-labelledby ref
+PASS textarea expecting name from aria-label
+PASS textarea expecting name from 2 labels
+PASS textarea expecting name from 1 label
+PASS textarea expecting name from encapsulating label
+PASS textarea expecting name from title
+PASS textarea expecting name from placeholder
+PASS textarea expecting name from aria-placeholder
+PASS textarea expecting name to be empty
+
