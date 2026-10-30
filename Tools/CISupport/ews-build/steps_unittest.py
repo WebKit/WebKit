@@ -7019,6 +7019,141 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
 
+class TestCheckChangeRelevanceBuildGroup(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def test_build_group_skips_pure_readme(self):
+        CheckChangeRelevance._get_patch = lambda x: b'README.md'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'iOS-26-Build-EWS')
+        self.expect_outcome(result=FAILURE, state_string="Patch doesn't have relevant changes")
+        return self.run_step()
+
+    def test_build_group_skips_metadata_only(self):
+        CheckChangeRelevance._get_patch = lambda x: b'metadata/contributors.json'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'macOS-Tahoe-Debug-Build-EWS')
+        self.expect_outcome(result=FAILURE, state_string="Patch doesn't have relevant changes")
+        return self.run_step()
+
+    def test_build_group_skips_cisupport_only(self):
+        CheckChangeRelevance._get_patch = lambda x: b'Tools/CISupport/ews-build/steps.py'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'GTK-Build-EWS')
+        self.expect_outcome(result=FAILURE, state_string="Patch doesn't have relevant changes")
+        return self.run_step()
+
+    def test_build_group_runs_for_source_change(self):
+        CheckChangeRelevance._get_patch = lambda x: b'Source/WebCore/dom/Node.cpp'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'iOS-26-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_build_group_runs_for_layouttests_change(self):
+        CheckChangeRelevance._get_patch = lambda x: b'LayoutTests/fast/foo.html'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'macOS-Sequoia-Release-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_build_group_runs_for_testwebkitapi_change(self):
+        CheckChangeRelevance._get_patch = lambda x: b'Tools/TestWebKitAPI/Tests/Foo.cpp'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'iOS-26-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_build_group_runs_for_gtk_tools_change(self):
+        CheckChangeRelevance._get_patch = lambda x: b'Tools/gtk/jhbuild.modules'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'GTK-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_build_group_runs_for_tools_scripts_change(self):
+        """Any Tools/Scripts/* change fires platform Build queues — matches main
+        behavior; CheckChangeRelevance doesn't attempt to carve out Tools/Scripts/*
+        subpaths that may or may not affect builds."""
+        CheckChangeRelevance._get_patch = lambda x: b'Tools/Scripts/filter-test-logs'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'iOS-26-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_build_group_runs_for_xcconfig_change(self):
+        CheckChangeRelevance._get_patch = lambda x: b'Configurations/Version.xcconfig'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'macOS-Sequoia-Release-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_build_group_runs_for_webkitlibraries_sdk_change(self):
+        CheckChangeRelevance._get_patch = lambda x: b'WebKitLibraries/SDKs/iOS26.sdk'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'iOS-26-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_build_group_runs_for_jhbuild_change(self):
+        CheckChangeRelevance._get_patch = lambda x: b'Tools/jhbuild/jhbuildrc'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'GTK-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_build_group_runs_for_glib_tools_change(self):
+        CheckChangeRelevance._get_patch = lambda x: b'Tools/glib/api_test_runner.py'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'WPE-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_build_group_runs_for_cmake_presets_change(self):
+        CheckChangeRelevance._get_patch = lambda x: b'CMakePresets.json'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'WPE-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_build_group_runs_for_xcworkspace_change(self):
+        CheckChangeRelevance._get_patch = lambda x: b'WebKit.xcworkspace/xcshareddata/foo.plist'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'macOS-Sequoia-Release-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_build_group_runs_for_wkdev_sdk_version_change(self):
+        CheckChangeRelevance._get_patch = lambda x: b'.wkdev-sdk-version'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'GTK-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_services_group_still_runs_for_cisupport(self):
+        """Regression guard: adding the `build` group must not break Services-EWS routing.
+        Services-EWS matches the `services-ews` group, not `build`."""
+        CheckChangeRelevance._get_patch = lambda x: b'Tools/CISupport/ews-build/steps.py'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'Services-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_webkitpy_group_still_runs_for_metadata(self):
+        """Regression guard: WebKitPy-Tests-EWS matches `webkitpy` group; metadata/contributors.json
+        is in its regex set."""
+        CheckChangeRelevance._get_patch = lambda x: b'metadata/contributors.json'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'WebKitPy-Tests-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+
 class TestGetTestExpectationsBaseline(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True

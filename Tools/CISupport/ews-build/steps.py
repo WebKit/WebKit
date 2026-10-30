@@ -1550,6 +1550,25 @@ class CheckChangeRelevance(AnalyzeChange):
         re.compile(rb'Tools/CISupport/safer-cpp-swift-version', re.IGNORECASE)
     ]
 
+    build_path_regexes = [
+        re.compile(rb'^Source/', re.IGNORECASE),
+        re.compile(rb'^JSTests/', re.IGNORECASE),
+        re.compile(rb'^LayoutTests/', re.IGNORECASE),
+        re.compile(rb'^Tools/TestWebKitAPI/', re.IGNORECASE),
+        re.compile(rb'^Tools/MiniBrowser/', re.IGNORECASE),
+        re.compile(rb'^Tools/WebKitTestRunner/', re.IGNORECASE),
+        re.compile(rb'^Tools/DumpRenderTree/', re.IGNORECASE),
+        re.compile(rb'^Tools/Scripts/', re.IGNORECASE),
+        re.compile(rb'^Tools/(gtk|wpe|glib|jhbuild)/', re.IGNORECASE),
+        re.compile(rb'^Configurations/', re.IGNORECASE),
+        re.compile(rb'^WebKitLibraries/', re.IGNORECASE),
+        re.compile(rb'^WebKit\.xcworkspace/', re.IGNORECASE),
+        re.compile(rb'^CMakePresets', re.IGNORECASE),
+        re.compile(rb'^\.wkdev-sdk-version', re.IGNORECASE),
+        re.compile(rb'^GNUmakefile', re.IGNORECASE),
+        re.compile(rb'^Makefile', re.IGNORECASE),
+    ]
+
     group_to_paths_mapping = {
         'bindings': bindings_path_regexes,
         'monterey-release-build': monterey_builder_path_regexes,
@@ -1558,6 +1577,7 @@ class CheckChangeRelevance(AnalyzeChange):
         'webkitpy': webkitpy_path_regexes,
         'wk1-tests': wk1_path_regexes,
         'safer-cpp': safer_cpp_path_regexes,
+        'build': build_path_regexes,
     }
 
     def _patch_is_relevant(self, patch, builderName, timeout=30):
