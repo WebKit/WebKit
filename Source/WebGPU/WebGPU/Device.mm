@@ -715,7 +715,9 @@ id<MTLRenderPipelineState> Device::indexBufferClampPipeline(MTLIndexType indexTy
     {
         device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput = wkindexedOutput.args;
         ushort indexBufferValue = indexBuffer[min(indexId, data[indexCountMinusOne])];
-        uint vertexIndex = uint((ushort)(data[primitiveRestart]) + indexBufferValue);
+        // MSL promotes ushort + ushort to int. Truncate so that the strip restart index 0xFFFF
+        // wraps to 0 and is not treated as out of bounds.
+        uint vertexIndex = uint(ushort(data[primitiveRestart] + indexBufferValue));
         if (addsat(vertexIndex, indexedOutput.baseVertex) >= data[vertexCount] + data[primitiveRestart]) {
             indexedOutput.indexCount = 0u;
             indexedOutput.instanceCount = 0u;
@@ -1152,7 +1154,8 @@ id<MTLFunction> Device::icbCommandClampFunction(MTLIndexType indexType)
         device const IndexDataUshort& data = *indexData;
         uint32_t k = (data.primitiveType == primitive_type::triangle_strip || data.primitiveType == primitive_type::line_strip) ? 1 : 0;
         ushort indexBufferValue = data.indexBuffer[min(data.indexBufferElementCountMinusOne, indexId + data.firstIndex)];
-        uint32_t vertexIndex = uint(indexBufferValue) + k;
+        // Truncate to 16 bits so that the strip restart index 0xFFFF wraps to 0.
+        uint32_t vertexIndex = uint(ushort(indexBufferValue + k));
         if (addsat(vertexIndex, data.baseVertex) >= data.minVertexCount + k) {
             *icb_container->outOfBoundsRead = 1;
             render_command cmd(icb_container->commandBuffer, data.renderCommand);
