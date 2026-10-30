@@ -655,7 +655,12 @@ if (ENABLE_WEBGPU)
     list(APPEND TestWGSL_SOURCES
         Tests/WGSL/MetalCompilationTests.mm
         Tests/WGSL/TypeCheckingTests.mm
+
+        Tests/WebGPU/UncapturedErrorCallbackTests.cpp
     )
+
+    # The tests of the WebGPU C API.
+    list(APPEND TestWGSL_FRAMEWORKS WebGPU)
 
     list(APPEND TestWGSL_PRIVATE_INCLUDE_DIRECTORIES
         ${WTF_FRAMEWORK_HEADERS_DIR}

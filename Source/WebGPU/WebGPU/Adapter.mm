@@ -239,6 +239,27 @@ WGPUBool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
     }
 }
 
+// Calls the uncaptured error callback of the C API with each error of the device that no error scope
+// catches, until the device is lost. As in webgpu.h, the callback has no callback mode: it is called
+// in the call that generates the error, on its thread.
+static void listenForUncapturedErrors(WebGPU::Metal::Device& device, const WGPUUncapturedErrorCallbackInfo& callbackInfo)
+{
+    device.resolveUncapturedErrorEvent({ [weakDevice = ThreadSafeWeakPtr { device }, callbackInfo](bool hasUncapturedError, std::optional<WebGPU::Error>&& error) {
+        // There is no error when the device is destroyed.
+        if (!hasUncapturedError || !error)
+            return;
+        RefPtr device = weakDevice;
+        if (!device || device->isLost())
+            return;
+        // The device calls its uncaptured error callback once, so listen for the next error before
+        // the callback can generate one.
+        listenForUncapturedErrors(*device, callbackInfo);
+        auto message = error->message.utf8();
+        WGPUDevice handle = WebGPU::toAPI(*device);
+        callbackInfo.callback(&handle, WebGPU::Metal::toAPI(error), WebGPU::Metal::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
+    }, CompletionHandlerCallThread::AnyThread });
+}
+
 // The C API reports a device that could not be created with WGPURequestDeviceStatus_Error and no
 // device. A null descriptor is the default one.
 WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallbackInfo callbackInfo)
@@ -251,17 +272,21 @@ WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescrip
             future.complete();
         };
         WGPUDeviceDescriptor defaultDescriptor = WGPU_DEVICE_DESCRIPTOR_INIT;
+        if (!descriptor)
+            descriptor = &defaultDescriptor;
         WebGPU::Metal::DeviceDescriptorStorage storage;
-        auto apiDescriptor = WebGPU::Metal::fromAPI(descriptor ? *descriptor : defaultDescriptor, storage);
+        auto apiDescriptor = WebGPU::Metal::fromAPI(*descriptor, storage);
         if (!apiDescriptor) {
             callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::Metal::toAPI("Device does not support requested features"_s));
             return future.future();
         }
-        protectedAdapter->requestDeviceOrError(*apiDescriptor, [callback = WTF::move(callback)](std::expected<Ref<WebGPU::Metal::Device>, String>&& device) {
+        protectedAdapter->requestDeviceOrError(*apiDescriptor, [callback = WTF::move(callback), uncapturedErrorCallbackInfo = descriptor->uncapturedErrorCallbackInfo](std::expected<Ref<WebGPU::Metal::Device>, String>&& device) {
             if (!device) {
                 auto message = device.error().utf8();
                 return callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::Metal::toAPI(message));
             }
+            if (uncapturedErrorCallbackInfo.callback)
+                listenForUncapturedErrors(device->get(), uncapturedErrorCallbackInfo);
             callback(WGPURequestDeviceStatus_Success, WebGPU::Metal::releaseToAPI(WTF::move(*device)), WebGPU::Metal::toAPI(""_s));
         });
         return future.future();
