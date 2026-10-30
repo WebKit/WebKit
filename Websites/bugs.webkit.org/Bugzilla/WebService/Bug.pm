@@ -349,16 +349,18 @@ sub render_comment {
     Bugzilla->switch_to_shadow_db();
     my $bug = $params->{id} ? Bugzilla::Bug->check($params->{id}) : undef;
 
-    my $tmpl = '[% text FILTER quoteUrls(bug) %]';
+    my $is_markdown = Bugzilla->user->wants_markdown;
+    my $tmpl = '[% text FILTER markdown(bug, { is_markdown => is_markdown }) %]';
+
     my $html;
     my $template = Bugzilla->template;
     $template->process(
         \$tmpl,
-        { bug => $bug, text => $params->{text}},
+        { bug => $bug, text => $params->{text}, is_markdown => $is_markdown },
         \$html
-    );
+    ) || ThrowTemplateError($template->error());
 
-    return { html => $html };
+    return { html => $html, is_markdown => $self->type('boolean', $is_markdown) };
 }
 
 # Helper for Bug.comments
@@ -990,8 +992,9 @@ sub add_comment {
         $params->{is_private} = delete $params->{private};
     }
     # Append comment
-    $bug->add_comment($comment, { isprivate => $params->{is_private},
-                                  work_time => $params->{work_time} });
+    $bug->add_comment($comment, { isprivate   => $params->{is_private},
+                                  work_time   => $params->{work_time},
+                                  is_markdown => $params->{is_markdown} });
     $bug->update();
 
     my $new_comment_id = $bug->{added_comments}[0]->id;
@@ -3126,6 +3129,10 @@ don't want it to be assigned to the component owner.
 =item C<comment_is_private> (boolean) - If set to true, the description
 is private, otherwise it is assumed to be public.
 
+=item C<is_markdown> (boolean) - If set to true, the description is
+rendered as Markdown. Otherwise it is plain text, whatever the user's
+Markdown preference is.
+
 =item C<groups> (array) - An array of group names to put this
 bug into. You can see valid group names on the Permissions
 tab of the Preferences screen, or, if you are an administrator,
@@ -3708,6 +3715,10 @@ you did not set the C<comment> parameter.
 =item C<is_private> (boolean) - If set to true, the comment is private, 
 otherwise it is assumed to be public.
 
+=item C<is_markdown> (boolean) - If set to true, the comment is rendered as
+Markdown. Otherwise it is plain text, whatever the user's Markdown preference
+is.
+
 =item C<work_time> (double) - Adds this many hours to the "Hours Worked"
 on the bug. If you are not in the time tracking group, this value will
 be ignored.
@@ -3899,6 +3910,10 @@ you can also call this field C<comment>, if you want.
 =item C<is_private> C<boolean> Whether the comment is private or not.
 If you try to make a comment private and you don't have the permission
 to, an error will be thrown.
+
+=item C<is_markdown> C<boolean> Whether the comment is rendered as Markdown.
+Defaults to false: the comment is plain text, whatever the user's Markdown
+preference is.
 
 =back
 

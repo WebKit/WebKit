@@ -20,7 +20,7 @@
       [% IF user.settings.quote_replies.value == 'quoted_reply' %]
         /* pre id="comment_name_N" */
         var text_elem = document.getElementById('comment_text_'+id);
-        var text = getText(text_elem);
+        var text = getCommentSource(text_elem);
         replytext = prefix + wrapReplyText(text);
       [% ELSIF user.settings.quote_replies.value == 'simple_reply' %]
         replytext = prefix;
@@ -226,12 +226,22 @@
 [%# Don't indent the <pre> block, since then the spaces are displayed in the
   # generated HTML
   #%]
+[% IF comment.is_markdown && feature_enabled('markdown') %]
+<div class="bz_comment_text markdown[% " collapsed" IF comment.collapsed %]"
+  data-markdown-source="[% comment_text FILTER html %]"
+  [% IF mode == "edit" || comment.collapsed %]
+    id="comment_text_[% comment.count FILTER none %]"
+  [% END %]>
+  [%- comment_text FILTER markdown(bug, comment) -%]
+</div>
+[% ELSE %]
 <pre class="bz_comment_text[% " collapsed" IF comment.collapsed %]"
   [% IF mode == "edit" || comment.collapsed %]
     id="comment_text_[% comment.count FILTER none %]"
   [% END %]>
   [%- comment_text FILTER quoteUrls(bug, comment) -%]
 </pre>
+[% END %]
     [% Hook.process('a_comment-end', 'bug/comments.html.tmpl') %]
     </div>
   [% END %]

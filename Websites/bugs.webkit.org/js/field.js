@@ -1041,6 +1041,19 @@ function initDirtyFieldTracking() {
 
 var last_comment_text = '';
 
+/**
+ * Syntax highlighting for fenced code blocks that name a language, such as
+ * ```swift. Needs js/highlight.min.js; does nothing if it isn't loaded.
+ */
+function highlight_code_blocks(root) {
+    if (typeof hljs == 'undefined') return;
+    var blocks = (root || document).querySelectorAll(
+        '.bz_comment_text.markdown pre code[class*="language-"]');
+    for (var i = 0; i < blocks.length; i++)
+        hljs.highlightElement(blocks[i]);
+}
+YAHOO.util.Event.onDOMReady(function() { highlight_code_blocks(); });
+
 function show_comment_preview(bug_id) {
     var Dom = YAHOO.util.Dom;
     var comment = document.getElementById('comment');
@@ -1082,6 +1095,11 @@ function show_comment_preview(bug_id) {
                     YAHOO.lang.escapeHTML(data.error.message);
             } else {
                 document.getElementById('comment_preview_text').innerHTML = data.result.html;
+                if (data.result.is_markdown)
+                    Dom.addClass('comment_preview_text', 'markdown');
+                else
+                    Dom.removeClass('comment_preview_text', 'markdown');
+                highlight_code_blocks(document.getElementById('comment_preview_text'));
                 Dom.addClass('comment_preview_loading', 'bz_default_hidden');
                 Dom.removeClass('comment_preview_text', 'bz_default_hidden');
                 last_comment_text = comment.value;
@@ -1090,8 +1108,13 @@ function show_comment_preview(bug_id) {
         failure: function(res) {
             Dom.addClass('comment_preview_loading', 'bz_default_hidden');
             Dom.removeClass('comment_preview_error', 'bz_default_hidden');
-            Dom.get('comment_preview_error').innerHTML =
-                YAHOO.lang.escapeHTML(res.responseText);
+            // A 403 here comes from a proxy/WAF in front of Bugzilla (it returns
+            // an HTML page, not JSON), so don't dump the raw body in the preview.
+            var message = res.status == 403
+                ? 'The preview request was blocked by the server (403 Forbidden). '
+                  + 'The comment text may contain content that is not allowed, such as raw HTML event handlers.'
+                : 'Unable to generate a preview (HTTP ' + res.status + ').';
+            Dom.get('comment_preview_error').innerHTML = YAHOO.lang.escapeHTML(message);
         }
     },
     YAHOO.lang.JSON.stringify({
