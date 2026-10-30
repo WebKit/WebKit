@@ -24,6 +24,7 @@
 
 #include "GStreamerCommon.h"
 #include "LibWebRTCMacros.h"
+#include "webrtc/api/video/encoded_image.h"
 #include "webrtc/api/video/i420_buffer.h"
 #include "webrtc/api/video/video_frame.h"
 #include "webrtc/common_video/include/video_frame_buffer.h"
@@ -33,7 +34,7 @@ namespace WebCore {
 
 [[nodiscard]] GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSample(const webrtc::VideoFrame&);
 
-webrtc::VideoFrame convertGStreamerSampleToLibWebRTCVideoFrame(GRefPtr<GstSample>&&, uint32_t rtpTimestamp);
+webrtc::VideoFrame convertGStreamerSampleToLibWebRTCVideoFrame(GRefPtr<GstSample>&&, const webrtc::EncodedImage&);
 
 class GStreamerVideoFrameLibWebRTC : public webrtc::RefCountedObject<webrtc::VideoFrameBuffer> {
 public:

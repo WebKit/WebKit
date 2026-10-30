@@ -88,15 +88,25 @@ GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSample(const webrtc::Vid
     return sample;
 }
 
-webrtc::VideoFrame convertGStreamerSampleToLibWebRTCVideoFrame(GRefPtr<GstSample>&& sample, uint32_t rtpTimestamp)
+webrtc::VideoFrame convertGStreamerSampleToLibWebRTCVideoFrame(GRefPtr<GstSample>&& sample, const webrtc::EncodedImage& inputImage)
 {
     webrtc::VideoFrame::Builder builder;
     auto buffer = gst_sample_get_buffer(sample.get());
+
     auto pts = GST_BUFFER_PTS(buffer);
-    return builder.set_video_frame_buffer(GStreamerVideoFrameLibWebRTC::create(WTF::move(sample)))
-        .set_timestamp_rtp(rtpTimestamp)
-        .set_timestamp_us(pts * GST_USECOND)
-        .build();
+    if (auto playoutDelay = inputImage.PlayoutDelay()) {
+        GRefPtr clock = adoptGRef(gst_system_clock_obtain());
+        pts = gst_clock_get_time(clock.get());
+    }
+
+    builder.set_video_frame_buffer(GStreamerVideoFrameLibWebRTC::create(WTF::move(sample)))
+        .set_timestamp_rtp(inputImage.RtpTimestamp())
+        .set_timestamp_us(pts * GST_USECOND);
+
+    if (const auto colorSpace = inputImage.ColorSpace())
+        builder.set_color_space(*colorSpace);
+
+    return builder.build();
 }
 
 webrtc::scoped_refptr<webrtc::VideoFrameBuffer> GStreamerVideoFrameLibWebRTC::create(GRefPtr<GstSample>&& sample)
