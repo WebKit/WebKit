@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: a grid container's percentage padding resolves against its grid area when it is a grid item of a grid</title>
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#padding-props">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-item-sizing">
+<link rel="match" href="grid-container-percentage-padding-grid-item-001-ref.html">
+<meta name="assert" content="The nested grid is in the 300px column of a 400px wide grid, so its 10% padding is 30px (not 40px, 10% of the outer grid's content box). The child of the nested grid starts 30px from the nested grid's padding edge.">
+<style>
+.o { display: grid; width: 400px; grid-template-columns: 100px 300px; }
+.i { display: grid; grid-template-columns: 50px; padding: 10%; background: yellow; }
+.i > div { height: 10px; background: green; }
+</style>
+<div class="o"><div></div><div class="i"><div></div></div></div>

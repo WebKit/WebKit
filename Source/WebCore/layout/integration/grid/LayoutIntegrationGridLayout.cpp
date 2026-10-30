@@ -64,9 +64,10 @@ void GridLayout::updateFormattingContextGeometries()
     clearGridItemGridAreas();
 
     auto boxGeometryUpdater = BoxGeometryUpdater { protect(layoutState()), gridBox() };
-    CheckedPtr gridBoxContainingBlock = CheckedRef { gridBoxRenderer() }->containingBlock();
 
-    boxGeometryUpdater.setFormattingContextRootGeometry(gridBoxContainingBlock->contentBoxLogicalWidth());
+    // Percentage padding and margin resolve against the same basis RenderBox uses for the grid container's own box model values.
+    // That is the grid area for a grid item, the padding box for an out-of-flow box, and the containing block's content box otherwise.
+    boxGeometryUpdater.setFormattingContextRootGeometry(CheckedRef { gridBoxRenderer() }->containingBlockLogicalWidthForContent());
     boxGeometryUpdater.setFormattingContextContentGeometry(CheckedRef { layoutState() }->geometryForBox(gridBox()).contentBoxWidth(), { });
 }
 
