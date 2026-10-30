@@ -50,6 +50,7 @@ static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingTypeFromWKKeyedCod
     return dictionaryForWebKitSecureCodingTypeFromWKKeyedCoder(object);
 }
 
+#if ENABLE(DATA_DETECTION)
 template<typename T> RetainPtr<NSDictionary> dictionaryFromVector(const Vector<std::pair<String, RetainPtr<T>>>& vector)
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:vector.size()];
@@ -57,14 +58,18 @@ template<typename T> RetainPtr<NSDictionary> dictionaryFromVector(const Vector<s
         dictionary[pair.first] = pair.second;
     return dictionary;
 }
+#endif // ENABLE(DATA_DETECTION)
 
+#if ENABLE(DATA_DETECTION)
 template<typename T> RetainPtr<NSDictionary> dictionaryFromOptionalVector(const std::optional<Vector<std::pair<String, RetainPtr<T>>>>& vector)
 {
     if (!vector)
         return nil;
     return dictionaryFromVector<T>(*vector);
 }
+#endif // ENABLE(DATA_DETECTION)
 
+#if ENABLE(DATA_DETECTION)
 template<typename T> Vector<std::pair<String, RetainPtr<T>>> vectorFromDictionary(NSDictionary *dictionary)
 {
     if (![dictionary isKindOfClass:NSDictionary.class])
@@ -76,28 +81,36 @@ template<typename T> Vector<std::pair<String, RetainPtr<T>>> vectorFromDictionar
     }];
     return result;
 }
+#endif // ENABLE(DATA_DETECTION)
 
+#if ENABLE(DATA_DETECTION)
 template<typename T> std::optional<Vector<std::pair<String, RetainPtr<T>>>> optionalVectorFromDictionary(NSDictionary *dictionary)
 {
     if (![dictionary isKindOfClass:NSDictionary.class])
         return std::nullopt;
     return vectorFromDictionary<T>(dictionary);
 }
+#endif // ENABLE(DATA_DETECTION)
 
+#if ENABLE(DATA_DETECTION)
 template<typename T> RetainPtr<NSArray> arrayFromVector(const Vector<RetainPtr<T>>& vector)
 {
     return createNSArray(vector, [] (auto& t) {
         return t.get();
     });
 }
+#endif // ENABLE(DATA_DETECTION)
 
+#if ENABLE(DATA_DETECTION)
 template<typename T> RetainPtr<NSArray> arrayFromOptionalVector(const std::optional<Vector<RetainPtr<T>>>& vector)
 {
     if (!vector)
         return nil;
     return arrayFromVector<T>(*vector);
 }
+#endif // ENABLE(DATA_DETECTION)
 
+#if ENABLE(DATA_DETECTION)
 template<typename T> Vector<RetainPtr<T>> vectorFromArray(NSArray *array)
 {
     if (![array isKindOfClass:NSArray.class])
@@ -109,13 +122,16 @@ template<typename T> Vector<RetainPtr<T>> vectorFromArray(NSArray *array)
     }
     return result;
 }
+#endif // ENABLE(DATA_DETECTION)
 
+#if ENABLE(DATA_DETECTION)
 template<typename T> std::optional<Vector<RetainPtr<T>>> optionalVectorFromArray(NSArray *array)
 {
     if (![array isKindOfClass:NSArray.class])
         return std::nullopt;
     return vectorFromArray<T>(array);
 }
+#endif // ENABLE(DATA_DETECTION)
 
 #if USE(AVFOUNDATION)
 CoreIPCAVOutputContext::CoreIPCAVOutputContext(
