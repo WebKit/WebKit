@@ -43,6 +43,7 @@
 #include "FrameIndexedDBAgent.h"
 #include "FrameInlines.h"
 #include "FrameRuntimeAgent.h"
+#include "FrameTimelineAgent.h"
 #include "FrameWorkerAgent.h"
 #include "InspectorBackendClient.h"
 #include "InspectorInstrumentation.h"
@@ -162,6 +163,7 @@ FrameAgentContext FrameInspectorController::frameAgentContext()
 // and thus this controller.
 void FrameInspectorController::siteIsolationFirstEnabled()
 {
+    m_instrumentingAgents->siteIsolationFirstEnabled();
     createConsoleAgent();
     m_executionStopwatch->startAtMonotonicEpoch();
     m_executionStopwatchIsShared = true;
@@ -211,6 +213,7 @@ void FrameInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<FrameRuntimeAgent>(context));
     m_agents.append(makeUniqueRef<FrameCSSAgent>(context));
     m_agents.append(makeUniqueRef<FrameCanvasAgent>(context));
+    m_agents.append(makeUniqueRef<FrameTimelineAgent>(context));
     m_agents.append(makeUniqueRef<FrameWorkerAgent>(context));
 }
 

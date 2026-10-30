@@ -96,6 +96,11 @@ bool InstrumentingAgents::developerExtrasEnabled() const
     return protect(m_environment)->developerExtrasEnabled();
 }
 
+void InstrumentingAgents::siteIsolationFirstEnabled()
+{
+    m_siteIsolationEnabled = true;
+}
+
 void InstrumentingAgents::reset()
 {
 #define RESET_MEMBER_VARIABLE_FOR_INSPECTOR_AGENT(Class, Name, Getter, Setter) \
@@ -108,12 +113,12 @@ FOR_EACH_INSPECTOR_AGENT(RESET_MEMBER_VARIABLE_FOR_INSPECTOR_AGENT)
 // FIXME: <https://webkit.org/b/300646> To ease the transition of agents and functionalities from page target
 // to frame target, we added this fallback mechanism to let the frame use its page's agents as delegates
 // for agents not yet supported. Remove this once we complete implementing/migrating the frame target's agents.
-#define DEFINE_GETTER_SETTER_FOR_INSPECTOR_AGENT(Class, Name, Getter, Setter) \
+#define DEFINE_GETTER_SETTER_FOR_INSPECTOR_AGENT(Class, Name, Getter, Setter, shouldUseFallbackAgents) \
 Class* InstrumentingAgents::Getter##Name() const \
 { \
     if (m_##Getter##Name) \
         return m_##Getter##Name.get(); \
-    if (auto* fallbackAgents = m_fallbackAgents.get()) \
+    if (auto* fallbackAgents = m_fallbackAgents.get(); fallbackAgents && (shouldUseFallbackAgents)) \
         return fallbackAgents->Getter##Name(); \
     return nullptr; \
 } \
@@ -122,7 +127,16 @@ void InstrumentingAgents::set##Setter##Name(Class* agent) \
     m_##Getter##Name = agent; \
 }
 
-FOR_EACH_INSPECTOR_AGENT(DEFINE_GETTER_SETTER_FOR_INSPECTOR_AGENT)
+#define DEFINE_GETTER_SETTER_FOR_INSPECTOR_AGENT_WITH_FALLBACK(Class, Name, Getter, Setter) \
+    DEFINE_GETTER_SETTER_FOR_INSPECTOR_AGENT(Class, Name, Getter, Setter, true)
+FOR_EACH_INSPECTOR_AGENT_WITH_FALLBACK(DEFINE_GETTER_SETTER_FOR_INSPECTOR_AGENT_WITH_FALLBACK)
+#undef DEFINE_GETTER_SETTER_FOR_INSPECTOR_AGENT_WITH_FALLBACK
+
+#define DEFINE_GETTER_SETTER_FOR_INSPECTOR_AGENT_WITHOUT_FALLBACK_UNDER_SITE_ISOLATION(Class, Name, Getter, Setter) \
+    DEFINE_GETTER_SETTER_FOR_INSPECTOR_AGENT(Class, Name, Getter, Setter, !m_siteIsolationEnabled)
+FOR_EACH_INSPECTOR_AGENT_WITHOUT_FALLBACK_UNDER_SITE_ISOLATION(DEFINE_GETTER_SETTER_FOR_INSPECTOR_AGENT_WITHOUT_FALLBACK_UNDER_SITE_ISOLATION)
+#undef DEFINE_GETTER_SETTER_FOR_INSPECTOR_AGENT_WITHOUT_FALLBACK_UNDER_SITE_ISOLATION
+
 #undef DEFINE_GETTER_SETTER_FOR_INSPECTOR_AGENT
 
 } // namespace WebCore

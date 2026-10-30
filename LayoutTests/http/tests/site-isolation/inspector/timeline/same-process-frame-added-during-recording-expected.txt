@@ -1,0 +1,12 @@
+Test that under Site Isolation, records from a same-process iframe added during a Timeline recording are reported by the iframe's frame target, and never by the page target, even before the iframe's frame target has started.
+
+
+== Running test suite: SiteIsolation.Timeline.SameProcessFrameAddedDuringRecording
+-- Running test case: SiteIsolation.Timeline.SameProcessFrameAddedDuringRecording.NoFallbackToPageTarget
+PASS: The page target and the main frame target started tracking.
+PASS: Should find the frame target of the same-origin iframe.
+PASS: The frame target of the added iframe started tracking.
+PASS: Recorded a timer from the frame target of the added iframe.
+PASS: Capturing stopped.
+PASS: The page target should not record the timer installed in the new iframe.
+
