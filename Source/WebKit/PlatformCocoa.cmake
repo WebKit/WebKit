@@ -1551,9 +1551,14 @@ webkit_target_add_swift_options(WebKit
     "-Xcc -I${WTF_FRAMEWORK_HEADERS_DIR}"
     "-Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}"
     "-Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}"
-    "-Xcc -isystem${CMAKE_OSX_SYSROOT}/usr/local/include"
-    "-Xcc -fmodule-map-file=${CMAKE_OSX_SYSROOT}/usr/local/include/unicode_private.modulemap"
 )
+
+if (EXISTS "${CMAKE_OSX_SYSROOT}/usr/local/include/unicode_private.modulemap")
+    webkit_target_add_swift_options(WebKit
+        "-Xcc -isystem${CMAKE_OSX_SYSROOT}/usr/local/include"
+        "-Xcc -fmodule-map-file=${CMAKE_OSX_SYSROOT}/usr/local/include/unicode_private.modulemap"
+    )
+endif ()
 
 webkit_target_add_swift_options(WebKit
     -enable-library-evolution
