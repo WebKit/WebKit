@@ -29,6 +29,7 @@ WTF_EXPORT_PRIVATE bool isInsideSnap();
 WTF_EXPORT_PRIVATE bool shouldUseBubblewrap();
 WTF_EXPORT_PRIVATE bool shouldUsePortal();
 WTF_EXPORT_PRIVATE bool checkFlatpakPortalVersion(int);
+WTF_EXPORT_PRIVATE bool flatpakPortalSupportsExposePids();
 
 WTF_EXPORT_PRIVATE const UTF8CString& sandboxedUserRuntimeDirectory();
 
@@ -40,5 +41,6 @@ using WTF::isInsideSnap;
 using WTF::shouldUseBubblewrap;
 using WTF::shouldUsePortal;
 using WTF::checkFlatpakPortalVersion;
+using WTF::flatpakPortalSupportsExposePids;
 
 using WTF::sandboxedUserRuntimeDirectory;

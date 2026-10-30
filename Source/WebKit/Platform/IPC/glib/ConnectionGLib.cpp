@@ -532,17 +532,16 @@ void Connection::sendCredentials() const
     g_socket_set_blocking(m_socket.get(), FALSE);
 }
 
-pid_t Connection::remoteProcessID(GSocket* socket)
+pid_t Connection::remoteProcessID(GSocket* socket, GError** error)
 {
     GRefPtr<GUnixConnection> connection = adoptGRef(G_UNIX_CONNECTION(g_object_new(G_TYPE_UNIX_CONNECTION, "socket", socket, nullptr)));
-    GUniqueOutPtr<GError> error;
-    GRefPtr<GCredentials> credentials = adoptGRef(g_unix_connection_receive_credentials(connection.get(), nullptr, &error.outPtr()));
+    GRefPtr<GCredentials> credentials = adoptGRef(g_unix_connection_receive_credentials(connection.get(), nullptr, error));
     if (!credentials)
-        g_error("Connection: failed to receive credentials: %s", error->message);
+        return 0;
 
-    pid_t processID = g_credentials_get_unix_pid(credentials.get(), &error.outPtr());
-    if (error)
-        g_error("Connection: failed to get pid from credentials: %s", error->message);
+    pid_t processID = g_credentials_get_unix_pid(credentials.get(), error);
+    if (processID == -1)
+        return 0;
 
     return processID;
 }

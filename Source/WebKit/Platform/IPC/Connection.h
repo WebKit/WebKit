@@ -409,7 +409,7 @@ public:
 
 #if USE(GLIB)
     void sendCredentials() const;
-    static pid_t remoteProcessID(GSocket*);
+    static pid_t remoteProcessID(GSocket*, GError**);
 #endif
 
     static Ref<Connection> createServerConnection(Identifier&&, ThreadQOS = ThreadQOS::Default);

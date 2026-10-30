@@ -98,22 +98,39 @@ bool shouldUsePortal()
     return returnValue;
 }
 
-bool checkFlatpakPortalVersion(int version)
+struct FlatpakPortalProperties {
+    int version { -1 };
+    uint32_t supports { 0 };
+};
+
+static const FlatpakPortalProperties& flatpakPortalProperties()
 {
-    static int flatpakPortalVersion = -1;
+    static FlatpakPortalProperties properties;
     static std::once_flag onceFlag;
 
     std::call_once(onceFlag, [] {
-        GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_for_bus_sync(G_BUS_TYPE_SESSION, G_DBUS_PROXY_FLAGS_NONE, nullptr, "org.freedesktop.portal.Flatpak", "/org/freedesktop/portal/Flatpak", "org.freedesktop.portal.Flatpak", nullptr, nullptr));
+        GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_for_bus_sync(G_BUS_TYPE_SESSION, G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS, nullptr, "org.freedesktop.portal.Flatpak", "/org/freedesktop/portal/Flatpak", "org.freedesktop.portal.Flatpak", nullptr, nullptr));
         if (!proxy)
             return;
-        GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_get_cached_property(proxy.get(), "version"));
-        if (!result)
-            return;
-        flatpakPortalVersion = g_variant_get_uint32(result.get());
+        if (GRefPtr<GVariant> version = adoptGRef(g_dbus_proxy_get_cached_property(proxy.get(), "version")))
+            properties.version = g_variant_get_uint32(version.get());
+        if (GRefPtr<GVariant> supports = adoptGRef(g_dbus_proxy_get_cached_property(proxy.get(), "supports")))
+            properties.supports = g_variant_get_uint32(supports.get());
     });
 
-    return flatpakPortalVersion != -1 && flatpakPortalVersion >= version;
+    return properties;
+}
+
+bool checkFlatpakPortalVersion(int version)
+{
+    auto portalVersion = flatpakPortalProperties().version;
+    return portalVersion != -1 && portalVersion >= version;
+}
+
+bool flatpakPortalSupportsExposePids()
+{
+    // FLATPAK_SPAWN_SUPPORT_FLAGS_EXPOSE_PIDS
+    return flatpakPortalProperties().supports & (1 << 0);
 }
 
 const UTF8CString& sandboxedUserRuntimeDirectory()

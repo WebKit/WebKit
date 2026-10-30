@@ -60,31 +60,6 @@
 
 namespace WebKit {
 
-#if OS(LINUX)
-static bool isFlatpakSpawnUsable()
-{
-    ASSERT(isInsideFlatpak());
-    static std::optional<bool> ret;
-    if (ret)
-        return *ret;
-
-    // For our usage to work we need flatpak >= 1.5.2 on the host and flatpak-xdg-utils > 1.0.1 in the sandbox.
-    // Use the same working directory as flatpakSpawn(). The current working directory might not be visible in the sub-sandbox.
-    GRefPtr<GSubprocess> process = adoptGRef(g_subprocess_new(static_cast<GSubprocessFlags>(G_SUBPROCESS_FLAGS_STDOUT_SILENCE | G_SUBPROCESS_FLAGS_STDERR_SILENCE),
-        nullptr, "flatpak-spawn", "--sandbox", "--directory=/", "--sandbox-expose-path-ro-try=/this_path_doesnt_exist", "echo", nullptr));
-
-    if (!process.get())
-        ret = false;
-    else
-        ret = g_subprocess_wait_check(process.get(), nullptr, nullptr);
-
-    if (!*ret)
-        g_warning("flatpak-spawn --sandbox is not usable. Sandboxed processes will be spawned without a sandbox.");
-
-    return *ret;
-}
-#endif
-
 static int connectionOptions()
 {
 #if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
@@ -234,12 +209,21 @@ void ProcessLauncher::launchProcess()
     GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_INHERIT_FDS));
     int webkitClientSocketValue = webkitSocketPair.client.release();
     g_subprocess_launcher_take_fd(launcher.get(), webkitClientSocketValue, webkitClientSocketValue);
+#if OS(LINUX)
+    Vector<int> flatpakInheritedFDs { webkitClientSocketValue };
+#endif
 
 #if USE(SYSPROF_CAPTURE)
     UnixFileDescriptor sysprofFd;
 
-    if (const char* sysprofFdStr = getenv("SYSPROF_CONTROL_FD"))
-        sysprofFd = UnixFileDescriptor(parseInteger<int>(StringView(unsafeSpan(sysprofFdStr))).value_or(-1), UnixFileDescriptor::Duplicate);
+    if (const char* sysprofFdStr = getenv("SYSPROF_CONTROL_FD")) {
+        int controlFD = parseInteger<int>(StringView(unsafeSpan(sysprofFdStr))).value_or(-1);
+        sysprofFd = UnixFileDescriptor(controlFD, UnixFileDescriptor::Duplicate);
+#if OS(LINUX)
+        if (sysprofFd)
+            flatpakInheritedFDs.append(controlFD);
+#endif
+    }
 
     if (sysprofFd) {
         int fd = sysprofFd.release();
@@ -249,6 +233,12 @@ void ProcessLauncher::launchProcess()
     }
 #endif
 
+    auto failLaunch = [&] {
+        RunLoop::mainSingleton().dispatch([protectedThis = protect(*this), this] {
+            didFinishLaunchingProcess(0, { });
+        });
+    };
+
     GUniqueOutPtr<GError> error;
     GRefPtr<GSubprocess> process;
 
@@ -256,7 +246,7 @@ void ProcessLauncher::launchProcess()
     bool sandboxEnabled = m_launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-sandbox"_s) == "true"_s;
 
     if (sandboxEnabled && isInsideFlatpak() && isFlatpakSpawnUsable())
-        process = flatpakSpawn(launcher.get(), m_launchOptions, argv, webkitClientSocketValue, &error.outPtr());
+        flatpakSpawn(m_launchOptions, argv, flatpakInheritedFDs.span());
 #if ENABLE(BUBBLEWRAP_SANDBOX)
     // You cannot use bubblewrap within Flatpak or some containers so lets ensure it never happens.
     // Snap can allow it but has its own limitations that require workarounds.
@@ -267,8 +257,11 @@ void ProcessLauncher::launchProcess()
 #endif // OS(LINUX)
         process = adoptGRef(g_subprocess_launcher_spawnv(launcher.get(), argv.span().data(), &error.outPtr()));
 
-    if (!process.get())
-        g_error("Unable to spawn a new child process: %s", error->message);
+    if (error) {
+        g_warning("Unable to spawn a new child process: %s", error->message);
+        failLaunch();
+        return;
+    }
 
 #if OS(LINUX)
     if (isInsideFlatpak() || (sandboxEnabled && shouldUseBubblewrap())) {
@@ -279,17 +272,20 @@ void ProcessLauncher::launchProcess()
             g_error("Failed to create pid socket wrapper: %s", error->message);
         }
 
-        // We need to get the pid of the actual WebKit auxiliary process, not the bwrap or flatpak-spawn
-        // intermediate process. And do it without blocking, because process launching is slow.
+        // We need to get the pid of the actual WebKit auxiliary process, not the bwrap intermediate
+        // process or the pid outside of our Flatpak sandbox. And do it without blocking, because process launching is slow.
         g_socket_set_blocking(socket.get(), FALSE);
         m_socketMonitor.start(socket.get(), G_IO_IN, RunLoop::mainSingleton(), nullptr, [protectedThis = protect(*this), this, socket](GIOCondition condition) mutable -> gboolean {
-            if (!(condition & G_IO_IN))
-                g_error("Failed to read pid from child process");
-
-            m_processID = IPC::Connection::remoteProcessID(socket.get());
-            RELEASE_ASSERT(m_processID);
-
             m_socketMonitor.stop();
+
+            // The child, or the sandbox around it, can fail to start after it was spawned.
+            GUniqueOutPtr<GError> error;
+            m_processID = IPC::Connection::remoteProcessID(socket.get(), &error.outPtr());
+            if (!m_processID) {
+                g_warning("Child process exited before connecting to the UI process: %s", error->message);
+                didFinishLaunchingProcess(0, { });
+                return G_SOURCE_REMOVE;
+            }
 
             didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { { g_socket_get_fd(socket.get()), UnixFileDescriptor::Duplicate } });
             return G_SOURCE_REMOVE;
@@ -299,8 +295,11 @@ void ProcessLauncher::launchProcess()
 #endif
 
     const char* processIdStr = g_subprocess_get_identifier(process.get());
-    if (!processIdStr)
-        g_error("Spawned process died immediately. This should not happen.");
+    if (!processIdStr) {
+        g_warning("Spawned process died immediately");
+        failLaunch();
+        return;
+    }
 
     m_processID = g_ascii_strtoll(processIdStr, nullptr, 0);
     RELEASE_ASSERT(m_processID);
