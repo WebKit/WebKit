@@ -128,8 +128,8 @@ public:
 
     id<MTLBlitCommandEncoder> ensureBlitCommandEncoder();
     void finalizeBlitCommandEncoder();
-    static void clearTextureIfNeeded(const WebGPU::TexelCopyTextureInfo&, NSUInteger, const Device&, id<MTLBlitCommandEncoder>);
-    static void clearTextureIfNeeded(Texture&, NSUInteger, NSUInteger, const Device&, id<MTLBlitCommandEncoder>);
+    static void clearTextureIfNeeded(const WebGPU::TexelCopyTextureInfo&, NSUInteger, const Device&, id<MTLBlitCommandEncoder>, const CommandEncoder* _Nullable owningCommandEncoder = nullptr);
+    static void clearTextureIfNeeded(Texture&, NSUInteger, NSUInteger, const Device&, id<MTLBlitCommandEncoder>, const CommandEncoder* _Nullable owningCommandEncoder = nullptr);
     void clearTextureIfNeeded(const WebGPU::TexelCopyTextureInfo&, NSUInteger);
     void makeInvalid(NSString*);
     void makeSubmitInvalid(NSString* = nil);

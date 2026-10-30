@@ -114,6 +114,11 @@ public:
     id<MTLBlitCommandEncoder> ensureBlitCommandEncoder();
     void finalizeBlitCommandEncoder();
 
+    void addProvisionalTextureClear(Texture&, uint32_t mipLevel, uint32_t slice, uint64_t commandEncoderId);
+    void removeProvisionalTextureClears(const Texture&, uint32_t mipLevel, uint32_t slice);
+    void discardProvisionalTextureClears(uint64_t commandEncoderId);
+    void resolveProvisionalTextureClears(std::optional<uint64_t> committingCommandEncoderId = std::nullopt);
+
     // This can be called on a background thread.
     void scheduleWork(Instance::WorkItem&&);
     [[nodiscard]] uint64_t retainCounterSampleBuffer(CommandEncoder&);
@@ -148,6 +153,13 @@ private:
     // pixel format. Cached per format, because a copy per animation frame is the expected usage.
     id<MTLRenderPipelineState> _Nullable copyExternalImagePipelineState(MTLPixelFormat);
 
+    struct ProvisionalTextureClear {
+        ThreadSafeWeakPtr<Texture> texture;
+        uint32_t mipLevel { 0 };
+        uint32_t slice { 0 };
+        uint64_t commandEncoderId { 0 };
+    };
+
     id<MTLCommandQueue> _Nullable m_commandQueue { nil };
     id<MTLCommandBuffer> _Nullable m_commandBuffer { nil };
     id<MTLBlitCommandEncoder> _Nullable m_blitCommandEncoder { nil };
@@ -176,6 +188,7 @@ private:
     // them to the staging command buffer. Set only inside
     // writeBuffer(Buffer&, uint64_t, Vector<uint8_t>&&).
     Vector<uint8_t> m_noCopyStagingSource;
+    Vector<ProvisionalTextureClear> m_provisionalTextureClears;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refQueue, derefQueue) SWIFT_PRIVATE_FILEID("WebGPU/Queue.swift");
 
 } // namespace WebGPU::Metal

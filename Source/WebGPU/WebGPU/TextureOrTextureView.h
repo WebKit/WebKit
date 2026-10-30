@@ -88,6 +88,11 @@ public:
         m_view ? protect(m_view)->setCommandEncoder(encoder) : protect(m_texture)->setCommandEncoder(encoder);
     }
 
+    void setProvisionallyCleared(const CommandEncoder& encoder)
+    {
+        m_view ? protect(m_view)->setProvisionallyCleared(encoder) : protect(m_texture)->setProvisionallyCleared(encoder);
+    }
+
     id<MTLRasterizationRateMap> rasterizationMapForSlice(uint32_t slice)
     {
         return m_view ? protect(m_view)->rasterizationMapForSlice(slice) : protect(m_texture)->rasterizationMapForSlice(slice);

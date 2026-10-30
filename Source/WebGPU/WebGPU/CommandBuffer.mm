@@ -99,8 +99,10 @@ void CommandBuffer::makeInvalid(NSString* lastError)
     releasePriorCommandBuffers();
     m_commandBuffer = nil;
     m_cachedCommandBuffer = nil;
-    if (RefPtr commandEncoder = m_commandEncoder)
+    if (RefPtr commandEncoder = m_commandEncoder) {
         commandEncoder->clearTracking();
+        m_device->getQueue()->discardProvisionalTextureClears(commandEncoder->uniqueId());
+    }
     m_commandEncoder = nullptr;
     m_preCommitHandlers.clear();
     m_postCommitHandlers.clear();
@@ -111,9 +113,11 @@ bool CommandBuffer::preCommitHandler()
     bool result = true;
     if (RefPtr commandEncoder = m_commandEncoder) {
         auto& commandEncoderRef = *commandEncoder;
+        m_device->getQueue()->resolveProvisionalTextureClears(commandEncoderRef.uniqueId());
         for (auto& function : m_preCommitHandlers)
             result = function(*this, commandEncoderRef) && result;
-    }
+    } else
+        m_device->getQueue()->resolveProvisionalTextureClears();
 
     m_preCommitHandlers.clear();
     return result;

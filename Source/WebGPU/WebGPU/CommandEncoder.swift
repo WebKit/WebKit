@@ -272,7 +272,7 @@ extension WebGPU.Metal.CommandEncoder {
     }
 
     fileprivate func clearTextureIfNeeded(destination: WebGPU.TexelCopyTextureInfo, slice: UInt) {
-        WebGPU.Metal.CommandEncoder.clearTextureIfNeeded(destination, slice, m_device.ptr(), m_blitCommandEncoder)
+        WebGPU.Metal.CommandEncoder.clearTextureIfNeeded(destination, slice, m_device.ptr(), m_blitCommandEncoder, self)
     }
 
     private func clearTextureIfNeeded(
@@ -376,7 +376,7 @@ extension WebGPU.Metal.CommandEncoder {
             return
         }
 
-        texture.setPreviouslyCleared(UInt32(mipLevel), UInt32(mutableSlice), true)
+        texture.setProvisionallyCleared(UInt32(mipLevel), UInt32(mutableSlice), self)
         blitCommandEncoder?
             .copy(
                 from: temporaryBuffer,
@@ -1304,10 +1304,10 @@ extension WebGPU.Metal.CommandEncoder {
                 if let textureToClear {
                     let textureWithResolve = TextureAndClearColor(texture: textureToClear)
                     attachmentsToClear[i as NSNumber] = textureWithResolve
-                    texture.setPreviouslyCleared()
+                    texture.setProvisionallyCleared(self)
                     // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
                     if var resolveTarget = optionalResolveTarget {
-                        resolveTarget.setPreviouslyCleared()
+                        resolveTarget.setProvisionallyCleared(self)
                     }
                 }
                 #else
@@ -1315,10 +1315,10 @@ extension WebGPU.Metal.CommandEncoder {
                 if var textureToClear {
                     let textureWithResolve = TextureAndClearColor(texture: textureToClear)
                     attachmentsToClear[i as NSNumber] = textureWithResolve
-                    texture.setPreviouslyCleared()
+                    texture.setProvisionallyCleared(self)
                     // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
                     if var resolveTarget = optionalResolveTarget {
-                        resolveTarget.setPreviouslyCleared()
+                        resolveTarget.setProvisionallyCleared(self)
                     }
                 }
                 #endif
@@ -1517,7 +1517,7 @@ extension WebGPU.Metal.CommandEncoder {
 
         if attachmentsToClear.count != 0 || depthStencilAttachmentToClear != nil {
             if var texture = optionalDepthStencilAttachment?.view, depthStencilAttachmentToClear != nil {
-                texture.setPreviouslyCleared()
+                texture.setProvisionallyCleared(self)
             }
 
             // FIXME: rdar://138042799 remove default argument.
@@ -2032,8 +2032,7 @@ extension WebGPU.Metal.CommandEncoder {
                 depthForMetal,
                 logicalSize.depthOrArrayLayers
             ) {
-                // FIXME: rdar://138042799 remove default argument.
-                destinationTexture.setPreviouslyCleared(destination.mipLevel, destinationSlice, true)
+                destinationTexture.setProvisionallyCleared(destination.mipLevel, destinationSlice, self)
             } else {
                 clearTextureIfNeeded(destination: destination, slice: UInt(destinationSlice))
             }
@@ -2465,8 +2464,7 @@ extension WebGPU.Metal.CommandEncoder {
                 guard let destinationSliceUInt32 = UInt32(exactly: destinationSlice) else {
                     return
                 }
-                // FIXME: rdar://138042799 remove default argument.
-                destinationTexture.setPreviouslyCleared(destination.mipLevel, destinationSliceUInt32, true)
+                destinationTexture.setProvisionallyCleared(destination.mipLevel, destinationSliceUInt32, self)
             } else {
                 self.clearTextureIfNeeded(destination: destination, slice: destinationSlice)
             }

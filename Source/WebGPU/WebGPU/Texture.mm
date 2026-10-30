@@ -4138,6 +4138,11 @@ NSString* Texture::errorValidatingLinearTextureData(const WebGPU::TexelCopyBuffe
     return nil;
 }
 
+static uint64_t provisionalClearKey(uint32_t mipLevel, uint32_t slice)
+{
+    return (static_cast<uint64_t>(mipLevel) << 32) | slice;
+}
+
 bool Texture::previouslyCleared() const
 {
     for (uint32_t m = 0; m < mipLevelCount(); ++m) {
@@ -4158,15 +4163,21 @@ void Texture::setPreviouslyCleared()
     }
 }
 
+bool Texture::durablyCleared(uint32_t mipLevel, uint32_t slice) const
+{
+    auto it = m_clearedToZero.find(mipLevel);
+    return it != m_clearedToZero.end() && it->value.contains(slice);
+}
+
 bool Texture::previouslyCleared(uint32_t mipLevel, uint32_t slice) const
 {
     if (isDestroyed())
         return true;
 
-    if (auto it = m_clearedToZero.find(mipLevel); it != m_clearedToZero.end())
-        return it->value.contains(slice);
+    if (durablyCleared(mipLevel, slice))
+        return true;
 
-    return false;
+    return m_provisionalClears.contains(provisionalClearKey(mipLevel, slice));
 }
 
 void Texture::setPreviouslyCleared(uint32_t mipLevel, uint32_t slice, bool setCleared)
@@ -4174,6 +4185,8 @@ void Texture::setPreviouslyCleared(uint32_t mipLevel, uint32_t slice, bool setCl
     if (!setCleared) {
         if (auto it = m_clearedToZero.find(mipLevel); it != m_clearedToZero.end())
             it->value.remove(slice);
+        m_provisionalClears.removeAll(provisionalClearKey(mipLevel, slice));
+        m_device->getQueue()->removeProvisionalTextureClears(*this, mipLevel, slice);
         return;
     }
 
@@ -4185,6 +4198,43 @@ void Texture::setPreviouslyCleared(uint32_t mipLevel, uint32_t slice, bool setCl
     ClearedToZeroInnerContainer set;
     set.add(slice);
     m_clearedToZero.add(mipLevel, set);
+}
+
+void Texture::setProvisionallyCleared(uint32_t mipLevel, uint32_t slice, const CommandEncoder& commandEncoder)
+{
+    if (isDestroyed() || durablyCleared(mipLevel, slice))
+        return;
+
+    m_provisionalClears.add(provisionalClearKey(mipLevel, slice));
+    m_device->getQueue()->addProvisionalTextureClear(*this, mipLevel, slice, commandEncoder.uniqueId());
+}
+
+void Texture::setProvisionallyCleared(const CommandEncoder& commandEncoder)
+{
+    for (uint32_t m = 0; m < mipLevelCount(); ++m) {
+        for (uint32_t s = 0; s < arrayLayerCount(); ++s)
+            setProvisionallyCleared(m, s, commandEncoder);
+    }
+}
+
+void Texture::promoteProvisionalClear(uint32_t mipLevel, uint32_t slice)
+{
+    m_provisionalClears.remove(provisionalClearKey(mipLevel, slice));
+    setPreviouslyCleared(mipLevel, slice);
+}
+
+void Texture::dropProvisionalClear(uint32_t mipLevel, uint32_t slice)
+{
+    m_provisionalClears.remove(provisionalClearKey(mipLevel, slice));
+}
+
+void Texture::discardProvisionalClear(uint32_t mipLevel, uint32_t slice)
+{
+    if (!m_provisionalClears.contains(provisionalClearKey(mipLevel, slice)))
+        return;
+
+    m_provisionalClears.removeAll(provisionalClearKey(mipLevel, slice));
+    m_device->getQueue()->removeProvisionalTextureClears(*this, mipLevel, slice);
 }
 
 id<MTLSharedEvent> Texture::sharedEvent() const

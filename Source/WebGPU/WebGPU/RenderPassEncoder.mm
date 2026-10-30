@@ -150,13 +150,13 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         if (texture.isDestroyed())
             m_parentEncoder->makeSubmitInvalid();
 
-        texture.setPreviouslyCleared();
+        texture.setProvisionallyCleared(m_parentEncoder);
         addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
         m_rasterSampleCount = texture.sampleCount();
         if (attachment.resolveTarget) {
             auto texture = *attachment.resolveTarget;
             texture.setCommandEncoder(m_parentEncoder);
-            texture.setPreviouslyCleared();
+            texture.setProvisionallyCleared(m_parentEncoder);
             addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
         }
 
@@ -180,7 +180,7 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
 
     if (const auto* attachment = depthStencilAttachment) {
         auto textureView = attachment->view;
-        textureView.setPreviouslyCleared();
+        textureView.setProvisionallyCleared(m_parentEncoder);
         textureView.setCommandEncoder(m_parentEncoder);
         id<MTLTexture> depthTexture = textureView.isDestroyed() ? nil : textureView.texture();
         if (textureView.width() && !m_renderTargetWidth) {

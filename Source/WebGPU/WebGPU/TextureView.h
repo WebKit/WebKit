@@ -87,6 +87,7 @@ public:
     Device& device() const { return m_device; }
     bool previouslyCleared() const;
     void setPreviouslyCleared(uint32_t mipLevel = 0, uint32_t slice = 0);
+    void setProvisionallyCleared(const CommandEncoder&, uint32_t mipLevel = 0, uint32_t slice = 0);
     uint32_t width() const;
     uint32_t height() const;
     uint32_t depthOrArrayLayers() const;

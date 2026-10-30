@@ -188,6 +188,7 @@ CommandEncoder::~CommandEncoder()
     retainTimestampsForOneUpdateLoop();
     m_commandBuffer = nil; // Do not remove, this is needed to workaround rdar://143905417
     clearTracking();
+    m_device->getQueue()->discardProvisionalTextureClears(m_uniqueId);
     m_device->removeCommandEncoder(m_uniqueId);
 }
 
@@ -436,6 +437,7 @@ void CommandEncoder::setExistingEncoder(id<MTLCommandEncoder> encoder)
 void CommandEncoder::discardCommandBuffer()
 {
     releasePriorCommandBuffers();
+    m_device->getQueue()->discardProvisionalTextureClears(m_uniqueId);
 
     if (!m_commandBuffer || m_commandBuffer.status >= MTLCommandBufferStatusCommitted) {
         retainTimestampsForOneUpdateLoop();
@@ -828,9 +830,9 @@ RefPtr<WebGPU::RenderPassEncoder> CommandEncoder::beginRenderPass(const WebGPU::
         if (textureToClear) {
             TextureAndClearColor *textureWithResolve = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
             [attachmentsToClear setObject:textureWithResolve forKey:@(i)];
-            texture.setPreviouslyCleared();
+            texture.setProvisionallyCleared(*this);
             if (auto resolveTarget = attachment.resolveTarget)
-                resolveTarget->setPreviouslyCleared();
+                resolveTarget->setProvisionallyCleared(*this);
         }
     }
 
@@ -952,7 +954,7 @@ RefPtr<WebGPU::RenderPassEncoder> CommandEncoder::beginRenderPass(const WebGPU::
     if (attachmentsToClear.count || depthStencilAttachmentToClear) {
         if (const auto* attachment = depthStencilAttachment; depthStencilAttachmentToClear) {
             auto textureView = attachment->view;
-            textureView.setPreviouslyCleared();
+            textureView.setProvisionallyCleared(*this);
         }
 
         runClearEncoder(attachmentsToClear, depthStencilAttachmentToClear, depthAttachmentToClear, stencilAttachmentToClear);
@@ -1257,7 +1259,7 @@ void CommandEncoder::copyBufferToTexture(const WebGPU::TexelCopyBufferInfo& sour
         NSUInteger destinationSlice = destinationTexture->dimension() == WebGPU::TextureDimension::_3d ? 0 : originPlusLayer.value();
         RELEASE_ASSERT(mtlDestinationTexture.parentTexture == nil);
         if (Queue::writeWillCompletelyClear(textureDimension, widthForMetal, logicalSize.width, heightForMetal, logicalSize.height, depthForMetal, logicalSize.depthOrArrayLayers))
-            destinationTexture->setPreviouslyCleared(destination.mipLevel, destinationSlice);
+            destinationTexture->setProvisionallyCleared(destination.mipLevel, destinationSlice, *this);
         else
             clearTextureIfNeeded(destination, destinationSlice);
     }
@@ -1478,19 +1480,19 @@ void CommandEncoder::clearTextureIfNeeded(const WebGPU::TexelCopyTextureInfo& de
     }
 #endif
 
-    clearTextureIfNeeded(destination, slice, m_device, m_blitCommandEncoder);
+    clearTextureIfNeeded(destination, slice, m_device, m_blitCommandEncoder, this);
 }
 
 
-void CommandEncoder::clearTextureIfNeeded(const WebGPU::TexelCopyTextureInfo& destination, NSUInteger slice, const Device& device, id<MTLBlitCommandEncoder> blitCommandEncoder)
+void CommandEncoder::clearTextureIfNeeded(const WebGPU::TexelCopyTextureInfo& destination, NSUInteger slice, const Device& device, id<MTLBlitCommandEncoder> blitCommandEncoder, const CommandEncoder* owningCommandEncoder)
 {
     Ref texture = metal(destination.texture);
     NSUInteger mipLevel = destination.mipLevel;
-    CommandEncoder::clearTextureIfNeeded(texture, mipLevel, slice, device, blitCommandEncoder);
+    CommandEncoder::clearTextureIfNeeded(texture, mipLevel, slice, device, blitCommandEncoder, owningCommandEncoder);
 }
 
 
-void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel, NSUInteger slice, const Device& device, id<MTLBlitCommandEncoder> blitCommandEncoder)
+void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel, NSUInteger slice, const Device& device, id<MTLBlitCommandEncoder> blitCommandEncoder, const CommandEncoder* owningCommandEncoder)
 {
     if (!blitCommandEncoder || texture.previouslyCleared(mipLevel, slice))
         return;
@@ -1556,7 +1558,10 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
     if (slice >= mtlTexture.arrayLength)
         return;
 
-    texture.setPreviouslyCleared(mipLevel, slice);
+    if (owningCommandEncoder)
+        texture.setProvisionallyCleared(mipLevel, slice, *owningCommandEncoder);
+    else
+        texture.setPreviouslyCleared(mipLevel, slice);
     [blitCommandEncoder
         copyFromBuffer:temporaryBuffer
         sourceOffset:0
@@ -1621,6 +1626,7 @@ void CommandEncoder::makeInvalid(NSString* errorString)
     m_existingCommandEncoder = nil;
     releasePriorCommandBuffers();
     m_device->getQueue()->removeMTLCommandBuffer(m_commandBuffer);
+    m_device->getQueue()->discardProvisionalTextureClears(m_uniqueId);
 
     m_commandBuffer = nil;
     m_lastErrorString = errorString;
@@ -2065,7 +2071,7 @@ void CommandEncoder::copyTextureToTexture(const WebGPU::TexelCopyTextureInfo& so
             return;
         NSUInteger destinationSlice = destinationTexture->dimension() == WebGPU::TextureDimension::_3d ? 0 : destinationOriginPlusLayer.value();
         if (Queue::writeWillCompletelyClear(destinationTextureDimension, copySize.width, destinationLogicalSize.width, copySize.height, destinationLogicalSize.height, copySize.depthOrArrayLayers, destinationLogicalSize.depthOrArrayLayers))
-            destinationTexture->setPreviouslyCleared(destination.mipLevel, destinationSlice);
+            destinationTexture->setProvisionallyCleared(destination.mipLevel, destinationSlice, *this);
         else
             clearTextureIfNeeded(destination, destinationSlice);
     }

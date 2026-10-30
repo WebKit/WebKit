@@ -293,6 +293,11 @@ void Queue::makeInvalid()
     m_onSubmittedWorkScheduledCallbacks.clear();
     m_onSubmittedWorkDoneCallbacks.clear();
 
+    for (auto& provisionalClear : std::exchange(m_provisionalTextureClears, { })) {
+        if (RefPtr texture = provisionalClear.texture.get())
+            texture->dropProvisionalClear(provisionalClear.mipLevel, provisionalClear.slice);
+    }
+
     while (m_createdNotCommittedBuffers.count)
         removeMTLCommandBuffer(m_createdNotCommittedBuffers.firstObject);
 
@@ -1070,6 +1075,7 @@ void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::s
         if (checkedDestinationSlice.hasOverflowed())
             return;
         NSUInteger destinationSlice = textureDimension == WebGPU::TextureDimension::_3d ? 0 : checkedDestinationSlice.value();
+        texture->discardProvisionalClear(destination.mipLevel, destinationSlice);
         if (!texture->previouslyCleared(destination.mipLevel, destinationSlice) && !writeCompletelyClearsSlice) {
             clearWasNeeded = true;
             clearTextureIfNeeded(destination, destinationSlice);
@@ -2226,6 +2232,69 @@ void Queue::clearTextureIfNeeded(Texture& parentTexture, uint32_t mipLevelCount,
         }
     }
     finalizeBlitCommandEncoder();
+}
+
+void Queue::addProvisionalTextureClear(Texture& texture, uint32_t mipLevel, uint32_t slice, uint64_t commandEncoderId)
+{
+    m_provisionalTextureClears.append(ProvisionalTextureClear { texture, mipLevel, slice, commandEncoderId });
+}
+
+void Queue::removeProvisionalTextureClears(const Texture& texture, uint32_t mipLevel, uint32_t slice)
+{
+    m_provisionalTextureClears.removeAllMatching([&](const auto& provisionalClear) {
+        return provisionalClear.texture.get() == &texture && provisionalClear.mipLevel == mipLevel && provisionalClear.slice == slice;
+    });
+}
+
+void Queue::discardProvisionalTextureClears(uint64_t commandEncoderId)
+{
+    m_provisionalTextureClears.removeAllMatching([&](const auto& provisionalClear) {
+        if (provisionalClear.commandEncoderId != commandEncoderId)
+            return false;
+        if (RefPtr texture = provisionalClear.texture.get())
+            texture->dropProvisionalClear(provisionalClear.mipLevel, provisionalClear.slice);
+        return true;
+    });
+}
+
+void Queue::resolveProvisionalTextureClears(std::optional<uint64_t> committingCommandEncoderId)
+{
+    if (m_provisionalTextureClears.isEmpty())
+        return;
+
+    auto provisionalClears = std::exchange(m_provisionalTextureClears, { });
+
+    for (auto& provisionalClear : provisionalClears) {
+        RefPtr texture = provisionalClear.texture.get();
+        if (!texture)
+            continue;
+        if (committingCommandEncoderId && provisionalClear.commandEncoderId == *committingCommandEncoderId) {
+            texture->promoteProvisionalClear(provisionalClear.mipLevel, provisionalClear.slice);
+            continue;
+        }
+
+        texture->dropProvisionalClear(provisionalClear.mipLevel, provisionalClear.slice);
+        m_provisionalTextureClears.append(provisionalClear);
+    }
+
+    RefPtr devicePtr = m_device.get();
+    if (!devicePtr)
+        return;
+
+    bool encodedAnyClear = false;
+    for (auto& provisionalClear : provisionalClears) {
+        if (committingCommandEncoderId && provisionalClear.commandEncoderId == *committingCommandEncoderId)
+            continue;
+        RefPtr texture = provisionalClear.texture.get();
+        if (!texture || texture->previouslyCleared(provisionalClear.mipLevel, provisionalClear.slice))
+            continue;
+
+        CommandEncoder::clearTextureIfNeeded(*texture, provisionalClear.mipLevel, provisionalClear.slice, *devicePtr, ensureBlitCommandEncoder());
+        encodedAnyClear = true;
+    }
+
+    if (encodedAnyClear)
+        finalizeBlitCommandEncoder();
 }
 
 id<MTLDevice> Queue::metalDevice() const

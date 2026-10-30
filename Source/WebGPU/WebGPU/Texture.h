@@ -29,6 +29,7 @@
 #import <Metal/Metal.h>
 #import <WebGPU/WebGPUCpp.h>
 #import <wtf/FastMalloc.h>
+#import <wtf/HashCountedSet.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
@@ -139,6 +140,11 @@ public:
     void setPreviouslyCleared();
     bool previouslyCleared(uint32_t mipLevel, uint32_t slice) const;
     void setPreviouslyCleared(uint32_t mipLevel, uint32_t slice, bool = true);
+    void setProvisionallyCleared(uint32_t mipLevel, uint32_t slice, const CommandEncoder&);
+    void setProvisionallyCleared(const CommandEncoder&);
+    void promoteProvisionalClear(uint32_t mipLevel, uint32_t slice);
+    void dropProvisionalClear(uint32_t mipLevel, uint32_t slice);
+    void discardProvisionalClear(uint32_t mipLevel, uint32_t slice);
     bool isDestroyed() const { return m_destroyed; }
 
     static bool hasStorageBindingCapability(WebGPU::TextureFormat, const Device&, std::optional<WebGPU::StorageTextureAccess> = std::nullopt);
@@ -180,6 +186,8 @@ private:
     std::optional<ResolvedTextureViewDescriptor> resolveTextureViewDescriptorDefaults(const WebGPU::TextureViewDescriptor&) const;
     NSString* errorValidatingTextureViewCreation(const ResolvedTextureViewDescriptor&) const;
 
+    bool durablyCleared(uint32_t mipLevel, uint32_t slice) const;
+
     id<MTLTexture> m_texture { nil };
 
     const uint32_t m_width { 0 };
@@ -197,6 +205,7 @@ private:
     using ClearedToZeroInnerContainer = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using ClearedToZeroContainer = HashMap<uint32_t, ClearedToZeroInnerContainer, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     ClearedToZeroContainer m_clearedToZero;
+    HashCountedSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_provisionalClears;
     Vector<ThreadSafeWeakPtr<TextureView>> m_textureViews;
     mutable ThreadSafeWeakHashSet<BindGroup> m_bindGroups;
     mutable ThreadSafeWeakHashSet<RenderBundle> m_renderBundles;
