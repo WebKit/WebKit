@@ -331,6 +331,9 @@ Connection::Connection(Identifier&& identifier, bool isServer, Thread::QOS recei
     : m_uniqueID(UniqueID::generate())
     , m_isServer(isServer)
     , m_connectionQueue(WorkQueue::create("com.apple.IPC.ReceiveQueue"_s, receiveQueueQOS))
+#if ENABLE(IPC_SEND_DIRECTLY)
+    , m_connectionQueueQOS(receiveQueueQOS)
+#endif
 {
     {
         Locker locker { s_connectionMapLock };
@@ -361,14 +364,14 @@ RefPtr<Connection> Connection::connection(UniqueID uniqueID)
 
 void Connection::setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool flag)
 {
-    ASSERT(!m_isConnected);
+    ASSERT(!isConnected());
 
     m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage = flag;
 }
 
 void Connection::setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMessageSendFailure)
 {
-    ASSERT(!m_isConnected);
+    ASSERT(!isConnected());
 
     m_shouldExitOnSyncMessageSendFailure = shouldExitOnSyncMessageSendFailure;
 }
@@ -481,7 +484,7 @@ template void Connection::dispatchMessageReceiverMessage<WorkQueueMessageReceive
 
 void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback)
 {
-    ASSERT(!m_isConnected);
+    ASSERT(!isConnected());
 
     m_didCloseOnConnectionWorkQueueCallback = callback;
 }
@@ -645,6 +648,11 @@ Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOp
         encoder->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::Yes);
     else if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply))
         encoder->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC);
+
+#if ENABLE(IPC_SEND_DIRECTLY)
+    if (trySendOutgoingMessageDirectly(encoder, sendOptions, qos))
+        return Error::NoError;
+#endif
 
     bool shouldDispatchMessageSend;
     size_t outgoingMessagesCount;
@@ -949,7 +957,7 @@ auto Connection::sendSyncMessage(SyncRequestID syncRequestID, UniqueRef<Encoder>
 
     // Since sync IPC is blocking the current thread, make sure we use the same priority for the IPC sending thread
     // as the current thread.
-    auto sendError = sendMessageImpl(WTF::move(encoder), sendOptions, Thread::currentThreadQOS());
+    auto sendError = sendMessageImpl(WTF::move(encoder), sendOptions, Thread::currentThreadQOS().value_or(Thread::QOS::Default));
     if (sendError != Error::NoError) {
         didFailToSendSyncMessage(sendError);
         return makeUnexpected(sendError);
@@ -1286,10 +1294,26 @@ void Connection::connectionDidClose()
     dispatchDidCloseAndInvalidate();
 }
 
+bool Connection::isConnected() const
+{
+#if PLATFORM(COCOA)
+    Locker locker { m_sendLock };
+#endif
+    return m_isConnected;
+}
+
 void Connection::sendOutgoingMessages()
 {
     assertIsCurrent(m_connectionQueue.get());
 
+#if PLATFORM(COCOA)
+    Locker sendLocker { m_sendLock };
+#endif
+    drainOutgoingMessages();
+}
+
+void Connection::drainOutgoingMessages()
+{
     if (!m_isConnected)
         return;
 
@@ -1320,8 +1344,6 @@ void Connection::sendOutgoingMessages()
 
 void Connection::didFinishSendingOutgoingMessage()
 {
-    assertIsCurrent(m_connectionQueue.get());
-
     Locker locker { m_outgoingMessagesLock };
     m_hasOutgoingMessages = !m_outgoingMessages.isEmpty() || hasPendingOutgoingMessage();
     if (!m_hasOutgoingMessages)

@@ -34,6 +34,10 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/threads/BinarySemaphore.h>
 
+#if ENABLE(IPC_SEND_DIRECTLY)
+#include <pthread/qos.h>
+#endif
+
 namespace TestWebKitAPI {
 
 template <typename T>
@@ -251,6 +255,30 @@ enum class ConnectionTestDirection {
 
 void PrintTo(ConnectionTestDirection, ::std::ostream*);
 
+// Whether connections may send messages on the calling thread, see IPC::Connection::setAllowsSendingDirectly(). Only
+// Disabled is supported without ENABLE(IPC_SEND_DIRECTLY).
+enum class ConnectionTestDirectSend : bool {
+    Disabled,
+    Enabled
+};
+
+void PrintTo(ConnectionTestDirectSend, ::std::ostream*);
+
+// Allows or disallows direct sends, and makes the calling thread's QoS high enough for them if they are allowed.
+// Restores both when destroyed.
+class ConnectionTestDirectSendScope {
+    WTF_MAKE_NONCOPYABLE(ConnectionTestDirectSendScope);
+public:
+    explicit ConnectionTestDirectSendScope(ConnectionTestDirectSend);
+    ~ConnectionTestDirectSendScope();
+
+private:
+#if ENABLE(IPC_SEND_DIRECTLY)
+    bool m_savedAllowsSendingDirectly { true };
+    std::optional<qos_class_t> m_savedQOSClass;
+#endif
+};
+
 class ConnectionTestBase {
 public:
     void setupBase();
@@ -327,12 +355,16 @@ protected:
 //  - Server as b() and client as a()
 // The setup and teardown of the Connection is not symmetric, so this fixture is useful to test various scenarios
 // around these.
-class ConnectionTestABBA : public testing::TestWithParam<std::tuple<ConnectionTestDirection>>, protected ConnectionTestBase {
+// With ENABLE(IPC_SEND_DIRECTLY), each of these also runs with direct sends enabled, see
+// IPC::Connection::setAllowsSendingDirectly().
+class ConnectionTestABBA : public testing::TestWithParam<std::tuple<ConnectionTestDirection, ConnectionTestDirectSend>>, protected ConnectionTestBase {
 public:
     bool serverIsA() const { return std::get<0>(GetParam()) == ConnectionTestDirection::ServerIsA; }
+    ConnectionTestDirectSend directSend() const { return std::get<1>(GetParam()); }
 
     void SetUp() override
     {
+        m_directSendScope.emplace(directSend());
         setupBase();
         if (!serverIsA())
             std::swap(m_connections[0].connection, m_connections[1].connection);
@@ -341,7 +373,28 @@ public:
     void TearDown() override
     {
         teardownBase();
+        m_directSendScope = std::nullopt;
     }
+
+private:
+    std::optional<ConnectionTestDirectSendScope> m_directSendScope;
+};
+
+// The parameters to instantiate ConnectionTestABBA and the fixtures derived from it with.
+inline auto connectionTestABBAParameters()
+{
+    return testing::Combine(testing::Values(ConnectionTestDirection::ServerIsA, ConnectionTestDirection::ClientIsA),
+#if ENABLE(IPC_SEND_DIRECTLY)
+        testing::Values(ConnectionTestDirectSend::Disabled, ConnectionTestDirectSend::Enabled));
+#else
+        testing::Values(ConnectionTestDirectSend::Disabled));
+#endif
+}
+
+// Names the tests that run with direct sends disabled like the tests did before there were direct sends, for example
+// "ServerIsA", and the others like "ServerIsADirectSendEnabled".
+struct ConnectionTestABBAParametersToStringFormatter {
+    std::string operator()(const testing::TestParamInfo<ConnectionTestABBA::ParamType>&) const;
 };
 
 class AutoWorkQueue {

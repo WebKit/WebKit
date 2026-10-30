@@ -170,6 +170,13 @@ public:
         os_unfair_lock_lock(&m_lock);
         TSAN_ANNOTATE_HAPPENS_AFTER(this);
     }
+    SUPPRESS_NODELETE bool LEGACY_NODELETE tryLock() WTF_ACQUIRES_LOCK_IF(true)
+    {
+        if (!os_unfair_lock_trylock(&m_lock))
+            return false;
+        TSAN_ANNOTATE_HAPPENS_AFTER(this);
+        return true;
+    }
     SUPPRESS_NODELETE void LEGACY_NODELETE unlock() WTF_RELEASES_LOCK()
     {
         TSAN_ANNOTATE_HAPPENS_BEFORE(this);

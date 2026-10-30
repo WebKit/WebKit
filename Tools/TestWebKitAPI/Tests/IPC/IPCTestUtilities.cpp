@@ -31,6 +31,10 @@
 #include <wtf/threads/BinarySemaphore.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(IPC_SEND_DIRECTLY)
+#include <pthread/qos.h>
+#endif
+
 namespace TestWebKitAPI {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MockConnectionClient);
@@ -43,6 +47,61 @@ void PrintTo(ConnectionTestDirection value, ::std::ostream* o)
         *o << "ClientIsA";
     else
         *o << "Unknown";
+}
+
+void PrintTo(ConnectionTestDirectSend value, ::std::ostream* o)
+{
+    switch (value) {
+    case ConnectionTestDirectSend::Disabled:
+        *o << "DirectSendDisabled";
+        return;
+    case ConnectionTestDirectSend::Enabled:
+        *o << "DirectSendEnabled";
+        return;
+    }
+    *o << "Unknown";
+}
+
+std::string ConnectionTestABBAParametersToStringFormatter::operator()(const testing::TestParamInfo<ConnectionTestABBA::ParamType>& info) const
+{
+    auto name = testing::PrintToString(std::get<0>(info.param));
+    if (std::get<1>(info.param) != ConnectionTestDirectSend::Disabled)
+        name += testing::PrintToString(std::get<1>(info.param));
+    return name;
+}
+
+ConnectionTestDirectSendScope::ConnectionTestDirectSendScope(ConnectionTestDirectSend directSend)
+{
+#if ENABLE(IPC_SEND_DIRECTLY)
+    m_savedAllowsSendingDirectly = IPC::Connection::allowsSendingDirectly();
+    IPC::Connection::setAllowsSendingDirectly(directSend == ConnectionTestDirectSend::Enabled);
+    if (directSend == ConnectionTestDirectSend::Disabled)
+        return;
+    // Messages are only sent directly from threads whose QoS is at least the connection queue's. If this fails, the
+    // tests would pass without sending anything directly.
+    m_savedQOSClass = qos_class_self();
+    EXPECT_EQ(pthread_set_qos_class_self_np(QOS_CLASS_USER_INTERACTIVE, 0), 0);
+    EXPECT_EQ(qos_class_self(), QOS_CLASS_USER_INTERACTIVE);
+#else
+    ASSERT_UNUSED(directSend, directSend == ConnectionTestDirectSend::Disabled);
+#endif
+}
+
+ConnectionTestDirectSendScope::~ConnectionTestDirectSendScope()
+{
+#if ENABLE(IPC_SEND_DIRECTLY)
+    IPC::Connection::setAllowsSendingDirectly(m_savedAllowsSendingDirectly);
+    if (!m_savedQOSClass)
+        return;
+    // A thread can't go back to having no QoS class, so give it the QoS the main thread started with instead, or the
+    // default QoS.
+    auto qosClass = *m_savedQOSClass;
+    if (qosClass == QOS_CLASS_UNSPECIFIED)
+        qosClass = qos_class_main();
+    if (qosClass == QOS_CLASS_UNSPECIFIED)
+        qosClass = QOS_CLASS_DEFAULT;
+    EXPECT_EQ(pthread_set_qos_class_self_np(qosClass, 0), 0);
+#endif
 }
 
 void ConnectionTestBase::setupBase()

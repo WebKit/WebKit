@@ -28,6 +28,7 @@
 #include "IPCTestUtilities.h"
 #include "Helpers/Test.h"
 #include "WorkQueueMessageReceiver.h"
+#include <wtf/Scope.h>
 #include <wtf/Threading.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -340,6 +341,32 @@ TEST_P(ConnectionTestABBA, UnopenedAAndInvalidateDoesNotDeliverBDidClose)
     EXPECT_FALSE(bClient().waitForDidClose(kWaitForAbsenceTimeout));
 }
 
+struct MockTestMessageWithDataAndAttachments {
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCTester_EmptyMessage; }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        encoder << data;
+        encoder << static_cast<uint64_t>(attachments.size());
+        for (auto& attachment : attachments)
+            encoder << WTF::move(attachment);
+    }
+
+    std::span<const uint8_t> data;
+    Vector<IPC::Attachment> attachments;
+};
+
+static Vector<uint8_t> testDataOfSize(size_t size)
+{
+    return Vector<uint8_t>(size, [size](size_t i) {
+        return static_cast<uint8_t>(i * 31 + size);
+    });
+}
+
 // Sends one message at a time while B doesn't receive, until a message can't be sent because B's port is full. That
 // message is parked while the outgoing queue is empty. flushSentMessages() must keep waiting until it has been sent.
 TEST_P(ConnectionTestABBA, FlushSentMessagesWaitsForParkedMessage)
@@ -391,7 +418,11 @@ TEST_P(ConnectionTestABBA, FlushSentMessagesAfterPeerIsGoneWaitsForClose)
     a()->dispatchOnReceiveQueueForTesting([&] {
         holdA.waitFor(kWaitForAbsenceTimeout);
     });
-    a()->send(MockTestMessage1 { }, 1);
+
+    // Send a message that is large enough that it is guaranteed to be sent on the connection queue
+    // rather than directly on the calling thread.
+    auto largeData = testDataOfSize(8000);
+    a()->send(MockTestMessageWithDataAndAttachments { largeData.span(), { } }, 1);
     BinarySemaphore releaseA;
     a()->dispatchOnReceiveQueueForTesting([&] {
         releaseA.waitFor(10_s);
@@ -403,6 +434,431 @@ TEST_P(ConnectionTestABBA, FlushSentMessagesAfterPeerIsGoneWaitsForClose)
     EXPECT_EQ(a()->flushSentMessages(kDefaultWaitForTimeout), IPC::Error::InvalidConnection);
     EXPECT_TRUE(aClient().waitForDidClose(kDefaultWaitForTimeout));
 }
+
+#if ENABLE(IPC_SEND_DIRECTLY)
+
+// Blocks a connection's queue, so that it neither receives nor sends messages, until unblock() is called or it is
+// destroyed.
+class ConnectionQueueBlocker {
+    WTF_MAKE_NONCOPYABLE(ConnectionQueueBlocker);
+public:
+    explicit ConnectionQueueBlocker(IPC::Connection& connection)
+    {
+        connection.dispatchOnReceiveQueueForTesting([semaphore = m_semaphore] {
+            semaphore->wait();
+        });
+    }
+
+    ~ConnectionQueueBlocker()
+    {
+        unblock();
+    }
+
+    // May be called on any thread.
+    void unblock()
+    {
+        if (m_isBlocking.exchange(false))
+            m_semaphore->signal();
+    }
+
+private:
+    // The connection queue may still be waking up when this is destroyed.
+    Box<BinarySemaphore> m_semaphore { Box<BinarySemaphore>::create() };
+    std::atomic<bool> m_isBlocking { true };
+};
+
+// Tests for sending messages on the calling thread, see IPC::Connection::setAllowsSendingDirectly(). They run with
+// direct sends allowed, and the main thread's QoS is higher than that of the connection queues. While A's connection
+// queue is blocked, only a direct send can deliver a message to B. So B receiving a message then shows that it was sent
+// directly, and B not receiving it shows that it was queued.
+class ConnectionDirectSendTest : public ConnectionTestABBA {
+protected:
+    static constexpr uint64_t probeDestinationID = 0xffffff;
+
+    // The destination IDs of the messages that B receives within the timeout, until there are at least `count`.
+    Vector<uint64_t> receiveFromA(size_t count, Seconds timeout)
+    {
+        Vector<uint64_t> destinationIDs;
+        auto deadline = MonotonicTime::now() + timeout;
+        while (true) {
+            for (auto& message : bClient().takeMessages())
+                destinationIDs.append(message.destinationID);
+            if (destinationIDs.size() >= count || MonotonicTime::now() >= deadline)
+                return destinationIDs;
+            Util::runFor(10_ms);
+        }
+    }
+
+    // A message can only be sent directly once a() is connected and its send source has been registered, which
+    // happens on its connection queue some time after it connected. Send messages until one is sent directly.
+    ::testing::AssertionResult waitUntilASendsDirectly()
+    {
+        for (unsigned attempt = 0; attempt < 100; ++attempt) {
+            Vector<uint64_t> received;
+            {
+                ConnectionQueueBlocker blocker { *a() };
+                a()->send(MockTestMessage1 { }, probeDestinationID);
+                received = receiveFromA(1, 100_ms);
+            }
+            if (!received.isEmpty()) {
+                if (received.size() != 1 || received[0] != probeDestinationID)
+                    return ::testing::AssertionFailure() << "Unexpected messages: " << received.size() << " first to " << received[0];
+                return ::testing::AssertionSuccess();
+            }
+            // The probe was queued, and A's connection queue sends it now.
+            received = receiveFromA(1, kDefaultWaitForTimeout);
+            if (received.size() != 1 || received[0] != probeDestinationID)
+                return ::testing::AssertionFailure() << "The queued probe didn't arrive, " << received.size() << " messages";
+            sleep(10_ms);
+        }
+        return ::testing::AssertionFailure() << "No message was sent directly";
+    }
+
+    enum class ToggleSendingDirectly : bool { No, Yes };
+
+    // Sends from several threads at once while B doesn't receive, with message sizes that can be sent directly and
+    // a size that is too large to be. Every thread's messages must arrive in order.
+    void sendFromThreadsWhileBIsBlocked(ToggleSendingDirectly toggleSendingDirectly)
+    {
+        constexpr uint64_t threadCount = 4;
+        constexpr uint64_t messagesPerThread = 500;
+        Vector<Vector<uint8_t>> data { testDataOfSize(16), testDataOfSize(2000), testDataOfSize(6000) };
+        auto sendMessages = [&](uint64_t thread) {
+            for (uint64_t i = 0; i < messagesPerThread; ++i)
+                a()->send(MockTestMessageWithDataAndAttachments { data[i % data.size()].span(), { } }, (thread << 32) | i);
+        };
+
+        ConnectionQueueBlocker blocker { *b() };
+
+        std::atomic<bool> doneSending { false };
+        RefPtr<Thread> toggler;
+        if (toggleSendingDirectly == ToggleSendingDirectly::Yes) {
+            toggler = Thread::create("ConnectionDirectSendTest toggler"_s, [&] {
+                for (unsigned i = 0; !doneSending; ++i) {
+                    IPC::Connection::setAllowsSendingDirectly(!(i % 2));
+                    sleep(100_us);
+                }
+                IPC::Connection::setAllowsSendingDirectly(true);
+            });
+        }
+
+        Vector<Ref<Thread>> senders;
+        for (uint64_t thread = 1; thread < threadCount; ++thread) {
+            senders.append(Thread::create("ConnectionDirectSendTest sender"_s, [&sendMessages, thread] {
+                sendMessages(thread);
+            }, ThreadType::Unknown, Thread::QOS::UserInteractive));
+        }
+        sendMessages(0);
+        for (auto& sender : senders)
+            sender->waitForCompletion();
+        doneSending = true;
+        if (toggler)
+            toggler->waitForCompletion();
+
+        blocker.unblock();
+        std::array<uint64_t, threadCount> nextSequenceNumbers { };
+        for (uint64_t i = 0; i < threadCount * messagesPerThread; ++i) {
+            auto destinationID = bClient().waitForMessage(kDefaultWaitForTimeout).destinationID;
+            auto thread = destinationID >> 32;
+            auto sequenceNumber = destinationID & 0xffffffff;
+            ASSERT_LT(thread, threadCount);
+            EXPECT_EQ(sequenceNumber, nextSequenceNumbers[thread]) << " thread: " << thread;
+            nextSequenceNumbers[thread] = sequenceNumber + 1;
+        }
+    }
+};
+
+TEST_P(ConnectionDirectSendTest, SmallMessagesAreSentDirectly)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilASendsDirectly());
+
+    // Fewer messages than B's port holds, so that none of them has to wait for B.
+    constexpr uint64_t messageCount = 100;
+    ConnectionQueueBlocker blocker { *a() };
+    for (uint64_t i = 0; i < messageCount; ++i)
+        a()->send(MockTestMessage1 { }, i);
+    auto received = receiveFromA(messageCount, kDefaultWaitForTimeout);
+    ASSERT_EQ(received.size(), messageCount);
+    for (uint64_t i = 0; i < messageCount; ++i)
+        EXPECT_EQ(received[i], i);
+}
+
+TEST_P(ConnectionDirectSendTest, MessagesWithAttachmentsAreSentDirectly)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilASendsDirectly());
+
+    mach_port_t port = MACH_PORT_NULL;
+    ASSERT_EQ(mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &port), KERN_SUCCESS);
+    auto sendRight = MachSendRight::createFromReceiveRight(port);
+    ASSERT_TRUE(!!sendRight);
+
+    constexpr uint64_t messageCount = 10;
+    auto data = testDataOfSize(100);
+    bClient().setAsyncMessageHandler([&](IPC::Connection&, IPC::Decoder& decoder) -> bool {
+        if (decoder.destinationID() >= messageCount)
+            return false;
+        auto receivedData = decoder.decode<std::span<const uint8_t>>();
+        auto attachmentCount = decoder.decode<uint64_t>();
+        EXPECT_TRUE(receivedData && equalSpans(*receivedData, data.span()));
+        EXPECT_TRUE(attachmentCount && *attachmentCount == 2u);
+        for (unsigned i = 0; i < 2; ++i) {
+            auto attachment = decoder.decode<IPC::Attachment>();
+            EXPECT_TRUE(attachment && attachment->sendRight() == port);
+        }
+        return false; // Record the message.
+    });
+
+    {
+        ConnectionQueueBlocker blocker { *a() };
+        for (uint64_t i = 0; i < messageCount; ++i) {
+            Vector<IPC::Attachment> attachments(2, [&](size_t) {
+                return MachSendRight { sendRight };
+            });
+            a()->send(MockTestMessageWithDataAndAttachments { data.span(), WTF::move(attachments) }, i);
+        }
+        auto received = receiveFromA(messageCount, kDefaultWaitForTimeout);
+        ASSERT_EQ(received.size(), messageCount);
+        for (uint64_t i = 0; i < messageCount; ++i)
+            EXPECT_EQ(received[i], i);
+    }
+
+    sendRight = { };
+    mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_RECEIVE, -1);
+}
+
+// A can't send directly before it is connected, which for a server is when B has opened, and before its send source has
+// been registered. The messages sent before then must still arrive first.
+TEST_P(ConnectionDirectSendTest, MessagesSentBeforeConnectingAreQueued)
+{
+    ASSERT_TRUE(openA());
+    for (uint64_t i = 0; i < 10; ++i)
+        a()->send(MockTestMessage1 { }, i);
+
+    ASSERT_TRUE(openB());
+    for (uint64_t i = 10; i < 20; ++i)
+        a()->send(MockTestMessage1 { }, i);
+    for (uint64_t i = 0; i < 20; ++i)
+        EXPECT_EQ(bClient().waitForMessage(kDefaultWaitForTimeout).destinationID, i);
+}
+
+// A message that isn't sent directly is queued, and the messages sent after it are queued behind it until it has been
+// sent, even if they could be sent directly. Only threads whose QoS is at least that of A's connection queue send
+// directly.
+TEST_P(ConnectionDirectSendTest, MessagesAreNotSentDirectlyAheadOfQueuedMessage)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilASendsDirectly());
+
+    auto checkMessageIsQueuedWithMessageBehindIt = [&](uint64_t destinationID, auto&& sendMessage) {
+        SCOPED_TRACE(destinationID);
+        {
+            // Keep A's connection queue from sending the queued message.
+            ConnectionQueueBlocker blocker { *a() };
+            sendMessage();
+            a()->send(MockTestMessage1 { }, destinationID + 1);
+            EXPECT_TRUE(receiveFromA(1, kWaitForAbsenceTimeout).isEmpty());
+        }
+        auto received = receiveFromA(2, kDefaultWaitForTimeout);
+        ASSERT_EQ(received.size(), 2u);
+        EXPECT_EQ(received[0], destinationID);
+        EXPECT_EQ(received[1], destinationID + 1);
+    };
+
+    // A message sent while direct sends aren't allowed.
+    checkMessageIsQueuedWithMessageBehindIt(100, [&] {
+        IPC::Connection::setAllowsSendingDirectly(false);
+        a()->send(MockTestMessage1 { }, 100);
+        IPC::Connection::setAllowsSendingDirectly(true);
+    });
+
+    // A message too large to be sent inline.
+    auto largeData = testDataOfSize(8000);
+    checkMessageIsQueuedWithMessageBehindIt(200, [&] {
+        a()->send(MockTestMessageWithDataAndAttachments { largeData.span(), { } }, 200);
+    });
+
+    // Messages sent from threads with a lower QoS than A's connection queue.
+    checkMessageIsQueuedWithMessageBehindIt(300, [&] {
+        Thread::create("ConnectionDirectSendTest utility"_s, [&] {
+            a()->send(MockTestMessage1 { }, 300);
+        }, ThreadType::Unknown, Thread::QOS::Utility)->waitForCompletion();
+    });
+    checkMessageIsQueuedWithMessageBehindIt(400, [&] {
+        Thread::create("ConnectionDirectSendTest background"_s, [&] {
+            a()->send(MockTestMessage1 { }, 400);
+        }, ThreadType::Unknown, Thread::QOS::Background)->waitForCompletion();
+    });
+
+    // A message sent from another thread with a high enough QoS is sent directly.
+    ConnectionQueueBlocker blocker { *a() };
+    Thread::create("ConnectionDirectSendTest user interactive"_s, [&] {
+        a()->send(MockTestMessage1 { }, 500);
+    }, ThreadType::Unknown, Thread::QOS::UserInteractive)->waitForCompletion();
+    auto received = receiveFromA(1, kDefaultWaitForTimeout);
+    ASSERT_EQ(received.size(), 1u);
+    EXPECT_EQ(received[0], 500u);
+}
+
+// When B's port is full, the direct send that finds it full parks its message, and the messages sent after it are
+// queued behind it.
+TEST_P(ConnectionDirectSendTest, MessagesAreNotSentDirectlyAheadOfParkedMessage)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilASendsDirectly());
+
+    // B's port holds 128 messages.
+    constexpr uint64_t messageCount = 200;
+    ConnectionQueueBlocker blockerA { *a() };
+    {
+        ConnectionQueueBlocker blockerB { *b() };
+        for (uint64_t i = 0; i < messageCount; ++i)
+            a()->send(MockTestMessage1 { }, i);
+    }
+
+    // B now receives the messages that were sent directly before its port was full. The parked message and the ones
+    // behind it wait for A's connection queue.
+    auto sentDirectly = receiveFromA(messageCount, kDefaultWaitForTimeout);
+    EXPECT_GT(sentDirectly.size(), 100u);
+    EXPECT_LT(sentDirectly.size(), messageCount);
+    for (uint64_t i = 0; i < sentDirectly.size(); ++i)
+        EXPECT_EQ(sentDirectly[i], i);
+
+    blockerA.unblock();
+    auto sentLater = receiveFromA(messageCount - sentDirectly.size(), kDefaultWaitForTimeout);
+    ASSERT_EQ(sentDirectly.size() + sentLater.size(), messageCount);
+    for (uint64_t i = 0; i < sentLater.size(); ++i)
+        EXPECT_EQ(sentLater[i], sentDirectly.size() + i);
+}
+
+TEST_P(ConnectionDirectSendTest, SendingFromThreadsKeepsOrder)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilASendsDirectly());
+    sendFromThreadsWhileBIsBlocked(ToggleSendingDirectly::No);
+}
+
+TEST_P(ConnectionDirectSendTest, TogglingSendingDirectlyWhileSendingFromThreadsKeepsOrder)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilASendsDirectly());
+    sendFromThreadsWhileBIsBlocked(ToggleSendingDirectly::Yes);
+}
+
+// Messages from A's connection queue can be sent directly too. That must not deadlock or reorder messages.
+TEST_P(ConnectionDirectSendTest, SendFromConnectionQueue)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilASendsDirectly());
+
+    a()->send(MockTestMessage1 { }, 1);
+    BinarySemaphore didSend;
+    BinarySemaphore didReceive;
+    a()->dispatchOnReceiveQueueForTesting([&] {
+        // The queue runs at its own QoS, it can't be draining or handling a send source event at the same time, and a
+        // message 1 that it had to send has been sent by now. It stays busy until B has received message 2, so message
+        // 2 can only have been sent directly.
+        a()->send(MockTestMessage1 { }, 2);
+        didSend.signal();
+        didReceive.wait();
+    });
+    didSend.wait();
+    auto received = receiveFromA(2, kDefaultWaitForTimeout);
+    didReceive.signal();
+    ASSERT_EQ(received.size(), 2u);
+    EXPECT_EQ(received[0], 1u);
+    EXPECT_EQ(received[1], 2u);
+
+    a()->send(MockTestMessage1 { }, 3);
+    EXPECT_EQ(bClient().waitForMessage(kDefaultWaitForTimeout).destinationID, 3u);
+}
+
+// B going away while threads send directly to it. Depending on whether A first finds B's port dead or gets the
+// no-senders notification, direct sends fail with MACH_SEND_INVALID_DEST, which cancels A's send source on the sending
+// thread, or stop because A is no longer connected. DirectSendToReceiverThatHasGoneAway checks the former reliably.
+TEST_P(ConnectionDirectSendTest, ReceiverInvalidatesWhileSendingDirectly)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilASendsDirectly());
+    bClient().setAsyncMessageHandler([](IPC::Connection&, IPC::Decoder&) {
+        return true; // Drop the message.
+    });
+
+    std::atomic<bool> stop { false };
+    Vector<Ref<Thread>> senders;
+    for (unsigned i = 0; i < 4; ++i) {
+        senders.append(Thread::create("ConnectionDirectSendTest sender"_s, [&] {
+            for (uint64_t j = 0; !stop && a()->send(MockTestMessage1 { }, j) == IPC::Error::NoError; ++j) { }
+        }, ThreadType::Unknown, Thread::QOS::UserInteractive));
+    }
+    sleep(10_ms);
+    b()->invalidate();
+    EXPECT_TRUE(aClient().waitForDidClose(5_s));
+    stop = true;
+    for (auto& sender : senders)
+        sender->waitForCompletion();
+}
+
+// A direct send that finds B's port dead drops the message and cancels A's send source on the sending thread. Later
+// messages are queued, and A still closes once it gets the no-senders notification.
+TEST_P(ConnectionDirectSendTest, DirectSendToReceiverThatHasGoneAway)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilASendsDirectly());
+
+    {
+        // Keep A from handling the no-senders notification, so that it is still connected when B's port dies. Only
+        // direct sends can reach B's port while A's connection queue is blocked.
+        ConnectionQueueBlocker blocker { *a() };
+        b()->invalidate();
+        // B's port dies once B's receive source has been cancelled on B's connection queue. After a direct send fails
+        // because the port is dead, flushSentMessages() waits until A closes. A direct send that parks its message
+        // because B's port filled up first does the same, but B's port usually dies long before it holds 128 messages.
+        bool directSendFailed = false;
+        for (unsigned attempt = 0; attempt < 5000 && !directSendFailed; ++attempt) {
+            a()->send(MockTestMessage1 { }, attempt);
+            directSendFailed = a()->flushSentMessages(0_s) == IPC::Error::Timeout;
+            if (!directSendFailed)
+                sleep(1_ms);
+        }
+        ASSERT_TRUE(directSendFailed);
+
+        // The send source has been cancelled, so this one is queued.
+        a()->send(MockTestMessage1 { }, 5000);
+        EXPECT_EQ(a()->flushSentMessages(0_s), IPC::Error::Timeout);
+    }
+    EXPECT_TRUE(aClient().waitForDidClose(5_s));
+}
+
+TEST_P(ConnectionDirectSendTest, SenderInvalidatesWhileOtherThreadsSendDirectly)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilASendsDirectly());
+    bClient().setAsyncMessageHandler([](IPC::Connection&, IPC::Decoder&) {
+        return true; // Drop the message.
+    });
+
+    Vector<Ref<Thread>> senders;
+    for (unsigned i = 0; i < 4; ++i) {
+        senders.append(Thread::create("ConnectionDirectSendTest sender"_s, [&] {
+            // Stops once A has been invalidated.
+            for (uint64_t j = 0; a()->send(MockTestMessage1 { }, j) == IPC::Error::NoError; ++j) { }
+        }, ThreadType::Unknown, Thread::QOS::UserInteractive));
+    }
+    sleep(10_ms);
+    a()->invalidate();
+    for (auto& sender : senders)
+        sender->waitForCompletion();
+    EXPECT_TRUE(bClient().waitForDidClose(5_s));
+}
+
+INSTANTIATE_TEST_SUITE_P(ConnectionTest,
+    ConnectionDirectSendTest,
+    testing::Combine(testing::Values(ConnectionTestDirection::ServerIsA, ConnectionTestDirection::ClientIsA), testing::Values(ConnectionTestDirectSend::Enabled)),
+    ConnectionTestABBAParametersToStringFormatter());
+
+#endif // ENABLE(IPC_SEND_DIRECTLY)
 
 #endif // PLATFORM(COCOA)
 
@@ -2263,13 +2719,13 @@ INSTANTIATE_TEST_SUITE_P(ConnectionTest,
 
 INSTANTIATE_TEST_SUITE_P(ConnectionTest,
     ConnectionTestABBA,
-    testing::Values(ConnectionTestDirection::ServerIsA, ConnectionTestDirection::ClientIsA),
-    TestParametersToStringFormatter());
+    connectionTestABBAParameters(),
+    ConnectionTestABBAParametersToStringFormatter());
 
 INSTANTIATE_TEST_SUITE_P(ConnectionTest,
     ConnectionRunLoopTest,
-    testing::Values(ConnectionTestDirection::ServerIsA, ConnectionTestDirection::ClientIsA),
-    TestParametersToStringFormatter());
+    connectionTestABBAParameters(),
+    ConnectionTestABBAParametersToStringFormatter());
 
 INSTANTIATE_TEST_SUITE_P(ConnectionTest,
     ConnectionDidReceiveInvalidMessageTest,
