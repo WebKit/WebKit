@@ -20,12 +20,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import sys
+from typing import TYPE_CHECKING, Any
 
 from .command import Command
 from webkitcorepy import arguments
 from webkitscmpy import local
+
+if TYPE_CHECKING:
+    from argparse import Namespace
+    from webkitscmpy import ScmBase, remote
 
 
 class Credentials(Command):
@@ -33,7 +40,7 @@ class Credentials(Command):
     help = 'Return https credentials for a repository in a format digestable by git'
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: local.Git | local.Svn | remote.Scm | None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository defined\n')
             return 1
@@ -41,7 +48,9 @@ class Credentials(Command):
             sys.stderr.write('Cannot extract credentials from subversion repository\n')
             return 1
 
+        rmt: ScmBase | None
         if repository.path:
+            assert isinstance(repository, local.Scm)  # remote repositories have no path
             rmt = repository.remote()
         else:
             rmt = repository
@@ -50,8 +59,10 @@ class Credentials(Command):
         password = None
 
         try:
-            if rmt and getattr(rmt, 'credentials', None):
-                username, password = rmt.credentials()
+            # Only some remotes (GitHub, BitBucket) provide credentials
+            credentials = getattr(rmt, 'credentials', None) if rmt else None
+            if credentials:
+                username, password = credentials()
 
             print('username={}'.format(username or ''))
             print('password={}'.format(password or ''))

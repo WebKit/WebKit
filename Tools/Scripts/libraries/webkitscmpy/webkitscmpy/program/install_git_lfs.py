@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import logging
 import os
 import platform
@@ -29,10 +31,16 @@ import subprocess
 import sys
 import tempfile
 import zipfile
+from typing import Any, Callable, TYPE_CHECKING
 
 from webkitcorepy import CallByNeed, Version, arguments, run
 from webkitscmpy import local, log
 from .command import Command
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitscmpy.scm_base import ScmBase
 
 requests = CallByNeed(lambda: __import__('requests'))
 
@@ -48,7 +56,7 @@ class InstallGitLFS(Command):
     VERSION_RE = re.compile(r'^git-lfs/(?P<version>\d+\.\d+\.\d+) \(.*\)')
 
     @classmethod
-    def url(cls, mirror_resolver_func=None):
+    def url(cls, mirror_resolver_func: Callable[[str], str] | None = None) -> str | None:
         _url = None
         if platform.system() == 'Darwin':
             version_str = '{}.{}.{}'.format(cls.VERSION[0], cls.VERSION[1], cls.VERSION[2])
@@ -61,7 +69,7 @@ class InstallGitLFS(Command):
         return _url
 
     @classmethod
-    def install(cls, mirror_resolver_func=None):
+    def install(cls, mirror_resolver_func: Callable[[str], str] | None = None) -> bool:
         url = cls.url(mirror_resolver_func=mirror_resolver_func)
         if not url:
             sys.stderr.write('No `git lfs` install implemented for the current platform\n')
@@ -109,7 +117,7 @@ class InstallGitLFS(Command):
             shutil.rmtree(tmpdir, ignore_errors=True)
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             '--overwrite', '-o', '--force', '-f',
             help='Overwrite existing `git lfs` install, regardless of version',
@@ -130,7 +138,7 @@ class InstallGitLFS(Command):
 
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: ScmBase | None, **kwargs: Any) -> int:
         if repository and not repository.path:
             sys.stderr.write("Cannot install `git lfs` from a remote repository\n")
             return 1
@@ -159,6 +167,7 @@ class InstallGitLFS(Command):
         if not repository:
             print("No repository provided, skipping configuring `git lfs`")
             return 0
+        assert isinstance(repository, local.Git)
         if args.configure is False:
             print("Skipping configuring `git lfs` for '{}', as requested".format(repository.path))
             return 0

@@ -20,11 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import pprint
 import re
 import shutil
 import sys
+from typing import TYPE_CHECKING, Any
 
 from webkitbugspy import radar
 from webkitcorepy import Terminal, Version, run, string_utils
@@ -32,6 +35,11 @@ from webkitcorepy import Terminal, Version, run, string_utils
 from webkitscmpy import local, log, remote
 
 from .command import Command
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitscmpy.program.canonicalize import IdentifierTrailer
 
 
 class InstallHooks(Command):
@@ -43,7 +51,7 @@ class InstallHooks(Command):
     MODES = ('default', 'publish', 'no-radar')
 
     @classmethod
-    def version_for(cls, path):
+    def version_for(cls, path: str) -> Version | None:
         if not os.path.isfile(path):
             return None
         with open(path, 'r') as f:
@@ -54,7 +62,7 @@ class InstallHooks(Command):
         return None
 
     @classmethod
-    def hook_needs_update(cls, repository, path):
+    def hook_needs_update(cls, repository: local.Git, path: str) -> bool:
         if not os.path.isfile(path):
             return False
 
@@ -71,7 +79,7 @@ class InstallHooks(Command):
         return repo_version > installed_version
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             'arguments', nargs='*',
             type=str, default=None,
@@ -88,7 +96,7 @@ class InstallHooks(Command):
         )
 
     @classmethod
-    def _security_levels(cls, repository):
+    def _security_levels(cls, repository: local.Git) -> dict[str, int | None]:
         proc = run(
             [local.Git.executable(), 'config', '--get-regexp', 'webkitscmpy.remotes'],
             capture_output=True, cwd=repository.root_path,
@@ -97,8 +105,8 @@ class InstallHooks(Command):
         if proc.returncode:
             return {}
 
-        levels_by_name = {}
-        remotes_by_name = {}
+        levels_by_name: dict[str, int] = {}
+        remotes_by_name: dict[str, str] = {}
         for line in proc.stdout.splitlines():
             key, value = line.split(' ', 1)
             parts = key.split('.')
@@ -109,7 +117,7 @@ class InstallHooks(Command):
             elif parts[3] == 'security-level':
                 levels_by_name[parts[2]] = int(value)
 
-        result = {}
+        result: dict[str, int | None] = {}
         for name, rmt in remotes_by_name.items():
             match = cls.REMOTE_RE.match(rmt)
             if match:
@@ -142,7 +150,7 @@ class InstallHooks(Command):
         return result
 
     @classmethod
-    def main(cls, args, repository, hooks=None, identifier_template=None, **kwargs):
+    def main(cls, args: Namespace, repository: local.Svn | local.Git | None, hooks: str | None = None, identifier_template: IdentifierTrailer | None = None, **kwargs: Any) -> int:
         if not isinstance(repository, local.Git):
             sys.stderr.write('Can only install hooks in a native git repository\n')
             return 1
@@ -151,6 +159,7 @@ class InstallHooks(Command):
             return 1
 
         url = repository.url()
+        assert url is not None  # Matching against the remote patterns below already requires a URL
         match = repository.SSH_REMOTE.match(url) or repository.HTTP_REMOTE.match(url)
         if match:
             path = match.group('path')
@@ -167,7 +176,7 @@ class InstallHooks(Command):
 
         candidates = os.listdir(hooks)
         if getattr(args, 'arguments', []):
-            hook_names = []
+            hook_names: list[str] = []
             for argument in args.arguments:
                 if argument in candidates:
                     hook_names.append(argument)
@@ -210,7 +219,7 @@ class InstallHooks(Command):
             if identifier_template else []
         )
         source_remotes = repository.source_remotes() or ['origin']
-        perl = 'perl'
+        perl: str | None = 'perl'
         perl = shutil.which('perl')
 
         default_target_directory = os.path.join(repository.common_directory, 'hooks')

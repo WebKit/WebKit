@@ -20,12 +20,21 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import sys
+from typing import Any, Iterator, TYPE_CHECKING
 
 from webkitbugspy import Tracker, radar
 from .command import Command
-from .. import local
+from .. import local, remote
 from ..commit import Commit
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitscmpy.pull_request import PullRequest
+    from webkitscmpy.remote import BitBucket, GitHub
 
 
 class Conflict(Command):
@@ -34,7 +43,7 @@ class Conflict(Command):
     INTEGRATION_BRANCH_PREFIX = 'integration'
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             'radar',
             type=str, default=None,
@@ -42,7 +51,7 @@ class Conflict(Command):
         )
 
     @classmethod
-    def find_conflict_pr(cls, remote, radar_id):
+    def find_conflict_pr(cls, remote: GitHub | BitBucket, radar_id: int) -> PullRequest | None:
         """
         Because we don't know what the target branch was just given the radar id,
         we need to search for PRs with branches that start with the integration prefix
@@ -53,7 +62,9 @@ class Conflict(Command):
         shas = []
 
         repo_name = remote.name if '/' not in remote.name else remote.name.split('/', 1)[-1]
-        for entry in radar_obj.source_changes:
+        source_changes = radar_obj.source_changes
+        assert source_changes is not None
+        for entry in source_changes:
             repo, action, sha = entry.split(', ')
             if repo.lower() == repo_name.lower():
                 shas.append(sha)
@@ -67,16 +78,19 @@ class Conflict(Command):
             integration_branches.append("{}/{}/{}_{}".format(cls.INTEGRATION_BRANCH_PREFIX, prefix, shas[0][:Commit.HASH_LABEL_SIZE], shas[-1][:Commit.HASH_LABEL_SIZE]))
 
         for pr in cls.get_open_integration_prs(remote):
+            assert pr.head is not None
             for branch in integration_branches:
                 if pr.head.startswith(branch):
                     return pr
+        return None
 
     @classmethod
-    def get_open_integration_prs(cls, remote):
+    def get_open_integration_prs(cls, remote: GitHub | BitBucket) -> Iterator[PullRequest]:
+        assert remote.pull_requests is not None
         return remote.pull_requests.find(head=cls.INTEGRATION_BRANCH_PREFIX, opened=True)
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: local.Git | None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -87,11 +101,13 @@ class Conflict(Command):
         # This is to remove any extra inputs like rdar://problem/
         radar_id = ''.join(i for i in args.radar if i.isdigit())
         radar_obj = Tracker.from_string(f'rdar://{radar_id}')
+        assert radar_obj is not None
         expected_branch = 'integration/conflict/{}'.format(radar_obj.id)
         conflict_pr = None
         source_remote = None
         for source_remote in repository.source_remotes():
             rmt = repository.remote(name=source_remote)
+            assert isinstance(rmt, (remote.GitHub, remote.BitBucket))
             conflict_pr = cls.find_conflict_pr(rmt, radar_obj.id)
             if conflict_pr:
                 break
@@ -100,7 +116,9 @@ class Conflict(Command):
             sys.stderr.write('No conflict pull request found with branch {}\n'.format(expected_branch))
             return 1
 
-        full_branch = '{}:{}'.format(conflict_pr._metadata['full_name'], conflict_pr.head)
+        metadata = conflict_pr._metadata
+        assert metadata is not None
+        full_branch = '{}:{}'.format(metadata['full_name'], conflict_pr.head)
         print('Found conflict branch {}'.format(full_branch))
         checkout_response = repository.checkout(full_branch)
 
@@ -111,9 +129,11 @@ class Conflict(Command):
         msg += "\nAlternatively, if you want to get into the traditional conflict state (ex. `git status` shows conflicting files)\n"
         msg += "you can run the following commands. Warning: This will require a force push. Any changes made to the pull request branch will therefore be lost."
         msg += f'\n\ngit reset --hard {source_remote}/{conflict_pr.base}\n'
-        for source in radar_obj.source_changes:
+        source_changes = radar_obj.source_changes
+        assert source_changes is not None
+        for source in source_changes:
             source_sha = source.split(', ')[2]
             msg += 'git cherry-pick {}\n'.format(source_sha)
         print(msg)
-        return checkout_response
+        return 0 if checkout_response else 1
 

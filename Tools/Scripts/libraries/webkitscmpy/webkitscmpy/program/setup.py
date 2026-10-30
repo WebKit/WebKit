@@ -20,21 +20,30 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import getpass
 import os
 import sys
 import time
+from typing import Any, Callable, TYPE_CHECKING
 
 from .command import Command
 from .install_hooks import InstallHooks
 from webkitcorepy import arguments, run, string_utils, CallByNeed, Editor, OutputCapture, TaskPool, Terminal
 from webkitscmpy import log, local, remote as wspremote
 
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitscmpy.remote import GitHub
+    from webkitscmpy.scm_base import ScmBase
+
 requests = CallByNeed(lambda: __import__('requests'))
 HTTPBasicAuth = CallByNeed(lambda: __import__('requests.auth', fromlist=['HTTPBasicAuth']).HTTPBasicAuth)
 
 
-def _fetch(path, remote):
+def _fetch(path: str, remote: str) -> int:
     log.info('    Fetching {}...'.format(remote))
     result = run(
         [local.Git.executable(), 'fetch', '--prune', '--quiet', remote],
@@ -56,8 +65,8 @@ class Setup(Command):
     help = 'Configure local settings for the current repository'
 
     @classmethod
-    def fetch(cls, repository):
-        from webkitscmpy.mocks.local import Git as MockGit
+    def fetch(cls, repository: local.Git) -> int:
+        from webkitscmpy.mocks.local.git import Git as MockGit
 
         remote_cmd = run(
             [repository.executable(), 'remote'],
@@ -71,7 +80,7 @@ class Setup(Command):
         remotes = remote_cmd.stdout.split()
 
         log.warning('Fetching {}...'.format(string_utils.pluralize(len(remotes), 'remote')))
-        results = []
+        results: list[int] = []
         with TaskPool(workers=(1 if MockGit.top else 12)) as pool:
             for remote in remotes:
                 pool.do(_fetch, repository.path, remote, callback=lambda value: results.append(value))
@@ -80,7 +89,7 @@ class Setup(Command):
         return 1 if any(results) else 0
 
     @classmethod
-    def github(cls, args, repository, additional_setup=None, remote=None, team=None, **kwargs):
+    def github(cls, args: Namespace, repository: GitHub, additional_setup: Callable[..., int] | None = None, remote: str | None = None, team: str | None = None, **kwargs: Any) -> int:
         log.info('Saving GitHub credentials in system credential store...')
         username, access_token = repository.credentials(required=True, validate=True, save_in_keyring=True)
         log.info('GitHub credentials saved via Keyring!')
@@ -209,7 +218,7 @@ class Setup(Command):
         return result
 
     @classmethod
-    def _add_remote(cls, repository, name, url, fetch=True):
+    def _add_remote(cls, repository: local.Git, name: str, url: str, fetch: bool = True) -> int:
         returncode = run(
             [repository.executable(), 'remote', 'add', name, url],
             capture_output=True, cwd=repository.root_path,
@@ -239,7 +248,7 @@ class Setup(Command):
         return 0
 
     @classmethod
-    def _fork_remote(cls, origin, username, name):
+    def _fork_remote(cls, origin: str, username: str | None, name: str) -> str | None:
         if '://' in origin:
             return '{}://{}/{}/{}.git'.format(origin.split(':')[0], origin.split('/')[2], username, name)
         elif ':' in origin:
@@ -247,7 +256,7 @@ class Setup(Command):
         return None
 
     @classmethod
-    def git(cls, args, repository, additional_setup=None, hooks=None, **kwargs):
+    def git(cls, args: Namespace, repository: local.Git, additional_setup: Callable[..., int] | None = None, hooks: str | None = None, **kwargs: Any) -> int:
         local_config = repository.config()
         global_config = local.Git.config()
         result = 0
@@ -273,7 +282,7 @@ class Setup(Command):
 
         contributor = repository.contributors.get(email)
         if contributor:
-            name = contributor.name
+            name: str | None = contributor.name
         else:
             name = local_config.get('user.name') or global_config.get('user.name')
         log.info('Setting git user name for {}...'.format(repository.root_path))
@@ -390,7 +399,7 @@ class Setup(Command):
         rmt = repository.remote()
         available_remotes = []
         if isinstance(rmt, wspremote.GitHub):
-            forking = True
+            forking: bool | str = True
             username, _ = rmt.credentials(required=True, validate=True, save_in_keyring=True)
         else:
             forking = False
@@ -416,7 +425,13 @@ class Setup(Command):
                         editor = os.environ.get(variable)
                         break
             else:
-                editor = ' '.join([arg.replace(' ', '\\ ') for arg in Editor.by_name(editor_name).wait])
+                editor_program = Editor.by_name(editor_name)
+                assert editor_program is not None
+                wait_args: list[str] = []
+                for arg in editor_program.wait:
+                    assert arg is not None
+                    wait_args.append(arg.replace(' ', '\\ '))
+                editor = ' '.join(wait_args)
 
             if not editor:
                 log.info('Using the default git editor for this repository')
@@ -431,11 +446,14 @@ class Setup(Command):
                 log.info("Set git editor to '{}' for this repository".format(editor_name))
 
         # Check if we need to define a credential helper
-        http_remote = local.Git.HTTP_REMOTE.match(repository.url())
+        origin_url = repository.url()
+        assert origin_url is not None
+        http_remote = local.Git.HTTP_REMOTE.match(origin_url)
         can_push = not http_remote
         rmt = repository.remote()
-        if rmt and getattr(rmt, 'credentials', None):
-            username, password = rmt.credentials()
+        credentials = getattr(rmt, 'credentials', None)
+        if rmt and credentials:
+            username, password = credentials()
             if username and password and not run([
                 repository.executable(), 'config',
                 'credential.{}.helper'.format('/'.join(rmt.url.split('/')[:3])),
@@ -448,6 +466,7 @@ class Setup(Command):
             "http(s) based remotes will prompt for your password every time when pushing,\nit is recommended to convert to a ssh remote, would you like to convert to a ssh remote?",
             default='Yes',
         ) == 'Yes':
+            assert http_remote is not None
             if run([
                 local.Git.executable(), 'config', 'remote.origin.url',
                 'git@{}:{}.git'.format(http_remote.group('host'), http_remote.group('path')),
@@ -483,7 +502,9 @@ class Setup(Command):
             else:
                 project_remotes[config_arg.split('.')[-1]] = [url]
 
-        protocol = repository.url().split('://')[0] + '://'
+        origin_url = repository.url()
+        assert origin_url is not None
+        protocol = origin_url.split('://')[0] + '://'
         if '@' in protocol:
             protocol = protocol.split('@')[0] + '@'
         if not project_remotes.get('origin') or repository.url() in project_remotes['origin']:
@@ -523,7 +544,12 @@ class Setup(Command):
                     continue
                 fork_name = '{}-fork'.format(name)
                 log.info("Adding forked {remote} remote as '{name}'...".format(remote=name, name=fork_name))
-                if cls._add_remote(repository, fork_name, cls._fork_remote(repository.url(), username, '{}-{}'.format(rmt.name, name)), fetch=False):
+                assert isinstance(rmt, (wspremote.GitHub, wspremote.BitBucket))
+                origin_url = repository.url()
+                assert origin_url is not None
+                fork_url = cls._fork_remote(origin_url, username, '{}-{}'.format(rmt.name, name))
+                assert fork_url is not None
+                if cls._add_remote(repository, fork_name, fork_url, fetch=False):
                     result += 1
                 else:
                     available_remotes.append(fork_name)
@@ -542,6 +568,7 @@ Automation may create pull requests and forks in unexpected locations
         if not forking or forking == 'No':
             return result | cls.fetch(repository)
 
+        assert isinstance(rmt, wspremote.GitHub)  # forking is only set for GitHub remotes
         if cls.github(
             args, rmt,
             team=repository.config().get('webkitscmpy.access.origin', None),
@@ -549,15 +576,19 @@ Automation may create pull requests and forks in unexpected locations
         ):
             return result + 1
 
-        log.info("Adding forked remote as 'fork'...".format(username))
-        if cls._add_remote(repository, 'fork', cls._fork_remote(repository.url(), username, rmt.name), fetch=False):
+        log.info("Adding forked remote as 'fork'...")
+        origin_url = repository.url()
+        assert origin_url is not None
+        fork_url = cls._fork_remote(origin_url, username, rmt.name)
+        assert fork_url is not None
+        if cls._add_remote(repository, 'fork', fork_url, fetch=False):
             result += 1
         else:
             available_remotes.append('fork')
         return result | cls.fetch(repository)
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             '--defaults', '--no-defaults', action=arguments.NoAction, default=None,
             help='Do not prompt the user for defaults, always use (or do not use) them',
@@ -572,7 +603,7 @@ Automation may create pull requests and forks in unexpected locations
         )
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: ScmBase | None, **kwargs: Any) -> int:
         if isinstance(repository, local.Git):
             if 'true' != repository.config().get('webkitscmpy.setup', ''):
                 info_url = 'https://github.com/WebKit/WebKit/wiki/Git-Config#Configuration-Options'

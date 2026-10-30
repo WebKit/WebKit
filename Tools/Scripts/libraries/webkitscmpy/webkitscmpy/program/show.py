@@ -22,11 +22,18 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import sys
+from typing import TYPE_CHECKING, Any
 
 from webkitcorepy import arguments, Terminal
 from webkitscmpy import local
 from webkitscmpy.program.command import FilteredCommand
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
 
 
 class Show(FilteredCommand):
@@ -34,7 +41,7 @@ class Show(FilteredCommand):
     help = "Filter raw output of 'git show' to replace native commit representation with identifiers"
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         FilteredCommand.parser(parser, loggers=loggers)
         parser.add_argument(
             '--pretty', '--format', type=str,
@@ -67,13 +74,20 @@ class Show(FilteredCommand):
         )
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(
+        cls, args: Namespace | list[str], repository: local.Svn | local.Git | None, command: str | None = None,
+        representation: str | None = None, **kwargs: Any,
+    ) -> int:
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only 'show' on a native Git repository\n")
             return 1
 
-        config = getattr(repository, 'config', lambda: {})()
+        config: dict[str, str] = getattr(repository, 'config', lambda: {})()
         Terminal.colors = config.get('color.diff', config.get('color.ui', 'auto')) != 'false'
+
+        if isinstance(args, list):
+            # The pager re-runs this file with the native arguments, which already include these options
+            return cls.pager(args, repository, file=__file__, representation=representation, **kwargs)
 
         pretty = getattr(args, 'pretty', None)
         if pretty:
@@ -85,7 +99,7 @@ class Show(FilteredCommand):
         if oneline is not None:
             args.args.insert(0, '--oneline')
 
-        return cls.pager(args, repository, file=__file__, **kwargs)
+        return cls.pager(args, repository, file=__file__, representation=representation, **kwargs)
 
 
 if __name__ == '__main__':
