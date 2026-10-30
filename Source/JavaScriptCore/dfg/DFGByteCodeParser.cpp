@@ -467,6 +467,7 @@ private:
     void handleMinMax(Operand result, NodeType op, int registerOffset, int argumentCountIncludingThis, NOESCAPE const ChecksFunctor& insertChecks);
     
     void refineStatically(CallLinkStatus&, Node* callTarget);
+    bool isFunctionAllocatedByInlineStack(FunctionExecutable*);
     // Blocks can either be targetable (i.e. in the m_blockLinkingTargets of one InlineStackEntry) with a well-defined bytecodeBegin,
     // or they can be untargetable, with bytecodeBegin==UINT_MAX, to be managed manually and not by the linkBlock machinery.
     // This is used most notably when doing polyvariant inlining (it requires a fair bit of control-flow with no bytecode analog).
@@ -1771,7 +1772,33 @@ void ByteCodeParser::refineStatically(CallLinkStatus& callLinkStatus, Node* call
         // costs more than it saves.
         if (callTarget->isFunctionAllocation() && callLinkStatus.size() == 1)
             callLinkStatus.makeClosureCall();
+
+        // Optimized code outlives the invocation it was profiled in: function-entry code only runs on
+        // later entries, and OSR-entry code is re-entered by later invocations reaching the same loop.
+        // Each of them allocates new closures for the functions declared by the code blocks being
+        // compiled, so checking the closure seen during profiling would exit right away.
+        if (callLinkStatus.size() == 1 && !callLinkStatus.isClosureCall()) {
+            if (auto* executable = dynamicDowncast<FunctionExecutable>(callLinkStatus[0].executable()); executable && isFunctionAllocatedByInlineStack(executable))
+                callLinkStatus.makeClosureCall();
+        }
     }
+}
+
+bool ByteCodeParser::isFunctionAllocatedByInlineStack(FunctionExecutable* executable)
+{
+    auto contains = [&](std::span<const WriteBarrier<FunctionExecutable>> functions) {
+        for (auto& function : functions) {
+            if (function.get() == executable)
+                return true;
+        }
+        return false;
+    };
+    for (InlineStackEntry* entry = m_inlineStackTop; entry; entry = entry->m_caller) {
+        CodeBlock* codeBlock = entry->m_profiledBlock;
+        if (contains(codeBlock->functionDecls()) || contains(codeBlock->functionExprs()))
+            return true;
+    }
+    return false;
 }
 
 ByteCodeParser::Terminality ByteCodeParser::handleCall(
