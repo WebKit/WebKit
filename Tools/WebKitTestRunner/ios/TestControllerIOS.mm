@@ -645,6 +645,7 @@ void TestController::restoreDefaultKeyboardInputModeIfNeeded()
     // Tests synthesize hardware key events by HID usage, so the resulting characters depend on the current keyboard layout.
     // Restore the default input mode in case it was changed by UIKit itself (e.g. by a keyboard shortcut that switches languages,
     // or upon attaching a hardware keyboard, which makes UIKit pick an input mode that matches the hardware keyboard).
+    // Keep this identifier in sync with KEYBOARD_INPUT_MODE in webkitpy, which makes it current on the simulators it boots.
     static NeverDestroyed<RetainPtr<UIKeyboardInputMode>> defaultKeyboardInputMode = [UIKeyboardInputMode keyboardInputModeWithIdentifier:@"en_US@sw=QWERTY;hw=US"];
     RetainPtr<UIKeyboardInputModeController> inputModeController = [UIKeyboardInputModeController sharedInputModeController];
     if (RetainPtr defaultInputMode = defaultKeyboardInputMode.get(); defaultInputMode && ![[inputModeController currentInputMode].identifier isEqualToString:[defaultInputMode identifier]]) {
