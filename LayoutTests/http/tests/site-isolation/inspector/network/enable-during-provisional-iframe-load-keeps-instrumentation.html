@@ -1,0 +1,66 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/frame-load-rows-test-utilities.js"></script>
+<script src="resources/provisional-load-test-utilities.js"></script>
+<script>
+const crossOriginBase = "http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html";
+
+function navigateFrame(id, query) {
+    document.getElementById(id).src = `${crossOriginBase}?${query}`;
+}
+
+function test() {
+    // Unique per run, so repeated runs in one process don't hit the memory cache.
+    const token = String(Math.random()).slice(2);
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.EnableDuringProvisionalIFrameLoadKeepsInstrumentation");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.EnableDuringProvisionalIFrameLoadKeepsInstrumentation.Commit",
+        description: "Enabling Network while an iframe's load is provisional in a cross-origin frame's process should keep Network events flowing from that process after the load commits and its iframe is removed.",
+        async test() {
+            let remaining = startPhase();
+            let crossOriginFrame = await pollUntil(() => childFrameWithQuery("cross-origin"), remaining());
+            InspectorTest.assert(crossOriginFrame, "Cross-origin frame should be in the frame model.");
+            if (!crossOriginFrame)
+                return;
+
+            let provisionalTarget = await holdProvisionalLoad(`navigateFrame("navigating", "navigating-${token}")`);
+            if (!provisionalTarget)
+                return;
+
+            // Run ProxyingNetworkAgent::enable() again, as a frontend attaching now would, while the cross-origin frame's process also hosts the provisional frame.
+            await WI.backendTarget.NetworkAgent.disable();
+            await WI.backendTarget.NetworkAgent.enable();
+
+            remaining = startPhase();
+            provisionalTarget._resumeIfPaused();
+            let committed = await pollUntil(() => !provisionalTarget.isProvisional, remaining());
+            InspectorTest.expectThat(!!committed, "Provisional load should commit.");
+            if (!committed)
+                return;
+
+            remaining = startPhase();
+            InspectorTest.evaluateInPage(`document.getElementById("navigating").remove()`);
+            let removed = await pollUntil(() => provisionalTarget.isDestroyed, remaining());
+            InspectorTest.expectThat(!!removed, "Committed frame's target should be removed.");
+            if (!removed)
+                return;
+
+            // Removing the committed frame releases one registration of the process, which must not be the cross-origin frame's.
+            let query = `cross-origin-${token}`;
+            let recorder = new FrameLoadRowRecorder;
+            await loadAndExpectDocumentAndScriptResources(recorder, `navigateFrame("cross-origin", "${query}")`, query);
+            recorder.stop();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that enabling Network while an iframe's load is provisional in another process keeps Network events flowing from that process under Site Isolation.</p>
+<iframe id="cross-origin" src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html?cross-origin"></iframe>
+<iframe id="navigating" src="resources/iframe-with-script.html?navigating"></iframe>
+</body>

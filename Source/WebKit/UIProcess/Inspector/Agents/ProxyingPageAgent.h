@@ -79,6 +79,10 @@ public:
     // Retires the protocol ID the frame had in the process it left (the hosting process is part of the ID).
     void frameSwappedOutOfProcess(WebCore::FrameIdentifier, WebCore::ProcessIdentifier oldProcessID);
 
+    // The document request of a discarded provisional load may have made the frontend create a frame under the protocol ID
+    // the frame has in that process, and nothing will commit under it now. Sent only while the Page agent is enabled, like any Page event.
+    void provisionalFrameDiscarded(WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
+
     // PageBackendDispatcherHandler
     CommandResult<void> enable() final;
     CommandResult<void> disable() final;

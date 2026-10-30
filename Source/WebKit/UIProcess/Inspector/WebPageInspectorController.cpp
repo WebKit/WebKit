@@ -363,8 +363,9 @@ void WebPageInspectorController::didCommitProvisionalPage(std::optional<WebCore:
 
     // Migrate per-process inspector instrumentation: the old process no
     // longer hosts the page, so unregister there to keep our message-receiver
-    // count balanced, and register on the new process. Mirrors
-    // didCommitProvisionalFrame.
+    // count balanced, and register on the new process. Unlike a provisional
+    // frame, a provisional page does not register its process when it is created.
+    // FIXME <https://webkit.org/b/328737>: Register it then, so the main document's Network and Page messages are not dropped before commit.
     Ref newProcess = protect(m_inspectedPage)->mainFrame()->process();
 
     if (m_pageAgent && m_pageAgent->isEnabled()) {
@@ -499,12 +500,14 @@ void WebPageInspectorController::didCreateProvisionalFrame(ProvisionalFrameProxy
     constexpr bool isProvisional = true;
     addTarget(makeUnique<FrameInspectorTargetProxy>(protect(provisionalFrame.frame())->frameID(), protect(provisionalFrame.process()), isProvisional));
 
-    // Register page instrumentation for the provisional frame's (possibly brand-new, cross-origin)
-    // process *before* it commits, so the UIProcess ProxyingPageAgent has a message receiver ready
-    // when the child's initial frameNavigated fires. didCommitProvisionalFrame is too late: the
-    // child commits (and emits frameNavigated) in its own process before then. See webkit.org/b/308896.
+    // Register instrumentation for the provisional frame's (possibly brand-new, cross-origin) process
+    // *before* it commits, so the UIProcess agents have a message receiver ready when the child loads
+    // its document and fires its initial frameNavigated. didCommitProvisionalFrame is too late: both
+    // happen in the child's own process before then. See webkit.org/b/308896 and webkit.org/b/328708.
     Ref process = provisionalFrame.process();
     auto pageID = protect(m_inspectedPage)->webPageIDInProcess(process);
+    if (m_networkAgent && m_networkAgent->isEnabled())
+        m_networkAgent->enableInstrumentationForProcess(process, pageID);
     if (m_pageAgent && m_pageAgent->isEnabled())
         m_pageAgent->enableInstrumentationForProcess(process, pageID);
 }
@@ -529,8 +532,12 @@ void WebPageInspectorController::willDestroyProvisionalFrame(const ProvisionalFr
     // is instead carried forward by didCommitProvisionalFrame.) See webkit.org/b/308896.
     Ref process = provisionalFrame.process();
     auto pageID = protect(m_inspectedPage)->webPageIDInProcess(process);
-    if (m_pageAgent && m_pageAgent->isEnabled())
+    if (m_networkAgent && m_networkAgent->isEnabled())
+        m_networkAgent->disableInstrumentationForProcess(process, pageID);
+    if (m_pageAgent && m_pageAgent->isEnabled()) {
         m_pageAgent->disableInstrumentationForProcess(process, pageID);
+        m_pageAgent->provisionalFrameDiscarded(protect(provisionalFrame.frame())->frameID(), process->coreProcessIdentifier());
+    }
 }
 
 void WebPageInspectorController::didCommitProvisionalFrame(WebFrameProxy& frame, WebCore::ProcessIdentifier oldProcessID, std::optional<WebCore::PageIdentifier> oldPageID, WebCore::ProcessIdentifier newProcessID)
@@ -558,26 +565,19 @@ void WebPageInspectorController::didCommitProvisionalFrame(WebFrameProxy& frame,
             targetAgent->targetDestroyed(protect(*oldTarget));
     }
 
-    // Instrument the new process for network events now that the frame has
-    // committed in its final process. Also disable instrumentation for the
-    // old process; the frame no longer lives there.
+    // The new process was registered in didCreateProvisionalFrame, and that registration now belongs to the
+    // committed frame. Re-registering here would double-count it, so only release the old process; the frame
+    // no longer lives there. See webkit.org/b/308896 and webkit.org/b/328708.
     RefPtr oldProcess = WebProcessProxy::processForIdentifier(oldProcessID);
-    Ref process = frame.process();
 
     if (m_networkAgent && m_networkAgent->isEnabled()) {
         if (oldProcess && oldPageID)
             m_networkAgent->disableInstrumentationForProcess(*oldProcess, *oldPageID);
-        if (auto pageID = frame.webPageIDInCurrentProcess())
-            m_networkAgent->enableInstrumentationForProcess(process, *pageID);
     }
 
     if (m_pageAgent && m_pageAgent->isEnabled()) {
         if (oldProcess && oldPageID)
             m_pageAgent->disableInstrumentationForProcess(*oldProcess, *oldPageID);
-        // Unlike the network agent, the page agent already registered the new (committing)
-        // process in didCreateProvisionalFrame -- so the frame's initial Page.frameNavigated
-        // is delivered. Re-registering here would double-count the receiver, so we only
-        // release the old process. See webkit.org/b/308896.
         if (oldProcessID != newProcessID)
             m_pageAgent->frameSwappedOutOfProcess(frameID, oldProcessID);
     }

@@ -177,6 +177,14 @@ void ProxyingPageAgent::frameSwappedOutOfProcess(FrameIdentifier frameID, Proces
     m_frontendDispatcher->frameDetached(IdentifierRegistry::protocolFrameId(frameID, oldProcessID));
 }
 
+void ProxyingPageAgent::provisionalFrameDiscarded(FrameIdentifier frameID, ProcessIdentifier processID)
+{
+    if (!m_enabled)
+        return;
+
+    m_frontendDispatcher->frameDetached(IdentifierRegistry::protocolFrameId(frameID, processID));
+}
+
 // MARK: - Frontend lifecycle
 
 void ProxyingPageAgent::didCreateFrontendAndBackend()
