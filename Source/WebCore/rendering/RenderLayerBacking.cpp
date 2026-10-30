@@ -4032,14 +4032,6 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
     if (m_owningLayer.behavesAsFixed() && m_graphicsLayer->allowsBackingStoreDetaching())
         return false;
 
-#if (PLATFORM(GTK) || PLATFORM(WPE))
-        // GTK and WPE ports don't support rounded rect clipping at TextureMapper level, so they cannot
-        // directly composite images that have border-radius propery. Draw them as non directly composited
-        // content instead. See https://bugs.webkit.org/show_bug.cgi?id=174157.
-        if (renderer().style().border().hasBorderRadius())
-            return false;
-#endif
-
     if (auto* viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer())) {
         auto image = viewTransitionCapture->image();
         if (!image)
