@@ -1624,6 +1624,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void setDeviceOrientation(WebCore::IntDegrees);
     void dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate&);
+    void setUnobscuredSafeAreaInsets(const WebCore::FloatBoxExtent&);
     bool scaleWasSetByUIProcess() const { return m_scaleWasSetByUIProcess; }
     void willStartUserTriggeredZooming();
     void didEndUserTriggeredZooming();

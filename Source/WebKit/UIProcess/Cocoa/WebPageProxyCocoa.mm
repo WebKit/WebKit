@@ -2445,6 +2445,9 @@ void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo&
         return;
 
     protect(m_legacyMainFrameProcess)->send(Messages::ViewUpdateDispatcher::VisibleContentRectUpdate(webPageIDInMainFrameProcess(), visibleContentRectUpdate), 0);
+#if PLATFORM(IOS_FAMILY)
+    updateUnobscuredSafeAreaInsetsInRemotePages(visibleContentRectUpdate.unobscuredSafeAreaInsets());
+#endif
 }
 
 void WebPageProxy::updateVisibleContentRectsLocally(const VisibleContentRectUpdateInfo& visibleContentRectUpdate)
