@@ -10474,6 +10474,9 @@ bool Document::useDarkAppearance([[maybe_unused]] const Style::ComputedStyle* st
             return pageUsesDarkAppearance;
     }
 
+    if (quirks().needsDarkAppearanceWithoutColorSchemeQuirk())
+        return true;
+
     return false;
 }
 

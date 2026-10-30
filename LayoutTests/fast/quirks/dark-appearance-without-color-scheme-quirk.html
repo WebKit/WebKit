@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+"use strict";
+
+function usesDarkAppearanceFor(url)
+{
+    internals.setTopDocumentURLForQuirks(url);
+    return internals.scrollbarUsingDarkAppearance();
+}
+
+for (const url of ["https://www.bbc.co.uk", "https://www.bbc.com"]) {
+    test(() => {
+        assert_true(usesDarkAppearanceFor(url));
+    }, `Dark appearance quirk applies on ${url}`);
+}
+
+test(() => {
+    assert_false(usesDarkAppearanceFor("https://www.example.com"));
+}, "Dark appearance quirk does not apply on unrelated hosts");
+</script>
+</body>
