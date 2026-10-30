@@ -641,6 +641,17 @@ void MediaPlayer::reloadAndResumePlaybackIfNeeded()
     protect(client())->mediaPlayerReloadAndResumePlaybackIfNeeded();
 }
 
+void MediaPlayer::setPlayerPrivate(RefPtr<MediaPlayerPrivateInterface>&& playerPrivate)
+{
+    // m_private is read on the audio render thread by audioSourceProvider(), and this player owns
+    // the only reference. It may only be replaced between mediaPlayerWillInitializeMediaEngine()
+    // and mediaPlayerDidInitializeMediaEngine(), which hold MediaElementAudioSourceNode's process
+    // lock; m_initializingMediaEngine tracks that window.
+    ASSERT(isMainThread());
+    ASSERT(m_initializingMediaEngine);
+    m_private = WTF::move(playerPrivate);
+}
+
 void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
 {
 
@@ -673,12 +684,12 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
     if (!engine) {
         LOG_WITH_STREAM(Media, stream << "MediaPlayer::loadWithNextMediaEngine - no media engine found for type \""_s << contentType().raw() << "\""_s);
         m_currentMediaEngine = engine.get();
-        m_private = nullptr;
+        setPlayerPrivate(nullptr);
     } else if (m_currentMediaEngine.get() != engine.get()) {
         m_currentMediaEngine = engine.get();
         m_attemptedEngines.add(*engine);
         RefPtr playerPrivate = engine->createMediaEnginePlayer(*this);
-        m_private = playerPrivate;
+        setPlayerPrivate(playerPrivate.copyRef());
         if (playerPrivate) {
             protect(client())->mediaPlayerEngineUpdated();
             playerPrivate->setMessageClientForTesting(m_internalMessageClient);
@@ -718,7 +729,7 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
 #endif
         playerPrivate->load(m_url, m_loadOptions);
     } else {
-        m_private = NullMediaPlayerPrivate::create(*this);
+        setPlayerPrivate(NullMediaPlayerPrivate::create(*this));
         CheckedPtr currentMediaEngine = m_currentMediaEngine.get();
         if (!m_activeEngineIdentifier
             && installedMediaEngines().size() > 1
@@ -1480,6 +1491,10 @@ bool MediaPlayer::attemptSniffAndReload()
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
+        // A new load clears m_sniffer through cancelSniffer(), but an already settled promise still
+        // delivers this callback. The result describes a load that is no longer the current one.
+        if (!protectedThis->m_sniffer)
+            return;
         protectedThis->m_sniffer = nullptr;
 
         auto reportOriginalFailure = [&protectedThis] {
@@ -1505,7 +1520,9 @@ bool MediaPlayer::attemptSniffAndReload()
         protectedThis->m_loadOptions.contentType = sniffed;
         protectedThis->m_attemptedEngines.clear();
         protectedThis->m_currentMediaEngine = nullptr;
-        protectedThis->m_private = nullptr;
+        // Clearing m_private here would free the engine while the audio render thread reads it in
+        // audioSourceProvider(). loadWithNextMediaEngine() replaces it under the process lock.
+        protectedThis->cancelLoad();
         protectedThis->loadWithNextMediaEngine(nullptr);
     });
     return true;
