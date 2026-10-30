@@ -128,7 +128,7 @@ static Path pathFromPolygonElement(const SVGPolygonElement& element)
         path.addLineTo(points.at(i)->value());
 
     path.closeSubpath();
-    return path;
+    return Path::createNonTransient(path.segments());
 }
 
 static Path pathFromPolylineElement(const SVGPolylineElement& element)
@@ -143,7 +143,7 @@ static Path pathFromPolylineElement(const SVGPolylineElement& element)
     unsigned size = points.size();
     for (unsigned i = 1; i < size; ++i)
         path.addLineTo(points.at(i)->value());
-    return path;
+    return Path::createNonTransient(path.segments());
 }
 
 static Path pathFromRectElement(const SVGRectElement& element)

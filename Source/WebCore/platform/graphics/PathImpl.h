@@ -95,7 +95,6 @@ public:
     WEBCORE_EXPORT void addObserver(WeakRef<RenderingResourceObserver>&&) const;
 
     virtual bool isTransient() const { return true; }
-    virtual void setNotTransient() { }
 
 protected:
     PathImpl() = default;

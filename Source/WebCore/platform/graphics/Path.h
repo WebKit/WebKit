@@ -52,6 +52,8 @@ public:
     explicit Path(const Vector<FloatPoint>& points);
     WEBCORE_EXPORT Path(Ref<PathImpl>&&);
 
+    static Path createNonTransient(Vector<PathSegment>&&);
+
     WEBCORE_EXPORT bool definitelyEqual(const Path&) const;
 
     void moveTo(const FloatPoint&);
@@ -111,8 +113,6 @@ public:
 
     WEBCORE_EXPORT void ensureImplForTesting();
     WEBCORE_EXPORT const PathImpl* LEGACY_NODELETE asImpl() const;
-
-    void setNotTransient();
 
 private:
     PlatformPathImpl& ensurePlatformPathImpl();

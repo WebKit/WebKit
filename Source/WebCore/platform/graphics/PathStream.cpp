@@ -43,9 +43,9 @@ Ref<PathStream> PathStream::create(PathSegment&& segment)
     return adoptRef(*new PathStream(WTF::move(segment)));
 }
 
-Ref<PathStream> PathStream::create(Vector<PathSegment>&& segments)
+Ref<PathStream> PathStream::create(Vector<PathSegment>&& segments, IsTransient isTransient)
 {
-    return adoptRef(*new PathStream(WTF::move(segments)));
+    return adoptRef(*new PathStream(WTF::move(segments), isTransient));
 }
 
 Ref<PathStream> PathStream::create(const Vector<PathSegment>& segments)
@@ -67,8 +67,9 @@ Ref<PathStream> PathStream::create(const Vector<FloatPoint>& points)
     return stream;
 }
 
-PathStream::PathStream(Vector<PathSegment>&& segments)
+PathStream::PathStream(Vector<PathSegment>&& segments, IsTransient isTransient)
     : m_segments(WTF::move(segments))
+    , m_isTransient(isTransient)
 {
 }
 

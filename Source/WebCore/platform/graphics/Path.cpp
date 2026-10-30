@@ -139,10 +139,11 @@ const PathImpl* Path::asImpl() const
     return nullptr;
 }
 
-void Path::setNotTransient()
+Path Path::createNonTransient(Vector<PathSegment>&& segments)
 {
-    if (RefPtr impl = asImpl())
-        impl->setNotTransient();
+    if (segments.size() <= 1)
+        return Path { WTF::move(segments) };
+    return Path { PathStream::create(WTF::move(segments), IsTransient::No) };
 }
 
 static FloatRoundedRect calculateEvenRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii)

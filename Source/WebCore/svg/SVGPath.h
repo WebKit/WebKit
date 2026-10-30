@@ -74,10 +74,8 @@ public:
 
     Path path() const
     {
-        if (!m_path) {
+        if (!m_path)
             m_path = buildPathFromByteStream(pathByteStream());
-            m_path->setNotTransient();
-        }
         return *m_path;
     }
 

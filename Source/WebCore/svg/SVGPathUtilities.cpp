@@ -91,6 +91,7 @@ Path buildPathFromByteStream(const SVGPathByteStream& stream)
     SVGPathBuilder builder(path);
     SVGPathByteStreamSource source(stream);
     SVGPathParser::parse(source, builder);
+    path = Path::createNonTransient(path.segments());
     stream.cachePath(path);
     return path;
 }

@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+enum class IsTransient : bool { No, Yes };
+
 class PathStream final : public PathImpl {
     WTF_MAKE_TZONE_ALLOCATED(PathStream);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PathStream);
@@ -41,7 +43,7 @@ public:
     static Ref<PathStream> LEGACY_NODELETE create();
     static Ref<PathStream> create(PathSegment&&);
     static Ref<PathStream> create(const Vector<FloatPoint>&);
-    static Ref<PathStream> LEGACY_NODELETE create(Vector<PathSegment>&&);
+    static Ref<PathStream> LEGACY_NODELETE create(Vector<PathSegment>&&, IsTransient = IsTransient::Yes);
 
     bool definitelyEqual(const PathImpl&) const final;
     Ref<PathImpl> copy() const final;
@@ -77,13 +79,12 @@ public:
     static FloatRect computeBoundingRect(std::span<const PathSegment>);
     static bool computeHasSubpaths(std::span<const PathSegment>);
 
-    bool isTransient() const final { return m_isTransient; }
-    void setNotTransient() final { m_isTransient = false; }
+    bool isTransient() const final { return m_isTransient == IsTransient::Yes; }
 
 private:
     PathStream() = default;
     PathStream(PathSegment&&);
-    PathStream(Vector<PathSegment>&&);
+    PathStream(Vector<PathSegment>&&, IsTransient);
     PathStream(const Vector<PathSegment>&);
 
     static Ref<PathStream> LEGACY_NODELETE create(const Vector<PathSegment>&);
@@ -100,7 +101,7 @@ private:
     Vector<PathSegment>& segments() { return m_segments; }
 
     Vector<PathSegment> m_segments;
-    bool m_isTransient { true };
+    const IsTransient m_isTransient { IsTransient::Yes };
 };
 
 } // namespace WebCore
