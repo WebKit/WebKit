@@ -661,9 +661,8 @@ protected:
 
     static LayoutUnit blockSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, double aspectRatioValue, BoxSizing, LayoutUnit inlineSize, const Style::AspectRatio&, bool isRenderReplaced);
 
-    // Applies the min/max sizes transferred through the aspect ratio and the box's min-width and max-width to the min-content
-    // and max-content widths of its content box.
-    void constrainIntrinsicLogicalWidthsByMinMax(LayoutUnit& minIntrinsicLogicalWidth, LayoutUnit& maxIntrinsicLogicalWidth) const;
+    // Applies the box's min-width and max-width to its min-content and max-content contributions.
+    virtual void constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& minContentLogicalWidthContribution, LayoutUnit& maxContentLogicalWidthContribution) const;
 
     bool isAspectRatioDegenerate(double aspectRatio) const { return !aspectRatio || isnan(aspectRatio); }
 

@@ -251,24 +251,19 @@ std::pair<LayoutUnit, LayoutUnit> RenderListBox::computeIntrinsicLogicalWidthCon
     // Nested style recal do not fire post recal callbacks. see webkit.org/b/153767
     ASSERT(!m_optionsChanged || Style::postResolutionCallbacksAreSuspended());
 
-    auto [minContentLogicalWidth, maxContentLogicalWidth] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
-        if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositive()) {
-            auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
-            return { logicalWidth, logicalWidth };
-        }
+    if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositive()) {
+        auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
+        return { logicalWidth, logicalWidth };
+    }
 
-        auto [minLogicalWidth, maxLogicalWidth] = computeIntrinsicLogicalWidths();
-        auto& logicalWidth = style().logicalWidth();
-        if (logicalWidth.isCalcSize() && (logicalWidth.isMinContent() || logicalWidth.isMaxContent())) {
-            // A calc-size() contributes the result of its calculation, not the size of its basis.
-            auto keywordLogicalWidth = logicalWidth.isMaxContent() ? maxLogicalWidth : minLogicalWidth;
-            auto calcSizeLogicalWidth = resolveCalcSizeLogicalWidth(logicalWidth.calcSize(), keywordLogicalWidth, 0_lu);
-            return { calcSizeLogicalWidth, calcSizeLogicalWidth };
-        }
-        return { minLogicalWidth, maxLogicalWidth };
-    }();
-
-    constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
+    auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicLogicalWidths();
+    auto& logicalWidth = style().logicalWidth();
+    if (logicalWidth.isCalcSize() && (logicalWidth.isMinContent() || logicalWidth.isMaxContent())) {
+        // A calc-size() contributes the result of its calculation, not the size of its basis.
+        auto keywordLogicalWidth = logicalWidth.isMaxContent() ? maxContentLogicalWidth : minContentLogicalWidth;
+        auto calcSizeLogicalWidth = resolveCalcSizeLogicalWidth(logicalWidth.calcSize(), keywordLogicalWidth, 0_lu);
+        return { calcSizeLogicalWidth, calcSizeLogicalWidth };
+    }
     return { minContentLogicalWidth, maxContentLogicalWidth };
 }
 

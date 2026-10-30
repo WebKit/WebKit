@@ -215,16 +215,11 @@ std::pair<LayoutUnit, LayoutUnit> RenderTextControl::computeIntrinsicLogicalWidt
     if (style().fieldSizing() == FieldSizing::Content)
         return RenderBlockFlow::computeIntrinsicLogicalWidthContributions();
 
-    auto [minContentLogicalWidth, maxContentLogicalWidth] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
-        if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero()) {
-            auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
-            return { logicalWidth, logicalWidth };
-        }
-        return computeIntrinsicLogicalWidths();
-    }();
-
-    constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
-    return { minContentLogicalWidth, maxContentLogicalWidth };
+    if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero()) {
+        auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
+        return { logicalWidth, logicalWidth };
+    }
+    return computeIntrinsicLogicalWidths();
 }
 
 void RenderTextControl::layoutExcludedChildren(RelayoutChildren relayoutChildren)

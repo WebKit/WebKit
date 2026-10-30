@@ -2374,27 +2374,22 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeIntrinsicLogicalWidthContr
 
     auto& styleToUse = style();
     auto logicalWidth = overridingLogicalWidthForFlexBasisComputation().value_or(styleToUse.logicalWidth());
-    auto [minContentLogicalWidth, maxContentLogicalWidth] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
-        if (auto contribution = fixedLogicalWidthContribution(logicalWidth))
-            return { *contribution, *contribution };
+    if (auto contribution = fixedLogicalWidthContribution(logicalWidth))
+        return { *contribution, *contribution };
 
-        if (shouldComputeLogicalWidthFromAspectRatio()) {
-            auto maxLogicalWidth = std::max(0_lu, computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
-            auto minLogicalWidth = maxLogicalWidth;
-            applyAutomaticContentBasedMinimumSize(minLogicalWidth, maxLogicalWidth);
-            return { minLogicalWidth, maxLogicalWidth };
-        }
+    if (shouldComputeLogicalWidthFromAspectRatio()) {
+        auto maxContentLogicalWidth = std::max(0_lu, computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
+        auto minContentLogicalWidth = maxContentLogicalWidth;
+        applyAutomaticContentBasedMinimumSize(minContentLogicalWidth, maxContentLogicalWidth);
+        return { minContentLogicalWidth, maxContentLogicalWidth };
+    }
 
-        auto [minLogicalWidth, maxLogicalWidth] = computeIntrinsicLogicalWidths();
-        if (overridingLogicalWidthForFlexBasisComputation() && logicalWidth.isCalcSize() && logicalWidth.isAuto()) {
-            // A flex-basis used as the main size, where `auto` means the width property rather than the width this box would otherwise take.
-            std::tie(minLogicalWidth, maxLogicalWidth) = logicalWidthContributionsForSize(styleToUse.logicalWidth(), minLogicalWidth, maxLogicalWidth);
-        }
-        return logicalWidthContributionsForSize(logicalWidth, minLogicalWidth, maxLogicalWidth);
-    }();
-
-    constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
-    return { minContentLogicalWidth, maxContentLogicalWidth };
+    auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicLogicalWidths();
+    if (overridingLogicalWidthForFlexBasisComputation() && logicalWidth.isCalcSize() && logicalWidth.isAuto()) {
+        // A flex-basis used as the main size, where `auto` means the width property rather than the width this box would otherwise take.
+        std::tie(minContentLogicalWidth, maxContentLogicalWidth) = logicalWidthContributionsForSize(styleToUse.logicalWidth(), minContentLogicalWidth, maxContentLogicalWidth);
+    }
+    return logicalWidthContributionsForSize(logicalWidth, minContentLogicalWidth, maxContentLogicalWidth);
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeBlockIntrinsicLogicalWidths() const

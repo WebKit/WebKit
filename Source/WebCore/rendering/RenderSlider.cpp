@@ -90,16 +90,11 @@ std::pair<LayoutUnit, LayoutUnit> RenderSlider::computeIntrinsicLogicalWidths() 
 
 std::pair<LayoutUnit, LayoutUnit> RenderSlider::computeIntrinsicLogicalWidthContributions()
 {
-    auto [minContentLogicalWidth, maxContentLogicalWidth] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
-        if (auto fixedLogicalWidth = style().logicalWidth().tryFixed()) {
-            auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
-            return { logicalWidth, logicalWidth };
-        }
-        return computeIntrinsicLogicalWidths();
-    }();
-
-    constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
-    return { minContentLogicalWidth, maxContentLogicalWidth };
+    if (auto fixedLogicalWidth = style().logicalWidth().tryFixed()) {
+        auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
+        return { logicalWidth, logicalWidth };
+    }
+    return computeIntrinsicLogicalWidths();
 }
 
 bool RenderSlider::inDragMode() const

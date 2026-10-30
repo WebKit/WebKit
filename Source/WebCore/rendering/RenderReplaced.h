@@ -133,6 +133,7 @@ private:
     bool canHaveChildren() const override { return false; }
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() final;
+    void constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& minContentLogicalWidthContribution, LayoutUnit& maxContentLogicalWidthContribution) const final;
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) { }
 
     RepaintRects localRectsForRepaint(RepaintOutlineBounds) const override;

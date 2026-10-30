@@ -283,7 +283,7 @@ RenderMathMLBlock::SizeAppliedToMathContent RenderMathMLBlock::sizeAppliedToMath
     CheckedRef style = this->style();
     auto usedZoom = style->usedZoomForLength();
 
-    // The intrinsic width contributions apply min-width and max-width themselves (see intrinsicLogicalWidthContributionsForMathContent()).
+    // The intrinsic width contributions apply min-width and max-width when they are computed (see constrainIntrinsicLogicalWidthContributionsByMinMax()).
     if (phase == LayoutPhase::Layout) {
         // FIXME: Resolve percentages and sizing keywords.
         if (auto fixedLogicalMinWidth = style->logicalMinWidth().tryFixed())
@@ -321,10 +321,8 @@ RenderMathMLBlock::SizeAppliedToMathContent RenderMathMLBlock::sizeAppliedToMath
 std::pair<LayoutUnit, LayoutUnit> RenderMathMLBlock::intrinsicLogicalWidthContributionsForMathContent(LayoutUnit mathContentLogicalWidth)
 {
     ASSERT(hasInvalidContentLogicalWidths());
-    auto minContentLogicalWidth = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth).logicalWidth.value_or(mathContentLogicalWidth);
-    auto maxContentLogicalWidth = minContentLogicalWidth;
-    constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
-    return { minContentLogicalWidth, maxContentLogicalWidth };
+    auto logicalWidth = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth).logicalWidth.value_or(mathContentLogicalWidth);
+    return { logicalWidth, logicalWidth };
 }
 
 LayoutUnit RenderMathMLBlock::applySizeToMathContent(LayoutPhase phase, const SizeAppliedToMathContent& sizes)

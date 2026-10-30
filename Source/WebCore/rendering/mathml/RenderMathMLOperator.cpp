@@ -221,17 +221,24 @@ std::pair<LayoutUnit, LayoutUnit> RenderMathMLOperator::computeIntrinsicLogicalW
             float glyphWidth = data.font ? protect(data.font)->widthForGlyph(data.glyph) : 0;
             preferredWidth -= std::min(LayoutUnit(glyphWidth), preferredWidth + borderAndPaddingLogicalWidth());
         }
-    } else {
-        // The operator spacing goes around the operator's box, so min-width and max-width don't apply to it.
-        auto minContentLogicalWidth = m_mathOperator.maxPreferredWidth();
-        preferredWidth = minContentLogicalWidth;
-        constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, preferredWidth);
-    }
+    } else
+        preferredWidth = m_mathOperator.maxPreferredWidth();
 
     // FIXME: The spacing should be added to the whole embellished operator (https://webkit.org/b/124831).
     // FIXME: The spacing should only be added inside (perhaps inferred) mrow (http://www.w3.org/TR/MathML/chapter3.html#presm.opspacing).
     preferredWidth = leadingSpace() + preferredWidth + trailingSpace();
     return { preferredWidth, preferredWidth };
+}
+
+void RenderMathMLOperator::constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& minContentLogicalWidthContribution, LayoutUnit& maxContentLogicalWidthContribution) const
+{
+    // The operator spacing goes around the operator's box, so min-width and max-width don't apply to it.
+    auto spacing = leadingSpace() + trailingSpace();
+    minContentLogicalWidthContribution -= spacing;
+    maxContentLogicalWidthContribution -= spacing;
+    RenderMathMLToken::constrainIntrinsicLogicalWidthContributionsByMinMax(minContentLogicalWidthContribution, maxContentLogicalWidthContribution);
+    minContentLogicalWidthContribution += spacing;
+    maxContentLogicalWidthContribution += spacing;
 }
 
 void RenderMathMLOperator::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit pageLogicalHeight)

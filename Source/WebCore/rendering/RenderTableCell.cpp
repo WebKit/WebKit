@@ -228,22 +228,26 @@ std::pair<LayoutUnit, LayoutUnit> RenderTableCell::computeIntrinsicLogicalWidthC
     auto overridingLogicalHeight = this->overridingBorderBoxLogicalHeight();
     if (overridingLogicalHeight)
         setOverridingBorderBoxLogicalHeight({ });
-    auto [minContentLogicalWidth, maxContentLogicalWidth] = RenderBlockFlow::computeIntrinsicLogicalWidthContributions();
+    auto contributions = RenderBlockFlow::computeIntrinsicLogicalWidthContributions();
     if (overridingLogicalHeight)
         setOverridingBorderBoxLogicalHeight(*overridingLogicalHeight);
+    return contributions;
+}
+
+void RenderTableCell::constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& minContentLogicalWidthContribution, LayoutUnit& maxContentLogicalWidthContribution) const
+{
+    RenderBlockFlow::constrainIntrinsicLogicalWidthContributionsByMinMax(minContentLogicalWidthContribution, maxContentLogicalWidthContribution);
 
     if (!element() || !document().inQuirksMode() || !element()->hasAttributeWithoutSynchronization(nowrapAttr))
-        return { minContentLogicalWidth, maxContentLogicalWidth };
+        return;
 
     auto [ logicalWidth, usedZoom ] = styleOrColLogicalWidth();
     if (auto fixedLogicalWidth = logicalWidth.tryFixed()) {
         // In quirks mode, when nowrap is set on a cell that also has an explicit fixed width,
         // WinIE/Moz treat the fixed width as the minimum width of the cell. Affected the top
         // of hiptop.com.
-        auto borderBoxLogicalWidth = adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit(fixedLogicalWidth->resolveZoom(usedZoom)));
-        minContentLogicalWidth = std::max(borderBoxLogicalWidth - borderAndPaddingLogicalWidth(), minContentLogicalWidth);
+        minContentLogicalWidthContribution = std::max(adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit(fixedLogicalWidth->resolveZoom(usedZoom))), minContentLogicalWidthContribution);
     }
-    return { minContentLogicalWidth, maxContentLogicalWidth };
 }
 
 

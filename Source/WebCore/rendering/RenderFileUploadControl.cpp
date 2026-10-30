@@ -314,16 +314,11 @@ std::pair<LayoutUnit, LayoutUnit> RenderFileUploadControl::computeIntrinsicLogic
 {
     ASSERT(hasInvalidContentLogicalWidths());
 
-    auto [minContentLogicalWidth, maxContentLogicalWidth] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
-        if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositive()) {
-            auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
-            return { logicalWidth, logicalWidth };
-        }
-        return computeIntrinsicLogicalWidths();
-    }();
-
-    constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
-    return { minContentLogicalWidth, maxContentLogicalWidth };
+    if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositive()) {
+        auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
+        return { logicalWidth, logicalWidth };
+    }
+    return computeIntrinsicLogicalWidths();
 }
 
 PositionWithAffinity RenderFileUploadControl::positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*)

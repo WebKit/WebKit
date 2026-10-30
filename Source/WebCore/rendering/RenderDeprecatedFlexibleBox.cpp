@@ -268,16 +268,11 @@ std::pair<LayoutUnit, LayoutUnit> RenderDeprecatedFlexibleBox::computeIntrinsicL
 {
     ASSERT(hasInvalidContentLogicalWidths());
 
-    auto [minContentLogicalWidth, maxContentLogicalWidth] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
-        if (auto fixedWidth = style().width().tryFixed(); fixedWidth && fixedWidth->isPositive()) {
-            auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedWidth);
-            return { logicalWidth, logicalWidth };
-        }
-        return computeIntrinsicLogicalWidths();
-    }();
-
-    constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
-    return { minContentLogicalWidth, maxContentLogicalWidth };
+    if (auto fixedWidth = style().width().tryFixed(); fixedWidth && fixedWidth->isPositive()) {
+        auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedWidth);
+        return { logicalWidth, logicalWidth };
+    }
+    return computeIntrinsicLogicalWidths();
 }
 
 // Use an inline capacity of 8, since flexbox containers usually have less than 8 children.

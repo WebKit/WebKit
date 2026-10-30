@@ -90,10 +90,8 @@ std::pair<LayoutUnit, LayoutUnit> RenderMathMLToken::computeIntrinsicLogicalWidt
     if (m_mathVariantCodePoint) {
         auto mathVariantGlyph = protect(style().fontCascade())->glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
         if (mathVariantGlyph.font) {
-            LayoutUnit minContentLogicalWidth { protect(mathVariantGlyph.font)->widthForGlyph(mathVariantGlyph.glyph) };
-            auto maxContentLogicalWidth = minContentLogicalWidth;
-            constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
-            return { minContentLogicalWidth, maxContentLogicalWidth };
+            LayoutUnit glyphWidth { protect(mathVariantGlyph.font)->widthForGlyph(mathVariantGlyph.glyph) };
+            return { glyphWidth, glyphWidth };
         }
     }
 

@@ -1038,47 +1038,65 @@ std::pair<LayoutUnit, LayoutUnit> RenderReplaced::computeIntrinsicLogicalWidthCo
             applyTransferredMinMaxSizesFromAspectRatio(minContentLogicalWidth, maxContentLogicalWidth);
     }
 
+    // A percentage width or max-width resolves against zero here, which makes the min-content contribution zero (CSS Sizing 3 section 5.2.1).
     auto& styleToUse = style();
     if (styleToUse.logicalWidth().isPercentOrCalculated() || styleToUse.logicalMaxWidth().isPercentOrCalculated())
         minContentLogicalWidth = 0_lu;
 
-    auto applyExplicitMinMaxWidthConstraints = [&] {
-        if (shouldIgnoreLogicalMinMaxWidthSizes())
-            return;
+    // computeAspectRatioAdjustedIntrinsicLogicalWidths() can return a negative width.
+    return { std::max(minContentLogicalWidth, 0_lu), std::max(maxContentLogicalWidth, 0_lu) };
+}
 
-        // Resolve the used min/max width, then clamp by max-width before min-width so that min-width
-        // wins when min > max (CSS 2.1 section 10.4). A min-content/max-content keyword min-width floors
-        // the contribution by the box's own min-content/max-content size; this matters for a
-        // percentage-width replaced element, whose min-content contribution is resolved against zero
-        // (CSS Sizing 3 section 5.2.1) and is then floored by the minimum size in its own axis.
-        // Mirrors RenderBox::constrainIntrinsicLogicalWidthsByMinMax().
-        auto& logicalMinWidth = styleToUse.logicalMinWidth();
+void RenderReplaced::constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& minContentLogicalWidthContribution, LayoutUnit& maxContentLogicalWidthContribution) const
+{
+    if (shouldIgnoreLogicalMinMaxWidthSizes())
+        return;
 
-        auto usedMaxLogicalWidth = [&] -> LayoutUnit {
-            if (auto fixedLogicalMaxWidth = styleToUse.logicalMaxWidth().tryFixed())
-                return adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalMaxWidth);
+    auto& style = this->style();
+    auto& logicalMinWidth = style.logicalMinWidth();
+    auto& logicalMaxWidth = style.logicalMaxWidth();
+    if (logicalMinWidth.isAuto() && logicalMaxWidth.isNone())
+        return;
+
+    // min-width and max-width apply to the content box. A percentage doesn't resolve here (CSS Sizing 3 section 5.2.1).
+    auto borderAndPadding = borderAndPaddingLogicalWidth();
+    auto minLogicalWidth = minContentLogicalWidthContribution - borderAndPadding;
+    auto maxLogicalWidth = maxContentLogicalWidthContribution - borderAndPadding;
+
+    auto usedMaxLogicalWidth = [&] -> LayoutUnit {
+        if (logicalMaxWidth.isNone() || logicalMaxWidth.isPercentOrCalculated())
             return LayoutUnit::max();
-        }();
+        // A keyword maximum doesn't apply to a percentage width, whose min-content contribution resolves against zero. With an auto
+        // width, the contributions are the box's own min-content/max-content sizes, which include the min/max sizes transferred
+        // through the aspect ratio: an indefinite maximum doesn't cap those (CSS Sizing 4 section 5.3).
+        if (logicalMaxWidth.isMinContent() || logicalMaxWidth.isMaxContent()) {
+            if (style.logicalWidth().isPercentOrCalculated())
+                return LayoutUnit::max();
+            if (style.logicalWidth().isAuto())
+                return logicalMaxWidth.isMaxContent() ? maxLogicalWidth : minLogicalWidth;
+        }
+        return computeReplacedLogicalWidthUsing(logicalMaxWidth);
+    }();
 
-        auto usedMinLogicalWidth = [&] -> LayoutUnit {
-            if (auto fixedLogicalMinWidth = logicalMinWidth.tryFixed())
-                return adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalMinWidth);
-            if (logicalMinWidth.isMaxContent())
-                return maxContentLogicalWidth;
-            if (logicalMinWidth.isMinContent())
-                return minContentLogicalWidth;
+    // A min-content/max-content keyword min-width floors the contribution by the box's own min-content/max-content size;
+    // this matters for a percentage-width replaced element, whose min-content contribution is resolved against zero
+    // (CSS Sizing 3 section 5.2.1) and is then floored by the minimum size in its own axis.
+    auto usedMinLogicalWidth = [&] -> LayoutUnit {
+        if (logicalMinWidth.isMaxContent())
+            return maxLogicalWidth;
+        if (logicalMinWidth.isMinContent())
+            return minLogicalWidth;
+        if (logicalMinWidth.isAuto() || logicalMinWidth.isPercentOrCalculated())
             return { };
-        }();
+        return computeReplacedLogicalWidthUsing(logicalMinWidth);
+    }();
 
-        maxContentLogicalWidth = std::min(maxContentLogicalWidth, usedMaxLogicalWidth);
-        minContentLogicalWidth = std::min(minContentLogicalWidth, usedMaxLogicalWidth);
+    // Clamp by max-width before min-width so that min-width wins when min > max (CSS 2.1 section 10.4).
+    maxLogicalWidth = std::max(std::min(maxLogicalWidth, usedMaxLogicalWidth), usedMinLogicalWidth);
+    minLogicalWidth = std::max(std::min(minLogicalWidth, usedMaxLogicalWidth), usedMinLogicalWidth);
 
-        maxContentLogicalWidth = std::max(maxContentLogicalWidth, usedMinLogicalWidth);
-        minContentLogicalWidth = std::max(minContentLogicalWidth, usedMinLogicalWidth);
-    };
-
-    applyExplicitMinMaxWidthConstraints();
-    return { minContentLogicalWidth, maxContentLogicalWidth };
+    minContentLogicalWidthContribution = minLogicalWidth + borderAndPadding;
+    maxContentLogicalWidthContribution = maxLogicalWidth + borderAndPadding;
 }
 
 PositionWithAffinity RenderReplaced::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)
@@ -1291,15 +1309,14 @@ void RenderReplaced::computeReplacedOutOfFlowPositionedLogicalHeight(LogicalExte
 
 LayoutUnit RenderReplaced::computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, IsComputingIntrinsicSize isComputingIntrinsicSize) const
 {
-    if (shouldIgnoreLogicalMinMaxWidthSizes())
+    // The intrinsic width contributions apply min-width and max-width once, in constrainIntrinsicLogicalWidthContributionsByMinMax().
+    if (isComputingIntrinsicSize == IsComputingIntrinsicSize::Yes || shouldIgnoreLogicalMinMaxWidthSizes())
         return logicalWidth;
 
     auto& logicalMinWidth = style().logicalMinWidth();
     auto& logicalMaxWidth = style().logicalMaxWidth();
-    bool useLogicalWidthForMinWidth = (isComputingIntrinsicSize == IsComputingIntrinsicSize::Yes && logicalMinWidth.isPercentOrCalculated());
-    bool useLogicalWidthForMaxWidth = (isComputingIntrinsicSize == IsComputingIntrinsicSize::Yes && logicalMaxWidth.isPercentOrCalculated()) || logicalMaxWidth.isNone();
-    auto minLogicalWidth =  useLogicalWidthForMinWidth ? logicalWidth : computeReplacedLogicalWidthUsing(logicalMinWidth);
-    auto maxLogicalWidth =  useLogicalWidthForMaxWidth ? logicalWidth : computeReplacedLogicalWidthUsing(logicalMaxWidth);
+    auto minLogicalWidth = computeReplacedLogicalWidthUsing(logicalMinWidth);
+    auto maxLogicalWidth = logicalMaxWidth.isNone() ? logicalWidth : computeReplacedLogicalWidthUsing(logicalMaxWidth);
     return std::max(minLogicalWidth, std::min(logicalWidth, maxLogicalWidth));
 }
 
