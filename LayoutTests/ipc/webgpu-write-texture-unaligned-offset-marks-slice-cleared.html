@@ -1,0 +1,213 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true WebGPUEnabled=true ] -->
+<body>
+<p>This test passes if a RemoteQueue::WriteTexture() whose dataLayout.offset is not a multiple of the texel block size does not record the destination slice as previously-cleared without writing it.</p>
+<pre id="log"></pre>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+
+const POISON = 0x41; // Stands in for whatever the recycled IOSurface happened to contain.
+const WRITE = 0xBB;  // Only present if the unaligned-offset write actually landed.
+const SIZE = 128, BYTES_PER_ROW = 512, IMAGE_SIZE = BYTES_PER_ROW * SIZE;
+
+function log(s)
+{
+    document.getElementById('log').textContent += s + '\n';
+}
+
+async function run()
+{
+    if (!window.IPC)
+        return 'PASS';
+
+    const { CoreIPC, ArgumentSerializer } = await import('./coreipc.js');
+    CoreIPC.default_timeout = 10;
+
+    // The GPU process only exposes WebGPU once the page has negotiated an adapter.
+    if (!await navigator.gpu?.requestAdapter())
+        return 'FAIL: navigator.gpu.requestAdapter() did not resolve with an adapter';
+
+    let nextId = (Math.floor(Math.random() * 100000) + 1) * 100000;
+    const freshId = () => ++nextId;
+
+    const renderingBackend = freshId();
+    const renderingBackendStream = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+        renderingBackendIdentifier: renderingBackend,
+        connectionHandle: renderingBackendStream,
+    });
+    const didInitialize = renderingBackendStream.connection.waitForMessage(renderingBackend, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 5);
+    if (!didInitialize)
+        return 'FAIL: no RemoteRenderingBackendProxy::DidInitialize';
+    renderingBackendStream.connection.setSemaphores(didInitialize[0].value, didInitialize[1].value);
+
+    const gpu = freshId();
+    const gpuStream = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateGPU(0, {
+        identifier: gpu,
+        renderingBackendIdentifier: renderingBackend,
+        serverConnection: gpuStream,
+    });
+    const wasCreated = gpuStream.connection.waitForMessage(gpu, IPC.messages.RemoteGPUProxy_WasCreated.name, 5);
+    if (!wasCreated)
+        return 'FAIL: no RemoteGPUProxy::WasCreated';
+    gpuStream.connection.setSemaphores(wasCreated[1].value, wasCreated[2].value);
+
+    const adapter = freshId();
+    let gotAdapter = false;
+    gpuStream.newInterface('RemoteGPU', gpu).RequestAdapter({
+        options: { powerPreference: {}, forceFallbackAdapter: false, xrCompatible: false },
+        identifier: adapter,
+    }, () => { gotAdapter = true; });
+    if (!gotAdapter)
+        return 'FAIL: no reply to RemoteGPU::RequestAdapter';
+
+    const device = freshId(), queueIdentifier = freshId();
+    let gotDevice = false;
+    gpuStream.newInterface('RemoteAdapter', adapter).RequestDevice({
+        deviceDescriptor: { label: '', requiredFeatures: [], requiredLimits: [] },
+        identifier: device,
+        queueIdentifier,
+    }, () => { gotDevice = true; });
+    if (!gotDevice)
+        return 'FAIL: no reply to RemoteAdapter::RequestDevice';
+
+    const iface = (name, identifier) => gpuStream.newInterface(name, identifier);
+    const remoteDevice = iface('RemoteDevice', device);
+    const queue = iface('RemoteQueue', queueIdentifier);
+
+    // Most of the WebGPU scalars are alias-structs in some configurations and bare scalars in others.
+    const alias = (type, value) => (type in CoreIPC.typeInfo) ? { alias: value } : value;
+    const coordinate = (value) => alias('WebCore::WebGPU::IntegerCoordinate', value);
+    const size32 = (value) => alias('WebCore::WebGPU::Size32', value);
+    const size64 = (value) => alias('WebCore::WebGPU::Size64', value);
+    const extent3D = (width, height, depthOrArrayLayers) => alias('WebKit::WebGPU::Extent3D', { variantIndex: 1, variant: { width: coordinate(width), height: coordinate(height), depthOrArrayLayers: coordinate(depthOrArrayLayers) } });
+    const origin3D = (x, y, z) => ({ optionalValue: alias('WebKit::WebGPU::Origin3D', { variantIndex: 1, variant: { x: coordinate(x), y: coordinate(y), z: coordinate(z) } }) });
+    const wholeTexture = (texture) => ({ texture, mipLevel: coordinate(0), origin: origin3D(0, 0, 0), aspect: 0 /* All */ });
+    const wholeImage = (offset) => ({ offset: size64(offset), bytesPerRow: { optionalValue: size32(BYTES_PER_ROW) }, rowsPerImage: { optionalValue: size32(SIZE) } });
+
+    function awaitReply(remoteInterface, name, args)
+    {
+        return new Promise((resolve, reject) => {
+            let settled = false;
+            remoteInterface[name](args, (reply) => { settled = true; resolve(reply); });
+            const start = Date.now();
+            (function poll() {
+                if (settled)
+                    return;
+                if (Date.now() - start > 10000)
+                    return reject(new Error(`${name}: no reply`));
+                setTimeout(poll, 25);
+            })();
+        });
+    }
+
+    // WriteTextureWithCopy() carries its source as a Vector<uint8_t>, which the argument
+    // serializer only encodes as a count followed by the raw bytes.
+    function writeTextureWithCopy(destination, bytes, dataLayout, size)
+    {
+        const definition = CoreIPC.messages['RemoteQueue_WriteTextureWithCopy'];
+        gpuStream.connection.sendMessage(queueIdentifier, definition.name, [
+            ArgumentSerializer.serializeArgument(definition.arguments[0], destination),
+            { value: bytes.length, type: 'uint64_t' },
+            bytes,
+            ArgumentSerializer.serializeArgument(definition.arguments[2], dataLayout),
+            ArgumentSerializer.serializeArgument(definition.arguments[3], size),
+        ]);
+    }
+
+    // A presentation context hands out textures backed by recycled IOSurfaces, and
+    // PresentationContextIOSurface::getCurrentTexture() resets previouslyCleared() to false on
+    // every acquisition precisely so that the next consumer lazily re-clears the stale content.
+    const compositorIntegration = freshId(), presentationContext = freshId();
+    iface('RemoteGPU', gpu).CreateCompositorIntegration({ identifier: compositorIntegration });
+    iface('RemoteGPU', gpu).CreatePresentationContext({
+        descriptor: { label: '', compositorIntegration },
+        identifier: presentationContext,
+    });
+    try {
+        iface('RemoteCompositorIntegration', compositorIntegration).RecreateRenderBuffers({
+            width: SIZE, height: SIZE,
+            destinationColorSpace: { serializableColorSpace: { alias: { optionalValue: { m_cgColorSpace: { alias: { variantIndex: 0, variant: 19 /* ColorSpace::SRGB */ } } } } } },
+            alphaMode: 0, // AlphaPremultiplication::Premultiplied
+            textureFormat: 21, // TextureFormat::Rgba8unorm
+            bufferCount: 2,
+            deviceIdentifier: device,
+        }, () => { });
+    } catch (error) {
+        // The reply carries MachSendRights, which the reply parser cannot rebuild; the message
+        // itself was sent and handled.
+        if (error?.name === 'SerializationError')
+            return `FAIL: RecreateRenderBuffers: ${error.message}`;
+    }
+    iface('RemotePresentationContext', presentationContext).Configure({ configuration: {
+        device,
+        format: 21, // TextureFormat::Rgba8unorm
+        usage: alias('WebCore::WebGPU::TextureUsageFlags', 1 | 2 | 16), // CopySrc | CopyDst | RenderAttachment
+        viewFormats: [],
+        colorSpace: alias('WebCore::WebGPU::PredefinedColorSpace', 0), // srgb
+        toneMappingMode: 0, // CanvasToneMappingMode::Standard
+        compositingAlphaMode: 1, // CanvasAlphaMode::Premultiplied
+        reportValidationErrors: true,
+    } });
+
+    // Fill the IOSurface through a well-formed full-coverage write, then present and re-acquire
+    // it: the same IOSurface comes back with previouslyCleared() honestly false while it still
+    // holds the poison bytes.
+    const poisonedTexture = freshId();
+    iface('RemotePresentationContext', presentationContext).GetCurrentTexture({ identifier: poisonedTexture, frameIndex: 0 });
+    writeTextureWithCopy(wholeTexture(poisonedTexture), new Uint8Array(IMAGE_SIZE).fill(POISON), wholeImage(0), extent3D(SIZE, SIZE, 1));
+    await awaitReply(queue, 'OnSubmittedWorkDone', {});
+    iface('RemotePresentationContext', presentationContext).Present({ frameIndex: 0 });
+    await awaitReply(queue, 'OnSubmittedWorkDone', {});
+
+    const texture = freshId();
+    iface('RemotePresentationContext', presentationContext).GetCurrentTexture({ identifier: texture, frameIndex: 0 });
+
+    // Settle the queue so that the write below takes Queue::writeTexture()'s idle CPU path,
+    // where -replaceRegion: is used and the unaligned source offset used to skip the write.
+    await awaitReply(queue, 'OnSubmittedWorkDone', {});
+
+    // dataLayout.offset = 2 is legal for writeTexture (nothing requires the offset to be a
+    // multiple of the block size) and this write covers the whole slice, so it either has to
+    // land or leave previouslyCleared() alone. Recording the slice as cleared and then skipping
+    // the write makes copyTextureToBuffer() elide the lazy zero-clear and disclose the poison.
+    writeTextureWithCopy(wholeTexture(texture), new Uint8Array(2 + IMAGE_SIZE).fill(WRITE), wholeImage(2), extent3D(SIZE, SIZE, 1));
+
+    const readback = freshId();
+    remoteDevice.CreateBuffer({
+        descriptor: { label: '', size: size64(IMAGE_SIZE), usage: alias('WebCore::WebGPU::BufferUsageFlags', 1 | 8) /* MapRead | CopyDst */, mappedAtCreation: false },
+        identifier: readback,
+    });
+    const commandEncoder = freshId(), commandBuffer = freshId();
+    remoteDevice.CreateCommandEncoder({ descriptor: { optionalValue: { label: '' } }, identifier: commandEncoder });
+    iface('RemoteCommandEncoder', commandEncoder).CopyTextureToBuffer({
+        source: wholeTexture(texture),
+        destination: { ...wholeImage(0), buffer: readback },
+        copySize: extent3D(SIZE, SIZE, 1),
+    });
+    iface('RemoteCommandEncoder', commandEncoder).Finish({ descriptor: { label: '' }, identifier: commandBuffer });
+    queue.Submit({ commandBuffers: [commandBuffer] });
+    await awaitReply(queue, 'OnSubmittedWorkDone', {});
+
+    const remoteReadback = iface('RemoteBuffer', readback);
+    if ((await awaitReply(remoteReadback, 'MapAsync', { mapModeFlags: alias('WebCore::WebGPU::MapModeFlags', 1) /* Read */, offset: size64(0), size: {} }))?.success !== true)
+        return 'FAIL: MapAsync did not succeed';
+    let mapped = null;
+    remoteReadback.GetMappedRange({ offset: size64(0), size: {} }, (reply) => { mapped = reply?.data?.optionalValue; });
+    if (mapped?.length !== IMAGE_SIZE)
+        return `FAIL: GetMappedRange returned ${mapped?.length} bytes`;
+
+    for (const byte of mapped) {
+        if (byte === POISON)
+            return `FAIL: copyTextureToBuffer() disclosed stale texture content (0x${POISON.toString(16)})`;
+        if (byte !== WRITE && byte !== 0)
+            return `FAIL: unexpected readback byte 0x${byte.toString(16)}`;
+    }
+    return 'PASS';
+}
+
+run().then(log, (error) => log(`FAIL: ${error}`)).then(() => testRunner?.notifyDone());
+</script>
+</body>
+</html>

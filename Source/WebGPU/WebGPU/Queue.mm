@@ -1060,18 +1060,19 @@ void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::s
     auto textureDimension = texture->dimension();
     uint32_t sliceCount = textureDimension == WebGPU::TextureDimension::_3d ? 1 : size.depthOrArrayLayers;
     bool clearWasNeeded = false;
+    const bool writeCompletelyClearsSlice = writeWillCompletelyClear(textureDimension, widthForMetal, logicalSize.width, heightForMetal, logicalSize.height, depthForMetal, logicalSize.depthOrArrayLayers);
+    auto markSliceAsCleared = [&](NSUInteger destinationSlice) {
+        if (writeCompletelyClearsSlice)
+            texture->setPreviouslyCleared(destination.mipLevel, destinationSlice);
+    };
     for (uint32_t layer = 0; layer < sliceCount; ++layer) {
         auto checkedDestinationSlice = checkedSum<uint32_t>(destination.origin.z, layer);
         if (checkedDestinationSlice.hasOverflowed())
             return;
         NSUInteger destinationSlice = textureDimension == WebGPU::TextureDimension::_3d ? 0 : checkedDestinationSlice.value();
-        if (!texture->previouslyCleared(destination.mipLevel, destinationSlice)) {
-            if (writeWillCompletelyClear(textureDimension, widthForMetal, logicalSize.width, heightForMetal, logicalSize.height, depthForMetal, logicalSize.depthOrArrayLayers))
-                texture->setPreviouslyCleared(destination.mipLevel, destinationSlice);
-            else {
-                clearWasNeeded = true;
-                clearTextureIfNeeded(destination, destinationSlice);
-            }
+        if (!texture->previouslyCleared(destination.mipLevel, destinationSlice) && !writeCompletelyClearsSlice) {
+            clearWasNeeded = true;
+            clearTextureIfNeeded(destination, destinationSlice);
         }
     }
 
@@ -1285,6 +1286,7 @@ void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::s
                             withBytes:byteCast<char>(data.subspan(sourceOffset).data())
                             bytesPerRow:0
                             bytesPerImage:0];
+                        markSliceAsCleared(destinationSlice);
                     }
                     break;
                 }
@@ -1315,6 +1317,7 @@ void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::s
                             withBytes:byteCast<char>(data.subspan(sourceOffset).data())
                             bytesPerRow:bytesPerRow
                             bytesPerImage:0];
+                        markSliceAsCleared(destinationSlice);
                     }
                     break;
                 }
@@ -1333,6 +1336,7 @@ void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::s
                         withBytes:byteCast<char>(data.subspan(sourceOffset).data())
                         bytesPerRow:bytesPerRow
                         bytesPerImage:bytesPerImage];
+                    markSliceAsCleared(0);
                     break;
                 }
                 }
@@ -1400,6 +1404,7 @@ void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::s
                 destinationLevel:destination.mipLevel
                 destinationOrigin:destinationOrigin
                 options:options];
+            markSliceAsCleared(destinationSlice);
         }
         break;
     }
@@ -1433,6 +1438,7 @@ void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::s
                 destinationLevel:destination.mipLevel
                 destinationOrigin:destinationOrigin
                 options:options];
+            markSliceAsCleared(destinationSlice);
         }
         break;
     }
@@ -1453,6 +1459,7 @@ void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::s
             destinationLevel:destination.mipLevel
             destinationOrigin:destinationOrigin
             options:options];
+        markSliceAsCleared(0);
         break;
     }
     }

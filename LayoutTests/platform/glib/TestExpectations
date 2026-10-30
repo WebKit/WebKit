@@ -3431,6 +3431,9 @@ ipc/web-authenticator-signal-main-thread.html [ Skip ]
 # These tests require UseGPUProcessForMediaEnabled
 ipc/restrictedendpoints/allow-access-testOnlyIPC.html [ Skip ]
 
+# ENABLE_WEBGPU is off for the GLIB ports.
+ipc/webgpu-write-texture-unaligned-offset-marks-slice-cleared.html [ Skip ]
+
 ### FAILING TESTS
 
 # (From wk2/TestExpectations)

@@ -1501,7 +1501,6 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
     if (texture.usage().contains(WebGPU::TextureUsage::Transient))
         return;
 
-    texture.setPreviouslyCleared(mipLevel, slice);
     auto logicalExtent = texture.logicalMiplevelSpecificTextureExtent(mipLevel);
     if (!logicalExtent.width)
         return;
@@ -1557,6 +1556,7 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
     if (slice >= mtlTexture.arrayLength)
         return;
 
+    texture.setPreviouslyCleared(mipLevel, slice);
     [blitCommandEncoder
         copyFromBuffer:temporaryBuffer
         sourceOffset:0

@@ -304,7 +304,6 @@ extension WebGPU.Metal.CommandEncoder {
             return
         }
 
-        texture.setPreviouslyCleared(UInt32(mipLevel), UInt32(slice), true)
         let logicalExtent = texture.logicalMiplevelSpecificTextureExtent(UInt32(mipLevel))
         if logicalExtent.width == 0 {
             return
@@ -377,6 +376,7 @@ extension WebGPU.Metal.CommandEncoder {
             return
         }
 
+        texture.setPreviouslyCleared(UInt32(mipLevel), UInt32(mutableSlice), true)
         blitCommandEncoder?
             .copy(
                 from: temporaryBuffer,
