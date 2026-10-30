@@ -198,6 +198,7 @@ public:
     void emitContextCreatedEvent(const WebPageProxy&);
     void didCreateFrame(const WebFrameProxy&);
     void willDestroyFrame(const WebFrameProxy&);
+    void webProcessDidTerminate(WebCore::ProcessIdentifier);
     void contextCreatedForFrame(const WebFrameProxy&);
     void contextDestroyedForPage(const WebPageProxy&);
     void contextDestroyedForFrame(const WebFrameProxy&);
@@ -268,6 +269,10 @@ public:
     void waitForNavigationToComplete(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Inspector::CommandCallback<void>&&) override;
     void evaluateJavaScriptFunction(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<bool>&& forceUserGesture, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&) override;
     void evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& expression, bool awaitPromise, int maxObjectDepth, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&);
+#if ENABLE(WEBDRIVER_BIDI)
+    void getBidiRealmInfo(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, CompletionHandler<void(std::optional<RealmIdentifier>&&)>&&);
+    void evaluateBidiCallFunction(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, std::optional<RealmIdentifier>, const String& functionDeclaration, Ref<JSON::Array>&& arguments, bool awaitPromise, std::optional<double> maxObjectDepth, bool userActivation, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&);
+#endif
     void performMouseInteraction(const Inspector::Protocol::Automation::BrowsingContextHandle&, Ref<JSON::Object>&& requestedPosition, Inspector::Protocol::Automation::MouseButton, Inspector::Protocol::Automation::MouseInteraction, Ref<JSON::Array>&& keyModifiers, Inspector::CommandCallback<Ref<Inspector::Protocol::Automation::Point>>&&) override;
     void performKeyboardInteractions(const Inspector::Protocol::Automation::BrowsingContextHandle&, Ref<JSON::Array>&& interactions, Inspector::CommandCallback<void>&&) override;
     void performInteractionSequence(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, Ref<JSON::Array>&& sources, Ref<JSON::Array>&& steps, Inspector::CommandCallback<void>&&) override;
@@ -388,8 +393,8 @@ private:
     void addKnownNodeReference(WebCore::FrameIdentifier, const String& nodeHandle);
     void isKnownNodeReference(WebCore::FrameIdentifier, const String& nodeHandle, CompletionHandler<void(bool)>&&);
 #if ENABLE(WEBDRIVER_BIDI)
-    void scriptRealmCreated(WebCore::FrameIdentifier, RealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
-    void scriptRealmDestroyed(WebCore::FrameIdentifier, RealmIdentifier);
+    void scriptRealmCreated(IPC::Connection&, WebCore::FrameIdentifier, RealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
+    void scriptRealmDestroyed(IPC::Connection&, WebCore::FrameIdentifier, RealmIdentifier);
 #endif
 
     // Platform-dependent implementations.

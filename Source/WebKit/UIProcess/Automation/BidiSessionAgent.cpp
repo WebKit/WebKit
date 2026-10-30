@@ -107,10 +107,10 @@ void BidiSessionAgent::subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&
             auto browsingContext = context->asString();
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(browsingContext.isEmpty(), InvalidParameter, "Browsing context must be a valid non-empty string."_s);
 
-            [[maybe_unused]] auto handles = session->extractBrowsingContextHandles(browsingContext);
-            ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
+            auto pageAndFrameHandles = session->extractBrowsingContextHandles(browsingContext);
+            ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
 
-            browsingContextIDs.add(browsingContext);
+            browsingContextIDs.add(pageAndFrameHandles.value().first);
         }
     }
 

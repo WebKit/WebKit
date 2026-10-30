@@ -46,6 +46,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <algorithm>
 #include <wtf/Borrow.h>
+#include <wtf/Box.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/HexNumber.h>
 #include <wtf/ProcessID.h>
@@ -60,7 +61,12 @@ using BrowsingContext = Inspector::Protocol::BidiBrowsingContext::BrowsingContex
 using EvaluateResultType = Inspector::Protocol::BidiScript::EvaluateResultType;
 
 static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value*);
-static Ref<JSON::Value> deserializeLocalValue(const JSON::Value&);
+static RefPtr<JSON::Value> parseLocalValue(const JSON::Value&, bool* usesUnsupportedType = nullptr, bool* usesHandle = nullptr);
+
+static String protocolRealmIdentifierString(RealmIdentifier realmIdentifier)
+{
+    return makeString("realm-"_s, realmIdentifier.loggingString());
+}
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BidiScriptAgent);
 
@@ -156,230 +162,316 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteVal
     return resultValue.setType(RemoteValueType::Undefined).release();
 }
 
-static Ref<JSON::Value> deserializeLocalValue(const JSON::Value& jsonValue)
+static RefPtr<JSON::Value> parseLocalValue(const JSON::Value& jsonValue, bool* usesUnsupportedType, bool* usesHandle)
 {
-    // Deserializes a BiDi LocalValue into a JSON::Value that can be passed to evaluateJavaScriptFunction.
-    // Per WebDriver BiDi spec: https://w3c.github.io/webdriver-bidi/#type-script-LocalValue
-    // LocalValue represents primitive values (string, number, boolean, etc.) as well as structured
-    // types (array, object, map, set, date, regexp). This function converts them into a format
-    // that WebKit's script evaluation machinery can consume.
-    //
-    // FIXME: Implement RemoteReference and Channel types.
+    // Parse and deserialize together so a malformed nested value cannot be accepted and then coerced.
+    // FIXME: Implement RemoteReference and Channel types instead of using null placeholders.
     // https://bugs.webkit.org/show_bug.cgi?id=288057
-
     auto object = jsonValue.asObject();
-    if (!object) {
-        // If it's not a LocalValue object, pass it through as-is (backwards compatibility).
-        return const_cast<JSON::Value&>(jsonValue);
+    if (!object)
+        return nullptr;
+
+    // RemoteReference alternatives take precedence over the other union members. Validate both
+    // fields when both are present, even though sharedId is authoritative during deserialization.
+    if (auto sharedIdField = object->getValue("sharedId"_s)) {
+        String sharedId;
+        if (!sharedIdField->asString(sharedId))
+            return nullptr;
+
+        if (auto handleField = object->getValue("handle"_s)) {
+            String handle;
+            if (!handleField->asString(handle))
+                return nullptr;
+        }
+
+        if (usesUnsupportedType)
+            *usesUnsupportedType = true;
+        return JSON::Value::null();
     }
 
-    String typeString = object->getString("type"_s);
+    if (auto handleField = object->getValue("handle"_s)) {
+        String handle;
+        if (!handleField->asString(handle))
+            return nullptr;
+        if (usesUnsupportedType)
+            *usesUnsupportedType = true;
+        if (usesHandle)
+            *usesHandle = true;
+        return JSON::Value::null();
+    }
 
-    // Primitive types: string, number, bigint, boolean, undefined, null
-    if (typeString == "string"_s)
-        return JSON::Value::create(object->getString("value"_s));
+    String typeString;
+    if (!object->getString("type"_s, typeString))
+        return nullptr;
+
+    if (typeString == "channel"_s) {
+        auto value = object->getObject("value"_s);
+        if (!value)
+            return nullptr;
+
+        String channel;
+        if (!value->getString("channel"_s, channel))
+            return nullptr;
+
+        if (auto ownershipField = value->getValue("ownership"_s)) {
+            String ownership;
+            if (!ownershipField->asString(ownership) || (ownership != "root"_s && ownership != "none"_s))
+                return nullptr;
+        }
+
+        if (auto serializationOptionsField = value->getValue("serializationOptions"_s)) {
+            auto serializationOptions = serializationOptionsField->asObject();
+            if (!serializationOptions || !WebDriverBidiProcessor::validateSerializationOptions(*serializationOptions))
+                return nullptr;
+        }
+
+        if (usesUnsupportedType)
+            *usesUnsupportedType = true;
+        return JSON::Value::null();
+    }
+
+    if (typeString == "string"_s || typeString == "bigint"_s || typeString == "date"_s) {
+        auto value = object->getValue("value"_s);
+        String stringValue;
+        if (!value || !value->asString(stringValue))
+            return nullptr;
+        return JSON::Value::create(stringValue);
+    }
 
     if (typeString == "number"_s) {
-        // Numbers can be represented as either a double or a special string (NaN, Infinity, -Infinity, -0).
-        if (auto num = object->getDouble("value"_s))
-            return JSON::Value::create(*num);
-        // Special number values like "NaN", "Infinity", "-Infinity", "-0" are strings in BiDi.
-        return JSON::Value::create(object->getString("value"_s));
+        auto value = object->getValue("value"_s);
+        if (!value)
+            return nullptr;
+
+        if (auto number = value->asDouble())
+            return JSON::Value::create(*number);
+
+        String specialValue;
+        if (!value->asString(specialValue) || (specialValue != "NaN"_s && specialValue != "Infinity"_s && specialValue != "-Infinity"_s && specialValue != "-0"_s))
+            return nullptr;
+        return JSON::Value::create(specialValue);
     }
 
     if (typeString == "boolean"_s) {
-        if (auto b = object->getBoolean("value"_s))
-            return JSON::Value::create(*b);
-        return JSON::Value::create(false);
+        auto value = object->getValue("value"_s);
+        if (!value)
+            return nullptr;
+        auto booleanValue = value->asBoolean();
+        if (!booleanValue)
+            return nullptr;
+        return JSON::Value::create(*booleanValue);
     }
 
-    if (typeString == "bigint"_s) {
-        // BigInt values are represented as strings in BiDi (e.g., "42n").
-        // Pass them through as strings since JSON doesn't have native bigint support.
-        return JSON::Value::create(object->getString("value"_s));
-    }
-
-    if (typeString == "undefined"_s)
-        return JSON::Value::null(); // JSON doesn't have undefined, use null as proxy.
-
-    if (typeString == "null"_s)
+    if (typeString == "undefined"_s || typeString == "null"_s)
         return JSON::Value::null();
 
-    // Date type: ISO 8601 string
-    if (typeString == "date"_s)
-        return JSON::Value::create(object->getString("value"_s));
-
-    // RegExp type: object with pattern and flags
     if (typeString == "regexp"_s) {
-        if (auto value = object->getValue("value"_s))
-            return value.releaseNonNull();
-        return JSON::Value::null();
+        auto value = object->getObject("value"_s);
+        if (!value)
+            return nullptr;
+
+        String pattern;
+        if (!value->getString("pattern"_s, pattern))
+            return nullptr;
+
+        if (auto flagsField = value->getValue("flags"_s)) {
+            String flags;
+            if (!flagsField->asString(flags))
+                return nullptr;
+        }
+
+        return value;
     }
 
-    // Array type: recursive deserialization
-    if (typeString == "array"_s) {
+    if (typeString == "array"_s || typeString == "set"_s) {
         auto valueArray = object->getArray("value"_s);
         if (!valueArray)
-            return JSON::Array::create();
+            return nullptr;
 
         auto resultArray = JSON::Array::create();
         for (unsigned i = 0; i < valueArray->length(); ++i) {
             Ref element = valueArray->get(i);
-            resultArray->pushValue(deserializeLocalValue(element.get()));
+            auto parsedElement = parseLocalValue(element.get(), usesUnsupportedType, usesHandle);
+            if (!parsedElement)
+                return nullptr;
+            resultArray->pushValue(parsedElement.releaseNonNull());
         }
         return resultArray;
     }
 
-    // Object type: recursive deserialization of properties
     if (typeString == "object"_s) {
         auto valueArray = object->getArray("value"_s);
         if (!valueArray)
-            return JSON::Object::create();
+            return nullptr;
 
         auto resultObject = JSON::Object::create();
-        // Per BiDi spec, object value is an array of [key, value] pairs.
         for (unsigned i = 0; i < valueArray->length(); ++i) {
-            auto pairValue = valueArray->get(i);
-            auto pairArray = pairValue->asArray();
-            if (!pairArray || pairArray->length() < 2)
-                continue;
+            auto pairArray = valueArray->get(i)->asArray();
+            if (!pairArray || pairArray->length() != 2)
+                return nullptr;
 
-            // Extract key (must be string or convertible to string)
+            Ref valueElement = pairArray->get(1);
+            auto parsedValue = parseLocalValue(valueElement.get(), usesUnsupportedType, usesHandle);
+            if (!parsedValue)
+                return nullptr;
+
             String key;
             Ref keyValue = pairArray->get(0);
-            if (auto keyObj = keyValue->asObject()) {
-                // If key is a LocalValue, deserialize it first
-                auto deserializedKey = deserializeLocalValue(keyValue.get());
-                key = deserializedKey->asString();
-            } else
-                key = keyValue->asString();
-
-            // Extract value
-            if (!key.isEmpty()) {
-                Ref valueElement = pairArray->get(1);
-                resultObject->setValue(key, deserializeLocalValue(valueElement.get()));
+            if (!keyValue->asString(key)) {
+                auto parsedKey = parseLocalValue(keyValue.get(), usesUnsupportedType, usesHandle);
+                if (!parsedKey)
+                    return nullptr;
+                if (!parsedKey->asString(key))
+                    continue;
             }
+
+            resultObject->setValue(key, parsedValue.releaseNonNull());
         }
         return resultObject;
     }
 
-    // Map type: convert to array of [key, value] pairs
     if (typeString == "map"_s) {
         auto valueArray = object->getArray("value"_s);
         if (!valueArray)
-            return JSON::Array::create();
+            return nullptr;
 
         auto resultArray = JSON::Array::create();
         for (unsigned i = 0; i < valueArray->length(); ++i) {
-            auto pairValue = valueArray->get(i);
-            auto pairArray = pairValue->asArray();
-            if (!pairArray || pairArray->length() < 2)
-                continue;
+            auto pairArray = valueArray->get(i)->asArray();
+            if (!pairArray || pairArray->length() != 2)
+                return nullptr;
 
             auto entryArray = JSON::Array::create();
             Ref keyElement = pairArray->get(0);
-            entryArray->pushValue(deserializeLocalValue(keyElement.get()));
+            String key;
+            if (keyElement->asString(key))
+                entryArray->pushValue(JSON::Value::create(key));
+            else {
+                auto parsedKey = parseLocalValue(keyElement.get(), usesUnsupportedType, usesHandle);
+                if (!parsedKey)
+                    return nullptr;
+                entryArray->pushValue(parsedKey.releaseNonNull());
+            }
+
             Ref valueElement = pairArray->get(1);
-            entryArray->pushValue(deserializeLocalValue(valueElement.get()));
+            auto parsedValue = parseLocalValue(valueElement.get(), usesUnsupportedType, usesHandle);
+            if (!parsedValue)
+                return nullptr;
+            entryArray->pushValue(parsedValue.releaseNonNull());
 
             resultArray->pushArray(WTF::move(entryArray));
         }
         return resultArray;
     }
 
-    // Set type: convert to array
-    if (typeString == "set"_s) {
-        auto valueArray = object->getArray("value"_s);
-        if (!valueArray)
-            return JSON::Array::create();
-
-        auto resultArray = JSON::Array::create();
-        for (unsigned i = 0; i < valueArray->length(); ++i) {
-            Ref element = valueArray->get(i);
-            resultArray->pushValue(deserializeLocalValue(element.get()));
-        }
-        return resultArray;
-    }
-
-    // For any unknown types or unsupported types, return null as a safe fallback.
-    return JSON::Value::null();
+    return nullptr;
 }
 
-void BidiScriptAgent::callFunction(const String& functionDeclaration, bool awaitPromise, Ref<JSON::Object>&& target, RefPtr<JSON::Array>&& arguments, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&&, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Object>&& optionalThis, std::optional<bool>&& optionalUserActivation, CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)
+void BidiScriptAgent::callFunction(const String& functionDeclaration, bool awaitPromise, Ref<JSON::Object>&& target, RefPtr<JSON::Array>&& arguments, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&& resultOwnership, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Object>&& optionalThis, std::optional<bool>&& optionalUserActivation, CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
     // FIXME: handle non-BrowsingContext obtained from `Target`.
-    std::optional<BrowsingContext> browsingContext = target->getString("context"_s);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!browsingContext, InvalidParameter);
+    // https://bugs.webkit.org/show_bug.cgi?id=304062
+    std::optional<BrowsingContext> browsingContext;
+    std::optional<RealmIdentifier> targetRealmIdentifier;
+    String sandbox;
 
+    if (auto contextJSON = target->getValue("context"_s)) {
+        String contextValue;
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!contextJSON->asString(contextValue), InvalidParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(contextValue.isEmpty(), FrameNotFound);
+        browsingContext = contextValue;
+
+        if (auto sandboxValue = target->getValue("sandbox"_s))
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!sandboxValue->asString(sandbox), InvalidParameter);
+    } else if (auto realmJSON = target->getValue("realm"_s)) {
+        String realmValue;
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!realmJSON->asString(realmValue), InvalidParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(realmValue.isEmpty(), FrameNotFound);
+        targetRealmIdentifier = parseRealmIdentifier(realmValue);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!targetRealmIdentifier, FrameNotFound);
+        browsingContext = browsingContextForRealm(*targetRealmIdentifier);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!browsingContext, FrameNotFound);
+    } else
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(true, InvalidParameter);
+
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!browsingContext, InvalidParameter);
     auto pageAndFrameHandles = session->extractBrowsingContextHandles(*browsingContext);
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
     auto& [topLevelContextHandle, frameHandle] = pageAndFrameHandles.value();
 
-    // FIXME: handle `awaitPromise` option.
-    // FIXME: handle `resultOwnership` option.
-    // FIXME: handle `serializationOptions` option.
-    // FIXME: handle custom `this` option.
-    // FIXME: handle `userActivation` option.
-
-    // Deserialize LocalValue arguments into plain JSON values for script evaluation.
-    // FIXME: Implement RemoteReference and Channel types for arguments <https://webkit.org/b/288057>
+    bool argumentsUseUnsupportedType = false;
+    bool argumentsUseHandle = false;
     auto argumentsArray = JSON::Array::create();
     if (arguments) {
-        for (unsigned i = 0; i < arguments->length(); ++i) {
-            Ref argValue = arguments->get(i);
-            argumentsArray->pushValue(deserializeLocalValue(argValue.get()));
+        for (size_t i = 0; i < arguments->length(); ++i) {
+            Ref argument = arguments->get(i);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parseLocalValue(argument.get(), &argumentsUseUnsupportedType, &argumentsUseHandle), InvalidParameter);
+            argumentsArray->pushValue(WTF::move(argument));
         }
     }
 
-    String realmID = generateRealmIdForBrowsingContext(*browsingContext);
-    session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle, functionDeclaration, WTF::move(argumentsArray), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTF::move(callback), realmID](Inspector::CommandResult<String>&& stringResult) {
-        // FIXME: Properly serialize RemoteValue types according to WebDriver BiDi spec.
-        // https://bugs.webkit.org/show_bug.cgi?id=301159
+    if (optionalThis)
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parseLocalValue(*optionalThis), InvalidParameter);
 
-        // FIXME: Properly fill ExceptionDetails remaining fields once we have a way to get them instead of just the error message.
-        // https://bugs.webkit.org/show_bug.cgi?id=288058
-        if (!stringResult) {
-            if (stringResult.error().startsWith("JavaScriptError"_s)) {
-                String errorMessage = stringResult.error().substring("JavaScriptError;"_s.length());
-                // Construct error object structure for RemoteValue.value per BiDi spec.
-                auto errorObject = JSON::Object::create();
-                errorObject->setString("message"_s, errorMessage);
-                auto exceptionValue = Inspector::Protocol::BidiScript::RemoteValue::create()
-                    .setType(Inspector::Protocol::BidiScript::RemoteValueType::Error)
-                    .release();
-                exceptionValue->setValue(WTF::move(errorObject));
-                auto stackTrace = Inspector::Protocol::BidiScript::StackTrace::create()
-                    .setCallFrames(JSON::ArrayOf<Inspector::Protocol::BidiScript::StackFrame>::create())
-                    .release();
-                auto exceptionDetails = Inspector::Protocol::BidiScript::ExceptionDetails::create()
-                    .setText(errorMessage)
-                    .setLineNumber(0)
-                    .setColumnNumber(0)
-                    .setException(WTF::move(exceptionValue))
-                    .setStackTrace(WTF::move(stackTrace))
-                    .release();
+    if (optionalSerializationOptions) {
+        auto result = WebDriverBidiProcessor::validateSerializationOptions(*optionalSerializationOptions);
+        if (!result)
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, result.error());
+    }
 
-                callback({ { EvaluateResultType::Exception, realmID, nullptr, WTF::move(exceptionDetails) } });
-                return;
-            }
+    std::optional<double> maxObjectDepth;
+    if (optionalSerializationOptions) {
+        if (auto depth = optionalSerializationOptions->getDouble("maxObjectDepth"_s))
+            maxObjectDepth = *depth;
+    }
 
-            callback(makeUnexpected(stringResult.error()));
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!sandbox.isEmpty(), NotImplemented, "Sandbox targets are not supported yet."_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(argumentsUseHandle, NoSuchHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(argumentsUseUnsupportedType, NotImplemented, "Remote references and channels are not supported yet."_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(optionalThis, NotImplemented, "Custom this values are not supported yet."_s);
+
+    // FIXME: Apply `maxDomDepth` and `includeShadowTree` during result serialization.
+    // https://bugs.webkit.org/show_bug.cgi?id=313658
+    // FIXME: Handle the `resultOwnership` option.
+    // https://bugs.webkit.org/show_bug.cgi?id=328254
+    // FIXME: Handle the custom `this` option.
+    // https://bugs.webkit.org/show_bug.cgi?id=328207
+
+    session->getBidiRealmInfo(topLevelContextHandle, frameHandle, [weakThis = WeakPtr { *this }, callback = WTF::move(callback), topLevelContextHandle = topLevelContextHandle.isolatedCopy(), frameHandle = frameHandle.isolatedCopy(), targetRealmIdentifier, functionDeclaration = functionDeclaration.isolatedCopy(), argumentsArray = WTF::move(argumentsArray), awaitPromise, maxObjectDepth, userActivation = optionalUserActivation.value_or(false)](std::optional<RealmIdentifier>&& realmIdentifier) mutable {
+        CheckedPtr protectedThis = weakThis;
+        if (!protectedThis) {
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+            return;
+        }
+        if (!realmIdentifier || (targetRealmIdentifier && *targetRealmIdentifier != *realmIdentifier)) {
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(FrameNotFound)));
             return;
         }
 
-        auto resultValue = JSON::Value::parseJSON(stringResult.value());
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!resultValue, InternalError, "Failed to parse callFunction result as JSON"_s);
+        RefPtr session = protectedThis->m_session;
+        if (!session) {
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+            return;
+        }
 
-        auto resultObject = Inspector::Protocol::BidiScript::RemoteValue::create()
-            .setType(Inspector::Protocol::BidiScript::RemoteValueType::Object)
-            .release();
+        String realmID = protocolRealmIdentifierString(*realmIdentifier);
+        session->evaluateBidiCallFunction(topLevelContextHandle, frameHandle, realmIdentifier, functionDeclaration, WTF::move(argumentsArray), awaitPromise, maxObjectDepth, userActivation, std::nullopt,
+            [weakThis, callback = WTF::move(callback), realmID = WTF::move(realmID), functionDeclaration = functionDeclaration.isolatedCopy()](Inspector::CommandResult<String>&& result) mutable {
+                CheckedPtr protectedThis = weakThis;
+                if (!protectedThis) {
+                    callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+                    return;
+                }
+                if (!result) {
+                    callback(makeUnexpected(result.error()));
+                    return;
+                }
 
-        resultObject->setValue(resultValue.releaseNonNull());
-
-        callback({ { EvaluateResultType::Success, realmID, WTF::move(resultObject), nullptr } });
+                protectedThis->finishEvaluateBidiScriptResult(realmID, functionDeclaration, WTF::move(result), WTF::move(callback));
+            });
     });
 }
 
@@ -433,7 +525,7 @@ void BidiScriptAgent::disown(Ref<JSON::Array>&& handles, Ref<JSON::Object>&& tar
 
 void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<JSON::Object>&& target, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&&, RefPtr<JSON::Object>&&, std::optional<bool>&&, CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)
 {
-    RefPtr session = m_session.get();
+    RefPtr session = m_session;
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
     // FIXME: Add full parameter validation (resultOwnership, serializationOptions, sandbox, realm targets, etc.)
@@ -443,17 +535,38 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
 
     auto pageAndFrameHandles = session->extractBrowsingContextHandles(*browsingContext);
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->webPageProxyForHandle(*browsingContext), FrameNotFound);
+    auto& [topLevelContextHandle, frameHandle] = pageAndFrameHandles.value();
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->webPageProxyForHandle(topLevelContextHandle), FrameNotFound);
 
-    String realmID = generateRealmIdForBrowsingContext(*browsingContext);
+    session->getBidiRealmInfo(topLevelContextHandle, frameHandle, [weakThis = WeakPtr { *this }, callback = WTF::move(callback), topLevelContextHandle = topLevelContextHandle.isolatedCopy(), frameHandle = frameHandle.isolatedCopy(), expression = expression.isolatedCopy(), awaitPromise](std::optional<RealmIdentifier>&& realmIdentifier) mutable {
+        CheckedPtr protectedThis = weakThis;
+        if (!protectedThis) {
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+            return;
+        }
+        if (!realmIdentifier) {
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(FrameNotFound)));
+            return;
+        }
 
-    session->evaluateBidiScript(*browsingContext, emptyString(), expression, awaitPromise, 1, std::nullopt,
-        [weakThis = WeakPtr { *this }, callback = WTF::move(callback), realmID = realmID.isolatedCopy(), expression = expression.isolatedCopy()](Inspector::CommandResult<String>&& result) mutable {
-            CheckedPtr protectedThis = weakThis.get();
-            if (!protectedThis)
-                return;
-            protectedThis->finishEvaluateBidiScriptResult(realmID, expression, WTF::move(result), WTF::move(callback));
-        });
+        RefPtr session = protectedThis->m_session;
+        if (!session) {
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+            return;
+        }
+
+        String realmID = protocolRealmIdentifierString(*realmIdentifier);
+        auto resultExpression = expression.isolatedCopy();
+        session->evaluateBidiScript(topLevelContextHandle, frameHandle, expression, awaitPromise, 1, std::nullopt,
+            [weakThis, callback = WTF::move(callback), realmID = WTF::move(realmID), expression = WTF::move(resultExpression)](Inspector::CommandResult<String>&& result) mutable {
+                CheckedPtr protectedThis = weakThis;
+                if (!protectedThis) {
+                    callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+                    return;
+                }
+                protectedThis->finishEvaluateBidiScriptResult(realmID, expression, WTF::move(result), WTF::move(callback));
+            });
+    });
 }
 
 void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmID, const String& expression, Inspector::CommandResult<String>&& result, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)
@@ -519,11 +632,16 @@ void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmID, cons
         return;
     }
 
+    String resultRealmID = envelopeObject->getString("realm"_s);
+    if (resultRealmID.isEmpty())
+        resultRealmID = realmID;
+
     // Handle JavaScript exception (success == false means user's JS code threw).
     if (!envelopeObject->getBoolean("success"_s).value_or(false)) {
         String errorMessage = "JavaScript exception"_s;
         String errorName = "Error"_s;
         String errorStack;
+        RefPtr<BidiScript::RemoteValue> exceptionRemote;
 
         // Extract exception details from the envelope's "error" field.
         if (auto errorValue = envelopeObject->getValue("error"_s)) {
@@ -534,20 +652,24 @@ void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmID, cons
                     errorName = name;
                 if (auto stack = errorObj->getString("stack"_s); !stack.isNull())
                     errorStack = stack;
+                if (auto exception = errorObj->getValue("exception"_s))
+                    exceptionRemote = deserializeRemoteValue(exception.get());
             }
         }
 
-        // Construct a basic error object structure for RemoteValue.value.
-        auto errorObject = JSON::Object::create();
-        errorObject->setString("name"_s, errorName);
-        errorObject->setString("message"_s, errorMessage);
-        if (!errorStack.isNull())
-            errorObject->setString("stack"_s, errorStack);
+        if (!exceptionRemote) {
+            // Preserve the existing fallback for malformed exception envelopes.
+            auto errorObject = JSON::Object::create();
+            errorObject->setString("name"_s, errorName);
+            errorObject->setString("message"_s, errorMessage);
+            if (!errorStack.isNull())
+                errorObject->setString("stack"_s, errorStack);
 
-        auto exceptionRemote = BidiScript::RemoteValue::create()
-            .setType(BidiScript::RemoteValueType::Error)
-            .release();
-        exceptionRemote->setValue(WTF::move(errorObject));
+            exceptionRemote = BidiScript::RemoteValue::create()
+                .setType(BidiScript::RemoteValueType::Error)
+                .release();
+            exceptionRemote->setValue(WTF::move(errorObject));
+        }
 
         // stackTrace is required by protocol - empty until full stack trace extraction is implemented (bug 304548).
         auto stackTrace = BidiScript::StackTrace::create()
@@ -557,16 +679,16 @@ void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmID, cons
             .setText(errorMessage)
             .setLineNumber(0)
             .setColumnNumber(0)
-            .setException(WTF::move(exceptionRemote))
+            .setException(exceptionRemote.releaseNonNull())
             .setStackTrace(WTF::move(stackTrace))
             .release();
-        callback({ { BidiScript::EvaluateResultType::Exception, realmID, nullptr, WTF::move(exceptionDetails) } });
+        callback({ { BidiScript::EvaluateResultType::Exception, resultRealmID, nullptr, WTF::move(exceptionDetails) } });
         return;
     }
 
     auto resultValue = envelopeObject->getValue("result"_s);
     auto remote = deserializeRemoteValue(resultValue.get());
-    callback({ { BidiScript::EvaluateResultType::Success, realmID, WTF::move(remote), nullptr } });
+    callback({ { BidiScript::EvaluateResultType::Success, resultRealmID, WTF::move(remote), nullptr } });
 }
 
 void BidiScriptAgent::getRealms(const BrowsingContext& optionalBrowsingContext, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&& callback)
@@ -592,13 +714,10 @@ void BidiScriptAgent::getRealms(const BrowsingContext& optionalBrowsingContext, 
     if (!optionalBrowsingContext.isEmpty()) {
         contextHandleFilter = optionalBrowsingContext;
 
-        // Only support page contexts in this PR - iframe support will be added later.
-        if (optionalBrowsingContext.startsWith("page-"_s))
-            resolvedPageForContext = session->webPageProxyForHandle(optionalBrowsingContext);
-        else
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
-
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!resolvedPageForContext, WindowNotFound);
+        auto pageAndFrameHandles = session->extractBrowsingContextHandles(optionalBrowsingContext);
+        ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
+        resolvedPageForContext = session->webPageProxyForHandle(pageAndFrameHandles.value().first);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!resolvedPageForContext, FrameNotFound);
     }
 
     // Early short-circuit: if a non-window realm type is requested, return empty (we currently only support window realms).
@@ -763,7 +882,10 @@ void BidiScriptAgent::executePreloadScriptsForContext(const String& browsingCont
         if (scriptInfo.arguments) {
             for (unsigned i = 0; i < scriptInfo.arguments->length(); ++i) {
                 Ref argValue = scriptInfo.arguments->get(i);
-                argumentsArray->pushValue(deserializeLocalValue(argValue.get()));
+                if (auto parsedArgument = parseLocalValue(argValue.get()))
+                    argumentsArray->pushValue(parsedArgument.releaseNonNull());
+                else
+                    argumentsArray->pushValue(JSON::Value::null());
             }
         }
 
@@ -781,7 +903,7 @@ void BidiScriptAgent::executePreloadScriptsForContext(const String& browsingCont
 }
 
 
-RefPtr<Inspector::Protocol::BidiScript::RealmInfo> BidiScriptAgent::createRealmInfoForFrame(const FrameInfoData& frameInfo)
+RefPtr<Inspector::Protocol::BidiScript::RealmInfo> BidiScriptAgent::createRealmInfoForFrame(const FrameInfoData& frameInfo, RealmIdentifier realmIdentifier)
 {
     ASSERT(frameInfo.documentID);
     RefPtr session = m_session.get();
@@ -794,8 +916,7 @@ RefPtr<Inspector::Protocol::BidiScript::RealmInfo> BidiScriptAgent::createRealmI
     if (!contextHandle)
         return nullptr;
 
-    RealmIdentifier realmIdentifier = generateRealmIdForFrame(frameInfo);
-    String realmID = makeString("realm-"_s, realmIdentifier.loggingString());
+    String realmID = protocolRealmIdentifierString(realmIdentifier);
     String origin = originStringFromSecurityOriginData(frameInfo.securityOrigin);
 
     auto realmInfo = Inspector::Protocol::BidiScript::RealmInfo::create()
@@ -807,38 +928,6 @@ RefPtr<Inspector::Protocol::BidiScript::RealmInfo> BidiScriptAgent::createRealmI
     realmInfo->setContext(*contextHandle);
 
     return realmInfo;
-}
-
-RealmIdentifier BidiScriptAgent::generateRealmIdForFrame(const FrameInfoData& frameInfo)
-{
-    auto contextHandle = contextHandleForFrame(frameInfo);
-    if (!contextHandle) {
-        // Fallback: generate a new realm identifier if we can't get context handle.
-        return RealmIdentifier::generate();
-    }
-
-    // Look up existing realm identifier for this browsing context.
-    auto it = m_browsingContextToRealmId.find(*contextHandle);
-    if (it == m_browsingContextToRealmId.end()) {
-        // No realm has been created yet for this context - generate a new identifier.
-        auto newRealmId = RealmIdentifier::generate();
-        m_browsingContextToRealmId.set(*contextHandle, newRealmId);
-        return newRealmId;
-    }
-
-    return it->value;
-}
-
-String BidiScriptAgent::generateRealmIdForBrowsingContext(const String& browsingContext)
-{
-    // Look up the actual RealmIdentifier for this browsing context.
-    auto it = m_browsingContextToRealmId.find(browsingContext);
-    if (it != m_browsingContextToRealmId.end())
-        return makeString("realm-"_s, it->value.loggingString());
-
-    // Fallback: if no realm exists yet, this is an error condition.
-    // evaluate/callFunction should only be called on existing realms.
-    return makeString("realm-"_s, browsingContext);
 }
 
 String BidiScriptAgent::originStringFromSecurityOriginData(const WebCore::SecurityOriginData& originData)
@@ -871,18 +960,61 @@ void BidiScriptAgent::processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& page
     pagesToProcess.removeFirst();
 
     currentPage->getAllFrames([weakThis = WeakPtr { *this }, pagesToProcess = WTF::move(pagesToProcess), optionalRealmType = WTF::move(optionalRealmType), contextHandleFilter = WTF::move(contextHandleFilter), accumulated = WTF::move(accumulated), callback = WTF::move(callback)](std::optional<FrameTreeNodeData>&& frameTree) mutable {
-        CheckedPtr protectedThis = weakThis.get();
-        if (!protectedThis)
+        CheckedPtr protectedThis = weakThis;
+        if (!protectedThis) {
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
             return;
-        // Collect realms from main frames only (no iframes in this PR).
-        Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>> candidateRealms;
+        }
+        Vector<FrameInfoData> candidateFrames;
         if (frameTree)
-            protectedThis->collectExecutionReadyFrameRealms(*frameTree, candidateRealms, contextHandleFilter, false);
+            protectedThis->collectExecutionReadyFrames(WTF::move(*frameTree), candidateFrames, contextHandleFilter);
 
-        for (auto& realmInfo : borrow(candidateRealms))
-            accumulated.append(WTF::move(realmInfo));
+        RefPtr session = protectedThis->m_session;
+        if (!session) {
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+            return;
+        }
 
-        protectedThis->processRealmsForPagesAsync(WTF::move(pagesToProcess), WTF::move(optionalRealmType), WTF::move(contextHandleFilter), WTF::move(accumulated), WTF::move(callback));
+        auto candidateRealms = Box<Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>>::create();
+        candidateRealms->grow(candidateFrames.size());
+        Ref aggregator = CallbackAggregator::create([weakThis, pagesToProcess = WTF::move(pagesToProcess), optionalRealmType = WTF::move(optionalRealmType), contextHandleFilter = WTF::move(contextHandleFilter), accumulated = WTF::move(accumulated), callback = WTF::move(callback), candidateRealms] mutable {
+            CheckedPtr protectedThis = weakThis;
+            if (!protectedThis) {
+                callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+                return;
+            }
+
+            for (auto& realmInfo : *candidateRealms)
+                accumulated.append(WTF::move(realmInfo));
+
+            protectedThis->processRealmsForPagesAsync(WTF::move(pagesToProcess), WTF::move(optionalRealmType), WTF::move(contextHandleFilter), WTF::move(accumulated), WTF::move(callback));
+        });
+
+        size_t index = 0;
+        for (auto& frameInfo : candidateFrames) {
+            auto contextHandle = protectedThis->contextHandleForFrame(frameInfo);
+            if (!contextHandle) {
+                ++index;
+                continue;
+            }
+
+            auto pageAndFrameHandles = session->extractBrowsingContextHandles(*contextHandle);
+            if (!pageAndFrameHandles) {
+                ++index;
+                continue;
+            }
+
+            // FIXME: Reject the reply if the frame changes document or process while this request is pending.
+            // https://bugs.webkit.org/show_bug.cgi?id=288061
+            session->getBidiRealmInfo(pageAndFrameHandles.value().first, pageAndFrameHandles.value().second, [weakThis, aggregator, candidateRealms, index, frameInfo = WTF::move(frameInfo)](std::optional<RealmIdentifier>&& realmIdentifier) mutable {
+                CheckedPtr protectedThis = weakThis;
+                if (!protectedThis || !realmIdentifier)
+                    return;
+
+                (*candidateRealms)[index] = protectedThis->createRealmInfoForFrame(frameInfo, *realmIdentifier);
+            });
+            ++index;
+        }
     });
 }
 
@@ -903,23 +1035,25 @@ bool BidiScriptAgent::isFrameExecutionReady(const FrameInfoData& frameInfo)
 
 std::optional<String> BidiScriptAgent::contextHandleForFrame(const FrameInfoData& frameInfo)
 {
-    RefPtr session = m_session.get();
+    RefPtr session = m_session;
     if (!session)
         return std::nullopt;
 
-    // FIXME: Add support for iframe contexts.
-    // https://bugs.webkit.org/show_bug.cgi?id=304305
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
-    if (!frame || !frame->isMainFrame())
+    if (!frame)
         return std::nullopt;
 
-    if (RefPtr page = frame->page())
+    RefPtr page = frame->page();
+    if (!page || !page->isControlledByAutomation())
+        return std::nullopt;
+
+    if (frame->isMainFrame())
         return session->handleForWebPageProxy(*page);
 
-    return std::nullopt;
+    return session->handleForWebFrameID(frameInfo.frameID);
 }
 
-void BidiScriptAgent::collectExecutionReadyFrameRealms(const FrameTreeNodeData& frameTree, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>& realms, const std::optional<String>& contextHandleFilter, bool recurseSubframes)
+void BidiScriptAgent::collectExecutionReadyFrames(FrameTreeNodeData&& frameTree, Vector<FrameInfoData>& frames, const std::optional<String>& contextHandleFilter)
 {
     // FIXME: Per W3C BiDi spec, when contextHandleFilter is present, we should also include
     // worker realms whose owner set includes the active document of that context.
@@ -930,72 +1064,127 @@ void BidiScriptAgent::collectExecutionReadyFrameRealms(const FrameTreeNodeData& 
     if (isFrameExecutionReady(frameTree.info)) {
         auto handle = contextHandleForFrame(frameTree.info);
         bool shouldInclude = !contextHandleFilter || (handle && *handle == *contextHandleFilter);
-        if (shouldInclude) {
-            if (auto realmInfo = createRealmInfoForFrame(frameTree.info))
-                realms.append(realmInfo);
-        }
+        if (shouldInclude)
+            frames.append(WTF::move(frameTree.info));
     }
 
-    // FIXME: The recurseSubframes parameter is currently always called with false since this PR
-    // only supports main frame contexts. When iframe support is added, this will be used to
-    // recursively collect realms from nested browsing contexts (iframes).
-    if (recurseSubframes) {
-        for (const auto& child : borrow(frameTree.children))
-            collectExecutionReadyFrameRealms(child, realms, contextHandleFilter, true);
-    }
+    for (auto& child : frameTree.children)
+        collectExecutionReadyFrames(WTF::move(child), frames, contextHandleFilter);
 }
 
-void BidiScriptAgent::sendRealmCreatedEvent(const String& realmID, const WebCore::SecurityOriginData& origin, Inspector::Protocol::BidiScript::RealmType type, Inspector::Protocol::BidiBrowsingContext::BrowsingContext context)
+void BidiScriptAgent::sendRealmCreatedEvent(const String& realmID, const WebCore::SecurityOriginData& origin, Inspector::Protocol::BidiScript::RealmType type, Inspector::Protocol::BidiBrowsingContext::BrowsingContext context, Inspector::Protocol::BidiBrowsingContext::BrowsingContext topLevelContext)
 {
-    RefPtr session = m_session.get();
+    RefPtr session = m_session;
     if (!session)
         return;
 
-    session->bidiProcessor().emitEventIfEnabled(BidiEventNames::Script::RealmCreated, { context }, [&]() {
+    session->bidiProcessor().emitEventIfEnabled(BidiEventNames::Script::RealmCreated, { topLevelContext }, [&] {
         session->bidiProcessor().scriptDomainNotifier().realmCreated(realmID, originStringFromSecurityOriginData(origin), type, context);
     });
 }
 
-void BidiScriptAgent::notifyRealmCreated(RealmIdentifier realmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext browsingContext, const WebCore::SecurityOriginData& origin)
+void BidiScriptAgent::notifyRealmCreatedFromBrowsingContext(RealmIdentifier realmIdentifier, WebCore::FrameIdentifier frameIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext browsingContext, Inspector::Protocol::BidiBrowsingContext::BrowsingContext topLevelContext, const WebCore::SecurityOriginData& origin)
 {
     // The WebProcess owns realm identifier creation and passes the identifier across IPC.
-    String realmID = makeString("realm-"_s, realmIdentifier.loggingString());
+    String realmID = protocolRealmIdentifierString(realmIdentifier);
+
+    auto previousRealmIterator = m_browsingContextToRealmId.find(browsingContext);
+    if (previousRealmIterator != m_browsingContextToRealmId.end() && previousRealmIterator->value != realmIdentifier)
+        notifyRealmDestroyedFromBrowsingContext(previousRealmIterator->value, browsingContext);
 
     // Track the current realm for this browsing context.
     m_browsingContextToRealmId.set(browsingContext, realmIdentifier);
 
-    RealmInfo realmInfo { origin.isolatedCopy(), Inspector::Protocol::BidiScript::RealmType::Window, browsingContext };
+    RealmInfo realmInfo { origin.isolatedCopy(), Inspector::Protocol::BidiScript::RealmType::Window, browsingContext, topLevelContext, frameIdentifier };
     m_activeRealms.set(realmIdentifier, WTF::move(realmInfo));
 
-    sendRealmCreatedEvent(realmID, origin, Inspector::Protocol::BidiScript::RealmType::Window, browsingContext);
+    sendRealmCreatedEvent(realmID, origin, Inspector::Protocol::BidiScript::RealmType::Window, browsingContext, topLevelContext);
 }
 
-void BidiScriptAgent::notifyRealmDestroyed(RealmIdentifier realmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext browsingContext)
+bool BidiScriptAgent::rebindRealmToBrowsingContext(RealmIdentifier realmIdentifier, WebCore::FrameIdentifier frameIdentifier, const BrowsingContext& browsingContext, const BrowsingContext& topLevelContext)
 {
-    RefPtr session = m_session.get();
-    if (!session)
-        return;
+    auto realmIterator = m_activeRealms.find(realmIdentifier);
+    if (realmIterator == m_activeRealms.end()
+        || realmIterator->value.type != Inspector::Protocol::BidiScript::RealmType::Window
+        || realmIterator->value.frameIdentifier != frameIdentifier)
+        return false;
 
-    // Match the realm identifier that the WebProcess reported for this realm.
-    String realmID = makeString("realm-"_s, realmIdentifier.loggingString());
+    auto currentRealmIterator = m_browsingContextToRealmId.find(browsingContext);
+    if (currentRealmIterator != m_browsingContextToRealmId.end() && currentRealmIterator->value != realmIdentifier)
+        return false;
 
-    // Remove the realm from active realms.
-    m_activeRealms.remove(realmIdentifier);
+    auto previousRealmIterator = m_browsingContextToRealmId.find(realmIterator->value.context);
+    if (previousRealmIterator != m_browsingContextToRealmId.end() && previousRealmIterator->value == realmIdentifier)
+        m_browsingContextToRealmId.remove(previousRealmIterator);
 
-    // Remove the browsing context mapping (realm will be regenerated on next navigation).
-    m_browsingContextToRealmId.remove(browsingContext);
+    m_browsingContextToRealmId.set(browsingContext, realmIdentifier);
+    realmIterator->value.context = browsingContext;
+    realmIterator->value.topLevelContext = topLevelContext;
+    return true;
+}
 
-    session->bidiProcessor().emitEventIfEnabled(BidiEventNames::Script::RealmDestroyed, { browsingContext }, [&]() {
-        session->bidiProcessor().scriptDomainNotifier().realmDestroyed(realmID, browsingContext);
+void BidiScriptAgent::notifyRealmDestroyedFromBrowsingContext(RealmIdentifier realmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext browsingContext)
+{
+    notifyRealmsDestroyed([&](auto activeRealmIdentifier, const auto& realmInfo) {
+        return activeRealmIdentifier == realmIdentifier
+            && realmInfo.type == Inspector::Protocol::BidiScript::RealmType::Window
+            && realmInfo.context == browsingContext;
     });
 }
 
-std::optional<RealmIdentifier> BidiScriptAgent::realmIdentifierForBrowsingContext(const String& browsingContext) const
+void BidiScriptAgent::notifyRealmsDestroyedForFrame(WebCore::FrameIdentifier frameIdentifier)
 {
-    auto it = m_browsingContextToRealmId.find(browsingContext);
-    if (it == m_browsingContextToRealmId.end())
-        return std::nullopt;
-    return it->value;
+    notifyRealmsDestroyed([&](auto, const auto& realmInfo) {
+        return realmInfo.frameIdentifier && *realmInfo.frameIdentifier == frameIdentifier;
+    });
+}
+
+void BidiScriptAgent::notifyRealmsDestroyedForProcess(WebCore::ProcessIdentifier processIdentifier)
+{
+    notifyRealmsDestroyed([&](auto realmIdentifier, const auto&) {
+        return realmIdentifier.processIdentifier() == processIdentifier;
+    });
+}
+
+void BidiScriptAgent::notifyRealmsDestroyedForTopLevelContext(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& topLevelContext)
+{
+    notifyRealmsDestroyed([&](auto, const auto& realmInfo) {
+        return realmInfo.topLevelContext == topLevelContext;
+    });
+}
+
+void BidiScriptAgent::notifyRealmsDestroyed(Function<bool(RealmIdentifier, const RealmInfo&)>&& matches)
+{
+    struct RealmToDestroy {
+        RealmIdentifier identifier;
+        BrowsingContext context;
+        BrowsingContext topLevelContext;
+    };
+
+    Vector<RealmToDestroy> realmsToDestroy;
+    for (const auto& [realmIdentifier, realmInfo] : m_activeRealms) {
+        if (matches(realmIdentifier, realmInfo))
+            realmsToDestroy.append({ realmIdentifier, realmInfo.context, realmInfo.topLevelContext });
+    }
+
+    for (const auto& realm : realmsToDestroy) {
+        m_activeRealms.remove(realm.identifier);
+
+        auto currentRealmIterator = m_browsingContextToRealmId.find(realm.context);
+        if (currentRealmIterator != m_browsingContextToRealmId.end() && currentRealmIterator->value == realm.identifier)
+            m_browsingContextToRealmId.remove(currentRealmIterator);
+    }
+
+    RefPtr session = m_session;
+    if (!session)
+        return;
+
+    for (const auto& realm : realmsToDestroy) {
+        String realmID = protocolRealmIdentifierString(realm.identifier);
+        session->bidiProcessor().emitEventIfEnabled(BidiEventNames::Script::RealmDestroyed, { realm.topLevelContext }, [&] {
+            session->bidiProcessor().scriptDomainNotifier().realmDestroyed(realmID);
+        });
+    }
 }
 
 void BidiScriptAgent::emitEventsForActiveRealms(const HashSet<String>& contextFilter)
@@ -1006,11 +1195,11 @@ void BidiScriptAgent::emitEventsForActiveRealms(const HashSet<String>& contextFi
         const RealmIdentifier& realmIdentifier = entry.key;
         const RealmInfo& realmInfo = entry.value;
 
-        if (!contextFilter.isEmpty() && !contextFilter.contains(realmInfo.context))
+        if (!contextFilter.isEmpty() && !contextFilter.contains(realmInfo.topLevelContext))
             continue;
 
-        String realmID = makeString("realm-"_s, realmIdentifier.loggingString());
-        sendRealmCreatedEvent(realmID, realmInfo.origin, realmInfo.type, realmInfo.context);
+        String realmID = protocolRealmIdentifierString(realmIdentifier);
+        sendRealmCreatedEvent(realmID, realmInfo.origin, realmInfo.type, realmInfo.context, realmInfo.topLevelContext);
     }
 }
 
@@ -1019,11 +1208,19 @@ std::optional<RealmIdentifier> BidiScriptAgent::parseRealmIdentifier(const Strin
     if (!realmID.startsWith("realm-"_s))
         return std::nullopt;
 
-    auto idValue = parseInteger<uint64_t>(realmID.substring(6));
-    if (!idValue || !RealmIdentifier::isValidIdentifier(*idValue))
+    auto serializedIdentifier = realmID.substring(6);
+    auto separatorPosition = serializedIdentifier.find('-');
+    if (separatorPosition == notFound || !separatorPosition || separatorPosition == serializedIdentifier.length() - 1
+        || serializedIdentifier.find('-', separatorPosition + 1) != notFound)
         return std::nullopt;
 
-    return RealmIdentifier(*idValue);
+    auto processIdentifierValue = parseInteger<uint64_t>(serializedIdentifier.left(separatorPosition));
+    auto objectIdentifierValue = parseInteger<uint64_t>(serializedIdentifier.substring(separatorPosition + 1));
+    if (!processIdentifierValue || !WebCore::ProcessIdentifier::isValidIdentifier(*processIdentifierValue)
+        || !objectIdentifierValue || !NonProcessQualifiedRealmIdentifier::isValidIdentifier(*objectIdentifierValue))
+        return std::nullopt;
+
+    return RealmIdentifier { NonProcessQualifiedRealmIdentifier { *objectIdentifierValue }, WebCore::ProcessIdentifier { *processIdentifierValue } };
 }
 
 std::optional<String> BidiScriptAgent::browsingContextForRealm(RealmIdentifier realmIdentifier) const

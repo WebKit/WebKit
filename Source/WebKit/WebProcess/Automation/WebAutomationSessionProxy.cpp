@@ -54,6 +54,7 @@
 #include <WebCore/CookieJar.h>
 #include <WebCore/DOMRect.h>
 #include <WebCore/DOMRectList.h>
+#include <WebCore/Document.h>
 #include <WebCore/DocumentPage.h>
 #include <WebCore/DocumentView.h>
 #include <WebCore/ElementAncestorIteratorInlines.h>
@@ -78,10 +79,17 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(WEBDRIVER_BIDI)
+#include <JavaScriptCore/CallData.h>
+#include <JavaScriptCore/Error.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/JSPromise.h>
+#include <JavaScriptCore/MarkedVector.h>
 #include <WebCore/AutomationInstrumentation.h>
 #include <WebCore/DOMWrapperWorld.h>
+#include <WebCore/JSDOMGlobalObject.h>
 #endif
 
 namespace WebKit {
@@ -285,6 +293,93 @@ static JSValueRef evaluate(JSContextRef context, JSObjectRef function, JSObjectR
     return JSEvaluateScript(context, script.get(), nullptr, nullptr, 0, exception);
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+static JSValueRef callFunctionWithUserActivation(JSContextRef context, JSObjectRef, JSObjectRef, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
+{
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
+    if (arguments.size() < 3) {
+        auto* globalObject = toJS(context);
+        JSC::JSLockHolder locker(globalObject);
+        if (exception)
+            *exception = toRef(JSC::createTypeError(globalObject, "Invalid arguments for function invocation."_s));
+        ASSERT_NOT_REACHED();
+        return JSValueMakeUndefined(context);
+    }
+
+    auto userActivation = arguments[0];
+    auto function = arguments[1];
+    auto thisValue = arguments[2];
+    auto argumentValues = arguments.subspan(3);
+
+    ASSERT(JSValueIsBoolean(context, userActivation));
+    ASSERT(JSValueIsObject(context, function));
+
+    auto* globalObject = toJS(context);
+    JSC::JSLockHolder locker(globalObject);
+    if (!JSValueIsBoolean(context, userActivation) || !JSValueIsObject(context, function)) {
+        if (exception)
+            *exception = toRef(JSC::createTypeError(globalObject, "Invalid arguments for function invocation."_s));
+        return JSValueMakeUndefined(context);
+    }
+
+    auto functionValue = toJS(globalObject, function);
+    auto callData = JSC::getCallData(functionValue);
+    if (callData.type == JSC::CallData::Type::None) {
+        if (exception)
+            *exception = toRef(JSC::createTypeError(globalObject, "Function declaration did not evaluate to a callable value."_s));
+        return JSValueMakeUndefined(context);
+    }
+
+    JSC::MarkedArgumentBuffer functionArguments;
+    functionArguments.ensureCapacity(argumentValues.size());
+    for (auto argument : argumentValues)
+        functionArguments.append(toJS(globalObject, argument));
+    if (functionArguments.hasOverflowed()) {
+        if (exception)
+            *exception = toRef(JSC::createOutOfMemoryError(globalObject));
+        return JSValueMakeUndefined(context);
+    }
+
+    auto invokeFunction = [&] {
+        NakedPtr<JSC::Exception> functionException;
+        auto result = JSC::profiledCall(globalObject, JSC::ProfilingReason::API, functionValue, callData, toJS(globalObject, thisValue), functionArguments, functionException);
+        if (functionException) {
+            if (exception)
+                *exception = toRef(globalObject, functionException->value());
+            return JSValueMakeUndefined(context);
+        }
+        return toRef(globalObject, result);
+    };
+
+    if (!JSValueToBoolean(context, userActivation))
+        return invokeFunction();
+
+    auto* domGlobalObject = dynamicDowncast<WebCore::JSDOMGlobalObject>(globalObject);
+    RefPtr document = domGlobalObject ? dynamicDowncast<WebCore::Document>(domGlobalObject->scriptExecutionContext()) : nullptr;
+    if (!document) {
+        if (exception)
+            *exception = toRef(JSC::createTypeError(globalObject, "Function target does not have a document."_s));
+        return JSValueMakeUndefined(context);
+    }
+
+    WebCore::UserGestureIndicator gestureIndicator { WebCore::IsProcessingUserGesture::Yes, document.get() };
+    return invokeFunction();
+}
+
+static JSValueRef isPromise(JSContextRef context, JSObjectRef, JSObjectRef, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef*)
+{
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
+    if (arguments.size() != 1) {
+        ASSERT_NOT_REACHED();
+        return JSValueMakeBoolean(context, false);
+    }
+
+    auto* globalObject = toJS(context);
+    JSC::JSLockHolder locker(globalObject);
+    return JSValueMakeBoolean(context, dynamicDowncast<JSC::JSPromise>(toJS(globalObject, arguments[0])));
+}
+#endif
+
 static JSValueRef createUUID(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     return toJSValue(context, createVersion4UUIDString().convertToASCIIUppercase());
@@ -397,7 +492,13 @@ JSObjectRef WebAutomationSessionProxy::scriptObjectForFrame(WebFrame& frame)
     JSObjectRef isValidNodeIdentifierFunction = JSObjectMakeFunctionWithCallback(context, nullptr, isValidNodeIdentifier);
     JSObjectRef isKnownReferenceFunction = JSObjectMakeFunctionWithCallback(context, nullptr, isKnownReferenceCallback);
     JSObjectRef addKnownReferenceFunction = JSObjectMakeFunctionWithCallback(context, nullptr, addKnownReferenceCallback);
-    JSValueRef arguments[] = { sessionIdentifier, currentFrameIdentifier, evaluateFunction, createUUIDFunction, isValidNodeIdentifierFunction, isKnownReferenceFunction, addKnownReferenceFunction };
+    JSValueRef callFunctionWithUserActivationFunction = JSValueMakeUndefined(context);
+    JSValueRef isPromiseFunction = JSValueMakeUndefined(context);
+#if ENABLE(WEBDRIVER_BIDI)
+    callFunctionWithUserActivationFunction = JSObjectMakeFunctionWithCallback(context, nullptr, callFunctionWithUserActivation);
+    isPromiseFunction = JSObjectMakeFunctionWithCallback(context, nullptr, isPromise);
+#endif
+    JSValueRef arguments[] = { sessionIdentifier, currentFrameIdentifier, evaluateFunction, createUUIDFunction, isValidNodeIdentifierFunction, isKnownReferenceFunction, addKnownReferenceFunction, callFunctionWithUserActivationFunction, isPromiseFunction };
     JSObjectRef scriptObject = const_cast<JSObjectRef>(JSObjectCallAsFunction(context, scriptObjectFunction, nullptr, std::size(arguments), arguments, &exception));
     ASSERT(JSValueIsObject(context, scriptObject));
 
@@ -667,6 +768,83 @@ void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageI
 
     didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage, errorType);
 }
+
+#if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSessionProxy::evaluateBidiCallFunction(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, std::optional<RealmIdentifier> expectedRealmIdentifier, const String& functionDeclaration, Vector<String> arguments, bool awaitPromise, std::optional<double> maxObjectDepth, bool userActivation, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+{
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    if (!page)
+        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound));
+
+    RefPtr frame = optionalFrameID ? WebProcess::singleton().webFrame(*optionalFrameID) : &page->mainWebFrame();
+    RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr window = coreLocalFrame ? coreLocalFrame->window() : nullptr;
+    if (!window || !window->frame())
+        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+
+    auto frameID = frame->frameID();
+    if (expectedRealmIdentifier) {
+        auto resolvedRealmIterator = m_frameToRealmIdentifier.find(frameID);
+        if (resolvedRealmIterator == m_frameToRealmIdentifier.end() || resolvedRealmIterator->value != *expectedRealmIdentifier)
+            return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+    }
+
+    if (!coreLocalFrame->isMainFrame())
+        ensureObserverForFrame(*frame);
+
+    JSObjectRef scriptObject = scriptObjectForFrame(*frame);
+    ASSERT(scriptObject);
+
+    auto executionRealmIterator = m_frameToRealmIdentifier.find(frameID);
+    if (executionRealmIterator == m_frameToRealmIdentifier.end() || (expectedRealmIdentifier && executionRealmIterator->value != *expectedRealmIdentifier))
+        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+
+    String realmID = makeString("realm-"_s, executionRealmIterator->value.loggingString());
+    JSValueRef exception = nullptr;
+    JSGlobalContextRef context = frame->jsContext();
+    auto callbackID = JSCallbackIdentifier::generate();
+
+    auto result = m_webFramePendingEvaluateJavaScriptCallbacksMap.add(frameID, HashMap<JSCallbackIdentifier, CompletionHandler<void(String&&, String&&)>>());
+    result.iterator->value.set(callbackID, [completionHandler = WTF::move(completionHandler), realmID = realmID.isolatedCopy()](String&& result, String&& errorType) mutable {
+        if (errorType.isEmpty()) {
+            auto envelopePayload = JSON::Value::parseJSON(result);
+            auto envelopeObject = envelopePayload ? envelopePayload->asObject() : nullptr;
+            if (envelopeObject) {
+                envelopeObject->setString("realm"_s, realmID);
+                result = envelopeObject->toJSONString();
+            }
+        }
+        completionHandler(WTF::move(result), WTF::move(errorType));
+    });
+
+    JSValueRef functionArguments[] = {
+        toJSValue(context, functionDeclaration),
+        toJSArray(context, arguments, toJSValue, &exception),
+        JSValueMakeBoolean(context, awaitPromise),
+        maxObjectDepth ? JSValueMakeNumber(context, *maxObjectDepth) : JSValueMakeNull(context),
+        JSValueMakeBoolean(context, userActivation),
+        JSValueMakeNumber(context, frameID.toUInt64()),
+        JSValueMakeNumber(context, callbackID.toUInt64()),
+        JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback),
+        JSValueMakeNumber(context, callbackTimeout.value_or(-1))
+    };
+
+    callPropertyFunction(context, scriptObject, "evaluateBidiCallFunction"_s, std::size(functionArguments), functionArguments, &exception);
+
+    if (!exception)
+        return;
+
+    String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
+    String exceptionMessage;
+    if (JSValueIsObject(context, exception)) {
+        JSValueRef messageValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), OpaqueJSString::tryCreate("message"_s).get(), nullptr);
+        exceptionMessage = adoptRef(JSValueToStringCopy(context, messageValue, nullptr))->string();
+    } else
+        exceptionMessage = adoptRef(JSValueToStringCopy(context, exception, nullptr))->string();
+
+    didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage, errorType);
+}
+#endif
 
 void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, uint32_t ordinal, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&& completionHandler)
 {
@@ -1302,6 +1480,42 @@ void WebAutomationSessionProxy::deleteCookie(WebCore::PageIdentifier pageID, std
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSessionProxy::getBidiRealmInfo(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, CompletionHandler<void(std::optional<RealmIdentifier>&&)>&& completionHandler)
+{
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    if (!page)
+        return completionHandler(std::nullopt);
+
+    RefPtr frame = optionalFrameID ? WebProcess::singleton().webFrame(*optionalFrameID) : &page->mainWebFrame();
+    RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr document = coreLocalFrame ? coreLocalFrame->document() : nullptr;
+    if (!document)
+        return completionHandler(std::nullopt);
+
+    // A scriptless subframe might not have a normal-world realm yet. Create it so
+    // getRealms returns the realm identifier used by later script commands and events.
+    // FIXME: Avoid eagerly creating a JSWindowProxy during realm enumeration.
+    // https://bugs.webkit.org/show_bug.cgi?id=310506
+    protect(coreLocalFrame->windowProxy())->jsWindowProxy(mainThreadNormalWorldSingleton());
+
+    auto realmIterator = m_frameToRealmIdentifier.find(frame->frameID());
+    if (realmIterator == m_frameToRealmIdentifier.end()) {
+        scriptRealmCreated(frame->frameID(), document->securityOrigin().data());
+        realmIterator = m_frameToRealmIdentifier.find(frame->frameID());
+    }
+
+    if (realmIterator == m_frameToRealmIdentifier.end())
+        return completionHandler(std::nullopt);
+
+    std::optional<RealmIdentifier> realmIdentifier { realmIterator->value };
+    // Realm creation can precede automation-session setup, in which case the
+    // UIProcess misses the original notification. Re-announce the existing
+    // realm before replying so later commands resolve the identifier returned
+    // by getRealms. The UIProcess handles an identical announcement idempotently.
+    sendScriptRealmCreated(frame->frameID(), *realmIdentifier, document->securityOrigin().data());
+    completionHandler(WTF::move(realmIdentifier));
+}
+
 void WebAutomationSessionProxy::addMessageToConsole(const JSC::MessageSource& source, const JSC::MessageLevel& level, const String& messageText, const JSC::MessageType& type, const WallTime& timestamp)
 {
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::LogEntryAdded(source, level, messageText, type, timestamp), 0);
@@ -1316,23 +1530,24 @@ void WebAutomationSessionProxy::scriptRealmCreated(WebCore::FrameIdentifier fram
     auto realmIdentifier = RealmIdentifier::generate();
     m_frameToRealmIdentifier.set(frameID, realmIdentifier);
 
+    sendScriptRealmCreated(frameID, realmIdentifier, origin);
+}
+
+void WebAutomationSessionProxy::sendScriptRealmCreated(WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier, const WebCore::SecurityOriginData& origin)
+{
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptRealmCreated(frameID, realmIdentifier, origin), 0);
 }
 
 void WebAutomationSessionProxy::scriptRealmDestroyed(WebCore::FrameIdentifier frameID)
 {
-    WeakPtr frame = WebProcess::singleton().webFrame(frameID);
-    if (!frame)
+    auto realmIterator = m_frameToRealmIdentifier.find(frameID);
+    if (realmIterator == m_frameToRealmIdentifier.end())
         return;
 
-    auto it = m_frameToRealmIdentifier.find(frameID);
-    if (it == m_frameToRealmIdentifier.end())
-        return;
+    auto destroyedRealmIdentifier = realmIterator->value;
+    m_frameToRealmIdentifier.remove(realmIterator);
 
-    auto realmIdentifier = it->value;
-    m_frameToRealmIdentifier.remove(it);
-
-    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptRealmDestroyed(frameID, realmIdentifier), 0);
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptRealmDestroyed(frameID, destroyedRealmIdentifier), 0);
 }
 
 void WebAutomationSessionProxy::ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)
