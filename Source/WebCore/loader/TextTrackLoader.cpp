@@ -40,6 +40,7 @@
 #include "Logging.h"
 #include "NodeInlinesLight.h"
 #include "SharedBuffer.h"
+#include "StyleSheetContents.h"
 #include "VTTCue.h"
 #include "WebVTTParser.h"
 #include <wtf/NeverDestroyed.h>
@@ -241,7 +242,7 @@ Vector<Ref<VTTRegion>> TextTrackLoader::getNewRegions()
     return m_cueParser->takeRegions();
 }
 
-Vector<String> TextTrackLoader::getNewStyleSheets()
+Vector<Ref<StyleSheetContents>> TextTrackLoader::getNewStyleSheets()
 {
     ASSERT(m_cueParser);
     if (!m_cueParser)

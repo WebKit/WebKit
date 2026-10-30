@@ -67,7 +67,7 @@ public:
 
     Vector<Ref<VTTCue>> getNewCues();
     Vector<Ref<VTTRegion>> getNewRegions();
-    Vector<String> getNewStyleSheets();
+    Vector<Ref<StyleSheetContents>> getNewStyleSheets();
 
     // CachedResourceClient.
     void ref() const final { RefCounted::ref(); }

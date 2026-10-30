@@ -63,6 +63,8 @@ public:
     TextTrackCue* LEGACY_NODELETE getCue() const;
     virtual void applyCSSProperties() { }
 
+    bool isTextTrackCueBox() const final { return true; }
+
 protected:
     void initialize();
 
@@ -210,5 +212,9 @@ template<> struct LogArgument<WebCore::TextTrackCue> {
 } // namespace WTF
 
 SPECIALIZE_TYPE_TRAITS_EVENTTARGET(TextTrackCue)
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TextTrackCueBox)
+    static bool isType(const WebCore::Node& node) { return node.isTextTrackCueBox(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

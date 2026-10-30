@@ -31,6 +31,7 @@
 
 #include "ElementInlines.h"
 #include "ScriptExecutionContext.h"
+#include "StyleSheetContents.h"
 #include "TextTrackCueList.h"
 #include "VTTCue.h"
 #include "VTTRegionList.h"
@@ -141,7 +142,7 @@ void LoadableTextTrack::newRegionsAvailable(TextTrackLoader& loader)
 void LoadableTextTrack::newStyleSheetsAvailable(TextTrackLoader& loader)
 {
     ASSERT(m_loader.get() == &loader);
-    m_styleSheets = loader.getNewStyleSheets();
+    addStyleSheets(loader.getNewStyleSheets());
 }
 
 AtomString LoadableTextTrack::id() const

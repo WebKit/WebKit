@@ -236,6 +236,7 @@ public:
 
 #if ENABLE(VIDEO)
     virtual bool isWebVTTElement() const { return false; }
+    virtual bool isTextTrackCueBox() const { return false; }
 #endif
     bool isStyledElement() const { return hasTypeFlag(TypeFlag::IsHTMLElement) || hasTypeFlag(TypeFlag::IsSVGElement) || hasTypeFlag(TypeFlag::IsMathMLElement); }
     virtual bool isHTMLFrameOwnerElement() const { return false; }

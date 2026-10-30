@@ -50,6 +50,7 @@ using namespace HTMLNames;
 
 class Document;
 class ISOWebVTTCue;
+class StyleSheetContents;
 class VTTScanner;
 
 class WebVTTParserClient {
@@ -113,6 +114,7 @@ public:
 
     WebVTTParser() = delete;
     WebVTTParser(WebVTTParserClient&, Document&);
+    ~WebVTTParser();
 
     static inline bool isRecognizedTag(const AtomString& tagName)
     {
@@ -139,7 +141,7 @@ public:
     // Transfers ownership of last parsed cues to caller.
     Vector<Ref<WebVTTCueData>> takeCues();
     Vector<Ref<VTTRegion>> takeRegions();
-    Vector<String> takeStyleSheets();
+    Vector<Ref<StyleSheetContents>> takeStyleSheets();
     
     // Create the DocumentFragment representation of the WebVTT cue text.
     static Ref<DocumentFragment> createDocumentFragmentFromCueText(Document&, const String&);
@@ -185,7 +187,7 @@ private:
 
     Vector<Ref<WebVTTCueData>> m_cuelist;
     Vector<Ref<VTTRegion>> m_regionList;
-    Vector<String> m_styleSheets;
+    Vector<Ref<StyleSheetContents>> m_styleSheets;
 };
 
 } // namespace WebCore

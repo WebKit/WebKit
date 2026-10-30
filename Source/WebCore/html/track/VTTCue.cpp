@@ -996,14 +996,6 @@ void VTTCue::obtainCSSBoxes()
         style->setTextContent(WTF::move(cssString));
         displayTree->appendChild(WTF::move(style));
     }
-
-    if (const auto& styleSheets = track()->styleSheets()) {
-        for (const auto& cssString : *styleSheets) {
-            auto style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
-            style->setTextContent(String { cssString });
-            displayTree->appendChild(WTF::move(style));
-        }
-    }
 }
 
 void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previousTimestamp, const MediaTime& movieTime)

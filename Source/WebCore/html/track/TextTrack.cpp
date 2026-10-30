@@ -39,7 +39,11 @@
 #include "DataCue.h"
 #include "Event.h"
 #include "ExceptionOr.h"
+#include "MediaQueryEvaluator.h"
+#include "RuleSet.h"
+#include "RuleSetBuilder.h"
 #include "SourceBuffer.h"
+#include "StyleSheetContents.h"
 #include "TextTrackClient.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
@@ -197,6 +201,32 @@ bool TextTrack::isValidKindKeyword(const AtomString& value)
         return true;
 
     return false;
+}
+
+void TextTrack::addStyleSheets(Vector<Ref<StyleSheetContents>>&& styleSheets)
+{
+    if (styleSheets.isEmpty())
+        return;
+    m_styleSheets.appendVector(WTF::move(styleSheets));
+    m_embeddedStyleRuleSet = nullptr;
+}
+
+const Style::RuleSet* TextTrack::embeddedStyleRuleSet()
+{
+    if (m_styleSheets.isEmpty())
+        return nullptr;
+
+    if (!m_embeddedStyleRuleSet) {
+        // WebVTTParser only accepts ::cue style rules, so there are no media queries to evaluate.
+        Ref ruleSet = Style::RuleSet::create();
+        {
+            Style::RuleSetBuilder builder(ruleSet, MQ::MediaQueryEvaluator { screenAtom(), MQ::EvaluationResult::True });
+            for (auto& styleSheet : m_styleSheets)
+                builder.addRulesFromSheet(styleSheet);
+        }
+        m_embeddedStyleRuleSet = WTF::move(ruleSet);
+    }
+    return m_embeddedStyleRuleSet.get();
 }
 
 const AtomString& TextTrack::kindKeyword() const

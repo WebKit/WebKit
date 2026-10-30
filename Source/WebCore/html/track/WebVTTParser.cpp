@@ -35,7 +35,6 @@
 
 #if ENABLE(VIDEO)
 
-#include "CSSSerializationContext.h"
 #include "CommonAtomStrings.h"
 #include "Document.h"
 #include "ISOVTTCue.h"
@@ -103,6 +102,8 @@ WebVTTParser::WebVTTParser(WebVTTParserClient& client, Document& document)
 {
 }
 
+WebVTTParser::~WebVTTParser() = default;
+
 Vector<Ref<WebVTTCueData>> WebVTTParser::takeCues()
 {
     return WTF::move(m_cuelist);
@@ -113,7 +114,7 @@ Vector<Ref<VTTRegion>> WebVTTParser::takeRegions()
     return WTF::move(m_regionList);
 }
 
-Vector<String> WebVTTParser::takeStyleSheets()
+Vector<Ref<StyleSheetContents>> WebVTTParser::takeStyleSheets()
 {
     return WTF::move(m_styleSheets);
 }
@@ -397,8 +398,7 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
     if (!childRules.size())
         return true;
 
-    StringBuilder sanitizedStyleSheetBuilder;
-
+    bool hasProperties = false;
     for (const auto& rule : childRules) {
         RefPtr styleRule = dynamicDowncast<StyleRule>(rule);
         if (!styleRule)
@@ -414,15 +414,12 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
         if (!isCue)
             return true;
 
-        if (styleRule->properties().isEmpty())
-            continue;
-
-        sanitizedStyleSheetBuilder.append(selectorText, " { "_s, protect(styleRule->properties())->asText(CSS::defaultSerializationContext()), "  }\n"_s);
+        if (!styleRule->properties().isEmpty())
+            hasProperties = true;
     }
 
-    // It would be more stylish to parse the stylesheet only once instead of serializing a sanitized version.
-    if (!sanitizedStyleSheetBuilder.isEmpty())
-        m_styleSheets.append(sanitizedStyleSheetBuilder.toString());
+    if (hasProperties)
+        m_styleSheets.append(WTF::move(contents));
 
     return true;
 }

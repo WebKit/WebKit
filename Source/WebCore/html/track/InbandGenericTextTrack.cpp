@@ -33,6 +33,7 @@
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
+#include "StyleSheetContents.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
 #include "VTTRegionList.h"
@@ -270,7 +271,7 @@ void InbandGenericTextTrack::newRegionsParsed()
 
 void InbandGenericTextTrack::newStyleSheetsParsed()
 {
-    m_styleSheets = parser().takeStyleSheets();
+    addStyleSheets(parser().takeStyleSheets());
 }
 
 void InbandGenericTextTrack::fileFailedToParse()

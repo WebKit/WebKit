@@ -93,6 +93,9 @@ private:
     void matchPartPseudoElementRulesForScope(const Element& partMatchingElement, DeclarationOrigin);
 
     void collectMatchingUserAgentPartRules(const MatchRequest&);
+#if ENABLE(VIDEO)
+    void matchWebVTTEmbeddedStyleRules();
+#endif
 
     void collectMatchingRules(DeclarationOrigin);
     void collectMatchingRules(const MatchRequest&);

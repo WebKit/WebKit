@@ -2,3 +2,4 @@ dom/ElementInlinesLight.h
 layout/formattingContexts/inline/InlineFormattingContext.h
 style/StyleBuilderState.h
 style/StyleExtractorState.h
+style/RuleSetBuilder.h

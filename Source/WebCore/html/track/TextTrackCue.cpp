@@ -536,16 +536,6 @@ void TextTrackCue::rebuildDisplayTree()
         }
     }
 
-    if (track()) {
-        if (const auto& styleSheets = track()->styleSheets()) {
-            for (const auto& cssString : *styleSheets) {
-                Ref style = HTMLStyleElement::create(HTMLNames::styleTag, *document, false);
-                style->setTextContent(String { cssString });
-                m_displayTree->appendChild(WTF::move(style));
-            }
-        }
-    }
-
     m_displayTreeNeedsUpdate = false;
 }
 
