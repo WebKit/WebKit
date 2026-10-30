@@ -813,8 +813,12 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request, const Stri
 
     std::optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
     isAppBound = m_isNavigatingToAppBoundDomain;
-    if (localFrame)
-        protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::StartDownload(policyDownloadID, request, topOrigin, isAppBound, suggestedName, fromDownloadAttribute, localFrame->frameID(), localFrame->pageID()), 0);
+    if (localFrame) {
+        OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
+        if (RefPtr documentLoader = localFrame->loader().documentLoader())
+            advancedPrivacyProtections = documentLoader->advancedPrivacyProtections();
+        protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::StartDownload(policyDownloadID, request, topOrigin, isAppBound, advancedPrivacyProtections, suggestedName, fromDownloadAttribute, localFrame->frameID(), localFrame->pageID()), 0);
+    }
 }
 
 void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, const ResourceRequest& request, const ResourceResponse& response)
