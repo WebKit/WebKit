@@ -79,6 +79,7 @@ public:
     void TearDown() override
     {
         FileSystem::deleteFile(m_tempFilePath);
+        resetTestState();
     }
     
     const String& tempFilePath() { return m_tempFilePath; }
