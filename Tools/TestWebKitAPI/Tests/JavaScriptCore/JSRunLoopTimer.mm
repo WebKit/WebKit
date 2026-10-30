@@ -87,6 +87,7 @@ TEST(JavaScriptCore, DISABLED_IncrementalSweeperMainThread)
 TEST(JavaScriptCore, IncrementalSweeperMainThread)
 #endif
 {
+    s_done = false;
     RetainPtr context = adoptNS([JSContext new]);
     s_expectedRunLoop = &RunLoop::currentSingleton();
 
@@ -103,6 +104,7 @@ TEST(JavaScriptCore, DISABLED_IncrementalSweeperSecondaryThread)
 TEST(JavaScriptCore, IncrementalSweeperSecondaryThread)
 #endif
 {
+    s_done = false;
     RetainPtr context = adoptNS([JSContext new]);
     s_expectedRunLoop = &RunLoop::currentSingleton();
 
