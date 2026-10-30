@@ -1,0 +1,80 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: inline-block; height: 220px; margin: 0 6px 6px 0; vertical-align: top; background: lightgray; font-family: monospace; font-size: 10px; border: solid blue; border-width: 1px 2px 3px 4px; padding: 3px 5px 7px 9px; }
+.lr { writing-mode: vertical-lr; }
+.rl { writing-mode: vertical-rl; }
+.slr { writing-mode: sideways-lr; }
+.srl { writing-mode: sideways-rl; }
+.box { background: lightblue; width: 12px; margin: 6px 0; }
+.collapse { margin: 10px 4px; }
+.auto { margin-inline: auto; block-size: 10px; inline-size: 60%; background: green; }
+.border { border: solid green; border-width: 1px 3px 5px 7px; padding: 2px 4px; }
+.flow-root { display: flow-root; margin: 8px 3px; background: orange; }
+.leaf-table { display: table; inline-size: 50%; block-size: 14px; background: purple; margin: 4px 0; }
+.leaf-flex { display: flex; block-size: 10px; margin-inline-start: 20px; background: brown; }
+.relative { position: relative; inset-inline-start: 15px; inset-block-start: 3px; background: pink; block-size: 10px; }
+.inline-block { display: inline-block; inline-size: 20px; block-size: 8px; background: teal; }
+.nested { display: inline-block; background: yellow; }
+.nested-item { display: inline-block; background: green; border: solid blue; border-width: 2px 5px 3px 4px; padding: 6px 3px 7px 8px; margin: 10px 6px 4px 12px; }
+</style>
+<div class="root lr">
+  <div class="box">text in a box</div>
+  <div class="collapse"><div class="collapse box"></div></div>
+  <div class="auto"></div>
+  <div class="border">bordered <span class="inline-block"></span> text</div>
+  <div class="flow-root"><div class="box" style="margin-block-start: 15px"></div></div>
+  <div class="leaf-table"></div>
+  <div class="leaf-flex"></div>
+  <div class="relative"></div>
+</div>
+<div class="root rl">
+  <div class="box">text in a box</div>
+  <div class="collapse"><div class="collapse box"></div></div>
+  <div class="auto"></div>
+  <div class="border">bordered <span class="inline-block"></span> text</div>
+  <div class="flow-root"><div class="box" style="margin-block-start: 15px"></div></div>
+  <div class="leaf-table"></div>
+  <div class="leaf-flex"></div>
+  <div class="relative"></div>
+</div>
+<div class="root lr" dir="rtl">
+  <div class="box">text in a box</div>
+  <div class="auto"></div>
+  <div class="border">bordered <span class="inline-block"></span> text</div>
+  <div class="flow-root"><div class="box" style="margin-inline-start: 15px"></div></div>
+  <div class="leaf-table"></div>
+  <div class="leaf-flex"></div>
+  <div class="relative"></div>
+</div>
+<div class="root rl" dir="rtl">
+  <div class="box">text in a box</div>
+  <div class="auto"></div>
+  <div class="border">bordered <span class="inline-block"></span> text</div>
+  <div class="flow-root"><div class="box" style="margin-inline-start: 15px"></div></div>
+  <div class="leaf-table"></div>
+  <div class="leaf-flex"></div>
+  <div class="relative"></div>
+</div>
+<div class="root slr">
+  <div class="box">text in a box</div>
+  <div class="auto"></div>
+  <div class="border">bordered <span class="inline-block"></span> text</div>
+  <div class="leaf-flex"></div>
+  <div class="relative"></div>
+</div>
+<div class="root srl" dir="rtl">
+  <div class="box">text in a box</div>
+  <div class="auto"></div>
+  <div class="border">bordered <span class="inline-block"></span> text</div>
+  <div class="leaf-flex"></div>
+  <div class="relative"></div>
+</div>
+<div class="root rl" style="text-align: center">
+  <div class="box" style="inline-size: 40px; margin-inline: auto"></div>
+  centered text
+  <div style="inline-size: 50px; block-size: 10px; background: green; margin-inline-start: 30%"></div>
+</div>
+<div class="root lr">text <span class="nested"><span class="nested-item">x</span></span> text</div>
+<div class="root rl">text <span class="nested"><span class="nested-item">x</span></span> text</div>
+<div class="root slr">text <span class="nested"><span class="nested-item">x</span></span> text</div>
+<div class="root srl">text <span class="nested"><span class="nested-item">x</span></span> text</div>

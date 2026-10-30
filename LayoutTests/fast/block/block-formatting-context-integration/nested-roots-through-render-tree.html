@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 400px; background: lightgray; margin-bottom: 10px; }
+.block { height: 20px; margin: 10px 0; background: lightblue; }
+.nested { display: flow-root; background: rgba(0, 128, 0, 0.3); margin: 10px 20px; padding: 5px; }
+.float { float: left; width: 50px; height: 30px; background: orange; }
+.inline-block { display: inline-block; width: 40px; height: 15px; background: blue; }
+.grid { display: grid; grid-template-columns: 1fr 2fr; gap: 5px; background: rgba(0, 0, 255, 0.2); margin: 10px 0; }
+.grid > div { height: 20px; background: navy; }
+</style>
+<div class="root" id="root">
+  <div class="block"></div>
+  <div class="nested"><div class="float"></div>text beside a float</div>
+  <div class="nested">inline <span class="inline-block"></span> block</div>
+  <div class="nested" style="contain: layout"><div class="block"></div></div>
+  <div class="nested" style="columns: 2; margin: 0"><div class="block"></div><div class="block"></div></div>
+  <div class="grid"><div></div><div></div><div></div></div>
+  <div class="nested" style="width: 50%; margin-left: auto"><div class="float" style="float: right"></div><div class="block"></div></div>
+  <div class="block"></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("root").style.width = "300px";
+document.body.offsetHeight;
+</script>

@@ -156,8 +156,8 @@ public:
     std::optional<Style::PreferredSize> logicalWidthForFlexBasisComputation;
     std::optional<Style::PreferredSize> logicalHeightForFlexBasisComputation;
     // FIXME: We should store these based on physical direction.
-    std::optional<RenderBox::GridAreaSize> gridAreaContentLogicalWidth;
-    std::optional<RenderBox::GridAreaSize> gridAreaContentLogicalHeight;
+    std::optional<RenderBox::ContainingBlockContentSize> overridingContainingBlockContentLogicalWidth;
+    std::optional<RenderBox::ContainingBlockContentSize> overridingContainingBlockContentLogicalHeight;
 };
 
 // Size of border belt for autoscroll. When mouse pointer in border belt,
@@ -552,7 +552,7 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
         clearOverridingSize();
 
     if (oldStyle && oldStyle->hasOutOfFlowPosition() != style().hasOutOfFlowPosition()) {
-        clearGridAreaContentSize();
+        clearOverridingContainingBlockContentSize();
         if (auto* containingBlock = this->containingBlock(); containingBlock && oldStyle->hasOutOfFlowPosition()) {
             // When going from out-of-flow to inflow, the containing block gains new descendant content and its preferred width becomes invalid.
             containingBlock->setNeedsLayoutAndInvalidateContentLogicalWidths();
@@ -1608,52 +1608,52 @@ std::optional<LayoutUnit> RenderBox::overridingBorderBoxLogicalHeight() const
     return m_overridingSizes ? m_overridingSizes->borderBoxLogicalHeight : std::nullopt;
 }
 
-std::optional<RenderBox::GridAreaSize> RenderBox::gridAreaContentWidth(WritingMode writingMode) const
+std::optional<RenderBox::ContainingBlockContentSize> RenderBox::overridingContainingBlockContentWidth(WritingMode writingMode) const
 {
     if (writingMode.isHorizontal())
-        return gridAreaContentLogicalWidth();
-    return gridAreaContentLogicalHeight();
+        return overridingContainingBlockContentLogicalWidth();
+    return overridingContainingBlockContentLogicalHeight();
 }
 
-std::optional<RenderBox::GridAreaSize> RenderBox::gridAreaContentHeight(WritingMode writingMode) const
+std::optional<RenderBox::ContainingBlockContentSize> RenderBox::overridingContainingBlockContentHeight(WritingMode writingMode) const
 {
     if (writingMode.isHorizontal())
-        return gridAreaContentLogicalHeight();
-    return gridAreaContentLogicalWidth();
+        return overridingContainingBlockContentLogicalHeight();
+    return overridingContainingBlockContentLogicalWidth();
 }
 
-std::optional<RenderBox::GridAreaSize> RenderBox::gridAreaContentLogicalWidth() const
+std::optional<RenderBox::ContainingBlockContentSize> RenderBox::overridingContainingBlockContentLogicalWidth() const
 {
-    return m_overridingSizes ? m_overridingSizes->gridAreaContentLogicalWidth : std::nullopt;
+    return m_overridingSizes ? m_overridingSizes->overridingContainingBlockContentLogicalWidth : std::nullopt;
 }
 
-std::optional<RenderBox::GridAreaSize> RenderBox::gridAreaContentLogicalHeight() const
+std::optional<RenderBox::ContainingBlockContentSize> RenderBox::overridingContainingBlockContentLogicalHeight() const
 {
-    return m_overridingSizes ? m_overridingSizes->gridAreaContentLogicalHeight : std::nullopt;
+    return m_overridingSizes ? m_overridingSizes->overridingContainingBlockContentLogicalHeight : std::nullopt;
 }
 
-void RenderBox::setGridAreaContentLogicalWidth(GridAreaSize logicalWidth)
+void RenderBox::setOverridingContainingBlockContentLogicalWidth(ContainingBlockContentSize logicalWidth)
 {
-    ensureOverridingSizes().gridAreaContentLogicalWidth = logicalWidth;
+    ensureOverridingSizes().overridingContainingBlockContentLogicalWidth = logicalWidth;
 }
 
-void RenderBox::setGridAreaContentLogicalHeight(GridAreaSize logicalHeight)
+void RenderBox::setOverridingContainingBlockContentLogicalHeight(ContainingBlockContentSize logicalHeight)
 {
-    ensureOverridingSizes().gridAreaContentLogicalHeight = logicalHeight;
+    ensureOverridingSizes().overridingContainingBlockContentLogicalHeight = logicalHeight;
 }
 
-void RenderBox::clearGridAreaContentSize()
+void RenderBox::clearOverridingContainingBlockContentSize()
 {
     if (!m_overridingSizes)
         return;
-    m_overridingSizes->gridAreaContentLogicalWidth = std::nullopt;
-    m_overridingSizes->gridAreaContentLogicalHeight = std::nullopt;
+    m_overridingSizes->overridingContainingBlockContentLogicalWidth = std::nullopt;
+    m_overridingSizes->overridingContainingBlockContentLogicalHeight = std::nullopt;
 }
 
-void RenderBox::clearGridAreaContentLogicalHeight()
+void RenderBox::clearOverridingContainingBlockContentLogicalHeight()
 {
     if (m_overridingSizes)
-        m_overridingSizes->gridAreaContentLogicalHeight = std::nullopt;
+        m_overridingSizes->overridingContainingBlockContentLogicalHeight = std::nullopt;
 }
 
 std::optional<Style::PreferredSize> RenderBox::overridingLogicalHeightForFlexBasisComputation() const
@@ -2539,23 +2539,18 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
         return constraints.containingInlineSize();
     }
 
-    if (isGridItem()) {
-        ASSERT(is<RenderGrid>(containingBlock));
-        if (auto gridAreaContentLogicalWidth = this->gridAreaContentLogicalWidth())
-            return gridAreaContentLogicalWidth->value_or(0_lu);
-    }
+    if (auto overridingContainingBlockContentLogicalWidth = this->overridingContainingBlockContentLogicalWidth())
+        return overridingContainingBlockContentLogicalWidth->value_or(0_lu);
 
     return containingBlock->contentBoxLogicalWidth();
 }
 
 LayoutUnit RenderBox::containingBlockLogicalHeightForContent(AvailableLogicalHeightType heightType) const
 {
-    if (isGridItem()) {
-        if (auto gridAreaContentLogicalHeight = this->gridAreaContentLogicalHeight(); gridAreaContentLogicalHeight && *gridAreaContentLogicalHeight) {
-            // FIXME: Containing block for a grid item is the grid area it's located in. We need to return whatever
-            // height value we get from gridAreaContentLogicalHeight() here, including std::nullopt.
-            return gridAreaContentLogicalHeight->value();
-        }
+    if (auto overridingContainingBlockContentLogicalHeight = this->overridingContainingBlockContentLogicalHeight(); overridingContainingBlockContentLogicalHeight && *overridingContainingBlockContentLogicalHeight) {
+        // FIXME: Containing block for a grid item is the grid area it's located in. We need to return whatever
+        // height value we get from overridingContainingBlockContentLogicalHeight() here, including std::nullopt.
+        return overridingContainingBlockContentLogicalHeight->value();
     }
 
     if (auto* containingBlock = this->containingBlock())
@@ -2572,10 +2567,8 @@ LayoutUnit RenderBox::containingBlockAvailableLineWidth() const
 
 LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
 {
-    if (isGridItem()) {
-        if (auto gridAreaContentLogicalHeight = this->gridAreaContentLogicalHeight(); gridAreaContentLogicalHeight && *gridAreaContentLogicalHeight)
-            return gridAreaContentLogicalHeight->value();
-    }
+    if (auto overridingContainingBlockContentLogicalHeight = this->overridingContainingBlockContentLogicalHeight(); overridingContainingBlockContentLogicalHeight && *overridingContainingBlockContentLogicalHeight)
+        return overridingContainingBlockContentLogicalHeight->value();
 
     auto* containingBlock = this->containingBlock();
     if (auto overridingLogicalHeight = containingBlock->overridingBorderBoxLogicalHeight())
@@ -2736,8 +2729,12 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
     computedValues.margins.end = marginEnd(writingMode());
 
     if (isOutOfFlowPositioned()) {
-        ASSERT(!overridingBorderBoxLogicalWidth());
         ASSERT(!overridingLogicalWidthForFlexBasisComputation());
+        // The new block formatting context sizes the out-of-flow flex containers it lays out through the render tree (css-position-3 §4.3).
+        if (auto logicalWidth = overridingBorderBoxLogicalWidth()) {
+            computedValues.extent = *logicalWidth;
+            return;
+        }
         // FIXME: This calculation is not patched for block-flow yet.
         // https://bugs.webkit.org/show_bug.cgi?id=46500
         computeOutOfFlowPositionedLogicalWidth(computedValues);
@@ -3377,6 +3374,11 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
     }
 
     if (isOutOfFlowPositioned()) {
+        // The new block formatting context also gives them their block size when it does not depend on their content.
+        if (auto logicalHeight = overridingBorderBoxLogicalHeight()) {
+            computedValues.extent = *logicalHeight;
+            return computedValues;
+        }
         computeOutOfFlowPositionedLogicalHeight(computedValues);
         return computedValues;
     }
@@ -3741,12 +3743,12 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
                 if (isGridItem()) {
                     if (isOrthogonal(*this, containingBlock))
                         return containingBlockLogicalWidthForContent();
-                    // gridAreaContentLogicalHeight() is optional<optional<LayoutUnit>>:
+                    // overridingContainingBlockContentLogicalHeight() is optional<optional<LayoutUnit>>:
                     // - empty outer: not set at all (shouldn't happen for grid items)
                     // - outer set, inner nullopt: grid area height not yet resolved (auto tracks during intrinsic sizing)
                     // - outer set, inner has value: grid area height is definite
                     // When the grid area is not yet resolved, stretch doesn't resolve.
-                    auto gridAreaSize = gridAreaContentLogicalHeight();
+                    auto gridAreaSize = overridingContainingBlockContentLogicalHeight();
                     if (!gridAreaSize || !*gridAreaSize)
                         return { };
                     return gridAreaSize->value();
@@ -3981,12 +3983,10 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computePercenta
 
     auto isOrthogonal = isHorizontal != containingBlock->isHorizontalWritingMode();
     auto overridingAvailableSize = std::optional<LayoutUnit> { };
-    if (isGridItem()) {
-        if (auto gridAreaSize = isOrthogonal ? gridAreaContentLogicalWidth() : gridAreaContentLogicalHeight()) {
-            if (!*gridAreaSize)
-                return { };
-            overridingAvailableSize = *gridAreaSize;
-        }
+    if (auto containingBlockContentSize = isOrthogonal ? overridingContainingBlockContentLogicalWidth() : overridingContainingBlockContentLogicalHeight()) {
+        if (!*containingBlockContentSize)
+            return { };
+        overridingAvailableSize = *containingBlockContentSize;
     }
     if (CheckedPtr tableCell = dynamicDowncast<RenderTableCell>(*containingBlock); tableCell && !isOrthogonal) {
         if (skippedAutoHeightContainingBlock)
@@ -5760,10 +5760,8 @@ bool RenderBox::hasAutoHeightOrContainingBlockWithAutoHeight(UpdatePercentageHei
     if (isFlexItem() && downcast<RenderFlexibleBox>(*parent()).canUseFlexItemForPercentageResolution(*this))
         return false;
 
-    if (isGridItem()) {
-        if (auto containingBlockContentLogicalHeight = gridAreaContentLogicalHeight())
-            return !*containingBlockContentLogicalHeight;
-    }
+    if (auto containingBlockContentLogicalHeight = overridingContainingBlockContentLogicalHeight())
+        return !*containingBlockContentLogicalHeight;
 
     auto isOutOfFlowPositionedWithImplicitHeight = isOutOfFlowPositioned() && !style().logicalTop().isAuto() && !style().logicalBottom().isAuto();
     if (logicalHeight.isAuto() && !isOutOfFlowPositionedWithImplicitHeight)
