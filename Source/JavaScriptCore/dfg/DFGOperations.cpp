@@ -4739,6 +4739,9 @@ JSC_DEFINE_JIT_OPERATION(operationFunctionBind, JSBoundFunction*, (JSGlobalObjec
     if (boundArgsLength >= 1)
         boundArgs = ArgList(arguments, boundArgsLength);
 
+    JSValue alreadyMaterializedPrototype = JSBoundFunction::materializeObservablePrototype(globalObject, target);
+    OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
+
     double length = 0;
     JSString* name = nullptr;
     JSFunction* function = dynamicDowncast<JSFunction>(target);
@@ -4753,12 +4756,14 @@ JSC_DEFINE_JIT_OPERATION(operationFunctionBind, JSBoundFunction*, (JSGlobalObjec
         if (found) {
             JSValue lengthValue = target->get(globalObject, vm.propertyNames->length);
             OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
-            length = lengthValue.toIntegerOrInfinity(globalObject);
-            OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
-            if (length > boundArgsLength)
-                length -= boundArgsLength;
-            else
-                length = 0;
+            if (lengthValue.isNumber()) {
+                length = lengthValue.toIntegerOrInfinity(globalObject);
+                OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
+                if (length > boundArgsLength)
+                    length -= boundArgsLength;
+                else
+                    length = 0;
+            }
         }
         JSValue nameValue = target->get(globalObject, vm.propertyNames->name);
         OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
@@ -4769,7 +4774,7 @@ JSC_DEFINE_JIT_OPERATION(operationFunctionBind, JSBoundFunction*, (JSGlobalObjec
     }
 
     SourceTaintedOrigin taintedness = sourceTaintedOriginFromStack(vm, callFrame).first;
-    OPERATION_RETURN(scope, JSBoundFunction::create(vm, globalObject, target, boundThis, boundArgs, length, name, taintedness));
+    OPERATION_RETURN(scope, JSBoundFunction::create(vm, globalObject, target, boundThis, boundArgs, length, name, taintedness, alreadyMaterializedPrototype));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewBoundFunction, JSBoundFunction*, (JSGlobalObject* globalObject, JSFunction* function, EncodedJSValue boundThisValue, EncodedJSValue arg0Value, EncodedJSValue arg1Value, EncodedJSValue arg2Value))
