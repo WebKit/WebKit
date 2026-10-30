@@ -1,0 +1,4 @@
+
+FAIL getBoxQuads() returns current geometry from connectedCallback assert_equals: Element.prototype.getBoxQuads expected "function" but got "undefined"
+FAIL getBoxQuads() updates reused OOF geometry after scrollbars appear oldChild.getBoxQuads is not a function. (In 'oldChild.getBoxQuads()', 'oldChild.getBoxQuads' is undefined)
+

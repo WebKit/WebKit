@@ -1,0 +1,5 @@
+
+
+FAIL horizontal writing mode assert_equals: clientLeft is the border plus the inline padding expected 25 but got 5
+FAIL vertical writing mode assert_equals: clientTop is the border plus the inline padding expected 25 but got 5
+

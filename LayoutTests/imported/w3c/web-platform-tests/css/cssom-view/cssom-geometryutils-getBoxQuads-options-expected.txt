@@ -1,0 +1,20 @@
+inline content wraps here
+
+FAIL GeometryUtils APIs exist on Element assert_equals: Element.prototype.getBoxQuads expected "function" but got "undefined"
+FAIL getBoxQuads({box: "margin"}) returns the requested CSS box target.getBoxQuads is not a function. (In 'target.getBoxQuads({box})', 'target.getBoxQuads' is undefined)
+FAIL getBoxQuads({box: "border"}) returns the requested CSS box target.getBoxQuads is not a function. (In 'target.getBoxQuads({box})', 'target.getBoxQuads' is undefined)
+FAIL getBoxQuads({box: "padding"}) returns the requested CSS box target.getBoxQuads is not a function. (In 'target.getBoxQuads({box})', 'target.getBoxQuads' is undefined)
+FAIL getBoxQuads({box: "content"}) returns the requested CSS box target.getBoxQuads is not a function. (In 'target.getBoxQuads({box})', 'target.getBoxQuads' is undefined)
+FAIL getBoxQuads() defaults to the border box target.getBoxQuads is not a function. (In 'target.getBoxQuads()', 'target.getBoxQuads' is undefined)
+FAIL getBoxQuads({relativeTo}) uses the relative element border-box origin child.getBoxQuads is not a function. (In 'child.getBoxQuads({relativeTo: relative})', 'child.getBoxQuads' is undefined)
+FAIL getBoxQuads() combines box and relativeTo options child.getBoxQuads is not a function. (In 'child.getBoxQuads({box: "content", relativeTo: relative})', 'child.getBoxQuads' is undefined)
+FAIL getBoxQuads() point order is physical for bidi and writing-mode rtl.getBoxQuads is not a function. (In 'rtl.getBoxQuads()', 'rtl.getBoxQuads' is undefined)
+FAIL getBoxQuads({box: "margin"}) applies box edges to inline fragments inline.getBoxQuads is not a function. (In 'inline.getBoxQuads({box})', 'inline.getBoxQuads' is undefined)
+FAIL getBoxQuads({box: "border"}) applies box edges to inline fragments inline.getBoxQuads is not a function. (In 'inline.getBoxQuads({box})', 'inline.getBoxQuads' is undefined)
+FAIL getBoxQuads({box: "padding"}) applies box edges to inline fragments inline.getBoxQuads is not a function. (In 'inline.getBoxQuads({box})', 'inline.getBoxQuads' is undefined)
+FAIL getBoxQuads({box: "content"}) applies box edges to inline fragments inline.getBoxQuads is not a function. (In 'inline.getBoxQuads({box})', 'inline.getBoxQuads' is undefined)
+FAIL Document.getBoxQuads({box: "margin"}) returns the layout viewport document.getBoxQuads is not a function. (In 'document.getBoxQuads({box})', 'document.getBoxQuads' is undefined)
+FAIL Document.getBoxQuads({box: "border"}) returns the layout viewport document.getBoxQuads is not a function. (In 'document.getBoxQuads({box})', 'document.getBoxQuads' is undefined)
+FAIL Document.getBoxQuads({box: "padding"}) returns the layout viewport document.getBoxQuads is not a function. (In 'document.getBoxQuads({box})', 'document.getBoxQuads' is undefined)
+FAIL Document.getBoxQuads({box: "content"}) returns the layout viewport document.getBoxQuads is not a function. (In 'document.getBoxQuads({box})', 'document.getBoxQuads' is undefined)
+

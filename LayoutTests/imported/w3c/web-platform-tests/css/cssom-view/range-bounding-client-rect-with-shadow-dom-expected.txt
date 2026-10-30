@@ -1,0 +1,7 @@
+Light
+
+PASS getBoundingClientRect returns a zero rect for a range crossing a shadow boundary
+PASS ranges entirely inside a shadow tree return client rects
+PASS ranges in a detached tree return empty rects
+PASS a collapsed range at a text node returns client rects
+
