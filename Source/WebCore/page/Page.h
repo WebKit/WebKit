@@ -43,6 +43,7 @@
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/ScriptTrackingPrivacyCategory.h>
 #include <WebCore/ScrollTypes.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SimpleRange.h>
 #include <WebCore/Supplementable.h>
 #include <WebCore/Timer.h>
@@ -1081,6 +1082,12 @@ public:
 #if ENABLE(VIDEO)
     void mediaEngineChanged(HTMLMediaElement&);
 #endif
+
+    void noteMediaUserInteractionToCarryForwardAcrossNavigation(const SecurityOriginData&);
+    void clearMediaUserInteractionToCarryForwardAcrossNavigation();
+    void notePlaybackOfMediaUserInteractedWith();
+    bool canCarryMediaUserInteractionForwardAcrossNavigation() const;
+
     WEBCORE_EXPORT void setMuted(MediaProducerMutedStateFlags);
     bool shouldSuppressHDR() const { return m_shouldSuppressHDR; }
     WEBCORE_EXPORT void setShouldSuppressHDR(bool);
@@ -1955,6 +1962,9 @@ private:
     bool m_shouldDeferIntersectionObservations { false };
     MonotonicTime m_lastResizeTimeForIOQuirk;
     MonotonicTime m_lastOrientationChangeTime;
+
+    MonotonicTime m_lastPlaybackTimeOfMediaUserInteractedWith;
+    std::optional<SecurityOriginData> m_mediaUserInteractionOriginToCarryForward;
 
     Ref<DocumentSyncData> m_topDocumentSyncData;
 
