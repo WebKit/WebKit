@@ -138,7 +138,8 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
     // Only the root and its content are written here, by the root's own formatting context, and nothing else in the block formatting context
     // reads them.
     SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef box = const_cast<RenderBox&>(root);
-    CheckedRef containingBlock = downcast<RenderBlockFlow>(*box->parent());
+    // Its parent, or the block container whose inline content it is in.
+    CheckedRef containingBlock = downcast<RenderBlockFlow>(*box->containingBlock());
 
     // Like RenderBlockFlow::layoutBlockChildren, which lays a child out again when the inline size of its containing block changed.
     containingBlock->updateBlockChildDirtyBitsBeforeLayout(constraints.relayoutChildren ? RelayoutChildren::Yes : RelayoutChildren::No, box);
