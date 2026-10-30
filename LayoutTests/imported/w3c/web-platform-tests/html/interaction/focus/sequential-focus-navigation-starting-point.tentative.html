@@ -2,6 +2,8 @@
 <html>
 <head>
 <meta charset="utf-8">
+<!-- test takes ~12 seconds on Firefox macOS -->
+<meta name="timeout" content="long">
 <title>Tests that the sequential focus navigation starting point is tracked correctly</title>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
@@ -118,6 +120,81 @@
     <button data-next slot="d">button 4</button>
   </div>
 </template>
+<template data-wait-for-event="hashchange"
+          data-description="Focus navigation starting point should be set when scrolling to fragment (and should not be overwritten when <a> is blurred).">
+  <a href="#fragment" data-click>click here</a>
+  <button id="button-1" data-prev>button 1</button>
+  <div id="fragment">Should set starting point to this div</div>
+  <button id="button-2" data-next>button 2</button>
+</template>
+<template data-description="Focus navigation starting point should be used when it's a descendant of the focused element.">
+  <div tabindex="0" data-focus>
+    <button data-prev id="button1">button 1</button>
+    <span data-click>in between</span>
+    <button data-next id="button2">button 2</button>
+  </div>
+</template>
+<template data-description="Backwards focus navigation should not be stuck when starting point is inside focused element but before any other focusable areas.">
+  <button data-prev id="button1">button 1</button>
+  <div tabindex="0" id="focusable" data-focus>
+    <span data-click>in between</span>
+    <button data-next id="button2">button 2</button>
+  </div>
+</template>
+<template data-description="Should start from focused element if it was focused after the selection was set.">
+  <button id="button1">button 1</button>
+  <span data-click>in between</span>
+  <button id="button2">button 2</button>
+  <button id="button3" data-prev>button 3</button>
+  <div tabindex="0" id="focusable" data-focus2>focusable</div>
+  <button id="button4" data-next>button 4</button>
+</template>
+
+<template data-description="Focus navigation starting point should be maintained when ancestor of slotted focused element is removed.">
+  <div data-shadow>
+    <template><slot name="a"
+      ></slot><slot name="b"
+      ></slot><slot name="c"
+      ></slot><slot name="d"
+      ></slot><slot name="e"
+      ></slot></template>
+    <button slot="a">button 1</button>
+    <div slot="c" data-remove>
+      <button data-focus>focus</button>
+    </div>
+    <button slot="e">button 5</button>
+    <button data-prev slot="b">button 2</button>
+    <button data-next slot="d">button 4</button>
+  </div>
+</template>
+
+<template data-description="Focus navigation starting point should be maintained when slotted shadow host is removed.">
+  <div data-shadow>
+    <template><slot name="a"
+      ></slot><slot name="b"
+      ></slot><slot name="c"
+      ></slot><slot name="d"
+      ></slot><slot name="e"
+      ></slot></template>
+    <button slot="a">button 1</button>
+    <div slot="c" data-remove data-shadow>
+      <template>
+        <button data-focus>focus</button>
+      </template>
+    </div>
+    <button slot="e">button 5</button>
+    <button data-prev slot="b">button 2</button>
+    <button data-next slot="d">button 4</button>
+  </div>
+</template>
+
+<template data-description="tabindex should be respected focus navigation starting point is inside focused element and after all other focusable content">
+  <div tabindex=1 data-prev>prev</div>
+  <div tabindex=2>tabindex=2 before</div>
+  <div tabindex=1>Start <span data-click>here</span>.</div>
+  <div tabindex=2>tabindex=2 after</div>
+  <div tabindex=1 data-next>next</div>
+</template>
 
 <script>
 "use strict";
@@ -132,16 +209,42 @@ function forEachMatching(selector, callback, root) {
     callback(element);
   }
   for (let element of root.querySelectorAll("[data-shadow]")) {
-    forEachMatching(selector, callback, element.shadowRoot);
+    if (element.shadowRoot) {
+      forEachMatching(selector, callback, element.shadowRoot);
+    }
+  }
+}
+
+async function forEachMatchingAsync(selector, callback) {
+  let elements = [];
+  forEachMatching(selector, e => elements.push(e));
+  for (let element of elements) {
+    await callback(element);
   }
 }
 
 for (let template of document.querySelectorAll("template")) {
   promise_test(async t => {
     for (let backwards of [false, true]) {
+      location.hash = '';
       container.replaceChildren();
       let test = document.importNode(template.content, true);
       container.append(test);
+      const waitForEvent = (() => {
+        const {promise, resolve}  = Promise.withResolvers();
+        const eventName = template.dataset.waitForEvent;
+        if (eventName) {
+          addEventListener(eventName, resolve);
+        } else {
+          resolve();
+        }
+        return promise;
+      })();
+      // Ensure buttons are keyboard-focusable
+      // (They aren't by default on Safari)
+      for (let button of document.querySelectorAll("button")) {
+        button.tabIndex = 0;
+      }
       forEachMatching("[data-shadow]", element => {
         let shadow = element.attachShadow({mode: "open"});
         shadow.append(element.querySelector("template").content);
@@ -149,6 +252,7 @@ for (let template of document.querySelectorAll("template")) {
       forEachMatching("[data-focus]", element => {
         element.focus();
       });
+      await forEachMatchingAsync("[data-click]", test_driver.click);
       forEachMatching("[data-blur]", element => {
         element.blur();
       });
@@ -175,6 +279,10 @@ for (let template of document.querySelectorAll("template")) {
       });
       forEachMatching("[data-reenable]", element => {
         element.disabled = false;
+      });
+      await waitForEvent;
+      forEachMatching("[data-focus2]", element => {
+        element.focus();
       });
 
       let actions = new test_driver.Actions();
