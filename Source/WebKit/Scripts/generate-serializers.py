@@ -2214,6 +2214,8 @@ def main(argv):
                         help='Additional opaque_ipc_types tracking file, for example one supplied by WebKitAdditions.')
     parser.add_argument('--split-by-directory', action='store_true',
                         help='Emit per-domain GeneratedSerializers<Domain>.{ext} files instead of a single GeneratedSerializers.{ext}.')
+    parser.add_argument('--write-if-changed', action='store_true',
+                        help='Do not rewrite output files whose contents did not change, so that build systems that check whether outputs changed (like ninja\'s restat) do not rebuild their dependents.')
 
     args = parser.parse_args(argv[1:])
 
@@ -2262,32 +2264,32 @@ def main(argv):
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    def output_path(filename):
-        if output_dir:
-            return os.path.join(output_dir, filename)
-        return filename
+    def write_output(filename, contents):
+        path = os.path.join(output_dir, filename) if output_dir else filename
+        if args.write_if_changed:
+            try:
+                with open(path) as existing_output:
+                    if existing_output.read() == contents:
+                        return
+            except FileNotFoundError:
+                pass
+        with open(path, "w+") as output:
+            output.write(contents)
 
-    with open(output_path('GeneratedSerializers.h'), "w+") as output:
-        output.write(generate_header(serialized_types, serialized_enums, additional_forward_declarations_list))
+    write_output('GeneratedSerializers.h', generate_header(serialized_types, serialized_enums, additional_forward_declarations_list))
     if split_by_directory:
         # Emit one .{ext} per bundle. Each bundle file is always emitted
         # (even if empty) so CMake/Xcode output lists stay deterministic. The
         # Common bundle catches inputs that don't match any prefix
         # (e.g. WebCore-generated inputs that aren't under Source/WebKit/).
         for bundle in ALL_BUNDLES:
-            with open(output_path(f'GeneratedSerializers{bundle}.{file_extension}'), "w+") as output:
-                output.write(generate_impl(serialized_types, serialized_enums, headers, False, [], bundle_filter=bundle))
+            write_output(f'GeneratedSerializers{bundle}.{file_extension}', generate_impl(serialized_types, serialized_enums, headers, False, [], bundle_filter=bundle))
     else:
-        with open(output_path('GeneratedSerializers.%s' % file_extension), "w+") as output:
-            output.write(generate_impl(serialized_types, serialized_enums, headers, False, []))
-    with open(output_path('WebKitPlatformGeneratedSerializers.%s' % file_extension), "w+") as output:
-        output.write(generate_impl(serialized_types, serialized_enums, headers, True, objc_wrapped_types))
-    with open(output_path('SerializedTypeInfo.%s' % file_extension), "w+") as output:
-        output.write(generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements, objc_wrapped_types))
-    with open(output_path('GeneratedWebKitSecureCoding.h'), "w+") as output:
-        output.write(generate_webkit_secure_coding_header(serialized_types))
-    with open(output_path('GeneratedWebKitSecureCoding.%s' % file_extension), "w+") as output:
-        output.write(generate_webkit_secure_coding_impl(serialized_types, headers))
+        write_output('GeneratedSerializers.%s' % file_extension, generate_impl(serialized_types, serialized_enums, headers, False, []))
+    write_output('WebKitPlatformGeneratedSerializers.%s' % file_extension, generate_impl(serialized_types, serialized_enums, headers, True, objc_wrapped_types))
+    write_output('SerializedTypeInfo.%s' % file_extension, generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements, objc_wrapped_types))
+    write_output('GeneratedWebKitSecureCoding.h', generate_webkit_secure_coding_header(serialized_types))
+    write_output('GeneratedWebKitSecureCoding.%s' % file_extension, generate_webkit_secure_coding_impl(serialized_types, headers))
     return 0
 
 
