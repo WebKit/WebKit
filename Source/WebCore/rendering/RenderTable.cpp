@@ -1052,6 +1052,15 @@ std::pair<LayoutUnit, LayoutUnit> RenderTable::computeIntrinsicLogicalWidthContr
     }
     maxContentLogicalWidth = std::max(maxContentLogicalWidth, minContentLogicalWidth);
 
+    // The min/max sizes transferred through the aspect ratio apply to the content box.
+    if (!style().logicalWidth().isFixed() && shouldComputeLogicalHeightFromAspectRatio()) {
+        minContentLogicalWidth -= borderAndPadding;
+        maxContentLogicalWidth -= borderAndPadding;
+        applyTransferredMinMaxSizesFromAspectRatio(minContentLogicalWidth, maxContentLogicalWidth);
+        minContentLogicalWidth += borderAndPadding;
+        maxContentLogicalWidth += borderAndPadding;
+    }
+
     auto& styleToUse = style();
     // FIXME: This should probably be checking for isSpecified since you should be able to use percentage or calc values for min-width.
     if (auto fixedLogicalMinWidth = styleToUse.logicalMinWidth().tryFixed(); fixedLogicalMinWidth && fixedLogicalMinWidth->isPositive()) {
