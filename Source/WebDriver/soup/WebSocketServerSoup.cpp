@@ -63,6 +63,22 @@ static bool soupServerListen(SoupServer* server, const String& host, unsigned po
 
 static void handleIncomingHandshake(SoupServer*, SoupServerMessage* message, const char* path, GHashTable*, gpointer userData)
 {
+    auto* webSocketServer = static_cast<WebSocketServer*>(userData);
+
+    // Setting a status here prevents libsoup from upgrading the connection.
+    auto* requestHeaders = soup_server_message_get_request_headers(message);
+    auto hostHeader = String::fromLatin1(soup_message_headers_get_one(requestHeaders, "Host"));
+    auto originHeader = String::fromLatin1(soup_message_headers_get_one(requestHeaders, "Origin"));
+    auto result = webSocketServer->messageHandler().validateHandshakeHeaders(hostHeader, originHeader);
+    if (!result) {
+        RELEASE_LOG_ERROR(WebDriverBiDi, "Rejected WebSocket handshake: %s", result.error().utf8());
+        auto response = HTTPRequestHandler::rejectedRequestResponse(result.error());
+        auto responseCharacters = byteCast<char>(response.data.span());
+        soup_server_message_set_status(message, response.statusCode, nullptr);
+        soup_server_message_set_response(message, response.contentType.utf8().legacyCStringPointer(), SOUP_MEMORY_COPY, responseCharacters.data(), responseCharacters.size());
+        return;
+    }
+
     if (!soup_websocket_server_check_handshake(message, nullptr, nullptr, nullptr, nullptr)) {
         soup_server_message_set_status(message, 500, "Invalid request");
         return;
@@ -76,7 +92,6 @@ static void handleIncomingHandshake(SoupServer*, SoupServerMessage* message, con
         static_cast<size_t>(requestBody->length)
     };
 
-    auto* webSocketServer = static_cast<WebSocketServer*>(userData);
     if (webSocketServer->messageHandler().acceptHandshake(WTF::move(handshakeMessage))) // Follow with handshake procedure
         return;
 
