@@ -40,10 +40,10 @@ class GtkTestRunner(TestRunner):
 
     def __init__(self, options, tests=[]):
         super(GtkTestRunner, self).__init__("gtk", options, tests)
+        self._accessibility_bus_address = None
 
-    def _ensure_accessibility_service_is_running(self):
-        # The a11y service is DBus activatable so we simply need to call it to ensure it
-        # has been started.
+    def _query_accessibility_bus_address(self):
+        # The a11y service is DBus activatable so asking for its address also starts it.
         try:
             proxy = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION,
                                                    Gio.DBusProxyFlags.NONE,
@@ -52,23 +52,39 @@ class GtkTestRunner(TestRunner):
                                                    '/org/a11y/bus',
                                                    'org.a11y.Bus',
                                                    None)
-
-            # After this returns we know the bus is setup, the return value doesn't matter.
-            proxy.GetAddress()
+            address = proxy.GetAddress()
         except GLib.Error as e:
             sys.stderr.write("Failed to talk to the accessibility service: {}\n".format(e.message))
             sys.stderr.flush()
-            return False
+            return None
 
-        return True
+        if not address:
+            sys.stderr.write("The accessibility service returned an empty bus address\n")
+            sys.stderr.flush()
+            return None
 
-    def _setup_testing_environment(self):
-        super(GtkTestRunner, self)._setup_testing_environment()
+        return address
 
-        # If we cannot start the accessibility daemons, we can just skip the accessibility tests.
-        if not self._ensure_accessibility_service_is_running():
+    def _setup_testing_environment_for_driver(self, driver):
+        test_env = super(GtkTestRunner, self)._setup_testing_environment_for_driver(driver)
+
+        # TestMain.cpp unsets DBUS_SESSION_BUS_ADDRESS, so the tests end up on an autolaunched session bus whose
+        # org.a11y.Bus might not work. Hand them the address of the a11y bus instead: GTK, libatspi and WebKit all
+        # use AT_SPI_BUS_ADDRESS without asking the session bus for it. If there is no usable a11y bus, disable
+        # accessibility, as GTK aborts the test process when it cannot get the address, and skip the a11y tests.
+        if not self._accessibility_bus_address:
+            self._accessibility_bus_address = test_env.get('AT_SPI_BUS_ADDRESS') or self._query_accessibility_bus_address()
+            if self._accessibility_bus_address:
+                print("Using accessibility bus at {}".format(self._accessibility_bus_address))
+        if self._accessibility_bus_address:
+            test_env['AT_SPI_BUS_ADDRESS'] = self._accessibility_bus_address
+        else:
             print("Could not start accessibility bus, so disabling TestWebKitAccessibility")
-            self._disabled_tests.append("WebKitGTK/TestWebKitAccessibility")
+            test_env['GTK_A11Y'] = 'none'
+            if "WebKitGTK/TestWebKitAccessibility" not in self._disabled_tests:
+                self._disabled_tests.append("WebKitGTK/TestWebKitAccessibility")
+
+        return test_env
 
     def _tear_down_testing_environment(self):
         super(GtkTestRunner, self)._tear_down_testing_environment()
