@@ -654,6 +654,7 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, c
     if (m_matchAuthorAndUserStyles) {
         collector.matchUserRules();
         collector.matchAuthorRules();
+        collector.matchQuirkRules();
     }
 
     ASSERT(!collector.matchedPseudoElements());
@@ -744,8 +745,10 @@ Vector<Ref<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Element*
             collector.matchUserRules();
     }
 
-    if (m_matchAuthorAndUserStyles && (rulesToInclude & AuthorCSSRules))
+    if (m_matchAuthorAndUserStyles && (rulesToInclude & AuthorCSSRules)) {
         collector.matchAuthorRules();
+        collector.matchQuirkRules();
+    }
 
     return collector.matchedRuleList();
 }
