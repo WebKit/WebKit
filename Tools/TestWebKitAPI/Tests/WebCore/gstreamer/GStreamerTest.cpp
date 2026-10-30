@@ -29,6 +29,7 @@
 #if USE(GSTREAMER)
 #include "GStreamerTest.h"
 
+#include "Helpers/WebCoreTestUtilities.h"
 #include <WebCore/GStreamerCodecUtilities.h>
 #include <WebCore/GStreamerCommon.h>
 #include <WebCore/GUniquePtrGStreamer.h>
@@ -276,6 +277,20 @@ TEST_F(GStreamerTest, displayAspectRatioCalculation)
     TEST_DAR_CALCULATION(330, 196, 7201628, 7170075, 331, 196); // 330x196 custom PAR (value too high)
 
 #undef TEST_DAR_CALCULATION
+}
+
+TEST_F(GStreamerTest, variableFrameRateFromCaps)
+{
+    // The color space lookup initializes GStreamer, which expects the WebProcess.
+    ScopedSetAuxiliaryProcessTypeForTesting processType { WTF::AuxiliaryProcessType::WebContent };
+    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420", "width", G_TYPE_INT, 320, "height", G_TYPE_INT, 240, "framerate", GST_TYPE_FRACTION, 0, 1, nullptr));
+    IntSize size;
+    GstVideoFormat format = GST_VIDEO_FORMAT_UNKNOWN;
+    int parN = 0, parD = 0, stride = 0;
+    double frameRate = 42;
+    PlatformVideoColorSpace colorSpace { };
+    ASSERT_TRUE(getVideoSizeAndFormatFromCaps(caps.get(), size, format, parN, parD, stride, frameRate, colorSpace));
+    EXPECT_EQ(frameRate, 0);
 }
 
 TEST_F(GStreamerTest, protocolValidation)
