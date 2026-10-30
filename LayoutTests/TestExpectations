@@ -3706,7 +3706,6 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/shaping/shaping
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/shaping/shaping-024.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/shaping/shaping-025.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/tab-size/tab-size-spacing-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text/tab-size/tab-size-block-ancestor.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/tab-size/tab-size-integer-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/tab-size/tab-size-spacing-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/tab-size/tab-size-spacing-003.html [ ImageOnlyFailure ]

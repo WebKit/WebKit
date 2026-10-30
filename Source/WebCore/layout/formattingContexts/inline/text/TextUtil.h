@@ -45,6 +45,7 @@ struct SpacingState;
 }
 
 struct GlyphOverflow;
+struct TabSize;
 class FontCascade;
 class RenderText;
 class TextRun;
@@ -107,6 +108,10 @@ public:
 
     static std::optional<TextDirection> overridingDirection(const InlineTextBox&);
     static std::optional<TextDirection> overridingDirection(const RenderText&);
+
+    static TabSize tabSize(const Style::ComputedStyle&, const Style::ComputedStyle& blockContainerStyle);
+    static TabSize tabSize(const InlineTextBox&);
+    static TabSize tabSize(const RenderText&, const Style::ComputedStyle&);
 
     static AtomString ellipsisTextInInlineDirection(bool isHorizontal = true);
 

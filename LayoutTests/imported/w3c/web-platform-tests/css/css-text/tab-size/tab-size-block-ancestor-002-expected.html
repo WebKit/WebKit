@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Text Test reference</title>
+<link rel="author" title="ChangSeok Oh" href="mailto:changseok@webkit.org">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<style>
+div {
+  font: 20px/30px Ahem;
+  white-space: pre;
+}
+.large {
+  font-size: 30px;
+}
+.small {
+  font-size: 10px;
+}
+.inline-block {
+  display: inline-block;
+  font-size: 20px;
+}
+</style>
+<p>Test passes if the left edges of the three black squares below are aligned.
+<!-- Each X is 160px from the start of its block container, spelled out with Ahem spaces. -->
+<div>        <span class="small">X</span></div>
+<div><span class="large"><span class="small">                X</span></span></div>
+<div class="small"><span class="inline-block"><span class="small">                X</span></span></div>

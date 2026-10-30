@@ -32,7 +32,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderCombineText.h"
 #include "StyleComputedStyle+GettersInlines.h"
-#include "StyleTabSize.h"
+#include "TextUtil.h"
 
 namespace WebCore {
 namespace InlineIterator {
@@ -65,7 +65,10 @@ TextRun TextBox::textRun(TextRunMode mode) const
     };
     auto characterScanForCodePath = isText() && !renderer().canUseSimpleFontCodePath();
     auto textRun = TextRun { mode == TextRunMode::Editing ? originalText() : displayBox().text().renderedContent(), logicalLeft(), expansion.horizontalExpansion, expansion.behavior, direction(), style->rtlOrdering() == Order::Visual, characterScanForCodePath };
-    textRun.setTabSize(!style->collapseWhiteSpace(), Style::toPlatform(style->tabSize(), style->usedZoomForLength()));
+    if (!style->collapseWhiteSpace()) {
+        CheckedRef blockContainerStyle = formattingContextRoot().style();
+        textRun.setTabSize(true, Layout::TextUtil::tabSize(style, blockContainerStyle));
+    }
     return textRun;
 }
 
