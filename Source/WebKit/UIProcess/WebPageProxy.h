@@ -3558,7 +3558,9 @@ private:
     void hidePopupMenu();
 
 #if ENABLE(CONTEXT_MENUS)
-    void showContextMenuFromFrame(FrameInfoData&&, ContextMenuContextData&&, UserData&&);
+    void showContextMenuFromFrame(IPC::Connection&, FrameInfoData&&, ContextMenuContextData&&, UserData&&);
+    bool contextMenuReplyReachesAskingProcess(WebCore::FrameIdentifier);
+    bool handleContextMenuSettingOrPanelAction(const WebContextMenuItemData&);
 #endif
 
 #if ENABLE(CONTEXT_MENU_EVENT)
