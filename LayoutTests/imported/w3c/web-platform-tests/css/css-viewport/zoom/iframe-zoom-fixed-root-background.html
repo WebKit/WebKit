@@ -1,0 +1,15 @@
+<!doctype html>
+<html class="reftest-wait">
+<meta charset="utf-8">
+<title>A fixed root background in a zoomed iframe covers the whole iframe</title>
+<link rel="help" href="https://drafts.csswg.org/css-viewport/#zoom-property">
+<link rel="match" href="iframe-zoom-fixed-root-background-ref.html">
+<style>
+  body { margin: 0; }
+  iframe { width: 400px; height: 300px; zoom: 0.5; border: 0; }
+</style>
+<iframe srcdoc="<!doctype html><style>html{background:linear-gradient(to right,red 50%,blue 50%) fixed}body{margin:0;height:100%}</style><body>"></iframe>
+<script>
+const iframe = document.querySelector("iframe");
+iframe.addEventListener("load", () => requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.remove("reftest-wait"))));
+</script>

@@ -138,6 +138,8 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
     IntRect clipRect = roundedIntRect(enclosingLayer()->childrenClipRect());
     IntRect newFrameRect = roundedIntRect(frame);
     IntRect oldFrameRect = protect(m_widget)->frameRect();
+    if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget))
+        frameView->setOwnerContentBoxSize(FloatSize { frame.size() });
     bool clipChanged = m_clipRect != clipRect;
     bool boundsChanged = oldFrameRect != newFrameRect;
 
@@ -212,6 +214,9 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
     if (widget) {
         widgetRendererMap().add(*widget, *this);
         view().frameView().didAddWidgetToRenderTree(*m_widget);
+        // The child's document style may have been resolved before this owner's zoom was known, or with a previous owner's zoom.
+        if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget); frameView && hasInitializedStyle())
+            frameView->ownerZoomDidChange(LocalFrameView::OwnerRendererChanged::Yes);
         // If we've already received a layout, apply the calculated space to the
         // widget immediately, but we have to have really been fully constructed.
         if (hasInitializedStyle()) {
@@ -262,13 +267,11 @@ void RenderWidget::styleDidChange(Style::Difference diff, const Style::ComputedS
     if (oldStyle && embeddedSVGRoot() && (oldStyle->objectFit() != style().objectFit() || oldStyle->objectPosition() != style().objectPosition() || oldStyle->objectViewBox() != style().objectViewBox()))
         setNeedsLayout();
 
-    // If this is an iframe and the zoom property changed, notify the iframe's content frame
-    // to trigger a resize event since devicePixelRatio will have changed.
-    if (oldStyle && oldStyle->zoom() != style().zoom()) {
-        if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget.get())) {
-            protect(frameView->frame())->deviceOrPageScaleFactorChanged();
-            frameView->scheduleResizeEventIfNeeded();
-        }
+    // If this is an iframe and its zoom or an ancestor's changed, notify the iframe's content frame, since its
+    // devicePixelRatio and layout size depend on it. That is a no-op if only the page zoom changed.
+    if (oldStyle && oldStyle->usedZoom() != style().usedZoom()) {
+        if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget))
+            frameView->ownerZoomDidChange();
     }
 }
 
