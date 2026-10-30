@@ -469,7 +469,6 @@ void Buffer::unmap()
         return;
 
     decrementBufferMapCount();
-    m_maxUnsignedIndex = m_maxUshortIndex = 0;
     indirectBufferInvalidated();
 
 #if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
@@ -540,15 +539,14 @@ std::optional<DrawIndexCacheContainerIterator> Buffer::canSkipDrawIndexedValidat
 void Buffer::drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, int32_t baseVertex, MTLIndexType indexType, uint32_t primitiveOffset, uint64_t validationGeneration, id<MTLIndirectCommandBuffer> icb)
 {
     constexpr auto maxCacheSize = 1000000;
-    if (m_drawIndexedCache.size() > maxCacheSize)
+    if (m_drawIndexedCache.size() > maxCacheSize) {
         m_drawIndexedCache.clear();
+        m_minValidatedVertexCount = UINT32_MAX;
+    }
 
     m_drawIndexedCache.set(makeKey(firstIndex, indexCount, baseVertex, indexType, primitiveOffset, icb), DrawIndexValidationCacheEntry { vertexCount, validationGeneration });
 
-    // Update the validated high-water marks so future writeBuffer calls
-    // with indices at or below these values don't need to invalidate.
-    m_maxValidatedUnsignedIndex = std::max(m_maxValidatedUnsignedIndex, m_maxUnsignedIndex);
-    m_maxValidatedUshortIndex = std::max(m_maxValidatedUshortIndex, m_maxUshortIndex);
+    m_minValidatedVertexCount = std::min(m_minValidatedVertexCount, vertexCount);
 }
 
 template <typename T>
@@ -685,7 +683,6 @@ void Buffer::didReadOOB(uint32_t v, id<MTLIndirectCommandBuffer> icb)
 
 void Buffer::indirectBufferInvalidated(CommandEncoder& commandEncoder)
 {
-    m_maxUnsignedIndex = m_maxUshortIndex = 0;
     indirectBufferInvalidated();
 
     commandEncoder.addOnCommitHandler([weakThis = ThreadSafeWeakPtr { *this }, weakCommandEncoder = ThreadSafeWeakPtr { commandEncoder }](CommandBuffer&, CommandEncoder&) {
@@ -693,7 +690,6 @@ void Buffer::indirectBufferInvalidated(CommandEncoder& commandEncoder)
             return true;
 
         RefPtr protectedThis = weakThis.get();
-        protectedThis->m_maxUnsignedIndex = protectedThis->m_maxUshortIndex = 0;
         RefPtr commandEncoder = weakCommandEncoder.get();
         protectedThis->indirectBufferInvalidated(commandEncoder.get());
         return true;
@@ -710,13 +706,18 @@ static size_t computeSize(HashSet<uint64_t, DefaultHash<uint64_t>, WTF::Unsigned
 
 bool Buffer::needsIndexValidation(uint32_t maxUnsignedIndex, uint16_t maxUshortIndex)
 {
-    const bool needsUpdate = maxUnsignedIndex > m_maxValidatedUnsignedIndex || maxUshortIndex > m_maxValidatedUshortIndex;
-    // Track the current write's max so we can update the validated
-    // threshold after a successful clamp-shader pass.
-    m_maxUnsignedIndex = maxUnsignedIndex;
-    m_maxUshortIndex = maxUshortIndex;
+    // Nothing has been validated since the last invalidation, so there is no cached verdict whose
+    // assumptions a write could break.
+    if (m_drawIndexedCache.isEmpty())
+        return true;
 
-    return needsUpdate;
+    // Every live cache entry was proven against a vertex count of at least m_minValidatedVertexCount,
+    // and the clamp shader accepts an index only if it is below the vertex count it was proven
+    // against. A write whose largest value stays below that bound therefore cannot make any cached
+    // draw fetch out of bounds no matter where in the buffer it lands, so the cached verdicts may be
+    // kept. Both interpretations are checked because the cache is shared across index types.
+    // Anything else has to be revalidated.
+    return maxUnsignedIndex >= m_minValidatedVertexCount || maxUshortIndex >= m_minValidatedVertexCount;
 }
 
 void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
@@ -732,12 +733,11 @@ void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
 
     m_gpuResourceMap.clear();
     m_drawIndexedCache.clear();
+    m_minValidatedVertexCount = UINT32_MAX;
     ++m_contentsGeneration;
     ++m_indexContentsGeneration;
     m_indexValueUpperBoundUint = UINT32_MAX;
     m_indexValueUpperBoundUshort = UINT16_MAX;
-    m_maxValidatedUnsignedIndex = 0;
-    m_maxValidatedUshortIndex = 0;
 }
 
 void Buffer::removeSkippedValidationCommandEncoder(uint64_t uniqueId)

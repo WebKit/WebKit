@@ -1,0 +1,142 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Regression test for rdar://183840202: drawIndexedValidated() raised the skip-invalidation " +
+           "ceiling to the max index over the ENTIRE preceding writeBuffer payload, although the clamp " +
+           "shader only proved the drawn sub-range [firstIndex, firstIndex + indexCount) below " +
+           "vertexCount. A value riding in the payload outside that window was therefore promoted as " +
+           "'validated' without ever having been bounds checked. needsIndexValidation() then let a later " +
+           "write of that value skip invalidation, and because indirectBufferInvalidated() is the only " +
+           "setter of m_mustTakeSlowIndexValidationPath, the on-commit safety net never armed - so an " +
+           "already-encoded, unsubmitted raw drawIndexedPrimitives ran against the new out-of-bounds " +
+           "indices. minVertexCount is 10. The poison 0x7FFFFFF0 sits at index 8, outside the drawn " +
+           "window [0, 4). Encoder E2 is finished but NOT submitted while it holds a cache-hit raw draw, " +
+           "then the drawn window is overwritten with 0x30000000..3 - values that stay under the poisoned " +
+           "ceiling but are far above 10. Submitting E2 must trigger the slow path, which fails CPU " +
+           "verification and zeroes the index buffer, so the raw draw fetches vertex 0 and paints green. " +
+           "Three distinguishable outcomes: green means the cache hit landed and the safety net caught it; " +
+           "red means E2 took a clamp pass instead, so the test never reached the vulnerable state and " +
+           "needs repair rather than silently passing; a GPU-process crash under Metal Shader Validation " +
+           "(or any other colour) means the out-of-bounds fetch happened.");
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    let queue = device.queue;
+    device.pushErrorScope('validation');
+
+    const format = 'rgba8unorm';
+    // Position is constant so the point always covers the 1x1 target regardless of what the attribute
+    // fetch returns; the colour carries the fetched attribute, so the rendered pixel identifies which
+    // vertex was actually read.
+    let module = device.createShaderModule({ code: `
+        struct VSOut {
+            @builtin(position) pos: vec4f,
+            @location(0) color: vec4f,
+        }
+        @vertex fn vs(@location(0) v: f32) -> VSOut {
+            var o: VSOut;
+            o.pos = vec4f(0, 0, 0, 1);
+            o.color = vec4f(0, v, 0, 1);
+            return o;
+        }
+        @fragment fn fs(in: VSOut) -> @location(0) vec4f { return in.color; }
+    ` });
+    let pipeline = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: {
+            module,
+            entryPoint: 'vs',
+            buffers: [{ arrayStride: 4, stepMode: 'vertex', attributes: [{ shaderLocation: 0, offset: 0, format: 'float32' }] }],
+        },
+        fragment: { module, entryPoint: 'fs', targets: [{ format }] },
+        primitive: { topology: 'point-list' },
+    });
+
+    // 40 bytes / arrayStride 4 => minVertexCount 10, so index values >= 10 are out of bounds.
+    // Only vertex 0 is 1.0, so a fetch of vertex 0 is green and every other in-bounds fetch is black.
+    let vertexData = new Float32Array(10);
+    vertexData[0] = 1;
+    let vertexBuffer = device.createBuffer({ size: vertexData.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
+    queue.writeBuffer(vertexBuffer, 0, vertexData);
+
+    // INDEX but not INDIRECT, and under 16KB, so writes go through Buffer::needsIndexValidation().
+    let indexBuffer = device.createBuffer({ size: 64, usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST });
+
+    let texture = device.createTexture({ size: [1, 1], format, usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+    let readback = device.createBuffer({ size: 256, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+    function encodeDraw(withReadback) {
+        let commandEncoder = device.createCommandEncoder();
+        let pass = commandEncoder.beginRenderPass({
+            colorAttachments: [{ view: texture.createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: 1, g: 0, b: 0, a: 1 } }],
+        });
+        pass.setPipeline(pipeline);
+        pass.setVertexBuffer(0, vertexBuffer);
+        pass.setIndexBuffer(indexBuffer, 'uint32');
+        pass.drawIndexed(4, 1, 0, 0, 0);
+        pass.end();
+        if (withReadback)
+            commandEncoder.copyTextureToBuffer({ texture }, { buffer: readback, bytesPerRow: 256 }, [1, 1]);
+        return commandEncoder.finish();
+    }
+
+    // Step 1: the drawn window [0, 4) is in bounds; the poison rides at index 8, outside it. The
+    // whole-payload maxima recorded by needsIndexValidation() are 0x7FFFFFF0 read as uint32 and 0xFFF0
+    // read as uint16. This is the first write, so it invalidates either way.
+    let p1 = new Uint32Array(16);
+    p1[0] = 0; p1[1] = 1; p1[2] = 2; p1[3] = 3;
+    p1[8] = 0x7FFFFFF0;
+    queue.writeBuffer(indexBuffer, 0, p1);
+
+    // Step 2: priming draw. Cache miss, so the clamp shader runs and proves only {0,1,2,3} < 10. Its
+    // completion handler populates the cache and raises the ceiling to the whole-payload maximum.
+    queue.submit([encodeDraw(false)]);
+    await queue.onSubmittedWorkDone();
+    // drawIndexedValidated() runs in a Metal completed handler, which onSubmittedWorkDone() does not
+    // order against. Without this settle the cache entry may be missing, E2 below takes a clamp pass
+    // instead of a raw draw, and the test never reaches the vulnerable state - which shows up as red
+    // rather than as a false pass.
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Step 3: identical draw in a new encoder. Nothing has written to the index buffer since the
+    // priming validation, so the generation still matches and this is a cache hit: a raw
+    // drawIndexedPrimitives with no clamp pass, and E2 joins m_skippedValidationCommandEncoders.
+    // finish() but deliberately do not submit - CommandBuffer holds a Ref to its encoder, so E2 stays
+    // resolvable in Device::m_commandEncoderMap and still counts towards computeSize().
+    let cb2 = encodeDraw(true);
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Step 4: overwrite the drawn window with out-of-bounds indices whose whole-payload maxima
+    // (0x30000003 as uint32, 0x3000 as uint16) both stay under the poisoned ceiling, so the old rule
+    // skipped invalidation and left the safety net disarmed. The bound that matters is the vertex count
+    // the clamp shader actually proved against, and 0x30000003 is far above 10.
+    queue.writeBuffer(indexBuffer, 0, new Uint32Array([0x30000000, 0x30000001, 0x30000002, 0x30000003]));
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Step 5: submit E2. The slow path must run, fail CPU verification, and zero the index buffer
+    // before the pre-encoded raw draw executes, so every index reads 0 and vertex 0 paints green.
+    queue.submit([cb2]);
+    await queue.onSubmittedWorkDone();
+    await readback.mapAsync(GPUMapMode.READ);
+    let pixel = [...new Uint8Array(readback.getMappedRange(0, 4))];
+    readback.unmap();
+
+    window.pixel = pixel;
+    shouldBeEqualToString('pixel.join()', '0,255,0,255');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

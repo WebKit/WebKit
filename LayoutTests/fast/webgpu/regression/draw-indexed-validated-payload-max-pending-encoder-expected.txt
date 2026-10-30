@@ -1,0 +1,10 @@
+Regression test for rdar://183840202: drawIndexedValidated() raised the skip-invalidation ceiling to the max index over the ENTIRE preceding writeBuffer payload, although the clamp shader only proved the drawn sub-range [firstIndex, firstIndex + indexCount) below vertexCount. A value riding in the payload outside that window was therefore promoted as 'validated' without ever having been bounds checked. needsIndexValidation() then let a later write of that value skip invalidation, and because indirectBufferInvalidated() is the only setter of m_mustTakeSlowIndexValidationPath, the on-commit safety net never armed - so an already-encoded, unsubmitted raw drawIndexedPrimitives ran against the new out-of-bounds indices. minVertexCount is 10. The poison 0x7FFFFFF0 sits at index 8, outside the drawn window [0, 4). Encoder E2 is finished but NOT submitted while it holds a cache-hit raw draw, then the drawn window is overwritten with 0x30000000..3 - values that stay under the poisoned ceiling but are far above 10. Submitting E2 must trigger the slow path, which fails CPU verification and zeroes the index buffer, so the raw draw fetches vertex 0 and paints green. Three distinguishable outcomes: green means the cache hit landed and the safety net caught it; red means E2 took a clamp pass instead, so the test never reached the vulnerable state and needs repair rather than silently passing; a GPU-process crash under Metal Shader Validation (or any other colour) means the out-of-bounds fetch happened.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pixel.join() is "0,255,0,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

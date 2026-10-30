@@ -176,10 +176,10 @@ private:
     using MappedRanges = RangeSet<Range<size_t>>;
     MappedRanges m_mappedRanges;
     OptionSet<WebGPU::MapMode> m_mapMode;
-    uint32_t m_maxUnsignedIndex { 0 };
-    uint16_t m_maxUshortIndex { 0 };
-    uint32_t m_maxValidatedUnsignedIndex { 0 };
-    uint16_t m_maxValidatedUshortIndex { 0 };
+    // The smallest vertex count that any entry currently in m_drawIndexedCache was proven against by
+    // the clamp shader, or 0 if any of them used a negative baseVertex. Only meaningful while
+    // m_drawIndexedCache is non-empty.
+    uint32_t m_minValidatedVertexCount { UINT32_MAX };
 
     DrawIndexCacheContainer m_drawIndexedCache;
 
