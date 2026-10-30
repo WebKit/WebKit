@@ -99,7 +99,6 @@ void ResourceTimingInformation::removeResourceTiming(CachedResource& resource)
 void ResourceTimingInformation::storeResourceTimingInitiatorInformation(CachedResource& resource, const AtomString& initiatorType, LocalFrame* frame)
 {
     if (resource.type() == CachedResource::Type::MainResource) {
-        // <iframe>s should report the initial navigation requested by the parent document, but not subsequent navigations.
         ASSERT(frame);
         if (frame->ownerElement()) {
             InitiatorInfo info = { frame->ownerElement()->localName(), NotYetAdded };

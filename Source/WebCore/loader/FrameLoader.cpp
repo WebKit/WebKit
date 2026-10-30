@@ -2091,6 +2091,26 @@ void FrameLoader::load(DocumentLoader& newDocumentLoader, const SecurityOrigin* 
     loadWithDocumentLoader(&newDocumentLoader, type, nullptr, AllowNavigationToInvalidURL::Yes);
 }
 
+void FrameLoader::updateShouldReportResourceTimingToParentFrame(const DocumentLoader& loader, FrameLoadType type)
+{
+    // FIXME: A load continuing from another process does not know who initiated the navigation, so keep
+    // reporting only the first navigation, or the first one after about:blank.
+    if (shouldTreatCurrentLoadAsContinuingLoad()) {
+        if (m_shouldReportResourceTimingToParentFrame && !m_previousURL.isNull() && m_previousURL != aboutBlankURL())
+            m_shouldReportResourceTimingToParentFrame = false;
+        return;
+    }
+
+    if (isBackForwardLoadType(type) || isReload(type)) {
+        m_shouldReportResourceTimingToParentFrame = false;
+        return;
+    }
+
+    RefPtr parent = m_frame->tree().parent();
+    auto& requester = loader.triggeringAction().requester();
+    m_shouldReportResourceTimingToParentFrame = parent && requester && requester->frameID == parent->frameID();
+}
+
 void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, RefPtr<const FormSubmission>&& formSubmission, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache, CompletionHandler<void()>&& completionHandler)
 {
     FRAMELOADER_RELEASE_LOG_FORWARDABLE(FrameLoaderLoadWithDocumentLoaderFrameLoadStarted);
@@ -2118,11 +2138,6 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         m_previousURL = protect(frame->document())->url();
 
     const URL& newURL = loader->request().url();
-
-    // Only the first iframe navigation or the first iframe navigation after about:blank should be reported.
-    // https://www.w3.org/TR/resource-timing-2/#resources-included-in-the-performanceresourcetiming-interface
-    if (m_shouldReportResourceTimingToParentFrame && !m_previousURL.isNull() && m_previousURL != aboutBlankURL())
-        m_shouldReportResourceTimingToParentFrame = false;
 
     // Log main frame navigation types.
     if (frame->isMainFrame()) {
@@ -2179,6 +2194,8 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         action.setNavigationAPIType(determineNavigationType(type, historyHandling));
         loader->setTriggeringAction(WTF::move(action));
     }
+
+    updateShouldReportResourceTimingToParentFrame(*loader, type);
 
     protect(frame->navigationScheduler())->cancel(NewLoadInProgress::Yes);
 
