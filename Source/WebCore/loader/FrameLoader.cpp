@@ -2727,7 +2727,7 @@ void FrameLoader::commitProvisionalLoad()
     if (pdl && m_documentLoader) {
         // Check if the destination page is allowed to access the previous page's timing information.
         Ref securityOrigin = SecurityOrigin::create(pdl->request().url());
-        m_documentLoader->timing().setHasSameOriginAsPreviousDocument(securityOrigin->canRequest(m_previousURL, OriginAccessPatternsForWebProcess::singleton()));
+        m_documentLoader->timing().setHasSameOriginAsPreviousDocument(!m_documentLoader->hasCrossOriginRedirect() && securityOrigin->canRequest(m_previousURL, OriginAccessPatternsForWebProcess::singleton()));
     }
 
     // Call clientRedirectCancelledOrFinished() here so that the frame load delegate is notified that the redirect's
