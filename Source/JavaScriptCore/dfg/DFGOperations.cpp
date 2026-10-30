@@ -5648,10 +5648,10 @@ JSC_DEFINE_JIT_OPERATION(operationSizeOfVarargsWithSpread, UCPUStrictInt32, (JSG
             length += 1U;
     }
 
-    // On overflow return a value that stays above the varargs limit without wrapping, so the caller's
-    // limit check turns it into a VarargsOverflow exit.
-    if (length.hasOverflowed())
-        OPERATION_RETURN(scope, toUCPUStrictInt32(maxArguments));
+    if (length.hasOverflowed() || length > maxArguments) [[unlikely]] {
+        throwStackOverflowError(globalObject, scope);
+        OPERATION_RETURN(scope, toUCPUStrictInt32(0));
+    }
     OPERATION_RETURN(scope, toUCPUStrictInt32(length.value()));
 }
 
@@ -5728,10 +5728,10 @@ JSC_DEFINE_JIT_OPERATION(operationSizeOfVarargsWithSpreadForward, UCPUStrictInt3
             length += 1U;
     }
 
-    // On overflow return a value that stays above the varargs limit without wrapping, so the caller's
-    // limit check turns it into a VarargsOverflow exit.
-    if (length.hasOverflowed())
-        OPERATION_RETURN(scope, toUCPUStrictInt32(maxArguments));
+    if (length.hasOverflowed() || length > maxArguments) [[unlikely]] {
+        throwStackOverflowError(globalObject, scope);
+        OPERATION_RETURN(scope, toUCPUStrictInt32(0));
+    }
     OPERATION_RETURN(scope, toUCPUStrictInt32(length.value()));
 }
 
