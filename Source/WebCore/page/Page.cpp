@@ -5802,6 +5802,19 @@ void Page::setObscuredInsets(const FloatBoxExtent& insets)
 }
 #endif
 
+bool Page::canSampleTopFixedContainerEdge() const
+{
+    RefPtr mainFrame = localMainFrame();
+    RefPtr document = mainFrame ? mainFrame->document() : nullptr;
+    RefPtr frameView = mainFrame ? mainFrame->view() : nullptr;
+    if (!document || !frameView)
+        return true;
+
+    return settings().topContentInsetBackgroundCanChangeAfterScrolling()
+        || (!frameView->wasEverScrolledExplicitlyByUserBelowTopEdge() && !m_userHasInteractedSinceLastPageLoadExcludingForcedUserGestures)
+        || document->parsing();
+}
+
 void Page::updateFixedContainerEdges(BoxSideSet sides)
 {
     RefPtr mainFrame = localMainFrame();
@@ -5822,9 +5835,7 @@ void Page::updateFixedContainerEdges(BoxSideSet sides)
         auto minimumOffset = frameView->minimumScrollOffset();
         auto maximumOffset = frameView->maximumScrollOffset();
 
-        bool canSampleTopEdge = settings().topContentInsetBackgroundCanChangeAfterScrolling()
-            || (!frameView->wasEverScrolledExplicitlyByUserBelowTopEdge() && !m_userHasInteractedSinceLastPageLoadExcludingForcedUserGestures)
-            || document->parsing();
+        bool canSampleTopEdge = canSampleTopFixedContainerEdge();
 
         if (scrollOffset.y() < minimumOffset.y() || !canSampleTopEdge)
             sidesToSample.remove(BoxSide::Top);
@@ -5842,7 +5853,7 @@ void Page::updateFixedContainerEdges(BoxSideSet sides)
     }());
 
     for (auto side : sides) {
-        if (!edges.hasFixedEdge(side) || (!edges.predominantColor(side).isVisible() && fixedContainerEdges().predominantColor(side).isVisible())) {
+        if (!edges.hasFixedEdge(side) || (!edges.predominantColor(side).isVisible() && !std::holds_alternative<FrameIdentifier>(edges.colors.at(side)) && fixedContainerEdges().predominantColor(side).isVisible())) {
             WeakPtr lastElement = m_fixedContainerEdgesAndElements.second.at(side);
             if (!lastElement)
                 continue;

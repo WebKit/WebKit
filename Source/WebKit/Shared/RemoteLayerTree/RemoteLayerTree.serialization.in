@@ -267,6 +267,7 @@ using WebKit::PageData::TransactionCallbackID = IPC::AsyncReplyID;
     WebCore::Color pageExtendedBackgroundColor;
     WebCore::Color sampledPageTopColor;
     std::optional<WebCore::FixedContainerEdges> fixedContainerEdges;
+    bool topFixedContainerEdgeIsLocked;
 
 #if PLATFORM(MAC)
     Markable<WebCore::PlatformLayerIdentifier> pageScalingLayerID;
@@ -307,4 +308,5 @@ struct WebKit::RemoteLayerTreeCommitBundle {
     WebKit::TransactionID transactionID;
     WebCore::PageIdentifier webPageID;
     MonotonicTime startTime;
+    Vector<std::pair<WebCore::FrameIdentifier, WebCore::FixedContainerEdges>> fixedContainerEdges;
 };

@@ -10368,17 +10368,6 @@ webkit.org/b/325809 fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking
 
 webkit.org/b/325810 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Pass Timeout ]
 
-# webkit.org/b/324418 Liquid glass edge colors do not include cross-site iframes with site isolation
-http/tests/site-isolation/edge-sampling-cross-site-iframe.html [ Skip ]
-http/tests/site-isolation/edge-sampling-cross-site-iframe-indeterminate.html [ Skip ]
-http/tests/site-isolation/edge-sampling-cross-site-iframe-clipped.html [ Skip ]
-http/tests/site-isolation/edge-sampling-cross-site-iframe-scrolled.html [ Skip ]
-http/tests/site-isolation/edge-sampling-cross-site-iframe-load-finish.html [ Skip ]
-http/tests/site-isolation/edge-sampling-cross-site-iframe-main-frame-scrolled.html [ Skip ]
-http/tests/site-isolation/edge-sampling-cross-site-iframe-color-change.html [ Skip ]
-http/tests/site-isolation/edge-sampling-cross-site-iframe-navigated.html [ Skip ]
-http/tests/site-isolation/edge-sampling-cross-site-iframe-zoomed.html [ Skip ]
-
 # webkit.org/b/325812 NEW TEST(318573@main): [iOS] 2x tests in fast/visual-viewport/ios/interactive-widget are flaky
 fast/visual-viewport/ios/interactive-widget/resizes-content-hardware-keyboard.html [ Pass Failure ]
 fast/visual-viewport/ios/interactive-widget/resizes-content-keyboard-scroll.html [ Pass Failure ]

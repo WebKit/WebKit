@@ -1,0 +1,8 @@
+PASS edgeSamplingFramesLoaded became true
+PASS edgeSamplingColors.bottom is "rgb(255, 120, 0)"
+PASS edgeSamplingColors.top is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

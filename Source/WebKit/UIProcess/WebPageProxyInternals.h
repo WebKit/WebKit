@@ -56,6 +56,7 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/CornerRadii.h>
 #include <WebCore/DevicePostureType.h>
+#include <WebCore/FixedContainerEdges.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntPointHash.h>
@@ -435,6 +436,11 @@ public:
 #endif
 
     bool needsFixedContainerEdgesUpdateAfterNextCommit { false };
+
+    WebCore::FixedContainerEdges mainFrameFixedContainerEdges;
+    bool topFixedContainerEdgeIsLocked { false };
+    WebCore::FixedContainerEdges resolvedFixedContainerEdges;
+    HashMap<WebCore::FrameIdentifier, std::optional<WebCore::FixedContainerEdges>> fixedContainerEdgeSamplingFrames;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     std::optional<PlaybackSessionContextIdentifier> currentFullscreenVideoSessionIdentifier;

@@ -441,6 +441,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
             page->didReachLayoutMilestone(milestones, WallTime::now());
     }
 
+    for (auto& [frameID, edges] : bundle.fixedContainerEdges)
+        page->didReceiveFixedContainerEdges(connection, frameID, edges);
+
     WeakPtr weakThis { *this };
 
     for (auto& transaction : borrowedTransactions) {

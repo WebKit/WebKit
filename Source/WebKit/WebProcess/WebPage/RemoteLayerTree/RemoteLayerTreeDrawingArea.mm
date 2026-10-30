@@ -376,6 +376,9 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     auto transactionID = takeNextTransactionID();
     send(Messages::RemoteLayerTreeDrawingAreaProxy::NotifyPendingCommitLayerTree(transactionID, webPage->identifier()));
 
+    bool samplesFixedContainerEdges = webPage->samplesFixedContainerEdges();
+    Vector<WebCore::FrameIdentifier> rootsWithLayerChanges;
+
     auto transactions = WTF::map(m_rootLayers, [&](RootLayerInfo& rootLayer) -> RemoteLayerTreeCommitBundle::RootFrameData {
         backingStoreCollection->willBuildTransaction();
         rootLayer.layer->flushCompositingStateForThisLayerOnly();
@@ -386,6 +389,9 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         m_remoteLayerTreeContext->buildTransaction(layerTransaction, *layer, rootLayer.frameID);
 
         webPage->willCommitLayerTree(layerTransaction, rootLayer.frameID);
+
+        if (samplesFixedContainerEdges && layerTransaction.hasAnyLayerChanges())
+            rootsWithLayerChanges.append(rootLayer.frameID);
 
         m_waitingForBackingStoreSwap = true;
 
@@ -417,6 +423,9 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     }
 
     bundle.editorState = webPage->editorStateIfUpdateNeeded();
+
+    if (samplesFixedContainerEdges)
+        bundle.fixedContainerEdges = webPage->sampleFixedContainerEdges(rootsWithLayerChanges);
 
     bundle.startTime = *std::exchange(m_updateStartTime, std::nullopt);
 

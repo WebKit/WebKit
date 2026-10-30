@@ -93,6 +93,9 @@ String RemoteLayerTreeCommitBundle::description() const
     ts.dumpProperty("transactionID"_s, transactionID);
     ts.dumpProperty("startTime"_s, startTime.secondsSinceEpoch().milliseconds());
 
+    if (!fixedContainerEdges.isEmpty())
+        ts.dumpProperty("fixedContainerEdges"_s, fixedContainerEdges.size());
+
     if (editorState) {
         TextStream::GroupScope scope(ts);
         ts << "EditorState"_s;

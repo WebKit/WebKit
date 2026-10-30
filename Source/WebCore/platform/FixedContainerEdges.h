@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/Color.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/RectEdges.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ enum class PredominantColorType : uint8_t {
     Multiple,
 };
 
-using FixedContainerEdge = Variant<PredominantColorType, Color>;
+using FixedContainerEdge = Variant<PredominantColorType, Color, FrameIdentifier>;
 
 struct FixedContainerEdges {
     WTF_MAKE_TZONE_ALLOCATED(FixedContainerEdges);

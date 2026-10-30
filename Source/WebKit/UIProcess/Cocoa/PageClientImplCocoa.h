@@ -118,7 +118,7 @@ public:
 #endif
 
     void didCommitLayerTree(const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&) override;
-    void didCommitMainFrameData(const MainFrameData&) override;
+    void didUpdateFixedContainerEdges(const WebCore::FixedContainerEdges&) override;
 
     void microphoneCaptureWillChange() final;
     void cameraCaptureWillChange() final;

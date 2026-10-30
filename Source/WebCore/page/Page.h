@@ -988,6 +988,7 @@ public:
     WEBCORE_EXPORT Color sampledPageTopColor() const;
 
     WEBCORE_EXPORT void updateFixedContainerEdges(EnumSet<BoxSide>);
+    WEBCORE_EXPORT bool canSampleTopFixedContainerEdge() const;
     const FixedContainerEdges& fixedContainerEdges() const LIFETIME_BOUND { return m_fixedContainerEdgesAndElements.first; }
     Element* LEGACY_NODELETE lastFixedContainer(BoxSide) const;
 

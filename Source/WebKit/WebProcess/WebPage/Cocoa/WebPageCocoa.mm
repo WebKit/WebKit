@@ -2450,6 +2450,7 @@ void WebPage::willCommitMainFrameData(MainFrameData& data, const TransactionID& 
     if (std::exchange(m_needsFixedContainerEdgesUpdate, false)) {
         page->updateFixedContainerEdges(sidesRequiringFixedContainerEdges());
         data.fixedContainerEdges = page->fixedContainerEdges();
+        data.topFixedContainerEdgeIsLocked = !page->canSampleTopFixedContainerEdge();
     }
 
     data.baseLayoutViewportSize = mainFrameView->baseLayoutViewportSize();

@@ -92,6 +92,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/NowPlayingInfo.h>
 #import <WebCore/NullPlaybackSessionInterface.h>
+#import <WebCore/PageColorSampler.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/PlatformPlaybackSessionInterface.h>
 #import <WebCore/PlatformRenderTheme.h>
@@ -239,8 +240,125 @@ void WebPageProxy::didCommitMainFrameData(const MainFrameData& mainFrameData, co
     if (std::exchange(internals().needsFixedContainerEdgesUpdateAfterNextCommit, false))
         protect(legacyMainFrameProcess())->send(Messages::WebPage::SetNeedsFixedContainerEdgesUpdate(), webPageIDInMainFrameProcess());
 
+    if (mainFrameData.fixedContainerEdges)
+        updateFixedContainerEdgeSampling(*mainFrameData.fixedContainerEdges, mainFrameData.topFixedContainerEdgeIsLocked);
+}
+
+static HashMap<FrameIdentifier, RectEdges<bool>> fixedContainerEdgeSamplingSides(const WebPageProxy& page, const FixedContainerEdges& edges, bool topIsLocked)
+{
+    HashMap<FrameIdentifier, RectEdges<bool>> sidesByFrame;
+    for (auto side : allBoxSides) {
+        if (side == BoxSide::Top && topIsLocked)
+            continue;
+
+        auto* frameID = std::get_if<FrameIdentifier>(&edges.colors.at(side));
+        if (!frameID)
+            continue;
+
+        RefPtr frame = WebFrameProxy::webFrame(*frameID);
+        RefPtr parentFrame = frame ? frame->parentFrame() : nullptr;
+        if (!parentFrame || frame->page() != &page || !parentFrame->isMainFrame() || &frame->process() == &parentFrame->process())
+            continue;
+
+        sidesByFrame.add(*frameID, RectEdges<bool> { }).iterator->value.setAt(side, true);
+    }
+    return sidesByFrame;
+}
+
+void WebPageProxy::updateFixedContainerEdgeSampling(const FixedContainerEdges& edges, bool topIsLocked)
+{
+    auto previousSides = fixedContainerEdgeSamplingSides(*this, internals().mainFrameFixedContainerEdges, internals().topFixedContainerEdgeIsLocked);
+    internals().mainFrameFixedContainerEdges = edges;
+    internals().topFixedContainerEdgeIsLocked = topIsLocked;
+
+    auto sidesByFrame = fixedContainerEdgeSamplingSides(*this, edges, topIsLocked);
+    auto previousFrames = std::exchange(internals().fixedContainerEdgeSamplingFrames, { });
+    for (auto& [frameID, sides] : sidesByFrame) {
+        auto previous = previousSides.find(frameID);
+        if (previous != previousSides.end() && previous->value == sides && previousFrames.contains(frameID)) {
+            internals().fixedContainerEdgeSamplingFrames.add(frameID, previousFrames.get(frameID));
+            continue;
+        }
+
+        internals().fixedContainerEdgeSamplingFrames.add(frameID, std::nullopt);
+        sendToProcessContainingFrame(frameID, Messages::WebPage::SetFixedContainerEdgeSamplingSides(frameID, sides));
+    }
+
+    for (auto& [frameID, results] : previousFrames) {
+        if (!sidesByFrame.contains(frameID) && WebFrameProxy::webFrame(frameID))
+            sendToProcessContainingFrame(frameID, Messages::WebPage::SetFixedContainerEdgeSamplingSides(frameID, RectEdges<bool> { }));
+    }
+
+    resolveFixedContainerEdges();
+}
+
+void WebPageProxy::didReceiveFixedContainerEdges(IPC::Connection& connection, FrameIdentifier frameID, const FixedContainerEdges& edges)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    auto sampling = internals().fixedContainerEdgeSamplingFrames.find(frameID);
+    if (!frame || frame->page() != this || !frame->process().hasConnection(connection) || sampling == internals().fixedContainerEdgeSamplingFrames.end())
+        return;
+
+    sampling->value = edges;
+    resolveFixedContainerEdges();
+}
+
+void WebPageProxy::resendFixedContainerEdgeSamplingSides(FrameIdentifier frameID)
+{
+    auto sampling = internals().fixedContainerEdgeSamplingFrames.find(frameID);
+    auto sidesByFrame = fixedContainerEdgeSamplingSides(*this, internals().mainFrameFixedContainerEdges, internals().topFixedContainerEdgeIsLocked);
+    auto sides = sidesByFrame.find(frameID);
+    if (sampling == internals().fixedContainerEdgeSamplingFrames.end() || sides == sidesByFrame.end())
+        return;
+
+    sampling->value = std::nullopt;
+    sendToProcessContainingFrame(frameID, Messages::WebPage::SetFixedContainerEdgeSamplingSides(frameID, sides->value));
+}
+
+void WebPageProxy::resolveFixedContainerEdges()
+{
+    auto resolved = internals().mainFrameFixedContainerEdges;
+    for (auto side : allBoxSides) {
+        auto* frameID = std::get_if<FrameIdentifier>(&resolved.colors.at(side));
+        if (!frameID)
+            continue;
+
+        if (side == BoxSide::Top && internals().topFixedContainerEdgeIsLocked) {
+            resolved.colors.setAt(side, internals().resolvedFixedContainerEdges.colors.at(side));
+            continue;
+        }
+
+        auto sampling = internals().fixedContainerEdgeSamplingFrames.find(*frameID);
+        if (sampling == internals().fixedContainerEdgeSamplingFrames.end() || !sampling->value) {
+            resolved.colors.setAt(side, internals().resolvedFixedContainerEdges.colors.at(side));
+            continue;
+        }
+
+        auto edge = sampling->value->colors.at(side);
+        if (auto* color = std::get_if<Color>(&edge))
+            edge = PageColorSampler::finishedFixedContainerColor(*color, false, pageExtendedBackgroundColor());
+        else if (std::holds_alternative<FrameIdentifier>(edge))
+            edge = PredominantColorType::None;
+        resolved.colors.setAt(side, edge);
+    }
+
+    internals().resolvedFixedContainerEdges = resolved;
     if (RefPtr pageClient = this->pageClient())
-        pageClient->didCommitMainFrameData(mainFrameData);
+        pageClient->didUpdateFixedContainerEdges(resolved);
+}
+
+void WebPageProxy::resetFixedContainerEdgeSamplingForMainFrameLoad()
+{
+    // Frames of the old document can stay alive in the back/forward cache.
+    for (auto frameID : internals().fixedContainerEdgeSamplingFrames.keys()) {
+        if (WebFrameProxy::webFrame(frameID))
+            sendToProcessContainingFrame(frameID, Messages::WebPage::SetFixedContainerEdgeSamplingSides(frameID, RectEdges<bool> { }));
+    }
+
+    internals().mainFrameFixedContainerEdges = { };
+    internals().topFixedContainerEdgeIsLocked = false;
+    internals().resolvedFixedContainerEdges = { };
+    internals().fixedContainerEdgeSamplingFrames.clear();
 }
 
 void WebPageProxy::layerTreeCommitComplete()
