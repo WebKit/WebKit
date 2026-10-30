@@ -462,7 +462,11 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     // A fieldset's legend sits in its border, which makes the border before the legend's block size (RenderBlock::intrinsicBorderForFieldset).
     if (box.isFieldset())
         return BlockAvoidanceReason::ContentIsFormControl;
-    if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(box.parent()); !parent || parent->childrenInline())
+    if (box.parent()->isInlineBox()) {
+        // FIXME: Anonymous block-level boxes in inline content.
+        if (box.isAnonymous())
+            return BlockAvoidanceReason::ContentHasBlockInInline;
+    } else if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(box.parent()); !parent || parent->childrenInline())
         return BlockAvoidanceReason::ContentHasBlockInInline;
     if (hasPercentageBlockSizeInQuirksMode(box))
         return BlockAvoidanceReason::ContentHasQuirksModePercentageHeight;
