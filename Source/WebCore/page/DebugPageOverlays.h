@@ -47,9 +47,10 @@ public:
         NonFastScrollableRegion,
         InteractionRegion,
         EnhancedSecurity,
+        BlockLayoutCoverage,
     };
 
-    static constexpr unsigned NumberOfRegionTypes = static_cast<unsigned>(RegionType::EnhancedSecurity) + 1;
+    static constexpr unsigned NumberOfRegionTypes = static_cast<unsigned>(RegionType::BlockLayoutCoverage) + 1;
 
     static void didLayout(LocalFrame&);
     static void didChangeEventHandlers(LocalFrame&);
@@ -100,6 +101,7 @@ inline void DebugPageOverlays::didLayout(LocalFrame& frame)
     sharedDebugOverlays->regionChanged(frame, RegionType::WheelEventHandlers);
     sharedDebugOverlays->regionChanged(frame, RegionType::NonFastScrollableRegion);
     sharedDebugOverlays->regionChanged(frame, RegionType::InteractionRegion);
+    sharedDebugOverlays->regionChanged(frame, RegionType::BlockLayoutCoverage);
 }
 
 inline void DebugPageOverlays::didChangeEventHandlers(LocalFrame& frame)
@@ -120,6 +122,7 @@ inline void DebugPageOverlays::doAfterUpdateRendering(Page& page)
     sharedDebugOverlays->updateRegionIfNecessary(page, RegionType::NonFastScrollableRegion);
     sharedDebugOverlays->updateRegionIfNecessary(page, RegionType::InteractionRegion);
     sharedDebugOverlays->updateRegionIfNecessary(page, RegionType::EnhancedSecurity);
+    sharedDebugOverlays->updateRegionIfNecessary(page, RegionType::BlockLayoutCoverage);
 }
 
 inline bool DebugPageOverlays::shouldPaintOverlayIntoLayerForRegionType(Page& page, RegionType regionType)
