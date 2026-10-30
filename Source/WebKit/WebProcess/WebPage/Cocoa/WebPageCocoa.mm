@@ -1267,13 +1267,17 @@ std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWit
     if (!url.hasQuery())
         return { url, DidFilterLinkDecoration::No };
 
-    RefPtr document = mainFrame ? mainFrame->document() : nullptr;
-    bool isConsistentQueryParameterFilteringQuirkEnabled = document && (document->quirks().needsConsistentQueryParameterFilteringQuirk(document->url()) || document->quirks().needsConsistentQueryParameterFilteringQuirk(url));
-    if (!hasOptedInToLinkDecorationFiltering && !m_page->settings().filterLinkDecorationByDefaultEnabled() && !isConsistentQueryParameterFilteringQuirkEnabled)
+    bool needsConsistentQueryParameterFiltering { false };
+    if (RefPtr document = mainFrame->document(); document && trigger == LinkDecorationFilteringTrigger::Navigation) {
+        auto consistencyLevel = document->quirks().consistentQueryParameterFilteringLevel(document->url(), url);
+        needsConsistentQueryParameterFiltering = consistencyLevel == ConsistentQueryParameterFilteringLevel::Medium || consistencyLevel == ConsistentQueryParameterFilteringLevel::High;
+    }
+
+    if (!hasOptedInToLinkDecorationFiltering && !m_page->settings().filterLinkDecorationByDefaultEnabled())
         return { url, DidFilterLinkDecoration::No };
 
     auto sanitizedURL = url;
-    bool allowLowEntropyException = !(hasOptedInToLinkDecorationFiltering || isConsistentQueryParameterFilteringQuirkEnabled);
+    bool allowLowEntropyException = !(hasOptedInToLinkDecorationFiltering || needsConsistentQueryParameterFiltering);
     const Vector removedParameters = WTF::removeQueryParameters(sanitizedURL, [&](auto& key, auto& value) {
         auto it = m_internals->linkDecorationFilteringData.find(key);
         if (it == m_internals->linkDecorationFilteringData.end())
