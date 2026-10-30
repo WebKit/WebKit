@@ -139,6 +139,7 @@ public:
     enum class OwnerRendererChanged : bool { No, Yes };
     void ownerZoomDidChange(OwnerRendererChanged = OwnerRendererChanged::No);
     float ownerZoomFactor() const;
+    void setOwnerContentBoxSize(FloatSize);
     FloatSize sizeWithoutOwnerZoom(FloatSize) const;
     IntSize unobscuredContentSizeInCSSUnits() const;
 
@@ -1085,6 +1086,7 @@ private:
 
     float m_lastUsedZoomFactor { 1 };
     float m_ownerZoomFactor { 1 };
+    std::optional<FloatSize> m_ownerContentBoxSize;
     unsigned m_visuallyNonEmptyCharacterCount { 0 };
     unsigned m_visuallyNonEmptyPixelCount { 0 };
     unsigned m_textRendererCountForVisuallyNonEmptyCharacters { 0 };

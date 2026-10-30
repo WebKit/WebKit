@@ -7,6 +7,10 @@ PASS Child layout follows a combined change to zoom 1 and size 786x461
 PASS Child layout follows a combined change to zoom 2 and size 393x230.5
 PASS Child layout viewport is exactly 1000px for a 1000px iframe at zoom 0.3
 PASS Child layout viewport is exactly 1572px for a 1572px iframe at zoom 0.6
+PASS Child layout viewport is exactly 1571px for a 1571px iframe at zoom 0.6
+PASS Child layout viewport is exactly 401px for a 401px iframe at zoom 0.5
+PASS Child layout viewport is about 200.7px for a 200.7px iframe at zoom 2
+PASS Child relays out after a sub-pixel width change
 PASS Child layout viewport is not negative when scrollbars are wider than the frame
 PASS Child has no scrollbars when written to a new iframe at zoom 0.5
 PASS Child has no scrollbars when written to a new iframe at zoom 0.8

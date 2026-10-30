@@ -2316,18 +2316,36 @@ float LocalFrameView::ownerZoomFactor() const
     return m_ownerZoomFactor;
 }
 
+void LocalFrameView::setOwnerContentBoxSize(FloatSize size)
+{
+    if (m_ownerContentBoxSize == size)
+        return;
+    m_ownerContentBoxSize = size;
+    // A sub-pixel change leaves the frame rect alone but can still change the size without the owner's zoom.
+    if (ownerZoomFactor() == 1)
+        return;
+    if (RefPtr document = m_frame->document())
+        document->updateViewportUnitsOnResize();
+    setNeedsLayoutAfterViewConfigurationChange();
+}
+
 FloatSize LocalFrameView::sizeWithoutOwnerZoom(FloatSize size) const
 {
     auto zoom = ownerZoomFactor();
     if (zoom == 1)
         return size;
 
+    // The frame rect is the owner's content box snapped to whole pixels, so start from the unsnapped box while it is current.
+    auto unsnappedSize = size;
+    if (m_ownerContentBoxSize && roundedIntSize(*m_ownerContentBoxSize) == frameRect().size())
+        unsnappedSize += *m_ownerContentBoxSize - FloatSize { frameRect().size() };
+
     // Round half down, but never so far up that the result scaled back up exceeds the size, which would cause scrollbars.
-    auto fit = [zoom](float length) {
-        auto largest = std::max(0.0, std::ceil((std::floor(length) + 1.0) / zoom) - 1);
+    auto fit = [zoom](float length, float sizeLength) {
+        auto largest = std::max(0.0, std::ceil((std::floor(sizeLength) + 1.0) / zoom) - 1);
         return static_cast<float>(std::clamp(std::ceil(length / zoom - 0.5), 0.0, largest));
     };
-    return { fit(size.width()), fit(size.height()) };
+    return { fit(unsnappedSize.width(), size.width()), fit(unsnappedSize.height(), size.height()) };
 }
 
 IntSize LocalFrameView::layoutSize() const

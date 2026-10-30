@@ -138,6 +138,8 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
     IntRect clipRect = roundedIntRect(enclosingLayer()->childrenClipRect());
     IntRect newFrameRect = roundedIntRect(frame);
     IntRect oldFrameRect = protect(m_widget)->frameRect();
+    if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget))
+        frameView->setOwnerContentBoxSize(FloatSize { frame.size() });
     bool clipChanged = m_clipRect != clipRect;
     bool boundsChanged = oldFrameRect != newFrameRect;
 
