@@ -81,8 +81,13 @@ foreach (_service IN LISTS MiniBrowser_XPC_SERVICES)
     set_property(TARGET MiniBrowser APPEND PROPERTY LINK_DEPENDS $<TARGET_FILE:${_service}>)
 endforeach ()
 
-set_property(TARGET MiniBrowser PROPERTY CODE_SIGN_ENTITLEMENTS
-    ${MINIBROWSER_DIR}/../MiniBrowser.entitlements)
+if (USE_APPLE_INTERNAL_SDK)
+    set_property(TARGET MiniBrowser PROPERTY CODE_SIGN_ENTITLEMENTS
+        ${MINIBROWSER_DIR}/../MiniBrowser-internal.entitlements)
+else ()
+    set_property(TARGET MiniBrowser PROPERTY CODE_SIGN_ENTITLEMENTS
+        ${MINIBROWSER_DIR}/../MiniBrowser.entitlements)
+endif ()
 _WEBKIT_ADD_DSYM(MiniBrowser)
 _WEBKIT_ADD_CODE_SIGN(MiniBrowser)
 

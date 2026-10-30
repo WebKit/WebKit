@@ -589,6 +589,7 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
 
             // 5.4.2 Let session be a new XRSession object.
             // 5.4.3 Initialize the session with session, mode, and device.
+            bool deferResolutionUntilRenderingInitialized = requestedFeatures->contains(PlatformXR::SessionFeature::WebGPU);
             Ref session = WebXRSession::create(protectedDocument.get(), mode, *device, WTF::move(*requestedFeatures));
             session->addSessionListener(*this);
 
@@ -598,6 +599,17 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
                 m_pendingImmersiveSession = false;
             } else
                 m_inlineSessions.add(session.copyRef());
+
+            if (deferResolutionUntilRenderingInitialized) {
+                session->whenRenderingInitialized([session = session.copyRef(), promise](bool initialized) mutable {
+                    if (!initialized) {
+                        promise.reject(Exception { ExceptionCode::NotSupportedError });
+                        return;
+                    }
+                    promise.resolve(WTF::move(session));
+                });
+                return;
+            }
 
             // 5.4.9 Resolve promise with session.
             promise.resolve(WTF::move(session));

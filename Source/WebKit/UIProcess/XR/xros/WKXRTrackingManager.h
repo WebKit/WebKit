@@ -25,7 +25,11 @@
 
 #if ENABLE(WEBXR) && USE(COMPOSITORXR)
 
+#if PLATFORM(IOS_FAMILY)
 #import "WKSpatialGestureRecognizer.h"
+#else
+#import <CompositorServices/CompositorServices.h>
+#endif
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #import <ARKit/ARKit.h>
@@ -40,13 +44,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if PLATFORM(IOS_FAMILY)
 @interface WKXRTrackingManager : NSObject <WKSpatialGestureRecognizerDelegate>
+#else
+@interface WKXRTrackingManager : NSObject
+#endif
 
 @property (nonatomic, readonly, getter=isWorldTrackingSupported) BOOL worldTrackingSupported;
 @property (nonatomic, readonly, getter=isValid) BOOL valid;
 @property (nonatomic, readonly) std::optional<PlatformXRPose> latestFloorPose;
 
 - (instancetype)initWithHandTrackingEnabled:(BOOL)handTrackingEnabled layerRenderer:(cp_layer_renderer_t)layerRenderer
+#if PLATFORM(MAC)
+    remoteDevice:(nullable ar_device_t)remoteDevice
+#endif
 #if HAVE(SPATIAL_CONTROLLERS)
     controllerManager:(RetainPtr<WKXRControllerManager>&)controllerManager
 #endif

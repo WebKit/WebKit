@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import <WebCore/WebCoreObjCExtras.h>
+#import <mach/mach_time.h>
 #import <numbers>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/darwin/DispatchExtras.h>
@@ -79,6 +80,9 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
 
     OSObjectPtr<ar_session_t> _arSession;
     OSObjectPtr<ar_world_tracking_provider_t> _worldTrackingProvider;
+#if PLATFORM(MAC)
+    OSObjectPtr<ar_device_t> _remoteDevice;
+#endif
 
     BOOL _handTrackingEnabled;
     OSObjectPtr<ar_hand_tracking_provider_t> _handTrackingProvider;
@@ -93,6 +97,9 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
 }
 
 - (instancetype)initWithHandTrackingEnabled:(BOOL)handTrackingEnabled layerRenderer:(cp_layer_renderer_t)layerRenderer
+#if PLATFORM(MAC)
+    remoteDevice:(ar_device_t)remoteDevice
+#endif
 #if HAVE(SPATIAL_CONTROLLERS)
     controllerManager:(RetainPtr<WKXRControllerManager> &)controllerManager
 #endif
@@ -100,8 +107,19 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
     if (!PAL::isARKitFrameworkAvailable())
         return nil;
 
+#if PLATFORM(MAC)
+    if (!remoteDevice) {
+        RELEASE_LOG_ERROR(XR, "Cannot create AR tracking manager without a remote device");
+        return nil;
+    }
+#endif
+
     if (!(self = [super init]))
         return nil;
+
+#if PLATFORM(MAC)
+    _remoteDevice = remoteDevice;
+#endif
 
     _accessQueue = dispatch_queue_create("com.apple.WebContent.WKXRTrackingManager.AccessQueue", serialQueueWithAutoreleasePoolAttrSingleton());
 #if ENABLE(WEBXR_HANDS) && !PLATFORM(IOS_FAMILY_SIMULATOR)
@@ -153,6 +171,16 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
 #endif
 }
 
+static NSTimeInterval currentMachTimeInSeconds()
+{
+    static double secondsPerTick = [] {
+        mach_timebase_info_data_t timebase { };
+        mach_timebase_info(&timebase);
+        return static_cast<double>(timebase.numer) / timebase.denom / NSEC_PER_SEC;
+    }();
+    return mach_absolute_time() * secondsPerTick;
+}
+
 - (OSObjectPtr<ar_device_anchor_t>)deviceAnchorAtTime:(NSTimeInterval)time
 {
     __block OSObjectPtr<ar_device_anchor_t> deviceAnchor;
@@ -161,13 +189,27 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
         if (!_worldTrackingProvider || !(self.runningProviderTypes & WKXRTrackingProviderTypeWorldTracking))
             return;
 
-        deviceAnchor = adoptOSObject(ar_device_anchor_create());
-        ar_device_anchor_query_status_t status = ar_world_tracking_provider_query_device_anchor_at_timestamp(_worldTrackingProvider.get(), time, deviceAnchor.get());
+        auto provider = _worldTrackingProvider.get();
+        auto queryDeviceAnchor = [provider](NSTimeInterval timestamp) -> OSObjectPtr<ar_device_anchor_t> {
+            OSObjectPtr<ar_device_anchor_t> anchor = adoptOSObject(ar_device_anchor_create());
+            if (ar_world_tracking_provider_query_device_anchor_at_timestamp(provider, timestamp, anchor.get()) != ar_device_anchor_query_status_success)
+                return nullptr;
+            // Only returned on success, so that a caller can tell a queried anchor from an unpopulated one.
+            return anchor;
+        };
 
-        if (status != ar_device_anchor_query_status_success) {
-            RELEASE_LOG_ERROR(XR, "Cannot get device anchor from world tracking provider");
+        NSTimeInterval now = currentMachTimeInSeconds();
+        deviceAnchor = queryDeviceAnchor(time);
+        if (deviceAnchor)
             return;
-        }
+
+        // A remote device predicts over a shorter window than the compositor's presentation lead,
+        // so the requested time can sit past the end of it. Fall back to the newest pose the
+        // provider will return: cp_drawable_set_device_anchor reports which pose the frame was
+        // rendered with, and the compositor reprojects the difference before display.
+        deviceAnchor = queryDeviceAnchor(now);
+        if (!deviceAnchor)
+            RELEASE_LOG_ERROR(XR, "Cannot get a device anchor from the world tracking provider, neither %.1f ms ahead nor at the current time", (time - now) * 1000);
     });
 
     return deviceAnchor;
@@ -178,7 +220,11 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
     dispatch_assert_queue(_accessQueue);
     ASSERT(!_arSession);
 
+#if PLATFORM(MAC)
+    _arSession = adoptOSObject(ar_session_create_with_device(_remoteDevice.get()));
+#else
     _arSession = adoptOSObject(ar_session_create());
+#endif
     if (!_arSession) {
         RELEASE_LOG_ERROR(XR, "Cannot create AR session");
         return;
@@ -290,6 +336,7 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
 
 // MARK: - WKSpatialGestureRecognizerDelegate
 
+#if PLATFORM(IOS_FAMILY)
 - (cp_layer_renderer_t)cpLayerForGestureRecognizer:(WKSpatialGestureRecognizer *)gestureRecognizer
 {
     return _layerRenderer;
@@ -326,6 +373,7 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
 {
     [self _doneWithTransientActionWithIdentifier:actionIdentifier];
 }
+#endif // PLATFORM(IOS_FAMILY)
 
 - (void)_doneWithTransientActionWithIdentifier:(NSNumber *)actionIdentifier
 {

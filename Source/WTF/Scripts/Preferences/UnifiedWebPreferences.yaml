@@ -7665,12 +7665,14 @@ WebXRAugmentedRealityModuleEnabled:
 
 WebXREnabled:
   type: bool
-  status: stable
+  status: Webxr_feature_status
   category: dom
   humanReadableName: "WebXR Device API"
   humanReadableDescription: "Adds support for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays, on the Web"
   condition: ENABLE(WEBXR)
-  defaultValue: true
+  defaultValue:
+    "PLATFORM(VISION)": true
+    default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
   richJavaScript: true

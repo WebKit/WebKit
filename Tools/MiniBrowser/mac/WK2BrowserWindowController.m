@@ -30,6 +30,7 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 270000
 #import <AppKit/NSRefreshController.h>
 #endif
+#import <Metal/Metal.h>
 #import <PDFKit/PDFDocument.h>
 #import <QuartzCore/CATextLayer.h>
 #import <SecurityInterface/SFCertificateTrustPanel.h>
@@ -1674,6 +1675,13 @@ static const NSUInteger findMaxMatchCount = 1000;
 - (void)_webViewDidLosePointerLock:(WKWebView *)webView
 {
     [webView _setHeaderBannerLayer:nil];
+}
+
+#pragma mark WebXR
+
+- (void)_webView:(WKWebView *)webView requestPermissionForXRSessionOrigin:(NSString *)originString mode:(_WKXRSessionMode)mode grantedFeatures:(_WKXRSessionFeatureFlags)grantedFeatures consentRequiredFeatures:(_WKXRSessionFeatureFlags)consentRequiredFeatures consentOptionalFeatures:(_WKXRSessionFeatureFlags)consentOptionalFeatures requiredFeaturesRequested:(_WKXRSessionFeatureFlags)requiredFeaturesRequested optionalFeaturesRequested:(_WKXRSessionFeatureFlags)optionalFeaturesRequested completionHandler:(void (^)(_WKXRSessionFeatureFlags))completionHandler
+{
+    completionHandler(grantedFeatures | consentRequiredFeatures | consentOptionalFeatures);
 }
 
 - (NSImage *)windowSnapshotInRect:(CGRect)rect
