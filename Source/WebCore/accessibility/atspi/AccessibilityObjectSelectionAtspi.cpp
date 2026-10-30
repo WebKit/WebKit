@@ -23,7 +23,6 @@
 #if USE(ATSPI)
 
 #include "AccessibilityAtspi.h"
-#include "AccessibilityObject.h" // NOLINT: check-webkit-style has problems with files that do not have primary header
 
 namespace WebCore {
 

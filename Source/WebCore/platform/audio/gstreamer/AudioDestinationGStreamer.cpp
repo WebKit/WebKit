@@ -33,7 +33,6 @@
 #include <wtf/PrintStream.h>
 #include <wtf/Scope.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 

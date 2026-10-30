@@ -24,8 +24,6 @@
 #include "JSCContextPrivate.h"
 #include "JSCExceptionPrivate.h"
 #include "JSCInlines.h"
-#include "JSStringRefPtr.h"
-#include "StrongInlines.h"
 #include <glib/gprintf.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GUniquePtr.h>

@@ -34,7 +34,6 @@
 #include "WebProcessCreationParameters.h"
 #include "WebProcessExtensionManager.h"
 #include "WebSystemSoundDelegate.h"
-#include <WebCore/PlatformRenderTheme.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ProcessCapabilities.h>
 #include <WebCore/ScreenProperties.h>

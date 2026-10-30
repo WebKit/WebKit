@@ -23,8 +23,6 @@
 
 #if USE(GSTREAMER)
 
-#include "GStreamerCommon.h"
-
 namespace WebCore {
 
 GST_DEBUG_CATEGORY_STATIC(webkit_openmax_quirks_debug);

@@ -29,7 +29,6 @@
 #if USE(GSTREAMER)
 
 #include "GStreamerTest.h"
-#include "Helpers/Test.h"
 #include <WebCore/GStreamerCommon.h>
 #include <WebCore/SharedBuffer.h>
 

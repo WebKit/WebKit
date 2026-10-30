@@ -27,11 +27,8 @@
 #include "JavaScriptEvaluationResult.h"
 
 #if USE(GLIB)
-#include "APIArray.h"
-#include "APIDictionary.h"
 #include "APISerializedScriptValue.h"
 #include <jsc/JSCContextPrivate.h>
-#include <jsc/JSCValuePrivate.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 

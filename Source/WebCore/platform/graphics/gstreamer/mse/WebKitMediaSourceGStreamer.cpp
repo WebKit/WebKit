@@ -27,22 +27,15 @@
 #if ENABLE(VIDEO) && ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)
 
 #include "MediaPlayerPrivateGStreamerMSE.h"
-#include "MediaSourcePrivateClient.h"
 #include "MediaSourceTrackGStreamer.h"
-#include "VideoTrackPrivateGStreamer.h"
 #include <cassert>
 #include <wtf/Condition.h>
 #include <wtf/DataMutex.h>
-#include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Scope.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/WTFGType.h>
-#include <wtf/text/AtomString.h>
-#include <wtf/text/AtomStringHash.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 
 using namespace WTF;

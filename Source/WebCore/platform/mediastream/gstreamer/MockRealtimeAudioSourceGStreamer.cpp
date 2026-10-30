@@ -26,7 +26,6 @@
 #include "MockRealtimeAudioSourceGStreamer.h"
 
 #include "GStreamerCaptureDeviceManager.h"
-#include "MockRealtimeMediaSourceCenter.h"
 #include <gst/app/gstappsrc.h>
 #include <numbers>
 #include <wtf/IndexedRange.h>

@@ -31,7 +31,6 @@
 #include "APICast.h"
 #include "JSCClassPrivate.h"
 #include "JSCContextPrivate.h"
-#include "JSDestructibleObjectHeapCellType.h"
 #include "JSCExceptionPrivate.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"

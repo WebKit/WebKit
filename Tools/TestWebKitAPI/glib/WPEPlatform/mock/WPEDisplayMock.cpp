@@ -30,7 +30,6 @@
 #include "WPEToplevelMock.h"
 #include "WPEViewMock.h"
 #include <gio/gio.h>
-#include <gmodule.h>
 #include <mutex>
 
 #if USE(LIBDRM)

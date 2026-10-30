@@ -39,7 +39,6 @@
 #include <wtf/DataMutex.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RunLoop.h>
-#include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>

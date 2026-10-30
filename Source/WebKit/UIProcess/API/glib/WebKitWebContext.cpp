@@ -20,11 +20,8 @@
 #include "config.h"
 #include "WebKitWebContext.h"
 
-#include "APIAutomationClient.h"
 #include "APIInjectedBundleClient.h"
 #include "APIProcessPoolConfiguration.h"
-#include "APIString.h"
-#include "FrameInfoData.h"
 #include "LegacyGlobalSettings.h"
 #include "NetworkProcessMessages.h"
 #include "TextChecker.h"
@@ -38,25 +35,20 @@
 #include "WebKitMemoryPressureSettings.h"
 #include "WebKitMemoryPressureSettingsPrivate.h"
 #include "WebKitNotificationProvider.h"
-#include "WebKitPrivate.h"
 #include "WebKitProtocolHandler.h"
 #include "WebKitSecurityManagerPrivate.h"
 #include "WebKitSecurityOriginPrivate.h"
-#include "WebKitSettingsPrivate.h"
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitUserMessagePrivate.h"
 #include "WebKitWebContextInternal.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
-#include "WebKitWebsitePoliciesPrivate.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebProcessMessages.h"
 #include "WebURLSchemeHandler.h"
 #include "WebsiteDataStore.h"
-#include "WebsiteDataType.h"
 #include <JavaScriptCore/RemoteInspector.h>
-#include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <cstdlib>
 #include <glib/gi18n-lib.h>
@@ -67,8 +59,6 @@
 #include <wtf/DateMath.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMallocInlines.h>

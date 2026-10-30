@@ -23,9 +23,7 @@
 
 #include <QtCore/QTemporaryFile>
 #include <QtCore/qdir.h>
-#include <QtCore/qfileinfo.h>
 #include <QtCore/qstandardpaths.h>
-#include <QtCore/qtemporarydir.h>
 
 class TestLoad : public WPEQtTest {
 Q_OBJECT

@@ -27,11 +27,8 @@
 #include "Pasteboard.h"
 
 #if PLATFORM(WPE)
-#include "DragData.h"
 #include "PasteboardStrategy.h"
 #include "PlatformStrategies.h"
-#include "SelectionData.h"
-#include "SharedBuffer.h"
 
 namespace WebCore {
 

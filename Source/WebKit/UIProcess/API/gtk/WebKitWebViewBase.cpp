@@ -54,7 +54,6 @@
 #include "ViewGestureController.h"
 #include "WebEventFactory.h"
 #include "WebInspectorUIProxy.h"
-#include "WebKit2Initialize.h"
 #include "WebKitEmojiChooser.h"
 #include "WebKitInitialize.h"
 #include "WebKitInputMethodContextImplGtk.h"
@@ -72,9 +71,7 @@
 #include <WebCore/NativeImage.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformMouseEvent.h>
-#include <WebCore/PointerEvent.h>
 #include <WebCore/RefPtrCairo.h>
-#include <WebCore/Region.h>
 #include <WebCore/Scrollbar.h>
 #include <WebCore/SkiaUtilities.h>
 #include <WebCore/SystemSettings.h>
@@ -88,9 +85,7 @@
 #include <utility>
 #include <wtf/Compiler.h>
 #include <wtf/HashMap.h>
-#include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/NotFound.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>

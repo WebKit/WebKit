@@ -28,7 +28,6 @@
 #include <WebCore/DataURLDecoder.h>
 #include <WebCore/LocalizedStrings.h>
 #include <wtf/FileSystem.h>
-#include <wtf/Language.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/MakeString.h>

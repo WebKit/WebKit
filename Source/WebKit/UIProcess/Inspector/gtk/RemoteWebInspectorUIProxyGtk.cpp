@@ -30,7 +30,6 @@
 
 #include "GtkVersioning.h"
 #include "HardwareAccelerationManager.h"
-#include "RemoteWebInspectorUIMessages.h"
 #include "WebInspectorUIProxy.h"
 #include "WebKitInspectorWindow.h"
 #include "WebKitWebViewBasePrivate.h"

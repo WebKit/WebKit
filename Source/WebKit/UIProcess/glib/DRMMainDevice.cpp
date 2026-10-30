@@ -32,7 +32,6 @@
 #include <WebCore/PlatformDisplay.h>
 #include <epoxy/egl.h>
 #include <mutex>
-#include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
 
 #if PLATFORM(GTK)

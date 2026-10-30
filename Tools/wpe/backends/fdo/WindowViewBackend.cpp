@@ -26,7 +26,6 @@
 #include "WindowViewBackend.h"
 
 #include <cassert>
-#include <cstdio>
 #include <cstring>
 #include <linux/input.h>
 #include <memory>

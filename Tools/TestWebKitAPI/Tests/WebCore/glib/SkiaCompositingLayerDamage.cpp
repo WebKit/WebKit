@@ -28,7 +28,6 @@
 #include "config.h"
 
 #if ENABLE(DAMAGE_TRACKING) && USE(SKIA) && !USE(TEXTURE_MAPPER)
-#include "Helpers/Test.h"
 #include <WebCore/Color.h>
 #include <WebCore/Damage.h>
 #include <WebCore/SkiaCompositingLayer.h>

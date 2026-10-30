@@ -20,7 +20,6 @@
 #include "SharedBuffer.h"
 
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/CString.h>
 
 #include <glib.h>
 

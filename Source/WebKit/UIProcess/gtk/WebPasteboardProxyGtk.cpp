@@ -28,7 +28,6 @@
 
 #include "Clipboard.h"
 #include "Connection.h"
-#include "SharedBufferReference.h"
 #include "WebFrameProxy.h"
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PasteboardCustomData.h>
@@ -36,7 +35,6 @@
 #include <WebCore/PlatformPasteboard.h>
 #include <WebCore/SelectionData.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/SetForScope.h>
 
 namespace WebKit {
 using namespace WebCore;

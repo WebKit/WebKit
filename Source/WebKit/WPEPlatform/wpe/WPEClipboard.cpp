@@ -31,7 +31,6 @@
 #include <optional>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>

@@ -21,7 +21,6 @@
 #include "WebKitPrivate.h"
 
 #include "APIError.h"
-#include "WebEvent.h"
 #include "WebKitError.h"
 
 #if PLATFORM(GTK)

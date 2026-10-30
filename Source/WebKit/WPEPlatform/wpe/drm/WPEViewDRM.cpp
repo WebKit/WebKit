@@ -34,7 +34,6 @@
 #include <drm_fourcc.h>
 #include <glib-unix.h>
 #include <optional>
-#include <wtf/FastMalloc.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SafeStrerror.h>

@@ -23,7 +23,6 @@
 #include "Options.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/Vector.h>
-#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
 /**

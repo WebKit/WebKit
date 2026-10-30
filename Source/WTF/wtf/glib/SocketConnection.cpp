@@ -24,11 +24,9 @@
 #include <gio/gio.h>
 #include <wtf/ByteOrder.h>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Logging.h>
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GSpanExtras.h>
-#include <wtf/text/MakeString.h>
 
 namespace WTF {
 

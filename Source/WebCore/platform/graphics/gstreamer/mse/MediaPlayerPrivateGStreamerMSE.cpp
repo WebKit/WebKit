@@ -39,17 +39,11 @@
 #include "VideoTrackPrivateGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
 
-#include <wtf/Condition.h>
 #include <wtf/HashSet.h>
 #include <wtf/NativePromise.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StringPrintStream.h>
-#include <wtf/URL.h>
-#include <wtf/text/AtomString.h>
-#include <wtf/text/AtomStringHash.h>
 #include <wtf/text/MakeString.h>
-#include <wtf/text/StringToIntegerConversion.h>
 
 #ifndef GST_DISABLE_GST_DEBUG
 static ASCIILiteral dumpReadyState(WebCore::MediaPlayer::ReadyState readyState)

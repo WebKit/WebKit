@@ -36,8 +36,6 @@
 #include <glib/gi18n-lib.h>
 #include <pal/SessionID.h>
 #include <wtf/FileSystem.h>
-#include <wtf/glib/GLibExtras.h>
-#include <wtf/glib/GMallocString.h>
 #include <wtf/glib/WTFGType.h>
 
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)

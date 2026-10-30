@@ -29,7 +29,6 @@
 #include "DRMUniquePtr.h"
 #include <drm_fourcc.h>
 #include <glib.h>
-#include <string.h>
 #include <wtf/IndexedRange.h>
 #include <wtf/TZoneMallocInlines.h>
 

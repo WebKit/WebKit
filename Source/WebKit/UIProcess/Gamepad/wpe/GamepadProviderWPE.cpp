@@ -29,7 +29,6 @@
 #if ENABLE(GAMEPAD) && ENABLE(WPE_PLATFORM)
 #include "PlatformGamepadWPE.h"
 #include <WebCore/GamepadProviderClient.h>
-#include <WebCore/NotImplemented.h>
 #include <wpe/wpe-platform.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GUniquePtr.h>

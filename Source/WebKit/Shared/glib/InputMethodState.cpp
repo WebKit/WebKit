@@ -26,7 +26,6 @@
 #include "config.h"
 #include "InputMethodState.h"
 
-#include "ArgumentCoders.h"
 #include <WebCore/ElementInlines.h>
 #include <WebCore/HTMLInputElement.h>
 

@@ -25,7 +25,6 @@
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
-#include <wtf/text/StringHash.h>
 
 static const char* kAlertDialogMessage = "WebKitGTK alert dialog message";
 static const char* kConfirmDialogMessage = "WebKitGTK confirm dialog message";

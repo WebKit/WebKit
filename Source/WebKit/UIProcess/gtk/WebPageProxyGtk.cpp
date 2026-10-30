@@ -32,7 +32,6 @@
 #include "DrawingAreaProxy.h"
 #include "GtkVersioning.h"
 #include "InputMethodState.h"
-#include "MessageSenderInlines.h"
 #include "PageClientImpl.h"
 #include "WebKitUserMessage.h"
 #include "WebKitWebViewBasePrivate.h"
@@ -40,11 +39,9 @@
 #include "WebPageMessages.h"
 #include "WebPasteboardProxy.h"
 #include "WebProcessProxy.h"
-#include <WebCore/PlatformDisplay.h>
 #include <WebCore/PlatformEvent.h>
 #include <WebCore/SelectionType.h>
 #include <wtf/CallbackAggregator.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/glib/Sandbox.h>
 
 namespace WebKit {

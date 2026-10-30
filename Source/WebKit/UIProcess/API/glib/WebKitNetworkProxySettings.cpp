@@ -24,7 +24,6 @@
 #include <WebCore/SoupNetworkProxySettings.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GSpanExtras.h>
-#include <wtf/glib/WTFGType.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;

@@ -28,7 +28,6 @@
 
 #if ENABLE(WPE_PLATFORM)
 
-#include <gio/gio.h>
 #include <wtf/glib/GResources.h>
 #include <wtf/glib/GUniquePtr.h>
 

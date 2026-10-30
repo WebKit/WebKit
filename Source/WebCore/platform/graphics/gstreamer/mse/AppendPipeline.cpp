@@ -25,16 +25,13 @@
 
 #include "AudioTrackPrivateGStreamer.h"
 #include "GStreamerCommon.h"
-#include "GStreamerEMEUtilities.h"
 #include "GStreamerMediaDescription.h"
 #include "GStreamerRegistryScannerMSE.h"
 #include "InbandTextTrackPrivateGStreamer.h"
-#include "MediaDescription.h"
 #include "MediaSampleGStreamer.h"
 #include "MediaSourcePrivateGStreamer.h"
 #include "SourceBufferPrivateGStreamer.h"
 #include "VideoTrackPrivateGStreamer.h"
-#include <functional>
 #include <gst/app/gstappsink.h>
 #include <gst/app/gstappsrc.h>
 #include <gst/base/gstbitreader.h>
@@ -42,11 +39,9 @@
 #include <gst/gst.h>
 #include <gst/pbutils/pbutils.h>
 #include <gst/video/video.h>
-#include <wtf/Condition.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GMallocString.h>
-#include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/MakeString.h>
 

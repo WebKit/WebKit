@@ -29,7 +29,6 @@
 #include "config.h"
 #include "WebInspectorUIProxy.h"
 
-#include "APINavigation.h"
 #include "APINavigationAction.h"
 #include "GtkUtilities.h"
 #include "GtkVersioning.h"
@@ -52,8 +51,6 @@
 #include <WebCore/InspectorDebuggableType.h>
 #include <WebCore/NotImplemented.h>
 #include <wtf/FileSystem.h>
-#include <wtf/text/Base64.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

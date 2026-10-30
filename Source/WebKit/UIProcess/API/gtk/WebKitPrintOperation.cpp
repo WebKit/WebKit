@@ -34,7 +34,6 @@
 #include <fcntl.h>
 #include <gio/gunixfdlist.h>
 #include <glib/gi18n-lib.h>
-#include <unistd.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
@@ -42,7 +41,6 @@
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/Sandbox.h>
 #include <wtf/glib/WTFGType.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 

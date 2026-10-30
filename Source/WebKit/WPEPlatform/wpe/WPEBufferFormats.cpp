@@ -31,7 +31,6 @@
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
-#include <wtf/text/CString.h>
 
 struct BufferFormat {
     explicit BufferFormat(guint32 fourcc)

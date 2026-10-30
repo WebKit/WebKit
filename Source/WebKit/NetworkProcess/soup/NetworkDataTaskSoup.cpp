@@ -51,7 +51,6 @@
 #include <WebCore/SoupNetworkSession.h>
 #include <WebCore/TimingAllowOrigin.h>
 #include <pal/text/TextEncoding.h>
-#include <wtf/MainThread.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/RunLoopSourcePriority.h>

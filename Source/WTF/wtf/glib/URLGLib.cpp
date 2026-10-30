@@ -31,7 +31,6 @@
 #include <glib.h>
 #include <wtf/URLParser.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/CString.h>
 
 namespace WTF {
 

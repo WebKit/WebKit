@@ -30,14 +30,12 @@
 #include "config.h"
 #include "WebKeyboardEvent.h"
 
-#include "GtkVersioning.h"
 #include <WebCore/WindowsKeyboardCodes.h>
 #include <array>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <wtf/HexNumber.h>
 #include <wtf/text/MakeString.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 

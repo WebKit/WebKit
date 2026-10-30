@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebEditorClient.h"
 
-#include <WebCore/CompositionHighlight.h>
 #include <WebCore/Document.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
@@ -28,7 +27,6 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/Node.h>
-#include <WebCore/NodeDocument.h>
 #include <WebCore/NodeInlines.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebPage.h>

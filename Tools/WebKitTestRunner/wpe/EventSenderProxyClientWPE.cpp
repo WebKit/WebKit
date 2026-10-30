@@ -29,7 +29,6 @@
 #if ENABLE(WPE_PLATFORM)
 
 #include "PlatformWebView.h"
-#include "PlatformWebViewClientWPE.h"
 #include "TestController.h"
 #include <wpe/WPEEventInternal.h>
 #include <wpe/wpe-platform.h>

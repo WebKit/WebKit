@@ -27,7 +27,6 @@
 #include "WPEDRMCursorTheme.h"
 
 #include "WPECursorTheme.h"
-#include "WPEDRM.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WPE {

@@ -31,7 +31,6 @@
 #include <WebCore/NotificationResources.h>
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
-#include <mutex>
 #include <unistd.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/NeverDestroyed.h>

@@ -26,8 +26,6 @@
 #include <WebKitWebExtensionInternal.h>
 #include <wtf/HashMap.h>
 #include <wtf/glib/GLibExtras.h>
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 using namespace TestWebKitAPI;

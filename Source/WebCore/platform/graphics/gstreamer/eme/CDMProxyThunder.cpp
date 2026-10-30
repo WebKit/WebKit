@@ -33,9 +33,7 @@
 #if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
 
 #include "CDMThunder.h"
-#include "Logging.h"
 #include <open_cdm_adapter.h>
-#include <wtf/ByteOrder.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkitMediaThunderDecryptDebugCategory);
 #define GST_CAT_DEFAULT webkitMediaThunderDecryptDebugCategory

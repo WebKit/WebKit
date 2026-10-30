@@ -22,7 +22,6 @@
 
 #include "APIIconLoadingClient.h"
 #include "PageLoadState.h"
-#include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GWeakPtr.h>

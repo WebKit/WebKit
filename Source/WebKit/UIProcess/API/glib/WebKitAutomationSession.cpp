@@ -23,7 +23,6 @@
 #include "APIAutomationSessionClient.h"
 #include "WebKitApplicationInfo.h"
 #include "WebKitAutomationSessionPrivate.h"
-#include "WebKitNetworkProxySettingsPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"

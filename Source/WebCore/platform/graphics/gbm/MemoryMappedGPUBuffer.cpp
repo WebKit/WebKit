@@ -39,9 +39,7 @@
 #include <linux/dma-buf.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
-#include <unistd.h>
 #include <wtf/SafeStrerror.h>
-#include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 
 #if USE(LIBDRM)

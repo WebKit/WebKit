@@ -22,8 +22,6 @@
 
 #if USE(GLIB) && ENABLE(MEDIA_SESSION)
 
-#include "AudioSession.h"
-#include "HTMLMediaElement.h"
 #include "MediaPlayer.h"
 #include "MediaSessionGLib.h"
 #include "MediaStrategy.h"
@@ -31,7 +29,6 @@
 #include "PlatformMediaSession.h"
 #include "PlatformStrategies.h"
 #include <gio/gio.h>
-#include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GUniquePtr.h>
 

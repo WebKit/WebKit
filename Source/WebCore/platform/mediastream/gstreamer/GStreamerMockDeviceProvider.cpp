@@ -23,7 +23,6 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 
-#include "ContextDestructionObserverInlines.h"
 #include "GStreamerCommon.h"
 #include "GStreamerMockDevice.h"
 #include "GUniquePtrGStreamer.h"

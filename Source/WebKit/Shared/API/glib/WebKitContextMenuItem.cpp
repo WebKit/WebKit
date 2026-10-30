@@ -20,13 +20,10 @@
 #include "config.h"
 #include "WebKitContextMenuItem.h"
 
-#include "APIArray.h"
-#include "WebContextMenuItem.h"
 #include "WebContextMenuItemGlib.h"
 #include "WebKitContextMenuActionsPrivate.h"
 #include "WebKitContextMenuItemPrivate.h"
 #include "WebKitContextMenuPrivate.h"
-#include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuItem.h>
 #include <memory>
 #include <wtf/glib/GRefPtr.h>
