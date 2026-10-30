@@ -1564,6 +1564,24 @@ struct WKWebsiteData {
     return nil;
 }
 
+- (void)_setSecurityOverridesInNetworkProcessForTesting:(NSDictionary<NSString *, NSString *> *)overrides completionHandler:(void(^)(void))completionHandler
+{
+#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD && HAVE(SECURITY_OVERRIDES)
+    std::optional<HashMap<String, String>> delivered;
+    if (overrides) {
+        delivered.emplace();
+        for (NSString *key in overrides)
+            delivered->set(key, overrides[key]);
+    }
+    protect(protect(*_websiteDataStore)->networkProcess())->setSecurityOverridesForTesting(WTF::move(delivered), [completionHandlerCopy = makeBlockPtr(completionHandler)] {
+        completionHandlerCopy();
+    });
+#else
+    UNUSED_PARAM(overrides);
+    completionHandler();
+#endif
+}
+
 + (void)_setWebPushActionHandler:(WKWebsiteDataStore *(^)(_WKWebPushAction *))handler
 {
 #if PLATFORM(IOS)

@@ -46,6 +46,7 @@
 #include "FrameInfoData.h"
 #include "GPUProcessMessages.h"
 #include "GPUProcessProxy.h"
+#include "GlobalPreferenceOverridesController.h"
 #include "ITPThirdPartyData.h"
 #include "LegacyGlobalSettings.h"
 #include "LoadedWebArchive.h"
@@ -2322,6 +2323,18 @@ void NetworkProcessProxy::receivedQualifiedServerTrust(WebKit::WebPageProxyIdent
     if (RefPtr page = WebPageProxy::fromIdentifier(webPageID))
         page->receivedQualifiedServerTrust(WTF::move(serverTrust), WTF::move(qualifiedServerTrust));
 }
+
+#if HAVE(SECURITY_OVERRIDES)
+void NetworkProcessProxy::setSecurityOverridesForTesting(std::optional<HashMap<String, String>>&& overrides, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::SetSecurityOverridesForTesting { WTF::move(overrides) }, WTF::move(completionHandler));
+}
+
+void NetworkProcessProxy::setSecurityOverrides(HashMap<String, String>&& overrides)
+{
+    GlobalPreferenceOverridesController::singleton().setOverrides(overrides);
+}
+#endif
 
 } // namespace WebKit
 

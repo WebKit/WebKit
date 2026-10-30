@@ -155,6 +155,10 @@
 #include "EnhancedSecurityLinkUtilities.h"
 #endif
 
+#if HAVE(SECURITY_OVERRIDES)
+#include "SecurityOverridesObserver.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -382,6 +386,19 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     if (parameters.defaultRequestTimeoutInterval)
         setDefaultRequestTimeoutInterval(*parameters.defaultRequestTimeoutInterval);
 
+#if HAVE(SECURITY_OVERRIDES)
+    if (parameters.enableSecurityOverrides)
+        m_securityOverridesObserver = makeUnique<SecurityOverridesObserver>(*this);
+    else {
+        RELEASE_LOG(Process, "Setting sandbox state flag to block Security Overrides access");
+        if (auto auditTokenForSelf = WTF::auditTokenForSelf()) {
+            if (!sandbox_enable_state_flag("BlockSecurityOverrides", *auditTokenForSelf))
+                RELEASE_LOG_ERROR(Process, "Unable to set sandbox state flag to block Security Overrides");
+        } else
+            RELEASE_LOG_FAULT(Process, "Unable to get audit token to block Security Overrides access");
+    }
+#endif
+
     RELEASE_LOG(Process, "%p - NetworkProcess::initializeNetworkProcess: Presenting processPID=%d", this, legacyPresentingApplicationPID());
 }
 
@@ -482,6 +499,17 @@ void NetworkProcess::isSecurityFlagEnabledForTesting(const String& flagName, Com
 {
     completionHandler(securityFlags().isFlagEnabledNamedForTesting(flagName));
 }
+
+#if HAVE(SECURITY_OVERRIDES)
+void NetworkProcess::setSecurityOverridesForTesting(std::optional<HashMap<String, String>>&& overrides, CompletionHandler<void()>&& completionHandler)
+{
+    assertIsMainRunLoop();
+
+    if (CheckedPtr observer = m_securityOverridesObserver)
+        observer->setOverridesForTesting(WTF::move(overrides));
+    completionHandler();
+}
+#endif
 
 void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
 {
