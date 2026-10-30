@@ -43,11 +43,40 @@
 #if PLATFORM(GTK)
 #include "ScreenManager.h"
 #include <gtk/gtk.h>
+#include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/StringCommon.h>
+#include <wtf/text/StringToIntegerConversion.h>
+#include <wtf/text/UTF8CStringView.h>
 #endif
 
 namespace WebKit {
 
 #if PLATFORM(GTK)
+#if USE(GTK4)
+static UTF8CStringView monitorConnectorName(GdkMonitor* monitor)
+{
+    return UTF8CStringView::unsafeFromUTF8(gdk_monitor_get_connector(monitor));
+}
+#else
+static GUniquePtr<char> monitorConnectorName(GdkMonitor* monitor)
+{
+    auto* display = gdk_monitor_get_display(monitor);
+    auto* screen = gdk_display_get_default_screen(display);
+    if (!screen)
+        return { };
+
+    const int monitorCount = gdk_display_get_n_monitors(display);
+    for (int i = 0; i < monitorCount; ++i) {
+        if (gdk_display_get_monitor(display, i) != monitor)
+            continue;
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        return GUniquePtr<char>(gdk_screen_get_monitor_plug_name(screen, i));
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    }
+    return { };
+}
+#endif
+
 static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd, GdkMonitor* monitor)
 {
     drmModeRes* resources = drmModeGetResources(fd);
@@ -56,8 +85,16 @@ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd, GdkMonitor*
 
     uint32_t widthMM = gdk_monitor_get_width_mm(monitor);
     uint32_t heightMM = gdk_monitor_get_height_mm(monitor);
+#if USE(GTK4)
+    auto connectorName = monitorConnectorName(monitor);
+#else
+    auto name = monitorConnectorName(monitor);
+    auto connectorName = UTF8CStringView::unsafeFromUTF8(name.get());
+#endif
+    const auto connectorNameSpan = connectorName.span();
+    const auto dash = reverseFind(connectorNameSpan, u8'-');
+    const auto connectorTypeID = dash != notFound ? parseInteger<uint32_t>(connectorNameSpan.subspan(dash + 1)) : std::nullopt;
 
-    // First find connectors matching the size.
     Vector<drmModeConnector*, 1> connectors;
     for (uint32_t connectorId : unsafeMakeSpan(resources->connectors, resources->count_connectors)) {
         auto* connector = drmModeGetConnector(fd, connectorId);
@@ -69,7 +106,13 @@ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd, GdkMonitor*
             continue;
         }
 
-        if (widthMM != connector->mmWidth || heightMM != connector->mmHeight) {
+        if (!connectorName.isEmpty()) {
+            const auto connectorTypeName = UTF8CStringView::unsafeFromUTF8(drmModeGetConnectorTypeName(connector->connector_type));
+            if (!connectorTypeID || *connectorTypeID != connector->connector_type_id || !equalSpans(connectorNameSpan.first(dash), connectorTypeName.span())) {
+                drmModeFreeConnector(connector);
+                continue;
+            }
+        } else if (widthMM != connector->mmWidth || heightMM != connector->mmHeight) {
             drmModeFreeConnector(connector);
             continue;
         }
