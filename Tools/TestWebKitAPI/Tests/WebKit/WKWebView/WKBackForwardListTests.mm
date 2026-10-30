@@ -218,6 +218,8 @@ static size_t navigations;
 
 TEST(WKBackForwardList, WindowLocationAsyncPolicyDecision)
 {
+    done = false;
+    navigations = 0;
     NSURL *simple = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
     NSURL *simple2 = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
     RetainPtr webView = adoptNS([[WKWebView alloc] init]);
