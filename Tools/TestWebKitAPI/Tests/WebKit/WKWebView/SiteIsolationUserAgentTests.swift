@@ -24,9 +24,7 @@
 private import TestWebKitAPILibrary
 import Testing
 import WebKit
-private import WebKit_Private.WKPreferencesPrivate
 private import WebKit_Private.WKWebpagePreferencesPrivate
-private import WebKit_Private._WKFeature
 
 import struct Foundation.URL
 import struct Swift.String
@@ -38,7 +36,7 @@ import struct Swift.String
 @MainActor
 struct SiteIsolationUserAgentTests {
     @Test
-    func userAgentDataUsesCustomUserAgentInCrossOriginIframe() async throws {
+    func customUserAgentAppliesInCrossOriginIframe() async throws {
         var server = try HTTPServer(protocol: .httpsProxy) {
             Route("/mainframe") {
                 "<iframe src='https://webkit.org/iframe'></iframe>"
@@ -51,35 +49,30 @@ struct SiteIsolationUserAgentTests {
 
         try await server.run { serverConfiguration in
             let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
-            for feature in WKPreferences._features() where feature.key == "NavigatorUserAgentDataJavaScriptAPIEnabled" {
-                configuration.preferences._setEnabled(true, for: feature)
-            }
-
             let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: configuration)
 
             // A frame prefers the main frame's site-specific user agent to the page's user agent, unless its process
-            // knows that the page's user agent is custom. Set one so that a process that doesn't know reports another
-            // version. On macOS, the quirks for digits.t-mobile.com replace it with their own, which works too.
+            // knows that the page's user agent is custom. Set one so that a process that doesn't know reports "QuirkUA".
             navigationDelegate.decidePolicyForNavigationActionWithPreferences = { navigationAction, preferences, decisionHandler in
                 if navigationAction.targetFrame?.isMainFrame ?? false {
                     preferences._customUserAgentAsSiteSpecificQuirks = "QuirkUA"
                 }
                 decisionHandler(.allow, preferences)
             }
-            webView.customUserAgent =
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            let customUserAgent = "CustomUA"
+            webView.customUserAgent = customUserAgent
 
-            // navigator.userAgentData is only exposed where the needsNavigatorUserAgentData quirk applies.
-            webView.load(URLRequest(url: try #require(URL(string: "https://digits.t-mobile.com/mainframe"))))
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/mainframe"))))
             try await navigationDelegate.waitForDidFinishNavigation()
 
-            let chromeBrandVersion = "return navigator.userAgentData.brands.find(b => b.brand == 'Google Chrome')?.version ?? ''"
-            let mainFrameVersion = try await webView.callJavaScript(returning: String.self) { chromeBrandVersion }
-            #expect(mainFrameVersion == "120.0.0.0")
+            let mainFrameUserAgent = try await webView.callJavaScript(returning: String.self) { "return navigator.userAgent" }
+            #expect(mainFrameUserAgent == customUserAgent)
 
             let childFrame = try #require(await webView.firstChildFrame)
-            let childFrameVersion = try await webView.callJavaScript(returning: String.self, in: childFrame) { chromeBrandVersion }
-            #expect(childFrameVersion == "120.0.0.0")
+            let childFrameUserAgent = try await webView.callJavaScript(returning: String.self, in: childFrame) {
+                "return navigator.userAgent"
+            }
+            #expect(childFrameUserAgent == customUserAgent)
         }
     }
 }

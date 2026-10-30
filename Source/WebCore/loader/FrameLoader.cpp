@@ -123,6 +123,7 @@
 #include "PluginDocument.h"
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
+#include "Quirks.h"
 #include "RFC8941.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameClient.h"
@@ -3584,6 +3585,13 @@ String FrameLoader::userAgent(const URL& url) const
         userAgent = m_client->userAgent(url);
 
     if (m_frame->settings().needsSiteSpecificQuirks()) {
+        if (m_client->hasCustomUserAgent()) {
+            if (RefPtr document = m_frame->document()) {
+                if (auto userAgentQuirk = Quirks::needsCustomUserAgentOverride(document->topURL(), { }, userAgent))
+                    userAgent = WTF::move(*userAgentQuirk);
+            }
+        }
+
         if (RefPtr document = m_frame->document()) {
             auto topFullURL = document->topURL();
             auto topFullURLPath = topFullURL.path();

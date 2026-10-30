@@ -332,4 +332,33 @@ onconnect = e => {
     EXPECT_WK_STREQ("SharedWorkerCustomUA/1.0", reportedUserAgent.get());
 }
 
+TEST(CustomUserAgent, SiteSpecificQuirkOverridesWebViewCustomUserAgent)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().preferences._needsSiteSpecificQuirks = YES;
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    [webView setCustomUserAgent:@"CustomUA/1.0"];
+
+    [webView loadSimulatedRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://commitmono.com/"]] responseHTMLString:@"<body></body>"];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_WK_STREQ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36", [webView stringByEvaluatingJavaScript:@"navigator.userAgent"]);
+
+    // A site without a quirk keeps the custom user agent.
+    [webView loadSimulatedRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]] responseHTMLString:@"<body></body>"];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_WK_STREQ("CustomUA/1.0", [webView stringByEvaluatingJavaScript:@"navigator.userAgent"]);
+}
+
+TEST(CustomUserAgent, ChromeCompatibilityQuirkAppliesToWebViewCustomUserAgent)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().preferences._needsSiteSpecificQuirks = YES;
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    [webView setCustomUserAgent:@"CustomUA/1.0 (KHTML, like Gecko)"];
+
+    [webView loadSimulatedRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://github.com/"]] responseHTMLString:@"<body></body>"];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_WK_STREQ("CustomUA/1.0 (KHTML, like Gecko, like Chrome/151.)", [webView stringByEvaluatingJavaScript:@"navigator.userAgent"]);
+}
+
 } // namespace TestWebKitAPI
