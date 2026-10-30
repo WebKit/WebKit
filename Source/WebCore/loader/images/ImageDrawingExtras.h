@@ -24,41 +24,17 @@
 
 #pragma once
 
-#include <WebCore/PlatformExportMacros.h>
-#include <cstdint>
-#include <memory>
-#include <wtf/TZoneMalloc.h>
+#include <WebCore/StyleLinkParameters.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 
-// Additional, optional information a caller can hand to Image::draw() for image kinds
-// that can make use of it. The base type carries nothing itself, it exists so that
-// platform code can pass information through without knowing what is in it.
-class ImageDrawingExtras {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageDrawingExtras, WEBCORE_EXPORT);
-public:
-    enum class Type : uint8_t {
-        Style,
-    };
+// Additional, optional information a caller can hand to Image::draw().
+struct ImageDrawingExtras {
+    URL fragmentURL;
+    Style::LinkParameters linkParameters { CSS::Keyword::None { } };
 
-    virtual ~ImageDrawingExtras() = default;
-
-    Type type() const { return m_type; }
-
-    virtual std::unique_ptr<ImageDrawingExtras> copy() const = 0;
-    bool operator==(const ImageDrawingExtras& other) const { return m_type == other.m_type && equals(other); }
-
-protected:
-    explicit ImageDrawingExtras(Type type)
-        : m_type(type)
-    {
-    }
-    ImageDrawingExtras(const ImageDrawingExtras&) = default;
-
-    virtual bool equals(const ImageDrawingExtras&) const = 0;
-
-private:
-    Type m_type;
+    bool operator==(const ImageDrawingExtras&) const = default;
 };
 
 } // namespace WebCore

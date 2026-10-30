@@ -41,6 +41,7 @@
 #include "EditorClient.h"
 #include "FrameLoader.h"
 #include "ImageBuffer.h"
+#include "ImageDrawingExtras.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "JSDOMWindowBase.h"
@@ -66,7 +67,6 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleDocumentScope.h"
 #include "StyleEnvironmentVariables.h"
-#include "StyleImageDrawingExtras.h"
 #include "StyleLinkParameters.h"
 #include "StyleScope.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -205,9 +205,9 @@ auto SVGImage::documentStateForDraw(ConcreteObjectSize concreteObjectSize, Image
     auto state = m_appliedDocumentState;
     state.containerSize = roundedIntSize(concreteObjectSize.size());
 
-    if (auto* styleExtras = dynamicDowncast<Style::ImageDrawingExtras>(extras)) {
-        state.fragmentURL = styleExtras->fragmentURL();
-        state.linkParameters = styleExtras->linkParameters();
+    if (extras) {
+        state.fragmentURL = extras->fragmentURL;
+        state.linkParameters = extras->linkParameters;
     }
 
     state.ignoreRootPreserveAspectRatio = options.ignoreRootPreserveAspectRatio();

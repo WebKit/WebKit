@@ -76,7 +76,7 @@ static void drawPatternTile(GraphicsContext& context, WebCore::Image::PatternTil
     context.drawPattern(tileImage, destination, scaledTile, scaledPatternTransform, phase, spacing, options);
 }
 
-static void drawPatternTile(GraphicsContext& context, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const WebCore::ImageDrawingExtras* extras)
+static void drawPatternTile(GraphicsContext& context, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const ImageDrawingExtras* extras)
 {
     if (tile.isEmpty())
         return;
@@ -93,7 +93,7 @@ static void drawPatternTile(GraphicsContext& context, WebCore::Image& image, Con
     drawPatternTile(context, WTF::move(*patternTile), destination, tile, patternTransform, phase, spacing, options);
 }
 
-static ImageDrawResult drawImageAsPattern(GraphicsContext& context, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const WebCore::ImageDrawingExtras* extras)
+static ImageDrawResult drawImageAsPattern(GraphicsContext& context, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const ImageDrawingExtras* extras)
 {
     drawPatternTile(context, image, concreteObjectSize, destination, tile, patternTransform, phase, spacing, options, extras);
     image.startAnimation();

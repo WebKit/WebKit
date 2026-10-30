@@ -28,8 +28,8 @@
 #include <WebCore/CachedImage.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/Image.h>
+#include <WebCore/ImageDrawingExtras.h>
 #include <WebCore/RenderObject.h>
-#include <WebCore/StyleImageDrawingExtras.h>
 #include <WebCore/StyleURL.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>

@@ -93,7 +93,7 @@ private:
 #if USE(CG)
     struct RasterizationKey {
         ConcreteObjectSize concreteObjectSize;
-        std::unique_ptr<ImageDrawingExtras> extras;
+        std::optional<ImageDrawingExtras> extras;
 
         RasterizationKey(ConcreteObjectSize, const ImageDrawingExtras*);
         bool matches(ConcreteObjectSize, const ImageDrawingExtras*) const;

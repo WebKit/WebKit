@@ -105,7 +105,7 @@ private:
     struct Entry {
         IntRect rect;
         ImageOrientation orientation;
-        std::unique_ptr<ImageDrawingExtras> extras;
+        ImageDrawingExtras extras;
         Path path;
     };
 
@@ -128,7 +128,7 @@ std::optional<Path> InteractionRegionPathCache::get(const Image& image, const In
         return std::nullopt;
 
     for (auto& entry : iterator->value) {
-        if (entry.rect == rect && entry.orientation == orientation && *entry.extras == extras)
+        if (entry.rect == rect && entry.orientation == orientation && entry.extras == extras)
             return entry.path;
     }
     return std::nullopt;
@@ -141,7 +141,7 @@ void InteractionRegionPathCache::add(const Image& image, const IntRect& rect, Im
 
     m_imageCache.ensure(image, [] {
         return Vector<Entry>();
-    }).iterator->value.append({ rect, orientation, extras.copy(), WTF::move(path) });
+    }).iterator->value.append({ rect, orientation, extras, WTF::move(path) });
 }
 
 void InteractionRegionPathCache::clear()

@@ -48,11 +48,10 @@ class AffineTransform;
 class Document;
 class FragmentedSharedBuffer;
 class GraphicsContext;
-class ImageDrawingExtras;
 class NativeImage;
 class ShareableBitmap;
 class Timer;
-
+struct ImageDrawingExtras;
 enum class CompositeOperator : uint8_t;
 
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.

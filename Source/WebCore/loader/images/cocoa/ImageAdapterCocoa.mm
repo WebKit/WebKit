@@ -32,7 +32,6 @@
 #import "NativeImageCocoa.h"
 #import "SharedBuffer.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
-#import <wtf/PointerComparison.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/WTFString.h>
@@ -118,14 +117,14 @@ void ImageAdapter::invalidate()
 
 ImageAdapter::RasterizationKey::RasterizationKey(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
     : concreteObjectSize(concreteObjectSize)
-    , extras(extras ? extras->copy() : nullptr)
+    , extras(extras ? std::optional { *extras } : std::nullopt)
 {
 }
 
 bool ImageAdapter::RasterizationKey::matches(ConcreteObjectSize otherConcreteObjectSize, const ImageDrawingExtras* otherExtras) const
 {
     return concreteObjectSize == otherConcreteObjectSize
-        && arePointingToEqualData<const ImageDrawingExtras*>(extras.get(), otherExtras);
+        && (otherExtras ? extras == *otherExtras : !extras);
 }
 
 CFDataRef ImageAdapter::tiffRepresentation(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
