@@ -98,9 +98,11 @@ void WebBroadcastChannelRegistry::postMessage(const WebCore::PartitionedSecurity
     auto blobURLs = message->blobURLs().map([](auto& blobURL) {
         return URL { blobURL };
     });
-    postMessageLocally(origin, name, source, message.copyRef(), callbackAggregator.copyRef());
+    // Send IPC first. postMessageLocally() consumes the SerializedScriptValue in the message, possibly on a different thread, so sending IPC afterward would be unsafe.
     if (auto clientOrigin = toClientOrigin(origin))
-        protect(broadcastChannelNetworkProcessConnection())->sendWithAsyncReply(Messages::NetworkBroadcastChannelRegistry::PostMessage { *clientOrigin, name, WebCore::MessageWithMessagePorts { WTF::move(message), { } }, WTF::move(blobURLs) }, [callbackAggregator] { }, 0);
+        protect(broadcastChannelNetworkProcessConnection())->sendWithAsyncReply(Messages::NetworkBroadcastChannelRegistry::PostMessage { *clientOrigin, name, WebCore::MessageWithMessagePorts { message.copyRef(), { } }, WTF::move(blobURLs) }, [callbackAggregator] { }, 0);
+
+    postMessageLocally(origin, name, source, WTF::move(message), WTF::move(callbackAggregator));
 }
 
 void WebBroadcastChannelRegistry::postMessageLocally(const WebCore::PartitionedSecurityOrigin& origin, const String& name, std::optional<WebCore::BroadcastChannelIdentifier> sourceInProcess, Ref<WebCore::SerializedScriptValue>&& message, Ref<WTF::CallbackAggregator>&& callbackAggregator)
