@@ -25,7 +25,8 @@
 
 import Foundation
 import struct Foundation.URL
-@_spi(WebKitAdditions_Testing) @_spi(Testing) import WebKit
+@_spi(WebKitAdditions_Testing) @_spi(Testing) @_spi(CrossImportOverlay) import WebKit
+private import WebKit_Private.WKPreferencesPrivate
 import SwiftUI
 import struct Swift.String
 private import struct TestWebKitAPILibrary.DOMRect
@@ -2970,6 +2971,535 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(
+        .bug("https://webkit.org/b/325570", "Dragging over a zoomed product image scrolls the page instead of panning the image"),
+        arguments: HoverZoomStyle.allCases,
+        HoverZoomPanDirection.allCases
+    )
+    func dragOverHoverZoomInCarouselPansZoom(style: HoverZoomStyle, direction: HoverZoomPanDirection) async throws {
+        let html = """
+            <body style="margin: 0; height: 4000px;">
+                <div id="carousel" style="position: absolute; left: 100px; top: 100px; width: 300px; height: 300px; overflow: hidden;">
+                    <div id="track" style="display: flex; width: 900px; height: 300px;">
+                        <div id="slide" style="position: relative; flex: none; width: 300px; height: 300px;">
+                            <div id="source" style="width: 300px; height: 300px; background: linear-gradient(red, blue);"></div>
+                        </div>
+                        <div style="flex: none; width: 300px; height: 300px; background: green;"></div>
+                        <div style="flex: none; width: 300px; height: 300px; background: yellow;"></div>
+                    </div>
+                </div>
+                <script>
+                    const style = "\(style.rawValue)";
+                    const carousel = document.getElementById("carousel");
+                    const track = document.getElementById("track");
+                    const slide = document.getElementById("slide");
+                    const source = document.getElementById("source");
+
+                    window.pageEvents = [];
+                    for (const type of ["mousedown", "mouseup", "click"])
+                        document.addEventListener(type, event => window.pageEvents.push(event.type), true);
+                    for (const type of ["mousemove", "pointerdown", "pointermove", "pointerup", "pointercancel"])
+                        document.addEventListener(type, event => window.pageEvents.push(event.buttons ? `${event.type}-with-buttons` : event.type), true);
+                    document.addEventListener("wheel", event => window.pageEvents.push(event.type), { capture: true, passive: true });
+
+                    let dragStartX = null;
+                    window.trackOffset = 0;
+                    track.addEventListener("mousedown", event => { dragStartX = event.clientX; });
+                    document.addEventListener("mousemove", event => {
+                        if (dragStartX === null || !event.buttons)
+                            return;
+                        window.trackOffset = event.clientX - dragStartX;
+                        track.style.transform = `translateX(${window.trackOffset}px)`;
+                    });
+                    document.addEventListener("mouseup", () => { dragStartX = null; });
+
+                    const zoomImage = document.createElement("div");
+                    zoomImage.id = "zoomImage";
+                    zoomImage.style.cssText = "position: absolute; width: 900px; height: 900px; background: linear-gradient(to right, orange, purple);";
+                    const preview = document.createElement("div");
+                    preview.id = "preview";
+                    preview.style.cssText = "display: none; position: absolute; overflow: hidden; width: 300px; height: 300px;";
+                    preview.appendChild(zoomImage);
+                    preview.addEventListener("click", () => { });
+                    const lens = document.createElement("div");
+                    lens.id = "lens";
+                    lens.style.cssText = "display: none; position: absolute; width: 100px; height: 100px; pointer-events: none; background: rgba(255, 255, 255, 0.5);";
+                    if (style === "overlay") {
+                        preview.style.left = "0";
+                        preview.style.top = "0";
+                        preview.addEventListener("mousemove", pan);
+                        preview.addEventListener("mouseleave", closeZoom);
+                        slide.appendChild(preview);
+                    } else {
+                        preview.style.left = "500px";
+                        preview.style.top = "100px";
+                        document.body.appendChild(preview);
+                        slide.appendChild(lens);
+                    }
+
+                    const isZoomOpen = () => preview.style.display !== "none";
+
+                    function openZoom() {
+                        preview.style.display = "block";
+                        if (style === "lens")
+                            lens.style.display = "block";
+                    }
+
+                    function closeZoom() {
+                        preview.style.display = "none";
+                        lens.style.display = "none";
+                    }
+
+                    function pan(event) {
+                        const bounds = source.getBoundingClientRect();
+                        const x = Math.min(Math.max(event.clientX - bounds.left, 0), bounds.width);
+                        const y = Math.min(Math.max(event.clientY - bounds.top, 0), bounds.height);
+                        zoomImage.style.transform = `translate(${-2 * x}px, ${-2 * y}px)`;
+                        if (style === "lens") {
+                            lens.style.left = `${x - 50}px`;
+                            lens.style.top = `${y - 50}px`;
+                        }
+                    }
+
+                    source.addEventListener("mouseenter", event => { openZoom(); pan(event); });
+                    source.addEventListener("mousemove", event => { openZoom(); pan(event); });
+                    if (style === "lens")
+                        source.addEventListener("mouseleave", closeZoom);
+
+                    window.zoomImageTransform = () => isZoomOpen() ? zoomImage.style.transform : "";
+                </script>
+            </body>
+            """
+
+        page.backingWebView.configuration.preferences._contentChangeObserverEnabled = true
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let bounds = try await screenBounds(ofElementWithID: "source")
+
+        await recap.play { composer in
+            composer._wk_click(at: bounds.center, for: .seconds(0.05))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let transformAfterClick = try await page.callJavaScript(returning: String.self) { "return window.zoomImageTransform();" }
+        try #require(!transformAfterClick.isEmpty)
+
+        let clickEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        #expect(!clickEvents.contains("click"))
+
+        try await Task.sleep(for: .seconds(1))
+        try await page.callJavaScript { "window.pageEvents = [];" }
+
+        await recap.play { composer in
+            composer._wk_scroll(
+                withStart: bounds.center,
+                end: direction.end(from: bounds.center),
+                duration: .seconds(0.3)
+            )
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let events = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        let transformAfterDrag = try await page.callJavaScript(returning: String.self) { "return window.zoomImageTransform();" }
+        let trackOffset = try await page.callJavaScript(returning: Double.self) { "return window.trackOffset;" }
+        let scroll = try await settledScrollPosition()
+
+        #expect(Set(events) == ["mousemove", "pointermove"])
+        #expect(!transformAfterDrag.isEmpty)
+        #expect(transformAfterDrag != transformAfterClick)
+        #expect(trackOffset == 0)
+        #expect(scroll == .zero)
+
+        try await page.callJavaScript { "window.pageEvents = [];" }
+
+        let secondStart = CGPoint(x: bounds.minX + bounds.width * 0.75, y: bounds.minY + bounds.height * 0.75)
+
+        try await Task.sleep(for: .seconds(1))
+        await recap.play { composer in
+            composer._wk_click(at: secondStart, for: .seconds(0.05))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let secondClickEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        let transformAfterSecondClick = try await page.callJavaScript(returning: String.self) { "return window.zoomImageTransform();" }
+
+        #expect(secondClickEvents.contains("click"))
+        #expect(secondClickEvents.contains("pointerdown-with-buttons"))
+        #expect(!transformAfterSecondClick.isEmpty)
+
+        try await Task.sleep(for: .seconds(1))
+        try await page.callJavaScript { "window.pageEvents = [];" }
+
+        await recap.play { composer in
+            composer._wk_scroll(
+                withStart: secondStart,
+                end: direction.end(from: secondStart),
+                duration: .seconds(0.3)
+            )
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let secondEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        let transformAfterSecondDrag = try await page.callJavaScript(returning: String.self) { "return window.zoomImageTransform();" }
+
+        #expect(Set(secondEvents) == ["mousemove", "pointermove"])
+        #expect(transformAfterSecondDrag != transformAfterSecondClick)
+        #expect(try await settledScrollPosition() == .zero)
+    }
+
+    @Test(arguments: [true, false])
+    func scrollAfterClickThatZoomsImageInPlacePansZoom(clickZoomsImage: Bool) async throws {
+        let baseURL = try #require(Bundle.testResources.resourceURL)
+        let html = """
+            <style>
+                #wrapper { position: absolute; left: 100px; top: 100px; width: 300px; height: 300px; background-image: linear-gradient(to right, orange, purple); background-size: 900px 900px; }
+                #photo { display: block; width: 300px; height: 300px; }
+                #wrapper.zoomed #photo { opacity: 0; }
+            </style>
+            <body style="margin: 0; height: 4000px;">
+                <div id="wrapper"><img id="photo" src="400x400-green.png"></div>
+                <script>
+                    const zoomsImage = \(clickZoomsImage);
+                    const wrapper = document.getElementById("wrapper");
+                    const photo = document.getElementById("photo");
+                    window.pageEvents = [];
+                    for (const type of ["mousedown", "mouseup", "click"])
+                        document.addEventListener(type, event => window.pageEvents.push(event.type), true);
+                    for (const type of ["mousemove", "pointerdown", "pointermove", "pointerup", "pointercancel"])
+                        document.addEventListener(type, event => window.pageEvents.push(event.buttons ? `${event.type}-with-buttons` : event.type), true);
+                    document.addEventListener("wheel", event => window.pageEvents.push(event.type), { capture: true, passive: true });
+                    photo.addEventListener("click", () => {
+                        if (zoomsImage)
+                            wrapper.classList.add("zoomed");
+                    });
+                    photo.addEventListener("mousemove", event => {
+                        if (wrapper.classList.contains("zoomed"))
+                            wrapper.style.backgroundPosition = `${event.offsetX / 3}% ${event.offsetY / 3}%`;
+                    });
+                    photo.addEventListener("mouseleave", () => wrapper.classList.remove("zoomed"));
+                    window.zoomState = () => wrapper.classList.contains("zoomed") ? wrapper.style.backgroundPosition : "closed";
+                </script>
+            </body>
+            """
+
+        page.backingWebView.configuration.preferences._contentChangeObserverEnabled = true
+
+        try await page.load(html: html, baseURL: baseURL).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let bounds = try await screenBounds(ofElementWithID: "photo")
+
+        await recap.play { composer in
+            composer._wk_click(at: bounds.center, for: .seconds(0.05))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let clickEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        try #require(clickEvents.contains("click"))
+
+        try await Task.sleep(for: .seconds(1))
+        try await page.callJavaScript { "window.pageEvents = [];" }
+        let zoomStateBeforeDrag = try await page.callJavaScript(returning: String.self) { "return window.zoomState();" }
+
+        await recap.play { composer in
+            composer._wk_scroll(
+                withStart: bounds.center,
+                end: CGPoint(x: bounds.center.x, y: bounds.center.y - 120),
+                duration: .seconds(0.3)
+            )
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let events = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        let zoomStateAfterDrag = try await page.callJavaScript(returning: String.self) { "return window.zoomState();" }
+        let scroll = try await settledScrollPosition()
+
+        if clickZoomsImage {
+            #expect(Set(events) == ["mousemove", "pointermove"])
+            #expect(zoomStateAfterDrag != "closed")
+            #expect(zoomStateAfterDrag != zoomStateBeforeDrag)
+            #expect(scroll == .zero)
+        } else {
+            #expect(events.contains("wheel"))
+            #expect(scroll.y > 20)
+        }
+    }
+
+    @Test(
+        .bug("https://webkit.org/b/325570", "Dragging over a zoomed product image scrolls the page instead of panning the image"),
+        arguments: [true, false]
+    )
+    func scrollAwayFromHoverZoomOpenedByClickScrollsPage(clickElsewhereFirst: Bool) async throws {
+        let html = """
+            <body style="margin: 0; height: 4000px;">
+                <div id="source" style="position: absolute; left: 100px; top: 100px; width: 300px; height: 300px; background: linear-gradient(red, blue);"></div>
+                <div id="preview" style="display: none; position: absolute; left: 500px; top: 100px; width: 300px; height: 300px; overflow: hidden;">
+                    <div id="zoomImage" style="width: 900px; height: 900px; background: linear-gradient(to right, orange, purple);"></div>
+                </div>
+                <div id="other" style="position: absolute; left: 100px; top: 420px; width: 300px; height: 100px; background: green;"></div>
+                <script>
+                    const source = document.getElementById("source");
+                    const preview = document.getElementById("preview");
+                    const zoomImage = document.getElementById("zoomImage");
+                    window.pageEvents = [];
+                    for (const type of ["mousedown", "mouseup", "click"])
+                        document.addEventListener(type, event => window.pageEvents.push(event.type), true);
+                    document.addEventListener("mousemove", event => window.pageEvents.push(event.buttons ? "mousemove-with-buttons" : "mousemove"), true);
+                    document.addEventListener("wheel", event => window.pageEvents.push(event.type), { capture: true, passive: true });
+                    document.getElementById("other").addEventListener("click", () => { });
+                    preview.addEventListener("click", () => { });
+                    function pan(event) {
+                        preview.style.display = "block";
+                        const bounds = source.getBoundingClientRect();
+                        zoomImage.style.transform = `translate(${-2 * (event.clientX - bounds.left)}px, ${-2 * (event.clientY - bounds.top)}px)`;
+                    }
+                    source.addEventListener("mouseenter", pan);
+                    source.addEventListener("mousemove", pan);
+                </script>
+            </body>
+            """
+
+        page.backingWebView.configuration.preferences._contentChangeObserverEnabled = true
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let source = try await screenBounds(ofElementWithID: "source")
+        let other = try await screenBounds(ofElementWithID: "other")
+
+        await recap.play { composer in
+            composer._wk_click(at: source.center, for: .seconds(0.05))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let clickEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        try #require(!clickEvents.contains("click"))
+
+        let start: CGPoint
+        if clickElsewhereFirst {
+            try await Task.sleep(for: .seconds(1))
+            await recap.play { composer in
+                composer._wk_click(at: other.center, for: .seconds(0.05))
+            }
+            await page.waitForPendingMouseEvents()
+            await page.waitForNextPresentationUpdate()
+
+            let otherClickEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+            try #require(otherClickEvents.contains("click"))
+            start = source.center
+        } else {
+            start = other.center
+        }
+
+        try await Task.sleep(for: .seconds(1))
+        try await page.callJavaScript { "window.pageEvents = [];" }
+
+        await recap.play { composer in
+            composer._wk_scroll(
+                withStart: start,
+                end: CGPoint(x: start.x, y: start.y - 120),
+                duration: .seconds(0.3)
+            )
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let events = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        #expect(events.contains("wheel"))
+        #expect(try await settledScrollPosition().y > 20)
+    }
+
+    @Test(
+        .bug("https://webkit.org/b/325570", "Dragging over a zoomed product image scrolls the page instead of panning the image"),
+        arguments: [true, false]
+    )
+    func clickAndDragInsideHoverZoomOpenedByClick(pointerTracking: Bool) async throws {
+        page.setWebFeature("UseAppKitGesturesForPointerEvents", enabled: pointerTracking)
+
+        let html = """
+            <body style="margin: 0; height: 4000px;">
+                <div id="source" style="position: absolute; left: 100px; top: 100px; width: 300px; height: 300px; background: linear-gradient(red, blue);"></div>
+                <div id="preview" style="display: none; position: absolute; left: 500px; top: 100px; width: 300px; height: 300px; overflow: hidden;">
+                    <div id="zoomImage" style="width: 900px; height: 900px; background: linear-gradient(to right, orange, purple);"></div>
+                </div>
+                <script>
+                    const source = document.getElementById("source");
+                    const preview = document.getElementById("preview");
+                    const zoomImage = document.getElementById("zoomImage");
+                    window.pageEvents = [];
+                    for (const type of ["mousedown", "mouseup", "click"])
+                        document.addEventListener(type, event => window.pageEvents.push(event.type), true);
+                    for (const type of ["mousemove", "pointerdown", "pointermove", "pointerup", "pointercancel"])
+                        document.addEventListener(type, event => window.pageEvents.push(event.buttons ? `${event.type}-with-buttons` : event.type), true);
+                    document.addEventListener("wheel", event => window.pageEvents.push(event.type), { capture: true, passive: true });
+                    function pan(event) {
+                        preview.style.display = "block";
+                        const bounds = source.getBoundingClientRect();
+                        zoomImage.style.transform = `translate(${-2 * (event.clientX - bounds.left)}px, ${-2 * (event.clientY - bounds.top)}px)`;
+                    }
+                    preview.addEventListener("click", () => { });
+                    source.addEventListener("mouseenter", pan);
+                    source.addEventListener("mousemove", pan);
+                    window.zoomImageTransform = () => zoomImage.style.transform;
+                </script>
+            </body>
+            """
+
+        page.backingWebView.configuration.preferences._contentChangeObserverEnabled = true
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let bounds = try await screenBounds(ofElementWithID: "source")
+
+        await recap.play { composer in
+            composer._wk_click(at: bounds.center, for: .seconds(0.05))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let firstClickEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        try #require(!firstClickEvents.contains("click"))
+
+        func dragInsideSource(from start: CGPoint) async throws -> [String] {
+            try await Task.sleep(for: .seconds(1))
+            try await page.callJavaScript { "window.pageEvents = [];" }
+
+            await recap.play { composer in
+                composer._wk_scroll(
+                    withStart: start,
+                    end: CGPoint(x: start.x, y: start.y - 120),
+                    duration: .seconds(0.3)
+                )
+            }
+            await page.waitForPendingMouseEvents()
+            await page.waitForNextPresentationUpdate()
+
+            return try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        }
+
+        let transformBeforeDrag = try await page.callJavaScript(returning: String.self) { "return window.zoomImageTransform();" }
+        let firstDragEvents = try await dragInsideSource(from: bounds.center)
+
+        let transformAfterDrag = try await page.callJavaScript(returning: String.self) { "return window.zoomImageTransform();" }
+
+        #expect(Set(firstDragEvents) == ["mousemove", "pointermove"])
+        #expect(transformAfterDrag != transformBeforeDrag)
+        #expect(try await settledScrollPosition() == .zero)
+
+        let secondClickLocation = CGPoint(x: bounds.minX + bounds.width * 0.75, y: bounds.minY + bounds.height * 0.75)
+
+        try await Task.sleep(for: .seconds(1))
+        try await page.callJavaScript { "window.pageEvents = [];" }
+
+        await recap.play { composer in
+            composer._wk_click(at: secondClickLocation, for: .seconds(0.05))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let secondClickEvents = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        #expect(secondClickEvents.contains("click"))
+        #expect(secondClickEvents.contains("pointerdown-with-buttons"))
+        #expect(secondClickEvents.contains("pointerup"))
+        #expect(!secondClickEvents.contains("pointercancel"))
+
+        let secondDragEvents = try await dragInsideSource(from: secondClickLocation)
+
+        #expect(Set(secondDragEvents) == ["mousemove", "pointermove"])
+        #expect(try await settledScrollPosition() == .zero)
+    }
+
+    @Test(
+        .bug("https://webkit.org/b/325570", "Dragging over a zoomed product image scrolls the page instead of panning the image"),
+        arguments: HoverOpenedByClickScrollTarget.allCases
+    )
+    func scrollOverHoverOpenedByClickScrollsWhenItIsNotAZoom(target: HoverOpenedByClickScrollTarget) async throws {
+        let html: String
+        switch target {
+        case .scrollerInMenu:
+            html = """
+                <body style="margin: 0; height: 4000px;">
+                    <div id="trigger" style="position: absolute; left: 100px; top: 100px; width: 300px; height: 40px; background: gray;">
+                        <div id="menu" style="display: none; position: absolute; left: 0; top: 40px; width: 300px; height: 300px; overflow: auto;">
+                            <div style="height: 2000px; background: linear-gradient(red, blue);"></div>
+                        </div>
+                    </div>
+                    <script>
+                        const trigger = document.getElementById("trigger");
+                        window.pageEvents = [];
+                        document.addEventListener("wheel", event => window.pageEvents.push(event.type), { capture: true, passive: true });
+                        trigger.addEventListener("mouseenter", () => { document.getElementById("menu").style.display = "block"; });
+                        trigger.addEventListener("click", () => { });
+                        window.scrolledDistance = () => document.getElementById("menu").scrollTop;
+                    </script>
+                </body>
+                """
+        case .elementCoveringViewport:
+            html = """
+                <body style="margin: 0; height: 4000px;">
+                    <div id="trigger" style="position: absolute; left: 0; top: 0; width: 100%; height: 2000px; background: linear-gradient(red, blue);">
+                        <div id="menu" style="display: none; position: absolute; left: 100px; top: 300px; width: 300px; height: 300px; background: green;"></div>
+                    </div>
+                    <script>
+                        const trigger = document.getElementById("trigger");
+                        window.pageEvents = [];
+                        document.addEventListener("wheel", event => window.pageEvents.push(event.type), { capture: true, passive: true });
+                        trigger.addEventListener("mouseenter", () => { document.getElementById("menu").style.display = "block"; });
+                        trigger.addEventListener("mousemove", () => { });
+                        window.scrolledDistance = () => window.scrollY;
+                    </script>
+                </body>
+                """
+        }
+
+        page.backingWebView.configuration.preferences._contentChangeObserverEnabled = true
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let triggerBounds = try await screenBounds(ofElementWithID: "trigger")
+        let clickLocation = CGPoint(x: triggerBounds.minX + 50, y: triggerBounds.minY + 20)
+
+        await recap.play { composer in
+            composer._wk_click(at: clickLocation, for: .seconds(0.05))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let menuBounds = try await screenBounds(ofElementWithID: "menu")
+        try #require(!menuBounds.isEmpty)
+
+        try await Task.sleep(for: .seconds(1))
+        try await page.callJavaScript { "window.pageEvents = [];" }
+
+        await recap.play { composer in
+            composer._wk_scroll(
+                withStart: menuBounds.center,
+                end: CGPoint(x: menuBounds.center.x, y: menuBounds.center.y - 120),
+                duration: .seconds(0.3)
+            )
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+        _ = try await settledScrollPosition()
+
+        let events = try await page.callJavaScript(returning: [String].self) { "return window.pageEvents;" }
+        let scrolledDistance = try await page.callJavaScript(returning: Double.self) { "return window.scrolledDistance();" }
+
+        #expect(events.contains("wheel"))
+        #expect(scrolledDistance > 20)
+    }
+
+    @Test(
         .bug("https://webkit.org/b/324408", "A mouse drag starting just off a thin range input slider track does not move it"),
         arguments: ThinSliderDragStart.allCases
     )
@@ -4561,6 +5091,33 @@ extension AppKitGesturesTests.Basic {
         case insidePlayer
         case visibleInsidePlayer
         case outsidePlayer
+    }
+
+    enum HoverOpenedByClickScrollTarget: Sendable, CaseIterable {
+        case scrollerInMenu
+
+        case elementCoveringViewport
+    }
+
+    enum HoverZoomStyle: String, Sendable, CaseIterable {
+        case overlay
+
+        case lens
+    }
+
+    enum HoverZoomPanDirection: Sendable, CaseIterable {
+        case vertical
+
+        case horizontal
+
+        static let distance: CGFloat = 120
+
+        func end(from start: CGPoint) -> CGPoint {
+            switch self {
+            case .vertical: CGPoint(x: start.x, y: start.y - Self.distance)
+            case .horizontal: CGPoint(x: start.x - Self.distance, y: start.y)
+            }
+        }
     }
 
     enum ThinSliderDragStart: Sendable, CaseIterable {

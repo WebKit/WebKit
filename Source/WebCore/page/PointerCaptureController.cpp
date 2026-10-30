@@ -430,7 +430,16 @@ bool PointerCaptureController::dispatchEventForTrackedPointer(Element& target, c
 void PointerCaptureController::cancelTrackedPointer(PointerID pointerId)
 {
     RefPtr capturingData = m_activePointerIdsToCapturingData.get(pointerId);
-    if (!capturingData || capturingData->trackingState != CapturingData::TrackingState::Pressed)
+    if (!capturingData)
+        return;
+
+    // Cancelling a released pointer only forgets it, so a later press that is not tracked derives its pointer events.
+    if (capturingData->trackingState == CapturingData::TrackingState::Released) {
+        capturingData->trackingState = CapturingData::TrackingState::NotTracked;
+        return;
+    }
+
+    if (capturingData->trackingState != CapturingData::TrackingState::Pressed)
         return;
 
     RefPtr target = capturingData->targetOverride;

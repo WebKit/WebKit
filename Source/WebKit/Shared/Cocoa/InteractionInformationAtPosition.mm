@@ -49,6 +49,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     bool isCustomSlider,
     bool hasDirectionalResizeCursor,
     bool isInResizeControl,
+    bool isHoverActivatedByClick,
     bool isOverVideo,
     bool isNearMarkedText,
 #if PLATFORM(IOS_FAMILY)
@@ -126,6 +127,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     , isCustomSlider(isCustomSlider)
     , hasDirectionalResizeCursor(hasDirectionalResizeCursor)
     , isInResizeControl(isInResizeControl)
+    , isHoverActivatedByClick(isHoverActivatedByClick)
     , isOverVideo(isOverVideo)
     , isNearMarkedText(isNearMarkedText)
 #if PLATFORM(IOS_FAMILY)

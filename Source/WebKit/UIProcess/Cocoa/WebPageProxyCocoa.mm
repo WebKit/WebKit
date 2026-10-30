@@ -2813,6 +2813,13 @@ void WebPageProxy::didHandleTapAsHover()
         pageClient->didHandleTapAsHover();
 }
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+void WebPageProxy::setHoverActivatedByClickBounds(std::optional<WebCore::IntRect>&& bounds)
+{
+    m_hoverActivatedByClickBounds = WTF::move(bounds);
+}
+#endif
+
 void WebPageProxy::didCompleteSyntheticClick()
 {
     if (RefPtr pageClient = this->pageClient())
