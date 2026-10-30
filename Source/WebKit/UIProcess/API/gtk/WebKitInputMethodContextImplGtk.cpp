@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitInputMethodContextImplGtk.h"
 
+#include "InputMethodDeleteSurroundingGtk.h"
 #include <gtk/gtk.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
@@ -31,6 +32,7 @@ struct _WebKitInputMethodContextImplGtkPrivate {
     GRefPtr<GtkIMContext> context;
     UTF8CString surroundingText;
     unsigned surroundingCursorIndex;
+    unsigned surroundingSelectionIndex;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitInputMethodContextImplGtk, webkit_input_method_context_impl_gtk, WEBKIT_TYPE_INPUT_METHOD_CONTEXT)
@@ -110,6 +112,17 @@ static void contextCommitCallback(WebKitInputMethodContextImplGtk* context, cons
     g_signal_emit_by_name(context, "committed", text, nullptr);
 }
 
+static gboolean contextDeleteSurroundingCallback(WebKitInputMethodContextImplGtk* context, int offset, int characterCount)
+{
+    auto* priv = context->priv;
+    auto range = WebKit::deleteSurroundingInUTF16(priv->surroundingText.span(), priv->surroundingCursorIndex, priv->surroundingSelectionIndex, offset, characterCount);
+    if (!range)
+        return FALSE;
+
+    g_signal_emit_by_name(context, "delete-surrounding", range->first, range->second, nullptr);
+    return TRUE;
+}
+
 static gboolean contextRetrieveSurrounding(WebKitInputMethodContextImplGtk* context)
 {
     auto* priv = context->priv;
@@ -132,6 +145,7 @@ static void webkitInputMethodContextImplGtkConstructed(GObject* object)
     g_signal_connect_object(priv->context.get(), "preedit-end", G_CALLBACK(contextPreeditEndCallback), object, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->context.get(), "commit", G_CALLBACK(contextCommitCallback), object, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->context.get(), "retrieve-surrounding", G_CALLBACK(contextRetrieveSurrounding), object, G_CONNECT_SWAPPED);
+    g_signal_connect_object(priv->context.get(), "delete-surrounding", G_CALLBACK(contextDeleteSurroundingCallback), object, G_CONNECT_SWAPPED);
 }
 
 static void webkitInputMethodContextImplGtkSetEnablePreedit(WebKitInputMethodContext* context, gboolean enabled)
@@ -206,11 +220,12 @@ static void webkitInputMethodContextImplGtkNotifyCursorArea(WebKitInputMethodCon
     gtk_im_context_set_cursor_location(priv->context.get(), &cursorRect);
 }
 
-static void webkitInputMethodContextImplGtkNotifySurrounding(WebKitInputMethodContext* context, const gchar* text, unsigned length, unsigned cursorIndex, unsigned)
+static void webkitInputMethodContextImplGtkNotifySurrounding(WebKitInputMethodContext* context, const gchar* text, unsigned length, unsigned cursorIndex, unsigned selectionIndex)
 {
     auto* priv = WEBKIT_INPUT_METHOD_CONTEXT_IMPL_GTK(context)->priv;
     priv->surroundingText = UTF8CString::fromUTF8(unsafeMakeSpan(text, length));
     priv->surroundingCursorIndex = cursorIndex;
+    priv->surroundingSelectionIndex = selectionIndex;
 }
 
 static void webkitInputMethodContextImplGtkReset(WebKitInputMethodContext* context)
