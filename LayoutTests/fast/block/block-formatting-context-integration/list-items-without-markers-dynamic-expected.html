@@ -1,0 +1,39 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 250px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+ul, ol { list-style: none; margin: 0; padding: 0 0 0 20px; }
+li { background: silver; }
+.marker::marker { content: "> "; }
+</style>
+<div class="roots">
+<div class="root" id="resized">
+  <ul id="list"><li id="text">text</li><li id="margin">margin</li><li id="removed">removed</li></ul>
+  <ol><li id="value" value="3">value</li><li>after</li></ol>
+  <ul style="display: flex"><li style="flex: 1"><span id="flex-text">flex</span><div>block</div></li><li style="flex: 1"><div id="flex-margin" style="margin-top: 5px">x</div></li></ul>
+</div>
+<div class="root"><ul><li id="gets-marker">gets a marker</li><li>next</li></ul></div>
+<div class="root"><ul style="list-style: disc"><li id="loses-marker">loses its marker</li><li style="list-style: none">next</li></ul></div>
+<div class="root"><ul><li id="gets-marker-content">gets marker content</li></ul></div>
+<div class="root"><ul><li id="marker-comes-and-goes">gets a marker and loses it</li></ul></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "changed text that is long enough to wrap to a second line";
+document.getElementById("margin").style.marginTop = "20px";
+document.getElementById("removed").remove();
+var item = document.createElement("li");
+item.textContent = "inserted";
+item.style.margin = "5px 0";
+document.getElementById("list").appendChild(item);
+document.getElementById("value").value = 10;
+document.getElementById("flex-text").firstChild.data = "flex item text that grows";
+document.getElementById("flex-margin").style.marginTop = "25px";
+document.getElementById("resized").style.width = "200px";
+document.getElementById("gets-marker").style.listStyleType = "disc";
+document.getElementById("loses-marker").style.listStyleType = "none";
+document.getElementById("gets-marker-content").className = "marker";
+document.getElementById("marker-comes-and-goes").style.listStyleType = "square";
+document.body.offsetHeight;
+document.getElementById("marker-comes-and-goes").style.listStyleType = "none";
+</script>

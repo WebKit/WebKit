@@ -1,0 +1,42 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 400px; background: lightgray; margin-bottom: 10px; }
+.box { height: 20px; margin: 10px 0; background: lightblue; }
+.abs { position: absolute; width: 30px; height: 10px; background: green; }
+</style>
+<div class="root">
+  <div class="box" id="first"></div>
+  <div class="abs"></div>
+  <div class="box"></div>
+</div>
+<div class="root" style="position: relative" id="container">
+  <div class="box"></div>
+  <div class="box"></div>
+</div>
+<div class="root">
+  <div class="box"></div>
+  <div class="abs" id="becomesStatic"></div>
+  <div class="box" id="becomesAbsolute"></div>
+</div>
+<div style="position: relative; height: 60px">
+  <div style="display: flex; flex-direction: column; flex-wrap: wrap; position: absolute; width: 100px">
+    <div style="flex: none; height: 50px; position: relative; background: green"><div></div><div style="position: absolute; top: 0; width: 10px; height: 10px; background: blue" id="moves"></div></div>
+    <div id="growsWider"></div>
+  </div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("first").style.height = "50px";
+var abs = document.createElement("div");
+abs.className = "abs";
+abs.style.right = "0";
+document.getElementById("container").insertBefore(abs, document.getElementById("container").lastElementChild);
+document.body.offsetHeight;
+document.getElementById("becomesStatic").style.position = "static";
+document.getElementById("becomesAbsolute").style.position = "absolute";
+document.getElementById("becomesAbsolute").style.width = "50px";
+document.getElementById("growsWider").style.width = "50px";
+document.body.offsetHeight;
+// Only the out-of-flow box of the flex item moves, which lays out none of the in-flow content.
+document.getElementById("moves").style.top = "5px";
+</script>
