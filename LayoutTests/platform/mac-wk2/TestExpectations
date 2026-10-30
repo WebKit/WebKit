@@ -2325,7 +2325,7 @@ imported/w3c/web-platform-tests/dom/nodes/moveBefore/throws-exception.html [ Ski
 
 webkit.org/b/315242 [ Tahoe+ ] fast/forms/select/mac-wk2/inactive-appearance.html [ Pass ImageOnlyFailure ] # rdar://162584530
 
-webkit.org/b/315246 [ Tahoe x86_64 ] http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-long-deletion.html [ Pass Failure ]
+webkit.org/b/315246 [ Tahoe x86_64 ] http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-except-deletion.html [ Pass Failure ]
 
 webkit.org/b/315282 [ Tahoe Release x86_64 ] imported/w3c/web-platform-tests/scroll-animations/css/deferred-timeline-composited.html [ Pass ImageOnlyFailure ]
 webkit.org/b/315282 [ Tahoe Release x86_64 ] webanimations/document-timeline-current-time-updates-without-running-animations.html [ Pass Failure ]

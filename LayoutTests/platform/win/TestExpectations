@@ -873,9 +873,11 @@ http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with
 # mac-wk2 and ios skip this flaky test
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ] # Pass Failure
 
-http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-long-deletion.html [ Failure ]
+http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-except-deletion.html [ Failure ]
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-js-cookie-checking.html [ Failure ]
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-unfiltered-link-decoration-after-short-deletion.html [ Failure ]
+http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-then-unfiltered-link-decoration-after-short-deletion.html [ Failure ]
+http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-unfiltered-then-filtered-link-decoration-after-short-deletion.html [ Failure ]
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-without-link-decoration.html [ Failure ]
 
 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction-js-cookie-checking.html [ Failure ]
@@ -888,6 +890,8 @@ http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect-fetch.
 
 http/tests/resourceLoadStatistics/log-cross-site-load-with-filtered-link-decoration-and-fragment.html [ Skip ]
 http/tests/resourceLoadStatistics/log-cross-site-load-with-filtered-link-decoration.html [ Skip ]
+http/tests/resourceLoadStatistics/data-removal-frequency-exempt-for-site-navigated-to-with-filtered-link-decoration.html [ Skip ]
+http/tests/resourceLoadStatistics/uncapped-lifetime-for-cookie-set-in-js-with-filtered-link-query-from-prevalent-resource.html [ Skip ]
 
 http/tests/cookies/multiple-cookies-iframes.https.html [ Skip ]
 http/tests/cookies/multiple-cookies.https.html [ Skip ]

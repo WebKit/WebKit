@@ -275,6 +275,7 @@ static String dataRemovalFrequencyToString(DataRemovalFrequency dataRemovalFrequ
     case DataRemovalFrequency::Never: return "Never"_s;
     case DataRemovalFrequency::Short: return "Short"_s;
     case DataRemovalFrequency::Long: return "Long"_s;
+    case DataRemovalFrequency::Exempt: return "Exempt"_s;
     }
     ASSERT_NOT_REACHED();
     return "Unknown"_s;
@@ -316,6 +317,7 @@ static DataRemovalFrequency toDataRemovalFrequency(int value)
     case 0: return DataRemovalFrequency::Never;
     case 1: return DataRemovalFrequency::Short;
     case 2: return DataRemovalFrequency::Long;
+    case 3: return DataRemovalFrequency::Exempt;
     default:
         ASSERT_NOT_REACHED();
         return DataRemovalFrequency::Short;
@@ -2110,11 +2112,12 @@ void ResourceLoadStatisticsStore::logCrossSiteLoadWithLinkDecoration(const Navig
 
     insertDomainRelationshipList(topFrameLinkDecorationsFromQuery, HashSet<RegistrableDomain>({ fromDomain }), *toDomainResult.second);
 
+    // Once a domain is scheduled for removal, a later navigation with filtered link decoration does not exempt it.
     auto currentDataRemovalFrequency = dataRemovalFrequency(toDomain);
     if (currentDataRemovalFrequency == DataRemovalFrequency::Short)
         return;
 
-    auto newDataRemovalFrequency = didFilterKnownLinkDecoration == DidFilterKnownLinkDecoration::Yes ? DataRemovalFrequency::Long : DataRemovalFrequency::Short;
+    auto newDataRemovalFrequency = didFilterKnownLinkDecoration == DidFilterKnownLinkDecoration::Yes ? DataRemovalFrequency::Exempt : DataRemovalFrequency::Short;
     if (currentDataRemovalFrequency == newDataRemovalFrequency)
         return;
 
@@ -2900,11 +2903,14 @@ bool ResourceLoadStatisticsStore::shouldRemoveAllButCookiesFor(const DomainData&
     bool isRemovalEnabled = firstPartyWebsiteDataRemovalMode() != FirstPartyWebsiteDataRemovalMode::None || resourceStatistic.dataRemovalFrequency != DataRemovalFrequency::Never;
     bool isResourceGrandfathered = shouldCheckForGrandfathering && resourceStatistic.grandfathered;
 
+    // Every link decorated navigation to this domain from a prevalent resource was filtered, so its script-written data is kept.
+    bool isExempt = false;
     OperatingDatesWindow window { };
     switch (firstPartyWebsiteDataRemovalMode()) {
     case FirstPartyWebsiteDataRemovalMode::AllButCookies:
         [[fallthrough]];
     case FirstPartyWebsiteDataRemovalMode::None:
+        isExempt = resourceStatistic.dataRemovalFrequency == DataRemovalFrequency::Exempt;
         window = resourceStatistic.dataRemovalFrequency == DataRemovalFrequency::Short ? OperatingDatesWindow::Short : OperatingDatesWindow::Long;
         break;
     case FirstPartyWebsiteDataRemovalMode::AllButCookiesLiveOnTestingTimeout:
@@ -2914,7 +2920,8 @@ bool ResourceLoadStatisticsStore::shouldRemoveAllButCookiesFor(const DomainData&
         window = OperatingDatesWindow::ForReproTesting;
     }
 
-    return isRemovalEnabled && !isResourceGrandfathered && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, window);
+    // Check isExempt last so that expired user interaction is still cleared.
+    return isRemovalEnabled && !isResourceGrandfathered && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, window) && !isExempt;
 }
 
 bool ResourceLoadStatisticsStore::shouldEnforceSameSiteStrictFor(DomainData& resourceStatistic, bool shouldCheckForGrandfathering)

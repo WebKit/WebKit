@@ -23,7 +23,7 @@ Registrable domain: 127.0.0.1
     grandfathered: No
     TopFrameLinkDecorationsFrom:
         localhost
-    DataRemovalFrequency: Long
+    DataRemovalFrequency: Exempt
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
