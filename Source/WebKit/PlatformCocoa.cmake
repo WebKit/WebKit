@@ -2645,19 +2645,21 @@ set(_private_modulemap_input "${WEBKIT_DIR}/Modules/${_modulemap_platform}_Priva
 set(_private_modulemap_intermediates_dir "${CMAKE_BINARY_DIR}/WebKit/Modules")
 set(_private_modulemap_preprocessed "${_private_modulemap_intermediates_dir}/module.private.modulemap.preprocessed")
 set(_private_modulemap_addendum "${_private_modulemap_intermediates_dir}/module.private.addendum.modulemap")
+set(_private_modulemap_injected "${_private_modulemap_intermediates_dir}/module.private.modulemap.injected")
+# file(CONFIGURE), unlike file(WRITE), keeps the mtime when the content is unchanged; the Swift modules rebuild when the module map's mtime changes.
 if (WEBKIT_SDK_IS_IOS_FAMILY)
-    file(WRITE "${_private_modulemap_addendum}"
+    file(CONFIGURE OUTPUT "${_private_modulemap_addendum}" CONTENT
 "  explicit module WKWebViewPrivate {
     header \"WKWebViewPrivate.h\"
     export *
   }
-")
+" @ONLY)
 else ()
-    file(WRITE "${_private_modulemap_addendum}" "")
+    file(CONFIGURE OUTPUT "${_private_modulemap_addendum}" CONTENT "" @ONLY)
 endif ()
 
 set(_private_modulemap_inject_script "${_private_modulemap_intermediates_dir}/inject-addendum.cmake")
-file(WRITE "${_private_modulemap_inject_script}"
+file(CONFIGURE OUTPUT "${_private_modulemap_inject_script}" CONTENT
 "file(READ \"\${INPUT}\" _content)
 file(READ \"\${ADDENDUM}\" _addendum)
 # Strip trailing whitespace, then replace the final `}` (closing
@@ -2665,7 +2667,7 @@ file(READ \"\${ADDENDUM}\" _addendum)
 string(REGEX REPLACE \"[ \\t\\r\\n]+$\" \"\" _content \"\${_content}\")
 string(REGEX REPLACE \"}$\" \"\${_addendum}}\\n\" _content \"\${_content}\")
 file(WRITE \"\${OUTPUT}\" \"\${_content}\")
-")
+" @ONLY)
 
 add_custom_command(
     OUTPUT "${_webkit_modules_dir}/module.modulemap"
@@ -2686,8 +2688,10 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND}
         -DINPUT=${_private_modulemap_preprocessed}
         -DADDENDUM=${_private_modulemap_addendum}
-        -DOUTPUT=${_webkit_modules_dir}/module.private.modulemap
+        -DOUTPUT=${_private_modulemap_injected}
         -P ${_private_modulemap_inject_script}
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${_private_modulemap_injected}" "${_webkit_modules_dir}/module.private.modulemap"
     COMMENT "Preprocessing ${_modulemap_platform}_Private.modulemap"
     VERBATIM
 )
