@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.container { width: 180px; vertical-align: top; background: lightgray; margin: 0 10px 10px 0; }
+.item { width: 120px; background: rgba(0, 0, 255, 0.2); }
+.percentage { height: 50%; background: green; }
+.filler { height: 100px; background: rgba(0, 128, 0, 0.3); }
+.atomic { display: inline-block; width: 50px; height: 50%; background: green; }
+</style>
+<!-- The flex base size is zero and the flexed height is definite. -->
+<div class="container" style="display: inline-flex; flex-direction: column"><div class="item" style="height: 0; flex: 0 0 100px"><div class="percentage"></div></div></div>
+<!-- The item is as tall as its content before stretching, so only its definiteness changes. -->
+<div class="container" style="display: inline-flex; height: 100px"><div class="item"><div class="filler"></div><div class="percentage"></div></div></div>
+<!-- The same with an auto height container, whose line is as tall as the first item. -->
+<div class="container" style="display: inline-flex"><div style="width: 50px; height: 100px"></div><div class="item"><div class="filler"></div><div class="percentage"></div></div></div>
+<!-- The stretched height comes from a nested column flexbox with a minimum height. -->
+<div class="container" style="display: inline-flex"><div style="display: flex; flex-direction: column; flex: 1; min-height: 100px"><div class="item" style="flex: 1"><div class="percentage"></div></div></div></div>
+<!-- The percentage resolves through the anonymous block around the inline content, and through a box with a percentage height. -->
+<div class="container" style="display: inline-flex; height: 100px"><div class="item"><div class="filler" style="height: 50px"></div><span class="atomic"></span></div></div>
+<div class="container" style="display: inline-flex; height: 100px"><div class="item"><div style="height: 80%"><div class="percentage"></div></div></div></div>
+<!-- Grid items: the row is as tall as the content, and a fixed row. -->
+<div class="container" style="display: inline-grid; grid-template-rows: 100px"><div class="item"><div class="filler"></div><div class="percentage"></div></div></div>
+<div class="container" style="display: inline-grid; grid-template-rows: 60px"><div class="item"><div class="percentage"></div><div style="height: 25%; min-height: 10px; background: blue"></div></div></div>
+<!-- An item whose block axis is the row axis of a vertical grid, stretched to the column. -->
+<div class="container" style="display: inline-grid; writing-mode: vertical-lr; grid-template-columns: 100px"><div class="item" style="writing-mode: horizontal-tb"><div class="filler"></div><div class="percentage"></div></div></div>
+<!-- The row grows with the text of the first item and stretches the second one. -->
+<div class="container" style="display: inline-flex"><div style="width: 60px" id="text">text</div><div class="item"><div class="percentage"></div><span class="atomic"></span></div></div>
+<div class="container" style="display: inline-grid; grid-template-columns: 60px 1fr"><div id="gridText">text</div><div><div class="percentage"></div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "text that wraps onto a few more lines";
+document.getElementById("gridText").firstChild.data = "text that wraps onto a few more lines";
+document.body.offsetHeight;
+</script>
