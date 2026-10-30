@@ -32,32 +32,28 @@
 namespace WebCore {
 
 template<typename T, typename... Parameters, typename... Arguments>
-void IDBActiveDOMObject::performCallbackOnOriginThread(T& object, void (T::*method)(Parameters...), Arguments&&... arguments)
+void IDBActiveDOMObject::performCallbackOnOriginThread(Ref<T>&& object, void (T::*method)(Parameters...), Arguments&&... arguments)
 {
-    ASSERT(&originThread() == &object.originThread());
+    ASSERT(&originThread() == &object->originThread());
 
-    if (canCurrentThreadAccessThreadLocalData(object.originThread())) {
-        (object.*method)(std::forward<Arguments>(arguments)...);
+    if (canCurrentThreadAccessThreadLocalData(object->originThread())) {
+        (object.get().*method)(std::forward<Arguments>(arguments)...);
         return;
     }
 
-    Locker<Lock> lock(m_scriptExecutionContextLock);
-
-    if (CheckedPtr context = scriptExecutionContext())
-        context->postCrossThreadTask(object, method, arguments...);
-}
-
-inline void IDBActiveDOMObject::callFunctionOnOriginThread(Function<void()>&& function)
-{
-    if (canCurrentThreadAccessThreadLocalData(originThread())) {
-        function();
-        return;
+    std::optional<ScriptExecutionContextIdentifier> contextIdentifier;
+    {
+        Locker<Lock> lock(m_scriptExecutionContextLock);
+        if (CheckedPtr context = scriptExecutionContext())
+            contextIdentifier = context->identifier();
     }
 
-    Locker<Lock> lock(m_scriptExecutionContextLock);
+    if (!contextIdentifier)
+        return;
 
-    if (CheckedPtr context = scriptExecutionContext())
-        context->postTask(WTF::move(function));
+    ScriptExecutionContext::postTaskTo(*contextIdentifier, [task = createCrossThreadTask(object.get(), method, arguments...), object = WTF::move(object)](ScriptExecutionContext&) mutable {
+        task.performTask();
+    });
 }
 
 }

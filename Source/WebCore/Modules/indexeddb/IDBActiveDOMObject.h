@@ -42,9 +42,7 @@ public:
     }
 
     template<typename T, typename... Parameters, typename... Arguments>
-    inline void performCallbackOnOriginThread(T&, void (T::*)(Parameters...), Arguments&&...);
-
-    inline void callFunctionOnOriginThread(Function<void()>&&);
+    inline void performCallbackOnOriginThread(Ref<T>&&, void (T::*)(Parameters...), Arguments&&...);
 
 protected:
     IDBActiveDOMObject(ScriptExecutionContext* context)
