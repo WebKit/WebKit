@@ -2581,7 +2581,11 @@ void WebProcess::updateProcessPreferences(const WebPreferencesStore& store)
     platformStrategies()->mediaStrategy()->setWirelessPlaybackMediaPlayerEnabled(store.getBoolValueForKey(WebPreferencesKey::wirelessPlaybackMediaPlayerEnabledKey()));
 #endif
 
-    updateSharedPreferencesForWebProcess(WebKit::sharedPreferencesForWebProcess(store, isLockdownModeEnabled()));
+    // The UI process only merges the preferences of the pages and workers into the shared preferences of
+    // the process (see WebProcessProxy::updateSharedPreferences), so do the same here to keep them in sync.
+    // Replacing them could drop flags that the UI process considers enabled, and the UI process would then
+    // send messages that this process rejects.
+    WebKit::updateSharedPreferencesForWebProcess(m_sharedPreferencesForWebProcess, store, isLockdownModeEnabled());
 }
 
 void WebProcess::updateRemoteWorkerPreferences(const WebPreferencesStore& store)

@@ -9988,6 +9988,46 @@ TEST(SiteIsolation, PlayAudioInRemoteFrameThenRemove)
     expectPlayingAudio(webView.get(), false, "Should not be playing audio after removing iframe"_s);
 }
 
+TEST(SiteIsolation, PlayAudioAfterServiceWorkerStartsInSameProcess)
+{
+    auto mainFrameHTML = "<video src='/video-with-audio.mp4' webkit-playsinline loop></video>"_s;
+
+    RetainPtr<NSData> videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"video-with-audio" ofType:@"mp4"] options:0 error:NULL];
+
+    HTTPServer server({
+        { "/mainframe"_s, { { { "Content-Type"_s, "text/html"_s } }, mainFrameHTML } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, "self.addEventListener('fetch', () => { });"_s } },
+        { "/video-with-audio.mp4"_s, { videoData.get() } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration.get().websiteDataStore _setServiceWorkerOverridePreferences:adoptNS([WKPreferences new]).get()];
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+
+    __block bool didTerminate = false;
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        didTerminate = true;
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    WKProcessPool *processPool = [webView configuration].processPool;
+    pid_t pagePID = [webView _webProcessIdentifier];
+    size_t processCountBeforeServiceWorker = [processPool _webProcessCountIgnoringPrewarmed];
+
+    [webView evaluateJavaScript:@"navigator.serviceWorker.register('/sw.js'); navigator.serviceWorker.ready.then(() => alert('ready'))" completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "ready");
+
+    EXPECT_EQ([processPool _serviceWorkerProcessCount], 1u);
+    EXPECT_EQ([processPool _webProcessCountIgnoringPrewarmed], processCountBeforeServiceWorker);
+    EXPECT_EQ([webView _webProcessIdentifier], pagePID);
+
+    callMethodOnFirstVideoElementInFrame(webView.get(), @"play", nil);
+    expectPlayingAudio(webView.get(), true, "Should be playing audio in main frame"_s);
+    EXPECT_FALSE(didTerminate);
+}
+
 TEST(SiteIsolation, MutesAndSetsAudioInMultipleFrames)
 {
     auto mainFrameHTML = "<video src='/video-with-audio.mp4' webkit-playsinline loop></video>"
