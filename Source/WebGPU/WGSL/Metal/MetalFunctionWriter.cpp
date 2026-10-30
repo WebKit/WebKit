@@ -830,7 +830,20 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_output.append(m_indent, "auto result = lhs[0] * rhs[0] + lhs[1] * rhs[1];\n"_s,
+            // use built-in dot for floats since its only defined there
+            m_output.append(m_indent, "if constexpr (is_floating_point_v<T>)\n"_s,
+                m_indent, "    return dot(lhs, rhs);\n"_s);
+            // avoid integer UB by promotion to unsigned
+            m_output.append(m_indent, "if constexpr (is_integral_v<T>) {\n"_s,
+                m_indent, "    using U = make_unsigned_t<T>;\n"_s,
+                m_indent, "    vec<U, N> l = vec<U, N>(lhs);\n"_s,
+                m_indent, "    vec<U, N> r = vec<U, N>(rhs);\n"_s,
+                m_indent, "    U result = l[0] * r[0] + l[1] * r[1];\n"_s,
+                m_indent, "    if constexpr (N > 2) result += l[2] * r[2];\n"_s,
+                m_indent, "    if constexpr (N > 3) result += l[3] * r[3];\n"_s,
+                m_indent, "    return as_type<T>(result);\n"_s,
+                m_indent, "}\n"_s,
+                m_indent, "auto result = lhs[0] * rhs[0] + lhs[1] * rhs[1];\n"_s,
                 m_indent, "if constexpr (N > 2) result += lhs[2] * rhs[2];\n"_s,
                 m_indent, "if constexpr (N > 3) result += lhs[3] * rhs[3];\n"_s,
                 m_indent, "return result;\n"_s);
