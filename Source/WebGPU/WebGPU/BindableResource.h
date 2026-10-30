@@ -147,7 +147,7 @@ struct ReusedIndirectIndexedDraw {
     friend bool operator==(const ReusedIndirectIndexedDraw&, const ReusedIndirectIndexedDraw&) = default;
 };
 
-using DrawIndexCacheContainerKey = std::array<uint32_t, 5>;
+using DrawIndexCacheContainerKey = std::array<uint32_t, 6>;
 inline void add(Hasher& hasher, const DrawIndexCacheContainerKey& input)
 {
     for (auto value : input)
@@ -165,6 +165,7 @@ struct DrawIndexCacheContainerValue {
             uint32_t icb2;
         };
     };
+    int32_t clampedBaseVertex { 0 };
     DrawIndexCacheContainerValue() { }
     DrawIndexCacheContainerValue(const DrawIndexCacheContainerKey& key)
         : firstIndex(key[0])
@@ -172,6 +173,7 @@ struct DrawIndexCacheContainerValue {
         , primitiveOffsetWithIndexType(key[2])
         , icb1(key[3])
         , icb2(key[4])
+        , clampedBaseVertex(static_cast<int32_t>(key[5]))
     {
     }
     uint32_t primitiveOffset() { return static_cast<MTLIndexType>(primitiveOffsetWithIndexType & 0x1); }
