@@ -48,10 +48,22 @@ const String FileMonitorTestData("This is a test"_s);
 const String FileMonitorRevisedData("This is some changed text for the test"_s);
 const String FileMonitorSecondRevisedData("This is some changed text for the test"_s);
 
+static bool observedFileModification = false;
+static bool observedFileDeletion = false;
+static bool didFinish = false;
+
+static void resetTestState()
+{
+    observedFileModification = false;
+    observedFileDeletion = false;
+    didFinish = false;
+}
+
 class FileMonitorTest : public testing::Test {
 public:
     void SetUp() override
     {
+        resetTestState();
         WTF::initializeMainThread();
         
         // create temp file
@@ -75,10 +87,6 @@ private:
     String m_tempFilePath;
 };
     
-static bool observedFileModification = false;
-static bool observedFileDeletion = false;
-static bool didFinish = false;
-    
 static void handleFileModification()
 {
     observedFileModification = true;
@@ -89,13 +97,6 @@ static void handleFileDeletion()
 {
     observedFileDeletion = true;
     didFinish = true;
-}
-    
-static void resetTestState()
-{
-    observedFileModification = false;
-    observedFileDeletion = false;
-    didFinish = false;
 }
 
 static String createCommand(const String& path, const String& payload)
@@ -154,8 +155,6 @@ TEST_F(FileMonitorTest, DetectChange)
 
     String revisedFileContents = readContentsOfFile(tempFilePath());
     EXPECT_EQ(FileMonitorRevisedData, revisedFileContents);
-
-    resetTestState();
 }
 
 TEST_F(FileMonitorTest, DetectMultipleChanges)
@@ -214,8 +213,6 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
 
     String secondRevisedfileContents = readContentsOfFile(tempFilePath());
     EXPECT_EQ(FileMonitorSecondRevisedData, secondRevisedfileContents);
-
-    resetTestState();
 }
 
 TEST_F(FileMonitorTest, DetectDeletion)
@@ -249,8 +246,6 @@ TEST_F(FileMonitorTest, DetectDeletion)
 
     EXPECT_FALSE(observedFileModification);
     EXPECT_TRUE(observedFileDeletion);
-
-    resetTestState();
 }
 
 TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
@@ -302,8 +297,6 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
 
     EXPECT_FALSE(observedFileModification);
     EXPECT_TRUE(observedFileDeletion);
-
-    resetTestState();
 }
 
 TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
@@ -368,8 +361,6 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
 
     EXPECT_FALSE(observedFileModification);
     EXPECT_FALSE(observedFileDeletion);
-
-    resetTestState();
 }
 
 }
