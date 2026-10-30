@@ -3021,6 +3021,11 @@
 // webkit.org/b/317381
 0 METAL : HardenedContextTest.RenderingFeedbackLoopWithStencilOnlyANGLE/* = SKIP
 
+// webkit.org/b/324700
+// The WebGPU backend's GL_NEAREST blits take the texel before an exact edge between source texels,
+// where GL takes the texel after it.
+0 WGPU : BlitFramebufferTest.NearestBlitsAtTexelEdges/* = SKIP
+
 // webkit.org/b/319849
 0 METAL : ClipDistanceAPPLETest.OneClipDistance/* = SKIP
 0 METAL : ClipDistanceAPPLETest.ToggleOneClipDistance/* = SKIP

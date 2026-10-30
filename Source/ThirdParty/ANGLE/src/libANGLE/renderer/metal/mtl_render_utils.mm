@@ -55,11 +55,22 @@ struct BlitParamsUniform
 {
     // 0: lower left, 1: upper right
     float srcTexCoords[2][2];
-    int srcLevel         = 0;
-    int srcLayer         = 0;
-    uint8_t dstLuminance = 0;  // dest texture is luminace
-    uint8_t padding[7];
+    // See NearestBlitAxis.
+    int32_t nearestQ0[2]          = {};
+    int32_t nearestA[2]           = {};
+    int32_t nearestR0[2]          = {};
+    int32_t nearestB[2]           = {};
+    int32_t nearestDenominator[2] = {1, 1};
+    int32_t nearestSrcBase[2]     = {};
+    int32_t nearestSrcSign[2]     = {1, 1};
+    int32_t nearestDstOrigin[2]   = {};
+    int srcLevel                  = 0;
+    int srcLayer                  = 0;
+    uint8_t dstLuminance          = 0;  // dest texture is luminace
+    uint8_t nearestFilter         = 0;
+    uint8_t padding[6];
 };
+static_assert(sizeof(BlitParamsUniform) == 96, "BlitParamsUniform must match blit.metal");
 
 struct BlitStencilToBufferParamsUniform
 {
@@ -258,7 +269,10 @@ struct ScopedDisableOcclusionQuery
     const bool mOcclusionQueryIsEnabled;
 };
 
-void GetBlitTexCoords(const NormalizedCoords &normalizedCoords,
+// Returns the corners of the source rectangle, in coordinates of a source whose height is
+// srcHeight.
+void GetBlitTexCoords(const float coords[4],
+                      float srcHeight,
                       bool srcYFlipped,
                       bool unpackFlipX,
                       bool unpackFlipY,
@@ -267,15 +281,15 @@ void GetBlitTexCoords(const NormalizedCoords &normalizedCoords,
                       float *u1,
                       float *v1)
 {
-    *u0 = normalizedCoords.v[0];
-    *v0 = normalizedCoords.v[1];
-    *u1 = normalizedCoords.v[2];
-    *v1 = normalizedCoords.v[3];
+    *u0 = coords[0];
+    *v0 = coords[1];
+    *u1 = coords[2];
+    *v1 = coords[3];
 
     if (srcYFlipped)
     {
-        *v0 = 1.0 - *v0;
-        *v1 = 1.0 - *v1;
+        *v0 = srcHeight - *v0;
+        *v1 = srcHeight - *v1;
     }
 
     if (unpackFlipX)
@@ -287,6 +301,105 @@ void GetBlitTexCoords(const NormalizedCoords &normalizedCoords,
     {
         std::swap(*v0, *v1);
     }
+}
+
+void GetBlitTexCoords(const NormalizedCoords &normalizedCoords,
+                      bool srcYFlipped,
+                      bool unpackFlipX,
+                      bool unpackFlipY,
+                      float *u0,
+                      float *v0,
+                      float *u1,
+                      float *v1)
+{
+    GetBlitTexCoords(normalizedCoords.v, 1.0f, srcYFlipped, unpackFlipX, unpackFlipY, u0, v0, u1,
+                     v1);
+}
+
+int64_t FloorDivide(int64_t numerator, int64_t denominator)
+{
+    ASSERT(denominator > 0);
+    const int64_t quotient = numerator / denominator;
+    return quotient * denominator > numerator ? quotient - 1 : quotient;
+}
+
+int32_t SaturateToInt32(int64_t value)
+{
+    return static_cast<int32_t>(std::clamp<int64_t>(value, std::numeric_limits<int32_t>::min(),
+                                                    std::numeric_limits<int32_t>::max()));
+}
+
+// The GL_NEAREST source texel of the destination texel dstOrigin + m, in one axis, is
+// srcBase + srcSign * (q0 + m * a + (r0 + m * b) / denominator), computed in integers, with
+// 0 <= r0, b < denominator.
+struct NearestBlitAxis
+{
+    int32_t q0          = 0;
+    int32_t a           = 0;
+    int32_t r0          = 0;
+    int32_t b           = 0;
+    int32_t denominator = 1;
+    int32_t srcBase     = 0;
+    int32_t srcSign     = 1;
+    int32_t dstOrigin   = 0;
+};
+
+// GL_NEAREST takes, for the destination pixel center g + 0.5 in GL window coordinates, the source
+// texel floor(srcStart + (g + 0.5 - dstStart) * srcExtent / dstExtent), where the starts and the
+// signed extents are those of the blit. Computes that in integers, in one axis, for the
+// destination texels from dstOrigin on. Texel j of a flipped texture is GL's size - 1 - j.
+NearestBlitAxis GetNearestBlitAxis(int srcStart,
+                                   int srcExtent,
+                                   int dstStart,
+                                   int dstExtent,
+                                   bool srcFlip,
+                                   int srcSize,
+                                   bool dstFlip,
+                                   int dstSize,
+                                   int dstOrigin)
+{
+    NearestBlitAxis axis;
+    axis.dstOrigin = dstOrigin;
+    axis.srcBase   = srcFlip ? srcSize - 1 : 0;
+    axis.srcSign   = srcFlip ? -1 : 1;
+
+    // The source coordinate of GL pixel g is numerator(g) / denominator. The GL pixel of
+    // destination texel dstOrigin + m is g0 + m * gStep.
+    const int64_t g0    = dstFlip ? dstSize - 1 - int64_t(dstOrigin) : dstOrigin;
+    const int64_t gStep = dstFlip ? -1 : 1;
+    int64_t denominator = 2 * int64_t(dstExtent);
+    int64_t numerator0  = 2 * int64_t(srcStart) * dstExtent +
+                         (2 * g0 + 1 - 2 * int64_t(dstStart)) * int64_t(srcExtent);
+    int64_t step = 2 * gStep * int64_t(srcExtent);
+    if (denominator < 0)
+    {
+        denominator = -denominator;
+        numerator0  = -numerator0;
+        step        = -step;
+    }
+
+    const int64_t q0 = FloorDivide(numerator0, denominator);
+    const int64_t a  = FloorDivide(step, denominator);
+    int64_t r0       = numerator0 - q0 * denominator;
+    int64_t b        = step - a * denominator;
+
+    // Keep r0 + m * b in 32 bits for any destination size. Only destination rectangles that are
+    // much larger than any framebuffer lose exactness.
+    constexpr int64_t kMaxDenominator = int64_t(1) << 16;
+    if (denominator > kMaxDenominator)
+    {
+        const int64_t divisor = (denominator + kMaxDenominator - 1) / kMaxDenominator;
+        r0 /= divisor;
+        b /= divisor;
+        denominator = (denominator + divisor - 1) / divisor;
+    }
+
+    axis.q0          = SaturateToInt32(q0);
+    axis.a           = SaturateToInt32(a);
+    axis.r0          = static_cast<int32_t>(r0);
+    axis.b           = static_cast<int32_t>(b);
+    axis.denominator = static_cast<int32_t>(denominator);
+    return axis;
 }
 
 template <typename T>
@@ -623,15 +736,23 @@ void SetupBlitWithDrawUniformData(RenderCommandEncoder *cmdEncoder,
     {
         const ColorBlitParams *colorParams = static_cast<const ColorBlitParams *>(&params);
         uniformParams.dstLuminance         = colorParams->dstLuminance ? 1 : 0;
+        uniformParams.nearestFilter =
+            GetFilter(colorParams->filter) == MTLSamplerMinMagFilterNearest ? 1 : 0;
     }
 
+    const NormalizedCoords &srcCoords = params.srcNormalizedCoords;
     float u0, v0, u1, v1;
-    GetBlitTexCoords(params.srcNormalizedCoords, params.srcYFlipped, params.unpackFlipX,
-                     params.unpackFlipY, &u0, &v0, &u1, &v1);
+    GetBlitTexCoords(srcCoords, params.srcYFlipped, params.unpackFlipX, params.unpackFlipY, &u0,
+                     &v0, &u1, &v1);
+    // The same corners, unnormalized.
+    float x0, y0, x1, y1;
+    GetBlitTexCoords(srcCoords.unnormalized, srcCoords.size[1], params.srcYFlipped,
+                     params.unpackFlipX, params.unpackFlipY, &x0, &y0, &x1, &y1);
 
     if (params.dstFlipX)
     {
         std::swap(u0, u1);
+        std::swap(x0, x1);
     }
 
     // If viewport is not flipped, we have to flip Y in normalized device coordinates
@@ -640,6 +761,7 @@ void SetupBlitWithDrawUniformData(RenderCommandEncoder *cmdEncoder,
     if (!params.dstFlipY)
     {
         std::swap(v0, v1);
+        std::swap(y0, y1);
     }
 
     // lower left
@@ -648,6 +770,58 @@ void SetupBlitWithDrawUniformData(RenderCommandEncoder *cmdEncoder,
     // upper right
     uniformParams.srcTexCoords[1][0] = u1;
     uniformParams.srcTexCoords[1][1] = v1;
+
+    // For GL_NEAREST, the fragment shader computes the source texel of each destination texel in
+    // integers, which is exact, unlike the interpolated texture coordinates.
+    if (params.src)
+    {
+        const MTLViewport viewport =
+            GetViewport(params.dstRect, params.dstTextureSize.height, params.dstFlipY);
+        const int originX = static_cast<int>(viewport.originX);
+        const int originY = static_cast<int>(viewport.originY);
+        NearestBlitAxis nearestX;
+        NearestBlitAxis nearestY;
+        if (params.hasBlitCallRects)
+        {
+            const gl::Rectangle &src = params.blitCallSrcRect;
+            const gl::Rectangle &dst = params.blitCallDstRect;
+            nearestX =
+                GetNearestBlitAxis(src.x, src.width, dst.x, dst.width, false, 0, false, 0, originX);
+            nearestY = GetNearestBlitAxis(src.y, src.height, dst.y, dst.height,
+                                          params.blitCallSrcFlipY, params.blitCallSrcHeight,
+                                          params.dstFlipY, params.dstTextureSize.height, originY);
+        }
+        else
+        {
+            // Map the viewport, which has (x0, y0) at its lower left corner and (x1, y1) at its
+            // upper right, to texels of the source level, as the sampler does with the normalized
+            // coordinates. The rows of both are in texture order.
+            const gl::Extents srcSize = params.src->size(params.srcLevel);
+            auto toTexels             = [](float coord, int levelSize, float size) {
+                return static_cast<int>(std::lround(static_cast<double>(coord) * levelSize / size));
+            };
+            const int srcX0 = toTexels(x0, srcSize.width, srcCoords.size[0]);
+            const int srcX1 = toTexels(x1, srcSize.width, srcCoords.size[0]);
+            const int srcY0 = toTexels(y0, srcSize.height, srcCoords.size[1]);
+            const int srcY1 = toTexels(y1, srcSize.height, srcCoords.size[1]);
+            nearestX = GetNearestBlitAxis(srcX0, srcX1 - srcX0, originX, params.dstRect.width,
+                                          false, 0, false, 0, originX);
+            nearestY = GetNearestBlitAxis(srcY1, srcY0 - srcY1, originY, params.dstRect.height,
+                                          false, 0, false, 0, originY);
+        }
+        const NearestBlitAxis *axes[2] = {&nearestX, &nearestY};
+        for (int i = 0; i < 2; ++i)
+        {
+            uniformParams.nearestQ0[i]          = axes[i]->q0;
+            uniformParams.nearestA[i]           = axes[i]->a;
+            uniformParams.nearestR0[i]          = axes[i]->r0;
+            uniformParams.nearestB[i]           = axes[i]->b;
+            uniformParams.nearestDenominator[i] = axes[i]->denominator;
+            uniformParams.nearestSrcBase[i]     = axes[i]->srcBase;
+            uniformParams.nearestSrcSign[i]     = axes[i]->srcSign;
+            uniformParams.nearestDstOrigin[i]   = axes[i]->dstOrigin;
+        }
+    }
 
     cmdEncoder->setVertexData(uniformParams, 0);
     cmdEncoder->setFragmentData(uniformParams, 0);
@@ -737,7 +911,9 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
 
 }  // namespace
 
-NormalizedCoords::NormalizedCoords() : v{0.0f, 0.0f, 1.0f, 1.0f} {}
+NormalizedCoords::NormalizedCoords()
+    : v{0.0f, 0.0f, 1.0f, 1.0f}, unnormalized{0.0f, 0.0f, 1.0f, 1.0f}, size{1.0f, 1.0f}
+{}
 
 NormalizedCoords::NormalizedCoords(float x,
                                    float y,
@@ -749,7 +925,9 @@ NormalizedCoords::NormalizedCoords(float x,
           y / rect.height,
           (x + width) / rect.width,
           (y + height) / rect.height,
-      }
+      },
+      unnormalized{x, y, x + width, y + height},
+      size{static_cast<float>(rect.width), static_cast<float>(rect.height)}
 {}
 
 NormalizedCoords::NormalizedCoords(const gl::Rectangle &rect, const gl::Extents &extents)
@@ -758,7 +936,10 @@ NormalizedCoords::NormalizedCoords(const gl::Rectangle &rect, const gl::Extents 
           static_cast<float>(rect.y0()) / extents.height,
           static_cast<float>(rect.x1()) / extents.width,
           static_cast<float>(rect.y1()) / extents.height,
-      }
+      },
+      unnormalized{static_cast<float>(rect.x0()), static_cast<float>(rect.y0()),
+                   static_cast<float>(rect.x1()), static_cast<float>(rect.y1())},
+      size{static_cast<float>(extents.width), static_cast<float>(extents.height)}
 {}
 
 // StencilBlitViaBufferParams implementation
