@@ -58,9 +58,8 @@
             .then(() => task.done());
       });
 
-      // Task: Test that looping an AudioBufferSource works correctly if the
-      // source is started and the buffer is assigned later, but before the
-      // source would start.
+      // A source started with a null buffer ends on the first render quantum.
+      // Assigning the buffer before the scheduled start does not play it.
       audit.define('delayed-start', (task, should) => {
         let renderDuration = 2;
         let context =
@@ -92,12 +91,17 @@
 
         context.startRendering()
             .then(function(buffer) {
-              // The left and right channel must match regardless of the timing
-              // of buffer assignment.
-              should(
-                  buffer.getChannelData(0),
-                  'The content of the left and right channel')
-                  .beEqualToArray(buffer.getChannelData(1));
+              let rendered = buffer.getChannelData(0);
+              let ramp = linearRampBuffer.getChannelData(0);
+              let expected = new Float32Array(rendered.length);
+              let startFrame = sampleRate;
+              for (let i = startFrame; i < expected.length; ++i)
+                expected[i] = ramp[(i - startFrame) % ramp.length];
+
+              should(rendered, 'The source that had a buffer before start()')
+                  .beEqualToArray(expected);
+              should(buffer.getChannelData(1), 'The source started with a null buffer')
+                  .beEqualToArray(new Float32Array(rendered.length));
             })
             .then(() => task.done());
       });

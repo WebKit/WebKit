@@ -125,6 +125,11 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
 
     if (!m_buffer) {
         outputBus->zero();
+        // The playback algorithm sets stop to the current time when buffer is null,
+        // so a source started without a buffer ends instead of staying silent until
+        // the context does.
+        if (m_playbackState != UNSCHEDULED_STATE && !hasFinished())
+            finish();
         return;
     }
 
@@ -685,15 +690,8 @@ double AudioBufferSourceNode::totalPitchRate()
 bool AudioBufferSourceNode::propagatesSilence() const
 {
     ASSERT(context().isAudioThread());
-    if (!isPlayingOrScheduled() || hasFinished())
-        return true;
-
-    if (!m_processLock.tryLock()) {
-        // We weren't able to get the lock so we assume we have a buffer.
-        return false;
-    }
-    Locker locker { AdoptLock, m_processLock };
-    return !m_buffer;
+    // A playing source with a null buffer must still be processed so it can finish.
+    return !isPlayingOrScheduled() || hasFinished();
 }
 
 float AudioBufferSourceNode::noiseInjectionMultiplier() const
