@@ -119,21 +119,19 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         return BlockAvoidanceReason::BlockFormattingContextIntegrationDisabled;
     if (!rootContainer.createsNewFormattingContext())
         return BlockAvoidanceReason::NotABlockFormattingContextRoot;
-    // Not RenderView, list items with a marker, table cells and captions, multi-column flows, fieldsets or form controls, which lay out their
-    // content their own way, nor marquees, whose children fit their content (RenderBox::sizesLogicalWidthToFitContent).
+    // Not RenderView, list items with a marker, table captions, multi-column flows, fieldsets or form controls, which lay out their content their
+    // own way, nor marquees, whose children fit their content (RenderBox::sizesLogicalWidthToFitContent).
     if (rootContainer.isRenderView())
         return BlockAvoidanceReason::RootIsRenderView;
     if (hasListMarker(rootContainer))
         return BlockAvoidanceReason::RootHasListMarker;
-    if (rootContainer.isRenderTableCell())
-        return BlockAvoidanceReason::RootIsTableCell;
     if (rootContainer.isRenderMultiColumnFlow())
         return BlockAvoidanceReason::RootIsMultiColumnFlow;
     if (rootContainer.isFieldset())
         return BlockAvoidanceReason::RootIsFieldset;
     if (rootContainer.isHTMLMarquee())
         return BlockAvoidanceReason::RootIsMarquee;
-    if (rootContainer.type() != RenderObject::Type::BlockFlow && !rootContainer.isRenderListItem())
+    if (rootContainer.type() != RenderObject::Type::BlockFlow && !rootContainer.isRenderListItem() && !rootContainer.isRenderTableCell())
         return BlockAvoidanceReason::RootHasUnsupportedRenderer;
     // Percentage block sizes inside look through an anonymous block to the flex or grid container (RenderBox::skipContainingBlockForPercentHeightCalculation),
     // which the block formatting context does not give its content. A button's label has none.
@@ -146,6 +144,11 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     };
     if ((rootContainer.isFlexItemIncludingDeprecated() || rootContainer.isGridItem()) && rootContainer.isAnonymous() && hasPercentageBlockSizeContent())
         return BlockAvoidanceReason::RootIsAnonymousFlexOrGridItem;
+    // FIXME: A table cell in quirks mode, where it is a quirk container (RenderBlockFlow::MarginInfo), and percentage block sizes inside one,
+    // which resolve against the height the row gives it, and only once it has one (RenderBox::computePercentageLogicalHeight,
+    // RenderTableSection::relayoutCellIfFlexed).
+    if (rootContainer.isRenderTableCell() && (rootContainer.document().inQuirksMode() || hasPercentageBlockSizeContent()))
+        return BlockAvoidanceReason::RootIsTableCell;
     // FIXME: horizontal-bt, whose inline content the inline formatting context places from the border and padding at the top, its block-end
     // side (BoxGeometryUpdater::formattingContextConstraints).
     if (rootContainer.writingMode().isHorizontal() && rootContainer.writingMode().isBlockFlipped())
@@ -691,7 +694,7 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
     case BlockAvoidanceReason::RootHasListMarker:
         return "root: list item with a marker"_s;
     case BlockAvoidanceReason::RootIsTableCell:
-        return "root: table cell"_s;
+        return "root: table cell in quirks mode or with percentage heights"_s;
     case BlockAvoidanceReason::RootIsMultiColumnFlow:
         return "root: multi-column flow"_s;
     case BlockAvoidanceReason::RootIsFieldset:
