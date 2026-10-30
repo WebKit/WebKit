@@ -975,8 +975,9 @@ LayoutUnit FlexFormattingContext::computeContentBasedMinMainSize(const FlexLayou
     auto& flexItemCrossSizeLength = flexFormattingUtils().preferredCrossSizeLengthForFlexItem(flexLayoutItem);
 
     // Content size suggestion: the min-content size in the main axis, clamped (when the item has a preferred
-    // aspect ratio) through the aspect ratio.
-    bool canComputeSizeThroughAspectRatio = flexFormattingUtils().flexItemHasComputableAspectRatio(flexLayoutItem) && flexItemCrossSizeIsDefinite(flexLayoutItem, flexItemCrossSizeLength);
+    // aspect ratio) through the aspect ratio. With a definite cross size, including a stretched one, a replaced
+    // item's min-content size is that cross size converted through the aspect ratio.
+    bool canComputeSizeThroughAspectRatio = flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(flexLayoutItem);
     if (canComputeSizeThroughAspectRatio)
         contentSize = computeMainSizeFromAspectRatioUsing(flexLayoutItem, flexItemCrossSizeLength);
 
