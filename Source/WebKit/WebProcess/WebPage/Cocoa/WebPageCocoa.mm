@@ -1267,10 +1267,23 @@ std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWit
     if (!url.hasQuery())
         return { url, DidFilterLinkDecoration::No };
 
+    auto sanitizedURL = url;
     bool needsConsistentQueryParameterFiltering { false };
     if (RefPtr document = mainFrame->document(); document && trigger == LinkDecorationFilteringTrigger::Navigation) {
+        RegistrableDomain sourceDomain { document->url() };
+        bool isCrossSiteNavigation = !sourceDomain.isEmpty() && !sourceDomain.matches(url);
         auto consistencyLevel = document->quirks().consistentQueryParameterFilteringLevel(document->url(), url);
-        needsConsistentQueryParameterFiltering = consistencyLevel == ConsistentQueryParameterFilteringLevel::Medium || consistencyLevel == ConsistentQueryParameterFilteringLevel::High;
+        if (isCrossSiteNavigation && consistencyLevel == ConsistentQueryParameterFilteringLevel::High) {
+            auto removedParameters = WTF::removeQueryParameters(sanitizedURL, [](auto&, auto&) {
+                return true;
+            });
+            send(Messages::WebPageProxy::DidApplyLinkDecorationFiltering(url, sanitizedURL));
+            auto removedParametersString = makeStringByJoining(removedParameters, ", "_s);
+            WEBPAGE_RELEASE_LOG(ResourceLoadStatistics, "applyLinkDecorationFilteringWithResult: Removed all query parameters after cross-site navigation: %s", removedParametersString.utf8());
+            return { sanitizedURL, DidFilterLinkDecoration::Yes };
+        }
+
+        needsConsistentQueryParameterFiltering = consistencyLevel == ConsistentQueryParameterFilteringLevel::Medium;
     }
 
     if (!hasOptedInToLinkDecorationFiltering && !m_page->settings().filterLinkDecorationByDefaultEnabled())
