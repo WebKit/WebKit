@@ -1669,8 +1669,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     layout/formattingContexts/FormattingConstraints.h
 
+    layout/formattingContexts/block/AdjoiningMargins.h
     layout/formattingContexts/block/BlockFormattingState.h
     layout/formattingContexts/block/BlockLayoutState.h
+    layout/formattingContexts/block/BlockMarginCollapse.h
 
 
     layout/formattingContexts/flex/FlexFormattingContext.h

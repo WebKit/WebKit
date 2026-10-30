@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; font-size: 20px; line-height: 20px; }
+.box { display: -webkit-box; margin: 10px 0; background: lightblue; }
+.item { background: rgba(0, 128, 0, 0.4); }
+</style>
+<div class="root">
+  <div class="box"><div class="item" style="-webkit-box-flex: 1">flexed</div><div class="item">item</div></div>
+  <div class="box" style="-webkit-box-orient: vertical; width: 50%; margin: 0 auto"><div class="item">vertical</div><div class="item">box</div></div>
+  <div class="box" style="-webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden"><div class="item">one two three four five six seven eight nine ten eleven twelve thirteen</div></div>
+  <div class="box" style="padding: 5px; border: 3px solid blue"><div class="item" style="width: 100px">fixed</div></div>
+</div>
+<div class="root"><div class="box"><div class="item" id="text">x</div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "text that wraps onto more lines inside the -webkit-box item";
+</script>
