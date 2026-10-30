@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.container { width: 300px; background: lightgray; margin-bottom: 6px; }
+</style>
+<!-- The label of a button and the text of a flex or grid container are in an anonymous block, a root of its own. -->
+<div class="container">inline <button id="label">x</button> and <input type="submit" value="submit"> buttons</div>
+<div class="container"><button style="display: block; width: 150px">a button label that wraps onto more lines</button></div>
+<div class="container" style="display: flex">text in a flex container <span style="background: yellow">then a flex item</span></div>
+<div class="container" style="display: grid; grid-template-columns: 1fr 1fr">grid text<span style="background: yellow">grid item</span></div>
+<div class="container" style="display: -webkit-box">-webkit-box text</div>
+<div class="container" style="display: flex; height: 60px">percentage <span style="display: inline-block; height: 50%; background: orange">height</span> inside</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("label").firstChild.data = "a longer label";
+</script>
