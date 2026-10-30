@@ -994,11 +994,53 @@ TEST(AdvancedPrivacyProtections, LinkPreconnectUsesEnhancedPrivacy)
 #if CPU(X86_64)
     EXPECT_EQ([logMessages count], 0U);
 #else
-    EXPECT_EQ([logMessages count], 4U);
+    // The navigation itself does not preconnect when the request uses enhanced privacy mode.
+    EXPECT_EQ([logMessages count], 2U);
 #endif
     for (NSString *message : logMessages)
         EXPECT_TRUE([message containsString:@"enhanced privacy"]);
 #endif
+}
+
+static size_t connectionCountForCancelledNavigationPreconnect(bool useEnhancedPrivacyMode)
+{
+    size_t connectionCount = 0;
+    HTTPServer server([&](Connection connection) {
+        ++connectionCount;
+        connection.receiveHTTPRequest([](Vector<char>&&) { });
+    });
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    // Cancel the navigation so that only the preconnect is sent, not the actual HTTP request.
+    bool didCallDecisionHandler = false;
+    [navigationDelegate setDecidePolicyForNavigationAction:[&](WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        didCallDecisionHandler = true;
+        decisionHandler(WKNavigationActionPolicyCancel);
+    }];
+
+    RetainPtr request = adoptNS([server.request() mutableCopy]);
+    if (useEnhancedPrivacyMode)
+        [request _setUseEnhancedPrivacyMode:YES];
+    [webView loadRequest:request.get()];
+    Util::run(&didCallDecisionHandler);
+
+    // Give the preconnect some additional time to reach the server before checking.
+    Util::spinRunLoop(10);
+    return connectionCount;
+}
+
+TEST(AdvancedPrivacyProtections, NavigationPreconnectSkippedForEnhancedPrivacy)
+{
+    EXPECT_EQ(connectionCountForCancelledNavigationPreconnect(true), 0U);
+}
+
+TEST(AdvancedPrivacyProtections, NavigationPreconnectHappensWithoutEnhancedPrivacy)
+{
+    // EXPECT_GE rather than EXPECT_EQ due to heuristics like ENABLE_ADDITIONAL_PRECONNECT_ON_HTTP_1X.
+    EXPECT_GE(connectionCountForCancelledNavigationPreconnect(false), 1U);
 }
 
 #endif // HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
