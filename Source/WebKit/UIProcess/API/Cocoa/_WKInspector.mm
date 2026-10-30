@@ -57,6 +57,7 @@ public:
         : m_delegate(delegate)
         , m_respondsToInspectorOpenURLExternally([delegate respondsToSelector:@selector(inspector:openURLExternally:)])
         , m_respondsToInspectorFrontendLoaded([delegate respondsToSelector:@selector(inspectorFrontendLoaded:)])
+        , m_respondsToInspectorDidRequestDisablingSiteIsolation([delegate respondsToSelector:@selector(inspectorDidRequestDisablingSiteIsolation:)])
     {
     }
 
@@ -80,10 +81,26 @@ private:
         [delegate inspectorFrontendLoaded:protect(wrapper(inspector)).get()];
     }
 
+    bool supportsDisablingSiteIsolation() const final
+    {
+        return m_respondsToInspectorDidRequestDisablingSiteIsolation && m_delegate;
+    }
+
+    void requestDisableSiteIsolation(WebKit::WebInspectorUIProxy& inspector) final
+    {
+        RetainPtr delegate = m_delegate.get();
+        if (!delegate || !m_respondsToInspectorDidRequestDisablingSiteIsolation)
+            return;
+
+        // The delegate may replace the inspector's delegate, which destroys this client, so don't use any members after this call.
+        [delegate inspectorDidRequestDisablingSiteIsolation:protect(wrapper(inspector)).get()];
+    }
+
     WeakObjCPtr<id <_WKInspectorDelegate> > m_delegate;
 
     bool m_respondsToInspectorOpenURLExternally : 1;
     bool m_respondsToInspectorFrontendLoaded : 1;
+    bool m_respondsToInspectorDidRequestDisablingSiteIsolation : 1;
 };
 
 @implementation _WKInspector

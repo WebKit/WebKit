@@ -43,4 +43,12 @@
 */
 - (void)inspectorFrontendLoaded:(_WKInspector *)inspector;
 
+/*! @abstract Called when the user asks, from the _WKInspector user interface, to turn off Site
+    Isolation for the inspected page. Site Isolation can't be safely toggled on a live page, so recreate
+    the page instead, for example in a new web view whose preferences have Site Isolation turned off.
+    Web Inspector only offers this action if the delegate implements this method.
+    @param inspector the associated inspector.
+*/
+- (void)inspectorDidRequestDisablingSiteIsolation:(_WKInspector *)inspector;
+
 @end

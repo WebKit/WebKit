@@ -181,6 +181,7 @@ public:
     void showMainResourceForFrame(WebCore::FrameIdentifier);
     void openURLExternally(const String& url);
     void revealFileExternally(const String& path);
+    void requestDisableSiteIsolation();
 
     AttachmentSide attachmentSide() const { return m_attachmentSide; }
     bool isAttached() const { return m_isAttached; }
@@ -230,6 +231,8 @@ private:
 
     void createFrontendPage();
     void closeFrontendPageAndWindow();
+
+    void updateSiteIsolationDisablingAvailable();
 
     void dispatchDidChangeLocalInspectorAttachment();
 

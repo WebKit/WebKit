@@ -41,6 +41,8 @@ public:
 
     virtual void openURLExternally(WebKit::WebInspectorUIProxy&, const WTF::String& url) { }
     virtual void frontendLoaded(WebKit::WebInspectorUIProxy&) { }
+    virtual bool supportsDisablingSiteIsolation() const { return false; }
+    virtual void requestDisableSiteIsolation(WebKit::WebInspectorUIProxy&) { }
 };
 
 } // namespace API
