@@ -9152,6 +9152,38 @@ TEST(SiteIsolation, NavigationAfterWindowOpenWithUpgradeInsecureRequestsHeader)
     checkFrameTreesInProcesses(opened.webView.get(), { { "https://example.com"_s } });
 }
 
+TEST(SiteIsolation, EmptyWindowOpenCommitsWithInheritedUpgradeInsecureRequests)
+{
+    HTTPServer server({
+        { "/example"_s, { { { "Content-Type"_s, "text/html"_s }, { "Content-Security-Policy"_s, "upgrade-insecure-requests"_s } }, "<script>w = window.open()</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    __block RetainPtr<TestWKWebView> openedWebView;
+    __block RetainPtr<TestNavigationDelegate> openedNavigationDelegate;
+    __block bool openedDidCommit = false;
+
+    auto [openerWebView, openerNavigationDelegate] = siteIsolatedViewAndDelegate(server);
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        enableSiteIsolation(configuration);
+        openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+        openedNavigationDelegate.get().didCommitNavigation = ^(WKWebView *, WKNavigation *) {
+            openedDidCommit = true;
+        };
+        openedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+        openedWebView.get().navigationDelegate = openedNavigationDelegate.get();
+        return openedWebView.get();
+    };
+    openerWebView.get().UIDelegate = uiDelegate.get();
+    openerWebView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    [openerWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [openerNavigationDelegate waitForDidFinishNavigation];
+
+    while (!openedDidCommit)
+        Util::spinRunLoop();
+}
+
 TEST(SiteIsolation, MultipleWebViewsWithSameOpenedConfiguration)
 {
     HTTPServer server({

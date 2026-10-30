@@ -9833,7 +9833,26 @@ void WebPageProxy::recordFirstPartyVisit(const URL& url)
 
 void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool wasPrivateRelayed, String&& proxyName, const WebCore::ResourceResponseSource source, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, DocumentSecurityPolicy&& documentSecurityPolicy, IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& untrustedCspOriginsThatUpgradeInsecureNavigations, const UserData& userData, RestoredFromBackForwardCache restoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState)
 {
-    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(cspOriginsThatUpgradeInsecureNavigations, untrustedCspOriginsThatUpgradeInsecureNavigations, ProcessSpeaksForDomain);
+    auto cspOriginsThatUpgradeInsecureNavigations = WTF::move(untrustedCspOriginsThatUpgradeInsecureNavigations).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
+    if (Ref process = WebProcessProxy::fromConnection(connection); firstPartyAccessIsAnswerable(process.get())) {
+        bool processSpeaksForAllOrigins = true;
+        cspOriginsThatUpgradeInsecureNavigations.removeIf([&](auto& origin) {
+            WebCore::RegistrableDomain domain { origin };
+            if (domain.isEmpty())
+                return false;
+            switch (process->allowsFirstPartyAccess(domain)) {
+            case WebProcessProxy::FirstPartyAccessResult::Pass:
+                return false;
+            case WebProcessProxy::FirstPartyAccessResult::SilentFailure:
+                return true;
+            case WebProcessProxy::FirstPartyAccessResult::HardFailure:
+                processSpeaksForAllOrigins = false;
+                return true;
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        });
+        MESSAGE_CHECK_BASE(processSpeaksForAllOrigins, connection);
+    }
 
     LOG(Loading, "(Loading) WebPageProxy %" PRIu64 " didCommitLoadForFrame in navigation %" PRIu64, identifier().toUInt64(), navigationID ? navigationID->object().toUInt64() : 0);
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
