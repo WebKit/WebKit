@@ -114,6 +114,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
     // their "whitespace" pair on the line (notable exception is when trailing whitespace is trimmed).
     // Including the trailing whitespace here enables us to cut the number of text measures when placing content on the line.
     auto extendedMeasuring = useTrailingWhitespaceMeasuringOptimization == UseTrailingWhitespaceMeasuringOptimization::Yes && hasKerningOrLigatures && to < text.length() && text[to] == space;
+    auto measuredTo = to;
     if (extendedMeasuring)
         ++to;
     auto width = 0.f;
@@ -139,6 +140,34 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
 
     if (extendedMeasuring)
         width -= (singleSpaceWidth(fontCascade, useSimplifiedContentMeasuring) + fontCascade.wordSpacing());
+
+    if (!width && hasKerningOrLigatures && (from || measuredTo < text.length())) {
+        auto breaksShaping = [](char16_t character) {
+            return character == space || character == tabCharacter || character == newlineCharacter || character == carriageReturn;
+        };
+        auto sharesShapingAcrossBoundary = (from && !breaksShaping(text[from - 1]) && !breaksShaping(text[from]))
+            || (measuredTo < text.length() && !breaksShaping(text[measuredTo - 1]) && !breaksShaping(text[measuredTo]));
+        auto rangeHasVisibleCharacter = [&] {
+            for (auto stringView = StringView(text).substring(from, measuredTo - from); auto character : stringView.codePoints()) {
+                if (!isDefaultIgnorableCodePoint(character) && !u_iscntrl(character) && u_charType(character) != U_FORMAT_CHAR)
+                    return true;
+            }
+            return false;
+        };
+        if (sharesShapingAcrossBoundary && rangeHasVisibleCharacter()) {
+            CheckedRef style = inlineTextBox.style();
+            auto directionalOverride = isOverride(style->unicodeBidi());
+            auto contextRun = WebCore::TextRun { StringView(text), contentLogicalLeft, { }, ExpansionBehavior::defaultBehavior(), directionalOverride ? style->writingMode().bidiDirection() : TextDirection::LTR, directionalOverride };
+            if (!style->collapseWhiteSpace() && !style->tabSize().isZero())
+                contextRun.setTabSize(true, Style::toPlatform(style->tabSize(), style->usedZoomForLength()));
+            contextRun.setTextSpacingState(spacingState);
+            ComplexTextController controller(fontCascade, contextRun);
+            controller.advance(from);
+            auto widthBeforeRange = controller.runWidthSoFar();
+            controller.advance(measuredTo);
+            width = controller.runWidthSoFar() - widthBeforeRange;
+        }
+    }
 
     if (std::isnan(width) || std::isinf(width)) [[unlikely]]
         return std::isnan(width) ? 0.0f : maxInlineLayoutUnit();
