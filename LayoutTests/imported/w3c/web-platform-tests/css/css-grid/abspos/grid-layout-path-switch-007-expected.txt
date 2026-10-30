@@ -1,0 +1,4 @@
+
+PASS A floated grid that changed from the grid formatting context to legacy layout is laid out like one that always used legacy layout
+PASS A grid in a flex container that changed from the grid formatting context to legacy layout is laid out like one that always used legacy layout
+

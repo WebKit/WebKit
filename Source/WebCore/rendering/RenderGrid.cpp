@@ -478,9 +478,50 @@ const std::optional<LayoutUnit> RenderGrid::availableLogicalHeightForContentBox(
     return availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
 }
 
+std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidthContributions()
+{
+#if ASSERT_ENABLED
+    m_lastIntrinsicWidthsUsedGFC = std::nullopt;
+#endif
+    auto contributions = RenderBlock::computeIntrinsicLogicalWidthContributions();
+#if ASSERT_ENABLED
+    // This is only called by computeIntrinsicLogicalWidthContributionsIfNeeded(), which caches the widths. A fixed width never
+    // measures the content, so nothing is recorded.
+    m_intrinsicWidthsForAssert = m_lastIntrinsicWidthsUsedGFC ? std::optional { IntrinsicWidthsForAssert { *m_lastIntrinsicWidthsUsedGFC } } : std::nullopt;
+#endif
+    return contributions;
+}
+
+void RenderGrid::gridItemStyleDidChange(Style::Difference diff, const Style::ComputedStyle& oldItemStyle, const Style::ComputedStyle& newItemStyle)
+{
+    // The decision between the grid formatting context and legacy layout (shouldUseGridFormattingContext()) reads the
+    // style of every child, in-flow or not, and the two paths can give different intrinsic widths. The item's own
+    // invalidation does not reach this grid reliably: invalidateContentLogicalWidths() stops at an ancestor chain that is
+    // already marked, and the widths of an item in a fixed track are always marked. Only the widths are invalidated here,
+    // not the layout: a layout change already marks the grid as having a child that needs layout, which runs layoutGrid()
+    // and makes the decision again, and marking the grid itself would change what repaints (the grid would repaint as
+    // a whole). Measuring the grid once more is the only added cost.
+    if (diff >= Style::DifferenceResult::Layout || oldItemStyle.hasOutOfFlowPosition() != newItemStyle.hasOutOfFlowPosition())
+        invalidateContentLogicalWidths();
+}
+
 void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 {
     {
+        // The decision is made again on every layout, before anything reads or writes the grid, because its inputs (the
+        // items' styles, the parent's style, content-visibility relevance) change without notifying this renderer.
+        bool useGridFormattingContext = shouldUseGridFormattingContext();
+#if ASSERT_ENABLED
+        // Layout and the intrinsic widths of a grid must take the same path: the parent sized this grid from the widths,
+        // and the two paths are free to disagree about them. Every input of the decision invalidates the widths when it
+        // changes (see gridItemStyleDidChange(), and attachToRenderGrid()/detachFromRenderGrid()), so cached widths that
+        // are still valid here were computed on the path that is taken now. A missing invalidation trips this.
+        ASSERT(!m_intrinsicWidthsForAssert || hasInvalidContentLogicalWidths() || m_intrinsicWidthsForAssert->usedGFC == useGridFormattingContext);
+#endif
+        if (m_lastLayoutUsedGFC && *m_lastLayoutUsedGFC != useGridFormattingContext)
+            LayoutIntegration::GridLayout::resetStateOnLayoutPathChange(*this);
+        m_lastLayoutUsedGFC = useGridFormattingContext;
+
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
 
         RenderGridLayoutState gridLayoutState;
@@ -506,8 +547,10 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
         m_resolvedTrackList.invalidate();
 
         // GridLayout::layout() commits the scroll info transaction begun above.
-        if (layoutUsingGridFormattingContext())
+        if (useGridFormattingContext) {
+            layoutUsingGridFormattingContext();
             return;
+        }
 
         // Fieldsets need to find their legend and position it inside the border of the object.
         // The legend then gets skipped during normal layout. The same is true for ruby text.
@@ -601,25 +644,27 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
     m_trackSizingAlgorithm.clearBaselineItemsCache();
 }
 
-bool RenderGrid::layoutUsingGridFormattingContext()
+bool RenderGrid::shouldUseGridFormattingContext() const
 {
-    if (m_hasGridFormattingContextLayout && !*m_hasGridFormattingContextLayout) {
-        // FIXME: Avoid continous content checking on (potentially) unsupported content. This ensures no pref impact on cases like resize etc.
-        // Remove when canUseForGridLayout becomes less expensive.
-        return false;
-    }
+    return LayoutIntegration::canUseForGridLayout(*this);
+}
 
-    m_hasGridFormattingContextLayout = LayoutIntegration::canUseForGridLayout(*this);
-    if (!*m_hasGridFormattingContextLayout) {
-        LayoutIntegration::GridLayout::invalidateFormattingContextRootRenderer(*this);
-        return false;
-    }
-
+void RenderGrid::layoutUsingGridFormattingContext()
+{
     auto gridLayout = LayoutIntegration::GridLayout { *this };
+    gridLayout.clearGridItemGridAreas();
     gridLayout.updateFormattingContextGeometries();
 
     gridLayout.layout();
-    return true;
+
+#if ASSERT_ENABLED
+    // GFC never fills the legacy grid's cells. Anything left in them is state of a previous legacy layout that the
+    // layout path change did not reset.
+    for (unsigned row = 0; row < numTracks(Style::GridTrackSizingDirection::Rows); ++row) {
+        for (unsigned column = 0; column < numTracks(Style::GridTrackSizingDirection::Columns); ++column)
+            ASSERT(currentGrid().cell(row, column).isEmpty());
+    }
+#endif
 }
 
 static GridLanesLayout::ResolvedFitTolerance resolveFitTolerance(const RenderGrid& grid, Style::GridTrackSizingDirection stackingAxisDirection)
@@ -883,18 +928,37 @@ LayoutUnit RenderGrid::guttersSize(Style::GridTrackSizingDirection direction, un
 
 std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidths() const
 {
-    if (LayoutIntegration::canUseForGridLayout(*this)) {
+    bool useGridFormattingContext = shouldUseGridFormattingContext();
+    auto recordIntrinsicWidthsForAssert = [&](std::pair<LayoutUnit, LayoutUnit> widths) {
+#if ASSERT_ENABLED
+        m_lastIntrinsicWidthsUsedGFC = useGridFormattingContext;
+#endif
+        return widths;
+    };
+    if (useGridFormattingContext) {
         // const_cast is safe here: computeIntrinsicWidths() only reads grid properties
         // and does not mutate RenderGrid state, matching the legacy path pattern below.
         auto gridLayout = LayoutIntegration::GridLayout { const_cast<RenderGrid&>(*this) };
+        // The items' grid areas are what relative positioning and percentage box model values of a laid out grid read,
+        // so a grid that is measured again without needing layout must keep them. Only the grid's own layout and its
+        // in-flow items' layout can make them stale: a grid that only has a positioned child to lay out (simplified
+        // layout) keeps its areas and does not compute them again, so clearing them for it would lose them.
+        if (selfNeedsLayout() || normalChildNeedsLayout())
+            gridLayout.clearGridItemGridAreas();
         gridLayout.updateFormattingContextGeometries();
         auto [minLogicalWidth, maxLogicalWidth] = gridLayout.computeIntrinsicWidths();
 
         auto scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
-        return { minLogicalWidth + scrollbarWidth, maxLogicalWidth + scrollbarWidth };
+        return recordIntrinsicWidthsForAssert({ minLogicalWidth + scrollbarWidth, maxLogicalWidth + scrollbarWidth });
     }
 
     auto [legendMinWidth, legendMaxWidth] = computeIntrinsicLogicalWidthsForFieldsetLegend();
+
+    // The grid formatting context path above clears the items' grid areas while the grid needs layout, since those are
+    // the ones a previous layout set. This path only gives an item one that has none (placeItemsOnGrid) and keeps the
+    // rest, so what a grid formatting context layout left behind is cleared under the same condition.
+    if (m_lastLayoutUsedGFC.value_or(false) && (selfNeedsLayout() || normalChildNeedsLayout()))
+        LayoutIntegration::GridLayout::clearGridItemGridAreasLeftByGridFormattingContext(const_cast<RenderGrid&>(*this));
 
     RenderGridLayoutState gridLayoutState;
     Grid grid;
@@ -936,7 +1000,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidths() co
     maxLogicalWidth = std::max(maxLogicalWidth, legendMaxWidth);
 
     auto scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
-    return { minLogicalWidth + scrollbarWidth, maxLogicalWidth + scrollbarWidth };
+    return recordIntrinsicWidthsForAssert({ minLogicalWidth + scrollbarWidth, maxLogicalWidth + scrollbarWidth });
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& algorithm, Style::GridTrackSizingDirection direction, RenderGridLayoutState& gridLayoutState) const
@@ -2006,7 +2070,7 @@ std::optional<LayoutUnit> RenderGrid::firstLineBaseline() const
     if ((isWritingModeRoot() && !isFlexItem()) || !currentGrid().hasGridItems() || shouldApplyLayoutContainment())
         return { };
 
-    if (m_hasGridFormattingContextLayout.value_or(false))
+    if (m_lastLayoutUsedGFC.value_or(false))
         return m_gridFormattingContextFirstBaseline;
 
     // Finding the first grid item in grid order.
@@ -2036,7 +2100,7 @@ std::optional<LayoutUnit> RenderGrid::lastLineBaseline() const
     if (isWritingModeRoot() || !currentGrid().hasGridItems() || shouldApplyLayoutContainment())
         return { };
 
-    if (m_hasGridFormattingContextLayout.value_or(false))
+    if (m_lastLayoutUsedGFC.value_or(false))
         return m_gridFormattingContextLastBaseline;
 
     CheckedPtr baselineGridItem = this->baselineGridItem(ItemPosition::LastBaseline);
@@ -2060,7 +2124,7 @@ const RenderBox* RenderGrid::baselineGridItem(ItemPosition alignment) const
 {
     ASSERT(alignment == ItemPosition::Baseline || alignment == ItemPosition::LastBaseline);
     // A grid laid out by GFC never fills the grid's cells. Its baselines come from m_gridFormattingContext*Baseline.
-    ASSERT(!m_hasGridFormattingContextLayout.value_or(false));
+    ASSERT(!m_lastLayoutUsedGFC.value_or(false));
     const RenderBox* baselineGridItem = { };
     unsigned numColumns = currentGrid().numTracks(Style::GridTrackSizingDirection::Columns);
     auto rowIndexDeterminingBaseline = alignment == ItemPosition::Baseline ? 0 : currentGrid().numTracks(Style::GridTrackSizingDirection::Rows) - 1;

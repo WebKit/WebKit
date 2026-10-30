@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: the intrinsic size of a grid follows changes that move it between layout paths</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-repeat">
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#stretch-fit-sizing">
+<meta name="assert" content="A grid whose size depends on its intrinsic size is sized from its current content after an out-of-flow child was removed, added, or stopped being out-of-flow, and after its in-flow item changed.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+.cb { width: 390px; }
+.grid {
+  float: left;
+  position: relative;
+  display: grid;
+  max-width: stretch;
+  grid-template-columns: repeat(auto-fill, 50px);
+}
+.item { height: 10px; }
+.abspos { position: absolute; }
+</style>
+<div id="host"></div>
+<script>
+function createGrid(withOutOfFlowChild) {
+  const cb = document.createElement("div");
+  cb.className = "cb";
+  const grid = document.createElement("div");
+  grid.className = "grid";
+  const item = document.createElement("div");
+  item.className = "item";
+  grid.append(item);
+  if (withOutOfFlowChild) {
+    const abspos = document.createElement("div");
+    abspos.className = "abspos";
+    grid.append(abspos);
+  }
+  cb.append(grid);
+  document.getElementById("host").append(cb);
+  return grid;
+}
+const trackCount = (grid) => getComputedStyle(grid).gridTemplateColumns.split(" ").length;
+
+test(() => {
+  const grid = createGrid(true);
+  grid.offsetWidth;
+  grid.querySelector(".abspos").remove();
+  // stretch is the 390px of the containing block, which fits 7 tracks of 50px.
+  assert_equals(grid.offsetWidth, 350, "width after the removal");
+  assert_equals(trackCount(grid), 7, "columns after the removal");
+
+  grid.querySelector(".item").style.height = "12px";
+  assert_equals(grid.offsetWidth, 350, "width after the item changed");
+  assert_equals(grid.offsetHeight, 12, "height after the item changed");
+}, "Removing the out-of-flow child, then changing the item");
+
+test(() => {
+  const grid = createGrid(false);
+  assert_equals(grid.offsetWidth, 350, "width before the insertion");
+  const abspos = document.createElement("div");
+  abspos.className = "abspos";
+  grid.append(abspos);
+  // Only checking that the grid is measured and laid out, the width with the out-of-flow child is not what this tests.
+  grid.offsetWidth;
+  abspos.remove();
+  assert_equals(grid.offsetWidth, 350, "width after the removal");
+  assert_equals(trackCount(grid), 7, "columns after the removal");
+}, "Inserting and removing an out-of-flow child");
+
+test(() => {
+  const grid = createGrid(false);
+  const toggled = document.createElement("div");
+  toggled.className = "item";
+  grid.append(toggled);
+  assert_equals(grid.offsetWidth, 350, "width before the item becomes out-of-flow");
+  toggled.style.position = "absolute";
+  grid.offsetWidth;
+  toggled.style.position = "";
+  assert_equals(grid.offsetWidth, 350, "width after the item is in-flow again");
+  assert_equals(trackCount(grid), 7, "columns after the item is in-flow again");
+}, "An item becoming out-of-flow and in-flow again");
+</script>

@@ -51,10 +51,12 @@ public:
     ~GridLayout();
 
     void updateFormattingContextGeometries();
+    void clearGridItemGridAreas();
 
     void layout();
 
-    static void invalidateFormattingContextRootRenderer(RenderGrid&);
+    static void resetStateOnLayoutPathChange(RenderGrid&);
+    static void clearGridItemGridAreasLeftByGridFormattingContext(RenderGrid&);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidths();
 
@@ -66,7 +68,6 @@ private:
 
     void updateGridItemRenderers(const GridItemBorderBoxRects& previousGridItemRects);
     void updateFormattingContextRootRendererBeforeLayout();
-    void clearGridItemGridAreas();
     void updateGridItemGridAreas(const Layout::UsedTrackSizes&, const Layout::GridItemRects&);
     void updateFormattingContextRootRenderer(const Layout::UsedTrackSizes&, LayoutUnit usedBlockContentSize, const Layout::GridItemRects&, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks);
     void layoutOutOfFlowBoxes();

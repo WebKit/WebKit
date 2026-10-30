@@ -34,6 +34,7 @@
 #include "LayoutIntegrationBoxGeometryUpdater.h"
 #include "LayoutIntegrationBoxTreeUpdater.h"
 #include "LocalFrameViewInlines.h"
+#include "RenderChildIterator.h"
 #include "RenderGrid.h"
 #include "RenderView.h"
 #include "StyleKeyword+Logging.h"
@@ -61,8 +62,6 @@ GridLayout::~GridLayout()
 
 void GridLayout::updateFormattingContextGeometries()
 {
-    clearGridItemGridAreas();
-
     auto boxGeometryUpdater = BoxGeometryUpdater { protect(layoutState()), gridBox() };
 
     // Percentage padding and margin resolve against the same basis RenderBox uses for the grid container's own box model values.
@@ -358,11 +357,6 @@ void GridLayout::updateFormattingContextRootRenderer(const Layout::UsedTrackSize
     }
     currentGrid.setNeedsItemsPlacement(false);
 
-    // gridAreaRangeForOutOfFlow reads the content-distribution offsets, which only legacy layout computes. Drop what a
-    // previous legacy layout left behind (e.g. for justify-content: space-between).
-    renderGrid->offsetBetweenTracks(Style::GridTrackSizingDirection::Columns) = { };
-    renderGrid->offsetBetweenTracks(Style::GridTrackSizingDirection::Rows) = { };
-
     // The grid was emptied before layout, so this sizes it to the used tracks, whether or not there are out-of-flow boxes:
     // gridAreaRangeForOutOfFlow relies on numTracks() to tell the last line from an interior one.
     // This has to precede setAutoRepeatTracks, which asserts on the track count.
@@ -392,14 +386,28 @@ void GridLayout::updateFormattingContextRootRenderer(const Layout::UsedTrackSize
         orderIteratorPopulator.collectChild(CheckedRef { downcast<RenderBox>(*layoutBox->rendererForIntegration()) });
 }
 
-// updateFormattingContextRootRenderer may mutate bits of RenderGrid to properly reflect
-// the state and result of layout since certain clients may query this information
-// (see RenderGrid::paintChildren). Undo this state if we are falling back to legacy
-// so that we run a full layout.
-void GridLayout::invalidateFormattingContextRootRenderer(RenderGrid& renderGrid)
+// Layout takes the grid formatting context or the legacy path depending on the grid as it is now, so it can switch
+// between two layouts. Each path leaves state in the render tree that the other one does not overwrite: GFC sets the
+// placement as done (so legacy would skip placing the items) and its baselines, legacy fills the grid's cells and
+// computes the content distribution offsets that GFC leaves alone. Reset all of it when the path changes, before either runs.
+void GridLayout::resetStateOnLayoutPathChange(RenderGrid& renderGrid)
 {
     renderGrid.currentGrid().setNeedsItemsPlacement(true);
     renderGrid.setGridFormattingContextBaselines({ }, { });
+    renderGrid.offsetBetweenTracks(Style::GridTrackSizingDirection::Columns) = { };
+    renderGrid.offsetBetweenTracks(Style::GridTrackSizingDirection::Rows) = { };
+
+    clearGridItemGridAreasLeftByGridFormattingContext(renderGrid);
+}
+
+// The items' grid areas were set by whichever path laid out the grid last. Legacy layout and legacy intrinsic sizing only
+// give an item one that has none, so one the grid formatting context left would be read as if they had set it.
+void GridLayout::clearGridItemGridAreasLeftByGridFormattingContext(RenderGrid& renderGrid)
+{
+    for (CheckedRef gridItem : childrenOfType<RenderBox>(renderGrid)) {
+        if (!gridItem->isOutOfFlowPositioned())
+            gridItem->clearGridAreaContentSize();
+    }
 }
 
 std::pair<LayoutUnit, LayoutUnit> GridLayout::computeIntrinsicWidths()
@@ -411,8 +419,30 @@ std::pair<LayoutUnit, LayoutUnit> GridLayout::computeIntrinsicWidths()
     auto [ minHeight, maxHeight ] = blockAxisMinMaxSizeConstraints(gridContainerRenderer);
     auto blockAxisAutoRepeatConstraint = Layout::AutoRepeatConstraint { gridContainerRenderer->availableLogicalHeightForContentBox(), minHeight, maxHeight };
 
+    // Measuring the grid items sets and then clears their grid area, which would also drop the one the last layout left
+    // for relative positioning and percentage box model values. Put it back.
+    struct GridAreaContentSize {
+        CheckedRef<RenderBox> renderer;
+        std::optional<RenderBox::GridAreaSize> logicalWidth;
+        std::optional<RenderBox::GridAreaSize> logicalHeight;
+    };
+    Vector<GridAreaContentSize> previousGridAreaContentSizes;
+    for (CheckedRef layoutBox : formattingContextBoxes(gridBox())) {
+        CheckedRef renderer = downcast<RenderBox>(*layoutBox->rendererForIntegration());
+        previousGridAreaContentSizes.append({ renderer, renderer->gridAreaContentLogicalWidth(), renderer->gridAreaContentLogicalHeight() });
+    }
+
     auto gridFormattingContext = Layout::GridFormattingContext { gridBox(), protect(layoutState()) };
     auto intrinsicWidths = gridFormattingContext.computeIntrinsicWidths(inlineAxisAutoRepeatConstraint, blockAxisAutoRepeatConstraint);
+
+    for (auto& previous : previousGridAreaContentSizes) {
+        CheckedRef renderer = previous.renderer;
+        renderer->clearGridAreaContentSize();
+        if (previous.logicalWidth)
+            renderer->setGridAreaContentLogicalWidth(*previous.logicalWidth);
+        if (previous.logicalHeight)
+            renderer->setGridAreaContentLogicalHeight(*previous.logicalHeight);
+    }
     return { intrinsicWidths.minimum, intrinsicWidths.maximum };
 }
 
