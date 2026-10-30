@@ -28,8 +28,10 @@
 #include <WebCore/FloatSize.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageOrientation.h>
+#include <WebCore/ImageUtilities.h>
 #include <WebCore/NaturalDimensions.h>
 #include <WebCore/ObjectSizeNegotiation.h>
+#include <WebCore/SharedBuffer.h>
 #include <limits>
 
 namespace TestWebKitAPI {
@@ -200,8 +202,11 @@ TEST(ObjectSizeNegotiation, BitmapImageNaturalDimensions)
 
     RefPtr imageBuffer = ImageBuffer::create({ 20, 10 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     ASSERT_TRUE(imageBuffer);
-    RefPtr image = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer)));
-    ASSERT_TRUE(image);
+    auto data = encodeData(WTF::move(imageBuffer), "image/png"_s);
+    ASSERT_FALSE(data.isEmpty());
+
+    Ref image = BitmapImage::create();
+    image->setData(SharedBuffer::create(WTF::move(data)), true);
 
     auto naturalDimensions = image->naturalDimensions();
     EXPECT_EQ(20, naturalDimensions.width.value_or(0));
