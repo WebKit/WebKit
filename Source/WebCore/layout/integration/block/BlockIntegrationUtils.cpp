@@ -241,7 +241,10 @@ Layout::BoxGeometry BlockIntegrationUtils::rootGeometry(const RenderBlockFlow& r
     auto geometry = Layout::BoxGeometry { };
     geometry.setHorizontalMargin({ margin(style->marginStart(writingMode)), margin(style->marginEnd(writingMode)) });
     geometry.setVerticalMargin({ marginLineOver, marginLineUnder });
-    geometry.setBorder({ { root.borderStart(), root.borderEnd() }, { root.borderBefore(), root.borderAfter() } });
+    // The physical borders on the root's own sides, not the collapsed border halves of a table cell, which are in the writing mode of the table
+    // (RenderTableCell::borderStart).
+    auto borderWidths = root.borderWidths();
+    geometry.setBorder({ { borderWidths.start(writingMode), borderWidths.end(writingMode) }, { borderWidths.before(writingMode), borderWidths.after(writingMode) } });
     geometry.setPadding({ { root.paddingStart(), root.paddingEnd() }, { root.paddingBefore(), root.paddingAfter() } });
     geometry.setContentBoxWidth(root.contentBoxLogicalWidth());
     // Scrollbars take the space they need from the padding box, up to all of it (LayoutIntegration::BoxGeometryUpdater's scrollbarLogicalSize).
