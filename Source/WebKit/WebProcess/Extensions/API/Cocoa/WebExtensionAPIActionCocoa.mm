@@ -560,6 +560,17 @@ void WebExtensionAPIAction::setIcon(WebFrame& frame, NSDictionary *details, Ref<
     if (!validateDictionary(details, @"details", nil, types, outExceptionString))
         return;
 
+    // Without a known property the call changes nothing. An explicit null still resets the icon.
+    bool hasIconProperty = details[pathKey] || details[imageDataKey];
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    hasIconProperty = hasIconProperty || details[variantsKey];
+#endif
+
+    if (!hasIconProperty) {
+        callback->call();
+        return;
+    }
+
     if (details[pathKey] && details[imageDataKey]) {
         *outExceptionString = toErrorString(nullString(), @"details", @"it cannot specify both 'path' and 'imageData'").createNSString().autorelease();
         return;

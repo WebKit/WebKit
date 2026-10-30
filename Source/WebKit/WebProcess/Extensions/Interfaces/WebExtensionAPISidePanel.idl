@@ -40,7 +40,7 @@ dictionary WebExtensionSidePanelBehavior {
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPISidePanel {
 
-    [RaisesException] void getOptions([NSDictionary] any options, [Optional, CallbackHandler] function callback);
+    [RaisesException] void getOptions([Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
     [RaisesException] void setOptions([NSDictionary] any options, [Optional, CallbackHandler] function callback);
 
     [RaisesException] void getPanelBehavior([Optional, CallbackHandler] function callback);
