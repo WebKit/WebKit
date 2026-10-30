@@ -403,6 +403,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (WI.debuggerManager.assertionFailuresBreakpoint)
             this._addBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
 
+        if (WI.debuggerManager.watchedObjectBreakpoint)
+            this._addBreakpoint(WI.debuggerManager.watchedObjectBreakpoint);
+
         if (WI.debuggerManager.allMicrotasksBreakpoint)
             this._addBreakpoint(WI.debuggerManager.allMicrotasksBreakpoint);
 
@@ -1443,6 +1446,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.assertionFailuresBreakpoint,
                 (treeElement) => treeElement instanceof WI.ResourceTreeElement || treeElement instanceof WI.ScriptTreeElement || (treeElement instanceof WI.JavaScriptBreakpointTreeElement && !treeElement.representedObject.special),
                 (treeElement) => treeElement instanceof WI.SymbolicBreakpointTreeElement,
+                (treeElement) => treeElement.representedObject === WI.debuggerManager.watchedObjectBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.allMicrotasksBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allAnimationFramesBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allTimeoutsBreakpoint,
@@ -1513,6 +1517,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             options.classNames = ["exception"];
         else if (breakpoint === WI.debuggerManager.assertionFailuresBreakpoint)
             options.classNames = ["assertion"];
+        else if (breakpoint === WI.debuggerManager.watchedObjectBreakpoint)
+            options.classNames = ["watched-object"];
         else if (breakpoint === WI.debuggerManager.allMicrotasksBreakpoint)
             options.classNames = ["microtask"];
         else if (breakpoint instanceof WI.DOMBreakpoint) {
@@ -2043,6 +2049,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             }
             return true;
 
+        case WI.DebuggerManager.PauseReason.WatchedObject:
+            if (!this._updatePauseReasonForBreakpoint(WI.debuggerManager.watchedObjectBreakpoint, WI.UIString("Watched Object"))) {
+                console.assert(false, "not reached");
+                break;
+            }
+            return true;
+
         case WI.DebuggerManager.PauseReason.PauseOnNextStatement:
             this._pauseReasonTextRow.text = WI.UIString("Immediate Pause Requested");
             this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
@@ -2287,6 +2300,12 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             });
 
             contextMenu.appendSeparator();
+        }
+
+        if (WI.JavaScriptBreakpoint.supportsWatchedObjectBreakpoint()) {
+            addToggleForSpecialBreakpoint(WI.repeatedUIString.watchedObjects(), WI.debuggerManager.watchedObjectBreakpoint, () => {
+                WI.debuggerManager.createWatchedObjectBreakpoint();
+            });
         }
 
         addToggleForSpecialBreakpoint(WI.repeatedUIString.assertionFailures(), WI.debuggerManager.assertionFailuresBreakpoint, () => {

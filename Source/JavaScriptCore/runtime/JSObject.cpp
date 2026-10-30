@@ -28,6 +28,7 @@
 #include "BlockDirectory.h"
 #include "CompleteSubspace.h"
 #include "CustomGetterSetter.h"
+#include "Debugger.h"
 #include "Exception.h"
 #include "GCDeferralContextInlines.h"
 #include "GetterSetter.h"
@@ -945,10 +946,21 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
         obj = asObject(prototype);
     }
 
-    scope.release();
     if (isThisValueAltered(slot, this)) [[unlikely]]
-        return definePropertyOnReceiver(globalObject, propertyName, value, slot);
-    return putInlineFast(globalObject, propertyName, value, slot);
+        RELEASE_AND_RETURN(scope, definePropertyOnReceiver(globalObject, propertyName, value, slot));
+
+    if (structure()->isUncacheableDictionary()) {
+        if (auto* debugger = globalObject->debugger()) [[unlikely]] {
+            bool didNotify = debugger->willModifyUncacheableDictionary(*this, propertyName);
+            RETURN_IF_EXCEPTION(scope, false);
+            if (didNotify) {
+                // The debugger may change property descriptors or unwatch the object while paused.
+                RELEASE_AND_RETURN(scope, ordinarySetSlow(globalObject, this, propertyName, value, slot.thisValue(), slot.isStrictMode()));
+            }
+        }
+    }
+
+    RELEASE_AND_RETURN(scope, putInlineFast(globalObject, propertyName, value, slot));
 }
 
 bool JSObject::mightBeSpecialProperty(VM& vm, JSType type, UniquedStringImpl* uid)
@@ -4149,6 +4161,16 @@ void JSObject::convertToUncacheableDictionary(VM& vm)
         return;
     DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, oldStructure);
     setStructure(vm, Structure::toUncacheableDictionaryTransition(vm, oldStructure, &deferredWatchpointFire));
+    if (mayBePrototype()) [[unlikely]]
+        vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Change);
+}
+
+void JSObject::replaceWithUncacheableDictionary(VM& vm, HasBeenFlattenedBefore hasBeenFlattenedBefore)
+{
+    Structure* oldStructure = structure();
+    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, oldStructure);
+    Structure* newStructure = Structure::cloneAsUncacheableDictionary(vm, oldStructure, hasBeenFlattenedBefore, &deferredWatchpointFire);
+    setStructure(vm, newStructure);
     if (mayBePrototype()) [[unlikely]]
         vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Change);
 }

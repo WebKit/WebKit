@@ -191,6 +191,8 @@ private:
     const Structure* m_structure;
 };
 
+enum class HasBeenFlattenedBefore : bool { No, Yes };
+
 class Structure : public JSCell {
     static constexpr uint16_t shortInvalidOffset = std::numeric_limits<uint16_t>::max() - 1;
     static constexpr uint16_t useRareDataFlag = std::numeric_limits<uint16_t>::max();
@@ -290,6 +292,7 @@ public:
     JS_EXPORT_PRIVATE static Structure* attributeChangeTransitionToExistingStructure(Structure*, PropertyName, unsigned attributes, PropertyOffset&);
     JS_EXPORT_PRIVATE static Structure* toCacheableDictionaryTransition(VM&, Structure*, DeferredStructureTransitionWatchpointFire* = nullptr);
     static Structure* toUncacheableDictionaryTransition(VM&, Structure*, DeferredStructureTransitionWatchpointFire* = nullptr);
+    static Structure* cloneAsUncacheableDictionary(VM&, Structure*, HasBeenFlattenedBefore, DeferredStructureTransitionWatchpointFire* = nullptr);
     JS_EXPORT_PRIVATE static Structure* sealTransition(VM&, Structure*, DeferredStructureTransitionWatchpointFire* = nullptr);
     JS_EXPORT_PRIVATE static Structure* freezeTransition(VM&, Structure*, DeferredStructureTransitionWatchpointFire* = nullptr);
     static Structure* preventExtensionsTransition(VM&, Structure*, DeferredStructureTransitionWatchpointFire* = nullptr);
