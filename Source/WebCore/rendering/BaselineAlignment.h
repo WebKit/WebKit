@@ -126,6 +126,7 @@ template<typename SizeType> SizeType BaselineAlignment::synthesizedBaselineOffse
     case AlignmentBaseline::Mathematical:
         return boxSize / 2;
     case AlignmentBaseline::Baseline:
+    case AlignmentBaseline::WebkitBaselineMiddle:
     case AlignmentBaseline::Alphabetic:
     case AlignmentBaseline::Ideographic:
     case AlignmentBaseline::TextBottom:

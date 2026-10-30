@@ -1781,6 +1781,11 @@
                 "mathematical",
                 "text-top",
                 {
+                    "value": "-webkit-baseline-middle",
+                    "status": "non-standard",
+                    "settings-flag": "cssVerticalAlignShorthandEnabled"
+                },
+                {
                     "value": "after-edge",
                     "status": "deprecated"
                 },
@@ -2478,13 +2483,27 @@
             "values": [
                 "baseline",
                 "sub",
-                "super"
+                "super",
+                {
+                    "value": "top",
+                    "settings-flag": "cssVerticalAlignShorthandEnabled"
+                },
+                {
+                    "value": "center",
+                    "settings-flag": "cssVerticalAlignShorthandEnabled"
+                },
+                {
+                    "value": "bottom",
+                    "settings-flag": "cssVerticalAlignShorthandEnabled"
+                }
             ],
             "codegen-properties": {
                 "computed-style-storage-path": ["m_nonInheritedData", "boxData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::BaselineShift",
-                "parser-grammar": "baseline | sub | super | <length-percentage>"
+                "style-extractor-custom": true,
+                "parser-grammar": "baseline | sub | super | top@(settings-flag=cssVerticalAlignShorthandEnabled) | center@(settings-flag=cssVerticalAlignShorthandEnabled) | bottom@(settings-flag=cssVerticalAlignShorthandEnabled) | <length-percentage>",
+                "parser-grammar-comment": "With cssVerticalAlignShorthandEnabled, 'baseline' is the legacy SVG keyword that CSS Inline 3 allows, computing to 0."
             },
             "specification": {
                 "category": "css-inline",

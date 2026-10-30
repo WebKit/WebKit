@@ -147,6 +147,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssSymbolsFunctionEnabled { settings.cssSymbolsFunctionEnabled() }
     , cssMeshGradientsEnabled { settings.cssMeshGradientsEnabled() }
     , cssFreeformGradientsEnabled { settings.cssFreeformGradientsEnabled() }
+    , cssVerticalAlignShorthandEnabled { settings.cssVerticalAlignShorthandEnabled() }
     , viewportSegmentsAPIEnabled { settings.viewportSegmentsAPIEnabled() }
     , propertySettings { CSSPropertySettings { settings } }
 {
@@ -219,6 +220,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.cssSymbolsFunctionEnabled,
         context.cssMeshGradientsEnabled,
         context.cssFreeformGradientsEnabled,
+        context.cssVerticalAlignShorthandEnabled,
         context.legacyFontFaceAttributeMode,
         context.viewportSegmentsAPIEnabled
     );

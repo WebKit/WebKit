@@ -1445,6 +1445,14 @@ CSSUserSelectEnabled:
   humanReadableDescription: "Enable the unprefixed user-select CSS property"
   defaultValue: true
 
+CSSVerticalAlignShorthandEnabled:
+  type: bool
+  status: unstable
+  category: css
+  humanReadableName: "CSS vertical-align shorthand"
+  humanReadableDescription: "Enable vertical-align as a shorthand for baseline-source, alignment-baseline and baseline-shift, defined in CSS Inline 3"
+  defaultValue: false
+
 CSSWhiteSpaceTrimEnabled:
   type: bool
   status: stable

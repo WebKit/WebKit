@@ -1466,6 +1466,7 @@ TextStream& operator<<(TextStream& ts, AlignmentBaseline value)
     case AlignmentBaseline::Mathematical: ts << "mathematical"_s; break;
     case AlignmentBaseline::TextTop: ts << "text-top"_s; break;
     case AlignmentBaseline::TextBottom: ts << "text-bottom"_s; break;
+    case AlignmentBaseline::WebkitBaselineMiddle: ts << "-webkit-baseline-middle"_s; break;
     }
     return ts;
 }

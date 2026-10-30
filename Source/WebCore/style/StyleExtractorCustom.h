@@ -95,6 +95,7 @@ public:
     static Ref<CSSValue> extractContent(ExtractorState&);
     static Ref<CSSValue> extractLetterSpacing(ExtractorState&);
     static Ref<CSSValue> extractWordSpacing(ExtractorState&);
+    static Ref<CSSValue> extractBaselineShift(ExtractorState&);
     static Ref<CSSValue> extractLineHeight(ExtractorState&);
     static Ref<CSSValue> extractFontFamily(ExtractorState&);
     static Ref<CSSValue> extractFontSize(ExtractorState&);
@@ -206,6 +207,7 @@ public:
     static void extractContentSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractLetterSpacingSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWordSpacingSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractBaselineShiftSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractLineHeightSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractFontFamilySerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractFontSizeSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
@@ -729,6 +731,19 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyID::WordSpacing> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, NOESCAPE const F& functor) const
     {
         return functor(state.style->computedWordSpacing());
+    }
+};
+
+template<> struct PropertyExtractorAdaptor<CSSPropertyID::BaselineShift> {
+    template<typename F> decltype(auto) computedValue(ExtractorState& state, NOESCAPE const F& functor) const
+    {
+        // When 'vertical-align' is a shorthand, the legacy SVG `baseline` keyword computes to `0`, as CSS Inline 3
+        // allows. It is still the initial value, so it can be stored regardless of the setting.
+        // https://drafts.csswg.org/css-inline-3/#propdef-baseline-shift
+        auto& baselineShift = state.style->baselineShift();
+        if (baselineShift.isBaseline() && state.element->document().settings().cssVerticalAlignShorthandEnabled())
+            return functor(BaselineShift { CSS::ValueLiteral<CSS::LengthUnit::Px> { 0 } });
+        return functor(baselineShift);
     }
 };
 
@@ -2163,6 +2178,16 @@ inline Ref<CSSValue> ExtractorCustom::extractWordSpacing(ExtractorState& state)
 inline void ExtractorCustom::extractWordSpacingSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     extractSerialization<CSSPropertyID::WordSpacing>(state, builder, context);
+}
+
+inline Ref<CSSValue> ExtractorCustom::extractBaselineShift(ExtractorState& state)
+{
+    return extractCSSValue<CSSPropertyID::BaselineShift>(state);
+}
+
+inline void ExtractorCustom::extractBaselineShiftSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    extractSerialization<CSSPropertyID::BaselineShift>(state, builder, context);
 }
 
 inline Ref<CSSValue> ExtractorCustom::extractLineHeight(ExtractorState& state)

@@ -162,7 +162,8 @@ static InlineLayoutUnit alignmentBaselineOffset(const InlineLevelBox& inlineLeve
     // https://drafts.csswg.org/css-inline-3/#alignment-baseline-property
     // The box's alignment baseline lines up with the same baseline of its parent, instead of the line's baseline.
     auto alignmentBaseline = inlineLevelBox.alignmentBaseline();
-    if (alignmentBaseline == AlignmentBaseline::Baseline)
+    // -webkit-baseline-middle is a 'vertical-align' value, so as an alignment baseline it behaves like baseline.
+    if (alignmentBaseline == AlignmentBaseline::Baseline || alignmentBaseline == AlignmentBaseline::WebkitBaselineMiddle)
         return { };
     // The 'vertical-align' values that pick a baseline of their own (e.g. middle) or align with the line box (top and bottom) win.
     auto& verticalAlign = inlineLevelBox.verticalAlign();

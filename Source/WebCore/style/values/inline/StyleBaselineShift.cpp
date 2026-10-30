@@ -27,6 +27,7 @@
 
 #include "AnimationUtilities.h"
 #include "CSSKeywordValue.h"
+#include "Settings.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
@@ -35,14 +36,24 @@ namespace WebCore::Style {
 
 auto CSSValueConversion<BaselineShift>::operator()(BuilderState& state, const CSSValue& value) -> BaselineShift
 {
+    using namespace CSS::Literals;
+
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
         case CSSValueID::Baseline:
+            if (state.document().settings().cssVerticalAlignShorthandEnabled())
+                return 0_css_px;
             return CSS::Keyword::Baseline { };
         case CSSValueID::Sub:
             return CSS::Keyword::Sub { };
         case CSSValueID::Super:
             return CSS::Keyword::Super { };
+        case CSSValueID::Top:
+            return CSS::Keyword::Top { };
+        case CSSValueID::Center:
+            return CSS::Keyword::Center { };
+        case CSSValueID::Bottom:
+            return CSS::Keyword::Bottom { };
         default:
             break;
         }

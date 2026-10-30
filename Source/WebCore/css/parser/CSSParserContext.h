@@ -113,6 +113,7 @@ struct CSSParserContext {
     bool cssSymbolsFunctionEnabled : 1 { false };
     bool cssMeshGradientsEnabled : 1 { false };
     bool cssFreeformGradientsEnabled : 1 { false };
+    bool cssVerticalAlignShorthandEnabled : 1 { false };
     bool viewportSegmentsAPIEnabled : 1 { false };
 
     // Enabled only for the legacy <font face> attribute: allows a numeric token within a family

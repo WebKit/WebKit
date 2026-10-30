@@ -28,7 +28,11 @@
 
 namespace WebCore::Style {
 
-// <'baseline-shift'> = baseline | sub | super | <length-percentage>
+// <'baseline-shift'> = baseline | sub | super | top | center | bottom | <length-percentage>
+// https://drafts.csswg.org/css-inline-3/#propdef-baseline-shift
+//
+// `baseline` is the legacy SVG keyword, which computes to `0` when 'vertical-align' is a shorthand.
+// `top`, `center` and `bottom` are only parsed when 'vertical-align' is a shorthand.
 struct BaselineShift {
     using LengthPercentage = Style::LengthPercentage<>;
 
@@ -47,8 +51,28 @@ struct BaselineShift {
     {
     }
 
+    BaselineShift(CSS::Keyword::Top keyword)
+        : m_value { keyword }
+    {
+    }
+
+    BaselineShift(CSS::Keyword::Center keyword)
+        : m_value { keyword }
+    {
+    }
+
+    BaselineShift(CSS::Keyword::Bottom keyword)
+        : m_value { keyword }
+    {
+    }
+
     BaselineShift(LengthPercentage&& value)
         : m_value { WTF::move(value) }
+    {
+    }
+
+    BaselineShift(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
+        : m_value { LengthPercentage { literal } }
     {
     }
 
@@ -68,7 +92,7 @@ struct BaselineShift {
 private:
     friend struct Blending<BaselineShift>;
 
-    Variant<CSS::Keyword::Baseline, CSS::Keyword::Sub, CSS::Keyword::Super, LengthPercentage> m_value;
+    Variant<CSS::Keyword::Baseline, CSS::Keyword::Sub, CSS::Keyword::Super, CSS::Keyword::Top, CSS::Keyword::Center, CSS::Keyword::Bottom, LengthPercentage> m_value;
 };
 
 // MARK: - Conversion
