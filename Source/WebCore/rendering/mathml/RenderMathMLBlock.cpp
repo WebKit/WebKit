@@ -283,6 +283,15 @@ RenderMathMLBlock::SizeAppliedToMathContent RenderMathMLBlock::sizeAppliedToMath
     CheckedRef style = this->style();
     auto usedZoom = style->usedZoomForLength();
 
+    // The intrinsic width contributions apply min-width and max-width themselves (see intrinsicLogicalWidthContributionsForMathContent()).
+    if (phase == LayoutPhase::Layout) {
+        // FIXME: Resolve percentages and sizing keywords.
+        if (auto fixedLogicalMinWidth = style->logicalMinWidth().tryFixed())
+            sizes.logicalMinWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalMinWidth);
+        if (auto fixedLogicalMaxWidth = style->logicalMaxWidth().tryFixed())
+            sizes.logicalMaxWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalMaxWidth);
+    }
+
     // Handle size containment with contain-intrinsic-inline-size
     if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto intrinsicWidth = explicitIntrinsicInnerLogicalWidth())
@@ -312,22 +321,31 @@ RenderMathMLBlock::SizeAppliedToMathContent RenderMathMLBlock::sizeAppliedToMath
 std::pair<LayoutUnit, LayoutUnit> RenderMathMLBlock::intrinsicLogicalWidthContributionsForMathContent(LayoutUnit mathContentLogicalWidth)
 {
     ASSERT(hasInvalidContentLogicalWidths());
-    auto logicalWidth = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth).logicalWidth.value_or(mathContentLogicalWidth);
-    return { logicalWidth, logicalWidth };
+    auto minContentLogicalWidth = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth).logicalWidth.value_or(mathContentLogicalWidth);
+    auto maxContentLogicalWidth = minContentLogicalWidth;
+    constrainIntrinsicLogicalWidthsByMinMax(minContentLogicalWidth, maxContentLogicalWidth);
+    return { minContentLogicalWidth, maxContentLogicalWidth };
 }
 
 LayoutUnit RenderMathMLBlock::applySizeToMathContent(LayoutPhase phase, const SizeAppliedToMathContent& sizes)
 {
     ASSERT_UNUSED(phase, phase == LayoutPhase::Layout);
 
+    auto oldWidth = logicalWidth();
+    auto newWidth = sizes.logicalWidth.value_or(oldWidth);
+    // Clamp by max-width before min-width so that min-width wins when min > max (CSS 2.1 section 10.4).
+    if (sizes.logicalMaxWidth)
+        newWidth = std::min(newWidth, *sizes.logicalMaxWidth);
+    if (sizes.logicalMinWidth)
+        newWidth = std::max(newWidth, *sizes.logicalMinWidth);
+
     LayoutUnit inlineShift;
-    if (sizes.logicalWidth) {
-        auto oldWidth = logicalWidth();
+    if (newWidth != oldWidth) {
         if (isMathContentCentered()) {
-            inlineShift = (*sizes.logicalWidth - oldWidth) / 2;
+            inlineShift = (newWidth - oldWidth) / 2;
         } else if (!style().writingMode().deprecatedIsLeftToRightDirection())
-            inlineShift = *sizes.logicalWidth - oldWidth;
-        setLogicalWidth(*sizes.logicalWidth);
+            inlineShift = newWidth - oldWidth;
+        setLogicalWidth(newWidth);
     }
 
     if (sizes.logicalHeight)

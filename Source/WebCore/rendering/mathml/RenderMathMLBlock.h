@@ -85,15 +85,17 @@ protected:
     struct SizeAppliedToMathContent {
         std::optional<LayoutUnit> logicalWidth;
         std::optional<LayoutUnit> logicalHeight;
+        std::optional<LayoutUnit> logicalMinWidth;
+        std::optional<LayoutUnit> logicalMaxWidth;
     };
-    // Retrieve the specified (and supported) CSS width/height to apply to math
+    // Retrieve the specified (and supported) CSS width/height, and in layout min-width/max-width, to apply to math
     // content box, if any.
     SizeAppliedToMathContent sizeAppliedToMathContent(LayoutPhase);
     // Whether math content should be centered on the inline axis if a different size is specified by the user.
     virtual bool isMathContentCentered() const { return false; }
-    // The min-content and max-content widths of math content of the given width, which a specified CSS width replaces.
+    // The min-content and max-content widths of math content of the given width, which a specified CSS width replaces and min-width and max-width constrain.
     std::pair<LayoutUnit, LayoutUnit> intrinsicLogicalWidthContributionsForMathContent(LayoutUnit mathContentLogicalWidth);
-    // Apply the specified CSS width/height to the math content box and return inline shift for further adjustments.
+    // Apply the specified CSS width/height/min-width/max-width to the math content box and return inline shift for further adjustments.
     LayoutUnit applySizeToMathContent(LayoutPhase, const SizeAppliedToMathContent&);
 
 private:

@@ -1,0 +1,435 @@
+
+PASS min-width property on a
+PASS min-width property on a (larger than width)
+PASS max-width property on a (content overflowing)
+PASS max-width property on a (smaller than width)
+PASS min-width property on a (preferred width)
+PASS min-width property on maction
+PASS min-width property on maction (larger than width)
+PASS max-width property on maction (content overflowing)
+PASS max-width property on maction (smaller than width)
+PASS min-width property on maction (preferred width)
+PASS min-width property on menclose
+PASS min-width property on menclose (larger than width)
+PASS max-width property on menclose (content overflowing)
+PASS max-width property on menclose (smaller than width)
+PASS min-width property on menclose (preferred width)
+PASS min-width property on merror
+PASS min-width property on merror (larger than width)
+PASS max-width property on merror (content overflowing)
+PASS max-width property on merror (smaller than width)
+PASS min-width property on merror (preferred width)
+PASS min-width property on mfrac
+PASS min-width property on mfrac (larger than width)
+PASS max-width property on mfrac (content overflowing)
+PASS max-width property on mfrac (smaller than width)
+PASS min-width property on mfrac (preferred width)
+PASS min-width property on mi
+PASS min-width property on mi (larger than width)
+PASS max-width property on mi (content overflowing)
+PASS max-width property on mi (smaller than width)
+PASS min-width property on mi (preferred width)
+PASS min-width property on mmultiscripts
+PASS min-width property on mmultiscripts (larger than width)
+PASS max-width property on mmultiscripts (content overflowing)
+PASS max-width property on mmultiscripts (smaller than width)
+PASS min-width property on mmultiscripts (preferred width)
+PASS min-width property on mn
+PASS min-width property on mn (larger than width)
+PASS max-width property on mn (content overflowing)
+PASS max-width property on mn (smaller than width)
+PASS min-width property on mn (preferred width)
+FAIL min-width property on mo assert_approx_equals: width expected 500 +/- 1 but got 508.875
+PASS min-width property on mo (larger than width)
+PASS max-width property on mo (content overflowing)
+PASS max-width property on mo (smaller than width)
+PASS min-width property on mo (preferred width)
+PASS min-width property on mover
+PASS min-width property on mover (larger than width)
+PASS max-width property on mover (content overflowing)
+PASS max-width property on mover (smaller than width)
+PASS min-width property on mover (preferred width)
+PASS min-width property on mpadded
+PASS min-width property on mpadded (larger than width)
+PASS max-width property on mpadded (content overflowing)
+PASS max-width property on mpadded (smaller than width)
+PASS min-width property on mpadded (preferred width)
+PASS min-width property on mphantom
+PASS min-width property on mphantom (larger than width)
+PASS max-width property on mphantom (content overflowing)
+PASS max-width property on mphantom (smaller than width)
+PASS min-width property on mphantom (preferred width)
+PASS min-width property on mroot
+PASS min-width property on mroot (larger than width)
+PASS max-width property on mroot (content overflowing)
+PASS max-width property on mroot (smaller than width)
+PASS min-width property on mroot (preferred width)
+PASS min-width property on mrow
+PASS min-width property on mrow (larger than width)
+PASS max-width property on mrow (content overflowing)
+PASS max-width property on mrow (smaller than width)
+PASS min-width property on mrow (preferred width)
+PASS min-width property on ms
+PASS min-width property on ms (larger than width)
+PASS max-width property on ms (content overflowing)
+PASS max-width property on ms (smaller than width)
+PASS min-width property on ms (preferred width)
+PASS min-width property on mspace
+PASS min-width property on mspace (larger than width)
+PASS max-width property on mspace (content overflowing)
+PASS max-width property on mspace (smaller than width)
+PASS min-width property on mspace (preferred width)
+PASS min-width property on msqrt
+PASS min-width property on msqrt (larger than width)
+PASS max-width property on msqrt (content overflowing)
+PASS max-width property on msqrt (smaller than width)
+PASS min-width property on msqrt (preferred width)
+PASS min-width property on mstyle
+PASS min-width property on mstyle (larger than width)
+PASS max-width property on mstyle (content overflowing)
+PASS max-width property on mstyle (smaller than width)
+PASS min-width property on mstyle (preferred width)
+PASS min-width property on msub
+PASS min-width property on msub (larger than width)
+PASS max-width property on msub (content overflowing)
+PASS max-width property on msub (smaller than width)
+PASS min-width property on msub (preferred width)
+PASS min-width property on msubsup
+PASS min-width property on msubsup (larger than width)
+PASS max-width property on msubsup (content overflowing)
+PASS max-width property on msubsup (smaller than width)
+PASS min-width property on msubsup (preferred width)
+PASS min-width property on msup
+PASS min-width property on msup (larger than width)
+PASS max-width property on msup (content overflowing)
+PASS max-width property on msup (smaller than width)
+PASS min-width property on msup (preferred width)
+PASS min-width property on mtable
+PASS min-width property on mtable (larger than width)
+PASS min-width property on mtable (preferred width)
+PASS min-width property on mtext
+PASS min-width property on mtext (larger than width)
+PASS max-width property on mtext (content overflowing)
+PASS max-width property on mtext (smaller than width)
+PASS min-width property on mtext (preferred width)
+PASS min-width property on munder
+PASS min-width property on munder (larger than width)
+PASS max-width property on munder (content overflowing)
+PASS max-width property on munder (smaller than width)
+PASS min-width property on munder (preferred width)
+PASS min-width property on munderover
+PASS min-width property on munderover (larger than width)
+PASS max-width property on munderover (content overflowing)
+PASS max-width property on munderover (smaller than width)
+PASS min-width property on munderover (preferred width)
+PASS min-width property on semantics
+PASS min-width property on semantics (larger than width)
+PASS max-width property on semantics (content overflowing)
+PASS max-width property on semantics (smaller than width)
+PASS min-width property on semantics (preferred width)
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+𝑎𝑎𝑎𝑎𝑎𝑎𝑎𝑎𝑎𝑎
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+aaaaaaaaaa
+aaaaaaaaaa
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+aaaaaaaaaa
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+aaaaaaaaaa
+aaaaaaaaaa
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
