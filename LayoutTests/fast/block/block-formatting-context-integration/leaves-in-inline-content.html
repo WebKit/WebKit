@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 250px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+.c { background: silver; }
+.f { display: flex; gap: 5px; background: rgba(0, 128, 0, 0.6); }
+span { background: rgba(0, 0, 255, 0.2); }
+</style>
+<div class="roots">
+<div class="root">
+  <div class="c"><span style="padding: 0 10px">text before<div class="f" style="margin: 10px 0"><div>flex</div><div>items</div></div>text after</span></div>
+  <div class="c" style="margin-top: 10px"><span><div class="f" style="margin-top: 15px"><div>at the start</div></div>after</span></div>
+  <div class="c" style="margin-bottom: 10px"><span>before<div class="f" style="margin-bottom: 20px"><div>at the end</div></div></span></div>
+  <div class="c"><a href="#"><div class="f" style="justify-content: space-between"><span>left</span><span>right</span></div></a></div>
+  <div class="c"><span>grid<div style="display: grid; grid-template-columns: 1fr 1fr; margin: 5px 10px; background: orange"><div>one</div><div>two</div></div>after</span></div>
+  <div class="c"><span>canvas<canvas width="50" height="20" style="display: block; margin: 4px 0; background: green"></canvas>after</span></div>
+  <div class="c"><span>svg<svg style="display: block" width="40" height="20"><rect width="40" height="20" fill="blue"/></svg>after</span></div>
+  <div class="c"><span>table<table style="border: 2px solid; margin: 3px 0"><tr><td>c1</td><td>c2</td></tr></table>after</span></div>
+  <div class="c"><span>collapsed<table style="border-collapse: collapse; border: 4px solid"><tr><td style="border: 2px solid">c</td></tr></table>after</span></div>
+</div>
+<div class="root">
+  <div class="c"><span>half<div class="f" style="width: 50%; margin-left: auto"><div>right</div></div>tail</span></div>
+  <div class="c" dir="rtl"><span>rtl<div class="f" style="width: 100px; margin-right: 10px"><div>own</div></div>more</span></div>
+  <div class="c"><span><div class="f" style="height: 0; margin: 10px 0"></div></span>after an empty flex container</div>
+  <div class="c"><span>button<button style="display: block">button</button>after</span></div>
+  <div class="c"><span><span>nested<div class="f"><div>deep</div></div>x</span>y</span></div>
+  <div class="c" style="height: 60px"><span>percent<div class="f" style="height: 50%"><div>half the height</div></div>x</span></div>
+  <div class="c"><span>mixed<div>block</div><div class="f"><div>flex</div></div><div style="margin-top: -4px">block</div>x</span></div>
+  <div style="display: flow-root; border: 1px solid"><span>a<div class="f" style="margin: 6px 0"><div>in a nested root</div></div>b</span></div>
+  <div style="position: relative; height: 50px"><div style="position: absolute; width: 150px; border: 1px solid"><span>a<div class="f" style="margin: 6px 0"><div>out of flow</div></div>b</span></div></div>
+</div>
+<div class="root" style="writing-mode: vertical-rl; height: 150px">
+  <span>vertical<div class="f" style="margin: 0 5px"><div>flex</div></div>text</span>
+</div>
+</div>
