@@ -2390,15 +2390,18 @@ foreach (_header_list _header_dir IN ZIP_LISTS _header_lists _header_dirs)
 
         cmake_path(GET _src FILENAME _name)
         set(_dst ${${_header_dir}}/${_name})
+        set(_depfile ${CMAKE_CURRENT_BINARY_DIR}/ReplaceWebKitAdditionsIncludes/${_name}.d)
         add_custom_command(
             OUTPUT ${_dst}
             COMMAND
                 env ${WEBKITADDITIONS_DEFINITIONS_FOR_HEADER_REPLACEMENT}
                     ${WEBKIT_DIR}/mac/replace-webkit-additions-includes.py
+                    --depfile ${_depfile}
                     ${WebKitAdditions_FRAMEWORK_HEADERS_DIR} ${CMAKE_OSX_SYSROOT}
                     ${_src} ${_dst}
             MAIN_DEPENDENCY ${_src}
-            DEPENDS ${WEBKITADDITIONS_HEADERS_DEPENDENCIES}
+            DEPENDS ${WEBKIT_DIR}/mac/replace-webkit-additions-includes.py ${WEBKITADDITIONS_HEADERS_DEPENDENCIES}
+            DEPFILE ${_depfile}
             VERBATIM
         )
         list(APPEND _updated_headers ${_dst})
