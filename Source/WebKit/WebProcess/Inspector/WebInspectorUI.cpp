@@ -294,6 +294,16 @@ void WebInspectorUI::revealFileExternally(const String& path)
     sendToParentProcess(Messages::WebInspectorUIProxy::RevealFileExternally(path));
 }
 
+void WebInspectorUI::requestDisableSiteIsolation()
+{
+    sendToParentProcess(Messages::WebInspectorUIProxy::RequestDisableSiteIsolation());
+}
+
+void WebInspectorUI::setSiteIsolationDisablingAvailable(bool available)
+{
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setSiteIsolationDisablingAvailable"_s, { JSON::Value::create(available) });
+}
+
 void WebInspectorUI::save(Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
 {
     sendToParentProcess(Messages::WebInspectorUIProxy::Save(WTF::move(saveDatas), forceSaveAs));

@@ -108,6 +108,8 @@ public:
     void setDiagnosticLoggingAvailable(bool);
 #endif
 
+    void setSiteIsolationDisablingAvailable(bool);
+
     void systemAppearanceDidChange();
 
     // WebCore::InspectorFrontendClient
@@ -146,6 +148,7 @@ public:
 
     void openURLExternally(const String& url) override;
     void revealFileExternally(const String& path) override;
+    void requestDisableSiteIsolation() override;
 
     bool canSave(WebCore::InspectorFrontendClient::SaveMode) override;
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs) override;

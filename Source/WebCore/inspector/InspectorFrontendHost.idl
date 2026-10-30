@@ -74,6 +74,8 @@
     undefined openURLExternally(DOMString url);
     undefined revealFileExternally(DOMString path);
 
+    undefined requestDisableSiteIsolation();
+
     boolean canSave(SaveMode saveMode);
     undefined save(sequence<SaveData> saveDatas, boolean forceSaveAs);
 

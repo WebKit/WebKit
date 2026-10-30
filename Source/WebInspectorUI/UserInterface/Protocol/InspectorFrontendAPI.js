@@ -92,6 +92,12 @@ InspectorFrontendAPI = {
             WI.diagnosticController.diagnosticLoggingAvailable = available;
     },
 
+    setSiteIsolationDisablingAvailable: function(available)
+    {
+        // The test frontend has no Site Isolation banner.
+        WI.setSiteIsolationDisablingAvailable?.(available);
+    },
+
     systemAppearanceDidChange: function()
     {
         if (WI.Platform.name === "mac")

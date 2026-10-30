@@ -56,6 +56,7 @@
 #import <WebKit/_WKFindOptions.h>
 #import <WebKit/_WKIconLoadingDelegate.h>
 #import <WebKit/_WKInspector.h>
+#import <WebKit/_WKInspectorDelegate.h>
 #import <WebKit/_WKLinkIconParameters.h>
 #import <WebKit/_WKUserInitiatedAction.h>
 #import <objc/runtime.h>
@@ -130,7 +131,7 @@ static const int testFooterBannerHeight = 58;
 
 @end
 
-@interface WK2BrowserWindowController () <NSTextFinderBarContainer, _WKFindDelegate, NSSearchFieldDelegate, WKDownloadDelegate, WKNavigationDelegate, WKNavigationDelegatePrivate, WKUIDelegate, WKUIDelegatePrivate, _WKIconLoadingDelegate>
+@interface WK2BrowserWindowController () <NSTextFinderBarContainer, _WKFindDelegate, NSSearchFieldDelegate, WKDownloadDelegate, WKNavigationDelegate, WKNavigationDelegatePrivate, WKUIDelegate, WKUIDelegatePrivate, _WKIconLoadingDelegate, _WKInspectorDelegate>
 @end
 
 @implementation WK2BrowserWindowController {
@@ -158,6 +159,8 @@ static const int testFooterBannerHeight = 58;
 
     // WebKit runs one JavaScript dialog per page at a time.
     JavaScriptDialog *_currentJavaScriptDialog;
+
+    _WKSessionState *_sessionStateToRestoreWhenInspectorLoads;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 270000
     NSRefreshController *_refreshController;
@@ -187,6 +190,7 @@ static const int testFooterBannerHeight = 58;
 
     _webView.navigationDelegate = self;
     _webView.UIDelegate = self;
+    _webView._inspector.delegate = self;
 
     SettingsController *settingsController = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
     // This setting installs the new WK2 Icon Loading Delegate and tests that mechanism by
@@ -1298,6 +1302,42 @@ static BOOL responseIsAttachment(NSURLResponse *response)
     completionHandler(^void (NSData *data) {
         LOG(@"Icon URL %@ received icon data of length %u", parameters.url, (unsigned)data.length);
     });
+}
+
+#pragma mark _WKInspectorDelegate
+
+- (void)inspectorDidRequestDisablingSiteIsolation:(_WKInspector *)inspector
+{
+    if (!_webView.configuration.preferences._siteIsolationEnabled)
+        return;
+
+    // Site Isolation can't be toggled on a live page, so reopen the page in a new window without it.
+    WKWebViewConfiguration *configuration = [_webView.configuration copy];
+    configuration.preferences = [configuration.preferences copy];
+    configuration.preferences._siteIsolationEnabled = NO;
+
+    WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:configuration];
+    [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
+    [controller.window makeKeyAndOrderFront:nil];
+
+    // Load the page only once the new inspector can record the load.
+    controller->_sessionStateToRestoreWhenInspectorLoads = [_webView _sessionState];
+    [controller->_webView._inspector show];
+
+    // Avoid closing this window, and with it this inspector, from inside one of the inspector's own callbacks.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.window close];
+    });
+}
+
+- (void)inspectorFrontendLoaded:(_WKInspector *)inspector
+{
+    _WKSessionState *sessionState = _sessionStateToRestoreWhenInspectorLoads;
+    if (!sessionState)
+        return;
+
+    _sessionStateToRestoreWhenInspectorLoads = nil;
+    [_webView _restoreSessionState:sessionState andNavigate:YES];
 }
 
 #pragma mark WKDownloadDelegate

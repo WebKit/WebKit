@@ -128,6 +128,10 @@ public:
     WEBCORE_EXPORT virtual void openURLExternally(const String& url) = 0;
     WEBCORE_EXPORT virtual void revealFileExternally(const String& path) = 0;
 
+    // Site Isolation can't be safely toggled on a live page, so the embedding application decides how to
+    // turn it off (e.g. by recreating the page).
+    virtual void requestDisableSiteIsolation() { }
+
     // Keep in sync with `WI.FileUtilities.SaveMode` and `InspectorFrontendHost::SaveMode`.
     enum class SaveMode : uint8_t {
         SingleFile,

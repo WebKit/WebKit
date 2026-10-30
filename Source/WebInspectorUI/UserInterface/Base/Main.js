@@ -638,6 +638,17 @@ WI.initializeTarget = function(target)
                 console.error(error);
             });
     }
+
+    if (target instanceof WI.FrameTarget && !WI._siteIsolationDetected) {
+        WI._siteIsolationDetected = true;
+        WI._updateSiteIsolationBanner();
+    }
+};
+
+WI.setSiteIsolationDisablingAvailable = function(available)
+{
+    WI._siteIsolationDisablingAvailable = available;
+    WI._updateSiteIsolationBanner();
 };
 
 WI.targetsAvailable = function()
@@ -2018,6 +2029,49 @@ WI._tabBrowserSizeDidChange = function()
     WI.tabBrowser.updateLayout(WI.View.LayoutReason.Resize);
     WI.consoleDrawer.updateLayout(WI.View.LayoutReason.Resize);
     WI.quickConsole.updateLayout(WI.View.LayoutReason.Resize);
+};
+
+// Parts of Web Inspector don't work under Site Isolation yet, so warn the user.
+WI._updateSiteIsolationBanner = function()
+{
+    let shouldShowBanner = WI._siteIsolationDetected && !WI._siteIsolationBannerDismissed;
+    let shouldShowActionButton = !!WI._siteIsolationDisablingAvailable && !WI._siteIsolationDisablingRequested;
+
+    // WI.BannerView can't change its action button after creation.
+    if (WI._siteIsolationBanner && (!shouldShowBanner || WI._siteIsolationBannerShowsActionButton !== shouldShowActionButton)) {
+        WI.View.rootView().removeSubview(WI._siteIsolationBanner);
+        WI._siteIsolationBanner = null;
+        WI._tabBrowserSizeDidChange();
+    }
+
+    if (!shouldShowBanner || WI._siteIsolationBanner)
+        return;
+
+    WI._siteIsolationBanner = new WI.BannerView(WI.UIString("Some Web Inspector features don't work with Site Isolation yet"), {
+        actionButtonMessage: shouldShowActionButton ? WI.UIString("Reload Page Without Site Isolation") : null,
+        actionButtonToolTip: shouldShowActionButton ? WI.UIString("Reopens only this page with Site Isolation off. New windows that this page opens also have Site Isolation off.") : null,
+        showDismissButton: true,
+    });
+    WI._siteIsolationBannerShowsActionButton = shouldShowActionButton;
+    WI._siteIsolationBanner.addEventListener(WI.BannerView.Event.ActionButtonClicked, (event) => {
+        // Only ask once, since the application reopens the page in response.
+        if (WI._siteIsolationDisablingRequested)
+            return;
+
+        WI._siteIsolationDisablingRequested = true;
+        WI._updateSiteIsolationBanner();
+        InspectorFrontendHost.requestDisableSiteIsolation();
+    });
+    WI._siteIsolationBanner.addEventListener(WI.BannerView.Event.DismissButtonClicked, (event) => {
+        WI._siteIsolationBannerDismissed = true;
+        WI._updateSiteIsolationBanner();
+    });
+
+    // Span the whole window, below the tab bar.
+    let mainElement = document.getElementById("main");
+    mainElement.insertBefore(WI._siteIsolationBanner.element, mainElement.firstChild);
+    WI.View.rootView().addSubview(WI._siteIsolationBanner);
+    WI._tabBrowserSizeDidChange();
 };
 
 WI._consoleDrawerCollapsedStateDidChange = function(event)
