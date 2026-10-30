@@ -169,6 +169,16 @@ RefPtr<FrameProcess> BrowsingContextGroup::liveSharedProcess()
     return nullptr;
 }
 
+void BrowsingContextGroup::adoptSharedProcess(BrowsingContextGroup& group, WebPageProxy& page)
+{
+    Ref sharedProcess = *group.m_sharedProcess;
+    m_sharedProcessSites = group.m_sharedProcessSites;
+    group.unregisterFrameProcess(sharedProcess);
+    sharedProcess->setBrowsingContextGroup(*this);
+    m_sharedProcess = sharedProcess.ptr();
+    m_pagesInSharedProcess.add(page);
+}
+
 void BrowsingContextGroup::clearSharedProcess()
 {
     m_sharedProcess = nullptr;
@@ -309,19 +319,24 @@ bool BrowsingContextGroup::addFrameProcessWithoutInjectingPageContext(FrameProce
     return true;
 }
 
-void BrowsingContextGroup::removeFrameProcess(FrameProcess& process)
+void BrowsingContextGroup::unregisterFrameProcess(FrameProcess& process)
 {
     if (process.isSharedProcess()) {
         if (m_sharedProcess.get() == &process)
             clearSharedProcess();
-    } else {
-        // A later navigation may already have replaced this entry (see
-        // canReplaceFrameProcessInProcessMap), in which case the site now belongs to a different
-        // FrameProcess and this teardown must leave it alone.
-        auto key = processMapKey(process);
-        if (m_processMap.get(key) == &process)
-            m_processMap.remove(key);
+        return;
     }
+    // A later navigation may already have replaced this entry (see
+    // canReplaceFrameProcessInProcessMap), in which case the site now belongs to a different
+    // FrameProcess, which must be left alone.
+    auto key = processMapKey(process);
+    if (m_processMap.get(key) == &process)
+        m_processMap.remove(key);
+}
+
+void BrowsingContextGroup::removeFrameProcess(FrameProcess& process)
+{
+    unregisterFrameProcess(process);
     m_remotePages.removeIf([&] (auto& pair) {
         auto& set = pair.value;
         set.removeIf([&] (auto& remotePage) {
@@ -334,10 +349,88 @@ void BrowsingContextGroup::removeFrameProcess(FrameProcess& process)
     });
 }
 
+Ref<BrowsingContextGroup> BrowsingContextGroup::takeProcessesOfCachedDocument(WebPageProxy& page, WebFrameProxy& mainFrame, const HashSet<Ref<FrameProcess>>& processesOfCommittedDocument)
+{
+    Ref group = BrowsingContextGroup::create(m_crossOriginMode);
+    group->m_pages.add(page);
+
+    HashSet<Ref<FrameProcess>> frameProcesses;
+    for (RefPtr frame = &mainFrame; frame; frame = frame->traverseNext().frame)
+        frameProcesses.add(frame->frameProcess());
+
+    HashSet<ProcessIdentifier> movedProcesses;
+    for (Ref frameProcess : frameProcesses) {
+        // The committed document can share one, such as when its main frame started in the process of a child frame.
+        if (processesOfCommittedDocument.contains(frameProcess) || frameProcess->browsingContextGroup() != this)
+            continue;
+        if (frameProcess->isSharedProcess()) {
+            if (m_sharedProcess.get() != frameProcess.ptr())
+                continue;
+            group->adoptSharedProcess(*this, page);
+        } else {
+            unregisterFrameProcess(frameProcess);
+            frameProcess->setBrowsingContextGroup(group);
+            group->addFrameProcessWithoutInjectingPageContext(frameProcess);
+        }
+        movedProcesses.add(frameProcess->process().coreProcessIdentifier());
+    }
+
+    for (auto& frameProcess : m_processMap.values()) {
+        if (frameProcess)
+            movedProcesses.remove(frameProcess->process().coreProcessIdentifier());
+    }
+    if (RefPtr sharedProcess = m_sharedProcess)
+        movedProcesses.remove(sharedProcess->process().coreProcessIdentifier());
+
+    if (auto it = m_remotePages.find(page); it != m_remotePages.end()) {
+        it->value.removeIf([&](auto& remotePage) {
+            if (!movedProcesses.contains(remotePage->process().coreProcessIdentifier()))
+                return false;
+            group->addRemotePage(page, Ref { remotePage });
+            return true;
+        });
+    }
+    return group;
+}
+
+// What's left here of the processes of the restored document's sites belongs to the document it replaces, which is
+// going away, so the restored document's processes replace them.
+void BrowsingContextGroup::adoptProcessesOfRestoredDocument(WebPageProxy& page, BrowsingContextGroup& group, const WebProcessProxy& mainFrameProcess)
+{
+    // The page can have left this group since, but adding it again mustn't give it a second remote page in these processes.
+    m_pages.add(page);
+    if (RefPtr remotePage = takeRemotePageInProcessForProvisionalPage(page, mainFrameProcess))
+        remotePage->disconnect();
+    for (Ref remotePage : group.m_remotePages.take(page)) {
+        if (RefPtr replacedRemotePage = takeRemotePageInProcessForProvisionalPage(page, remotePage->process()))
+            replacedRemotePage->disconnect();
+        addRemotePage(page, WTF::move(remotePage));
+    }
+
+    if (RefPtr sharedProcess = group.liveSharedProcess()) {
+        clearSharedProcess();
+        adoptSharedProcess(group, page);
+        addFrameProcessAndInjectPageContextIf(*sharedProcess, [page = Ref { page }](WebPageProxy& otherPage) {
+            return page.ptr() != &otherPage;
+        });
+    }
+    for (auto& weakFrameProcess : copyToVector(group.m_processMap.values())) {
+        RefPtr frameProcess = weakFrameProcess;
+        if (!frameProcess)
+            continue;
+        group.unregisterFrameProcess(*frameProcess);
+        frameProcess->setBrowsingContextGroup(*this);
+        m_processMap.remove(processMapKey(*frameProcess));
+        addFrameProcessAndInjectPageContextIf(*frameProcess, [page = Ref { page }](WebPageProxy& otherPage) {
+            return page.ptr() != &otherPage;
+        });
+    }
+}
+
 void BrowsingContextGroup::addPage(WebPageProxy& page)
 {
     if (m_pages.contains(page)) {
-        // This only happens when restoring a page from a suspended BCG, which holds exactly this one page.
+        // This only happens when restoring a page from the back/forward cache into a group that holds exactly this one page.
         ASSERT(!hasMultiplePages());
         return;
     }
@@ -400,6 +493,15 @@ void BrowsingContextGroup::closeRemotePagesForPage(WebPageProxy& page, ShouldSen
 bool BrowsingContextGroup::hasMultiplePages() const
 {
     return m_pages.computeSize() > 1;
+}
+
+bool BrowsingContextGroup::hasPagesOtherThan(const WebPageProxy& page) const
+{
+    for (Ref otherPage : m_pages) {
+        if (otherPage.ptr() != &page)
+            return true;
+    }
+    return false;
 }
 
 bool BrowsingContextGroup::hasVisiblePage() const

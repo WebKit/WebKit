@@ -2452,6 +2452,8 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
 
     if (siteIsolationEnabled) {
         if (RefPtr targetItem = navigation.targetItem(); targetItem && frame.isMainFrame()) {
+            if (RefPtr suspendedPage = targetItem->suspendedPage(); suspendedPage && !suspendedPage->canBeRestored())
+                protect(backForwardCache())->removeEntry(*targetItem);
             if (RefPtr suspendedPage = targetItem->suspendedPage()) {
                 Ref process = suspendedPage->process();
                 if (process->state() != AuxiliaryProcessProxy::State::Terminated && browsingContextGroup.canUseProcessForCrossOriginIsolation(process)) {

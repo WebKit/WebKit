@@ -31,6 +31,7 @@
 #include "BrowsingContextGroup.h"
 #include "DrawingAreaProxy.h"
 #include "EnhancedSecurity.h"
+#include "FrameProcess.h"
 #include "HandleMessage.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
@@ -74,7 +75,7 @@ unsigned SuspendedPageProxy::remotePagesWithNetworkActivityCountForTesting()
         RefPtr page = suspendedPage->page();
         if (!page)
             continue;
-        suspendedPage->m_browsingContextGroup->forEachRemotePage(*page, [&count](auto& remotePage) {
+        protect(suspendedPage->m_browsingContextGroup)->forEachRemotePage(*page, [&count](auto& remotePage) {
             if (remotePage.processActivityState().hasValidNetworkActivity())
                 ++count;
         });
@@ -101,6 +102,37 @@ RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(Web
         }
     }
     return nullptr;
+}
+
+// The page's committed document is in group, which its documents in the back/forward cache can't share processes with
+// then. Their processes move to groups of their own until they're restored into group.
+void SuspendedPageProxy::takeProcessesFromBrowsingContextGroup(WebPageProxy& page, BrowsingContextGroup& group, const HashSet<Ref<FrameProcess>>& processesOfCommittedDocument)
+{
+    Vector<Ref<SuspendedPageProxy>> suspendedPagesMissingFrames;
+    for (Ref suspendedPage : allSuspendedPages()) {
+        if (suspendedPage->page() != &page || suspendedPage->m_browsingContextGroup.ptr() != &group)
+            continue;
+        suspendedPage->m_browsingContextGroup = group.takeProcessesOfCachedDocument(page, suspendedPage->m_mainFrame, processesOfCommittedDocument);
+        suspendedPage->m_browsingContextGroupToRestoreInto = group;
+        // The committed document's main frame took over the WebPage of any frame in the process it started in.
+        for (RefPtr frame = suspendedPage->m_mainFrame.ptr(); frame; frame = frame->traverseNext().frame) {
+            if (processesOfCommittedDocument.contains(frame->frameProcess())) {
+                suspendedPagesMissingFrames.append(suspendedPage);
+                break;
+            }
+        }
+    }
+    for (Ref suspendedPage : suspendedPagesMissingFrames)
+        protect(suspendedPage->backForwardCache())->removeEntry(suspendedPage);
+}
+
+// Like a page only goes into the back/forward cache when no other page shares its group, one whose processes left that
+// group only comes back while that's still so, as another page could have frames of the same sites in other processes.
+bool SuspendedPageProxy::canBeRestored() const
+{
+    RefPtr page = m_page;
+    RefPtr group = m_browsingContextGroupToRestoreInto;
+    return !page || !group || !group->hasPagesOtherThan(*page);
 }
 
 #if !LOG_DISABLED
@@ -228,7 +260,7 @@ void SuspendedPageProxy::teardown()
 
     if (RefPtr page = m_page.get()) {
         if (hasSuspensionStarted() && m_suspendedFrameItemID) {
-            m_browsingContextGroup->forEachRemotePage(*page, [suspendedPage = Ref { *this }](auto& remotePage) {
+            protect(m_browsingContextGroup)->forEachRemotePage(*page, [suspendedPage = Ref { *this }](auto& remotePage) {
                 Ref process = remotePage.siteIsolatedProcess();
                 // Mirror the suspendSubframeProcesses() filter: only processes that received addSuspendedPageProxy() need the matching remove.
                 if (!suspendedPage->hasSubframeInProcess(process->coreProcessIdentifier()))
@@ -237,7 +269,7 @@ void SuspendedPageProxy::teardown()
             });
         }
         if (m_suspensionState != SuspensionState::Resumed)
-            m_browsingContextGroup->closeRemotePagesForPage(*page);
+            protect(m_browsingContextGroup)->closeRemotePagesForPage(*page);
     }
 
     if (m_suspensionState != SuspensionState::Resumed)
@@ -310,7 +342,7 @@ void SuspendedPageProxy::unsuspend(WebCore::BackForwardFrameItemIdentifier mainF
     Ref mainFrameOrigin = m_mainFrame->securityOrigin();
     std::optional<std::pair<URL, WebCore::SecurityOriginData>> mainFrameURLAndOrigin { { m_mainFrame->url(), mainFrameOrigin->data() } };
 
-    m_browsingContextGroup->forEachRemotePage(*page, [suspendedPage = Ref { *this }, &aggregator, mainFrameItemID, mainFrameURLAndOrigin = WTF::move(mainFrameURLAndOrigin)](auto& remotePage) {
+    protect(m_browsingContextGroup)->forEachRemotePage(*page, [suspendedPage = Ref { *this }, &aggregator, mainFrameItemID, mainFrameURLAndOrigin = WTF::move(mainFrameURLAndOrigin)](auto& remotePage) {
         Ref process = remotePage.siteIsolatedProcess();
         if (!suspendedPage->hasSubframeInProcess(process->coreProcessIdentifier()))
             return;
@@ -400,7 +432,7 @@ void SuspendedPageProxy::dropNetworkActivityOnRemotePages()
     RefPtr page = m_page.get();
     if (!page)
         return;
-    m_browsingContextGroup->forEachRemotePage(*page, [](auto& remotePage) {
+    protect(m_browsingContextGroup)->forEachRemotePage(*page, [](auto& remotePage) {
         remotePage.processActivityState().dropNetworkActivity();
     });
 }
@@ -439,7 +471,7 @@ void SuspendedPageProxy::suspendSubframeProcesses(BackForwardFrameItemIdentifier
         protectedThis->maybeCompleteSuspension();
     });
 
-    m_browsingContextGroup->forEachRemotePage(*page, [suspendedPage = Ref { *this }, &aggregator, mainFrameItemID](auto& remotePage) {
+    protect(m_browsingContextGroup)->forEachRemotePage(*page, [suspendedPage = Ref { *this }, &aggregator, mainFrameItemID](auto& remotePage) {
         Ref process = remotePage.siteIsolatedProcess();
         if (!suspendedPage->hasSubframeInProcess(process->coreProcessIdentifier()))
             return;

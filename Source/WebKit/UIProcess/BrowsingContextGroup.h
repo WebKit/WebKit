@@ -58,6 +58,7 @@ enum class ShouldSendCloseMessage : bool { No, Yes };
 class FrameProcess;
 class ProvisionalPageProxy;
 class RemotePageProxy;
+class WebFrameProxy;
 class WebPageProxy;
 class WebPreferences;
 class WebProcessPool;
@@ -84,6 +85,8 @@ public:
     void addFrameProcessAndInjectPageContextIf(FrameProcess&, Function<bool(WebPageProxy&)>);
     bool addFrameProcessWithoutInjectingPageContext(FrameProcess&);
     void removeFrameProcess(FrameProcess&);
+    Ref<BrowsingContextGroup> takeProcessesOfCachedDocument(WebPageProxy&, WebFrameProxy& mainFrame, const HashSet<Ref<FrameProcess>>& processesOfCommittedDocument);
+    void adoptProcessesOfRestoredDocument(WebPageProxy&, BrowsingContextGroup&, const WebProcessProxy& mainFrameProcess);
     void processDidTerminate(WebPageProxy&, WebProcessProxy&);
 
     void addPage(WebPageProxy&);
@@ -91,6 +94,7 @@ public:
     void removePage(WebPageProxy&, ShouldSendCloseMessage = ShouldSendCloseMessage::Yes);
     void closeRemotePagesForPage(WebPageProxy&, ShouldSendCloseMessage = ShouldSendCloseMessage::Yes);
     bool hasMultiplePages() const;
+    bool hasPagesOtherThan(const WebPageProxy&) const;
     void forEachPage(NOESCAPE const Function<void(WebPageProxy&)>&);
     bool hasVisiblePage() const;
     void forEachRemotePage(const WebPageProxy&, NOESCAPE const Function<void(RemotePageProxy&)>&);
@@ -119,6 +123,7 @@ private:
     explicit BrowsingContextGroup(WebCore::CrossOriginMode);
 
     RefPtr<FrameProcess> liveSharedProcess();
+    void adoptSharedProcess(BrowsingContextGroup&, WebPageProxy&);
     void clearSharedProcess();
 
     WebCore::BrowsingContextGroupIdentifier m_identifier { WebCore::BrowsingContextGroupIdentifier::generate() };
@@ -134,6 +139,7 @@ private:
     using ProcessMapKey = std::pair<WebCore::Site, IsDocumentIsolationPolicyProcess>;
     ProcessMapKey processMapKey(const FrameProcess&) const;
     bool hasProcessForSite(const WebCore::Site&) const;
+    void unregisterFrameProcess(FrameProcess&);
 
     HashMap<ProcessMapKey, WeakPtr<FrameProcess>> m_processMap;
     WeakListHashSet<WebPageProxy> m_pages;

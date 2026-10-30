@@ -1684,7 +1684,7 @@ void WebPageProxy::hideCaptionDisplaySettingsPreview(WebProcessProxy& process, W
 
 #endif
 
-void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisionalPage)
+void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisionalPage, BrowsingContextGroup& browsingContextGroup)
 {
     ASSERT(!m_isClosed);
     WEBPAGEPROXY_RELEASE_LOG(Loading, "swapToProvisionalPage: newWebPageID=%" PRIu64, provisionalPage->webPageID().toUInt64());
@@ -1718,8 +1718,9 @@ void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisional
     ASSERT(!m_drawingArea);
     setDrawingArea(provisionalPage->takeDrawingArea());
 
-    // The group was chosen in browsingContextGroupForNavigation(); adopt whatever the provisional page carries.
-    setBrowsingContextGroup(provisionalPage->browsingContextGroup());
+    // The group was chosen in browsingContextGroupForNavigation(), unless commitProvisionalPage() kept a restored document
+    // in its own.
+    setBrowsingContextGroup(browsingContextGroup);
 
     protect(legacyMainFrameProcess())->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::No);
     addAllMessageReceivers();
@@ -6465,7 +6466,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             if (suspendedPage && suspendedPage->pageIsClosedOrClosing())
                 suspendedPage = nullptr;
 
-            Ref bcgForNavigation = suspendedPage ? suspendedPage->browsingContextGroup() : browsingContextGroup.get();
+            Ref bcgForNavigation = suspendedPage ? suspendedPage->browsingContextGroupToRestoreInto() : browsingContextGroup.get();
             auto navigationUpgradeToHTTPSBehavior = navigationAction->data().navigationUpgradeToHTTPSBehavior;
             auto pendingNavigateEventID = navigationAction->data().pendingNavigateEventID;
 
@@ -6938,7 +6939,21 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
     const auto oldProcessID = siteIsolatedProcess().coreProcessIdentifier();
     const auto oldWebPageID = m_webPageID;
     RefPtr deferredTopDocumentSyncData = provisionalPage->takeDeferredTopDocumentSyncData();
-    swapToProvisionalPage(provisionalPage.releaseNonNull());
+    Ref browsingContextGroup = provisionalPage->browsingContextGroup();
+    if (preferences->siteIsolationEnabled()) {
+        RefPtr restoredPageBrowsingContextGroup = provisionalPage->takeRestoredPageBrowsingContextGroup();
+        // A page can have joined the group since SuspendedPageProxy::canBeRestored(), so the document stays in its own.
+        if (restoredPageBrowsingContextGroup && browsingContextGroup->hasPagesOtherThan(*this))
+            browsingContextGroup = restoredPageBrowsingContextGroup.releaseNonNull();
+        HashSet<Ref<FrameProcess>> processesOfCommittedDocument;
+        for (RefPtr frame = provisionalPage->mainFrame(); frame; frame = frame->traverseNext().frame)
+            processesOfCommittedDocument.add(frame->frameProcess());
+        // In the process of a cached document's main frame, the page's WebPage is the cached one.
+        SuspendedPageProxy::takeProcessesFromBrowsingContextGroup(*this, browsingContextGroup, processesOfCommittedDocument);
+        if (restoredPageBrowsingContextGroup)
+            browsingContextGroup->adoptProcessesOfRestoredDocument(*this, *restoredPageBrowsingContextGroup, protect(provisionalPage->process()));
+    }
+    swapToProvisionalPage(provisionalPage.releaseNonNull(), browsingContextGroup);
 
     if (deferredTopDocumentSyncData)
         applyDeferredTopDocumentSyncDataFromCommittedProcess(deferredTopDocumentSyncData.releaseNonNull());
@@ -7125,7 +7140,9 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
 
     // FIXME: Assert the equality of data stores regardless of whether site isolation is enabled or not.
     ASSERT(!siteIsolationEnabled || newProcess->websiteDataStore() == &websiteDataStore());
-    Ref frameProcess = browsingContextGroup.ensureProcessForSite(navigationSite, Site { mainFrame()->url() }, newProcess, preferences, loadedWebArchive, BrowsingContextGroupUpdate::None);
+    // A restored page's processes only join browsingContextGroup on commit, if they were kept apart.
+    bool restoresProcessesKeptApart = suspendedPage && &suspendedPage->browsingContextGroup() != &browsingContextGroup;
+    Ref frameProcess = restoresProcessesKeptApart ? Ref { suspendedPage->mainFrame().frameProcess() } : browsingContextGroup.ensureProcessForSite(navigationSite, Site { mainFrame()->url() }, newProcess, preferences, loadedWebArchive, BrowsingContextGroupUpdate::None);
     // Make sure we destroy any existing ProvisionalPageProxy object *before* we construct a new one.
     // It is important from the previous provisional page to unregister itself before we register a
     // new one to avoid confusion.
@@ -8648,7 +8665,7 @@ void WebPageProxy::getBackForwardCacheEntryTopDocumentURLsForTesting(int relativ
 
     if (RefPtr suspendedPage = entry->suspendedPage()) {
         query(suspendedPage->process(), suspendedPage->webPageID());
-        suspendedPage->browsingContextGroup().forEachRemotePage(*this, [&] (auto& remotePage) {
+        protect(suspendedPage->browsingContextGroup())->forEachRemotePage(*this, [&](auto& remotePage) {
             Ref process = remotePage.siteIsolatedProcess();
             if (!suspendedPage->hasSubframeInProcess(process->coreProcessIdentifier()))
                 return;

@@ -46,6 +46,7 @@ class Site;
 namespace WebKit {
 
 class BrowsingContextGroup;
+class FrameProcess;
 class RemotePageProxy;
 class WebBackForwardCache;
 class WebPageProxy;
@@ -69,6 +70,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     static RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(WebProcessPool&, const WebCore::Site&, WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&);
+    static void takeProcessesFromBrowsingContextGroup(WebPageProxy&, BrowsingContextGroup&, const HashSet<Ref<FrameProcess>>& processesOfCommittedDocument);
 
     WebPageProxy* LEGACY_NODELETE page() const;
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
@@ -76,6 +78,8 @@ public:
     WebFrameProxy& mainFrame() { return m_mainFrame.get(); }
     const BrowsingContextGroup& browsingContextGroup() const { return m_browsingContextGroup.get(); }
     BrowsingContextGroup& browsingContextGroup() { return m_browsingContextGroup.get(); }
+    BrowsingContextGroup& browsingContextGroupToRestoreInto() { return m_browsingContextGroupToRestoreInto ? *m_browsingContextGroupToRestoreInto : m_browsingContextGroup.get(); }
+    bool canBeRestored() const;
 
     WebBackForwardCache& LEGACY_NODELETE backForwardCache() const;
 
@@ -134,7 +138,8 @@ private:
     const WebCore::PageIdentifier m_webPageID;
     const Ref<WebProcessProxy> m_process;
     const Ref<WebFrameProxy> m_mainFrame;
-    const Ref<BrowsingContextGroup> m_browsingContextGroup;
+    Ref<BrowsingContextGroup> m_browsingContextGroup;
+    RefPtr<BrowsingContextGroup> m_browsingContextGroupToRestoreInto;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
     bool m_isClosed { false };
     ShouldDelayClosingUntilFirstLayerFlush m_shouldDelayClosingUntilFirstLayerFlush { ShouldDelayClosingUntilFirstLayerFlush::No };

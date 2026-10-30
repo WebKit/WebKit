@@ -73,6 +73,7 @@ imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub
 # Document-Isolation-Policy is partially implemented.
 imported/w3c/web-platform-tests/html/document-isolation-policy/agent-cluster.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/back-forward-cache-frames.tentative.https.html [ Pass ]
+imported/w3c/web-platform-tests/html/document-isolation-policy/back-forward-cache-same-origin-frames.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/back-forward-cache.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/blob-document-inherits-policy.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/broadcast-channel.tentative.https.html [ Pass ]
