@@ -42,13 +42,13 @@ namespace WebKit {
 static std::optional<String> invalidIconPathMessage(WebExtensionContext& context, const String& path)
 {
     if (path.startsWith("data:"_s)) {
-        if (context.extension().iconForPath(path))
+        if (protect(context.extension())->iconForPath(path))
             return std::nullopt;
         return "the data URL is not a valid image"_s;
     }
 
     if (path.startsWith("symbol:"_s)) {
-        if (context.extension().iconForPath(path))
+        if (protect(context.extension())->iconForPath(path))
             return std::nullopt;
         return makeString("\""_s, path, "\" is not a known symbol"_s);
     }

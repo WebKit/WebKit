@@ -168,7 +168,7 @@ bool WebExtensionContext::hasResource(const String& path) const
         return false;
 
     // The path excludes any query or fragment.
-    return extension().hasResourceForPath(url.path().toString());
+    return protect(extension())->hasResourceForPath(url.path().toString());
 }
 
 bool WebExtensionContext::canNavigateToURL(const URL& url) const

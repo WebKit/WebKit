@@ -14081,13 +14081,13 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
         ? WebKit::NotifyInputDelegate::No
         : WebKit::NotifyInputDelegate::Yes;
 
-    for (RetainPtr command : makeVector<RetainPtr<NSString>>(deleteSelectionCommands(direction, granularity)))
+    for (RetainPtr command : makeVector<RetainPtr<NSString>>(protect(deleteSelectionCommands(direction, granularity))))
         [self _executeEditCommand:command notifyDelegate:notifyDelegate];
 }
 
 - (void)moveInStorageDirection:(UITextStorageDirection)direction byGranularity:(UITextGranularity)granularity
 {
-    for (RetainPtr command : makeVector<RetainPtr<NSString>>(moveSelectionCommand(direction, granularity)))
+    for (RetainPtr command : makeVector<RetainPtr<NSString>>(protect(moveSelectionCommand(direction, granularity))))
         [self _executeEditCommand:command];
 }
 
@@ -14098,7 +14098,7 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 - (void)extendInStorageDirection:(UITextStorageDirection)direction byGranularity:(UITextGranularity)granularity
 {
-    for (RetainPtr command : makeVector<RetainPtr<NSString>>(extendSelectionCommand(direction, granularity)))
+    for (RetainPtr command : makeVector<RetainPtr<NSString>>(protect(extendSelectionCommand(direction, granularity))))
         [self _executeEditCommand:command];
 }
 

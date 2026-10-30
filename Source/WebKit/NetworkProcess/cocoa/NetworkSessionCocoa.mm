@@ -1359,12 +1359,12 @@ static SessionWrapper& initializeSessionWithoutCredentialStorageIfNeeded(Session
 
 SessionWrapper& SessionSet::initializeSessionWithoutCredentialStorageIfNeeded(NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, NetworkSessionCocoa& session)
 {
-    return WebKit::initializeSessionWithoutCredentialStorageIfNeeded(sessionWithoutCredentialStorage, sessionWithCredentialStorage, isNavigatingToAppBoundDomain, session);
+    return WebKit::initializeSessionWithoutCredentialStorageIfNeeded(protect(sessionWithoutCredentialStorage), protect(sessionWithCredentialStorage), isNavigatingToAppBoundDomain, session);
 }
 
 SessionWrapper& IsolatedSession::initializeSessionWithoutCredentialStorageIfNeeded(NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, NetworkSessionCocoa& session)
 {
-    return WebKit::initializeSessionWithoutCredentialStorageIfNeeded(sessionWithoutCredentialStorage, sessionWithCredentialStorage, isNavigatingToAppBoundDomain, session);
+    return WebKit::initializeSessionWithoutCredentialStorageIfNeeded(protect(sessionWithoutCredentialStorage), protect(sessionWithCredentialStorage), isNavigatingToAppBoundDomain, session);
 }
 
 CheckedRef<SessionWrapper> NetworkSessionCocoa::sessionWrapperForTask(std::optional<WebPageProxyIdentifier> webPageProxyID, const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
