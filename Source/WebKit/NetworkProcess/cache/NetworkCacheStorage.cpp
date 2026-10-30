@@ -491,11 +491,16 @@ size_t Storage::estimateRecordsSize(unsigned recordCount, unsigned blobCount) co
 
 void Storage::synchronize()
 {
-    ASSERT(RunLoop::isMain());
+    assertIsMainThread();
 
     if (m_synchronizationInProgress || m_shrinkInProgress)
         return;
     m_synchronizationInProgress = true;
+
+    for (auto& operation : m_pendingWriteOperations)
+        m_recordFilterHashesAddedDuringSynchronization.append(operation->record().key.hash());
+    for (auto& operation : m_activeWriteOperations.values())
+        m_recordFilterHashesAddedDuringSynchronization.append(operation->record().key.hash());
 
     LOG(NetworkCacheStorage, "(NetworkProcess) synchronizing cache");
 
