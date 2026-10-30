@@ -1071,21 +1071,24 @@ void GraphicsContextGLCocoa::insertFinishedSignalOrInvoke(Function<void()> signa
 }
 
 #if ENABLE(VIDEO)
-bool GraphicsContextGLCocoa::copyTextureFromVideoFrame(VideoFrame& videoFrame, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY)
+bool GraphicsContextGLCocoa::copyTextureFromVideoFrame(VideoFrame& videoFrame, PlatformGLObject texture, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY)
 {
     UNUSED_VARIABLE(premultiplyAlpha);
-    ASSERT_UNUSED(target, target == WebCore::GraphicsContextGL::TEXTURE_2D);
     auto* contextCV = cvContext();
     if (!contextCV) {
         ASSERT(contextCV);
+        recordVideoUploadForTesting(VideoUploadOutcome::Unsupported, 0);
         return false;
     }
     RefPtr videoFrameCV = videoFrame.asVideoFrameCV();
     if (!videoFrameCV) {
         ASSERT_NOT_REACHED(); // Programming error.
+        recordVideoUploadForTesting(VideoUploadOutcome::Unsupported, 0);
         return false;
     }
-    return contextCV->copyVideoSampleToTexture(*videoFrameCV, texture, level, internalFormat, format, type, WebCore::GraphicsContextGL::FlipY(flipY));
+    auto outcome = contextCV->copyVideoSampleToTexture(*videoFrameCV, texture, level, internalFormat, format, type, WebCore::GraphicsContextGL::FlipY(flipY));
+    recordVideoUploadForTesting(outcome, videoFrameCV->pixelFormat());
+    return isSuccessfulVideoUpload(outcome);
 }
 #endif
 

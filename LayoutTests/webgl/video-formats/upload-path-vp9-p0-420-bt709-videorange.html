@@ -1,0 +1,20 @@
+<!-- webkit-test-runner [ AllowTestOnlyIPC=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/video-formats/video-formats-manifest.js"></script>
+<script src="../../resources/video-formats/video-formats-test-utils.js"></script>
+<script src="resources/webgl-video-sink.js"></script>
+<script src="resources/webgl-upload-path-test.js"></script>
+</head>
+<body>
+<script>
+"use strict";
+description("The upload path of a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0) in WebGL 2 of vp9-p0-420-bt709-videorange.webm, from the video element and from VideoFrame(video): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. A compressed pixel format is shown as the format it compresses. The pixel formats depend on the GPU and OS.");
+
+UploadPathTest.run(() => UploadPathTest.runVideoTest({ video: "vp9-p0-420-bt709-videorange.webm" }));
+</script>
+</body>
+</html>

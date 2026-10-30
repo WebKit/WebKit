@@ -641,6 +641,16 @@ RefPtr<NativeImage> GraphicsContextGL::videoFrameToNativeImage(VideoFrame& frame
     imageBuffer->context().drawVideoFrame(frame, { { }, size }, ShouldDiscardAlpha::Yes, { frame.orientation() });
     return ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
 }
+
+std::optional<GraphicsContextGL::VideoUploadRecord> GraphicsContextGL::lastVideoUploadForTesting()
+{
+    return m_lastVideoUploadForTesting;
+}
+
+void GraphicsContextGL::setVideoUploadHardwareOnlyForTesting(bool hardwareOnly)
+{
+    m_videoUploadHardwareOnlyForTesting = hardwareOnly;
+}
 #endif
 
 } // namespace WebCore

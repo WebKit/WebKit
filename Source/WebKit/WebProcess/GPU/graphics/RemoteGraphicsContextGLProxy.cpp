@@ -239,11 +239,15 @@ RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::surfaceBufferToVideoFr
 #endif
 
 #if ENABLE(VIDEO)
-bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame& videoFrame, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
+bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame& videoFrame, PlatformGLObject texture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
 {
 #if PLATFORM(COCOA)
-    if (isContextLost())
+    recordVideoUploadForTesting(VideoUploadOutcome::NotTransferable, videoFrame.pixelFormat());
+    m_lastVideoUploadWasSentForTesting = false;
+    if (isContextLost()) {
+        m_lastVideoUploadForTesting.outcome = VideoUploadOutcome::ContextLost;
         return false;
+    }
 
     auto sharedVideoFrame = m_sharedVideoFrameWriter.write(videoFrame, [this, protectedThis = protect(*this)](auto& semaphore) {
         auto sendResult = send(Messages::RemoteGraphicsContextGL::SetSharedVideoFrameSemaphore { semaphore });
@@ -254,10 +258,15 @@ bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame
         if (sendResult != IPC::Error::NoError)
             markContextLost();
     });
-    if (!sharedVideoFrame || isContextLost())
+    if (!sharedVideoFrame || isContextLost()) {
+        if (isContextLost())
+            m_lastVideoUploadForTesting.outcome = VideoUploadOutcome::ContextLost;
         return false;
+    }
 
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CopyTextureFromVideoFrame(WTF::move(*sharedVideoFrame), texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY));
+    m_lastVideoUploadWasSentForTesting = true;
+    ++m_videoUploadsSentForTesting;
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CopyTextureFromVideoFrame(WTF::move(*sharedVideoFrame), texture, level, internalFormat, format, type, premultiplyAlpha, flipY));
     if (!sendResult.succeeded()) {
         markContextLost();
         return false;
@@ -266,7 +275,44 @@ bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame
     auto [result] = sendResult.takeReply();
     return result;
 #else
+    recordVideoUploadForTesting(VideoUploadOutcome::Unsupported, 0);
     return false;
+#endif
+}
+
+std::optional<GraphicsContextGL::VideoUploadRecord> RemoteGraphicsContextGLProxy::lastVideoUploadForTesting()
+{
+#if PLATFORM(COCOA)
+    if (!m_lastVideoUploadWasSentForTesting)
+        return m_lastVideoUploadForTesting;
+    // The GPU process rejects the test-only messages, and the sender with them, unless AllowTestOnlyIPC is set.
+    if (isContextLost() || !WebProcess::singleton().sharedPreferencesForWebProcessValue().allowTestOnlyIPC)
+        return std::nullopt;
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetLastVideoUploadForTesting());
+    if (!sendResult.succeeded()) {
+        markContextLost();
+        return std::nullopt;
+    }
+    auto [record] = sendResult.takeReply();
+    // The stream is ordered, so the GPU process has handled every call sent so far.
+    if (record.sequence != m_videoUploadsSentForTesting)
+        return std::nullopt;
+    record.sequence = m_lastVideoUploadForTesting.sequence;
+    return record;
+#else
+    return GraphicsContextGL::lastVideoUploadForTesting();
+#endif
+}
+
+void RemoteGraphicsContextGLProxy::setVideoUploadHardwareOnlyForTesting(bool hardwareOnly)
+{
+    GraphicsContextGL::setVideoUploadHardwareOnlyForTesting(hardwareOnly);
+#if PLATFORM(COCOA)
+    if (isContextLost() || !WebProcess::singleton().sharedPreferencesForWebProcessValue().allowTestOnlyIPC)
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::SetVideoUploadHardwareOnlyForTesting(hardwareOnly));
+    if (sendResult != IPC::Error::NoError)
+        markContextLost();
 #endif
 }
 

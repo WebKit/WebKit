@@ -47,13 +47,14 @@ public:
 
     ~GraphicsContextGLCVCocoa() final;
 
-    bool copyVideoSampleToTexture(const VideoFrameCV&, PlatformGLObject outputTexture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, FlipY) final;
+    GraphicsContextGLVideoUploadOutcome copyVideoSampleToTexture(const VideoFrameCV&, PlatformGLObject outputTexture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, FlipY) final;
 
     void invalidateKnownTextureContent(GCGLuint texture);
 private:
     GraphicsContextGLCVCocoa(GraphicsContextGLCocoa&);
 
     RetainPtr<CVPixelBufferRef> convertPixelBuffer(CVPixelBufferRef);
+    bool isRenderableForTesting(GCGLenum internalFormat, GCGLenum format, GCGLenum type);
 
     const CheckedRef<GraphicsContextGLCocoa> m_owner;
     GCGLDisplay m_display { nullptr };

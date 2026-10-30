@@ -19,3 +19,18 @@
 
 # FairPlay Streaming is not supported on simulators
 ipc/cocoa/legacy-cdm-session-avcontentkeysession-destruction-race.html [ Skip ]
+
+webkit.org/b/329245 webgl/video-formats/upload-path-av1-420-bt709-videorange.html [ Failure ]
+webkit.org/b/329236 webkit.org/b/329245 webgl/video-formats/upload-path-h264-420-bt709-videorange-frag-mse.html [ Failure ]
+webkit.org/b/329245 webgl/video-formats/upload-path-h264-422-bt709-videorange.html [ Failure ]
+webkit.org/b/329239 webkit.org/b/329245 webgl/video-formats/upload-path-h264-rgb.html [ Failure ]
+webkit.org/b/329235 webkit.org/b/329245 webgl/video-formats/upload-path-hevc-420-10bit-bt709-videorange-frag-mse.html [ Failure ]
+webkit.org/b/329246 webgl/video-formats/upload-path-hevc-444-8bit-bt709-videorange-321x193.html [ Failure ]
+webkit.org/b/329246 webgl/video-formats/upload-path-hevc-444-8bit-bt709-videorange.html [ Failure ]
+webkit.org/b/329236 webkit.org/b/329241 webkit.org/b/329245 webgl/video-formats/upload-path-hevcvt-alpha-bt709-videorange-frag-mse.html [ Failure ]
+webkit.org/b/329238 webkit.org/b/329245 webgl/video-formats/upload-path-prores-422-bt709-videorange.html [ Failure ]
+webkit.org/b/322966 webkit.org/b/329234 webkit.org/b/329238 webkit.org/b/329245 webgl/video-formats/upload-path-prores-4444-alpha-bt709-videorange.html [ Failure ]
+webkit.org/b/329236 webkit.org/b/329245 webgl/video-formats/upload-path-vp8-420-bt601-videorange-mse.html [ Failure ]
+webkit.org/b/329236 webkit.org/b/329240 webkit.org/b/329245 webgl/video-formats/upload-path-vp9-alpha-420-bt709-videorange-mse.html [ Failure ]
+webkit.org/b/329236 webkit.org/b/329245 webgl/video-formats/upload-path-vp9-p0-420-bt709-videorange-mse.html [ Failure ]
+webkit.org/b/329235 webkit.org/b/329245 webgl/video-formats/upload-path-vp9-p2-420-10bit-pq-videorange-mse.html [ Failure ]

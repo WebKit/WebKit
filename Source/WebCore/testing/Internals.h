@@ -1132,6 +1132,17 @@ public:
     static Vector<int> webglMaxDrawingBufferSize(WebGLRenderingContextBase&);
     // The width and height of the allocated default framebuffer storage, or 0, 0 if it is not allocated.
     static Vector<int> webglDefaultFramebufferAllocatedSize(WebGLRenderingContextBase&);
+#if ENABLE(VIDEO)
+    enum class WebGLVideoUploadPath : uint8_t { Default, Software, Hardware };
+    void setWebGLVideoUploadPath(WebGLRenderingContextBase&, WebGLVideoUploadPath);
+    struct WebGLVideoUploadRecord {
+        String path;
+        String reason;
+        String pixelFormat;
+        uint64_t sequence { 0 };
+    };
+    std::optional<WebGLVideoUploadRecord> webglLastVideoUpload(WebGLRenderingContextBase&);
+#endif
 #endif
 
     void setPageVisibility(bool isVisible);

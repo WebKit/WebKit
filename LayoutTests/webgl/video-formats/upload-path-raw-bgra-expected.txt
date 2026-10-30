@@ -1,0 +1,19 @@
+The upload path of a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0) in WebGL 2 of raw-bgra.mov, from the video element and from VideoFrame(video): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. A compressed pixel format is shown as the format it compresses. The pixel formats depend on the GPU and OS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+raw-bgra.mov: rawvideo bgra rgb/range untagged/bt709/iec61966-2-1
+PASS raw-bgra.mov <video> default path: hardware (converted), pixel format BGRA
+PASS raw-bgra.mov <video> software path: software (forced)
+PASS raw-bgra.mov <video> hardware path: hardware (converted)
+PASS raw-bgra.mov <video> hardware vs software: match
+PASS raw-bgra.mov VideoFrame(video) (format BGRA) default path: software (gate-videoframe-format)
+PASS raw-bgra.mov VideoFrame(video) (format BGRA) software path: software (forced)
+raw-bgra.mov VideoFrame(video) (format BGRA) hardware path: hardware not available (gate-videoframe-format)
+raw-bgra.mov VideoFrame(video) (format BGRA) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

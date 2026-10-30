@@ -2488,3 +2488,16 @@ webkit.org/b/328460 [ Sequoia Tahoe ] http/wpt/webcodecs/audio-decoder-opus-mult
 webkit.org/b/328460 [ Sequoia Tahoe ] webaudio/decode-audio-data-webm-opus-5.1.html [ Failure ]
 webkit.org/b/328460 [ Sequoia Tahoe ] http/wpt/webcodecs/audio-decoder-channel-order.https.any.html [ Failure ]
 webkit.org/b/328460 [ Sequoia Tahoe ] http/wpt/webcodecs/audio-decoder-channel-order.https.any.worker.html [ Failure ]
+
+webkit.org/b/329245 [ Sequoia ] webgl/video-formats/upload-path-av1-420-bt709-videorange.html [ Failure ]
+webkit.org/b/329239 webkit.org/b/329245 [ Sequoia ] webgl/video-formats/upload-path-h264-rgb.html [ Failure ]
+webkit.org/b/329237 webkit.org/b/329241 webkit.org/b/329244 [ Sequoia ] webgl/video-formats/upload-path-decoder.html [ Failure ]
+
+webkit.org/b/329245 [ x86_64 ] webgl/video-formats/upload-path-h264-420-bt709-fullrange.html [ Failure ]
+webkit.org/b/329245 [ x86_64 ] webgl/video-formats/upload-path-h264-422-bt709-videorange.html [ Failure ]
+webkit.org/b/329243 [ x86_64 ] webgl/video-formats/upload-path-hevc-420-12bit-bt709-videorange.html [ Failure ]
+webkit.org/b/329245 [ x86_64 ] webgl/video-formats/upload-path-hevc-444-8bit-bt709-videorange-321x193.html [ Failure ]
+webkit.org/b/329245 [ x86_64 ] webgl/video-formats/upload-path-hevc-444-8bit-bt709-videorange.html [ Failure ]
+webkit.org/b/322966 webkit.org/b/329234 webkit.org/b/329243 [ x86_64 ] webgl/video-formats/upload-path-hevcvt-alpha-bt709-videorange.html [ Failure ]
+webkit.org/b/329243 [ x86_64 ] webgl/video-formats/upload-path-raw-2vuy-bt709-videorange.html [ Failure ]
+webkit.org/b/322966 webkit.org/b/329234 webkit.org/b/329243 [ x86_64 ] webgl/video-formats/upload-path-raw-bgra.html [ Failure ]

@@ -1,0 +1,36 @@
+texImage2D of a video into sRGB internal formats with the default, forced hardware and forced software paths: WebGL 2 SRGB8_ALPHA8 and SRGB8, and WebGL 1 SRGB_ALPHA_EXT and SRGB_EXT (EXT_sRGB). The sources are a video the hardware path uses directly (h264-420-bt709-videorange.mp4) and one it converts first (hevc-420-10bit-bt709-videorange.mp4). The stored bytes must be the frame's own R'G'B' values, as a texImage2D of the same pixels stores them (no further sRGB encoding). Renderable formats are read with readPixels; SRGB8 is sampled (decoded) and encoded again.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+h264-420-bt709-videorange.mp4: h264 yuv420p bt709/videorange/bt709/bt709
+hevc-420-10bit-bt709-videorange.mp4: hevc yuv420p10le bt709/videorange/bt709/bt709
+PASS WebGL 1 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB_ALPHA_EXT/UNSIGNED_BYTE) default path: software (gate-combination)
+WebGL 1 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB_ALPHA_EXT/UNSIGNED_BYTE) hardware path: hardware not available (gate-combination)
+PASS WebGL 1 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB_ALPHA_EXT/UNSIGNED_BYTE) software path: software (forced)
+PASS WebGL 1 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB_EXT/UNSIGNED_BYTE) default path: software (gate-combination)
+WebGL 1 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB_EXT/UNSIGNED_BYTE) hardware path: hardware not available (gate-combination)
+PASS WebGL 1 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB_EXT/UNSIGNED_BYTE) software path: software (forced)
+PASS WebGL 1 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB_ALPHA_EXT/UNSIGNED_BYTE) default path: software (gate-combination)
+WebGL 1 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB_ALPHA_EXT/UNSIGNED_BYTE) hardware path: hardware not available (gate-combination)
+PASS WebGL 1 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB_ALPHA_EXT/UNSIGNED_BYTE) software path: software (forced)
+PASS WebGL 1 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB_EXT/UNSIGNED_BYTE) default path: software (gate-combination)
+WebGL 1 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB_EXT/UNSIGNED_BYTE) hardware path: hardware not available (gate-combination)
+PASS WebGL 1 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB_EXT/UNSIGNED_BYTE) software path: software (forced)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE) default path: hardware (direct)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE) hardware path: hardware (direct)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE) software path: software (forced)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) default path: software (fbo-incomplete)
+WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) hardware path: hardware not available (fbo-incomplete)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) software path: software (forced)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE) default path: hardware (converted)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE) hardware path: hardware (converted)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE) software path: software (forced)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) default path: software (fbo-incomplete)
+WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) hardware path: hardware not available (fbo-incomplete)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) software path: software (forced)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -49,12 +49,13 @@
 namespace WebKit {
 
 #if ENABLE(VIDEO)
-void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::SharedVideoFrame&& frame, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::SharedVideoFrame&& frame, PlatformGLObject texture, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     RefPtr videoFrame = m_sharedVideoFrameReader.read(WTF::move(frame));
     if (!videoFrame) {
         ASSERT_IS_TESTING_IPC();
+        protect(m_context)->recordVideoUploadForTesting(WebCore::GraphicsContextGLVideoUploadOutcome::NoFrame, 0);
         completionHandler(false);
         return;
     }
@@ -63,8 +64,20 @@ void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::SharedVideoFrame
         return;
     }
     texture = m_objectNames.get(texture);
-    bool result = protect(m_context)->copyTextureFromVideoFrame(*videoFrame, texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY);
+    bool result = protect(m_context)->copyTextureFromVideoFrame(*videoFrame, texture, level, internalFormat, format, type, premultiplyAlpha, flipY);
     completionHandler(result);
+}
+
+void RemoteGraphicsContextGL::setVideoUploadHardwareOnlyForTesting(bool hardwareOnly)
+{
+    assertIsCurrent(workQueue());
+    protect(m_context)->setVideoUploadHardwareOnlyForTesting(hardwareOnly);
+}
+
+void RemoteGraphicsContextGL::getLastVideoUploadForTesting(CompletionHandler<void(WebCore::GraphicsContextGLVideoUploadRecord)>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+    completionHandler(protect(m_context)->lastVideoUploadForTesting().value_or(WebCore::GraphicsContextGLVideoUploadRecord { }));
 }
 
 void RemoteGraphicsContextGL::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)

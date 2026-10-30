@@ -8290,3 +8290,22 @@ webkit.org/b/327137 imported/w3c/web-platform-tests/resource-timing/resource-tim
 # BackgroundFetchAPI is not stable yet
 imported/w3c/web-platform-tests/background-fetch/abort.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/background-fetch/match.https.window.html [ Failure ]
+
+# The expected results of webgl/video-formats record the correct output.
+webkit.org/b/222822 webkit.org/b/329234 webgl/video-formats/upload-path-api.html [ Failure ]
+webkit.org/b/329237 webkit.org/b/329241 webgl/video-formats/upload-path-decoder.html [ Failure ]
+webkit.org/b/329236 webgl/video-formats/upload-path-h264-420-bt709-videorange-frag-mse.html [ Failure ]
+webkit.org/b/329237 webgl/video-formats/upload-path-h264-420-smpte240m-videorange.html [ Failure ]
+webkit.org/b/329239 webgl/video-formats/upload-path-h264-rgb.html [ Failure ]
+webkit.org/b/329235 webgl/video-formats/upload-path-hevc-420-10bit-bt709-videorange-frag-mse.html [ Failure ]
+webkit.org/b/322966 webkit.org/b/329234 webgl/video-formats/upload-path-hevcvt-alpha-bt709-videorange.html [ Failure ]
+webkit.org/b/329236 webkit.org/b/329241 webgl/video-formats/upload-path-hevcvt-alpha-bt709-videorange-frag-mse.html [ Failure ]
+webkit.org/b/329238 webgl/video-formats/upload-path-prores-422-bt709-videorange.html [ Failure ]
+webkit.org/b/322966 webkit.org/b/329234 webkit.org/b/329238 webgl/video-formats/upload-path-prores-4444-alpha-bt709-videorange.html [ Failure ]
+webkit.org/b/322966 webkit.org/b/329234 webgl/video-formats/upload-path-raw-bgra.html [ Failure ]
+webkit.org/b/222822 webgl/video-formats/upload-path-srgb.html [ Failure ]
+webkit.org/b/329236 webgl/video-formats/upload-path-vp8-420-bt601-videorange-mse.html [ Failure ]
+webkit.org/b/329240 webgl/video-formats/upload-path-vp9-alpha-420-bt709-videorange.html [ Failure ]
+webkit.org/b/329236 webkit.org/b/329240 webgl/video-formats/upload-path-vp9-alpha-420-bt709-videorange-mse.html [ Failure ]
+webkit.org/b/329236 webgl/video-formats/upload-path-vp9-p0-420-bt709-videorange-mse.html [ Failure ]
+webkit.org/b/329235 webgl/video-formats/upload-path-vp9-p2-420-10bit-pq-videorange-mse.html [ Failure ]
