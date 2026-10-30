@@ -35,6 +35,7 @@ enum class ViewCoordinateSpace : uint8_t {
     View,
     Contents,
     RootView,
+    MainFrameView,
 };
 
 template<ViewCoordinateSpace space, typename RectType = FloatRect>
@@ -62,15 +63,19 @@ using ContentsFloatRect = ViewCoordinateSpaceRect<ViewCoordinateSpace::Contents,
 using ContentsIntRect = ViewCoordinateSpaceRect<ViewCoordinateSpace::Contents, IntRect>;
 using RootViewFloatRect = ViewCoordinateSpaceRect<ViewCoordinateSpace::RootView, FloatRect>;
 using RootViewIntRect = ViewCoordinateSpaceRect<ViewCoordinateSpace::RootView, IntRect>;
+using MainFrameViewFloatRect = ViewCoordinateSpaceRect<ViewCoordinateSpace::MainFrameView, FloatRect>;
+using MainFrameViewIntRect = ViewCoordinateSpaceRect<ViewCoordinateSpace::MainFrameView, IntRect>;
 
 template<typename RectType> constexpr ViewCoordinateSpaceRect<ViewCoordinateSpace::View, RectType> inViewSpace(const RectType& rect) { return ViewCoordinateSpaceRect<ViewCoordinateSpace::View, RectType> { rect }; }
 template<typename RectType> constexpr ViewCoordinateSpaceRect<ViewCoordinateSpace::Contents, RectType> inContentsSpace(const RectType& rect) { return ViewCoordinateSpaceRect<ViewCoordinateSpace::Contents, RectType> { rect }; }
 template<typename RectType> constexpr ViewCoordinateSpaceRect<ViewCoordinateSpace::RootView, RectType> inRootViewSpace(const RectType& rect) { return ViewCoordinateSpaceRect<ViewCoordinateSpace::RootView, RectType> { rect }; }
+template<typename RectType> constexpr ViewCoordinateSpaceRect<ViewCoordinateSpace::MainFrameView, RectType> inMainFrameViewSpace(const RectType& rect) { return ViewCoordinateSpaceRect<ViewCoordinateSpace::MainFrameView, RectType> { rect }; }
 
 static_assert(sizeof(ContentsFloatRect) == sizeof(FloatRect));
 static_assert(sizeof(ContentsIntRect) == sizeof(IntRect));
 static_assert(std::is_trivially_copyable_v<ContentsFloatRect>);
 static_assert(!std::is_convertible_v<FloatRect, ContentsFloatRect>);
 static_assert(!std::is_convertible_v<ContentsFloatRect, RootViewFloatRect>);
+static_assert(!std::is_convertible_v<RootViewFloatRect, MainFrameViewFloatRect>);
 
 } // namespace WebCore

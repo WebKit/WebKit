@@ -11273,7 +11273,9 @@ void WebPage::requestAllTextAndRects(CompletionHandler<void(Vector<std::pair<Str
     if (!page)
         return completion({ });
 
-    completion(TextExtraction::extractAllTextAndRects(*page));
+    completion(WTF::map(TextExtraction::extractAllTextAndRects(*page), [](auto&& textAndRect) {
+        return std::pair { WTF::move(textAndRect.first), textAndRect.second.raw() };
+    }));
 }
 
 void WebPage::requestTargetedElement(TargetedElementRequest&& request, CompletionHandler<void(Vector<WebCore::TargetedElementInfo>&&)>&& completion)

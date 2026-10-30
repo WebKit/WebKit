@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/TextExtractionTypes.h>
+#include <WebCore/ViewCoordinateSpaceRect.h>
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ WEBCORE_EXPORT Result extractItem(Request&&, LocalFrame&);
 
 WEBCORE_EXPORT String shortenedURLString(const URL&);
 
-WEBCORE_EXPORT Vector<std::pair<String, FloatRect>> extractAllTextAndRects(Page&);
+WEBCORE_EXPORT Vector<std::pair<String, MainFrameViewFloatRect>> extractAllTextAndRects(Page&);
 
 WEBCORE_EXPORT void handleInteraction(Interaction&&, LocalFrame&, CompletionHandler<void(bool, String&&, Vector<String>&&, FloatRect)>&&);
 

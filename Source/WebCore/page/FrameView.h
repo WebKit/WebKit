@@ -144,6 +144,7 @@ public:
     WEBCORE_EXPORT IntPoint contentsToMainFrameView(const IntPoint&) const;
     WEBCORE_EXPORT FloatPoint contentsToMainFrameView(FloatPoint) const;
     WEBCORE_EXPORT FloatQuad contentsToMainFrameView(const FloatQuad&) const;
+    template<typename RectType> ViewCoordinateSpaceRect<ViewCoordinateSpace::MainFrameView, RectType> contentsToMainFrameView(const ViewCoordinateSpaceRect<ViewCoordinateSpace::Contents, RectType>& rect) const { return inMainFrameViewSpace(contentsToMainFrameView(rect.raw())); }
 
     WEBCORE_EXPORT virtual LayoutRect layoutViewportRect() const = 0;
 
