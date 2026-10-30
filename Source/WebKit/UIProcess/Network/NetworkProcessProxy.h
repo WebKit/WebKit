@@ -30,6 +30,7 @@
 #include "AuxiliaryProcessProxy.h"
 #include "BackgroundFetchState.h"
 #include "DataTaskIdentifier.h"
+#include "DownloadID.h"
 #include "IdentifierTypes.h"
 #include "NavigationResponseProcessSwap.h"
 #include "NetworkResourceLoadIdentifier.h"
@@ -164,6 +165,7 @@ public:
 
     void addAllowedFirstPartyForCookies(WebProcessProxy&, const WebCore::RegistrableDomain& firstPartyForCookies, LoadedWebArchive, CompletionHandler<void()>&&);
     void addAllowedWebPageProxyIdentifier(WebProcessProxy&, WebPageProxyIdentifier);
+    void authorizeDownloadForWebProcess(WebProcessProxy&, DownloadID, CompletionHandler<void()>&&);
     void addAllowedFilePaths(WebProcessProxy&, const Vector<String>& paths);
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, CompletionHandler<void(WebsiteData)>&&);
