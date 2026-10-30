@@ -60,7 +60,7 @@ SVGTextPathElement& RenderSVGTextPath::textPathElement() const
 
 RefPtr<SVGGeometryElement> RenderSVGTextPath::targetElement() const
 {
-    auto target = SVGURIReference::targetElementFromIRIString(textPathElement().href(), textPathElement().treeScopeForSVGReferences());
+    auto target = SVGURIReference::targetElementFromIRIString(textPathElement().href(), protect(textPathElement().treeScopeForSVGReferences()));
     return dynamicDowncast<SVGGeometryElement>(WTF::move(target.element));
 }
 

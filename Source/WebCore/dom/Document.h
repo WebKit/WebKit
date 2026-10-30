@@ -460,6 +460,12 @@ public:
 
     OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(ContainerNode);
 
+    using ContainerNode::checkedPtrCount;
+    using ContainerNode::checkedPtrCountWithoutThreadCheck;
+    using ContainerNode::decrementCheckedPtrCount;
+    using ContainerNode::incrementCheckedPtrCount;
+    using ContainerNode::setDidBeginCheckedPtrDeletion;
+
     inline static Ref<Document> create(const Settings&, const URL&);
     static Ref<Document> createNonRenderedPlaceholder(LocalFrame&, const URL&);
     static Ref<Document> create(Document&);

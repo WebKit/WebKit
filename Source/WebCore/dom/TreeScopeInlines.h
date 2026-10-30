@@ -32,6 +32,31 @@
 
 namespace WebCore {
 
+inline uint32_t TreeScope::checkedPtrCount() const
+{
+    return m_rootNode->checkedPtrCount();
+}
+
+inline uint32_t TreeScope::checkedPtrCountWithoutThreadCheck() const
+{
+    return m_rootNode->checkedPtrCountWithoutThreadCheck();
+}
+
+inline void TreeScope::incrementCheckedPtrCount() const
+{
+    return m_rootNode->incrementCheckedPtrCount();
+}
+
+inline void TreeScope::decrementCheckedPtrCount() const
+{
+    return m_rootNode->decrementCheckedPtrCount();
+}
+
+inline void TreeScope::setDidBeginCheckedPtrDeletion()
+{
+    return m_rootNode->setDidBeginCheckedPtrDeletion();
+}
+
 inline ContainerNode& TreeScope::rootNode() const
 {
     return m_rootNode.get();

@@ -111,7 +111,7 @@ void RenderLayerFilters::updateReferenceFilterClients(const Style::Filter& filte
                     CheckedPtr layer = m_layer.get();
                     if (!layer)
                         return;
-                    RefPtr filterElement = layer->renderer().document().getElementById(filterReference.cachedFragment);
+                    RefPtr filterElement = protect(layer->renderer().document())->getElementById(filterReference.cachedFragment);
                     if (!filterElement)
                         return;
                     CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGResourceFilter>(filterElement->renderer());

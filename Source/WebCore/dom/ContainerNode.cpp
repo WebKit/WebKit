@@ -1111,7 +1111,7 @@ ExceptionOr<void> ContainerNode::insertChildrenBeforeWithoutPreInsertionValidity
     InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
 
     executeNodeInsertionWithScriptAssertion(*this, newChildren, refChild.get(), ChildChange::Source::API, ReplacedAllChildren::No, [&](auto& child) {
-        child->setTreeScopeRecursively(treeScope());
+        child->setTreeScopeRecursively(protect(treeScope()));
         if (refChild)
             insertBeforeCommon(*refChild, child);
         else

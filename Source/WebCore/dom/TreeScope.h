@@ -70,11 +70,17 @@ class TreeScope : public NoVirtualDestructorBase {
     friend class Document;
 
 public:
-    TreeScope* parentTreeScope() const { return m_parentTreeScope; }
+    TreeScope* parentTreeScope() const { return m_parentTreeScope.get(); }
     void setParentTreeScope(TreeScope&);
 
     WEBCORE_EXPORT void LEGACY_NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
+
+    uint32_t checkedPtrCount() const;
+    uint32_t checkedPtrCountWithoutThreadCheck() const;
+    void incrementCheckedPtrCount() const;
+    void decrementCheckedPtrCount() const;
+    void setDidBeginCheckedPtrDeletion();
 
     Element* LEGACY_NODELETE focusedElementInScope();
     Element* LEGACY_NODELETE pointerLockElement() const;
@@ -178,7 +184,7 @@ private:
 
     const CheckedRef<ContainerNode> m_rootNode;
     std::reference_wrapper<Document> m_documentScope;
-    TreeScope* m_parentTreeScope;
+    CheckedPtr<TreeScope> m_parentTreeScope;
 
     RefPtr<CustomElementRegistry> m_customElementRegistry;
 
