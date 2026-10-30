@@ -1,0 +1,20 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; font-size: 20px; line-height: 20px; }
+.block { margin: 10px 0; background: lightblue; }
+.inline-block { display: inline-block; padding: 3px; margin: 0 5px; background: green; color: white; }
+</style>
+<!-- Quirks mode: atomic inline-level boxes without percentage block sizes size the same as in standards mode. -->
+<div class="root">
+  <div class="block">text <span class="inline-block">inline-block</span> text</div>
+  <div class="block"><span class="inline-block" style="height: 30px; vertical-align: middle">fixed</span><span class="inline-block" style="width: 50px">wrapping text</span></div>
+  <div class="block">image <img style="width: 30px; height: 20px; background: blue"> and button <button>button</button></div>
+  <div class="block"><span class="inline-block"><span style="display: block; margin: 5px; background: blue">block inside</span></span></div>
+</div>
+<!-- A percentage block size in an atomic inline-level box keeps the root on the render tree path. -->
+<div class="root" style="height: 100px"><div class="block"><span class="inline-block" style="height: 50%">percentage</span></div></div>
+<div class="root"><div class="block"><span class="inline-block" id="text">x</span></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "text that wraps onto more lines inside the inline-block";
+</script>
