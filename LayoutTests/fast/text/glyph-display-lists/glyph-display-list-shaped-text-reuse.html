@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+if (window.internals)
+    internals.setForceUseGlyphDisplayListForTesting(true);
+</script>
+<body onload="run()">
+<style>
+#container { margin: 3em; font: 16px Helvetica; font-kerning: normal; }
+#container > span { position: absolute; padding: 3em; }
+#antialiased { -webkit-font-smoothing: antialiased; color: red; }
+#antialiasedOtherColor { -webkit-font-smoothing: antialiased; color: blue; top: 100px; }
+#unsmoothed { -webkit-font-smoothing: none; top: 200px; }
+</style>
+<!-- These spans share their FontCascadeFonts, and so the shaped text cache entry for their text, but only
+     the first two may share a glyph display list: the font smoothing mode is recorded into the list. -->
+<div id=container>
+    <span id=antialiased>Shaped text reuse</span>
+    <span id=antialiasedOtherColor>Shaped text reuse</span>
+    <span id=unsmoothed>Shaped text reuse</span>
+</div>
+<pre id=log></pre>
+<script>
+function displayListFor(element)
+{
+    return internals.cachedGlyphDisplayListsForTextNode(element.firstChild, internals.DISPLAY_LIST_INCLUDE_RESOURCE_IDENTIFIERS);
+}
+
+let results = [];
+function check(condition, message)
+{
+    results.push((condition ? "PASS: " : "FAIL: ") + message);
+}
+
+function run() {
+    requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+            if (window.internals) {
+                let antialiasedList = displayListFor(antialiased);
+                let antialiasedOtherColorList = displayListFor(antialiasedOtherColor);
+                let unsmoothedList = displayListFor(unsmoothed);
+                check(antialiasedList.includes("(font-smoothing-mode antialiased)"), "antialiased text is recorded as antialiased.");
+                check(antialiasedOtherColorList == antialiasedList, "text that differs only in color has the same display list.");
+                check(unsmoothedList.includes("(font-smoothing-mode none)"), "unsmoothed text is recorded as unsmoothed.");
+                log.textContent = results.join("\n");
+                internals.setForceUseGlyphDisplayListForTesting(false);
+                container.remove();
+            }
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+}
+</script>

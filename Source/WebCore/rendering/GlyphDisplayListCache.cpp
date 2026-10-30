@@ -93,7 +93,7 @@ unsigned GlyphDisplayListCache::size() const
     return m_entries.size();
 }
 
-RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::get(const InlineDisplay::Box& box, const FontCascade& font, GraphicsContext& context, const TextRun& textRun, const PaintInfo& paintInfo)
+RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::get(const InlineDisplay::Box& box, const FontCascade& font, GraphicsContext& context, const TextRun& textRun, const PaintInfo& paintInfo, AllowShapedTextCacheReuse allowShapedTextCacheReuse)
 {
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
         if (!m_entries.isEmpty()) {
@@ -131,7 +131,7 @@ RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::get(const InlineDi
         }
     }
 
-    if (RefPtr displayList = font.displayListForTextRun(context, textRun)) {
+    if (RefPtr displayList = font.displayListForTextRun(context, textRun, 0, std::nullopt, FontCascade::CustomFontNotReadyAction::DoNotPaintIfFontNotReady, allowShapedTextCacheReuse)) {
         Ref entry = GlyphDisplayListCacheEntry::create(displayList.releaseNonNull(), textRun, font, context);
         Ref result = entry->displayList();
         if (canShareDisplayList(result)) {
