@@ -111,7 +111,7 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::createBuffer(RenderingMode render
         if (!contentsOpaque)
             textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
 
-        return CoordinatedAcceleratedTileBuffer::create(BitmapTexturePool::singleton().acquireTexture(size, textureFlags));
+        return CoordinatedAcceleratedTileBuffer::create(BitmapTexturePool::forCurrentThread().acquireTexture(size, textureFlags));
     }
 
     return CoordinatedUnacceleratedTileBuffer::create(size, contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha);

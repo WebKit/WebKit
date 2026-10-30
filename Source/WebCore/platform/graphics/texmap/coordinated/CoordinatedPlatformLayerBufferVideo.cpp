@@ -286,7 +286,7 @@ void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& te
             OptionSet<BitmapTexture::Flags> textureFlags;
             if (GST_VIDEO_INFO_HAS_ALPHA(m_videoFrame->info()))
                 textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
-            auto texture = BitmapTexturePool::singleton().acquireTexture(m_size, textureFlags);
+            auto texture = BitmapTexturePool::forCurrentThread().acquireTexture(m_size, textureFlags);
 
             auto* meta = gst_buffer_get_video_gl_texture_upload_meta(m_videoFrame->get()->buffer);
             if (meta && meta->n_textures == 1) {

@@ -95,7 +95,7 @@ public:
 
         auto maxTextureSize = options.textureMapper.maxTextureSize();
         forEachTile(maxTextureSize, [&](const IntRect& tileRect) {
-            RefPtr<BitmapTexture> surface = BitmapTexturePool::singleton().acquireTexture(tileRect.size(), { BitmapTexture::Flags::SupportsAlpha });
+            RefPtr<BitmapTexture> surface = BitmapTexturePool::forCurrentThread().acquireTexture(tileRect.size(), { BitmapTexture::Flags::SupportsAlpha });
             {
                 SetForScope scopedSurface(options.surface, surface);
                 SetForScope scopedOffset(options.offset, -toIntSize(tileRect.location()));
@@ -1111,7 +1111,7 @@ static void commitSurface(TextureMapperPaintOptions& options, BitmapTexture& sur
 
 void TextureMapperLayer::paintWithIntermediateSurface(TextureMapperPaintOptions& options, const IntRect& rect)
 {
-    auto surface = BitmapTexturePool::singleton().acquireTexture(rect.size(), { BitmapTexture::Flags::SupportsAlpha });
+    auto surface = BitmapTexturePool::forCurrentThread().acquireTexture(rect.size(), { BitmapTexture::Flags::SupportsAlpha });
     {
         SetForScope scopedSurface(options.surface, surface.ptr());
         SetForScope scopedOffset(options.offset, -toIntSize(rect.location()));
@@ -1127,7 +1127,7 @@ void TextureMapperLayer::paintWithIntermediateSurface(TextureMapperPaintOptions&
 
 void TextureMapperLayer::paintSelfAndChildrenWithIntermediateSurface(TextureMapperPaintOptions& options, const IntRect& rect)
 {
-    auto surface = BitmapTexturePool::singleton().acquireTexture(rect.size(), { BitmapTexture::Flags::SupportsAlpha });
+    auto surface = BitmapTexturePool::forCurrentThread().acquireTexture(rect.size(), { BitmapTexture::Flags::SupportsAlpha });
     {
         SetForScope scopedSurface(options.surface, surface.ptr());
         SetForScope scopedOffset(options.offset, -toIntSize(rect.location()));

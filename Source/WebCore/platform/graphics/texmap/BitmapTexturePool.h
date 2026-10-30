@@ -32,7 +32,6 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -42,14 +41,16 @@ typedef void *EGLImage;
 namespace WebCore {
 class IntSize;
 
-// Thread safe singleton to create textures for any GL context created with the shared PlatformDisplay sharing context.
+// Per-thread pool to create textures for GL contexts created with the shared PlatformDisplay sharing context.
 // It should be used with a current GL context to be able to create the textures.
-// Unused textures are automatically deleted in the main thread using a timer.
+// Unused textures are automatically deleted in the owning thread using a timer.
 class BitmapTexturePool final : public CanMakeThreadSafeCheckedPtr<BitmapTexturePool> {
     WTF_MAKE_TZONE_ALLOCATED(BitmapTexturePool);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BitmapTexturePool);
 public:
-    WEBCORE_EXPORT static BitmapTexturePool& singleton();
+    WEBCORE_EXPORT static BitmapTexturePool& forCurrentThread();
+    // Must be called with the GL context of the thread still current. The main thread pool is never destroyed.
+    WEBCORE_EXPORT static void destroyForCurrentThread();
     ~BitmapTexturePool() = default;
 
     WEBCORE_EXPORT Ref<BitmapTexture> acquireTexture(const IntSize&, OptionSet<BitmapTexture::Flags>);
@@ -62,7 +63,6 @@ public:
 #endif
 
 private:
-    friend class NeverDestroyed<BitmapTexturePool>;
     BitmapTexturePool();
 
     struct Entry {

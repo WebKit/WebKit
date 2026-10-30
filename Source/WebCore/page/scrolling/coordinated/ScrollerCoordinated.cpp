@@ -137,7 +137,7 @@ void ScrollerCoordinated::updateValues()
     RELEASE_ASSERT(grContext);
     GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
 
-    Ref texture = BitmapTexturePool::singleton().acquireTexture(state.frameRect.size(), { BitmapTexture::Flags::SupportsAlpha });
+    Ref texture = BitmapTexturePool::forCurrentThread().acquireTexture(state.frameRect.size(), { BitmapTexture::Flags::SupportsAlpha });
 
     GrGLTextureInfo externalTexture;
     externalTexture.fTarget = GL_TEXTURE_2D;

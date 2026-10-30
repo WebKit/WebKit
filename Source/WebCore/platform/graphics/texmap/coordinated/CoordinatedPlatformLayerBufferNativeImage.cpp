@@ -116,7 +116,7 @@ bool CoordinatedPlatformLayerBufferNativeImage::tryEnsureBuffer()
     OptionSet<BitmapTexture::Flags> textureFlags;
     if (m_image->hasAlpha())
         textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
-    auto texture = BitmapTexturePool::singleton().acquireTexture(m_size, textureFlags);
+    auto texture = BitmapTexturePool::forCurrentThread().acquireTexture(m_size, textureFlags);
 
 #if USE(CAIRO)
     auto* surface = m_image->platformImage().get();

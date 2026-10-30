@@ -52,14 +52,23 @@ static constexpr Seconds s_releaseUnusedTexturesTimerInterval { 500_ms };
 static constexpr Seconds s_releaseUnusedSecondsToleranceOnLimitExceeded { 50_ms };
 static constexpr Seconds s_releaseUnusedTexturesTimerIntervalOnLimitExceeded { 200_ms };
 
-BitmapTexturePool& BitmapTexturePool::singleton()
+// Raw pointer, since the pool has to be deleted with the GL context current, which can't be guaranteed at thread exit.
+static thread_local BitmapTexturePool* s_threadPool;
+
+BitmapTexturePool& BitmapTexturePool::forCurrentThread()
 {
-    static NeverDestroyed<BitmapTexturePool> pool;
-    return pool;
+    if (!s_threadPool)
+        s_threadPool = new BitmapTexturePool;
+    return *s_threadPool;
+}
+
+void BitmapTexturePool::destroyForCurrentThread()
+{
+    delete std::exchange(s_threadPool, nullptr);
 }
 
 BitmapTexturePool::BitmapTexturePool()
-    : m_releaseUnusedTexturesTimer(RunLoop::mainSingleton(), "BitmapTexturePool::ReleaseUnusedTexturesTimer"_s, this, &BitmapTexturePool::releaseUnusedTexturesTimerFired)
+    : m_releaseUnusedTexturesTimer(RunLoop::currentSingleton(), "BitmapTexturePool::ReleaseUnusedTexturesTimer"_s, this, &BitmapTexturePool::releaseUnusedTexturesTimerFired)
     , m_releaseUnusedSecondsTolerance(s_releaseUnusedSecondsTolerance)
     , m_releaseUnusedTexturesTimerInterval(s_releaseUnusedTexturesTimerInterval)
 {

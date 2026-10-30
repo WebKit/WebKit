@@ -78,7 +78,7 @@ void CoordinatedBackingStoreTile::processPendingUpdates()
         WTFBeginSignpost(this, AcquireTexture);
         if (!m_texture || unscaledTileRect != m_rect) {
             m_rect = unscaledTileRect;
-            m_texture = BitmapTexturePool::singleton().acquireTexture(update.tileRect.size(), flags);
+            m_texture = BitmapTexturePool::forCurrentThread().acquireTexture(update.tileRect.size(), flags);
         } else if (update.buffer->supportsAlpha() == m_texture->isOpaque())
             m_texture->reset(update.tileRect.size(), flags);
         WTFEndSignpost(this, AcquireTexture);

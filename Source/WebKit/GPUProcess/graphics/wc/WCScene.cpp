@@ -261,11 +261,11 @@ std::optional<UpdateInfo> WCScene::update(WCUpdateInfo&& update)
 
     if (update.remoteContextHostedIdentifier) {
         showFPS = false;
-        texture = WebCore::BitmapTexturePool::singleton().acquireTexture(update.viewport, { WebCore::BitmapTexture::Flags::SupportsAlpha });
+        texture = WebCore::BitmapTexturePool::forCurrentThread().acquireTexture(update.viewport, { WebCore::BitmapTexture::Flags::SupportsAlpha });
         surface = texture.get();
     } else if (m_usesOffscreenRendering) {
         readPixel = true;
-        texture = WebCore::BitmapTexturePool::singleton().acquireTexture(update.viewport, { WebCore::BitmapTexture::Flags::SupportsAlpha });
+        texture = WebCore::BitmapTexturePool::forCurrentThread().acquireTexture(update.viewport, { WebCore::BitmapTexture::Flags::SupportsAlpha });
         surface = texture.get();
     } else
         glViewport(0, 0, update.viewport.width(), update.viewport.height());
