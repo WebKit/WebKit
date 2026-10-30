@@ -150,6 +150,11 @@ bool PageDebugger::isContentScript(JSGlobalObject* state) const
     return &currentWorld(*state) != &mainThreadNormalWorldSingleton() || JSC::Debugger::isContentScript(state);
 }
 
+bool PageDebugger::isInternalScript(JSGlobalObject* state) const
+{
+    return currentWorld(*state).type() == DOMWrapperWorld::Type::Internal || JSC::Debugger::isInternalScript(state);
+}
+
 URL PageDebugger::sourceURLBase(JSGlobalObject* state) const
 {
     if (RefPtr context = uncheckedDowncast<JSDOMGlobalObject>(state)->scriptExecutionContext())

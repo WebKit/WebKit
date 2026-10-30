@@ -1,0 +1,19 @@
+Tests that pausing at the next statement skips scripts in an internal world, such as a content world that is not inspectable.
+
+
+== Running test suite: Debugger.InternalWorld
+-- Running test setup.
+-- Running test case: Debugger.InternalWorld.PauseAtNextStatement
+PASS: Should pause in pageMessage.
+-- Running test teardown.
+
+-- Running test setup.
+-- Running test case: Debugger.InternalWorld.PauseAtNextStatement.PauseForInternalScripts
+PASS: Should pause in Global Code.
+-- Running test teardown.
+
+-- Running test setup.
+-- Running test case: Debugger.InternalWorld.PauseAtNextStatement.ScriptWithoutURL
+PASS: Should pause in pageMessage.
+-- Running test teardown.
+

@@ -56,6 +56,7 @@ private:
     void runEventLoopWhilePaused() final;
     bool isPauseBlockedByAnotherDebugger() const final;
     bool isContentScript(JSC::JSGlobalObject*) const final;
+    bool isInternalScript(JSC::JSGlobalObject*) const final;
     URL sourceURLBase(JSC::JSGlobalObject*) const final;
     void reportException(JSC::JSGlobalObject*, JSC::Exception*) const final;
 

@@ -20,6 +20,13 @@ function test()
 {
     let suite = InspectorTest.createAsyncSuite("CommandLineAPI.$event");
 
+    async function setPauseForInternalScripts(shouldPause) {
+        for (let target of WI.targets) {
+            if (target.hasDomain("Debugger"))
+                await target.DebuggerAgent.setPauseForInternalScripts(shouldPause);
+        }
+    }
+
     suite.addTestCase({
         name: "CommandLineAPI.$event.World.Main",
         async test() {
@@ -50,6 +57,12 @@ function test()
 
     suite.addTestCase({
         name: "CommandLineAPI.$event.World.Internal",
+        async setup() {
+            await setPauseForInternalScripts(true);
+        },
+        async teardown() {
+            await setPauseForInternalScripts(false);
+        },
         async test() {
             let pausePromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
 

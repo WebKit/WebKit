@@ -374,6 +374,11 @@ void Debugger::setProfilingClient(ProfilingClient* client)
     m_profilingClient = client;
 }
 
+bool Debugger::isWebKitInjectedScript(const String& sourceURL)
+{
+    return sourceURL.startsWith("__InjectedScript_"_s) && sourceURL.endsWith(".js"_s);
+}
+
 void Debugger::sourceParsed(JSGlobalObject* globalObject, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
 {
     // Preemptively check whether we can dispatch so that we don't do any unnecessary allocations.
@@ -403,6 +408,7 @@ void Debugger::sourceParsed(JSGlobalObject* globalObject, SourceProvider* source
     script.startColumn = sourceProvider->startPosition().m_column.zeroBasedInt();
     script.isContentScript = isContentScript(globalObject);
     script.sourceURL = sourceProvider->sourceURLDirective();
+    script.isInternalScript = isInternalScript(globalObject) || isWebKitInjectedScript(script.sourceURL);
     script.sourceMappingURL = sourceProvider->sourceMappingURLDirective();
 
     int sourceLength = script.source.length();

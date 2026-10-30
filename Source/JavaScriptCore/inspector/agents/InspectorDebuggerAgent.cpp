@@ -79,11 +79,6 @@ static String objectGroupForBreakpointAction(JSC::BreakpointActionID id)
     return makeString("breakpoint-action-"_s, id);
 }
 
-static bool isWebKitInjectedScript(const String& sourceURL)
-{
-    return sourceURL.startsWith("__InjectedScript_"_s) && sourceURL.endsWith(".js"_s);
-}
-
 static JSC::Debugger::BlackboxRange LEGACY_NODELETE blackboxRange(const JSC::Debugger::Script& script)
 {
     return {
@@ -1466,7 +1461,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setShouldBlackboxURL(const
     if (optionalIsRegex)
         blackboxedScript.isRegex = *optionalIsRegex;
 
-    if (blackboxedScript.caseSensitive && !blackboxedScript.isRegex && isWebKitInjectedScript(blackboxedScript.url))
+    if (blackboxedScript.caseSensitive && !blackboxedScript.isRegex && JSC::Debugger::isWebKitInjectedScript(blackboxedScript.url))
         return makeUnexpected("Blackboxing of internal scripts is controlled by 'Debugger.setPauseForInternalScripts'"_s);
 
     m_blackboxedScripts.removeAll(blackboxedScript);
@@ -1524,7 +1519,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setShouldBlackboxURL(const
     }
 
     for (auto& [sourceID, script] : m_scripts) {
-        if (isWebKitInjectedScript(script.sourceURL))
+        if (JSC::Debugger::isWebKitInjectedScript(script.sourceURL))
             continue;
 
         setBlackboxConfiguration(sourceID, script);
@@ -1541,7 +1536,7 @@ void InspectorDebuggerAgent::setBlackboxConfiguration(JSC::SourceID sourceID, co
 
     JSC::Debugger::BlackboxConfiguration blackboxConfiguration;
 
-    if (!m_pauseForInternalScripts && isWebKitInjectedScript(script.sourceURL)) {
+    if (!m_pauseForInternalScripts && script.isInternalScript) {
         auto& blackboxFlags = blackboxConfiguration.ensure(blackboxRange(script), [] {
             return JSC::Debugger::BlackboxFlags();
         }).iterator->value;
@@ -1614,7 +1609,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseForInternalScripts
     m_pauseForInternalScripts = shouldPause;
 
     for (auto& [sourceID, script] : m_scripts) {
-        if (!isWebKitInjectedScript(script.sourceURL))
+        if (!script.isInternalScript)
             continue;
 
         setBlackboxConfiguration(sourceID, script);
@@ -1857,11 +1852,11 @@ void InspectorDebuggerAgent::didParseSource(JSC::JSGlobalObject* globalObject, J
     if (scriptTypeForScript(script) == Protocol::Debugger::ScriptType::WebAssembly)
         return;
 
+    setBlackboxConfiguration(sourceID, script);
+
     String scriptURLForBreakpoints = hasSourceURL ? script.sourceURL : script.url;
     if (scriptURLForBreakpoints.isEmpty())
         return;
-
-    setBlackboxConfiguration(sourceID, script);
 
     for (auto& protocolBreakpoint : m_protocolBreakpointForProtocolBreakpointID.values()) {
         if (!protocolBreakpoint.matchesScriptURL(scriptURLForBreakpoints))
