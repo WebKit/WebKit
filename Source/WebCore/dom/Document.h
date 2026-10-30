@@ -1700,7 +1700,7 @@ public:
     const AXCustomColorModeController* axCustomColorModeControllerIfExists() const { return m_axCustomColorModeController.get(); }
     AXCustomColorModeController& axCustomColorModeController();
 
-    bool isAXCustomColorModeActive() const;
+    WEBCORE_EXPORT bool isAXCustomColorModeActive() const;
 #endif
 
     void LEGACY_NODELETE adjustStyleColorOptionsIfNeeded(OptionSet<StyleColorOptions>&) const;

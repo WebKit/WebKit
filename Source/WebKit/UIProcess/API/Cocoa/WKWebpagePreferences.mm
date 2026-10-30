@@ -911,4 +911,18 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return WKSecurityRestrictionModeNone;
 }
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+
+- (BOOL)_forceDisableAXCustomColorMode
+{
+    return _websitePolicies->forceDisableAXCustomColorMode();
+}
+
+- (void)_setForceDisableAXCustomColorMode:(BOOL)disabled
+{
+    _websitePolicies->setForceDisableAXCustomColorMode(disabled);
+}
+
+#endif
+
 @end

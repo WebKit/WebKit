@@ -564,12 +564,6 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 settings->fontGenericFamilies() = parentSettings->fontGenericFamilies();
                 settings->setCSSDPropertyEnabled(parentSettings->cssDPropertyEnabled());
                 settings->setDownloadableBinaryFontTrustedTypes(parentSettings->downloadableBinaryFontTrustedTypes());
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-                m_fallbackInvertContent = AXCustomColorModeController::shouldAdjustSVGImages(m_page);
-                m_appliedDocumentState.invertContent = m_fallbackInvertContent;
-                settings->setAxCustomColorModeEnabled(m_fallbackInvertContent);
-                settings->setAxCustomColorModeAppearanceDetectionEnabled(false);
-#endif
             }
             protect(m_page)->setUseColorAppearance(observer->useSystemDarkAppearance(), false);
         }
@@ -599,6 +593,13 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         protect(localMainFrame->document())->updateLayoutIgnorePendingStylesheets();
 
         reportApproximateMemoryCost();
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        m_fallbackInvertContent = AXCustomColorModeController::shouldAdjustSVGImages(protect(*localMainFrame->document()));
+        m_appliedDocumentState.invertContent = m_fallbackInvertContent;
+        settings->setAxCustomColorModeEnabled(m_fallbackInvertContent);
+        settings->setAxCustomColorModeAppearanceDetectionEnabled(false);
+#endif
     }
 
     return m_page ? EncodedDataStatus::Complete : EncodedDataStatus::Unknown;

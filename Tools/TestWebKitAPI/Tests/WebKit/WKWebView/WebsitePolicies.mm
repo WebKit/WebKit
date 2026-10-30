@@ -28,6 +28,7 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestProtocol.h"
@@ -2465,3 +2466,53 @@ TEST(WebpagePreferences, GlobalPrivacyControlRequestHeaderInSubframe)
     EXPECT_TRUE(sawMainResourceRequest);
     EXPECT_TRUE(sawSubframeMainResourceRequest);
 }
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+
+@interface AXCustomColorModeBlocklistDelegate : TestNavigationDelegate <WKNavigationDelegate, WKUIDelegatePrivate>
+@property BOOL forceDisable;
+@end
+
+@implementation AXCustomColorModeBlocklistDelegate
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
+{
+    RetainPtr websitePolicies = adoptNS([[WKWebpagePreferences alloc] init]);
+    [websitePolicies _setForceDisableAXCustomColorMode:_forceDisable];
+    decisionHandler(WKNavigationActionPolicyAllow, websitePolicies.get());
+}
+
+@end
+
+TEST(WebpagePreferences, ForceDisableAXCustomColorMode)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/index.html"_s, { "<script>alert(internals.isAXCustomColorModeActive())</script>"_s } },
+    });
+
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    TestWebKitAPI::setFeatureEnabled(configuration, @"AXCustomColorModeEnabled", true);
+
+    RetainPtr delegate = adoptNS([[AXCustomColorModeBlocklistDelegate alloc] init]);
+    [delegate setForceDisable:NO];
+
+    {
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        [webView setNavigationDelegate:delegate];
+        [webView loadRequest:server.requestWithLocalhost("/index.html"_s)];
+
+        EXPECT_WK_STREQ("true", [webView _test_waitForAlert]);
+    }
+
+    [delegate setForceDisable:YES];
+
+    {
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        [webView setNavigationDelegate:delegate];
+        [webView loadRequest:server.requestWithLocalhost("/index.html"_s)];
+
+        EXPECT_WK_STREQ("false", [webView _test_waitForAlert]);
+    }
+}
+
+#endif
