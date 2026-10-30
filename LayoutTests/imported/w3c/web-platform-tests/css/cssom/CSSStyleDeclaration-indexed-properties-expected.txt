@@ -1,0 +1,8 @@
+
+PASS indexed access returns property names in insertion order
+PASS indexed access works after setting cssText
+PASS indexed access updates after removeProperty
+PASS indexed access on empty style returns undefined
+PASS in operator works for indexed properties
+PASS indexed properties are enumerable
+

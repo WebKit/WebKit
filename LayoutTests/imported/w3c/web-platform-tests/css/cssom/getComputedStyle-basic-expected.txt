@@ -1,0 +1,7 @@
+Test
+
+PASS Sanity check
+PASS cssText
+PASS setProperty
+PASS removeProperty
+

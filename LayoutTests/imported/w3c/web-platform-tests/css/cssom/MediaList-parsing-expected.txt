@@ -1,0 +1,15 @@
+
+PASS Initial media from stylesheet is normalized
+PASS mediaText setter lowercases media types
+PASS mediaText setter trims and normalizes whitespace
+PASS mediaText setter collapses internal whitespace and lowercases
+PASS Setting mediaText to empty string empties the list
+PASS Invalid queries in a list become "not all"
+PASS A single invalid query becomes "not all"
+PASS appendMedium adds a new medium
+PASS appendMedium deduplicates by normalized form
+PASS appendMedium with invalid input appends "not all"
+PASS deleteMedium matches by normalized form
+PASS deleteMedium throws NotFoundError for non-existent medium
+PASS deleteMedium throws NotFoundError when no "not all" entry exists
+

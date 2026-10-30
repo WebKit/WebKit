@@ -1,0 +1,7 @@
+Parent element (blue)
+Child element (inherits blue)
+Overridden child element (red)
+
+PASS Test color inheritance
+PASS Dynamically override inherited color
+

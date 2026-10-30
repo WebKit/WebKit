@@ -1,0 +1,17 @@
+
+PASS getter normalizes 'from' to '0%'
+PASS getter normalizes 'to' to '100%'
+PASS getter preserves percentage values
+FAIL getter normalizes comma-separated selectors assert_equals: expected "25%, 75%" but got "25%,75%"
+PASS setter accepts a valid percentage
+PASS setter normalizes 'from' to '0%'
+PASS setter normalizes 'to' to '100%'
+FAIL setter accepts comma-separated percentages assert_equals: expected "10%, 90%" but got "10%,90%"
+FAIL setter normalizes comma-separated from/to assert_equals: expected "0%, 100%" but got "0%,100%"
+FAIL setter throws SyntaxError for invalid selector assert_throws_dom: function "() => {
+    rules[0].keyText = "invalid";
+  }" did not throw
+FAIL setter throws SyntaxError for empty string assert_throws_dom: function "() => {
+    rules[0].keyText = "";
+  }" did not throw
+

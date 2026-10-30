@@ -1,0 +1,8 @@
+Hello world
+
+
+PASS Sanity check: getComputedStyle works as expected
+PASS Inserting a new CSS element that overrides the old one updates the computed style
+PASS Updating the inserted CSS element changes the computed style
+PASS Removing the inserted CSS element updates the computed style back to original value
+

@@ -1,0 +1,4 @@
+
+PASS Sanity check
+PASS toggle shadowRoot.host visibility
+

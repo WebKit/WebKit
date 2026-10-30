@@ -13,7 +13,7 @@ PASS The serialization of border: solid; border-style: dotted should be canonica
 PASS The serialization of border-width: 1px; should be canonical.
 PASS The serialization of overflow-x: scroll; overflow-y: hidden; should be canonical.
 PASS The serialization of overflow-x: scroll; overflow-y: scroll; should be canonical.
-FAIL The serialization of outline-width: 2px; outline-style: dotted; outline-color: blue; should be canonical. assert_equals: expected "outline: blue dotted 2px;" but got "outline: 2px dotted blue;"
+PASS The serialization of outline-width: 2px; outline-style: dotted; outline-color: blue; should be canonical.
 PASS The serialization of margin-top: 1px; margin-right: 2px; margin-bottom: 3px; margin-left: 4px; should be canonical.
 PASS The serialization of list-style-type: circle; list-style-position: inside; list-style-image: none; should be canonical.
 PASS The serialization of list-style-type: lower-alpha; should be canonical.

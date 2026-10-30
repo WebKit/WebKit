@@ -1,0 +1,10 @@
+
+PASS @import with empty prelude is dropped
+PASS @import with supports() but no URL is dropped
+PASS @namespace with empty prelude is dropped
+PASS @namespace with bare identifier instead of URL is dropped
+PASS @namespace with trailing identifier after URL is dropped
+PASS @namespace with no prefix and trailing identifier after URL is dropped
+PASS Valid @namespace with URL is kept
+PASS Valid @import with URL string is kept
+
