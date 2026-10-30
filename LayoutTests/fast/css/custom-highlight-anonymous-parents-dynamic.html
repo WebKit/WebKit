@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<meta charset="utf-8">
+<title>Custom Highlight survives anonymous-parent reconstruction</title>
+<link rel="help" href="https://drafts.csswg.org/css-highlight-api-1/">
+<link rel="match" href="custom-highlight-anonymous-parents-dynamic-expected.html">
+<link rel="issue" href="https://bugs.webkit.org/show_bug.cgi?id=307455">
+<style>
+@font-face { font-family: Ahem; src: url("../../resources/Ahem.ttf"); }
+body { font: 20px Ahem; color: black; background: white; }
+math { font: inherit; }
+::highlight(probe) { background-color: yellow; color: blue; }
+.origin { --highlight-background: magenta; }
+.origin::highlight(probe) { background-color: var(--highlight-background); }
+
+</style>
+<div style="display:flex"><span id="flex" class="origin">before TEXT after</span></div>
+<math><mtext><span id="math" class="origin">TEXT</span></mtext></math>
+<script>
+const ranges = [...document.querySelectorAll('[id]')].map(element => {
+    const range = new Range();
+    range.setStart(element.firstChild, element.firstChild.length === 4 ? 0 : 7);
+    range.setEnd(element.firstChild, element.firstChild.length === 4 ? 4 : 11);
+    return range;
+});
+CSS.highlights.set('probe', new Highlight(...ranges));
+// Keep the exact same Text nodes, Ranges, Highlight, and registry entry.
+// Paint both real and boxless origins before changing the boxless origin's
+// custom property, exercising its highlight pseudo-style invalidation too.
+const nextFrame = () => new Promise(requestAnimationFrame);
+(async () => {
+    await document.fonts.ready;
+    await nextFrame();
+    await nextFrame();
+    for (const element of document.querySelectorAll('[id]'))
+        element.style.display = 'contents';
+    await nextFrame();
+    await nextFrame();
+    for (const element of document.querySelectorAll('[id]'))
+        element.style.setProperty('--highlight-background', 'yellow');
+    await nextFrame();
+    document.documentElement.classList.remove('reftest-wait');
+})();
+</script>

@@ -61,6 +61,7 @@
 #include "StyleableInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
+#include "StyleDifference.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
 #include "TextManipulationController.h"
@@ -429,6 +430,12 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
 #endif
 
     auto elementUpdateStyle = Style::ComputedStyle::cloneIncludingPseudoElements(*elementUpdate.style);
+    bool repaintBoxlessHighlights = [&] {
+        if (elementUpdateStyle.display() != Style::DisplayType::Contents || !element.hasDisplayContents())
+            return false;
+        CheckedPtr oldStyle = element.renderOrDisplayContentsStyle();
+        return oldStyle && Style::highlightPseudoElementStyleChangeRequiresRepaint(*oldStyle, elementUpdateStyle);
+    }();
 
     bool shouldTearDownRenderers = [&]() {
         if (element.isInTopLayer() && elementUpdate.changes.contains(Style::Change::Inherited) && elementUpdate.style->isSkippedRootOrSkippedContent())
@@ -505,8 +512,26 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         return;
     }
 
-    if (!element.renderer())
+    if (!element.renderer()) {
+        if (repaintBoxlessHighlights) {
+            // Direct composed Text children use this boxless origin's highlight style. Descendant
+            // elements handle their own styles, including inherited highlight changes.
+            SingleThreadWeakHashSet<RenderBlock> containingBlocks;
+            for (Ref node : composedTreeChildren(element)) {
+                if (auto* text = dynamicDowncast<Text>(node)) {
+                    if (CheckedPtr renderer = text->renderer()) {
+                        renderer->repaint();
+                        if (CheckedPtr containingBlock = renderer->containingBlock())
+                            containingBlocks.add(*containingBlock);
+                    }
+                }
+            }
+            // Include containing blocks for first-letter fragments and decorations outside text ink overflow.
+            for (CheckedRef containingBlock : containingBlocks)
+                containingBlock->repaint();
+        }
         return;
+    }
     auto& renderer = *element.renderer();
 
     if (elementUpdate.recompositeLayer) {
