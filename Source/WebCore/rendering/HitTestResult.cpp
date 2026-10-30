@@ -419,18 +419,19 @@ String HitTestResult::altDisplayString() const
 
 RefPtr<Node> HitTestResult::nodeForImageData() const
 {
-    if (!m_innerNonSharedNode)
+    RefPtr innerNonSharedNode = m_innerNonSharedNode;
+    if (!innerNonSharedNode)
         return nullptr;
 
-    if (ImageOverlay::isInsideOverlay(*m_innerNonSharedNode))
-        return m_innerNonSharedNode->shadowHost();
-    
+    if (ImageOverlay::isInsideOverlay(*innerNonSharedNode))
+        return innerNonSharedNode->shadowHost();
+
 #if ENABLE(SERVICE_CONTROLS)
-    if (ImageControlsMac::isInsideImageControls(*m_innerNonSharedNode))
-        return m_innerNonSharedNode->shadowHost();
+    if (ImageControlsMac::isInsideImageControls(*innerNonSharedNode))
+        return innerNonSharedNode->shadowHost();
 #endif
 
-    return m_innerNonSharedNode;
+    return innerNonSharedNode;
 }
 
 RenderImage* HitTestResult::renderImage() const
@@ -513,7 +514,7 @@ URL HitTestResult::absolutePDFURL() const
     if (!element)
         return URL();
 
-    auto url = m_innerNonSharedNode->document().encodingParseURL(element->url());
+    auto url = protect(m_innerNonSharedNode->document())->encodingParseURL(element->url());
     if (!url.isValid())
         return URL();
 
@@ -617,7 +618,7 @@ void HitTestResult::toggleMediaFullscreenState() const
 #if ENABLE(VIDEO)
     if (RefPtr mediaElement = this->mediaElement()) {
         if (mediaElement->isVideo() && mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
-            UserGestureIndicator indicator(IsProcessingUserGesture::Yes, &mediaElement->document());
+            UserGestureIndicator indicator(IsProcessingUserGesture::Yes, protect(mediaElement->document()).ptr());
             mediaElement->toggleStandardFullscreenState();
         }
     }
@@ -630,7 +631,7 @@ void HitTestResult::enterFullscreenForVideo() const
     RefPtr mediaElement(this->mediaElement());
     if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(mediaElement)) {
         if (!videoElement->isFullscreen() && mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
-            UserGestureIndicator indicator(IsProcessingUserGesture::Yes, &mediaElement->document());
+            UserGestureIndicator indicator(IsProcessingUserGesture::Yes, protect(mediaElement->document()).ptr());
             videoElement->webkitEnterFullscreen();
         }
     }
@@ -654,7 +655,7 @@ void HitTestResult::toggleVideoViewer() const
     if (!videoElement || !mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeInWindow))
         return;
 
-    UserGestureIndicator indicator(IsProcessingUserGesture::Yes, &mediaElement->document());
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes, protect(mediaElement->document()).ptr());
     auto newMode = videoElement->webkitPresentationMode() == HTMLVideoElement::VideoPresentationMode::InWindow ? HTMLVideoElement::VideoPresentationMode::Inline : HTMLVideoElement::VideoPresentationMode::InWindow;
 
     videoElement->webkitSetPresentationMode(newMode);
@@ -977,7 +978,7 @@ void HitTestResult::togglePictureInPictureForVideo() const
     if (!mediaElement || !videoElement || !mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture))
         return;
 
-    UserGestureIndicator indicator(IsProcessingUserGesture::Yes, &mediaElement->document());
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes, protect(mediaElement->document()).ptr());
     if (videoElement->webkitPresentationMode() == HTMLVideoElement::VideoPresentationMode::PictureInPicture)
         videoElement->webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
     else
