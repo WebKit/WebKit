@@ -3392,13 +3392,10 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
     // Context here refers to the general term and not necessarily a formatting context
     // since, for example, we might compute the logical height from the aspect ratio.
     auto usedLogicalHeightFromContext = [&] -> std::optional<LayoutUnit> {
-        if (is<RenderTable>(*this)) {
-            // Tables use the passed-in height (not the style height) even when they are flex/grid items.
-            auto heightValue = logicalHeight;
-            if (shouldComputeLogicalHeightFromAspectRatio())
-                heightValue = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizingForAspectRatio(), logicalWidth(), style().aspectRatio(), is<RenderReplaced>(*this));
-            return heightValue;
-        }
+        // Tables use the passed-in height (not the style height or the aspect ratio, which RenderTable::layout() applies) even when
+        // they are flex/grid items.
+        if (is<RenderTable>(*this))
+            return logicalHeight;
 
         if (is<RenderFlexibleBox>(parent)) {
             if (auto overridingLogicalHeight = overridingLogicalHeightForFlexBasisComputation()) {

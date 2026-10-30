@@ -608,7 +608,10 @@ void RenderTable::layout()
         }
 
         auto& logicalHeightLength = style().logicalHeight();
-        if (!isOutOfFlowPositioned() && (logicalHeightLength.isIntrinsicOrStretch() || (logicalHeightLength.isSpecified() && logicalHeightLength.isPossiblyPositive())))
+        if (!isOutOfFlowPositioned() && shouldComputeLogicalHeightFromAspectRatio()) {
+            auto borderBoxLogicalHeight = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizingForAspectRatio(), logicalWidth(), style().aspectRatio(), false);
+            computedLogicalHeight = borderBoxLogicalHeight - (borderAndPaddingBefore + borderAndPaddingAfter);
+        } else if (!isOutOfFlowPositioned() && (logicalHeightLength.isIntrinsicOrStretch() || (logicalHeightLength.isSpecified() && logicalHeightLength.isPossiblyPositive())))
             computedLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalHeightLength);
 
         if (auto overridingLogicalHeight = this->overridingBorderBoxLogicalHeight())
