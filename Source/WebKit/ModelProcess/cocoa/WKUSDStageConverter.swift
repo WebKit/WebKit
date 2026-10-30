@@ -51,6 +51,11 @@ private func usdStageType(forMIMEType mimeType: String) -> UTType {
 extension WKUSDStageConverter {
     @objc(convert:mimeType:)
     class func convert(_ data: Data, mimeType: String) -> Data? {
+        if ModelAssetPolicy.referencesExternalAssets(modelData: data) {
+            Logger.usdStageConverter.error("WKUSDStageConverter: Refusing to open a stage that references assets outside itself")
+            return nil
+        }
+
         let stage: USDStage
         do {
             stage = try USDStage(data, type: usdStageType(forMIMEType: mimeType))
