@@ -2163,6 +2163,11 @@ void ContextMtl::updateViewport(FramebufferMtl *framebufferMtl,
                                 float nearPlane,
                                 float farPlane)
 {
+    if (NeedToInvertDepthRange(nearPlane, farPlane))
+    {
+        // As in updateDepthRange(), the shader inverts the depth of a reversed range.
+        std::swap(nearPlane, farPlane);
+    }
     mViewport = mtl::GetViewport(viewport, framebufferMtl->getState().getDimensions().height,
                                  framebufferMtl->getFlipY(), nearPlane, farPlane);
     mDirtyBits.set(DIRTY_BIT_VIEWPORT);
