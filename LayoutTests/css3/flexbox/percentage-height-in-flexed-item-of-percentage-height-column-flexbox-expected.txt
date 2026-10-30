@@ -1,0 +1,5 @@
+
+PASS .outer 1
+Column flexbox with an unresolvable height: 100%. The flexed item is sized by aspect-ratio, and its specified height is overridden by the 0% flex-basis, so the percentage resolves against the flexed size:
+
+
