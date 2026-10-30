@@ -272,6 +272,9 @@ public:
 
     WTF::AdaptiveStringSearcherTables& adaptiveStringSearcherTables() { return m_stringSearcherTables.get(*this); }
 
+    uint64_t& recentLatin1JSONStringifyLengths() { return m_recentLatin1JSONStringifyLengths; }
+    uint64_t& recentUTF16JSONStringifyLengths() { return m_recentUTF16JSONStringifyLengths; }
+
     bool isAnalyzingHeap() const { return m_activeHeapAnalyzer; }
     HeapAnalyzer* activeHeapAnalyzer() const { return m_activeHeapAnalyzer; }
     void setActiveHeapAnalyzer(HeapAnalyzer* analyzer) { m_activeHeapAnalyzer = analyzer; }
@@ -1273,6 +1276,8 @@ private:
     LazyUniqueRef<VM, ShadowChicken> m_shadowChicken;
     std::unique_ptr<BytecodeIntrinsicRegistry> m_bytecodeIntrinsicRegistry;
     uint64_t m_drainMicrotaskDelayScopeCount { 0 };
+    uint64_t m_recentLatin1JSONStringifyLengths { 0 };
+    uint64_t m_recentUTF16JSONStringifyLengths { 0 };
 
     // FIXME: We should remove handled promises from this list at GC flip. <https://webkit.org/b/201005>
     Vector<Strong<JSPromise>> m_aboutToBeNotifiedRejectedPromises;
