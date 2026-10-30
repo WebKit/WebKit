@@ -81,12 +81,12 @@ public:
 
     std::optional<LayoutRect> updateOverflow();
 
-    static void updateStyle(const RenderObject&);
+    static void updateStyle(const RenderElement&);
 
     // Partial invalidation.
     bool insertedIntoTree(RenderObject& child);
     bool removedFromTree(RenderObject& child);
-    bool updateTextContent(const RenderText&, std::optional<size_t> offset, size_t oldLength);
+    bool updateTextContent(RenderText&, std::optional<size_t> offset, size_t oldLength);
     bool rootStyleWillChange(const RenderBlockFlow&, const Style::ComputedStyle& newStyle);
     bool styleWillChange(const RenderElement&, const Style::ComputedStyle& newStyle, Style::Difference);
     bool boxContentWillChange(const RenderBox&);

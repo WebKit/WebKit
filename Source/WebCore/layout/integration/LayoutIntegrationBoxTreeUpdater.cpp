@@ -29,7 +29,6 @@
 #include "FormattingContextBoxIterator.h"
 #include "InlineWalker.h"
 #include "LayoutElementBox.h"
-#include "LayoutInlineTextBox.h"
 #include "RenderBlock.h"
 #include "RenderBlockFlow.h"
 #include "RenderBlockFlowInlines.h"
@@ -49,6 +48,7 @@
 #include "RenderSVGInline.h"
 #include "RenderSlider.h"
 #include "RenderTable.h"
+#include "RenderText.h"
 #include "RenderTextControl.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
@@ -142,6 +142,9 @@ void BoxTreeUpdater::tearDown()
         if (layoutBox->isIntegrationRoot())
             continue;
         const_cast<Layout::Box&>(layoutBox.get()).clearFormattingContextData();
+        // The inline items are gone, so content changes that waited for them can go in.
+        if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(layoutBox->rendererForIntegration()))
+            textRenderer->updateLayoutBoxContentIfNeeded();
     }
 
     if (!isInLiveFormattingContext(m_rootRenderer))
@@ -152,6 +155,47 @@ void BoxTreeUpdater::tearDown()
 static Layout::ElementBox::IsListMarkerImage isListMarkerImage(const RenderListOutsideMarker& listMarkerRenderer)
 {
     return listMarkerRenderer.isImage() ? Layout::ElementBox::IsListMarkerImage::Yes : Layout::ElementBox::IsListMarkerImage::No;
+}
+
+void BoxTreeUpdater::initializeLayoutBox(RenderElement& renderer)
+{
+    // The element box shares the renderer's style.
+    CheckedRef elementBox = renderer.layoutBox();
+    elementBox->setElementAttributes(elementAttributes(renderer));
+    elementBox->setFirstLineStyle(firstLineStyleFor(renderer));
+    if (CheckedPtr listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(renderer))
+        elementBox->setIsListMarkerImage(isListMarkerImage(*listMarkerRenderer));
+}
+
+void BoxTreeUpdater::initializeInlineContent(const RenderElement& container)
+{
+    for (auto walker = InlineWalker(container); !walker.atEnd(); walker.advance()) {
+        // Text keeps its box current itself.
+        CheckedPtr childRenderer = dynamicDowncast<RenderElement>(*walker.current());
+        if (!childRenderer) {
+            ASSERT(!downcast<RenderText>(*walker.current()).layoutBoxContentNeedsUpdate());
+            continue;
+        }
+        if (Layout::isExcludedFromLayoutBoxNavigation(*childRenderer) || childRenderer->layoutBox().isIntegrationRoot())
+            continue;
+        initializeLayoutBox(*childRenderer);
+    }
+}
+
+void BoxTreeUpdater::initializeGridContent()
+{
+    for (CheckedRef gridItemRenderer : childrenOfType<RenderElement>(m_rootRenderer)) {
+        if (gridItemRenderer->layoutBox().isIntegrationRoot())
+            continue;
+        initializeLayoutBox(gridItemRenderer);
+    }
+}
+
+
+static bool canUseSimplifiedMeasuring(const RenderText& renderer, StringView content)
+{
+    CheckedRef style = renderer.style();
+    return Layout::TextUtil::canUseSimplifiedTextMeasuring(content, style->fontCascade(), style->collapseWhiteSpace(), &renderer.firstLineStyle());
 }
 
 static bool synthesizesGlyph(const RenderText& textRenderer)
@@ -169,172 +213,64 @@ static bool synthesizesGlyph(const RenderText& textRenderer)
     return false;
 }
 
-void BoxTreeUpdater::initializeLayoutBox(RenderObject& renderer)
+void BoxTreeUpdater::updateContent(RenderText& textRenderer)
 {
-    std::unique_ptr<Style::ComputedStyle> firstLineStyle = firstLineStyleFor(renderer);
+    ASSERT(textRenderer.parent());
+    auto isCombined = [&] {
+        auto* combineText = dynamicDowncast<RenderCombineText>(textRenderer);
+        return combineText && combineText->isCombined();
+    }();
+    CheckedRef style = textRenderer.style();
+    auto content = isCombined ? textRenderer.originalText() : textRenderer.text();
+    if (style->textSecurity() != TextSecurity::None)
+        content = RenderBlock::updateSecurityDiscCharacters(style, WTF::move(content));
 
-    if (auto* textRenderer = dynamicDowncast<RenderText>(renderer)) {
-        auto style = Style::ComputedStyle::createAnonymousStyleWithDisplay(textRenderer->style(), Style::DisplayType::InlineFlow);
-        auto isCombinedText = [&] {
-            auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(*textRenderer);
-            return combineTextRenderer && combineTextRenderer->isCombined();
-        }();
-        auto text = style.textSecurity() == TextSecurity::None
-            ? (isCombinedText ? textRenderer->originalText() : textRenderer->text())
-            : RenderBlock::updateSecurityDiscCharacters(style, isCombinedText ? textRenderer->originalText() : String { textRenderer->text() });
-
-        auto canUseSimpleFontCodePath = textRenderer->canUseSimpleFontCodePath();
-        auto canUseSimplifiedTextMeasuring = textRenderer->canUseSimplifiedTextMeasuring();
-        if (!canUseSimplifiedTextMeasuring) {
-            canUseSimplifiedTextMeasuring = canUseSimpleFontCodePath && Layout::TextUtil::canUseSimplifiedTextMeasuring(text, style.fontCascade(), style.collapseWhiteSpace(), firstLineStyle.get());
-            textRenderer->setCanUseSimplifiedTextMeasuring(*canUseSimplifiedTextMeasuring);
-        }
-
-        auto hasPositionDependentContentWidth = textRenderer->hasPositionDependentContentWidth();
-        if (!hasPositionDependentContentWidth) {
-            hasPositionDependentContentWidth = Layout::TextUtil::hasPositionDependentContentWidth(text);
-            textRenderer->setHasPositionDependentContentWidth(*hasPositionDependentContentWidth);
-        }
-
-        auto hasStrongDirectionalityContent = textRenderer->hasStrongDirectionalityContent();
-        if (!hasStrongDirectionalityContent) {
-            hasStrongDirectionalityContent = Layout::TextUtil::containsStrongDirectionalityText(text);
-            textRenderer->setHasStrongDirectionalityContent(*hasStrongDirectionalityContent);
-        }
-
-        auto contentCharacteristic = EnumSet<Layout::InlineTextBox::ContentCharacteristic> { };
-        if (canUseSimpleFontCodePath)
-            contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpleFontCodepath);
-        if (textRenderer->shouldUseSimpleGlyphOverflowCodePath())
-            contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::ShouldUseSimpleGlyphOverflowCodePath);
-        if (*canUseSimplifiedTextMeasuring)
-            contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimplifiedContentMeasuring);
-        if (*hasPositionDependentContentWidth)
-            contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
-        if (*hasStrongDirectionalityContent)
-            contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
-        if (synthesizesGlyph(*textRenderer))
-            contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasSynthesizedGlyph);
-
-        CheckedRef inlineTextBox = textRenderer->layoutBox();
-        inlineTextBox->setContent(text, contentCharacteristic);
-        inlineTextBox->setIsCombined(isCombinedText);
-        inlineTextBox->updateStyle(WTF::move(style), WTF::move(firstLineStyle));
-        return;
+    using ContentCharacteristic = Layout::InlineTextBox::ContentCharacteristic;
+    auto contentCharacteristics = EnumSet<ContentCharacteristic> { };
+    if (textRenderer.canUseSimpleFontCodePath()) {
+        contentCharacteristics.add(ContentCharacteristic::CanUseSimpleFontCodepath);
+        if (canUseSimplifiedMeasuring(textRenderer, content))
+            contentCharacteristics.add(ContentCharacteristic::CanUseSimplifiedContentMeasuring);
     }
+    if (textRenderer.shouldUseSimpleGlyphOverflowCodePath())
+        contentCharacteristics.add(ContentCharacteristic::ShouldUseSimpleGlyphOverflowCodePath);
+    if (Layout::TextUtil::hasPositionDependentContentWidth(content))
+        contentCharacteristics.add(ContentCharacteristic::HasPositionDependentContentWidth);
+    if (Layout::TextUtil::containsStrongDirectionalityText(content))
+        contentCharacteristics.add(ContentCharacteristic::HasStrongDirectionalityContent);
+    if (synthesizesGlyph(textRenderer))
+        contentCharacteristics.add(ContentCharacteristic::HasSynthesizedGlyph);
 
+    CheckedRef inlineTextBox = textRenderer.layoutBox();
+    inlineTextBox->setContent(WTF::move(content), contentCharacteristics);
+    inlineTextBox->setIsCombined(isCombined);
+}
+
+void BoxTreeUpdater::updateSimplifiedMeasuring(RenderText& textRenderer)
+{
+    CheckedRef inlineTextBox = textRenderer.layoutBox();
+    inlineTextBox->setCanUseSimplifiedContentMeasuring(inlineTextBox->canUseSimpleFontCodePath() && canUseSimplifiedMeasuring(textRenderer, inlineTextBox->content()));
+}
+
+void BoxTreeUpdater::updateStyle(const RenderElement& renderer)
+{
     // The element box shares the renderer's style.
-    auto& renderElement = downcast<RenderElement>(renderer);
-    CheckedRef elementBox = renderElement.layoutBox();
-    elementBox->setElementAttributes(elementAttributes(renderElement));
-    elementBox->setFirstLineStyle(WTF::move(firstLineStyle));
-    if (CheckedPtr listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(renderElement))
-        elementBox->setIsListMarkerImage(isListMarkerImage(*listMarkerRenderer));
-}
-
-void BoxTreeUpdater::initializeInlineContent(const RenderElement& container)
-{
-    for (auto walker = InlineWalker(container); !walker.atEnd(); walker.advance()) {
-        CheckedRef childRenderer = *walker.current();
-        if (Layout::isExcludedFromLayoutBoxNavigation(childRenderer) || childRenderer->layoutBox().isIntegrationRoot())
-            continue;
-        initializeLayoutBox(childRenderer);
-    }
-}
-
-void BoxTreeUpdater::initializeGridContent()
-{
-    for (CheckedRef gridItemRenderer : childrenOfType<RenderElement>(m_rootRenderer)) {
-        if (gridItemRenderer->layoutBox().isIntegrationRoot())
-            continue;
-        initializeLayoutBox(gridItemRenderer);
-    }
-}
-
-static void updateContentCharacteristic(const RenderText& rendererText, Layout::InlineTextBox& inlineTextBox)
-{
-    CheckedRef rendererStyle = rendererText.style();
-    auto shouldUpdateContentCharacteristic = !rendererStyle->fontCascadeEqual(inlineTextBox.style());
-    if (!shouldUpdateContentCharacteristic)
-        return;
-
-    auto contentCharacteristic = EnumSet<Layout::InlineTextBox::ContentCharacteristic> { };
-    // These may only change when content changes.
-    if (inlineTextBox.canUseSimpleFontCodePath())
-        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpleFontCodepath);
-    if (inlineTextBox.shouldUseSimpleGlyphOverflowCodePath())
-        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::ShouldUseSimpleGlyphOverflowCodePath);
-    if (inlineTextBox.hasPositionDependentContentWidth())
-        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
-    if (inlineTextBox.hasStrongDirectionalityContent())
-        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
-    if (inlineTextBox.hasSynthesizedGlyph())
-        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasSynthesizedGlyph);
-
-    if (inlineTextBox.canUseSimpleFontCodePath() && Layout::TextUtil::canUseSimplifiedTextMeasuring(inlineTextBox.content(), rendererStyle->fontCascade(), rendererStyle->collapseWhiteSpace(), &rendererText.firstLineStyle()))
-        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimplifiedContentMeasuring);
-
-    inlineTextBox.setContentCharacteristic(contentCharacteristic);
-}
-
-void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
-{
-    if (auto* renderText = dynamicDowncast<RenderText>(renderer)) {
-        CheckedRef inlineTextBox = const_cast<Layout::InlineTextBox&>(renderText->layoutBox());
-        updateContentCharacteristic(*renderText, inlineTextBox);
-        inlineTextBox->updateStyle(Style::ComputedStyle::createAnonymousStyleWithDisplay(renderText->style(), Style::DisplayType::InlineFlow), firstLineStyleFor(*renderText));
-        return;
-    }
-
-    // The element box shares the renderer's style.
-    CheckedRef elementBox = const_cast<Layout::ElementBox&>(downcast<RenderElement>(renderer).layoutBox());
+    CheckedRef elementBox = const_cast<Layout::ElementBox&>(renderer.layoutBox());
     elementBox->setFirstLineStyle(firstLineStyleFor(renderer));
     if (auto* listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(renderer))
         elementBox->setIsListMarkerImage(isListMarkerImage(*listMarkerRenderer));
 }
 
-void BoxTreeUpdater::updateContent(const RenderText& textRenderer)
-{
-    CheckedRef inlineTextBox = const_cast<Layout::InlineTextBox&>(textRenderer.layoutBox());
-    CheckedRef style = inlineTextBox->style();
-    auto isCombinedText = [&] {
-        auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(textRenderer);
-        return combineTextRenderer && combineTextRenderer->isCombined();
-    }();
-    auto text = style->textSecurity() == TextSecurity::None ? (isCombinedText ? textRenderer.originalText() : String { textRenderer.text() }) : RenderBlock::updateSecurityDiscCharacters(style.get(), isCombinedText ? textRenderer.originalText() : String { textRenderer.text() });
-    auto contentCharacteristic = EnumSet<Layout::InlineTextBox::ContentCharacteristic> { };
-    if (textRenderer.canUseSimpleFontCodePath())
-        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpleFontCodepath);
-    if (textRenderer.canUseSimpleFontCodePath() && Layout::TextUtil::canUseSimplifiedTextMeasuring(text, style->fontCascade(), style->collapseWhiteSpace(), &inlineTextBox->firstLineStyle()))
-        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimplifiedContentMeasuring);
-    if (textRenderer.shouldUseSimpleGlyphOverflowCodePath())
-        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::ShouldUseSimpleGlyphOverflowCodePath);
-    auto hasPositionDependentContentWidth = textRenderer.hasPositionDependentContentWidth();
-    if (!hasPositionDependentContentWidth) {
-        hasPositionDependentContentWidth = Layout::TextUtil::hasPositionDependentContentWidth(text);
-        const_cast<RenderText&>(textRenderer).setHasPositionDependentContentWidth(*hasPositionDependentContentWidth);
-    }
-    if (*hasPositionDependentContentWidth)
-        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
-    auto hasStrongDirectionalityContent = textRenderer.hasStrongDirectionalityContent();
-    if (!hasStrongDirectionalityContent) {
-        hasStrongDirectionalityContent = Layout::TextUtil::containsStrongDirectionalityText(text);
-        const_cast<RenderText&>(textRenderer).setHasStrongDirectionalityContent(*hasStrongDirectionalityContent);
-    }
-    if (*hasStrongDirectionalityContent)
-        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
-    if (synthesizesGlyph(textRenderer))
-        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasSynthesizedGlyph);
-
-    inlineTextBox->setContent(text, contentCharacteristic);
-}
-
 void BoxTreeUpdater::insert(RenderObject& child)
 {
-    initializeLayoutBox(child);
+    // Text keeps its box current itself.
+    CheckedPtr element = dynamicDowncast<RenderElement>(child);
+    if (!element)
+        return;
+    initializeLayoutBox(*element);
     // An inserted inline box may come with content.
-    if (CheckedPtr inlineBox = dynamicDowncast<RenderElement>(child); inlineBox && inlineBox->isInlineBox())
-        initializeInlineContent(*inlineBox);
+    if (element->isInlineBox())
+        initializeInlineContent(*element);
 }
 
 void BoxTreeUpdater::remove(RenderObject& child)
@@ -342,6 +278,9 @@ void BoxTreeUpdater::remove(RenderObject& child)
     // Only text and line breaks are removed without invalidating the whole formatting context.
     ASSERT(!is<RenderElement>(child) || !downcast<RenderElement>(child).firstChild());
     child.layoutBox().clearFormattingContextData();
+    // The inline items are gone, so content changes that waited for them can go in.
+    if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(child))
+        textRenderer->updateLayoutBoxContentIfNeeded();
 }
 
 #if ENABLE(TREE_DEBUGGING)

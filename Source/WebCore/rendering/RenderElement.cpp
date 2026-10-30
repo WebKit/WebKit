@@ -632,13 +632,22 @@ void RenderElement::setStyle(Style::ComputedStyle&& style, Style::DifferenceResu
     auto oldStyle = mutableStyle().replace(WTF::move(style));
     bool detachedFromParent = !parent();
 
+    // Text renderers inherit from their parent.
+    bool hasTextChildren = false;
+    for (CheckedRef child : childrenOfType<RenderText>(*this)) {
+        child->inheritStyleFromParent();
+        hasTextChildren = true;
+    }
+
     adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(oldStyle, this->style());
 
     styleDidChange(diff, &oldStyle);
 
-    // Text renderers use their parent style. Notify them about the change.
-    for (CheckedRef child : childrenOfType<RenderText>(*this))
-        child->styleDidChange(diff, &oldStyle);
+    if (hasTextChildren) {
+        // The old style has the old inherited values of the text.
+        for (CheckedRef child : childrenOfType<RenderText>(*this))
+            child->styleDidChange(diff, &oldStyle);
+    }
 
     // FIXME: |this| might be destroyed here. This can currently happen for a RenderTextFragment when
     // its first-letter block gets an update in RenderTextFragment::styleDidChange. For RenderTextFragment(s),
@@ -685,6 +694,8 @@ RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> chil
 {
     document().incRenderTreeVersion();
     child->setParent(this);
+    if (CheckedPtr textChild = dynamicDowncast<RenderText>(*child))
+        textChild->inheritStyleFromParent();
 
     if (m_firstChild == beforeChild)
         m_firstChild = child.get();

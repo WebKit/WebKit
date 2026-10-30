@@ -100,10 +100,7 @@ struct SameSizeAsRenderText : public RenderObject, private Layout::InlineTextBox
     float candidateTextSize;
     float widths[4];
     String text;
-    std::optional<bool> canUseSimplifiedTextMeasuring;
-    std::optional<bool> hasPositionDependentContentWidth;
-    std::optional<bool> m_hasStrongDirectionalityContent;
-    uint32_t bitfields : 14;
+    uint32_t bitfields : 15;
 };
 
 static_assert(sizeof(RenderText) == sizeof(SameSizeAsRenderText), "RenderText should stay small");
@@ -406,7 +403,7 @@ static LayoutRect selectionRectForTextBox(const InlineIterator::TextBox& textBox
 
     auto textRun = textBox.textRun();
     if (clampedStart || clampedEnd != textRun.length())
-        textBox.fontCascade().adjustSelectionRectForText(textBox.renderer().canUseSimplifiedTextMeasuring().value_or(false), textRun, selectionRect, clampedStart, clampedEnd);
+        textBox.fontCascade().adjustSelectionRectForText(textBox.renderer().canUseSimplifiedTextMeasuring(), textRun, selectionRect, clampedStart, clampedEnd);
 
     if (!textBox.writingMode().isLogicalLeftLineLeft())
         selectionRect.setX(textBox.logicalWidth() - selectionRect.maxX());
@@ -439,6 +436,7 @@ static FontCascade::CodePath computeFontCodePath(const String& text, bool contai
 
 inline RenderText::RenderText(Type type, Node& node, const String& text)
     : RenderObject(type, node, TypeFlag::IsText, { })
+    // The initial values of an anonymous inline box. The inherited ones come on attach, see inheritStyleFromParent().
     , Layout::InlineTextBox(Style::ComputedStyle::create())
     , m_text(text)
     , m_containsOnlyASCII(text.impl()->containsOnlyASCII())
@@ -488,47 +486,36 @@ bool RenderText::computeUseBackslashAsYenSymbol() const
     return false;
 }
 
-void RenderText::initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifiedTextMeasuring(const String& textContent)
+void RenderText::inheritStyleFromParent()
 {
-    auto& style = this->style();
-    auto& fontCascade = style.fontCascade();
-    // See webkit.org/b/252668
-    auto fontVariant = FontVariant::Auto;
-    m_canUseSimplifiedTextMeasuring = canUseSimpleFontCodePath();
-#if USE(FONT_VARIANT_VIA_FEATURES)
-    auto fontVariantCaps = fontCascade.fontDescription().variantCaps();
-    if (fontVariantCaps == FontVariantCaps::Small || fontVariantCaps == FontVariantCaps::AllSmall || fontVariantCaps ==  FontVariantCaps::Petite || fontVariantCaps == FontVariantCaps::AllPetite) {
-        // This matches the behavior of ComplexTextController::collectComplexTextRuns(): that function doesn't perform font fallback
-        // on the capitalized characters when small caps is enabled, so we shouldn't here either.
-        fontVariant = FontVariant::Normal;
-        m_canUseSimplifiedTextMeasuring = false;
-    }
-#endif
-    auto whitespaceIsCollapsed = style.collapseWhiteSpace();
-    Ref primaryFont = fontCascade.primaryFont();
-    m_canUseSimplifiedTextMeasuring = *m_canUseSimplifiedTextMeasuring && !fontCascade.wordSpacing() && !fontCascade.letterSpacing() && (&firstLineStyle() == &style || &fontCascade == &firstLineStyle().fontCascade());
+    CheckedPtr parentRenderer = parent();
+    CheckedRef parentStyle = parentRenderer->style();
+    auto& style = mutableStyle();
+    style.inheritFrom(parentStyle);
+    style.inheritUnicodeBidiFrom(parentStyle);
+    auto mayHaveFirstLineStyle = parentRenderer->mayHaveFirstLineStyle();
+    setMayHaveFirstLineStyle(mayHaveFirstLineStyle);
+    // Measuring depends on the first-line font. It can change with the parent style or with a move to another parent,
+    // which doesn't send styleDidChange.
+    if (mayHaveFirstLineStyle)
+        LayoutIntegration::BoxTreeUpdater::updateSimplifiedMeasuring(*this);
+}
 
-    if (*m_canUseSimplifiedTextMeasuring) {
-        // Additional check on the font codepath.
-        auto run = TextRun { textContent };
-        run.setCharacterScanForCodePath(false);
-        m_canUseSimplifiedTextMeasuring = fontCascade.codePath(run) == FontCascade::CodePath::Simple;
+void RenderText::layoutBoxContentDidChange()
+{
+    // Content in a live inline formatting context changes only together with its inline items. LineLayout::updateTextContent
+    // updates it, or the line layout goes away and its teardown does.
+    if (!parent() || LayoutIntegration::BoxTreeUpdater::isInLiveFormattingContext(*this)) {
+        m_layoutBoxContentNeedsUpdate = true;
+        return;
     }
+    updateLayoutBoxContent();
+}
 
-    m_hasPositionDependentContentWidth = false;
-    m_hasStrongDirectionalityContent = false;
-    auto mayHaveStrongDirectionalityContent = !textContent.is8Bit();
-    // FIXME: Pre-warm glyph loading in FontCascade with the most common range.
-    WTF::BitSet<256> hasSeen;
-    for (char32_t character : StringView(textContent).codePoints()) {
-        if (character < 256) {
-            if (hasSeen.testAndSet(character))
-                continue;
-        }
-        m_canUseSimplifiedTextMeasuring = *m_canUseSimplifiedTextMeasuring && fontCascade.canUseSimplifiedTextMeasuring(character, fontVariant, whitespaceIsCollapsed, primaryFont);
-        m_hasPositionDependentContentWidth = *m_hasPositionDependentContentWidth || character == tabCharacter;
-        m_hasStrongDirectionalityContent = *m_hasStrongDirectionalityContent || (mayHaveStrongDirectionalityContent && Layout::TextUtil::isStrongDirectionalityCharacter(character));
-    }
+void RenderText::updateLayoutBoxContent()
+{
+    m_layoutBoxContentNeedsUpdate = false;
+    LayoutIntegration::BoxTreeUpdater::updateContent(*this);
 }
 
 void RenderText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
@@ -543,14 +530,8 @@ void RenderText::styleDidChange(Style::Difference diff, const Style::ComputedSty
     }
 
     const Style::ComputedStyle& newStyle = style();
-    if (!oldStyle) {
-        initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifiedTextMeasuring(m_text);
+    if (!oldStyle || oldStyle->fontCascade().useBackslashAsYenSymbol() != newStyle.fontCascade().useBackslashAsYenSymbol())
         m_useBackslashAsYenSymbol = computeUseBackslashAsYenSymbol();
-    } else if (oldStyle->fontCascade().useBackslashAsYenSymbol() != newStyle.fontCascade().useBackslashAsYenSymbol())
-        m_useBackslashAsYenSymbol = computeUseBackslashAsYenSymbol();
-
-    if (oldStyle && !oldStyle->fontCascadeEqual(newStyle))
-        m_canUseSimplifiedTextMeasuring = { };
 
     auto needsRenderedTextUpdateOnly = [&] {
         if (!oldStyle)
@@ -565,14 +546,23 @@ void RenderText::styleDidChange(Style::Difference diff, const Style::ComputedSty
     };
     if (needsRenderedTextUpdateOnly())
         updateRenderedText();
+    else if (!oldStyle) {
+        // The box is new, so no inline items refer to its content yet.
+        updateLayoutBoxContent();
+    } else {
+        auto fontChanged = !oldStyle->fontCascadeEqual(newStyle);
+        // Measuring depends on the font and white-space collapsing, and on the first-line font, see inheritStyleFromParent(). It
+        // follows them even while live content waits for its inline items to change.
+        if (fontChanged || oldStyle->collapseWhiteSpace() != newStyle.collapseWhiteSpace())
+            LayoutIntegration::BoxTreeUpdater::updateSimplifiedMeasuring(*this);
+        // The secure text disc depends on the font.
+        if (fontChanged && newStyle.textSecurity() != TextSecurity::None)
+            layoutBoxContentDidChange();
+    }
 
-    // FIXME: First line change on the block comes in as equal on text.
-    auto needsLayoutBoxStyleUpdate = LayoutIntegration::BoxTreeUpdater::isInLiveFormattingContext(*this) && (diff >= Style::DifferenceResult::RecompositeLayer || (&style() != &firstLineStyle()));
-    if (needsLayoutBoxStyleUpdate)
-        LayoutIntegration::LineLayout::updateStyle(*this);
-
+    // Accessibility reads the non-inherited properties of text from the parent.
     if (CheckedPtr cache = document().existingAXObjectCache())
-        cache->onStyleChange(*this, diff, oldStyle, newStyle);
+        cache->onStyleChange(*this, diff, oldStyle, parent()->style());
 
     setHorizontalWritingMode(newStyle.writingMode().isHorizontal());
 }
@@ -1849,9 +1839,6 @@ void RenderText::setRenderedText(const String& newText)
 
     m_containsOnlyASCII = text().containsOnlyASCII();
     m_fontCodePath = computeFontCodePath(text(), m_containsOnlyASCII);
-    m_canUseSimplifiedTextMeasuring = { };
-    m_hasPositionDependentContentWidth = { };
-    m_hasStrongDirectionalityContent = { };
 
     if (m_text != originalText) {
         originalTextMap().set(*this, originalText);
@@ -1860,6 +1847,8 @@ void RenderText::setRenderedText(const String& newText)
         originalTextMap().remove(*this);
         m_originalTextDiffersFromRendered = false;
     }
+
+    layoutBoxContentDidChange();
 }
 
 void RenderText::secureText(char16_t maskingCharacter)

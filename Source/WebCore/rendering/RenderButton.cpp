@@ -79,10 +79,6 @@ void RenderButton::setInnerRenderer(RenderBlock& innerRenderer)
         if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_inner))
             lineLayout->styleWillChange(*m_inner, m_inner->style(), Style::DifferenceResult::Layout);
         LayoutIntegration::LineLayout::updateStyle(*m_inner);
-        for (auto& child : childrenOfType<RenderText>(*m_inner)) {
-            if (LayoutIntegration::BoxTreeUpdater::isInLiveFormattingContext(child))
-                LayoutIntegration::LineLayout::updateStyle(child);
-        }
     }
 }
 

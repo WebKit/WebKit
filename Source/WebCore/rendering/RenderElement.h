@@ -108,6 +108,8 @@ public:
     inline UsedStyle firstLineUsedStyle() const LIFETIME_BOUND;
     const Style::ComputedStyle* parentStyle() const LIFETIME_BOUND { return !RenderObject::m_parent ? nullptr : &RenderObject::m_parent->style(); }
     const Style::ComputedStyle& LEGACY_NODELETE firstLineStyle() const LIFETIME_BOUND;
+    // False when firstLineStyle() is style().
+    inline bool mayHaveFirstLineStyle() const;
 
     // FIXME: Style shouldn't be mutated.
     Style::ComputedStyle& mutableStyle() LIFETIME_BOUND { return Layout::ElementBox::mutableStyle(); }
@@ -576,6 +578,16 @@ inline RenderObject* RenderElement::lastInFlowChild() const
 inline RenderElement* RenderObject::parent() const
 {
     return m_parent.get();
+}
+
+inline bool RenderElement::mayHaveFirstLineStyle() const
+{
+    // As firstLineStyle() finds it. Anonymous blocks use the parent's, if they are its first in-flow child.
+    if (isAnonymousBlock()) {
+        SUPPRESS_UNCHECKED_LOCAL auto* parentRenderer = parent();
+        return parentRenderer && parentRenderer->style().pseudoElementStyle({ PseudoElementType::FirstLine });
+    }
+    return style().pseudoElementStyle({ PseudoElementType::FirstLine });
 }
 
 } // namespace WebCore

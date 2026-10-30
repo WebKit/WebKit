@@ -52,6 +52,9 @@ public:
     float scalingFactor() const { return m_scalingFactor; }
     const FontCascade& scaledFont() const { return m_scaledFont; }
     void updateScaledFont();
+    // Unknown until the text is measured with the scaled font.
+    std::optional<bool> canUseSimplifiedTextMeasuringWithScaledFont() const { return m_canUseSimplifiedTextMeasuringWithScaledFont; }
+    void setCanUseSimplifiedTextMeasuringWithScaledFont(bool value) { m_canUseSimplifiedTextMeasuringWithScaledFont = value; }
     static bool computeNewScaledFontForStyle(const RenderObject&, const Style::ComputedStyle&, float& scalingFactor, FontCascade& scaledFont);
 
     // Preserves floating point precision for the use in DRT. It knows how to round and does a better job than enclosingIntRect.
@@ -69,11 +72,13 @@ private:
     IntRect linesBoundingBox() const override;
 
     void setTextInternal(const String&, bool force) final;
+    void setRenderedText(const String&) final;
 
     float m_scalingFactor;
     FontCascade m_scaledFont;
     Vector<SVGTextMetrics> m_textMetrics;
     bool m_hasValidTextMetrics { false };
+    std::optional<bool> m_canUseSimplifiedTextMeasuringWithScaledFont;
 };
 
 } // namespace WebCore

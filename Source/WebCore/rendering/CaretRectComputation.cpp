@@ -209,7 +209,7 @@ static LayoutRect computeCaretRectForText(const InlineBoxAndOffset& boxAndOffset
         LayoutRect selectionRect;
         // Get logical x coordinate relative to text run.
         auto textRun = textBox->textRun(InlineIterator::TextRunMode::Editing);
-        textBox->fontCascade().adjustSelectionRectForText(textBox->renderer().canUseSimplifiedTextMeasuring().value_or(false), textRun, selectionRect, startOffset, endOffset);
+        textBox->fontCascade().adjustSelectionRectForText(textBox->renderer().canUseSimplifiedTextMeasuring(), textRun, selectionRect, startOffset, endOffset);
         selectionRect.shiftXEdgeTo(selectionRect.maxX());
 
         // Convert to box coordinates.

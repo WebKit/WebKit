@@ -76,11 +76,12 @@ public:
 
 private:
     friend class RenderElement;
+    friend class RenderObject;
 
     float deviceScaleFactor() const { return computedStyle().deviceScaleFactor(); }
     template<typename T, typename Value> T evaluateZoomed(const Value& value) const { return Style::evaluate<T>(value, computedStyle().usedZoomForLength(), deviceScaleFactor()); }
 
-    // The style must belong to the renderer, as returned by RenderElement::firstLineStyle().
+    // The renderer's first-line style, or the style of one of its text children.
     UsedStyle(const RenderElement& renderer LIFETIME_BOUND, const Style::ComputedStyle& pseudoElementStyle LIFETIME_BOUND)
         : UsedStyleProperties(renderer, pseudoElementStyle)
     {

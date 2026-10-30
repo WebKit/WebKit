@@ -170,10 +170,10 @@ static void ensureTextMetrics(RenderSVGInlineText& text)
     auto canUseSimplifiedTextMeasuring = [&] {
         if (run.direction() != TextDirection::LTR)
             return false;
-        if (auto cachedValue = text.canUseSimplifiedTextMeasuring())
+        if (auto cachedValue = text.canUseSimplifiedTextMeasuringWithScaledFont())
             return *cachedValue;
         auto value = Layout::TextUtil::canUseSimplifiedTextMeasuring(run.text(), scaledFont, text.style().collapseWhiteSpace(), nullptr);
-        text.setCanUseSimplifiedTextMeasuring(value);
+        text.setCanUseSimplifiedTextMeasuringWithScaledFont(value);
         return value;
     }();
 

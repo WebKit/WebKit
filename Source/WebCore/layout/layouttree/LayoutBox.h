@@ -191,16 +191,22 @@ public:
     bool LEGACY_NODELETE isPaddingApplicable() const;
     bool LEGACY_NODELETE isOverflowVisible() const;
 
-    void updateStyle(Style::ComputedStyle&& newStyle, std::unique_ptr<Style::ComputedStyle>&& newFirstLineStyle);
     void setFirstLineStyle(std::unique_ptr<Style::ComputedStyle>&&);
     // Always inlined so that RenderElement::style() costs the same in debug builds.
     ALWAYS_INLINE const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
-    const Style::ComputedStyle& LEGACY_NODELETE firstLineStyle() const LIFETIME_BOUND { return hasBoxRareData() && boxRareData().firstLineStyle ? *boxRareData().firstLineStyle : m_style; }
+    // Text uses the first-line style of its parent when the parent has one.
+    const Style::ComputedStyle& LEGACY_NODELETE firstLineStyle() const LIFETIME_BOUND
+    {
+        if (m_mayHaveFirstLineStyle) [[unlikely]]
+            return firstLineStyleForText();
+        return hasBoxRareData() && boxRareData().firstLineStyle ? *boxRareData().firstLineStyle : m_style;
+    }
     WritingMode writingMode() const { return style().writingMode(); }
 
     void setIsInlineIntegrationRoot(bool value) { m_isInlineIntegrationRoot = value; }
     void setIsGridIntegrationRoot(bool value) { m_isGridIntegrationRoot = value; }
     void setIsAnonymousTextIndentCandidateForIntegration(bool value) { m_isAnonymousTextIndentCandidateForIntegration = value; }
+    void setMayHaveFirstLineStyle(bool value) { m_mayHaveFirstLineStyle = value; }
 
     const LayoutShape* LEGACY_NODELETE shape() const;
     void setShape(RefPtr<const LayoutShape>);
@@ -244,6 +250,7 @@ private:
     bool hasBoxRareData() const { return m_hasRareData; }
     void setHasRareData(bool hasRareData) { m_hasRareData = hasRareData; }
     const BoxRareData& LEGACY_NODELETE boxRareData() const;
+    const Style::ComputedStyle& LEGACY_NODELETE firstLineStyleForText() const LIFETIME_BOUND;
     Box::BoxRareData& boxRareData();
     BoxRareData& ensureBoxRareData();
     void removeBoxRareData();
@@ -264,6 +271,8 @@ private:
     bool m_isInlineIntegrationRoot : 1 { false };
     bool m_isGridIntegrationRoot : 1 { false };
     bool m_isAnonymousTextIndentCandidateForIntegration : 1 { false }; // Either first anonymous block box child or simple anonymous block container (e.g flex item).
+    // Text only. Set when the parent may have a first-line style. Use of first-line styles is rare.
+    bool m_mayHaveFirstLineStyle : 1 { false };
 
     Style::ComputedStyle m_style;
 

@@ -30,17 +30,18 @@
 
 namespace WebCore {
 
+// Text has the used values of its own style, with its parent as the renderer they are resolved for.
 inline UsedStyle RenderObject::usedStyle() const
 {
     if (isRenderText())
-        return m_parent->usedStyle();
+        return UsedStyle { *m_parent, uncheckedDowncast<RenderText>(*this).style() };
     return downcast<RenderElement>(*this).usedStyle();
 }
 
 inline UsedStyle RenderObject::firstLineUsedStyle() const
 {
     if (isRenderText())
-        return m_parent->firstLineUsedStyle();
+        return UsedStyle { *m_parent, uncheckedDowncast<RenderText>(*this).firstLineStyle() };
     return downcast<RenderElement>(*this).firstLineUsedStyle();
 }
 

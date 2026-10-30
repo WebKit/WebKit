@@ -79,7 +79,7 @@ FloatRect selectionRectForTextFragment(const RenderSVGInlineText& renderer, Text
 
     LayoutRect selectionRect { textOrigin, LayoutSize(0, LayoutUnit(fragment.height * scalingFactor)) };
     TextRun run = constructTextRun(renderer.text(), direction, style, fragment);
-    scaledFont.adjustSelectionRectForText(renderer.canUseSimplifiedTextMeasuring().value_or(false), run, selectionRect, startPosition, endPosition);
+    scaledFont.adjustSelectionRectForText(renderer.canUseSimplifiedTextMeasuringWithScaledFont().value_or(false), run, selectionRect, startPosition, endPosition);
     FloatRect snappedSelectionRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer.document().deviceScaleFactor(), run.ltr());
     if (scalingFactor == 1)
         return snappedSelectionRect;

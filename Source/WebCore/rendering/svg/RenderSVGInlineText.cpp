@@ -100,6 +100,12 @@ void RenderSVGInlineText::setTextInternal(const String& newText, bool force)
         textAncestor->setNeedsLayout();
 }
 
+void RenderSVGInlineText::setRenderedText(const String& text)
+{
+    RenderText::setRenderedText(text);
+    m_canUseSimplifiedTextMeasuringWithScaledFont = { };
+}
+
 void RenderSVGInlineText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderText::styleDidChange(diff, oldStyle);
@@ -214,7 +220,7 @@ void RenderSVGInlineText::updateScaledFont()
     float scalingFactor = 1;
     FontCascade scaledFont;
     if (computeNewScaledFontForStyle(*this, style(), scalingFactor, scaledFont))
-        m_canUseSimplifiedTextMeasuring = { };
+        m_canUseSimplifiedTextMeasuringWithScaledFont = { };
     if (scalingFactor != m_scalingFactor || scaledFont != m_scaledFont)
         m_hasValidTextMetrics = false;
     m_scalingFactor = scalingFactor;

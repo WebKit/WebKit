@@ -120,12 +120,11 @@ static bool shouldInvalidateLineLayoutAfterChangeFor(const RenderBlockFlow& root
         if (lineLayout.contentNeedsVisualReordering())
             return true;
         if (auto* textRenderer = dynamicDowncast<RenderText>(renderer)) {
-            auto hasStrongDirectionalityContent = textRenderer->hasStrongDirectionalityContent();
-            if (!hasStrongDirectionalityContent) {
-                hasStrongDirectionalityContent = Layout::TextUtil::containsStrongDirectionalityText(textRenderer->text());
-                const_cast<RenderText*>(textRenderer)->setHasStrongDirectionalityContent(*hasStrongDirectionalityContent);
-            }
-            return *hasStrongDirectionalityContent;
+            // After a content change in a live formatting context the box still has the content the inline items were
+            // built from.
+            if (textRenderer->layoutBoxContentNeedsUpdate())
+                return Layout::TextUtil::containsStrongDirectionalityText(textRenderer->text());
+            return textRenderer->layoutBox().hasStrongDirectionalityContent();
         }
         if (renderer.isInlineBox()) {
             auto& style = renderer.style();
@@ -355,7 +354,7 @@ void LineLayout::updateFormattingContextGeometries(LayoutUnit availableLogicalWi
     m_boxGeometryUpdater.setFormattingContextContentGeometry(m_inlineContentConstraints->horizontal().logicalWidth, { });
 }
 
-void LineLayout::updateStyle(const RenderObject& renderer)
+void LineLayout::updateStyle(const RenderElement& renderer)
 {
     BoxTreeUpdater::updateStyle(renderer);
 }
@@ -1780,7 +1779,7 @@ void LineLayout::releaseContentRebuiltFromDamage()
         m_inlineContent->releaseCaches();
 }
 
-bool LineLayout::updateTextContent(const RenderText& textRenderer, std::optional<size_t> offset, size_t oldLength)
+bool LineLayout::updateTextContent(RenderText& textRenderer, std::optional<size_t> offset, size_t oldLength)
 {
     if (flow().style().isSkippedRootOrSkippedContent())
         return false;
@@ -1792,7 +1791,7 @@ bool LineLayout::updateTextContent(const RenderText& textRenderer, std::optional
         return false;
     }
 
-    BoxTreeUpdater::updateContent(textRenderer);
+    textRenderer.updateLayoutBoxContent();
 
     if (flow().isRenderSVGText()) {
         // SVG text is always fully laid out.

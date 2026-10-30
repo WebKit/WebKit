@@ -93,9 +93,12 @@ public:
 
     WEBCORE_EXPORT Text* LEGACY_NODELETE textNode() const;
 
-    const Style::ComputedStyle& style() const LIFETIME_BOUND;
-
-    const Style::ComputedStyle& firstLineStyle() const LIFETIME_BOUND;
+    // The style of an anonymous inline box around the text. The inherited properties come from the parent, the other properties
+    // have their initial values.
+    ALWAYS_INLINE const Style::ComputedStyle& style() const LIFETIME_BOUND { return Layout::InlineTextBox::style(); }
+    ALWAYS_INLINE const Style::ComputedStyle& firstLineStyle() const LIFETIME_BOUND { return Layout::InlineTextBox::firstLineStyle(); }
+    // On attach and parent style change.
+    void inheritStyleFromParent();
     const Style::ComputedStyle* lazyPseudoElementStyle(const Style::PseudoElementIdentifier&, const Style::ComputedStyle* parentStyle = nullptr) const LIFETIME_BOUND;
 
     Color selectionBackgroundColor() const;
@@ -211,12 +214,17 @@ public:
 
     void resetMinMaxWidth();
 
-    void setCanUseSimplifiedTextMeasuring(bool canUseSimplifiedTextMeasuring) { m_canUseSimplifiedTextMeasuring = canUseSimplifiedTextMeasuring; }
-    std::optional<bool> canUseSimplifiedTextMeasuring() const { return m_canUseSimplifiedTextMeasuring; }
-    void setHasPositionDependentContentWidth(bool hasPositionDependentContentWidth) { m_hasPositionDependentContentWidth = hasPositionDependentContentWidth; }
-    std::optional<bool> hasPositionDependentContentWidth() const { return m_hasPositionDependentContentWidth; }
-    void setHasStrongDirectionalityContent(bool hasStrongDirectionalityContent) { m_hasStrongDirectionalityContent = hasStrongDirectionalityContent; }
-    std::optional<bool> hasStrongDirectionalityContent() const { return m_hasStrongDirectionalityContent; }
+    bool canUseSimplifiedTextMeasuring() const { return layoutBox().canUseSimplifiedContentMeasuring(); }
+
+    // The layout box content is the rendered text, or the original text when combined, with the secure text disc swapped
+    // on Cocoa platforms. In a live inline formatting context it changes only together with the inline items.
+    void updateLayoutBoxContent();
+    bool layoutBoxContentNeedsUpdate() const { return m_layoutBoxContentNeedsUpdate; }
+    void updateLayoutBoxContentIfNeeded()
+    {
+        if (m_layoutBoxContentNeedsUpdate)
+            updateLayoutBoxContent();
+    }
 
 protected:
     virtual void computeMinMaxIntrinsicLogicalWidths(float leadingWidth, bool forcedMinMaxWidthComputation = false);
@@ -226,6 +234,8 @@ protected:
     virtual char32_t previousCharacter() const;
 
     virtual void setTextInternal(const String&, bool force);
+
+    void layoutBoxContentDidChange();
 
 private:
     void updateRenderedText();
@@ -260,7 +270,6 @@ private:
 
     float maxWordFragmentWidth(const Style::ComputedStyle&, const FontCascade&, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, unsigned minimumWordLength, bool currentCharacterIsSpace, unsigned characterIndex, float xPos, float entireWordWidth, WordTrailingSpace&, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow&);
     float widthFromCacheConsideringPossibleTrailingSpace(const Style::ComputedStyle&, const FontCascade&, unsigned startIndex, unsigned wordLen, float xPos, bool currentCharacterIsSpace, WordTrailingSpace&, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow&) const;
-    void initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifiedTextMeasuring(const String&);
 
     // FIXME: This should probably be part of the text sizing structures in Document instead. That would save some memory.
     float m_candidateComputedTextSize { 0 };
@@ -271,11 +280,6 @@ private:
 
     String m_text;
 
-protected:
-    std::optional<bool> m_canUseSimplifiedTextMeasuring;
-private:
-    std::optional<bool> m_hasPositionDependentContentWidth;
-    std::optional<bool> m_hasStrongDirectionalityContent;
     unsigned m_hasBreakableChar : 1 { false }; // Whether or not we can be broken into multiple lines.
     unsigned m_hasBreak : 1 { false }; // Whether or not we have a hard break (e.g., <pre> with '\n').
     unsigned m_hasTab : 1 { false }; // Whether or not we have a variable width tab character (e.g., <pre> with '\t').
@@ -287,6 +291,7 @@ private:
     unsigned m_useBackslashAsYenSymbol : 1 { false };
     unsigned m_originalTextDiffersFromRendered : 1 { false };
     unsigned m_hasInlineWrapperForDisplayContents : 1 { false };
+    unsigned m_layoutBoxContentNeedsUpdate : 1 { false };
     unsigned m_hasSecureTextTimer : 1 { false };
     FontCascade::CodePath m_fontCodePath : 2;
 };
@@ -302,16 +307,6 @@ TextBreakIterator::ContentAnalysis LEGACY_NODELETE mapWordBreakToContentAnalysis
 inline char16_t RenderText::characterAt(unsigned i) const
 {
     return i >= length() ? 0 : text()[i];
-}
-
-inline const Style::ComputedStyle& RenderText::style() const
-{
-    return parent()->style();
-}
-
-inline const Style::ComputedStyle& RenderText::firstLineStyle() const
-{
-    return parent()->firstLineStyle();
 }
 
 inline const Style::ComputedStyle* RenderText::lazyPseudoElementStyle(const Style::PseudoElementIdentifier& pseudoElementIdentifier, const Style::ComputedStyle* parentStyle) const

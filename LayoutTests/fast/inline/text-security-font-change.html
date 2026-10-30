@@ -1,0 +1,14 @@
+<style>
+div { font: 20px Times; margin: 10px; -webkit-text-security: disc; }
+.changed { font: 40px Ahem; }
+</style>
+<!-- The secure text discs are measured with the font. The font changes here after the text was laid out, once together with the content. -->
+<div id="font">password</div>
+<div id="fontAndContent">password</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("font").classList.add("changed");
+let element = document.getElementById("fontAndContent");
+element.classList.add("changed");
+element.firstChild.appendData("1234");
+</script>

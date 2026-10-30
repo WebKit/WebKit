@@ -34,9 +34,7 @@ inline WritingMode RenderObject::writingMode() const { return style().writingMod
 
 inline const Style::ComputedStyle& RenderObject::style() const
 {
-    if (isRenderText())
-        return m_parent->style();
-    return downcast<RenderElement>(*this).style();
+    return layoutBox().style();
 }
 
 } // namespace WebCore

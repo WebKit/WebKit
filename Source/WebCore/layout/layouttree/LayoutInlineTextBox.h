@@ -40,7 +40,8 @@ public:
         ShouldUseSimpleGlyphOverflowCodePath,
         HasPositionDependentContentWidth,
         HasStrongDirectionalityContent,
-        HasSynthesizedGlyph // A list marker's disc, circle or square: the text is the character the counter style produced.
+        HasSynthesizedGlyph, // A list marker's disc, circle or square: the text is the character the counter style produced.
+        HighestEnumValue = HasSynthesizedGlyph
     };
     const String& content() const LIFETIME_BOUND { return m_content; }
     bool isCombined() const { return m_isCombined; }
@@ -52,8 +53,9 @@ public:
     bool hasStrongDirectionalityContent() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::HasStrongDirectionalityContent); }
     bool hasSynthesizedGlyph() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::HasSynthesizedGlyph); }
 
+    // BoxTreeUpdater sets these from the renderer.
     void setContent(String newContent, EnumSet<ContentCharacteristic>);
-    void setContentCharacteristic(EnumSet<ContentCharacteristic> contentCharacteristicSet) { m_contentCharacteristicSet = contentCharacteristicSet; }
+    void setCanUseSimplifiedContentMeasuring(bool value) { m_contentCharacteristicSet.set(ContentCharacteristic::CanUseSimplifiedContentMeasuring, value); }
     void setIsCombined(bool isCombined) { m_isCombined = isCombined; }
 
 protected:
@@ -61,8 +63,6 @@ protected:
     ~InlineTextBox() = default;
 
 private:
-    friend class Box;
-
     String m_content;
     bool m_isCombined { false };
     EnumSet<ContentCharacteristic> m_contentCharacteristicSet;
@@ -70,7 +70,7 @@ private:
 
 inline void InlineTextBox::setContent(String newContent, EnumSet<ContentCharacteristic> contentCharacteristicSet)
 {
-    m_content = newContent;
+    m_content = WTF::move(newContent);
     m_contentCharacteristicSet = contentCharacteristicSet;
 }
 

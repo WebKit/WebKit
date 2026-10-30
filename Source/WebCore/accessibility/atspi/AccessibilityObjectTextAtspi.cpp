@@ -737,7 +737,9 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
 
     auto accessibilityTextAttributes = [this](AXCoreObject& axObject, const HashMap<String, String>& defaultAttributes) -> HashMap<String, String> {
         HashMap<String, String> attributes;
-        auto& style = axObject.renderer()->style();
+        // Non-inherited properties like the background color come from the parent of text.
+        CheckedRef renderer = *axObject.renderer();
+        auto& style = is<RenderText>(renderer) && renderer->parent() ? renderer->parent()->style() : renderer->style();
 
         auto addAttributeIfNeeded = [&](const String& name, const String& value) {
             if (defaultAttributes.isEmpty() || defaultAttributes.get(name) != value)

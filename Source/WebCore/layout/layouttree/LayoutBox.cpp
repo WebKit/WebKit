@@ -69,8 +69,7 @@ void Box::clearFormattingContextData()
     if (auto* elementBox = dynamicDowncast<ElementBox>(*this)) {
         elementBox->m_replacedData = nullptr;
         elementBox->m_baselineForIntegration = { };
-    } else if (auto* inlineTextBox = dynamicDowncast<InlineTextBox>(*this))
-        inlineTextBox->m_content = { };
+    }
 
     if (hasBoxRareData())
         removeBoxRareData();
@@ -79,12 +78,6 @@ void Box::clearFormattingContextData()
     m_primaryLayoutState = nullptr;
 #endif
     m_cachedGeometryForPrimaryLayoutState = nullptr;
-}
-
-void Box::updateStyle(Style::ComputedStyle&& newStyle, std::unique_ptr<Style::ComputedStyle>&& newFirstLineStyle)
-{
-    m_style = WTF::move(newStyle);
-    setFirstLineStyle(WTF::move(newFirstLineStyle));
 }
 
 void Box::setFirstLineStyle(std::unique_ptr<Style::ComputedStyle>&& newFirstLineStyle)
@@ -625,6 +618,15 @@ const ElementBox& containingBlock(const Box& layoutBox)
 
     ASSERT_NOT_REACHED();
     return layoutBox.parent();
+}
+
+const Style::ComputedStyle& Box::firstLineStyleForText() const
+{
+    ASSERT(isInlineTextBox());
+    SUPPRESS_UNCHECKED_LOCAL auto* parent = RenderObject::fromLayoutBox(*this).parent();
+    ASSERT(parent);
+    auto& parentFirstLineStyle = parent->firstLineStyle();
+    return &parentFirstLineStyle == &parent->style() ? m_style : parentFirstLineStyle;
 }
 
 UsedStyle Box::usedStyle() const

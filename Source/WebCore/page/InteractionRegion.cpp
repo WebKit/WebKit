@@ -511,6 +511,9 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
     if (!regionRenderer.node())
         return std::nullopt;
 
+    // The decorations and the other properties read below aren't inherited. Text reads them from its parent.
+    CheckedRef<const RenderObject> styleRenderer = regionRenderer.isRenderText() ? *regionRenderer.parent() : regionRenderer;
+
     RefPtr originalElement = dynamicDowncast<Element>(regionRenderer.node());
     if (originalElement && originalElement->isPseudoElement())
         return std::nullopt;
@@ -629,7 +632,7 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
 
                 return cachedImageIsPhoto(protect(*renderImage->cachedImage()));
             }();
-        } else if (auto& backgroundLayers = regionRenderer.style().backgroundLayers(); Style::hasImageInAnyLayer(backgroundLayers)) {
+        } else if (auto& backgroundLayers = styleRenderer->style().backgroundLayers(); Style::hasImageInAnyLayer(backgroundLayers)) {
             isPhoto = [&]() -> bool {
                 RefPtr backgroundImage = backgroundLayers.usedFirst().image().tryStyleImage();
                 if (!backgroundImage || !backgroundImage->cachedImage())
@@ -678,7 +681,7 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
     bool shapeIsInset = false;
 
     CheckedPtr<const RenderBox> backgroundBox = isOriginalMatch ? siblingBackground.get() : nullptr;
-    CheckedRef style = regionRenderer.style();
+    CheckedRef style = styleRenderer->style();
     CheckedPtr<const RenderBox> regionRendererBox;
 
     if (auto basicShapePath = style->clipPath().tryBasicShape(); !hasRotationOrShear && originalElement && basicShapePath) {

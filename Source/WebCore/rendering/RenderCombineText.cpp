@@ -62,8 +62,9 @@ void RenderCombineText::styleDidChange(Style::Difference diff, const Style::Comp
 
     if (m_isCombined && selfNeedsLayout()) {
         // Layouts cause the text to be recombined; therefore, only only un-combine when the style diff causes a layout.
-        RenderText::setRenderedText(originalText()); // This RenderCombineText has been combined once. Restore the original text for the next combineText().
+        // The layout box content follows the combined state.
         m_isCombined = false;
+        RenderText::setRenderedText(originalText()); // This RenderCombineText has been combined once. Restore the original text for the next combineText().
     }
 
     m_needsFontUpdate = true;
@@ -108,10 +109,12 @@ void RenderCombineText::combineTextIfNeeded()
         return;
 
     // An ancestor element may trigger us to lay out again, even when we're already combined.
-    if (m_isCombined)
+    // The layout box content follows the combined state.
+    if (m_isCombined) {
+        m_isCombined = false;
         RenderText::setRenderedText(originalText());
+    }
 
-    m_isCombined = false;
     m_needsFontUpdate = false;
 
     // text-combine-upright works only in vertical typographic mode.

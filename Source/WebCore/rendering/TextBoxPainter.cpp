@@ -533,7 +533,7 @@ void TextBoxPainter::paintForegroundAndDecorations()
                 auto snappedPaintRect = snapRectToDevicePixelsWithWritingDirection(LayoutRect { m_paintRect }, m_document->deviceScaleFactor(), m_paintTextRun.ltr());
                 if (startOffset || endOffset != m_paintTextRun.length()) {
                     LayoutRect selectionRect = { m_paintRect.x(), m_paintRect.y(), m_paintRect.width(), m_paintRect.height() };
-                    fontCascade().adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring().value_or(false), m_paintTextRun, selectionRect, startOffset, endOffset);
+                    fontCascade().adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring(), m_paintTextRun, selectionRect, startOffset, endOffset);
                     snappedPaintRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, m_document->deviceScaleFactor(), m_paintTextRun.ltr());
                 }
                 auto decorationPaintRect = writingMode().isHorizontal() ? FloatRect { snappedPaintRect.x(), m_paintRect.y(), snappedPaintRect.width(), snappedPaintRect.height() } : snappedPaintRect;
@@ -640,7 +640,7 @@ LayoutRect TextBoxPainter::backgroundRectForRange(unsigned startOffset, unsigned
         return rect;
     }
 
-    fontCascade().adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring().value_or(false), m_paintTextRun, rect, startOffset, endOffset);
+    fontCascade().adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring(), m_paintTextRun, rect, startOffset, endOffset);
     return rect;
 }
 
@@ -793,7 +793,7 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
     GraphicsContextStateSaver clipStateSaver(context, false);
     if (markedText.style.textStyles.strokeWidth > 0 && markedText.endOffset < m_paintTextRun.length()) {
         LayoutRect segmentRect { m_paintRect };
-        fontCascade().adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring().value_or(false), m_paintTextRun, segmentRect, markedText.startOffset, markedText.endOffset);
+        fontCascade().adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring(), m_paintTextRun, segmentRect, markedText.startOffset, markedText.endOffset);
         auto snapped = snapRectToDevicePixelsWithWritingDirection(segmentRect, m_document->deviceScaleFactor(), m_paintTextRun.ltr());
         static constexpr float overflowSlack = 4096;
         bool ltr = m_paintTextRun.ltr();
@@ -1739,7 +1739,7 @@ FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator& t
     if (markedText.startOffset || markedText.endOffset != textBox->selectableRange().clamp(textBox->end())) {
         auto run = textBox->textRun();
         auto selectionRect = LayoutRect { 0_lu, y, 0_lu, height };
-        font.adjustSelectionRectForText(textBox->renderer().canUseSimplifiedTextMeasuring().value_or(false), run, selectionRect, markedText.startOffset, markedText.endOffset);
+        font.adjustSelectionRectForText(textBox->renderer().canUseSimplifiedTextMeasuring(), run, selectionRect, markedText.startOffset, markedText.endOffset);
         return selectionRect;
     }
 

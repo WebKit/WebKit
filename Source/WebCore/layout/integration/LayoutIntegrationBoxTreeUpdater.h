@@ -47,11 +47,10 @@ public:
 
     // Initializes the boxes of the formatting context content. The root box too, unless it is content of another live formatting context.
     void build();
-    // Clears what the formatting context stored on its boxes.
+    // Clears what the formatting context stored on its boxes. Text content that waited for the inline items goes in.
     void tearDown();
 
-    static void updateStyle(const RenderObject&);
-    static void updateContent(const RenderText&);
+    static void updateStyle(const RenderElement&);
 
     // Partial invalidation in an inline formatting context.
     void insert(RenderObject& child);
@@ -63,10 +62,15 @@ public:
     // The same, or the renderer is such a root.
     static bool isLaidOutByIntegration(const RenderObject&);
 
+    // The text content of the box and the flags derived from it.
+    static void updateContent(RenderText&);
+    // Simplified measuring also depends on the style.
+    static void updateSimplifiedMeasuring(RenderText&);
+
 private:
     Layout::ElementBox& rootLayoutBox();
 
-    static void initializeLayoutBox(RenderObject&);
+    static void initializeLayoutBox(RenderElement&);
     void initializeInlineContent(const RenderElement&);
     void initializeGridContent();
 

@@ -160,8 +160,11 @@ float AccessibilityObjectAtspi::opacity() const
     if (!m_coreObject)
         return 1;
 
-    if (auto* renderer = m_coreObject->renderer())
-        return Style::evaluate<float>(renderer->style().opacity());
+    if (auto* renderer = m_coreObject->renderer()) {
+        // Opacity isn't inherited. Text reads it from its parent.
+        auto& style = is<RenderText>(*renderer) && renderer->parent() ? renderer->parent()->style() : renderer->style();
+        return Style::evaluate<float>(style.opacity());
+    }
 
     return 1;
 }
