@@ -34,10 +34,17 @@ class WebDriverMac(WebDriver):
     def browser_name(self):
         return 'MiniBrowser'
 
+    def browser_args(self):
+        # Always say whether to use Site Isolation, so that a run doesn't change with WebKit's default.
+        return ['--force-site-isolation', 'YES' if self._port.get_option('site_isolation') else 'NO']
+
     def capabilities(self):
         # minidriver always launches the MiniBrowser in its own build directory, and doesn't accept a binary.
         # The GLib ports trust the test server's certificate through WEBKIT_TLS_CAFILE_PEM instead.
-        return {'acceptInsecureCerts': True}
+        return {
+            'acceptInsecureCerts': True,
+            'webkit:browserOptions': {'args': self.browser_args()},
+        }
 
 
 register_driver('mac', WebDriverMac)

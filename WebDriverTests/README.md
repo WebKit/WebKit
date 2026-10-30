@@ -61,5 +61,9 @@ or both, as in `gtk@Debug`, `all:arm64` or `mac@Release:arm64`, and a qualified 
 one at the same level. The first key that matches is used as a whole: its fields aren't combined with those of
 other keys.
 
+With `--site-isolation` (Mac only), the tests run with Site Isolation, and `mac-site-isolation` is looked up before
+all the other keys. So its entries only need to say where Site Isolation changes the results. Without the option, Mac
+runs turn Site Isolation off, whatever WebKit's default is.
+
 `status` lists the results that are expected, more than one for a flaky test: `PASS`, `FAIL`, `TIMEOUT` or
 `SKIP`. `slow` gives a test five times the usual timeout. `bug` and `note` are for people.
