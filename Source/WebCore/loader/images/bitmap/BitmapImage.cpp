@@ -32,7 +32,6 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
-#include "NativeImageSource.h"
 #include "PlatformResource.h"
 #include "ShareableBitmap.h"
 #include "SharedBuffer.h"
@@ -46,23 +45,6 @@ namespace WebCore {
 Ref<BitmapImage> BitmapImage::create(ImageObserver* observer, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     return adoptRef(*new BitmapImage(observer, alphaOption, gammaAndColorProfileOption));
-}
-
-Ref<BitmapImage> BitmapImage::create(Ref<NativeImage>&& nativeImage)
-{
-    return adoptRef(*new BitmapImage(WTF::move(nativeImage)));
-}
-
-RefPtr<BitmapImage> BitmapImage::create(RefPtr<NativeImage>&& nativeImage)
-{
-    if (!nativeImage)
-        return nullptr;
-    return adoptRef(*new BitmapImage(nativeImage.releaseNonNull()));
-}
-
-RefPtr<BitmapImage> BitmapImage::create(PlatformImagePtr&& platformImage)
-{
-    return create(NativeImage::create(WTF::move(platformImage)));
 }
 
 Ref<BitmapImage> BitmapImage::createFromPlatformResource(StringView name)
@@ -86,11 +68,6 @@ BitmapImage& BitmapImage::nullImage()
 BitmapImage::BitmapImage(ImageObserver* observer, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     : Image(observer)
     , m_source(BitmapImageSource::create(*this, alphaOption, gammaAndColorProfileOption))
-{
-}
-
-BitmapImage::BitmapImage(Ref<NativeImage>&& image)
-    : m_source(NativeImageSource::create(WTF::move(image)))
 {
 }
 

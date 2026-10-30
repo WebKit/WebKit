@@ -2952,7 +2952,6 @@
 		7272D337292F818E00F74D99 /* FilterStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 7272D336292F767D00F74D99 /* FilterStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		727610562988B09800897621 /* ApplePayButtonPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 72F8898A29887AB900A6E07A /* ApplePayButtonPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		727A7F3A24078B84004D2931 /* ImageBufferIOSurfaceBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 72BAC3AB23E1E544008D741C /* ImageBufferIOSurfaceBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		72854E692B6987B700E0181A /* NativeImageSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 72854E5D2B6987B300E0181A /* NativeImageSource.h */; };
 		7287A84029879CF2004A50E2 /* SearchFieldResultsPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 7287A83A29879695004A50E2 /* SearchFieldResultsPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		728D4791279A48B700BA7C0E /* FilterEffectApplier.h in Headers */ = {isa = PBXBuildFile; fileRef = 72A13A9F274C5CC700E2A88E /* FilterEffectApplier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72963B6D29510A38004FF6FB /* TextAreaPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 72963B6C29510287004FF6FB /* TextAreaPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14456,9 +14455,7 @@
 		727AFED31A2EA6A0000442E8 /* EXTsRGB.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EXTsRGB.idl; sourceTree = "<group>"; };
 		7284557E2F4F787C00AE13F7 /* FilterEffectSoftwareParallelApplier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterEffectSoftwareParallelApplier.h; sourceTree = "<group>"; };
 		72854E5C2B6987B300E0181A /* ImageFrameAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageFrameAnimator.cpp; sourceTree = "<group>"; };
-		72854E5D2B6987B300E0181A /* NativeImageSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeImageSource.h; sourceTree = "<group>"; };
 		72854E5E2B6987B300E0181A /* ImageFrameAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageFrameAnimator.h; sourceTree = "<group>"; };
-		72854E612B6987B400E0181A /* NativeImageSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeImageSource.cpp; sourceTree = "<group>"; };
 		72854E662B6987B600E0181A /* BitmapImageSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitmapImageSource.h; sourceTree = "<group>"; };
 		72854E672B6987B600E0181A /* BitmapImageSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapImageSource.cpp; sourceTree = "<group>"; };
 		7287A83A29879695004A50E2 /* SearchFieldResultsPart.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchFieldResultsPart.h; sourceTree = "<group>"; };
@@ -44117,8 +44114,6 @@
 				72E0375C2FC9323300088DDE /* ImageFrameWorkQueue.h */,
 				554675771FD1FC1A003B10B0 /* ImageSource.cpp */,
 				554675781FD1FC1A003B10B0 /* ImageSource.h */,
-				72854E612B6987B400E0181A /* NativeImageSource.cpp */,
-				72854E5D2B6987B300E0181A /* NativeImageSource.h */,
 			);
 			path = bitmap;
 			sourceTree = "<group>";
@@ -47878,7 +47873,6 @@
 				5CC59425C83340698819A8EE /* NameValidation.h in Headers */,
 				726D56E3253AE3660002EF90 /* NativeImage.h in Headers */,
 				8388CA7C42BEE5A116A9DF69 /* NativeImageCocoa.h in Headers */,
-				72854E692B6987B700E0181A /* NativeImageSource.h in Headers */,
 				83B2D1751B8BCD6A00A02E47 /* NativeNodeFilter.h in Headers */,
 				E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */,
 				9AEBF919AAC54D083C5923A8 /* NaturalDimensions.h in Headers */,

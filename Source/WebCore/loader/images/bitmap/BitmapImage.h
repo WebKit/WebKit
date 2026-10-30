@@ -41,9 +41,6 @@ class ShareableSpatialImage;
 class BitmapImage final : public Image {
 public:
     WEBCORE_EXPORT static Ref<BitmapImage> LEGACY_NODELETE create(ImageObserver* = nullptr, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
-    WEBCORE_EXPORT static Ref<BitmapImage> LEGACY_NODELETE create(Ref<NativeImage>&&);
-    WEBCORE_EXPORT static RefPtr<BitmapImage> create(RefPtr<NativeImage>&&);
-    WEBCORE_EXPORT static RefPtr<BitmapImage> create(PlatformImagePtr&&);
     WEBCORE_EXPORT static Ref<BitmapImage> createFromPlatformResource(StringView name);
 
     WEBCORE_EXPORT static BitmapImage& nullImage();
@@ -126,7 +123,6 @@ public:
 
 private:
     BitmapImage(ImageObserver*, AlphaOption, GammaAndColorProfileOption);
-    BitmapImage(Ref<NativeImage>&&);
 
     // Encoded and decoded data
     EncodedDataStatus dataChanged(bool allDataReceived) final;

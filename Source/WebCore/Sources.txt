@@ -2245,7 +2245,6 @@ loader/images/bitmap/BitmapImageSource.cpp
 loader/images/bitmap/ImageFrameAnimator.cpp
 loader/images/bitmap/ImageFrameWorkQueue.cpp
 loader/images/bitmap/ImageSource.cpp
-loader/images/bitmap/NativeImageSource.cpp
 loader/images/sizing/ImageSizingContext.cpp
 loader/images/sizing/ObjectSizeNegotiation.cpp
 loader/images/svg/SVGImage.cpp @header:RenderStyleGetters
