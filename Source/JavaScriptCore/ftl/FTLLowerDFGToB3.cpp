@@ -15476,7 +15476,12 @@ IGNORE_CLANG_WARNINGS_END
         LoadVarargsData* data = m_node->loadVarargsData();
         LValue jsArguments = lowJSValue(m_node->argumentsChild());
 
-        LValue length = vmCall(Int32, operationSizeOfVarargs, weakPointer(globalObject), jsArguments, m_out.constInt32(data->offset));
+        LValue length;
+        if (m_node->argumentsChild()->op() == Spread && !data->offset) {
+            length = m_out.load32NonNegative(toButterfly(jsArguments), m_heaps.Butterfly_publicLength);
+            speculate(VarargsOverflow, noValue(), nullptr, m_out.above(length, m_out.constInt32(maxArguments)));
+        } else
+            length = vmCall(Int32, operationSizeOfVarargs, weakPointer(globalObject), jsArguments, m_out.constInt32(data->offset));
 
         LValue lengthIncludingThis = m_out.add(length, m_out.int32One);
 
@@ -15496,6 +15501,10 @@ IGNORE_CLANG_WARNINGS_END
         case UntypedUse: {
             speculate(VarargsOverflow, noValue(), nullptr, m_out.bitOr(m_out.isZero32(lengthIncludingThis), m_out.above(lengthIncludingThis, m_out.constInt32(data->limit))));
             m_out.store32(lengthIncludingThis, lowWordFor(data->machineCount));
+            if (m_node->argumentsChild()->op() == Spread && !data->offset) {
+                emitLoadVarargsFromContiguousStorage(m_heaps.indexedContiguousProperties, toButterfly(jsArguments), lengthIncludingThis);
+                break;
+            }
             // FIXME: This computation is rather silly. If operationLoadVarargs just took a pointer instead
             // of a VirtualRegister, we wouldn't have to do this.
             // https://bugs.webkit.org/show_bug.cgi?id=141660
@@ -15614,14 +15623,19 @@ IGNORE_CLANG_WARNINGS_END
         unsigned numberOfArgumentsToSkip = data->offset;
         LValue lengthIncludingThis = lowInt32(m_node->child1());
 
-        LValue length = m_out.sub(lengthIncludingThis, m_out.int32One);
         speculate(
             VarargsOverflow, noValue(), nullptr,
             m_out.above(lengthIncludingThis, m_out.constInt32(data->limit)));
 
         m_out.store32(lengthIncludingThis, lowWordFor(data->machineCount));
 
-        LValue sourceStart = getArgumentsStart(inlineCallFrame, numberOfArgumentsToSkip);
+        emitLoadVarargsFromContiguousStorage(m_heaps.variables, getArgumentsStart(inlineCallFrame, numberOfArgumentsToSkip), lengthIncludingThis);
+    }
+
+    void emitLoadVarargsFromContiguousStorage(IndexedAbstractHeap& sourceHeap, LValue sourceStart, LValue lengthIncludingThis)
+    {
+        LoadVarargsData* data = m_node->loadVarargsData();
+        LValue length = m_out.sub(lengthIncludingThis, m_out.int32One);
         LValue targetStart = addressFor(data->machineStart).value();
 
         LBasicBlock undefinedLoop = m_out.newBlock();
@@ -15654,7 +15668,7 @@ IGNORE_CLANG_WARNINGS_END
         previousIndex = m_out.phi(pointerType(), loopBound);
         currentIndex = m_out.sub(previousIndex, m_out.intPtrOne);
         LValue value = m_out.load64(
-            m_out.baseIndex(m_heaps.variables, sourceStart, currentIndex));
+            m_out.baseIndex(sourceHeap, sourceStart, currentIndex));
         m_out.store64(value, m_out.baseIndex(m_heaps.variables, targetStart, currentIndex));
         nextIndex = m_out.anchor(currentIndex);
         m_out.addIncomingToPhi(previousIndex, nextIndex);
