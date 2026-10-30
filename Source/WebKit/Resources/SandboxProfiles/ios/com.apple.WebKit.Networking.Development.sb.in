@@ -188,4 +188,10 @@
         (global-name "com.apple.imagent.EnhancedLinkSecurityStore")))
 #endif
 
+#if HAVE(SECURITY_OVERRIDES)
+(with-filter (require-not (state-flag "BlockSecurityOverrides"))
+    (allow mach-lookup
+        (global-name "com.apple.securityoverrides")))
+#endif
+
 #endif // !ENABLE(DEVELOPMENT_SANDBOX_FALLBACK)

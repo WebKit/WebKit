@@ -27,6 +27,7 @@
 #include "WebPreferences.h"
 
 #include "APIPageConfiguration.h"
+#include "GlobalPreferenceOverridesController.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
@@ -66,12 +67,21 @@ Ref<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& ident
     return preferences;
 }
 
+HashSet<WebPreferences*>& WebPreferences::allPreferences()
+{
+    static NeverDestroyed<HashSet<WebPreferences*>> preferences;
+    return preferences;
+}
+
 WebPreferences::WebPreferences(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
     : m_identifier(identifier)
     , m_keyPrefix(keyPrefix)
     , m_globalDebugKeyPrefix(globalDebugKeyPrefix)
 {
+    allPreferences().add(this);
+
     platformInitializeStore();
+    applyGlobalOverrides();
 
     if (WebKit::forceSiteIsolationAlwaysOnForTesting)
         setSiteIsolationEnabled(true);
@@ -83,7 +93,10 @@ WebPreferences::WebPreferences(const WebPreferences& other)
     , m_globalDebugKeyPrefix(other.m_globalDebugKeyPrefix)
     , m_store(other.m_store)
 {
+    allPreferences().add(this);
+
     platformInitializeStore();
+    applyGlobalOverrides();
 
     if (WebKit::forceSiteIsolationAlwaysOnForTesting)
         setSiteIsolationEnabled(true);
@@ -92,6 +105,29 @@ WebPreferences::WebPreferences(const WebPreferences& other)
 WebPreferences::~WebPreferences()
 {
     ASSERT(m_pages.isEmptyIgnoringNullReferences());
+
+    allPreferences().remove(this);
+}
+
+void WebPreferences::applyGlobalOverrides()
+{
+    m_store.setOverriddenValues(WebPreferencesStore::ValueMap { GlobalPreferenceOverridesController::singleton().overrides() });
+}
+
+void WebPreferences::applyGlobalOverridesAndUpdate()
+{
+    applyGlobalOverrides();
+    update();
+}
+
+void WebPreferences::globalOverridesDidChange()
+{
+    // Updating can run client code that releases a WebPreferences, so hold references.
+    auto preferences = WTF::map(allPreferences(), [](auto* preferences) {
+        return Ref { *preferences };
+    });
+    for (auto& preference : preferences)
+        preference->applyGlobalOverridesAndUpdate();
 }
 
 void WebPreferences::forceSiteIsolationAlwaysOnForTesting()

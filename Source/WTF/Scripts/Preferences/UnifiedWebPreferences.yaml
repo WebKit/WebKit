@@ -5561,6 +5561,18 @@ SecureContextChecksEnabled:
   humanReadableDescription: "Allow access to HTTPS-only Web APIs over HTTP"
   defaultValue: true
 
+SecurityOverridesEnabled:
+  type: bool
+  status: internal
+  category: security
+  condition: HAVE(SECURITY_OVERRIDES)
+  defaultsOverridable: true
+  humanReadableName: "Security Overrides"
+  humanReadableDescription: "Applies preference overrides when available"
+  defaultValue:
+    "PLATFORM(COCOA)": true
+    default: false
+
 SelectShowPickerEnabled:
   type: bool
   status: testable

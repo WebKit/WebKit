@@ -27,6 +27,7 @@
 #import "WKPreferencesInternal.h"
 
 #import "APIArray.h"
+#import "GlobalPreferenceOverridesController.h"
 #import "Logging.h"
 #import "WKNSArray.h"
 #import "WKTextExtractionUtilities.h"
@@ -660,6 +661,14 @@ static _WKStorageBlockingPolicy LEGACY_NODELETE toAPI(WebCore::StorageBlockingPo
 #if ENABLE(APPLE_PAY)
     protect(*_preferences)->setApplePayCapabilityDisclosureAllowed(applePayCapabilityDisclosureAllowed);
 #endif
+}
+
++ (void)_setGlobalPreferenceOverridesForTesting:(NSDictionary<NSString *, NSString *> *)overrides
+{
+    HashMap<String, String> delivered;
+    for (NSString *key in overrides)
+        delivered.set(key, overrides[key]);
+    WebKit::GlobalPreferenceOverridesController::singleton().setOverrides(delivered);
 }
 
 - (BOOL)_shouldSuppressKeyboardInputDuringProvisionalNavigation

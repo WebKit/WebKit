@@ -3781,6 +3781,10 @@
 		0DF018792FA847BD0077DA6B /* studio_lighting_objectmode_v3_diffmap.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = studio_lighting_objectmode_v3_diffmap.ktx; sourceTree = "<group>"; };
 		0DF0187A2FA847BD0077DA6B /* studio_lighting_objectmode_v3_specmap.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = studio_lighting_objectmode_v3_specmap.ktx; sourceTree = "<group>"; };
 		0DF0187B2FA847BD0077DA6B /* studio_lighting_objectmode_v3.reibl */ = {isa = PBXFileReference; lastKnownFileType = text; path = studio_lighting_objectmode_v3.reibl; sourceTree = "<group>"; };
+		5E55104200000000000D0001 /* SecurityOverridesObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecurityOverridesObserver.h; sourceTree = "<group>"; };
+		5E55104200000000000D0002 /* SecurityOverridesObserver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SecurityOverridesObserver.mm; sourceTree = "<group>"; };
+		5E55104200000000000D0004 /* GlobalPreferenceOverridesController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalPreferenceOverridesController.cpp; sourceTree = "<group>"; };
+		5E55104200000000000D0005 /* GlobalPreferenceOverridesController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GlobalPreferenceOverridesController.h; sourceTree = "<group>"; };
 		0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SafeBrowsingSPI.h; sourceTree = "<group>"; };
 		0EDE85022004E74900030560 /* WebsitePopUpPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsitePopUpPolicy.h; sourceTree = "<group>"; };
 		0F08CF511D63C13A00B48DF1 /* WKFormSelectPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFormSelectPicker.h; sourceTree = "<group>"; };
@@ -15416,6 +15420,8 @@
 				D2E2FE6F29C8C4F900023E6B /* NetworkTaskCocoa.mm */,
 				86EB7202298D310900C1DC77 /* SecItemShim.h */,
 				86EB7201298D310900C1DC77 /* SecItemShim.mm */,
+				5E55104200000000000D0001 /* SecurityOverridesObserver.h */,
+				5E55104200000000000D0002 /* SecurityOverridesObserver.mm */,
 				FA745C47302EA40D007231F3 /* SecuritySoftLink.h */,
 				FA745C48302EA40D007231F3 /* SecuritySoftLink.mm */,
 				41287D4C225C05C5009A3E26 /* WebSocketTaskCocoa.h */,
@@ -16388,6 +16394,8 @@
 				BC06F44812DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h */,
 				BC06F43912DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp */,
 				BC06F43812DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h */,
+				5E55104200000000000D0004 /* GlobalPreferenceOverridesController.cpp */,
+				5E55104200000000000D0005 /* GlobalPreferenceOverridesController.h */,
 				2DD5A72A1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h */,
 				5CEABA2B2333251400797797 /* LegacyGlobalSettings.cpp */,
 				5CEABA2A2333247700797797 /* LegacyGlobalSettings.h */,

@@ -71,6 +71,16 @@ SUPPRESS_NODELETE static MappedType LEGACY_NODELETE valueForKey(const WebPrefere
 }
 
 template<typename MappedType>
+SUPPRESS_NODELETE static MappedType LEGACY_NODELETE resolvedValueForKey(const WebPreferencesStore::ValueMap& values, const WebPreferencesStore::ValueMap& overriddenDefaults, const WebPreferencesStore::ValueMap& overriddenValues, const String& key)
+{
+    auto overriddenIt = overriddenValues.find(key);
+    if (overriddenIt != overriddenValues.end() && std::holds_alternative<MappedType>(overriddenIt->value))
+        return std::get<MappedType>(overriddenIt->value);
+
+    return valueForKey<MappedType>(values, overriddenDefaults, key);
+}
+
+template<typename MappedType>
 static bool setValueForKey(WebPreferencesStore::ValueMap& map, const WebPreferencesStore::ValueMap& overriddenDefaults, const String& key, const MappedType& value)
 {
     MappedType existingValue = valueForKey<MappedType>(map, overriddenDefaults, key);
@@ -88,7 +98,7 @@ bool WebPreferencesStore::setStringValueForKey(const String& key, const String& 
 
 String WebPreferencesStore::getStringValueForKey(const String& key) const
 {
-    return valueForKey<String>(m_values, m_overriddenDefaults, key);
+    return resolvedValueForKey<String>(m_values, m_overriddenDefaults, m_overriddenValues, key);
 }
 
 bool WebPreferencesStore::setBoolValueForKey(const String& key, bool value)
@@ -103,7 +113,7 @@ SUPPRESS_NODELETE bool WebPreferencesStore::getBoolValueForKey(const String& key
     if (it != boolTestRunnerOverridesMap().end())
         return it->value;
 
-    return valueForKey<bool>(m_values, m_overriddenDefaults, key);
+    return resolvedValueForKey<bool>(m_values, m_overriddenDefaults, m_overriddenValues, key);
 }
 
 bool WebPreferencesStore::setUInt32ValueForKey(const String& key, uint32_t value) 
@@ -113,7 +123,7 @@ bool WebPreferencesStore::setUInt32ValueForKey(const String& key, uint32_t value
 
 uint32_t WebPreferencesStore::getUInt32ValueForKey(const String& key) const
 {
-    return valueForKey<uint32_t>(m_values, m_overriddenDefaults, key);
+    return resolvedValueForKey<uint32_t>(m_values, m_overriddenDefaults, m_overriddenValues, key);
 }
 
 bool WebPreferencesStore::setDoubleValueForKey(const String& key, double value) 
@@ -123,7 +133,7 @@ bool WebPreferencesStore::setDoubleValueForKey(const String& key, double value)
 
 double WebPreferencesStore::getDoubleValueForKey(const String& key) const
 {
-    return valueForKey<double>(m_values, m_overriddenDefaults, key);
+    return resolvedValueForKey<double>(m_values, m_overriddenDefaults, m_overriddenValues, key);
 }
 
 // Overridden Defaults
@@ -146,6 +156,11 @@ void WebPreferencesStore::setOverrideDefaultsUInt32ValueForKey(const String& key
 void WebPreferencesStore::setOverrideDefaultsDoubleValueForKey(const String& key, double value)
 {
     m_overriddenDefaults.set(key, Value(value));
+}
+
+void WebPreferencesStore::setOverriddenValues(ValueMap&& overrides)
+{
+    m_overriddenValues = WTF::move(overrides);
 }
 
 void WebPreferencesStore::deleteKey(const String& key)

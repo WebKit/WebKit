@@ -33,6 +33,7 @@ NetworkProcess/cocoa/NetworkSessionCocoa.mm @nonARC
 NetworkProcess/cocoa/NetworkStorageSessionCocoa.mm @nonARC
 NetworkProcess/cocoa/NetworkTaskCocoa.mm @nonARC
 NetworkProcess/cocoa/SecItemShim.mm @nonARC
+NetworkProcess/cocoa/SecurityOverridesObserver.mm @nonARC
 NetworkProcess/cocoa/WKURLSessionTaskDelegate.mm @nonARC
 
 NetworkProcess/webtransport/cocoa/NetworkTransportSessionCocoa.mm @nonARC
