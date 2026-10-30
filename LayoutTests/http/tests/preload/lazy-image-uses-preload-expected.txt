@@ -1,0 +1,6 @@
+
+
+PASS A loading=lazy image uses a link preload that has finished loading
+PASS A loading=lazy image uses a link preload that is still loading
+PASS A loading=eager image uses a link preload that is still loading
+
