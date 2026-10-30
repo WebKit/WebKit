@@ -1,0 +1,13 @@
+
+PASS readableStreamTee() does not leak teeState through an Object.prototype 'cancelPromiseCapability' setter
+PASS readableStreamTee() does not leak teeState through an Object.prototype 'branch1' setter
+PASS readableStreamTee() does not leak teeState through an Object.prototype 'branch2' setter
+PASS TransformStream construction does not leak transformerDict through an Object.prototype 'start' setter
+PASS TransformStream construction does not leak transformerDict through an Object.prototype 'transform' setter
+PASS TransformStream construction does not leak transformerDict through an Object.prototype 'flush' setter
+PASS WritableStream construction does not leak underlyingSinkDict through an Object.prototype 'start' setter
+PASS WritableStream construction does not leak underlyingSinkDict through an Object.prototype 'write' setter
+PASS WritableStream construction does not leak underlyingSinkDict through an Object.prototype 'close' setter
+PASS WritableStream construction does not leak underlyingSinkDict through an Object.prototype 'abort' setter
+PASS Internal builtin results are not iterated through Array.prototype[Symbol.iterator]
+
