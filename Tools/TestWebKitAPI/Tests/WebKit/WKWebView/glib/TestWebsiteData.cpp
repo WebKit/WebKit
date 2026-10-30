@@ -389,6 +389,27 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
 #endif
 }
 
+// Website data is written to disk asynchronously, so it has to be polled for. Give up well inside
+// the timeout of the test so that the caller gets to assert on the data it wanted instead of the
+// harness killing the test.
+static const double kWebsiteDataPollInterval = 0.1;
+static const unsigned kWebsiteDataPollCount = 20;
+
+static bool hasSingleEntryWithTypes(GList* dataList, WebKitWebsiteDataTypes expectedTypes)
+{
+    return dataList && !dataList->next && webkit_website_data_get_types(static_cast<WebKitWebsiteData*>(dataList->data)) == expectedTypes;
+}
+
+static GList* waitUntilSingleEntryHasTypes(WebsiteDataTest* test, WebKitWebsiteDataTypes types, WebKitWebsiteDataTypes expectedTypes)
+{
+    GList* dataList = test->fetch(types);
+    for (unsigned i = 0; i < kWebsiteDataPollCount && !hasSingleEntryWithTypes(dataList, expectedTypes); ++i) {
+        test->wait(kWebsiteDataPollInterval);
+        dataList = test->fetch(types);
+    }
+    return dataList;
+}
+
 static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
 {
     static const WebKitWebsiteDataTypes cacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
@@ -402,11 +423,8 @@ static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
     test->waitUntilLoadFinished();
 
     // Disk cache delays the storing of initial resources for 1 second to avoid
-    // affecting early page load. So, wait here to make sure resources
-    // have already been stored.
-    test->wait(2);
-
-    dataList = test->fetch(cacheTypes);
+    // affecting early page load.
+    dataList = waitUntilSingleEntryHasTypes(test, cacheTypes, cacheTypes);
     g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(dataList->data);
@@ -491,9 +509,7 @@ static void testWebsiteDataStorage(WebsiteDataTest* test, gconstpointer)
     test->waitUntilLoadFinished();
 
     // Local storage uses a 1 second timer to update the database.
-    test->wait(1);
-
-    dataList = test->fetch(storageTypes);
+    dataList = waitUntilSingleEntryHasTypes(test, storageTypes, storageTypes);
     g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(dataList->data);
@@ -508,7 +524,7 @@ static void testWebsiteDataStorage(WebsiteDataTest* test, gconstpointer)
 
     // Get also cached data, and clear it.
     static const WebKitWebsiteDataTypes cacheAndStorageTypes = static_cast<WebKitWebsiteDataTypes>(storageTypes | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
-    dataList = test->fetch(cacheAndStorageTypes);
+    dataList = waitUntilSingleEntryHasTypes(test, cacheAndStorageTypes, cacheAndStorageTypes);
     g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     data = static_cast<WebKitWebsiteData*>(dataList->data);
@@ -864,9 +880,7 @@ static void testWebsiteDataSizes(WebsiteDataTest* test, gconstpointer)
     test->waitUntilLoadFinished();
 
     // Local storage uses a 1 second timer to update the database.
-    test->wait(1);
-
-    dataList = test->fetch(sizeTypes);
+    dataList = waitUntilSingleEntryHasTypes(test, sizeTypes, WEBKIT_WEBSITE_DATA_LOCAL_STORAGE);
     g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     auto* data = static_cast<WebKitWebsiteData*>(dataList->data);
