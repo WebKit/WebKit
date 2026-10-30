@@ -54,12 +54,14 @@
 #include "ScreenProperties.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 class GPUDisplayBufferDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
+    WTF_MAKE_TZONE_ALLOCATED(GPUDisplayBufferDisplayDelegate);
 public:
     static Ref<GPUDisplayBufferDisplayDelegate> LEGACY_NODELETE create(bool isOpaque = true, float contentsScale = 1)
     {
@@ -128,6 +130,8 @@ private:
     ContentsFormat m_contentsFormat { ContentsFormat::RGBA8 };
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUDisplayBufferDisplayDelegate);
+
 #if HAVE(SUPPORT_HDR_DISPLAY)
 struct ScreenHeadroom {
     float maxEDRHeadroom { 1.f };
@@ -149,6 +153,7 @@ static ScreenHeadroom gatherScreenHeadroom()
 }
 
 class GPUOffMainThreadScreenHeadroom final : public ThreadSafeRefCounted<GPUOffMainThreadScreenHeadroom> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUOffMainThreadScreenHeadroom);
 public:
     static Ref<GPUOffMainThreadScreenHeadroom> LEGACY_NODELETE create() { return adoptRef(*new GPUOffMainThreadScreenHeadroom); }
 
@@ -184,6 +189,8 @@ private:
     std::optional<ScreenHeadroom> m_headroom WTF_GUARDED_BY_LOCK(m_lock);
     bool m_isRefreshing WTF_GUARDED_BY_LOCK(m_lock) { false };
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUOffMainThreadScreenHeadroom);
 #endif // HAVE(SUPPORT_HDR_DISPLAY)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUCanvasContextCocoa);

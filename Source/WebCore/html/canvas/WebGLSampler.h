@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 
 #include <WebCore/WebGLObject.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 class AbstractLocker;
@@ -36,6 +37,7 @@ class AbstractLocker;
 namespace WebCore {
 
 class WebGLSampler final : public WebGLObject {
+    WTF_MAKE_TZONE_ALLOCATED(WebGLSampler);
 public:
     static Ref<WebGLSampler> LEGACY_NODELETE createLost();
     static Ref<WebGLSampler> create(WebGLRenderingContextBase&);

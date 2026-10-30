@@ -31,6 +31,7 @@
 #include <WebCore/WebGLObject.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -51,6 +52,7 @@ class WebXROpaqueFramebuffer;
 #endif
 
 class WebGLFramebuffer final : public WebGLObject {
+    WTF_MAKE_TZONE_ALLOCATED(WebGLFramebuffer);
 public:
     virtual ~WebGLFramebuffer();
 

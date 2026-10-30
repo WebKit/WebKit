@@ -29,10 +29,12 @@
 
 #include "GraphicsContextGL.h"
 #include "WebGLObject.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebGLSync final : public WebGLObject {
+    WTF_MAKE_TZONE_ALLOCATED(WebGLSync);
 public:
     virtual ~WebGLSync();
     static Ref<WebGLSync> LEGACY_NODELETE createLost();

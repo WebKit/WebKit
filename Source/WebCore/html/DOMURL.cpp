@@ -36,9 +36,12 @@
 #include "SecurityOrigin.h"
 #include "URLSearchParams.h"
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMURL);
 
 inline DOMURL::DOMURL(URL&& completeURL)
     : m_url(WTF::move(completeURL))

@@ -29,8 +29,11 @@
 #include "CanvasRenderingContext2DBase.h"
 #include "Filter.h"
 #include "GraphicsContextSwitcher.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CanvasLayerContextSwitcher);
 
 RefPtr<CanvasLayerContextSwitcher> CanvasLayerContextSwitcher::create(CanvasRenderingContext2DBase& context, const FloatRect& bounds, RefPtr<Filter>&& filter)
 {

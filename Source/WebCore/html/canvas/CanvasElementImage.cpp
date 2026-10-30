@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "CanvasElementImage.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CanvasElementImage);
 
 Ref<CanvasElementImage> CanvasElementImage::create(CanvasElementSnapshot&& snapshot)
 {

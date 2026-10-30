@@ -32,6 +32,7 @@
 #include <atomic>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -97,6 +98,7 @@ enum class WebGLExtensionName {
 };
 
 class WebGLExtensionBase : public RefCounted<WebGLExtensionBase> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebGLExtensionBase);
 public:
     WebGLExtensionName name() const { return m_name; }
 

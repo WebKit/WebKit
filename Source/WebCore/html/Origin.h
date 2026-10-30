@@ -27,6 +27,7 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class JSValue;
@@ -39,6 +40,7 @@ class ScriptExecutionContext;
 class SecurityOrigin;
 
 class Origin final : public RefCounted<Origin> {
+    WTF_MAKE_TZONE_ALLOCATED(Origin);
 public:
     static Ref<Origin> create();
     ~Origin();

@@ -32,8 +32,11 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGLBuffer);
 
 Ref<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContextBase& context)
 {

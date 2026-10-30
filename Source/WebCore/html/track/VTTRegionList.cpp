@@ -26,10 +26,13 @@
 
 #include "config.h"
 #include "VTTRegionList.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VTTRegionList);
 
 VTTRegion* VTTRegionList::item(unsigned index) const
 {

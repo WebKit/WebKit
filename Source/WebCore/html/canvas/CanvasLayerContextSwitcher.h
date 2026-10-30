@@ -28,6 +28,7 @@
 #include "FloatRect.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ class GraphicsContext;
 class GraphicsContextSwitcher;
 
 class CanvasLayerContextSwitcher : public RefCounted<CanvasLayerContextSwitcher> {
+    WTF_MAKE_TZONE_ALLOCATED(CanvasLayerContextSwitcher);
 public:
     static RefPtr<CanvasLayerContextSwitcher> create(CanvasRenderingContext2DBase&, const FloatRect& bounds, RefPtr<Filter>&&);
 

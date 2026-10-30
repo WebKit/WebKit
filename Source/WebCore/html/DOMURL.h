@@ -29,6 +29,7 @@
 #include "ExceptionOr.h"
 #include "URLDecomposition.h"
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
@@ -40,6 +41,7 @@ class URLRegistrable;
 class URLSearchParams;
 
 class DOMURL final : public RefCountedAndCanMakeWeakPtr<DOMURL>, public URLDecomposition {
+    WTF_MAKE_TZONE_ALLOCATED(DOMURL);
 public:
     static ExceptionOr<Ref<DOMURL>> create(const String& url, const String& base);
     WEBCORE_EXPORT ~DOMURL();

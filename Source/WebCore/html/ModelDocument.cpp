@@ -45,6 +45,7 @@
 #include "LocalFrameLoaderClient.h"
 #include "RawDataDocumentParser.h"
 #include "UserScriptTypes.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -55,6 +56,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelDocument);
 using namespace HTMLNames;
 
 class ModelDocumentParser final : public RawDataDocumentParser {
+    WTF_MAKE_TZONE_ALLOCATED(ModelDocumentParser);
 public:
     static Ref<ModelDocumentParser> create(ModelDocument& document)
     {
@@ -76,6 +78,8 @@ private:
     WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> m_modelElement;
     String m_outgoingReferrer;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelDocumentParser);
 
 void ModelDocumentParser::createDocumentStructure()
 {

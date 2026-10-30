@@ -31,6 +31,7 @@
 #include "TextTrackCueList.h"
 #include <algorithm>
 #include <ranges>
+#include <wtf/TZoneMallocInlines.h>
 
 // Checking sorting is too slow for general use; turn it on explicitly when working on this class.
 #undef CHECK_SORTING
@@ -42,6 +43,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextTrackCueList);
 
 static inline bool LEGACY_NODELETE cueSortsBefore(const Ref<TextTrackCue>& a, const Ref<TextTrackCue>& b)
 {

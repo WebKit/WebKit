@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 
 #include <WebCore/WebGLVertexArrayObjectBase.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 class AbstractLocker;
@@ -38,6 +39,7 @@ namespace WebCore {
 class WebGL2RenderingContext;
 
 class WebGLVertexArrayObject final : public WebGLVertexArrayObjectBase {
+    WTF_MAKE_TZONE_ALLOCATED(WebGLVertexArrayObject);
 public:
     static Ref<WebGLVertexArrayObject> LEGACY_NODELETE createLost();
     static Ref<WebGLVertexArrayObject> create(WebGLRenderingContextBase&, Type);

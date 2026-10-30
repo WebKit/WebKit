@@ -68,6 +68,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(OFFSCREEN_CANVAS)
@@ -975,6 +976,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 }
 
 class ImageBitmapImageObserver final : public ImageObserver {
+    WTF_MAKE_TZONE_ALLOCATED(ImageBitmapImageObserver);
 public:
     static Ref<ImageBitmapImageObserver> create(String mimeType, long long expectedContentLength, const URL& sourceUrl)
     {
@@ -1005,6 +1007,8 @@ private:
     long long m_expectedContentLength;
     URL m_sourceUrl;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBitmapImageObserver);
 
 class PendingImageBitmap final : public RefCounted<PendingImageBitmap>, public ActiveDOMObject, public FileReaderLoaderClient {
     WTF_MAKE_TZONE_ALLOCATED(PendingImageBitmap);

@@ -28,6 +28,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ struct DOMMatrix2DInit;
 template<typename> class ExceptionOr;
 
 class CanvasPattern : public RefCounted<CanvasPattern> {
+    WTF_MAKE_TZONE_ALLOCATED(CanvasPattern);
 public:
     static Ref<CanvasPattern> LEGACY_NODELETE create(SourceImage&&, bool repeatX, bool repeatY, bool originClean);
     ~CanvasPattern();

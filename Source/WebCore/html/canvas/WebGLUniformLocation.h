@@ -30,10 +30,12 @@
 
 #include "WebGLProgram.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebGLUniformLocation final : public RefCounted<WebGLUniformLocation> {
+    WTF_MAKE_TZONE_ALLOCATED(WebGLUniformLocation);
 public:
     static Ref<WebGLUniformLocation> LEGACY_NODELETE create(WebGLProgram&, GCGLint location);
     RefPtr<WebGLProgram> LEGACY_NODELETE program() const;

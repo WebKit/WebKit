@@ -30,10 +30,12 @@
 
 #include "GraphicsTypesGL.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebGLShaderPrecisionFormat : public RefCounted<WebGLShaderPrecisionFormat> {
+    WTF_MAKE_TZONE_ALLOCATED(WebGLShaderPrecisionFormat);
 public:
     static Ref<WebGLShaderPrecisionFormat> LEGACY_NODELETE create(GCGLint rangeMin, GCGLint rangeMax, GCGLint precision);
 
