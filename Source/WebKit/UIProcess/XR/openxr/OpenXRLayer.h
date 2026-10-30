@@ -29,9 +29,9 @@
 
 #include "OpenXRGraphicsBinding.h"
 #include "OpenXRSwapchain.h"
-#include "OpenXRUtils.h"
 
 #include <WebCore/PlatformXR.h>
+#include <openxr/openxr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
@@ -101,52 +101,54 @@ private:
     void releaseImages();
 };
 
-class OpenXRQuadLayer final : public OpenXRCompositionLayer {
+template<typename XrLayerType, XrStructureType StructureType>
+class OpenXRTypedCompositionLayer : public OpenXRCompositionLayer {
+protected:
+    OpenXRTypedCompositionLayer(UniqueRef<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
+
+    Vector<XrLayerType> m_layers;
+
+private:
+    size_t layerCount() const final { return m_layers.size(); }
+};
+
+class OpenXRQuadLayer final : public OpenXRTypedCompositionLayer<XrCompositionLayerQuad, XR_TYPE_COMPOSITION_LAYER_QUAD> {
     WTF_MAKE_TZONE_ALLOCATED(OpenXRQuadLayer);
     WTF_MAKE_NONCOPYABLE(OpenXRQuadLayer);
 public:
     static std::unique_ptr<OpenXRQuadLayer> create(std::unique_ptr<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
 
 private:
-    explicit OpenXRQuadLayer(UniqueRef<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
+    OpenXRQuadLayer(UniqueRef<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
 
-    size_t layerCount() const final { return m_layers.size(); }
     XrCompositionLayerBaseHeader* fillLayer(size_t, XrEyeVisibility, const PlatformXR::DeviceLayer&) final;
-
-    Vector<XrCompositionLayerQuad> m_layers;
 };
 
 #if defined(XR_KHR_composition_layer_equirect2)
-class OpenXREquirectLayer final : public OpenXRCompositionLayer {
+class OpenXREquirectLayer final : public OpenXRTypedCompositionLayer<XrCompositionLayerEquirect2KHR, XR_TYPE_COMPOSITION_LAYER_EQUIRECT2_KHR> {
     WTF_MAKE_TZONE_ALLOCATED(OpenXREquirectLayer);
     WTF_MAKE_NONCOPYABLE(OpenXREquirectLayer);
 public:
     static std::unique_ptr<OpenXREquirectLayer> create(std::unique_ptr<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
 
 private:
-    explicit OpenXREquirectLayer(UniqueRef<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
+    OpenXREquirectLayer(UniqueRef<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
 
-    size_t layerCount() const final { return m_layers.size(); }
     XrCompositionLayerBaseHeader* fillLayer(size_t, XrEyeVisibility, const PlatformXR::DeviceLayer&) final;
-
-    Vector<XrCompositionLayerEquirect2KHR> m_layers;
 };
 #endif
 
 #if defined(XR_KHR_composition_layer_cylinder)
-class OpenXRCylinderLayer final : public OpenXRCompositionLayer {
+class OpenXRCylinderLayer final : public OpenXRTypedCompositionLayer<XrCompositionLayerCylinderKHR, XR_TYPE_COMPOSITION_LAYER_CYLINDER_KHR> {
     WTF_MAKE_TZONE_ALLOCATED(OpenXRCylinderLayer);
     WTF_MAKE_NONCOPYABLE(OpenXRCylinderLayer);
 public:
     static std::unique_ptr<OpenXRCylinderLayer> create(std::unique_ptr<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
 
 private:
-    explicit OpenXRCylinderLayer(UniqueRef<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
+    OpenXRCylinderLayer(UniqueRef<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
 
-    size_t layerCount() const final { return m_layers.size(); }
     XrCompositionLayerBaseHeader* fillLayer(size_t, XrEyeVisibility, const PlatformXR::DeviceLayer&) final;
-
-    Vector<XrCompositionLayerCylinderKHR> m_layers;
 };
 #endif
 
