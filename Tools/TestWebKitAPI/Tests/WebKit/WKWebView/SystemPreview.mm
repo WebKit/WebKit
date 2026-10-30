@@ -60,6 +60,16 @@ static uint64_t elementID;
 static uint64_t pageID;
 static String documentID;
 
+static void resetSystemPreviewTriggerState()
+{
+    hasTriggerInfo = false;
+    wasTriggered = false;
+    wasTriggeredByDetachedElement = false;
+    elementID = 0;
+    pageID = 0;
+    documentID = { };
+}
+
 @interface TestSystemPreviewTriggeredHandler : NSObject <WKScriptMessageHandler>
 @end
 
@@ -120,6 +130,8 @@ namespace TestWebKitAPI {
 
 TEST(WebKit, SystemPreviewLoad)
 {
+    resetSystemPreviewTriggerState();
+
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration _setSystemPreviewEnabled:YES];
 
@@ -144,6 +156,8 @@ TEST(WebKit, SystemPreviewLoad)
 
 TEST(WebKit, SystemPreviewFail)
 {
+    resetSystemPreviewTriggerState();
+
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration _setSystemPreviewEnabled:YES];
 
@@ -168,6 +182,8 @@ TEST(WebKit, SystemPreviewFail)
 
 TEST(WebKit, SystemPreviewBlobRevokedImmediately)
 {
+    resetSystemPreviewTriggerState();
+
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration _setSystemPreviewEnabled:YES];
 
@@ -208,6 +224,8 @@ TEST(WebKit, SystemPreviewBlobRevokedImmediately)
 
 TEST(WebKit, SystemPreviewBlob)
 {
+    resetSystemPreviewTriggerState();
+
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration _setSystemPreviewEnabled:YES];
 
@@ -232,6 +250,8 @@ TEST(WebKit, SystemPreviewBlob)
 
 TEST(WebKit, SystemPreviewUnknownMIMEType)
 {
+    resetSystemPreviewTriggerState();
+
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration _setSystemPreviewEnabled:YES];
 
@@ -271,6 +291,8 @@ TEST(WebKit, SystemPreviewUnknownMIMEType)
 
 TEST(WebKit, SystemPreviewTriggered)
 {
+    resetSystemPreviewTriggerState();
+
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     RetainPtr messageHandler = adoptNS([[TestSystemPreviewTriggeredHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testSystemPreview"];
@@ -286,6 +308,8 @@ TEST(WebKit, SystemPreviewTriggered)
 
 TEST(WebKit, SystemPreviewTriggeredOnDetachedElement)
 {
+    resetSystemPreviewTriggerState();
+
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     RetainPtr messageHandler = adoptNS([[TestSystemPreviewTriggeredOnDetachedElementHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testSystemPreview"];
