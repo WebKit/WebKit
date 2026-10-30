@@ -1013,10 +1013,13 @@ if (SWIFT_REQUIRED)
         list(APPEND WebKit_SWIFT_INTEROP_SOURCES
             UIProcess/API/ios/WKWebViewIOS.mm
             UIProcess/API/mac/WKWebViewMac.mm
+
+            UIProcess/XR/xros/PlatformXRCompositor.mm
+
             UIProcess/ios/ViewGestureControllerIOS.mm
+
             UIProcess/mac/ViewGestureControllerMac.mm
             UIProcess/mac/WebViewImpl.mm
-
             UIProcess/mac/AppKitGestures/WKAppKitGestureController.mm
         )
     endif ()

@@ -171,6 +171,7 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa/PhoneNumberPossessionManaging.swift
 
     UIProcess/PDF/WKPDFPageNumberIndicator.mm
+    ${WEBKIT_DIR}/UIProcess/XR/mac/WKWebXRImmersiveSpaceHost.swift
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKTextExtraction.swift
 
     UIProcess/ios/fullscreen/FullscreenTouchSecheuristicParameters.cpp

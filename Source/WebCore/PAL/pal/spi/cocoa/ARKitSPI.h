@@ -31,12 +31,17 @@
 #include <wtf/Compiler.h>
 #include <wtf/Platform.h>
 
-#if HAVE(ARKIT)
+#if HAVE(ARKIT) || USE(COMPOSITORXR)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 DECLARE_SYSTEM_HEADER
 
 #import <ARKit/ARKit.h>
+
+#if HAVE(CP_REMOTE_COMPOSITOR)
+// ar_device_create_with_endpoint() takes an nw_endpoint_t, which ARKit.h does not declare.
+#import <Network/Network.h>
+#endif
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -50,6 +55,6 @@ typedef void (^ar_plane_detection_floor_plane_completion_handler_t)(bool, ar_pla
 #endif
 
 ALLOW_DEPRECATED_DECLARATIONS_END
-#endif // HAVE(ARKIT)
+#endif // HAVE(ARKIT) || USE(COMPOSITORXR)
 
 #endif // !__has_feature(modules)

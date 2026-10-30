@@ -44,6 +44,7 @@
 #include "XRSessionMode.h"
 #include "XRVisibilityState.h"
 #include <numbers>
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Ref.h>
@@ -160,6 +161,7 @@ public:
         uint32_t arrayLength { 0 };
     };
     std::optional<InitialRenderingDimensions> initialRenderingDimensions() const { return m_initialRenderingDimensions; }
+    void whenRenderingInitialized(CompletionHandler<void(bool)>&&);
 
 private:
     WebXRSession(Document&, XRSessionMode, PlatformXR::Device&, FeatureList&&);
@@ -226,6 +228,7 @@ private:
     PlatformXR::FrameData m_frameData;
     std::optional<PlatformXR::RequestData> m_requestData;
     std::optional<InitialRenderingDimensions> m_initialRenderingDimensions;
+    Vector<CompletionHandler<void(bool)>> m_renderingInitializedCallbacks;
 
     double m_minimumInlineFOV { 0.0 };
     double m_maximumInlineFOV { std::numbers::pi };

@@ -41,7 +41,7 @@ PlatformXRCoordinator* PlatformXRSystem::xrCoordinator()
 #if ENABLE(WEBXR_LAYERS)
 void PlatformXRSystem::createCompositionLayer(IPC::Connection&, PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>&& reply)
 {
-    RELEASE_LOG_ERROR(XR, "VisionOS does not support composition layers yet");
+    RELEASE_LOG_ERROR(XR, "The Compositor Services backend does not support composition layers yet");
     reply(std::nullopt);
 }
 #endif // ENABLE(WEBXR_LAYERS)

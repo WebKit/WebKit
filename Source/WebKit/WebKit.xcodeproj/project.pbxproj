@@ -2572,6 +2572,7 @@
 		E4D54D0421F1D72D007E3C36 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = E40C1F9321F0B96E00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h */; };
 		E4E57F6B21A83B1200345F3C /* RemoteLayerTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E57F6A21A83B1100345F3C /* RemoteLayerTreeNode.h */; };
 		E502E4F82D4810EA00C3D56D /* WKMaterialHostingSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E502E4F72D4810EA00C3D56D /* WKMaterialHostingSupport.swift */; };
+		F9E52DA831AFA8F48259C878 /* WKWebXRImmersiveSpaceHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709078092671295C4266FA96 /* WKWebXRImmersiveSpaceHost.swift */; };
 		E502E4FA2D48113B00C3D56D /* WKMaterialHostingSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = E502E4F92D48110200C3D56D /* WKMaterialHostingSupport.h */; };
 		E50620922542102000C43091 /* ContactsUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E50620912542102000C43091 /* ContactsUISPI.h */; };
 		E50F80F62BD648720079DBDE /* HardwareKeyboardState.h in Headers */ = {isa = PBXBuildFile; fileRef = E50F80F52BD648620079DBDE /* HardwareKeyboardState.h */; };
@@ -3929,6 +3930,7 @@
 		118502632673B0DA00A6425E /* XRDeviceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRDeviceIdentifier.h; sourceTree = "<group>"; };
 		118502652673B0DA00A6425E /* XRDeviceInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRDeviceInfo.h; sourceTree = "<group>"; };
 		1669C1B9C02F0AE6F2B8E521 /* ContentInversion.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ContentInversion.serialization.in; sourceTree = "<group>"; };
+		51A0B2012F9E7B0000C0DE02 /* XRMetalPixelFormats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRMetalPixelFormats.h; sourceTree = "<group>"; };
 		17CF2486D8134D6FB486C07A /* WKWebView+TextExtraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "WKWebView+TextExtraction.mm"; sourceTree = "<group>"; };
 		1A002D3E196B329400B9AD44 /* _WKSessionState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKSessionState.mm; sourceTree = "<group>"; };
 		1A002D3F196B329400B9AD44 /* _WKSessionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSessionState.h; sourceTree = "<group>"; };
@@ -8933,6 +8935,7 @@
 		E4E57F6821A83B0300345F3C /* RemoteLayerTreeNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeNode.mm; sourceTree = "<group>"; };
 		E4E57F6A21A83B1100345F3C /* RemoteLayerTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeNode.h; sourceTree = "<group>"; };
 		E502E4F72D4810EA00C3D56D /* WKMaterialHostingSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKMaterialHostingSupport.swift; sourceTree = "<group>"; };
+		709078092671295C4266FA96 /* WKWebXRImmersiveSpaceHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKWebXRImmersiveSpaceHost.swift; sourceTree = "<group>"; };
 		E502E4F92D48110200C3D56D /* WKMaterialHostingSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKMaterialHostingSupport.h; sourceTree = "<group>"; };
 		E50620912542102000C43091 /* ContactsUISPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactsUISPI.h; sourceTree = "<group>"; };
 		E50F80F42BD648620079DBDE /* HardwareKeyboardState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HardwareKeyboardState.cpp; path = ios/HardwareKeyboardState.cpp; sourceTree = "<group>"; };
@@ -10249,6 +10252,7 @@
 			isa = PBXGroup;
 			children = (
 				3AEE89902AA5954000D4DF44 /* ios */,
+				9C0E2D08784FDB8B0579C23E /* mac */,
 				3ABF16BC2F983FE200267B72 /* xros */,
 				1185025B2673B07100A6425E /* PlatformXRCoordinator.h */,
 				522746C92C01C02200304409 /* PlatformXRSessionEnums.h */,
@@ -10267,6 +10271,7 @@
 				118502652673B0DA00A6425E /* XRDeviceInfo.h */,
 				118502622673B0DA00A6425E /* XRDeviceProxy.cpp */,
 				118502612673B0DA00A6425E /* XRDeviceProxy.h */,
+				51A0B2012F9E7B0000C0DE02 /* XRMetalPixelFormats.h */,
 				86AA520D292523AF0065399E /* XRSystem.serialization.in */,
 			);
 			path = XR;
@@ -14053,6 +14058,14 @@
 				1AAF08B619269E6D00B6390C /* WebUserContentControllerMessages.h */,
 			);
 			path = IPC;
+			sourceTree = "<group>";
+		};
+		9C0E2D08784FDB8B0579C23E /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				709078092671295C4266FA96 /* WKWebXRImmersiveSpaceHost.swift */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		3ABF16BC2F983FE200267B72 /* xros */ = {
@@ -22812,6 +22825,7 @@
 				F4E038F82F230571003A8F3A /* WKWebView+SystemTextExtraction.swift in Sources */,
 				075369492DC589E1006446F8 /* WKWebView+TextExtraction.swift in Sources */,
 				079A4DA32D72CDB400CA387F /* WKWebViewConfiguration+Extras.swift in Sources */,
+				F9E52DA831AFA8F48259C878 /* WKWebXRImmersiveSpaceHost.swift in Sources */,
 				077DD8E7303AE8A2000AA8FC /* WTFCompletionHandler+Extras.swift in Sources */,
 				0708B49430413DF90014BF6C /* WTFExpected+Extras.swift in Sources */,
 				C14D306924B79BE000480387 /* XPCEndpoint.mm in Sources */,

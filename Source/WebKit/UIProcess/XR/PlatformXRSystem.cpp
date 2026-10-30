@@ -187,7 +187,7 @@ void PlatformXRSystem::requestPermissionOnSessionFeatures(IPC::Connection& conne
         return;
     }
 
-    MESSAGE_CHECK_COMPLETION(m_immersiveSessionState == ImmersiveSessionState::Idle || m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromWebContent, connection, completionHandler({ }));
+    MESSAGE_CHECK_COMPLETION(m_immersiveSessionState == ImmersiveSessionState::Idle || m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromWebContent || m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromSystem, connection, completionHandler({ }));
     setImmersiveSessionState(ImmersiveSessionState::RequestingPermissions, [](bool) mutable { });
     m_immersiveSessionGrantedFeatures = std::nullopt;
 
@@ -369,7 +369,9 @@ void PlatformXRSystem::deleteTransientInputHitTestSource(PlatformXR::TransientIn
 void PlatformXRSystem::didCompleteShutdownTriggeredBySystem(IPC::Connection& connection)
 {
     ASSERT(RunLoop::isMain());
-    MESSAGE_CHECK(m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromSystem, connection);
+    UNUSED_PARAM(connection);
+    if (m_immersiveSessionState != ImmersiveSessionState::SessionEndingFromSystem)
+        return;
     setImmersiveSessionState(ImmersiveSessionState::Idle, [](bool) mutable { });
 }
 

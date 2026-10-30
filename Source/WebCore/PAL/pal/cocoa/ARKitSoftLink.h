@@ -28,7 +28,7 @@
 // FIXME: Remove the `__has_feature(modules)` condition when possible.
 #if !__has_feature(modules)
 
-#if HAVE(ARKIT)
+#if HAVE(ARKIT) || USE(COMPOSITORXR)
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #import <ARKit/ARKit.h>
@@ -38,13 +38,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, ARKit)
 
+#if HAVE(ARKIT)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, ARQuickLookPreviewItem);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 SOFT_LINK_CLASS_FOR_HEADER(PAL, ARSession);
 ALLOW_DEPRECATED_DECLARATIONS_END
 SOFT_LINK_CLASS_FOR_HEADER(PAL, ARWorldTrackingConfiguration)
+#endif
 
-#if PLATFORM(VISION)
+#if PLATFORM(VISION) || USE(COMPOSITORXR)
 
 #import <simd/simd.h>
 
@@ -67,6 +69,7 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_data_providers_add_data_provider, v
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_error_get_error_code, ar_error_code_t, (ar_error_t error), (error))
 #define ar_error_get_error_code PAL::softLink_ARKit_ar_error_get_error_code
 
+#if !PLATFORM(MAC)
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_plane_detection_configuration_create, ar_plane_detection_configuration_t, (void), ())
 #define ar_plane_detection_configuration_create PAL::softLink_ARKit_ar_plane_detection_configuration_create
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_plane_detection_configuration_set_alignment, void, (ar_plane_detection_configuration_t plane_detection_configuration, ar_plane_alignment_t alignment), (plane_detection_configuration, alignment))
@@ -77,12 +80,22 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_plane_detection_provider_get_floor_
 #define ar_plane_detection_provider_get_floor_plane_anchor_for_device_pose PAL::softLink_ARKit_ar_plane_detection_provider_get_floor_plane_anchor_for_device_pose
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_plane_detection_provider_is_supported, bool, (void), ())
 #define ar_plane_detection_provider_is_supported PAL::softLink_ARKit_ar_plane_detection_provider_is_supported
+#endif // !PLATFORM(MAC)
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_device_anchor_create, ar_device_anchor_t, (void), ())
 #define ar_device_anchor_create PAL::softLink_ARKit_ar_device_anchor_create
 
+#if PLATFORM(MAC)
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_session_create_with_device, ar_session_t, (ar_device_t device), (device))
+#define ar_session_create_with_device PAL::softLink_ARKit_ar_session_create_with_device
+#if HAVE(CP_REMOTE_COMPOSITOR)
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_device_create_with_endpoint, ar_device_t, (nw_endpoint_t endpoint), (endpoint))
+#define ar_device_create_with_endpoint PAL::softLink_ARKit_ar_device_create_with_endpoint
+#endif
+#else
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_session_create, ar_session_t, (void), ())
 #define ar_session_create PAL::softLink_ARKit_ar_session_create
+#endif
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_session_run, void, (ar_session_t session, ar_data_providers_t data_providers), (session, data_providers))
 #define ar_session_run PAL::softLink_ARKit_ar_session_run
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_session_set_data_provider_state_change_handler, void, (ar_session_t session, dispatch_queue_t queue, ar_session_data_provider_state_change_handler_t data_provider_state_change_handler), (session, queue, data_provider_state_change_handler))
@@ -152,7 +165,7 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_accessory_tracking_provider_is_supp
 #define ar_accessory_tracking_provider_is_supported PAL::softLink_ARKit_ar_accessory_tracking_provider_is_supported
 
 #endif // HAVE(SPATIAL_CONTROLLERS)
-#endif // PLATFORM(VISION)
-#endif // HAVE(ARKIT)
+#endif // PLATFORM(VISION) || USE(COMPOSITORXR)
+#endif // HAVE(ARKIT) || USE(COMPOSITORXR)
 
 #endif // !__has_feature(modules)

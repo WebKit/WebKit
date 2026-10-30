@@ -31,6 +31,7 @@
 #include "GPUDevice.h"
 #include "WebGPUXRLayerBacking.h"
 #include "WebXRFrame.h"
+#include "WebXRSession.h"
 #include "WebXRView.h"
 #include "XRCompositionLayer.h"
 #include "XRGPUProjectionLayerInit.h"
@@ -71,15 +72,6 @@ ExceptionOr<Ref<XRProjectionLayer>> XRGPUBinding::createProjectionLayer(ScriptEx
 {
     if (!m_backing || !m_session)
         return Exception { ExceptionCode::AbortError };
-
-    if (init) {
-        auto converted = init->convertToBacking();
-        m_session->initializeTrackingAndRendering(XRCanvasConfiguration {
-            .colorFormat = converted.colorFormat,
-            .depthStencilFormat = converted.depthStencilFormat
-        });
-    } else
-        m_session->initializeTrackingAndRendering(std::nullopt);
 
     WebGPU::XRProjectionLayerDescriptor convertedInit;
     if (init)

@@ -68,6 +68,13 @@ else { \
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderPassEncoder);
 
+static bool LEGACY_NODELETE renderPassDefinesAttachmentMemory(std::optional<WebGPU::LoadOp> loadOp, std::optional<WebGPU::StoreOp> storeOp)
+{
+    if (storeOp == WebGPU::StoreOp::Store)
+        return true;
+    return storeOp == WebGPU::StoreOp::Discard && loadOp == WebGPU::LoadOp::Load;
+}
+
 static std::pair<uint64_t, uint32_t> LEGACY_NODELETE makeKey(uint64_t bufferIdentifier, uint32_t offset)
 {
     return std::make_pair(bufferIdentifier, offset);
@@ -150,7 +157,8 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         if (texture.isDestroyed())
             m_parentEncoder->makeSubmitInvalid();
 
-        texture.setPreviouslyCleared();
+        if (renderPassDefinesAttachmentMemory(attachment.loadOp, attachment.storeOp))
+            texture.setPreviouslyCleared();
         addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
         m_rasterSampleCount = texture.sampleCount();
         if (attachment.resolveTarget) {
@@ -180,7 +188,11 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
 
     if (const auto* attachment = depthStencilAttachment) {
         auto textureView = attachment->view;
-        textureView.setPreviouslyCleared();
+        auto depthStencilFormat = textureView.format();
+        bool depthStencilIsDefined = (!Texture::containsDepthAspect(depthStencilFormat) || renderPassDefinesAttachmentMemory(attachment->depthLoadOp, attachment->depthStoreOp))
+            && (!Texture::containsStencilAspect(depthStencilFormat) || renderPassDefinesAttachmentMemory(attachment->stencilLoadOp, attachment->stencilStoreOp));
+        if (depthStencilIsDefined)
+            textureView.setPreviouslyCleared();
         textureView.setCommandEncoder(m_parentEncoder);
         id<MTLTexture> depthTexture = textureView.isDestroyed() ? nil : textureView.texture();
         if (textureView.width() && !m_renderTargetWidth) {
@@ -2131,11 +2143,26 @@ void RenderPassEncoder::setViewport(float x, float y, float width, float height,
         makeInvalid(@"GPURenderPassEncoder.setViewport: viewport is out of bounds");
         return;
     }
+    auto originX = x;
+    auto originY = y;
+    auto viewportWidth = width;
+    auto viewportHeight = height;
+
+    if (id<MTLRasterizationRateMap> map = m_rasterizationRateMap) {
+        MTLSize physicalSize = [map physicalSizeForLayer:0];
+        MTLCoordinate2D start = [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(std::min<float>(physicalSize.width, x), std::min<float>(physicalSize.height, y)) forLayer:0];
+        MTLCoordinate2D end = [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(std::min<float>(physicalSize.width, x + width), std::min<float>(physicalSize.height, y + height)) forLayer:0];
+        originX = start.x;
+        originY = start.y;
+        viewportWidth = end.x - start.x;
+        viewportHeight = end.y - start.y;
+    }
+
     m_viewport = MTLViewport {
-        .originX = x,
-        .originY = y,
-        .width = width,
-        .height = height,
+        .originX = originX,
+        .originY = originY,
+        .width = viewportWidth,
+        .height = viewportHeight,
         .znear = minDepth,
         .zfar = maxDepth
     };
