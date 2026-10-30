@@ -191,6 +191,15 @@ static void webkitInputMethodContextImplGtkNotifyFocusIn(WebKitInputMethodContex
 {
     auto* priv = WEBKIT_INPUT_METHOD_CONTEXT_IMPL_GTK(context)->priv;
     gtk_im_context_focus_in(priv->context.get());
+
+#if USE(GTK4) && GTK_CHECK_VERSION(4, 14, 0)
+    // Since GTK 4.14 the input method context no longer asks for the on-screen keyboard by itself.
+    // Ask for it when an editable element gets the focus, like the input method contexts of the WPE
+    // Platform do, unless a script focused it without user interaction. The compositor decides
+    // whether to show it.
+    if (!(webkit_input_method_context_get_input_hints(context) & WEBKIT_INPUT_HINT_INHIBIT_OSK))
+        gtk_im_context_activate_osk(priv->context.get(), nullptr);
+#endif
 }
 
 static void webkitInputMethodContextImplGtkNotifyFocusOut(WebKitInputMethodContext* context)
