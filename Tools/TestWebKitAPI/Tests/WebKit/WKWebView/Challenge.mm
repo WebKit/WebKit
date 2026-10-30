@@ -48,8 +48,6 @@
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
 
-static bool navigationFinished;
-
 RetainPtr<SecCertificateRef> testCertificate()
 {
     auto certificateBytes = TestWebKitAPI::HTTPServer::testCertificate();
@@ -199,42 +197,28 @@ static RetainPtr<NSURLCredential> credentialWithIdentity()
     return [NSURLCredential credentialWithIdentity:identity.get() certificates:@[(id)testCertificate().get()] persistence:NSURLCredentialPersistenceNone];
 }
 
-@interface ChallengeDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation ChallengeDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    navigationFinished = true;
-}
-
-- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *))completionHandler
-{
-    NSURLProtectionSpace *protectionSpace = challenge.protectionSpace;
-    EXPECT_NULL(challenge.proposedCredential);
-    EXPECT_EQ(challenge.previousFailureCount, 0);
-    EXPECT_TRUE([protectionSpace.realm isEqualToString:@"testrealm"]);
-    EXPECT_FALSE(protectionSpace.receivesCredentialSecurely);
-    EXPECT_FALSE(protectionSpace.isProxy);
-    EXPECT_TRUE([protectionSpace.host isEqualToString:@"127.0.0.1"]);
-    EXPECT_NULL(protectionSpace.proxyType);
-    EXPECT_TRUE([protectionSpace.protocol isEqualToString:NSURLProtectionSpaceHTTP]);
-    EXPECT_TRUE([protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodHTTPBasic]);
-    EXPECT_EQ([(NSHTTPURLResponse *)challenge.failureResponse statusCode], 401);
-
-    completionHandler(NSURLSessionAuthChallengeUseCredential, credentialWithIdentity().get());
-}
-
-@end
-
 TEST(Challenge, SecIdentity)
 {
     using namespace TestWebKitAPI;
     HTTPServer server(HTTPServer::respondWithChallengeThenOK);
 
     RetainPtr webView = adoptNS([WKWebView new]);
-    RetainPtr delegate = adoptNS([ChallengeDelegate new]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        NSURLProtectionSpace *protectionSpace = challenge.protectionSpace;
+        EXPECT_NULL(challenge.proposedCredential);
+        EXPECT_EQ(challenge.previousFailureCount, 0);
+        EXPECT_TRUE([protectionSpace.realm isEqualToString:@"testrealm"]);
+        EXPECT_FALSE(protectionSpace.receivesCredentialSecurely);
+        EXPECT_FALSE(protectionSpace.isProxy);
+        EXPECT_TRUE([protectionSpace.host isEqualToString:@"127.0.0.1"]);
+        EXPECT_NULL(protectionSpace.proxyType);
+        EXPECT_TRUE([protectionSpace.protocol isEqualToString:NSURLProtectionSpaceHTTP]);
+        EXPECT_TRUE([protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodHTTPBasic]);
+        EXPECT_EQ([(NSHTTPURLResponse *)challenge.failureResponse statusCode], 401);
+
+        completionHandler(NSURLSessionAuthChallengeUseCredential, credentialWithIdentity().get());
+    };
     [webView setNavigationDelegate:delegate.get()];
 
     // Make sure no credential left by previous tests.
@@ -243,7 +227,7 @@ TEST(Challenge, SecIdentity)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
 
-    Util::run(&navigationFinished);
+    [delegate waitForDidFinishNavigation];
 }
 
 TEST(Challenge, DeallocateDuringChallenge)
@@ -269,37 +253,6 @@ TEST(Challenge, DeallocateDuringChallenge)
     Util::spinRunLoop(1000);
 }
 
-@interface ClientCertificateDelegate : NSObject <WKNavigationDelegate> {
-    Vector<RetainPtr<NSString>> _authenticationMethods;
-}
-- (const Vector<RetainPtr<NSString>>&)authenticationMethods;
-@end
-
-@implementation ClientCertificateDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    navigationFinished = true;
-}
-
-- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *))completionHandler
-{
-    _authenticationMethods.append(challenge.protectionSpace.authenticationMethod);
-
-    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust])
-        return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
-    
-    EXPECT_TRUE([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodClientCertificate]);
-    completionHandler(NSURLSessionAuthChallengeUseCredential, credentialWithIdentity().get());
-}
-
-- (const Vector<RetainPtr<NSString>>&)authenticationMethods
-{
-    return _authenticationMethods;
-}
-
-@end
-
 #if HAVE(SEC_KEY_PROXY)
 TEST(Challenge, ClientCertificate)
 {
@@ -309,45 +262,26 @@ TEST(Challenge, ClientCertificate)
     });
 
     RetainPtr webView = adoptNS([WKWebView new]);
-    RetainPtr delegate = adoptNS([ClientCertificateDelegate new]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    __block Vector<RetainPtr<NSString>> methods;
+    delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        methods.append(challenge.protectionSpace.authenticationMethod);
+
+        if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust])
+            return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+
+        EXPECT_TRUE([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodClientCertificate]);
+        completionHandler(NSURLSessionAuthChallengeUseCredential, credentialWithIdentity().get());
+    };
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:server.request()];
-    
-    Util::run(&navigationFinished);
-    auto& methods = [delegate authenticationMethods];
+
+    [delegate waitForDidFinishNavigation];
     EXPECT_EQ(methods.size(), 2ull);
     EXPECT_TRUE([methods[0] isEqualToString:NSURLAuthenticationMethodServerTrust]);
     EXPECT_TRUE([methods[1] isEqualToString:NSURLAuthenticationMethodClientCertificate]);
 }
 #endif
-
-static bool receivedSecondChallenge;
-static RetainPtr<NSURLCredential> persistentCredential;
-
-@interface ProposedCredentialDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation ProposedCredentialDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    navigationFinished = true;
-}
-
-- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *))completionHandler
-{
-    static bool firstChallenge = true;
-    if (firstChallenge) {
-        firstChallenge = false;
-        persistentCredential = adoptNS([[NSURLCredential alloc] initWithUser:@"testuser" password:@"testpassword" persistence:NSURLCredentialPersistencePermanent]);
-        return completionHandler(NSURLSessionAuthChallengeUseCredential, persistentCredential.get());
-        
-    }
-    receivedSecondChallenge = true;
-    return completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
-}
-
-@end
 
 TEST(Challenge, BasicProposedCredential)
 {
@@ -355,7 +289,17 @@ TEST(Challenge, BasicProposedCredential)
     HTTPServer server(HTTPServer::respondWithChallengeThenOK);
     auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BasicProposedCredentialPlugIn"]);
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
-    RetainPtr delegate = adoptNS([ProposedCredentialDelegate new]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    __block bool receivedFirstChallenge = false;
+    __block bool receivedSecondChallenge = false;
+    delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        if (!receivedFirstChallenge) {
+            receivedFirstChallenge = true;
+            return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialWithUser:@"testuser" password:@"testpassword" persistence:NSURLCredentialPersistencePermanent]);
+        }
+        receivedSecondChallenge = true;
+        completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
+    };
     [webView setNavigationDelegate:delegate.get()];
 
     // Make sure no credential left by previous tests.
@@ -364,10 +308,9 @@ TEST(Challenge, BasicProposedCredential)
 
     RetainPtr<NSURLRequest> request = server.request();
     [webView loadRequest:request.get()];
-    Util::run(&navigationFinished);
-    navigationFinished = false;
+    [delegate waitForDidFinishNavigation];
     [webView loadRequest:request.get()];
-    Util::run(&navigationFinished);
+    [delegate waitForDidFinishNavigation];
     EXPECT_TRUE(receivedSecondChallenge);
 
     // Clear persistent credentials created by this test.
