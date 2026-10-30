@@ -1507,6 +1507,15 @@ WGPUBool wgpuDeviceHasFeature(WGPUDevice device, WGPUFeatureName feature)
     }
 }
 
+// The features for which wgpuDeviceHasFeature() is true, freed with
+// wgpuSupportedFeaturesFreeMembers().
+void wgpuDeviceGetFeatures(WGPUDevice device, WGPUSupportedFeatures* features)
+{
+    @autoreleasepool {
+        *features = WebGPU::Metal::toAPIAllocated(protect(WebGPU::Metal::fromAPI(device))->features());
+    }
+}
+
 // A scope that could not be popped is WGPUPopErrorScopeStatus_Error.
 WGPUFuture wgpuDevicePopErrorScope(WGPUDevice device, WGPUPopErrorScopeCallbackInfo callbackInfo)
 {
