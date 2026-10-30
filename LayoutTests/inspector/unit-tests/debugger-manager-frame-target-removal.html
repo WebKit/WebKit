@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("DebuggerManager.FrameTargetRemoval");
+
+    let counter = 0;
+
+    const scriptKinds = [
+        {name: "extension script", url: "safari-web-extension://unit-test/content.js", injected: true},
+        {name: "injected script", sourceURL: "user-script.js", injected: true},
+        {name: "anonymous script"},
+        {name: "WebAssembly module", url: "wasm://wasm/unit-test-module", sourceType: WI.Script.SourceType.WebAssembly},
+        {name: "WebAssembly module of a frame", url: "wasm://wasm/unit-test-frame-module", sourceType: WI.Script.SourceType.WebAssembly, inFrame: true},
+    ];
+
+    function createFrameTarget()
+    {
+        let connection = {_sendCommandToBackendWithCallback() { }};
+        let target = new WI.FrameTarget(null, `unit-test-frame-target-${++counter}`, "Frame", connection);
+        WI.targetManager.addTarget(target);
+        target.addExecutionContext(new WI.ExecutionContext(target, ++counter, WI.ExecutionContext.Type.Normal, "", WI.networkManager.mainFrame.id));
+        return target;
+    }
+
+    function parseScripts(target)
+    {
+        return scriptKinds.map(({url = "", sourceURL = "", injected = false, sourceType = WI.Script.SourceType.Program, inFrame = false}) => {
+            let id = `unit-test-script-${++counter}`;
+            let executionContextId = inFrame ? target.executionContext.id : undefined;
+            WI.debuggerManager.scriptDidParse(target, id, url, 0, 0, 0, 0, executionContextId, sourceType, injected, sourceURL);
+            return WI.debuggerManager.knownNonResourceScripts.find((script) => script.target === target && script.id === id) || null;
+        });
+    }
+
+    function expectKnown(scripts, expected, when)
+    {
+        let knownScripts = WI.debuggerManager.knownNonResourceScripts;
+        let frameExtraScripts = WI.networkManager.mainFrame.extraScriptCollection;
+        scriptKinds.forEach(({name, inFrame}, index) => {
+            let script = scripts[index];
+            if (!script) {
+                InspectorTest.fail(`The ${name} was not parsed.`);
+                return;
+            }
+
+            if (expected)
+                InspectorTest.expectThat(knownScripts.includes(script), `The ${name} should be known ${when}.`);
+            else
+                InspectorTest.expectFalse(knownScripts.includes(script), `The ${name} should not be known ${when}.`);
+
+            if (!inFrame)
+                return;
+
+            if (expected)
+                InspectorTest.expectThat(frameExtraScripts.has(script), `The ${name} should be an extra script of the frame ${when}.`);
+            else
+                InspectorTest.expectFalse(frameExtraScripts.has(script), `The ${name} should not be an extra script of the frame ${when}.`);
+        });
+    }
+
+    function expectParsed(scripts)
+    {
+        scriptKinds.forEach(({name, inFrame}, index) => {
+            InspectorTest.expectNotNull(scripts[index], `The ${name} should be parsed.`);
+            if (inFrame)
+                InspectorTest.expectEqual(scripts[index]?.parentFrame, WI.networkManager.mainFrame, `The ${name} should belong to the frame.`);
+        });
+    }
+
+    suite.addTestCase({
+        name: "DebuggerManager.FrameTargetRemoval.ForgetsScriptsOfRemovedTarget",
+        description: "Once a frame target is removed, its scripts must leave the lists that the Sources tree shows them from.",
+        test() {
+            let target = createFrameTarget();
+            let scripts = parseScripts(target);
+            expectParsed(scripts);
+            expectKnown(scripts, true, "while its frame target exists");
+
+            WI.targetManager.removeTarget(target);
+            expectKnown(scripts, false, "after its frame target is removed");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DebuggerManager.FrameTargetRemoval.KeepsScriptsOfOtherTargets",
+        description: "Removing a frame target must not forget the scripts of other frame targets.",
+        test() {
+            let removedTarget = createFrameTarget();
+            let keptTarget = createFrameTarget();
+            let removedScripts = parseScripts(removedTarget);
+            let keptScripts = parseScripts(keptTarget);
+            expectParsed(removedScripts);
+            expectParsed(keptScripts);
+
+            WI.targetManager.removeTarget(removedTarget);
+            expectKnown(removedScripts, false, "after its frame target is removed");
+            expectKnown(keptScripts, true, "while its frame target exists");
+
+            WI.targetManager.removeTarget(keptTarget);
+            expectKnown(keptScripts, false, "after its frame target is removed");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that DebuggerManager forgets the scripts of a frame target when the target is removed, and only those of that target.</p>
+</body>
+</html>
