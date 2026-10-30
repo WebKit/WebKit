@@ -872,6 +872,26 @@ bool Quirks::needsPartitionedCookies(const ResourceRequest& request)
     return urlHasQuirk(request.url(), QuirkBehaviorID::NeedsPartitionedCookiesQuirk);
 }
 
+Vector<String> Quirks::cnameCloakingCookieCapExemptTargetPatterns(const URL& firstPartyURL)
+{
+    Vector<String> patterns;
+    for (const auto& behavior : resolveTopURLQuirks(firstPartyURL).behaviorsMatching(QuirkBehaviorID::NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk)) {
+        for (const auto& pattern : behavior.secondaryURL)
+            patterns.append(pattern.string().isolatedCopy());
+    }
+    return patterns;
+}
+
+bool Quirks::anyPatternMatchesCNAMETarget(const Vector<String>& patterns, const String& cnameHostName)
+{
+    auto hostName = cnameHostName.endsWith('.') ? cnameHostName.left(cnameHostName.length() - 1) : cnameHostName;
+    URLMatchContext context { URL { makeString("https://"_s, hostName, '/') } };
+    return patterns.containsIf([&](const String& patternString) {
+        auto pattern = QuirkMatchPattern::parse(patternString);
+        return pattern && pattern->matches(context);
+    });
+}
+
 bool Quirks::shouldExemptCookieFromITPDataRemoval(const String& cookieName)
 {
     return shouldExemptCookieFromITPDataRemovalInternal(cookieName);

@@ -1783,7 +1783,7 @@ void WebsiteDataStore::setResourceLoadStatisticsFirstPartyHostCNAMEDomainForTest
 
 void WebsiteDataStore::setResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(const URL& cnameURL, CompletionHandler<void()>&& completionHandler)
 {
-    if (cnameURL.host() != "testwebkit.org"_s && cnameURL.host() != "3rdpartytestwebkit.org"_s) {
+    if (cnameURL.host() != "testwebkit.org"_s && cnameURL.host() != "3rdpartytestwebkit.org"_s && cnameURL.host() != "google.com"_s) {
         completionHandler();
         return;
     }

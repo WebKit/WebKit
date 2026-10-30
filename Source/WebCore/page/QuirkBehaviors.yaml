@@ -310,6 +310,12 @@ NeedsScrollbarWidthThinDisabledQuirk:
 NeedsSeekingSupportDisabledQuirk:
   accessor: needsSeekingSupportDisabled
 
+# youtube.com, google.com: rdar://191425637
+NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk:
+  conditions: [SecondaryURL]
+  conditionsRequired: true
+  implementation: custom
+
 NeedsSupportsProgressMonitoringQuirk:
   available: mediaSource
   accessor: needsSupportsProgressMonitoring
