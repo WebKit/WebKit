@@ -216,6 +216,10 @@ SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, HIServices, _AXSetAuditTokenIsAuthenticatedCallback, void, (AXAuditTokenIsAuthenticatedCallback callback), (callback))
 #endif
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebProcessCocoaAdditionsBefore.mm>)
+#import <WebKitAdditions/WebProcessCocoaAdditionsBefore.mm>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -335,18 +339,42 @@ void WebProcess::setAllowAXAuthenticationForTesting(bool allow)
     allowAllAXAuthenticationForTesting = allow;
 }
 
-static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
+// The decision is opaque to WebKit: it's handed to HIServices, so WebKitAdditions defines its values.
+static uint32_t axAuthenticationDecision(bool allowed)
+{
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebProcessCocoaAdditionsBefore.mm>)
+    return axAuthenticationDecisionForAllowedAdditions(allowed);
+#else
+    return allowed;
+#endif
+}
+
+static bool axAuthenticationDecisionIsAllowed(uint32_t decision)
+{
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebProcessCocoaAdditionsBefore.mm>)
+    return axAuthenticationDecisionIsAllowedAdditions(decision);
+#else
+    return decision == axAuthenticationDecision(true);
+#endif
+}
+
+static uint32_t requestAXAuthenticationDecision(audit_token_t requester)
 {
     if (allowAllAXAuthenticationForTesting) [[unlikely]]
-        return true;
+        return axAuthenticationDecision(true);
 
-    bool authenticated = false;
+    uint32_t decision = axAuthenticationDecision(false);
     // IPC must be done on the main runloop, so dispatch it to avoid crashes when the secondary AX thread handles this callback.
-    callOnMainRunLoopAndWait([&authenticated, auditToken] {
-        auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebProcessProxy::IsAXAuthenticated(auditToken), 0);
-        std::tie(authenticated) = sendResult.takeReplyOr(false);
+    callOnMainRunLoopAndWait([&decision, requester] {
+        auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebProcessProxy::RequestAXAuthenticationDecision(requester), 0);
+        std::tie(decision) = sendResult.takeReplyOr(axAuthenticationDecision(false));
     });
-    return authenticated;
+    return decision;
+}
+
+static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
+{
+    return axAuthenticationDecisionIsAllowed(requestAXAuthenticationDecision(auditToken));
 }
 #endif
 
@@ -645,7 +673,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    if (canLoad_HIServices__AXSetAuditTokenIsAuthenticatedCallback())
+    bool installedAuthenticationCallback = false;
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebProcessCocoaAdditionsBefore.mm>)
+    installedAuthenticationCallback = installAXAuthenticationDecisionCallbackAdditions(requestAXAuthenticationDecision);
+#endif
+    if (!installedAuthenticationCallback && canLoad_HIServices__AXSetAuditTokenIsAuthenticatedCallback())
         softLink_HIServices__AXSetAuditTokenIsAuthenticatedCallback(isAXAuthenticatedCallback);
 #endif
 

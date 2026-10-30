@@ -89,6 +89,10 @@
 #import "TCCSoftLink.h"
 #endif
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebProcessProxyCocoaAdditionsBefore.mm>)
+#import <WebKitAdditions/WebProcessProxyCocoaAdditionsBefore.mm>
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromWebProcess(url), connection())
 
@@ -219,14 +223,45 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
 }
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-void WebProcessProxy::isAXAuthenticated(CoreIPCAuditToken&& auditToken, CompletionHandler<void(bool)>&& completionHandler)
+// The decision is opaque to WebKit: web content processes hand it to HIServices, so WebKitAdditions defines its values.
+static uint32_t axAuthenticationDecision(bool allowed)
 {
-    if (processPool().allowAXAuthenticationForTesting()) {
-        completionHandler(true);
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebProcessProxyCocoaAdditionsBefore.mm>)
+    return axAuthenticationDecisionForAllowedAdditions(allowed);
+#else
+    return allowed;
+#endif
+}
+
+void WebProcessProxy::requestAXAuthenticationDecision(CoreIPCAuditToken&& requester, CompletionHandler<void(uint32_t)>&& completionHandler)
+{
+    switch (processPool().axAuthenticationTestingMode()) {
+    case WebProcessPool::AXAuthenticationTestingMode::Default:
+        break;
+    case WebProcessPool::AXAuthenticationTestingMode::Allow:
+        completionHandler(axAuthenticationDecision(true));
+        return;
+    case WebProcessPool::AXAuthenticationTestingMode::Deny:
+        completionHandler(axAuthenticationDecision(false));
         return;
     }
-    auto authenticated = TCCAccessCheckAuditToken(get_TCC_kTCCServiceAccessibilitySingleton(), auditToken.auditToken(), nullptr);
-    completionHandler(authenticated);
+
+    // The requester's audit token comes from the web content process, which mustn't be able to grant itself access.
+    auto requesterPID = pidFromAuditToken(requester.auditToken());
+    if (!requesterPID || requesterPID == processID()) {
+        completionHandler(axAuthenticationDecision(false));
+        return;
+    }
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebProcessProxyCocoaAdditionsBefore.mm>)
+    if (auto decision = axAuthenticationDecisionForRequesterAdditions(*this, requester.auditToken())) {
+        completionHandler(*decision);
+        return;
+    }
+#endif
+
+    bool authenticated = TCCAccessCheckAuditToken(get_TCC_kTCCServiceAccessibilitySingleton(), requester.auditToken(), nullptr);
+    completionHandler(axAuthenticationDecision(authenticated));
 }
 #endif
 

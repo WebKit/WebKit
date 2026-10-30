@@ -541,6 +541,9 @@ public:
 #if PLATFORM(MAC)
     // Client accessibility testing support
     void initializeWebProcessAccessibility();
+    void setAXAuthenticationDeniedForTesting(bool);
+    void resetAXAuthenticationModeForTesting();
+    void terminateWebContentProcessesIfAXAuthenticationWasDenied();
     void axNotificationReceived(CFTypeRef element, CFStringRef notification, CFDictionaryRef userInfo, pid_t observedPid);
 #endif
 
@@ -999,6 +1002,7 @@ private:
     HashMap<uint64_t, RetainPtr<CFTypeRef>> m_axElementTokens WTF_GUARDED_BY_LOCK(m_axElementTokensLock);
     RetainPtr<CFTypeRef> m_axWebContentElement WTF_GUARDED_BY_LOCK(m_axElementTokensLock);
     RefPtr<WorkQueue> m_axRequestQueue;
+    bool m_didDenyAXAuthenticationForTesting { false };
     // One AXObserver per observed web content process, keyed by pid, with the application element it
     // observes. Non-empty only while a client-mode test has a notification listener installed.
     struct AXApplicationObserver {
