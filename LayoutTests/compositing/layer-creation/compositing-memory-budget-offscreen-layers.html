@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 30000px;
+        }
+        .box {
+            position: absolute;
+            left: 10px;
+            width: 600px;
+            height: 2000px;
+            background-color: silver;
+            transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        if (window.internals) {
+            internals.compositingPolicyOverride = null;
+            internals.compositingMemoryBudgetOverride = 30 * 1024 * 1024;
+        }
+
+        window.addEventListener('load', () => {
+            requestAnimationFrame(() => {
+                if (!window.internals)
+                    return;
+
+                const compositedBoxCount = internals.layerTreeAsText(document).split('(bounds 600.00 2000.00)').length - 1;
+                document.getElementById('result').textContent = 'Composited offscreen boxes: ' + compositedBoxCount;
+                testRunner.notifyDone();
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="box" style="top: 20000px"></div>
+<div class="box" style="top: 22000px"></div>
+<div class="box" style="top: 24000px"></div>
+<div class="box" style="top: 26000px"></div>
+<div class="box" style="top: 28000px"></div>
+<pre id="result"></pre>
+</body>
+</html>

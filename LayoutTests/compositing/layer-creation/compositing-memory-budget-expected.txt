@@ -1,0 +1,43 @@
+Box
+Box
+Box
+Box
+Within budget:
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 1018.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 1018.00)
+      (contentsOpaque 1)
+      (children 4
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (bounds 300.00 100.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 18.00 120.00)
+          (bounds 300.00 100.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 18.00 230.00)
+          (bounds 300.00 100.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 18.00 340.00)
+          (bounds 300.00 100.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+Over budget:
+

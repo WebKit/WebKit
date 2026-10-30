@@ -667,6 +667,7 @@ void Internals::resetToConsistentState(Page& page)
     localMainFrame->setTextZoomFactor(1.0f);
 
     page.setCompositingPolicyOverride(WebCore::CompositingPolicy::Normal);
+    page.setCompositingMemoryBudgetOverride(std::nullopt);
 
     RefPtr mainFrameView = localMainFrame->view();
     if (mainFrameView) {
@@ -4910,6 +4911,25 @@ ExceptionOr<std::optional<Internals::CompositingPolicy>> Internals::compositingP
     }
 
     return { Internals::CompositingPolicy::Normal };
+}
+
+ExceptionOr<void> Internals::setCompositingMemoryBudgetOverride(std::optional<double> budget)
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->page())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    document->page()->setCompositingMemoryBudgetOverride(budget);
+    return { };
+}
+
+ExceptionOr<std::optional<double>> Internals::compositingMemoryBudgetOverride() const
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->page())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    return { document->page()->compositingMemoryBudgetOverride() };
 }
 
 void Internals::updateLayoutAndStyleForAllFrames() const

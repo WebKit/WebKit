@@ -1043,6 +1043,7 @@ enum ContentsFormat {
     double? timeToNextRenderingUpdate();
 
     attribute CompositingPolicy? compositingPolicyOverride;
+    attribute double? compositingMemoryBudgetOverride;
 
     undefined updateLayoutAndStyleForAllFrames();
 

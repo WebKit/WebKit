@@ -1165,6 +1165,9 @@ public:
     std::optional<CompositingPolicy> compositingPolicyOverride() const { return m_compositingPolicyOverride; }
     void setCompositingPolicyOverride(std::optional<CompositingPolicy> policy) { m_compositingPolicyOverride = policy; }
 
+    std::optional<double> compositingMemoryBudgetOverride() const { return m_compositingMemoryBudgetOverride; }
+    void setCompositingMemoryBudgetOverride(std::optional<double> budget) { m_compositingMemoryBudgetOverride = budget; }
+
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisClient* speechSynthesisClient() const { return m_speechSynthesisClient.get(); }
 #endif
@@ -1782,6 +1785,7 @@ private:
     // For testing.
     std::optional<EventThrottlingBehavior> m_eventThrottlingBehaviorOverride;
     std::optional<CompositingPolicy> m_compositingPolicyOverride;
+    std::optional<double> m_compositingMemoryBudgetOverride;
 
     const std::unique_ptr<PerformanceMonitor> m_performanceMonitor;
     const UniqueRef<LowPowerModeNotifier> m_lowPowerModeNotifier;

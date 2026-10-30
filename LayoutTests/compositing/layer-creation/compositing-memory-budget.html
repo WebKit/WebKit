@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            overflow: hidden;
+            height: 1000px;
+        }
+        .box {
+            margin: 10px;
+            height: 100px;
+            width: 300px;
+            background-color: silver;
+            transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        if (window.internals) {
+            internals.compositingPolicyOverride = null;
+            internals.compositingMemoryBudgetOverride = 10 * 1024 * 1024;
+        }
+
+        window.addEventListener('load', () => {
+            requestAnimationFrame(() => {
+                if (!window.internals)
+                    return;
+
+                document.getElementById('withinBudget').innerText = 'Within budget:\n' + internals.layerTreeAsText(document);
+
+                internals.compositingMemoryBudgetOverride = 1;
+                document.getElementById('last').style.height = '110px';
+                document.body.offsetHeight;
+
+                document.getElementById('overBudget').innerText = 'Over budget:\n' + internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="box">Box</div>
+<div class="box">Box</div>
+<div class="box">Box</div>
+<div class="box" id="last">Box</div>
+<pre id="withinBudget"></pre>
+<pre id="overBudget"></pre>
+</body>
+</html>

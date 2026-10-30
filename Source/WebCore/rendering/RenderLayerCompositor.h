@@ -446,6 +446,10 @@ private:
     // Returns true if the policy changed.
     bool updateCompositingPolicy();
     bool canUpdateCompositingPolicy() const;
+    std::optional<double> compositingMemoryBudget() const;
+    void beginBackingStoreMemoryEstimate();
+    void addToBackingStoreMemoryEstimate(const LayerOverlapMap&, const RenderLayer&);
+    bool backingStoreMemoryEstimateExceedsBudget();
     
     // GraphicsLayerClient implementation
     void paintContents(const GraphicsLayer&, GraphicsContext&, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>) override;
@@ -653,6 +657,16 @@ private:
     
     CompositingPolicy m_compositingPolicy;
     PAL::HysteresisActivity m_compositingPolicyHysteresis;
+    MonotonicTime m_compositingMemoryBudgetBackoffEndTime;
+    Seconds m_compositingMemoryBudgetBackoffDuration;
+
+    struct BackingStoreMemoryEstimate {
+        double budget { 0 };
+        FloatRect coverageRect;
+        double bytesPerUnitArea { 0 };
+        double bytes { 0 };
+    };
+    std::optional<BackingStoreMemoryEstimate> m_backingStoreMemoryEstimate;
 
     bool m_showDebugBorders { false };
     bool m_showRepaintCounter { false };
