@@ -3272,8 +3272,8 @@ void WebPage::selectTextWithGranularityAtPoint(std::optional<WebCore::FrameIdent
             return;
         }
 
-        // Otherwise, the second press's pending click would land on the new selection.
-        cancelPotentialClick();
+        // Otherwise, the second press's pending tap would land on the new selection.
+        cancelPotentialTap();
     }
 #endif
     setSelectionRange(frameID, point, granularity, isInteractingWithFocusedElement);

@@ -818,7 +818,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     _isSuppressingSingleClickGestureForTextSelection = true;
 
     [self _handleClickCancelled];
-    [webView _protectedPage]->cancelPotentialClick();
+    [webView _protectedPage]->cancelPotentialTap();
 }
 
 - (void)endSuppressingSingleClickGestureForTextSelection
@@ -2081,7 +2081,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _potentialClickInProgress = false;
 
     if (RetainPtr webView = _view.get())
-        [webView _protectedPage]->cancelPotentialClick();
+        [webView _protectedPage]->cancelPotentialTap();
 }
 
 - (void)_endPotentialClickAndEnableDoubleClickGesturesIfNecessary
