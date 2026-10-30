@@ -44,7 +44,6 @@
 #include "GraphicsLayerTransformAnimationValue.h"
 #include "HTMLVideoElement.h"
 #include "HostingContext.h"
-#include "Image.h"
 #include "Logging.h"
 #include "Model.h"
 #include "PlatformCAAnimationCocoa.h"

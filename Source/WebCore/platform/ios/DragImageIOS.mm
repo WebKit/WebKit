@@ -35,7 +35,6 @@
 #import "GraphicsClient.h"
 #import "GraphicsContext.h"
 #import "GraphicsContextCG.h"
-#import "Image.h"
 #import "ImageBuffer.h"
 #import "NativeImage.h"
 #import "NotImplemented.h"

@@ -72,7 +72,6 @@ platform/graphics/android/BufferFormatAndroid.cpp @no-unify
 platform/graphics/angle/PlatformDisplayANGLE.cpp @no-unify
 
 platform/graphics/glib/IconGLib.cpp
-platform/graphics/glib/ImageAdapterGLib.cpp
 platform/graphics/glib/SystemFontDatabaseGLib.cpp
 
 platform/graphics/android/GraphicsContextGLAndroid.cpp @no-unify

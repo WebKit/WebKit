@@ -1868,6 +1868,23 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/cache/MemoryCache.h
     loader/cache/TrustedFonts.h
 
+    loader/images/Image.h
+    loader/images/ImageAdapter.h
+    loader/images/ImageDrawingExtras.h
+    loader/images/ImageObserver.h
+    loader/images/SizedImage.h
+
+    loader/images/bitmap/BitmapImage.h
+    loader/images/bitmap/ImageSource.h
+
+    loader/images/sizing/ConcreteObjectSize.h
+    loader/images/sizing/DefaultSizing.h
+    loader/images/sizing/ImageSizingContext.h
+    loader/images/sizing/NaturalDimensions.h
+    loader/images/sizing/ObjectSizeNegotiation.h
+
+    loader/images/svg/SVGImage.h
+
     page/ActivityState.h
     page/ActivityStateChangeObserver.h
     page/AdjustViewSize.h
@@ -2390,7 +2407,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/AudioVideoRenderer.h
     platform/graphics/BezierUtilities.h
     platform/graphics/BifurcatedGraphicsContext.h
-    platform/graphics/BitmapImage.h
     platform/graphics/CachedSubimage.h
     platform/graphics/Color.h
     platform/graphics/ColorBlending.h
@@ -2409,7 +2425,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ColorTypes.h
     platform/graphics/ColorUtilities.h
     platform/graphics/ComplexTextController.h
-    platform/graphics/ConcreteObjectSize.h
     platform/graphics/ContentTypeUtilities.h
     platform/graphics/ContentsFormat.h
     platform/graphics/CopyImageOptions.h
@@ -2418,7 +2433,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Damage.h
     platform/graphics/DashArray.h
     platform/graphics/DecodingOptions.h
-    platform/graphics/DefaultSizing.h
     platform/graphics/DisplayRefreshMonitor.h
     platform/graphics/DisplayRefreshMonitorClient.h
     platform/graphics/DisplayRefreshMonitorFactory.h
@@ -2507,8 +2521,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/HEVCUtilities.h
     platform/graphics/HostingContext.h
     platform/graphics/Icon.h
-    platform/graphics/Image.h
-    platform/graphics/ImageAdapter.h
     platform/graphics/ImageBackingStore.h
     platform/graphics/ImageBuffer.h
     platform/graphics/ImageBufferAllocator.h
@@ -2520,14 +2532,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageBufferTransferIdentifier.h
     platform/graphics/ImageDecoder.h
     platform/graphics/ImageDecoderIdentifier.h
-    platform/graphics/ImageDrawingExtras.h
     platform/graphics/ImageDrawingOptions.h
     platform/graphics/ImageFrame.h
-    platform/graphics/ImageObserver.h
     platform/graphics/ImageOrientation.h
     platform/graphics/ImageResolution.h
-    platform/graphics/ImageSizingContext.h
-    platform/graphics/ImageSource.h
     platform/graphics/ImageTypes.h
     platform/graphics/ImageUtilities.h
     platform/graphics/ImmersiveVideoMetadata.h
@@ -2571,10 +2579,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Model.h
     platform/graphics/ModelContext.h
     platform/graphics/NativeImage.h
-    platform/graphics/NaturalDimensions.h
     platform/graphics/NullGraphicsContext.h
     platform/graphics/NullImageBufferBackend.h
-    platform/graphics/ObjectSizeNegotiation.h
     platform/graphics/Path.h
     platform/graphics/PathElement.h
     platform/graphics/PathImpl.h
@@ -2621,7 +2627,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ShareableBitmapHandle.h
 
     platform/graphics/ShouldLocalizeAxisNames.h
-    platform/graphics/SizedImage.h
     platform/graphics/SourceBrush.h
     platform/graphics/SourceBrushLogicalGradient.h
     platform/graphics/SourceBufferPrivate.h
@@ -3545,9 +3550,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     svg/SVGPreserveAspectRatioValue.h
     svg/SVGTests.h
     svg/SVGUnitTypes.h
-
-
-    svg/graphics/SVGImage.h
 
     svg/graphics/filters/SVGFilterExpression.h
     svg/graphics/filters/SVGFilterRenderer.h

@@ -36544,9 +36544,6 @@
 			isa = PBXGroup;
 			children = (
 				B255989C0D00D8B800BB825C /* filters */,
-				B255990B0D00D8B900BB825C /* SVGImage.cpp */,
-				B255990C0D00D8B900BB825C /* SVGImage.h */,
-				55D408F71A7C631800C78450 /* SVGImageClients.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -36607,8 +36604,6 @@
 				B27535350B053814002CE64F /* PathCG.cpp */,
 				7246F02E2A1549CB00FD74F1 /* PathCG.h */,
 				A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */,
-				B27535360B053814002CE64F /* PDFDocumentImage.cpp */,
-				B27535370B053814002CE64F /* PDFDocumentImage.h */,
 				46C963C32B6C993C002F46D1 /* ShareableBitmapCG.mm */,
 				B6F2010A2EAC180400BBF4AA /* ShareableSpatialImage.cpp */,
 				B6F201092EAC180400BBF4AA /* ShareableSpatialImage.h */,
@@ -36633,7 +36628,6 @@
 				B275358D0B053A66002CE64F /* IconMac.mm */,
 				49AF2D6B14435D210016A784 /* LegacyDisplayRefreshMonitorMac.cpp */,
 				2DE70022192FE82A00B0975C /* LegacyDisplayRefreshMonitorMac.h */,
-				2D6E468217D660F500ECF8BB /* PDFDocumentImageMac.mm */,
 				E53FC418293BF17200EDE3E6 /* ScrollbarTrackCornerSystemImageMac.h */,
 				E53FC419293BF17200EDE3E6 /* ScrollbarTrackCornerSystemImageMac.mm */,
 				7A22731F20C9F9DA00DB1DEF /* WebKitNSImageExtras.h */,
@@ -36681,12 +36675,6 @@
 				BE21E01000000000000000B1 /* BezierUtilities.h */,
 				2DD87147265F4364005F997C /* BifurcatedGraphicsContext.cpp */,
 				2DD87149265F4365005F997C /* BifurcatedGraphicsContext.h */,
-				A89943270B42338700D7C802 /* BitmapImage.cpp */,
-				A89943260B42338700D7C802 /* BitmapImage.h */,
-				724D43202C0F791800934872 /* BitmapImageDescriptor.cpp */,
-				7224ABCF2C0174EE00D85362 /* BitmapImageDescriptor.h */,
-				72854E672B6987B600E0181A /* BitmapImageSource.cpp */,
-				72854E662B6987B600E0181A /* BitmapImageSource.h */,
 				72C172102983717500136E02 /* CachedSubimage.cpp */,
 				72C172112983717500136E02 /* CachedSubimage.h */,
 				CDF4CD672B15255C00933B3F /* CodecUtilities.cpp */,
@@ -36721,7 +36709,6 @@
 				C2F4E7881E45AEDF006D7105 /* ComplexTextController.cpp */,
 				C2F4E7891E45AEDF006D7105 /* ComplexTextController.h */,
 				1C84BE4126D3939F002D61FC /* ComposedCharacterClusterTextIterator.h */,
-				3F8E1C2A6B5D4E7F9A0B1C2D /* ConcreteObjectSize.h */,
 				726516E52C9CB59900647895 /* ContentsFormat.cpp */,
 				726516E42C9BB70E00647895 /* ContentsFormat.h */,
 				CDAD1A5827AFBF3900699285 /* ContentTypeUtilities.cpp */,
@@ -36733,7 +36720,6 @@
 				22441CD32FEB273C00BD3B41 /* CornerShapeUtilities.h */,
 				A8CB41020E85B8A50032C4F0 /* DashArray.h */,
 				555130001E7CCCCA00A69E38 /* DecodingOptions.h */,
-				96678FE1C22624AD3A8E0844 /* DefaultSizing.h */,
 				49FC7A4F1444AF5F00A5D864 /* DisplayRefreshMonitor.cpp */,
 				49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */,
 				2D29ECC1192ECC8300984B78 /* DisplayRefreshMonitorClient.cpp */,
@@ -36878,10 +36864,6 @@
 				CDA595912146DEC300A84185 /* HEVCUtilities.h */,
 				E3BFBA6B2E036BE600A38E4F /* HostingContext.h */,
 				B27535400B053814002CE64F /* Icon.h */,
-				B27535410B053814002CE64F /* Image.cpp */,
-				B27535420B053814002CE64F /* Image.h */,
-				72ECA8AB2B62FBB30094F595 /* ImageAdapter.cpp */,
-				72ECA8AC2B62FBB40094F595 /* ImageAdapter.h */,
 				55A336F81D821E3C0022C4C7 /* ImageBackingStore.h */,
 				43D2597613C816F400608559 /* ImageBuffer.cpp */,
 				B2A10B910B3818BD00099AA4 /* ImageBuffer.h */,
@@ -36901,24 +36883,13 @@
 				CD19FEA71F573972000C42FB /* ImageDecoder.cpp */,
 				CD19FEA61F573972000C42FB /* ImageDecoder.h */,
 				1D47658D25CCA778007AF312 /* ImageDecoderIdentifier.h */,
-				BC734350306983F500B13901 /* ImageDrawingExtras.cpp */,
-				89AAA5F5CEBC35EFDF20580F /* ImageDrawingExtras.h */,
 				7B0C389D2ACED2F000F1FDDC /* ImageDrawingOptions.cpp */,
 				72C18A3F230B04B7006847C7 /* ImageDrawingOptions.h */,
 				5576A5621D88A70800CCC04C /* ImageFrame.cpp */,
 				5576A5631D88A70800CCC04C /* ImageFrame.h */,
-				72854E5C2B6987B300E0181A /* ImageFrameAnimator.cpp */,
-				72854E5E2B6987B300E0181A /* ImageFrameAnimator.h */,
-				72E0375D2FC9573200088DDE /* ImageFrameWorkQueue.cpp */,
-				72E0375C2FC9323300088DDE /* ImageFrameWorkQueue.h */,
-				BC7F44A70B9E324E00A9D081 /* ImageObserver.h */,
 				A8748D6612CC3763001FBA41 /* ImageOrientation.h */,
 				CA3A4AAB25416E3C006CDAE2 /* ImageResolution.cpp */,
 				CA3A4AAD25416E3E006CDAE2 /* ImageResolution.h */,
-				EA9928B2D3DE85B6F7D270CB /* ImageSizingContext.cpp */,
-				257524222FF97A6B8028F838 /* ImageSizingContext.h */,
-				554675771FD1FC1A003B10B0 /* ImageSource.cpp */,
-				554675781FD1FC1A003B10B0 /* ImageSource.h */,
 				5550CB411E955E3C00111AA0 /* ImageTypes.h */,
 				7BD3F3B52F4F2565002B92FA /* ImageUtilities.cpp */,
 				55BBD42824DB53A200BB6E0C /* ImageUtilities.h */,
@@ -36990,14 +36961,9 @@
 				5266C7E62D115B5F000C4997 /* ModelContext.h */,
 				7252396B254CADC200F5FB15 /* NativeImage.cpp */,
 				55A336F61D8209F40022C4C7 /* NativeImage.h */,
-				72854E612B6987B400E0181A /* NativeImageSource.cpp */,
-				72854E5D2B6987B300E0181A /* NativeImageSource.h */,
-				760041D7205CBE677C0EC732 /* NaturalDimensions.h */,
 				2DA397E3265C737400468F33 /* NullGraphicsContext.h */,
 				7B0E6DC92AB463E4005189E8 /* NullImageBufferBackend.cpp */,
 				7B0E6DC82AB463E4005189E8 /* NullImageBufferBackend.h */,
-				6DDDF0DE1D7A0E138E208013 /* ObjectSizeNegotiation.cpp */,
-				5268A3FEA3789C5F09CFB72A /* ObjectSizeNegotiation.h */,
 				B27535520B053814002CE64F /* Path.cpp */,
 				B27535530B053814002CE64F /* Path.h */,
 				0318396A0000000000000002 /* PathArcLengthMapper.cpp */,
@@ -37068,7 +37034,6 @@
 				46C963C52B6C9CAE002F46D1 /* ShareableBitmapHandle.cpp */,
 				46C963C42B6C9CAE002F46D1 /* ShareableBitmapHandle.h */,
 				1C4DB02427339E5E007B0AD1 /* ShouldLocalizeAxisNames.h */,
-				563C1375F94DDADF69B40207 /* SizedImage.h */,
 				72FD30A927E3217A0023CDAC /* SourceBrush.cpp */,
 				72FD30AA27E3217B0023CDAC /* SourceBrush.h */,
 				46E6F1922AFAB7EC002807E2 /* SourceBrushLogicalGradient.h */,
@@ -37246,7 +37211,6 @@
 				CDA595962146DF7800A84185 /* HEVCUtilitiesCocoa.h */,
 				CDA595972146DF7800A84185 /* HEVCUtilitiesCocoa.mm */,
 				075CC6C228EE99E100EAAF61 /* IconCocoa.mm */,
-				7AFD16D02C63F64200B51D1A /* ImageAdapterCocoa.mm */,
 				B27535500B053814002CE64F /* IntRectCocoa.mm */,
 				2D0B4AA918DA1CCD00434DE1 /* IOSurface.h */,
 				2D0B4AAA18DA1CCD00434DE1 /* IOSurface.mm */,
@@ -38830,6 +38794,7 @@
 				A8D2B2521287A56000AF4DDA /* cache */,
 				7E4DE10B198B10810051CB02 /* cocoa */,
 				5126E6B60A2E3AEF005C29FA /* icon */,
+				DFA9FF98FB31F86BCFAA71F3 /* images */,
 				A15E31F01E0CB075004B371C /* ios */,
 				63152D181F9531EE007A5E4B /* ApplicationManifestLoader.cpp */,
 				63152D171F9531EE007A5E4B /* ApplicationManifestLoader.h */,
@@ -44123,6 +44088,97 @@
 			name = phonenumberpossession;
 			path = Modules/phonenumberpossession;
 			sourceTree = SOURCE_ROOT;
+		};
+		DFA9FF98FB31F86BCFAA71F3 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				34FE04A6E0E1DD08F179A36F /* bitmap */,
+				3289D66A60D023A4788FC3BC /* cocoa */,
+				09DF9138212191A849283C6A /* pdf */,
+				4A19A41507081C0B07CD64FB /* sizing */,
+				9501F5EF37FF705CF7C30324 /* svg */,
+				B27535410B053814002CE64F /* Image.cpp */,
+				B27535420B053814002CE64F /* Image.h */,
+				72ECA8AB2B62FBB30094F595 /* ImageAdapter.cpp */,
+				72ECA8AC2B62FBB40094F595 /* ImageAdapter.h */,
+				BC734350306983F500B13901 /* ImageDrawingExtras.cpp */,
+				89AAA5F5CEBC35EFDF20580F /* ImageDrawingExtras.h */,
+				BC7F44A70B9E324E00A9D081 /* ImageObserver.h */,
+				563C1375F94DDADF69B40207 /* SizedImage.h */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		34FE04A6E0E1DD08F179A36F /* bitmap */ = {
+			isa = PBXGroup;
+			children = (
+				A89943270B42338700D7C802 /* BitmapImage.cpp */,
+				A89943260B42338700D7C802 /* BitmapImage.h */,
+				724D43202C0F791800934872 /* BitmapImageDescriptor.cpp */,
+				7224ABCF2C0174EE00D85362 /* BitmapImageDescriptor.h */,
+				72854E672B6987B600E0181A /* BitmapImageSource.cpp */,
+				72854E662B6987B600E0181A /* BitmapImageSource.h */,
+				72854E5C2B6987B300E0181A /* ImageFrameAnimator.cpp */,
+				72854E5E2B6987B300E0181A /* ImageFrameAnimator.h */,
+				72E0375D2FC9573200088DDE /* ImageFrameWorkQueue.cpp */,
+				72E0375C2FC9323300088DDE /* ImageFrameWorkQueue.h */,
+				554675771FD1FC1A003B10B0 /* ImageSource.cpp */,
+				554675781FD1FC1A003B10B0 /* ImageSource.h */,
+				72854E612B6987B400E0181A /* NativeImageSource.cpp */,
+				72854E5D2B6987B300E0181A /* NativeImageSource.h */,
+			);
+			path = bitmap;
+			sourceTree = "<group>";
+		};
+		09DF9138212191A849283C6A /* pdf */ = {
+			isa = PBXGroup;
+			children = (
+				AE08653CBE1B3B62FE56DB3C /* mac */,
+				B27535360B053814002CE64F /* PDFDocumentImage.cpp */,
+				B27535370B053814002CE64F /* PDFDocumentImage.h */,
+			);
+			path = pdf;
+			sourceTree = "<group>";
+		};
+		AE08653CBE1B3B62FE56DB3C /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				2D6E468217D660F500ECF8BB /* PDFDocumentImageMac.mm */,
+			);
+			path = mac;
+			sourceTree = "<group>";
+		};
+		9501F5EF37FF705CF7C30324 /* svg */ = {
+			isa = PBXGroup;
+			children = (
+				B255990B0D00D8B900BB825C /* SVGImage.cpp */,
+				B255990C0D00D8B900BB825C /* SVGImage.h */,
+				55D408F71A7C631800C78450 /* SVGImageClients.h */,
+			);
+			path = svg;
+			sourceTree = "<group>";
+		};
+		4A19A41507081C0B07CD64FB /* sizing */ = {
+			isa = PBXGroup;
+			children = (
+				3F8E1C2A6B5D4E7F9A0B1C2D /* ConcreteObjectSize.h */,
+				96678FE1C22624AD3A8E0844 /* DefaultSizing.h */,
+				EA9928B2D3DE85B6F7D270CB /* ImageSizingContext.cpp */,
+				257524222FF97A6B8028F838 /* ImageSizingContext.h */,
+				760041D7205CBE677C0EC732 /* NaturalDimensions.h */,
+				6DDDF0DE1D7A0E138E208013 /* ObjectSizeNegotiation.cpp */,
+				5268A3FEA3789C5F09CFB72A /* ObjectSizeNegotiation.h */,
+			);
+			path = sizing;
+			sourceTree = "<group>";
+		};
+		3289D66A60D023A4788FC3BC /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				7AFD16D02C63F64200B51D1A /* ImageAdapterCocoa.mm */,
+			);
+			path = cocoa;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 

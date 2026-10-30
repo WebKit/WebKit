@@ -62,7 +62,7 @@ class Image : public RefCountedAndCanMakeWeakPtr<Image> {
     friend class CachedSubimage;
 public:
     virtual ~Image();
-    
+
     WEBCORE_EXPORT static RefPtr<Image> create(ImageObserver&);
     WEBCORE_EXPORT static bool supportsType(const String&);
 
@@ -132,8 +132,8 @@ public:
     // It will automatically pause once all observers no longer want to render the image anywhere.
     virtual void startAnimation() { }
     void startAnimationAsynchronously();
-    virtual void stopAnimation() {}
-    virtual void resetAnimation() {}
+    virtual void stopAnimation() { }
+    virtual void resetAnimation() { }
     virtual bool isAnimating() const { return false; }
     WEBCORE_EXPORT bool LEGACY_NODELETE animationPending() const;
     std::optional<bool> allowsAnimation() const { return m_allowsAnimation; }

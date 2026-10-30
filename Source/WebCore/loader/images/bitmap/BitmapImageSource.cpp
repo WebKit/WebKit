@@ -64,7 +64,7 @@ ImageDecoder* BitmapImageSource::decoder(FragmentedSharedBuffer* data) const
     if (!m_decoder)
         return nullptr;
 
-    protect(m_decoder)->setEncodedDataStatusChangeCallback([weakThis = ThreadSafeWeakPtr { *this }] (auto status) {
+    protect(m_decoder)->setEncodedDataStatusChangeCallback([weakThis = ThreadSafeWeakPtr { *this }](auto status) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->encodedDataStatusChanged(status);
     });
@@ -93,9 +93,8 @@ ImageFrameAnimator* BitmapImageSource::frameAnimator() const
 
 ImageFrameWorkQueue& BitmapImageSource::workQueue() const
 {
-    if (!m_workQueue) {
+    if (!m_workQueue)
         m_workQueue = ImageFrameWorkQueue::create(const_cast<BitmapImageSource&>(*this));
-    }
     return *m_workQueue;
 }
 

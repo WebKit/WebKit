@@ -24,24 +24,33 @@
  */
 
 #include "config.h"
-#include "NativeImageSource.h"
-#include <wtf/text/TextStream.h>
+#include "ImageAdapter.h"
+
+#include "BitmapImage.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-Ref<NativeImageSource> NativeImageSource::create(Ref<NativeImage>&& nativeImage)
-{
-    return adoptRef(*new NativeImageSource(WTF::move(nativeImage)));
-}
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageAdapter);
 
-NativeImageSource::NativeImageSource(Ref<NativeImage>&& nativeImage)
-    : m_frame(WTF::move(nativeImage))
+#if !PLATFORM(COCOA)
+void ImageAdapter::invalidate()
 {
 }
+#endif
 
-void NativeImageSource::dump(TextStream& ts) const
+Vector<Ref<NativeImage>> ImageAdapter::allNativeImages(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
 {
-    ts.dumpProperty("size"_s, size());
+    Vector<Ref<NativeImage>> nativeImages;
+    RefPtr image = this->image();
+    unsigned count = image->frameCount();
+
+    for (unsigned i = 0; i < count; ++i) {
+        if (RefPtr nativeImage = image->nativeImageAtIndex(i, concreteObjectSize, extras))
+            nativeImages.append(nativeImage.releaseNonNull());
+    }
+
+    return nativeImages;
 }
 
 } // namespace WebCore

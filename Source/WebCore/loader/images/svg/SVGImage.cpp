@@ -170,7 +170,7 @@ IntSize SVGImage::containerSize() const
         return { };
 
     // If a container size is available it has precedence.
-    auto computeContainerSize = [&]() -> IntSize {
+    auto computeContainerSize = [&] -> IntSize {
         if (auto* renderer = dynamicDowncast<LegacyRenderSVGRoot>(rootElement->renderer()))
             return renderer->containerSize();
 
@@ -392,7 +392,7 @@ ImageDrawResult SVGImage::drawImage(GraphicsContext& context, ConcreteObjectSize
         orientation = ImageOrientation::Orientation::None;
 
     FloatSize scale(dstRect.size() / adjustedSrcRect.size());
-    
+
     // We can only draw the entire frame, clipped to the rect we want. So compute where the top left
     // of the image would be if we were drawing without clipping, and translate accordingly.
     FloatSize topLeftOffset(adjustedSrcRect.location().x() * scale.width(), adjustedSrcRect.location().y() * scale.height());
@@ -625,7 +625,7 @@ void SVGImage::subresourcesAreFinished(Document* embedderDocument, CompletionHan
     ASSERT(rootElement());
     if (embedderDocument)
         embedderDocument->incrementLoadEventDelayCount();
-    protect(protect(internalPage())->localTopDocument())->whenWindowLoadEventOrDestroyed([embedderDocument = WeakPtr { embedderDocument }, completionHandler = WTF::move(completionHandler)]() mutable {
+    protect(protect(internalPage())->localTopDocument())->whenWindowLoadEventOrDestroyed([embedderDocument = WeakPtr { embedderDocument }, completionHandler = WTF::move(completionHandler)] mutable {
         if (RefPtr document = embedderDocument.get())
             document->decrementLoadEventDelayCount();
         completionHandler();
@@ -641,7 +641,7 @@ void SVGImage::tryCreateFromData(std::span<const uint8_t> data, CompletionHandle
         completionHandler(nullptr);
         return;
     }
-    svgImage->subresourcesAreFinished(nullptr, [svgImage, completionHandler = WTF::move(completionHandler)]() mutable {
+    svgImage->subresourcesAreFinished(nullptr, [svgImage, completionHandler = WTF::move(completionHandler)] mutable {
         completionHandler(WTF::move(svgImage));
     });
 }

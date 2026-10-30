@@ -89,7 +89,6 @@ platform/graphics/gbm/PlatformDisplayGBM.cpp @no-unify
 platform/graphics/gbm/VivanteSuperTiledTexture.cpp
 
 platform/graphics/glib/IconGLib.cpp
-platform/graphics/glib/ImageAdapterGLib.cpp
 platform/graphics/glib/SystemFontDatabaseGLib.cpp
 
 platform/graphics/opentype/OpenTypeVerticalData.cpp

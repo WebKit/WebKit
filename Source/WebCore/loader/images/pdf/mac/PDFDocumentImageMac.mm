@@ -37,8 +37,8 @@
 #import <wtf/RetainPtr.h>
 
 extern "C" {
-bool CGContextGetAllowsFontSmoothing(CGContextRef context);
-bool CGContextGetAllowsFontSubpixelQuantization(CGContextRef context);
+bool CGContextGetAllowsFontSmoothing(CGContextRef);
+bool CGContextGetAllowsFontSubpixelQuantization(CGContextRef);
 }
 
 namespace WebCore {

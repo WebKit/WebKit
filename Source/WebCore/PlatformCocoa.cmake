@@ -227,6 +227,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/loader/cf"
     "${WEBCORE_DIR}/loader/cocoa"
+    "${WEBCORE_DIR}/loader/images/pdf"
     "${WEBCORE_DIR}/page/cocoa"
     "${WEBCORE_DIR}/page/scrolling/cocoa"
     "${WEBCORE_DIR}/page/writing-tools"
@@ -330,6 +331,8 @@ list(APPEND WebCore_SOURCES
     html/shadow/SpatialImageControls.cpp
 
     loader/cocoa/PrivateClickMeasurementCocoa.mm
+
+    loader/images/pdf/PDFDocumentImage.cpp
 
     page/ViewportConfiguration.cpp
 
@@ -457,7 +460,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/IntRectCG.cpp
     platform/graphics/cg/IntSizeCG.cpp
     platform/graphics/cg/NativeImageCG.cpp
-    platform/graphics/cg/PDFDocumentImage.cpp
     platform/graphics/cg/PathCG.cpp
     platform/graphics/cg/PatternCG.cpp
     platform/graphics/cg/ShareableSpatialImage.h
@@ -569,6 +571,8 @@ list(APPEND WebCore_SOURCES
     editing/mac/EditorMac.mm
     editing/mac/TextUndoInsertionMarkupMac.mm
 
+    loader/images/pdf/mac/PDFDocumentImageMac.mm
+
     page/mac/EventHandlerMac.mm
     page/mac/ServicesOverlayController.mm
     page/mac/WheelEventDeltaFilterMac.mm
@@ -584,7 +588,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/mac/ColorMac.mm
     platform/graphics/mac/GraphicsChecksMac.cpp
     platform/graphics/mac/IconMac.mm
-    platform/graphics/mac/PDFDocumentImageMac.mm
 
     platform/mac/CursorMac.mm
     platform/mac/KeyEventMac.mm
@@ -1157,6 +1160,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     loader/cocoa/LoaderNSURLExtras.h
 
+    loader/images/pdf/PDFDocumentImage.h
+
     page/CaptionUserPreferencesMediaAF.h
 
     page/cocoa/ContentChangeObserver.h
@@ -1307,7 +1312,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cg/ImageBufferCGPDFDocumentBackend.h
     platform/graphics/cg/ImageBufferIOSurfaceBackend.h
     platform/graphics/cg/ImageDecoderCG.h
-    platform/graphics/cg/PDFDocumentImage.h
     platform/graphics/cg/PathCG.h
     platform/graphics/cg/ShareableSpatialImage.h
     platform/graphics/cg/SpatialImageTypes.h

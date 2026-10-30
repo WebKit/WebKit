@@ -224,6 +224,9 @@ loader/cocoa/LoaderNSURLExtras.mm @nonARC
 loader/cocoa/PrivateClickMeasurementCocoa.mm @nonARC
 loader/cocoa/ResourceLoaderCocoa.mm @nonARC
 loader/cocoa/SubresourceLoaderCocoa.mm @nonARC
+loader/images/cocoa/ImageAdapterCocoa.mm @nonARC
+loader/images/pdf/PDFDocumentImage.cpp
+loader/images/pdf/mac/PDFDocumentImageMac.mm @nonARC
 loader/ios/LegacyPreviewLoader.mm @nonARC
 page/CaptionUserPreferencesMediaAF.cpp
 page/cocoa/CaptionUserPreferencesMediaAFCocoa.mm @nonARC
@@ -450,7 +453,6 @@ platform/graphics/cg/IntPointCG.cpp
 platform/graphics/cg/IntRectCG.cpp
 platform/graphics/cg/IntSizeCG.cpp
 platform/graphics/cg/NativeImageCG.cpp
-platform/graphics/cg/PDFDocumentImage.cpp
 platform/graphics/cg/PathCG.cpp
 platform/graphics/cg/PatternCG.cpp
 platform/graphics/cg/ShareableBitmapCG.mm @nonARC @no-unify-when(bundle<=8)
@@ -479,7 +481,6 @@ platform/graphics/cocoa/ISOBMFFPreParser.cpp
 platform/graphics/cocoa/ISOBMFFTrackInfoParser.cpp
 platform/graphics/cocoa/IconCocoa.mm @nonARC
 platform/graphics/cocoa/IntRectCocoa.mm @nonARC
-platform/graphics/cocoa/ImageAdapterCocoa.mm @nonARC
 platform/graphics/cocoa/MediaPlayerCocoa.mm @nonARC
 platform/graphics/cocoa/MediaPlayerPrivateWebM.mm @nonARC @no-unify-when(bundle<=8) @cost:7
 platform/graphics/cocoa/NativeImageCocoa.mm @nonARC
@@ -546,7 +547,6 @@ platform/graphics/mac/ColorMac.mm @nonARC
 platform/graphics/mac/GraphicsChecksMac.cpp
 platform/graphics/mac/IconMac.mm @nonARC
 platform/graphics/mac/LegacyDisplayRefreshMonitorMac.cpp
-platform/graphics/mac/PDFDocumentImageMac.mm @nonARC
 platform/graphics/mac/ScrollbarTrackCornerSystemImageMac.mm @nonARC
 platform/graphics/mac/WebKitNSImageExtras.mm @nonARC
 platform/graphics/mac/controls/ButtonMac.mm @nonARC

@@ -30,7 +30,6 @@
 
 #include "GraphicsContextCG.h"
 #include "GraphicsContextGLImageExtractor.h"
-#include "Image.h"
 #include "Logging.h"
 #include "NativeImage.h"
 
