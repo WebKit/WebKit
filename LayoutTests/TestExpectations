@@ -6947,7 +6947,6 @@ imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-f
 imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-first-003.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-last-002.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-last-003.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-inline/text-box-trim/border-padding-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/new-fc-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/out-of-flow-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-end-002.html [ ImageOnlyFailure ]
