@@ -49,8 +49,6 @@ imported/w3c/web-platform-tests/svg/painting/marker-009.svg                     
 imported/w3c/web-platform-tests/svg/painting/scripted/marker-element-added.html                                [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-template-pattern-removed.svg         [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/render/reftests/blending-svg-foreign-object.html                           [ ImageOnlyFailure ]
-# The outline of the outermost <svg> is painted at twice its offset (RenderSVGRoot::paintObject()).
-imported/w3c/web-platform-tests/svg/render/reftests/outer-svg-transform-outline.html                           [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size.svg                [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-002.html                               [ ImageOnlyFailure ]
 

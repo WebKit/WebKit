@@ -375,9 +375,8 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
             paintBoxDecorations(paintInfo, paintOffset);
     }
 
-    auto adjustedPaintOffset = paintOffset + location();
     if (paintInfo.phase == PaintPhase::Mask && usedStyle().visibility() == UsedVisibility::Visible) {
-        paintSVGMask(paintInfo, adjustedPaintOffset);
+        paintSVGMask(paintInfo, paintOffset);
         return;
     }
 
@@ -392,7 +391,7 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
         // bounds via paintContents below. Skip the interaction-region contribution so the
         // SVG root's border rect doesn't change the interaction-region shape — only the
         // children should contribute to interaction regions.
-        auto borderRect = LayoutRect(adjustedPaintOffset, borderBoxSize());
+        auto borderRect = LayoutRect(paintOffset, borderBoxSize());
         auto usedStyle = this->usedStyle();
         auto borderShape = BorderShape::shapeForBorderRect(usedStyle, borderRect);
         protect(paintInfo.eventRegionContext())->unite(borderShape.deprecatedPixelSnappedRoundedRect(document().deviceScaleFactor()), *this, usedStyle.computedStyle(), false, EventRegionContext::ContributeToInteractionRegions::No);
@@ -430,7 +429,7 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
         paintContents(paintInfo, scrolledOffset);
 
     if ((paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline) && hasOutline() && usedStyle().visibility() == UsedVisibility::Visible)
-        paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, borderBoxSize()));
+        paintOutline(paintInfo, LayoutRect(paintOffset, borderBoxSize()));
 }
 
 void RenderSVGRoot::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

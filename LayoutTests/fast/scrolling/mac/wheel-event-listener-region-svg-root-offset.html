@@ -1,0 +1,18 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<script>
+window.onload = () => {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    if (window.internals)
+        results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+}
+</script>
+<body>
+<!-- The wheel event listener region of an outermost <svg> that is not at (0, 0) within its containing block must cover its border box at (58, 58). -->
+<div style="height: 50px"></div>
+<svg style="display: block; margin-left: 50px; width: 100px; height: 100px;" onwheel=""></svg>
+<pre id="results"></pre>
+</body>
+</html>
