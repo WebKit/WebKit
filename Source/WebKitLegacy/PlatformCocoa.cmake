@@ -254,9 +254,24 @@ set_target_properties(WebKitLegacy PROPERTIES
     INSTALL_NAME_DIR "${WebKitLegacy_INSTALL_NAME_DIR}"
 )
 
+set(_wkl_exported_symbols_list "${WEBKITLEGACY_DIR}/WebKitLegacy-iOS.exp")
+# Leave out WebEventRegion when WebCore does not build it, which Xcode does by generating
+# WebKitLegacy.generated.exp in WebKitLegacy.xcodeproj's "Migrate WebCore Headers and
+# Generate Export List" and "Generate Export Files" build script phases.
+if (NOT ENABLE_IOS_TOUCH_EVENTS)
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_wkl_exported_symbols_list}")
+    file(STRINGS "${_wkl_exported_symbols_list}" _wkl_exported_symbols)
+    list(FILTER _wkl_exported_symbols EXCLUDE REGEX "_WebEventRegion($|\\.)")
+    list(JOIN _wkl_exported_symbols "\n" _wkl_exported_symbols)
+    set(_wkl_exported_symbols_list "${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-iOS.exp")
+    file(CONFIGURE OUTPUT "${_wkl_exported_symbols_list}" CONTENT "${_wkl_exported_symbols}\n" @ONLY)
+    unset(_wkl_exported_symbols)
+endif ()
 target_link_options(WebKitLegacy PRIVATE
-    -exported_symbols_list ${WEBKITLEGACY_DIR}/WebKitLegacy-iOS.exp
+    -exported_symbols_list ${_wkl_exported_symbols_list}
 )
+set_property(TARGET WebKitLegacy APPEND PROPERTY LINK_DEPENDS "${_wkl_exported_symbols_list}")
+unset(_wkl_exported_symbols_list)
 
 # FIXME: Generate this list dynamically (from `tapi reexport` against the
 # migrated WebCore headers + ios/WebKit.iOS.exp + mac/WebKit.exp) instead of
