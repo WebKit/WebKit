@@ -7563,8 +7563,6 @@ fast/canvas/2d.context.many.small.html [ Slow Skip ]
 
 webkit.org/b/268995 [ Debug ] fast/misc/out-of-flow-position-inside-mathml-crash.html [ Skip ]
 
-webkit.org/b/261557 media/video-remove-insert-repaints.html [ Pass Crash ]
-
 # ::part() cascade is wrong when the part name is forwarded with exportparts and !important is used.
 imported/w3c/web-platform-tests/css/css-shadow/part/exportparts-layered.html [ ImageOnlyFailure ]
 
