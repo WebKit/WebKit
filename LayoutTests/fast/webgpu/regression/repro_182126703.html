@@ -1,0 +1,184 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true dumpJSConsoleLogInStdErr=true ] -->
+<script src="../../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+const wgsl = `
+@group(0) @binding(0) var t : texture_external;
+@group(0) @binding(1) var<storage, read_write> outBuf : array<u32, 4>;
+@compute @workgroup_size(1)
+fn main() {
+    let c = textureLoad(t, vec2u(0, 0));
+    outBuf[0] = u32(round(c.r * 255.0));
+    outBuf[1] = u32(round(c.g * 255.0));
+    outBuf[2] = u32(round(c.b * 255.0));
+    outBuf[3] = u32(round(c.a * 255.0));
+}`;
+
+// A VideoFrame wrapping a solid color canvas, which reaches the GPU process as a real CVPixelBuffer
+// without the test depending on a media file decoding in time.
+async function importSolidColorFrame(device, fillStyle)
+{
+    const canvas = document.createElement('canvas');
+    canvas.width = 16;
+    canvas.height = 16;
+    const context = canvas.getContext('2d');
+    context.fillStyle = fillStyle;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    const videoFrame = new VideoFrame(await createImageBitmap(canvas), { timestamp: 0 });
+    return device.importExternalTexture({ source: videoFrame, colorSpace: 'srgb' });
+}
+
+function storageBuffer(device)
+{
+    return device.createBuffer({ size: 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+}
+
+function dispatch(device, pipeline, bindGroup)
+{
+    const encoder = device.createCommandEncoder();
+    const pass = encoder.beginComputePass();
+    pass.setPipeline(pipeline);
+    pass.setBindGroup(0, bindGroup);
+    pass.dispatchWorkgroups(1);
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+}
+
+// Which channel the shader sampled, rather than the exact values, so the result does not depend on
+// how precisely a canvas color survives the round trip through a VideoFrame.
+async function sampledChannel(device, outputBuffer)
+{
+    const readback = device.createBuffer({ size: 16, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    const encoder = device.createCommandEncoder();
+    encoder.copyBufferToBuffer(outputBuffer, 0, readback, 0, 16);
+    device.queue.submit([encoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    await readback.mapAsync(GPUMapMode.READ);
+    const [red, green] = new Uint32Array(readback.getMappedRange());
+    readback.unmap();
+    if (red < 128 && green < 128)
+        return 'nothing';
+    return red > green ? 'red' : 'green';
+}
+
+onload = async () => {
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        const deviceA = await adapter.requestDevice();
+        const deviceB = await adapter.requestDevice();
+
+        const layout = deviceA.createBindGroupLayout({
+            entries: [
+                { binding: 0, visibility: GPUShaderStage.COMPUTE, externalTexture: { } },
+                { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
+            ],
+        });
+        const pipeline = deviceA.createComputePipeline({
+            layout: deviceA.createPipelineLayout({ bindGroupLayouts: [layout] }),
+            compute: { module: deviceA.createShaderModule({ code: wgsl }), entryPoint: 'main' },
+        });
+
+        const greenOnA = await importSolidColorFrame(deviceA, 'rgb(0, 255, 0)');
+        const redOnA = await importSolidColorFrame(deviceA, 'rgb(255, 0, 0)');
+        const redOnB = await importSolidColorFrame(deviceB, 'rgb(255, 0, 0)');
+
+        // Positive control: an external texture imported by the same device must still be bindable,
+        // and must still be the texture the shader samples.
+        const sameDeviceOutput = storageBuffer(deviceA);
+        deviceA.pushErrorScope('validation');
+        const sameDeviceBindGroup = deviceA.createBindGroup({
+            layout,
+            entries: [
+                { binding: 0, resource: greenOnA },
+                { binding: 1, resource: { buffer: sameDeviceOutput } },
+            ],
+        });
+        dispatch(deviceA, pipeline, sameDeviceBindGroup);
+        const sameDeviceError = await deviceA.popErrorScope();
+        if (sameDeviceError)
+            testFailed(`a same-device external texture was rejected by createBindGroup: ${sameDeviceError.message}`);
+        else
+            testPassed("a same-device external texture is still accepted by createBindGroup");
+
+        const sameDeviceChannel = await sampledChannel(deviceA, sameDeviceOutput);
+        if (sameDeviceChannel === 'green')
+            testPassed("the dispatch sampled the same-device external texture");
+        else
+            testFailed(`the dispatch sampled ${sameDeviceChannel} instead of the same-device external texture`);
+
+        // An external texture imported by deviceB must not be bindable into a bind group owned by
+        // deviceA. Command encoder identifiers are minted from a per-device counter and registered
+        // only in that device's map, so an external texture cannot see that an encoder of another
+        // device is holding the argument buffer that a later update would rewrite.
+        const crossDeviceOutput = storageBuffer(deviceA);
+        deviceA.pushErrorScope('validation');
+        const crossDeviceBindGroup = deviceA.createBindGroup({
+            layout,
+            entries: [
+                { binding: 0, resource: redOnB },
+                { binding: 1, resource: { buffer: crossDeviceOutput } },
+            ],
+        });
+        dispatch(deviceA, pipeline, crossDeviceBindGroup);
+        const crossDeviceError = await deviceA.popErrorScope();
+        if (crossDeviceError)
+            testPassed("a cross-device external texture was rejected by createBindGroup");
+        else
+            testFailed("a cross-device external texture was accepted by createBindGroup");
+
+        const crossDeviceChannel = await sampledChannel(deviceA, crossDeviceOutput);
+        if (crossDeviceChannel === 'nothing')
+            testPassed("no dispatch happened with the cross-device external texture");
+        else
+            testFailed(`a dispatch with the cross-device external texture sampled ${crossDeviceChannel}`);
+
+        // An external texture bind group that a compute pass has already bound must not be rewritten
+        // in place while that pass is still open: the pass made the textures it was given resident,
+        // and made no others.
+        const openPassOutput = storageBuffer(deviceA);
+        deviceA.pushErrorScope('validation');
+        const boundBindGroup = deviceA.createBindGroup({
+            layout,
+            entries: [
+                { binding: 0, resource: greenOnA },
+                { binding: 1, resource: { buffer: openPassOutput } },
+            ],
+        });
+        const encoder = deviceA.createCommandEncoder();
+        const pass = encoder.beginComputePass();
+        pass.setPipeline(pipeline);
+        pass.setBindGroup(0, boundBindGroup);
+        pass.dispatchWorkgroups(1);
+
+        // Entries identical apart from the external texture, which is what makes GPUDevice reach for
+        // its cached bind group and try to update the textures in place.
+        const reboundBindGroup = deviceA.createBindGroup({
+            layout,
+            entries: [
+                { binding: 0, resource: redOnA },
+                { binding: 1, resource: { buffer: openPassOutput } },
+            ],
+        });
+        pass.end();
+        deviceA.queue.submit([encoder.finish()]);
+        const openPassError = await deviceA.popErrorScope();
+        if (openPassError)
+            testFailed(`an open compute pass over an external texture bind group was rejected: ${openPassError.message}`);
+
+        if (reboundBindGroup === boundBindGroup)
+            testFailed("createBindGroup rewrote a bind group that an open compute pass had already bound");
+        else
+            testPassed("createBindGroup did not rewrite a bind group that an open compute pass had already bound");
+
+        const openPassChannel = await sampledChannel(deviceA, openPassOutput);
+        if (openPassChannel === 'green')
+            testPassed("the recorded dispatch sampled the external texture that was bound when it was recorded");
+        else
+            testFailed(`the recorded dispatch sampled ${openPassChannel} instead of the external texture that was bound when it was recorded`);
+    } catch (e) {
+        testFailed(`${e}`);
+    }
+    finishJSTest();
+};
+</script>
