@@ -28,12 +28,12 @@
 #include "config.h"
 #include "StyleCanvasImage.h"
 
-#include "BitmapImage.h"
 #include "CSSCanvasValue.h"
 #include "DeprecatedCSSOMValue.h"
 #include "HTMLCanvasElement.h"
 #include "ImageQualityController.h"
 #include "InspectorInstrumentation.h"
+#include "NativeImage.h"
 #include "RenderBoxModelObject.h"
 #include "RenderElement.h"
 #include "RenderObjectInlines.h"
@@ -91,10 +91,10 @@ ImageDrawResult CanvasImage::draw(GraphicsContext& context, const RenderElement&
         return ImageDrawResult::DidNothing;
 
     RefPtr image = resolvedImage(renderer);
-    if (!image || !image->hasSomethingToDraw())
+    if (!image || image->size().isEmpty())
         return ImageDrawResult::DidNothing;
 
-    return drawResolved(context, renderer, *image, ConcreteObjectSize::fixed(image->size()), destination, mapSourceToSize(source, concreteObjectSize, image->size(options.orientation())), options);
+    return drawResolved(context, *image, destination, mapSourceToSize(source, concreteObjectSize, image->size()), options);
 }
 
 ImageDrawResult CanvasImage::drawAsPattern(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, bool) const
@@ -103,7 +103,7 @@ ImageDrawResult CanvasImage::drawAsPattern(GraphicsContext& context, const Rende
     if (!image || context.paintingDisabled())
         return ImageDrawResult::DidNothing;
 
-    return drawResolvedAsPattern(context, renderer, *image, ConcreteObjectSize::fixed(image->size()), destination, tile, patternTransform, phase, spacing, options);
+    return drawResolvedAsPattern(context, *image, destination, tile, patternTransform, phase, spacing, options);
 }
 
 ImageDrawResult CanvasImage::drawTiled(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions options, bool) const
@@ -112,7 +112,7 @@ ImageDrawResult CanvasImage::drawTiled(GraphicsContext& context, const RenderEle
     if (!image || context.paintingDisabled())
         return ImageDrawResult::DidNothing;
 
-    return drawResolvedTiled(context, renderer, *image, NaturalDimensions::fixed(image->size()), ConcreteObjectSize::fixed(image->size()), destination, phase, tileSize, spacing, options);
+    return drawResolvedTiled(context, *image, destination, phase, tileSize, spacing, options);
 }
 
 ImageDrawResult CanvasImage::drawNinePiece(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize, const NinePieceGeometry& geometry, ImageDrawingOptions options) const
@@ -121,7 +121,7 @@ ImageDrawResult CanvasImage::drawNinePiece(GraphicsContext& context, const Rende
     if (!image || context.paintingDisabled())
         return ImageDrawResult::DidNothing;
 
-    return drawResolvedNinePiece(context, renderer, *image, ConcreteObjectSize::fixed(image->size()), geometry, options);
+    return drawResolvedNinePiece(context, *image, geometry, options);
 }
 
 bool CanvasImage::knownToBeOpaque(const RenderElement&) const
@@ -133,7 +133,7 @@ bool CanvasImage::knownToBeOpaque(const RenderElement&) const
 bool CanvasImage::canDraw(const RenderElement& renderer) const
 {
     RefPtr image = resolvedImage(renderer);
-    return image && image->hasSomethingToDraw();
+    return image && !image->size().isEmpty();
 }
 
 bool CanvasImage::canDrawAtSize(const RenderElement& renderer, const FloatSize& size) const
@@ -215,7 +215,7 @@ HTMLCanvasElement* CanvasImage::element(Document& document) const
     return m_element.get();
 }
 
-RefPtr<BitmapImage> CanvasImage::resolvedImage(const RenderElement& renderer) const
+RefPtr<NativeImage> CanvasImage::resolvedImage(const RenderElement& renderer) const
 {
     ASSERT(clients().contains(const_cast<RenderElement&>(renderer)));
     RefPtr element = this->element(protect(renderer.document()));

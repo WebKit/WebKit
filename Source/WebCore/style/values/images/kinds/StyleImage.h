@@ -48,6 +48,7 @@ class CSSValuePool;
 class Document;
 class ImageSizingContext;
 class LayoutSize;
+class NativeImage;
 class RenderBoxModelObject;
 class RenderElement;
 class RenderObject;
@@ -177,6 +178,11 @@ protected:
     ImageDrawResult drawResolvedAsPattern(GraphicsContext&, const RenderElement&, WebCore::Image&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions) const;
     ImageDrawResult drawResolvedTiled(GraphicsContext&, const RenderElement&, WebCore::Image&, NaturalDimensions tileNaturalDimensions, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions) const;
     ImageDrawResult drawResolvedNinePiece(GraphicsContext&, const RenderElement&, WebCore::Image&, ConcreteObjectSize, const NinePieceGeometry&, ImageDrawingOptions) const;
+
+    static ImageDrawResult drawResolved(GraphicsContext&, NativeImage&, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions);
+    static ImageDrawResult drawResolvedAsPattern(GraphicsContext&, NativeImage&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions);
+    static ImageDrawResult drawResolvedTiled(GraphicsContext&, NativeImage&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions);
+    static ImageDrawResult drawResolvedNinePiece(GraphicsContext&, NativeImage&, const NinePieceGeometry&, ImageDrawingOptions);
 
     using DestinationPaint = ImageDrawResult(GraphicsContext&);
     using TiledDraw = ImageDrawResult(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source);

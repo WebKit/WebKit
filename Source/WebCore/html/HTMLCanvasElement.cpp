@@ -28,7 +28,6 @@
 #include "config.h"
 #include "HTMLCanvasElement.h"
 
-#include "BitmapImage.h"
 #include "Blob.h"
 #include "BlobCallback.h"
 #include "CanvasGradient.h"
@@ -922,12 +921,10 @@ SecurityOrigin* HTMLCanvasElement::securityOrigin() const
     return &protect(document())->securityOrigin();
 }
 
-BitmapImage* HTMLCanvasElement::copiedImage() const
+NativeImage* HTMLCanvasElement::copiedImage() const
 {
-    if (m_copiedImage)
-        return m_copiedImage.get();
-    if (RefPtr image = copyNativeImage())
-        m_copiedImage = BitmapImage::create(WTF::move(image));
+    if (!m_copiedImage)
+        m_copiedImage = copyNativeImage();
     return m_copiedImage.get();
 }
 

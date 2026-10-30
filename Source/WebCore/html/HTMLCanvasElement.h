@@ -46,7 +46,6 @@
 
 namespace WebCore {
 
-class BitmapImage;
 class BlobCallback;
 class CanvasRenderingContext;
 class CanvasRenderingContext2D;
@@ -59,6 +58,7 @@ class ImageBitmapRenderingContext;
 class ImageBuffer;
 class ImageData;
 class MediaStream;
+class NativeImage;
 class OffscreenCanvas;
 class VideoFrame;
 class WebGLRenderingContextBase;
@@ -142,7 +142,7 @@ public:
 
     std::unique_ptr<CSSParserContext> createCSSParserContext() const final;
 
-    BitmapImage* copiedImage() const;
+    NativeImage* copiedImage() const;
     RefPtr<ImageData> getImageData();
 
     SecurityOrigin* securityOrigin() const final;
@@ -204,7 +204,7 @@ private:
     std::unique_ptr<CanvasRenderingContext> m_context;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_changedDrawableElements;
     PlatformDynamicRangeLimit m_dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
-    mutable RefPtr<BitmapImage> m_copiedImage; // For CSSCanvasValue.
+    mutable RefPtr<NativeImage> m_copiedImage; // For CSSCanvasValue.
 };
 
 WebCoreOpaqueRoot LEGACY_NODELETE root(HTMLCanvasElement*);
