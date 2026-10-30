@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true useHardwareKeyboardMode=true ] -->
 <html>
 <head>
 <script src="/js-test-resources/js-test.js"></script>
@@ -6,7 +6,7 @@
 </head>
 <body>
 <script>
-description("Tests that focusing an input field inside a cross-origin iframe brings up the keyboard and allows typing when site isolation is enabled.");
+description("Tests that focusing an input field inside a cross-origin iframe starts an input session and allows typing when site isolation is enabled.");
 jsTestIsAsync = true;
 
 window.addEventListener("message", async (event) => {
@@ -32,9 +32,8 @@ async function runTest() {
     const clickX = iframeRect.left + inputCenter.x;
     const clickY = iframeRect.top + inputCenter.y;
 
-    await UIHelper.activateAt(clickX, clickY);
-    await UIHelper.waitForKeyboardToShow();
-    testPassed("Keyboard is visible after tapping input in cross-origin iframe.");
+    await UIHelper.activateAndWaitForInputSessionStartAt(clickX, clickY);
+    testPassed("Input session started after tapping input in cross-origin iframe.");
 
     for (const character of "hello") {
         const inputChanged = new Promise(resolve => {
