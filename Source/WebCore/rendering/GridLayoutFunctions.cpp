@@ -192,9 +192,9 @@ Style::GridTrackSizingDirection flowAwareDirectionForParent(const RenderGrid& gr
     return isOrthogonalParent(grid, parent) ? orthogonalDirection(direction) : direction;
 }
 
-std::optional<RenderBox::GridAreaSize> overridingContainingBlockContentSizeForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection direction)
+std::optional<RenderBox::ContainingBlockContentSize> overridingContainingBlockContentSizeForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection direction)
 {
-    return direction == Style::GridTrackSizingDirection::Columns ? gridItem.gridAreaContentLogicalWidth() : gridItem.gridAreaContentLogicalHeight();
+    return direction == Style::GridTrackSizingDirection::Columns ? gridItem.overridingContainingBlockContentLogicalWidth() : gridItem.overridingContainingBlockContentLogicalHeight();
 }
 
 bool isFlippedDirection(const RenderGrid& grid, Style::GridTrackSizingDirection direction)
@@ -330,7 +330,7 @@ void updateAutoMarginsInRowAxisIfNeeded(RenderBox& gridItem, WritingMode writing
     if (!marginEnd.isAuto())
         marginLogicalWidth += gridItem.marginEnd(gridItem.writingMode());
 
-    auto availableAlignmentSpace = gridItem.gridAreaContentLogicalWidth()->value() - gridItem.logicalWidth() - marginLogicalWidth;
+    auto availableAlignmentSpace = gridItem.overridingContainingBlockContentLogicalWidth()->value() - gridItem.logicalWidth() - marginLogicalWidth;
     if (availableAlignmentSpace <= 0)
         return;
 
@@ -358,7 +358,7 @@ void updateAutoMarginsInColumnAxisIfNeeded(RenderBox& gridItem, WritingMode writ
     if (!marginAfter.isAuto())
         marginLogicalHeight += gridItem.marginAfter(gridItem.writingMode());
 
-    auto availableAlignmentSpace = gridItem.gridAreaContentLogicalHeight()->value() - gridItem.logicalHeight() - marginLogicalHeight;
+    auto availableAlignmentSpace = gridItem.overridingContainingBlockContentLogicalHeight()->value() - gridItem.logicalHeight() - marginLogicalHeight;
     if (availableAlignmentSpace <= 0)
         return;
 

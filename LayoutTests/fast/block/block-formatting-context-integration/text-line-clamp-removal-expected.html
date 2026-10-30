@@ -1,0 +1,10 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 300px; font: 20px/1 Ahem; color: green; }
+</style>
+<div class="root" id="container" style="line-clamp: 1"><div>xx xx</div><div>xxx</div><div>x <span>xx</span></div></div>
+<script>
+document.body.offsetHeight;
+// The boxes after the clamp point are visible again.
+document.getElementById("container").style.lineClamp = "none";
+</script>

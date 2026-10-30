@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: inline-block; vertical-align: top; width: 70px; margin-right: 6px; background: lightgray; }
+.fill { background: rgba(0, 128, 0, 0.6); }
+.wrapper { margin: 7px 0 3px; border: solid blue; border-width: 2px 0 4px; padding: 5px 0; background: yellow; }
+</style>
+<div class="root" style="height: 200px"><div class="fill" style="height: -webkit-fill-available"></div></div>
+<div class="root" style="height: 200px"><div class="fill" style="height: -webkit-fill-available; margin: 10px 0; padding: 4px; border: 3px solid black"></div></div>
+<div class="root" style="height: 200px"><div class="wrapper"><div class="fill" style="height: -webkit-fill-available"></div></div></div>
+<div class="root" style="height: 200px"><div class="wrapper" style="max-height: 120px"><div><div class="fill" style="height: -webkit-fill-available"></div></div></div></div>
+<div class="root" style="height: 200px"><div class="fill" style="height: 20px; min-height: -webkit-fill-available; box-sizing: border-box; padding: 10px"></div></div>
+<div class="root" style="height: 200px"><div class="fill" style="height: 400px; max-height: -webkit-fill-available"></div></div>
+<div class="root" style="height: 150px"><div class="fill" style="height: -webkit-fill-available"><div style="height: 50%; width: 20px; background: purple"></div></div></div>
+<div class="root"><div class="fill" style="max-height: -webkit-fill-available">auto block size root</div></div>
