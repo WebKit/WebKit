@@ -74,6 +74,12 @@ using WebCore::DashArray = FixedVector<float>
     WebCore::WindRule windRule();
 }
 
+[CustomHeader] class WebCore::DisplayList::ClipTransformedPath {
+    WebCore::AffineTransform pathTransform();
+    WebCore::Path path();
+    WebCore::WindRule windRule();
+}
+
 [CustomHeader] class WebCore::DisplayList::ConcatenateCTM {
     WebCore::AffineTransform transform();
 }
@@ -265,6 +271,7 @@ using WebKit::DisplayListDataItem = Variant<
     WebCore::DisplayList::ClipOutRoundedRect,
     WebCore::DisplayList::ClipOutToPath,
     WebCore::DisplayList::ClipPath,
+    WebCore::DisplayList::ClipTransformedPath,
     WebCore::DisplayList::ConcatenateCTM,
     WebCore::DisplayList::DrawDotsForDocumentMarker,
     WebCore::DisplayList::DrawEllipse,

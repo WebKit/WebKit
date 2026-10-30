@@ -98,6 +98,7 @@ public:
     void clipOut(const Path&) final;
 
     void clipPath(const Path&, WindRule = WindRule::EvenOdd) final;
+    void clipTransformedPath(const AffineTransform&, const Path&, WindRule = WindRule::EvenOdd) final;
 
     void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
 

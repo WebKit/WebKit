@@ -152,10 +152,9 @@ auto LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
     }
 
     // Transform path by animatedLocalTransform.
-    AffineTransform oldCTM = context.getCTM();
-    context.concatCTM(animatedLocalTransform);
+    auto clipPathTransform = animatedLocalTransform;
     if (transform)
-        context.concatCTM(*transform);
+        clipPathTransform.multiply(*transform);
 
     // The SVG specification wants us to clip everything, if clip-path doesn't have a child.
     if (clipPath.isEmpty())
@@ -171,8 +170,7 @@ auto LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
             result.add(ApplyResult::ClipContainsRendererContent);
     }
 
-    context.clipPath(clipPath, clipRule);
-    context.setCTM(oldCTM);
+    context.clipTransformedPath(clipPathTransform, clipPath, clipRule);
     return result;
 }
 

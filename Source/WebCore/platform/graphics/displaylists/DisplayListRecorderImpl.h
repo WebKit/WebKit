@@ -72,6 +72,7 @@ public:
     void clipOut(const Path&) final;
     void clipOutRoundedRect(const FloatRoundedRect&) final;
     void clipPath(const Path&, WindRule) final;
+    void clipTransformedPath(const AffineTransform&, const Path&, WindRule) final;
     void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
     void beginTransparencyLayer(float) final;
     void beginTransparencyLayer(CompositeOperator, BlendMode) final;

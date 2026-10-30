@@ -258,6 +258,18 @@ void ClipPath::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("wind-rule"_s, windRule());
 }
 
+void ClipTransformedPath::apply(GraphicsContext& context) const
+{
+    context.clipTransformedPath(m_pathTransform, m_path, m_windRule);
+}
+
+void ClipTransformedPath::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+{
+    ts.dumpProperty("path-transform"_s, pathTransform());
+    ts.dumpProperty("path"_s, path());
+    ts.dumpProperty("wind-rule"_s, windRule());
+}
+
 void ResetClip::apply(GraphicsContext& context) const
 {
     context.resetClip();

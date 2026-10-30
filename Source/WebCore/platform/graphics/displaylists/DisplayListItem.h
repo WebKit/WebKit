@@ -50,6 +50,7 @@ class ClipOut;
 class ClipOutRoundedRect;
 class ClipOutToPath;
 class ClipPath;
+class ClipTransformedPath;
 class ClipToImageBuffer;
 class ConcatenateCTM;
 class DrawControlPart;
@@ -119,6 +120,7 @@ using Item = Variant
     , ClipOutRoundedRect
     , ClipOutToPath
     , ClipPath
+    , ClipTransformedPath
     , ClipToImageBuffer
     , ConcatenateCTM
     , DrawControlPart

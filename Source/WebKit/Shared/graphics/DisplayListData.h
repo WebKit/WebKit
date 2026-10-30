@@ -48,6 +48,7 @@ using DisplayListDataItem = Variant
     , WebCore::DisplayList::ClipOutRoundedRect
     , WebCore::DisplayList::ClipOutToPath
     , WebCore::DisplayList::ClipPath
+    , WebCore::DisplayList::ClipTransformedPath
     , WebCore::DisplayList::ConcatenateCTM
     , WebCore::DisplayList::DrawDotsForDocumentMarker
     , WebCore::DisplayList::DrawEllipse

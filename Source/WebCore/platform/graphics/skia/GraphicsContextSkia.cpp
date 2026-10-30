@@ -732,6 +732,15 @@ void GraphicsContextSkia::clipPath(const Path& path, WindRule clipRule)
     m_canvas.clipPath(*pathForClip, true);
 }
 
+void GraphicsContextSkia::clipTransformedPath(const AffineTransform& pathTransform, const Path& path, WindRule clipRule)
+{
+    // The clip is stored in device space, so the matrix can be restored afterwards without affecting it.
+    auto matrix = m_canvas.getLocalToDevice();
+    m_canvas.concat(pathTransform);
+    clipPath(path, clipRule);
+    m_canvas.setMatrix(matrix);
+}
+
 IntRect GraphicsContextSkia::clipBounds() const
 {
     return enclosingIntRect(m_canvas.getLocalClipBounds());

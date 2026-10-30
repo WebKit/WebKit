@@ -274,6 +274,12 @@ void Recorder::updateStateForClipPath(const Path& path)
     currentState().clipBounds.intersect(currentState().ctm.mapRect(path.fastBoundingRect()));
 }
 
+void Recorder::updateStateForClipTransformedPath(const AffineTransform& pathTransform, const Path& path)
+{
+    appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
+    currentState().clipBounds.intersect((currentState().ctm * pathTransform).mapRect(path.fastBoundingRect()));
+}
+
 void Recorder::updateStateForClipToImageBuffer(const FloatRect& rect)
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.

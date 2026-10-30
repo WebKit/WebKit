@@ -92,6 +92,7 @@ public:
     void clip(const FloatRect&) final;
     void clipRoundedRect(const FloatRoundedRect&) final;
     void clipPath(const Path&, WindRule = WindRule::EvenOdd) final;
+    // clipTransformedPath intentionally left as the base class implementation.
 
     void clipOut(const FloatRect&) final;
     void clipOutRoundedRect(const FloatRoundedRect&) final;

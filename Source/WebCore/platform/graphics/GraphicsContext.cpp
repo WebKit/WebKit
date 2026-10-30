@@ -474,6 +474,13 @@ void GraphicsContext::clipRoundedRect(const FloatRoundedRect& rect)
     clipPath(path);
 }
 
+void GraphicsContext::clipTransformedPath(const AffineTransform& pathTransform, const Path& path, WindRule windRule)
+{
+    auto transformedPath = path;
+    transformedPath.transform(pathTransform);
+    clipPath(transformedPath, windRule);
+}
+
 void GraphicsContext::clipOutRoundedRect(const FloatRoundedRect& rect)
 {
     if (!rect.hasNonZeroRadii()) {

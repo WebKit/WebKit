@@ -268,6 +268,20 @@ void RemoteGraphicsContextProxy::clipPath(const Path& path, WindRule rule)
     send(Messages::RemoteGraphicsContext::ClipPath(path, rule));
 }
 
+void RemoteGraphicsContextProxy::clipTransformedPath(const AffineTransform& pathTransform, const Path& path, WindRule rule)
+{
+    sendPendingDrawsIfNecessary();
+    updateStateForClipTransformedPath(pathTransform, path);
+    if (RefPtr impl = path.asImpl(); impl && !impl->isTransient()) {
+        if (auto identifier = recordResourceUse(*impl)) {
+            send(Messages::RemoteGraphicsContext::ClipTransformedCachedPath(pathTransform, *identifier, rule));
+            return;
+        }
+    }
+
+    send(Messages::RemoteGraphicsContext::ClipTransformedPath(pathTransform, path, rule));
+}
+
 void RemoteGraphicsContextProxy::resetClip()
 {
     sendPendingDrawsIfNecessary();

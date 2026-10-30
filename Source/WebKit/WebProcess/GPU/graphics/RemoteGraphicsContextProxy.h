@@ -112,6 +112,7 @@ private:
     void clipOut(const WebCore::Path&) final;
     void clipOutRoundedRect(const WebCore::FloatRoundedRect&) final;
     void clipPath(const WebCore::Path&, WebCore::WindRule) final;
+    void clipTransformedPath(const WebCore::AffineTransform&, const WebCore::Path&, WebCore::WindRule) final;
     void clipToImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destinationRect) final;
     void resetClip() final;
     void beginTransparencyLayer(float) final;

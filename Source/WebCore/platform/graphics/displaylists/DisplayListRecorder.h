@@ -110,6 +110,7 @@ protected:
     WEBCORE_EXPORT void updateStateForClip(const FloatRect&);
     WEBCORE_EXPORT void updateStateForClipRoundedRect(const FloatRoundedRect&);
     WEBCORE_EXPORT void updateStateForClipPath(const Path&);
+    WEBCORE_EXPORT void updateStateForClipTransformedPath(const AffineTransform&, const Path&);
     WEBCORE_EXPORT void updateStateForClipOut(const FloatRect&);
     WEBCORE_EXPORT void updateStateForClipOut(const Path&);
     WEBCORE_EXPORT void updateStateForClipOutRoundedRect(const FloatRoundedRect&);

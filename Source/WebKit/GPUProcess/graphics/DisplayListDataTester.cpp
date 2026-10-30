@@ -118,6 +118,7 @@ static void testValueItems(Tester& tester)
     items.append(DisplayList::ClipOutRoundedRect { roundedRect });
     items.append(DisplayList::ClipOutToPath { testPath() });
     items.append(DisplayList::ClipPath { testPath(), WindRule::EvenOdd });
+    items.append(DisplayList::ClipTransformedPath { transform, testPath(), WindRule::NonZero });
     items.append(DisplayList::ConcatenateCTM { transform });
     items.append(DisplayList::DrawDotsForDocumentMarker { rect, { DocumentMarkerLineStyleMode::Grammar, Color::green } });
     items.append(DisplayList::DrawEllipse { rect });

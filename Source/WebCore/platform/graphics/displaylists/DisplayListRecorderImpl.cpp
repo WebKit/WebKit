@@ -190,6 +190,12 @@ void RecorderImpl::clipPath(const Path& path, WindRule rule)
     m_items.append(ClipPath(path, rule));
 }
 
+void RecorderImpl::clipTransformedPath(const AffineTransform& pathTransform, const Path& path, WindRule rule)
+{
+    updateStateForClipTransformedPath(pathTransform, path);
+    m_items.append(ClipTransformedPath(pathTransform, path, rule));
+}
+
 void RecorderImpl::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults&)
 {
     appendStateChangeItemIfNecessary();

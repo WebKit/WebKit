@@ -113,6 +113,7 @@ public:
     void clipOut(const FloatRect&) final;
     void clipOut(const Path&) final;
     void clipPath(const Path&, WindRule) final;
+    void clipTransformedPath(const AffineTransform&, const Path&, WindRule) final;
     IntRect clipBounds() const final;
     void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
 

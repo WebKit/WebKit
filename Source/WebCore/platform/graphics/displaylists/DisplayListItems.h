@@ -454,6 +454,37 @@ private:
     WindRule m_windRule;
 };
 
+class ClipTransformedPath {
+public:
+    static constexpr char name[] = "clip-transformed-path";
+
+    ClipTransformedPath(const AffineTransform& pathTransform, Path&& path, WindRule windRule)
+        : m_pathTransform(pathTransform)
+        , m_path(WTF::move(path))
+        , m_windRule(windRule)
+    {
+    }
+
+    ClipTransformedPath(const AffineTransform& pathTransform, const Path& path, WindRule windRule)
+        : m_pathTransform(pathTransform)
+        , m_path(path)
+        , m_windRule(windRule)
+    {
+    }
+
+    const AffineTransform& pathTransform() const LIFETIME_BOUND { return m_pathTransform; }
+    const Path& path() const LIFETIME_BOUND { return m_path; }
+    WindRule windRule() const { return m_windRule; }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const;
+
+private:
+    AffineTransform m_pathTransform;
+    Path m_path;
+    WindRule m_windRule;
+};
+
 class ResetClip {
 public:
     static constexpr char name[] = "reset-clip";

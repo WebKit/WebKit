@@ -96,6 +96,8 @@ public:
     void clipOutToPath(const WebCore::Path&);
     void clipPath(const WebCore::Path&, WebCore::WindRule);
     void clipCachedPath(RemotePathImplIdentifier, WebCore::WindRule);
+    void clipTransformedPath(const WebCore::AffineTransform&, const WebCore::Path&, WebCore::WindRule);
+    void clipTransformedCachedPath(const WebCore::AffineTransform&, RemotePathImplIdentifier, WebCore::WindRule);
     void resetClip();
     void drawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize>, WebCore::FloatPoint localAnchor, WebCore::FontSmoothingMode);
     void drawDisplayList(RemoteDisplayListIdentifier);
