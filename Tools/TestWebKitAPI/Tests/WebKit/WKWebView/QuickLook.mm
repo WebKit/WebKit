@@ -377,6 +377,7 @@ TEST(QuickLook, CancelResponseAfterLoadingPreview)
 
 TEST(QuickLook, DownloadResponseBeforeLoadingPreview)
 {
+    downloadIsDone = false;
     RetainPtr delegate = adoptNS([[QuickLookDelegate alloc] initWithExpectedFileURL:pagesDocumentURL().get() responsePolicy:WKNavigationResponsePolicyDownload]);
     runTestDecideBeforeLoading(delegate.get(), [NSURLRequest requestWithURL:pagesDocumentURL().get()]);
     EXPECT_EQ(WebKitErrorFrameLoadInterruptedByPolicyChange, [delegate navigationError].code);
