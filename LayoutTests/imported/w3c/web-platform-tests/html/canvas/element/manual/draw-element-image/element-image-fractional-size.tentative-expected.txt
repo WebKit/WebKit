@@ -1,0 +1,4 @@
+
+FAIL getElementImageDefaultSize width and height should support fractional values promise_test: Unhandled rejection with value: object "TypeError: canvas.getElementImageDefaultSize is not a function. (In 'canvas.getElementImageDefaultSize(child)', 'canvas.getElementImageDefaultSize' is undefined)"
+FAIL getElementImageDefaultSize width and height should support fractional values in canvas pixel grid coordinate space promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'entry.devicePixelContentBoxSize[0]')"
+

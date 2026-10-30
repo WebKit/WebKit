@@ -1,4 +1,4 @@
 
 
-FAIL drawElementImage does not leak visited colors in SVG use content from outside the subtree promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+FAIL drawElementImage does not leak visited colors in SVG use content from outside the subtree assert_array_equals: Unvisited color should be used expected property 0 to be 0 but got 255 (expected array [0, 128, 0, 255] got object "255,0,0,255")
 

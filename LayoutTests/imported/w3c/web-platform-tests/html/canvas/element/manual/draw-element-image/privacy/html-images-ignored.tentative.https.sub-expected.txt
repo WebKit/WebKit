@@ -1,0 +1,4 @@
+
+
+PASS drawElementImage does not draw cross-origin HTML images
+

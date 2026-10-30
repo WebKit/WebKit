@@ -1,0 +1,4 @@
+hello world
+
+PASS Double-clicking on canvas should be able to modify selection.
+

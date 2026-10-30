@@ -1,0 +1,4 @@
+hello world
+
+FAIL Double-clicking on canvas should be able to modify selection. assert_true: dblclick event should be fired. expected true got false
+

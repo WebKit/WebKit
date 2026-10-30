@@ -1,0 +1,9 @@
+
+
+
+FAIL Initial paint of all canvases across multiple branches and sibling inner canvases runs in reverse shadow-including tree order assert_array_equals: Initial paint should run in reverse shadow-including tree order expected property 0 to be "inner_c" but got "inner_b_1" (expected array ["inner_c", "outer_c", "inner_b_2", "inner_b_1", "outer_b", "inner_a", "outer_a"] got ["inner_b_1", "inner_b_2", "outer_a", "inner_c", "outer_b", "inner_a", "outer_c"])
+PASS Repainting inner_b_1 fires paint events in reverse shadow-including tree order (inner_b_1 before outer_b)
+FAIL Repainting sibling inner canvases in outer_b fires in reverse shadow-including tree order assert_array_equals: Changing both sibling inner canvases triggers paint on inner_b_2, inner_b_1, then outer_b expected property 0 to be "inner_b_2" but got "inner_b_1" (expected array ["inner_b_2", "inner_b_1", "outer_b"] got ["inner_b_1", "inner_b_2", "outer_b"])
+PASS Simultaneous repaints across disjoint branches fire in reverse shadow-including tree order
+FAIL Drawing operations in nested canvas onpaint should not cause outer onpaint to fire again assert_equals: inner onpaint should fire once expected 1 but got 0
+

@@ -1,0 +1,3 @@
+
+FAIL canvas child containment assert_equals: expected "static" but got "absolute"
+

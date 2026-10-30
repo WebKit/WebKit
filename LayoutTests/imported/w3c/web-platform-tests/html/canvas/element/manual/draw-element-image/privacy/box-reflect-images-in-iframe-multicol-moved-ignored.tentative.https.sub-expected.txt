@@ -1,4 +1,4 @@
 
 
-FAIL drawElementImage does not draw cross-origin box-reflect images in a multicol inside an iframe moved under canvas promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+FAIL drawElementImage does not draw cross-origin box-reflect images in a multicol inside an iframe moved under canvas assert_array_equals: Same origin div should draw expected property 1 to be 128 but got 0 (expected array [0, 128, 0, 255] got object "0,0,255,255")
 

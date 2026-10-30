@@ -1,0 +1,3 @@
+
+FAIL Draw order trumps z-index in hit testing. assert_equals: expected Element node <div drawable="" id="a" style="z-index: 5;"></div> but got Element node <div drawable="" id="b" style="z-index: 6;"></div>
+

@@ -1,0 +1,6 @@
+Details
+A
+
+
+PASS drawElementImage does not paint corss-origin ::after image in ::details-content
+

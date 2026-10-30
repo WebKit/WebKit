@@ -1,0 +1,8 @@
+
+
+
+FAIL Prevent drawing ElementImage into a different canvas on main thread assert_throws_dom: Drawing an ElementImage into a different canvas must throw InvalidStateError function "() => {
+      ctx2.drawElementImage(elementImage1, 0, 0);
+    }" did not throw
+FAIL Prevent drawing ElementImage into a different canvas in a worker thread promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+

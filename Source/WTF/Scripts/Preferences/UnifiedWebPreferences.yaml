@@ -2776,7 +2776,7 @@ HTMLEnhancedSelectParsingQuirkEnabled:
 
 HTMLInCanvasEnabled:
   type: bool
-  status: unstable
+  status: testable
   category: dom
   webcoreOnChange: setNeedsRelayoutAllFrames
   humanReadableName: "HTML-in-Canvas"

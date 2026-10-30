@@ -1,3 +1,4 @@
+link
 
-FAIL drawElementImage does not reveal visited link colors promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+FAIL drawElementImage does not reveal visited link colors assert_false: The canvas should not reflect the visited state. expected false got true
 

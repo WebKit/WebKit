@@ -1,0 +1,4 @@
+hello world
+
+PASS Elements under canvas should report intersections, but not visibility
+

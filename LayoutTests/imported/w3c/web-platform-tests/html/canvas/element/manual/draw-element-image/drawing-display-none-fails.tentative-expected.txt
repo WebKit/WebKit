@@ -1,0 +1,4 @@
+ <
+
+PASS drawElementImage with display:none element
+

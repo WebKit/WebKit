@@ -1,4 +1,4 @@
 
 
-FAIL drawElementImage does not draw cross-origin images for before/after promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+FAIL drawElementImage does not draw cross-origin images for before/after assert_false: The canvas should not paint cross origin content. expected false got true
 

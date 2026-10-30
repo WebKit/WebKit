@@ -1,0 +1,4 @@
+
+
+PASS onpaint should fire after iframe changes.
+

@@ -1,0 +1,3 @@
+
+PASS canvas drawElementImage throws for a detached canvas due to lack of layout
+

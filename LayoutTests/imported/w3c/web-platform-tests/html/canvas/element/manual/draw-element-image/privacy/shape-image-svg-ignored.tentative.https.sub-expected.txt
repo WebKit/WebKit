@@ -1,0 +1,4 @@
+X X X X
+
+PASS drawElementImage does not use cross-origin svg image for shape-outside
+

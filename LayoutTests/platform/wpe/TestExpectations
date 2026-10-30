@@ -1309,3 +1309,5 @@ webkit.org/b/328890 [ arm64 ] imported/w3c/web-platform-tests/css/css-overflow/o
 webkit.org/b/329157 [ arm64 ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/prompt/001.html [ Crash Pass ]
 
 webkit.org/b/329221 http/tests/misc/image-blocked-src-change.html [ Pass Crash ]
+
+webkit.org/b/329530 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/selection-painted-overlay-path.tentative.html [ ImageOnlyFailure ]

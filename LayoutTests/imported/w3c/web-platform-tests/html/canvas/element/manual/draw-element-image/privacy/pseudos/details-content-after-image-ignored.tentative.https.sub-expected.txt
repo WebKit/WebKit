@@ -1,3 +1,6 @@
+Details
+A
 
-FAIL drawElementImage does not paint corss-origin ::after image in ::details-content promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+
+FAIL drawElementImage does not paint corss-origin ::after image in ::details-content assert_false: The canvas should not paint a cross origin image. expected false got true
 

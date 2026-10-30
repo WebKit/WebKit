@@ -1,4 +1,4 @@
 
 
-FAIL drawElementImage does not use SVG resources from outside the subtree promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+FAIL drawElementImage does not use SVG resources from outside the subtree assert_true: The canvas should not use the gradient. expected true got false
 

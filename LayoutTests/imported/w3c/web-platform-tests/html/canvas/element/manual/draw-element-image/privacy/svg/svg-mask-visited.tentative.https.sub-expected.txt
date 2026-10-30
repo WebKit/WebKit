@@ -1,4 +1,4 @@
 
 
-FAIL drawElementImage does not reveal visited links in external SVG masks promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+FAIL drawElementImage does not reveal visited links in external SVG masks assert_array_equals: External mask should not be drawn expected property 0 to be 0 but got 40 (expected array [0, 0, 255, 255] got object "40,140,240,255")
 

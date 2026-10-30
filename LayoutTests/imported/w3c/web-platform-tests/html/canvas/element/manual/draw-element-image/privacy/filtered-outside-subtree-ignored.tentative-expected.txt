@@ -1,4 +1,4 @@
 
 
-FAIL drawElementImage does not use SVG filters outside the canvas subtree promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+FAIL drawElementImage does not use SVG filters outside the canvas subtree assert_array_equals: External filter on HTML element should be ignored expected property 1 to be 128 but got 255 (expected array [0, 128, 0, 255] got object "0,255,0,255")
 

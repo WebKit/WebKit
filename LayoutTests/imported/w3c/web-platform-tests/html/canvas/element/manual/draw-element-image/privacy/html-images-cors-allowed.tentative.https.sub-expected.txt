@@ -1,0 +1,4 @@
+
+
+FAIL drawElementImage does draws CORS enabled cross-origin HTML images assert_array_equals: CORS png should draw expected property 0 to be 0 but got 255 (expected array [0, 255, 0, 255] got object "255,0,0,255")
+

@@ -1294,3 +1294,5 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/t
 fast/images/pdf-as-background.html [ Skip ]
 fast/images/pdf-as-tiled-background.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/input/mouse-wheel.html [ Skip ]
+
+webkit.org/b/329530 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/css-clip-path-on-div.tentative.html [ ImageOnlyFailure ]
