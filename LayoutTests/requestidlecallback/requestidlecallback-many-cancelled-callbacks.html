@@ -1,0 +1,64 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This test exercises the logic that clears stale callbacks.');
+
+jsTestIsAsync = true;
+
+const callbacks = [];
+
+function queueLoggedCallback() {
+    const callback = { ran: false, cancelled: false };
+    callback.handle = requestIdleCallback(() => {
+        callback.ran = true;
+    });
+    callbacks.push(callback);
+}
+
+function queue50LoggedCallbacks() {
+    for (let i = 0; i < 50; ++i)
+        queueLoggedCallback();
+}
+
+// 60 random indexes to cancel, hardcoded to produce stable expectations:
+const callbacksToCancel = [
+    1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 15, 18, 21, 22, 23, 25, 26, 27, 28, 29,
+    30, 31, 33, 34, 35, 36, 37, 39, 40, 42, 44, 48, 52, 53, 55, 58, 59, 60, 61, 62,
+    66, 67, 70, 71, 73, 74, 75, 76, 79, 80, 81, 82, 83, 88, 91, 92, 94, 96, 97, 98,
+];
+function checkEveryCallback() {
+    for (let i = 0; i < 100; ++i) {
+        if (callbacksToCancel.includes(i)) {
+            shouldBeFalse(`callbacks[${i}].ran`);
+            shouldBeTrue(`callbacks[${i}].cancelled`);
+        } else {
+            shouldBeTrue(`callbacks[${i}].ran`);
+            shouldBeFalse(`callbacks[${i}].cancelled`);
+        }
+    }
+}
+
+window.addEventListener('load', () => {
+    requestIdleCallback( () => {
+        // Second batch of 50 callbacks:
+        queue50LoggedCallbacks();
+        for (const index of callbacksToCancel) {
+            callbacks[index].cancelled = true;
+            cancelIdleCallback(callbacks[index].handle);
+        }
+        requestIdleCallback( () => {
+            checkEveryCallback();
+            finishJSTest();
+        });
+    });
+
+    // First batch of 50 callbacks:
+    queue50LoggedCallbacks();
+});
+
+</script>
+</body>
+</html>

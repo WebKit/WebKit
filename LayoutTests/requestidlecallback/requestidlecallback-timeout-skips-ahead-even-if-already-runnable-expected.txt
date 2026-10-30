@@ -1,0 +1,11 @@
+This tests that a runnable idle callback can skip ahead of others in case of timeout.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS firstIdlePeriodStarted is true
+PASS secondIdlePeriodStarted is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

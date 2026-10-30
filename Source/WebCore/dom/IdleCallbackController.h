@@ -48,10 +48,9 @@ public:
     void removeIdleCallback(unsigned);
 
     void startIdlePeriod();
-    bool isEmpty() const { return m_idleRequestCallbacks.isEmpty() && m_runnableIdleCallbacks.isEmpty(); }
+    bool isEmpty() const { return !(m_idleRequestCallbacks.size() - m_staleRequestCount); }
 
 private:
-    void queueTaskToInvokeIdleCallbacks();
     bool invokeIdleCallbacks();
     void invokeIdleCallbackTimeout(unsigned identifier);
 
@@ -59,12 +58,15 @@ private:
 
     struct IdleRequest {
         unsigned identifier { 0 };
-        Ref<IdleRequestCallback> callback;
+        RefPtr<IdleRequestCallback> callback;
         std::optional<MonotonicTime> timeout;
     };
-
     Deque<IdleRequest> m_idleRequestCallbacks;
-    Deque<IdleRequest> m_runnableIdleCallbacks;
+    size_t m_runnableRequestCount { 0 };
+    std::optional<IdleRequest> takeFirstRunnableNonStaleRequest();
+    // Stale requests were either cancelled or have already been serviced by invokeIdleCallbackTimeout():
+    size_t m_staleRequestCount { 0 };
+
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 

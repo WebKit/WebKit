@@ -75,63 +75,67 @@ unsigned IdleCallbackController::queueIdleCallback(Ref<IdleRequestCallback>&& ca
 
 void IdleCallbackController::removeIdleCallback(unsigned identifier)
 {
-    if (!identifier)
+    auto it = m_idleRequestCallbacks.findIf([identifier](auto& request) {
+        return request.identifier == identifier;
+    });
+
+    if (it == m_idleRequestCallbacks.end())
         return;
 
-    m_idleRequestCallbacks.removeAllMatching([identifier](auto& request) {
-        return request.identifier == identifier;
-    });
-
-    m_runnableIdleCallbacks.removeAllMatching([identifier](auto& request) {
-        return request.identifier == identifier;
-    });
+    if (it->callback) {
+        it->callback = nullptr;
+        ++m_staleRequestCount;
+    }
 }
 
 // https://w3c.github.io/requestidlecallback/#start-an-idle-period-algorithm
 void IdleCallbackController::startIdlePeriod()
 {
-    for (auto& request : m_idleRequestCallbacks)
-        m_runnableIdleCallbacks.append(WTF::move(request));
-    m_idleRequestCallbacks.clear();
-
-    if (m_runnableIdleCallbacks.isEmpty())
+    m_runnableRequestCount = m_idleRequestCallbacks.size();
+    if (!m_runnableRequestCount)
         return;
 
     while (invokeIdleCallbacks()) { }
 }
 
-void IdleCallbackController::queueTaskToInvokeIdleCallbacks()
-{
-    Ref document = *m_document;
-    protect(document->eventLoop())->queueTask(TaskSource::IdleTask, [weakThis = WeakPtr { *this }, document] {
-        CheckedPtr checkedThis = weakThis.get();
-        if (!checkedThis)
-            return;
-        RELEASE_ASSERT(document->idleCallbackController() == checkedThis.get());
-        while (checkedThis->invokeIdleCallbacks()) { }
-    });
-}
-
 // https://w3c.github.io/requestidlecallback/#invoke-idle-callbacks-algorithm
 bool IdleCallbackController::invokeIdleCallbacks()
 {
+    ASSERT(!m_idleRequestCallbacks.isEmpty());
+    if (!m_runnableRequestCount)
+        return false;
+
     RefPtr document = m_document.get();
     if (!document || !document->frame())
         return false;
 
     Ref windowEventLoop = document->windowEventLoop();
-    // FIXME: Implement "if the user-agent believes it should end the idle period early due to newly scheduled high-priority work, return from the algorithm."
-
     auto now = MonotonicTime::now();
     auto deadline = windowEventLoop->computeIdleDeadline();
-    if (now >= deadline || m_runnableIdleCallbacks.isEmpty())
+    if (now >= deadline)
+        return false;
+    auto request = takeFirstRunnableNonStaleRequest();
+    if (!request)
         return false;
 
-    auto request = m_runnableIdleCallbacks.takeFirst();
-    auto idleDeadline = IdleDeadline::create(request.timeout && *request.timeout < now ? IdleDeadline::DidTimeout::Yes : IdleDeadline::DidTimeout::No);
-    protect(request.callback)->invoke(idleDeadline.get());
+    auto idleDeadline = IdleDeadline::create(request->timeout && *request->timeout < now ? IdleDeadline::DidTimeout::Yes : IdleDeadline::DidTimeout::No);
+    protect(request->callback)->invoke(idleDeadline.get());
 
-    return !m_runnableIdleCallbacks.isEmpty();
+    return !m_idleRequestCallbacks.isEmpty();
+}
+
+std::optional<IdleCallbackController::IdleRequest> IdleCallbackController::takeFirstRunnableNonStaleRequest()
+{
+    while (m_runnableRequestCount) {
+        --m_runnableRequestCount;
+        auto request = m_idleRequestCallbacks.takeFirst();
+        if (!request.callback) {
+            --m_staleRequestCount;
+            continue;
+        }
+        return request;
+    }
+    return std::nullopt;
 }
 
 // https://w3c.github.io/requestidlecallback/#dfn-invoke-idle-callback-timeout-algorithm
@@ -148,8 +152,9 @@ void IdleCallbackController::invokeIdleCallbackTimeout(unsigned identifier)
         return;
 
     auto idleDeadline = IdleDeadline::create(IdleDeadline::DidTimeout::Yes);
-    auto callback = WTF::move(it->callback);
-    m_idleRequestCallbacks.remove(it);
+    auto callback = std::exchange(it->callback, nullptr);
+    ++m_staleRequestCount;
+
     callback->invoke(idleDeadline.get());
 }
 
