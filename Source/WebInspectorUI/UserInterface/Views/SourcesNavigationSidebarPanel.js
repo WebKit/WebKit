@@ -1379,6 +1379,36 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
     }
 
+    _removeScriptsOfTarget(target)
+    {
+        const suppressOnDeselect = true;
+        const suppressSelectSibling = true;
+        let belongsToTarget = (treeElement) => treeElement instanceof WI.ScriptTreeElement && treeElement.representedObject.target === target;
+
+        for (let i = this._breakpointsTreeOutline.children.length - 1; i >= 0; --i) {
+            let treeElement = this._breakpointsTreeOutline.children[i];
+            if (belongsToTarget(treeElement))
+                this._breakpointsTreeOutline.removeChild(treeElement, suppressOnDeselect, suppressSelectSibling);
+        }
+
+        for (let folderTreeElement of [this._extensionScriptsFolderTreeElement, this._extraScriptsFolderTreeElement, this._anonymousScriptsFolderTreeElement]) {
+            if (!folderTreeElement)
+                continue;
+
+            for (let i = folderTreeElement.children.length - 1; i >= 0; --i) {
+                let treeElement = folderTreeElement.children[i];
+                if (!belongsToTarget(treeElement))
+                    continue;
+
+                folderTreeElement.representedObject.remove(treeElement.representedObject);
+                folderTreeElement.removeChild(treeElement, suppressOnDeselect, suppressSelectSibling);
+            }
+
+            if (!folderTreeElement.children.length && folderTreeElement.parent)
+                folderTreeElement.parent.removeChild(folderTreeElement, suppressOnDeselect, suppressSelectSibling);
+        }
+    }
+
     _addWorkerTargetWithMainResource(target)
     {
         console.assert(target.type === WI.TargetType.Worker);
@@ -2519,6 +2549,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _handleFrameWasRemoved(event)
     {
+        // FIXME: <https://webkit.org/b/328686> Web Inspector: Sources tab in Path grouping mode rebuilds its whole tree for every removed frame
         if (WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Path)
             this._handleResourceGroupingModeChanged();
     }
@@ -2574,6 +2605,15 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     {
         const suppressOnDeselect = true;
         const suppressSelectSibling = true;
+
+        // With Site Isolation, each frame target clears only its own scripts, so keep the rows of the other targets. Skipping
+        // the rest of the reset is fine: each worker's own TargetRemoved removes its row, and MainResourceDidChange adds the
+        // main frame's resources back.
+        let {target} = event.data;
+        if (target instanceof WI.FrameTarget && WI.settings.resourceGroupingMode.value !== WI.Resource.GroupingMode.Path) {
+            this._removeScriptsOfTarget(target);
+            return;
+        }
 
         for (let i = this._breakpointsTreeOutline.children.length - 1; i >= 0; --i) {
             let treeElement = this._breakpointsTreeOutline.children[i];
@@ -2909,8 +2949,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (workerTreeElement)
             workerTreeElement.parent.removeChild(workerTreeElement);
 
-        if (target instanceof WI.FrameTarget)
-            this._handleResourceGroupingModeChanged();
+        if (target instanceof WI.FrameTarget) {
+            // FIXME: <https://webkit.org/b/328686> Web Inspector: Sources tab in Path grouping mode rebuilds its whole tree for every removed frame
+            if (WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Path)
+                this._handleResourceGroupingModeChanged();
+            else
+                this._removeScriptsOfTarget(target);
+        }
 
         let callStackTreeElement = this._findCallStackTargetTreeElement(target);
         console.assert(callStackTreeElement);

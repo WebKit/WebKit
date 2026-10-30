@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("DebuggerManager.FrameTargetScriptsCleared");
+
+    let counter = 0;
+
+    const scriptKinds = [
+        {name: "extension script", url: "safari-web-extension://unit-test/content.js", injected: true},
+        {name: "injected script", sourceURL: "user-script.js", injected: true},
+        {name: "anonymous script"},
+    ];
+
+    function createFrameTarget()
+    {
+        let connection = {_sendCommandToBackendWithCallback() { }};
+        let target = new WI.FrameTarget(null, `unit-test-frame-target-${++counter}`, "Frame", connection);
+        WI.targetManager.addTarget(target);
+        return target;
+    }
+
+    function parseScripts(target)
+    {
+        return scriptKinds.map(({url = "", sourceURL = "", injected = false}) => {
+            let id = `unit-test-script-${++counter}`;
+            WI.debuggerManager.scriptDidParse(target, id, url, 0, 0, 0, 0, undefined, WI.Script.SourceType.Program, injected, sourceURL);
+            return WI.debuggerManager.knownNonResourceScripts.find((script) => script.target === target && script.id === id) || null;
+        });
+    }
+
+    function clearScripts(target)
+    {
+        let clearedTarget = null;
+        WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.ScriptsCleared, (event) => {
+            clearedTarget = event.data?.target;
+        });
+        WI.debuggerManager.globalObjectCleared(target);
+        InspectorTest.expectEqual(clearedTarget, target, "ScriptsCleared should name the frame target that cleared its scripts.");
+    }
+
+    function expectParsed(scripts)
+    {
+        scriptKinds.forEach(({name}, index) => {
+            InspectorTest.expectNotNull(scripts[index], `The ${name} should be parsed.`);
+        });
+    }
+
+    function expectKnown(scripts, expected, when)
+    {
+        let knownScripts = WI.debuggerManager.knownNonResourceScripts;
+        scriptKinds.forEach(({name}, index) => {
+            let script = scripts[index];
+            if (!script) {
+                InspectorTest.fail(`The ${name} was not parsed.`);
+                return;
+            }
+
+            if (expected)
+                InspectorTest.expectThat(knownScripts.includes(script), `The ${name} should be known ${when}.`);
+            else
+                InspectorTest.expectFalse(knownScripts.includes(script), `The ${name} should not be known ${when}.`);
+        });
+    }
+
+    suite.addTestCase({
+        name: "DebuggerManager.FrameTargetScriptsCleared.NamesClearedTarget",
+        description: "ScriptsCleared must name the frame target that cleared its scripts, so that the Sources tree removes only the rows of that target.",
+        test() {
+            let target = createFrameTarget();
+            let scripts = parseScripts(target);
+            expectParsed(scripts);
+
+            clearScripts(target);
+            expectKnown(scripts, false, "after its frame target clears its scripts");
+
+            WI.targetManager.removeTarget(target);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DebuggerManager.FrameTargetScriptsCleared.KeepsScriptsOfOtherTargets",
+        description: "A frame target that clears its scripts must not clear the scripts of other frame targets.",
+        test() {
+            let clearedTarget = createFrameTarget();
+            let keptTarget = createFrameTarget();
+            let clearedScripts = parseScripts(clearedTarget);
+            let keptScripts = parseScripts(keptTarget);
+            expectParsed(clearedScripts);
+            expectParsed(keptScripts);
+
+            clearScripts(clearedTarget);
+            expectKnown(clearedScripts, false, "after its frame target clears its scripts");
+            expectKnown(keptScripts, true, "after another frame target clears its scripts");
+
+            WI.targetManager.removeTarget(clearedTarget);
+            WI.targetManager.removeTarget(keptTarget);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that DebuggerManager names the frame target in ScriptsCleared and clears only the scripts of that target.</p>
+</body>
+</html>
