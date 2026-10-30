@@ -266,6 +266,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
     TerminateRemoteWorkerContextConnectionWhenPossible(enum:uint8_t WebKit::RemoteWorkerType workerType, PAL::SessionID sessionID,  WebCore::RegistrableDomain registrableDomain, WebCore::ProcessIdentifier processIdentifier);
     RunningOrTerminatingServiceWorkerCountForTesting(PAL::SessionID sessionID) -> (unsigned count)
+    LoadersAwaitingWebProcessTransferCountForTesting(PAL::SessionID sessionID) -> (uint64_t count)
 
     GetPendingPushMessage(PAL::SessionID sessionID) -> (struct std::optional<WebKit::WebPushMessage> message)
     GetPendingPushMessages(PAL::SessionID sessionID) -> (Vector<WebKit::WebPushMessage> messages)
