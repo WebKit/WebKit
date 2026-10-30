@@ -1,0 +1,4 @@
+Submit
+
+PASS getComputedStyle should return the default style, not :hover style
+

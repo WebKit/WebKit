@@ -1,0 +1,3 @@
+
+PASS insertRule with font-face rule should not throw
+

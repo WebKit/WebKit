@@ -1,0 +1,8 @@
+
+PASS length reflects number of keyframe rules
+PASS indexed getter returns the rule at the given index
+PASS indexed getter returns the last rule
+PASS indexed getter returns undefined for out-of-bounds index
+PASS indexed getter returns undefined for negative index
+PASS indexed getter returns undefined for large out-of-bounds index
+

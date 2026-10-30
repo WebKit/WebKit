@@ -1,0 +1,4 @@
+
+PASS Sanity check
+PASS ID selector matches with CSS.escape()
+

@@ -1,0 +1,6 @@
+
+PASS replaceSync() nullifies parentStyleSheet on old rules
+PASS replaceSync() nullifies parentStyleSheet on old nested rules
+PASS replace() nullifies parentStyleSheet on old rules after replacement
+PASS replace() nullifies parentStyleSheet on old nested rules after replacement
+

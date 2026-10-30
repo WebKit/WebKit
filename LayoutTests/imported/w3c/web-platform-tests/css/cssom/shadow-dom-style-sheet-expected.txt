@@ -1,0 +1,5 @@
+
+PASS Style element in shadow root has a CSSStyleSheet
+PASS insertRule() works on a style element's sheet inside a shadow root
+PASS insertRule() and deleteRule() work on a pre-populated shadow root stylesheet
+

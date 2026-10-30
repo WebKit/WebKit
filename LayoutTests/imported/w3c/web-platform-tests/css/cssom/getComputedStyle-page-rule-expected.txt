@@ -1,0 +1,5 @@
+Test
+
+
+PASS getComputedStyle should not throw when a @page rule is present
+

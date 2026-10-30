@@ -1,0 +1,9 @@
+
+PASS selectorText getter returns the initial selector
+PASS Setting a valid selector updates selectorText
+PASS Setting a valid selector list updates selectorText
+PASS Setting an invalid selector does not change selectorText
+PASS Setting an empty string does not change selectorText
+PASS Setting an unclosed bracket does not change selectorText
+PASS cssText reflects the updated selectorText
+

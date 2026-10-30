@@ -1,0 +1,6 @@
+
+PASS appendRule with trailing garbage after keyframe block is silently ignored
+PASS appendRule with trailing at-rule after keyframe block is silently ignored
+PASS appendRule with two keyframe entries is silently ignored
+PASS appendRule with valid single keyframe works normally
+

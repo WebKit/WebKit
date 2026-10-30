@@ -1,0 +1,18 @@
+
+PASS style attribute: }color: red
+PASS cssText setter: }color: red
+PASS style attribute: } color: red; z-index: 1
+PASS cssText setter: } color: red; z-index: 1
+PASS style attribute: }; z-index: 1
+PASS cssText setter: }; z-index: 1
+PASS style attribute: z-index: 1; }color: red
+PASS cssText setter: z-index: 1; }color: red
+PASS style attribute: z-index: 1; }
+PASS cssText setter: z-index: 1; }
+PASS style attribute: {}color: red
+PASS cssText setter: {}color: red
+PASS style attribute: {}color: red; z-index: 1
+PASS cssText setter: {}color: red; z-index: 1
+PASS style attribute: @foo{}z-index: 1
+PASS cssText setter: @foo{}z-index: 1
+

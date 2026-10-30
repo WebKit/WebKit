@@ -1,0 +1,4 @@
+
+PASS Sanity check: getComputedStyle returns apparent visibility
+PASS Real check: getComputedStyle returns hidden visibility
+
