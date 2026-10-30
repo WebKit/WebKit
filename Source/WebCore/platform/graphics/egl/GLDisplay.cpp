@@ -24,8 +24,13 @@
 #include "GLContext.h"
 #include "Logging.h"
 #include <array>
+#include <wtf/HashMap.h>
+#include <wtf/Hasher.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/UTF8CStringView.h>
 
@@ -40,7 +45,6 @@
 #include "BufferFormatAndroid.h"
 #include <android/hardware_buffer.h>
 #include <drm/drm_fourcc.h>
-#include <wtf/NeverDestroyed.h>
 #elif USE(GBM)
 #include <drm_fourcc.h>
 #endif
@@ -53,6 +57,13 @@ typedef EGLBoolean (EGLAPIENTRYP PFNEGLDESTROYIMAGEPROC) (EGLDisplay, EGLImage);
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLDESTROYIMAGEKHRPROC) (EGLDisplay, EGLImage);
 typedef EGLImageKHR (EGLAPIENTRYP PFNEGLCREATEIMAGEKHRPROC) (EGLDisplay, EGLContext, EGLenum target, EGLClientBuffer, const EGLint* attribList);
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLDESTROYIMAGEKHRPROC) (EGLDisplay, EGLImageKHR);
+#endif
+#ifndef EGL_ANDROID_blob_cache
+#define EGL_ANDROID_blob_cache 1
+typedef khronos_ssize_t EGLsizeiANDROID;
+typedef void (*EGLSetBlobFuncANDROID) (const void* key, EGLsizeiANDROID keySize, const void* value, EGLsizeiANDROID valueSize);
+typedef EGLsizeiANDROID (*EGLGetBlobFuncANDROID) (const void* key, EGLsizeiANDROID keySize, void* value, EGLsizeiANDROID valueSize);
+typedef void (EGLAPIENTRYP PFNEGLSETBLOBCACHEFUNCSANDROIDPROC) (EGLDisplay, EGLSetBlobFuncANDROID, EGLGetBlobFuncANDROID);
 #endif
 #endif
 
@@ -70,6 +81,80 @@ typedef EGLBoolean (EGLAPIENTRYP PFNEGLDESTROYIMAGEKHRPROC) (EGLDisplay, EGLImag
 #endif
 
 namespace WebCore {
+
+static bool s_shouldUseInMemoryShaderCache { false };
+
+class InMemoryShaderCache {
+    WTF_MAKE_NONCOPYABLE(InMemoryShaderCache);
+    friend NeverDestroyed<InMemoryShaderCache>;
+public:
+    static InMemoryShaderCache& singleton()
+    {
+        static NeverDestroyed<InMemoryShaderCache> cache;
+        return cache.get();
+    }
+
+    void set(std::span<const uint8_t> key, std::span<const uint8_t> value)
+    {
+        if (value.size() > maximumValueSize)
+            return;
+
+        Locker locker { m_lock };
+        auto addResult = m_entries.add(Vector<uint8_t>(key), Vector<uint8_t> { });
+        m_size -= addResult.iterator->value.size();
+        addResult.iterator->value = Vector<uint8_t>(value);
+        m_size += value.size();
+        m_keysByAge.appendOrMoveToLast(addResult.iterator->key);
+
+        while (m_size > maximumSize)
+            m_size -= m_entries.take(m_keysByAge.takeFirst()).size();
+    }
+
+    size_t get(std::span<const uint8_t> key, std::span<uint8_t> value)
+    {
+        Locker locker { m_lock };
+        auto it = m_entries.find(Vector<uint8_t>(key));
+        if (it == m_entries.end())
+            return 0;
+
+        m_keysByAge.appendOrMoveToLast(it->key);
+        if (it->value.size() <= value.size())
+            memcpySpan(value, it->value.span());
+        return it->value.size();
+    }
+
+private:
+    InMemoryShaderCache() = default;
+
+    static constexpr size_t maximumValueSize = 64 * KB;
+    static constexpr size_t maximumSize = 8 * MB;
+
+    Lock m_lock;
+    HashMap<Vector<uint8_t>, Vector<uint8_t>> m_entries WTF_GUARDED_BY_LOCK(m_lock);
+    ListHashSet<Vector<uint8_t>> m_keysByAge WTF_GUARDED_BY_LOCK(m_lock);
+    size_t m_size WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+};
+
+static void setShaderBlob(const void* key, EGLsizeiANDROID keySize, const void* value, EGLsizeiANDROID valueSize)
+{
+    if (keySize <= 0 || valueSize <= 0)
+        return;
+
+    InMemoryShaderCache::singleton().set(unsafeMakeSpan(static_cast<const uint8_t*>(key), keySize), unsafeMakeSpan(static_cast<const uint8_t*>(value), valueSize));
+}
+
+static EGLsizeiANDROID getShaderBlob(const void* key, EGLsizeiANDROID keySize, void* value, EGLsizeiANDROID valueSize)
+{
+    if (keySize <= 0 || valueSize < 0)
+        return 0;
+
+    return InMemoryShaderCache::singleton().get(unsafeMakeSpan(static_cast<const uint8_t*>(key), keySize), unsafeMakeSpan(static_cast<uint8_t*>(value), valueSize));
+}
+
+void GLDisplay::setShouldUseInMemoryShaderCache(bool shouldUse)
+{
+    s_shouldUseInMemoryShaderCache = shouldUse;
+}
 
 RefPtr<GLDisplay> GLDisplay::create(EGLDisplay eglDisplay)
 {
@@ -106,9 +191,16 @@ GLDisplay::GLDisplay(EGLDisplay eglDisplay)
     m_extensions.KHR_fence_sync = findExtension("EGL_KHR_fence_sync"_s);
     m_extensions.KHR_wait_sync = findExtension("EGL_KHR_wait_sync"_s);
     m_extensions.ANDROID_native_fence_sync = findExtension("EGL_ANDROID_native_fence_sync"_s);
+    m_extensions.ANDROID_blob_cache = findExtension("EGL_ANDROID_blob_cache"_s);
     m_extensions.EXT_image_dma_buf_import = findExtension("EGL_EXT_image_dma_buf_import"_s);
     m_extensions.EXT_image_dma_buf_import_modifiers = findExtension("EGL_EXT_image_dma_buf_import_modifiers"_s);
     m_extensions.MESA_image_dma_buf_export = findExtension("EGL_MESA_image_dma_buf_export"_s);
+
+    if (s_shouldUseInMemoryShaderCache && m_extensions.ANDROID_blob_cache) {
+        static PFNEGLSETBLOBCACHEFUNCSANDROIDPROC s_eglSetBlobCacheFuncsANDROID = reinterpret_cast<PFNEGLSETBLOBCACHEFUNCSANDROIDPROC>(eglGetProcAddress("eglSetBlobCacheFuncsANDROID"));
+        if (s_eglSetBlobCacheFuncsANDROID)
+            s_eglSetBlobCacheFuncsANDROID(m_display, setShaderBlob, getShaderBlob);
+    }
 
 #if OS(ANDROID)
     m_extensions.ANDROID_get_native_client_buffer = findExtension("EGL_ANDROID_get_native_client_buffer"_s);

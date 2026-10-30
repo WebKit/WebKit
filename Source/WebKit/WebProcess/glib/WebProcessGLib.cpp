@@ -34,6 +34,7 @@
 #include "WebProcessCreationParameters.h"
 #include "WebProcessExtensionManager.h"
 #include "WebSystemSoundDelegate.h"
+#include <WebCore/GLDisplay.h>
 #include <WebCore/PlatformRenderTheme.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ProcessCapabilities.h>
@@ -217,6 +218,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (enableCPURendering && strcmp(enableCPURendering, "0"))
         ProcessCapabilities::setCanUseAcceleratedBuffers(false);
     IGNORE_CLANG_WARNINGS_END
+
+#if !OS(ANDROID)
+    GLDisplay::setShouldUseInMemoryShaderCache(true);
+#endif
 
 #if ENABLE(MEDIA_STREAM)
     addSupplementWithoutRefCountedCheck<UserMediaCaptureManager>();
