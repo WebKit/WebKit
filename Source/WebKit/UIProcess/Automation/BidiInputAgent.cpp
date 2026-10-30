@@ -34,6 +34,7 @@
 #include "WebAutomationSessionMacros.h"
 #include "WebDriverBidiProtocolObjects.h"
 #include "WebPageProxy.h"
+#include <WebCore/FloatPoint.h>
 #include <numbers>
 #include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -107,7 +108,11 @@ SimulatedInputSource& BidiInputState::simulatedSource(const Action& action)
     }
 
     return m_simulatedSources.ensure(action.id, [&] {
-        return SimulatedInputSource::create(simulatedSourceType(*source));
+        auto type = simulatedSourceType(*source);
+        Ref simulatedSource = SimulatedInputSource::create(type);
+        if (type == SimulatedInputSourceType::Mouse || type == SimulatedInputSourceType::Pen || type == SimulatedInputSourceType::Touch)
+            simulatedSource->state.location = std::nullopt;
+        return simulatedSource;
     }).iterator->value.get();
 }
 #endif
@@ -673,6 +678,22 @@ static std::optional<VirtualKey> virtualKeyForKeyValue(const String& value)
     }
 }
 
+// https://w3c.github.io/webdriver/#dfn-dispatch-a-pointerdown-action
+static std::optional<MouseButton> mouseButtonForW3CButton(uint64_t button)
+{
+    switch (button) {
+    case 0: return MouseButton::Left;
+    case 1: return MouseButton::Middle;
+    case 2: return MouseButton::Right;
+// FIXME: Map the Back and Forward buttons on other ports. <https://webkit.org/b/329449>
+#if PLATFORM(MAC)
+    case 3: return MouseButton::Back;
+    case 4: return MouseButton::Forward;
+#endif
+    default: return std::nullopt;
+    }
+}
+
 // https://w3c.github.io/webdriver/#dfn-dispatch-tick-actions
 static Inspector::CommandResult<Vector<SimulatedInputKeyFrame>> translateTicksToKeyFrames(BidiInputState& state, const ActionsByTick& actionsByTick, Vector<Action>* cancelEntries)
 {
@@ -685,11 +706,17 @@ static Inspector::CommandResult<Vector<SimulatedInputKeyFrame>> translateTicksTo
 
     Vector<SimulatedInputKeyFrame> keyFrames;
     for (auto& tick : borrow(actionsByTick)) {
+        // https://w3c.github.io/webdriver/#dfn-computing-the-tick-duration
         std::optional<uint64_t> tickDuration;
+        for (auto& action : borrow(tick)) {
+            if (action.duration)
+                tickDuration = std::max(tickDuration.value_or(0), *action.duration);
+        }
+
         Vector<SimulatedInputKeyFrame::StateEntry> entries;
         for (auto& action : borrow(tick)) {
-            if (action.sourceType == SourceType::Pointer || action.sourceType == SourceType::Wheel)
-                SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Pointer and wheel input sources are not yet supported."_s);
+            if (action.sourceType == SourceType::Wheel)
+                SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Wheel input sources are not yet supported."_s);
 // FIXME: Remove the platform-exclusive WEBDRIVER_*_INTERACTIONS guards and input source aliasing. <https://webkit.org/b/327296>
 #if !ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
             if (action.sourceType == SourceType::Key)
@@ -698,6 +725,14 @@ static Inspector::CommandResult<Vector<SimulatedInputKeyFrame>> translateTicksTo
 
             auto& sourceState = currentState(action);
             sourceState.duration = std::nullopt;
+            if (action.sourceType == SourceType::Pointer) {
+                if (sourceState.mouseInteraction == MouseInteraction::Up)
+                    sourceState.pressedMouseButton = std::nullopt;
+                sourceState.mouseInteraction = std::nullopt;
+                sourceState.origin = std::nullopt;
+                sourceState.nodeHandle = std::nullopt;
+                sourceState.location = std::nullopt;
+            }
             switch (action.type) {
             case ActionType::Pause:
                 break;
@@ -734,16 +769,52 @@ static Inspector::CommandResult<Vector<SimulatedInputKeyFrame>> translateTicksTo
 #endif
                 }
                 break;
+            case ActionType::PointerDown: {
+                // https://w3c.github.io/webdriver/#dfn-dispatch-a-pointerdown-action
+                auto button = mouseButtonForW3CButton(action.button);
+                if (!button)
+                    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This mouse button is not supported."_s);
+                if (sourceState.pressedMouseButton == button)
+                    break;
+                if (sourceState.pressedMouseButton)
+                    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Pressing more than one mouse button at a time is not supported."_s);
+                sourceState.pressedMouseButton = button;
+                sourceState.mouseInteraction = MouseInteraction::Down;
+                if (cancelEntries) {
+                    auto pointerUp = action;
+                    pointerUp.type = ActionType::PointerUp;
+                    pointerUp.duration = std::nullopt;
+                    cancelEntries->append(WTF::move(pointerUp));
+                }
+                break;
+            }
+            case ActionType::PointerUp: {
+                // https://w3c.github.io/webdriver/#dfn-dispatch-a-pointerup-action
+                auto button = mouseButtonForW3CButton(action.button);
+                if (!button || sourceState.pressedMouseButton != button)
+                    break;
+                sourceState.mouseInteraction = MouseInteraction::Up;
+                break;
+            }
+            case ActionType::PointerMove:
+                // https://w3c.github.io/webdriver/#dfn-dispatch-a-pointermove-action
+                if (action.origin == OriginType::Element)
+                    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Element origin is not supported yet."_s);
+                sourceState.mouseInteraction = MouseInteraction::Move;
+                sourceState.origin = action.origin == OriginType::Pointer ? MouseMoveOrigin::Pointer : MouseMoveOrigin::Viewport;
+                sourceState.location = WebCore::flooredIntPoint(WebCore::FloatPoint(action.x, action.y));
+                break;
             default:
                 SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This input source type is not supported yet."_s);
             }
-            if (action.duration)
-                tickDuration = std::max(tickDuration.value_or(0), *action.duration);
+            auto duration = action.duration;
+            if (!duration && action.type == ActionType::PointerMove)
+                duration = tickDuration;
+            if (duration)
+                sourceState.duration = Seconds::fromMilliseconds(*duration);
             Ref simulatedSource = state.simulatedSource(action);
             entries.append({ simulatedSource.get(), sourceState });
         }
-        if (tickDuration && !entries.isEmpty())
-            entries.first().second.duration = Seconds::fromMilliseconds(*tickDuration);
         keyFrames.append(SimulatedInputKeyFrame { WTF::move(entries) });
     }
 
@@ -839,7 +910,7 @@ static void dispatchKeyFrames(WebAutomationSession& session, Automation::BidiInp
     if (frameNotFound)
         return reply(AUTOMATION_COMMAND_ERROR_WITH_NAME(FrameNotFound));
 
-    session.runInteractionSequence(*page, frameID, WTF::move(*keyFrames), state.simulatedSources(), WTF::move(reply));
+    session.runBidiInteractionSequence(*page, frameID, WTF::move(*keyFrames), state.simulatedSources(), WTF::move(reply));
 }
 #endif
 
