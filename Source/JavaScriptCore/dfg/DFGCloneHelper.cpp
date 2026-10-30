@@ -171,6 +171,7 @@ Node* CloneHelper::cloneNodeImpl(BasicBlock* into, Node* node)
             return cloneEdges(node, clone);
         }
         case CallVarargs:
+        case CallVarargsWithSpread:
         case ConstructVarargs:
         case TailCallVarargsInlinedCaller:
         case TailCallForwardVarargsInlinedCaller: {
@@ -181,7 +182,9 @@ Node* CloneHelper::cloneNodeImpl(BasicBlock* into, Node* node)
             return cloneEdges(node, clone);
         }
         case LoadVarargs:
-        case VarargsLength: {
+        case VarargsLength:
+        case LoadVarargsWithSpread:
+        case VarargsLengthWithSpread: {
             Node* clone = into->cloneAndAppend(m_graph, node);
             LoadVarargsData& cloneData = *m_graph.m_loadVarargsData.add();
             cloneData = *node->loadVarargsData();

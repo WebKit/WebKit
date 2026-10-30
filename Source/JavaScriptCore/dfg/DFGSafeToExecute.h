@@ -670,6 +670,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case Construct:
     case DirectConstruct:
     case CallVarargs:
+    case CallVarargsWithSpread:
     case CallDirectEval:
     case TailCallVarargsInlinedCaller:
     case TailCallForwardVarargsInlinedCaller:
@@ -680,6 +681,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case CallCustomAccessorSetter:
     case VarargsLength:
     case LoadVarargs:
+    case VarargsLengthWithSpread:
+    case LoadVarargsWithSpread:
     case CallForwardVarargs:
     case ConstructForwardVarargs:
     case NewObject:
