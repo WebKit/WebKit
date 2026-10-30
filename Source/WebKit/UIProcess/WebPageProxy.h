@@ -767,7 +767,6 @@ enum class SameDocumentNavigationType : uint8_t;
 enum class SelectionExtentAnchor : bool;
 enum class SelectionFlags : uint8_t;
 enum class SelectionTouch : uint8_t;
-enum class ShouldDelayClosingUntilFirstLayerFlush : bool;
 enum class ShouldExpectAppBoundDomainResult : bool;
 enum class ShouldExpectSafeBrowsingResult : bool;
 enum class ShouldWaitForInitialLinkDecorationFilteringData : bool;
@@ -1978,10 +1977,11 @@ public:
     void modelProcessExited(ProcessTerminationReason);
 #endif
 
+#if !PLATFORM(COCOA)
     void enterAcceleratedCompositingMode(const LayerTreeContext&);
     void exitAcceleratedCompositingMode();
     void updateAcceleratedCompositingMode(const LayerTreeContext&);
-    void didFirstLayerFlush(const LayerTreeContext&);
+#endif
 
     void addEditCommand(WebEditCommandProxy&);
     void removeEditCommand(WebEditCommandProxy&);
@@ -3280,7 +3280,7 @@ private:
     void updateThrottleState();
     void updateHiddenPageThrottlingAutoIncreases();
 
-    bool suspendCurrentPageIfPossible(API::Navigation&, const ProvisionalPageProxy&, RefPtr<WebFrameProxy>&& mainFrame, ShouldDelayClosingUntilFirstLayerFlush);
+    bool suspendCurrentPageIfPossible(API::Navigation&, const ProvisionalPageProxy&, RefPtr<WebFrameProxy>&& mainFrame);
 
     enum class ResetStateReason : uint8_t {
         PageInvalidated,
@@ -4449,8 +4449,6 @@ private:
     bool m_isServiceWorkerPage { false };
 
     RefPtr<ProvisionalPageProxy> m_provisionalPage;
-    RefPtr<SuspendedPageProxy> m_suspendedPageKeptToPreventFlashing;
-    WeakPtr<SuspendedPageProxy> m_lastSuspendedPage;
 
     TextManipulationItemCallback m_textManipulationItemCallback;
 

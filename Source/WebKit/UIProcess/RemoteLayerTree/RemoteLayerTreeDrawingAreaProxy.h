@@ -189,9 +189,6 @@ protected:
     std::unique_ptr<RemoteLayerTreeHost> m_remoteLayerTreeHost;
     bool m_needsDisplayRefreshCallbacksForDrawing { false };
 private:
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    DrawingAreaType type() const final { return DrawingAreaType::RemoteLayerTree; }
-#endif
 
     void remotePageProcessDidTerminate(WebCore::ProcessIdentifier) final;
     void sizeDidChange() final;

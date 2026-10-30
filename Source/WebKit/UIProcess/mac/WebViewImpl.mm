@@ -63,7 +63,6 @@
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
-#import "TiledCoreAnimationDrawingAreaProxy.h"
 #import "TransientZoomState.h"
 #import "UIGamepadProvider.h"
 #import "UndoOrRedo.h"
@@ -1361,25 +1360,6 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
     if (isInBaseSystem())
         setWindowOcclusionDetectionEnabled(false);
 
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    auto useRemoteLayerTree = [&]() {
-        bool result = false;
-#if ENABLE(REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT)
-        result = true;
-#endif
-        if (RetainPtr<id> useRemoteLayerTreeBoolean = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"])
-            result = [useRemoteLayerTreeBoolean boolValue];
-
-        if (protect(m_page->preferences())->siteIsolationEnabled())
-            result = true;
-
-        return result;
-    };
-
-    if (useRemoteLayerTree())
-        m_drawingAreaType = DrawingAreaType::RemoteLayerTree;
-#endif
-
     [view addTrackingArea:m_primaryTrackingArea.get()];
     [view addTrackingArea:m_flagsChangedEventMonitorTrackingArea.get()];
 
@@ -2050,25 +2030,12 @@ CGSize WebViewImpl::fixedLayoutSize() const
 
 Ref<WebKit::DrawingAreaProxy> WebViewImpl::createDrawingAreaProxy(WebProcessProxy& webProcessProxy)
 {
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    switch (m_drawingAreaType) {
-    case DrawingAreaType::TiledCoreAnimation:
-        return TiledCoreAnimationDrawingAreaProxy::create(m_page, webProcessProxy);
-    case DrawingAreaType::RemoteLayerTree:
-        return RemoteLayerTreeDrawingAreaProxyMac::create(m_page, webProcessProxy);
-    }
-    ASSERT_NOT_REACHED();
-#endif
     return RemoteLayerTreeDrawingAreaProxyMac::create(m_page, webProcessProxy);
 }
 
 bool WebViewImpl::isUsingUISideCompositing() const
 {
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    return m_drawingAreaType == DrawingAreaType::RemoteLayerTree;
-#else
     return true;
-#endif
 }
 
 void WebViewImpl::setDrawingAreaSize(CGSize size)
@@ -4490,30 +4457,6 @@ void WebViewImpl::toolTipChanged(const String& oldToolTip, const String& newTool
         m_lastToolTipTag = [m_view.get() addToolTipRect:wideOpenRect owner:m_view.get().get() userData:NULL];
         sendToolTipMouseEntered();
     }
-}
-
-void WebViewImpl::enterAcceleratedCompositingWithRootLayer(CALayer *rootLayer)
-{
-    // This is the process-swap case. We add the new layer behind the existing root layer and mark it as hidden.
-    // This way, the new layer gets accelerated compositing but won't be visible until
-    // setAcceleratedCompositingRootLayer() is called by didFirstLayerFlush(), in order to prevent flashing.
-    if (m_rootLayer && rootLayer && m_rootLayer != rootLayer) {
-        if (m_thumbnailView)
-            return;
-
-        [rootLayer web_disableAllActions];
-
-        [CATransaction begin];
-        [CATransaction setDisableActions:YES];
-
-        rootLayer.hidden = YES;
-        [retainPtr([m_layerHostingView layer]) insertSublayer:rootLayer atIndex:0];
-
-        [CATransaction commit];
-        return;
-    }
-
-    setAcceleratedCompositingRootLayer(rootLayer);
 }
 
 void WebViewImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)

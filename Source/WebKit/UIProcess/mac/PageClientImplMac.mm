@@ -664,35 +664,6 @@ void PageClientImpl::accessibilityWebProcessTokenReceived(std::span<const uint8_
     protect(m_impl)->setAccessibilityWebProcessToken(toNSData(data).get(), pid);
 }
     
-void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
-{
-    ASSERT(!layerTreeContext.isEmpty());
-
-    RetainPtr renderLayer = [CALayer _web_renderLayerWithContextID:layerTreeContext.contextID shouldPreserveFlip:NO];
-    protect(m_impl)->enterAcceleratedCompositingWithRootLayer(renderLayer.get());
-}
-
-void PageClientImpl::didFirstLayerFlush(const LayerTreeContext& layerTreeContext)
-{
-    ASSERT(!layerTreeContext.isEmpty());
-
-    RetainPtr renderLayer = [CALayer _web_renderLayerWithContextID:layerTreeContext.contextID shouldPreserveFlip:NO];
-    protect(m_impl)->setAcceleratedCompositingRootLayer(renderLayer.get());
-}
-
-void PageClientImpl::exitAcceleratedCompositingMode()
-{
-    protect(m_impl)->setAcceleratedCompositingRootLayer(nil);
-}
-
-void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
-{
-    ASSERT(!layerTreeContext.isEmpty());
-
-    RetainPtr renderLayer = [CALayer _web_renderLayerWithContextID:layerTreeContext.contextID shouldPreserveFlip:NO];
-    protect(m_impl)->setAcceleratedCompositingRootLayer(renderLayer.get());
-}
-
 void PageClientImpl::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
 {
     protect(m_impl)->setAcceleratedCompositingRootLayer(rootNode ? protect(rootNode->layer()).get() : nil);

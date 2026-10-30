@@ -26,9 +26,10 @@
     DispatchedTo=UI
 ]
 messages -> DrawingAreaProxy {
+#if !PLATFORM(COCOA)
     EnterAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
     UpdateAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
-    DidFirstLayerFlush(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
+#endif
     DispatchPresentationCallbacksAfterFlushingLayers(Vector<IPC::AsyncReplyID> callbackIDs);
 
 #if !PLATFORM(WPE) && !PLATFORM(GTK) && (USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER))

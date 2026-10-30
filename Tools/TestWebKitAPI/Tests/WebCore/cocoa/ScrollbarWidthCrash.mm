@@ -29,7 +29,6 @@
 #import "TestInputDelegate.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
-#import "Helpers/cocoa/UISideCompositingScope.h"
 
 #import <WebKit/WKWebViewPrivate.h>
 
@@ -61,8 +60,6 @@ static NSString *htmlPage = @"<meta name='viewport' content='width=device-width,
 
 TEST(ScrollbarWidthCrash, DynamicallyChangeScrollbarWidth)
 {
-    UISideCompositingScope scope { UISideCompositingState::Disabled };
-
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, viewHeight)]);
 
     RetainPtr delegate = adoptNS([[CrashNavigationDelegate alloc] init]);

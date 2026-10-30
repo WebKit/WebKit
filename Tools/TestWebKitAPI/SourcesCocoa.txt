@@ -54,7 +54,6 @@ Helpers/cocoa/TestScriptMessageHandler.mm @nonARC
 Helpers/cocoa/TestWebExtensionsDelegate.mm @nonARC
 Helpers/cocoa/TestWKWebView.mm @nonARC
 Helpers/cocoa/TestWKWebViewConfiguration.mm @nonARC
-Helpers/cocoa/UISideCompositingScope.mm @nonARC
 Helpers/cocoa/UserMediaCaptureUIDelegate.mm @nonARC
 Helpers/cocoa/FindCAPITester.mm @nonARC
 Helpers/cocoa/FindInPageUtilities.mm @nonARC

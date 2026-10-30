@@ -121,9 +121,6 @@ struct WebPageCreationParameters {
     OptionSet<WebCore::ActivityState> activityState { };
     
     WebPreferencesStore store { };
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    DrawingAreaType drawingAreaType { };
-#endif
     DrawingAreaIdentifier drawingAreaIdentifier;
     WebPageProxyIdentifier webPageProxyIdentifier;
     WebPageGroupData pageGroupData;
@@ -243,9 +240,6 @@ struct WebPageCreationParameters {
     Vector<String> additionalSupportedImageTypes { };
     Vector<SandboxExtension::Handle> gpuIOKitExtensionHandles { };
     Vector<SandboxExtension::Handle> gpuMachExtensionHandles { };
-#endif
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    SandboxExtension::Handle renderServerMachExtensionHandle { };
 #endif
 #if HAVE(STATIC_FONT_REGISTRY) && !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
     Vector<SandboxExtension::Handle> fontMachExtensionHandles { };

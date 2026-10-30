@@ -50,10 +50,6 @@ struct TestWebKitAPI {
         for argument in CommandLine.arguments[1...] {
             // These defaults are not propagated manually but are only consulted in the UI process.
             switch argument {
-            case "--remote-layer-tree":
-                argumentDefaults["WebKit2UseRemoteLayerTreeDrawingArea"] = true
-            case "--no-remote-layer-tree":
-                argumentDefaults["WebKit2UseRemoteLayerTreeDrawingArea"] = false
             case "--use-gpu-process":
                 argumentDefaults["WebKit2GPUProcessForDOMRendering"] = true
             case "--no-use-gpu-process":

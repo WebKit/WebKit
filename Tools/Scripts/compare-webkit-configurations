@@ -31,17 +31,13 @@ import tempfile
 def main():
     parser = argparse.ArgumentParser(description="Compare layout test results between two configurations of WebKit.")
 
-    parser.add_argument("--comparison", action="store", choices=["remote-layer-tree", "accelerated-drawing", "webkit2"], required=True, help="configuration to test")
+    parser.add_argument("--comparison", action="store", choices=["accelerated-drawing", "webkit2"], required=True, help="configuration to test")
     parser.add_argument("-2", "--webkit2", action="store_true", default=False, help="use WebKit2 always (some configurations may force this)")
     parser.add_argument('tests', metavar='TESTS', type=str, help='list of LayoutTest subdirectories to run', default=None, nargs="*")
 
     args = parser.parse_args()
 
     force_webkit2 = args.webkit2
-    if args.comparison == "remote-layer-tree":
-        print("Forcing use of WebKit2, as the remote layer tree depends on WebKit2.")
-        force_webkit2 = True
-
     if args.comparison == "webkit2" and force_webkit2:
         print("It doesn't make sense to test WebKit1 vs. WebKit2 *and* force WebKit2 on.")
         sys.exit(1)
@@ -56,8 +52,6 @@ def main():
     run_webkit_tests(tests=args.tests, results_directory=results_directory, additional_arguments=[configuration_flag], use_webkit2=force_webkit2)
 
 def flag_for_comparison(comparison_name):
-    if comparison_name == "remote-layer-tree":
-        return "--remote-layer-tree"
     if comparison_name == "accessibility-isolated-tree":
         return "--accessibility-isolated-tree"
     if comparison_name == "accelerated-drawing":

@@ -45,11 +45,6 @@ static void setDefaultsToConsistentValuesForTesting()
         @"NSOverlayScrollersEnabled": @NO,
         @"NSScrollAnimationEnabled" : @NO,
         @"AppleShowScrollBars": @"Always",
-#if ENABLE(REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT)
-        @"WebKit2UseRemoteLayerTreeDrawingArea": @YES,
-#else
-        @"WebKit2UseRemoteLayerTreeDrawingArea": @NO,
-#endif
         @"ForceDefaultAccessibilitySettings": @YES,
     };
 

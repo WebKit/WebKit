@@ -1543,11 +1543,8 @@ void WebPageProxy::launchProcess(const Site& site, ProcessLaunchReason reason)
         send(Messages::WebPage::PostInjectedBundleMessage(message.messageName, UserData(process->transformObjectsToHandles(protect(message.messageBody)).get())));
 }
 
-bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, const ProvisionalPageProxy& provisionalPage, RefPtr<WebFrameProxy>&& mainFrame, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
+bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, const ProvisionalPageProxy& provisionalPage, RefPtr<WebFrameProxy>&& mainFrame)
 {
-    m_suspendedPageKeptToPreventFlashing = nullptr;
-    m_lastSuspendedPage = nullptr;
-
     if (!mainFrame)
         return false;
 
@@ -1585,8 +1582,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, con
         return false;
     }
 
-    bool needsSuspendedPageToPreventFlashing = shouldDelayClosingUntilFirstLayerFlush == ShouldDelayClosingUntilFirstLayerFlush::Yes;
-    if (!needsSuspendedPageToPreventFlashing && (!fromItem || !shouldUseBackForwardCache())) {
+    if (!fromItem || !shouldUseBackForwardCache()) {
         if (!fromItem)
             WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i there is no associated WebBackForwardListItem", m_legacyMainFrameProcess->processID());
         else
@@ -1599,7 +1595,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, con
 
     // The page stays in its current process until swapToProvisionalPage().
     Ref placeholderBrowsingContextGroup = BrowsingContextGroup::create(protect(m_browsingContextGroup)->crossOriginMode());
-    Ref suspendedPage = SuspendedPageProxy::create(*this, protect(legacyMainFrameProcess()), mainFrame.releaseNonNull(), std::exchange(m_browsingContextGroup, WTF::move(placeholderBrowsingContextGroup)), shouldDelayClosingUntilFirstLayerFlush);
+    Ref suspendedPage = SuspendedPageProxy::create(*this, protect(legacyMainFrameProcess()), mainFrame.releaseNonNull(), std::exchange(m_browsingContextGroup, WTF::move(placeholderBrowsingContextGroup)));
     std::optional<BackForwardFrameItemIdentifier> mainFrameItemID;
     Ref preferences = this->preferences();
     if (fromItem && preferences->siteIsolationEnabled() && preferences->multiProcessBackForwardCacheEnabled())
@@ -1611,14 +1607,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, con
 
     LOG_WITH_STREAM(ProcessSwapping, stream << "WebPageProxy "_s << identifier().toUInt64() << " created suspended page "_s << suspendedPage->loggingString() << " for process pid "_s << m_legacyMainFrameProcess->processID() << ", back/forward item "_s << (fromItem ? fromItem->identifier().toString() : "0"_s));
 
-    m_lastSuspendedPage = suspendedPage.get();
-
-    if (fromItem && shouldUseBackForwardCache())
-        protect(backForwardCache())->addEntry(*fromItem, WTF::move(suspendedPage));
-    else {
-        ASSERT(needsSuspendedPageToPreventFlashing);
-        m_suspendedPageKeptToPreventFlashing = WTF::move(suspendedPage);
-    }
+    protect(backForwardCache())->addEntry(*fromItem, WTF::move(suspendedPage));
 
     return true;
 }
@@ -6462,7 +6451,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
                 removeSuspendedPagesBeforeNavigation(processNavigatingTo);
 
             ASSERT(suspendedPage.get() == destinationSuspendedPage);
-            if (suspendedPage && suspendedPage->pageIsClosedOrClosing())
+            if (suspendedPage && suspendedPage->isClosed())
                 suspendedPage = nullptr;
 
             Ref bcgForNavigation = suspendedPage ? suspendedPage->browsingContextGroup() : browsingContextGroup.get();
@@ -6876,14 +6865,6 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
 
     ASSERT(m_legacyMainFrameProcess.ptr() != &provisionalPage->process() || preferences->siteIsolationEnabled());
 
-    auto shouldDelayClosingUntilFirstLayerFlush = ShouldDelayClosingUntilFirstLayerFlush::No;
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    // On macOS, when not using UI-side compositing, we need to make sure we do not close the page in the previous process until we've
-    // entered accelerated compositing for the new page or we will flash on navigation.
-    if (protect(drawingArea())->type() == DrawingAreaType::TiledCoreAnimation)
-        shouldDelayClosingUntilFirstLayerFlush = ShouldDelayClosingUntilFirstLayerFlush::Yes;
-#endif
-
     if (m_isLayerTreeFrozenDueToSwipeAnimation)
         send(Messages::WebPage::SwipeAnimationDidEnd());
 
@@ -6891,7 +6872,7 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
 
     removeAllMessageReceivers();
     RefPtr navigation = m_navigationState->navigation(provisionalPage->navigationID());
-    bool didSuspendPreviousPage = navigation ? suspendCurrentPageIfPossible(*navigation, *provisionalPage, WTF::move(mainFrameInPreviousProcess), shouldDelayClosingUntilFirstLayerFlush) : false;
+    bool didSuspendPreviousPage = navigation ? suspendCurrentPageIfPossible(*navigation, *provisionalPage, WTF::move(mainFrameInPreviousProcess)) : false;
 
     // Deferred from ProvisionalPageProxy::didCommitLoadForFrame(): if the
     // previous main-frame process still has local frames in this BCG,
@@ -15651,8 +15632,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 {
     m_mainFrame = nullptr;
     m_focusedFrame = nullptr;
-    m_suspendedPageKeptToPreventFlashing = nullptr;
-    m_lastSuspendedPage = nullptr;
 
 #if ENABLE(WEB_AUTHN) && ENABLE(WEBDRIVER_BIDI)
     abortPendingDigitalCredentialWaitHandlers("The page was reset."_s);
@@ -16056,9 +16035,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.windowFeatures = m_configuration->windowFeatures();
     parameters.viewSize = pageClient ? pageClient->viewSize() : WebCore::IntSize { };
     parameters.activityState = internals().activityState;
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    parameters.drawingAreaType = drawingArea.type();
-#endif
     parameters.store = preferencesStore();
     parameters.isEditable = m_isEditable;
     parameters.underlayColor = internals().underlayColor;
@@ -16173,27 +16149,13 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.additionalSupportedImageTypes = m_configuration->additionalSupportedImageTypes().value_or(Vector<String>());
 
 #if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    if (!shouldBlockIOKit(preferences) || drawingArea.type() == DrawingAreaType::TiledCoreAnimation)
-#else
     if (!shouldBlockIOKit(preferences))
-#endif
     {
         parameters.gpuIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(gpuIOKitClasses(), std::nullopt);
         parameters.gpuMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(gpuMachServices(), std::nullopt);
     }
 #endif // !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
 #endif // PLATFORM(COCOA)
-
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    if (!shouldBlockIOKit(preferences)
-        || drawingArea.type() == DrawingAreaType::TiledCoreAnimation
-        || !preferences->unifiedPDFEnabled()) {
-        auto handle = SandboxExtension::createHandleForMachLookup("com.apple.CARenderServer"_s, std::nullopt);
-        if (handle)
-            parameters.renderServerMachExtensionHandle = WTF::move(*handle);
-    }
-#endif // ENABLE(TILED_CA_DRAWING_AREA)
 
 #if HAVE(STATIC_FONT_REGISTRY)
     if (preferences->shouldAllowUserInstalledFonts()) {
@@ -16298,9 +16260,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     bool createBootstrapExtension = !parameters.store.getBoolValueForKey(WebPreferencesKey::experimentalSandboxEnabledKey());
 #endif
     if (!shouldBlockIOKit(preferences)
-#if ENABLE(TILED_CA_DRAWING_AREA)
-        || drawingArea.type() == DrawingAreaType::TiledCoreAnimation
-#endif
         || createBootstrapExtension)
         parameters.machBootstrapHandle = SandboxExtension::createHandleForMachBootstrapExtension();
 #endif
@@ -16389,26 +16348,11 @@ void WebPageProxy::isEnhancedSecurityEnabled(CompletionHandler<void(bool)>&& com
     protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebProcess::IsEnhancedSecurityEnabled(), WTF::move(completionHandler), 0);
 }
 
+#if !PLATFORM(COCOA)
 void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    ASSERT(m_drawingArea->type() == DrawingAreaType::TiledCoreAnimation);
-#endif
     if (RefPtr pageClient = this->pageClient())
         pageClient->enterAcceleratedCompositingMode(layerTreeContext);
-}
-
-void WebPageProxy::didFirstLayerFlush(const LayerTreeContext& layerTreeContext)
-{
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    ASSERT(m_drawingArea->type() == DrawingAreaType::TiledCoreAnimation);
-#endif
-    if (RefPtr pageClient = this->pageClient())
-        pageClient->didFirstLayerFlush(layerTreeContext);
-
-    if (RefPtr lastSuspendedPage = m_lastSuspendedPage.get())
-        lastSuspendedPage->pageDidFirstLayerFlush();
-    m_suspendedPageKeptToPreventFlashing = nullptr;
 }
 
 void WebPageProxy::exitAcceleratedCompositingMode()
@@ -16422,6 +16366,7 @@ void WebPageProxy::updateAcceleratedCompositingMode(const LayerTreeContext& laye
     if (RefPtr pageClient = this->pageClient())
         pageClient->updateAcceleratedCompositingMode(layerTreeContext);
 }
+#endif
 
 #if ENABLE(GAMEPAD)
 

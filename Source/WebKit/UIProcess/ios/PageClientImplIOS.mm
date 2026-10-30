@@ -694,10 +694,6 @@ CALayer* PageClientImpl::textIndicatorInstallationLayer()
     return [contentView() textIndicatorInstallationLayer];
 }
 
-void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
-{
-}
-
 void PageClientImpl::makeViewBlank(bool makeBlank)
 {
     [contentView() layer].opacity = makeBlank ? 0 : 1;
@@ -724,15 +720,6 @@ void PageClientImpl::clearBrowsingWarningIfForMainFrameNavigation()
 bool PageClientImpl::hasBrowsingWarning() const
 {
     return !![webView() _safeBrowsingWarning];
-}
-
-void PageClientImpl::exitAcceleratedCompositingMode()
-{
-    notImplemented();
-}
-
-void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)
-{
 }
 
 void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)

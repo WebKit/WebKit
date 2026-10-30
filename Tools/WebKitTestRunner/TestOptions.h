@@ -85,8 +85,6 @@ public:
     bool useDataDetection() const { return boolTestRunnerFeatureValue("useDataDetection"); }
     bool useEphemeralSession() const { return boolTestRunnerFeatureValue("useEphemeralSession"); }
     bool useFlexibleViewport() const { return boolTestRunnerFeatureValue("useFlexibleViewport"); }
-    bool useRemoteLayerTree() const { return boolTestRunnerFeatureValue("useRemoteLayerTree"); }
-    bool noUseRemoteLayerTree() const { return boolTestRunnerFeatureValue("noUseRemoteLayerTree"); }
     bool useThreadedScrolling() const { return boolTestRunnerFeatureValue("useThreadedScrolling"); }
     bool suppressInputAccessoryView() const { return boolTestRunnerFeatureValue("suppressInputAccessoryView"); }
     bool allowsInlinePredictions() const { return boolTestRunnerFeatureValue("allowsInlinePredictions"); }

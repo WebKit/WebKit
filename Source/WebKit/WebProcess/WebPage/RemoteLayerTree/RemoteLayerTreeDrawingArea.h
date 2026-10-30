@@ -73,9 +73,6 @@ protected:
     void updateRendering();
 
 private:
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    DrawingAreaType type() const final { return DrawingAreaType::RemoteLayerTree; }
-#endif
 
     // DrawingArea
     void setNeedsDisplay() final;

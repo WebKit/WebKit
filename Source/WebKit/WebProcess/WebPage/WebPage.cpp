@@ -650,9 +650,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_pageGroup(WebProcess::singleton().webPageGroup(WTF::move(parameters.pageGroupData)))
     , m_userAgent(WTF::move(parameters.userAgent))
     , m_hasCustomUserAgent(parameters.hasCustomUserAgent)
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    , m_drawingAreaType(parameters.drawingAreaType)
-#endif
     , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
     , m_alwaysShowsVerticalScroller { parameters.alwaysShowsVerticalScroller }
     , m_shouldRenderDOMInGPUProcess { parameters.shouldRenderDOMInGPUProcess }
@@ -781,9 +778,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     auto shouldBlockIOKit = m_shouldRenderDOMInGPUProcess
 #if ENABLE(WEBGL)
         && parameters.store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForWebGLEnabledKey())
-#if ENABLE(TILED_CA_DRAWING_AREA)
-        && m_drawingAreaType == DrawingAreaType::RemoteLayerTree
-#endif
 #endif
         && parameters.store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForCanvasRenderingEnabledKey())
         && parameters.store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForMediaEnabledKey());
@@ -1302,12 +1296,6 @@ void WebPage::updateAfterDrawingAreaCreation(const WebPageCreationParameters& pa
 {
 #if PLATFORM(COCOA)
     m_page->settings().setForceCompositingMode(true);
-#endif
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    if (parameters.drawingAreaType == DrawingAreaType::TiledCoreAnimation) {
-        if (auto viewExposedRect = parameters.viewExposedRect)
-            protect(drawingArea())->setViewExposedRect(viewExposedRect);
-    }
 #endif
 }
 
@@ -5785,11 +5773,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if ENABLE(GPU_PROCESS)
     bool usingGPUProcessForDOMRendering = m_shouldRenderDOMInGPUProcess
-#if ENABLE(TILED_CA_DRAWING_AREA)
-        && DrawingArea::supportsGPUProcessRendering(m_drawingAreaType);
-#else
         && DrawingArea::supportsGPUProcessRendering();
-#endif
     WebProcess::singleton().setUseGPUProcessForDOMRendering(usingGPUProcessForDOMRendering);
 #endif // ENABLE(GPU_PROCESS)
 
@@ -11023,9 +11007,7 @@ void WebPage::updatePrefersNonBlinkingCursor()
 
 bool WebPage::isUsingUISideCompositing() const
 {
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    return m_drawingAreaType == DrawingAreaType::RemoteLayerTree;
-#elif PLATFORM(COCOA)
+#if PLATFORM(COCOA)
     return true;
 #else
     return false;

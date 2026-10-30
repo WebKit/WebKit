@@ -135,18 +135,17 @@ static const MessageNameSet& messageNamesToIgnoreWhileSuspended()
 }
 #endif
 
-Ref<SuspendedPageProxy> SuspendedPageProxy::create(WebPageProxy& page, Ref<WebProcessProxy>&& process, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&& browsingContextGroup, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
+Ref<SuspendedPageProxy> SuspendedPageProxy::create(WebPageProxy& page, Ref<WebProcessProxy>&& process, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&& browsingContextGroup)
 {
-    return adoptRef(*new SuspendedPageProxy(page, WTF::move(process), WTF::move(mainFrame), WTF::move(browsingContextGroup), shouldDelayClosingUntilFirstLayerFlush));
+    return adoptRef(*new SuspendedPageProxy(page, WTF::move(process), WTF::move(mainFrame), WTF::move(browsingContextGroup)));
 }
 
-SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&& browsingContextGroup, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
+SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&& browsingContextGroup)
     : m_page(page)
     , m_webPageID(page.webPageIDInMainFrameProcess())
     , m_process(WTF::move(process))
     , m_mainFrame(WTF::move(mainFrame))
     , m_browsingContextGroup(WTF::move(browsingContextGroup))
-    , m_shouldDelayClosingUntilFirstLayerFlush(shouldDelayClosingUntilFirstLayerFlush)
     , m_suspensionTimeoutTimer(RunLoop::mainSingleton(), "SuspendedPageProxy::SuspensionTimeoutTimer"_s, this, &SuspendedPageProxy::suspensionTimedOut)
 #if USE(RUNNINGBOARD)
     , m_suspensionActivity(protect(m_process->throttler())->backgroundActivity("Page suspension for back/forward cache"_s))
@@ -332,31 +331,6 @@ void SuspendedPageProxy::close()
     m_process->sendPageCloseMessage(page ? std::optional { page->identifier() } : std::nullopt, m_webPageID);
 }
 
-void SuspendedPageProxy::pageDidFirstLayerFlush()
-{
-    m_shouldDelayClosingUntilFirstLayerFlush = ShouldDelayClosingUntilFirstLayerFlush::No;
-
-    if (m_shouldCloseWhenEnteringAcceleratedCompositingMode) {
-        // We needed the suspended page to stay alive to avoid flashing. Now we can get rid of it.
-        close();
-    }
-}
-
-bool SuspendedPageProxy::pageIsClosedOrClosing() const
-{
-    return m_isClosed || m_shouldCloseWhenEnteringAcceleratedCompositingMode;
-}
-
-void SuspendedPageProxy::closeWithoutFlashing()
-{
-    RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::closeWithoutFlashing() shouldDelayClosingUntilFirstLayerFlush? %d", this, m_shouldDelayClosingUntilFirstLayerFlush == ShouldDelayClosingUntilFirstLayerFlush::Yes);
-    if (m_shouldDelayClosingUntilFirstLayerFlush == ShouldDelayClosingUntilFirstLayerFlush::Yes) {
-        m_shouldCloseWhenEnteringAcceleratedCompositingMode = true;
-        return;
-    }
-    close();
-}
-
 void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensionState)
 {
     LOG_WITH_STREAM(ProcessSwapping, stream << "SuspendedPageProxy "_s << loggingString() << " from process "_s << m_process->processID() << " finished transition to suspended"_s);
@@ -376,7 +350,7 @@ void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensio
     if (newSuspensionState == SuspensionState::FailedToSuspend) {
         m_suspensionState = SuspensionState::FailedToSuspend;
         m_suspensionTimeoutTimer.stop();
-        closeWithoutFlashing();
+        close();
         if (auto handler = std::exchange(m_readyToUnsuspendHandler, nullptr))
             handler(this);
         return;

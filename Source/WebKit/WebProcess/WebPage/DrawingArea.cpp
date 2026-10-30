@@ -43,7 +43,6 @@
 // Subclasses
 #if PLATFORM(COCOA)
 #include "RemoteLayerTreeDrawingAreaMac.h"
-#include "TiledCoreAnimationDrawingArea.h"
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #include "DrawingAreaCoordinatedGraphicsGLib.h"
@@ -62,16 +61,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DrawingArea);
 
 RefPtr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPageCreationParameters& parameters)
 {
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    SandboxExtension::consumePermanently(parameters.renderServerMachExtensionHandle);
-    switch (parameters.drawingAreaType) {
-    case DrawingAreaType::TiledCoreAnimation:
-        return TiledCoreAnimationDrawingArea::create(webPage, parameters);
-    case DrawingAreaType::RemoteLayerTree:
-        return RemoteLayerTreeDrawingAreaMac::create(webPage, parameters);
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-#elif PLATFORM(MAC)
+#if PLATFORM(MAC)
     return RemoteLayerTreeDrawingAreaMac::create(webPage, parameters);
 #elif PLATFORM(IOS_FAMILY)
     return RemoteLayerTreeDrawingArea::create(webPage, parameters);
@@ -138,20 +128,6 @@ void DrawingArea::didCompleteRenderingFrame()
     Ref { m_webPage.get() }->didCompleteRenderingFrame();
 }
 
-#if ENABLE(TILED_CA_DRAWING_AREA)
-bool DrawingArea::supportsGPUProcessRendering(DrawingAreaType type)
-{
-    switch (type) {
-    case DrawingAreaType::TiledCoreAnimation:
-        return false;
-    case DrawingAreaType::RemoteLayerTree:
-        return true;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-#else // ENABLE(TILED_CA_DRAWING_AREA)
-
 bool DrawingArea::supportsGPUProcessRendering()
 {
 #if PLATFORM(COCOA)
@@ -162,8 +138,6 @@ bool DrawingArea::supportsGPUProcessRendering()
     return false;
 #endif
 }
-
-#endif // ENABLE(TILED_CA_DRAWING_AREA)
 
 WebCore::TiledBacking* DrawingArea::mainFrameTiledBacking() const
 {

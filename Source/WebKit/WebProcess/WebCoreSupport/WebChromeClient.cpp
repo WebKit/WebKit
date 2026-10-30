@@ -184,7 +184,6 @@
 #endif
 
 #if PLATFORM(MAC)
-#include "TiledCoreAnimationScrollingCoordinator.h"
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
@@ -1593,14 +1592,7 @@ RefPtr<WebCore::ScrollingCoordinator> WebChromeClient::createScrollingCoordinato
         return nullptr;
 
     ASSERT_UNUSED(corePage, page->corePage() == &corePage);
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    switch (protect(page->drawingArea())->type()) {
-    case DrawingAreaType::TiledCoreAnimation:
-        return TiledCoreAnimationScrollingCoordinator::create(page.get());
-    case DrawingAreaType::RemoteLayerTree:
-        return RemoteScrollingCoordinator::create(page.get());
-    }
-#elif PLATFORM(COCOA)
+#if PLATFORM(COCOA)
     return RemoteScrollingCoordinator::create(page.get());
 #elif USE(COORDINATED_GRAPHICS)
     return ScrollingCoordinatorCoordinated::create(page.get());
@@ -1627,26 +1619,10 @@ void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea&
     }
 
 #if PLATFORM(MAC)
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    switch (protect(page->drawingArea())->type()) {
-    case DrawingAreaType::RemoteLayerTree: {
-        if (!area.usesCompositedScrolling() && (!currentScrollbarsController || is<RemoteScrollbarsController>(currentScrollbarsController)))
-            area.setScrollbarsController(ScrollbarsController::create(area));
-        else if (area.usesCompositedScrolling() && (!currentScrollbarsController || !is<RemoteScrollbarsController>(currentScrollbarsController)))
-            area.setScrollbarsController(makeUnique<RemoteScrollbarsController>(area, corePage.scrollingCoordinator()));
-        return;
-    }
-    default: {
-        if (!currentScrollbarsController)
-            area.setScrollbarsController(ScrollbarsController::create(area));
-    }
-    }
-#else
     if (!area.usesCompositedScrolling() && (!currentScrollbarsController || is<RemoteScrollbarsController>(currentScrollbarsController)))
         area.setScrollbarsController(ScrollbarsController::create(area));
     else if (area.usesCompositedScrolling() && (!currentScrollbarsController || !is<RemoteScrollbarsController>(currentScrollbarsController)))
         area.setScrollbarsController(makeUnique<RemoteScrollbarsController>(area, corePage.scrollingCoordinator()));
-#endif
 #elif USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
     if (area.usesCompositedScrolling()) {
         if (!currentScrollbarsController || !is<ScrollbarsControllerCoordinated>(currentScrollbarsController))
@@ -2550,10 +2526,7 @@ void WebChromeClient::beginSystemPreview(const URL& url, const SecurityOriginDat
 
 bool WebChromeClient::isUsingUISideCompositing() const
 {
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    RefPtr page = m_page.get();
-    return page && protect(page->drawingArea())->type() == DrawingAreaType::RemoteLayerTree;
-#elif PLATFORM(COCOA)
+#if PLATFORM(COCOA)
     return true;
 #else
     return false;

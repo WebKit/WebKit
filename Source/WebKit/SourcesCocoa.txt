@@ -648,7 +648,6 @@ UIProcess/mac/PageClientImplMac.mm @nonARC
 UIProcess/mac/ServicesController.mm @nonARC
 UIProcess/mac/SwipeProgressTrackerMac.mm @nonARC
 UIProcess/mac/TextCheckerMac.mm @nonARC
-UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm @nonARC
 UIProcess/mac/ViewGestureControllerMac.mm @nonARC
 UIProcess/mac/WebColorPickerMac.mm @nonARC
 UIProcess/mac/WebContextMenuProxyMac.mm @nonARC
@@ -904,8 +903,6 @@ WebProcess/WebPage/ios/WebPageIOS.mm @nonARC
 
 WebProcess/WebPage/mac/PageBannerMac.mm @nonARC
 WebProcess/WebPage/mac/RemoteLayerTreeDrawingAreaMac.mm @nonARC @cost:3
-WebProcess/WebPage/mac/TiledCoreAnimationScrollingCoordinator.mm @nonARC
-WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm @nonARC
 WebProcess/WebPage/mac/WebPageMac.mm @nonARC @cost:7
 WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm @nonARC
 

@@ -177,9 +177,6 @@ private:
     void clearBrowsingWarningIfForMainFrameNavigation() override;
     bool hasBrowsingWarning() const override;
 
-    void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
-    void exitAcceleratedCompositingMode() override;
-    void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
     void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*) override;
     CALayer* acceleratedCompositingRootLayer() const override;
 

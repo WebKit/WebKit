@@ -173,10 +173,6 @@ private:
 
     CALayer *textIndicatorInstallationLayer() override;
 
-    void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
-    void exitAcceleratedCompositingMode() override;
-    void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
-    void didFirstLayerFlush(const LayerTreeContext&) override;
 
     RefPtr<ViewSnapshot> takeViewSnapshot(std::optional<WebCore::IntRect>&&) override;
     RefPtr<ViewSnapshot> takeViewSnapshot(std::optional<WebCore::IntRect>&&, ForceSoftwareCapturingViewportSnapshot) override;

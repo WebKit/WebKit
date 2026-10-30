@@ -33,7 +33,6 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/PlatformWebView.h"
 #import "Helpers/cocoa/TestWKWebView.h"
-#import "Helpers/cocoa/UISideCompositingScope.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <WebCore/Color.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -355,8 +354,6 @@ void checkThumbnailViewSnapshotConsistency(TestWKWebView *webView)
 
 TEST(WebKit, WKThumbnailViewLayerReparentingWithUISideCompositing)
 {
-    UISideCompositingScope scope { UISideCompositingState::Enabled };
-
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView synchronouslyLoadTestPageNamed:@"fixed-nav-bar"];
     [webView waitForNextPresentationUpdate];
@@ -366,8 +363,6 @@ TEST(WebKit, WKThumbnailViewLayerReparentingWithUISideCompositing)
 
 TEST(WebKit, WKThumbnailViewLayerReparentingWithUISideCompositingAndTopContentInset)
 {
-    UISideCompositingScope scope { UISideCompositingState::Enabled };
-
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView _setAutomaticallyAdjustsContentInsets:NO];
     [webView _setTopContentInset:100];

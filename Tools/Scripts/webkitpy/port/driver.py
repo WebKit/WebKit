@@ -564,10 +564,6 @@ class Driver(object):
             cmd.append('--complex-text')
         if self._port.get_option('accelerated_drawing'):
             cmd.append('--accelerated-drawing')
-        if self._port.get_option('remote_layer_tree'):
-            cmd.append('--remote-layer-tree')
-        if self._port.get_option('no_remote_layer_tree'):
-            cmd.append('--no-remote-layer-tree')
         if self._port.get_option('wpe_legacy_api'):
             cmd.append('--wpe-legacy-api')
         if self._port.get_option('world_leaks'):

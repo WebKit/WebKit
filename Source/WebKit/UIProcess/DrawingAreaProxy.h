@@ -74,10 +74,6 @@ class DrawingAreaProxy : public IPC::MessageReceiver, public IPC::MessageSender,
 public:
     virtual ~DrawingAreaProxy();
 
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    virtual DrawingAreaType type() const = 0;
-#endif
-
     virtual bool isRemoteLayerTreeDrawingAreaProxyMac() const { return false; }
     virtual bool isRemoteLayerTreeDrawingAreaProxyIOS() const { return false; }
 
@@ -171,10 +167,11 @@ private:
     virtual void sizeDidChange() = 0;
 
     // Message handlers.
+#if !PLATFORM(COCOA)
     // FIXME: These should be pure virtual.
     virtual void enterAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
     virtual void updateAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
-    virtual void didFirstLayerFlush(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
+#endif
 
 #if !PLATFORM(WPE) && !PLATFORM(GTK) && (USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER))
     virtual void update(uint64_t /* backingStoreStateID */, UpdateInfo&&) { }
@@ -197,19 +194,8 @@ private:
 
 } // namespace WebKit
 
-#if ENABLE(TILED_CA_DRAWING_AREA)
-
-#define SPECIALIZE_TYPE_TRAITS_DRAWING_AREA_PROXY(ToValueTypeName, ProxyType) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ToValueTypeName) \
-    static bool isType(const WebKit::DrawingAreaProxy& proxy) { return proxy.type() == WebKit::ProxyType; } \
-SPECIALIZE_TYPE_TRAITS_END()
-
-#else
-
 // There is only one type of DrawingArea.
 #define SPECIALIZE_TYPE_TRAITS_DRAWING_AREA_PROXY(ToValueTypeName, ProxyType) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ToValueTypeName) \
     static bool isType(const WebKit::DrawingAreaProxy&) { return true; } \
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

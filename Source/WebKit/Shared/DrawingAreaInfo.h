@@ -29,13 +29,6 @@
 
 namespace WebKit {
 
-#if ENABLE(TILED_CA_DRAWING_AREA)
-enum class DrawingAreaType : bool {
-    TiledCoreAnimation,
-    RemoteLayerTree,
-};
-#endif
-    
 enum {
     ActivityStateChangeAsynchronous = 0
 };

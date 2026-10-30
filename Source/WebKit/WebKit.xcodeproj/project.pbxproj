@@ -441,7 +441,6 @@
 		1AAF08A4192682DA00B6390C /* WKUserContentControllerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF08A3192682DA00B6390C /* WKUserContentControllerInternal.h */; };
 		1AAF08AE1926936700B6390C /* WebUserContentController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF08AC1926936700B6390C /* WebUserContentController.h */; };
 		1AAF08B819269E6D00B6390C /* WebUserContentControllerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF08B619269E6D00B6390C /* WebUserContentControllerMessages.h */; };
-		1AAF263914687C39004A1E8A /* TiledCoreAnimationDrawingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF263714687C39004A1E8A /* TiledCoreAnimationDrawingArea.h */; };
 		1AB16ADE1648598400290D62 /* RemoteLayerTreeDrawingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB16ADC1648598400290D62 /* RemoteLayerTreeDrawingArea.h */; };
 		1AB16AE21648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB16AE01648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h */; };
 		1AB16AEA164B3A8800290D62 /* RemoteLayerTreeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB16AE8164B3A8800290D62 /* RemoteLayerTreeContext.h */; };
@@ -502,7 +501,6 @@
 		1AE286841C7F93860069AC4F /* APIWebsiteDataRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE286821C7F93860069AC4F /* APIWebsiteDataRecord.h */; };
 		1AE52F981920267200A1FA37 /* WKContextConfigurationRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE52F9419201F6B00A1FA37 /* WKContextConfigurationRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AEFD2F711D1807B008219D3 /* ArgumentCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEFD2F611D1807B008219D3 /* ArgumentCoders.h */; };
-		1AF05D8714688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF05D8514688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h */; };
 		1AF1AC6C1651759E00C17D7F /* RemoteLayerTreeTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF1AC6A1651759E00C17D7F /* RemoteLayerTreeTransaction.h */; };
 		1AF4129B18B40FCD00546FDC /* WKNavigationActionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF4129A18B40FCD00546FDC /* WKNavigationActionPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF4592F19464B2000F9D4A2 /* WKError.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF4592D19464B2000F9D4A2 /* WKError.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3898,8 +3896,6 @@
 		0FD07E4F28A3413700B38C81 /* WebViewImpl.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewImpl.mm; sourceTree = "<group>"; };
 		0FD2CB2526CDD7A30008B11C /* IdentifierTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdentifierTypes.h; sourceTree = "<group>"; };
 		0FDCD7F61D47E92A009F08BC /* LogInitialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInitialization.h; sourceTree = "<group>"; };
-		0FE27FAE2714FC150003AAAE /* TiledCoreAnimationScrollingCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TiledCoreAnimationScrollingCoordinator.h; sourceTree = "<group>"; };
-		0FE27FAF2714FC150003AAAE /* TiledCoreAnimationScrollingCoordinator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TiledCoreAnimationScrollingCoordinator.mm; sourceTree = "<group>"; };
 		0FE653202B5F1BFC00EECEA0 /* PDFIncrementalLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PDFIncrementalLoader.h; path = PDF/PDFIncrementalLoader.h; sourceTree = "<group>"; };
 		0FE653212B5F1BFC00EECEA0 /* PDFIncrementalLoader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFIncrementalLoader.mm; path = PDF/PDFIncrementalLoader.mm; sourceTree = "<group>"; };
 		0FEC6E05280915CF008082AC /* ProcessTerminationReason.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessTerminationReason.cpp; sourceTree = "<group>"; };
@@ -4110,8 +4106,6 @@
 		1AAF08B419269E2400B6390C /* WebUserContentController.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebUserContentController.messages.in; sourceTree = "<group>"; };
 		1AAF08B519269E6D00B6390C /* WebUserContentControllerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebUserContentControllerMessageReceiver.cpp; sourceTree = "<group>"; };
 		1AAF08B619269E6D00B6390C /* WebUserContentControllerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUserContentControllerMessages.h; sourceTree = "<group>"; };
-		1AAF263614687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TiledCoreAnimationDrawingArea.mm; sourceTree = "<group>"; };
-		1AAF263714687C39004A1E8A /* TiledCoreAnimationDrawingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TiledCoreAnimationDrawingArea.h; sourceTree = "<group>"; };
 		1AB16ADB1648598400290D62 /* RemoteLayerTreeDrawingArea.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeDrawingArea.mm; sourceTree = "<group>"; };
 		1AB16ADC1648598400290D62 /* RemoteLayerTreeDrawingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDrawingArea.h; sourceTree = "<group>"; };
 		1AB16ADF1648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeDrawingAreaProxy.mm; sourceTree = "<group>"; };
@@ -4219,8 +4213,6 @@
 		1AE52F9319201F6B00A1FA37 /* WKContextConfigurationRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKContextConfigurationRef.cpp; sourceTree = "<group>"; };
 		1AE52F9419201F6B00A1FA37 /* WKContextConfigurationRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextConfigurationRef.h; sourceTree = "<group>"; };
 		1AEFD2F611D1807B008219D3 /* ArgumentCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCoders.h; sourceTree = "<group>"; };
-		1AF05D8414688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TiledCoreAnimationDrawingAreaProxy.mm; sourceTree = "<group>"; };
-		1AF05D8514688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TiledCoreAnimationDrawingAreaProxy.h; sourceTree = "<group>"; };
 		1AF1AC691651759E00C17D7F /* RemoteLayerTreeTransaction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeTransaction.mm; sourceTree = "<group>"; };
 		1AF1AC6A1651759E00C17D7F /* RemoteLayerTreeTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeTransaction.h; sourceTree = "<group>"; };
 		1AF4129A18B40FCD00546FDC /* WKNavigationActionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationActionPrivate.h; sourceTree = "<group>"; };
@@ -17214,10 +17206,6 @@
 				7C6D37FA172F555F009D2847 /* PageBannerMac.mm */,
 				0F4A438528F0968400D6161C /* RemoteLayerTreeDrawingAreaMac.h */,
 				0F4A438428F0968400D6161C /* RemoteLayerTreeDrawingAreaMac.mm */,
-				1AAF263714687C39004A1E8A /* TiledCoreAnimationDrawingArea.h */,
-				1AAF263614687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm */,
-				0FE27FAE2714FC150003AAAE /* TiledCoreAnimationScrollingCoordinator.h */,
-				0FE27FAF2714FC150003AAAE /* TiledCoreAnimationScrollingCoordinator.mm */,
 				BC963D6D113DD1A500574BE2 /* WebPageMac.mm */,
 				29232DF318B29D6800D0596F /* WKAccessibilityWebPageObjectMac.h */,
 				29232DF118B29D1100D0596F /* WKAccessibilityWebPageObjectMac.mm */,
@@ -17286,8 +17274,6 @@
 				2D0FD45C2F75126800B1A53C /* SwipeProgressTrackerMac.h */,
 				2D0FD45D2F75126800B1A53C /* SwipeProgressTrackerMac.mm */,
 				1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */,
-				1AF05D8514688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h */,
-				1AF05D8414688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.mm */,
 				2D125C5D1857EA05003BA3CB /* ViewGestureControllerMac.mm */,
 				728E86EF1795188C0087879E /* WebColorPickerMac.h */,
 				728E86F01795188C0087879E /* WebColorPickerMac.mm */,
@@ -19141,8 +19127,6 @@
 				CE1A0BD71A48E6C60054EF74 /* TextInputSPI.h in Headers */,
 				7B7C380F2EBABD7F00F71B4A /* TextManipulationParameters.h in Headers */,
 				E3C6727329D4A3AD00AD4452 /* TextTrackRepresentationCocoa.h in Headers */,
-				1AAF263914687C39004A1E8A /* TiledCoreAnimationDrawingArea.h in Headers */,
-				1AF05D8714688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h in Headers */,
 				3A8801412FB2C9D600DBBD50 /* TimeBasedEvictionMode.h in Headers */,
 				F48570A32644BEC500C05F71 /* Timeout.h in Headers */,
 				7B8486842ED9C1FC00E34DC1 /* TransferString.h in Headers */,

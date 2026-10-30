@@ -120,8 +120,6 @@ extension TestRunner.Configuration {
         let sectionSeparator = "\n\n"
         let macOptions = """
             macOS OPTIONS:
-              --remote-layer-tree    Use the remote layer tree drawing model.
-              --no-remote-layer-tree Disable the remote layer tree drawing model.
               --use-gpu-process      Enable GPU process DOM rendering.
               --no-use-gpu-process   Disable GPU process DOM rendering.
             """

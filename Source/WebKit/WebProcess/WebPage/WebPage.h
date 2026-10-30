@@ -514,9 +514,6 @@ class WebWheelEvent;
 
 enum class ContentInversion : uint8_t;
 enum class DragControllerAction : uint8_t;
-#if ENABLE(TILED_CA_DRAWING_AREA)
-enum class DrawingAreaType : bool;
-#endif
 enum class FindOptions : uint16_t;
 enum class FindDecorationStyle : uint8_t;
 enum class FrameTraversalResult : uint8_t;
@@ -2968,10 +2965,6 @@ private:
 
 #if ENABLE(VIEWPORT_RESIZING)
     int m_lastShrinkToFitLayoutWidth { 0 };
-#endif
-
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    DrawingAreaType m_drawingAreaType;
 #endif
 
     HashMap<TextCheckerRequestID, Ref<WebCore::TextCheckingRequest>> m_pendingTextCheckingRequestMap;

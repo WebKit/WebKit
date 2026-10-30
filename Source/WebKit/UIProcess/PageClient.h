@@ -525,10 +525,11 @@ public:
     virtual bool effectiveAppearanceIsDark() const { return false; }
     virtual bool effectiveUserInterfaceLevelIsElevated() const { return false; }
 
+#if !PLATFORM(COCOA)
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) = 0;
     virtual void exitAcceleratedCompositingMode() = 0;
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) = 0;
-    virtual void didFirstLayerFlush(const LayerTreeContext&) { }
+#endif
 
     virtual void takeFocus(WebCore::FocusDirection) { }
 

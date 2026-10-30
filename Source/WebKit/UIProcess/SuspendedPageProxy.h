@@ -56,13 +56,12 @@ class WebsiteDataStore;
 using LayerHostingContextID = uint32_t;
 #endif
 
-enum class ShouldDelayClosingUntilFirstLayerFlush : bool { No, Yes };
 
 class SuspendedPageProxy final: public IPC::MessageReceiver, public RefCounted<SuspendedPageProxy>, public CanMakeCheckedPtr<SuspendedPageProxy> {
     WTF_MAKE_TZONE_ALLOCATED(SuspendedPageProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SuspendedPageProxy);
 public:
-    static Ref<SuspendedPageProxy> create(WebPageProxy&, Ref<WebProcessProxy>&&, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&&, ShouldDelayClosingUntilFirstLayerFlush);
+    static Ref<SuspendedPageProxy> create(WebPageProxy&, Ref<WebProcessProxy>&&, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&&);
     ~SuspendedPageProxy();
 
     void ref() const final { RefCounted::ref(); }
@@ -81,7 +80,7 @@ public:
 
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() LIFETIME_BOUND { return m_messageReceiverRegistration; }
 
-    bool LEGACY_NODELETE pageIsClosedOrClosing() const;
+    bool isClosed() const { return m_isClosed; }
 
     void startSuspension(std::optional<WebCore::BackForwardFrameItemIdentifier>);
     void waitUntilReadyToUnsuspend(CompletionHandler<void(SuspendedPageProxy*)>&&);
@@ -94,8 +93,6 @@ public:
     std::optional<WebCore::BackForwardFrameItemIdentifier> suspendedFrameItemID() const { return m_suspendedFrameItemID; }
     HashSet<Ref<WebProcessProxy>> iframeProcesses() const;
 
-    void pageDidFirstLayerFlush();
-    void closeWithoutFlashing();
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     LayerHostingContextID contextIDForVisibilityPropagationInWebProcess() const { return m_contextIDForVisibilityPropagationInWebProcess; }
@@ -109,7 +106,7 @@ public:
 #endif
 
 private:
-    SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&&, ShouldDelayClosingUntilFirstLayerFlush);
+    SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&&);
 
     enum class SuspensionState : uint8_t { BeforeStart, Suspending, FailedToSuspend, Suspended, Resumed };
     bool hasSuspensionStarted() const { return m_suspensionState != SuspensionState::BeforeStart; }
@@ -137,8 +134,6 @@ private:
     const Ref<BrowsingContextGroup> m_browsingContextGroup;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
     bool m_isClosed { false };
-    ShouldDelayClosingUntilFirstLayerFlush m_shouldDelayClosingUntilFirstLayerFlush { ShouldDelayClosingUntilFirstLayerFlush::No };
-    bool m_shouldCloseWhenEnteringAcceleratedCompositingMode { false };
 
     SuspensionState m_suspensionState { SuspensionState::BeforeStart };
     // Set once in startSuspension; never reset (the entry destructor gates reads on its own frame id).

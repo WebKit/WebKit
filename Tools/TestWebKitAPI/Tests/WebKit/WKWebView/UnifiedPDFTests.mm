@@ -44,7 +44,6 @@
 #import "TestURLSchemeHandler.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
-#import "Helpers/cocoa/UISideCompositingScope.h"
 #import "WKPrinting.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import "Helpers/mac/WKWebViewForTestingImmediateActions.h"
@@ -1945,23 +1944,6 @@ UNIFIED_PDF_TEST(PasswordFormShouldDismissAfterNavigation)
     auto colorsAfter = [webView sampleColorsWithInterval:2];
 
     EXPECT_EQ(colorsBefore, colorsAfter);
-}
-
-UNIFIED_PDF_TEST(WebProcessShouldNotCrashWithUISideCompositingDisabled)
-{
-    UISideCompositingScope scope { UISideCompositingState::Disabled };
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
-    RetainPtr delegate = adoptNS([[ObserveWebContentCrashNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
-    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
-    [webView loadRequest:request.get()];
-
-    Util::waitFor([delegate] {
-        return [delegate webProcessCrashed] || [delegate navigationFinished];
-    });
-    EXPECT_FALSE([delegate webProcessCrashed]);
 }
 
 static void runSelectAllAndVerifySelectedTextMatches(NSString *expected, void (^loadContent)(TestWKWebView *webView))

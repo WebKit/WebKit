@@ -548,7 +548,6 @@ public:
     NSString *stringForToolTip(NSToolTipTag tag);
     void toolTipChanged(const String& oldToolTip, const String& newToolTip);
 
-    void enterAcceleratedCompositingWithRootLayer(CALayer *);
     void setAcceleratedCompositingRootLayer(CALayer *);
     CALayer *acceleratedCompositingRootLayer() const LIFETIME_BOUND { return m_rootLayer.get(); }
 
@@ -1010,10 +1009,6 @@ private:
     WeakObjCPtr<WKWebView> m_view;
     const UniqueRef<PageClient> m_pageClient;
     const Ref<WebPageProxy> m_page;
-
-#if ENABLE(TILED_CA_DRAWING_AREA)
-    DrawingAreaType m_drawingAreaType { DrawingAreaType::TiledCoreAnimation };
-#endif
 
     bool m_willBecomeFirstResponderAgain { false };
     bool m_inBecomeFirstResponder { false };
