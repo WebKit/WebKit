@@ -2280,10 +2280,12 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/mathmlCoreMathvariant.css \
     $(WebCore)/css/mathmlFontSizeMath.css \
     $(WebCore)/css/mathmlLegacyFontSizeMath.css \
+    $(WebCore)/css/mathmlVerticalAlignShorthand.css \
     $(WebCore)/css/popover.css \
     $(WebCore)/css/quirks.css \
     $(WebCore)/css/selectMultipleAndListBox.css \
     $(WebCore)/css/svg.css \
+    $(WebCore)/css/verticalAlignShorthand.css \
     $(WebCore)/css/viewTransitions.css \
     $(WebCore)/html/shadow/mac/imageControlsMac.css \
     $(WebCore)/html/shadow/attachmentElementInlineProgressShadow.css \

@@ -52,6 +52,12 @@ NODELETE static void applyUASheetBehaviorsToContext(CSSParserContext& context)
     context.cssAppearanceBaseEnabled = true;
     context.cssRubyDisplayTypesEnabled = true;
     context.cssTextTransformMathAutoEnabled = true;
+    // verticalAlignShorthand.css and mathmlVerticalAlignShorthand.css, which are only loaded when the setting is enabled,
+    // use the 'vertical-align' longhand values it gates, and 'baseline-source'. This applies to every parse in user agent
+    // mode, including html.css and <style> in user agent shadow trees, so whether 'vertical-align' is parsed as the
+    // shorthand must not depend on it. Otherwise html.css would always set the shorthand.
+    context.cssVerticalAlignShorthandEnabled = true;
+    context.propertySettings.cssBaselineSourceEnabled = true;
     context.popoverAttributeEnabled = true;
     context.propertySettings.cssInputSecurityEnabled = true;
     context.propertySettings.supportHDRDisplayEnabled = true;

@@ -1420,6 +1420,7 @@ $(PROJECT_DIR)/css/mathmlCoreExtras.css
 $(PROJECT_DIR)/css/mathmlCoreMathvariant.css
 $(PROJECT_DIR)/css/mathmlFontSizeMath.css
 $(PROJECT_DIR)/css/mathmlLegacyFontSizeMath.css
+$(PROJECT_DIR)/css/mathmlVerticalAlignShorthand.css
 $(PROJECT_DIR)/css/popover.css
 $(PROJECT_DIR)/css/quirks.css
 $(PROJECT_DIR)/css/scripts/process-css-properties.py
@@ -1468,6 +1469,7 @@ $(PROJECT_DIR)/css/typedom/transform/CSSSkewY.idl
 $(PROJECT_DIR)/css/typedom/transform/CSSTransformComponent.idl
 $(PROJECT_DIR)/css/typedom/transform/CSSTransformValue.idl
 $(PROJECT_DIR)/css/typedom/transform/CSSTranslate.idl
+$(PROJECT_DIR)/css/verticalAlignShorthand.css
 $(PROJECT_DIR)/css/viewTransitions.css
 $(PROJECT_DIR)/dom/AbortAlgorithm.idl
 $(PROJECT_DIR)/dom/AbortController.idl

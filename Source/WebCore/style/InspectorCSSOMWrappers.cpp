@@ -145,11 +145,13 @@ void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& exten
         collectFromStyleSheetContents(userAgentSheets.svgStyleSheet.get());
         collectFromStyleSheetContents(userAgentSheets.mathMLStyleSheet.get());
         collectFromStyleSheetContents(userAgentSheets.mathMLCoreExtrasStyleSheet.get());
+        collectFromStyleSheetContents(userAgentSheets.mathMLVerticalAlignShorthandStyleSheet.get());
         collectFromStyleSheetContents(userAgentSheets.mathMLCoreMathvariantStyleSheet.get());
         collectFromStyleSheetContents(userAgentSheets.mathMLFontSizeMathStyleSheet.get());
         collectFromStyleSheetContents(userAgentSheets.mathMLLegacyFontSizeMathStyleSheet.get());
         collectFromStyleSheetContents(userAgentSheets.horizontalFormControlsStyleSheet.get());
         collectFromStyleSheetContents(userAgentSheets.viewTransitionsStyleSheet.get());
+        collectFromStyleSheetContents(userAgentSheets.verticalAlignShorthandStyleSheet.get());
         collectFromStyleSheetContents(userAgentSheets.htmlSwitchControlStyleSheet.get());
 #if ENABLE(FULLSCREEN_API)
         collectFromStyleSheetContents(userAgentSheets.fullscreenStyleSheet.get());

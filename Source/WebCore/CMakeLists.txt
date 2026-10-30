@@ -2274,10 +2274,12 @@ set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/mathmlCoreMathvariant.css
     ${WEBCORE_DIR}/css/mathmlFontSizeMath.css
     ${WEBCORE_DIR}/css/mathmlLegacyFontSizeMath.css
+    ${WEBCORE_DIR}/css/mathmlVerticalAlignShorthand.css
     ${WEBCORE_DIR}/css/popover.css
     ${WEBCORE_DIR}/css/quirks.css
     ${WEBCORE_DIR}/css/selectMultipleAndListBox.css
     ${WEBCORE_DIR}/css/svg.css
+    ${WEBCORE_DIR}/css/verticalAlignShorthand.css
     ${WEBCORE_DIR}/css/viewTransitions.css
     ${WEBCORE_DIR}/html/shadow/attachmentElementInlineProgressShadow.css
     ${WEBCORE_DIR}/html/shadow/attachmentElementShadow.css
