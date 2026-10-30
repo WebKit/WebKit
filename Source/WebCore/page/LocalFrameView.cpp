@@ -947,6 +947,12 @@ void LocalFrameView::updateSnapOffsets()
     updateSnapOffsetsForScrollableArea(*this, *rootRenderer, *styleToUse, viewport, rootRenderer->style().writingMode(), protect(m_frame->document()->focusedElement()).get(), protect(m_frame->document()->cssTarget()).get());
 }
 
+bool LocalFrameView::prefersSmoothScrolling() const
+{
+    RefPtr document = m_frame->document();
+    return document && useSmoothScrolling(ScrollBehavior::Auto, document->documentElement());
+}
+
 bool LocalFrameView::isScrollSnapInProgress() const
 {
     if (scrollbarsSuppressed())

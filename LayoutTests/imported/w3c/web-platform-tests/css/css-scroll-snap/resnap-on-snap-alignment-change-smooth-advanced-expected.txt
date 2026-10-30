@@ -1,0 +1,4 @@
+
+PASS Re-snap does not animate when only an ancestor has scroll-behavior: smooth
+PASS Re-snap animates when the scroller itself has scroll-behavior: smooth, regardless of ancestors
+

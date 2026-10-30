@@ -685,7 +685,11 @@ void ScrollableArea::resnapAfterLayout()
         auto position = scrollPositionFromOffset(correctedOffset);
         if (scrollAnimationStatus() == ScrollAnimationStatus::NotAnimating) {
             auto scrollTypeScope = ScrollTypeScope(*this, ScrollType::Programmatic);
-            scrollToOffsetWithoutAnimation(correctedOffset);
+            if (prefersSmoothScrolling()) {
+                registerScrollableAreaForAnimatedScroll();
+                scrollToPositionWithAnimation(position, ScrollPositionChangeOptions::createProgrammaticWithOptions(ScrollClamping::Clamped, ScrollIsAnimated::Yes, ScrollSnapPointSelectionMethod::Closest));
+            } else
+                scrollToOffsetWithoutAnimation(correctedOffset);
         } else
             scrollAnimator->retargetRunningAnimation(position);
     }

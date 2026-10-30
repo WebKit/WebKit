@@ -1,0 +1,5 @@
+
+PASS Re-snap after scroll-snap-align change animates with scroll-behavior: smooth (inline axis)
+PASS Re-snap after scroll-snap-align change animates with scroll-behavior: smooth (block axis)
+PASS Re-snap after scroll-snap-align change is immediate with scroll-behavior: auto
+

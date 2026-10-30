@@ -379,6 +379,8 @@ public:
     virtual bool isUserScrollInProgress() const { return false; }
     virtual bool isRubberBandInProgress() const { return false; }
     virtual bool isScrollSnapInProgress() const { return false; }
+    virtual bool prefersSmoothScrolling() const { return false; }
+    virtual void registerScrollableAreaForAnimatedScroll() { }
 
     virtual bool scrollAnimatorEnabled() const { return false; }
 
