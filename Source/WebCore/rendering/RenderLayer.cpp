@@ -5546,8 +5546,11 @@ ClipRect RenderLayer::calculateBackgroundClipRect(const ClipRectsContext& clipRe
 
 ClipRect RenderLayer::calculateBackgroundRect(const ClipRectsContext& clipRectsContext, const LayoutSize& offsetFromRoot) const
 {
-    auto backgroundRect = calculateBackgroundClipRect(clipRectsContext, offsetFromRoot);
+    return calculateBackgroundRect(clipRectsContext, offsetFromRoot, calculateBackgroundClipRect(clipRectsContext, offsetFromRoot));
+}
 
+ClipRect RenderLayer::calculateBackgroundRect(const ClipRectsContext& clipRectsContext, const LayoutSize& offsetFromRoot, ClipRect backgroundRect) const
+{
     if (clipRectsContext.options.contains(ClipRectsOption::OutsideFilter) || !renderer().hasClipOrNonVisibleOverflow())
         return backgroundRect;
 
@@ -5578,8 +5581,11 @@ ClipRect RenderLayer::calculateBackgroundRect(const ClipRectsContext& clipRectsC
 
 ClipRect RenderLayer::calculateForegroundRect(const ClipRectsContext& clipRectsContext, const LayoutSize& offsetFromRoot) const
 {
-    auto foregroundRect = calculateBackgroundClipRect(clipRectsContext, offsetFromRoot);
+    return calculateForegroundRect(clipRectsContext, offsetFromRoot, calculateBackgroundClipRect(clipRectsContext, offsetFromRoot));
+}
 
+ClipRect RenderLayer::calculateForegroundRect(const ClipRectsContext& clipRectsContext, const LayoutSize& offsetFromRoot, ClipRect foregroundRect) const
+{
     if (clipRectsContext.options.contains(ClipRectsOption::OutsideFilter) || !renderer().hasNonVisibleOverflow())
         return foregroundRect;
 
@@ -5602,8 +5608,10 @@ ClipRect RenderLayer::calculateForegroundRect(const ClipRectsContext& clipRectsC
 LayerFragment::Rects RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const LayoutSize& offsetFromRoot, const LayoutRect& paintDirtyRect) const
 {
     auto layerBounds = LayoutRect(toLayoutPoint(offsetFromRoot), size());
-    auto backgroundRect = calculateBackgroundRect(clipRectsContext, offsetFromRoot);
-    auto foregroundRect = calculateForegroundRect(clipRectsContext, offsetFromRoot);
+    // Both rects start from the same ancestor-derived clip, which is costly to compute, so compute it once.
+    auto backgroundClipRect = calculateBackgroundClipRect(clipRectsContext, offsetFromRoot);
+    auto backgroundRect = calculateBackgroundRect(clipRectsContext, offsetFromRoot, backgroundClipRect);
+    auto foregroundRect = calculateForegroundRect(clipRectsContext, offsetFromRoot, WTF::move(backgroundClipRect));
     return { layerBounds, paintDirtyRect, backgroundRect, foregroundRect };
 }
 
