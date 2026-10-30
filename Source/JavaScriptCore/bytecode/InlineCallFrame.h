@@ -291,6 +291,16 @@ inline bool CodeOrigin::inlineStackContainsActiveCheckpoint() const
     return result;
 }
 
+inline bool CodeOrigin::inlineStackContains(InlineCallFrame& frame) const
+{
+    bool result = false;
+    walkUpInlineStack([&] (CodeOrigin origin) {
+        if (origin.inlineCallFrame() == &frame)
+            result = true;
+    });
+    return result;
+}
+
 ALWAYS_INLINE Operand remapOperand(InlineCallFrame* inlineCallFrame, Operand operand)
 {
     if (inlineCallFrame)
