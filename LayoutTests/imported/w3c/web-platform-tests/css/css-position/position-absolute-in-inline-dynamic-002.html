@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<meta charset="utf-8">
+<title>CSS Position Test: absolutely positioned box at the start of an inline box whose content grows</title>
+<link rel="help" href="https://drafts.csswg.org/css-position-3/#def-cb">
+<link rel="match" href="position-absolute-in-inline-dynamic-001-ref.html">
+<meta name="assert" content="An absolutely positioned box whose containing block is an inline box is laid out again when content inside the inline box changes the inline box's size, even if the change does not move the absolutely positioned box's static position.">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<style>
+  .container { font: 20px/60px Ahem; }
+  .inline { position: relative; background-color: red; color: transparent; }
+  .absolute { position: absolute; inset: 0; background-color: green; }
+</style>
+<p>Test passes if there is no red.</p>
+<div class="container">AB <span class="inline"><span class="absolute"></span><span id="content">67</span></span></div>
+<script src="/common/rendering-utils.js"></script>
+<script src="/common/reftest-wait.js"></script>
+<script>
+  window.addEventListener("load", async () => {
+    await document.fonts.ready;
+    await waitForAtLeastOneFrame();
+    document.getElementById("content").textContent = "6789";
+    await waitForAtLeastOneFrame();
+    takeScreenshot();
+  });
+</script>
+</html>
