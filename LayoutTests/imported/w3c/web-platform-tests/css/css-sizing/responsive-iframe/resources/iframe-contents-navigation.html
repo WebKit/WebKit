@@ -1,6 +1,6 @@
 <!doctype HTML>
 <head>
-<meta name="responsive-embedded-sizing">
+<meta name="responsive-embedded-sizing" content="allow-origins=*">
 <style>
 body { margin: 0; }
 #box { width: 100px; height: 200px; background: blue; }
@@ -9,10 +9,8 @@ body { margin: 0; }
 <div id="box"></div>
 <script>
 window.addEventListener('message', (e) => {
-  if (e.data === 'navigate') {
-    window.location.href = 'iframe-contents-slow.html';
-  } else if (e.data === 'unsized') {
-    window.location.href = 'iframe-contents-unsized.html';
+  if (e.data && e.data.action === 'navigate') {
+    window.location.href = e.data.url;
   }
 });
 </script>

@@ -10,11 +10,14 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/aspect-ratio-interpolation-degenerate.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/aspect-ratio-interpolation-sideways-lr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/aspect-ratio-interpolation-sideways-rl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/aspect-ratio-interpolation-vertical-lr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/aspect-ratio-interpolation-vertical-rl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/aspect-ratio-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/box-sizing-no-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/animation/height-composition.html

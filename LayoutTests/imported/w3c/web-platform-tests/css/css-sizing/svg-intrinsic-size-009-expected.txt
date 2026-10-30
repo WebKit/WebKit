@@ -1,0 +1,20 @@
+No intrinsic attributes:
+viewBox and height:
+viewBox and height (non-square):
+viewBox and width:
+viewBox, width, height:
+Just viewBox:
+
+PASS .block, svg 1
+PASS .block, svg 2
+PASS .block, svg 3
+PASS .block, svg 4
+PASS .block, svg 5
+PASS .block, svg 6
+PASS .block, svg 7
+PASS .block, svg 8
+PASS .block, svg 9
+PASS .block, svg 10
+PASS .block, svg 11
+PASS .block, svg 12
+

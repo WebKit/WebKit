@@ -1,0 +1,4 @@
+
+
+FAIL Allow origins check: container=parent, origin=same, allow=multiple assert_equals: iframe height should be 400px for container=parent, origin=same, allow=multiple expected 400 but got 150
+

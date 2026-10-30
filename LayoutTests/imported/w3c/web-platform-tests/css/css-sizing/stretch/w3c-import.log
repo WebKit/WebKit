@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/WEB_FEATURES.yml
@@ -42,6 +40,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-010-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/block-height-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/cache-miss-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/cache-miss-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/cache-miss-002-expected.xht
@@ -126,3 +125,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-quirk-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-quirk-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-table-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-with-huge-padding-avoiding-float.html

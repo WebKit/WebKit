@@ -1,7 +1,10 @@
 <!doctype HTML>
 <head>
 <script>
-window.parent.postMessage('slow-will-block', '*');
+window.parent.postMessage({
+  action: 'slow-will-block',
+  viewportHeight: window.innerHeight
+}, '*');
 </script>
 <script src="slow.js"></script>
 <style>
@@ -12,6 +15,6 @@ window.parent.postMessage('slow-will-block', '*');
   box-sizing: border-box;
 }
 </style>
-<meta name="responsive-embedded-sizing">
+<meta name="responsive-embedded-sizing" content="allow-origins=*">
 </head>
 <div id="target" style="width: 100px; height: 400px"></div>

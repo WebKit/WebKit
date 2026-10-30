@@ -10,19 +10,22 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/1x1-navy.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-400x200root.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-allow-origins-missing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-allow-origins.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-dom-content-loaded.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-dynamic-append.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-dynamic-name-change.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-dynamic-remove.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-dynamic-write.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-icb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-meta-after-head.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-meta-dynamic-append-after-body.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-meta-dynamic-append-to-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-meta-dynamic-append.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-meta-dynamic-name-change-after-body.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-meta-dynamic-name-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-meta-dynamic-remove.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-meta-dynamic-write.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-meta-in-body.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-navigation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/resources/iframe-contents-request-resize-error.html

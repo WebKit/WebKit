@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 box-decoration-break
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/META.yml
@@ -44,6 +42,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio-percentage-height-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio-percentage-height-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio-percentage-height.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/auto-scrollbar-inside-stf-abspos-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/auto-scrollbar-inside-stf-abspos-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/auto-scrollbar-inside-stf-abspos.html
@@ -211,6 +210,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/dynamic-change-inline-size-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/dynamic-change-inline-size-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/dynamic-change-inline-size-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/fieldset-intrinsic-size-percent.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/fit-content-block-size-abspos-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/fit-content-block-size-abspos.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/fit-content-block-size-fixedpos-expected.html
@@ -263,6 +263,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/float-clearance-with-margin-collapse-and-stretch-and-padding-percentage-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/float-clearance-with-margin-collapse-and-stretch-and-padding-percentage.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/frameset-intrinsic-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/grid-item-image-percentage-min-height-computes-as-0-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/grid-item-image-percentage-min-height-computes-as-0-ref.html
@@ -410,6 +412,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-032-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-032.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-033.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-034-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-034.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-035-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-035.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-002-expected.html
@@ -471,6 +477,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/min-content-negative-margin-inline-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/min-max-content-orthogonal-flow-crash-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/min-width-max-width-precedence.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/min-width-min-content-contribution.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/nested-flexbox-image-percentage-max-height-computes-as-none-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/nested-flexbox-image-percentage-max-height-computes-as-none-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/nested-flexbox-image-percentage-max-height-computes-as-none.html
@@ -506,6 +513,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/replaced-element-intrinsic-sizing-keywords-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/replaced-element-intrinsic-sizing-keywords-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/replaced-element-intrinsic-sizing-keywords.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/replaced-element-max-content-contribution-transferred-size.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/replaced-element-transferred-size-flex.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/replaced-fractional-height-from-aspect-ratio-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/replaced-fractional-height-from-aspect-ratio.html
@@ -528,8 +536,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/replaced-min-height-min-content.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/replaced-min-width-min-content-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/replaced-min-width-min-content.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/replaced-percent-min-width-max-content-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/replaced-percent-min-width-max-content.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/shrink-to-fit-sizing-max-width-min-content-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/shrink-to-fit-sizing-max-width-min-content.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/size-shorthand-serialization.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/slice-intrinsic-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/slice-intrinsic-size-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/slice-intrinsic-size.html
@@ -552,10 +563,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/svg-intrinsic-size-007.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/svg-intrinsic-size-007.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/svg-intrinsic-size-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/svg-intrinsic-size-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/svg-intrinsic-size-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/svg-intrinsic-size-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/svg-no-ar-max-height-min-content-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/svg-no-ar-max-height-min-content.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/svg-no-ar-min-height-min-content-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/svg-no-ar-min-height-min-content.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/table-cell-definite-height-transferred-size.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/table-child-percentage-height-with-border-box-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/table-child-percentage-height-with-border-box-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/table-child-percentage-height-with-border-box.html

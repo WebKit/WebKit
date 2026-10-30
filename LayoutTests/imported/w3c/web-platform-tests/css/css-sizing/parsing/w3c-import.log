@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/WEB_FEATURES.yml
@@ -23,14 +21,23 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/max-height-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/max-height-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/max-height-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/max-size-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/max-size-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/max-size-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/max-width-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/max-width-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/max-width-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/min-height-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/min-height-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/min-height-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/min-size-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/min-size-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/min-size-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/min-width-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/min-width-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/min-width-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/size-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/size-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/size-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/width-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/parsing/width-valid.html

@@ -1,0 +1,5 @@
+float
+target
+
+PASS CSS Sizing Test: stretch size with huge padding, while avoiding floats
+

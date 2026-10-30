@@ -4717,11 +4717,15 @@ imported/w3c/web-platform-tests/css/css-sizing/replaced-max-width-with-height-fi
 imported/w3c/web-platform-tests/css/css-sizing/replaced-max-width-with-height-max-content.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/replaced-max-width-with-height-min-content.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-cross-origin.sub.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-dynamic-remove.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-after-head.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-append-to-doc.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-append.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-name-change.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-remove.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-write.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-request-resize.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-navigation.html [ Failure Pass ]
+imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-navigation.html [ Skip ]
 
 # wpt css-text-decor failures
 webkit.org/b/230041 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-selection-pseudo-01.html [ ImageOnlyFailure ]

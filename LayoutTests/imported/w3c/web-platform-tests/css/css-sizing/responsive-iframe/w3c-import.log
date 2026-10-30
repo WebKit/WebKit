@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-allow-origins.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-cross-origin-no-match-element.sub-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-cross-origin-no-match-element.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-cross-origin-not-embedded-sized.sub-expected.html
@@ -21,18 +20,24 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-cross-origin.sub-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-cross-origin.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-dom-content-loaded.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-dynamic-append-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-dynamic-append.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-dynamic-name-change-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-dynamic-name-change.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-dynamic-remove-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-dynamic-remove.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-dynamic-write-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-dynamic-write.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-icb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-after-head-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-after-head.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-append-after-body-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-append-after-body.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-append-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-append-to-doc-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-append-to-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-append.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-name-change-after-body-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-name-change-after-body.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-name-change-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-name-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-remove-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-remove.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-write-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-dynamic-write.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-in-body-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-meta-in-body.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-navigation-unsized.html

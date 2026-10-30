@@ -1,0 +1,13 @@
+
+PASS number / number
+PASS number
+PASS auto
+PASS auto number / number
+PASS auto number
+PASS zero / number
+PASS number / zero
+PASS zero
+PASS invalid; negative / number
+PASS invalid; number / negative
+PASS invalid; negative
+

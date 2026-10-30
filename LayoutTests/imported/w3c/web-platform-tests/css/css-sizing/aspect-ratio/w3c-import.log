@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/WEB_FEATURES.yml
@@ -58,6 +56,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-021-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-021.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-aspect-ratio-border.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-intrinsic-block-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/aspect-ratio-minimum-size-single-axis-scroll-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/auto-margins-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/auto-margins-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-001-expected.xht
@@ -174,6 +174,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-057.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-058-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-058.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-shrink-to-fit-ancestor-relayout-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-shrink-to-fit-ancestor-relayout-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-shrink-to-fit-ancestor-relayout.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-with-margin-collapsing-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-with-margin-collapsing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-with-margin-collapsing-002-expected.xht
@@ -297,6 +300,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-054.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-055-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-055.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-orthogonal-percentage-child.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-row-percentage-height-child.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-shrink-to-fit-ancestor-relayout.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/floats-aspect-ratio-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/floats-aspect-ratio-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/floats-aspect-ratio-001.html
@@ -383,6 +389,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-041.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-042-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-042.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-043-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-043-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-043.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-align-items-center-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-align-items-center.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/inheritance.html

@@ -1,0 +1,14 @@
+
+PASS horizontal-tb, min-content: percentage block padding is excluded from the image percentage basis
+PASS horizontal-tb, min-content: intrinsic size tracks changes to the parent block size
+PASS horizontal-tb, max-content: percentage block padding is excluded from the image percentage basis
+PASS horizontal-tb, max-content: intrinsic size tracks changes to the parent block size
+PASS horizontal-tb, fit-content: percentage block padding is excluded from the image percentage basis
+PASS horizontal-tb, fit-content: intrinsic size tracks changes to the parent block size
+PASS vertical-rl, min-content: percentage block padding is excluded from the image percentage basis
+PASS vertical-rl, min-content: intrinsic size tracks changes to the parent block size
+PASS vertical-rl, max-content: percentage block padding is excluded from the image percentage basis
+PASS vertical-rl, max-content: intrinsic size tracks changes to the parent block size
+PASS vertical-rl, fit-content: percentage block padding is excluded from the image percentage basis
+PASS vertical-rl, fit-content: intrinsic size tracks changes to the parent block size
+
