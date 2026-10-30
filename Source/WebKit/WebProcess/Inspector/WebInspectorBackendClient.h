@@ -64,6 +64,7 @@ private:
     void hideHighlight() override;
     void highlightFrame(WebCore::LocalFrame&) override;
     void hideHighlightForFrame(WebCore::LocalFrame&) override;
+    void setFrameHighlightsNeedDisplay() override;
 
 #if PLATFORM(IOS_FAMILY)
     void showInspectorIndication() override;

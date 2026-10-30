@@ -3835,7 +3835,7 @@ void LocalFrameView::didChangeScrollOffset()
 {
     if (RefPtr page = m_frame->page()) {
         page->pageOverlayController().didScrollFrame(m_frame.get());
-        InspectorInstrumentation::didScroll(*page);
+        InspectorInstrumentation::didScroll(m_frame.get());
     }
 
     m_frame->loader().client().didChangeScrollOffset();

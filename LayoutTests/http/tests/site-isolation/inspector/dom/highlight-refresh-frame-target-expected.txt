@@ -1,0 +1,63 @@
+Tests that highlights sent through a frame target follow scrolling, style and layout changes.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameHighlightRefresh
+-- Running test case: Canary
+PASS: Should get a nodeId for '#mover'.
+PASS: Should draw the highlight over '#mover'.
+PASS: Should remove the highlight.
+
+-- Running test case: IframeFixedElementFollowsIframeScroll
+PASS: Should get a nodeId for '#iframe-fixed'.
+PASS: Should draw the highlight over '#iframe-fixed'.
+PASS: Should draw the highlight over '#iframe-fixed' after the iframe scrolls.
+PASS: Should not leave the highlight where '#iframe-fixed' was before the iframe scrolls.
+PASS: Should remove the highlight.
+
+-- Running test case: PageTargetFixedElementFollowsMainFrameScroll
+PASS: Should get a nodeId for '#fixed-header'.
+PASS: Should draw the highlight over '#fixed-header'.
+PASS: Should draw the highlight over '#fixed-header' after the main frame scrolls.
+PASS: Should remove the highlight.
+
+-- Running test case: MainFrameTargetFixedElementFollowsMainFrameScroll
+PASS: Should get a nodeId for '#fixed-header'.
+PASS: Should draw the highlight over '#fixed-header'.
+PASS: Should draw the highlight over '#fixed-header' after the main frame scrolls.
+PASS: Should remove the highlight.
+
+-- Running test case: MainFrameTargetExtendedGridLinesFollowMainFrameScroll
+PASS: Should get a nodeId for '#grid'.
+PASS: Should draw the extended grid line below '#grid'.
+PASS: Should draw the extended grid line below '#grid' after the main frame scrolls.
+PASS: Should remove the grid overlay.
+
+-- Running test case: FrameTargetHighlightFollowsDOMChange
+PASS: Should get a nodeId for '#mover'.
+PASS: Should draw the highlight over '#mover'.
+PASS: Should draw the highlight over '#mover' after it moves.
+PASS: Should not leave the highlight where '#mover' was before it moves.
+PASS: Should remove the highlight.
+
+-- Running test case: FrameTargetHighlightFollowsTransformChange
+PASS: Should get a nodeId for '#spinner'.
+PASS: Should draw the highlight over '#spinner'.
+PASS: Should draw the highlight over '#spinner' after its transform changes.
+PASS: Should not leave the highlight where '#spinner' was before its transform changes.
+PASS: Should remove the highlight.
+
+-- Running test case: FrameTargetHighlightFollowsIframeResize
+PASS: Should get a nodeId for '#mover'.
+PASS: Should draw the highlight over '#mover'.
+PASS: Should draw the highlight over '#mover' after the iframe grows.
+PASS: Should not leave the highlight where '#mover' was before the iframe grows.
+PASS: Should remove the highlight.
+
+-- Running test case: MainFrameTargetHighlightFollowsDOMChange
+PASS: Should get a nodeId for '#main-mover'.
+PASS: Should draw the highlight over '#main-mover'.
+PASS: Should draw the highlight over '#main-mover' after it moves.
+PASS: Should not leave the highlight where '#main-mover' was before it moves.
+PASS: Should remove the highlight.
+
