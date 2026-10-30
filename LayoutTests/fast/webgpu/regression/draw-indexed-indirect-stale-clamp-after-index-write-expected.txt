@@ -1,0 +1,11 @@
+Regression test for rdar://182324564: drawIndexedIndirect's clamp-skip verdict is cached on the indirect args buffer, but it was reached by inspecting the index buffer's values. indirectIndexedBufferRequiresRecomputation() compared only args-buffer state (indirectOffset, minVertexCount, minInstanceCount, indexType, indexBufferOffsetInBytes, drawType), so rewriting the index buffer left the verdict matching and the clamp pass was skipped entirely - the new index values were never bounds-checked. Rewriting the index buffer does not touch the args buffer, so no high-water-mark trick is needed to reach this. The vertex shader derives position from @builtin(vertex_index) so both outcomes are deterministic regardless of what the attribute fetch returns. minVertexCount is 3. frame0 draws with indices 0,1,2 (green) and caches the verdict; frame1 uses indices 3,4,5, which are out of bounds, so the clamp pass must re-run and zero indexCount, leaving the red clear. A stale verdict would skip the clamp, draw green, and fetch vertex attributes past the end of the 3-vertex buffer.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frame0.join() is "0,255,0,255"
+PASS frame1.join() is "255,0,0,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
