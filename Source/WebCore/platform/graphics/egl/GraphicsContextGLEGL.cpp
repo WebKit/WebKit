@@ -207,7 +207,7 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLEGL::layerContents
 }
 
 #if ENABLE(VIDEO)
-bool GraphicsContextGLEGL::copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
+bool GraphicsContextGLEGL::copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, bool, bool)
 {
     // FIXME: Implement copy-free (or at least, software copy-free) texture transfer.
     recordVideoUploadForTesting(VideoUploadOutcome::Unsupported, 0);

@@ -49,7 +49,7 @@ enum class GraphicsContextGLVideoUploadOutcome : uint8_t {
     Unsupported,
     ConversionFailed,
     NoIOSurface,
-    FramebufferIncomplete,
+    CopyFailed, // The copy raised a GL error, e.g. the destination format is not supported.
     PbufferFailed,
 };
 

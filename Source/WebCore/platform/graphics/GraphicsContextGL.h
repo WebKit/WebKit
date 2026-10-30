@@ -74,9 +74,6 @@ class ImageBuffer;
 class NativeImage;
 class PixelBuffer;
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
-class GraphicsContextGLCV;
-#endif
 #if ENABLE(VIDEO)
 class MediaPlayer;
 class VideoFrame;
@@ -1682,7 +1679,9 @@ public:
     virtual void simulateEventForTesting(SimulatedEventForTesting) = 0;
 
 #if ENABLE(VIDEO)
-    virtual bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) = 0;
+    // Like glCopyTextureCHROMIUM with the video frame as the source texture.
+    // Returns false if the copy is not possible, in which case the texture is not modified.
+    virtual bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum type, bool unpackFlipY, bool unpackPremultiplyAlpha) = 0;
     WEBCORE_EXPORT virtual RefPtr<NativeImage> videoFrameToNativeImage(VideoFrame&);
 
     // Test-only. The outcome of the last copyTextureFromVideoFrame() call. Recorded for every call, not
@@ -1690,10 +1689,6 @@ public:
     using VideoUploadOutcome = GraphicsContextGLVideoUploadOutcome;
     using VideoUploadRecord = GraphicsContextGLVideoUploadRecord;
     WEBCORE_EXPORT virtual std::optional<VideoUploadRecord> lastVideoUploadForTesting();
-    // Test-only. When set, the caller does not fall back to another upload path when
-    // copyTextureFromVideoFrame() fails, so failures leave the texture unchanged where possible.
-    WEBCORE_EXPORT virtual void setVideoUploadHardwareOnlyForTesting(bool);
-    bool videoUploadHardwareOnlyForTesting() const { return m_videoUploadHardwareOnlyForTesting; }
     void recordVideoUploadForTesting(VideoUploadOutcome outcome, uint32_t pixelFormat) { m_lastVideoUploadForTesting = { m_lastVideoUploadForTesting.sequence + 1, outcome, pixelFormat }; }
 #endif
 
@@ -1756,7 +1751,6 @@ protected:
     EnumSet<GCGLExtension> m_requestableExtensions;
 #if ENABLE(VIDEO)
     VideoUploadRecord m_lastVideoUploadForTesting;
-    bool m_videoUploadHardwareOnlyForTesting { false };
 #endif
 
 private:

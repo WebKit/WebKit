@@ -616,11 +616,9 @@ void WebGLRenderingContextBase::initializeContextState()
     m_supportedTexImageSourceTypes.addAll(supportedTypesES2);
     m_packReverseRowOrderSupported = context->enableExtension(GCGLExtension::ANGLE_pack_reverse_row_order);
 #if ENABLE(VIDEO)
-    // A restored context counts its copies from the start and does not know the forced upload path.
+    // A restored context counts its copies from the start.
     m_lastVideoUploadForTesting = { };
     m_videoCopiesForTesting = 0;
-    if (m_videoUploadPathForTesting == VideoUploadPathForTesting::Hardware) [[unlikely]]
-        context->setVideoUploadHardwareOnlyForTesting(true);
 #endif
 }
 
@@ -3565,32 +3563,55 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     return { };
 }
 
+#if ENABLE(VIDEO) || ENABLE(WEB_CODECS)
+// Returns true if texImage2D of a video frame with the combination can use GraphicsContextGL::copyTextureFromVideoFrame().
+// The copy does not take the format, so the combination must be valid for TexImage2D.
+static bool isValidVideoFrameCopyCombination(bool isWebGL2, GCGLenum internalformat, GCGLenum format, GCGLenum type)
+{
+    if (type != GraphicsContextGL::UNSIGNED_BYTE)
+        return false;
+    switch (internalformat) {
+    case GraphicsContextGL::RGB:
+        return format == GraphicsContextGL::RGB;
+    case GraphicsContextGL::RGBA:
+        return format == GraphicsContextGL::RGBA;
+    case GraphicsContextGL::RGB8:
+    case GraphicsContextGL::SRGB8:
+    case GraphicsContextGL::RGB565:
+        return isWebGL2 && format == GraphicsContextGL::RGB;
+    case GraphicsContextGL::RGBA8:
+    case GraphicsContextGL::SRGB8_ALPHA8:
+    case GraphicsContextGL::RGBA4:
+    case GraphicsContextGL::RGB5_A1:
+        return isWebGL2 && format == GraphicsContextGL::RGBA;
+    default:
+        return false;
+    }
+}
+#endif
+
 #if ENABLE(VIDEO)
 // The upload restrictions of GraphicsContextGL::copyTextureFromVideoFrame(). Returns the reason the
 // copy is not tried, or nullopt.
-// FIXME: The current restrictions require that target should be TEXTURE_2D, format should be RGB or RGBA,
-// type should be UNSIGNED_BYTE and level should be 0. It may be lifted in the future.
-std::optional<WebGLRenderingContextBase::VideoUploadDecision> WebGLRenderingContextBase::videoUploadGate(TexImageFunctionID functionID, GCGLenum target, bool sourceImageRectIsDefault, GCGLenum format, GCGLenum type, GCGLint level) const
+// FIXME: The current restrictions require that the source rectangle is the whole frame and
+// the format is RGB or RGBA with UNSIGNED_BYTE. It may be lifted in the future.
+std::optional<WebGLRenderingContextBase::VideoUploadDecision> WebGLRenderingContextBase::videoUploadGate(TexImageFunctionID functionID, bool sourceImageRectIsDefault, GCGLint internalformat, GCGLenum format, GCGLenum type) const
 {
     if (m_videoUploadPathForTesting == VideoUploadPathForTesting::Software) [[unlikely]]
         return VideoUploadDecision::Forced;
     if (functionID != TexImageFunctionID::TexImage2D)
         return VideoUploadDecision::GateFunction;
-    if (target != GraphicsContextGL::TEXTURE_2D)
-        return VideoUploadDecision::GateTarget;
     if (!sourceImageRectIsDefault)
         return VideoUploadDecision::GateSourceRect;
-    if ((format != GraphicsContextGL::RGB && format != GraphicsContextGL::RGBA) || type != GraphicsContextGL::UNSIGNED_BYTE)
+    if (!isValidVideoFrameCopyCombination(isWebGL2(), internalformat, format, type))
         return VideoUploadDecision::GateCombination;
-    if (level)
-        return VideoUploadDecision::GateLevel;
     return std::nullopt;
 }
 
-WebGLRenderingContextBase::VideoUploadStatus WebGLRenderingContextBase::copyVideoFrameToTexture(VideoFrame& videoFrame, WebGLTexture& texture, ASCIILiteral functionName, GCGLint level, GCGLint internalformat, GCGLenum format, GCGLenum type)
+WebGLRenderingContextBase::VideoUploadStatus WebGLRenderingContextBase::copyVideoFrameToTexture(VideoFrame& videoFrame, WebGLTexture& texture, ASCIILiteral functionName, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLenum type)
 {
     bool hardwareOnly = m_videoUploadPathForTesting == VideoUploadPathForTesting::Hardware;
-    bool copied = protect(m_context)->copyTextureFromVideoFrame(videoFrame, texture.object(), level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY);
+    bool copied = protect(m_context)->copyTextureFromVideoFrame(videoFrame, texture.object(), target, level, internalformat, type, m_unpackFlipY, m_unpackPremultiplyAlpha);
     m_lastVideoUploadForTesting = { m_lastVideoUploadForTesting.sequence + 1, VideoUploadDecision::Copy, hardwareOnly, copied, ++m_videoCopiesForTesting };
     if (copied)
         return VideoUploadStatus::Done;
@@ -3615,8 +3636,6 @@ WebGLRenderingContextBase::VideoUploadStatus WebGLRenderingContextBase::recordSo
 void WebGLRenderingContextBase::setVideoUploadPathForTesting(VideoUploadPathForTesting path)
 {
     m_videoUploadPathForTesting = path;
-    if (RefPtr context = m_context)
-        context->setVideoUploadHardwareOnlyForTesting(path == VideoUploadPathForTesting::Hardware);
 }
 
 std::optional<WebGLRenderingContextBase::VideoUploadRecordForTesting> WebGLRenderingContextBase::lastVideoUploadForTesting()
@@ -3661,14 +3680,14 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
 
     // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
     // Otherwise, it will fall back to the normal SW path.
-    auto decision = videoUploadGate(functionID, target, sourceImageRectIsDefault, format, type, level);
+    auto decision = videoUploadGate(functionID, sourceImageRectIsDefault, internalformat, format, type);
     if (!decision) {
         RefPtr<VideoFrame> videoFrame;
         if (RefPtr player = source.player())
             videoFrame = player->videoFrameForCurrentTime();
         if (!videoFrame)
             decision = VideoUploadDecision::NoFrame;
-        else if (copyVideoFrameToTexture(*videoFrame, *texture, functionName, level, internalformat, format, type) == VideoUploadStatus::Done)
+        else if (copyVideoFrameToTexture(*videoFrame, *texture, functionName, target, level, internalformat, type) == VideoUploadStatus::Done)
             return { };
     }
     if (decision && recordSoftwareVideoUpload(*decision, functionName) == VideoUploadStatus::Done)
@@ -3724,6 +3743,10 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
         return { };
     if (!validateTexFunc(functionID, SourceWebCodecsVideoFrame, target, level, internalformat, source.displayWidth(), source.displayHeight(), depth, border, format, type, xoffset, yoffset, zoffset))
         return { };
+    if (!inputSourceImageRect.isValid()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "source sub-rectangle specified via pixel unpack parameters is invalid"_s);
+        return { };
+    }
 
     RefPtr internalFrame = source.internalFrameForRendering(*protect(scriptExecutionContext()));
 
@@ -3734,11 +3757,11 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     // Otherwise, it will fall back to the normal SW path.
     bool sourceImageRectIsDefault = inputSourceImageRect == sentinelEmptyRect() || inputSourceImageRect == IntRect(0, 0, frameSize.width(), frameSize.height());
     RefPtr context = m_context;
-    auto decision = videoUploadGate(functionID, target, sourceImageRectIsDefault, format, type, level);
+    auto decision = videoUploadGate(functionID, sourceImageRectIsDefault, internalformat, format, type);
     if (!decision && !isVideoFrameFormatEligibleToCopy(source))
         decision = VideoUploadDecision::GateVideoFrameFormat;
     if (!decision) {
-        if (copyVideoFrameToTexture(*internalFrame, *texture, functionName, level, internalformat, format, type) == VideoUploadStatus::Done)
+        if (copyVideoFrameToTexture(*internalFrame, *texture, functionName, target, level, internalformat, type) == VideoUploadStatus::Done)
             return { };
     } else if (recordSoftwareVideoUpload(*decision, functionName) == VideoUploadStatus::Done)
         return { };
