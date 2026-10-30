@@ -2068,7 +2068,7 @@ TEST(WKWebExtensionAPIRuntime, PortDisconnectFromContentScript)
         @"port?.postMessage('Message from content script to background')",
 
         @"port?.onDisconnect.addListener(() => {",
-        @"  browser.test.assertTrue(true, 'Should trigger the onDisconnect event in the content script')",
+        @"  browser.test.fail('Should not trigger the onDisconnect event for the port that called disconnect()')",
         @"})",
 
         @"port?.disconnect()"

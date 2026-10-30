@@ -413,7 +413,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebPageProxyIdentifi
             return;
 
         port->setError(globalContext.get(), protect(runtime())->reportError(result.error(), globalContext.get()));
-        port->disconnect();
+        port->fireDisconnectEventIfNeeded();
     }, extensionContext().identifier());
 #endif
 
@@ -448,7 +448,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connectNative(WebPageProxyId
             return;
 
         port->setError(globalContext.get(), protect(runtime())->reportError(result.error(), globalContext.get()));
-        port->disconnect();
+        port->fireDisconnectEventIfNeeded();
     }, extensionContext().identifier());
 #endif
 
@@ -537,7 +537,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebPage& page
 
         callAfterRandomDelay([=]() {
 #if PLATFORM(COCOA)
-            port->disconnect();
+            port->fireDisconnectEventIfNeeded();
 #endif
         });
 
@@ -552,7 +552,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebPage& page
             return;
 
         port->setError(globalContext.get(), protect(runtime())->reportError(result.error(), globalContext.get()));
-        port->disconnect();
+        port->fireDisconnectEventIfNeeded();
     }, destinationExtensionContext->identifier());
 #endif
 

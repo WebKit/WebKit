@@ -153,7 +153,17 @@ void WebExtensionAPIPort::disconnect()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/Port#disconnect
 
-    fireDisconnectEventIfNeeded();
+    if (isDisconnected())
+        return;
+
+    RELEASE_LOG_DEBUG(Extensions, "Port channel %{public}llu disconnected in %{public}@ world", m_channelIdentifier ? m_channelIdentifier->toUInt64() : 0, toDebugString(contentWorldType()).createNSString().get());
+
+    m_disconnected = true;
+
+    if (m_onMessage)
+        m_onMessage->removeAllListeners();
+
+    remove();
 }
 
 void WebExtensionAPIPort::fireMessageEventIfNeeded(id message, bool userGesture)
@@ -188,14 +198,7 @@ void WebExtensionAPIPort::fireDisconnectEventIfNeeded()
     if (isDisconnected())
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Port channel %{public}llu disconnected in %{public}@ world", m_channelIdentifier ? m_channelIdentifier->toUInt64() : 0, toDebugString(contentWorldType()).createNSString().get());
-
-    m_disconnected = true;
-
-    if (m_onMessage)
-        m_onMessage->removeAllListeners();
-
-    remove();
+    disconnect();
 
     if (!m_onDisconnect || m_onDisconnect->listeners().isEmpty())
         return;

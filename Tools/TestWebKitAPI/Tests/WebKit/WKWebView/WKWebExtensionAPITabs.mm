@@ -3622,7 +3622,7 @@ TEST(WKWebExtensionAPITabs, PortDisconnect)
         @"  port.postMessage('Hello')",
 
         @"  port.onDisconnect.addListener(() => {",
-        @"    browser.test.assertTrue(true, 'Should trigger the onDisconnect event in the background script')",
+        @"    browser.test.fail('Should not trigger the onDisconnect event for the port that called disconnect()')",
         @"  })",
 
         @"  port.disconnect()",
@@ -3654,6 +3654,25 @@ TEST(WKWebExtensionAPITabs, PortDisconnect)
     [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, ConnectWithoutListenersFiresOnDisconnectWithError)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"const port = browser.tabs.connect(currentTab.id, { name: 'testPort' })",
+
+        @"port.onDisconnect.addListener(() => {",
+        @"  browser.test.assertTrue(!!port.error, 'Port error should be set')",
+        @"  browser.test.assertTrue(/no runtime.onConnect listeners found/i.test(port.error?.message), 'Port error should describe the failure')",
+
+        @"  browser.test.notifyPass()",
+        @"})"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
 
     [manager run];
 }
