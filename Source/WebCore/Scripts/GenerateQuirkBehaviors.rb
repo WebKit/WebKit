@@ -25,7 +25,8 @@
 
 # Generates QuirkBehaviorID, the build conditions, the declaration of each behavior (looked up by ID by the
 # quirk table parser), and the QuirksAccessors base class of Quirks from QuirkBehaviors.yaml and
-# QuirkBuildConditions.yaml.
+# QuirkBuildConditions.yaml. Behaviors from an additions file, in the same format, come after those in
+# QuirkBehaviors.yaml.
 
 require "fileutils"
 require 'erb'
@@ -35,14 +36,16 @@ require 'yaml'
 options = {
   :outputDirectory => Dir.getwd,
   :templates => [],
+  :additions => nil,
 }
 optparse = OptionParser.new do |opts|
-  opts.banner = "Usage: #{File.basename($0)} [--outputDir <output>] --template <file> [--template <file>...] <QuirkBehaviors.yaml> <QuirkBuildConditions.yaml>"
+  opts.banner = "Usage: #{File.basename($0)} [--outputDir <output>] [--additions <QuirkBehaviorsAdditions.yaml>] --template <file> [--template <file>...] <QuirkBehaviors.yaml> <QuirkBuildConditions.yaml>"
 
   opts.separator ""
 
   opts.on("--template input", "template to use for generation (may be specified multiple times)") { |template| options[:templates] << template }
   opts.on("--outputDir output", "directory to generate file in (default: cwd)") { |outputDir| options[:outputDirectory] = outputDir }
+  opts.on("--additions input", "more behaviors, in the format of QuirkBehaviors.yaml") { |additions| options[:additions] = additions }
   opts.on("-h", "--help", "show this help message") { puts opts; exit 1 }
 end
 
@@ -202,46 +205,49 @@ class QuirkBehaviors
 
   attr_reader :behaviors, :buildConditions
 
-  def initialize(path, buildConditions)
+  # paths are read in order.
+  def initialize(paths, buildConditions)
     @behaviors = []
     @buildConditions = buildConditions
     @warning = "THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT."
     buildConditionNames = buildConditions.map(&:name)
 
     failed = false
-    reject = Proc.new do |msg|
-      STDERR.puts("error: #{path}: " + msg)
-      failed = true
-    end
-
     seen = {}
     accessorNames = {}
-    loadMapping(path, "QuirkBehaviorID names to their fields").each do |id, opts|
-      if seen[id]
-        reject.call "#{id} is defined more than once."
-        next
+    paths.each do |path|
+      reject = Proc.new do |msg|
+        STDERR.puts("error: #{path}: " + msg)
+        failed = true
       end
-      seen[id] = true
-      opts ||= {}
-      reject.call "#{id} is not a valid QuirkBehaviorID name." if !(id =~ /\A[A-Z]\w*\z/)
-      (opts.keys - FIELDS).each { |field| reject.call "#{id} has unknown field \"#{field}\". Allowed fields: #{FIELDS.join(", ")}." }
-      ((opts["parameters"] || []) - PARAMETERS).each { |parameter| reject.call "#{id} has unknown parameter \"#{parameter}\"." }
-      ((opts["conditions"] || []) - CONDITIONS).each { |condition| reject.call "#{id} has unknown condition \"#{condition}\"." }
 
-      behavior = QuirkBehavior.new(id, opts)
-      (behavior.availableNames - buildConditionNames).each { |name| reject.call "#{id} is available under \"#{name}\", which is not in QuirkBuildConditions.yaml." }
-      generated = behavior.hasGeneratedAccessor?
-      reject.call "#{id} has implementation \"#{opts["implementation"]}\"; the only value is \"custom\"." if opts["implementation"] && opts["implementation"] != "custom"
-      (GENERATED_ONLY_FIELDS & opts.keys).each { |field| reject.call "#{id} has a custom implementation, so \"#{field}\" would be ignored." } if !generated
-      reject.call "#{id} has parameters, which a generated accessor cannot read. Use \"implementation: custom\"." if generated && !behavior.parameters.empty?
-      reject.call "#{id} is static, so it only sees top-URL quirks and cannot evaluate conditions." if generated && behavior.shape == :staticURL && !behavior.conditions.empty?
-      reject.call "#{id} has conditions #{behavior.conditions}; a generated accessor supports only [ElementSelector] or [SecondaryURL]. Use \"implementation: custom\"." if generated && !behavior.conditions.empty? && !behavior.shape
-      reject.call "#{id}'s accessor #{behavior.accessor} is also generated for #{accessorNames[behavior.accessor]}." if generated && accessorNames[behavior.accessor]
-      accessorNames[behavior.accessor] = id if generated
-      reject.call "#{id} has conditionsRequired but no conditions." if opts["conditionsRequired"] && behavior.conditions.empty?
-      reject.call "#{id} has accessor #{behavior.accessor}, which is already the default; remove it." if opts["accessor"] && opts["accessor"] == behavior.constantName
+      loadMapping(path, "QuirkBehaviorID names to their fields").each do |id, opts|
+        if seen[id]
+          reject.call "#{id} is defined more than once."
+          next
+        end
+        seen[id] = true
+        opts ||= {}
+        reject.call "#{id} is not a valid QuirkBehaviorID name." if !(id =~ /\A[A-Z]\w*\z/)
+        (opts.keys - FIELDS).each { |field| reject.call "#{id} has unknown field \"#{field}\". Allowed fields: #{FIELDS.join(", ")}." }
+        ((opts["parameters"] || []) - PARAMETERS).each { |parameter| reject.call "#{id} has unknown parameter \"#{parameter}\"." }
+        ((opts["conditions"] || []) - CONDITIONS).each { |condition| reject.call "#{id} has unknown condition \"#{condition}\"." }
 
-      @behaviors << behavior
+        behavior = QuirkBehavior.new(id, opts)
+        (behavior.availableNames - buildConditionNames).each { |name| reject.call "#{id} is available under \"#{name}\", which is not in QuirkBuildConditions.yaml." }
+        generated = behavior.hasGeneratedAccessor?
+        reject.call "#{id} has implementation \"#{opts["implementation"]}\"; the only value is \"custom\"." if opts["implementation"] && opts["implementation"] != "custom"
+        (GENERATED_ONLY_FIELDS & opts.keys).each { |field| reject.call "#{id} has a custom implementation, so \"#{field}\" would be ignored." } if !generated
+        reject.call "#{id} has parameters, which a generated accessor cannot read. Use \"implementation: custom\"." if generated && !behavior.parameters.empty?
+        reject.call "#{id} is static, so it only sees top-URL quirks and cannot evaluate conditions." if generated && behavior.shape == :staticURL && !behavior.conditions.empty?
+        reject.call "#{id} has conditions #{behavior.conditions}; a generated accessor supports only [ElementSelector] or [SecondaryURL]. Use \"implementation: custom\"." if generated && !behavior.conditions.empty? && !behavior.shape
+        reject.call "#{id}'s accessor #{behavior.accessor} is also generated for #{accessorNames[behavior.accessor]}." if generated && accessorNames[behavior.accessor]
+        accessorNames[behavior.accessor] = id if generated
+        reject.call "#{id} has conditionsRequired but no conditions." if opts["conditionsRequired"] && behavior.conditions.empty?
+        reject.call "#{id} has accessor #{behavior.accessor}, which is already the default; remove it." if opts["accessor"] && opts["accessor"] == behavior.constantName
+
+        @behaviors << behavior
+      end
     end
     exit 1 if failed
   end
@@ -269,7 +275,9 @@ class QuirkBehaviors
   end
 end
 
-quirkBehaviors = QuirkBehaviors.new(behaviorsFile, loadBuildConditions(buildConditionsFile))
+behaviorFiles = [behaviorsFile]
+behaviorFiles << options[:additions] if options[:additions]
+quirkBehaviors = QuirkBehaviors.new(behaviorFiles, loadBuildConditions(buildConditionsFile))
 
 options[:templates].each do |template|
   quirkBehaviors.renderTemplate(template, options[:outputDirectory])

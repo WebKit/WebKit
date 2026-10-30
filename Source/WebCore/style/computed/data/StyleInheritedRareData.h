@@ -233,6 +233,9 @@ public:
 #if ENABLE(SMART_IMAGE_RESIZER)
     PREFERRED_TYPE(bool) unsigned isAffectedBySmartImageResizer : 1;
 #endif
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    PREFERRED_TYPE(AppleColorFilterOverride) unsigned appleColorFilterOverride : 2;
+#endif
 #if HAVE(CORE_MATERIAL)
     PREFERRED_TYPE(AppleVisualEffect) unsigned usedAppleVisualEffectForSubtree : 5;
 #endif

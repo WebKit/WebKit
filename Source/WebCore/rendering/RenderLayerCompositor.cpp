@@ -2328,6 +2328,12 @@ void RenderLayerCompositor::layerStyleChanged(Style::Difference diff, RenderLaye
         // image rendering mode can determine whether we use device pixel ratio for the backing store.
         if (oldStyle && oldStyle->imageRendering() != newStyle.imageRendering())
             layer.setNeedsCompositingConfigurationUpdate();
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        // A forced color filter has to be painted, so it decides whether an image can be composited directly.
+        if (oldStyle && oldStyle->appleColorFilterOverride() != newStyle.appleColorFilterOverride())
+            layer.setNeedsCompositingConfigurationUpdate();
+#endif
     }
 
     if (diff >= Style::DifferenceResult::RecompositeLayer) {

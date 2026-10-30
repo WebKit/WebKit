@@ -3111,6 +3111,11 @@ set(QUIRK_BEHAVIORS_TEMPLATES
     ${WEBCORE_DIR}/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorID.serialization.in.erb
     ${WEBCORE_DIR}/Scripts/QuirkBehaviorsTemplates/QuirksAccessors.cpp.erb
     ${WEBCORE_DIR}/Scripts/QuirkBehaviorsTemplates/QuirksAccessors.h.erb)
+set(QUIRK_BEHAVIORS_ADDITIONS_ARGUMENTS)
+if (QUIRK_BEHAVIORS_ADDITIONS)
+    set_source_files_properties(${QUIRK_BEHAVIORS_ADDITIONS} PROPERTIES GENERATED TRUE)
+    set(QUIRK_BEHAVIORS_ADDITIONS_ARGUMENTS --additions ${QUIRK_BEHAVIORS_ADDITIONS})
+endif ()
 add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorDeclarations.cpp
        ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorDeclarations.h
@@ -3119,8 +3124,8 @@ add_custom_command(
        ${WebCore_DERIVED_SOURCES_DIR}/QuirksAccessors.cpp
        ${WebCore_DERIVED_SOURCES_DIR}/QuirksAccessors.h
     MAIN_DEPENDENCY ${WEBCORE_DIR}/page/QuirkBehaviors.yaml
-    DEPENDS ${WEBCORE_DIR}/page/QuirkBuildConditions.yaml ${WEBCORE_DIR}/Scripts/GenerateQuirkBehaviors.rb ${QUIRK_BEHAVIORS_TEMPLATES}
-    COMMAND ${Ruby_EXECUTABLE} ${WEBCORE_DIR}/Scripts/GenerateQuirkBehaviors.rb --outputDir ${WebCore_DERIVED_SOURCES_DIR} --template "$<JOIN:${QUIRK_BEHAVIORS_TEMPLATES},;--template;>" ${WEBCORE_DIR}/page/QuirkBehaviors.yaml ${WEBCORE_DIR}/page/QuirkBuildConditions.yaml
+    DEPENDS ${WEBCORE_DIR}/page/QuirkBuildConditions.yaml ${WEBCORE_DIR}/Scripts/GenerateQuirkBehaviors.rb ${QUIRK_BEHAVIORS_TEMPLATES} ${QUIRK_BEHAVIORS_ADDITIONS} ${WEBKITADDITIONS_HEADERS_DEPENDENCIES}
+    COMMAND ${Ruby_EXECUTABLE} ${WEBCORE_DIR}/Scripts/GenerateQuirkBehaviors.rb --outputDir ${WebCore_DERIVED_SOURCES_DIR} --template "$<JOIN:${QUIRK_BEHAVIORS_TEMPLATES},;--template;>" ${QUIRK_BEHAVIORS_ADDITIONS_ARGUMENTS} ${WEBCORE_DIR}/page/QuirkBehaviors.yaml ${WEBCORE_DIR}/page/QuirkBuildConditions.yaml
     COMMAND_EXPAND_LISTS
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorDeclarations.h)

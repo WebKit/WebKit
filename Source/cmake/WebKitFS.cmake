@@ -94,10 +94,12 @@ set(WTF_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/WTF/Scripts")
 set(JavaScriptCore_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/JavaScriptCore/Scripts")
 
 # Anything reading a header out of the WebKitAdditions headers directory has to
-# depend on the target which stages them, and the preferences additions are one
-# of those inputs. Both variables stay unset without the internal SDK.
+# depend on the target which stages them, and the preferences and quirk behaviors
+# additions are some of those inputs. These variables stay unset without the
+# internal SDK.
 if (USE_APPLE_INTERNAL_SDK)
     set(WEB_PREFERENCES_ADDITIONS "${WebKitAdditions_HEADERS_DIR}/WebPreferencesAdditions.yaml")
+    set(QUIRK_BEHAVIORS_ADDITIONS "${WebKitAdditions_HEADERS_DIR}/QuirkBehaviorsAdditions.yaml")
     set(WEBKITADDITIONS_HEADERS_DEPENDENCIES WebKitAdditions_CopyHeaders)
 endif ()
 

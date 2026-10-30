@@ -141,8 +141,10 @@ ImageDrawingOptions calculateSVGImageDrawingOptions(const Style::Image& styleIma
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     auto invertContent = [&] {
         if (styleImage.drawsSVGImage())
-            return AXCustomColorModeController::shouldInvertSVGImage(renderer, styleImage);
-        return AXCustomColorModeController::shouldInvertContentImage(renderer, destinationSize);
+            return AXCustomColorModeController::shouldInvertSVGImage(renderer, styleImage) ? InvertContent::Yes : InvertContent::No;
+        if (AXCustomColorModeController::shouldForceInvertBitmapImage(renderer, styleImage))
+            return InvertContent::Forced;
+        return AXCustomColorModeController::shouldInvertContentImage(renderer, destinationSize) ? InvertContent::Yes : InvertContent::No;
     };
 #endif
 
@@ -157,7 +159,7 @@ ImageDrawingOptions calculateSVGImageDrawingOptions(const Style::Image& styleIma
         paintBehavior.contains(PaintBehavior::DrawsHDRContent) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
         renderer.style().dynamicRangeLimit().toPlatformDynamicRangeLimit(),
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        invertContent() ? InvertContent::Yes : InvertContent::No,
+        invertContent(),
 #endif
     };
 }

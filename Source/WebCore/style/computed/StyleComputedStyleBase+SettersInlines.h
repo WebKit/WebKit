@@ -122,6 +122,13 @@ inline void ComputedStyleBase::setIsAffectedBySmartImageResizer(bool isAffectedB
 }
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+inline void ComputedStyleBase::setAppleColorFilterOverride(AppleColorFilterOverride colorFilterOverride)
+{
+    SET(m_inheritedRareData, appleColorFilterOverride, static_cast<unsigned>(colorFilterOverride));
+}
+#endif
+
 inline void ComputedStyleBase::setIsEffectivelyTransparent(bool effectivelyTransparent)
 {
     SET(m_inheritedRareData, effectivelyTransparent, effectivelyTransparent);

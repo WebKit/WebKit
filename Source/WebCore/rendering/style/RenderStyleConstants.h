@@ -1041,6 +1041,14 @@ enum class ContentVisibility : uint8_t {
     Hidden,
 };
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+enum class AppleColorFilterOverride : uint8_t {
+    None,
+    Preserve,
+    Force,
+};
+#endif
+
 enum class BlockStepAlign : uint8_t {
     Auto,
     Center,
@@ -1174,6 +1182,9 @@ enum class UsesSVGZoomRulesForLength : bool { No, Yes };
 WTF::TextStream& operator<<(WTF::TextStream&, AnimationDirection);
 WTF::TextStream& operator<<(WTF::TextStream&, AnimationFillMode);
 WTF::TextStream& operator<<(WTF::TextStream&, AnimationPlayState);
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+WTF::TextStream& operator<<(WTF::TextStream&, AppleColorFilterOverride);
+#endif
 WTF::TextStream& operator<<(WTF::TextStream&, AspectRatioType);
 WTF::TextStream& operator<<(WTF::TextStream&, AutoRepeatType);
 WTF::TextStream& operator<<(WTF::TextStream&, BackfaceVisibility);

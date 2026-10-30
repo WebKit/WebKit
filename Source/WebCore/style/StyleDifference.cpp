@@ -821,6 +821,9 @@ public:
             || a.insideDefaultButton != b.insideDefaultButton
             || a.insideSubmitButton != b.insideSubmitButton
             || a.paintOrder != b.paintOrder
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+            || a.appleColorFilterOverride != b.appleColorFilterOverride
+#endif
     #if ENABLE(DARK_MODE_CSS)
             || a.colorScheme != b.colorScheme
     #endif

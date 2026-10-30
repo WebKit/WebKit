@@ -364,9 +364,14 @@ void GraphicsContextCG::drawNativeImage(const NativeImage& nativeImage, const Fl
         return;
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE) && HAVE(CGSTYLE_COLORMATRIX_BLUR)
-    if (options.invertContent() == InvertContent::Yes) {
-        auto sourceRect = options.orientation() == ImageOrientation::Orientation::None ? std::optional { normalizeRect(srcRect) } : std::nullopt;
-        if (auto colorMatrix = AXCustomColorModeController::colorMatrixForImageInversion(nativeImage.paintTimeTransformation(sourceRect))) {
+    if (auto invertContent = options.invertContent(); invertContent == InvertContent::Yes || invertContent == InvertContent::Forced) {
+        auto colorMatrix = [&] -> std::optional<GraphicsColorMatrix> {
+            if (invertContent == InvertContent::Forced)
+                return AXCustomColorModeController::colorMatrixForForcedImageInversion();
+            auto sourceRect = options.orientation() == ImageOrientation::Orientation::None ? std::optional { normalizeRect(srcRect) } : std::nullopt;
+            return AXCustomColorModeController::colorMatrixForImageInversion(nativeImage.paintTimeTransformation(sourceRect));
+        }();
+        if (colorMatrix) {
             GraphicsContextStateSaver stateSaver(*this);
             clip(normalizeRect(destRect));
             setStyle(*colorMatrix);
@@ -564,6 +569,20 @@ void GraphicsContextCG::drawPattern(const NativeImage& nativeImage, const FloatR
 {
     if (!patternTransform.isInvertible())
         return;
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE) && HAVE(CGSTYLE_COLORMATRIX_BLUR)
+    // Tiles are never classified, so only an unconditional inversion applies to them.
+    if (options.invertContent() == InvertContent::Forced) {
+        GraphicsContextStateSaver stateSaver(*this);
+        clip(destRect);
+        setStyle(AXCustomColorModeController::colorMatrixForForcedImageInversion());
+        setCompositeOperation(options.compositeOperator(), options.blendMode());
+        beginTransparencyLayer(options.compositeOperator(), options.blendMode());
+        drawPattern(nativeImage, destRect, tileRect, patternTransform, phase, spacing, { options, InvertContent::No, CompositeOperator::SourceOver, BlendMode::Normal });
+        endTransparencyLayer();
+        return;
+    }
+#endif
 
     auto image = nativeImage.platformImage();
     auto imageSize = nativeImage.size();

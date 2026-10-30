@@ -191,6 +191,13 @@ inline bool ComputedStyleBase::isAffectedBySmartImageResizer() const
 }
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+inline AppleColorFilterOverride ComputedStyleBase::appleColorFilterOverride() const
+{
+    return static_cast<AppleColorFilterOverride>(m_inheritedRareData->appleColorFilterOverride);
+}
+#endif
+
 inline bool ComputedStyleBase::isForceHidden() const
 {
     return m_inheritedRareData->isForceHidden;
