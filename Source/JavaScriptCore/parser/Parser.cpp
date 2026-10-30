@@ -440,6 +440,8 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceEl
                     // Since strict mode is changed, restoring lexer state by calling next() may cause errors.
                     restoreSavePoint(context, *savePoint);
                     propagateError();
+                    // Drop any directives parsed so far because they will be parsed again.
+                    sourceElements = context.createSourceElements();
                     continue;
                 }
 
