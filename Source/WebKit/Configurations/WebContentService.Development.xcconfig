@@ -28,6 +28,10 @@ SKIP_INSTALL[sdk=macosx*] = $(WK_RELOCATABLE_FRAMEWORKS);
 
 WK_XPC_SERVICE_VARIANT = Development;
 
+// Don't use the derived Info.plist like other targets do, as the Development
+// plist does not use injected RunningBoard keys.
+INFOPLIST_FILE[sdk=macosx*] = $(WK_SOURCE_INFOPLIST_FILE);
+
 WK_USE_RESTRICTED_ENTITLEMENTS = NO;
 WK_USE_FATAL_EXCEPTIONS = $(OVERRIDE_WK_USE_FATAL_EXCEPTIONS:default=YES);
 
