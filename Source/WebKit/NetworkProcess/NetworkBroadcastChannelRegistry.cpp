@@ -73,8 +73,9 @@ NetworkBroadcastChannelRegistry::NetworkBroadcastChannelRegistry(NetworkProcess&
 
 NetworkBroadcastChannelRegistry::~NetworkBroadcastChannelRegistry() = default;
 
-void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name)
+void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, const String& name)
 {
+    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     MESSAGE_CHECK(isValidClientOrigin(origin), connection);
     MESSAGE_CHECK(!name.isNull(), connection);
     MESSAGE_CHECK(isOriginAllowedForConnection(connection, origin), connection);
@@ -85,8 +86,9 @@ void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connectio
     connectionIdentifiersForName.append(connection.uniqueID());
 }
 
-void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name)
+void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, const String& name)
 {
+    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     MESSAGE_CHECK(isValidClientOrigin(origin), connection);
     MESSAGE_CHECK(!name.isNull(), connection);
     MESSAGE_CHECK(isOriginAllowedForConnection(connection, origin), connection);
@@ -104,8 +106,9 @@ void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connect
     connectionIdentifiersForNameIterator->value.removeFirst(connection.uniqueID());
 }
 
-void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name, WebCore::MessageWithMessagePorts&& message, Vector<URL>&& blobURLs, CompletionHandler<void()>&& completionHandler)
+void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, const String& name, WebCore::MessageWithMessagePorts&& message, Vector<URL>&& blobURLs, CompletionHandler<void()>&& completionHandler)
 {
+    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     MESSAGE_CHECK_COMPLETION(isValidClientOrigin(origin), connection, completionHandler());
     MESSAGE_CHECK_COMPLETION(!name.isNull(), connection, completionHandler());
     MESSAGE_CHECK_COMPLETION(isOriginAllowedForConnection(connection, origin), connection, completionHandler());
