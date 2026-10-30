@@ -47,6 +47,9 @@ SCAN_BUILD_PATH = '../swift-project/llvm-project/clang/tools/scan-build/bin/scan
 SWIFT_TOOLCHAIN_NAME = 'swift-webkit'
 SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER = 'org.webkit.swift'
 USER_TOOLCHAINS_DIR = '/Users/buildbot/Library/Developer/Toolchains'
+# Records the Swift tag the installed toolchain was built from. The swift checkout can't be used for this
+# since it gets updated to the new tag before the toolchain is built, even if building it fails.
+SWIFT_TOOLCHAIN_TAG_FILE = 'webkit-swift-tag'
 DEFAULT_PATH = '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'
 CMAKE_BIN_DIR = '/Applications/CMake.app/Contents/bin/'
 # Message printed by run-webkit-tests when uploading the results fails, please keep this in sync with run_webkit_tests.py.
@@ -228,8 +231,9 @@ class PrintSwiftVersion(steps.ShellSequence, ShellMixin):
         self.addLogObserver('stdio', self.log_observer)
 
         toolchain_path = f'{USER_TOOLCHAINS_DIR}/{SWIFT_TOOLCHAIN_NAME}.xctoolchain'
+        tag_file = f'{toolchain_path}/{SWIFT_TOOLCHAIN_TAG_FILE}'
         self.commands = [
-            util.ShellArg(command=self.shell_command('git describe --tags'), logname='stdio', haltOnFailure=False),
+            util.ShellArg(command=self.shell_command(f'test -f {tag_file} && echo "Installed Swift tag: $(cat {tag_file})" || echo "Installed Swift tag is unknown"'), logname='stdio', haltOnFailure=False),
             util.ShellArg(command=self.shell_command(f'test -d {toolchain_path} && echo "Toolchain exists at {toolchain_path}" || echo "Toolchain does not exist"'), logname='stdio'),
             util.ShellArg(command=self.shell_command(f'{toolchain_path}/usr/bin/swift --version'), logname='stdio', haltOnFailure=False)
         ]
@@ -237,14 +241,12 @@ class PrintSwiftVersion(steps.ShellSequence, ShellMixin):
         rc = yield super().run()
 
         log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
-        if 'not a git repository' in log_text:
-            self.summary = 'Swift repository does not exist'
+        match = re.search(r'^Installed Swift tag: (\S+)$', log_text, re.MULTILINE)
+        if match:
+            self.setProperty('current_swift_tag', match.group(1))
+            self.summary = f'Current Swift tag: {match.group(1)}'
         else:
-            # Extract git tag from first line
-            first_line = log_text.split('\n')[0].strip()
-            if first_line and not first_line.startswith('fatal'):
-                self.setProperty('current_swift_tag', first_line)
-                self.summary = f'Current Swift tag: {first_line}'
+            self.summary = 'Current Swift tag is unknown'
 
         if 'Toolchain exists at' in log_text:
             self.setProperty('has_swift_toolchain', True)
@@ -363,7 +365,7 @@ class UpdateSwiftCheckouts(steps.ShellSequence, ShellMixin):
 
         rc = yield super().run()
         if rc != SUCCESS:
-            if self.getProperty('current_swift_tag', '') and self.getProperty('has_swift_toolchain', False):
+            if self.getProperty('has_swift_toolchain', False):
                 self.summary = 'Failed to update swift, using previous checkout'
                 return WARNINGS
             self.summary = 'Failed to update swift checkout'
@@ -402,7 +404,8 @@ class InstallSwiftToolchain(steps.ShellSequence, ShellMixin):
         command_list = [
             f'rm -rf {USER_TOOLCHAINS_DIR}',
             f'mkdir -p {USER_TOOLCHAINS_DIR}',
-            f'cp -a {source_toolchain} {dest_toolchain}'
+            f'cp -a {source_toolchain} {dest_toolchain}',
+            f"echo {quote(self.getProperty('canonical_swift_tag', ''))} > {dest_toolchain}/{SWIFT_TOOLCHAIN_TAG_FILE}",
         ]
         for command in command_list:
             self.commands.append(util.ShellArg(command=self.shell_command(command), logname='stdio', haltOnFailure=True))
