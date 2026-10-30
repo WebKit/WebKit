@@ -75,6 +75,10 @@
                 "PORT": {
                     "type": "STRING",
                     "value": "GTK"
+                },
+                "CMAKE_MAKE_PROGRAM": {
+                    "type": "FILEPATH",
+                    "value": "${sourceDir}/Source/cmake/ninja-wrapper"
                 }
             }
         },
@@ -520,6 +524,10 @@
                 "PORT": {
                     "type": "STRING",
                     "value": "WPE"
+                },
+                "CMAKE_MAKE_PROGRAM": {
+                    "type": "FILEPATH",
+                    "value": "${sourceDir}/Source/cmake/ninja-wrapper"
                 }
             }
         },

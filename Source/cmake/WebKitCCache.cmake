@@ -86,7 +86,21 @@ if (("$ENV{WEBKIT_USE_SCCACHE}" STREQUAL "1") OR DEFINED ENV{SCCACHE_REDIS} OR D
     endif ()
 endif ()
 
-if (APPLE AND CMAKE_GENERATOR STREQUAL "Ninja")
+# Adaptive unified sources (314224@main): ninja-wrapper decides per build whether
+# dirty unified bundles are compiled whole or split into their members by
+# clang-wrapper. Needs CMAKE_MAKE_PROGRAM=Source/cmake/ninja-wrapper, which
+# build-webkit and the presets set for the ports below. The member merge is
+# "ld -r", which does not compose with LTO bitcode objects.
+if (APPLE)
+    set(_adaptive_unified_sources_default ON)
+elseif ((PORT STREQUAL "GTK" OR PORT STREQUAL "WPE") AND DEVELOPER_MODE AND NOT LTO_MODE)
+    set(_adaptive_unified_sources_default ON)
+else ()
+    set(_adaptive_unified_sources_default OFF)
+endif ()
+option(USE_ADAPTIVE_UNIFIED_SOURCES "Split dirty unified source bundles into their members in small builds" ${_adaptive_unified_sources_default})
+
+if (USE_ADAPTIVE_UNIFIED_SOURCES AND CMAKE_GENERATOR STREQUAL "Ninja")
     set(_clang_wrapper "${CMAKE_SOURCE_DIR}/Source/cmake/clang-wrapper")
     # Flags for the member merge step, which reuses the compile flags as a link
     # command line. Only clang complains about compile-only flags when linking.
