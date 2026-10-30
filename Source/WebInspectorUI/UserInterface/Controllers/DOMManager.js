@@ -55,7 +55,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         this._pendingInspectedFrameNode = null;
         this._frameOwnerRequestedDocuments = new WeakSet;
 
-        this._activeSearch = null;
+        this._activeSearches = new Map;
 
         WI.EventBreakpoint.addEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this._handleEventBreakpointDisabledStateChanged, this);
         WI.EventBreakpoint.addEventListener(WI.Breakpoint.Event.ConditionDidChange, this._handleEventBreakpointEditablePropertyChanged, this);
@@ -902,14 +902,14 @@ WI.DOMManager = class DOMManager extends WI.Object
         }, callback);
     }
 
-    async performSearch(query, {caseSensitive} = {})
+    async performSearch(query, {caseSensitive, root, owner = null} = {})
     {
-        // Resolves to null if a newer search starts first.
-        this.discardSearchResults();
+        // Resolves to null if the same owner starts a newer search first. Searches of different owners are independent.
+        this.discardSearchResults(owner);
 
         let search = {sessions: []};
-        this._activeSearch = search;
-        let isActive = () => this._activeSearch === search;
+        this._activeSearches.set(owner, search);
+        let isActive = () => this._activeSearches.get(owner) === search;
 
         let pageTarget = WI.assumingMainTarget();
         if (pageTarget && !pageTarget.hasDomain("DOM"))
@@ -942,12 +942,17 @@ WI.DOMManager = class DOMManager extends WI.Object
         let send = (target, promise) => Promise.race([promise.catch(() => null), targetRemovedPromises.get(target).promise]);
 
         let startSearch = async (target) => {
-            let result = await send(target, target.DOMAgent.performSearch.invoke({query, caseSensitive}));
-            if (!result?.resultCount)
+            let commandArguments = {query, caseSensitive};
+            if (target === pageTarget && root && !root.owningTarget)
+                commandArguments.nodeIds = [root.id];
+
+            let result = await send(target, target.DOMAgent.performSearch.invoke(commandArguments));
+            if (!result)
                 return null;
 
-            if (!isActive()) {
-                target.DOMAgent.discardSearchResults(result.searchId);
+            // The backend keeps an entry even for zero results.
+            if (!result.resultCount || !isActive()) {
+                target.DOMAgent.discardSearchResults(result.searchId).catch(() => {});
                 return null;
             }
 
@@ -958,6 +963,37 @@ WI.DOMManager = class DOMManager extends WI.Object
         let fetchNodeIds = async (target, {searchId, resultCount}) => {
             let response = await send(target, target.DOMAgent.getSearchResults(searchId, 0, resultCount));
             return response?.nodeIds || [];
+        };
+
+        // A frame document is spliced into the page tree once its owner element is loaded. Load the owners
+        // above it hop by hop, like for an inspected node: an owner that sits in another unspliced frame
+        // document needs that document's owner next.
+        let requestFrameOwners = async (frameDocument) => {
+            let requestedDocuments = new Set;
+            let topDocument = this._rootNodeOf(frameDocument);
+            while (topDocument !== this._document) {
+                if (!isActive() || requestedDocuments.has(topDocument) || !topDocument.frameIdentifier)
+                    return;
+                requestedDocuments.add(topDocument);
+
+                // The owner's events arrive before the reply, so a splice below it has already happened.
+                let frameId = topDocument.frameIdentifier;
+                let owner = null;
+                if (pageTarget?.hasCommand("DOM.requestFrameOwner")) {
+                    let result = await send(pageTarget, pageTarget.DOMAgent.requestFrameOwner.invoke({frameId}));
+                    if (result)
+                        owner = this.nodeForId(result.nodeId);
+                }
+                if (!owner) {
+                    let result = await this._requestFrameOwnerFromFrameTargets(frameId);
+                    if (result)
+                        owner = this.nodeForIdInFrameTarget(result.ownerNodeId, result.target);
+                }
+                if (!owner)
+                    return;
+
+                topDocument = this._rootNodeOf(owner);
+            }
         };
 
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, handleTargetRemoved, this);
@@ -1006,29 +1042,64 @@ WI.DOMManager = class DOMManager extends WI.Object
                     if (node && node.ownerDocument === frameDocument)
                         frameNodes.push(node);
                 }
+
+                if (root && frameNodes.length)
+                    await requestFrameOwners(frameDocument);
                 return frameNodes;
             }));
 
             if (!isActive())
                 return null;
 
-            return nodes.concat(...frameTargetNodeLists);
+            let frameTargetNodes = frameTargetNodeLists.flat();
+
+            // Keep the page target's order (XPath, then selector, then other matches) unless matches from other
+            // targets must be merged into it. The page target only searched under a root in its own tree.
+            if (!root || (!frameTargetNodes.length && !root.owningTarget))
+                return nodes.concat(frameTargetNodes);
+
+            return DOMManager._nodesUnderRootInTreeOrder(root, nodes.concat(frameTargetNodes));
         } finally {
             WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, handleTargetRemoved, this);
         }
     }
 
-    discardSearchResults()
+    discardSearchResults(owner = null)
     {
-        let search = this._activeSearch;
-        this._activeSearch = null;
+        let search = this._activeSearches.get(owner);
         if (!search)
             return;
 
+        this._activeSearches.delete(owner);
         for (let {target, searchId} of search.sessions) {
             if (!target.isDestroyed)
-                target.DOMAgent.discardSearchResults(searchId);
+                target.DOMAgent.discardSearchResults(searchId).catch(() => {});
         }
+    }
+
+    // A tree outline can only reveal nodes under its root, and frame documents that are not spliced into the page
+    // tree are under no root. Results from different targets are merged in the order the outline shows them.
+    static _nodesUnderRootInTreeOrder(root, nodes)
+    {
+        let paths = new Map;
+        for (let node of nodes) {
+            let path = [];
+            let ancestor = node;
+            for (; ancestor && ancestor !== root; ancestor = ancestor.parentNode)
+                path.push(ancestor.index ?? -1);
+            if (ancestor)
+                paths.set(node, path.reverse());
+        }
+
+        return Array.from(paths.keys()).sort((a, b) => {
+            let pathA = paths.get(a);
+            let pathB = paths.get(b);
+            for (let i = 0; i < pathA.length && i < pathB.length; ++i) {
+                if (pathA[i] !== pathB[i])
+                    return pathA[i] - pathB[i];
+            }
+            return pathA.length - pathB.length;
+        });
     }
 
     // DOMObserver

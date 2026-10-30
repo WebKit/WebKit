@@ -605,6 +605,7 @@
 				WebKit/WKWebView/SiteIsolationDataDetectionTests.swift,
 				WebKit/WKWebView/SiteIsolationEditableRegionTests.swift,
 				WebKit/WKWebView/SiteIsolationEditingTests.swift,
+				WebKit/WKWebView/SiteIsolationElementsFindTests.swift,
 				WebKit/WKWebView/SiteIsolationFullscreenTests.swift,
 				WebKit/WKWebView/SiteIsolationLinkIndicatorTests.swift,
 				WebKit/WKWebView/SiteIsolationLookUpTests.swift,
