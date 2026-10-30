@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>media-source-smooth-switch-twice-ignored</title>
+  <script src="mock-media-source.js"></script>
+  <script src="../video-test.js"></script>
+  <script src="smooth-switch-test.js"></script>
+  <script>
+    smoothSwitchTest(async () => {
+      run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 5)');
+      await sourceBufferAppend(1, [[0, 6]]);
+      await showEnqueuedSamples();
+
+      await sourceBufferAppend(2, [[2, 8]]);
+      run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 6)');
+      consoleWrite("<br>Samples of the second generation must be enqueued as non-displaying.")
+      await showEnqueuedSamples();
+
+      await sourceBufferAppend(3, [[1, 7]]);
+      run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, QUEUE_DEPTH_UNLIMITED)');
+      consoleWrite("<br>Generation 3 should not be enqueued.");
+      await showEnqueuedSamples();
+      await showBufferedSamples();
+    });
+  </script>
+</head>
+
+<body>
+  <video controls></video>
+</body>
+
+</html>
