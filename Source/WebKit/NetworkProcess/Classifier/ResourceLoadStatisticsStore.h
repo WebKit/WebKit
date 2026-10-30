@@ -84,7 +84,7 @@ private:
 enum class OperatingDatesWindow : uint8_t { Long, Short, ForLiveOnTesting, ForReproTesting };
 enum class CookieAccess : uint8_t { CannotRequest, BasedOnCookiePolicy, OnlyIfGranted };
 enum class CanRequestStorageAccessWithoutUserInteraction : bool { No, Yes };
-enum class DataRemovalFrequency : uint8_t { Never, Short, Long };
+enum class DataRemovalFrequency : uint8_t { Never, Short, Long, Exempt };
 
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsStore final : public RefCountedAndCanMakeWeakPtr<ResourceLoadStatisticsStore>,  public DatabaseUtilities {

@@ -282,6 +282,8 @@ http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect-fetch.
 http/tests/resourceLoadStatistics/only-accept-first-party-cookies-with-third-party-cookie-blocking.html [ Skip ]
 http/tests/resourceLoadStatistics/log-cross-site-load-with-filtered-link-decoration-and-fragment.html [ Skip ]
 http/tests/resourceLoadStatistics/log-cross-site-load-with-filtered-link-decoration.html [ Skip ]
+http/tests/resourceLoadStatistics/data-removal-frequency-exempt-for-site-navigated-to-with-filtered-link-decoration.html [ Skip ]
+http/tests/resourceLoadStatistics/uncapped-lifetime-for-cookie-set-in-js-with-filtered-link-query-from-prevalent-resource.html [ Skip ]
 http/tests/cookies/multiple-cookies-iframes.https.html [ Skip ]
 http/tests/cookies/multiple-cookies.https.html [ Skip ]
 
