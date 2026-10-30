@@ -239,6 +239,10 @@ LineWidth effectiveOutlineWidth(const ComputedStyle&);
 WEBCORE_EXPORT UsedOutlineOffset effectiveOutlineOffset(const ComputedStyle&);
 // How far the outline reaches outside the border box.
 float effectiveOutlineSize(const ComputedStyle&, ZoomFactor, float deviceScaleFactor);
+// The 'vertical-align' value that non-SVG layout, editing and accessibility act on. All of them read it
+// through here, so that it can later be derived from the 'alignment-baseline' and 'baseline-shift'
+// longhands once 'vertical-align' is implemented as a shorthand.
+VerticalAlign effectiveVerticalAlign(const ComputedStyle&);
 
 } // namespace Style
 } // namespace WebCore

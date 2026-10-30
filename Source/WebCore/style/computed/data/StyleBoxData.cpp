@@ -34,7 +34,8 @@ namespace Style {
 struct SameSizeAsStyleBoxData : public RefCounted<SameSizeAsStyleBoxData> {
     PrimitiveData length[6];
     VerticalAlign verticalAlign;
-    uint8_t bitfield;
+    BaselineShift baselineShift;
+    uint8_t bitfields[2];
     int m_zIndex[2];
 };
 static_assert(sizeof(BoxData) == sizeof(SameSizeAsStyleBoxData), "BoxData should not grow");
@@ -49,10 +50,12 @@ BoxData::BoxData()
     , maxWidth(ComputedStyle::initialMaxWidth())
     , maxHeight(ComputedStyle::initialMaxHeight())
     , verticalAlign(ComputedStyle::initialVerticalAlign())
+    , baselineShift(ComputedStyle::initialBaselineShift())
     , hasAutoSpecifiedZIndex(static_cast<uint8_t>(ComputedStyle::initialSpecifiedZIndex().m_isAuto))
     , hasAutoUsedZIndex(static_cast<uint8_t>(ComputedStyle::initialUsedZIndex().m_isAuto))
     , boxDecorationBreak(static_cast<uint8_t>(BoxDecorationBreak::Slice))
     , baselineSource(static_cast<uint8_t>(ComputedStyle::initialBaselineSource()))
+    , alignmentBaseline(static_cast<uint8_t>(ComputedStyle::initialAlignmentBaseline()))
     , specifiedZIndexValue(ComputedStyle::initialSpecifiedZIndex().m_value)
     , usedZIndexValue(ComputedStyle::initialUsedZIndex().m_value)
 {
@@ -67,10 +70,12 @@ inline BoxData::BoxData(const BoxData& o)
     , maxWidth(o.maxWidth)
     , maxHeight(o.maxHeight)
     , verticalAlign(o.verticalAlign)
+    , baselineShift(o.baselineShift)
     , hasAutoSpecifiedZIndex(o.hasAutoSpecifiedZIndex)
     , hasAutoUsedZIndex(o.hasAutoUsedZIndex)
     , boxDecorationBreak(o.boxDecorationBreak)
     , baselineSource(o.baselineSource)
+    , alignmentBaseline(o.alignmentBaseline)
     , specifiedZIndexValue(o.specifiedZIndexValue)
     , usedZIndexValue(o.usedZIndexValue)
 {
@@ -90,10 +95,12 @@ bool BoxData::operator==(const BoxData& o) const
         && maxWidth == o.maxWidth
         && maxHeight == o.maxHeight
         && verticalAlign == o.verticalAlign
+        && baselineShift == o.baselineShift
         && usedZIndexValue == o.usedZIndexValue
         && hasAutoUsedZIndex == o.hasAutoUsedZIndex
         && boxDecorationBreak == o.boxDecorationBreak
         && baselineSource == o.baselineSource
+        && alignmentBaseline == o.alignmentBaseline
         && specifiedZIndexValue == o.specifiedZIndexValue
         && hasAutoSpecifiedZIndex == o.hasAutoSpecifiedZIndex;
 }
@@ -111,17 +118,43 @@ void BoxData::dumpDifferences(TextStream& ts, const BoxData& other) const
     LOG_IF_DIFFERENT(maxHeight);
 
     LOG_IF_DIFFERENT(verticalAlign);
+    LOG_IF_DIFFERENT(baselineShift);
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasAutoSpecifiedZIndex);
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasAutoUsedZIndex);
 
     LOG_IF_DIFFERENT_WITH_CAST(BoxDecorationBreak, boxDecorationBreak);
     LOG_IF_DIFFERENT_WITH_CAST(BaselineSource, baselineSource);
+    LOG_IF_DIFFERENT_WITH_CAST(AlignmentBaseline, alignmentBaseline);
 
     LOG_IF_DIFFERENT(specifiedZIndexValue);
     LOG_IF_DIFFERENT(usedZIndexValue);
 }
 #endif
+
+TextStream& operator<<(TextStream& ts, const BoxData& data)
+{
+    ts.dumpProperty("width"_s, data.width);
+    ts.dumpProperty("height"_s, data.height);
+    ts.dumpProperty("min-width"_s, data.minWidth);
+    ts.dumpProperty("min-height"_s, data.minHeight);
+    ts.dumpProperty("max-width"_s, data.maxWidth);
+    ts.dumpProperty("max-height"_s, data.maxHeight);
+    ts.dumpProperty("vertical-align"_s, data.verticalAlign);
+    ts.dumpProperty("baseline-shift"_s, data.baselineShift);
+    ts.dumpProperty("box-decoration-break"_s, static_cast<BoxDecorationBreak>(data.boxDecorationBreak));
+    ts.dumpProperty("baseline-source"_s, static_cast<BaselineSource>(data.baselineSource));
+    ts.dumpProperty("alignment-baseline"_s, static_cast<AlignmentBaseline>(data.alignmentBaseline));
+    if (data.hasAutoSpecifiedZIndex)
+        ts.dumpProperty("z-index"_s, "auto"_s);
+    else
+        ts.dumpProperty("z-index"_s, data.specifiedZIndexValue);
+    if (data.hasAutoUsedZIndex)
+        ts.dumpProperty("used z-index"_s, "auto"_s);
+    else
+        ts.dumpProperty("used z-index"_s, data.usedZIndexValue);
+    return ts;
+}
 
 } // namespace Style
 } // namespace WebCore

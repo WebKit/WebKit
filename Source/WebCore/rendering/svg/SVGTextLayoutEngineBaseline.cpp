@@ -49,7 +49,7 @@ float SVGTextLayoutEngineBaseline::calculateBaselineShift(const Style::ComputedS
         [&](const CSS::Keyword::Super&) -> float {
             return m_font->metricsOfPrimaryFont().height() / 2;
         },
-        [&](const Style::SVGBaselineShift::LengthPercentage& value) -> float {
+        [&](const Style::BaselineShift::LengthPercentage& value) -> float {
             return Style::evaluate<float>(value, m_font->size(), style.usedZoomForLength());
         }
     );

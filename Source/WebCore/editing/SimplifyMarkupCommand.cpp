@@ -52,8 +52,8 @@ static bool mayAffectLayout(const RenderElement& renderer)
     auto hasHardLineBreakChildOnly = renderer.firstChild() && renderer.firstChild() == renderer.lastChild() && renderer.firstChild()->isBR();
     bool checkFonts = renderer.document().inNoQuirksMode();
     auto affectsGeometry = (parentIsInlineBox && mayAffectLayout(parent))
-        || (parentIsInlineBox && !WTF::holdsAlternative<CSS::Keyword::Baseline>(parentStyle->verticalAlign()))
-        || !WTF::holdsAlternative<CSS::Keyword::Baseline>(renderer.style().verticalAlign())
+        || (parentIsInlineBox && !WTF::holdsAlternative<CSS::Keyword::Baseline>(Style::effectiveVerticalAlign(parentStyle.get())))
+        || !WTF::holdsAlternative<CSS::Keyword::Baseline>(Style::effectiveVerticalAlign(renderer.style()))
         || !renderer.style().textEmphasisStyle().isNone()
         || (checkFonts && (!protect(parentStyle->fontCascade())->metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(protect(renderer.style().fontCascade())->metricsOfPrimaryFont())
         || parentStyle->textAutosizingAdjustedLineHeight() != renderer.style().textAutosizingAdjustedLineHeight()))
@@ -64,7 +64,7 @@ static bool mayAffectLayout(const RenderElement& renderer)
         CheckedRef parentFirstLineStyle = parent->firstLineStyle();
         CheckedRef childStyle = renderer.firstLineStyle();
         affectsGeometry = !protect(parentFirstLineStyle->fontCascade())->metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(protect(childStyle->fontCascade())->metricsOfPrimaryFont())
-            || !WTF::holdsAlternative<CSS::Keyword::Baseline>(childStyle->verticalAlign())
+            || !WTF::holdsAlternative<CSS::Keyword::Baseline>(Style::effectiveVerticalAlign(childStyle.get()))
             || parentFirstLineStyle->textAutosizingAdjustedLineHeight() != childStyle->textAutosizingAdjustedLineHeight();
     }
     return affectsGeometry;

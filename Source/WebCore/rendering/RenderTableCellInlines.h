@@ -70,7 +70,7 @@ inline bool RenderTableCell::isBaselineAligned() const
     if (auto alignContent = style().alignContent(); !alignContent.isNormal())
         return alignContent.isFirstBaseline();
 
-    auto& verticalAlign = style().verticalAlign();
+    auto verticalAlign = Style::effectiveVerticalAlign(style());
     return WTF::holdsAlternative<CSS::Keyword::Baseline>(verticalAlign)
         || WTF::holdsAlternative<CSS::Keyword::TextBottom>(verticalAlign)
         || WTF::holdsAlternative<CSS::Keyword::TextTop>(verticalAlign)

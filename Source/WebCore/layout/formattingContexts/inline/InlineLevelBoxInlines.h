@@ -37,7 +37,7 @@ namespace Layout {
 
 template<typename PreferredLineHeightFunctor> InlineLevelBox::VerticalAlignment toInlineBoxLevelVerticalAlign(const Style::ComputedStyle& style, NOESCAPE const PreferredLineHeightFunctor& preferredLineHeightFunctor)
 {
-    return WTF::switchOn(style.verticalAlign(),
+    return WTF::switchOn(Style::effectiveVerticalAlign(style),
         [](CSS::SpecificKeyword auto const& keyword) -> InlineLevelBox::VerticalAlignment {
             return keyword;
         },

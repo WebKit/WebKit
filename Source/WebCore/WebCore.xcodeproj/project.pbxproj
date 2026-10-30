@@ -5093,7 +5093,7 @@
 		BC22AA642E357814009AC0C3 /* StyleSVGRadiusComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA5E2E35729F009AC0C3 /* StyleSVGRadiusComponent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC22AA662E357BBA009AC0C3 /* StyleSVGStrokeDashoffset.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA652E357BBA009AC0C3 /* StyleSVGStrokeDashoffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC22AA6A2E357D38009AC0C3 /* StyleSVGStrokeDasharray.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA692E357D38009AC0C3 /* StyleSVGStrokeDasharray.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC22AA6E2E35C74C009AC0C3 /* StyleSVGBaselineShift.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA6D2E359F42009AC0C3 /* StyleSVGBaselineShift.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC22AA6E2E35C74C009AC0C3 /* StyleBaselineShift.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA6D2E359F42009AC0C3 /* StyleBaselineShift.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC22AA812E367D83009AC0C3 /* StyleVerticalAlign.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA7F2E367D83009AC0C3 /* StyleVerticalAlign.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC22AA8E2E369EB1009AC0C3 /* StyleShapeMargin.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA8A2E36996F009AC0C3 /* StyleShapeMargin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC22AA8F2E369EB1009AC0C3 /* StyleShapeOutside.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA8B2E369AB7009AC0C3 /* StyleShapeOutside.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -19224,8 +19224,8 @@
 		BC22AA672E357C23009AC0C3 /* StyleSVGStrokeDashoffset.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleSVGStrokeDashoffset.cpp; sourceTree = "<group>"; };
 		BC22AA692E357D38009AC0C3 /* StyleSVGStrokeDasharray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleSVGStrokeDasharray.h; sourceTree = "<group>"; };
 		BC22AA6B2E35988A009AC0C3 /* StyleSVGStrokeDasharray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleSVGStrokeDasharray.cpp; sourceTree = "<group>"; };
-		BC22AA6C2E359F42009AC0C3 /* StyleSVGBaselineShift.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleSVGBaselineShift.cpp; sourceTree = "<group>"; };
-		BC22AA6D2E359F42009AC0C3 /* StyleSVGBaselineShift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleSVGBaselineShift.h; sourceTree = "<group>"; };
+		BC22AA6C2E359F42009AC0C3 /* StyleBaselineShift.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleBaselineShift.cpp; sourceTree = "<group>"; };
+		BC22AA6D2E359F42009AC0C3 /* StyleBaselineShift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleBaselineShift.h; sourceTree = "<group>"; };
 		BC22AA7E2E367D83009AC0C3 /* StyleVerticalAlign.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleVerticalAlign.cpp; sourceTree = "<group>"; };
 		BC22AA7F2E367D83009AC0C3 /* StyleVerticalAlign.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleVerticalAlign.h; sourceTree = "<group>"; };
 		BC22AA8A2E36996F009AC0C3 /* StyleShapeMargin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleShapeMargin.h; sourceTree = "<group>"; };
@@ -37648,6 +37648,8 @@
 		BC2387AA2D8742AB00698102 /* inline */ = {
 			isa = PBXGroup;
 			children = (
+				BC22AA6C2E359F42009AC0C3 /* StyleBaselineShift.cpp */,
+				BC22AA6D2E359F42009AC0C3 /* StyleBaselineShift.h */,
 				BC10DA8B2E80D597000EE742 /* StyleLineFitEdge.h */,
 				BC7826262E820D8800FB0C7E /* StyleLineHeight.cpp */,
 				BC7826252E820D8800FB0C7E /* StyleLineHeight.h */,
@@ -37680,8 +37682,6 @@
 		BC2A0CE02E0314ED003CBA0E /* svg */ = {
 			isa = PBXGroup;
 			children = (
-				BC22AA6C2E359F42009AC0C3 /* StyleSVGBaselineShift.cpp */,
-				BC22AA6D2E359F42009AC0C3 /* StyleSVGBaselineShift.h */,
 				BC22AA602E357407009AC0C3 /* StyleSVGCenterCoordinateComponent.h */,
 				BC22AA5F2E357323009AC0C3 /* StyleSVGCoordinateComponent.h */,
 				BC0A30872E871139007B809D /* StyleSVGGlyphOrientationVertical.cpp */,
@@ -49224,6 +49224,7 @@
 				BC4631F02EAC585B00EA911F /* StyleBackgroundLayers.h in Headers */,
 				BC2E5C972E47B80A0083FFF5 /* StyleBackgroundSize.h in Headers */,
 				BC76ADBA2EB9411300331BEC /* StyleBaselineAlignmentPreference.h in Headers */,
+				BC22AA6E2E35C74C009AC0C3 /* StyleBaselineShift.h in Headers */,
 				BCB2720A2CC1F1DB00265123 /* StyleBasicShape.h in Headers */,
 				DDCF765D2C7F85E2005DDAFF /* StyleBlockEllipsis.h in Headers */,
 				BC092A772E300E5D002ACB2C /* StyleBlockStepSize.h in Headers */,
@@ -49549,7 +49550,6 @@
 				BC34D2BC2E3BDAB4001EAD95 /* StyleStrokeMiterlimit.h in Headers */,
 				BC092AFA2E33DBE9002ACB2C /* StyleStrokeWidth.h in Headers */,
 				BC63AD402F084C2F007B62C4 /* StyleSurroundData.h in Headers */,
-				BC22AA6E2E35C74C009AC0C3 /* StyleSVGBaselineShift.h in Headers */,
 				BC22AA622E357814009AC0C3 /* StyleSVGCenterCoordinateComponent.h in Headers */,
 				BC22AA632E357814009AC0C3 /* StyleSVGCoordinateComponent.h in Headers */,
 				BC63AD3A2F084C2F007B62C4 /* StyleSVGData.h in Headers */,

@@ -3312,6 +3312,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/images/kinds/StyleImage.h
 
+    style/values/inline/StyleBaselineShift.h
     style/values/inline/StyleLineFitEdge.h
     style/values/inline/StyleLineHeight.h
     style/values/inline/StyleTextBoxEdge.h
@@ -3460,7 +3461,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/speech/StyleSpeakAs.h
 
-    style/values/svg/StyleSVGBaselineShift.h
     style/values/svg/StyleSVGCenterCoordinateComponent.h
     style/values/svg/StyleSVGCoordinateComponent.h
     style/values/svg/StyleSVGGlyphOrientationVertical.h
