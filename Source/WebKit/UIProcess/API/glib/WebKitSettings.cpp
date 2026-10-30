@@ -193,6 +193,7 @@ enum {
     PROP_ENABLE_WEBRTC,
     PROP_DISABLE_WEB_SECURITY,
     PROP_WEBRTC_UDP_PORTS_RANGE,
+    PROP_SHOW_ON_SCREEN_KEYBOARD_ON_VIEW_FOCUS,
     N_PROPERTIES,
 };
 
@@ -428,6 +429,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     case PROP_WEBRTC_UDP_PORTS_RANGE:
         webkit_settings_set_webrtc_udp_ports_range(settings, g_value_get_string(value));
         break;
+    case PROP_SHOW_ON_SCREEN_KEYBOARD_ON_VIEW_FOCUS:
+        webkit_settings_set_show_on_screen_keyboard_on_view_focus(settings, g_value_get_boolean(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -644,6 +648,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         break;
     case PROP_WEBRTC_UDP_PORTS_RANGE:
         g_value_set_string(value, webkit_settings_get_webrtc_udp_ports_range(settings));
+        break;
+    case PROP_SHOW_ON_SCREEN_KEYBOARD_ON_VIEW_FOCUS:
+        g_value_set_boolean(value, webkit_settings_get_show_on_screen_keyboard_on_view_focus(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1736,6 +1743,25 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
         _("WebRTC UDP ports range"),
         _("WebRTC UDP ports range, the format is min-port:max-port"),
         nullptr, // A null string forces the default value.
+        readWriteConstructParamFlags);
+
+    /**
+     * WebKitSettings:show-on-screen-keyboard-on-view-focus: (getter get_show_on_screen_keyboard_on_view_focus) (setter set_show_on_screen_keyboard_on_view_focus) (attributes org.gtk.Property.get=webkit_settings_get_show_on_screen_keyboard_on_view_focus org.gtk.Property.set=webkit_settings_set_show_on_screen_keyboard_on_view_focus):
+     *
+     * Whether to show the on-screen keyboard again when the view gets the focus back, for example after
+     * switching back from another tab, and a text field still has the focus.
+     *
+     * When this setting is disabled, the input method gets the focus again, but the on-screen keyboard is
+     * inhibited until the user taps or clicks the field. When it is enabled, the on-screen keyboard is
+     * shown again, even if a script focused the field.
+     *
+     * Since: 2.56
+     */
+    sObjProperties[PROP_SHOW_ON_SCREEN_KEYBOARD_ON_VIEW_FOCUS] = g_param_spec_boolean(
+        "show-on-screen-keyboard-on-view-focus",
+        _("Show on-screen keyboard on view focus"),
+        _("Whether to show the on-screen keyboard again when the view gets the focus back"),
+        FEATURE_DEFAULT(ShowOnScreenKeyboardOnViewFocus),
         readWriteConstructParamFlags);
 
     g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
@@ -4484,4 +4510,43 @@ webkit_settings_set_webrtc_udp_ports_range(WebKitSettings* settings, const gchar
 #else
     UNUSED_PARAM(udpPortsRange);
 #endif
+}
+
+/**
+ * webkit_settings_get_show_on_screen_keyboard_on_view_focus: (get-property show-on-screen-keyboard-on-view-focus):
+ * @settings: a #WebKitSettings
+ *
+ * Get the [property@Settings:show-on-screen-keyboard-on-view-focus] property.
+ *
+ * Returns: %TRUE if the on-screen keyboard is shown again when the view gets the focus back, or %FALSE otherwise.
+ *
+ * Since: 2.56
+ */
+gboolean webkit_settings_get_show_on_screen_keyboard_on_view_focus(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return settings->priv->preferences->showOnScreenKeyboardOnViewFocus();
+}
+
+/**
+ * webkit_settings_set_show_on_screen_keyboard_on_view_focus: (set-property show-on-screen-keyboard-on-view-focus):
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the [property@Settings:show-on-screen-keyboard-on-view-focus] property.
+ *
+ * Since: 2.56
+ */
+void webkit_settings_set_show_on_screen_keyboard_on_view_focus(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = priv->preferences->showOnScreenKeyboardOnViewFocus();
+    if (currentValue == enabled)
+        return;
+
+    priv->preferences->setShowOnScreenKeyboardOnViewFocus(enabled);
+    g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_SHOW_ON_SCREEN_KEYBOARD_ON_VIEW_FOCUS]);
 }

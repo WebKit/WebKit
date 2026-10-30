@@ -5893,6 +5893,12 @@ ShowModalDialogEnabled:
       default: false
     WebCore: false
 
+ShowOnScreenKeyboardOnViewFocus:
+  type: bool
+  status: embedder
+  condition: PLATFORM(GTK) || PLATFORM(WPE)
+  defaultValue: false
+
 ShowsToolTipOverTruncatedText:
   type: bool
   status: embedder

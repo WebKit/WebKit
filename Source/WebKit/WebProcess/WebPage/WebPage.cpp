@@ -5047,6 +5047,10 @@ void WebPage::setActivityState(OptionSet<ActivityState> activityState, ActivityS
         page->setActivityState(activityState);
     }
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    restoreInputMethodStateAfterPageFocus();
+#endif
+
     protect(drawingArea())->activityStateDidChange(changed, activityStateChangeID, WTF::move(callback));
     WebProcess::singleton().pageActivityStateDidChange(m_identifier, changed);
 
@@ -8353,9 +8357,8 @@ void WebPage::elementDidBlur(WebCore::Element& element)
 #elif PLATFORM(MAC)
                 protectedThis->send(Messages::WebPageProxy::SetFocusedElementInputType(InputType::None));
 #elif PLATFORM(GTK) || PLATFORM(WPE)
-                // Clear it first so that setInputMethodState() does not hold the reset back again.
-                protectedThis->m_recentlyBlurredElement = nullptr;
-                protectedThis->setInputMethodState(nullptr);
+                RefPtr blurredElement = protectedThis->m_recentlyBlurredElement;
+                protectedThis->resetInputMethodStateAfterBlur(*blurredElement);
 #endif
             }
             protectedThis->m_recentlyBlurredElement = nullptr;

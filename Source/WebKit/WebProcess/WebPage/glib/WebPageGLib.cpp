@@ -43,6 +43,7 @@
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/NodeDocument.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/PointerCharacteristics.h>
@@ -230,9 +231,15 @@ void WebPage::setInputMethodState(Element* element)
     if (!element && m_recentlyBlurredElement)
         return;
 
+    m_focusedElementBeforePageBlur = nullptr;
+    sendInputMethodState(element, !m_userIsInteracting);
+}
+
+void WebPage::sendInputMethodState(Element* element, bool inhibitOnScreenKeyboard)
+{
     auto state = inputMethodStateForElement(element);
 
-    if (state && !m_userIsInteracting)
+    if (state && inhibitOnScreenKeyboard)
         state->hints.add(InputMethodState::Hint::InhibitOnScreenKeyboard);
 
     if (m_inputMethodState == state)
@@ -240,6 +247,29 @@ void WebPage::setInputMethodState(Element* element)
 
     m_inputMethodState = state;
     send(Messages::WebPageProxy::SetInputMethodState(state));
+}
+
+void WebPage::resetInputMethodStateAfterBlur(Element& element)
+{
+    bool isPageBlur = !windowAndWebPageAreFocused() && protect(element.document())->focusedElement() == &element;
+    m_focusedElementBeforePageBlur = isPageBlur && m_inputMethodState ? &element : nullptr;
+    sendInputMethodState(nullptr, false);
+}
+
+void WebPage::restoreInputMethodStateAfterPageFocus()
+{
+    if (!m_focusedElementBeforePageBlur || !windowAndWebPageAreFocused())
+        return;
+
+    RefPtr element = std::exchange(m_focusedElementBeforePageBlur, nullptr);
+    if (protect(element->document())->focusedElement() != element)
+        return;
+
+    sendInputMethodState(element.get(), !m_page->settings().showOnScreenKeyboardOnViewFocus());
+
+    // The UI process forgot the cursor area and the surrounding text when the view lost the focus. The selection did not
+    // change, so nothing else is sure to send an editor state.
+    scheduleFullEditorStateUpdate();
 }
 
 void WebPage::focusedElementDidChangeReadOnly(Element& element)
