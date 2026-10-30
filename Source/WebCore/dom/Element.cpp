@@ -3460,12 +3460,6 @@ void Element::setInvokedPopover(RefPtr<Element>&& element)
     invalidateStyle();
 }
 
-inline void ShadowRoot::setHost(Element* host)
-{
-    m_host = host;
-    m_shadowIncludingRoot = host ? &host->shadowIncludingRoot() : this;
-}
-
 void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 {
     ASSERT(!newShadowRoot->hasChildNodes());
@@ -3480,7 +3474,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 
         m_shadowRoot = WTF::move(newShadowRoot);
 
-        shadowRoot->setHost(this);
+        shadowRoot->setHost(*this);
         shadowRoot->setParentTreeScope(protect(treeScope()));
 
         NodeVector postInsertionNotificationTargets;
