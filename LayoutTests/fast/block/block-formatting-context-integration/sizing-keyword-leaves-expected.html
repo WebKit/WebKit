@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 200px; background: lightgray; margin-bottom: 8px; }
+.flex { display: flex; background: lightblue; margin: 4px 0; }
+.flex > div { padding: 2px; margin: 2px; background: green; color: white; white-space: nowrap; }
+</style>
+<div class="root" id="resized">
+  <div class="flex" style="min-width: fit-content"><div>wider than its containing block</div><div>item</div></div>
+  <div class="flex" style="width: fit-content; margin-left: auto; margin-right: auto"><div id="text">x</div></div>
+  <div class="flex" style="max-width: min-content; padding: 3px"><div>min</div><div>content</div></div>
+  <div style="display: grid; grid-template-columns: auto auto; width: max-content; background: orange"><div>grid</div><div>max-content</div></div>
+  <div class="flex" style="width: min-content; border: 2px solid blue"><div>min</div><div>content</div></div>
+</div>
+<div class="root"><div class="flex" style="width: calc-size(auto, size - 50px)"><div>calc-size</div></div></div>
+<div class="root" dir="rtl"><div class="flex" style="width: fit-content; margin-right: 10px"><div>right to left</div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "150px";
+document.getElementById("text").firstChild.data = "centered text that got longer";
+</script>

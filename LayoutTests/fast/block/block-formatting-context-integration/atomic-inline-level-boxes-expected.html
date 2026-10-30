@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 400px; background: lightgray; margin-bottom: 10px; }
+.ib { display: inline-block; background: orange; vertical-align: top; }
+.flex { display: inline-flex; background: lightblue; }
+.flex > div { width: 30px; height: 15px; background: blue; margin: 2px; }
+</style>
+<div class="root" id="root">
+  <div>text <span class="ib" style="width: 25%; height: 20px"></span> text</div>
+  <div style="padding: 0 20px">shrink <span class="ib" style="padding: 3px">xx xx</span> to fit</div>
+  <div>inline <span class="flex"><div></div><div></div></span> flex and <span style="display: inline-table; background: yellow"><span style="display: table-cell">cell</span></span></div>
+  <div style="height: 60px">percentage <span class="ib" style="height: 50%; width: 20px"></span> height</div>
+  <div>baseline <span class="ib" style="vertical-align: baseline">x<br>xx</span> alignment</div>
+  <div>fixed <span class="ib" style="height: 50px"><canvas width="20" height="100" style="max-height: 50%; background: blue"></canvas></span> height</div>
+  <div style="height: 50px"><span class="ib"><canvas width="20" height="40" style="max-height: 10%; background: blue"></canvas></span></div>
+  <div id="sized" style="height: 50px"><div style="height: 100%"><span class="ib" style="height: 100%; width: 20px"></span></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("root").style.width = "300px";
+document.getElementById("sized").style.height = "80px";
+document.body.offsetHeight;
+</script>
