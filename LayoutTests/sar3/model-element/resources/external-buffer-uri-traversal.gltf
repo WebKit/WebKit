@@ -1,0 +1,79 @@
+{
+    "asset": {
+        "version": "2.0"
+    },
+    "buffers": [
+        {
+            "uri": "../../../../../../../../../../../../../../../../../../../../../../../../private/etc/hosts",
+            "byteLength": 213
+        },
+        {
+            "uri": "data:application/octet-stream;base64,AAAA",
+            "byteLength": 3
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 3
+        },
+        {
+            "buffer": 1,
+            "byteOffset": 0,
+            "byteLength": 3
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5121,
+            "count": 1,
+            "type": "VEC3",
+            "min": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "max": [
+                255.0,
+                255.0,
+                255.0
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5121,
+            "count": 3,
+            "type": "SCALAR"
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 0
+                    },
+                    "indices": 1,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "mesh": 0
+        }
+    ],
+    "scenes": [
+        {
+            "nodes": [
+                0
+            ]
+        }
+    ],
+    "scene": 0
+}
