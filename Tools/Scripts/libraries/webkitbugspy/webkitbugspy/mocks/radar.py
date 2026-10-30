@@ -537,6 +537,9 @@ class Radar(Base, ContextStack):
             return os.environ.get('RADAR_USERNAME')
 
     class AuthenticationStrategyAppleConnect(object):
+        def __init__(self, interactivity_type: str = 'gui') -> None:
+            self.interactivity_type = interactivity_type
+
         def username(self) -> str | None:
             return None
 
