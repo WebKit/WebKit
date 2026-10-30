@@ -42,6 +42,9 @@
       promise_test(async () => {
         let result = scroller[scroll_method]({ behavior: behavior });
         assert_true(result instanceof Promise);
+        const result_value = await result;
+        assert_equals(typeof result_value, "object");
+        assert_equals(typeof result_value.interrupted, "boolean");
       }, `${test_label}: return type`);
 
       promise_test(async () => {
@@ -59,8 +62,10 @@
                 "Position before await");
         }
 
-        await promise;
+        const result_value = await promise;
         assert_equals(scroller.scrollTop, offset, "Position after await");
+        assert_equals(typeof result_value, "object");
+        assert_equals(typeof result_value.interrupted, "boolean");
       }, `${test_label}: promise behavior`);
     }
   }

@@ -1,4 +1,3 @@
-Scrollable area to test.
 
 PASS scrollTo with 0 arguments
 FAIL scrollTo with 1 non-dictionary argument promise_test: Unhandled rejection with value: object "TypeError: Type error"

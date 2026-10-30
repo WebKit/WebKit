@@ -5147,6 +5147,7 @@ imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/req-tcu-font.htm
 # Untriaged CSSOM-View timeout failures.
 imported/w3c/web-platform-tests/css/cssom-view/smooth-scrollIntoView-with-smooth-fragment-scroll-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/css/cssom-view/smooth-scroll-nonstop.html [ Skip ] # passes few subtests
+imported/w3c/web-platform-tests/css/cssom-view/mouseEvent-offsetXY-svg.html [ Skip ]
 
 webkit.org/b/145176 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_align-items-stretch-3.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/select-element-multiple.html [ ImageOnlyFailure ]
