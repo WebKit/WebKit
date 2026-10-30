@@ -36,7 +36,7 @@ void fliteDeleteWave(cst_wave*);
 namespace WTF {
 
 WTF_DEFINE_GPTR_DELETER(cst_voice, WebCore::fliteDeleteVoice)
-WTF_DEFINE_GPTR_DELETER(cst_wave, WebCore::fliteDeleteWave)
+WTF_DEFINE_GPTR_DELETER_UNCHECKED(cst_wave, WebCore::fliteDeleteWave)
 
 } // namespace WTF
 

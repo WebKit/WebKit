@@ -25,6 +25,7 @@
 #include <gio/gio.h>
 #include <utility>
 #include <wtf/Noncopyable.h>
+#include <wtf/glib/GPtrSpecializations.h>
 
 namespace WTF {
 
@@ -54,7 +55,8 @@ using GUniquePtr = std::unique_ptr<T, U>;
     macro(GVariantType, g_variant_type_free) \
     macro(GMarkupParseContext, g_markup_parse_context_free)
 
-#define WTF_DEFINE_GPTR_DELETER(typeName, deleterFunc) \
+// Only for types declared as typedef struct { ... } X, which GPtrSpecializations.h cannot forward-declare.
+#define WTF_DEFINE_GPTR_DELETER_UNCHECKED(typeName, deleterFunc) \
     template<> struct GPtrDeleter<typeName> \
     { \
         void operator() (typeName* ptr) const \
@@ -63,10 +65,15 @@ using GUniquePtr = std::unique_ptr<T, U>;
         } \
     };
 
+#define WTF_DEFINE_GPTR_DELETER(typeName, deleterFunc) \
+    WTF_CHECK_GPTR_DELETER_DECLARED(typeName) \
+    WTF_DEFINE_GPTR_DELETER_UNCHECKED(typeName, deleterFunc)
+
 FOR_EACH_GLIB_DELETER(WTF_DEFINE_GPTR_DELETER)
 #undef FOR_EACH_GLIB_DELETER
 
 #define WTF_DEFINE_DEPRECATED_GPTR_DELETER(typeName, deleterFunc) \
+    WTF_CHECK_GPTR_DELETER_DECLARED(typeName) \
     template<> struct GPtrDeleter<typeName> { \
         void operator()(typeName* ptr) const \
         { \

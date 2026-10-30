@@ -83,6 +83,7 @@ WTF_DECLARE_GREF_TRAITS(GstEGLImage)
 #endif
 
 // GstToc needs to be defined manually because gst_toc_ref() causes a warning if return value is not used.
+WTF_CHECK_GREF_TRAITS_DECLARED(GstToc)
 template<> struct GRefPtrDefaultRefDerefTraits<GstToc> {
     static inline GstToc* refIfNotNull(GstToc* ptr)
     {
