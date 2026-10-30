@@ -40,6 +40,7 @@
 #include "HTMLNames.h"
 #include "Icon.h"
 #include "InputTypeNames.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "LocalizedStrings.h"
@@ -164,8 +165,12 @@ void FileInputType::handleDOMActivateEvent(Event& event)
     if (element()->isDisabledFormControl())
         return;
 
-    if (!UserGestureIndicator::processingUserGesture())
-        return;
+    // Like showPicker(), accept transient activation, since a script that runs after an async hop no longer has the gesture token.
+    if (!UserGestureIndicator::processingUserGesture()) {
+        RefPtr window = element()->document().window();
+        if (!window || !window->consumeTransientActivation())
+            return;
+    }
 
     showPicker();
     event.setDefaultHandled();
