@@ -2131,7 +2131,7 @@ static Vector<std::pair<String, FloatRect>> extractAllTextAndRectsRecursive(Docu
         if (absoluteBounds.isEmpty())
             absoluteBounds = renderer->absoluteBoundingBoxRect();
 
-        result.append({ trimmedText.toString(), view->contentsToRootView(absoluteBounds) });
+        result.append({ trimmedText.toString(), view->contentsToMainFrameView(absoluteBounds) });
     }
 
     for (auto& frameOwner : frameOwners) {
@@ -2147,15 +2147,16 @@ static Vector<std::pair<String, FloatRect>> extractAllTextAndRectsRecursive(Docu
 
 Vector<std::pair<String, FloatRect>> extractAllTextAndRects(Page& page)
 {
-    RefPtr mainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
-    if (!mainFrame)
-        return { };
+    Vector<std::pair<String, FloatRect>> result;
+    for (RefPtr frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame);
+        if (!localFrame || !localFrame->isRootFrame())
+            continue;
 
-    RefPtr document = mainFrame->document();
-    if (!document)
-        return { };
-
-    return extractAllTextAndRectsRecursive(*document);
+        if (RefPtr document = localFrame->document())
+            result.appendVector(extractAllTextAndRectsRecursive(*document));
+    }
+    return result;
 }
 
 static std::optional<SimpleRange> searchForClickTarget(Node& container, const String& searchText)

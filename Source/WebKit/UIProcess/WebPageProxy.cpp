@@ -21471,15 +21471,31 @@ void WebPageProxy::requestAllTextAndRects(CompletionHandler<void(Vector<Ref<API:
     if (!hasRunningProcess())
         return completion({ });
 
-    sendWithAsyncReply(Messages::WebPage::RequestAllTextAndRects(), [completion = WTF::move(completion), weakThis = WeakPtr { *this }](auto&& textAndRects) mutable {
+    ListHashSet<Ref<WebProcessProxy>> processes;
+    for (RefPtr frame = m_mainFrame; frame; frame = frame->traverseNext().frame)
+        processes.add(frame->process());
+
+    auto textAndRectsByProcess = Box<Vector<Vector<std::pair<String, FloatRect>>>>::create(processes.size());
+    Ref aggregator = CallbackAggregator::create([textAndRectsByProcess, completion = WTF::move(completion), weakThis = WeakPtr { *this }] mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return completion({ });
 
-        completion(WTF::map(WTF::move(textAndRects), [protectedThis](auto&& textAndRect) {
-            return API::TextRun::create(*protectedThis, WTF::move(textAndRect.first), WTF::move(textAndRect.second));
-        }));
+        Vector<Ref<API::TextRun>> textRuns;
+        for (auto& textAndRects : *textAndRectsByProcess) {
+            for (auto& [text, rect] : textAndRects)
+                textRuns.append(API::TextRun::create(*protectedThis, WTF::move(text), WTF::move(rect)));
+        }
+        completion(WTF::move(textRuns));
     });
+
+    size_t index = 0;
+    for (Ref process : processes) {
+        process->sendWithAsyncReply(Messages::WebPage::RequestAllTextAndRects(), [textAndRectsByProcess, index, aggregator](auto&& textAndRects) {
+            (*textAndRectsByProcess)[index] = WTF::move(textAndRects);
+        }, webPageIDInProcess(process));
+        ++index;
+    }
 }
 
 static Vector<Ref<API::TargetedElementInfo>> createTargetedElementInfos(WebPageProxy& page, Vector<WebCore::TargetedElementInfo>&& elements)
