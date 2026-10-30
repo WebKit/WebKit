@@ -697,6 +697,8 @@ public:
     inline NativeExecutable* promiseAnySlowRejectFunctionExecutable();
     inline NativeExecutable* proxyRevokeExecutable();
 
+    // Structure::visitChildren reads symbolImplToSymbolMap from GC marking threads.
+    Lock symbolImplToSymbolMapLock;
     WeakGCMap<WTF::SymbolImpl*, Symbol, PtrHash<WTF::SymbolImpl*>> symbolImplToSymbolMap;
     WeakGCMap<StringImpl*, JSString, PtrHash<StringImpl*>> atomStringToJSStringMap;
 #if ENABLE(WEBASSEMBLY)

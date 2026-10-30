@@ -33,6 +33,7 @@
 #include "JSCInlines.h"
 #include "PropertyNameArray.h"
 #include "PropertyTable.h"
+#include "Symbol.h"
 #include "WebAssemblyGCStructure.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/NeverDestroyed.h>
@@ -602,6 +603,9 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
 
     transition->m_blob.setIndexingModeIncludingHistory(structure->indexingModeIncludingHistory() & ~CopyOnWrite);
     transition->m_transitionPropertyName = propertyName.uid();
+    // visitChildren marks the Symbol of a symbol key, so revisit the new Structure.
+    if (propertyName.isSymbol())
+        vm.writeBarrier(transition);
     transition->setTransitionPropertyAttributes(attributes);
     transition->setTransitionKind(TransitionKind::PropertyAddition);
     transition->setPropertyTable(vm, structure->takePropertyTableOrCloneIfPinned(vm));
@@ -840,6 +844,8 @@ Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, Pr
 
     transition->m_blob.setIndexingModeIncludingHistory(structure->indexingModeIncludingHistory() & ~CopyOnWrite);
     transition->m_transitionPropertyName = propertyName.uid();
+    if (propertyName.isSymbol())
+        vm.writeBarrier(transition);
     transition->setTransitionPropertyAttributes(attributes);
     transition->setTransitionKind(TransitionKind::PropertyAttributeChange);
     transition->setPropertyTable(vm, structure->takePropertyTableOrCloneIfPinned(vm));
@@ -1404,6 +1410,20 @@ void Structure::didTransitionFromThisStructure(DeferredStructureTransitionWatchp
     fireStructureTransitionWatchpoint(deferred);
 }
 
+// A symbol-keyed property refs the SymbolImpl, not the Symbol cell. Mark the cell while a
+// live Structure has the property, so the symbol keeps its identity: otherwise a later
+// Object.getOwnPropertySymbols() creates a new cell for the same SymbolImpl, and WeakMap,
+// WeakSet, WeakRef and FinalizationRegistry entries keyed by the original cell are lost.
+// Registered symbols cannot be held weakly, and private symbols are never exposed.
+template<typename Visitor>
+static void appendSymbolForPropertyKey(VM& vm, Visitor& visitor, SymbolImpl& uid)
+{
+    if (uid.isRegistered() || uid.isPrivate())
+        return;
+    if (Symbol* symbol = Symbol::existingSymbolConcurrently(vm, uid))
+        visitor.appendUnbarriered(symbol);
+}
+
 template<typename Visitor>
 void Structure::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
@@ -1437,6 +1457,21 @@ void Structure::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         visitor.append(thisObject->m_propertyTableUnsafe);
     else if (thisObject->m_propertyTableUnsafe)
         thisObject->m_propertyTableUnsafe.clear();
+
+    // Each transition adds one key, and the previous Structure is visited above, so the
+    // transition chain covers every key. A pinned table is mutated in place instead.
+    VM& vm = thisObject->vm();
+    if (RefPtr uid = dynamicDowncast<SymbolImpl>(thisObject->m_transitionPropertyName.get()))
+        appendSymbolForPropertyKey(vm, visitor, *uid);
+    if (thisObject->isPinnedPropertyTable()) {
+        if (PropertyTable* table = thisObject->m_propertyTableUnsafe.get()) {
+            table->forEachProperty([&](const auto& entry) {
+                if (RefPtr uid = dynamicDowncast<SymbolImpl>(entry.key()))
+                    appendSymbolForPropertyKey(vm, visitor, *uid);
+                return IterationStatus::Continue;
+            });
+        }
+    }
 
     switch (thisObject->variant()) {
     case StructureVariant::Normal:
