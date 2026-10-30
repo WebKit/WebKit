@@ -2679,5 +2679,3 @@ webkit.org/b/329010 [ Tahoe+ ] compositing/filters/filter-fractional-translation
 webkit.org/b/329010 [ Tahoe+ ] compositing/filters/filter-fractional-translation-flipped.html [ ImageOnlyFailure ]
 webkit.org/b/329010 [ Tahoe+ ] compositing/filters/filter-fractional-translation-perspective.html [ ImageOnlyFailure ]
 webkit.org/b/329010 [ Tahoe+ ] compositing/filters/filter-fractional-translation-rotate-y.html [ ImageOnlyFailure ]
-
-webkit.org/b/329350 [ Debug ] fast/css-grid-layout/grid-auto-repeat-huge-grid.html [ Pass Timeout ]

@@ -43,8 +43,8 @@ ExplicitGridTrackSizes ExplicitGridResolver::resolve(const Style::ComputedStyle&
 }
 
 // Style keeps the auto-repeated tracks apart from the rest of the track list, so splice
-// each repetition in at the position the repeat() was specified.
-static Vector<Style::GridTrackSize> trackSizesWithAutoRepetitions(const Style::GridTemplateList& gridTemplateList, size_t repetitionCount)
+// the auto-repeated tracks in at the position the repeat() was specified.
+static Vector<Style::GridTrackSize> trackSizesWithAutoRepetitions(const Style::GridTemplateList& gridTemplateList, size_t autoRepeatTracksCount)
 {
     auto& gridTemplateListSizes = gridTemplateList.sizes;
     auto& autoRepeatSizes = gridTemplateList.autoRepeatSizes;
@@ -52,11 +52,14 @@ static Vector<Style::GridTrackSize> trackSizesWithAutoRepetitions(const Style::G
     ASSERT(insertionPoint <= gridTemplateListSizes.size());
 
     Vector<Style::GridTrackSize> trackSizes;
-    trackSizes.reserveInitialCapacity(gridTemplateListSizes.size() + repetitionCount * autoRepeatSizes.size());
+    trackSizes.reserveInitialCapacity(gridTemplateListSizes.size() + autoRepeatTracksCount);
     trackSizes.append(gridTemplateListSizes.span().first(insertionPoint));
-    for ([[maybe_unused]] auto repetition : std::views::iota(0uz, repetitionCount))
-        trackSizes.append(autoRepeatSizes.span());
+    for (auto autoRepeatTrackIndex : std::views::iota(0uz, autoRepeatTracksCount))
+        trackSizes.append(autoRepeatSizes[autoRepeatTrackIndex % autoRepeatSizes.size()]);
     trackSizes.append(gridTemplateListSizes.span().subspan(insertionPoint));
+
+    // The tracks after the repeat() are dropped too once the auto-repeated tracks reach the limit.
+    trackSizes.shrink(std::min<size_t>(trackSizes.size(), Style::GridPosition::max()));
     return trackSizes;
 }
 
@@ -66,9 +69,13 @@ ExplicitGridResolver::ResolveTrackSizesResult ExplicitGridResolver::resolveTrack
     if (gridTemplateList.autoRepeatType == AutoRepeatType::None || autoRepeatSizes.isEmpty())
         return { gridTemplateList.sizes, { } };
 
+    size_t maximumTracksCount = Style::GridPosition::max();
+    auto insertionPoint = gridTemplateList.autoRepeatInsertionPoint;
     auto repetitionCount = AutoRepeatResolver::resolveRepetitions(gridTemplateList, autoRepeatConstraint, usedGap, zoom);
-    auto firstAutoRepeatTrackIndex = gridTemplateList.autoRepeatInsertionPoint;
-    return { trackSizesWithAutoRepetitions(gridTemplateList, repetitionCount), { firstAutoRepeatTrackIndex, firstAutoRepeatTrackIndex + repetitionCount * autoRepeatSizes.size() } };
+    // The tracks before the repeat() can already reach the limit, which leaves no room for auto-repeated tracks.
+    auto remainingTracksCount = insertionPoint < maximumTracksCount ? maximumTracksCount - insertionPoint : 0;
+    auto autoRepeatTracksCount = std::min(repetitionCount * autoRepeatSizes.size(), remainingTracksCount);
+    return { trackSizesWithAutoRepetitions(gridTemplateList, autoRepeatTracksCount), { insertionPoint, insertionPoint + autoRepeatTracksCount } };
 }
 
 } // namespace Layout

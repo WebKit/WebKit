@@ -54,6 +54,7 @@ private:
         Vector<Style::GridTrackSize> trackSizes;
         WTF::Range<size_t> autoRepeatTracksIndexes;
     };
+    // This is clamped by the large grid limit.
     static ResolveTrackSizesResult resolveTrackSizes(const Style::GridTemplateList&, const AutoRepeatConstraint&, LayoutUnit usedGap, Style::ZoomFactor);
 };
 

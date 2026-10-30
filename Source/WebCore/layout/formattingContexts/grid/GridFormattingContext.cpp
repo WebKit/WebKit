@@ -220,7 +220,9 @@ static TrackSizingFunctionsList trackSizingFunctions(size_t totalTracksCount, si
 // https://drafts.csswg.org/css-grid-1/#valdef-repeat-auto-fit
 static BitVector collapsedTracksList(WTF::Range<size_t> autoFitTracksIndexes, size_t leadingImplicitTracksCount, const PlacedGridItemSpanList& gridItemSpans)
 {
-    ASSERT(autoFitTracksIndexes);
+    // The grid size limit leaves no auto-fit tracks when the tracks before the repeat() already reach it.
+    if (!autoFitTracksIndexes)
+        return { };
 
     // The auto-fit tracks are indexed within the explicit grid, which starts after the leading implicit tracks.
     auto firstAutoFitTrackIndex = leadingImplicitTracksCount + autoFitTracksIndexes.begin();
@@ -242,7 +244,6 @@ static BitVector collapsedTracksList(WTF::Range<size_t> autoFitTracksIndexes, si
 
 static BitVector collapsedColumnTracksList(const ExplicitGridTrackSizes& explicitGridTrackSizes, LeadingImplicitTracks leadingImplicitTracks, const GridAreas& gridAreas)
 {
-    ASSERT(explicitGridTrackSizes.columnAutoRepeatTracksIndexes);
     auto columnSpans = gridAreas.map([](auto& gridArea) {
         return WTF::Range<size_t> { gridArea.second.columnStartLine, gridArea.second.columnEndLine };
     });
@@ -251,7 +252,6 @@ static BitVector collapsedColumnTracksList(const ExplicitGridTrackSizes& explici
 
 static BitVector collapsedRowTracksList(const ExplicitGridTrackSizes& explicitGridTrackSizes, LeadingImplicitTracks leadingImplicitTracks, const GridAreas& gridAreas)
 {
-    ASSERT(explicitGridTrackSizes.rowAutoRepeatTracksIndexes);
     auto rowSpans = gridAreas.map([](auto& gridArea) {
         return WTF::Range<size_t> { gridArea.second.rowStartLine, gridArea.second.rowEndLine };
     });
