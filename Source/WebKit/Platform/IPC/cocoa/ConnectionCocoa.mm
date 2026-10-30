@@ -110,8 +110,6 @@ void Connection::platformInvalidate()
         return;
     }
 
-    if (std::exchange(m_pendingOutgoingMachMessage, nullptr))
-        didFinishSendingOutgoingMessage();
     m_isConnected = false;
 
     ASSERT(m_receivePort);
@@ -218,40 +216,51 @@ void Connection::platformOpen()
     getAuditToken();
 }
 
-bool Connection::hasPendingOutgoingMessage() const
+bool Connection::platformCanSendOutgoingMessages() const
 {
-    return m_pendingOutgoingMachMessage || !MACH_PORT_VALID(m_sendPort);
+    return MACH_PORT_VALID(m_sendPort);
 }
 
-bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
+bool Connection::platformHasMessageInFlight() const
 {
-    assertIsCurrent(m_connectionQueue.get());
-    ASSERT(m_isConnected);
-    ASSERT(!m_pendingOutgoingMachMessage);
+    return false;
+}
 
+auto Connection::platformCreateOutgoingMessage(UniqueRef<Encoder>&& encoder) -> std::optional<OutgoingMessage>
+{
+    auto messageName = encoder->messageName();
     auto message = MachMessage::create(WTF::move(encoder));
     if (!message) {
-#if ENABLE(IPC_TESTING_API)
-        if (m_ignoreInvalidMessageForTesting)
-            return true; // The message is dropped, but the connection can still send.
-#endif
-        cancelSendSource();
-        return false;
+        RELEASE_LOG_ERROR(IPC, "platformCreateOutgoingMessage: Dropping message '%" PUBLIC_LOG_STRING "' with more attachments than a mach message can carry", description(messageName).characters());
+        return std::nullopt;
     }
+    return makeUniqueRefFromNonNullUniquePtr(WTF::move(message));
+}
+
+auto Connection::platformSendOutgoingMessage(OutgoingMessage& message) -> PlatformSendResult
+{
+    ASSERT(m_isConnected);
 
     switch (message->send(m_sendPort)) {
     case MachMessage::SendResult::Success:
-        return true;
+        return PlatformSendResult::Done;
 
     case MachMessage::SendResult::Timeout:
-        // The message is sent again when the destination has room for it.
-        m_pendingOutgoingMachMessage = WTF::move(message);
-        return false;
+        return PlatformSendResult::ReceiverIsFull;
 
     case MachMessage::SendResult::InvalidDestinationPort:
+        // The other end has destroyed the receive right to the port we are trying to send to. Cancel the send
+        // source, so that we do not try to send more messages needlessly.
+        //
+        // We do not yet invalidate this instance. When the send right to the port of this instance is destroyed,
+        // this instance gets a NO_SENDERS notification which will cause this instance invalidation. Noteworthy
+        // special case: the InitializeConnection message holds the send right to this connection's receive port. If
+        // that message can't be sent, dropping it releases the send right, and this connection gets the NO_SENDERS.
         cancelSendSource();
-        return false;
+        return PlatformSendResult::ReceiverIsGone;
     }
+    ASSERT_NOT_REACHED();
+    return PlatformSendResult::ReceiverIsGone;
 }
 
 void Connection::initializeSendSource()
@@ -266,7 +275,7 @@ void Connection::initializeSendSource()
     dispatch_source_set_registration_handler(sendSource, [this, protectedThis = Ref { *this }] {
         if (!m_sendSource)
             return;
-        resumeSendSource();
+        sendOutgoingMessages();
     });
     dispatch_source_set_event_handler(sendSource, [this, protectedThis = Ref { *this }] {
         if (!m_sendSource)
@@ -276,7 +285,7 @@ void Connection::initializeSendSource()
 
         if (data & DISPATCH_MACH_SEND_POSSIBLE) {
             // FIXME: Figure out why we get spurious DISPATCH_MACH_SEND_POSSIBLE events.
-            resumeSendSource();
+            sendOutgoingMessages();
             return;
         }
     });
@@ -287,28 +296,6 @@ void Connection::initializeSendSource()
         deallocateSendRightSafely(sendPort);
     });
     dispatch_resume(sendSource);
-}
-
-void Connection::resumeSendSource()
-{
-    assertIsCurrent(m_connectionQueue.get());
-
-    if (auto message = std::exchange(m_pendingOutgoingMachMessage, nullptr)) {
-        switch (message->send(m_sendPort)) {
-        case MachMessage::SendResult::Success:
-            break;
-
-        case MachMessage::SendResult::Timeout:
-            // The destination still has no room for the message, so it is sent again later.
-            m_pendingOutgoingMachMessage = WTF::move(message);
-            break;
-
-        case MachMessage::SendResult::InvalidDestinationPort:
-            cancelSendSource();
-            return;
-        }
-    }
-    sendOutgoingMessages();
 }
 
 static bool shouldLogIncomingMessageHandling()
