@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<title>Resnap caused by a layout change is immediate even with scroll-behavior: smooth</title>
+<link rel="help" href="https://drafts.csswg.org/css-scroll-snap-1/#re-snap">
+<link rel="help" href="https://drafts.csswg.org/css-overflow-4/#scroll-behavior">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  body {
+    margin: 0;
+  }
+  #scroller {
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    width: 400px;
+    height: 400px;
+  }
+  .box {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    width: 100%;
+    height: 100%;
+  }
+  #changer {
+    height: 100%;
+    width: 100%;
+  }
+  body.changed #changer {
+    height: 0;
+  }
+</style>
+<div id="scroller">
+  <div id="changer"></div>
+  <div class="box"></div>
+  <div class="box"></div>
+  <div class="box"></div>
+</div>
+<script>
+const nextFrame = () => new Promise(resolve => requestAnimationFrame(() => resolve()));
+const scroller = document.getElementById("scroller");
+
+promise_test(async t => {
+  t.add_cleanup(() => {
+    document.body.classList.remove("changed");
+    scroller.style.scrollBehavior = "";
+  });
+  // Position the scroller instantly so the test does not depend on how the initial snap behaves.
+  scroller.style.scrollBehavior = "auto";
+  scroller.scrollTop = 400;
+  await nextFrame();
+  assert_equals(scroller.scrollTop, 400, "Snapped to the first box initially");
+  scroller.style.scrollBehavior = "";
+
+  document.body.classList.add("changed");
+  assert_equals(scroller.scrollTop, 0, "The new scroll position is set immediately, without animating");
+}, "When re-snap happens on layout, the new scroll position is set immediately even with scroll-behavior: smooth");
+</script>
+</html>

@@ -1,0 +1,3 @@
+
+PASS When re-snap happens on layout, the new scroll position is set immediately even with scroll-behavior: smooth
+
