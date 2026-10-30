@@ -1,0 +1,25 @@
+Test that Page.getResourceTree includes the fragment each frame requested a resource with, and that the resource's object URL keeps it.
+
+Search Search
+
+== Running test suite: Page.getResourceTree.URLFragment
+-- Running test case: Page.getResourceTree.URLFragment.MainFrame
+PASS: Should find the resource by its URL with the '#dark' fragment.
+PASS: Resource type should be Image.
+PASS: Resource MIME type should be 'image/svg+xml'.
+
+-- Running test case: Page.getResourceTree.URLFragment.ChildFrame
+PASS: Should have a child frame.
+PASS: Should find the resource by its URL with the '#light' fragment.
+PASS: Resource type should be Image.
+PASS: Resource MIME type should be 'image/svg+xml'.
+
+-- Running test case: Page.getResourceTree.URLFragment.Preload
+PASS: Should find the resource by its URL with the '#dark' fragment.
+PASS: Resource type should be Image.
+PASS: Resource MIME type should be 'image/svg+xml'.
+
+-- Running test case: Resource.createObjectURL.URLFragment
+PASS: Object URL should not have a fragment.
+PASS: URL should be the object URL with the '#dark' fragment.
+

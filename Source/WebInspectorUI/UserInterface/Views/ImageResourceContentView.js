@@ -89,8 +89,8 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
             return;
         }
 
-        let objectURL = this.resource.createObjectURL();
-        if (!objectURL) {
+        let {url, objectURL} = this.resource.createObjectURL();
+        if (!url) {
             this.showGenericErrorMessage();
             return;
         }
@@ -99,8 +99,9 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
         this._imageContainer.className = "img-container";
 
         this._imageElement = this._imageContainer.appendChild(document.createElement("img"));
-        this._imageElement.addEventListener("load", function() { URL.revokeObjectURL(objectURL); });
-        this._imageElement.src = objectURL;
+        if (objectURL)
+            this._imageElement.addEventListener("load", function() { URL.revokeObjectURL(objectURL); });
+        this._imageElement.src = url;
         this._imageElement.setAttribute("filename", this.resource.urlComponents.lastPathComponent || "");
         this._imageElement.draggable = true;
         this._updateImageGrid();
@@ -263,6 +264,6 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
 
     _handleLocalResourceContentDidChange(event)
     {
-        this._imageElement.src = this.resource.createObjectURL();
+        this._imageElement.src = this.resource.createObjectURL().url;
     }
 };

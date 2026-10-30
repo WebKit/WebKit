@@ -51,9 +51,11 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
 
     contentAvailable(content, base64Encoded)
     {
-        this._fontObjectURL = this.resource.createObjectURL();
+        let {url, objectURL} = this.resource.createObjectURL();
+        this._fontURL = url;
+        this._fontObjectURL = objectURL;
 
-        if (!this._fontObjectURL) {
+        if (!this._fontURL) {
             this.showGenericErrorMessage();
             return;
         }
@@ -179,7 +181,7 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
             format = " format(\"svg\")";
 
         this._styleElement = document.createElement("style");
-        this._styleElement.textContent = `@font-face { font-family: "${uniqueFontName}"; src: url(${this._fontObjectURL}) ${format}; }`;
+        this._styleElement.textContent = `@font-face { font-family: "${uniqueFontName}"; src: url(${this._fontURL}) ${format}; }`;
 
         // The style element will be added when shown later if we are not visible now.
         if (this.isAttached)
@@ -220,7 +222,9 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
 
     _handleLocalResourceContentDidChange(event)
     {
-        this._fontObjectURL = this.resource.createObjectURL();
+        let {url, objectURL} = this.resource.createObjectURL();
+        this._fontURL = url;
+        this._fontObjectURL = objectURL;
         this._updatePreviewElement();
     }
 };

@@ -1,0 +1,11 @@
+Test that resources served from the memory cache keep the URL fragment they were requested with.
+
+Search
+
+== Running test suite: Resource.URLFragment.MemoryCache
+-- Running test case: Resource.URLFragment.MemoryCache
+PASS: Should find the CSS background-image resource by its URL with the '#dark' fragment.
+PASS: responseSource should be Symbol(memory-cache).
+PASS: Should find the <img> resource by its URL with the '#dark' fragment.
+PASS: responseSource should be Symbol(memory-cache).
+

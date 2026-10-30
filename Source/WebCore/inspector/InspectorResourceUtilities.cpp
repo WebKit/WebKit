@@ -233,9 +233,10 @@ Ref<JSON::ArrayOf<Inspector::Protocol::Page::FrameResource>> buildResourceObject
 Vector<Inspector::FrameResource> buildResourceDataForFrame(LocalFrame& frame)
 {
     Vector<Inspector::FrameResource> resources;
+    Ref cachedResourceLoader = protect(frame.document())->cachedResourceLoader();
     for (RefPtr cachedResource : cachedResourcesForFrame(&frame)) {
         Inspector::FrameResource resource;
-        resource.url = cachedResource->url().string();
+        resource.url = cachedResourceLoader->urlWithRequestedFragmentIdentifier(*cachedResource).string();
         resource.type = inspectorResourceType(*cachedResource);
         resource.mimeType = cachedResource->response().mimeType();
         if (cachedResource->wasCanceled())

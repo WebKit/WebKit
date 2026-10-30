@@ -893,15 +893,15 @@ void InspectorInstrumentation::willSendRequestOfTypeImpl(InstrumentingAgents& in
         domDebuggerAgent->willSendRequestOfType(protect(instrumentingAgents.enabledWebDebuggerAgent()), request);
 }
 
-void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingAgents& instrumentingAgents, DocumentLoader* loader, CachedResource* cachedResource)
+void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingAgents& instrumentingAgents, DocumentLoader* loader, CachedResource* cachedResource, const URL& url)
 {
     if (!loader || !cachedResource)
         return;
 
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
-        networkAgent->didLoadResourceFromMemoryCache(loader, *cachedResource);
+        networkAgent->didLoadResourceFromMemoryCache(loader, *cachedResource, url);
     if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
-        networkProxy->didLoadResourceFromMemoryCache(loader, *cachedResource);
+        networkProxy->didLoadResourceFromMemoryCache(loader, *cachedResource, url);
 }
 
 void InspectorInstrumentation::didReceiveResourceResponseImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)

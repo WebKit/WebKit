@@ -106,6 +106,7 @@ public:
     SecurityOrigin* origin() { return m_origin.get(); }
 
     bool hasFragmentIdentifier() const { return !m_fragmentIdentifier.isEmpty(); }
+    const String& fragmentIdentifier() const LIFETIME_BOUND { return m_fragmentIdentifier; }
     String&& releaseFragmentIdentifier() { return WTF::move(m_fragmentIdentifier); }
     void clearFragmentIdentifier() { m_fragmentIdentifier = { }; }
 

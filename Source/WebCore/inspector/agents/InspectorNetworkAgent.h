@@ -118,7 +118,7 @@ public:
     void didReceiveData(ResourceLoaderIdentifier, const SharedBuffer*, int expectedDataLength, int encodedDataLength) override;
     void didFinishLoading(ResourceLoaderIdentifier, DocumentLoader*, const NetworkLoadMetrics&, ResourceLoader*) override;
     void didFailLoading(ResourceLoaderIdentifier, DocumentLoader*, const ResourceError&) override;
-    void didLoadResourceFromMemoryCache(DocumentLoader*, CachedResource&) override;
+    void didLoadResourceFromMemoryCache(DocumentLoader*, CachedResource&, const URL&) override;
     void didReceiveThreadableLoaderResponse(ResourceLoaderIdentifier, DocumentThreadableLoader&) override;
     void LEGACY_NODELETE willLoadXHRSynchronously();
     void LEGACY_NODELETE didLoadXHRSynchronously();
@@ -170,7 +170,7 @@ private:
     Ref<Inspector::Protocol::Network::Initiator> buildInitiatorObject(Document*, const ResourceRequest* = nullptr);
     Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const NetworkLoadMetrics&, ResourceLoader&);
     RefPtr<Inspector::Protocol::Network::Response> buildObjectForResourceResponse(const ResourceResponse&, ResourceLoader*);
-    Ref<Inspector::Protocol::Network::CachedResource> buildObjectForCachedResource(CachedResource*);
+    Ref<Inspector::Protocol::Network::CachedResource> buildObjectForCachedResource(CachedResource*, const URL&);
 
     double timestamp();
 

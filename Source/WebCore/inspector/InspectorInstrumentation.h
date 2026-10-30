@@ -222,7 +222,7 @@ public:
     static void flexibleBoxRendererWrappedToNextLine(const RenderObject&, size_t lineStartItemIndex);
 
     static void willSendRequest(LocalFrame*, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*, ResourceLoader*);
-    static void didLoadResourceFromMemoryCache(Page&, DocumentLoader*, CachedResource*);
+    static void didLoadResourceFromMemoryCache(LocalFrame&, DocumentLoader*, CachedResource*, const URL&);
     static void didReceiveResourceResponse(LocalFrame&, ResourceLoaderIdentifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
     static void didReceiveThreadableLoaderResponse(Document&, DocumentThreadableLoader&, ResourceLoaderIdentifier);
     static void didReceiveData(LocalFrame*, ResourceLoaderIdentifier, const SharedBuffer*, int encodedDataLength);
@@ -475,7 +475,7 @@ private:
     static void willSendRequestImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*, ResourceLoader*);
     static void willSendRequestOfTypeImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, Inspector::UncachedLoadType);
     static void markResourceAsCachedImpl(InstrumentingAgents&, ResourceLoaderIdentifier);
-    static void didLoadResourceFromMemoryCacheImpl(InstrumentingAgents&, DocumentLoader*, CachedResource*);
+    static void didLoadResourceFromMemoryCacheImpl(InstrumentingAgents&, DocumentLoader*, CachedResource*, const URL&);
     static void didReceiveResourceResponseImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
     static void didReceiveThreadableLoaderResponseImpl(InstrumentingAgents&, DocumentThreadableLoader&, ResourceLoaderIdentifier);
     static void didReceiveDataImpl(InstrumentingAgents&, ResourceLoaderIdentifier, const SharedBuffer*, int encodedDataLength);
@@ -1191,10 +1191,10 @@ inline void InspectorInstrumentation::willSendRequestOfType(LocalFrame* frame, R
         willSendRequestOfTypeImpl(*agents, identifier, loader, request, loadType);
 }
 
-inline void InspectorInstrumentation::didLoadResourceFromMemoryCache(Page& page, DocumentLoader* loader, CachedResource* resource)
+inline void InspectorInstrumentation::didLoadResourceFromMemoryCache(LocalFrame& frame, DocumentLoader* loader, CachedResource* resource, const URL& url)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    didLoadResourceFromMemoryCacheImpl(protect(instrumentingAgents(page)), loader, resource);
+    didLoadResourceFromMemoryCacheImpl(protect(instrumentingAgents(frame)), loader, resource, url);
 }
 
 inline void InspectorInstrumentation::didReceiveResourceResponse(LocalFrame& frame, ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)

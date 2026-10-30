@@ -450,12 +450,19 @@ WI.Resource = class Resource extends WI.SourceCode
     {
         let revision = this.currentRevision;
         let blobContent = revision.blobContent;
-        if (blobContent)
-            return URL.createObjectURL(blobContent)
+        if (blobContent) {
+            let objectURL = URL.createObjectURL(blobContent);
+
+            let url = objectURL;
+            let fragment = this.urlComponents.fragment;
+            if (fragment)
+                url += "#" + fragment;
+
+            return {url, objectURL};
+        }
 
         // If content is not available, fallback to using original URL.
-        // The client may try to revoke it, but nothing will happen.
-        return this._url;
+        return {url: this._url, objectURL: null};
     }
 
     isMainResource()
@@ -1069,7 +1076,8 @@ WI.Resource = class Resource extends WI.SourceCode
 
         // Event handler for the image "load" event.
         function imageDidLoad() {
-            URL.revokeObjectURL(objectURL);
+            if (objectURL)
+                URL.revokeObjectURL(objectURL);
 
             // Cache the image metrics.
             this._imageSize = {
@@ -1092,8 +1100,10 @@ WI.Resource = class Resource extends WI.SourceCode
 
         // Set the image source using an object URL once we've obtained its data.
         this.requestContent().then((content) => {
-            objectURL = image.src = content.sourceCode.createObjectURL();
-            if (!objectURL)
+            let url;
+            ({url, objectURL} = content.sourceCode.createObjectURL());
+            image.src = url;
+            if (!url)
                 requestContentFailure.call(this);
         }, requestContentFailure.bind(this));
     }

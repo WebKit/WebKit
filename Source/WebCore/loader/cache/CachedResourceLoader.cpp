@@ -269,6 +269,14 @@ CachedResource* CachedResourceLoader::cachedResource(const URL& url) const
     return m_documentResources.get(url.string()).get();
 }
 
+URL CachedResourceLoader::urlWithRequestedFragmentIdentifier(const CachedResource& resource) const
+{
+    URL url = resource.url();
+    if (auto fragmentIdentifier = m_documentResourceFragmentIdentifiers.get(url.string()); !fragmentIdentifier.isNull())
+        url.setFragmentIdentifier(fragmentIdentifier);
+    return url;
+}
+
 LocalFrame* LEGACY_NODELETE CachedResourceLoader::frame() const
 {
     return m_documentLoader ? m_documentLoader->frame() : nullptr;
@@ -895,7 +903,11 @@ bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(con
     if (!frame() || resource.status() != CachedResource::Cached)
         return true;
 
-    ResourceRequest newRequest = ResourceRequest(URL { resource.url() });
+    URL url = resource.url();
+    if (auto& fragmentIdentifier = request.fragmentIdentifier(); !fragmentIdentifier.isNull())
+        url.setFragmentIdentifier(fragmentIdentifier);
+
+    ResourceRequest newRequest = ResourceRequest(WTF::move(url));
     newRequest.setRequester(request.resourceRequest().requester());
     newRequest.setInitiatorIdentifier(request.resourceRequest().initiatorIdentifier());
     if (auto inspectorInitiatorNodeIdentifier = request.resourceRequest().inspectorInitiatorNodeIdentifier())
@@ -1310,8 +1322,10 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
     request.disableCachingIfNeeded();
 
     Ref memoryCache = MemoryCache::singleton();
-    if (request.allowsCaching() && memoryCache->disabled())
+    if (request.allowsCaching() && memoryCache->disabled()) {
         m_documentResources.remove(url.string());
+        m_documentResourceFragmentIdentifiers.remove(url.string());
+    }
 
     // See if we can use an existing resource from the cache.
     RefPtr<CachedResource> resource;
@@ -1333,6 +1347,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
     FrameLoader::addSameSiteInfoToRequestIfNeeded(request.resourceRequest(), document.get());
 
     bool ignoreForRequestCount = request.ignoreForRequestCount();
+    String fragmentIdentifier = request.fragmentIdentifier();
     auto mayAddToMemoryCache = computeMayAddToMemoryCache(request, resource.get()) ? MayAddToMemoryCache::Yes : MayAddToMemoryCache::No;
     RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get(), forPreload, imageLoading);
     switch (policy) {
@@ -1464,6 +1479,8 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
 
     ASSERT(resource->url() == url.string());
     m_documentResources.set(resource->url().string(), CachedResourceHandle { *resource });
+    if (!fragmentIdentifier.isEmpty())
+        m_documentResourceFragmentIdentifiers.add(resource->url().string(), WTF::move(fragmentIdentifier));
     frame->loader().client().didLoadFromRegistrableDomain(RegistrableDomain(resource->resourceRequest().url()));
     return resource.releaseNonNull();
 }
@@ -1859,6 +1876,7 @@ void CachedResourceLoader::garbageCollectDocumentResources()
         bool resourceHasExternalUsers = resource->refCount() > (resource->inCache() ? 3u : 2u);
         if (!resourceHasExternalUsers && !resource->loader() && !resource->isPreloaded()) {
             m_resourceTimingInfo.removeResourceTiming(resource);
+            m_documentResourceFragmentIdentifiers.remove(resourceEntry.key);
             return true;
         }
         return false;

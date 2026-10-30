@@ -4703,7 +4703,7 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource& resource, Resour
         return;
 
     if (!page->areMemoryCacheClientCallsEnabled()) {
-        InspectorInstrumentation::didLoadResourceFromMemoryCache(*page, documentloader.get(), &resource);
+        InspectorInstrumentation::didLoadResourceFromMemoryCache(protect(m_frame), documentloader.get(), &resource, newRequest.url());
         documentloader->recordMemoryCacheLoadForFutureClientNotification(resource.resourceRequest());
         documentloader->didTellClientAboutLoad(resource.url().string());
         page->setHasPendingMemoryCacheLoadNotifications(true);
@@ -4711,7 +4711,7 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource& resource, Resour
     }
 
     if (m_client->dispatchDidLoadResourceFromMemoryCache(documentloader.get(), newRequest, resource.response(), resource.encodedSize())) {
-        InspectorInstrumentation::didLoadResourceFromMemoryCache(*page, documentloader.get(), &resource);
+        InspectorInstrumentation::didLoadResourceFromMemoryCache(protect(m_frame), documentloader.get(), &resource, newRequest.url());
         documentloader->didTellClientAboutLoad(resource.url().string());
         return;
     }
@@ -4720,6 +4720,8 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource& resource, Resour
 
     ResourceResponse response = resource.response();
     response.setSource(ResourceResponse::Source::MemoryCache);
+    if (equalIgnoringFragmentIdentifier(response.url(), newRequest.url()))
+        response.setURL(URL { newRequest.url() });
     notifier().sendRemainingDelegateMessages(documentloader.get(), identifier, newRequest, response, nullptr, resource.encodedSize(), 0, error);
 }
 

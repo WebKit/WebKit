@@ -75,7 +75,7 @@ public:
     virtual void didFailLoading(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::ResourceError&) = 0;
     virtual void didReceiveScriptResponse(WebCore::ResourceLoaderIdentifier) = 0;
     virtual void setInitialScriptContent(WebCore::ResourceLoaderIdentifier, const String& sourceString) = 0;
-    virtual void didLoadResourceFromMemoryCache(WebCore::DocumentLoader*, WebCore::CachedResource&) = 0;
+    virtual void didLoadResourceFromMemoryCache(WebCore::DocumentLoader*, WebCore::CachedResource&, const URL&) = 0;
     virtual void didReceiveThreadableLoaderResponse(WebCore::ResourceLoaderIdentifier, WebCore::DocumentThreadableLoader&) = 0;
     virtual void willDestroyCachedResource(WebCore::CachedResource&) = 0;
     virtual void mainFrameNavigated(WebCore::DocumentLoader&) = 0;

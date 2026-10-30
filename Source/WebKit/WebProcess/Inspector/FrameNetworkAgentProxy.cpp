@@ -379,7 +379,7 @@ void FrameNetworkAgentProxy::didFailLoading(ResourceLoaderIdentifier resourceID,
         protect(m_page)->identifier());
 }
 
-void FrameNetworkAgentProxy::didLoadResourceFromMemoryCache(DocumentLoader* loader, CachedResource& cachedResource)
+void FrameNetworkAgentProxy::didLoadResourceFromMemoryCache(DocumentLoader* loader, CachedResource& cachedResource, const URL& url)
 {
     if (!loader || !loader->frame() || !loader->frame()->document())
         return;
@@ -419,7 +419,7 @@ void FrameNetworkAgentProxy::didLoadResourceFromMemoryCache(DocumentLoader* load
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::RequestServedFromMemoryCache(
-            qualifyResourceID(resourceID), *frameID, loaderId, documentURL,
+            qualifyResourceID(resourceID), *frameID, loaderId, documentURL, url,
             cachedResource.response(), resourceType, sourceMapURL, bodySize, timestamp, WTF::move(initiator)),
         page->identifier());
 }
