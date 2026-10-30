@@ -160,6 +160,7 @@ void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& exten
         collectFromStyleSheets(extensionStyleSheets.injectedUserStyleSheets());
         collectFromStyleSheets(extensionStyleSheets.documentUserStyleSheets());
         collectFromStyleSheets(extensionStyleSheets.injectedAuthorStyleSheets());
+        collectFromStyleSheets(extensionStyleSheets.quirkStyleSheets());
         collectFromStyleSheets(extensionStyleSheets.authorStyleSheetsForTesting());
     }
 }

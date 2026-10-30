@@ -487,7 +487,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
 
     apply(valueType);
 
-    if (!isAnyRevert && cascadeOrigin == PropertyCascade::Origin::Author)
+    if (!isAnyRevert && (cascadeOrigin == PropertyCascade::Origin::Author || cascadeOrigin == PropertyCascade::Origin::Quirk))
         m_state->didApplyAuthorProperty(id);
 
     if (!isUnset && !isAnyRevert && m_state->isCurrentPropertyInvalidAtComputedValueTime()) {
@@ -845,6 +845,10 @@ const PropertyCascade* Builder::ensureRollbackCascadeForRevert()
     auto rollbackOrigin = m_state->m_currentProperty->origin;
 
     switch (rollbackOrigin) {
+    case PropertyCascade::Origin::Quirk:
+        // Reverting a quirk declaration falls back to everything below the quirk origin.
+        rollbackOrigin = PropertyCascade::Origin::PositionFallback;
+        break;
     case PropertyCascade::Origin::PositionFallback:
         // "Similar to the Animation Origin, use of the revert value acts as if the property was part of the Author Origin."
         // https://drafts.csswg.org/css-anchor-position-1/#fallback-rule

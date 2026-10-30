@@ -15,7 +15,8 @@ if (!window.internals)
     document.body.textContent = "FAIL: this test requires window.internals.";
 else {
     StyleSheetQuirkHelpers.installQuirk("*://127.0.0.1/*");
-    location.href = "resources/style-sheet-injection-target.html";
+    const targetWithImportantAuthorAndInlineColors = "resources/style-sheet-injection-target.html";
+    location.href = targetWithImportantAuthorAndInlineColors;
 }
 </script>
 </body>
