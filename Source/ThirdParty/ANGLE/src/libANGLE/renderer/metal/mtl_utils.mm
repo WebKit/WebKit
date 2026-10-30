@@ -15,10 +15,12 @@
 #include <stdio.h>
 
 #include "common/MemoryBuffer.h"
+#include "common/mathutil.h"
 #include "common/string_utils.h"
 #include "common/system_utils.h"
 #include "common/unsafe_buffers.h"
 #include "gpu_info_util/SystemInfo_internal.h"
+#include "libANGLE/ErrorStrings.h"
 #include "libANGLE/histogram_macros.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
@@ -402,12 +404,39 @@ static angle::Result InitializeCompressedTextureContents(const gl::Context *cont
     return angle::Result::Continue;
 }
 
+// The number of bytes from which writing a texture that the GPU does not use is faster through a
+// staging buffer or a GPU clear than on the CPU, on Apple GPUs. The driver writes on the CPU more
+// slowly the smaller the texels are, while a staged upload costs the same per byte for any texel
+// size, after a fixed cost per upload. A GPU clear, which initializes the texture, copies nothing,
+// but costs more up front than a staged upload.
+size_t StagingThreshold(size_t texelBytes, StagingPurpose purpose)
+{
+    if (purpose == StagingPurpose::Initialization)
+    {
+        return texelBytes <= 2 ? 256 * 1024 : 512 * 1024;
+    }
+    if (texelBytes <= 1)
+    {
+        return 16 * 1024;
+    }
+    if (texelBytes <= 2)
+    {
+        return 32 * 1024;
+    }
+    if (texelBytes <= 4)
+    {
+        return 512 * 1024;
+    }
+    return std::numeric_limits<size_t>::max();
+}
+
 }  // namespace
 
 bool PreferStagedTextureUploads(const gl::Context *context,
                                 const TextureRef &texture,
                                 const Format &textureObjFormat,
-                                StagingPurpose purpose)
+                                StagingPurpose purpose,
+                                size_t byteCount)
 {
     // Compressed textures cannot be uploaded from staging textures.
     const gl::InternalFormat &intendedInternalFormat = textureObjFormat.intendedInternalFormat();
@@ -450,8 +479,24 @@ bool PreferStagedTextureUploads(const gl::Context *context,
         }
     }
 
-    return (texture->hasIOSurface() && features.uploadDataToIosurfacesWithStagingBuffers.enabled) ||
-           features.alwaysPreferStagedTextureUploads.enabled;
+    if ((texture->hasIOSurface() && features.uploadDataToIosurfacesWithStagingBuffers.enabled) ||
+        features.alwaysPreferStagedTextureUploads.enabled)
+    {
+        return true;
+    }
+
+    // The thresholds are measured on Apple GPUs.
+    if (!contextMtl->getDisplay()->supportsAppleGPUFamily(1))
+    {
+        return false;
+    }
+    // Writing a texture on the CPU while the GPU uses it waits for all the GPU work queued before
+    // the use. A staged write is ordered after the use instead.
+    if (texture->isBeingUsedByGPU(contextMtl))
+    {
+        return true;
+    }
+    return byteCount >= StagingThreshold(textureObjFormat.actualAngleFormat().pixelBytes, purpose);
 }
 
 angle::Result InitializeTextureContents(const gl::Context *context,
@@ -467,15 +512,22 @@ angle::Result InitializeTextureContents(const gl::Context *context,
 
     const gl::InternalFormat &intendedInternalFormat = textureObjFormat.intendedInternalFormat();
 
-    bool preferGPUInitialization = PreferStagedTextureUploads(context, texture, textureObjFormat,
-                                                              StagingPurpose::Initialization);
-
     // This function is called in many places to initialize the content of a texture.
     // So it's better we do the initial check here instead of let the callers do it themselves:
     if (!textureObjFormat.valid())
     {
         return angle::Result::Continue;
     }
+
+    gl::Extents size = texture->size(index);
+
+    angle::CheckedNumeric<size_t> byteCount = textureObjFormat.actualAngleFormat().pixelBytes;
+    byteCount *= size.width;
+    byteCount *= size.height;
+    byteCount *= size.depth;
+    ANGLE_CHECK_ASSERT(contextMtl, byteCount.IsValid());
+    bool preferGPUInitialization = PreferStagedTextureUploads(
+        context, texture, textureObjFormat, StagingPurpose::Initialization, byteCount.ValueOrDie());
 
     if ((textureObjFormat.hasDepthOrStencilBits() && !textureObjFormat.getCaps().depthRenderable) ||
         !textureObjFormat.getCaps().colorRenderable)
@@ -484,8 +536,6 @@ angle::Result InitializeTextureContents(const gl::Context *context,
         // to use GPU initialization (clears for initialization).
         preferGPUInitialization = false;
     }
-
-    gl::Extents size = texture->size(index);
 
     // Intiialize the content to black
     GLint layer, startDepth;
