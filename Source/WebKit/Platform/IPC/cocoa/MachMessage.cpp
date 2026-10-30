@@ -48,16 +48,15 @@ namespace {
 // An arbitrary message ID that does not collide with Mach notification messages.
 static constexpr mach_msg_id_t webkitMachMessageID = 0xdba0dba;
 
-// The mach message size that is built without touching the heap. A body that does not fit is sent
-// out-of-line; the messages that do not fit even then are the ones with many attachments, and they are the
-// only ones that need a heap allocation. With current limits, this fits:
-// 0 attachments and 4072 bytes of inline body.
-// 127 attachments and 2544 bytes of inline body.
-static constexpr size_t messageStorageSize = 4096;
+static constexpr size_t typicalMaximumAttachmentCount = 16;
 
-// The largest message that can be built, which is one carrying the most attachments a message may have.
+// Sized to fit the largest inline body plus a typical number of attachments without a heap
+// allocation.
+static constexpr size_t messageStorageSize = round_msg(sizeof(mach_msg_header_t) + sizeof(mach_msg_body_t)
+    + typicalMaximumAttachmentCount * sizeof(mach_msg_port_descriptor_t) + Encoder::maximumInlineBodySize);
+
 static constexpr size_t maxMessageSize = sizeof(mach_msg_header_t) + sizeof(mach_msg_body_t)
-    + MachMessage::maxAttachmentCount * sizeof(mach_msg_port_descriptor_t) + sizeof(mach_msg_ool_descriptor_t);
+    + MachMessage::maxAttachmentCount * sizeof(mach_msg_port_descriptor_t) + std::max(sizeof(mach_msg_ool_descriptor_t), Encoder::maximumInlineBodySize);
 static_assert(maxMessageSize <= std::numeric_limits<mach_msg_size_t>::max());
 
 // Storage for one message. The messages that fit messageStorageSize, plus the trailer a received message
@@ -156,7 +155,7 @@ std::unique_ptr<MachMessage> MachMessage::adoptPseudoReceived(MessageName messag
 //     mach_msg_header_t header;
 //     mach_msg_body_t body;
 //     mach_msg_port_descriptor_t attachments[attachmentCount];
-//     mach_msg_ool_descriptor_t outOfLineEncoderBody  // when the body does not fit,
+//     mach_msg_ool_descriptor_t outOfLineEncoderBody  // when the encoder keeps the body out-of-line,
 //         | std::byte encoderBody[];                  // and otherwise the body itself
 //
 // The attachments are not sent as an out-of-line array of port names, even though that would keep every
@@ -179,9 +178,8 @@ MachMessage::SendEncoderResult MachMessage::sendEncoder(UniqueRef<Encoder>&& enc
     size_t attachmentDescriptorsSize = attachmentCount * sizeof(mach_msg_port_descriptor_t);
     size_t headerAndDescriptorsSize = sizeof(mach_msg_header_t) + (attachmentCount ? sizeof(mach_msg_body_t) + attachmentDescriptorsSize : 0);
 
-    // A body that does not fit is sent out-of-line, so that the kernel makes a virtual copy of it instead of
-    // it being copied into the message and out of it again.
-    bool bodyIsOutOfLine = headerAndDescriptorsSize + body.size() > messageStorageSize;
+    bool bodyIsOutOfLine = encoder->hasOutOfLineBuffer();
+    ASSERT(bodyIsOutOfLine || body.size() <= Encoder::maximumInlineBodySize);
     size_t messageSize = round_msg(bodyIsOutOfLine
         ? sizeof(mach_msg_header_t) + sizeof(mach_msg_body_t) + attachmentDescriptorsSize + sizeof(mach_msg_ool_descriptor_t)
         : headerAndDescriptorsSize + body.size());
