@@ -1023,6 +1023,9 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     if (WKStringIsEqualToUTF8CString(messageName, "DidLoadNonAppInitiatedRequest"))
         return adoptWK(WKBooleanCreate(TestController::singleton().didLoadNonAppInitiatedRequest()));
 
+    if (WKStringIsEqualToUTF8CString(messageName, "IsDisplayCaptureCapabilityActive"))
+        return adoptWK(WKBooleanCreate(WKPageIsDisplayCaptureCapabilityActiveForTesting(TestController::singleton().mainWebView()->page())));
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsGrandfathered")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto hostName = stringValue(messageBodyDictionary, "HostName");

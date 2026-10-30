@@ -3864,6 +3864,7 @@ private:
     void deactivateDisplayCaptureCapability(MediaCapability&);
     bool shouldActivateDisplayCaptureCapability() const;
     bool shouldDeactivateDisplayCaptureCapability() const;
+    bool hasDisplayCaptureAuthorization() const;
 #endif
 
     // These are intentionally private
@@ -4181,9 +4182,14 @@ private:
     RefPtr<UserMediaPermissionRequestManagerProxy> m_userMediaPermissionRequestManager;
     bool m_shouldListenToVoiceActivity { false };
     OptionSet<WebCore::MediaProducerMediaCaptureKind> m_mutedCaptureKindsDesiredByWebApp;
+<<<<<<< HEAD
 #if PLATFORM(COCOA)
     MediaPermissionPromptHandlerForTesting m_mediaPermissionPromptHandlerForTesting;
 #endif
+=======
+    bool m_isPromptingForDisplayCapture { false };
+    bool m_hasGrantedDisplayCapture { false };
+>>>>>>> 14d7bb6de682 (Forged IsPlayingMediaDidChange activates the display-capture process capability without user consent)
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
