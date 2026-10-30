@@ -247,6 +247,10 @@ void RenderSVGRoot::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    AXCustomColorSVGClassifier::svgRootWillLayout(*this);
+#endif
+
     svgSVGElement().invalidateCachedViewportSizes();
 
     // Arbitrary affine transforms are incompatible with RenderLayoutState.

@@ -191,6 +191,13 @@ inline bool ComputedStyleBase::isAffectedBySmartImageResizer() const
 }
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+inline const AppleColorFilter& ComputedStyleBase::isolatedSVGShapeAppleColorFilter() const
+{
+    return m_inheritedRareData->appleColorFilter->isolatedSVGShapeAppleColorFilter;
+}
+#endif
+
 inline bool ComputedStyleBase::isForceHidden() const
 {
     return m_inheritedRareData->isForceHidden;

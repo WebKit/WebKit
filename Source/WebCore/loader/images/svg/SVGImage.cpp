@@ -92,7 +92,7 @@ SVGImage::SVGImage(ImageObserver* observer)
         .linkParameters = CSS::Keyword::None { },
         .ignoreRootPreserveAspectRatio = IgnoreRootPreserveAspectRatio::No,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        .invertContent = false,
+        .invertContent = InvertContent::No,
 #endif
       }
     , m_startAnimationTimer(*this, &SVGImage::startAnimationTimerFired)
@@ -213,8 +213,9 @@ auto SVGImage::documentStateForDraw(ConcreteObjectSize concreteObjectSize, Image
     state.ignoreRootPreserveAspectRatio = options.ignoreRootPreserveAspectRatio();
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    auto invert = options.invertContent();
-    state.invertContent = invert == InvertContent::FromResource ? m_fallbackInvertContent : invert == InvertContent::Yes;
+    state.invertContent = options.invertContent();
+    if (state.invertContent == InvertContent::FromResource)
+        state.invertContent = m_fallbackInvertContent ? InvertContent::Yes : InvertContent::No;
 #else
     UNUSED_PARAM(options);
 #endif
@@ -233,7 +234,8 @@ void SVGImage::applyDocumentState(Document& document, LocalFrameView& view, cons
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     if (state.invertContent != m_appliedDocumentState.invertContent) {
-        protect(m_page)->settings().setAxCustomColorModeEnabled(state.invertContent);
+        protect(m_page)->settings().setAxCustomColorModeEnabled(state.invertContent != InvertContent::No);
+        AXCustomColorModeController::setSVGImageKeepsColorfulContent(document, state.invertContent == InvertContent::ExceptColorfulContent);
         updateStyle = true;
     }
 #endif
@@ -566,7 +568,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 settings->setDownloadableBinaryFontTrustedTypes(parentSettings->downloadableBinaryFontTrustedTypes());
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
                 m_fallbackInvertContent = AXCustomColorModeController::shouldAdjustSVGImages(m_page);
-                m_appliedDocumentState.invertContent = m_fallbackInvertContent;
+                m_appliedDocumentState.invertContent = m_fallbackInvertContent ? InvertContent::Yes : InvertContent::No;
                 settings->setAxCustomColorModeEnabled(m_fallbackInvertContent);
                 settings->setAxCustomColorModeAppearanceDetectionEnabled(false);
 #endif

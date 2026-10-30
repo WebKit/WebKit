@@ -118,7 +118,7 @@ private:
         Style::LinkParameters linkParameters;
         IgnoreRootPreserveAspectRatio ignoreRootPreserveAspectRatio { IgnoreRootPreserveAspectRatio::No };
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        bool invertContent { false };
+        InvertContent invertContent { InvertContent::No };
 #endif
 
         bool operator==(const DocumentState&) const = default;

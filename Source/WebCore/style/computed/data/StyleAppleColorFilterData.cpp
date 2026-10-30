@@ -39,12 +39,18 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AppleColorFilterData);
 
 AppleColorFilterData::AppleColorFilterData()
     : appleColorFilter(ComputedStyle::initialAppleColorFilter())
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    , isolatedSVGShapeAppleColorFilter(ComputedStyle::initialAppleColorFilter())
+#endif
 {
 }
 
 AppleColorFilterData::AppleColorFilterData(const AppleColorFilterData& other)
     : RefCounted<AppleColorFilterData>()
     , appleColorFilter(other.appleColorFilter)
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    , isolatedSVGShapeAppleColorFilter(other.isolatedSVGShapeAppleColorFilter)
+#endif
 {
 }
 
@@ -55,13 +61,20 @@ Ref<AppleColorFilterData> AppleColorFilterData::copy() const
 
 bool AppleColorFilterData::operator==(const AppleColorFilterData& other) const
 {
-    return appleColorFilter == other.appleColorFilter;
+    auto equal = appleColorFilter == other.appleColorFilter;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    equal = equal && isolatedSVGShapeAppleColorFilter == other.isolatedSVGShapeAppleColorFilter;
+#endif
+    return equal;
 }
 
 #if !LOG_DISABLED
 void AppleColorFilterData::dumpDifferences(TextStream& ts, const AppleColorFilterData& other) const
 {
     LOG_IF_DIFFERENT(appleColorFilter);
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    LOG_IF_DIFFERENT(isolatedSVGShapeAppleColorFilter);
+#endif
 }
 #endif // !LOG_DISABLED
 

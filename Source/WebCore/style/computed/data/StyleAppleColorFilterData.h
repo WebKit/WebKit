@@ -47,6 +47,9 @@ public:
 #endif
 
     AppleColorFilter appleColorFilter;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    AppleColorFilter isolatedSVGShapeAppleColorFilter;
+#endif
 
 private:
     AppleColorFilterData();
