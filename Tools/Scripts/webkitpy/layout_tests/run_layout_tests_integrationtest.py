@@ -41,7 +41,7 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.host import Host
 from webkitpy.common.host_mock import MockHost
-from webkitpy.layout_tests import run_webkit_tests
+from webkitpy.layout_tests import run_layout_tests
 from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS, RunDetails
 from webkitpy.layout_tests.views import printing
@@ -54,18 +54,18 @@ from webkitpy.xcode.device_type import DeviceType
 def parse_args(extra_args=None, tests_included=False, new_results=False, print_nothing=True):
     extra_args = extra_args or []
     args = []
-    if not '--platform' in extra_args:
+    if '--platform' not in extra_args:
         args.extend(['--platform', 'test'])
     if not new_results:
         args.append('--no-new-test-results')
 
-    if not '--child-processes' in extra_args:
+    if '--child-processes' not in extra_args:
         args.extend(['--child-processes', 1])
 
-    if not '--world-leaks' in extra_args:
+    if '--world-leaks' not in extra_args:
         args.append('--world-leaks')
 
-    if not '--accessibility-isolated-tree' in extra_args:
+    if '--accessibility-isolated-tree' not in extra_args:
         args.append('--accessibility-isolated-tree')
 
     args.extend(extra_args)
@@ -75,7 +75,7 @@ def parse_args(extra_args=None, tests_included=False, new_results=False, print_n
                      'http/tests',
                      'websocket/tests',
                      'failures/expected/*'])
-    return run_webkit_tests.parse_args(args)
+    return run_layout_tests.parse_args(args)
 
 
 def passing_run(extra_args=None, port_obj=None, tests_included=False, host=None, shared_port=True):
@@ -89,7 +89,7 @@ def passing_run(extra_args=None, port_obj=None, tests_included=False, host=None,
 
     with OutputCapture():
         logging_stream = StringIO()
-        run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
+        run_details = run_layout_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
     return run_details.exit_code == 0
 
 
@@ -110,7 +110,7 @@ def run_and_capture(port_obj, options, parsed_args, shared_port=True):
         port_obj.host.port_factory.get = lambda *args, **kwargs: port_obj
     with OutputCapture():
         logging_stream = StringIO()
-        run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
+        run_details = run_layout_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
 
     return (run_details, logging_stream)
 
@@ -143,7 +143,7 @@ def get_test_results(args, host=None):
 
     with OutputCapture():
         logging_stream = StringIO()
-        run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
+        run_details = run_layout_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
 
     all_results = []
     if run_details.initial_results:
@@ -187,7 +187,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         logging_stream = StringIO()
         host = MockHost()
         port_obj = host.port_factory.get(options.platform, options)
-        details = run_webkit_tests.run(port_obj, options, args, logging_stream)
+        details = run_layout_tests.run(port_obj, options, args, logging_stream)
 
         # These numbers will need to be updated whenever we add new tests.
         self.assertEqual(details.initial_results.total, test.TOTAL_TESTS)
@@ -250,11 +250,11 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         # WorkerExceptions (a subclass of BaseException), which have a string capture of the stack which can
         # be printed, but don't display properly in the unit test exception handlers.
         self.assertRaises(BaseException, logging_run,
-            ['failures/expected/exception.html', '--child-processes', '1'], tests_included=True)
+                          ['failures/expected/exception.html', '--child-processes', '1'], tests_included=True)
 
         if self.should_test_processes:
             self.assertRaises(BaseException, logging_run,
-                ['--child-processes', '2', '--force', 'failures/expected/exception.html', 'passes/text.html'], tests_included=True, shared_port=False)
+                              ['--child-processes', '2', '--force', 'failures/expected/exception.html', 'passes/text.html'], tests_included=True, shared_port=False)
 
     def serial_test_full_results_html(self):
         # FIXME: verify html?
@@ -304,7 +304,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         port.target_host = patched_target_host
 
         with patch.object(Upload, 'upload', return_value=False) as mock_upload, \
-             patch.object(Upload, 'upload_archive', return_value=False):
+                patch.object(Upload, 'upload_archive', return_value=False):
             details, _, _ = logging_run(extra_args=extra_args, tests_included=True, port_obj=port, host=host)
 
         # If the regression returns, patched_target_host raises in the guarded path
@@ -380,7 +380,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         # Check that nothing changes when we specify skipped=default.
         self.assertEqual(len(get_tests_run(['--skipped=default', 'passes'])),
-                          num_tests_run_by_default)
+                         num_tests_run_by_default)
 
         # Now check that we run one more test (the skipped one).
         tests_run = get_tests_run(['--skipped=ignore', 'passes'])
@@ -520,7 +520,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         host = MockHost()
         self.assertTrue(passing_run(host=host))
         self.assertEqual(host.filesystem.read_text_file('/tmp/layout-test-results/passes/error-stderr.txt'),
-                          'stuff going to stderr')
+                         'stuff going to stderr')
 
     def test_test_list(self):
         host = MockHost()
@@ -616,10 +616,10 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         # is missing, update the expected generic location.
         host = MockHost()
         details, err, _ = logging_run(['--no-show-results',
-            'failures/expected/missing_image.html',
-            'failures/unexpected/missing_text.html',
-            'failures/unexpected/text-image-checksum.html'],
-            tests_included=True, host=host)
+                                       'failures/expected/missing_image.html',
+                                       'failures/unexpected/missing_text.html',
+                                       'failures/unexpected/text-image-checksum.html'],
+                                      tests_included=True, host=host)
         file_list = host.filesystem.written_files.keys()
         self.assertEqual(details.exit_code, 1)
         expected_dictionary = {
@@ -700,13 +700,13 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
                 return unexpected_results['num_regressions'] + unexpected_results['num_missing']
 
         host = MockHost()
-        options, parsed_args = run_webkit_tests.parse_args(['--pixel-tests', '--no-new-test-results'])
+        options, parsed_args = run_layout_tests.parse_args(['--pixel-tests', '--no-new-test-results'])
         test_port = CustomExitCodePort(host, options=options)
         details, err, _ = logging_run(['--no-show-results',
-            'failures/expected/missing_image.html',
-            'failures/unexpected/missing_text.html',
-            'failures/unexpected/text-image-checksum.html'],
-            tests_included=True, host=host, port_obj=test_port)
+                                       'failures/expected/missing_image.html',
+                                       'failures/unexpected/missing_text.html',
+                                       'failures/unexpected/text-image-checksum.html'],
+                                      tests_included=True, host=host, port_obj=test_port)
         self.assertEqual(details.exit_code, 2)
 
     def test_crash_with_stderr(self):
@@ -882,8 +882,8 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
     def test_exit_after_n_failures_upload(self):
         host = MockHost()
         details, regular_output, user = logging_run(
-           ['failures/unexpected/text-image-checksum.html', 'passes/text.html', '--exit-after-n-failures', '1'],
-           tests_included=True, host=host)
+            ['failures/unexpected/text-image-checksum.html', 'passes/text.html', '--exit-after-n-failures', '1'],
+            tests_included=True, host=host)
 
         # By returning False, we know that the incremental results were generated and then deleted.
         self.assertFalse(host.filesystem.exists('/tmp/layout-test-results/incremental_results.json'))
@@ -1037,9 +1037,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         # Test what happens when pixel results are missing on retry.
         host = MockHost()
         details, err, _ = logging_run(['--no-show-results',
-            '--no-new-test-results', '--no-pixel-tests',
-            'failures/unexpected/text-image-missing.html'],
-            tests_included=True, host=host)
+                                       '--no-new-test-results', '--no-pixel-tests',
+                                       'failures/unexpected/text-image-missing.html'],
+                                      tests_included=True, host=host)
         file_list = host.filesystem.written_files.keys()
         self.assertEqual(details.exit_code, 1)
         json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
@@ -1079,7 +1079,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
                 return ImageDiffResult(passed=False, diff_image=b'', difference=1, fuzzy_data=None, tolerance=self._options.tolerance or 0)
 
         def get_port_for_run(args):
-            options, parsed_args = run_webkit_tests.parse_args(args)
+            options, parsed_args = run_layout_tests.parse_args(args)
             host = MockHost()
             test_port = ImageDiffTestPort(host, options=options)
             res = passing_run(args, port_obj=test_port, tests_included=True)
@@ -1148,9 +1148,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
                                      'failures/unexpected/timeout.html'],
                                     host=host)
         self.assertEqual(details.initial_results.slow_tests,
-                          {'failures/unexpected/timeout.html'})
+                         {'failures/unexpected/timeout.html'})
         self.assertEqual(details.retry_results.slow_tests,
-                          {'failures/unexpected/timeout.html'})
+                         {'failures/unexpected/timeout.html'})
 
     def serial_test_no_http_and_force(self):
         # See test_run_force, using --force raises an exception.
@@ -1194,9 +1194,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
     def test_unsupported_platform(self):
         stdout = StringIO()
         stderr = StringIO()
-        res = run_webkit_tests.main(['--platform', 'foo'], stdout, stderr)
+        res = run_layout_tests.main(['--platform', 'foo'], stdout, stderr)
 
-        self.assertEqual(res, run_webkit_tests.EXCEPTIONAL_EXIT_STATUS)
+        self.assertEqual(res, run_layout_tests.EXCEPTIONAL_EXIT_STATUS)
         self.assertEqual(stdout.getvalue(), '')
         self.assertTrue('unsupported platform' in stderr.getvalue())
 
@@ -1221,7 +1221,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         saved_level = wkc_logger.level
         wkc_logger.setLevel(logging.WARNING)
         try:
-            run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
+            run_layout_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
         finally:
             wkc_logger.setLevel(saved_level)
         self.assertTrue('text.html passed' in logging_stream.getvalue())
@@ -1238,7 +1238,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         with OutputCapture() as captured:
             logging = StringIO()
-            run_webkit_tests.run(port, run_webkit_tests.parse_args(['--debug-rwt-logging', '-n', '--no-build', '--root', '/build'])[0], [], logging_stream=logging)
+            run_layout_tests.run(port, run_layout_tests.parse_args(['--debug-rwt-logging', '-n', '--no-build', '--root', '/build'])[0], [], logging_stream=logging)
 
         for line in logging.getvalue():
             if str(DeviceType.from_string('iPhone 12')) in line:
@@ -1248,7 +1248,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
     def test_device_type_specific_listing(self):
         host = MockHost()
-        options = run_webkit_tests.parse_args(['--print-expectations'])[0]
+        options = run_layout_tests.parse_args(['--print-expectations'])[0]
         port = host.port_factory.get('ios-simulator', options)
 
         host.filesystem.write_text_file('/mock-checkout/LayoutTests/test1.html', '')
@@ -1260,7 +1260,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             logger = logging.getLogger()
             logger.setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
             printer = printing.Printer(port, options, logging_stream, logger=logger)
-            run_webkit_tests._set_up_derived_options(port, options)
+            run_layout_tests._set_up_derived_options(port, options)
             manager = Manager(port, options, printer)
             exit_code = manager.print_expectations([])
             printer.cleanup()
@@ -1296,7 +1296,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         with OutputCapture():
             logging = StringIO()
-            run_webkit_tests.run(port, run_webkit_tests.parse_args(['--debug-rwt-logging', '-n', '--no-build', '--root', '/build'])[0], [], logging_stream=logging)
+            run_layout_tests.run(port, run_layout_tests.parse_args(['--debug-rwt-logging', '-n', '--no-build', '--root', '/build'])[0], [], logging_stream=logging)
 
         for line in logging.getvalue():
             if str(DeviceType.from_string('iPad (9th generation)')) in line:
@@ -1304,7 +1304,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
     def test_ipad_listing(self):
         host = MockHost()
-        options = run_webkit_tests.parse_args(['--print-expectations'])[0]
+        options = run_layout_tests.parse_args(['--print-expectations'])[0]
         port = host.port_factory.get('ipad-simulator', options)
 
         host.filesystem.write_text_file('/mock-checkout/LayoutTests/test1.html', '')
@@ -1317,7 +1317,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             logger = logging.getLogger()
             logger.setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
             printer = printing.Printer(port, options, logging_stream, logger=logger)
-            run_webkit_tests._set_up_derived_options(port, options)
+            run_layout_tests._set_up_derived_options(port, options)
             manager = Manager(port, options, printer)
             exit_code = manager.print_expectations([])
             printer.cleanup()
@@ -1383,11 +1383,11 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
         host = MockHost()
         host.filesystem.clear_written_files()
         details, err, _ = logging_run(['--no-show-results',
-            'failures/unexpected/missing_text.html',
-            'failures/unexpected/missing_image.html',
-            'failures/unexpected/missing_audio.html',
-            'failures/unexpected/missing_render_tree_dump.html'],
-            tests_included=True, host=host, new_results=True)
+                                       'failures/unexpected/missing_text.html',
+                                       'failures/unexpected/missing_image.html',
+                                       'failures/unexpected/missing_audio.html',
+                                       'failures/unexpected/missing_render_tree_dump.html'],
+                                      tests_included=True, host=host, new_results=True)
         file_list = host.filesystem.written_files.keys()
         self.assertEqual(details.exit_code, 0)
         self.assertEqual(
@@ -1439,7 +1439,7 @@ class PortTest(unittest.TestCase):
 
 class MainTest(unittest.TestCase):
     def test_exception_handling(self):
-        orig_run_fn = run_webkit_tests.run
+        orig_run_fn = run_layout_tests.run
 
         # unused args pylint: disable=W0613
         def interrupting_run(port, options, args, stderr):
@@ -1459,19 +1459,19 @@ class MainTest(unittest.TestCase):
         stdout = StringIO()
         stderr = StringIO()
         try:
-            run_webkit_tests.run = interrupting_run
-            res = run_webkit_tests.main([], stdout, stderr)
+            run_layout_tests.run = interrupting_run
+            res = run_layout_tests.main([], stdout, stderr)
             self.assertEqual(res, INTERRUPTED_EXIT_STATUS)
 
-            run_webkit_tests.run = successful_run
-            res = run_webkit_tests.main(['--platform', 'test'], stdout, stderr)
+            run_layout_tests.run = successful_run
+            res = run_layout_tests.main(['--platform', 'test'], stdout, stderr)
             self.assertEqual(res, -1)
 
-            run_webkit_tests.run = exception_raising_run
-            res = run_webkit_tests.main([], stdout, stderr)
-            self.assertEqual(res, run_webkit_tests.EXCEPTIONAL_EXIT_STATUS)
+            run_layout_tests.run = exception_raising_run
+            res = run_layout_tests.main([], stdout, stderr)
+            self.assertEqual(res, run_layout_tests.EXCEPTIONAL_EXIT_STATUS)
         finally:
-            run_webkit_tests.run = orig_run_fn
+            run_layout_tests.run = orig_run_fn
 
     def test_results_printed_when_upload_fails(self):
         stdout = StringIO()
@@ -1479,7 +1479,7 @@ class MainTest(unittest.TestCase):
         with OutputCapture(), \
              patch.object(Upload, 'upload', return_value=False), \
              patch.object(Upload, 'upload_archive', return_value=True):
-            res = run_webkit_tests.main(['--platform', 'test', '--child-processes', '1', '--debug-rwt-logging', '--report', 'http://example.invalid/', 'passes/text.html'], stdout, stderr)
+            res = run_layout_tests.main(['--platform', 'test', '--child-processes', '1', '--debug-rwt-logging', '--report', 'http://example.invalid/', 'passes/text.html'], stdout, stderr)
 
         # A failed upload still fails the run, but the results and the reason (that Tools/CISupport looks for) are printed.
         self.assertEqual(res, -1)
@@ -1507,7 +1507,7 @@ class MainTest(unittest.TestCase):
              patch.object(Upload, 'upload_archive', return_value=True), \
              patch('shutil.make_archive'), \
              patch.object(MockFileSystem, 'open_binary_file_for_reading', autospec=True, side_effect=open_test_archive):
-            res = run_webkit_tests.main(['--platform', 'test', '--child-processes', '1', '--debug-rwt-logging', '--report', 'http://good.invalid/', '--report', 'http://bad.invalid/', 'passes/text.html'], stdout, stderr)
+            res = run_layout_tests.main(['--platform', 'test', '--child-processes', '1', '--debug-rwt-logging', '--report', 'http://good.invalid/', '--report', 'http://bad.invalid/', 'passes/text.html'], stdout, stderr)
 
         self.assertEqual(res, -1)
         self.assertIn('=> Results: 1/1 tests passed', stdout.getvalue())
@@ -1515,7 +1515,7 @@ class MainTest(unittest.TestCase):
         self.assertNotIn('good.invalid', stdout.getvalue().split('=> Results')[-1])
 
     def test_failed_upload_without_results(self):
-        orig_run_fn = run_webkit_tests.run
+        orig_run_fn = run_layout_tests.run
 
         def run_without_results(port, options, args, stderr):
             return RunDetails(exit_code=-1, failed_uploads=['http://example.invalid/'])
@@ -1523,10 +1523,10 @@ class MainTest(unittest.TestCase):
         stdout = StringIO()
         stderr = StringIO()
         try:
-            run_webkit_tests.run = run_without_results
-            res = run_webkit_tests.main(['--platform', 'test', '--report', 'http://example.invalid/'], stdout, stderr)
+            run_layout_tests.run = run_without_results
+            res = run_layout_tests.main(['--platform', 'test', '--report', 'http://example.invalid/'], stdout, stderr)
         finally:
-            run_webkit_tests.run = orig_run_fn
+            run_layout_tests.run = orig_run_fn
 
         # With no results there is nothing to print, but the failed upload is still reported.
         self.assertEqual(res, -1)

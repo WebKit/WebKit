@@ -27,7 +27,7 @@ from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.controllers.single_test_runner import SingleTestRunner
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test_input import Test, TestInput
-from webkitpy.layout_tests.run_webkit_tests import parse_args
+from webkitpy.layout_tests.run_layout_tests import parse_args
 from webkitpy.port.driver import DriverOutput
 from webkitpy.port.test import TestPort
 
