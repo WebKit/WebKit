@@ -1,0 +1,6 @@
+
+
+PASS Cross-origin child layout follows zoom 1 with size 786px
+PASS Cross-origin child layout follows zoom 2 with size 393px
+PASS Cross-origin child layout follows zoom 0.5 with size 1572px
+

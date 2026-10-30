@@ -1367,7 +1367,7 @@ using WebCore::ScrollPosition = WebCore::IntPoint;
     bool ownerIsFullyClipped();
     WebCore::TransformationMatrix childFrameOwnerToRootContentTransform();
     WebCore::TransformationMatrix absoluteToChildFrameOwnerLocalTransform();
-    float frameScaleFactor();
+    [Validator='std::isfinite(*frameScaleFactor) && *frameScaleFactor > 0'] float frameScaleFactor();
     WebCore::LayoutPoint contentBoxLocation();
     OptionSet<WebCore::FrameOwnerElementAppearance> ownerElementAppearance();
 };

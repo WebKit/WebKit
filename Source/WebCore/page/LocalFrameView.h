@@ -108,7 +108,7 @@ public:
     virtual ~LocalFrameView();
 
     WEBCORE_EXPORT void setFrameRect(const IntRect&) final;
-    WEBCORE_EXPORT void LEGACY_NODELETE primeResizeEventBaseline(IntSize);
+    WEBCORE_EXPORT void primeResizeEventBaseline(IntSize);
     Type viewType() const final { return Type::Local; }
     void writeRenderTreeAsText(TextStream&, OptionSet<RenderAsTextFlag>) override;
 

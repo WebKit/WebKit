@@ -5123,9 +5123,9 @@ IntSize LocalFrameView::sizeForResizeEvent() const
 
 void LocalFrameView::primeResizeEventBaseline(IntSize size)
 {
-    m_lastViewportSize = size;
+    m_lastViewportSize = expandedIntSize(sizeWithoutOwnerZoom(FloatSize { size }));
     if (CheckedPtr renderView = this->renderView())
-        m_lastUsedZoomFactor = renderView->style().usedZoom();
+        m_lastUsedZoomFactor = zoomFactorForResizeEvent(renderView->style().usedZoom());
 }
 
 void LocalFrameView::scheduleResizeEventIfNeeded()
