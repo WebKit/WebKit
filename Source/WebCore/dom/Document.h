@@ -1700,7 +1700,7 @@ public:
     const AXCustomColorModeController* axCustomColorModeControllerIfExists() const { return m_axCustomColorModeController.get(); }
     AXCustomColorModeController& axCustomColorModeController();
 
-    bool isAXCustomColorModeActive() const;
+    WEBCORE_EXPORT bool isAXCustomColorModeActive() const;
 #endif
 
     void LEGACY_NODELETE adjustStyleColorOptionsIfNeeded(OptionSet<StyleColorOptions>&) const;
@@ -2827,6 +2827,8 @@ private:
 
     OriginKeyed m_isOriginKeyed { OriginKeyed::No };
     Markable<AgentClusterIdentifier> m_agentClusterIdentifier;
+
+    mutable std::optional<bool> m_documentURLInAXCustomColorModeBlocklist;
 
     // These flags are kept as full bool members rather than joining the bitfield block below
     // because they are bound by reference (via SetForScope or std::exchange), which a bitfield

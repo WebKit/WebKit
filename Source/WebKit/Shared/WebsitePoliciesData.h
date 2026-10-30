@@ -103,6 +103,10 @@ public:
     WebCore::ResourceRequest alternateRequest;
     std::optional<UserContentControllerParameters> userContentControllerParameters;
     String overrideReferrerForAllRequests;
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    WebCore::AXCustomColorModeBlocklist axCustomColorModeBlocklist;
+#endif
 };
 
 } // namespace WebKit

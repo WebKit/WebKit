@@ -166,6 +166,26 @@ static WebCore::ModalContainerObservationPolicy LEGACY_NODELETE coreModalContain
     return WebCore::ModalContainerObservationPolicy::Disabled;
 }
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+static WebCore::AXCustomColorModeBlocklistURLMap nsDictionaryToAXCustomColorModeBlocklistURLMap(RetainPtr<NSDictionary<NSString *, NSSet<NSString *> *>> dict)
+{
+    if (!dict)
+        return { };
+
+    __block HashMap<String, HashSet<String>> map;
+    [dict enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSSet<NSString *> *value, BOOL *) {
+        HashSet<String> set;
+        set.reserveInitialCapacity(value.count);
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL NSString *path in value)
+            set.add(path);
+        map.add(key, WTF::move(set));
+    }];
+
+    return map;
+}
+#endif
+
 } // namespace WebKit
 
 @implementation WKWebpagePreferences
@@ -910,5 +930,19 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return WKSecurityRestrictionModeMaximizeCompatibility;
     return WKSecurityRestrictionModeNone;
 }
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+- (void)_setAXCustomColorModeBlocklist:(NSDictionary<NSString *, NSSet<NSString *> *> *)urls
+    urlsIncludingSubdomains:(NSDictionary<NSString *, NSSet<NSString *> *> *)urlsIncludingSubdomains
+{
+    WebCore::AXCustomColorModeBlocklist blocklist {
+        WebKit::nsDictionaryToAXCustomColorModeBlocklistURLMap(urls),
+        WebKit::nsDictionaryToAXCustomColorModeBlocklistURLMap(urlsIncludingSubdomains),
+    };
+
+    _websitePolicies->setAXCustomColorModeBlocklist(WTF::move(blocklist));
+}
+
+#endif
 
 @end

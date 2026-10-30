@@ -4138,7 +4138,18 @@ enum class WebCore::ScheduleLocationChangeResult : uint8_t {
     Started
 };
 
-header: <WebCore/DocumentLoader.h>
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+
+header: <WebCore/AXCustomColorModeBlocklist.h>
+using WebCore::AXCustomColorModeBlocklistURLMap = HashMap<String, HashSet<String>>;
+
+class WebCore::AXCustomColorModeBlocklist {
+    WebCore::AXCustomColorModeBlocklistURLMap urls();
+    WebCore::AXCustomColorModeBlocklistURLMap urlsIncludingSubdomains();
+}
+
+#endif
+
 [CustomHeader] enum class WebCore::MouseEventPolicy : uint8_t {
     Default,
 #if ENABLE(IOS_TOUCH_EVENTS)

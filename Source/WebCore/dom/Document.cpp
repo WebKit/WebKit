@@ -4876,6 +4876,8 @@ void Document::setURL(URL&& url)
     urlsAffectingQuirksDidChange();
     if (RefPtr page = this->page(); page && isTopDocument())
         page->topDocumentURLDidChange();
+
+    m_documentURLInAXCustomColorModeBlocklist.reset();
 }
 
 const URL& Document::urlForBindings()
@@ -10510,6 +10512,18 @@ void Document::adjustStyleColorOptionsIfNeeded(OptionSet<StyleColorOptions>&) co
 
 bool Document::isAXCustomColorModeActive() const
 {
+    bool urlInAXCustomColorModeBlocklist = [&] {
+        if (!m_documentURLInAXCustomColorModeBlocklist) {
+            if (RefPtr loader = this->loader())
+                m_documentURLInAXCustomColorModeBlocklist = loader->axCustomColorModeBlocklist().matches(url());
+        }
+
+        return m_documentURLInAXCustomColorModeBlocklist.value_or(false);
+    }();
+
+    if (urlInAXCustomColorModeBlocklist)
+        return false;
+
     if (RefPtr page = this->page())
         return page->isAXCustomColorModeActive();
 

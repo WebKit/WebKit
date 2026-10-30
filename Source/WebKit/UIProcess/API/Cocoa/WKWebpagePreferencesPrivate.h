@@ -139,4 +139,9 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteNetworkConnectionIntegrityPolicy) {
 
 @property (nonatomic, setter=setOverrideReferrer:) NSString *_overrideReferrerForAllRequests WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
+// FIXME: add getters and turn it into a @property as needed. Right now we only need to
+// pass it from embedder to WebKit.
+- (void)_setAXCustomColorModeBlocklist:(NSDictionary<NSString *, NSSet<NSString *> *> *)urls
+    urlsIncludingSubdomains:(NSDictionary<NSString *, NSSet<NSString *> *> *)urlsIncludingSubdomains;
+
 @end

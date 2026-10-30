@@ -1885,6 +1885,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     loader/images/svg/SVGImage.h
 
+    page/AXCustomColorModeBlocklist.h
     page/ActivityState.h
     page/ActivityStateChangeObserver.h
     page/AdjustViewSize.h

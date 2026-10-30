@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include <WebCore/AXCustomColorModeBlocklist.h>
 #include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/AgentClusterAssignment.h>
 #include <WebCore/AutoplayPolicy.h>
@@ -149,6 +150,7 @@ enum class ContentExtensionDefaultEnablement : bool { Disabled, Enabled };
 using ContentExtensionEnablement = std::pair<ContentExtensionDefaultEnablement, HashSet<String>>;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentLoader);
+
 class DocumentLoader
     : public RefCounted<DocumentLoader>
     , public FrameDestructionObserver
@@ -548,6 +550,11 @@ public:
     const std::optional<NavigationRequester>& crossSiteRequester() const LIFETIME_BOUND { return m_crossSiteRequester; }
     void setCrossSiteRequester(NavigationRequester&& crossSiteRequester) { m_crossSiteRequester = WTF::move(crossSiteRequester); }
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    void setAXCustomColorModeBlocklist(AXCustomColorModeBlocklist data) { m_axCustomColorModeBlocklist = WTF::move(data); }
+    const AXCustomColorModeBlocklist& axCustomColorModeBlocklist() const LIFETIME_BOUND { return m_axCustomColorModeBlocklist; }
+#endif
+
 protected:
     WEBCORE_EXPORT DocumentLoader(ResourceRequest&&, SubstituteData&&, ResourceRequest&&);
     WEBCORE_EXPORT DocumentLoader(ResourceRequest&&, SubstituteData&&);
@@ -792,6 +799,10 @@ private:
     std::optional<NavigationRequester> m_crossSiteRequester;
 
     Function<void(Document*)> m_whenDocumentIsCreatedCallback;
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    AXCustomColorModeBlocklist m_axCustomColorModeBlocklist;
+#endif
 
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
 

@@ -101,4 +101,7 @@ struct WebKit::WebsitePoliciesData {
     WebCore::ResourceRequest alternateRequest;
     std::optional<WebKit::UserContentControllerParameters> userContentControllerParameters;
     String overrideReferrerForAllRequests;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    WebCore::AXCustomColorModeBlocklist axCustomColorModeBlocklist;
+#endif
 };

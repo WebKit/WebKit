@@ -2270,6 +2270,7 @@ mathml/MathMLUnderOverElement.cpp @header:RenderStyleGetters
 mathml/MathMLUnknownElement.cpp
 page/ActivityState.cpp
 page/AutoscrollController.cpp @header:RenderStyleGetters @cost:6
+page/AXCustomColorModeBlocklist.cpp
 page/BarProp.cpp
 page/CaptionUserPreferences.cpp
 page/Chrome.cpp

@@ -7134,6 +7134,7 @@
 		EE042903F1A0DE0100A1B2C3 /* JSDOMBindingFacade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE042901F1A0DE0100A1B2C3 /* JSDOMBindingFacade.cpp */; };
 		EE042904F1A0DE0100A1B2C3 /* JSDOMBindingFacade.h in Headers */ = {isa = PBXBuildFile; fileRef = EE042902F1A0DE0100A1B2C3 /* JSDOMBindingFacade.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EE0730583035331700B23328 /* StyleResolvedColors.h in Headers */ = {isa = PBXBuildFile; fileRef = EE073056303532EF00B23328 /* StyleResolvedColors.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EE07C978309393DB00AF3F38 /* AXCustomColorModeBlocklist.h in Headers */ = {isa = PBXBuildFile; fileRef = EE07C976309393C300AF3F38 /* AXCustomColorModeBlocklist.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EE0C7E042CE845CB0043DAF8 /* CSSPositionTryRule.h in Headers */ = {isa = PBXBuildFile; fileRef = EE0C7E002CE845CB0043DAF8 /* CSSPositionTryRule.h */; };
 		EE0D3C492D2F4B4C00072978 /* StageModeOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = EE0D3C482D2F4AE600072978 /* StageModeOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EE1A93AA2F2AE00A0054FAE4 /* NavigationActivation.h in Headers */ = {isa = PBXBuildFile; fileRef = DFD9B92D2C29D16200E10B53 /* NavigationActivation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -23298,6 +23299,8 @@
 		EE042902F1A0DE0100A1B2C3 /* JSDOMBindingFacade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMBindingFacade.h; sourceTree = "<group>"; };
 		EE073056303532EF00B23328 /* StyleResolvedColors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleResolvedColors.h; sourceTree = "<group>"; };
 		EE073057303532EF00B23328 /* StyleResolvedColors.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleResolvedColors.cpp; sourceTree = "<group>"; };
+		EE07C976309393C300AF3F38 /* AXCustomColorModeBlocklist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXCustomColorModeBlocklist.h; sourceTree = "<group>"; };
+		EE07C977309393C300AF3F38 /* AXCustomColorModeBlocklist.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AXCustomColorModeBlocklist.cpp; sourceTree = "<group>"; };
 		EE0C7E002CE845CB0043DAF8 /* CSSPositionTryRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPositionTryRule.h; sourceTree = "<group>"; };
 		EE0C7E012CE845CB0043DAF8 /* CSSPositionTryRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPositionTryRule.cpp; sourceTree = "<group>"; };
 		EE0C7E022CE845CB0043DAF8 /* CSSPositionTryRule.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSPositionTryRule.idl; sourceTree = "<group>"; };
@@ -31060,6 +31063,8 @@
 				1AF62EE114DA22A70041556C /* scrolling */,
 				F4C7E85A2B5F1D50001B8C9C /* text-extraction */,
 				07E2C0702C13962800BE6743 /* writing-tools */,
+				EE07C977309393C300AF3F38 /* AXCustomColorModeBlocklist.cpp */,
+				EE07C976309393C300AF3F38 /* AXCustomColorModeBlocklist.h */,
 				0F70495D211B524200369968 /* ActivityState.cpp */,
 				724EE54E1DC7F25B00A91FFB /* ActivityState.h */,
 				F4C574742A8432040024A071 /* ActivityState.serialization.in */,
@@ -44575,6 +44580,7 @@
 				07E9C65F2E5068EE001DFE83 /* AXComputedObjectAttributeCache.h in Headers */,
 				2936BF5C21D69E4B004A8FC9 /* AXCoreObject.h in Headers */,
 				489DE3272F3B9C30008530FF /* AXCrossProcessSearch.h in Headers */,
+				EE07C978309393DB00AF3F38 /* AXCustomColorModeBlocklist.h in Headers */,
 				421129B22EC39C0A00778FE7 /* AXFormActivityMonitor.h in Headers */,
 				486B8DC72A043C0600E00E73 /* AXGeometryManager.h in Headers */,
 				48CBBAB52EC3B70000EC5429 /* AXID.h in Headers */,

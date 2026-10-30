@@ -28,6 +28,7 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestProtocol.h"
@@ -2465,3 +2466,217 @@ TEST(WebpagePreferences, GlobalPrivacyControlRequestHeaderInSubframe)
     EXPECT_TRUE(sawMainResourceRequest);
     EXPECT_TRUE(sawSubframeMainResourceRequest);
 }
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+
+@interface AXCustomColorModeBlocklistDelegate : TestNavigationDelegate <WKNavigationDelegate, WKUIDelegatePrivate>
+@property (retain) NSDictionary<NSString *, NSSet<NSString *> *> *blockedURLs;
+@property (retain) NSDictionary<NSString *, NSSet<NSString *> *> *blockedURLsIncludingSubdomains;
+@end
+
+@implementation AXCustomColorModeBlocklistDelegate
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
+{
+    RetainPtr websitePolicies = adoptNS([[WKWebpagePreferences alloc] init]);
+    [websitePolicies _setAXCustomColorModeBlocklist:_blockedURLs
+        urlsIncludingSubdomains:_blockedURLsIncludingSubdomains];
+
+    decisionHandler(WKNavigationActionPolicyAllow, websitePolicies.get());
+}
+
+@end
+
+enum class AXCustomColorModeBlocklistTestFrame {
+    MainFrame,
+    Subframe,
+    NestedSubframe
+};
+
+void testAXCustomColorModeBlocklistPhase(AXCustomColorModeBlocklistTestFrame testFrame, const String& frameHost, const String& framePath, bool allowed, RetainPtr<TestNavigationDelegate> delegate)
+{
+    auto httpServer = [&] {
+        switch (testFrame) {
+        case AXCustomColorModeBlocklistTestFrame::MainFrame:
+            return TestWebKitAPI::HTTPServer({
+                { makeString("http://"_s, frameHost, framePath), "<!DOCTYPE html><script>alert(internals.isAXCustomColorModeActive())</script>"_s },
+            });
+
+        case AXCustomColorModeBlocklistTestFrame::Subframe:
+            return TestWebKitAPI::HTTPServer({
+                { "http://mainframe.fun/"_s, makeString("<!DOCTYPE html><iframe src='http://"_s, frameHost, framePath, "'></iframe>"_s) },
+                { makeString("http://"_s, frameHost, framePath), "<!DOCTYPE html><script>alert(internals.isAXCustomColorModeActive())</script>"_s },
+            });
+
+        case AXCustomColorModeBlocklistTestFrame::NestedSubframe:
+            return TestWebKitAPI::HTTPServer({
+                { "http://mainframe.fun/"_s, "<!DOCTYPE html><iframe src='http://subframe1.fun'></iframe>"_s },
+                { "http://subframe1.fun/"_s, makeString("<!DOCTYPE html><iframe src='http://"_s, frameHost, framePath, "'></iframe>"_s) },
+                { makeString("http://"_s, frameHost, framePath), "<!DOCTYPE html><script>alert(internals.isAXCustomColorModeActive())</script>"_s },
+            });
+        }
+    }();
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPProxy:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", httpServer.port()]]];
+
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    TestWebKitAPI::setFeatureEnabled(configuration, @"AXCustomColorModeEnabled", true);
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:delegate];
+
+    if (testFrame == AXCustomColorModeBlocklistTestFrame::MainFrame)
+        [webView loadURL:[NSURL URLWithString:makeString("http://"_s, frameHost, framePath).createNSString()]];
+    else
+        [webView loadURL:[NSURL URLWithString:@"http://mainframe.fun/"]];
+
+    EXPECT_WK_STREQ(allowed ? "true" : "false", [webView _test_waitForAlert]) << "http://" << frameHost << framePath << "should be " << (allowed ? "allowed" : "blocked");
+}
+
+void testAXCustomColorModeBlocklist(const String& host, const String& path, bool allowed, RetainPtr<TestNavigationDelegate> delegate)
+{
+    testAXCustomColorModeBlocklistPhase(AXCustomColorModeBlocklistTestFrame::MainFrame, host, path, allowed, delegate);
+    testAXCustomColorModeBlocklistPhase(AXCustomColorModeBlocklistTestFrame::Subframe, host, path, allowed, delegate);
+    testAXCustomColorModeBlocklistPhase(AXCustomColorModeBlocklistTestFrame::NestedSubframe, host, path, allowed, delegate);
+}
+
+TEST(WebpagePreferences, AXCustomColorModeBlocklist_Host)
+{
+    NSDictionary<NSString *, NSSet<NSString *> *> *blockedURLs = @{
+        @"blocked.host": [NSSet setWithArray:@[ @"/" ]],
+        @"blocked2.host": [NSSet setWithArray:@[ @"/blocked", @"/blocked2/path" ]],
+    };
+
+    RetainPtr delegate = adoptNS([[AXCustomColorModeBlocklistDelegate alloc] init]);
+    [delegate setBlockedURLs:blockedURLs];
+
+    testAXCustomColorModeBlocklist("blocked.host"_s, "/"_s, false, delegate);
+    testAXCustomColorModeBlocklist("blocked.host"_s, "/abc/def"_s, false, delegate);
+
+    testAXCustomColorModeBlocklist("blocked2.host"_s, "/"_s, true, delegate);
+    testAXCustomColorModeBlocklist("blocked2.host"_s, "/abc/def"_s, true, delegate);
+    testAXCustomColorModeBlocklist("blocked2.host"_s, "/blocked"_s, false, delegate);
+    testAXCustomColorModeBlocklist("blocked2.host"_s, "/blocked/path"_s, false, delegate);
+    testAXCustomColorModeBlocklist("blocked2.host"_s, "/blocked2"_s, true, delegate);
+    testAXCustomColorModeBlocklist("blocked2.host"_s, "/blocked2/abc"_s, true, delegate);
+    testAXCustomColorModeBlocklist("blocked2.host"_s, "/blocked2/path"_s, false, delegate);
+    testAXCustomColorModeBlocklist("blocked2.host"_s, "/blocked2/path/path2"_s, false, delegate);
+}
+
+TEST(WebpagePreferences, AXCustomColorModeBlocklist_HostWww)
+{
+    NSDictionary<NSString *, NSSet<NSString *> *> *blockedURLs = @{
+        @"blocked.host": [NSSet setWithArray:@[ @"/" ]],
+        @"blocked2.host": [NSSet setWithArray:@[ @"/blocked", @"/blocked2/path" ]],
+    };
+
+    RetainPtr delegate = adoptNS([[AXCustomColorModeBlocklistDelegate alloc] init]);
+    [delegate setBlockedURLs:blockedURLs];
+
+    testAXCustomColorModeBlocklist("www.blocked.host"_s, "/"_s, false, delegate);
+    testAXCustomColorModeBlocklist("www.blocked.host"_s, "/abc/def"_s, false, delegate);
+
+    testAXCustomColorModeBlocklist("www.blocked2.host"_s, "/"_s, true, delegate);
+    testAXCustomColorModeBlocklist("www.blocked2.host"_s, "/abc/def"_s, true, delegate);
+    testAXCustomColorModeBlocklist("www.blocked2.host"_s, "/blocked"_s, false, delegate);
+    testAXCustomColorModeBlocklist("www.blocked2.host"_s, "/blocked/path"_s, false, delegate);
+    testAXCustomColorModeBlocklist("www.blocked2.host"_s, "/blocked2"_s, true, delegate);
+    testAXCustomColorModeBlocklist("www.blocked2.host"_s, "/blocked2/abc"_s, true, delegate);
+    testAXCustomColorModeBlocklist("www.blocked2.host"_s, "/blocked2/path"_s, false, delegate);
+    testAXCustomColorModeBlocklist("www.blocked2.host"_s, "/blocked2/path/path2"_s, false, delegate);
+}
+
+// Split to avoid timing out.
+TEST(WebpagePreferences, AXCustomColorModeBlocklist_HostIncludingSubdomains1)
+{
+    NSDictionary<NSString *, NSSet<NSString *> *> *blockedURLsIncludingSubdomains = @{
+        @"blocked.host": [NSSet setWithArray:@[ @"" ]],
+        @"blocked2.host": [NSSet setWithArray:@[ @"/" ]],
+        @"blocked3.host": [NSSet setWithArray:@[ @"/blocked", @"/blocked2/path" ]],
+    };
+
+    RetainPtr delegate = adoptNS([[AXCustomColorModeBlocklistDelegate alloc] init]);
+    [delegate setBlockedURLsIncludingSubdomains:blockedURLsIncludingSubdomains];
+
+    for (const auto& host : { "blocked.host"_s, "bar.blocked.host"_s, "foo.bar.blocked.host"_s }) {
+        testAXCustomColorModeBlocklist(host, "/"_s, false, delegate);
+        testAXCustomColorModeBlocklist(host, "/abc/def"_s, false, delegate);
+    }
+
+    for (const auto& host : { "blocked2.host"_s, "bar.blocked2.host"_s, "foo.bar.blocked2.host"_s }) {
+        testAXCustomColorModeBlocklist(host, "/"_s, false, delegate);
+        testAXCustomColorModeBlocklist(host, "/abc/def"_s, false, delegate);
+    }
+}
+
+TEST(WebpagePreferences, AXCustomColorModeBlocklist_HostIncludingSubdomains2)
+{
+    NSDictionary<NSString *, NSSet<NSString *> *> *blockedURLsIncludingSubdomains = @{
+        @"blocked.host": [NSSet setWithArray:@[ @"" ]],
+        @"blocked2.host": [NSSet setWithArray:@[ @"/" ]],
+        @"blocked3.host": [NSSet setWithArray:@[ @"/blocked", @"/blocked2/path" ]],
+    };
+
+    RetainPtr delegate = adoptNS([[AXCustomColorModeBlocklistDelegate alloc] init]);
+    [delegate setBlockedURLsIncludingSubdomains:blockedURLsIncludingSubdomains];
+
+    for (const auto& host : { "blocked3.host"_s, "foo.bar.blocked3.host"_s }) {
+        testAXCustomColorModeBlocklist(host, "/"_s, true, delegate);
+        testAXCustomColorModeBlocklist(host, "/abc/def"_s, true, delegate);
+        testAXCustomColorModeBlocklist(host, "/blocked"_s, false, delegate);
+        testAXCustomColorModeBlocklist(host, "/blocked/path"_s, false, delegate);
+        testAXCustomColorModeBlocklist(host, "/blocked2"_s, true, delegate);
+        testAXCustomColorModeBlocklist(host, "/blocked2/abc"_s, true, delegate);
+        testAXCustomColorModeBlocklist(host, "/blocked2/path"_s, false, delegate);
+        testAXCustomColorModeBlocklist(host, "/blocked2/path/path2"_s, false, delegate);
+    }
+}
+
+TEST(WebpagePreferences, AXCustomColorModeBlocklist_HostIncludingSubdomainsWww1)
+{
+    NSDictionary<NSString *, NSSet<NSString *> *> *blockedURLsIncludingSubdomains = @{
+        @"blocked.host": [NSSet setWithArray:@[ @"" ]],
+        @"blocked2.host": [NSSet setWithArray:@[ @"/" ]],
+        @"blocked3.host": [NSSet setWithArray:@[ @"/blocked", @"/blocked2/path" ]],
+    };
+
+    RetainPtr delegate = adoptNS([[AXCustomColorModeBlocklistDelegate alloc] init]);
+    [delegate setBlockedURLsIncludingSubdomains:blockedURLsIncludingSubdomains];
+
+    for (const auto& host : { "www.blocked.host"_s, "www.bar.blocked.host"_s, "www.foo.bar.blocked.host"_s }) {
+        testAXCustomColorModeBlocklist(host, "/"_s, false, delegate);
+        testAXCustomColorModeBlocklist(host, "/abc/def"_s, false, delegate);
+    }
+
+    for (const auto& host : { "www.blocked2.host"_s, "www.bar.blocked2.host"_s, "www.foo.bar.blocked2.host"_s }) {
+        testAXCustomColorModeBlocklist(host, "/"_s, false, delegate);
+        testAXCustomColorModeBlocklist(host, "/abc/def"_s, false, delegate);
+    }
+}
+
+TEST(WebpagePreferences, AXCustomColorModeBlocklist_HostIncludingSubdomainsWww2)
+{
+    NSDictionary<NSString *, NSSet<NSString *> *> *blockedURLsIncludingSubdomains = @{
+        @"blocked.host": [NSSet setWithArray:@[ @"" ]],
+        @"blocked2.host": [NSSet setWithArray:@[ @"/" ]],
+        @"blocked3.host": [NSSet setWithArray:@[ @"/blocked", @"/blocked2/path" ]],
+    };
+
+    RetainPtr delegate = adoptNS([[AXCustomColorModeBlocklistDelegate alloc] init]);
+    [delegate setBlockedURLsIncludingSubdomains:blockedURLsIncludingSubdomains];
+
+    for (const auto& host : { "www.blocked3.host"_s, "www.foo.bar.blocked3.host"_s }) {
+        testAXCustomColorModeBlocklist(host, "/"_s, true, delegate);
+        testAXCustomColorModeBlocklist(host, "/abc/def"_s, true, delegate);
+        testAXCustomColorModeBlocklist(host, "/blocked"_s, false, delegate);
+        testAXCustomColorModeBlocklist(host, "/blocked/path"_s, false, delegate);
+        testAXCustomColorModeBlocklist(host, "/blocked2"_s, true, delegate);
+        testAXCustomColorModeBlocklist(host, "/blocked2/abc"_s, true, delegate);
+        testAXCustomColorModeBlocklist(host, "/blocked2/path"_s, false, delegate);
+        testAXCustomColorModeBlocklist(host, "/blocked2/path/path2"_s, false, delegate);
+    }
+}
+
+#endif
