@@ -93,18 +93,24 @@ static std::optional<LayoutUnit> contentBoxBlockSizeForPercentages(const RenderB
 
 static Layout::ConstraintsForBlockContent constraintsForBlockContent(const RenderBlockFlow& rootRenderer, RelayoutChildren relayoutChildren)
 {
-    // The root lives in its parent's formatting context, which has already decided its size.
-    auto contentBoxLogicalLeft = rootRenderer.borderAndPaddingStart();
+    // The root lives in its parent's formatting context, which has already decided its size. WebKit compatibility: the collapsed border halves
+    // of a table cell are in the writing mode of the table (RenderTableCell::borderStart). Block content starts after those on the cell's own
+    // inline-start and block-start sides (RenderBlockFlow::determineLogicalLeftPositionForChild), inline content after the physical ones on
+    // those sides (BoxGeometryUpdater::setFormattingContextRootGeometry).
+    auto writingMode = rootRenderer.writingMode();
+    auto borderWidths = rootRenderer.borderWidths();
+    auto borderStart = rootRenderer.childrenInline() ? borderWidths.start(writingMode) : rootRenderer.borderStart();
+    auto borderBefore = rootRenderer.childrenInline() ? borderWidths.before(writingMode) : rootRenderer.borderBefore();
+    auto contentBoxLogicalLeft = borderStart + rootRenderer.paddingStart();
     // The scrollbar in the inline axis sits between the border and the padding: the vertical one, on the left or on the right, in horizontal
     // writing modes and the horizontal one, at the bottom, in vertical writing modes. The block formatting context measures from the inline
     // start, so it counts when it is on that side, like RenderBlockFlow::determineLogicalLeftPositionForChild, which measures from the logical
     // left (top in vertical writing modes) and clamps it to the space it has.
-    auto writingMode = rootRenderer.writingMode();
     auto scrollbarIsOnLogicalLeft = writingMode.isHorizontal() && rootRenderer.shouldPlaceVerticalScrollbarOnLeft();
     if (scrollbarIsOnLogicalLeft == writingMode.isLogicalLeftInlineStart())
         contentBoxLogicalLeft += std::min<LayoutUnit>(rootRenderer.scrollbarLogicalWidth(), std::max(0_lu, rootRenderer.logicalWidth() - rootRenderer.borderAndPaddingLogicalWidth()));
     auto horizontalConstraints = Layout::HorizontalConstraints { contentBoxLogicalLeft, rootRenderer.contentBoxLogicalWidth() };
-    return { { horizontalConstraints, rootRenderer.borderAndPaddingBefore() }, contentBoxBlockSizeForPercentages(rootRenderer), rootRenderer.availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding), relayoutChildren == RelayoutChildren::Yes };
+    return { { horizontalConstraints, borderBefore + rootRenderer.paddingBefore() }, contentBoxBlockSizeForPercentages(rootRenderer), rootRenderer.availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding), relayoutChildren == RelayoutChildren::Yes };
 }
 
 void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
