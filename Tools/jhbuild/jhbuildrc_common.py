@@ -114,6 +114,6 @@ def init(jhbuildrc_globals, jhbuild_platform):
         if jhbuild_enable_thunder == 'yes' or jhbuild_enable_thunder == '1' or jhbuild_enable_thunder == 'true':
             jhbuildrc_globals['conditions'].add('Thunder')
 
-    REQUIRED_MESON_VERSION = (0, 62, 2)
+    REQUIRED_MESON_VERSION = (1, 4, 0)
     if not meson_version() or meson_version() < REQUIRED_MESON_VERSION:
         jhbuildrc_globals['conditions'].add('require-meson')

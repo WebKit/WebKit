@@ -122,6 +122,7 @@ PACKAGES=(
     libexpat1-dev
     libgirepository1.0-dev
     libgles2-mesa-dev
+    libjson-glib-dev
     liborc-0.4-dev
     libp11-kit-dev
     libproxy-dev

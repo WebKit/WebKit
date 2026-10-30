@@ -12,7 +12,6 @@ PACKAGES+=(
     libffi-devel
     libgudev1-devel
     libsecret-devel
-    nasm
     python-devel
     redhat-rpm-config
 
@@ -30,8 +29,6 @@ PACKAGES+=(
     hicolor-icon-theme
 
     # These are dependencies necessary for building the jhbuild.
-    bison
-    flex
     libdrm-devel
     libpciaccess-devel
     libunwind-devel

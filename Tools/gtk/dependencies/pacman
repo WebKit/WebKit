@@ -40,8 +40,6 @@ PACKAGES+=(
     hicolor-icon-theme
 
     # These are dependencies necessary for building the jhbuild.
-    bison
-    flex
     gnutls
     libdrm
     libepoxy
