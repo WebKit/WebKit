@@ -856,6 +856,7 @@ Document::~Document()
     ASSERT(m_backForwardCacheState != InBackForwardCache);
     ASSERT(!m_parentTreeScope);
     ASSERT(!m_disabledFieldsetElementsCount);
+    ASSERT(!m_connectedDisabledFieldsetElementsCount);
     ASSERT(m_ranges.isEmpty());
     ASSERT(m_inDocumentShadowRoots.isEmptyIgnoringNullReferences());
 
