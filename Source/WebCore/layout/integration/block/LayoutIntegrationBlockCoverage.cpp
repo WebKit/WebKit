@@ -83,7 +83,7 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentHasStretchedQuirksModeBody,
     ContentHasUnsupportedRenderer,
     ContentHasFormattingContextRoot,
-    ContentHasLayer,
+    ContentHasInlineBoxContainingBlock,
     ContentHasBlockInInline,
     ContentHasUnsupportedInlineBox,
     ContentHasOrthogonalFlow,
@@ -265,8 +265,6 @@ static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const Re
     CheckedRef style = renderer.style();
     if (renderer.type() != RenderObject::Type::Inline || style->display() != Style::DisplayType::InlineFlow || style->pseudoElementType() == PseudoElementType::FirstLetter)
         return BlockAvoidanceReason::ContentHasUnsupportedInlineBox;
-    if (renderer.hasLayer())
-        return BlockAvoidanceReason::ContentHasLayer;
     return { };
 }
 
@@ -374,6 +372,10 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
     // FIXME: An orthogonal flex container, whose inline size comes from the available block size (css-writing-modes-4 §7.3).
     if (isFlexContainer && outOfFlowBox.isWritingModeRoot())
         return BlockAvoidanceReason::ContentHasOrthogonalFlow;
+    // FIXME: A positioned inline box as its containing block, whose first and last fragments make the containing block's rectangle
+    // (css-position-3 §2.1), not a block container's padding box (PositionedLayoutConstraints takes container(), not containingBlock()).
+    if (CheckedPtr container = outOfFlowBox.container(); container && container->isInlineBox())
+        return BlockAvoidanceReason::ContentHasInlineBoxContainingBlock;
     CheckedRef style = outOfFlowBox.style();
     // FIXME: Anchor positioning, position-area and position-try fallbacks, and alignment other than normal (css-position-3 §4.5).
     if (Style::AnchorPositionEvaluator::isAnchorPositioned(style.get()) || !style->positionTryFallbacks().isNone())
@@ -736,8 +738,8 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "other renderer"_s;
     case BlockAvoidanceReason::ContentHasFormattingContextRoot:
         return "formatting context root (contain, columns, ...)"_s;
-    case BlockAvoidanceReason::ContentHasLayer:
-        return "inline box with a layer"_s;
+    case BlockAvoidanceReason::ContentHasInlineBoxContainingBlock:
+        return "out-of-flow box in a positioned inline box"_s;
     case BlockAvoidanceReason::ContentHasBlockInInline:
         return "block-in-inline"_s;
     case BlockAvoidanceReason::ContentHasUnsupportedInlineBox:
