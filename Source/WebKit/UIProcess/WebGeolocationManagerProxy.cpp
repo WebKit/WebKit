@@ -170,7 +170,7 @@ void WebGeolocationManagerProxy::startUpdatingWithProxy(WebProcessProxy& proxy, 
 
 void WebGeolocationManagerProxy::stopUpdating(IPC::Connection& connection, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain)
 {
-    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(registrableDomain, untrustedDomain, ProcessSpeaksForDomain);
+    auto registrableDomain = WTF::move(untrustedDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
     stopUpdatingWithProxy(WebProcessProxy::fromConnection(connection), registrableDomain);
 }
 
@@ -201,8 +201,11 @@ void WebGeolocationManagerProxy::stopUpdatingWithProxy(WebProcessProxy& proxy, c
 
 void WebGeolocationManagerProxy::setEnableHighAccuracy(IPC::Connection& connection, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain, bool enabled)
 {
-    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(registrableDomain, untrustedDomain, ProcessSpeaksForDomain);
-    setEnableHighAccuracyWithProxy(WebProcessProxy::fromConnection(connection), registrableDomain, enabled);
+    auto registrableDomain = WTF::move(untrustedDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
+    Ref proxy = WebProcessProxy::fromConnection(connection);
+    if (auto it = m_perDomainData.find(registrableDomain); it != m_perDomainData.end())
+        MESSAGE_CHECK(connection, it->value->watchers.contains(proxy));
+    setEnableHighAccuracyWithProxy(proxy, registrableDomain, enabled);
 }
 
 void WebGeolocationManagerProxy::setEnableHighAccuracyWithProxy(WebProcessProxy& proxy, const WebCore::RegistrableDomain& registrableDomain, bool enabled)
