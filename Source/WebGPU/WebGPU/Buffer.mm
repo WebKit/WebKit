@@ -608,7 +608,10 @@ void Buffer::clearIndexBufferForCommandBuffer(CommandBuffer& commandBuffer)
     commandBuffer.addPostCommitHandler([queue, priorData = WTF::move(priorData), protectedThis = protect(*this)](id<MTLCommandBuffer> mtlCommandBuffer) mutable {
         [mtlCommandBuffer waitUntilCompleted];
         protectedThis->m_clearedForCommandBuffer = 0;
-        queue->writeBuffer(*protectedThis.ptr(), 0, priorData.mutableSpan());
+        // priorData goes out of scope with this handler, but a restore this large is staged through a
+        // newBufferWithBytesNoCopy MTLBuffer the GPU reads after the commit, so hand the bytes
+        // over instead of lending them.
+        queue->writeBuffer(*protectedThis.ptr(), 0, WTF::move(priorData));
     });
 }
 
