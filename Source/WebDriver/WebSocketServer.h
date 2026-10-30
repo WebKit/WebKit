@@ -107,6 +107,8 @@ public:
         static Message reply(const String& type, unsigned id, Ref<JSON::Value>&& result);
     };
 
+    // Same semantics as HTTPRequestHandler::validateRequestHeaders()
+    virtual std::expected<void, String> validateHandshakeHeaders(const String& hostHeader, const String& originHeader) const = 0;
     virtual bool acceptHandshake(HTTPRequestHandler::Request&&) = 0;
     virtual void handleMessage(Message&&, Function<void(Message&&)>&& replyHandler) = 0;
     virtual void clientDisconnected(const Connection&) = 0;
