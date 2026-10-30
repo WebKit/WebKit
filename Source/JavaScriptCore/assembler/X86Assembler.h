@@ -4656,6 +4656,15 @@ public:
         m_formatter.immediate8(controlBits);
     }
 
+    void vpshufhw_i8rr(uint8_t controlBits, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    {
+        // https://www.felixcloutier.com/x86/pshufhw
+        // VEX.128.F3.0F.WIG 70 /r ib VPSHUFHW xmm1, xmm2/m128, imm8
+        // A    NA    ModRM:reg (w)    ModRM:r/m (r)    imm8    NA
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_F3, OP2_PSHUFHW_VdqWdqIb, (RegisterID)xmm1, (RegisterID)0, (RegisterID)xmm2);
+        m_formatter.immediate8(controlBits);
+    }
+
     void vpshufd_i8rr(uint8_t controlBits, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/pshufd

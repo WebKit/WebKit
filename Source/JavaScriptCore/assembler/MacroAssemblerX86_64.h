@@ -7937,6 +7937,29 @@ public:
             m_assembler.vpshufd_i8rr(imm, src, dest);
             break;
         }
+        case SIMDLane::i16x8:
+            if (!lane.m_value && supportsAVX2()) {
+                m_assembler.vpbroadcastw_rr(src, dest);
+                break;
+            }
+            dupInt16Element(lane.m_value, src, dest);
+            break;
+        case SIMDLane::i8x16:
+            if (supportsAVX2()) {
+                if (lane.m_value) {
+                    m_assembler.vpalignr_i8rrr(lane.m_value, src, src, dest);
+                    m_assembler.vpbroadcastb_rr(dest, dest);
+                } else
+                    m_assembler.vpbroadcastb_rr(src, dest);
+                break;
+            }
+            // Interleaving the vector with itself turns each byte into a 16-bit lane holding two copies of it.
+            if (lane.m_value < 8)
+                m_assembler.vpunpcklbw_rrr(src, src, dest);
+            else
+                m_assembler.vpunpckhbw_rrr(src, src, dest);
+            dupInt16Element(lane.m_value % 8, dest, dest);
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -9971,6 +9994,18 @@ private:
         srcIsNonZero.link(this);
         xor64(TrustedImm32(0x3f), dst);
         skipNonZeroCase.link(this);
+    }
+
+    void dupInt16Element(unsigned lane, FPRegisterID src, FPRegisterID dest)
+    {
+        ASSERT(lane < 8);
+        uint8_t wordShuffle = (lane % 4) * 0x55;
+        if (lane < 4)
+            m_assembler.vpshuflw_i8rr(wordShuffle, src, dest);
+        else
+            m_assembler.vpshufhw_i8rr(wordShuffle, src, dest);
+        // Every 32-bit lane of that 64-bit half now holds two copies of the word.
+        vectorDupElement(SIMDLane::i32x4, TrustedImm32(lane < 4 ? 0 : 2), dest, dest);
     }
 
     friend class LinkBuffer;

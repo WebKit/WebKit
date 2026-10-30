@@ -181,6 +181,19 @@ public:
         return std::nullopt;
     }
 
+    static std::optional<std::tuple<SIMDLane, uint8_t>> isDupElement(v128_t pattern)
+    {
+        if (auto lane = isI64x2DupElement(pattern))
+            return std::tuple { SIMDLane::i64x2, *lane };
+        if (auto lane = isI32x4DupElement(pattern))
+            return std::tuple { SIMDLane::i32x4, *lane };
+        if (auto lane = isI16x8DupElement(pattern))
+            return std::tuple { SIMDLane::i16x8, *lane };
+        if (auto lane = isI8x16DupElement(pattern))
+            return std::tuple { SIMDLane::i8x16, *lane };
+        return std::nullopt;
+    }
+
     static bool isI16x8Shuffle(v128_t pattern)
     {
         return isLargerElementShuffle(pattern, 2);

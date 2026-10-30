@@ -3780,28 +3780,10 @@ private:
                     }
                 }
 
-                // DupElement: i64x2 and i32x4 on all platforms
-                if (auto lane = SIMDShuffle::isI64x2DupElement(pattern)) {
-                    replaceWithNew<SIMDValue>(m_value->origin(), VectorDupElement, B3::V128, SIMDLane::i64x2, SIMDSignMode::None, lane.value(), inner);
+                if (auto dup = SIMDShuffle::isDupElement(pattern)) {
+                    auto [lane, index] = *dup;
+                    replaceWithNew<SIMDValue>(m_value->origin(), VectorDupElement, B3::V128, lane, SIMDSignMode::None, index, inner);
                     break;
-                }
-
-                if (auto lane = SIMDShuffle::isI32x4DupElement(pattern)) {
-                    replaceWithNew<SIMDValue>(m_value->origin(), VectorDupElement, B3::V128, SIMDLane::i32x4, SIMDSignMode::None, lane.value(), inner);
-                    break;
-                }
-
-                // DupElement: i16x8 and i8x16 — ARM64 only
-                if constexpr (isARM64()) {
-                    if (auto lane = SIMDShuffle::isI16x8DupElement(pattern)) {
-                        replaceWithNew<SIMDValue>(m_value->origin(), VectorDupElement, B3::V128, SIMDLane::i16x8, SIMDSignMode::None, lane.value(), inner);
-                        break;
-                    }
-
-                    if (auto lane = SIMDShuffle::isI8x16DupElement(pattern)) {
-                        replaceWithNew<SIMDValue>(m_value->origin(), VectorDupElement, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, lane.value(), inner);
-                        break;
-                    }
                 }
 
                 if (m_pass == ReduceStrengthPass::Final) {

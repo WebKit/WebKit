@@ -513,22 +513,38 @@ void MacroAssemblerX86_64::collectCPUFeatures()
             s_avxCheckState = (cpuid[2] & (1 << 28)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
 #endif
         }
+        auto collectLeaf7Features = [] {
+            if (getCPUID(0x0)[0] < 0x7) {
+                s_bmi1CheckState = CPUIDCheckState::Clear;
+                s_avx2CheckState = CPUIDCheckState::Clear;
+                return;
+            }
+            CPUID cpuid = getCPUID(0x7);
+            s_bmi1CheckState = (cpuid[1] & (1 << 3)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+            // Hypervisors can mask AVX while still reporting AVX2, and AVX2 code paths emit VEX instructions.
+            s_avx2CheckState = (s_avxCheckState == CPUIDCheckState::Set && (cpuid[1] & (1 << 5))) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        };
 #if OS(DARWIN)
         {
             uint32_t val = 0;
             size_t valSize = sizeof(val);
-            int rc = sysctlbyname("hw.optional.bmi1", &val, &valSize, nullptr, 0);
-            s_bmi1CheckState = (rc >= 0 && val) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+            // Not WTF::isX86BinaryRunningOnARM(): Rosetta developer builds compile it out but still run translated.
+            int rc = sysctlbyname("sysctl.proc_translated", &val, &valSize, nullptr, 0);
+            if (rc >= 0 && val) {
+                // Rosetta translates AVX2 even when it does not advertise it, the same as AVX. It reports
+                // BMI1 only through CPUID, and only when the process is launched with ROSETTA_ADVERTISE_AVX=1.
+                collectLeaf7Features();
+                s_avx2CheckState = CPUIDCheckState::Set;
+            } else {
+                rc = sysctlbyname("hw.optional.bmi1", &val, &valSize, nullptr, 0);
+                s_bmi1CheckState = (rc >= 0 && val) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
 
-            rc = sysctlbyname("hw.optional.avx2_0", &val, &valSize, nullptr, 0);
-            s_avx2CheckState = (rc >= 0 && val) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+                rc = sysctlbyname("hw.optional.avx2_0", &val, &valSize, nullptr, 0);
+                s_avx2CheckState = (rc >= 0 && val) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+            }
         }
 #else
-        {
-            CPUID cpuid = getCPUID(0x7);
-            s_bmi1CheckState = (cpuid[2] & (1 << 3)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
-            s_avx2CheckState = (cpuid[2] & (1 << 5)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
-        }
+        collectLeaf7Features();
 #endif
         {
             CPUID cpuid = getCPUID(0x80000001);

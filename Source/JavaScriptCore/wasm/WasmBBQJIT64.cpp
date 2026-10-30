@@ -3733,22 +3733,10 @@ void LEGACY_NODELETE BBQJIT::notifyFunctionUsesSIMD()
         Location resultLocation = allocate(result);
         LOG_INSTRUCTION("VectorShuffle", a, b, source, sourceLocation, RESULT(result));
 
-        if constexpr (isARM64()) {
-            if (auto lane = SIMDShuffle::isI8x16DupElement(pattern)) {
-                m_jit.vectorDupElement(SIMDLane::i8x16, TrustedImm32(*lane), sourceLocation.asFPR(), resultLocation.asFPR());
-                return { };
-            }
-            if (auto lane = SIMDShuffle::isI16x8DupElement(pattern)) {
-                m_jit.vectorDupElement(SIMDLane::i16x8, TrustedImm32(*lane), sourceLocation.asFPR(), resultLocation.asFPR());
-                return { };
-            }
-        }
-
-        if (auto lane = SIMDShuffle::isI32x4DupElement(pattern))
-            m_jit.vectorDupElement(SIMDLane::i32x4, TrustedImm32(*lane), sourceLocation.asFPR(), resultLocation.asFPR());
-        else if (auto lane = SIMDShuffle::isI64x2DupElement(pattern))
-            m_jit.vectorDupElement(SIMDLane::i64x2, TrustedImm32(*lane), sourceLocation.asFPR(), resultLocation.asFPR());
-        else {
+        if (auto dup = SIMDShuffle::isDupElement(pattern)) {
+            auto [lane, index] = *dup;
+            m_jit.vectorDupElement(lane, TrustedImm32(index), sourceLocation.asFPR(), resultLocation.asFPR());
+        } else {
             materializeVectorConstant(pattern, Location::fromFPR(wasmScratchFPR));
             m_jit.vectorSwizzle(sourceLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
         }
