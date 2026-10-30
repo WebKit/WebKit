@@ -13,7 +13,7 @@ const WIDTH = 4;
 const HEIGHT = 4;
 const BYTES_PER_ROW = WIDTH * 4;
 
-function makeDragImageHandle()
+function makeDragImageHandle(colorSpace)
 {
     const shm = IPC.createSharedMemory(BYTES_PER_ROW * HEIGHT);
     shm.writeBytes(new Uint8Array(BYTES_PER_ROW * HEIGHT).fill(0xff).buffer);
@@ -21,7 +21,8 @@ function makeDragImageHandle()
         m_handle: { handle: shm, protection: "ReadWrite" },
         m_configuration: {
             m_size: { width: WIDTH, height: HEIGHT },
-            m_colorSpace: { },
+            m_colorSpace: colorSpace,
+            m_pixelFormat: 3, // WebCore::PixelFormat::BGRA8, matching m_bitmapInfo.
             m_baseImageHeadroom: { headroom: 1 },
             m_isOpaque: false,
             bitsPerComponent: 8,
@@ -44,7 +45,8 @@ function makeDragItem(additionalType)
     const origin = { x: 0, y: 0 };
     const point = { x: 50, y: 50 };
     return {
-        image: { textIndicator: { }, visiblePath: { } },
+        textIndicator: { },
+        visiblePath: { },
         imageAnchorPoint: { x: 0, y: 0 },
         sourceAction: { },
         rootFrameID: { optionalValue: IPC.frameID[0] },
@@ -75,7 +77,7 @@ function makeDragItem(additionalType)
         return;
     }
 
-    const { CoreIPC } = await import("../coreipc.js");
+    const { CoreIPC, sRGBColorSpace } = await import("../coreipc.js");
 
     // WebViewImpl::startDrag has no drag initiator in the test runner, so an accepted StartDrag
     // always ends up cancelling the drag. Use WebPage::DragCancelled as the signal that the message
@@ -91,7 +93,7 @@ function makeDragItem(additionalType)
         sawDragCancelled = false;
         CoreIPC.UI.WebPageProxy.StartDrag(IPC.pageID, {
             dragItem: makeDragItem(additionalType),
-            dragImage: makeDragImageHandle(),
+            dragImage: makeDragImageHandle(sRGBColorSpace()),
             nodeID: { },
             frameID: { optionalValue: IPC.frameID[0] },
         });
