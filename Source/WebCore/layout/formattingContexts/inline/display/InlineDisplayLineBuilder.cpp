@@ -321,7 +321,8 @@ static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEn
 
     ASSERT(displayBoxes.front().isRootInlineBox());
     auto& rootInlineBox = displayBoxes.front();
-    CheckedRef rootStyle = rootInlineBox.style();
+    // The ellipsis is not part of ::first-line, and it is painted with the root style too (see EllipsisBoxPainter).
+    CheckedRef rootStyle = rootInlineBox.layoutBox().style();
     auto ellipsisWidth = std::max(0.f, rootStyle->fontCascade().width(ellipsisText));
 
     auto contentNeedsTruncation = [&] {
