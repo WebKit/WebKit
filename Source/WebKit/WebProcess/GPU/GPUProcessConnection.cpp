@@ -142,6 +142,7 @@ void GPUProcessConnection::didBecomeUnresponsive()
     // The function call might have been posted asynchronously from other thread.
     // Guard against notifying a problem for a GPUProcessConnection that has already been
     // switched away.
+    assertIsMainRunLoop();
     if (webProcess->existingGPUProcessConnection() != this)
         return;
     webProcess->gpuProcessConnectionDidBecomeUnresponsive();
@@ -174,6 +175,7 @@ void GPUProcessConnection::didClose(IPC::Connection&)
     RELEASE_LOG_ERROR(Process, "%p - GPUProcessConnection::didClose", this);
     auto protector = Ref { *this };
     Ref webProcess = WebProcess::singleton();
+    assertIsMainRunLoop();
     ASSERT(webProcess->existingGPUProcessConnection() == this);
     webProcess->gpuProcessConnectionClosed();
 

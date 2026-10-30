@@ -94,10 +94,11 @@ void WebMediaStrategy::ensureCodecsSupportChecksInitialized()
 bool WebMediaStrategy::canDecodeExtendedType(PlatformMediaDecodingType platformType, const ContentType& contentType)
 {
     Ref connection = [&] {
-        RefPtr connection = WebProcess::singleton().existingGPUProcessConnection();
+        RefPtr connection = WebProcess::singleton().existingGPUProcessConnectionOffMainThread();
         if (connection)
             return connection.releaseNonNull();
         callOnMainRunLoopAndWait([&] {
+            assertIsMainRunLoop();
             connection = &WebProcess::singleton().ensureGPUProcessConnection();
         });
         return connection.releaseNonNull();
@@ -123,6 +124,7 @@ std::unique_ptr<WebCore::NowPlayingManager> WebMediaStrategy::createNowPlayingMa
         class NowPlayingInfoForGPUManager : public WebCore::NowPlayingManager {
             void clearNowPlayingInfoPrivate(std::optional<WebCore::PageIdentifier> pageIdentifier) final
             {
+                assertIsMainRunLoop();
                 if (RefPtr connection = WebProcess::singleton().existingGPUProcessConnection())
                     connection->connection().send(Messages::GPUConnectionToWebProcess::ClearNowPlayingInfoForPage { pageIdentifier }, 0);
             }
@@ -148,6 +150,7 @@ std::unique_ptr<WebCore::NowPlayingManager> WebMediaStrategy::createNowPlayingMa
 void WebMediaStrategy::isActiveNowPlayingSessionInGPUProcessForTesting(WebCore::MediaSessionIdentifier identifier, CompletionHandler<void(bool)>&& completion)
 {
 #if ENABLE(GPU_PROCESS)
+    assertIsMainRunLoop();
     if (m_useGPUProcess) {
         RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection();
         if (!gpuProcessConnection) {
@@ -165,6 +168,7 @@ void WebMediaStrategy::isActiveNowPlayingSessionInGPUProcessForTesting(WebCore::
 void WebMediaStrategy::isRemoteCommandTargetSessionInGPUProcessForTesting(WebCore::MediaSessionIdentifier identifier, CompletionHandler<void(bool)>&& completion)
 {
 #if ENABLE(GPU_PROCESS)
+    assertIsMainRunLoop();
     if (m_useGPUProcess) {
         RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection();
         if (!gpuProcessConnection) {
@@ -182,6 +186,7 @@ void WebMediaStrategy::isRemoteCommandTargetSessionInGPUProcessForTesting(WebCor
 bool WebMediaStrategy::postNowPlayingRemoteControlCommandToGPUProcessForTesting(WebCore::PlatformMediaSession::RemoteControlCommandType type, const WebCore::PlatformMediaSession::RemoteCommandArgument& argument)
 {
 #if ENABLE(GPU_PROCESS)
+    assertIsMainRunLoop();
     if (m_useGPUProcess) {
         if (RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection()) {
             gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::PostNowPlayingRemoteControlCommandForTesting(type, argument), 0);
