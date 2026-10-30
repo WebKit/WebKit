@@ -20,6 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import tempfile
 import unittest
 
 from webkitpy.common.host_mock import MockHost
@@ -29,9 +30,9 @@ from webkitpy.common.test_expectations import TestExpectations
 class MockTestExpectations(TestExpectations):
 
     def __init__(self, port, expectations, build_type='Release', architecture=None):
-        host = MockHost()
-        port = host.port_factory.get(port)
-        self._port_name = port.name()
+        if isinstance(port, str):
+            port = [MockHost().port_factory.get(port).name()]
+        self._port_names = port
         self._build_type = build_type
         self._architecture = architecture
         self._expectations = self._load_expectation_string(expectations)
@@ -269,6 +270,33 @@ class ExpectationsTest(unittest.TestCase):
     }
 }"""
 
+    FALLBACK = """
+{
+    "TestWebKit": {
+        "subtests": {
+            "WebKit.PortOverGroup": {
+                "expected": {
+                    "all": {"status": ["FAIL"], "bug": "1234"},
+                    "glib": {"status": ["TIMEOUT"], "bug": "1234"},
+                    "gtk": {"status": ["CRASH"], "bug": "1234"}
+                }
+            },
+            "WebKit.GroupOverAll": {
+                "expected": {
+                    "all": {"status": ["FAIL"], "bug": "1234"},
+                    "glib": {"status": ["TIMEOUT"], "bug": "1234"}
+                }
+            },
+            "WebKit.QualifiedAllUnderGroup": {
+                "expected": {
+                    "all@Debug": {"status": ["CRASH"], "bug": "1234"},
+                    "glib": {"status": ["TIMEOUT"], "bug": "1234"}
+                }
+            }
+        }
+    }
+}"""
+
     REPEATED_KEYS = """
 {
     "TestDummy": {
@@ -463,6 +491,30 @@ class ExpectationsTest(unittest.TestCase):
 
         self.expectations = MockTestExpectations('gtk', self.ARCHITECTURE_SKIP, architecture='x86_64')
         self.assert_skip('TestSkipArchSubtest', 'sub1', False)
+
+    def test_fallback(self):
+        self.expectations = MockTestExpectations(['gtk', 'glib'], self.FALLBACK)
+        self.assert_exp('TestWebKit', 'WebKit.PortOverGroup', 'CRASH')
+        self.assert_exp('TestWebKit', 'WebKit.GroupOverAll', 'TIMEOUT')
+        self.assert_exp('TestWebKit', 'WebKit.QualifiedAllUnderGroup', 'TIMEOUT')
+
+        self.expectations = MockTestExpectations(['wpe', 'glib'], self.FALLBACK, 'Debug')
+        self.assert_exp('TestWebKit', 'WebKit.PortOverGroup', 'TIMEOUT')
+        self.assert_exp('TestWebKit', 'WebKit.QualifiedAllUnderGroup', 'TIMEOUT')
+
+        self.expectations = MockTestExpectations(['mac', 'cocoa'], self.FALLBACK, 'Debug')
+        self.assert_exp('TestWebKit', 'WebKit.PortOverGroup', 'FAIL')
+        self.assert_exp('TestWebKit', 'WebKit.GroupOverAll', 'FAIL')
+        self.assert_exp('TestWebKit', 'WebKit.QualifiedAllUnderGroup', 'CRASH')
+
+    def test_single_port_name(self):
+        # As Tools/glib/api_test_runner.py uses it.
+        with tempfile.NamedTemporaryFile('w', suffix='.json') as expectations_file:
+            expectations_file.write(self.FALLBACK)
+            expectations_file.flush()
+            self.expectations = TestExpectations('gtk', expectations_file.name)
+            self.assert_exp('TestWebKit', 'WebKit.PortOverGroup', 'CRASH')
+            self.assert_exp('TestWebKit', 'WebKit.GroupOverAll', 'FAIL')
 
     def test_repeated_keys(self):
         self.assertRaises(ValueError, lambda: MockTestExpectations('gtk', self.REPEATED_KEYS))

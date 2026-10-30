@@ -20,10 +20,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import http.client
 import logging
 import os
 import json
 import sys
+import time
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
@@ -122,8 +124,9 @@ class WebKitDriverBrowser(WebDriverBrowser):
 
 
 class WebDriverW3CExecutor(WdspecExecutor):
+    WARM_UP_TIMEOUT_SECONDS = 120
 
-    def __init__(self, driver, server, env, timeout, expectations):
+    def __init__(self, driver, server, env, timeout, expectations, target_platform):
         WebKitDriverBrowser.test_env = env
         WebKitDriverBrowser.test_env.update(driver.browser_env())
         WebKitDriverBrowser.test_env['WEBKIT_TLS_CAFILE_PEM'] = server.cacert_pem_file()
@@ -135,7 +138,7 @@ class WebDriverW3CExecutor(WdspecExecutor):
                          'doc_root': server.document_root()}
         self.runner = TestRunner()
         browser = WebKitDriverBrowser(self.runner.logger, webdriver_binary=driver.binary_path())
-        WdspecExecutor.__init__(self, self.runner.logger, browser, server_config, driver.binary_path(), None, capabilities=driver.capabilities(), target_platform=None)
+        WdspecExecutor.__init__(self, self.runner.logger, browser, server_config, driver.binary_path(), None, capabilities=driver.capabilities(), target_platform=target_platform)
 
         self._timeout = timeout
         self._expectations = expectations
@@ -148,11 +151,32 @@ class WebDriverW3CExecutor(WdspecExecutor):
         self._test_process = TestProcess(self._run_file, self._timeout, restart=self._restart_driver)
         self._test_process.start()
 
+    def warm_up(self):
+        # The first launch of a newly built browser can take much longer than later ones, for example while
+        # the system checks the new executables. Start and end a session before running any tests, so that
+        # the first test doesn't time out.
+        start_time = time.monotonic()
+        connection = http.client.HTTPConnection(self.browser.host, self.browser.port, timeout=self.WARM_UP_TIMEOUT_SECONDS)
+        try:
+            connection.request('POST', '/session', json.dumps({'capabilities': {'alwaysMatch': self.capabilities}}), {'Content-Type': 'application/json'})
+            value = json.loads(connection.getresponse().read())['value']
+            if 'sessionId' not in value:
+                _log.warning('Failed to start a session before running tests: %s' % value)
+                return
+            connection.request('DELETE', '/session/%s' % value['sessionId'])
+            connection.getresponse().read()
+        except (OSError, http.client.HTTPException, ValueError, KeyError, TypeError) as error:
+            _log.warning('Failed to start a session before running tests: %s' % error)
+            return
+        finally:
+            connection.close()
+        _log.info('Started and ended a session in %.1f s before running tests' % (time.monotonic() - start_time))
+
     def teardown(self):
         if self._test_process is not None:
             self._test_process.stop()
             self._test_process = None
-        self.protocol.teardown()
+        super(WebDriverW3CExecutor, self).teardown()
         self.browser.stop(force=True)
 
     def _restart_driver(self):
@@ -175,7 +199,7 @@ class WebDriverW3CExecutor(WdspecExecutor):
                       'webdriver': {'binary': self.browser.webdriver_binary},
                       'wptserve': self.server_config,
                       'timeout_multiplier': 10,
-                      'target_platform': sys.platform,
+                      'target_platform': self.target_platform,
                       }
             with open(config_path, 'w') as f:
                 json.dump(config, f)

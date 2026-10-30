@@ -56,7 +56,7 @@ def register_driver(port_name, driver_cls):
 
 
 def create_driver(port):
-    if port.name() not in _drivers:
-        __import__('webkitpy.webdriver_tests.webdriver_driver_%s' % port.name())
+    if port.port_name not in _drivers:
+        __import__('webkitpy.webdriver_tests.webdriver_driver_%s' % port.port_name)
 
-    return _drivers[port.name()](port)
+    return _drivers[port.port_name](port)

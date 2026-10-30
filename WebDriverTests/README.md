@@ -37,3 +37,29 @@ To test the imported suite, run it:
 ```
 Tools/Scripts/run-webdriver-tests --verbose --wpe --release --display-server=xvfb
 ```
+
+## Expectations
+
+`TestExpectations.json` lists the tests that don't simply pass. Each test file can have an `expected` entry for
+the whole file, and entries for its subtests, which take precedence:
+
+```json
+"imported/w3c/webdriver/tests/classic/navigate_to/navigate.py": {
+    "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/123456"}},
+    "subtests": {
+        "test_basic": {
+            "expected": {"glib": {"status": ["PASS"]}, "mac": {"status": ["TIMEOUT"], "note": "Why it times out"}}
+        }
+    }
+}
+```
+
+The keys of an `expected` object say which ports an entry is for. For each port, `run-webdriver-tests` looks for
+its full name (for example `mac-tahoe-wk2`), then its base name (`mac`, `gtk` or `wpe`), then its group (`cocoa`
+for Mac; `glib` for GTK and WPE), then `all`. Each of these can be qualified with a build type, an architecture,
+or both, as in `gtk@Debug`, `all:arm64` or `mac@Release:arm64`, and a qualified key is preferred to an unqualified
+one at the same level. The first key that matches is used as a whole: its fields aren't combined with those of
+other keys.
+
+`status` lists the results that are expected, more than one for a flaky test: `PASS`, `FAIL`, `TIMEOUT` or
+`SKIP`. `slow` gives a test five times the usual timeout. `bug` and `note` are for people.

@@ -125,6 +125,9 @@ class TestProcess(object):
     def _main(run_file, tests, events):
         # For _dump_stacks(). The handler runs outside of Python code, so it works even when the test is stuck.
         faulthandler.register(signal.SIGUSR1, all_threads=True)
+        # Inherited from run-webdriver-tests, which exits through its cleanup on SIGTERM. The test process has
+        # nothing to clean up.
+        signal.signal(signal.SIGTERM, signal.SIG_DFL)
         while True:
             test = tests.get()
             if test is None:

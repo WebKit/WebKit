@@ -22,6 +22,7 @@
 
 import logging
 import os
+import time
 
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.webdriver_tests.webdriver_w3c_executor import WebDriverW3CExecutor
@@ -90,31 +91,45 @@ class WebDriverTestRunnerW3C(object):
         return os.path.basename(path) + '::' + test
 
     def run(self, tests=[]):
-        self._server.start()
-
-        executor = WebDriverW3CExecutor(self._driver, self._server, self._env, self._port.get_option('timeout'), self._expectations)
-        executor.setup()
-        need_restart = False
+        executor = None
         try:
+            self._server.start()
+
+            # The tests compare the platformName capability with this. Like wptrunner, use the OS name as mozinfo has it
+            # (mac, linux, win), which WdspecExecutor maps to the WebDriver name.
+            executor = WebDriverW3CExecutor(self._driver, self._server, self._env, self._port.get_option('timeout'), self._expectations, self._port.host.platform.os_name)
+            executor.setup()
+            executor.warm_up()
+            restart_count = 0
+            restart_seconds = 0
+            previous_file_failed = False
             for test in tests:
+                # A test file with unexpected results may have left the browser in a bad state, so the next one gets a
+                # new driver, browser and pytest process. Restarting before every file would make results independent
+                # of the files that ran before, but it takes about 12% longer.
+                if previous_file_failed:
+                    restart_start_time = time.monotonic()
+                    executor.teardown()
+                    executor.setup()
+                    restart_count += 1
+                    restart_seconds += time.monotonic() - restart_start_time
+
                 test_name = os.path.relpath(test.split('::')[0], self._tests_dir)
                 harness_result, test_results = executor.run(test)
                 result = WebDriverTestResult(test_name, *harness_result)
+                previous_file_failed = harness_result[0] != 'OK' or any(status in ('FAIL', 'ERROR', 'TIMEOUT') for _, status, _, _ in test_results)
                 if harness_result[0] == 'OK':
                     for subtest, status, message, backtrace in test_results:
                         result.add_subtest_results(self._subtest_name(subtest), status, message, backtrace)
-                        need_restart = need_restart or status in ('FAIL', 'ERROR', 'XFAIL', 'TIMEOUT')
                 else:
                     _log.error("Test %s failed:" % test_name)
                     _log.error(harness_result[1])
-                    need_restart = True
                 self._results.append(result)
-
-                if need_restart:
-                    executor.teardown()
-                    executor.setup()
+            if restart_count:
+                _log.info('Restarted the driver %d times between test files, taking %.1f s in total, %.1f s on average' % (restart_count, restart_seconds, restart_seconds / restart_count))
         finally:
-            executor.teardown()
+            if executor is not None:
+                executor.teardown()
             self._server.stop()
 
     def results(self):

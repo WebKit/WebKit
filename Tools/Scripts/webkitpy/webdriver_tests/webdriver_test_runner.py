@@ -57,8 +57,8 @@ class WebDriverSeleniumFinder(importlib.abc.MetaPathFinder):
 sys.meta_path.insert(0, WebDriverSeleniumFinder())
 
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.common.test_expectations import TestExpectations
 from webkitpy.webdriver_tests.webdriver_driver import create_driver
+from webkitpy.webdriver_tests.webdriver_test_expectations import WebDriverTestExpectations  # noqa: E402
 from webkitpy.webdriver_tests.webdriver_test_runner_selenium import WebDriverTestRunnerSelenium
 from webkitpy.webdriver_tests.webdriver_test_runner_w3c import WebDriverTestRunnerW3C
 
@@ -90,8 +90,8 @@ class WebDriverTestRunner(object):
             expectations_file = ''
         else:
             expectations_file = os.path.join(self._tests_dir, 'TestExpectations.json')
-        build_type = 'Debug' if self._port.get_option('debug') else 'Release'
-        self._expectations = TestExpectations(self._port.name(), expectations_file, build_type, self._port.architecture())
+        build_type = 'Debug' if self._port.get_option('configuration') == 'Debug' else 'Release'
+        self._expectations = WebDriverTestExpectations(self._port, expectations_file, build_type, self._port.architecture())
         for test in self._expectations._expectations.keys():
             if not os.path.isfile(os.path.join(self._tests_dir, test)):
                 _log.warning('Test %s does not exist' % test)
@@ -189,11 +189,13 @@ class WebDriverTestRunner(object):
             results['status'] = result.status
             results['message'] = result.message
             results['subtests'] = []
-            for name, status, message, _ in result.subtest_results:
+            for name, status, message, backtrace in result.subtest_results:
                 subtest = {}
                 subtest['name'] = name.split('::', 1)[1]
                 subtest['status'] = status
                 subtest['message'] = message
+                if backtrace:
+                    subtest['stack'] = backtrace
                 results['subtests'].append(subtest)
             json_results['results'].append(results)
 

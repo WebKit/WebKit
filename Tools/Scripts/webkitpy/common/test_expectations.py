@@ -37,8 +37,9 @@ def check_repeated_keys(args):
 
 class TestExpectations(object):
 
-    def __init__(self, port_name, expectations_file, build_type='Release', architecture=None):
-        self._port_name = port_name
+    # port_names is a port name, or a list of names to try in order, most specific first. 'all' is tried last.
+    def __init__(self, port_names, expectations_file, build_type='Release', architecture=None):
+        self._port_names = [port_names] if isinstance(port_names, str) else list(port_names)
         self._build_type = build_type
         self._architecture = architecture
         if os.path.isfile(expectations_file):
@@ -51,7 +52,7 @@ class TestExpectations(object):
         return json.loads(expectations, object_pairs_hook=check_repeated_keys)
 
     def _port_name_for_expected(self, expected):
-        for port in [self._port_name, 'all']:
+        for port in self._port_names + ['all']:
             candidates = [port]
             if self._build_type:
                 candidates.append('%s@%s' % (port, self._build_type))

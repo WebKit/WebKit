@@ -129,7 +129,8 @@ class WebDriverW3CWebServer(object):
         if self._pid:
             # kill_process will not kill the subprocesses, interrupt does the job.
             self._port._executive.interrupt(self._pid)
-        self._port.host.filesystem.remove(self._pid_file)
+        if self._port.host.filesystem.exists(self._pid_file):
+            self._port.host.filesystem.remove(self._pid_file)
         self._pid = None
 
     def host(self):
