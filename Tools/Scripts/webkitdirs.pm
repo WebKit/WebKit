@@ -3125,6 +3125,8 @@ sub generateBuildSystemFromCMakeProject
     my @args;
     push @args, "-DPORT=\"$port\"";
     push @args, "-DCMAKE_OSX_SYSROOT=\"" . xcodeSDK() . "\"" if isAppleCocoaWebKit();
+    # Multi-arch builds are handed in buildUniversalCMakeProject() below.
+    push @args, "-DCMAKE_OSX_ARCHITECTURES=" . architecture() if isAppleCocoaWebKit() && $didUserSpecifyArchitecture && !universalArchitectures();
     push @args, "-DCMAKE_INSTALL_PREFIX=\"$prefixPath\"" if $prefixPath;
     if ($config =~ /release/i) {
         push @args, "-DCMAKE_BUILD_TYPE=Release";
