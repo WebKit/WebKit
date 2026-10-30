@@ -548,6 +548,9 @@ void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, W
         return;
     }
 
+    auto targetParametersCopy = targetParameters;
+    targetParametersCopy.pageProxyIdentifier = tab->webView()._page->identifier();
+
     auto handledCount = Box<size_t>::create(0);
     size_t totalExpected = processes.size();
 
@@ -555,7 +558,7 @@ void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, W
     completeSenderParameters.windowIdentifier = windowIdentifierForPage(senderParameters.pageProxyIdentifier);
 
     for (Ref process : processes) {
-        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, targetParameters, completeSenderParameters, userGesture), [=, this, protectedThis = Ref { *this }](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
+        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, targetParametersCopy, completeSenderParameters, userGesture), [=, this, protectedThis = Ref { *this }](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
             // Flip target and source worlds since we're adding the opposite side of the port connection, sending from target back to source.
             addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTF::move(addedPortCounts));
 

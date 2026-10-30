@@ -1461,6 +1461,100 @@ TEST(WKWebExtensionAPITabs, SendMessageFromBackgroundToOpenedWindow)
     [manager run];
 }
 
+TEST(WKWebExtensionAPITabs, ConnectFromBackgroundToOpenedWindow)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script>browser.test.runWithUserGesture(() => { window.open('/window.html', '_blank') })</script>"_s } },
+        { "/window.html"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    static auto *manifest = @{
+        @"manifest_version": @3,
+        @"name": @"Tabs Test",
+        @"description": @"Tabs Test",
+        @"version": @"1",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"content_scripts": @[
+            @{ @"js": @[ @"main-script.js" ], @"matches": @[ @"*://localhost/" ], @"all_frames": @NO },
+            @{ @"js": @[ @"window-script.js" ], @"matches": @[ @"*://localhost/window.html" ], @"all_frames": @NO }
+        ],
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender) => {",
+        @"  browser.test.assertEq(message, 'Begin Test', 'Message content should match')",
+
+        @"  const tabId = sender?.tab?.id",
+        @"  browser.test.assertTrue(typeof tabId === 'number', 'tabId should be a valid number')",
+
+        @"  const port = browser.tabs.connect(tabId, { name: 'testPort' })",
+
+        @"  port.onMessage.addListener((response) => {",
+        @"    browser.test.assertEq(response, 'Message received', 'Should receive response from window script')",
+
+        @"    browser.test.notifyPass()",
+        @"  })",
+
+        @"  port.postMessage('Hello, window!')",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')",
+    ]);
+
+    auto *mainScript = Util::constructScript(@[
+        @"browser.runtime.onConnect.addListener(() => {",
+        @"  browser.test.fail('Main page should not receive connections intended for opened window')",
+        @"})",
+    ]);
+
+    auto *windowScript = Util::constructScript(@[
+        @"browser.runtime.onConnect.addListener((port) => {",
+        @"  browser.test.assertEq(port.name, 'testPort', 'Port name should match')",
+
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertEq(message, 'Hello, window!', 'Message should be received in the opened window')",
+        @"    port.postMessage('Message received')",
+        @"  })",
+        @"})",
+
+        @"browser.runtime.sendMessage('Begin Test')",
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"main-script.js": mainScript,
+        @"window-script.js": windowScript,
+    };
+
+    auto manager = Util::loadExtension(manifest, resources);
+
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:@"*" host:@"localhost" path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    __block RetainPtr<TestWebExtensionWindow> testWindow;
+
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().createWebViewWithConfiguration = ^WKWebView *(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        testWindow = [manager openNewWindowUsingPrivateBrowsing:NO];
+        testWindow.get().activeTab.webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]).get();
+        return testWindow.get().activeTab.webView;
+    };
+
+    auto *webView = manager.get().defaultTab.webView;
+    webView.UIDelegate = uiDelegate.get();
+    [webView loadRequest:server.requestWithLocalhost()];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIRuntime, SendMessageWithNaNValue)
 {
     TestWebKitAPI::HTTPServer server({
