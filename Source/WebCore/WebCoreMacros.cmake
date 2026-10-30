@@ -102,23 +102,25 @@ function(GENERATE_BINDINGS target)
         list(APPEND _abs_included_files ${f})
     endforeach ()
 
+    # These lists are inputs of build commands (e.g. the inspector native function
+    # parameters), so only rewrite them when they change.
     set(content)
     foreach (f ${_abs_input_files} ${_abs_supplemental_files})
         set(content "${content}${f}\n")
     endforeach ()
-    file(WRITE ${idl_files_list} ${content})
+    WEBKIT_WRITE_FILE_IF_CHANGED(${idl_files_list} "${content}")
 
     set(pp_content)
     foreach (f ${_abs_pp_input_files})
         set(pp_content "${pp_content}${f}\n")
     endforeach ()
-    file(WRITE ${pp_idl_files_list} ${pp_content})
+    WEBKIT_WRITE_FILE_IF_CHANGED(${pp_idl_files_list} "${pp_content}")
 
     set(include_content)
     foreach (f ${_abs_input_files} ${_abs_supplemental_files} ${_abs_included_files})
         set(include_content "${include_content}${f}\n")
     endforeach ()
-    file(WRITE ${included_idl_files_list} ${include_content})
+    WEBKIT_WRITE_FILE_IF_CHANGED(${included_idl_files_list} "${include_content}")
 
     set(args
         --defines ${arg_FEATURES}
