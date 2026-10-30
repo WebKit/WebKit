@@ -121,6 +121,7 @@ TEST(WebKit, NavigateDuringDeviceEnumeration)
     RetainPtr delegate = adoptNS([[NavigationWhileGetUserMediaPromptDisplayedUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
+    delegateCounter = 0;
     okToProceed = false;
     [webView loadTestPageNamed:@"enumerateMediaDevices"];
     TestWebKitAPI::Util::run(&okToProceed);
