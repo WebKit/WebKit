@@ -59,6 +59,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     glib/FilePathWatcher.h
     glib/GLibExtras.h
     glib/GMallocString.h
+    glib/GPtrSpecializations.h
     glib/GRefPtr.h
     glib/GResources.h
     glib/GSocketMonitor.h

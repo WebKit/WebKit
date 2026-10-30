@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <glib-object.h>
 #include <wtf/HashTraits.h>
+#include <wtf/glib/GPtrSpecializations.h>
 
 extern "C" {
     typedef struct _GDBusConnection GDBusConnection;
@@ -50,6 +51,8 @@ extern "C" {
 namespace WTF {
 
 template<typename T> struct GRefPtrDefaultRefDerefTraits {
+    static constexpr bool isPrimaryTemplate = true;
+
     static inline T* refIfNotNull(T* ptr)
     {
         if (ptr) [[likely]]
@@ -87,10 +90,13 @@ template<typename T, typename GRefPtrRefDerefTraits = GRefPtrDefaultRefDerefTrai
 // as GstObject.
 //
 // **You must include the header containing any specific specializations you need.**
-// Failing to do so will silently cause the default implementation to be used.
+// Every specialization is declared up front in GPtrSpecializations.h, so failing to do so
+// is a compile error (incomplete type) rather than a silent use of the default implementation.
 template<typename T, typename _GRefPtrRefDerefTraits = GRefPtrDefaultRefDerefTraits<T>> class GRefPtr {
 public:
     using RefDerefTraits = _GRefPtrRefDerefTraits;
+    static_assert(!std::is_same_v<RefDerefTraits, GRefPtrDefaultRefDerefTraits<T>> || requires { RefDerefTraits::isPrimaryTemplate; } || hasDeclaredGRefTraits<T>,
+        "GRefPtrDefaultRefDerefTraits<T> is specialized; declare it in wtf/glib/GPtrSpecializations.h");
     typedef T ValueType;
     typedef ValueType* PtrType;
 
