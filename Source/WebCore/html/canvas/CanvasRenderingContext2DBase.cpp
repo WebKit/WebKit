@@ -788,7 +788,8 @@ void CanvasRenderingContext2DBase::restore()
     ASSERT(m_stateStack.size() >= 1);
     if (m_stateStack.size() <= 1)
         return;
-    m_path.transform(state().transform);
+    if (hasInvertibleTransform())
+        m_path.transform(state().transform);
     m_stateStack.removeLast();
     auto& state = this->state();
     m_hasInvertibleTransform = state.transformInverse.has_value();
@@ -3538,9 +3539,13 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
 void CanvasRenderingContext2DBase::updateStateTransform(const AffineTransform& transform)
 {
     auto& state = modifiableState();
+    auto inverse = transform.inverse();
+    // m_path is kept in user space while the transform is invertible, and in device space otherwise.
+    if (m_hasInvertibleTransform && !inverse)
+        m_path.transform(state.transform);
     state.transform = transform;
-    state.transformInverse = transform.inverse();
-    m_hasInvertibleTransform = state.transformInverse.has_value();
+    state.transformInverse = inverse;
+    m_hasInvertibleTransform = inverse.has_value();
 }
 
 FloatPoint CanvasRenderingContext2DBase::textOffset(float width, TextDirection direction)

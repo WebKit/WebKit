@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Path points are transformed when they are added, so making the transform non-invertible and then resetting, setting or restoring the transform must not move or collapse the existing path.");
+
+let pixel;
+function checkPixel(context, x, y, expected)
+{
+    pixel = Array.from(context.getImageData(x, y, 1, 1).data);
+    shouldBe("pixel", JSON.stringify(expected));
+}
+
+const red = [255, 0, 0, 255];
+const transparent = [0, 0, 0, 0];
+
+// Adds a rect at (100, 0) to (120, 20) in canvas coordinates, makes the transform
+// non-invertible, then calls changeTransform. Filling must still cover only that rect.
+function checkPathAfterNonInvertibleTransform(makeNonInvertible, changeTransform)
+{
+    const canvas = document.createElement("canvas");
+    canvas.width = 200;
+    canvas.height = 100;
+    const context = canvas.getContext("2d");
+
+    context.save();
+    context.translate(100, 0);
+    context.rect(0, 0, 20, 20);
+    makeNonInvertible(context);
+    changeTransform(context);
+    context.fillStyle = "red";
+    context.fill();
+
+    checkPixel(context, 110, 10, red);
+    checkPixel(context, 10, 10, transparent);
+}
+
+const makeNonInvertibleFunctions = [
+    ["scale(0, 0)", context => context.scale(0, 0)],
+    ["transform(0, 0, 0, 0, 0, 0)", context => context.transform(0, 0, 0, 0, 0, 0)],
+];
+
+const changeTransformFunctions = [
+    ["resetTransform()", context => context.resetTransform()],
+    ["setTransform(1, 0, 0, 1, 0, 0)", context => context.setTransform(1, 0, 0, 1, 0, 0)],
+    ["setTransform(new DOMMatrix())", context => context.setTransform(new DOMMatrix())],
+    ["setTransform(2, 0, 0, 2, 0, 50)", context => context.setTransform(2, 0, 0, 2, 0, 50)],
+    ["restore()", context => context.restore()],
+];
+
+for (const [makeNonInvertibleName, makeNonInvertible] of makeNonInvertibleFunctions) {
+    for (const [changeTransformName, changeTransform] of changeTransformFunctions) {
+        debug("");
+        debug(`${makeNonInvertibleName}, then ${changeTransformName}:`);
+        checkPathAfterNonInvertibleTransform(makeNonInvertible, changeTransform);
+    }
+}
+</script>
+</body>
+</html>

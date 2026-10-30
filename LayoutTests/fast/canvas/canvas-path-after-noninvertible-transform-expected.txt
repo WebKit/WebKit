@@ -1,0 +1,49 @@
+Path points are transformed when they are added, so making the transform non-invertible and then resetting, setting or restoring the transform must not move or collapse the existing path.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+scale(0, 0), then resetTransform():
+PASS pixel is [255,0,0,255]
+PASS pixel is [0,0,0,0]
+
+scale(0, 0), then setTransform(1, 0, 0, 1, 0, 0):
+PASS pixel is [255,0,0,255]
+PASS pixel is [0,0,0,0]
+
+scale(0, 0), then setTransform(new DOMMatrix()):
+PASS pixel is [255,0,0,255]
+PASS pixel is [0,0,0,0]
+
+scale(0, 0), then setTransform(2, 0, 0, 2, 0, 50):
+PASS pixel is [255,0,0,255]
+PASS pixel is [0,0,0,0]
+
+scale(0, 0), then restore():
+PASS pixel is [255,0,0,255]
+PASS pixel is [0,0,0,0]
+
+transform(0, 0, 0, 0, 0, 0), then resetTransform():
+PASS pixel is [255,0,0,255]
+PASS pixel is [0,0,0,0]
+
+transform(0, 0, 0, 0, 0, 0), then setTransform(1, 0, 0, 1, 0, 0):
+PASS pixel is [255,0,0,255]
+PASS pixel is [0,0,0,0]
+
+transform(0, 0, 0, 0, 0, 0), then setTransform(new DOMMatrix()):
+PASS pixel is [255,0,0,255]
+PASS pixel is [0,0,0,0]
+
+transform(0, 0, 0, 0, 0, 0), then setTransform(2, 0, 0, 2, 0, 50):
+PASS pixel is [255,0,0,255]
+PASS pixel is [0,0,0,0]
+
+transform(0, 0, 0, 0, 0, 0), then restore():
+PASS pixel is [255,0,0,255]
+PASS pixel is [0,0,0,0]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
