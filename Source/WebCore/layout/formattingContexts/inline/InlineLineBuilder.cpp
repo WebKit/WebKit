@@ -333,7 +333,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         // contentful inline content leave marginState alone for the next line to apply.
         if (!hasContentfulInlineContent)
             return;
-        auto& marginState = blockLayoutState().marginState();
+        auto& marginState = layoutState().marginState();
         marginState.resetMarginValues();
         if (marginState.atBeforeSideOfBlock)
             marginState.resetBeforeSideOfBlock();
@@ -480,7 +480,7 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Inl
         // <span><div style="margin-bottom: 100px;"></div>text</span>
         // where "text" sits at the block's content bottom plus 100px.
         auto lineLogicalRect = initialLineLogicalRect;
-        auto& marginState = blockLayoutState().marginState();
+        auto& marginState = layoutState().marginState();
         // If the previous line had no contentful in-flow content (float-only or empty), the same pending margin
         // is already baked into its top via this advance. Re-applying would double-count.
         // A margin still at the before side of the block is only skipped when it can actually collapse out
@@ -1471,7 +1471,7 @@ void LineBuilder::handleBlockContent(const InlineItem& blockItem)
     // marginState and re-adds the margin via its own collapsing logic; passing the already-advanced
     // top would double-count the margin. Roll back m_lineLogicalRect.top too so the line's reported
     // bottom doesn't inherit the eager advance (which would shift the next line down).
-    auto& marginState = blockLayoutState().marginState();
+    auto& marginState = layoutState().marginState();
     // Unless the margin collapses out through the root's before edge, the line's top already includes it: either
     // initialize advanced the line by it, or the previous line's bottom absorbed it as a self collapsing block box's
     // offset. Block layout applies the margin from the container's own position, so take it back off before handing over.
