@@ -2445,6 +2445,8 @@ TestWebKitAPI.SampledPageTopColor.DifferentColorsWithMiddleOutlierAboveMaxDiffer
 TestWebKitAPI.SampledPageTopColor.DifferentColorsWithRightOutlierAboveMaxDifference
 TestWebKitAPI.SampledPageTopColor.DifferentColorsWithoutOutlierBelowMaxDifference
 TestWebKitAPI.SampledPageTopColor.ForcedUserGestureFromJSInjectionDoesNotPreventTopEdgeSampling
+TestWebKitAPI.SampledPageTopColor.HitTestAfterCSSAnimation
+TestWebKitAPI.SampledPageTopColor.HitTestAfterCSSTransition
 TestWebKitAPI.SampledPageTopColor.HitTestBeforeCSSAnimation
 TestWebKitAPI.SampledPageTopColor.HitTestBeforeCSSTransition
 TestWebKitAPI.SampledPageTopColor.HitTestCSSBackgroundImage
@@ -4392,6 +4394,7 @@ TestWebKitAPI.WebKit.AddUnsupportedAndBogusImageTypes
 TestWebKitAPI.WebKit.AddUnsupportedAndBogusImageTypesTwice
 TestWebKitAPI.WebKit.AddUnsupportedImageTypes
 TestWebKitAPI.WebKit.AdditionalReadAccessAllowedURLs
+TestWebKitAPI.WebKit.AllowTempUploadDirectory
 TestWebKitAPI.WebKit.AllowsContentJavaScript
 TestWebKitAPI.WebKit.AllowsContentJavaScriptAffectsNoscriptElements
 TestWebKitAPI.WebKit.AllowsContentJavaScriptFromDefaultPreferences
@@ -4816,6 +4819,7 @@ TestWebKitAPI.WebKitLegacy.WillPerformClientRedirectToURLCrash
 TestWebKitAPI.WebKitLegacy.WillSendSubmitEvent
 TestWebKitAPI.WebProcessCache.CachedProcessSuspension
 TestWebKitAPI.WebProcessCache.ClearWhenEnteringCache
+TestWebKitAPI.WebProcessCache.ReusedCrashedBackForwardSuspendedWebProcess
 TestWebKitAPI.WebSocket
 TestWebKitAPI.WebSocket.LoadRequestWSS
 TestWebKitAPI.WebTransportHeaderValidation
@@ -7025,6 +7029,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WebKit.RestoreShouldOpenExternalURLsPolicyAfterCrash
 [ ios ] TestWebKitAPI.WebKit.SOCKS5API
 [ ios ] TestWebKitAPI.WebKit.ScrollToFoundRangeDoesNotFocusElement
+[ ios ] TestWebKitAPI.WebKit.ScrollToFoundRangeInNonScrollableIframe
 [ ios ] TestWebKitAPI.WebKit.ScrollToFoundRangeRepeated
 [ ios ] TestWebKitAPI.WebKit.ScrollToFoundRangeWithExistingSelection
 [ ios ] TestWebKitAPI.WebKit.ScrollToUserSelectNoneFoundRange
@@ -7634,14 +7639,20 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.SiteIsolation.ConvertRectToMainFrameCoordinatesInSameOriginIframeWithPageScaleAndUnifiedMacZoomDisabled
 [ mac ] TestWebKitAPI.SiteIsolation.CrossOriginIframeWithHorizontalOverflowWillHandleHorizontalScrollEvents
 [ mac ] TestWebKitAPI.SiteIsolation.CrossOriginIframeWithoutHorizontalOverflowCanShortCircuitHorizontalScrollEvents
+[ mac ] TestWebKitAPI.SiteIsolation.CrossProcessHistoryTraversalCoalesce
+[ mac ] TestWebKitAPI.SiteIsolation.CrossProcessHistoryTraversalCoalesceWithSharedProcess
+[ mac ] TestWebKitAPI.SiteIsolation.CrossProcessHistoryTraversalGoMinus2
+[ mac ] TestWebKitAPI.SiteIsolation.CrossProcessHistoryTraversalSameFrameBackTwice
 [ mac ] TestWebKitAPI.SiteIsolation.CrossSiteIframeProcessesDoNotReportMainFrameScroll
 [ mac ] TestWebKitAPI.SiteIsolation.DataListSuggestionsElementRectInCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.DataListSuggestionsElementRectInNestedCrossOriginIframes
 [ mac ] TestWebKitAPI.SiteIsolation.DeviceScaleFactorChangeUpdatesCrossOriginIframeCompositingScale
 [ mac ] TestWebKitAPI.SiteIsolation.DictationCaretStateInCrossOriginIframe
+[ mac ] TestWebKitAPI.SiteIsolation.DragSourceEndedAtCoordinateTransformationNested
 [ mac ] TestWebKitAPI.SiteIsolation.DragSourceEndedOutsideRemoteFrame
 [ mac ] TestWebKitAPI.SiteIsolation.DropInSameSiteGrandchildOfOffsetRemoteFrame
 [ mac ] TestWebKitAPI.SiteIsolation.EnhancedSecurityInheritedByCrossSiteIframeProcess
+[ mac ] TestWebKitAPI.SiteIsolation.Events
 [ mac ] TestWebKitAPI.SiteIsolation.FindStringIndicatorPositionInIsolatedIframe
 [ mac ] TestWebKitAPI.SiteIsolation.FindStringIndicatorPositionWithObscuredContentInsets
 [ mac ] TestWebKitAPI.SiteIsolation.FindStringIndicatorPositionWithObscuredContentInsetsChangedAfterLoad
@@ -7687,6 +7698,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.SiteIsolation.SetMarkedTextInCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.SharedProcessAfterClick
 [ mac ] TestWebKitAPI.SiteIsolation.SharedProcessAfterKeyDown
+[ mac ] TestWebKitAPI.SiteIsolation.SharedProcessMainFrameNotReusedAfterCrash
 [ mac ] TestWebKitAPI.SiteIsolation.SharedProcessWithResourceLoadStatistics
 [ mac ] TestWebKitAPI.SiteIsolation.ShouldDelayWindowOrderingOverSelectionInFocusedCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.StorageAccessUnderOpenerWithRemoteFrameOpener
@@ -7696,6 +7708,8 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.SiteIsolation.URLSchemeTask
 [ mac ] TestWebKitAPI.SiteIsolation.UndoAfterCrossOriginIframeProcessCrashesDoesNotOfferRedo
 [ mac ] TestWebKitAPI.SiteIsolation.UndoAndRedoEditInCrossOriginIframeFromPlatformUndoManager
+[ mac ] TestWebKitAPI.SiteIsolation.UnresponsiveProcessDies
+[ mac ] TestWebKitAPI.SiteIsolation.UnresponsiveProcessKeydown
 [ mac ] TestWebKitAPI.SiteIsolation.ValidateMenuItemInCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.ValidationMessageAnchorInCrossOriginIframe
 [ mac ] TestWebKitAPI.SiteIsolation.ValidationMessageAnchorInCrossOriginIframeWithScrolledMainFrame
@@ -8361,6 +8375,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WebKit.AccessibilityHasNoPreferencesServiceAccessWhenPostingNotification
 [ mac ] TestWebKitAPI.WebKit.AccessibilityHasPreferencesServiceAccess
 [ mac ] TestWebKitAPI.WebKit.AccessibilityModeSyncsToAllPagesSharingAWebProcess
+[ mac ] TestWebKitAPI.WebKit.AllowUploadFromTempDirectory
 [ mac ] TestWebKitAPI.WebKit.AttrStyle
 [ mac ] TestWebKitAPI.WebKit.AttributedSubstringForProposedRangeWithAnchorWithInvalidHref
 [ mac ] TestWebKitAPI.WebKit.AttributedSubstringForProposedRangeWithImage
@@ -8493,6 +8508,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WebKit.SuggestedFilenameWithMIMEType
 [ mac ] TestWebKitAPI.WebKit.TabOutOfWebView
 [ mac ] TestWebKitAPI.WebKit.URLCanonicalization
+[ mac ] TestWebKitAPI.WebKit.UploadDirectory
 [ mac ] TestWebKitAPI.WebKit.UseSelectionAsFindString
 [ mac ] TestWebKitAPI.WebKit.ViewScaleFactorAfterShrinkToFit
 [ mac ] TestWebKitAPI.WebKit.WKPageConfigurationBasic
@@ -8555,6 +8571,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WebPageMouseEventsTests/mouseDownUpFiresClickHandler()
 [ mac ] TestWebKitAPI.WebPageMouseEventsTests/mouseMoveFiresMouseMoveHandler()
 [ mac ] TestWebKitAPI.WebPageMouseEventsTests/sendingMouseMovedToWebViewDoesNotReachPage()
+[ mac ] TestWebKitAPI.WebProcessCache.ReusedCrashedCachedWebProcess
 [ mac ] TestWebKitAPI.WebTransport.AllowedNetworkHosts
 [ mac ] TestWebKitAPI.WebTransport.BackForwardCache
 [ mac ] TestWebKitAPI.WebTransport.CSP
