@@ -36,6 +36,10 @@
 #include "WebCoreOpaqueRoot.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 
+#if USE(OPENSSL)
+#include <openssl/rand.h>
+#endif
+
 namespace WebCore {
 
 CryptoKey::CryptoKey(CryptoAlgorithmIdentifier algorithmIdentifier, Type type, bool extractable, CryptoKeyUsageBitmap usages)
@@ -80,7 +84,15 @@ WebCoreOpaqueRoot root(CryptoKey* key)
 Vector<uint8_t> CryptoKey::randomData(size_t size)
 {
     Vector<uint8_t> result(size);
+#if USE(OPENSSL)
+    for (auto remaining = result.mutableSpan(); !remaining.empty();) {
+        size_t chunkSize = std::min<size_t>(remaining.size(), std::numeric_limits<int>::max());
+        RELEASE_ASSERT(RAND_bytes(remaining.data(), static_cast<int>(chunkSize)) == 1);
+        remaining = remaining.subspan(chunkSize);
+    }
+#else
     cryptographicallyRandomValues(result.mutableSpan());
+#endif
     return result;
 }
 #endif

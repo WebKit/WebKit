@@ -41,6 +41,8 @@
 #if OS(DARWIN)
 #include <CommonCrypto/CommonCryptor.h>
 #include <CommonCrypto/CommonRandom.h>
+#elif USE(OPENSSL)
+#include <openssl/rand.h>
 #endif
 
 namespace WebCore {
@@ -62,6 +64,9 @@ ExceptionOr<void> Crypto::getRandomValues(ArrayBufferView& array)
 #if OS(DARWIN)
     auto rc = CCRandomGenerateBytes(array.baseAddress(), array.byteLength());
     RELEASE_ASSERT(rc == kCCSuccess);
+#elif USE(OPENSSL)
+    auto rc = RAND_bytes(array.mutableSpan().data(), static_cast<int>(array.byteLength()));
+    RELEASE_ASSERT(rc == 1);
 #else
     cryptographicallyRandomValues(array.mutableSpan());
 #endif
