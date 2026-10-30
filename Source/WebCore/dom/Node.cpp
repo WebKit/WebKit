@@ -2151,18 +2151,15 @@ static unsigned traverseSubtreeToUpdateTreeScope(Node& root, NOESCAPE const Move
 {
     unsigned count = 0;
     for (CheckedPtr node = &root; node; node = NodeTraversal::next(*node, &root)) {
-        moveNode(*node);
-        ++count;
+        count += moveNode(*node);
 
         RefPtr element = dynamicDowncast<Element>(*node);
         if (!element)
             continue;
 
         if (element->hasSyntheticAttrChildNodes()) {
-            for (auto& attr : element->attrNodeList()) {
-                moveNode(attr);
-                ++count;
-            }
+            for (auto& attr : element->attrNodeList())
+                count += moveNode(attr);
         }
 
         if (RefPtr shadow = element->shadowRoot())
@@ -2196,8 +2193,13 @@ inline unsigned Node::moveShadowTreeToNewDocumentFastCase(ShadowRoot& shadowRoot
 {
     ASSERT(isDocumentEligibleForFastAdoption(oldDocument, newDocument));
     adoptCustomElementRegistryIfNotExplicitlySet(shadowRoot, newDocument);
-    return traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) {
+    return traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) -> unsigned {
+        if (&node.treeScope() != static_cast<TreeScope*>(&shadowRoot)) {
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.document() == &newDocument);
+            return 0;
+        }
         node.moveNodeToNewDocumentFastCase(oldDocument, newDocument);
+        return 1;
     }, [&oldDocument, &newDocument](ShadowRoot& innerShadowRoot) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&innerShadowRoot.document() == &oldDocument);
         innerShadowRoot.moveShadowRootToNewDocument(oldDocument, newDocument);
@@ -2209,8 +2211,13 @@ inline void Node::moveShadowTreeToNewDocumentSlowCase(ShadowRoot& shadowRoot, Do
 {
     ASSERT(!isDocumentEligibleForFastAdoption(oldDocument, newDocument));
     adoptCustomElementRegistryIfNotExplicitlySet(shadowRoot, newDocument);
-    traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) {
+    traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) -> unsigned {
+        if (&node.treeScope() != static_cast<TreeScope*>(&shadowRoot)) {
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.document() == &newDocument);
+            return 0;
+        }
         node.moveNodeToNewDocumentSlowCase(oldDocument, newDocument);
+        return 1;
     }, [&oldDocument, &newDocument](ShadowRoot& innerShadowRoot) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&innerShadowRoot.document() == &oldDocument);
         innerShadowRoot.moveShadowRootToNewDocument(oldDocument, newDocument);
@@ -2230,11 +2237,12 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
         oldDocument->incrementReferencingNodeCount();
         bool isFastCase = isDocumentEligibleForFastAdoption(oldDocument, newDocument) && !newScopeIsUAShadowTree;
         if (isFastCase) {
-            unsigned nodeCount = traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
+            unsigned nodeCount = traverseSubtreeToUpdateTreeScope(root, [&](Node& node) -> unsigned {
                 ASSERT(!node.isTreeScope());
                 RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
                 node.setTreeScope(newScope);
                 node.moveNodeToNewDocumentFastCase(oldDocument, newDocument);
+                return 1;
             }, [&](ShadowRoot& shadowRoot) {
                 ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == oldDocument.ptr());
                 shadowRoot.moveShadowRootToNewParentScope(newScope, newDocument);
@@ -2243,13 +2251,14 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
             newDocument->incrementReferencingNodeCount(nodeCount);
             oldDocument->decrementReferencingNodeCount(nodeCount);
         } else {
-            traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
+            traverseSubtreeToUpdateTreeScope(root, [&](Node& node) -> unsigned {
                 ASSERT(!node.isTreeScope());
                 RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
                 if (newScopeIsUAShadowTree)
                     node.setEventTargetFlag(EventTargetFlag::HasBeenInUserAgentShadowTree);
                 node.setTreeScope(newScope);
                 node.moveNodeToNewDocumentSlowCase(oldDocument, newDocument);
+                return 1;
             }, [&](ShadowRoot& shadowRoot) {
                 ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == oldDocument.ptr());
                 shadowRoot.moveShadowRootToNewParentScope(newScope, newDocument);
@@ -2260,16 +2269,17 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&oldScope.documentScope() == oldDocument.ptr() && &newScope.documentScope() == newDocument.ptr());
         oldDocument->decrementReferencingNodeCount();
     } else {
-        traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
+            traverseSubtreeToUpdateTreeScope(root, [&](Node& node) -> unsigned {
             ASSERT(!node.isTreeScope());
             RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
             if (newScopeIsUAShadowTree)
                 node.setEventTargetFlag(EventTargetFlag::HasBeenInUserAgentShadowTree);
             node.setTreeScope(newScope);
             if (!node.hasRareData()) [[likely]]
-                return;
+                return 1;
             if (auto* nodeLists = node.rareData()->nodeLists())
                 nodeLists->adoptTreeScope();
+            return 1;
         }, [&newScope](ShadowRoot& shadowRoot) {
             shadowRoot.setParentTreeScope(newScope);
             return 0; // Unused.
