@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: inline-block; height: 150px; margin: 0 6px 6px 0; vertical-align: top; background: lightgray; font-family: monospace; font-size: 10px; }
+.lr { writing-mode: vertical-lr; }
+.rl { writing-mode: vertical-rl; }
+.box { background: lightblue; margin: 4px 0; }
+.sized { block-size: 10px; inline-size: 50px; background: green; }
+</style>
+<div class="root lr"><div class="box">first</div><div class="sized"></div><div class="box">last</div></div>
+<div class="root rl"><div class="box">first</div><div class="sized"></div><div class="box">last</div></div>
+<div class="root rl" dir="rtl"><div class="box">first</div><div class="sized"></div><div class="box">last</div></div>
+<script>
+document.body.offsetHeight;
+for (let root of document.querySelectorAll(".root")) {
+    root.firstElementChild.firstChild.data = "first line that wraps";
+    root.querySelector(".sized").style.blockSize = "20px";
+    root.querySelector(".sized").style.inlineSize = "30px";
+}
+</script>
