@@ -91,4 +91,15 @@ std::optional<double> parseJSONDouble(std::span<const char16_t> string, size_t& 
     return doubleValue;
 }
 
+double parseJSONDoubleFromDigits(uint64_t mantissa, int64_t exponent)
+{
+    // compute_float needs the digits themselves, for a slower comparison, only when the mantissa has been
+    // truncated, and a mantissa of at most 19 digits is exact.
+    auto adjusted = fast_float::compute_float<fast_float::binary_format<double>>(exponent, mantissa);
+    RELEASE_ASSERT(adjusted.power2 >= 0);
+    double doubleValue = 0;
+    fast_float::to_float(false, adjusted, doubleValue);
+    return doubleValue;
+}
+
 } // namespace WTF
