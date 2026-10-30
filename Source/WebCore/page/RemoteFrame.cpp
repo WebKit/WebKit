@@ -63,7 +63,7 @@ RemoteFrame::RemoteFrame(Page& page, ClientCreator&& clientCreator, FrameIdentif
     , m_window(RemoteDOMWindow::create(*this, GlobalWindowIdentifier { Process::identifier(), WindowIdentifier::generate() }))
     , m_client(clientCreator(*this))
     , m_layerHostingContextIdentifier(layerHostingContextIdentifier)
-    , m_autoplayPolicy(AutoplayPolicy::Default)
+    , m_autoplayPolicy { }
     , m_colorSchemePreference(ColorSchemePreference::NoPreference)
 {
     setView(RemoteFrameView::create(*this));
@@ -276,7 +276,7 @@ const SecurityOrigin& RemoteFrame::frameDocumentSecurityOriginOrOpaque() const
     return SecurityOrigin::opaqueOrigin();
 }
 
-AutoplayPolicy RemoteFrame::autoplayPolicy() const
+std::optional<AutoplayPolicy> RemoteFrame::autoplayPolicy() const
 {
     return m_autoplayPolicy;
 }

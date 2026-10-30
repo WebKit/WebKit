@@ -122,6 +122,7 @@ Modules/async-clipboard/ClipboardItemPasteboardDataSource.cpp
 Modules/async-clipboard/NavigatorClipboard.cpp
 Modules/audiosession/DOMAudioSession.cpp @cost:3
 Modules/audiosession/NavigatorAudioSession.cpp
+Modules/autoplay/NavigatorGetAutoplayPolicy.cpp
 Modules/beacon/NavigatorBeacon.cpp @cost:5
 Modules/cache/CacheStorageConnection.cpp
 Modules/cache/DOMCache.cpp @cost:4
@@ -3969,6 +3970,8 @@ JSAuthenticatorResponse.cpp
 JSAuthenticatorSelectionCriteria.cpp
 JSAuthenticatorTransport.cpp
 JSAutomationRate.cpp
+JSAutoplayPolicy.cpp
+JSAutoplayPolicyMediaType.cpp
 JSAvcEncoderConfig.cpp
 JSBackgroundFetchEvent.cpp
 JSBackgroundFetchEventInit.cpp

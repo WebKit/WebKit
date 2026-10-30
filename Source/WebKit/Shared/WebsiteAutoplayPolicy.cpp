@@ -30,20 +30,20 @@
 
 namespace WebKit {
 
-WebCore::AutoplayPolicy core(WebsiteAutoplayPolicy policy)
+std::optional<WebCore::AutoplayPolicy> core(WebsiteAutoplayPolicy policy)
 {
     switch (policy) {
     case WebsiteAutoplayPolicy::Default:
-        return WebCore::AutoplayPolicy::Default;
+        return { };
     case WebsiteAutoplayPolicy::Allow:
-        return WebCore::AutoplayPolicy::Allow;
+        return WebCore::AutoplayPolicy::Allowed;
     case WebsiteAutoplayPolicy::AllowWithoutSound:
-        return WebCore::AutoplayPolicy::AllowWithoutSound;
+        return WebCore::AutoplayPolicy::AllowedMuted;
     case WebsiteAutoplayPolicy::Deny:
-        return WebCore::AutoplayPolicy::Deny;
+        return WebCore::AutoplayPolicy::Disallowed;
     }
     ASSERT_NOT_REACHED();
-    return WebCore::AutoplayPolicy::Default;
+    return { };
 }
 
 } // namespace WebKit

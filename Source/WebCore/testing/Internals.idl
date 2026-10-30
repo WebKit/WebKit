@@ -125,10 +125,9 @@ enum RouteSharingPolicy {
 };
 
 enum AutoplayPolicy {
-    "Default",
-    "Allow",
-    "AllowWithoutSound",
-    "Deny"
+    "allowed",
+    "allowed-muted",
+    "disallowed"
 };
 
 [
@@ -1605,7 +1604,7 @@ enum ContentsFormat {
 
     DOMString dumpStyleResolvers();
 
-    undefined setDocumentAutoplayPolicy(Document document, AutoplayPolicy policy);
+    undefined setDocumentAutoplayPolicy(Document document, optional AutoplayPolicy policy);
 
     undefined retainTextIteratorForDocumentContent();
 

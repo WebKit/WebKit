@@ -30,6 +30,7 @@
 #include "AudioContext.h"
 #include "AudioContextOptions.h"
 #include "AudioTimestamp.h"
+#include "AutoplayPolicy.h"
 #include "DOMAudioSession.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
@@ -756,6 +757,24 @@ const String& AudioContext::sceneIdentifier() const
     return nullString();
 }
 #endif
+
+AutoplayPolicy AudioContext::getAutoplayPolicy() const
+{
+    RefPtr document = this->document();
+    if (!document)
+        return AutoplayPolicy::Disallowed;
+
+    if (userGestureRequiredForAudioStart() && !shouldDocumentAllowWebAudioToAutoPlay(*document))
+        return AutoplayPolicy::Disallowed;
+
+    if (pageConsentRequiredForAudioStart()) {
+        RefPtr page = document->page();
+        if (page && !page->canStartMedia())
+            return AutoplayPolicy::Disallowed;
+    }
+
+    return AutoplayPolicy::Allowed;
+}
 
 void AudioContext::mediaCanStart(Document& document)
 {

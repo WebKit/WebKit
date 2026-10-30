@@ -21431,6 +21431,13 @@
 		CDBA1F332F8C58FA00D30314 /* MediaSessionCaptionTrack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionCaptionTrack.h; sourceTree = "<group>"; };
 		CDBA1F342F8C58FA00D30314 /* MediaSessionCaptionTrack.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaSessionCaptionTrack.idl; sourceTree = "<group>"; };
 		CDBA1F352F8D9EB300D30314 /* YouTubeCaptionQuirk.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = YouTubeCaptionQuirk.js; sourceTree = "<group>"; };
+		CDBCE5723090F3F900466261 /* AutoplayPolicy.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AutoplayPolicy.idl; sourceTree = "<group>"; };
+		CDBCE5733090F3F900466261 /* AutoplayPolicyMediaType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AutoplayPolicyMediaType.h; sourceTree = "<group>"; };
+		CDBCE5743090F3F900466261 /* AutoplayPolicyMediaType.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AutoplayPolicyMediaType.idl; sourceTree = "<group>"; };
+		CDBCE5753090F3F900466261 /* DOMAutoplayPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMAutoplayPolicy.h; sourceTree = "<group>"; };
+		CDBCE5763090F3F900466261 /* Navigator+GetAutoplayPolicy.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Navigator+GetAutoplayPolicy.idl"; sourceTree = "<group>"; };
+		CDBCE5773090F3F900466261 /* NavigatorGetAutoplayPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigatorGetAutoplayPolicy.h; sourceTree = "<group>"; };
+		CDBCE5783090F3F900466261 /* NavigatorGetAutoplayPolicy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorGetAutoplayPolicy.cpp; sourceTree = "<group>"; };
 		CDBA1F372F8D9EB300D30314 /* CNNCaptionQuirk.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = CNNCaptionQuirk.js; sourceTree = "<group>"; };
 		CDBD3D281FE85CB80012C545 /* VideoConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoConfiguration.idl; sourceTree = "<group>"; };
 		CDBD3D291FE85CB90012C545 /* MediaConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaConfiguration.idl; sourceTree = "<group>"; };
@@ -33892,6 +33899,7 @@
 				63BD4A5C1F778E8400438722 /* applicationmanifest */,
 				F440E76A233D93C80063F9AB /* async-clipboard */,
 				41621A89293DFFED006E9442 /* audiosession */,
+				CDBCE5333090F09000466261 /* autoplay */,
 				512D34D1294A8CC60000B9B9 /* badge */,
 				832150791F27E96B0095B136 /* beacon */,
 				41380C1E1F34366000155FDA /* cache */,
@@ -40452,6 +40460,20 @@
 				CDF946412E5EDB09004EA5B5 /* JSMediaControlsUtils.h */,
 			);
 			name = MediaControls;
+			sourceTree = "<group>";
+		};
+		CDBCE5333090F09000466261 /* autoplay */ = {
+			isa = PBXGroup;
+			children = (
+				CDBCE5723090F3F900466261 /* AutoplayPolicy.idl */,
+				CDBCE5733090F3F900466261 /* AutoplayPolicyMediaType.h */,
+				CDBCE5743090F3F900466261 /* AutoplayPolicyMediaType.idl */,
+				CDBCE5753090F3F900466261 /* DOMAutoplayPolicy.h */,
+				CDBCE5763090F3F900466261 /* Navigator+GetAutoplayPolicy.idl */,
+				CDBCE5783090F3F900466261 /* NavigatorGetAutoplayPolicy.cpp */,
+				CDBCE5773090F3F900466261 /* NavigatorGetAutoplayPolicy.h */,
+			);
+			path = autoplay;
 			sourceTree = "<group>";
 		};
 		CDBD3D271FE85C920012C545 /* mediacapabilities */ = {
