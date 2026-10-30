@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CoordinatedPlatformLayerBufferSkiaDeferredImage.h"
 
-#if USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
+#if USE(COORDINATED_GRAPHICS) && USE(SKIA)
 #include "PlatformDisplay.h"
 #include "SkiaUtilities.h"
 
@@ -77,4 +77,4 @@ sk_sp<SkImage> CoordinatedPlatformLayerBufferSkiaDeferredImage::skiaImage()
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
+#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA)

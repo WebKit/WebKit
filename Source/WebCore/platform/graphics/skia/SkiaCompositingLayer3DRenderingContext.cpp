@@ -27,7 +27,7 @@
 #include "config.h"
 #include "SkiaCompositingLayer3DRenderingContext.h"
 
-#if USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
+#if USE(COORDINATED_GRAPHICS) && USE(SKIA)
 #include "Polygon4D.h"
 #include "SkiaCompositingLayer.h"
 #include <limits>
@@ -340,4 +340,4 @@ SkiaCompositingLayer3DRenderingContext::LayerPosition SkiaCompositingLayer3DRend
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
+#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA)

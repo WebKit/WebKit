@@ -3987,15 +3987,11 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor(IsDuplicateSample isDu
     options.info = m_videoInfo;
     auto frame = VideoFrameGStreamer::createWrappedSample(m_sample, options);
 
-#if USE(TEXTURE_MAPPER)
-    auto buffer = CoordinatedPlatformLayerBufferVideo::create(WTF::move(frame), m_videoDecoderPlatform, !m_isUsingFallbackVideoSink, m_videoSourceOrientation);
-#else
     sk_sp<GrContextThreadSafeProxy> context = proxy->threadSafeGrContext();
     if (!context)
         return;
 
     auto buffer = CoordinatedPlatformLayerBufferVideo::create(WTF::move(frame), m_videoDecoderPlatform, !m_isUsingFallbackVideoSink, m_videoSourceOrientation, context);
-#endif
     if (isInitialBuffer == IsInitialBuffer::Yes)
         proxy->setInitialDisplayBuffer(WTF::move(buffer));
     else

@@ -132,10 +132,6 @@ private:
     };
 
     bool makeGLContextCurrentIfNeeded() const;
-#if USE(TEXTURE_MAPPER)
-    void trackAcceleratedRenderingFenceIfNeeded(const sk_sp<SkImage>&, GrDirectContext*);
-    void trackAcceleratedRenderingFenceIfNeeded(Pattern&);
-#endif
     sk_sp<SkImage> imageForCurrentThread(const sk_sp<SkImage>&) const;
 
     void setupFillSource(SkPaint&);
@@ -202,9 +198,6 @@ private:
     SkiaState m_skiaState;
     Vector<SkiaState, 1> m_skiaStateStack;
     sk_sp<GrContextThreadSafeProxy> m_threadSafeGrContext;
-#if USE(TEXTURE_MAPPER)
-    SkiaImageToFenceMap m_imageToFenceMap;
-#endif
     bool m_enableStateReplayTracking : 1 { false };
     std::unique_ptr<SkiaImageAtlasLayoutBuilder> m_atlasLayoutBuilder;
     const ColorSpace m_colorSpace;

@@ -559,13 +559,6 @@ void CoordinatedPlatformLayer::replaceCurrentContentsBufferWithCopy()
 
     m_contentsBuffer.pending = nullptr;
 
-#if USE(TEXTURE_MAPPER)
-    if (is<CoordinatedPlatformLayerBufferVideo>(*m_contentsBuffer.committed))
-        m_contentsBuffer.pending = downcast<CoordinatedPlatformLayerBufferVideo>(*m_contentsBuffer.committed).copyBuffer();
-    m_contentsBuffer.committed = WTF::move(m_contentsBuffer.pending);
-    m_contentsBuffer.hasCommitted = !!m_contentsBuffer.committed;
-    ensureTarget().setContentsLayer(m_contentsBuffer.committed.get());
-#else
     if (!m_target)
         return;
 
@@ -575,7 +568,6 @@ void CoordinatedPlatformLayer::replaceCurrentContentsBufferWithCopy()
         m_contentsBuffer.hasCommitted = !!m_contentsBuffer.pending;
         m_target->setContentsBuffer(WTF::move(m_contentsBuffer.pending));
     }
-#endif
 }
 #endif
 

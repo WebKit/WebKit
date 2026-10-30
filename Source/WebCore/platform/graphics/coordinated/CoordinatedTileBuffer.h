@@ -53,8 +53,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 namespace WebCore {
-class BitmapTexture;
-class GLFence;
 
 class CoordinatedTileBuffer : public ThreadSafeRefCounted<CoordinatedTileBuffer> {
 public:
@@ -155,25 +153,13 @@ private:
 #if USE(SKIA)
 class CoordinatedAcceleratedTileBuffer final : public CoordinatedTileBuffer {
 public:
-#if USE(TEXTURE_MAPPER)
-    WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(const IntSize&, Flags);
-#else
     WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(const sk_sp<GrContextThreadSafeProxy>&, const IntSize&, Flags);
-#endif
     WEBCORE_EXPORT virtual ~CoordinatedAcceleratedTileBuffer();
 
-#if USE(TEXTURE_MAPPER)
-    RefPtr<BitmapTexture> takeTexture();
-#else
     sk_sp<GrDeferredDisplayList> takeDisplayList() { return std::exchange(m_displayList, nullptr); }
-#endif
 
 private:
-#if USE(TEXTURE_MAPPER)
-    CoordinatedAcceleratedTileBuffer(const IntSize&, Flags);
-#else
     CoordinatedAcceleratedTileBuffer(GrSurfaceCharacterization&&, Flags);
-#endif
 
     bool isBackedByOpenGL() const final { return true; }
     IntSize size() const final;
@@ -184,16 +170,9 @@ private:
 
     SkCanvas* canvas() final;
 
-#if USE(TEXTURE_MAPPER)
-    IntSize m_size;
-    sk_sp<SkSurface> m_surface;
-    RefPtr<BitmapTexture> m_texture;
-    std::unique_ptr<GLFence> m_fence;
-#else
     GrSurfaceCharacterization m_characterization;
     std::optional<GrDeferredDisplayListRecorder> m_recorder;
     sk_sp<GrDeferredDisplayList> m_displayList;
-#endif
 };
 #endif // USE(SKIA)
 

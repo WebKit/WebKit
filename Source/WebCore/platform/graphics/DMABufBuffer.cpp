@@ -234,14 +234,6 @@ std::optional<Vector<EGLint>> DMABufBuffer::buildEGLImageAttributes(const Attrib
     });
 }
 
-#if USE(TEXTURE_MAPPER)
-void DMABufBuffer::setBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer)
-{
-    m_buffer = WTF::move(buffer);
-}
-
-#else
-
 static bool formatIsYUV(uint32_t fourcc)
 {
     switch (fourcc) {
@@ -588,7 +580,6 @@ sk_sp<SkImage> DMABufBuffer::createPromiseImageForQualcommVideoFrame(const sk_sp
             Ref context = adoptRef(*static_cast<PromiseDMABufImageContext*>(userData));
         }, &context.leakRef());
 }
-#endif
 #endif
 
 } // namespace WebCore

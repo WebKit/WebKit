@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CoordinatedPlatformLayerBufferDMABuf.h"
 
-#if USE(COORDINATED_GRAPHICS) && !USE(TEXTURE_MAPPER) && USE(GBM)
+#if USE(COORDINATED_GRAPHICS) && USE(GBM)
 #include "DMABufBuffer.h"
 #include "GLFence.h"
 

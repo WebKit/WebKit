@@ -84,10 +84,6 @@ public:
     bool isQualcommVideoFrameBuffer() const;
     static std::optional<Vector<EGLint>> buildEGLImageAttributes(const Attributes&, Attributes::EnableModifiers = Attributes::EnableModifiers::Yes);
 
-#if USE(TEXTURE_MAPPER)
-    CoordinatedPlatformLayerBuffer* buffer() const LIFETIME_BOUND { return m_buffer.get(); }
-    void setBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
-#else
     bool importIfNeeded();
     sk_sp<SkColorSpace> skiaColorSpace() const;
     SkYUVAInfo yuvaInfo() const;
@@ -96,7 +92,6 @@ public:
     sk_sp<SkImage> createPromiseImage(const sk_sp<GrContextThreadSafeProxy>&, SkColorType, SkAlphaType, GrSurfaceOrigin, std::unique_ptr<GLFence>&&, WTF::UnixFileDescriptor&&);
 #if USE(GSTREAMER)
     sk_sp<SkImage> createPromiseImageForQualcommVideoFrame(const sk_sp<GrContextThreadSafeProxy>&, SkColorType, SkAlphaType, GrSurfaceOrigin);
-#endif
 #endif
 
 private:
@@ -108,12 +103,8 @@ private:
     std::optional<ColorSpace> m_colorSpace;
     std::optional<TransferFunction> m_transferFunction;
     std::optional<SampleRange> m_sampleRange;
-#if USE(TEXTURE_MAPPER)
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
-#else
     Vector<GrBackendTexture, 4> m_importedBackendTextures;
     Vector<RefPtr<BitmapTexture>, 4> m_importedTextures;
-#endif
 };
 
 } // namespace WebCore

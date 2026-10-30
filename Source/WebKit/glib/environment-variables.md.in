@@ -59,21 +59,13 @@ Example: `AR24:0:scanout`
 
 #endif
 
-- `WEBKIT_SKIA_CPU_PAINTING_THREADS`:
-Specifies the amount of CPU worker threads to use for multi-threaded tile rendering using Skia.
-By default we use as much CPU worker threads as the amount of CPU cores in the system divided by two, capped at eight.
+- `WEBKIT_SKIA_TILE_PAINTING_THREADS`:
+Specifies the amount of worker threads to use for tile rendering.
+By default we use as much worker threads as the amount of CPU cores in the system divided by two, capped at eight.
 Example: `2`
 
-- `WEBKIT_SKIA_GPU_PAINTING_THREADS`:
-Specifies the amount of GPU worker threads to use for multi-threaded tile rendering using Skia.
-By default we use two GPU worker threads if the number of CPU cores in the system exceeds 3,
-otherwise we a single GPU worker thread.
-Example: `0` (don't use GPU for tile rendering)
-
 - `WEBKIT_SKIA_ENABLE_CPU_RENDERING`:
-Disallow the use of GPU for rendering purposes. If only setting `WEBKIT_SKIA_GPU_PAINTING_THREADS=0`,
-the GPU may still be used for e.g. accelerated filters (anything using accelerated ImageBuffers),
-even though the tile painting is performed using the CPU only.
+Disallow the use of GPU for rendering purposes (tile painting and accelerated ImageBuffers such as filters). Canvas may still be accelerated.
 Example: `1`
 
 - `WEBKIT_SKIA_USE_LINEAR_TILE_TEXTURES`:
