@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "Helpers/cocoa/AppleLanguagesOverride.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/WebExtensionUtilities.h"
 
@@ -166,8 +167,7 @@ TEST(WKWebExtensionAPILocalization, i18n)
 
 TEST(WKWebExtensionAPILocalization, i18nWithFallback)
 {
-    // Temporarily set the current locale to US English for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"en-US" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"en-US" ] };
 
     NSArray<NSString *> *preferredLocaleIdentifiers = NSLocale.preferredLanguages;
     NSMutableOrderedSet<NSString *> *acceptedLanguages = [NSMutableOrderedSet orderedSetWithCapacity:preferredLocaleIdentifiers.count];
@@ -736,8 +736,7 @@ TEST(WKWebExtensionAPILocalization, CSSLocalizationInRegisteredContentScript)
 
 TEST(WKWebExtensionAPILocalization, i18nChineseSimplified)
 {
-    // Temporarily set the current locale to Simplified Chinese with the US country code for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"zh-Hans-US" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"zh-Hans-US" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), '简体中文扩展')",
@@ -779,8 +778,7 @@ TEST(WKWebExtensionAPILocalization, i18nChineseSimplified)
 
 TEST(WKWebExtensionAPILocalization, i18nChineseSimplifiedOnly)
 {
-    // Temporarily set the current locale to Simplified Chinese with the US country code for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"zh-Hans-US" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"zh-Hans-US" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), '简体中文扩展')",
@@ -814,8 +812,7 @@ TEST(WKWebExtensionAPILocalization, i18nChineseSimplifiedOnly)
 
 TEST(WKWebExtensionAPILocalization, i18nChineseSimplifiedScript)
 {
-    // Temporarily set the current locale to Simplified Chinese with the US country code for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"zh-Hans-US", @"en-US", @"zh-HK" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"zh-Hans-US", @"en-US", @"zh-HK" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), '简体中文扩展')",
@@ -857,8 +854,7 @@ TEST(WKWebExtensionAPILocalization, i18nChineseSimplifiedScript)
 
 TEST(WKWebExtensionAPILocalization, i18nChineseTraditional)
 {
-    // Temporarily set the current locale to Traditional Chinese with the US country code for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"zh-Hant-US" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"zh-Hant-US" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), '繁體中文擴展')",
@@ -900,8 +896,7 @@ TEST(WKWebExtensionAPILocalization, i18nChineseTraditional)
 
 TEST(WKWebExtensionAPILocalization, i18nChineseSimplifiedInTaiwan)
 {
-    // Temporarily set the current locale to Simplified Chinese with the Taiwan country code for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"zh-Hans-TW" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"zh-Hans-TW" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), '简体中文扩展')",
@@ -943,8 +938,7 @@ TEST(WKWebExtensionAPILocalization, i18nChineseSimplifiedInTaiwan)
 
 TEST(WKWebExtensionAPILocalization, i18nChineseTraditionalInChina)
 {
-    // Temporarily set the current locale to Traditional Chinese with the China country code for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"zh-Hant-CN" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"zh-Hant-CN" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), '繁體中文擴展')",
@@ -986,8 +980,7 @@ TEST(WKWebExtensionAPILocalization, i18nChineseTraditionalInChina)
 
 TEST(WKWebExtensionAPILocalization, i18nChineseSimplifiedInHongKong)
 {
-    // Temporarily set the current locale to Simplified Chinese with the Hong Kong country code for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"zh-Hans-HK" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"zh-Hans-HK" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), '简体中文扩展')",
@@ -1037,8 +1030,7 @@ TEST(WKWebExtensionAPILocalization, i18nChineseSimplifiedInHongKong)
 
 TEST(WKWebExtensionAPILocalization, i18nChineseTraditionalOnly)
 {
-    // Temporarily set the current locale to Traditional Chinese with the US country code for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"zh-Hant-US" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"zh-Hant-US" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), '繁體中文擴展')",
@@ -1072,8 +1064,7 @@ TEST(WKWebExtensionAPILocalization, i18nChineseTraditionalOnly)
 
 TEST(WKWebExtensionAPILocalization, i18nChineseTraditionalScript)
 {
-    // Temporarily set the current locale to Simplified Chinese with the US country code for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"zh-Hant-US" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"zh-Hant-US" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), '繁體中文擴展')",
@@ -1115,8 +1106,7 @@ TEST(WKWebExtensionAPILocalization, i18nChineseTraditionalScript)
 
 TEST(WKWebExtensionAPILocalization, i18nChineseLanguageFallback)
 {
-    // Temporarily set the current locale to Simplified Chinese in China for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"zh-Hans-CN" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"zh-Hans-CN" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('regional_name'), '简体中文扩展')",
@@ -1159,8 +1149,7 @@ TEST(WKWebExtensionAPILocalization, i18nChineseLanguageFallback)
 
 TEST(WKWebExtensionAPILocalization, i18nChineseTraditionalFallback)
 {
-    // Temporarily set the current locale to Traditional Chinese for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"zh-Hant" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"zh-Hant" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('language_name'), '中文擴展', 'Generic Chinese message should be used')",
@@ -1197,8 +1186,7 @@ TEST(WKWebExtensionAPILocalization, i18nChineseTraditionalFallback)
 
 TEST(WKWebExtensionAPILocalization, i18nChineseSimplifiedFallback)
 {
-    // Temporarily set the current locale to Simplified Chinese for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"zh-Hans" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"zh-Hans" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('language_name'), '中文扩展', 'Generic Chinese message should be used')",
@@ -1235,8 +1223,7 @@ TEST(WKWebExtensionAPILocalization, i18nChineseSimplifiedFallback)
 
 TEST(WKWebExtensionAPILocalization, i18nPortugueseBrazilian)
 {
-    // Temporarily set the current locale to Brazilian Portuguese for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"pt-BR" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"pt-BR" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), 'Extensão Brasileira')",
@@ -1270,8 +1257,7 @@ TEST(WKWebExtensionAPILocalization, i18nPortugueseBrazilian)
 
 TEST(WKWebExtensionAPILocalization, i18nPortugueseEuropean)
 {
-    // Temporarily set the current locale to European Portuguese for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"pt-PT" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"pt-PT" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), 'Extensão Portuguesa')",
@@ -1305,8 +1291,7 @@ TEST(WKWebExtensionAPILocalization, i18nPortugueseEuropean)
 
 TEST(WKWebExtensionAPILocalization, i18nPortugueseUnitedStates)
 {
-    // Temporarily set the current locale to Portuguese with the US country code for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"pt-US" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"pt-US" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), 'Extensão Portuguesa')",
@@ -1340,8 +1325,7 @@ TEST(WKWebExtensionAPILocalization, i18nPortugueseUnitedStates)
 
 TEST(WKWebExtensionAPILocalization, i18nPortugueseUnitedStatesFallbackToBrazilian)
 {
-    // Temporarily set the current locale to Portuguese with the US country code for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"pt-US" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"pt-US" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), 'Extensão Brasileira')",
@@ -1383,8 +1367,7 @@ TEST(WKWebExtensionAPILocalization, i18nPortugueseUnitedStatesFallbackToBrazilia
 
 TEST(WKWebExtensionAPILocalization, i18nPortugueseUnitedStatesFallbackToGeneric)
 {
-    // Temporarily set the current locale to Portuguese with the US country code for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"pt-US" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"pt-US" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), 'Extensão Portuguesa Genérica')",
@@ -1426,8 +1409,7 @@ TEST(WKWebExtensionAPILocalization, i18nPortugueseUnitedStatesFallbackToGeneric)
 
 TEST(WKWebExtensionAPILocalization, i18nPortugueseLanguageFallback)
 {
-    // Temporarily set the current locale to Brazilian Portuguese for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"pt-BR" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"pt-BR" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('regional_name'), 'Extensão Brasileira')",
@@ -1470,8 +1452,7 @@ TEST(WKWebExtensionAPILocalization, i18nPortugueseLanguageFallback)
 
 TEST(WKWebExtensionAPILocalization, i18nSpanishLatinAmerica)
 {
-    // Temporarily set the current locale to Latin American Spanish.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"es-419" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"es-419" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), 'Extensión en español')",
@@ -1514,8 +1495,7 @@ TEST(WKWebExtensionAPILocalization, i18nSpanishLatinAmerica)
 
 TEST(WKWebExtensionAPILocalization, i18nSpanishMexico)
 {
-    // Temporarily set the current locale to Spanish (Mexico).
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"es-MX" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"es-MX" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), 'Extensión en español')",
@@ -1557,8 +1537,7 @@ TEST(WKWebExtensionAPILocalization, i18nSpanishMexico)
 
 TEST(WKWebExtensionAPILocalization, i18nSpanishSpain)
 {
-    // Temporarily set the current locale to Spanish (Spain).
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"es-ES" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"es-ES" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), 'Extensión en castellano')",
@@ -1600,8 +1579,7 @@ TEST(WKWebExtensionAPILocalization, i18nSpanishSpain)
 
 TEST(WKWebExtensionAPILocalization, i18nSwedishDefaultToEnglish)
 {
-    // Temporarily set the current locale to Swedish (Sweden) for the test.
-    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"sv-SE" ] } forName:NSArgumentDomain];
+    AppleLanguagesOverride languagesOverride { @[ @"sv-SE" ] };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), 'Default English Name', 'Should fall back to the default English name.')",
