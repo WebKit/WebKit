@@ -37,11 +37,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly) NSURL *origin;
 
-@property (nonatomic, strong, readonly) NSArray<WKIdentityDocumentPresentmentMobileDocumentRequest *> *mobileDocumentRequests;
+@property (nonatomic, strong, readonly) NSArray<id<WKIdentityDocumentPresentmentCredentialRequest>> *requests;
 
-@property (nonatomic, strong, readonly) NSArray<WKIdentityDocumentPresentmentOpenID4VPRequest *> *openID4VPRequests;
-
-- (instancetype)initWithOrigin:(NSURL *)origin mobileDocumentRequests:(NSArray<WKIdentityDocumentPresentmentMobileDocumentRequest *> *)mobileDocumentRequests openID4VPRequests:(NSArray<WKIdentityDocumentPresentmentOpenID4VPRequest *> *)openID4VPRequests NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithOrigin:(NSURL *)origin requests:(NSArray<id<WKIdentityDocumentPresentmentCredentialRequest>> *)requests NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
 @end

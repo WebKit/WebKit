@@ -74,7 +74,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface WKIdentityDocumentPresentmentMobileDocumentRequest : NSObject
+@protocol WKIdentityDocumentPresentmentCredentialRequest <NSObject>
+@end
+
+@interface WKIdentityDocumentPresentmentMobileDocumentRequest : NSObject <WKIdentityDocumentPresentmentCredentialRequest>
 
 @property (nonatomic, strong) NSArray<WKIdentityDocumentPresentmentMobileDocumentPresentmentRequest *> *presentmentRequests;
 

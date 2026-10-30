@@ -1864,8 +1864,6 @@
 		48B187902E5CAE0F009B57A9 /* AccessibilityRole.h in Headers */ = {isa = PBXBuildFile; fileRef = 48B1878F2E5CAE0F009B57A9 /* AccessibilityRole.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		48B187A62E63BD3C009B57A9 /* AccessibilityObjectInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 48B187A52E63BD3C009B57A9 /* AccessibilityObjectInlines.h */; };
 		48B5BF3729CA691700FEBE3B /* AccessibilityRegionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 48B5BF3529CA691700FEBE3B /* AccessibilityRegionContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		48BFAF1E2F2D7B3A00E7D926 /* DigitalCredentialsMobileDocumentRequestData.h in Headers */ = {isa = PBXBuildFile; fileRef = 48BFAF1C2F2D7B3A00E7D926 /* DigitalCredentialsMobileDocumentRequestData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F4B200212E02001100B20011 /* DigitalCredentialsOpenID4VPRequestData.h in Headers */ = {isa = PBXBuildFile; fileRef = F4B200112E02000100B20001 /* DigitalCredentialsOpenID4VPRequestData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		48BFAF2B2F3137FA00E7D926 /* DigitalCredentialsRequestDataBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 48BFAF292F3137FA00E7D926 /* DigitalCredentialsRequestDataBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		48CBBAB52EC3B70000EC5429 /* AXID.h in Headers */ = {isa = PBXBuildFile; fileRef = 48CBBAB42EC3B70000EC5429 /* AXID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		48D0E12929F7329E00263857 /* ElementAnimationContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 48D0E12829F7322900263857 /* ElementAnimationContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12129,8 +12127,6 @@
 		48B187A52E63BD3C009B57A9 /* AccessibilityObjectInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityObjectInlines.h; sourceTree = "<group>"; };
 		48B5BF3529CA691700FEBE3B /* AccessibilityRegionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityRegionContext.h; sourceTree = "<group>"; };
 		48B5BF3629CA691700FEBE3B /* AccessibilityRegionContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityRegionContext.cpp; sourceTree = "<group>"; };
-		48BFAF1C2F2D7B3A00E7D926 /* DigitalCredentialsMobileDocumentRequestData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DigitalCredentialsMobileDocumentRequestData.h; sourceTree = "<group>"; };
-		F4B200112E02000100B20001 /* DigitalCredentialsOpenID4VPRequestData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DigitalCredentialsOpenID4VPRequestData.h; sourceTree = "<group>"; };
 		48BFAF292F3137FA00E7D926 /* DigitalCredentialsRequestDataBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DigitalCredentialsRequestDataBuilder.h; sourceTree = "<group>"; };
 		48BFAF322F318E9E00E7D926 /* DigitalCredentialsRequestDataBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DigitalCredentialsRequestDataBuilder.cpp; sourceTree = "<group>"; };
 		48C4E83C2B34D8380083460A /* AXTextRun.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AXTextRun.cpp; sourceTree = "<group>"; };
@@ -25050,8 +25046,6 @@
 				0D431A862B5A42AB00864655 /* DigitalCredentialPresentationProtocol.idl */,
 				0D494DEC2B5DF3DC00B61C51 /* DigitalCredentialRequestOptions.h */,
 				0D431A802B5A3A9800864655 /* DigitalCredentialRequestOptions.idl */,
-				48BFAF1C2F2D7B3A00E7D926 /* DigitalCredentialsMobileDocumentRequestData.h */,
-				F4B200112E02000100B20001 /* DigitalCredentialsOpenID4VPRequestData.h */,
 				0DF687F52C8840D100C16DC9 /* DigitalCredentialsRequestData.h */,
 				48BFAF322F318E9E00E7D926 /* DigitalCredentialsRequestDataBuilder.cpp */,
 				48BFAF292F3137FA00E7D926 /* DigitalCredentialsRequestDataBuilder.h */,
@@ -45465,8 +45459,6 @@
 				0D431F012B905BC4001E222F /* DigitalCredentialGetRequest.h in Headers */,
 				0D77A8522B9063A700BBD327 /* DigitalCredentialPresentationProtocol.h in Headers */,
 				0D431F002B9053DC001E222F /* DigitalCredentialRequestOptions.h in Headers */,
-				48BFAF1E2F2D7B3A00E7D926 /* DigitalCredentialsMobileDocumentRequestData.h in Headers */,
-				F4B200212E02001100B20011 /* DigitalCredentialsOpenID4VPRequestData.h in Headers */,
 				E8E7BDE32D94D20E0000A163 /* DigitalCredentialsProtocols.h in Headers */,
 				0DF687F62C88414900C16DC9 /* DigitalCredentialsRequestData.h in Headers */,
 				48BFAF2B2F3137FA00E7D926 /* DigitalCredentialsRequestDataBuilder.h in Headers */,

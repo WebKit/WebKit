@@ -434,6 +434,9 @@ struct WebCore::ValidatedOpenID4VPRequest {
     [Validator='WebCore::isWithinOpenID4VPRequestLimits(*request)'] WebCore::ValidatedOpenID4VPRequestObject request;
 };
 
+header: <WebCore/DigitalCredentialsProtocols.h>
+using WebCore::ValidatedDigitalCredentialRequest = Variant<WebCore::ValidatedMobileDocumentRequest, WebCore::ValidatedOpenID4VPRequest>;
+
 header: <WebCore/UnvalidatedDigitalCredentialRequest.h>
 using WebCore::UnvalidatedDigitalCredentialRequest = Variant<WebCore::MobileDocumentRequest, WebCore::OpenID4VPSignedRequest, WebCore::OpenID4VPMultisignedRequest, WebCore::OpenID4VPUnsignedRequest>;
 
@@ -443,13 +446,8 @@ header: <WebCore/DigitalCredentialsRequestData.h>
     [Validator='!documentOrigin->isNull()'] WebCore::SecurityOriginData documentOrigin;
 }
 
-struct WebCore::DigitalCredentialsMobileDocumentRequestData : WebCore::DigitalCredentialsSecurityOriginData {
-    Vector<WebCore::ValidatedMobileDocumentRequest> requests;
-};
-
-header: <WebCore/DigitalCredentialsOpenID4VPRequestData.h>
-struct WebCore::DigitalCredentialsOpenID4VPRequestData : WebCore::DigitalCredentialsSecurityOriginData {
-    [Validator='requests->size() <= WebCore::maxOpenID4VPRequestCount'] Vector<WebCore::ValidatedOpenID4VPRequest> requests;
+struct WebCore::DigitalCredentialsRequestData : WebCore::DigitalCredentialsSecurityOriginData {
+    [Validator='WebCore::isWithinOpenID4VPRequestCountLimit(*requests)'] Vector<WebCore::ValidatedDigitalCredentialRequest> requests;
 };
 
 struct WebCore::DigitalCredentialsResponseData {

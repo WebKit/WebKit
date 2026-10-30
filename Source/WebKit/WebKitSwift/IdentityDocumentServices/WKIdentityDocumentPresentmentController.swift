@@ -80,16 +80,20 @@ extension WKIdentityDocumentPresentmentController {
 
             do {
                 Self.logger.debug("IdentityDocumentPresentmentController performRequest called with request \(String(describing: request))")
-                var convertedRequests: [any IdentityDocumentWebPresentmentRequest] =
-                    request.mobileDocumentRequests.map(ISO18013MobileDocumentRequest.init(_:))
-                #if HAVE_DIGITAL_CREDENTIALS_OPENID4VP
-                let convertedOpenID4VPRequests = request.openID4VPRequests.compactMap(wkPlatformOpenID4VPRequest(from:))
-                guard convertedOpenID4VPRequests.count == request.openID4VPRequests.count else {
-                    Self.logger.error("IdentityDocumentPresentmentController could not convert every OpenID4VP request")
+                let convertedRequests: [any IdentityDocumentWebPresentmentRequest] = try request.requests.map { offeredRequest in
+                    if let mobileDocumentRequest = offeredRequest as? WKIdentityDocumentPresentmentMobileDocumentRequest {
+                        return ISO18013MobileDocumentRequest(mobileDocumentRequest)
+                    }
+                    #if HAVE_DIGITAL_CREDENTIALS_OPENID4VP
+                    if let openID4VPRequest = offeredRequest as? WKIdentityDocumentPresentmentOpenID4VPRequest,
+                        let convertedRequest = wkPlatformOpenID4VPRequest(from: openID4VPRequest)
+                    {
+                        return convertedRequest
+                    }
+                    #endif
+                    Self.logger.error("IdentityDocumentPresentmentController could not convert a request")
                     throw WKIdentityDocumentPresentmentError(.invalidRequest)
                 }
-                convertedRequests.append(contentsOf: convertedOpenID4VPRequests)
-                #endif
 
                 if convertedRequests.isEmpty {
                     throw WKIdentityDocumentPresentmentError(.invalidRequest)
@@ -105,12 +109,20 @@ extension WKIdentityDocumentPresentmentController {
                 let response = try await task.value
 
                 if let response = response as? ISO18013MobileDocumentResponse {
+                    guard request.requests.contains(where: { $0 is WKIdentityDocumentPresentmentMobileDocumentRequest }) else {
+                        Self.logger.error(
+                            "IdentityDocumentPresentmentController received a mobile document response that was not requested"
+                        )
+                        throw WKIdentityDocumentPresentmentError(.invalidRequest)
+                    }
+
                     return .init(protocolString: Self.isoMdocProtocol, responseData: response.responseData)
                 }
 
                 #if HAVE_DIGITAL_CREDENTIALS_OPENID4VP
                 if let (exchangeProtocol, responseData) = wkPlatformOpenID4VPResponse(from: response) {
-                    guard request.openID4VPRequests.contains(where: { $0.requestType == exchangeProtocol }) else {
+                    let openID4VPRequests = request.requests.compactMap { $0 as? WKIdentityDocumentPresentmentOpenID4VPRequest }
+                    guard openID4VPRequests.contains(where: { $0.requestType == exchangeProtocol }) else {
                         Self.logger.error(
                             "IdentityDocumentPresentmentController received an OpenID4VP response for a protocol that was not requested"
                         )

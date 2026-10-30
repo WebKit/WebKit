@@ -13237,66 +13237,50 @@ static VirtualWalletDisposition applyVirtualWalletBehavior(const VirtualWalletBe
 #if ENABLE(WEB_AUTHN)
 void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, std::optional<WebCore::FrameIdentifier>&& frameID, const WebCore::DigitalCredentialsRequestData& requestData, CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
-    WTF::switchOn(requestData,
-        [&](const auto& requestData) {
-            LOG_WITH_STREAM(DigitalCredentials, stream << "WebPageProxy::showDigitalCredentialsChooser() - UIProcess: received IPC from WebProcess for origin: "_s << requestData.topOrigin.toString());
-            MESSAGE_CHECK_COMPLETION_BASE(
-                protect(preferences())->digitalCredentialsEnabled(),
-                connection,
-                completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::SecurityError, "Digital credentials feature is disabled by preference."_s }))
-            );
+    LOG_WITH_STREAM(DigitalCredentials, stream << "WebPageProxy::showDigitalCredentialsChooser() - UIProcess: received IPC from WebProcess for origin: "_s << requestData.topOrigin.toString());
+    MESSAGE_CHECK_COMPLETION_BASE(
+        protect(preferences())->digitalCredentialsEnabled(),
+        connection,
+        completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::SecurityError, "Digital credentials feature is disabled by preference."_s }))
+    );
 
-            if constexpr (std::is_same_v<std::remove_cvref_t<decltype(requestData)>, WebCore::DigitalCredentialsOpenID4VPRequestData>) {
-                MESSAGE_CHECK_COMPLETION_BASE(
-                    protect(preferences())->digitalCredentialsOpenID4VPEnabled(),
-                    connection,
-                    completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::SecurityError, "OpenID4VP for the Digital Credentials API is disabled by preference."_s }))
-                );
-            }
-
-#if ENABLE(WEBDRIVER_BIDI)
-            if (isControlledByAutomation()) {
-                if (RefPtr automationSession = configuration().processPool().automationSession()) {
-                    auto& agent = automationSession->bidiProcessor().digitalCredentialsAgent();
-                    // Per the Digital Credentials spec (§13.2 "Handle Virtual Wallet Behavior"),
-                    // the behavior is looked up for the requesting global's browsing context,
-                    // falling back to the session default. Resolve the requesting frame to its
-                    // BiDi browsing-context id; this matches the id-space SET uses. The
-                    // end-to-end iframe-scoped test lands with the WKTR actuation bridge
-                    // (webkit.org/b/306292).
-                    String contextID;
-                    if (frameID) {
-                        if (RefPtr frame = WebFrameProxy::webFrame(*frameID); frame && frame->page() == this)
-                            contextID = automationSession->effectiveHandleForWebFrameProxy(*frame);
-                    } else
-                        contextID = automationSession->handleForWebPageProxy(*this);
-                    const auto walletBehavior = agent.behaviorForContext(contextID);
-                    if (walletBehavior) {
-                        switch (applyVirtualWalletBehavior(*walletBehavior, completionHandler)) {
-                        case VirtualWalletDisposition::StorePendingHandler:
-                            // FIXME: A concurrent request from a site-isolated cross-origin iframe (separate
-                            // process) can clobber this single slot; only same-process concurrency is
-                            // serialized by prepareCredentialRequests (webkit.org/b/318408).
-                            ASSERT(!m_pendingDigitalCredentialsWaitContextID);
-                            m_pendingDigitalCredentialsWaitContextID = contextID;
-                            agent.holdPendingHandler(contextID, WTF::move(completionHandler));
-                            return;
-                        case VirtualWalletDisposition::Handled:
-                            return;
-                        case VirtualWalletDisposition::NotHandled:
-                            break;
-                        }
-                    }
-                }
-            }
-#endif
+    bool hasOpenID4VPRequest = requestData.requests.containsIf([](auto& request) {
+        return std::holds_alternative<WebCore::ValidatedOpenID4VPRequest>(request);
+    });
+    if (hasOpenID4VPRequest) {
+        MESSAGE_CHECK_COMPLETION_BASE(
+            protect(preferences())->digitalCredentialsOpenID4VPEnabled(),
+            connection,
+            completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::SecurityError, "OpenID4VP for the Digital Credentials API is disabled by preference."_s }))
+        );
+    }
 
 #if ENABLE(WEBDRIVER_BIDI)
-            if (const auto& testBehavior = internals().testingVirtualWalletBehavior) {
-                switch (applyVirtualWalletBehavior(*testBehavior, completionHandler)) {
+    if (isControlledByAutomation()) {
+        if (RefPtr automationSession = configuration().processPool().automationSession()) {
+            auto& agent = automationSession->bidiProcessor().digitalCredentialsAgent();
+            // Per the Digital Credentials spec (§13.2 "Handle Virtual Wallet Behavior"),
+            // the behavior is looked up for the requesting global's browsing context,
+            // falling back to the session default. Resolve the requesting frame to its
+            // BiDi browsing-context id; this matches the id-space SET uses. The
+            // end-to-end iframe-scoped test lands with the WKTR actuation bridge
+            // (webkit.org/b/306292).
+            String contextID;
+            if (frameID) {
+                if (RefPtr frame = WebFrameProxy::webFrame(*frameID); frame && frame->page() == this)
+                    contextID = automationSession->effectiveHandleForWebFrameProxy(*frame);
+            } else
+                contextID = automationSession->handleForWebPageProxy(*this);
+            const auto walletBehavior = agent.behaviorForContext(contextID);
+            if (walletBehavior) {
+                switch (applyVirtualWalletBehavior(*walletBehavior, completionHandler)) {
                 case VirtualWalletDisposition::StorePendingHandler:
-                    settlePendingTestingDigitalCredentialHandler("Superseded by a new digital credential request."_s);
-                    internals().testingPendingDigitalCredentialHandler = WTF::move(completionHandler);
+                    // FIXME: A concurrent request from a site-isolated cross-origin iframe (separate
+                    // process) can clobber this single slot; only same-process concurrency is
+                    // serialized by prepareCredentialRequests (webkit.org/b/318408).
+                    ASSERT(!m_pendingDigitalCredentialsWaitContextID);
+                    m_pendingDigitalCredentialsWaitContextID = contextID;
+                    agent.holdPendingHandler(contextID, WTF::move(completionHandler));
                     return;
                 case VirtualWalletDisposition::Handled:
                     return;
@@ -13304,42 +13288,58 @@ void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, st
                     break;
                 }
             }
+        }
+    }
+#endif
+
+#if ENABLE(WEBDRIVER_BIDI)
+    if (const auto& testBehavior = internals().testingVirtualWalletBehavior) {
+        switch (applyVirtualWalletBehavior(*testBehavior, completionHandler)) {
+        case VirtualWalletDisposition::StorePendingHandler:
+            settlePendingTestingDigitalCredentialHandler("Superseded by a new digital credential request."_s);
+            internals().testingPendingDigitalCredentialHandler = WTF::move(completionHandler);
+            return;
+        case VirtualWalletDisposition::Handled:
+            return;
+        case VirtualWalletDisposition::NotHandled:
+            break;
+        }
+    }
 #endif
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
-            RefPtr requestingFrame = WebFrameProxy::webFrame(frameID);
-            RefPtr mainFrame = this->mainFrame();
-            if (!requestingFrame || !mainFrame || requestingFrame->page() != this) {
-                completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "Digital credentials request has no active frame."_s }));
-                return;
-            }
-            MESSAGE_CHECK_COMPLETION_BASE(
-                &requestingFrame->process() == WebProcessProxy::fromConnection(connection).ptr(),
-                connection,
-                completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::SecurityError, "Digital credentials request is not allowed."_s }))
-            );
+    RefPtr requestingFrame = WebFrameProxy::webFrame(frameID);
+    RefPtr mainFrame = this->mainFrame();
+    if (!requestingFrame || !mainFrame || requestingFrame->page() != this) {
+        completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "Digital credentials request has no active frame."_s }));
+        return;
+    }
+    MESSAGE_CHECK_COMPLETION_BASE(
+        &requestingFrame->process() == WebProcessProxy::fromConnection(connection).ptr(),
+        connection,
+        completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::SecurityError, "Digital credentials request is not allowed."_s }))
+    );
 
-            auto lastActivationTimestamp = internals().lastActivationTimestamp;
-            bool hasTransientActivation = MonotonicTime::now() - lastActivationTimestamp < WebCore::LocalDOMWindow::transientActivationDuration();
-            if (!hasTransientActivation || lastActivationTimestamp <= internals().lastConsumedDigitalCredentialsActivationTimestamp) {
-                completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "Digital credentials request requires transient user activation."_s }));
-                return;
-            }
-            internals().lastConsumedDigitalCredentialsActivationTimestamp = lastActivationTimestamp;
+    auto lastActivationTimestamp = internals().lastActivationTimestamp;
+    bool hasTransientActivation = MonotonicTime::now() - lastActivationTimestamp < WebCore::LocalDOMWindow::transientActivationDuration();
+    if (!hasTransientActivation || lastActivationTimestamp <= internals().lastConsumedDigitalCredentialsActivationTimestamp) {
+        completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "Digital credentials request requires transient user activation."_s }));
+        return;
+    }
+    internals().lastConsumedDigitalCredentialsActivationTimestamp = lastActivationTimestamp;
 
-            auto topLevelOrigin = mainFrame->documentSecurityOriginData();
-            auto requestingOrigin = requestingFrame->documentSecurityOriginData();
+    auto topLevelOrigin = mainFrame->documentSecurityOriginData();
+    auto requestingOrigin = requestingFrame->documentSecurityOriginData();
 
-            auto sanitizedRequestData = requestData;
-            sanitizedRequestData.topOrigin = WTF::move(topLevelOrigin);
-            sanitizedRequestData.documentOrigin = WTF::move(requestingOrigin);
+    auto sanitizedRequestData = requestData;
+    sanitizedRequestData.topOrigin = WTF::move(topLevelOrigin);
+    sanitizedRequestData.documentOrigin = WTF::move(requestingOrigin);
 
-            LOG(DigitalCredentials, "WebPageProxy::showDigitalCredentialsChooser() - UIProcess: passing to pageClient to present chooser UI");
-            protect(pageClient())->showDigitalCredentialsChooser(sanitizedRequestData, WTF::move(completionHandler));
+    LOG(DigitalCredentials, "WebPageProxy::showDigitalCredentialsChooser() - UIProcess: passing to pageClient to present chooser UI");
+    protect(pageClient())->showDigitalCredentialsChooser(sanitizedRequestData, WTF::move(completionHandler));
 #else
-            completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotSupportedError, "Digital credentials UI is not supported."_s }));
+    completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotSupportedError, "Digital credentials UI is not supported."_s }));
 #endif
-    });
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
@@ -13396,7 +13396,7 @@ void WebPageProxy::fetchRawDigitalCredentialRequests(CompletionHandler<void(WebC
 #if ENABLE(WEB_AUTHN)
     sendWithAsyncReply(Messages::DigitalCredentialsCoordinator::ProvideRawDigitalCredentialRequests(), WTF::move(completionHandler));
 #else
-    completionHandler(WebCore::DigitalCredentialsRawRequests { Vector<WebCore::UnvalidatedDigitalCredentialRequest> { } });
+    completionHandler({ });
 #endif
 }
 

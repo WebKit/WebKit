@@ -173,7 +173,7 @@ struct DragItem;
 struct ResolvedCaptionDisplaySettingsOptions;
 
 #if ENABLE(WEB_AUTHN)
-struct DigitalCredentialsMobileDocumentRequestData;
+struct DigitalCredentialsRequestData;
 struct DigitalCredentialsResponseData;
 #endif
 

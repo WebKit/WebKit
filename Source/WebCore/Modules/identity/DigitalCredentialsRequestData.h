@@ -25,22 +25,25 @@
 
 #pragma once
 
-#include <WebCore/DigitalCredentialsMobileDocumentRequestData.h>
-#include <WebCore/DigitalCredentialsOpenID4VPRequestData.h>
 #include <WebCore/DigitalCredentialsProtocols.h>
+#include <WebCore/DigitalCredentialsSecurityOriginData.h>
 #include <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-using DigitalCredentialsRequestData = Variant<
-    DigitalCredentialsMobileDocumentRequestData,
-    DigitalCredentialsOpenID4VPRequestData
->;
+struct DigitalCredentialsRequestData : DigitalCredentialsSecurityOriginData {
+    Vector<ValidatedDigitalCredentialRequest> requests;
+};
 
-using DigitalCredentialsRawRequests = Variant<
-    Vector<UnvalidatedDigitalCredentialRequest>
-    >;
+inline bool isWithinOpenID4VPRequestCountLimit(const Vector<ValidatedDigitalCredentialRequest>& requests)
+{
+    return std::ranges::count_if(requests, [](auto& request) {
+        return std::holds_alternative<ValidatedOpenID4VPRequest>(request);
+    }) <= static_cast<std::ptrdiff_t>(maxOpenID4VPRequestCount);
+}
+
+using DigitalCredentialsRawRequests = Vector<UnvalidatedDigitalCredentialRequest>;
 
 } // namespace WebCore

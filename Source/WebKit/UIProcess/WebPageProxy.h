@@ -411,20 +411,14 @@ struct WrappedCryptoKey;
 
 #if ENABLE(WEB_AUTHN)
 struct MockWebAuthenticationConfiguration;
-struct DigitalCredentialsMobileDocumentRequestData;
-struct DigitalCredentialsOpenID4VPRequestData;
+struct DigitalCredentialsRequestData;
 
 struct MobileDocumentRequest;
 struct OpenID4VPMultisignedRequest;
 struct OpenID4VPSignedRequest;
 struct OpenID4VPUnsignedRequest;
 using UnvalidatedDigitalCredentialRequest = Variant<MobileDocumentRequest, OpenID4VPSignedRequest, OpenID4VPMultisignedRequest, OpenID4VPUnsignedRequest>;
-using DigitalCredentialsRequestData = Variant<
-    WebCore::DigitalCredentialsMobileDocumentRequestData,
-    WebCore::DigitalCredentialsOpenID4VPRequestData
->;
-using DigitalCredentialsRawRequests = Variant<Vector<UnvalidatedDigitalCredentialRequest>
-    >;
+using DigitalCredentialsRawRequests = Vector<UnvalidatedDigitalCredentialRequest>;
 struct DigitalCredentialsResponseData;
 struct MobileDocumentRequest;
 #endif

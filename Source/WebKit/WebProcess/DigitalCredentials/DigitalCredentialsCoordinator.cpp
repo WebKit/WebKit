@@ -63,9 +63,7 @@ Ref<DigitalCredentialsCoordinator> DigitalCredentialsCoordinator::create(WebPage
 
 void DigitalCredentialsCoordinator::showDigitalCredentialsChooser(std::optional<WebCore::FrameIdentifier> frameID, WebCore::DigitalCredentialsRawRequests&& rawRequests, const WebCore::DigitalCredentialsRequestData& request, WTF::CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
-    WTF::switchOn(m_rawRequests, [](auto& cachedRawRequests) {
-        ASSERT(cachedRawRequests.isEmpty());
-    });
+    ASSERT(m_rawRequests.isEmpty());
     m_rawRequests = WTF::move(rawRequests);
 
     if (RefPtr page = m_page.get()) {
@@ -74,15 +72,11 @@ void DigitalCredentialsCoordinator::showDigitalCredentialsChooser(std::optional<
             if (!protectedThis)
                 return completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "The coordinator is no longer available."_s }));
 
-            WTF::switchOn(protectedThis->m_rawRequests, [](auto& cachedRawRequests) {
-                cachedRawRequests.clear();
-            });
+            protectedThis->m_rawRequests.clear();
             completionHandler(WTF::move(responseOrException));
         });
     } else {
-        WTF::switchOn(m_rawRequests, [](auto& cachedRawRequests) {
-            cachedRawRequests.clear();
-        });
+        m_rawRequests.clear();
         completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, "The page is not available."_s }));
     }
 }
@@ -95,9 +89,7 @@ ExceptionOr<Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>>> D
 
 void DigitalCredentialsCoordinator::dismissDigitalCredentialsChooser(CompletionHandler<void(bool)>&& completionHandler)
 {
-    WTF::switchOn(m_rawRequests, [](auto& rawRequests) {
-        rawRequests.clear();
-    });
+    m_rawRequests.clear();
     if (RefPtr page = m_page.get())
         page->dismissDigitalCredentialsChooser(WTF::move(completionHandler));
     else
@@ -106,9 +98,7 @@ void DigitalCredentialsCoordinator::dismissDigitalCredentialsChooser(CompletionH
 
 void DigitalCredentialsCoordinator::provideRawDigitalCredentialRequests(CompletionHandler<void(WebCore::DigitalCredentialsRawRequests&&)>&& completionHandler)
 {
-    WTF::switchOn(m_rawRequests, [](auto& rawRequests) {
-        ASSERT(!rawRequests.isEmpty());
-    });
+    ASSERT(!m_rawRequests.isEmpty());
     completionHandler(std::exchange(m_rawRequests, { }));
 }
 

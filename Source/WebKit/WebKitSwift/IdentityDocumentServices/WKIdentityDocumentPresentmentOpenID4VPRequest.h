@@ -116,7 +116,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @end
 
-@interface WKIdentityDocumentPresentmentOpenID4VPRequest : NSObject
+@interface WKIdentityDocumentPresentmentOpenID4VPRequest : NSObject <WKIdentityDocumentPresentmentCredentialRequest>
 
 @property (nonatomic, strong, readonly) NSString *requestType;
 @property (nonatomic, strong, readonly) NSArray<WKIdentityDocumentPresentmentOpenID4VPCredentialQuery *> *credentials;

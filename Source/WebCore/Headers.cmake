@@ -343,8 +343,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/identity/DigitalCredentialGetRequest.h
     Modules/identity/DigitalCredentialPresentationProtocol.h
     Modules/identity/DigitalCredentialRequestOptions.h
-    Modules/identity/DigitalCredentialsMobileDocumentRequestData.h
-    Modules/identity/DigitalCredentialsOpenID4VPRequestData.h
     Modules/identity/DigitalCredentialsRequestData.h
     Modules/identity/DigitalCredentialsRequestDataBuilder.h
     Modules/identity/DigitalCredentialsResponseData.h

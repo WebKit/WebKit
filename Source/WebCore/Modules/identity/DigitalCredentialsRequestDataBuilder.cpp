@@ -50,54 +50,31 @@ ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawReques
     };
 
     // The raw requests handed to the document provider are exactly the presented requests, in the
-    // same order, so that a raw request can be released by its position.
-    Vector<ValidatedMobileDocumentRequest> mobileDocumentRequests;
-    Vector<UnvalidatedDigitalCredentialRequest> mobileDocumentRawRequests;
-    Vector<ValidatedOpenID4VPRequest> openID4VPRequests;
-    Vector<UnvalidatedDigitalCredentialRequest> openID4VPRawRequests;
+    // same order.
+    Vector<ValidatedDigitalCredentialRequest> requests;
+    Vector<UnvalidatedDigitalCredentialRequest> rawRequests;
+    size_t openID4VPRequestCount = 0;
 
     for (size_t index = 0; index < validatedCredentialRequests.size(); ++index) {
         auto& validatedRequest = validatedCredentialRequests[index];
         if (!validatedRequest)
             continue;
 
-        WTF::switchOn(*validatedRequest,
-            [&](ValidatedMobileDocumentRequest& request) {
-                mobileDocumentRequests.append(WTF::move(request));
-                mobileDocumentRawRequests.append(WTF::move(unvalidatedRequests[index]));
-            },
-            [&](ValidatedOpenID4VPRequest& request) {
-                if (!openID4VPRequests.isEmpty() && openID4VPRequests.first().protocol != request.protocol) {
-                    LOG(DigitalCredentials, "DigitalCredentialsRequestDataBuilder::build() - not presenting an OpenID4VP request of a second protocol.");
-                    return;
-                }
-                if (openID4VPRequests.size() == maxOpenID4VPRequestCount) {
-                    LOG(DigitalCredentials, "DigitalCredentialsRequestDataBuilder::build() - not presenting OpenID4VP requests beyond the limit.");
-                    return;
-                }
-                openID4VPRequests.append(WTF::move(request));
-                openID4VPRawRequests.append(WTF::move(unvalidatedRequests[index]));
-            });
-    }
+        if (std::holds_alternative<ValidatedOpenID4VPRequest>(*validatedRequest)) {
+            if (openID4VPRequestCount == maxOpenID4VPRequestCount) {
+                LOG(DigitalCredentials, "DigitalCredentialsRequestDataBuilder::build() - not presenting OpenID4VP requests beyond the limit.");
+                continue;
+            }
+            ++openID4VPRequestCount;
+        }
 
-    if (mobileDocumentRequests.isEmpty()) {
-        return std::make_pair(
-            DigitalCredentialsRequestData {
-                DigitalCredentialsOpenID4VPRequestData {
-                    origins,
-                    WTF::move(openID4VPRequests) } },
-            DigitalCredentialsRawRequests { WTF::move(openID4VPRawRequests) });
+        requests.append(WTF::move(*validatedRequest));
+        rawRequests.append(WTF::move(unvalidatedRequests[index]));
     }
-
-    if (!openID4VPRequests.isEmpty())
-        LOG(DigitalCredentials, "DigitalCredentialsRequestDataBuilder::build() - mdoc requests present; %zu OpenID4VP request(s) will not be presented.", openID4VPRequests.size());
 
     return std::make_pair(
-        DigitalCredentialsRequestData {
-            DigitalCredentialsMobileDocumentRequestData {
-                origins,
-                WTF::move(mobileDocumentRequests) } },
-        DigitalCredentialsRawRequests { WTF::move(mobileDocumentRawRequests) });
+        DigitalCredentialsRequestData { origins, WTF::move(requests) },
+        WTF::move(rawRequests));
 }
 
 } // namespace WebCore

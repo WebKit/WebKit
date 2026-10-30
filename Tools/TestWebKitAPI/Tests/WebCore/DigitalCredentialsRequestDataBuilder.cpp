@@ -72,22 +72,20 @@ static std::optional<ValidatedDigitalCredentialRequest> validatedOpenID4VP(Digit
 
 static Vector<String> rawRequestIdentifiers(const DigitalCredentialsRawRequests& rawRequests)
 {
-    return WTF::switchOn(rawRequests, [](const Vector<UnvalidatedDigitalCredentialRequest>& requests) {
-        return requests.map([](auto& request) {
-            return WTF::switchOn(request,
-                [](const MobileDocumentRequest& request) {
-                    return request.deviceRequest;
-                },
-                [](const OpenID4VPSignedRequest& request) {
-                    return request.request;
-                },
-                [](const OpenID4VPMultisignedRequest& request) {
-                    return request.payload;
-                },
-                [](const OpenID4VPUnsignedRequest& request) {
-                    return request.requestJSON;
-                });
-        });
+    return rawRequests.map([](auto& request) {
+        return WTF::switchOn(request,
+            [](const MobileDocumentRequest& request) {
+                return request.deviceRequest;
+            },
+            [](const OpenID4VPSignedRequest& request) {
+                return request.request;
+            },
+            [](const OpenID4VPMultisignedRequest& request) {
+                return request.payload;
+            },
+            [](const OpenID4VPUnsignedRequest& request) {
+                return request.requestJSON;
+            });
     });
 }
 
@@ -102,13 +100,11 @@ TEST(DigitalCredentialsRequestDataBuilder, RawRequestsOmitRequestsThatDidNotVali
     ASSERT_FALSE(result.hasException());
 
     auto [requestData, rawRequests] = result.releaseReturnValue();
-    auto* mobileDocumentRequestData = std::get_if<DigitalCredentialsMobileDocumentRequestData>(&requestData);
-    ASSERT_TRUE(mobileDocumentRequestData);
-    EXPECT_EQ(mobileDocumentRequestData->requests.size(), 2u);
+    EXPECT_EQ(requestData.requests.size(), 2u);
     EXPECT_EQ(rawRequestIdentifiers(rawRequests), (Vector<String> { "valid-1"_s, "valid-2"_s }));
 }
 
-TEST(DigitalCredentialsRequestDataBuilder, RawRequestsFollowMobileDocumentPrecedence)
+TEST(DigitalCredentialsRequestDataBuilder, PresentsMobileDocumentAndOpenID4VPRequestsInPageOrder)
 {
     auto document = createDocument();
 
@@ -119,11 +115,13 @@ TEST(DigitalCredentialsRequestDataBuilder, RawRequestsFollowMobileDocumentPreced
     ASSERT_FALSE(result.hasException());
 
     auto [requestData, rawRequests] = result.releaseReturnValue();
-    EXPECT_TRUE(std::holds_alternative<DigitalCredentialsMobileDocumentRequestData>(requestData));
-    EXPECT_EQ(rawRequestIdentifiers(rawRequests), (Vector<String> { "mdoc"_s }));
+    ASSERT_EQ(requestData.requests.size(), 2u);
+    EXPECT_TRUE(std::holds_alternative<ValidatedOpenID4VPRequest>(requestData.requests[0]));
+    EXPECT_TRUE(std::holds_alternative<ValidatedMobileDocumentRequest>(requestData.requests[1]));
+    EXPECT_EQ(rawRequestIdentifiers(rawRequests), (Vector<String> { "openid4vp"_s, "mdoc"_s }));
 }
 
-TEST(DigitalCredentialsRequestDataBuilder, RawRequestsFollowTheFirstOpenID4VPProtocol)
+TEST(DigitalCredentialsRequestDataBuilder, PresentsOpenID4VPRequestsOfDifferentProtocols)
 {
     auto document = createDocument();
 
@@ -140,12 +138,11 @@ TEST(DigitalCredentialsRequestDataBuilder, RawRequestsFollowTheFirstOpenID4VPPro
     ASSERT_FALSE(result.hasException());
 
     auto [requestData, rawRequests] = result.releaseReturnValue();
-    auto* openID4VPRequestData = std::get_if<DigitalCredentialsOpenID4VPRequestData>(&requestData);
-    ASSERT_TRUE(openID4VPRequestData);
-    ASSERT_EQ(openID4VPRequestData->requests.size(), 2u);
-    EXPECT_EQ(openID4VPRequestData->requests[0].protocol, DigitalCredentialPresentationProtocol::Openid4vpV1Unsigned);
-    EXPECT_EQ(openID4VPRequestData->requests[1].protocol, DigitalCredentialPresentationProtocol::Openid4vpV1Unsigned);
-    EXPECT_EQ(rawRequestIdentifiers(rawRequests), (Vector<String> { "unsigned-1"_s, "unsigned-2"_s }));
+    auto protocols = requestData.requests.map([](auto& request) {
+        return std::get<ValidatedOpenID4VPRequest>(request).protocol;
+    });
+    EXPECT_EQ(protocols, (Vector<DigitalCredentialPresentationProtocol> { DigitalCredentialPresentationProtocol::Openid4vpV1Unsigned, DigitalCredentialPresentationProtocol::Openid4vpV1Signed, DigitalCredentialPresentationProtocol::Openid4vpV1Unsigned }));
+    EXPECT_EQ(rawRequestIdentifiers(rawRequests), (Vector<String> { "unsigned-1"_s, "signed"_s, "unsigned-2"_s }));
 }
 
 TEST(DigitalCredentialsRequestDataBuilder, RejectsValidationThatDoesNotCoverEveryRequest)
@@ -169,15 +166,18 @@ TEST(DigitalCredentialsRequestDataBuilder, PresentsAtMostTheMaximumNumberOfOpenI
         validatedRequests.append(validatedOpenID4VP(DigitalCredentialPresentationProtocol::Openid4vpV1Unsigned));
         unvalidatedRequests.append(unsignedRequest("request"_s));
     }
+    validatedRequests.append(validatedMobileDocument());
+    unvalidatedRequests.append(mobileDocumentRequest("mdoc"_s));
 
     auto result = DigitalCredentialsRequestDataBuilder::build(WTF::move(validatedRequests), document, WTF::move(unvalidatedRequests));
     ASSERT_FALSE(result.hasException());
 
     auto [requestData, rawRequests] = result.releaseReturnValue();
-    auto* openID4VPRequestData = std::get_if<DigitalCredentialsOpenID4VPRequestData>(&requestData);
-    ASSERT_TRUE(openID4VPRequestData);
-    EXPECT_EQ(openID4VPRequestData->requests.size(), maxOpenID4VPRequestCount);
-    EXPECT_EQ(rawRequestIdentifiers(rawRequests).size(), maxOpenID4VPRequestCount);
+    ASSERT_EQ(requestData.requests.size(), maxOpenID4VPRequestCount + 1);
+    EXPECT_TRUE(std::holds_alternative<ValidatedMobileDocumentRequest>(requestData.requests.last()));
+    auto rawRequestIDs = rawRequestIdentifiers(rawRequests);
+    ASSERT_EQ(rawRequestIDs.size(), maxOpenID4VPRequestCount + 1);
+    EXPECT_EQ(rawRequestIDs.last(), "mdoc"_s);
 }
 
 TEST(ValidatedOpenID4VPRequest, LimitsBoundEveryElement)
