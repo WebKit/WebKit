@@ -522,13 +522,25 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
         }
 #endif
 
-        // FIXME: <https://webkit.org/b/314881> This early-return is using synthetic click type
-        // and input source to approximate "pointer events for this interaction have already been
+        // FIXME: <https://webkit.org/b/314881> This early-return is using platform event tags
+        // to approximate "pointer events for this interaction have already been
         // dispatched upstream by other compat paths."
         // That state should live in PointerCaptureController, not be inferred from event tags.
         // Migrating there would make this short circuit unnecessary.
-        if (platformEvent.syntheticClickType() != SyntheticClickType::NoTap && !isAnyClick(mouseEvent) && mouseEvent.type() != eventNames().contextmenuEvent && platformEvent.inputSource() != MouseEventInputSource::Automation)
+        bool isSyntheticTouchEvent = platformEvent.syntheticClickType() != SyntheticClickType::NoTap && platformEvent.inputSource() != MouseEventInputSource::Automation;
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+        isSyntheticTouchEvent |= element.document().settings().isTouchEventEmulationEnabled();
+#endif
+#if PLATFORM(GTK)
+        isSyntheticTouchEvent |= platformEvent.isTouchEvent();
+#endif
+        if (isSyntheticTouchEvent && !isAnyClick(mouseEvent) && mouseEvent.type() != eventNames().contextmenuEvent) {
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+            if (isCompatibilityMouseEvent(mouseEvent) && pointerCaptureController.preventsCompatibilityMouseEventsForPrimaryTouch())
+                return ShouldIgnoreMouseEvent::Yes;
+#endif
             return ShouldIgnoreMouseEvent::No;
+        }
 
         if (RefPtr pointerEvent = pointerCaptureController.pointerEventForMouseEvent(mouseEvent, platformEvent.pointerId(), platformEvent.pointerType())) {
             pointerCaptureController.dispatchEvent(*pointerEvent, &element);

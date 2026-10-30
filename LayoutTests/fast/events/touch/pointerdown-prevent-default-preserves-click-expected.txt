@@ -1,0 +1,4 @@
+
+
+PASS Canceling a touch pointerdown suppresses compatibility mouse events but preserves click.
+

@@ -72,6 +72,11 @@ public:
     bool hasCancelledPointerEventForIdentifier(PointerID) const;
     bool preventsCompatibilityMouseEventsForIdentifier(PointerID) const;
 
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    bool preventsCompatibilityMouseEventsForPrimaryTouch() const { return m_preventsCompatibilityMouseEventsForPrimaryTouch; }
+    void resetCompatibilityMouseEventSuppressionForPrimaryTouch() { m_preventsCompatibilityMouseEventsForPrimaryTouch = false; }
+#endif
+
 #if PLATFORM(MAC)
     bool dispatchEventForTrackedPointer(Element& target, const MouseEvent&, PointerID, const String& pointerType);
     void cancelTrackedPointer(PointerID);
@@ -151,6 +156,10 @@ private:
     PointerIdToCapturingDataMap m_activePointerIdsToCapturingData;
     bool m_processingPendingPointerCapture { false };
     bool m_haveAnyCapturingElement { false };
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    // Mouse events synthesized after touchend still need the primary touch's prevention state.
+    bool m_preventsCompatibilityMouseEventsForPrimaryTouch { false };
+#endif
 };
 
 inline void PointerCaptureController::elementWasRemoved(Element& element)
