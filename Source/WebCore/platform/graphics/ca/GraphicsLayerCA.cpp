@@ -2225,11 +2225,6 @@ void GraphicsLayerCA::platformCALayerLayerDisplay(PlatformCALayer* layer)
         delegate->display(*layer);
 }
 
-bool GraphicsLayerCA::platformCALayerNeedsPlatformContext(const PlatformCALayer*) const
-{
-    return client().layerNeedsPlatformContext(*this);
-}
-
 void GraphicsLayerCA::commitLayerTypeChangesBeforeSublayers(CommitState&, float pageScaleFactor, bool& layerTypeChanged)
 {
     SetForScope committingChangesChange(m_isCommittingChanges, true);

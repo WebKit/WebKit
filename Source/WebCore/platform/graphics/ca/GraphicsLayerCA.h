@@ -282,7 +282,6 @@ private:
     WEBCORE_EXPORT bool platformCALayerUseGiantTiles() const override;
     WEBCORE_EXPORT bool platformCALayerCSSUnprefixedBackdropFilterEnabled() const override;
     WEBCORE_EXPORT void platformCALayerLogFilledVisibleFreshTile(unsigned) override;
-    WEBCORE_EXPORT bool platformCALayerNeedsPlatformContext(const PlatformCALayer*) const override;
     bool platformCALayerShouldPaintUsingCompositeCopy() const override { return shouldPaintUsingCompositeCopy(); }
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)

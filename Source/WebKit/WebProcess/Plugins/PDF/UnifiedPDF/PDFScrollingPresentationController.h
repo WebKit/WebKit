@@ -84,7 +84,6 @@ private:
     float pageScaleFactor() const override;
     float deviceScaleFactor() const override;
     std::optional<float> customContentsScale(const WebCore::GraphicsLayer&) const override;
-    bool layerNeedsPlatformContext(const WebCore::GraphicsLayer&) const override;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     bool layerAllowsDynamicContentScaling(const WebCore::GraphicsLayer*) const override;
 #endif

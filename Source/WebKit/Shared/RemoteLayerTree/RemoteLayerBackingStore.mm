@@ -152,9 +152,9 @@ void RemoteLayerBackingStore::ensureBackingStore(const Parameters& parameters)
     clearBackingStore();
 }
 
-RemoteLayerBackingStore::ProcessModel RemoteLayerBackingStore::processModelForLayer(PlatformCALayerRemote& layer)
+RemoteLayerBackingStore::ProcessModel RemoteLayerBackingStore::processModelForLayer(PlatformCALayerRemote&)
 {
-    if (WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM) && !layer.needsPlatformContext())
+    if (WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM))
         return ProcessModel::Remote;
     return ProcessModel::InProcess;
 }

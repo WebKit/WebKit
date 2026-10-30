@@ -148,8 +148,6 @@ protected:
     RefPtr<AsyncPDFRenderer> LEGACY_NODELETE asyncRendererIfExists() const;
     void clearAsyncRenderer();
 
-    bool LEGACY_NODELETE shouldUseInProcessBackingStore() const;
-
     WebCore::Path shadowPathForLayer(const WebCore::GraphicsLayer&) const;
 
     const Ref<UnifiedPDFPlugin> m_plugin;

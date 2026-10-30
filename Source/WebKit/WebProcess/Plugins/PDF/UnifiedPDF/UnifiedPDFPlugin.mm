@@ -1677,7 +1677,7 @@ bool UnifiedPDFPlugin::updateOverflowControlsLayers(bool needsHorizontalScrollba
             layer->setAllowsBackingStoreDetaching(false);
             layer->setAllowsTiling(false);
             layer->setDrawsContent(true);
-            layer->setAcceleratesDrawing(!shouldUseInProcessBackingStore());
+            layer->setAcceleratesDrawing(true);
 
 #if ENABLE(SCROLLING_THREAD)
             layer->setScrollingNodeID(m_scrollingNodeID);
@@ -1731,7 +1731,7 @@ void UnifiedPDFPlugin::positionOverflowControlsLayers()
         layer->setPosition(cornerRect.location());
         layer->setSize(cornerRect.size());
         layer->setDrawsContent(!cornerRect.isEmpty());
-        layer->setAcceleratesDrawing(!shouldUseInProcessBackingStore());
+        layer->setAcceleratesDrawing(true);
     }
 }
 
@@ -5253,16 +5253,6 @@ FloatRect UnifiedPDFPlugin::absoluteBoundingRectForSmartMagnificationAtPoint(Flo
     FloatRect pageColumnFrame = [page columnFrameAtPoint:pagePoint];
 
     return pageToRootView(pageColumnFrame, pageIndex);
-}
-
-bool UnifiedPDFPlugin::shouldUseInProcessBackingStore() const
-{
-    return false;
-}
-
-bool UnifiedPDFPlugin::layerNeedsPlatformContext(const GraphicsLayer& layer) const
-{
-    return shouldUseInProcessBackingStore() && (&layer == layerForHorizontalScrollbar() || &layer == layerForVerticalScrollbar() || &layer == layerForScrollCorner());
 }
 
 bool UnifiedPDFPlugin::delegatesScrollingToMainFrame() const

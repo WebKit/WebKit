@@ -282,22 +282,7 @@ void PlatformCALayerRemote::ensureBackingStore()
     ASSERT(owner());
     ASSERT(m_properties.backingStoreAttached);
 
-    bool needsNewBackingStore = [&] {
-        if (!m_context)
-            return false;
-
-        CheckedPtr store = m_properties.backingStoreOrProperties.store.get();
-        if (!store)
-            return true;
-
-        // A layer pulled out of a pool may have existing backing store which we mustn't reuse if it lives in the wrong process.
-        if (store->processModel() != RemoteLayerBackingStore::processModelForLayer(*this))
-            return true;
-
-        return false;
-    }();
-
-    if (needsNewBackingStore)
+    if (m_context && !m_properties.backingStoreOrProperties.store)
         m_properties.backingStoreOrProperties.store = RemoteLayerBackingStore::createForLayer(*this);
 
     updateBackingStore();

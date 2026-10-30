@@ -146,8 +146,6 @@ public:
     virtual bool layerAllowsDynamicContentScaling(const GraphicsLayer*) const { return true; }
 #endif
 
-    virtual bool layerNeedsPlatformContext(const GraphicsLayer&) const { return false; }
-
     virtual bool backdropRootIsOpaque(const GraphicsLayer*) const { return false; }
 
     virtual OptionSet<ContentsFormat> screenContentsFormats() const { return { }; }

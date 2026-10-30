@@ -131,7 +131,7 @@ Ref<GraphicsLayer> PDFPresentationController::makePageContainerLayer(PDFDocument
     pageBackgroundLayer->setAnchorPoint({ });
     pageBackgroundLayer->setBackgroundColor(pdfPageBackgroundColor(accessibilityDisplayMode()));
     pageBackgroundLayer->setDrawsContent(true);
-    pageBackgroundLayer->setAcceleratesDrawing(!shouldUseInProcessBackingStore());
+    pageBackgroundLayer->setAcceleratesDrawing(true);
     pageBackgroundLayer->setShouldUpdateRootRelativeScaleFactor(false);
     pageBackgroundLayer->setAllowsTiling(false);
     pageBackgroundLayer->setNeedsDisplay(); // We only need to paint this layer once when page backgrounds change.
@@ -311,11 +311,6 @@ FloatPoint PDFPresentationController::anchorPointInDocumentSpace(AnchorPoint anc
         }();
     }
     return checkedPlugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Plugin, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, anchorPointInPluginSpace);
-}
-
-bool PDFPresentationController::shouldUseInProcessBackingStore() const
-{
-    return m_plugin->shouldUseInProcessBackingStore();
 }
 
 } // namespace WebKit

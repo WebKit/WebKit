@@ -155,7 +155,7 @@ void PDFScrollingPresentationController::setupLayers(GraphicsLayer& scrolledCont
         m_contentsLayer = contentsLayer.copyRef();
         contentsLayer->setAnchorPoint({ });
         contentsLayer->setDrawsContent(true);
-        contentsLayer->setAcceleratesDrawing(!shouldUseInProcessBackingStore());
+        contentsLayer->setAcceleratesDrawing(true);
         scrolledContentsLayer.addChild(*contentsLayer);
 
         // This is the call that enables async rendering.
@@ -425,11 +425,6 @@ std::optional<float> PDFScrollingPresentationController::customContentsScale(con
         return scaleForPagePreviews();
 
     return { };
-}
-
-bool PDFScrollingPresentationController::layerNeedsPlatformContext(const GraphicsLayer& layer) const
-{
-    return shouldUseInProcessBackingStore() && (&layer == m_contentsLayer || pageIndexForPageBackgroundLayer(layer));
 }
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
