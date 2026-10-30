@@ -111,16 +111,9 @@ list(APPEND WebKitLegacy_SOURCES
 
 if (WEBKIT_SDK_IS_MACOS)
 list(APPEND WebKitLegacy_SOURCES
-    mac/History/WebURLsWithTitles.mm
-
-    mac/Misc/WebNSControlExtras.m
     mac/Misc/WebNSEventExtras.m
-    mac/Misc/WebNSImageExtras.mm
-    mac/Misc/WebNSPrintOperationExtras.m
-    mac/Misc/WebNSViewExtras.mm
     mac/Misc/WebNSWindowExtras.m
 
-    mac/Panels/WebAuthenticationPanel.mm
     mac/Panels/WebPanelAuthenticationHandler.mm
 
     mac/WebCoreSupport/WebJavaScriptTextInputPanel.mm
