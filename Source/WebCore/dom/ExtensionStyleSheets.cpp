@@ -200,6 +200,22 @@ void ExtensionStyleSheets::removePageSpecificUserStyleSheet(const UserStyleSheet
         invalidateInjectedStyleSheetCache();
 }
 
+void ExtensionStyleSheets::setQuirkStyleSheets(Vector<String>&& sources)
+{
+    if (m_quirkStyleSheetSources == sources)
+        return;
+
+    for (auto& sheet : m_quirkStyleSheets)
+        sheet->detachFromDocument();
+
+    m_quirkStyleSheetSources = WTF::move(sources);
+    m_quirkStyleSheets = m_quirkStyleSheetSources.map([&](auto& source) {
+        return createExtensionsStyleSheet(protect(m_document), { }, source, UserStyleLevel::Author);
+    });
+
+    protect(m_document->styleScope())->didChangeExtensionStyleSheets();
+}
+
 bool ExtensionStyleSheets::hasCachedInjectedStyleSheets() const
 {
     return !m_injectedUserStyleSheets.isEmpty()
@@ -275,6 +291,8 @@ void ExtensionStyleSheets::detachFromDocument()
     for (auto& sheet : m_userStyleSheets)
         sheet->detachFromDocument();
     for (auto& sheet : m_authorStyleSheetsForTesting)
+        sheet->detachFromDocument();
+    for (auto& sheet : m_quirkStyleSheets)
         sheet->detachFromDocument();
 }
 

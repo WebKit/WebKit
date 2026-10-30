@@ -37,11 +37,13 @@
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "DocumentInlines.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
 #include "DocumentStorageAccess.h"
 #include "DocumentView.h"
 #include "Element.h"
+#include "ExtensionStyleSheets.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementInlines.h"
 #include "ElementTargetingTypes.h"
@@ -1010,6 +1012,32 @@ Vector<String, 1> Quirks::scriptsToEvaluateBeforeRunningScriptFromURL(const URL&
     return scripts;
 }
 
+Vector<String> Quirks::styleSheetsToInject()
+{
+    constexpr auto id = QuirkBehaviorID::NeedsStyleSheetInjectedQuirk;
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE({ });
+
+    if (!m_quirksData.isBehaviorEnabled(id))
+        return { };
+
+    Vector<String> styleSheets;
+    for (const auto& behavior : m_quirksData.behaviorsMatching(id)) {
+        if (!behavior.styleSheet.isEmpty())
+            styleSheets.append(behavior.styleSheet);
+    }
+
+    return styleSheets;
+}
+
+void Quirks::updateInjectedStyleSheets()
+{
+    RefPtr document = m_document;
+    if (!document || !document->frame() || !needsQuirks())
+        return;
+
+    protect(document->extensionStyleSheets())->setQuirkStyleSheets(styleSheetsToInject());
+}
+
 bool Quirks::needsChromeOSNavigatorUserAgentQuirk(const Document& document) const
 {
     constexpr auto id = QuirkBehaviorID::NeedsChromeOSNavigatorUserAgentQuirk;
@@ -1366,6 +1394,8 @@ void Quirks::urlsDidChange()
 
     if (!m_quirksData.hasSameBehaviorFlags(previousQuirksData))
         protect(m_document)->scheduleFullStyleRebuild();
+
+    updateInjectedStyleSheets();
 }
 
 void Quirks::logQuirksToConsoleIfNecessary() const

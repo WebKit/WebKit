@@ -7716,6 +7716,7 @@ webkit_platform_headers: <WebCore/QuirkMatchPattern.h> <WebCore/QuirksData.h> <W
     String userAgent;
     String chromeCompatibilityVersion;
     Vector<String> cookieNames;
+    String styleSheet;
     String elementSelector;
     String documentSelector;
     Vector<WebCore::QuirkMatchPattern> secondaryURL;

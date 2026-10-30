@@ -57,6 +57,7 @@ public:
     void matchAllRules(bool matchAuthorAndUserStyles, bool includeSMILProperties);
     void matchUARules();
     void matchAuthorRules();
+    void matchQuirkRules();
     void matchUserRules();
 
     bool matchesAnyAuthorRules();
@@ -123,6 +124,7 @@ private:
     const Ref<const Element> m_element;
     const Ref<const RuleSet> m_authorStyle;
     const RefPtr<const RuleSet> m_userStyle;
+    const RefPtr<const RuleSet> m_quirkStyle;
     const RefPtr<const RuleSet> m_userAgentMediaQueryStyle;
     const RefPtr<const RuleSet> m_dynamicViewTransitionsStyle;
     SelectorMatchingState* m_selectorMatchingState;

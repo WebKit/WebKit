@@ -189,7 +189,7 @@ public:
 
     bool isAuthorOrigin() const
     {
-        return m_currentProperty && m_currentProperty->origin == PropertyCascade::Origin::Author;
+        return m_currentProperty && (m_currentProperty->origin == PropertyCascade::Origin::Author || m_currentProperty->origin == PropertyCascade::Origin::Quirk);
     }
 
     CSSPropertyID LEGACY_NODELETE cssPropertyID() const;

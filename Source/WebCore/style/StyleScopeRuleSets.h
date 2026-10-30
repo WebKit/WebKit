@@ -91,6 +91,7 @@ public:
     RuleSet* LEGACY_NODELETE dynamicViewTransitionsStyle() const;
     RuleSet& authorStyle() const { return *m_authorStyle; }
     RuleSet* userStyle() const;
+    RuleSet* quirkStyle() const;
     RuleSet* styleForDeclarationOrigin(DeclarationOrigin);
 
     const RuleFeatureSet& features() const LIFETIME_BOUND;
@@ -139,6 +140,7 @@ private:
     mutable RefPtr<RuleSet> m_userAgentMediaQueryStyle;
     mutable RefPtr<RuleSet> m_dynamicViewTransitionsStyle;
     RefPtr<RuleSet> m_userStyle;
+    RefPtr<RuleSet> m_quirkStyle;
 
     Resolver& m_styleResolver;
     mutable RuleFeatureSet m_features;

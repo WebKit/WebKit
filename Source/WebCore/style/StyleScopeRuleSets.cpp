@@ -103,6 +103,13 @@ RuleSet* ScopeRuleSets::userStyle() const
     return m_userStyle.get();
 }
 
+RuleSet* ScopeRuleSets::quirkStyle() const
+{
+    if (m_usesSharedUserStyle)
+        return protect(m_styleResolver.document().styleScope())->resolver().ruleSets().quirkStyle();
+    return m_quirkStyle.get();
+}
+
 RuleSet* ScopeRuleSets::styleForDeclarationOrigin(DeclarationOrigin origin)
 {
     switch (origin) {
@@ -111,6 +118,9 @@ RuleSet* ScopeRuleSets::styleForDeclarationOrigin(DeclarationOrigin origin)
 
     case DeclarationOrigin::User:
         return userStyle();
+
+    case DeclarationOrigin::Quirk:
+        return quirkStyle();
 
     case DeclarationOrigin::UserAgent:
         return userAgentMediaQueryStyle();
@@ -149,6 +159,15 @@ void ScopeRuleSets::initializeUserStyle()
 
     if (userStyle->ruleCount() > 0 || userStyle->pageRules().size() > 0)
         m_userStyle = WTF::move(userStyle);
+
+    // Quirk style sheets are author-level sheets, but they are cascaded in their own origin above all others.
+    auto quirkStyle = RuleSet::create();
+    RuleSetBuilder quirkBuilder(quirkStyle, mediaQueryEvaluator, &m_styleResolver);
+    for (auto& sheet : extensionStyleSheets->quirkStyleSheets())
+        quirkBuilder.addRulesFromSheet(protect(sheet->contents()));
+
+    if (quirkStyle->ruleCount() > 0)
+        m_quirkStyle = WTF::move(quirkStyle);
 }
 
 void ScopeRuleSets::collectRulesFromUserStyleSheets(const Vector<Ref<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const MQ::MediaQueryEvaluator& mediaQueryEvaluator)
@@ -177,6 +196,8 @@ bool ScopeRuleSets::hasViewportDependentMediaQueries() const
         return true;
     if (m_userStyle && m_userStyle->hasViewportDependentMediaQueries())
         return true;
+    if (m_quirkStyle && m_quirkStyle->hasViewportDependentMediaQueries())
+        return true;
     if (m_userAgentMediaQueryStyle && m_userAgentMediaQueryStyle->hasViewportDependentMediaQueries())
         return true;
 
@@ -189,6 +210,8 @@ bool ScopeRuleSets::hasContainerQueries() const
         return true;
     if (m_userStyle && m_userStyle->hasContainerQueries())
         return true;
+    if (m_quirkStyle && m_quirkStyle->hasContainerQueries())
+        return true;
     if (m_userAgentMediaQueryStyle && m_userAgentMediaQueryStyle->hasContainerQueries())
         return true;
 
@@ -200,6 +223,8 @@ bool ScopeRuleSets::hasScopeRules() const
     if (m_authorStyle->hasScopeRules())
         return true;
     if (m_userStyle && m_userStyle->hasScopeRules())
+        return true;
+    if (m_quirkStyle && m_quirkStyle->hasScopeRules())
         return true;
     if (m_userAgentMediaQueryStyle && m_userAgentMediaQueryStyle->hasScopeRules())
         return true;
@@ -235,6 +260,7 @@ std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamic
 
     evaluate(&authorStyle());
     evaluate(userStyle());
+    evaluate(quirkStyle());
     evaluate(userAgentMediaQueryStyle());
 
     return evaluationChanges;
@@ -281,6 +307,8 @@ void ScopeRuleSets::collectFeatures() const
         m_features.add(m_authorStyle->features());
     if (RefPtr userStyle = this->userStyle())
         m_features.add(userStyle->features());
+    if (RefPtr quirkStyle = this->quirkStyle())
+        m_features.add(quirkStyle->features());
 
     m_idInvalidationRuleSets.clear();
     m_classInvalidationRuleSets.clear();
@@ -459,6 +487,7 @@ const HashSet<AtomString>& ScopeRuleSets::customPropertyNamesInStyleContainerQue
 
         collectPropertyNames(&authorStyle());
         collectPropertyNames(userStyle());
+        collectPropertyNames(quirkStyle());
 
         m_customPropertyNamesInStyleContainerQueries = propertyNames;
     }
@@ -490,6 +519,9 @@ bool ScopeRuleSets::hasMatchingUserOrAuthorStyle(NOESCAPE const WTF::Function<bo
         return true;
 
     if (RefPtr userStyle = this->userStyle(); userStyle && predicate(*userStyle))
+        return true;
+
+    if (RefPtr quirkStyle = this->quirkStyle(); quirkStyle && predicate(*quirkStyle))
         return true;
 
     return false;

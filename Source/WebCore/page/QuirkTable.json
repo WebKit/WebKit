@@ -479,8 +479,10 @@
             "behaviors": [{ "id": "RequiresUserGestureToPauseInPictureInPictureQuirk" }]
         },
         {
+            "bugs": ["https://webkit.org/b/303622"],
+            "comment": "FIXME: Remove as soon as nvidia adjusts the site for Safari. https://webkit.org/b/303718",
             "matches": ["*://play.geforcenow.com/*"],
-            "behaviors": [{ "id": "NeedsGeforcenowWarningDisplayNoneQuirk" }]
+            "behaviors": [{ "id": "NeedsStyleSheetInjectedQuirk", "styleSheet": "div.cdk-overlay-container, div.unsupported-scenario-container { display: none; }" }]
         },
         {
             "bugs": ["https://webkit.org/b/319011", "rdar://181825035"],
