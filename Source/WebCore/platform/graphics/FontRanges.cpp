@@ -30,10 +30,13 @@
 #include "FontSelector.h"
 #include "GlyphPage.h"
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FontRanges);
 
 const Font* FontRanges::Range::font(ExternalResourceDownloadPolicy policy) const
 {
