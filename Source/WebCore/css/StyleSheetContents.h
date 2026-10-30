@@ -183,7 +183,7 @@ private:
     CSSNamespacePrefixMap m_namespacePrefixMap;
     AtomString m_defaultNamespace;
 
-    bool m_isUserStyleSheet;
+    bool m_isUserStyleSheet { false };
     bool m_loadCompleted { false };
     bool m_hasSyntacticallyValidCSSHeader { true };
     bool m_didLoadErrorOccur { false };
