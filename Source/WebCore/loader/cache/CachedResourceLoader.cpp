@@ -778,9 +778,9 @@ FetchMetadataSite CachedResourceLoader::computeFetchMetadataSite(const ResourceR
         && documentLoader->isContinuingLoadAfterProvisionalLoadStarted()
         && documentLoader->originalURL() != request.url()) {
         ResourceRequest originalRequest { URL { documentLoader->originalURL() } };
-        auto originalSite = computeFetchMetadataSiteInternal(originalRequest, type, mode, nullptr, &frame, FetchMetadataSite::SameOrigin, false);
+        auto originalSite = computeFetchMetadataSiteInternal(originalRequest, type, mode, nullptr, &frame, FetchMetadataSite::SameOrigin, isDirectlyUserInitiatedRequest);
         Ref originalOrigin = SecurityOrigin::create(documentLoader->originalURL());
-        site = computeFetchMetadataSiteAfterRedirection(request, type, mode, originalOrigin.get(), originalSite, false);
+        site = computeFetchMetadataSiteAfterRedirection(request, type, mode, originalOrigin.get(), originalSite, isDirectlyUserInitiatedRequest);
     }
 
     return site;
