@@ -4,5 +4,5 @@ fonts.ready should resolve only after DOMContentLoaded and load event are fired,
 Before setting font-family - fonts.check Ahem: false
 DOMContentLoaded
 load
-fonts.ready - fonts.check Ahem: true
+fonts.ready - fonts.check Ahem: false
 hello

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+<p>This test verifies that document.fonts.check() returns false once a FontFace has
+permanently failed to load (status "error"), per
+https://drafts.csswg.org/css-font-loading/#font-face-set-check: check() may only report true
+when every matching face has a status of "loaded", and "error" is not "loaded". Regression
+test for a bug where a family whose only matching face had already failed was excluded from
+check()'s matching entirely, so check() fell through to its "no matching faces" branch and
+incorrectly kept returning true.</p>
+<pre id="log"></pre>
+<div id="element1">hello</div>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message) {
+    document.getElementById('log').textContent += message + '\n';
+}
+
+const family = 'BrokenFaceCheckTest';
+const face = new FontFace(family, 'url(data:font/ttf;base64,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)');
+document.fonts.add(face);
+
+// Apply the family and force layout before the face has settled, so this also covers the case
+// where the family's matching font face gets looked up (and could be cached) while the face is
+// still pending, before its status becomes "error".
+element1.style.fontFamily = `${family}, serif`;
+element1.getBoundingClientRect();
+
+log(`check() before load settles: ${document.fonts.check(`16px ${family}`)}`);
+
+face.load().catch(() => { });
+
+document.fonts.ready.then(() => {
+    log(`face.status: ${face.status}`);
+    log(`check() after fonts.ready: ${document.fonts.check(`16px ${family}`)}`);
+    element1.getBoundingClientRect();
+    log(`check() after another layout: ${document.fonts.check(`16px ${family}`)}`);
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+</script>
+</body>
+</html>
