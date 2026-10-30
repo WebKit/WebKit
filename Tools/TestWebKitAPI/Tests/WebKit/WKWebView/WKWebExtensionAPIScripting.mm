@@ -29,9 +29,11 @@
 
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WebExtensionUtilities.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/_WKWebExtensionContext.h>
 #import <wtf/SetForScope.h>
 
 namespace TestWebKitAPI {
@@ -2306,6 +2308,176 @@ TEST(WKWebExtensionAPIScripting, ContentScriptsRespectDeniedMatchPatterns)
     }];
 
     TestWebKitAPI::Util::run(&doneCheckingLoopback);
+}
+
+static auto *activeTabContentScriptsManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"ActiveTab Content Scripts Test",
+    @"description": @"ActiveTab Content Scripts Test",
+    @"version": @"1.0",
+
+    @"permissions": @[ @"activeTab" ],
+
+    @"content_scripts": @[ @{
+        @"matches": @[ @"*://localhost/*" ],
+        @"js": @[ @"content.js" ],
+        @"css": @[ @"content.css" ],
+        @"run_at": @"document_end"
+    } ]
+};
+
+static auto *activeTabContentScriptsResources = @{
+    @"content.js": @"document.body.dataset.scriptInjected = 'true'",
+    @"content.css": @"body { background-color: rgb(255, 0, 0) !important; }"
+};
+
+static NSDictionary *contentScriptState(WKWebView *webView)
+{
+    return [webView objectByEvaluatingJavaScript:@"({ scriptInjected: document.body.dataset.scriptInjected === 'true', backgroundColor: getComputedStyle(document.body).backgroundColor })"];
+}
+
+TEST(WKWebExtensionAPIScripting, ActiveTabInjectsContentScriptsOnlyInGrantedTab)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto manager = Util::loadExtension(activeTabContentScriptsManifest, activeTabContentScriptsResources);
+
+    auto *grantedTab = manager.get().defaultTab;
+    auto *otherTab = [manager.get().defaultWindow openNewTab];
+
+    [grantedTab.webView loadRequest:server.requestWithLocalhost()];
+    [grantedTab.webView _test_waitForDidFinishNavigation];
+
+    [otherTab.webView loadRequest:server.requestWithLocalhost()];
+    [otherTab.webView _test_waitForDidFinishNavigation];
+
+    // Without a grant, no content is injected.
+    EXPECT_NS_EQUAL(contentScriptState(grantedTab.webView)[@"scriptInjected"], @NO);
+    EXPECT_NS_EQUAL(contentScriptState(otherTab.webView)[@"scriptInjected"], @NO);
+
+    [manager.get().context userGesturePerformedInTab:grantedTab];
+
+    // The granted tab gets the scripts and styles...
+    EXPECT_TRUE(Util::waitFor([&] {
+        auto *state = contentScriptState(grantedTab.webView);
+        return [state[@"scriptInjected"] boolValue] && [state[@"backgroundColor"] isEqualToString:@"rgb(255, 0, 0)"];
+    }));
+
+    // ...but another tab on the same host does not, since activeTab only covers the tab the gesture was in.
+    auto *otherState = contentScriptState(otherTab.webView);
+    EXPECT_NS_EQUAL(otherState[@"scriptInjected"], @NO);
+    EXPECT_FALSE([otherState[@"backgroundColor"] isEqualToString:@"rgb(255, 0, 0)"]);
+
+    // The content stays for as long as the grant does, so it is injected again when the tab reloads.
+    [grantedTab.webView reload];
+    [grantedTab.webView _test_waitForDidFinishNavigation];
+
+    auto *reloadedState = contentScriptState(grantedTab.webView);
+    EXPECT_NS_EQUAL(reloadedState[@"scriptInjected"], @YES);
+    EXPECT_NS_EQUAL(reloadedState[@"backgroundColor"], @"rgb(255, 0, 0)");
+
+    [otherTab.webView reload];
+    [otherTab.webView _test_waitForDidFinishNavigation];
+
+    EXPECT_NS_EQUAL(contentScriptState(otherTab.webView)[@"scriptInjected"], @NO);
+}
+
+TEST(WKWebExtensionAPIScripting, ActiveTabContentRemovedWhenGestureCleared)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto manager = Util::loadExtension(activeTabContentScriptsManifest, activeTabContentScriptsResources);
+
+    auto *tab = manager.get().defaultTab;
+
+    [tab.webView loadRequest:server.requestWithLocalhost()];
+    [tab.webView _test_waitForDidFinishNavigation];
+
+    [manager.get().context userGesturePerformedInTab:tab];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [contentScriptState(tab.webView)[@"backgroundColor"] isEqualToString:@"rgb(255, 0, 0)"];
+    }));
+
+    // Revoking the grant takes the content away.
+    [manager.get().context clearUserGestureInTab:tab];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return ![contentScriptState(tab.webView)[@"backgroundColor"] isEqualToString:@"rgb(255, 0, 0)"];
+    }));
+
+    // Nothing is left registered, so a reload does not bring the content back.
+    [tab.webView reload];
+    [tab.webView _test_waitForDidFinishNavigation];
+
+    auto *state = contentScriptState(tab.webView);
+    EXPECT_NS_EQUAL(state[@"scriptInjected"], @NO);
+    EXPECT_FALSE([state[@"backgroundColor"] isEqualToString:@"rgb(255, 0, 0)"]);
+}
+
+TEST(WKWebExtensionAPIScripting, ActiveTabNotificationsIncludeTab)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto manager = Util::loadExtension(activeTabContentScriptsManifest, activeTabContentScriptsResources);
+
+    auto *context = manager.get().context;
+    auto *tab = manager.get().defaultTab;
+
+    [tab.webView loadRequest:server.requestWithLocalhost()];
+    [tab.webView _test_waitForDidFinishNavigation];
+
+    RetainPtr grantedUserInfos = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr removedUserInfos = adoptNS([[NSMutableArray alloc] init]);
+
+    auto grantedObserver = [NSNotificationCenter.defaultCenter addObserverForName:WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification object:context queue:nil usingBlock:^(NSNotification *notification) {
+        [grantedUserInfos addObject:notification.userInfo];
+    }];
+
+    auto removedObserver = [NSNotificationCenter.defaultCenter addObserverForName:WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification object:context queue:nil usingBlock:^(NSNotification *notification) {
+        [removedUserInfos addObject:notification.userInfo];
+    }];
+
+    // Granting access to the whole extension is not for a single tab, so there is no tab in the notification.
+    auto *otherPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://example.com/*"];
+    [context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:otherPattern];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return grantedUserInfos.get().count == 1;
+    }));
+
+    EXPECT_NOT_NULL(grantedUserInfos.get()[0][_WKWebExtensionContextNotificationUserInfoKeyMatchPatterns]);
+    EXPECT_NULL(grantedUserInfos.get()[0][_WKWebExtensionContextNotificationUserInfoKeyTab]);
+
+    // The activeTab permission is only for the tab with the gesture, so the notification says which tab.
+    [context userGesturePerformedInTab:tab];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return grantedUserInfos.get().count == 2;
+    }));
+
+    EXPECT_NOT_NULL(grantedUserInfos.get()[1][_WKWebExtensionContextNotificationUserInfoKeyMatchPatterns]);
+    EXPECT_NS_EQUAL(grantedUserInfos.get()[1][_WKWebExtensionContextNotificationUserInfoKeyTab], tab);
+
+    // Losing it says the same.
+    [context clearUserGestureInTab:tab];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return removedUserInfos.get().count == 1;
+    }));
+
+    EXPECT_NOT_NULL(removedUserInfos.get()[0][_WKWebExtensionContextNotificationUserInfoKeyMatchPatterns]);
+    EXPECT_NS_EQUAL(removedUserInfos.get()[0][_WKWebExtensionContextNotificationUserInfoKeyTab], tab);
+
+    [NSNotificationCenter.defaultCenter removeObserver:grantedObserver];
+    [NSNotificationCenter.defaultCenter removeObserver:removedObserver];
 }
 
 } // namespace TestWebKitAPI

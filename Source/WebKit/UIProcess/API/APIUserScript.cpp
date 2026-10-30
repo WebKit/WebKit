@@ -26,12 +26,21 @@
 #include "config.h"
 #include "APIUserScript.h"
 
+#include "WebPageProxy.h"
+
 namespace API {
 
-UserScript::UserScript(WebCore::UserScript userScript, API::ContentWorld& world)
+UserScript::UserScript(WebCore::UserScript userScript, API::ContentWorld& world, WebKit::WebPageProxy* page)
     : m_userScript(userScript)
     , m_world(world)
+    , m_page(page)
+    , m_isPageScoped(!!page)
 {
+}
+
+WebKit::WebPageProxy* UserScript::page() const
+{
+    return m_page.get();
 }
 
 } // namespace API

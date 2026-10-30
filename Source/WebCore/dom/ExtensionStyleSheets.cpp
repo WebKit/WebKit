@@ -145,18 +145,9 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
             m_injectedAuthorStyleSheets.append(WTF::move(sheet));
     };
 
-    for (const auto& userStyleSheet : m_pageSpecificStyleSheets)
-        addStyleSheet(userStyleSheet);
-
-    RefPtr frame = document->frame();
-    RefPtr userContentProvider = frame ? frame->userContentProvider() : nullptr;
-
-    userContentProvider->forEachUserStyleSheet([&](const UserStyleSheet& userStyleSheet) {
-        if (userStyleSheet.pageID())
-            return;
-
+    auto shouldInjectStyleSheet = [&](const UserStyleSheet& userStyleSheet) {
         if (userStyleSheet.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly && document->ownerElement())
-            return;
+            return false;
 
         auto url = document->url();
 
@@ -177,7 +168,33 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
             }
         }
 
-        if (!UserContentURLPattern::matchesPatterns(url, userStyleSheet.allowlist(), userStyleSheet.blocklist()))
+        return UserContentURLPattern::matchesPatterns(url, userStyleSheet.allowlist(), userStyleSheet.blocklist());
+    };
+
+    for (const auto& userStyleSheet : m_pageSpecificStyleSheets) {
+        if (shouldInjectStyleSheet(userStyleSheet))
+            addStyleSheet(userStyleSheet);
+    }
+
+    RefPtr frame = document->frame();
+    RefPtr userContentProvider = frame ? frame->userContentProvider() : nullptr;
+
+    auto shouldApplyPageScopedStyleSheet = [&](const UserStyleSheet& userStyleSheet) {
+        // A style sheet scoped to a page is applied once, to the documents the page has when it is injected. However, a script that should persist across documents, will need the style sheet injected again.
+        if (!userStyleSheet.persistsAcrossDocuments() || userStyleSheet.pageID() != owningPage->identifier())
+            return false;
+
+        // The document already has it, so skip.
+        return !m_pageSpecificStyleSheets.containsIf([&](auto& pageSpecificStyleSheet) {
+            return pageSpecificStyleSheet.url() == userStyleSheet.url();
+        });
+    };
+
+    userContentProvider->forEachUserStyleSheet([&](const UserStyleSheet& userStyleSheet) {
+        if (userStyleSheet.pageID() && !shouldApplyPageScopedStyleSheet(userStyleSheet))
+            return;
+
+        if (!shouldInjectStyleSheet(userStyleSheet))
             return;
 
         addStyleSheet(userStyleSheet);

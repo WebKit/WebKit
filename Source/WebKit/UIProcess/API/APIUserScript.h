@@ -30,27 +30,42 @@
 #include "UserScriptIdentifier.h"
 #include <WebCore/UserScript.h>
 #include <wtf/Identified.h>
+#include <wtf/WeakPtr.h>
+
+namespace WebKit {
+class WebPageProxy;
+}
 
 namespace API {
 
 class UserScript final : public ObjectImpl<Object::Type::UserScript>, public Identified<WebKit::UserScriptIdentifier> {
 public:
-    static Ref<UserScript> create(WebCore::UserScript&& userScript, API::ContentWorld& world)
+    static Ref<UserScript> create(WebCore::UserScript&& userScript, API::ContentWorld& world, WebKit::WebPageProxy* page = nullptr)
     {
-        return adoptRef(*new UserScript(WTF::move(userScript), world));
+        return adoptRef(*new UserScript(WTF::move(userScript), world, page));
     }
 
-    UserScript(WebCore::UserScript, API::ContentWorld&);
+    UserScript(WebCore::UserScript, API::ContentWorld&, WebKit::WebPageProxy* = nullptr);
 
     WebCore::UserScript& userScript() LIFETIME_BOUND { return m_userScript; }
     const WebCore::UserScript& userScript() const LIFETIME_BOUND { return m_userScript; }
 
     ContentWorld& contentWorld() { return m_world; }
     const ContentWorld& contentWorld() const { return m_world; }
-    
+
+    WebKit::WebPageProxy* page() const;
+
+    bool isPageScoped() const { return m_isPageScoped; }
+
+    // Scripts that are page scoped but whose page has gone away are orphaned,
+    // and should not message anywhere.
+    bool isOrphaned() const { return m_isPageScoped && !page(); }
+
 private:
     WebCore::UserScript m_userScript;
     const Ref<ContentWorld> m_world;
+    WeakPtr<WebKit::WebPageProxy> m_page;
+    bool m_isPageScoped { false };
 };
 
 } // namespace API

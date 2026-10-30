@@ -58,3 +58,4 @@ WK_EXTERN NSNotificationName const _WKWebExtensionContextDeniedPermissionMatchPa
 
 WK_EXTERN NSString * const _WKWebExtensionContextNotificationUserInfoKeyPermissions;
 WK_EXTERN NSString * const _WKWebExtensionContextNotificationUserInfoKeyMatchPatterns;
+WK_EXTERN NSString * const _WKWebExtensionContextNotificationUserInfoKeyTab;
