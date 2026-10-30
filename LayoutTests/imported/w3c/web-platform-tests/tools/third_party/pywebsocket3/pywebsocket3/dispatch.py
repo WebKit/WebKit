@@ -183,7 +183,8 @@ class Dispatcher(object):
                  root_dir,
                  scan_dir=None,
                  allow_handlers_outside_root_dir=True,
-                 handler_encoding=None):
+                 handler_encoding=None,
+                 extra_handler_dirs=None):
         """Construct an instance.
 
         Args:
@@ -197,12 +198,40 @@ class Dispatcher(object):
                       subdirectories.
             allow_handlers_outside_root_dir: Scans handler files even if their
                       canonical path is not under root_dir.
+            extra_handler_dirs: WEBKIT LOCAL PATCH (rdar://184296263). An
+                      optional list of additional (root_dir, scan_dir) pairs.
+                      Each pair is scanned like the primary pair and its
+                      handlers are unioned into the same resource-path map, so
+                      handlers from a sibling tree (e.g. LayoutTests/sar3/)
+                      register at the same resource paths as the primary tree.
+                      If any pair produces a resource path already registered
+                      by an earlier pair, a DispatchException is raised so a
+                      staging collision surfaces loudly rather than being
+                      silently resolved. FIXME: upstream this so it survives an
+                      import-w3c-tests resync.
         """
 
         self._logger = util.get_class_logger(self)
 
         self._handler_suite_map = {}
         self._source_warnings = []
+        self._add_handler_tree(root_dir, scan_dir,
+                               allow_handlers_outside_root_dir,
+                               handler_encoding)
+
+        # WEBKIT LOCAL PATCH (rdar://184296263): union additional handler trees.
+        for extra_root_dir, extra_scan_dir in extra_handler_dirs or []:
+            self._add_handler_tree(extra_root_dir, extra_scan_dir,
+                                   allow_handlers_outside_root_dir,
+                                   handler_encoding,
+                                   disallow_collisions=True)
+
+    def _add_handler_tree(self, root_dir, scan_dir,
+                          allow_handlers_outside_root_dir, handler_encoding,
+                          disallow_collisions=False):
+        """Validate a (root_dir, scan_dir) pair and source its handlers into
+        the shared map. scan_dir defaults to root_dir and must be nested under
+        it."""
         if scan_dir is None:
             scan_dir = root_dir
         if not os.path.realpath(scan_dir).startswith(
@@ -211,7 +240,8 @@ class Dispatcher(object):
                                     'root_dir:%s.' % (scan_dir, root_dir))
         self._source_handler_files_in_dir(root_dir, scan_dir,
                                           allow_handlers_outside_root_dir,
-                                          handler_encoding)
+                                          handler_encoding,
+                                          disallow_collisions=disallow_collisions)
 
     def add_resource_path_alias(self, alias_resource_path,
                                 existing_resource_path):
@@ -352,10 +382,17 @@ class Dispatcher(object):
 
     def _source_handler_files_in_dir(self, root_dir, scan_dir,
                                      allow_handlers_outside_root_dir,
-                                     handler_encoding):
+                                     handler_encoding,
+                                     disallow_collisions=False):
         """Source all the handler source files in the scan_dir directory.
 
         The resource path is determined relative to root_dir.
+
+        WEBKIT LOCAL PATCH (rdar://184296263): when disallow_collisions is
+        True, a resource path already present in the map (registered by an
+        earlier scan) raises a DispatchException instead of being silently
+        overwritten, so a sar3-staged handler that shadows a main-tree handler
+        surfaces the staging mistake loudly.
         """
 
         # We build a map from resource to handler code assuming that there's
@@ -385,7 +422,12 @@ class Dispatcher(object):
                 self._logger.debug('Path to resource conversion on %s failed' %
                                    path)
             else:
-                self._handler_suite_map[convert(path)] = handler_suite
+                if disallow_collisions and resource in self._handler_suite_map:
+                    raise DispatchException(
+                        'Collision on resource %r: handler %s conflicts with '
+                        'an already-registered handler.' % (resource, path))
+                self._handler_suite_map[resource] = handler_suite
+
 
 
 # vi:sts=4 sw=4 et

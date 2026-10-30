@@ -106,6 +106,11 @@ class Port(object):
     DRIVER_NAMES = ('WebKitTestRunner',)
     DEFAULT_SUPPORTED_DRIVERS = DRIVER_NAMES
 
+    # LayoutTests-relative directories served over HTTP by the layout-test HTTP
+    # server. This is the single source of truth for HTTP-test classification,
+    # shared by LayoutTestFinder (Test.is_http_test) and Driver.is_http_test().
+    HTTP_TEST_ROOTS = ("http/tests", "sar3/http/tests")
+
     # Do test runners support alias hostnames such as web-platform.test
     supports_localhost_aliases = False
 
@@ -883,6 +888,25 @@ class Port(object):
         if Port._web_platform_test_server:
             ports.extend(Port._web_platform_test_server.ports_to_forward())
         return ports
+
+    def http_test_roots(self):
+        """Ordered tuple of LayoutTests-relative directories classified as HTTP tests."""
+        return self.HTTP_TEST_ROOTS
+
+    def url_prefix_for_http_test_root(self, root):
+        """The URL path prefix a given HTTP-test root is served under.
+
+        The default root (`http_test_roots()[0]`, "http/tests") is served with
+        no prefix; an extra root like "sar3/http/tests" is served under
+        "sar3/". Every root ends with that shared subdirectory; the prefix is
+        whatever precedes it."""
+        suffix = self.HTTP_TEST_ROOTS[0]
+        return root[:-len(suffix)] if root.endswith(suffix) else root
+
+    def absolute_path_for_http_test_root(self, root):
+        """Absolute on-disk directory for an HTTP-test root (an entry of
+        http_test_roots(), e.g. "sar3/http/tests")."""
+        return self._filesystem.join(self.layout_tests_dir(), *root.split('/'))
 
     def start_http_server(self, additional_dirs=None):
         """Start a web server. Raise an error if it can't start or is already running.

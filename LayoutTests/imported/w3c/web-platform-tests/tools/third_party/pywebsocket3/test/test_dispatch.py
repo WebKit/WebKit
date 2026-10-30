@@ -292,6 +292,43 @@ class DispatcherTest(unittest.TestCase):
         self.assertRaises(dispatch.DispatchException,
                           disp.add_resource_path_alias, '/alias', '/not-exist')
 
+    # WEBKIT LOCAL PATCH (rdar://184296263): a second (root_dir, scan_dir) tree
+    # can be unioned into one Dispatcher so LayoutTests/sar3/ WebSocket handlers
+    # register at the same /websocket/tests/... namespace as the main tree.
+    def test_extra_handler_dirs_union(self):
+        # Primary tree rooted at sub/ registers /exception_in_transfer, /plain.
+        # An extra tree rooted at the parent handlers/ dir registers its own
+        # handlers at that root's relative paths, unioned into one map.
+        disp = dispatch.Dispatcher(
+            _TEST_HANDLERS_SUB_DIR, _TEST_HANDLERS_SUB_DIR,
+            extra_handler_dirs=[(_TEST_HANDLERS_DIR, _TEST_HANDLERS_DIR)])
+        self.assertTrue('/exception_in_transfer' in disp._handler_suite_map)
+        self.assertTrue('/plain' in disp._handler_suite_map)
+        self.assertTrue('/origin_check' in disp._handler_suite_map)
+        self.assertTrue('/sub/plain' in disp._handler_suite_map)
+        self.assertTrue(
+            '/sub/exception_in_transfer' in disp._handler_suite_map)
+
+    def test_extra_handler_dirs_collision_raises(self):
+        # The same resource path provided by both the primary tree and an extra
+        # tree (here, the same directory used twice) must fail loudly, not
+        # silently pick one.
+        self.assertRaises(
+            dispatch.DispatchException,
+            dispatch.Dispatcher,
+            _TEST_HANDLERS_SUB_DIR, _TEST_HANDLERS_SUB_DIR,
+            extra_handler_dirs=[(_TEST_HANDLERS_SUB_DIR,
+                                 _TEST_HANDLERS_SUB_DIR)])
+
+    def test_no_extra_handler_dirs_matches_single_tree(self):
+        # extra_handler_dirs defaulting to None must leave single-tree behavior
+        # byte-for-byte unchanged.
+        baseline = dispatch.Dispatcher(_TEST_HANDLERS_DIR, None)
+        with_default = dispatch.Dispatcher(
+            _TEST_HANDLERS_DIR, None, extra_handler_dirs=None)
+        self.assertEqual(sorted(baseline._handler_suite_map),
+                         sorted(with_default._handler_suite_map))
+
 
 if __name__ == '__main__':
     unittest.main()

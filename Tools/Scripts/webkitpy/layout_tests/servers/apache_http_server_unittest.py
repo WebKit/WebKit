@@ -67,3 +67,30 @@ class TestLayoutTestApacheHttpd(unittest.TestCase):
             server.stop()
 
         self.assertTrue(host.filesystem.exists("/mock/output_dir/httpd.conf"))
+
+    def test_start_cmd_sar3_alias_present_when_dir_exists(self):
+        host = MockHost()
+        host.executive = MockExecutive(should_log=False)
+        test_port = test.TestPort(host)
+        host.filesystem.write_text_file(test_port._path_to_apache_config_file(), '')
+        host.filesystem.write_text_file(
+            "/mock-checkout/Tools/Scripts/webkitpy/layout_tests/servers/aliases.json", '[["/js-test-resources", "resources"]]')
+        host.filesystem.maybe_make_directory(
+            host.filesystem.join(test_port.layout_tests_dir(), "sar3", "http", "tests"))
+
+        server = LayoutTestApacheHttpd(test_port, "/mock/output_dir")
+
+        sar3_path = host.filesystem.join(test_port.layout_tests_dir(), "sar3", "http", "tests")
+        self.assertIn('Alias /sar3/ "%s/"' % sar3_path, server._start_cmd)
+
+    def test_start_cmd_sar3_alias_absent_when_dir_missing(self):
+        host = MockHost()
+        host.executive = MockExecutive(should_log=False)
+        test_port = test.TestPort(host)
+        host.filesystem.write_text_file(test_port._path_to_apache_config_file(), '')
+        host.filesystem.write_text_file(
+            "/mock-checkout/Tools/Scripts/webkitpy/layout_tests/servers/aliases.json", '[["/js-test-resources", "resources"]]')
+
+        server = LayoutTestApacheHttpd(test_port, "/mock/output_dir")
+
+        self.assertFalse(any('/sar3/' in arg for arg in server._start_cmd))

@@ -233,6 +233,10 @@ class PortTest(unittest.TestCase):
     def test_operating_system(self):
         self.assertEqual('mac', self.make_port().operating_system())
 
+    def test_http_test_roots(self):
+        port = self.make_port()
+        self.assertEqual(port.http_test_roots(), ("http/tests", "sar3/http/tests"))
+
     def test_http_server_supports_ipv6(self):
         port = self.make_port()
         self.assertTrue(port.http_server_supports_ipv6())

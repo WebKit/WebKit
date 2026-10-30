@@ -120,10 +120,22 @@ class DriverTest(unittest.TestCase):
         self.assertEqual(driver.test_to_uri(DriverInput('foo/bar.html', 1000, None, None, additional_header='runInCrossOriginFrame=true')), 'http://127.0.0.1:8000/root/foo/bar.html')
         self.assertEqual(driver.test_to_uri(DriverInput('http/tests/foo.html', 1000, None, None)), 'http://127.0.0.1:8000/foo.html')
         self.assertEqual(driver.test_to_uri(DriverInput('http/tests/ssl/bar.html', 1000, None, None)), 'https://127.0.0.1:8443/ssl/bar.html')
+        self.assertEqual(driver.test_to_uri(DriverInput('sar3/http/tests/foo.html', 1000, None, None)), 'http://127.0.0.1:8000/sar3/foo.html')
+        self.assertEqual(driver.test_to_uri(DriverInput('sar3/http/tests/ssl/bar.html', 1000, None, None)), 'https://127.0.0.1:8443/sar3/ssl/bar.html')
+        self.assertEqual(driver.test_to_uri(DriverInput('sar3/http/tests/foo.https.html', 1000, None, None)), 'https://127.0.0.1:8443/sar3/foo.https.html')
         self.assertEqual(driver.test_to_uri(DriverInput('imported/w3c/web-platform-tests/foo/bar.html', 1000, None, None)), 'http://localhost:8800/foo/bar.html')
         self.assertEqual(driver.test_to_uri(DriverInput('imported/w3c/web-platform-tests/foo/bar.https.html', 1000, None, None)), 'https://localhost:9443/foo/bar.https.html')
         self.assertEqual(driver.test_to_uri(DriverInput('http/wpt/bar2.html', 1000, None, None)), 'http://localhost:8800/WebKit/bar2.html')
         self.assertEqual(driver.test_to_uri(DriverInput('http/wpt/bar2.https.html', 1000, None, None)), 'https://localhost:9443/WebKit/bar2.https.html')
+
+    def test_is_http_test(self):
+        port = self.make_port()
+        driver = Driver(port, None, pixel_tests=False)
+
+        self.assertTrue(driver.is_http_test(DriverInput('http/tests/foo.html', 1000, None, None)))
+        self.assertTrue(driver.is_http_test(DriverInput('sar3/http/tests/foo.html', 1000, None, None)))
+        self.assertFalse(driver.is_http_test(DriverInput('http/tests/local/foo.html', 1000, None, None)))
+        self.assertFalse(driver.is_http_test(DriverInput('fast/foo.html', 1000, None, None)))
 
     def test_uri_to_test(self):
         port = self.make_port()
@@ -132,6 +144,8 @@ class DriverTest(unittest.TestCase):
         self.assertEqual(driver.uri_to_test('http://127.0.0.1:8000/foo.html'), 'http/tests/foo.html')
         self.assertEqual(driver.uri_to_test('https://127.0.0.1:8443/ssl/bar.html'), 'http/tests/ssl/bar.html')
         self.assertEqual(driver.uri_to_test('https://127.0.0.1:8443/ssl/bar.https.html'), 'http/tests/ssl/bar.https.html')
+        self.assertEqual(driver.uri_to_test('http://127.0.0.1:8000/sar3/foo.html'), 'sar3/http/tests/foo.html')
+        self.assertEqual(driver.uri_to_test('https://127.0.0.1:8443/sar3/ssl/bar.html'), 'sar3/http/tests/ssl/bar.html')
         self.assertEqual(driver.uri_to_test('http://localhost:8800/foo/bar.html'), 'imported/w3c/web-platform-tests/foo/bar.html')
         self.assertEqual(driver.uri_to_test('http://localhost:8800/WebKit/bar2.html'), 'http/wpt/bar2.html')
         self.assertEqual(driver.uri_to_test('https://localhost:9443/WebKit/bar2.https.html'), 'http/wpt/bar2.https.html')

@@ -91,9 +91,16 @@ class WebSocketServer(socketserver.ThreadingMixIn, BaseHTTPServer.HTTPServer):
 
         # Share a Dispatcher among request handlers to save time for
         # instantiation.  Dispatcher can be shared because it is thread-safe.
+        # WEBKIT LOCAL PATCH (rdar://184296263): pair each extra handler root
+        # with its scan dir and union the trees into one resource-path map.
+        extra_handler_dirs = list(
+            zip(getattr(options, "extra_websock_handlers", []),
+                getattr(options, "extra_scan_dir", [])))
         options.dispatcher = dispatch.Dispatcher(
             options.websock_handlers, options.scan_dir,
-            options.allow_handlers_outside_root_dir, handler_encoding)
+            options.allow_handlers_outside_root_dir, handler_encoding,
+            extra_handler_dirs=extra_handler_dirs)
+
         if options.websock_handlers_map_file:
             _alias_handlers(options.dispatcher,
                             options.websock_handlers_map_file)

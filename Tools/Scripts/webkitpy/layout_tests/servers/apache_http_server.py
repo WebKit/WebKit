@@ -108,6 +108,21 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         for (alias, path) in self.aliases():
             start_cmd.extend(['-c', 'Alias %s "%s"' % (alias, path)])
 
+        # Serve each additional HTTP-test root (e.g. sar3/http/tests) under the
+        # same URL prefix Driver.test_to_uri() maps it to, with the CGI handler
+        # disabled to match additional_dirs below.
+        for root in self._port_obj.http_test_roots()[1:]:
+            root_dir = self._port_obj.absolute_path_for_http_test_root(root)
+            if not self._filesystem.isdir(root_dir):
+                continue
+            alias = '/%s' % self._port_obj.url_prefix_for_http_test_root(root)
+            start_cmd += [
+                '-c', 'Alias %s "%s/"' % (alias, root_dir),
+                '-c', '<Location %s>' % alias,
+                '-c', 'RemoveHandler .cgi .pl',
+                '-c', '</Location>',
+            ]
+
         if not port_obj.host.platform.is_win():
             start_cmd.extend(['-C', 'User "%s"' % os.environ.get("USERNAME", os.environ.get("USER", getuser()))])
 
