@@ -398,11 +398,13 @@ class TestRunnerShell < TestRunner
 end
 
 class TestRunnerMake < TestRunner
+    def output_command(outp, plan)
+        outp.puts "\truby test_script_#{plan.index}"
+    end
     def output_target(outp, plan, prereqs)
-        index = plan.index
-        target = "test_done_#{index}"
+        target = "test_done_#{plan.index}"
         outp.puts "#{target}: #{prereqs.join(" ")}"
-        outp.puts "\truby test_script_#{index}"
+        output_command(outp, plan)
         target
     end
     def prepareRunnerForRemote(runlist, serialPlans, exclusivePlans, completedPlans, remoteIndex)
@@ -429,14 +431,14 @@ class TestRunnerMake < TestRunner
             | outp |
             all_deps = []
 
+            if !exclusiveRunPlans.empty?
+                all_deps << "exclusive"
+            end
+
             if serialRunPlans.empty?
                 all_deps << "parallel"
             else
                 all_deps << "test_done_#{serialRunPlans[-1].index}"
-            end
-
-            if !exclusiveRunPlans.empty?
-                all_deps << "test_done_#{exclusiveRunPlans[-1].index}"
             end
 
             outp.puts("all: " + all_deps.join(" "))
@@ -450,10 +452,10 @@ class TestRunnerMake < TestRunner
             end
 
             if !exclusiveRunPlans.empty?
-                prev_target = nil
+                outp.puts "exclusive:"
                 exclusiveRunPlans.each {
                     | plan |
-                    prev_target = output_target(outp, plan, prev_target ? [prev_target] : [])
+                    output_command(outp, plan)
                 }
             end
 

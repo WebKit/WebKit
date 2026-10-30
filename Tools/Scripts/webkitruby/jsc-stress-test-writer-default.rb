@@ -342,11 +342,13 @@ class TestRunnerShell < TestRunner
 end
 
 class TestRunnerMake < TestRunner
+    def output_command(outp, plan)
+        outp.puts "\tsh test_script_#{plan.index}"
+    end
     def output_target(outp, plan, prereqs)
-        index = plan.index
-        target = "test_done_#{index}"
+        target = "test_done_#{plan.index}"
         outp.puts "#{target}: #{prereqs.join(" ")}"
-        outp.puts "\tsh test_script_#{index}"
+        output_command(outp, plan)
         target
     end
     def prepareRunnerForRemote(runlist, serialPlans, exclusivePlans, completedPlans, remoteHosts, remoteIndex)
@@ -360,11 +362,12 @@ class TestRunnerMake < TestRunner
         # depends all tests, other than the ones marked 'serial' or
         # 'exclusive'. The serial tests are arranged in a chain; the last
         # target in the serial chain depends on 'parallel' and 'all'
-        # depends on the head of the chain. The exclusive tests are
-        # arranged in their own chain, independent of 'parallel', so they
-        # can run concurrently with parallel tests but only one exclusive
-        # test runs at a time. Running 'make -j <whatever>' on this
-        # Makefile results in 'make' doing all of the hard work:
+        # depends on the head of the chain. The exclusive tests run one
+        # after another in the recipe of a single 'exclusive' rule, which
+        # 'all' lists first, so they run concurrently with parallel tests
+        # but only one exclusive test runs at a time. Running
+        # 'make -j <whatever>' on this Makefile results in 'make' doing
+        # all of the hard work:
         #
         # - Load balancing just works. Most systems have a great load balancer in
         #   'make'. If your system doesn't then just install a real 'make'.
@@ -412,14 +415,14 @@ class TestRunnerMake < TestRunner
             | outp |
             all_deps = []
 
+            if !exclusiveRunPlans.empty?
+                all_deps << "exclusive"
+            end
+
             if serialRunPlans.empty?
                 all_deps << "parallel"
             else
                 all_deps << "test_done_#{serialRunPlans[-1].index}"
-            end
-
-            if !exclusiveRunPlans.empty?
-                all_deps << "test_done_#{exclusiveRunPlans[-1].index}"
             end
 
             outp.puts("all: " + all_deps.join(" "))
@@ -433,10 +436,10 @@ class TestRunnerMake < TestRunner
             end
 
             if !exclusiveRunPlans.empty?
-                prev_target = nil
+                outp.puts "exclusive:"
                 exclusiveRunPlans.each {
                     | plan |
-                    prev_target = output_target(outp, plan, prev_target ? [prev_target] : [])
+                    output_command(outp, plan)
                 }
             end
 
