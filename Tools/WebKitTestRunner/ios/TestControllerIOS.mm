@@ -644,12 +644,20 @@ void TestController::restoreDefaultKeyboardInputModeIfNeeded()
 
     // Tests synthesize hardware key events by HID usage, so the resulting characters depend on the current keyboard layout.
     // Restore the default input mode in case it was changed by UIKit itself (e.g. by a keyboard shortcut that switches languages,
-    // or upon attaching a hardware keyboard, which makes UIKit pick an input mode that matches the hardware keyboard).
+    // or upon attaching a hardware keyboard, which makes UIKit pick an input mode that matches the hardware keyboard), or by the
+    // simulator host setting the keyboard language. The latter can happen in the middle of a test, so this is also called right
+    // before synthesizing key events.
     static NeverDestroyed<RetainPtr<UIKeyboardInputMode>> defaultKeyboardInputMode = [UIKeyboardInputMode keyboardInputModeWithIdentifier:@"en_US@sw=QWERTY;hw=US"];
     RetainPtr<UIKeyboardInputModeController> inputModeController = [UIKeyboardInputModeController sharedInputModeController];
-    if (RetainPtr defaultInputMode = defaultKeyboardInputMode.get(); defaultInputMode && ![[inputModeController currentInputMode].identifier isEqualToString:[defaultInputMode identifier]]) {
+    RetainPtr<NSString> currentIdentifier = [inputModeController currentInputMode].identifier;
+    if (RetainPtr defaultInputMode = defaultKeyboardInputMode.get(); defaultInputMode && ![currentIdentifier isEqualToString:[defaultInputMode identifier]]) {
+        if (![currentIdentifier hasPrefix:@"en_US"])
+            NSLog(@"Restoring the default keyboard input mode from %@.", currentIdentifier.get());
         [inputModeController setCurrentInputMode:defaultInputMode];
         [UIKeyboardImpl.sharedInstance prepareKeyboardInputModeFromPreferences:defaultInputMode.get()];
+        // UIKit translates hardware key events with a keyboard layout that it only rebuilds upon an input mode change
+        // when it considers a hardware keyboard attached, which it only updates when a text input is focused.
+        [UIApplication.sharedApplication setHardwareKeyboardLayoutName:@"US" forceRebuild:YES];
     }
 }
 

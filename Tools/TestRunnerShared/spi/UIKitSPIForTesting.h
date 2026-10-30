@@ -138,6 +138,7 @@ WTF_EXTERN_C_END
 - (void)_handleHIDEvent:(IOHIDEventRef)event;
 - (void)_cancelAllTouches;
 - (CGFloat)statusBarHeight;
+- (void)setHardwareKeyboardLayoutName:(NSString *)layout forceRebuild:(BOOL)forceRebuild;
 @end
 
 @interface UIDevice ()

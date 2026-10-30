@@ -701,6 +701,8 @@ void UIScriptControllerIOS::typeCharacterUsingHardwareKeyboard(JSStringRef chara
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
+    TestController::singleton().restoreDefaultKeyboardInputModeIfNeeded();
+
     // Assumes that the keyboard is already shown.
     [[HIDEventGenerator sharedHIDEventGenerator] keyPress:toWTFString(character).createNSString().get() completionBlock:makeBlockPtr([protectedThis = Ref { *this }, callbackID] {
         if (protectedThis->m_context)
@@ -723,6 +725,7 @@ void UIScriptControllerIOS::rawKeyDown(JSStringRef key)
 {
     // Key can be either a single Unicode code point or the name of a special key (e.g. "downArrow").
     // HIDEventGenerator knows how to map these special keys to the appropriate keycode.
+    TestController::singleton().restoreDefaultKeyboardInputModeIfNeeded();
     [[HIDEventGenerator sharedHIDEventGenerator] keyDown:toWTFString(key).createNSString().get()];
     [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:^{ /* Do nothing */ }];
 }
@@ -741,6 +744,8 @@ void UIScriptControllerIOS::keyDown(JSStringRef character, JSValueRef modifierAr
     // HIDEventGenerator knows how to map these special keys to the appropriate keycode.
     auto inputString = toWTFString(character);
     auto modifierFlags = parseModifierArray(m_context->jsContext(), modifierArray);
+
+    TestController::singleton().restoreDefaultKeyboardInputModeIfNeeded();
 
     for (auto& modifierFlag : modifierFlags)
         [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag.createNSString().get()];
