@@ -95,6 +95,9 @@ public:
     void addAttachment(Attachment&&);
     size_t attachmentCount() const { return m_attachments.size(); }
     Vector<Attachment> releaseAttachments();
+#if PLATFORM(COCOA)
+    MmapSpan<uint8_t> releaseOutOfLineBuffer();
+#endif
     void reserve(size_t);
 
 #if PLATFORM(COCOA)

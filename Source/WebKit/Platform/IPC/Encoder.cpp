@@ -210,6 +210,14 @@ Vector<Attachment> Encoder::releaseAttachments()
     return std::exchange(m_attachments, { });
 }
 
+#if PLATFORM(COCOA)
+MmapSpan<uint8_t> Encoder::releaseOutOfLineBuffer()
+{
+    m_bufferSize = 0;
+    return std::exchange(m_outOfLineBuffer, { });
+}
+#endif
+
 bool Encoder::hasAttachments() const
 {
     return !m_attachments.isEmpty();
