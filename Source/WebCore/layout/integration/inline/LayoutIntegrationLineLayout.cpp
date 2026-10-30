@@ -851,6 +851,11 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
                 if (hasStaticInlinePositioning)
                     renderer->move(delta.width(), delta.height());
             }
+            if (!delta.isZero()) {
+                // A moved static position may mean the inline box containing block broke into lines differently and changed size.
+                if (CheckedPtr container = renderer->container(); container && container->isInlineBox())
+                    renderer->setChildNeedsLayout(MarkingBehavior::OnlyThis);
+            }
 
             layer->setStaticBlockPosition(borderBoxLogicalTopLeft.y());
             layer->setStaticInlinePosition(borderBoxLogicalTopLeft.x());
