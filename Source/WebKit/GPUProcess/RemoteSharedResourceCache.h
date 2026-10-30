@@ -67,6 +67,8 @@ public:
 
     bool addNativeImage(RemoteNativeImageReference, Ref<WebCore::NativeImage>);
     RefPtr<WebCore::NativeImage> readNativeImage(RemoteNativeImageReadReference&&, Seconds timeout);
+    // For stream message handlers: std::nullopt means that the handler should defer the message.
+    std::optional<RefPtr<WebCore::NativeImage>> readNativeImage(IPC::StreamServerConnection&, RemoteNativeImageReadReference&&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

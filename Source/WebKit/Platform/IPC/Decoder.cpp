@@ -112,6 +112,7 @@ Decoder::Decoder(std::span<const uint8_t> buffer, BufferDeallocator&& bufferDeal
             return;
         m_replyID = syncRequestID->toUInt64();
     }
+    m_argumentsOffset = currentBufferOffset();
 }
 
 Decoder::Decoder(std::span<const uint8_t> stream, uint64_t destinationID)
@@ -141,6 +142,7 @@ Decoder::Decoder(std::span<const uint8_t> stream, uint64_t destinationID)
             return;
         m_replyID = syncRequestID->toUInt64();
     }
+    m_argumentsOffset = currentBufferOffset();
 }
 
 Decoder::~Decoder()
@@ -199,6 +201,13 @@ std::optional<Attachment> Decoder::takeLastAttachment()
         return std::nullopt;
     }
     return m_attachments.takeLast();
+}
+
+void Decoder::rewindToArguments()
+{
+    ASSERT(isValid());
+    m_bufferPosition = m_buffer.begin() + m_argumentsOffset;
+    m_indicesOfObjectsFailingDecoding.clear();
 }
 
 } // namespace IPC
