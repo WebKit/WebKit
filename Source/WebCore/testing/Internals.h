@@ -1785,6 +1785,10 @@ public:
     String LEGACY_NODELETE effectiveEnvironmentMap(Element&);
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    bool isAXCustomColorModeActive(const Document&);
+#endif
+
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     String volumetricScenePresentationMode(Element&);
 #endif

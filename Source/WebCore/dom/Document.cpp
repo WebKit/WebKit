@@ -10510,6 +10510,9 @@ void Document::adjustStyleColorOptionsIfNeeded(OptionSet<StyleColorOptions>&) co
 
 bool Document::isAXCustomColorModeActive() const
 {
+    if (RefPtr loader = this->loader(); loader && loader->forceDisableAXCustomColorMode())
+        return false;
+
     if (RefPtr page = this->page())
         return page->isAXCustomColorModeActive();
 

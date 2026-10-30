@@ -179,6 +179,11 @@ public:
     void setOverrideReferrerForAllRequests(WTF::String&& referrer) { m_data.overrideReferrerForAllRequests = WTF::move(referrer); }
     const WTF::String& overrideReferrerForAllRequests() const LIFETIME_BOUND { return m_data.overrideReferrerForAllRequests; }
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    void setForceDisableAXCustomColorMode(bool value) { m_data.forceDisableAXCustomColorMode = value; }
+    bool forceDisableAXCustomColorMode() const { return m_data.forceDisableAXCustomColorMode; }
+#endif
+
 private:
     WebKit::WebsitePoliciesData m_data;
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;

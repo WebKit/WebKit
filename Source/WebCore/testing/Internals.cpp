@@ -9478,6 +9478,14 @@ String Internals::volumetricScenePresentationMode(Element& element)
 }
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+bool Internals::isAXCustomColorModeActive(const Document& document)
+{
+    return document.isAXCustomColorModeActive();
+}
+
+#endif
+
 ExceptionOr<void> Internals::copyImageAtLocation(int x, int y)
 {
     RefPtr document = contextDocument();
