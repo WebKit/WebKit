@@ -120,6 +120,13 @@ static void waitForSampledPageTopColorToChangeForHTML(TestWKWebView *webView, St
     });
 }
 
+static bool waitForAnimationsToFinish(TestWKWebView *webView)
+{
+    return TestWebKitAPI::Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.getAnimations().every(animation => animation.playState == 'finished')"] boolValue];
+    });
+}
+
 static String createHTMLGradientWithColorStops(String&& direction, Vector<String>&& colorStops)
 {
     EXPECT_GE(colorStops.size(), 2UL);
@@ -834,7 +841,7 @@ TEST(SampledPageTopColor, HitTestAfterCSSTransition)
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='margin: 0; transition: background-color 0.1s'>"];
     [webView objectByEvaluatingJavaScript:@"document.body.style.setProperty('background-color', 'red')"];
 
-    TestWebKitAPI::Util::runFor(1_s);
+    EXPECT_TRUE(waitForAnimationsToFinish(webView.get()));
 
     // Not setting this until now prevents the sampling logic from running because without it the page isn't considered contentful.
     [webView objectByEvaluatingJavaScript:@"document.body.textContent = 'Test'"];
@@ -873,7 +880,7 @@ TEST(SampledPageTopColor, HitTestAfterCSSAnimation)
 
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<style>@keyframes changeBackgroundRed { to { background-color: red; } }</style><body style='margin: 0; animation: changeBackgroundRed 0.1s forwards'>"];
 
-    TestWebKitAPI::Util::runFor(1_s);
+    EXPECT_TRUE(waitForAnimationsToFinish(webView.get()));
 
     // Not setting this until now prevents the sampling logic from running because without it the page isn't considered contentful.
     [webView objectByEvaluatingJavaScript:@"document.body.textContent = 'Test'"];
