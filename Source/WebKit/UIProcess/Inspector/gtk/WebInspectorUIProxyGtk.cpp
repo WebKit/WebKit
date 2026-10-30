@@ -208,6 +208,15 @@ RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
     m_inspectorView.reset(GTK_WIDGET(webkitWebViewBaseCreate(*pageConfiguration.ptr())));
     g_signal_connect(m_inspectorView.get(), "destroy", G_CALLBACK(inspectorViewDestroyed), this);
 
+    if (m_underTest) {
+        GtkAllocation allocation = { 0, 0, static_cast<int>(initialWindowWidth), static_cast<int>(initialWindowHeight) };
+#if USE(GTK4)
+        gtk_widget_size_allocate(m_inspectorView.get(), &allocation, -1);
+#else
+        gtk_widget_size_allocate(m_inspectorView.get(), &allocation);
+#endif
+    }
+
     WKPageUIClientV2 uiClient = {
         { 2, this },
         nullptr, // createNewPage_deprecatedForUseWithV0
