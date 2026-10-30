@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 400px; background: lightgray; margin-bottom: 10px; }
+canvas, svg, iframe { background: green; vertical-align: top; border: 0; }
+.generated::before { content: linear-gradient(green, lightgreen); display: block; width: 50%; height: 20px; }
+</style>
+<div class="root" id="root">
+  <div>canvas <canvas width="40" height="20" style="width: 20%"></canvas> with a percentage width</div>
+  <div style="padding: 0 30px"><svg viewBox="0 0 4 1"></svg></div>
+  <div style="line-height: 0"><canvas width="30" height="10" style="max-width: 50%; width: 300px"></canvas></div>
+  <div class="generated"></div>
+  <div id="sized" style="height: 50px"><div style="height: 100%"><div></div><iframe style="width: 100%; height: 100%"></iframe></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("root").style.width = "300px";
+document.getElementById("sized").style.height = "80px";
+document.body.offsetHeight;
+</script>
