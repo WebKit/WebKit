@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../resources/common.js"></script>
+</head>
+<body>
+<script>
+
+description("Test sending X25519 crypto keys via postMessage to a worker.");
+
+jsTestIsAsync = true;
+
+var publicKeyJSON = {
+    kty: "OKP",
+    ext: true,
+    crv: "X25519",
+    x: "HPKx5gIuxTc3Htf1PlT6EVTYPpjrZOpR-uWzMHz-lwY",
+};
+
+var privateKeyJSON = {
+    kty: "OKP",
+    ext: true,
+    key_ops: ["deriveBits", "deriveKey"],
+    crv: "X25519",
+    x: "HPKx5gIuxTc3Htf1PlT6EVTYPpjrZOpR-uWzMHz-lwY",
+    d: "yIOOdtBX37fYyVpp4TgWCt1jc_1xpNJ2u1bjqBtk_2E",
+};
+
+var count = 0;
+var worker = new Worker("resources/x25519-postMessage-worker.js");
+worker.onmessage = function(evt) {
+    if (!evt.data.result) {
+        testFailed("Check failed in worker: " + evt.data.message);
+        finishJSTest();
+    } else {
+        if (publicKey = evt.data.publicKey) {
+            testPassed("All checks passed in worker for public key");
+            shouldBe("publicKey.type", "'public'");
+            shouldBe("publicKey.extractable", "true");
+            shouldBe("publicKey.algorithm.name", "'X25519'");
+            shouldBe("publicKey.usages", "[ ]");
+
+            crypto.subtle.exportKey("jwk", publicKey).then(function(result) {
+                count = count + 1;
+                exportedKey = result;
+
+                shouldBe("exportedKey.x", "publicKeyJSON.x");
+
+                if (count == 2)
+                    finishJSTest();
+            });
+        } else if (privateKey = evt.data.privateKey) {
+            testPassed("All checks passed in worker for private key");
+            shouldBe("privateKey.type", "'private'");
+            shouldBe("privateKey.extractable", "true");
+            shouldBe("privateKey.algorithm.name", "'X25519'");
+            shouldBe("privateKey.usages", "['deriveBits']");
+
+            crypto.subtle.exportKey("jwk", privateKey).then(function(result) {
+                count = count + 1;
+                exportedKey = result;
+
+                shouldBe("exportedKey.x", "privateKeyJSON.x");
+                shouldBe("exportedKey.d", "privateKeyJSON.d");
+
+                if (count == 2)
+                    finishJSTest();
+            });
+        }
+    }
+}
+
+crypto.subtle.importKey("jwk", publicKeyJSON, { name:"X25519" }, true, [ ]).then(function(localPublicKey) {
+    worker.postMessage({ publicKey: localPublicKey });
+    crypto.subtle.importKey("jwk", privateKeyJSON, { name:"X25519" }, true, ['deriveBits']).then(function(localPrivateKey) {
+        worker.postMessage({ privateKey: localPrivateKey });
+    });
+});
+</script>
+</body>
+</html>
