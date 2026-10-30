@@ -413,15 +413,21 @@ void Device::makeInvalid()
 
 void Device::loseTheDevice(WebGPU::DeviceLostReason reason)
 {
+    loseTheDevice(reason, "Device lost."_s);
+}
+
+void Device::loseTheDevice(WebGPU::DeviceLostReason reason, String&& message)
+{
     m_device = nil;
 
     m_adapter->makeInvalid();
+    // As in webgpu.h, the device is lost before its device-lost callback is called.
+    m_isLost = true;
 
     if (m_deviceLostCallback)
-        m_deviceLostCallback(reason, "Device lost."_s);
+        m_deviceLostCallback(reason, WTF::move(message));
 
     protect(m_defaultQueue)->makeInvalid();
-    m_isLost = true;
 }
 
 static void setOwnerWithIdentity(id<MTLResourceSPI> resource, auto webProcessID)
@@ -458,6 +464,28 @@ void Device::destroy()
     }
 
     loseTheDevice(WebGPU::DeviceLostReason::Destroyed);
+}
+
+void Device::countExternalReferences()
+{
+    m_countsExternalReferences = true;
+    m_externalReferenceCount = 1;
+}
+
+void Device::addExternalReference()
+{
+    if (m_countsExternalReferences)
+        ++m_externalReferenceCount;
+}
+
+bool Device::releaseExternalReference()
+{
+    return m_countsExternalReferences && m_externalReferenceCount.fetch_sub(1) == 1;
+}
+
+bool Device::hasExternalReferences() const
+{
+    return !m_countsExternalReferences || m_externalReferenceCount;
 }
 
 void Device::addTexture(const Texture& texture)
@@ -1226,13 +1254,20 @@ static constexpr auto invalidRenderPipelineDescriptorMessage = "GPURenderPipelin
 
 void LEGACY_NODELETE wgpuDeviceAddRef(WGPUDevice device)
 {
-    WebGPU::Metal::fromAPI(device).ref();
+    auto& apiDevice = WebGPU::Metal::fromAPI(device);
+    apiDevice.ref();
+    apiDevice.addExternalReference();
 }
 
+// As in webgpu.h, releasing the last reference destroys the device, also when its objects still
+// reference it.
 void wgpuDeviceRelease(WGPUDevice device)
 {
     @autoreleasepool {
-        WebGPU::Metal::fromAPI(device).deref();
+        Ref protectedDevice = WebGPU::Metal::fromAPI(device);
+        if (protectedDevice->releaseExternalReference() && !protectedDevice->isDestroyed())
+            protectedDevice->destroy();
+        protectedDevice->deref();
     }
 }
 
@@ -1469,6 +1504,26 @@ void wgpuDeviceDestroy(WGPUDevice device)
 {
     @autoreleasepool {
         protect(WebGPU::Metal::fromAPI(device))->destroy();
+    }
+}
+
+// For testing, as in Dawn. The reasons that the C++ API does not have are WGPUDeviceLostReason_Unknown.
+void wgpuDeviceForceLoss(WGPUDevice device, WGPUDeviceLostReason type, WGPUStringView message)
+{
+    @autoreleasepool {
+        Ref protectedDevice = WebGPU::Metal::fromAPI(device);
+        if (protectedDevice->isLost())
+            return;
+        protectedDevice->loseTheDevice(WebGPU::Metal::fromAPI(type).value_or(WebGPU::DeviceLostReason::Unknown), WebGPU::Metal::fromAPI(message));
+    }
+}
+
+// The future of the device-lost callback of the WGPUDeviceDescriptor, which completes once the
+// callback has been called.
+WGPUFuture wgpuDeviceGetLostFuture(WGPUDevice device)
+{
+    @autoreleasepool {
+        return WebGPU::Metal::fromAPI(device).lostFuture();
     }
 }
 

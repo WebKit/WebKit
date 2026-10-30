@@ -109,8 +109,10 @@ const DawnProcTable &GetProcs()
         procs.deviceCreateShaderModule = wgpuDeviceCreateShaderModule;
         procs.deviceCreateTexture = wgpuDeviceCreateTexture;
         procs.deviceDestroy = wgpuDeviceDestroy;
+        procs.deviceForceLoss = wgpuDeviceForceLoss;
         procs.deviceGetAdapter = wgpuDeviceGetAdapter;
         procs.deviceGetLimits = wgpuDeviceGetLimits;
+        procs.deviceGetLostFuture = wgpuDeviceGetLostFuture;
         procs.deviceGetQueue = wgpuDeviceGetQueue;
         procs.deviceHasFeature = wgpuDeviceHasFeature;
         procs.devicePopErrorScope = wgpuDevicePopErrorScope;

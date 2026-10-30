@@ -33,6 +33,7 @@
 #import <ranges>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/text/MakeString.h>
 
 namespace WebGPU::Metal {
 
@@ -239,30 +240,137 @@ WGPUBool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
     }
 }
 
+namespace WebGPU::Metal {
+
+// The device-lost event of the C API, for WGPUDeviceDescriptor.deviceLostCallbackInfo. As in webgpu.h,
+// its callback is called once: when the device is lost, which destroying the device and releasing its
+// last reference also do, or when the device cannot be created. A WGPUCallbackMode_AllowSpontaneous
+// callback is called then, on that thread. The other ones are called in wgpuInstanceProcessEvents()
+// and wgpuInstanceWaitAny(), as the other callbacks of the C API, including the
+// WGPUCallbackMode_WaitAnyOnly ones.
+//
+// As Dawn does when its instance is destroyed, destroying the instance calls the callbacks that have
+// not been called yet with WGPUDeviceLostReason_CallbackCancelled, except the
+// WGPUCallbackMode_AllowSpontaneous ones, which are still called when the device is lost. Unlike in
+// Dawn, adapters and devices do not keep the instance alive, so, as webgpu.h specifies, that is when
+// the last reference to the instance is released, also when the device is still alive.
+// FIXME: The other pending callbacks of the C API keep their instance alive through CAPIFuture, so
+// while one of them has not been called, releasing the instance destroys it only once it is called.
+class DeviceLostEvent final : public ThreadSafeRefCounted<DeviceLostEvent> {
+public:
+    static Ref<DeviceLostEvent> create(const WGPUDeviceLostCallbackInfo& callbackInfo, Instance* instance)
+    {
+        Ref event = adoptRef(*new DeviceLostEvent(callbackInfo, instance));
+        if (instance && callbackInfo.mode != WGPUCallbackMode_AllowSpontaneous) {
+            instance->addCancellation(event->m_future, [event] {
+                event->complete(WGPUDeviceLostReason_CallbackCancelled, cancelledMessage());
+            });
+        }
+        return event;
+    }
+
+    // Only an event whose callback was never to be called is destroyed before it completes.
+    ~DeviceLostEvent()
+    {
+        complete(WGPUDeviceLostReason_CallbackCancelled, cancelledMessage());
+    }
+
+    WGPUFuture future() const { return { m_future }; }
+    void setDevice(Device& device) { m_device = device; }
+
+    void lose(WGPUDeviceLostReason reason, String&& message)
+    {
+        if (m_callbackInfo.mode == WGPUCallbackMode_AllowSpontaneous) {
+            complete(reason, message);
+            return;
+        }
+        RefPtr instance = m_instance;
+        if (!instance) {
+            complete(WGPUDeviceLostReason_CallbackCancelled, cancelledMessage());
+            return;
+        }
+        instance->scheduleWork([protectedThis = Ref { *this }, reason, message = WTF::move(message).isolatedCopy()] {
+            protectedThis->complete(reason, message);
+        });
+    }
+
+private:
+    DeviceLostEvent(const WGPUDeviceLostCallbackInfo& callbackInfo, Instance* instance)
+        : m_callbackInfo(callbackInfo)
+        , m_instance(instance)
+        , m_future(instance ? instance->createFuture() : 0)
+    {
+    }
+
+    static String cancelledMessage() { return "The instance was released before the device-lost callback was called."_s; }
+
+    void complete(WGPUDeviceLostReason reason, const String& message)
+    {
+        if (m_isCompleted.exchange(true))
+            return;
+        // As in webgpu.h, there is no device when it was not created, when the callback is cancelled,
+        // and when its last reference has been released.
+        RefPtr device = m_device;
+        bool hasDevice = device && device->hasExternalReferences() && reason != WGPUDeviceLostReason_FailedCreation && reason != WGPUDeviceLostReason_CallbackCancelled;
+        WGPUDevice handle = hasDevice ? WebGPU::toAPI(*device) : nullptr;
+        if (m_callbackInfo.callback) {
+            auto utf8Message = message.utf8();
+            m_callbackInfo.callback(&handle, reason, toAPI(utf8Message), m_callbackInfo.userdata1, m_callbackInfo.userdata2);
+        }
+        if (RefPtr instance = m_instance) {
+            instance->removeCancellation(m_future);
+            instance->completeFuture(m_future);
+        }
+    }
+
+    const WGPUDeviceLostCallbackInfo m_callbackInfo;
+    // The event does not keep the instance alive, so that releasing the instance cancels it.
+    const ThreadSafeWeakPtr<Instance> m_instance;
+    const uint64_t m_future;
+    ThreadSafeWeakPtr<Device> m_device;
+    std::atomic<bool> m_isCompleted { false };
+};
+
+} // namespace WebGPU::Metal
+
 // The C API reports a device that could not be created with WGPURequestDeviceStatus_Error and no
 // device. A null descriptor is the default one.
 WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallbackInfo callbackInfo)
 {
     @autoreleasepool {
         Ref protectedAdapter = WebGPU::Metal::fromAPI(adapter);
-        WebGPU::Metal::CAPIFuture future { protectedAdapter->instance() };
+        RefPtr instance = protectedAdapter->instance();
+        WebGPU::Metal::CAPIFuture future { instance.copyRef() };
         auto callback = [callbackInfo, future](WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message) {
             callbackInfo.callback(status, device, message, callbackInfo.userdata1, callbackInfo.userdata2);
             future.complete();
         };
         WGPUDeviceDescriptor defaultDescriptor = WGPU_DEVICE_DESCRIPTOR_INIT;
+        if (!descriptor)
+            descriptor = &defaultDescriptor;
+        Ref lostEvent = WebGPU::Metal::DeviceLostEvent::create(descriptor->deviceLostCallbackInfo, instance.get());
+        auto failedCreation = [lostEvent, callback](const String& error) {
+            lostEvent->lose(WGPUDeviceLostReason_FailedCreation, makeString("Failed to create the device: "_s, error));
+            auto message = error.utf8();
+            callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::Metal::toAPI(message));
+        };
         WebGPU::Metal::DeviceDescriptorStorage storage;
-        auto apiDescriptor = WebGPU::Metal::fromAPI(descriptor ? *descriptor : defaultDescriptor, storage);
+        auto apiDescriptor = WebGPU::Metal::fromAPI(*descriptor, storage);
         if (!apiDescriptor) {
-            callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::Metal::toAPI("Device does not support requested features"_s));
+            failedCreation("Device does not support requested features"_s);
             return future.future();
         }
-        protectedAdapter->requestDeviceOrError(*apiDescriptor, [callback = WTF::move(callback)](std::expected<Ref<WebGPU::Metal::Device>, String>&& device) {
-            if (!device) {
-                auto message = device.error().utf8();
-                return callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::Metal::toAPI(message));
-            }
-            callback(WGPURequestDeviceStatus_Success, WebGPU::Metal::releaseToAPI(WTF::move(*device)), WebGPU::Metal::toAPI(""_s));
+        protectedAdapter->requestDeviceOrError(*apiDescriptor, [callback = WTF::move(callback), failedCreation = WTF::move(failedCreation), lostEvent = WTF::move(lostEvent)](std::expected<Ref<WebGPU::Metal::Device>, String>&& device) {
+            if (!device)
+                return failedCreation(device.error());
+            Ref apiDevice = WTF::move(*device);
+            apiDevice->countExternalReferences();
+            apiDevice->setLostFuture(lostEvent->future());
+            lostEvent->setDevice(apiDevice);
+            apiDevice->resolveDeviceLostPromise({ [lostEvent](WebGPU::DeviceLostReason reason, String&& message) {
+                lostEvent->lose(WebGPU::Metal::toAPI(reason), WTF::move(message));
+            }, CompletionHandlerCallThread::AnyThread });
+            callback(WGPURequestDeviceStatus_Success, WebGPU::Metal::releaseToAPI(WTF::move(apiDevice)), WebGPU::Metal::toAPI(""_s));
         });
         return future.future();
     }
