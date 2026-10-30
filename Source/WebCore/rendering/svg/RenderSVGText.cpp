@@ -132,6 +132,14 @@ void RenderSVGText::updateLocalTransform()
     m_localTransform = computeLocalTransform();
 }
 
+void RenderSVGText::updateTransform()
+{
+    ASSERT(document().settings().layerBasedSVGEngineEnabled());
+    updateLayerTransform();
+    if (!hasLayer())
+        updateLocalTransform();
+}
+
 void RenderSVGText::layout()
 {
     auto isLayerBasedSVGEngineEnabled = [&]() {
@@ -153,6 +161,9 @@ void RenderSVGText::layout()
         m_localTransform = protect(textElement())->animatedLocalTransform();
         updateCachedBoundariesInParents = true;
     }
+
+    if (isLayerBasedSVGEngineEnabled())
+        updateTransform();
 
     auto isLayoutSizeChanged = [&] {
         if (auto* legacyRootObject = lineageOfType<LegacyRenderSVGRoot>(*this).first())
@@ -206,12 +217,8 @@ void RenderSVGText::layout()
     computePerCharacterLayoutInformation();
 
     if (isLayerBasedSVGEngineEnabled()) {
-        updateLayerTransform();
-        // Non-layered text caches its transform in m_localTransform (read via localTransform()
-        // by getCTM()/getScreenCTM(), hit-testing and the transform-recursion paint path),
-        // mirroring RenderSVGModelObject::updateLocalTransform(). Layered text uses its RenderLayer.
-        if (!hasLayer())
-            updateLocalTransform();
+        if (previousReferenceBoxRect != transformReferenceBoxRect())
+            updateTransform();
         updateCachedBoundariesInParents = false; // No longer needed for LBSE.
         layoutChanged = false; // No longer needed for LBSE.
     } else {

@@ -77,6 +77,7 @@ public:
 
 private:
     void graphicsElement() const = delete;
+    void updateTransform();
 
     ASCIILiteral renderName() const override { return "RenderSVGText"_s; }
 

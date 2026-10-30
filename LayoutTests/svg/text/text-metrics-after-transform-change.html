@@ -1,0 +1,81 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<title>SVG text is re-measured after every kind of ancestor or own transform change</title>
+<link rel="help" href="https://www.w3.org/TR/SVG2/text.html">
+<style>
+  body { margin: 0; }
+  svg { display: block; }
+  .css-transformed { transform-box: view-box; transform-origin: 0 0; }
+  #css-transform { transform: scale(16); }
+  #css-scale { scale: 16; }
+  #web-animation { transform: scale(16); }
+  #self-css-transform-text { transform: scale(16); }
+</style>
+</head>
+<body>
+<svg width="800" height="600">
+  <!-- Once the scale is dropped, each text has to measure like its never-scaled reference. -->
+  <g id="attribute-change" transform="scale(16)"><text font-size="8" font-family="Times">Hamburgefonstiv</text></g>
+  <g id="attribute-change-reference"><text font-size="8" font-family="Times">Hamburgefonstiv</text></g>
+
+  <g id="attribute-removal" transform="scale(16)"><text font-size="8" font-family="Times">Hamburgefonstiv</text></g>
+  <g id="attribute-removal-reference"><text font-size="8" font-family="Times">Hamburgefonstiv</text></g>
+
+  <g id="css-transform" class="css-transformed"><text font-size="8" font-family="Times">Hamburgefonstiv</text></g>
+  <g id="css-transform-reference"><text font-size="8" font-family="Times">Hamburgefonstiv</text></g>
+
+  <g id="css-scale" class="css-transformed"><text font-size="8" font-family="Times">Hamburgefonstiv</text></g>
+  <g id="css-scale-reference"><text font-size="8" font-family="Times">Hamburgefonstiv</text></g>
+
+  <g id="web-animation" class="css-transformed"><text font-size="8" font-family="Times">Hamburgefonstiv</text></g>
+  <g id="web-animation-reference"><text font-size="8" font-family="Times">Hamburgefonstiv</text></g>
+
+  <!-- These keep a scale(2), so the cached transform of the text itself has to be refreshed. -->
+  <g id="self-attribute-change"><text transform="scale(16)" font-size="8" font-family="Times">Hamburgefonstiv</text></g>
+  <g id="self-attribute-change-reference"><text transform="scale(2)" font-size="8" font-family="Times">Hamburgefonstiv</text></g>
+
+  <g id="self-css-transform"><text id="self-css-transform-text" class="css-transformed" font-size="8" font-family="Times">Hamburgefonstiv</text></g>
+  <g id="self-css-transform-reference"><text transform="scale(2)" font-size="8" font-family="Times">Hamburgefonstiv</text></g>
+</svg>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const results = [];
+
+function check(id, dropTheScale)
+{
+    const group = document.getElementById(id);
+
+    group.firstElementChild.getBBox();
+
+    dropTheScale(group);
+
+    const box = group.firstElementChild.getBBox();
+    const referenceBox = document.getElementById(id + "-reference").firstElementChild.getBBox();
+    const matches = Math.abs(box.width - referenceBox.width) < 1e-4 && Math.abs(box.height - referenceBox.height) < 1e-4;
+
+    results.push(id + ": " + (matches ? "PASS"
+        : "FAIL (" + box.width + "x" + box.height + " instead of " + referenceBox.width + "x" + referenceBox.height + ")"));
+}
+
+check("attribute-change", group => group.setAttribute("transform", "scale(1)"));
+check("attribute-removal", group => group.removeAttribute("transform"));
+check("css-transform", group => group.style.transform = "scale(1)");
+check("css-scale", group => group.style.scale = "1");
+check("web-animation", group => {
+    const animation = group.animate([{ transform: "scale(16)" }, { transform: "scale(1)" }], { duration: 1000, fill: "forwards" });
+    animation.pause();
+    animation.currentTime = 1000;
+});
+
+check("self-attribute-change", group => group.firstElementChild.setAttribute("transform", "scale(2)"));
+check("self-css-transform", group => group.firstElementChild.style.transform = "scale(2)");
+
+document.querySelector("svg").remove();
+document.getElementById("log").textContent = results.join("\n");
+</script>
+</body>
+</html>
