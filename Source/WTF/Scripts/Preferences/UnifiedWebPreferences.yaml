@@ -7145,12 +7145,14 @@ WebAuthenticationASEnabled:
 
 WebAuthenticationCrossDeviceFallbackURLEnabled:
   type: bool
-  status: testable
+  status: embedder
   category: dom
   humanReadableName: "Web Authentication cross-device fallback URL"
   humanReadableDescription: "Enable the Web Authentication crossDeviceFallbackUrl extension"
   condition: ENABLE(WEB_AUTHN)
-  defaultValue: false
+  defaultValue:
+    default: true
+    WebKitLegacy: false
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebAuthenticationEnabled:
