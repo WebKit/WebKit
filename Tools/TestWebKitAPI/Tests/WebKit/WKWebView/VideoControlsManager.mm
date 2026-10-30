@@ -72,13 +72,13 @@
 - (void)waitForMediaControlsToShow
 {
     while (![self _hasActiveVideoForControlsManager])
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+        TestWebKitAPI::Util::cycleRunLoop();
 }
 
 - (void)waitForMediaControlsToHide
 {
     while ([self _hasActiveVideoForControlsManager])
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+        TestWebKitAPI::Util::cycleRunLoop();
 }
 
 - (void)waitForPageToLoadWithAutoplayingVideos:(int)numberOfAutoplayingVideos
@@ -452,7 +452,8 @@ TEST(VideoControlsManager, VideoControlsManagerAudioElementFollowingUserInteract
     [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:YES];
 
     TestWebKitAPI::Util::run(&secondAudioPlaying);
-    while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
+    while (true) {
+        TestWebKitAPI::Util::cycleRunLoop();
         if ([webView _hasActiveVideoForControlsManager] && [[webView controlledElementID] isEqualToString:@"second"])
             break;
     }
