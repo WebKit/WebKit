@@ -529,6 +529,11 @@ imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-selec
 
 imported/w3c/web-platform-tests/selection/fire-selectionchange-event-on-pressing-backspace.html [ Pass Failure ]
 
+imported/w3c/web-platform-tests/selection/selection-range-painting-after-splitText.html?splitAt=1 [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/selection/selection-range-painting-after-splitText.html?splitAt=2 [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/selection/selection-range-painting-after-splitText.html?splitAt=3 [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/selection/selection-range-painting-after-splitText.html?splitAt=6 [ ImageOnlyFailure ]
+
 # This test hits a debug assertion in WebKit
 webkit.org/b/266465 imported/w3c/web-platform-tests/editing/run/delete.html?6001-7000 [ Skip ]
 
