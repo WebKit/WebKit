@@ -1813,8 +1813,16 @@ else ()
 configure_file(${WEBCORE_DIR}/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/WebCore-Info.plist)
 
 set(_wc_fw "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework")
+if (WEBKIT_SDK_IS_WATCHOS)
+    set(_wc_media_controls_images watchOS)
+else ()
+    set(_wc_media_controls_images iOS)
+endif ()
 
 add_custom_command(TARGET WebCore POST_BUILD
+    # FIXME: Replace all of these with WEBCORE_COPY_FILES so that ninja can
+    # track their dependencies and clean them up. Should be expressible with
+    # rdar://188725492.
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${WEBCORE_DIR}/en.lproj" "${_wc_fw}/en.lproj"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${WEBCORE_DIR}/Resources/ContentFilterBlockedPage.html"
@@ -1837,6 +1845,13 @@ add_custom_command(TARGET WebCore POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${WEBCORE_DIR}/Modules/modern-media-controls"
         "${_wc_fw}/modern-media-controls"
+    # The controls load their images from images/, which Xcode populates with this platform's set.
+    # FIXME: Instead of copying the entire directory and then deleting, we
+    # should only copy what we need.
+    COMMAND ${CMAKE_COMMAND} -E rm -rf "${_wc_fw}/modern-media-controls/images"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${WEBCORE_DIR}/Modules/modern-media-controls/images/${_wc_media_controls_images}"
+        "${_wc_fw}/modern-media-controls/images"
     COMMAND ${CMAKE_COMMAND} -E rm -rf "${_wc_fw}/Resources"
     COMMAND ${CMAKE_COMMAND} -E copy
         "${CMAKE_CURRENT_BINARY_DIR}/WebCore-Info.plist"
