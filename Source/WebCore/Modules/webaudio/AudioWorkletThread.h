@@ -53,7 +53,7 @@ public:
     WorkerLoaderProxy* LEGACY_NODELETE workerLoaderProxy() const final;
     WorkerDebuggerProxy* LEGACY_NODELETE workerDebuggerProxy() const final;
 
-    AudioWorkletMessagingProxy* messagingProxy() { return m_messagingProxy.get(); }
+    RefPtr<AudioWorkletMessagingProxy> messagingProxy() const;
 
 private:
     AudioWorkletThread(AudioWorkletMessagingProxy&, WorkletParameters&&);
@@ -63,7 +63,8 @@ private:
     Ref<Thread> createThread() final;
     RefPtr<WorkerOrWorkletGlobalScope> createGlobalScope() final;
 
-    CheckedPtr<AudioWorkletMessagingProxy> m_messagingProxy;
+    mutable Lock m_messagingProxyLock;
+    CheckedPtr<AudioWorkletMessagingProxy> m_messagingProxy WTF_GUARDED_BY_LOCK(m_messagingProxyLock);
     WorkletParameters m_parameters;
 };
 
