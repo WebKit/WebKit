@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("RuntimeManager.InitializeTarget");
+
+    suite.addTestCase({
+        name: "RuntimeManager.InitializeTarget.WithoutRuntimeDomain",
+        test() {
+            let target = {
+                hasDomain: () => false,
+                hasCommand: () => false,
+                RuntimeAgent: undefined,
+            };
+
+            let error = null;
+            try {
+                WI.runtimeManager.initializeTarget(target);
+            } catch (e) {
+                error = e.message;
+            }
+            InspectorTest.expectNull(error, "Initializing a target without the Runtime domain should not throw.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "RuntimeManager.InitializeTarget.WithRuntimeDomain",
+        test() {
+            let enableCount = 0;
+            let target = {
+                hasDomain: (domainName) => domainName === "Runtime",
+                hasCommand: () => false,
+                RuntimeAgent: {
+                    enable() { ++enableCount; },
+                    enableTypeProfiler() { },
+                    enableControlFlowProfiler() { },
+                },
+            };
+
+            WI.runtimeManager.initializeTarget(target);
+            InspectorTest.expectEqual(enableCount, 1, "Initializing a target with the Runtime domain should enable its RuntimeAgent.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that RuntimeManager.initializeTarget skips targets without the Runtime domain.</p>
+</body>
+</html>

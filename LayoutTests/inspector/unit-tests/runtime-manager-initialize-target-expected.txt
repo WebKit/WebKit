@@ -1,0 +1,10 @@
+Tests that RuntimeManager.initializeTarget skips targets without the Runtime domain.
+
+
+== Running test suite: RuntimeManager.InitializeTarget
+-- Running test case: RuntimeManager.InitializeTarget.WithoutRuntimeDomain
+PASS: Initializing a target without the Runtime domain should not throw.
+
+-- Running test case: RuntimeManager.InitializeTarget.WithRuntimeDomain
+PASS: Initializing a target with the Runtime domain should enable its RuntimeAgent.
+

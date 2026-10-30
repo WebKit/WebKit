@@ -62,6 +62,10 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
 
     initializeTarget(target)
     {
+        // COMPATIBILITY (macOS 26.4, iOS 26.4): Frame targets did not support the Runtime domain yet.
+        if (!target.hasDomain("Runtime"))
+            return;
+
         target.RuntimeAgent.enable();
 
         if (WI.settings.showJavaScriptTypeInformation.value)
