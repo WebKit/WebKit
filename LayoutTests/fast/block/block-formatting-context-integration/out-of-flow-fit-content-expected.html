@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; position: relative; width: 300px; height: 360px; background: lightgray; font-size: 10px; line-height: 10px; }
+.abs { position: absolute; background: rgba(0, 128, 0, 0.5); color: blue; padding: 2px; border: 1px solid black; }
+.block { height: 10px; background: orange; }
+</style>
+<div class="root" id="root">
+  <div class="abs" style="top: 0">xx xxx</div>
+  <div class="abs" style="top: 20px; right: 0">xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx</div>
+  <div class="abs" style="top: 70px; left: 20px"><div class="block" style="width: 50px; margin-left: 10px"></div><div class="block" style="width: 80px; box-sizing: border-box; padding: 0 5px"></div><div>xx xx</div></div>
+  <div class="abs" style="top: 120px; left: 0; min-width: 100px">x</div>
+  <div class="abs" style="top: 140px; left: 0; max-width: 60px">xxxx xxxx xxxx</div>
+  <div class="abs" style="top: 180px; left: 0; white-space: nowrap">xxxx xxxx xxxx</div>
+  <div class="abs" style="top: 200px; left: 0"><div style="white-space: nowrap"><div class="block" style="width: 40px"></div><div>xx xx xx</div></div></div>
+  <div style="padding-left: 40px" dir="rtl"><div class="abs" style="top: 250px">xx xx</div><div></div></div>
+  <div class="abs" style="top: 280px; left: 10px"><div style="min-width: 70px; max-width: 90px">xxxxxxxxxxx</div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("root").style.width = "250px";
+</script>
