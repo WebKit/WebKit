@@ -77,6 +77,27 @@ PlatformXR::LayerHandle XRCompositionLayer::layerHandle() const
     return m_backing->handle();
 }
 
+// https://www.w3.org/TR/webxrlayers-1/#dom-xrcompositionlayer-destroy
+void XRCompositionLayer::destroy()
+{
+    if (m_destroyed)
+        return;
+    m_destroyed = true;
+
+    destroyResources();
+
+    if (RefPtr session = m_session)
+        session->layerDestroyed(*this);
+}
+
+// https://www.w3.org/TR/webxrlayers-1/#destroy-the-resources-for-a-layer
+void XRCompositionLayer::destroyResources()
+{
+    m_backing->invalidateTextures();
+    m_colorTextures.clear();
+    m_depthStencilTextures.clear();
+}
+
 void XRCompositionLayer::setColorTextures(Vector<RefPtr<WebGLOpaqueTexture>>&& colorTextures)
 {
     m_colorTextures = WTF::move(colorTextures);

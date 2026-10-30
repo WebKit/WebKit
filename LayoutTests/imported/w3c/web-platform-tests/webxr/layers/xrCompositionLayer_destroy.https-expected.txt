@@ -1,0 +1,16 @@
+
+PASS XRCompositionLayer.destroy() does not generate a WebGL error and can be called more than once - webgl
+PASS XRCompositionLayer.destroy() does not generate a WebGL error and can be called more than once - webgl2
+PASS XRCompositionLayer.destroy() can be called on a layer that was never rendered to - webgl
+PASS XRCompositionLayer.destroy() can be called on a layer that was never rendered to - webgl2
+PASS XRWebGLBinding.getSubImage() throws InvalidStateError for a destroyed layer - webgl
+PASS XRWebGLBinding.getSubImage() throws InvalidStateError for a destroyed layer - webgl2
+PASS XRSession.updateRenderState() throws InvalidStateError when given a destroyed layer - webgl
+PASS XRSession.updateRenderState() throws InvalidStateError when given a destroyed layer - webgl2
+PASS A destroyed layer is removed from renderState.layers on the next frame - webgl
+PASS A destroyed layer is removed from renderState.layers on the next frame - webgl2
+PASS Destroying a layer does not affect the other layers of the session - webgl
+PASS Destroying a layer does not affect the other layers of the session - webgl2
+PASS A destroyed layer is removed from a pending render state that has not been applied yet - webgl
+PASS A destroyed layer is removed from a pending render state that has not been applied yet - webgl2
+

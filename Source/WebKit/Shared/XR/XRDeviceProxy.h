@@ -70,7 +70,7 @@ private:
 #if ENABLE(WEBXR_LAYERS)
     std::optional<PlatformXR::LayerInfo> createCompositionLayer(PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout) final;
 #endif
-    void deleteLayer(PlatformXR::LayerHandle) override { };
+    void deleteLayer(PlatformXR::LayerHandle) final;
     void submitFrame(Vector<PlatformXR::DeviceLayer>&&) final;
 
 #if ENABLE(WEBXR_HIT_TEST)

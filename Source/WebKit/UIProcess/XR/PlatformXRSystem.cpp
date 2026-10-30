@@ -302,6 +302,22 @@ void PlatformXRSystem::submitFrame(IPC::Connection& connection)
     }
 }
 
+#if ENABLE(WEBXR_LAYERS)
+void PlatformXRSystem::deleteLayer(IPC::Connection&, PlatformXR::LayerHandle handle)
+{
+    ASSERT(RunLoop::isMain());
+    if (m_immersiveSessionState != ImmersiveSessionState::SessionRunning)
+        return;
+
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    if (auto* xrCoordinator = PlatformXRSystem::xrCoordinator())
+        xrCoordinator->deleteLayer(*page, handle);
+}
+#endif
+
 #if ENABLE(WEBXR_HIT_TEST)
 void PlatformXRSystem::requestHitTestSource(const PlatformXR::HitTestOptions& hitTestOptions, CompletionHandler<void(std::expected<PlatformXR::HitTestSource, WebCore::ExceptionData>)>&& passedCompletionHandler)
 {

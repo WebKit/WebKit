@@ -73,6 +73,12 @@ OpenXRSwapchain::~OpenXRSwapchain()
         xrDestroySwapchain(m_swapchain);
 }
 
+void OpenXRSwapchain::releaseExportedTextures(OpenXRGraphicsBinding& graphicsBinding) const
+{
+    for (auto image : m_imageHandles)
+        graphicsBinding.releaseExportedTextures(image);
+}
+
 std::optional<uint64_t> OpenXRSwapchain::acquireImage()
 {
     RELEASE_ASSERT_WITH_MESSAGE(!m_acquiredTexture , "Expected no acquired images. ReleaseImage not called?");

@@ -63,6 +63,7 @@ public:
 
 #if ENABLE(WEBXR_LAYERS)
     void createCompositionLayer(PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, CreateCompositionLayerCallback&&) override;
+    void deleteLayer(WebPageProxy&, PlatformXR::LayerHandle) override;
 #endif
 
     void startSession(WebPageProxy&, WeakPtr<PlatformXRCoordinatorSessionEventClient>&&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, std::optional<WebCore::XRCanvasConfiguration>&&) override;

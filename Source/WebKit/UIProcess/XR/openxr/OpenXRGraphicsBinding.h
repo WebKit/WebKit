@@ -73,6 +73,7 @@ public:
     virtual void commitFrame(uint64_t keyImage, const OpenXRSwapchain&, TextureType, const Vector<uint64_t>& images) = 0;
     virtual void waitFrameFence(WTF::UnixFileDescriptor&&) = 0;
 
+    virtual void releaseExportedTextures(uint64_t image) = 0;
     virtual void releaseSessionGraphics() = 0;
 };
 

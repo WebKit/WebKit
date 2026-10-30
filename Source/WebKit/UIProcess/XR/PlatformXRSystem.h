@@ -106,6 +106,7 @@ private:
 #endif
 #if ENABLE(WEBXR_LAYERS)
     void LEGACY_NODELETE createCompositionLayer(IPC::Connection&, PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>&&);
+    void deleteLayer(IPC::Connection&, PlatformXR::LayerHandle);
 #endif
 #if ENABLE(WEBXR_HIT_TEST)
     void requestHitTestSource(const PlatformXR::HitTestOptions&, CompletionHandler<void(std::expected<PlatformXR::HitTestSource, WebCore::ExceptionData>)>&&);
