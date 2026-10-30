@@ -2619,21 +2619,10 @@ void WebProcess::updateRemoteWorkerPreferences(const WebPreferencesStore& store)
 #endif
 
 #if PLATFORM(COCOA)
-    // Like WebPage, except that the drawing area type does not matter because the workers do not draw the DOM.
-    bool shouldBlockIOKit = store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForDOMRenderingEnabledKey())
-#if ENABLE(WEBGL)
-        && store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForWebGLEnabledKey())
-#endif
-        && store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForCanvasRenderingEnabledKey())
+    bool shouldBlockIOKit = store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForCanvasRenderingEnabledKey())
         && store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForMediaEnabledKey());
-    if (shouldBlockIOKit) {
-#if ENABLE(GPU_PROCESS)
-        // The workers do not draw the DOM, but without IOKit this process cannot map the image buffers
-        // either, which is what the GPU process DOM rendering means for the image buffers.
-        setUseGPUProcessForDOMRendering(true);
-#endif
+    if (shouldBlockIOKit)
         blockIOKit();
-    }
 #endif
 }
 
@@ -2650,7 +2639,7 @@ void WebProcess::setUseGPUProcessFromPreferences(const WebPreferencesStore& stor
 #endif
     setUseGPUProcessForCanvasRendering(store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForCanvasRenderingEnabledKey()));
     setUseGPUProcessForMedia(useGPUProcessForMedia);
-#if ENABLE(WEBGL)
+#if ENABLE(WEBGL) && !PLATFORM(COCOA)
     setUseGPUProcessForWebGL(store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForWebGLEnabledKey()));
 #endif
 }
@@ -2660,10 +2649,12 @@ void WebProcess::setUseGPUProcessForCanvasRendering(bool useGPUProcessForCanvasR
     m_useGPUProcessForCanvasRendering = useGPUProcessForCanvasRendering;
 }
 
+#if !PLATFORM(COCOA)
 void WebProcess::setUseGPUProcessForDOMRendering(bool useGPUProcessForDOMRendering)
 {
     m_useGPUProcessForDOMRendering = useGPUProcessForDOMRendering;
 }
+#endif
 
 void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 {
@@ -2749,7 +2740,11 @@ bool WebProcess::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
     case RenderingPurpose::LayerBacking:
     case RenderingPurpose::Snapshot:
     case RenderingPurpose::ShareableSnapshot:
+#if PLATFORM(COCOA)
+        return true;
+#else
         return m_useGPUProcessForDOMRendering;
+#endif
     case RenderingPurpose::MediaPainting:
         return m_useGPUProcessForMedia;
     case RenderingPurpose::ShareableLocalSnapshot:
@@ -2759,7 +2754,7 @@ bool WebProcess::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
     return false;
 }
 
-#if ENABLE(WEBGL)
+#if ENABLE(WEBGL) && !PLATFORM(COCOA)
 void WebProcess::setUseGPUProcessForWebGL(bool useGPUProcessForWebGL)
 {
     m_useGPUProcessForWebGL = useGPUProcessForWebGL;
@@ -2777,7 +2772,7 @@ bool WebProcess::shouldUseRemoteRenderingForWebGL() const
     return m_useGPUProcessForWebGL;
 #endif
 }
-#endif // ENABLE(WEBGL)
+#endif // ENABLE(WEBGL) && !PLATFORM(COCOA)
 
 #endif // ENABLE(GPU_PROCESS)
 

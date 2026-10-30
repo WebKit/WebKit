@@ -30,7 +30,42 @@
 
 #include <wtf/text/TextStream.h>
 
+#if PLATFORM(COCOA)
+#include <WebCore/PlatformCALayer.h>
+#endif
+
 namespace WebKit {
+
+using namespace WebCore;
+
+PaintRectList computePaintingRects(const Region& dirtyRegion, float resolutionScale)
+{
+    // If we have less than webLayerMaxRectsToPaint rects to paint and they cover less
+    // than webLayerWastedSpaceThreshold of the total dirty area, we'll repaint each rect separately.
+    // Otherwise, repaint the entire bounding box of the dirty region.
+    const auto dirtyRects = [&] {
+        auto dirtyRects = dirtyRegion.rects();
+#if PLATFORM(COCOA)
+        IntRect dirtyBounds = dirtyRegion.bounds();
+        if (dirtyRects.size() > PlatformCALayer::webLayerMaxRectsToPaint || dirtyRegion.totalArea() > PlatformCALayer::webLayerWastedSpaceThreshold * dirtyBounds.width() * dirtyBounds.height()) {
+            dirtyRects.clear();
+            dirtyRects.append(dirtyBounds);
+        }
+#endif
+        return dirtyRects;
+    }();
+
+    // FIXME: find a consistent way to scale and snap dirty and CG clip rects.
+    PaintRectList paintingRects;
+    for (const auto& rect : dirtyRects) {
+        FloatRect scaledRect(rect);
+        scaledRect.scale(resolutionScale);
+        scaledRect = enclosingIntRect(scaledRect);
+        scaledRect.scale(1 / resolutionScale);
+        paintingRects.append(scaledRect);
+    }
+    return paintingRects;
+}
 
 TextStream& operator<<(TextStream& ts, const ImageBufferSetPrepareBufferForDisplayInputData& inputData)
 {
@@ -62,4 +97,4 @@ TextStream& operator<<(TextStream& ts, SwapBuffersDisplayRequirement displayRequ
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+#endif // ENABLE(GPU_PROCESS)

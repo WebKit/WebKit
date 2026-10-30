@@ -365,21 +365,16 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
     if (providedBackingStore) {
         ImageBuffer::Parameters parameters { logicalSize, resolutionScale, colorSpace, bufferFormat, purpose };
         switch (renderingMode) {
-        case RenderingMode::Accelerated:
-#if HAVE(IOSURFACE)
-            if (auto backend = ImageBufferShareableMappedIOSurfaceBackend::create(parameters, WTF::move(*providedBackingStore), creationContext.useIOSurfaceWebKitBehavior))
-                return ImageBuffer::create(parameters, creationContext, WTF::move(backend));
-#endif
-            return nullptr;
         case RenderingMode::Unaccelerated:
             if (!std::holds_alternative<ShareableBitmap::Handle>(*providedBackingStore))
                 return nullptr;
             if (auto backend = ImageBufferShareableBitmapBackend::create(parameters, std::get<ShareableBitmap::Handle>(WTF::move(*providedBackingStore))))
                 return ImageBuffer::create(parameters, creationContext, WTF::move(backend));
             return nullptr;
+        case RenderingMode::Accelerated:
         case RenderingMode::PDFDocument:
         case RenderingMode::DisplayList:
-            // These have no backing store to hand over.
+            // These have no backing store the web process can hand over.
             return nullptr;
         }
         return nullptr;

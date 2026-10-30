@@ -121,7 +121,7 @@ void RemoteVideoFrameObjectHeapProxyProcessor::newVideoFrameBuffer(RemoteVideoFr
         callback(WTF::move(pixelBuffer));
 }
 
-void RemoteVideoFrameObjectHeapProxyProcessor::getVideoFrameBuffer(const RemoteVideoFrameProxy& frame, bool canUseIOSurface, Callback&& callback)
+void RemoteVideoFrameObjectHeapProxyProcessor::getVideoFrameBuffer(const RemoteVideoFrameProxy& frame, Callback&& callback)
 {
     {
         Locker lock(m_callbacksLock);
@@ -137,7 +137,7 @@ void RemoteVideoFrameObjectHeapProxyProcessor::getVideoFrameBuffer(const RemoteV
         takeCallback(frame.identifier())(nullptr);
         return;
     }
-    connection->send(Messages::RemoteVideoFrameObjectHeap::GetVideoFrameBuffer(frame.newReadReference(), canUseIOSurface), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    connection->send(Messages::RemoteVideoFrameObjectHeap::GetVideoFrameBuffer(frame.newReadReference()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void RemoteVideoFrameObjectHeapProxyProcessor::newConvertedVideoFrameBuffer(std::optional<SharedVideoFrame::Buffer>&& buffer)

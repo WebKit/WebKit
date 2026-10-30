@@ -652,7 +652,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_hasCustomUserAgent(parameters.hasCustomUserAgent)
     , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
     , m_alwaysShowsVerticalScroller { parameters.alwaysShowsVerticalScroller }
+#if !PLATFORM(COCOA)
     , m_shouldRenderDOMInGPUProcess { parameters.shouldRenderDOMInGPUProcess }
+#endif
     , m_shouldSendConsoleLogsToUIProcessForTesting(parameters.shouldSendConsoleLogsToUIProcessForTesting)
 #if HAVE(NSVIEW_CORNER_CONFIGURATION)
     , m_scrollbarAvoidanceCornerRadii(parameters.scrollbarAvoidanceCornerRadii)
@@ -775,11 +777,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         sandbox_enable_state_flag("BlockUserInstalledFonts", *auditToken);
 #endif // PLATFORM(MAC)
 #endif // HAVE(SANDBOX_STATE_FLAGS)
-    auto shouldBlockIOKit = m_shouldRenderDOMInGPUProcess
-#if ENABLE(WEBGL)
-        && parameters.store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForWebGLEnabledKey())
-#endif
-        && parameters.store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForCanvasRenderingEnabledKey())
+    auto shouldBlockIOKit = parameters.store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForCanvasRenderingEnabledKey())
         && parameters.store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForMediaEnabledKey());
 
     if (shouldBlockIOKit)
@@ -5771,11 +5769,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     if (RefPtr drawingArea = m_drawingArea)
         drawingArea->updatePreferences(store);
 
-#if ENABLE(GPU_PROCESS)
-    bool usingGPUProcessForDOMRendering = m_shouldRenderDOMInGPUProcess
-        && DrawingArea::supportsGPUProcessRendering();
-    WebProcess::singleton().setUseGPUProcessForDOMRendering(usingGPUProcessForDOMRendering);
-#endif // ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && !PLATFORM(COCOA)
+    WebProcess::singleton().setUseGPUProcessForDOMRendering(m_shouldRenderDOMInGPUProcess && DrawingArea::supportsGPUProcessRendering());
+#endif
 
 #if ENABLE(IPC_TESTING_API)
     m_ipcTestingAPIEnabled = store.getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey());

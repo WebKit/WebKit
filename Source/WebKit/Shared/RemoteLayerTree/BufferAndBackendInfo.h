@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ImageBufferBackendHandle.h"
-#include <WebCore/ImageBuffer.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 
 namespace WebKit {
@@ -34,11 +33,6 @@ namespace WebKit {
 struct BufferAndBackendInfo {
     WebCore::RenderingResourceIdentifier resourceIdentifier;
     unsigned backendGeneration { 0 };
-
-    static BufferAndBackendInfo fromImageBuffer(WebCore::ImageBuffer& imageBuffer)
-    {
-        return { imageBuffer.renderingResourceIdentifier(), imageBuffer.backendGeneration() };
-    }
 
     bool operator==(const BufferAndBackendInfo&) const = default;
 };

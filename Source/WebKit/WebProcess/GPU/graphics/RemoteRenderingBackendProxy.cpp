@@ -59,7 +59,6 @@
 
 #if HAVE(IOSURFACE)
 #include "ImageBufferRemoteIOSurfaceBackend.h"
-#include "ImageBufferShareableMappedIOSurfaceBackend.h"
 #endif
 
 namespace WebKit {
@@ -256,21 +255,11 @@ void RemoteRenderingBackendProxy::disconnectGPUProcess()
     m_gpuProcessConnection = nullptr;
 }
 
-bool RemoteRenderingBackendProxy::canMapRemoteImageBufferBackendBackingStore()
-{
-    // When DOM rendering happens in WebContent process, we need to paint 2D contexts
-    // into the tiles. In this case ImageBuffers should be created as mappable.
-    return !WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM);
-}
-
 RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const ColorSpace& colorSpace, ImageBufferFormat bufferFormat)
 {
     // Whoever needs to touch the pixels allocates them. Backends this process maps or
     // shares onward are allocated here and their handle travels with CreateImageBuffer;
     // the rest are allocated by the GPU process and are opaque to us.
-    // Note this only needs an IOSurface where canMapRemoteImageBufferBackendBackingStore()
-    // is true, which is exactly when this process is allowed to create one; see
-    // WebPage::platformInitialize()'s shouldBlockIOKit.
     ImageBuffer::Parameters parameters { size, resolutionScale, colorSpace, bufferFormat, purpose };
     ImageBufferCreationContext creationContext;
 
@@ -278,10 +267,7 @@ RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::createImageBuffer(co
     switch (renderingMode) {
     case RenderingMode::Accelerated:
 #if HAVE(IOSURFACE)
-        if (canMapRemoteImageBufferBackendBackingStore())
-            imageBuffer = RemoteImageBufferProxy::create<ImageBufferShareableMappedIOSurfaceBackend>(parameters, *this, creationContext);
-        else
-            imageBuffer = RemoteImageBufferProxy::create<ImageBufferRemoteIOSurfaceBackend>(parameters, *this);
+        imageBuffer = RemoteImageBufferProxy::create<ImageBufferRemoteIOSurfaceBackend>(parameters, *this);
 #endif
         [[fallthrough]];
 
@@ -358,8 +344,6 @@ static std::unique_ptr<ImageBufferBackend> createBackendForSerializedBuffer(cons
     switch (renderingMode) {
     case RenderingMode::Accelerated:
 #if HAVE(IOSURFACE)
-        if (handle && std::holds_alternative<MachSendRight>(*handle))
-            return ImageBufferShareableMappedIOSurfaceBackend::create(parameters, WTF::move(*handle));
         if (!handle)
             return ImageBufferRemoteIOSurfaceBackend::create(parameters);
 #endif

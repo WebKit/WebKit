@@ -103,7 +103,6 @@ public:
 
     ~RemoteRenderingBackendProxy();
 
-    static bool canMapRemoteImageBufferBackendBackingStore();
 
     RemoteResourceCacheProxy& remoteResourceCacheProxy() const { return m_remoteResourceCacheProxy; }
 

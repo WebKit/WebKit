@@ -49,7 +49,7 @@ public:
     static Ref<RemoteVideoFrameObjectHeapProxy> create(GPUProcessConnection& connection) { return adoptRef(*new RemoteVideoFrameObjectHeapProxy(connection)); }
 
 #if PLATFORM(COCOA)
-    void getVideoFrameBuffer(const RemoteVideoFrameProxy& proxy, bool canUseIOSurface, RemoteVideoFrameObjectHeapProxyProcessor::Callback&& callback) { m_processor->getVideoFrameBuffer(proxy, canUseIOSurface, WTF::move(callback)); }
+    void getVideoFrameBuffer(const RemoteVideoFrameProxy& proxy, RemoteVideoFrameObjectHeapProxyProcessor::Callback&& callback) { m_processor->getVideoFrameBuffer(proxy, WTF::move(callback)); }
     RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame& frame, ShouldApplyRotation shouldApplyRotation = ShouldApplyRotation::No) { return m_processor->getNativeImage(frame, shouldApplyRotation); }
 #endif
 

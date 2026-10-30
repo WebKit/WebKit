@@ -44,10 +44,8 @@
 OBJC_CLASS CALayer;
 OBJC_CLASS UIView;
 
-// FIXME: Make PlatformCALayerRemote.cpp Objective-C so we can include WebLayer.h here and share the typedef.
 namespace WebCore {
 class NativeImage;
-typedef Vector<WebCore::FloatRect, 5> RepaintRectList;
 struct PlatformCALayerDelegatedContents;
 struct PlatformCALayerDelegatedContentsFinishedEvent;
 }
@@ -70,27 +68,25 @@ enum class BackingStoreNeedsDisplayReason : uint8_t {
     HasDirtyRegion,
 };
 
-class RemoteLayerBackingStore : public CanMakeWeakPtr<RemoteLayerBackingStore>, public CanMakeCheckedPtr<RemoteLayerBackingStore> {
+class RemoteLayerBackingStore final : public CanMakeWeakPtr<RemoteLayerBackingStore>, public CanMakeCheckedPtr<RemoteLayerBackingStore>, public ImageBufferSetClient {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerBackingStore);
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerBackingStore);
 public:
     RemoteLayerBackingStore(PlatformCALayerRemote&);
-    virtual ~RemoteLayerBackingStore();
+    ~RemoteLayerBackingStore();
 
-    static std::unique_ptr<RemoteLayerBackingStore> createForLayer(PlatformCALayerRemote&);
+    // CheckedPtr interface
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
     enum class Type : bool {
         IOSurface,
         Bitmap
     };
-
-    virtual bool isRemoteLayerWithRemoteRenderingBackingStore() const { return false; }
-    virtual bool isRemoteLayerWithInProcessRenderingBackingStore() const { return false; }
-
-    enum class ProcessModel : uint8_t { InProcess, Remote };
-    virtual ProcessModel processModel() const = 0;
-    static ProcessModel processModelForLayer(PlatformCALayerRemote&);
 
     struct Parameters {
         Type type { Type::Bitmap };
@@ -107,10 +103,10 @@ public:
         friend bool operator==(const Parameters&, const Parameters&) = default;
     };
 
-    virtual void ensureBackingStore(const Parameters&);
+    void ensureBackingStore(const Parameters&);
 
     void setNeedsDisplay(const WebCore::IntRect);
-    void setNeedsDisplay();
+    void setNeedsDisplay() final;
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
     bool setNeedsDisplayIfEDRHeadroomExceeds(float);
@@ -127,11 +123,13 @@ public:
 
     void paintContents();
     void flush();
-    virtual void prepareToDisplay() = 0;
-    virtual void createContextAndPaintContents() = 0;
+    void prepareToDisplay();
+    void createContextAndPaintContents();
 
-    virtual std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher(ThreadSafeImageBufferSetFlusher::FlushType = ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesAndDrawing) = 0;
-    virtual void submitDrawingCommands() { }
+    RemoteImageBufferSetProxy* bufferSet() { return m_bufferSet.get(); }
+
+    std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher(ThreadSafeImageBufferSetFlusher::FlushType = ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesAndDrawing);
+    void submitDrawingCommands();
 
     WebCore::FloatSize size() const { return m_parameters.size; }
     float scale() const { return m_parameters.scale; }
@@ -150,36 +148,30 @@ public:
 
     void enumerateRectsBeingDrawn(WebCore::GraphicsContext&, void (^)(WebCore::FloatRect));
 
-    virtual bool hasFrontBuffer() const = 0;
-    virtual bool frontBufferMayBeVolatile() const = 0;
+    bool hasFrontBuffer() const;
+    bool frontBufferMayBeVolatile() const;
 
     Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> takePendingFlushers();
-
-    enum class BufferType {
-        Front,
-        Back,
-        SecondaryBack
-    };
 
     const WebCore::Region& dirtyRegion() LIFETIME_BOUND { return m_dirtyRegion; }
     bool hasEmptyDirtyRegion() const { return m_dirtyRegion.isEmpty() || m_parameters.size.isEmpty(); }
 
     MonotonicTime lastDisplayTime() const { return m_lastDisplayTime; }
 
-    virtual void clearBackingStore();
+    void clearBackingStore();
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    virtual std::optional<WebCore::DynamicContentScalingDisplayList> displayListHandle() const  { return std::nullopt; }
+    std::optional<WebCore::DynamicContentScalingDisplayList> displayListHandle() const;
 #endif
-    virtual std::optional<ImageBufferSetIdentifier> bufferSetIdentifier() const = 0;
+    std::optional<ImageBufferSetIdentifier> bufferSetIdentifier() const;
 
-    virtual void dump(WTF::TextStream&) const = 0;
+    void dump(WTF::TextStream&) const;
 
     void purgeFrontBufferForTesting();
     void purgeBackBufferForTesting();
     void markFrontBufferVolatileForTesting();
 
-protected:
+private:
     RemoteLayerBackingStoreCollection* LEGACY_NODELETE backingStoreCollection() const LIFETIME_BOUND;
 
     void drawInContext(WebCore::GraphicsContext&);
@@ -189,6 +181,7 @@ protected:
     WebCore::IntRect layerBounds() const;
 
     WeakRef<PlatformCALayerRemote> m_layer;
+    const RefPtr<RemoteImageBufferSetProxy> m_bufferSet;
 
     Parameters m_parameters;
 
@@ -203,7 +196,7 @@ protected:
 
     Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> m_frontBufferFlushers;
 
-    WebCore::RepaintRectList m_paintingRects;
+    PaintRectList m_paintingRects;
 
     MonotonicTime m_lastDisplayTime;
 
@@ -212,6 +205,7 @@ protected:
     float m_maxRequestedEDRHeadroom { 1 };
 #endif
     bool m_needsFlush { false };
+    bool m_cleared { true };
 };
 
 // The subset of RemoteLayerBackingStore that gets serialized into the UI

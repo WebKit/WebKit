@@ -330,7 +330,6 @@ Shared/Extensions/WebExtensionRegisteredScriptsSQLiteStore.cpp
 Shared/Gamepad/GamepadData.cpp
 
 Shared/graphics/DisplayListData.cpp
-Shared/graphics/ImageBufferSet.cpp
 
 Shared/WebGPU/WebGPUBindGroupDescriptor.cpp
 Shared/WebGPU/WebGPUBindGroupEntry.cpp

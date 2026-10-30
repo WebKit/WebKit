@@ -141,10 +141,12 @@ RefPtr<GraphicsContextGL> GPUProcessWebWorkerClient::createGraphicsContextGL(con
     if (!dispatcher)
         return nullptr;
     assertIsCurrent(*dispatcher);
+#if !PLATFORM(COCOA)
     if (!WebProcess::singleton().shouldUseRemoteRenderingForWebGL()) {
         // ANGLE does not support multithreading, so we cannot create in-process contexts in worker threads.
         return nullptr;
     }
+#endif
     return RemoteGraphicsContextGLProxy::create(attributes, protect(ensureRenderingBackend()), *dispatcher);
 }
 #endif

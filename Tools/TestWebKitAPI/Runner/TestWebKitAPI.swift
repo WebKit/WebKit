@@ -46,18 +46,6 @@ struct TestWebKitAPI {
 
         // FIXME: Remove once the root cause is fixed in rdar://159372811
         argumentDefaults["NSEventConcurrentProcessingEnabled"] = false
-
-        for argument in CommandLine.arguments[1...] {
-            // These defaults are not propagated manually but are only consulted in the UI process.
-            switch argument {
-            case "--use-gpu-process":
-                argumentDefaults["WebKit2GPUProcessForDOMRendering"] = true
-            case "--no-use-gpu-process":
-                argumentDefaults["WebKit2GPUProcessForDOMRendering"] = false
-            default:
-                break
-            }
-        }
     }
 
     @MainActor

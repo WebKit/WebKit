@@ -31,8 +31,8 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     void CreateRenderingBackend(WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle connectionHandle) AllowedWhenWaitingForSyncReply
     void ReleaseRenderingBackend(WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier) AllowedWhenWaitingForSyncReply
 #if ENABLE(WEBGL)
-    [EnabledBy=WebGLEnabled && UseGPUProcessForWebGLEnabled] void CreateGraphicsContextGL(WebKit::RemoteGraphicsContextGLIdentifier identifier, struct WebCore::GraphicsContextGLAttributes attributes, WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
-    [EnabledBy=WebGLEnabled && UseGPUProcessForWebGLEnabled] void ReleaseGraphicsContextGL(WebKit::RemoteGraphicsContextGLIdentifier identifier) AllowedWhenWaitingForSyncReply
+    [EnabledBy=WebGLEnabled] void CreateGraphicsContextGL(WebKit::RemoteGraphicsContextGLIdentifier identifier, struct WebCore::GraphicsContextGLAttributes attributes, WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
+    [EnabledBy=WebGLEnabled] void ReleaseGraphicsContextGL(WebKit::RemoteGraphicsContextGLIdentifier identifier) AllowedWhenWaitingForSyncReply
 #endif
     [EnabledBy=WebGPUEnabled] void CreateGPU(WebKit::WebGPUIdentifier identifier, WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
     [EnabledBy=WebGPUEnabled] void ReleaseGPU(WebKit::WebGPUIdentifier identifier) AllowedWhenWaitingForSyncReply

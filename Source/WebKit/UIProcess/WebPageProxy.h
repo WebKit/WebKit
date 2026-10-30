@@ -3847,7 +3847,11 @@ private:
     bool tryToSendCommandToActiveControlledVideo(WebCore::PlatformMediaSessionRemoteControlCommandType);
 #endif
 
+#if PLATFORM(COCOA)
+    bool useGPUProcessForDOMRenderingEnabled() const { return true; }
+#else
     bool useGPUProcessForDOMRenderingEnabled() const;
+#endif
 
     void dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier);
     void addResourceTimingFromSubframe(WebCore::FrameIdentifier parentFrameID, WebCore::ResourceTiming&&);

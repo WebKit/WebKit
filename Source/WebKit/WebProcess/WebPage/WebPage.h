@@ -2997,7 +2997,9 @@ private:
     bool m_alwaysShowsHorizontalScroller { false };
     bool m_alwaysShowsVerticalScroller { false };
 
+#if !PLATFORM(COCOA)
     bool m_shouldRenderDOMInGPUProcess { false };
+#endif
 #if ENABLE(APP_BOUND_DOMAINS)
     bool m_needsInAppBrowserPrivacyQuirks { false };
 #endif

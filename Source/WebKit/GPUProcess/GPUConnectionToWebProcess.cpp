@@ -542,8 +542,12 @@ bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
     if (hasOutstandingRenderingResourceUsage())
         return false;
 
+#if PLATFORM(COCOA)
+    return false;
+#else
     if (m_sharedPreferencesForWebProcess.useGPUProcessForDOMRenderingEnabled)
         return false;
+#endif
 
 #if ENABLE(WEB_AUDIO)
     RefPtr remoteAudioDestinationManager = m_remoteAudioDestinationManager.get();
@@ -731,6 +735,9 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RemoteRenderingBackendId
 void GPUConnectionToWebProcess::createGraphicsContextGL(RemoteGraphicsContextGLIdentifier identifier, WebCore::GraphicsContextGLAttributes attributes, RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
     MESSAGE_CHECK(!isLockdownModeEnabled());
+#if !PLATFORM(COCOA)
+    MESSAGE_CHECK(m_sharedPreferencesForWebProcess.useGPUProcessForWebGLEnabled);
+#endif
     MESSAGE_CHECK(!attributes.supportWebGLDraftExtensions || m_sharedPreferencesForWebProcess.webGLDraftExtensionsEnabled);
 
     auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);

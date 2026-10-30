@@ -65,7 +65,6 @@
 #import "WebContextMenuProxy.h"
 #import "WebEventModifier.h"
 #import "WebFrameProxy.h"
-#import "WebPage.h"
 #import "WebPageLoadTiming.h"
 #import "WebPageMessages.h"
 #import "WebPageProxyInternals.h"
@@ -1377,31 +1376,6 @@ void WebPageProxy::replaceImageForRemoveBackground(const ElementContext& element
 }
 
 #endif
-
-bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
-{
-    if (RetainPtr useGPUProcessForDOMRendering = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"])
-        return [useGPUProcessForDOMRendering boolValue];
-
-    if (protect(preferences())->useGPUProcessForDOMRenderingEnabled())
-        return true;
-
-    Ref configuration = m_configuration;
-#if ENABLE(REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT)
-    if (configuration->lockdownModeEnabled())
-        return true;
-#endif
-
-    HashSet<Ref<const WebPageProxy>> visitedPages;
-    visitedPages.add(*this);
-    for (RefPtr page = configuration->relatedPage(); page && !visitedPages.contains(*page); page = page->configuration().relatedPage()) {
-        if (protect(page->preferences())->useGPUProcessForDOMRenderingEnabled())
-            return true;
-        visitedPages.add(*page);
-    }
-
-    return false;
-}
 
 bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
 {

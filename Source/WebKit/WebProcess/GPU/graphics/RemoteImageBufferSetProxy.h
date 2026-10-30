@@ -52,9 +52,6 @@ namespace WebKit {
 class RemoteImageBufferSetProxyFlushFence;
 struct BufferSetBackendHandle;
 
-// FIXME: We should have a generic 'ImageBufferSet' class that contains
-// the code that isn't specific to being remote, and this helper belongs
-// there.
 class ThreadSafeImageBufferSetFlusher {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(ThreadSafeImageBufferSetFlusher);
     WTF_MAKE_NONCOPYABLE(ThreadSafeImageBufferSetFlusher);
@@ -77,7 +74,8 @@ public:
     virtual void setNeedsDisplay() = 0;
 };
 
-// A RemoteImageBufferSet is an ImageBufferSet, where the actual ImageBuffers are owned by the GPU process.
+// A RemoteImageBufferSet is a set of three ImageBuffers (front, back, secondary back) owned by the GPU process,
+// for the purpose of drawing successive layer frames.
 // To draw a frame, the consumer allocates a new RemoteGraphicsContextProxy and
 // asks the RemoteImageBufferSet set to map it to an appropriate new front
 // buffer (either by picking one of the back buffers, or by allocating a new
@@ -86,8 +84,6 @@ public:
 // Usage is done through RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay,
 // so that a Vector of RemoteImageBufferSets can be used with a single
 // IPC call.
-// FIXME: It would be nice if this could actually be a subclass of ImageBufferSet, but
-// probably can't while it uses batching for prepare and volatility.
 class RemoteImageBufferSetProxy : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::MainRunLoop>, public Identified<ImageBufferSetIdentifier> {
 public:
     static Ref<RemoteImageBufferSetProxy> create(RemoteRenderingBackendProxy&, ImageBufferSetClient&);

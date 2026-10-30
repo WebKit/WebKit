@@ -15991,9 +15991,7 @@ static bool shouldBlockIOKit(const WebPreferences& preferences)
         || !preferences.captureVideoInGPUProcessEnabled()
         || !preferences.captureAudioInGPUProcessEnabled()
         || !preferences.webRTCPlatformCodecsInGPUProcessEnabled()
-        || !preferences.useGPUProcessForCanvasRenderingEnabled()
-        || !preferences.useGPUProcessForDOMRenderingEnabled()
-        || !preferences.useGPUProcessForWebGLEnabled())
+        || !preferences.useGPUProcessForCanvasRenderingEnabled())
         return false;
     return true;
 }
@@ -16222,8 +16220,9 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         parameters.webExtensionControllerParameters = weakWebExtensionController->parameters(m_configuration, process);
 #endif
 
-    // Not the same as the preference: on Cocoa, a user default, Lockdown Mode or a related page may also enable it.
+#if !PLATFORM(COCOA)
     parameters.shouldRenderDOMInGPUProcess = useGPUProcessForDOMRenderingEnabled();
+#endif
     parameters.shouldCaptureDisplayInUIProcess = m_configuration->processPool().configuration().shouldCaptureDisplayInUIProcess();
 #if ENABLE(APP_BOUND_DOMAINS)
     parameters.limitsNavigationsToAppBoundDomains = m_limitsNavigationsToAppBoundDomains;
@@ -17699,7 +17698,7 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::computePagesForPrinti
 bool WebPageProxy::shouldUseRemoteSnapshotting(const WebFrameProxy* rootFrame)
 {
     Ref preferences = this->preferences();
-    if (!preferences->remoteSnapshottingEnabled() || !preferences->useGPUProcessForDOMRenderingEnabled() || !preferences->siteIsolationEnabled())
+    if (!preferences->remoteSnapshottingEnabled() || !useGPUProcessForDOMRenderingEnabled() || !preferences->siteIsolationEnabled())
         return false;
 
     if (!rootFrame)

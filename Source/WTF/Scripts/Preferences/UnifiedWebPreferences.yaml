@@ -6661,7 +6661,7 @@ UseGPUProcessForDOMRenderingEnabled:
   category: dom
   humanReadableName: "GPU Process: DOM Rendering"
   humanReadableDescription: "Enable DOM rendering in GPU Process"
-  condition: ENABLE(GPU_PROCESS)
+  condition: ENABLE(GPU_PROCESS) && !PLATFORM(COCOA)
   excludeFrom: [ WebKitLegacy, WebCore ]
   defaultValue: defaultUseGPUProcessForDOMRenderingEnabled()
   sharedPreferenceForWebProcess: true
@@ -6694,10 +6694,9 @@ UseGPUProcessForWebGLEnabled:
   status: internal
   humanReadableName: "GPU Process: WebGL"
   humanReadableDescription: "Process all WebGL operations in GPU Process"
-  condition: ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+  condition: ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && !PLATFORM(COCOA)
   excludeFrom: [ WebKitLegacy, WebCore ]
   defaultValue:
-    "ENABLE(GPU_PROCESS_BY_DEFAULT) && ENABLE(GPU_PROCESS_WEBGL_BY_DEFAULT)": true
     "USE(GRAPHICS_LAYER_WC)": true
     default: false
   sharedPreferenceForWebProcess: true

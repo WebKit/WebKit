@@ -331,7 +331,6 @@ void ImageBuffer::setBackend(std::unique_ptr<ImageBufferBackend>&& backend)
         return;
 
     m_backend = WTF::move(backend);
-    ++m_backendGeneration;
 }
 
 IntSize ImageBuffer::backendSize() const
@@ -616,11 +615,6 @@ std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBuffer::createFlusher()
     if (auto* backend = m_backend.get())
         return backend->createFlusher();
     return nullptr;
-}
-
-unsigned ImageBuffer::backendGeneration() const
-{
-    return m_backendGeneration;
 }
 
 std::optional<ImageBufferTransferHandle> SerializedImageBuffer::sinkIntoTransferHandle(std::unique_ptr<SerializedImageBuffer> buffer)

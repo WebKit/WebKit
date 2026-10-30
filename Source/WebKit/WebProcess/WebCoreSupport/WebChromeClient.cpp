@@ -1314,15 +1314,18 @@ RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const Graphic
     WebProcess::singleton().initializePlatformDisplayIfNeeded();
     WebProcess::singleton().initializeVulkanIfNeeded();
 #endif
-#if ENABLE(GPU_PROCESS)
-    if (WebProcess::singleton().shouldUseRemoteRenderingForWebGL()) {
-        RefPtr page = m_page.get();
-        if (!page)
-            return nullptr;
-        return RemoteGraphicsContextGLProxy::create(attributes, page.releaseNonNull());
-    }
+#if ENABLE(GPU_PROCESS) && !PLATFORM(COCOA)
+    if (!WebProcess::singleton().shouldUseRemoteRenderingForWebGL())
+        return WebCore::createWebProcessGraphicsContextGL(attributes);
 #endif
+#if ENABLE(GPU_PROCESS)
+    RefPtr page = m_page.get();
+    if (!page)
+        return nullptr;
+    return RemoteGraphicsContextGLProxy::create(attributes, page.releaseNonNull());
+#else
     return WebCore::createWebProcessGraphicsContextGL(attributes);
+#endif
 }
 #endif
 
