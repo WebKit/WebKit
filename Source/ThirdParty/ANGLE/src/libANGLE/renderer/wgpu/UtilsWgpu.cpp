@@ -118,6 +118,12 @@ const char *GetWgslTextureComponentTypeFromFormat(const angle::Format &format)
     return GetWgslTextureComponentTypeFromGlComponent(format.componentType);
 }
 
+// 32-bit float formats can only be filtered with the float32-filterable feature.
+bool IsUnfilterableFloatFormat(const angle::Format &format)
+{
+    return format.componentType == GL_FLOAT && format.redBits == 32;
+}
+
 WGPUTextureSampleType GetWgpuTextureSampleType(GLenum componentType)
 {
     switch (componentType)
@@ -201,12 +207,27 @@ webgpu::ShaderModuleHandle UtilsWgpu::getBlitShaderModule(ContextWgpu *context, 
     // The source coordinate of the pixel center, in texels.
     ss << "    let texCoord = in.texOffset + in.position.xy * in.texScale;\n";
 
-    if (key.filter == GL_LINEAR && key.srcComponentType != GL_INT &&
-        key.srcComponentType != GL_UNSIGNED_INT)
+    const bool srcIsInteger =
+        key.srcComponentType == GL_INT || key.srcComponentType == GL_UNSIGNED_INT;
+    if (key.filter == GL_LINEAR && !srcIsInteger && !key.srcUnfilterable)
     {
         ss << "    let size = vec2<f32>(textureDimensions(t_source));\n";
         ss << "    var srcValue = textureSampleLevel(t_source, t_sampler, texCoord / size, "
               "0.0);\n";
+    }
+    else if (key.filter == GL_LINEAR && !srcIsInteger)
+    {
+        // Bilinear filtering in the shader, with the texels clamped to the edge.
+        ss << "    let maxCoord = vec2<i32>(textureDimensions(t_source)) - vec2<i32>(1);\n";
+        ss << "    let p = texCoord - vec2<f32>(0.5);\n";
+        ss << "    let f = fract(p);\n";
+        ss << "    let c0 = clamp(vec2<i32>(floor(p)), vec2<i32>(0), maxCoord);\n";
+        ss << "    let c1 = clamp(vec2<i32>(floor(p)) + vec2<i32>(1), vec2<i32>(0), maxCoord);\n";
+        ss << "    let top = mix(textureLoad(t_source, c0, 0), textureLoad(t_source, "
+              "vec2<i32>(c1.x, c0.y), 0), f.x);\n";
+        ss << "    let bottom = mix(textureLoad(t_source, vec2<i32>(c0.x, c1.y), 0), "
+              "textureLoad(t_source, c1, 0), f.x);\n";
+        ss << "    var srcValue = mix(top, bottom, f.y);\n";
     }
     else
     {
@@ -215,11 +236,14 @@ webgpu::ShaderModuleHandle UtilsWgpu::getBlitShaderModule(ContextWgpu *context, 
         ss << "    var srcValue = textureLoad(t_source, coord, 0);\n";
     }
 
+    // Formats without alpha read as an alpha of one, also when the actual format stores alpha,
+    // and store an alpha of one.
     ss << "    var out_rgb = srcValue.rgb;\n";
     ss << "    var out_a = srcValue.a;\n";
-    if (!key.dstIntentedFormatHasAlphaBits)
+    if (!key.srcIntendedFormatHasAlphaBits || !key.dstIntentedFormatHasAlphaBits)
     {
-        ss << "    out_a = 1.0;\n";
+        ss << "    out_a = " << GetWgslTextureComponentTypeFromGlComponent(key.srcComponentType)
+           << "(1);\n";
     }
     ss << "    return vec4<" << GetWgslTextureComponentTypeFromFormat(dstFormat)
        << ">(out_rgb, out_a);\n";
@@ -368,11 +392,16 @@ angle::Result UtilsWgpu::getBlitPipeline(ContextWgpu *context,
     bglEntries[0].visibility               = WGPUShaderStage_Fragment;
     bglEntries[0].texture.viewDimension    = WGPUTextureViewDimension_2D;
     bglEntries[0].texture.sampleType       = GetWgpuTextureSampleType(key.srcComponentType);
+    if (key.srcUnfilterable)
+    {
+        bglEntries[0].texture.sampleType = WGPUTextureSampleType_UnfilterableFloat;
+    }
 
     bglEntries[1].binding      = 1;
     bglEntries[1].visibility   = WGPUShaderStage_Fragment;
     bglEntries[1].sampler.type = WGPUSamplerBindingType_Filtering;
-    if (key.srcComponentType == GL_INT || key.srcComponentType == GL_UNSIGNED_INT)
+    if (key.srcComponentType == GL_INT || key.srcComponentType == GL_UNSIGNED_INT ||
+        key.srcUnfilterable)
     {
         bglEntries[1].sampler.type = WGPUSamplerBindingType_NonFiltering;
     }
@@ -663,18 +692,23 @@ angle::Result UtilsWgpu::blitColor(ContextWgpu *context,
                                    const BlitParams &params,
                                    const webgpu::TextureViewHandle &src,
                                    uint32_t srcSamples,
-                                   const angle::Format &srcFormat,
+                                   angle::FormatID srcIntendedFormatID,
+                                   angle::FormatID srcActualFormatID,
                                    const webgpu::TextureViewHandle &dst,
                                    angle::FormatID dstIntendedFormatID,
                                    angle::FormatID dstActualFormatID)
 {
     const DawnProcTable *wgpu              = webgpu::GetProcs(context);
+    const angle::Format &srcActualFormat   = angle::Format::Get(srcActualFormatID);
+    const angle::Format &srcIntendedFormat = angle::Format::Get(srcIntendedFormatID);
     const angle::Format &dstIntendedFormat = angle::Format::Get(dstIntendedFormatID);
     BlitKey key                            = {};
 
     key.op                            = WgpuPipelineOp::ColorBlit;
-    key.srcComponentType              = srcFormat.componentType;
+    key.srcComponentType              = srcActualFormat.componentType;
+    key.srcUnfilterable               = IsUnfilterableFloatFormat(srcActualFormat);
     key.dstActualFormatID             = dstActualFormatID;
+    key.srcIntendedFormatHasAlphaBits = srcIntendedFormat.alphaBits != 0;
     key.dstIntentedFormatHasAlphaBits = dstIntendedFormat.alphaBits != 0;
     key.srcSamples                    = srcSamples;
     key.filter                        = params.filter;
@@ -687,7 +721,7 @@ angle::Result UtilsWgpu::blitColor(ContextWgpu *context,
     samplerDesc.addressModeV          = WGPUAddressMode_ClampToEdge;
     samplerDesc.addressModeW          = WGPUAddressMode_ClampToEdge;
     samplerDesc.maxAnisotropy         = 1;
-    if (params.filter == GL_LINEAR)
+    if (params.filter == GL_LINEAR && !key.srcUnfilterable)
     {
         samplerDesc.magFilter = WGPUFilterMode_Linear;
         samplerDesc.minFilter = WGPUFilterMode_Linear;

@@ -1101,8 +1101,15 @@ angle::Result FramebufferWgpu::blitColorAttachment(const gl::Context *context,
         GetBlitParams(geometry.dstArea, geometry.dstScissor, geometry.srcArea, geometry.callSrcArea,
                       geometry.callDstArea, srcFlipY, srcLevelSize, flipY(), dstLevelSize, filter);
 
+    // A copy can't convert between formats. Formats without alpha may be stored in a format with
+    // alpha, whose stored alpha must not be read, and in which an alpha of one must be stored, so
+    // a copy into such a format would carry the source's stored alpha.
+    const bool srcHasAlpha    = angle::Format::Get(srcImage->getIntendedFormatID()).alphaBits != 0;
+    const bool dstHasAlpha    = angle::Format::Get(dstImage->getIntendedFormatID()).alphaBits != 0;
+    const bool dstStoresAlpha = angle::Format::Get(dstImage->getActualFormatID()).alphaBits != 0;
     if (srcImage->getActualFormatID() == dstImage->getActualFormatID() &&
-        srcImage->getSamples() <= 1 && IsBlitUnscaledAndUnflipped(params))
+        (!dstStoresAlpha || (srcHasAlpha && dstHasAlpha)) && srcImage->getSamples() <= 1 &&
+        IsBlitUnscaledAndUnflipped(params))
     {
         return blitWithDirectCopy(contextWgpu, readRenderTarget, drawRenderTarget, params,
                                   WGPUTextureAspect_All);
@@ -1128,16 +1135,14 @@ angle::Result FramebufferWgpu::blitColorAttachment(const gl::Context *context,
             WGPUTextureAspect_All, WGPUTextureFormat_Undefined));
     }
 
-    const angle::Format &srcAngleFormat = angle::Format::Get(srcImage->getIntendedFormatID());
-
     webgpu::TextureViewHandle srcView;
     ANGLE_TRY(srcImage->createTextureViewSingleLevel(
         readRenderTarget->getGlLevel(), readRenderTarget->getLayer(), srcView,
         WGPUTextureAspect_All, WGPUTextureFormat_Undefined));
 
-    return contextWgpu->getUtils()->blitColor(contextWgpu, params, srcView, srcImage->getSamples(),
-                                              srcAngleFormat, dstView,
-                                              dstImage->getIntendedFormatID(), dstViewFormatID);
+    return contextWgpu->getUtils()->blitColor(
+        contextWgpu, params, srcView, srcImage->getSamples(), srcImage->getIntendedFormatID(),
+        srcImage->getActualFormatID(), dstView, dstImage->getIntendedFormatID(), dstViewFormatID);
 }
 
 angle::Result FramebufferWgpu::blitDepthStencilAttachment(const gl::Context *context,

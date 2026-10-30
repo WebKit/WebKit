@@ -600,8 +600,9 @@ angle::Result TextureWgpu::generateMipmap(const gl::Context *context)
         params.dstSize    = gl_wgpu::GetExtent3D(destSize);
         params.filter     = GL_LINEAR;
         ANGLE_TRY(contextWgpu->getUtils()->blitColor(
-            contextWgpu, params, srcView, 1, format.getIntendedFormat(), dstView,
-            format.getIntendedFormatID(), format.getActualImageFormatID()));
+            contextWgpu, params, srcView, 1, format.getIntendedFormatID(),
+            format.getActualImageFormatID(), dstView, format.getIntendedFormatID(),
+            format.getActualImageFormatID()));
     }
 
     return angle::Result::Continue;

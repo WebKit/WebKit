@@ -97,17 +97,23 @@ struct BlitKey
 {
     WgpuPipelineOp op;
     GLenum srcComponentType;
+    // Whether the source format can't be sampled with a filtering sampler, so that the shader
+    // filters.
+    bool srcUnfilterable;
     angle::FormatID dstActualFormatID;
     uint32_t srcSamples;
+    bool srcIntendedFormatHasAlphaBits;
     bool dstIntentedFormatHasAlphaBits;
     GLenum filter;
 
     bool operator<(const BlitKey &other) const
     {
-        return std::tie(op, srcComponentType, dstActualFormatID, srcSamples,
-                        dstIntentedFormatHasAlphaBits, filter) <
-               std::tie(other.op, other.srcComponentType, other.dstActualFormatID, other.srcSamples,
-                        other.dstIntentedFormatHasAlphaBits, other.filter);
+        return std::tie(op, srcComponentType, srcUnfilterable, dstActualFormatID, srcSamples,
+                        srcIntendedFormatHasAlphaBits, dstIntentedFormatHasAlphaBits,
+                        filter) < std::tie(other.op, other.srcComponentType, other.srcUnfilterable,
+                                           other.dstActualFormatID, other.srcSamples,
+                                           other.srcIntendedFormatHasAlphaBits,
+                                           other.dstIntentedFormatHasAlphaBits, other.filter);
     }
 };
 
@@ -190,12 +196,13 @@ class UtilsWgpu : angle::NonCopyable
                             angle::FormatID dstActualFormatID,
                             const gl::Rectangle *scissor);
 
-    // Blits a color image by sampling it in a draw.
+    // Blits a color image by sampling it in a draw. The draw converts between the formats.
     angle::Result blitColor(ContextWgpu *context,
                             const BlitParams &params,
                             const webgpu::TextureViewHandle &src,
                             uint32_t srcSamples,
-                            const angle::Format &srcFormat,
+                            angle::FormatID srcIntendedFormatID,
+                            angle::FormatID srcActualFormatID,
                             const webgpu::TextureViewHandle &dst,
                             angle::FormatID dstIntendedFormatID,
                             angle::FormatID dstActualFormatID);
