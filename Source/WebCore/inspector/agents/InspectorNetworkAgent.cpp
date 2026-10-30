@@ -224,7 +224,8 @@ double InspectorNetworkAgent::timestamp()
 
 void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, Inspector::ResourceType type, ResourceLoader* resourceLoader)
 {
-    if (request.hiddenFromInspector()) {
+    // A redirect hop's request is rebuilt by the network layer without the hidden bit.
+    if (request.hiddenFromInspector() || m_hiddenRequestIdentifiers.contains(identifier)) {
         m_hiddenRequestIdentifiers.add(identifier);
         return;
     }
