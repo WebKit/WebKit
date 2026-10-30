@@ -7251,10 +7251,15 @@ FloatSize LocalFrameView::calculateSizeForCSSViewportUnitsOverride(std::optional
 
 FloatSize LocalFrameView::sizeForCSSDynamicViewportUnits() const
 {
+    bool useFixedLayout = this->useFixedLayout();
+
+    if (useFixedLayout && sizeForCSSSmallViewportUnits() == sizeForCSSLargeViewportUnits())
+        return fixedLayoutSize();
+
     if (m_layoutViewportOverrideRect)
         return m_layoutViewportOverrideRect->size();
 
-    if (useFixedLayout())
+    if (useFixedLayout)
         return fixedLayoutSize();
 
     if (m_frame->settings().visualViewportEnabled()) {
