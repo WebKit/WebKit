@@ -76,6 +76,39 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerOrWorkletScriptController);
 
+// SharedTask copies its functor, so this cannot be a move-only local.
+// Heap allocation has to be TZone-allocated. The last ref calls the handler.
+class ModuleLoadCompletion final : public RefCounted<ModuleLoadCompletion> {
+    WTF_MAKE_TZONE_ALLOCATED(ModuleLoadCompletion);
+public:
+    static Ref<ModuleLoadCompletion> create(CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
+    {
+        return adoptRef(*new ModuleLoadCompletion(WTF::move(completionHandler)));
+    }
+
+    ~ModuleLoadCompletion()
+    {
+        if (m_completionHandler)
+            m_completionHandler(Exception { ExceptionCode::AbortError });
+    }
+
+    void complete(std::optional<Exception>&& exception)
+    {
+        if (m_completionHandler)
+            m_completionHandler(WTF::move(exception));
+    }
+
+private:
+    explicit ModuleLoadCompletion(CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
+        : m_completionHandler(WTF::move(completionHandler))
+    {
+    }
+
+    CompletionHandler<void(std::optional<Exception>&&)> m_completionHandler;
+};
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModuleLoadCompletion);
+
 using namespace JSC;
 
 WorkerOrWorkletScriptController::WorkerOrWorkletScriptController(WorkerThreadType type, Ref<VM>&& vm, WorkerOrWorkletGlobalScope* globalScope)
@@ -526,122 +559,126 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
     JSLockHolder lock { vm };
 
     auto parameters = ModuleFetchParameters::create(JSC::ScriptFetchParameters::Type::JavaScript, emptyString(), /* isTopLevelModule */ true);
-    RefPtr globalScope = m_globalScope.get();
+    RefPtr globalScope = m_globalScope;
     auto scriptFetcher = WorkerScriptFetcher::create(WTF::move(parameters), credentials, globalScope->destination(), globalScope->referrerPolicy());
 
     auto* promise = JSExecState::loadModule(globalObject, moduleURL, &scriptFetcher->parameters(), scriptFetcher.ptr());
-    if (promise) [[likely]] {
-        auto task = createSharedTask<void(std::optional<Exception>&&)>([completionHandler = WTF::move(completionHandler)](std::optional<Exception>&& exception) mutable {
-            completionHandler(WTF::move(exception));
-        });
+    if (!promise) {
+        completionHandler(Exception { ExceptionCode::AbortError });
+        return;
+    }
 
-        auto& fulfillHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, String(), [task, scriptFetcher](JSGlobalObject* globalObject, CallFrame* callFrame) -> JSC::EncodedJSValue {
-            // task->run(std::nullopt);
-            VM& vm = globalObject->vm();
-            JSLockHolder lock { vm };
-            auto scope = DECLARE_THROW_SCOPE(vm);
+    Ref completion = ModuleLoadCompletion::create(WTF::move(completionHandler));
+    auto task = createSharedTask<void(std::optional<Exception>&&)>([completion = WTF::move(completion)](std::optional<Exception>&& exception) mutable {
+        completion->complete(WTF::move(exception));
+    });
 
-            Identifier moduleKey = jsValueToModuleKey(globalObject, callFrame->argument(0));
-            RETURN_IF_EXCEPTION(scope, { });
-            scriptFetcher->notifyLoadCompleted(*moduleKey.impl());
+    auto& fulfillHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, String(), [task, scriptFetcher](JSGlobalObject* globalObject, CallFrame* callFrame) -> JSC::EncodedJSValue {
+        // task->run(std::nullopt);
+        VM& vm = globalObject->vm();
+        JSLockHolder lock { vm };
+        auto scope = DECLARE_THROW_SCOPE(vm);
 
-            RefPtr context = downcast<WorkerOrWorkletGlobalScope>(downcast<JSDOMGlobalObject>(globalObject)->scriptExecutionContext());
-            if (!context || !context->script()) {
-                task->run(std::nullopt);
-                return JSValue::encode(jsUndefined());
-            }
+        Identifier moduleKey = jsValueToModuleKey(globalObject, callFrame->argument(0));
+        RETURN_IF_EXCEPTION(scope, { });
+        scriptFetcher->notifyLoadCompleted(*moduleKey.impl());
 
-            NakedPtr<JSC::Exception> returnedException;
-            JSPromise* promise = JSExecState::linkAndEvaluateModule(*globalObject, moduleKey, nullptr, returnedException);
-            if ((returnedException && vm.isTerminationException(returnedException)) || context->script()->isTerminatingExecution()) {
-                if (context->script())
-                    context->script()->forbidExecution();
-                task->run(std::nullopt);
-                return JSValue::encode(jsUndefined());
-            }
-
-            auto report = [context, moduleKey](JSGlobalObject* globalObject, JSValue error) {
-                String message;
-                if (context->canIncludeErrorDetails(nullptr, moduleKey.string())) {
-                    // FIXME: It's not great that this can run arbitrary code to string-ify the value of the exception.
-                    // Do we need to do anything to handle that properly, if it, say, raises another exception?
-                    message = error.toWTFString(globalObject);
-                } else
-                    message = "Script error."_s;
-                context->reportException(message, { }, { }, { }, { }, { }, nullptr, true);
-            };
-
-            if (returnedException) {
-                report(globalObject, returnedException->value());
-                task->run(std::nullopt);
-            } else {
-                JSC::JSValue onRejected = JSC::JSNativeStdFunction::create(vm, globalObject, 1, { }, [report](JSGlobalObject* globalObject, CallFrame* callFrame) -> JSC::EncodedJSValue {
-                    report(globalObject, callFrame->argument(0));
-                    return encodedJSUndefined();
-                }, promise);
-
-                promise->then(globalObject, jsUndefined(), onRejected);
-                if (JSC::Exception* exception = scope.exception()) {
-                    report(globalObject, exception->value());
-                    task->run(std::nullopt);
-                    TRY_CLEAR_EXCEPTION(scope, { });
-                } else
-                    task->run(std::nullopt);
-            }
-
+        RefPtr context = downcast<WorkerOrWorkletGlobalScope>(downcast<JSDOMGlobalObject>(globalObject)->scriptExecutionContext());
+        if (!context || !context->script()) {
+            task->run(std::nullopt);
             return JSValue::encode(jsUndefined());
-        });
+        }
 
-        auto& rejectHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, String(), [task](JSGlobalObject* globalObject, CallFrame* callFrame) {
-            VM& vm = globalObject->vm();
-            JSLockHolder lock { vm };
-            JSValue errorValue = callFrame->argument(0);
-            if (errorValue.isObject()) {
-                auto* object = JSC::asObject(errorValue);
-                if (JSValue failureKindValue = object->getDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName())) {
+        NakedPtr<JSC::Exception> returnedException;
+        JSPromise* promise = JSExecState::linkAndEvaluateModule(*globalObject, moduleKey, nullptr, returnedException);
+        if ((returnedException && vm.isTerminationException(returnedException)) || context->script()->isTerminatingExecution()) {
+            if (context->script())
+                context->script()->forbidExecution();
+            task->run(std::nullopt);
+            return JSValue::encode(jsUndefined());
+        }
+
+        auto report = [context, moduleKey](JSGlobalObject* globalObject, JSValue error) {
+            String message;
+            if (context->canIncludeErrorDetails(nullptr, moduleKey.string())) {
+                // FIXME: It's not great that this can run arbitrary code to string-ify the value of the exception.
+                // Do we need to do anything to handle that properly, if it, say, raises another exception?
+                message = error.toWTFString(globalObject);
+            } else
+                message = "Script error."_s;
+            context->reportException(message, { }, { }, { }, { }, { }, nullptr, true);
+        };
+
+        if (returnedException) {
+            report(globalObject, returnedException->value());
+            task->run(std::nullopt);
+        } else {
+            JSC::JSValue onRejected = JSC::JSNativeStdFunction::create(vm, globalObject, 1, { }, [report](JSGlobalObject* globalObject, CallFrame* callFrame) -> JSC::EncodedJSValue {
+                report(globalObject, callFrame->argument(0));
+                return encodedJSUndefined();
+            }, promise);
+
+            promise->then(globalObject, jsUndefined(), onRejected);
+            if (JSC::Exception* exception = scope.exception()) {
+                report(globalObject, exception->value());
+                task->run(std::nullopt);
+                TRY_CLEAR_EXCEPTION(scope, { });
+            } else
+                task->run(std::nullopt);
+        }
+
+        return JSValue::encode(jsUndefined());
+    });
+
+    auto& rejectHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, String(), [task](JSGlobalObject* globalObject, CallFrame* callFrame) {
+        VM& vm = globalObject->vm();
+        JSLockHolder lock { vm };
+        JSValue errorValue = callFrame->argument(0);
+        if (errorValue.isObject()) {
+            auto* object = JSC::asObject(errorValue);
+            if (JSValue failureKindValue = object->getDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName())) {
+                auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+                String message = retrieveErrorMessageWithoutName(*globalObject, vm, object, catchScope);
+                switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {
+                case ModuleFetchFailureKind::WasFetchError:
+                case ModuleFetchFailureKind::WasResolveError:
+                    task->run(Exception { ExceptionCode::TypeError, message });
+                    break;
+                case ModuleFetchFailureKind::WasPropagatedError:
+                case ModuleFetchFailureKind::WasCanceled:
+                    task->run(Exception { ExceptionCode::AbortError, message });
+                    break;
+                }
+                return JSValue::encode(jsUndefined());
+            }
+            if (object->inherits<ErrorInstance>()) {
+                auto* error = uncheckedDowncast<ErrorInstance>(object);
+                switch (error->errorType()) {
+                case ErrorType::TypeError: {
                     auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-                    String message = retrieveErrorMessageWithoutName(*globalObject, vm, object, catchScope);
-                    switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {
-                    case ModuleFetchFailureKind::WasFetchError:
-                    case ModuleFetchFailureKind::WasResolveError:
-                        task->run(Exception { ExceptionCode::TypeError, message });
-                        break;
-                    case ModuleFetchFailureKind::WasPropagatedError:
-                    case ModuleFetchFailureKind::WasCanceled:
-                        task->run(Exception { ExceptionCode::AbortError, message });
-                        break;
-                    }
+                    String message = retrieveErrorMessageWithoutName(*globalObject, vm, error, catchScope);
+                    task->run(Exception { ExceptionCode::TypeError, message });
                     return JSValue::encode(jsUndefined());
                 }
-                if (object->inherits<ErrorInstance>()) {
-                    auto* error = uncheckedDowncast<ErrorInstance>(object);
-                    switch (error->errorType()) {
-                    case ErrorType::TypeError: {
-                        auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-                        String message = retrieveErrorMessageWithoutName(*globalObject, vm, error, catchScope);
-                        task->run(Exception { ExceptionCode::TypeError, message });
-                        return JSValue::encode(jsUndefined());
-                    }
-                    case ErrorType::SyntaxError: {
-                        auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-                        String message = retrieveErrorMessageWithoutName(*globalObject, vm, error, catchScope);
-                        task->run(Exception { ExceptionCode::JSSyntaxError, message });
-                        return JSValue::encode(jsUndefined());
-                    }
-                    default:
-                        break;
-                    }
+                case ErrorType::SyntaxError: {
+                    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+                    String message = retrieveErrorMessageWithoutName(*globalObject, vm, error, catchScope);
+                    task->run(Exception { ExceptionCode::JSSyntaxError, message });
+                    return JSValue::encode(jsUndefined());
+                }
+                default:
+                    break;
                 }
             }
+        }
 
-            auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-            String message = retrieveErrorMessageWithoutName(*globalObject, vm, errorValue, catchScope);
-            task->run(Exception { ExceptionCode::AbortError, message });
-            return JSValue::encode(jsUndefined());
-        });
+        auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+        String message = retrieveErrorMessageWithoutName(*globalObject, vm, errorValue, catchScope);
+        task->run(Exception { ExceptionCode::AbortError, message });
+        return JSValue::encode(jsUndefined());
+    });
 
-        promise->then(&globalObject, &fulfillHandler, &rejectHandler);
-    }
+    promise->then(&globalObject, &fulfillHandler, &rejectHandler);
     globalScope->eventLoop().performMicrotaskCheckpoint(*m_vm);
 }
 

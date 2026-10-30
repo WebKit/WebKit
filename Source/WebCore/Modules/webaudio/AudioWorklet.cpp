@@ -43,6 +43,16 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioWorklet);
 
+AudioWorklet::~AudioWorklet()
+{
+    // Proxies are destroyed by ~Worklet, after this object's members. Release processors
+    // and stop the thread while proxy() and m_nodes are still alive.
+    if (RefPtr proxy = this->proxy()) {
+        releaseProcessors(*proxy);
+        proxy->stopThread(AudioWorkletMessagingProxy::StopThread::ThreadOnly);
+    }
+}
+
 Ref<AudioWorklet> AudioWorklet::create(BaseAudioContext& audioContext)
 {
     auto worklet = adoptRef(*new AudioWorklet(audioContext));
@@ -73,6 +83,30 @@ AudioWorkletMessagingProxy* AudioWorklet::proxy() const
 BaseAudioContext* AudioWorklet::audioContext() const
 {
     return m_audioContext.get();
+}
+
+void AudioWorklet::addNode(AudioWorkletNode& node)
+{
+    m_nodes.add(&node);
+}
+
+void AudioWorklet::removeNode(AudioWorkletNode& node)
+{
+    m_nodes.remove(&node);
+}
+
+void AudioWorklet::releaseProcessors(AudioWorkletMessagingProxy& proxy)
+{
+    for (auto& node : m_nodes) {
+        if (!node)
+            continue;
+        RefPtr processor = node->takeProcessorForThreadShutdown();
+        if (!processor)
+            continue;
+        proxy.postTaskForModeToWorkletGlobalScope([processor = WTF::move(processor)](ScriptExecutionContext& context) mutable {
+            downcast<AudioWorkletGlobalScope>(context).processorIsNoLongerNeeded(*processor);
+        }, WorkerRunLoop::defaultMode());
+    }
 }
 
 void AudioWorklet::createProcessor(const String& name, TransferredMessagePort port, Ref<SerializedScriptValue>&& options, AudioWorkletNode& node)
