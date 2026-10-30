@@ -3015,6 +3015,17 @@ ImageControlsEnabled:
   condition: ENABLE(SERVICE_CONTROLS)
   defaultValue: false
 
+ImageElementImmersiveEnabled:
+  type: bool
+  status: unstable
+  category: javascript
+  condition: ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+  humanReadableName: "Immersive <img> API"
+  humanReadableDescription: "Enable <img> element immersive API"
+  defaultValue: false
+  disableInLockdownMode: true
+  sharedPreferenceForWebProcess: true
+
 ImportDeferEnabled:
   type: bool
   status: stable

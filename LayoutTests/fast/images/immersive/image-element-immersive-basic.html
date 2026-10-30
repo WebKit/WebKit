@@ -1,0 +1,73 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementImmersiveEnabled=true ImageElementImmersiveEnabled=true shouldAcceptImmersiveEnvironmentRequests=true ] -->
+<meta charset="utf-8">
+<title>&lt;img> immersive</title>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<body>
+<script>
+
+async function createImage(t, source)
+{
+    const image = document.createElement('img');
+    image.src = source;
+    document.body.appendChild(image);
+    t.add_cleanup(() => image.remove());
+    await image.decode();
+    return image;
+}
+
+promise_test(async t => {
+    const image = await createImage(t, "resources/panorama.png");
+
+    assert_true('requestImmersive' in image, 'requestImmersive should exist');
+    assert_equals(typeof image.requestImmersive, 'function', 'requestImmersive should be a function');
+    assert_true('onimmersivechange' in image, 'onimmersivechange should exist');
+    assert_true('onimmersiveerror' in image, 'onimmersiveerror should exist');
+}, 'Immersive API exists on img');
+
+promise_test(async t => {
+    const image = await createImage(t, "../resources/green-400x400.png");
+
+    await promise_rejects_dom(t, "InvalidStateError",
+        image.requestImmersive(),
+        'Should reject an image that is not a panorama'
+    );
+
+    assert_equals(document.immersiveElement, null, 'No immersive element for an image that is not a panorama');
+}, 'Image immersive request fails for an image that is not a panorama');
+
+promise_test(async t => {
+    const image = await createImage(t, "resources/panorama.png");
+
+    await promise_rejects_dom(t, "NotAllowedError",
+        image.requestImmersive(),
+        'Should reject without user activation'
+    );
+
+    assert_equals(document.immersiveElement, null, 'No immersive element without user gesture');
+}, 'Image immersive request fails without user activation');
+
+promise_test(async t => {
+    const image = await createImage(t, "resources/panorama.png");
+
+    let errorFired = false;
+    let handlerFired = false;
+    const errorHandler = () => { errorFired = true; };
+    image.addEventListener('immersiveerror', errorHandler);
+    image.onimmersiveerror = () => { handlerFired = true; };
+
+    await promise_rejects_dom(t, "NotAllowedError",
+        image.requestImmersive(),
+        'Should reject without user activation'
+    );
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+    image.removeEventListener('immersiveerror', errorHandler);
+    image.onimmersiveerror = null;
+
+    assert_true(errorFired, 'immersiveerror event should fire on failed request');
+    assert_true(handlerFired, 'onimmersiveerror should be called on failed request');
+}, 'Immersiveerror event fires when an image request fails');
+
+</script>
+</body>

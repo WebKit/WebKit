@@ -52,6 +52,10 @@
 #include <WebCore/ModelPresentationMode.h>
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+#include <WebCore/ImmersiveElement.h>
+#endif
+
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)
 #include <WebCore/StageModeOperations.h>
 #endif
@@ -88,7 +92,11 @@ template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 template<typename> class ExceptionOr;
 
 class HTMLModelElementEventListener;
-class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient, public ModelPlayerClient, public ActiveDOMObject, public VisibilityChangeClient {
+class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient, public ModelPlayerClient, public ActiveDOMObject, public VisibilityChangeClient
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    , public ImmersiveElement
+#endif
+{
     WTF_MAKE_TZONE_ALLOCATED(HTMLModelElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLModelElement);
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
@@ -173,10 +181,7 @@ public:
     void setAnimationCurrentTime(double, DOMPromiseDeferred<void>&&);
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    bool immersive() const;
     void requestImmersive(DOMPromiseDeferred<void>&&);
-    void ensureImmersivePresentation(CompletionHandler<void(ExceptionOr<LayerHostingContextIdentifier>)>&&);
-    void exitImmersivePresentation(CompletionHandler<void()>&&);
 #endif
 
     WEBCORE_EXPORT bool LEGACY_NODELETE supportsDragging() const;
@@ -273,6 +278,17 @@ private:
     void resume() final;
     void suspend(ReasonForSuspension) final;
     void stop() final;
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    void refImmersiveElement() const final { HTMLElement::ref(); }
+    void derefImmersiveElement() const final { HTMLElement::deref(); }
+
+    HTMLElement& asHTMLElement() final { return *this; }
+    bool isImmersiveEnabled() const final;
+    void prepareImmersivePresentation(CompletionHandler<void(ExceptionOr<void>)>&&) final;
+    void presentImmersivePresentation(ChromeClient&, CompletionHandler<void(bool)>&&) final;
+    void exitImmersivePresentation(CompletionHandler<void()>&&) final;
+#endif
 
     // DOM overrides.
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
@@ -449,6 +465,7 @@ private:
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     unsigned m_immersiveDetachGeneration { 0 };
+    std::optional<LayerHostingContextIdentifier> m_immersiveContextID;
 
     Vector<CompletionHandler<void(ExceptionOr<RefPtr<ModelPlayer>>)>> m_modelPlayerCreationCallbacks;
     void ensureModelPlayer(CompletionHandler<void(ExceptionOr<RefPtr<ModelPlayer>>)>&&);

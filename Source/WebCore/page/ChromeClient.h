@@ -373,6 +373,9 @@ public:
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     virtual void allowImmersiveElement(CompletionHandler<void(bool)>&& completion) const { completion(false); }
     virtual void presentImmersiveElement(const LayerHostingContextIdentifier, CompletionHandler<void(bool)>&& completion) const { completion(false); }
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    virtual void presentImmersiveImageElement(HTMLImageElement&, CompletionHandler<void(bool)>&& completion) const { completion(false); }
+#endif
     virtual void dismissImmersiveElement(CompletionHandler<void()>&& completion) const { completion(); }
     virtual bool supportsImmersiveElement() const { return false; }
 #endif

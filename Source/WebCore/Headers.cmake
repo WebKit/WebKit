@@ -1257,6 +1257,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/FullscreenOptions.h
     dom/GCReachableRef.h
     dom/ImageOverlay.h
+    dom/ImmersiveElement.h
     dom/ImportNodeOptions.h
     dom/InlineStyleSheetOwner.h
     dom/IsSecureContext.h

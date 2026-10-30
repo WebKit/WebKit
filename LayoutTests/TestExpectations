@@ -64,6 +64,8 @@ fast/images/text-recognition [ Skip ]
 fast/images/mac [ Skip ]
 fast/images/spatial-image-controls.html [ Skip ]
 fast/images/spatial-image-controls-rtl.html [ Skip ]
+# Requires ENABLE(IMAGE_ELEMENT_IMMERSIVE), which is off on EWS.
+fast/images/immersive [ Skip ]
 # Requires ENABLE(LINEAR_MEDIA_PLAYER) or the test times out.
 media/caption-mirroring-quirk-external-playback.html [ Skip ]
 fast/sandbox/ios [ Skip ]

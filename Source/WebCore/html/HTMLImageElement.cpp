@@ -87,6 +87,11 @@
 #include "SpatialImageControls.h"
 #endif
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+#include "DocumentImmersive.h"
+#include "JSDOMPromiseDeferred.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLImageElement);
@@ -652,6 +657,11 @@ void HTMLImageElement::removingSteps(RemovalType removalType, ContainerNode& old
 
     HTMLElement::removingSteps(removalType, oldParentOfRemovedTree);
     FormAssociatedElement::elementRemovedFromAncestor(*this, removalType);
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    if (removalType.disconnectedFromDocument)
+        exitImmersiveIfNeeded();
+#endif
 }
 
 void HTMLImageElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
@@ -1201,5 +1211,66 @@ IntersectionObserverData* HTMLImageElement::intersectionObserverDataIfExists() c
 {
     return m_intersectionObserverData.get();
 }
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+
+void HTMLImageElement::suspend(ReasonForSuspension reason)
+{
+    if (reason == ReasonForSuspension::BackForwardCache)
+        exitImmersiveIfNeeded();
+}
+
+void HTMLImageElement::stop()
+{
+    exitImmersiveIfNeeded();
+}
+
+void HTMLImageElement::exitImmersiveIfNeeded()
+{
+    if (RefPtr documentImmersive = document().immersiveIfExists())
+        documentImmersive->exitRemovedImmersiveElementIfNeeded(this, [] { });
+}
+
+bool HTMLImageElement::isImmersiveEnabled() const
+{
+    return document().settings().imageElementImmersiveEnabled();
+}
+
+void HTMLImageElement::prepareImmersivePresentation(CompletionHandler<void(ExceptionOr<void>)>&& completion)
+{
+    // `src` can change while the consent prompt is up.
+    if (auto error = immersiveImageError())
+        return completion(WTF::move(*error));
+    completion({ });
+}
+
+void HTMLImageElement::presentImmersivePresentation(ChromeClient& client, CompletionHandler<void(bool)>&& completion)
+{
+    client.presentImmersiveImageElement(*this, WTF::move(completion));
+}
+
+std::optional<Exception> HTMLImageElement::immersiveImageError() const
+{
+    RefPtr image = this->image();
+    if (!image || !image->isPanorama())
+        return Exception { ExceptionCode::InvalidStateError, "requestImmersive() requires a panoramic image."_s };
+    return std::nullopt;
+}
+
+void HTMLImageElement::requestImmersive(DOMPromiseDeferred<void>&& promise)
+{
+    if (auto error = immersiveImageError())
+        return promise.reject(WTF::move(*error));
+
+    protect(document().immersive())->requestImmersive(this, [promise = WTF::move(promise)](ExceptionOr<void> result) mutable {
+        if (result.hasException()) {
+            promise.reject(result.releaseException());
+            return;
+        }
+        promise.resolve();
+    });
+}
+
+#endif
 
 }

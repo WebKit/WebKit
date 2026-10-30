@@ -1,0 +1,6 @@
+
+PASS Immersive API exists on img
+PASS Image immersive request fails for an image that is not a panorama
+PASS Image immersive request fails without user activation
+PASS Immersiveerror event fires when an image request fails
+

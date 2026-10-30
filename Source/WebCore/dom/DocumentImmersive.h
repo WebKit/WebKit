@@ -29,8 +29,7 @@
 
 #include <WebCore/Document.h>
 #include <WebCore/GCReachableRef.h>
-#include <WebCore/HTMLModelElement.h>
-#include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/ImmersiveElement.h>
 #include <wtf/Deque.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -55,12 +54,12 @@ public:
     Document& document() { return m_document; }
     const Document& document() const { return m_document; }
 
-    HTMLModelElement* immersiveElement() const;
+    ImmersiveElement* immersiveElement() const;
 
-    void requestImmersive(HTMLModelElement*, CompletionHandler<void(ExceptionOr<void>)>&&);
+    void requestImmersive(ImmersiveElement*, CompletionHandler<void(ExceptionOr<void>)>&&);
     void exitImmersive(CompletionHandler<void(ExceptionOr<void>)>&&);
     WEBCORE_EXPORT void exitImmersiveIfNeeded(CompletionHandler<void()>&& = nullptr);
-    void exitRemovedImmersiveElementIfNeeded(HTMLModelElement*, CompletionHandler<void()>&&);
+    void exitRemovedImmersiveElementIfNeeded(ImmersiveElement*, CompletionHandler<void()>&&);
 
     enum class EventType : bool { Change, Error };
     void dispatchPendingEvents();
@@ -77,30 +76,30 @@ private:
     using CompletionHandlerScope = Document::CompletionHandlerScope;
 
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
-    WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> m_immersiveElement;
-    void updateElementIsImmersive(HTMLModelElement*, bool);
+    WeakPtr<ImmersiveElement> m_immersiveElement;
+    void updateElementIsImmersive(ImmersiveElement*, bool);
 
-    WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> m_pendingImmersiveElement;
+    WeakPtr<ImmersiveElement> m_pendingImmersiveElement;
     bool m_pendingExitImmersive { false };
     CompletionHandler<void()> m_deferredRequestHandler;
     void releaseDeferredRequest();
 
     struct ActiveRequest {
-        enum class Stage : uint8_t { None, Permission, ModelPlayer, Presentation };
+        enum class Stage : uint8_t { None, Permission, Preparation, Presentation };
         Stage stage { Stage::None };
-        WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> element;
+        WeakPtr<ImmersiveElement> element;
     };
     ActiveRequest m_activeRequest;
-    std::optional<Exception> isRequestOutdated(HTMLModelElement*, ActiveRequest::Stage expectedStage);
+    std::optional<Exception> isRequestOutdated(ImmersiveElement*, ActiveRequest::Stage expectedStage);
 
     void cancelActiveRequest(CompletionHandler<void()>&&);
-    void beginImmersiveRequest(Ref<HTMLModelElement>&&, CompletionHandler<void(ExceptionOr<void>)>&&);
-    void createModelPlayerForImmersive(Ref<HTMLModelElement>&&, CompletionHandler<void(ExceptionOr<void>)>&&);
-    void presentImmersiveElement(Ref<HTMLModelElement>&&, LayerHostingContextIdentifier, CompletionHandler<void(ExceptionOr<void>)>&&);
+    void beginImmersiveRequest(Ref<ImmersiveElement>&&, CompletionHandler<void(ExceptionOr<void>)>&&);
+    void prepareImmersivePresentation(Ref<ImmersiveElement>&&, CompletionHandler<void(ExceptionOr<void>)>&&);
+    void presentImmersiveElement(Ref<ImmersiveElement>&&, CompletionHandler<void(ExceptionOr<void>)>&&);
     void dismissClientImmersivePresentation(CompletionHandler<void()>&&);
 
     enum class EmitErrorEvent : bool { No, Yes };
-    void handleImmersiveError(HTMLModelElement*, const String& message, EmitErrorEvent, ExceptionCode, CompletionHandler<void(ExceptionOr<void>)>&&);
+    void handleImmersiveError(ImmersiveElement*, const String& message, EmitErrorEvent, ExceptionCode, CompletionHandler<void(ExceptionOr<void>)>&&);
 
     Deque<std::pair<EventType, GCReachableRef<Element>>> m_pendingEvents;
 };

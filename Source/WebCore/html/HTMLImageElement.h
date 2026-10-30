@@ -33,6 +33,10 @@
 #include <wtf/Platform.h>
 #include <wtf/WeakPtr.h>
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+#include <WebCore/ImmersiveElement.h>
+#endif
+
 namespace WebCore {
 
 class CachedImage;
@@ -44,6 +48,10 @@ class HTMLMapElement;
 class Image;
 class LayoutSize;
 class SecurityOrigin;
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+template<typename IDLType> class DOMPromiseDeferred;
+#endif
 
 struct ImageCandidate;
 struct ImageOrientation;
@@ -59,6 +67,9 @@ class HTMLImageElement
     , public AttachmentAssociatedElement
 #endif
     , public FormAssociatedElement
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    , public ImmersiveElement
+#endif
     , public ActiveDOMObject {
     WTF_MAKE_TZONE_ALLOCATED(HTMLImageElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLImageElement);
@@ -192,6 +203,10 @@ public:
 
     Image* image() const;
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    void requestImmersive(DOMPromiseDeferred<void>&&);
+#endif
+
 protected:
     HTMLImageElement(const QualifiedName&, Document&);
 
@@ -213,6 +228,20 @@ private:
 
     // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    void suspend(ReasonForSuspension) final;
+    void stop() final;
+
+    void refImmersiveElement() const final { HTMLElement::ref(); }
+    void derefImmersiveElement() const final { HTMLElement::deref(); }
+
+    bool isImmersiveEnabled() const final;
+    void prepareImmersivePresentation(CompletionHandler<void(ExceptionOr<void>)>&&) final;
+    void presentImmersivePresentation(ChromeClient&, CompletionHandler<void(bool)>&&) final;
+
+    std::optional<Exception> immersiveImageError() const;
+    void exitImmersiveIfNeeded();
+#endif
 
     void didAttachRenderers() override;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;

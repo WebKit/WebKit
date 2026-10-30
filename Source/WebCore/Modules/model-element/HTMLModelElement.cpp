@@ -1988,10 +1988,9 @@ void HTMLModelElement::setAnimationCurrentTime(double currentTime, DOMPromiseDef
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
 
-bool HTMLModelElement::immersive() const
+bool HTMLModelElement::isImmersiveEnabled() const
 {
-    RefPtr documentImmersive = document().immersiveIfExists();
-    return documentImmersive && documentImmersive->immersiveElement() == this;
+    return document().settings().modelElementImmersiveEnabled();
 }
 
 void HTMLModelElement::requestImmersive(DOMPromiseDeferred<void>&& promise)
@@ -2005,7 +2004,7 @@ void HTMLModelElement::requestImmersive(DOMPromiseDeferred<void>&& promise)
     });
 }
 
-void HTMLModelElement::ensureImmersivePresentation(CompletionHandler<void(ExceptionOr<LayerHostingContextIdentifier>)>&& completion)
+void HTMLModelElement::prepareImmersivePresentation(CompletionHandler<void(ExceptionOr<void>)>&& completion)
 {
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     if (m_presentationMode == ModelPresentationMode::Volumetric) {
@@ -2044,13 +2043,23 @@ void HTMLModelElement::ensureImmersivePresentation(CompletionHandler<void(Except
                 return;
             }
 
-            completion(WTF::move(contextID.value()));
+            protectedThis->m_immersiveContextID = contextID.value();
+            completion({ });
         });
     });
 }
 
+void HTMLModelElement::presentImmersivePresentation(ChromeClient& client, CompletionHandler<void(bool)>&& completion)
+{
+    if (!m_immersiveContextID)
+        return completion(false);
+    client.presentImmersiveElement(*m_immersiveContextID, WTF::move(completion));
+}
+
 void HTMLModelElement::exitImmersivePresentation(CompletionHandler<void()>&& completion)
 {
+    m_immersiveContextID = std::nullopt;
+
     RefPtr modelPlayer = m_modelPlayer;
     if (!modelPlayer) {
         setPresentationMode(ModelPresentationMode::Inline);

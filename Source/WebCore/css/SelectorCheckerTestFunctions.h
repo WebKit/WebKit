@@ -61,6 +61,7 @@
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
 #include "DocumentImmersive.h"
+#include "HTMLModelElement.h"
 #endif
 
 #if ENABLE(VIDEO)
@@ -477,8 +478,14 @@ ALWAYS_INLINE bool matchesPictureInPicturePseudoClass(const Element& element)
 
 ALWAYS_INLINE bool matchesImmersivePseudoClass(const Element& element)
 {
-    auto* modelElement = dynamicDowncast<HTMLModelElement>(element);
-    return modelElement && modelElement->immersive();
+    if (!is<HTMLModelElement>(element) && !is<HTMLImageElement>(element))
+        return false;
+
+    RefPtr documentImmersive = element.document().immersiveIfExists();
+    if (!documentImmersive)
+        return false;
+    RefPtr immersiveElement = documentImmersive->immersiveElement();
+    return immersiveElement && &immersiveElement->asHTMLElement() == &element;
 }
 
 #endif
