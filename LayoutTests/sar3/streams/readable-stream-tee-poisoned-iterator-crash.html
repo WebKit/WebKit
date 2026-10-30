@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+const locked = Object.getOwnPropertyDescriptor(ReadableStream.prototype, "locked").get;
+
+function isReadableStream(stream)
+{
+    try {
+        locked.call(stream);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function runWithPoisonedIterator(poison)
+{
+    const originalIterator = Array.prototype[Symbol.iterator];
+    Array.prototype[Symbol.iterator] = poison;
+    try {
+        return new ReadableStream({ start(c) { c.enqueue("x"); } }).tee();
+    } finally {
+        Array.prototype[Symbol.iterator] = originalIterator;
+    }
+}
+
+function poisonedIteratorTest(label, poison)
+{
+    promise_test(async () => {
+        const branches = runWithPoisonedIterator(poison);
+        assert_equals(branches.length, 2, "tee() must return two branches");
+        assert_true(isReadableStream(branches[0]), "first branch is a ReadableStream");
+        assert_true(isReadableStream(branches[1]), "second branch is a ReadableStream");
+        await branches[0].getReader().read();
+        await branches[1].getReader().read();
+    }, label);
+}
+
+// Iterator immediately reports done, so both branches would be read out of bounds.
+poisonedIteratorTest("empty iterator", function() {
+    return { next() { return { done: true }; } };
+});
+
+// Iterator yields only the first of two elements, so the second branch would be read out of bounds.
+poisonedIteratorTest("truncated iterator", function() {
+    const array = this;
+    let i = 0;
+    return {
+        next() {
+            if (i >= 1)
+                return { done: true };
+            return { value: array[i++], done: false };
+        }
+    };
+});
+
+// Iterator yields two plain objects, which would be wrapped as InternalReadableStream without a brand check.
+poisonedIteratorTest("substituted plain objects", function() {
+    const array = this;
+    let i = 0;
+    return {
+        next() {
+            if (i >= array.length)
+                return { done: true };
+            const value = array.length === 2 ? { fake: true, idx: i } : array[i];
+            i++;
+            return { value, done: false };
+        }
+    };
+});
+
+promise_test(async () => {
+    const [branch1, branch2] = new ReadableStream({ start(c) { c.enqueue("x"); c.close(); } }).tee();
+    const results = await Promise.all([branch1.getReader().read(), branch2.getReader().read()]);
+    assert_equals(results[0].value, "x", "first branch reads the enqueued chunk");
+    assert_equals(results[1].value, "x", "second branch reads the enqueued chunk");
+}, "both branches read the enqueued chunk");
+</script>
+</body>
+</html>

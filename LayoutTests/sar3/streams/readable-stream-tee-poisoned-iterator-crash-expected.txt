@@ -1,0 +1,6 @@
+
+PASS empty iterator
+PASS truncated iterator
+PASS substituted plain objects
+PASS both branches read the enqueued chunk
+

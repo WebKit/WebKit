@@ -109,4 +109,27 @@ WEBCORE_EXPORT JSC::JSValue freezeObject(JSC::JSGlobalObject&, JSC::JSObject*);
 
 WEBCORE_EXPORT JSC::JSBoundFunction* createBoundFunction(JSC::VM&, JSC::JSGlobalObject*, JSC::JSObject* target, JSC::JSValue boundThis, JSC::ArgList, double length, ASCIILiteral sourceName);
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+JSC::JSArray* arrayFromValue(JSC::JSValue, unsigned expectedLength);
+JSC::Strong<JSC::JSObject> objectFromArrayAt(JSC::JSGlobalObject&, JSC::VM&, JSC::ThrowScope&, JSC::JSArray&, unsigned);
+template<unsigned expectedLength>
+std::optional<std::array<JSC::Strong<JSC::JSObject>, expectedLength>> getInternalBuiltinResultObjects(JSC::JSGlobalObject& globalObject, JSC::JSValue value)
+{
+    auto* array = arrayFromValue(value, expectedLength);
+    if (!array) [[unlikely]]
+        return { };
+
+    auto& vm = JSC::getVM(&globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    std::array<JSC::Strong<JSC::JSObject>, expectedLength> result;
+    for (unsigned index = 0; index < expectedLength; ++index) {
+        auto element = objectFromArrayAt(globalObject, vm, scope, *array, index);
+        if (!element) [[unlikely]]
+            return { };
+        result[index] = WTF::move(element);
+    }
+    return result;
+}
+#endif
+
 } // namespace WebCore
