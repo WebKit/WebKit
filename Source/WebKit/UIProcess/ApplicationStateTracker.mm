@@ -272,8 +272,23 @@ void ApplicationStateTracker::setWindow(UIWindow *window)
     updateApplicationBackgroundState();
 }
 
-void ApplicationStateTracker::setScene(UIScene *scene)
+static RetainPtr<UIScene> sceneForLifecycleTracking(UIScene *scene)
 {
+#if HAVE(UIKIT_KEYBOARD_INPUT_SCENE)
+    // In-process input views may be hosted in a keyboard-owned scene, which
+    // doesn't post lifecycle notifications. Follow the activation state of the scene
+    // the keyboard is being presented on behalf of instead.
+    if (RetainPtr keyboardInputScene = dynamic_objc_cast<_UIKeyboardInputScene>(scene)) {
+        if (RetainPtr targetScene = [keyboardInputScene _targetScene])
+            return targetScene;
+    }
+#endif
+    return scene;
+}
+
+void ApplicationStateTracker::setScene(UIScene *windowScene)
+{
+    RetainPtr scene = sceneForLifecycleTracking(windowScene);
     if (m_scene.get() == scene) {
         setIsInBackground(shouldBeInBackground());
         return;
@@ -292,7 +307,7 @@ void ApplicationStateTracker::setScene(UIScene *scene)
     if (!m_scene)
         return;
 
-    RELEASE_LOG(ViewState, "%p - ApplicationStateTracker: add observers for scene", this);
+    RELEASE_LOG(ViewState, "%p - ApplicationStateTracker: add observers for scene (isTargetSceneOfKeyboardInputScene=%d)", this, scene != windowScene);
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     m_didEnterBackgroundObserver = [notificationCenter addObserverForName:UISceneDidEnterBackgroundNotification object:scene queue:nil usingBlock:[weakThis = WeakPtr { *this }](NSNotification *notification) {
