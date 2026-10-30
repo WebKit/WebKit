@@ -45,7 +45,7 @@ std::expected<Ref<NativeImage>, DecodingStatus> ImageSource::currentNativeImageF
 
 void ImageSource::drawNativeImage(GraphicsContext& context, NativeImage& nativeImage, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions options)
 {
-    context.drawNativeImage(protect(nativeImage), destinationRect, sourceRect, options);
+    context.drawNativeImage(protect(nativeImage), destinationRect, sourceRect, options.rasterDrawingOptions());
 }
 
 bool ImageSource::hasSolidColor() const

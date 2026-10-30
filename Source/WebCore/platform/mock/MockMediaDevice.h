@@ -30,6 +30,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include <WebCore/CaptureDevice.h>
+#include <WebCore/Color.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/VideoPreset.h>
 

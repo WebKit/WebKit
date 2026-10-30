@@ -30,6 +30,7 @@
 #include <WebCore/ImageOrientation.h>
 #include <WebCore/ImageTypes.h>
 #include <WebCore/PlatformDynamicRangeLimit.h>
+#include <WebCore/RasterDrawingOptions.h>
 #include <initializer_list>
 #include <wtf/Forward.h>
 
@@ -117,6 +118,8 @@ struct ImageDrawingOptions {
     AllowAcceleratedApplyGainMap allowAcceleratedApplyGainMap() const { return m_allowAcceleratedApplyGainMap; }
     Headroom headroom() const { return m_headroom; }
     PlatformDynamicRangeLimit dynamicRangeLimit() const { return m_dynamicRangeLimit; }
+
+    WEBCORE_EXPORT RasterDrawingOptions rasterDrawingOptions() const;
 
 private:
     void setOption(CompositeOperator compositeOperator) { m_compositeOperator = compositeOperator; }

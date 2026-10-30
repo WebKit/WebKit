@@ -96,7 +96,7 @@ ImageDrawResult ImageAdapter::drawMultiRepresentationHEIC(GraphicsContext& conte
     if (orientation == ImageOrientation::Orientation::FromImage)
         orientation = image().orientation();
 
-    context.drawImageBuffer(*imageBuffer, destination, { options, orientation });
+    context.drawImageBuffer(*imageBuffer, destination, { options.rasterDrawingOptions(), orientation });
 
     return ImageDrawResult::DidDraw;
 }

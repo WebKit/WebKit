@@ -363,7 +363,7 @@ ImageDrawResult CachedImage::drawSVGResourceAsPattern(GraphicsContext& context, 
     auto imageRect = FloatRect { { }, size };
     auto result = drawSVGResource(imageBuffer->context(), referenced, imageRect, imageRect, options);
 
-    context.drawPattern(*imageBuffer, destination, tile, patternTransform, phase, spacing, options);
+    context.drawPattern(*imageBuffer, destination, tile, patternTransform, phase, spacing, options.rasterDrawingOptions());
     return result;
 }
 

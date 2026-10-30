@@ -78,8 +78,8 @@ public:
     void beginTransparencyLayer(CompositeOperator, BlendMode) final;
     void endTransparencyLayer() final;
     void drawFilteredImageBuffer(ImageBuffer*, const FloatRect&, Filter&, FilterResults&) final;
-    void drawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, ImageDrawingOptions) final;
-    void drawNativeImage(const NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImageDrawingOptions) final;
+    void drawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions) final;
+    void drawNativeImage(const NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions) final;
     void drawSystemImage(SystemImage&, const FloatRect&) final;
     void drawRect(const FloatRect&, float) final;
     void drawLine(const FloatPoint& point1, const FloatPoint& point2) final;
@@ -89,8 +89,8 @@ public:
     void drawPath(const Path&) final;
     void drawFocusRing(const Path&, float outlineWidth, const Color&, float zoomFactor) final;
     void drawFocusRing(const Vector<FloatRect>&, float outlineWidth, const Color&, float zoomFactor) final;
-    void drawPattern(const NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions) final;
-    void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions) final;
+    void drawPattern(const NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, RasterDrawingOptions) final;
+    void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, RasterDrawingOptions) final;
     void fillEllipse(const FloatRect&) final;
     void fillPath(const Path&) final;
     void fillRect(const FloatRect&, RequiresClipToRect) final;
@@ -104,7 +104,7 @@ public:
     void drawGlyphsImmediate(const FontBase&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& localAnchor, FontSmoothingMode) final;
     void drawDisplayList(const DisplayList&, ControlFactory&) final;
 #if ENABLE(VIDEO)
-    void drawVideoFrame(const VideoFrame&, const FloatRect& destination, ShouldDiscardAlpha, ImageDrawingOptions) final;
+    void drawVideoFrame(const VideoFrame&, const FloatRect& destination, ShouldDiscardAlpha, RasterDrawingOptions) final;
 #endif
     void strokeRect(const FloatRect&, float) final;
     void strokeEllipse(const FloatRect&) final;

@@ -63,7 +63,6 @@ class IntSize;
 class NativeImageBackend;
 class PixelBuffer;
 class ShareableBitmap;
-struct ImageDrawingOptions;
 struct ImageOrientation;
 
 class NativeImage : public ThreadSafeRefCounted<NativeImage>, public CanMakeThreadSafeCheckedPtr<NativeImage> {

@@ -49,7 +49,7 @@ class TextStream;
 namespace WebCore {
 
 class ControlFactory;
-struct ImageDrawingOptions;
+struct RasterDrawingOptions;
 
 namespace DisplayList {
 class DisplayList;
@@ -629,7 +629,7 @@ class DrawImageBuffer {
 public:
     static constexpr char name[] = "draw-image-buffer";
 
-    DrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImageDrawingOptions options)
+    DrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions options)
         : m_imageBuffer(imageBuffer)
         , m_destinationRect(destRect)
         , m_srcRect(srcRect)
@@ -640,7 +640,7 @@ public:
     ImageBuffer& imageBuffer() const { return m_imageBuffer; }
     FloatRect source() const { return m_srcRect; }
     FloatRect destinationRect() const { return m_destinationRect; }
-    ImageDrawingOptions options() const { return m_options; }
+    RasterDrawingOptions options() const { return m_options; }
 
     void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -649,14 +649,14 @@ private:
     const Ref<ImageBuffer> m_imageBuffer;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
-    ImageDrawingOptions m_options;
+    RasterDrawingOptions m_options;
 };
 
 class DrawNativeImage {
 public:
     static constexpr char name[] = "draw-native-image";
 
-    DrawNativeImage(const NativeImage& image, const FloatRect& destRect, const FloatRect& srcRect, ImageDrawingOptions options)
+    DrawNativeImage(const NativeImage& image, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions options)
         : m_image(image)
         , m_destinationRect(destRect)
         , m_srcRect(srcRect)
@@ -667,7 +667,7 @@ public:
     const NativeImage& nativeImage() const { return m_image; }
     const FloatRect& destinationRect() const LIFETIME_BOUND { return m_destinationRect; }
     const FloatRect& source() const LIFETIME_BOUND { return m_srcRect; }
-    ImageDrawingOptions options() const { return m_options; }
+    RasterDrawingOptions options() const { return m_options; }
 
     void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -676,7 +676,7 @@ private:
     const Ref<const NativeImage> m_image;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
-    ImageDrawingOptions m_options;
+    RasterDrawingOptions m_options;
 };
 
 class DrawSystemImage {
@@ -704,7 +704,7 @@ class DrawPatternNativeImage {
 public:
     static constexpr char name[] = "draw-pattern-nativeimage";
 
-    DrawPatternNativeImage(const NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options)
+    DrawPatternNativeImage(const NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, RasterDrawingOptions options)
         : m_image(image)
         , m_destination(destRect)
         , m_tileRect(tileRect)
@@ -720,7 +720,7 @@ public:
     const AffineTransform& patternTransform() const LIFETIME_BOUND { return m_patternTransform; }
     FloatPoint phase() const { return m_phase; }
     FloatSize spacing() const { return m_spacing; }
-    ImageDrawingOptions options() const { return m_options; }
+    RasterDrawingOptions options() const { return m_options; }
 
     void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -732,14 +732,14 @@ private:
     AffineTransform m_patternTransform;
     FloatPoint m_phase;
     FloatSize m_spacing;
-    ImageDrawingOptions m_options;
+    RasterDrawingOptions m_options;
 };
 
 class DrawPatternImageBuffer {
 public:
     static constexpr char name[] = "draw-pattern-imagebuffer";
 
-    DrawPatternImageBuffer(ImageBuffer& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options)
+    DrawPatternImageBuffer(ImageBuffer& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, RasterDrawingOptions options)
         : m_imageBuffer(image)
         , m_destination(destRect)
         , m_tileRect(tileRect)
@@ -755,7 +755,7 @@ public:
     const AffineTransform& patternTransform() const LIFETIME_BOUND { return m_patternTransform; }
     FloatPoint phase() const { return m_phase; }
     FloatSize spacing() const { return m_spacing; }
-    ImageDrawingOptions options() const { return m_options; }
+    RasterDrawingOptions options() const { return m_options; }
 
     void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -767,7 +767,7 @@ private:
     AffineTransform m_patternTransform;
     FloatPoint m_phase;
     FloatSize m_spacing;
-    ImageDrawingOptions m_options;
+    RasterDrawingOptions m_options;
 };
 
 class BeginTransparencyLayer {

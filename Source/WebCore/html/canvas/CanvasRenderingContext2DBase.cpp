@@ -2004,7 +2004,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
     else
         willUpdateContents(normalizedDstRect);
 
-    ImageDrawingOptions options = {
+    RasterDrawingOptions options = {
         internalFrame->orientation(),
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
         (isHDR() && usesITUR2100TF(internalFrame->colorSpace())) ? DrawsHDRContent::Yes : DrawsHDRContent::No
@@ -2091,7 +2091,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Im
         else if (auto color = firstFrame->singlePixelSolidColor())
             Image::fillWithSolidColor(context, destination, *color, options.compositeOperator());
         else
-            context.drawNativeImage(*firstFrame, destination, normalizedSrcRect, options);
+            context.drawNativeImage(*firstFrame, destination, normalizedSrcRect, options.rasterDrawingOptions());
     };
 
     auto willUpdateContentsOptions = shouldPostProcess ? defaultWillUpdateContentsOptions() : defaultWillUpdateContentsOptionsWithoutPostProcessing();
@@ -3652,7 +3652,7 @@ std::optional<double> CanvasRenderingContext2DBase::getEffectiveDynamicRangeLimi
     return effectiveDynamicRangeLimit(m_dynamicRangeLimit, displayEDRState(protect(canvasBase())).suppressEDR).value();
 }
 
-ImageDrawingOptions CanvasRenderingContext2DBase::drawingOptionsForDisplay() const
+RasterDrawingOptions CanvasRenderingContext2DBase::drawingOptionsForDisplay() const
 {
     if (!isHDR() || m_dynamicRangeLimit == PlatformDynamicRangeLimit::noLimit())
         return { };

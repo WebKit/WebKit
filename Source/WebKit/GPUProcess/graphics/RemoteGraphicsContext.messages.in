@@ -79,14 +79,14 @@ messages -> RemoteGraphicsContext Stream {
     DrawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize> glyphsAdvances, WebCore::FloatPoint localAnchor, enum:uint8_t WebCore::FontSmoothingMode smoothingMode) StreamBatched
     DrawDisplayList(WebKit::RemoteDisplayListIdentifier identifier) StreamBatched
     DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, Ref<WebCore::Filter> filter) StreamBatched
-    DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::ImageDrawingOptions options) StreamBatched
-    DrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect srcRect, struct WebCore::ImageDrawingOptions options) StreamBatched
+    DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::RasterDrawingOptions options) StreamBatched
+    DrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect srcRect, struct WebCore::RasterDrawingOptions options) StreamBatched
 #if USE(SYSTEM_PREVIEW)
     DrawBadgeSystemImage(std::optional<WebCore::RenderingResourceIdentifier> imageIdentifier, WebCore::FloatRect destinationRect) StreamBatched
 #endif
     DrawSystemImage(Ref<WebCore::SystemImage> systemImage, WebCore::FloatRect destinationRect) StreamBatched
-    DrawPatternNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect tileRect, WebCore::AffineTransform transform, WebCore::FloatPoint phase, WebCore::FloatSize spacing, struct WebCore::ImageDrawingOptions options) StreamBatched
-    DrawPatternImageBuffer(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect tileRect, WebCore::AffineTransform transform, WebCore::FloatPoint phase, WebCore::FloatSize spacing, struct WebCore::ImageDrawingOptions options) StreamBatched
+    DrawPatternNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect tileRect, WebCore::AffineTransform transform, WebCore::FloatPoint phase, WebCore::FloatSize spacing, struct WebCore::RasterDrawingOptions options) StreamBatched
+    DrawPatternImageBuffer(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect tileRect, WebCore::AffineTransform transform, WebCore::FloatPoint phase, WebCore::FloatSize spacing, struct WebCore::RasterDrawingOptions options) StreamBatched
     BeginTransparencyLayer(float opacity) StreamBatched
     BeginTransparencyLayerWithCompositeMode(struct WebCore::CompositeMode compositeMode) StreamBatched
     EndTransparencyLayer() StreamBatched
@@ -137,7 +137,7 @@ messages -> RemoteGraphicsContext Stream {
     SetURLForRect(URL link, WebCore::FloatRect destRect) StreamBatched
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    DrawVideoFrame(struct WebKit::SharedVideoFrame frame, WebCore::FloatRect rect, enum:bool WebCore::ShouldDiscardAlpha shouldDiscardAlpha, struct WebCore::ImageDrawingOptions options) NotStreamEncodable
+    DrawVideoFrame(struct WebKit::SharedVideoFrame frame, WebCore::FloatRect rect, enum:bool WebCore::ShouldDiscardAlpha shouldDiscardAlpha, struct WebCore::RasterDrawingOptions options) NotStreamEncodable
     SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
 #endif

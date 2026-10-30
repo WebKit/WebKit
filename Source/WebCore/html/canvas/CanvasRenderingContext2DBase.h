@@ -464,7 +464,7 @@ private:
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     void setDynamicRangeLimit(PlatformDynamicRangeLimit) final;
     std::optional<double> getEffectiveDynamicRangeLimitValue() const final;
-    ImageDrawingOptions drawingOptionsForDisplay() const final;
+    RasterDrawingOptions drawingOptionsForDisplay() const final;
 #endif
 
     void realizeSavesLoop();

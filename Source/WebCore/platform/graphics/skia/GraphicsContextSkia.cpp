@@ -268,7 +268,7 @@ sk_sp<SkImage> GraphicsContextSkia::imageForCurrentThread(const sk_sp<SkImage>& 
     return imageInThisThread->makeRasterImage(grContext);
 }
 
-void GraphicsContextSkia::drawNativeImage(const NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, ImageDrawingOptions options)
+void GraphicsContextSkia::drawNativeImage(const NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions options)
 {
     auto image = nativeImage.platformImage();
     if (!image)
@@ -1141,7 +1141,7 @@ static sk_sp<SkSurface> createAcceleratedSurface(const IntSize& size)
     return surface;
 }
 
-void GraphicsContextSkia::drawPattern(const NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options)
+void GraphicsContextSkia::drawPattern(const NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, RasterDrawingOptions options)
 {
     if (!patternTransform.isInvertible())
         return;

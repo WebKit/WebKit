@@ -1871,6 +1871,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/images/Image.h
     loader/images/ImageAdapter.h
     loader/images/ImageDrawingExtras.h
+    loader/images/ImageDrawingOptions.h
     loader/images/ImageObserver.h
     loader/images/SizedImage.h
 
@@ -2532,7 +2533,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageBufferTransferIdentifier.h
     platform/graphics/ImageDecoder.h
     platform/graphics/ImageDecoderIdentifier.h
-    platform/graphics/ImageDrawingOptions.h
     platform/graphics/ImageFrame.h
     platform/graphics/ImageOrientation.h
     platform/graphics/ImageResolution.h
@@ -2617,6 +2617,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PlatformVideoTrackConfiguration.h
     platform/graphics/PlatformVideoTransferCharacteristics.h
     platform/graphics/Polygon4D.h
+    platform/graphics/RasterDrawingOptions.h
     platform/graphics/Region.h
     platform/graphics/RenderingMode.h
     platform/graphics/RenderingResource.h

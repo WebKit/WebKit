@@ -107,13 +107,13 @@ public:
     void setLineJoin(LineJoin) final;
     void setMiterLimit(float) final;
 
-    void drawNativeImage(const NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImageDrawingOptions = { }) final;
+    void drawNativeImage(const NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions = { }) final;
     void drawSystemImage(SystemImage&, const FloatRect&) final;
-    void drawPattern(const NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions = { }) final;
+    void drawPattern(const NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, RasterDrawingOptions = { }) final;
     void drawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) final;
 
 #if ENABLE(VIDEO)
-    void drawVideoFrame(const VideoFrame&, const FloatRect& destination, ShouldDiscardAlpha, ImageDrawingOptions) final;
+    void drawVideoFrame(const VideoFrame&, const FloatRect& destination, ShouldDiscardAlpha, RasterDrawingOptions) final;
 #endif
 
     using GraphicsContext::scale;

@@ -329,11 +329,11 @@ private:
 
     void didUpdateState(GraphicsContextState&) final { }
 
-    void drawNativeImage(const NativeImage&, const FloatRect&, const FloatRect&, ImageDrawingOptions) final { }
+    void drawNativeImage(const NativeImage&, const FloatRect&, const FloatRect&, RasterDrawingOptions) final { }
 
     void drawSystemImage(SystemImage&, const FloatRect&) final { }
 
-    void drawPattern(const NativeImage&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, ImageDrawingOptions) final { }
+    void drawPattern(const NativeImage&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, RasterDrawingOptions) final { }
 
     IntRect clipBounds() const final { return { }; }
 
@@ -396,7 +396,7 @@ private:
     void drawFocusRing(const Path&, float, const Color&, float) final { }
     void drawFocusRing(const Vector<FloatRect>&, float, const Color&, float) final { }
 
-    void drawImageBuffer(ImageBuffer&, const FloatRect&, const FloatRect&, ImageDrawingOptions = { }) final { }
+    void drawImageBuffer(ImageBuffer&, const FloatRect&, const FloatRect&, RasterDrawingOptions = { }) final { }
 
     void clipRoundedRect(const FloatRoundedRect&) final { }
     void clipOutRoundedRect(const FloatRoundedRect&) final { }
@@ -409,7 +409,7 @@ private:
     void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) final { }
 
 #if ENABLE(VIDEO)
-    void drawVideoFrame(const VideoFrame&, const FloatRect&, ShouldDiscardAlpha, ImageDrawingOptions = { }) final { }
+    void drawVideoFrame(const VideoFrame&, const FloatRect&, ShouldDiscardAlpha, RasterDrawingOptions = { }) final { }
 #endif
 
     RenderedFonts m_renderedFonts;

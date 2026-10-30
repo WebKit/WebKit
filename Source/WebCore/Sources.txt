@@ -2239,6 +2239,7 @@ loader/cache/TrustedFonts.cpp
 loader/icon/IconLoader.cpp
 loader/images/Image.cpp
 loader/images/ImageAdapter.cpp
+loader/images/ImageDrawingOptions.cpp
 loader/images/bitmap/BitmapImage.cpp
 loader/images/bitmap/BitmapImageDescriptor.cpp
 loader/images/bitmap/BitmapImageSource.cpp
@@ -2737,7 +2738,6 @@ platform/graphics/ImageBufferBackend.cpp
 platform/graphics/ImageBufferContextSwitcher.cpp
 platform/graphics/ImageBufferDisplayListBackend.cpp
 platform/graphics/ImageDecoder.cpp
-platform/graphics/ImageDrawingOptions.cpp
 platform/graphics/ImageFrame.cpp
 platform/graphics/ImageResolution.cpp
 platform/graphics/ImageUtilities.cpp
@@ -2780,6 +2780,7 @@ platform/graphics/PlatformDynamicRangeLimit.cpp
 platform/graphics/PlatformTimeRanges.cpp
 platform/graphics/PlatformVideoColorSpace.cpp
 platform/graphics/Polygon4D.cpp
+platform/graphics/RasterDrawingOptions.cpp
 platform/graphics/Region.cpp
 platform/graphics/RenderingMode.cpp
 platform/graphics/RotationDirection.cpp

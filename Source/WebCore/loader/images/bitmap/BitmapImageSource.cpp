@@ -520,7 +520,7 @@ void BitmapImageSource::drawNativeImage(GraphicsContext& context, NativeImage& n
 {
     Ref protectedNativeImage { nativeImage };
     auto sizeBeforeDrawing = protectedNativeImage->sizeInBytes();
-    context.drawNativeImage(protectedNativeImage, destinationRect, sourceRect, options);
+    context.drawNativeImage(protectedNativeImage, destinationRect, sourceRect, options.rasterDrawingOptions());
     auto sizeAfterDrawing = protectedNativeImage->sizeInBytes();
 
     if (sizeBeforeDrawing == sizeAfterDrawing)

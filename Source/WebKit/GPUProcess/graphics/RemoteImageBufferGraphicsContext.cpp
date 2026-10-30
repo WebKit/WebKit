@@ -62,7 +62,7 @@ void RemoteImageBufferGraphicsContext::stopListeningForIPC()
     m_renderingBackend->streamConnection().stopReceivingMessages(Messages::RemoteGraphicsContext::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteImageBufferGraphicsContext::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, ImageDrawingOptions options)
+void RemoteImageBufferGraphicsContext::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, RasterDrawingOptions options)
 {
     RefPtr sourceImage = imageBuffer(imageBufferIdentifier);
     MESSAGE_CHECK(sourceImage);

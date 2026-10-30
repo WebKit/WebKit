@@ -419,7 +419,7 @@ void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect,
     comboBoxButtonContext.scale(desiredComboBoxButtonSize.width() / comboBoxButtonSize.width());
     comboBoxButtonContext.clipRoundedRect(FloatRoundedRect(FloatRect(FloatPoint::zero(), comboBoxButtonSize), CornerRadii(comboBoxButtonCornerRadii)));
     comboBoxButtonContext.translate(comboBoxButtonInset.scaled(-1));
-    comboBoxButtonContext.drawConsumingImageBuffer(WTF::move(comboBoxImageBuffer), FloatPoint::zero(), ImageDrawingOptions { ImageOrientation::Orientation::OriginBottomRight });
+    comboBoxButtonContext.drawConsumingImageBuffer(WTF::move(comboBoxImageBuffer), FloatPoint::zero(), RasterDrawingOptions { ImageOrientation::Orientation::OriginBottomRight });
 
     auto isVerticalWritingMode = style.states.contains(ControlStyle::State::VerticalWritingMode);
 

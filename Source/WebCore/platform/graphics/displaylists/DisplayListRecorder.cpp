@@ -94,7 +94,7 @@ bool Recorder::decomposeDrawGlyphsIfNeeded(const Font& font, std::span<const Gly
     return false;
 }
 
-void Recorder::drawConsumingImageBuffer(RefPtr<ImageBuffer> imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImageDrawingOptions options)
+void Recorder::drawConsumingImageBuffer(RefPtr<ImageBuffer> imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions options)
 {
     // ImageBuffer draws are recorded as ImageBuffer draws, not as NativeImage draws. So for consistency,
     // record this too. This should be removed once NativeImages are the only image types drawn from.

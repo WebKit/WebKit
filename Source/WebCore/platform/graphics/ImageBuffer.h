@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include <WebCore/AffineTransform.h>
 #include <WebCore/ImageBufferAllocator.h>
 #include <WebCore/ImageBufferBackend.h>
 #include <WebCore/ImageBufferFormat.h>

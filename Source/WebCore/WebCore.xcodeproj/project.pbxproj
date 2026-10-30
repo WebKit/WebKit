@@ -58,6 +58,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		B37D5734449A2CF7D02E4B5A /* RasterDrawingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2346E0FF92D1BDEFA870881B /* RasterDrawingOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E86B6A6E3E4C9B02D5AAD6D /* CSSValueKeywords.serialization.in in Headers */ = {isa = PBXBuildFile; fileRef = A41992C7F8B4034E8D8344E8 /* CSSValueKeywords.serialization.in */; settings = {ATTRIBUTES = (Private, ); }; };
 		4C1117D4C483A9BC36554D2F /* SVGImageElementSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 775ED9913673971DA280FD1E /* SVGImageElementSizing.h */; };
 		281A941CB72C48E5886C9BC1 /* ImageInputTypeSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 67E6257C27C4E92D1FA4CBD1 /* ImageInputTypeSizing.h */; };
@@ -7748,6 +7749,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2346E0FF92D1BDEFA870881B /* RasterDrawingOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RasterDrawingOptions.h; sourceTree = "<group>"; };
+		F4545C832C4D153807E9E90E /* RasterDrawingOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RasterDrawingOptions.cpp; sourceTree = "<group>"; };
 		02C7A954E7356C44F0D32986 /* WorkerInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerInternals.h; sourceTree = "<group>"; };
 		0CC942725BC2AC733B0941DC /* JSWorkerInternals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerInternals.cpp; sourceTree = "<group>"; };
 		2A60F92AA328DB579A254028 /* JSSimulatedWebGLContextEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSimulatedWebGLContextEvent.cpp; sourceTree = "<group>"; };
@@ -36876,8 +36879,6 @@
 				CD19FEA71F573972000C42FB /* ImageDecoder.cpp */,
 				CD19FEA61F573972000C42FB /* ImageDecoder.h */,
 				1D47658D25CCA778007AF312 /* ImageDecoderIdentifier.h */,
-				7B0C389D2ACED2F000F1FDDC /* ImageDrawingOptions.cpp */,
-				72C18A3F230B04B7006847C7 /* ImageDrawingOptions.h */,
 				5576A5621D88A70800CCC04C /* ImageFrame.cpp */,
 				5576A5631D88A70800CCC04C /* ImageFrame.h */,
 				A8748D6612CC3763001FBA41 /* ImageOrientation.h */,
@@ -37010,6 +37011,8 @@
 				A19759462A4F9AC700FEC5EA /* PlatformVideoPresentationInterface.h */,
 				CDD08AC1277E554E00EA3755 /* PlatformVideoTrackConfiguration.h */,
 				CD1F9AFC26FD38CA00617EB6 /* PlatformVideoTransferCharacteristics.h */,
+				F4545C832C4D153807E9E90E /* RasterDrawingOptions.cpp */,
+				2346E0FF92D1BDEFA870881B /* RasterDrawingOptions.h */,
 				BCAB417F13E356E800D8AAF3 /* Region.cpp */,
 				BCAB418013E356E800D8AAF3 /* Region.h */,
 				0FC5FB6429C4D7EC001EDFE5 /* RenderingMode.cpp */,
@@ -44093,6 +44096,8 @@
 				72ECA8AB2B62FBB30094F595 /* ImageAdapter.cpp */,
 				72ECA8AC2B62FBB40094F595 /* ImageAdapter.h */,
 				89AAA5F5CEBC35EFDF20580F /* ImageDrawingExtras.h */,
+				7B0C389D2ACED2F000F1FDDC /* ImageDrawingOptions.cpp */,
+				72C18A3F230B04B7006847C7 /* ImageDrawingOptions.h */,
 				BC7F44A70B9E324E00A9D081 /* ImageObserver.h */,
 				563C1375F94DDADF69B40207 /* SizedImage.h */,
 			);
@@ -48420,6 +48425,7 @@
 				27E7CA972D75735A00554A77 /* RangeBoundaryPointInlines.h in Headers */,
 				F55B3DCE1251F12D003EF269 /* RangeInputType.h in Headers */,
 				5C4A0FD725C3435000D9EE97 /* RangeResponseGenerator.h in Headers */,
+				B37D5734449A2CF7D02E4B5A /* RasterDrawingOptions.h in Headers */,
 				6E84E9E117668BF100815B68 /* RasterLayoutShape.h in Headers */,
 				A84D827C11D333ED00972990 /* RawDataDocumentParser.h in Headers */,
 				4129C9A91F59C56B009D7403 /* ReadableStreamDefaultController.h in Headers */,

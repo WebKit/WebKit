@@ -277,7 +277,7 @@ ImageDrawResult GradientImage::drawAsPattern(GraphicsContext& context, const Ren
             cached->setPatternBuffer(newBuffer.releaseNonNull(), adjustedSize, gradientHash, scaleFactor);
     }
 
-    context.drawPattern(*buffer, destination, adjustedTile, adjustedPatternCTM, phase, spacing, options);
+    context.drawPattern(*buffer, destination, adjustedTile, adjustedPatternCTM, phase, spacing, options.rasterDrawingOptions());
     return ImageDrawResult::DidDraw;
 }
 

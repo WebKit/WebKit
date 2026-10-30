@@ -193,9 +193,9 @@ void SwitchMac::drawTrack(GraphicsContext& context, const FloatRoundedRect& bord
             return;
         // FIXME: As above, not using context().platformContext() here is likely dubious.
         trackImageBuffer->context().setAlpha(1.0f - progress);
-        trackImageBuffer->context().drawConsumingImageBuffer(WTF::move(fromImage), IntPoint(), ImageDrawingOptions { CompositeOperator::SourceOver });
+        trackImageBuffer->context().drawConsumingImageBuffer(WTF::move(fromImage), IntPoint(), RasterDrawingOptions { CompositeOperator::SourceOver });
         trackImageBuffer->context().setAlpha(progress);
-        trackImageBuffer->context().drawConsumingImageBuffer(WTF::move(toImage), IntPoint(), ImageDrawingOptions { CompositeOperator::PlusLighter });
+        trackImageBuffer->context().drawConsumingImageBuffer(WTF::move(toImage), IntPoint(), RasterDrawingOptions { CompositeOperator::PlusLighter });
     }
 
     {

@@ -29,6 +29,7 @@
 #include "ImageFrame.h"
 #include "ScalableImageDecoder.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/TextStream.h>
 
 #if USE(CG)
 #include "ImageDecoderCG.h"
@@ -134,6 +135,22 @@ std::optional<std::tuple<Ref<NativeImage>, DecodingDestination>> ImageDecoder::c
     RefPtr nativeImage = NativeImage::create(WTF::move(platformImage), WTF::move(gainMap));
 
     return { { nativeImage.releaseNonNull(), decodingOptions.decodingDestination() } };
+}
+
+TextStream& operator<<(TextStream& ts, DecodingMode mode)
+{
+    switch (mode) {
+    case DecodingMode::Auto:
+        ts << "auto"_s;
+        break;
+    case DecodingMode::Synchronous:
+        ts << "synchronous"_s;
+        break;
+    case DecodingMode::Asynchronous:
+        ts << "asynchronous"_s;
+        break;
+    }
+    return ts;
 }
 
 } // namespace WebCore

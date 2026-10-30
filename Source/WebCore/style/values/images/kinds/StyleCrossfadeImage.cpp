@@ -322,7 +322,7 @@ ImageDrawResult CrossfadeImage::drawAsPattern(GraphicsContext& context, const Re
         return ImageDrawResult::DidNothing;
 
     drawCrossfade(imageBuffer->context(), renderer, concreteObjectSize, isForFirstLine);
-    context.drawPattern(*imageBuffer, destination, tile, patternTransform, phase, spacing, options);
+    context.drawPattern(*imageBuffer, destination, tile, patternTransform, phase, spacing, options.rasterDrawingOptions());
 
     return ImageDrawResult::DidDraw;
 }

@@ -345,7 +345,7 @@ void RemoteGraphicsContextProxy::drawDisplayList(const DisplayList::DisplayList&
     send(Messages::RemoteGraphicsContext::DrawDisplayList(*identifier));
 }
 
-void RemoteGraphicsContextProxy::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImageDrawingOptions options)
+void RemoteGraphicsContextProxy::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions options)
 {
     sendPendingDrawsIfNecessary();
     appendStateChangeItemIfNecessary();
@@ -358,7 +358,7 @@ void RemoteGraphicsContextProxy::drawImageBuffer(ImageBuffer& imageBuffer, const
     send(Messages::RemoteGraphicsContext::DrawImageBuffer(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options));
 }
 
-void RemoteGraphicsContextProxy::drawNativeImage(const NativeImage& image, const FloatRect& destRect, const FloatRect& srcRect, ImageDrawingOptions options)
+void RemoteGraphicsContextProxy::drawNativeImage(const NativeImage& image, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions options)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY_APIS)
     auto headroom = options.headroom();
@@ -370,7 +370,7 @@ void RemoteGraphicsContextProxy::drawNativeImage(const NativeImage& image, const
     }
     m_maxPaintedEDRHeadroom = std::max(m_maxPaintedEDRHeadroom, headroom.headroom);
     m_maxRequestedEDRHeadroom = std::max(m_maxRequestedEDRHeadroom, image.headroom().headroom);
-    ImageDrawingOptions clampedOptions(options, headroom);
+    RasterDrawingOptions clampedOptions(options, headroom);
 #endif
     sendPendingDrawsIfNecessary();
     appendStateChangeItemIfNecessary();
@@ -404,7 +404,7 @@ void RemoteGraphicsContextProxy::drawSystemImage(SystemImage& systemImage, const
     send(Messages::RemoteGraphicsContext::DrawSystemImage(systemImage, destinationRect));
 }
 
-void RemoteGraphicsContextProxy::drawPattern(const NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options)
+void RemoteGraphicsContextProxy::drawPattern(const NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, RasterDrawingOptions options)
 {
     sendPendingDrawsIfNecessary();
     appendStateChangeItemIfNecessary();
@@ -413,7 +413,7 @@ void RemoteGraphicsContextProxy::drawPattern(const NativeImage& image, const Flo
     send(Messages::RemoteGraphicsContext::DrawPatternNativeImage(image.renderingResourceIdentifier(), destRect, tileRect, patternTransform, phase, spacing, options));
 }
 
-void RemoteGraphicsContextProxy::drawPattern(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options)
+void RemoteGraphicsContextProxy::drawPattern(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, RasterDrawingOptions options)
 {
     sendPendingDrawsIfNecessary();
     appendStateChangeItemIfNecessary();
@@ -597,7 +597,7 @@ void RemoteGraphicsContextProxy::fillEllipse(const FloatRect& rect)
 }
 
 #if ENABLE(VIDEO)
-void RemoteGraphicsContextProxy::drawVideoFrame(const VideoFrame& frame, const FloatRect& destination, ShouldDiscardAlpha shouldDiscardAlpha, ImageDrawingOptions options)
+void RemoteGraphicsContextProxy::drawVideoFrame(const VideoFrame& frame, const FloatRect& destination, ShouldDiscardAlpha shouldDiscardAlpha, RasterDrawingOptions options)
 {
     sendPendingDrawsIfNecessary();
     appendStateChangeItemIfNecessary();

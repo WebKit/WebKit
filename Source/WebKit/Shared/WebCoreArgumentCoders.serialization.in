@@ -3544,19 +3544,19 @@ header: <WebCore/ImageTypes.h>
 };
 #endif
 
-[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImageDrawingOptions {
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::RasterDrawingOptions {
     WebCore::CompositeOperator compositeOperator();
     WebCore::BlendMode blendMode();
-    WebCore::DecodingMode decodingMode();
     WebCore::ImageOrientation::Orientation orientation().orientation();
     WebCore::InterpolationQuality interpolationQuality();
-    WebCore::DrawsHDRContent drawsHDRContent();
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     WebCore::InvertContent invertContent();
 #endif
+    WebCore::DrawsHDRContent drawsHDRContent();
     WebCore::Headroom headroom();
     WebCore::PlatformDynamicRangeLimit dynamicRangeLimit();
 };
+
 
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::FloatSegment {
     float begin;

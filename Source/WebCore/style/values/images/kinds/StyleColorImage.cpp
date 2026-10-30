@@ -104,7 +104,7 @@ ImageDrawResult ColorImage::drawAsPattern(GraphicsContext& context, const Render
         return ImageDrawResult::DidNothing;
 
     imageBuffer->context().fillRect(FloatRect { { }, size }, color);
-    context.drawPattern(*imageBuffer, destination, tile, patternTransform, phase, spacing, options);
+    context.drawPattern(*imageBuffer, destination, tile, patternTransform, phase, spacing, options.rasterDrawingOptions());
 
     return ImageDrawResult::DidDraw;
 }

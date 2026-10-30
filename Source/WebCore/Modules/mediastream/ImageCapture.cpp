@@ -119,7 +119,7 @@ static Ref<ImageBitmap> createImageBitmapViaDrawing(Ref<ImageBuffer>&& imageBuff
 
 static Ref<ImageBitmap> createImageBitmapFromNativeImage(Ref<ImageBuffer>&& imageBuffer, NativeImage& nativeImage, ImageOrientation orientation)
 {
-    imageBuffer->context().drawNativeImage(nativeImage, { { }, imageBuffer->backendSize() }, { { }, imageBuffer->backendSize() }, ImageDrawingOptions { orientation });
+    imageBuffer->context().drawNativeImage(nativeImage, { { }, imageBuffer->backendSize() }, { { }, imageBuffer->backendSize() }, RasterDrawingOptions { orientation });
 
     bool isOriginClean = true;
     return ImageBitmap::create(WTF::move(imageBuffer), isOriginClean);

@@ -113,7 +113,7 @@ ImageDrawResult NamedImage::drawAsPattern(GraphicsContext& context, const Render
         return ImageDrawResult::DidNothing;
 
     Theme::singleton().drawNamedImage(adjustNamedImage(renderer, m_name.value), imageBuffer->context(), size);
-    context.drawPattern(*imageBuffer, destination, tile, patternTransform, phase, spacing, options);
+    context.drawPattern(*imageBuffer, destination, tile, patternTransform, phase, spacing, options.rasterDrawingOptions());
 
     return ImageDrawResult::DidDraw;
 }

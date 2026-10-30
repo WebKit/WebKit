@@ -124,7 +124,7 @@ ImageDrawResult PaintImage::drawAsPattern(GraphicsContext& context, const Render
     if (options.drawLuminanceMask() == DrawLuminanceMask::Yes)
         buffer->convertToLuminanceMask();
 
-    context.drawPattern(*buffer, destination, adjustedTile, adjustedPatternCTM, phase, spacing, options);
+    context.drawPattern(*buffer, destination, adjustedTile, adjustedPatternCTM, phase, spacing, options.rasterDrawingOptions());
 
     return ImageDrawResult::DidDraw;
 }

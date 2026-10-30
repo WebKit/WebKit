@@ -22,6 +22,7 @@
 #pragma once
 
 #include <WebCore/AutoplayEvent.h>
+#include <WebCore/Color.h>
 #include <WebCore/ContactInfo.h>
 #include <WebCore/CornerRadii.h>
 #include <WebCore/DatabaseDetails.h>
