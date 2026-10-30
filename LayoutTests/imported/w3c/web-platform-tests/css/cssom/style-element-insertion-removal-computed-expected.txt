@@ -1,0 +1,6 @@
+Insert Test
+Remove Test
+
+PASS Styles should be recomputed correctly after a <style> element is inserted.
+PASS Styles should be recomputed correctly after a <style> element is removed.
+

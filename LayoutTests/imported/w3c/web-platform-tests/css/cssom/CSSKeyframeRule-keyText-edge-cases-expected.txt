@@ -1,0 +1,16 @@
+
+PASS setter rejects 150%
+PASS setter rejects -5%
+PASS setter accepts and normalizes .5%
+PASS setter accepts and normalizes 1e1%
+PASS setter accepts and normalizes 100.0%
+PASS setter accepts and normalizes 0.0%
+PASS setter accepts and normalizes FROM
+PASS setter accepts and normalizes To
+FAIL setter accepts and normalizes mixed-case From, TO assert_equals: expected "0%, 100%" but got "0%,100%"
+PASS setter trims whitespace
+FAIL setter trims whitespace in comma-separated selectors assert_equals: expected "25%, 75%" but got "25%,75%"
+PASS getter normalizes .5% from parsed stylesheet
+PASS getter normalizes 100.0% from parsed stylesheet
+PASS getter normalizes 1e1% from parsed stylesheet
+

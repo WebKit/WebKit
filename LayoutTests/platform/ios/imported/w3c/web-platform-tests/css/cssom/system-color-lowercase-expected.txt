@@ -1,0 +1,6 @@
+
+PASS Sanity check
+PASS Color with upper cased letter
+PASS Color with upper cased kelvin sign
+PASS Color with inherit keyword, with system color applied to parent
+

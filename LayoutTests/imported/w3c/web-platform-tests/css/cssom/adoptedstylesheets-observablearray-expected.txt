@@ -4,4 +4,8 @@ PASS document.adoptedStyleSheets should allow mutation in-place
 PASS shadowRoot.adoptedStyleSheets should allow mutation in-place
 PASS adoptedStyleSheets should return true for isArray()
 PASS adoptedStyleSheets should not expose its backing object via prototype
+FAIL adoptedStyleSheets defineProperty should reject accessors that become non-callable during descriptor conversion assert_throws_js: function "() => {
+      Reflect.defineProperty(document.adoptedStyleSheets, "reentrantAccessor",
+                             descriptor);
+    }" did not throw
 

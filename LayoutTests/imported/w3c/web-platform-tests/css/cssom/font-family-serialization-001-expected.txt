@@ -1,7 +1,7 @@
 
 FAIL Serialization of <generic-family> assert_equals: expected "generic(fangsong)" but got "-webkit-standard"
 FAIL Serialization of quoted "<generic-family>" assert_equals: expected "\"system-ui\"" but got "system-ui"
-FAIL Serialization of prefixed -webkit-<generic-family> assert_equals: expected "-webkit-generic(fangsong)" but got "-webkit-standard"
+PASS Serialization of prefixed -webkit-<generic-family>
 FAIL Serialization of NonGenericFontFamilyName,-webkit-body,-webkit-standard,-webkit-pictograph,emoji,fangsong,BlinkMacSystemFont assert_equals: expected "-webkit-body" but got "Times"
 PASS Specified: multi-word family name serializes unquoted
 PASS Specified: quoted multi-word name normalizes to unquoted
@@ -20,6 +20,9 @@ PASS Specified: quoted 'initial' stays quoted
 PASS Specified: quoted 'inherit' stays quoted
 PASS Specified: quoted 'unset' stays quoted
 PASS Specified: quoted 'default' stays quoted
+PASS Specified: quoted 'revert' stays quoted
+PASS Specified: quoted 'revert-layer' stays quoted
+PASS Specified: quoted 'revert-rule' stays quoted
 PASS Specified: double-space family name stays quoted
 PASS Specified: mixed font-family list serialization
 PASS Computed: mixed font-family list serialization
