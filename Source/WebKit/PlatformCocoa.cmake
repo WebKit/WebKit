@@ -2464,18 +2464,34 @@ WEBKIT_SYMLINK_FILES(WebKit_CopyAutomationProtocol
     FILES ${WEBKIT_DIR}/UIProcess/Automation/Automation.json
     FLATTENED
 )
-WEBKIT_SYMLINK_FILES(WebKit_CopyAutomationAtoms
-    DESTINATION ${WebKit_PRIVATE_HEADERS_DIR}/atoms
-    FILES
-        ${WEBKIT_DIR}/UIProcess/Automation/atoms/ElementAttribute.js
-        ${WEBKIT_DIR}/UIProcess/Automation/atoms/ElementDisplayed.js
-        ${WEBKIT_DIR}/UIProcess/Automation/atoms/EnterFullscreen.js
-        ${WEBKIT_DIR}/UIProcess/Automation/atoms/FindNodes.js
-        ${WEBKIT_DIR}/UIProcess/Automation/atoms/FormElementClear.js
-        ${WEBKIT_DIR}/UIProcess/Automation/atoms/FormSubmit.js
-    FLATTENED
+# Like Xcode's "Generate WebDriver Atoms" rule, inline the utils.js helpers each
+# atom calls; a plain copy leaves them referencing an undefined `utils`.
+set(WebKit_AUTOMATION_ATOMS_DIR ${WebKit_PRIVATE_HEADERS_DIR}/atoms)
+file(MAKE_DIRECTORY ${WebKit_AUTOMATION_ATOMS_DIR})
+set(WebKit_AUTOMATION_ATOMS)
+foreach (_atom
+    ElementAttribute.js
+    ElementDisplayed.js
+    EnterFullscreen.js
+    FindNodes.js
+    FormElementClear.js
+    FormSubmit.js
 )
-list(APPEND WebKit_DEPENDENCIES WebKit_CopyAutomationProtocol WebKit_CopyAutomationAtoms)
+    # Remove first: earlier builds left a symlink here into the source tree,
+    # which the script would otherwise write through.
+    add_custom_command(OUTPUT ${WebKit_AUTOMATION_ATOMS_DIR}/${_atom}
+        COMMAND ${CMAKE_COMMAND} -E rm -f ${WebKit_AUTOMATION_ATOMS_DIR}/${_atom}
+        COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-automation-atom.py
+            ${WEBKIT_DIR}/UIProcess/Automation/atoms/${_atom} ${WebKit_AUTOMATION_ATOMS_DIR}/${_atom}
+        MAIN_DEPENDENCY ${WEBKIT_DIR}/UIProcess/Automation/atoms/${_atom}
+        DEPENDS
+            ${WEBKIT_DIR}/Scripts/generate-automation-atom.py
+            ${WEBKIT_DIR}/UIProcess/Automation/atoms/utils.js
+        VERBATIM)
+    list(APPEND WebKit_AUTOMATION_ATOMS ${WebKit_AUTOMATION_ATOMS_DIR}/${_atom})
+endforeach ()
+add_custom_target(WebKit_GenerateAutomationAtoms DEPENDS ${WebKit_AUTOMATION_ATOMS})
+list(APPEND WebKit_DEPENDENCIES WebKit_CopyAutomationProtocol WebKit_GenerateAutomationAtoms)
 
 # XPC Services
 
