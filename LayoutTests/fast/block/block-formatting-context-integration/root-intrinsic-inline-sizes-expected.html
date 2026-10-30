@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.container { width: 300px; background: lightgray; margin-bottom: 10px; font-size: 20px; line-height: 20px; color: green; }
+.root { background: lightblue; padding: 2px 5px; border: 3px solid blue; }
+.inline-block { display: inline-block; vertical-align: top; }
+.float { float: left; }
+.child { background: orange; margin: 3px 0; }
+</style>
+<div class="container"><div class="root inline-block"><div class="child">xx xxxx x</div><div class="child" style="width: 50px; height: 10px"></div></div></div>
+<div class="container"><div class="root inline-block"><div class="child">xx xxxx xx xx xxxx xxx xx x xxxxx</div></div></div>
+<div class="container"><div class="root inline-block"><div class="child" style="margin: 0 10px; padding-left: 7px">xx</div><div class="child" style="width: max-content">xxx xxx</div></div></div>
+<div class="container" style="display: flow-root"><div class="root float"><div class="child">xx xxx</div><div class="child" style="min-width: 120px; height: 10px"></div></div></div>
+<div class="container" style="display: flow-root"><div class="root float"><div class="child" style="max-width: 40px">xxxx xxxx</div></div></div>
+<div class="container"><div class="root" style="display: flow-root; width: fit-content"><div class="child">xx xxxx x</div><div style="display: flow-root"><div class="child" style="width: min-content">xxx xxxxx</div></div></div></div>
+<div class="container"><div class="root" style="display: flow-root; width: min-content"><div class="child">xx xxxx x</div><div class="child" style="box-sizing: border-box; width: 60px; padding: 0 5px; height: 10px"></div></div></div>
+<div class="container"><div class="root inline-block" id="dynamic"><div class="child">x</div></div></div>
+<script>
+document.body.offsetHeight;
+document.querySelector("#dynamic .child").firstChild.data = "xx xxxxx xxx";
+</script>
