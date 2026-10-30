@@ -149,6 +149,7 @@ public struct Future: Sendable, ~Copyable {
     }
 
     /// Waits for the promise of this Future to be resolved, or for the current task to be cancelled.
+    @concurrent
     public func wait() async {
         let storage = self.storage
 
@@ -209,7 +210,7 @@ public struct ConditionTimedOut: Error, CustomStringConvertible {
 public func waitForCondition(
     _ description: String,
     timeout: Duration = .seconds(5),
-    _ condition: () async throws -> Bool
+    _ condition: @concurrent () async throws -> Bool
 ) async throws {
     let deadline = ContinuousClock.now + timeout
 
@@ -252,7 +253,7 @@ public nonisolated(nonsending) func withSwizzledObjectiveCInstanceMethod<Result,
     replacing class: AnyClass,
     name: Selector,
     with implementation: Any,
-    perform body: () async throws(Failure) -> sending Result
+    perform body: @concurrent () async throws(Failure) -> sending Result
 ) async throws(Failure) -> sending Result where Result: ~Copyable, Failure: Error {
     guard let targetMethod = unsafe class_getInstanceMethod(`class`, name) else {
         fatalError("\(`class`) does not respond to \(name)")

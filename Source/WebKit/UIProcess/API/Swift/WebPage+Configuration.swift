@@ -233,13 +233,14 @@ extension WebPage {
             case mediaCapture(WKMediaCaptureType)
         }
 
-        let decisionHandler: (Permission, WebPage.FrameInfo, WKSecurityOrigin) async -> WKPermissionDecision
+        let decisionHandler: @concurrent (Permission, WebPage.FrameInfo, WKSecurityOrigin) async -> WKPermissionDecision
 
         /// Creates a new `DeviceSensorAuthorization` using the specified policy.
         ///
         /// - Parameter decisionHandler: A closure which decides the permission decision for an authorization request,
         /// which may be based on the kind of permission, the webpage frame information, or the security origin.
-        public init(decisionHandler: @escaping (Permission, WebPage.FrameInfo, WKSecurityOrigin) async -> WKPermissionDecision) {
+        public init(decisionHandler: @escaping @concurrent (Permission, WebPage.FrameInfo, WKSecurityOrigin) async -> WKPermissionDecision)
+        {
             self.decisionHandler = decisionHandler
         }
 

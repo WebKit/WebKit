@@ -138,35 +138,35 @@ extension WebPage: Transferable {
 
         // The preferred types are roughly in order of descending losslessness.
 
-        DataRepresentation(exportedContentType: .webArchive) {
-            try await $0.webArchiveRepresentation()
+        DataRepresentation(exportedContentType: .webArchive) { @concurrent page in
+            try await page.webArchiveRepresentation()
         }
 
-        DataRepresentation(exportedContentType: .pdf) {
-            try await $0.exported(as: .pdf())
+        DataRepresentation(exportedContentType: .pdf) { @concurrent page in
+            try await page.exported(as: .pdf())
         }
 
         // FIXME: Support all the types that NSImage/UIImage support (this can't use ProxyRepresentation since it needs to be async).
         // FIXME: This is slightly inefficient since it will be converting data to an image and then back to data.
-        DataRepresentation(exportedContentType: .png) {
-            try await $0.exported(as: .image())
+        DataRepresentation(exportedContentType: .png) { @concurrent page in
+            try await page.exported(as: .image())
         }
 
         // FIXME: See if this can somehow be made synchronous, so then it can use `ProxyRepresentation` with `exportingCondition`.
-        DataRepresentation(exportedContentType: .url) {
-            try await $0.urlRepresentation()
+        DataRepresentation(exportedContentType: .url) { @concurrent page in
+            try await page.urlRepresentation()
         }
 
-        DataRepresentation(exportedContentType: .flatRTFD) {
-            try await $0.richTextRepresentation(.rtfd)
+        DataRepresentation(exportedContentType: .flatRTFD) { @concurrent page in
+            try await page.richTextRepresentation(.rtfd)
         }
 
-        DataRepresentation(exportedContentType: .rtf) {
-            try await $0.richTextRepresentation(.rtf)
+        DataRepresentation(exportedContentType: .rtf) { @concurrent page in
+            try await page.richTextRepresentation(.rtf)
         }
 
-        DataRepresentation(exportedContentType: .utf8PlainText) {
-            try await $0.plainTextRepresentation()
+        DataRepresentation(exportedContentType: .utf8PlainText) { @concurrent page in
+            try await page.plainTextRepresentation()
         }
     }
 
@@ -195,6 +195,7 @@ extension WebPage: Transferable {
     /// - Parameter representation: A configuration for a representation for a specific type of data with optional customizable properties.
     /// - Returns: The data with the specified representation type.
     /// - Throws: An error if the specified representation cannot be created from the page.
+    @concurrent
     public nonisolated func exported(as representation: ExportedContentConfiguration) async throws -> Data {
         switch representation.storage {
         case .pdf(let region, let allowTransparentBackground):

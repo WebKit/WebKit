@@ -48,7 +48,7 @@ public func withStubbedSafeBrowsingLists<Result: ~Copyable, Failure: Error>(
         ) -> Void
 
     let lookUpLists: LookUpListsBlock = { _, _, _, completionHandler in
-        Task.detached {
+        Task.detached { @concurrent in
             completionHandler(lists, nil)
         }
     }
