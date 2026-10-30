@@ -43,6 +43,8 @@
 #import "ScrollingAccelerationCurve.h"
 #import "TextRecognitionUpdateResult.h"
 #import "ViewGestureController.h"
+#import "WKClickHighlightController.h"
+#import "WKClickHighlightView.h"
 #import "WKDeferringGestureRecognizer.h"
 #import "WKMouseTrackingGestureRecognizer.h"
 #import "WKPointerTrackingGestureRecognizer.h"
@@ -405,7 +407,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     return [WKAppKitGestureController loggingDescriptionForGestureRecognizer:gesture];
 }
 
-@interface WKAppKitGestureController () <NSGestureRecognizerDelegatePrivate, WKPointerTrackingGestureRecognizerDelegate, WKPressGestureRecognizerDelegate>
+@interface WKAppKitGestureController () <NSGestureRecognizerDelegatePrivate, WKClickHighlightControllerDelegate, WKPointerTrackingGestureRecognizerDelegate, WKPressGestureRecognizerDelegate>
 @end
 
 @implementation WKAppKitGestureController {
@@ -432,11 +434,11 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     bool _suppressNextPanScrollDelta;
 
     bool _potentialClickInProgress;
-    bool _isClickHighlightIDValid;
     bool _isSuppressingSingleClickGestureForTextSelection;
 
     std::optional<WebKit::TransactionID> _layerTreeTransactionIdAtLastInteractionStart;
     Markable<WebKit::ClickIdentifier> _latestClickID;
+    RetainPtr<WKClickHighlightController> _clickHighlightController;
 
     // FIXME: Avoid bloat in WKAppKitGestureController by introducing a separate
     // gesture delegate that exclusively manages the mouse tracking recognizers.
@@ -503,6 +505,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
         return nil;
 
     _view = view;
+    _clickHighlightController = adoptNS([[WKClickHighlightController alloc] initWithDelegate:self]);
     _fastScrollTracker = makeUniqueWithoutFastMallocCheck<WebKit::WKFastScrollTracker>(WebKit::WKFastScrollTracker::init());
     _directionalScrollLockTracker = makeUniqueWithoutFastMallocCheck<WebKit::WKDirectionalScrollLockTracker>(WebKit::WKDirectionalScrollLockTracker::init());
 
@@ -2033,7 +2036,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     _latestClickID = WebKit::ClickIdentifier::generate();
     _potentialClickInProgress = true;
-    _isClickHighlightIDValid = true;
+
+    [_clickHighlightController beginRequest:*_latestClickID expectsFastCommit:YES];
 
     [webView _protectedPage]->potentialClickAtPosition(std::nullopt, WebCore::FloatPoint(position), false, *_latestClickID, WebKit::WebEventInputSource::Automation);
 }
@@ -2058,17 +2062,23 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     // instead of the DOM double-click gesture also sending it.
     auto completesDoubleClick = [self takeCompletedDOMDoubleClick] ? WebKit::CompletesDoubleClick::Yes : WebKit::CompletesDoubleClick::No;
 
+    RetainPtr clickHighlightController = _clickHighlightController;
+    [clickHighlightController showPendingHighlightForCommittedClick];
+
     auto modifiers = WebKit::WebEventFactory::toWebEventModifierFlags([gesture modifierFlags]);
     [webView _protectedPage]->commitPotentialClick(std::nullopt, modifiers, *_layerTreeTransactionIdAtLastInteractionStart, WebCore::mousePointerID, completesDoubleClick);
+
+    [clickHighlightController fadeUnlessAwaitingHighlight];
 }
 
 - (void)_handleClickCancelled
 {
+    [protect(_clickHighlightController) cancel];
+
     if (!_potentialClickInProgress)
         return;
 
     _potentialClickInProgress = false;
-    _isClickHighlightIDValid = false;
 
     if (RetainPtr webView = _view.get())
         [webView _protectedPage]->cancelPotentialClick();
@@ -2094,20 +2104,20 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     return _potentialClickInProgress;
 }
 
+- (WKClickHighlightController *)clickHighlightController
+{
+    return _clickHighlightController.get();
+}
+
 - (void)didGetClickHighlightForRequest:(WebKit::ClickIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads cornerRadii:(WebCore::CornerRadii&&)cornerRadii nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling
 {
     RetainPtr webView = _view.get();
     if (!webView)
         return;
 
-    if (!_isClickHighlightIDValid || _latestClickID != requestID)
-        return;
-
-    _isClickHighlightIDValid = false;
-
-    // FIXME: Bring up support for click highlighting here.
-
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Received click highlight for request %llu, nodeHasBuiltInClickHandling=%d", requestID.toUInt64(), nodeHasBuiltInClickHandling);
+
+    [protect(_clickHighlightController) didReceiveHighlightForRequest:requestID color:color quads:highlightedQuads cornerRadii:WTF::move(cornerRadii) nodeHasBuiltInClickHandling:nodeHasBuiltInClickHandling];
 }
 
 - (void)disableDoubleClickGesturesDuringClickIfNecessary:(WebKit::ClickIdentifier)requestID
@@ -2156,6 +2166,51 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Click at (%d, %d) was not handled as click", point.x(), point.y());
 
     // FIXME: Consider smart magnification here if a double-click is pending and the point hasn't moved significantly.
+}
+
+#pragma mark - WKClickHighlightControllerDelegate
+
+- (void)clickHighlightController:(WKClickHighlightController *)controller installHighlightView:(WKClickHighlightView *)highlightView
+{
+    if (RetainPtr webView = _view.get())
+        protect([webView _impl])->installClickHighlightView(highlightView);
+}
+
+- (CGFloat)clickHighlightControllerContentScale:(WKClickHighlightController *)controller
+{
+    // The highlighted quads are already in view coordinates.
+    return 1;
+}
+
+- (CGFloat)clickHighlightControllerCornerRadiusScale:(WKClickHighlightController *)controller
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return 1;
+
+    RefPtr page = [webView _protectedPage];
+    return page->pageScaleFactor() * page->viewScaleFactor();
+}
+
+- (WebCore::FloatRect)clickHighlightControllerUnobscuredRect:(WKClickHighlightController *)controller
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return { };
+
+    WebCore::FloatRect unobscuredRect { [webView bounds] };
+    unobscuredRect.contract([webView _protectedPage]->obscuredContentInsets());
+    return unobscuredRect;
+}
+
+- (WebCore::FloatRect)clickHighlightControllerBoundaryRect:(WKClickHighlightController *)controller
+{
+    return [self clickHighlightControllerUnobscuredRect:controller];
+}
+
+- (BOOL)clickHighlightControllerIsPotentialClickInProgress:(WKClickHighlightController *)controller
+{
+    return _potentialClickInProgress;
 }
 
 #endif
@@ -2575,6 +2630,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _textSelectionDragCompletionHandler = nullptr;
     _dragGestureHasSentMouseDown = false;
     _dragGestureDidReceiveDragStart = false;
+}
+
+- (void)cancelClickHighlight
+{
+    [protect(_clickHighlightController) cancel];
 }
 
 - (void)reset

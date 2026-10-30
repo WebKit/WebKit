@@ -133,6 +133,21 @@ extension WebPage {
         backingWebView.isPoint(inScrollbar: locationInView)
     }
 
+    /// The frame of the most recently shown click highlight, in view coordinates, or `.zero` if none has been shown.
+    public var clickHighlightRect: CGRect {
+        backingWebView._clickHighlightRectForTesting
+    }
+
+    /// Whether a click highlight is currently shown.
+    public var isShowingClickHighlight: Bool {
+        backingWebView._isShowingClickHighlightForTesting
+    }
+
+    /// The color of the most recent click highlight.
+    public var clickHighlightColor: NSColor? {
+        backingWebView._clickHighlightColorForTesting
+    }
+
     /// Sends a left mouse-down NSEvent to the web view at the given location.
     ///
     /// - Parameter location: The location in window coordinates.

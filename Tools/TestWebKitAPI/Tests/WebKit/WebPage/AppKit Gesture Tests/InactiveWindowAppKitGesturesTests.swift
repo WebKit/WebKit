@@ -94,6 +94,28 @@ extension AppKitGesturesTests.InactiveWindow {
         }
         #expect(clickCount == 0)
     }
+
+    @Test
+    func singleClickIntoInactiveWindowDoesNotShowClickHighlight() async throws {
+        let html = """
+            <body style="margin: 0">
+            <a id="target" href="#" style="display: block; width: 200px; height: 50px;">Link</a>
+            </body>
+            """
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let targetBounds = try await screenBounds(ofElementWithID: "target")
+
+        await recap.play { composer in
+            composer._wk_click(at: targetBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        #expect(page.clickHighlightRect == .zero)
+    }
 }
 
 #endif

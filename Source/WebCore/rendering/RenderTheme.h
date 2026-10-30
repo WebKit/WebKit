@@ -210,7 +210,7 @@ public:
 
 #if ENABLE(CSS_TAP_HIGHLIGHT_COLOR)
     static Color tapHighlightColor();
-    virtual Color platformTapHighlightColor() const;
+    WEBCORE_EXPORT virtual Color platformTapHighlightColor() const;
 #endif
     virtual void platformColorsDidChange();
 

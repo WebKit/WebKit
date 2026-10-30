@@ -4891,4 +4891,125 @@ extension AppKitGesturesTests.Basic {
     }
 }
 
+extension AppKitGesturesTests.Basic {
+    @Test(arguments: [0, 300])
+    func singleClickOnLinkShowsClickHighlight(scrollOffset: Int) async throws {
+        try await loadClickHighlightTarget(
+            "<a id='target' href='#' style='display: block; position: absolute; left: 100px; top: \(200 + scrollOffset)px; width: 200px; height: 50px;'>Link</a>",
+            scrollOffset: scrollOffset
+        )
+
+        try await clickTarget()
+
+        let expectedRect = try await viewRect(ofElementWithID: "target").insetBy(dx: -4, dy: -4)
+        #expect(page.clickHighlightRect == expectedRect)
+        #expect((page.clickHighlightColor?.alphaComponent ?? 0) > 0)
+    }
+
+    @Test
+    func clickHighlightFadesOutAfterClick() async throws {
+        try await loadClickHighlightTarget("<a id='target' href='#' style='display: block; width: 200px; height: 50px;'>Link</a>")
+
+        try await clickTarget()
+
+        #expect(page.clickHighlightRect != .zero)
+        try await waitForCondition("The click highlight fades out") {
+            !page.isShowingClickHighlight
+        }
+    }
+
+    @Test
+    func singleClickOnLargeClickableElementDoesNotShowClickHighlight() async throws {
+        try await loadClickHighlightTarget("<div id='target' style='width: 600px; height: 400px;'></div>")
+
+        try await clickTarget()
+
+        #expect(page.clickHighlightRect == .zero)
+    }
+
+    @Test
+    func singleClickOnLargeButtonShowsClickHighlight() async throws {
+        try await loadClickHighlightTarget("<button id='target' style='width: 600px; height: 400px;'>Button</button>")
+
+        try await clickTarget()
+
+        let expectedRect = try await viewRect(ofElementWithID: "target").insetBy(dx: -4, dy: -4)
+        #expect(page.clickHighlightRect == expectedRect)
+    }
+
+    @Test
+    func clickHighlightHonorsTransparentStyle() async throws {
+        try await loadClickHighlightTarget(
+            "<a id='target' href='#' style='display: block; width: 200px; height: 50px; \(transparentClickHighlightStyle)'>Link</a>"
+        )
+
+        try await clickTarget()
+
+        #expect(page.clickHighlightRect != .zero)
+        #expect(page.clickHighlightColor?.alphaComponent == 0)
+    }
+
+    @Test(arguments: [false, true])
+    func singleClickOnTextFieldShowsClickHighlightUnlessFocused(focused: Bool) async throws {
+        try await loadClickHighlightTarget(
+            "<input id='target' style='position: absolute; left: 100px; top: 100px; width: 300px; height: 40px; font-size: 20px;'>"
+        )
+
+        if focused {
+            try await page.callJavaScript {
+                "document.getElementById('target').focus();"
+            }
+            await page.waitForNextPresentationUpdate()
+        }
+
+        try await clickTarget()
+
+        if focused {
+            #expect(page.clickHighlightRect == .zero)
+        } else {
+            let expectedRect = try await viewRect(ofElementWithID: "target").insetBy(dx: -4, dy: -4)
+            #expect(page.clickHighlightRect == expectedRect)
+        }
+    }
+
+    private func loadClickHighlightTarget(_ markup: String, scrollOffset: Int = 0) async throws {
+        let html = """
+            <body style="margin: 0; height: 3000px;">
+            \(markup)
+            <script>
+            document.getElementById("target").addEventListener("click", event => {
+                event.preventDefault();
+                window.didClickTarget = true;
+            });
+            window.scrollTo(0, \(scrollOffset));
+            </script>
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+    }
+
+    private func clickTarget() async throws {
+        let targetBounds = try await screenBounds(ofElementWithID: "target")
+
+        await recap.play { composer in
+            composer._wk_click(at: targetBounds.center, for: .seconds(0.05))
+        }
+
+        await page.waitForPendingMouseEvents()
+        try await waitForCondition("The target is clicked") {
+            try await page.callJavaScript(returning: Bool.self) {
+                "return !!window.didClickTarget;"
+            }
+        }
+        await page.waitForNextPresentationUpdate()
+    }
+
+    private func viewRect(ofElementWithID id: String) async throws -> CGRect {
+        let viewportRect = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: id))
+        return CGRect(viewportRect).offsetBy(dx: 0, dy: Self.topInset)
+    }
+}
+
 #endif

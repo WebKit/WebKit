@@ -197,6 +197,16 @@ struct ClickHighlightInformation {
     return [_highlightView frame];
 }
 
+- (WebCore::Color)highlightColor
+{
+    return _highlightInformation.color;
+}
+
+- (BOOL)isShowingHighlight
+{
+    return !![_highlightView superview];
+}
+
 - (BOOL)_shouldPaintHighlightInRect:(const WebCore::FloatRect&)rect
 {
     // FIXME: <https://webkit.org/b/328335> Make paint decision based on input type rather than a blanket platform policy.

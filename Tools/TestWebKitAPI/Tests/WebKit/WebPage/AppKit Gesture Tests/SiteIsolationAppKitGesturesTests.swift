@@ -127,6 +127,70 @@ extension AppKitGesturesTests.SiteIsolation {
         }
     }
 
+    @Test(arguments: [0, 100])
+    func singleClickOnLinkInCrossSiteIframeShowsClickHighlight(mainFrameScrollOffset: Int) async throws {
+        let iframeHTML = """
+            <body style="margin: 0">
+            <a id="target" href="#" style="display: block; position: absolute; left: 50px; top: 40px; width: 200px; height: 50px;">Link</a>
+            <script>
+            document.getElementById("target").addEventListener("click", event => {
+                event.preventDefault();
+                window.didClickTarget = true;
+            });
+            </script>
+            </body>
+            """
+
+        var server = try HTTPServer(protocol: .http) {
+            Route("/iframe") {
+                iframeHTML
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let iframeURL = serverConfiguration.localhostAddress.appending(path: "iframe")
+            let html = """
+                <body style="margin: 0; height: 3000px;">
+                <iframe id="iframe" src="\(iframeURL.absoluteString)"
+                    style="position: absolute; left: 100px; top: 250px; width: 600px; height: 200px; border: none;"></iframe>
+                </body>
+                """
+            try await page.load(html: html, baseURL: serverConfiguration.address).wait()
+            try await page.callJavaScript {
+                "window.scrollTo(0, \(mainFrameScrollOffset));"
+            }
+            await page.waitForNextPresentationUpdate()
+
+            let iframeInfo = try await #require(page.mainFrame?.childFrames.first?.info)
+            let iframe = WebPage.FrameInfo(iframeInfo)
+
+            let iframeRect = try await CGRect(page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: "iframe")))
+            let targetRectInIframe = try await CGRect(
+                page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: "target"), in: iframe)
+            )
+            let iframeScreenBounds = try await screenBounds(ofElementWithID: "iframe")
+            let targetScreenBounds = targetRectInIframe.offsetBy(dx: iframeScreenBounds.minX, dy: iframeScreenBounds.minY)
+
+            await recap.play { composer in
+                composer._wk_click(at: targetScreenBounds.center, for: .seconds(0.05))
+            }
+
+            await page.waitForPendingMouseEvents()
+            try await waitForCondition("The target is clicked") {
+                try await page.callJavaScript(returning: Bool.self, in: iframe) {
+                    "return !!window.didClickTarget;"
+                }
+            }
+            await page.waitForNextPresentationUpdate()
+
+            let expectedRect =
+                targetRectInIframe
+                .offsetBy(dx: iframeRect.minX, dy: iframeRect.minY + Self.topInset)
+                .insetBy(dx: -4, dy: -4)
+            #expect(page.clickHighlightRect == expectedRect)
+        }
+    }
+
     // Bounding client rects in the iframe are relative to its viewport, so they are offset by the position of the iframe.
     private func screenBoundsOfTextInIframe(_ text: String, in iframe: WebPage.FrameInfo) async throws -> CGRect {
         let range = try #require(Self.text.utf16Range(of: text))

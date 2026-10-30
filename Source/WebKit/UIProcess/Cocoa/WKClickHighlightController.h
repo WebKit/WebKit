@@ -68,6 +68,8 @@
 
 @property (nonatomic) BOOL usesDebugAppearance;
 @property (nonatomic, readonly) CGRect highlightViewFrame;
+@property (nonatomic, readonly) WebCore::Color highlightColor;
+@property (nonatomic, readonly) BOOL isShowingHighlight;
 
 @end
 

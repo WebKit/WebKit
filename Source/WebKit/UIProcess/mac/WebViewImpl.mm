@@ -2658,6 +2658,8 @@ void WebViewImpl::pageDidScroll(const IntPoint& scrollOffset)
     // While a selection-drag is autoscrolling, keep extending the selection toward the
     // last drag point as the content scrolls underneath it.
     [m_textSelectionController reextendSelectionForAutoscrollIfNeeded];
+
+    [m_appKitGestureController cancelClickHighlight];
 #endif
 
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
@@ -3994,6 +3996,10 @@ void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     [std::exchange(m_lastContextMenuTranslationPopover, nil).get() close];
+#endif
+
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    [m_appKitGestureController cancelClickHighlight];
 #endif
 }
 
@@ -8435,6 +8441,11 @@ void WebViewImpl::invalidateCachedPositionInformation()
 void WebViewImpl::positionInformationDidChange(const InteractionInformationAtPosition& info)
 {
     [m_appKitGestureController positionInformationDidChange:info];
+}
+
+void WebViewImpl::installClickHighlightView(NSView *highlightView)
+{
+    [protect(view()) addSubview:highlightView positioned:NSWindowAbove relativeTo:m_layerHostingView];
 }
 
 void WebViewImpl::beginSuppressingSingleClickGestureForTextSelection()

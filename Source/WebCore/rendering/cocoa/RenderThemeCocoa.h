@@ -103,6 +103,10 @@ public:
     void adjustTextControlInnerPlaceholderStyle(Style::ComputedStyle&, const Style::ComputedStyle&, const Element*) const final;
     bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
 
+#if ENABLE(CSS_TAP_HIGHLIGHT_COLOR)
+    Color platformTapHighlightColor() const final { return SRGBA<uint8_t> { 26, 26, 26, 77 } ; }
+#endif
+
 protected:
     virtual Color pictureFrameColor(const RenderElement&);
 #if ENABLE(ATTACHMENT_ELEMENT)
