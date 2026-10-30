@@ -505,10 +505,9 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
         // legacy path) fails to repopulate it.
         m_resolvedTrackList.invalidate();
 
-        if (layoutUsingGridFormattingContext()) {
-            endAndCommitUpdateScrollInfoAfterLayoutTransaction();
+        // GridLayout::layout() commits the scroll info transaction begun above.
+        if (layoutUsingGridFormattingContext())
             return;
-        }
 
         // Fieldsets need to find their legend and position it inside the border of the object.
         // The legend then gets skipped during normal layout. The same is true for ruby text.

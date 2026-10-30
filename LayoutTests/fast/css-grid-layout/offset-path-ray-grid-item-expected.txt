@@ -1,0 +1,5 @@
+
+PASS offset-path ray() on a grid item starts at the center of its containing block
+PASS offset-path ray() on an out-of-flow descendant whose containing block is the grid
+PASS offset-path ray() follows the grid when its size changes
+

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+body { margin: 0; }
+.grid { display: grid; grid-template-columns: 100px 60px; position: relative; width: 200px; margin-bottom: 20px; }
+#grid1 { grid-template-rows: 20px 40px; }
+#grid2 { height: 60px; }
+.item { grid-column: 2; width: 20px; height: 20px; background: green; offset-path: ray(90deg); offset-distance: 0px; }
+.plain { grid-column: 2; height: 20px; }
+.abspos { position: absolute; left: 10px; top: 5px; width: 20px; height: 20px; background: blue; offset-path: ray(90deg); offset-distance: 0px; }
+</style>
+<div id="grid1" class="grid"><div id="item1" class="item"></div></div>
+<div id="grid2" class="grid"><div class="plain"><div id="abspos2" class="abspos"></div></div></div>
+<script>
+function offsetIn(id, gridId) {
+    let box = document.getElementById(id).getBoundingClientRect();
+    let grid = document.getElementById(gridId).getBoundingClientRect();
+    return [box.left - grid.left, box.top - grid.top];
+}
+test(() => {
+    assert_array_equals(offsetIn("item1", "grid1"), [90, 20]);
+}, "offset-path ray() on a grid item starts at the center of its containing block");
+test(() => {
+    assert_array_equals(offsetIn("abspos2", "grid2"), [90, 20]);
+}, "offset-path ray() on an out-of-flow descendant whose containing block is the grid");
+test(() => {
+    // Chrome does not recompute the offset-path of an unchanged box when only the grid's size changes, so
+    // touch the box's own offset-distance to make the grid lay out with the box registered again.
+    for (let id of ["grid1", "grid2"])
+        document.getElementById(id).style.width = "300px";
+    document.getElementById("grid2").style.height = "80px";
+    for (let id of ["item1", "abspos2"]) {
+        document.getElementById(id).style.offsetDistance = "1px";
+        document.getElementById(id).getBoundingClientRect();
+        document.getElementById(id).style.offsetDistance = "0px";
+    }
+    assert_array_equals(offsetIn("item1", "grid1"), [140, 20]);
+    assert_array_equals(offsetIn("abspos2", "grid2"), [140, 30]);
+}, "offset-path ray() follows the grid when its size changes");
+</script>

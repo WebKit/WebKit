@@ -438,9 +438,18 @@ void GridLayout::layout()
     };
     gridBoxRenderer().setGridFormattingContextBaselines(borderBoxOffset(baselines.first), borderBoxOffset(baselines.last));
     populateGridPositions(usedTrackSizes, collapsedColumnTracks, collapsedRowTracks);
-    layoutOutOfFlowBoxes();
 
     CheckedRef renderGrid = gridBoxRenderer();
+    // Closes the transaction RenderGrid::layoutGrid() began. Like the other containers, commit it before the transforms
+    // and the overflow are updated: committing relays out a box whose scrollbar changed, and that box registers
+    // with this container again if its offset-path depends on its containing block.
+    renderGrid->endAndCommitUpdateScrollInfoAfterLayoutTransaction();
+    // Taking the boxes registered for this container drains both the in-flow and the out-of-flow ones, and an
+    // out-of-flow box registers while it is laid out, so the in-flow update has to run before out-of-flow layout.
+    renderGrid->updateInFlowDescendantTransformsAfterLayout();
+    layoutOutOfFlowBoxes();
+    renderGrid->updateOutOfFlowDescendantTransformsAfterLayout();
+
     renderGrid->updateLogicalHeight();
     updateOverflow(renderGrid);
 
