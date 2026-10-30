@@ -48,6 +48,10 @@
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/MakeString.h>
 
+#if USE(LIBWEBRTC)
+#include "RealtimeIncomingVideoSource.h"
+#endif
+
 using namespace WebCore;
 
 static GstStaticPadTemplate videoSrcTemplate = GST_STATIC_PAD_TEMPLATE("video_src%u", GST_PAD_SRC, GST_PAD_SOMETIMES,
@@ -525,6 +529,16 @@ private:
             lazyInitialize(m_trackSource, Ref { m_track->source() });
 
         GRefPtr pad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
+#if USE(LIBWEBRTC)
+        // The player's key frame requests go to the remote sender, as libwebrtc's own decoders' do.
+        if (m_isIncomingVideoSource) {
+            m_keyFrameRequestPadProbeHandle = PadProbeHandle<RealtimeIncomingVideoSource>::create(downcast<RealtimeIncomingVideoSource>(trackSource), GRefPtr(pad), GST_PAD_PROBE_TYPE_EVENT_UPSTREAM, [](const auto& source, const auto&, auto info) -> GstPadProbeReturn {
+                if (gst_video_event_is_force_key_unit(GST_PAD_PROBE_INFO_EVENT(info)))
+                    source->requestKeyFrame();
+                return GST_PAD_PROBE_OK;
+            });
+        }
+#endif
         m_upstreamQueryPadProbeHandle = PadProbeHandle<InternalSource>::create(*this, WTF::move(pad), GST_PAD_PROBE_TYPE_QUERY_UPSTREAM, [](const auto& self, const auto&, auto info) -> GstPadProbeReturn {
             auto query = GST_PAD_PROBE_INFO_QUERY(info);
             switch (GST_QUERY_TYPE(query)) {
@@ -677,6 +691,9 @@ private:
     GRefPtr<GstStream> m_stream;
     bool m_isVideoTrack { false };
     RefPtr<PadProbeHandle<InternalSource>> m_upstreamQueryPadProbeHandle;
+#if USE(LIBWEBRTC)
+    RefPtr<PadProbeHandle<RealtimeIncomingVideoSource>> m_keyFrameRequestPadProbeHandle;
+#endif
 };
 
 class PadProbeData final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PadProbeData> {

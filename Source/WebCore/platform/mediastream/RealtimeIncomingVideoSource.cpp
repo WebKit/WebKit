@@ -98,6 +98,12 @@ void RealtimeIncomingVideoSource::stopProducingData()
     m_videoTrack->RemoveSink(this);
 }
 
+void RealtimeIncomingVideoSource::requestKeyFrame()
+{
+    if (auto* source = m_videoTrack->GetSource())
+        source->GenerateKeyFrame();
+}
+
 void RealtimeIncomingVideoSource::OnChanged()
 {
     callOnMainThread([protectedThis = Ref { *this }] {
