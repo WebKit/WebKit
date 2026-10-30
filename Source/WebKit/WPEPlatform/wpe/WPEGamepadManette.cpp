@@ -28,14 +28,20 @@
 
 #include <linux/input-event-codes.h>
 #include <optional>
+#include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
+#include <wtf/text/StringToIntegerConversion.h>
+#include <wtf/text/StringView.h>
 
 static constexpr size_t wpeGamepadAxisCount = static_cast<size_t>(WPE_GAMEPAD_AXIS_RIGHT_Y) + 1;
 static constexpr size_t wpeGamepadButtonCount = static_cast<size_t>(WPE_GAMEPAD_BUTTON_CENTER_CLUSTER_CENTER) + 1;
 
 struct _WPEGamepadManettePrivate {
     GRefPtr<ManetteDevice> device;
+    HashMap<uint16_t, WPEGamepadButton, IntHash<uint16_t>, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>> analogButtons; // hardware index -> button
 };
 
 WEBKIT_DEFINE_FINAL_TYPE(WPEGamepadManette, wpe_gamepad_manette, WPE_TYPE_GAMEPAD, WPEGamepad)
@@ -133,17 +139,89 @@ static WPEGamepadAxis wpeGamepadAxis(uint16_t axis)
     return static_cast<WPEGamepadAxis>(axis % wpeGamepadAxisCount);
 }
 
+static void wpeGamepadManetteParseAnalogButtons(WPEGamepadManette* gamepad)
+{
+    auto* priv = gamepad->priv;
+    priv->analogButtons.clear();
+#if LIBMANETTE_CHECK_VERSION(0, 2, 8)
+    GUniquePtr<char> mapping(manette_device_get_mapping(priv->device.get()));
+    if (!mapping)
+        return;
+
+    GUniquePtr<char*> entries(g_strsplit(mapping.get(), ",", -1));
+    for (const char* entryCString : span(entries)) {
+        auto entry = StringView::fromLatin1(entryCString);
+        WPEGamepadButton button;
+        if (entry.startsWith("lefttrigger:"_s))
+            button = WPE_GAMEPAD_BUTTON_LEFT_SHOULDER_BACK;
+        else if (entry.startsWith("righttrigger:"_s))
+            button = WPE_GAMEPAD_BUTTON_RIGHT_SHOULDER_BACK;
+        else
+            continue;
+
+        // Source can be "a2", "+a2", "-a2" or "a2~"; only axis sources are analog.
+        auto source = entry.substring(entry.find(':') + 1);
+        if (source.startsWith('+') || source.startsWith('-'))
+            source = source.substring(1);
+        if (!source.startsWith('a'))
+            continue; // e.g. "b6": trigger is a digital button on this device
+
+        if (auto index = parseIntegerAllowingTrailingJunk<uint16_t>(source.substring(1)))
+            priv->analogButtons.set(*index, button);
+    }
+#endif
+}
+
+static std::optional<WPEGamepadButton> wpeGamepadManetteAnalogButton(WPEGamepadManette* gamepad, ManetteEvent* event)
+{
+    if (manette_event_get_hardware_type(event) != EV_ABS)
+        return std::nullopt; // digital button (bN)
+
+    uint16_t code = manette_event_get_hardware_code(event);
+    if (code >= ABS_HAT0X && code <= ABS_HAT3Y)
+        return std::nullopt; // D-pad from a hat (hN.M)
+
+    auto* priv = gamepad->priv;
+    auto it = priv->analogButtons.find(manette_event_get_hardware_index(event));
+    if (it != priv->analogButtons.end())
+        return it->value;
+
+    return std::nullopt;
+}
+
 static void wpeGamepadManetteStartInputMonitor(WPEGamepad* gamepad)
 {
     auto* priv = WPE_GAMEPAD_MANETTE(gamepad)->priv;
 
+    wpeGamepadManetteParseAnalogButtons(WPE_GAMEPAD_MANETTE(gamepad));
+
+    g_signal_connect_object(priv->device.get(), "event", G_CALLBACK(+[](WPEGamepad* gamepad, ManetteEvent* event) {
+        auto analogButton = wpeGamepadManetteAnalogButton(WPE_GAMEPAD_MANETTE(gamepad), event);
+        if (!analogButton)
+            return; // not an analog button (e.g. a stick axis)
+
+        uint16_t axis;
+        double value;
+        if (!manette_event_get_absolute(event, &axis, &value))
+            return;
+
+        double pressure = (value + 1) / 2; // [-1, 1] -> [0, 1]
+
+        wpe_gamepad_analog_button_event(gamepad, *analogButton, pressure);
+    }), gamepad, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->device.get(), "button-press-event", G_CALLBACK(+[](WPEGamepad* gamepad, ManetteEvent* event) {
+        if (wpeGamepadManetteAnalogButton(WPE_GAMEPAD_MANETTE(gamepad), event))
+            return; // handled from the raw "event" with the analog value
+
         uint16_t button;
         if (!manette_event_get_button(event, &button))
             return;
         wpe_gamepad_button_event(gamepad, wpeGamepadButton(button), TRUE);
     }), gamepad, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->device.get(), "button-release-event", G_CALLBACK(+[](WPEGamepad* gamepad, ManetteEvent* event) {
+        if (wpeGamepadManetteAnalogButton(WPE_GAMEPAD_MANETTE(gamepad), event))
+            return; // handled from the raw "event" with the analog value
+
         uint16_t button;
         if (!manette_event_get_button(event, &button))
             return;
