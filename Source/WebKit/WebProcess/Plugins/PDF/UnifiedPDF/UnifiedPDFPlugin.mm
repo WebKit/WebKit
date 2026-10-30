@@ -4559,7 +4559,7 @@ void UnifiedPDFPlugin::installDataDetectorOverlay(PageOverlay& overlay)
         return;
 
     Ref rootFrame { frame->coreLocalFrame()->rootFrame() };
-    overlay.setAssociatedFrame(rootFrame.ptr());
+    overlay.setAssociatedFrame(rootFrame.get());
     webPage->corePage()->pageOverlayController().installPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
 }
 

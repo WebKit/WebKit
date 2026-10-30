@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<body style="margin:0">
+<script>
+addEventListener("message", event => {
+    if (event.data == "removeInnerFrame")
+        document.getElementById("inner").remove();
+});
+</script>
+<iframe id="inner" style="width:300px; height:150px; border:0" src="http://127.0.0.1:8000/site-isolation/pageoverlay/resources/frame-scoped-overlay-inner.html"></iframe>
+</body>
