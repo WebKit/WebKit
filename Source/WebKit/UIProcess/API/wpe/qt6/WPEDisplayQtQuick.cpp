@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Igalia S.L.
+ * Copyright (C) 2026 Savoir-faire Linux, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +33,12 @@
 #include <epoxy/egl.h>
 
 #include <QGuiApplication>
+#include <QOpenGLFunctions>
 #include <qpa/qplatformnativeinterface.h>
 #include <wpe/GRefPtrWPE.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
+#include <wtf/unix/UnixFileDescriptor.h>
 
 #ifndef EGL_DRM_RENDER_NODE_FILE_EXT
 #define EGL_DRM_RENDER_NODE_FILE_EXT 0x3377
@@ -49,6 +52,9 @@
 struct _WPEDisplayQtQuickPrivate {
     EGLDisplay eglDisplay;
     GRefPtr<WPEDRMDevice> drmDevice;
+    bool usesEGL15 { false };
+    bool hasNativeFenceSync { false };
+    bool hasKHRWaitSync { false };
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEDisplayQtQuick, wpe_display_qtquick, WPE_TYPE_DISPLAY, WPEDisplay)
 
@@ -68,6 +74,11 @@ static gboolean wpeDisplayQtQuickConnect(WPEDisplay* display, GError** error)
         g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to initialize rendering: 'EGL_EXT_device_query' not available");
         return FALSE;
     }
+
+    priv->usesEGL15 = epoxy_egl_version(eglDisplay) >= 15;
+    priv->hasNativeFenceSync = epoxy_has_egl_extension(eglDisplay, "EGL_ANDROID_native_fence_sync")
+        && (priv->usesEGL15 || epoxy_has_egl_extension(eglDisplay, "EGL_KHR_fence_sync"));
+    priv->hasKHRWaitSync = epoxy_has_egl_extension(eglDisplay, "EGL_KHR_wait_sync");
 
     EGLDeviceEXT eglDevice;
     if (!eglQueryDisplayAttribEXT(eglDisplay, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice))) {
@@ -117,6 +128,36 @@ static WPEDRMDevice* wpeDisplayQtQuickGetDRMDevice(WPEDisplay* display)
     return WPE_DISPLAY_QTQUICK(display)->priv->drmDevice.get();
 }
 
+static gboolean wpeDisplayQtQuickUseExplicitSync(WPEDisplay* display)
+{
+    return WPE_DISPLAY_QTQUICK(display)->priv->hasNativeFenceSync;
+}
+
+static EGLSync createNativeFenceSync(EGLDisplay display, EGLint fd, bool usesEGL15)
+{
+    if (usesEGL15) {
+        const EGLAttrib attributes[] = { EGL_SYNC_NATIVE_FENCE_FD_ANDROID, fd, EGL_NONE };
+        return eglCreateSync(display, EGL_SYNC_NATIVE_FENCE_ANDROID, attributes);
+    }
+
+    const EGLint attributes[] = { EGL_SYNC_NATIVE_FENCE_FD_ANDROID, fd, EGL_NONE };
+    return eglCreateSyncKHR(display, EGL_SYNC_NATIVE_FENCE_ANDROID, attributes);
+}
+
+static void destroyNativeFenceSync(EGLDisplay display, EGLSync sync, bool usesEGL15)
+{
+    usesEGL15 ? eglDestroySync(display, sync) : eglDestroySyncKHR(display, sync);
+}
+
+static bool waitNativeFenceSync(EGLDisplay display, EGLSync sync, bool usesEGL15, bool hasKHRWaitSync)
+{
+    if (usesEGL15)
+        return eglWaitSync(display, sync, 0) == EGL_TRUE;
+    if (hasKHRWaitSync)
+        return eglWaitSyncKHR(display, sync, 0) == EGL_TRUE;
+    return eglClientWaitSyncKHR(display, sync, 0, EGL_FOREVER_KHR) == EGL_CONDITION_SATISFIED_KHR;
+}
+
 static void wpe_display_qtquick_class_init(WPEDisplayQtQuickClass* displayQtQuickClass)
 {
     WPEDisplayClass* displayClass = WPE_DISPLAY_CLASS(displayQtQuickClass);
@@ -124,9 +165,54 @@ static void wpe_display_qtquick_class_init(WPEDisplayQtQuickClass* displayQtQuic
     displayClass->create_view = wpeDisplayQtQuickCreateView;
     displayClass->get_egl_display = wpeDisplayQtQuickGetEGLDisplay;
     displayClass->get_drm_device = wpeDisplayQtQuickGetDRMDevice;
+    displayClass->use_explicit_sync = wpeDisplayQtQuickUseExplicitSync;
 }
 
 WPEDisplay* wpe_display_qtquick_new(void)
 {
     return WPE_DISPLAY(g_object_new(WPE_TYPE_DISPLAY_QTQUICK, nullptr));
+}
+
+gboolean wpe_display_qtquick_wait_rendering_fence(WPEDisplayQtQuick* display, WPEBuffer* buffer, GError** error)
+{
+    WTF::UnixFileDescriptor fd {
+        wpe_buffer_take_rendering_fence(buffer), WTF::UnixFileDescriptor::Adopt
+    };
+    if (!fd)
+        return true;
+
+    auto* priv = display->priv;
+    auto sync = createNativeFenceSync(priv->eglDisplay, fd.value(), priv->usesEGL15);
+    if (sync == EGL_NO_SYNC) {
+        g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED,
+            "Failed to import WPE rendering fence");
+        return false;
+    }
+    (void)fd.release();
+
+    bool waited = waitNativeFenceSync(priv->eglDisplay, sync, priv->usesEGL15, priv->hasKHRWaitSync);
+    destroyNativeFenceSync(priv->eglDisplay, sync, priv->usesEGL15);
+
+    if (!waited) {
+        g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to wait for WPE rendering fence");
+        return false;
+    }
+    return true;
+}
+
+int wpe_display_qtquick_create_release_fence(WPEDisplayQtQuick* display, QOpenGLFunctions* gl)
+{
+    auto* priv = display->priv;
+    if (!priv->hasNativeFenceSync)
+        return -1;
+
+    auto sync = createNativeFenceSync(priv->eglDisplay, EGL_NO_NATIVE_FENCE_FD_ANDROID, priv->usesEGL15);
+    if (sync == EGL_NO_SYNC)
+        return -1;
+
+    gl->glFlush();
+
+    auto fd = eglDupNativeFenceFDANDROID(priv->eglDisplay, sync);
+    destroyNativeFenceSync(priv->eglDisplay, sync, priv->usesEGL15);
+    return fd;
 }
