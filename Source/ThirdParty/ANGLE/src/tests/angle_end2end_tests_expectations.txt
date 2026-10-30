@@ -2531,6 +2531,8 @@
 // 383356846 ubyte index formats are not fully supported yet.
 383356846 WGPU : LineLoopTest.*UShort* = SKIP
 383356846 WGPU : LineLoopTest.*BufferBlend* = SKIP
+// The WebGPU backend does not support depth ranges with near > far yet.
+0 WGPU : DepthRangeTest.ReversedRangeAfterViewportAndFramebufferChanges/* = SKIP
 
 42266907 WGPU : AddMockTextureNoRenderTargetTest.NoProgramOutputWorkaround/* = SKIP
 42266907 WGPU : AttributeLayoutBufferIndexed.Test/* = SKIP

@@ -440,4 +440,122 @@ ANGLE_INSTANTIATE_TEST_ES2_AND(ViewportTest, ES2_D3D11_PRESENT_PATH_FAST());
 // This test suite is not instantiated on some OSes.
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ViewportTest);
 
+struct DepthRange
+{
+    float zNear;
+    float zFar;
+};
+
+class DepthRangeTest : public ANGLETest<>
+{
+  protected:
+    static constexpr int kSize = 32;
+
+    DepthRangeTest()
+    {
+        setWindowWidth(kSize);
+        setWindowHeight(kSize);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+        setConfigDepthBits(24);
+    }
+
+    void testSetUp() override
+    {
+        // Outputs the window depth, gl_FragCoord.z, in the red channel.
+        constexpr char kFragCoordZFS[] = R"(precision highp float;
+void main()
+{
+    gl_FragColor = vec4(gl_FragCoord.z, 0.0, 0.0, 1.0);
+})";
+        mFragCoordZProgram = CompileProgram(essl1_shaders::vs::Simple(), kFragCoordZFS);
+        ASSERT_NE(0u, mFragCoordZProgram);
+    }
+
+    void testTearDown() override { glDeleteProgram(mFragCoordZProgram); }
+
+    // Binds the default framebuffer, or a framebuffer object with an RGBA8 color texture and a
+    // 16-bit depth renderbuffer.
+    void bindFramebuffer(bool useFramebufferObject)
+    {
+        if (!useFramebufferObject)
+        {
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            return;
+        }
+        glBindTexture(GL_TEXTURE_2D, mColorTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     nullptr);
+        glBindRenderbuffer(GL_RENDERBUFFER, mDepthRenderbuffer);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, kSize, kSize);
+        glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mColorTexture,
+                               0);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+                                  mDepthRenderbuffer);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    }
+
+    void drawFragCoordZQuad(float z)
+    {
+        drawQuad(mFragCoordZProgram, essl1_shaders::PositionAttrib(), z, 1.0f, true);
+    }
+
+    // ES maps the clip space z to the window depth n + (f - n) * (z + 1) / 2, also when n > f.
+    static float WindowDepth(const DepthRange &range, float z)
+    {
+        return range.zNear + (range.zFar - range.zNear) * (z + 1.0f) * 0.5f;
+    }
+
+    // Expects the pixel to hold the window depth that drawFragCoordZQuad() wrote.
+    void expectFragCoordZ(int x, int y, float depth)
+    {
+        EXPECT_PIXEL_NEAR(x, y, depth * 255.0f, 0, 0, 255, 1);
+    }
+
+    GLuint mFragCoordZProgram = 0;
+    GLTexture mColorTexture;
+    GLRenderbuffer mDepthRenderbuffer;
+    GLFramebuffer mFramebuffer;
+};
+
+// Tests that a reversed depth range stays in effect when the viewport or the framebuffer changes
+// after it was set.
+TEST_P(DepthRangeTest, ReversedRangeAfterViewportAndFramebufferChanges)
+{
+    constexpr DepthRange kReversed = {0.75f, 0.25f};
+    const float expectedDepth      = WindowDepth(kReversed, 0.5f);
+    glDepthRangef(kReversed.zNear, kReversed.zFar);
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawFragCoordZQuad(0.5f);
+    ASSERT_GL_NO_ERROR();
+    expectFragCoordZ(kSize / 2, kSize / 2, expectedDepth);
+
+    glViewport(0, 0, kSize / 2, kSize);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawFragCoordZQuad(0.5f);
+    ASSERT_GL_NO_ERROR();
+    {
+        SCOPED_TRACE("after a viewport change");
+        expectFragCoordZ(kSize / 4, kSize / 2, expectedDepth);
+    }
+    glViewport(0, 0, kSize, kSize);
+
+    for (bool useFramebufferObject : {true, false})
+    {
+        bindFramebuffer(useFramebufferObject);
+        glClear(GL_COLOR_BUFFER_BIT);
+        drawFragCoordZQuad(0.5f);
+        ASSERT_GL_NO_ERROR();
+        SCOPED_TRACE(testing::Message() << "after binding framebuffer object: "
+                                        << useFramebufferObject);
+        expectFragCoordZ(kSize / 2, kSize / 2, expectedDepth);
+    }
+}
+
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(DepthRangeTest);
+
 }  // namespace
