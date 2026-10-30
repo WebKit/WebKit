@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<input id="input" type=password>
+<script>
+jsTestIsAsync = true;
+
+description("Verify that reloading a page disables secure input state when the focused password input is not refocused after the load.");
+
+var isReloaded = location.hash === "#reloaded";
+
+window.addEventListener("load", () => {
+    if (!isReloaded) {
+        input.focus();
+        UIHelper.ensurePresentationUpdate().then(() => {
+            if (document.activeElement !== input || !testRunner.secureEventInputIsEnabled) {
+                testFailed("Initial load: expected password input to be focused with secure input enabled.");
+                finishJSTest();
+                return;
+            }
+            location.hash = "#reloaded";
+            location.reload();
+        });
+        return;
+    }
+
+    UIHelper.ensurePresentationUpdate().then(() => {
+        debug("After reload (no element refocused):");
+        shouldBeFalse("document.activeElement === input");
+        shouldBe("testRunner.secureEventInputIsEnabled", "false");
+        finishJSTest();
+    });
+});
+</script>
+</body>
+</html>

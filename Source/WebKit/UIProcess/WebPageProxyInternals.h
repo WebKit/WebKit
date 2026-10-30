@@ -500,6 +500,7 @@ public:
 #endif
 
     std::optional<WebCore::DevicePostureType> currentDevicePostureType;
+    bool forceNeedsSecureInputReevaluation { false };
 
     explicit Internals(WebPageProxy&, bool processInheritedFromOpener);
 

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+
+description("Verify that a cross-origin process-swap navigation away from a page with a focused password input disables secure event input state.");
+
+shouldBe("testRunner.secureEventInputIsEnabled", "false");
+
+if (window.testRunner)
+    testRunner.notifyDone();
+
+</script>
+</body>
+</html>

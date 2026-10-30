@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/secure-input-helper.js"></script>
+</head>
+<body>
+<input id="input" type=password>
+<iframe id="iframe" src="about:blank"></iframe>
+<script>
+jsTestIsAsync = true;
+
+description("Verify that committing a load in a cross-origin subframe does not disable secure input state while the main frame's password input is focused.");
+
+window.addEventListener("load", async () => {
+    debug("A password input in the main frame is focused:");
+    input.focus();
+
+    await UIHelper.ensurePresentationUpdate();
+    shouldBe("testRunner.secureEventInputIsEnabled", "true");
+
+    debug("\nThe cross-origin subframe commits a new document:");
+    let loadPromise = waitForIframeLoad(iframe);
+    iframe.src = "http://localhost:8000/secure-input/resources/cross-origin-empty-frame.html";
+    await loadPromise;
+
+    await UIHelper.ensurePresentationUpdate();
+    shouldBe("document.activeElement", "input");
+    shouldBe("testRunner.secureEventInputIsEnabled", "true");
+    finishJSTest();
+});
+</script>
+</body>
+</html>
