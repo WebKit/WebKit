@@ -20,10 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import json
 import time
 import sys
+from typing import Any
 
 from webkitcorepy import mocks
 from webkitscmpy import Commit, remote as scmremote
@@ -33,9 +36,9 @@ class BitBucket(mocks.Requests):
     top = None
 
     def __init__(
-        self, remote='bitbucket.example.com/projects/WEBKIT/repos/webkit', datafile=None,
-        default_branch='main', git_svn=False, statuses=None, environment=None,
-    ):
+        self, remote: str = 'bitbucket.example.com/projects/WEBKIT/repos/webkit', datafile: str | None = None,
+        default_branch: str = 'main', git_svn: bool = False, statuses: dict[str, list[dict[str, Any]]] | None = None, environment: mocks.Environment | None = None,
+    ) -> None:
         if not scmremote.BitBucket.is_webserver('https://{}'.format(remote)):
             raise ValueError('"{}" is not a valid BitBucket remote'.format(remote))
 
@@ -54,8 +57,9 @@ class BitBucket(mocks.Requests):
         self._username = self._environment.environ.get('{}_USERNAME'.format(prefix), 'timcommitter')
 
         with open(datafile or os.path.join(os.path.dirname(os.path.dirname(__file__)), 'git-repo.json')) as file:
-            self.commits = json.load(file)
-        for key, commits in self.commits.items():
+            data: dict[str, list[dict[str, Any]]] = json.load(file)
+        self.commits: dict[str, list[Commit]] = {}
+        for key, commits in data.items():
             commit_objs = []
             for kwargs in commits:
                 changeFiles = None
@@ -72,24 +76,25 @@ class BitBucket(mocks.Requests):
                     commit.revision = None
 
         self.head = self.commits[self.default_branch][-1]
-        self.tags = {}
-        self.pull_requests = []
+        self.tags: dict[str, Commit] = {}
+        self.pull_requests: list[dict[str, Any]] = []
         self.statuses = statuses or {}
 
-    def __enter__(self):
+    def __enter__(self) -> BitBucket:
         self._environment.__enter__()
         return super(BitBucket, self).__enter__()
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         result = super(BitBucket, self).__exit__(*args, **kwargs)
         self._environment.__exit__(*args, **kwargs)
         return result
 
-    def resolve_all_commits(self, branch):
+    def resolve_all_commits(self, branch: str) -> list[Commit]:
         all_commits = self.commits[branch][:]
         last_commit = all_commits[0]
         while last_commit.branch != branch:
             head_index = None
+            assert last_commit.branch is not None
             commits_part = self.commits[last_commit.branch]
             for i in range(len(commits_part)):
                 if commits_part[i].hash == last_commit.hash:
@@ -101,7 +106,7 @@ class BitBucket(mocks.Requests):
                 break
         return all_commits
 
-    def commit(self, ref):
+    def commit(self, ref: str) -> Commit | None:
         if ref == 'HEAD':
             ref = self.default_branch
         if ref in self.commits:
@@ -110,18 +115,20 @@ class BitBucket(mocks.Requests):
             return self.tags[ref]
 
         for branch, commits in self.commits.items():
-            for commit in commits:
-                if commit.hash.startswith(ref):
-                    return commit
+            for candidate in commits:
+                assert candidate.hash is not None
+                if candidate.hash.startswith(ref):
+                    return candidate
 
         if '~' not in ref:
             return None
-        ref, delta = ref.split('~')
+        ref, delta_string = ref.split('~')
         commit = self.commit(ref)
         if not commit:
             return None
-        delta = int(delta)
+        delta = int(delta_string)
 
+        assert commit.branch is not None
         all_commits = self.resolve_all_commits(commit.branch)
         commit_index = 0
         for i in range(len(all_commits)):
@@ -132,8 +139,9 @@ class BitBucket(mocks.Requests):
             return all_commits[commit_index - delta]
         return None
 
-    def _branches_default(self, url):
+    def _branches_default(self, url: str) -> mocks.Response:
         recent = self.commit(self.default_branch)
+        assert recent is not None
         return mocks.Response.fromJson(dict(
             id='refs/heads/{}'.format(self.default_branch),
             displayId=self.default_branch,
@@ -143,7 +151,7 @@ class BitBucket(mocks.Requests):
             isDefault=True,
         ), url=url)
 
-    def _branches(self, url, params):
+    def _branches(self, url: str, params: dict[str, Any]) -> mocks.Response:
         limit = params.get('limit', 25)
         start = params.get('start', 0)
         branches = [branch for branch in sorted(self.commits.keys())[start * limit: (start + 1) * limit]]
@@ -165,7 +173,7 @@ class BitBucket(mocks.Requests):
             ],
         ), url=url)
 
-    def _tags(self, url, params):
+    def _tags(self, url: str, params: dict[str, Any]) -> mocks.Response:
         limit = params.get('limit', 25)
         start = params.get('start', 0)
         tags = [tag for tag in sorted(self.tags.keys())[start * limit: (start + 1) * limit]]
@@ -186,7 +194,7 @@ class BitBucket(mocks.Requests):
             ],
         ), url=url)
 
-    def _branches_for(self, ref, url, params):
+    def _branches_for(self, ref: str, url: str, params: dict[str, Any]) -> mocks.Response:
         limit = params.get('limit', 25)
         start = params.get('start', 0)
         commit = self.commit(ref)
@@ -209,7 +217,7 @@ class BitBucket(mocks.Requests):
             ],
         ), url=url)
 
-    def request(self, method, url, data=None, params=None, json=None, **kwargs):
+    def request(self, method: str, url: str, data: Any = None, params: dict[str, Any] | None = None, json: Any = None, **kwargs: Any) -> mocks.Response:
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
 
@@ -242,6 +250,7 @@ class BitBucket(mocks.Requests):
                 return mocks.Response.create404(url)
 
             if stripped_url.split('?')[0].endswith('diff'):
+                assert commit.message is not None
                 message_lines = commit.message.splitlines()
                 return mocks.Response.fromJson(dict(
                     fromHash=None,
@@ -268,6 +277,7 @@ class BitBucket(mocks.Requests):
                     )],
                 ))
 
+            assert commit.hash is not None and commit.author is not None and commit.timestamp is not None and commit.message is not None
             return mocks.Response.fromJson(dict(
                 id=commit.hash,
                 displayId=commit.hash[:12],
@@ -292,7 +302,7 @@ class BitBucket(mocks.Requests):
         # All pull-requests
         pr_base = '{}/rest/api/1.0/{}/pull-requests'.format(self.hosts[0], self.project)
         if method == 'GET' and stripped_url == pr_base:
-            prs = []
+            prs: list[dict[str, Any]] = []
             for candidate in self.pull_requests:
                 states = (params or {}).get('state', [])
                 states = states if isinstance(states, list) else [states]

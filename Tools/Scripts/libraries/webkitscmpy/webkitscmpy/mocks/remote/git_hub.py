@@ -20,39 +20,46 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import re
 import time
+from typing import Any, Iterable, TYPE_CHECKING
 
 import json as jsonlib
 from webkitbugspy import mocks as bmocks, Issue
 from webkitcorepy import mocks
 from webkitscmpy import Commit, remote as scmremote
 
+if TYPE_CHECKING:
+    from requests.auth import HTTPBasicAuth
+
 
 class GitHub(bmocks.GitHub):
     top = None
 
     def __init__(
-        self, remote='github.example.com/WebKit/WebKit', datafile=None,
-        default_branch='main', git_svn=False, environment=None,
-        releases=None, issues=None, projects=None, labels=None,
-        private=False, statuses=None,
-    ):
+        self, remote: str = 'github.example.com/WebKit/WebKit', datafile: str | None = None,
+        default_branch: str = 'main', git_svn: bool = False, environment: mocks.Environment | None = None,
+        releases: dict[str, mocks.Response] | None = None, issues: Iterable[dict[str, Any]] | None = None, projects: dict[str, dict[str, Any]] | None = None, labels: dict[str, dict[str, str]] | None = None,
+        private: bool = False, statuses: dict[str, list[dict[str, Any]]] | None = None,
+    ) -> None:
         if not scmremote.GitHub.is_webserver('https://{}'.format(remote)):
             raise ValueError('"{}" is not a valid GitHub remote'.format(remote))
 
         self.default_branch = default_branch
         self.remote = remote
-        self.forks = []
+        self.forks: list[str] = []
         self.private = private
         self._comment_id = 1234
 
         super(GitHub, self).__init__(remote, environment=environment, issues=issues, projects=projects, labels=labels)
 
         with open(datafile or os.path.join(os.path.dirname(os.path.dirname(__file__)), 'git-repo.json')) as file:
-            self.commits = jsonlib.load(file)
-        for key, commits in self.commits.items():
+            data: dict[str, list[dict[str, Any]]] = jsonlib.load(file)
+        self.commits: dict[str, list[Commit]] = {}
+        for key, commits in data.items():
             commit_objs = []
             for kwargs in commits:
                 changeFiles = None
@@ -69,16 +76,17 @@ class GitHub(bmocks.GitHub):
                     commit.revision = None
 
         self.head = self.commits[self.default_branch][-1]
-        self.tags = {}
-        self.pull_requests = []
+        self.tags: dict[str, Commit] = {}
+        self.pull_requests: list[dict[str, Any]] = []
         self.releases = releases or dict()
         self.statuses = statuses or {}
 
-    def resolve_all_commits(self, branch):
+    def resolve_all_commits(self, branch: str) -> list[Commit]:
         all_commits = self.commits[branch][:]
         last_commit = all_commits[0]
         while last_commit.branch != branch:
             head_index = None
+            assert last_commit.branch is not None
             commits_part = self.commits[last_commit.branch]
             for i in range(len(commits_part)):
                 if commits_part[i].hash == last_commit.hash:
@@ -90,7 +98,7 @@ class GitHub(bmocks.GitHub):
                 break
         return all_commits
 
-    def commit(self, ref):
+    def commit(self, ref: str) -> Commit | None:
         if ref in self.commits:
             return self.commits[ref][-1]
         if ref in self.tags:
@@ -99,18 +107,20 @@ class GitHub(bmocks.GitHub):
             return self.commits[self.default_branch][-1]
 
         for branch, commits in self.commits.items():
-            for commit in commits:
-                if commit.hash.startswith(ref):
-                    return commit
+            for candidate in commits:
+                assert candidate.hash is not None
+                if candidate.hash.startswith(ref):
+                    return candidate
 
         if '~' not in ref:
             return None
-        ref, delta = ref.split('~')
+        ref, delta_string = ref.split('~')
         commit = self.commit(ref)
         if not commit:
             return None
-        delta = int(delta)
+        delta = int(delta_string)
 
+        assert commit.branch is not None
         all_commits = self.resolve_all_commits(commit.branch)
         commit_index = 0
         for i in range(len(all_commits)):
@@ -122,7 +132,7 @@ class GitHub(bmocks.GitHub):
             return all_commits[commit_index - delta]
         return None
 
-    def _api_response(self, url):
+    def _api_response(self, url: str) -> mocks.Response:
         return mocks.Response.fromJson({
             'id': 1,
             'name': self.remote.split('/')[2],
@@ -136,7 +146,7 @@ class GitHub(bmocks.GitHub):
             }, 'html_url': self.remote,
         }, url=url)
 
-    def _list_refs_response(self, url, type):
+    def _list_refs_response(self, url: str, type: str) -> mocks.Response:
         return mocks.Response.fromJson([
             {
                 'name': reference,
@@ -148,7 +158,7 @@ class GitHub(bmocks.GitHub):
             } for reference, commit in (self.commits if type == 'branches' else self.tags).items()
         ], url=url)
 
-    def _commits_response(self, url, ref):
+    def _commits_response(self, url: str, ref: str) -> mocks.Response:
         from datetime import datetime, timedelta, timezone
 
         base = self.commit(ref)
@@ -159,16 +169,19 @@ class GitHub(bmocks.GitHub):
                 status_code=404,
             )
 
-        response = []
+        response: list[dict[str, Any]] = []
+        start: str | None = ref
+        assert base.branch is not None
         for branch in [self.default_branch] if base.branch == self.default_branch else [base.branch, self.default_branch]:
             in_range = False
             previous = None
             for commit in reversed(self.commits[branch]):
-                if commit.hash == ref:
+                if commit.hash == start:
                     in_range = True
                 if not in_range:
                     continue
                 previous = commit
+                assert commit.author is not None and commit.timestamp is not None and commit.message is not None
                 response.append({
                     'sha': commit.hash,
                     'commit': {
@@ -188,13 +201,14 @@ class GitHub(bmocks.GitHub):
                     'html_url': 'https://{}/commit/{}'.format(self.remote, commit.hash),
                 })
             if branch != self.default_branch:
+                assert previous is not None
                 for commit in reversed(self.commits[self.default_branch]):
                     if previous.branch_point == commit.identifier:
-                        ref = commit.hash
+                        start = commit.hash
 
         return mocks.Response.fromJson(response, url=url)
 
-    def _commit_response(self, url, ref):
+    def _commit_response(self, url: str, ref: str) -> mocks.Response:
         from datetime import datetime, timedelta, timezone
 
         path = None
@@ -220,6 +234,7 @@ class GitHub(bmocks.GitHub):
                 status_code=404,
             )
 
+        assert commit.author is not None and commit.timestamp is not None and commit.message is not None
         return mocks.Response.fromJson({
             'sha': commit.hash,
             'commit': {
@@ -241,7 +256,7 @@ class GitHub(bmocks.GitHub):
             'files': [dict(filename=name) for name in ('Source/main.cpp', 'Source/main.h')],
         }, url=url)
 
-    def _diff_response(self, url, ref):
+    def _diff_response(self, url: str, ref: str) -> mocks.Response:
         commit = self.commit(ref)
         if not commit:
             return mocks.Response.fromJson(
@@ -249,6 +264,7 @@ class GitHub(bmocks.GitHub):
                 url=url,
                 status_code=404,
             )
+        assert commit.message is not None
         return mocks.Response.fromText(
             'diff --git a/ChangeLog b/ChangeLog\n'
             '--- a/ChangeLog\n'
@@ -257,7 +273,7 @@ class GitHub(bmocks.GitHub):
             url=url,
         )
 
-    def _compare_response(self, url, ref_a, ref_b):
+    def _compare_response(self, url: str, ref_a: str, ref_b: str) -> mocks.Response:
         commit_a = self.commit(ref_a)
         commit_b = self.commit(ref_b)
         if not commit_a or not commit_b:
@@ -271,13 +287,14 @@ class GitHub(bmocks.GitHub):
             raise NotImplementedError(
                 'This is a valid comparison command, but has not been implemented in the mock GitHub API')
 
+        assert commit_a.identifier is not None and commit_b.branch_point is not None
         return mocks.Response.fromJson({
             'status': 'diverged',
             'ahead_by': commit_b.identifier,
             'behind_by': commit_a.identifier - commit_b.branch_point,
         }, url=url)
 
-    def _branches_for_request(self, url, ref):
+    def _branches_for_request(self, url: str, ref: str) -> mocks.Response:
         commit = self.commit(ref)
         if not commit:
             return mocks.Response.create404(url)
@@ -291,10 +308,11 @@ class GitHub(bmocks.GitHub):
             ), url=url
         )
 
-    def _parents_of_request(self, url, ref):
+    def _parents_of_request(self, url: str, ref: str) -> mocks.Response:
         commit = self.commit(ref)
         if not commit:
             return mocks.Response.create404(url)
+        assert commit.identifier is not None
 
         # This response is abbreviated since most is unused
         return mocks.Response.fromText(
@@ -330,7 +348,7 @@ class GitHub(bmocks.GitHub):
         )
 
     # FIXME: Not a very flexible mock of GitHub's GraphQL API, only supports pull-request querying
-    def graphql(self, url, auth=None, json=None):
+    def graphql(self, url: str, auth: HTTPBasicAuth | None = None, json: dict[str, Any] | None = None) -> mocks.Response:
         query = (json or {}).get('query')
         if not query:
             return mocks.Response.create404(url)
@@ -338,7 +356,7 @@ class GitHub(bmocks.GitHub):
         qline = query.splitlines()[1]
         pr_search = re.match(r'\s*search\(query:\s+"(?P<query>.+)",\s+type:\s+ISSUE,\s+last:\s+(?P<last>\d+)\)\s*\{', qline)
         if pr_search:
-            query_bits = {}
+            query_bits: dict[str, list[str]] = {}
             for bit in pr_search.group('query').split():
                 key, value = bit.split(':')
                 if key in query_bits:
@@ -358,7 +376,7 @@ class GitHub(bmocks.GitHub):
             state = 'open' if 'open' in query_bits.get('is', []) else None
             state = 'closed' if 'closed' in query_bits.get('is', []) else state
 
-            nodes = []
+            nodes: list[dict[str, Any]] = []
             for candidate in self.pull_requests:
                 chead = candidate.get('head', {}).get('ref', '').split(':')[-1]
                 cbase = candidate.get('base', {}).get('ref', '').split(':')[-1]
@@ -390,7 +408,7 @@ class GitHub(bmocks.GitHub):
 
         return mocks.Response.create404(url)
 
-    def request(self, method, url, data=None, params=None, auth=None, json=None, headers=None, **kwargs):
+    def request(self, method: str, url: str, data: Any = None, params: dict[str, Any] | None = None, auth: HTTPBasicAuth | None = None, json: Any = None, headers: dict[str, str] | None = None, **kwargs: Any) -> mocks.Response:
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
 
@@ -443,15 +461,15 @@ class GitHub(bmocks.GitHub):
 
         # Add fork
         if stripped_url.startswith('{}/forks'.format(self.api_remote)) and method == 'POST':
-            username = (json or {}).get('owner', None)
-            if username:
-                self.forks.append(username)
-            return mocks.Response.fromJson({}, url=url) if username else mocks.Response.create404(url)
+            owner = (json or {}).get('owner', None)
+            if owner:
+                self.forks.append(owner)
+            return mocks.Response.fromJson({}, url=url) if owner else mocks.Response.create404(url)
 
         # All pull-requests
         pr_base = '{}/pulls'.format(self.api_remote)
         if method == 'GET' and stripped_url == pr_base:
-            prs = []
+            prs: list[dict[str, Any]] = []
             for candidate in self.pull_requests:
                 state = params.get('state', 'all')
                 if state != 'all' and candidate.get('state', 'closed') != state:
@@ -532,7 +550,7 @@ class GitHub(bmocks.GitHub):
             )
 
         # Create/update pull-request
-        pr = dict()
+        pr: dict[str, Any] = dict()
         if method == 'POST' and auth and stripped_url.startswith(pr_base):
             # Create PR comment
             if len(stripped_url.split('/')) == 7 and stripped_url.split('/')[6] == 'comments':

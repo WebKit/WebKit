@@ -2,3 +2,5 @@
 
 from webkitscmpy.mocks.local.svn import Svn
 from webkitscmpy.mocks.local.git import Git
+
+__all__ = ['Git', 'Svn']
