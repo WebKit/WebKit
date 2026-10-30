@@ -597,6 +597,12 @@ void runWKHTTPCookieStoreWithoutProcessPool(ShouldEnableProcessPrewarming should
     webView.get().UIDelegate = delegate.get();
     [webView loadHTMLString:alertCookieHTML baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
     TestWebKitAPI::Util::run(&cookieStoreFinished);
+
+    cookieStoreFinished = false;
+    [defaultStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:[] {
+        cookieStoreFinished = true;
+    }];
+    TestWebKitAPI::Util::run(&cookieStoreFinished);
 }
 
 TEST(WKHTTPCookieStore, WithoutProcessPoolWithoutPrewarming)
