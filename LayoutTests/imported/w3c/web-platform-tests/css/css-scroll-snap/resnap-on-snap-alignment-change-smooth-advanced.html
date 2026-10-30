@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<title>Resnap animation: scroll-behavior is not inherited</title>
+<link rel="help" href="https://drafts.csswg.org/css-scroll-snap-1/#re-snap">
+<link rel="help" href="https://drafts.csswg.org/css-overflow-4/#scroll-behavior">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  body {
+    margin: 0;
+  }
+  .scroller {
+    width: 300px;
+    height: 100px;
+    overflow: auto;
+    scroll-snap-type: x mandatory;
+  }
+  .scroller.smooth {
+    scroll-behavior: smooth;
+  }
+  .content {
+    display: flex;
+    width: 900px;
+    height: 50px;
+  }
+  .content > div {
+    flex: 1;
+  }
+  .snap-start {
+    scroll-snap-align: start;
+  }
+  /* scroll-behavior is not inherited, so the inner scroller must still behave as auto. */
+  .smooth-ancestor {
+    scroll-behavior: smooth;
+  }
+</style>
+<body>
+<script>
+const nextFrame = () => new Promise(resolve => requestAnimationFrame(() => resolve()));
+
+function createScroller(t, parent, className) {
+  const scroller = document.createElement("div");
+  scroller.className = `scroller ${className}`;
+  scroller.innerHTML = '<div class="content"><div class="a"></div><div class="b"></div><div class="c"></div></div>';
+  parent.appendChild(scroller);
+  t.add_cleanup(() => parent.remove());
+  return scroller;
+}
+
+function createParent(t, className) {
+  const parent = document.createElement("div");
+  parent.className = className;
+  document.body.appendChild(parent);
+  t.add_cleanup(() => parent.remove());
+  return parent;
+}
+
+promise_test(async t => {
+  const parent = createParent(t, "smooth-ancestor");
+  const scroller = createScroller(t, parent, "");
+  await nextFrame();
+  assert_equals(getComputedStyle(scroller).scrollBehavior, "auto", "scroll-behavior is not inherited");
+  assert_equals(scroller.scrollLeft, 0, "Initially at the start");
+
+  const max = scroller.scrollWidth - scroller.clientWidth;
+  scroller.querySelector(".c").classList.add("snap-start");
+
+  let sawIntermediatePosition = false;
+  for (let i = 0; i < 60 && scroller.scrollLeft < max; ++i) {
+    await nextFrame();
+    const position = scroller.scrollLeft;
+    if (position > 0 && position < max)
+      sawIntermediatePosition = true;
+  }
+  assert_equals(scroller.scrollLeft, max, "Ends at the new snap position");
+  assert_false(sawIntermediatePosition, "A scroller with scroll-behavior: auto should not animate because of a smooth ancestor");
+}, "Re-snap does not animate when only an ancestor has scroll-behavior: smooth");
+
+promise_test(async t => {
+  const parent = createParent(t, "");
+  const scroller = createScroller(t, parent, "smooth");
+  await nextFrame();
+  assert_equals(scroller.scrollLeft, 0, "Initially at the start");
+
+  const max = scroller.scrollWidth - scroller.clientWidth;
+  scroller.querySelector(".c").classList.add("snap-start");
+
+  let sawIntermediatePosition = false;
+  for (let i = 0; i < 300 && scroller.scrollLeft < max; ++i) {
+    await nextFrame();
+    const position = scroller.scrollLeft;
+    if (position > 0 && position < max)
+      sawIntermediatePosition = true;
+  }
+  assert_equals(scroller.scrollLeft, max, "Ends at the new snap position");
+  assert_true(sawIntermediatePosition, "The scroller's own scroll-behavior: smooth applies");
+}, "Re-snap animates when the scroller itself has scroll-behavior: smooth, regardless of ancestors");
+</script>
+</html>

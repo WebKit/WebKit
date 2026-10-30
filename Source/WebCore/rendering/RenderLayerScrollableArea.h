@@ -215,6 +215,7 @@ public:
     bool isRubberBandInProgress() const final;
     NODELETE bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
     bool isScrollSnapInProgress() const final;
+    bool prefersSmoothScrolling() const final;
     NODELETE bool scrollAnimatorEnabled() const final;
     NODELETE bool mockScrollbarsControllerEnabled() const final;
     void logMockScrollbarsControllerMessage(const String&) const final;
@@ -299,7 +300,7 @@ private:
     void clearResizer();
 
     void updateScrollbarPresenceAndState(std::optional<bool> hasHorizontalOverflow = std::nullopt, std::optional<bool> hasVerticalOverflow = std::nullopt);
-    void registerScrollableAreaForAnimatedScroll();
+    void registerScrollableAreaForAnimatedScroll() final;
 
     float deviceScaleFactor() const final;
     void scrollDidEnd() final;

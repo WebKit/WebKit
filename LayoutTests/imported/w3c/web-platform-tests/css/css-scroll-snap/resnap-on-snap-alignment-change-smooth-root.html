@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<title>Resnap after a snap alignment change respects scroll-behavior on the root scroller</title>
+<link rel="help" href="https://drafts.csswg.org/css-scroll-snap-1/#re-snap">
+<link rel="help" href="https://drafts.csswg.org/css-overflow-4/#scroll-behavior">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  html {
+    scroll-snap-type: x mandatory;
+  }
+  body {
+    margin: 0;
+    width: 4000px;
+    height: 50px;
+  }
+  #end {
+    position: absolute;
+    top: 0;
+    left: 1000px;
+    width: 3000px;
+    height: 50px;
+  }
+  .snap-start {
+    scroll-snap-align: start;
+  }
+</style>
+<body>
+<div id="end"></div>
+<script>
+const nextFrame = () => new Promise(resolve => requestAnimationFrame(() => resolve()));
+const scroller = document.scrollingElement;
+const end = document.getElementById("end");
+
+async function resnapAndObserve() {
+  await nextFrame();
+  assert_equals(scroller.scrollLeft, 0, "Initially at the start");
+  assert_greater_than(scroller.scrollWidth - scroller.clientWidth, 1000, "Snap position is reachable");
+
+  end.classList.add("snap-start");
+
+  let sawIntermediatePosition = false;
+  for (let i = 0; i < 300 && scroller.scrollLeft < 1000; ++i) {
+    await nextFrame();
+    if (scroller.scrollLeft > 0 && scroller.scrollLeft < 1000)
+      sawIntermediatePosition = true;
+  }
+  assert_equals(scroller.scrollLeft, 1000, "Ends at the new snap position");
+  return sawIntermediatePosition;
+}
+
+promise_test(async t => {
+  t.add_cleanup(() => {
+    end.classList.remove("snap-start");
+    document.documentElement.style.scrollBehavior = "";
+    scroller.scrollLeft = 0;
+  });
+  document.documentElement.style.scrollBehavior = "smooth";
+  assert_true(await resnapAndObserve(), "Re-snap should animate through intermediate positions");
+}, "Root re-snap after scroll-snap-align change animates with scroll-behavior: smooth");
+</script>
+</html>
