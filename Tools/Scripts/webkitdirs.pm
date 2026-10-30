@@ -1600,10 +1600,6 @@ sub XcodeOptions
     if (!checkForArgumentAndRemoveFromARGV("--no-use-workspace")) {
         push @options, ("-workspace", $configuredXcodeWorkspace) if $configuredXcodeWorkspace;
     }
-    # WebKit-only builds in Safari.xcworkspace use the SDK's AuthenticationServices frameworks instead of building
-    # SafariShared for WebKitSwift's product dependencies (see WebKitSwift.xcconfig). --build-safari-shared keeps them.
-    my $buildSafariShared = checkForArgumentAndRemoveFromARGV("--build-safari-shared");
-    push @options, "WK_BUILD_SAFARI_SHARED=NO" if !$buildSafariShared && $configuredXcodeWorkspace && $configuredXcodeWorkspace =~ /Safari\.xcworkspace\/?$/;
     push @options, ("-configuration", $configuration);
     push @options, ("-destination", $destination) if $destination;
     # Be mindful of adding build settings here. Any settings which don't
