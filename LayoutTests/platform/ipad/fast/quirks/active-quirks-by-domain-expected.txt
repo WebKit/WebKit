@@ -128,7 +128,7 @@ https://www.forbes.com/
 https://gizmodo.com/
     NeedsFullscreenDisplayNoneQuirk
 https://play.geforcenow.com/
-    NeedsGeforcenowWarningDisplayNoneQuirk
+    NeedsStyleSheetInjectedQuirk
 https://www.google.com/
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
 https://www.google.com/search

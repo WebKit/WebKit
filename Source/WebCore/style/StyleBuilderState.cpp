@@ -399,7 +399,7 @@ unsigned BuilderState::siblingIndex()
 void BuilderState::disableNativeAppearanceIfNeeded(CSSPropertyID propertyID, PropertyCascade::Origin origin)
 {
     auto shouldDisable = [&] {
-        if (origin != PropertyCascade::Origin::Author)
+        if (origin != PropertyCascade::Origin::Author && origin != PropertyCascade::Origin::Quirk)
             return false;
         if (!CSSProperty::disablesNativeAppearance(propertyID))
             return false;

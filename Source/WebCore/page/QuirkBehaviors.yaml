@@ -229,10 +229,6 @@ NeedsGoogleTranslateScrollingQuirk:
 NeedsNetflixVolumeSliderQuirk:
   available: "iOS || vision"
 
-# play.geforcenow.com https://webkit.org/b/303622
-# FIXME: Remove as soon as nvidia adjusts the site for Safari. https://webkit.org/b/303718
-NeedsGeforcenowWarningDisplayNoneQuirk:
-
 # Expedia Group sites (hotels.com, expedia.*, orbitz.com, …) rdar://126631968
 NeedsExpediaGroupAnimationQuirk:
   conditions: [ElementSelector]
@@ -293,6 +289,10 @@ NeedsReuseLiveRangeForSelectionUpdateQuirk:
 NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk:
   parameters: [Script]
   conditions: [SecondaryURL]
+  implementation: custom
+
+NeedsStyleSheetInjectedQuirk:
+  parameters: [StyleSheet]
   implementation: custom
 
 # youtube.com rdar://135886305

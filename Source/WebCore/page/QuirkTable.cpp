@@ -73,7 +73,7 @@ void Quirk::apply(QuirksData& quirksData) const
 }
 
 static constexpr std::array rowFields { "bugs"_s, "comment"_s, "matches"_s, "embeddedMatches"_s, "excludeMatches"_s, "queryContains"_s, "fragmentContains"_s, "environment"_s, "available"_s, "behaviors"_s };
-static constexpr std::array behaviorFields { "id"_s, "script"_s, "userAgent"_s, "chromeCompatibilityVersion"_s, "cookieNames"_s, "elementSelector"_s, "documentSelector"_s, "secondaryURL"_s, "bugs"_s, "comment"_s };
+static constexpr std::array behaviorFields { "id"_s, "script"_s, "userAgent"_s, "chromeCompatibilityVersion"_s, "cookieNames"_s, "styleSheet"_s, "elementSelector"_s, "documentSelector"_s, "secondaryURL"_s, "bugs"_s, "comment"_s };
 
 static String LEGACY_NODELETE nonEmptyString(const JSON::Value& value)
 {
@@ -238,6 +238,7 @@ static constexpr std::array parameterFields {
     std::pair { "userAgent"_s, QuirkParametersNeeded::NeedsUserAgent },
     std::pair { "chromeCompatibilityVersion"_s, QuirkParametersNeeded::NeedsChromeCompatibilityVersion },
     std::pair { "cookieNames"_s, QuirkParametersNeeded::NeedsCookieNames },
+    std::pair { "styleSheet"_s, QuirkParametersNeeded::NeedsStyleSheet },
 };
 
 static constexpr std::array conditionFields {
@@ -524,6 +525,7 @@ std::optional<QuirkBehavior> QuirkTableParser::parseBehavior(JSON::Value& value,
         .userAgent = fields.string("userAgent"_s),
         .chromeCompatibilityVersion = fields.string("chromeCompatibilityVersion"_s),
         .cookieNames = fields.strings("cookieNames"_s),
+        .styleSheet = fields.string("styleSheet"_s),
         .elementSelector = fields.string("elementSelector"_s),
         .documentSelector = fields.string("documentSelector"_s),
         .secondaryURL = fields.patterns("secondaryURL"_s),

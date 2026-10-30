@@ -1,0 +1,17 @@
+Target
+
+Initial URL, which does not match:
+quirk active: false
+color: rgb(0, 0, 0)
+font face count: 0
+
+history.pushState() to ?inject:
+quirk active: true
+color: rgb(0, 128, 0)
+font face count: 1
+
+history.pushState() to ?other:
+quirk active: false
+color: rgb(0, 0, 0)
+font face count: 0
+

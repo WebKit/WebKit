@@ -49,7 +49,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PropertyCascade);
 PropertyCascade::PropertyCascade(const MatchResult& matchResult, IncludedProperties&& includedProperties, const HashMap<AnimatableCSSProperty, EnumSet<AnimationSource>>* animatedProperties, const StyleProperties* positionTryFallbackProperties)
     : m_matchResult(matchResult)
     , m_includedProperties(WTF::move(includedProperties))
-    , m_maximumOrigin(positionTryFallbackProperties ? PropertyCascade::Origin::PositionFallback : PropertyCascade::Origin::Author)
+    , m_maximumOrigin(PropertyCascade::Origin::Quirk)
     , m_animationLayer(animatedProperties ? std::optional { AnimationLayer { *animatedProperties } } : std::nullopt)
 {
     ASSERT(!m_includedProperties.isEmpty());
@@ -131,6 +131,13 @@ void PropertyCascade::buildCascade()
         if (!originsWithImportant[std::to_underlying(origin)])
             continue;
         addImportantMatches(origin);
+    }
+
+    // Quirk style sits above all other origins, so its declarations win regardless of importance elsewhere.
+    // Its own !important declarations are still ordered after its normal ones.
+    if (m_maximumOrigin >= Origin::Quirk) {
+        if (addNormalMatches(Origin::Quirk))
+            addImportantMatches(Origin::Quirk);
     }
 
     sortLogicalGroupPropertyIDs();
@@ -444,6 +451,7 @@ static auto& LEGACY_NODELETE declarationsForOrigin(const MatchResult& matchResul
     case PropertyCascade::Origin::UserAgent: return matchResult.userAgentDeclarations;
     case PropertyCascade::Origin::User: return matchResult.userDeclarations;
     case PropertyCascade::Origin::Author: return matchResult.authorDeclarations;
+    case PropertyCascade::Origin::Quirk: return matchResult.quirkDeclarations;
     case PropertyCascade::Origin::PositionFallback: break;
     }
     ASSERT_NOT_REACHED();

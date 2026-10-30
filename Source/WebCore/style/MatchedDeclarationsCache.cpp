@@ -131,7 +131,7 @@ unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult, c
     if (matchResult.isCompletelyNonCacheable)
         return 0;
 
-    if (matchResult.userAgentDeclarations.isEmpty() && matchResult.userDeclarations.isEmpty()) {
+    if (matchResult.userAgentDeclarations.isEmpty() && matchResult.userDeclarations.isEmpty() && matchResult.quirkDeclarations.isEmpty()) {
         bool allNonCacheable = std::ranges::all_of(matchResult.authorDeclarations, [](auto& matchedProperties) {
             return matchedProperties.isCacheable != IsCacheable::Yes;
         });
@@ -246,7 +246,7 @@ void MatchedDeclarationsCache::sweep()
 
     removeAllMatching([&] (const Entry& entry) -> bool {
         auto& matchResult = entry.matchResult;
-        return hasOneRef(matchResult->userAgentDeclarations) || hasOneRef(matchResult->userDeclarations) || hasOneRef(matchResult->authorDeclarations);
+        return hasOneRef(matchResult->userAgentDeclarations) || hasOneRef(matchResult->userDeclarations) || hasOneRef(matchResult->authorDeclarations) || hasOneRef(matchResult->quirkDeclarations);
     });
 
     m_additionsSinceLastSweep = 0;

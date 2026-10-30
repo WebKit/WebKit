@@ -33,7 +33,8 @@ namespace Style {
 enum class DeclarationOrigin : uint8_t {
     UserAgent,
     User,
-    Author
+    Author,
+    Quirk
 };
 
 }

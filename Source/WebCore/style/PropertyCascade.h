@@ -62,7 +62,9 @@ public:
         UserAgent,
         User,
         Author,
-        PositionFallback
+        PositionFallback,
+        // Site-specific quirk style sheets. Applied after everything else in the cascade, including !important author declarations.
+        Quirk
     };
 
     static constexpr OptionSet<PropertyType> normalPropertyTypes() { return { PropertyType::NonInherited,  PropertyType::Inherited }; }

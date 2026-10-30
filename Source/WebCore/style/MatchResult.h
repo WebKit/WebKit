@@ -56,15 +56,17 @@ struct MatchResult : RefCounted<MatchResult> {
     Vector<MatchedProperties> userAgentDeclarations;
     Vector<MatchedProperties> userDeclarations;
     Vector<MatchedProperties> authorDeclarations;
+    Vector<MatchedProperties> quirkDeclarations;
     Vector<CSSPropertyID, 4> nonCacheablePropertyIds;
 
-    bool isEmpty() const { return userAgentDeclarations.isEmpty() && userDeclarations.isEmpty() && authorDeclarations.isEmpty(); }
+    bool isEmpty() const { return userAgentDeclarations.isEmpty() && userDeclarations.isEmpty() && authorDeclarations.isEmpty() && quirkDeclarations.isEmpty(); }
 
     void copyDeclarationsFrom(const MatchResult& other)
     {
         userAgentDeclarations = other.userAgentDeclarations;
         userDeclarations = other.userDeclarations;
         authorDeclarations = other.authorDeclarations;
+        quirkDeclarations = other.quirkDeclarations;
     }
 
     bool cacheablePropertiesEqual(const MatchResult&) const;
@@ -96,6 +98,8 @@ inline bool MatchResult::cacheablePropertiesEqual(const MatchResult& other) cons
     if (userAgentDeclarations != other.userAgentDeclarations)
         return false;
     if (userDeclarations != other.userDeclarations)
+        return false;
+    if (quirkDeclarations != other.quirkDeclarations)
         return false;
 
     // Currently the cached style contains also the non-cacheable property values from when the entry was made
@@ -138,7 +142,7 @@ inline void add(Hasher& hasher, const MatchedProperties& matchedProperties)
 inline void add(Hasher& hasher, const MatchResult& matchResult)
 {
     ASSERT(!matchResult.isCompletelyNonCacheable);
-    add(hasher, matchResult.isForLink, matchResult.nonCacheablePropertyIds, matchResult.userAgentDeclarations, matchResult.userDeclarations, matchResult.authorDeclarations);
+    add(hasher, matchResult.isForLink, matchResult.nonCacheablePropertyIds, matchResult.userAgentDeclarations, matchResult.userDeclarations, matchResult.authorDeclarations, matchResult.quirkDeclarations);
 }
 
 }
