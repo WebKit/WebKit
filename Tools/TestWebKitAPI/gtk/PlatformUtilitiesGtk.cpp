@@ -68,7 +68,7 @@ WKURLRef URLForNonExistentResource()
 
 bool isKeyDown(WKNativeEventPtr event)
 {
-    return gdk_event_get_event_type(const_cast<GdkEvent*>(event)) == GDK_KEY_PRESS;
+    return event && gdk_event_get_event_type(const_cast<GdkEvent*>(event)) == GDK_KEY_PRESS;
 }
 
 } // namespace Util
