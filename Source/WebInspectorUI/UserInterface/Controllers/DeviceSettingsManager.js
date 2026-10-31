@@ -58,6 +58,16 @@ WI.DeviceSettingsManager = class DeviceSettingsManager extends WI.Object
         });
     }
 
+    initializeBackendTargetForSiteIsolation(target)
+    {
+        // COMPATIBILITY (macOS 27.0, iOS 27.0): Page.overrideSetting did not support the WebPage target yet.
+        if (!target.hasCommand("Page.overrideSetting"))
+            return;
+
+        for (let [setting, value] of this._overridenDeviceSettings)
+            target.PageAgent.overrideSetting(setting, value);
+    }
+
     // Static
 
     static supportsSetScreenSizeOverride()
@@ -87,6 +97,11 @@ WI.DeviceSettingsManager = class DeviceSettingsManager extends WI.Object
         let shouldOverride = !this._overridenDeviceSettings.has(setting);
         if (shouldOverride)
             commandArguments.value = value;
+
+        // Under Site Isolation, the WebPage target fans the override out to the processes hosting cross-origin frames.
+        let backendTarget = WI.networkManager.enabledPageForSiteIsolation ? WI.backendTarget : null;
+        if (backendTarget && backendTarget !== target && backendTarget.hasCommand("Page.overrideSetting"))
+            backendTarget.PageAgent.overrideSetting.invoke(commandArguments);
 
         target.PageAgent.overrideSetting.invoke(commandArguments, (error) => {
             if (error) {

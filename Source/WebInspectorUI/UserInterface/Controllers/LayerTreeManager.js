@@ -46,15 +46,15 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
             if (target.hasCommand("Page.setShowPaintRects") && this._showPaintRects)
                 target.PageAgent.setShowPaintRects(this._showPaintRects);
 
-            if (this._compositingBordersVisible) {
-                // COMPATIBILITY(iOS 13.1): Page.setCompositingBordersVisible was replaced by Page.Setting.ShowDebugBorders and Page.Setting.ShowRepaintCounter.
-                if (InspectorBackend.Enum.Page.Setting.ShowDebugBorders && InspectorBackend.Enum.Page.Setting.ShowRepaintCounter) {
-                    target.PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.ShowDebugBorders, this._compositingBordersVisible);
-                    target.PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.ShowRepaintCounter, this._compositingBordersVisible);
-                } else if (target.hasCommand("Page.setCompositingBordersVisible"))
-                    target.PageAgent.setCompositingBordersVisible(this._compositingBordersVisible);
-            }
+            if (this._compositingBordersVisible)
+                this._applyCompositingBorders(target);
         }
+    }
+
+    initializeBackendTargetForSiteIsolation(target)
+    {
+        if (this._compositingBordersVisible)
+            this._applyCompositingBorders(target);
     }
 
     // Static
@@ -110,16 +110,11 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
 
         this._compositingBordersVisible = compositingBordersVisible;
 
-        for (let target of WI.targets) {
+        for (let target of WI.networkManager.pageAgentTargets) {
             if (!target.hasDomain("Page"))
                 continue;
 
-            // COMPATIBILITY(iOS 13.1): Page.setCompositingBordersVisible was replaced by Page.Setting.ShowDebugBorders and Page.Setting.ShowRepaintCounter.
-            if (InspectorBackend.Enum.Page.Setting.ShowDebugBorders && InspectorBackend.Enum.Page.Setting.ShowRepaintCounter) {
-                target.PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.ShowDebugBorders, this._compositingBordersVisible);
-                target.PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.ShowRepaintCounter, this._compositingBordersVisible);
-            } else if (target.hasCommand("Page.setCompositingBordersVisible"))
-                target.PageAgent.setCompositingBordersVisible(this._compositingBordersVisible);
+            this._applyCompositingBorders(target);
         }
 
         this.dispatchEventToListeners(LayerTreeManager.Event.CompositingBordersVisibleChanged);
@@ -225,6 +220,18 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
     layerTreeDidChange()
     {
         this.dispatchEventToListeners(WI.LayerTreeManager.Event.LayerTreeDidChange);
+    }
+
+    // Private
+
+    _applyCompositingBorders(target)
+    {
+        // COMPATIBILITY(iOS 13.1): Page.setCompositingBordersVisible was replaced by Page.Setting.ShowDebugBorders and Page.Setting.ShowRepaintCounter.
+        if (target.hasCommand("Page.overrideSetting") && InspectorBackend.Enum.Page.Setting.ShowDebugBorders && InspectorBackend.Enum.Page.Setting.ShowRepaintCounter) {
+            target.PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.ShowDebugBorders, this._compositingBordersVisible);
+            target.PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.ShowRepaintCounter, this._compositingBordersVisible);
+        } else if (target.hasCommand("Page.setCompositingBordersVisible"))
+            target.PageAgent.setCompositingBordersVisible(this._compositingBordersVisible);
     }
 };
 

@@ -788,6 +788,13 @@ void WebInspectorBackend::disablePageInstrumentation()
     // resets on disable().
     m_showPaintRects = false;
     m_bootstrapScript = { };
+
+    if (RefPtr corePage = m_page ? m_page->corePage() : nullptr) {
+        for (auto& settingName : std::exchange(m_overriddenSettings, { })) {
+            if (auto setting = Inspector::Protocol::Helpers::parseEnumValueFromString<Inspector::Protocol::Page::Setting>(settingName))
+                InspectorPageAgent::applySettingOverride(*corePage, *setting, std::nullopt);
+        }
+    }
 }
 
 void WebInspectorBackend::setShowPaintRects(bool show)
@@ -797,6 +804,22 @@ void WebInspectorBackend::setShowPaintRects(bool show)
     m_showPaintRects = show;
     for (auto& proxy : m_framePageAgentProxies.values())
         proxy->setShowPaintRects(show);
+}
+
+void WebInspectorBackend::setSettingOverride(const String& settingName, std::optional<bool> value)
+{
+    RefPtr corePage = m_page ? m_page->corePage() : nullptr;
+    if (!corePage)
+        return;
+
+    auto setting = Inspector::Protocol::Helpers::parseEnumValueFromString<Inspector::Protocol::Page::Setting>(settingName);
+    if (!setting || !InspectorPageAgent::applySettingOverride(*corePage, *setting, value))
+        return;
+
+    if (value)
+        m_overriddenSettings.add(settingName);
+    else
+        m_overriddenSettings.remove(settingName);
 }
 
 void WebInspectorBackend::setBootstrapScript(const String& source)

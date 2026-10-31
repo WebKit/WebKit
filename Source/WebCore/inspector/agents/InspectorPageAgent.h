@@ -130,6 +130,9 @@ public:
 
     static void evaluateBootstrapScript(LocalFrame&, const String& source);
 
+    // Returns false if the setting isn't backed by page Settings.
+    WEBCORE_EXPORT static bool applySettingOverride(Page&, Inspector::Protocol::Page::Setting, std::optional<bool>);
+
 private:
     double timestamp();
 

@@ -137,10 +137,11 @@ private:
     bool m_enabled { false };
     HashMap<std::pair<WebCore::ProcessIdentifier, WebCore::PageIdentifier>, unsigned> m_instrumentedProcessPageCounts;
 
-    // Latest paint-rects toggle and bootstrap script, sent to every instrumented process and replayed
+    // Latest paint-rects toggle, bootstrap script and setting overrides, sent to every instrumented process and replayed
     // to any process that registers later (e.g. a cross-origin navigation spawns a new one).
     bool m_showPaintRects { false };
     String m_bootstrapScript;
+    HashMap<String, bool> m_settingOverrides;
 
     // Pin each instrumented WebProcessProxy alive while we hold an IPC message
     // receiver registration on it. Without this, the process can be destructed
