@@ -40,6 +40,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/posix/POSIXExtras.h>
 #import <wtf/spi/cocoa/BOMSPI.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/MakeString.h>
@@ -105,6 +106,8 @@ String createTemporaryZipArchive(const String& path)
         auto copier = BOMCopierNew();
         if (!BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, archivePath.legacyCStringPointer(), bridge_cast(options)))
             temporaryFile = String { archivePath };
+        else
+            posixUnlink(archivePath);
         BOMCopierFree(copier);
     }];
 
@@ -126,10 +129,15 @@ String extractTemporaryZipArchive(const String& path)
         };
 
         auto copier = BOMCopierNew();
-        if (BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, fileSystemRepresentation(temporaryDirectory).legacyCStringPointer(), bridge_cast(options)))
+        if (BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, fileSystemRepresentation(temporaryDirectory).legacyCStringPointer(), bridge_cast(options))) {
+            deleteNonEmptyDirectory(temporaryDirectory);
             temporaryDirectory = nullString();
+        }
         BOMCopierFree(copier);
     }];
+
+    if (!temporaryDirectory)
+        return nullString();
 
     RetainPtr nsTemporaryDirectory = temporaryDirectory.createNSString();
     auto *contentsOfTemporaryDirectory = [NSFileManager.defaultManager contentsOfDirectoryAtPath:nsTemporaryDirectory.get() error:nil];
