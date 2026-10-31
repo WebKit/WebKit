@@ -30,6 +30,8 @@
 #include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
 #undef GST_USE_UNSTABLE_API
+#include <wtf/Lock.h>
+#include <wtf/Locker.h>
 #include <wtf/glib/GUniquePtr.h>
 
 GST_DEBUG_CATEGORY(webkit_display_debug);
@@ -45,8 +47,11 @@ static void ensureDebugCategoryInitialized()
     });
 }
 
+static Lock s_gstGLStateLock;
+
 GstGLDisplay* PlatformDisplay::gstGLDisplay() const
 {
+    Locker locker { s_gstGLStateLock };
     ensureDebugCategoryInitialized();
     if (!m_gstGLDisplay)
         m_gstGLDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(eglDisplay())));
@@ -58,10 +63,11 @@ GstGLContext* PlatformDisplay::gstGLContext() const
 {
     ensureDebugCategoryInitialized();
 
+    auto* gstDisplay = gstGLDisplay();
+    Locker locker { s_gstGLStateLock };
+
     if (m_gstGLContext)
         return m_gstGLContext.get();
-
-    auto* gstDisplay = gstGLDisplay();
     if (!gstDisplay) {
         GST_ERROR("No GL display");
         return nullptr;
@@ -89,6 +95,7 @@ GstGLContext* PlatformDisplay::gstGLContext() const
 
 void PlatformDisplay::clearGStreamerGLState()
 {
+    Locker locker { s_gstGLStateLock };
     m_gstGLDisplay = nullptr;
     m_gstGLContext = nullptr;
 }
