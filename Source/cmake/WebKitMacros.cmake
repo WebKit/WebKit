@@ -583,16 +583,25 @@ endmacro()
 function(_WEBKIT_TARGET_LINK_FRAMEWORK_INTO target_name framework _public_frameworks_var _private_frameworks_var)
     set_property(GLOBAL PROPERTY ${framework}_LINKED_INTO ${target_name})
 
+    set(_public ${${_public_frameworks_var}})
+    set(_private ${${_private_frameworks_var}})
+
     get_property(_framework_public_frameworks GLOBAL PROPERTY ${framework}_FRAMEWORKS)
-    foreach (dependency IN LISTS ${_framework_public_frameworks})
-        set(${_public_frameworks_var} "${${_public_frameworks_var}};${dependency}" PARENT_SCOPE)
-    endforeach ()
+    list(APPEND _public ${_framework_public_frameworks})
 
     get_property(_framework_private_frameworks GLOBAL PROPERTY ${framework}_PRIVATE_FRAMEWORKS)
     foreach (dependency IN LISTS _framework_private_frameworks)
-        set(${_private_frameworks_var} "${${_private_frameworks_var}};${dependency}" PARENT_SCOPE)
+        list(APPEND _private ${dependency})
+        # The recursive call returns its result through PARENT_SCOPE into these variables.
+        set(${_public_frameworks_var} ${_public})
+        set(${_private_frameworks_var} ${_private})
         _WEBKIT_TARGET_LINK_FRAMEWORK_INTO(${target_name} ${dependency} ${_public_frameworks_var} ${_private_frameworks_var})
+        set(_public ${${_public_frameworks_var}})
+        set(_private ${${_private_frameworks_var}})
     endforeach ()
+
+    set(${_public_frameworks_var} ${_public} PARENT_SCOPE)
+    set(${_private_frameworks_var} ${_private} PARENT_SCOPE)
 endfunction()
 
 macro(_WEBKIT_FRAMEWORK_LINK_FRAMEWORK _target_name)
