@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <glib-object.h>
 #include <wtf/HashTraits.h>
+#include <wtf/glib/GPtrSpecializations.h>
 
 extern "C" {
     typedef struct _GDBusConnection GDBusConnection;
@@ -87,7 +88,8 @@ template<typename T, typename GRefPtrRefDerefTraits = GRefPtrDefaultRefDerefTrai
 // as GstObject.
 //
 // **You must include the header containing any specific specializations you need.**
-// Failing to do so will silently cause the default implementation to be used.
+// Every specialization is declared up front in GPtrSpecializations.h, so failing to do so
+// is a compile error (incomplete type) rather than a silent use of the default implementation.
 template<typename T, typename _GRefPtrRefDerefTraits = GRefPtrDefaultRefDerefTraits<T>> class GRefPtr {
 public:
     using RefDerefTraits = _GRefPtrRefDerefTraits;
@@ -271,6 +273,7 @@ template<typename P> struct HashTraits<GRefPtr<P>> : SimpleClassHashTraits<GRefP
 };
 
 #define WTF_DECLARE_GREF_TRAITS(typeName, ...) \
+    WTF_CHECK_GREF_TRAITS_DECLARED(typeName) \
     template<> struct GRefPtrDefaultRefDerefTraits<typeName> { \
         static __VA_ARGS__ typeName* refIfNotNull(typeName*); \
         static __VA_ARGS__ void derefIfNotNull(typeName*); \
@@ -299,6 +302,7 @@ template<typename P> struct HashTraits<GRefPtr<P>> : SimpleClassHashTraits<GRefP
     }
 
 #define WTF_DEFINE_GREF_TRAITS_INLINE(typeName, refFunc, derefFunc, ...) \
+    WTF_CHECK_GREF_TRAITS_DECLARED(typeName) \
     template<> struct GRefPtrDefaultRefDerefTraits<typeName> { \
         static inline typeName* refIfNotNull(typeName* ptr) \
         { \
@@ -323,6 +327,7 @@ template<typename P> struct HashTraits<GRefPtr<P>> : SimpleClassHashTraits<GRefP
 
 #if ASSERT_ENABLED
 #define WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(typeName, refFunc, derefFunc, isFloatingFunc, shouldBeFloatingOnCreation) \
+    WTF_CHECK_GREF_TRAITS_DECLARED(typeName) \
     template<> struct GRefPtrDefaultRefDerefTraits<typeName> { \
         static inline typeName* refIfNotNull(typeName* ptr) \
         { \

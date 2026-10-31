@@ -38,7 +38,7 @@ WTF_DEFINE_GPTR_DELETER(GstInstallPluginsContext, gst_install_plugins_context_fr
 WTF_DEFINE_GPTR_DELETER(GstIterator, gst_iterator_free)
 WTF_DEFINE_GPTR_DELETER(GstSegment, gst_segment_free)
 WTF_DEFINE_GPTR_DELETER(GstFlowCombiner, gst_flow_combiner_free)
-WTF_DEFINE_GPTR_DELETER(GstByteReader, gst_byte_reader_free)
+WTF_DEFINE_GPTR_DELETER_UNCHECKED(GstByteReader, gst_byte_reader_free)
 WTF_DEFINE_GPTR_DELETER(GstVideoConverter, gst_video_converter_free)
 WTF_DEFINE_GPTR_DELETER(GstAudioConverter, gst_audio_converter_free)
 WTF_DEFINE_GPTR_DELETER(GstAudioInfo, gst_audio_info_free)
