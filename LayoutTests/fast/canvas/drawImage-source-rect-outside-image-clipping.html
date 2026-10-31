@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("When the source rectangle of drawImage() is partly outside the source image, the source rectangle must be clipped to the image and the destination rectangle clipped in the same proportion, for both canvas and ImageBitmap sources.");
+jsTestIsAsync = true;
+
+let pixel;
+function checkPixel(context, x, y, expected)
+{
+    pixel = Array.from(context.getImageData(x, y, 1, 1).data);
+    shouldBe("pixel", JSON.stringify(expected));
+}
+
+const green = [0, 255, 0, 255];
+const blue = [0, 0, 255, 255];
+const transparent = [0, 0, 0, 0];
+
+// 100x50 source: left half green, right half blue.
+const sourceCanvas = document.createElement("canvas");
+sourceCanvas.width = 100;
+sourceCanvas.height = 50;
+const sourceContext = sourceCanvas.getContext("2d");
+sourceContext.fillStyle = "rgb(0, 255, 0)";
+sourceContext.fillRect(0, 0, 50, 50);
+sourceContext.fillStyle = "rgb(0, 0, 255)";
+sourceContext.fillRect(50, 0, 50, 50);
+
+// [name, source rect, destination rect, [x, y, expected color] checks]
+const testCases = [
+    ["Source extends past the right edge",
+        [50, 0, 100, 50], [0, 0, 100, 50],
+        [[25, 25, blue], [75, 25, transparent]]],
+    ["Source extends past the left edge",
+        [-50, 0, 100, 50], [0, 0, 100, 50],
+        [[25, 25, transparent], [75, 25, green]]],
+    ["Source extends past the top and bottom edges",
+        [50, -25, 100, 100], [0, 0, 100, 100],
+        [[25, 50, blue], [25, 10, transparent], [25, 90, transparent], [75, 50, transparent]]],
+    // The destination is half the size of the source, so the visible part of the image is drawn at half size.
+    ["Source extends past the right edge, downscaled destination",
+        [50, 0, 100, 50], [0, 0, 50, 25],
+        [[12, 12, blue], [37, 12, transparent]]],
+    ["Source extends past all edges, downscaled destination",
+        [-50, -25, 200, 100], [0, 0, 100, 50],
+        [[37, 25, green], [62, 25, blue], [12, 25, transparent], [87, 25, transparent], [50, 5, transparent], [50, 45, transparent]]],
+    ["Source extends past the left edge, downscaled and offset destination",
+        [-50, 0, 100, 50], [20, 10, 50, 25],
+        [[57, 22, green], [32, 22, transparent], [57, 5, transparent], [57, 40, transparent]]],
+    ["Source extends past the right edge, upscaled destination",
+        [50, 0, 100, 50], [0, 0, 200, 100],
+        [[50, 50, blue], [150, 50, transparent]]],
+    ["Source extends past the left and top edges, upscaled destination",
+        [-50, -25, 100, 50], [0, 0, 200, 100],
+        [[150, 75, green], [50, 75, transparent], [150, 25, transparent]]],
+    ["Source extends past the right edge, non-uniformly scaled destination",
+        [50, 0, 100, 50], [0, 0, 100, 100],
+        [[25, 50, blue], [75, 50, transparent]]],
+    ["Source entirely outside the image",
+        [100, 0, 50, 50], [0, 0, 50, 50],
+        [[25, 25, transparent]]],
+];
+
+function runTestCases(sourceName, source)
+{
+    for (const [name, sourceRect, destinationRect, checks] of testCases) {
+        debug("");
+        debug(`${sourceName}: ${name}:`);
+        const canvas = document.createElement("canvas");
+        canvas.width = 200;
+        canvas.height = 100;
+        const context = canvas.getContext("2d");
+        context.drawImage(source, ...sourceRect, ...destinationRect);
+        for (const [x, y, expected] of checks)
+            checkPixel(context, x, y, expected);
+    }
+}
+
+(async () => {
+    runTestCases("HTMLCanvasElement", sourceCanvas);
+    runTestCases("ImageBitmap", await createImageBitmap(sourceCanvas));
+    finishJSTest();
+})();
+</script>
+</body>
+</html>
