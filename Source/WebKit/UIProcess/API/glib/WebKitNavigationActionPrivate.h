@@ -20,6 +20,7 @@
 #pragma once
 
 #include "APINavigationAction.h"
+#include "WebKitFrameInfoPrivate.h"
 #include "WebKitNavigationAction.h"
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>

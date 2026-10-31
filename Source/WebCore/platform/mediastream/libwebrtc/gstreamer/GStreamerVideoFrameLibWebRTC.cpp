@@ -23,6 +23,7 @@
 
 #include "GStreamerCommon.h"
 #include "GStreamerVideoFrameConverter.h"
+#include "GUniquePtrGStreamer.h"
 #include "LibWebRTCVideoFrameUtilities.h"
 
 #include <wtf/MediaTime.h>
