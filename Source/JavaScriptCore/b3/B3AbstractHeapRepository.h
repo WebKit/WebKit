@@ -108,7 +108,8 @@ namespace JSC::B3 {
     macro(JSObject_butterfly, JSObject::butterflyOffset(), Mutability::Mutable) \
     macro(JSPropertyNameEnumerator_cachedInlineCapacity, JSPropertyNameEnumerator::cachedInlineCapacityOffset(), Mutability::Mutable) \
     macro(JSPropertyNameEnumerator_cachedPropertyNamesVector, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset(), Mutability::Mutable) \
-    macro(JSPropertyNameEnumerator_cachedStructureID, JSPropertyNameEnumerator::cachedStructureIDOffset(), Mutability::Mutable) \
+    macro(JSPropertyNameEnumerator_cachedStructureIDForNames, JSPropertyNameEnumerator::cachedStructureIDForNamesOffset(), Mutability::Mutable) \
+    macro(JSPropertyNameEnumerator_cachedStructureIDForOffsets, JSPropertyNameEnumerator::cachedStructureIDForOffsetsOffset(), Mutability::Mutable) \
     macro(JSPropertyNameEnumerator_endGenericPropertyIndex, JSPropertyNameEnumerator::endGenericPropertyIndexOffset(), Mutability::Mutable) \
     macro(JSPropertyNameEnumerator_endStructurePropertyIndex, JSPropertyNameEnumerator::endStructurePropertyIndexOffset(), Mutability::Mutable) \
     macro(JSPropertyNameEnumerator_indexLength, JSPropertyNameEnumerator::indexedLengthOffset(), Mutability::Mutable) \

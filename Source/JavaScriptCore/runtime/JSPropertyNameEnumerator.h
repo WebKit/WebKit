@@ -80,16 +80,18 @@ public:
     Structure* cachedStructure(VM& vm) const
     {
         UNUSED_PARAM(vm);
-        return m_cachedStructureID.get();
+        return m_cachedStructureIDForNames.get();
     }
-    StructureID cachedStructureID() const { return m_cachedStructureID.value(); }
+    StructureID cachedStructureIDForNames() const { return m_cachedStructureIDForNames.value(); }
+    StructureID cachedStructureIDForOffsets() const { return m_cachedStructureIDForOffsets.value(); }
     uint32_t indexedLength() const { return m_indexedLength; }
     uint32_t endStructurePropertyIndex() const { return m_endStructurePropertyIndex; }
     uint32_t endGenericPropertyIndex() const { return m_endGenericPropertyIndex; }
     uint32_t cachedInlineCapacity() const { return m_cachedInlineCapacity; }
     uint32_t sizeOfPropertyNames() const { return endGenericPropertyIndex(); }
     uint32_t flags() const { return m_flags; }
-    static constexpr ptrdiff_t cachedStructureIDOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_cachedStructureID); }
+    static constexpr ptrdiff_t cachedStructureIDForNamesOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_cachedStructureIDForNames); }
+    static constexpr ptrdiff_t cachedStructureIDForOffsetsOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_cachedStructureIDForOffsets); }
     static constexpr ptrdiff_t indexedLengthOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_indexedLength); }
     static constexpr ptrdiff_t endStructurePropertyIndexOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_endStructurePropertyIndex); }
     static constexpr ptrdiff_t endGenericPropertyIndexOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_endGenericPropertyIndex); }
@@ -113,7 +115,8 @@ private:
     // JSPropertyNameEnumerator is immutable data structure, which allows VM to cache the empty one.
     // After instantiating JSPropertyNameEnumerator, we must not change any fields.
     AuxiliaryBarrier<WriteBarrier<JSString>*> m_propertyNames;
-    WriteBarrierStructureID m_cachedStructureID;
+    WriteBarrierStructureID m_cachedStructureIDForNames;
+    WriteBarrierStructureID m_cachedStructureIDForOffsets;
     uint32_t m_indexedLength;
     uint32_t m_endStructurePropertyIndex;
     uint32_t m_endGenericPropertyIndex;

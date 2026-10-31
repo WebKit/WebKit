@@ -59,7 +59,8 @@ JSPropertyNameEnumerator* JSPropertyNameEnumerator::tryCreate(VM& vm, Structure*
 JSPropertyNameEnumerator::JSPropertyNameEnumerator(VM& vm, Structure* structure, uint32_t indexedLength, uint32_t numberStructureProperties, WriteBarrier<JSString>* propertyNamesBuffer, unsigned propertyNamesSize)
     : JSCell(vm, vm.propertyNameEnumeratorStructure.get())
     , m_propertyNames(propertyNamesBuffer, WriteBarrierEarlyInit)
-    , m_cachedStructureID(structure, WriteBarrierEarlyInit)
+    , m_cachedStructureIDForNames(structure, WriteBarrierEarlyInit)
+    , m_cachedStructureIDForOffsets(structure && structure->canAccessPropertiesQuicklyForEnumeration() ? structure : nullptr, WriteBarrierEarlyInit)
     , m_indexedLength(indexedLength)
     , m_endStructurePropertyIndex(numberStructureProperties)
     , m_endGenericPropertyIndex(propertyNamesSize)
@@ -95,7 +96,8 @@ void JSPropertyNameEnumerator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         visitor.markAuxiliary(propertyNames);
         visitor.append(propertyNames, propertyNames + thisObject->sizeOfPropertyNames());
     }
-    visitor.append(thisObject->m_cachedStructureID);
+    visitor.append(thisObject->m_cachedStructureIDForNames);
+    visitor.append(thisObject->m_cachedStructureIDForOffsets);
 }
 
 DEFINE_VISIT_CHILDREN(JSPropertyNameEnumerator);
@@ -136,6 +138,9 @@ void getEnumerablePropertyNames(JSGlobalObject* globalObject, JSObject* base, Pr
         RETURN_IF_EXCEPTION(scope, void());
         // |propertyNames| contains all indexed properties, so disable enumeration based on getEnumerableLength().
         indexedLength = 0;
+
+        if (structure->canCacheOwnPropertyNames() && !structure->typeInfo().overridesGetOwnPropertySlot())
+            structurePropertyCount = propertyNames.size();
     }
 
     JSObject* object = base;
@@ -200,7 +205,7 @@ JSString* JSPropertyNameEnumerator::computeNext(JSGlobalObject* globalObject, JS
             name = propertyNameAtIndex(index);
             if (!name)
                 break;
-            if (index < endStructurePropertyIndex() && base->structureID() == cachedStructureID())
+            if (index < endStructurePropertyIndex() && base->structureID() == cachedStructureIDForNames())
                 break;
             auto id = name->toAtomString(globalObject);
             RETURN_IF_EXCEPTION(scope, nullptr);
