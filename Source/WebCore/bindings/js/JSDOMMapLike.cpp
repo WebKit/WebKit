@@ -38,20 +38,25 @@ namespace WebCore {
 std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingMap(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& mapLike)
 {
     auto& vm = lexicalGlobalObject.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto backingMap = mapLike.getDirect(vm, builtinNames(vm).backingMapPrivateName());
+    scope.assertNoExceptionExceptTermination();
     if (backingMap)
         return { false, *JSC::asObject(backingMap) };
 
     backingMap = JSC::JSMap::create(vm, lexicalGlobalObject.mapStructure());
     mapLike.putDirect(vm, builtinNames(vm).backingMapPrivateName(), backingMap, std::to_underlying(JSC::PropertyAttribute::DontEnum));
+    scope.assertNoExceptionExceptTermination();
     return { true, *JSC::asObject(backingMap) };
 }
 
 void clearBackingMap(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& backingMap)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto function = lexicalGlobalObject.mapPrototype()->getDirect(vm, vm.propertyNames->builtinNames().clearPrivateName());
     ASSERT(function);
+    RETURN_IF_EXCEPTION(scope, void());
 
     auto callData = JSC::getCallData(function);
     ASSERT(callData.type != JSC::CallData::Type::None);
@@ -63,8 +68,10 @@ void clearBackingMap(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& ba
 void setToBackingMap(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& backingMap, JSC::JSValue key, JSC::JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto function = lexicalGlobalObject.mapPrototype()->getDirect(vm, vm.propertyNames->builtinNames().setPrivateName());
     ASSERT(function);
+    RETURN_IF_EXCEPTION(scope, void());
 
     auto callData = JSC::getCallData(function);
     ASSERT(callData.type != JSC::CallData::Type::None);
@@ -84,8 +91,10 @@ JSC::JSValue forwardAttributeGetterToBackingMap(JSC::JSGlobalObject& lexicalGlob
 JSC::JSValue forwardFunctionCallToBackingMap(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, JSC::JSObject& backingMap, const JSC::Identifier& functionName)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto function = lexicalGlobalObject.mapPrototype()->getDirect(vm, functionName);
     ASSERT(function);
+    RETURN_IF_EXCEPTION(scope, { });
 
     auto callData = JSC::getCallData(function);
     ASSERT(callData.type != JSC::CallData::Type::None);
@@ -95,13 +104,16 @@ JSC::JSValue forwardFunctionCallToBackingMap(JSC::JSGlobalObject& lexicalGlobalO
     for (size_t cptr = 0; cptr < callFrame.argumentCount(); ++cptr)
         arguments.append(callFrame.uncheckedArgument(cptr));
     ASSERT(!arguments.hasOverflowed());
-    return JSC::call(&lexicalGlobalObject, function, callData, &backingMap, arguments);
+    RELEASE_AND_RETURN(scope, JSC::call(&lexicalGlobalObject, function, callData, &backingMap, arguments));
 }
 
 JSC::JSValue forwardForEachCallToBackingMap(JSDOMGlobalObject& globalObject, JSC::CallFrame& callFrame, JSC::JSObject& mapLike)
 {
+    auto& vm = JSC::getVM(&globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto result = getBackingMap(globalObject, mapLike);
     ASSERT(!result.first);
+    RETURN_IF_EXCEPTION(scope, { });
 
     auto* function = globalObject.builtinInternalFunctions().jsDOMBindingInternals().m_forEachWrapperFunction.get();
     ASSERT(function);
@@ -115,7 +127,7 @@ JSC::JSValue forwardForEachCallToBackingMap(JSDOMGlobalObject& globalObject, JSC
     for (size_t cptr = 0; cptr < callFrame.argumentCount(); ++cptr)
         arguments.append(callFrame.uncheckedArgument(cptr));
     ASSERT(!arguments.hasOverflowed());
-    return JSC::call(&globalObject, function, callData, &mapLike, arguments);
+    RELEASE_AND_RETURN(scope, JSC::call(&globalObject, function, callData, &mapLike, arguments));
 }
 
 void DOMMapAdapter::clear()
