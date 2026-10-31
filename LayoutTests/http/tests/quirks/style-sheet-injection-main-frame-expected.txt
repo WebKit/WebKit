@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: http://127.0.0.1:8000/quirks/resources/style-sheet-injection-target.html has active WebKit quirks: NeedsStyleSheetInjectedQuirk. Visit https://docs.webkit.org/Infrastructure/Quirks.html for more information.
+Target
+
+quirk active: true
+color: rgb(0, 128, 0)
+font face count: 1

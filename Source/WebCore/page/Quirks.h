@@ -168,6 +168,9 @@ public:
 
     Vector<String, 1> scriptsToEvaluateBeforeRunningScriptFromURL(const URL&);
 
+    Vector<String> styleSheetsToInject();
+    void updateInjectedStyleSheets();
+
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT bool needsPointerTouchCompatibility(const Element&) const;
 #endif

@@ -134,10 +134,10 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
     if (!owningPage)
         return;
 
-    auto addStyleSheet = [&](const UserStyleSheet& userStyleSheet) {
-        Ref sheet = createExtensionsStyleSheet(document, userStyleSheet.url(), userStyleSheet.source(), userStyleSheet.level());
+    auto addStyleSheet = [&](const URL& url, const String& source, UserStyleLevel level) {
+        Ref sheet = createExtensionsStyleSheet(document, url, source, level);
 
-        m_injectedStyleSheetToSource.set(sheet.copyRef(), userStyleSheet.source());
+        m_injectedStyleSheetToSource.set(sheet.copyRef(), source);
 
         if (sheet->contents().isUserStyleSheet())
             m_injectedUserStyleSheets.append(WTF::move(sheet));
@@ -146,7 +146,10 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
     };
 
     for (const auto& userStyleSheet : m_pageSpecificStyleSheets)
-        addStyleSheet(userStyleSheet);
+        addStyleSheet(userStyleSheet.url(), userStyleSheet.source(), userStyleSheet.level());
+
+    for (const auto& source : m_quirkStyleSheets)
+        addStyleSheet({ }, source, UserStyleLevel::Author);
 
     RefPtr frame = document->frame();
     RefPtr userContentProvider = frame ? frame->userContentProvider() : nullptr;
@@ -180,7 +183,7 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
         if (!UserContentURLPattern::matchesPatterns(url, userStyleSheet.allowlist(), userStyleSheet.blocklist()))
             return;
 
-        addStyleSheet(userStyleSheet);
+        addStyleSheet(userStyleSheet.url(), userStyleSheet.source(), userStyleSheet.level());
     });
 }
 
@@ -198,6 +201,15 @@ void ExtensionStyleSheets::removePageSpecificUserStyleSheet(const UserStyleSheet
 
     if (removedStyleSheet)
         invalidateInjectedStyleSheetCache();
+}
+
+void ExtensionStyleSheets::setQuirkStyleSheets(Vector<String>&& sources)
+{
+    if (m_quirkStyleSheets == sources)
+        return;
+
+    m_quirkStyleSheets = WTF::move(sources);
+    invalidateInjectedStyleSheetCache();
 }
 
 bool ExtensionStyleSheets::hasCachedInjectedStyleSheets() const

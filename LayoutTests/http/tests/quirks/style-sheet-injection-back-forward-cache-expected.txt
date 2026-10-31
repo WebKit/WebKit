@@ -1,0 +1,12 @@
+Target
+
+Before leaving:
+quirk active: true
+color: rgb(0, 128, 0)
+font face count: 1
+
+Restored from the back/forward cache: true
+quirk active: true
+color: rgb(0, 128, 0)
+font face count: 1
+

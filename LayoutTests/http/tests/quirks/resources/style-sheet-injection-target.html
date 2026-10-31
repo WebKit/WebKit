@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="style-sheet-injection.js"></script>
+</head>
+<body>
+<p id="target">Target</p>
+<pre id="output"></pre>
+<script>
+window.addEventListener("pageshow", event => {
+    window.lastPageShowPersisted = event.persisted;
+});
+
+if (window.parent !== window)
+    window.parent.postMessage(StyleSheetQuirkHelpers.state(), "*");
+else {
+    document.getElementById("output").textContent = StyleSheetQuirkHelpers.state();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

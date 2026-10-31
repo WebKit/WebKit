@@ -1,0 +1,16 @@
+Same-origin subframe:
+quirk active: true
+color: rgb(0, 128, 0)
+font face count: 1
+
+Cross-origin subframe:
+quirk active: true
+color: rgb(0, 128, 0)
+font face count: 1
+
+Subframe of a top document that does not match:
+quirk active: false
+color: rgb(0, 0, 255)
+font face count: 0
+
+
