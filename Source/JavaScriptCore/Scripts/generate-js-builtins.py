@@ -31,6 +31,8 @@ import fnmatch
 import logging
 import optparse
 import os
+import re
+import subprocess
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'wkbuiltins'))
@@ -52,6 +54,32 @@ def concatenated_output_filename(builtins_files, framework_name, generate_only_w
 def do_open(file, mode):
     return open(file, mode, encoding="UTF-8")
 
+
+def security_macro_flag():
+    SECURITY_RELEASE_MACRO = 'RC_REMOVE_SEC_ACCEL_3'
+    # Configurations/SecurityReleaseMacros.xcconfig recognizes exactly the values 1 and YES.
+    return ('-D' if os.environ.get(SECURITY_RELEASE_MACRO) in ('1', 'YES') else '-U') + SECURITY_RELEASE_MACRO
+
+
+CONDITIONAL_DIRECTIVE_PATTERN = re.compile(r'^[ \t]*#[ \t]*(?:elif|else|endif|if|ifdef|ifndef)\b', re.MULTILINE)
+
+
+def preprocess_builtins_file(filepath, file_text, macro_flag):
+    if not CONDITIONAL_DIRECTIVE_PATTERN.search(file_text):
+        return file_text
+
+    if sys.platform != 'darwin':
+        raise ParseException("No support for preprocessing of conditional directives in %s." % filepath)
+
+    # -t keeps unifdef from lexing the JavaScript input as C.
+    command = ['/usr/bin/xcrun', 'unifdef', '-t', macro_flag, filepath]
+    result = subprocess.run(command, stdout=subprocess.PIPE, encoding="UTF-8")
+    if result.returncode >= 2:
+        raise ParseException("Failed to resolve conditional directives in %s." % filepath)
+
+    return result.stdout
+
+
 def generate_bindings_for_builtins_files(builtins_files=[],
                                          output_path=None,
                                          concatenate_output=False,
@@ -66,7 +94,7 @@ def generate_bindings_for_builtins_files(builtins_files=[],
 
     for filepath in builtins_files:
         with do_open(filepath, "r") as file:
-            file_text = file.read()
+            file_text = preprocess_builtins_file(filepath, file.read(), security_macro_flag())
             file_name = os.path.basename(filepath)
 
             # If this is a test file, then rewrite the filename to remove the

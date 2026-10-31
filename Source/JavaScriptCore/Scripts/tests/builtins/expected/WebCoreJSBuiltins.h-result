@@ -1,7 +1,7 @@
 ### Begin File: WebCoreJSBuiltins.h
 /*
  * Copyright (c) 2015 Canon Inc. All rights reserved.
- * Copyright (c) 2016 Apple Inc. All rights reserved.
+ * Copyright (c) 2016, 2026 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 #include "ArbitraryConditionalGuardBuiltins.h"
 #include "GuardedBuiltinBuiltins.h"
 #include "GuardedInternalBuiltinBuiltins.h"
+#include "SecurityReleaseConditionalBuiltins.h"
 #include "UnguardedBuiltinBuiltins.h"
 #include "xmlCasingTestBuiltins.h"
 #include <JavaScriptCore/VM.h>
@@ -59,6 +60,7 @@ public:
 #if ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
         , m_guardedInternalBuiltinBuiltins(m_vm)
 #endif // ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
+        , m_securityReleaseConditionalBuiltins(m_vm)
         , m_unguardedBuiltinBuiltins(m_vm)
 #if ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
         , m_xmlCasingTestBuiltins(m_vm)
@@ -70,6 +72,7 @@ public:
 #if ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
         m_guardedInternalBuiltinBuiltins.exportNames();
 #endif // ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
+        m_securityReleaseConditionalBuiltins.exportNames();
 #if ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
         m_xmlCasingTestBuiltins.exportNames();
 #endif // ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
@@ -87,6 +90,7 @@ public:
 #if ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
     GuardedInternalBuiltinBuiltinsWrapper& guardedInternalBuiltinBuiltins() { return m_guardedInternalBuiltinBuiltins; }
 #endif // ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
+    SecurityReleaseConditionalBuiltinsWrapper& securityReleaseConditionalBuiltins() { return m_securityReleaseConditionalBuiltins; }
     UnguardedBuiltinBuiltinsWrapper& unguardedBuiltinBuiltins() { return m_unguardedBuiltinBuiltins; }
 #if ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
     XMLCasingTestBuiltinsWrapper& xmlCasingTestBuiltins() { return m_xmlCasingTestBuiltins; }
@@ -106,6 +110,7 @@ private:
 #if ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
     GuardedInternalBuiltinBuiltinsWrapper m_guardedInternalBuiltinBuiltins;
 #endif // ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
+    SecurityReleaseConditionalBuiltinsWrapper m_securityReleaseConditionalBuiltins;
     UnguardedBuiltinBuiltinsWrapper m_unguardedBuiltinBuiltins;
 #if ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
     XMLCasingTestBuiltinsWrapper m_xmlCasingTestBuiltins;
@@ -118,7 +123,7 @@ private:
 ### Begin File: WebCoreJSBuiltins.cpp
 /*
  * Copyright (c) 2015 Canon Inc. All rights reserved.
- * Copyright (c) 2016 Apple Inc. All rights reserved.
+ * Copyright (c) 2016, 2026 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -150,6 +155,7 @@ private:
 #include "ArbitraryConditionalGuardBuiltins.cpp"
 #include "GuardedBuiltinBuiltins.cpp"
 #include "GuardedInternalBuiltinBuiltins.cpp"
+#include "SecurityReleaseConditionalBuiltins.cpp"
 #include "UnguardedBuiltinBuiltins.cpp"
 #include "xmlCasingTestBuiltins.cpp"
 ### End File: WebCoreJSBuiltins.cpp
@@ -157,7 +163,7 @@ private:
 ### Begin File: WebCoreJSBuiltinInternals.h
 /*
  * Copyright (c) 2015 Canon Inc. All rights reserved.
- * Copyright (c) 2016 Apple Inc. All rights reserved.
+ * Copyright (c) 2016, 2026 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -191,6 +197,7 @@ private:
 
 #include "AnotherGuardedInternalBuiltinBuiltins.h"
 #include "GuardedInternalBuiltinBuiltins.h"
+#include "SecurityReleaseConditionalBuiltins.h"
 #include "xmlCasingTestBuiltins.h"
 #include <JavaScriptCore/VM.h>
 #include <JavaScriptCore/WeakInlines.h>
@@ -212,6 +219,7 @@ public:
 #if ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
     GuardedInternalBuiltinBuiltinFunctions& guardedInternalBuiltin() { return m_guardedInternalBuiltin; }
 #endif // ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
+    SecurityReleaseConditionalBuiltinFunctions& securityReleaseConditional() { return m_securityReleaseConditional; }
 #if ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
     XMLCasingTestBuiltinFunctions& xmlCasingTest() { return m_xmlCasingTest; }
 #endif // ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
@@ -224,6 +232,7 @@ private:
 #if ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
     GuardedInternalBuiltinBuiltinFunctions m_guardedInternalBuiltin;
 #endif // ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
+    SecurityReleaseConditionalBuiltinFunctions m_securityReleaseConditional;
 #if ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
     XMLCasingTestBuiltinFunctions m_xmlCasingTest;
 #endif // ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
@@ -235,7 +244,7 @@ private:
 ### Begin File: WebCoreJSBuiltinInternals.cpp
 /*
  * Copyright (c) 2015 Canon Inc. All rights reserved.
- * Copyright (c) 2016 Apple Inc. All rights reserved.
+ * Copyright (c) 2016, 2026 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -280,6 +289,7 @@ JSBuiltinInternalFunctions::JSBuiltinInternalFunctions(JSC::VM& vm)
 #if ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
     , m_guardedInternalBuiltin(m_vm)
 #endif // ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
+    , m_securityReleaseConditional(m_vm)
 #if ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
     , m_xmlCasingTest(m_vm)
 #endif // ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
@@ -296,6 +306,7 @@ void JSBuiltinInternalFunctions::visit(Visitor& visitor)
 #if ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
     m_guardedInternalBuiltin.visit(visitor);
 #endif // ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
+    m_securityReleaseConditional.visit(visitor);
 #if ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
     m_xmlCasingTest.visit(visitor);
 #endif // ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
@@ -314,6 +325,7 @@ SUPPRESS_ASAN void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& glo
 #if ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
     m_guardedInternalBuiltin.init(globalObject);
 #endif // ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
+    m_securityReleaseConditional.init(globalObject);
 #if ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
     m_xmlCasingTest.init(globalObject);
 #endif // ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
@@ -334,6 +346,11 @@ SUPPRESS_ASAN void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& glo
     WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
 #undef DECLARE_GLOBAL_STATIC
 #endif // ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
+#define DECLARE_GLOBAL_STATIC(name) \
+    JSDOMGlobalObject::GlobalPropertyInfo( \
+        clientData.builtinFunctions().securityReleaseConditionalBuiltins().name##PrivateName(), securityReleaseConditional().m_##name##Function.get() , JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly),
+    WEBCORE_FOREACH_SECURITYRELEASECONDITIONAL_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
+#undef DECLARE_GLOBAL_STATIC
 #if ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
 #define DECLARE_GLOBAL_STATIC(name) \
     JSDOMGlobalObject::GlobalPropertyInfo( \
