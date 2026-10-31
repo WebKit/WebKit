@@ -675,6 +675,7 @@ builders:
     factory: JSCBuildO3AndTestsFactory
     platform: mac-sequoia
     configuration: debug
+    additionalArguments: [--cmake]
     runTests: 'true'
     workernames: {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m2pro'\").name"}}
   - name: API-Tests-iOS-Simulator-EWS
