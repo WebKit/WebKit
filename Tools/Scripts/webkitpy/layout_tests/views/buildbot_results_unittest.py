@@ -32,6 +32,7 @@ from webkitcorepy import StringIO
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.tool.mocktool import MockOptions
+from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_run_results
 from webkitpy.layout_tests.models import test_run_results_unittest
 from webkitpy.layout_tests.views import buildbot_results
@@ -85,6 +86,26 @@ class BuildBotPrinterTests(unittest.TestCase):
         summary = test_run_results_unittest.summarized_results(port, expected=False, passing=True, flaky=False)
         printer.print_unexpected_results(summary)
         self.assertNotEmpty(out)
+
+    def test_print_unexpected_results_regression_with_differing_retry_result(self):
+        port = MockHost().port_factory.get('test', options=MockOptions(pixel_tests=False, world_leaks=False))
+        printer, out = self.get_printer()
+
+        # A test failing in both the initial and retry runs is a regression,
+        # even when the result types differ between the runs, and must be
+        # reported as a regression rather than as flakiness.
+        initial_results = test_run_results_unittest.run_results(port)
+        initial_results.add(test_run_results_unittest.get_result('passes/text.html', test_expectations.TIMEOUT), False)
+        retry_results = test_run_results_unittest.run_results(port)
+        retry_results.add(test_run_results_unittest.get_result('passes/text.html', test_expectations.CRASH), False)
+        summary = test_run_results.summarize_results(
+            port, {None: initial_results.expectations}, initial_results, retry_results, enabled_pixel_tests_in_retry=False)
+        self.assertEqual(summary['num_regressions'], 1)
+        self.assertEqual(summary['num_flaky'], 0)
+        printer.print_unexpected_results(summary)
+        self.assertIn('Regressions: Unexpected', out.getvalue())
+        self.assertIn('passes/text.html', out.getvalue())
+        self.assertNotIn('Unexpected flakiness', out.getvalue())
 
     def test_print_unexpected_results_with_options(self):
         port = MockHost().port_factory.get('test', options=MockOptions(pixel_tests=False, world_leaks=False))
