@@ -52,9 +52,6 @@ imported/w3c/web-platform-tests/svg/render/reftests/blending-svg-foreign-object.
 imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size.svg                [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-002.html                               [ ImageOnlyFailure ]
 
-# <foreignObject> issues
-svg/foreignObject/vertical-foreignObject.html [ ImageOnlyFailure ]
-
 # Animation problems
 svg/animations/animateMotion-remove-or-retarget-resets-previous-target.html [ Failure ]
 
