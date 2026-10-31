@@ -59,6 +59,7 @@ static NSString * const NonFastScrollableRegionOverlayVisiblePreferenceKey = @"N
 static NSString * const WheelEventHandlerRegionOverlayVisiblePreferenceKey = @"WheelEventHandlerRegionOverlayVisible";
 static NSString * const InteractionRegionOverlayVisiblePreferenceKey = @"InteractionRegionOverlayVisible";
 static NSString * const EnhancedSecurityOverlayVisiblePreferenceKey = @"EnhancedSecurityOverlayVisible";
+static NSString * const TouchActionRegionOverlayVisiblePreferenceKey = @"TouchActionRegionOverlayVisible";
 
 static NSString * const UseTransparentWindowsPreferenceKey = @"UseTransparentWindows";
 static NSString * const UsePaginatedModePreferenceKey = @"UsePaginatedMode";
@@ -89,6 +90,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     WheelEventHandlerRegionOverlayTag,
     InteractionRegionOverlayTag,
     EnhancedSecurityOverlayTag,
+    TouchActionRegionOverlayTag,
     ExperimentalFeatureTag,
     InternalDebugFeatureTag,
 };
@@ -237,6 +239,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItemToMenu(debugOverlaysMenu, @"Wheel Event Handler Region", @selector(toggleDebugOverlay:), NO, WheelEventHandlerRegionOverlayTag);
     addItemToMenu(debugOverlaysMenu, @"Interaction Region", @selector(toggleDebugOverlay:), NO, InteractionRegionOverlayTag);
     addItemToMenu(debugOverlaysMenu, @"Enhanced Security", @selector(toggleDebugOverlay:), NO, EnhancedSecurityOverlayTag);
+    addItemToMenu(debugOverlaysMenu, @"CSS touch-action Region", @selector(toggleDebugOverlay:), NO, TouchActionRegionOverlayTag);
     addItemToMenu(debugOverlaysMenu, @"Resource Usage", @selector(toggleShowResourceUsageOverlay:), NO, 0);
     addItemToMenu(debugOverlaysMenu, @"Show Web Process ID in Window Title", @selector(toggleShowWebProcessIdentifierInTitle:), NO, 0);
 
@@ -877,6 +880,11 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     return [MiniBrowserUserDefaults() boolForKey:EnhancedSecurityOverlayVisiblePreferenceKey];
 }
 
+- (BOOL)touchActionRegionOverlayVisible
+{
+    return [MiniBrowserUserDefaults() boolForKey:TouchActionRegionOverlayVisiblePreferenceKey];
+}
+
 - (NSString *)preferenceKeyForRegionOverlayTag:(NSUInteger)tag
 {
     switch (tag) {
@@ -891,6 +899,9 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 
     case EnhancedSecurityOverlayTag:
         return EnhancedSecurityOverlayVisiblePreferenceKey;
+
+    case TouchActionRegionOverlayTag:
+        return TouchActionRegionOverlayVisiblePreferenceKey;
     }
     return nil;
 }

@@ -769,6 +769,8 @@ static BOOL areEssentiallyEqual(double a, double b)
         visibleOverlayRegions |= _WKInteractionRegion;
     if (settings.enhancedSecurityOverlayVisible)
         visibleOverlayRegions |= _WKEnhancedSecurityRegion;
+    if (settings.touchActionRegionOverlayVisible)
+        visibleOverlayRegions |= _WKTouchActionRegion;
 
     preferences._visibleDebugOverlayRegions = visibleOverlayRegions;
 
