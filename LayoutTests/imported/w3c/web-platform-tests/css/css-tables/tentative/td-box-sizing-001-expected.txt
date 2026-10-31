@@ -85,15 +85,7 @@ PASS table 7
 PASS table 8
 PASS table 9
 PASS table 10
-FAIL table 11 assert_equals:
-<table style="table-layout:fixed;width:530px" data-expected-width="530">
-  <tbody><tr>
-    <td style="width:60%;box-sizing:content-box" data-expected-width="340">
-      <div style="width:100px">60%/100</div></td>
-    <td data-expected-width="160">Auto</td>
-  </tr>
-</tbody></table>
-width expected 340 but got 300
+PASS table 11
 PASS table 12
 PASS table 13
 PASS table 14
