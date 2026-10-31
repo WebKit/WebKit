@@ -5198,7 +5198,6 @@ webkit.org/b/230747 imported/w3c/web-platform-tests/css/css-flexbox/flex-contain
 webkit.org/b/230747 imported/w3c/web-platform-tests/css/css-flexbox/flex-container-min-content-001.html [ ImageOnlyFailure ]
 
 # min-size:auto in flexbox.
-webkit.org/b/221481 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-015.html [ ImageOnlyFailure ]
 
 # visibility:collapse in flex items.
 webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-collapsed-item-baseline-001.html [ ImageOnlyFailure ]
