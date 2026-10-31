@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ public:
 
     unsigned short align() const { return m_value.align(); }
 
-    ExceptionOr<void> setAlign(float value)
+    ExceptionOr<void> setAlign(unsigned short value)
     {
         if (isReadOnly())
             return Exception { ExceptionCode::NoModificationAllowedError };
@@ -67,7 +67,7 @@ public:
 
     unsigned short meetOrSlice() const { return m_value.meetOrSlice(); }
 
-    ExceptionOr<void> setMeetOrSlice(float value)
+    ExceptionOr<void> setMeetOrSlice(unsigned short value)
     {
         if (isReadOnly())
             return Exception { ExceptionCode::NoModificationAllowedError };
