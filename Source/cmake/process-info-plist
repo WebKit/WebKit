@@ -27,7 +27,8 @@
 # which documents the behavior), run on a plist that already has its variables
 # substituted. Only WebKitInfoPlist.cmake calls this, so arguments aren't
 # validated beyond what argparse does. --device-family is only passed for the
-# iOS family, and selects its keys over macOS's.
+# iOS family, and selects its keys over macOS's. Mac Catalyst also passes
+# --macos-deployment-target, the minimum macOS version its bundles declare.
 
 import argparse
 import os
@@ -46,6 +47,7 @@ def main(argv):
     parser.add_argument('--sdk')
     parser.add_argument('--deployment-target')
     parser.add_argument('--device-family', type=int, nargs='+')
+    parser.add_argument('--macos-deployment-target')
     parser.add_argument('--cpp')
     parser.add_argument('-D', dest='definitions', action='append', default=[])
     args = parser.parse_args(argv)
@@ -72,10 +74,11 @@ def main(argv):
     plist.setdefault('CFBundleSupportedPlatforms', [args.platform])
     plist.setdefault('DTPlatformName', args.sdk)
     if args.device_family:
-        plist['MinimumOSVersion'] = args.deployment_target
         plist['UIDeviceFamily'] = args.device_family
+    if args.device_family and not args.macos_deployment_target:
+        plist['MinimumOSVersion'] = args.deployment_target
     else:
-        plist.setdefault('LSMinimumSystemVersion', args.deployment_target)
+        plist.setdefault('LSMinimumSystemVersion', args.macos_deployment_target or args.deployment_target)
 
     contents = plistlib.dumps(plist)
     try:

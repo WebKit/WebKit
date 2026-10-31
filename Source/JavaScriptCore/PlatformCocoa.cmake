@@ -189,13 +189,13 @@ set(PRODUCT_NAME "JavaScriptCore")
 set(PRODUCT_BUNDLE_IDENTIFIER "com.apple.JavaScriptCore")
 set(PLATFORM_NAME "${WEBKIT_SDK_NAME}")
 
-if (WEBKIT_SDK_IS_MACOS)
+if (NOT WEBKIT_SDK_SHALLOW_BUNDLE)
     set_target_properties(JavaScriptCore PROPERTIES
         MACOSX_FRAMEWORK_INFO_PLIST ${JAVASCRIPTCORE_DIR}/Info.plist)
 endif ()
 
-# iOS-family framework packaging (identity, versioning, Info.plist, and the
-# private headers / module maps / sandbox profile the iOS framework ships).
+# iOS-family framework packaging (identity, versioning, and the private
+# headers / module maps the iOS framework ships).
 if (WEBKIT_SDK_IS_IOS_FAMILY)
     set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.JavaScriptCore)
 
@@ -210,12 +210,6 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
     target_link_options(JavaScriptCore PRIVATE "LINKER:-weak_framework,BrowserEngineCore")
 
     target_compile_definitions(JavaScriptCore PRIVATE PAS_BMALLOC_HIDDEN=1)
-
-    configure_file(${JAVASCRIPTCORE_DIR}/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/JavaScriptCore-Info.plist)
-    set(JavaScriptCore_POST_BUILD_COMMAND
-        ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/JavaScriptCore-Info.plist
-            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework/Info.plist
-    )
 
     # arm64e: MacroAssembler.h conditionally includes this via CPU(ARM64E).
     list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
@@ -277,11 +271,19 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
         inspector/scripts/codegen/objc_generator_templates.py
     )
 
-    file(MAKE_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework")
-    configure_file(${JAVASCRIPTCORE_DIR}/framework.sb ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework/framework.sb COPYONLY)
     configure_file(${JAVASCRIPTCORE_DIR}/JavaScriptCore.modulemap ${CMAKE_BINARY_DIR}/JavaScriptCore/Modules/module.modulemap COPYONLY)
     configure_file("${JAVASCRIPTCORE_DIR}/JavaScriptCore_Private.modulemap" ${CMAKE_BINARY_DIR}/JavaScriptCore/Modules/module.private.modulemap COPYONLY)
-elseif (WEBKIT_SDK_IS_MACOS)
+endif ()
+
+if (WEBKIT_SDK_SHALLOW_BUNDLE)
+    configure_file(${JAVASCRIPTCORE_DIR}/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/JavaScriptCore-Info.plist)
+    set(JavaScriptCore_POST_BUILD_COMMAND
+        ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/JavaScriptCore-Info.plist
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework/Info.plist
+    )
+    file(MAKE_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework")
+    configure_file(${JAVASCRIPTCORE_DIR}/framework.sb ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework/framework.sb COPYONLY)
+else ()
     configure_file(${JAVASCRIPTCORE_DIR}/framework.sb ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework/Versions/A/Resources/framework.sb COPYONLY)
 endif ()
 

@@ -219,13 +219,20 @@ set(PRODUCT_BUNDLE_IDENTIFIER com.apple.WebKitTestRunner.InjectedBundle)
 configure_file("${WebKitTestRunner_DIR}/InjectedBundle-Info.plist"
                "${CMAKE_CURRENT_BINARY_DIR}/InjectedBundle-Info.plist")
 set(_wktr_app_dir "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKitTestRunnerApp.app")
+if (WEBKIT_SDK_SHALLOW_BUNDLE)
+    set(_wktr_app_plugins_dir "${_wktr_app_dir}/PlugIns")
+    set(_wktr_app_resources_dir "${_wktr_app_dir}")
+else ()
+    set(_wktr_app_plugins_dir "${_wktr_app_dir}/Contents/PlugIns")
+    set(_wktr_app_resources_dir "${_wktr_app_dir}/Contents/Resources")
+endif ()
 # TestControllerIOS.mm loads the injected bundle out of the app's PlugIns directory.
 set_target_properties(TestRunnerInjectedBundle PROPERTIES
     BUNDLE TRUE
     BUNDLE_EXTENSION bundle
     OUTPUT_NAME WebKitTestRunnerInjectedBundle
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/InjectedBundle-Info.plist"
-    LIBRARY_OUTPUT_DIRECTORY "${_wktr_app_dir}/PlugIns"
+    LIBRARY_OUTPUT_DIRECTORY "${_wktr_app_plugins_dir}"
     CODE_SIGN_BUNDLE "$<TARGET_BUNDLE_DIR:TestRunnerInjectedBundle>"
 )
 
@@ -389,17 +396,17 @@ set_target_properties(WebKitTestRunner PROPERTIES
 )
 
 add_custom_command(
-    OUTPUT "${_wktr_app_dir}/Launch.storyboardc"
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${_wktr_app_dir}"
-    COMMAND ibtool --compile "${_wktr_app_dir}/Launch.storyboardc" "${WebKitTestRunner_DIR}/ios/Launch.storyboard"
+    OUTPUT "${_wktr_app_resources_dir}/Launch.storyboardc"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${_wktr_app_resources_dir}"
+    COMMAND ibtool --compile "${_wktr_app_resources_dir}/Launch.storyboardc" "${WebKitTestRunner_DIR}/ios/Launch.storyboard"
     DEPENDS "${WebKitTestRunner_DIR}/ios/Launch.storyboard"
     VERBATIM)
 
-target_sources(WebKitTestRunner PRIVATE "${_wktr_app_dir}/Launch.storyboardc")
+target_sources(WebKitTestRunner PRIVATE "${_wktr_app_resources_dir}/Launch.storyboardc")
 # The app signs in POST_BUILD, which only re-runs on relink.
 set_property(TARGET WebKitTestRunner APPEND PROPERTY LINK_DEPENDS
     "$<TARGET_FILE:TestRunnerInjectedBundle>"
-    "${_wktr_app_dir}/Launch.storyboardc")
+    "${_wktr_app_resources_dir}/Launch.storyboardc")
 
 if (USE_EXTENSIONKIT)
     add_dependencies(WebKitTestRunner WebContentExtension WebContentCaptivePortalExtension WebContentEnhancedSecurityExtension NetworkingExtension)

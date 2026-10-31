@@ -15,7 +15,7 @@ set_target_properties(WebInspectorUIFramework PROPERTIES
     FRAMEWORK TRUE
     FRAMEWORK_VERSION A
     OUTPUT_NAME WebInspectorUI
-    INSTALL_NAME_DIR "/System/Library/PrivateFrameworks"
+    INSTALL_NAME_DIR "${WEBKIT_SDK_SYSTEM_PREFIX}/System/Library/PrivateFrameworks"
     BUILD_WITH_INSTALL_RPATH ON
     MACOSX_RPATH OFF
     MACOSX_FRAMEWORK_INFO_PLIST ${WEBINSPECTORUI_DIR}/Info.plist

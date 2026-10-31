@@ -161,7 +161,9 @@ class Manager(object):
                 continue
 
             to_be_listed = path
-            if not self._port.host.platform.is_win():
+            # An app's executable is signed as part of its bundle, so a copy of it won't launch.
+            list_from_copy = not self._port.host.platform.is_win() and '.app/Contents/MacOS/' not in path
+            if list_from_copy:
                 to_be_listed = self.host.filesystem.join(self.host.filesystem.dirname(path), 'ToBeListed')
                 self.host.filesystem.copyfile(path, to_be_listed)
                 self.host.filesystem.copymode(path, to_be_listed)
@@ -174,7 +176,7 @@ class Manager(object):
                 _log.error(f'Failed to list {canonicalized_binary} tests')
                 raise
             finally:
-                if not self._port.host.platform.is_win():
+                if list_from_copy:
                     self.host.filesystem.remove(to_be_listed)
 
         if len(args) == 0:

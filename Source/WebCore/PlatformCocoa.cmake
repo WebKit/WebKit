@@ -14,7 +14,9 @@ target_compile_options(WebCore PRIVATE
 
 target_compile_options(WebCore PRIVATE ${WEBKIT_PRIVATE_FRAMEWORKS_COMPILE_FLAG})
 
-target_link_options(WebCore PRIVATE "LINKER:-weak_framework,BrowserEngineKit")
+if (NOT WEBKIT_SDK_IS_MACCATALYST)
+    target_link_options(WebCore PRIVATE "LINKER:-weak_framework,BrowserEngineKit")
+endif ()
 
 target_link_options(WebCore PRIVATE
     "LINKER:-unexported_symbols_list,${WEBCORE_DIR}/Configurations/WebCore.unexp"
@@ -31,7 +33,9 @@ find_library(FONTPARSER_LIBRARY FontParser HINTS ${CMAKE_OSX_SYSROOT}/System/Lib
 find_library(IOKIT_LIBRARY IOKit)
 find_library(IOSURFACE_LIBRARY IOSurface)
 find_library(LIBACCESSIBILITY_LIBRARY Accessibility PATHS ${CMAKE_OSX_SYSROOT}/usr/lib NO_CMAKE_FIND_ROOT_PATH NO_DEFAULT_PATH)
-find_library(ACCESSIBILITYSUPPORT_LIBRARY AccessibilitySupport HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+if (NOT WEBKIT_SDK_IS_MACCATALYST)
+    find_library(ACCESSIBILITYSUPPORT_LIBRARY AccessibilitySupport HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+endif ()
 find_library(METAL_LIBRARY Metal)
 find_library(NETWORKEXTENSION_LIBRARY NetworkExtension)
 find_library(QUARTZCORE_LIBRARY QuartzCore)
@@ -50,7 +54,9 @@ find_library(OPENGL_LIBRARY OpenGL)
 find_library(QUARTZ_LIBRARY Quartz)
 find_library(LOOKUP_FRAMEWORK Lookup HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
 find_library(APPSUPPORT_LIBRARY AppSupport HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
-find_library(IOSURFACEACCELERATOR_LIBRARY IOSurfaceAccelerator HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+if (NOT WEBKIT_SDK_IS_MACCATALYST)
+    find_library(IOSURFACEACCELERATOR_LIBRARY IOSurfaceAccelerator HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+endif ()
 find_library(IMAGEIO_LIBRARY ImageIO)
 find_library(CORETEXT_LIBRARY CoreText)
 find_library(COREIMAGE_LIBRARY CoreImage)
@@ -74,7 +80,7 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "SourcesCocoa.txt"
 )
 # FIXME: Test building on iOS and then enable on iOS.
-if (NOT WEBKIT_SDK_IS_IOS_FAMILY)
+if (NOT WEBKIT_SDK_IS_IOS_FAMILY OR WEBKIT_SDK_IS_MACCATALYST)
     list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
         "SourcesCMakeCocoa.txt"
     )
@@ -134,6 +140,11 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
         $<$<BOOL:${MOBILEGESTALT_LIBRARY}>:${MOBILEGESTALT_LIBRARY}>
         $<$<BOOL:${IOSURFACEACCELERATOR_LIBRARY}>:${IOSURFACEACCELERATOR_LIBRARY}>
     )
+endif ()
+
+if (WEBKIT_SDK_IS_MACCATALYST)
+    find_library(APPKIT_LIBRARY AppKit)
+    list(APPEND WebCore_LIBRARIES ${APPKIT_LIBRARY})
 endif ()
 
 if (USE_APPLE_INTERNAL_SDK AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
@@ -559,7 +570,7 @@ list(APPEND WebCore_SOURCES
     testing/MockParentalControlsURLFilter.mm
 )
 
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_SDK_IS_MACOS OR WEBKIT_SDK_IS_MACCATALYST)
 list(APPEND WebCore_SOURCES
     accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm
     accessibility/isolatedtree/mac/AXIsolatedTreeMac.mm
@@ -1633,16 +1644,12 @@ set(PRODUCT_NAME "WebCore")
 set(PRODUCT_BUNDLE_IDENTIFIER "com.apple.WebCore")
 set(PLATFORM_NAME "${WEBKIT_SDK_NAME}")
 
-if (WEBKIT_SDK_IS_MACOS)
+if (NOT WEBKIT_SDK_SHALLOW_BUNDLE)
 
 set_target_properties(WebCore PROPERTIES
     MACOSX_FRAMEWORK_INFO_PLIST ${WEBCORE_DIR}/Info.plist)
 
-if (WEBKIT_SDK_IS_MACOS)
-    set(WebCore_LOCALIZED_RESOURCES_DIR "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework/Versions/A/Resources/en.lproj")
-else ()
-    set(WebCore_LOCALIZED_RESOURCES_DIR "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework/en.lproj")
-endif ()
+set(WebCore_LOCALIZED_RESOURCES_DIR "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework/Versions/A/Resources/en.lproj")
 WEBKIT_COPY_FILES(WebCore_CopyLocalizedResources
     DESTINATION "${WebCore_LOCALIZED_RESOURCES_DIR}"
     FILES
@@ -1744,8 +1751,46 @@ endif ()
 # Modern media controls button icons. RenderThemeCocoa::mediaControlsImageDataForIconNameAndType
 # loads these at runtime from WebCore.framework/Resources/modern-media-controls/images/<name>.<type>;
 # without them every media-control button loads an empty blob and logs "Button failed to load".
-# The macOS variants are copied flat (no platform subdirectory), matching the bundle lookup.
+# The platform's variants are copied flat (no platform subdirectory), matching the bundle lookup.
 # Listed explicitly (rather than globbed) so null builds stay clean.
+if (WEBKIT_SDK_IS_MACCATALYST)
+set(WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR ${WEBCORE_DIR}/Modules/modern-media-controls/images/iOS)
+set(WebCore_MODERN_MEDIA_CONTROLS_IMAGES
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Airplay.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Ellipsis.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/EnterFullscreen.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/ExitFullscreen.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/MediaSelector.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Overflow.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Pause.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/PipIn.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Play.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/SkipBack10.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/SkipBack15.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/SkipForward10.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/SkipForward15.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume0-RTL.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume0.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume1-RTL.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume1.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume2-RTL.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume2.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume3-RTL.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume3.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/VolumeMuted-RTL.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/VolumeMuted.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/X.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/airplay-placard@1x.png
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/airplay-placard@2x.png
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/airplay-placard@3x.png
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/invalid-placard@1x.png
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/invalid-placard@2x.png
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/invalid-placard@3x.png
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/pip-placard@1x.png
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/pip-placard@2x.png
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/pip-placard@3x.png
+)
+else ()
 set(WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR ${WEBCORE_DIR}/Modules/modern-media-controls/images/macOS)
 set(WebCore_MODERN_MEDIA_CONTROLS_IMAGES
     ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Airplay-fullscreen.svg
@@ -1784,6 +1829,7 @@ set(WebCore_MODERN_MEDIA_CONTROLS_IMAGES
     ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/pip-placard@1x.png
     ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/pip-placard@2x.png
 )
+endif ()
 file(MAKE_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework/Versions/A/Resources/modern-media-controls/images")
 WEBKIT_COPY_FILES(WebCore_CopyModernMediaControlsImages
     DESTINATION "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework/Versions/A/Resources/modern-media-controls/images"
@@ -1791,22 +1837,19 @@ WEBKIT_COPY_FILES(WebCore_CopyModernMediaControlsImages
     FLATTENED NO_SYMLINK)
 add_dependencies(WebCore WebCore_CopyModernMediaControlsImages)
 
-add_compile_options(
-    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks>"
-    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${AVFOUNDATION_LIBRARY}/Versions/Current/Frameworks>"
-    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${CARBON_LIBRARY}/Versions/Current/Frameworks>"
-    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${CORESERVICES_LIBRARY}/Versions/Current/Frameworks>"
-    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${QUARTZ_LIBRARY}/Frameworks>"
-)
+if (WEBKIT_SDK_IS_MACOS)
+    add_compile_options(
+        "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks>"
+        "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${AVFOUNDATION_LIBRARY}/Versions/Current/Frameworks>"
+        "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${CARBON_LIBRARY}/Versions/Current/Frameworks>"
+        "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${CORESERVICES_LIBRARY}/Versions/Current/Frameworks>"
+        "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${QUARTZ_LIBRARY}/Frameworks>"
+    )
 
-list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
-    ${WEBCORE_DIR}/html/shadow/mac/imageControlsMac.css
-)
-
-# CSS codegen scripts only see command-line defines, not PlatformHave.h.
-# Bare names only (no =1). FIXME: HAVE_CORE_MATERIAL should be gated for Mac
-# in PlatformHave.h. https://bugs.webkit.org/show_bug.cgi?id=312061
-set(CSS_VALUE_PLATFORM_DEFINES "WTF_PLATFORM_MAC WTF_PLATFORM_COCOA ENABLE_APPLE_PAY_NEW_BUTTON_TYPES HAVE_CORE_MATERIAL HAVE_MATERIAL_HOSTING")
+    list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
+        ${WEBCORE_DIR}/html/shadow/mac/imageControlsMac.css
+    )
+endif ()
 
 else ()
 
@@ -1863,14 +1906,15 @@ configure_file("${WEBCORE_DIR}/WebCore.modulemap"
 configure_file("${WEBCORE_DIR}/WebCore_Private.modulemap"
                "${_wc_fw}/Modules/module.private.modulemap" COPYONLY)
 
+endif ()
+
+if (WEBKIT_SDK_IS_IOS_FAMILY)
+
 set_source_files_properties(
     ${WEBCORE_DIR}/platform/ios/wak/WAKAppKitStubs.mm
     ${WEBCORE_DIR}/platform/ios/wak/WAKClipView.mm
     ${WEBCORE_DIR}/platform/ios/wak/WAKResponder.mm
     PROPERTIES COMPILE_FLAGS -fno-objc-arc
-)
-
-list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
@@ -1884,8 +1928,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/ios/wak/WAKView.h
 )
 
-set(CSS_VALUE_PLATFORM_DEFINES "WTF_PLATFORM_IOS WTF_PLATFORM_IOS_FAMILY WTF_PLATFORM_COCOA ENABLE_APPLE_PAY_NEW_BUTTON_TYPES HAVE_CORE_MATERIAL HAVE_MATERIAL_HOSTING")
-
 list(APPEND WebCoreTestSupport_PRIVATE_INCLUDE_DIRECTORIES "${WEBCORE_DIR}/testing/cocoa")
 list(APPEND WebCoreTestSupport_SOURCES
     testing/MockMediaDeviceRoute.mm
@@ -1894,4 +1936,15 @@ list(APPEND WebCoreTestSupport_SOURCES
     testing/cocoa/WebMockMediaDeviceRoute.mm
 )
 
+endif ()
+
+# CSS codegen scripts only see command-line defines, not PlatformHave.h.
+# Bare names only (no =1). FIXME: HAVE_CORE_MATERIAL should be gated for Mac
+# in PlatformHave.h. https://bugs.webkit.org/show_bug.cgi?id=312061
+if (WEBKIT_SDK_IS_MACOS)
+    set(CSS_VALUE_PLATFORM_DEFINES "WTF_PLATFORM_MAC WTF_PLATFORM_COCOA ENABLE_APPLE_PAY_NEW_BUTTON_TYPES HAVE_CORE_MATERIAL HAVE_MATERIAL_HOSTING")
+elseif (WEBKIT_SDK_IS_MACCATALYST)
+    set(CSS_VALUE_PLATFORM_DEFINES "WTF_PLATFORM_MACCATALYST WTF_PLATFORM_IOS_FAMILY WTF_PLATFORM_COCOA HAVE_CORE_MATERIAL HAVE_MATERIAL_HOSTING")
+else ()
+    set(CSS_VALUE_PLATFORM_DEFINES "WTF_PLATFORM_IOS WTF_PLATFORM_IOS_FAMILY WTF_PLATFORM_COCOA ENABLE_APPLE_PAY_NEW_BUTTON_TYPES HAVE_CORE_MATERIAL HAVE_MATERIAL_HOSTING")
 endif ()

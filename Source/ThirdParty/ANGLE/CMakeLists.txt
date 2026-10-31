@@ -2,7 +2,7 @@ set_property(DIRECTORY . PROPERTY FOLDER "ANGLE")
 
 if (APPLE)
     set(is_apple TRUE)
-    if (WEBKIT_SDK_IS_IOS_FAMILY)
+    if (WEBKIT_SDK_IS_IOS_FAMILY AND NOT WEBKIT_SDK_IS_MACCATALYST)
         set(is_ios TRUE)
     else ()
         set(is_mac TRUE)
@@ -263,7 +263,7 @@ if (USE_ANGLE_EGL OR ENABLE_WEBGL)
             "-framework Metal"
             "-framework QuartzCore"
         )
-        if (WEBKIT_SDK_IS_MACOS)
+        if (WEBKIT_SDK_IS_MACOS OR WEBKIT_SDK_IS_MACCATALYST)
             list(APPEND _angle_shared_libraries "-framework IOKit")
         endif ()
         if (ENABLE_WEBGL_WEBGPU)
@@ -278,7 +278,7 @@ if (USE_ANGLE_EGL OR ENABLE_WEBGL)
             LINKER_LANGUAGE CXX
             MACOSX_RPATH OFF
             BUILD_WITH_INSTALL_NAME_DIR ON
-            INSTALL_NAME_DIR "/System/Library/PrivateFrameworks/WebCore.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}Frameworks"
+            INSTALL_NAME_DIR "${WEBKIT_SDK_SYSTEM_PREFIX}/System/Library/PrivateFrameworks/WebCore.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}Frameworks"
         )
 
         set_property(TARGET GLESv2Framework PROPERTY INTERFACE_LINK_LIBRARIES ANGLE-shared)

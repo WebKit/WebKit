@@ -583,12 +583,14 @@ if (WEBKIT_SDK_IS_MACOS)
 else ()
     list(APPEND TestWebKit_LIBRARIES
         "-framework AVKit"
-        "-framework BrowserEngineKit"
         "-framework GameController"
         "-framework MobileCoreServices"
         "-framework PDFKit"
         "-framework UIKit"
     )
+    if (NOT WEBKIT_SDK_IS_MACCATALYST)
+        list(APPEND TestWebKit_LIBRARIES "-framework BrowserEngineKit")
+    endif ()
     target_link_options(TestWebKit PRIVATE "LINKER:-delay_framework,CoreTelephony")
 endif ()
 
@@ -597,6 +599,13 @@ target_link_options(TestWebKit PRIVATE
 )
 if (WEBKIT_SDK_IS_MACOS)
     target_link_options(TestWebKit PRIVATE "LINKER:-weak_framework,WritingToolsUI")
+endif ()
+
+# WebKit.h leaves out WebKitLegacy.h on Mac Catalyst, as config.h's Xcode path
+# accounts for.
+if (WEBKIT_SDK_IS_MACCATALYST)
+    target_compile_options(TestWebKit PRIVATE
+        "$<$<COMPILE_LANGUAGE:OBJC,OBJCXX>:SHELL:-include WebKit/WebKit.h -include WebKit/WebKitLegacy.h>")
 endif ()
 
 set_source_files_properties(
@@ -1052,6 +1061,14 @@ set_target_properties(TestWebKitAPIWebProcessPlugIn PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/WebProcessPlugIn-Info.plist"
 )
 
+if (WEBKIT_SDK_IS_MACCATALYST)
+    set(_twkapi_main_bundle_resources_dir "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI.app/Contents/Resources")
+    set_target_properties(TestWebKitAPIWebProcessPlugIn PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY "${_twkapi_main_bundle_resources_dir}")
+else ()
+    set(_twkapi_main_bundle_resources_dir "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}")
+endif ()
+
 # Same rationale as TestWebKitAPIInjectedBundle: WebCoreTestSupport references
 # WTF symbols that the hosting WebContent process provides.
 target_link_options(TestWebKitAPIWebProcessPlugIn PRIVATE "LINKER:-undefined,dynamic_lookup")
@@ -1080,8 +1097,8 @@ add_dependencies(TestWebKit TestWebKitAPIWebProcessPlugIn)
 # (e.g. WKWebExtension.mm) load entire subdirectories as nested bundles via
 # URLForResource:withExtension:@"", which requires web-extension/, *.appex/,
 # and *.mlmodelc/ to retain their layout.
-set(_resources_bundle_dir "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPIResources.bundle")
-if (WEBKIT_SDK_IS_MACOS)
+set(_resources_bundle_dir "${_twkapi_main_bundle_resources_dir}/TestWebKitAPIResources.bundle")
+if (NOT WEBKIT_SDK_SHALLOW_BUNDLE)
     set(_resources_info_plist "${_resources_bundle_dir}/Contents/Info.plist")
     set(_resources_dir "${_resources_bundle_dir}/Contents/Resources")
     set(_resources_min_os_key LSMinimumSystemVersion)
@@ -1089,6 +1106,11 @@ else ()
     set(_resources_info_plist "${_resources_bundle_dir}/Info.plist")
     set(_resources_dir "${_resources_bundle_dir}")
     set(_resources_min_os_key MinimumOSVersion)
+endif ()
+if (WEBKIT_SDK_IS_MACCATALYST)
+    set(_resources_min_os_version "${WEBKIT_MACCATALYST_MACOS_DEPLOYMENT_TARGET}")
+else ()
+    set(_resources_min_os_version "${CMAKE_OSX_DEPLOYMENT_TARGET}")
 endif ()
 
 file(CONFIGURE OUTPUT ${_resources_info_plist} CONTENT [[
@@ -1115,7 +1137,7 @@ file(CONFIGURE OUTPUT ${_resources_info_plist} CONTENT [[
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>@_resources_min_os_key@</key>
-    <string>@CMAKE_OSX_DEPLOYMENT_TARGET@</string>
+    <string>@_resources_min_os_version@</string>
 </dict>
 </plist>
 ]] @ONLY)

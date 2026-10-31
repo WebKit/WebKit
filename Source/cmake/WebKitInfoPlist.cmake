@@ -41,6 +41,9 @@ function(WEBKIT_PROCESS_INFO_PLIST _input _output)
         WEBKIT_GET_DEVICE_FAMILY(_device_family ${_arg_TARGETED_DEVICE_FAMILY})
         list(APPEND _options --device-family ${_device_family})
     endif ()
+    if (WEBKIT_SDK_IS_MACCATALYST)
+        list(APPEND _options --macos-deployment-target ${WEBKIT_MACCATALYST_MACOS_DEPLOYMENT_TARGET})
+    endif ()
     execute_process(
         COMMAND ${Python_EXECUTABLE} ${_script} ${_configured} ${_output}
             --platform ${WEBKIT_PLATFORM_NAME}
