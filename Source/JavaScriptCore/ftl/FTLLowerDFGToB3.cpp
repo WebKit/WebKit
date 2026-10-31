@@ -10983,6 +10983,7 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock loopHeader = m_out.newBlock();
         LBasicBlock loopBody = m_out.newBlock();
         LBasicBlock storeSlot = m_out.newBlock();
+        LBasicBlock releaseScratch = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
         LValue cached = m_out.loadPtr(m_out.absolute(&vm().m_cachedSortScratch));
@@ -11007,17 +11008,24 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(loopBody, storeSlot);
         LValue value = m_out.load64(m_out.baseIndex(sourceHeap, butterfly, index));
-        ValueFromBlock holeResult = m_out.anchor(m_out.constIntPtr(std::bit_cast<void*>(vm().m_sortScratchSentinel.get())));
         LValue isHole = m_out.isZero64(value);
         if (m_node->arrayMode().type() == Array::Contiguous)
             isHole = m_out.bitOr(isHole, m_out.equal(value, m_out.constInt64(JSValue::encode(jsUndefined()))));
-        m_out.branch(isHole, rarely(continuation), usually(storeSlot));
+        m_out.branch(isHole, rarely(releaseScratch), usually(storeSlot));
 
-        m_out.appendTo(storeSlot, continuation);
+        m_out.appendTo(storeSlot, releaseScratch);
         m_out.store64(value, m_out.baseIndex(m_heaps.indexedContiguousProperties, scratch, index, JSValue(), JSCellButterfly::offsetOfData()));
         LValue nextIndex = m_out.add(index, m_out.intPtrOne);
         m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
         m_out.jump(loopHeader);
+
+        // The scratch won't be barriered, so need to undo the writes.
+        // Without this, we could have an unremembered old/black cell referencing new/white cells.
+        m_out.appendTo(releaseScratch, continuation);
+        splatWords(m_out.add(scratch, m_out.constIntPtr(JSCellButterfly::offsetOfData())), m_out.int32Zero, m_out.constInt32(sortScratchSlotCount), m_out.int64Zero, m_heaps.indexedContiguousProperties.atAnyIndex());
+        m_out.storePtr(scratch, m_out.absolute(&vm().m_cachedSortScratch));
+        ValueFromBlock holeResult = m_out.anchor(m_out.constIntPtr(std::bit_cast<void*>(vm().m_sortScratchSentinel.get())));
+        m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
         setJSValue(m_out.phi(pointerType(), successResult, holeResult));
