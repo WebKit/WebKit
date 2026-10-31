@@ -617,7 +617,7 @@ void BidiScriptAgent::getRealms(const BrowsingContext& optionalBrowsingContext, 
         // Enumerate all controlled pages; filtering by context happens during collection.
         RefPtr processPool = session->processPool();
         for (Ref process : borrow(processPool->processes())) {
-            for (Ref page : process->pages()) {
+            for (Ref page : process->mainPages()) {
                 if (page->isControlledByAutomation())
                     pagesToProcess.append(page);
             }
