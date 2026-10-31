@@ -652,8 +652,10 @@ BBQJIT::BBQJIT(CompilationContext& compilationContext, const RTT& signature, Mod
     gprSetBuilder.exclude(RegisterSet::macroClobberedGPRs());
     gprSetBuilder.exclude(RegisterSet::wasmPinnedRegisters());
     gprSetBuilder.exclude(RegisterSet::bbqCalleeSaveRegisters());
-    // FIXME: handle callee-saved registers better.
+    // The remaining callee-saves are the pinned-local pool. IPInt does not preserve every one, so they stay out of this allocator.
     gprSetBuilder.exclude(RegisterSet::vmCalleeSaveRegisters());
+    if (mode == MemoryMode::Signaling)
+        gprSetBuilder.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
 
     RegisterSet fprSetBuilder = RegisterSet::allFPRs();
     RegisterSet::macroClobberedFPRs().forEach([&](Reg reg) {
@@ -665,6 +667,8 @@ BBQJIT::BBQJIT(CompilationContext& compilationContext, const RTT& signature, Mod
     });
 
     RegisterSet callerSaveGprs = gprSetBuilder;
+    // Every callee preserves this register, so a live binding survives a call.
+    callerSaveGprs.remove(GPRInfo::wasmBoundsCheckingSizeRegister);
     RegisterSet callerSaveFprs = fprSetBuilder;
 
     gprSetBuilder.remove(wasmScratchGPR);
@@ -685,8 +689,11 @@ BBQJIT::BBQJIT(CompilationContext& compilationContext, const RTT& signature, Mod
     CallInformation callInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Callee);
 
     // The frame is laid out before local types are known, so this reserves room for the most
-    // pinned locals assignPinnedLocals() could later choose.
-    m_calleeSaves = RegisterAtOffsetList(RegisterSet::bbqCalleeSaveRegisters());
+    // pinned locals assignPinnedLocals() could later choose. The bounds-check size register is
+    // always saved: signaling code keeps a value in it, and bounds-checking code reloads the size after this save.
+    RegisterSet calleeSaves = RegisterSet::bbqCalleeSaveRegisters();
+    calleeSaves.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
+    m_calleeSaves = RegisterAtOffsetList(calleeSaves);
     size_t calleeSaveSlots = m_calleeSaves.registerCount() + maxPinnedLocals();
     for (size_t i = 0; i < calleeSaveSlots; ++i)
         allocateStack(Value::fromPointer(nullptr));
@@ -3331,6 +3338,9 @@ void BBQJIT::emitEntryTierUpCheck()
     static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
     m_jit.storePairPtr(GPRInfo::wasmContextInstancePointer, wasmScratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
 
+    if (m_mode == MemoryMode::BoundsChecking && m_info.memoryCount())
+        m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + sizeof(void*)), wasmBoundsCheckingSizeRegister);
+
     if (m_profiledCallee.hasExceptionHandlers())
         m_jit.store32(CCallHelpers::TrustedImm32(wasmInvalidCallSiteIndex), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
 
@@ -3496,6 +3506,9 @@ MacroAssembler::Label BBQJIT::addLoopOSREntrypoint()
     m_jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(&m_callee)), wasmScratchGPR);
     static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
     m_jit.storePairPtr(GPRInfo::wasmContextInstancePointer, wasmScratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
+
+    if (m_mode == MemoryMode::BoundsChecking && m_info.memoryCount())
+        m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + sizeof(void*)), wasmBoundsCheckingSizeRegister);
 
     // Because tiering up code materializes BaselineData, this is always non nullptr.
     m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfBaselineData(m_info, m_functionIndex)), GPRInfo::jitDataRegister);
@@ -4302,10 +4315,34 @@ void BBQJIT::restoreWebAssemblyContextInstance()
     m_jit.loadPtr(Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * sizeof(Register)), GPRInfo::wasmContextInstancePointer);
 }
 
+void BBQJIT::emitLoadMemoryBase(GPRReg base)
+{
+    m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), base);
+    m_jit.cageConditionally(Gigacage::Primitive, base, wasmScratchGPR, wasmScratchGPR);
+}
+
+void BBQJIT::flushSizeRegisterIfLive()
+{
+    if (!validGPRs().contains(wasmBoundsCheckingSizeRegister, IgnoreVectors))
+        return;
+    const RegisterBinding& binding = bindingFor(wasmBoundsCheckingSizeRegister);
+    if (binding.isNone() || binding.isScratch())
+        return;
+    Value value = binding.toValue();
+    if (value.isLocal() || value.isTemp())
+        flush(wasmBoundsCheckingSizeRegister, binding);
+}
+
+void BBQJIT::emitLoadMemoryBaseAndSize(GPRReg base, GPRReg size)
+{
+    m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), base, size);
+    m_jit.cageConditionally(Gigacage::Primitive, base, size, wasmScratchGPR);
+}
+
 void BBQJIT::loadWebAssemblyGlobalState(GPRReg wasmBaseMemoryPointer, GPRReg wasmBoundsCheckingSizeRegister)
 {
-    m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
-    m_jit.cageConditionally(Gigacage::Primitive, wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister, wasmScratchGPR);
+    flushSizeRegisterIfLive();
+    emitLoadMemoryBaseAndSize(wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
 }
 
 void BBQJIT::flushRegistersForException()
@@ -4487,8 +4524,10 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndexSpace, const RTT& sign
     parameterLocations.reserveInitialCapacity(arguments.size() + isX86());
 
     // Save the old Frame Pointer for later and make sure the return address gets saved to its canonical location.
+    flushSizeRegisterIfLive();
     emitRestoreCalleeSaves();
     auto preserved = callingConvention.argumentGPRs();
+    preserved.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
     if constexpr (isARM64E())
         preserved.add(callingConvention.prologueScratchGPRs[0], IgnoreVectors);
     ScratchScope<1, 0> scratches(*this, WTF::move(preserved));
@@ -4510,7 +4549,6 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndexSpace, const RTT& sign
         auto targetInstOffset = JSWebAssemblyInstance::offsetOfTargetInstance(m_module.moduleInformation(), functionIndexSpace);
         m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, targetInstOffset), wasmScratchGPR);
 
-        // We can trash wasmBaseMemoryPointer and wasmBoundsCheckingSizeRegister since we won't use them during argument setup and we'll restore them for our callee anyway.
         emitRestoreInstanceFrameIfNeeded(m_jit, GPRInfo::wasmContextInstancePointer, callerStackSize, m_frameSize, topSourceOffsetFromFP, wasmScratchGPR, wasmBaseMemoryPointer);
     }
 
@@ -4647,6 +4685,11 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndexSpace, const RTT& sign
 
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndexSpace))
         restoreWebAssemblyGlobalStateAfterWasmCall();
+    else if (m_mode == MemoryMode::BoundsChecking && m_info.memoryCount() && !m_info.memory(0).isShared()) {
+        // The callee restored the size register, so a grow is not visible until this reload.
+        restoreWebAssemblyContextInstance();
+        loadWebAssemblyGlobalState(wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
+    }
 
     LOG_INSTRUCTION("Call", functionIndexSpace, arguments, "=> ", results);
 
@@ -4681,7 +4724,7 @@ void BBQJIT::emitIndirectCall(const char* opcode, unsigned callProfileIndex, con
         // Do a context switch if needed.
         Jump isSameInstanceBefore = m_jit.branchPtr(RelationalCondition::Equal, wasmScratchGPR, GPRInfo::wasmContextInstancePointer);
         m_jit.move(wasmScratchGPR, GPRInfo::wasmContextInstancePointer);
-        loadWebAssemblyGlobalState(wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
+        emitLoadMemoryBase(wasmBaseMemoryPointer);
         isSameInstanceBefore.link(m_jit);
     } else {
         JumpList profilingDone;
@@ -4690,7 +4733,7 @@ void BBQJIT::emitIndirectCall(const char* opcode, unsigned callProfileIndex, con
         m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfTargetInstance()), m_jit.scratchRegister());
         Jump isSameInstanceBefore = m_jit.branchPtr(RelationalCondition::Equal, m_jit.scratchRegister(), GPRInfo::wasmContextInstancePointer);
         m_jit.move(m_jit.scratchRegister(), GPRInfo::wasmContextInstancePointer);
-        loadWebAssemblyGlobalState(wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
+        emitLoadMemoryBase(wasmBaseMemoryPointer);
         m_jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, safeCast<int32_t>(BaselineData::offsetOfData() + sizeof(CallProfile) * callProfileIndex + CallProfile::offsetOfBoxedCallee())), wasmScratchGPR);
         m_jit.orPtr(TrustedImm32(CallProfile::Megamorphic), wasmScratchGPR);
         updateProfile.append(m_jit.jump());
@@ -4747,11 +4790,13 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
     ASSERT(callInfo.results.size() == wasmCallerInfo.results.size());
     ASSERT(arguments.size() == callInfo.params.size());
 
+    flushSizeRegisterIfLive();
     emitRestoreCalleeSaves();
 
 #if CPU(ARM64)
     auto preserved = callingConvention.argumentGPRs();
     preserved.add(importableFunction, IgnoreVectors);
+    preserved.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
     if constexpr (isARM64E())
         preserved.add(callingConvention.prologueScratchGPRs[0], IgnoreVectors);
     ScratchScope<1, 0> scratches(*this, WTF::move(preserved));
@@ -4773,8 +4818,6 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
         m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfTargetInstance()), wasmScratchGPR);
         Jump isSameInstance = m_jit.branchPtr(RelationalCondition::Equal, wasmScratchGPR, GPRInfo::wasmContextInstancePointer);
         emitRestoreInstanceFrameIfNeeded(m_jit, GPRInfo::wasmContextInstancePointer, callerStackSize, m_frameSize, topSourceOffsetFromFP, wasmScratchGPR, wasmBaseMemoryPointer);
-        m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfTargetInstance()), GPRInfo::wasmContextInstancePointer);
-        loadWebAssemblyGlobalState(wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
         isSameInstance.link(m_jit);
     }
 
@@ -4856,6 +4899,11 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
     UNREACHABLE_FOR_PLATFORM();
 #endif
 
+    m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfTargetInstance()), wasmScratchGPR);
+    Jump isSameInstanceForMemory = m_jit.branchPtr(RelationalCondition::Equal, wasmScratchGPR, GPRInfo::wasmContextInstancePointer);
+    m_jit.move(wasmScratchGPR, GPRInfo::wasmContextInstancePointer);
+    emitLoadMemoryBase(wasmBaseMemoryPointer);
+    isSameInstanceForMemory.link(m_jit);
     m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()), importableFunction);
     m_jit.farJump(CCallHelpers::Address(importableFunction), WasmEntryPtrTag);
     LOG_INSTRUCTION(opcode, callee, arguments);
@@ -6033,10 +6081,11 @@ void BBQJIT::assignPinnedLocals()
         return;
 
     RegisterSet saves = RegisterSet::bbqCalleeSaveRegisters();
+    saves.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
     saves.merge(m_pinnedLocalRegisters);
     m_calleeSaves = RegisterAtOffsetList(saves);
 
-    RELEASE_ASSERT(m_calleeSaves.registerCount() <= RegisterSet::bbqCalleeSaveRegisters().numberOfSetRegisters() + maxPinnedLocals());
+    RELEASE_ASSERT(m_calleeSaves.registerCount() <= RegisterSet::bbqCalleeSaveRegisters().numberOfSetRegisters() + 1 + maxPinnedLocals());
 }
 
 void BBQJIT::loadPinnedLocals()

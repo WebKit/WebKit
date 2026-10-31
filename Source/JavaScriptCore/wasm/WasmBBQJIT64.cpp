@@ -3261,8 +3261,12 @@ PartialResult BBQJIT::addI32WrapI64(Value operand, Value& result)
 void BBQJIT::emitCatchPrologue()
 {
     m_jit.subPtr(GPRInfo::callFrameRegister, TrustedImm32(m_frameSize), MacroAssembler::stackPointerRegister);
-    if (m_info.memoryCount())
-        loadWebAssemblyGlobalState(wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
+    if (m_info.memoryCount()) {
+        if (m_mode == MemoryMode::Signaling)
+            emitLoadMemoryBase(wasmBaseMemoryPointer);
+        else
+            loadWebAssemblyGlobalState(wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
+    }
     static_assert(noOverlap(GPRInfo::nonPreservedNonArgumentGPR0, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2));
     // Control arrives from the runtime with registers in an unknown state, so a pinned local has to
     // be put back in the register the rest of the body expects it in.
@@ -3588,8 +3592,12 @@ int LEGACY_NODELETE BBQJIT::alignedFrameSize(int frameSize) const
 void BBQJIT::restoreWebAssemblyGlobalState()
 {
     restoreWebAssemblyContextInstance();
+    if (!m_info.memoryCount())
+        return;
     // FIXME: We should just store these registers on stack and load them.
-    if (m_info.memoryCount())
+    if (m_mode == MemoryMode::Signaling)
+        emitLoadMemoryBase(wasmBaseMemoryPointer);
+    else
         loadWebAssemblyGlobalState(wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
 }
 
@@ -3601,8 +3609,10 @@ void BBQJIT::restoreWebAssemblyGlobalStateAfterWasmCall()
         m_jit.loadPtr(Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * sizeof(Register)), wasmScratchGPR);
         Jump isSameInstanceAfter = m_jit.branchPtr(RelationalCondition::Equal, wasmScratchGPR, GPRInfo::wasmContextInstancePointer);
         m_jit.move(wasmScratchGPR, GPRInfo::wasmContextInstancePointer);
-        m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
-        m_jit.cageConditionally(Gigacage::Primitive, wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister, wasmScratchGPR);
+        if (m_mode == MemoryMode::Signaling)
+            emitLoadMemoryBase(wasmBaseMemoryPointer);
+        else
+            loadWebAssemblyGlobalState(wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
         isSameInstanceAfter.link(&m_jit);
     } else
         restoreWebAssemblyGlobalState();

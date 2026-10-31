@@ -42,7 +42,7 @@
 
 namespace JSC { namespace Wasm {
 
-constexpr unsigned numberOfIPIntCalleeSaveRegisters = 2;
+constexpr unsigned numberOfIPIntCalleeSaveRegisters = 3;
 constexpr unsigned numberOfIPIntInternalRegisters = 1; // UnboxedWasmCalleeStackSlot
 constexpr ptrdiff_t WasmToJSScratchSpaceSize = 0x8 * 4; // Needs to be aligned to 0x10. 3 slots: callable function + IPInt return PC + IPInt MC.
 constexpr ptrdiff_t WasmToJSCallableFunctionSlot = -0x8;

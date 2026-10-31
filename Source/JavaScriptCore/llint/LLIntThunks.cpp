@@ -657,8 +657,8 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> wasmRestoreFrameGateThunk()
 
         JIT_COMMENT(jit, "wasmRestoreFrame gate: restore instance and memory");
         jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * sizeof(Register)), GPRInfo::wasmContextInstancePointer);
-        jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
-        jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, Wasm::wasmCallingConvention().prologueScratchGPRs[0]);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), GPRInfo::wasmBaseMemoryPointer);
+        jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, Wasm::wasmCallingConvention().prologueScratchGPRs[0], Wasm::wasmCallingConvention().prologueScratchGPRs[0]);
 
         JIT_COMMENT(jit, "wasmRestoreFrame gate: untag return PC, load caller frame, retag, return");
 #if CPU(ARM64E)

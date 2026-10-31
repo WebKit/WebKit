@@ -373,6 +373,9 @@ void IPIntCallee::setEntrypointWithoutRegistration(CodePtr<WasmEntryPtrTag> entr
 const RegisterAtOffsetList* IPIntCallee::calleeSaveRegistersImpl()
 {
     ASSERT(RegisterAtOffsetList::ipintCalleeSaveRegisters().registerCount() == numberOfIPIntCalleeSaveRegisters);
+    ASSERT(RegisterAtOffsetList::ipintCalleeSaveRegisters().find(GPRInfo::wasmIPIntPCRegister)->offset() == -8);
+    ASSERT(RegisterAtOffsetList::ipintCalleeSaveRegisters().find(GPRInfo::wasmIPIntMCRegister)->offset() == -16);
+    ASSERT(RegisterAtOffsetList::ipintCalleeSaveRegisters().find(GPRInfo::wasmBoundsCheckingSizeRegister)->offset() == -24);
     return &RegisterAtOffsetList::ipintCalleeSaveRegisters();
 }
 

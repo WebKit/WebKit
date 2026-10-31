@@ -549,8 +549,8 @@ void QueryHandler::handleWasmGlobal(StringView packet)
 //   -------------------------------------------------------------------------------------
 //   cfr -  8          PC
 //   cfr - 16          MC
-//   cfr - 24          UnboxedWasmCalleeStackSlot
-//   cfr - 32          (pad)                  <-- stackEnd
+//   cfr - 24          boundsCheckingSize
+//   cfr - 32          UnboxedWasmCalleeStackSlot  <-- stackEnd
 //   =====================================================================================
 //   cfr - 48   0x11111111   index 0   pushed 1st
 //   cfr - 64   0x22222222   index 1   pushed 2nd  <-- firstNonArg

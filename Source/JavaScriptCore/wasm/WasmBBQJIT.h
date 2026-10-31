@@ -2044,6 +2044,12 @@ public:
 
     void restoreWebAssemblyGlobalState();
 
+    void emitLoadMemoryBase(GPRReg base);
+
+    void flushSizeRegisterIfLive();
+
+    void emitLoadMemoryBaseAndSize(GPRReg base, GPRReg size);
+
     void loadWebAssemblyGlobalState(GPRReg wasmBaseMemoryPointer, GPRReg wasmBoundsCheckingSizeRegister);
 
     void restoreWebAssemblyGlobalStateAfterWasmCall();
