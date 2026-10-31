@@ -614,14 +614,36 @@ bool FlexLayout::hasDefiniteSizeForPercentResolution(const RenderBox& flexItem)
         return FlexFormattingUtils::alignmentForFlexItem(flexItem) == ItemPosition::Stretch;
 
     // Flexbox 9.8 rule 2: definite flex-basis makes post-flexing main size definite.
-    // A percentage (or stretch) flex-basis is definite only when the container's block size is, which is rule 1 below.
+    // A percentage (or stretch) flex-basis is definite only when the container's block size is, which is rule 1 below,
+    // or when it is used as content and the aspect-ratio makes that definite, which is checked after rule 1.
     auto* flexLayoutState = m_flexLayoutState ? &*m_flexLayoutState : nullptr;
     auto flexBasis = FlexFormattingUtils::flexBasisForFlexItem(flexItem);
     if (!flexBasis.isPercentOrCalculated() && !flexBasis.isStretch() && FlexIntegrationUtils::flexItemMainSizeIsDefinite(flexItem, flexBasis, flexLayoutState))
         return true;
 
     // Flexbox 9.8 rule 1: definite container main size makes post-flexing sizes definite.
-    return FlexIntegrationUtils::canResolvePercentAgainstContainerBlockSize(flexItem, RenderBox::UpdatePercentageHeightDescendants::Yes, flexLayoutState);
+    if (FlexIntegrationUtils::canResolvePercentAgainstContainerBlockSize(flexItem, RenderBox::UpdatePercentageHeightDescendants::Yes, flexLayoutState))
+        return true;
+
+    // At this point, the container main size is assumed to be indefinite.
+    ASSERT(!FlexIntegrationUtils::isFlexBoxBlockSizeDefiniteForFlexItem(flexItem, flexLayoutState).value_or(false));
+
+    // Flexbox 9.8 rule 2 + Flexbox 9.2.3.B: check if a non-fixed flexBasis can also be definite.
+    // A flex item has a definite inline size if it has a preferred aspect ratio, a used flex basis of 'content', and a definite cross size.
+    // https://drafts.csswg.org/css-flexbox/#algo-main-item
+    bool hasPreferredAspectRatio = FlexFormattingUtils::flexItemHasAspectRatio(flexItem) && flexItem.preferredAspectRatioAsSize().aspectRatioDouble() > 0;
+    // https://drafts.csswg.org/css-flexbox/#flex-basis-property
+    // If a value would resolve to auto for width, it instead resolves to content for flex-basis.
+    // If a value would resolve against a containing block with an indefinite size, the used value for flex-basis is content.
+    bool usedFlexBasisIsContent = flexBasis.isAuto() || flexBasis.isPercentOrCalculated() || flexBasis.isContent();
+
+    auto& crossSize = flexItem.style().logicalWidth();
+    // A percentage or stretch cross size is unknown while the container computes its intrinsic widths.
+    bool hasDefiniteCrossSize = crossSize.isFixed()
+        || ((crossSize.isPercentOrCalculated() || crossSize.isStretch()) && !flexBox().layoutContext().isComputingIntrinsicLogicalWidthFor(flexBox()))
+        || FlexFormattingUtils::hasDefiniteCrossSizeForFlexItem(flexItem);
+
+    return usedFlexBasisIsContent && hasPreferredAspectRatio && hasDefiniteCrossSize;
 }
 
 }
