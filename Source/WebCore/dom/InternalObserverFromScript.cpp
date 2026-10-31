@@ -73,14 +73,14 @@ void InternalObserverFromScript::complete()
 
 void InternalObserverFromScript::visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor) const
 {
-    if (RefPtr next = m_next)
-        next->visitJSFunctionInGCThread(visitor);
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* next = m_next.get())
+        SUPPRESS_UNCOUNTED_ARG next->visitJSFunctionInGCThread(visitor);
 
-    if (RefPtr error = m_error)
-        error->visitJSFunctionInGCThread(visitor);
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* error = m_error.get())
+        SUPPRESS_UNCOUNTED_ARG error->visitJSFunctionInGCThread(visitor);
 
-    if (RefPtr complete = m_complete)
-        complete->visitJSFunctionInGCThread(visitor);
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* complete = m_complete.get())
+        SUPPRESS_UNCOUNTED_ARG complete->visitJSFunctionInGCThread(visitor);
 }
 
 InternalObserverFromScript::InternalObserverFromScript(ScriptExecutionContext& context, RefPtr<JSSubscriptionObserverCallback> callback)
