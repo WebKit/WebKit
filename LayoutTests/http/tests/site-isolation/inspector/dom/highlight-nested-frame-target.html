@@ -1,0 +1,228 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-document-splicing-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.NestedFrameHighlight");
+
+    // The cross-site frames are local roots in their own process. #cross and #other each nest a same-site
+    // frame that shares that process without being a local root. #back nests a local root in the main
+    // frame's process, which nests such a frame in turn.
+
+    let pageTarget = WI.assumingMainTarget();
+    let crossRootTarget = null;
+    let crossNestedTarget = null;
+    let otherRootTarget = null;
+    let rootTargetNode = null;
+    let innerTargetNode = null;
+    let liveTargets = new Set;
+
+    function rectsExpression(hook) {
+        return `JSON.stringify(Array.from(internals.${hook}(), (rect) => [rect.x, rect.y, rect.width, rect.height].join()))`;
+    }
+
+    // The overlay container is attached at the next compositing update, so poll.
+    async function pollRects(evaluate, expectedCount) {
+        let rects = [];
+        for (let attempt = 0; attempt < 50; ++attempt) {
+            rects = JSON.parse(await evaluate());
+            if (rects.length === expectedCount)
+                break;
+            await new Promise((resolve) => setTimeout(resolve, 50));
+        }
+        return rects.sort();
+    }
+
+    function localRootRects(target, expectedCount) {
+        return pollRects(() => evaluateInFrameTarget(target, rectsExpression("inspectorLocalRootHighlightRects")), expectedCount);
+    }
+
+    function pageRects(expectedCount) {
+        return pollRects(() => InspectorTest.evaluateInPage(rectsExpression("inspectorHighlightRects")), expectedCount);
+    }
+
+    function repeated(rect, count) {
+        return Array(count).fill(rect);
+    }
+
+    function highlightNode(target, node) {
+        return target.DOMAgent.highlightNode.invoke({nodeId: node.backendNodeId, ...WI.DOMManager.buildHighlightConfigs()});
+    }
+
+    async function hideHighlights() {
+        WI.domManager.hideDOMNodeHighlight();
+        await Promise.all(Array.from(liveTargets, (target) => target.DOMAgent.hideHighlight()));
+    }
+
+    async function nestedTargetAndNode(substring) {
+        let target = await frameTargetForURLContainingWhenReady(substring);
+        InspectorTest.expectNotNull(target, `Should find the nested frame target for ${substring}.`);
+        let node = await pushNodeIntoFrameTargetTree(target, `document.getElementById("inner-target")`);
+        InspectorTest.expectEqual(node?.owningTarget, target, "#inner-target should belong to the nested frame target.");
+        liveTargets.add(target);
+        return {target, node};
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Resolve the cross-site root, its nested same-site frame, and a second cross-site root.",
+        async test() {
+            crossRootTarget = await frameTargetForURLContainingWhenReady("highlight-nested-root-frame.html?root=cross");
+            otherRootTarget = await frameTargetForURLContainingWhenReady("highlight-nested-root-frame.html?root=other");
+            InspectorTest.expectNotNull(crossRootTarget, "Should find the cross-site root frame target.");
+            InspectorTest.expectNotNull(otherRootTarget, "Should find the second cross-site root frame target.");
+            liveTargets.add(pageTarget);
+            liveTargets.add(crossRootTarget);
+            liveTargets.add(otherRootTarget);
+
+            ({target: crossNestedTarget, node: innerTargetNode} = await nestedTargetAndNode("hover-inner-frame.html?root=cross"));
+            InspectorTest.expectThat(crossNestedTarget !== crossRootTarget, "The nested frame and its root should be distinct targets.");
+
+            rootTargetNode = await pushNodeIntoFrameTargetTree(crossRootTarget, `document.getElementById("root-target")`);
+            InspectorTest.expectNotNull(rootTargetNode, "Should resolve #root-target in the cross-site root.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "RootNodeHighlightIsHosted",
+        description: "Highlighting a node of the local root itself should draw on the root's surface.",
+        async test() {
+            rootTargetNode.highlight();
+            InspectorTest.expectShallowEqual(await localRootRects(crossRootTarget, 4), repeated("300,10,100,20", 4), "The root should draw #root-target.");
+            await hideHighlights();
+            InspectorTest.expectShallowEqual(await localRootRects(crossRootTarget, 0), [], "The root should draw nothing after hiding.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "NestedNodeHighlightIsHosted",
+        description: "Highlighting a node of the nested frame should draw on its local root's surface.",
+        async test() {
+            innerTargetNode.highlight();
+            InspectorTest.expectShallowEqual(await localRootRects(crossRootTarget, 4), repeated("20,30,240,60", 4), "The root should draw the nested #inner-target.");
+            await hideHighlights();
+        }
+    });
+
+    suite.addTestCase({
+        name: "NestedNodeListHighlightIsHosted",
+        description: "Highlighting a node list in the nested frame should draw on its local root's surface.",
+        async test() {
+            WI.domManager.highlightDOMNodeList([innerTargetNode]);
+            InspectorTest.expectShallowEqual(await localRootRects(crossRootTarget, 4), repeated("20,30,240,60", 4), "The root should draw the nested #inner-target.");
+            await hideHighlights();
+        }
+    });
+
+    suite.addTestCase({
+        name: "HideClearsNestedHighlight",
+        description: "Hiding the nested frame's highlight should clear it from the root's surface.",
+        async test() {
+            await highlightNode(crossNestedTarget, innerTargetNode);
+            InspectorTest.expectShallowEqual(await localRootRects(crossRootTarget, 4), repeated("20,30,240,60", 4), "The root should draw the nested #inner-target.");
+            await crossNestedTarget.DOMAgent.hideHighlight();
+            InspectorTest.expectShallowEqual(await localRootRects(crossRootTarget, 0), [], "The root should draw nothing after hiding.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "RootAndNestedShareTheRootSurface",
+        description: "The root and its nested frame should both draw at once, and hiding one should keep the other.",
+        async test() {
+            await highlightNode(crossRootTarget, rootTargetNode);
+            await highlightNode(crossNestedTarget, innerTargetNode);
+            InspectorTest.expectShallowEqual(await localRootRects(crossRootTarget, 8), [...repeated("20,30,240,60", 4), ...repeated("300,10,100,20", 4)], "The root should draw both highlights.");
+
+            await crossNestedTarget.DOMAgent.hideHighlight();
+            InspectorTest.expectShallowEqual(await localRootRects(crossRootTarget, 4), repeated("300,10,100,20", 4), "The root should keep drawing its own highlight.");
+            await hideHighlights();
+        }
+    });
+
+    suite.addTestCase({
+        name: "NestedFrameRemovalTearsDownHighlight",
+        description: "Removing the highlighted nested frame should clear its highlight, and the root should still draw.",
+        async test() {
+            await highlightNode(crossNestedTarget, innerTargetNode);
+            InspectorTest.expectShallowEqual(await localRootRects(crossRootTarget, 4), repeated("20,30,240,60", 4), "The root should draw the nested #inner-target.");
+
+            liveTargets.delete(crossNestedTarget);
+            await evaluateInFrameTarget(crossRootTarget, `document.querySelector("iframe").remove()`);
+            InspectorTest.expectShallowEqual(await localRootRects(crossRootTarget, 0), [], "The root should draw nothing once the nested frame is gone.");
+
+            await highlightNode(crossRootTarget, rootTargetNode);
+            InspectorTest.expectShallowEqual(await localRootRects(crossRootTarget, 4), repeated("300,10,100,20", 4), "The root should still draw #root-target.");
+            await hideHighlights();
+
+            await evaluateInFrameTarget(crossRootTarget, `let iframe = document.createElement("iframe"); iframe.src = "hover-inner-frame.html?root=cross-again"; document.body.appendChild(iframe);`);
+            ({target: crossNestedTarget, node: innerTargetNode} = await nestedTargetAndNode("hover-inner-frame.html?root=cross-again"));
+        }
+    });
+
+    suite.addTestCase({
+        name: "RootRemovalWhileNestedHighlighted",
+        description: "Removing the cross-site root while its nested frame is highlighted should leave the process drawing for its other root.",
+        async test() {
+            await highlightNode(crossNestedTarget, innerTargetNode);
+            InspectorTest.expectShallowEqual(await localRootRects(crossRootTarget, 4), repeated("20,30,240,60", 4), "The root should draw the nested #inner-target.");
+
+            liveTargets.delete(crossNestedTarget);
+            liveTargets.delete(crossRootTarget);
+            await InspectorTest.evaluateInPage(`document.getElementById("cross").remove()`);
+
+            let otherRootNode = await pushNodeIntoFrameTargetTree(otherRootTarget, `document.getElementById("root-target")`);
+            await highlightNode(otherRootTarget, otherRootNode);
+            InspectorTest.expectShallowEqual(await localRootRects(otherRootTarget, 4), repeated("300,10,100,20", 4), "The other root in the same process should draw #root-target.");
+            await hideHighlights();
+        }
+    });
+
+    suite.addTestCase({
+        name: "MainProcessNestedNodeHighlightIsHosted",
+        description: "In the main frame's process, a node of a frame nested inside another local root should draw on that root's surface.",
+        async test() {
+            let mainProcessRootTarget = await frameTargetForURLContainingWhenReady("highlight-nested-root-frame.html?root=back-main");
+            InspectorTest.expectNotNull(mainProcessRootTarget, "Should find the local root frame target in the main frame's process.");
+            let {target, node} = await nestedTargetAndNode("hover-inner-frame.html?root=back-main");
+
+            await highlightNode(target, node);
+            InspectorTest.expectShallowEqual(await localRootRects(mainProcessRootTarget, 4), repeated("20,30,240,60", 4), "The root should draw the nested #inner-target.");
+            await target.DOMAgent.hideHighlight();
+            InspectorTest.expectShallowEqual(await localRootRects(mainProcessRootTarget, 0), [], "The root should draw nothing after hiding.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SameSiteControl",
+        description: "A node in a same-site nested frame belongs to the page target and should draw on the page overlay.",
+        async test() {
+            await new Promise((resolve) => WI.domManager.requestDocument(resolve));
+            let {result} = await pageTarget.RuntimeAgent.evaluate.invoke({expression: `document.getElementById("same").contentDocument.querySelector("iframe").contentDocument.getElementById("inner-target")`, objectGroup: "test"});
+            let {nodeId} = await pageTarget.DOMAgent.requestNode(result.objectId);
+            await pageTarget.RuntimeAgent.releaseObjectGroup("test");
+            let node = WI.domManager.nodeForId(nodeId);
+            InspectorTest.expectNotNull(node, "Should resolve the same-site nested #inner-target.");
+            InspectorTest.expectNull(node.owningTarget, "The same-site nested #inner-target should belong to the page target.");
+
+            node.highlight();
+            InspectorTest.expectShallowEqual(await pageRects(4), repeated("420,30,240,60", 4), "The page should draw the same-site nested #inner-target.");
+            await hideHighlights();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<style>
+body { margin: 0; }
+iframe { position: absolute; width: 400px; height: 150px; border: 0; }
+</style>
+<body onload="runTest()">
+<p>Tests that a node in a same-site frame nested inside a cross-site iframe is highlighted on the iframe's surface.</p>
+<iframe id="cross" src="http://localhost:8000/site-isolation/inspector/dom/resources/highlight-nested-root-frame.html?root=cross" style="left: 0; top: 0"></iframe>
+<iframe id="same" src="http://127.0.0.1:8000/site-isolation/inspector/dom/resources/highlight-nested-root-frame.html?root=same" style="left: 400px; top: 0"></iframe>
+<iframe id="other" src="http://localhost:8000/site-isolation/inspector/dom/resources/highlight-nested-root-frame.html?root=other" style="left: 0; top: 160px"></iframe>
+<iframe id="back" src="http://localhost:8000/site-isolation/inspector/dom/resources/highlight-nested-root-frame.html?root=back&nest=main" style="left: 400px; top: 160px"></iframe>
+</body>
