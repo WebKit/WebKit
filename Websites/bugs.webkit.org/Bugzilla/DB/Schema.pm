@@ -410,7 +410,8 @@ use constant ABSTRACT_SCHEMA => {
                                 DEFAULT => 'FALSE'},
             type            => {TYPE => 'INT2', NOTNULL => 1,
                                 DEFAULT => '0'},
-            extra_data      => {TYPE => 'varchar(255)'}
+            extra_data      => {TYPE => 'varchar(255)'},
+            is_markdown     => {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'FALSE'}
         ],
         INDEXES => [
             longdescs_bug_id_idx   => [qw(bug_id work_time)],

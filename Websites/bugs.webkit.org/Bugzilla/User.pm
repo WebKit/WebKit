@@ -2042,6 +2042,15 @@ our %names_to_events = (
     'product'                 => EVT_COMPONENT,
     'component'               => EVT_COMPONENT);
 
+# Returns true if the user wants their comments rendered as Markdown.
+# The setting defaults to 'on', so users who never changed it get Markdown.
+# Always false when the optional Markdown modules aren't installed.
+sub wants_markdown {
+    my $self = shift;
+    return 0 unless Bugzilla->feature('markdown');
+    return ($self->setting('use_markdown') // 'on') eq 'on' ? 1 : 0;
+}
+
 # Returns true if the user wants mail for a given bug change.
 # Note: the "+" signs before the constants suppress bareword quoting.
 sub wants_bug_mail {

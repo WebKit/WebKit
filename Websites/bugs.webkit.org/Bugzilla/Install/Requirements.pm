@@ -417,6 +417,38 @@ sub OPTIONAL_MODULES {
         feature => ['memcached'],
     },
 
+    # Markdown
+    {
+        package => 'Markdown',
+        module  => 'Bugzilla::Markdown',
+        version => 0,
+        feature => ['markdown'],
+    },
+    {
+        package => 'Moo',
+        module  => 'Moo',
+        version => 0,
+        feature => ['markdown'],
+    },
+    {
+        package => 'Mojolicious',
+        module  => 'Mojolicious',
+        version => 0,
+        feature => ['markdown'],
+    },
+    {
+        package => 'FFI-Platypus',
+        module  => 'FFI::Platypus',
+        version => 0,
+        feature => ['markdown'],
+    },
+    {
+        package => 'Alien-libcmark_gfm',
+        module  => 'Alien::libcmark_gfm',
+        version => 0,
+        feature => ['markdown'],
+    },
+
     # Documentation
     {
         package => 'File-Copy-Recursive',
@@ -454,6 +486,7 @@ use constant FEATURE_FILES => (
                       'Bugzilla/JobQueue/*', 'jobqueue.pl'],
     patch_viewer  => ['Bugzilla/Attachment/PatchReader.pm'],
     updates       => ['Bugzilla/Update.pm'],
+    markdown      => ['Bugzilla/Markdown.pm', 'Bugzilla/Markdown/*'],
     memcached     => ['Bugzilla/Memcache.pm'],
 );
 

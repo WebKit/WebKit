@@ -316,6 +316,13 @@ div#docslinks {
      width: 50em;
 }
 
+/* Markdown comments are rendered to block-level HTML, not preformatted text. */
+/* The #comments selector outranks skins that force pre-wrap on comments. */
+.bz_comment_text.markdown,
+#comments .bz_comment_text.markdown {
+     white-space: normal;
+}
+
 .bz_comment_text span.quote {
     color: #65379c;
     /* Make quoted text not wrap. */

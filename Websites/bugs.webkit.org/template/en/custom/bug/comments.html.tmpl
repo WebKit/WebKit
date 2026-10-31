@@ -19,7 +19,7 @@
       [% IF user.settings.quote_replies.value == 'quoted_reply' %]
         /* pre id="comment_name_N" */
         var text_elem = document.getElementById('comment_text_'+id);
-        var text = getText(text_elem);
+        var text = getCommentSource(text_elem);
         replytext = prefix + wrapReplyText(text);
       [% ELSIF user.settings.quote_replies.value == 'simple_reply' %]
         replytext = prefix;
@@ -203,11 +203,13 @@
 [%# Don't indent the <pre> block, since then the spaces are displayed in the
   # generated HTML
   #%]
-<div class="bz_comment_text[% " collapsed" IF comment.collapsed %]"
+[% render_markdown = comment.is_markdown && feature_enabled('markdown') %]
+<div class="bz_comment_text[% " collapsed" IF comment.collapsed %][% " markdown" IF render_markdown %]"
+  [% IF render_markdown %]data-markdown-source="[% comment_text FILTER html %]"[% END %]
   [% IF mode == "edit" || comment.collapsed %]
     id="comment_text_[% comment.count FILTER none %]"
   [% END %]>
-  [%- comment_text FILTER quoteUrls(bug, comment) -%]
+  [%- comment_text FILTER markdown(bug, comment) -%]
 </div>
     [% Hook.process('a_comment-end', 'bug/comments.html.tmpl') %]
     </div>
@@ -274,11 +276,6 @@
                    maxrows   = 25
                    cols      = constants.COMMENT_COLS
         %]
-        [% IF user.is_insider %]
-          <script>
-             updateCommentTagControl(document.getElementById('newcommentprivacy'), 'comment');
-          </script>
-        [% END %]
         [% Hook.process("after_comment_textarea", 'bug/edit.html.tmpl') %]
       [% ELSE %]
         You are not allowed to make an additional comment on this [% terms.bug %].
@@ -292,6 +289,13 @@
         [% Param('insidergroup') FILTER html %] group)">
           Make comment private
         </label>
+
+        [% IF user.is_insider %]
+          <script>
+             updateCommentTagControl(document.getElementById('newcommentprivacy'), 'comment');
+          </script>
+        [% END %]
+
       [% END %]
 
       [% PROCESS commit_button id=""%]
