@@ -145,6 +145,7 @@ static const Register* LEGACY_NODELETE topOfFrame(const CallFrame* callFrame)
         case Wasm::CompilationMode::IPIntMode:
         case Wasm::CompilationMode::BBQMode:
         case Wasm::CompilationMode::OMGMode:
+        case Wasm::CompilationMode::RestoreFrameMode:
             return callFrame->registers() + 2;
         case Wasm::CompilationMode::JSToWasmMode:
             return alignStackPointer(callFrame->registers() + static_cast<size_t>(CallFrameSlot::firstArgument) + callFrame->argumentCount());
@@ -359,7 +360,8 @@ IterationStatus SlabSlicer::step(VM& vm, StackVisitor& visitor)
             case Wasm::CompilationMode::IPIntMode:
             case Wasm::CompilationMode::BBQMode:
             case Wasm::CompilationMode::OMGMode:
-            case Wasm::CompilationMode::OMGForOSREntryMode: {
+            case Wasm::CompilationMode::OMGForOSREntryMode:
+            case Wasm::CompilationMode::RestoreFrameMode: {
                 m_pendingFrameRecords.append(callFrame);
                 break;
             }
