@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/RenderObjectStyle.h>
 #include <WebCore/StyleComputedStyle+GettersInlines.h>
 #include <WebCore/StylePrimitiveNumericTypes+Evaluation.h>
 #include <WebCore/UsedStyleProperties.h>
@@ -41,7 +42,7 @@ namespace WebCore {
 // values needing bespoke logic (float/clear) are hand-written here.
 class UsedStyle final : public UsedStyleProperties {
 public:
-    explicit UsedStyle(const RenderElement& renderer LIFETIME_BOUND)
+    explicit UsedStyle(const RenderObject& renderer LIFETIME_BOUND)
         : UsedStyleProperties(renderer, renderer.style())
     {
     }
@@ -75,14 +76,12 @@ public:
     template<typename T = LayoutUnit> T columnRuleWidth() const { return evaluateZoomed<T>(Style::effectiveColumnRuleWidth(computedStyle())); }
 
 private:
-    friend class RenderElement;
     friend class RenderObject;
 
     float deviceScaleFactor() const { return computedStyle().deviceScaleFactor(); }
     template<typename T, typename Value> T evaluateZoomed(const Value& value) const { return Style::evaluate<T>(value, computedStyle().usedZoomForLength(), deviceScaleFactor()); }
 
-    // The renderer's first-line style, or the style of one of its text children.
-    UsedStyle(const RenderElement& renderer LIFETIME_BOUND, const Style::ComputedStyle& pseudoElementStyle LIFETIME_BOUND)
+    UsedStyle(const RenderObject& renderer LIFETIME_BOUND, const Style::ComputedStyle& pseudoElementStyle LIFETIME_BOUND)
         : UsedStyleProperties(renderer, pseudoElementStyle)
     {
     }
@@ -99,7 +98,10 @@ template<typename T> RectEdges<T> UsedStyle::borderWidths() const
 
 inline UsedVisibility UsedStyle::visibility() const
 {
-    if (m_renderer->isForceHiddenByLineClamp() || computedStyle().isForceHidden()) [[unlikely]]
+    // Text is hidden with its parent.
+    const RenderObject& renderer = m_renderer;
+    auto& element = renderer.isRenderElement() ? uncheckedDowncast<RenderElement>(renderer) : *renderer.parent();
+    if (element.isForceHiddenByLineClamp() || computedStyle().isForceHidden()) [[unlikely]]
         return UsedVisibility::Hidden;
     return computedStyle().visibility() == Visibility::Visible ? UsedVisibility::Visible : UsedVisibility::Hidden;
 }

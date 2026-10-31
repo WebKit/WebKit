@@ -16,7 +16,7 @@ public:
     const Style::ComputedStyle& computedStyle() const LIFETIME_BOUND { return m_computedStyle.get(); }
 
 protected:
-    UsedStyleProperties(const RenderElement& renderer LIFETIME_BOUND, const Style::ComputedStyle& computedStyle LIFETIME_BOUND)
+    UsedStyleProperties(const RenderObject& renderer LIFETIME_BOUND, const Style::ComputedStyle& computedStyle LIFETIME_BOUND)
         : m_renderer(renderer)
         , m_computedStyle(computedStyle)
     {
@@ -27,7 +27,7 @@ protected:
     LayoutUnit resolveReferenceSize(ReferenceSize) const;
 
     // const: a UsedStyle view never rebinds its members, so they can be read without a stack-local guard.
-    const CheckedRef<const RenderElement> m_renderer;
+    const CheckedRef<const RenderObject> m_renderer;
     // The renderer's style, or one of its pseudo-element styles.
     const CheckedRef<const Style::ComputedStyle> m_computedStyle;
 };

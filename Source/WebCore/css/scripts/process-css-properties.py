@@ -8472,7 +8472,7 @@ class GenerateUsedStyle:
                 writer.write(f"protected:")
 
                 with writer.indent():
-                    writer.write(f"UsedStyleProperties(const RenderElement& renderer LIFETIME_BOUND, const Style::ComputedStyle& computedStyle LIFETIME_BOUND)")
+                    writer.write(f"UsedStyleProperties(const RenderObject& renderer LIFETIME_BOUND, const Style::ComputedStyle& computedStyle LIFETIME_BOUND)")
                     with writer.indent():
                         writer.write(f": m_renderer(renderer)")
                         writer.write(f", m_computedStyle(computedStyle)")
@@ -8486,7 +8486,7 @@ class GenerateUsedStyle:
                     writer.newline()
 
                     writer.write(f"// const: a UsedStyle view never rebinds its members, so they can be read without a stack-local guard.")
-                    writer.write(f"const CheckedRef<const RenderElement> m_renderer;")
+                    writer.write(f"const CheckedRef<const RenderObject> m_renderer;")
                     writer.write(f"// The renderer's style, or one of its pseudo-element styles.")
                     writer.write(f"const CheckedRef<const Style::ComputedStyle> m_computedStyle;")
                 writer.write(f"}};")

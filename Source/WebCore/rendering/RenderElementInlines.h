@@ -30,23 +30,13 @@
 
 namespace WebCore {
 
-// Text has the used values of its own style, with its parent as the renderer they are resolved for.
-inline UsedStyle RenderObject::usedStyle() const
-{
-    if (isRenderText())
-        return UsedStyle { *m_parent, uncheckedDowncast<RenderText>(*this).style() };
-    return downcast<RenderElement>(*this).usedStyle();
-}
-
+inline UsedStyle RenderObject::usedStyle() const { return UsedStyle { *this }; }
 inline UsedStyle RenderObject::firstLineUsedStyle() const
 {
     if (isRenderText())
-        return UsedStyle { *m_parent, uncheckedDowncast<RenderText>(*this).firstLineStyle() };
-    return downcast<RenderElement>(*this).firstLineUsedStyle();
+        return UsedStyle { *this, layoutBox().firstLineStyle() };
+    return UsedStyle { *this, uncheckedDowncast<RenderElement>(*this).firstLineStyle() };
 }
-
-inline UsedStyle RenderElement::usedStyle() const { return UsedStyle { *this }; }
-inline UsedStyle RenderElement::firstLineUsedStyle() const { return UsedStyle { *this, firstLineStyle() }; }
 inline Overflow RenderElement::effectiveOverflowBlockDirection() const { return writingMode().isHorizontal() ? effectiveOverflowY() : effectiveOverflowX(); }
 inline Overflow RenderElement::effectiveOverflowInlineDirection() const { return writingMode().isHorizontal() ? effectiveOverflowX() : effectiveOverflowY(); }
 inline Element* RenderElement::element() const { return downcast<Element>(RenderObject::node()); }
