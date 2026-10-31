@@ -32,6 +32,7 @@
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/cocoa/FindInPageUtilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/PrintingTestUtilities.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestDownloadDelegate.h"
@@ -20375,14 +20376,7 @@ TEST(SiteIsolation, DrawPagesToPDFSynchronouslyIncludesCrossSiteFrames)
         return nested && [[webView objectByEvaluatingJavaScript:@"document.readyState" inFrame:nested.get()] isEqualToString:@"complete"];
     }));
 
-    RetainPtr<WKFrameInfo> mainFrame = [webView mainFrame].info;
-    __block bool computedPages = false;
-    [webView _computePagesForPrinting:[mainFrame _handle] completionHandler:^{
-        computedPages = true;
-    }];
-    Util::run(&computedPages);
-
-    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:[mainFrame _handle] pageCount:1];
+    RetainPtr data = drawPagesToPDF(webView.get(), [webView mainFrame].info._handle, 1);
     ASSERT_NOT_NULL(data.get());
 
     RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
@@ -20441,13 +20435,7 @@ TEST(SiteIsolation, DrawPagesToPDFSynchronouslyDuringDOMPrintIncludesCrossSiteFr
     [webView evaluateJavaScript:@"window.print()" completionHandler:nil];
     RetainPtr<_WKFrameHandle> frame = [uiDelegate waitForPrintFrame];
 
-    __block bool computedPages = false;
-    [webView _computePagesForPrinting:frame.get() completionHandler:^{
-        computedPages = true;
-    }];
-    Util::run(&computedPages);
-
-    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:frame.get() pageCount:1];
+    RetainPtr data = drawPagesToPDF(webView.get(), frame.get(), 1);
     [uiDelegate finishPrinting];
     ASSERT_NOT_NULL(data.get());
 
@@ -20456,40 +20444,6 @@ TEST(SiteIsolation, DrawPagesToPDFSynchronouslyDuringDOMPrintIncludesCrossSiteFr
     RetainPtr text = [[document pageAtIndex:0] text];
     EXPECT_TRUE([text containsString:@"Mainframe"]);
     EXPECT_TRUE([text containsString:@"Subframe"]);
-}
-
-// The sRGB color of the pixel at a point, measured from the top left of a page. Unlike TestPDFPage's
-// colorAtPoint:, this can tell apart colors at different heights.
-static std::optional<std::array<uint8_t, 3>> pdfPageColorAtPoint(NSData *data, size_t pageNumber, CGPoint point)
-{
-    RetainPtr provider = adoptCF(CGDataProviderCreateWithCFData(bridge_cast(data)));
-    RetainPtr document = adoptCF(CGPDFDocumentCreateWithProvider(provider.get()));
-    CGPDFPageRef page = CGPDFDocumentGetPage(document.get(), pageNumber);
-    if (!page)
-        return std::nullopt;
-    auto bounds = CGPDFPageGetBoxRect(page, kCGPDFMediaBox);
-    size_t width = bounds.size.width;
-    size_t height = bounds.size.height;
-    RetainPtr colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
-    RetainPtr context = adoptCF(CGBitmapContextCreate(nullptr, width, height, 8, width * 4, colorSpace.get(), kCGImageAlphaPremultipliedLast));
-    CGContextSetRGBFillColor(context.get(), 1, 1, 1, 1);
-    CGContextFillRect(context.get(), CGRectMake(0, 0, width, height));
-    CGContextDrawPDFPage(context.get(), page);
-    auto pixels = unsafeMakeSpan(static_cast<const uint8_t*>(CGBitmapContextGetData(context.get())), width * height * 4);
-    auto pixel = pixels.subspan((static_cast<size_t>(point.y) * width + static_cast<size_t>(point.x)) * 4, 3);
-    return std::array { pixel[0], pixel[1], pixel[2] };
-}
-
-static bool pdfPageHasColorAtPoint(NSData *data, size_t pageNumber, CGPoint point, std::array<uint8_t, 3> color)
-{
-    auto actualColor = pdfPageColorAtPoint(data, pageNumber, point);
-    if (!actualColor)
-        return false;
-    for (size_t i = 0; i < 3; ++i) {
-        if (std::abs((*actualColor)[i] - color[i]) > 2)
-            return false;
-    }
-    return true;
 }
 
 // An iframe taller than a page straddles the page break, so printing paints it once on each page. Its
@@ -20511,26 +20465,21 @@ TEST(SiteIsolation, DrawPagesToPDFIncludesCrossSiteFrameOnEveryPageItSpans)
     RetainPtr<WKFrameInfo> subframe = [webView mainFrame].childFrames.firstObject.info;
     EXPECT_NE([mainFrame _processIdentifier], [subframe _processIdentifier]);
 
-    __block bool computedPages = false;
-    [webView _computePagesForPrinting:[mainFrame _handle] completionHandler:^{
-        computedPages = true;
-    }];
-    Util::run(&computedPages);
-
-    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:[mainFrame _handle] pageCount:2];
+    RetainPtr data = drawPagesToPDF(webView.get(), [mainFrame _handle], 2);
     ASSERT_NOT_NULL(data.get());
     RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
     EXPECT_EQ([document pageCount], 2);
 
-    // The first page ends in the blue half of the iframe, and the second shows the rest of it.
+    // Probe the middle of each color.
+    constexpr auto pageHeight = usLetterPaperSizeInCSSPixels.height;
     constexpr std::array<uint8_t, 3> red { 255, 0, 0 };
     constexpr std::array<uint8_t, 3> blue { 0, 0, 255 };
     constexpr std::array<uint8_t, 3> white { 255, 255, 255 };
-    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 1, CGPointMake(100, 300), red));
-    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 1, CGPointMake(100, 700), blue));
-    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(100, 100), blue));
-    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(100, 500), white));
-    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(500, 100), white));
+    EXPECT_TRUE(pdfPageHasColorAtCSSPixel(data.get(), 1, { 200, 300 }, red));
+    EXPECT_TRUE(pdfPageHasColorAtCSSPixel(data.get(), 1, { 200, (600 + pageHeight) / 2 }, blue));
+    EXPECT_TRUE(pdfPageHasColorAtCSSPixel(data.get(), 2, { 200, (1200 - pageHeight) / 2 }, blue));
+    EXPECT_TRUE(pdfPageHasColorAtCSSPixel(data.get(), 2, { 200, 600 }, white));
+    EXPECT_TRUE(pdfPageHasColorAtCSSPixel(data.get(), 2, { 608, (1200 - pageHeight) / 2 }, white));
 }
 
 TEST(SiteIsolation, DrawPagesToPDFDoesNotCarryTransformIntoNextPage)
@@ -20554,19 +20503,14 @@ TEST(SiteIsolation, DrawPagesToPDFDoesNotCarryTransformIntoNextPage)
     RetainPtr<WKFrameInfo> subframe = [webView mainFrame].childFrames.firstObject.info;
     EXPECT_NE([mainFrame _processIdentifier], [subframe _processIdentifier]);
 
-    __block bool computedPages = false;
-    [webView _computePagesForPrinting:[mainFrame _handle] completionHandler:^{
-        computedPages = true;
-    }];
-    Util::run(&computedPages);
-
-    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:[mainFrame _handle] pageCount:2];
+    RetainPtr data = drawPagesToPDF(webView.get(), [mainFrame _handle], 2);
     ASSERT_NOT_NULL(data.get());
     RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
     EXPECT_EQ([document pageCount], 2);
 
+    // The middle of the green box.
     constexpr std::array<uint8_t, 3> green { 0, 128, 0 };
-    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(100, 100), green));
+    EXPECT_TRUE(pdfPageHasColorAtCSSPixel(data.get(), 2, { 100, 110 }, green));
 }
 
 static void collectImageBitsPerComponent(CGPDFDictionaryRef resources, Vector<CGPDFInteger>& bitsPerComponent, unsigned depth = 0)
@@ -20659,12 +20603,7 @@ TEST(SiteIsolation, DrawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit)
         RetainPtr<WKFrameInfo> subframe = [webView mainFrame].childFrames.firstObject.info;
         EXPECT_EQ([mainFrame _processIdentifier] != [subframe _processIdentifier], siteIsolationAndRemoteSnapshotting);
 
-        __block bool computedPages = false;
-        [webView _computePagesForPrinting:[mainFrame _handle] completionHandler:^{
-            computedPages = true;
-        }];
-        Util::run(&computedPages);
-        return [webView _drawPagesToPDFSynchronouslyForTesting:[mainFrame _handle] pageCount:1];
+        return drawPagesToPDF(webView.get(), [mainFrame _handle], 1);
     };
 
     RetainPtr localData = print(false);
@@ -20677,11 +20616,11 @@ TEST(SiteIsolation, DrawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit)
     for (auto value : bitsPerComponent)
         EXPECT_EQ(value, 8);
 
-    // The middle of each image, in points.
-    for (auto point : { CGPointMake(50 * 0.75, 50 * 0.75), CGPointMake(50 * 0.75, 150 * 0.75) }) {
-        auto localColor = pdfPageColorAtPoint(localData.get(), 1, point);
+    // The middle of each image.
+    for (auto point : { CGPointMake(50, 50), CGPointMake(50, 150) }) {
+        auto localColor = pdfPageColorAtCSSPixel(localData.get(), 1, point);
         ASSERT_TRUE(localColor);
-        EXPECT_TRUE(pdfPageHasColorAtPoint(remoteData.get(), 1, point, *localColor));
+        EXPECT_TRUE(pdfPageHasColorAtCSSPixel(remoteData.get(), 1, point, *localColor));
     }
 }
 

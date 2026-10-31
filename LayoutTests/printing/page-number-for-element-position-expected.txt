@@ -1,0 +1,28 @@
+Tests that an element's page number comes from its position in the document, even inside a positioned element, and is the page that the element starts on.
+
+
+horizontal-tb:
+PASS: number of pages is 5
+PASS: page number of "first" is 0
+PASS: page number of "wrapper" is 1
+PASS: page number of "inWrapper" is 2
+PASS: page number of "inlineInWrapper" is 2
+PASS: page number of "emptyAtBreak" is 3
+PASS: page number of "tall" is 3
+vertical-rl:
+PASS: number of pages is 5
+PASS: page number of "first" is 0
+PASS: page number of "wrapper" is 1
+PASS: page number of "inWrapper" is 2
+PASS: page number of "inlineInWrapper" is 2
+PASS: page number of "emptyAtBreak" is 3
+PASS: page number of "tall" is 3
+vertical-lr:
+PASS: number of pages is 5
+PASS: page number of "first" is 0
+PASS: page number of "wrapper" is 1
+PASS: page number of "inWrapper" is 2
+PASS: page number of "inlineInWrapper" is 2
+PASS: page number of "emptyAtBreak" is 3
+PASS: page number of "tall" is 3
+All tests passed

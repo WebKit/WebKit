@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test.js"></script>
+<script src="resources/paged-media-test-utils.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -16,14 +17,24 @@
         document.head.appendChild(element);
     }
 
+    function pxSize(width, height)
+    {
+        return "(" + width + ", " + height + ")";
+    }
+
     function inchSize(width, height)
     {
-        return "(" + Math.floor(width * 96) + ", " + Math.floor(height * 96) + ")";
+        return pxSize(cssPixelsFromInches(width), cssPixelsFromInches(height));
     }
 
     function mmSize(width, height)
     {
-        return "(" + Math.floor(width * 96 / 25.4) + ", " + Math.floor(height * 96 / 25.4) + ")";
+        return pxSize(cssPixelsFromMillimeters(width), cssPixelsFromMillimeters(height));
+    }
+
+    function ptSize(width, height)
+    {
+        return pxSize(cssPixelsFromPoints(width), cssPixelsFromPoints(height));
     }
 
     function pxMargins(top, right, bottom, left)
@@ -127,6 +138,10 @@
         debug("Test 20cm x 30cm");
         appendStyle("@page {size:20cm 30cm;}");
         shouldBe("internals.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4)", "mmSize(200, 300) + pxMargins(1, 2, 3, 4)");
+
+        debug("Test 100pt 200pt");
+        appendStyle("@page {size:100pt 200pt;}");
+        shouldBe("internals.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4)", "ptSize(100, 200) + pxMargins(1, 2, 3, 4)");
 
         debug("Test 10000px 20000px");
         appendStyle("@page {size:10000px 20000px;}");
