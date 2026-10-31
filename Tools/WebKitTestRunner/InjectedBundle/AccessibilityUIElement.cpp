@@ -1419,6 +1419,11 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(int)
     return nullptr;
 }
 
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForRelativeIndex(int)
+{
+    return nullptr;
+}
+
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForPoint(int, int)
 {
     return nullptr;

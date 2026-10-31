@@ -1,0 +1,101 @@
+Tests that AXTextMarkerForRelativeIndex and AXRelativeIndexForTextMarker round-trip. For each element, converts a relative index to a text marker and back.
+
+Paragraph:
+PASS: roundTrip(paragraph, 0) === 0
+PASS: roundTrip(paragraph, 6) === 6
+PASS: roundTrip(paragraph, 10) === 10
+PASS: roundTrip(paragraph, 11) === 11
+PASS: roundTrip(paragraph, 13) === 13
+
+Second paragraph:
+PASS: roundTrip(paragraph2, 0) === 0
+PASS: roundTrip(paragraph2, 4) === 4
+PASS: roundTrip(paragraph2, 5) === 5
+PASS: roundTrip(paragraph2, 7) === 7
+PASS: roundTrip(paragraph2, 9) === 9
+PASS: roundTrip(paragraph2, 10) === 10
+PASS: roundTrip(paragraph2, 13) === 13
+PASS: roundTrip(paragraph2, 14) === 14
+PASS: roundTrip(paragraph2, 16) === 16
+
+List:
+PASS: roundTrip(list, 0) === 0
+PASS: roundTrip(list, 2) === 2
+PASS: roundTrip(list, 3) === 3
+PASS: roundTrip(list, 4) === 4
+PASS: roundTrip(list, 8) === 8
+PASS: roundTrip(list, 12) === 12
+PASS: roundTrip(list, 13) === 13
+
+First list item:
+PASS: roundTrip(item1, 0) === 0
+PASS: roundTrip(item1, 1) === 1
+PASS: roundTrip(item1, 2) === 2
+PASS: roundTrip(item1, 3) === 3
+PASS: roundTrip(item1, 4) === 4
+
+Second list item:
+PASS: roundTrip(item2, 0) === 0
+PASS: roundTrip(item2, 2) === 2
+PASS: roundTrip(item2, 3) === 3
+PASS: roundTrip(item2, 4) === 4
+
+Third list item:
+PASS: roundTrip(item3, 0) === 0
+PASS: roundTrip(item3, 4) === 4
+PASS: roundTrip(item3, 5) === 5
+PASS: roundTrip(item3, 6) === 6
+
+Contenteditable:
+PASS: roundTrip(editable, 0) === 0
+PASS: roundTrip(editable, 4) === 4
+PASS: roundTrip(editable, 6) === 6
+PASS: roundTrip(editable, 7) === 7
+
+Input:
+PASS: roundTrip(input, 0) === 0
+PASS: roundTrip(input, 2) === 2
+PASS: roundTrip(input, 4) === 4
+PASS: roundTrip(input, 5) === 5
+
+Textarea:
+PASS: roundTrip(textarea, 0) === 0
+PASS: roundTrip(textarea, 3) === 3
+PASS: roundTrip(textarea, 4) === 4
+
+From the first paragraph into the elements below it:
+PASS: roundTrip(paragraph, 18) === 18
+PASS: roundTrip(paragraph, 22) === 22
+PASS: roundTrip(paragraph, 26) === 26
+PASS: roundTrip(paragraph, 27) === 27
+PASS: roundTrip(paragraph, 29) === 29
+PASS: roundTrip(paragraph, 32) === 32
+PASS: roundTrip(paragraph, 33) === 33
+PASS: roundTrip(paragraph, 37) === 37
+PASS: roundTrip(paragraph, 41) === 41
+PASS: roundTrip(paragraph, 42) === 42
+PASS: roundTrip(paragraph, 43) === 43
+PASS: roundTrip(paragraph, 49) === 49
+PASS: roundTrip(paragraph, 50) === 50
+
+Between the two newlines after a paragraph, which snaps back to the end of the paragraph's text:
+PASS: roundTrip(paragraph, 12) === 11
+PASS: roundTrip(paragraph, 28) === 27
+PASS: roundTrip(paragraph2, 15) === 14
+
+A marker from one element's relative index, read back as another element's relative index:
+PASS: indexOnOtherElement(paragraph, 13, paragraph2) === 0
+PASS: indexOnOtherElement(paragraph, 18, paragraph2) === 5
+PASS: indexOnOtherElement(paragraph, 22, paragraph2) === 9
+PASS: indexOnOtherElement(paragraph, 29, list) === 0
+PASS: indexOnOtherElement(paragraph, 29, item1) === 0
+PASS: indexOnOtherElement(paragraph, 33, item2) === 0
+PASS: indexOnOtherElement(item1, 4, item2) === 0
+PASS: indexOnOtherElement(list, 12, item3) === 4
+PASS: indexOnOtherElement(paragraph, 43, editable) === 0
+PASS: indexOnOtherElement(paragraph, 49, editable) === 6
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

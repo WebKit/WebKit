@@ -1,0 +1,77 @@
+Tests AXTextMarkerForRelativeIndex. For each element, checks the text between the marker at a relative index and the next marker.
+
+Paragraph:
+PASS: textAtRelativeIndex(paragraph, 0) === 'H'
+PASS: textAtRelativeIndex(paragraph, 6) === 'w'
+PASS: textAtRelativeIndex(paragraph, 10) === 'd'
+PASS: textAtRelativeIndex(paragraph, 13) === 'T'
+
+Second paragraph:
+PASS: textAtRelativeIndex(paragraph2, 0) === 'T'
+PASS: textAtRelativeIndex(paragraph2, 4) === ' '
+PASS: textAtRelativeIndex(paragraph2, 5) === 'i'
+PASS: textAtRelativeIndex(paragraph2, 8) === 'a'
+PASS: textAtRelativeIndex(paragraph2, 9) === ' '
+PASS: textAtRelativeIndex(paragraph2, 10) === 't'
+PASS: textAtRelativeIndex(paragraph2, 13) === 't'
+PASS: textAtRelativeIndex(paragraph2, 16) === '• O'
+
+List:
+PASS: textAtRelativeIndex(list, 0) === '• O'
+PASS: textAtRelativeIndex(list, 2) === 'e'
+PASS: textAtRelativeIndex(list, 4) === '• T'
+PASS: textAtRelativeIndex(list, 8) === '• T'
+PASS: textAtRelativeIndex(list, 12) === 'e'
+
+First list item:
+PASS: textAtRelativeIndex(item1, 0) === '• O'
+PASS: textAtRelativeIndex(item1, 1) === 'n'
+PASS: textAtRelativeIndex(item1, 2) === 'e'
+PASS: textAtRelativeIndex(item1, 4) === '• T'
+
+Second list item:
+PASS: textAtRelativeIndex(item2, 0) === '• T'
+PASS: textAtRelativeIndex(item2, 2) === 'o'
+PASS: textAtRelativeIndex(item2, 4) === '• T'
+
+Third list item:
+PASS: textAtRelativeIndex(item3, 0) === '• T'
+PASS: textAtRelativeIndex(item3, 4) === 'e'
+PASS: textAtRelativeIndex(item3, 6) === 'E'
+
+Contenteditable:
+PASS: textAtRelativeIndex(editable, 0) === 'E'
+PASS: textAtRelativeIndex(editable, 4) === ' '
+PASS: textAtRelativeIndex(editable, 6) === 'e'
+
+Input:
+PASS: textAtRelativeIndex(input, 0) === 'F'
+PASS: textAtRelativeIndex(input, 2) === 'e'
+PASS: textAtRelativeIndex(input, 4) === 'd'
+
+Textarea:
+PASS: textAtRelativeIndex(textarea, 0) === 'A'
+PASS: textAtRelativeIndex(textarea, 3) === 'a'
+
+From the first paragraph into the elements below it:
+PASS: textAtRelativeIndex(paragraph, 18) === 'i'
+PASS: textAtRelativeIndex(paragraph, 22) === ' '
+PASS: textAtRelativeIndex(paragraph, 26) === 't'
+PASS: textAtRelativeIndex(paragraph, 29) === '• O'
+PASS: textAtRelativeIndex(paragraph, 31) === 'e'
+PASS: textAtRelativeIndex(paragraph, 33) === '• T'
+PASS: textAtRelativeIndex(paragraph, 35) === 'o'
+PASS: textAtRelativeIndex(paragraph, 37) === '• T'
+PASS: textAtRelativeIndex(paragraph, 41) === 'e'
+PASS: textAtRelativeIndex(paragraph, 43) === 'E'
+PASS: textAtRelativeIndex(paragraph, 47) === ' '
+PASS: textAtRelativeIndex(paragraph, 49) === 'e'
+
+Past the end of the document, which returns the marker for the last position in the document:
+PASS: textarea.textMarkerForRelativeIndex(5).isEqual(webArea.endTextMarker) === true
+PASS: textarea.textMarkerForRelativeIndex(1000).isEqual(webArea.endTextMarker) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

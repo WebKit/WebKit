@@ -298,6 +298,7 @@ interface AccessibilityUIElement {
     boolean isTextMarkerRangeValid(AccessibilityTextMarkerRange markerRange);
     boolean isTextMarkerNull(AccessibilityTextMarker marker);
     AccessibilityTextMarker textMarkerForIndex(long textIndex);
+    AccessibilityTextMarker textMarkerForRelativeIndex(long textIndex);
     readonly attribute AccessibilityTextMarker startTextMarker;
     readonly attribute AccessibilityTextMarker endTextMarker;
     boolean setSelectedTextMarkerRange(AccessibilityTextMarkerRange range);
