@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+window.imageEvents = [];
+
+function pauseHere()
+{
+    debugger;
+    return "resumed";
+}
+
+function addImages()
+{
+    // The first image stalls so that it finishes long after the second one fails, and both finish while the page is stopped.
+    let stalled = new Image();
+    stalled.addEventListener("load", (event) => imageEvents.push(`stalled:load trusted=${event.isTrusted}`));
+    stalled.addEventListener("error", () => imageEvents.push("stalled:error"));
+    stalled.src = `/resources/load-and-stall.py?name=square100.png&mimeType=image/png&stallAt=0&stallFor=1&rand=${Math.random()}`;
+
+    let missing = new Image();
+    missing.addEventListener("load", () => imageEvents.push("missing:load"));
+    missing.addEventListener("error", (event) => imageEvents.push(`missing:error trusted=${event.isTrusted}`));
+    missing.src = `/resources/this-image-does-not-exist.png?rand=${Math.random()}`;
+
+    window.images = [stalled, missing];
+    document.body.append(stalled, missing);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Debugger.PauseDefersLoadEventsOfStoppedDocument");
+
+    async function evaluate(expression) {
+        let {result} = await InspectorTest.mainFrameTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
+        return result.value;
+    }
+
+    async function waitForExpression(expression) {
+        for (let i = 0; i < 100; ++i) {
+            if (await evaluate(expression))
+                return true;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return false;
+    }
+
+    suite.addTestCase({
+        name: "Debugger.PauseDefersLoadEventsOfStoppedDocument.ImagesFinishWhileStopped",
+        description: "The load and error events of images that finish while their own document is stopped in the debugger should be dispatched after resuming, once each.",
+        async test() {
+            let paused = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            InspectorTest.mainFrameTarget.RuntimeAgent.evaluate.invoke({expression: "pauseHere()", objectGroup: "test"}).catch(() => { });
+            await paused;
+
+            await evaluate("addImages()");
+            InspectorTest.expectThat(await waitForExpression(`images.every((image) => image.complete)`), "Both images should finish loading while the page is stopped.");
+            InspectorTest.expectEqual(await evaluate("imageEvents.length"), 0, "No image event should be dispatched while the page is stopped.");
+
+            let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+            await WI.debuggerManager.resume();
+            await resumed;
+
+            InspectorTest.expectThat(await waitForExpression(`imageEvents.length >= 2`), "Both image events should be dispatched after resuming.");
+            await new Promise((resolve) => setTimeout(resolve, 200));
+            InspectorTest.log(`Events: ${await evaluate("imageEvents.join(', ')")}`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that the load and error events of images that finish while their own document is stopped in the debugger are dispatched after resuming instead of being dropped.</p>
+</body>
+</html>

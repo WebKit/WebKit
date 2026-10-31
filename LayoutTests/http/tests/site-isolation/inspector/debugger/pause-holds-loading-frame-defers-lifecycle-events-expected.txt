@@ -1,0 +1,23 @@
+Test that a cross-site frame that finishes loading while a debugger pause holds it gets its load, readystatechange, pageshow and image load events after resuming.
+
+
+== Running test suite: SiteIsolation.Debugger.PauseHoldsLoadingFrameDefersLifecycleEvents
+-- Running test case: SiteIsolation.Debugger.PauseHoldsLoadingFrameDefersLifecycleEvents.WithoutPause
+PASS: Should find the cross-site frame target.
+PASS: The frame should be parsed while its image is still loading.
+PASS: The frame should finish loading.
+PASS: The iframe element should get its load event.
+Events: readystatechange:interactive, DOMContentLoaded, readystatechange:complete, img:load, load target=document currentTarget=window trusted=true, load:once, pageshow persisted=false trusted=true
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsLoadingFrameDefersLifecycleEvents.LoadFinishesWhileHeld
+PASS: Should find the cross-site frame target.
+PASS: The frame should be parsed while its image is still loading.
+PASS: The held frame should finish loading.
+PASS: The events after the frame was parsed should not be dispatched while it is held.
+PASS: A load event dispatched by script should be dispatched at once while the frame is held.
+PASS: The frame's pageshow event should be dispatched after resuming.
+PASS: The iframe element should get its load event after resuming.
+PASS: The frame should get each lifecycle event once, in the same order as without a pause.
+PASS: The load event dispatched by script while held should not be dispatched again.
+PASS: Each iframe element should get one load event.
+

@@ -398,6 +398,8 @@ public:
 private:
     explicit LocalDOMWindow(Document&);
 
+    void dispatchEventWithoutDebuggerDeferral(Event&, EventTarget*);
+
     ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
 
     void closePage() final;
