@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <title>PointerEvent constructor preserves tiltX/tiltY and altitudeAngle/azimuthAngle when both components are provided</title>
+    <link rel="help" href="https://w3c.github.io/pointerevents/#converting-between-tiltx-tilty-and-altitudeangle-azimuthangle">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+      const toRadians = degrees => degrees * Math.PI / 180;
+
+      test(() => {
+        const event = new PointerEvent("pointerdown", {tiltX: 30, tiltY: 30});
+        assert_equals(event.tiltX, 30, "tiltX");
+        assert_equals(event.tiltY, 30, "tiltY");
+        assert_approx_equals(event.azimuthAngle, Math.PI / 4, 1e-6, "azimuthAngle");
+        const tan30 = Math.tan(toRadians(30));
+        assert_approx_equals(event.altitudeAngle, Math.atan(1 / Math.sqrt(2 * tan30 * tan30)), 1e-6, "altitudeAngle");
+      }, "tiltX and tiltY are preserved when both are provided");
+
+      test(() => {
+        const event = new PointerEvent("pointerdown", {tiltX: -45, tiltY: 20});
+        assert_equals(event.tiltX, -45, "tiltX");
+        assert_equals(event.tiltY, 20, "tiltY");
+      }, "tiltX and tiltY with mixed signs are preserved when both are provided");
+
+      test(() => {
+        const event = new PointerEvent("pointerdown", {azimuthAngle: Math.PI / 4, altitudeAngle: Math.PI / 4});
+        assert_equals(event.azimuthAngle, Math.PI / 4, "azimuthAngle");
+        assert_equals(event.altitudeAngle, Math.PI / 4, "altitudeAngle");
+        assert_equals(event.tiltX, 35, "tiltX");
+        assert_equals(event.tiltY, 35, "tiltY");
+      }, "azimuthAngle and altitudeAngle are preserved when both are provided");
+
+      test(() => {
+        const event = new PointerEvent("pointerdown", {tiltX: 30, tiltY: -10, azimuthAngle: 1, altitudeAngle: 0.5});
+        assert_equals(event.tiltX, 30, "tiltX");
+        assert_equals(event.tiltY, -10, "tiltY");
+        assert_equals(event.azimuthAngle, 1, "azimuthAngle");
+        assert_equals(event.altitudeAngle, 0.5, "altitudeAngle");
+      }, "All four values are preserved when all are provided");
+    </script>
+  </body>
+</html>

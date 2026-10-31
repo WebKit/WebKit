@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -152,17 +152,19 @@ PointerEvent::PointerEvent(const AtomString& type, Init&& initializer, IsTrusted
     , m_coalescedEvents(initializer.coalescedEvents)
     , m_predictedEvents(initializer.predictedEvents)
 {
-    // A pair of components is complete when both or no values have been initialized to non-default values.
-    bool tiltComponentsComplete = !initializer.tiltX == !initializer.tiltY;
-    bool angleComponentsComplete = !initializer.azimuthAngle == (initializer.altitudeAngle == piOverTwoDouble);
+    // Only derive one pair from the other when the other pair has no values initialized to non-default values.
+    bool hasTilt = initializer.tiltX || initializer.tiltY;
+    bool hasAngle = initializer.azimuthAngle || initializer.altitudeAngle != piOverTwoDouble;
 
-    PointerEventAngle angle = angleFromTilt(m_tiltX, m_tiltY);
-    PointerEventTilt tilt = tiltFromAngle(m_altitudeAngle, m_azimuthAngle);
-
-    m_altitudeAngle = angleComponentsComplete ? angle.altitudeAngle : m_altitudeAngle;
-    m_azimuthAngle = angleComponentsComplete ? angle.azimuthAngle : m_azimuthAngle;
-    m_tiltX = tiltComponentsComplete ? tilt.tiltX : m_tiltX;
-    m_tiltY = tiltComponentsComplete ? tilt.tiltY : m_tiltY;
+    if (hasTilt && !hasAngle) {
+        auto angle = angleFromTilt(m_tiltX, m_tiltY);
+        m_altitudeAngle = angle.altitudeAngle;
+        m_azimuthAngle = angle.azimuthAngle;
+    } else if (hasAngle && !hasTilt) {
+        auto tilt = tiltFromAngle(m_altitudeAngle, m_azimuthAngle);
+        m_tiltX = tilt.tiltX;
+        m_tiltY = tilt.tiltY;
+    }
 }
 
 static Vector<Ref<PointerEvent>> createCoalescedPointerEvents(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
