@@ -1,0 +1,485 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true WebGPUEnabled=true ModelElementEnabled=true ] -->
+<meta charset="utf-8">
+<title>RemoteMesh::Update geometry validation</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+function enumValue(enumType, name) {
+    const value = IPC.serializedEnumInfo[enumType]?.valueMap?.find(entry => entry.name === name)?.value;
+    if (value === undefined)
+        throw new Error(`no ${enumType} named ${name}`);
+    return value;
+}
+
+function withTimeout(promise, ms) {
+    return Promise.race([promise, new Promise(resolve => setTimeout(resolve, ms))]);
+}
+
+let nextIdentifier = 987654000;
+const newIdentifier = () => ++nextIdentifier;
+
+function cubeAsset(dataSize, width, mipmapLevelCount) {
+    return {
+        dataHandle: { optionalValue: { protection: 'ReadOnly', handle: IPC.createSharedMemory(dataSize) } },
+        width,
+        height: width,
+        depth: 1,
+        textureType: enumValue('WebCore::WebGPU::TextureViewDimension', 'Cube'),
+        pixelFormat: enumValue('WebCore::WebGPU::TextureFormat', 'R16float'),
+        mipmapLevelCount,
+        arrayLength: 6,
+        textureUsage: { alias: enumValue('WebCore::WebGPU::TextureUsage', 'TextureBinding') },
+        swizzle: { red: 2, green: 3, blue: 4, alpha: 5 },
+    };
+}
+
+async function createRemoteMesh() {
+    if (!window.IPC || !IPC.messages.RemoteGPU_CreateModelBacking || !IPC.messages.RemoteMesh_Update)
+        return null;
+
+    const { CoreIPC } = await import('../../ipc/coreipc.js');
+
+    const backendIdentifier = newIdentifier();
+    const backendConnection = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+        renderingBackendIdentifier: backendIdentifier,
+        connectionHandle: backendConnection,
+    });
+    const didInitialize = backendConnection.connection.waitForMessage(backendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 5);
+    if (!didInitialize)
+        return null;
+    backendConnection.connection.setSemaphores(didInitialize[0].value, didInitialize[1].value);
+
+    const gpuIdentifier = newIdentifier();
+    const gpuConnection = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateGPU(0, {
+        identifier: gpuIdentifier,
+        renderingBackendIdentifier: backendIdentifier,
+        serverConnection: gpuConnection,
+    });
+    const wasCreated = gpuConnection.connection.waitForMessage(gpuIdentifier, IPC.messages.RemoteGPUProxy_WasCreated.name, 5);
+    if (!wasCreated || !wasCreated[0].value)
+        return null;
+    gpuConnection.connection.setSemaphores(wasCreated[1].value, wasCreated[2].value);
+
+    // RemoteGPU::createModelBacking MESSAGE_CHECKs for exactly these bootstrap assets:
+    // a 64x64 R16float cube (49152 bytes) and a 9-mip 256x256 R16float cube (1048572 bytes).
+    const meshIdentifier = newIdentifier();
+    gpuConnection.newInterface('RemoteGPU', gpuIdentifier).CreateModelBacking({
+        width: 64,
+        height: 64,
+        diffuseAsset: cubeAsset(49152, 64, 1),
+        specularAsset: cubeAsset(1048572, 256, 9),
+        identifier: meshIdentifier,
+        standardDynamicRange: true,
+    });
+    return gpuConnection.newInterface('RemoteMesh', meshIdentifier);
+}
+
+const remoteMeshPromise = createRemoteMesh();
+
+const attribute = (semantic, format, layoutIndex, offset) => ({ semantic, format, layoutIndex, offset });
+const layout = (bufferIndex, bufferOffset, bufferStride, stepFunction = 'PerVertex') => ({ bufferIndex, bufferOffset, bufferStride, stepFunction });
+const part = (indexCount, indexOffset = 0) => ({ indexCount, indexOffset });
+
+function indexBytes(count, value) {
+    const bytes = [];
+    for (let i = 0; i < count; ++i)
+        bytes.push(value & 0xff, (value >>> 8) & 0xff, (value >>> 16) & 0xff, (value >>> 24) & 0xff);
+    return bytes;
+}
+
+const identityTransform = {
+    m00: 1, m01: 0, m02: 0, m03: 0,
+    m10: 0, m11: 1, m12: 0, m13: 0,
+    m20: 0, m21: 0, m22: 1, m23: 0,
+    m30: 0, m31: 0, m32: 0, m33: 1,
+};
+
+let caseNumber = 0;
+function updateMeshDescriptor(geometry, options) {
+    const float3 = value => ({ x: value, y: value, z: value, w: 0 });
+    const identifierNumber = options.identifierNumber ?? ++caseNumber;
+    return {
+        // WebKitMesh.mm converts this to a non-optional UUID, so it has to parse.
+        identifier: {
+            value: `6b3f1a2e-0000-4000-8000-0000000000${String(identifierNumber).padStart(2, '0')}`,
+            path: `/invalid-geometry-${identifierNumber}.usdz`,
+            hashValue: identifierNumber,
+        },
+        updateType: options.updateType ?? 0,
+        descriptor: {
+            vertexBufferCount: geometry.vertexBufferCount,
+            vertexCapacity: geometry.vertexCapacity,
+            vertexAttributes: geometry.vertexAttributes.map(({ semantic, format, layoutIndex, offset }) => ({
+                semantic: enumValue('WebModel::VertexSemantic', semantic),
+                format: enumValue('WebCore::WebGPU::VertexFormat', format),
+                layoutIndex,
+                offset,
+            })),
+            vertexLayouts: geometry.vertexLayouts.map(({ bufferIndex, bufferOffset, bufferStride, stepFunction }) => ({
+                bufferIndex,
+                bufferOffset,
+                bufferStride,
+                stepFunction: enumValue('WebModel::VertexStepFunction', stepFunction),
+                stepRate: 1,
+            })),
+            indexCapacity: options.indexCapacity ?? 0,
+            indexType: enumValue('WebModel::IndexType', 'UInt32'),
+        },
+        parts: (options.parts ?? []).map(({ indexCount, indexOffset }) => ({
+            indexOffset,
+            indexCount,
+            topology: enumValue('WebCore::WebGPU::PrimitiveTopology', 'TriangleList'),
+            materialIndex: 0,
+            boundsMin: float3(-1),
+            boundsMax: float3(1),
+        })),
+        indexData: options.indexData ?? [],
+        vertexData: options.vertexData ?? [],
+        transform: identityTransform,
+        instanceTransforms: [identityTransform],
+        assignedMaterials: [],
+        deformationData: options.deformed ? { optionalValue: { skinningData: { }, blendShapeData: { }, renormalizationData: { } } } : { },
+    };
+}
+
+const noDescriptor = {
+    vertexBufferCount: 0,
+    vertexCapacity: 0,
+    vertexAttributes: [],
+    vertexLayouts: [],
+};
+
+function sendUpdate(remoteMesh, geometry, options) {
+    return withTimeout(new Promise(resolve => {
+        remoteMesh.Update({ descriptor: [updateMeshDescriptor(geometry, options)] }, resolve);
+    }), 5000);
+}
+
+function updateTest(expectedSuccess, description, geometry, options = { }) {
+    promise_test(async () => {
+        const remoteMesh = await remoteMeshPromise;
+        assert_true(!!remoteMesh, 'created RemoteMesh');
+        const reply = await sendUpdate(remoteMesh, geometry, options);
+        assert_not_equals(reply, undefined, 'the GPU process replied');
+        assert_equals(!!reply.success, expectedSuccess, 'Update success');
+    }, `RemoteMesh::Update ${expectedSuccess ? 'accepts' : 'rejects'} ${description}.`);
+}
+const rejects = (...args) => updateTest(false, ...args);
+const accepts = (...args) => updateTest(true, ...args);
+
+function sequenceTest(description, steps) {
+    promise_test(async () => {
+        const remoteMesh = await remoteMeshPromise;
+        assert_true(!!remoteMesh, 'created RemoteMesh');
+        const identifierNumber = ++caseNumber;
+        for (const [index, step] of steps.entries()) {
+            const reply = await sendUpdate(remoteMesh, step.geometry, { ...step.options, identifierNumber });
+            assert_not_equals(reply, undefined, `the GPU process replied to update ${index}`);
+            assert_equals(!!reply.success, step.accepted, `update ${index} success`);
+        }
+    }, `RemoteMesh::Update ${description}.`);
+}
+const deltaUpdateType = 1;
+
+rejects('a 4-byte stride with 12-byte attributes and indices at vertexCapacity - 1', {
+    vertexBufferCount: 1,
+    vertexCapacity: 1000,
+    vertexAttributes: [
+        attribute('Bitangent', 'Float32x3', 0, 0),
+        attribute('Normal', 'Float32x3', 0, 0),
+        attribute('Position', 'Float32x3', 0, 0),
+        attribute('Tangent', 'Float32x3', 0, 0),
+        attribute('UV0', 'Float32x2', 0, 0),
+    ],
+    vertexLayouts: [layout(0, 0, 4)],
+}, {
+    indexCapacity: 36,
+    indexData: indexBytes(36, 999),
+    vertexData: [new Array(4000).fill(0)],
+    parts: [part(36)],
+});
+
+rejects('a layoutIndex past the vertexLayouts array', {
+    vertexBufferCount: 1,
+    vertexCapacity: 100,
+    vertexAttributes: [attribute('Position', 'Float32x3', 1, 0)],
+    vertexLayouts: [layout(0, 0, 12)],
+});
+
+rejects('a bufferIndex past vertexBufferCount', {
+    vertexBufferCount: 1,
+    vertexCapacity: 100,
+    vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+    vertexLayouts: [layout(1, 0, 12)],
+});
+
+rejects('vertex data for a buffer no vertexLayout declares', {
+    vertexBufferCount: 4,
+    vertexCapacity: 100,
+    vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+    vertexLayouts: [layout(0, 0, 12)],
+}, {
+    vertexData: [new Array(1200).fill(0), new Array(1200).fill(0), new Array(1200).fill(0), new Array(1200).fill(0)],
+});
+
+rejects('a negative bufferStride', {
+    vertexBufferCount: 1,
+    vertexCapacity: 100,
+    vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+    vertexLayouts: [layout(0, 0, -12)],
+});
+
+rejects('a negative attribute offset', {
+    vertexBufferCount: 1,
+    vertexCapacity: 100,
+    vertexAttributes: [attribute('Position', 'Float32x3', 0, -8)],
+    vertexLayouts: [layout(0, 0, 12)],
+});
+
+rejects('a negative vertexCapacity', {
+    vertexBufferCount: 1,
+    vertexCapacity: -100,
+    vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+    vertexLayouts: [layout(0, 0, 12)],
+});
+
+rejects('a vertexCapacity whose buffer size overflows', {
+    vertexBufferCount: 1,
+    vertexCapacity: 0x4000000000000000,
+    vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+    vertexLayouts: [layout(0, 0, 12)],
+});
+
+rejects('vertex data for an undeclared vertex buffer', {
+    vertexBufferCount: 1,
+    vertexCapacity: 100,
+    vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+    vertexLayouts: [layout(0, 0, 12)],
+}, {
+    vertexData: [new Array(1200).fill(0), new Array(1200).fill(0)],
+});
+
+rejects('a part to draw with no vertices', {
+    vertexBufferCount: 1,
+    vertexCapacity: 0,
+    vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+    vertexLayouts: [layout(0, 0, 12)],
+}, {
+    indexCapacity: 36,
+    indexData: indexBytes(36, 0),
+    parts: [part(36)],
+});
+
+const indexedPosition = {
+    vertexBufferCount: 1,
+    vertexCapacity: 100,
+    vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+    vertexLayouts: [layout(0, 0, 12)],
+};
+
+rejects('a part whose index range runs past indexCapacity', indexedPosition, {
+    indexCapacity: 36,
+    indexData: indexBytes(36, 0),
+    parts: [part(36, 4)],
+});
+
+rejects('a part to draw with no index buffer', indexedPosition, {
+    parts: [part(3)],
+});
+
+const compactPosition = {
+    vertexBufferCount: 1,
+    vertexCapacity: 100,
+    vertexAttributes: [attribute('Position', 'Float32', 0, 0)],
+    vertexLayouts: [layout(0, 0, 4)],
+};
+
+rejects('a deformed position narrower than the float3 the deformation writes', compactPosition, { deformed: true });
+
+accepts('a Float32 position with no deformation', compactPosition);
+
+accepts('an interleaved buffer packed to its stride', {
+    vertexBufferCount: 1,
+    vertexCapacity: 24,
+    vertexAttributes: [
+        attribute('Position', 'Float32x3', 0, 0),
+        attribute('Normal', 'Float32x3', 0, 12),
+        attribute('Tangent', 'Float32x3', 0, 24),
+        attribute('Bitangent', 'Float32x3', 0, 36),
+        attribute('UV0', 'Float32x2', 0, 48),
+        attribute('Color', 'Float32x4', 0, 64),
+    ],
+    vertexLayouts: [layout(0, 0, 80)],
+}, {
+    vertexData: [new Array(24 * 80).fill(0)],
+});
+
+accepts('an attribute offset past the end of the stride', {
+    vertexBufferCount: 1,
+    vertexCapacity: 100,
+    vertexAttributes: [
+        attribute('Position', 'Float32x3', 0, 0),
+        attribute('Normal', 'Float32x3', 0, 12),
+        attribute('Tangent', 'Float32x3', 0, 24),
+    ],
+    vertexLayouts: [layout(0, 0, 32)],
+}, {
+    vertexData: [new Array(100 * 32).fill(0)],
+});
+
+accepts('a deformation over float3 and float2 attributes', {
+    vertexBufferCount: 1,
+    vertexCapacity: 24,
+    vertexAttributes: [
+        attribute('Position', 'Float32x3', 0, 0),
+        attribute('Normal', 'Float32x3', 0, 12),
+        attribute('UV0', 'Float32x2', 0, 24),
+    ],
+    vertexLayouts: [layout(0, 0, 32)],
+}, {
+    deformed: true,
+});
+
+accepts('one vertex buffer per attribute', {
+    vertexBufferCount: 2,
+    vertexCapacity: 100,
+    vertexAttributes: [
+        attribute('Position', 'Float32x3', 0, 0),
+        attribute('UV0', 'Float32x2', 1, 0),
+    ],
+    vertexLayouts: [layout(0, 0, 12), layout(1, 0, 8)],
+}, {
+    vertexData: [new Array(1200).fill(0), new Array(800).fill(0)],
+});
+
+accepts('a bufferOffset covered by slack in the stride', {
+    vertexBufferCount: 1,
+    vertexCapacity: 100,
+    vertexAttributes: [
+        attribute('Position', 'Float32x3', 0, 0),
+        attribute('UV0', 'Float32x2', 0, 16),
+    ],
+    vertexLayouts: [layout(0, 8, 64)],
+});
+
+accepts('a bufferOffset larger than the stride', {
+    vertexBufferCount: 1,
+    vertexCapacity: 100,
+    vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+    vertexLayouts: [layout(0, 16, 12)],
+});
+
+accepts('a per-instance vertex layout', {
+    vertexBufferCount: 1,
+    vertexCapacity: 100,
+    vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+    vertexLayouts: [layout(0, 0, 12, 'PerInstance')],
+});
+
+accepts('a vertexBufferCount larger than the vertexLayouts declare', {
+    vertexBufferCount: 4,
+    vertexCapacity: 100,
+    vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+    vertexLayouts: [layout(0, 0, 12)],
+});
+
+accepts('valid geometry with no vertex data', {
+    vertexBufferCount: 1,
+    vertexCapacity: 100,
+    vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+    vertexLayouts: [layout(0, 0, 12)],
+});
+
+rejects('a delta update for an identifier that has no mesh resource', noDescriptor, {
+    updateType: deltaUpdateType,
+});
+
+const roomyPosition = {
+    vertexBufferCount: 1,
+    vertexCapacity: 100,
+    vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+    vertexLayouts: [layout(0, 0, 12)],
+};
+
+sequenceTest('rejects a delta update that deforms a position narrower than the float3 it writes', [
+    { geometry: compactPosition, options: { vertexData: [new Array(400).fill(0)] }, accepted: true },
+    { geometry: noDescriptor, options: { updateType: deltaUpdateType, deformed: true }, accepted: false },
+]);
+
+sequenceTest('accepts a delta update that deforms a position wide enough for the float3 it writes', [
+    { geometry: roomyPosition, options: { vertexData: [new Array(1200).fill(0)] }, accepted: true },
+    { geometry: noDescriptor, options: { updateType: deltaUpdateType, deformed: true }, accepted: true },
+]);
+
+sequenceTest('rejects a delta update with a part to draw against a mesh with no vertices', [
+    {
+        geometry: {
+            vertexBufferCount: 1,
+            vertexCapacity: 0,
+            vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+            vertexLayouts: [layout(0, 0, 12)],
+        },
+        accepted: true,
+    },
+    {
+        geometry: noDescriptor,
+        options: { updateType: deltaUpdateType, indexCapacity: 36, indexData: indexBytes(36, 0), parts: [part(36)] },
+        accepted: false,
+    },
+]);
+
+sequenceTest('rejects a delta update with vertex data for an undeclared vertex buffer', [
+    { geometry: roomyPosition, accepted: true },
+    {
+        geometry: noDescriptor,
+        options: { updateType: deltaUpdateType, vertexData: [new Array(1200).fill(0), new Array(1200).fill(0)] },
+        accepted: false,
+    },
+]);
+
+sequenceTest('rejects a second initial update that narrows the geometry of an existing mesh', [
+    { geometry: roomyPosition, accepted: true },
+    { geometry: compactPosition, accepted: false },
+]);
+
+sequenceTest('rejects a second initial update with no descriptor at all', [
+    { geometry: roomyPosition, accepted: true },
+    { geometry: noDescriptor, accepted: false },
+]);
+
+sequenceTest('accepts a second initial update that redeclares the same geometry', [
+    { geometry: roomyPosition, accepted: true },
+    { geometry: roomyPosition, options: { vertexData: [new Array(1200).fill(0)] }, accepted: true },
+]);
+
+sequenceTest('rejects a delta update carrying a malformed descriptor it does not use', [
+    { geometry: roomyPosition, accepted: true },
+    {
+        geometry: {
+            vertexBufferCount: 1,
+            vertexCapacity: 100,
+            vertexAttributes: [attribute('Position', 'Float32x3', 0, 0)],
+            vertexLayouts: [layout(0, 0, -12)],
+        },
+        options: { updateType: deltaUpdateType },
+        accepted: false,
+    },
+]);
+
+sequenceTest('keeps checking against the first descriptor after a rejected redeclaration', [
+    { geometry: roomyPosition, accepted: true },
+    { geometry: compactPosition, accepted: false },
+    { geometry: noDescriptor, options: { updateType: deltaUpdateType, deformed: true }, accepted: true },
+]);
+
+sequenceTest('rejects a delta update whose part index range runs past the first indexCapacity', [
+    { geometry: roomyPosition, options: { indexCapacity: 36, indexData: indexBytes(36, 0) }, accepted: true },
+    { geometry: noDescriptor, options: { updateType: deltaUpdateType, parts: [part(36, 4)] }, accepted: false },
+]);
+</script>
+</body>

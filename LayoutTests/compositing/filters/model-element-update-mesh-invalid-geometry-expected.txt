@@ -1,0 +1,36 @@
+
+PASS RemoteMesh::Update rejects a 4-byte stride with 12-byte attributes and indices at vertexCapacity - 1.
+PASS RemoteMesh::Update rejects a layoutIndex past the vertexLayouts array.
+PASS RemoteMesh::Update rejects a bufferIndex past vertexBufferCount.
+PASS RemoteMesh::Update rejects vertex data for a buffer no vertexLayout declares.
+PASS RemoteMesh::Update rejects a negative bufferStride.
+PASS RemoteMesh::Update rejects a negative attribute offset.
+PASS RemoteMesh::Update rejects a negative vertexCapacity.
+PASS RemoteMesh::Update rejects a vertexCapacity whose buffer size overflows.
+PASS RemoteMesh::Update rejects vertex data for an undeclared vertex buffer.
+PASS RemoteMesh::Update rejects a part to draw with no vertices.
+PASS RemoteMesh::Update rejects a part whose index range runs past indexCapacity.
+PASS RemoteMesh::Update rejects a part to draw with no index buffer.
+PASS RemoteMesh::Update rejects a deformed position narrower than the float3 the deformation writes.
+PASS RemoteMesh::Update accepts a Float32 position with no deformation.
+PASS RemoteMesh::Update accepts an interleaved buffer packed to its stride.
+PASS RemoteMesh::Update accepts an attribute offset past the end of the stride.
+PASS RemoteMesh::Update accepts a deformation over float3 and float2 attributes.
+PASS RemoteMesh::Update accepts one vertex buffer per attribute.
+PASS RemoteMesh::Update accepts a bufferOffset covered by slack in the stride.
+PASS RemoteMesh::Update accepts a bufferOffset larger than the stride.
+PASS RemoteMesh::Update accepts a per-instance vertex layout.
+PASS RemoteMesh::Update accepts a vertexBufferCount larger than the vertexLayouts declare.
+PASS RemoteMesh::Update accepts valid geometry with no vertex data.
+PASS RemoteMesh::Update rejects a delta update for an identifier that has no mesh resource.
+PASS RemoteMesh::Update rejects a delta update that deforms a position narrower than the float3 it writes.
+PASS RemoteMesh::Update accepts a delta update that deforms a position wide enough for the float3 it writes.
+PASS RemoteMesh::Update rejects a delta update with a part to draw against a mesh with no vertices.
+PASS RemoteMesh::Update rejects a delta update with vertex data for an undeclared vertex buffer.
+PASS RemoteMesh::Update rejects a second initial update that narrows the geometry of an existing mesh.
+PASS RemoteMesh::Update rejects a second initial update with no descriptor at all.
+PASS RemoteMesh::Update accepts a second initial update that redeclares the same geometry.
+PASS RemoteMesh::Update rejects a delta update carrying a malformed descriptor it does not use.
+PASS RemoteMesh::Update keeps checking against the first descriptor after a rejected redeclaration.
+PASS RemoteMesh::Update rejects a delta update whose part index range runs past the first indexCapacity.
+
