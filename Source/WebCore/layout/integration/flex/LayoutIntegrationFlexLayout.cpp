@@ -147,15 +147,22 @@ void FlexLayout::buildFlexItemList()
     // order iterator. The list holds weak pointers because painting/hit-testing/baseline queries read it after
     // layout, when a child may have been removed.
     m_flexItems.clear();
+    bool hasMixedOrder = false;
     for (CheckedRef child : childrenOfType<RenderBox>(flexBox())) {
         // Out-of-flow children are not flex items, but the container still establishes their static position.
         if (child->isOutOfFlowPositioned()) {
             prepareOutOfFlowBoxForPositionedLayout(child);
             continue;
         }
-        if (!child->isExcludedFromNormalLayout())
-            m_flexItems.append(child.get());
+        if (child->isExcludedFromNormalLayout())
+            continue;
+        if (!m_flexItems.isEmpty() && child->style().order().value != m_flexItems.first()->style().order().value)
+            hasMixedOrder = true;
+        m_flexItems.append(child.get());
     }
+    // Document order is already order-modified document order when every item has the same 'order'.
+    if (!hasMixedOrder)
+        return;
     std::stable_sort(m_flexItems.begin(), m_flexItems.end(), [](auto& a, auto& b) {
         return a->style().order().value < b->style().order().value;
     });
