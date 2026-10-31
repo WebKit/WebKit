@@ -92,6 +92,11 @@ messages -> WebInspectorBackend {
     # (same empty-string == connection-loss convention as GetResponseBody above).
     LoadResource(WebCore::FrameIdentifier frameID, String url) -> (std::expected<std::tuple<String, String, int>, String> result) Async
 
+    # Network.resolveWebSocket: wrap the WebSocket whose channel has this progress identifier with the injected
+    # script of the frame that owns it. Reply is the Runtime.RemoteObject as a JSON string, or an unexpected error
+    # string (same empty-string == connection-loss convention as GetResponseBody above).
+    ResolveWebSocket(uint64_t channelID, String objectGroup) -> (std::expected<String, String> result) Async
+
     # Page.searchInResource (requestId branch): search one XHR/Fetch body in this process's store.
     SearchInRequest(WebCore::ResourceLoaderIdentifier resourceID, String query, bool caseSensitive, bool isRegex) -> (Vector<Inspector::SearchMatch> matches, String errorString) Async
 

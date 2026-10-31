@@ -229,6 +229,12 @@ WEBCORE_EXPORT Ref<Inspector::Protocol::Network::Request> buildObjectForResource
 // Loads url in the given context on behalf of the inspector, bypassing cross-origin checks (Network.loadResource).
 WEBCORE_EXPORT void loadResource(WebCore::ScriptExecutionContext&, const String& url, LoadResourceCompletionHandler&&);
 
+// Resolves the WebSocket in this process whose channel has the given progress identifier (Network.resolveWebSocket
+// under Site Isolation). A main-frame socket is wrapped by the page's injected script, so its object id belongs to
+// the page target, which holds the console's default context. Any other socket is wrapped by the injected script of
+// the frame that owns it, so its object id belongs to that frame's target. The socket must belong to `page`.
+WEBCORE_EXPORT Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveWebSocketInFrame(WebCore::Page&, uint64_t channelID, const String& objectGroup);
+
 } // namespace ResourceUtilities
 
 } // namespace Inspector

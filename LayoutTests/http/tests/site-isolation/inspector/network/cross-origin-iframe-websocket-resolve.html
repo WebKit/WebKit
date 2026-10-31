@@ -1,0 +1,112 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/websocket-test-utilities.js"></script>
+<script>
+// Global so the socket is kept alive.
+let mainFrameWebSocket = null;
+
+function openMainFrameWebSocket() {
+    mainFrameWebSocket = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo");
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.ResolveWebSocket");
+
+    function resolveWebSocket(resource) {
+        return new Promise((resolve) => {
+            WI.RemoteObject.resolveWebSocket(resource, "test", resolve);
+        });
+    }
+
+    async function expectWebSocketObject(remoteObject, resource) {
+        InspectorTest.expectThat(remoteObject instanceof WI.RemoteObject, "Should resolve a remote object.");
+        InspectorTest.expectEqual(remoteObject.type, "object", "Remote object should have type \"object\".");
+        InspectorTest.expectEqual(remoteObject.description, "WebSocket", "Remote object should have description \"WebSocket\".");
+
+        let url = await remoteObject.callFunctionJSON(function() { return this.url; });
+        InspectorTest.expectEqual(url, resource.url, "Remote object should be the WebSocket that opened the resource.");
+
+        let propertyNames = await new Promise((resolve) => {
+            remoteObject.getDisplayablePropertyDescriptors((properties) => {
+                resolve((properties || []).map((property) => property.name));
+            });
+        });
+        InspectorTest.expectThat(propertyNames.includes("url"), "Displayable properties should include \"url\".");
+        InspectorTest.expectThat(propertyNames.includes("readyState"), "Displayable properties should include \"readyState\".");
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.ResolveWebSocket.CrossOriginIFrame",
+        description: "Network.resolveWebSocket should route to the iframe's process and return an object owned by the iframe's frame target.",
+        async test() {
+            let frameTarget = await waitForFrameTargetForURLContaining("websocket-iframe.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+            await waitForExpressionInTarget(frameTarget, "typeof openPersistentWebSocket === 'function'");
+
+            let resourcePromise = awaitWebSocketResource("localhost:8880");
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "openPersistentWebSocket()", objectGroup: "test"});
+            let resource = await resourcePromise;
+            await awaitWebSocketOpen(resource);
+
+            let remoteObject = await resolveWebSocket(resource);
+            InspectorTest.expectEqual(remoteObject?.target, frameTarget, "Remote object should belong to the iframe's frame target.");
+            await expectWebSocketObject(remoteObject, resource);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.ResolveWebSocket.MainFrame",
+        description: "Network.resolveWebSocket should return a main-frame socket owned by the page target, where the console evaluates by default.",
+        async test() {
+            let resourcePromise = awaitWebSocketResource("127.0.0.1:8880");
+            await InspectorTest.evaluateInPage("openMainFrameWebSocket()");
+            let resource = await resourcePromise;
+            await awaitWebSocketOpen(resource);
+            InspectorTest.expectThat(resource.parentFrame.isMainFrame(), "WebSocket should belong to the main frame.");
+
+            let remoteObject = await resolveWebSocket(resource);
+            InspectorTest.expectEqual(remoteObject?.target, WI.pageTarget, "Remote object should belong to the page target.");
+            InspectorTest.expectEqual(remoteObject?.target, WI.runtimeManager.activeExecutionContext.target, "Remote object should belong to the target of the console's active execution context.");
+            await expectWebSocketObject(remoteObject, resource);
+
+            // Log WebSocket saves the object as a console result; it must be reachable from the console's context.
+            let savedResultIndex = await new Promise((resolve) => {
+                WI.runtimeManager.saveResult(remoteObject, resolve);
+            });
+            let executionContext = WI.runtimeManager.activeExecutionContext;
+            let {result} = await executionContext.target.RuntimeAgent.evaluate.invoke({
+                expression: `$${savedResultIndex}.url`,
+                objectGroup: "test",
+                contextId: executionContext.id,
+                includeCommandLineAPI: true,
+                returnByValue: true,
+            });
+            InspectorTest.expectEqual(result.value, resource.url, "Saved console result should be the main frame's WebSocket.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.ResolveWebSocket.InvalidRequestIdentifier",
+        description: "An unknown requestId should produce an error.",
+        async test() {
+            for (let requestId of ["DOES_NOT_EXIST", "request-1.1"]) {
+                try {
+                    await WI.backendTarget.NetworkAgent.resolveWebSocket(requestId, "test");
+                    InspectorTest.fail(`${requestId}: resolveWebSocket should fail.`);
+                } catch (e) {
+                    InspectorTest.pass(`${requestId}: resolveWebSocket should fail.`);
+                    InspectorTest.log(`  Error: ${e.message || e}`);
+                }
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that Network.resolveWebSocket resolves main-frame and cross-origin iframe WebSockets under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/websocket-iframe.html"></iframe>
+</body>

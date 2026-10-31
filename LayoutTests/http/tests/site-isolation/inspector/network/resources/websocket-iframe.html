@@ -12,4 +12,9 @@ function openWebSocket(message) {
         webSocket.close();
     };
 }
+
+// Opens a socket that stays open, so the inspector can resolve it.
+function openPersistentWebSocket() {
+    webSocket = new WebSocket("ws://localhost:8880/websocket/tests/hybi/echo");
+}
 </script>
