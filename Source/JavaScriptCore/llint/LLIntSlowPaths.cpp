@@ -2616,29 +2616,21 @@ static void handleVarargsCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject
     callFrame->uncheckedR(bytecode.m_dst) = result;
 }
 
-static void handleVarargsWithSpreadCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject* globalObject, CodeBlock* codeBlock, const OpCallVarargsWithSpread& bytecode)
+static void handleVarargsWithSpreadCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject* globalObject, CodeBlock* codeBlock, const OpCallVarargsWithSpread& bytecode, CheckpointOSRExitSideState& sideState)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     const BitVector& bitVector = codeBlock->unlinkedCodeBlock()->bitVector(bytecode.m_bitVector);
     JSValue* values = std::bit_cast<JSValue*>(&callFrame->r(bytecode.m_argv));
     unsigned argc = bytecode.m_argc;
+    unsigned length = sideState.tmps[OpCallVarargsWithSpread::argCountIncludingThis].asUInt32() - 1;
 
-    // Recount rather than trusting the optimizing JIT's argument count: on overflow it reports a
-    // clamped count that is smaller than the number of values the copy below would write.
-    CheckedUint32 length = 0;
-    for (unsigned i = 0; i < argc; ++i) {
-        if (bitVector.get(i))
-            length += uncheckedDowncast<JSCellButterfly>(values[-static_cast<int>(i)])->publicLength();
-        else
-            length += 1U;
-    }
-    if (length.hasOverflowed() || length > maxArguments) [[unlikely]] {
+    if (length > maxArguments) [[unlikely]] {
         throwStackOverflowError(globalObject, scope);
         return;
     }
 
     MarkedArgumentBuffer args;
-    args.fill(vm, length.value(), [&](JSValue* buffer) {
+    args.fill(vm, length, [&](JSValue* buffer) {
         JSValue* dest = buffer;
         for (unsigned i = 0; i < argc; ++i) {
             JSValue value = values[-static_cast<int>(i)];
@@ -2904,7 +2896,7 @@ extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit(CallFrame* call
         handleVarargsCheckpoint(vm, callFrame, globalObject, pc->as<OpCallVarargs>(), *sideState.get());
         break;
     case op_call_varargs_with_spread:
-        handleVarargsWithSpreadCheckpoint(vm, callFrame, globalObject, codeBlock, pc->as<OpCallVarargsWithSpread>());
+        handleVarargsWithSpreadCheckpoint(vm, callFrame, globalObject, codeBlock, pc->as<OpCallVarargsWithSpread>(), *sideState.get());
         break;
     case op_construct_varargs:
         handleVarargsCheckpoint(vm, callFrame, globalObject, pc->as<OpConstructVarargs>(), *sideState.get());
