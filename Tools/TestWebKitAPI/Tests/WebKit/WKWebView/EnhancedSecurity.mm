@@ -937,7 +937,7 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenLockdownOpts
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
 
-TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenSecurityRestrictionModeNone)
+TEST(EnhancedSecurity, SystemLockdownModeIgnoresWhenSecurityRestrictionModeNoneSet)
 {
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
 
@@ -949,9 +949,9 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenSecurityRest
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     [webView _test_waitForDidFinishNavigation];
 
-    EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
     EXPECT_EQ(false, isJITEnabled(webView.get()));
-    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
 
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
@@ -976,7 +976,7 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenBothAPIOptsO
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
 
-TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenMaximizeCompatibilitySet)
+TEST(EnhancedSecurity, SystemLockdownModeIgnoresWhenMaximizeCompatibilitySet)
 {
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
 
@@ -988,9 +988,9 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenMaximizeComp
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     [webView _test_waitForDidFinishNavigation];
 
-    EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
     EXPECT_EQ(false, isJITEnabled(webView.get()));
-    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
 
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }

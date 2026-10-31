@@ -886,6 +886,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)setSecurityRestrictionMode:(WKSecurityRestrictionMode)mode
 {
+    if (WebKit::lockdownModeEnabledBySystem())
+        return;
+
     switch (mode) {
     case WKSecurityRestrictionModeNone:
         _websitePolicies->setIsEnhancedSecurityEnabled(false);
