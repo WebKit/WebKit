@@ -1723,7 +1723,7 @@ static void runWebAssemblyInstantiateStreaming(JSGlobalObject* globalObject, VM&
 
     // FIXME: <http://webkit.org/b/184888> if there's an importObject and it contains a Memory, then we can compile the module with the right memory type (fast or not) by looking at the memory's type.
     ASSERT(globalObject->globalObjectMethodTable()->instantiateStreaming);
-    globalObject->globalObjectMethodTable()->instantiateStreaming(globalObject, outerPromise, resolution, context->importObject(), context->takeCompileOptions());
+    globalObject->globalObjectMethodTable()->instantiateStreaming(globalObject, outerPromise, resolution, context->importObject(), context->takeCompileOptions(), context->incumbentGlobalObject());
 }
 #endif
 
