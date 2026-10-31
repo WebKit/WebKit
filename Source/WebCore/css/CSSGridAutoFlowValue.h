@@ -26,10 +26,12 @@
 
 #include "CSSGridAutoFlow.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSGridAutoFlowValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSGridAutoFlowValue);
 public:
     static Ref<CSSGridAutoFlowValue> LEGACY_NODELETE create(CSS::GridAutoFlow);
 

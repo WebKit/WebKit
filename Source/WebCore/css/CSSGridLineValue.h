@@ -28,10 +28,12 @@
 
 #include "CSSGridLine.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSGridLineValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSGridLineValue);
 public:
     static Ref<CSSGridLineValue> create(CSS::GridLine);
 

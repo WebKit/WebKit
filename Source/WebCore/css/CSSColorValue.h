@@ -27,12 +27,14 @@
 
 #include <WebCore/CSSColor.h>
 #include <WebCore/CSSValue.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class Color;
 
 class CSSColorValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSColorValue);
 public:
     static Ref<CSSColorValue> create(CSS::Color);
     static Ref<CSSColorValue> create(WebCore::Color);

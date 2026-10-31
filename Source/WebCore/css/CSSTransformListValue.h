@@ -31,11 +31,13 @@
 #pragma once
 
 #include "CSSValueList.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CSSTransformListValue final : public CSSValueContainingVector {
+    WTF_MAKE_TZONE_ALLOCATED(CSSTransformListValue);
 public:
     static Ref<CSSTransformListValue> create(CSSValueListBuilder);
     static Ref<CSSTransformListValue> create(Ref<CSSValue>);

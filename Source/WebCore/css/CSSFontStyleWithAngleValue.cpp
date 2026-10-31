@@ -28,9 +28,12 @@
 
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFontStyleWithAngleValue);
 
 CSSFontStyleWithAngleValue::CSSFontStyleWithAngleValue(ObliqueAngle&& obliqueAngle)
     : CSSValue(ClassType::FontStyleWithAngle)

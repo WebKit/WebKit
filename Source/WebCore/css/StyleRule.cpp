@@ -56,8 +56,39 @@
 #include "StyleRuleFunction.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleFontFace);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleFontPaletteValues);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleFontFeatureValuesBlock);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleFontFeatureValues);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRulePage);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleGroup);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleMedia);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleSupports);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleLayer);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleContainer);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleProperty);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleScope);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleStartingStyle);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleCharset);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleNamespace);
 
 struct SameSizeAsStyleRuleBase : public WTF::RefCountedBase {
     unsigned bitfields : 5;

@@ -28,9 +28,12 @@
 
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include <wtf/Hasher.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSValuePair);
 
 CSSValuePair::CSSValuePair(ValueSeparator separator, Ref<CSSValue> first, Ref<CSSValue> second, IdenticalValueSerialization serialization)
     : CSSValue(ClassType::ValuePair)

@@ -29,6 +29,7 @@
 #include "CSSValue.h"
 #include "CachedResourceHandle.h"
 #include "ResourceLoaderOptions.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -40,6 +41,7 @@ class ScriptExecutionContext;
 class WeakPtrImplWithEventTargetData;
 
 class CSSFontFaceSrcLocalValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontFaceSrcLocalValue);
 public:
     static Ref<CSSFontFaceSrcLocalValue> create(AtomString fontFaceName);
     ~CSSFontFaceSrcLocalValue();
@@ -107,6 +109,7 @@ inline ASCIILiteral cssTextFromFontTech(FontTechnology tech)
 }
 
 class CSSFontFaceSrcResourceValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontFaceSrcResourceValue);
 public:
     static Ref<CSSFontFaceSrcResourceValue> create(CSS::URL, String format, Vector<FontTechnology>&&);
 

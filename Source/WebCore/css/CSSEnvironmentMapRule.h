@@ -31,6 +31,7 @@
 #include "CSSURL.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -40,6 +41,7 @@ enum class EnvironmentMapFormat : bool {
 };
 
 class StyleRuleEnvironmentMap final : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleEnvironmentMap);
 public:
     static Ref<StyleRuleEnvironmentMap> create(Ref<StyleProperties>&&);
     ~StyleRuleEnvironmentMap();
@@ -65,6 +67,7 @@ private:
 };
 
 class CSSEnvironmentMapRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSEnvironmentMapRule);
 public:
     static Ref<CSSEnvironmentMapRule> create(StyleRuleEnvironmentMap&, CSSStyleSheet*);
     ~CSSEnvironmentMapRule();

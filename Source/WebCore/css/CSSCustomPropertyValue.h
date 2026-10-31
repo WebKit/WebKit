@@ -30,12 +30,14 @@
 #include <WebCore/CSSValue.h>
 #include <WebCore/CSSVariableData.h>
 #include <WebCore/CSSWideKeyword.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSParserToken;
 
 class CSSCustomPropertyValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSCustomPropertyValue);
 public:
     using VariantValue = Variant<
         Ref<CSSSubstitutionValue>,

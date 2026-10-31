@@ -33,6 +33,8 @@
 #include "FontDescription.h"
 #include "FontPaletteValues.h"
 #include "FontSelector.h"
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSegmentedFontFace);
@@ -58,6 +60,7 @@ void CSSSegmentedFontFace::fontLoaded(CSSFontFace&)
 }
 
 class CSSFontAccessor final : public FontAccessor {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontAccessor);
 public:
     static Ref<CSSFontAccessor> create(CSSFontFace& fontFace, const FontDescription& fontDescription, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues, bool syntheticBold, bool syntheticItalic)
     {
@@ -99,6 +102,8 @@ private:
     bool m_syntheticBold;
     bool m_syntheticItalic;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFontAccessor);
 
 static void appendFont(FontRanges& ranges, Ref<FontAccessor>&& fontAccessor, const Vector<CSSFontFace::UnicodeRange>& unicodeRanges)
 {

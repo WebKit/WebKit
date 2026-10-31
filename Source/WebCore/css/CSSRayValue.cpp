@@ -33,9 +33,12 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSValueKeywords.h"
 #include "StyleKeyword+Mappings.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSRayValue);
 
 String CSSRayValue::customCSSText(const CSS::SerializationContext& context) const
 {

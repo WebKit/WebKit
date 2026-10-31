@@ -31,9 +31,12 @@
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSRelativeAlphaColorResolver.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace CSS {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RelativeAlphaColor);
 
 bool RelativeAlphaColor::operator==(const RelativeAlphaColor&) const = default;
 

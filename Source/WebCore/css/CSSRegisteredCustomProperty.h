@@ -28,12 +28,13 @@
 #include "CSSCustomPropertySyntax.h"
 #include "CSSVariableData.h"
 #include "StyleCustomProperty.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 struct CSSRegisteredCustomProperty {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CSSRegisteredCustomProperty);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(CSSRegisteredCustomProperty);
 
     AtomString name;
     CSSCustomPropertySyntax syntax;

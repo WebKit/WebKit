@@ -33,10 +33,12 @@
 
 #include "CSSGridTemplateAreas.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSGridTemplateAreasValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSGridTemplateAreasValue);
 public:
     static Ref<CSSGridTemplateAreasValue> LEGACY_NODELETE create(CSS::GridTemplateAreas&&);
     static Ref<CSSGridTemplateAreasValue> create(const CSS::GridTemplateAreas&);

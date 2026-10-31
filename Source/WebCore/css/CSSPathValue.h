@@ -32,12 +32,14 @@
 
 #include "CSSPathFunction.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // `CSSPathValue` is used to represent a path for the `d` property from SVG.
 // https://svgwg.org/svg2-draft/paths.html#DProperty
 class CSSPathValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSPathValue);
 public:
     static Ref<CSSPathValue> create(CSS::PathFunction path)
     {

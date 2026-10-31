@@ -56,6 +56,8 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleZoomPrimitivesInlines.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::CQ {
 
@@ -95,6 +97,7 @@ struct SizeFeatureSchema : public FeatureSchema {
 namespace Features {
 
 struct WidthFeatureSchema : public SizeFeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(WidthFeatureSchema);
     WidthFeatureSchema()
         : SizeFeatureSchema("width"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length, MediaQueryDynamicDependency::Viewport)
     {
@@ -109,7 +112,10 @@ struct WidthFeatureSchema : public SizeFeatureSchema {
     }
 };
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(WidthFeatureSchema);
+
 struct HeightFeatureSchema : public SizeFeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(HeightFeatureSchema);
     HeightFeatureSchema()
         : SizeFeatureSchema("height"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length, MediaQueryDynamicDependency::Viewport)
     {
@@ -124,7 +130,10 @@ struct HeightFeatureSchema : public SizeFeatureSchema {
     }
 };
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(HeightFeatureSchema);
+
 struct InlineSizeFeatureSchema : public SizeFeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(InlineSizeFeatureSchema);
     InlineSizeFeatureSchema()
         : SizeFeatureSchema("inline-size"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length, MediaQueryDynamicDependency::Viewport)
     {
@@ -139,7 +148,10 @@ struct InlineSizeFeatureSchema : public SizeFeatureSchema {
     }
 };
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(InlineSizeFeatureSchema);
+
 struct BlockSizeFeatureSchema : public SizeFeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(BlockSizeFeatureSchema);
     BlockSizeFeatureSchema()
         : SizeFeatureSchema("block-size"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length, MediaQueryDynamicDependency::Viewport)
     {
@@ -154,7 +166,10 @@ struct BlockSizeFeatureSchema : public SizeFeatureSchema {
     }
 };
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(BlockSizeFeatureSchema);
+
 struct AspectRatioFeatureSchema : public SizeFeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(AspectRatioFeatureSchema);
     AspectRatioFeatureSchema()
         : SizeFeatureSchema("aspect-ratio"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Ratio, MediaQueryDynamicDependency::Viewport)
     {
@@ -168,7 +183,10 @@ struct AspectRatioFeatureSchema : public SizeFeatureSchema {
     }
 };
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(AspectRatioFeatureSchema);
+
 struct OrientationFeatureSchema : public SizeFeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(OrientationFeatureSchema);
     OrientationFeatureSchema()
         : SizeFeatureSchema("orientation"_s, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Identifier, MediaQueryDynamicDependency::Viewport, { CSSValueID::Portrait, CSSValueID::Landscape })
     {
@@ -182,6 +200,8 @@ struct OrientationFeatureSchema : public SizeFeatureSchema {
         return evaluateIdentifierFeature(feature, isPortrait ? CSSValueID::Portrait : CSSValueID::Landscape, conversionData);
     }
 };
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(OrientationFeatureSchema);
 
 // https://drafts.csswg.org/css-conditional-5/#typedef-style-range
 enum class StyleRangeCategory : uint8_t { Number, Length, Percentage, Angle, Time, Frequency, Resolution };
@@ -278,6 +298,7 @@ static bool LEGACY_NODELETE styleRangeValuesShareCategory(std::initializer_list<
 }
 
 struct StyleFeatureSchema : public FeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(StyleFeatureSchema);
     StyleFeatureSchema()
         : FeatureSchema("style"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::CustomProperty, { })
     {
@@ -420,9 +441,12 @@ struct StyleFeatureSchema : public FeatureSchema {
     }
 };
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(StyleFeatureSchema);
+
 // Scroll-state query features: scroll-state(scrollable | scrolled | stuck | snapped [: <keyword>]).
 // https://drafts.csswg.org/css-conditional-5/#scroll-state-container
 struct ScrollStateFeatureSchema : public FeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(ScrollStateFeatureSchema);
     ScrollStateFeatureSchema(const AtomString& name, FixedVector<CSSValueID>&& valueIdentifiers)
         : FeatureSchema(name, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Identifier, { }, WTF::move(valueIdentifiers))
     {
@@ -436,11 +460,14 @@ struct ScrollStateFeatureSchema : public FeatureSchema {
     }
 };
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ScrollStateFeatureSchema);
+
 // scroll-state(scrollable [: <edge> | <axis> | none]): whether the query container can currently be
 // scrolled further toward the given edge/axis (any direction for the boolean form). A container that
 // is not a scroll container, or is already fully scrolled, matches only `none`.
 // https://drafts.csswg.org/css-conditional-5/#scrollable
 struct ScrollableFeatureSchema : public ScrollStateFeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(ScrollableFeatureSchema);
     using ScrollStateFeatureSchema::ScrollStateFeatureSchema;
 
     EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override
@@ -502,6 +529,8 @@ struct ScrollableFeatureSchema : public ScrollStateFeatureSchema {
         }
     }
 };
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ScrollableFeatureSchema);
 
 // MARK: - Singleton readonly instances of FeatureSchemas
 

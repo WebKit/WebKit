@@ -28,8 +28,11 @@
 
 #include "CSSMarkup.h"
 #include "StyleRuleFunction.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFunctionRule);
 
 Ref<CSSFunctionRule> CSSFunctionRule::create(StyleRuleFunction& rule, CSSStyleSheet* parent)
 {

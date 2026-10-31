@@ -31,10 +31,12 @@
 
 #include "CSSURL.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSURLValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSURLValue);
 public:
     static Ref<CSSURLValue> create(CSS::URL url)
     {

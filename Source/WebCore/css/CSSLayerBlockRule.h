@@ -31,6 +31,7 @@
 
 #include "CSSGroupingRule.h"
 #include "StyleRuleType.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,6 +40,7 @@ class StyleRuleLayer;
 using CascadeLayerName = Vector<AtomString>;
 
 class CSSLayerBlockRule final : public CSSGroupingRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSLayerBlockRule);
 public:
     static Ref<CSSLayerBlockRule> create(StyleRuleLayer&, CSSStyleSheet* parent);
 

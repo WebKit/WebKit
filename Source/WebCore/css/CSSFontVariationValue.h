@@ -29,10 +29,12 @@
 #include "CSSValue.h"
 #include "FontTaggedSettings.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSFontVariationValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontVariationValue);
 public:
     static Ref<CSSFontVariationValue> create(FontTag tag, Ref<CSSValue>&& value)
     {

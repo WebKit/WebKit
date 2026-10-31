@@ -27,10 +27,12 @@
 
 #include "CSSMaskBorderSource.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSMaskBorderSourceValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSMaskBorderSourceValue);
 public:
     static Ref<CSSMaskBorderSourceValue> LEGACY_NODELETE create(CSS::MaskBorderSource&&);
     ~CSSMaskBorderSourceValue();

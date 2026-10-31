@@ -27,10 +27,12 @@
 
 #include "CSSCounterStyle.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSSymbolsFunctionValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSSymbolsFunctionValue);
 public:
     static Ref<CSSSymbolsFunctionValue> create(CSS::SymbolsFunction);
 

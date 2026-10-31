@@ -29,6 +29,7 @@
 #include "StyleRule.h"
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ class CSSRuleList;
 class StyleRuleKeyframe;
 
 class StyleRuleKeyframes final : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleKeyframes);
 public:
     static Ref<StyleRuleKeyframes> LEGACY_NODELETE create(const AtomString& name);
     ~StyleRuleKeyframes();
@@ -66,6 +68,7 @@ private:
 };
 
 class CSSKeyframesRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSKeyframesRule);
 public:
     static Ref<CSSKeyframesRule> create(StyleRuleKeyframes& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSKeyframesRule(rule, sheet)); }
 

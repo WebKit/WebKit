@@ -32,8 +32,11 @@
 #include "ShadowRoot.h"
 #include "TreeScope.h"
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSStyleSheetObservableArray);
 
 Ref<CSSStyleSheetObservableArray> CSSStyleSheetObservableArray::create(ContainerNode& treeScope)
 {

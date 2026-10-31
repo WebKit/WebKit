@@ -29,6 +29,7 @@
 #include "CSSString.h"
 #include "CSSValue.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -36,6 +37,7 @@ namespace WebCore {
 // <image-set-option> = [ <image> | <string> ] [ <resolution> || type(<string>) ]?
 // https://drafts.csswg.org/css-images-4/#typedef-image-set-option
 class CSSImageSetOptionValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSImageSetOptionValue);
 public:
     static Ref<CSSImageSetOptionValue> LEGACY_NODELETE create(Ref<CSSValue>&&, std::optional<CSS::Resolution<>>&&, std::optional<FunctionNotation<CSSValueID::Type, CSS::String>>&&);
 

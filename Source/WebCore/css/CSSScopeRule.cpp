@@ -27,9 +27,12 @@
 #include "CSSScopeRule.h"
 
 #include "StyleRule.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSScopeRule);
 
 CSSScopeRule::CSSScopeRule(StyleRuleScope& rule, CSSStyleSheet* parent)
     : CSSGroupingRule(rule, parent)

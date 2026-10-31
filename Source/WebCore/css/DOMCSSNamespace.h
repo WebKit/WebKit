@@ -33,6 +33,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,6 +42,7 @@ class HighlightRegistry;
 class Highlight;
 
 class DOMCSSNamespace final : public RefCounted<DOMCSSNamespace>, public Supplementable<DOMCSSNamespace> {
+    WTF_MAKE_TZONE_ALLOCATED(DOMCSSNamespace);
 public:
     static bool supports(Document&, const String& property, const String& value);
     static bool supports(Document&, const String& conditionText);

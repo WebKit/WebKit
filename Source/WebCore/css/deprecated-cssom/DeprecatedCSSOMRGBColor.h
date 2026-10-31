@@ -23,10 +23,12 @@
 
 #include <WebCore/Color.h>
 #include <WebCore/DeprecatedCSSOMPrimitiveValue.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class DeprecatedCSSOMRGBColor final : public RefCounted<DeprecatedCSSOMRGBColor> {
+    WTF_MAKE_TZONE_ALLOCATED(DeprecatedCSSOMRGBColor);
 public:
     static Ref<DeprecatedCSSOMRGBColor> LEGACY_NODELETE create(const WebCore::Color&, CSSStyleDeclaration&);
 

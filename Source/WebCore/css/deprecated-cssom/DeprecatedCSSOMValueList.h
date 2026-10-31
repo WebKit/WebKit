@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/DeprecatedCSSOMValue.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,6 +34,7 @@ class CSSValueContainingVector;
 using DeprecatedCSSOMValueListBuilder = Vector<Ref<DeprecatedCSSOMValue>, 4>;
 
 class DeprecatedCSSOMValueList final : public DeprecatedCSSOMValue {
+    WTF_MAKE_TZONE_ALLOCATED(DeprecatedCSSOMValueList);
 public:
     static Ref<DeprecatedCSSOMValueList> LEGACY_NODELETE create(DeprecatedCSSOMValueListBuilder&&, CSSValue::ValueSeparator, CSSStyleDeclaration&);
     static Ref<DeprecatedCSSOMValueList> create(const CSSValueContainingVector&, CSSStyleDeclaration&);

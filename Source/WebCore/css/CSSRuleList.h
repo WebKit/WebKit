@@ -24,6 +24,7 @@
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
@@ -48,6 +49,7 @@ protected:
 };
 
 class StaticCSSRuleList final : public CSSRuleList, public RefCounted<StaticCSSRuleList> {
+    WTF_MAKE_TZONE_ALLOCATED(StaticCSSRuleList);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

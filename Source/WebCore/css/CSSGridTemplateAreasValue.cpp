@@ -34,10 +34,13 @@
 
 #include <wtf/FixedVector.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSGridTemplateAreasValue);
 
 CSSGridTemplateAreasValue::CSSGridTemplateAreasValue(CSS::GridTemplateAreas&& areas)
     : CSSValue(ClassType::GridTemplateAreas)

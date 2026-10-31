@@ -30,8 +30,11 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSValuePool.h"
 #include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFilterValue);
 
 Ref<CSSFilterValue> CSSFilterValue::create(CSS::Filter filter)
 {

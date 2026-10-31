@@ -26,10 +26,12 @@
 
 #include "CSSAppleColorFilter.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSAppleColorFilterValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSAppleColorFilterValue);
 public:
     static Ref<CSSAppleColorFilterValue> create(CSS::AppleColorFilter);
 

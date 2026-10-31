@@ -26,10 +26,12 @@
 
 #include "CSSFilter.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSFilterValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFilterValue);
 public:
     static Ref<CSSFilterValue> create(CSS::Filter);
 
