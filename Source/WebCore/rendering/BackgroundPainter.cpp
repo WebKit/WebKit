@@ -714,7 +714,7 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
                 // down the frameView to to fit in the current viewport.
                 viewportRect.setSize(frameView->fixedLayoutSize());
             } else
-                viewportRect.setSize(frameView->sizeForVisibleContent());
+                viewportRect.setSize(LayoutSize(frameView->sizeWithoutOwnerZoom(FloatSize { frameView->sizeForVisibleContent() })));
 
             if (renderer.fixedBackgroundPaintsInLocalCoordinates()) {
                 if (!useFixedLayout) {

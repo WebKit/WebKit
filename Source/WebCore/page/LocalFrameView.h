@@ -136,6 +136,11 @@ public:
 
     WEBCORE_EXPORT bool LEGACY_NODELETE needsLayout() const;
     WEBCORE_EXPORT void setNeedsLayoutAfterViewConfigurationChange();
+    enum class OwnerRendererChanged : bool { No, Yes };
+    void ownerZoomDidChange(OwnerRendererChanged = OwnerRendererChanged::No);
+    float ownerZoomFactor() const;
+    FloatSize sizeWithoutOwnerZoom(FloatSize) const;
+    IntSize unobscuredContentSizeInCSSUnits() const;
 
     void setNeedsCompositingConfigurationUpdate();
     void setNeedsCompositingGeometryUpdate();
@@ -374,6 +379,8 @@ public:
     void LEGACY_NODELETE clearCachedHasAnchorPositionedViewportConstrainedObjects();
 
     float frameScaleFactor() const;
+
+    WEBCORE_EXPORT IntSize layoutSize() const final;
 
     // Functions for querying the current scrolled position, negating the effects of overhang
     // and adjusting for page scale.
@@ -992,6 +999,7 @@ private:
     void willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot);
     void didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot, bool canDeferUpdateLayerPositions);
 
+    float zoomFactorForResizeEvent(float usedZoom) const;
     FloatSize calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize>) const;
 
     void overrideWidthForCSSDefaultViewportUnits(float);
@@ -1076,6 +1084,7 @@ private:
     OptionSet<PaintBehavior> m_paintBehavior;
 
     float m_lastUsedZoomFactor { 1 };
+    float m_ownerZoomFactor { 1 };
     unsigned m_visuallyNonEmptyCharacterCount { 0 };
     unsigned m_visuallyNonEmptyPixelCount { 0 };
     unsigned m_textRendererCountForVisuallyNonEmptyCharacters { 0 };
