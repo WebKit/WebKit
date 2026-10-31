@@ -114,6 +114,8 @@ static unsigned incrementingTouchIdentifier = 1;
 
     _isPotentialTap = NO;
 
+    bool lastTouchSequenceEndedNormally = _lastTouchEvent.type == WebKit::WKTouchEventType::End;
+
     _lastTouchEvent.type = WebKit::WKTouchEventType::Begin;
     _lastTouchEvent.timestamp = 0;
     _lastTouchEvent.locationInRootViewCoordinates = CGPointZero;
@@ -128,7 +130,7 @@ static unsigned incrementingTouchIdentifier = 1;
 
     // If the last touch sequence ended abnormally, clear the pointer capture
     // controller so that its active touch map doesn't retain extra touches.
-    if (_lastTouchEvent.type != WebKit::WKTouchEventType::End)
+    if (!lastTouchSequenceEndedNormally)
         [protect(_contentView) _touchEventsGestureRecognizerReset];
 }
 
