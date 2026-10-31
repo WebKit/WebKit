@@ -3267,7 +3267,7 @@ private:
 
     bool shouldForceForegroundPriorityForClientNavigation() const;
 
-    void updateMouseEventTargetAfterWindowAndViewFramesChanged(const WebCore::FloatRect&);
+    void updateMouseEventTargetAfterWindowAndViewFramesChanged();
 
 #if ENABLE(DRAG_SUPPORT)
     void dragEndedInFrame(const std::optional<WebCore::FrameIdentifier>&, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragOperation>, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>)>&&);

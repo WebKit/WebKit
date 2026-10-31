@@ -226,8 +226,8 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindow
 
         forEachWebContentProcess([&](auto& webProcess, auto pageID) {
             if (&webProcess == &legacyMainFrameProcess()) {
-                webProcess.sendWithAsyncReply(Messages::WebPage::WindowAndViewFramesChanged(*m_viewWindowCoordinates), [this, protectedThis, viewFrameInWindowCoordinates] {
-                    updateMouseEventTargetAfterWindowAndViewFramesChanged(viewFrameInWindowCoordinates);
+                webProcess.sendWithAsyncReply(Messages::WebPage::WindowAndViewFramesChanged(*m_viewWindowCoordinates), [this, protectedThis] {
+                    updateMouseEventTargetAfterWindowAndViewFramesChanged();
                 }, pageID);
                 return;
             }
@@ -236,18 +236,23 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindow
     });
 }
 
-void WebPageProxy::updateMouseEventTargetAfterWindowAndViewFramesChanged(const FloatRect& viewFrameInWindowCoordinates)
+void WebPageProxy::updateMouseEventTargetAfterWindowAndViewFramesChanged()
 {
     RetainPtr window = platformWindow();
+    // Only report global cursor location when the window is focused and the cursor is within the view
+    RefPtr pageClient = this->pageClient();
+    if (!pageClient || ![window isKeyWindow])
+        return;
 
+    NSPoint macMouseLocationInWindow = [window mouseLocationOutsideOfEventStream];
+    NSPoint macMouseLocationInScreen = [window convertPointToScreen:macMouseLocationInWindow];
+    if (!pageClient->rootViewToScreen(WebCore::IntRect({ }, viewSize())).contains(WebCore::IntPoint(macMouseLocationInScreen)))
+        return;
     // The origin of mac coordinate system is the bottom left corner. We need to convert
     // the point to the web coordinate system which has an origin of the top left corner.
-    auto macMouseLocationInWindow = [window mouseLocationOutsideOfEventStream];
-
     auto webMouseLocationInWindow = DoublePoint(macMouseLocationInWindow.x, [window frame].size.height - macMouseLocationInWindow.y);
 
-    // do same conversion as above
-    auto macMouseLocationInScreen = [NSEvent mouseLocation];
+    // do same coordinate system conversion from bottom left corner to top left corner origin
     auto webMouseLocationInScreen = DoublePoint(macMouseLocationInScreen.x, [[NSScreen mainScreen] frame].size.height - macMouseLocationInScreen.y);
     protect(legacyMainFrameProcess())->send(Messages::WebPage::UpdateMouseEventTargetAfterWindowAndViewFramesChanged(webMouseLocationInWindow, webMouseLocationInScreen), webPageIDInMainFrameProcess());
 }
