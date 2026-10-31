@@ -72,6 +72,7 @@ WK_EXPORT bool WKPageGetPaginationLineGridEnabled(WKPageRef page);
 
 WK_EXPORT unsigned WKPageGetPageCount(WKPageRef page);
 
+// Paper sizes are in points.
 struct WKPrintInfo {
     float pageSetupScaleFactor;
     float availablePaperWidth;
@@ -79,11 +80,14 @@ struct WKPrintInfo {
 };
 typedef struct WKPrintInfo WKPrintInfo;
 
+// Page rects are in CSS px. Multiply them by resultPageScaleFactor to get points.
 typedef void (*WKPageComputePagesForPrintingFunction)(WKRect* pageRects, uint32_t pageCount, double resultPageScaleFactor, WKErrorRef error, void* functionContext);
 WK_EXPORT void WKPageComputePagesForPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo, WKPageComputePagesForPrintingFunction, void* context);
 
 typedef void (*WKPageDrawToPDFFunction)(WKDataRef data, WKErrorRef error, void* functionContext);
 WK_EXPORT void WKPageBeginPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo);
+// PDF pages are in points, at the size they print: the page rect times resultPageScaleFactor.
+// Draw them without scaling.
 WK_EXPORT void WKPageDrawPagesToPDF(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo, uint32_t first, uint32_t count, WKPageDrawToPDFFunction callback, void* context);
 WK_EXPORT void WKPageEndPrinting(WKPageRef page);
 

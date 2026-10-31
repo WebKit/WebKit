@@ -62,7 +62,9 @@ function runPrintingTest(testFunction)
 
 function ratioToPageHeightToPixels(heightInRatioToPageHeight)
 {
-  var pageHeightInPixels = 600 * 1.25;
+  // The default 800x600 page is laid out at 1066x799px
+  var pageWidthInPixels = Math.floor(800 * 4 / 3);
+  var pageHeightInPixels = Math.floor(pageWidthInPixels * 600 / 800);
   return Math.floor(pageHeightInPixels * heightInRatioToPageHeight);
 }
 

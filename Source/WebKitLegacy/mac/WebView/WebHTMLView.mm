@@ -815,6 +815,9 @@ static void setCursor(NSWindow *self, SEL cmd, NSPoint point)
 const float _WebHTMLViewPrintingMinimumShrinkFactor = WebCore::PrintContext::minimumShrinkFactor();
 const float _WebHTMLViewPrintingMaximumShrinkFactor = WebCore::PrintContext::maximumShrinkFactor();
 
+// Screen pagination isn't printing, so it keeps the old factor.
+static constexpr float screenPaginationMinimumShrinkFactor = 1.25;
+
 // Any non-zero value will do, but using something recognizable might help us debug some day.
 #define TRACKING_RECT_TAG 0xBADFACE
 
@@ -2498,8 +2501,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // If we are a frameset just print with the layout we have onscreen, otherwise relayout
     // according to the page width.
     if (shrinkToFit && (!frame->document() || !protect(frame->document())->isFrameSet())) {
-        minLayoutSize = frame->resizePageRectsKeepingRatio(WebCore::FloatSize(pageLogicalWidth, pageLogicalHeight), WebCore::FloatSize(pageLogicalWidth * _WebHTMLViewPrintingMinimumShrinkFactor, pageLogicalHeight * _WebHTMLViewPrintingMinimumShrinkFactor));
-        maximumShrinkRatio = _WebHTMLViewPrintingMaximumShrinkFactor / _WebHTMLViewPrintingMinimumShrinkFactor;
+        minLayoutSize = frame->resizePageRectsKeepingRatio(WebCore::FloatSize(pageLogicalWidth, pageLogicalHeight), WebCore::FloatSize(pageLogicalWidth * screenPaginationMinimumShrinkFactor, pageLogicalHeight * screenPaginationMinimumShrinkFactor));
+        maximumShrinkRatio = _WebHTMLViewPrintingMaximumShrinkFactor / screenPaginationMinimumShrinkFactor;
     }
 
     [self _setPrinting:[self _isInPrintMode] minimumPageLogicalWidth:minLayoutSize.width() logicalHeight:minLayoutSize.height() originalPageWidth:pageLogicalWidth originalPageHeight:pageLogicalHeight maximumShrinkRatio:maximumShrinkRatio adjustViewSize:YES paginateScreenContent:[self _isInScreenPaginationMode]];

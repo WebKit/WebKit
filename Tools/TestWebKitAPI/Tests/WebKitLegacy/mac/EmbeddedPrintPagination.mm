@@ -27,6 +27,7 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestPDFDocument.h"
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLView.h>
@@ -75,5 +76,64 @@ TEST(WebKitLegacy, EmbeddedPrintPaginationWithZeroPageSize)
     [webHTMLView adjustPageHeightNew:&newBottom top:0 bottom:400 limit:400];
     EXPECT_GT(newBottom, 0);
 }
+
+#if HAVE(PDFKIT)
+static RetainPtr<TestPDFDocument> printWebViewToPDF(NSString *styleSheet)
+{
+    RetainPtr webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) frameName:nil groupName:nil]);
+    RetainPtr loadDelegate = adoptNS([[EmbeddedPrintPaginationLoadDelegate alloc] init]);
+    [webView setFrameLoadDelegate:loadDelegate.get()];
+
+    didFinishLoad = false;
+    [[webView mainFrame] loadHTMLString:[NSString stringWithFormat:@"<style>%@ body { margin: 0 }</style><div>Hello</div>", styleSheet] baseURL:nil];
+    Util::run(&didFinishLoad);
+
+    RetainPtr printInfo = adoptNS([[NSPrintInfo alloc] init]);
+    [printInfo setPaperSize:NSMakeSize(612, 792)];
+    [printInfo setTopMargin:0];
+    [printInfo setBottomMargin:0];
+    [printInfo setLeftMargin:0];
+    [printInfo setRightMargin:0];
+    // AppKit centers the page in the printer's imageable area, which is off center when the
+    // printer's top and bottom margins differ, and can move text near the top off the paper.
+    [printInfo setHorizontallyCentered:NO];
+    [printInfo setVerticallyCentered:NO];
+
+    RetainPtr pdfURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.pdf", NSUUID.UUID.UUIDString]] isDirectory:NO];
+    [printInfo setJobDisposition:NSPrintSaveJob];
+    [printInfo dictionary][NSPrintJobSavingURL] = pdfURL.get();
+
+    RetainPtr operation = [[[webView mainFrame] frameView] printOperationWithPrintInfo:printInfo.get()];
+    [operation setShowsPrintPanel:NO];
+    [operation setShowsProgressPanel:NO];
+    EXPECT_TRUE([operation runOperation]);
+
+    RetainPtr data = adoptNS([[NSData alloc] initWithContentsOfURL:pdfURL.get()]);
+    [NSFileManager.defaultManager removeItemAtURL:pdfURL.get() error:nil];
+    EXPECT_NOT_NULL(data.get());
+    if (!data)
+        return nil;
+    return adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
+}
+
+// Measured from the top left of the paper.
+static CGPoint firstCharacterPositionInPrintedWebView(NSString *styleSheet)
+{
+    RetainPtr document = printWebViewToPDF(styleSheet);
+    EXPECT_EQ([document pageCount], 1);
+    RetainPtr page = [document pageAtIndex:0];
+    CGRect characterRect = [page rectForCharacterAtIndex:0];
+    return CGPointMake(CGRectGetMinX(characterRect), CGRectGetMaxY([page bounds]) - CGRectGetMaxY(characterRect));
+}
+
+TEST(WebKitLegacy, PrintedContentUsesCSSUnits)
+{
+    // 1in = 96px = 72pt.
+    auto position = firstCharacterPositionInPrintedWebView(@"div { margin-left: 1in; padding-top: 1in }");
+    auto referencePosition = firstCharacterPositionInPrintedWebView(@"");
+    EXPECT_NEAR(position.x - referencePosition.x, 72, 0.05);
+    EXPECT_NEAR(position.y - referencePosition.y, 72, 0.05);
+}
+#endif // HAVE(PDFKIT)
 
 } // namespace TestWebKitAPI

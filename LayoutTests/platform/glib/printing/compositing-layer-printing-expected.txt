@@ -1,9 +1,9 @@
-layer at (0,0) size 1000x270
-  RenderView at (0,0) size 1000x270
-layer at (0,0) size 1000x270
-  RenderBlock {HTML} at (0,0) size 1000x270
-    RenderBody {BODY} at (8,16) size 984x244
-      RenderBlock {P} at (0,0) size 984x18
+layer at (0,0) size 1066x270
+  RenderView at (0,0) size 1066x270
+layer at (0,0) size 1066x270
+  RenderBlock {HTML} at (0,0) size 1066x270
+    RenderBody {BODY} at (8,16) size 1050x244
+      RenderBlock {P} at (0,0) size 1050x18
         RenderText {#text} at (0,0) size 444x18
           text run at (0,0) width 444: "You should see two green squares below on screen, and when printed."
       RenderBlock {DIV} at (10,34) size 100x100 [bgcolor=#008000]

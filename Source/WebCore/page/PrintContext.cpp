@@ -461,9 +461,8 @@ bool PrintContext::beginAndComputePageRectsWithPageSize(LocalFrame& frame, const
     protect(frame.document())->updateLayout();
 
     begin(pageSizeInPixels.width(), pageSizeInPixels.height());
-    // Account for shrink-to-fit.
-    FloatSize scaledPageSize = pageSizeInPixels;
-    scaledPageSize.scale(protect(frame.view())->contentsSize().width() / pageSizeInPixels.width());
+    // Account for shrink-to-fit, rounding like begin() does.
+    FloatSize scaledPageSize = frame.resizePageRectsKeepingRatio(pageSizeInPixels, FloatSize(protect(frame.view())->contentsSize()));
     computePageRectsWithPageSize(scaledPageSize, false);
 
     return true;

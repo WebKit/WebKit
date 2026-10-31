@@ -7541,8 +7541,7 @@ void WebPage::computePagesForPrintingImpl(FrameIdentifier frameID, const PrintIn
         PrintContextAccessScope scope { *this };
         resultPageRects = printContext->pageRects();
         computedPageMargin = printContext->computedPageMargin(printInfo.margin);
-        auto computedPageSize = printContext->computedPageSize(FloatSize(printInfo.availablePaperWidth, printInfo.availablePaperHeight), printInfo.margin);
-        resultTotalScaleFactorForPrinting = printContext->computeAutomaticScaleFactor(computedPageSize) * printInfo.pageSetupScaleFactor;
+        resultTotalScaleFactorForPrinting = totalScaleFactorForPrinting(*printContext, printInfo);
     }
 #if PLATFORM(COCOA)
     else
@@ -7552,6 +7551,13 @@ void WebPage::computePagesForPrintingImpl(FrameIdentifier frameID, const PrintIn
     // If we're asked to print, we should actually print at least a blank page.
     if (resultPageRects.isEmpty())
         resultPageRects.append(IntRect(0, 0, 1, 1));
+}
+
+// Converts page rects from CSS px to points.
+float WebPage::totalScaleFactorForPrinting(PrintContext& printContext, const PrintInfo& printInfo)
+{
+    auto computedPageSize = printContext.computedPageSize(FloatSize(printInfo.availablePaperWidth, printInfo.availablePaperHeight), printInfo.margin);
+    return printContext.computeAutomaticScaleFactor(computedPageSize) * printInfo.pageSetupScaleFactor;
 }
 
 void WebPage::paintRemoteFrameContents(FrameIdentifier frameID, const IntRect& rect, GraphicsContext& context)

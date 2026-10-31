@@ -4006,8 +4006,8 @@ void WebPage::drawPrintingPagesToSnapshotiOS(RemoteSnapshotIdentifier snapshotId
     ASSERT(coreFrame->document()->printing());
 
     auto mediaBox = FloatRect { 0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight };
-    if (!printInfo.snapshotFirstPage && m_printContext && m_printContext->pageCount())
-        mediaBox = m_printContext->pageRect(0);
+    if (!printInfo.snapshotFirstPage)
+        mediaBox = printedPageMediaBox(printInfo);
 
     recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Root, RenderingMode::PDFDocument, mediaBox, mediaBox.size(), MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
         if (printInfo.snapshotFirstPage) {

@@ -20425,7 +20425,8 @@ TEST(SiteIsolation, DrawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit)
     for (auto value : bitsPerComponent)
         EXPECT_EQ(value, 8);
 
-    for (auto point : { CGPointMake(50, 50), CGPointMake(50, 150) }) {
+    // The middle of each image, in points.
+    for (auto point : { CGPointMake(50 * 0.75, 50 * 0.75), CGPointMake(50 * 0.75, 150 * 0.75) }) {
         auto localColor = pdfPageColorAtPoint(localData.get(), 1, point);
         ASSERT_TRUE(localColor);
         EXPECT_TRUE(pdfPageHasColorAtPoint(remoteData.get(), 1, point, *localColor));

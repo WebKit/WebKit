@@ -21,6 +21,7 @@
 #pragma once
 
 #include <WebCore/BoxExtents.h>
+#include <WebCore/CSSUnits.h>
 #include <WebCore/FrameDestructionObserver.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -90,12 +91,9 @@ public:
     // (pageSizeInPixels.height() + 1) * number-of-pages - 1
     WEBCORE_EXPORT static void spoolAllPagesWithBoundaries(LocalFrame&, GraphicsContext&, const FloatSize& pageSizeInPixels);
     
-    // By imaging to a width a little wider than the available pixels,
-    // thin pages will be scaled down a little, matching the way they
-    // print in IE and Camino. This lets them use fewer sheets than they
-    // would otherwise, which is presumably why other browsers do this.
-    // Wide pages will be scaled down more than this.
-    static constexpr float minimumShrinkFactor() { return 1.25; }
+    // In CSS px per point, like maximumShrinkFactor(). Printing passes page sizes in points,
+    // so this lays out 96 CSS px per inch.
+    static constexpr float minimumShrinkFactor() { return static_cast<float>(CSS::pixelsPerPt); }
 
     // This number determines how small we are willing to reduce the page content
     // in order to accommodate the widest line. If the page would have to be

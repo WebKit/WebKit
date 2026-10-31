@@ -1,4 +1,8 @@
 <!DOCTYPE html>
-<!-- We page zoom scale down the page by 1.25 when printing. -->
-<html style="overflow: hidden; height: 500px; width: 500px; border: 5px solid pink; zoom: 80%;">
-<body style="margin: 0; height: 50%; width: 50%; border: 5px solid salmon;"></body>
+<html style="overflow: hidden; height: 500px; width: 500px; border: 5px solid pink">
+<script>
+if (window.testRunner)
+    testRunner.setPrinting();
+</script>
+<!-- 50% of the 500px root element. -->
+<body style="margin: 0; height: 250px; width: 250px; border: 5px solid salmon;"></body>

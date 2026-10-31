@@ -2014,7 +2014,7 @@ void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& print
     if (coreFrame) {
         ASSERT(coreFrame->document()->printing() || pdfDocumentForPrintingFrame(coreFrame.get()));
 
-        FloatRect mediaBox = (m_printContext && m_printContext->pageCount()) ? m_printContext->pageRect(0) : FloatRect { 0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight };
+        FloatRect mediaBox = printedPageMediaBox(printInfo);
 
         RefPtr buffer = ImageBuffer::create(mediaBox.size(), RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
         if (!buffer)
@@ -2035,18 +2035,31 @@ void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& print
 #endif
 }
 
-void WebPage::drawPrintContextPagesToGraphicsContext(GraphicsContext& context, const FloatRect& pageRect, uint32_t first, uint32_t count)
+// Page rects are in CSS px, but PDF pages are in points.
+FloatRect WebPage::printedPageMediaBox(const PrintInfo& printInfo)
+{
+    RefPtr printContext = m_printContext;
+    if (!printContext || !printContext->pageCount())
+        return { 0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight };
+
+    FloatRect mediaBox { { }, printContext->pageRect(0).size() };
+    if (auto scale = totalScaleFactorForPrinting(*printContext, printInfo); scale > 0)
+        mediaBox.scale(scale);
+    return mediaBox;
+}
+
+void WebPage::drawPrintContextPagesToGraphicsContext(GraphicsContext& context, const FloatRect& mediaBox, uint32_t first, uint32_t count)
 {
     RefPtr printContext = m_printContext;
     for (uint32_t page = first; page < first + count; ++page) {
         if (page >= printContext->pageCount())
             break;
 
-        context.beginPage(pageRect);
+        context.beginPage(mediaBox);
 
         context.scale(FloatSize(1, -1));
-        context.translate(0, -printContext->pageRect(page).height());
-        printContext->spoolPage(context, page, printContext->pageRect(page).width());
+        context.translate(0, -mediaBox.height());
+        printContext->spoolPage(context, page, mediaBox.width());
 
         context.endPage();
     }
@@ -2114,7 +2127,7 @@ void WebPage::drawPrintingPagesToSnapshot(RemoteSnapshotIdentifier snapshotIdent
     PrintContextAccessScope scope { *this };
     ASSERT(coreFrame->document()->printing());
 
-    FloatRect mediaBox = (m_printContext && m_printContext->pageCount()) ? m_printContext->pageRect(0) : FloatRect { 0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight };
+    FloatRect mediaBox = printedPageMediaBox(printInfo);
 
     recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Root, RenderingMode::PDFDocument, mediaBox, mediaBox.size(), MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
         drawPrintContextPagesToGraphicsContext(context, mediaBox, first, count);

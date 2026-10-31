@@ -481,7 +481,8 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
 
     CGContextSaveGState(context.get());
     CGContextTranslateCTM(context.get(), point.x, point.y);
-    CGContextScaleCTM(context.get(), _totalScaleFactorForPrinting, -_totalScaleFactorForPrinting);
+    // Pages are already in points.
+    CGContextScaleCTM(context, 1, -1);
     CGContextTranslateCTM(context.get(), 0, -[pdfPage boundsForBox:kPDFDisplayBoxMediaBox].size.height);
 
     [pdfPage drawWithBox:kPDFDisplayBoxMediaBox toContext:context.get()];
