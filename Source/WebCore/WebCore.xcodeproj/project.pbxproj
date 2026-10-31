@@ -3102,7 +3102,7 @@
 		7AF9B20F18CFB5F400C64BEF /* JSVTTRegionList.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF9B20B18CFB5F300C64BEF /* JSVTTRegionList.h */; };
 		7AFD16C42C63EB6A00B51D1A /* WebNSAttributedStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A2701F22C62D5D80047263F /* WebNSAttributedStringExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AFD16D32C63F70200B51D1A /* WebLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFD16D22C63F70200B51D1A /* WebLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7B0C389F2ACEDEF400F1FDDC /* ImageDrawingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C18A3F230B04B7006847C7 /* ImageDrawingOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B0C389F2ACEDEF400F1FDDC /* ImageDrawDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C18A3F230B04B7006847C7 /* ImageDrawDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B0C76C02CC8490F0068DAF2 /* IDBIndexIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B0C76BE2CC8482D0068DAF2 /* IDBIndexIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B0E6DCA2AB463E4005189E8 /* NullImageBufferBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B0E6DC82AB463E4005189E8 /* NullImageBufferBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B10339E2549721700C8C1AC /* GraphicsContextGLCV.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B10339D2549720100C8C1AC /* GraphicsContextGLCV.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7125,7 +7125,7 @@
 		EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = EBF5121B1696496C0056BD25 /* JSTypeConversions.h */; };
 		ECA680C71E67724500731D20 /* StringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA680C61E67724500731D20 /* StringUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ECB15D3681944F2886E4820B /* ObjectSizeNegotiation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5268A3FEA3789C5F09CFB72A /* ObjectSizeNegotiation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		ECC2B535B9F2983B774A915F /* ImageDrawingExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 89AAA5F5CEBC35EFDF20580F /* ImageDrawingExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		ECC2B535B9F2983B774A915F /* ImageRenditionOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 89AAA5F5CEBC35EFDF20580F /* ImageRenditionOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDB04F3A278E5539008D3678 /* libwebrtc.dylib in Product Dependencies */ = {isa = PBXBuildFile; fileRef = EDB04F39278E5531008D3678 /* libwebrtc.dylib */; platformFilters = (ios, macos, tvos, ); };
 		EDCBD2C43FF775B2FF40A33D /* NinePieceGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 424D1B489B71DA74BDCDF10C /* NinePieceGeometry.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14557,7 +14557,7 @@
 		72BEE7CD2E79E3E900026436 /* LayoutIntegrationGridLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LayoutIntegrationGridLayout.cpp; sourceTree = "<group>"; };
 		72C172102983717500136E02 /* CachedSubimage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedSubimage.cpp; sourceTree = "<group>"; };
 		72C172112983717500136E02 /* CachedSubimage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedSubimage.h; sourceTree = "<group>"; };
-		72C18A3F230B04B7006847C7 /* ImageDrawingOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageDrawingOptions.h; sourceTree = "<group>"; };
+		72C18A3F230B04B7006847C7 /* ImageDrawDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageDrawDescriptor.h; sourceTree = "<group>"; };
 		72C37B9B29650466007E8F52 /* SearchFieldPart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchFieldPart.h; sourceTree = "<group>"; };
 		72C37B9C29650466007E8F52 /* SearchFieldCancelButtonPart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchFieldCancelButtonPart.h; sourceTree = "<group>"; };
 		72C37B9F29650481007E8F52 /* SearchControlMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SearchControlMac.mm; sourceTree = "<group>"; };
@@ -14875,7 +14875,7 @@
 		7AFD16D02C63F64200B51D1A /* ImageAdapterCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageAdapterCocoa.mm; sourceTree = "<group>"; };
 		7AFD16D12C63F6CB00B51D1A /* WebLayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebLayer.mm; sourceTree = "<group>"; };
 		7AFD16D22C63F70200B51D1A /* WebLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebLayer.h; sourceTree = "<group>"; };
-		7B0C389D2ACED2F000F1FDDC /* ImageDrawingOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDrawingOptions.cpp; sourceTree = "<group>"; };
+		7B0C389D2ACED2F000F1FDDC /* ImageDrawDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDrawDescriptor.cpp; sourceTree = "<group>"; };
 		7B0C76BE2CC8482D0068DAF2 /* IDBIndexIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IDBIndexIdentifier.h; sourceTree = "<group>"; };
 		7B0E6DC82AB463E4005189E8 /* NullImageBufferBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NullImageBufferBackend.h; sourceTree = "<group>"; };
 		7B0E6DC92AB463E4005189E8 /* NullImageBufferBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NullImageBufferBackend.cpp; sourceTree = "<group>"; };
@@ -15931,7 +15931,7 @@
 		89321A9857B6158E963247AF /* CrossOriginEmbedderPolicyValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrossOriginEmbedderPolicyValue.h; sourceTree = "<group>"; };
 		898785F2122E1EAC003AABDA /* JSFileReaderSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileReaderSync.cpp; sourceTree = "<group>"; };
 		898785F3122E1EAC003AABDA /* JSFileReaderSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileReaderSync.h; sourceTree = "<group>"; };
-		89AAA5F5CEBC35EFDF20580F /* ImageDrawingExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageDrawingExtras.h; sourceTree = "<group>"; };
+		89AAA5F5CEBC35EFDF20580F /* ImageRenditionOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageRenditionOptions.h; sourceTree = "<group>"; };
 		89C20A7AC4BA0F7144DDF0B9 /* UnifiedSource2-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource2-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		8A00EEC72A680139006A53A2 /* EXTDepthClamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTDepthClamp.h; sourceTree = "<group>"; };
 		8A00EEC82A680139006A53A2 /* EXTDepthClamp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EXTDepthClamp.cpp; sourceTree = "<group>"; };
@@ -44098,10 +44098,10 @@
 				B27535420B053814002CE64F /* Image.h */,
 				72ECA8AB2B62FBB30094F595 /* ImageAdapter.cpp */,
 				72ECA8AC2B62FBB40094F595 /* ImageAdapter.h */,
-				89AAA5F5CEBC35EFDF20580F /* ImageDrawingExtras.h */,
-				7B0C389D2ACED2F000F1FDDC /* ImageDrawingOptions.cpp */,
-				72C18A3F230B04B7006847C7 /* ImageDrawingOptions.h */,
+				7B0C389D2ACED2F000F1FDDC /* ImageDrawDescriptor.cpp */,
+				72C18A3F230B04B7006847C7 /* ImageDrawDescriptor.h */,
 				BC7F44A70B9E324E00A9D081 /* ImageObserver.h */,
+				89AAA5F5CEBC35EFDF20580F /* ImageRenditionOptions.h */,
 				563C1375F94DDADF69B40207 /* SizedImage.h */,
 			);
 			path = images;
@@ -46364,8 +46364,7 @@
 				721B02F72FBE907300688E0A /* ImageDecoderFactoryAVF.h in Headers */,
 				1D47658E25CCA778007AF312 /* ImageDecoderIdentifier.h in Headers */,
 				97205AB61239291000B17380 /* ImageDocument.h in Headers */,
-				ECC2B535B9F2983B774A915F /* ImageDrawingExtras.h in Headers */,
-				7B0C389F2ACEDEF400F1FDDC /* ImageDrawingOptions.h in Headers */,
+				7B0C389F2ACEDEF400F1FDDC /* ImageDrawDescriptor.h in Headers */,
 				5576A5651D88A70800CCC04C /* ImageFrame.h in Headers */,
 				F55B3DC21251F12D003EF269 /* ImageInputType.h in Headers */,
 				281A941CB72C48E5886C9BC1 /* ImageInputTypeSizing.h in Headers */,
@@ -46376,6 +46375,7 @@
 				F482434B260C33060022497C /* ImageOverlayController.h in Headers */,
 				F446EDE1265DB1E50031DA8F /* ImageOverlayDataDetectionResultIdentifier.h in Headers */,
 				B51A2F3F17D7D3AE0072517A /* ImageQualityController.h in Headers */,
+				ECC2B535B9F2983B774A915F /* ImageRenditionOptions.h in Headers */,
 				7915577A65BBC088CFB5EC0D /* ImageRequestState.h in Headers */,
 				CA3A4AAF25416E40006CDAE2 /* ImageResolution.h in Headers */,
 				417BA339299567CE007AEAB4 /* ImageResource.h in Headers */,

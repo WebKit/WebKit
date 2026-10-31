@@ -38,8 +38,7 @@ OBJC_CLASS NSAdaptiveImageGlyph;
 struct CGContext;
 #endif
 
-#include <WebCore/ImageDrawingExtras.h>
-#include <WebCore/ImageDrawingOptions.h>
+#include <WebCore/ImageDrawDescriptor.h>
 #include <WebCore/ImageTypes.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/ObjectSizeNegotiation.h>
@@ -70,17 +69,17 @@ public:
     }
 
 #if USE(APPKIT)
-    WEBCORE_EXPORT NSImage *nsImage(ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
-    WEBCORE_EXPORT RetainPtr<NSImage> snapshotNSImage(ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
+    WEBCORE_EXPORT NSImage *nsImage(const ImageDrawDescriptor&);
+    WEBCORE_EXPORT RetainPtr<NSImage> snapshotNSImage(const ImageDrawDescriptor&);
 #endif
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT CFDataRef tiffRepresentation(ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
+    WEBCORE_EXPORT CFDataRef tiffRepresentation(const ImageDrawDescriptor&);
 #endif
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     NSAdaptiveImageGlyph *multiRepresentationHEIC();
-    ImageDrawResult drawMultiRepresentationHEIC(GraphicsContext&, const Font&, const FloatRect& destination, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage });
+    ImageDrawResult drawMultiRepresentationHEIC(GraphicsContext&, const Font&, const FloatRect& destination, const ImageDrawDescriptor&);
 #endif
 
     void invalidate();
@@ -88,15 +87,14 @@ public:
 private:
     Image& image() const { return m_image; }
 
-    Vector<Ref<NativeImage>> allNativeImages(ConcreteObjectSize, const ImageDrawingExtras*);
+    Vector<Ref<NativeImage>> allNativeImages(const ImageDrawDescriptor&);
 
 #if USE(CG)
     struct RasterizationKey {
         ConcreteObjectSize concreteObjectSize;
-        std::optional<ImageDrawingExtras> extras;
+        ImageRenditionOptions rendition;
 
-        RasterizationKey(ConcreteObjectSize, const ImageDrawingExtras*);
-        bool matches(ConcreteObjectSize, const ImageDrawingExtras*) const;
+        bool operator==(const RasterizationKey&) const = default;
     };
 #endif
 

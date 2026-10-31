@@ -889,7 +889,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             String dataURL = "data:,"_s;
 
             if (RefPtr image = imageElement->sourceImage())
-                dataURL = encodeDataURL(image->currentNativeImage(DefaultSizing { }.resolve(image->naturalDimensions())), "image/png"_s);
+                dataURL = encodeDataURL(image->currentNativeImage(ImageDrawDescriptor { DefaultSizing { }.resolve(image->naturalDimensions()) }), "image/png"_s);
 
             index = indexForData(dataURL);
         },
@@ -957,7 +957,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
 
             if (RefPtr cachedImage = cssImageValue->image()) {
                 if (RefPtr image = cachedImage->image())
-                    dataURL = encodeDataURL(image->currentNativeImage(DefaultSizing { }.resolve(image->naturalDimensions())), "image/png"_s);
+                    dataURL = encodeDataURL(image->currentNativeImage(ImageDrawDescriptor { DefaultSizing { }.resolve(image->naturalDimensions()) }), "image/png"_s);
             }
 
             index = indexForData(dataURL);

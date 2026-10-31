@@ -33,7 +33,6 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
-#include "ImageDrawingExtras.h"
 #include "LayoutRepainter.h"
 #include "PointerEventsHitRules.h"
 #include "RenderElementInlines.h"
@@ -153,8 +152,8 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
     if (!styleImage || !styleImage->canDrawAtSize(*this, rect.size()))
         return ImageDrawResult::DidNothing;
 
-    auto options = calculateSVGImageDrawingOptions(*styleImage, *this, paintInfo.context(), imageRenderingSize, rect.size(), paintInfo.paintBehavior);
-    auto drawResult = styleImage->draw(paintInfo.context(), *this, ConcreteObjectSize::fixed(imageRenderingSize), rect, sourceRect, options);
+    auto descriptor = calculateSVGImageDrawDescriptor(*styleImage, *this, paintInfo.context(), imageRenderingSize, rect.size(), paintInfo.paintBehavior);
+    auto drawResult = styleImage->draw(paintInfo.context(), *this, descriptor, rect, sourceRect);
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));
 

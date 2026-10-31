@@ -2069,7 +2069,8 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Im
         shouldPostProcess = false;
     }
 
-    ImageDrawingOptions options = {
+    ImageDrawDescriptor descriptor {
+        concreteObjectSize,
         op,
         blendMode,
         orientation,
@@ -2086,32 +2087,32 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Im
 #endif
     };
 
-    auto draw = [&](GraphicsContext& context, const FloatRect& destination, ImageDrawingOptions options) {
+    auto draw = [&](GraphicsContext& context, const FloatRect& destination, const ImageDrawDescriptor& descriptor) {
         if (!firstFrame)
-            sourceImage.draw(context, concreteObjectSize, destination, normalizedSrcRect, options);
+            sourceImage.draw(context, descriptor, destination, normalizedSrcRect);
         else if (auto color = firstFrame->singlePixelSolidColor())
-            Image::fillWithSolidColor(context, destination, *color, options.compositeOperator());
+            Image::fillWithSolidColor(context, destination, *color, descriptor.compositeOperator);
         else
-            context.drawNativeImage(*firstFrame, destination, normalizedSrcRect, options.rasterDrawingOptions());
+            context.drawNativeImage(*firstFrame, destination, normalizedSrcRect, descriptor.rasterDrawingOptions());
     };
 
     auto willUpdateContentsOptions = shouldPostProcess ? defaultWillUpdateContentsOptions() : defaultWillUpdateContentsOptionsWithoutPostProcessing();
 
     if (rectContainsCanvas(normalizedDstRect)) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        draw(*c, normalizedDstRect, options);
+        draw(*c, normalizedDstRect, descriptor);
     } else if (isFullCanvasCompositeMode(op)) {
         willUpdateEntireContents(willUpdateContentsOptions);
         fullCanvasCompositedDraw(normalizedDstRect, op, [&](GraphicsContext& context, const FloatRect& destination) {
-            draw(context, destination, { options, CompositeOperator::SourceOver });
+            draw(context, destination, { descriptor, CompositeOperator::SourceOver });
         });
     } else if (op == CompositeOperator::Copy) {
         willUpdateEntireContents(willUpdateContentsOptions);
         clearCanvas();
-        draw(*c, normalizedDstRect, options);
+        draw(*c, normalizedDstRect, descriptor);
     } else {
         willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : normalizedDstRect, willUpdateContentsOptions);
-        draw(*c, normalizedDstRect, options);
+        draw(*c, normalizedDstRect, descriptor);
     }
 
     return { };
@@ -2649,7 +2650,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(I
     if (image.isSVGImage())
         originClean = false;
 
-    RefPtr nativeImage = image.nativeImage(concreteObjectSize);
+    RefPtr nativeImage = image.nativeImage(ImageDrawDescriptor { concreteObjectSize });
     if (!nativeImage)
         return Exception { ExceptionCode::InvalidStateError };
 

@@ -3455,7 +3455,7 @@ RefPtr<SharedBuffer> AccessibilityObject::imageData(const AXImageDataParameters&
         return nullptr;
 
     // Draw the source image scaled into the buffer.
-    image->draw(imageBuffer->context(), concreteObjectSize, FloatRect({ }, bufferSize), FloatRect({ }, imageSize), { renderImage->imageOrientation() });
+    image->draw(imageBuffer->context(), ImageDrawDescriptor { concreteObjectSize, renderImage->imageOrientation() }, FloatRect({ }, bufferSize), FloatRect({ }, imageSize));
 
     // Determine the extraction rect from subrect parameters or full image.
     IntRect extractionRect;

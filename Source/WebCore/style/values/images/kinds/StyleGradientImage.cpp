@@ -221,24 +221,24 @@ Ref<WebCore::Gradient> GradientImage::gradientForSize(const RenderElement& rende
     return gradient;
 }
 
-ImageDrawResult GradientImage::draw(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options, bool isForFirstLine) const
+ImageDrawResult GradientImage::draw(GraphicsContext& context, const RenderElement& renderer, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& source, bool isForFirstLine) const
 {
-    auto size = concreteObjectSize.size() * concreteObjectSize.zoom();
+    auto size = descriptor.concreteObjectSize.size() * descriptor.concreteObjectSize.zoom();
     if (size.isEmpty())
         return ImageDrawResult::DidNothing;
 
     CachedGradient* cached = nullptr;
     Ref gradient = gradientForSize(renderer, size, isForFirstLine, cached);
 
-    return drawIntoDestination(context, destination, source, options, [&](GraphicsContext& context) {
+    return drawIntoDestination(context, descriptor, destination, source, [&](GraphicsContext& context) {
         context.fillRect(FloatRect { { }, size }, gradient);
         return ImageDrawResult::DidDraw;
     });
 }
 
-ImageDrawResult GradientImage::drawAsPattern(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, bool isForFirstLine) const
+ImageDrawResult GradientImage::drawAsPattern(GraphicsContext& context, const RenderElement& renderer, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, bool isForFirstLine) const
 {
-    auto size = concreteObjectSize.size() * concreteObjectSize.zoom();
+    auto size = descriptor.concreteObjectSize.size() * descriptor.concreteObjectSize.zoom();
     if (size.isEmpty() || context.paintingDisabled())
         return ImageDrawResult::DidNothing;
 
@@ -269,7 +269,7 @@ ImageDrawResult GradientImage::drawAsPattern(GraphicsContext& context, const Ren
 
         newBuffer->context().fillRect(FloatRect { { }, adjustedSize }, gradient);
 
-        if (options.drawLuminanceMask() == DrawLuminanceMask::Yes)
+        if (descriptor.drawLuminanceMask == DrawLuminanceMask::Yes)
             newBuffer->convertToLuminanceMask();
 
         buffer = newBuffer.copyRef();
@@ -277,7 +277,7 @@ ImageDrawResult GradientImage::drawAsPattern(GraphicsContext& context, const Ren
             cached->setPatternBuffer(newBuffer.releaseNonNull(), adjustedSize, gradientHash, scaleFactor);
     }
 
-    context.drawPattern(*buffer, destination, adjustedTile, adjustedPatternCTM, phase, spacing, options.rasterDrawingOptions());
+    context.drawPattern(*buffer, destination, adjustedTile, adjustedPatternCTM, phase, spacing, descriptor.rasterDrawingOptions());
     return ImageDrawResult::DidDraw;
 }
 

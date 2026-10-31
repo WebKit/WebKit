@@ -77,11 +77,11 @@ private:
     bool shouldDrawFromCachedSubimage(GraphicsContext&) const override;
     bool mustDrawFromCachedSubimage(GraphicsContext&) const override;
 
-    std::unique_ptr<CachedSubimage> createCachedSubimage(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions);
+    std::unique_ptr<CachedSubimage> createCachedSubimage(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImageDrawDescriptor&);
 
-    ImageDrawResult drawPDFDocument(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions);
-    ImageDrawResult drawFromCachedSubimage(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions);
-    ImageDrawResult drawImage(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions, const ImageDrawingExtras*) override;
+    ImageDrawResult drawPDFDocument(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImageDrawDescriptor&);
+    ImageDrawResult drawFromCachedSubimage(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImageDrawDescriptor&);
+    ImageDrawResult drawImage(GraphicsContext&, const ImageDrawDescriptor&, const FloatRect& destinationRect, const FloatRect& sourceRect) override;
 
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const override { return false; }

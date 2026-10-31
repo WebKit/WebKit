@@ -100,22 +100,22 @@ NaturalDimensions BitmapImage::unorientedNaturalDimensions() const
     return NaturalDimensions::fixed(size);
 }
 
-ImageDrawResult BitmapImage::draw(GraphicsContext& context, FloatPoint destination, ImageDrawingOptions options)
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, FloatPoint destination)
 {
-    return draw(context, FloatRect(destination, size()), FloatRect({ }, size()), options);
+    return draw(context, FloatRect(destination, size()), FloatRect({ }, size()));
 }
 
-ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destination, ImageDrawingOptions options)
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destination)
 {
-    return draw(context, destination, FloatRect({ }, size(options.orientation())), options);
+    return draw(context, destination, FloatRect({ }, size()));
 }
 
-ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options)
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destination, const FloatRect& source)
 {
-    return draw(context, ConcreteObjectSize::fixed(size()), destination, source, options);
+    return draw(context, ImageDrawDescriptor { ConcreteObjectSize::fixed(size()) }, destination, source);
 }
 
-ImageDrawResult BitmapImage::drawImage(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions options, const ImageDrawingExtras*)
+ImageDrawResult BitmapImage::drawImage(GraphicsContext& context, const ImageDrawDescriptor& descriptor, const FloatRect& destinationRect, const FloatRect& sourceRect)
 {
     if (destinationRect.isEmpty() || sourceRect.isEmpty())
         return ImageDrawResult::DidNothing;
@@ -130,47 +130,47 @@ ImageDrawResult BitmapImage::drawImage(GraphicsContext& context, ConcreteObjectS
 
     auto scaleFactorForDrawing = context.scaleFactorForDrawing(destinationRect, adjustedSourceRect);
     auto sizeForDrawing = expandedIntSize(sourceSize * scaleFactorForDrawing);
-    auto subsamplingLevel =  m_source->subsamplingLevelForScaleFactor(context, scaleFactorForDrawing, options.allowImageSubsampling());
-    auto preferredDecodingDestination = m_source->preferredDecodingDestination(context, options);
+    auto subsamplingLevel =  m_source->subsamplingLevelForScaleFactor(context, scaleFactorForDrawing, descriptor.allowImageSubsampling);
+    auto preferredDecodingDestination = m_source->preferredDecodingDestination(context, descriptor);
 
-    auto decodingOptions = DecodingOptions { options.decodingMode(), preferredDecodingDestination, sizeForDrawing };
+    auto decodingOptions = DecodingOptions { descriptor.decodingMode, preferredDecodingDestination, sizeForDrawing };
     auto nativeImageOrError = m_source->currentNativeImageForDrawing(subsamplingLevel, decodingOptions);
 
     if (!nativeImageOrError) {
         // The decoder has not returned a frame. Fill the image rectangle with a debugging color to show what has happened.
-        if (options.showDebugBackground() == ShowDebugBackground::Yes) {
+        if (descriptor.showDebugBackground == ShowDebugBackground::Yes) {
             if (nativeImageOrError.error() == DecodingStatus::Decoding)
-                fillWithSolidColor(context, destinationRect, Color::yellow.colorWithAlphaByte(128), options.compositeOperator());
+                fillWithSolidColor(context, destinationRect, Color::yellow.colorWithAlphaByte(128), descriptor.compositeOperator);
             else if (nativeImageOrError.error() == DecodingStatus::Invalid)
-                fillWithSolidColor(context, destinationRect, Color::red.colorWithAlphaByte(128), options.compositeOperator());
+                fillWithSolidColor(context, destinationRect, Color::red.colorWithAlphaByte(128), descriptor.compositeOperator);
         }
         return nativeImageOrError.error() == DecodingStatus::Decoding ? ImageDrawResult::DidRequestDecoding : ImageDrawResult::DidNothing;
     }
 
     Ref nativeImage = WTF::move(nativeImageOrError.value());
     if (auto color = nativeImage->singlePixelSolidColor())
-        fillWithSolidColor(context, destinationRect, *color, options.compositeOperator());
+        fillWithSolidColor(context, destinationRect, *color, descriptor.compositeOperator);
     else {
         // adjustedSourceRect is in the coordinates of the unsubsampled image, so map it to the subsampled image.
         auto imageSize = nativeImage->size();
         if (imageSize != sourceSize)
             adjustedSourceRect.scale(imageSize / sourceSize);
 
-        auto orientation = options.orientation();
+        auto orientation = descriptor.orientation;
         if (orientation == ImageOrientation::Orientation::FromImage)
             orientation = currentFrameOrientation();
 
 #if !HAVE(SUPPORT_HDR_DISPLAY_APIS)
-        if (hasHDRContentForTesting() && options.dynamicRangeLimit() != PlatformDynamicRangeLimit::standard())
-            fillWithSolidColor(context, destinationRect, Color::green, options.compositeOperator());
+        if (hasHDRContentForTesting() && descriptor.rendition.dynamicRangeLimit != PlatformDynamicRangeLimit::standard())
+            fillWithSolidColor(context, destinationRect, Color::green, descriptor.compositeOperator);
         else {
 #endif
-            auto headroom = options.headroom();
+            auto headroom = descriptor.rendition.headroom;
 
             if (headroom == Headroom::FromImage)
                 headroom = nativeImage->headroom();
 
-            m_source->drawNativeImage(context, nativeImage, destinationRect, adjustedSourceRect, { options, orientation, headroom });
+            m_source->drawNativeImage(context, nativeImage, destinationRect, adjustedSourceRect, { descriptor.rasterDrawingOptions(), orientation, headroom });
 #if !HAVE(SUPPORT_HDR_DISPLAY_APIS)
         }
 #endif

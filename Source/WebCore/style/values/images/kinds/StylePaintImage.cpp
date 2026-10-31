@@ -89,20 +89,20 @@ void PaintImage::load(CachedResourceLoader&, const ResourceLoaderOptions&)
 {
 }
 
-ImageDrawResult PaintImage::draw(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options, bool) const
+ImageDrawResult PaintImage::draw(GraphicsContext& context, const RenderElement& renderer, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& source, bool) const
 {
-    auto size = concreteObjectSize.size() * concreteObjectSize.zoom();
+    auto size = descriptor.concreteObjectSize.size() * descriptor.concreteObjectSize.zoom();
     if (!canDrawAtSize(renderer, size))
         return ImageDrawResult::DidNothing;
 
-    return drawIntoDestination(context, destination, source, options, [&](GraphicsContext& context) {
+    return drawIntoDestination(context, descriptor, destination, source, [&](GraphicsContext& context) {
         return paint(context, renderer, size);
     });
 }
 
-ImageDrawResult PaintImage::drawAsPattern(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, bool) const
+ImageDrawResult PaintImage::drawAsPattern(GraphicsContext& context, const RenderElement& renderer, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, bool) const
 {
-    auto size = concreteObjectSize.size() * concreteObjectSize.zoom();
+    auto size = descriptor.concreteObjectSize.size() * descriptor.concreteObjectSize.zoom();
     if (!canDrawAtSize(renderer, size) || context.paintingDisabled())
         return ImageDrawResult::DidNothing;
 
@@ -121,10 +121,10 @@ ImageDrawResult PaintImage::drawAsPattern(GraphicsContext& context, const Render
 
     paint(buffer->context(), renderer, size);
 
-    if (options.drawLuminanceMask() == DrawLuminanceMask::Yes)
+    if (descriptor.drawLuminanceMask == DrawLuminanceMask::Yes)
         buffer->convertToLuminanceMask();
 
-    context.drawPattern(*buffer, destination, adjustedTile, adjustedPatternCTM, phase, spacing, options.rasterDrawingOptions());
+    context.drawPattern(*buffer, destination, adjustedTile, adjustedPatternCTM, phase, spacing, descriptor.rasterDrawingOptions());
 
     return ImageDrawResult::DidDraw;
 }

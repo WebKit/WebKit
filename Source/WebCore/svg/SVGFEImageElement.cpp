@@ -344,8 +344,8 @@ RefPtr<FilterEffect> SVGFEImageElement::imageEffect(const GraphicsContext& desti
     context.translate(-toFloatSize(visiblePixels.location()));
     context.scale(placement.filterScale);
 
-    auto options = calculateSVGImageDrawingOptions(*styleImage, *renderer, context, imageRenderingSize, imagePlacement.destination.size(), { });
-    styleImage->draw(context, *renderer, ConcreteObjectSize::fixed(imageRenderingSize), imagePlacement.destination, imagePlacement.source, options);
+    auto descriptor = calculateSVGImageDrawDescriptor(*styleImage, *renderer, context, imageRenderingSize, imagePlacement.destination.size(), { });
+    styleImage->draw(context, *renderer, descriptor, imagePlacement.destination, imagePlacement.source);
 
     RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
     if (!nativeImage)

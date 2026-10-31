@@ -71,7 +71,7 @@ NSAdaptiveImageGlyph *ImageAdapter::multiRepresentationHEIC()
     return m_multiRepHEIC.get();
 }
 
-ImageDrawResult ImageAdapter::drawMultiRepresentationHEIC(GraphicsContext& context, const Font& font, const FloatRect& destination, ImageDrawingOptions options)
+ImageDrawResult ImageAdapter::drawMultiRepresentationHEIC(GraphicsContext& context, const Font& font, const FloatRect& destination, const ImageDrawDescriptor& descriptor)
 {
     RetainPtr multiRepresentationHEIC = this->multiRepresentationHEIC();
     if (!multiRepresentationHEIC)
@@ -92,11 +92,11 @@ ImageDrawResult ImageAdapter::drawMultiRepresentationHEIC(GraphicsContext& conte
 
     CTFontDrawImageFromAdaptiveImageProviderAtPoint(protect(font.ctFont()), multiRepresentationHEIC.get(), CGContextGetTextPosition(cgContext), cgContext);
 
-    auto orientation = options.orientation();
+    auto orientation = descriptor.orientation;
     if (orientation == ImageOrientation::Orientation::FromImage)
         orientation = image().orientation();
 
-    context.drawImageBuffer(*imageBuffer, destination, { options.rasterDrawingOptions(), orientation });
+    context.drawImageBuffer(*imageBuffer, destination, { descriptor.rasterDrawingOptions(), orientation });
 
     return ImageDrawResult::DidDraw;
 }
@@ -115,50 +115,40 @@ void ImageAdapter::invalidate()
 #endif
 }
 
-ImageAdapter::RasterizationKey::RasterizationKey(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
-    : concreteObjectSize(concreteObjectSize)
-    , extras(extras ? std::optional { *extras } : std::nullopt)
+CFDataRef ImageAdapter::tiffRepresentation(const ImageDrawDescriptor& descriptor)
 {
-}
-
-bool ImageAdapter::RasterizationKey::matches(ConcreteObjectSize otherConcreteObjectSize, const ImageDrawingExtras* otherExtras) const
-{
-    return concreteObjectSize == otherConcreteObjectSize
-        && (otherExtras ? extras == *otherExtras : !extras);
-}
-
-CFDataRef ImageAdapter::tiffRepresentation(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
-{
-    if (m_tiffRep && m_tiffRepKey && m_tiffRepKey->matches(concreteObjectSize, extras))
+    RasterizationKey key { descriptor.concreteObjectSize, descriptor.rendition };
+    if (m_tiffRep && m_tiffRepKey == key)
         return m_tiffRep.get();
 
-    auto data = WebCore::tiffRepresentation(allNativeImages(concreteObjectSize, extras));
+    auto data = WebCore::tiffRepresentation(allNativeImages(descriptor));
     if (!data)
         return nullptr;
 
     m_tiffRep = data;
-    m_tiffRepKey.emplace(concreteObjectSize, extras);
+    m_tiffRepKey = WTF::move(key);
     return m_tiffRep.get();
 }
 
 #if USE(APPKIT)
-NSImage* ImageAdapter::nsImage(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
+NSImage* ImageAdapter::nsImage(const ImageDrawDescriptor& descriptor)
 {
-    if (m_nsImage && m_nsImageKey && m_nsImageKey->matches(concreteObjectSize, extras))
+    RasterizationKey key { descriptor.concreteObjectSize, descriptor.rendition };
+    if (m_nsImage && m_nsImageKey == key)
         return m_nsImage.get();
 
-    RetainPtr data = tiffRepresentation(concreteObjectSize, extras);
+    RetainPtr data = tiffRepresentation(descriptor);
     if (!data)
         return nullptr;
 
     m_nsImage = adoptNS([[NSImage alloc] initWithData:(__bridge NSData *)data.get()]);
-    m_nsImageKey.emplace(concreteObjectSize, extras);
+    m_nsImageKey = WTF::move(key);
     return m_nsImage.get();
 }
 
-RetainPtr<NSImage> ImageAdapter::snapshotNSImage(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
+RetainPtr<NSImage> ImageAdapter::snapshotNSImage(const ImageDrawDescriptor& descriptor)
 {
-    RefPtr nativeImage = protect(image())->currentNativeImage(concreteObjectSize, extras);
+    RefPtr nativeImage = protect(image())->currentNativeImage(descriptor);
     if (!nativeImage)
         return nullptr;
 

@@ -2021,7 +2021,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [pasteboard _web_writePromisedRTFDFromArchive:archive.get() containsImage:[[pasteboard types] containsObject:WebCore::legacyTIFFPasteboardTypeSingleton()]];
     } else if ([type isEqualToString:WebCore::legacyTIFFPasteboardTypeSingleton()] && _private->promisedDragTIFFDataSource && _private->promisedDragTIFFDataConcreteObjectSize) {
         if (RefPtr image = protect(_private->promisedDragTIFFDataSource.get())->image())
-            [pasteboard setData:protect((__bridge NSData *)image->adapter().tiffRepresentation(*_private->promisedDragTIFFDataConcreteObjectSize)) forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
+            [pasteboard setData:protect((__bridge NSData *)image->adapter().tiffRepresentation(WebCore::ImageDrawDescriptor { *_private->promisedDragTIFFDataConcreteObjectSize })) forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
         [self clearPromisedDragTIFFDataSource];
     }
 }

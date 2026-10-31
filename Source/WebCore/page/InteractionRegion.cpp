@@ -92,8 +92,8 @@ class InteractionRegionPathCache {
 public:
     static InteractionRegionPathCache& LEGACY_NODELETE singleton();
 
-    std::optional<Path> get(const Image&, const IntRect&, ImageOrientation, const ImageDrawingExtras&);
-    void add(const Image&, const IntRect&, ImageOrientation, const ImageDrawingExtras&, Path);
+    std::optional<Path> get(const Image&, const IntRect&, ImageOrientation, const ImageRenditionOptions&);
+    void add(const Image&, const IntRect&, ImageOrientation, const ImageRenditionOptions&, Path);
 
     void clear();
 
@@ -105,7 +105,7 @@ private:
     struct Entry {
         IntRect rect;
         ImageOrientation orientation;
-        ImageDrawingExtras extras;
+        ImageRenditionOptions rendition;
         Path path;
     };
 
@@ -118,7 +118,7 @@ InteractionRegionPathCache& InteractionRegionPathCache::singleton()
     return cache;
 }
 
-std::optional<Path> InteractionRegionPathCache::get(const Image& image, const IntRect& rect, ImageOrientation orientation, const ImageDrawingExtras& extras)
+std::optional<Path> InteractionRegionPathCache::get(const Image& image, const IntRect& rect, ImageOrientation orientation, const ImageRenditionOptions& rendition)
 {
     if (rect.isEmpty())
         return std::nullopt;
@@ -128,20 +128,20 @@ std::optional<Path> InteractionRegionPathCache::get(const Image& image, const In
         return std::nullopt;
 
     for (auto& entry : iterator->value) {
-        if (entry.rect == rect && entry.orientation == orientation && entry.extras == extras)
+        if (entry.rect == rect && entry.orientation == orientation && entry.rendition == rendition)
             return entry.path;
     }
     return std::nullopt;
 }
 
-void InteractionRegionPathCache::add(const Image& image, const IntRect& rect, ImageOrientation orientation, const ImageDrawingExtras& extras, Path path)
+void InteractionRegionPathCache::add(const Image& image, const IntRect& rect, ImageOrientation orientation, const ImageRenditionOptions& rendition, Path path)
 {
     if (rect.isEmpty())
         return;
 
     m_imageCache.ensure(image, [] {
         return Vector<Entry>();
-    }).iterator->value.append({ rect, orientation, extras, WTF::move(path) });
+    }).iterator->value.append({ rect, orientation, rendition, WTF::move(path) });
 }
 
 void InteractionRegionPathCache::clear()
@@ -697,16 +697,16 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
         auto imageRect = snappedIntRect(LayoutRect(iconImageRect(renderImage, transform)));
         Ref styleImage = *renderImage->imageResource().styleImage();
         auto orientation = renderImage->imageOrientation();
-        auto extras = styleImage->drawingExtrasForRenderer(renderImage);
+        auto rendition = styleImage->renditionOptionsForRenderer(renderImage, { });
         auto generateAndCachePath = [&] {
             Ref shape = LayoutShape::createRasterShape(styleImage, renderImage, 0, imageRect, imageRect, WritingMode(), 0, renderImage->concreteObjectSizeForInteractionRegion());
             LayoutShape::DisplayPaths paths;
             shape->buildDisplayPaths(paths);
             auto path = paths.shape;
-            InteractionRegionPathCache::singleton().add(*iconImage.get(), imageRect, orientation, extras, path);
+            InteractionRegionPathCache::singleton().add(*iconImage.get(), imageRect, orientation, rendition, path);
             return path;
         };
-        auto cachedPath = InteractionRegionPathCache::singleton().get(*iconImage.get(), imageRect, orientation, extras);
+        auto cachedPath = InteractionRegionPathCache::singleton().get(*iconImage.get(), imageRect, orientation, rendition);
         auto path = cachedPath ? *cachedPath : generateAndCachePath();
 
         if (!clipOffset.isZero())

@@ -5185,7 +5185,7 @@ void WebViewImpl::writePromisedImageDragDataToPasteboard(NSPasteboard *pasteboar
             [pasteboard setData:imageData.get() forType:data.imageUTI.createNSString().get()];
     }
 
-    if (RetainPtr tiffData = image->adapter().tiffRepresentation(WebCore::ConcreteObjectSize::fixed(image->size())))
+    if (RetainPtr tiffData = image->adapter().tiffRepresentation(WebCore::ImageDrawDescriptor { WebCore::ConcreteObjectSize::fixed(image->size()) }))
         [pasteboard setData:bridge_cast(WTF::move(tiffData)) forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
 
     if (RefPtr archiveBuffer = data.archiveBuffer) {
@@ -5219,7 +5219,7 @@ void WebViewImpl::provideDataForPasteboard(NSPasteboard *pasteboard, NSString *t
 
     // FIXME: Need to support NSRTFDPboardType.
     if ([type isEqual:WebCore::legacyTIFFPasteboardTypeSingleton()])
-        [pasteboard setData:(__bridge NSData *)RetainPtr { promisedImage->adapter().tiffRepresentation(WebCore::ConcreteObjectSize::fixed(promisedImage->size())) }.get() forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
+        [pasteboard setData:(__bridge NSData *)RetainPtr { promisedImage->adapter().tiffRepresentation(WebCore::ImageDrawDescriptor { WebCore::ConcreteObjectSize::fixed(promisedImage->size()) }) }.get() forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
 }
 
 static BOOL fileExists(NSString *path)

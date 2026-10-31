@@ -2051,7 +2051,7 @@ void WebFrameLoaderClient::finishedLoadingIcon(WebCore::FragmentedSharedBuffer* 
         return;
 
     WebCore::FloatSize size { 16, 16 };
-    RetainPtr icon = image->adapter().nsImage(WebCore::ConcreteObjectSize::fixed(size));
+    RetainPtr icon = image->adapter().nsImage(WebCore::ImageDrawDescriptor { WebCore::ConcreteObjectSize::fixed(size) });
     if (!icon)
         return;
     if (!NSEqualSizes([icon size], size))

@@ -708,7 +708,7 @@
 #include "Image.h"
 #include "ImageAdapter.h"
 #include "ImageBufferFormat.h"
-#include "ImageDrawingOptions.h"
+#include "ImageDrawDescriptor.h"
 #include "ImageOrientation.h"
 #include "InspectorInstrumentationPublic.h"
 #include "IntSizeHash.h"

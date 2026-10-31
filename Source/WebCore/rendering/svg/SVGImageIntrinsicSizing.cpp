@@ -23,7 +23,7 @@
 #include "CachedImage.h"
 #include "GraphicsContext.h"
 #include "Image.h"
-#include "ImageDrawingOptions.h"
+#include "ImageDrawDescriptor.h"
 #include "RenderElement.h"
 #include "RenderObjectInlines.h"
 #include "SVGImageElement.h"
@@ -136,7 +136,7 @@ SVGImagePlacement calculateSVGImagePlacement(const Style::Image& styleImage, con
     return { imageRenderingRectangle, destination, { destination.location() - toFloatSize(imageRenderingRectangle.location()), destination.size() } };
 }
 
-ImageDrawingOptions calculateSVGImageDrawingOptions(const Style::Image& styleImage, RenderElement& renderer, GraphicsContext& context, const FloatSize& imageRenderingSize, const FloatSize& destinationSize, OptionSet<PaintBehavior> paintBehavior)
+ImageDrawDescriptor calculateSVGImageDrawDescriptor(const Style::Image& styleImage, RenderElement& renderer, GraphicsContext& context, const FloatSize& imageRenderingSize, const FloatSize& destinationSize, OptionSet<PaintBehavior> paintBehavior)
 {
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     auto invertContent = [&] {
@@ -147,10 +147,12 @@ ImageDrawingOptions calculateSVGImageDrawingOptions(const Style::Image& styleIma
 #endif
 
     Ref settings = renderer.settings();
-    return {
+    auto concreteObjectSize = ConcreteObjectSize::fixed(imageRenderingSize);
+    return ImageDrawDescriptor {
+        concreteObjectSize,
         IgnoreRootPreserveAspectRatio::Yes,
         renderer.imageOrientation(),
-        styleImage.interpolationQualityForImageDraw(context, renderer, ConcreteObjectSize::fixed(imageRenderingSize), &styleImage, LayoutSize(destinationSize)),
+        styleImage.interpolationQualityForImageDraw(context, renderer, concreteObjectSize, &styleImage, LayoutSize(destinationSize)),
         settings->imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
         settings->showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
         settings->hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,

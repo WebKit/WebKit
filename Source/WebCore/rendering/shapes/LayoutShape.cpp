@@ -218,7 +218,7 @@ Ref<const LayoutShape> LayoutShape::createRasterShape(const Style::Image& styleI
     if (!imageBuffer)
         return createShape();
 
-    styleImage.draw(imageBuffer->context(), renderer, concreteObjectSize, FloatRect { { }, snappedPhysicalImageSize }, FloatRect { { }, concreteObjectSize.size() }, { renderer.imageOrientation() });
+    styleImage.draw(imageBuffer->context(), renderer, ImageDrawDescriptor { concreteObjectSize, renderer.imageOrientation() }, FloatRect { { }, snappedPhysicalImageSize }, FloatRect { { }, concreteObjectSize.size() });
 
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
     auto pixelBuffer = imageBuffer->getPixelBuffer(format, { { }, snappedPhysicalImageSize });

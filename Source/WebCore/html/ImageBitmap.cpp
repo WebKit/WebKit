@@ -709,11 +709,17 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         }
         auto concreteSize = ConcreteObjectSize::fixed(imageSize);
         FloatRect destRect(FloatPoint(), outputSize);
-        ImageDrawingOptions drawingOptions { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No };
+        ImageDrawDescriptor descriptor {
+            concreteSize,
+            interpolationQualityForResizeQuality(options.resizeQuality),
+            options.resolvedImageOrientation(orientation),
+            drawsHDRContent,
+            scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        drawingOptions = { drawingOptions, InvertContent::No };
+            InvertContent::No,
 #endif
-        sourceImage->draw(bitmapData->context(), concreteSize, destRect, sourceRect, drawingOptions);
+        };
+        sourceImage->draw(bitmapData->context(), descriptor, destRect, sourceRect);
     }
 
     auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, bufferAlphaFormat);
@@ -1136,7 +1142,14 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
             return;
         }
         FloatRect destRect(FloatPoint(), outputSize);
-        image->draw(bitmapData->context(), destRect, sourceRect, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
+        ImageDrawDescriptor descriptor {
+            ConcreteObjectSize::fixed(image->size()),
+            interpolationQualityForResizeQuality(options.resizeQuality),
+            options.resolvedImageOrientation(orientation),
+            drawsHDRContent,
+            scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No
+        };
+        image->draw(bitmapData->context(), descriptor, destRect, sourceRect);
     }
 
     auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, bufferAlphaFormat);

@@ -47,7 +47,6 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
-#include "ImageDrawingExtras.h"
 #include "ImageOverlay.h"
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
@@ -498,7 +497,7 @@ RefPtr<ShareableBitmap> RenderImage::createShareableBitmap(const CreateShareable
     if (!graphicsContext)
         return { };
 
-    styleImage->draw(*graphicsContext, *this, concreteObjectSize, FloatRect { { }, bitmapSize }, FloatRect { { }, concreteObjectSize.size() }, { imageOrientation() });
+    styleImage->draw(*graphicsContext, *this, ImageDrawDescriptor { concreteObjectSize, imageOrientation() }, FloatRect { { }, bitmapSize }, FloatRect { { }, concreteObjectSize.size() });
     return sharedBitmap;
 }
 
@@ -701,7 +700,7 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
             LayoutUnit centerY { (usableSize.height() - imageSize.height()) / 2 };
             imageOffset = LayoutSize(borderWidths.left() + padding.left() + centerX + missingImageBorderWidth, borderWidths.top() + padding.top() + centerY + missingImageBorderWidth);
 
-            brokenImage->draw(context, snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), { imageOrientation() });
+            brokenImage->draw(context, ImageDrawDescriptor { ConcreteObjectSize::fixed(brokenImage->size(imageOrientation())), imageOrientation() }, snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor));
             errorPictureDrawn = true;
         }
     }
@@ -951,7 +950,8 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     };
 #endif
 
-    ImageDrawingOptions options = {
+    ImageDrawDescriptor descriptor {
+        concreteObjectSize,
         CompositeOperator::SourceOver,
         styleImage->decodingModeForImageDraw(*this, paintInfo),
         imageOrientation(),
@@ -972,11 +972,11 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     auto drawResult = ImageDrawResult::DidNothing;
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     if (RefPtr cachedImage = this->cachedImage(); cachedImage && isMultiRepresentationHEIC())
-        drawResult = protect(cachedImage->image())->adapter().drawMultiRepresentationHEIC(paintInfo.context(), style().fontCascade().primaryFont(), rect, options);
+        drawResult = protect(cachedImage->image())->adapter().drawMultiRepresentationHEIC(paintInfo.context(), style().fontCascade().primaryFont(), rect, descriptor);
 #endif
 
     if (drawResult == ImageDrawResult::DidNothing)
-        drawResult = styleImage->draw(paintInfo.context(), *this, concreteObjectSize, rect, FloatRect { { }, concreteObjectSize.size() }, options);
+        drawResult = styleImage->draw(paintInfo.context(), *this, descriptor, rect, FloatRect { { }, concreteObjectSize.size() });
 
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));
@@ -984,7 +984,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
 #if USE(SYSTEM_PREVIEW)
     RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element());
     if (RefPtr cachedImage = this->cachedImage(); cachedImage && imageElement && imageElement->isSystemPreviewImage() && drawResult == ImageDrawResult::DidDraw && imageElement->document().settings().systemPreviewEnabled())
-        theme().paintSystemPreviewBadge(protect(cachedImage->image())->nativeImage(concreteObjectSize), paintInfo, rect);
+        theme().paintSystemPreviewBadge(protect(cachedImage->image())->nativeImage(ImageDrawDescriptor { concreteObjectSize }), paintInfo, rect);
 #endif
 
     if (drawResult != ImageDrawResult::DidNothing && element() && !paintInfo.context().paintingDisabled())

@@ -24,17 +24,29 @@
 
 #pragma once
 
+#include <WebCore/GraphicsTypes.h>
+#include <WebCore/ImageTypes.h>
+#include <WebCore/PlatformDynamicRangeLimit.h>
 #include <WebCore/StyleLinkParameters.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
 
-// Additional, optional information a caller can hand to Image::draw().
-struct ImageDrawingExtras {
+// The parts of an ImageDrawDescriptor that change what an image draws, rather than where or how it is
+// composited. Caches of an image's output are keyed on these.
+struct ImageRenditionOptions {
     URL fragmentURL;
     Style::LinkParameters linkParameters { CSS::Keyword::None { } };
+    IgnoreRootPreserveAspectRatio ignoreRootPreserveAspectRatio { IgnoreRootPreserveAspectRatio::No };
+    InterpolationQuality interpolationQuality { InterpolationQuality::Default };
+    DrawsHDRContent drawsHDRContent { DrawsHDRContent::No };
+    Headroom headroom { Headroom::FromImage };
+    PlatformDynamicRangeLimit dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    InvertContent invertContent { InvertContent::FromResource };
+#endif
 
-    bool operator==(const ImageDrawingExtras&) const = default;
+    bool operator==(const ImageRenditionOptions&) const = default;
 };
 
 } // namespace WebCore

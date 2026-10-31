@@ -652,7 +652,7 @@ std::pair<DragImage, IntPoint> DataTransfer::createDragImage(const Document* doc
         // FIXME; Sizing images for DataTransfer is not fully specified. See https://github.com/whatwg/html/issues/13099.
 
         Ref image = *protect(m_dragImage)->image();
-        RefPtr nativeImage = image->currentNativeImage(DefaultSizing { std::nullopt, m_dragImageDensity }.resolve(image->naturalDimensions()));
+        RefPtr nativeImage = image->currentNativeImage(ImageDrawDescriptor { DefaultSizing { std::nullopt, m_dragImageDensity }.resolve(image->naturalDimensions()) });
         if (!nativeImage)
             return { };
 

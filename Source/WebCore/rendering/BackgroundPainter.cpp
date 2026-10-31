@@ -573,7 +573,8 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
             };
 #endif
 
-            ImageDrawingOptions options = {
+            ImageDrawDescriptor descriptor {
+                concreteObjectSize,
                 op == CompositeOperator::SourceOver ? layer.layer.compositeForPainting(layer.isLast) : op,
                 layerBlendMode,
                 bgImage->decodingModeForImageDraw(m_renderer, m_paintInfo),
@@ -590,7 +591,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                 style.dynamicRangeLimit().toPlatformDynamicRangeLimit()
             };
 
-            auto drawResult = bgImage->drawTiled(context, clientForBackgroundImage, concreteObjectSize, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options, isFirstLine);
+            auto drawResult = bgImage->drawTiled(context, clientForBackgroundImage, descriptor, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, isFirstLine);
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
                 ASSERT(bgImage->hasCachedImage());
                 protect(bgImage->cachedImage())->addClientWaitingForAsyncDecoding(protect(m_renderer)->cachedImageClient());

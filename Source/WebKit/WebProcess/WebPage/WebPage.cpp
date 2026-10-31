@@ -3784,7 +3784,7 @@ RefPtr<ShareableBitmap> WebPage::shareableBitmapForNodeIncludingOffscreen(Node& 
         if (imageElement) {
             if (RefPtr cachedImage = imageElement->cachedImage()) {
                 if (RefPtr image = cachedImage->image()) {
-                    if (RefPtr nativeImage = image->currentNativeImage(DefaultSizing { }.resolve(image->naturalDimensions())))
+                    if (RefPtr nativeImage = image->currentNativeImage(ImageDrawDescriptor { DefaultSizing { }.resolve(image->naturalDimensions()) }))
                         bitmap = ShareableBitmap::createFromImageDraw(*nativeImage, ColorSpace::SRGB());
                 }
             }

@@ -237,7 +237,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
         return;
 
     PasteboardImage pasteboardImage;
-    if (RetainPtr tiffData = image->adapter().tiffRepresentation(renderImage->concreteObjectSizeForPasteboard()))
+    if (RetainPtr tiffData = image->adapter().tiffRepresentation(ImageDrawDescriptor { renderImage->concreteObjectSizeForPasteboard() }))
         pasteboardImage.dataInTIFFFormat = SharedBuffer::create(tiffData.get());
 
     if (!pasteboard.isStatic())

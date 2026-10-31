@@ -28,7 +28,7 @@
 
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
-#include "ImageDrawingOptions.h"
+#include "ImageDrawDescriptor.h"
 #include "ImageSizingContext.h"
 #include "NativeImage.h"
 #include "NinePieceGeometry.h"
@@ -58,7 +58,7 @@ static std::optional<SourceImage> convertToLuminanceMask(GraphicsContext& contex
     return SourceImage { buffer.releaseNonNull() };
 }
 
-static void drawPatternTile(GraphicsContext& context, WebCore::Image::PatternTile&& patternTile, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options)
+static void drawPatternTile(GraphicsContext& context, WebCore::Image::PatternTile&& patternTile, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing)
 {
     auto scaledTile = tile;
     scaledTile.scale(patternTile.scale.width(), patternTile.scale.height());
@@ -66,46 +66,46 @@ static void drawPatternTile(GraphicsContext& context, WebCore::Image::PatternTil
     scaledPatternTransform.scale(1 / patternTile.scale.width(), 1 / patternTile.scale.height());
 
     auto tileImage = WTF::move(patternTile.image);
-    if (options.drawLuminanceMask() == DrawLuminanceMask::Yes) {
+    if (descriptor.drawLuminanceMask == DrawLuminanceMask::Yes) {
         auto mask = convertToLuminanceMask(context, WTF::move(tileImage));
         if (!mask)
             return;
         tileImage = WTF::move(*mask);
     }
 
-    context.drawPattern(tileImage, destination, scaledTile, scaledPatternTransform, phase, spacing, options.rasterDrawingOptions());
+    context.drawPattern(tileImage, destination, scaledTile, scaledPatternTransform, phase, spacing, descriptor.rasterDrawingOptions());
 }
 
-static void drawPatternTile(GraphicsContext& context, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const ImageDrawingExtras* extras)
+static void drawPatternTile(GraphicsContext& context, WebCore::Image& image, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing)
 {
     if (tile.isEmpty())
         return;
 
-    if (options.headroom() == Headroom::FromImage && image.hasHDRContentForTesting()) {
-        WebCore::Image::fillWithSolidColor(context, destination, WebCore::Color::gold, options.compositeOperator());
+    if (descriptor.rendition.headroom == Headroom::FromImage && image.hasHDRContentForTesting()) {
+        WebCore::Image::fillWithSolidColor(context, destination, WebCore::Color::gold, descriptor.compositeOperator);
         return;
     }
 
-    auto patternTile = image.currentPatternTile(context, concreteObjectSize, options, extras);
+    auto patternTile = image.currentPatternTile(context, descriptor);
     if (!patternTile)
         return;
 
-    drawPatternTile(context, WTF::move(*patternTile), destination, tile, patternTransform, phase, spacing, options);
+    drawPatternTile(context, WTF::move(*patternTile), descriptor, destination, tile, patternTransform, phase, spacing);
 }
 
-static ImageDrawResult drawImageAsPattern(GraphicsContext& context, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options, const ImageDrawingExtras* extras)
+static ImageDrawResult drawImageAsPattern(GraphicsContext& context, WebCore::Image& image, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing)
 {
-    drawPatternTile(context, image, concreteObjectSize, destination, tile, patternTransform, phase, spacing, options, extras);
+    drawPatternTile(context, image, descriptor, destination, tile, patternTransform, phase, spacing);
     image.startAnimation();
     return ImageDrawResult::DidDraw;
 }
 
-ImageDrawResult Image::drawIntoDestinationImpl(GraphicsContext& context, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options, const ScopedLambda<DestinationPaint>& paint)
+ImageDrawResult Image::drawIntoDestinationImpl(GraphicsContext& context, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& source, const ScopedLambda<DestinationPaint>& paint)
 {
     GraphicsContextStateSaver stateSaver(context);
-    context.setCompositeOperation(options.compositeOperator(), options.blendMode());
-    if (options.interpolationQuality() != InterpolationQuality::Default)
-        context.setImageInterpolationQuality(options.interpolationQuality());
+    context.setCompositeOperation(descriptor.compositeOperator, descriptor.blendMode);
+    if (descriptor.rendition.interpolationQuality != InterpolationQuality::Default)
+        context.setImageInterpolationQuality(descriptor.rendition.interpolationQuality);
 
     context.clip(destination);
     context.translate(destination.location());
@@ -119,8 +119,9 @@ ImageDrawResult Image::drawIntoDestinationImpl(GraphicsContext& context, const F
     return paint(context);
 }
 
-ImageDrawResult Image::drawTiledUsingImpl(GraphicsContext& ctxt, NaturalDimensions naturalDimensions, const ScopedLambda<TiledDraw>& draw, const ScopedLambda<TiledDrawPattern>& drawPattern, ConcreteObjectSize concreteObjectSize, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, ImageDrawingOptions options)
+ImageDrawResult Image::drawTiledUsingImpl(GraphicsContext& ctxt, NaturalDimensions naturalDimensions, const ScopedLambda<TiledDraw>& draw, const ScopedLambda<TiledDrawPattern>& drawPattern, const ImageDrawDescriptor& descriptor, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing)
 {
+    auto concreteObjectSize = descriptor.concreteObjectSize;
     FloatSize intrinsicTileSize = concreteObjectSize.size();
     if (!naturalDimensions.width)
         intrinsicTileSize.setWidth(scaledTileSize.width());
@@ -136,7 +137,7 @@ ImageDrawResult Image::drawTiledUsingImpl(GraphicsContext& ctxt, NaturalDimensio
     oneTileRect.setSize(scaledTileSize);
 
     // Check and see if a single draw of the image can cover the entire area we are supposed to tile.
-    if (oneTileRect.contains(destRect) && options.drawLuminanceMask() == DrawLuminanceMask::No) {
+    if (oneTileRect.contains(destRect) && descriptor.drawLuminanceMask == DrawLuminanceMask::No) {
         FloatRect visibleSrcRect;
         visibleSrcRect.setX((destRect.x() - oneTileRect.x()) / scale.width());
         visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
@@ -348,14 +349,15 @@ FloatRect Image::mapChangedRectToSource(const RenderElement&, ConcreteObjectSize
     return { { }, concreteObjectSize.size() * concreteObjectSize.zoom() };
 }
 
-RefPtr<NativeImage> Image::nativeImage(const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, float resolutionScale, ImageDrawingOptions options) const
+RefPtr<NativeImage> Image::nativeImage(const RenderElement& renderer, const ImageDrawDescriptor& descriptor, float resolutionScale) const
 {
-    auto pixelSize = FloatSize { calculateImageBufferBackendSize(concreteObjectSize.size(), resolutionScale) };
+    auto size = descriptor.concreteObjectSize.size();
+    auto pixelSize = FloatSize { calculateImageBufferBackendSize(size, resolutionScale) };
     RefPtr imageBuffer = ImageBuffer::create(pixelSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return nullptr;
 
-    draw(imageBuffer->context(), renderer, concreteObjectSize, FloatRect { { }, pixelSize }, FloatRect { { }, concreteObjectSize.size() }, options);
+    draw(imageBuffer->context(), renderer, descriptor, FloatRect { { }, pixelSize }, FloatRect { { }, size });
     return ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
 }
 
@@ -380,174 +382,187 @@ static NinePieceGeometry ninePieceGeometryForImage(const NinePieceGeometry& geom
     return pieceGeometry;
 }
 
-ImageDrawResult Image::drawResolved(GraphicsContext& context, const RenderElement& renderer, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options) const
+ImageDrawDescriptor Image::descriptorForRenderer(const RenderElement& renderer, const ImageDrawDescriptor& descriptor) const
 {
-    auto extras = drawingExtrasForRenderer(renderer);
-    return image.draw(context, concreteObjectSize, destination, source, options, &extras);
+    return { descriptor, renditionOptionsForRenderer(renderer, descriptor.rendition) };
 }
 
-ImageDrawResult Image::drawResolvedAsPattern(GraphicsContext& context, const RenderElement& renderer, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options) const
+ImageDrawResult Image::drawResolved(GraphicsContext& context, const RenderElement& renderer, WebCore::Image& image, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& source) const
 {
-    auto extras = drawingExtrasForRenderer(renderer);
-    return drawImageAsPattern(context, image, concreteObjectSize, destination, tile, patternTransform, phase, spacing, options, &extras);
+    return image.draw(context, descriptorForRenderer(renderer, descriptor), destination, source);
 }
 
-ImageDrawResult Image::drawResolvedTiled(GraphicsContext& context, const RenderElement& renderer, WebCore::Image& image, NaturalDimensions tileNaturalDimensions, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions options) const
+ImageDrawResult Image::drawResolvedAsPattern(GraphicsContext& context, const RenderElement& renderer, WebCore::Image& image, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) const
+{
+    return drawImageAsPattern(context, image, descriptorForRenderer(renderer, descriptor), destination, tile, patternTransform, phase, spacing);
+}
+
+ImageDrawResult Image::drawResolvedTiled(GraphicsContext& context, const RenderElement& renderer, WebCore::Image& image, NaturalDimensions tileNaturalDimensions, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing) const
 {
     if (auto color = image.singlePixelSolidColor()) {
-        WebCore::Image::fillWithSolidColor(context, destination, *color, options.compositeOperator());
+        WebCore::Image::fillWithSolidColor(context, destination, *color, descriptor.compositeOperator);
         return ImageDrawResult::DidDraw;
     }
     ASSERT_IMPLIES(image.isBitmapImage(), !image.hasSolidColor());
 
-    auto extras = drawingExtrasForRenderer(renderer);
+    auto imageDescriptor = descriptorForRenderer(renderer, descriptor);
     return drawTiledUsing(context, tileNaturalDimensions, [&](GraphicsContext& context, ConcreteObjectSize tileConcreteObjectSize, const FloatRect& destination, const FloatRect& source) {
-        return image.draw(context, tileConcreteObjectSize, destination, source, options, &extras);
+        return image.draw(context, ImageDrawDescriptor { imageDescriptor, tileConcreteObjectSize }, destination, source);
     }, [&](GraphicsContext& context, ConcreteObjectSize tileConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
-        return drawImageAsPattern(context, image, tileConcreteObjectSize, destination, tile, patternTransform, phase, spacing, options, &extras);
-    }, concreteObjectSize, destination, phase, tileSize, spacing, options);
+        return drawImageAsPattern(context, image, ImageDrawDescriptor { imageDescriptor, tileConcreteObjectSize }, destination, tile, patternTransform, phase, spacing);
+    }, imageDescriptor, destination, phase, tileSize, spacing);
 }
 
-ImageDrawResult Image::drawResolvedNinePiece(GraphicsContext& context, const RenderElement& renderer, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const NinePieceGeometry& geometry, ImageDrawingOptions options) const
+ImageDrawResult Image::drawResolvedNinePiece(GraphicsContext& context, const RenderElement& renderer, WebCore::Image& image, const ImageDrawDescriptor& descriptor, const NinePieceGeometry& geometry) const
 {
     auto singlePixelSolidColor = image.singlePixelSolidColor();
     auto pieceGeometry = ninePieceGeometryForImage(geometry, singlePixelSolidColor.has_value());
 
-    auto extras = drawingExtrasForRenderer(renderer);
+    auto imageDescriptor = descriptorForRenderer(renderer, descriptor);
+    auto patternDescriptor = descriptorForRenderer(renderer, ImageDrawDescriptor {
+        descriptor.concreteObjectSize,
+        descriptor.compositeOperator,
+        descriptor.rendition.interpolationQuality,
+        descriptor.orientation
+    });
     return drawNinePieceUsing(context, [&](GraphicsContext& context, ConcreteObjectSize pieceConcreteObjectSize, const FloatRect& destination, const FloatRect& source) {
-        return image.draw(context, pieceConcreteObjectSize, destination, source, options, &extras);
+        return image.draw(context, ImageDrawDescriptor { imageDescriptor, pieceConcreteObjectSize }, destination, source);
     }, [&](GraphicsContext& context, ConcreteObjectSize pieceConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
         if (singlePixelSolidColor) {
-            WebCore::Image::fillWithSolidColor(context, destination, *singlePixelSolidColor, options.compositeOperator());
+            WebCore::Image::fillWithSolidColor(context, destination, *singlePixelSolidColor, descriptor.compositeOperator);
             return ImageDrawResult::DidDraw;
         }
-        return drawImageAsPattern(context, image, pieceConcreteObjectSize, destination, tile, patternTransform, phase, spacing, { options.compositeOperator(), options.interpolationQuality(), options.orientation() }, &extras);
-    }, concreteObjectSize, pieceGeometry);
+        return drawImageAsPattern(context, image, ImageDrawDescriptor { patternDescriptor, pieceConcreteObjectSize }, destination, tile, patternTransform, phase, spacing);
+    }, descriptor.concreteObjectSize, pieceGeometry);
 }
 
-ImageDrawResult Image::drawResolved(GraphicsContext& context, NativeImage& image, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options)
+ImageDrawResult Image::drawResolved(GraphicsContext& context, NativeImage& image, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& source)
 {
     if (context.paintingDisabled() || destination.isEmpty() || source.isEmpty())
         return ImageDrawResult::DidNothing;
 
     if (auto color = image.singlePixelSolidColor()) {
-        WebCore::Image::fillWithSolidColor(context, destination, *color, options.compositeOperator());
+        WebCore::Image::fillWithSolidColor(context, destination, *color, descriptor.compositeOperator);
         return ImageDrawResult::DidDraw;
     }
 
-    auto orientation = options.orientation();
+    auto orientation = descriptor.orientation;
     if (orientation == WebCore::ImageOrientation::Orientation::FromImage)
         orientation = WebCore::ImageOrientation::Orientation::None;
 
-    auto headroom = options.headroom();
+    auto headroom = descriptor.rendition.headroom;
     if (headroom == Headroom::FromImage)
         headroom = image.headroom();
 
-    context.drawNativeImage(image, destination, source, { options.rasterDrawingOptions(), orientation, headroom });
+    context.drawNativeImage(image, destination, source, { descriptor.rasterDrawingOptions(), orientation, headroom });
     return ImageDrawResult::DidDraw;
 }
 
-ImageDrawResult Image::drawResolvedAsPattern(GraphicsContext& context, NativeImage& image, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options)
+ImageDrawResult Image::drawResolvedAsPattern(GraphicsContext& context, NativeImage& image, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing)
 {
     if (!tile.isEmpty())
-        drawPatternTile(context, { SourceImage { Ref { image } } }, destination, tile, patternTransform, phase, spacing, options);
+        drawPatternTile(context, { SourceImage { Ref { image } } }, descriptor, destination, tile, patternTransform, phase, spacing);
     return ImageDrawResult::DidDraw;
 }
 
-ImageDrawResult Image::drawResolvedTiled(GraphicsContext& context, NativeImage& image, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions options)
+ImageDrawResult Image::drawResolvedTiled(GraphicsContext& context, NativeImage& image, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing)
 {
     if (auto color = image.singlePixelSolidColor()) {
-        WebCore::Image::fillWithSolidColor(context, destination, *color, options.compositeOperator());
+        WebCore::Image::fillWithSolidColor(context, destination, *color, descriptor.compositeOperator);
         return ImageDrawResult::DidDraw;
     }
 
     return drawTiledUsing(context, NaturalDimensions::fixed(image.size()), [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source) {
-        return drawResolved(context, image, destination, source, options);
+        return drawResolved(context, image, descriptor, destination, source);
     }, [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
-        return drawResolvedAsPattern(context, image, destination, tile, patternTransform, phase, spacing, options);
-    }, ConcreteObjectSize::fixed(image.size()), destination, phase, tileSize, spacing, options);
+        return drawResolvedAsPattern(context, image, descriptor, destination, tile, patternTransform, phase, spacing);
+    }, ImageDrawDescriptor { descriptor, ConcreteObjectSize::fixed(image.size()) }, destination, phase, tileSize, spacing);
 }
 
-ImageDrawResult Image::drawResolvedNinePiece(GraphicsContext& context, NativeImage& image, const NinePieceGeometry& geometry, ImageDrawingOptions options)
+ImageDrawResult Image::drawResolvedNinePiece(GraphicsContext& context, NativeImage& image, const ImageDrawDescriptor& descriptor, const NinePieceGeometry& geometry)
 {
     auto singlePixelSolidColor = image.singlePixelSolidColor();
     auto pieceGeometry = ninePieceGeometryForImage(geometry, singlePixelSolidColor.has_value());
 
+    ImageDrawDescriptor patternDescriptor { descriptor.concreteObjectSize, descriptor.compositeOperator, descriptor.rendition.interpolationQuality };
     return drawNinePieceUsing(context, [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source) {
-        return drawResolved(context, image, destination, source, options);
+        return drawResolved(context, image, descriptor, destination, source);
     }, [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
         if (singlePixelSolidColor) {
-            WebCore::Image::fillWithSolidColor(context, destination, *singlePixelSolidColor, options.compositeOperator());
+            WebCore::Image::fillWithSolidColor(context, destination, *singlePixelSolidColor, descriptor.compositeOperator);
             return ImageDrawResult::DidDraw;
         }
-        return drawResolvedAsPattern(context, image, destination, tile, patternTransform, phase, spacing, { options.compositeOperator(), options.interpolationQuality() });
+        return drawResolvedAsPattern(context, image, patternDescriptor, destination, tile, patternTransform, phase, spacing);
     }, ConcreteObjectSize::fixed(image.size()), pieceGeometry);
 }
 
-ImageDrawResult Image::drawResolved(GraphicsContext& context, ImageBuffer& image, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options)
+ImageDrawResult Image::drawResolved(GraphicsContext& context, ImageBuffer& image, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& source)
 {
     if (context.paintingDisabled() || destination.isEmpty() || source.isEmpty())
         return ImageDrawResult::DidNothing;
 
-    auto orientation = options.orientation();
+    auto orientation = descriptor.orientation;
     if (orientation == WebCore::ImageOrientation::Orientation::FromImage)
         orientation = WebCore::ImageOrientation::Orientation::None;
 
-    auto headroom = options.headroom();
+    auto headroom = descriptor.rendition.headroom;
     if (headroom == Headroom::FromImage)
         headroom = Headroom::None;
 
-    context.drawImageBuffer(image, destination, source, { options.rasterDrawingOptions(), orientation, headroom });
+    context.drawImageBuffer(image, destination, source, { descriptor.rasterDrawingOptions(), orientation, headroom });
     return ImageDrawResult::DidDraw;
 }
 
-ImageDrawResult Image::drawResolvedAsPattern(GraphicsContext& context, ImageBuffer& image, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options)
+ImageDrawResult Image::drawResolvedAsPattern(GraphicsContext& context, ImageBuffer& image, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing)
 {
     if (!tile.isEmpty())
-        drawPatternTile(context, { SourceImage { Ref { image } } }, destination, tile, patternTransform, phase, spacing, options);
+        drawPatternTile(context, { SourceImage { Ref { image } } }, descriptor, destination, tile, patternTransform, phase, spacing);
     return ImageDrawResult::DidDraw;
 }
 
-ImageDrawResult Image::drawResolvedTiled(GraphicsContext& context, ImageBuffer& image, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions options)
+ImageDrawResult Image::drawResolvedTiled(GraphicsContext& context, ImageBuffer& image, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing)
 {
     return drawTiledUsing(context, NaturalDimensions::fixed(image.logicalSize()), [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source) {
-        return drawResolved(context, image, destination, source, options);
+        return drawResolved(context, image, descriptor, destination, source);
     }, [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
-        return drawResolvedAsPattern(context, image, destination, tile, patternTransform, phase, spacing, options);
-    }, ConcreteObjectSize::fixed(image.logicalSize()), destination, phase, tileSize, spacing, options);
+        return drawResolvedAsPattern(context, image, descriptor, destination, tile, patternTransform, phase, spacing);
+    }, ImageDrawDescriptor { descriptor, ConcreteObjectSize::fixed(image.logicalSize()) }, destination, phase, tileSize, spacing);
 }
 
-ImageDrawResult Image::drawResolvedNinePiece(GraphicsContext& context, ImageBuffer& image, const NinePieceGeometry& geometry, ImageDrawingOptions options)
+ImageDrawResult Image::drawResolvedNinePiece(GraphicsContext& context, ImageBuffer& image, const ImageDrawDescriptor& descriptor, const NinePieceGeometry& geometry)
 {
+    ImageDrawDescriptor patternDescriptor { descriptor.concreteObjectSize, descriptor.compositeOperator, descriptor.rendition.interpolationQuality };
     return drawNinePieceUsing(context, [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source) {
-        return drawResolved(context, image, destination, source, options);
+        return drawResolved(context, image, descriptor, destination, source);
     }, [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
-        return drawResolvedAsPattern(context, image, destination, tile, patternTransform, phase, spacing, { options.compositeOperator(), options.interpolationQuality() });
+        return drawResolvedAsPattern(context, image, patternDescriptor, destination, tile, patternTransform, phase, spacing);
     }, ConcreteObjectSize::fixed(image.logicalSize()), geometry);
 }
 
-ImageDrawResult Image::drawTiled(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions options, bool isForFirstLine) const
+ImageDrawResult Image::drawTiled(GraphicsContext& context, const RenderElement& renderer, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, bool isForFirstLine) const
 {
     if (!canDrawAtSize(renderer, tileSize) || context.paintingDisabled())
         return ImageDrawResult::DidNothing;
 
     return drawTiledUsing(context, NaturalDimensions::none(), [&](GraphicsContext& context, ConcreteObjectSize tileConcreteObjectSize, const FloatRect& destination, const FloatRect& source) {
-        return draw(context, renderer, tileConcreteObjectSize, destination, source, options, isForFirstLine);
+        return draw(context, renderer, ImageDrawDescriptor { descriptor, tileConcreteObjectSize }, destination, source, isForFirstLine);
     }, [&](GraphicsContext& context, ConcreteObjectSize tileConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
-        return drawAsPattern(context, renderer, tileConcreteObjectSize, destination, tile, patternTransform, phase, spacing, options, isForFirstLine);
-    }, ConcreteObjectSize::fixed(tileSize), destination, phase, tileSize, spacing, options);
+        return drawAsPattern(context, renderer, ImageDrawDescriptor { descriptor, tileConcreteObjectSize }, destination, tile, patternTransform, phase, spacing, isForFirstLine);
+    }, ImageDrawDescriptor { descriptor, ConcreteObjectSize::fixed(tileSize) }, destination, phase, tileSize, spacing);
 }
 
-ImageDrawResult Image::drawNinePiece(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const NinePieceGeometry& geometry, ImageDrawingOptions options) const
+ImageDrawResult Image::drawNinePiece(GraphicsContext& context, const RenderElement& renderer, const ImageDrawDescriptor& descriptor, const NinePieceGeometry& geometry) const
 {
+    auto concreteObjectSize = descriptor.concreteObjectSize;
     auto size = concreteObjectSize.size() * concreteObjectSize.zoom();
     if (!canDrawAtSize(renderer, size) || context.paintingDisabled())
         return ImageDrawResult::DidNothing;
 
+    ImageDrawDescriptor patternDescriptor { concreteObjectSize, descriptor.compositeOperator, descriptor.rendition.interpolationQuality, descriptor.orientation };
     return drawNinePieceUsing(context, [&](GraphicsContext& context, ConcreteObjectSize pieceConcreteObjectSize, const FloatRect& destination, const FloatRect& source) {
-        return draw(context, renderer, pieceConcreteObjectSize, destination, source, options, false);
+        return draw(context, renderer, ImageDrawDescriptor { descriptor, pieceConcreteObjectSize }, destination, source, false);
     }, [&](GraphicsContext& context, ConcreteObjectSize pieceConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
-        return drawAsPattern(context, renderer, pieceConcreteObjectSize, destination, tile, patternTransform, phase, spacing, { options.compositeOperator(), options.interpolationQuality(), options.orientation() }, false);
+        return drawAsPattern(context, renderer, ImageDrawDescriptor { patternDescriptor, pieceConcreteObjectSize }, destination, tile, patternTransform, phase, spacing, false);
     }, ConcreteObjectSize::fixed(size), geometry);
 }
 

@@ -3375,11 +3375,11 @@ static TexImageSourceImage nativeImageForTexImageSource(Image& image, ConcreteOb
     // Images without encoded data are backed by image buffers, which hold premultiplied alpha.
     RefPtr data = image.data();
     if (!data)
-        return { image.currentNativeImage(concreteObjectSize), AlphaPremultiplication::Premultiplied };
+        return { image.currentNativeImage(ImageDrawDescriptor { concreteObjectSize }), AlphaPremultiplication::Premultiplied };
     bool hasAlpha = !image.currentFrameKnownToBeOpaque();
     if (ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha))
         return { NativeImage::create(*data, premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied), std::nullopt };
-    return { image.currentNativeImage(concreteObjectSize), std::nullopt };
+    return { image.currentNativeImage(ImageDrawDescriptor { concreteObjectSize }), std::nullopt };
 }
 
 ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, TexImageSource&& source)
@@ -4585,7 +4585,7 @@ RefPtr<NativeImage> WebGLRenderingContextBase::drawImageIntoBuffer(const SizedIm
 
     FloatRect srcRect(FloatPoint(), sizedImage.concreteObjectSize.size());
     FloatRect destRect(FloatPoint(), size);
-    protect(sizedImage.image)->draw(buf->context(), sizedImage.concreteObjectSize, destRect, srcRect);
+    protect(sizedImage.image)->draw(buf->context(), ImageDrawDescriptor { sizedImage.concreteObjectSize }, destRect, srcRect);
     // FIXME: createNativeImageReference() does not make sense for GPUP.
     // Instead, should fix by GPUP side upload.
     return buf->createNativeImageReference();

@@ -154,13 +154,13 @@ bool LegacyRenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& cont
     return true;
 }
 
-bool LegacyRenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions options)
+bool LegacyRenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImageDrawDescriptor& descriptor)
 {
     GraphicsContextStateSaver stateSaver(context);
 
-    context.setCompositeOperation(options.compositeOperator(), options.blendMode());
-    if (options.interpolationQuality() != InterpolationQuality::Default)
-        context.setImageInterpolationQuality(options.interpolationQuality());
+    context.setCompositeOperation(descriptor.compositeOperator, descriptor.blendMode);
+    if (descriptor.rendition.interpolationQuality != InterpolationQuality::Default)
+        context.setImageInterpolationQuality(descriptor.rendition.interpolationQuality);
 
     context.translate(destinationRect.location());
 

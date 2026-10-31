@@ -75,17 +75,17 @@ public:
     bool isLoaded(const RenderElement*) const final;
     bool errorOccurred() const final;
     NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final;
-    ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&) const final;
+    ImageRenditionOptions renditionOptionsForRenderer(const RenderElement&, ImageRenditionOptions) const final;
     void addClient(RenderElement&) final;
     void removeClient(RenderElement&) final;
     bool hasClient(RenderElement&) const final;
     bool hasImage() const final;
     bool hasDecodedImage() const final;
-    ImageDrawResult draw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions, bool isForFirstLine) const final;
-    ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions, bool isForFirstLine) const final;
-    ImageDrawResult drawTiled(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions, bool isForFirstLine) const final;
-    ImageDrawResult drawNinePiece(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const NinePieceGeometry&, ImageDrawingOptions) const final;
-    RefPtr<NativeImage> nativeImage(const RenderElement&, ConcreteObjectSize, float resolutionScale, ImageDrawingOptions) const final;
+    ImageDrawResult draw(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source, bool isForFirstLine) const final;
+    ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, bool isForFirstLine) const final;
+    ImageDrawResult drawTiled(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, bool isForFirstLine) const final;
+    ImageDrawResult drawNinePiece(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const NinePieceGeometry&) const final;
+    RefPtr<NativeImage> nativeImage(const RenderElement&, const ImageDrawDescriptor&, float resolutionScale) const final;
     bool currentFrameIsComplete(const RenderElement*) const final;
     std::optional<IntPoint> hotSpot() const final;
     float imageScaleFactor() const final;
@@ -127,8 +127,8 @@ private:
     LegacyRenderSVGResourceContainer* legacyRenderSVGResource(const RenderElement*) const;
     RenderSVGResourceContainer* renderSVGResource(const RenderElement*) const;
     bool isRenderSVGResource(const RenderElement*) const;
-    ImageDrawResult drawSVGResource(GraphicsContext&, const ReferencedSVGResource&, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions) const;
-    ImageDrawResult drawSVGResourceAsPattern(GraphicsContext&, const ReferencedSVGResource&, const FloatSize&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions) const;
+    ImageDrawResult drawSVGResource(GraphicsContext&, const ReferencedSVGResource&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source) const;
+    ImageDrawResult drawSVGResourceAsPattern(GraphicsContext&, const ReferencedSVGResource&, const ImageDrawDescriptor&, const FloatSize&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing) const;
 
     URL m_url;
     const Ref<CSSImageValue> m_cssValue;

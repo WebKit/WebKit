@@ -148,7 +148,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::createFromImageElemen
     //    animation.
     // 4. Let codedWidth and codedHeight be the width and height of resource.
     auto codedSize = VideoFrameImageSizing { }.resolve(naturalDimensions);
-    RefPtr resource = sourceImage->currentPreTransformedNativeImage(codedSize, orientation);
+    RefPtr resource = sourceImage->currentPreTransformedNativeImage(ImageDrawDescriptor { codedSize, orientation });
     if (!resource)
         return Exception { ExceptionCode::InvalidStateError, "Image has no video frame"_s };
 

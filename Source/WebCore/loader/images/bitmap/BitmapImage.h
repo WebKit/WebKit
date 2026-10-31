@@ -46,9 +46,9 @@ public:
     WEBCORE_EXPORT static BitmapImage& nullImage();
 
     using Image::draw;
-    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, FloatPoint destination = { }, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage });
-    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, const FloatRect& destination, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage });
-    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage });
+    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, FloatPoint destination = { });
+    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, const FloatRect& destination);
+    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, const FloatRect& destination, const FloatRect& source);
 
     // Animation
     void startAnimation() final { m_source->startAnimation(); }
@@ -76,8 +76,8 @@ public:
     RefPtr<NativeImage> nativeImageForUnpremultipliedPixels() { return m_source->primaryNativeImageForUnpremultipliedPixels(); }
 
     // A bitmap has a size of its own, so these ignore the concrete object size.
-    RefPtr<NativeImage> nativeImage(ConcreteObjectSize, const ColorSpace& = ColorSpace::SRGB(), const ImageDrawingExtras* = nullptr) final { return primaryNativeImage(); }
-    RefPtr<NativeImage> currentNativeImage(ConcreteObjectSize, const ImageDrawingExtras* = nullptr) final { return currentNativeImage(); }
+    RefPtr<NativeImage> nativeImage(const ImageDrawDescriptor&, const ColorSpace& = ColorSpace::SRGB()) final { return primaryNativeImage(); }
+    RefPtr<NativeImage> currentNativeImage(const ImageDrawDescriptor&) final { return currentNativeImage(); }
 
     // Image Metadata
     String uti() const final { return m_source->uti(); }
@@ -100,7 +100,7 @@ public:
 
     // NativeImage
     RefPtr<NativeImage> nativeImageAtIndex(unsigned index) const { return m_source->nativeImageAtIndex(index); }
-    RefPtr<NativeImage> nativeImageAtIndex(unsigned index, ConcreteObjectSize, const ImageDrawingExtras* = nullptr) final { return nativeImageAtIndex(index); }
+    RefPtr<NativeImage> nativeImageAtIndex(unsigned index, const ImageDrawDescriptor&) final { return nativeImageAtIndex(index); }
 
     // Testing support.
     UTF8CString sourceUTF8() const { return sourceURL().string().utf8(); }
@@ -137,7 +137,7 @@ private:
 
     // Current NativeImage
     RefPtr<NativeImage> currentPreTransformedNativeImage(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) { return m_source->currentPreTransformedNativeImage(orientation); }
-    RefPtr<NativeImage> currentPreTransformedNativeImage(ConcreteObjectSize, ImageOrientation orientation = ImageOrientation::Orientation::FromImage, const ImageDrawingExtras* = nullptr) final { return currentPreTransformedNativeImage(orientation); }
+    RefPtr<NativeImage> currentPreTransformedNativeImage(const ImageDrawDescriptor& descriptor) final { return currentPreTransformedNativeImage(descriptor.orientation); }
 
     // Image Metadata
     bool hasDensityCorrectedSize() const final { return m_source->hasDensityCorrectedSize(); }
@@ -159,7 +159,7 @@ private:
 
     bool hasHDRContentForTesting() const final { return m_source->hasHDRContentForTesting(); }
 
-    ImageDrawResult drawImage(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions, const ImageDrawingExtras*) final;
+    ImageDrawResult drawImage(GraphicsContext&, const ImageDrawDescriptor&, const FloatRect& destinationRect, const FloatRect& sourceRect) final;
 
     void dump(WTF::TextStream&) const final;
 

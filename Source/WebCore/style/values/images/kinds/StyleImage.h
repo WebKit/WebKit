@@ -28,7 +28,6 @@
 #include <WebCore/CachedImage.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/Image.h>
-#include <WebCore/ImageDrawingExtras.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/StyleURL.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -109,7 +108,7 @@ public:
 
     // Rendering.
     virtual bool canRender(const RenderElement*) const { return true; }
-    virtual ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&) const { return { }; }
+    virtual ImageRenditionOptions renditionOptionsForRenderer(const RenderElement&, ImageRenditionOptions rendition) const { return rendition; }
     virtual bool knownToBeOpaque(const RenderElement&) const = 0;
     virtual bool canDraw(const RenderElement&) const { return true; }
     virtual bool containsCurrentColor() const = 0;
@@ -121,13 +120,13 @@ public:
     virtual void resetAnimation() { }
 
     // Drawing
-    virtual ImageDrawResult draw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions = { }, bool isForFirstLine = false) const = 0;
-    virtual ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions, bool isForFirstLine) const = 0;
-    virtual ImageDrawResult drawTiled(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions = { }, bool isForFirstLine = false) const;
-    virtual ImageDrawResult drawNinePiece(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const NinePieceGeometry&, ImageDrawingOptions = { }) const;
+    virtual ImageDrawResult draw(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source, bool isForFirstLine = false) const = 0;
+    virtual ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, bool isForFirstLine) const = 0;
+    virtual ImageDrawResult drawTiled(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, bool isForFirstLine = false) const;
+    virtual ImageDrawResult drawNinePiece(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const NinePieceGeometry&) const;
     // Rasterizes the image at its concrete object size, with resolutionScale pixels per unit rounded up to whole pixels.
     // A bitmap is its own pixels, whatever size it is asked for.
-    virtual RefPtr<NativeImage> nativeImage(const RenderElement&, ConcreteObjectSize, float resolutionScale, ImageDrawingOptions = { }) const;
+    virtual RefPtr<NativeImage> nativeImage(const RenderElement&, const ImageDrawDescriptor&, float resolutionScale) const;
 
     // Drawing options
     virtual DecodingMode decodingModeForImageDraw(const RenderBoxModelObject&, const PaintInfo&) const { return DecodingMode::Synchronous; }
@@ -175,33 +174,35 @@ protected:
     static FloatRect mapSourceToSize(const FloatRect&, ConcreteObjectSize, const FloatSize&);
     static FloatRect mapSizeToSource(const FloatRect&, const FloatSize&, ConcreteObjectSize);
 
-    ImageDrawResult drawResolved(GraphicsContext&, const RenderElement&, WebCore::Image&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions) const;
-    ImageDrawResult drawResolvedAsPattern(GraphicsContext&, const RenderElement&, WebCore::Image&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions) const;
-    ImageDrawResult drawResolvedTiled(GraphicsContext&, const RenderElement&, WebCore::Image&, NaturalDimensions tileNaturalDimensions, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions) const;
-    ImageDrawResult drawResolvedNinePiece(GraphicsContext&, const RenderElement&, WebCore::Image&, ConcreteObjectSize, const NinePieceGeometry&, ImageDrawingOptions) const;
+    ImageDrawDescriptor descriptorForRenderer(const RenderElement&, const ImageDrawDescriptor&) const;
 
-    static ImageDrawResult drawResolved(GraphicsContext&, NativeImage&, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions);
-    static ImageDrawResult drawResolvedAsPattern(GraphicsContext&, NativeImage&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions);
-    static ImageDrawResult drawResolvedTiled(GraphicsContext&, NativeImage&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions);
-    static ImageDrawResult drawResolvedNinePiece(GraphicsContext&, NativeImage&, const NinePieceGeometry&, ImageDrawingOptions);
+    ImageDrawResult drawResolved(GraphicsContext&, const RenderElement&, WebCore::Image&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source) const;
+    ImageDrawResult drawResolvedAsPattern(GraphicsContext&, const RenderElement&, WebCore::Image&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing) const;
+    ImageDrawResult drawResolvedTiled(GraphicsContext&, const RenderElement&, WebCore::Image&, NaturalDimensions tileNaturalDimensions, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing) const;
+    ImageDrawResult drawResolvedNinePiece(GraphicsContext&, const RenderElement&, WebCore::Image&, const ImageDrawDescriptor&, const NinePieceGeometry&) const;
 
-    static ImageDrawResult drawResolved(GraphicsContext&, ImageBuffer&, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions);
-    static ImageDrawResult drawResolvedAsPattern(GraphicsContext&, ImageBuffer&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions);
-    static ImageDrawResult drawResolvedTiled(GraphicsContext&, ImageBuffer&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions);
-    static ImageDrawResult drawResolvedNinePiece(GraphicsContext&, ImageBuffer&, const NinePieceGeometry&, ImageDrawingOptions);
+    static ImageDrawResult drawResolved(GraphicsContext&, NativeImage&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source);
+    static ImageDrawResult drawResolvedAsPattern(GraphicsContext&, NativeImage&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing);
+    static ImageDrawResult drawResolvedTiled(GraphicsContext&, NativeImage&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing);
+    static ImageDrawResult drawResolvedNinePiece(GraphicsContext&, NativeImage&, const ImageDrawDescriptor&, const NinePieceGeometry&);
+
+    static ImageDrawResult drawResolved(GraphicsContext&, ImageBuffer&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source);
+    static ImageDrawResult drawResolvedAsPattern(GraphicsContext&, ImageBuffer&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing);
+    static ImageDrawResult drawResolvedTiled(GraphicsContext&, ImageBuffer&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing);
+    static ImageDrawResult drawResolvedNinePiece(GraphicsContext&, ImageBuffer&, const ImageDrawDescriptor&, const NinePieceGeometry&);
 
     using DestinationPaint = ImageDrawResult(GraphicsContext&);
     using TiledDraw = ImageDrawResult(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source);
     using TiledDrawPattern = ImageDrawResult(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing);
 
-    static ImageDrawResult drawIntoDestination(GraphicsContext& context, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options, NOESCAPE auto&& draw)
+    static ImageDrawResult drawIntoDestination(GraphicsContext& context, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& source, NOESCAPE auto&& draw)
     {
-        return drawIntoDestinationImpl(context, destination, source, options, draw);
+        return drawIntoDestinationImpl(context, descriptor, destination, source, draw);
     }
 
-    static ImageDrawResult drawTiledUsing(GraphicsContext& context, NaturalDimensions naturalDimensions, NOESCAPE auto&& draw, NOESCAPE auto&& drawPattern, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions options)
+    static ImageDrawResult drawTiledUsing(GraphicsContext& context, NaturalDimensions naturalDimensions, NOESCAPE auto&& draw, NOESCAPE auto&& drawPattern, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing)
     {
-        return drawTiledUsingImpl(context, naturalDimensions, draw, drawPattern, concreteObjectSize, destination, phase, tileSize, spacing, options);
+        return drawTiledUsingImpl(context, naturalDimensions, draw, drawPattern, descriptor, destination, phase, tileSize, spacing);
     }
 
     static ImageDrawResult drawNinePieceUsing(GraphicsContext& context, NOESCAPE auto&& draw, NOESCAPE auto&& drawPattern, ConcreteObjectSize concreteObjectSize, const NinePieceGeometry& geometry)
@@ -210,8 +211,8 @@ protected:
     }
 
 private:
-    static ImageDrawResult drawIntoDestinationImpl(GraphicsContext&, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions, const ScopedLambda<DestinationPaint>&);
-    static ImageDrawResult drawTiledUsingImpl(GraphicsContext&, NaturalDimensions, const ScopedLambda<TiledDraw>&, const ScopedLambda<TiledDrawPattern>&, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions);
+    static ImageDrawResult drawIntoDestinationImpl(GraphicsContext&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source, const ScopedLambda<DestinationPaint>&);
+    static ImageDrawResult drawTiledUsingImpl(GraphicsContext&, NaturalDimensions, const ScopedLambda<TiledDraw>&, const ScopedLambda<TiledDrawPattern>&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing);
     static ImageDrawResult drawTiledUsingImpl(GraphicsContext&, const ScopedLambda<TiledDrawPattern>&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, NinePieceImageRule horizontalRule, NinePieceImageRule verticalRule);
     static ImageDrawResult drawNinePieceUsingImpl(GraphicsContext&, const ScopedLambda<TiledDraw>&, const ScopedLambda<TiledDrawPattern>&, ConcreteObjectSize, const NinePieceGeometry&);
 

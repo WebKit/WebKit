@@ -27,7 +27,7 @@
 
 #include "BoxExtents.h"
 #include "GraphicsContext.h"
-#include "ImageDrawingOptions.h"
+#include "ImageDrawDescriptor.h"
 #include "ImageQualityController.h"
 #include "LayoutRect.h"
 #include "NinePieceGeometry.h"
@@ -199,7 +199,7 @@ static NinePieceScales LEGACY_NODELETE computeTileScales(const NinePieceRects& d
 }
 
 template<typename T>
-static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImageDrawingOptions options)
+static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImageDrawDescriptor descriptor)
 {
     auto styleImage = ninePieceImage.source().tryStyleImage();
     ASSERT(styleImage);
@@ -233,23 +233,23 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
     InterpolationQualityMaintainer interpolationMaintainer(graphicsContext, ImageQualityController::interpolationQualityFromStyle(style));
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    options = { options, styleImage->drawsSVGImage() && AXCustomColorModeController::shouldInvertSVGImage(renderer, *styleImage) ? InvertContent::Yes : InvertContent::No };
+    descriptor = { descriptor, styleImage->drawsSVGImage() && AXCustomColorModeController::shouldInvertSVGImage(renderer, *styleImage) ? InvertContent::Yes : InvertContent::No };
 #endif
 
     // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST styleImage->drawNinePiece(graphicsContext, renderer, ConcreteObjectSize::fixed(FloatSize(source)), geometry, options);
+    SUPPRESS_MEMORY_UNSAFE_CAST styleImage->drawNinePiece(graphicsContext, renderer, descriptor, geometry);
 }
 
 // MARK: - Painter entry point
 
-void NinePieceImagePainter::paint(const Style::BorderImage& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImageDrawingOptions options)
+void NinePieceImagePainter::paint(const Style::BorderImage& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, const ImageDrawDescriptor& descriptor)
 {
-    return paintNinePieceImage(ninePieceImage, graphicsContext, renderer, usedStyle, destination, source, deviceScaleFactor, options);
+    return paintNinePieceImage(ninePieceImage, graphicsContext, renderer, usedStyle, destination, source, deviceScaleFactor, descriptor);
 }
 
-void NinePieceImagePainter::paint(const Style::MaskBorder& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImageDrawingOptions options)
+void NinePieceImagePainter::paint(const Style::MaskBorder& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, const ImageDrawDescriptor& descriptor)
 {
-    return paintNinePieceImage(ninePieceImage, graphicsContext, renderer, usedStyle, destination, source, deviceScaleFactor, options);
+    return paintNinePieceImage(ninePieceImage, graphicsContext, renderer, usedStyle, destination, source, deviceScaleFactor, descriptor);
 }
 
 } // namespace WebCore

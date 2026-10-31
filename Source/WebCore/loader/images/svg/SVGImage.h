@@ -74,7 +74,7 @@ public:
     void setFallbackInvertContent(bool invertContent) { m_fallbackInvertContent = invertContent; }
 #endif
 
-    RefPtr<NativeImage> nativeImage(const FloatSize&, const ColorSpace& = ColorSpace::SRGB(), const ImageDrawingExtras* = nullptr, ImageDrawingOptions = { });
+    RefPtr<NativeImage> nativeImage(const ImageDrawDescriptor&, const ColorSpace& = ColorSpace::SRGB()) final;
 
 private:
     friend class SVGImageChromeClient;
@@ -102,29 +102,23 @@ private:
 
     bool hasHDRContent() const final;
 
-    RefPtr<NativeImage> nativeImage(ConcreteObjectSize, const ColorSpace& = ColorSpace::SRGB(), const ImageDrawingExtras* = nullptr) final;
-    RefPtr<NativeImage> currentNativeImage(ConcreteObjectSize, const ImageDrawingExtras* = nullptr) final;
-    RefPtr<NativeImage> currentPreTransformedNativeImage(ConcreteObjectSize, ImageOrientation = ImageOrientation::Orientation::FromImage, const ImageDrawingExtras* = nullptr) final;
+    RefPtr<NativeImage> currentNativeImage(const ImageDrawDescriptor&) final;
+    RefPtr<NativeImage> currentPreTransformedNativeImage(const ImageDrawDescriptor&) final;
 
     void startAnimationTimerFired();
 
-    ImageDrawResult drawImage(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions, const ImageDrawingExtras*) final;
-    std::optional<PatternTile> currentPatternTile(GraphicsContext&, ConcreteObjectSize, ImageDrawingOptions, const ImageDrawingExtras*) final;
+    ImageDrawResult drawImage(GraphicsContext&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source) final;
+    std::optional<PatternTile> currentPatternTile(GraphicsContext&, const ImageDrawDescriptor&) final;
 
     // FIXME: This should also hold the variable state dataChanged() sets on the Page and its Settings.
     struct DocumentState {
         IntSize containerSize;
-        URL fragmentURL;
-        Style::LinkParameters linkParameters;
-        IgnoreRootPreserveAspectRatio ignoreRootPreserveAspectRatio { IgnoreRootPreserveAspectRatio::No };
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-        bool invertContent { false };
-#endif
+        ImageRenditionOptions rendition;
 
         bool operator==(const DocumentState&) const = default;
     };
 
-    DocumentState documentStateForDraw(ConcreteObjectSize, ImageDrawingOptions, const ImageDrawingExtras*) const;
+    DocumentState documentStateForDraw(const ImageDrawDescriptor&) const;
     void applyDocumentState(Document&, LocalFrameView&, const DocumentState&);
 
     RefPtr<Page> m_page;

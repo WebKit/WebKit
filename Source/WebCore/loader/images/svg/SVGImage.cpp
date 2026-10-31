@@ -41,7 +41,6 @@
 #include "EditorClient.h"
 #include "FrameLoader.h"
 #include "ImageBuffer.h"
-#include "ImageDrawingExtras.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "JSDOMWindowBase.h"
@@ -88,12 +87,14 @@ SVGImage::SVGImage(ImageObserver* observer)
     : Image(observer)
     , m_appliedDocumentState {
         .containerSize = IntSize { },
-        .fragmentURL = URL { },
-        .linkParameters = CSS::Keyword::None { },
-        .ignoreRootPreserveAspectRatio = IgnoreRootPreserveAspectRatio::No,
+        .rendition = {
+            .fragmentURL = URL { },
+            .linkParameters = CSS::Keyword::None { },
+            .ignoreRootPreserveAspectRatio = IgnoreRootPreserveAspectRatio::No,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        .invertContent = false,
+            .invertContent = InvertContent::No,
 #endif
+        },
       }
     , m_startAnimationTimer(*this, &SVGImage::startAnimationTimerFired)
 {
@@ -200,23 +201,13 @@ IntSize SVGImage::containerSize() const
     return IntSize(currentSize);
 }
 
-auto SVGImage::documentStateForDraw(ConcreteObjectSize concreteObjectSize, ImageDrawingOptions options, const ImageDrawingExtras* extras) const -> DocumentState
+auto SVGImage::documentStateForDraw(const ImageDrawDescriptor& descriptor) const -> DocumentState
 {
-    auto state = m_appliedDocumentState;
-    state.containerSize = roundedIntSize(concreteObjectSize.size());
-
-    if (extras) {
-        state.fragmentURL = extras->fragmentURL;
-        state.linkParameters = extras->linkParameters;
-    }
-
-    state.ignoreRootPreserveAspectRatio = options.ignoreRootPreserveAspectRatio();
+    DocumentState state { roundedIntSize(descriptor.concreteObjectSize.size()), descriptor.rendition };
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    auto invert = options.invertContent();
-    state.invertContent = invert == InvertContent::FromResource ? m_fallbackInvertContent : invert == InvertContent::Yes;
-#else
-    UNUSED_PARAM(options);
+    if (state.rendition.invertContent == InvertContent::FromResource)
+        state.rendition.invertContent = m_fallbackInvertContent ? InvertContent::Yes : InvertContent::No;
 #endif
 
     return state;
@@ -232,25 +223,25 @@ void SVGImage::applyDocumentState(Document& document, LocalFrameView& view, cons
     bool updateStyle = false;
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    if (state.invertContent != m_appliedDocumentState.invertContent) {
-        protect(m_page)->settings().setAxCustomColorModeEnabled(state.invertContent);
+    if (state.rendition.invertContent != m_appliedDocumentState.rendition.invertContent) {
+        protect(m_page)->settings().setAxCustomColorModeEnabled(state.rendition.invertContent == InvertContent::Yes);
         updateStyle = true;
     }
 #endif
 
     // FIXME: webkit.org/b/322833 - the resource document holds one container's parameters at a time,
     // so this restyles it once per draw in the container.
-    if (state.linkParameters != m_appliedDocumentState.linkParameters) {
-        protect(document)->styleScope().environmentVariables().setLinkParameters(state.linkParameters);
+    if (state.rendition.linkParameters != m_appliedDocumentState.rendition.linkParameters) {
+        protect(document)->styleScope().environmentVariables().setLinkParameters(state.rendition.linkParameters);
         updateStyle = true;
     }
 
-    if (state.fragmentURL != m_appliedDocumentState.fragmentURL || state.ignoreRootPreserveAspectRatio != m_appliedDocumentState.ignoreRootPreserveAspectRatio) {
-        if (state.fragmentURL != m_appliedDocumentState.fragmentURL)
-            protect(view)->scrollToFragment(state.fragmentURL);
+    if (state.rendition.fragmentURL != m_appliedDocumentState.rendition.fragmentURL || state.rendition.ignoreRootPreserveAspectRatio != m_appliedDocumentState.rendition.ignoreRootPreserveAspectRatio) {
+        if (state.rendition.fragmentURL != m_appliedDocumentState.rendition.fragmentURL)
+            protect(view)->scrollToFragment(state.rendition.fragmentURL);
 
         if (RefPtr root = rootElement()) {
-            root->setIgnoresPreserveAspectRatioForSVGImage(state.ignoreRootPreserveAspectRatio == IgnoreRootPreserveAspectRatio::Yes);
+            root->setIgnoresPreserveAspectRatioForSVGImage(state.rendition.ignoreRootPreserveAspectRatio == IgnoreRootPreserveAspectRatio::Yes);
             if (CheckedPtr renderer = root->renderer())
                 root->invalidateCurrentView(*renderer);
         }
@@ -278,12 +269,7 @@ bool SVGImage::hasHDRContent() const
     return false;
 }
 
-RefPtr<NativeImage> SVGImage::nativeImage(ConcreteObjectSize concreteObjectSize, const ColorSpace& colorSpace, const ImageDrawingExtras* extras)
-{
-    return nativeImage(concreteObjectSize.size(), colorSpace, extras);
-}
-
-RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& size, const ColorSpace& colorSpace, const ImageDrawingExtras* extras, ImageDrawingOptions options)
+RefPtr<NativeImage> SVGImage::nativeImage(const ImageDrawDescriptor& descriptor, const ColorSpace& colorSpace)
 {
     if (!m_page)
         return nullptr;
@@ -294,29 +280,31 @@ RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& size, const ColorSpac
     if (CheckedPtr svgRoot = embeddedSVGRoot())
         hostWindow = svgRoot->hostWindow();
 
+    auto size = descriptor.concreteObjectSize.size();
     RefPtr imageBuffer = ImageBuffer::create(size, renderingMode, RenderingPurpose::DOM, 1, colorSpace, PixelFormat::BGRA8, hostWindow);
     if (!imageBuffer)
         return nullptr;
 
     ImageObserverDisableScope imageObserverDisabler(*this);
 
-    draw(imageBuffer->context(), ConcreteObjectSize::fixed(size), FloatPoint { }, options, extras);
+    draw(imageBuffer->context(), ImageDrawDescriptor { ConcreteObjectSize::fixed(size), descriptor.rendition });
 
     return ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
 }
 
-RefPtr<NativeImage> SVGImage::currentNativeImage(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
+RefPtr<NativeImage> SVGImage::currentNativeImage(const ImageDrawDescriptor& descriptor)
 {
-    return nativeImage(concreteObjectSize, ColorSpace::SRGB(), extras);
+    return nativeImage(descriptor);
 }
 
-RefPtr<NativeImage> SVGImage::currentPreTransformedNativeImage(ConcreteObjectSize concreteObjectSize, ImageOrientation, const ImageDrawingExtras* extras)
+RefPtr<NativeImage> SVGImage::currentPreTransformedNativeImage(const ImageDrawDescriptor& descriptor)
 {
-    return nativeImage(concreteObjectSize, ColorSpace::SRGB(), extras);
+    return nativeImage(descriptor);
 }
 
-std::optional<Image::PatternTile> SVGImage::currentPatternTile(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, ImageDrawingOptions options, const ImageDrawingExtras* extras)
+std::optional<Image::PatternTile> SVGImage::currentPatternTile(GraphicsContext& context, const ImageDrawDescriptor& descriptor)
 {
+    auto concreteObjectSize = descriptor.concreteObjectSize;
     FloatRect zoomedContainerRect = FloatRect(FloatPoint(), concreteObjectSize.size());
     zoomedContainerRect.scale(concreteObjectSize.zoom());
 
@@ -333,18 +321,12 @@ std::optional<Image::PatternTile> SVGImage::currentPatternTile(GraphicsContext& 
     if (!buffer)
         return std::nullopt;
 
-    ImageDrawingOptions bufferOptions {
-        options.ignoreRootPreserveAspectRatio(),
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-        options.invertContent(),
-#endif
-    };
-    draw(buffer->context(), concreteObjectSize, imageBufferSize, zoomedContainerRect, bufferOptions, extras);
+    draw(buffer->context(), ImageDrawDescriptor { concreteObjectSize, descriptor.rendition }, imageBufferSize, zoomedContainerRect);
 
     return PatternTile { SourceImage { buffer.releaseNonNull() }, imageBufferScale };
 }
 
-ImageDrawResult SVGImage::drawImage(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImageDrawingOptions options, const ImageDrawingExtras* extras)
+ImageDrawResult SVGImage::drawImage(GraphicsContext& context, const ImageDrawDescriptor& descriptor, const FloatRect& dstRect, const FloatRect& srcRect)
 {
     if (!m_page)
         return ImageDrawResult::DidNothing;
@@ -353,6 +335,7 @@ ImageDrawResult SVGImage::drawImage(GraphicsContext& context, ConcreteObjectSize
     if (!document)
         return ImageDrawResult::DidNothing;
 
+    auto concreteObjectSize = descriptor.concreteObjectSize;
     auto concreteSize = concreteObjectSize.size();
     if (concreteSize.isEmpty())
         return ImageDrawResult::DidNothing;
@@ -363,7 +346,7 @@ ImageDrawResult SVGImage::drawImage(GraphicsContext& context, ConcreteObjectSize
     RefPtr view = frameView();
     ASSERT(view);
 
-    applyDocumentState(*document, *view, documentStateForDraw(concreteObjectSize, options, extras));
+    applyDocumentState(*document, *view, documentStateForDraw(descriptor));
 
     auto adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(1 / concreteObjectSize.zoom());
@@ -374,19 +357,19 @@ ImageDrawResult SVGImage::drawImage(GraphicsContext& context, ConcreteObjectSize
     adjustedSrcRect.setSize(adjustedSrcSize);
 
     GraphicsContextStateSaver stateSaver(context);
-    context.setCompositeOperation(options.compositeOperator(), options.blendMode());
-    if (options.interpolationQuality() != InterpolationQuality::Default)
-        context.setImageInterpolationQuality(options.interpolationQuality());
+    context.setCompositeOperation(descriptor.compositeOperator, descriptor.blendMode);
+    if (descriptor.rendition.interpolationQuality != InterpolationQuality::Default)
+        context.setImageInterpolationQuality(descriptor.rendition.interpolationQuality);
     context.clip(enclosingIntRect(dstRect));
 
     float alpha = context.alpha();
-    bool compositingRequiresTransparencyLayer = options.compositeOperator() != CompositeOperator::SourceOver || options.blendMode() != BlendMode::Normal || alpha < 1;
+    bool compositingRequiresTransparencyLayer = descriptor.compositeOperator != CompositeOperator::SourceOver || descriptor.blendMode != BlendMode::Normal || alpha < 1;
     if (compositingRequiresTransparencyLayer) {
         context.beginTransparencyLayer(alpha);
         context.setCompositeOperation(CompositeOperator::SourceOver, BlendMode::Normal);
     }
 
-    auto orientation = options.orientation();
+    auto orientation = descriptor.orientation;
     // SVG images don't have intrinsic orientation metadata like EXIF, so FromImage defaults to None.
     if (orientation == ImageOrientation::Orientation::FromImage)
         orientation = ImageOrientation::Orientation::None;
@@ -566,7 +549,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 settings->setDownloadableBinaryFontTrustedTypes(parentSettings->downloadableBinaryFontTrustedTypes());
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
                 m_fallbackInvertContent = AXCustomColorModeController::shouldAdjustSVGImages(m_page);
-                m_appliedDocumentState.invertContent = m_fallbackInvertContent;
+                m_appliedDocumentState.rendition.invertContent = m_fallbackInvertContent ? InvertContent::Yes : InvertContent::No;
                 settings->setAxCustomColorModeEnabled(m_fallbackInvertContent);
                 settings->setAxCustomColorModeAppearanceDetectionEnabled(false);
 #endif

@@ -1869,9 +1869,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     loader/images/Image.h
     loader/images/ImageAdapter.h
-    loader/images/ImageDrawingExtras.h
-    loader/images/ImageDrawingOptions.h
+    loader/images/ImageDrawDescriptor.h
     loader/images/ImageObserver.h
+    loader/images/ImageRenditionOptions.h
     loader/images/SizedImage.h
 
     loader/images/bitmap/BitmapImage.h

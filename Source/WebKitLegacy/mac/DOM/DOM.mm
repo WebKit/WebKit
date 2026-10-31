@@ -644,7 +644,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     RefPtr cachedImage = renderImage->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return protect(cachedImage->image())->adapter().nsImage(renderImage->concreteObjectSizeForElementImage());
+    return protect(cachedImage->image())->adapter().nsImage(WebCore::ImageDrawDescriptor { renderImage->concreteObjectSizeForElementImage() });
 }
 
 #endif
@@ -672,7 +672,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     RefPtr cachedImage = renderImage->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return (__bridge NSData *)protect(cachedImage->image())->adapter().tiffRepresentation(renderImage->concreteObjectSizeForElementImage());
+    return (__bridge NSData *)protect(cachedImage->image())->adapter().tiffRepresentation(WebCore::ImageDrawDescriptor { renderImage->concreteObjectSizeForElementImage() });
 }
 
 #endif

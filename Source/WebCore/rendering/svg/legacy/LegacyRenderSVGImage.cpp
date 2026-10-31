@@ -30,7 +30,6 @@
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
-#include "ImageDrawingExtras.h"
 #include "LayoutRepainter.h"
 #include "LegacyRenderSVGResource.h"
 #include "PointerEventsHitRules.h"
@@ -187,8 +186,8 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
     auto srcRect = placement.source;
 
     auto& context = paintInfo.context();
-    auto options = calculateSVGImageDrawingOptions(*styleImage, *this, context, placement.imageRenderingRectangle.size(), destRect.size(), paintInfo.paintBehavior);
-    styleImage->draw(context, *this, ConcreteObjectSize::fixed(placement.imageRenderingRectangle.size()), destRect, srcRect, options);
+    auto descriptor = calculateSVGImageDrawDescriptor(*styleImage, *this, context, placement.imageRenderingRectangle.size(), destRect.size(), paintInfo.paintBehavior);
+    styleImage->draw(context, *this, descriptor, destRect, srcRect);
 
     if (RefPtr cachedImage = imageResource().cachedImage(); cachedImage && !context.paintingDisabled())
         protect(document())->didPaintImage(imageElement(), cachedImage, destRect);

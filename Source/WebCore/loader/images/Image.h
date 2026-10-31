@@ -31,7 +31,7 @@
 #include <WebCore/DecodingOptions.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/ImageAdapter.h>
-#include <WebCore/ImageDrawingOptions.h>
+#include <WebCore/ImageDrawDescriptor.h>
 #include <WebCore/ImageOrientation.h>
 #include <WebCore/ImageTypes.h>
 #include <WebCore/NaturalDimensions.h>
@@ -51,7 +51,6 @@ class GraphicsContext;
 class NativeImage;
 class ShareableBitmap;
 class Timer;
-struct ImageDrawingExtras;
 enum class CompositeOperator : uint8_t;
 
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.
@@ -151,20 +150,20 @@ public:
     WEBCORE_EXPORT String mimeType() const;
     long long expectedContentLength() const;
 
-    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, FloatPoint destination = { }, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage }, const ImageDrawingExtras* = nullptr);
-    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage }, const ImageDrawingExtras* = nullptr);
-    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions = { ImageOrientation::Orientation::FromImage }, const ImageDrawingExtras* = nullptr);
+    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, const ImageDrawDescriptor&, FloatPoint destination = { });
+    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, const ImageDrawDescriptor&, const FloatRect& destination);
+    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source);
 
-    virtual RefPtr<NativeImage> nativeImage(ConcreteObjectSize, const ColorSpace& = ColorSpace::SRGB(), const ImageDrawingExtras* = nullptr);
-    virtual RefPtr<NativeImage> nativeImageAtIndex(unsigned, ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
-    virtual RefPtr<NativeImage> currentNativeImage(ConcreteObjectSize, const ImageDrawingExtras* = nullptr);
-    virtual RefPtr<NativeImage> currentPreTransformedNativeImage(ConcreteObjectSize, ImageOrientation = ImageOrientation::Orientation::FromImage, const ImageDrawingExtras* = nullptr);
+    virtual RefPtr<NativeImage> nativeImage(const ImageDrawDescriptor&, const ColorSpace& = ColorSpace::SRGB());
+    virtual RefPtr<NativeImage> nativeImageAtIndex(unsigned, const ImageDrawDescriptor&);
+    virtual RefPtr<NativeImage> currentNativeImage(const ImageDrawDescriptor&);
+    virtual RefPtr<NativeImage> currentPreTransformedNativeImage(const ImageDrawDescriptor&);
 
     struct PatternTile {
         SourceImage image;
         FloatSize scale { 1, 1 };
     };
-    virtual std::optional<PatternTile> currentPatternTile(GraphicsContext&, ConcreteObjectSize, ImageDrawingOptions, const ImageDrawingExtras* = nullptr);
+    virtual std::optional<PatternTile> currentPatternTile(GraphicsContext&, const ImageDrawDescriptor&);
 
 #if ASSERT_ENABLED
     virtual bool hasSolidColor() { return false; }
@@ -194,7 +193,7 @@ protected:
 
     virtual bool shouldDrawFromCachedSubimage(GraphicsContext&) const { return false; }
     virtual bool mustDrawFromCachedSubimage(GraphicsContext&) const { return false; }
-    virtual ImageDrawResult drawImage(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions, const ImageDrawingExtras*) = 0;
+    virtual ImageDrawResult drawImage(GraphicsContext&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source) = 0;
 
     virtual bool canReplaceData() const { return false; }
     virtual void dataReplaced() { }

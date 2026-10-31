@@ -335,12 +335,12 @@ bool BitmapImageSource::hasEverAnimated() const
     return m_frameAnimator && m_frameAnimator->hasEverAnimated();
 }
 
-DecodingDestination BitmapImageSource::preferredDecodingDestination(GraphicsContext& context, ImageDrawingOptions options) const
+DecodingDestination BitmapImageSource::preferredDecodingDestination(GraphicsContext& context, const ImageDrawDescriptor& descriptor) const
 {
-    if (options.drawsHDRContent() == DrawsHDRContent::No || options.dynamicRangeLimit() == PlatformDynamicRangeLimit::standard() || !hasHDRGainMap())
+    if (descriptor.rendition.drawsHDRContent == DrawsHDRContent::No || descriptor.rendition.dynamicRangeLimit == PlatformDynamicRangeLimit::standard() || !hasHDRGainMap())
         return DecodingDestination::Base;
 
-    if (options.allowAcceleratedApplyGainMap() == AllowAcceleratedApplyGainMap::Yes && !context.renderingMethod())
+    if (descriptor.allowAcceleratedApplyGainMap == AllowAcceleratedApplyGainMap::Yes && !context.renderingMethod())
         return DecodingDestination::BaseAndGainMap;
 
     return DecodingDestination::ShouldDecodeToHDR;
@@ -516,11 +516,11 @@ void BitmapImageSource::cacheNativeImageAtIndex(unsigned index, SubsamplingLevel
     decodedSizeIncreased(destination.sizeInBytes());
 }
 
-void BitmapImageSource::drawNativeImage(GraphicsContext& context, NativeImage& nativeImage, const FloatRect& destinationRect, const FloatRect& sourceRect, ImageDrawingOptions options)
+void BitmapImageSource::drawNativeImage(GraphicsContext& context, NativeImage& nativeImage, const FloatRect& destinationRect, const FloatRect& sourceRect, RasterDrawingOptions options)
 {
     Ref protectedNativeImage { nativeImage };
     auto sizeBeforeDrawing = protectedNativeImage->sizeInBytes();
-    context.drawNativeImage(protectedNativeImage, destinationRect, sourceRect, options.rasterDrawingOptions());
+    context.drawNativeImage(protectedNativeImage, destinationRect, sourceRect, options);
     auto sizeAfterDrawing = protectedNativeImage->sizeInBytes();
 
     if (sizeBeforeDrawing == sizeAfterDrawing)

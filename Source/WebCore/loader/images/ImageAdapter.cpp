@@ -39,14 +39,14 @@ void ImageAdapter::invalidate()
 }
 #endif
 
-Vector<Ref<NativeImage>> ImageAdapter::allNativeImages(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
+Vector<Ref<NativeImage>> ImageAdapter::allNativeImages(const ImageDrawDescriptor& descriptor)
 {
     Vector<Ref<NativeImage>> nativeImages;
     RefPtr image = this->image();
     unsigned count = image->frameCount();
 
     for (unsigned i = 0; i < count; ++i) {
-        if (RefPtr nativeImage = image->nativeImageAtIndex(i, concreteObjectSize, extras))
+        if (RefPtr nativeImage = image->nativeImageAtIndex(i, descriptor))
             nativeImages.append(nativeImage.releaseNonNull());
     }
 

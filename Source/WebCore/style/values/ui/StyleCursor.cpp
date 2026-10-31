@@ -89,13 +89,14 @@ std::optional<WebCore::Cursor> Cursor::selectImageCursor(const RenderObject* ren
         if (!visibleContentRect.contains(cursorRect))
             continue;
 
-        ImageDrawingOptions options {
+        ImageDrawDescriptor descriptor {
+            concreteCursorSize,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
             AXCustomColorModeController::shouldInvertSVGImage(*renderElement, styleImage.get()) ? InvertContent::Yes : InvertContent::No,
 #endif
         };
 
-        RefPtr nativeImage = styleImage->nativeImage(*renderElement, concreteCursorSize, deviceScaleFactor, options);
+        RefPtr nativeImage = styleImage->nativeImage(*renderElement, descriptor, deviceScaleFactor);
         if (!nativeImage || nativeImage->size().isEmpty())
             continue;
 

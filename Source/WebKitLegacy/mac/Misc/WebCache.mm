@@ -159,7 +159,7 @@
         return nullptr;
     
     Ref image = *cachedImage->image();
-    auto nativeImage = image->nativeImage(WebCore::DefaultSizing { }.resolve(image->naturalDimensions()));
+    auto nativeImage = image->nativeImage(WebCore::ImageDrawDescriptor { WebCore::DefaultSizing { }.resolve(image->naturalDimensions()) });
     if (!nativeImage)
         return nullptr;
 

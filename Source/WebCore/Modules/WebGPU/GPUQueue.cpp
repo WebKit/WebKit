@@ -538,7 +538,7 @@ static void imageBytesForSource(WebGPUIntegration& gpu, WebGPU::Queue& backing, 
             else if (RefPtr svgImage = dynamicDowncast<SVGImage>(cachedImage->image())) {
                 // An <img> can also hold a PDFDocumentImage, which is neither a BitmapImage nor an
                 // SVGImage; there is nothing to read pixels from in that case.
-                nativeImage = svgImage->nativeImage(FloatSize(destination.texture->width(), destination.texture->height()));
+                nativeImage = svgImage->nativeImage(ImageDrawDescriptor { ConcreteObjectSize::fixed(FloatSize(destination.texture->width(), destination.texture->height())) });
                 isSVG = true;
             }
 
@@ -872,7 +872,7 @@ static GPUResidentSource gpuResidentSourceForImageElement(ScriptExecutionContext
     // CoreGraphics decodes to premultiplied alpha, so compositing over the buffer's transparent
     // black leaves the decoded channels untouched; the copy is lossless for as long as the
     // destination wants premultiplied alpha too.
-    image->draw(imageBuffer->context(), destinationRect, sourceRect, { CompositeOperator::Copy, ImageOrientation::Orientation::FromImage });
+    image->draw(imageBuffer->context(), ImageDrawDescriptor { ConcreteObjectSize::fixed(image->size()), CompositeOperator::Copy }, destinationRect, sourceRect);
     return { WTF::move(imageBuffer) };
 }
 #endif // HAVE(IOSURFACE) && ENABLE(VIDEO) && ENABLE(WEB_CODECS)

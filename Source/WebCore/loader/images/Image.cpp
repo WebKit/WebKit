@@ -35,7 +35,6 @@
 #include "ImageAdapter.h"
 #include "ImageBuffer.h"
 #include "ImageDecoder.h"
-#include "ImageDrawingExtras.h"
 #include "ImageObserver.h"
 #include "MIMETypeRegistry.h"
 #include "NativeImage.h"
@@ -173,7 +172,7 @@ static void tryCreateNativeImageFromData(std::span<const uint8_t> data, std::opt
             completionHandler(nullptr);
             return;
         }
-        completionHandler(svgImage->nativeImage(DefaultSizing { preferredSize }.resolve(svgImage->naturalDimensions()).size()));
+        completionHandler(svgImage->nativeImage(ImageDrawDescriptor { ConcreteObjectSize::fixed(DefaultSizing { preferredSize }.resolve(svgImage->naturalDimensions()).size()) }));
     });
 }
 
@@ -200,7 +199,7 @@ static RefPtr<NativeImage> createNativeImageFromSVGImage(SVGImage& image, const 
     if (!buffer)
         return nullptr;
 
-    image.draw(buffer->context(), ConcreteObjectSize::fixed(size));
+    image.draw(buffer->context(), ImageDrawDescriptor { ConcreteObjectSize::fixed(size) });
 
     return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
 }
@@ -312,21 +311,22 @@ long long Image::expectedContentLength() const
     return imageObserver() ? imageObserver()->expectedContentLength() : 0;
 }
 
-ImageDrawResult Image::draw(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, FloatPoint destination, ImageDrawingOptions options, const ImageDrawingExtras* extras)
+ImageDrawResult Image::draw(GraphicsContext& context, const ImageDrawDescriptor& descriptor, FloatPoint destination)
 {
-    return draw(context, concreteObjectSize, FloatRect(destination, concreteObjectSize.size()), FloatRect({ }, concreteObjectSize.size()), options, extras);
+    auto size = descriptor.concreteObjectSize.size();
+    return draw(context, descriptor, FloatRect(destination, size), FloatRect({ }, size));
 }
 
-ImageDrawResult Image::draw(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, ImageDrawingOptions options, const ImageDrawingExtras* extras)
+ImageDrawResult Image::draw(GraphicsContext& context, const ImageDrawDescriptor& descriptor, const FloatRect& destination)
 {
-    return draw(context, concreteObjectSize, destination, FloatRect({ }, concreteObjectSize.size()), options, extras);
+    return draw(context, descriptor, destination, FloatRect({ }, descriptor.concreteObjectSize.size()));
 }
 
-ImageDrawResult Image::draw(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options, const ImageDrawingExtras* extras)
+ImageDrawResult Image::draw(GraphicsContext& context, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& source)
 {
     if (context.paintingDisabled())
         return ImageDrawResult::DidNothing;
-    return drawImage(context, concreteObjectSize, destination, source, options, extras);
+    return drawImage(context, descriptor, destination, source);
 }
 
 void Image::fillWithSolidColor(GraphicsContext& ctxt, const FloatRect& dstRect, const Color& color, CompositeOperator op)
@@ -340,29 +340,29 @@ void Image::fillWithSolidColor(GraphicsContext& ctxt, const FloatRect& dstRect, 
     ctxt.setCompositeOperation(previousOperator);
 }
 
-RefPtr<NativeImage> Image::nativeImage(ConcreteObjectSize, const ColorSpace&, const ImageDrawingExtras*)
+RefPtr<NativeImage> Image::nativeImage(const ImageDrawDescriptor&, const ColorSpace&)
 {
     return nullptr;
 }
 
-RefPtr<NativeImage> Image::nativeImageAtIndex(unsigned, ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
+RefPtr<NativeImage> Image::nativeImageAtIndex(unsigned, const ImageDrawDescriptor& descriptor)
 {
-    return nativeImage(concreteObjectSize, ColorSpace::SRGB(), extras);
+    return nativeImage(descriptor);
 }
 
-RefPtr<NativeImage> Image::currentNativeImage(ConcreteObjectSize concreteObjectSize, const ImageDrawingExtras* extras)
+RefPtr<NativeImage> Image::currentNativeImage(const ImageDrawDescriptor& descriptor)
 {
-    return nativeImage(concreteObjectSize, ColorSpace::SRGB(), extras);
+    return nativeImage(descriptor);
 }
 
-RefPtr<NativeImage> Image::currentPreTransformedNativeImage(ConcreteObjectSize concreteObjectSize, ImageOrientation, const ImageDrawingExtras* extras)
+RefPtr<NativeImage> Image::currentPreTransformedNativeImage(const ImageDrawDescriptor& descriptor)
 {
-    return currentNativeImage(concreteObjectSize, extras);
+    return currentNativeImage(descriptor);
 }
 
-std::optional<Image::PatternTile> Image::currentPatternTile(GraphicsContext&, ConcreteObjectSize concreteObjectSize, ImageDrawingOptions options, const ImageDrawingExtras* extras)
+std::optional<Image::PatternTile> Image::currentPatternTile(GraphicsContext&, const ImageDrawDescriptor& descriptor)
 {
-    RefPtr tileImage = currentPreTransformedNativeImage(concreteObjectSize, options.orientation(), extras);
+    RefPtr tileImage = currentPreTransformedNativeImage(descriptor);
     if (!tileImage)
         return std::nullopt;
 
@@ -395,7 +395,7 @@ RefPtr<ShareableBitmap> Image::toShareableBitmap(ConcreteObjectSize concreteObje
     if (!graphicsContext)
         return nullptr;
 
-    const_cast<Image&>(*this).draw(*graphicsContext, concreteObjectSize);
+    const_cast<Image&>(*this).draw(*graphicsContext, ImageDrawDescriptor { concreteObjectSize });
     return bitmap;
 }
 

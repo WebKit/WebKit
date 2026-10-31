@@ -636,7 +636,7 @@ void MediaSession::updateNowPlayingInfo(NowPlayingInfo& info)
         info.metadata.artwork = { {
             .src = metadataWithImage->artworkSrc(),
             .mimeType = image->mimeType(),
-            .image = image->nativeImage(artworkImage.concreteObjectSize),
+            .image = image->nativeImage(ImageDrawDescriptor { artworkImage.concreteObjectSize }),
         } };
     }
     if (m_metadata) {
