@@ -138,7 +138,17 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
 
     auto dmabuf = m_videoFrame->getDMABuf();
     RELEASE_ASSERT(dmabuf);
-    return CoordinatedPlatformLayerBufferDMABuf::create(dmabuf.releaseNonNull(), m_flags, nullptr);
+    auto buffer = CoordinatedPlatformLayerBufferDMABuf::create(dmabuf.releaseNonNull(), m_flags, nullptr);
+    buffer->setYUVPlaneSource([this](unsigned planeIndex, unsigned& stride) -> std::span<const uint8_t> {
+        if (!m_repackMappedFrame)
+            m_repackMappedFrame.emplace(GstMappedFrame(m_videoFrame->sample(), GST_MAP_READ));
+        if (!*m_repackMappedFrame)
+            return { };
+        stride = m_repackMappedFrame->planeStride(planeIndex);
+        auto data = m_repackMappedFrame->planeData(planeIndex);
+        return { data.data(), data.size() };
+    });
+    return buffer;
 }
 #endif // USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
 

@@ -27,6 +27,8 @@
 
 #if USE(COORDINATED_GRAPHICS) && USE(GBM)
 #include "CoordinatedPlatformLayerBuffer.h"
+#include <span>
+#include <wtf/Function.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if !USE(TEXTURE_MAPPER)
@@ -56,6 +58,14 @@ public:
 #endif
     virtual ~CoordinatedPlatformLayerBufferDMABuf();
 
+#if USE(TEXTURE_MAPPER)
+    // Provides CPU-readable rows for a YUV plane whose standalone DMABuf import the GPU
+    // rejected, so the plane can be repacked at an accepted stride. Set by the owner that
+    // has access to the source frame; invoked only when a plane's zero-copy import fails.
+    using YUVPlaneSourceFunction = Function<std::span<const uint8_t>(unsigned planeIndex, unsigned& stride)>;
+    void setYUVPlaneSource(YUVPlaneSourceFunction&& source) { m_yuvPlaneSource = WTF::move(source); }
+#endif
+
 private:
 #if USE(TEXTURE_MAPPER)
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
@@ -64,10 +74,16 @@ private:
     sk_sp<SkImage> skiaImage() override { return m_image; }
 #endif
 
+#if USE(TEXTURE_MAPPER)
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> importDMABuf(bool& containsCopy) const;
+#else
     std::unique_ptr<CoordinatedPlatformLayerBuffer> importDMABuf() const;
+#endif
 
     const Ref<DMABufBuffer> m_dmabuf;
 #if USE(TEXTURE_MAPPER)
+    YUVPlaneSourceFunction m_yuvPlaneSource;
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_copiedBuffer;
     WTF::UnixFileDescriptor m_fenceFD;
 #else
     sk_sp<SkImage> m_image;
