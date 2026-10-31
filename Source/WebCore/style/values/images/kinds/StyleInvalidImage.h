@@ -27,6 +27,7 @@
 #pragma once
 
 #include "StyleGeneratedImage.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class CSSInvalidImageValue;
 namespace Style {
 
 class InvalidImage final : public GeneratedImage {
+    WTF_MAKE_TZONE_ALLOCATED(InvalidImage);
 public:
     static Ref<InvalidImage> LEGACY_NODELETE create();
 

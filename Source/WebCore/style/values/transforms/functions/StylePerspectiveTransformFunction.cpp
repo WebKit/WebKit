@@ -33,9 +33,12 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerspectiveTransformFunction);
 
 PerspectiveTransformFunction::PerspectiveTransformFunction(Perspective p)
     : TransformFunctionBase(TransformFunctionBase::Type::Perspective)

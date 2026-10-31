@@ -28,9 +28,12 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SkewTransformFunction);
 
 SkewTransformFunction::SkewTransformFunction(Angle<> angleX, Angle<> angleY, TransformFunctionBase::Type type)
     : TransformFunctionBase(type)

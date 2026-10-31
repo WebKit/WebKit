@@ -27,6 +27,7 @@
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
 #include <WebCore/StyleTransformFunctionBase.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -43,6 +44,7 @@ namespace Style {
 // https://drafts.csswg.org/css-transforms-2/#funcdef-rotatez
 
 class RotateTransformFunction final : public TransformFunctionBase {
+    WTF_MAKE_TZONE_ALLOCATED(RotateTransformFunction);
 public:
     static Ref<const RotateTransformFunction> LEGACY_NODELETE create(Angle<>, TransformFunctionBase::Type);
     static Ref<const RotateTransformFunction> LEGACY_NODELETE create(Number<>, Number<>, Number<>, Angle<>, TransformFunctionBase::Type);

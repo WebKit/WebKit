@@ -31,6 +31,7 @@
 #include "StyleGeneratedImage.h"
 #include "StyleGradient.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -38,6 +39,7 @@ namespace Style {
 struct AppleColorFilter;
 
 class GradientImage final : public GeneratedImage {
+    WTF_MAKE_TZONE_ALLOCATED(GradientImage);
 public:
     static Ref<GradientImage> create(Gradient gradient)
     {

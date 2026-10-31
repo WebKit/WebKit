@@ -27,6 +27,7 @@
 
 #include "StylePrimitiveNumericTypes.h"
 #include "StyleTransformFunctionBase.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -35,6 +36,7 @@ namespace Style {
 // https://drafts.csswg.org/css-transforms/#funcdef-transform-matrix
 
 class MatrixTransformFunction final : public TransformFunctionBase {
+    WTF_MAKE_TZONE_ALLOCATED(MatrixTransformFunction);
 public:
     static Ref<const MatrixTransformFunction> LEGACY_NODELETE createIdentity();
     static Ref<const MatrixTransformFunction> LEGACY_NODELETE create(Number<>, Number<>, Number<>, Number<>, Number<>, Number<>);

@@ -28,11 +28,13 @@
 
 #include <WebCore/DocumentEnums.h>
 #include <WebCore/StyleComputedStyleProperties.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 class ComputedStyle final : public ComputedStyleProperties {
+    WTF_MAKE_TZONE_ALLOCATED(ComputedStyle);
 public:
     ComputedStyle(ComputedStyle&&);
     ComputedStyle& operator=(ComputedStyle&&);
