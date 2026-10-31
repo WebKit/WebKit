@@ -102,7 +102,7 @@ private:
     RetainPtr<AVAssetTrack> m_avAssetTrack;
     RetainPtr<AVMutableAudioMix> m_avAudioMix;
     RetainPtr<MTAudioProcessingTapRef> m_tap;
-    AudioConverterRef m_converter;
+    AudioConverterRef m_converter { nullptr };
     std::unique_ptr<PitchShiftAudioUnit> m_pitchShifter;
     std::unique_ptr<MultiChannelResampler> m_multiChannelResampler;
     std::unique_ptr<AudioBufferList, WTF::SystemFree<AudioBufferList>> m_list;
