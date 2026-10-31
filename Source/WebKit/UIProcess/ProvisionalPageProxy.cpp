@@ -131,6 +131,8 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<FrameProcess>
         suspendedPage->unsuspend(navigation.targetItem()->mainFrameItem().identifier());
         m_mainFrame = suspendedPage->mainFrame();
         m_mainFrame->updateReferrerPolicy(ReferrerPolicy::EmptyString);
+        if (&suspendedPage->browsingContextGroup() != m_browsingContextGroup.ptr())
+            m_restoredPageBrowsingContextGroup = suspendedPage->browsingContextGroup();
     } else if (m_shouldReuseMainFrame) {
         m_mainFrame = page.mainFrame();
         m_mainFrame->updateReferrerPolicy(ReferrerPolicy::EmptyString);
@@ -195,6 +197,10 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
     process->removeProvisionalPageProxy(*this);
     if (RefPtr takenRemotePage = m_takenRemotePage)
         takenRemotePage->disconnect();
+    if (RefPtr restoredPageBrowsingContextGroup = m_restoredPageBrowsingContextGroup) {
+        if (RefPtr page = m_page)
+            restoredPageBrowsingContextGroup->closeRemotePagesForPage(*page);
+    }
 }
 
 WebProcessProxy& ProvisionalPageProxy::process() const
@@ -235,6 +241,11 @@ RefPtr<DrawingAreaProxy> ProvisionalPageProxy::takeDrawingArea()
     if (RefPtr drawingArea = m_drawingArea)
         drawingArea->stopReceivingMessages(protect(process()));
     return WTF::move(m_drawingArea);
+}
+
+RefPtr<BrowsingContextGroup> ProvisionalPageProxy::takeRestoredPageBrowsingContextGroup()
+{
+    return WTF::move(m_restoredPageBrowsingContextGroup);
 }
 
 void ProvisionalPageProxy::setNavigation(API::Navigation& navigation)

@@ -3504,7 +3504,7 @@ private:
     };
 
     void launchProcess(const WebCore::Site&, ProcessLaunchReason);
-    void swapToProvisionalPage(Ref<ProvisionalPageProxy>&&);
+    void swapToProvisionalPage(Ref<ProvisionalPageProxy>&&, BrowsingContextGroup&);
     void finishAttachingToWebProcess(const WebCore::Site&, ProcessLaunchReason);
 
     RefPtr<API::Navigation> launchProcessForReload();

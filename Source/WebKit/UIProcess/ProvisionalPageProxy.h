@@ -131,6 +131,7 @@ public:
 
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
     RefPtr<DrawingAreaProxy> takeDrawingArea();
+    RefPtr<BrowsingContextGroup> takeRestoredPageBrowsingContextGroup();
 
     void LEGACY_NODELETE setNavigation(API::Navigation&);
 
@@ -226,6 +227,7 @@ private:
     WebCore::PageIdentifier m_webPageID;
     Ref<FrameProcess> m_frameProcess;
     const Ref<BrowsingContextGroup> m_browsingContextGroup;
+    RefPtr<BrowsingContextGroup> m_restoredPageBrowsingContextGroup;
     RefPtr<RemotePageProxy> m_takenRemotePage;
 
     // Keep WebsiteDataStore alive for provisional page load.

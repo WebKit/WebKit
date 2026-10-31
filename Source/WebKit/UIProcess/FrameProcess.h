@@ -68,6 +68,7 @@ private:
         return adoptRef(*new FrameProcess(process, group, site, mainFrameSite, preferences, loadedWebArchive, browsingContextGroupUpdate));
     }
     FrameProcess(WebProcessProxy&, BrowsingContextGroup&, const std::optional<WebCore::Site>&, const WebCore::Site& mainFrameSite, const WebPreferences&, LoadedWebArchive, BrowsingContextGroupUpdate);
+    void setBrowsingContextGroup(BrowsingContextGroup&);
 
     const Ref<WebProcessProxy> m_process;
     WeakPtr<BrowsingContextGroup> m_browsingContextGroup;

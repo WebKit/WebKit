@@ -72,6 +72,11 @@ FrameProcess::~FrameProcess()
         group->removeFrameProcess(*this);
 }
 
+void FrameProcess::setBrowsingContextGroup(BrowsingContextGroup& group)
+{
+    m_browsingContextGroup = group;
+}
+
 BrowsingContextGroup* FrameProcess::browsingContextGroup() const
 {
     return m_browsingContextGroup.get();
