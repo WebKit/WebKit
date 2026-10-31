@@ -192,8 +192,13 @@ TEST(DrawingToPDF, DisplayListData)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
 
+    RetainPtr webFonts = @[
+        [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"Ahem" withExtension:@"ttf"]],
+        [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"Ahem-10000A" withExtension:@"ttf"]],
+    ];
+
     __block bool done = false;
-    [webView _runDisplayListDataTestsInGPUProcessForTesting:^(NSArray<NSString *> *failures) {
+    [webView _runDisplayListDataTestsInGPUProcessWithWebFonts:webFonts.get() completionHandler:^(NSArray<NSString *> *failures) {
         for (NSString *failure in failures)
             ADD_FAILURE() << failure.UTF8String;
         done = true;

@@ -626,9 +626,9 @@ void GPUProcessProxy::webProcessConnectionCountForTesting(CompletionHandler<void
     sendWithAsyncReply(Messages::GPUProcess::WebProcessConnectionCountForTesting(), WTF::move(completionHandler));
 }
 
-void GPUProcessProxy::runDisplayListDataTestsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void GPUProcessProxy::runDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuffer>>&& webFonts, CompletionHandler<void(std::optional<Vector<String>>&&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::GPUProcess::RunDisplayListDataTestsForTesting(), WTF::move(completionHandler));
+    sendWithAsyncReply(Messages::GPUProcess::RunDisplayListDataTestsForTesting(WTF::move(webFonts)), WTF::move(completionHandler));
 }
 
 void GPUProcessProxy::didClose(IPC::Connection&)

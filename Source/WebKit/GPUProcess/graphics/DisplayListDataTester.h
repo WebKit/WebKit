@@ -29,9 +29,13 @@
 
 #include <wtf/Forward.h>
 
+namespace WebCore {
+class SharedBuffer;
+}
+
 namespace WebKit {
 
-Vector<String> testDisplayListData();
+Vector<String> testDisplayListData(const Vector<Ref<WebCore::SharedBuffer>>& webFonts);
 
 } // namespace WebKit
 

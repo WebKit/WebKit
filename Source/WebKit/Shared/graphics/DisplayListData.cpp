@@ -28,12 +28,54 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "SharedFont.h"
 #include <WebCore/DisplayListRecorderImpl.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+static bool hasFEImage(const Filter& filter)
+{
+    return !filter.effectsOfType(FilterFunction::Type::FEImage).isEmpty();
+}
+
+static std::optional<SourceBrushData> sourceBrushData(const SourceBrush& brush)
+{
+    if (brush.pattern())
+        return std::nullopt;
+    SourceBrushData result { brush.color(), std::monostate { } };
+    if (RefPtr gradient = brush.gradient())
+        result.patternGradient = SourceBrushLogicalGradient { gradient.releaseNonNull(), brush.gradientSpaceTransform() };
+    return result;
+}
+
+static std::optional<SetStateData> setStateData(const GraphicsContextState& state)
+{
+    auto fillBrush = sourceBrushData(state.fillBrush());
+    auto strokeBrush = sourceBrushData(state.strokeBrush());
+    if (!fillBrush || !strokeBrush)
+        return std::nullopt;
+    return SetStateData {
+        state.changes(),
+        WTF::move(*fillBrush),
+        state.fillRule(),
+        WTF::move(*strokeBrush),
+        state.strokeThickness(),
+        state.strokeStyle(),
+        state.compositeMode(),
+        state.dropShadow(),
+        state.style(),
+        state.alpha(),
+        state.imageInterpolationQuality(),
+        state.textDrawingMode(),
+        state.shouldAntialias(),
+        state.shouldSmoothFonts(),
+        state.shouldSubpixelQuantizeFonts(),
+        state.shadowsIgnoreTransforms()
+    };
+}
 
 namespace {
 
@@ -43,7 +85,7 @@ public:
     {
         if (!encodeDisplayList(displayList))
             return std::nullopt;
-        return DisplayListData { WTF::move(m_displayLists) };
+        return DisplayListData { WTF::move(m_customFonts), WTF::move(m_fonts), WTF::move(m_displayLists) };
     }
 
 private:
@@ -93,18 +135,40 @@ private:
                 Ref contents = recorder->takeDisplayList();
                 return appendItems(contents->items(), result);
             },
+            [&](const DisplayList::DrawGlyphs& item) {
+                auto advances = item.advances().map([](auto& advance) {
+                    return WebCore::size(advance);
+                });
+                Ref font = item.font();
+                result.constructAndAppend(WTF::InPlaceType<DrawGlyphsWithFontAtIndex>, fontIndex(font), item.glyphs(), WTF::move(advances), item.localAnchor(), item.fontSmoothingMode());
+                return true;
+            },
+            [&](const DisplayList::DrawFilteredImageBuffer& item) {
+                if (item.sourceImage() || hasFEImage(item.filter()))
+                    return false;
+                result.constructAndAppend(WTF::InPlaceType<DrawFilteredImageBuffer>, item.sourceImageRect(), item.filter());
+                return true;
+            },
+            [&](const DisplayList::DrawSystemImage& item) {
+#if USE(SYSTEM_PREVIEW)
+                if (item.systemImage().systemImageType() == SystemImageType::ARKitBadge)
+                    return false;
+#endif
+                result.constructAndAppend(WTF::InPlaceType<DisplayList::DrawSystemImage>, item);
+                return true;
+            },
+            [&](const DisplayList::SetState& item) {
+                auto state = setStateData(item.state());
+                if (!state)
+                    return false;
+                result.constructAndAppend(WTF::InPlaceType<SetStateData>, WTF::move(*state));
+                return true;
+            },
             [](const DisplayList::ClipToImageBuffer&) { return false; },
-            [](const DisplayList::DrawControlPart&) { return false; },
-            [](const DisplayList::DrawFilteredImageBuffer&) { return false; },
-            [](const DisplayList::DrawGlyphs&) { return false; },
             [](const DisplayList::DrawImageBuffer&) { return false; },
             [](const DisplayList::DrawNativeImage&) { return false; },
             [](const DisplayList::DrawPatternNativeImage&) { return false; },
             [](const DisplayList::DrawPatternImageBuffer&) { return false; },
-            [](const DisplayList::DrawSystemImage&) { return false; },
-            [](const DisplayList::FillRectWithGradient&) { return false; },
-            [](const DisplayList::FillRectWithGradientAndSpaceTransform&) { return false; },
-            [](const DisplayList::SetState&) { return false; },
 #if USE(SKIA)
             [](const DisplayList::DrawTextBlob&) { return false; },
 #endif
@@ -114,25 +178,107 @@ private:
             });
     }
 
+    uint64_t fontIndex(const FontBase& font)
+    {
+        return m_fontIndices.ensure(&font, [&] {
+            std::optional<uint64_t> customFontIndex;
+            if (RefPtr customFont = font.platformData().customPlatformData()) {
+                customFontIndex = m_customFontIndices.ensure(customFont, [&] {
+                    m_customFonts.append(customFont->serializedData());
+                    return m_customFonts.size() - 1;
+                }).iterator->value;
+            }
+            m_fonts.append(DisplayListDataFont { font.attributes(), font.platformData().attributes(), customFontIndex });
+            return m_fonts.size() - 1;
+        }).iterator->value;
+    }
+
+    Vector<FontCustomPlatformSerializedData> m_customFonts;
+    Vector<DisplayListDataFont> m_fonts;
     Vector<Vector<DisplayListDataItem>> m_displayLists;
+    HashMap<RefPtr<const FontCustomPlatformData>, uint64_t> m_customFontIndices;
+    HashMap<RefPtr<const FontBase>, uint64_t> m_fontIndices;
     HashMap<RefPtr<const DisplayList::DisplayList>, uint64_t> m_indices;
     HashSet<RefPtr<const DisplayList::DisplayList>> m_displayListsBeingEncoded;
 };
 
 } // namespace
 
+static SourceBrush sourceBrush(const SourceBrushData& data)
+{
+    SourceBrush result { data.color };
+    if (auto* gradient = std::get_if<SourceBrushLogicalGradient>(&data.patternGradient))
+        result.setGradient(gradient->gradient.copyRef(), gradient->spaceTransform);
+    return result;
+}
+
+static GraphicsContextState graphicsContextState(const SetStateData& data)
+{
+    GraphicsContextState state;
+    state.setFillBrush(sourceBrush(data.fillBrush));
+    state.setFillRule(data.fillRule);
+    state.setStrokeBrush(sourceBrush(data.strokeBrush));
+    state.setStrokeThickness(data.strokeThickness);
+    state.setStrokeStyle(data.strokeStyle);
+    state.setCompositeMode(data.compositeMode);
+    state.setDropShadow(data.dropShadow);
+    state.setStyle(data.style);
+    state.setAlpha(data.alpha);
+    state.setImageInterpolationQuality(data.imageInterpolationQuality);
+    state.setTextDrawingMode(data.textDrawingMode);
+    state.setShouldAntialias(data.shouldAntialias);
+    state.setShouldSmoothFonts(data.shouldSmoothFonts);
+    state.setShouldSubpixelQuantizeFonts(data.shouldSubpixelQuantizeFonts);
+    state.setShadowsIgnoreTransforms(data.shadowsIgnoreTransforms);
+    state.didApplyChanges();
+    state.markChanged(data.changes);
+    return state;
+}
+
+static std::optional<Vector<Ref<const FontBase>>> createFonts(const Vector<FontCustomPlatformSerializedData>& customFontData, const Vector<DisplayListDataFont>& fontData, bool shouldUseLockdownFontParser)
+{
+    Vector<Ref<FontCustomPlatformData>> customFonts;
+    customFonts.reserveInitialCapacity(customFontData.size());
+    for (auto data : customFontData) {
+        auto customFont = FontCustomPlatformData::tryMakeFromSerializationData(WTF::move(data), shouldUseLockdownFontParser);
+        if (!customFont)
+            return std::nullopt;
+        customFonts.append(WTF::move(*customFont));
+    }
+
+    Vector<Ref<const FontBase>> fonts;
+    fonts.reserveInitialCapacity(fontData.size());
+    for (auto& data : fontData) {
+        RefPtr<FontCustomPlatformData> customFont;
+        if (data.customFontIndex) {
+            if (*data.customFontIndex >= customFonts.size())
+                return std::nullopt;
+            customFont = customFonts[*data.customFontIndex].ptr();
+        }
+        auto platformData = FontPlatformData::create(data.platformData, customFont.get());
+        fonts.append(SharedFont::create(platformData, data.attributes.origin, data.attributes.isInterstitial, data.attributes.visibility, data.attributes.isTextOrientationFallback, data.attributes.renderingResourceIdentifier));
+    }
+    return fonts;
+}
+
 std::optional<DisplayListData> DisplayListData::create(const DisplayList::DisplayList& displayList)
 {
     return DisplayListDataEncoder { }.encode(displayList);
 }
 
-DisplayListData::DisplayListData(Vector<Vector<DisplayListDataItem>>&& displayLists)
-    : m_displayLists(WTF::move(displayLists))
+DisplayListData::DisplayListData(Vector<FontCustomPlatformSerializedData>&& customFonts, Vector<DisplayListDataFont>&& fonts, Vector<Vector<DisplayListDataItem>>&& displayLists)
+    : m_customFonts(WTF::move(customFonts))
+    , m_fonts(WTF::move(fonts))
+    , m_displayLists(WTF::move(displayLists))
 {
 }
 
-RefPtr<const DisplayList::DisplayList> DisplayListData::createDisplayList() const
+RefPtr<const DisplayList::DisplayList> DisplayListData::createDisplayList(bool shouldUseLockdownFontParser) const
 {
+    auto fonts = createFonts(m_customFonts, m_fonts, shouldUseLockdownFontParser);
+    if (!fonts)
+        return nullptr;
+
     Vector<Ref<const DisplayList::DisplayList>> displayLists;
     displayLists.reserveInitialCapacity(m_displayLists.size());
     for (auto& items : m_displayLists) {
@@ -144,6 +290,25 @@ RefPtr<const DisplayList::DisplayList> DisplayListData::createDisplayList() cons
                     if (item.index >= displayLists.size())
                         return false;
                     result.constructAndAppend(WTF::InPlaceType<DisplayList::DrawDisplayList>, displayLists[item.index].copyRef());
+                    return true;
+                },
+                [&](const DrawGlyphsWithFontAtIndex& item) {
+                    if (item.fontIndex >= fonts->size() || item.glyphs.size() != item.advances.size())
+                        return false;
+                    auto advances = item.advances.map([](auto& advance) {
+                        return makeGlyphBufferAdvance(advance);
+                    });
+                    result.constructAndAppend(WTF::InPlaceType<DisplayList::DrawGlyphs>, (*fonts)[item.fontIndex].copyRef(), Vector<GlyphBufferGlyph>(item.glyphs), WTF::move(advances), item.localAnchor, item.fontSmoothingMode);
+                    return true;
+                },
+                [&](const DrawFilteredImageBuffer& item) {
+                    if (hasFEImage(item.filter))
+                        return false;
+                    result.constructAndAppend(WTF::InPlaceType<DisplayList::DrawFilteredImageBuffer>, nullptr, item.sourceImageRect, item.filter.get());
+                    return true;
+                },
+                [&](const SetStateData& item) {
+                    result.constructAndAppend(WTF::InPlaceType<DisplayList::SetState>, graphicsContextState(item));
                     return true;
                 },
                 [&](const auto& item) {
