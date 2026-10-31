@@ -189,6 +189,7 @@ WTF_EXPORT_PRIVATE bool isAppleApplication();
 WTF_EXPORT_PRIVATE bool isAppleBooks();
 WTF_EXPORT_PRIVATE bool isDumpRenderTree();
 WTF_EXPORT_PRIVATE bool isWebkitTestRunner();
+WTF_EXPORT_PRIVATE bool shouldOSFaultLogForAppleApplication();
 WTF_EXPORT_PRIVATE bool shouldOSFaultLogForAppleApplicationUsingWebKit1();
 
 }
