@@ -1999,21 +1999,39 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
         return { };
 
     auto normalizedDstRect = normalizeRect(dstRect);
-    // FIXME: Can we avoid post-processing in any cases?
-    if (rectContainsCanvas(normalizedDstRect))
-        willUpdateEntireContents();
-    else
-        willUpdateContents(normalizedDstRect);
+    auto compositeOperator = state().globalComposite;
 
     RasterDrawingOptions options = {
         internalFrame->orientation(),
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-        (isHDR() && usesITUR2100TF(internalFrame->colorSpace())) ? DrawsHDRContent::Yes : DrawsHDRContent::No
+        (isHDR() && usesITUR2100TF(internalFrame->colorSpace())) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
 #endif
+        compositeOperator,
+        state().globalBlend
     };
 
-    // FIXME: Add support for srcRect
-    context->drawVideoFrame(*internalFrame, dstRect, ShouldDiscardAlpha::No, options);
+    auto draw = [&](GraphicsContext& drawingContext, const FloatRect& destination, RasterDrawingOptions drawingOptions) {
+        // FIXME: Add support for srcRect
+        drawingContext.drawVideoFrame(*internalFrame, destination, ShouldDiscardAlpha::No, drawingOptions);
+    };
+
+    // FIXME: Can we avoid post-processing in any cases?
+    if (rectContainsCanvas(normalizedDstRect)) {
+        willUpdateEntireContents();
+        draw(*context, normalizedDstRect, options);
+    } else if (isFullCanvasCompositeMode(compositeOperator)) {
+        willUpdateEntireContents();
+        fullCanvasCompositedDraw(normalizedDstRect, compositeOperator, [&](GraphicsContext& bufferContext, const FloatRect& destination) {
+            draw(bufferContext, destination, { options, CompositeOperator::SourceOver, BlendMode::Normal });
+        });
+    } else if (compositeOperator == CompositeOperator::Copy) {
+        willUpdateEntireContents();
+        clearCanvas();
+        draw(*context, normalizedDstRect, options);
+    } else {
+        willUpdateContents(normalizedDstRect);
+        draw(*context, normalizedDstRect, options);
+    }
 
     return { };
 }
@@ -2236,27 +2254,59 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
 
     checkOrigin(&video);
 
-    if (rectContainsCanvas(normalizedDstRect))
-        willUpdateEntireContents(defaultWillUpdateContentsOptionsWithoutPostProcessing());
-    else
-        willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : normalizedDstRect, defaultWillUpdateContentsOptionsWithoutPostProcessing());
-
+    // Draws the current frame of the video into destination, with the composite operator and blend mode from options.
+    auto draw = [&](GraphicsContext& drawingContext, const FloatRect& destination, RasterDrawingOptions options) {
 #if USE(CG)
-    if (c->hasPlatformContext() && video.shouldGetNativeImageForCanvasDrawing()) {
-        if (auto image = video.nativeImageForCurrentTime()) {
-            c->drawNativeImage(*image, normalizedDstRect, normalizedSrcRect);
-            return { };
+        if (drawingContext.hasPlatformContext() && video.shouldGetNativeImageForCanvasDrawing()) {
+            if (auto image = video.nativeImageForCurrentTime()) {
+                drawingContext.drawNativeImage(*image, destination, normalizedSrcRect, options);
+                return;
+            }
         }
-    }
 #endif
 
-    GraphicsContextStateSaver stateSaver(*c);
-    c->clip(normalizedDstRect);
-    c->translate(normalizedDstRect.location());
-    c->scale(FloatSize(normalizedDstRect.width() / normalizedSrcRect.width(), normalizedDstRect.height() / normalizedSrcRect.height()));
-    c->translate(-normalizedSrcRect.location());
-    video.paintCurrentFrameInContext(*c, FloatRect(FloatPoint(), size(video)));
-    stateSaver.restore();
+        auto paintCurrentFrame = [&](GraphicsContext& targetContext, const FloatRect& targetDestination) {
+            GraphicsContextStateSaver stateSaver(targetContext);
+            targetContext.clip(targetDestination);
+            targetContext.translate(targetDestination.location());
+            targetContext.scale(FloatSize(targetDestination.width() / normalizedSrcRect.width(), targetDestination.height() / normalizedSrcRect.height()));
+            targetContext.translate(-normalizedSrcRect.location());
+            video.paintCurrentFrameInContext(targetContext, FloatRect(FloatPoint(), size(video)));
+        };
+
+        if (options.compositeOperator() == CompositeOperator::SourceOver && options.blendMode() == BlendMode::Normal) {
+            paintCurrentFrame(drawingContext, destination);
+            return;
+        }
+
+        // paintCurrentFrameInContext() always draws with source-over, so draw the frame into a buffer, and draw that with options.
+        auto bufferSize = destination.size().expandedTo({ 1, 1 });
+        RefPtr buffer = createCompatibleImageBuffer(drawingContext, bufferSize);
+        if (!buffer)
+            return;
+        paintCurrentFrame(buffer->context(), FloatRect { { }, bufferSize });
+        drawingContext.drawImageBuffer(*buffer, destination, FloatRect { { }, bufferSize }, options);
+    };
+
+    auto compositeOperator = state().globalComposite;
+    RasterDrawingOptions options = { compositeOperator, state().globalBlend };
+
+    if (rectContainsCanvas(normalizedDstRect)) {
+        willUpdateEntireContents(defaultWillUpdateContentsOptionsWithoutPostProcessing());
+        draw(*c, normalizedDstRect, options);
+    } else if (isFullCanvasCompositeMode(compositeOperator)) {
+        willUpdateEntireContents(defaultWillUpdateContentsOptionsWithoutPostProcessing());
+        fullCanvasCompositedDraw(normalizedDstRect, compositeOperator, [&](GraphicsContext& bufferContext, const FloatRect& destination) {
+            draw(bufferContext, destination, { });
+        });
+    } else if (compositeOperator == CompositeOperator::Copy) {
+        willUpdateEntireContents(defaultWillUpdateContentsOptionsWithoutPostProcessing());
+        clearCanvas();
+        draw(*c, normalizedDstRect, options);
+    } else {
+        willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : normalizedDstRect, defaultWillUpdateContentsOptionsWithoutPostProcessing());
+        draw(*c, normalizedDstRect, options);
+    }
 
     return { };
 }
@@ -3400,34 +3450,6 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
     if (drawStyle.isGradientOrPattern()) {
         IntRect maskRect = enclosingIntRect(textRect);
 
-        willUpdateContents(FloatRect { maskRect });
-
-        // If we have a shadow, we need to draw it before the mask operation.
-        // Follow a procedure similar to paintTextWithShadows in TextPainter.
-
-        if (shouldDrawShadows()) {
-            GraphicsContextStateSaver stateSaver(*c);
-
-            FloatSize offset(0, 2 * maskRect.height());
-
-            auto shadow = c->dropShadow();
-            ASSERT(shadow);
-
-            FloatRect shadowRect(maskRect);
-            shadowRect.inflate(shadow->radius * 1.4);
-            shadowRect.move(shadow->offset * -1);
-            c->clip(shadowRect);
-
-            c->setDropShadow({ shadow->offset + offset, shadow->radius, shadow->color, ShadowRadiusMode::Legacy });
-
-            if (fill)
-                c->setFillColor(Color::black);
-            else
-                c->setStrokeColor(Color::black);
-
-            drawText(*c, location + offset);
-        }
-
         auto maskImage = c->createAlignedImageBuffer(maskRect.size());
         if (!maskImage)
             return;
@@ -3453,13 +3475,55 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
             drawText(maskImageContext, location);
         }
 
-        GraphicsContextStateSaver stateSaver(*c);
-        c->clipToImageBuffer(*maskImage, maskRect);
-        if (RefPtr gradient = drawStyle.canvasGradient())
-            c->setFillGradient(gradient->gradient());
-        else
-            c->setFillPattern(drawStyle.canvasPattern()->pattern());
-        c->fillRect(maskRect);
+        auto drawShadowAndMaskedFill = [&] {
+            // If we have a shadow, we need to draw it before the mask operation.
+            // Follow a procedure similar to paintTextWithShadows in TextPainter.
+
+            if (shouldDrawShadows()) {
+                GraphicsContextStateSaver stateSaver(*c);
+
+                FloatSize offset(0, 2 * maskRect.height());
+
+                auto shadow = c->dropShadow();
+                ASSERT(shadow);
+
+                FloatRect shadowRect(maskRect);
+                shadowRect.inflate(shadow->radius * 1.4);
+                shadowRect.move(shadow->offset * -1);
+                c->clip(shadowRect);
+
+                c->setDropShadow({ shadow->offset + offset, shadow->radius, shadow->color, ShadowRadiusMode::Legacy });
+
+                if (fill)
+                    c->setFillColor(Color::black);
+                else
+                    c->setStrokeColor(Color::black);
+
+                drawText(*c, location + offset);
+            }
+
+            GraphicsContextStateSaver stateSaver(*c);
+            c->clipToImageBuffer(*maskImage, maskRect);
+            if (RefPtr gradient = drawStyle.canvasGradient())
+                c->setFillGradient(gradient->gradient());
+            else
+                c->setFillPattern(drawStyle.canvasPattern()->pattern());
+            c->fillRect(maskRect);
+        };
+
+        if (isFullCanvasCompositeMode(state().globalComposite)) {
+            willUpdateEntireContents();
+            beginCompositeLayer();
+            drawShadowAndMaskedFill();
+            endCompositeLayer();
+        } else if (state().globalComposite == CompositeOperator::Copy) {
+            willUpdateEntireContents();
+            clearCanvas();
+            drawShadowAndMaskedFill();
+        } else {
+            willUpdateContents(FloatRect { maskRect });
+            drawShadowAndMaskedFill();
+        }
         return;
     }
 #endif

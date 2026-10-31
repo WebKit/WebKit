@@ -1,0 +1,99 @@
+fillText() and strokeText() must honor the composite operations that affect the whole canvas (copy, source-in, destination-in) for every kind of fill and stroke style: solid color, gradient and pattern.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+solid color fillText with copy:
+PASS pixel at (45, 45) is the style color
+PASS pixel at (45, 85) is transparent
+PASS pixel at (150, 50) is transparent
+PASS pixel at (5, 5) is transparent
+
+gradient fillText with copy:
+PASS pixel at (45, 45) is the style color
+PASS pixel at (45, 85) is transparent
+PASS pixel at (150, 50) is transparent
+PASS pixel at (5, 5) is transparent
+
+pattern fillText with copy:
+PASS pixel at (45, 45) is the style color
+PASS pixel at (45, 85) is transparent
+PASS pixel at (150, 50) is transparent
+PASS pixel at (5, 5) is transparent
+
+solid color fillText with source-in:
+PASS pixel at (45, 45) is the style color
+PASS pixel at (45, 85) is transparent
+PASS pixel at (150, 50) is transparent
+PASS pixel at (5, 5) is transparent
+
+gradient fillText with source-in:
+PASS pixel at (45, 45) is the style color
+PASS pixel at (45, 85) is transparent
+PASS pixel at (150, 50) is transparent
+PASS pixel at (5, 5) is transparent
+
+pattern fillText with source-in:
+PASS pixel at (45, 45) is the style color
+PASS pixel at (45, 85) is transparent
+PASS pixel at (150, 50) is transparent
+PASS pixel at (5, 5) is transparent
+
+solid color fillText with destination-in:
+PASS pixel at (45, 45) is red
+PASS pixel at (45, 85) is transparent
+PASS pixel at (150, 50) is transparent
+PASS pixel at (5, 5) is transparent
+
+gradient fillText with destination-in:
+PASS pixel at (45, 45) is red
+PASS pixel at (45, 85) is transparent
+PASS pixel at (150, 50) is transparent
+PASS pixel at (5, 5) is transparent
+
+pattern fillText with destination-in:
+PASS pixel at (45, 45) is red
+PASS pixel at (45, 85) is transparent
+PASS pixel at (150, 50) is transparent
+PASS pixel at (5, 5) is transparent
+
+solid color strokeText with copy:
+PASS the stroke covers part of the canvas
+PASS the canvas matches the stroke composited over red
+
+gradient strokeText with copy:
+PASS the stroke covers part of the canvas
+PASS the canvas matches the stroke composited over red
+
+pattern strokeText with copy:
+PASS the stroke covers part of the canvas
+PASS the canvas matches the stroke composited over red
+
+solid color strokeText with source-in:
+PASS the stroke covers part of the canvas
+PASS the canvas matches the stroke composited over red
+
+gradient strokeText with source-in:
+PASS the stroke covers part of the canvas
+PASS the canvas matches the stroke composited over red
+
+pattern strokeText with source-in:
+PASS the stroke covers part of the canvas
+PASS the canvas matches the stroke composited over red
+
+solid color strokeText with destination-in:
+PASS the stroke covers part of the canvas
+PASS the canvas matches the stroke composited over red
+
+gradient strokeText with destination-in:
+PASS the stroke covers part of the canvas
+PASS the canvas matches the stroke composited over red
+
+pattern strokeText with destination-in:
+PASS the stroke covers part of the canvas
+PASS the canvas matches the stroke composited over red
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
