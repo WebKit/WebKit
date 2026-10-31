@@ -5083,6 +5083,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case GetTypedArrayBuffer: {
+        compileGetTypedArrayBuffer(node);
+        break;
+    }
+
     case GetWebAssemblyInstanceExports: {
         compileGetWebAssemblyInstanceExports(node);
         break;

@@ -799,6 +799,7 @@ public:
     void loadTypedArrayByteLength(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, TypedArrayType);
     std::tuple<Jump, JumpList> loadDataViewByteLength(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, TypedArrayType);
     void loadTypedArrayLength(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType>);
+    JumpList loadTypedArrayBufferWrapper(GPRReg baseGPR, GPRReg resultGPR);
 
     void emitTurnUndefinedIntoNull(GPRReg valueGPR)
     {

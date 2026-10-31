@@ -43,6 +43,7 @@ public:
     virtual JSArrayBuffer* toJS(JSGlobalObject*, JSGlobalObject*, ArrayBuffer&) = 0;
     virtual void registerWrapper(JSGlobalObject*, ArrayBuffer&, JSArrayBuffer&) = 0;
     virtual bool isAtomicsWaitAllowedOnCurrentThread() = 0;
+    virtual bool isWrapperCachedInArrayBuffer() const { return false; }
 
     virtual bool isWebCoreTypedArrayController() const { return false; }
 };

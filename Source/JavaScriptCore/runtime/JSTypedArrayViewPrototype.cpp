@@ -31,6 +31,7 @@
 #include "JSArrayIterator.h"
 #include "JSCInlines.h"
 #include "JSTypedArrayViewPrototypeInternal.h"
+#include "TypedArrayController.h"
 #include "VMTrapsInlines.h"
 
 namespace JSC {
@@ -171,7 +172,7 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
 
     putDirectWithoutTransition(vm, vm.propertyNames->toString, globalObject->arrayProtoToStringFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("buffer"_s, typedArrayViewProtoGetterFuncBuffer, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    JSC_NATIVE_INTRINSIC_GETTER_WITHOUT_TRANSITION("buffer"_s, typedArrayViewProtoGetterFuncBuffer, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, protect(vm.m_typedArrayController)->isWrapperCachedInArrayBuffer() ? TypedArrayBufferIntrinsic : NoIntrinsic);
     JSC_NATIVE_INTRINSIC_GETTER_WITHOUT_TRANSITION(vm.propertyNames->byteLength, typedArrayViewProtoGetterFuncByteLength, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, TypedArrayByteLengthIntrinsic);
     JSC_NATIVE_INTRINSIC_GETTER_WITHOUT_TRANSITION(vm.propertyNames->byteOffset, typedArrayViewProtoGetterFuncByteOffset, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, TypedArrayByteOffsetIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("copyWithin"_s, typedArrayViewProtoFuncCopyWithin, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
