@@ -1380,13 +1380,15 @@ final class WebBackForwardList {
         connection: IPC.Connection,
         frameID: WebCore.FrameIdentifier
     ) -> WebKit.VectorRefFrameState {
-        guard frameOnPage(frameID) != nil else {
+        guard let webPageProxy = page.get(), frameOnPage(frameID) != nil else {
             return WebKit.VectorRefFrameState(array: [])
         }
+
+        let process = WebKit.WebProcessProxy.fromConnection(connection)
         var frameStates: [WebKit.FrameState] = []
         for item in entries {
             if let frameItem = item.mainFrameItem().childItemForFrameID(frameID) {
-                frameStates.append(frameItem.copyFrameStateWithChildren().ptr())
+                frameStates.append(frameItem.copyFrameStateWithChildrenForProcess(webPageProxy, process.ptr()).ptr())
             }
         }
         return WebKit.VectorRefFrameState(array: frameStates)
@@ -1398,16 +1400,17 @@ final class WebBackForwardList {
         delta: Int32,
         frameID: WebCore.FrameIdentifier
     ) throws(InvalidMessage) -> WebKit.RefPtrFrameState {
-        try itemAtIndexForWebContent(delta: delta, frameID: frameID)
+        try itemAtIndexForWebContent(connection: connection, delta: delta, frameID: frameID)
     }
 
     private func itemAtIndexForWebContent(
+        connection: IPC.Connection,
         delta: Int32,
         frameID: WebCore.FrameIdentifier
     ) throws(InvalidMessage) -> WebKit.RefPtrFrameState {
         try messageCheck { delta != Int32.min }
 
-        guard let frame = frameOnPage(frameID) else {
+        guard let webPageProxy = page.get(), let frame = frameOnPage(frameID) else {
             return WebKit.RefPtrFrameState()
         }
 
@@ -1415,14 +1418,15 @@ final class WebBackForwardList {
         guard let item = entryAtDeltaFromCurrentIndex(delta: delta, allowSkipping: false) else {
             return WebKit.RefPtrFrameState()
         }
+        let process = WebKit.WebProcessProxy.fromConnection(connection)
         guard let frameItem = item.mainFrameItem().childItemForFrameID(frameID) else {
             // Entries can lack the main frame's current ID (after session restore or a process swap).
             guard frame.isMainFrame() else {
                 return WebKit.RefPtrFrameState()
             }
-            return WebKit.RefPtrFrameState(item.copyMainFrameStateWithChildren().ptr())
+            return WebKit.RefPtrFrameState(item.mainFrameItem().copyFrameStateWithChildrenForProcess(webPageProxy, process.ptr()).ptr())
         }
-        return WebKit.RefPtrFrameState(frameItem.copyFrameStateWithChildren().ptr())
+        return WebKit.RefPtrFrameState(frameItem.copyFrameStateWithChildrenForProcess(webPageProxy, process.ptr()).ptr())
     }
 
     @MainActor

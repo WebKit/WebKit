@@ -7136,8 +7136,11 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         if (currentItem && (navigation->lockBackForwardList() == LockBackForwardList::Yes || navigation->lockHistory() == LockHistory::Yes)) {
             // If WebCore is supposed to lock the history for this load, then the new process needs to know about the current history item so it can update
             // it instead of creating a new one. If the load doesn't replace the entry, the new process saves state to the item and sends it back, so it
-            // needs all of it.
-            Ref frameState = navigation->lockBackForwardList() == LockBackForwardList::Yes ? protect(currentItem->mainFrameItem())->copyFrameStateForReplacingDocument(navigation->currentRequest().url()) : currentItem->copyMainFrameStateWithChildren();
+            // needs the item's own state.
+            Ref mainFrameItem = currentItem->mainFrameItem();
+            Ref frameState = navigation->lockBackForwardList() == LockBackForwardList::Yes
+                ? mainFrameItem->copyFrameStateForReplacingDocument(navigation->currentRequest().url())
+                : mainFrameItem->copyFrameStateWithChildrenForProcess(*this, protect(provisionalPage->process()));
             provisionalPage->send(Messages::WebPage::SetCurrentHistoryItemForReattach(WTF::move(frameState)));
         }
 

@@ -83,6 +83,9 @@ public:
 
     Ref<FrameState> copy();
 
+    // Only for frames the receiving process doesn't host, so copy a new member here only if WebContent needs it to match entries and frames.
+    Ref<FrameState> copyIdentifiersOnly() const;
+
     void replacePayloadFrom(Ref<FrameState>&& other);
 
     const Vector<AtomString>& documentState() const LIFETIME_BOUND { return m_documentState; }
