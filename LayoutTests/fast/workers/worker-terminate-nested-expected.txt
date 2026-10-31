@@ -1,0 +1,3 @@
+Terminating a worker releases its nested worker.
+
+PASS: both workers released

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<p>Terminating a worker releases its child and grandchild.</p>
+<pre id="result"></pre>
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+let worker = new Worker("resources/nested-worker-grandchild.js");
+let finished = false;
+const timeout = setTimeout(() => finish("FAIL: workers did not stop; count=" + internals.workerThreadCount), 10000);
+function finish(message) {
+    if (finished) return;
+    finished = true;
+    clearTimeout(timeout);
+    if (worker) worker.terminate();
+    document.getElementById("result").textContent = message;
+    testRunner.notifyDone();
+}
+worker.onerror = event => finish("FAIL: " + event.message);
+worker.onmessage = () => {
+    if (internals.workerThreadCount !== 3) { finish("FAIL: expected three workers"); return; }
+    worker.terminate();
+    worker = null;
+    function check() {
+        if (finished) return;
+        GCController.collect();
+        if (internals.workerThreadCount === 0) finish("PASS: all three workers released");
+        else setTimeout(check, 10);
+    }
+    setTimeout(check, 0);
+};
+</script>

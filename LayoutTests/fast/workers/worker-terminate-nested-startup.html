@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<p>Terminating a worker while its child is starting releases both workers.</p>
+<pre id="result"></pre>
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+let worker = new Worker("resources/nested-worker-startup.js");
+let finished = false;
+const timeout = setTimeout(() => finish("FAIL: timeout; count=" + internals.workerThreadCount), 10000);
+function finish(message) {
+    if (finished) return;
+    finished = true;
+    clearTimeout(timeout);
+    if (worker) worker.terminate();
+    document.getElementById("result").textContent = message;
+    testRunner.notifyDone();
+}
+worker.onerror = event => finish("FAIL: " + event.message);
+function waitForChild() {
+    if (finished) return;
+    // Do not wait for a child message. Its initial script never returns.
+    if (internals.workerThreadCount !== 2) {
+        setTimeout(waitForChild, 0);
+        return;
+    }
+    worker.terminate();
+    worker = null;
+    function check() {
+        if (finished) return;
+        GCController.collect();
+        if (internals.workerThreadCount === 0) finish("PASS: both workers released");
+        else setTimeout(check, 10);
+    }
+    setTimeout(check, 0);
+}
+setTimeout(waitForChild, 0);
+</script>

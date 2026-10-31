@@ -117,7 +117,7 @@ private:
     };
     RunInModeResult runInMode(WorkerOrWorkletGlobalScope*, const ModePredicate&);
 
-    // Runs any clean up tasks that are currently in the queue and returns.
+    // Runs cleanup tasks until child threads have stopped and the queue is empty.
     // This should only be called when the context is closed or loop has been terminated.
     void runCleanupTasks(WorkerOrWorkletGlobalScope*);
 
