@@ -153,7 +153,7 @@ PASS new MouseEvent('eventType', { metaKey: false }).metaKey is false
 PASS new MouseEvent('eventType', { metaKey: true }).metaKey is true
 PASS new MouseEvent('eventType', { button: 0 }).button is 0
 PASS new MouseEvent('eventType', { button: -1 }).button is -1
-PASS new MouseEvent('eventType', { button: -2 }).button is 0
+PASS new MouseEvent('eventType', { button: -2 }).button is -2
 PASS new MouseEvent('eventType', { button: 1 }).button is 1
 PASS new MouseEvent('eventType', { button: -32768 }).button is -32768
 PASS new MouseEvent('eventType', { button: 32767 }).button is 32767
