@@ -88,8 +88,12 @@ http/tests/security/model-element [ Pass ]
 http/wpt/model-element [ Pass ]
 http/tests/security/model-element/model-element-crossorigin-allowed-with-all-access-header.html [ Slow ]
 model-element [ Pass ]
+<<<<<<< HEAD
 fast/quirks/model-element-fallback-content-quirk.html [ Pass ]
 model-element/immersive [ Pass ]
+=======
+sar3/model-element [ Pass ]
+>>>>>>> f05148fdb7c1 (A web page reads sandboxed-allowed local files out of Safari and into JavaScript)
 model-element/model-element-animations-loop.html [ Slow ]
 model-element/model-element-lazy-loading-unloading.html [ Slow ]
 model-element/model-element-suspend-before-ready.html [ Slow ]
