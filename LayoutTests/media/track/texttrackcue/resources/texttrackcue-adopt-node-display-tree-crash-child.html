@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Adopting a video whose cue display tree is in the UA shadow tree must migrate it exactly once</title>
+</head>
+<body>
+<video id="v" controls muted preload="auto" width="640" height="480"></video>
+<pre id="log"></pre>
+<script>
+function log(message)
+{
+    document.getElementById("log").textContent += message + "\n";
+}
+
+function raf()
+{
+    return new Promise(resolve => requestAnimationFrame(resolve));
+}
+
+// TextTrackCue::didMoveToNewDocument() used to re-scope the cue's display tree unconditionally. Once
+// MediaControlTextTrackContainerElement::updateDisplay() has parented that display tree into the
+// media element's UA shadow tree, the tree-scope update that reentrantly dispatched the callout
+// migrates it too, so every display node was moved twice and Document::m_referencingNodeCount was
+// decremented once per display node too many. That counter is the only thing keeping the old Document
+// alive for the Nodes that still name it in their raw m_treeScope pointer, so the skew let the
+// Document be freed while such Nodes were live -- a use-after-free on the next ~Node.
+//
+// N is large enough that the surplus decrements exceed the number of nodes still referencing this
+// document, which is what drives the counter to zero rather than merely making it inaccurate.
+const N = 800;
+
+// Keeps the author-side fragment reachable until we deliberately drop it.
+let keepAlive = {};
+
+async function test()
+{
+    let video = document.getElementById("v");
+
+    // An in-band track is required: TrackListBase::didMoveToNewDocument() only iterates m_inbandTracks.
+    video.src = "../../../../../media/content/counting-subtitled.m4v";
+    await new Promise(resolve => video.textTracks.addEventListener("addtrack", resolve, { once: true }));
+
+    let track = video.textTracks[0];
+    track.mode = "showing";
+
+    // A base-class TextTrackCue (not a VTTCue) is what updateDisplay() parents via appendChild().
+    // TextTrackCue::create() requires both a [cuebackground] and a [cue] element in the fragment.
+    let fragment = document.createDocumentFragment();
+    let background = document.createElement("span");
+    background.setAttribute("cuebackground", "");
+    let cueElement = document.createElement("span");
+    cueElement.setAttribute("cue", "");
+    background.appendChild(cueElement);
+    for (let i = 0; i < N; ++i) {
+        let span = document.createElement("span");
+        span.textContent = "x";
+        cueElement.appendChild(span);
+    }
+    fragment.appendChild(background);
+    keepAlive.fragment = fragment;
+    track.addCue(new TextTrackCue(0, 9999, fragment));
+
+    video.play().catch(() => { });
+
+    // Wait until the display tree has actually been appended into the UA shadow tree.
+    let shadowRoot = internals.shadowRoot(video);
+    let displayBox = null;
+    for (let i = 0; i < 200 && shadowRoot; ++i) {
+        await raf();
+        document.body.offsetHeight;
+        displayBox = shadowRoot.querySelector('[useragentpart="-webkit-generic-cue-root"]');
+        if (displayBox && displayBox.isConnected)
+            break;
+    }
+
+    if (!displayBox || !displayBox.isConnected) {
+        log("FAIL: the cue display tree was never parented into the UA shadow tree.");
+        return;
+    }
+
+    video.pause();
+    await raf();
+
+    document.implementation.createHTMLDocument("").adoptNode(video);
+
+    // The display tree is part of the shadow tree, so it must still name the shadow root as its tree
+    // scope. The buggy double migration re-scoped it straight to the adopting Document, detaching its
+    // scope from its parent's. internals.treeScopeRootNode() reads m_treeScope directly, unlike
+    // getRootNode(), which walks the parent chain and so cannot observe this skew.
+    if (internals.treeScopeRootNode(displayBox) !== shadowRoot) {
+        log("FAIL: the display tree's tree scope is no longer the UA shadow root.");
+        return;
+    }
+
+    // Drop the author fragment so that sweeping it runs ~Node on ~1600 nodes that never left this
+    // document. With the counter driven too low, one of those decrements underflows it and frees the
+    // Document out from under its remaining Nodes.
+    keepAlive.fragment = null;
+}
+
+// The GC has to run after test()'s frame is gone, otherwise JSC's conservative stack scan keeps the
+// author fragment alive and the counter is never driven down.
+test().catch(error => {
+    log("FAIL: " + error);
+    top.postMessage('*', {status: 'done'});
+}).then(() => {
+    setTimeout(() => {
+        GCController.collect();
+        GCController.collect();
+        log("PASS if no crash.");
+        top.postMessage('*', {status: 'done'});
+    }, 0);
+});
+</script>
+</body>
+</html>

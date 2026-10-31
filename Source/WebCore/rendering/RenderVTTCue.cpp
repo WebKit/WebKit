@@ -222,8 +222,13 @@ CheckedPtr<RenderVTTCue> RenderVTTCue::overlappingObject() const
 
 CheckedPtr<RenderVTTCue> RenderVTTCue::overlappingObjectForRect(const FloatRect& rect) const
 {
+<<<<<<< HEAD
     for (CheckedPtr sibling = previousSibling(); sibling; sibling = sibling->previousSibling()) {
         CheckedPtr previousCue = downcast<RenderVTTCue>(sibling);
+=======
+    for (RenderObject* sibling = previousSibling(); sibling; sibling = sibling->previousSibling()) {
+        auto* previousCue = dynamicDowncast<RenderVTTCue>(sibling);
+>>>>>>> d854fa9ad42c (Use-after-free of Node due to document's referencingNodeCount getting out of sync)
         if (!previousCue || !previousCue->firstChild())
             continue;
 
