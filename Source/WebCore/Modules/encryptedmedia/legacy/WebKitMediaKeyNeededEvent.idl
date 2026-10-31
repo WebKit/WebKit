@@ -26,7 +26,8 @@
 [
     Conditional=LEGACY_ENCRYPTED_MEDIA,
     EnabledBySetting=LegacyEncryptedMediaAPIEnabled,
-    Exposed=Window
+    Exposed=Window,
+    GenerateAddOpaqueRoot
 ] interface WebKitMediaKeyNeededEvent : Event {
     constructor([AtomString] DOMString type, optional WebKitMediaKeyNeededEventInit eventInitDict = {});
 

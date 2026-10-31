@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/gc.js"></script>
+<script>
+function imageDataFromArray()
+{
+    return new ImageData(new Uint8ClampedArray(4 * 2 * 2), 2);
+}
+
+function imageDataFromContext()
+{
+    return document.createElement("canvas").getContext("2d").createImageData(2, 2);
+}
+
+function setCustomProperty(imageData)
+{
+    imageData.data.customProperty = 42;
+}
+
+test(() => {
+    const array = new Uint8ClampedArray(4 * 2 * 2);
+    const imageData = new ImageData(array, 2);
+    assert_equals(imageData.data, array);
+    assert_equals(imageData.data, imageData.data);
+}, "ImageData constructed from an array returns that array as its data");
+
+test(() => {
+    const imageData = imageDataFromArray();
+    setCustomProperty(imageData);
+    gc();
+    assert_equals(imageData.data.customProperty, 42);
+}, "ImageData constructed from an array keeps its data's properties through garbage collection");
+
+test(() => {
+    const imageData = imageDataFromContext();
+    assert_equals(imageData.data, imageData.data);
+    setCustomProperty(imageData);
+    gc();
+    assert_equals(imageData.data.customProperty, 42);
+}, "ImageData created by a canvas keeps its data's properties through garbage collection");
+</script>

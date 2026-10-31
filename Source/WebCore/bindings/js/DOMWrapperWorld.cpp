@@ -25,11 +25,16 @@
 #include "JSEventListener.h"
 #include "Logging.h"
 #include "WebCoreJSClientData.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include "WindowProxy.h"
+#include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/HeapCellInlines.h>
+#include <JavaScriptCore/JSArrayBufferView.h>
 #include <JavaScriptCore/SlotVisitorInlines.h>
 #include <JavaScriptCore/WeakInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -55,6 +60,61 @@ DOMWrapperWorld::~DOMWrapperWorld()
         protect(*m_jsWindowProxies.begin())->destroyJSWindowProxy(*this);
 }
 
+// The wrapper is not what keeps the view alive, so the view's address, which is its key, could be reused
+// for another view while the wrapper is alive. Keeping a reference to the view prevents that.
+struct DOMWrapperWorld::ArrayBufferViewWrapper {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(ArrayBufferViewWrapper);
+
+    ArrayBufferViewWrapper(DOMWrapperWorld& world, JSC::ArrayBufferView& view)
+        : world(world)
+        , view(view)
+    {
+    }
+
+    SingleThreadWeakPtr<DOMWrapperWorld> world;
+    const Ref<JSC::ArrayBufferView> view;
+    JSC::Weak<JSC::JSArrayBufferView> wrapper;
+};
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(DOMWrapperWorld::ArrayBufferViewWrapper);
+
+class DOMWrapperWorld::ArrayBufferViewWrapperOwner final : public JSC::WeakHandleOwner {
+public:
+    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor& visitor, ASCIILiteral* reason) final
+    {
+        if (reason) [[unlikely]]
+            *reason = "ArrayBufferView is opaque root"_s;
+        auto& entry = *static_cast<ArrayBufferViewWrapper*>(context);
+        return containsWebCoreOpaqueRoot(visitor, WebCoreOpaqueRoot { entry.view.ptr() });
+    }
+
+    void finalize(JSC::Handle<JSC::Unknown>, void* context) final
+    {
+        auto& entry = *static_cast<ArrayBufferViewWrapper*>(context);
+        if (RefPtr world = entry.world.get())
+            world->m_arrayBufferViewWrappers.remove(entry.view.ptr());
+    }
+};
+
+JSC::JSArrayBufferView* DOMWrapperWorld::arrayBufferViewWrapper(JSC::ArrayBufferView& view) const
+{
+    auto* entry = m_arrayBufferViewWrappers.get(&view);
+    return entry ? entry->wrapper.get() : nullptr;
+}
+
+void DOMWrapperWorld::cacheArrayBufferViewWrapper(JSC::ArrayBufferView& view, JSC::JSArrayBufferView& wrapper)
+{
+    static NeverDestroyed<ArrayBufferViewWrapperOwner> owner;
+
+    auto& entry = *m_arrayBufferViewWrappers.ensure(&view, [&] {
+        return makeUnique<ArrayBufferViewWrapper>(*this, view);
+    }).iterator->value;
+    if (entry.wrapper)
+        return;
+
+    entry.wrapper = JSC::Weak<JSC::JSArrayBufferView>(&wrapper, &owner.get(), &entry);
+}
+
 void DOMWrapperWorld::clearWrappers()
 {
     if (!m_eventListeners.isEmptyIgnoringNullReferences()) {
@@ -65,6 +125,7 @@ void DOMWrapperWorld::clearWrappers()
     }
 
     m_wrappers.clear();
+    m_arrayBufferViewWrappers.clear();
 
     // These items are created lazily.
     while (!m_jsWindowProxies.isEmpty())

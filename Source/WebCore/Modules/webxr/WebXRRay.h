@@ -30,6 +30,7 @@
 #include "ExceptionOr.h"
 #include "FloatPoint3D.h"
 #include "TransformationMatrix.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -51,6 +52,7 @@ public:
     const DOMPointReadOnly& origin();
     const DOMPointReadOnly& direction();
     const Float32Array& LEGACY_NODELETE matrix();
+    WebCoreOpaqueRoot opaqueRoot() const { return WebCoreOpaqueRoot { static_cast<JSC::ArrayBufferView*>(m_matrix.get()) }; }
 
 private:
     WebXRRay(Ref<DOMPointReadOnly>&& origin, Ref<DOMPointReadOnly>&& direction);

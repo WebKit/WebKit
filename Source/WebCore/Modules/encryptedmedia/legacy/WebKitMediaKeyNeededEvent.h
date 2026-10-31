@@ -28,6 +28,7 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "Event.h"
+#include "WebCoreOpaqueRoot.h"
 #include "WebKitMediaKeyError.h"
 
 namespace WebCore {
@@ -52,6 +53,7 @@ public:
     }
 
     Uint8Array* initData() const { return m_initData.get(); }
+    WebCoreOpaqueRoot opaqueRoot() const { return WebCoreOpaqueRoot { static_cast<JSC::ArrayBufferView*>(m_initData.get()) }; }
 
 private:
     WebKitMediaKeyNeededEvent(const AtomString& type, Uint8Array* initData);

@@ -75,11 +75,9 @@ WEBCORE_EXPORT RefPtr<JSC::BigInt64Array> toUnsharedBigInt64Array(JSC::VM&, JSC:
 WEBCORE_EXPORT RefPtr<JSC::BigUint64Array> toUnsharedBigUint64Array(JSC::VM&, JSC::JSValue);
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, JSC::ArrayBuffer&);
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::JSGlobalObject*, JSC::JSGlobalObject*, JSC::ArrayBufferView&);
 
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSGlobalObject* globalObject, JSC::ArrayBufferView& view)
-{
-    return view.wrap(lexicalGlobalObject, globalObject);
-}
+WEBCORE_EXPORT void cacheArrayBufferViewWrapper(JSC::JSGlobalObject&, JSC::ArrayBufferView&, JSC::JSArrayBufferView&);
 
 template<> struct JSConverter<IDLBufferSource> {
     static constexpr bool needsState = true;
@@ -125,6 +123,14 @@ struct BufferSourceConverter {
     using WrapperType = typename Converter<BufferSourceType>::WrapperType;
     using Result = ConversionResult<BufferSourceType>;
 
+    template<typename T>
+    static void cacheWrapper(JSC::JSGlobalObject& lexicalGlobalObject, T& object, JSC::JSValue value)
+    {
+        // This excludes ArrayBuffer which is cached via the WebCoreTypedArrayController during creation.
+        if constexpr (std::derived_from<T, JSC::ArrayBufferView>)
+            cacheArrayBufferViewWrapper(lexicalGlobalObject, object, *uncheckedDowncast<JSC::JSArrayBufferView>(value));
+    }
+
     template<typename ExceptionThrower = DefaultExceptionThrower>
     static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, NOESCAPE ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
@@ -136,6 +142,7 @@ struct BufferSourceConverter {
                 exceptionThrower(lexicalGlobalObject, scope);
                 return Result::exception();
             }
+            cacheWrapper(lexicalGlobalObject, *object, value);
             return Result { object.releaseNonNull() };
         } else {
             RefPtr object = WrapperType::toWrapped(vm, value);
@@ -143,6 +150,7 @@ struct BufferSourceConverter {
                 exceptionThrower(lexicalGlobalObject, scope);
                 return Result::exception();
             }
+            cacheWrapper(lexicalGlobalObject, *object, value);
             return Result { object.releaseNonNull() };
         }
     }
@@ -167,6 +175,7 @@ struct BufferSourceConverter {
             throwTypeError(&lexicalGlobalObject, scope, "Resizable ArrayBuffer is not allowed"_s);
             return Result::exception();
         }
+        cacheWrapper(lexicalGlobalObject, *object, value);
         return Result { object.releaseNonNull() };
     }
 };
