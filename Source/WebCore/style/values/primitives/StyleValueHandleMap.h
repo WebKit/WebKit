@@ -26,7 +26,11 @@
 #pragma once
 
 #include <wtf/HashMap.h>
+<<<<<<< HEAD:Source/WebCore/style/values/primitives/StyleValueHandleMap.h
 #include <wtf/NeverDestroyed.h>
+=======
+#include <wtf/Lock.h>
+>>>>>>> badde006a35b (Make Style::Calculation::ValueMap thread-safe):Source/WebCore/style/calc/StyleCalculationValueMap.h
 
 namespace WebCore {
 namespace Style {
@@ -35,11 +39,17 @@ namespace Style {
 // what lets it stay packed. Each value type gets its own map.
 template<typename ValueType> class ValueHandleMap {
 public:
+<<<<<<< HEAD:Source/WebCore/style/values/primitives/StyleValueHandleMap.h
     static ValueHandleMap& LEGACY_NODELETE singleton()
     {
         static NeverDestroyed<ValueHandleMap> map;
         return map;
     }
+=======
+    // ValueMap::calculationValues() returns a process-global ValuesMap registry used
+    // by Style::PrimitiveData to keep calc() values out of its (float-sized) payload.
+    static ValueMap& NODELETE calculationValues();
+>>>>>>> badde006a35b (Make Style::Calculation::ValueMap thread-safe):Source/WebCore/style/calc/StyleCalculationValueMap.h
 
     unsigned insert(Ref<ValueType>&&);
     void ref(unsigned handle);
@@ -62,15 +72,16 @@ private:
         }
     };
 
-    unsigned m_nextAvailableHandle { 1 };
-    HashMap<unsigned, Entry> m_map;
+    mutable Lock m_lock;
+    unsigned m_nextAvailableHandle WTF_GUARDED_BY_LOCK(m_lock) { 1 };
+    HashMap<unsigned, Entry> m_map WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 template<typename ValueType> unsigned ValueHandleMap<ValueType>::insert(Ref<ValueType>&& value)
 {
-    ASSERT(m_nextAvailableHandle);
-
     Entry entry(WTF::move(value));
+    Locker locker { m_lock };
+    ASSERT(m_nextAvailableHandle);
 
     // FIXME: This monotonically increasing handle generation scheme is potentially wasteful
     // of the handle space. Consider reusing empty handles. https://bugs.webkit.org/show_bug.cgi?id=80489
@@ -83,14 +94,20 @@ template<typename ValueType> unsigned ValueHandleMap<ValueType>::insert(Ref<Valu
 // HashMap lookups are not modeled by NoDeleteChecker but cannot destroy anything.
 template<typename ValueType> SUPPRESS_NODELETE ValueType& LEGACY_NODELETE ValueHandleMap<ValueType>::get(unsigned handle) const
 {
+<<<<<<< HEAD:Source/WebCore/style/values/primitives/StyleValueHandleMap.h
     auto entry = m_map.find(handle);
     ASSERT(entry != m_map.end());
+=======
+    Locker locker { m_lock };
+    ASSERT(m_map.contains(handle));
+>>>>>>> badde006a35b (Make Style::Calculation::ValueMap thread-safe):Source/WebCore/style/calc/StyleCalculationValueMap.h
 
     return *entry->value.value;
 }
 
 template<typename ValueType> void ValueHandleMap<ValueType>::ref(unsigned handle)
 {
+    Locker locker { m_lock };
     ASSERT(m_map.contains(handle));
 
     ++m_map.find(handle)->value.referenceCountMinusOne;
@@ -98,6 +115,7 @@ template<typename ValueType> void ValueHandleMap<ValueType>::ref(unsigned handle
 
 template<typename ValueType> void ValueHandleMap<ValueType>::deref(unsigned handle)
 {
+    Locker locker { m_lock };
     ASSERT(m_map.contains(handle));
 
     auto it = m_map.find(handle);
@@ -106,7 +124,11 @@ template<typename ValueType> void ValueHandleMap<ValueType>::deref(unsigned hand
         return;
     }
 
+    RefPtr<Value> valueHold = WTF::move(it->value.value);
     m_map.remove(it);
+    locker.unlockEarly();
+    // Destroying Calculation::Value can run arbitrary `Calculation::Tree` teardown,
+    // so drop the last reference (valueHold) after unlocking.
 }
 
 } // namespace Style
