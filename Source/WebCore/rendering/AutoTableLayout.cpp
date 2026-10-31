@@ -122,17 +122,19 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                                 // Honor the cell's CSS max-width constraint.
                                 if (auto fixedMaxWidth = cell->style().logicalMaxWidth().tryFixed())
                                     logicalWidth = std::min(logicalWidth, cell->adjustBorderBoxLogicalWidthForBoxSizing(*fixedMaxWidth).toFloat());
+                                // logicalWidth is already zoomed, so reset the column's zoom to avoid zooming it again.
+                                auto setColumnLogicalWidth = [&] {
+                                    columnLayout.logicalWidth = Style::PreferredSize::Fixed { logicalWidth };
+                                    columnLayout.usedZoom = 1.0f;
+                                    fixedContributor = cell;
+                                };
                                 if (auto fixedColumnLayoutLogicalWidth = columnLayout.logicalWidth.tryFixed()) {
                                     // Nav/IE weirdness
-                                    if ((logicalWidth > fixedColumnLayoutLogicalWidth->resolveZoom(cellUsedZoom))
-                                        || ((fixedColumnLayoutLogicalWidth->resolveZoom(cellUsedZoom) == logicalWidth) && (maxContributor == cell))) {
-                                        columnLayout.logicalWidth = Style::PreferredSize::Fixed { logicalWidth };
-                                        fixedContributor = cell;
-                                    }
-                                } else {
-                                    columnLayout.logicalWidth = Style::PreferredSize::Fixed { logicalWidth };
-                                    fixedContributor = cell;
-                                }
+                                    auto columnLogicalWidth = fixedColumnLayoutLogicalWidth->resolveZoom(Style::ZoomFactor { columnLayout.usedZoom });
+                                    if (logicalWidth > columnLogicalWidth || (columnLogicalWidth == logicalWidth && maxContributor == cell))
+                                        setColumnLogicalWidth();
+                                } else
+                                    setColumnLogicalWidth();
                             }
                         },
                         [&](const Style::PreferredSize::Percentage& percentageCellLogicalWidth) {
@@ -473,7 +475,7 @@ float AutoTableLayout::calcEffectiveLogicalWidth()
                 for (unsigned pos = effCol; fixedWidth > 0 && pos < lastCol; ++pos) {
                     // NOTE: The unchecked use of tryFixed() here is allowed because `allColsAreFixed` is true.
                     // FIXME: Find a more type safe way to enforce this invariant.
-                    auto fixedLogicalWidth = m_layoutStruct[pos].logicalWidth.tryFixed()->resolveZoom(Style::ZoomFactor { m_layoutStruct[effCol].usedZoom });
+                    auto fixedLogicalWidth = m_layoutStruct[pos].logicalWidth.tryFixed()->resolveZoom(Style::ZoomFactor { m_layoutStruct[pos].usedZoom });
 
                     float cellLogicalWidth = std::max(m_layoutStruct[pos].effectiveMinLogicalWidth, cellMinLogicalWidth * fixedLogicalWidth / fixedWidth);
                     fixedWidth -= fixedLogicalWidth;
