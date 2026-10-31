@@ -42,6 +42,9 @@
 #import "SharedBuffer.h"
 #import "UTIUtilities.h"
 #import "WebCoreDecompressionSession.h"
+#if ENABLE(LOCKDOWN_MODE_API)
+#import <pal/cocoa/LockdownModeCocoa.h>
+#endif
 #import <AVFoundation/AVAsset.h>
 #import <AVFoundation/AVAssetReader.h>
 #import <AVFoundation/AVAssetReaderOutput.h>
@@ -367,6 +370,10 @@ ImageDecoderAVFObjC::~ImageDecoderAVFObjC() = default;
 
 bool ImageDecoderAVFObjC::supportsMediaType(MediaType type)
 {
+#if ENABLE(LOCKDOWN_MODE_API)
+    if (PAL::isLockdownModeEnabledForCurrentProcess())
+        return false;
+#endif
     return type == MediaType::Video && AVAssetMIMETypeCache::singleton().isAvailable();
 }
 
@@ -377,6 +384,10 @@ bool ImageDecoderAVFObjC::supportsContainerType(const String& type)
 
 bool ImageDecoderAVFObjC::canDecodeType(const String& mimeType)
 {
+#if ENABLE(LOCKDOWN_MODE_API)
+    if (PAL::isLockdownModeEnabledForCurrentProcess())
+        return false;
+#endif
     return AVAssetMIMETypeCache::singleton().canDecodeType(mimeType) != MediaPlayerEnums::SupportsType::IsNotSupported;
 }
 
