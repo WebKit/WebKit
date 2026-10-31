@@ -28,6 +28,7 @@
 
 #include "SourceAlpha.h"
 #include "SourceGraphic.h"
+#include <wtf/GraphNodeWorklist.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -86,7 +87,35 @@ public:
             return false;
 
         Vector<Ref<NodeType>> stack;
-        return visit(*lastNode, stack, 0, callback);
+        unsigned visitCount = 0;
+        return visit(*lastNode, stack, 0, visitCount, callback);
+    }
+
+    // Visits every node reachable from the last node exactly once. The inputs
+    // of a node are visited before the node itself.
+    template<typename Callback>
+    bool visitUnique(NOESCAPE const Callback& callback)
+    {
+        RefPtr lastNode = m_lastNode;
+        if (!lastNode)
+            return false;
+
+        PostOrderGraphNodeWorklist<RefPtr<NodeType>> worklist;
+        worklist.push(WTF::move(lastNode));
+
+        while (worklist.notEmpty()) {
+            auto item = worklist.pop();
+            if (item.order == GraphVisitOrder::Post) {
+                callback(*item.node);
+                continue;
+            }
+
+            worklist.pushPost(item.node);
+            for (auto& input : getNodeInputs(*item.node))
+                worklist.push(input.ptr());
+        }
+
+        return true;
     }
 
 protected:
@@ -95,9 +124,16 @@ protected:
         return name == SourceGraphic::effectName() || name == SourceAlpha::effectName();
     }
 
+    // visit() expands the graph into a tree, so a node which is shared by multiple
+    // consumers is visited once per path to it. Bail out before this blows up.
+    static constexpr unsigned maxVisitCount = 10000;
+
     template<typename Callback>
-    bool visit(NodeType& node, Vector<Ref<NodeType>>& stack, unsigned level, NOESCAPE const Callback& callback)
+    bool visit(NodeType& node, Vector<Ref<NodeType>>& stack, unsigned level, unsigned& visitCount, NOESCAPE const Callback& callback)
     {
+        if (++visitCount > maxVisitCount)
+            return false;
+
         // A cycle is detected.
         if (stack.containsIf([&](auto& item) { return item.ptr() == &node; }))
             return false;
@@ -107,7 +143,7 @@ protected:
         callback(node, level);
 
         for (auto& input : getNodeInputs(node)) {
-            if (!visit(input, stack, level + 1, callback))
+            if (!visit(input, stack, level + 1, visitCount, callback))
                 return false;
         }
 
