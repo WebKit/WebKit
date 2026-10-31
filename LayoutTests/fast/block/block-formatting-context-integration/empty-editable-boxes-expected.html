@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; position: relative; width: 300px; background: lightgray; margin-bottom: 10px; font-size: 20px; line-height: 30px; }
+.box { margin: 10px 0; background: lightblue; }
+.abs { position: absolute; width: 10px; height: 10px; background: green; }
+</style>
+<!-- An empty editable box gets a line, which keeps its margins apart. -->
+<div class="root"><div class="box" contenteditable></div><div class="box" contenteditable> </div><div class="box" contenteditable style="line-height: 10px"></div></div>
+<div class="root"><div class="box" contenteditable><span class="abs"></span></div><div class="box" contenteditable style="display: flow-root"></div></div>
+<div class="root" style="height: 50px"><div class="abs" contenteditable style="width: 50px; height: auto; background: blue"></div></div>
+<div class="root"><div class="box" contenteditable id="emptied">text</div><div class="box" contenteditable id="filled"></div></div>
+<div class="root"><div class="box" contenteditable id="lostChild"><div>child</div></div><div class="box" contenteditable style="display: flow-root" id="rootLostChild"><div>child</div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("emptied").firstChild.data = "";
+document.getElementById("filled").appendChild(document.createTextNode("text"));
+document.getElementById("lostChild").firstChild.remove();
+document.getElementById("rootLostChild").firstChild.remove();
+</script>

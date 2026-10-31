@@ -113,11 +113,11 @@ void GridLanesLayout::setItemContainingBlockToGridArea(const GridTrackSizingAlgo
     // Ideally we untangle all that and only set the grid axis that we need. webkit.org/b/305136
     auto direction = gridAxisDirection();
     if (direction == Style::GridTrackSizingDirection::Columns) {
-        gridItem.setGridAreaContentLogicalWidth(algorithm.gridAreaBreadthForGridItem(gridItem, direction));
-        gridItem.setGridAreaContentLogicalHeight(containingBlock->availableLogicalHeightForContentBox());
+        gridItem.setOverridingContainingBlockContentLogicalWidth(algorithm.gridAreaBreadthForGridItem(gridItem, direction));
+        gridItem.setOverridingContainingBlockContentLogicalHeight(containingBlock->availableLogicalHeightForContentBox());
     } else {
-        gridItem.setGridAreaContentLogicalHeight(algorithm.gridAreaBreadthForGridItem(gridItem, direction));
-        gridItem.setGridAreaContentLogicalWidth(containingBlock->contentBoxLogicalWidth());
+        gridItem.setOverridingContainingBlockContentLogicalHeight(algorithm.gridAreaBreadthForGridItem(gridItem, direction));
+        gridItem.setOverridingContainingBlockContentLogicalWidth(containingBlock->contentBoxLogicalWidth());
     }
 
     // FIXME(249230): Try to cache grid lanes layout sizes

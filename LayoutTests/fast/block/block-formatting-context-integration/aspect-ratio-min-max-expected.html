@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; }
+.ratio { aspect-ratio: 2 / 1; margin: 6px 0; background: rgba(0, 128, 0, 0.5); }
+.text { font-size: 20px; line-height: 20px; color: blue; }
+.fill { background: blue; width: 30px; }
+</style>
+<div class="root" style="height: 260px">
+  <div class="ratio" style="max-height: 40px"></div>
+  <div class="ratio" style="max-height: 20%"></div>
+  <div class="ratio" style="min-height: 100px; width: 100px"></div>
+  <div class="ratio" style="max-width: 120px; min-height: 10px"></div>
+  <div class="ratio" style="width: 100px; max-height: 30px; box-sizing: border-box; padding: 5px"></div>
+</div>
+<div class="root">
+  <div class="ratio" style="width: 100px"><div class="fill" style="height: 50%"></div></div>
+  <div class="ratio text" style="width: 40px">xx xx xx xx xx</div>
+  <div class="ratio text" style="width: 40px; min-height: 0">xx xx xx xx xx</div>
+  <div class="ratio text" style="width: 40px; max-height: 30px">xx xx xx xx xx</div>
+  <div class="ratio text" style="width: 40px; overflow: hidden">xx xx xx xx xx</div>
+</div>
+<div class="root"><div style="width: min-content; background: yellow"><div class="ratio" style="min-height: 50px"></div></div></div>
+<div class="root"><div style="width: max-content; background: yellow"><div class="ratio" style="max-height: 20px">x</div></div></div>
