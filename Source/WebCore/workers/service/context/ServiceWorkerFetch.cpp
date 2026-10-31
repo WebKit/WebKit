@@ -48,8 +48,8 @@ namespace WebCore {
 
 namespace ServiceWorkerFetch {
 
-// https://fetch.spec.whatwg.org/#http-fetch step 5.5
-static inline ResourceError validateResponse(const ResourceResponse& response, FetchOptions::Mode mode, FetchOptions::Redirect redirect)
+// https://fetch.spec.whatwg.org/commit-snapshots/586cd2a44c2a865b37c166dc0740f3fb8bb220d6/#concept-http-fetch step 5.7
+ResourceError validateResponse(const ResourceResponse& response, FetchOptionsMode mode, FetchOptionsRedirect redirect)
 {
     if (response.type() == ResourceResponse::Type::Error)
         return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Response served by service worker is an error"_s, ResourceError::Type::General, ResourceError::IsSanitized::Yes };

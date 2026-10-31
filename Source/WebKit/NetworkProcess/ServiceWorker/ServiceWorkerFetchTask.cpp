@@ -45,6 +45,7 @@
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/RetrieveRecordsOptions.h>
 #include <WebCore/SWServerRegistration.h>
+#include <WebCore/ServiceWorkerFetch.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #define SWFETCH_RELEASE_LOG(fmt, ...) RELEASE_LOG(ServiceWorker, "%p - [fetchIdentifier=%" PRIu64 "] ServiceWorkerFetchTask::" fmt, this, m_fetchIdentifier.toUInt64(), ##__VA_ARGS__)
@@ -726,7 +727,7 @@ void ServiceWorkerFetchTask::loadFromCache(NetworkStorageManager& manager, WebCo
 void ServiceWorkerFetchTask::respondWithCacheResponse(std::optional<DOMCacheEngine::Record>&& record)
 {
     if (!record) {
-        if (auto* loader = m_loader.get())
+        if (RefPtr loader = m_loader)
             loader->setWorkerFinalRouterSource(RouterSourceEnum::Network);
         didNotHandle();
         return;
@@ -735,10 +736,15 @@ void ServiceWorkerFetchTask::respondWithCacheResponse(std::optional<DOMCacheEngi
     if (m_isDone)
         return;
 
-    if (auto* loader = m_loader.get())
-        loader->setWorkerFinalRouterSource(RouterSourceEnum::Cache);
+    Ref loader = *m_loader;
+    loader->setWorkerFinalRouterSource(RouterSourceEnum::Cache);
 
     auto response = std::exchange(record->response, { });
+    if (auto error = ServiceWorkerFetch::validateResponse(response, loader->parameters().options.mode, loader->parameters().options.redirect); !error.isNull()) {
+        didFail(error);
+        return;
+    }
+
     if (response.url().isNull())
         response.setURL(URL { m_currentRequest.url() });
 
@@ -751,6 +757,7 @@ void ServiceWorkerFetchTask::respondWithCacheResponse(std::optional<DOMCacheEngi
 
     finishLoadingWithCacheResponse(WTF::move(*record));
 }
+
 void ServiceWorkerFetchTask::finishLoadingWithCacheResponse(DOMCacheEngine::Record&& record)
 {
     switchOn(WTF::move(record.responseBody), [&](std::nullptr_t) {
