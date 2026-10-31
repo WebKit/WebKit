@@ -511,11 +511,9 @@ void MediaPlayerPrivateGStreamer::play()
 #endif
         RefPtr player = m_player.get();
         if (player) {
-            if (isSeamlessSeekingEnabled() && !m_initialSegmentSeekDone) {
-                GST_DEBUG_OBJECT(pipeline(), "Scheduling initial SEGMENT seek");
-                doSeek(SeekTarget { playbackPosition() }, m_playbackRate, true, true);
-                m_initialSegmentSeekDone = true;
-            } else
+            if (isSeamlessSeekingEnabled() && !m_initialSegmentSeekDone)
+                armInitialSegmentSeek();
+            else
                 updateDownloadBufferingFlag();
         }
     } else
@@ -619,11 +617,16 @@ bool MediaPlayerPrivateGStreamer::doSeek(const SeekTarget& target, float rate, b
         g_object_set(m_downloadBuffer.get(), "high-percent", 0, nullptr);
     }
 
-    auto flag = (player->isLooping() && isSegment) ? GST_SEEK_FLAG_SEGMENT : GST_SEEK_FLAG_FLUSH;
-    if (paused() && !m_isEndReached && player->isLooping()) {
-        GST_DEBUG_OBJECT(pipeline(), "Segment non-flushing seek attempt not supported on a paused pipeline, enabling flush");
-        m_isSegmentSeekAllowed = false;
-        flag = GST_SEEK_FLAG_FLUSH;
+    GstSeekFlags flag;
+    if (m_isInitialArmingSeekPending)
+        flag = static_cast<GstSeekFlags>(GST_SEEK_FLAG_SEGMENT | GST_SEEK_FLAG_FLUSH);
+    else {
+        flag = (player->isLooping() && isSegment) ? GST_SEEK_FLAG_SEGMENT : GST_SEEK_FLAG_FLUSH;
+        if (paused() && !m_isEndReached && player->isLooping()) {
+            GST_DEBUG_OBJECT(pipeline(), "Segment non-flushing seek attempt not supported on a paused pipeline, enabling flush");
+            m_isSegmentSeekAllowed = false;
+            flag = GST_SEEK_FLAG_FLUSH;
+        }
     }
     auto seekFlags = static_cast<GstSeekFlags>(flag | GST_SEEK_FLAG_ACCURATE);
 
@@ -691,6 +694,23 @@ bool MediaPlayerPrivateGStreamer::doSeek(const SeekTarget& target, float rate, b
     GST_DEBUG_OBJECT(m_pipeline.get(), "Resuming segment playback");
     seekFlags = static_cast<GstSeekFlags>(GST_SEEK_FLAG_SEGMENT | GST_SEEK_FLAG_ACCURATE);
     return gst_element_send_event(m_pipeline.get(), gst_event_new_seek(rate, GST_FORMAT_TIME, seekFlags, GST_SEEK_TYPE_SET, seekStart, GST_SEEK_TYPE_SET, seekStop));
+}
+
+void MediaPlayerPrivateGStreamer::armInitialSegmentSeek()
+{
+    // Switch the pipeline into segment mode once, so SEGMENT_DONE is posted at the loop point. Issue it
+    // as a flushing segment seek at preroll, before playback data accumulates between the demuxer and the
+    // sinks: a non-flushing seek here would let that queued data render before the restarted segment,
+    // replaying the opening of the clip.
+    //
+    // The seek runs synchronously on the main thread. The video sink's flush probe completes FLUSH_START
+    // through callOnMainThreadAndWait, so issuing the seek on a helper thread would block it on the main
+    // thread while the main thread drives the state change that armed this seek. On the main thread that
+    // hop runs inline.
+    m_initialSegmentSeekDone = true;
+    m_isInitialArmingSeekPending = true;
+    doSeek(SeekTarget { playbackPosition() }, m_playbackRate, false, true);
+    m_isInitialArmingSeekPending = false;
 }
 
 Ref<MediaTimePromise> MediaPlayerPrivateGStreamer::seekToTarget(const SeekTarget& inTarget)
@@ -3168,6 +3188,12 @@ void MediaPlayerPrivateGStreamer::updateStates()
         if (player && player->isLooping() && m_oldState == GST_STATE_PAUSED && m_currentState == GST_STATE_PLAYING) {
             GST_DEBUG_OBJECT(pipeline(), "Starting a new iteration of a looping media, clearing EOS flag.");
             m_isEndReached = false;
+        }
+
+        if (isSeamlessSeekingEnabled() && !m_initialSegmentSeekDone && stateReallyChanged
+            && m_oldState < GST_STATE_PAUSED && m_currentState == GST_STATE_PAUSED) {
+            GST_DEBUG_OBJECT(pipeline(), "Arming segment mode at preroll with a flushing segment seek");
+            armInitialSegmentSeek();
         }
 
         // Emit play state change notification only when going to PLAYING so that
