@@ -1,0 +1,15 @@
+<p>Cross-origin iframe that opens a WebSocket on demand.</p>
+<script>
+// Global so the socket is kept alive.
+let webSocket = null;
+
+function openWebSocket(message) {
+    webSocket = new WebSocket("ws://localhost:8880/websocket/tests/hybi/echo");
+    webSocket.onopen = () => {
+        webSocket.send(message);
+    };
+    webSocket.onmessage = () => {
+        webSocket.close();
+    };
+}
+</script>
