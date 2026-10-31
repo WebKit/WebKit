@@ -4961,7 +4961,9 @@ JSC_DEFINE_JIT_OPERATION(operationCompareStringLess, uintptr_t, (JSGlobalObject*
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    OPERATION_RETURN(scope, codePointCompareLessThan(asString(a)->view(globalObject), asString(b)->view(globalObject)));
+    auto aView = asString(a)->view(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, false);
+    OPERATION_RETURN(scope, codePointCompareLessThan(aView, asString(b)->view(globalObject)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCompareStringLessEq, uintptr_t, (JSGlobalObject* globalObject, JSString* a, JSString* b))
@@ -4971,7 +4973,9 @@ JSC_DEFINE_JIT_OPERATION(operationCompareStringLessEq, uintptr_t, (JSGlobalObjec
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    OPERATION_RETURN(scope, !codePointCompareLessThan(asString(b)->view(globalObject), asString(a)->view(globalObject)));
+    auto bView = asString(b)->view(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, false);
+    OPERATION_RETURN(scope, !codePointCompareLessThan(bView, asString(a)->view(globalObject)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCompareStringGreater, uintptr_t, (JSGlobalObject* globalObject, JSString* a, JSString* b))
@@ -4981,7 +4985,9 @@ JSC_DEFINE_JIT_OPERATION(operationCompareStringGreater, uintptr_t, (JSGlobalObje
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    OPERATION_RETURN(scope, codePointCompareLessThan(asString(b)->view(globalObject), asString(a)->view(globalObject)));
+    auto bView = asString(b)->view(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, false);
+    OPERATION_RETURN(scope, codePointCompareLessThan(bView, asString(a)->view(globalObject)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCompareStringGreaterEq, uintptr_t, (JSGlobalObject* globalObject, JSString* a, JSString* b))
@@ -4991,7 +4997,9 @@ JSC_DEFINE_JIT_OPERATION(operationCompareStringGreaterEq, uintptr_t, (JSGlobalOb
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    OPERATION_RETURN(scope, !codePointCompareLessThan(asString(a)->view(globalObject), asString(b)->view(globalObject)));
+    auto aView = asString(a)->view(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, false);
+    OPERATION_RETURN(scope, !codePointCompareLessThan(aView, asString(b)->view(globalObject)));
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationNotifyWrite, void, (VM* vmPointer, WatchpointSet* set))
