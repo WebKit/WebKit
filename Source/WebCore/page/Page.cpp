@@ -4859,7 +4859,7 @@ void Page::didChangeMainDocument(Document* newDocument)
     clearSampledPageTopColor();
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    resetAXCustomColorModeState();
+    resetAXCustomColorModeState(newDocument);
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
