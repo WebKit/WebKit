@@ -52,6 +52,7 @@ PlatformGamepadWPE::PlatformGamepadWPE(WPEGamepad* gamepad, unsigned index)
     m_buttonValues.resize(WPE_GAMEPAD_BUTTON_CENTER_CLUSTER_CENTER + 1);
     for (auto& value : m_buttonValues)
         value.setValue(0.0);
+    setButtonTypesForStandardMapping(m_buttonValues.size());
 
     m_axisValues.resize(WPE_GAMEPAD_AXIS_RIGHT_Y + 1);
     for (auto& value : m_axisValues)

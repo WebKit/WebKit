@@ -27,6 +27,7 @@
 
 #if ENABLE(GAMEPAD)
 
+#include <WebCore/GamepadButtonType.h>
 #include <WebCore/GamepadHapticEffectType.h>
 #include <WebCore/SharedGamepadValue.h>
 #include <wtf/MonotonicTime.h>
@@ -37,9 +38,9 @@ namespace WebKit {
 
 class GamepadData {
 public:
-    GamepadData(unsigned index, const String& id, const String& mapping, const Vector<WebCore::SharedGamepadValue>& axisValues, const Vector<WebCore::SharedGamepadValue>& buttonValues, MonotonicTime lastUpdateTime, const WebCore::GamepadHapticEffectTypeSet& supportedEffectTypes);
-    
-    GamepadData(unsigned index, String&& id, String&& mapping, Vector<double>&& axisValues, Vector<double>&& buttonValues, MonotonicTime lastUpdateTime, WebCore::GamepadHapticEffectTypeSet&& supportedEffectTypes);
+    GamepadData(unsigned index, const String& id, const String& mapping, const Vector<WebCore::SharedGamepadValue>& axisValues, const Vector<WebCore::SharedGamepadValue>& buttonValues, const Vector<WebCore::GamepadButtonType>& buttonTypes, MonotonicTime lastUpdateTime, const WebCore::GamepadHapticEffectTypeSet& supportedEffectTypes);
+
+    GamepadData(unsigned index, String&& id, String&& mapping, Vector<double>&& axisValues, Vector<double>&& buttonValues, Vector<WebCore::GamepadButtonType>&& buttonTypes, MonotonicTime lastUpdateTime, WebCore::GamepadHapticEffectTypeSet&& supportedEffectTypes);
 
     MonotonicTime lastUpdateTime() const { return m_lastUpdateTime; }
     unsigned index() const { return m_index; }
@@ -47,6 +48,7 @@ public:
     const String& mapping() const LIFETIME_BOUND { return m_mapping; }
     const Vector<double>& axisValues() const LIFETIME_BOUND { return m_axisValues; }
     const Vector<double>& buttonValues() const LIFETIME_BOUND { return m_buttonValues; }
+    const Vector<WebCore::GamepadButtonType>& buttonTypes() const LIFETIME_BOUND { return m_buttonTypes; }
     const WebCore::GamepadHapticEffectTypeSet& supportedEffectTypes() const LIFETIME_BOUND { return m_supportedEffectTypes; }
 
 private:
@@ -55,6 +57,7 @@ private:
     String m_mapping;
     Vector<double> m_axisValues;
     Vector<double> m_buttonValues;
+    Vector<WebCore::GamepadButtonType> m_buttonTypes;
     MonotonicTime m_lastUpdateTime;
     WebCore::GamepadHapticEffectTypeSet m_supportedEffectTypes;
 

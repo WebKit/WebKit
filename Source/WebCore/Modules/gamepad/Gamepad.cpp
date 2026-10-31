@@ -28,14 +28,31 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "Document.h"
 #include "GamepadButton.h"
+#include "GamepadButtonType.h"
+#include "GamepadConstants.h"
 #include "GamepadHapticActuator.h"
 #include "PlatformGamepad.h"
 #include "ScriptExecutionContext.h"
+#include "Settings.h"
 #include "SharedGamepadValue.h"
+#include <algorithm>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+static size_t exposedButtonCount(Document* document, const PlatformGamepad& platformGamepad)
+{
+    auto buttonCount = platformGamepad.buttonValues().size();
+    if (document && document->settings().gamepadButtonTypeEnabled())
+        return buttonCount;
+
+    if (platformGamepad.mapping() == standardGamepadMappingString())
+        return std::min(buttonCount, numberOfStandardGamepadButtonsWithHomeButton);
+
+    return buttonCount;
+}
 
 Gamepad::Gamepad(Document* document, const PlatformGamepad& platformGamepad)
     : m_id(platformGamepad.id())
@@ -47,9 +64,11 @@ Gamepad::Gamepad(Document* document, const PlatformGamepad& platformGamepad)
     , m_axes(FillWith { }, platformGamepad.axisValues().size(), 0.0)
     , m_vibrationActuator(platformGamepad.supportedEffectTypes().contains(GamepadHapticEffectType::DualRumble) ? RefPtr { GamepadHapticActuator::create(document, GamepadHapticActuator::Type::DualRumble, *this) } : nullptr)
 {
-    unsigned buttonCount = platformGamepad.buttonValues().size();
-    m_buttons = Vector<Ref<GamepadButton>>(buttonCount, [](size_t) {
-        return GamepadButton::create();
+    auto buttonCount = exposedButtonCount(document, platformGamepad);
+    const auto& buttonTypes = platformGamepad.buttonTypes();
+    m_buttons = Vector<Ref<GamepadButton>>(buttonCount, [&](size_t index) {
+        auto type = index < buttonTypes.size() ? buttonTypes[index] : GamepadButtonType::NonStandard;
+        return GamepadButton::create(type);
     });
 }
 
