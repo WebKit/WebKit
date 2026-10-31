@@ -31,6 +31,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/mac/TestDraggingInfo.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/TestNSBundleExtras.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/PasteboardCustomData.h>
@@ -867,6 +868,74 @@ TEST(DragAndDropTests, PasteboardPathnamesRequireDataAccess)
     EXPECT_EQ(0, count);
 
     [[NSFileManager defaultManager] removeItemAtPath:tempFile error:nil];
+}
+
+TEST(DragAndDropTests, PromisedImageFileNameFromWebContentIsSanitized)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+    [configuration preferences]._largeImageAsyncDecodingEnabled = NO;
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:@R"TESTHTML(
+        <!DOCTYPE html>
+        <body style="margin: 0;">
+        <img src="icon.png">
+        <script>
+        var sendResult = "not sent";
+
+        function sendPromisedImageData(pasteboardName, imageBase64)
+        {
+            try {
+                const png = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0));
+                const image = IPC.createSharedMemory(png.length);
+                image.writeBytes(png);
+                const archive = IPC.createSharedMemory(16);
+                archive.writeBytes(new Uint8Array(16));
+
+                IPC.sendMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_SetPromisedDataForImage.name, [
+                    { type: 'String', value: pasteboardName },
+                    { type: 'SharedMemory', value: image, protection: 'ReadOnly' },
+                    { type: 'String', value: '' },
+                    { type: 'String', value: 'zshrc' },
+                    { type: 'String', value: 'title' },
+                    { type: 'String', value: 'https://webkit.org/' },
+                    { type: 'String', value: 'https://webkit.org/' },
+                    { type: 'SharedMemory', value: archive, protection: 'ReadOnly' },
+                    { type: 'String', value: '' }
+                ]);
+                sendResult = "sent";
+            } catch (ex) {
+                sendResult = "" + ex;
+            }
+        }
+        </script>
+        </body>
+        )TESTHTML"];
+
+    [simulator runFrom:NSMakePoint(25, 25) to:NSMakePoint(300, 300)];
+
+    RetainPtr iconURL = [NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"];
+    RetainPtr imageBase64 = [[NSData dataWithContentsOfURL:iconURL.get()] base64EncodedStringWithOptions:0];
+    RetainPtr script = [NSString stringWithFormat:@"sendPromisedImageData('%@', '%@'); sendResult", NSPasteboardNameDrag, imageBase64.get()];
+
+    EXPECT_WK_STREQ("sent", [webView stringByEvaluatingJavaScript:script]);
+
+    RetainPtr<NSArray<NSURL *>> urls = [simulator receivePromisedFiles];
+    EXPECT_EQ(1UL, [urls count]);
+
+    RetainPtr fileName = [[urls firstObject] lastPathComponent];
+    EXPECT_WK_STREQ("zshrc", fileName);
+    EXPECT_FALSE([fileName hasPrefix:@"."]);
+
+    for (NSURL *url in urls.get())
+        [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
 }
 #endif // ENABLE(IPC_TESTING_API)
 
