@@ -31,6 +31,18 @@
         run('video.src = "content/test.mp4"');
         await Promise.race([waitForAndSucceed(video, 'canplay'), waitForAndFail(video, 'error')]);
 
+        video = document.createElement('video');
+        run('internals.settings.setAllowedMediaContainerTypes("video/webm")');
+        testExpected('video.canPlayType("video/webm")', 'maybe');
+        run('video.src = "content/test-vp8.webm"');
+        await Promise.race([waitForAndSucceed(video, 'canplay'), waitForAndFail(video, 'error')]);
+
+        video = document.createElement('video');
+        run('internals.settings.setAllowedMediaContainerTypes("video/mp4")');
+        testExpected('video.canPlayType("video/webm")', '');
+        run('video.src = "content/test-vp8.webm"');
+        await Promise.race([waitForAndSucceed(video, 'error'), waitForAndFail(video, 'canplay')]);
+
         endTest();
     });
     </script>
