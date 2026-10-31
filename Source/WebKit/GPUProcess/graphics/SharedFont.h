@@ -35,13 +35,13 @@ namespace WebKit {
 // not store glyph tables, so it can't be used for shaping or measuring glyphs.
 class SharedFont : public WebCore::FontBase, public ThreadSafeRefCounted<SharedFont> {
 public:
-    static Ref<SharedFont> create(const WebCore::FontPlatformData&, Origin, IsInterstitial, Visibility, IsOrientationFallback, std::optional<WebCore::RenderingResourceIdentifier>);
+    static Ref<SharedFont> create(const WebCore::FontPlatformData&, Origin, IsInterstitial, Visibility, IsOrientationFallback, IsSmallCapsFace, std::optional<WebCore::RenderingResourceIdentifier>);
 
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
 private:
-    SharedFont(const WebCore::FontPlatformData&, Origin, IsInterstitial, Visibility, IsOrientationFallback, std::optional<WebCore::RenderingResourceIdentifier>);
+    SharedFont(const WebCore::FontPlatformData&, Origin, IsInterstitial, Visibility, IsOrientationFallback, IsSmallCapsFace, std::optional<WebCore::RenderingResourceIdentifier>);
 };
 
 } // namespace WebKit

@@ -68,9 +68,9 @@ const float emphasisMarkFontSizeMultiplier = 0.5f;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Font);
 
-Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> identifier)
+Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, IsSmallCapsFace smallCapsFace, std::optional<RenderingResourceIdentifier> identifier)
 {
-    return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, identifier));
+    return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, smallCapsFace, identifier));
 }
 
 Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, float fontSize, bool, bool, DownloadableBinaryFontTrustedTypes trustedType)
@@ -86,11 +86,11 @@ Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, fl
 
 Ref<Font> Font::create(FontInternalAttributes&& attributes, FontPlatformData&& platformData)
 {
-    return Font::create(platformData, attributes.origin, attributes.isInterstitial, attributes.visibility, attributes.isTextOrientationFallback, attributes.renderingResourceIdentifier);
+    return Font::create(platformData, attributes.origin, attributes.isInterstitial, attributes.visibility, attributes.isTextOrientationFallback, attributes.isSmallCapsFace, attributes.renderingResourceIdentifier);
 }
 
-Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
-    : FontBase(platformData, origin, interstitial, visibility, orientationFallback, renderingResourceIdentifier)
+Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, IsSmallCapsFace smallCapsFace, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+    : FontBase(platformData, origin, interstitial, visibility, orientationFallback, smallCapsFace, renderingResourceIdentifier)
 {
     platformInit();
     platformGlyphInit();
@@ -452,7 +452,7 @@ const Font& Font::verticalRightOrientationFont() const
     DerivedFonts& derivedFontData = ensureDerivedFontData();
     if (!derivedFontData.verticalRightOrientationFont) {
         auto verticalRightPlatformData = FontPlatformData::cloneWithOrientation(m_platformData, FontOrientation::Horizontal);
-        derivedFontData.verticalRightOrientationFont = create(verticalRightPlatformData, origin(), IsInterstitial::No, Visibility::Visible, IsOrientationFallback::Yes);
+        derivedFontData.verticalRightOrientationFont = create(verticalRightPlatformData, origin(), IsInterstitial::No, Visibility::Visible, IsOrientationFallback::Yes, attributes().isSmallCapsFace);
     }
     ASSERT(derivedFontData.verticalRightOrientationFont != this);
     return *derivedFontData.verticalRightOrientationFont;
@@ -462,7 +462,7 @@ const Font& Font::uprightOrientationFont() const
 {
     DerivedFonts& derivedFontData = ensureDerivedFontData();
     if (!derivedFontData.uprightOrientationFont)
-        derivedFontData.uprightOrientationFont = create(m_platformData, origin(), IsInterstitial::No, Visibility::Visible, IsOrientationFallback::Yes);
+        derivedFontData.uprightOrientationFont = create(m_platformData, origin(), IsInterstitial::No, Visibility::Visible, IsOrientationFallback::Yes, attributes().isSmallCapsFace);
     ASSERT(derivedFontData.uprightOrientationFont != this);
     return *derivedFontData.uprightOrientationFont;
 }
@@ -471,7 +471,7 @@ const Font& Font::invisibleFont() const
 {
     DerivedFonts& derivedFontData = ensureDerivedFontData();
     if (!derivedFontData.invisibleFont)
-        derivedFontData.invisibleFont = create(m_platformData, origin(), IsInterstitial::Yes, Visibility::Invisible);
+        derivedFontData.invisibleFont = create(m_platformData, origin(), IsInterstitial::Yes, Visibility::Invisible, IsOrientationFallback::No, attributes().isSmallCapsFace);
     ASSERT(derivedFontData.invisibleFont != this);
     return *derivedFontData.invisibleFont;
 }

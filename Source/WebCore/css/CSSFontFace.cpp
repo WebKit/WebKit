@@ -843,6 +843,14 @@ bool CSSFontFace::hasSVGFontFaceSource() const
     });
 }
 
+bool CSSFontFace::supportsSVGVariantCaps(FontVariantCaps variantCaps) const
+{
+    return std::ranges::all_of(m_sources, [&](auto& source) {
+        RefPtr svgFontFaceElement = source->svgFontFaceElement();
+        return !svgFontFaceElement || svgFontFaceElement->supportsVariantCaps(variantCaps);
+    });
+}
+
 void CSSFontFace::setErrorState()
 {
     switch (m_status) {
