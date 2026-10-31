@@ -273,12 +273,12 @@ public:
     Direction direction() const { return state().direction; }
     void setDirection(Direction);
 
-    class FontProxy final : public FontSelectorClient {
+    class FontProxy final : public RefCounted<FontProxy>, public FontSelectorClient {
     public:
-        FontProxy() = default;
+        static Ref<FontProxy> create();
+        Ref<FontProxy> NODELETE clone() const;
+
         virtual ~FontProxy();
-        FontProxy(const FontProxy&);
-        FontProxy& operator=(const FontProxy&);
 
         bool realized() const { return m_font.hasFontSelector(); }
         void initialize(FontSelector&, const FontCascade&);
@@ -302,6 +302,12 @@ public:
         void update(NOESCAPE const ScopedLambda<void(FontCascadeDescription&)>&);
 
     private:
+        FontProxy() = default;
+
+        // Don't use these to make a copy, use clone() instead,
+        // which ensures the resulting copy is ref-counted.
+        FontProxy(const FontProxy&);
+        FontProxy& operator=(const FontProxy&);
         void update(FontSelector&);
         void fontsNeedUpdate(FontSelector&) final;
 
@@ -310,6 +316,13 @@ public:
 
     struct State final {
         State();
+
+        State clone() const;
+
+        // Explicit copy constructor definition inhibits these,
+        // so we have to explicitly define them.
+        State(State&&) = default;
+        State& operator=(State&&) = default;
 
         String unparsedStrokeColor;
         String unparsedFillColor;
@@ -343,10 +356,14 @@ public:
         String lang;
 
         String unparsedFont;
+<<<<<<< HEAD
         FontProxy font;
         // The font description `unparsedFont` was resolved against. Relative values in the font
         // shorthand depend on it, so `font` is stale once it no longer matches the canvas element.
         FontCascadeDescription fontResolutionBase;
+=======
+        Ref<FontProxy> font;
+>>>>>>> d91e352adfba (Make CanvasRenderingContext2DBase::FontProxy ref-counted)
 
         RefPtr<CanvasLayerContextSwitcher> targetSwitcher;
 
@@ -361,6 +378,10 @@ public:
         String fontString() const;
         String globalCompositeOperationString() const;
         String shadowColorString() const;
+
+private:
+        // Use clone() to make a copy.
+        State(const State&) = default;
     };
     const Vector<State, 1>& stateStack() LIFETIME_BOUND;
 

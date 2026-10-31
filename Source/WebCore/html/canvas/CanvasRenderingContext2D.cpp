@@ -226,6 +226,12 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     if (newFont.isEmpty())
         return;
 
+<<<<<<< HEAD
+=======
+    if (newFont == state().unparsedFont && protect(state().font)->realized())
+        return;
+
+>>>>>>> d91e352adfba (Make CanvasRenderingContext2DBase::FontProxy ref-counted)
     Ref canvas = this->canvas();
     Ref document = canvas->document();
 
@@ -265,9 +271,15 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     modifiableState().unparsedFont = newFontSafeCopy;
     modifiableState().fontResolutionBase = WTF::move(fontDescription);
 
+<<<<<<< HEAD
     modifiableState().font.initialize(protect(document->fontSelector()), protect(*fontCascade));
     ASSERT(state().font.realized());
     ASSERT(state().font.isPopulated());
+=======
+    protect(modifiableState().font)->initialize(protect(document->fontSelector()), *fontCascade);
+    ASSERT(protect(state().font)->realized());
+    ASSERT(protect(state().font)->isPopulated());
+>>>>>>> d91e352adfba (Make CanvasRenderingContext2DBase::FontProxy ref-counted)
 
     // Recompute the word and the letter spacing for the new font.
     String letterSpacing;
@@ -337,8 +349,9 @@ auto CanvasRenderingContext2D::fontProxy() -> const FontProxy*
     // This means that the style may end up being stale here, but that's at least better than running arbitrary JS in the middle of processing.
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    if (!state().font.realized())
+    if (!protect(state().font)->realized())
         setFontWithoutUpdatingStyle(state().unparsedFont);
+<<<<<<< HEAD
     else if (state().lang == "inherit"_s && state().font.fontDescription().computedLocale() != inheritedLanguage()) {
         realizeSaves();
         modifiableState().font.update([language = effectiveLanguage()](FontCascadeDescription& description) {
@@ -346,6 +359,9 @@ auto CanvasRenderingContext2D::fontProxy() -> const FontProxy*
         });
     }
     return &state().font;
+=======
+    return state().font.ptr();
+>>>>>>> d91e352adfba (Make CanvasRenderingContext2DBase::FontProxy ref-counted)
 }
 
 void CanvasRenderingContext2D::drawTextInternal(const String& text, double x, double y, bool fill, std::optional<double> maxWidth)
