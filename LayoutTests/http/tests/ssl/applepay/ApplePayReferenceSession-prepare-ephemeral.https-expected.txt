@@ -1,0 +1,11 @@
+Test that ApplePayReferenceSession.prepare() in Private Browsing still resolves, and tells the payment coordinator not to disclose Apple Pay capability.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS token is "mock-token"
+PASS internals.mockPaymentCoordinator.referenceSessionShouldDiscloseCapability is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

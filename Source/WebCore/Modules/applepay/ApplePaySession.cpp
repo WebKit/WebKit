@@ -63,9 +63,7 @@
 #include "PaymentMethod.h"
 #include "PaymentRequestUtilities.h"
 #include "PaymentRequestValidator.h"
-#include "ScriptTrackingPrivacyCategory.h"
 #include "SecurityOrigin.h"
-#include "Settings.h"
 #include "UserGestureIndicator.h"
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -529,15 +527,6 @@ ExceptionOr<bool> ApplePaySession::supportsVersion(Document& document, unsigned 
         return Exception { ExceptionCode::InvalidAccessError };
 
     return protect(page->paymentCoordinator())->supportsVersion(document, version);
-}
-
-static bool shouldDiscloseApplePayCapability(Document& document)
-{
-    RefPtr page = document.page();
-    if (!page || page->usesEphemeralSession() || document.requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::Payments))
-        return false;
-
-    return document.settings().applePayCapabilityDisclosureAllowed();
 }
 
 ExceptionOr<bool> ApplePaySession::canMakePayments(Document& document)

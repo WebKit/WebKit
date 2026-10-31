@@ -408,6 +408,21 @@ void MockPaymentCoordinator::beginApplePaySetup(const ApplePaySetupConfiguration
     completionHandler(true);
 }
 
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+
+void MockPaymentCoordinator::prepareReferenceSession(const ApplePayReferenceRequest& request, bool shouldDiscloseCapability, CompletionHandler<void(std::optional<String>&&)>&& completionHandler)
+{
+    m_referenceSessionRequest = request;
+    m_referenceSessionShouldDiscloseCapability = shouldDiscloseCapability;
+    RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler), token = m_referenceSessionToken] mutable {
+        if (token.isNull())
+            return completionHandler(std::nullopt);
+        completionHandler(WTF::move(token));
+    });
+}
+
+#endif
+
 bool MockPaymentCoordinator::installmentConfigurationReturnsNil() const
 {
 #if HAVE(PASSKIT_INSTALLMENTS)

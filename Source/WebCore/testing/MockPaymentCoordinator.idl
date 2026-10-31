@@ -38,6 +38,10 @@
 
     undefined addSetupFeature(ApplePaySetupFeatureState state, ApplePaySetupFeatureType type, boolean supportsInstallments);
 
+    [Conditional=APPLE_PAY_REFERENCE_SESSION] undefined setReferenceSessionToken(DOMString? token);
+    [Conditional=APPLE_PAY_REFERENCE_SESSION] readonly attribute ApplePayReferenceRequest referenceSessionRequest;
+    [Conditional=APPLE_PAY_REFERENCE_SESSION] readonly attribute boolean referenceSessionShouldDiscloseCapability;
+
     readonly attribute ApplePayLineItem total;
     readonly attribute sequence<ApplePayLineItem> lineItems;
     readonly attribute sequence<MockPaymentError> errors;

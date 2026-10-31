@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ApplePayReferenceSessionEnabled=true UsesBackForwardCache=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+
+description("Test that a page with an ApplePayReferenceSession enters the back/forward cache, that a prepare() in flight then rejects with AbortError, and that an idle session still works once the page is restored.");
+
+window.jsTestIsAsync = true;
+
+const request = { clientIdentifier: "com.example.client" };
+let idleSession;
+let preparingSession;
+let preparing;
+let preparingResult;
+let token;
+
+window.addEventListener("pagehide", event => {
+    debug(`pagehide - ${event.persisted ? "" : "not "}entering cache`);
+    if (!event.persisted) {
+        testFailed("Page failed to enter the back/forward cache.");
+        finishJSTest();
+        return;
+    }
+
+    // The mock replies on a later run loop turn, so this prepare() is still in flight when the page is suspended.
+    preparing = preparingSession.prepare().then(() => "resolved", e => e.name);
+});
+
+window.addEventListener("pageshow", async event => {
+    debug(`pageshow - ${event.persisted ? "" : "not "}from cache`);
+    if (!event.persisted)
+        return;
+
+    preparingResult = await preparing;
+    shouldBeEqualToString("preparingResult", "AbortError");
+
+    // Navigating away installed a new mock payment coordinator.
+    internals.mockPaymentCoordinator.setReferenceSessionToken("mock-token");
+    token = await idleSession.prepare();
+    shouldBeEqualToString("token", "mock-token");
+
+    finishJSTest();
+});
+
+window.addEventListener("load", () => {
+    internals.mockPaymentCoordinator.setReferenceSessionToken("mock-token");
+    idleSession = new ApplePayReferenceSession(request);
+    preparingSession = new ApplePayReferenceSession(request);
+    setTimeout(() => window.location.href = "/navigation/resources/page-cache-helper.html", 0);
+});
+
+</script>
+</body>
+</html>

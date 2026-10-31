@@ -52,6 +52,7 @@ class PaymentSessionError;
 struct ApplePayCouponCodeUpdate;
 struct ApplePayPaymentAuthorizationResult;
 struct ApplePayPaymentMethodUpdate;
+struct ApplePayReferenceRequest;
 struct ApplePaySetupConfiguration;
 struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethod;
@@ -100,6 +101,10 @@ public:
     void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&&);
     void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<Ref<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&);
     void endApplePaySetup();
+
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+    void prepareReferenceSession(const ApplePayReferenceRequest&, bool shouldDiscloseCapability, CompletionHandler<void(std::optional<String>&&)>&&);
+#endif
 
 protected:
     WEBCORE_EXPORT explicit PaymentCoordinator(Ref<PaymentCoordinatorClient>&&);

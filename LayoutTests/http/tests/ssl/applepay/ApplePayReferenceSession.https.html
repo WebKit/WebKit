@@ -3,16 +3,23 @@
 <head>
 <meta charset="utf-8">
 <script src="/js-test-resources/js-test.js"></script>
+<style>
+iframe { display: none; }
+</style>
 </head>
 <body>
+<iframe id="withoutPermission" data-src="https://localhost:8443/ssl/applepay/resources/ApplePayReferenceSession-frame.html"></iframe>
+<iframe id="withPermission" allow="payment" data-src="https://localhost:8443/ssl/applepay/resources/ApplePayReferenceSession-frame.html"></iframe>
 <script>
 
-description("Test the ApplePayReferenceSession scaffolding: construction and prepare().");
+description("Test ApplePayReferenceSession construction, which needs no user gesture.");
 
 window.jsTestIsAsync = true;
 
 const request = { clientIdentifier: "com.example.client" };
 let session;
+let frameResult;
+let FrameSession;
 
 // Logs only the error name, since the bindings word their own TypeErrors.
 function shouldThrowNamed(expression, name) {
@@ -27,26 +34,45 @@ function shouldThrowNamed(expression, name) {
     }
 }
 
-async function shouldRejectNamed(expression, name) {
-    try {
-        await eval(expression);
-        testFailed(`${expression} resolved.`);
-    } catch (e) {
-        if (e.name === name)
-            testPassed(`${expression} rejected with ${name}.`);
-        else
-            testFailed(`${expression} rejected with ${e.name}, not ${name}: ${e.message}`);
-    }
+function waitFor(target, eventName) {
+    return new Promise(resolve => target.addEventListener(eventName, resolve, { once: true }));
+}
+
+async function constructInFrame(id) {
+    const frame = document.getElementById(id);
+    const loaded = waitFor(frame, "load");
+    frame.src = frame.dataset.src;
+    await loaded;
+    const reply = waitFor(window, "message");
+    frame.contentWindow.postMessage("construct", "*");
+    return (await reply).data;
 }
 
 window.onload = async () => {
     shouldBeEqualToString("typeof ApplePayReferenceSession", "function");
     shouldThrowNamed("new ApplePayReferenceSession()", "TypeError");
     shouldThrowNamed("new ApplePayReferenceSession({})", "TypeError");
+    shouldThrowNamed("new ApplePayReferenceSession({ clientIdentifier: '' })", "TypeError");
     shouldNotThrow("session = new ApplePayReferenceSession(request)");
     debug("");
 
-    await shouldRejectNamed("session.prepare()", "NotSupportedError");
+    debug("In a third-party iframe:");
+    frameResult = await constructInFrame("withoutPermission");
+    shouldBeEqualToString("frameResult", "SecurityError");
+    frameResult = await constructInFrame("withPermission");
+    shouldBeEqualToString("frameResult", "constructed");
+    debug("");
+
+    debug("In an about:blank iframe, which is not secure for payment, then after removing it:");
+    const blankFrame = document.body.appendChild(document.createElement("iframe"));
+    FrameSession = blankFrame.contentWindow.ApplePayReferenceSession;
+    shouldThrowNamed("new FrameSession(request)", "InvalidAccessError");
+    blankFrame.remove();
+    shouldThrowNamed("new FrameSession(request)", "InvalidAccessError");
+    debug("");
+
+    debug("The request is validated before the document:");
+    shouldThrowNamed("new FrameSession({ clientIdentifier: '' })", "TypeError");
     debug("");
 
     finishJSTest();
