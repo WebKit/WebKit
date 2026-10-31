@@ -382,7 +382,7 @@
 #include <JavaScriptCore/JSGlobalObjectFunctions.h>
 #include <JavaScriptCore/JSHeapFinalizerPrivate.h>
 #include <JavaScriptCore/JSLock.h>
-#include <JavaScriptCore/JSObjectInlines.h>
+#include <JavaScriptCore/JSObjectInlinesLight.h>
 #include <JavaScriptCore/JSONCache.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>

@@ -32,6 +32,7 @@
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSGlobalProxy.h>
 #include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/JSObjectInlinesLight.h>
 #include <JavaScriptCore/JSTypedArrays.h>
 #include <JavaScriptCore/Lookup.h>
 #include <JavaScriptCore/MegamorphicCache.h>
@@ -170,13 +171,6 @@ inline T JSObject::getAs(JSGlobalObject* globalObject, PropertyNameType property
         return nullptr;
 #endif
     return uncheckedDowncast<std::remove_pointer_t<T>>(value);
-}
-
-template<typename CellType, SubspaceAccess>
-CompleteSubspace* JSFinalObject::subspaceFor(VM& vm)
-{
-    static_assert(CellType::needsDestruction == DoesNotNeedDestruction);
-    return &vm.cellSpace();
 }
 
 // https://tc39.es/ecma262/#sec-createlistfromarraylike
