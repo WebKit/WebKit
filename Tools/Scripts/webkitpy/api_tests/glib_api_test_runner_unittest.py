@@ -114,7 +114,7 @@ class GLibAPITestRunnerTest(unittest.TestCase):
         self._git("branch", "base")
 
     def _git(self, *args):
-        subprocess.check_output(["git", "-c", "user.name=Test", "-c", "user.email=test@example.com"] + list(args), cwd=self._source_directory)
+        subprocess.check_output(["git", "-c", "commit.gpgsign=false", "-c", "user.name=Test", "-c", "user.email=test@example.com"] + list(args), cwd=self._source_directory)
 
     def _write_sources(self, files):
         for path, content in files.items():
