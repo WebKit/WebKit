@@ -52,7 +52,7 @@ private:
     class JSArrayBufferOwner : public JSC::WeakHandleOwner {
     public:
         bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) override;
-        void finalize(JSC::Handle<JSC::Unknown>, void* context) override;
+        FinalizeResult finalize(JSC::Handle<JSC::Unknown>, void* context) override;
     };
 
     JSArrayBufferOwner m_owner;

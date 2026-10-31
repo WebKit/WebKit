@@ -164,11 +164,12 @@ bool JSTestSerializableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknow
     return false;
 }
 
-void JSTestSerializableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestSerializableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestSerializable = static_cast<JSTestSerializable*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestSerializable->wrapped(), jsTestSerializable);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

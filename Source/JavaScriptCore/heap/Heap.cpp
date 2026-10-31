@@ -2037,20 +2037,18 @@ void Heap::addFinalizer(JSCell* cell, LambdaFinalizer function)
     WeakSet::allocate(cell, &m_lambdaFinalizerOwner, function.leak()); // Balanced by LambdaFinalizerOwner::finalize().
 }
 
-void Heap::CFinalizerOwner::finalize(Handle<Unknown> handle, void* context)
+WeakHandleOwner::FinalizeResult Heap::CFinalizerOwner::finalize(Handle<Unknown> handle, void* context)
 {
-    HandleSlot slot = handle.slot();
     CFinalizer finalizer = std::bit_cast<CFinalizer>(context);
-    finalizer(slot->asCell());
-    WeakSet::deallocate(WeakImpl::asWeakImpl(slot));
+    finalizer(handle.get().asCell());
+    return FinalizeResult::DeallocateImpl;
 }
 
-void Heap::LambdaFinalizerOwner::finalize(Handle<Unknown> handle, void* context)
+WeakHandleOwner::FinalizeResult Heap::LambdaFinalizerOwner::finalize(Handle<Unknown> handle, void* context)
 {
     auto finalizer = WTF::adopt(static_cast<LambdaFinalizer::Impl*>(context));
-    HandleSlot slot = handle.slot();
-    finalizer(slot->asCell());
-    WeakSet::deallocate(WeakImpl::asWeakImpl(slot));
+    finalizer(handle.get().asCell());
+    return FinalizeResult::DeallocateImpl;
 }
 
 void Heap::collectNowFullIfNotDoneRecently(Synchronousness synchronousness)

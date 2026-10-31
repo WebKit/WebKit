@@ -459,11 +459,12 @@ bool JSTestNamedSetterWithLegacyUnforgeablePropertiesOwner::isReachableFromOpaqu
     return false;
 }
 
-void JSTestNamedSetterWithLegacyUnforgeablePropertiesOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestNamedSetterWithLegacyUnforgeablePropertiesOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedSetterWithLegacyUnforgeableProperties = static_cast<JSTestNamedSetterWithLegacyUnforgeableProperties*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestNamedSetterWithLegacyUnforgeableProperties->wrapped(), jsTestNamedSetterWithLegacyUnforgeableProperties);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

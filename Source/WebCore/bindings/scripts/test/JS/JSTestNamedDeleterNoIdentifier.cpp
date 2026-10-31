@@ -367,11 +367,12 @@ bool JSTestNamedDeleterNoIdentifierOwner::isReachableFromOpaqueRoots(JSC::Handle
     return false;
 }
 
-void JSTestNamedDeleterNoIdentifierOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestNamedDeleterNoIdentifierOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedDeleterNoIdentifier = static_cast<JSTestNamedDeleterNoIdentifier*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestNamedDeleterNoIdentifier->wrapped(), jsTestNamedDeleterNoIdentifier);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

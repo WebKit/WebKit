@@ -70,7 +70,7 @@ bool SimpleTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots(
     return visitor.containsOpaqueRoot(wrapper.impl());
 }
 
-void SimpleTypedArrayController::JSArrayBufferOwner::finalize(JSC::Handle<JSC::Unknown>, void*) { }
+WeakHandleOwner::FinalizeResult SimpleTypedArrayController::JSArrayBufferOwner::finalize(JSC::Handle<JSC::Unknown>, void*) { return FinalizeResult::KeepImpl; }
 
 } // namespace JSC
 

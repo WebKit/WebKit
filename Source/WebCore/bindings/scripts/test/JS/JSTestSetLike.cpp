@@ -378,11 +378,12 @@ bool JSTestSetLikeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
     return false;
 }
 
-void JSTestSetLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestSetLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestSetLike = static_cast<JSTestSetLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestSetLike->wrapped(), jsTestSetLike);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

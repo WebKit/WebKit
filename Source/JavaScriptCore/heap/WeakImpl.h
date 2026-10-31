@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/Weak.h>
+#include <wtf/Atomics.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -48,69 +49,82 @@ public:
     };
 
     WeakImpl();
-    WeakImpl(JSValue, WeakHandleOwner*, void* context);
+    void initialize(JSValue, WeakHandleOwner*, void* context);
 
     State state();
-    void setState(State);
     void LEGACY_NODELETE clear();
 
-    const JSValue& jsValue();
-    static constexpr ptrdiff_t offsetOfJSValue() { return OBJECT_OFFSETOF(WeakImpl, m_jsValue); }
-    WeakHandleOwner* weakHandleOwner();
-    static constexpr ptrdiff_t offsetOfWeakHandleOwner() { return OBJECT_OFFSETOF(WeakImpl, m_weakHandleOwner); }
-    void* context();
+    JSValue jsValue() { return JSValue::decode(m_jsValue.load<MemoryOrder::Relaxed>()); }
+    WeakHandleOwner* weakHandleOwner() { return weakHandleOwnerOf(stateWord()); }
+    void* context() { return m_context.load<MemoryOrder::Relaxed>(); }
 
-    static WeakImpl* asWeakImpl(JSValue*);
+    static constexpr ptrdiff_t offsetOfJSValue() { return OBJECT_OFFSETOF(WeakImpl, m_jsValue); }
+    static constexpr ptrdiff_t offsetOfWeakHandleOwner() { return OBJECT_OFFSETOF(WeakImpl, m_weakHandleOwner); }
 
 private:
-    const JSValue m_jsValue;
-    WeakHandleOwner* m_weakHandleOwner;
-    void* m_context { nullptr };
+    friend class WeakBlock;
+
+    static State stateOf(uintptr_t word) { return static_cast<State>(word & StateMask); }
+    static WeakHandleOwner* weakHandleOwnerOf(uintptr_t word) { return std::bit_cast<WeakHandleOwner*>(word & ~static_cast<uintptr_t>(StateMask)); }
+    static uintptr_t withState(uintptr_t word, State state) { return (word & ~static_cast<uintptr_t>(StateMask)) | state; }
+
+    struct WeakImplSnapshot {
+        explicit operator bool() { return !!jsValue; }
+
+        JSValue jsValue { };
+        WeakHandleOwner* weakHandleOwner { nullptr };
+        void* context { nullptr };
+    };
+    void setDead();
+    WeakImplSnapshot trySetFinalized(uintptr_t deadStateWord);
+    uintptr_t stateWord();
+
+    Atomic<EncodedJSValue> m_jsValue;
+    Atomic<uintptr_t> m_weakHandleOwner;
+    Atomic<void*> m_context { nullptr };
 };
 
 inline WeakImpl::WeakImpl()
-    : m_weakHandleOwner(std::bit_cast<WeakHandleOwner*>(static_cast<uintptr_t>(Deallocated)))
+    : m_jsValue(JSValue::encode(JSValue()))
+    , m_weakHandleOwner(Deallocated)
 {
 }
 
-inline WeakImpl::WeakImpl(JSValue jsValue, WeakHandleOwner* weakHandleOwner, void* context)
-    : m_jsValue(jsValue)
-    , m_weakHandleOwner(weakHandleOwner)
-    , m_context(context)
+inline void WeakImpl::initialize(JSValue jsValue, WeakHandleOwner* weakHandleOwner, void* context)
 {
-    ASSERT(state() == Live);
-    ASSERT(m_jsValue && m_jsValue.isCell());
+    ASSERT(state() == Deallocated);
+    ASSERT(jsValue && jsValue.isCell());
+    ASSERT(!(std::bit_cast<uintptr_t>(weakHandleOwner) & StateMask));
+    m_jsValue.store<MemoryOrder::Relaxed>(JSValue::encode(jsValue));
+    m_context.store<MemoryOrder::Relaxed>(context);
+    m_weakHandleOwner.store<MemoryOrder::Relaxed>(std::bit_cast<uintptr_t>(weakHandleOwner) | Live);
+}
+
+inline uintptr_t WeakImpl::stateWord()
+{
+    return m_weakHandleOwner.load<MemoryOrder::Relaxed>();
 }
 
 inline WeakImpl::State WeakImpl::state()
 {
-    return static_cast<State>(reinterpret_cast<uintptr_t>(m_weakHandleOwner) & StateMask);
+    return stateOf(stateWord());
 }
 
-inline void WeakImpl::setState(WeakImpl::State state)
+inline void WeakImpl::setDead()
 {
-    ASSERT(state >= this->state());
-    m_weakHandleOwner = reinterpret_cast<WeakHandleOwner*>((reinterpret_cast<uintptr_t>(m_weakHandleOwner) & ~StateMask) | state);
+    ASSERT(state() == Live);
+    m_weakHandleOwner.store<MemoryOrder::Relaxed>(withState(stateWord(), Dead));
 }
 
-inline const JSValue& WeakImpl::jsValue()
+inline WeakImpl::WeakImplSnapshot WeakImpl::trySetFinalized(uintptr_t deadStateWord)
 {
-    return m_jsValue;
-}
-
-inline WeakHandleOwner* WeakImpl::weakHandleOwner()
-{
-    return reinterpret_cast<WeakHandleOwner*>((reinterpret_cast<uintptr_t>(m_weakHandleOwner) & ~StateMask));
-}
-
-inline void* WeakImpl::context()
-{
-    return m_context;
-}
-
-inline WeakImpl* WeakImpl::asWeakImpl(JSValue* slot)
-{
-    return reinterpret_cast_ptr<WeakImpl*>(reinterpret_cast_ptr<char*>(slot) + OBJECT_OFFSETOF(WeakImpl, m_jsValue));
+    ASSERT(stateOf(deadStateWord) == Dead);
+    JSValue jsValue = JSValue::decode(m_jsValue.load<MemoryOrder::Relaxed>());
+    void* context = m_context.load<MemoryOrder::Relaxed>();
+    // A concurrent clear() may have already deallocated.
+    if (m_weakHandleOwner.compareExchangeStrong<MemoryOrder::AcquireRelease>(deadStateWord, withState(deadStateWord, Finalized)) != deadStateWord)
+        return { };
+    return { jsValue, weakHandleOwnerOf(deadStateWord), context };
 }
 
 } // namespace JSC

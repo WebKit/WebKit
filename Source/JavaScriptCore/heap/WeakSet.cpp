@@ -44,10 +44,19 @@ WeakSet::~WeakSet()
 
 void WeakSet::lastChanceToFinalize()
 {
-    for (WeakBlock* block = m_blocks.head(); block; block = block->next()) {
-        WeakBlock::IterationScope iterationScope(*block);
-        block->lastChanceToFinalize();
-    }
+    // A finalizer may allocate a handle into this WeakSet, and that handle has to be finalized too.
+    auto hasLiveHandles = [&] {
+        for (WeakBlock* block = m_blocks.head(); block; block = block->next()) {
+            if (block->hasLiveHandles())
+                return true;
+        }
+        return false;
+    };
+    do {
+        for (WeakBlock* block = m_blocks.head(); block; block = block->next())
+            block->reapAllLiveHandles();
+        sweep();
+    } while (hasLiveHandles());
 }
 
 void WeakSet::reap()
@@ -59,14 +68,21 @@ void WeakSet::reap()
 
 void WeakSet::didBecomeEmpty(WeakBlock* block)
 {
-    ASSERT(block->isEmpty());
-    tryReleaseBlock(block);
+    Locker locker { heap()->weakBlockLock() };
+    tryReleaseBlock(locker, block);
 }
 
-void WeakSet::tryReleaseBlock(WeakBlock* block)
+void WeakSet::tryReleaseBlock(const AbstractLocker&, WeakBlock* block)
 {
-    // The fast path allocates out of m_currentBlock without consulting the list, so that one block
-    // stays put; a later sweep() or shrink() collects it once the allocator has moved on.
+    if (block->m_isIterationTarget)
+        return;
+
+    // Past this point the caller must be the thread with heap access, or the world must be stopped.
+    // Nothing tracks which thread has heap access, and many clients clear Weak<>s without holding the
+    // API lock
+
+    // The fast path allocates out of m_currentBlock without consulting the list, so that block
+    // can't be changed concurrently; a later shrink() will collect it.
     if (block == m_currentBlock)
         return;
 
@@ -99,52 +115,72 @@ void WeakSet::sweep()
     // 1. We are iterating doubly-linked list, so it is fine when a new WeakBlock is appended to m_blocks.
     // 2. During sweeping, we mark WeakBlock via WeakBlock::IterationScope. This defers empty / logically-empty chaining.
     //    Thus we do not unchain the currently swept block from m_blocks.
-    // 3. Once the scope is closed the block is no longer held, so it can be released right away. Its
-    //    successor has to be read first, because releasing pools the block and may free it outright.
+    for (WeakBlock* block = m_blocks.head(); block; block = block->next()) {
+        WeakBlock::IterationScope iterationScope(*block);
+        block->sweep();
+    }
+
+    releaseBlocks();
+}
+
+void WeakSet::finalizeDeadHandles()
+{
+    Lock& lock = heap()->weakBlockLock();
+    WeakBlock* block;
+    {
+        Locker locker { lock };
+        block = m_blocks.head();
+        if (!block)
+            return;
+        ASSERT(!block->m_isIterationTarget);
+        block->m_isIterationTarget = true;
+    }
+
+    while (block) {
+        block->sweep();
+
+        Locker locker { lock };
+        block->m_isIterationTarget = false;
+        block = block->next();
+        if (block) {
+            ASSERT(!block->m_isIterationTarget);
+            block->m_isIterationTarget = true;
+        }
+    }
+}
+
+void WeakSet::releaseBlocks()
+{
+    if (m_blocks.isEmpty())
+        return;
+
+    // A finalizer can clear the last live handle in a block a sweep already let go of. Nothing
+    // revisits a block when its live count reaches zero, so classify every block, including the one
+    // the allocator was using.
+    Locker locker { heap()->weakBlockLock() };
+    m_currentBlock = nullptr;
     WeakBlock* next;
     for (WeakBlock* block = m_blocks.head(); block; block = next) {
-        {
-            WeakBlock::IterationScope iterationScope(*block);
-            block->sweep();
-        }
         next = block->next();
-        tryReleaseBlock(block);
+        tryReleaseBlock(locker, block);
     }
-
-    detachAllocator();
-
-    // A finalizer above can clear the last live handle in a block the first walk already released
-    // its hold on. Nothing revisits a block when its live count reaches zero, so classify whatever
-    // survived now that every finalizer has run.
-    for (WeakBlock* block = m_blocks.head(); block; block = next) {
-        next = block->next();
-        tryReleaseBlock(block);
-    }
-
-    resetAllocator();
-
-    if (m_blocks.isEmpty() && isOnList())
-        remove();
+    resetAllocator(locker);
 }
 
 void WeakSet::shrink()
 {
-    detachAllocator();
+    Locker locker { heap()->weakBlockLock() };
+    m_currentBlock = nullptr;
 
     WeakBlock* next;
     for (WeakBlock* block = m_blocks.head(); block; block = next) {
         next = block->next();
 
-        if (block->isEmpty()) {
-            m_blocks.remove(block);
-            heap()->returnWeakBlockToPool(block);
-        }
+        if (block->isEmpty())
+            tryReleaseBlock(locker, block);
     }
 
-    resetAllocator();
-
-    if (m_blocks.isEmpty() && isOnList())
-        remove();
+    resetAllocator(locker);
 }
 
 WeakBlock* WeakSet::findAllocator(CellContainer container)
@@ -183,7 +219,10 @@ WeakBlock* WeakSet::addAllocator(CellContainer container)
         heap()->didAllocate(WeakBlock::blockSize);
     }
 
-    m_blocks.append(block);
+    {
+        Locker locker { heap()->weakBlockLock() };
+        m_blocks.append(block);
+    }
     ASSERT(block->hasFreeCell());
     return m_currentBlock = block;
 }

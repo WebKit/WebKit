@@ -321,11 +321,12 @@ bool JSTestDefaultToJSONCustomGetterOwner::isReachableFromOpaqueRoots(JSC::Handl
     return false;
 }
 
-void JSTestDefaultToJSONCustomGetterOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestDefaultToJSONCustomGetterOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDefaultToJSONCustomGetter = static_cast<JSTestDefaultToJSONCustomGetter*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestDefaultToJSONCustomGetter->wrapped(), jsTestDefaultToJSONCustomGetter);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

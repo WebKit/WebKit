@@ -76,11 +76,12 @@ RegExp* RegExpCache::ensureEmptyRegExpSlow(VM& vm)
     return regExp;
 }
 
-void RegExpCache::finalize(Handle<Unknown> handle, void*)
+WeakHandleOwner::FinalizeResult RegExpCache::finalize(Handle<Unknown> handle, void*)
 {
     Locker locker { m_lock };
     RegExp* regExp = static_cast<RegExp*>(handle.get().asCell());
     weakRemove(m_weakCache, regExp->key(), regExp);
+    return FinalizeResult::KeepImpl;
 }
 
 void RegExpCache::addToStrongCache(RegExp* regExp)

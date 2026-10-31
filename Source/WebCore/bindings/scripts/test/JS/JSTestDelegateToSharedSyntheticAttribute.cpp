@@ -282,11 +282,12 @@ bool JSTestDelegateToSharedSyntheticAttributeOwner::isReachableFromOpaqueRoots(J
     return false;
 }
 
-void JSTestDelegateToSharedSyntheticAttributeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestDelegateToSharedSyntheticAttributeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDelegateToSharedSyntheticAttribute = static_cast<JSTestDelegateToSharedSyntheticAttribute*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestDelegateToSharedSyntheticAttribute->wrapped(), jsTestDelegateToSharedSyntheticAttribute);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

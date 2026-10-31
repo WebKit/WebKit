@@ -356,11 +356,12 @@ bool JSTestIndexedSetterThrowingExceptionOwner::isReachableFromOpaqueRoots(JSC::
     return false;
 }
 
-void JSTestIndexedSetterThrowingExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestIndexedSetterThrowingExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestIndexedSetterThrowingException = static_cast<JSTestIndexedSetterThrowingException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestIndexedSetterThrowingException->wrapped(), jsTestIndexedSetterThrowingException);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

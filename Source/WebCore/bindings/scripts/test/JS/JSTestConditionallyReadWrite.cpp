@@ -500,11 +500,12 @@ bool JSTestConditionallyReadWriteOwner::isReachableFromOpaqueRoots(JSC::Handle<J
     return false;
 }
 
-void JSTestConditionallyReadWriteOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestConditionallyReadWriteOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestConditionallyReadWrite = static_cast<JSTestConditionallyReadWrite*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestConditionallyReadWrite->wrapped(), jsTestConditionallyReadWrite);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

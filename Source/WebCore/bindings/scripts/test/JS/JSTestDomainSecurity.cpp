@@ -359,11 +359,12 @@ bool JSTestDomainSecurityOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unkn
     return false;
 }
 
-void JSTestDomainSecurityOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestDomainSecurityOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDomainSecurity = static_cast<JSTestDomainSecurity*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestDomainSecurity->wrapped(), jsTestDomainSecurity);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

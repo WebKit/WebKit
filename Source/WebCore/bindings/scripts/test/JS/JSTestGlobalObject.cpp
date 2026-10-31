@@ -1978,11 +1978,12 @@ bool JSTestGlobalObjectOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknow
     return false;
 }
 
-void JSTestGlobalObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestGlobalObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestGlobalObject = static_cast<JSTestGlobalObject*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestGlobalObject->wrapped(), jsTestGlobalObject);
+    return FinalizeResult::KeepImpl;
 }
 
 TestGlobalObject* JSTestGlobalObject::toWrapped(JSC::VM&, JSC::JSValue value)

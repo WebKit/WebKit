@@ -323,11 +323,12 @@ bool JSTestIterableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
     return false;
 }
 
-void JSTestIterableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestIterableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestIterable = static_cast<JSTestIterable*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestIterable->wrapped(), jsTestIterable);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

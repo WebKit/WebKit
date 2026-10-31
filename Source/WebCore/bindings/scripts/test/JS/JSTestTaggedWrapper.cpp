@@ -202,11 +202,12 @@ bool JSTestTaggedWrapperOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unkno
     return false;
 }
 
-void JSTestTaggedWrapperOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestTaggedWrapperOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestTaggedWrapper = static_cast<JSTestTaggedWrapper*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestTaggedWrapper->wrapped(), jsTestTaggedWrapper);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

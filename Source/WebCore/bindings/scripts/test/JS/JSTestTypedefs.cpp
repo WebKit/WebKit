@@ -845,11 +845,12 @@ bool JSTestTypedefsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
     return false;
 }
 
-void JSTestTypedefsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestTypedefsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestTypedefs = static_cast<JSTestTypedefs*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestTypedefs->wrapped(), jsTestTypedefs);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

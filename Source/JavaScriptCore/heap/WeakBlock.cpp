@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,14 +62,12 @@ void WeakBlock::destroy(JSC::Heap& heap, WeakBlock* block)
 
 WeakBlock::WeakBlock(JSC::Heap& heap, CellContainer container)
     : DoublyLinkedListNode<WeakBlock>()
+    , m_freeList(allFreeMask())
     , m_container(container)
     , m_heap(heap)
 {
-    for (size_t i = 0; i < weakImplCount(); ++i) {
-        WeakImpl* weakImpl = &weakImpls()[i];
-        new (NotNull, weakImpl) WeakImpl;
-        pushFreeCell(weakImpl);
-    }
+    for (size_t i = 0; i < weakImplCount(); ++i)
+        new (NotNull, &weakImpls()[i]) WeakImpl;
 
     ASSERT(isEmpty());
     assertFreeListIsConsistent();
@@ -77,19 +75,16 @@ WeakBlock::WeakBlock(JSC::Heap& heap, CellContainer container)
 
 void WeakBlock::didBecomeEmpty()
 {
-    ASSERT(isEmpty());
-
     switch (m_ownership) {
     case Ownership::Attached:
-        // A walk that runs finalizers is holding this block; WeakSet::sweep collects it afterwards.
-        if (m_isIterationTarget)
-            return;
+        // May have been allocated from since it became empty; WeakSet rechecks.
         m_container.weakSet().didBecomeEmpty(this);
         break;
     case Ownership::Detached:
         // A detached block is on no WeakSet and is never swept, reaped or visited, and every slot in
         // it is already finalized, so only this call can change it. That makes returning it to the
         // Heap safe at any reentrancy depth, including from within a finalizer.
+        ASSERT(isEmpty());
         ASSERT(!m_container);
         m_heap.releaseDetachedWeakBlock(this);
         break;
@@ -98,34 +93,43 @@ void WeakBlock::didBecomeEmpty()
     }
 }
 
-void WeakBlock::lastChanceToFinalize()
+void WeakBlock::reapAllLiveHandles()
 {
+    ASSERT(!m_isIterationTarget);
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
-        WeakImpl::State state = weakImpl->state();
-        if (state >= WeakImpl::Finalized)
-            continue;
-        if (state == WeakImpl::Live) {
-            weakImpl->setState(WeakImpl::Dead);
+        if (weakImpl->state() == WeakImpl::Live) {
+            weakImpl->setDead();
             --m_liveCount;
-            ++m_deadCount;
+            ++m_deadCountUpperBound;
         }
-        finalize(weakImpl);
     }
 }
 
 void WeakBlock::sweep()
 {
-    for (size_t i = 0; m_deadCount && i < weakImplCount(); ++i) {
+    for (size_t i = 0; m_deadCountUpperBound && i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
-        // finalize() calls out to a WeakHandleOwner, which may clear handles in this block or any
-        // other. Clearing only pushes onto a free list, so the rest of this scan stays valid.
-        if (weakImpl->state() == WeakImpl::Dead)
-            finalize(weakImpl);
+        uintptr_t stateWord = weakImpl->stateWord();
+        if (WeakImpl::stateOf(stateWord) != WeakImpl::Dead)
+            continue;
+
+        auto snapshot = weakImpl->trySetFinalized(stateWord);
+        if (!snapshot)
+            continue;
+
+        --m_deadCountUpperBound;
+        if (!snapshot.weakHandleOwner)
+            continue;
+
+        if (snapshot.weakHandleOwner->finalize(Handle<Unknown>::wrapSlot(&snapshot.jsValue), snapshot.context) == WeakHandleOwner::FinalizeResult::DeallocateImpl) {
+            ASSERT(weakImpl->state() == WeakImpl::Finalized);
+            weakImpl->clear();
+        }
     }
 
-    ASSERT(!m_deadCount);
-    assertFreeListIsConsistent();
+    // The main thread could have already clear()'d, which doesn't update this count.
+    m_deadCountUpperBound = 0;
 }
 
 template<typename ContainerType, typename Visitor>
@@ -186,6 +190,8 @@ void WeakBlock::visit(SlotVisitor& visitor) { visitImpl(visitor); }
 
 void WeakBlock::reap()
 {
+    ASSERT(!m_isIterationTarget);
+    assertFreeListIsConsistent();
     if (!m_liveCount)
         return;
 
@@ -202,9 +208,9 @@ void WeakBlock::reap()
         if (m_container.isMarked(markingVersion, weakImpl->jsValue().asCell()))
             continue;
 
-        weakImpl->setState(WeakImpl::Dead);
+        weakImpl->setDead();
         --m_liveCount;
-        ++m_deadCount;
+        ++m_deadCountUpperBound;
     }
 }
 

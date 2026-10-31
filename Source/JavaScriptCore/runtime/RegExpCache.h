@@ -68,7 +68,7 @@ private:
 
     static constexpr int maxStrongCacheableEntries = 64;
 
-    void finalize(Handle<Unknown>, void* context) final;
+    FinalizeResult finalize(Handle<Unknown>, void* context) final;
 
     RegExp* ensureEmptyRegExpSlow(VM&);
 

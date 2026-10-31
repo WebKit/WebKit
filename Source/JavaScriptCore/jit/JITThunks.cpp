@@ -294,7 +294,7 @@ struct JITThunks::NativeExecutableTranslator {
     }
 };
 
-void JITThunks::finalize(Handle<Unknown> handle, void*)
+WeakHandleOwner::FinalizeResult JITThunks::finalize(Handle<Unknown> handle, void*)
 {
     auto* nativeExecutable = static_cast<NativeExecutable*>(handle.get().asCell());
     auto hostFunctionKey = std::make_tuple(nativeExecutable->function(), nativeExecutable->constructor(), nativeExecutable->implementationVisibility(), nativeExecutable->length(), nativeExecutable->name());
@@ -306,6 +306,7 @@ void JITThunks::finalize(Handle<Unknown> handle, void*)
         ASSERT(iterator->unsafeImpl()->state() == WeakImpl::State::Finalized);
         m_nativeExecutableSet.remove(iterator);
     }
+    return FinalizeResult::KeepImpl;
 }
 
 NativeExecutable* JITThunks::hostFunctionStub(VM& vm, TaggedNativeFunction function, TaggedNativeFunction constructor, ImplementationVisibility implementationVisibility, unsigned length, const String& name)

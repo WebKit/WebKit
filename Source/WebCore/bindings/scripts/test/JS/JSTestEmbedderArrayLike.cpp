@@ -202,11 +202,12 @@ bool JSTestEmbedderArrayLikeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::U
     return false;
 }
 
-void JSTestEmbedderArrayLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestEmbedderArrayLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestEmbedderArrayLike = static_cast<JSTestEmbedderArrayLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestEmbedderArrayLike->wrapped(), jsTestEmbedderArrayLike);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

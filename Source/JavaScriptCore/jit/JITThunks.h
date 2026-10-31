@@ -248,7 +248,7 @@ private:
 
     MacroAssemblerCodeRef<JITThunkPtrTag> lazyCommonThunk(VM&, CommonJITThunkID);
 
-    void finalize(Handle<Unknown>, void* context) final;
+    FinalizeResult finalize(Handle<Unknown>, void* context) final;
 
     struct Entry {
         PackedRefPtr<ExecutableMemoryHandle> handle;

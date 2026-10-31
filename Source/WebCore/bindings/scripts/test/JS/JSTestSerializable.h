@@ -59,7 +59,7 @@ class JSTestSerializableOwner final : public JSC::WeakHandleOwner {
 public:
     JSTestSerializableOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
-    void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+    FinalizeResult finalize(JSC::Handle<JSC::Unknown>, void* context) final;
 
 private:
     explicit JSTestSerializableOwner(ClangVTableWorkaroundTag);

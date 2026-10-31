@@ -57,9 +57,13 @@ public:
     bool isEmpty() const;
     bool isTriviallyDestructible() const;
 
-    void reap();
-    void sweep();
+    JS_EXPORT_PRIVATE void reap();
+    JS_EXPORT_PRIVATE void sweep();
     JS_EXPORT_PRIVATE void shrink();
+
+    // finalizeDeadHandles() may run off the mutator (one sweeper at a time); releaseBlocks() must run on the mutator.
+    JS_EXPORT_PRIVATE void finalizeDeadHandles();
+    JS_EXPORT_PRIVATE void releaseBlocks();
 
     static constexpr ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(WeakSet, m_vm); }
 
@@ -79,10 +83,9 @@ private:
 
     JS_EXPORT_PRIVATE void didBecomeEmpty(WeakBlock*);
 
-    void tryReleaseBlock(WeakBlock*);
+    void tryReleaseBlock(const AbstractLocker&, WeakBlock*);
 
-    void detachAllocator();
-    void resetAllocator();
+    void resetAllocator(const AbstractLocker&);
 
     WeakBlock* m_currentBlock { nullptr };
     WeakBlock* m_nextAllocator { nullptr };
@@ -131,15 +134,8 @@ ALWAYS_INLINE void WeakSet::deallocate(WeakImpl* weakImpl)
     weakImpl->clear();
 }
 
-inline void WeakSet::detachAllocator()
+inline void WeakSet::resetAllocator(const AbstractLocker&)
 {
-    m_currentBlock = nullptr;
-    m_nextAllocator = nullptr;
-}
-
-inline void WeakSet::resetAllocator()
-{
-    m_currentBlock = nullptr;
     m_nextAllocator = m_blocks.head();
 }
 

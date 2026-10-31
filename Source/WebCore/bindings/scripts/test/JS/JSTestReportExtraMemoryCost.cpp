@@ -229,11 +229,12 @@ bool JSTestReportExtraMemoryCostOwner::isReachableFromOpaqueRoots(JSC::Handle<JS
     return false;
 }
 
-void JSTestReportExtraMemoryCostOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestReportExtraMemoryCostOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestReportExtraMemoryCost = static_cast<JSTestReportExtraMemoryCost*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestReportExtraMemoryCost->wrapped(), jsTestReportExtraMemoryCost);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

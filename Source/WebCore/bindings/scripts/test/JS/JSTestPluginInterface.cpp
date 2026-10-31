@@ -308,11 +308,12 @@ bool JSTestPluginInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unk
     return false;
 }
 
-void JSTestPluginInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestPluginInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestPluginInterface = static_cast<JSTestPluginInterface*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestPluginInterface->wrapped(), jsTestPluginInterface);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

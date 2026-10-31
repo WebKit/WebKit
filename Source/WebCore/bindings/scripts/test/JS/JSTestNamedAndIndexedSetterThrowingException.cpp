@@ -446,11 +446,12 @@ bool JSTestNamedAndIndexedSetterThrowingExceptionOwner::isReachableFromOpaqueRoo
     return false;
 }
 
-void JSTestNamedAndIndexedSetterThrowingExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestNamedAndIndexedSetterThrowingExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedAndIndexedSetterThrowingException = static_cast<JSTestNamedAndIndexedSetterThrowingException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestNamedAndIndexedSetterThrowingException->wrapped(), jsTestNamedAndIndexedSetterThrowingException);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

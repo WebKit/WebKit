@@ -535,11 +535,12 @@ bool JSTestNamedSetterWithIndexedGetterAndSetterOwner::isReachableFromOpaqueRoot
     return false;
 }
 
-void JSTestNamedSetterWithIndexedGetterAndSetterOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestNamedSetterWithIndexedGetterAndSetterOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedSetterWithIndexedGetterAndSetter = static_cast<JSTestNamedSetterWithIndexedGetterAndSetter*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestNamedSetterWithIndexedGetterAndSetter->wrapped(), jsTestNamedSetterWithIndexedGetterAndSetter);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

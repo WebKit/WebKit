@@ -208,11 +208,12 @@ bool JSTestClassWithJSBuiltinConstructorOwner::isReachableFromOpaqueRoots(JSC::H
     return false;
 }
 
-void JSTestClassWithJSBuiltinConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestClassWithJSBuiltinConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestClassWithJSBuiltinConstructor = static_cast<JSTestClassWithJSBuiltinConstructor*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestClassWithJSBuiltinConstructor->wrapped(), jsTestClassWithJSBuiltinConstructor);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

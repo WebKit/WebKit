@@ -70,7 +70,7 @@ class JSTestPluginInterfaceOwner final : public JSC::WeakHandleOwner {
 public:
     JSTestPluginInterfaceOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
-    void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+    FinalizeResult finalize(JSC::Handle<JSC::Unknown>, void* context) final;
 
 private:
     explicit JSTestPluginInterfaceOwner(ClangVTableWorkaroundTag);

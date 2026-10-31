@@ -377,11 +377,12 @@ bool JSTestNamedGetterCallWithOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC:
     return false;
 }
 
-void JSTestNamedGetterCallWithOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestNamedGetterCallWithOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedGetterCallWith = static_cast<JSTestNamedGetterCallWith*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestNamedGetterCallWith->wrapped(), jsTestNamedGetterCallWith);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

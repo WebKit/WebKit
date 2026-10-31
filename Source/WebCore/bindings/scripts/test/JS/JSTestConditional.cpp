@@ -519,11 +519,12 @@ bool JSTestConditionalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown
     return false;
 }
 
-void JSTestConditionalOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestConditionalOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestConditional = static_cast<JSTestConditional*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestConditional->wrapped(), jsTestConditional);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

@@ -3692,7 +3692,7 @@ sub GenerateHeader
         push(@headerContent, "public:\n");
         push(@headerContent, "    JS${interfaceName}Owner() = default;\n");
         push(@headerContent, "    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) ${overrideDecl};\n");
-        push(@headerContent, "    void finalize(JSC::Handle<JSC::Unknown>, void* context) ${overrideDecl};\n");
+        push(@headerContent, "    FinalizeResult finalize(JSC::Handle<JSC::Unknown>, void* context) ${overrideDecl};\n");
         push(@headerContent, "\n");
         push(@headerContent, "private:\n");
         # When -fpch-debuginfo is enabled, clang sometimes fails to emit the
@@ -5796,11 +5796,12 @@ sub GenerateImplementation
     }
 
     if (ShouldGenerateWrapperOwnerCode($hasParent, $interface) && !$interface->extendedAttributes->{JSCustomFinalize}) {
-        push(@implContent, "void JS${interfaceName}Owner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)\n");
+        push(@implContent, "JSC::WeakHandleOwner::FinalizeResult JS${interfaceName}Owner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)\n");
         push(@implContent, "{\n");
         push(@implContent, "    SUPPRESS_MEMORY_UNSAFE_CAST auto* js${interfaceName} = static_cast<JS${interfaceName}*>(handle.slot()->asCell());\n");
         push(@implContent, "    auto& world = *static_cast<DOMWrapperWorld*>(context);\n");
         push(@implContent, "    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &js${interfaceName}->wrapped(), js${interfaceName});\n");
+        push(@implContent, "    return FinalizeResult::KeepImpl;\n");
         push(@implContent, "}\n\n");
     }
 

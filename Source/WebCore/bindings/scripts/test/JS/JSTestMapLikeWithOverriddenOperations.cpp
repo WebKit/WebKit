@@ -418,11 +418,12 @@ bool JSTestMapLikeWithOverriddenOperationsOwner::isReachableFromOpaqueRoots(JSC:
     return false;
 }
 
-void JSTestMapLikeWithOverriddenOperationsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestMapLikeWithOverriddenOperationsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestMapLikeWithOverriddenOperations = static_cast<JSTestMapLikeWithOverriddenOperations*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestMapLikeWithOverriddenOperations->wrapped(), jsTestMapLikeWithOverriddenOperations);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

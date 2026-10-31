@@ -240,11 +240,12 @@ bool JSTestStringifierReadOnlyAttributeOwner::isReachableFromOpaqueRoots(JSC::Ha
     return false;
 }
 
-void JSTestStringifierReadOnlyAttributeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestStringifierReadOnlyAttributeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestStringifierReadOnlyAttribute = static_cast<JSTestStringifierReadOnlyAttribute*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestStringifierReadOnlyAttribute->wrapped(), jsTestStringifierReadOnlyAttribute);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

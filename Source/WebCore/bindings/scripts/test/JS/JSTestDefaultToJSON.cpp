@@ -870,11 +870,12 @@ bool JSTestDefaultToJSONOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unkno
     return false;
 }
 
-void JSTestDefaultToJSONOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestDefaultToJSONOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDefaultToJSON = static_cast<JSTestDefaultToJSON*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestDefaultToJSON->wrapped(), jsTestDefaultToJSON);
+    return FinalizeResult::KeepImpl;
 }
 
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSON>&& impl)

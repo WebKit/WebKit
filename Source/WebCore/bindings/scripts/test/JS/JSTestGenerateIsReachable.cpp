@@ -232,11 +232,12 @@ bool JSTestGenerateIsReachableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC:
     return containsWebCoreOpaqueRoot(visitor, owner);
 }
 
-void JSTestGenerateIsReachableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestGenerateIsReachableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestGenerateIsReachable = static_cast<JSTestGenerateIsReachable*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestGenerateIsReachable->wrapped(), jsTestGenerateIsReachable);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

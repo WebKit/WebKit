@@ -390,11 +390,12 @@ bool JSTestSetLikeWithOverriddenOperationsOwner::isReachableFromOpaqueRoots(JSC:
     return false;
 }
 
-void JSTestSetLikeWithOverriddenOperationsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestSetLikeWithOverriddenOperationsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestSetLikeWithOverriddenOperations = static_cast<JSTestSetLikeWithOverriddenOperations*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestSetLikeWithOverriddenOperations->wrapped(), jsTestSetLikeWithOverriddenOperations);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

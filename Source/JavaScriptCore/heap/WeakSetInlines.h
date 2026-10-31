@@ -40,21 +40,10 @@ inline WeakImpl* WeakSet::allocate(JSValue jsValue, WeakHandleOwner* weakHandleO
     if (!block || !block->hasFreeCell()) [[unlikely]]
         block = weakSet.findAllocator(container);
 
-    WeakImpl* weakImpl = WeakBlock::asWeakImpl(block->takeFreeCell());
+    WeakImpl* weakImpl = block->takeFreeCell();
     container.vm().heap.didAllocate(sizeof(WeakImpl));
-    return new (NotNull, weakImpl) WeakImpl(jsValue, weakHandleOwner, context);
-}
-
-inline void WeakBlock::finalize(WeakImpl* weakImpl)
-{
-    ASSERT(weakImpl->state() == WeakImpl::Dead);
-    weakImpl->setState(WeakImpl::Finalized);
-    ASSERT(m_deadCount);
-    --m_deadCount;
-    WeakHandleOwner* weakHandleOwner = weakImpl->weakHandleOwner();
-    if (!weakHandleOwner)
-        return;
-    weakHandleOwner->finalize(Handle<Unknown>::wrapSlot(&const_cast<JSValue&>(weakImpl->jsValue())), weakImpl->context());
+    weakImpl->initialize(jsValue, weakHandleOwner, context);
+    return weakImpl;
 }
 
 } // namespace JSC

@@ -375,11 +375,12 @@ bool JSTestNamedSetterWithLegacyOverrideBuiltInsOwner::isReachableFromOpaqueRoot
     return false;
 }
 
-void JSTestNamedSetterWithLegacyOverrideBuiltInsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestNamedSetterWithLegacyOverrideBuiltInsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedSetterWithLegacyOverrideBuiltIns = static_cast<JSTestNamedSetterWithLegacyOverrideBuiltIns*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestNamedSetterWithLegacyOverrideBuiltIns->wrapped(), jsTestNamedSetterWithLegacyOverrideBuiltIns);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

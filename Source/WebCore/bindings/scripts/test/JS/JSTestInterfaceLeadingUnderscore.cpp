@@ -219,11 +219,12 @@ bool JSTestInterfaceLeadingUnderscoreOwner::isReachableFromOpaqueRoots(JSC::Hand
     return false;
 }
 
-void JSTestInterfaceLeadingUnderscoreOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestInterfaceLeadingUnderscoreOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestInterfaceLeadingUnderscore = static_cast<JSTestInterfaceLeadingUnderscore*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestInterfaceLeadingUnderscore->wrapped(), jsTestInterfaceLeadingUnderscore);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

@@ -563,11 +563,12 @@ bool JSTestCallTracerOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>
     return false;
 }
 
-void JSTestCallTracerOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestCallTracerOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestCallTracer = static_cast<JSTestCallTracer*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestCallTracer->wrapped(), jsTestCallTracer);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

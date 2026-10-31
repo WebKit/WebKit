@@ -398,11 +398,12 @@ bool JSTestSerializedScriptValueInterfaceOwner::isReachableFromOpaqueRoots(JSC::
     return false;
 }
 
-void JSTestSerializedScriptValueInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestSerializedScriptValueInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestSerializedScriptValueInterface = static_cast<JSTestSerializedScriptValueInterface*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestSerializedScriptValueInterface->wrapped(), jsTestSerializedScriptValueInterface);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

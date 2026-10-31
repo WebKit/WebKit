@@ -300,11 +300,12 @@ bool JSTestCEReactionsStringifierOwner::isReachableFromOpaqueRoots(JSC::Handle<J
     return false;
 }
 
-void JSTestCEReactionsStringifierOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestCEReactionsStringifierOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestCEReactionsStringifier = static_cast<JSTestCEReactionsStringifier*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestCEReactionsStringifier->wrapped(), jsTestCEReactionsStringifier);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

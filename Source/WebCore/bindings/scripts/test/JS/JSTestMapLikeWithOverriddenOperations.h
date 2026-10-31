@@ -58,7 +58,7 @@ class JSTestMapLikeWithOverriddenOperationsOwner final : public JSC::WeakHandleO
 public:
     JSTestMapLikeWithOverriddenOperationsOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
-    void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+    FinalizeResult finalize(JSC::Handle<JSC::Unknown>, void* context) final;
 
 private:
     explicit JSTestMapLikeWithOverriddenOperationsOwner(ClangVTableWorkaroundTag);

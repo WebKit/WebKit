@@ -319,11 +319,12 @@ bool JSTestAsyncKeyValueIterableOwner::isReachableFromOpaqueRoots(JSC::Handle<JS
     return false;
 }
 
-void JSTestAsyncKeyValueIterableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestAsyncKeyValueIterableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestAsyncKeyValueIterable = static_cast<JSTestAsyncKeyValueIterable*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestAsyncKeyValueIterable->wrapped(), jsTestAsyncKeyValueIterable);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

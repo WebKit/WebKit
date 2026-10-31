@@ -304,11 +304,12 @@ bool JSTestDefaultToJSONFilteredByExposedOwner::isReachableFromOpaqueRoots(JSC::
     return false;
 }
 
-void JSTestDefaultToJSONFilteredByExposedOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestDefaultToJSONFilteredByExposedOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDefaultToJSONFilteredByExposed = static_cast<JSTestDefaultToJSONFilteredByExposed*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestDefaultToJSONFilteredByExposed->wrapped(), jsTestDefaultToJSONFilteredByExposed);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

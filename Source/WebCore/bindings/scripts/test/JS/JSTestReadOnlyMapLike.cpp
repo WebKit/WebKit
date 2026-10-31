@@ -340,11 +340,12 @@ bool JSTestReadOnlyMapLikeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unk
     return false;
 }
 
-void JSTestReadOnlyMapLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestReadOnlyMapLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestReadOnlyMapLike = static_cast<JSTestReadOnlyMapLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestReadOnlyMapLike->wrapped(), jsTestReadOnlyMapLike);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

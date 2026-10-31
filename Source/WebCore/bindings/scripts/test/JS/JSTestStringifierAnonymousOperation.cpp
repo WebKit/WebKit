@@ -224,11 +224,12 @@ bool JSTestStringifierAnonymousOperationOwner::isReachableFromOpaqueRoots(JSC::H
     return false;
 }
 
-void JSTestStringifierAnonymousOperationOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestStringifierAnonymousOperationOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestStringifierAnonymousOperation = static_cast<JSTestStringifierAnonymousOperation*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestStringifierAnonymousOperation->wrapped(), jsTestStringifierAnonymousOperation);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

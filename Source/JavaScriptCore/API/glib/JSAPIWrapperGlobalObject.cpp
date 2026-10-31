@@ -34,7 +34,7 @@
 
 class JSAPIWrapperGlobalObjectHandleOwner final : public JSC::WeakHandleOwner {
 public:
-    void finalize(JSC::Handle<JSC::Unknown>, void*) final;
+    FinalizeResult finalize(JSC::Handle<JSC::Unknown>, void*) final;
 };
 
 static JSAPIWrapperGlobalObjectHandleOwner* jsAPIWrapperGlobalObjectHandleOwner()
@@ -43,14 +43,14 @@ static JSAPIWrapperGlobalObjectHandleOwner* jsAPIWrapperGlobalObjectHandleOwner(
     return &jsWrapperGlobalObjectHandleOwner.get();
 }
 
-void JSAPIWrapperGlobalObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*)
+JSC::WeakHandleOwner::FinalizeResult JSAPIWrapperGlobalObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*)
 {
     auto* wrapperObject = static_cast<JSC::JSAPIWrapperGlobalObject*>(handle.get().asCell());
     if (!wrapperObject->wrappedObject())
-        return;
+        return FinalizeResult::DeallocateImpl;
 
     JSC::Heap::heap(wrapperObject)->releaseSoon(std::unique_ptr<JSC::JSCGLibWrapperObject>(wrapperObject->wrappedObject()));
-    JSC::WeakSet::deallocate(JSC::WeakImpl::asWeakImpl(handle.slot()));
+    return FinalizeResult::DeallocateImpl;
 }
 
 namespace JSC {

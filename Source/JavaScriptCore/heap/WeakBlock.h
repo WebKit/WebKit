@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,9 @@
 #pragma once
 
 #include <JavaScriptCore/CellContainer.h>
+#include <JavaScriptCore/WeakHandleOwner.h>
 #include <JavaScriptCore/WeakImpl.h>
+#include <wtf/Atomics.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/MathExtras.h>
@@ -45,14 +47,13 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WeakBlock);
 // Holds the WeakImpl slots for the Weak<> handles pointing at one CellContainer's cells. The block
 // is blockSize-aligned, so masking a slot address yields its block, which is what lets a Weak<>
 // return its slot in constant time without knowing anything about its WeakSet.
+//
+// Only the mutator allocates slots and unlinks blocks. It's valid to sweep/finalize on a background
+// thread as long as that finalizer doesn't clear other WeakImpls.
 class WeakBlock : public DoublyLinkedListNode<WeakBlock> {
 public:
     friend class WTF::DoublyLinkedListNode<WeakBlock>;
     static constexpr size_t blockSize = 1024; // 1/16 of MarkedBlock size
-
-    struct FreeCell {
-        FreeCell* next;
-    };
 
     // A block is on exactly one list, and which one follows from this.
     enum class Ownership : uint8_t {
@@ -64,10 +65,9 @@ public:
     static WeakBlock* create(Heap&, CellContainer);
     static void destroy(Heap&, WeakBlock*);
 
-    // A walk that runs finalizers holds exactly one block pointer across the callout. That block
-    // must stay linked even if a finalizer empties it; every other block is free to go. Nothing
-    // hands a held block back on its own, so the walk owes it a WeakSet::tryReleaseBlock once the
-    // scope closes, or an emptied block stays linked to its WeakSet forever.
+    // A sweep running finalizers holds exactly one block pointer across the callout. That block
+    // must stay linked even if a finalizer empties it. The iterator should report any blocks it
+    // empties to the Heap.
     class IterationScope {
     public:
         IterationScope(WeakBlock& block)
@@ -86,15 +86,14 @@ public:
         WeakBlock& m_block;
     };
 
-    static WeakImpl* asWeakImpl(FreeCell*);
     static WeakBlock* blockFor(WeakImpl*);
 
     JSC::Heap& heap() const { return m_heap; }
 
-    bool isEmpty() const { return !m_allocatedCount; }
+    bool isEmpty() const { return m_freeList.load<MemoryOrder::Relaxed>() == allFreeMask(); }
     bool hasLiveHandles() const { return m_liveCount; }
-    bool hasOnlyFinalizedHandles() const { return m_allocatedCount && !m_liveCount && !m_deadCount; }
-    bool hasFreeCell() const { return !!m_freeList; }
+    bool hasOnlyFinalizedHandles() const { return !isEmpty() && !m_liveCount && !m_deadCountUpperBound; }
+    bool hasFreeCell() const { return !!m_freeList.load<MemoryOrder::Relaxed>(); }
 
     void sweep();
 
@@ -103,9 +102,10 @@ public:
 
     void reap();
 
-    void lastChanceToFinalize();
+    void reapAllLiveHandles();
 
-    static constexpr size_t weakImplCount();
+    static constexpr size_t weakImplCount() { return weakAtomsPerBlock - firstPayloadRegionWeakAtom(); }
+    static constexpr size_t weakAtomsPerBlock = blockSize / sizeof(WeakImpl);
 
 private:
     friend class Heap;
@@ -120,61 +120,52 @@ private:
 
     template<typename Visitor> void visitImpl(Visitor&);
 
-    static FreeCell* asFreeCell(WeakImpl*);
     static WeakBlock* blockContaining(const void*);
 
     template<typename ContainerType, typename Visitor>
     void specializedVisit(ContainerType&, Visitor&);
 
     WeakBlock(Heap&, CellContainer);
-    void finalize(WeakImpl*);
-    WeakImpl* weakImpls();
+    WeakImpl* weakAtoms() { return reinterpret_cast_ptr<WeakImpl*>(this); }
+    WeakImpl* weakImpls() { return weakAtoms() + firstPayloadRegionWeakAtom(); }
 
-    FreeCell* takeFreeCell();
-    void pushFreeCell(WeakImpl*);
+    static constexpr size_t firstPayloadRegionWeakAtom() { return (sizeof(WeakBlock) + sizeof(WeakImpl) - 1) / sizeof(WeakImpl); }
+    static constexpr uint64_t allFreeMask();
+    static constexpr uint64_t bitFor(size_t weakAtom) { ASSERT(weakAtom < weakAtomsPerBlock); return 1ull << weakAtom; }
+    size_t weakAtomNumber(WeakImpl* weakImpl) { return weakImpl - weakAtoms(); }
+    WeakImpl* takeFreeCell();
+    bool addFreeCell(WeakImpl*);
     void deallocate(WeakImpl*, WeakImpl::State previousState);
 
     void assertFreeListIsConsistent();
 
+    static_assert(weakAtomsPerBlock <= std::numeric_limits<uint64_t>::digits);
+    // Bit i of this freelist is set when the ith weakAtom is free.
+    Atomic<uint64_t> m_freeList;
     CellContainer m_container;
     WeakBlock* m_prev;
     WeakBlock* m_next;
-    FreeCell* m_freeList { nullptr };
     JSC::Heap& m_heap;
-    // Slots in each WeakImpl state, so that emptiness, pending finalization and "nothing here
-    // refers to a cell any more" are all answerable without scanning the block.
-    uint16_t m_allocatedCount { 0 };
+    // clear() of a Dead slot does not decrement m_deadCountUpperBound.
     uint16_t m_liveCount { 0 };
-    uint16_t m_deadCount { 0 };
+    uint16_t m_deadCountUpperBound { 0 };
     Ownership m_ownership { Ownership::Attached };
     bool m_isIterationTarget { false };
 };
-
-inline WeakImpl* WeakBlock::asWeakImpl(FreeCell* freeCell)
-{
-    return reinterpret_cast_ptr<WeakImpl*>(freeCell);
-}
-
-inline WeakBlock::FreeCell* WeakBlock::asFreeCell(WeakImpl* weakImpl)
-{
-    return reinterpret_cast_ptr<FreeCell*>(weakImpl);
-}
 
 inline WeakBlock* WeakBlock::blockContaining(const void* address)
 {
     return std::bit_cast<WeakBlock*>(roundDownToMultipleOf<blockSize>(std::bit_cast<uintptr_t>(address)));
 }
 
-inline WeakImpl* WeakBlock::weakImpls()
+inline constexpr uint64_t WeakBlock::allFreeMask()
 {
-    return reinterpret_cast_ptr<WeakImpl*>(this) + ((sizeof(WeakBlock) + sizeof(WeakImpl) - 1) / sizeof(WeakImpl));
+    constexpr uint64_t weakAtoms = std::numeric_limits<uint64_t>::max() >> (std::numeric_limits<uint64_t>::digits - weakAtomsPerBlock);
+    constexpr uint64_t header = bitFor(firstPayloadRegionWeakAtom()) - 1;
+    constexpr uint64_t mask = weakAtoms & ~header;
+    static_assert(std::popcount(mask) == weakImplCount());
+    return mask;
 }
-
-inline constexpr size_t WeakBlock::weakImplCount()
-{
-    return (blockSize / sizeof(WeakImpl)) - ((sizeof(WeakBlock) + sizeof(WeakImpl) - 1) / sizeof(WeakImpl));
-}
-static_assert(WeakBlock::weakImplCount() <= std::numeric_limits<uint16_t>::max());
 
 // A member added to WeakBlock costs a WeakImpl slot in every block in the VM.
 static_assert(sizeof(WeakBlock) <= 2 * sizeof(WeakImpl), "The payload must not lose a slot.");
@@ -186,40 +177,37 @@ inline WeakBlock* WeakBlock::blockFor(WeakImpl* weakImpl)
     return block;
 }
 
-inline WeakBlock::FreeCell* WeakBlock::takeFreeCell()
+inline WeakImpl* WeakBlock::takeFreeCell()
 {
-    FreeCell* freeCell = m_freeList;
-    m_freeList = freeCell->next;
-    ASSERT(m_allocatedCount < weakImplCount());
-    ++m_allocatedCount;
+    uint64_t freeList = m_freeList.load<MemoryOrder::Relaxed>();
+    ASSERT(freeList);
+    size_t weakAtom = ctz(freeList);
+    // Only the mutator clears bits, so the bit chosen from the relaxed load is still set.
+    uint64_t oldFreeList = m_freeList.exchangeAnd<MemoryOrder::Acquire>(~bitFor(weakAtom));
+    ASSERT_UNUSED(oldFreeList, oldFreeList & bitFor(weakAtom));
     // The caller constructs a WeakImpl in this slot, and a WeakImpl is born Live.
     ++m_liveCount;
-    return freeCell;
+    return weakAtoms() + weakAtom;
 }
 
-inline void WeakBlock::pushFreeCell(WeakImpl* weakImpl)
+inline bool WeakBlock::addFreeCell(WeakImpl* weakImpl)
 {
     ASSERT(weakImpl->state() == WeakImpl::Deallocated);
     ASSERT(blockFor(weakImpl) == this);
-    FreeCell* freeCell = asFreeCell(weakImpl);
-    freeCell->next = m_freeList;
-    m_freeList = freeCell;
+    uint64_t bit = bitFor(weakAtomNumber(weakImpl));
+    uint64_t oldFreeList = m_freeList.exchangeOr<MemoryOrder::Release>(bit);
+    RELEASE_ASSERT(!(oldFreeList & bit));
+    return (oldFreeList | bit) == allFreeMask();
 }
 
 inline void WeakBlock::deallocate(WeakImpl* weakImpl, WeakImpl::State previousState)
 {
-    pushFreeCell(weakImpl);
-
     if (previousState == WeakImpl::Live) {
         ASSERT(m_liveCount);
         --m_liveCount;
-    } else if (previousState == WeakImpl::Dead) {
-        ASSERT(m_deadCount);
-        --m_deadCount;
     }
 
-    RELEASE_ASSERT(m_allocatedCount);
-    if (!--m_allocatedCount) [[unlikely]]
+    if (addFreeCell(weakImpl)) [[unlikely]]
         didBecomeEmpty();
 }
 
@@ -245,30 +233,41 @@ inline void WeakBlock::setPooled()
     ASSERT(isEmpty());
     ASSERT(!m_isIterationTarget);
     m_container = CellContainer();
+    m_liveCount = 0;
+    m_deadCountUpperBound = 0;
     m_ownership = Ownership::Pooled;
 }
 
 inline void WeakBlock::assertFreeListIsConsistent()
 {
 #if ASSERT_ENABLED
-    size_t count = 0;
-    for (FreeCell* freeCell = m_freeList; freeCell; freeCell = freeCell->next) {
-        ASSERT(blockContaining(freeCell) == this);
-        ASSERT(asWeakImpl(freeCell)->state() == WeakImpl::Deallocated);
-        ASSERT(++count <= weakImplCount());
+    uint64_t freeList = m_freeList.load();
+    ASSERT(!(freeList & ~allFreeMask()));
+    size_t liveCount = 0;
+    size_t deadCount = 0;
+    for (size_t i = 0; i < weakImplCount(); ++i) {
+        WeakImpl::State state = weakImpls()[i].state();
+        ASSERT(!!(freeList & bitFor(i + firstPayloadRegionWeakAtom())) == (state == WeakImpl::Deallocated));
+        liveCount += state == WeakImpl::Live;
+        deadCount += state == WeakImpl::Dead;
     }
-    ASSERT(count + m_allocatedCount == weakImplCount());
-    ASSERT(m_liveCount + m_deadCount <= m_allocatedCount);
+    ASSERT(liveCount == m_liveCount);
+    ASSERT(deadCount <= m_deadCountUpperBound);
 #endif
 }
 
-// The free list threads through m_jsValue, so clearing must set the Deallocated tag in
-// m_weakHandleOwner first: that tag is what every scanner filters on before reading the value.
+// Only a Dead slot can race with trySetFinalized(). A next occupant cannot overwrite this slot
+// before trySetFinalized() has read it, because trySetFinalized() reads before its Release and
+// addFreeCell()'s Release / takeFreeCell()'s Acquire keep this state read before the slot is reused.
 SUPPRESS_NODELETE inline void WeakImpl::clear()
 {
     State previousState = state();
     ASSERT(previousState != Deallocated);
-    m_weakHandleOwner = std::bit_cast<WeakHandleOwner*>(static_cast<uintptr_t>(Deallocated));
+    // FIXME: It might be faster to just always exchange here, at least on ARM64.
+    if (previousState == Dead)
+        previousState = stateOf(m_weakHandleOwner.exchange<MemoryOrder::Relaxed>(Deallocated));
+    else
+        m_weakHandleOwner.store<MemoryOrder::Relaxed>(Deallocated);
 
     WeakBlock::blockFor(this)->deallocate(this, previousState);
 }

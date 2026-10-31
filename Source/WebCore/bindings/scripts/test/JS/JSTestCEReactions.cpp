@@ -480,11 +480,12 @@ bool JSTestCEReactionsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown
     return false;
 }
 
-void JSTestCEReactionsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestCEReactionsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestCEReactions = static_cast<JSTestCEReactions*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestCEReactions->wrapped(), jsTestCEReactions);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

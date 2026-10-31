@@ -521,6 +521,10 @@ public:
 
     unsigned weakBlockCount() const { return m_weakBlockCount; }
 
+    // Guards changes to each WeakSet's m_blocks, so that WeakSet::finalizeDeadHandles() can walk a
+    // WeakSet off the mutator. Never hold it across a finalizer, since clear() may take it.
+    Lock& weakBlockLock() WTF_RETURNS_LOCK(m_weakBlockLock) { return m_weakBlockLock; }
+
 #if ENABLE(RESOURCE_USAGE)
     size_t blockBytesAllocated() const { return m_blockBytesAllocated; }
 #endif
@@ -651,11 +655,11 @@ private:
     static constexpr size_t minExtraMemory = 256;
     
     class CFinalizerOwner final : public WeakHandleOwner {
-        void finalize(Handle<Unknown>, void* context) final;
+        FinalizeResult finalize(Handle<Unknown>, void* context) final;
     };
 
     class LambdaFinalizerOwner final : public WeakHandleOwner {
-        void finalize(Handle<Unknown>, void* context) final;
+        FinalizeResult finalize(Handle<Unknown>, void* context) final;
     };
 
     Lock& lock() LIFETIME_BOUND { return m_lock; }
@@ -864,6 +868,7 @@ private:
     Seconds m_lastEdenGCLength { 10_ms };
 #endif
 
+    Lock m_weakBlockLock;
     DoublyLinkedList<WeakBlock> m_detachedWeakBlocks;
     DoublyLinkedList<WeakBlock> m_pooledWeakBlocks;
     unsigned m_pooledWeakBlockCount { 0 };

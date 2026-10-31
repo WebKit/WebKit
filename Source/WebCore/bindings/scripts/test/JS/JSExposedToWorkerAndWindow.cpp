@@ -300,11 +300,12 @@ bool JSExposedToWorkerAndWindowOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC
     return false;
 }
 
-void JSExposedToWorkerAndWindowOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSExposedToWorkerAndWindowOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsExposedToWorkerAndWindow = static_cast<JSExposedToWorkerAndWindow*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsExposedToWorkerAndWindow->wrapped(), jsExposedToWorkerAndWindow);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

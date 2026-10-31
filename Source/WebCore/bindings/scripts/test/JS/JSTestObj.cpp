@@ -11914,11 +11914,12 @@ bool JSTestObjOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle
     return false;
 }
 
-void JSTestObjOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestObjOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestObj = static_cast<JSTestObj*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestObj->wrapped(), jsTestObj);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

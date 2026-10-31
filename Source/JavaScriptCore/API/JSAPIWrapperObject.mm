@@ -36,7 +36,7 @@
 
 class JSAPIWrapperObjectHandleOwner final : public JSC::WeakHandleOwner {
 public:
-    void finalize(JSC::Handle<JSC::Unknown>, void*) final;
+    FinalizeResult finalize(JSC::Handle<JSC::Unknown>, void*) final;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
 };
 
@@ -46,14 +46,14 @@ static JSAPIWrapperObjectHandleOwner* jsAPIWrapperObjectHandleOwner()
     return &jsWrapperObjectHandleOwner.get();
 }
 
-void JSAPIWrapperObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*)
+JSC::WeakHandleOwner::FinalizeResult JSAPIWrapperObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*)
 {
     JSC::JSAPIWrapperObject* wrapperObject = static_cast<JSC::JSAPIWrapperObject*>(handle.get().asCell());
     if (!wrapperObject->wrappedObject())
-        return;
+        return FinalizeResult::DeallocateImpl;
 
     JSC::Heap::heap(wrapperObject)->releaseSoon(adoptNS(static_cast<id>(wrapperObject->wrappedObject())));
-    JSC::WeakSet::deallocate(JSC::WeakImpl::asWeakImpl(handle.slot()));
+    return FinalizeResult::DeallocateImpl;
 }
 
 bool JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, ASCIILiteral*)

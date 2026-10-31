@@ -42,7 +42,7 @@
 
 class JSManagedValueHandleOwner final : public JSC::WeakHandleOwner {
 public:
-    void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+    FinalizeResult finalize(JSC::Handle<JSC::Unknown>, void* context) final;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
 };
 
@@ -191,10 +191,11 @@ bool JSManagedValueHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unkn
     return visitor.containsOpaqueRoot((__bridge void*)managedValue);
 }
 
-void JSManagedValueHandleOwner::finalize(JSC::Handle<JSC::Unknown>, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSManagedValueHandleOwner::finalize(JSC::Handle<JSC::Unknown>, void* context)
 {
     JSManagedValue *managedValue = (__bridge JSManagedValue *)context;
     [managedValue disconnectValue];
+    return FinalizeResult::KeepImpl;
 }
 
 #endif // JSC_OBJC_API_ENABLED

@@ -42,8 +42,9 @@ bool WeakHandleOwner::isReachableFromOpaqueRoots(Handle<Unknown>, void*, Abstrac
     return false;
 }
 
-void WeakHandleOwner::finalize(Handle<Unknown>, void*)
+WeakHandleOwner::FinalizeResult WeakHandleOwner::finalize(Handle<Unknown>, void*)
 {
+    return FinalizeResult::KeepImpl;
 }
 
 } // namespace JSC

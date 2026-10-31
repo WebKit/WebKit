@@ -277,11 +277,12 @@ bool JSTestOverloadedConstructorsWithSequenceOwner::isReachableFromOpaqueRoots(J
     return false;
 }
 
-void JSTestOverloadedConstructorsWithSequenceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestOverloadedConstructorsWithSequenceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestOverloadedConstructorsWithSequence = static_cast<JSTestOverloadedConstructorsWithSequence*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestOverloadedConstructorsWithSequence->wrapped(), jsTestOverloadedConstructorsWithSequence);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

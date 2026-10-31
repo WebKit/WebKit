@@ -274,11 +274,12 @@ bool JSTestLegacyFactoryFunctionOwner::isReachableFromOpaqueRoots(JSC::Handle<JS
     return false;
 }
 
-void JSTestLegacyFactoryFunctionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+JSC::WeakHandleOwner::FinalizeResult JSTestLegacyFactoryFunctionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestLegacyFactoryFunction = static_cast<JSTestLegacyFactoryFunction*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestLegacyFactoryFunction->wrapped(), jsTestLegacyFactoryFunction);
+    return FinalizeResult::KeepImpl;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
