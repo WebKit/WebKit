@@ -267,8 +267,15 @@ void InlineContentBuilder::updateInkOverflowForText(std::span<InlineDisplay::Box
             inkOverflow.expand(-letterSpacing, { });
         }
 
+        // Glyph overflow is measured on the line-over (top) and line-under (bottom) sides, while this rect (not yet flipped
+        // for block direction) has block-start at its top in horizontal and at its left in vertical writing modes.
         auto glyphOverflow = displayBox.glyphOverflow();
-        inkOverflow.inflate(0.f, glyphOverflow.top(), 0.f, glyphOverflow.bottom());
+        auto blockStartGlyphOverflow = writingMode.isLineInverted() ? glyphOverflow.bottom() : glyphOverflow.top();
+        auto blockEndGlyphOverflow = writingMode.isLineInverted() ? glyphOverflow.top() : glyphOverflow.bottom();
+        if (writingMode.isHorizontal())
+            inkOverflow.inflate(0.f, blockStartGlyphOverflow, 0.f, blockEndGlyphOverflow);
+        else
+            inkOverflow.inflate(blockStartGlyphOverflow, 0.f, blockEndGlyphOverflow, 0.f);
 
         auto outsets = strokeAndTextShadowInkOverflowOutsets(textStyle, initialContainingBlockSize);
         inkOverflow.inflate(outsets.left(), outsets.top(), outsets.right(), outsets.bottom());
