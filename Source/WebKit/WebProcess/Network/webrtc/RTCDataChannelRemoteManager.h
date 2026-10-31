@@ -32,6 +32,9 @@
 #include <WebCore/RTCDataChannelRemoteHandlerConnection.h>
 #include <WebCore/RTCDataChannelRemoteSource.h>
 #include <WebCore/RTCDataChannelRemoteSourceConnection.h>
+#ifndef RC_REMOVE_SEC_ACCEL_3
+#include <wtf/Lock.h>
+#endif
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
@@ -66,7 +69,11 @@ private:
 
     WebCore::RTCDataChannelRemoteSourceConnection& remoteSourceConnection();
     void postTaskToHandler(WebCore::RTCDataChannelIdentifier, Function<void(WebCore::RTCDataChannelRemoteHandler&)>&&);
+#ifdef RC_REMOVE_SEC_ACCEL_3
     WebCore::RTCDataChannelRemoteSource* sourceFromIdentifier(WebCore::RTCDataChannelIdentifier);
+#else
+    RefPtr<WebCore::RTCDataChannelRemoteSource> sourceFromIdentifier(WebCore::RTCDataChannelIdentifier);
+#endif
 
     class RemoteHandlerConnection : public WebCore::RTCDataChannelRemoteHandlerConnection {
     public:
@@ -106,10 +113,21 @@ private:
 
     const Ref<WorkQueue> m_queue;
     const Ref<IPC::Connection> m_connection;
+<<<<<<< HEAD
     const RefPtr<RemoteHandlerConnection> m_remoteHandlerConnection;
     const RefPtr<RemoteSourceConnection> m_remoteSourceConnection;
+=======
+    RefPtr<RemoteHandlerConnection> m_remoteHandlerConnection;
+    RefPtr<RemoteSourceConnection> m_remoteSourceConnection;
+#ifdef RC_REMOVE_SEC_ACCEL_3
+>>>>>>> 63fcf3b9df30 (Heap UAF in RTCDataChannelRemoteManager::m_sources HashMap raced between WorkQueue sendData reader and main-thread connectToRemoteSource)
     HashMap<WebCore::RTCDataChannelLocalIdentifier, Ref<WebCore::RTCDataChannelRemoteSource>> m_sources;
     HashMap<WebCore::RTCDataChannelLocalIdentifier, RemoteHandler> m_handlers;
+#else
+    Lock m_mapsLock;
+    HashMap<WebCore::RTCDataChannelLocalIdentifier, Ref<WebCore::RTCDataChannelRemoteSource>> m_sources WTF_GUARDED_BY_LOCK(m_mapsLock);
+    HashMap<WebCore::RTCDataChannelLocalIdentifier, RemoteHandler> m_handlers WTF_GUARDED_BY_LOCK(m_mapsLock);
+#endif
 };
 
 } // namespace WebKit
