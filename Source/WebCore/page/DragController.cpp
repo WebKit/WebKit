@@ -1437,11 +1437,11 @@ void DragController::doSystemDrag(DragImage image, RefPtr<TextIndicator>&& textI
     item.containsSelection = protect(frame.selection())->contains(eventPos);
     item.rootFrameID = rootFrameID;
 
-    auto eventPositionInRootViewCoordinates = roundedIntPoint(frameView->contentsToMainFrameView(FloatPoint { eventPos }));
-    auto dragLocationInRootViewCoordinates = roundedIntPoint(frameView->contentsToMainFrameView(FloatPoint { dragLoc }));
-    item.eventPositionInContentCoordinates = mainFrameView->rootViewToContents(eventPositionInRootViewCoordinates);
-    item.eventPositionInRootViewCoordinates = eventPositionInRootViewCoordinates;
-    item.dragLocationInContentCoordinates = mainFrameView->rootViewToContents(dragLocationInRootViewCoordinates);
+    auto eventPositionInMainFrameViewCoordinates = roundedIntPoint(frameView->contentsToMainFrameView(FloatPoint { eventPos }));
+    auto dragLocationInMainFrameViewCoordinates = roundedIntPoint(frameView->contentsToMainFrameView(FloatPoint { dragLoc }));
+    item.eventPositionInContentCoordinates = mainFrameView->rootViewToContents(eventPositionInMainFrameViewCoordinates);
+    item.eventPositionInMainFrameViewCoordinates = eventPositionInMainFrameViewCoordinates;
+    item.dragLocationInContentCoordinates = mainFrameView->rootViewToContents(dragLocationInMainFrameViewCoordinates);
     item.dragLocationInWindowCoordinates = mainFrameView->contentsToWindow(item.dragLocationInContentCoordinates);
 
     std::optional<NodeIdentifier> nodeID;
@@ -1457,10 +1457,10 @@ void DragController::doSystemDrag(DragImage image, RefPtr<TextIndicator>&& textI
                 if (auto* page = frame.page())
                     dragPreviewSize.scale(1 / page->deviceScaleFactor());
             }
-            item.dragPreviewFrameInRootViewCoordinates = { dragLocationInRootViewCoordinates, WTF::move(dragPreviewSize) };
+            item.dragPreviewFrameInMainFrameViewCoordinates = { dragLocationInMainFrameViewCoordinates, WTF::move(dragPreviewSize) };
         } else {
             // We can position the preview using the bounds of the drag source element.
-            item.dragPreviewFrameInRootViewCoordinates = element->boundsInRootViewSpace();
+            item.dragPreviewFrameInMainFrameViewCoordinates = element->boundsInMainFrameViewSpace();
         }
 
         if (RefPtr link = containingLinkElement(*element)) {

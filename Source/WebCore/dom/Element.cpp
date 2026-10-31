@@ -1972,29 +1972,43 @@ inline bool LEGACY_NODELETE shouldObtainBoundsFromBoxModel(const Element* elemen
     return false;
 }
 
-IntRect Element::boundsInRootViewSpace()
+static IntRect boundsInViewSpace(Element& element, NOESCAPE const Invocable<IntRect(LocalFrameView&, const IntRect&)> auto& contentsToViewSpace)
 {
-    Ref document = this->document();
+    Ref document = element.document();
     document->updateLayoutIgnorePendingStylesheets();
 
     RefPtr view = document->view();
     if (!view)
         return IntRect();
 
-    if (isInNonRenderedSVGSubtree(*this))
+    if (isInNonRenderedSVGSubtree(element))
         return IntRect();
 
     Vector<FloatQuad> quads;
 
-    if (RefPtr svgElement = elementWithSVGLayoutBox(*this)) {
+    if (RefPtr svgElement = elementWithSVGLayoutBox(element)) {
         if (auto localRect = svgElement->getBoundingBox())
-            quads.append(protect(renderer())->localToAbsoluteQuad(*localRect));
-    } else if (shouldObtainBoundsFromBoxModel(this)) {
+            quads.append(protect(element.renderer())->localToAbsoluteQuad(*localRect));
+    } else if (shouldObtainBoundsFromBoxModel(&element)) {
         // Get the bounding rectangle from the box model.
-        protect(renderer())->absoluteQuads(quads);
+        protect(element.renderer())->absoluteQuads(quads);
     }
 
-    return view->contentsToRootView(enclosingIntRect(unitedBoundingBoxes(quads)));
+    return contentsToViewSpace(*view, enclosingIntRect(unitedBoundingBoxes(quads)));
+}
+
+IntRect Element::boundsInRootViewSpace()
+{
+    return boundsInViewSpace(*this, [](LocalFrameView& view, const IntRect& rect) {
+        return view.contentsToRootView(rect);
+    });
+}
+
+IntRect Element::boundsInMainFrameViewSpace()
+{
+    return boundsInViewSpace(*this, [](LocalFrameView& view, const IntRect& rect) {
+        return view.contentsToMainFrameView(rect);
+    });
 }
 
 IntRect Element::boundingBoxInRootViewCoordinates() const
