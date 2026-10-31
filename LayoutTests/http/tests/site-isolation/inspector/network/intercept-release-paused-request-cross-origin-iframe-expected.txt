@@ -1,0 +1,32 @@
+Test that a request paused by Web Inspector interception in a cross-origin iframe's process loads once it is released by Network.interceptContinue, by disabling interception, or by disabling the Network domain.
+
+
+== Running test suite: SiteIsolation.Network.InterceptReleasePausedRequest
+-- Running test case: SiteIsolation.Network.InterceptReleasePausedRequest.CrossOriginIFrameTargetExists
+PASS: Added target should be a FrameTarget, proving a separate-process OOPIF.
+PASS: Network should be enabled on the backend target.
+
+-- Running test case: SiteIsolation.Network.InterceptReleasePausedRequest.InterceptContinue
+PASS: Network.requestIntercepted should be dispatched on the backend target.
+PASS: Paused request should be the cross-origin iframe's fetch.
+PASS: Fetch should not complete while its request is paused.
+Continuing the paused request...
+PASS: Status should be the original one.
+PASS: Content should be the original one.
+
+-- Running test case: SiteIsolation.Network.InterceptReleasePausedRequest.DisableInterception
+PASS: Network.requestIntercepted should be dispatched on the backend target.
+PASS: Paused request should be the cross-origin iframe's fetch.
+PASS: Fetch should not complete while its request is paused.
+Disabling interception...
+PASS: Status should be the original one.
+PASS: Content should be the original one.
+
+-- Running test case: SiteIsolation.Network.InterceptReleasePausedRequest.DisableNetwork
+PASS: Network.requestIntercepted should be dispatched on the backend target.
+PASS: Paused request should be the cross-origin iframe's fetch.
+PASS: Fetch should not complete while its request is paused.
+Disabling the Network domain...
+PASS: Status should be the original one.
+PASS: Content should be the original one.
+
