@@ -63,6 +63,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
@@ -1012,6 +1013,11 @@ private:
 
     void nativeMouseEventHandler(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
     void nativeMouseEventHandlerInternal(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
+    void inputContextDidHandleMouseEvent(uint64_t identifier, bool handled);
+    void dispatchReadyMouseEvents();
+    void flushPendingMouseEvents();
+    void clearPendingMouseEvents();
+    void pendingMouseEventTimerFired();
 
     void scheduleMouseDidMoveOverElementForModifierFlagsChange(NSEvent *);
 
@@ -1187,6 +1193,17 @@ private:
     std::optional<NSRange> m_stagedMarkedRange;
     Deque<Vector<WebCore::KeypressCommand>> m_collectedKeypressCommands;
     Deque<Function<void()>> m_interpretKeyEventHoldingTank;
+
+    struct PendingMouseEvent {
+        uint64_t identifier { 0 };
+        RetainPtr<NSEvent> event;
+        WebEventInputSource inputSource { WebEventInputSource::UserDriven };
+        WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag { WebCore::PlatformMouseEvent::CanInitiateDrag::Yes };
+        std::optional<bool> handled;
+    };
+    Deque<PendingMouseEvent> m_pendingMouseEvents;
+    uint64_t m_lastPendingMouseEventIdentifier { 0 };
+    RunLoop::Timer m_pendingMouseEventTimer { RunLoop::mainSingleton(), "WebViewImpl::PendingMouseEventTimer"_s, this, &WebViewImpl::pendingMouseEventTimerFired };
 
     String m_lastStringForCandidateRequest;
     NSInteger m_lastCandidateRequestSequenceNumber;

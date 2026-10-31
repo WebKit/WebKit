@@ -1537,6 +1537,7 @@ void WebViewImpl::processWillSwap()
 
 void WebViewImpl::processDidExit()
 {
+    clearPendingMouseEvents();
     handleProcessSwapOrExit();
     m_gestureController = nullptr;
 }
@@ -2528,6 +2529,7 @@ void WebViewImpl::viewWillMoveToWindowImpl(NSWindow *window)
     if (window == currentWindow.get())
         return;
 
+    flushPendingMouseEvents();
     clearAllEditCommands();
 
     if (!m_isPreparingToUnparentView)
@@ -6897,6 +6899,8 @@ static TextStream& operator<<(TextStream& ts, NSEventType eventType)
 }
 #endif
 
+static constexpr auto pendingMouseEventInputContextTimeout = 1_s;
+
 void WebViewImpl::nativeMouseEventHandler(NSEvent *event, WebEventInputSource inputSource, WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag)
 {
     if (m_ignoresNonWheelEvents) {
@@ -6904,23 +6908,80 @@ void WebViewImpl::nativeMouseEventHandler(NSEvent *event, WebEventInputSource in
         return;
     }
 
-    if (RetainPtr context = [m_view.get() inputContext]) {
-        WeakPtr weakThis { *this };
-        RetainPtr<NSEvent> retainedEvent = event;
-        [context handleEvent:event completionHandler:[weakThis, retainedEvent, inputSource, canInitiateDrag] (BOOL handled) {
-            if (!weakThis)
-                return;
-            if (handled)
-                LOG_WITH_STREAM(TextInput, stream << "Event " << [retainedEvent type] << " was handled by text input context");
-            else {
-                Ref webEvent = NativeWebMouseEvent::create(retainedEvent.get(), weakThis->m_lastPressureEvent.get(), weakThis->m_view.get(), inputSource, canInitiateDrag);
-                weakThis->m_page->handleMouseEvent(WTF::move(webEvent));
-            }
-        }];
+    RetainPtr context = [m_view.get() inputContext];
+    if (!context && m_pendingMouseEvents.isEmpty()) {
+        Ref webEvent = NativeWebMouseEvent::create(event, m_lastPressureEvent.get(), m_view.get().get(), inputSource, canInitiateDrag);
+        m_page->handleMouseEvent(WTF::move(webEvent));
         return;
     }
-    Ref webEvent = NativeWebMouseEvent::create(event, m_lastPressureEvent.get(), m_view.get().get(), inputSource, canInitiateDrag);
-    m_page->handleMouseEvent(WTF::move(webEvent));
+
+    auto identifier = ++m_lastPendingMouseEventIdentifier;
+    m_pendingMouseEvents.append({ identifier, event, inputSource, canInitiateDrag, std::nullopt });
+
+    if (!context) {
+        inputContextDidHandleMouseEvent(identifier, false);
+        return;
+    }
+
+    WeakPtr weakThis { *this };
+    [context handleEvent:event completionHandler:[weakThis, identifier](BOOL handled) {
+        if (CheckedPtr checkedThis = weakThis)
+            checkedThis->inputContextDidHandleMouseEvent(identifier, handled);
+    }];
+
+    if (!m_pendingMouseEvents.isEmpty() && !m_pendingMouseEventTimer.isActive())
+        m_pendingMouseEventTimer.startOneShot(pendingMouseEventInputContextTimeout);
+}
+
+void WebViewImpl::inputContextDidHandleMouseEvent(uint64_t identifier, bool handled)
+{
+    auto pendingEvent = m_pendingMouseEvents.findIf([identifier](auto& pendingEvent) {
+        return pendingEvent.identifier == identifier;
+    });
+    if (pendingEvent == m_pendingMouseEvents.end() || pendingEvent->handled)
+        return;
+    pendingEvent->handled = handled;
+    dispatchReadyMouseEvents();
+}
+
+void WebViewImpl::dispatchReadyMouseEvents()
+{
+    bool dispatchedAnyEvent = false;
+    while (!m_pendingMouseEvents.isEmpty() && m_pendingMouseEvents.first().handled) {
+        auto readyEvent = m_pendingMouseEvents.takeFirst();
+        dispatchedAnyEvent = true;
+        if (*readyEvent.handled) {
+            LOG_WITH_STREAM(TextInput, stream << "Event " << [readyEvent.event type] << " was handled by text input context");
+            continue;
+        }
+        Ref webEvent = NativeWebMouseEvent::create(readyEvent.event.get(), m_lastPressureEvent.get(), m_view.get().get(), readyEvent.inputSource, readyEvent.canInitiateDrag);
+        m_page->handleMouseEvent(WTF::move(webEvent));
+    }
+
+    if (m_pendingMouseEvents.isEmpty())
+        m_pendingMouseEventTimer.stop();
+    else if (dispatchedAnyEvent)
+        m_pendingMouseEventTimer.startOneShot(pendingMouseEventInputContextTimeout);
+}
+
+void WebViewImpl::pendingMouseEventTimerFired()
+{
+    flushPendingMouseEvents();
+}
+
+void WebViewImpl::flushPendingMouseEvents()
+{
+    for (auto& pendingEvent : m_pendingMouseEvents) {
+        if (!pendingEvent.handled)
+            pendingEvent.handled = false;
+    }
+    dispatchReadyMouseEvents();
+}
+
+void WebViewImpl::clearPendingMouseEvents()
+{
+    m_pendingMouseEvents.clear();
+    m_pendingMouseEventTimer.stop();
 }
 
 void WebViewImpl::nativeMouseEventHandlerInternal(NSEvent *event, WebEventInputSource inputSource, WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag)
