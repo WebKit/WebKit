@@ -296,6 +296,11 @@ void RemoteScrollingCoordinatorProxyMac::applyScrollingTreeLayerPositionsAfterCo
     m_eventDispatcher->renderingUpdateComplete();
 }
 
+void RemoteScrollingCoordinatorProxyMac::flushLayerPositionsIfNeeded()
+{
+    m_eventDispatcher->flushLayerPositionsIfNeeded();
+}
+
 #if ENABLE(THREADED_ANIMATIONS)
 void RemoteScrollingCoordinatorProxyMac::animationsWereAddedToNode(RemoteLayerTreeNode& node)
 {

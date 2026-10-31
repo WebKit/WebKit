@@ -108,6 +108,7 @@ public:
     void viewportChangedViaDelegatedScrolling(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale);
 
     virtual void applyScrollingTreeLayerPositionsAfterCommit();
+    virtual void flushLayerPositionsIfNeeded() { }
 
     void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical);
 

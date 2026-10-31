@@ -107,6 +107,7 @@ public:
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>);
 
     void renderingUpdateComplete();
+    void flushLayerPositionsIfNeeded();
 
 #if ENABLE(THREADED_ANIMATIONS)
     void lockForAnimationChanges() WTF_ACQUIRES_LOCK(m_animationLock);
@@ -148,6 +149,8 @@ private:
 
     void scheduleDelayedRenderingUpdateDetectionTimer(Seconds delay);
     void delayedRenderingUpdateDetectionTimerFired();
+
+    static bool mainThreadCommitsWaitForUpdateCycle();
 
     bool scrollingThreadNeedsDisplayDidRefresh();
     bool scrollingTreeWasRecentlyActive();
@@ -208,6 +211,9 @@ private:
     Condition m_stateCondition;
 
     MonotonicTime m_lastDisplayDidRefreshTime WTF_GUARDED_BY_LOCK(m_scrollingTreeLock);
+    bool m_layerPositionsDeferredToRenderingUpdate WTF_GUARDED_BY_LOCK(m_scrollingTreeLock) { false };
+    bool m_needsLayerPositionFlush { false };
+    const bool m_mainThreadCommitsWaitForUpdateCycle { mainThreadCommitsWaitForUpdateCycle() };
 
     std::unique_ptr<RunLoop::Timer> m_delayedRenderingUpdateDetectionTimer;
 
