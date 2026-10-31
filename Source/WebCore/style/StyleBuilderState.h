@@ -257,7 +257,7 @@ public:
     void setFontDescriptionVariantNumericOrdinal(FontVariantNumericOrdinal);
     void setFontDescriptionVariantNumericSlashedZero(FontVariantNumericSlashedZero);
 
-    void disableNativeAppearanceIfNeeded(CSSPropertyID, PropertyCascade::Origin);
+    void didApplyAuthorProperty(CSSPropertyID);
 
 private:
     // See the comment in maybeUpdateFontForLetterSpacingOrWordSpacing() about why this needs to be a friend.

@@ -144,6 +144,11 @@ inline bool ComputedStyleBase::hasExplicitlyInheritedProperties() const
     return m_nonInheritedFlags.hasExplicitlyInheritedProperties;
 }
 
+inline bool ComputedStyleBase::hasAuthorHighlightColors() const
+{
+    return m_nonInheritedFlags.hasAuthorHighlightColors;
+}
+
 inline bool ComputedStyleBase::disallowsFastPathInheritance() const
 {
     return m_nonInheritedFlags.disallowsFastPathInheritance;

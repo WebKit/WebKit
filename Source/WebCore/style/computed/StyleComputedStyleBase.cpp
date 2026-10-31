@@ -485,6 +485,7 @@ void ComputedStyleBase::NonInheritedFlags::dumpDifferences(TextStream& ts, const
     LOG_IF_DIFFERENT_WITH_FROM_RAW(TextDecorationLine, textDecorationLine);
 
     LOG_IF_DIFFERENT(hasExplicitlyInheritedProperties);
+    LOG_IF_DIFFERENT(hasAuthorHighlightColors);
     LOG_IF_DIFFERENT(disallowsFastPathInheritance);
     LOG_IF_DIFFERENT(hasZeroEffectiveBorderWidths);
     LOG_IF_DIFFERENT(hasZeroPadding);

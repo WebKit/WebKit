@@ -133,6 +133,9 @@ void Builder::applyHighlightInheritance()
     ASSERT(m_state->isBuildingHighlightStyle());
 
     BuilderGenerated::applyHighlightInheritAllProperties(m_state);
+
+    if (CheckedPtr parentHighlightStyle = m_state->parentHighlightStyle(); parentHighlightStyle && parentHighlightStyle->hasAuthorHighlightColors())
+        m_state->style().setHasAuthorHighlightColors();
 }
 
 // Top priority properties affect resolution of high priority properties.
@@ -484,8 +487,8 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
 
     apply(valueType);
 
-    if (!isAnyRevert)
-        m_state->disableNativeAppearanceIfNeeded(id, cascadeOrigin);
+    if (!isAnyRevert && cascadeOrigin == PropertyCascade::Origin::Author)
+        m_state->didApplyAuthorProperty(id);
 
     if (!isUnset && !isAnyRevert && m_state->isCurrentPropertyInvalidAtComputedValueTime()) {
         // https://drafts.csswg.org/css-variables-2/#invalid-variables

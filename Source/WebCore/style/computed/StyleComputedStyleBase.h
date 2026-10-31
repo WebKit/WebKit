@@ -488,6 +488,9 @@ public:
     inline const Color& colorForHighlight() const;
     inline void setColorForHighlight(Color&&);
 
+    inline bool hasAuthorHighlightColors() const;
+    inline void setHasAuthorHighlightColors();
+
     inline bool isLink() const;
     inline void setIsLink(bool);
 
@@ -808,6 +811,7 @@ public:
         PREFERRED_TYPE(bool) unsigned isContainerDependent : 1;
         PREFERRED_TYPE(bool) unsigned useTreeCountingFunctions : 1;
         PREFERRED_TYPE(bool) unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.
+        PREFERRED_TYPE(bool) unsigned hasAuthorHighlightColors : 1; // Highlight pseudo-element color or background-color comes from the author origin.
         PREFERRED_TYPE(bool) unsigned disallowsFastPathInheritance : 1;
         PREFERRED_TYPE(bool) unsigned hasZeroEffectiveBorderWidths : 1; // Maintained by the border setters.
         PREFERRED_TYPE(bool) unsigned hasZeroPadding : 1; // Maintained by the padding setters.

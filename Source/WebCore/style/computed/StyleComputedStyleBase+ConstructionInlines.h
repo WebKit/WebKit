@@ -79,6 +79,7 @@ inline ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag)
     m_nonInheritedFlags.isContainerDependent = false;
     m_nonInheritedFlags.useTreeCountingFunctions = false;
     m_nonInheritedFlags.hasExplicitlyInheritedProperties = false;
+    m_nonInheritedFlags.hasAuthorHighlightColors = false;
     m_nonInheritedFlags.disallowsFastPathInheritance = false;
     m_nonInheritedFlags.hasZeroEffectiveBorderWidths = true;
     m_nonInheritedFlags.hasZeroPadding = true;
@@ -132,6 +133,7 @@ inline void ComputedStyleBase::NonInheritedFlags::copyNonInheritedFrom(const Non
     isContainerDependent = other.isContainerDependent;
     useTreeCountingFunctions = other.useTreeCountingFunctions;
     hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
+    hasAuthorHighlightColors = other.hasAuthorHighlightColors;
     disallowsFastPathInheritance = other.disallowsFastPathInheritance;
     hasZeroEffectiveBorderWidths = other.hasZeroEffectiveBorderWidths;
     hasZeroPadding = other.hasZeroPadding;

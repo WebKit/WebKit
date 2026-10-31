@@ -396,11 +396,9 @@ unsigned BuilderState::siblingIndex()
     return count;
 }
 
-void BuilderState::disableNativeAppearanceIfNeeded(CSSPropertyID propertyID, PropertyCascade::Origin origin)
+void BuilderState::didApplyAuthorProperty(CSSPropertyID propertyID)
 {
-    auto shouldDisable = [&] {
-        if (origin != PropertyCascade::Origin::Author)
-            return false;
+    auto shouldDisableNativeAppearance = [&] {
         if (!CSSProperty::disablesNativeAppearance(propertyID))
             return false;
         if (!applyPropertyToRegularStyle())
@@ -408,8 +406,12 @@ void BuilderState::disableNativeAppearanceIfNeeded(CSSPropertyID propertyID, Pro
         SUPPRESS_UNCOUNTED_ARG return element()->isDevolvableWidget() || RenderTheme::hasAppearanceForElementTypeFromUAStyle(*element());
     };
 
-    if (shouldDisable())
+    if (shouldDisableNativeAppearance())
         style().setNativeAppearanceDisabled(true);
+
+    // https://drafts.csswg.org/css-pseudo-4/#paired-defaults
+    if (isBuildingHighlightStyle() && (propertyID == CSSPropertyID::Color || propertyID == CSSPropertyID::BackgroundColor))
+        style().setHasAuthorHighlightColors();
 }
 
 

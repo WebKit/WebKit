@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <style>
 span { font-size: 3em; }
-::selection { text-shadow: 1px 1px 2px blue; }
+::selection {
+    background-color: transparent;
+    text-shadow: 1px 1px 2px blue;
+}
 ::selection:window-inactive {
     text-shadow: 1px 1px 2px rgba(63, 128, 33, 0.95); /* green; alpha < 1 so that we don't blend the background color with white. */
 }
