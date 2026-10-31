@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>text-overflow clips the first character of a block ellipsis that starts the line rather than ellipsing it</title>
+<style>
+div {
+    font: 20px/1.2 monospace;
+    border: 1px solid;
+    margin: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-clamp: 1 "wxyz";
+}
+.narrow { width: 1.5ch; }
+.wide { width: 3ch; }
+</style>
+<!-- The content of the first line is all displaced by the block ellipsis, so the block ellipsis starts the line. -->
+<div class="narrow">xyz<br>y</div>
+<div class="narrow" dir="rtl">xyz<br>y</div>
+<div class="wide">xyz<br>y</div>
+<div class="wide" dir="rtl">xyz<br>y</div>

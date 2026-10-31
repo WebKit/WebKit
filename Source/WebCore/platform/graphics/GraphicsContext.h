@@ -364,6 +364,10 @@ public:
 
     virtual bool supportsInternalLinks() const { return false; }
 
+    // Splits the run at its bidi level boundaries and returns the pieces in visual (left to right) order, each in its resolved direction,
+    // which is how drawBidiText paints it.
+    static Vector<TextRun> visuallyOrderedSubruns(const TextRun&);
+
     // Contentful Paint Detection
 
     void setContentfulPaintDetected() { m_contentfulPaintDetected = true; }
@@ -376,8 +380,6 @@ public:
 #endif
 
 protected:
-    static Vector<TextRun> visuallyOrderedSubruns(const TextRun&);
-
     // Returns the interpolation quality a draw operation should use. InterpolationQuality::Default
     // in the options means the context image interpolation quality is used.
     InterpolationQuality imageInterpolationQualityForOptions(RasterDrawingOptions options) const

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>text-overflow hides the part of a block ellipsis that overflows at the end edge of the line, in each bidi run</title>
+<style>
+div {
+    font: 20px/1.2 monospace;
+    width: 10ch;
+    border: 1px solid;
+    margin: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.english { line-clamp: 1 "very long block ellipsis"; }
+.hebrew { line-clamp: 1 "אבגדה ופזחטי כלמנ"; }
+.mixed { line-clamp: 1 "abc אבגדה def ופזח"; }
+.mixed-rtl-first { line-clamp: 1 "אבג defghijklmn"; }
+</style>
+<!-- The expected rendering is that of the same text as the content of the line, which text-overflow truncates the same way. -->
+<div class="english">x<br>y</div>
+<div class="english" dir="rtl">x<br>y</div>
+<div class="hebrew">x<br>y</div>
+<div class="hebrew" dir="rtl">x<br>y</div>
+<div class="mixed">x<br>y</div>
+<div class="mixed" dir="rtl">x<br>y</div>
+<div class="mixed-rtl-first">x<br>y</div>
+<div class="mixed-rtl-first" dir="rtl">x<br>y</div>

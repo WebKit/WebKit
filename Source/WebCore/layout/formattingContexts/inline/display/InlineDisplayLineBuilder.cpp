@@ -26,11 +26,13 @@
 #include "config.h"
 #include "InlineDisplayLineBuilder.h"
 
+#include "GraphicsContext.h"
 #include "InlineDisplayContentBuilder.h"
 #include "LayoutBoxGeometry.h"
-#include "LayoutIntegrationUtils.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TextUtil.h"
+#include <wtf/text/StringBuilder.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 namespace Layout {
@@ -506,36 +508,142 @@ static InlineDisplay::Line::Ellipsis LEGACY_NODELETE trailingBlockEllipsis(const
     return { InlineDisplay::Line::Ellipsis::Type::Block, visualRect, blockEllipsis.text };
 }
 
-std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::placeTrailingEllipsisIfNeeded(LineEndingTruncationPolicy truncationPolicy, const std::optional<BlockOverflowEllipsis>& blockEllipsis, InlineDisplay::Line& displayLine, std::span<InlineDisplay::Box> displayBoxes, bool isLegacyLineClamp)
+static AtomString textOverflowEllipsisText(const Style::ComputedStyle& style, bool isHorizontal)
+{
+    return WTF::switchOn(style.textOverflow(),
+        [&](const CSS::Keyword::Clip&) -> AtomString {
+            return nullAtom();
+        },
+        [&](const CSS::Keyword::Ellipsis&) -> AtomString {
+            return TextUtil::ellipsisTextInInlineDirection(isHorizontal);
+        },
+        [&](const Style::String& string) -> AtomString {
+            return AtomString { string.value };
+        }
+    );
+}
+
+// Returns the part of the text run that fits the available width at the line's start edge, in whole grapheme clusters: its logically
+// leading part when the run has the line's direction, and its logically trailing part otherwise (see truncateTextContentWithMismatchingDirection).
+// When the run can't be fully truncated, the grapheme cluster at the start edge is kept even if it does not fit.
+static StringView visiblePartOfTextRun(StringView text, bool hasLineDirection, float availableWidth, bool canFullyTruncate, const FontCascade& fontCascade)
+{
+    auto graphemeClusterIterator = NonSharedCharacterBreakIterator { text };
+    if (hasLineDirection) {
+        auto visibleLength = canFullyTruncate ? 0u : static_cast<unsigned>(ubrk_following(graphemeClusterIterator, 0));
+        for (auto clusterEnd = ubrk_following(graphemeClusterIterator, visibleLength); clusterEnd != UBRK_DONE; clusterEnd = ubrk_next(graphemeClusterIterator)) {
+            if (fontCascade.width(text.left(static_cast<unsigned>(clusterEnd))) > availableWidth)
+                break;
+            visibleLength = static_cast<unsigned>(clusterEnd);
+        }
+        return text.left(visibleLength);
+    }
+    auto visibleStart = canFullyTruncate ? text.length() : static_cast<unsigned>(ubrk_preceding(graphemeClusterIterator, text.length()));
+    for (auto clusterStart = ubrk_preceding(graphemeClusterIterator, visibleStart); clusterStart != UBRK_DONE; clusterStart = ubrk_previous(graphemeClusterIterator)) {
+        if (fontCascade.width(text.substring(static_cast<unsigned>(clusterStart))) > availableWidth)
+            break;
+        visibleStart = static_cast<unsigned>(clusterStart);
+    }
+    return text.substring(visibleStart);
+}
+
+static void truncateBlockEllipsisForTextOverflow(InlineDisplay::Line::Ellipsis& blockEllipsis, float hangingWidth, bool isFirstContentOnLine, const InlineDisplay::Line& displayLine, const Style::ComputedStyle& styleForTruncation, const FontCascade& fontCascade)
+{
+    // "If a line has a block overflow ellipsis, then any handling relating to it, including displacing content from the end of the line, occurs first.
+    // If the line still overflows after that (e.g. because the block overflow ellipsis is too long), then it is ellipsed according to the text-overflow property."
+    // https://drafts.csswg.org/css-overflow-4/#text-overflow
+
+    // 1. Check that text-overflow applies: the box clips its overflow, and text-overflow is not clip.
+    if (styleForTruncation.overflowX() == Overflow::Visible)
+        return;
+    auto isHorizontal = displayLine.isHorizontal();
+    auto textOverflowText = textOverflowEllipsisText(styleForTruncation, isHorizontal);
+    if (textOverflowText.isEmpty())
+        return;
+
+    // 2. Check whether the block ellipsis overflows the line box at its end edge (the right edge in left-to-right, the left edge in right-to-left).
+    // Hanging punctuation at the end of the block ellipsis is meant to hang outside of the line box, so it does not count as overflow.
+    auto lineBoxVisualLeft = isHorizontal ? displayLine.left() : displayLine.top();
+    auto lineBoxVisualRight = isHorizontal ? displayLine.right() : displayLine.bottom();
+    auto ellipsisVisualLeft = isHorizontal ? blockEllipsis.visualRect.x() : blockEllipsis.visualRect.y();
+    auto ellipsisVisualRight = isHorizontal ? blockEllipsis.visualRect.maxX() : blockEllipsis.visualRect.maxY();
+    auto isLeftToRight = displayLine.isLeftToRightInlineDirection();
+#if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
+    // The line box width is a floored LayoutUnit while the ellipsis is measured in floats, so allow for epsilon-scale differences
+    // (see truncateOverflowingDisplayBoxes).
+    if (isLeftToRight)
+        lineBoxVisualRight += LayoutUnit::epsilon();
+    else
+        lineBoxVisualLeft -= LayoutUnit::epsilon();
+#endif
+    if (isLeftToRight ? ellipsisVisualRight - hangingWidth <= lineBoxVisualRight : ellipsisVisualLeft + hangingWidth >= lineBoxVisualLeft)
+        return;
+
+    // 3. Replace the block ellipsis with what is left of it after hiding what overflows the end edge, followed by the text-overflow ellipsis.
+    // The block ellipsis is painted as bidi runs in visual order (see GraphicsContext::drawBidiText), so hiding content at the end edge may take
+    // the logical end of some runs and the logical start of others. What is left of each run is appended in visual order from the start edge, and
+    // what is left of runs in the other direction is isolated, so that the line's direction lays them out in that order again.
+    auto availableWidth = (isLeftToRight ? lineBoxVisualRight - ellipsisVisualLeft : ellipsisVisualRight - lineBoxVisualLeft) - fontCascade.width(textOverflowText);
+    auto lineDirection = isLeftToRight ? TextDirection::LTR : TextDirection::RTL;
+    auto subruns = GraphicsContext::visuallyOrderedSubruns(TextRun { StringView { blockEllipsis.text }, 0, 0, ExpansionBehavior::defaultBehavior(), lineDirection });
+    if (!isLeftToRight)
+        subruns.reverse();
+    StringBuilder textBuilder;
+    for (CheckedRef subrun : subruns) {
+        auto hasLineDirection = subrun->direction() == lineDirection;
+        auto subrunWidth = fontCascade.width(subrun);
+        // "The first character or atomic inline-level element on a line must be clipped rather than ellipsed."
+        auto canFullyTruncate = !isFirstContentOnLine || !textBuilder.isEmpty();
+        auto visibleText = subrunWidth <= availableWidth ? subrun->text() : visiblePartOfTextRun(subrun->text(), hasLineDirection, std::max(0.f, availableWidth), canFullyTruncate, fontCascade);
+        if (hasLineDirection)
+            textBuilder.append(visibleText);
+        else if (!visibleText.isEmpty())
+            textBuilder.append(isLeftToRight ? rightToLeftIsolate : leftToRightIsolate, visibleText, popDirectionalIsolate);
+        if (subrunWidth > availableWidth)
+            break;
+        availableWidth -= subrunWidth;
+    }
+    textBuilder.append(textOverflowText);
+
+    // 4. Keep the start edge of the block ellipsis in place.
+    auto text = textBuilder.toAtomString();
+    auto width = std::max(0.f, fontCascade.width(text));
+    auto start = isLeftToRight ? ellipsisVisualLeft : ellipsisVisualRight - width;
+    if (isHorizontal)
+        blockEllipsis.visualRect = { start, blockEllipsis.visualRect.y(), width, blockEllipsis.visualRect.height() };
+    else
+        blockEllipsis.visualRect = { blockEllipsis.visualRect.x(), start, blockEllipsis.visualRect.width(), width };
+    blockEllipsis.text = WTF::move(text);
+}
+
+std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::placeTrailingEllipsisIfNeeded(LineEndingTruncationPolicy truncationPolicy, const Style::ComputedStyle& styleForTruncation, const std::optional<BlockOverflowEllipsis>& blockEllipsis, InlineDisplay::Line& displayLine, std::span<InlineDisplay::Box> displayBoxes, bool isLegacyLineClamp)
 {
     if (!displayBoxes.size())
         return { };
-    // Line breaking already made room for the block ellipsis. Otherwise the content is truncated here to make room for the ellipsis.
-    if (blockEllipsis)
-        return trailingBlockEllipsis(*blockEllipsis, displayLine, displayBoxes[0]);
+    // Line breaking already made room for the block ellipsis (as much as displacing content can), and text-overflow applies to what still overflows.
+    // Otherwise the content is truncated here to make room for the ellipsis.
+    if (blockEllipsis) {
+        auto ellipsis = trailingBlockEllipsis(*blockEllipsis, displayLine, displayBoxes[0]);
+        // "The first character or atomic inline-level element on a line must be clipped rather than ellipsed."
+        // https://drafts.csswg.org/css-overflow-4/#text-overflow
+        // The block ellipsis is the first content on the line when line breaking displaced all of the line's content to make room for it.
+        // Inline boxes are not content here (see truncateOverflowingDisplayBoxes).
+        auto isFirstContentOnLine = std::ranges::all_of(displayBoxes, [](auto& displayBox) {
+            return displayBox.isInlineBox();
+        });
+        // The block ellipsis is measured and painted with the root style, not the ::first-line style (see InlineFormattingUtils::blockEllipsisForLine).
+        truncateBlockEllipsisForTextOverflow(ellipsis, blockEllipsis->hangingWidth, isFirstContentOnLine, displayLine, styleForTruncation, displayBoxes[0].layoutBox().style().fontCascade());
+        return ellipsis;
+    }
     if (truncationPolicy == LineEndingTruncationPolicy::NoTruncation)
         return { };
     // Without a block ellipsis from line breaking (e.g. block-ellipsis: none), only legacy line clamp gets an ellipsis in the block direction.
     if (truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection && !isLegacyLineClamp)
         return { };
 
-    CheckedRef rootBox = displayBoxes[0].layoutBox();
-    CheckedRef styleForTruncation = rootBox->isAnonymous() ? IntegrationUtils::firstNonAnonymousAncestorStyle(rootBox) : rootBox->style();
-
     auto ellipsisText = [&] -> AtomString {
-        if (truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection) {
-            return WTF::switchOn(styleForTruncation->textOverflow(),
-                [&](const CSS::Keyword::Clip&) -> AtomString {
-                    return nullAtom();
-                },
-                [&](const CSS::Keyword::Ellipsis&) -> AtomString {
-                    return TextUtil::ellipsisTextInInlineDirection(displayLine.isHorizontal());
-                },
-                [&](const Style::String& string) -> AtomString {
-                    return AtomString { string.value };
-                }
-            );
-        }
+        if (truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection)
+            return textOverflowEllipsisText(styleForTruncation, displayLine.isHorizontal());
         // Legacy line clamp always uses ...
         return TextUtil::ellipsisTextInInlineDirection(displayLine.isHorizontal());
     }();

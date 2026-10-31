@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>text-overflow does not truncate a block ellipsis whose punctuation hangs outside of the line</title>
+<style>
+div {
+    font: 20px/1.2 monospace;
+    width: 10ch;
+    border: 1px solid;
+    margin: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    hanging-punctuation: last;
+}
+.fits-with-hanging { line-clamp: 1 "0123456789”"; }
+.overflows { line-clamp: 1 "0123456789A”"; }
+</style>
+<div class="fits-with-hanging">x<br>y</div>
+<div class="overflows">x<br>y</div>
