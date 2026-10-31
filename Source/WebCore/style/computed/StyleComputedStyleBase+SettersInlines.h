@@ -122,6 +122,13 @@ inline void ComputedStyleBase::setIsAffectedBySmartImageResizer(bool isAffectedB
 }
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+inline void ComputedStyleBase::setIsolatedSVGShapeAppleColorFilter(AppleColorFilter&& filter)
+{
+    SET_NESTED(m_inheritedRareData, appleColorFilter, isolatedSVGShapeAppleColorFilter, WTF::move(filter));
+}
+#endif
+
 inline void ComputedStyleBase::setIsEffectivelyTransparent(bool effectivelyTransparent)
 {
     SET(m_inheritedRareData, effectivelyTransparent, effectivelyTransparent);

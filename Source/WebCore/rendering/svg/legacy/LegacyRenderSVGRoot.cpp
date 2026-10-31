@@ -209,6 +209,10 @@ void LegacyRenderSVGRoot::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    AXCustomColorSVGClassifier::svgRootWillLayout(*this);
+#endif
+
     m_resourcesNeedingToInvalidateClients.clear();
 
     // Arbitrary affine transforms are incompatible with RenderLayoutState.

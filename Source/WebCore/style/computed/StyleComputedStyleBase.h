@@ -558,6 +558,11 @@ public:
     inline void setIsAffectedBySmartImageResizer(bool);
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    inline const AppleColorFilter& isolatedSVGShapeAppleColorFilter() const;
+    inline void setIsolatedSVGShapeAppleColorFilter(AppleColorFilter&&);
+#endif
+
     inline bool isEffectivelyTransparent() const; // This or any ancestor has opacity 0.
     inline void setIsEffectivelyTransparent(bool);
 
