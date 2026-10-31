@@ -26,15 +26,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import time
 
 from webkitcorepy import string_utils
 
-from webkitpy.port.base import Port
-from webkitpy.port.driver import Driver, DriverOutput
-from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
+from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.layout_tests.models.test_configuration import TestConfiguration
+from webkitpy.port.base import Port
+from webkitpy.port.driver import Driver, DriverOutput
 from webkitpy.port.image_diff import ImageDiffResult
 
 
@@ -52,7 +54,7 @@ class TestInstance(object):
         self.error = ''
         self.timeout = False
         self.is_reftest = False
-        self.is_wpt_crash_test = False
+        self.is_crash_test = False
 
         # The values of each field are treated as raw byte strings. They
         # will be converted to unicode strings where appropriate using
@@ -102,13 +104,17 @@ class TestList(object):
         return item in self.tests
 
     def __getitem__(self, item):
+        # Tests injected into the mock filesystem by a unit test need no canned
+        # driver output; TestInstance derives usable defaults from the name.
+        if item not in self.tests:
+            self.tests[item] = TestInstance(item)
         return self.tests[item]
 
 
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 91
+TOTAL_TESTS = 92
 TOTAL_SKIPS = 12
 TOTAL_RETRIES = 15
 
@@ -239,6 +245,7 @@ layer at (0,0) size 800x34
     # FIXME: Add a reftest which crashes.
 
     tests.add('websocket/tests/passes/text.html')
+    tests.add('http/tests/websocket/passes/text.html')
 
     # For testing test are properly included from platform directories.
     tests.add('platform/test-mac-leopard/passes/platform-specific-test.html')
@@ -276,24 +283,24 @@ layer at (0,0) size 800x34
     tests.add('imported/w3c/web-platform-tests/some/new.html',
         expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None)
     tests.add('imported/w3c/web-platform-tests/some/test-pass-crash.html',
-        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/some/test-pass-crash.https.html',
-        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/some/test-pass-crash.tentative.html',
-        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/some/test-timeout-crash.html',
-        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_wpt_crash_test=True)
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/some/test-crash-crash.html',
-        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, is_wpt_crash_test=True, crash=True, error='mock-crash-stderr')
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, is_crash_test=True, crash=True, error='mock-crash-stderr')
 
     tests.add('imported/w3c/web-platform-tests/crashtests/pass.html',
-        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/crashtests/timeout.html',
-        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_wpt_crash_test=True)
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/crashtests/crash.html',
-        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, crash=True, is_wpt_crash_test=True)
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, crash=True, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/crashtests/dir/test.html',
-        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_crash_test=True)
 
     tests.add('variant/variant.any.html')
 
@@ -315,6 +322,22 @@ TEST_DIR = '/mock-checkout'
 def add_unit_tests_to_mock_filesystem(filesystem):
     # Add the test_expectations file.
     filesystem.maybe_make_directory(LAYOUT_TEST_DIR + '/platform/test')
+
+    # Apache's aliases, as in the real aliases.json: several alias directories
+    # of tests (such as media/), which must not be mistaken for test roots.
+    aliases_path = filesystem.join(WebKitFinder(filesystem).webkit_base(), 'Tools', 'Scripts', 'webkitpy', 'layout_tests', 'servers', 'aliases.json')
+    filesystem.maybe_make_directory(filesystem.dirname(aliases_path))
+    filesystem.write_text_file(aliases_path, json.dumps([
+        ['/ipc/coreipc.js', 'ipc/coreipc.js'],
+        ['/js-test-resources', 'resources'],
+        ['/media-resources', 'media'],
+        ['/modern-media-controls', '../Source/WebCore/Modules/modern-media-controls'],
+        ['/resources/testharness.css', 'resources/testharness.css'],
+        ['/resources/testharness.js', 'resources/testharness.js'],
+        ['/resources/testharnessreport.js', 'resources/testharnessreport.js'],
+        ['/root', '.'],
+    ]))
+
     if not filesystem.exists(LAYOUT_TEST_DIR + '/platform/test/TestExpectations'):
         filesystem.write_text_file(LAYOUT_TEST_DIR + '/platform/test/TestExpectations', """
 Bug(test) failures/expected/crash.html [ Crash ]
@@ -349,6 +372,19 @@ Bug(test) corner-cases/multiple-failures/failure-timeout.html [ Pass Timeout ]
     if not filesystem.exists(w3c_resources_path + 'resource-files.json'):
         filesystem.maybe_make_directory(w3c_resources_path)
         filesystem.write_text_file(w3c_resources_path + 'resource-files.json', '{"directories": [], "files": []}')
+    if not filesystem.exists(w3c_resources_path + 'config.json'):
+        filesystem.write_text_file(w3c_resources_path + 'config.json', json.dumps({
+            "ports": {"http": [8800], "https": [8800], "h2": [9000], "ws": [9001], "wss": [9444]},
+            "browser_host": "localhost",
+            "alternate_hosts": {"alt": "not-localhost"},
+            "ssl": {"openssl": {"base_path": "/tmp"}},
+            "aliases": [
+                {"url-path": "/resources/testharnessreport.js", "local-dir": "../../../resources/"},
+                {"url-path": "/resources/testdriver-vendor.js", "local-dir": "../../../resources/"},
+                {"url-path": "/webkit-test-resources/", "local-dir": "../../../resources/"},
+                {"url-path": "/WebKit/", "local-dir": "../../../http/wpt/"},
+            ],
+        }))
 
     # FIXME: This test was only being ignored because of missing a leading '/'.
     # Fixing the typo causes several tests to assert, so disabling the test entirely.
@@ -373,13 +409,20 @@ Bug(test) corner-cases/multiple-failures/failure-timeout.html [ Pass Timeout ]
         add_file(test, test.name[test.name.rfind('.'):], '')
         if test.is_reftest:
             continue
-        if test.is_wpt_crash_test:
+        if test.is_crash_test:
             continue
         if test.actual_audio:
             add_file(test, '-expected.wav', test.expected_audio)
             continue
         add_file(test, '-expected.txt', test.expected_text)
         add_file(test, '-expected.png', test.expected_image)
+
+    # 'new.html' is a real WPT test with no baseline (used to test MISSING
+    # results/rebaselining), so it needs testharness.js content for
+    # SourceFile to classify it as a test rather than a support file.
+    filesystem.write_text_file(
+        LAYOUT_TEST_DIR + '/imported/w3c/web-platform-tests/some/new.html',
+        '<script src="/resources/testharness.js"></script>')
 
 
 def add_checkout_information_json_to_mock_filesystem(filesystem):
@@ -410,6 +453,7 @@ class TestPort(Port):
         Port.__init__(self, host, port_name or TestPort.default_port_name, **kwargs)
         self._tests = unit_test_list()
         self._flakes = set()
+        self._running_servers = set()
         self._expectations_path = LAYOUT_TEST_DIR + '/platform/test/TestExpectations'
         self._results_directory = None
 
@@ -514,22 +558,31 @@ class TestPort(Port):
         return self.results_directory()
 
     def start_http_server(self, additional_dirs=None):
-        pass
+        self._running_servers.add('http')
 
     def start_websocket_server(self):
-        pass
+        self._running_servers.add('websocket')
 
     def stop_http_server(self):
-        pass
+        self._running_servers.discard('http')
 
     def stop_websocket_server(self):
-        pass
+        self._running_servers.discard('websocket')
 
     def start_web_platform_test_server(self, additional_dirs=None, number_of_servers=None):
-        pass
+        self._running_servers.add('wpt')
 
     def stop_web_platform_test_server(self):
-        pass
+        self._running_servers.discard('wpt')
+
+    def is_http_server_running(self):
+        return 'http' in self._running_servers
+
+    def is_websocket_server_running(self):
+        return 'websocket' in self._running_servers
+
+    def is_wpt_server_running(self):
+        return 'wpt' in self._running_servers
 
     def web_platform_test_server_doc_root(self):
         return 'imported/w3c/web-platform-tests/'
@@ -608,6 +661,9 @@ class TestDriver(Driver):
             self.pid = TestDriver.next_pid
             TestDriver.next_pid += 1
 
+        if test_input.url is not None:
+            self._url_to_test_name[test_input.url] = test_input.test_name
+
         start_time = time.time()
         test_name = test_input.test_name
         test_args = test_input.args or []
@@ -672,16 +728,34 @@ class TestDriver(Driver):
         if not self._port.get_option('world_leaks'):
             return None
 
-        test_world_leaks_output = """TEST: file:///test.checkout/LayoutTests/failures/expected/leak.html
-ABANDONED DOCUMENT: file:///test.checkout/LayoutTests/failures/expected/leak.html
-TEST: file:///test.checkout/LayoutTests/failures/unexpected/leak.html
-ABANDONED DOCUMENT: file:///test.checkout/LayoutTests/failures/expected/flaky-leak.html
-TEST: file:///test.checkout/LayoutTests/failures/unexpected/flaky-leak.html
-ABANDONED DOCUMENT: file:///test.checkout/LayoutTests/failures/expected/leak.html
-TEST: file:///test.checkout/LayoutTests/failures/unexpected/leak.html
-ABANDONED DOCUMENT: file:///test.checkout/LayoutTests/failures/expected/leak-subframe.html
-TEST: file:///test.checkout/LayoutTests/failures/expected/leaky-reftest.html
-ABANDONED DOCUMENT: file:///test.checkout/LayoutTests/failures/expected/leaky-reftest.html"""
+        # The mock emits world-leak output in the production WKTR format
+        # (full file:// URIs in TEST: lines). In production, WKTR only emits
+        # TEST: lines for tests it actually ran, so the corresponding URIs
+        # are guaranteed to be present in self._url_to_test_name (populated
+        # by run_test). The mock pre-populates the dict here for the URIs
+        # it is about to emit so the resolution works in tests without
+        # requiring that every leak test happen to have run on the current
+        # Driver instance (drivers get re-created on crashes, and on
+        # pixel_tests toggles within a DriverProxy).
+        leak_emissions = [
+            ('failures/expected/leak.html',
+             'file:///test.checkout/LayoutTests/failures/expected/leak.html'),
+            ('failures/unexpected/leak.html',
+             'file:///test.checkout/LayoutTests/failures/expected/flaky-leak.html'),
+            ('failures/unexpected/flaky-leak.html',
+             'file:///test.checkout/LayoutTests/failures/expected/leak.html'),
+            ('failures/unexpected/leak.html',
+             'file:///test.checkout/LayoutTests/failures/expected/leak-subframe.html'),
+            ('failures/expected/leaky-reftest.html',
+             'file:///test.checkout/LayoutTests/failures/expected/leaky-reftest.html'),
+        ]
+        lines = []
+        for test_name, abandoned_uri in leak_emissions:
+            test_uri = 'file:///test.checkout/LayoutTests/' + test_name
+            self._url_to_test_name.setdefault(test_uri, test_name)
+            lines.append('TEST: ' + test_uri)
+            lines.append('ABANDONED DOCUMENT: ' + abandoned_uri)
+        test_world_leaks_output = '\n'.join(lines)
         return self._parse_world_leaks_output(test_world_leaks_output)
 
     def stop(self):

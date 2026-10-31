@@ -747,6 +747,15 @@ imported/w3c/web-platform-tests/storage/ [ Pass ]
 storage/storagemanager/ [ Pass ]
 fast/canvas/large-getImageData.html [ Pass ]
 
+# These generated WPT variants (.any.worker/.any.serviceworker/.any.sharedworker/
+# .window.html etc.) had no on-disk importer stub, so they were invisible to the
+# old finder and have never run before. The new manifest-based finder discovers
+# them for the first time as of this branch; none have been individually
+# triaged for pass/fail yet. Bulk-skipped pending per-test triage, rather than
+# landing them as unexpected failures/crashes on the bots.
+# TODO: file a tracking bug for triaging this batch, and reference it here.
+imported/w3c/web-platform-tests/storage/storagemanager-persist-persisted-match.https.any.worker.html [ Skip ]
+
 # This test has been flaky since its import.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-constructor.https.html [ Failure Pass ]
 

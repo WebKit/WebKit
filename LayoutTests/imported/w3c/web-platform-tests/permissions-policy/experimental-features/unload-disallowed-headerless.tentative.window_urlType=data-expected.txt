@@ -1,0 +1,3 @@
+
+FAIL 'unload' Policy : disallowed in headerless doc when disallowed in main frame. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'document.permissionsPolicy.allowsFeature')"
+

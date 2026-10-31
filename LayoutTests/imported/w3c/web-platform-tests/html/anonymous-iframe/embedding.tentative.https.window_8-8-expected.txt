@@ -1,0 +1,3 @@
+
+FAIL COOP:same-origin + COEP:require-corp embeds cross-origin credentialless iframe assert_equals: expected "load" but got "block"
+

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="100">
-    <meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-2000"/>
+    <meta xmlns="http://www.w3.org/1999/xhtml" name="fuzzy" content="maxDifference=0-2; totalPixels=0-2000"/>
     <!-- An xlink:href cycle has to stop at the first pattern it reaches twice, no earlier and no
          later. All three squares show the same green checkerboard rotated by 45 degrees, the last
          one shifted right by 5 units. -->

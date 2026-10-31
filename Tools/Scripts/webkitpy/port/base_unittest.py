@@ -37,6 +37,7 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.host_mock import MockHost
+from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.port import Port
 from webkitpy.port.config import Config
 from webkitpy.port.test import add_unit_tests_to_mock_filesystem, TestPort
@@ -44,10 +45,6 @@ from webkitpy.thirdparty.mock import patch
 
 from webkitcorepy import OutputCapture
 from webkitscmpy import mocks
-
-
-def cmp(a, b):
-    return (a > b) - (a < b)
 
 class PortTest(unittest.TestCase):
     def setUp(self):
@@ -165,9 +162,16 @@ class PortTest(unittest.TestCase):
         port.default_baseline_search_path = lambda **kwargs: ['LayoutTests/platform/foo']
         test_file = 'fast/test.html'
 
+        def make_finder(port):
+            return LayoutTestFinder(
+                port._filesystem,
+                port.layout_tests_dir(),
+                port.baseline_search_path(),
+            )
+
         # No additional platform directory
         self.assertEqual(
-            port.expected_baselines(test_file, '.txt'),
+            make_finder(port).baselines_for_test(test_file, '.txt'),
             [(None, 'fast/test-expected.txt')])
         self.assertEqual(port.baseline_path(), 'LayoutTests/platform/foo')
 
@@ -175,14 +179,14 @@ class PortTest(unittest.TestCase):
         port._options.additional_platform_directory = ['/tmp/local-baselines']
         port._filesystem.write_text_file('/tmp/local-baselines/fast/test-expected.txt', 'foo')
         self.assertEqual(
-            port.expected_baselines(test_file, '.txt'),
+            make_finder(port).baselines_for_test(test_file, '.txt'),
             [('/tmp/local-baselines', 'fast/test-expected.txt')])
         self.assertEqual(port.baseline_path(), '/tmp/local-baselines')
 
         # Multiple additional platform directories
         port._options.additional_platform_directory = ['/foo', '/tmp/local-baselines']
         self.assertEqual(
-            port.expected_baselines(test_file, '.txt'),
+            make_finder(port).baselines_for_test(test_file, '.txt'),
             [('/tmp/local-baselines', 'fast/test-expected.txt')])
         self.assertEqual(port.baseline_path(), '/foo')
 
@@ -254,14 +258,6 @@ class PortTest(unittest.TestCase):
         with OutputCapture() as captured:
             self.assertFalse(port.check_httpd())
         self.assertEqual('httpd seems broken. Cannot run http tests.\n', captured.root.log.getvalue())
-
-    def test_test_exists(self):
-        port = self.make_port(with_tests=True)
-        self.assertTrue(port.test_exists('passes'))
-        self.assertTrue(port.test_exists('passes/text.html'))
-        self.assertFalse(port.test_exists('passes/does_not_exist.html'))
-        self.assertTrue(port.test_exists('variant/variant.any.html?1-100'))
-        self.assertTrue(port.test_exists('variant/variant.any.html?val=2.3'))
 
     def test_test_isfile(self):
         port = self.make_port(with_tests=True)
@@ -352,53 +348,57 @@ class PortTest(unittest.TestCase):
             }], port.commits_for_upload())
 
 
-class NaturalCompareTest(unittest.TestCase):
-    def setUp(self):
-        self._port = TestPort(MockSystemHost())
+class TestNameAndVariantTest(unittest.TestCase):
+    def test_no_variant(self):
+        self.assertEqual(Port.test_name_and_variant('fast/dom/foo.html'), ('fast/dom/foo.html', ''))
 
-    def assert_cmp(self, x, y, result):
-        self.assertEqual(cmp(self._port._natural_sort_key(x), self._port._natural_sort_key(y)), result)
+    def test_query_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?a=1'), ('foo.html', '?a=1'))
 
-    def test_natural_compare(self):
-        self.assert_cmp('a', 'a', 0)
-        self.assert_cmp('ab', 'a', 1)
-        self.assert_cmp('a', 'ab', -1)
-        self.assert_cmp('', '', 0)
-        self.assert_cmp('', 'ab', -1)
-        self.assert_cmp('01', '1', -1)
-        self.assert_cmp('001', '1', -1)
-        self.assert_cmp('001', '01', -1)
-        self.assert_cmp('1', '2', -1)
-        self.assert_cmp('2', '1', 1)
-        self.assert_cmp('1', '10', -1)
-        self.assert_cmp('2', '10', -1)
-        self.assert_cmp('foo_1.html', 'foo_2.html', -1)
-        self.assert_cmp('foo_1.1.html', 'foo_2.html', -1)
-        self.assert_cmp('foo_1.html', 'foo_10.html', -1)
-        self.assert_cmp('foo_2.html', 'foo_10.html', -1)
-        self.assert_cmp('foo_23.html', 'foo_10.html', 1)
-        self.assert_cmp('foo_23.html', 'foo_100.html', -1)
+    def test_fragment_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html#bar'), ('foo.html', '#bar'))
 
+    def test_query_before_fragment(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?a=1#frag'), ('foo.html', '?a=1#frag'))
 
-class KeyCompareTest(unittest.TestCase):
-    def setUp(self):
-        self._port = TestPort(MockSystemHost())
+    def test_fragment_before_query(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html#frag?a=1'), ('foo.html', '#frag?a=1'))
 
-    def assert_cmp(self, x, y, result):
-        self.assertEqual(cmp(self._port.test_key(x), self._port.test_key(y)), result)
+    def test_slash_in_query_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?a/b'), ('foo.html', '?a/b'))
 
-    def test_test_key(self):
-        self.assert_cmp('/a', '/a', 0)
-        self.assert_cmp('/a', '/b', -1)
-        self.assert_cmp('/a', '/a2', -1)
-        self.assert_cmp('/a2', '/a10', -1)
-        self.assert_cmp('/a2/foo', '/a10/foo', -1)
-        self.assert_cmp('/a/foo11', '/a/foo2', 1)
-        self.assert_cmp('/a/foo1', '/a/foo01', 1)
-        self.assert_cmp('/a/foo01', '/a/foo001', 1)
-        self.assert_cmp('/ab', '/a/a/b', -1)
-        self.assert_cmp('/a/a/b', '/ab', 1)
-        self.assert_cmp('/foo-bar/baz', '/foo/baz', -1)
-        self.assert_cmp('/foo!bar/baz', '/foo/bar/baz', -1)
-        self.assert_cmp('/foo-bar/baz', '/foo/bar/baz', -1)
-        self.assert_cmp('/foo_bar/baz', '/foo/bar/baz', 1)
+    def test_slash_in_fragment_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html#frag/sub'), ('foo.html', '#frag/sub'))
+
+    def test_dot_in_query_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?a.b.c'), ('foo.html', '?a.b.c'))
+
+    def test_dot_in_fragment_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html#frag.name'), ('foo.html', '#frag.name'))
+
+    def test_dot_in_query_and_fragment_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?a.b#c.d'), ('foo.html', '?a.b#c.d'))
+
+    def test_dot_in_fragment_and_query_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html#c.d?a.b'), ('foo.html', '#c.d?a.b'))
+
+    def test_repeated_separators_belong_to_the_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?a?b'), ('foo.html', '?a?b'))
+        self.assertEqual(Port.test_name_and_variant('foo.html#a#b'), ('foo.html', '#a#b'))
+        self.assertEqual(Port.test_name_and_variant('foo.html?a#b#c'), ('foo.html', '?a#b#c'))
+        self.assertEqual(Port.test_name_and_variant('foo.html#a?b#c'), ('foo.html', '#a?b#c'))
+
+    def test_empty_variants(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?'), ('foo.html', '?'))
+        self.assertEqual(Port.test_name_and_variant('foo.html#'), ('foo.html', '#'))
+        self.assertEqual(Port.test_name_and_variant('foo.html?#'), ('foo.html', '?#'))
+        self.assertEqual(Port.test_name_and_variant('foo.html#?'), ('foo.html', '#?'))
+        self.assertEqual(Port.test_name_and_variant(''), ('', ''))
+
+    def test_percent_encoding_is_left_alone(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?a%20b'), ('foo.html', '?a%20b'))
+        # An encoded separator is not a separator.
+        self.assertEqual(Port.test_name_and_variant('foo.html%3Fa'), ('foo.html%3Fa', ''))
+
+    def test_dots_in_the_directory_do_not_start_a_variant(self):
+        self.assertEqual(Port.test_name_and_variant('a.b/c.d/foo.html?x'), ('a.b/c.d/foo.html', '?x'))

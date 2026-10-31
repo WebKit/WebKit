@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="400" height="120">
-    <meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-500" />
+    <meta xmlns="http://www.w3.org/1999/xhtml" name="fuzzy" content="maxDifference=0-1; totalPixels=0-500" />
     <defs>
         <!-- Every rect but the first one takes a RenderLayer in the layer-based SVG engine, while
              painting exactly like the first one. All five have to end up in the feImage image. -->

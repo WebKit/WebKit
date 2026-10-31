@@ -1,0 +1,5 @@
+
+PASS set cookies
+PASS Worker spawned from normal iframe can access global cookies
+FAIL Worker spawned from credentialless iframe can't access global cookies assert_equals: expected (undefined) undefined but got (string) "cookie_value"
+

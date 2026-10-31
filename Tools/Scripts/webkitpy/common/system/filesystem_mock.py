@@ -183,12 +183,12 @@ class MockFileSystem(object):
     def glob(self, glob_string, recursive=False):
         # Normalize the glob string to handle '..' before matching
         glob_string = self.normpath(glob_string)
-        # FIXME: This handles '*', but not '?', '[', or ']'.
+        # FIXME: This handles '*' and '?', but not '[', or ']'.
         glob_string = re.escape(glob_string)
         if recursive:
             # Replace '**' (escaped as \*\*) with .* before replacing single '*'.
             glob_string = glob_string.replace(r'\*\*', '.*')
-        glob_string = glob_string.replace(r'\*', r'[^\/]*') + '$'
+        glob_string = glob_string.replace(r'\*', r'[^\/]*').replace(r'\?', r'[^\/]') + '$'
         glob_string = glob_string.replace(r'\/', '/')
         path_filter = lambda path: re.match(glob_string, path)
 
