@@ -2375,7 +2375,7 @@ static void dispatchSimulatedClick(LocalFrame& frame, IntPoint location, Complet
 static void dispatchSimulatedHover(LocalFrame& frame, IntPoint location, CompletionHandler<void(bool, String&&)>&& completion)
 {
     frame.eventHandler().handleMouseMoveEvent({
-        location, location, MouseButton::None, PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), ForceAtClick, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven
+        location, location, std::nullopt, PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), ForceAtClick, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven
     });
 
     completion(true, { });

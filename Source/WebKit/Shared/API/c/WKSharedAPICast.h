@@ -375,14 +375,14 @@ inline WKEventMouseButton toAPI(WebMouseEventButton mouseButton)
     return wkMouseButton;
 }
 
-inline WKEventMouseButton toAPI(WebCore::MouseButton mouseButton)
+inline WKEventMouseButton toAPI(std::optional<WebCore::MouseButton> mouseButton)
 {
     WKEventMouseButton wkMouseButton = kWKEventMouseButtonNoButton;
 
-    switch (mouseButton) {
-    case WebCore::MouseButton::None:
-        wkMouseButton = kWKEventMouseButtonNoButton;
-        break;
+    if (!mouseButton)
+        return wkMouseButton;
+
+    switch (*mouseButton) {
     case WebCore::MouseButton::Left:
         wkMouseButton = kWKEventMouseButtonLeftButton;
         break;

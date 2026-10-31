@@ -1543,7 +1543,8 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const WebCore::NavigationAc
         RetainPtr element = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:protect(core(m_webFrame.get())->eventHandler())->hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType)]);
         [result setObject:element.get() forKey:WebActionElementKey];
 
-        auto button = std::to_underlying(mouseEventData->isTrusted ? mouseEventData->button : MouseButton::None);
+        constexpr int noButton = -2;
+        int button = mouseEventData->isTrusted ? std::to_underlying(mouseEventData->button) : noButton;
         [result setObject:@(button) forKey:WebActionButtonKey];
     }
 

@@ -38,11 +38,11 @@
 
 namespace WebKit {
 
-WebCore::MouseButton platform(WebMouseEventButton button)
+std::optional<WebCore::MouseButton> platform(WebMouseEventButton button)
 {
     switch (button) {
     case WebMouseEventButton::None:
-        return WebCore::MouseButton::None;
+        return std::nullopt;
     case WebMouseEventButton::Left:
         return WebCore::MouseButton::Left;
     case WebMouseEventButton::Middle:
@@ -58,11 +58,12 @@ WebCore::MouseButton platform(WebMouseEventButton button)
     }
 }
 
-WebMouseEventButton kit(WebCore::MouseButton button)
+WebMouseEventButton kit(std::optional<WebCore::MouseButton> button)
 {
-    switch (button) {
-    case WebCore::MouseButton::None:
+    if (!button)
         return WebMouseEventButton::None;
+
+    switch (*button) {
     case WebCore::MouseButton::Left:
         return WebMouseEventButton::Left;
     case WebCore::MouseButton::Middle:

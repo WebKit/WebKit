@@ -84,7 +84,7 @@ enum class MouseAction : uint8_t {
 NSPoint lastMousePosition;
 NSPoint lastClickPosition;
 NSInteger lastButtonDown;
-int lastClickButton = std::to_underlying(WebCore::MouseButton::None);
+int lastClickButton = -2;
 static RetainPtr<NSArray> webkitDomEventNames;
 BOOL replayingSavedEvents;
 auto mouseButtonsCurrentlyDown = [] {
