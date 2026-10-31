@@ -35,6 +35,7 @@
 #include <WebCore/NetworkAgentInstrumentation.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
@@ -112,6 +113,9 @@ private:
 
     // Owned by the WebInspectorBackend that owns this proxy; applied in willSendRequest.
     const WebCore::HTTPHeaderMap& m_extraRequestHeaders;
+
+    // Loads whose request is hidden from the inspector. Their later hooks must not reach the UIProcess.
+    HashSet<WebCore::ResourceLoaderIdentifier> m_hiddenRequestIdentifiers;
 
     bool m_enabled { false };
 };

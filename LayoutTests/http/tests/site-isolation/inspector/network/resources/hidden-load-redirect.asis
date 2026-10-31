@@ -1,0 +1,6 @@
+Status: 302 Found
+Location: hidden-load-redirect-target.txt
+Content-Type: text/plain
+Content-Length: 0
+Cache-Control: no-store
+
