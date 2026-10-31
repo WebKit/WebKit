@@ -1,0 +1,14 @@
+Tests that URL breakpoints do not pause for loads that are hidden from the inspector.
+
+
+== Running test suite: URLBreakpoint.HiddenLoads
+-- Running test case: URLBreakpoint.HiddenFileReaderLoad
+Reading a blob with FileReader...
+PASS: Should not pause for a load hidden from the inspector.
+PASS: FileReader should finish reading the blob.
+
+-- Running test case: URLBreakpoint.VisibleBlobLoad
+Loading a blob script...
+PASS: Should pause for a load visible to the inspector.
+PASS: Pause reason should be URL.
+
