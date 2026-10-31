@@ -130,6 +130,8 @@ void ServiceWorkerSoftUpdateLoader::loadFromNetwork(NetworkSession& session, Res
     parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
     parameters.needsCertificateInfo = true;
     parameters.request = WTF::move(request);
+    // We do not want to retry this load if it fails through private relay.
+    parameters.hadMainFrameMainResourcePrivateRelayed = true;
     Ref networkLoad = NetworkLoad::create(*this, WTF::move(parameters), session);
     m_networkLoad = networkLoad.copyRef();
     networkLoad->start();
