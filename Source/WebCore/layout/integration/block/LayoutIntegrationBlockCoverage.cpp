@@ -438,9 +438,9 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
 
 // The render tree lays out the content of a leaf (an atomic inline-level box or a box laid out through the render tree), and registers the
 // out-of-flow boxes it finds on their containing block (RenderBlock::addOutOfFlowBox). The block formatting context lays out the ones whose
-// containing block it lays out, outside the leaf, from the static position on their layer, which it moves out of the leaf through the boxes
-// in between (BlockLayout::layoutOutOfFlowBoxes): inline boxes, which add nothing to it, and in-flow boxes with the block flow direction of
-// the containing block, whose positions are in its coordinates, outside fragmented flows.
+// containing block it lays out, outside the leaf, from their static position (on their layer, or a flex container's), which it moves out of
+// the leaf through the boxes in between (BlockLayout::layoutOutOfFlowBoxes): inline boxes, which add nothing to it, and in-flow boxes with
+// the block flow direction of the containing block, whose positions are in its coordinates, outside fragmented flows.
 static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(const RenderBox& leaf, const RenderBlockFlow& rootContainer)
 {
     auto isSupportedBoxInBetween = [](const RenderElement& box, const RenderBlock& containingBlock) {
@@ -457,23 +457,14 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(c
         if (auto reason = outOfFlowBoxAvoidanceReason(descendant))
             return reason;
         // Its static position comes from its block container, or from a grid container, which puts it at the start of its content box
-        // (RenderGrid::prepareGridItemForPositionedLayout). A flex container aligns it with its size once it has one, laying it out again
-        // (FlexLayout::setStaticPositionForPositionedLayout), so only a box with insets that do not use its static position. The block
-        // formatting context lays out its content too.
+        // (RenderGrid::prepareGridItemForPositionedLayout), or a flex container, which aligns it in its content box. The block formatting
+        // context lays out its content too.
         CheckedPtr staticPositionBlock = descendant->parent();
         while (staticPositionBlock->isInlineBox())
             staticPositionBlock = staticPositionBlock->parent();
-        auto hasSupportedStaticPosition = [&] {
-            if (is<RenderBlockFlow>(*staticPositionBlock) || staticPositionBlock->isRenderGrid())
-                return true;
-            if (!staticPositionBlock->isRenderFlexibleBox())
-                return false;
-            CheckedRef style = descendant->style();
-            auto isHorizontalWritingMode = staticPositionBlock->writingMode().isHorizontal();
-            return !style->hasStaticInlinePosition(isHorizontalWritingMode) && !style->hasStaticBlockPosition(isHorizontalWritingMode);
-        };
+        auto hasSupportedStaticPosition = is<RenderBlockFlow>(*staticPositionBlock) || staticPositionBlock->isRenderGrid() || staticPositionBlock->isRenderFlexibleBox();
         CheckedPtr outOfFlowBlockContainer = dynamicDowncast<RenderBlockFlow>(descendant);
-        if (!hasSupportedStaticPosition() || (outOfFlowBlockContainer && !canUseForNestedBlockLayout(*outOfFlowBlockContainer)))
+        if (!hasSupportedStaticPosition || (outOfFlowBlockContainer && !canUseForNestedBlockLayout(*outOfFlowBlockContainer)))
             return BlockAvoidanceReason::ContentHasOutOfFlowBox;
         for (CheckedPtr box = staticPositionBlock; box != containingBlock; box = box->parent()) {
             if (!isSupportedBoxInBetween(*box, *containingBlock))
