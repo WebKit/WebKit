@@ -147,11 +147,9 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
             return false;
         }
 
-        if (structure->hasNonReifiedStaticProperties()) {
-            if (structure->findPropertyHashEntry(uid())) {
-                dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because the property exists in the non-reified static property table: ", uid(), ".");
-                return false;
-            }
+        if (structure->hasNonReifiedStaticProperty(uid())) {
+            dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because the property exists in the non-reified static property table: ", uid(), ".");
+            return false;
         }
 
         if (structure->storedPrototypeObject() != prototype()) {

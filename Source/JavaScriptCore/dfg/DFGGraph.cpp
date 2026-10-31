@@ -1557,6 +1557,10 @@ ObjectPropertyConditionSet Graph::tryEnsureAbsence(JSGlobalObject* globalObject,
         unsigned attributes;
         if (isValidOffset(structure->getConcurrently(identifier.uid(), attributes)))
             return false;
+        // getConcurrently sees only the property table, so a structure with
+        // a non-reified static property table can still own the property.
+        if (structure->hasNonReifiedStaticProperty(identifier.uid()))
+            return false;
         if (structure->hasPolyProto())
             return false;
         return true;

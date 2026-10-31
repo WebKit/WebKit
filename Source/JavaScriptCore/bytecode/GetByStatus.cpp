@@ -504,7 +504,7 @@ GetByStatus GetByStatus::computeFor(JSGlobalObject* globalObject, const Structur
         return GetByStatus(LikelyTakesSlowPath);
 
     VM& vm = globalObject->vm();
-    auto attempToFold = [&]() -> std::optional<GetByStatus> {
+    auto attemptToFold = [&] -> std::optional<GetByStatus> {
         Structure* structure = set.onlyStructure();
         if (!structure)
             return std::nullopt;
@@ -582,6 +582,12 @@ GetByStatus GetByStatus::computeFor(JSGlobalObject* globalObject, const Structur
             if (currentStructure->hasPolyProto())
                 return std::nullopt;
 
+            // We need to check the non-reified static property table here because getConcurrently won't
+            // see it and because generateConditions starts running its functor at the prototype and
+            // skips the head structure.
+            if (currentStructure->hasNonReifiedStaticProperty(identifier.uid()))
+                return std::nullopt;
+
             JSValue value = currentStructure->prototypeForLookup(globalObject);
             if (!value)
                 return std::nullopt;
@@ -596,7 +602,7 @@ GetByStatus GetByStatus::computeFor(JSGlobalObject* globalObject, const Structur
     // We should do a prototype walk searching for the property only if this
     // is a normal access. Don't consult proto for for direct accesses.
     if (mode == GetByStatus::LookupMode::Normal) {
-        if (auto result = attempToFold())
+        if (auto result = attemptToFold())
             return result.value();
     }
 
