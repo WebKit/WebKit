@@ -2090,6 +2090,11 @@ void InspectorDebuggerAgent::didContinue()
         m_frontendDispatcher->resumed();
 }
 
+void InspectorDebuggerAgent::didNotPauseForSpecialBreakpoint()
+{
+    clearPauseDetails();
+}
+
 void InspectorDebuggerAgent::didDeferBreakpointPause(JSC::BreakpointID breakpointId)
 {
     updatePauseReasonAndData(DebuggerFrontendDispatcher::Reason::Breakpoint, buildBreakpointPauseReason(breakpointId));
