@@ -566,9 +566,15 @@ angle::Result UploadTextureContents(const gl::Context *context,
     ContextMtl *contextMtl       = mtl::GetImpl(context);
     const mtl::Format &mtlFormat = contextMtl->getPixelFormat(textureAngleFormat.id);
 
+    angle::CheckedNumeric<size_t> byteCount = textureAngleFormat.pixelBytes;
+    byteCount *= region.size.width;
+    byteCount *= region.size.height;
+    byteCount *= region.size.depth;
+    ANGLE_CHECK_ASSERT(contextMtl, byteCount.IsValid());
     bool preferGPUInitialization =
         !avoidStagingBuffers &&
-        PreferStagedTextureUploads(context, texture, mtlFormat, mtl::StagingPurpose::Upload);
+        PreferStagedTextureUploads(context, texture, mtlFormat, mtl::StagingPurpose::Upload,
+                                   byteCount.ValueOrDie());
     if (texture->isCPUAccessible() && !preferGPUInitialization)
     {
         if (mtlFormat.isPVRTC())
