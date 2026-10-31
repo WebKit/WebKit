@@ -50,6 +50,12 @@ messages -> WebInspectorBackend {
     SetExtraHTTPHeaders(WebCore::HTTPHeaderMap headers)
     SetResourceCachingDisabled(bool disabled)
 
+    # The page's network interception configuration, pushed down from the UIProcess
+    # authority to this hosting process's sink. Broadcast on every configuration
+    # write, and replayed into a process that joins the page later. See
+    # webkit.org/b/308897.
+    SetNetworkInterception(Inspector::NetworkInterception configuration)
+
     EnablePageInstrumentation()
     DisablePageInstrumentation()
 

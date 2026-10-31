@@ -490,6 +490,7 @@ class WebFrame;
 class WebFullScreenManager;
 class WebGestureEvent;
 class WebImage;
+class NetworkInterceptionSink;
 class WebInspectorBackend;
 class WebInspectorBackendClient;
 class WebInspectorUI;
@@ -888,6 +889,10 @@ public:
     void updateTextIndicator(RefPtr<WebCore::TextIndicator>&&);
 
     WebFrame& mainWebFrame() const { return m_mainFrame; }
+
+    // Receives the page's network interception configuration from the UI process
+    // authority. Created on first use, since most pages are never inspected.
+    NetworkInterceptionSink& networkInterceptionSink();
     const URL& mainFrameOpenerURL() const { return m_mainFrameOpenerURL; }
 
     WebCore::Frame* LEGACY_NODELETE mainFrame() const;
@@ -2960,6 +2965,7 @@ private:
     RefPtr<WebPageTesting> m_webPageTesting;
 
     const Ref<WebFrame> m_mainFrame;
+    std::unique_ptr<NetworkInterceptionSink> m_networkInterceptionSink;
     std::optional<WebCore::FrameIdentifier> m_unresolvedMainFrameOpenerIdentifier;
     URL m_mainFrameOpenerURL;
 

@@ -32,6 +32,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorBackendClient.h>
+#include <WebCore/NetworkInterception.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <utility>
 #include <wtf/HashMap.h>
@@ -108,6 +109,7 @@ public:
 
     void setExtraHTTPHeaders(WebCore::HTTPHeaderMap&&);
     void setResourceCachingDisabled(bool);
+    void setNetworkInterception(Inspector::NetworkInterception&&);
 
     void enablePageInstrumentation();
     void disablePageInstrumentation();
