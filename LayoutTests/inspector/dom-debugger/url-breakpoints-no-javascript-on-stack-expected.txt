@@ -1,0 +1,23 @@
+Tests that a URL breakpoint matching a load with no JavaScript on the stack does not change the reason of the next pause.
+
+
+== Running test suite: URLBreakpoint.NoJavaScriptOnStack
+-- Running test case: URLBreakpoint.NoJavaScriptOnStack.NextPauseReason
+Adding "text:fontLoadWithoutJavaScript" URL Breakpoint...
+Loading font...
+PASS: Should not pause for a load that starts with no JavaScript on the stack.
+Triggering debugger statement...
+PASS: Pause reason should be debugger statement.
+PASS: Pause should not have data.
+-- Running test teardown.
+
+-- Running test case: URLBreakpoint.NoJavaScriptOnStack.PendingPauseReason
+Adding "text:imageLoadWhilePauseIsPending" URL Breakpoint...
+Requesting pause...
+Loading image...
+PASS: Image request should start while the pause is pending.
+Running script...
+PASS: Pause reason should be pause on next statement.
+PASS: Pause should not have data.
+-- Running test teardown.
+
