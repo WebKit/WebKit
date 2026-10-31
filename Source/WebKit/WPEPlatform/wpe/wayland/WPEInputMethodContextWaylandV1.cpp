@@ -444,16 +444,8 @@ static const struct zwp_text_input_v1_listener textInputListenerV1 = {
             g_signal_emit_by_name(global->current, "preedit-finished");
         }
 
-        if (priv->surrounding.text && priv->pendingSurroundingDelete.length > 0) {
-            char* pos = priv->surrounding.text.get() + priv->surrounding.cursorIndex;
-            glong charIndex = g_utf8_pointer_to_offset(priv->surrounding.text.get(), pos);
-            pos += priv->pendingSurroundingDelete.index;
-            glong charStart = g_utf8_pointer_to_offset(priv->surrounding.text.get(), pos);
-            pos += priv->pendingSurroundingDelete.length;
-            glong charEnd = g_utf8_pointer_to_offset(priv->surrounding.text.get(), pos);
-
-            g_signal_emit_by_name(global->current, "delete-surrounding", charStart - charIndex, charEnd - charStart);
-        }
+        if (priv->pendingSurroundingDelete.length > 0)
+            g_signal_emit_by_name(global->current, "delete-surrounding-bytes", priv->pendingSurroundingDelete.index, priv->pendingSurroundingDelete.length);
         priv->pendingSurroundingDelete.index = 0;
         priv->pendingSurroundingDelete.length = 0;
 

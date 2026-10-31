@@ -129,7 +129,7 @@ void webkitWebViewDidLosePointerLock(WebKitWebView*);
 void webkitWebViewSetComposition(WebKitWebView*, const String&, const Vector<WebCore::CompositionUnderline>&, WebKit::EditingRange&&);
 void webkitWebViewConfirmComposition(WebKitWebView*, const String&);
 void webkitWebViewCancelComposition(WebKitWebView*, const String&);
-void webkitWebViewDeleteSurrounding(WebKitWebView*, int offset, unsigned characterCount);
+void webkitWebViewDeleteSurrounding(WebKitWebView*, int64_t offset, unsigned characterCount, CompletionHandler<void()>&&);
 void webkitWebViewSetIsWebProcessResponsive(WebKitWebView*, bool);
 
 guint createRunColorChooserSignal(WebKitWebViewClass*);

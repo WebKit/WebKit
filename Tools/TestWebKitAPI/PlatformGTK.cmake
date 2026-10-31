@@ -72,6 +72,8 @@ list(APPEND TestWebCore_LIBRARIES
 
 # TestWebKit
 list(APPEND TestWebKit_SOURCES
+    Tests/WebKit/glib/InputMethodSurrounding.cpp
+
     gtk/PlatformUtilitiesGtk.cpp
     gtk/PlatformWebViewGtk.cpp
     gtk/main.cpp

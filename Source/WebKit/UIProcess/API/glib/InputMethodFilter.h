@@ -20,8 +20,10 @@
 #pragma once
 
 #include "InputMethodState.h"
+#include "InputMethodSurrounding.h"
 #include <WebCore/CompositionUnderline.h>
 #include <WebCore/IntRect.h>
+#include <wtf/Box.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
@@ -85,12 +87,14 @@ private:
     static void preeditFinishedCallback(InputMethodFilter*);
     static void committedCallback(InputMethodFilter*, const char*);
     static void deleteSurroundingCallback(InputMethodFilter*, int offset, unsigned characterCount);
+    static void deleteSurroundingCodePointsCallback(InputMethodFilter*, int offset, unsigned codePointCount);
+    static void deleteSurroundingBytesCallback(InputMethodFilter*, int offset, unsigned byteCount);
 
     void preeditStarted();
     void preeditChanged();
     void preeditFinished();
     void committed(const char*);
-    void deleteSurrounding(int offset, unsigned characterCount);
+    void deleteSurrounding(InputMethodDeleteSurroundingUnit, int64_t offset, uint64_t count);
 
     bool isEnabled() const { return !!m_state; }
     bool isViewFocused() const;
@@ -128,6 +132,10 @@ private:
         uint64_t cursorPosition;
         uint64_t selectionPosition;
     } m_surrounding;
+    // The deletions sent to the web process that haven't been replied to yet. The surrounding text of the editor
+    // states received meanwhile doesn't have the deletions applied yet, unlike m_surrounding. It's shared with the
+    // reply handlers, which can be called after the filter is destroyed.
+    Box<unsigned> m_pendingDeletionCount { Box<unsigned>::create(0) };
 
 #if ENABLE(WPE_PLATFORM)
     bool m_useWPEPlatformEvents { false };

@@ -574,7 +574,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     CancelComposition(String text)
-    DeleteSurrounding(int64_t offset, unsigned characterCount)
+    DeleteSurrounding(int64_t offset, unsigned characterCount) -> ()
 #endif
 
 #if PLATFORM(GTK)

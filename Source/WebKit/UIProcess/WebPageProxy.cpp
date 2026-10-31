@@ -18636,12 +18636,12 @@ void WebPageProxy::cancelComposition(const String& compositionString)
     send(Messages::WebPage::CancelComposition(compositionString));
 }
 
-void WebPageProxy::deleteSurrounding(int64_t offset, unsigned characterCount)
+void WebPageProxy::deleteSurrounding(int64_t offset, unsigned characterCount, CompletionHandler<void()>&& completionHandler)
 {
     if (!hasRunningProcess())
-        return;
+        return completionHandler();
 
-    send(Messages::WebPage::DeleteSurrounding(offset, characterCount));
+    sendWithAsyncReply(Messages::WebPage::DeleteSurrounding(offset, characterCount), WTF::move(completionHandler));
 }
 
 #endif // PLATFORM(GTK) || PLATFORM(WPE)
