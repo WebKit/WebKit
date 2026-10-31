@@ -54,6 +54,7 @@
 #include <WebCore/CookieJar.h>
 #include <WebCore/DOMRect.h>
 #include <WebCore/DOMRectList.h>
+#include <WebCore/Document.h>
 #include <WebCore/DocumentPage.h>
 #include <WebCore/DocumentView.h>
 #include <WebCore/ElementAncestorIteratorInlines.h>
@@ -1334,6 +1335,36 @@ void WebAutomationSessionProxy::deleteCookie(WebCore::PageIdentifier pageID, std
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSessionProxy::getBidiRealmInfo(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, CompletionHandler<void(std::optional<RealmIdentifier>&&)>&& completionHandler)
+{
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    if (!page)
+        return completionHandler(std::nullopt);
+
+    RefPtr frame = optionalFrameID ? WebProcess::singleton().webFrame(*optionalFrameID) : &page->mainWebFrame();
+    RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr document = coreLocalFrame ? coreLocalFrame->document() : nullptr;
+    if (!document)
+        return completionHandler(std::nullopt);
+
+    // A scriptless subframe might not have a normal-world realm yet. Create it so
+    // getRealms returns the realm identifier used by later script commands and events.
+    // FIXME: Avoid eagerly creating a JSWindowProxy during realm enumeration.
+    // https://bugs.webkit.org/show_bug.cgi?id=310506
+    protect(coreLocalFrame->windowProxy())->jsWindowProxy(mainThreadNormalWorldSingleton());
+
+    auto realmIdentifier = m_frameToRealmIdentifier.get(frame->frameID());
+    if (!realmIdentifier) {
+        scriptRealmCreated(frame->frameID(), document->securityOrigin().data());
+        realmIdentifier = m_frameToRealmIdentifier.get(frame->frameID());
+    }
+
+    if (!realmIdentifier)
+        return completionHandler(std::nullopt);
+
+    completionHandler(WTF::move(realmIdentifier));
+}
+
 void WebAutomationSessionProxy::addMessageToConsole(const JSC::MessageSource& source, const JSC::MessageLevel& level, const String& messageText, const JSC::MessageType& type, const WallTime& timestamp)
 {
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::LogEntryAdded(source, level, messageText, type, timestamp), 0);
