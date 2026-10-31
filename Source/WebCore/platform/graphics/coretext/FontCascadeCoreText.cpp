@@ -403,6 +403,7 @@ bool FontCascade::primaryFontIsSystemFont() const
 
 static RefPtr<const Font> fontForOrientation(const Font& font, char32_t character, Glyph glyph, NonCJKGlyphOrientation nonCJKGlyphOrientation)
 {
+<<<<<<< HEAD
     if (font.platformData().orientation() != FontOrientation::Vertical)
         return &font;
     if (FontCascade::isCJKIdeographOrSymbol(character)) {
@@ -425,6 +426,9 @@ static RefPtr<const Font> fontForOrientation(const Font& font, char32_t characte
 RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView, std::optional<char32_t>& matchedPrecomposedCharacter) const
 {
     matchedPrecomposedCharacter = std::nullopt;
+=======
+    Ref fonts = *this->fonts();
+>>>>>>> e127f091fbc0 (Protect FontCascadeFonts across fallback walks that can load a font)
     auto codePoints = stringView.codePoints();
     auto codePointsIterator = codePoints.begin();
 
@@ -443,6 +447,7 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
 
     bool triedBaseCharacterFont = false;
 
+<<<<<<< HEAD
     // Computed once, and only when a font fails the first rule, because most clusters never need it.
     std::optional<std::optional<char32_t>> cachedPrecomposedCharacter;
     auto clusterPrecomposedCharacter = [&] {
@@ -465,6 +470,12 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
 
     for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
         auto& fontRanges = fallbackRangesAt(i);
+=======
+    for (unsigned fallbackIndex = 0; ; ++fallbackIndex) {
+        auto& fontRanges = fallbackRangesAt(fonts, fallbackIndex);
+        if (fontRanges.isNull())
+            break;
+>>>>>>> e127f091fbc0 (Protect FontCascadeFonts across fallback walks that can load a font)
         if (fontRanges.isGenericFontFamily() && isPrivateUseAreaCharacter(baseCharacter))
             continue;
         RefPtr font = fontRanges.fontForCharacter(baseCharacter);
