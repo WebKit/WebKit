@@ -142,6 +142,9 @@ public:
 
     LayoutUnit columnGap() const;
 
+    std::optional<LayoutUnit> firstLineBaseline() const final;
+    std::optional<LayoutUnit> lastLineBaseline() const final;
+
 private:
     void addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions> = { }) override;
 

@@ -106,6 +106,9 @@ private:
     void fragmentedFlowDescendantBoxLaidOut(RenderBox*) override;
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
     LayoutUnit initialLogicalWidth() const override;
+    // The multi-column container takes its baselines from its column sets, which know which part of the flow is in each column.
+    std::optional<LayoutUnit> firstLineBaseline() const final { return { }; }
+    std::optional<LayoutUnit> lastLineBaseline() const final { return { }; }
     void setPageBreak(const RenderBlock*, LayoutUnit offset, LayoutUnit spaceShortage) override;
     void updateMinimumPageHeight(const RenderBlock*, LayoutUnit offset, LayoutUnit minHeight) override;
     void updateSpaceShortageForSizeContainment(const RenderBlock*, LayoutUnit offset, LayoutUnit shortage) override;

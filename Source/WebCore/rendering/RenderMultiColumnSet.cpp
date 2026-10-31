@@ -30,12 +30,14 @@
 
 #include "BorderPainter.h"
 #include "HitTestResult.h"
+#include "InlineIteratorLineBox.h"
 #include "LocalFrameView.h"
 #include "PaintInfo.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxFragmentInfo.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderLayer.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
@@ -520,6 +522,134 @@ LayoutRect RenderMultiColumnSet::columnRectAt(unsigned index) const
     if (isHorizontalWritingMode())
         return LayoutRect(columnLogicalLeft(index), columnLogicalTop(index), colLogicalWidth, colLogicalHeight);
     return LayoutRect(columnLogicalTop(index), columnLogicalLeft(index), colLogicalHeight, colLogicalWidth);
+}
+
+enum class BaselineSet : bool { First, Last };
+
+static std::optional<LayoutUnit> baselineInColumn(const RenderBlockFlow&, BaselineSet, LayoutUnit columnStart, LayoutUnit columnEnd);
+
+// The first or last baseline of a child box in the multi-column flow, if it is in the column that lays out columnStart to columnEnd
+// of its parent's block axis.
+static std::optional<LayoutUnit> baselineOfChildInColumn(const RenderBox& child, const RenderBlockFlow& parent, BaselineSet baselineSet, LayoutUnit columnStart, LayoutUnit columnEnd)
+{
+    if ((child.isLegend() && child.isExcludedFromNormalLayout()) || child.isExcludedMarker())
+        return { };
+    auto childStart = child.logicalTop();
+    auto childEnd = childStart + child.logicalHeight();
+    // An empty box (e.g. a zero height block with overflowing lines) is in the column it starts in.
+    auto overlapsColumn = childStart < columnEnd && (childEnd > columnStart || childStart == columnStart);
+    if (!overlapsColumn)
+        return { };
+
+    // A block container that is split across columns has its baseline in this column among its own content.
+    CheckedPtr childBlockFlow = dynamicDowncast<RenderBlockFlow>(child);
+    auto isSplit = childStart < columnStart || childEnd > columnEnd;
+    if (isSplit && childBlockFlow && !childBlockFlow->isWritingModeRoot() && !childBlockFlow->hasNonVisibleOverflow() && !childBlockFlow->shouldApplyLayoutContainment() && !childBlockFlow->multiColumnFlow()) {
+        if (auto baseline = baselineInColumn(*childBlockFlow, baselineSet, columnStart - childStart, columnEnd - childStart))
+            return childStart + *baseline;
+        return { };
+    }
+
+    // Any other box is in the column it starts in.
+    if (childStart < columnStart)
+        return { };
+    if (baselineSet == BaselineSet::First) {
+        if (auto baseline = child.firstLineBaseline())
+            return childStart + *baseline;
+        return { };
+    }
+    // CSS Align §9.1: for legacy reasons a block container that is a block-axis scroll container has its last baseline at its block-end margin edge.
+    auto isBlockAxisScrollContainer = childBlockFlow && !child.isWritingModeRoot() && (child.isHorizontalWritingMode() ? child.isScrollContainerY() : child.isScrollContainerX());
+    if (isBlockAxisScrollContainer)
+        return childEnd + child.marginAfter(parent.writingMode());
+    if (auto baseline = child.lastLineBaseline())
+        return childStart + *baseline;
+    return { };
+}
+
+// The first or last baseline of the in-flow content of a block in the multi-column flow that is in the column that lays out
+// columnStart to columnEnd of the block's block axis.
+static std::optional<LayoutUnit> baselineInColumn(const RenderBlockFlow& block, BaselineSet baselineSet, LayoutUnit columnStart, LayoutUnit columnEnd)
+{
+    if (block.childrenInline()) {
+        auto baselineInLine = [&](const InlineIterator::LineBox& lineBox) -> std::optional<LayoutUnit> {
+            if (!lineBox.hasContentfulInFlowBox())
+                return { };
+            // For block-in-inline look for the baseline of the child box.
+            if (auto blockLevelBox = lineBox.blockLevelBox()) {
+                CheckedRef blockRenderer = downcast<RenderBox>(blockLevelBox->renderer());
+                return baselineOfChildInColumn(blockRenderer, block, baselineSet, columnStart, columnEnd);
+            }
+            // A line is in the column it starts in.
+            auto lineStart = LayoutUnit { lineBox.logicalTop() };
+            if (lineStart < columnStart || lineStart >= columnEnd)
+                return { };
+            return LayoutUnit { lineBox.logicalBaseline() };
+        };
+
+        if (baselineSet == BaselineSet::First) {
+            for (auto lineBox = InlineIterator::firstLineBoxFor(block); lineBox; lineBox.traverseNext()) {
+                if (auto baseline = baselineInLine(*lineBox))
+                    return baseline;
+            }
+            return { };
+        }
+        for (auto lineBox = InlineIterator::lastLineBoxFor(block); lineBox; lineBox.traversePrevious()) {
+            if (auto baseline = baselineInLine(*lineBox))
+                return baseline;
+        }
+        return { };
+    }
+
+    if (baselineSet == BaselineSet::First) {
+        for (CheckedPtr child = block.firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
+            if (auto baseline = baselineOfChildInColumn(*child, block, baselineSet, columnStart, columnEnd))
+                return baseline;
+        }
+        return { };
+    }
+    for (CheckedPtr child = block.lastInFlowChildBox(); child; child = child->previousInFlowSiblingBox()) {
+        if (auto baseline = baselineOfChildInColumn(*child, block, baselineSet, columnStart, columnEnd))
+            return baseline;
+    }
+    return { };
+}
+
+// CSS Align 9.1: the first baseline of a multi-column container is the block-start-most first baseline of its columns and spanners,
+// and its last baseline the block-end-most last baseline. The container gets the spanners' baselines from the spanners and the
+// columns' baselines from the column sets.
+static std::optional<LayoutUnit> baselineOfColumns(const RenderMultiColumnSet& columnSet, BaselineSet baselineSet)
+{
+    CheckedPtr multiColumnFlow = columnSet.multiColumnFlow();
+    if (!multiColumnFlow)
+        return { };
+
+    std::optional<LayoutUnit> result;
+    auto columnHeight = columnSet.computedColumnHeight();
+    auto columnCount = columnSet.columnCount();
+    for (unsigned columnIndex = 0; columnIndex < columnCount; ++columnIndex) {
+        // Each column lays out the next columnHeight of the multi-column flow.
+        auto columnStart = columnSet.logicalTopInFragmentedFlow() + columnIndex * columnHeight;
+        auto columnEnd = columnIndex + 1 < columnCount ? columnStart + columnHeight : columnSet.logicalBottomInFragmentedFlow();
+        auto baseline = baselineInColumn(*multiColumnFlow, baselineSet, columnStart, columnEnd);
+        if (!baseline)
+            continue;
+        auto columnRect = columnSet.columnRectAt(columnIndex);
+        auto columnBaseline = (columnSet.isHorizontalWritingMode() ? columnRect.y() : columnRect.x()) + *baseline - columnStart;
+        if (!result || (baselineSet == BaselineSet::First ? columnBaseline < *result : columnBaseline > *result))
+            result = columnBaseline;
+    }
+    return result;
+}
+
+std::optional<LayoutUnit> RenderMultiColumnSet::firstLineBaseline() const
+{
+    return baselineOfColumns(*this, BaselineSet::First);
+}
+
+std::optional<LayoutUnit> RenderMultiColumnSet::lastLineBaseline() const
+{
+    return baselineOfColumns(*this, BaselineSet::Last);
 }
 
 unsigned RenderMultiColumnSet::columnIndexAtOffset(LayoutUnit offset, ColumnIndexCalculationMode mode) const

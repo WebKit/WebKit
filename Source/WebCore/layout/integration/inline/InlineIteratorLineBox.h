@@ -46,6 +46,7 @@ public:
     float logicalBottom() const;
     float logicalHeight() const { return logicalBottom() - logicalTop(); }
     float logicalWidth() const;
+    float logicalBaseline() const;
 
     float contentLogicalTop() const;
     float contentLogicalBottom() const;
@@ -325,6 +326,13 @@ inline float LineBox::logicalBottom() const
 inline float LineBox::logicalWidth() const
 {
     return line().lineBoxLogicalRect().width();
+}
+
+inline float LineBox::logicalBaseline() const
+{
+    if (formattingContextRoot().writingMode().isLineInverted())
+        return logicalBottom() - line().baseline();
+    return logicalTop() + line().baseline();
 }
 
 inline float LineBox::inkOverflowLogicalTop() const
