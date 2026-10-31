@@ -523,7 +523,7 @@ void WebAutomationSession::getBrowsingContexts(CommandCallback<Ref<JSON::ArrayOf
     Ref processPool = *m_processPool;
     Vector<Ref<WebPageProxy>> pages;
     for (Ref process : borrow(processPool->processes())) {
-        for (Ref page : process->pages()) {
+        for (Ref page : process->mainPages()) {
             if (!page->isControlledByAutomation())
                 continue;
             pages.append(WTF::move(page));
