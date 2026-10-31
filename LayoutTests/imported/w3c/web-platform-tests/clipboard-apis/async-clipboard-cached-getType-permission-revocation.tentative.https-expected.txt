@@ -1,0 +1,4 @@
+Body needed for clipboard access
+
+FAIL Revoking clipboard-read does not invalidate an already-resolved ClipboardItem representation promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "clipboard-read"."
+

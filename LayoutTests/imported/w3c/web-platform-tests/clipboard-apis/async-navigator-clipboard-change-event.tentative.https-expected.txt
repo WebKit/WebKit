@@ -1,0 +1,13 @@
+Body needed for test_driver.click()
+Put payload in the clipboard
+
+
+
+FAIL clipboardchange event is invoked assert_equals: clipboardchange event should be called exactly once expected 1 but got 0
+FAIL clipboardchange event is invoked with async clipboard API assert_equals: clipboardchange event should be called exactly once expected 1 but got 0
+FAIL clipboardchange event is invoked using onclipboardchange attribute assert_equals: onclipboardchange attribute should be called exactly once expected 1 but got 0
+FAIL clipboardchange event is invoked even when only custom MIME types are set assert_equals: onclipboardchange attribute should be called exactly once expected 1 but got 0
+FAIL clipboardchange event listener behavior when adding, removing, and re-adding assert_equals: Event listener should be called exactly once after adding expected 1 but got 0
+FAIL clipboardchange event exposes all standard MIME types and filters non-standard ones assert_true: clipboardchange event should be invoked once expected true got false
+FAIL clipboardchange event should only fire in the focused context assert_equals: iframe should receive event only 1 event after focus expected 1 but got 0
+

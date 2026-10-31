@@ -1,0 +1,4 @@
+Body needed for test_driver.click()
+
+FAIL unsanitized: null should reject with TypeError assert_unreached: Should have rejected: undefined Reached unreachable code
+

@@ -1,4 +1,5 @@
 Body needed for test_driver.click()
 
-FAIL Verify write and read clipboard (multiple types) promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "clipboard-read"."
+FAIL Verify write and read clipboard (multiple types) assert_equals: expected 2 but got 1
+PASS navigator.clipboard.read() does not crash if clipboard data has null values
 

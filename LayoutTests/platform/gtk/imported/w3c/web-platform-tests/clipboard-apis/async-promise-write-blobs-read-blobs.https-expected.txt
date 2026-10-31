@@ -1,0 +1,4 @@
+Body needed for test_driver.click()
+
+PASS Verify write and read clipboard (multiple types) with promise to Blobs
+

@@ -1,0 +1,6 @@
+Body needed for test_driver.click()
+
+PASS Permissions-Policy header clipboard-write=self allows the top-level document.
+PASS Permissions-Policy header clipboard-write=self allows same-origin iframes.
+PASS Permissions-Policy header clipboard-write=self disallows cross-origin iframes.
+

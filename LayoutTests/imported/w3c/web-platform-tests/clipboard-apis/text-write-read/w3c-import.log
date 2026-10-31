@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/text-write-read/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/text-write-read/async-write-read.https.html
 /LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/text-write-read/async-write-readText.https.html
 /LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/text-write-read/async-writeText-read.https.html

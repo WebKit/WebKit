@@ -1,0 +1,4 @@
+Body needed for test_driver.click()
+
+PASS Permissions policy "clipboard-read" can be enabled in cross-origin iframe using allow="clipboard-read" attribute
+

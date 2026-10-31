@@ -1,0 +1,4 @@
+Body needed for test_driver.click()
+
+PASS Permissions policy "clipboard-write" can be enabled in same-origin iframe using allow="clipboard-write" attribute
+

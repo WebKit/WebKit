@@ -638,7 +638,10 @@
     "imported/w3c/web-platform-tests/audio-output/setSinkId-manual.https.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/clipboard-apis/async-idlharness.https.html": [
+    "imported/w3c/web-platform-tests/clipboard-apis/clipboard-copy-selection-line-break.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/clipboard-apis/downloadurl-list-custom-clipboard-data.tentative.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/close-watcher/iframes/dialog-same-origin-nn.html": [

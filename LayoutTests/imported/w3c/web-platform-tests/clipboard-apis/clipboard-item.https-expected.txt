@@ -1,16 +1,25 @@
 
-PASS ClipboardItem({string, Blob}) succeeds with different types
+Harness Error (FAIL), message = Unhandled rejection: promise_rejects_js: getType(DOMString type) should reject with TypeError for invalid type function "function() { throw e; }" threw object "NotFoundError: The object can not be found here." ("NotFoundError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+
+PASS ClipboardItem() succeeds with valid type strings
+PASS ClipboardItem() succeeds with multiple valid type strings
 PASS ClipboardItem() succeeds with empty options
 PASS ClipboardItem({}) fails with empty dictionary input
 PASS ClipboardItem(Blob) fails
 PASS ClipboardItem() fails with null input
 PASS ClipboardItem() fails with no input
+FAIL ClipboardItem() fails with invalid type string assert_throws_js: function "() => {new ClipboardItem({"not a/real type": blob2});}" did not throw
+FAIL ClipboardItem() fails with invalid web custom format assert_throws_js: function "() => {new ClipboardItem({"web notarealtype": blob3});}" did not throw
 PASS types() returns correct values
 PASS getType(DOMString valid type) succeeds with correct output
-PASS getType(DOMString invalid type) succeeds with correct output
+PASS getType(DOMString unsupported type) succeeds with correct output
+PASS getType(DOMString web custom format type) succeeds with correct output
 PASS getType(DOMString type) rejects correctly when querying for missing type
 PASS getType(DOMString valid type) converts DOMString to Blob
-PASS getType(DOMString invalid type) converts DOMString to Blob
+PASS getType(DOMString unsupported type) converts DOMString to Blob
+PASS getType(DOMString web custom format type) converts DOMString to Blob
 PASS supports(text/plain) returns true
 PASS supports(text/html) returns true
 PASS supports(image/png) returns true
@@ -18,6 +27,8 @@ PASS supports(text/uri-list) returns true
 PASS supports(image/svg+xml) returns true
 FAIL supports(web foo/bar) returns true assert_equals: expected true but got false
 FAIL supports(web text/html) returns true assert_equals: expected true but got false
+PASS supports(text/plain;foo=1) returns false
+PASS supports(web foo/bar;foo=1) returns false
 PASS supports(web ) returns false
 PASS supports(web) returns false
 PASS supports(web foo) returns false
