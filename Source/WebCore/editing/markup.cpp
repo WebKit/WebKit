@@ -1629,12 +1629,15 @@ static ALWAYS_INLINE ExceptionOr<Ref<DocumentFragment>> createFragmentForMarkup(
     Ref document = contextElement.hasTagName(templateTag) ? protect(contextElement.document())->ensureTemplateDocument() : contextElement.document();
     auto fragment = mode == DocumentFragmentMode::New ? DocumentFragment::create(document.get()) : document->documentFragmentForInnerOuterHTML();
     ASSERT(!fragment->hasChildNodes());
+<<<<<<< HEAD
 
     if (registryKind == Element::CustomElementRegistryKind::Null)
         fragment->setUsesNullCustomElementRegistry();
     else
         fragment->clearUsesNullCustomElementRegistry();
 
+=======
+>>>>>>> 22ad88017a2d (Use after free of DocumentFragment through m_shadowIncludingRoot)
     if (document->isHTMLDocument() || parserContentPolicy.contains(ParserContentPolicy::AlwaysParseAsHTML)) {
         fragment->parseHTML(markup, contextElement, parserContentPolicy, registry);
         return fragment;
