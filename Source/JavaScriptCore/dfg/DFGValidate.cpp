@@ -114,6 +114,30 @@ public:
             for (size_t i = 0; i < block->numNodes(); ++i)
                 m_myRefCounts.add(block->node(i), 0);
         }
+
+        // Validate that every tuple producer owns a disjoint range of the graph's tuple buffers.
+        // Everything keyed off Node::tupleOffset() (Graph::m_tupleData, the abstract
+        // interpreter's tuple values, FTL's m_tupleValues) holds exactly one entry per slot, so
+        // two producers sharing a range means one of them silently reads the other's results.
+        {
+            Vector<Node*> tupleOwners(FillWith { }, m_graph.m_tupleData.size(), nullptr);
+            for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+                BasicBlock* block = m_graph.block(blockIndex);
+                if (!block)
+                    continue;
+                for (size_t i = 0; i < block->numNodes(); ++i) {
+                    Node* node = block->node(i);
+                    if (!node->isTuple())
+                        continue;
+                    VALIDATE((node), node->tupleOffset() + node->tupleSize() <= m_graph.m_tupleData.size());
+                    for (unsigned j = 0; j < node->tupleSize(); ++j) {
+                        VALIDATE((node), !tupleOwners[node->tupleOffset() + j]);
+                        tupleOwners[node->tupleOffset() + j] = node;
+                    }
+                }
+            }
+        }
+
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
