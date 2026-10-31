@@ -34,6 +34,7 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "NodeDocument.h"
+#include "RenderObjectDocument.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -334,12 +335,16 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
     if (!box)
         return -1;
 
-    int top = roundToInt(box->offsetTop());
-    int left = roundToInt(box->offsetLeft());
-    size_t pageNumber = 0;
-    for (; pageNumber < printContext->pageCount(); pageNumber++) {
-        const IntRect& page = printContext->pageRect(pageNumber);
-        if (page.x() <= left && left < page.maxX() && page.y() <= top && top < page.maxY())
+    auto boxRect = box->absoluteBoundingBoxRect();
+    auto point = boxRect.location();
+    if (auto writingMode = box->view().writingMode(); writingMode.isBlockFlipped()) {
+        if (writingMode.isHorizontal())
+            point.setY(boxRect.maxY() - 1);
+        else
+            point.setX(boxRect.maxX() - 1);
+    }
+    for (size_t pageNumber = 0; pageNumber < printContext->pageCount(); ++pageNumber) {
+        if (printContext->pageRect(pageNumber).contains(point))
             return pageNumber;
     }
     return -1;
