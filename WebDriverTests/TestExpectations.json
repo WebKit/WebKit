@@ -2757,7 +2757,7 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/226134"}}
             },
             "test_source_origin[cross_origin]": {
-                "expected": {"mac-site-isolation": {"status": ["FAIL"], "note": "With Site Isolation, the screenshot of an element in a cross-origin iframe doesn't match its reference"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/205994"}}
+                "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/205994"}}
             }
         }
     },
