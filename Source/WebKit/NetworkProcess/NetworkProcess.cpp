@@ -410,13 +410,15 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
         return;
     }
 
-    auto& [currentLoadedWebArchive, currentDomains] = m_allowedFirstPartiesForCookies.ensure(identifier, [&] {
-        return std::make_pair(parameters.loadedWebArchive, HashSet<RegistrableDomain> { });
+    auto& allowedFirstParties = m_allowedFirstPartiesForCookies.ensure(identifier, [&] {
+        return AllowedFirstParties { parameters.loadedWebArchive, { }, { } };
     }).iterator->value;
     if (parameters.loadedWebArchive == LoadedWebArchive::Yes)
-        currentLoadedWebArchive = LoadedWebArchive::Yes;
-    for (auto& domain : parameters.allowedFirstPartiesForCookies)
-        currentDomains.add(domain);
+        allowedFirstParties.loadedWebArchive = LoadedWebArchive::Yes;
+    for (auto& site : parameters.allowedFirstPartiesForCookies) {
+        allowedFirstParties.domains.add(site.domain());
+        allowedFirstParties.sites.add(site);
+    }
 
     auto newConnection = NetworkConnectionToWebProcess::create(identifier, sessionID, WTF::move(parameters), WTF::move(connectionIdentifiers->server));
     Ref connection = newConnection;
@@ -457,10 +459,10 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
         std::optional<HashSet<WebCore::RegistrableDomain>> allowedSites = HashSet<WebCore::RegistrableDomain> { };
         auto iter = m_allowedFirstPartiesForCookies.find(identifier);
         if (iter != m_allowedFirstPartiesForCookies.end()) {
-            if (iter->value.first == LoadedWebArchive::Yes)
+            if (iter->value.loadedWebArchive == LoadedWebArchive::Yes)
                 allowedSites = std::nullopt; // All sites.
             else
-                allowedSites = iter->value.second;
+                allowedSites = iter->value.domains;
         }
         session->storageManager().startReceivingMessageFromConnection(connection->connection(), WTF::move(allowedSites), connection->sharedPreferencesForWebProcessValue());
     }
@@ -483,14 +485,31 @@ void NetworkProcess::isSecurityFlagEnabledForTesting(const String& flagName, Com
     completionHandler(securityFlags().isFlagEnabledNamedForTesting(flagName));
 }
 
-void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::Site&& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
+{
+    // Record every site that has a real scheme. Site::isEmpty() is not the test to use here: it reports the
+    // registrable domain, which RegistrableDomain sets to "nullOrigin" for any empty host, so it is true for a
+    // file: or custom-scheme first party as well as for an opaque one. Site::protocol() is empty only for the
+    // invalidProtocol sentinel an opaque origin collapses to, which is the one case worth dropping.
+    if (!firstPartyForCookies.protocol().isEmpty() && HashSet<WebCore::Site>::isValidValue(firstPartyForCookies)) {
+        m_allowedFirstPartiesForCookies.ensure(processIdentifier, [] {
+            return AllowedFirstParties { };
+        }).iterator->value.sites.add(firstPartyForCookies);
+    }
+
+    addAllowedFirstPartyDomainForCookies(processIdentifier, WebCore::RegistrableDomain { firstPartyForCookies.domain() }, loadedWebArchive, WTF::move(completionHandler));
+}
+
+void NetworkProcess::addAllowedFirstPartyDomainForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
 {
     if (!HashSet<WebCore::RegistrableDomain>::isValidValue(firstPartyForCookies))
         return completionHandler();
 
-    auto& [currentLoadedWebArchive, currentDomains] = m_allowedFirstPartiesForCookies.ensure(processIdentifier, [] {
-        return std::make_pair(LoadedWebArchive::No, HashSet<RegistrableDomain> { });
+    auto& allowedFirstParties = m_allowedFirstPartiesForCookies.ensure(processIdentifier, [] {
+        return AllowedFirstParties { };
     }).iterator->value;
+    auto& currentLoadedWebArchive = allowedFirstParties.loadedWebArchive;
+    auto& currentDomains = allowedFirstParties.domains;
 
     auto updateConnectionAllowedSitesForStorage = [&](auto& allowedSites) {
         auto iter = m_webProcessConnections.find(processIdentifier);
@@ -542,10 +561,10 @@ auto NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
         return terminateOrDisallow;
     }
 
-    if (iterator->value.first == LoadedWebArchive::Yes)
+    if (iterator->value.loadedWebArchive == LoadedWebArchive::Yes)
         return AllowCookieAccess::Allow;
 
-    auto& set = iterator->value.second;
+    auto& set = iterator->value.domains;
     if (!std::remove_reference_t<decltype(set)>::isValidValue(firstPartyDomain)) {
         ASSERT_NOT_REACHED();
         return terminateOrDisallow;
@@ -559,6 +578,26 @@ void NetworkProcess::setHostedDomains(WebCore::ProcessIdentifier processIdentifi
 {
     if (RefPtr connection = webProcessConnection(processIdentifier))
         connection->setHostedDomains(WTF::move(domains));
+}
+
+bool NetworkProcess::allowsFirstPartySite(WebCore::ProcessIdentifier processIdentifier, const WebCore::Site& site) const
+{
+    if (!decltype(m_allowedFirstPartiesForCookies)::isValidKey(processIdentifier)) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    auto iterator = m_allowedFirstPartiesForCookies.find(processIdentifier);
+    if (iterator == m_allowedFirstPartiesForCookies.end())
+        return false;
+
+    if (iterator->value.loadedWebArchive == LoadedWebArchive::Yes)
+        return true;
+
+    if (!HashSet<WebCore::Site>::isValidValue(site))
+        return false;
+
+    return iterator->value.sites.contains(site);
 }
 
 void NetworkProcess::addAllowedWebPageProxyIdentifier(WebCore::ProcessIdentifier processIdentifier, WebPageProxyIdentifier pageID)
