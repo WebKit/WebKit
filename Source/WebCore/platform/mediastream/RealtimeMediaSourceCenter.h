@@ -74,6 +74,9 @@ public:
     struct ValidDevices {
         Vector<CaptureDevice> audioDevices;
         Vector<CaptureDevice> videoDevices;
+
+        unsigned bestMatchingAudioDeviceCount { 0 };
+        unsigned bestMatchingVideoDeviceCount { 0 };
     };
     using ValidateHandler = CompletionHandler<void(std::expected<ValidDevices, MediaConstraintType>&&)>;
     WEBCORE_EXPORT void validateRequestConstraints(ValidateHandler&&, const MediaStreamRequest&, MediaDeviceHashSalts&&);

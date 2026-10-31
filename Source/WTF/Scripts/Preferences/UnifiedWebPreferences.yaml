@@ -1486,6 +1486,16 @@ CaptureAudioInGPUProcessEnabled:
   excludeFrom: [ WebKitLegacy, WebCore ]
   defaultValue: WebKit::defaultCaptureAudioInGPUProcessEnabled()
 
+CaptureDevicePreviewInPromptEnabled:
+  type: bool
+  status: internal
+  category: media
+  humanReadableName: "Capture Device Preview In Permission Prompt"
+  humanReadableDescription: "Show a live camera preview, microphone level meter, and device menus in the getUserMedia permission prompt"
+  condition: ENABLE(MEDIA_STREAM)
+  excludeFrom: [ WebKitLegacy, WebCore ]
+  defaultValue: false
+
 CaptureVideoInGPUProcessEnabled:
   type: bool
   status: internal

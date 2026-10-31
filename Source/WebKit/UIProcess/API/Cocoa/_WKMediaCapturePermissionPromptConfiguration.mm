@@ -130,15 +130,19 @@ const NSUInteger _WKMediaCapturePermissionPromptMaximumAdditionalActions = WebKi
 @implementation _WKMediaCapturePermissionPromptResult {
     _WKMediaCapturePermissionPromptOutcome _outcome;
     RetainPtr<_WKMediaCapturePermissionAction> _chosenAction;
+    RetainPtr<NSString> _cameraDeviceID;
+    RetainPtr<NSString> _microphoneDeviceID;
 }
 
-- (instancetype)_initWithOutcome:(_WKMediaCapturePermissionPromptOutcome)outcome chosenAction:(_WKMediaCapturePermissionAction *)chosenAction
+- (instancetype)_initWithOutcome:(_WKMediaCapturePermissionPromptOutcome)outcome chosenAction:(_WKMediaCapturePermissionAction *)chosenAction cameraDeviceID:(NSString *)cameraDeviceID microphoneDeviceID:(NSString *)microphoneDeviceID
 {
     if (!(self = [super init]))
         return nil;
 
     _outcome = outcome;
     _chosenAction = chosenAction;
+    _cameraDeviceID = cameraDeviceID;
+    _microphoneDeviceID = microphoneDeviceID;
 
     return self;
 }
@@ -151,6 +155,16 @@ const NSUInteger _WKMediaCapturePermissionPromptMaximumAdditionalActions = WebKi
 - (_WKMediaCapturePermissionAction *)chosenAction
 {
     return _chosenAction.get();
+}
+
+- (NSString *)cameraDeviceID
+{
+    return _cameraDeviceID.get();
+}
+
+- (NSString *)microphoneDeviceID
+{
+    return _microphoneDeviceID.get();
 }
 
 @end

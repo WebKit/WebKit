@@ -38,6 +38,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
@@ -83,7 +84,8 @@ private:
     void detachAudioSource() WTF_REQUIRES_CAPABILITY(mainThread);
     RefPtr<WebCore::SampleBufferDisplayLayer> displayLayer() const;
     void setDisplayLayer(RefPtr<WebCore::SampleBufferDisplayLayer>&&);
-#if PLATFORM(IOS_FAMILY) && USE(AUDIO_SESSION)
+    void sendAudioLevel() WTF_REQUIRES_CAPABILITY(mainThread);
+#if (PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)) && USE(AUDIO_SESSION)
     void prepareAudioSession(CompletionHandler<void()>&&) WTF_REQUIRES_CAPABILITY(mainThread);
     void restoreAudioSession() WTF_REQUIRES_CAPABILITY(mainThread);
 #endif
@@ -116,9 +118,9 @@ private:
 
     WebCore::OrientationNotifier m_orientationNotifier WTF_GUARDED_BY_CAPABILITY(mainThread) { 0 };
     Function<void(float)> m_audioLevelHandler WTF_GUARDED_BY_CAPABILITY(mainThread);
+    RunLoop::Timer m_audioLevelTimer WTF_GUARDED_BY_CAPABILITY(mainThread);
     Lock m_audioLevelLock;
     float m_peakSinceLastLevel WTF_GUARDED_BY_LOCK(m_audioLevelLock) { 0 };
-    size_t m_framesSinceLastLevel WTF_GUARDED_BY_LOCK(m_audioLevelLock) { 0 };
 #if PLATFORM(IOS_FAMILY) && USE(AUDIO_SESSION)
     std::optional<String> m_savedPreferredMicrophoneID WTF_GUARDED_BY_CAPABILITY(mainThread);
 #endif

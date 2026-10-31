@@ -4400,6 +4400,10 @@ void WebPageProxy::setMediaStreamCaptureMuted(bool muted)
         state.add(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
     else
         state.remove(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
+#if ENABLE(MEDIA_STREAM)
+    if (muted)
+        m_captureMutedByCapturePreview = { };
+#endif
     setMuted(state);
 }
 
@@ -13496,13 +13500,71 @@ static void LEGACY_NODELETE updateMutedCaptureKindsDesiredByWebApp(OptionSet<Web
 }
 #endif
 
-void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state, FromApplication fromApplication, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state, FromApplication fromApplication, CompletionHandler<void()>&& completionHandler, WebCore::MediaProducerMutedStateFlags kindsSetByApplication)
 {
 #if ENABLE(MEDIA_STREAM)
-    if (fromApplication == FromApplication::Yes)
-        updateMutedCaptureKindsDesiredByWebApp(m_mutedCaptureKindsDesiredByWebApp, state);
+    if (fromApplication == FromApplication::Yes) {
+        auto kindsSet = kindsSetByApplication.isEmpty() ? WebCore::MediaProducer::MediaStreamCaptureIsMuted : kindsSetByApplication;
+        auto stillPausedByPreview = m_captureMutedByCapturePreview;
+        stillPausedByPreview.remove(kindsSet);
+        auto stateDesiredByApplication = state;
+        stateDesiredByApplication.remove(stillPausedByPreview);
+        updateMutedCaptureKindsDesiredByWebApp(m_mutedCaptureKindsDesiredByWebApp, stateDesiredByApplication);
+        m_captureMutedByCapturePreview = stillPausedByPreview;
+    }
+#else
+    UNUSED_PARAM(kindsSetByApplication);
 #endif
 
+    applyMutedState(state, MuteCaptureInOtherPages::Yes, WTF::move(completionHandler));
+}
+
+#if ENABLE(MEDIA_STREAM)
+void WebPageProxy::beginCapturePreviewPause()
+{
+    ++m_capturePreviewPauseCount;
+}
+
+Ref<GenericPromise> WebPageProxy::pauseCaptureForCapturePreview(WebCore::MediaProducerMutedStateFlags captureKinds)
+{
+    auto mediaState = reportedMediaState();
+    auto mutedState = mutedStateFlags();
+    WebCore::MediaProducerMutedStateFlags kindsToPause;
+    if (captureKinds.contains(WebCore::MediaProducerMutedState::AudioCaptureIsMuted) && mediaState.contains(WebCore::MediaProducerMediaState::HasActiveAudioCaptureDevice) && !mutedState.contains(WebCore::MediaProducerMutedState::AudioCaptureIsMuted))
+        kindsToPause.add(WebCore::MediaProducerMutedState::AudioCaptureIsMuted);
+    if (captureKinds.contains(WebCore::MediaProducerMutedState::VideoCaptureIsMuted) && mediaState.contains(WebCore::MediaProducerMediaState::HasActiveVideoCaptureDevice) && !mutedState.contains(WebCore::MediaProducerMutedState::VideoCaptureIsMuted))
+        kindsToPause.add(WebCore::MediaProducerMutedState::VideoCaptureIsMuted);
+    if (kindsToPause.isEmpty())
+        return GenericPromise::createAndResolve();
+
+    m_captureMutedByCapturePreview.add(kindsToPause);
+
+    GenericPromise::Producer producer;
+    auto promise = producer.promise();
+    applyMutedState(mutedState | kindsToPause, MuteCaptureInOtherPages::No, [producer = WTF::move(producer)] {
+        producer.resolve();
+    });
+    return promise;
+}
+
+void WebPageProxy::endCapturePreviewPause()
+{
+    ASSERT(m_capturePreviewPauseCount);
+    if (!m_capturePreviewPauseCount || --m_capturePreviewPauseCount)
+        return;
+
+    auto kindsToResume = std::exchange(m_captureMutedByCapturePreview, { });
+    if (kindsToResume.isEmpty())
+        return;
+
+    auto mutedState = mutedStateFlags();
+    mutedState.remove(kindsToResume);
+    applyMutedState(mutedState, MuteCaptureInOtherPages::No, [] { });
+}
+#endif
+
+void WebPageProxy::applyMutedState(WebCore::MediaProducerMutedStateFlags state, MuteCaptureInOtherPages muteCaptureInOtherPages, CompletionHandler<void()>&& completionHandler)
+{
     if (!isAllowedToChangeMuteState())
         state.add(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
 
@@ -13520,8 +13582,10 @@ void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state, FromApp
 
 #if ENABLE(MEDIA_STREAM)
     bool hasMutedCaptureStreams = internals().mediaState.containsAny(WebCore::MediaProducer::MutedCaptureMask);
-    if (hasMutedCaptureStreams && !(state.containsAny(WebCore::MediaProducer::MediaStreamCaptureIsMuted)))
+    if (muteCaptureInOtherPages == MuteCaptureInOtherPages::Yes && hasMutedCaptureStreams && !(state.containsAny(WebCore::MediaProducer::MediaStreamCaptureIsMuted)))
         WebProcessProxy::muteCaptureInPagesExcept(m_webPageID);
+#else
+    UNUSED_PARAM(muteCaptureInOtherPages);
 #endif // ENABLE(MEDIA_STREAM)
 
     forEachWebContentProcess([&] (auto& process, auto pageID) {
@@ -20419,6 +20483,11 @@ void WebPageProxy::gpuProcessExited(ProcessTerminationReason)
 {
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     m_contextIDForVisibilityPropagationInGPUProcess = 0;
+#endif
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    if (RefPtr userMediaPermissionRequestManager = m_userMediaPermissionRequestManager)
+        userMediaPermissionRequestManager->gpuProcessExited();
 #endif
 
     if (RefPtr pageClient = this->pageClient())

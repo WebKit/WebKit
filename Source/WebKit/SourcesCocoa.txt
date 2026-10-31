@@ -450,6 +450,8 @@ UIProcess/Cocoa/AppKitSoftLink.mm @nonARC
 UIProcess/Cocoa/AutomationClient.mm @nonARC
 UIProcess/Cocoa/AutomationSessionClient.mm @nonARC
 UIProcess/Cocoa/BrowsingWarningCocoa.mm @nonARC
+UIProcess/Cocoa/CapturePreviewDeviceSelection.cpp
+UIProcess/Cocoa/CapturePreviewLevelMeterState.cpp
 UIProcess/Cocoa/CoreTelephonyUtilities.mm @nonARC
 UIProcess/Cocoa/DiagnosticLoggingClient.mm @nonARC
 UIProcess/Cocoa/DisplayCaptureSessionManager.mm @nonARC @cost:3
@@ -612,6 +614,7 @@ UIProcess/ios/WKActionSheet.mm @nonARC
 UIProcess/ios/WKActionSheetAssistant.mm @nonARC
 UIProcess/ios/WKApplicationStateTrackingView.mm @nonARC
 UIProcess/ios/WKBaseScrollView.mm @nonARC
+UIProcess/ios/WKCapturePreviewViewController.mm @nonARC
 UIProcess/ios/WKContentView.mm @nonARC @no-unify
 UIProcess/ios/WKContentViewInteraction.mm @nonARC @no-unify
 UIProcess/ios/WKExtendedTextInputTraits.mm @nonARC
@@ -657,6 +660,7 @@ UIProcess/mac/WebPageProxyMac.mm @nonARC
 UIProcess/mac/WebPopupMenuProxyMac.mm @nonARC
 UIProcess/mac/WebProcessProxyMac.mm @nonARC
 UIProcess/mac/WindowServerConnection.mm @nonARC
+UIProcess/mac/WKCapturePreviewPrompt.mm @nonARC
 UIProcess/mac/WKFullScreenWindowController.mm @nonARC
 UIProcess/mac/WKImmediateActionController.mm @nonARC
 UIProcess/mac/PositionInformationManager.cpp

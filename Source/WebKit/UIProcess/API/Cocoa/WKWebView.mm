@@ -1515,7 +1515,7 @@ static WKMediaPlaybackState LEGACY_NODELETE toWKMediaPlaybackState(WebKit::Media
         mutedState.add(WebCore::MediaProducerMutedState::AudioCaptureIsMuted);
     _page->setMuted(mutedState, WebKit::WebPageProxy::FromApplication::Yes, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
-    });
+    }, WebCore::MediaProducerMutedState::AudioCaptureIsMuted);
 }
 
 - (void)setCameraCaptureState:(WKMediaCaptureState)state completionHandler:(void (^)(void))completionHandler
@@ -1537,7 +1537,7 @@ static WKMediaPlaybackState LEGACY_NODELETE toWKMediaPlaybackState(WebKit::Media
         mutedState.add(WebCore::MediaProducerMutedState::VideoCaptureIsMuted);
     _page->setMuted(mutedState, WebKit::WebPageProxy::FromApplication::Yes, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
-    });
+    }, WebCore::MediaProducerMutedState::VideoCaptureIsMuted);
 }
 
 - (void)_evaluateJavaScript:(NSString *)javaScriptString asAsyncFunction:(BOOL)asAsyncFunction withSourceURL:(NSURL *)sourceURL withArguments:(NSDictionary<NSString *, id> *)arguments forceUserGesture:(BOOL)forceUserGesture inFrame:(WKFrameInfo *)frame inWorld:(WKContentWorld *)world completionHandler:(void (^)(id, NSError *))completionHandler
@@ -5903,12 +5903,15 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     protect(*_page)->showMediaCapturePermissionPrompt(WebKit::customizationFromConfiguration(configuration), [completionHandler = makeBlockPtr(completionHandler)](WebKit::MediaPermissionPromptResult&& promptResult) {
         auto outcome = !promptResult.wasAnswered ? _WKMediaCapturePermissionPromptOutcomeDismissed : promptResult.granted ? _WKMediaCapturePermissionPromptOutcomeAllowed : _WKMediaCapturePermissionPromptOutcomeDenied;
         RetainPtr chosenAction = WTF::move(promptResult.chosenAction);
-        RetainPtr result = adoptNS([[_WKMediaCapturePermissionPromptResult alloc] _initWithOutcome:outcome chosenAction:chosenAction.get()]);
+        RetainPtr result = adoptNS([[_WKMediaCapturePermissionPromptResult alloc] _initWithOutcome:outcome
+            chosenAction:chosenAction
+            cameraDeviceID:nsStringNilIfEmpty(promptResult.selectedVideoDeviceUID)
+            microphoneDeviceID:nsStringNilIfEmpty(promptResult.selectedAudioDeviceUID)]);
         completionHandler(result.get());
     });
 #else
     UNUSED_PARAM(configuration);
-    completionHandler(adoptNS([[_WKMediaCapturePermissionPromptResult alloc] _initWithOutcome:_WKMediaCapturePermissionPromptOutcomeDismissed chosenAction:nil]).get());
+    completionHandler(adoptNS([[_WKMediaCapturePermissionPromptResult alloc] _initWithOutcome:_WKMediaCapturePermissionPromptOutcomeDismissed chosenAction:nil cameraDeviceID:nil microphoneDeviceID:nil]).get());
 #endif
 }
 
@@ -7018,7 +7021,7 @@ static inline OptionSet<WebKit::FindOptions> LEGACY_NODELETE toFindOptions(_WKFi
         mutedState.add(displayMutedFlags);
     _page->setMuted(mutedState, WebKit::WebPageProxy::FromApplication::Yes, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
-    });
+    }, displayMutedFlags);
 }
 
 - (void)_setSystemAudioCaptureState:(WKSystemAudioCaptureState)state completionHandler:(void (^)(void))completionHandler
@@ -7040,7 +7043,7 @@ static inline OptionSet<WebKit::FindOptions> LEGACY_NODELETE toFindOptions(_WKFi
         mutedState.add(WebCore::MediaProducerMutedState::WindowCaptureIsMuted);
     _page->setMuted(mutedState, WebKit::WebPageProxy::FromApplication::Yes, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
-    });
+    }, WebCore::MediaProducerMutedState::WindowCaptureIsMuted);
 }
 
 - (void)_setOverrideDeviceScaleFactor:(CGFloat)deviceScaleFactor

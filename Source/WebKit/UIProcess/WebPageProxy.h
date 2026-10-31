@@ -2134,7 +2134,12 @@ public:
     void setMediaVolume(float);
 
     enum class FromApplication : bool { No, Yes };
-    void setMuted(WebCore::MediaProducerMutedStateFlags, FromApplication = FromApplication::No, CompletionHandler<void()>&& = [] { });
+    void setMuted(WebCore::MediaProducerMutedStateFlags, FromApplication = FromApplication::No, CompletionHandler<void()>&& = [] { }, WebCore::MediaProducerMutedStateFlags kindsSetByApplication = { });
+#if ENABLE(MEDIA_STREAM)
+    void beginCapturePreviewPause();
+    Ref<GenericPromise> pauseCaptureForCapturePreview(WebCore::MediaProducerMutedStateFlags captureKinds);
+    void endCapturePreviewPause();
+#endif
     bool LEGACY_NODELETE isAudioMuted() const;
     void setMayStartMediaWhenInWindow(bool);
     bool mayStartMediaWhenInWindow() const { return m_mayStartMediaWhenInWindow; }
@@ -2574,7 +2579,12 @@ public:
     void showMediaCapturePermissionPrompt(MediaPermissionPromptCustomization&&, CompletionHandler<void(MediaPermissionPromptResult&&)>&&);
     using MediaPermissionPromptHandlerForTesting = Function<void(Ref<MediaPermissionPromptForTesting>&&)>;
     const MediaPermissionPromptHandlerForTesting& mediaPermissionPromptHandlerForTesting() const LIFETIME_BOUND { return m_mediaPermissionPromptHandlerForTesting; }
-    void setMediaPermissionPromptHandlerForTesting(MediaPermissionPromptHandlerForTesting&& handler) { m_mediaPermissionPromptHandlerForTesting = WTF::move(handler); }
+    bool mediaPermissionPromptRunsPreviewForTesting() const { return m_mediaPermissionPromptRunsPreviewForTesting; }
+    void setMediaPermissionPromptHandlerForTesting(MediaPermissionPromptHandlerForTesting&& handler, bool runsPreview)
+    {
+        m_mediaPermissionPromptHandlerForTesting = WTF::move(handler);
+        m_mediaPermissionPromptRunsPreviewForTesting = runsPreview;
+    }
 #endif
 #endif
 
@@ -2611,6 +2621,7 @@ public:
     void getProcessDisplayName(CompletionHandler<void(String&&)>&&);
 
     void setOrientationForMediaCapture(WebCore::IntDegrees);
+    WebCore::IntDegrees orientationForMediaCapture() const { return m_orientationForMediaCapture; }
     void setMediaCaptureRotationForTesting(WebCore::IntDegrees, const String&);
 
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
@@ -3445,6 +3456,9 @@ private:
 
     bool shouldClosePreviousPage(const ProvisionalPageProxy&);
 
+    enum class MuteCaptureInOtherPages : bool { No, Yes };
+    void applyMutedState(WebCore::MediaProducerMutedStateFlags, MuteCaptureInOtherPages, CompletionHandler<void()>&&);
+
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManagerProxy& userMediaPermissionRequestManager();
     void requestUserMediaPermissionForFrame(IPC::Connection&, WebCore::UserMediaRequestIdentifier, FrameInfoData&&, IPC::Untrusted<WebCore::SecurityOriginData>&& userMediaDocumentOriginIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& topLevelDocumentOriginIdentifier, WebCore::MediaStreamRequest&&);
@@ -4179,8 +4193,11 @@ private:
     RefPtr<UserMediaPermissionRequestManagerProxy> m_userMediaPermissionRequestManager;
     bool m_shouldListenToVoiceActivity { false };
     OptionSet<WebCore::MediaProducerMediaCaptureKind> m_mutedCaptureKindsDesiredByWebApp;
+    WebCore::MediaProducerMutedStateFlags m_captureMutedByCapturePreview;
+    unsigned m_capturePreviewPauseCount { 0 };
 #if PLATFORM(COCOA)
     MediaPermissionPromptHandlerForTesting m_mediaPermissionPromptHandlerForTesting;
+    bool m_mediaPermissionPromptRunsPreviewForTesting { false };
 #endif
 #endif
 

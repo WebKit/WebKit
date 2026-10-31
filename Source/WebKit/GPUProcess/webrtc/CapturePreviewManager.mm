@@ -41,17 +41,36 @@
 #include <cmath>
 #include <wtf/TZoneMallocInlines.h>
 
-#if PLATFORM(IOS_FAMILY) && USE(AUDIO_SESSION)
+#if (PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)) && USE(AUDIO_SESSION)
 #include "RemoteAudioSessionProxyManager.h"
+#endif
+
+#if PLATFORM(IOS_FAMILY) && USE(AUDIO_SESSION)
 #include <WebCore/AVAudioSessionCaptureDeviceManager.h>
 #endif
 
 namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CapturePreviewManager);
 
+constexpr float audioLevelFloorInDBFS = -60;
+constexpr Seconds audioLevelInterval = 1_s / 15;
+
+static float normalizedLevelFromPeak(float peak)
+{
+    if (peak <= 0)
+        return 0;
+
+    float dbfs = 20 * std::log10(peak);
+    if (dbfs <= audioLevelFloorInDBFS)
+        return 0;
+
+    return std::clamp((dbfs - audioLevelFloorInDBFS) / -audioLevelFloorInDBFS, 0.f, 1.f);
+}
+
 CapturePreviewManager::CapturePreviewManager(WebCore::PageIdentifier pageIdentifier, Function<void(float)>&& audioLevelHandler)
     : m_pageIdentifier(pageIdentifier)
     , m_audioLevelHandler(WTF::move(audioLevelHandler))
+    , m_audioLevelTimer(RunLoop::mainSingleton(), "CapturePreviewManager::AudioLevelTimer"_s, this, &CapturePreviewManager::sendAudioLevel)
 {
 }
 
@@ -93,7 +112,7 @@ void CapturePreviewManager::start(std::optional<WebCore::CaptureDevice>&& videoD
         stopAudio();
         if (audioDevice)
             startAudio(*audioDevice);
-#if PLATFORM(IOS_FAMILY) && USE(AUDIO_SESSION)
+#if (PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)) && USE(AUDIO_SESSION)
         else
             restoreAudioSession();
 #endif
@@ -118,7 +137,7 @@ void CapturePreviewManager::startAudio(const WebCore::CaptureDevice& device)
 {
     m_audioDeviceID = device.persistentId();
 
-#if PLATFORM(IOS_FAMILY) && USE(AUDIO_SESSION)
+#if (PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)) && USE(AUDIO_SESSION)
     prepareAudioSession([protectedThis = Ref { *this }, device] {
         assertIsMainThread();
         if (protectedThis->m_audioDeviceID != device.persistentId())
@@ -142,29 +161,34 @@ void CapturePreviewManager::startAudioSource(const WebCore::CaptureDevice& devic
 
     protect(m_audioSource)->addAudioSampleObserver(*this);
     protect(m_audioSource)->start();
+    m_audioLevelTimer.startRepeating(audioLevelInterval);
 }
 
-#if PLATFORM(IOS_FAMILY) && USE(AUDIO_SESSION)
+#if (PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)) && USE(AUDIO_SESSION)
 
 void CapturePreviewManager::prepareAudioSession(CompletionHandler<void()>&& completionHandler)
 {
+#if PLATFORM(IOS_FAMILY)
     if (!m_savedPreferredMicrophoneID)
         m_savedPreferredMicrophoneID = WebCore::AVAudioSessionCaptureDeviceManager::singleton().preferredMicrophoneID();
+#endif
 
     protect(GPUProcess::singleton().audioSessionManager())->beginCapturePreview(WTF::move(completionHandler));
 }
 
 void CapturePreviewManager::restoreAudioSession()
 {
+#if PLATFORM(IOS_FAMILY)
     auto savedPreferredMicrophoneID = std::exchange(m_savedPreferredMicrophoneID, std::nullopt);
     if (!savedPreferredMicrophoneID)
         return;
 
     WebCore::AVAudioSessionCaptureDeviceManager::singleton().setPreferredMicrophoneID(*savedPreferredMicrophoneID);
+#endif
     protect(GPUProcess::singleton().audioSessionManager())->endCapturePreview();
 }
 
-#endif // PLATFORM(IOS_FAMILY) && USE(AUDIO_SESSION)
+#endif // (PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)) && USE(AUDIO_SESSION)
 
 void CapturePreviewManager::startVideo(const WebCore::CaptureDevice& device, WebCore::IntSize previewSize, StartCallback&& callback)
 {
@@ -258,6 +282,7 @@ void CapturePreviewManager::stopVideo()
 
 void CapturePreviewManager::detachAudioSource()
 {
+    m_audioLevelTimer.stop();
     if (RefPtr audioSource = WTF::move(m_audioSource)) {
         audioSource->removeAudioSampleObserver(*this);
         audioSource->endImmediatly();
@@ -272,7 +297,6 @@ void CapturePreviewManager::stopAudio()
 
     Locker locker { m_audioLevelLock };
     m_peakSinceLastLevel = 0;
-    m_framesSinceLastLevel = 0;
 }
 
 bool CapturePreviewManager::isRunning() const
@@ -289,7 +313,7 @@ void CapturePreviewManager::stop()
     stopVideo();
     stopAudio();
 
-#if PLATFORM(IOS_FAMILY) && USE(AUDIO_SESSION)
+#if (PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)) && USE(AUDIO_SESSION)
     restoreAudioSession();
 #endif
 }
@@ -317,22 +341,7 @@ void CapturePreviewManager::sampleBufferDisplayLayerStatusDidFail()
     RELEASE_LOG_ERROR(WebRTC, "CapturePreviewManager display layer status failed");
 }
 
-constexpr float audioLevelFloorInDBFS = -60;
-constexpr unsigned audioLevelUpdatesPerSecond = 15;
-
-static float normalizedLevelFromPeak(float peak)
-{
-    if (peak <= 0)
-        return 0;
-
-    float dbfs = 20 * std::log10(peak);
-    if (dbfs <= audioLevelFloorInDBFS)
-        return 0;
-
-    return std::clamp((dbfs - audioLevelFloorInDBFS) / -audioLevelFloorInDBFS, 0.f, 1.f);
-}
-
-void CapturePreviewManager::audioSamplesAvailable(const WTF::MediaTime&, const WebCore::PlatformAudioData& data, const WebCore::AudioStreamDescription& description, size_t numberOfFrames)
+void CapturePreviewManager::audioSamplesAvailable(const WTF::MediaTime&, const WebCore::PlatformAudioData& data, const WebCore::AudioStreamDescription& description, size_t)
 {
     if (!description.isFloat())
         return;
@@ -348,25 +357,22 @@ void CapturePreviewManager::audioSamplesAvailable(const WTF::MediaTime&, const W
             peak = std::max(peak, std::abs(sample));
     }
 
-    float level;
+    Locker locker { m_audioLevelLock };
+    m_peakSinceLastLevel = std::max(m_peakSinceLastLevel, peak);
+}
+
+void CapturePreviewManager::sendAudioLevel()
+{
+    assertIsMainThread();
+
+    float peak;
     {
         Locker locker { m_audioLevelLock };
-        m_peakSinceLastLevel = std::max(m_peakSinceLastLevel, peak);
-        m_framesSinceLastLevel += numberOfFrames;
-
-        size_t framesPerUpdate = static_cast<size_t>(description.sampleRate() / audioLevelUpdatesPerSecond);
-        if (!framesPerUpdate || m_framesSinceLastLevel < framesPerUpdate)
-            return;
-
-        m_framesSinceLastLevel = 0;
-        level = normalizedLevelFromPeak(std::exchange(m_peakSinceLastLevel, 0));
+        peak = std::exchange(m_peakSinceLastLevel, 0);
     }
 
-    callOnMainRunLoop([protectedThis = Ref { *this }, level] {
-        assertIsMainThread();
-        if (protectedThis->m_audioLevelHandler)
-            protectedThis->m_audioLevelHandler(level);
-    });
+    if (m_audioLevelHandler)
+        m_audioLevelHandler(normalizedLevelFromPeak(peak));
 }
 
 } // namespace WebKit

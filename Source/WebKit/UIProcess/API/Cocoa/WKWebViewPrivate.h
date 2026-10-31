@@ -346,11 +346,13 @@ for this property.
 - (void)_showSafeBrowsingWarningWithURL:(NSURL *)url title:(NSString *)title warning:(NSString *)warning detailsWithLinks:(NSAttributedString *)details completionHandler:(void(^)(BOOL, NSURL *))completionHandler WK_API_AVAILABLE(macos(10.15.4), ios(13.2));
 
 /*! @abstract Shows WebKit's capture permission prompt for the current getUserMedia request and
- reports what the user did.
+ reports what the user did. When the capture preview preference is on, the prompt also has device
+ menus and a live preview.
  @discussion Call this only from within
  -webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:, then answer
  that decision handler with WKPermissionDecisionGrant or WKPermissionDecisionDeny. The outcome is
- advisory: the application has the final say through its own decision handler.
+ advisory: the application has the final say through its own decision handler. Answering
+ WKPermissionDecisionGrant captures from the device the user chose in the prompt.
 
  configuration may be nil for WebKit's unmodified prompt. If no capture request is being decided the
  completion handler is called synchronously, with a dismissed outcome, because there is nothing for the

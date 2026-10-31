@@ -646,6 +646,8 @@ header: <WebCore/RealtimeMediaSourceCenter.h>
 [Nested] struct WebCore::RealtimeMediaSourceCenter::ValidDevices {
     Vector<WebCore::CaptureDevice> audioDevices;
     Vector<WebCore::CaptureDevice> videoDevices;
+    [Validator='*bestMatchingAudioDeviceCount <= audioDevices->size()'] unsigned bestMatchingAudioDeviceCount;
+    [Validator='*bestMatchingVideoDeviceCount <= videoDevices->size()'] unsigned bestMatchingVideoDeviceCount;
 };
 
 #endif // ENABLE(MEDIA_STREAM)

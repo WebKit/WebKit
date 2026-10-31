@@ -23,11 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #pragma once
 
 #include <optional>
-#include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -63,38 +61,65 @@ struct MediaPermissionPromptCustomization {
     Vector<MediaPermissionPromptAdditionalAction> additionalActions;
 };
 
+// The device IDs are empty unless the prompt had device menus and the user granted permission to capture.
 struct MediaPermissionPromptResult {
     bool granted { false };
     bool wasAnswered { false };
 #if PLATFORM(COCOA)
     RetainPtr<_WKMediaCapturePermissionAction> chosenAction;
 #endif
+    String selectedAudioDeviceUID;
+    String selectedVideoDeviceUID;
 };
 
-#if ENABLE(MEDIA_STREAM)
-// Lets an API test answer the capture permission prompt.
+// No button means the prompt closed without an answer. A null device ID doesn't change the prompt's selection.
+struct MediaPermissionPromptResponseForTesting {
+    std::optional<size_t> buttonIndex;
+    String cameraPersistentID;
+    String microphonePersistentID;
+};
+
+// Lets an API test drive the capture permission prompt.
 class MediaPermissionPromptForTesting : public RefCounted<MediaPermissionPromptForTesting> {
 public:
-    ~MediaPermissionPromptForTesting();
+    struct Device {
+        String persistentID;
+        String label;
+    };
 
-    static Ref<MediaPermissionPromptForTesting> create(String&& title, String&& informativeText, Vector<String>&& buttonTitles, Vector<MediaPermissionPromptAdditionalAction>&&, CompletionHandler<void(MediaPermissionPromptResult&&)>&&);
+    virtual ~MediaPermissionPromptForTesting() = default;
 
     const String& title() const LIFETIME_BOUND { return m_title; }
     const String& informativeText() const LIFETIME_BOUND { return m_informativeText; }
     const Vector<String>& buttonTitles() const LIFETIME_BOUND { return m_buttonTitles; }
+    bool showsPreview() const { return m_showsPreview; }
 
-    // No button means the prompt closed without an answer.
-    void respond(std::optional<size_t> buttonIndex);
+    virtual Vector<Device> cameras() const = 0;
+    virtual Vector<Device> microphones() const = 0;
+    virtual String selectedCameraID() const = 0;
+    virtual String selectedMicrophoneID() const = 0;
+    virtual unsigned audioLevelUpdateCount() const = 0;
+    virtual unsigned previewLayerCount() const = 0;
+    virtual bool hasPreviewLayer() const = 0;
+
+    virtual void selectCamera(size_t index) = 0;
+    virtual void selectMicrophone(size_t index) = 0;
+    virtual void respond(MediaPermissionPromptResponseForTesting&&) = 0;
+
+protected:
+    MediaPermissionPromptForTesting(String&& title, String&& informativeText, Vector<String>&& buttonTitles, bool showsPreview)
+        : m_title(WTF::move(title))
+        , m_informativeText(WTF::move(informativeText))
+        , m_buttonTitles(WTF::move(buttonTitles))
+        , m_showsPreview(showsPreview)
+    {
+    }
 
 private:
-    MediaPermissionPromptForTesting(String&& title, String&& informativeText, Vector<String>&& buttonTitles, Vector<MediaPermissionPromptAdditionalAction>&&, CompletionHandler<void(MediaPermissionPromptResult&&)>&&);
-
     const String m_title;
     const String m_informativeText;
     const Vector<String> m_buttonTitles;
-    const Vector<MediaPermissionPromptAdditionalAction> m_additionalActions;
-    CompletionHandler<void(MediaPermissionPromptResult&&)> m_completionHandler;
+    const bool m_showsPreview { false };
 };
-#endif
 
 } // namespace WebKit

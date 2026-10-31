@@ -31,7 +31,7 @@
 // The classes exist on every platform, so a platform without media capture can still answer the SPI
 // with a denial.
 @interface _WKMediaCapturePermissionPromptResult (Internal)
-- (instancetype)_initWithOutcome:(_WKMediaCapturePermissionPromptOutcome)outcome chosenAction:(_WKMediaCapturePermissionAction *)chosenAction;
+- (instancetype)_initWithOutcome:(_WKMediaCapturePermissionPromptOutcome)outcome chosenAction:(_WKMediaCapturePermissionAction *)chosenAction cameraDeviceID:(NSString *)cameraDeviceID microphoneDeviceID:(NSString *)microphoneDeviceID;
 @end
 
 #if ENABLE(MEDIA_STREAM)

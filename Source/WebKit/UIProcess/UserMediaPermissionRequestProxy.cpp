@@ -21,13 +21,17 @@
 #include "UserMediaPermissionRequestProxy.h"
 
 #include "APIUIClient.h"
+#include "Logging.h"
 #include "MediaPermissionUtilities.h"
 #include "UserMediaPermissionRequestManagerProxy.h"
+#include "UserMediaProcessManager.h"
 #include "WebPageProxy.h"
+#include "WebPreferences.h"
 #include <WebCore/CaptureDeviceManager.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <algorithm>
 #include <wtf/text/StringHash.h>
 
 namespace WebKit {
@@ -81,37 +85,68 @@ bool UserMediaPermissionRequestProxy::willUseEchoCancellation() const
 }
 
 #if ENABLE(MEDIA_STREAM)
-static inline void setDeviceAsFirst(Vector<CaptureDevice>& devices, const String& deviceID)
+template<typename Predicate>
+static bool moveDeviceToFront(std::span<CaptureDevice> devices, NOESCAPE const Predicate& matches)
 {
-    size_t index = devices.findIf([&deviceID](const auto& device) {
-        return device.persistentId() == deviceID;
-    });
-    ASSERT(index != notFound);
+    auto iterator = std::ranges::find_if(devices, matches);
+    if (iterator == devices.end())
+        return false;
 
-    if (index) {
-        auto device = devices[index];
-        ASSERT(device.enabled());
+    std::rotate(devices.begin(), iterator, iterator + 1);
+    return true;
+}
 
-        devices.removeAt(index);
-        devices.insert(0, WTF::move(device));
-    }
+static auto hasPersistentID(const String& deviceID)
+{
+    return [&deviceID](const CaptureDevice& device) {
+        return !deviceID.isEmpty() && device.persistentId() == deviceID;
+    };
 }
 #endif
 
-void UserMediaPermissionRequestProxy::allow(const String& audioDeviceUID, const String& videoDeviceUID)
+void UserMediaPermissionRequestProxy::applyDeviceSelection(const String& audioDeviceUID, const String& videoDeviceUID)
 {
 #if ENABLE(MEDIA_STREAM)
-    if (!audioDeviceUID.isEmpty())
-        setDeviceAsFirst(m_eligibleAudioDevices, audioDeviceUID);
-    if (!videoDeviceUID.isEmpty())
-        setDeviceAsFirst(m_eligibleVideoDevices, videoDeviceUID);
+    m_selectedDeviceUIDs = { audioDeviceUID, videoDeviceUID };
+    m_deviceSelectionWasExplicit = true;
+
+    if (!audioDeviceUID.isEmpty() && !moveDeviceToFront(m_eligibleAudioDevices.mutableSpan(), hasPersistentID(audioDeviceUID)))
+        RELEASE_LOG(WebRTC, "UserMediaPermissionRequestProxy::applyDeviceSelection: the chosen microphone is not eligible");
+    if (!videoDeviceUID.isEmpty() && !moveDeviceToFront(m_eligibleVideoDevices.mutableSpan(), hasPersistentID(videoDeviceUID)))
+        RELEASE_LOG(WebRTC, "UserMediaPermissionRequestProxy::applyDeviceSelection: the chosen camera is not eligible");
 #else
     UNUSED_PARAM(audioDeviceUID);
     UNUSED_PARAM(videoDeviceUID);
 #endif
+}
 
+void UserMediaPermissionRequestProxy::allow(const String& audioDeviceUID, const String& videoDeviceUID)
+{
+    applyDeviceSelection(audioDeviceUID, videoDeviceUID);
     allow();
 }
+
+#if ENABLE(MEDIA_STREAM)
+void UserMediaPermissionRequestProxy::preferDevices(const DeviceUIDs& deviceUIDs, BestMatchingDeviceCounts bestMatchingCounts)
+{
+    m_selectedDeviceUIDs = deviceUIDs;
+    m_deviceSelectionWasExplicit = false;
+
+    moveDeviceToFront(m_eligibleAudioDevices.mutableSpan().first(std::min<size_t>(bestMatchingCounts.audio, m_eligibleAudioDevices.size())), hasPersistentID(deviceUIDs.audioDeviceUID));
+    moveDeviceToFront(m_eligibleVideoDevices.mutableSpan().first(std::min<size_t>(bestMatchingCounts.video, m_eligibleVideoDevices.size())), hasPersistentID(deviceUIDs.videoDeviceUID));
+}
+
+void UserMediaPermissionRequestProxy::reapplyDeviceSelection(BestMatchingDeviceCounts bestMatchingCounts)
+{
+    if (!m_deviceSelectionWasExplicit) {
+        preferDevices(m_selectedDeviceUIDs, bestMatchingCounts);
+        return;
+    }
+
+    moveDeviceToFront(m_eligibleAudioDevices.mutableSpan(), hasPersistentID(m_selectedDeviceUIDs.audioDeviceUID));
+    moveDeviceToFront(m_eligibleVideoDevices.mutableSpan(), hasPersistentID(m_selectedDeviceUIDs.videoDeviceUID));
+}
+#endif
 
 void UserMediaPermissionRequestProxy::allow()
 {
@@ -121,8 +156,24 @@ void UserMediaPermissionRequestProxy::allow()
         return;
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    if (auto dismissPrompt = std::exchange(m_promptDismisser, nullptr))
+    if (m_afterPromptCloses) {
+        RELEASE_LOG_ERROR(WebRTC, "UserMediaPermissionRequestProxy::allow: already waiting for the prompt to close");
+        return;
+    }
+
+    // Don't grant the request until the preview has been dismissed and released its devices.
+    if (auto dismissPrompt = std::exchange(m_previewPromptHandles.promptDismisser, nullptr)) {
+        m_afterPromptCloses = [weakThis = WeakPtr { *this }] {
+            RefPtr request = weakThis;
+            if (!request)
+                return;
+            if (RefPtr manager = request->m_manager)
+                manager->grantRequest(*request);
+            request->invalidate();
+        };
         dismissPrompt();
+        return;
+    }
 #endif
 
     manager->grantRequest(*this);
@@ -141,12 +192,23 @@ void UserMediaPermissionRequestProxy::deny(UserMediaAccessDenialReason reason)
 
 void UserMediaPermissionRequestProxy::invalidate()
 {
+    RefPtr manager = std::exchange(m_manager, nullptr);
+
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    if (auto dismissPrompt = std::exchange(m_promptDismisser, nullptr))
+    m_previewPromptHandles.deviceListUpdater = nullptr;
+    m_previewPromptHandles.previewRestarter = nullptr;
+    if (auto dismissPrompt = std::exchange(m_previewPromptHandles.promptDismisser, nullptr)) {
+        m_afterPromptCloses = [weakThis = WeakPtr { *this }, weakManager = WeakPtr<UserMediaPermissionRequestManagerProxy> { manager }] {
+            RefPtr request = weakThis;
+            RefPtr manager = weakManager;
+            if (request && manager)
+                manager->delegateDecisionEnded(*request);
+        };
+        manager = nullptr;
         dismissPrompt();
+    }
 #endif
 
-    RefPtr manager = std::exchange(m_manager, nullptr);
 #if ENABLE(MEDIA_STREAM)
     if (manager)
         manager->delegateDecisionEnded(*this);
@@ -229,7 +291,7 @@ void UserMediaPermissionRequestProxy::promptForGetUserMedia()
         if (!result.granted)
             deny(result.wasAnswered ? UserMediaAccessDenialReason::PermissionDenied : UserMediaAccessDenialReason::OtherFailure);
         else
-            allow();
+            allow(result.selectedAudioDeviceUID, result.selectedVideoDeviceUID);
     });
 #endif
 }
@@ -238,7 +300,13 @@ void UserMediaPermissionRequestProxy::promptForGetUserMedia()
 
 void UserMediaPermissionRequestProxy::showCapturePromptWithoutDeciding(MediaPermissionPromptCustomization&& customization, PromptResultHandler&& completionHandler)
 {
-    showCapturePrompt(WTF::move(customization), WTF::move(completionHandler));
+    showCapturePrompt(WTF::move(customization), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](MediaPermissionPromptResult&& result) mutable {
+
+        if (result.granted)
+            applyDeviceSelection(result.selectedAudioDeviceUID, result.selectedVideoDeviceUID);
+
+        completionHandler(WTF::move(result));
+    });
 }
 
 void UserMediaPermissionRequestProxy::showCapturePrompt(MediaPermissionPromptCustomization&& customization, PromptResultHandler&& completionHandler)
@@ -261,23 +329,71 @@ void UserMediaPermissionRequestProxy::showCapturePrompt(MediaPermissionPromptCus
     }
     m_isShowingPrompt = true;
 
-    PermissionPromptRequest request { .reason = reason, .origin = topLevelDocumentSecurityOrigin().data(), .customization = WTF::move(customization) };
-    CompletionHandler<void(MediaPermissionPromptResult&&)> promptCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](MediaPermissionPromptResult&& result) mutable {
-        m_isShowingPrompt = false;
-        m_promptDismisser = nullptr;
-        completionHandler(WTF::move(result));
-    };
+    bool showsPreview = protect(page->preferences())->captureDevicePreviewInPromptEnabled();
+    bool isAnsweredByTest = !!page->mediaPermissionPromptHandlerForTesting();
+    if (showsPreview)
+        UserMediaProcessManager::singleton().beginMonitoringCaptureDevices();
+    if (showsPreview || isAnsweredByTest) {
+        CapturePreviewPromptRequest request {
+            .reason = reason,
+            .origin = topLevelDocumentSecurityOrigin().data(),
+            .eligibleVideoDevices = m_eligibleVideoDevices,
+            .eligibleAudioDevices = m_eligibleAudioDevices,
+            .customization = WTF::move(customization),
+        };
+        CompletionHandler<void(MediaPermissionPromptResult&&)> promptCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](MediaPermissionPromptResult&& result) mutable {
+            m_isShowingPrompt = false;
+            m_previewPromptHandles = { };
+            completionHandler(WTF::move(result));
 
-    if (page->mediaPermissionPromptHandlerForTesting()) {
-        auto dismissPrompt = alertForPermissionForTesting(page, WTF::move(request), WTF::move(promptCompletionHandler));
-        if (m_isShowingPrompt)
-            m_promptDismisser = WTF::move(dismissPrompt);
+            if (auto afterPromptCloses = std::exchange(m_afterPromptCloses, nullptr))
+                afterPromptCloses();
+        };
+        auto handles = isAnsweredByTest ? alertForPermissionForTesting(page, WTF::move(request), showsPreview, WTF::move(promptCompletionHandler)) : alertForPermissionWithCapturePreview(page, WTF::move(request), WTF::move(promptCompletionHandler));
+        if (!m_isShowingPrompt)
+            return;
+        m_previewPromptHandles = WTF::move(handles);
         return;
     }
 
-    alertForPermission(page, WTF::move(request), WTF::move(promptCompletionHandler));
+    alertForPermission(page, { .reason = reason, .origin = topLevelDocumentSecurityOrigin().data(), .customization = WTF::move(customization) }, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](MediaPermissionPromptResult&& result) mutable {
+        m_isShowingPrompt = false;
+        completionHandler(WTF::move(result));
+    });
 }
 
+void UserMediaPermissionRequestProxy::gpuProcessExited()
+{
+    if (m_previewPromptHandles.previewRestarter)
+        m_previewPromptHandles.previewRestarter();
+}
+
+void UserMediaPermissionRequestProxy::devicesChanged()
+{
+    if (!m_previewPromptHandles.deviceListUpdater)
+        return;
+
+    auto request = m_request;
+    bool offersOnlyDefaultMicrophone = m_kind == Kind::SpeechRecognition;
+    if (offersOnlyDefaultMicrophone)
+        request.audioConstraints.isValid = true;
+
+    RealtimeMediaSourceCenter::singleton().validateRequestConstraints([protectedThis = Ref { *this }, generation = ++m_deviceListGeneration, offersOnlyDefaultMicrophone](auto&& validDevices) mutable {
+        if (!protectedThis->m_previewPromptHandles.deviceListUpdater || generation != protectedThis->m_deviceListGeneration)
+            return;
+
+        if (!validDevices) {
+            protectedThis->m_previewPromptHandles.deviceListUpdater({ }, { });
+            return;
+        }
+
+        protectedThis->m_eligibleVideoDevices = WTF::move(validDevices->videoDevices);
+        protectedThis->m_eligibleAudioDevices = WTF::move(validDevices->audioDevices);
+        if (offersOnlyDefaultMicrophone)
+            protectedThis->m_eligibleAudioDevices.shrink(std::min<size_t>(1, protectedThis->m_eligibleAudioDevices.size()));
+        protectedThis->m_previewPromptHandles.deviceListUpdater(Vector<WebCore::CaptureDevice> { protectedThis->m_eligibleVideoDevices }, Vector<WebCore::CaptureDevice> { protectedThis->m_eligibleAudioDevices });
+    }, request, MediaDeviceHashSalts { m_deviceIdentifierHashSalts });
+}
 #endif
 
 void UserMediaPermissionRequestProxy::doDefaultAction()

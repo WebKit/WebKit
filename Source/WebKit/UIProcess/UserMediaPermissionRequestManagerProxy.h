@@ -117,6 +117,7 @@ public:
     void captureDevicesChanged();
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    void gpuProcessExited();
     void showMediaCapturePermissionPrompt(MediaPermissionPromptCustomization&&, UserMediaPermissionRequestProxy::PromptResultHandler&&);
 #endif
 
@@ -176,6 +177,8 @@ private:
     bool hasGrantedRequest(std::optional<WebCore::FrameIdentifier>, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo, bool isUserGesturePriviledged) const;
     bool wasRequestDenied(const UserMediaPermissionRequestProxy&, bool needsAudio, bool needsVideo, bool needsScreenCapture);
 
+    UserMediaPermissionRequestProxy::DeviceUIDs previouslySelectedDeviceUIDs(const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, WebCore::FrameIdentifier) const;
+
     void getUserMediaPermissionInfo(WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(WebCore::PermissionState, WebCore::PermissionState)>&&);
     void captureDevicesChanged(bool hasCameraPersistentAccess, bool hasMicrophonePersistentAccess);
 
@@ -185,12 +188,12 @@ private:
     bool LEGACY_NODELETE wasGrantedAudioAccess(WebCore::FrameIdentifier);
     bool LEGACY_NODELETE wasGrantedVideoAccess(WebCore::FrameIdentifier);
 
-    void computeFilteredDeviceList(WebCore::FrameIdentifier, WebCore::PermissionState, WebCore::PermissionState, CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&)>&&);
+    void computeFilteredDeviceList(WebCore::FrameIdentifier, UserMediaPermissionRequestProxy::DeviceUIDs&& previouslySelectedDeviceUIDs, WebCore::PermissionState, WebCore::PermissionState, CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&)>&&);
     void platformGetMediaStreamDevices(bool revealIdsAndLabels, CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&)>&&);
 
     void processUserMediaPermissionRequest();
     void processUserMediaPermissionInvalidRequest(WebCore::MediaConstraintType invalidConstraint);
-    void processUserMediaPermissionValidRequest(Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaDeviceHashSalts&&);
+    void processUserMediaPermissionValidRequest(WebCore::RealtimeMediaSourceCenter::ValidDevices&&, WebCore::MediaDeviceHashSalts&&);
     void startProcessingUserMediaPermissionRequest(Ref<UserMediaPermissionRequestProxy>&&);
 
     static void requestSystemValidation(const WebPageProxy&, UserMediaPermissionRequestProxy&, CompletionHandler<void(bool)>&&);

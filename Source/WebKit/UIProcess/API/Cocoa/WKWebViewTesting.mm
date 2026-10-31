@@ -130,6 +130,16 @@
     _prompt = WTF::move(prompt);
     return self;
 }
+
+static RetainPtr<NSArray<NSDictionary<NSString *, NSString *> *>> devicesForTesting(const Vector<WebKit::MediaPermissionPromptForTesting::Device>& devices)
+{
+    return createNSArray(devices, [](auto& device) {
+        return @{
+            @"id": device.persistentID.createNSString(),
+            @"label": device.label.createNSString()
+        };
+    });
+}
 #endif
 
 - (NSString *)title
@@ -159,19 +169,111 @@
 #endif
 }
 
-- (void)respondWithButtonIndex:(NSUInteger)index
+- (BOOL)showsPreview
 {
 #if ENABLE(MEDIA_STREAM)
-    protect(_prompt)->respond(index);
+    return _prompt->showsPreview();
+#else
+    return NO;
+#endif
+}
+
+- (NSArray<NSDictionary<NSString *, NSString *> *> *)cameras
+{
+#if ENABLE(MEDIA_STREAM)
+    return devicesForTesting(protect(_prompt)->cameras()).autorelease();
+#else
+    return @[ ];
+#endif
+}
+
+- (NSArray<NSDictionary<NSString *, NSString *> *> *)microphones
+{
+#if ENABLE(MEDIA_STREAM)
+    return devicesForTesting(protect(_prompt)->microphones()).autorelease();
+#else
+    return @[ ];
+#endif
+}
+
+- (NSString *)selectedCameraID
+{
+#if ENABLE(MEDIA_STREAM)
+    return nsStringNilIfEmpty(protect(_prompt)->selectedCameraID()).autorelease();
+#else
+    return nil;
+#endif
+}
+
+- (NSString *)selectedMicrophoneID
+{
+#if ENABLE(MEDIA_STREAM)
+    return nsStringNilIfEmpty(protect(_prompt)->selectedMicrophoneID()).autorelease();
+#else
+    return nil;
+#endif
+}
+
+- (NSUInteger)audioLevelUpdateCount
+{
+#if ENABLE(MEDIA_STREAM)
+    return protect(_prompt)->audioLevelUpdateCount();
+#else
+    return 0;
+#endif
+}
+
+- (NSUInteger)previewLayerCount
+{
+#if ENABLE(MEDIA_STREAM)
+    return protect(_prompt)->previewLayerCount();
+#else
+    return 0;
+#endif
+}
+
+- (BOOL)hasPreviewLayer
+{
+#if ENABLE(MEDIA_STREAM)
+    return protect(_prompt)->hasPreviewLayer();
+#else
+    return NO;
+#endif
+}
+
+- (void)selectCameraAtIndex:(NSUInteger)index
+{
+#if ENABLE(MEDIA_STREAM)
+    protect(_prompt)->selectCamera(index);
 #else
     UNUSED_PARAM(index);
+#endif
+}
+
+- (void)selectMicrophoneAtIndex:(NSUInteger)index
+{
+#if ENABLE(MEDIA_STREAM)
+    protect(_prompt)->selectMicrophone(index);
+#else
+    UNUSED_PARAM(index);
+#endif
+}
+
+- (void)respondWithButtonIndex:(NSUInteger)index cameraID:(NSString *)cameraID microphoneID:(NSString *)microphoneID
+{
+#if ENABLE(MEDIA_STREAM)
+    protect(_prompt)->respond({ .buttonIndex = index, .cameraPersistentID = cameraID, .microphonePersistentID = microphoneID });
+#else
+    UNUSED_PARAM(index);
+    UNUSED_PARAM(cameraID);
+    UNUSED_PARAM(microphoneID);
 #endif
 }
 
 - (void)dismissWithoutAnswer
 {
 #if ENABLE(MEDIA_STREAM)
-    protect(_prompt)->respond(std::nullopt);
+    protect(_prompt)->respond({ });
 #endif
 }
 
@@ -630,22 +732,23 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #endif
 }
 
-- (void)_setMediaCapturePermissionPromptHandlerForTesting:(void (^)(_WKMediaCapturePermissionPromptForTesting *))handler
+- (void)_setMediaCapturePermissionPromptHandlerForTesting:(void (^)(_WKMediaCapturePermissionPromptForTesting *))handler runsPreview:(BOOL)runsPreview
 {
 #if ENABLE(MEDIA_STREAM)
     if (!_page)
         return;
 
     if (!handler) {
-        _page->setMediaPermissionPromptHandlerForTesting(nullptr);
+        _page->setMediaPermissionPromptHandlerForTesting(nullptr, false);
         return;
     }
 
     _page->setMediaPermissionPromptHandlerForTesting([handler = makeBlockPtr(handler)](Ref<WebKit::MediaPermissionPromptForTesting>&& prompt) {
         handler(adoptNS([[_WKMediaCapturePermissionPromptForTesting alloc] _initWithPrompt:WTF::move(prompt)]).get());
-    });
+    }, runsPreview);
 #else
     UNUSED_PARAM(handler);
+    UNUSED_PARAM(runsPreview);
 #endif
 }
 

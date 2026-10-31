@@ -295,6 +295,9 @@
 /* Display name for closed captions text tracks. */
 "CC (text track)" = "CC";
 
+/* Accessibility label for the camera menu in the user media prompt */
+"Camera (usermedia)" = "Camera";
+
 /* Cancel */
 "Cancel" = "Cancel";
 
@@ -1063,6 +1066,12 @@
 /* Display name for text track kind 'metadata'. */
 "Metadata (text track)" = "Metadata";
 
+/* Accessibility label for the microphone menu in the user media prompt */
+"Microphone (usermedia)" = "Microphone";
+
+/* Accessibility label for the microphone level meter in the user media prompt */
+"Microphone level (usermedia)" = "Microphone level";
+
 /* Label text to be used when a plugin is missing */
 "Missing Plug-in" = "Missing Plug-in";
 
@@ -1260,6 +1269,9 @@
 
 /* Title for file upload progress view */
 "Preparing (file upload)" = "Preparing…";
+
+/* Badge label identifying the live camera preview in the user media prompt */
+"Preview (usermedia)" = "Preview";
 
 /* Previous Page context menu item */
 "Previous Page" = "Previous Page";

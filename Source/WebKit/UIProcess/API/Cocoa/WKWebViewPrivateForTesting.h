@@ -58,7 +58,7 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 @class _WKNowPlayingMetadata;
 @protocol _WKMediaSessionCoordinator;
 
-// What WebKit's capture permission prompt would show.
+// What WebKit's capture permission prompt would show, kept current while it is up.
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKMediaCapturePermissionPromptForTesting : NSObject
 
@@ -68,8 +68,24 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, readonly, copy) NSString *title;
 @property (nonatomic, readonly, copy, nullable) NSString *informativeText;
 @property (nonatomic, readonly, copy) NSArray<NSString *> *buttonTitles;
+@property (nonatomic, readonly) BOOL showsPreview;
 
-- (void)respondWithButtonIndex:(NSUInteger)index;
+// Each has "id" and "label". Empty without a preview.
+@property (nonatomic, readonly, copy) NSArray<NSDictionary<NSString *, NSString *> *> *cameras;
+@property (nonatomic, readonly, copy) NSArray<NSDictionary<NSString *, NSString *> *> *microphones;
+@property (nonatomic, readonly, copy, nullable) NSString *selectedCameraID;
+@property (nonatomic, readonly, copy, nullable) NSString *selectedMicrophoneID;
+
+// Zero unless the handler was set with runsPreview.
+@property (nonatomic, readonly) NSUInteger audioLevelUpdateCount;
+@property (nonatomic, readonly) NSUInteger previewLayerCount;
+@property (nonatomic, readonly) BOOL hasPreviewLayer;
+
+- (void)selectCameraAtIndex:(NSUInteger)index;
+- (void)selectMicrophoneAtIndex:(NSUInteger)index;
+
+// nil device IDs return the prompt's current selection.
+- (void)respondWithButtonIndex:(NSUInteger)index cameraID:(nullable NSString *)cameraID microphoneID:(nullable NSString *)microphoneID;
 - (void)dismissWithoutAnswer;
 
 @end
@@ -121,7 +137,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (void)_setIndexOfGetDisplayMediaDeviceSelectedForTesting:(nullable NSNumber *)index;
 - (void)_setSystemCanPromptForGetDisplayMediaForTesting:(BOOL)canPrompt;
 
-- (void)_setMediaCapturePermissionPromptHandlerForTesting:(nullable void (^)(_WKMediaCapturePermissionPromptForTesting *prompt))handler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+// With @runsPreview, the camera preview and microphone meter are active exactly as they are in a real prompt.
+- (void)_setMediaCapturePermissionPromptHandlerForTesting:(nullable void (^)(_WKMediaCapturePermissionPromptForTesting *prompt))handler runsPreview:(BOOL)runsPreview WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (BOOL)_beginBackSwipeForTesting;
 - (BOOL)_completeBackSwipeForTesting;

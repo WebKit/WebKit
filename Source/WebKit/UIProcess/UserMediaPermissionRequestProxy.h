@@ -53,11 +53,26 @@ public:
 
     void allow(const String& audioDeviceUID, const String& videoDeviceUID);
     void allow();
+#if ENABLE(MEDIA_STREAM)
+    struct DeviceUIDs {
+        String audioDeviceUID;
+        String videoDeviceUID;
+    };
+    struct BestMatchingDeviceCounts {
+        unsigned audio { 0 };
+        unsigned video { 0 };
+    };
+    void preferDevices(const DeviceUIDs&, BestMatchingDeviceCounts);
+    void reapplyDeviceSelection(BestMatchingDeviceCounts);
+#endif
     void promptForGetUserMedia();
 
     Kind kind() const { return m_kind; }
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    void devicesChanged();
+    void gpuProcessExited();
+
     using PromptResultHandler = CompletionHandler<void(MediaPermissionPromptResult&&)>;
     void showCapturePromptWithoutDeciding(MediaPermissionPromptCustomization&&, PromptResultHandler&&);
 #endif
@@ -124,6 +139,7 @@ protected:
     UserMediaPermissionRequestManagerProxy* LEGACY_NODELETE manager() const;
 
 private:
+    void applyDeviceSelection(const String& audioDeviceUID, const String& videoDeviceUID);
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     void showCapturePrompt(MediaPermissionPromptCustomization&&, PromptResultHandler&&);
 #endif
@@ -143,8 +159,14 @@ private:
     Function<void()> m_beforeStartingCaptureCallback;
     const Kind m_kind;
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    MediaPermissionPromptDismisser m_promptDismisser;
+    CapturePreviewPromptHandles m_previewPromptHandles;
+    uint64_t m_deviceListGeneration { 0 };
     bool m_isShowingPrompt { false };
+    Function<void()> m_afterPromptCloses;
+#endif
+#if ENABLE(MEDIA_STREAM)
+    DeviceUIDs m_selectedDeviceUIDs;
+    bool m_deviceSelectionWasExplicit { false };
 #endif
 };
 

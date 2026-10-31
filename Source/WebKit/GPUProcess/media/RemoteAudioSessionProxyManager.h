@@ -63,7 +63,7 @@ public:
     void updatePreferredBufferSizeForProcess();
     void updateSpatialExperience();
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)
     void beginCapturePreview(CompletionHandler<void()>&&);
     void endCapturePreview();
 #endif
@@ -93,13 +93,13 @@ private:
 
     bool hasOtherActiveProxyThan(RemoteAudioSessionProxy& proxyToExclude);
     bool hasActiveNotInterruptedProxy();
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)
     bool hasActiveProxy();
 #endif
 
     bool isCapturePreviewActive() const
     {
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)
         return m_capturePreviewActive;
 #else
         return false;
@@ -108,7 +108,7 @@ private:
 
     WeakRef<GPUProcess> m_gpuProcess;
     WeakHashSet<RemoteAudioSessionProxy> m_proxies;
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)
     bool m_capturePreviewActive { false };
     Vector<CompletionHandler<void()>> m_capturePreviewActivationHandlers;
     unsigned m_capturePreviewActivationCount { 0 };

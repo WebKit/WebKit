@@ -83,6 +83,10 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
  chosenAction is nil when the user activated the built-in allow or deny button, and is
  otherwise the object from additionalActions that was activated.
+
+ cameraDeviceID and microphoneDeviceID name the devices the user selected, for an application that
+ wants to show that choice in its own UI. They are the platform's persistent device identifiers. Both
+ are nil unless the outcome allows capture of that kind.
  */
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKMediaCapturePermissionPromptResult : NSObject
@@ -92,6 +96,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 @property (nonatomic, readonly) _WKMediaCapturePermissionPromptOutcome outcome;
 @property (nonatomic, readonly, nullable) _WKMediaCapturePermissionAction *chosenAction;
+@property (nonatomic, readonly, copy, nullable) NSString *cameraDeviceID;
+@property (nonatomic, readonly, copy, nullable) NSString *microphoneDeviceID;
 
 @end
 
