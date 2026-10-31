@@ -611,6 +611,49 @@ TEST_F(GraphicsContextGLCocoaTest, CopyNativeImageWithReadBufferNoneWebGL2)
     }
 }
 
+// The read and draw framebuffer bindings are separate in WebGL2, so the gate must consider the
+// binding the target actually names.
+TEST_F(GraphicsContextGLCocoaTest, DefaultFramebufferAttachmentsAreNotMutablePerTargetWebGL2)
+{
+    using GL = GraphicsContextGL;
+    GraphicsContextGLAttributes attributes;
+    attributes.isWebGL2 = true;
+    auto gl = TestedGraphicsContextGLCocoa::create(WTF::move(attributes));
+    ASSERT_NE(gl, nullptr);
+    gl->reshape(10, 10);
+    auto fbo = gl->createFramebuffer();
+    auto rbo = gl->createRenderbuffer();
+    gl->bindRenderbuffer(GL::RENDERBUFFER, rbo);
+    gl->renderbufferStorage(GL::RENDERBUFFER, GL::RGBA8, 10, 10);
+    gl->bindFramebuffer(GL::DRAW_FRAMEBUFFER, fbo);
+    gl->bindFramebuffer(GL::READ_FRAMEBUFFER, 0);
+    ASSERT_TRUE(gl->getErrors().isEmpty());
+
+    // The read framebuffer is the emulated default framebuffer.
+    gl->framebufferRenderbuffer(GL::READ_FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, 0);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    gl->framebufferTexture2D(GL::READ_FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, 0, 0);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    gl->framebufferTextureLayer(GL::READ_FRAMEBUFFER, GL::COLOR_ATTACHMENT0, 0, 0, 0);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    EXPECT_EQ(gl->checkFramebufferStatus(GL::READ_FRAMEBUFFER), static_cast<GCGLenum>(GL::FRAMEBUFFER_COMPLETE));
+
+    // FRAMEBUFFER and DRAW_FRAMEBUFFER name the draw binding, which is a content framebuffer.
+    gl->framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, rbo);
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+    EXPECT_EQ(gl->checkFramebufferStatus(GL::DRAW_FRAMEBUFFER), static_cast<GCGLenum>(GL::FRAMEBUFFER_COMPLETE));
+    gl->framebufferRenderbuffer(GL::DRAW_FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, 0);
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+    EXPECT_EQ(gl->getFramebufferAttachmentParameteri(GL::DRAW_FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE), static_cast<GCGLint>(GL::NONE));
+
+    // Once the default framebuffer is the draw binding too, the same calls are rejected.
+    gl->bindFramebuffer(GL::DRAW_FRAMEBUFFER, 0);
+    gl->framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, 0);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    gl->framebufferRenderbuffer(GL::DRAW_FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, 0);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+}
+
 TEST_P(AnyContextAttributeTest, DisplayBuffersAreRecycled)
 {
     auto context = createTestContext({ 20, 20 });
@@ -1286,6 +1329,87 @@ TEST_P(AnyContextAttributeTest, WebXRBlitTest)
     EXPECT_TRUE(gl->getErrors().isEmpty());
 }
 #endif
+
+// The default framebuffer is emulated with an internal FBO. Content must not be able to change
+// its attachments: detaching the color buffer would make the internal drawing buffer readback
+// fail and expose uninitialized memory.
+TEST_P(AnyContextAttributeTest, DefaultFramebufferAttachmentsAreNotMutable)
+{
+    using GL = GraphicsContextGL;
+    auto gl = createTestContext({ 10, 10 });
+    ASSERT_NE(gl, nullptr);
+    gl->clearColor(0.f, 1.f, 0.f, 1.f);
+    gl->clear(GL::COLOR_BUFFER_BIT);
+    ASSERT_TRUE(gl->getErrors().isEmpty());
+
+    gl->bindFramebuffer(GL::FRAMEBUFFER, 0);
+    ASSERT_TRUE(gl->getErrors().isEmpty());
+
+    gl->framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, 0);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+
+    gl->framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, 0, 0);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+
+    if (isWebGL2()) {
+        gl->framebufferTextureLayer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, 0, 0, 0);
+        EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    }
+
+    // The color attachment is still there, and the drawing buffer still reads back.
+    EXPECT_NE(gl->getFramebufferAttachmentParameteri(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE), static_cast<GCGLint>(GL::NONE));
+    EXPECT_EQ(gl->checkFramebufferStatus(GL::FRAMEBUFFER), static_cast<GCGLenum>(GL::FRAMEBUFFER_COMPLETE));
+    RefPtr drawingImage = gl->copyNativeImage(GL::SurfaceBuffer::DrawingBuffer);
+    ASSERT_NE(drawingImage, nullptr);
+    EXPECT_EQ(drawingImage->size(), FloatSize(10, 10));
+    EXPECT_TRUE(nativeImagePixelsIs(Color::green, *drawingImage, FloatPoint(5, 5)));
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+}
+
+// The same, without ever calling bindFramebuffer: the internal FBO is bound from context
+// creation onwards, so the gate must hold on the initial binding state too.
+TEST_P(AnyContextAttributeTest, DefaultFramebufferAttachmentsAreNotMutableWithoutBind)
+{
+    using GL = GraphicsContextGL;
+    auto gl = createTestContext({ 10, 10 });
+    ASSERT_NE(gl, nullptr);
+    gl->clearColor(0.f, 1.f, 0.f, 1.f);
+    gl->clear(GL::COLOR_BUFFER_BIT);
+    ASSERT_TRUE(gl->getErrors().isEmpty());
+
+    gl->framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, 0);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    gl->framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, 0, 0);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+
+    EXPECT_NE(gl->getFramebufferAttachmentParameteri(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE), static_cast<GCGLint>(GL::NONE));
+    RefPtr drawingImage = gl->copyNativeImage(GL::SurfaceBuffer::DrawingBuffer);
+    ASSERT_NE(drawingImage, nullptr);
+    EXPECT_TRUE(nativeImagePixelsIs(Color::green, *drawingImage, FloatPoint(5, 5)));
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+}
+
+// The same calls must still work for framebuffers the content created itself.
+TEST_P(AnyContextAttributeTest, UserFramebufferAttachmentsAreMutable)
+{
+    using GL = GraphicsContextGL;
+    auto gl = createTestContext({ 10, 10 });
+    ASSERT_NE(gl, nullptr);
+    auto fbo = gl->createFramebuffer();
+    auto rbo = gl->createRenderbuffer();
+    gl->bindFramebuffer(GL::FRAMEBUFFER, fbo);
+    gl->bindRenderbuffer(GL::RENDERBUFFER, rbo);
+    gl->renderbufferStorage(GL::RENDERBUFFER, isWebGL2() ? GL::RGBA8 : GL::RGBA4, 10, 10);
+    ASSERT_TRUE(gl->getErrors().isEmpty());
+
+    gl->framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, rbo);
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+    EXPECT_EQ(gl->checkFramebufferStatus(GL::FRAMEBUFFER), static_cast<GCGLenum>(GL::FRAMEBUFFER_COMPLETE));
+
+    gl->framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, 0);
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+    EXPECT_EQ(gl->getFramebufferAttachmentParameteri(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE), static_cast<GCGLint>(GL::NONE));
+}
 
 static std::string anyContextAttributeTestName(const testing::TestParamInfo<AnyContextAttributeTest::ParamType>& info)
 {
