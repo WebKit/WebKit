@@ -1,0 +1,86 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function navigateCrossOrigin() {
+    // Toggle the host so the same test page reloads at a cross-origin host, forcing a main-frame
+    // process swap under Site Isolation while keeping the frontend test harness alive.
+    location.hostname = location.hostname === "127.0.0.1" ? "localhost" : "127.0.0.1";
+}
+
+function test() {
+    // The targets in WI.targets that have Page.setEmulatedMedia, like the Web Inspector Print Styles
+    // toggle. Under Site Isolation this is the main page target only.
+    function pageTargets() {
+        return WI.targets.filter((target) => target.hasCommand("Page.setEmulatedMedia"));
+    }
+
+    async function navigateAndGetSwappedMainFrameTarget() {
+        // A cross-origin MAIN-frame navigation swaps the page into a new WebContent process under
+        // Site Isolation; the frontend observes the swapped-in main-frame target when its
+        // provisional page commits.
+        let committedPromise = new Promise((resolve) => {
+            function handle(event) {
+                let { target } = event.data;
+                if (target.type === WI.TargetType.Frame) {
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, handle);
+                    resolve(target);
+                }
+            }
+            WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, handle);
+        });
+
+        InspectorTest.deferOutputUntilTestPageIsReloaded();
+        InspectorTest.evaluateInPage("navigateCrossOrigin()");
+
+        let target = await committedPromise;
+        if (!target.executionContext)
+            await target.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
+        return target;
+    }
+
+    async function matchesPrintInTarget(target) {
+        // The target commits before its document has finished loading and instrumentation is in
+        // place; wait for load before reading the media state.
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: "new Promise(resolve => { if (document.readyState === 'complete') resolve(); else window.addEventListener('load', resolve); })",
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+
+        let response = await target.RuntimeAgent.evaluate.invoke({expression: `matchMedia("print").matches`, objectGroup: "test", returnByValue: true});
+        return response.result.value;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetEmulatedMediaProcessSwapPageTarget");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMedia.ProcessSwapKeepsPageTargetOverride",
+        description: "An emulated media override set on the page target should survive a cross-origin main-frame navigation. The old process's page target is torn down by the swap, and that teardown must not clear the override in the page's other processes.",
+        async test() {
+            InspectorTest.log("Setting emulated media to print on the page target before the cross-origin main-frame navigation...");
+            for (let pageTarget of pageTargets())
+                await pageTarget.PageAgent.setEmulatedMedia("print");
+
+            InspectorTest.log("Navigating the main frame cross-origin to force a process swap...");
+            let target = await navigateAndGetSwappedMainFrameTarget();
+
+            let matchesPrint = await matchesPrintInTarget(target);
+            InspectorTest.expectTrue(matchesPrint, "Swapped-in main-frame process should observe the print media override.");
+
+            // A clear relayed by the old process's teardown would reach the UIProcess and be broadcast
+            // to the new process. Round-trip through the UIProcess before reading again.
+            await WI.backendTarget.PageAgent.getResourceTree();
+            let matchesPrintAfterRoundTrip = await matchesPrintInTarget(target);
+            InspectorTest.expectTrue(matchesPrintAfterRoundTrip, "Swapped-in main-frame process should still observe the print media override after a UIProcess round-trip.");
+
+            await WI.backendTarget.PageAgent.setEmulatedMedia("");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a Page.setEmulatedMedia override set on the page target survives a cross-origin main-frame navigation under site isolation.</p>
+</body>

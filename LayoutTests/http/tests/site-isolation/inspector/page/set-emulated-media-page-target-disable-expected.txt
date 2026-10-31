@@ -1,0 +1,32 @@
+Test that under site isolation an emulated-media override set on the page target is cleared in the main page and a cross-origin iframe when either target's Page domain is disabled.
+
+
+== Running test suite: SiteIsolation.Page.SetEmulatedMediaPageTargetDisable
+-- Running test case: SiteIsolation.Page.SetEmulatedMediaPageTargetDisable.DisableWebPageTarget
+PASS: Main page should start with screen styles (blue).
+PASS: Cross-origin iframe should start with screen styles (blue).
+Setting emulated media to print on the page target...
+PASS: Main page should switch to print styles (green).
+PASS: Cross-origin iframe should switch to print styles (green).
+Disabling the Page domain on the web-page target...
+PASS: Main page should revert to screen styles (blue).
+PASS: Cross-origin iframe should revert to screen styles (blue).
+
+-- Running test case: SiteIsolation.Page.SetEmulatedMediaPageTargetDisable.DisablePageTarget
+Setting emulated media to print on the page target...
+PASS: Main page should switch to print styles (green).
+PASS: Cross-origin iframe should switch to print styles (green).
+Disabling the Page domain on the page target...
+PASS: Main page should revert to screen styles (blue).
+PASS: Cross-origin iframe should revert to screen styles (blue).
+
+-- Running test case: SiteIsolation.Page.SetEmulatedMediaPageTargetDisable.SetWhileWebPageTargetDisabled
+Disabling the Page domain on the web-page target...
+Setting emulated media to print on the page target...
+Enabling the Page domain on the web-page target...
+PASS: Main page should have print styles (green).
+PASS: Cross-origin iframe should have print styles (green).
+Clearing emulated media on the page target...
+PASS: Main page should return to screen styles (blue).
+PASS: Cross-origin iframe should return to screen styles (blue).
+

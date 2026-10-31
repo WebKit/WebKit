@@ -1,0 +1,79 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/emulated-media-frame.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    async function addIFrameAndGetTarget() {
+        // Under Site Isolation, TargetAdded fires for the iframe's provisional about:blank target
+        // before the cross-origin document commits; evaluating then hits the empty realm. Await the
+        // committed target + its execution context, mirroring set-emulated-media-cross-origin-iframe.html.
+        let committedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+        InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+        let event = await committedPromise;
+        let target = event.data.target;
+        if (!target.executionContext)
+            await target.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
+        return target;
+    }
+
+    async function awaitDocumentLoadInTarget(target) {
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: "new Promise(resolve => { if (document.readyState === 'complete') resolve(); else window.addEventListener('load', resolve); })",
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+    }
+
+    async function matchesPrintInTarget(target) {
+        await awaitDocumentLoadInTarget(target);
+        let response = await target.RuntimeAgent.evaluate.invoke({expression: `matchMedia("print").matches`, objectGroup: "test", returnByValue: true});
+        return response.result.value;
+    }
+
+    async function getComputedColorInTarget(target) {
+        await awaitDocumentLoadInTarget(target);
+        let response = await target.RuntimeAgent.evaluate.invoke({expression: "window.getComputedStyle(document.body).getPropertyValue('color')", objectGroup: "test", returnByValue: true});
+        InspectorTest.assert(response.result.value, "Should be able to evaluate computed style in cross-origin target.");
+        return response.result.value;
+    }
+
+    // The late-joining process receives the override in its creation parameters, so it is in place
+    // before the frame's first commit and a single read after the document load observes it.
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetEmulatedMediaLateOOPIF");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMedia.LateJoiningProcessInheritsOverride",
+        description: "An emulated media override set before a cross-origin iframe is created should be in place in its newly-spawned process, so it observes the override without a reload.",
+        async test() {
+            InspectorTest.log("Setting emulated media to print before the cross-origin iframe exists...");
+            await WI.backendTarget.PageAgent.setEmulatedMedia("print");
+
+            InspectorTest.log("Adding cross-origin iframe into a new process...");
+            let target = await addIFrameAndGetTarget();
+            InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Added target should have Frame type.");
+
+            let matchesPrint = await matchesPrintInTarget(target);
+            InspectorTest.expectTrue(matchesPrint, "Late-joining cross-origin iframe process should observe the print media override.");
+
+            let color = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(color, "rgb(0, 128, 0)", "Late-joining cross-origin iframe should apply print styles (green).");
+
+            await WI.backendTarget.PageAgent.setEmulatedMedia("");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a Page.setEmulatedMedia override set before a cross-origin iframe is created is in place in the iframe's late-joining process under site isolation.</p>
+</body>

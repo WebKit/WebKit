@@ -1,0 +1,74 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<style>
+body { color: blue; }
+@media print {
+    body { color: green; }
+}
+</style>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+// When page instrumentation is enabled, each already-committed frame re-evaluates its media queries
+// under any override the process holds, which runs change listeners synchronously. This listener in
+// the main frame removes a frame later in that iteration.
+function armRemoveLaterFrame() {
+    matchMedia("print").addEventListener("change", () => {
+        document.getElementById("later").remove();
+        TestPage.dispatchEventToFrontend("LaterFrameRemoved");
+    }, { once: true });
+}
+
+function frameCount() {
+    return document.querySelectorAll("iframe").length;
+}
+
+function test() {
+    function pageTargets() {
+        return WI.targets.filter((target) => target.hasCommand("Page.setEmulatedMedia"));
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetEmulatedMediaEnableDetach");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMediaEnableDetach.ListenerRemovesLaterFrame",
+        description: "A media query change listener that removes a later frame while page instrumentation is being enabled should not crash.",
+        async test() {
+            // With both Page domains disabled, nothing reads the override, so the frames keep resolving
+            // screen media while this process stores print. The web-page target's Page.enable then
+            // applies it to each existing frame in turn.
+            InspectorTest.log("Disabling the Page domain on both targets...");
+            await WI.backendTarget.PageAgent.disable();
+            for (let pageTarget of pageTargets())
+                await pageTarget.PageAgent.disable();
+
+            for (let pageTarget of pageTargets())
+                await pageTarget.PageAgent.setEmulatedMedia("print");
+
+            InspectorTest.expectEqual(await InspectorTest.evaluateInPage("frameCount()"), 2, "Page should start with two same-origin iframes.");
+
+            await InspectorTest.evaluateInPage("armRemoveLaterFrame()");
+            let laterFrameRemoved = InspectorTest.awaitEvent("LaterFrameRemoved");
+
+            InspectorTest.log("Enabling the Page domain on the web-page target...");
+            await WI.backendTarget.PageAgent.enable();
+            await laterFrameRemoved;
+
+            InspectorTest.expectEqual(await InspectorTest.evaluateInPage("frameCount()"), 1, "Listener should have removed the later iframe.");
+
+            InspectorTest.pass("Page should survive enabling Page instrumentation while a frame is removed.");
+
+            for (let pageTarget of pageTargets()) {
+                await pageTarget.PageAgent.enable();
+                await pageTarget.PageAgent.setEmulatedMedia("");
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that removing a frame from a media query change listener while page instrumentation is enabled does not crash under site isolation.</p>
+<iframe id="earlier" srcdoc="<p>earlier</p>"></iframe>
+<iframe id="later" srcdoc="<p>later</p>"></iframe>
+</body>

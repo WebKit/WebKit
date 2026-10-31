@@ -1,0 +1,14 @@
+Test that the Web Inspector Print Styles toggle, which calls Page.setEmulatedMedia on the main page target, reaches cross-origin iframes under site isolation.
+
+
+== Running test suite: SiteIsolation.Page.SetEmulatedMediaPrintStylesToggle
+-- Running test case: SiteIsolation.Page.SetEmulatedMediaPrintStylesToggle.ReachesCrossOriginIFrame
+PASS: Cross-origin iframe should start with screen styles (blue).
+PASS: The web-page backend target should not be in WI.targets.
+Toggling Print Styles on...
+PASS: Print Styles toggle should invoke Page.setEmulatedMedia on exactly one target (the main page target).
+PASS: Main page should have print styles (green).
+PASS: Cross-origin iframe should switch to print styles (green).
+Toggling Print Styles off...
+PASS: Cross-origin iframe should return to screen styles (blue).
+

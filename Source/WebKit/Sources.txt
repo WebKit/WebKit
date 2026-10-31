@@ -615,6 +615,7 @@ UIProcess/Inspector/WebInspectorUtilities.cpp
 UIProcess/Inspector/WebPageDebuggable.cpp
 UIProcess/Inspector/WebPageInspectorController.cpp
 
+UIProcess/Inspector/Agents/InspectorBackendSyncState.cpp
 UIProcess/Inspector/Agents/InspectorBrowserAgent.cpp
 UIProcess/Inspector/Agents/InspectorStorageAgent.cpp
 UIProcess/Inspector/Agents/ProxyingNetworkAgent.cpp
@@ -925,6 +926,7 @@ WebProcess/WebCoreSupport/WebStorageConnection.cpp
 WebProcess/WebCoreSupport/WebWorkerClient.cpp
 
 WebProcess/WebPage/DrawingArea.cpp @cost:3
+WebProcess/WebPage/EmulationManager.cpp
 WebProcess/WebPage/EventDispatcher.cpp @cost:3
 WebProcess/WebPage/FindIndicator.cpp
 WebProcess/WebPage/FindController.cpp @cost:3
