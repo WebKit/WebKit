@@ -56,11 +56,14 @@ double resolveLengthForCalc(double value, CSS::LengthUnit, const CSSToLengthConv
 // Only valid for absolute length units (Px, Cm, Mm, Q, In, Pt, Pc).
 double LEGACY_NODELETE resolveLength(double value, CSS::LengthUnit, NoConversionDataRequiredToken);
 
+// `rootFontCascadeForUnit` is used to resolve the root font relative units (Rem, Rex, Rcap, Rch, Ric).
+// Callers that have no separate root font should pass `fontCascadeForUnit` for both.
+//
 // If `RenderView` is nullptr, the following LengthUnits will all cause a return value of zero:
 //    Vw, Vh, Vb, Vi, Svw, Svh, Svb, Svi, Lvw, Lvh, Lvb, Lvi, Dvw, Dvh, Dvb, Dvi (width/height/block/inline viewport-percentage units)
 // and the following LengthUnits will all cause a return value of `value`:
 //    Vmin, Vmax, Svmin, Svmax, Lvmin, Lvmax, Dvmin, Dvmax (min/max viewport-percentage units)
-double resolveLength(double value, CSS::LengthUnit, CSSPropertyID, const FontCascade& fontCascadeForUnit, const RenderView*);
+double resolveLength(double value, CSS::LengthUnit, CSSPropertyID, const FontCascade& fontCascadeForUnit, const FontCascade& rootFontCascadeForUnit, const RenderView*);
 
 // True if `resolveLength` would produce identical results when resolved against both these styles.
 bool equalForLengthResolution(const ComputedStyle&, const ComputedStyle&);

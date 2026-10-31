@@ -420,6 +420,7 @@ struct CSSToLengthConversionDataAdaptor {
 struct DirectDataAdaptor {
     CSSPropertyID propertyToCompute;
     const FontCascade& fontCascadeForUnit;
+    const FontCascade& rootFontCascadeForUnit;
     const RenderView* renderViewForUnit;
 
     void LEGACY_NODELETE setUsesViewportUnits() const
@@ -453,7 +454,7 @@ struct DirectDataAdaptor {
 
     const FontCascade& LEGACY_NODELETE fontCascadeForRootFontUnits() const
     {
-        return fontCascadeForUnit;
+        return rootFontCascadeForUnit;
     }
 
     const ComputedStyle* LEGACY_NODELETE styleForLineHeightUnits() const
@@ -688,11 +689,12 @@ double resolveLength(double value, CSS::LengthUnit lengthUnit, const CSSToLength
     });
 }
 
-double resolveLength(double value, CSS::LengthUnit lengthUnit, CSSPropertyID propertyToCompute, const FontCascade& fontCascadeForUnit, const RenderView* renderViewForUnit)
+double resolveLength(double value, CSS::LengthUnit lengthUnit, CSSPropertyID propertyToCompute, const FontCascade& fontCascadeForUnit, const FontCascade& rootFontCascadeForUnit, const RenderView* renderViewForUnit)
 {
     return resolveLengthApplyingTextZoom(value, lengthUnit, DirectDataAdaptor {
         .propertyToCompute = propertyToCompute,
         .fontCascadeForUnit = fontCascadeForUnit,
+        .rootFontCascadeForUnit = rootFontCascadeForUnit,
         .renderViewForUnit = renderViewForUnit,
     });
 }

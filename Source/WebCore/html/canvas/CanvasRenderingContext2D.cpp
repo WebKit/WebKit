@@ -242,7 +242,15 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
         fontDescription.setUsedSize(DefaultFontSize);
     }
 
-    if (newFont == state().unparsedFont && state().font.realized() && fontDescription == state().fontResolutionBase)
+    // Root font relative values ('rem', 'rex', ...) additionally depend on the root element's font.
+    // When there is no root font, they resolve against `fontDescription` and are covered by it.
+    // See https://github.com/whatwg/html/issues/10893 for the open question of how non-absolute
+    // <length> values should behave here.
+    CheckedPtr rootFontCascade = Style::rootFontCascadeForRootFontUnits(document.get());
+
+    if (newFont == state().unparsedFont && state().font.realized()
+        && fontDescription == state().fontResolutionBase
+        && (!rootFontCascade || rootFontCascade->fontDescription() == state().rootFontResolutionBase))
         return;
 
     // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
@@ -264,6 +272,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     realizeSaves();
     modifiableState().unparsedFont = newFontSafeCopy;
     modifiableState().fontResolutionBase = WTF::move(fontDescription);
+    modifiableState().rootFontResolutionBase = rootFontCascade ? rootFontCascade->fontDescription() : FontCascadeDescription { };
 
     modifiableState().font.initialize(protect(document->fontSelector()), protect(*fontCascade));
     ASSERT(state().font.realized());
