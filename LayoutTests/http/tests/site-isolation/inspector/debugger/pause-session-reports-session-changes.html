@@ -1,0 +1,94 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+function pauseHere()
+{
+    debugger;
+    return "resumed";
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseSessionReportsSessionChanges");
+
+    let mainTarget;
+    let frameATarget;
+    let sessionID;
+
+    function describeStoppingTargets(stoppingTargetIds) {
+        let names = {[mainTarget.identifier]: "main frame", [frameATarget.identifier]: "frame A"};
+        return stoppingTargetIds.map((id) => names[id] || id).sort().join(", ") || "none";
+    }
+
+    function awaitSessionState(state, stoppingTargetNames) {
+        return GlobalPause.awaitSessionEvent((data) => data.state === state && describeStoppingTargets(data.stoppingTargetIds) === stoppingTargetNames);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionReportsSessionChanges.Setup",
+        description: "Find the frame targets of the main frame and of the cross-site iframe.",
+        async test() {
+            mainTarget = InspectorTest.mainFrameTarget;
+            frameATarget = await frameTargetForURLContaining("same-process-frame.html?A");
+            InspectorTest.expectNotNull(frameATarget, "Should find the frame target for frame A.");
+            InspectorTest.expectNotNull(GlobalPause.pageTarget(), "Should find the target that serves the Target domain.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionReportsSessionChanges.OpenWithStoppingFrame",
+        description: "Pausing a frame should open a session that names it as the stopping frame.",
+        async test() {
+            let opened = awaitSessionState("paused", "frame A");
+            await GlobalPause.pause(frameATarget);
+            let data = await opened;
+            sessionID = data.sessionId;
+            InspectorTest.expectEqual(typeof data.timestamp, "number", "The event should carry a timestamp.");
+            InspectorTest.expectNotNull(WI.debuggerManager.pauseSession, "DebuggerManager should know the session.");
+            InspectorTest.expectEqual(WI.debuggerManager.pauseSession.sessionId, sessionID, "DebuggerManager should know the session by the same ID.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionReportsSessionChanges.SecondStoppingFrame",
+        description: "Pausing a frame that the session holds should add it to the same session.",
+        async test() {
+            let changed = awaitSessionState("paused", "frame A, main frame");
+            await GlobalPause.pause(mainTarget);
+            let data = await changed;
+            InspectorTest.expectEqual(data.sessionId, sessionID, "The session ID should not change.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionReportsSessionChanges.OneFrameResumes",
+        description: "A stopping frame that resumes should leave the session open.",
+        async test() {
+            let changed = awaitSessionState("paused", "frame A");
+            await mainTarget.DebuggerAgent.resume();
+            let data = await changed;
+            InspectorTest.expectEqual(data.sessionId, sessionID, "The session ID should not change.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionReportsSessionChanges.Close",
+        description: "Resuming the last stopping frame should close the session.",
+        async test() {
+            let closed = awaitSessionState("closed", "none");
+            await frameATarget.DebuggerAgent.resume();
+            let data = await closed;
+            InspectorTest.expectEqual(data.sessionId, sessionID, "The session ID should not change.");
+            InspectorTest.expectNull(WI.debuggerManager.pauseSession, "DebuggerManager should not know a session.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that the page target reports the pause session opening, the frames it is stopped in changing, and closing.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?A"></iframe>
+</body>

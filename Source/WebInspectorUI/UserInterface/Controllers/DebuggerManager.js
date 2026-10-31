@@ -66,6 +66,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         WI.SourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, this._handleSourceCodeSourceMapAdded, this);
 
+        this._pauseSession = null;
+
         this._breakpointsEnabledSetting = new WI.Setting("breakpoints-enabled", true);
         this._asyncStackTraceDepthSetting = new WI.Setting("async-stack-trace-depth", 200);
 
@@ -351,6 +353,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         }
 
         return false;
+    }
+
+    get pauseSession()
+    {
+        return this._pauseSession;
     }
 
     get activeCallFrame()
@@ -1123,6 +1130,13 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     debuggerDidResume(target)
     {
         this._didResumeInternal(target);
+    }
+
+    debuggerPauseSessionChanged(sessionId, state, stoppingTargetIds, timestamp)
+    {
+        let isPaused = state === InspectorBackend.Enum.Target.DebuggerPauseSessionState.Paused;
+        this._pauseSession = isPaused ? {sessionId, stoppingTargetIds, timestamp} : null;
+        this.dispatchEventToListeners(WI.DebuggerManager.Event.PauseSessionChanged, {sessionId, state, stoppingTargetIds, timestamp});
     }
 
     playBreakpointActionSound(breakpointActionIdentifier)
@@ -1913,6 +1927,7 @@ WI.DebuggerManager.Event = {
     ProbeSetAdded: "debugger-manager-probe-set-added",
     ProbeSetRemoved: "debugger-manager-probe-set-removed",
     BlackboxChanged: "blackboxed-urls-changed",
+    PauseSessionChanged: "debugger-manager-pause-session-changed",
 };
 
 WI.DebuggerManager.PauseReason = {

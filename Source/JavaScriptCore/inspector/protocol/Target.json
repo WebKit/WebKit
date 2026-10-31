@@ -13,6 +13,12 @@
                 { "name": "isProvisional", "type": "boolean", "optional": true, "description": "Whether this is a provisional page target." },
                 { "name": "isPaused", "type": "boolean", "optional": true, "description": "Whether the target is paused on start and has to be explicitely resumed by inspector." }
             ]
+        },
+        {
+            "id": "DebuggerPauseSessionState",
+            "type": "string",
+            "enum": ["paused", "closed"],
+            "description": "State of the page's debugger pause session. While a session is paused, every frame of the page in every process is either stopped or held."
         }
     ],
     "commands": [
@@ -58,6 +64,16 @@
             "parameters": [
                 { "name": "oldTargetId", "type": "string", "description": "ID of the old target that is swapped with the committed one." },
                 { "name": "newTargetId", "type": "string", "description": "ID of the committed target." }
+            ]
+        },
+        {
+            "name": "debuggerPauseSessionChanged",
+            "description": "Fired when the page's debugger pause session opens, when the frames it is stopped in change, and when it closes.",
+            "parameters": [
+                { "name": "sessionId", "type": "string", "description": "Identifies the session from the event that opens it to the event that closes it." },
+                { "name": "state", "$ref": "DebuggerPauseSessionState" },
+                { "name": "stoppingTargetIds", "type": "array", "items": { "type": "string" }, "description": "Targets of the frames that are stopped. Every other frame of the page is held." },
+                { "name": "timestamp", "type": "number", "description": "Monotonic time in seconds, comparable only with the timestamps of other debuggerPauseSessionChanged events." }
             ]
         },
         {

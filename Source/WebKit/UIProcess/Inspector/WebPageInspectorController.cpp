@@ -213,6 +213,12 @@ void WebPageInspectorController::setIndicating(bool indicating)
 }
 #endif
 
+void WebPageInspectorController::debuggerPauseSessionDidChange(WebCore::DebuggerPauseSessionIdentifier sessionID, bool isPaused, const Vector<String>& stoppingTargetIDs)
+{
+    if (CheckedPtr targetAgent = m_targetAgent)
+        targetAgent->debuggerPauseSessionChanged(String::number(sessionID.toUInt64()), isPaused, stoppingTargetIDs, MonotonicTime::now().secondsSinceEpoch().seconds());
+}
+
 void WebPageInspectorController::sendMessageToInspectorFrontend(const String& targetId, const String& message)
 {
     if (!m_targets.contains(targetId)) {

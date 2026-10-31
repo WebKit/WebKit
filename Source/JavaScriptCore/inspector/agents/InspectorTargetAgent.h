@@ -61,6 +61,8 @@ public:
     void targetDestroyed(InspectorTarget&);
     void didCommitProvisionalTarget(const String& oldTargetID, const String& committedTargetID);
 
+    void debuggerPauseSessionChanged(const String& sessionID, bool isPaused, const Vector<String>& stoppingTargetIDs, double timestamp);
+
     // Target messages.
     void sendMessageFromTargetToFrontend(const String& targetId, const String& message);
 
