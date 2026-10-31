@@ -214,7 +214,7 @@ auto SVGImage::documentStateForDraw(ConcreteObjectSize concreteObjectSize, Image
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     auto invert = options.invertContent();
-    state.invertContent = invert == InvertContent::FromResource ? m_fallbackInvertContent : invert == InvertContent::Yes;
+    state.invertContent = invert == InvertContent::FromResource ? m_fallbackInvertContent : invert == InvertContent::Yes || invert == InvertContent::Forced;
 #else
     UNUSED_PARAM(options);
 #endif

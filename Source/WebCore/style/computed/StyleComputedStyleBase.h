@@ -67,6 +67,9 @@ enum class CSSPropertyID : uint16_t;
 enum class AlignmentBaseline : uint8_t;
 enum class ApplePayButtonStyle : uint8_t;
 enum class ApplePayButtonType : uint8_t;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+enum class AppleColorFilterOverride : uint8_t;
+#endif
 enum class AppleVisualEffect : uint8_t;
 enum class BackfaceVisibility : uint8_t;
 enum class BaselineSource : uint8_t;
@@ -556,6 +559,11 @@ public:
 #if ENABLE(SMART_IMAGE_RESIZER)
     inline bool isAffectedBySmartImageResizer() const;
     inline void setIsAffectedBySmartImageResizer(bool);
+#endif
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    inline AppleColorFilterOverride appleColorFilterOverride() const;
+    inline void setAppleColorFilterOverride(AppleColorFilterOverride);
 #endif
 
     inline bool isEffectivelyTransparent() const; // This or any ancestor has opacity 0.

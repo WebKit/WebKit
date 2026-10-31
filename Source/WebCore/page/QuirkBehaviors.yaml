@@ -36,6 +36,9 @@
 #   export              Adds WEBCORE_EXPORT to the declaration.
 #   implementation      "custom" if the accessor is hand-written in Quirks. Only custom behaviors may set parameters
 #   parameters          QuirkParametersNeeded
+#
+# WebKitAdditions can declare more behaviors in QuirkBehaviorsAdditions.yaml, in this format, and add rows
+# that use them after those in QuirkTable.json.
 
 # espn.com: rdar://problem/95651814
 AllowLayeredFullscreenVideos:

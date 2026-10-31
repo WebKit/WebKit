@@ -291,7 +291,12 @@ void CrossfadeImage::drawCrossfade(GraphicsContext& context, const RenderElement
             Ref image = *input.image;
             ImageDrawingOptions inputOptions;
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-            inputOptions = ImageDrawingOptions { AXCustomColorModeController::shouldInvertSVGImage(renderer, image) ? InvertContent::Yes : InvertContent::No };
+            auto invertContent = [&] {
+                if (AXCustomColorModeController::shouldForceInvertBitmapImage(renderer, image))
+                    return InvertContent::Forced;
+                return AXCustomColorModeController::shouldInvertSVGImage(renderer, image) ? InvertContent::Yes : InvertContent::No;
+            };
+            inputOptions = ImageDrawingOptions { invertContent() };
 #endif
             drawCrossfadeInput(context, renderer, image, inputOptions, operation, percentage / 100, concreteObjectSize, isForFirstLine);
             operation = CompositeOperator::PlusLighter;

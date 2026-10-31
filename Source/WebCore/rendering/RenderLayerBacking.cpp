@@ -4056,6 +4056,12 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
         return false;
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    // A directly composited image is never painted, so it could not be inverted.
+    if (RefPtr styleImage = imageRenderer->imageResource().styleImage(); styleImage && AXCustomColorModeController::shouldForceInvertBitmapImage(*imageRenderer, *styleImage))
+        return false;
+#endif
+
     if (RefPtr cachedImage = imageRenderer->cachedImage()) {
         if (!cachedImage->hasImage())
             return false;

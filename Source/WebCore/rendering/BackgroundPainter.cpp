@@ -566,10 +566,12 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
             auto invertContent = [&] {
                 if (bgImage->drawsSVGImage())
-                    return AXCustomColorModeController::shouldInvertSVGImage(clientForBackgroundImage, *bgImage);
+                    return AXCustomColorModeController::shouldInvertSVGImage(clientForBackgroundImage, *bgImage) ? InvertContent::Yes : InvertContent::No;
                 if constexpr (std::is_same_v<Layer, Style::MaskLayer>)
-                    return false;
-                return AXCustomColorModeController::shouldInvertBackgroundImage(clientForBackgroundImage, *bgImage, geometry.destinationRect.size(), geometry.tileSize);
+                    return InvertContent::No;
+                if (AXCustomColorModeController::shouldForceInvertBitmapImage(clientForBackgroundImage, *bgImage))
+                    return InvertContent::Forced;
+                return AXCustomColorModeController::shouldInvertBackgroundImage(clientForBackgroundImage, *bgImage, geometry.destinationRect.size(), geometry.tileSize) ? InvertContent::Yes : InvertContent::No;
             };
 #endif
 
@@ -582,7 +584,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                 layer.layer.maskMode() == Style::MaskMode::Luminance ? DrawLuminanceMask::Yes : DrawLuminanceMask::No,
                 document().settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-                invertContent() ? InvertContent::Yes : InvertContent::No,
+                invertContent(),
 #endif
                 document().settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
                 document().settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,

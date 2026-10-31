@@ -140,6 +140,9 @@ InheritedRareData::InheritedRareData()
 #if ENABLE(SMART_IMAGE_RESIZER)
     , isAffectedBySmartImageResizer(false)
 #endif
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    , appleColorFilterOverride(static_cast<unsigned>(AppleColorFilterOverride::None))
+#endif
 #if HAVE(CORE_MATERIAL)
     , usedAppleVisualEffectForSubtree(static_cast<unsigned>(AppleVisualEffect::None))
 #endif
@@ -254,6 +257,9 @@ inline InheritedRareData::InheritedRareData(const InheritedRareData& o)
 #if ENABLE(SMART_IMAGE_RESIZER)
     , isAffectedBySmartImageResizer(o.isAffectedBySmartImageResizer)
 #endif
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    , appleColorFilterOverride(o.appleColorFilterOverride)
+#endif
 #if HAVE(CORE_MATERIAL)
     , usedAppleVisualEffectForSubtree(o.usedAppleVisualEffectForSubtree)
 #endif
@@ -367,6 +373,9 @@ bool InheritedRareData::operator==(const InheritedRareData& o) const
         && inBaseAppearanceSubtree == o.inBaseAppearanceSubtree
 #if ENABLE(SMART_IMAGE_RESIZER)
         && isAffectedBySmartImageResizer == o.isAffectedBySmartImageResizer
+#endif
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        && appleColorFilterOverride == o.appleColorFilterOverride
 #endif
 #if HAVE(CORE_MATERIAL)
         && usedAppleVisualEffectForSubtree == o.usedAppleVisualEffectForSubtree
@@ -500,6 +509,9 @@ void InheritedRareData::dumpDifferences(TextStream& ts, const InheritedRareData&
     LOG_IF_DIFFERENT_WITH_CAST(bool, inBaseAppearanceSubtree);
 #if ENABLE(SMART_IMAGE_RESIZER)
     LOG_IF_DIFFERENT_WITH_CAST(bool, isAffectedBySmartImageResizer);
+#endif
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    LOG_IF_DIFFERENT_WITH_CAST(AppleColorFilterOverride, appleColorFilterOverride);
 #endif
 
 #if HAVE(CORE_MATERIAL)

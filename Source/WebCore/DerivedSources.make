@@ -2637,6 +2637,8 @@ QUIRK_BEHAVIORS_INPUT_FILES = \
     $(WebCore)/page/QuirkBuildConditions.yaml \
 #
 
+QUIRK_BEHAVIORS_ADDITIONS = $(firstword $(wildcard $(addsuffix /QuirkBehaviorsAdditions.yaml, $(WEBKITADDITIONS_HEADER_SEARCH_PATHS))))
+
 GENERATE_QUIRK_BEHAVIORS = \
     QuirkBehaviorDeclarations.cpp \
     QuirkBehaviorDeclarations.h \
@@ -2654,8 +2656,8 @@ QUIRK_BEHAVIORS_STAMP = .quirk-behaviors-stamp
 
 all : $(GENERATE_QUIRK_BEHAVIORS)
 
-$(QUIRK_BEHAVIORS_STAMP) : $(GENERATE_QUIRK_BEHAVIORS_TEMPLATES) $(QUIRK_BEHAVIORS_INPUT_FILES) $(WebCore)/Scripts/GenerateQuirkBehaviors.rb
-	$(RUBY) $(WebCore)/Scripts/GenerateQuirkBehaviors.rb $(QUIRK_BEHAVIORS_INPUT_FILES) $(addprefix --template , $(GENERATE_QUIRK_BEHAVIORS_TEMPLATES))
+$(QUIRK_BEHAVIORS_STAMP) : $(GENERATE_QUIRK_BEHAVIORS_TEMPLATES) $(QUIRK_BEHAVIORS_INPUT_FILES) $(QUIRK_BEHAVIORS_ADDITIONS) $(WebCore)/Scripts/GenerateQuirkBehaviors.rb
+	$(RUBY) $(WebCore)/Scripts/GenerateQuirkBehaviors.rb $(QUIRK_BEHAVIORS_INPUT_FILES) $(addprefix --additions , $(QUIRK_BEHAVIORS_ADDITIONS)) $(addprefix --template , $(GENERATE_QUIRK_BEHAVIORS_TEMPLATES))
 	touch $(QUIRK_BEHAVIORS_STAMP)
 
 $(GENERATE_QUIRK_BEHAVIORS) : $(QUIRK_BEHAVIORS_STAMP)

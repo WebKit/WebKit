@@ -40,6 +40,12 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringParsingBuffer.h>
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/QuirkTableAdditions.h>)
+#include <WebKitAdditions/QuirkTableAdditions.h>
+#else
+static constexpr ASCIILiteral quirkTableAdditionsJSON { };
+#endif
+
 namespace WebCore {
 
 bool Quirk::appliesTo(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument isTopDocument) const
@@ -606,6 +612,19 @@ String QuirkTableParseError::description() const
     return builder.toString();
 }
 
+static QuirkTable parseQuirkTableWithErrorLogging(StringView json, ASCIILiteral name)
+{
+    UNUSED_PARAM(name);
+
+    auto result = parseQuirkTable(json);
+    for (auto& error : result.errors) {
+        UNUSED_VARIABLE(error); // RELEASE_LOG_ERROR compiles away on ports without logging.
+        RELEASE_LOG_ERROR(Loading, "%" PUBLIC_LOG_STRING ": %" PUBLIC_LOG_STRING, name.characters(), error.description().utf8());
+    }
+    ASSERT_WITH_MESSAGE(result.errors.isEmpty(), "%s has errors; see the log", name.characters());
+    return WTF::move(result.table);
+}
+
 static QuirkTable loadQuirkTable()
 {
     auto json = loadQuirkTableJSON();
@@ -614,13 +633,10 @@ static QuirkTable loadQuirkTable()
         return { };
     }
 
-    auto result = parseQuirkTable(json);
-    for (auto& error : result.errors) {
-        UNUSED_VARIABLE(error); // RELEASE_LOG_ERROR compiles away on ports without logging.
-        RELEASE_LOG_ERROR(Loading, "QuirkTable.json: %" PUBLIC_LOG_STRING, error.description().utf8());
-    }
-    ASSERT_WITH_MESSAGE(result.errors.isEmpty(), "QuirkTable.json has errors; see the log");
-    return WTF::move(result.table);
+    auto table = parseQuirkTableWithErrorLogging(json, "QuirkTable.json"_s);
+    if (!quirkTableAdditionsJSON.isNull())
+        table.quirks.appendVector(parseQuirkTableWithErrorLogging(quirkTableAdditionsJSON, "QuirkTableAdditions"_s).quirks);
+    return table;
 }
 
 class QuirkTableHolder {
