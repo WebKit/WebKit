@@ -152,12 +152,14 @@ public:
     void stopAllTimers();
     void scrollPositionChanged();
 
-    bool startAnimatedScrollToDestination(FloatPoint startOffset, FloatPoint destinationOffset);
-    bool retargetAnimatedScroll(FloatPoint newDestinationOffset);
+    bool startAnimatedScrollToDestination(FloatPoint startOffset, FloatPoint destinationOffset, ScrollAnimationCurve = ScrollAnimationCurve::Default);
+    bool retargetAnimatedScroll(FloatPoint newDestinationOffset, ScrollAnimationCurve);
     bool retargetAnimatedScrollBy(FloatSize);
+    std::optional<FloatPoint> animatedScrollDestinationOffset() const;
 
     void stopAnimatedScroll();
     void stopAnimatedNonRubberbandingScroll();
+    void stopSpringAnimation();
 
     void stopKeyboardScrolling();
 
@@ -197,6 +199,10 @@ public:
     bool LEGACY_NODELETE isUserScrollInProgress() const;
 
 #if PLATFORM(MAC)
+    // Stops a running spring animation, or ignores the rest of a momentum scroll while one runs. Called before the wheel event
+    // scrolls anything, including for events with PlatformWheelEventPhase::MayBegin.
+    void handleWheelEventDuringSpringAnimation(const PlatformWheelEvent&);
+
     static FloatSize LEGACY_NODELETE wheelDeltaBiasingTowardsVertical(const FloatSize&);
     static bool LEGACY_NODELETE isScrollDeltaOpposingStretch(IntSize stretch, ScrollEventAxis, float delta);
 
@@ -223,6 +229,8 @@ public:
 #endif
 
 private:
+    bool isSpringAnimationRunning() const;
+
     void updateRubberBandAnimatingState();
 
     void setIsAnimatingRubberBand(bool);

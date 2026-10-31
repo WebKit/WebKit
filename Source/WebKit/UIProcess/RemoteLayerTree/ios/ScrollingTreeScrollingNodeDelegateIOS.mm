@@ -503,7 +503,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
-bool ScrollingTreeScrollingNodeDelegateIOS::startAnimatedScrollToPosition(FloatPoint scrollPosition)
+bool ScrollingTreeScrollingNodeDelegateIOS::startAnimatedScrollToPosition(FloatPoint scrollPosition, ScrollAnimationCurve)
 {
     auto scrollOffset = ScrollableArea::scrollOffsetFromPosition(scrollPosition, toFloatSize(scrollOrigin()));
 

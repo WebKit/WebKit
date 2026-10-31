@@ -155,6 +155,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheel
     auto deferrer = ScrollingTreeWheelEventTestMonitorCompletionDeferrer { *scrollingTree(), scrollingNode()->scrollingNodeID(), WheelEventTestMonitor::DeferReason::HandlingWheelEvent };
 
     updateUserScrollInProgressForEvent(wheelEvent);
+    m_scrollController.handleWheelEventDuringSpringAnimation(wheelEvent);
 
     // PlatformWheelEventPhase::MayBegin fires when two fingers touch the trackpad, and is used to flash overlay scrollbars.
     // We know we're scrollable at this point, so handle the event.

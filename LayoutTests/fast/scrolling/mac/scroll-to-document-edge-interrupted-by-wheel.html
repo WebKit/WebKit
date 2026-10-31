@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body {
+    height: 10000px;
+}
+</style>
+</head>
+<body>
+<script>
+description("Tests that touching the trackpad or scrolling stops an animated scroll to the end of the document.");
+jsTestIsAsync = true;
+
+var maxScrollY;
+
+async function startScrollingToEnd()
+{
+    window.scrollTo(0, 0);
+    await UIHelper.renderingUpdate();
+
+    const scrolled = new Promise(resolve => window.addEventListener("scroll", resolve, { once: true }));
+    await UIHelper.keyDown("end");
+    await scrolled;
+}
+
+async function runTest()
+{
+    maxScrollY = document.scrollingElement.scrollHeight - innerHeight;
+    eventSender.mouseMoveTo(100, 100);
+
+    debug("Scroll gesture");
+    await startScrollingToEnd();
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, "began", "none");
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, "changed", "none");
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+    shouldBeTrue("scrollY < maxScrollY");
+
+    debug("Touching the trackpad");
+    await startScrollingToEnd();
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "maybegin", "none");
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "cancelled", "none");
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+    shouldBeTrue("scrollY < maxScrollY");
+
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>

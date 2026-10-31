@@ -41,7 +41,6 @@
 #import <WebCore/WebEvent.h>
 #import <WebKit/UIKitSPI.h>
 #import <algorithm>
-#import <numbers>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -329,12 +328,12 @@ static NSString * const scrollToExtentWithAnimationKey = @"ScrollToExtentAnimati
 
         // See also: _smoothDecelerationAnimation() in UIKit.
         auto animation = [CASpringAnimation animationWithKeyPath:@"position"];
-        static constexpr auto angularFrequency = 2 * std::numbers::pi / 0.6;
-        animation.mass = 1;
-        animation.stiffness = angularFrequency * angularFrequency;
-        animation.damping = 2 * angularFrequency;
-        animation.duration = 1.6;
-        animation.timingFunction = [CAMediaTimingFunction functionWithControlPoints:0.0 :0.2 :1.0 :1.0];
+        animation.mass = WebCore::DocumentEdgeScrollSpring::mass;
+        animation.stiffness = WebCore::DocumentEdgeScrollSpring::stiffness;
+        animation.damping = 2 * WebCore::DocumentEdgeScrollSpring::angularFrequency * WebCore::DocumentEdgeScrollSpring::mass;
+        animation.duration = WebCore::DocumentEdgeScrollSpring::duration.seconds();
+        auto& controlPoints = WebCore::DocumentEdgeScrollSpring::timingFunctionControlPoints;
+        animation.timingFunction = [CAMediaTimingFunction functionWithControlPoints:controlPoints[0] :controlPoints[1] :controlPoints[2] :controlPoints[3]];
         animation.fromValue = [NSValue valueWithCGPoint:currentOffset];
         animation.toValue = [NSValue valueWithCGPoint:targetOffset];
 

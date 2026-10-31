@@ -244,6 +244,7 @@ header: <WebCore/ScrollbarTrackCornerSystemImageMac.h>
 #endif // USE(APPKIT)
 
 header: <WebCore/ScrollTypes.h>
+enum class WebCore::ScrollAnimationCurve : bool;
 enum class WebCore::ScrollIsAnimated : bool;
 enum class WebCore::ScrollbarRevealBehavior : bool;
 
@@ -2963,6 +2964,7 @@ enum class WebCore::ScrollType : bool;
     WebCore::ScrollType scrollType;
     WebCore::ScrollClamping clamping;
     WebCore::ScrollbarRevealBehavior scrollbarRevealBehavior;
+    WebCore::ScrollAnimationCurve animationCurve;
 }
 
 using WebCore::ScrollRequestData = Vector<WebCore::RequestedScrollData, 2>;

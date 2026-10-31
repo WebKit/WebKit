@@ -797,6 +797,8 @@ endforeach ()
 webkit_target_add_swift_options(TestWebKit "-Xcc -I${CMAKE_SOURCE_DIR}/Source")
 
 list(APPEND TestWebKit_SOURCES
+    Tests/WebCore/cocoa/ScrollAnimationSmoothTests.swift
+
     "Tests/WebKit/WebPage/AppKit Gesture Tests/AppKitGesturesTestsSupport.swift"
     "Tests/WebKit/WebPage/AppKit Gesture Tests/BasicAppKitGesturesTests.swift"
     "Tests/WebKit/WebPage/AppKit Gesture Tests/DoubleClickGesturesTests.swift"

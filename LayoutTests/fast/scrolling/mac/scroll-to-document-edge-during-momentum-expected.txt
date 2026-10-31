@@ -1,0 +1,17 @@
+Tests that scrolling to the start or end of the document during a momentum scroll ignores the rest of the momentum, so that it neither fights the animated scroll nor scrolls away from the edge afterwards.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Home
+PASS largestStepAwayFromEdge is 0
+PASS scrollY is edgeScrollY
+End
+PASS largestStepAwayFromEdge is 0
+PASS scrollY is edgeScrollY
+Momentum after scrolling to the edge
+PASS scrollY < scrollYAfterGesture is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -378,15 +378,21 @@ void ScrollingTreeScrollingNode::didStopWheelEventScroll()
         scrollingTree()->scrollingTreeNodeDidStopWheelEventScroll(*this);
 }
 
-bool ScrollingTreeScrollingNode::startAnimatedScrollToPosition(FloatPoint destinationPosition)
+bool ScrollingTreeScrollingNode::startAnimatedScrollToPosition(FloatPoint destinationPosition, ScrollAnimationCurve curve)
 {
-    return m_delegate ? m_delegate->startAnimatedScrollToPosition(destinationPosition) : false;
+    return m_delegate ? m_delegate->startAnimatedScrollToPosition(destinationPosition, curve) : false;
 }
 
 void ScrollingTreeScrollingNode::stopAnimatedScroll(EnumSet<AnimatedScrollType> scrollTypesToStop)
 {
     if (m_delegate)
         m_delegate->stopAnimatedScroll(scrollTypesToStop);
+}
+
+void ScrollingTreeScrollingNode::stopSpringAnimation()
+{
+    if (m_delegate)
+        m_delegate->stopSpringAnimation();
 }
 
 void ScrollingTreeScrollingNode::serviceScrollAnimation(MonotonicTime currentTime)
@@ -458,7 +464,7 @@ void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScro
 
     auto destinationPosition = requestedScrollData.destinationPosition(currentScrollPosition());
     if (isAnimatedUpdate(requestedScrollData.requestType)) {
-        startAnimatedScrollToPosition(destinationPosition);
+        startAnimatedScrollToPosition(destinationPosition, requestedScrollData.animationCurve);
         return;
     }
 

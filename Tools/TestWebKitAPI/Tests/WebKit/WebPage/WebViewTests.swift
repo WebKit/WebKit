@@ -59,6 +59,8 @@ private final class ViewModel {
     var viewportInitialScale: Float? = nil
 
     var attachments = Attachments()
+
+    var scrollPosition = ScrollPosition(edge: .top)
 }
 
 private struct TestView: View {
@@ -87,6 +89,19 @@ private struct TestView: View {
                     fatalError()
                 }
             }
+    }
+}
+
+private struct ScrollPositionTestView: View {
+    @Environment(ViewModel.self)
+    var model
+
+    var body: some View {
+        @Bindable
+        var model = model
+
+        WebView(model.page)
+            .webViewScrollPosition($model.scrollPosition)
     }
 }
 
@@ -171,6 +186,62 @@ struct WebViewTests {
         #expect(model.attachments.removed == [firstAttachment])
         #expect(model.attachments.inserted == [firstAttachment, secondAttachment])
     }
+
+    #if WTF_PLATFORM_MAC
+    @Test
+    func animatedScrollToEdgeUsesSpring() async throws {
+        let model = ViewModel()
+
+        render {
+            ScrollPositionTestView()
+                .frame(width: 500, height: 500)
+                .environment(model)
+        } observing: {
+            model.scrollPosition
+        }
+
+        let html = """
+            <body style='height: 10000px'>
+            <script>
+            window.scrollEndCount = 0;
+            window.scrollEndTime = new Promise(resolve => {
+                addEventListener('scrollend', () => {
+                    ++window.scrollEndCount;
+                    resolve(performance.now());
+                });
+            });
+            </script>
+            </body>
+            """
+
+        try await model.page.load(html: html).wait()
+        await model.page.waitForNextPresentationUpdate()
+
+        let startTime = try await model.page.callJavaScript(returning: Double.self) {
+            "return performance.now();"
+        }
+
+        withAnimation {
+            model.scrollPosition.scrollTo(edge: .bottom)
+        }
+
+        // The spring takes over a second to reach the bottom of this page, whereas other animated scrolls take at most 200ms.
+        let endTime = try await model.page.callJavaScript(returning: Double.self) {
+            "return await window.scrollEndTime;"
+        }
+        #expect(endTime - startTime > 400)
+
+        let isAtBottom = try await model.page.callJavaScript(returning: Bool.self) {
+            "return window.scrollY == document.scrollingElement.scrollHeight - innerHeight;"
+        }
+        #expect(isAtBottom)
+
+        let scrollEndCount = try await model.page.callJavaScript(returning: Int.self) {
+            "return window.scrollEndCount;"
+        }
+        #expect(scrollEndCount == 1)
+    }
+    #endif // WTF_PLATFORM_MAC
 
     #if WTF_PLATFORM_IOS_FAMILY
     @Test

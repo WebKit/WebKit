@@ -421,6 +421,7 @@
 		0F03C0751884805500A5F8CA /* InspectorOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C522D4A15B478B2009B7C95 /* InspectorOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F099D0917B968A100FF84B9 /* WebCoreTypedArrayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F099D0717B968A100FF84B9 /* WebCoreTypedArrayController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0E009C26F92D8400ACE9C6 /* ScrollAnimationMomentum.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0E009A26F92D7B00ACE9C6 /* ScrollAnimationMomentum.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9D86DC6FCFD9BDC3673BC4DD /* ScrollAnimationSmooth.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC692BE257C0F420098E3F9 /* ScrollAnimationSmooth.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F11781822E3C47F008BD570 /* FrameIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F11781622E3C47E008BD570 /* FrameIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F11A54F0F39233100C37884 /* RenderSelectionGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F11A54E0F39233100C37884 /* RenderSelectionGeometry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F13163E16ED0CC80035CC04 /* PlatformCAFilters.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F13163D16ED0CC80035CC04 /* PlatformCAFilters.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -48846,6 +48847,7 @@
 				1A05BAD7289A513500BF0D87 /* ScrollAnchoringController.h in Headers */,
 				0FA61B0E26F43213001AADB6 /* ScrollAnimation.h in Headers */,
 				0F0E009C26F92D8400ACE9C6 /* ScrollAnimationMomentum.h in Headers */,
+				9D86DC6FCFD9BDC3673BC4DD /* ScrollAnimationSmooth.h in Headers */,
 				CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */,
 				0F1774801378B772009DA76A /* ScrollAnimatorIOS.h in Headers */,
 				BCAE1FA712939DB7004CB026 /* ScrollAnimatorMac.h in Headers */,

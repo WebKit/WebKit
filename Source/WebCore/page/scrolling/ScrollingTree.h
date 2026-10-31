@@ -100,6 +100,11 @@ public:
     WEBCORE_EXPORT bool isUserScrollInProgressAtEventLocation(const PlatformWheelEvent&);
     WEBCORE_EXPORT OptionSet<WheelEventProcessingSteps> determineWheelEventProcessing(const PlatformWheelEvent&);
     WEBCORE_EXPORT virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps> = { });
+#if PLATFORM(MAC)
+    // Stops spring animations in the scroller under the wheel event and in the scrollers that enclose it. This hit tests the
+    // same way as handleWheelEvent(), so call it with the same locks held.
+    WEBCORE_EXPORT void stopSpringAnimationsForWheelEvent(const PlatformWheelEvent&);
+#endif
 
     bool LEGACY_NODELETE isRubberBandInProgressForNode(std::optional<ScrollingNodeID>);
     WEBCORE_EXPORT virtual void setRubberBandingInProgressForNode(ScrollingNodeID, bool);

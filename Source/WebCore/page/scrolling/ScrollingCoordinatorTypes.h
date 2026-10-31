@@ -126,6 +126,7 @@ struct RequestedScrollData {
     ScrollType scrollType { ScrollType::User };
     ScrollClamping clamping { ScrollClamping::Clamped };
     ScrollbarRevealBehavior scrollbarRevealBehavior { ScrollbarRevealBehavior::Default };
+    ScrollAnimationCurve animationCurve { ScrollAnimationCurve::Default };
 
     WEBCORE_EXPORT FloatPoint destinationPosition(FloatPoint currentScrollPosition) const;
     WEBCORE_EXPORT static FloatPoint computeDestinationPosition(FloatPoint currentScrollPosition, ScrollRequestType, const Variant<FloatPoint, FloatSize>& scrollPositionOrDelta);
@@ -146,7 +147,8 @@ struct RequestedScrollData {
             && comparePositionOrDelta(other)
             && scrollType == other.scrollType
             && clamping == other.clamping
-            && scrollbarRevealBehavior == other.scrollbarRevealBehavior;
+            && scrollbarRevealBehavior == other.scrollbarRevealBehavior
+            && animationCurve == other.animationCurve;
     }
 };
 

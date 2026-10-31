@@ -1,0 +1,147 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body {
+    height: 20000px;
+}
+
+/* Nested scrollers are as tall as what encloses them, so that the pointer stays over them however far it scrolls. */
+.nested {
+    position: absolute;
+    top: 0;
+    width: 200px;
+    height: 20000px;
+    border: none;
+    overflow: scroll;
+}
+
+.nested > div {
+    height: 40000px;
+}
+
+#scroller {
+    left: 0;
+}
+
+#frame {
+    left: 220px;
+}
+
+#outer {
+    position: absolute;
+    top: 0;
+    left: 440px;
+    width: 300px;
+    height: 500px;
+    overflow: scroll;
+}
+
+#outer > div {
+    position: relative;
+    height: 20000px;
+}
+
+#inner {
+    left: 0;
+}
+</style>
+</head>
+<body>
+<div id="scroller" class="nested"><div></div></div>
+<iframe id="frame" class="nested" srcdoc="<body style='height: 40000px'></body>"></iframe>
+<div id="outer" tabindex="0"><div><div id="inner" class="nested"><div></div></div></div></div>
+<script>
+description("Tests that touching the trackpad or scrolling over a nested scroller stops an animated scroll to the end of an enclosing scroller.");
+jsTestIsAsync = true;
+
+var springScroller;
+var maxScrollTop;
+var nestedScroller;
+var nestedScrollTopBefore;
+
+function touchTrackpad()
+{
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "maybegin", "none");
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "cancelled", "none");
+}
+
+function scrollGesture()
+{
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, "began", "none");
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, "changed", "none");
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+}
+
+function scrollMouseWheel()
+{
+    eventSender.mouseScrollBy(0, 10);
+}
+
+async function scrollToEndThenInteract(scrollerToSpring, scrollEventTarget, nested, nestedScrollTop, x, y, interact, nestedShouldScroll)
+{
+    springScroller = scrollerToSpring;
+    nestedScroller = nested;
+    springScroller.scrollTop = 0;
+    nestedScroller.scrollTop = nestedScrollTop;
+    await UIHelper.renderingUpdate();
+    maxScrollTop = springScroller.scrollHeight - springScroller.clientHeight;
+    eventSender.mouseMoveTo(x, y);
+
+    const scrolled = new Promise(resolve => scrollEventTarget.addEventListener("scroll", resolve, { once: true }));
+    await UIHelper.keyDown("end");
+    await scrolled;
+
+    nestedScrollTopBefore = nestedScroller.scrollTop;
+    interact();
+    await UIHelper.waitForTargetScrollAnimationToSettle(springScroller);
+    await UIHelper.waitForTargetScrollAnimationToSettle(nestedScroller);
+
+    shouldBeTrue("springScroller.scrollTop < maxScrollTop");
+    if (nestedShouldScroll)
+        shouldBeTrue("nestedScroller.scrollTop < nestedScrollTopBefore");
+}
+
+async function runTest()
+{
+    const documentScroller = document.scrollingElement;
+    const frameScroller = frame.contentDocument.scrollingElement;
+
+    debug("Touching the trackpad over a nested scroller");
+    await scrollToEndThenInteract(documentScroller, window, scroller, 1000, 100, 100, touchTrackpad, false);
+
+    debug("Scroll gesture over a nested scroller");
+    await scrollToEndThenInteract(documentScroller, window, scroller, 1000, 100, 100, scrollGesture, true);
+
+    debug("Mouse wheel over a nested scroller");
+    await scrollToEndThenInteract(documentScroller, window, scroller, 1000, 100, 100, scrollMouseWheel, true);
+
+    debug("Scroll gesture over a nested scroller with overscroll-behavior: contain");
+    scroller.style.overscrollBehavior = "contain";
+    await scrollToEndThenInteract(documentScroller, window, scroller, 0, 100, 100, scrollGesture, false);
+    scroller.style.overscrollBehavior = "";
+
+    debug("Touching the trackpad over an iframe");
+    await scrollToEndThenInteract(documentScroller, window, frameScroller, 1000, 300, 100, touchTrackpad, false);
+
+    debug("Scroll gesture over an iframe");
+    await scrollToEndThenInteract(documentScroller, window, frameScroller, 1000, 300, 100, scrollGesture, true);
+
+    scrollTo(0, 0);
+    outer.focus();
+
+    debug("Touching the trackpad over a scroller nested in a scroller");
+    await scrollToEndThenInteract(outer, outer, inner, 1000, 500, 100, touchTrackpad, false);
+
+    debug("Scroll gesture over a scroller nested in a scroller");
+    await scrollToEndThenInteract(outer, outer, inner, 1000, 500, 100, scrollGesture, true);
+
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>

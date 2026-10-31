@@ -43,9 +43,10 @@ public:
     Ref<ScrollingTreeScrollingNode> scrollingNode() { return m_scrollingNode; }
     Ref<const ScrollingTreeScrollingNode> scrollingNode() const { return m_scrollingNode; }
 
-    virtual bool startAnimatedScrollToPosition(FloatPoint) = 0;
+    virtual bool startAnimatedScrollToPosition(FloatPoint, ScrollAnimationCurve) = 0;
 
     virtual void stopAnimatedScroll(EnumSet<AnimatedScrollType>) = 0;
+    virtual void stopSpringAnimation() { }
 
     virtual void serviceScrollAnimation(MonotonicTime) = 0;
 

@@ -257,6 +257,47 @@ WheelEventHandlingResult ScrollingTree::handleWheelEventWithNode(const PlatformW
     return WheelEventHandlingResult::unhandled();
 }
 
+#if PLATFORM(MAC)
+void ScrollingTree::stopSpringAnimationsForWheelEvent(const PlatformWheelEvent& wheelEvent)
+{
+    // Spring animations last long enough that the user may want to take over before they finish, by touching the trackpad
+    // or by scrolling. A nested scroller may handle the event, so stop the springs of all the scrollers that enclose it too.
+    if (!wheelEvent.isGestureStart() && !wheelEvent.isNonGestureEvent())
+        return;
+
+    // Avoid hit testing when nothing is animating.
+    if (!hasNodeWithActiveScrollAnimations())
+        return;
+
+    Locker locker { m_treeLock };
+
+    RefPtr rootNode = m_rootNode;
+    if (!rootNode)
+        return;
+
+    FloatPoint position;
+    {
+        Locker locker { m_treeStateLock };
+        position = rootNode->viewToContentsPoint(wheelEvent.position(), m_treeState.mainFrameScrollPosition);
+    }
+
+    RefPtr node = scrollingNodeForPoint(position);
+    while (node) {
+        if (RefPtr scrollingNode = dynamicDowncast<ScrollingTreeScrollingNode>(*node))
+            scrollingNode->stopSpringAnimation();
+
+        if (RefPtr scrollProxyNode = dynamicDowncast<ScrollingTreeOverflowScrollProxyNode>(*node)) {
+            if (RefPtr relatedNode = nodeForID(scrollProxyNode->overflowScrollingNodeID())) {
+                node = WTF::move(relatedNode);
+                continue;
+            }
+        }
+
+        node = node->parent();
+    }
+}
+#endif
+
 RefPtr<ScrollingTreeNode> ScrollingTree::scrollingNodeForPoint(FloatPoint)
 {
     ASSERT(asyncFrameOrOverflowScrollingEnabled());

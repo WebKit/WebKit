@@ -453,6 +453,7 @@ bool AsyncScrollingCoordinator::requestScrollToPosition(ScrollableArea& scrollab
         .scrollType = options.type,
         .clamping = options.clamping,
         .scrollbarRevealBehavior = scrollableArea.scrollbarRevealBehavior(),
+        .animationCurve = options.animationCurve,
     };
 
     if (options.originalScrollDelta) {

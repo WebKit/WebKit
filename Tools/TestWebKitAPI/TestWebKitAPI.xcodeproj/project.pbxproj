@@ -570,6 +570,7 @@
 		07AA27602F83C3A900FE10FC /* Exceptions for "Tests" folder in "TestWebKitAPI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				WebCore/cocoa/ScrollAnimationSmoothTests.swift,
 				"WebKit/WebPage/AppKit Gesture Tests/AppKitGesturesTestsSupport.swift",
 				"WebKit/WebPage/AppKit Gesture Tests/BasicAppKitGesturesTests.swift",
 				"WebKit/WebPage/AppKit Gesture Tests/DoubleClickGesturesTests.swift",

@@ -1,0 +1,27 @@
+Tests that pressing Space or Page Down while an animated scroll to the end of the document is in progress scrolls by a page from the position on screen, without first jumping back to an earlier position.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Document, Space
+PASS largestBackwardStep is 0
+PASS finalScrollTop >= highestOnScreenScrollTop is true
+PASS finalScrollTop < maxScrollTop is true
+Document, Page Down
+PASS largestBackwardStep is 0
+PASS finalScrollTop >= highestOnScreenScrollTop is true
+PASS finalScrollTop < maxScrollTop is true
+Overflow scroller, Space
+PASS largestBackwardStep is 0
+PASS finalScrollTop >= highestOnScreenScrollTop is true
+PASS finalScrollTop < maxScrollTop is true
+PASS scrollY is 0
+Overflow scroller, Page Down
+PASS largestBackwardStep is 0
+PASS finalScrollTop >= highestOnScreenScrollTop is true
+PASS finalScrollTop < maxScrollTop is true
+PASS scrollY is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

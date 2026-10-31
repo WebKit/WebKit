@@ -165,6 +165,8 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
     EnumSet<ScrollAnimator::ScrollBehavior> behavior = ScrollAnimator::ScrollBehavior::RespectScrollSnap;
     if (granularity == ScrollGranularity::Page)
         behavior.add(ScrollAnimator::ScrollBehavior::Paged);
+    if (granularity == ScrollGranularity::Document)
+        behavior.add(ScrollAnimator::ScrollBehavior::DocumentEdge);
 
     return scrollAnimator().singleAxisScroll(axis, scrollDelta, behavior);
 }
@@ -201,7 +203,7 @@ void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, c
         // which prematurely fires a scrollend event at the current intermediate position
         // rather than running to the new destination. Fall back to cancellation when
         // there is no active main-thread animation to retarget.
-        if (scrollAnimator().retargetRunningAnimation(position))
+        if (scrollAnimator().retargetRunningAnimation(position, options.animationCurve))
             return;
         scrollAnimator().cancelAnimations();
     }
@@ -211,9 +213,16 @@ void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, c
 
     auto scrollTypeScope = ScrollTypeScope(*this, options.type);
 
-    bool startedAnimation = requestScrollToPosition(roundedIntPoint(position), { ScrollType::Programmatic, options.clamping, ScrollIsAnimated::Yes, options.snapPointSelectionMethod, options.originalScrollDelta });
+    bool startedAnimation = requestScrollToPosition(roundedIntPoint(position), {
+        .type = ScrollType::Programmatic,
+        .clamping = options.clamping,
+        .animated = ScrollIsAnimated::Yes,
+        .snapPointSelectionMethod = options.snapPointSelectionMethod,
+        .originalScrollDelta = options.originalScrollDelta,
+        .animationCurve = options.animationCurve,
+    });
     if (!startedAnimation)
-        startedAnimation = scrollAnimator().scrollToPositionWithAnimation(position, options.clamping);
+        startedAnimation = scrollAnimator().scrollToPositionWithAnimation(position, options.clamping, options.animationCurve);
 
     if (startedAnimation)
         setScrollAnimationStatus(ScrollAnimationStatus::Animating);
@@ -686,8 +695,10 @@ void ScrollableArea::resnapAfterLayout()
         if (scrollAnimationStatus() == ScrollAnimationStatus::NotAnimating) {
             auto scrollTypeScope = ScrollTypeScope(*this, ScrollType::Programmatic);
             scrollToOffsetWithoutAnimation(correctedOffset);
-        } else
-            scrollAnimator->retargetRunningAnimation(position);
+        } else {
+            // Resnapping corrects the position rather than scrolling to an edge of the document, so it uses the default curve.
+            scrollAnimator->retargetRunningAnimation(position, ScrollAnimationCurve::Default);
+        }
     }
 }
 

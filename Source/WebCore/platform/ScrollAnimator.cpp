@@ -92,12 +92,20 @@ bool ScrollAnimator::singleAxisScroll(ScrollEventAxis axis, float scrollDelta, E
     }
 
     if (scrollableArea->scrollAnimatorEnabled() && !behavior.contains(ScrollBehavior::NeverAnimate)) {
-        if (m_scrollController.retargetAnimatedScrollBy(delta))
-            return true;
-
         auto options = ScrollPositionChangeOptions::createProgrammatic();
-        options.originalScrollDelta = delta;
-        scrollableArea->scrollToPositionWithAnimation(m_currentPosition + delta, options);
+        auto newPosition = m_currentPosition + delta;
+        if (behavior.contains(ScrollBehavior::DocumentEdge)) {
+            // Request the edge itself, rather than a delta that is relative to a position that may be out of date while an animation runs.
+            options.animationCurve = documentEdgeScrollAnimationCurve();
+            // On the other axis, keep the destination of an animation running on the main thread, such as the inline edge that Home and End scroll to first.
+            if (auto destinationOffset = m_scrollController.animatedScrollDestinationOffset())
+                newPosition = setValueForAxis(positionFromOffset(*destinationOffset), axis, valueForAxis(newPosition, axis));
+        } else {
+            if (m_scrollController.retargetAnimatedScrollBy(delta))
+                return true;
+            options.originalScrollDelta = delta;
+        }
+        scrollableArea->scrollToPositionWithAnimation(newPosition, options);
         return true;
     }
 
@@ -122,7 +130,7 @@ bool ScrollAnimator::scrollToPositionWithoutAnimation(const FloatPoint& position
     return true;
 }
 
-bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& position, ScrollClamping clamping)
+bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& position, ScrollClamping clamping, ScrollAnimationCurve curve)
 {
     CheckedRef scrollableArea = m_scrollableArea;
     auto adjustedPosition = clamping == ScrollClamping::Clamped ? position.constrainedBetween(scrollableArea->minimumScrollPosition(), scrollableArea->maximumScrollPosition()) : position;
@@ -130,13 +138,13 @@ bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& position, S
     if (!positionChanged && !scrollableArea->scrollOriginChanged())
         return false;
 
-    return m_scrollController.startAnimatedScrollToDestination(offsetFromPosition(m_currentPosition), offsetFromPosition(adjustedPosition));
+    return m_scrollController.startAnimatedScrollToDestination(offsetFromPosition(m_currentPosition), offsetFromPosition(adjustedPosition), curve);
 }
 
-bool ScrollAnimator::retargetRunningAnimation(const FloatPoint& newPosition)
+bool ScrollAnimator::retargetRunningAnimation(const FloatPoint& newPosition, ScrollAnimationCurve curve)
 {
     ASSERT(scrollableArea().scrollAnimationStatus() == ScrollAnimationStatus::Animating);
-    return m_scrollController.retargetAnimatedScroll(offsetFromPosition(newPosition));
+    return m_scrollController.retargetAnimatedScroll(offsetFromPosition(newPosition), curve);
 }
 
 FloatPoint ScrollAnimator::offsetFromPosition(const FloatPoint& position) const

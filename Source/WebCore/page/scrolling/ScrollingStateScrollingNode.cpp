@@ -643,6 +643,9 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<Scrol
 
         if (isAnimatedUpdate(request.requestType))
             ts.dumpProperty("requested scroll position is animated"_s, true);
+
+        if (request.animationCurve != ScrollAnimationCurve::Default)
+            ts.dumpProperty("requested scroll animation curve"_s, request.animationCurve);
     };
 
     for (auto& request : m_requestedScrollData)

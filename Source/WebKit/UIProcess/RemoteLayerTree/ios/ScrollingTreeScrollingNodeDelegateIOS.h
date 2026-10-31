@@ -89,7 +89,7 @@ public:
     UIScrollView *findActingScrollParent(UIScrollView *);
     WKBaseScrollView *scrollView() const;
 
-    bool startAnimatedScrollToPosition(WebCore::FloatPoint) final;
+    bool startAnimatedScrollToPosition(WebCore::FloatPoint, WebCore::ScrollAnimationCurve) final;
     void stopAnimatedScroll(EnumSet<WebCore::AnimatedScrollType>) final;
 
     void serviceScrollAnimation(MonotonicTime) final { }
