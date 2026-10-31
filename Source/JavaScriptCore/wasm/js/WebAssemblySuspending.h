@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-JSFunctionWithFields* createWebAssemblySuspendingFunction(VM&, JSGlobalObject*, JSValue callable);
+JSFunctionWithFields* createWebAssemblySuspendingFunction(VM&, JSGlobalObject*, JSObject* wrappedFunction);
 
 }
 

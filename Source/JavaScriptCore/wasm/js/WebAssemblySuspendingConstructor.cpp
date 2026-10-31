@@ -31,6 +31,7 @@
 #include "CallData.h"
 #include "Error.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblySuspendingWrapper.h"
 #include "WebAssemblySuspending.h"
 
 namespace JSC {
@@ -56,11 +57,14 @@ JSC_DEFINE_HOST_FUNCTION(constructWebAssemblySuspending, (JSGlobalObject* global
         throwTypeError(globalObject, scope, "Argument 0 must be a function"_s);
         return { };
     }
+    JSObject* wrappedFunction = asObject(argument);
 
-    auto* suspending = createWebAssemblySuspendingFunction(vm, globalObject, argument);
+    // The wrapper is not callable; the suspending function itself is created when the wrapper is
+    // bound as a module import.
+    auto* result = JSWebAssemblySuspendingWrapper::create(vm, globalObject->webAssemblySuspendingStructure(), wrappedFunction);
     RETURN_IF_EXCEPTION(scope, { });
 
-    return JSValue::encode(suspending);
+    return JSValue::encode(result);
 }
 
 JSC_DEFINE_HOST_FUNCTION(callWebAssemblySuspending, (JSGlobalObject* globalObject, CallFrame*))
