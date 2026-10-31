@@ -29,6 +29,22 @@ window.awaitWebSocketClosed = function awaitWebSocketClosed(resource) {
     });
 };
 
+// Resolves once the resource reaches the Open state.
+window.awaitWebSocketOpen = function awaitWebSocketOpen(resource) {
+    return new Promise((resolve) => {
+        if (resource.readyState === WI.WebSocketResource.ReadyState.Open) {
+            resolve();
+            return;
+        }
+        let listener = resource.addEventListener(WI.WebSocketResource.Event.ReadyStateChanged, () => {
+            if (resource.readyState !== WI.WebSocketResource.ReadyState.Open)
+                return;
+            resource.removeEventListener(WI.WebSocketResource.Event.ReadyStateChanged, listener);
+            resolve();
+        });
+    });
+};
+
 // Counts the WebSocket resources for `url` across the whole frame tree, to catch duplicate rows.
 window.countWebSocketResourcesForURL = function countWebSocketResourcesForURL(url) {
     let count = 0;
