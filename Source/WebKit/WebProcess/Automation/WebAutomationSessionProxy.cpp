@@ -1209,9 +1209,25 @@ static WebCore::IntRect snapshotElementRectForScreenshot(WebPage& page, WebCore:
 
 void WebAutomationSessionProxy::takeScreenshot(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&, String&&)>&& completionHandler)
 {
-    snapshotRectForScreenshot(pageID, frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport, [pageID, frameID, completionHandler = WTF::move(completionHandler)] (std::optional<String> errorString, WebCore::IntRect&& rect) mutable {
+    documentRectForScreenshot(pageID, frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport, [pageID, completionHandler = WTF::move(completionHandler)](std::optional<String> errorString, WebCore::IntRect&& snapshotRect) mutable {
         if (errorString)
             return completionHandler(std::nullopt, WTF::move(*errorString));
+
+        RefPtr page = WebProcess::singleton().webPage(pageID);
+        ASSERT(page);
+        RefPtr<WebImage> image = page->scaledSnapshotWithOptions(snapshotRect, 1, SnapshotOption::Shareable);
+        if (!image)
+            return completionHandler(std::nullopt, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError));
+
+        completionHandler(image->createHandle(SharedMemory::Protection::ReadOnly), { });
+    });
+}
+
+void WebAutomationSessionProxy::documentRectForScreenshot(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, CompletionHandler<void(std::optional<String>, WebCore::IntRect&&)>&& completionHandler)
+{
+    snapshotRectForScreenshot(pageID, frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport, [pageID, frameID, completionHandler = WTF::move(completionHandler)](std::optional<String> errorString, WebCore::IntRect&& rect) mutable {
+        if (errorString)
+            return completionHandler(WTF::move(errorString), { });
 
         RefPtr page = WebProcess::singleton().webPage(pageID);
         ASSERT(page);
@@ -1222,13 +1238,9 @@ void WebAutomationSessionProxy::takeScreenshot(WebCore::PageIdentifier pageID, s
         RefPtr localRootFrame = frame ? frame->coreLocalFrame() : nullptr;
         RefPtr localRootView = localRootFrame ? localRootFrame->rootFrame().view() : nullptr;
         if (!localRootView)
-            return completionHandler(std::nullopt, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError));
-        auto snapshotRect = WebCore::IntRect(localRootView->clientToDocumentRect(rect));
-        RefPtr<WebImage> image = page->scaledSnapshotWithOptions(snapshotRect, 1, SnapshotOption::Shareable);
-        if (!image)
-            return completionHandler(std::nullopt, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError));
+            return completionHandler(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError), { });
 
-        completionHandler(image->createHandle(SharedMemory::Protection::ReadOnly), { });
+        completionHandler(std::nullopt, WebCore::IntRect(localRootView->clientToDocumentRect(rect)));
     });
 }
 
