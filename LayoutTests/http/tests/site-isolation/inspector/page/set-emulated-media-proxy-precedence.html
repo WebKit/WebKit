@@ -1,0 +1,130 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<style>
+body { color: blue; }
+@media print {
+    body { color: green; }
+}
+</style>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/emulated-media-frame.html`;
+    document.body.appendChild(iframe);
+}
+
+function armMediaChange() {
+    matchMedia("print").addEventListener("change", () => { TestPage.dispatchEventToFrontend("MediaChanged"); }, { once: true });
+}
+
+function test() {
+    // Calls Page.setEmulatedMedia on the targets in WI.targets that have the command, like the Web Inspector
+    // Print Styles toggle. Under Site Isolation this is the main page target only.
+    async function setEmulatedMediaOnPageTargets(mediaType) {
+        for (let target of WI.targets) {
+            if (target.hasCommand("Page.setEmulatedMedia"))
+                await target.PageAgent.setEmulatedMedia(mediaType);
+        }
+    }
+
+    async function addIFrameAndGetTarget() {
+        // Under Site Isolation, TargetAdded fires for the iframe's provisional about:blank target
+        // before the cross-origin document commits; evaluating then hits the empty realm. Await the
+        // committed target + its execution context, mirroring set-emulated-media-cross-origin-iframe.html.
+        let committedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+        InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+        let event = await committedPromise;
+        let target = event.data.target;
+        if (!target.executionContext)
+            await target.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
+        return target;
+    }
+
+    async function getComputedColorInTarget(target) {
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: "new Promise(resolve => { if (document.readyState === 'complete') resolve(); else window.addEventListener('load', resolve); })",
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+
+        let response = await target.RuntimeAgent.evaluate.invoke({expression: "window.getComputedStyle(document.body).getPropertyValue('color')", objectGroup: "test", returnByValue: true});
+        return response.result.value;
+    }
+
+    async function armMediaChangeInTarget(target) {
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: `window.__mediaChanged = new Promise(r => matchMedia("print").addEventListener("change", r, { once: true }))`,
+            objectGroup: "test",
+        });
+    }
+
+    async function awaitMediaChangeInTarget(target) {
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: "window.__mediaChanged",
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+    }
+
+    // Arm one-shot media change listeners in the main page and the cross-origin iframe, run the
+    // command, then wait until both frames have re-evaluated their media queries.
+    async function runAndAwaitMediaChange(target, command) {
+        let mainMediaChanged = InspectorTest.awaitEvent("MediaChanged");
+        await InspectorTest.evaluateInPage("armMediaChange()");
+        await armMediaChangeInTarget(target);
+        await command();
+        await mainMediaChanged;
+        await awaitMediaChangeInTarget(target);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetEmulatedMediaProxyPrecedence");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMediaProxyPrecedence.ClearOnWebPageTarget",
+        description: "Clearing an override on the web-page target should clear it in the main page too, even when it was set on the page target.",
+        async test() {
+            let target = await addIFrameAndGetTarget();
+
+            let mainPageColorBefore = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColorBefore, "rgb(0, 0, 255)", "Main page should start with screen styles (blue).");
+            let iframeColorBefore = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColorBefore, "rgb(0, 0, 255)", "Cross-origin iframe should start with screen styles (blue).");
+
+            InspectorTest.log("Setting emulated media to print on the page target...");
+            await runAndAwaitMediaChange(target, () => setEmulatedMediaOnPageTargets("print"));
+
+            let mainPageColorPrint = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColorPrint, "rgb(0, 128, 0)", "Main page should switch to print styles (green).");
+            let iframeColorPrint = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColorPrint, "rgb(0, 128, 0)", "Cross-origin iframe should switch to print styles (green).");
+
+            InspectorTest.log("Clearing emulated media on the web-page target...");
+            await runAndAwaitMediaChange(target, () => WI.backendTarget.PageAgent.setEmulatedMedia(""));
+
+            let mainPageColorCleared = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColorCleared, "rgb(0, 0, 255)", "Main page should return to screen styles (blue).");
+            let iframeColorCleared = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColorCleared, "rgb(0, 0, 255)", "Cross-origin iframe should return to screen styles (blue).");
+
+            // The web-page target's clear reached the main-frame process too, so this is a new value for
+            // the page target, not a same-value call, and must reach both frames.
+            InspectorTest.log("Setting emulated media to print on the page target again...");
+            await runAndAwaitMediaChange(target, () => setEmulatedMediaOnPageTargets("print"));
+
+            let mainPageColorPrintAgain = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColorPrintAgain, "rgb(0, 128, 0)", "Main page should switch to print styles again (green).");
+            let iframeColorPrintAgain = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColorPrintAgain, "rgb(0, 128, 0)", "Cross-origin iframe should switch to print styles again (green).");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under site isolation an emulated-media override set on the page target and cleared on the web-page target is cleared in every frame.</p>
+</body>

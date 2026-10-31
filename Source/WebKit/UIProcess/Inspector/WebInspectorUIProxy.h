@@ -295,6 +295,7 @@ private:
     void elementSelectionChanged(bool);
     void LEGACY_NODELETE timelineRecordingChanged(bool);
     void showPaintRectsChanged(bool);
+    void emulatedMediaChanged(const String&);
 
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>);
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
