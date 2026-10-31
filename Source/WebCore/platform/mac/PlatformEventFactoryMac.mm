@@ -101,11 +101,11 @@ DoublePoint pointForEvent(NSEvent *event, NSView *windowView)
     }
 }
 
-static MouseButton currentMouseButton()
+static std::optional<MouseButton> currentMouseButton()
 {
     NSUInteger pressedMouseButtons = [NSEvent pressedMouseButtons];
     if (!pressedMouseButtons)
-        return MouseButton::None;
+        return std::nullopt;
     if (pressedMouseButtons == 1 << 0)
         return MouseButton::Left;
     if (pressedMouseButtons == 1 << 1)
@@ -119,7 +119,7 @@ static MouseButton currentMouseButton()
     return MouseButton::Middle;
 }
 
-static MouseButton buttonFromButtonNumber(NSEvent *event)
+static std::optional<MouseButton> buttonFromButtonNumber(NSEvent *event)
 {
     // NSEvent.buttonNumber reports 0 for non-mouse events, so it would be wrong to map 0 to the left button.
     switch ([event buttonNumber]) {
@@ -132,11 +132,11 @@ static MouseButton buttonFromButtonNumber(NSEvent *event)
     case 4:
         return MouseButton::Forward;
     default:
-        return MouseButton::None;
+        return std::nullopt;
     }
 }
 
-MouseButton mouseButtonForEvent(NSEvent *event)
+std::optional<MouseButton> mouseButtonForEvent(NSEvent *event)
 {
     switch ([event type]) {
     case NSEventTypeLeftMouseDown:
@@ -156,7 +156,7 @@ MouseButton mouseButtonForEvent(NSEvent *event)
     case NSEventTypePressure:
         return currentMouseButton();
     default:
-        return MouseButton::None;
+        return std::nullopt;
     }
 }
 

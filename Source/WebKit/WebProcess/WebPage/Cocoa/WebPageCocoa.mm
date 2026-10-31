@@ -3345,7 +3345,7 @@ static void dispatchSyntheticMouseMove(LocalFrame& localFrame, const WebCore::Fl
     }();
     auto mouseEvent = PlatformMouseEvent(
         roundedIntPoint(location), globalPositionForSyntheticMouseEvent(localFrame, location),
-        MouseButton::None, PlatformEvent::Type::MouseMoved, 0,
+        std::nullopt, PlatformEvent::Type::MouseMoved, 0,
         platform(modifiers), MonotonicTime::now(),
         WebCore::ForceAtClick, WebCore::SyntheticClickType::OneFingerTap,
         inputSource,
