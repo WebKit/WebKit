@@ -4069,6 +4069,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         _textInteractionWrapper = adoptNS([[WKTextInteractionWrapper alloc] initWithView:self]);
     else {
         // Reset the gesture recognizers in case editability has changed.
+        SetForScope isResettingGestureRecognizersScope { _isResettingTextInteractionGestureRecognizers, YES };
         [protect(_textInteractionWrapper) setGestureRecognizers];
     }
 
@@ -5773,6 +5774,13 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
 - (void)selectPositionAtPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
+    if (_isResettingTextInteractionGestureRecognizers) {
+        RELEASE_LOG(TextInteraction, "Ignoring request to select position at (%.0f, %.0f) while resetting text interaction gesture recognizers.", point.x, point.y);
+        if (completionHandler)
+            completionHandler();
+        return;
+    }
+
     _autocorrectionContextNeedsUpdate = YES;
     [self _selectPositionAtPoint:point stayingWithinFocusedElement:self._hasFocusedElement completionHandler:completionHandler];
 }
