@@ -28,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-not-rendered.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-poster-when-visible.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-resume-on-loading-attribute-change.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-source-inserted-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-source-poster-deferred.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-to-eager.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-window-onload.html

@@ -5381,64 +5381,64 @@ PASS video.defaultMuted (<video muted>): IDL set to -Infinity
 PASS video.defaultMuted (<video muted>): IDL set to "\0"
 PASS video.defaultMuted (<video muted>): IDL set to object "test-toString"
 PASS video.defaultMuted (<video muted>): IDL set to object "test-valueOf"
-FAIL video.loading: typeof IDL attribute assert_equals: expected "string" but got "undefined"
-FAIL video.loading: IDL get with DOM attribute unset assert_equals: expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to "" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to undefined assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to 7 assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to 1.5 assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to "5%" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to "+100" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to ".5" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to true assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to false assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to NaN assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to Infinity assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to -Infinity assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to "\0" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to null assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to "lazy" assert_equals: IDL get expected (string) "lazy" but got (undefined) undefined
-FAIL video.loading: setAttribute() to "xlazy" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to "lazy\0" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to "azy" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to "LAZY" assert_equals: IDL get expected (string) "lazy" but got (undefined) undefined
-FAIL video.loading: setAttribute() to "eager" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to "xeager" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to "eager\0" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to "ager" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: setAttribute() to "EAGER" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL video.loading: IDL set to "" assert_equals: getAttribute() expected "" but got "EAGER"
-FAIL video.loading: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "EAGER"
-FAIL video.loading: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "EAGER"
-FAIL video.loading: IDL set to 7 assert_equals: getAttribute() expected "7" but got "EAGER"
-FAIL video.loading: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "EAGER"
-FAIL video.loading: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "EAGER"
-FAIL video.loading: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "EAGER"
-FAIL video.loading: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "EAGER"
-FAIL video.loading: IDL set to true assert_equals: getAttribute() expected "true" but got "EAGER"
-FAIL video.loading: IDL set to false assert_equals: getAttribute() expected "false" but got "EAGER"
-FAIL video.loading: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "EAGER"
-FAIL video.loading: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "EAGER"
-FAIL video.loading: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "EAGER"
-FAIL video.loading: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "EAGER"
-FAIL video.loading: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "EAGER"
-FAIL video.loading: IDL set to null assert_equals: IDL get expected (string) "eager" but got (object) null
-FAIL video.loading: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "EAGER"
-FAIL video.loading: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "EAGER"
-FAIL video.loading: IDL set to "lazy" assert_equals: getAttribute() expected "lazy" but got "EAGER"
-FAIL video.loading: IDL set to "xlazy" assert_equals: getAttribute() expected "xlazy" but got "EAGER"
-FAIL video.loading: IDL set to "lazy\0" assert_equals: getAttribute() expected "lazy\0" but got "EAGER"
-FAIL video.loading: IDL set to "azy" assert_equals: getAttribute() expected "azy" but got "EAGER"
-FAIL video.loading: IDL set to "LAZY" assert_equals: getAttribute() expected "LAZY" but got "EAGER"
-FAIL video.loading: IDL set to "eager" assert_equals: getAttribute() expected "eager" but got "EAGER"
-FAIL video.loading: IDL set to "xeager" assert_equals: getAttribute() expected "xeager" but got "EAGER"
-FAIL video.loading: IDL set to "eager\0" assert_equals: getAttribute() expected "eager\0" but got "EAGER"
-FAIL video.loading: IDL set to "ager" assert_equals: getAttribute() expected "ager" but got "EAGER"
-FAIL video.loading: IDL set to "EAGER" assert_equals: IDL get expected "eager" but got "EAGER"
+PASS video.loading: typeof IDL attribute
+PASS video.loading: IDL get with DOM attribute unset
+PASS video.loading: setAttribute() to ""
+PASS video.loading: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS video.loading: setAttribute() to undefined
+PASS video.loading: setAttribute() to 7
+PASS video.loading: setAttribute() to 1.5
+PASS video.loading: setAttribute() to "5%"
+PASS video.loading: setAttribute() to "+100"
+PASS video.loading: setAttribute() to ".5"
+PASS video.loading: setAttribute() to true
+PASS video.loading: setAttribute() to false
+PASS video.loading: setAttribute() to object "[object Object]"
+PASS video.loading: setAttribute() to NaN
+PASS video.loading: setAttribute() to Infinity
+PASS video.loading: setAttribute() to -Infinity
+PASS video.loading: setAttribute() to "\0"
+PASS video.loading: setAttribute() to null
+PASS video.loading: setAttribute() to object "test-toString"
+PASS video.loading: setAttribute() to object "test-valueOf"
+PASS video.loading: setAttribute() to "lazy"
+PASS video.loading: setAttribute() to "xlazy"
+PASS video.loading: setAttribute() to "lazy\0"
+PASS video.loading: setAttribute() to "azy"
+PASS video.loading: setAttribute() to "LAZY"
+PASS video.loading: setAttribute() to "eager"
+PASS video.loading: setAttribute() to "xeager"
+PASS video.loading: setAttribute() to "eager\0"
+PASS video.loading: setAttribute() to "ager"
+PASS video.loading: setAttribute() to "EAGER"
+PASS video.loading: IDL set to ""
+PASS video.loading: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS video.loading: IDL set to undefined
+PASS video.loading: IDL set to 7
+PASS video.loading: IDL set to 1.5
+PASS video.loading: IDL set to "5%"
+PASS video.loading: IDL set to "+100"
+PASS video.loading: IDL set to ".5"
+PASS video.loading: IDL set to true
+PASS video.loading: IDL set to false
+PASS video.loading: IDL set to object "[object Object]"
+PASS video.loading: IDL set to NaN
+PASS video.loading: IDL set to Infinity
+PASS video.loading: IDL set to -Infinity
+PASS video.loading: IDL set to "\0"
+PASS video.loading: IDL set to null
+PASS video.loading: IDL set to object "test-toString"
+PASS video.loading: IDL set to object "test-valueOf"
+PASS video.loading: IDL set to "lazy"
+PASS video.loading: IDL set to "xlazy"
+PASS video.loading: IDL set to "lazy\0"
+PASS video.loading: IDL set to "azy"
+PASS video.loading: IDL set to "LAZY"
+PASS video.loading: IDL set to "eager"
+PASS video.loading: IDL set to "xeager"
+PASS video.loading: IDL set to "eager\0"
+PASS video.loading: IDL set to "ager"
+PASS video.loading: IDL set to "EAGER"
 PASS video.width: typeof IDL attribute
 PASS video.width: IDL get with DOM attribute unset
 PASS video.width: setAttribute() to -2147483649
@@ -6363,64 +6363,64 @@ PASS audio.defaultMuted (<audio muted>): IDL set to -Infinity
 PASS audio.defaultMuted (<audio muted>): IDL set to "\0"
 PASS audio.defaultMuted (<audio muted>): IDL set to object "test-toString"
 PASS audio.defaultMuted (<audio muted>): IDL set to object "test-valueOf"
-FAIL audio.loading: typeof IDL attribute assert_equals: expected "string" but got "undefined"
-FAIL audio.loading: IDL get with DOM attribute unset assert_equals: expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to "" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to undefined assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to 7 assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to 1.5 assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to "5%" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to "+100" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to ".5" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to true assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to false assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to NaN assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to Infinity assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to -Infinity assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to "\0" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to null assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to "lazy" assert_equals: IDL get expected (string) "lazy" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to "xlazy" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to "lazy\0" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to "azy" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to "LAZY" assert_equals: IDL get expected (string) "lazy" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to "eager" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to "xeager" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to "eager\0" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to "ager" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: setAttribute() to "EAGER" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
-FAIL audio.loading: IDL set to "" assert_equals: getAttribute() expected "" but got "EAGER"
-FAIL audio.loading: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "EAGER"
-FAIL audio.loading: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "EAGER"
-FAIL audio.loading: IDL set to 7 assert_equals: getAttribute() expected "7" but got "EAGER"
-FAIL audio.loading: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "EAGER"
-FAIL audio.loading: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "EAGER"
-FAIL audio.loading: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "EAGER"
-FAIL audio.loading: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "EAGER"
-FAIL audio.loading: IDL set to true assert_equals: getAttribute() expected "true" but got "EAGER"
-FAIL audio.loading: IDL set to false assert_equals: getAttribute() expected "false" but got "EAGER"
-FAIL audio.loading: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "EAGER"
-FAIL audio.loading: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "EAGER"
-FAIL audio.loading: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "EAGER"
-FAIL audio.loading: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "EAGER"
-FAIL audio.loading: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "EAGER"
-FAIL audio.loading: IDL set to null assert_equals: IDL get expected (string) "eager" but got (object) null
-FAIL audio.loading: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "EAGER"
-FAIL audio.loading: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "EAGER"
-FAIL audio.loading: IDL set to "lazy" assert_equals: getAttribute() expected "lazy" but got "EAGER"
-FAIL audio.loading: IDL set to "xlazy" assert_equals: getAttribute() expected "xlazy" but got "EAGER"
-FAIL audio.loading: IDL set to "lazy\0" assert_equals: getAttribute() expected "lazy\0" but got "EAGER"
-FAIL audio.loading: IDL set to "azy" assert_equals: getAttribute() expected "azy" but got "EAGER"
-FAIL audio.loading: IDL set to "LAZY" assert_equals: getAttribute() expected "LAZY" but got "EAGER"
-FAIL audio.loading: IDL set to "eager" assert_equals: getAttribute() expected "eager" but got "EAGER"
-FAIL audio.loading: IDL set to "xeager" assert_equals: getAttribute() expected "xeager" but got "EAGER"
-FAIL audio.loading: IDL set to "eager\0" assert_equals: getAttribute() expected "eager\0" but got "EAGER"
-FAIL audio.loading: IDL set to "ager" assert_equals: getAttribute() expected "ager" but got "EAGER"
-FAIL audio.loading: IDL set to "EAGER" assert_equals: IDL get expected "eager" but got "EAGER"
+PASS audio.loading: typeof IDL attribute
+PASS audio.loading: IDL get with DOM attribute unset
+PASS audio.loading: setAttribute() to ""
+PASS audio.loading: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS audio.loading: setAttribute() to undefined
+PASS audio.loading: setAttribute() to 7
+PASS audio.loading: setAttribute() to 1.5
+PASS audio.loading: setAttribute() to "5%"
+PASS audio.loading: setAttribute() to "+100"
+PASS audio.loading: setAttribute() to ".5"
+PASS audio.loading: setAttribute() to true
+PASS audio.loading: setAttribute() to false
+PASS audio.loading: setAttribute() to object "[object Object]"
+PASS audio.loading: setAttribute() to NaN
+PASS audio.loading: setAttribute() to Infinity
+PASS audio.loading: setAttribute() to -Infinity
+PASS audio.loading: setAttribute() to "\0"
+PASS audio.loading: setAttribute() to null
+PASS audio.loading: setAttribute() to object "test-toString"
+PASS audio.loading: setAttribute() to object "test-valueOf"
+PASS audio.loading: setAttribute() to "lazy"
+PASS audio.loading: setAttribute() to "xlazy"
+PASS audio.loading: setAttribute() to "lazy\0"
+PASS audio.loading: setAttribute() to "azy"
+PASS audio.loading: setAttribute() to "LAZY"
+PASS audio.loading: setAttribute() to "eager"
+PASS audio.loading: setAttribute() to "xeager"
+PASS audio.loading: setAttribute() to "eager\0"
+PASS audio.loading: setAttribute() to "ager"
+PASS audio.loading: setAttribute() to "EAGER"
+PASS audio.loading: IDL set to ""
+PASS audio.loading: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS audio.loading: IDL set to undefined
+PASS audio.loading: IDL set to 7
+PASS audio.loading: IDL set to 1.5
+PASS audio.loading: IDL set to "5%"
+PASS audio.loading: IDL set to "+100"
+PASS audio.loading: IDL set to ".5"
+PASS audio.loading: IDL set to true
+PASS audio.loading: IDL set to false
+PASS audio.loading: IDL set to object "[object Object]"
+PASS audio.loading: IDL set to NaN
+PASS audio.loading: IDL set to Infinity
+PASS audio.loading: IDL set to -Infinity
+PASS audio.loading: IDL set to "\0"
+PASS audio.loading: IDL set to null
+PASS audio.loading: IDL set to object "test-toString"
+PASS audio.loading: IDL set to object "test-valueOf"
+PASS audio.loading: IDL set to "lazy"
+PASS audio.loading: IDL set to "xlazy"
+PASS audio.loading: IDL set to "lazy\0"
+PASS audio.loading: IDL set to "azy"
+PASS audio.loading: IDL set to "LAZY"
+PASS audio.loading: IDL set to "eager"
+PASS audio.loading: IDL set to "xeager"
+PASS audio.loading: IDL set to "eager\0"
+PASS audio.loading: IDL set to "ager"
+PASS audio.loading: IDL set to "EAGER"
 PASS source.title: typeof IDL attribute
 PASS source.title: IDL get with DOM attribute unset
 PASS source.title: setAttribute() to ""

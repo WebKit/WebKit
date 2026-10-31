@@ -85,6 +85,8 @@
 #include "JSHTMLMediaElement.h"
 #include "JSMediaControlsHost.h"
 #include "JSValueInWrappedObjectInlines.h"
+#include "LazyLoadElementObserver.h"
+#include "LazyLoading.h"
 #include "LoadableTextTrack.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
@@ -829,6 +831,8 @@ HTMLMediaElement::~HTMLMediaElement()
 
     allMediaElements().remove(*this);
 
+    LazyLoadElementObserver::unobserve(*this, protect(document()));
+
     setShouldDelayLoadEvent(false);
 
 #if USE(AUDIO_SESSION)
@@ -993,6 +997,11 @@ void HTMLMediaElement::didMoveToNewDocument(Document& oldDocument, Document& new
     HTMLMEDIAELEMENT_RELEASE_LOG(DidMoveToNewDocument);
 
     ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
+
+    LazyLoadElementObserver::unobserve(*this, oldDocument);
+    if (shouldObserveViewportIntersection())
+        LazyLoadElementObserver::observe(*this);
+
     if (m_shouldDelayLoadEvent) {
         oldDocument.decrementLoadEventDelayCount();
         newDocument.incrementLoadEventDelayCount();
@@ -1094,6 +1103,10 @@ void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomStr
         }
         maybeUpdatePlayerPreload();
         return;
+    case AttributeNames::loadingAttr:
+        if (!LazyLoading::hasLazyAttributeValue(newValue))
+            runLazyLoadResumptionSteps();
+        break;
     case AttributeNames::mediagroupAttr:
         setMediaGroup(newValue);
         return;
@@ -1627,6 +1640,84 @@ void HTMLMediaElement::load()
     queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, m_resourceSelectionTaskCancellationGroup, [](auto& element) { element.prepareToPlay(); });
 }
 
+bool HTMLMediaElement::shouldLazyLoadMediaResource() const
+{
+    if (!LazyLoading::isLazyLoadable(*this))
+        return false;
+
+#if ENABLE(MEDIA_STREAM)
+    if (hasMediaStreamSrcObject())
+        return false;
+#endif
+
+    return true;
+}
+
+bool HTMLMediaElement::deferMediaResourceLoadIfNeeded()
+{
+    if (m_lazyLoadState != LazyLoadState::NotDeferred || !shouldLazyLoadMediaResource())
+        return false;
+
+    // selectMediaResource() sets the delaying-the-load-event flag for every element, but a lazy
+    // load must never delay the load event
+    setShouldDelayLoadEvent(false);
+
+    // Only <video> can be true here: it's observed from create() so already has an intersection state,
+    // and observe() below would no-op. <audio> always parks and resumes on the observer's first delivery.
+    if (isIntersectingViewport()) {
+        m_lazyLoadState = LazyLoadState::ResumedFromDeferred;
+        return false;
+    }
+
+    m_lazyLoadState = LazyLoadState::Deferred;
+    LazyLoadElementObserver::observe(*this);
+    return true;
+}
+
+void HTMLMediaElement::clearLazyLoadState()
+{
+    if (isMediaResourceLoadDeferred() && !tracksViewportIntersection())
+        LazyLoadElementObserver::unobserve(*this, protect(document()));
+
+    m_lazyLoadState = LazyLoadState::NotDeferred;
+}
+
+void HTMLMediaElement::resumeDeferredMediaResourceLoad()
+{
+    if (!isMediaResourceLoadDeferred())
+        return;
+
+    m_lazyLoadState = LazyLoadState::ResumedFromDeferred;
+
+    // An <audio> is observed only to trigger this resumption, so release it now that the load has
+    // restarted. A <video> keeps tracking intersection for accelerated rendering.
+    if (!shouldObserveViewportIntersection())
+        LazyLoadElementObserver::unobserve(*this, protect(document()));
+
+    queueSelectMediaResourceTask();
+}
+
+void HTMLMediaElement::runLazyLoadResumptionSteps()
+{
+    resumeDeferredMediaResourceLoad();
+}
+
+void HTMLMediaElement::lazyLoadIntersectionCallbackInvoked(bool isIntersecting)
+{
+    if (isIntersecting)
+        runLazyLoadResumptionSteps();
+
+    // Only <video> tracks intersection. <audio> is observed solely to unpark a lazy load,
+    // so it keeps reporting not-intersecting just as it did before being observed.
+    if (!tracksViewportIntersection() || m_isIntersectingViewport == isIntersecting)
+        return;
+
+    m_isIntersectingViewport = isIntersecting;
+
+    isVisibleInViewportChanged();
+    viewportIntersectionChanged();
+}
+
 void HTMLMediaElement::prepareForLoad(IsExplicitLoad isExplicitLoad)
 {
     // https://html.spec.whatwg.org/multipage/embedded-content.html#media-element-load-algorithm
@@ -1642,6 +1733,7 @@ void HTMLMediaElement::prepareForLoad(IsExplicitLoad isExplicitLoad)
     // Perform the cleanup required for the resource load algorithm to run.
     stopPeriodicTimers();
     m_resourceSelectionTaskCancellationGroup.cancel();
+    clearLazyLoadState();
     // FIXME: Figure out appropriate place to reset LoadTextTrackResource if necessary and set m_pendingActionFlags to 0 here.
     m_sentEndEvent = false;
     m_sentStalledEvent = false;
@@ -1813,6 +1905,11 @@ void HTMLMediaElement::selectMediaResource()
     // put into the background.
     mediaSession->removeBehaviorRestriction(MediaElementSession::RequirePageConsentToLoadMedia);
 
+    queueSelectMediaResourceTask();
+}
+
+void HTMLMediaElement::queueSelectMediaResourceTask()
+{
     queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, m_resourceSelectionTaskCancellationGroup, [](auto& element) {
         HTMLMEDIAELEMENT_RELEASE_LOG_WITH_THIS(&element, SelectMediaResourceLambdaTaskFired);
         // 5. If the media element’s blocked-on-parser flag is false, then populate the list of pending text tracks.
@@ -1862,6 +1959,9 @@ void HTMLMediaElement::selectMediaResource()
 
             return;
         }
+
+        if (element.deferMediaResourceLoadIfNeeded())
+            return;
 
         // 7. Set the media element’s networkState to NETWORK_LOADING.
         element.m_networkState = NETWORK_LOADING;
@@ -4667,6 +4767,8 @@ void HTMLMediaElement::playInternal()
     Ref mediaSession = this->mediaSession();
     mediaSession->setActive(true);
 
+    resumeDeferredMediaResourceLoad();
+
     // Internal play steps, step 1: invoke the resource selection algorithm when networkState is
     // NETWORK_EMPTY. With a src assigned, only do so when no load is underway yet — either no player
     // exists, or one exists but loading was suppressed (e.g. iOS autoplay policy) and readyState is
@@ -6231,15 +6333,20 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement& source)
         return;
     }
 
+    if (isMediaResourceLoadDeferred())
+        return;
+
     if (m_nextChildNodeToConsider)
         return;
 
     // 4.8.9.5, resource selection algorithm, source elements section:
     // 21. Wait until the node after pointer is a node other than the end of the list. (This step might wait forever.)
     // 22. Asynchronously await a stable state...
-    // 23. Set the element's delaying-the-load-event flag back to true (this delays the load event again, in case
-    // it hasn't been fired yet).
-    setShouldDelayLoadEvent(true);
+    // 23. If the media element's lazy loading attribute is in the Eager state or scripting is disabled for
+    // the media element, set the element's delaying-the-load-event flag back to true (this delays the load
+    // event again, in case it hasn't been fired yet). A lazy element never delays the load event, in view or not.
+    if (!shouldLazyLoadMediaResource())
+        setShouldDelayLoadEvent(true);
 
     // 24. Set the networkState back to NETWORK_LOADING.
     m_networkState = NETWORK_LOADING;
