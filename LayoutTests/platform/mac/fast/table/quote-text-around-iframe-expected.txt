@@ -13,11 +13,11 @@ layer at (0,0) size 800x348
               RenderText {#text} at (13,279) size 32x37
                 text run at (13,279) width 32: " A"
               RenderIFrame {IFRAME} at (44,0) size 609x308 [border: (4px inset #000000)]
-                layer at (0,0) size 600x300
-                  RenderView at (0,0) size 600x300
-                layer at (0,0) size 600x300
-                  RenderBlock {HTML} at (0,0) size 600x300
-                    RenderBody {BODY} at (8,8) size 584x284
+                layer at (0,0) size 300x150
+                  RenderView at (0,0) size 300x150
+                layer at (0,0) size 300x150
+                  RenderBlock {HTML} at (0,0) size 300x150
+                    RenderBody {BODY} at (8,8) size 284x134
               RenderText {#text} at (652,279) size 30x37
                 text run at (652,279) width 30: "B "
               RenderInline (generated) at (681,279) size 14x37
