@@ -1057,8 +1057,7 @@ void NetworkConnectionToWebProcess::setRawCookie(const URL& firstParty, const UR
 {
     auto access = validateCookieAccess("setRawCookie"_s, firstParty, url, nullptr, std::nullopt);
     MESSAGE_CHECK(access != CookieAccess::Terminate);
-    MESSAGE_CHECK(RegistrableDomain::uncheckedCreateFromHost(cookie.domain).matches(firstParty));
-    MESSAGE_CHECK(RegistrableDomain(url).matches(firstParty));
+    MESSAGE_CHECK(RegistrableDomain::uncheckedCreateFromHost(cookie.domain).matches(url));
     if (access != CookieAccess::Allow)
         return;
 
@@ -1066,10 +1065,11 @@ void NetworkConnectionToWebProcess::setRawCookie(const URL& firstParty, const UR
     if (!networkStorageSession)
         return;
 
+    if (networkStorageSession->shouldBlockCookies(firstParty, url, std::nullopt, std::nullopt, ShouldRelaxThirdPartyCookieBlocking::No, NetworkSession::isResourceFromKnownCrossSiteTracker(firstParty, url)))
+        return;
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
-    networkStorageSession->setCookie(firstParty, cookie, shouldPartitionCookie);
+    networkStorageSession->setCookie(cookie, url, firstParty, shouldPartitionCookie);
 #else
-    UNUSED_PARAM(firstParty);
     UNUSED_PARAM(shouldPartitionCookie);
     networkStorageSession->setCookie(cookie, url, firstParty);
 #endif
@@ -1087,6 +1087,8 @@ void NetworkConnectionToWebProcess::deleteCookie(const URL& firstParty, const UR
 
     CheckedPtr networkStorageSession = storageSession();
     if (!networkStorageSession)
+        return completionHandler();
+    if (networkStorageSession->shouldBlockCookies(firstParty, url, std::nullopt, std::nullopt, ShouldRelaxThirdPartyCookieBlocking::No, NetworkSession::isResourceFromKnownCrossSiteTracker(firstParty, url)))
         return completionHandler();
     networkStorageSession->deleteCookie(firstParty, url, cookieName, WTF::move(completionHandler));
 }

@@ -151,7 +151,7 @@ public:
     void setCookie(const WebCore::Cookie&);
 #endif
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
-    void setCookie(const URL& firstParty, const WebCore::Cookie&, WebCore::ShouldPartitionCookie);
+    void setCookie(const WebCore::Cookie&, const URL&, const URL& mainDocumentURL, WebCore::ShouldPartitionCookie);
 #endif
     void setCookie(const WebCore::Cookie&, const URL&, const URL& mainDocumentURL);
     void setCookies(const Vector<WebCore::Cookie>&, const URL&, const URL& mainDocumentURL);
