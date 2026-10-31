@@ -34,7 +34,7 @@ enum class MouseInteraction { Move, Down, Up, SingleClick, DoubleClick };
 enum class PointerType { Mouse, Pen, Touch };
 
 struct InputSource {
-    enum class Type { None, Key, Pointer, Wheel };
+    enum class Type { None, Key, Pointer, Wheel, Gamepad };
 
     Type type;
     std::optional<PointerType> pointerType;
@@ -52,8 +52,8 @@ struct PointerOrigin {
 };
 
 struct Action {
-    enum class Type { None, Key, Pointer, Wheel };
-    enum class Subtype { Pause, PointerUp, PointerDown, PointerMove, PointerCancel, KeyUp, KeyDown, Scroll };
+    enum class Type { None, Key, Pointer, Wheel, Gamepad };
+    enum class Subtype { Pause, PointerUp, PointerDown, PointerMove, PointerCancel, KeyUp, KeyDown, Scroll, GamepadAxis, GamepadButton };
 
     Action(const String& id, Type type, Subtype subtype)
         : id(id)
@@ -76,6 +76,8 @@ struct Action {
     std::optional<int64_t> deltaY;
 
     std::optional<String> key;
+    std::optional<unsigned> gamepadIndex;
+    std::optional<double> gamepadValue;
 };
 
 } // WebDriver
