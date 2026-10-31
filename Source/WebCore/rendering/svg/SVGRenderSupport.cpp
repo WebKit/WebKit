@@ -60,6 +60,7 @@
 #include "SVGGeometryElement.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
+#include "SVGSVGElement.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TransformOperationData.h"
@@ -524,6 +525,46 @@ bool SVGRenderSupport::pointInClippingArea(const RenderElement& renderer, const 
         return clipper->hitTestClipContent(renderer.objectBoundingBox(), point);
 
     return true;
+}
+
+AffineTransform SVGRenderSupport::legacyNonScalingStrokeTransform(const SVGElement& element)
+{
+    // We intentionally do NOT use getScreenCTM() here. getScreenCTM() now returns
+    // the full accumulated CSS transform matrix (including transforms from HTML
+    // ancestors like a scaled <body>). However, the legacy SVG paint context only
+    // includes SVG-internal transforms plus position offsets — HTML ancestor CSS
+    // transforms are applied at the compositing/layer level. Using the full
+    // getScreenCTM() would cause non-scaling-stroke to over-compensate for
+    // transforms that are already handled by the layer system.
+    //
+    // Instead, walk the SVG ancestor chain accumulating SVG-internal transforms,
+    // and at the outermost <svg>, use localToAbsolute (point-mapping only) which
+    // correctly discards the rotation/scale components of HTML ancestor CSS transforms.
+    AffineTransform ctm;
+    RefPtr<const SVGSVGElement> outermostSVG;
+    for (RefPtr<const Element> current = &element; current; current = current->parentOrShadowHostElement()) {
+        RefPtr svgElement = dynamicDowncast<SVGElement>(*current);
+        if (!svgElement)
+            break;
+        ctm = svgElement->localCoordinateSpaceTransform(CTMScope::NearestViewportScope).multiply(ctm);
+        if (RefPtr svgSVGElement = dynamicDowncast<SVGSVGElement>(*svgElement))
+            outermostSVG = WTF::move(svgSVGElement);
+    }
+
+    // Now add the outermost SVG's screen position as a translation.
+    if (outermostSVG) {
+        if (CheckedPtr renderer = outermostSVG->renderer()) {
+            if (CheckedPtr legacyRoot = dynamicDowncast<LegacyRenderSVGRoot>(*renderer)) {
+                FloatPoint location = legacyRoot->localToBorderBoxTransform().mapPoint(FloatPoint());
+                float zoomFactor = 1 / renderer->style().usedZoom();
+                location = renderer->localToAbsolute(location, MapCoordinatesMode::UseTransforms);
+                location.scale(zoomFactor);
+                ctm = AffineTransform::makeTranslation(toFloatSize(location)) * ctm;
+            }
+        }
+    }
+
+    return ctm;
 }
 
 void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const Style::ComputedStyle& style, const RenderElement& renderer)
