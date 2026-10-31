@@ -69,7 +69,7 @@ static Document* LEGACY_NODELETE documentFromClipboard(const Clipboard* clipboar
 static FileReaderLoader::ReadType readTypeForMIMEType(const String& type)
 {
     if (type == "text/uri-list"_s || type == textPlainContentTypeAtom() || type == textHTMLContentTypeAtom())
-        return FileReaderLoader::ReadAsText;
+        return FileReaderLoader::ReadAsUTF8Text;
     return FileReaderLoader::ReadAsArrayBuffer;
 }
 
@@ -267,7 +267,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::didFinishLoading(
     ASSERT(m_blobLoader);
 
     Ref blobLoader = *m_blobLoader;
-    auto stringResult = readTypeForMIMEType(m_type) == FileReaderLoader::ReadAsText ? blobLoader->stringResult() : nullString();
+    auto stringResult = readTypeForMIMEType(m_type) == FileReaderLoader::ReadAsUTF8Text ? blobLoader->stringResult() : nullString();
     if (!stringResult.isNull())
         m_data = { stringResult };
     else if (auto arrayBuffer = blobLoader->arrayBufferResult())
