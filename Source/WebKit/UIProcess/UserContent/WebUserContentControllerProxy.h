@@ -104,7 +104,7 @@ public:
 #else
     void removeAllUserScripts();
 #endif
-    WebCoreUserScriptData dataFromUserScript(const WebCore::UserScript&) const;
+    WebCoreUserScriptData dataFromUserScript(const API::UserScript&, WebProcessProxy&) const;
 
     API::Array& userStyleSheets() { return m_userStyleSheets.get(); }
     void addUserStyleSheet(API::UserStyleSheet&);

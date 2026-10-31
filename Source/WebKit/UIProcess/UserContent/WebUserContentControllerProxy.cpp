@@ -129,9 +129,15 @@ void WebUserContentControllerProxy::resetTransferStringCache()
     m_transferStringCache.clear();
 }
 
-WebCoreUserScriptData WebUserContentControllerProxy::dataFromUserScript(const WebCore::UserScript& script) const
+WebCoreUserScriptData WebUserContentControllerProxy::dataFromUserScript(const API::UserScript& userScript, WebProcessProxy& process) const
 {
-    return { cachedTransferString(script.source()), script.url(), script.allowlist(), script.blocklist(), script.injectionTime(), script.injectedFrames(), script.matchParentFrame() };
+    auto& script = userScript.userScript();
+
+    std::optional<WebCore::PageIdentifier> pageID;
+    if (RefPtr page = userScript.page())
+        pageID = page->webPageIDInProcess(process);
+
+    return { cachedTransferString(script.source()), script.url(), script.allowlist(), script.blocklist(), script.injectionTime(), script.injectedFrames(), script.matchParentFrame(), pageID };
 }
 
 WebCoreUserStyleSheetData WebUserContentControllerProxy::dataFromUserStyleSheet(const API::UserStyleSheet& userStyleSheet, WebProcessProxy& process) const
@@ -142,7 +148,7 @@ WebCoreUserStyleSheetData WebUserContentControllerProxy::dataFromUserStyleSheet(
     if (RefPtr page = userStyleSheet.page())
         pageID = page->webPageIDInProcess(process);
 
-    return { cachedTransferString(sheet.source()), sheet.url(), sheet.allowlist(), sheet.blocklist(), sheet.injectedFrames(), sheet.matchParentFrame(), sheet.level(), pageID };
+    return { cachedTransferString(sheet.source()), sheet.url(), sheet.allowlist(), sheet.blocklist(), sheet.injectedFrames(), sheet.matchParentFrame(), sheet.level(), pageID, sheet.persistsAcrossDocuments() };
 }
 
 UserContentControllerParameters WebUserContentControllerProxy::parametersForProcess(WebProcessProxy& process) const
@@ -150,8 +156,11 @@ UserContentControllerParameters WebUserContentControllerProxy::parametersForProc
     m_processes.add(process);
 
     Vector<WebUserScriptData> userScripts;
-    for (RefPtr userScript : m_userScripts->elementsOfType<API::UserScript>())
-        userScripts.append({ userScript->identifier(), Ref { userScript->contentWorld() }->worldDataForProcess(process), dataFromUserScript(userScript->userScript()) });
+    for (RefPtr userScript : m_userScripts->elementsOfType<API::UserScript>()) {
+        if (userScript->isOrphaned())
+            continue;
+        userScripts.append({ userScript->identifier(), Ref { userScript->contentWorld() }->worldDataForProcess(process), dataFromUserScript(*userScript, process) });
+    }
 
     Vector<WebUserStyleSheetData> userStyleSheets;
     for (RefPtr userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>()) {
@@ -197,8 +206,11 @@ void WebUserContentControllerProxy::addUserScript(API::UserScript& userScript, I
 
     m_userScripts->elements().append(&userScript);
 
+    if (userScript.isOrphaned())
+        return;
+
     for (Ref process : m_processes)
-        process->send(Messages::WebUserContentController::AddUserScripts({ { userScript.identifier(), world->worldDataForProcess(process), dataFromUserScript(userScript.userScript()) } }, immediately), identifier());
+        process->send(Messages::WebUserContentController::AddUserScripts({ { userScript.identifier(), world->worldDataForProcess(process), dataFromUserScript(userScript, process) } }, immediately), identifier());
 }
 
 void WebUserContentControllerProxy::removeUserScript(API::UserScript& userScript)

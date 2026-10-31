@@ -49,6 +49,7 @@ struct WebCoreUserScriptData {
     WebCore::UserScriptInjectionTime injectionTime;
     WebCore::UserContentInjectedFrames injectedFrames;
     WebCore::UserContentMatchParentFrame matchParentFrame;
+    std::optional<WebCore::PageIdentifier> pageID;
 };
 
 struct WebUserScriptData {
@@ -66,6 +67,7 @@ struct WebCoreUserStyleSheetData {
     WebCore::UserContentMatchParentFrame matchParentFrame;
     WebCore::UserStyleLevel level;
     std::optional<WebCore::PageIdentifier> pageID;
+    bool persistsAcrossDocuments;
 };
 
 struct WebUserStyleSheetData {

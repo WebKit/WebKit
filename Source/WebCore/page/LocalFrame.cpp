@@ -828,6 +828,9 @@ void LocalFrame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserS
     if (!page)
         return;
 
+    if (script.pageID() && script.pageID() != page->identifier())
+        return;
+
     if (script.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly && !isMainFrame())
         return;
 
