@@ -43,11 +43,51 @@ std::span<const Latin1Character> JSONCache::recordableName(Structure* from, Stru
         return { };
     // Matching the raw source text is only equivalent to lexing the key when the key needs no escaping.
     auto characters = name->span8();
-    for (auto character : characters) {
-        if (character < ' ' || character == '"' || character == '\\')
-            return { };
-    }
+    if (hasUnsafeStringCharacter(characters))
+        return { };
     return characters;
+}
+
+const JSONCache::StringEntry* JSONCache::addLongString(VM& vm, std::span<const Latin1Character> source, size_t searchedLength, LongStringIndex index, StructureID keepAlive)
+{
+    ASSERT(maxAtomizeStringLength < searchedLength && searchedLength <= longStringSearchLength);
+    EnsureStillAliveScope keepAliveScope(keepAlive ? keepAlive.decode() : nullptr);
+    size_t length = searchedLength;
+    if (length == longStringSearchLength) {
+        auto characters = source.subspan(1, std::min<size_t>(source.size() - 1, maxLongStringLength + 1));
+        auto vectorMatch = [](simde_uint8x16_t input) ALWAYS_INLINE_LAMBDA {
+            return SIMD::findFirstNonZeroIndex(SIMD::equal(input, SIMD::splat<uint8_t>('"')));
+        };
+        auto scalarMatch = [](Latin1Character character) ALWAYS_INLINE_LAMBDA {
+            return character == '"';
+        };
+        auto rest = characters.subspan(longStringSearchLength);
+        length = longStringSearchLength + (SIMD::find(rest, vectorMatch, scalarMatch) - rest.data());
+        if (length == characters.size())
+            return nullptr;
+    }
+    auto characters = source.subspan(1, length);
+    if (hasUnsafeStringCharacter(characters))
+        return nullptr;
+
+    uint64_t key = StringEntry::makeKey(length + 2, index.hashBits);
+    std::span<StringEntry, longStringWays> entries { std::span { m_longStrings }.subspan(index.set, longStringWays) };
+    JSString* string = nullptr;
+    if (length >= longStringSearchLength) {
+        auto secondaryIndex = secondaryLongStringIndex(characters.data(), length);
+        auto& secondary = m_secondaryLongStrings[secondaryIndex.set];
+        uint64_t secondaryKey = StringEntry::makeKey(length + 2, secondaryIndex.hashBits);
+        if (secondary.key() == secondaryKey && longStringMatches(secondary.string(), characters))
+            string = secondary.string();
+        else {
+            string = jsNontrivialString(vm, String(characters));
+            m_secondaryLongStrings[secondaryIndex.set] = { string, secondaryKey };
+        }
+    } else
+        string = jsNontrivialString(vm, String(characters));
+    insertLongString(entries, string, key);
+    addString(source, length + 2, string);
+    return &entries[0];
 }
 
 template<unsigned size>

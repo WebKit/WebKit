@@ -208,11 +208,13 @@ ALWAYS_INLINE Identifier LiteralParser<CharType, reviverMode>::makeIdentifier(VM
 }
 
 template<typename CharType, JSONReviverMode reviverMode>
-ALWAYS_INLINE JSString* LiteralParser<CharType, reviverMode>::makeJSString(VM& vm, JSONCache& cache, typename Lexer::LiteralParserTokenPtr token)
+ALWAYS_INLINE JSString* LiteralParser<CharType, reviverMode>::makeJSString(VM& vm, JSONCache& cache)
 {
+    auto token = m_lexer.currentToken();
+    bool isSourceText = m_lexer.currentStringIsSourceText();
     if (token->stringIs8Bit)
-        return cache.makeJSString(vm, token->string8());
-    return cache.makeJSString(vm, token->string16());
+        return cache.makeJSString(vm, token->string8(), isSourceText);
+    return cache.makeJSString(vm, token->string16(), isSourceText);
 }
 
 [[maybe_unused]] static ALWAYS_INLINE bool LEGACY_NODELETE cannotBeIdentPartOrEscapeStart(Latin1Character)
@@ -1016,16 +1018,27 @@ ALWAYS_INLINE bool LiteralParser<CharType, reviverMode>::Lexer::tryConsumeString
 }
 
 template<typename CharType, JSONReviverMode reviverMode>
-ALWAYS_INLINE void LiteralParser<CharType, reviverMode>::Lexer::cacheString(JSONCache& cache, JSString* string, std::span<const CharType> source)
+ALWAYS_INLINE bool LiteralParser<CharType, reviverMode>::Lexer::currentStringIsSourceText() const
+{
+    // The token only points into the source when the string had no escapes. Only strict JSON quotes
+    // every string with '"' and escapes every character that needs it.
+    if (m_mode != StrictJSON)
+        return false;
+    if constexpr (sizeof(CharType) == 1)
+        return m_currentToken.stringStart8 == m_currentStringStart + 1;
+    else
+        return !m_currentToken.stringIs8Bit && m_currentToken.stringStart16 == m_currentStringStart + 1;
+}
+
+template<typename CharType, JSONReviverMode reviverMode>
+ALWAYS_INLINE void LiteralParser<CharType, reviverMode>::Lexer::cacheString(JSONCache& cache, JSString* string)
 {
     if constexpr (sizeof(CharType) == 1) {
-        // The token only points into the source when the string had no escapes, and then the source text
-        // from the opening quote to the closing one is exactly what a later match compares against.
-        if (m_currentToken.stringStart8 != source.data() + 1)
+        if (!currentStringIsSourceText())
             return;
-        cache.addString(source, m_ptr - source.data(), string);
+        cache.addString(currentStringSource(), m_ptr - m_currentStringStart, string);
     } else
-        UNUSED_PARAM(cache), UNUSED_PARAM(string), UNUSED_PARAM(source);
+        UNUSED_PARAM(cache), UNUSED_PARAM(string);
 }
 
 template <>
@@ -1117,7 +1130,7 @@ template<typename CharType, JSONReviverMode reviverMode>
 template <JSONIdentifierHint hint>
 ALWAYS_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::lexString(LiteralParserToken<CharType>& token, CharType terminator)
 {
-    ++m_ptr;
+    m_currentStringStart = m_ptr++;
     const CharType* runStart = m_ptr;
 
     if constexpr (hint == JSONIdentifierHint::MaybeIdentifier) {
@@ -1376,7 +1389,7 @@ ALWAYS_INLINE JSValue LiteralParser<CharType, reviverMode>::parsePrimitiveValue(
 {
     switch (m_lexer.currentToken()->type) {
     case TokString: {
-        JSString* result = makeJSString(vm, m_jsonCache, m_lexer.currentToken());
+        JSString* result = makeJSString(vm, m_jsonCache);
         m_lexer.nextAfterValue();
         return result;
     }
@@ -1649,18 +1662,17 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
         case '"': {
             if constexpr (parserMode == StrictJSON && sizeof(CharType) == 1) {
                 if (lookUpCachedStrings) {
-                    if (auto* entry = jsonCache.findString(m_lexer.remaining())) {
-                        m_lexer.advance(entry->textLength);
+                    if (auto* entry = jsonCache.findOrCreateString(vm, m_lexer.remaining(), StructureID())) {
+                        m_lexer.advance(entry->textLength());
                         m_lexer.nextAfterValue();
-                        return entry->string;
+                        return entry->string();
                     }
                 }
             }
-            auto source = m_lexer.remaining();
             if (m_lexer.nextString() == TokString) [[likely]] {
-                JSString* result = makeJSString(vm, jsonCache, m_lexer.currentToken());
+                JSString* result = makeJSString(vm, jsonCache);
                 if constexpr (parserMode == StrictJSON && sizeof(CharType) == 1)
-                    m_lexer.cacheString(jsonCache, result, source);
+                    m_lexer.cacheString(jsonCache, result);
                 m_lexer.nextAfterValue();
                 return result;
             }
@@ -1766,9 +1778,10 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
                 if (cursor < end) [[likely]] {
                     if (*cursor == '"') {
                         if constexpr (sizeof(CharType) == 1) {
-                            if (auto* stringEntry = jsonCache.findString(std::span { cursor, static_cast<size_t>(end - cursor) })) {
-                                value = stringEntry->string;
-                                cursor += stringEntry->textLength;
+                            std::span source { cursor, static_cast<size_t>(end - cursor) };
+                            if (auto* stringEntry = jsonCache.findOrCreateString(vm, source, newStructureID)) {
+                                value = stringEntry->string();
+                                cursor += stringEntry->textLength();
                             }
                         }
                     } else if (isASCIIDigit(*cursor)) {

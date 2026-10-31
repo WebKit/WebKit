@@ -38,6 +38,9 @@
 
 namespace JSC {
 
+// A cell in a PreciseAllocation is only half aligned, which would leave StringEntry no low bits for its key.
+static_assert(!JSString::numberOfLowerTierPreciseCells && !JSRopeString::numberOfLowerTierPreciseCells);
+
 ALWAYS_INLINE uint64_t JSONCache::atomStringKey(char16_t firstCharacter, char16_t lastCharacter, unsigned length)
 {
     return length | (static_cast<uint64_t>(firstCharacter) << 8) | (static_cast<uint64_t>(lastCharacter) << 24);
@@ -175,18 +178,17 @@ NEVER_INLINE JSString* JSONCache::makeJSStringSlow(VM& vm, uint64_t key, std::sp
 }
 
 template<typename CharacterType>
-ALWAYS_INLINE JSString* JSONCache::makeJSString(VM& vm, std::span<const CharacterType> characters)
+ALWAYS_INLINE JSString* JSONCache::makeJSString(VM& vm, std::span<const CharacterType> characters, bool isSourceText)
 {
     if (characters.empty())
         return jsEmptyString(vm);
 
-    constexpr unsigned maxAtomizeStringLength = 16;
     auto firstCharacter = characters.front();
     if (characters.size() == 1) {
         if (firstCharacter <= maxSingleCharacterString)
             return jsSingleCharacterString(vm, firstCharacter);
     } else if (characters.size() > maxAtomizeStringLength)
-        return makeLongJSString(vm, characters);
+        return makeLongJSString(vm, characters, isSourceText);
 
     uint64_t key = atomStringKey(characters);
     unsigned index = primaryAtomStringIndex(key);
@@ -197,10 +199,41 @@ ALWAYS_INLINE JSString* JSONCache::makeJSString(VM& vm, std::span<const Characte
     return makeJSStringSlow(vm, key, characters);
 }
 
-// Long values such as URLs and type names repeat heavily in real JSON, so they are shared without
-// atomizing. Called only for lengths above maxAtomizeStringLength, so both 8-byte loads are in bounds.
 template<typename CharacterType>
-inline JSString* JSONCache::makeLongJSString(VM& vm, std::span<const CharacterType> characters)
+ALWAYS_INLINE bool JSONCache::hasUnsafeStringCharacter(std::span<const CharacterType> characters)
+{
+    using UnsignedType = SameSizeUnsignedInteger<CharacterType>;
+    auto vectorMatch = [](auto input) ALWAYS_INLINE_LAMBDA {
+        auto quotes = SIMD::equal(input, SIMD::splat<UnsignedType>('"'));
+        auto escapes = SIMD::equal(input, SIMD::splat<UnsignedType>('\\'));
+        auto controls = SIMD::lessThan(input, SIMD::splat<UnsignedType>(' '));
+        return SIMD::findFirstNonZeroIndex(SIMD::bitOr(quotes, escapes, controls));
+    };
+    auto scalarMatch = [](CharacterType character) ALWAYS_INLINE_LAMBDA {
+        return character < ' ' || character == '"' || character == '\\';
+    };
+    return SIMD::find(characters, vectorMatch, scalarMatch) != std::to_address(characters.end());
+}
+
+template<typename CharacterType>
+ALWAYS_INLINE bool JSONCache::longStringMatches(JSString* string, std::span<const CharacterType> characters)
+{
+    // A JSString's characters can move to another StringImpl when it is atomized, so they are read from it.
+    SUPPRESS_UNCOUNTED_LOCAL StringImpl* impl = string->getValueImpl();
+    ASSERT(impl->length() == characters.size());
+    return impl->is8Bit() ? equal(impl->span8().data(), characters) : equal(impl->span16().data(), characters);
+}
+
+ALWAYS_INLINE void JSONCache::insertLongString(std::span<StringEntry, longStringWays> entries, JSString* string, uint64_t key)
+{
+    for (unsigned way = longStringWays - 1; way; --way)
+        entries[way] = entries[way - 1];
+    entries[0] = { string, key };
+}
+
+// Long values such as URLs and type names repeat heavily in real JSON, so they are shared without atomizing.
+template<typename CharacterType>
+inline JSString* JSONCache::makeLongJSString(VM& vm, std::span<const CharacterType> characters, bool isSourceText)
 {
     auto create = [&] {
         if constexpr (std::is_same_v<CharacterType, char16_t>)
@@ -212,27 +245,44 @@ inline JSString* JSONCache::makeLongJSString(VM& vm, std::span<const CharacterTy
     if (characters.size() > maxLongStringLength)
         return create();
 
-    auto bytes = asBytes(characters);
-    uint64_t head = WTF::unalignedLoad<uint64_t>(bytes.data());
-    uint64_t tail = WTF::unalignedLoad<uint64_t>(bytes.last(sizeof(uint64_t)).data());
-    uint64_t hash = (head * 0x9E3779B97F4A7C15ULL) ^ (tail * 0xC2B2AE3D27D4EB4FULL) ^ characters.size();
-    hash ^= hash >> 32;
-    unsigned index = static_cast<unsigned>(hash * 0x9E3779B97F4A7C15ULL >> (64 - longStringCapacityLog2));
+    auto index = longStringIndex(characters.data(), std::min<size_t>(characters.size(), longStringSearchLength));
+    uint64_t key = StringEntry::makeKey(characters.size() + 2, index.hashBits);
+    std::span<StringEntry, longStringWays> entries { std::span { m_longStrings }.subspan(index.set, longStringWays) };
+    for (unsigned way = 0; way < longStringWays; ++way) {
+        JSString* cached = entries[way].string();
+        if (!cached)
+            break;
+        if ((entries[way].key() | sourceTextKeyBit) != key)
+            continue;
+        if (longStringMatches(cached, characters)) {
+            if (way)
+                std::swap(entries[0], entries[way]);
+            return cached;
+        }
+    }
 
-    JSString*& slot = m_longJSStrings[index];
-    if (JSString* cached = slot) {
-        SUPPRESS_UNCOUNTED_LOCAL StringImpl* impl = cached->getValueImpl();
-        if (impl->length() == characters.size()) {
-            if (impl->is8Bit()) {
-                if (equal(impl->span8().data(), characters))
-                    return cached;
-            } else if (equal(impl->span16().data(), characters))
-                return cached;
+    StringEntry* secondary = nullptr;
+    uint64_t secondaryKey = 0;
+    if (characters.size() >= longStringSearchLength) {
+        auto secondaryIndex = secondaryLongStringIndex(characters.data(), characters.size());
+        secondary = &m_secondaryLongStrings[secondaryIndex.set];
+        secondaryKey = StringEntry::makeKey(characters.size() + 2, secondaryIndex.hashBits);
+        if ((secondary->key() | sourceTextKeyBit) == secondaryKey && longStringMatches(secondary->string(), characters)) {
+            JSString* cached = secondary->string();
+            insertLongString(entries, cached, key & (secondary->key() | ~sourceTextKeyBit));
+            return cached;
         }
     }
 
     JSString* result = create();
-    slot = result;
+    // The source text of a value that needs escapes is not its characters between quotes.
+    if (!isSourceText && hasUnsafeStringCharacter(characters)) {
+        key &= ~sourceTextKeyBit;
+        secondaryKey &= ~sourceTextKeyBit;
+    }
+    insertLongString(entries, result, key);
+    if (secondary)
+        *secondary = { result, secondaryKey };
     return result;
 }
 
@@ -330,43 +380,35 @@ ALWAYS_INLINE unsigned JSONCache::prefixedNameIndex(StructureID structureID, uin
     return ((key * 0x9E3779B97F4A7C15ULL) >> (64 - WTF::fastLog2(prefixedNameEntrySize))) & ~(prefixedNameWays - 1);
 }
 
-ALWAYS_INLINE bool JSONCache::textMatches(const NameText& text, unsigned length, NameSource source)
+template<typename CharacterType>
+ALWAYS_INLINE JSONCache::TextWindow JSONCache::loadTextWindow(NameSource<CharacterType> source)
 {
-    ASSERT(length <= text.size());
     constexpr size_t stride = SIMD::stride<uint8_t>;
     static_assert(std::tuple_size_v<NameText> == 2 * stride);
-    constexpr simde_uint8x16_t lowIndices { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-    constexpr simde_uint8x16_t highIndices { 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
-    auto load = [](std::span<const Latin1Character, stride> characters) ALWAYS_INLINE_LAMBDA {
-        return SIMD::load(std::bit_cast<const uint8_t*>(characters.data()));
-    };
-    NameSource expected { text };
-    auto lengths = SIMD::splat<uint8_t>(length);
-    auto low = SIMD::bitAnd(SIMD::bitXor(load(source.first<stride>()), load(expected.first<stride>())), SIMD::lessThan(lowIndices, lengths));
-    auto high = SIMD::bitAnd(SIMD::bitXor(load(source.last<stride>()), load(expected.last<stride>())), SIMD::lessThan(highIndices, lengths));
-    return !SIMD::isNonZero(SIMD::bitOr(low, high));
+    if constexpr (sizeof(CharacterType) == 1) {
+        auto zero = SIMD::splat<uint8_t>(0);
+        return {
+            { SIMD::load(std::bit_cast<const uint8_t*>(source.data())), SIMD::load(std::bit_cast<const uint8_t*>(source.template last<stride>().data())) },
+            { zero, zero },
+        };
+    } else {
+        auto first = simde_vld2q_u8(std::bit_cast<const uint8_t*>(source.data()));
+        auto last = simde_vld2q_u8(std::bit_cast<const uint8_t*>(source.template last<stride>().data()));
+        return { { first.val[0], last.val[0] }, { first.val[1], last.val[1] } };
+    }
 }
 
-// Matching 16-bit source also requires the high byte of each character to be zero.
-ALWAYS_INLINE bool JSONCache::textMatches(const NameText& text, unsigned length, NameSource16 source)
+ALWAYS_INLINE bool JSONCache::textMatches(const NameText& text, unsigned length, const TextWindow& window)
 {
     ASSERT(length <= text.size());
     constexpr size_t stride = SIMD::stride<uint8_t>;
     constexpr simde_uint8x16_t lowIndices { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
     constexpr simde_uint8x16_t highIndices { 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
-    auto loadSource = [](std::span<const char16_t, stride> characters) ALWAYS_INLINE_LAMBDA {
-        return simde_vld2q_u8(std::bit_cast<const uint8_t*>(characters.data()));
-    };
-    auto load = [](std::span<const Latin1Character, stride> characters) ALWAYS_INLINE_LAMBDA {
-        return SIMD::load(std::bit_cast<const uint8_t*>(characters.data()));
-    };
-    NameSource expected { text };
     auto lengths = SIMD::splat<uint8_t>(length);
-    auto first = loadSource(source.first<stride>());
-    auto last = loadSource(source.last<stride>());
-    auto low = SIMD::bitAnd(SIMD::bitOr(SIMD::bitXor(first.val[0], load(expected.first<stride>())), first.val[1]), SIMD::lessThan(lowIndices, lengths));
-    auto high = SIMD::bitAnd(SIMD::bitOr(SIMD::bitXor(last.val[0], load(expected.last<stride>())), last.val[1]), SIMD::lessThan(highIndices, lengths));
-    return !SIMD::isNonZero(SIMD::bitOr(low, high));
+    auto expected = std::span { text };
+    auto low = SIMD::bitOr(SIMD::bitXor(SIMD::load(std::bit_cast<const uint8_t*>(expected.data())), window.characters[0]), window.nonLatin1[0]);
+    auto high = SIMD::bitOr(SIMD::bitXor(SIMD::load(std::bit_cast<const uint8_t*>(expected.template last<stride>().data())), window.characters[1]), window.nonLatin1[1]);
+    return !SIMD::isNonZero(SIMD::bitOr(SIMD::bitAnd(low, SIMD::lessThan(lowIndices, lengths)), SIMD::bitAnd(high, SIMD::lessThan(highIndices, lengths))));
 }
 
 template<unsigned size>
@@ -409,21 +451,34 @@ ALWAYS_INLINE const JSONCache::NameEntry* JSONCache::findName(StructureID from, 
     return nullptr;
 }
 
+ALWAYS_INLINE uint64_t JSONCache::stringPrefix(const Latin1Character* characters)
+{
+    return WTF::unalignedLoad<uint64_t>(characters);
+}
+
+ALWAYS_INLINE uint64_t JSONCache::stringPrefix(const char16_t* characters)
+{
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    return static_cast<uint64_t>(sourcePrefix(unsafeMakeSpan(characters, 4))) | (static_cast<uint64_t>(sourcePrefix(unsafeMakeSpan(characters + 4, 4))) << 32);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+}
+
 ALWAYS_INLINE unsigned JSONCache::stringIndex(std::span<const Latin1Character> source)
 {
     static_assert(hasOneBitSet(stringEntrySize) && hasOneBitSet(stringWays));
-    uint64_t prefix = WTF::unalignedLoad<uint64_t>(source.data());
+    ASSERT(source.size() >= sizeof(uint64_t));
+    uint64_t prefix = stringPrefix(source.data());
     return ((prefix * 0x9E3779B97F4A7C15ULL) >> (64 - WTF::fastLog2(stringEntrySize))) & ~(stringWays - 1);
 }
 
-ALWAYS_INLINE const JSONCache::StringEntry* JSONCache::StringTable::match(unsigned index, std::span<const Latin1Character> source) const
+ALWAYS_INLINE const JSONCache::StringEntry* JSONCache::StringTable::match(unsigned index, const TextWindow& window) const
 {
     auto& entry = m_entries[index];
-    if (!entry.string || source.size() < maxNameTextLength)
-        return nullptr;
-    if (!textMatches(m_texts[index], entry.textLength, source.first<maxNameTextLength>()))
-        return nullptr;
-    return &entry;
+    ASSERT(entry.textLength() <= maxNameTextLength);
+    // Both conditions are evaluated without a branch between them, so that the lookup branches only on
+    // whether the value matched.
+    unsigned matches = static_cast<unsigned>(!!entry.string()) & static_cast<unsigned>(textMatches(m_texts[index], entry.textLength(), window));
+    return matches ? &entry : nullptr;
 }
 
 ALWAYS_INLINE void JSONCache::StringTable::insert(unsigned set, JSString* string, std::span<const Latin1Character> source, unsigned textLength)
@@ -432,18 +487,28 @@ ALWAYS_INLINE void JSONCache::StringTable::insert(unsigned set, JSString* string
         m_entries[set + way] = m_entries[set + way - 1];
         m_texts[set + way] = m_texts[set + way - 1];
     }
-    m_entries[set] = { string, textLength };
+    m_entries[set] = { string, StringEntry::makeKey(textLength, 0) };
     WTF::copyElements(std::span<Latin1Character> { m_texts[set] }, source.first(maxNameTextLength));
 }
 
-ALWAYS_INLINE const JSONCache::StringEntry* JSONCache::findString(std::span<const Latin1Character> source) const
+ALWAYS_INLINE const JSONCache::StringEntry* JSONCache::findShortString(std::span<const Latin1Character> source)
 {
-    if (source.size() < sizeof(uint64_t))
+    static_assert(stringWays == 2);
+    if (source.size() < maxNameTextLength)
         return nullptr;
     unsigned set = stringIndex(source);
-    for (unsigned way = 0; way < stringWays; ++way) {
-        if (auto* entry = m_strings.match(set + way, source))
-            return entry;
+    auto window = loadTextWindow(source.first<maxNameTextLength>());
+    auto* first = m_strings.match(set, window);
+    auto* second = m_strings.match(set + 1, window);
+    if (first)
+        return first;
+    if (second) {
+        std::swap(m_strings.m_entries[set], m_strings.m_entries[set + 1]);
+        // Copying the texts whole is a few vector moves, where std::swap would exchange them a character at a time.
+        NameText text = m_strings.m_texts[set];
+        m_strings.m_texts[set] = m_strings.m_texts[set + 1];
+        m_strings.m_texts[set + 1] = text;
+        return &m_strings.m_entries[set];
     }
     return nullptr;
 }
@@ -453,6 +518,135 @@ ALWAYS_INLINE void JSONCache::addString(std::span<const Latin1Character> source,
     if (textLength > maxNameTextLength || source.size() < maxNameTextLength)
         return;
     m_strings.insert(stringIndex(source), string, source, textLength);
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+template<typename CharacterType>
+ALWAYS_INLINE uint64_t JSONCache::longStringHash(const CharacterType* characters, size_t length)
+{
+    static_assert(maxAtomizeStringLength >= sizeof(uint64_t));
+    ASSERT(length > maxAtomizeStringLength && length <= maxLongStringLength);
+    uint64_t head = stringPrefix(characters);
+    uint64_t tail = stringPrefix(characters + length - sizeof(uint64_t));
+    uint64_t hash = (head * 0x9E3779B97F4A7C15ULL) ^ (tail * 0xC2B2AE3D27D4EB4FULL) ^ length;
+    hash ^= hash >> 32;
+    return hash * 0x9E3779B97F4A7C15ULL;
+}
+
+// The hash bits below those that choose the set fill the key bits that the text length leaves free: seven
+// above it, and three next to sourceTextKeyBit in the low bits of the pointer.
+template<unsigned setBits>
+ALWAYS_INLINE uint64_t JSONCache::longStringHashBits(uint64_t hash)
+{
+    constexpr unsigned highBits = 64 - StringEntry::pointerBits - StringEntry::textLengthBits;
+    constexpr unsigned lowBits = 3;
+    static_assert(sourceTextKeyBit == 1 && !(StringEntry::pointerMask & (((1ULL << lowBits) - 1) << 1)));
+    uint64_t bits = (hash >> (64 - setBits - highBits - lowBits)) & ((1ULL << (highBits + lowBits)) - 1);
+    return ((bits >> lowBits) << (64 - highBits)) | ((bits & ((1ULL << lowBits) - 1)) << 1) | sourceTextKeyBit;
+}
+
+template<typename CharacterType>
+ALWAYS_INLINE JSONCache::LongStringIndex JSONCache::longStringIndex(const CharacterType* characters, size_t length)
+{
+    static_assert(hasOneBitSet(longStringEntrySize) && hasOneBitSet(longStringWays));
+    ASSERT(length <= longStringSearchLength);
+    uint64_t hash = longStringHash(characters, length);
+    constexpr unsigned setBits = WTF::fastLog2(longStringEntrySize);
+    return { static_cast<unsigned>(hash >> (64 - setBits)) & ~(longStringWays - 1), longStringHashBits<setBits>(hash) };
+}
+
+template<typename CharacterType>
+ALWAYS_INLINE JSONCache::LongStringIndex JSONCache::secondaryLongStringIndex(const CharacterType* characters, size_t length)
+{
+    static_assert(hasOneBitSet(secondaryLongStringEntrySize));
+    uint64_t hash = longStringHash(characters, length);
+    constexpr unsigned setBits = WTF::fastLog2(secondaryLongStringEntrySize);
+    return { static_cast<unsigned>(hash >> (64 - setBits)), longStringHashBits<setBits>(hash) };
+}
+
+ALWAYS_INLINE std::optional<size_t> JSONCache::boundedValueLength(std::span<const Latin1Character> source)
+{
+    constexpr size_t stride = SIMD::stride<uint8_t>;
+    static_assert(!(longStringSearchLength % stride));
+    ASSERT(!source.empty());
+    const Latin1Character* characters = source.data() + 1;
+    size_t available = std::min<size_t>(source.size() - 1, longStringSearchLength);
+    size_t offset = 0;
+    for (; offset + stride <= available; offset += stride) {
+        auto quotes = SIMD::equal(SIMD::load(std::bit_cast<const uint8_t*>(characters + offset)), SIMD::splat<uint8_t>('"'));
+        if (auto index = SIMD::findFirstNonZeroIndex(quotes))
+            return offset + *index;
+    }
+    for (; offset < available; ++offset) {
+        if (characters[offset] == '"')
+            return offset;
+    }
+    if (available == longStringSearchLength)
+        return longStringSearchLength;
+    return std::nullopt;
+}
+
+// Compares 32 characters at a time, starting with the last 32 so that values sharing a common prefix fail on
+// the first comparison. Fewer than 32 characters are compared as two overlapping halves.
+ALWAYS_INLINE bool JSONCache::longTextMatches(std::span<const Latin1Character> expected, std::span<const Latin1Character> source)
+{
+    constexpr size_t stride = SIMD::stride<uint8_t>;
+    size_t length = expected.size();
+    ASSERT(length == source.size());
+    ASSERT(length >= stride);
+    auto load = [](const Latin1Character* characters) ALWAYS_INLINE_LAMBDA {
+        return SIMD::load(std::bit_cast<const uint8_t*>(characters));
+    };
+    auto differences = [&](size_t first, size_t second) ALWAYS_INLINE_LAMBDA {
+        return SIMD::bitOr(SIMD::bitXor(load(expected.data() + first), load(source.data() + first)), SIMD::bitXor(load(expected.data() + second), load(source.data() + second)));
+    };
+    if (length < 2 * stride)
+        return !SIMD::isNonZero(differences(0, length - stride));
+    size_t last = length - 2 * stride;
+    if (SIMD::isNonZero(differences(last, last + stride)))
+        return false;
+    for (size_t offset = 0; offset < last; offset += 2 * stride) {
+        if (SIMD::isNonZero(differences(offset, offset + stride)))
+            return false;
+    }
+    return true;
+}
+
+ALWAYS_INLINE const JSONCache::StringEntry* JSONCache::findLongString(VM& vm, std::span<const Latin1Character> source, StructureID keepAlive)
+{
+    auto length = boundedValueLength(source);
+    if (!length || *length <= maxAtomizeStringLength)
+        return nullptr;
+    auto index = longStringIndex(source.data() + 1, *length);
+    auto entries = std::span { m_longStrings }.subspan(index.set, longStringWays);
+    for (unsigned way = 0; way < longStringWays; ++way) {
+        JSString* string = entries[way].string();
+        if (!string)
+            break;
+        size_t textLength = entries[way].textLength();
+        if (*length < longStringSearchLength) {
+            if (entries[way].key() != StringEntry::makeKey(*length + 2, index.hashBits))
+                continue;
+        } else if ((entries[way].key() & ~StringEntry::textLengthMask) != index.hashBits || source.size() < textLength || source.data()[textLength - 1] != '"')
+            continue;
+        // A JSString's characters can move to another StringImpl when it is atomized, so they are read from it.
+        SUPPRESS_UNCOUNTED_LOCAL StringImpl* impl = string->getValueImpl();
+        auto characters = unsafeMakeSpan(source.data() + 1, textLength - 2);
+        if (!impl->is8Bit() || !longTextMatches(impl->span8(), characters))
+            continue;
+        if (way)
+            std::swap(entries[0], entries[way]);
+        return &entries[0];
+    }
+    return addLongString(vm, source, *length, index, keepAlive);
+}
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+ALWAYS_INLINE const JSONCache::StringEntry* JSONCache::findOrCreateString(VM& vm, std::span<const Latin1Character> source, StructureID keepAlive)
+{
+    if (auto* entry = findShortString(source))
+        return entry;
+    return findLongString(vm, source, keepAlive);
 }
 
 template<typename Visitor>

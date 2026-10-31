@@ -228,7 +228,11 @@ private:
             ASSERT(length <= static_cast<size_t>(m_end - m_ptr));
             m_ptr += length;
         }
-        void cacheString(JSONCache&, JSString*, std::span<const CharType> source);
+        // The source text of the current string token, from its opening quote.
+        std::span<const CharType> currentStringSource() const { return { m_currentStringStart, static_cast<size_t>(m_end - m_currentStringStart) }; }
+        // Whether the current string token is JSON text whose characters, between its quotes, are the string's characters.
+        bool currentStringIsSourceText() const;
+        void cacheString(JSONCache&, JSString*);
 
 #if !ASSERT_ENABLED
         using LiteralParserTokenPtr = const LiteralParserToken<CharType>*;
@@ -298,6 +302,7 @@ private:
         const CharType* m_start;
         const CharType* m_currentTokenStart { nullptr };
         const CharType* m_currentTokenEnd { nullptr };
+        const CharType* m_currentStringStart { nullptr };
 #if ASSERT_ENABLED
         unsigned m_currentTokenID { 0 };
 #endif
@@ -316,7 +321,7 @@ private:
     static ALWAYS_INLINE bool equalIdentifier(UniquedStringImpl*, typename Lexer::LiteralParserTokenPtr);
     static ALWAYS_INLINE AtomStringImpl* existingIdentifier(VM&, JSONCache&, typename Lexer::LiteralParserTokenPtr);
     ALWAYS_INLINE Identifier makeIdentifier(VM&, typename Lexer::LiteralParserTokenPtr);
-    static ALWAYS_INLINE JSString* makeJSString(VM&, JSONCache&, typename Lexer::LiteralParserTokenPtr);
+    ALWAYS_INLINE JSString* makeJSString(VM&, JSONCache&);
 
     void setErrorMessageForToken(TokenType);
 
