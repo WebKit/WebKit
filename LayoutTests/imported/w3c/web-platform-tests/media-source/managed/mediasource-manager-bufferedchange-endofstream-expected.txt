@@ -1,0 +1,4 @@
+
+PASS endOfStream() that changes buffered fires bufferedchange
+PASS endOfStream() that does not change buffered does not fire bufferedchange
+

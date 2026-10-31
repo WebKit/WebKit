@@ -1689,6 +1689,8 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/size.
 # MSE in worker is only supported on platform with the GPU process active and where MSE is enabled by default
 # (this excludes iPhone (no MediaSource) and Linux/Windows (no GPUP))
 imported/w3c/web-platform-tests/media-source/dedicated-worker [ Skip ]
+# ManagedMediaSource is supported on all platforms, including iPhone.
+imported/w3c/web-platform-tests/media-source/dedicated-worker/managed [ Pass ]
 
 # Tests a setting behind the ENABLE_FULLSCREEN_API flag, which is WK2-only
 media/video-supports-fullscreen.html [ Skip ]

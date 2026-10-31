@@ -1,0 +1,6 @@
+
+PASS appendBuffer() fires bufferedchange reporting the added ranges
+PASS appendBuffer() of an adjacent segment reports only the newly added range
+PASS appendBuffer() that does not change buffered does not fire bufferedchange
+PASS Appending an initialization segment alone does not fire bufferedchange
+

@@ -1,0 +1,7 @@
+
+PASS BufferedChangeEvent constructed with empty ranges
+PASS BufferedChangeEvent constructor honours EventInit members
+PASS BufferedChangeEvent attributes are [SameObject]
+PASS BufferedChangeEvent constructor rejects non-TimeRanges members
+PASS BufferedChangeEvent constructed with non-empty ranges reports them
+
