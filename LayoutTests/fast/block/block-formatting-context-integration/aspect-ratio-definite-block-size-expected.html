@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; font-family: monospace; font-size: 10px; }
+.ratio { aspect-ratio: 2 / 1; margin: 4px 0; background: rgba(0, 128, 0, 0.5); }
+.wrapper { background: yellow; margin: 4px 0; }
+</style>
+<div class="root" style="height: 200px">
+  <div class="ratio" style="height: 20px"></div>
+  <div class="ratio" style="height: 20px; margin-inline: auto"></div>
+  <div class="ratio" style="height: 10%"></div>
+  <div style="height: 40px"><div class="ratio" style="height: stretch"></div></div>
+  <div class="ratio" style="height: 30px; max-width: 40px"></div>
+  <div class="ratio" style="height: 30px; min-width: 80px"></div>
+  <div class="ratio" style="height: 60px; max-height: 15px; padding: 2px 5px"></div>
+  <div class="ratio" style="height: 20px; box-sizing: border-box; padding: 3px"></div>
+</div>
+<div class="root">
+  <div class="ratio" style="height: 10px">wide content</div>
+  <div class="ratio" style="height: 10px; min-width: 0">wide content</div>
+  <div class="ratio" style="height: 10px; overflow: hidden">wide content</div>
+  <div class="ratio" style="height: 20px; width: min-content"></div>
+  <div class="ratio" style="height: 20px; width: max-content">x</div>
+  <div class="ratio" style="height: 20px; width: fit-content; max-width: max-content"></div>
+  <div class="ratio" style="height: min-content; width: 60px"></div>
+  <div class="wrapper" style="width: max-content"><div class="ratio" style="height: 25px"></div></div>
+  <div class="wrapper" style="width: min-content"><div class="ratio" style="height: 10px">more wide content</div></div>
+</div>

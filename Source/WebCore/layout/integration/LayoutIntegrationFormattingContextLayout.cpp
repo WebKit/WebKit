@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationFormattingContextLayout.h"
 
+#include "BlockFormattingContext.h"
 #include "BlockLayoutState.h"
 #include "FloatingObjects.h"
 #include "InlineLayoutState.h"
@@ -107,10 +108,10 @@ void layoutGridItemWithFormattingContext(const Layout::ElementBox& box, std::opt
     // A grid item's containing block is its grid area. Keep the grid area's inline size set on the renderer so
     // descendants resolve percentage/calc sizes against it during layout, and resolve the item's own geometry
     // against it below rather than against the grid container's content box.
-    renderer->setGridAreaContentLogicalWidth(gridAreaInlineSize);
+    renderer->setOverridingContainingBlockContentLogicalWidth(gridAreaInlineSize);
     layoutRendererWithOverridingBorderBoxSize(renderer.get(), overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight);
     updateGridItemBoxGeometry(box, gridAreaInlineSize, layoutState);
-    renderer->clearGridAreaContentSize();
+    renderer->clearOverridingContainingBlockContentSize();
 }
 
 static inline void populateRootRendererWithFloatsFromIFC(auto& rootBlockContainer, auto& placedFloats)
@@ -226,8 +227,7 @@ static inline void LEGACY_NODELETE updateIFCLineClampAfterLayout(auto& inlineLay
 
 void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block, LayoutPoint blockLineLogicalTopLeft, Layout::InlineLayoutState& inlineLayoutState, Layout::LayoutState& layoutState)
 {
-    auto& parentBlockLayoutState = inlineLayoutState.parentBlockLayoutState();
-    auto& placedFloats = parentBlockLayoutState.placedFloats();
+    auto& placedFloats = inlineLayoutState.placedFloats();
     CheckedRef blockRenderer = downcast<RenderBox>(*block.rendererForIntegration());
     CheckedRef rootBlockContainer = downcast<RenderBlockFlow>(*rootLayoutBox(block).rendererForIntegration());
     auto& renderTreeLayoutState = *rootBlockContainer->view().frameView().layoutContext().layoutState();
@@ -240,12 +240,15 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
 
     auto positionAndMargin = RenderBlockFlow::BlockPositionAndMargin { };
     auto layoutBlockRenderer = [&] {
+        // Like RenderBlockFlow::layoutInlineContent's, with what the inline content changed so far.
+        auto marginInfo = RenderBlockFlow::MarginInfo { rootBlockContainer.get(), RenderBlockFlow::MarginInfo::IgnoreScrollbarForAfterMargin::No };
+        Layout::IntegrationUtils::updateMarginInfo(marginInfo, inlineLayoutState.marginState());
         if (inlineLayoutState.lineCount()) {
             auto textBoxTrimStartDisabler = TextBoxTrimStartDisabler { blockRenderer.get() };
-            positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), Layout::IntegrationUtils::toMarginInfo(parentBlockLayoutState.marginState()));
+            positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), marginInfo);
             return;
         }
-        positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), Layout::IntegrationUtils::toMarginInfo(parentBlockLayoutState.marginState()));
+        positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), marginInfo);
     };
     layoutBlockRenderer();
     ASSERT(!blockRenderer->needsLayout());
@@ -282,10 +285,30 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
         // the box starts at, even though the box keeps it for that content (CSS 2.2 8.3.1, 9.5.2). A negative margin
         // before is not above the border box at all, which is why this is the positive part only.
         if (auto marginBeforeWithClearance = rootBlockContainer->selfCollapsingMarginBeforeWithClear(blockRenderer.ptr()))
-            marginState.marginBeforeWithClearance = *marginBeforeWithClearance;
-        parentBlockLayoutState.marginState() = marginState;
+            marginState.marginBeforeIncludedInClearance = *marginBeforeWithClearance;
+        inlineLayoutState.marginState() = marginState;
     };
     updateIFCAfterLayout();
+}
+
+void layoutWithBlockFormattingContextForBlockInInline(Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult, const Layout::ElementBox& block, LayoutPoint blockLineLogicalTopLeft, Layout::InlineLayoutState& inlineLayoutState, Layout::LayoutState& layoutState)
+{
+    CheckedRef blockRenderer = downcast<RenderBox>(*block.rendererForIntegration());
+    auto lineLogicalTop = blockLineLogicalTopLeft.y();
+    // The inline formatting context keeps the inline margins it took from the style (BoxGeometryUpdater::setFormattingContextContentGeometry),
+    // which size the line. The box's own inline content, as the root of its inline formatting context, gets the geometry the block formatting
+    // context gave it, with the used ones (LineLayout::updateFormattingContextGeometries).
+    auto inlineMargins = layoutState.geometryForBox(block).horizontalMargin();
+    auto box = blockFormattingContext.layoutBlockLevelBoxInInlineContent(blockRenderer, lineLogicalTop, inlineLayoutState.lineCount(), blockLayoutResult);
+
+    // Like the render tree path above: the line of the box ends where the content after it starts, and the box sits in it at its border box
+    // top.
+    auto& blockGeometry = layoutState.ensureGeometryForBox(block);
+    blockGeometry.setHorizontalMargin(inlineMargins);
+    blockGeometry.setContentBoxSize({ box.geometry.contentBoxWidth(), box.geometry.contentBoxHeight() });
+    blockGeometry.setVerticalMargin({ box.logicalBottom - lineLogicalTop - box.geometry.borderBoxHeight(), { } });
+    blockGeometry.setTopLeft({ blockGeometry.marginStart(), Layout::BoxGeometry::borderBoxTop(box.geometry) - lineLogicalTop });
+    inlineLayoutState.marginState() = box.marginState;
 }
 
 LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& box, LogicalWidthType logicalWidthType)

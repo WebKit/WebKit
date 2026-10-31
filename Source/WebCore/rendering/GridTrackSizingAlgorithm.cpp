@@ -52,22 +52,22 @@ namespace WebCore {
 
 class ScopedGridAreaContentLogicalHeight {
 public:
-    ScopedGridAreaContentLogicalHeight(RenderBox& gridItem, RenderBox::GridAreaSize size)
+    ScopedGridAreaContentLogicalHeight(RenderBox& gridItem, RenderBox::ContainingBlockContentSize size)
         : m_gridItem(gridItem)
-        , m_previous(gridItem.gridAreaContentLogicalHeight())
+        , m_previous(gridItem.overridingContainingBlockContentLogicalHeight())
     {
-        m_gridItem->setGridAreaContentLogicalHeight(size);
+        m_gridItem->setOverridingContainingBlockContentLogicalHeight(size);
     }
     ~ScopedGridAreaContentLogicalHeight()
     {
         if (m_previous)
-            m_gridItem->setGridAreaContentLogicalHeight(*m_previous);
+            m_gridItem->setOverridingContainingBlockContentLogicalHeight(*m_previous);
         else
-            m_gridItem->clearGridAreaContentLogicalHeight();
+            m_gridItem->clearOverridingContainingBlockContentLogicalHeight();
     }
 private:
     CheckedRef<RenderBox> m_gridItem;
-    std::optional<RenderBox::GridAreaSize> m_previous;
+    std::optional<RenderBox::ContainingBlockContentSize> m_previous;
 };
 
 class ScopedOverridingContentSizeForGridItem {
@@ -202,9 +202,9 @@ static void setOverridingContainingBlockContentSizeForGridItem(const RenderGrid&
     // the directions.
     direction = GridLayoutFunctions::flowAwareDirectionForGridItem(grid, *gridItem.containingBlock(), direction);
     if (direction == Style::GridTrackSizingDirection::Columns)
-        gridItem.setGridAreaContentLogicalWidth(size);
+        gridItem.setOverridingContainingBlockContentLogicalWidth(size);
     else
-        gridItem.setGridAreaContentLogicalHeight(size);
+        gridItem.setOverridingContainingBlockContentLogicalHeight(size);
 }
 
 // GridTrackSizingAlgorithm private.
@@ -1119,7 +1119,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minContentContributionForGridItem(R
             gridItem.invalidateContentLogicalWidths();
 
         // Row-axis override for preferred-width computation:
-        // - intrinsic column sizing: gridAreaContentLogicalHeight = sum of definite max
+        // - intrinsic column sizing: overridingContainingBlockContentLogicalHeight = sum of definite max
         //   row tracks (https://drafts.csswg.org/css-grid-2/#algo-track-sizing).
         // - second-column-pass min-content: stretched row size as the item's content size.
         auto minContentLogicalWidth = [&] {
@@ -1182,7 +1182,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::maxContentContributionForGridItem(R
         if (gridItem.shouldInvalidateContentWidths() || isComputingColumnIntrinsicWidthForNonOrthogonalItem)
             gridItem.invalidateContentLogicalWidths();
 
-        // Row-axis override for preferred-width computation: gridAreaContentLogicalHeight =
+        // Row-axis override for preferred-width computation: overridingContainingBlockContentLogicalHeight =
         // sum of definite max row tracks (https://drafts.csswg.org/css-grid-2/#algo-track-sizing).
         auto maxContentLogicalWidth = [&] {
             if (isComputingColumnIntrinsicWidthForNonOrthogonalItem) {
