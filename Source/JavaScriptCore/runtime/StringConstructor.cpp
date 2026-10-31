@@ -143,7 +143,7 @@ JSC_DEFINE_HOST_FUNCTION(stringFromCodePoint, (JSGlobalObject* globalObject, Cal
         }
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, builder.toString())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTF::move(builder).toString())));
 }
 
 JSString* stringFromCodePoint(JSGlobalObject* globalObject, int32_t arg)

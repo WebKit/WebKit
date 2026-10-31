@@ -315,6 +315,59 @@ TEST(StringBuilderTest, ToString)
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);
 }
 
+TEST(StringBuilderTest, ToStringOnRvalue)
+{
+    StringBuilder builder;
+    EXPECT_EQ(emptyString(), WTF::move(builder).toString());
+
+    builder.append("0123456789"_s);
+    String string = WTF::move(builder).toString();
+    EXPECT_EQ(String("0123456789"_s), string);
+    EXPECT_TRUE(string.impl()->hasOneRef());
+    expectEmpty(builder);
+
+    builder.append("abcdefghijklmno"_s);
+    string = WTF::move(builder).toString();
+    EXPECT_EQ(String("abcdefghijklmno"_s), string);
+    EXPECT_TRUE(string.impl()->hasOneRef());
+    EXPECT_FALSE(string.impl()->isSubString());
+    expectEmpty(builder);
+
+    builder.reserveCapacity(4);
+    builder.append("abcd"_s);
+    string = WTF::move(builder).toString();
+    EXPECT_EQ(String("abcd"_s), string);
+    EXPECT_TRUE(string.impl()->hasOneRef());
+    expectEmpty(builder);
+
+    builder.append(string);
+    EXPECT_EQ(string.impl(), WTF::move(builder).toString().impl());
+    expectEmpty(builder);
+
+    builder.reserveCapacity(32);
+    builder.append("0123456789abcdefghij"_s);
+    String preserved = builder.toStringPreserveCapacity();
+    EXPECT_TRUE(preserved.impl()->isSubString());
+    builder.append("klmnopqrst"_s);
+    EXPECT_EQ(String("0123456789abcdefghijklmnopqrst"_s), WTF::move(builder).toString());
+    EXPECT_EQ(String("0123456789abcdefghij"_s), preserved);
+    expectEmpty(builder);
+    EXPECT_EQ(0U, builder.capacity());
+}
+
+TEST(StringBuilderTest, ToStringHandsOverBuffer)
+{
+    StringBuilder builder;
+    builder.reserveCapacity(16);
+    builder.append("abcdefghijklmno"_s);
+    String string = builder.toString();
+    EXPECT_EQ(String("abcdefghijklmno"_s), string);
+    EXPECT_FALSE(string.impl()->isSubString());
+    builder.append('p');
+    EXPECT_EQ(String("abcdefghijklmno"_s), string);
+    EXPECT_EQ(String("abcdefghijklmnop"_s), builder.toString());
+}
+
 TEST(StringBuilderTest, ToStringPreserveCapacity)
 {
     StringBuilder builder;
@@ -396,6 +449,36 @@ TEST(StringBuilderTest, Resize)
     EXPECT_EQ("0123456"_s, builderContent(builder));
     builder.shrink(0);
     expectEmpty(builder);
+}
+
+TEST(StringBuilderTest, ResizeAfterHash)
+{
+    StringBuilder builder;
+    builder.reserveCapacity(4);
+    builder.append("abcd"_s);
+    builder.toStringPreserveCapacity().hash();
+    builder.shrink(2);
+    builder.append("xy"_s);
+    EXPECT_EQ(String("abxy"_s), builder.toString());
+    EXPECT_EQ(String("abxy"_s).hash(), builder.toString().hash());
+
+    builder.clear();
+    builder.reserveCapacity(5);
+    builder.append("abcde"_s);
+    builder.toStringPreserveCapacity().hash();
+    builder.shrink(4);
+    EXPECT_EQ(String("abcd"_s).hash(), builder.toString().hash());
+}
+
+TEST(StringBuilderTest, ResizeAfterToAtomString)
+{
+    StringBuilder builder;
+    builder.reserveCapacity(4);
+    builder.append("abcd"_s);
+    builder.toAtomString();
+    builder.shrink(2);
+    builder.append("xy"_s);
+    EXPECT_EQ(AtomString("abxy"_s).impl(), AtomString(builder.toString()).impl());
 }
 
 TEST(StringBuilderTest, Equal)

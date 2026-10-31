@@ -1461,7 +1461,7 @@ static inline String getSubstitution(JSGlobalObject* globalObject, const String&
         return { };
     }
 
-    return result.toString();
+    return WTF::move(result).toString();
 }
 
 JSValue regExpReplaceGeneric(JSGlobalObject* globalObject, JSObject* thisObject, JSString* string, JSValue replaceValue)
@@ -1694,7 +1694,7 @@ JSValue regExpReplaceGeneric(JSGlobalObject* globalObject, JSObject* thisObject,
             throwOutOfMemoryError(globalObject, scope);
             return { };
         }
-        return jsString(vm, accumulatedResult.toString());
+        return jsString(vm, WTF::move(accumulatedResult).toString());
     }
 
     // 17. Return the string-concatenation of accumulatedResult and the substring of S from nextSourcePosition.
@@ -1703,7 +1703,7 @@ JSValue regExpReplaceGeneric(JSGlobalObject* globalObject, JSObject* thisObject,
         throwOutOfMemoryError(globalObject, scope);
         return { };
     }
-    return jsString(vm, accumulatedResult.toString());
+    return jsString(vm, WTF::move(accumulatedResult).toString());
 }
 
 // 22.2.6.11 RegExp.prototype [ %Symbol.replace% ] ( string, replaceValue )
