@@ -107,7 +107,7 @@ TEST(ParserYieldTokenTests, PreventDocumentLoadByTakingParserYieldToken)
     [[webView bundle] releaseDocumentParserToken];
 
     while (![webView finishedLoad] || ![webView finishedDocumentLoad])
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+        TestWebKitAPI::Util::cycleRunLoop();
 }
 
 TEST(ParserYieldTokenTests, TakeMultipleParserYieldTokens)
@@ -130,7 +130,7 @@ TEST(ParserYieldTokenTests, TakeMultipleParserYieldTokens)
     [[webView bundle] releaseDocumentParserToken];
 
     while (![webView finishedLoad] || ![webView finishedDocumentLoad])
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+        TestWebKitAPI::Util::cycleRunLoop();
 }
 
 TEST(ParserYieldTokenTests, ReleaseAndRetakeYieldTokenDoesNotCrash)
@@ -156,7 +156,7 @@ TEST(ParserYieldTokenTests, ReleaseAndRetakeYieldTokenDoesNotCrash)
     [[webView bundle] releaseDocumentParserToken];
 
     while (![webView finishedLoad] || ![webView finishedDocumentLoad])
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+        TestWebKitAPI::Util::cycleRunLoop();
 }
 
 TEST(ParserYieldTokenTests, DeferredScriptExecutesBeforeDocumentLoadWhenTakingParserYieldToken)
@@ -173,7 +173,7 @@ TEST(ParserYieldTokenTests, DeferredScriptExecutesBeforeDocumentLoadWhenTakingPa
     [[webView bundle] releaseDocumentParserToken];
 
     while (![webView finishedLoad] || ![webView finishedDocumentLoad])
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+        TestWebKitAPI::Util::cycleRunLoop();
 
     // Verify that synchronous script is executed before deferred script and deferred script is run before document load.
     NSArray<NSString *> *eventMessages = [webView objectByEvaluatingJavaScript:@"window.eventMessages"];
@@ -213,7 +213,7 @@ TEST(ParserYieldTokenTests, AsyncScriptRunsWhenFetched)
     [[webView bundle] releaseDocumentParserToken];
 
     while (![webView finishedLoad] || ![webView finishedDocumentLoad])
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+        TestWebKitAPI::Util::cycleRunLoop();
 
     NSArray<NSString *> *eventMessages = [webView objectByEvaluatingJavaScript:@"window.eventMessages"];
     EXPECT_EQ(eventMessages.count, 4U);

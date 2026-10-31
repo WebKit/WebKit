@@ -212,9 +212,13 @@ void RunLoop::wakeUp()
         m_wakeUpCallback();
 }
 
-RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
+RunLoop::CycleResult RunLoop::cycle(RunLoopMode, Seconds maximumWait)
 {
     auto& runLoop = RunLoop::currentSingleton();
+    if (maximumWait > 0_s) {
+        if (DWORD timeout = std::min(runLoop.msTillNextTimer(), maximumWait.millisecondsAs<DWORD>()))
+            ::MsgWaitForMultipleObjectsEx(0, nullptr, timeout, QS_ALLINPUT, MWMO_INPUTAVAILABLE);
+    }
     runLoop.fireTimers();
     MSG message;
     while (::PeekMessage(&message, nullptr, 0, 0, PM_REMOVE)) {

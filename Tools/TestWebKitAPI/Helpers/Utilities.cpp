@@ -32,27 +32,15 @@ namespace TestWebKitAPI::Util {
 
 #if !PLATFORM(COCOA)
 
-void run(bool* done)
+void cycleRunLoop()
 {
-    while (!*done)
-        RunLoop::currentSingleton().cycle();
+    RunLoop::cycle(DefaultRunLoopMode, runLoopWaitInterval);
 }
 
 void spinRunLoop(uint64_t count)
 {
     while (count--)
         RunLoop::currentSingleton().cycle();
-}
-
-bool runFor(bool* done, Seconds duration)
-{
-    ApproximateTime start = ApproximateTime::now();
-    while (!*done) {
-        if (ApproximateTime::now() - start > duration)
-            return false;
-        RunLoop::currentSingleton().cycle();
-    }
-    return true;
 }
 
 void runFor(Seconds duration)

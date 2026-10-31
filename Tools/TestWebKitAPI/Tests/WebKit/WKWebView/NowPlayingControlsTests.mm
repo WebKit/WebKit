@@ -74,7 +74,7 @@
 
     bool finishedWaiting = false;
     while (!finishedWaiting) {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+        TestWebKitAPI::Util::cycleRunLoop();
         finishedWaiting = self.hasActiveNowPlayingSession == hasActiveNowPlayingSession;
     }
 }
@@ -85,7 +85,7 @@
 
     bool finishedWaiting = false;
     while (!finishedWaiting) {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+        TestWebKitAPI::Util::cycleRunLoop();
         finishedWaiting = self.registeredAsNowPlayingApplication == registeredAsNowPlayingApplication;
     }
 }
@@ -210,7 +210,8 @@ TEST(NowPlayingControlsTests, NowPlayingControlsClearInfoAfterSessionIsNoLongerV
     [webView setWindowVisible:NO];
     [webView.get().window resignKeyWindow];
 
-    while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
+    while (true) {
+        TestWebKitAPI::Util::cycleRunLoop();
         if (initialHasActiveNowPlayingSession != webView.get().hasActiveNowPlayingSession)
             break;
 
@@ -370,7 +371,8 @@ TEST(NowPlayingControlsTests, DISABLED_NowPlayingUpdatesThrottled)
     NowPlayingState previousState;
     NSDate *startTime = [NSDate date];
     bool videoLooped = false;
-    while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
+    while (true) {
+        TestWebKitAPI::Util::cycleRunLoop();
 
         if ([[NSDate date] timeIntervalSinceDate:startTime] > internalTestTimout)
             break;
