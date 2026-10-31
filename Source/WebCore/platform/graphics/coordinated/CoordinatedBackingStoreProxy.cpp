@@ -54,10 +54,10 @@ static uint32_t generateTileID()
 
 CoordinatedBackingStoreProxy::Update::~Update() = default;
 
-void CoordinatedBackingStoreProxy::Update::appendUpdate(Vector<uint32_t>&& tilesToCreate, Vector<TileUpdate>&& tilesToUpdate, Vector<uint32_t>&& tilesToRemove)
+void CoordinatedBackingStoreProxy::Update::appendUpdate(Vector<uint32_t>&& tilesToCreate, Vector<TileUpdate>&& tilesToUpdate, Vector<uint32_t>&& tilesToRemove, HashMap<uint32_t, bool>&& tilesToUpdateVisibility)
 {
     // Remove any creations or updates previously registered for tiles that are going to be removed now.
-    if (!tilesToRemove.isEmpty() && (!m_tilesToCreate.isEmpty() || !m_tilesToUpdate.isEmpty())) {
+    if (!tilesToRemove.isEmpty() && (!m_tilesToCreate.isEmpty() || !m_tilesToUpdate.isEmpty() || !m_tilesToUpdateVisibility.isEmpty())) {
         Vector<uint32_t, 8> createdTilesRemoved;
         for (const auto& tileID : tilesToRemove) {
             if (m_tilesToCreate.removeAll(tileID))
@@ -65,6 +65,7 @@ void CoordinatedBackingStoreProxy::Update::appendUpdate(Vector<uint32_t>&& tiles
             m_tilesToUpdate.removeAllMatching([tileID](auto& update) {
                 return update.tileID == tileID;
             });
+            m_tilesToUpdateVisibility.remove(tileID);
         }
 
         // Remove the removals of tiles also registered to be created.
@@ -86,6 +87,13 @@ void CoordinatedBackingStoreProxy::Update::appendUpdate(Vector<uint32_t>&& tiles
         m_tilesToRemove = WTF::move(tilesToRemove);
     else
         m_tilesToRemove.appendVector(WTF::move(tilesToRemove));
+
+    if (m_tilesToUpdateVisibility.isEmpty())
+        m_tilesToUpdateVisibility = WTF::move(tilesToUpdateVisibility);
+    else {
+        for (const auto& item : tilesToUpdateVisibility)
+            m_tilesToUpdateVisibility.set(item.key, item.value);
+    }
 }
 
 void CoordinatedBackingStoreProxy::Update::waitUntilPaintingFinished()
@@ -106,12 +114,21 @@ CoordinatedBackingStoreProxy::Tile::~Tile() = default;
 #if USE(SKIA)
 void CoordinatedBackingStoreProxy::Tile::cancelActiveBuffers(CoordinatedPlatformLayer& layer)
 {
+    if (activeBuffers.isEmpty())
+        return;
+
     for (auto& buffer : activeBuffers) {
-        if (buffer->cancelPainting())
+        if (auto tileRenderingUpdateID = buffer->cancelPainting()) {
+            // FIXME: pass tileRenderingUpdateID to didPaintTile() when we support starting next rendering
+            // update while waiting for previous composition.
             layer.didPaintTile();
+        }
     }
 
     activeBuffers.clear();
+#if !USE(TEXTURE_MAPPER)
+    layer.tileManager().didChangePaintingTaskPriorities();
+#endif
 }
 #endif
 
@@ -163,22 +180,78 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
         invalidateRegion(dirtyRegion);
 
     OptionSet<UpdateResult> result;
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
     if (m_pendingTileCreation)
         result.add(UpdateResult::TilesPending);
+#endif
 
     auto& tileManager = layer.tileManager();
 
     IntRect tileDirtyRectUnion;
     unsigned dirtyTilesCount = 0;
+    HashMap<uint32_t, bool> tilesToUpdateVisibility;
     for (auto& tile : m_tiles.values()) {
 #if USE(SKIA)
+#if !USE(TEXTURE_MAPPER)
+        const bool distanceChanged = std::exchange(tile.distanceChanged, false);
+        if (distanceChanged) {
+            bool isVisible = !tile.distance;
+            if (isVisible != tile.isVisible) {
+                tile.isVisible = isVisible;
+                tilesToUpdateVisibility.set(tile.id, tile.isVisible);
+            }
+        }
+#endif
+
         tile.activeBuffers.removeAllMatching([&](auto& buffer) {
             auto paintingState = buffer->paintingState();
-            return paintingState == CoordinatedTileBuffer::PaintingState::Complete || paintingState == CoordinatedTileBuffer::PaintingState::Cancelled;
+            if (paintingState == CoordinatedTileBuffer::PaintingState::Complete || paintingState == CoordinatedTileBuffer::PaintingState::Cancelled)
+                return true;
+
+#if !USE(TEXTURE_MAPPER)
+            if (!distanceChanged)
+                return false;
+
+            if (auto tileRenderingUpdateID = buffer->updateDistance(tile.distance, tileManager.currentRenderingUpdate())) {
+                // FIXME: pass tileRenderingUpdateID to willPaintTile() and didPaintTile() when we support starting next rendering
+                // update while waiting for previous composition.
+                if (tile.distance) {
+                    // Became hidden.
+                    layer.didPaintTile();
+                } else {
+                    // Became Visible.
+                    layer.willPaintTile();
+                }
+            }
+
+            tileManager.didChangePaintingTaskPriorities();
+#endif
+
+            return false;
         });
 #endif
 
         if (tile.isDirty()) {
+#if !USE(TEXTURE_MAPPER)
+            // If a pre-rendered tile has pending buffers, cancel the previous tasks if possible and
+            // schedule a single new task damaging the whole tile.
+            if (tile.distance && !tile.activeBuffers.isEmpty()) {
+                auto cancelledCount = tile.activeBuffers.removeAllMatching([&](auto& buffer) {
+                    if (auto tileRenderingUpdateID = buffer->cancelPainting()) {
+                        // FIXME: pass tileRenderingUpdateID to didPaintTile() when we support starting next rendering
+                        // update while waiting for previous composition.
+                        layer.didPaintTile();
+                    }
+
+                    return buffer->paintingState() == CoordinatedTileBuffer::PaintingState::Cancelled;
+                });
+                if (cancelledCount) {
+                    tile.dirtyRect = tile.rect;
+                    tileManager.didChangePaintingTaskPriorities();
+                }
+            }
+#endif
+
             tileDirtyRectUnion.unite(tile.dirtyRect);
             ++dirtyTilesCount;
         }
@@ -202,7 +275,7 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
                 tile.rect.x(), tile.rect.y(), tile.rect.width(), tile.rect.height(), tile.dirtyRect.x(), tile.dirtyRect.y(), tile.dirtyRect.width(), tile.dirtyRect.height());
 
 #if USE(SKIA)
-            auto buffer = tileManager.scheduleReplay(*layer.owner(), recording, tile.rect, tile.dirtyRect);
+            auto buffer = tileManager.scheduleReplay(*layer.owner(), recording, tile.rect, tile.dirtyRect, tile.distance);
             tile.activeBuffers.append(buffer);
 #else
             auto buffer = tileManager.schedulePaint(*layer.owner(), tile.dirtyRect, contentsOpaque, contentsScale);
@@ -228,13 +301,13 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
     UNUSED_VARIABLE(dirtyTilesCount);
 #endif
 
-    if (tilesToCreate.isEmpty() && tilesToUpdate.isEmpty() && tilesToRemove.isEmpty())
+    if (tilesToCreate.isEmpty() && tilesToUpdate.isEmpty() && tilesToRemove.isEmpty() && tilesToUpdateVisibility.isEmpty())
         return result;
 
     result.add(UpdateResult::TilesChanged);
     {
         Locker locker { m_update.lock };
-        m_update.pending.appendUpdate(WTF::move(tilesToCreate), WTF::move(tilesToUpdate), WTF::move(tilesToRemove));
+        m_update.pending.appendUpdate(WTF::move(tilesToCreate), WTF::move(tilesToUpdate), WTF::move(tilesToRemove), WTF::move(tilesToUpdateVisibility));
     }
     return result;
 }
@@ -276,8 +349,13 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
     IntRect visibleRect = mapFromContents(unscaledVisibleRect);
     bool contentsRectChanged = contentsScaleChanged || m_contentsRect != contentsRect;
     bool geometryChanged = contentsRectChanged || m_visibleRect != visibleRect || m_coverAreaMultiplier != coverAreaMultiplier;
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
     if (!geometryChanged && !m_pendingTileCreation)
         return;
+#else
+    if (!geometryChanged)
+        return;
+#endif
 
     auto removeTile = [&](Tile& tile) {
 #if USE(SKIA)
@@ -347,6 +425,19 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
         return false;
     });
 
+    IntPoint visibleCenterPosition = tilePositionForPoint(m_visibleRect.center());
+    auto tileDistance = [&](const IntPoint& tilePosition) -> unsigned {
+        if (m_visibleRect.intersects(tileRectForPosition(tilePosition)))
+            return 0;
+
+        return std::max(1, std::max(std::abs(visibleCenterPosition.y() - tilePosition.y()), std::abs(visibleCenterPosition.x() - tilePosition.x())));
+    };
+
+#if !USE(TEXTURE_MAPPER)
+    for (auto& [position, tile] : m_tiles)
+        tile.setDistance(tileDistance(position));
+#endif
+
     if (m_coverRect.isEmpty())
         return;
 
@@ -369,20 +460,31 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
 
     // Search for the tile position closest to the viewport center that does not yet contain a tile.
     // Which position is considered the closest depends on the tileDistance function.
-    double shortestDistance = std::numeric_limits<double>::infinity();
-    IntPoint visibleCenterPosition = tilePositionForPoint(m_visibleRect.center());
-    auto tileDistance = [&] (const IntPoint& tilePosition) -> double {
-        if (m_visibleRect.intersects(tileRectForPosition(tilePosition)))
-            return 0;
+#if USE(SKIA) && !USE(TEXTURE_MAPPER)
+    forEachTilePositionInRect(m_coverRect, [&](IntPoint&& position) {
+        if (m_tiles.contains(position))
+            return;
 
-        return std::max(std::abs(visibleCenterPosition.y() - tilePosition.y()), std::abs(visibleCenterPosition.x() - tilePosition.x()));
-    };
+        auto tile = Tile(generateTileID(), tileRectForPosition(position));
+        tile.setDistance(tileDistance(position));
+#if ENABLE(DAMAGE_TRACKING)
+        IntRect unscaledDirtyRect = tile.dirtyRect;
+        unscaledDirtyRect.scale(1 / contentsScale);
+        damage.add(unscaledDirtyRect);
+#else
+        UNUSED_PARAM(damage);
+#endif
 
+        tilesToCreate.append(tile.id);
+        m_tiles.add(WTF::move(position), WTF::move(tile));
+    });
+#else
     // Cover areas (in tiles) with minimum distance from the visible rect. If the visible rect is
     // not covered already it will be covered first in one go, due to the distance being 0 for tiles
     // inside the visible rect.
     Vector<IntPoint> tilePositionsToCreate;
     unsigned requiredTileCount = 0;
+    double shortestDistance = std::numeric_limits<double>::infinity();
     forEachTilePositionInRect(m_coverRect, [&](IntPoint&& position) {
         if (m_tiles.contains(position))
             return;
@@ -404,6 +506,11 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
 
         for (const auto& position : tilePositionsToCreate) {
             auto tile = Tile(generateTileID(), tileRectForPosition(position));
+
+#if USE(SKIA) && USE(TEXTURE_MAPPER)
+            tile.distance = 0;
+#endif
+
 #if ENABLE(DAMAGE_TRACKING)
             IntRect unscaledDirtyRect = tile.dirtyRect;
             unscaledDirtyRect.scale(1 / contentsScale);
@@ -418,6 +525,7 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
 
     // Re-call createTiles on a timer to cover the visible area with the newest shortest distance.
     m_pendingTileCreation = requiredTileCount;
+#endif
 }
 
 // This is based on the same heuristics used by chromium to compute the tile size.

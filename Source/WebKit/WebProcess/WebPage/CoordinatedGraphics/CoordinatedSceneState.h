@@ -55,7 +55,8 @@ public:
 
     bool flush();
     void flushPendingState();
-    void flushCompositingState(const OptionSet<WebCore::CompositionReason>&);
+    enum class ChangedPreRenderedTiles : bool { No, Yes };
+    ChangedPreRenderedTiles flushCompositingState(const OptionSet<WebCore::CompositionReason>&);
     void invalidate();
 
     void invalidateCommittedLayers();
@@ -66,6 +67,10 @@ public:
 
     void willPaintTile();
     void didPaintTile();
+#if !USE(TEXTURE_MAPPER)
+    ChangedPreRenderedTiles didPaintPreRenderedTile(WebCore::CoordinatedPlatformLayer&);
+    ChangedPreRenderedTiles processLayersWithPreRenderedTiles(const Function<bool()>& shouldStopProcessingTiles);
+#endif
     unsigned pendingTiles() const { return m_pendingTiles.load(); }
 
 private:
@@ -82,6 +87,10 @@ private:
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_pendingLayersToRemove WTF_GUARDED_BY_LOCK(m_pendingLayersLock);
     std::atomic<bool> m_didChangeLayers { false };
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_committedLayers;
+#if !USE(TEXTURE_MAPPER)
+    Lock m_layersWithPreRenderedTilesLock;
+    HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_layersWithPreRenderedTiles WTF_GUARDED_BY_LOCK(m_layersWithPreRenderedTilesLock);
+#endif
     std::atomic<unsigned> m_pendingTiles { 0 };
     Lock m_stateLock;
 };

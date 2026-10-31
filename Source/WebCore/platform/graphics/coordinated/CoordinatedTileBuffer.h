@@ -83,9 +83,22 @@ public:
 
     enum class BeginPaintingResult : uint8_t { Started, Failed, Cancelled };
     BeginPaintingResult beginPainting();
-    void completePainting();
-    bool cancelPainting();
+
+    // Resets the tile rendering update ID and returns the previous value.
+    std::optional<uint64_t> completePainting();
+
+    // Resets the tile rendering update ID and returns the previous value.
+    std::optional<uint64_t> cancelPainting();
+
+    // Returns:
+    //   - When the tile became hidden: the old tile rendering update ID.
+    //   - when the tile became visible: the new tile rendering update ID.
+    //   - When visibility didn't change: std::nullopt.
+    std::optional<uint64_t> updateDistance(unsigned distance, uint64_t renderingUpdateID);
+
     void waitUntilPaintingFinished();
+
+    unsigned distance() const;
 
 #if USE(SKIA)
     virtual SkCanvas* canvas() = 0;
@@ -95,7 +108,7 @@ public:
     static double getMemoryUsage();
 
 protected:
-    explicit CoordinatedTileBuffer(Flags);
+    CoordinatedTileBuffer(Flags, unsigned distance, std::optional<uint64_t> renderingUpdateID);
 
     static Lock s_layersMemoryUsageLock;
     static double s_currentLayersMemoryUsage;
@@ -111,6 +124,8 @@ protected:
         mutable Lock lock;
         Condition condition;
         PaintingState state WTF_GUARDED_BY_LOCK(lock) { PaintingState::Pending };
+        std::optional<uint64_t> renderingUpdateID WTF_GUARDED_BY_LOCK(lock);
+        unsigned distance WTF_GUARDED_BY_LOCK(lock) { 0 };
     } m_painting;
 
 private:
@@ -119,7 +134,7 @@ private:
 
 class CoordinatedUnacceleratedTileBuffer final : public CoordinatedTileBuffer {
 public:
-    WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(const IntSize&, Flags);
+    WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(const IntSize&, Flags, unsigned distance, std::optional<uint64_t> renderingUpdateID);
     WEBCORE_EXPORT virtual ~CoordinatedUnacceleratedTileBuffer();
 
     Vector<unsigned char> takeData();
@@ -130,7 +145,7 @@ public:
 #endif
 
 private:
-    CoordinatedUnacceleratedTileBuffer(const IntSize&, Flags);
+    CoordinatedUnacceleratedTileBuffer(const IntSize&, Flags, unsigned distance, std::optional<uint64_t> renderingUpdateID);
 
     bool tryAllocateData();
 
@@ -156,9 +171,9 @@ private:
 class CoordinatedAcceleratedTileBuffer final : public CoordinatedTileBuffer {
 public:
 #if USE(TEXTURE_MAPPER)
-    WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(const IntSize&, Flags);
+    WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(const IntSize&, Flags, unsigned distance, std::optional<uint64_t> renderingUpdateID);
 #else
-    WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(const sk_sp<GrContextThreadSafeProxy>&, const IntSize&, Flags);
+    WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(const sk_sp<GrContextThreadSafeProxy>&, const IntSize&, Flags, unsigned distance, std::optional<uint64_t> renderingUpdateID);
 #endif
     WEBCORE_EXPORT virtual ~CoordinatedAcceleratedTileBuffer();
 
@@ -170,9 +185,9 @@ public:
 
 private:
 #if USE(TEXTURE_MAPPER)
-    CoordinatedAcceleratedTileBuffer(const IntSize&, Flags);
+    CoordinatedAcceleratedTileBuffer(const IntSize&, Flags, unsigned distance, std::optional<uint64_t> renderingUpdateID);
 #else
-    CoordinatedAcceleratedTileBuffer(GrSurfaceCharacterization&&, Flags);
+    CoordinatedAcceleratedTileBuffer(GrSurfaceCharacterization&&, Flags, unsigned distance, std::optional<uint64_t> renderingUpdateID);
 #endif
 
     bool isBackedByOpenGL() const final { return true; }

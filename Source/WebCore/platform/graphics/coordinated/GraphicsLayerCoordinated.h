@@ -212,13 +212,20 @@ private:
     bool needsCommit(CommitState&) const;
     void recursiveCommitChanges(CommitState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
     bool updateBackingStoresIfNeeded();
     bool updateBackingStoreIfNeeded();
+#else
+    void updateBackingStoresIfNeeded();
+    void updateBackingStoreIfNeeded();
+#endif
 
     const Ref<CoordinatedPlatformLayer> m_platformLayer;
     EnumSet<Change> m_pendingChanges;
     bool m_hasDescendantsWithPendingChanges { false };
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
     bool m_hasDescendantsWithPendingTilesCreation { false };
+#endif
     bool m_hasDescendantsWithRunningTransformAnimations { false };
     FloatSize m_pixelAlignmentOffset;
     std::optional<Damage> m_dirtyRegion;

@@ -90,6 +90,9 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
 {
     ASSERT(RunLoop::isMain());
 
+    // Make sure rendering update is the highest priority task in worker loop.
+    m_renderTimer.setPriority(RunLoopSourcePriority::RunLoopTimer - 1);
+
     lazyInitialize(m_didCompositeRunLoopObserver, makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::GraphicsCommit, [this] {
         this->didCompositeRunLoopObserverFired();
     }));
@@ -291,6 +294,34 @@ void ThreadedCompositor::pendingTilesDidChange()
     scheduleUpdateLocked();
 }
 
+#if !USE(TEXTURE_MAPPER)
+void ThreadedCompositor::preRenderedTilesDidChange()
+{
+    m_workQueue->dispatch([this, protectedThis = Ref { *this }] {
+        {
+            Locker locker { m_state.lock };
+            if (m_state.state == State::Invalidated)
+                return;
+        }
+
+        // Keep processing pending tile updates for at most 2ms while no other composition is requested.
+        auto deadline = MonotonicTime::now() + 2_ms;
+        Function<bool()> shouldStopProcessingTiles = [&] -> bool {
+            if (MonotonicTime::now() >= deadline)
+                return true;
+
+            Locker locker { m_state.lock };
+            return m_state.isRenderTimerActive;
+        };
+
+        auto changedPreRenderedTiles = m_sceneState->processLayersWithPreRenderedTiles(shouldStopProcessingTiles);
+        PlatformDisplay::sharedDisplay().skiaGrContext()->submit(GrSyncCpu::kNo);
+        if (changedPreRenderedTiles == CoordinatedSceneState::ChangedPreRenderedTiles::Yes)
+            preRenderedTilesDidChange();
+    });
+}
+#endif
+
 void ThreadedCompositor::setSize(const IntSize& size, float deviceScaleFactor)
 {
     ASSERT(RunLoop::isMain());
@@ -352,7 +383,12 @@ void ThreadedCompositor::flushCompositingState(const OptionSet<CompositionReason
     }
 #endif
 
+#if USE(TEXTURE_MAPPER)
     m_sceneState->flushCompositingState(reasons);
+#else
+    if (m_sceneState->flushCompositingState(reasons) == CoordinatedSceneState::ChangedPreRenderedTiles::Yes)
+        preRenderedTilesDidChange();
+#endif
 }
 
 TargetContents ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& matrix, const IntSize& size, const OptionSet<CompositionReason>& reasons)

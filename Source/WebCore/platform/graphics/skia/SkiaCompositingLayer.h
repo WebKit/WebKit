@@ -115,6 +115,7 @@ public:
     void updateBackingStore(CoordinatedBackingStoreProxy::Update&&, float);
     bool hasPendingBackingStoreTileUpdates() const;
     void processPendingTileUpdates();
+    bool processPendingTileUpdatesIncludingPreRendered(const Function<bool()>& shouldStopProcessingTiles);
     void setImageBackingStore(CoordinatedImageBackingStore*);
     void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
     std::unique_ptr<CoordinatedPlatformLayerBuffer> takeContentsBuffer();

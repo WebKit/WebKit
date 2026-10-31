@@ -900,8 +900,13 @@ void CoordinatedPlatformLayer::updateBackingStore()
 {
     assertIsMainThread();
 
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
     if (m_dirtyRegion.isEmpty() && !m_pendingTilesCreation && !m_needsTilesUpdate)
         return;
+#else
+    if (m_dirtyRegion.isEmpty() && !m_needsTilesUpdate)
+        return;
+#endif
 
     FloatSize size;
     float contentsScale;
@@ -919,10 +924,17 @@ void CoordinatedPlatformLayer::updateBackingStore()
     }
 
     Damage damage(size, Damage::Mode::Rectangles);
-    auto updateResult = backingStoreProxy->updateIfNeeded(m_transformedVisibleRect, size, m_visibleRect, contentsScale, contentsOpaque, m_pendingTilesCreation || m_needsTilesUpdate, m_dirtyRegion, damage, *this);
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
+    bool shouldCreateDestroyTiles = m_pendingTilesCreation || m_needsTilesUpdate;
+#else
+    bool shouldCreateDestroyTiles = m_needsTilesUpdate;
+#endif
+    auto updateResult = backingStoreProxy->updateIfNeeded(m_transformedVisibleRect, size, m_visibleRect, contentsScale, contentsOpaque, shouldCreateDestroyTiles, m_dirtyRegion, damage, *this);
     m_dirtyRegion.clear();
     m_needsTilesUpdate = false;
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
     m_pendingTilesCreation = updateResult.contains(CoordinatedBackingStoreProxy::UpdateResult::TilesPending);
+#endif
 
     bool tilesChanged = updateResult.contains(CoordinatedBackingStoreProxy::UpdateResult::TilesChanged);
     {
@@ -1020,6 +1032,15 @@ void CoordinatedPlatformLayer::didPaintTile()
     // Could be called from painting threads.
     if (m_client)
         m_client->didPaintTile();
+}
+
+void CoordinatedPlatformLayer::didPaintPreRenderedTile()
+{
+#if !USE(TEXTURE_MAPPER)
+    // Called from painting threads.
+    if (m_client)
+        m_client->didPaintPreRenderedTile(*this);
+#endif
 }
 
 void CoordinatedPlatformLayer::waitUntilPaintingFinished()
@@ -1559,6 +1580,14 @@ void CoordinatedPlatformLayer::processPendingBackingStoreTileUpdates()
     }
 #endif
 }
+
+#if !USE(TEXTURE_MAPPER)
+bool CoordinatedPlatformLayer::processPendingBackingStoreTileUpdatesIncludingPreRendered(const Function<bool()>& shouldStopProcessingTiles)
+{
+    ASSERT(!isMainThread());
+    return m_target ? m_target->processPendingTileUpdatesIncludingPreRendered(shouldStopProcessingTiles) : false;
+}
+#endif
 
 } // namespace WebCore
 

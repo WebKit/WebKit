@@ -184,6 +184,10 @@ void LayerTreeHost::updateRendering()
 
     TraceScope traceScope(LayerTreeHostRenderingUpdateStart, LayerTreeHostRenderingUpdateEnd);
 
+    m_renderingUpdateID++;
+
+    m_tileManager->didStartRenderingUpdate(m_renderingUpdateID);
+
     Ref page = m_webPage;
     page->updateRendering();
     page->flushPendingEditorStateUpdate();
@@ -219,6 +223,7 @@ void LayerTreeHost::updateRendering()
         drawingArea->dispatchPendingCallbacksAfterEnsuringDrawing();
 
     bool didChangeSceneState = m_sceneState->flush();
+    m_tileManager->didFinishRenderingUpdate();
     if (m_compositionRequired || m_pendingResize || m_forceFrameSync || didChangeSceneState)
         requestCompositionForRenderingUpdate();
 
@@ -409,6 +414,14 @@ void LayerTreeHost::didPaintTile()
     m_sceneState->didPaintTile();
     m_compositor->pendingTilesDidChange();
 }
+
+#if !USE(TEXTURE_MAPPER)
+void LayerTreeHost::didPaintPreRenderedTile(CoordinatedPlatformLayer& layer)
+{
+    if (m_sceneState->didPaintPreRenderedTile(layer) == CoordinatedSceneState::ChangedPreRenderedTiles::Yes)
+        m_compositor->preRenderedTilesDidChange();
+}
+#endif
 
 Ref<CoordinatedImageBackingStore> LayerTreeHost::imageBackingStore(Ref<NativeImage>&& nativeImage)
 {

@@ -88,6 +88,9 @@ public:
     void preferredBufferFormatsDidChange();
 #endif
     void pendingTilesDidChange();
+#if !USE(TEXTURE_MAPPER)
+    void preRenderedTilesDidChange();
+#endif
 
     void setSize(const WebCore::IntSize&, float);
     void requestCompositionForRenderingUpdate(Function<void()>&&);
