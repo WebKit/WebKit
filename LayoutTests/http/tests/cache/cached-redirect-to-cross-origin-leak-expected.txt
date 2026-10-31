@@ -1,0 +1,11 @@
+A cached cross-origin redirect must not let the redirecting origin revalidate the redirect target's cache entry.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Revalidated the target's cache entry against the target, not against the redirect source
+PASS Blocked read of cross-origin redirect's body, threw exception: TypeError: Load failed
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
