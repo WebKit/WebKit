@@ -365,6 +365,8 @@ void GridLayout::updateFormattingContextRootRenderer(const Layout::UsedTrackSize
     // Out-of-flow boxes are placed by RenderGrid, which resolves their grid lines against the explicit
     // grid it computes from style plus these auto-repeated track counts, offset by the explicit grid start.
     currentGrid.setAutoRepeatTracks(autoRepeatRowsCount, autoRepeatColumnsCount);
+    // GFC does not report yet whether the limit on the number of tracks cut the auto-repeat.
+    currentGrid.setAutoRepeatTruncatedByLimit(false, false);
     currentGrid.setExplicitGridStart(leadingImplicitRowsCount, leadingImplicitColumnsCount);
 
     auto emptyTrackIndexes = [](const BitVector& collapsedTracks) -> std::unique_ptr<OrderedTrackIndexSet> {

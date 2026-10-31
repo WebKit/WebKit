@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<title>The resolved grid-template-columns/rows of a legacy grid limited to the maximum number of grid tracks</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#overlarge-grids">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#resolved-track-list">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+.grid { display: grid; width: 1000px; height: 1000px; }
+.inline-grid { display: inline-grid; width: 1000px; height: 1000px; }
+</style>
+<div id="container"></div>
+<script>
+// The limit is 10 tracks. Style clamps repeat(<integer>) to it, so the auto-repeat of each of the templates below starts at
+// track 9 or 10. Keep the CSS values in sync with this limit.
+if (window.internals)
+    window.internals.setGridMaxTracksLimit(10);
+
+function resolvedValues(template, className, size = "1000px")
+{
+    container.innerHTML = `<div class="${className}" style="width: ${size}; height: ${size}; grid-template-columns: ${template}; grid-template-rows: ${template}"><div style="grid-row: 1; grid-column: 1"></div></div>`;
+    let style = getComputedStyle(container.firstChild);
+    return { columns: style.gridTemplateColumns, rows: style.gridTemplateRows };
+}
+
+// "UAs may clamp the possible size of the implicit grid to be within a UA-defined limit, dropping all lines outside that limit."
+// The 10 tracks before the auto-repeat fill the limited grid, so the repetitions are dropped. These grids are laid out by the
+// legacy path: inline-grid always is, and so is a template with line names.
+const ten = "5px 5px 5px 5px 5px 5px 5px 5px 5px 5px";
+
+test(() => {
+    let values = resolvedValues("repeat(10, 5px) repeat(auto-fill, 7px)", "inline-grid");
+    assert_equals(values.columns, ten, "columns");
+    assert_equals(values.rows, ten, "rows");
+}, "Resolved tracks when the auto-repeat has no repetitions because it starts at the limit");
+
+test(() => {
+    let values = resolvedValues("repeat(9, 5px) repeat(auto-fill, 10px 20px 30px)", "inline-grid");
+    let expected = "5px 5px 5px 5px 5px 5px 5px 5px 5px 10px";
+    assert_equals(values.columns, expected, "columns");
+    assert_equals(values.rows, expected, "rows");
+}, "Resolved tracks when the limit cuts the last repetition of the auto-repeat");
+
+test(() => {
+    let values = resolvedValues("repeat(10, 5px) repeat(10, 5px) repeat(auto-fill, 7px)", "inline-grid");
+    assert_equals(values.columns, ten, "columns");
+    assert_equals(values.rows, ten, "rows");
+}, "Resolved tracks when the auto-repeat starts past the limit");
+
+// A line name is on a line, and the lines are the ones of the limited grid: the names on lines past the limit are dropped with them.
+// The grid ends inside the repeat(), so the line at the limit is the one before its first track and has the names at the start of the
+// repeat(), not the ones after it. Chrome gives the same names.
+test(() => {
+    let values = resolvedValues("[a] repeat(10, 5px) [b] repeat(auto-fill, [x] 7px [y]) [c] 9px [d]", "grid");
+    assert_equals(values.columns, `[a] ${ten} [b x]`, "columns");
+    assert_equals(values.rows, `[a] ${ten} [b x]`, "rows");
+}, "Resolved line names when the auto-repeat has no repetitions because it starts at the limit");
+
+// The 10th line is the one after the first track of the repetition, so it has the names that follow that track and not the ones
+// at the end of the repeat().
+test(() => {
+    let values = resolvedValues("repeat(9, 5px) [p] repeat(auto-fill, [x] 10px [y] 20px [z]) [q] 20px", "grid");
+    let expected = "5px 5px 5px 5px 5px 5px 5px 5px 5px [p x] 10px [y]";
+    assert_equals(values.columns, expected, "columns");
+    assert_equals(values.rows, expected, "rows");
+}, "Resolved line names when the limit cuts the last repetition of the auto-repeat");
+
+test(() => {
+    let values = resolvedValues("[a] repeat(10, 5px) repeat(10, 5px) repeat(auto-fill, [x] 7px [y]) [c]", "grid");
+    assert_equals(values.columns, `[a] ${ten}`, "columns");
+    assert_equals(values.rows, `[a] ${ten}`, "rows");
+}, "Resolved line names when the auto-repeat starts past the limit");
+
+// A repetition that ends exactly at the limit has the names after the repeat() on its last line, unless more repetitions would have
+// fitted: then the last line is also the start of the next one, and the names after the repeat() are on a line that is dropped.
+const hundreds = "100px [y x] ".repeat(9);
+
+test(() => {
+    let values = resolvedValues("repeat(auto-fill, [x] 100px [y]) [q]", "grid");
+    let expected = `[x] ${hundreds}100px [y q]`;
+    assert_equals(values.columns, expected, "columns");
+    assert_equals(values.rows, expected, "rows");
+}, "Resolved line names when the last repetition of the auto-repeat ends at the limit and no more would fit");
+
+test(() => {
+    let values = resolvedValues("repeat(auto-fill, [x] 100px [y]) [q]", "grid", "2000px");
+    let expected = `[x] ${hundreds}100px [y x]`;
+    assert_equals(values.columns, expected, "columns");
+    assert_equals(values.rows, expected, "rows");
+}, "Resolved line names when the last repetition of the auto-repeat ends at the limit and more would fit");
+
+test(() => {
+    let values = resolvedValues("[a] repeat(10, 5px) [b] repeat(auto-fill, 7px) [c] 9px", "grid");
+    assert_equals(values.columns, `[a] ${ten} [b]`, "columns");
+    assert_equals(values.rows, `[a] ${ten} [b]`, "rows");
+}, "Resolved line names when the auto-repeat has no repetitions and no names inside it");
+
+// Two tracks per repetition, and the limit cuts the repetition after its first track: the last line has the name between them.
+test(() => {
+    let values = resolvedValues("[a] repeat(9, 0px) [b] repeat(auto-fill, [x] 7px [m] 7px [y]) [c] 9px [d]", "grid", "2000px");
+    let expected = "[a] 0px 0px 0px 0px 0px 0px 0px 0px 0px [b x] 7px [m]";
+    assert_equals(values.columns, expected, "columns");
+    assert_equals(values.rows, expected, "rows");
+}, "Resolved line names when the limit cuts a repetition of the auto-repeat that has two tracks");
+
+// The repetitions that fit end exactly at the limit, so none were left out: the track after the repeat() is dropped, but the names after
+// the repeat() are on the last line.
+test(() => {
+    let values = resolvedValues("[a] repeat(8, 0px) [b] repeat(auto-fill, [x] 100px [y]) [c] 9px [d]", "grid", "209px");
+    let expected = "[a] 0px 0px 0px 0px 0px 0px 0px 0px [b x] 100px [y x] 100px [y c]";
+    assert_equals(values.columns, expected, "columns");
+    assert_equals(values.rows, expected, "rows");
+}, "Resolved line names when the auto-repeat ends at the limit, no repetition was left out, and a track after it is dropped");
+
+test(() => {
+    let values = resolvedValues("[a] repeat(3, 5px) [b] repeat(auto-fill, [x] 100px [y]) [c] 9px [d]", "grid", "500px");
+    let expected = "[a] 5px 5px 5px [b x] 100px [y x] 100px [y x] 100px [y x] 100px [y c] 9px [d]";
+    assert_equals(values.columns, expected, "columns");
+    assert_equals(values.rows, expected, "rows");
+}, "Resolved line names of an auto-repeat after other tracks that the limit does not cut");
+
+test(() => {
+    let values = resolvedValues("[a] repeat(3, 5px) [b] repeat(auto-fill, [x] 100px [y]) [c] 9px [d]", "grid", "2000px");
+    let expected = "[a] 5px 5px 5px [b x] 100px [y x] 100px [y x] 100px [y x] 100px [y x] 100px [y x] 100px [y x] 100px [y x]";
+    assert_equals(values.columns, expected, "columns");
+    assert_equals(values.rows, expected, "rows");
+}, "Resolved line names of an auto-repeat after other tracks when the limit ends it on a repetition and more would fit");
+</script>

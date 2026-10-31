@@ -254,6 +254,9 @@ bool NamedLineCollectionBase::contains(unsigned line) const
         return contains(m_autoRepeatNamedLinesIndices, autoRepeatIndexInFirstRepetition);
     }
 
+    // FIXME: This is the mapping of OrderedNamedLinesCollectorInGridLayout::collectLineNamesForIndex() from before it knew that the limit on the
+    // number of grid tracks can truncate the auto-repeat. When it did, the last line has other names (and the lines after it none), and
+    // with no repetitions left this assert fires.
     ASSERT(m_autoRepeatTotalTracks);
 
     if (line > m_insertionPoint + m_autoRepeatTotalTracks)

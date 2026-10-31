@@ -1310,10 +1310,10 @@ AutoRepeatType RenderGrid::autoRepeatType(Style::GridTrackSizingDirection direct
 // caller who does know whether the available logical width is indefinite or not.
 void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidth)
 {
-    unsigned autoRepeatColumns = computeAutoRepeatTracksCount(Style::GridTrackSizingDirection::Columns, availableLogicalWidth);
-    unsigned autoRepeatRows = computeAutoRepeatTracksCount(Style::GridTrackSizingDirection::Rows, availableLogicalHeightForPercentageComputation());
-    autoRepeatRows = clampAutoRepeatTracks(Style::GridTrackSizingDirection::Rows, autoRepeatRows);
-    autoRepeatColumns = clampAutoRepeatTracks(Style::GridTrackSizingDirection::Columns, autoRepeatColumns);
+    unsigned unclampedAutoRepeatColumns = computeAutoRepeatTracksCount(Style::GridTrackSizingDirection::Columns, availableLogicalWidth);
+    unsigned unclampedAutoRepeatRows = computeAutoRepeatTracksCount(Style::GridTrackSizingDirection::Rows, availableLogicalHeightForPercentageComputation());
+    unsigned autoRepeatRows = clampAutoRepeatTracks(Style::GridTrackSizingDirection::Rows, unclampedAutoRepeatRows);
+    unsigned autoRepeatColumns = clampAutoRepeatTracks(Style::GridTrackSizingDirection::Columns, unclampedAutoRepeatColumns);
 
     if (isSubgridInParentDirection(Style::GridTrackSizingDirection::Columns) || isSubgridInParentDirection(Style::GridTrackSizingDirection::Rows)) {
         auto* parent = dynamicDowncast<RenderGrid>(this->parent());
@@ -1327,6 +1327,9 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
         currentGrid().setNeedsItemsPlacement(true);
         currentGrid().setAutoRepeatTracks(autoRepeatRows, autoRepeatColumns);
     }
+    // Not part of the check above: the count alone cannot tell that the limit cut the auto-repeat, and the unclamped count can change
+    // while the clamped one does not.
+    currentGrid().setAutoRepeatTruncatedByLimit(autoRepeatRows < unclampedAutoRepeatRows, autoRepeatColumns < unclampedAutoRepeatColumns);
 
     if (!currentGrid().needsItemsPlacement())
         return;

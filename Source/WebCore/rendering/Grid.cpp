@@ -147,6 +147,17 @@ unsigned Grid::autoRepeatTracks(Style::GridTrackSizingDirection direction) const
     return direction == Style::GridTrackSizingDirection::Rows ? m_autoRepeatRows : m_autoRepeatColumns;
 }
 
+bool Grid::autoRepeatTruncatedByLimit(Style::GridTrackSizingDirection direction) const
+{
+    return direction == Style::GridTrackSizingDirection::Rows ? m_autoRepeatRowsTruncatedByLimit : m_autoRepeatColumnsTruncatedByLimit;
+}
+
+void Grid::setAutoRepeatTruncatedByLimit(bool rows, bool columns)
+{
+    m_autoRepeatRowsTruncatedByLimit = rows;
+    m_autoRepeatColumnsTruncatedByLimit = columns;
+}
+
 void Grid::setAutoRepeatEmptyColumns(std::unique_ptr<OrderedTrackIndexSet> autoRepeatEmptyColumns)
 {
     ASSERT(!autoRepeatEmptyColumns || (autoRepeatEmptyColumns->size() <= m_autoRepeatColumns));
@@ -206,6 +217,8 @@ void Grid::setNeedsItemsPlacement(bool needsItemsPlacement)
     m_autoRepeatEmptyRows = nullptr;
     m_autoRepeatColumns = 0;
     m_autoRepeatRows = 0;
+    m_autoRepeatColumnsTruncatedByLimit = false;
+    m_autoRepeatRowsTruncatedByLimit = false;
     m_maxColumns = 0;
     m_maxRows = 0;
 }
