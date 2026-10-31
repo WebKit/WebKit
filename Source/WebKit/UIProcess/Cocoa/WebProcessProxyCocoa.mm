@@ -303,15 +303,6 @@ std::optional<Vector<SandboxExtension::Handle>> WebProcessProxy::fontdMachExtens
 }
 #endif // !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebProcessProxyCocoaAdditions.mm>)
-#import <WebKitAdditions/WebProcessProxyCocoaAdditions.mm>
-#else
-bool WebProcessProxy::shouldDisableJITCage() const
-{
-    return false;
-}
-#endif
-
 #if ENABLE(REMOTE_INSPECTOR)
 void WebProcessProxy::createServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier, URL&& url, WebCore::ServiceWorkerIsInspectable isInspectable, CompletionHandler<void(bool shouldWaitForAutoInspection)>&& completionHandler)
 {

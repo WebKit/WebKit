@@ -750,7 +750,6 @@ private:
     bool isJITEnabled() const final;
     bool shouldEnableLockdownMode() const final { return m_lockdownMode == LockdownMode::Enabled; }
     bool shouldEnableEnhancedSecurity() const final { return isEnhancedSecurityEnabledForState(m_enhancedSecurity); }
-    bool shouldDisableJITCage() const final;
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     RefPtr<XPCEventHandler> xpcEventHandler() const final;
     void didReceiveLogsDuringLaunchForTesting() final;

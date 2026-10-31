@@ -224,12 +224,6 @@ void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode enableLoc
             JSC::Options::allowSharedArrayBuffer() = false;
         });
     }
-    // FIXME (276012): Remove this XPC bootstrap message when it's no longer necessary. See rdar://130669638 for more context.
-    if (xpc_dictionary_get_bool(initializerMessage, "disable-jit-cage")) {
-        JSC::Options::initialize([] {
-            JSC::Options::useJITCage() = false;
-        });
-    }
 }
 
 void disableJSC(NOESCAPE WTF::CompletionHandler<void(void)>&& beforeFinalizeHandler)

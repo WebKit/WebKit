@@ -1548,11 +1548,6 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 {
     return false;
 }
-
-bool WebProcessProxy::shouldDisableJITCage() const
-{
-    return false;
-}
 #endif // !PLATFORM(COCOA)
 
 void WebProcessProxy::getNetworkProcessConnection(CompletionHandler<void(NetworkProcessConnectionInfo&&)>&& reply)
