@@ -8066,8 +8066,16 @@ static BoundaryPoint moveOutOfSurrogatePair(const BoundaryPoint& point, Surrogat
     return { point.container.copyRef(), direction == SurrogatePairDirection::Backward ? point.offset - 1 : point.offset + 1 };
 }
 
-void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount)
+void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount, CompletionHandler<void()>&& completionHandler)
 {
+    // The UI process doesn't notify the input method of the surrounding text of editor states sent before the reply,
+    // since it has already removed the deleted text from it. Send the reply first, so that the editor state sent after
+    // it, even if nothing was deleted, is the one the input method is notified of.
+    auto replyAndSendEditorState = makeScopeExit([&] {
+        completionHandler();
+        sendEditorStateUpdate();
+    });
+
     RefPtr targetFrame = targetFrameForEditing(*this);
     if (!targetFrame)
         return;
@@ -8108,7 +8116,6 @@ void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount)
             frameSelection->setSelection(VisibleSelection(frameSelection->selection().visibleStart()));
     }
     targetFrame->editor().setIgnoreSelectionChanges(false);
-    sendEditorStateUpdate();
 }
 
 #endif

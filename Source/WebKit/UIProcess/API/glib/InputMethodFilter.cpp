@@ -23,8 +23,10 @@
 #include "WebKitInputMethodContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebPageProxy.h"
+#include <limits>
 #include <wtf/SetForScope.h>
 #include <wtf/glib/GMallocString.h>
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(GTK)
 #include "Display.h"
@@ -60,7 +62,17 @@ void InputMethodFilter::committedCallback(InputMethodFilter* filter, const char*
 
 void InputMethodFilter::deleteSurroundingCallback(InputMethodFilter* filter, int offset, unsigned characterCount)
 {
-    filter->deleteSurrounding(offset, characterCount);
+    filter->deleteSurrounding(InputMethodDeleteSurroundingUnit::UTF16, offset, characterCount);
+}
+
+void InputMethodFilter::deleteSurroundingCodePointsCallback(InputMethodFilter* filter, int offset, unsigned codePointCount)
+{
+    filter->deleteSurrounding(InputMethodDeleteSurroundingUnit::CodePoints, offset, codePointCount);
+}
+
+void InputMethodFilter::deleteSurroundingBytesCallback(InputMethodFilter* filter, int offset, unsigned byteCount)
+{
+    filter->deleteSurrounding(InputMethodDeleteSurroundingUnit::UTF8, offset, byteCount);
 }
 
 void InputMethodFilter::setContext(WebKitInputMethodContext* context)
@@ -80,6 +92,8 @@ void InputMethodFilter::setContext(WebKitInputMethodContext* context)
     g_signal_connect_swapped(m_context.get(), "preedit-finished", G_CALLBACK(preeditFinishedCallback), this);
     g_signal_connect_swapped(m_context.get(), "committed", G_CALLBACK(committedCallback), this);
     g_signal_connect_swapped(m_context.get(), "delete-surrounding", G_CALLBACK(deleteSurroundingCallback), this);
+    g_signal_connect_swapped(m_context.get(), "delete-surrounding-code-points", G_CALLBACK(deleteSurroundingCodePointsCallback), this);
+    g_signal_connect_swapped(m_context.get(), "delete-surrounding-bytes", G_CALLBACK(deleteSurroundingBytesCallback), this);
 
     notifyContentType();
 
@@ -278,6 +292,8 @@ void InputMethodFilter::notifyCursorRectAndSurroundingToContext()
 {
     if (m_cursorRect != IntRect { })
         notifyCursorRectToContext();
+    // Unlike the surrounding text of the editor states received while deletions are pending, this one has them, so the
+    // input method counts its next deletions in it.
     if (!m_surrounding.text.isNull())
         notifySurroundingToContext();
 }
@@ -292,6 +308,11 @@ void InputMethodFilter::notifySurrounding(const String& text, uint64_t cursorPos
 {
     // The surrounding text is kept without a context too, to notify the next one of it.
     if (!isEnabled())
+        return;
+
+    // The input method was already notified of the text without the deletions that the web process hasn't replied to
+    // yet, so this text is older than that. The web process sends a new editor state after replying.
+    if (*m_pendingDeletionCount)
         return;
 
     if (m_surrounding.text == text && m_surrounding.cursorPosition == cursorPosition && m_surrounding.selectionPosition == selectionPosition)
@@ -403,14 +424,54 @@ void InputMethodFilter::committed(const char* compositionString)
     m_compositionResult = { };
 }
 
-void InputMethodFilter::deleteSurrounding(int offset, unsigned characterCount)
+void InputMethodFilter::deleteSurrounding(InputMethodDeleteSurroundingUnit unit, int64_t offset, uint64_t count)
 {
     if (!isEnabled())
         return;
 
+    if (unit != InputMethodDeleteSurroundingUnit::UTF16) {
+        // A UTF-16 deletion of nothing moves the cursor, but the other ones do nothing.
+        // FIXME: Make a UTF-16 deletion of nothing do nothing too, like GtkIMContext and the Wayland text input
+        // protocols do. Moving the cursor is a side effect of the original implementation.
+        if (!count)
+            return;
+        // Code points and bytes are counted in the surrounding text given to the input method, so they can't be
+        // converted without it.
+        if (m_surrounding.text.isNull())
+            return;
+    }
+
+    // Input methods expect the surrounding text to change as soon as they ask for a deletion, but the web process
+    // deletes the text asynchronously. Remove the text from the surrounding text right away, and notify the input
+    // method of it, so that it counts what it asks for next in the text as it will be.
+    std::optional<InputMethodSurroundingRange> range;
+    if (!m_surrounding.text.isNull())
+        range = inputMethodSurroundingDeletionRange(m_surrounding.text, m_surrounding.cursorPosition, unit, offset, count);
+
+    if (unit != InputMethodDeleteSurroundingUnit::UTF16) {
+        if (!range)
+            return;
+        offset = static_cast<int64_t>(range->start) - static_cast<int64_t>(m_surrounding.cursorPosition);
+        count = range->end - range->start;
+    }
+
     auto* webView = webkitInputMethodContextGetWebView(m_context.get());
     ASSERT(webView);
-    webkitWebViewDeleteSurrounding(webView, offset, characterCount);
+    ++*m_pendingDeletionCount;
+    webkitWebViewDeleteSurrounding(webView, offset, std::min<uint64_t>(count, std::numeric_limits<unsigned>::max()), [pendingDeletionCount = m_pendingDeletionCount] {
+        --*pendingDeletionCount;
+    });
+
+    if (!range)
+        return;
+
+    if (range->start == range->end && range->start == m_surrounding.cursorPosition && range->start == m_surrounding.selectionPosition)
+        return;
+
+    m_surrounding.text = makeString(StringView(m_surrounding.text).left(range->start), StringView(m_surrounding.text).substring(range->end));
+    m_surrounding.cursorPosition = range->start;
+    m_surrounding.selectionPosition = range->start;
+    notifySurroundingToContext();
 }
 
 void InputMethodFilter::cancelComposition()
