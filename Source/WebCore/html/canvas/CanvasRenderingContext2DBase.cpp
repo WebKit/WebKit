@@ -3509,16 +3509,15 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
     if (!fontProxy->realized())
         return metrics;
 
-    auto& font = *fontProxy;
-    auto& fontMetrics = font.metricsOfPrimaryFont();
-
     GlyphOverflow glyphOverflow;
     glyphOverflow.computeBounds = true;
-    float fontWidth = font.width(textRun, &glyphOverflow);
+    float fontWidth = fontProxy->width(textRun, &glyphOverflow);
     metrics->setWidth(fontWidth);
 
     FloatPoint offset = textOffset(fontWidth, textRun.direction());
-    auto [emHeightAscent, emHeightDescent] = emHeightAscentAndDescent(protect(font.fontCascade()));
+    auto [emHeightAscent, emHeightDescent] = emHeightAscentAndDescent(protect(fontProxy->fontCascade()));
+    // Bind the primary font's metrics only after width() has run, since it can rebuild the font cache.
+    auto& fontMetrics = fontProxy->metricsOfPrimaryFont();
 
     metrics->setActualBoundingBoxAscent(glyphOverflow.top - offset.y());
     metrics->setActualBoundingBoxDescent(glyphOverflow.bottom + offset.y());

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// measureTextInternal() binds `auto& fontMetrics = fontProxy->metricsOfPrimaryFont()` - a
+// reference into the primary Font - and then calls fontProxy->width(). On a worker, width()
+// walks glyphs with ExternalResourceDownloadPolicy::Allow, so a still-pending @font-face is
+// loaded synchronously inside the call. Its completion dispatches font selector invalidation,
+// which re-keys this canvas' FontCascade; the previous FontCascadeFonts becomes
+// cache-only and FontCascadeCache::pruneUnreferencedEntries() destroys it, taking the
+// primary Font with it. The metrics reads after width() are then use-after-free reads,
+// and their values are returned to script in the TextMetrics object.
+const WORKER_BODY = `
+// FontCascadeCache::retrieveOrAddCachedFonts() only bumps the global prune counter for new
+// entries, and the cache key embeds the font selector version, so each of these unique-family
+// contexts adds a fresh entry on every invalidation dispatch. That guarantees the
+// 1000-entry pruneUnreferencedEntries() interval is crossed inline, inside width().
+const dummies = [];
+for (let i = 0; i < 3500; i++) {
+    const dummy = new OffscreenCanvas(1, 1).getContext('2d');
+    dummy.font = '10px "dummy' + i + '"';
+    dummies.push(dummy);
+}
+
+// A >= 1MB data: URL, so CSSFontFaceSource::opportunisticallyStartFontDataURLLoading()
+// skips the pre-warm and the face stays pending until a glyph walk pumps it. The bytes are
+// not a font, but the load itself is the reentrancy window; completion fires either way.
+const pendingFontURL = 'url("data:font/ttf;base64,' + 'A'.repeat(1100000) + '")';
+
+const keepAlive = [];
+for (let attempt = 0; attempt < 2; attempt++) {
+    // No unicode-range, so this one covers U+0020 and is what the primary font probe pumps.
+    const metricsDonor = new FontFace('metricsDonor' + attempt, pendingFontURL);
+    // Excludes U+0020 but covers the measured text, so width()'s walk pumps this one.
+    const measured = new FontFace('measured' + attempt, pendingFontURL, { unicodeRange: 'U+13A0-13FF' });
+    self.fonts.add(metricsDonor);
+    self.fonts.add(measured);
+
+    const context = new OffscreenCanvas(64, 64).getContext('2d');
+    context.font = '10px metricsDonor' + attempt + ', measured' + attempt;
+    keepAlive.push(metricsDonor, measured, context);
+
+    // Cherokee, inside the measured face's unicode-range and below U+1700 so that
+    // characterRangeCodePath() picks CodePath::Simple and WidthIterator walks per character.
+    context.measureText('\\u13A0\\u13A2\\u13A4');
+}
+postMessage('done');
+`;
+
+const worker = new Worker(URL.createObjectURL(new Blob([WORKER_BODY], { type: 'application/javascript' })));
+worker.onmessage = () => {
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
