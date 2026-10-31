@@ -30,6 +30,7 @@
 #include "ScriptExecutionContextIdentifier.h"
 #include "WritableStreamSink.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -55,6 +56,7 @@ private:
     VideoTrackGenerator(Ref<Sink>&&, Ref<WritableStream>&&, Ref<MediaStreamTrack>&&);
 
     class Source final : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Source, WTF::DestructionThread::MainRunLoop> {
+        WTF_MAKE_TZONE_ALLOCATED_EXPORT(Source, WEBCORE_EXPORT);
     public:
         static Ref<Source> create(ScriptExecutionContextIdentifier identifier) { return adoptRef(*new Source(identifier)); }
 
@@ -81,6 +83,7 @@ private:
     };
 
     class Sink final : public WritableStreamSink {
+        WTF_MAKE_TZONE_ALLOCATED(Sink);
     public:
         static Ref<Sink> create(Ref<Source>&& source) { return adoptRef(*new Sink(WTF::move(source))); }
 

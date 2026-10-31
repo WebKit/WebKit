@@ -46,6 +46,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Identified.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -56,6 +57,7 @@ class SecurityOrigin;
 template<typename IDLType> class DOMPromiseDeferred;
 
 class UserMediaRequest : public RefCounted<UserMediaRequest>, public ActiveDOMObject, public Identified<UserMediaRequestIdentifier> {
+    WTF_MAKE_TZONE_ALLOCATED(UserMediaRequest);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

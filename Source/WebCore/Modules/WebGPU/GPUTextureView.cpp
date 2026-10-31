@@ -28,8 +28,11 @@
 
 #include "GPUDevice.h"
 #include "GPUTexture.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUTextureView);
 
 GPUTextureView::GPUTextureView(Ref<WebGPU::TextureView>&& backing, String&& label, const GPUTexture& texture)
     : m_backing(WTF::move(backing))

@@ -29,6 +29,7 @@
 #include <WebCore/Range.h>
 #include <WebCore/StaticRange.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
 
 namespace WebCore {
@@ -69,6 +70,7 @@ private:
 };
 
 class Highlight : public RefCounted<Highlight> {
+    WTF_MAKE_TZONE_ALLOCATED(Highlight);
 public:
     WEBCORE_EXPORT static Ref<Highlight> create(FixedVector<std::reference_wrapper<AbstractRange>>&&);
     static void repaintRange(const AbstractRange&);

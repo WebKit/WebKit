@@ -28,12 +28,14 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaSourceInterfaceProxy.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class MediaSource;
 
 class MediaSourceInterfaceMainThread : public MediaSourceInterfaceProxy {
+    WTF_MAKE_TZONE_ALLOCATED(MediaSourceInterfaceMainThread);
 public:
     static Ref<MediaSourceInterfaceMainThread> create(Ref<MediaSource>&& mediaSource) { return adoptRef(*new MediaSourceInterfaceMainThread(WTF::move(mediaSource))); }
 

@@ -29,11 +29,13 @@
 #include "WebGPUValidationError.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class GPUValidationError final : public GPUError {
+    WTF_MAKE_TZONE_ALLOCATED(GPUValidationError);
 public:
     static Ref<GPUValidationError> create(String&& message)
     {

@@ -30,6 +30,7 @@
 #include <WebCore/AuthenticationResponseJSON.h>
 #include <WebCore/AuthenticatorResponse.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 
 OBJC_CLASS LAContext;
@@ -37,6 +38,7 @@ OBJC_CLASS LAContext;
 namespace WebCore {
 
 class AuthenticatorAssertionResponse : public AuthenticatorResponse {
+    WTF_MAKE_TZONE_ALLOCATED(AuthenticatorAssertionResponse);
 public:
     static Ref<AuthenticatorAssertionResponse> create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& authenticatorData, Ref<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle, std::optional<AuthenticationExtensionsClientOutputs>&&, AuthenticatorAttachment);
     WEBCORE_EXPORT static Ref<AuthenticatorAssertionResponse> create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature,  const Vector<uint8_t>& userHandle, AuthenticatorAttachment);

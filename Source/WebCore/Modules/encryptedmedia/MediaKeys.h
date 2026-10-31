@@ -34,6 +34,7 @@
 #include "MediaKeySessionType.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -55,6 +56,7 @@ template<typename> class ExceptionOr;
 class MediaKeys final
     : public RefCounted<MediaKeys>
     , public CDMInstanceClient {
+    WTF_MAKE_TZONE_ALLOCATED(MediaKeys);
 public:
     using KeySessionType = MediaKeySessionType;
 

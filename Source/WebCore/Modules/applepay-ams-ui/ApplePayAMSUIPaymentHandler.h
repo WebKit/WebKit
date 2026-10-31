@@ -34,6 +34,7 @@
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -54,6 +55,7 @@ template<typename> class ExceptionOr;
 enum class PaymentComplete;
 
 class ApplePayAMSUIPaymentHandler final : public PaymentHandler, private ContextDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(ApplePayAMSUIPaymentHandler);
 public:
     static ExceptionOr<void> validateData(Document&, JSC::JSValue);
     static bool handlesIdentifier(const PaymentRequest::MethodIdentifier&);

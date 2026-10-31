@@ -46,8 +46,11 @@
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <wtf/Logger.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaCapabilities);
 
 MediaCapabilities::MediaCapabilities(NavigatorBase& navigator)
     : m_navigator(navigator)

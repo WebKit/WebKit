@@ -27,6 +27,7 @@
 
 #include "DatagramSource.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -41,6 +42,7 @@ class JSDOMGlobalObject;
 class ReadableByteStreamController;
 
 class DatagramByteSource final : public DatagramSource, public RefCounted<DatagramByteSource> {
+    WTF_MAKE_TZONE_ALLOCATED(DatagramByteSource);
 public:
     static Ref<DatagramByteSource> create() { return adoptRef(*new DatagramByteSource()); }
     ~DatagramByteSource();

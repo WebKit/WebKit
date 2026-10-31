@@ -42,6 +42,7 @@ public:
 };
 
 class MediaStreamTrackHandle : public RefCounted<MediaStreamTrackHandle> {
+    WTF_MAKE_TZONE_ALLOCATED(MediaStreamTrackHandle);
 public:
     ~MediaStreamTrackHandle();
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WritableStream.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ class WebTransport;
 struct WebTransportSendOptions;
 
 class WebTransportDatagramsWritable : public WritableStream {
+    WTF_MAKE_TZONE_ALLOCATED(WebTransportDatagramsWritable);
 public:
     static ExceptionOr<Ref<WebTransportDatagramsWritable>> create(ScriptExecutionContext&, RefPtr<WebTransport>&&, WebTransportSendOptions&&);
     ~WebTransportDatagramsWritable();

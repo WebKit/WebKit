@@ -31,6 +31,7 @@
 #include "JSDOMPromiseDeferredForward.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,6 +41,7 @@ struct DetectedFace;
 template<typename> class ExceptionOr;
 
 class FaceDetector : public RefCounted<FaceDetector> {
+    WTF_MAKE_TZONE_ALLOCATED(FaceDetector);
 public:
     static ExceptionOr<Ref<FaceDetector>> create(ScriptExecutionContext&, const FaceDetectorOptions&);
 

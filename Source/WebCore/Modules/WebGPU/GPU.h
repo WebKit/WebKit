@@ -31,6 +31,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -47,6 +48,7 @@ enum class GPUTextureFormat : uint8_t;
 struct GPURequestAdapterOptions;
 
 class GPU : public RefCounted<GPU> {
+    WTF_MAKE_TZONE_ALLOCATED(GPU);
 public:
     static Ref<GPU> create(Ref<WebGPUIntegration>&& backing)
     {

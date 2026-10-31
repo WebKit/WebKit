@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ReadableStreamSource.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,6 +41,7 @@ struct WebTransportStreamIdentifierType;
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 
 class WebTransportReceiveStreamSource : public RefCountedReadableStreamSource {
+    WTF_MAKE_TZONE_ALLOCATED(WebTransportReceiveStreamSource);
 public:
     static Ref<WebTransportReceiveStreamSource> createIncomingStreamsSource() { return adoptRef(*new WebTransportReceiveStreamSource()); }
     bool receiveIncomingStream(JSC::JSGlobalObject&, Ref<WebTransportReceiveStream>&);

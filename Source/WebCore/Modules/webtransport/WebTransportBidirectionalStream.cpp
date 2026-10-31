@@ -28,8 +28,11 @@
 
 #include "WebTransportReceiveStream.h"
 #include "WebTransportSendStream.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebTransportBidirectionalStream);
 
 Ref<WebTransportBidirectionalStream> WebTransportBidirectionalStream::create(Ref<WebTransportReceiveStream>&& readable, Ref<WebTransportSendStream>&& writable)
 {

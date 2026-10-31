@@ -36,6 +36,7 @@
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -55,6 +56,7 @@ class ScriptExecutionContext;
 class SharedBuffer;
 
 class CDM : public RefCounted<CDM>, public CDMPrivateClient, private ContextDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(CDM);
 public:
     static bool supportsKeySystem(const String&);
     static bool isPersistentType(MediaKeySessionType);

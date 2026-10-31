@@ -29,6 +29,7 @@
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/JSDOMGlobalObject.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -46,6 +47,7 @@ struct DetachedWritableStream {
 };
 
 class WritableStream : public RefCountedAndCanMakeWeakPtr<WritableStream> {
+    WTF_MAKE_TZONE_ALLOCATED(WritableStream);
 public:
     static ExceptionOr<Ref<WritableStream>> create(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, JSC::Strong<JSC::JSObject>&&);
     static ExceptionOr<Ref<WritableStream>> create(JSDOMGlobalObject&, Ref<WritableStreamSink>&&);

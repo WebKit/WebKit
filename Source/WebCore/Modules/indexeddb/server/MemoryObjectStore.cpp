@@ -38,10 +38,13 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSLock.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
 namespace IDBServer {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MemoryObjectStore);
 
 Ref<MemoryObjectStore> MemoryObjectStore::create(const IDBObjectStoreInfo& info)
 {

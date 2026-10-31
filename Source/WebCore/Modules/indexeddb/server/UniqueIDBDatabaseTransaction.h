@@ -33,6 +33,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -57,6 +58,7 @@ class UniqueIDBDatabase;
 class UniqueIDBDatabaseConnection;
 
 class UniqueIDBDatabaseTransaction : public RefCountedAndCanMakeWeakPtr<UniqueIDBDatabaseTransaction> {
+    WTF_MAKE_TZONE_ALLOCATED(UniqueIDBDatabaseTransaction);
 public:
     static Ref<UniqueIDBDatabaseTransaction> create(UniqueIDBDatabaseConnection&, const IDBTransactionInfo&);
 

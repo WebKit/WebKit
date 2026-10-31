@@ -40,6 +40,8 @@
 namespace WebCore {
 namespace IDBServer {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MemoryBackingStoreTransaction);
+
 Ref<MemoryBackingStoreTransaction> MemoryBackingStoreTransaction::create(MemoryIDBBackingStore& backingStore, const IDBTransactionInfo& info)
 {
     return adoptRef(*new MemoryBackingStoreTransaction(backingStore, info));

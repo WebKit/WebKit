@@ -30,6 +30,7 @@
 #include "GamepadHapticEffectType.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -42,6 +43,7 @@ class GamepadHapticActuator;
 class PlatformGamepad;
 
 class Gamepad: public RefCountedAndCanMakeWeakPtr<Gamepad> {
+    WTF_MAKE_TZONE_ALLOCATED(Gamepad);
 public:
     static Ref<Gamepad> create(Document* document, const PlatformGamepad& platformGamepad)
     {

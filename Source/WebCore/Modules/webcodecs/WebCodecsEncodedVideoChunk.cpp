@@ -32,8 +32,11 @@
 #include "WebCodecsBufferTransfer.h"
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCodecsEncodedVideoChunk);
 
 ExceptionOr<Ref<WebCodecsEncodedVideoChunk>> WebCodecsEncodedVideoChunk::create(JSC::JSGlobalObject& globalObject, Init&& init)
 {

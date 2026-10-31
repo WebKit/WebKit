@@ -30,8 +30,11 @@
 
 #include "NotImplemented.h"
 #include "PlatformAudioData.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamAudioSource);
 
 MediaStreamAudioSource::MediaStreamAudioSource(float sampleRate)
     : RealtimeMediaSource(CaptureDevice { { }, CaptureDevice::DeviceType::Microphone, "MediaStreamAudioDestinationNode"_s })

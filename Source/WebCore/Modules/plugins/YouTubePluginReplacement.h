@@ -27,6 +27,7 @@
 
 #include <WebCore/PluginReplacement.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -36,6 +37,7 @@ class WeakPtrImplWithEventTargetData;
 class YouTubeEmbedShadowElement;
 
 class YouTubePluginReplacement final : public PluginReplacement {
+    WTF_MAKE_TZONE_ALLOCATED(YouTubePluginReplacement);
 public:
     static void registerPluginReplacement(PluginReplacementRegistrar);
 

@@ -28,10 +28,12 @@
 
 #include "LibWebRTCRtpReceiverBackend.h"
 #include "LibWebRTCRtpTransformBackend.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class LibWebRTCRtpReceiverTransformBackend final : public LibWebRTCRtpTransformBackend {
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCRtpReceiverTransformBackend);
 public:
     static Ref<LibWebRTCRtpReceiverTransformBackend> create(Ref<webrtc::RtpReceiverInterface>&& receiver) { return adoptRef(*new LibWebRTCRtpReceiverTransformBackend(WTF::move(receiver))); }
     ~LibWebRTCRtpReceiverTransformBackend();

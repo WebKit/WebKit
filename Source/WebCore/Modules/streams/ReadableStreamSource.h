@@ -31,6 +31,7 @@
 #include "ReadableStreamDefaultController.h"
 #include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <wtf/AbstractRefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -85,6 +86,7 @@ public:
 class SimpleReadableStreamSource
     : public RefCountedReadableStreamSource
     , public CanMakeWeakPtr<SimpleReadableStreamSource> {
+    WTF_MAKE_TZONE_ALLOCATED(SimpleReadableStreamSource);
 public:
     static Ref<SimpleReadableStreamSource> create() { return adoptRef(*new SimpleReadableStreamSource); }
 

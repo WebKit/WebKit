@@ -28,9 +28,12 @@
 
 #include "IDBResultData.h"
 #include "UniqueIDBDatabaseTransaction.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBServer {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServerOpenDBRequest);
 
 Ref<ServerOpenDBRequest> ServerOpenDBRequest::create(IDBConnectionToClient& connection, const IDBOpenRequestData& requestData)
 {

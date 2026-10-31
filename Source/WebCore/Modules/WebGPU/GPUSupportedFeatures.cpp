@@ -29,8 +29,11 @@
 #include "GPUFeatureName.h"
 #include "IDLTypes.h"
 #include "JSGPUFeatureName.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUSupportedFeatures);
 
 Ref<GPUSupportedFeatures> GPUSupportedFeatures::create(const Vector<::WebGPU::FeatureName>& features)
 {

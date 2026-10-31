@@ -33,8 +33,11 @@
 #include "WebTransportSendGroup.h"
 #include "WebTransportSendOptions.h"
 #include "WebTransportSession.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebTransportDatagramsWritable);
 
 ExceptionOr<Ref<WebTransportDatagramsWritable>> WebTransportDatagramsWritable::create(ScriptExecutionContext& context, RefPtr<WebTransport>&& transport, WebTransportSendOptions&& options)
 {

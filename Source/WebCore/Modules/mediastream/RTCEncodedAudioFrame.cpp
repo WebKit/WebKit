@@ -29,8 +29,11 @@
 #include "RTCEncodedAudioFrame.h"
 
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCEncodedAudioFrame);
 
 Ref<RTCEncodedAudioFrame> RTCEncodedAudioFrame::create(RTCEncodedAudioFrame& frame, const Options& options)
 {

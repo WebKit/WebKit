@@ -32,6 +32,7 @@
 #include <wtf/MachSendRight.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,6 +40,7 @@ class ColorSpace;
 class ImageBuffer;
 
 class GPUCompositorIntegration : public RefCountedAndCanMakeWeakPtr<GPUCompositorIntegration> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUCompositorIntegration);
 public:
     static Ref<GPUCompositorIntegration> create(Ref<WebGPUCompositorIntegration>&& backing)
     {

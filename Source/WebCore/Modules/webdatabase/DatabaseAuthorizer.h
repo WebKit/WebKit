@@ -30,6 +30,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -41,6 +42,7 @@ extern const int SQLAuthIgnore;
 extern const int SQLAuthDeny;
 
 class DatabaseAuthorizer : public ThreadSafeRefCounted<DatabaseAuthorizer> {
+    WTF_MAKE_TZONE_ALLOCATED(DatabaseAuthorizer);
 public:
 
     enum Permissions {

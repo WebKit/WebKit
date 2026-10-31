@@ -52,11 +52,14 @@
 #include <JavaScriptCore/JSONObject.h>
 #include <Logging.h>
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DigitalCredential);
 
 Ref<DigitalCredential> DigitalCredential::create(JSC::Strong<JSC::JSObject>&& data, DigitalCredentialPresentationProtocol protocol)
 {

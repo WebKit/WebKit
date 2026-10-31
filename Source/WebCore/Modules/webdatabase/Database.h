@@ -31,6 +31,7 @@
 #include "SQLiteDatabase.h"
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/UniqueRef.h>
 
@@ -55,6 +56,7 @@ template<typename> class ExceptionOr;
 using DatabaseGUID = int;
 
 class Database : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Database> {
+    WTF_MAKE_TZONE_ALLOCATED(Database);
 public:
     ~Database();
 

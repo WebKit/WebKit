@@ -30,8 +30,11 @@
 
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCEncodedFrame);
 
 RTCEncodedFrame::RTCEncodedFrame(Ref<RTCRtpTransformableFrame>&& frame)
     : m_frame(WTF::move(frame))

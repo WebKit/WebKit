@@ -28,8 +28,11 @@
 
 #include "GPUDevice.h"
 #include "GPURenderBundleEncoder.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPURenderBundle);
 
 GPURenderBundle::GPURenderBundle(Ref<WebGPU::RenderBundle>&& backing, String&& label, GPURenderBundleEncoder& renderBundleEncoder)
     : m_backing(WTF::move(backing))

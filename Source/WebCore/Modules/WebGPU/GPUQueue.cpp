@@ -58,6 +58,7 @@
 #include <array>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MallocSpan.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "ColorSpaceCG.h"
@@ -68,6 +69,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUQueue);
 
 GPUQueue::GPUQueue(Ref<WebGPU::Queue>&& backing, Ref<WebGPUIntegration>&& gpu, GPUDevice& device)
     : m_backing(WTF::move(backing))

@@ -27,8 +27,11 @@
 #include "OriginLock.h"
 
 #include <wtf/FileSystem.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OriginLock);
 
 static String lockFileNameForPath(const String& originPath)
 {

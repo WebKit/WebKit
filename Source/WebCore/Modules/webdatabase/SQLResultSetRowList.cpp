@@ -31,8 +31,11 @@
 
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLResultSetRowList);
 
 unsigned SQLResultSetRowList::length() const
 {

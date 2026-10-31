@@ -27,12 +27,14 @@
 
 #include <wtf/FileHandle.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class OriginLock : public ThreadSafeRefCounted<OriginLock> {
+    WTF_MAKE_TZONE_ALLOCATED(OriginLock);
 public:
     static Ref<OriginLock> create(const String& originPath)
     {

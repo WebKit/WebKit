@@ -29,8 +29,11 @@
 #if ENABLE(WEBXR_LAYERS)
 
 #include "WebGLRenderingContextBase.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGLOpaqueTexture);
 
 RefPtr<WebGLOpaqueTexture> WebGLOpaqueTexture::create(WebGLRenderingContextBase& context, PlatformGLObject object, GCGLenum target)
 {

@@ -29,9 +29,12 @@
 #include "config.h"
 #include "DatabaseAuthorizer.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DatabaseAuthorizer);
 
 Ref<DatabaseAuthorizer> DatabaseAuthorizer::create(const String& databaseInfoTableName)
 {

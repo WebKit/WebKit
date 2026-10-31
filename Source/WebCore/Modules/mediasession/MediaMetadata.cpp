@@ -48,6 +48,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaMetadata);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ArtworkImageLoader);
 
 Ref<ArtworkImageLoader> ArtworkImageLoader::create(Document& document, const String& src, ArtworkImageLoaderCallback&& callback)

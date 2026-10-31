@@ -29,6 +29,7 @@
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,6 +39,7 @@ class GPUDevice;
 class GPURenderBundleEncoder;
 
 class GPURenderBundle : public RefCountedAndCanMakeWeakPtr<GPURenderBundle> {
+    WTF_MAKE_TZONE_ALLOCATED(GPURenderBundle);
 public:
     static Ref<GPURenderBundle> create(Ref<::WebGPU::RenderBundle>&& backing, String&& label, GPURenderBundleEncoder& renderBundleEncoder)
     {

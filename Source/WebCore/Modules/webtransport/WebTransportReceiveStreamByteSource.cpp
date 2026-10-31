@@ -41,8 +41,11 @@
 #include <JavaScriptCore/JSCellInlines.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebTransportReceiveStreamByteSource);
 
 WebTransportReceiveStreamByteSource::WebTransportReceiveStreamByteSource(WebTransport& transport, WebTransportStreamIdentifier identifier)
     : m_transport(transport)

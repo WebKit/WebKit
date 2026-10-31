@@ -37,6 +37,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -46,6 +47,7 @@ class GPUDevice;
 class WeakPtrImplWithEventTargetData;
 
 class GPURenderPipeline : public RefCountedAndCanMakeWeakPtr<GPURenderPipeline> {
+    WTF_MAKE_TZONE_ALLOCATED(GPURenderPipeline);
 public:
     static Ref<GPURenderPipeline> create(Ref<::WebGPU::RenderPipeline>&&, uint64_t uniqueId, GPUDevice*, WebGPURenderPipelineDescriptor&&, const WebGPUShaderModuleDescriptor&, std::optional<WebGPUShaderModuleDescriptor>&&, bool sharesVertexFragmentShader);
 

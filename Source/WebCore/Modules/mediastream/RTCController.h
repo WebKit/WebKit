@@ -27,6 +27,7 @@
 #include "EventTarget.h"
 #include "SecurityOrigin.h"
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 
@@ -45,6 +46,7 @@ class LibWebRTCLogSink;
 #endif
 
 class RTCController : public RefCountedAndCanMakeWeakPtr<RTCController> {
+    WTF_MAKE_TZONE_ALLOCATED(RTCController);
 public:
     static Ref<RTCController> create() { return adoptRef(*new RTCController); }
 

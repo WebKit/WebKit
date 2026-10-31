@@ -35,6 +35,7 @@
 #include <cstring>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <zlib.h>
 
 namespace WebCore {
@@ -42,6 +43,7 @@ namespace WebCore {
 template<typename> class ExceptionOr;
 
 class DecompressionStreamDecoder : public RefCounted<DecompressionStreamDecoder> {
+    WTF_MAKE_TZONE_ALLOCATED(DecompressionStreamDecoder);
 public:
     static ExceptionOr<Ref<DecompressionStreamDecoder>> create(unsigned char formatChar);
 

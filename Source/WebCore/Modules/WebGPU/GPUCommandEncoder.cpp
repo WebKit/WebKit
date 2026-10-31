@@ -31,8 +31,11 @@
 #include "GPUCommandBuffer.h"
 #include "GPUDevice.h"
 #include "GPUQuerySet.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUCommandEncoder);
 
 static bool isCanvasBacking(const auto& textureOrView)
 {

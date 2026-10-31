@@ -29,10 +29,12 @@
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class GPUCompilationInfo : public RefCounted<GPUCompilationInfo> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUCompilationInfo);
 public:
     static Ref<GPUCompilationInfo> create(::WebGPU::CompilationInfo&& backing)
     {

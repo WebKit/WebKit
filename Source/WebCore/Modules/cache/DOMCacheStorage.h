@@ -29,12 +29,14 @@
 #include "DOMCache.h"
 #include "FetchRequest.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 struct MultiCacheQueryOptions;
 
 class DOMCacheStorage : public RefCounted<DOMCacheStorage>, public ActiveDOMObject {
+    WTF_MAKE_TZONE_ALLOCATED(DOMCacheStorage);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

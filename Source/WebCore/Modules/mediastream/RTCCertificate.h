@@ -28,11 +28,13 @@
 
 #include "SecurityOrigin.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class RTCCertificate : public RefCounted<RTCCertificate> {
+    WTF_MAKE_TZONE_ALLOCATED(RTCCertificate);
 public:
     struct DtlsFingerprint {
         String algorithm;
