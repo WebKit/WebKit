@@ -53,14 +53,49 @@
 
 // The TestJSC executable doesn't use gtest it uses glib's testing
 #if !defined(BUILDING_TestJSC) && !defined(NO_GTEST_USAGE)
+#ifdef __clang__
+// Same as config.h, for targets that don't pass TestWebKitAPI_DISABLED_WARNINGS.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
+#pragma clang diagnostic ignored "-Wundef"
+#endif
 #undef UniversalPrint
 #include <gtest/gtest.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 #endif
 #include <wtf/Assertions.h>
 #undef new
 #undef delete
 #include <wtf/FastMalloc.h>
 #include <wtf/text/StringView.h>
+
+// config.h's TestWebKit imports, under the same conditions. Every TU of
+// TestWebKit, TestWebKitAPIInjectedBundle and TestWebKitAPIWebProcessPlugIn
+// would otherwise parse them, WebKit.h in particular. TestWebKit therefore
+// has its own PCH rather than reusing TestWTF's.
+#if defined(BUILDING_WITH_CMAKE) && defined(BUILDING_TestWebKit)
+#include <JavaScriptCore/JSExportMacros.h>
+#include <WebCore/PlatformExportMacros.h>
+#include <pal/ExportMacros.h>
+#include <WebKit/WebKit2_C.h>
+#include <wtf/TZoneMalloc.h>
+#if PLATFORM(COCOA) && defined(__OBJC__) && !defined(TestWebKitAPIInjectedBundle_EXPORTS)
+#import <WebKit/WebKit.h>
+#endif
+// Headers that most of this subtarget's sources parse (measured with -ftime-trace).
+#if PLATFORM(MAC)
+#include <WebKit/WKRetainPtr.h>
+#include "Test.h"
+#if !defined(__OBJC__)
+#include <wtf/JSONValues.h>
+#include <wtf/ObjectIdentifier.h>
+#include <wtf/WeakPtr.h>
+#include <wtf/HashSet.h>
+#endif
+#endif // PLATFORM(MAC)
+#endif
 #endif
 
 #if USE(OS_LOG)

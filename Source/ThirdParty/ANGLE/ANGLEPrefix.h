@@ -38,4 +38,20 @@
 #include "libANGLE/queryconversions.h"
 #include "libANGLE/queryutils.h"
 
+#if defined(__OBJC__) && defined(ANGLE_ENABLE_METAL)
+// Metal backend: headers parsed by most of ANGLE's ObjC++ files.
+#import <Foundation/Foundation.h>
+#import <Metal/Metal.h>
+
+#include "libANGLE/Context.h"
+#include "libANGLE/renderer/metal/BufferMtl.h"
+#include "libANGLE/renderer/metal/ContextMtl.h"
+#include "libANGLE/renderer/metal/DisplayMtl.h"
+#include "libANGLE/renderer/metal/mtl_common.h"
+#include "libANGLE/renderer/metal/mtl_format_utils.h"
+#include "libANGLE/renderer/metal/mtl_render_utils.h"
+#include "libANGLE/renderer/metal/mtl_resources.h"
+#include "libANGLE/renderer/metal/mtl_utils.h"
+#endif
+
 #endif

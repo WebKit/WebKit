@@ -21,8 +21,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-GPUProcess/GPUProcess.cpp @cost:7
-GPUProcess/GPUConnectionToWebProcess.cpp @cost:8
+GPUProcess/GPUProcess.cpp @cost:17
+GPUProcess/GPUConnectionToWebProcess.cpp @cost:19
 GPUProcess/GPUProcessPreferences.cpp
 GPUProcess/RemoteSharedResourceCache.cpp
 GPUProcess/ShapeDetection/RemoteBarcodeDetector.cpp
@@ -186,7 +186,7 @@ NetworkProcess/storage/IDBStorageManager.cpp
 NetworkProcess/storage/IDBStorageRegistry.cpp
 NetworkProcess/storage/LocalStorageManager.cpp
 NetworkProcess/storage/MemoryStorageArea.cpp
-NetworkProcess/storage/NetworkStorageManager.cpp @cost:7
+NetworkProcess/storage/NetworkStorageManager.cpp @cost:30
 NetworkProcess/storage/OriginQuotaManager.cpp
 NetworkProcess/storage/OriginStorageManager.cpp
 NetworkProcess/storage/SQLiteStorageArea.cpp
@@ -969,8 +969,8 @@ RTCDataChannelRemoteManagerMessageReceiver.cpp
 RTCDataChannelRemoteManagerProxyMessageReceiver.cpp
 RemoteAudioMediaStreamTrackRendererInternalUnitManagerMessageReceiver.cpp
 RemoteSnapshotRecorderMessageReceiver.cpp @cost:5
-RemoteGraphicsContextMessageReceiver.cpp @cost:9
-RemoteGraphicsContextGLMessageReceiver.cpp @cost:13
+RemoteGraphicsContextMessageReceiver.cpp @cost:57
+RemoteGraphicsContextGLMessageReceiver.cpp @cost:57
 RemoteGraphicsContextGLProxyMessageReceiver.cpp
 PlatformXRSystemMessageReceiver.cpp
 PlatformXRSystemProxyMessageReceiver.cpp

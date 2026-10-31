@@ -37,7 +37,9 @@
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
 #include "GeneratedSerializers.h"
+#if !defined(__OBJC__) || !PLATFORM(MAC)
 #include "RemoteRenderingBackend.h"
+#endif
 
 #define new ("if you use new/delete make sure to include config.h at the top of the file"())
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"())

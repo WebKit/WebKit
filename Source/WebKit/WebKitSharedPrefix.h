@@ -35,9 +35,18 @@
 #include "ArgumentCoders.h"
 #include "GeneratedSerializers.h"
 
+#if defined(__OBJC__) || !PLATFORM(MAC)
 #include <JavaScriptCore/AssemblyHelpers.h>
+#endif
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>
+
+// Headers that most of this subtarget's sources parse (measured with -ftime-trace).
+#if PLATFORM(MAC)
+#if defined(__OBJC__)
+#include <WebCore/HTMLElement.h>
+#endif
+#endif // PLATFORM(MAC)
 
 #define new ("if you use new/delete make sure to include config.h at the top of the file"())
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"())

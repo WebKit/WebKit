@@ -22,6 +22,10 @@ macro(WEBKIT_TEST _target)
     WEBKIT_EXECUTABLE(${_target})
     if (${_target} STREQUAL "TestWTF")
         WEBKIT_ADD_PREFIX_HEADER(TestWTF Helpers/TestWebKitAPIPrefix.h PREFIX_NO_CODEGEN PREFIX_LANGUAGES CXX OBJCXX)
+    elseif (${_target} STREQUAL "TestWebKit")
+        # Not REUSE_FROM TestWTF: under BUILDING_TestWebKit the prefix header also
+        # precompiles config.h's WebKit imports.
+        WEBKIT_ADD_PREFIX_HEADER(TestWebKit Helpers/TestWebKitAPIPrefix.h PREFIX_NO_CODEGEN PREFIX_LANGUAGES CXX OBJCXX)
     else ()
         WEBKIT_REUSE_PREFIX_HEADER(${_target} TestWTF Helpers/TestWebKitAPIPrefix.h PREFIX_LANGUAGES CXX OBJCXX)
     endif ()

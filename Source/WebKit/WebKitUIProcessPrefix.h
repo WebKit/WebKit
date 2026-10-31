@@ -223,6 +223,21 @@
 #include "WebEventModifier.h"
 #include "WebEventType.h"
 
+// Headers that most of this subtarget's sources parse (measured with -ftime-trace).
+#if PLATFORM(MAC)
+#if !defined(__OBJC__)
+#include "AuthenticatorManager.h"
+#include "APIUIClient.h"
+#endif
+#if defined(__OBJC__)
+#import <pal/spi/cocoa/AVKitSPI.h>
+#import <Vision/CCRect.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#include <WebCore/AcceleratedEffectStackUpdater.h>
+#import <Vision/VNRecognizeTextRequestPrivate.h>
+#endif
+#endif // PLATFORM(MAC)
+
 #define new ("if you use new/delete make sure to include config.h at the top of the file"())
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"())
 #endif
