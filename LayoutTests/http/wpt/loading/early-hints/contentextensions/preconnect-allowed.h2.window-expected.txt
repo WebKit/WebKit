@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Preconnecting to https://not-web-platform.test:9000/ due to early hint
+
+
+PASS Early hints preconnect content rule list check
+

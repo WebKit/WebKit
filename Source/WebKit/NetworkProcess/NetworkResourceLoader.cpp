@@ -104,6 +104,12 @@
 #include <wtf/RunLoop.h>
 #include <wtf/text/MakeString.h>
 
+#if ENABLE(CONTENT_EXTENSIONS)
+#include "NetworkContentRuleListManager.h"
+#include <WebCore/ContentExtensionsBackend.h>
+#include <WebCore/ContentRuleListResults.h>
+#endif
+
 #if USE(QUICK_LOOK)
 #include <WebCore/PreviewConverter.h>
 #endif
@@ -1294,10 +1300,6 @@ void NetworkResourceLoader::startPreconnectTask(const URL& baseURL, const LinkHe
     if (!contentSecurityPolicy.allowConnectToSource(url, { }, ContentSecurityPolicy::RedirectResponseReceived::No, originalRequest().url()))
         return;
 
-    CheckedPtr networkSession = protect(connectionToWebProcess())->networkSession();
-    if (!networkSession)
-        return;
-
     NetworkLoadParameters parameters;
     auto globalFrameID = this->globalFrameID();
     parameters.webPageProxyID = globalFrameID.webPageProxyID;
@@ -1309,15 +1311,65 @@ void NetworkResourceLoader::startPreconnectTask(const URL& baseURL, const LinkHe
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
     parameters.request = constructPreconnectRequest(originalRequest(), url);
     parameters.isNavigatingToAppBoundDomain = this->parameters().isNavigatingToAppBoundDomain;
+
+    startPreconnectTaskAfterContentRuleListCheck(WTF::move(parameters), originalRequest().url());
+#else
+    UNUSED_PARAM(baseURL);
+    UNUSED_PARAM(header);
+    UNUSED_PARAM(contentSecurityPolicy);
+#endif // ENABLE(SERVER_PRECONNECT)
+}
+
+void NetworkResourceLoader::startPreconnectTaskAfterContentRuleListCheck(NetworkLoadParameters&& parameters, const URL& mainDocumentURL)
+{
+#if ENABLE(SERVER_PRECONNECT)
+#if ENABLE(CONTENT_EXTENSIONS)
+    // Without an identifier we cannot tell which content rule lists apply, so fail closed: a
+    // preconnect is only an optimization, while issuing one puts a DNS query and a TLS ClientHello
+    // carrying the target's SNI on the wire.
+    auto userContentControllerIdentifier = this->parameters().userContentControllerIdentifier;
+    if (!userContentControllerIdentifier)
+        return;
+
+    // This is a main-frame navigation (handleEarlyHintsResponse bails out otherwise), so the
+    // navigation's own URL is both the main document URL and the frame URL, matching what
+    // ContentExtensionsBackend::processContentRuleListsForLoad computes for the renderer-side path.
+    protect(protect(NetworkProcess::singleton())->networkContentRuleListManager())->contentExtensionsBackend(*userContentControllerIdentifier, [protectedThis = Ref { *this }, parameters = WTF::move(parameters), mainDocumentURL = URL { mainDocumentURL }](auto& backend) mutable {
+        auto url = parameters.request.url();
+        auto results = backend.processContentRuleListsForPingLoad(url, mainDocumentURL, mainDocumentURL, parameters.request.httpMethod(), ContentExtensions::ContentExtensionsBackend::MainFrameContext::Yes);
+        if (results.shouldBlock()) {
+            protectedThis->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker prevented frame displaying "_s, mainDocumentURL.string(), " from preconnecting to "_s, url.string(), " due to early hint"_s));
+            return;
+        }
+        ContentExtensions::applyResultsToRequest(WTF::move(results), nullptr, parameters.request);
+
+        protectedThis->startPreconnectTaskIgnoringContentRuleLists(WTF::move(parameters));
+    });
+#else
+    UNUSED_PARAM(mainDocumentURL);
+    startPreconnectTaskIgnoringContentRuleLists(WTF::move(parameters));
+#endif // ENABLE(CONTENT_EXTENSIONS)
+#else
+    UNUSED_PARAM(parameters);
+    UNUSED_PARAM(mainDocumentURL);
+#endif // ENABLE(SERVER_PRECONNECT)
+}
+
+void NetworkResourceLoader::startPreconnectTaskIgnoringContentRuleLists(NetworkLoadParameters&& parameters)
+{
+#if ENABLE(SERVER_PRECONNECT)
+    CheckedPtr networkSession = protect(connectionToWebProcess())->networkSession();
+    if (!networkSession)
+        return;
+
+    auto url = parameters.request.url();
     Ref preconnectTask = PreconnectTask::create(*networkSession, WTF::move(parameters));
     preconnectTask->start();
 
     addConsoleMessage(MessageSource::Network, MessageLevel::Info, makeString("Preconnecting to "_s, url.string(), " due to early hint"_s));
 #else
-    UNUSED_PARAM(baseURL);
-    UNUSED_PARAM(header);
-    UNUSED_PARAM(contentSecurityPolicy);
-#endif
+    UNUSED_PARAM(parameters);
+#endif // ENABLE(SERVER_PRECONNECT)
 }
 
 void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedResponse, PrivateRelayed privateRelayed, ResponseCompletionHandler&& completionHandler)

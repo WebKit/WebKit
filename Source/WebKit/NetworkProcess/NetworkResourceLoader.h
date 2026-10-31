@@ -312,6 +312,8 @@ private:
     void handleEarlyHintsResponse(WebCore::ResourceResponse&&);
     WebCore::ResourceRequest constructPreconnectRequest(const WebCore::ResourceRequest&, const URL&);
     void startPreconnectTask(const URL& baseURL, const WebCore::LinkHeader&, const WebCore::ContentSecurityPolicy&);
+    void startPreconnectTaskAfterContentRuleListCheck(NetworkLoadParameters&&, const URL& mainDocumentURL);
+    void startPreconnectTaskIgnoringContentRuleLists(NetworkLoadParameters&&);
 
     void logSlowCacheRetrieveIfNeeded(const NetworkCache::Cache::RetrieveInfo&);
 
