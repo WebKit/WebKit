@@ -411,7 +411,7 @@ String JSDOMGlobalObject::codeForEval(JSGlobalObject* globalObject, JSValue valu
     return String();
 }
 
-bool JSDOMGlobalObject::canCompileStrings(JSGlobalObject* globalObject, CompilationType compilationType, String codeString, const ArgList& args)
+bool JSDOMGlobalObject::canCompileStrings(JSGlobalObject* globalObject, CompilationType compilationType, String codeString)
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -421,7 +421,7 @@ bool JSDOMGlobalObject::canCompileStrings(JSGlobalObject* globalObject, Compilat
     if (!scriptExecutionContext) [[unlikely]]
         return false;
 
-    auto result = canCompile(*scriptExecutionContext, compilationType, codeString, args);
+    auto result = canCompile(*scriptExecutionContext, compilationType, codeString);
 
     if (result.hasException()) {
         // https://w3c.github.io/webappsec-csp/#can-compile-strings
