@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 400px; background: lightgray; }
+.rotated { transform: rotate(10deg); background: rgba(0, 128, 0, 0.5); margin: 20px; }
+</style>
+<div class="root" id="root">
+  <div class="rotated"><div id="content" style="height: 20px"></div></div>
+  <div class="rotated" style="width: 50%"><div style="height: 20px"></div></div>
+  <div style="display: flex; transform: rotate(-10deg); margin: 30px 20px; background: rgba(0, 0, 255, 0.3)"><div id="flexItem" style="height: 20px; width: 40%"></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("content").style.height = "80px";
+document.getElementById("flexItem").style.height = "60px";
+document.getElementById("root").style.width = "300px";
+document.body.offsetHeight;
+</script>
