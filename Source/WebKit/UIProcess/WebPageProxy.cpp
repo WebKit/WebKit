@@ -21375,6 +21375,12 @@ void WebPageProxy::postMessageToRemote(IPC::Connection& connection, WebCore::Fra
         return;
     }
 
+    // Not a MESSAGE_CHECK: FrameProcess::site() isn't updated for every same-process load, such as alternate HTML.
+    if (!protect(sourceFrame->frameProcess())->isAllowedToClaimOrigin(sourceOrigin)) {
+        WEBPAGEPROXY_RELEASE_LOG_ERROR(SiteIsolation, "postMessageToRemote: Dropping a message from frame %" PRIu64 " whose source origin is outside its process's site", source.toUInt64());
+        return;
+    }
+
     // Only this process knows where the message is going, so it hands ownership of any sunk
     // ImageBuffers to the destination, so that they outlive the process that sent them. Not waited
     // for: the destination can claim them either way, since they were deposited before being sent.

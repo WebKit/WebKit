@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessProxy.h"
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/Site.h>
 
 namespace WebKit {
@@ -75,6 +76,17 @@ FrameProcess::~FrameProcess()
 BrowsingContextGroup* FrameProcess::browsingContextGroup() const
 {
     return m_browsingContextGroup.get();
+}
+
+bool FrameProcess::isAllowedToClaimOrigin(const WebCore::SecurityOriginData& origin) const
+{
+    if (origin.host().isEmpty() || m_isArchiveProcess)
+        return true;
+
+    if (isSharedProcess())
+        return m_process->sharedProcessDomains().contains(WebCore::RegistrableDomain { origin });
+
+    return m_site->matches(origin);
 }
 
 }

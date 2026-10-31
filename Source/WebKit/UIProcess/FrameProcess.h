@@ -54,6 +54,8 @@ public:
     const WebCore::Site& sharedProcessMainFrameSite() const LIFETIME_BOUND { ASSERT(!m_site); return m_mainFrameSite; }
     bool isArchiveProcess() const { return m_isArchiveProcess; }
 
+    bool isAllowedToClaimOrigin(const WebCore::SecurityOriginData&) const;
+
     BrowsingContextGroup* LEGACY_NODELETE browsingContextGroup() const;
 
     void incrementFrameCount() { m_frameCount++; }
