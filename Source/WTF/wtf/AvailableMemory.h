@@ -32,5 +32,6 @@ namespace WTF {
 
 WTF_EXPORT_PRIVATE size_t availableMemory();
 WTF_EXPORT_PRIVATE double percentAvailableMemoryInUse();
+WTF_EXPORT_PRIVATE std::optional<size_t> currentProcessMemoryLimit();
 
 } // namespace WTF

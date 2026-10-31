@@ -84,6 +84,7 @@
 #include "TransformState.h"
 #include "TranslateTransformOperation.h"
 #include "ViewTransition.h"
+#include <wtf/AvailableMemory.h>
 #include <wtf/HexNumber.h>
 #include <wtf/InlineWeakPtr.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -553,12 +554,19 @@ static inline bool layersLogEnabled()
 
 static constexpr Seconds conservativeCompositingPolicyHysteresisDuration { 2_s };
 
+static constexpr double compositingMemoryBudgetFractionOfProcessLimit = 0.4;
+static constexpr Seconds initialCompositingMemoryBudgetBackoff { 2_s };
+static constexpr Seconds maximumCompositingMemoryBudgetBackoff { 32_s };
+// 4 bytes per pixel, with front and back buffers.
+static constexpr double estimatedBackingStoreBytesPerPixel = 4 * 2;
+
 RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     : m_renderView(renderView)
     , m_updateCompositingLayersTimer(*this, &RenderLayerCompositor::updateCompositingLayersTimerFired)
     , m_updateRenderingTimer(*this, &RenderLayerCompositor::scheduleRenderingUpdate)
     , m_compositingPolicy { CompositingPolicy::Normal }
     , m_compositingPolicyHysteresis([](PAL::HysteresisState) { }, conservativeCompositingPolicyHysteresisDuration)
+    , m_compositingMemoryBudgetBackoffDuration(initialCompositingMemoryBudgetBackoff)
 {
 #if PLATFORM(IOS_FAMILY)
     if (m_renderView.frameView().platformWidget())
@@ -721,6 +729,8 @@ bool RenderLayerCompositor::updateCompositingPolicy()
     }
 
     m_compositingPolicy = cachedMemoryPolicy == WTF::MemoryUsagePolicy::Unrestricted ? CompositingPolicy::Normal : CompositingPolicy::Conservative;
+    if (MonotonicTime::now() < m_compositingMemoryBudgetBackoffEndTime)
+        m_compositingPolicy = CompositingPolicy::Conservative;
 
     bool didChangePolicy = currentPolicy != m_compositingPolicy;
     if (didChangePolicy && m_compositingPolicy == CompositingPolicy::Conservative)
@@ -732,6 +742,73 @@ bool RenderLayerCompositor::updateCompositingPolicy()
 bool RenderLayerCompositor::canUpdateCompositingPolicy() const
 {
     return m_compositingPolicyHysteresis.state() == PAL::HysteresisState::Stopped;
+}
+
+std::optional<double> RenderLayerCompositor::compositingMemoryBudget() const
+{
+    if (auto budgetOverride = page().compositingMemoryBudgetOverride())
+        return *budgetOverride;
+
+    if (auto processMemoryLimit = WTF::currentProcessMemoryLimit())
+        return *processMemoryLimit * compositingMemoryBudgetFractionOfProcessLimit;
+
+    return std::nullopt;
+}
+
+// The footprint lags behind backing store allocation, so estimate it from the bounds of layers that will be composited.
+void RenderLayerCompositor::beginBackingStoreMemoryEstimate()
+{
+    m_backingStoreMemoryEstimate = std::nullopt;
+
+    if (m_compositingPolicy != CompositingPolicy::Normal || page().compositingPolicyOverride())
+        return;
+
+    auto budget = compositingMemoryBudget();
+    if (!budget)
+        return;
+
+    Ref frameView = m_renderView.frameView();
+#if PLATFORM(IOS_FAMILY)
+    FloatRect coverageRect = frameView->exposedContentRect().raw();
+#else
+    FloatRect coverageRect = frameView->visibleContentRect();
+#endif
+    // Tiled layers only retain tiles near the visible area.
+    if (auto* backing = rootRenderLayer().backing()) {
+        if (CheckedPtr tiledBacking = backing->tiledBacking())
+            coverageRect.unite(tiledBacking->coverageRect());
+    }
+
+    // With delegated page scaling, pageScaleFactor() is not applied by RenderView.
+    float scale = deviceScaleFactor() * (page().delegatesScaling() ? pageScaleFactor() : 1);
+    m_backingStoreMemoryEstimate = BackingStoreMemoryEstimate { *budget, coverageRect, scale * scale * estimatedBackingStoreBytesPerPixel };
+}
+
+void RenderLayerCompositor::addToBackingStoreMemoryEstimate(const LayerOverlapMap& overlapMap, const RenderLayer& layer)
+{
+    if (!m_backingStoreMemoryEstimate)
+        return;
+
+    // Not the OverlapExtent bounds, which inflate fixed and sticky layers to cover every scroll position.
+    auto bounds = overlapMap.geometryMap().absoluteRect(layer.overlapBounds());
+    auto coveredBounds = intersection(bounds, m_backingStoreMemoryEstimate->coverageRect);
+    m_backingStoreMemoryEstimate->bytes += coveredBounds.area() * m_backingStoreMemoryEstimate->bytesPerUnitArea;
+}
+
+bool RenderLayerCompositor::backingStoreMemoryEstimateExceedsBudget()
+{
+    auto estimate = std::exchange(m_backingStoreMemoryEstimate, std::nullopt);
+    if (!estimate)
+        return false;
+
+    if (estimate->bytes <= estimate->budget) {
+        if (estimate->bytes < estimate->budget / 2)
+            m_compositingMemoryBudgetBackoffDuration = initialCompositingMemoryBudgetBackoff;
+        return false;
+    }
+
+    RELEASE_LOG(MemoryPressure, "RenderLayerCompositor %p estimated backing store memory %.1fMB exceeds budget %.1fMB, using conservative compositing for %.0fs", this, estimate->bytes / MB, estimate->budget / MB, m_compositingMemoryBudgetBackoffDuration.seconds());
+    return true;
 }
 
 bool RenderLayerCompositor::canRender3DTransforms() const
@@ -1141,7 +1218,20 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         BackingSharingState backingSharingState;
         LayerOverlapMap overlapMap(rootLayer);
 
+        beginBackingStoreMemoryEstimate();
         computeCompositingRequirements(nullptr, rootLayer, overlapMap, compositingState, backingSharingState);
+
+        if (backingStoreMemoryEstimateExceedsBudget()) {
+            m_compositingMemoryBudgetBackoffEndTime = MonotonicTime::now() + m_compositingMemoryBudgetBackoffDuration;
+            m_compositingMemoryBudgetBackoffDuration = std::min(m_compositingMemoryBudgetBackoffDuration * 2, maximumCompositingMemoryBudgetBackoff);
+            m_compositingPolicy = CompositingPolicy::Conservative;
+            rootLayer->setDescendantsNeedCompositingRequirementsTraversal();
+
+            CompositingState conservativeCompositingState(updateRoot);
+            BackingSharingState conservativeBackingSharingState;
+            LayerOverlapMap conservativeOverlapMap(rootLayer);
+            computeCompositingRequirements(nullptr, rootLayer, conservativeOverlapMap, conservativeCompositingState, conservativeBackingSharingState);
+        }
     }
 
     LOG(Compositing, "\nRenderLayerCompositor::updateCompositingLayers - mid");
@@ -1531,6 +1621,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     ASSERT(willBeComposited == needsToBeComposited(layer, queryData));
 
+    if (willBeComposited)
+        addToBackingStoreMemoryEstimate(overlapMap, layer);
+
     // Create or destroy backing here. However, we can't update geometry because layers above us may become composited
     // during post-order traversal (e.g. for clipping).
     bool needsCompositingStatusUpdate = false;
@@ -1632,6 +1725,7 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
         LOG_WITH_STREAM(CompositingOverlap, stream << "unchangedSubtree: layer " << &layer << " will composite, pushed container " << overlapMap);
 
         computeExtent(overlapMap, layer, layerExtent);
+        addToBackingStoreMemoryEstimate(overlapMap, layer);
         currentState.ancestorHasTransformAnimation |= layerExtent.hasTransformAnimation;
         // Too hard to compute animated bounds if both us and some ancestor is animating transform.
         layerExtent.animationCausesExtentUncertainty |= layerExtent.hasTransformAnimation && compositingState.ancestorHasTransformAnimation;

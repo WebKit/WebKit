@@ -817,6 +817,8 @@ public:
     enum CompositingPolicy { Normal, Conservative };
     ExceptionOr<void> setCompositingPolicyOverride(std::optional<CompositingPolicy>);
     ExceptionOr<std::optional<CompositingPolicy>> compositingPolicyOverride() const;
+    ExceptionOr<void> setCompositingMemoryBudgetOverride(std::optional<double>);
+    ExceptionOr<std::optional<double>> compositingMemoryBudgetOverride() const;
 
     ExceptionOr<void> setAllowAnimationControlsOverride(bool);
 

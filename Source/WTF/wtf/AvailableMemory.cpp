@@ -117,4 +117,14 @@ double percentAvailableMemoryInUse()
     return std::min(1.0, static_cast<double>(memoryFootprint()) / static_cast<double>(availableMemory()));
 }
 
+std::optional<size_t> currentProcessMemoryLimit()
+{
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
+    static const std::optional<size_t> limit = jetsamLimit();
+    return limit;
+#else
+    return std::nullopt;
+#endif
+}
+
 } // namespace WTF
