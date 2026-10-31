@@ -228,6 +228,7 @@ namespace JSC::B3 {
     macro(WasmRTT_data, Wasm::RTT::offsetOfData(), sizeof(RefPtr<const Wasm::RTT>)) \
     macro(WasmExternOrAnyRefTable_jsValuesBuffer, 0, sizeof(WriteBarrier<Unknown>)) \
     macro(WasmFuncRefTable_wrappersBuffer, 0, sizeof(WriteBarrier<Unknown>)) \
+    macro(JSWebAssemblyInstance_cachedMemoryCurrentSize, 0, sizeof(size_t)) \
     macro(WebAssemblyGCStructure_inlinedDisplay, WebAssemblyGCStructure::offsetOfInlinedDisplay(), sizeof(WriteBarrierStructureID)) \
 
 #define FOR_EACH_NUMBERED_ABSTRACT_HEAP(macro) \
