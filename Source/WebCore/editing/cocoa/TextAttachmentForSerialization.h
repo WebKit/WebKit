@@ -29,6 +29,8 @@
 #if PLATFORM(COCOA)
 
 #include <WebCore/NativeImage.h>
+#include <algorithm>
+#include <cmath>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -49,9 +51,16 @@ struct TextAttachmentFileWrapper {
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
+inline bool isValidMultiRepresentationHEICImageSize(const FloatSize& size)
+{
+    return std::isfinite(size.width()) && std::isfinite(size.height());
+}
+
 struct MultiRepresentationHEICAttachmentSingleImage {
     RefPtr<NativeImage> image;
     FloatSize size;
+
+    bool isValid() const { return isValidMultiRepresentationHEICImageSize(size); }
 };
 
 struct MultiRepresentationHEICAttachmentData {
@@ -65,6 +74,11 @@ struct MultiRepresentationHEICAttachmentData {
     // FIXME: Remove this once same-process AttributedString to NSAttributeedString conversion
     // is removed. See https://bugs.webkit.org/show_bug.cgi?id=269384.
     RetainPtr<CFDataRef> data { };
+
+    bool isValid() const
+    {
+        return std::ranges::all_of(images, [](auto& image) { return image.isValid(); });
+    }
 };
 
 #endif
