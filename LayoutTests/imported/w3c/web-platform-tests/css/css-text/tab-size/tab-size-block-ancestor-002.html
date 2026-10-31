@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Text Test: tab-size against the space of the nearest block container, past nested inline boxes and up to an inline-block</title>
+<link rel="author" title="ChangSeok Oh" href="mailto:changseok@webkit.org">
+<link rel="help" href="https://drafts.csswg.org/css-text-3/#tab-size-property">
+<link rel="match" href="tab-size-block-ancestor-002-ref.html">
+<meta name="assert" content="A <number> tab-size is a multiple of the advance width of the space character of the nearest block container ancestor of the tab: inline boxes in between do not count, and an inline-block is a block container of its own.">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<style>
+div {
+  font: 20px/30px Ahem;
+  white-space: pre;
+}
+.large {
+  font-size: 30px;
+}
+.small {
+  font-size: 10px;
+}
+.inline-block {
+  display: inline-block;
+  font-size: 20px;
+}
+</style>
+<p>Test passes if the left edges of the three black squares below are aligned.
+<!-- The first X is placed with 8 spaces of the 20px font. Each other X is 8 * 20px = 160px from the start of its
+block container: the 20px div in the second row and the 20px inline-block in the third, not the 10px div around it. -->
+<div>        <span class="small">X</span></div>
+<div><span class="large"><span class="small">&#9;X</span></span></div>
+<div class="small"><span class="inline-block"><span class="small">&#9;X</span></span></div>
