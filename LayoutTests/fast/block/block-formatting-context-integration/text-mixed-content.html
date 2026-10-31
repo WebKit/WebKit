@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; }
+.root div { background: rgba(0, 128, 0, 0.3); }
+</style>
+<div class="root">
+  text before the block
+  <div style="margin: 10px 0">block</div>
+  text after the block
+</div>
+<div class="root" style="direction: rtl">
+  <div style="margin-bottom: 20px">right to left text that wraps onto a second line here</div>
+  <div style="direction: ltr">left to right text inside an rtl root with <span dir="rtl">rtl span</span></div>
+</div>

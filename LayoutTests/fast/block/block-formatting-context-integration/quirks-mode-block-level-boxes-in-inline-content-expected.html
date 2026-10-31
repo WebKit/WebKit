@@ -1,0 +1,17 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font-family: monospace; font-size: 10px; line-height: 12px; background: lightgray; }
+p { background: yellow; }
+.root { display: flow-root; width: 250px; background: silver; margin: 5px 0; }
+.b { height: 12px; background: rgba(0, 128, 0, 0.6); }
+span { background: rgba(0, 0, 255, 0.2); }
+</style>
+<span>the body's first line<p>a paragraph after a line keeps its quirky margins</p>more text<div class="root">
+<div><span>text before<p>a paragraph in inline content</p>text after</span></div>
+<div><span><p>quirky margins at the start</p>after</span></div>
+<div><span>before<p>quirky margins at the end</p></span></div><p>next paragraph</p>
+<div style="height: 60px"><span>x<div class="b" style="height: 25%"></div>y</span></div>
+<div style="margin-top: 20px"><span><div class="b" style="margin-top: 30px"></div>after</span></div>
+<div><span><div style="margin: 10px 0"></div><p>after a box that collapses through</p></span></div>
+<div><span>one<div><p>nested</p></div>two</span></div>
+</div>the body's last line<p>the last paragraph of the body</p></span>

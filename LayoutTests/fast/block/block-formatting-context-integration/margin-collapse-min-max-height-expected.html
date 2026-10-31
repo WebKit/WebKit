@@ -1,0 +1,57 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; }
+.root div { background: rgba(0, 128, 0, 0.3); }
+</style>
+<div class="root">
+  <div style="min-height: 5px; margin-bottom: 10px">
+    <div style="height: 10px; margin-bottom: 25px"></div>
+  </div>
+  <div style="height: 5px"></div>
+  <div style="min-height: 50px; margin-bottom: 10px">
+    <div style="height: 10px; margin-bottom: 25px"></div>
+  </div>
+  <div style="height: 5px"></div>
+  <div style="min-height: 20px; margin-bottom: 10px">
+    <div style="height: 10px; margin-bottom: 25px"></div>
+  </div>
+  <div style="height: 5px"></div>
+</div>
+<div class="root">
+  <div style="max-height: 4px; margin-bottom: 10px">
+    <div style="height: 10px; margin-bottom: 25px"></div>
+  </div>
+  <div style="height: 5px"></div>
+  <div style="max-height: 0; margin-top: 10px; margin-bottom: 10px">
+    <div style="height: 10px; margin-top: 15px; margin-bottom: 25px"></div>
+  </div>
+  <div style="height: 5px"></div>
+</div>
+<div class="root">
+  <div style="min-height: 10px; margin-top: 10px; margin-bottom: 20px"></div>
+  <div style="min-height: 5%; margin-top: 10px; margin-bottom: 20px"></div>
+  <div style="min-height: 0; margin-top: 10px; margin-bottom: 20px"></div>
+  <div style="min-height: calc(0px); margin-top: 10px; margin-bottom: 20px"></div>
+  <div style="max-height: 0; margin-top: 10px; margin-bottom: 20px"></div>
+  <div style="height: 10px"></div>
+</div>
+<div class="root" style="height: 200px">
+  <div style="height: 50%; margin-bottom: 10px">
+    <div style="height: 10px; margin-bottom: 25px"></div>
+  </div>
+  <div style="height: 5px"></div>
+  <div style="min-height: 20%; margin-bottom: 10px">
+    <div style="height: 10px; margin-bottom: 25px"></div>
+  </div>
+  <div style="height: 5px"></div>
+</div>
+<div class="root">
+  <div style="height: 50%; margin-bottom: 10px">
+    <div style="height: 10px; margin-bottom: 25px"></div>
+  </div>
+  <div style="height: 5px"></div>
+  <div style="height: 50%; min-height: 40px; margin-bottom: 10px">
+    <div style="height: 10px; margin-bottom: 25px"></div>
+  </div>
+  <div style="height: 5px"></div>
+</div>

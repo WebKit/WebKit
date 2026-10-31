@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 250px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+.c { background: silver; margin-bottom: 5px; }
+span { background: rgba(0, 0, 255, 0.2); }
+</style>
+<div class="roots">
+<div class="root">
+  <div class="c">text <span style="position: relative; top: 5px; left: 10px">relative</span> after</div>
+  <div class="c">text <span style="opacity: 0.5">translucent text that wraps across more than one line in the box</span> after</div>
+  <div class="c">text <span style="mix-blend-mode: multiply">blended</span> <span style="isolation: isolate">isolated</span> <span style="clip-path: inset(2px)">clipped</span></div>
+  <div class="c">text <span style="position: relative; z-index: 2">z-index</span> <span style="will-change: opacity">will-change</span></div>
+  <div class="c"><span style="position: relative; top: 3px">relative<div style="margin: 5px 0; background: orange">block-level box</div>after</span></div>
+  <div class="c"><span style="opacity: 0.8">a<span style="display: inline-block; width: 50px; height: 20px; background: green"></span>b</span></div>
+  <div class="c"><span style="position: relative; top: 2px"><span style="position: relative; left: 3px">nested relative</span></span></div>
+</div>
+<div class="root">
+  <div class="c" dir="rtl">rtl <span style="position: relative; left: 10px">relative</span> text</div>
+  <div class="c"><span style="position: relative; top: 5px; padding: 3px; border: 1px solid">padded and bordered</span><br>second line</div>
+  <div class="c" style="position: relative; height: 40px"><span style="opacity: 0.5">opacity<span style="position: absolute; top: 15px; left: 0">absolute</span></span></div>
+  <div class="c" style="writing-mode: vertical-rl; height: 100px">vertical <span style="position: relative; top: 10px">relative</span> text</div>
+</div>
+<div class="root" style="position: relative; height: 40px">
+  <span style="position: relative; left: 20px">relative<span style="position: absolute; top: 12px; left: 0">absolute</span></span>
+</div>
+</div>

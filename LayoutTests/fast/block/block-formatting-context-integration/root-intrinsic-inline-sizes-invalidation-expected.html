@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.container { display: flow-root; margin-bottom: 10px; }
+.root { float: left; border: 20px solid blue; }
+.child { background: orange; height: 10px; }
+</style>
+<div class="container"><div class="root"><div class="child" style="width: 50px"></div><div class="child" id="out-of-flow" style="width: 100px"></div></div></div>
+<div class="container"><div class="root"><div class="child" style="width: 50px"></div><div class="child" id="width" style="width: 100px"></div></div></div>
+<div class="container"><div class="root"><div><div id="text">x</div></div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("out-of-flow").style.position = "absolute";
+document.getElementById("width").style.width = "20px";
+document.getElementById("text").textContent = "xx xxxxx xxx";
+</script>

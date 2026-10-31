@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; }
+.ratio { aspect-ratio: 4 / 1; margin: 10px 0; background: rgba(0, 128, 0, 0.5); }
+.text { font-size: 20px; line-height: 20px; color: blue; }
+</style>
+<div class="root" id="root">
+  <div class="ratio"></div>
+  <div class="ratio" style="width: 50%; padding: 5px; border: 3px solid black"></div>
+  <div class="ratio" style="box-sizing: border-box; padding: 10px; border: 2px solid black"></div>
+  <div class="ratio" style="aspect-ratio: auto 4 / 1; box-sizing: border-box; padding: 10px"></div>
+  <div class="ratio text">xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx</div>
+  <div class="ratio text" style="box-sizing: border-box; padding: 10px">xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx</div>
+  <div style="margin: 20px 0"><div class="ratio" style="aspect-ratio: 10 / 1"></div></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("root").style.width = "260px";
+</script>
