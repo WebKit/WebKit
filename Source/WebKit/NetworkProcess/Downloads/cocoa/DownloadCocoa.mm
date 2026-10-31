@@ -36,6 +36,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
@@ -107,18 +108,85 @@ void Download::resume(std::span<const uint8_t> resumeData, const String& path, S
 #endif
 }
     
+static NSString * const advancedPrivacyProtectionsResumeKey = @"WKAdvancedPrivacyProtections";
+static NSString * const wasPrivateRelayedResumeKey = @"WKWasPrivateRelayed";
+static NSString * const downloadURLResumeKey = @"WKDownloadURL";
+
+auto Download::currentResumeInfo() const -> ResumeInfo
+{
+    RetainPtr metrics = dynamic_objc_cast<NSURLSessionTaskTransactionMetrics>([m_downloadTask _incompleteTaskMetrics].transactionMetrics.lastObject);
+    bool wasPrivateRelayed = metrics.get()._privacyStance == nw_connection_privacy_stance_proxied;
+
+    RetainPtr request = [m_downloadTask originalRequest] ?: [m_downloadTask currentRequest];
+    return { m_advancedPrivacyProtections, wasPrivateRelayed, URL { [request URL] } };
+}
+
+Vector<uint8_t> Download::resumeDataWithResumeInfo(std::span<const uint8_t> resumeData, const ResumeInfo& info)
+{
+    if (info.advancedPrivacyProtections.isEmpty() || resumeData.empty())
+        return resumeData;
+
+    RetainPtr dictionary = dynamic_objc_cast<NSMutableDictionary>([NSPropertyListSerialization propertyListWithData:toNSData(resumeData).get() options:NSPropertyListMutableContainersAndLeaves format:0 error:nullptr]);
+    if (!dictionary)
+        return resumeData;
+
+    [dictionary setObject:@(info.advancedPrivacyProtections.toRaw()) forKey:advancedPrivacyProtectionsResumeKey];
+    [dictionary setObject:@(info.wasPrivateRelayed) forKey:wasPrivateRelayedResumeKey];
+    if (info.url.isValid())
+        [dictionary setObject:info.url.string().createNSString().get() forKey:downloadURLResumeKey];
+    RetainPtr updatedData = [NSPropertyListSerialization dataWithPropertyList:dictionary.get() format:NSPropertyListXMLFormat_v1_0 options:0 error:nullptr];
+    if (!updatedData)
+        return resumeData;
+
+    return makeVector(updatedData.get());
+}
+
+auto Download::resumeInfoFromResumeData(std::span<const uint8_t> resumeData) -> ResumeInfo
+{
+    if (resumeData.empty())
+        return { };
+
+    RetainPtr dictionary = dynamic_objc_cast<NSDictionary>([NSPropertyListSerialization propertyListWithData:toNSData(resumeData).get() options:NSPropertyListImmutable format:0 error:nullptr]);
+    RetainPtr protections = dynamic_objc_cast<NSNumber>([dictionary objectForKey:advancedPrivacyProtectionsResumeKey]);
+    if (!protections)
+        return { };
+
+    RetainPtr urlString = dynamic_objc_cast<NSString>([dictionary objectForKey:downloadURLResumeKey]);
+    return {
+        OptionSet<WebCore::AdvancedPrivacyProtections>::fromRaw([protections unsignedShortValue]),
+        static_cast<bool>([dynamic_objc_cast<NSNumber>([dictionary objectForKey:wasPrivateRelayedResumeKey]) boolValue]),
+        URL { String { urlString.get() } }
+    };
+}
+
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+Vector<uint8_t> Download::placeholderBookmarkDataFromResumeData(std::span<const uint8_t> resumeData)
+{
+    if (resumeData.empty())
+        return { };
+
+    RetainPtr dictionary = dynamic_objc_cast<NSDictionary>([NSPropertyListSerialization propertyListWithData:toNSData(resumeData).get() options:NSPropertyListImmutable format:0 error:nullptr]);
+    RetainPtr bookmarkData = dynamic_objc_cast<NSData>([dictionary objectForKey:@"ResumePlaceholderURLBookmarkData"]);
+    if (!bookmarkData)
+        return { };
+
+    return makeVector(bookmarkData.get());
+}
+#endif
+
 void Download::platformCancelNetworkLoad(CompletionHandler<void(std::span<const uint8_t>)>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
     ASSERT(m_downloadTask);
-    [m_downloadTask cancelByProducingResumeData:makeBlockPtr([completionHandler = WTF::move(completionHandler), placeholderURL = m_placeholderURL] (NSData *resumeData) mutable {
-        ensureOnMainRunLoop([resumeData = retainPtr(resumeData), completionHandler = WTF::move(completionHandler), placeholderURL = WTF::move(placeholderURL)] () mutable  {
+    // FIXME: It's weird to unpack, repack and again unpack the resume data here.
+    // Good opportunity for refactoring once merged back to main.
+    [m_downloadTask cancelByProducingResumeData:makeBlockPtr([completionHandler = WTF::move(completionHandler), placeholderURL = m_placeholderURL, resumeInfo = currentResumeInfo()] (NSData *resumeData) mutable {
+        ensureOnMainRunLoop([resumeData = retainPtr(resumeData), completionHandler = WTF::move(completionHandler), placeholderURL = WTF::move(placeholderURL), resumeInfo] () mutable  {
+            auto updatedResumeData = resumeDataWithResumeInfo(span(resumeData.get()), resumeInfo);
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-            auto resumeDataWithPlaceholder = updateResumeDataWithPlaceholderURL(placeholderURL.get(), span(resumeData.get()));
-            completionHandler(resumeDataWithPlaceholder.span());
-#else
-            completionHandler(span(resumeData.get()));
+            updatedResumeData = updateResumeDataWithPlaceholderURL(placeholderURL.get(), updatedResumeData.span());
 #endif
+            completionHandler(updatedResumeData.span());
         });
     }).get()];
 }

@@ -2583,6 +2583,22 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
 {
     String suggestedFilename = networkDataTask.suggestedFilename();
 
+    // Some downloads might already have a destination.
+    // e.g. A download the client attempted to resume, but we decided to force it to restart instead.
+    // Skip the destination deciding callback in those cases.
+    if (!networkDataTask.pendingDownloadLocation().isEmpty()) {
+        auto downloadID = *networkDataTask.pendingDownloadID();
+        Ref protectedTask = networkDataTask;
+        completionHandler(PolicyAction::Download);
+        if (protectedTask->state() == NetworkDataTask::State::Canceling || protectedTask->state() == NetworkDataTask::State::Completed)
+            return;
+        CheckedRef downloadManager = this->downloadManager();
+        if (downloadManager->download(downloadID))
+            return;
+        downloadManager->downloadDestinationDecided(downloadID, WTF::move(protectedTask));
+        return;
+    }
+
     RefPtr connection = downloadProxyConnection();
     if (!connection) {
         RELEASE_LOG_ERROR(Network, "NetworkProcess::findPendingDownloadLocation: No download proxy connection for download %" PRIu64, networkDataTask.pendingDownloadID()->toUInt64());
