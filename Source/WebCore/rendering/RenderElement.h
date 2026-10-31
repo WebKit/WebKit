@@ -580,16 +580,6 @@ inline RenderElement* RenderObject::parent() const
     return m_parent.get();
 }
 
-inline bool RenderElement::mayHaveFirstLineStyle() const
-{
-    // As firstLineStyle() finds it. Anonymous blocks use the parent's, if they are its first in-flow child.
-    if (isAnonymousBlock()) {
-        SUPPRESS_UNCHECKED_LOCAL auto* parentRenderer = parent();
-        return parentRenderer && parentRenderer->style().pseudoElementStyle({ PseudoElementType::FirstLine });
-    }
-    return style().pseudoElementStyle({ PseudoElementType::FirstLine });
-}
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderElement, isRenderElement())

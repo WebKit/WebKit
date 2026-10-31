@@ -89,6 +89,16 @@ inline bool RenderElement::isAnonymousBlock() const
         && !isViewTransitionContainingBlock();
 }
 
+inline bool RenderElement::mayHaveFirstLineStyle() const
+{
+    // As firstLineStyle() finds it. Anonymous blocks use the parent's, if they are its first in-flow child.
+    if (isAnonymousBlock()) {
+        SUPPRESS_UNCHECKED_LOCAL auto* parentRenderer = parent();
+        return parentRenderer && parentRenderer->style().pseudoElementStyle({ PseudoElementType::FirstLine });
+    }
+    return style().pseudoElementStyle({ PseudoElementType::FirstLine });
+}
+
 inline bool RenderElement::isBlockContainer() const
 {
     return style().display().doesGenerateBlockContainer() && !isRenderReplaced();

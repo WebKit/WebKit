@@ -50,6 +50,7 @@
 #include "Range.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderCombineText.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
 #include "RenderTextInlines.h"
