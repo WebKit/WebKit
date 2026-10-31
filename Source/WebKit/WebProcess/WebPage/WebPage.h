@@ -2674,6 +2674,9 @@ private:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void failedToShowPopupMenu();
+    void sendInputMethodState(WebCore::Element*, bool inhibitOnScreenKeyboard);
+    void resetInputMethodStateAfterBlur(WebCore::Element&);
+    void restoreInputMethodStateAfterPageFocus();
 #endif
 
     void didChooseFilesForOpenPanel(const Vector<String>& files, const Vector<String>& replacementFiles);
@@ -3414,6 +3417,7 @@ private:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<InputMethodState> m_inputMethodState;
+    WeakPtr<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_focusedElementBeforePageBlur;
 #endif
 
 #if USE(OS_STATE)
