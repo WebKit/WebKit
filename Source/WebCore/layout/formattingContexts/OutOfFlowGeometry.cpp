@@ -62,7 +62,7 @@ std::pair<LayoutUnit, LayoutUnit> OutOfFlowGeometry::insetModifiedContainingBloc
 // The geometry of one axis: auto margins (§4.4) and the alignment of the margin box (§4.5) in the inset-modified containing block.
 auto OutOfFlowGeometry::computeAxisGeometry(Axis axis, const AxisValues& values, LayoutUnit borderBoxSize) -> AxisGeometry
 {
-    auto [insetStart, insetEnd, marginStart, marginEnd, containingBlockSize, borderAndPadding, staticPosition, staticPositionIsMarginBoxEnd] = values;
+    auto [insetStart, insetEnd, marginStart, marginEnd, containingBlockSize, borderAndPadding, staticPosition, staticPositionIsMarginBoxEnd, staticPositionAlignment] = values;
     auto [rangeStart, rangeEnd] = insetModifiedContainingBlock(values);
     borderBoxSize = std::max(borderAndPadding, borderBoxSize);
 
@@ -87,6 +87,26 @@ auto OutOfFlowGeometry::computeAxisGeometry(Axis axis, const AxisValues& values,
     auto marginBoxSize = usedMarginStart + borderBoxSize + usedMarginEnd;
     auto alignsWithEnd = !insetStart && (insetEnd || staticPositionIsMarginBoxEnd);
     auto marginBoxStart = alignsWithEnd ? rangeEnd - marginBoxSize : rangeStart;
+    // The size comes from the inset-modified containing block at the start of the static-position rectangle, as on the render tree path,
+    // which lays the box out again at the aligned position (FlexLayout::setStaticPositionForPositionedLayout).
+    if (!insetStart && !insetEnd && staticPositionAlignment) {
+        auto freeSpace = staticPositionAlignment->rectangleSize - marginBoxSize;
+        auto offset = [&] {
+            if (freeSpace < 0 && staticPositionAlignment->isSafe)
+                return 0_lu;
+            switch (staticPositionAlignment->position) {
+            case StaticPosition::Alignment::Position::Start:
+                return 0_lu;
+            case StaticPosition::Alignment::Position::Center:
+                return freeSpace / 2;
+            case StaticPosition::Alignment::Position::End:
+                return freeSpace;
+            }
+            ASSERT_NOT_REACHED();
+            return 0_lu;
+        }();
+        marginBoxStart += staticPositionIsMarginBoxEnd ? -offset : offset;
+    }
     return { borderBoxSize, usedMarginStart, usedMarginEnd, marginBoxStart + usedMarginStart };
 }
 
@@ -105,7 +125,7 @@ auto OutOfFlowGeometry::inlineAxisValues() const -> AxisValues
     return {
         inset(style->insetStart(writingMode)), inset(style->insetEnd(writingMode)),
         margin(style->marginStart(writingMode)), margin(style->marginEnd(writingMode)),
-        m_containingBlock.inlineSize, m_inlineAxisBorderAndPadding, m_staticPosition.inlinePosition, m_staticPosition.inlinePositionIsMarginBoxEnd
+        m_containingBlock.inlineSize, m_inlineAxisBorderAndPadding, m_staticPosition.inlinePosition, m_staticPosition.inlinePositionIsMarginBoxEnd, m_staticPosition.inlineAlignment
     };
 }
 
@@ -123,7 +143,7 @@ auto OutOfFlowGeometry::blockAxisValues() const -> AxisValues
     return {
         inset(style->insetBefore(writingMode)), inset(style->insetAfter(writingMode)),
         margin(style->marginBefore(writingMode)), margin(style->marginAfter(writingMode)),
-        m_containingBlock.blockSize, m_blockAxisBorderAndPadding, m_staticPosition.blockPosition, false
+        m_containingBlock.blockSize, m_blockAxisBorderAndPadding, m_staticPosition.blockPosition, false, m_staticPosition.blockAlignment
     };
 }
 

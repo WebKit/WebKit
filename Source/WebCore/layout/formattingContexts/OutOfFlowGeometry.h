@@ -56,9 +56,20 @@ public:
     // block, in its direction. The inline position is where the margin box would end when the static-position containing block has the
     // opposite direction (css-position-3 §3.1).
     struct StaticPosition {
+        // A flex container aligns the margin box in the static-position rectangle that starts at the static position, its content box, as if
+        // the box were its only flex item (css-flexbox-1 §4.1), in the direction of the static-position containing block. Safe alignment
+        // keeps it at the start when it overflows (css-align-3 §4.4).
+        struct Alignment {
+            enum class Position : uint8_t { Start, Center, End };
+            LayoutUnit rectangleSize;
+            Position position { Position::Start };
+            bool isSafe { false };
+        };
         LayoutUnit inlinePosition;
         LayoutUnit blockPosition;
         bool inlinePositionIsMarginBoxEnd { false };
+        std::optional<Alignment> inlineAlignment { };
+        std::optional<Alignment> blockAlignment { };
     };
     // The used values in one axis, the border box start relative to the padding box of the containing block.
     struct AxisGeometry {
@@ -93,6 +104,7 @@ private:
         LayoutUnit borderAndPadding;
         LayoutUnit staticPosition;
         bool staticPositionIsMarginBoxEnd { false };
+        std::optional<StaticPosition::Alignment> staticPositionAlignment;
     };
     static std::pair<LayoutUnit, LayoutUnit> insetModifiedContainingBlock(const AxisValues&);
     static AxisGeometry computeAxisGeometry(Axis, const AxisValues&, LayoutUnit borderBoxSize);
