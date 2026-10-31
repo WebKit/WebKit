@@ -1,0 +1,7 @@
+
+PASS Sending a message with 127 attachments does not break the connection.
+PASS Sending a message with 128 attachments does not break the connection.
+PASS Sending a message with 337 attachments does not break the connection.
+PASS Sending a message with 338 attachments does not break the connection.
+PASS Sending a message with 1000 attachments does not break the connection.
+

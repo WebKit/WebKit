@@ -41,6 +41,7 @@ $(SRCROOT)/Platform/IPC/IPCUtilities.h
 $(SRCROOT)/Platform/IPC/cocoa/ImportanceAssertion.h
 $(SRCROOT)/Shared/LogStream.h
 $(SRCROOT)/Shared/LogStreamIdentifier.h
+$(SRCROOT)/Platform/IPC/cocoa/MachMessage.h
 $(SRCROOT)/Platform/IPC/MessageLog.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/MessageNames.h
 $(SRCROOT)/Platform/IPC/MessageObserver.h

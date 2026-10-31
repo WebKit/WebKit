@@ -76,6 +76,7 @@ private:
     void releaseConnectionTester(IPCConnectionTesterIdentifier, CompletionHandler<void()>&&);
     void sendSameSemaphoreBack(IPC::Connection&, IPC::Semaphore&&);
     void sendSemaphoreBackAndSignalProtocol(IPC::Connection&, IPC::Semaphore&&);
+    void sendSemaphores(Vector<IPC::Semaphore>&&, CompletionHandler<void(uint64_t)>&&);
     void sendAsyncMessageToReceiver(IPC::Connection&, uint32_t);
     void sendAsyncMessageToReceiverRequestingReply(IPC::Connection&, uint32_t value, CompletionHandler<void(uint32_t, bool)>&&);
     void sendDeferredReplyMessageToReceiver(IPC::Connection&, uint32_t value, CompletionHandler<void(uint64_t, bool)>&&);

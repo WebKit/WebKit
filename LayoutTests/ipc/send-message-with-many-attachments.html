@@ -1,0 +1,33 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that a message with more attachments than fit as inline port descriptors can be sent.</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+const defaultTimeout = 1000;
+// A mach message carries at most 127 attachments as an inline port descriptor each, so a message with
+// more than that has to be sent some other way. Note that an out-of-line array of port names is not a
+// way: the kernel refuses one sent to an ordinary connection port with a fatal EXC_GUARD. Past 337
+// attachments, the message no longer fits the storage it is sent from without allocating.
+const attachmentCounts = [ 127, 128, 337, 338, 1000 ];
+
+for (const attachmentCount of attachmentCounts) {
+    test(() => {
+        if (!window.IPC)
+            return;
+        for (const processTarget of IPC.processTargets) {
+            // Every semaphore travels as a mach port attachment.
+            const semaphores = [];
+            for (let i = 0; i < attachmentCount; ++i)
+                semaphores.push({ type: 'Semaphore', value: IPC.createSemaphore() });
+
+            // The reply proves that the receiver decoded every attachment, and that the connection
+            // outlived the message: neither process was taken down by it, and the connection was not
+            // invalidated for failing to send it.
+            const reply = IPC.sendSyncMessage(processTarget, 0, IPC.messages.IPCTester_SendSemaphores.name, defaultTimeout, [{ type: 'Vector', value: semaphores }]);
+            assert_equals(reply.arguments[0].type, 'uint64_t', `for ${ processTarget }`);
+            assert_equals(reply.arguments[0].value, attachmentCount, `for ${ processTarget }`);
+        }
+    }, `Sending a message with ${ attachmentCount } attachments does not break the connection.`);
+}
+</script>

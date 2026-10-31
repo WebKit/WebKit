@@ -179,6 +179,11 @@ void IPCTester::sendSemaphoreBackAndSignalProtocol(IPC::Connection& connection, 
     }
 }
 
+void IPCTester::sendSemaphores(Vector<IPC::Semaphore>&& semaphores, CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    completionHandler(semaphores.size());
+}
+
 void IPCTester::sendAsyncMessageToReceiver(IPC::Connection& connection, uint32_t arg0)
 {
     connection.sendWithAsyncReply(Messages::IPCTesterReceiver::AsyncMessage(arg0 + 1), [arg0](uint32_t newArg0) {

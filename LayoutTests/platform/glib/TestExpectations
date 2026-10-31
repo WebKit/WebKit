@@ -3409,6 +3409,8 @@ imported/w3c/web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.
 
 # Specific to Cocoa-ports.
 ipc/pasteboard-write-custom-data.html [ Skip ]
+# Tests the mach message attachment limits.
+ipc/send-message-with-many-attachments.html [ Skip ]
 # Hardcodes Cocoa's WebCore::CertificateInfo::trust field in the IPC payload; SOUP's
 # CertificateInfo serializes a GRefPtr<GTlsCertificate> that coreipc.js cannot construct.
 http/tests/ipc/createnewpage-file-body-sandbox-extension.html [ Skip ]

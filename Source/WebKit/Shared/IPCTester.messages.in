@@ -38,6 +38,7 @@ messages -> IPCTester {
 
     SendSameSemaphoreBack(IPC::Semaphore semaphore)
     SendSemaphoreBackAndSignalProtocol(IPC::Semaphore semaphore)
+    SendSemaphores(Vector<IPC::Semaphore> semaphores) -> (uint64_t semaphoreCount) Synchronous
 
     AsyncPing(uint32_t value) -> (uint32_t nextValue)
     SyncPing(uint32_t value) -> (uint32_t nextValue) Synchronous
