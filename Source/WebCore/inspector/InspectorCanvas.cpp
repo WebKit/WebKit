@@ -56,6 +56,7 @@
 #include "InspectorCanvasAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorInstrumentation.h"
+#include "InspectorObjectIdentifier.h"
 #include "JSCanvasDirection.h"
 #include "JSCanvasFillRule.h"
 #include "JSCanvasLineCap.h"
@@ -74,7 +75,6 @@
 #include "Path2D.h"
 #include "SVGPathUtilities.h"
 #include "StringAdaptors.h"
-#include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <ranges>
@@ -109,7 +109,7 @@ Ref<InspectorCanvas> InspectorCanvas::create(GPUDevice& device)
 InspectorCanvas::~InspectorCanvas() = default;
 
 InspectorCanvas::InspectorCanvas(CanvasRenderingContext& context)
-    : m_identifier(makeString("canvas:"_s, IdentifiersFactory::createIdentifier()))
+    : m_identifier(makeString("canvas:"_s, generateInspectorObjectIdentifierString()))
     , m_context(context)
 {
 }
@@ -121,7 +121,7 @@ CanvasRenderingContext* InspectorCanvas::canvasContext() const
 }
 
 InspectorCanvas::InspectorCanvas(GPUDevice& device)
-    : m_identifier(makeString("canvas:"_s, IdentifiersFactory::createIdentifier()))
+    : m_identifier(makeString("canvas:"_s, generateInspectorObjectIdentifierString()))
     , m_context(device)
 {
 }

@@ -43,6 +43,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorObjectIdentifier.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWrapperCache.h"
 #include "JSExecState.h"
@@ -61,7 +62,6 @@
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
 #include "WebAnimationUtilities.h"
-#include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorEnvironment.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
@@ -440,7 +440,7 @@ void InspectorAnimationAgent::willApplyKeyframeEffect(const Styleable& target, K
         return;
 
     auto ensureResult = m_trackedStyleOriginatedAnimationData.ensure(styleOriginatedAnimation.get(), [&] () -> UniqueRef<TrackedStyleOriginatedAnimationData> {
-        return makeUniqueRef<TrackedStyleOriginatedAnimationData>(TrackedStyleOriginatedAnimationData { makeString("animation:"_s, IdentifiersFactory::createIdentifier()), computedTiming });
+        return makeUniqueRef<TrackedStyleOriginatedAnimationData>(TrackedStyleOriginatedAnimationData { makeString("animation:"_s, generateInspectorObjectIdentifierString()), computedTiming });
     });
     auto& trackingData = ensureResult.iterator->value.get();
 
@@ -622,7 +622,7 @@ WebAnimation* InspectorAnimationAgent::assertAnimation(Inspector::Protocol::Erro
 
 void InspectorAnimationAgent::bindAnimation(WebAnimation& animation, RefPtr<Inspector::Protocol::Console::StackTrace> backtrace)
 {
-    auto animationId = makeString("animation:"_s, IdentifiersFactory::createIdentifier());
+    auto animationId = makeString("animation:"_s, generateInspectorObjectIdentifierString());
     m_animationIdMap.set(animationId, &animation);
 
     auto animationPayload = Inspector::Protocol::Animation::Animation::create()

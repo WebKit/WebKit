@@ -78,7 +78,6 @@
 #include "SharedBuffer.h"
 #include "WebInjectedScriptHost.h"
 #include "WebInjectedScriptManager.h"
-#include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/InspectorAgent.h>
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
