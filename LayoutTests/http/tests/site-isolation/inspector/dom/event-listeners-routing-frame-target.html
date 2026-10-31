@@ -1,0 +1,221 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+let mainFireCount = 0;
+
+function mainClickHandler()
+{
+    ++mainFireCount;
+}
+
+function attachMainListener()
+{
+    document.getElementById("main-target").addEventListener("click", mainClickHandler);
+}
+
+function dispatchMainClick()
+{
+    document.getElementById("main-target").dispatchEvent(new Event("click"));
+}
+
+function resetMainFireCount()
+{
+    mainFireCount = 0;
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.EventListeners.Routing");
+
+    const deadlineDuration = 10000;
+
+    let frameTarget = null;
+    let mainNode = null;
+    let frameNode = null;
+    let frameBodyNode = null;
+    let mainListener = null;
+    let frameListener = null;
+
+    function withDeadline(promise, description)
+    {
+        let timer = 0;
+        let deadline = new Promise((resolve, reject) => {
+            timer = setTimeout(() => {
+                InspectorTest.fail(`Timed out: ${description}`);
+                reject(new Error(`Timed out: ${description}`));
+            }, deadlineDuration);
+        });
+        return Promise.race([promise, deadline]).finally(() => clearTimeout(timer));
+    }
+
+    async function evaluateInFrame(expression) {
+        let {result, wasThrown} = await withDeadline(frameTarget.RuntimeAgent.evaluate.invoke({
+            expression,
+            objectGroup: "test",
+            returnByValue: true,
+        }), `evaluate in frame: ${expression}`);
+        InspectorTest.assert(!wasThrown, `Evaluation should not throw: ${expression}`);
+        return result.value;
+    }
+
+    async function evaluateInMainPage(expression) {
+        return withDeadline(InspectorTest.evaluateInPage(expression), `evaluate in page: ${expression}`);
+    }
+
+    // Commands sent to a target are handled in order, so a round trip to each target
+    // makes sure every earlier DOM command has been applied.
+    async function flushCommands() {
+        await evaluateInMainPage("0");
+        await evaluateInFrame("0");
+    }
+
+    async function clickBoth() {
+        await evaluateInMainPage("resetMainFireCount()");
+        await evaluateInFrame("resetFireCount()");
+        await evaluateInMainPage("dispatchMainClick()");
+        await evaluateInFrame("dispatchClick('heading')");
+        return {
+            main: await evaluateInMainPage("mainFireCount"),
+            frame: await evaluateInFrame("window.fireCount"),
+        };
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find a node in the page target and a node in the cross-origin frame target.",
+        async test() {
+            frameTarget = await waitForFrameTargetForURLContaining("event-listeners-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin frame target.");
+
+            let frameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            if (!frameDoc) {
+                let docEvent = await withDeadline(WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable), "frame document");
+                frameDoc = docEvent.data.document;
+            }
+            InspectorTest.expectNotNull(frameDoc, "Frame target should have a document.");
+
+            let pageDoc = await withDeadline(WI.domManager.requestDocument(), "page document");
+            InspectorTest.expectNotNull(pageDoc, "Page target should have a document.");
+
+            mainNode = WI.domManager.nodeForId(await withDeadline(pageDoc.querySelector("#main-target"), "page querySelector"));
+            InspectorTest.expectNotNull(mainNode, "Should find #main-target in the page.");
+            InspectorTest.expectThat(!mainNode.owningTarget, "The page node should not belong to a frame target.");
+
+            frameNode = WI.domManager.nodeForId(await withDeadline(frameDoc.querySelector("#heading"), "frame querySelector"));
+            InspectorTest.expectNotNull(frameNode, "Should find #heading in the frame.");
+            InspectorTest.expectThat(frameNode.owningTarget === frameTarget, "The frame node should belong to the frame target.");
+
+            frameBodyNode = WI.domManager.nodeForId(await withDeadline(frameDoc.querySelector("body"), "frame querySelector"));
+            InspectorTest.expectNotNull(frameBodyNode, "Should find the body in the frame.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ListenersAreStamped",
+        description: "Event listeners record the target and node they belong to. The frame listener gets the same id as the page listener.",
+        async test() {
+            await evaluateInMainPage("attachMainListener()");
+            let mainResult = await withDeadline(mainNode.getEventListeners({includeAncestors: false}), "page getEventListeners");
+            InspectorTest.expectEqual(mainResult.listeners.length, 1, "Page node should have one listener.");
+
+            // The frame agent numbers listeners from 1 for each document, but the page agent keeps counting
+            // across documents. Give the frame agent enough other listeners to reach the page listener's id.
+            let padCount = mainResult.listeners[0].eventListenerId - 1;
+            if (padCount) {
+                await evaluateInFrame(`for (let i = 0; i < ${padCount}; ++i) document.body.addEventListener("pad" + i, function() { })`);
+                let padResult = await withDeadline(frameBodyNode.getEventListeners({includeAncestors: false}), "frame getEventListeners for pad listeners");
+                InspectorTest.assert(padResult.listeners.length === padCount, "Frame body should have the pad listeners.");
+            }
+
+            await evaluateInFrame("attachBasicClickListener()");
+            let frameResult = await withDeadline(frameNode.getEventListeners({includeAncestors: false}), "frame getEventListeners");
+
+            InspectorTest.expectEqual(frameResult.listeners.length, 1, "Frame node should have one listener.");
+
+            mainListener = mainResult.listeners[0];
+            frameListener = frameResult.listeners[0];
+
+            InspectorTest.expectEqual(mainListener.handlerName, "mainClickHandler", "Page listener should be the page handler.");
+            InspectorTest.expectEqual(frameListener.handlerName, "basicClickHandler", "Frame listener should be the frame handler.");
+            InspectorTest.expectEqual(frameListener.eventListenerId, mainListener.eventListenerId, "The two listeners should have the same id.");
+
+            InspectorTest.expectEqual(mainListener.owningTarget, null, "Page listener should have no frame target.");
+            InspectorTest.expectThat(mainListener.node === mainNode, "Page listener should resolve to the page node.");
+            InspectorTest.expectThat(frameListener.owningTarget === frameTarget, "Frame listener should record the frame target.");
+            InspectorTest.expectThat(frameListener.node === frameNode, "Frame listener should resolve to the frame node, not a page node with the same raw id.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DisableFrameListener",
+        description: "Disabling a frame listener goes to the frame target and leaves the page listener that has the same id alone.",
+        async test() {
+            let counts = await clickBoth();
+            InspectorTest.expectEqual(counts.main, 1, "Baseline: page handler should fire.");
+            InspectorTest.expectEqual(counts.frame, 1, "Baseline: frame handler should fire.");
+
+            WI.domManager.setEventListenerDisabled(frameListener, true);
+            await flushCommands();
+
+            counts = await clickBoth();
+            InspectorTest.expectEqual(counts.frame, 0, "Frame handler should not fire after the frame listener is disabled.");
+            InspectorTest.expectEqual(counts.main, 1, "Page handler should still fire.");
+
+            WI.domManager.setEventListenerDisabled(frameListener, false);
+            await flushCommands();
+
+            counts = await clickBoth();
+            InspectorTest.expectEqual(counts.frame, 1, "Frame handler should fire after the frame listener is enabled again.");
+            InspectorTest.expectEqual(counts.main, 1, "Page handler should still fire.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DisablePageListener",
+        description: "Disabling a page listener still goes to the page target and leaves the frame listener alone.",
+        async test() {
+            WI.domManager.setEventListenerDisabled(mainListener, true);
+            await flushCommands();
+
+            let counts = await clickBoth();
+            InspectorTest.expectEqual(counts.main, 0, "Page handler should not fire after the page listener is disabled.");
+            InspectorTest.expectEqual(counts.frame, 1, "Frame handler should still fire.");
+
+            WI.domManager.setEventListenerDisabled(mainListener, false);
+            await flushCommands();
+
+            counts = await clickBoth();
+            InspectorTest.expectEqual(counts.main, 1, "Page handler should fire after the page listener is enabled again.");
+            InspectorTest.expectEqual(counts.frame, 1, "Frame handler should still fire.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "FrameListenerBreakpoint",
+        description: "A breakpoint on a frame listener is not registered, and removing it does not remove the breakpoint of the page listener with the same id.",
+        async test() {
+            WI.domManager.setBreakpointForEventListener(frameListener);
+            InspectorTest.expectNull(WI.domManager.breakpointForEventListenerId(frameListener.eventListenerId), "Should not register a breakpoint for the frame listener.");
+
+            WI.domManager.setBreakpointForEventListener(mainListener);
+            await flushCommands();
+            InspectorTest.expectNotNull(WI.domManager.breakpointForEventListenerId(mainListener.eventListenerId), "Should register a breakpoint for the page listener.");
+
+            WI.domManager.removeBreakpointForEventListener(frameListener);
+            InspectorTest.expectNotNull(WI.domManager.breakpointForEventListenerId(mainListener.eventListenerId), "Removing the frame listener's breakpoint should keep the page listener's breakpoint.");
+
+            WI.domManager.removeBreakpointForEventListener(mainListener);
+            InspectorTest.expectNull(WI.domManager.breakpointForEventListenerId(mainListener.eventListenerId), "Should remove the breakpoint of the page listener.");
+            await flushCommands();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that the Event Listeners model and controller route a frame node's listeners to the frame target, even when a page listener has the same id.</p>
+<div id="main-target"></div>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/event-listeners-frame.html"></iframe>
+</body>
