@@ -45,6 +45,8 @@ public:
     static RefPtr<GLDisplay> create(EGLDisplay);
     ~GLDisplay() = default;
 
+    static void setShouldUseInMemoryShaderCache(bool);
+
     EGLDisplay eglDisplay() const { return m_display; }
     bool checkVersion(int major, int minor) const;
 
@@ -67,6 +69,7 @@ public:
         bool EXT_image_dma_buf_import_modifiers { false };
         bool MESA_image_dma_buf_export { false };
         bool ANDROID_native_fence_sync { false };
+        bool ANDROID_blob_cache { false };
 #if OS(ANDROID)
         bool ANDROID_get_native_client_buffer { false };
         bool ANDROID_image_native_buffer { false };
