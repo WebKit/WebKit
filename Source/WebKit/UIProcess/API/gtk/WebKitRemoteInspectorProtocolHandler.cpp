@@ -23,17 +23,14 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "APIContentWorld.h"
-#include "APISerializedScriptValue.h"
 #include "JavaScriptEvaluationResult.h"
 #include "PageLoadState.h"
 #include "WebKitError.h"
 #include "WebKitNavigationPolicyDecision.h"
 #include "WebKitUserContentManagerPrivate.h"
-#include "WebKitWebContextPrivate.h"
 #include "WebPageProxy.h"
 #include "WebScriptMessageHandler.h"
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/URL.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/StringToIntegerConversion.h>

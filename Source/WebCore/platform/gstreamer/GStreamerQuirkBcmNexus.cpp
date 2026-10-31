@@ -23,9 +23,6 @@
 
 #if USE(GSTREAMER)
 
-#include "GStreamerCommon.h"
-#include <wtf/OptionSet.h>
-
 namespace WebCore {
 
 GST_DEBUG_CATEGORY_STATIC(webkit_bcmnexus_quirks_debug);

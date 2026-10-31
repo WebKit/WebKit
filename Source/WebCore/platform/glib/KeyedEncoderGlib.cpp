@@ -29,7 +29,6 @@
 #include "SharedBuffer.h"
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GSpanExtras.h>
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 

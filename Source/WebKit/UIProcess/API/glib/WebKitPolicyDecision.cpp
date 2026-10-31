@@ -20,12 +20,10 @@
 #include "config.h"
 #include "WebKitPolicyDecision.h"
 
-#include "APIWebsitePolicies.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebKitPolicyDecisionPrivate.h"
 #include "WebKitWebsitePolicies.h"
 #include "WebKitWebsitePoliciesPrivate.h"
-#include "WebsitePoliciesData.h"
 #include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;

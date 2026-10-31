@@ -38,17 +38,13 @@
 #include "WebPageInlines.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcess.h"
-#include <WebCore/GraphicsContext.h>
-#include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/Region.h>
 #include <WebCore/Settings.h>
-#include <WebCore/ShareableBitmap.h>
 #include <WebCore/WindowEventLoop.h>
 #include <wtf/SetForScope.h>
-#include <wtf/SystemTracing.h>
 
 namespace WebKit {
 using namespace WebCore;

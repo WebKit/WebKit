@@ -28,11 +28,9 @@
 #include <glib/gi18n-lib.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/FileSystem.h>
-#include <wtf/URL.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/WTFGType.h>
-#include <wtf/text/CString.h>
 
 using namespace WebKit;
 using namespace WebCore;

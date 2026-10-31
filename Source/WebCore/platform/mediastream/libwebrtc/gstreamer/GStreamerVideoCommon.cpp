@@ -23,7 +23,6 @@
 #if ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
 #include "GStreamerVideoCommon.h"
 
-#include "absl/types/optional.h"
 #include "webrtc/api/video_codecs/h264_profile_level_id.h"
 #include "webrtc/media/base/codec.h"
 

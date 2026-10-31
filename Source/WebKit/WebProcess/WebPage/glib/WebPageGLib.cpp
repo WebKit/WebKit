@@ -50,7 +50,6 @@
 #include <WebCore/Settings.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/UserAgent.h>
-#include <WebCore/VisiblePosition.h>
 #include <WebCore/VisibleUnits.h>
 #include <wtf/text/MakeString.h>
 

@@ -28,7 +28,6 @@
 #include "Cookie.h"
 
 #include <libsoup/soup.h>
-#include <wtf/DateMath.h>
 
 namespace WebCore {
 

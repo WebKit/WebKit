@@ -27,9 +27,7 @@
 
 #include "WPEDisplayMock.h"
 #include "WPEMockPlatformTest.h"
-#include "WPEScreenMock.h"
 #include "WPEToplevelMock.h"
-#include "WPEViewMock.h"
 
 namespace TestWebKitAPI {
 

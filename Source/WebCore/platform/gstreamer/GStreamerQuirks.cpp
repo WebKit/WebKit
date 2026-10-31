@@ -42,7 +42,6 @@
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringCommon.h>
-#include <wtf/text/StringView.h>
 
 namespace WebCore {
 

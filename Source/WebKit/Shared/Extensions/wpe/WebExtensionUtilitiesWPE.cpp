@@ -33,7 +33,6 @@
 #include <wpe/wpe-platform.h>
 #endif
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/glib/WTFGType.h>
 
 namespace WebKit {
 

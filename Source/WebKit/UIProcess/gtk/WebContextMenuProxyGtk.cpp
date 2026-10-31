@@ -41,7 +41,6 @@
 #include "WebProcessProxy.h"
 #include <gio/gio.h>
 #include <gtk/gtk.h>
-#include <wtf/text/CString.h>
 
 static const char* gContextMenuItemGroup = "webkitContextMenu";
 

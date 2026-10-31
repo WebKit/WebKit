@@ -28,7 +28,6 @@
 
 #include "Logging.h"
 #include <wtf/Threading.h>
-#include <wtf/Vector.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace WebKit {

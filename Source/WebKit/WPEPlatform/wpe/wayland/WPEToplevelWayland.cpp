@@ -36,7 +36,6 @@
 #include "xdg-decoration-unstable-v1-client-protocol.h"
 #endif
 #include <sys/mman.h>
-#include <sys/stat.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/Application.h>
 #include <wtf/glib/GRefPtr.h>
@@ -44,7 +43,6 @@
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
-#include <wtf/unix/UnixFileDescriptor.h>
 
 #if USE(LIBDRM)
 #include <xf86drm.h>

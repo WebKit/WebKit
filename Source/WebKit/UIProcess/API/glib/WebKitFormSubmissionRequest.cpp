@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebKitFormSubmissionRequest.h"
 
-#include "APIDictionary.h"
 #include "APIString.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebKitFormSubmissionRequestPrivate.h"

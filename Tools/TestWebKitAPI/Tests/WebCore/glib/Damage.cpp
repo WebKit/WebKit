@@ -26,7 +26,6 @@
 #include "config.h"
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-#include "Helpers/Test.h"
 #include <WebCore/Damage.h>
 
 namespace TestWebKitAPI {

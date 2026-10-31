@@ -29,12 +29,10 @@
 #include "WebKitNavigationPolicyDecisionPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitResponsePolicyDecisionPrivate.h"
-#include "WebKitURIResponsePrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/CString.h>
 
 #if ENABLE(2022_GLIB_API)
 #include "WebKitNetworkSessionPrivate.h"

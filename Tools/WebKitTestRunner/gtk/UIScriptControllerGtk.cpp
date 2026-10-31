@@ -32,7 +32,6 @@
 #include "TestController.h"
 #include "UIScriptContext.h"
 #include <JavaScriptCore/JSStringRefCPP.h>
-#include <JavaScriptCore/JavaScript.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <WebKit/WKTextCheckerGLib.h>
 #include <WebKit/WKViewPrivate.h>

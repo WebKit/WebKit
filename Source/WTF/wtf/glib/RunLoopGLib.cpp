@@ -26,7 +26,6 @@
  */
 
 #include "config.h"
-#include "Compiler.h"
 #include <wtf/RunLoop.h>
 
 #include <glib.h>

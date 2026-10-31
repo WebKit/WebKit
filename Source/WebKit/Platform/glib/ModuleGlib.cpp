@@ -29,7 +29,6 @@
 #include "Module.h"
 
 #include <gmodule.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/UTF8CStringView.h>
 
 namespace WebKit {

@@ -25,7 +25,6 @@
 #include "WebExtensionController.h"
 #include "WebURLSchemeTask.h"
 #include <WebCore/NotImplemented.h>
-#include <WebCore/ResourceError.h>
 
 namespace WebKit {
 

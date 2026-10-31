@@ -26,7 +26,6 @@
 #include "WebKitInitialize.h"
 #include "WebKitUserContentManagerPrivate.h"
 #include "WebKitUserContentPrivate.h"
-#include "WebKitWebContextPrivate.h"
 #include "WebScriptMessageHandler.h"
 #include <jsc/JSCContextPrivate.h>
 #include <jsc/JSCValuePrivate.h>

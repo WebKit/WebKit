@@ -37,7 +37,6 @@
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GMallocString.h>
-#include <wtf/text/MakeString.h>
 
 using namespace WebCore;
 

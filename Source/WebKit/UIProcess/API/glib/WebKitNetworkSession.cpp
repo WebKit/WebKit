@@ -23,7 +23,6 @@
 #include "WebKitNetworkSession.h"
 
 #include "APIDownloadClient.h"
-#include "FrameInfoData.h"
 #include "ITPThirdPartyData.h"
 #include "NetworkProcessMessages.h"
 #include "WebKitCookieManagerPrivate.h"
@@ -32,7 +31,6 @@
 #include "WebKitMemoryPressureSettings.h"
 #include "WebKitMemoryPressureSettingsPrivate.h"
 #include "WebKitNetworkProxySettingsPrivate.h"
-#include "WebKitPrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebProcessPool.h"
 #include <glib/gi18n-lib.h>

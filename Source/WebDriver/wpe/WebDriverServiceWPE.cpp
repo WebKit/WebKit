@@ -27,7 +27,6 @@
 #include "WebDriverService.h"
 
 #include "Capabilities.h"
-#include "CommandResult.h"
 #include <wtf/JSONValues.h>
 #include <wtf/text/StringToIntegerConversion.h>
 

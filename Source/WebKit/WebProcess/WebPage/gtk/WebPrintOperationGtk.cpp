@@ -35,15 +35,12 @@
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/GraphicsContextSkia.h>
-#include <WebCore/IntRect.h>
 #include <WebCore/LocalFrameInlines.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceError.h>
 #include <gtk/gtk.h>
 #include <memory>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/URL.h>
 #include <wtf/glib/GUniquePtr.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN

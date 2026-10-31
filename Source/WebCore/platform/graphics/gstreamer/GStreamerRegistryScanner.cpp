@@ -32,13 +32,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RuntimeApplicationChecks.h>
-#include <wtf/WeakPtr.h>
-#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
-
-#if ENABLE(VIDEO)
-#include "VideoEncoderPrivateGStreamer.h"
-#endif
 
 namespace WebCore {
 

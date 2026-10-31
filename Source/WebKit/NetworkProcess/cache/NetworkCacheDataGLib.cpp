@@ -29,15 +29,7 @@
 #if USE(GLIB)
 
 #include <WebCore/SharedMemory.h>
-#include <fcntl.h>
 #include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-
-#if !PLATFORM(WIN)
-#include <gio/gfiledescriptorbased.h>
-#endif
 
 #include <wtf/MallocSpan.h>
 #include <wtf/glib/GSpanExtras.h>

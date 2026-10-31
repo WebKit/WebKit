@@ -31,8 +31,6 @@
 #include "NetworkStorageSession.h"
 #include "SoupCookiePersistentStorageType.h"
 #include <WebCore/HTTPCookieAcceptPolicy.h>
-#include <WebCore/SoupNetworkSession.h>
-#include <libsoup/soup.h>
 
 namespace WebKit {
 using namespace WebCore;

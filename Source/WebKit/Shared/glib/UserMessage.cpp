@@ -26,8 +26,6 @@
 #include "config.h"
 #include "UserMessage.h"
 
-#include "ArgumentCodersGLib.h"
-
 namespace WebKit {
 
 UserMessage::IPCData UserMessage::toIPCData() const

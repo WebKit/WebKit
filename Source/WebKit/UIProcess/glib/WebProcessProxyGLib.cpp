@@ -30,9 +30,6 @@
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/NotImplemented.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <wtf/FileSystem.h>
 #include <wtf/glib/Sandbox.h>
 
 #if PLATFORM(GTK)

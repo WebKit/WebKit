@@ -20,9 +20,7 @@
 #include "config.h"
 #include "WebKitWebProcessExtension.h"
 
-#include "APIDictionary.h"
 #include "APIInjectedBundleBundleClient.h"
-#include "APIString.h"
 #include "WebKitUserMessagePrivate.h"
 #include "WebKitWebPagePrivate.h"
 #include "WebKitWebProcessExtensionPrivate.h"

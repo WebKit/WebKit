@@ -35,7 +35,6 @@
 #include "WebProcessProxy.h"
 #include <WebCore/PlatformEvent.h>
 #include <wtf/CallbackAggregator.h>
-#include <wtf/glib/GSpanExtras.h>
 
 #if USE(ATK)
 #include <atk/atk.h>
@@ -50,7 +49,6 @@
 #endif
 
 #if ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
-#include "MessageSenderInlines.h"
 #include "WebPageMessages.h"
 #endif
 

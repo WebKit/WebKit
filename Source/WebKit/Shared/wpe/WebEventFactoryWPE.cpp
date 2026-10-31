@@ -31,7 +31,6 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/Scrollbar.h>
 #include <wpe/wpe-platform.h>
-#include <wtf/MonotonicTime.h>
 
 namespace WebKit {
 

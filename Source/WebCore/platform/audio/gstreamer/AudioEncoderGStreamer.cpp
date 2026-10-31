@@ -28,7 +28,6 @@
 #include "PlatformRawAudioDataGStreamer.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GUniquePtr.h>

@@ -32,7 +32,6 @@
 #include <wtf/SortedArrayMap.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
 
 #include <QOpenGLFunctions>

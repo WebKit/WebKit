@@ -25,7 +25,6 @@
 #include "MockDisplayCaptureSourceGStreamer.h"
 
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
-#include "ContextDestructionObserverInlines.h"
 
 namespace WebCore {
 

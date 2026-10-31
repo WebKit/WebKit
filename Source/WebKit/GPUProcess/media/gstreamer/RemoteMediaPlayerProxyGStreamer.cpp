@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS) && USE(GSTREAMER)
 
-#include "LayerHostingContext.h"
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {

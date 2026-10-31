@@ -32,7 +32,6 @@
 #include <wtf/HexNumber.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/PrintStream.h>
-#include <wtf/glib/WTFGType.h>
 #include <wtf/text/MakeString.h>
 
 GST_DEBUG_CATEGORY(webkit_capturer_debug);

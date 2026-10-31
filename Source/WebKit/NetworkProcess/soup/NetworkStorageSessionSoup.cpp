@@ -41,9 +41,6 @@
 #include <WebCore/URLSoup.h>
 #include <libsoup/soup.h>
 #include <optional>
-#include <wtf/DateMath.h>
-#include <wtf/MainThread.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>

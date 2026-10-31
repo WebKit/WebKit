@@ -33,7 +33,6 @@
 #include <sys/sysmacros.h>
 #include <systemd/sd-login.h>
 #include <unistd.h>
-#include <wtf/Seconds.h>
 
 namespace WPE {
 

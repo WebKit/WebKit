@@ -29,7 +29,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
-#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct {

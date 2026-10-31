@@ -31,7 +31,6 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringHash.h>
 
 static WebKitTestServer* kServer;
 

@@ -39,16 +39,12 @@
 
 #include "ContentType.h"
 #include "Logging.h"
-#include "MediaPlayerPrivateGStreamer.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
 #include "MediaSourceConfiguration.h"
 #include "MediaSourcePrivateClient.h"
 #include "MediaSourceTrackGStreamer.h"
-#include "NotImplemented.h"
 #include "SourceBufferPrivateGStreamer.h"
-#include "TimeRanges.h"
 #include "WebKitMediaSourceGStreamer.h"
-#include <wtf/NativePromise.h>
 #include <wtf/RefPtr.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/StringToIntegerConversion.h>

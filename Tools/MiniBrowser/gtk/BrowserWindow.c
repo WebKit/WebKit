@@ -33,7 +33,6 @@
 #include "BrowserDownloadsBar.h"
 #include "BrowserSettingsDialog.h"
 #include "BrowserTab.h"
-#include <gdk/gdkkeysyms.h>
 #include <string.h>
 
 struct _BrowserWindow {

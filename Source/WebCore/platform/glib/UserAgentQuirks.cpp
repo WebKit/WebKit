@@ -27,7 +27,6 @@
 #include "UserAgentQuirks.h"
 
 #include "PublicSuffixStore.h"
-#include <wtf/URL.h>
 
 namespace WebCore {
 

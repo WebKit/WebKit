@@ -31,7 +31,6 @@
 #include "GtkUtilities.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
-#include <wtf/ProcessPrivilege.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebKit {

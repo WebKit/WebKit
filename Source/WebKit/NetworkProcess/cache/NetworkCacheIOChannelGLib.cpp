@@ -26,13 +26,10 @@
 #include "config.h"
 #include "NetworkCacheIOChannel.h"
 
-#include "NetworkCacheFileSystem.h"
 #include <wtf/MainThread.h>
-#include <wtf/RunLoop.h>
 #include <wtf/Threading.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace WebKit {
 namespace NetworkCache {

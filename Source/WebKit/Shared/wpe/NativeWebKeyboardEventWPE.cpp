@@ -29,7 +29,6 @@
 #if ENABLE(WPE_PLATFORM)
 
 #include "WebEventFactory.h"
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 

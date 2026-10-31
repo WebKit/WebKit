@@ -21,7 +21,6 @@
 #include "JSCWrapperMap.h"
 
 #include "APICast.h"
-#include "IntegrityInlines.h"
 #include "JSAPIWrapperGlobalObject.h"
 #include "JSAPIWrapperObject.h"
 #include "JSCClassPrivate.h"

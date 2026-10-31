@@ -23,7 +23,6 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "Logging.h"
-#include <WebCore/LocalizedStrings.h>
 #include <gtk/gtk.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>

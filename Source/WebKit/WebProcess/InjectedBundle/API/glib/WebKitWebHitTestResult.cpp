@@ -20,18 +20,15 @@
 #include "config.h"
 #include "WebKitWebHitTestResult.h"
 
-#include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleScriptWorld.h"
 #include "WebKitScriptWorldPrivate.h"
 #include "WebKitWebHitTestResultPrivate.h"
 #include <JavaScriptCore/APICast.h>
-#include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/JSNode.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Node.h>
-#include <WebCore/NodeDocument.h>
 #include <WebCore/ScriptController.h>
 #include <glib/gi18n-lib.h>
 #include <jsc/JSCContextPrivate.h>

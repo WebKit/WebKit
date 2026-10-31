@@ -30,20 +30,17 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcessCreationParameters.h"
-#include <glib.h>
 #if ENABLE(WEBGL)
 #include "RemoteGraphicsContextGL.h"
 #include "StreamConnectionWorkQueue.h"
 #include <WebCore/GraphicsContextGLANGLE.h>
 #endif
 #if USE(GBM)
-#include <WebCore/DRMDevice.h>
 #include <WebCore/DRMDeviceManager.h>
 #include <WebCore/GBMDevice.h>
 #include <WebCore/PlatformDisplayGBM.h>
 #endif
 #include <WebCore/PlatformDisplaySurfaceless.h>
-#include <wtf/text/UTF8CStringView.h>
 
 namespace WebKit {
 

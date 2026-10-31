@@ -22,14 +22,8 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "Logging.h"
 #include "WebExtensionLocalization.h"
-#include "WebExtensionUtilities.h"
-#include <WebCore/DataURLDecoder.h>
-#include <WebCore/LocalizedStrings.h>
 #include <WebCore/platform/graphics/Icon.h>
-#include <wtf/FileSystem.h>
-#include <wtf/Language.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 
