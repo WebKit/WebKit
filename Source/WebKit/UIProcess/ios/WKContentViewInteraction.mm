@@ -8620,12 +8620,14 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
             return keyboard && !keyboard.isMinimized;
         }();
 
+        bool softwareKeyboardWillAppear = !_isChangingFocus && !UIKeyboard.isInHardwareKeyboardMode && !UIPeripheralHost.sharedInstance.isUndocked;
+
         if (page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
             revealFocusedElementDeferralReasons.add(WebKit::RevealFocusedElementDeferralReason::EditorState);
 
         if (!self._scroller.firstResponderKeyboardAvoidanceEnabled)
             revealFocusedElementDeferralReasons.add(WebKit::RevealFocusedElementDeferralReason::KeyboardDidShow);
-        else if (_waitingForKeyboardAppearanceAnimationToStart || ignorePreviousKeyboardWillShowNotification)
+        else if (softwareKeyboardWillAppear || _waitingForKeyboardAppearanceAnimationToStart || ignorePreviousKeyboardWillShowNotification)
             revealFocusedElementDeferralReasons.add(WebKit::RevealFocusedElementDeferralReason::KeyboardWillShow);
 
         if (!revealFocusedElementDeferralReasons.isEmpty())
@@ -8670,6 +8672,8 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         // (e.g. when running API tests outside of the context of a UI application). In this scenario, don't bother waiting
         // for keyboard appearance notifications.
         _waitingForKeyboardAppearanceAnimationToStart = NO;
+        if (_revealFocusedElementDeferrer)
+            protect(_revealFocusedElementDeferrer)->fulfill(WebKit::RevealFocusedElementDeferralReason::KeyboardWillShow);
     }
 
     // The custom fixed position rect behavior is affected by -isFocusingElement, so if that changes we need to recompute rects.

@@ -1,0 +1,78 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+}
+
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that a focused text area near the bottom of the page is scrolled above the software keyboard when the keyboard only appears after the text area has been focused. This test requires WebKitTestRunner.");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+
+    const textArea = document.querySelector("textarea");
+    const rect = textArea.getBoundingClientRect();
+    const x = rect.left + scrollX + rect.width / 2;
+    const y = rect.top + scrollY + rect.height / 2;
+
+    await new Promise(resolve => {
+        testRunner.runUIScript(`
+            (function() {
+                uiController.suppressSoftwareKeyboard = true;
+                uiController.singleTapAtPoint(${x}, ${y}, () => uiController.uiScriptComplete());
+            })()`, resolve);
+    });
+
+    while (document.activeElement !== textArea)
+        await UIHelper.delayFor(10);
+    while (!(await UIHelper.getUICaretViewRect()).height)
+        await UIHelper.delayFor(10);
+
+    await new Promise(resolve => testRunner.runUIScript("uiController.suppressSoftwareKeyboard = false", resolve));
+    while (!(await UIHelper.inputViewBounds()).height)
+        await UIHelper.delayFor(50);
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.waitForZoomingOrScrollingToEnd();
+
+    caretRect = await UIHelper.getUICaretViewRectInGlobalCoordinates();
+    inputViewBounds = await UIHelper.inputViewBounds();
+    shouldBeGreaterThanOrEqual("inputViewBounds.top", "caretRect.top + caretRect.height");
+
+    textArea.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div class="container">
+    <textarea rows="1"></textarea>
+</div>
+<pre id="description"></pre>
+<pre id="console"></pre>
+</body>
+</html>

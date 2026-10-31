@@ -56,6 +56,9 @@ webkit.org/b/194259 fast/events/ios/viewport-no-width-value-allows-double-tap.ht
 # This test relies on the numeric keyboard having a different size than regular keyboard. This is not the case on iPad.
 fast/forms/ios/inputmode-change-update-keyboard.html [ Skip ]
 
+# This test relies on the software keyboard appearing all at once when it is unsuppressed. On iPad, the shortcuts bar appears first.
+fast/forms/ios/scroll-to-reveal-focused-element-when-keyboard-appears-later.html [ Skip ]
+
 # <rdar://problem/51865126> [ iPad Simulator ] 2 New Layout tests are failing on iOS 13 iPad Simulator testers fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-*
 fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-2.html [ Skip ]
 fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-1.html [ Skip ]
