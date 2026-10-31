@@ -1,0 +1,5 @@
+
+PASS Dark appearance quirk applies on https://www.bbc.co.uk
+PASS Dark appearance quirk applies on https://www.bbc.com
+PASS Dark appearance quirk does not apply on unrelated hosts
+

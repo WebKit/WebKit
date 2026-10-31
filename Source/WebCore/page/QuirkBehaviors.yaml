@@ -115,6 +115,9 @@ NeedsBoxAnnotationQuirk:
   available: mac
   conditions: [ElementSelector]
 
+# bbc.co.uk, bbc.com: rdar://162447105
+NeedsDarkAppearanceWithoutColorSchemeQuirk:
+
 # hulu.com rdar://55041979
 NeedsCanPlayAfterSeekedQuirk:
 
