@@ -2880,7 +2880,7 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const String& 
 }
 
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
-void webkitWebViewGetLoadDecisionForIcons(WebKitWebView* webView, const HashMap<CallbackID, WebCore::LinkIcon>& icons, CompletionHandler<void(HashSet<WebKit::CallbackID>&&)>&& completionHandler)
+void webkitWebViewGetLoadDecisionForIcons(WebKitWebView* webView, const Vector<std::pair<CallbackID, WebCore::LinkIcon>>& icons, CompletionHandler<void(HashSet<WebKit::CallbackID>&&)>&& completionHandler)
 {
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator>  {
         explicit CallbackAggregator(CompletionHandler<void(HashSet<WebKit::CallbackID>&&)>&& completionHandler)

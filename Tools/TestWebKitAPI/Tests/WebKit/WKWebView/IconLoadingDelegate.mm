@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -235,4 +235,58 @@ TEST(IconLoading, IconLoadCancelledCallback2)
     });
 
     TestWebKitAPI::Util::run(&iconCallbackCalled);
+}
+
+@interface IconOrderDelegate : NSObject <_WKIconLoadingDelegate> {
+    @public
+    RetainPtr<NSMutableArray<NSString *>> iconOrder;
+    NSUInteger expectedIconCount;
+    bool receivedAllIcons;
+}
+@end
+
+@implementation IconOrderDelegate
+
+- (void)webView:(WKWebView *)webView shouldLoadIconWithParameters:(_WKLinkIconParameters *)parameters completionHandler:(void (^)(void (^)(NSData*)))completionHandler
+{
+    if (!iconOrder)
+        iconOrder = adoptNS([[NSMutableArray alloc] init]);
+
+    [iconOrder addObject:parameters.url.lastPathComponent];
+    if ([iconOrder count] == expectedIconCount)
+        receivedAllIcons = true;
+
+    completionHandler(nil);
+}
+
+@end
+
+static constexpr auto iconOrderBody =
+"<head>" \
+"<link rel=\"icon\" href=\"/a.png\">" \
+"<link rel=\"icon\" sizes=\"32x32\" href=\"/a32.png\">" \
+"<link rel=\"icon\" href=\"/b.png\">" \
+"<link rel=\"icon\" sizes=\"32x32\" href=\"/b32.png\">" \
+"<link rel=\"apple-touch-icon\" href=\"/touch.png\">" \
+"</head>"_s;
+
+TEST(IconLoading, IconOrder)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { iconOrderBody } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr<IconOrderDelegate> iconDelegate = adoptNS([[IconOrderDelegate alloc] init]);
+    iconDelegate.get()->expectedIconCount = 5;
+
+    webView.get()._iconLoadingDelegate = iconDelegate.get();
+    [webView loadRequest:server.request()];
+
+    TestWebKitAPI::Util::run(&iconDelegate.get()->receivedAllIcons);
+
+    // Touch icons -> larger icons -> last declared first (https://html.spec.whatwg.org/multipage/links.html#rel-icon).
+    EXPECT_WK_STREQ("touch.png,b32.png,a32.png,b.png,a.png", [iconDelegate.get()->iconOrder componentsJoinedByString:@","]);
 }

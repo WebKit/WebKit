@@ -2151,11 +2151,10 @@ void WebLocalFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<W
     if (!webPage)
         return;
 
-    HashMap<CallbackID, WebCore::LinkIcon> callbackIdIconMap;
-    for (auto& icon : borrow(icons))
-        callbackIdIconMap.add(CallbackID::fromInteger(icon.second), icon.first);
-
-    webPage->send(Messages::WebPageProxy::GetLoadDecisionForIcons(WTF::move(callbackIdIconMap)));
+    // Keep LinkIconCollector's order, most appropriate first.
+    webPage->send(Messages::WebPageProxy::GetLoadDecisionForIcons(WTF::map(icons, [](auto& icon) -> std::pair<CallbackID, WebCore::LinkIcon> {
+        return { CallbackID::fromInteger(icon.second), icon.first };
+    })));
 }
 
 void WebLocalFrameLoaderClient::didFinishServiceWorkerPageRegistration(bool success)

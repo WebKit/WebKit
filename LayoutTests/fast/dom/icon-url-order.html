@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="icon" href="http://example.com/a.png">
+<link rel="icon" sizes="32x32" href="http://example.com/a32.png">
+<link rel="icon" href="http://example.com/b.png">
+<link rel="icon" sizes="32x32" href="http://example.com/b32.png">
+<link rel="apple-touch-icon" href="http://example.com/touch-a.png">
+<link rel="apple-touch-icon" href="http://example.com/touch-b.png">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+// Last declared first among equal icons is from https://html.spec.whatwg.org/multipage/links.html#rel-icon.
+// Touch icons first and larger icons first are WebKit's own ranking.
+promise_test(async () => {
+    await new Promise(resolve => window.addEventListener("load", resolve));
+    assert_array_equals(internals.shortcutIconURLs(), [
+        "http://example.com/touch-b.png",
+        "http://example.com/touch-a.png",
+        "http://example.com/b32.png",
+        "http://example.com/a32.png",
+        "http://example.com/b.png",
+        "http://example.com/a.png",
+    ]);
+}, "Icons are listed most appropriate first, last declared first among equals");
+</script>
+</body>
+</html>

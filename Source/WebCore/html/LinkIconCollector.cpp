@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,7 +113,9 @@ auto LinkIconCollector::iconsOfTypes(OptionSet<LinkIconType> iconTypes) -> Vecto
         icons.append({ url, iconType, linkElement->type(), iconSize, WTF::move(attributes) });
     }
 
-    std::ranges::sort(icons, [](auto& a, auto& b) {
+    // Among equally appropriate icons, the last declared wins (https://html.spec.whatwg.org/multipage/links.html#rel-icon).
+    icons.reverse();
+    std::ranges::stable_sort(icons, [](auto& a, auto& b) {
         return compareIcons(a, b) < 0;
     });
 
