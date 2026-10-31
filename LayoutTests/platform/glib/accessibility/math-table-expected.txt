@@ -1,0 +1,25 @@
+Verifies that MathML exposes proper grid dimensions, and properly computes rowIndexRange and columnIndexRange across multi-row spans and empty cells.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL table.rowCount should be 3. Was 0.
+FAIL table.columnCount should be 2. Was 0.
+FAIL cellSpanning.rowIndexRange() should be 2 (of type number). Was {0, 1} (of type string).
+FAIL cellSpanning.columnIndexRange() should be 1 (of type number). Was {0, 1} (of type string).
+FAIL cellTopRight.rowIndexRange() should be 1 (of type number). Was {0, 1} (of type string).
+FAIL cellTopRight.columnIndexRange() should be 1 (of type number). Was {0, 1} (of type string).
+FAIL cellOffset.rowIndexRange() should be 1 (of type number). Was {0, 1} (of type string).
+FAIL cellOffset.columnIndexRange() should be 1 (of type number). Was {0, 1} (of type string).
+FAIL cellBottomLeft.rowIndexRange() should be 1 (of type number). Was {0, 1} (of type string).
+FAIL cellBottomLeft.columnIndexRange() should be 1 (of type number). Was {0, 1} (of type string).
+FAIL cellBottomRight.rowIndexRange() should be 1 (of type number). Was {0, 1} (of type string).
+FAIL cellBottomRight.columnIndexRange() should be 1 (of type number). Was {0, 1} (of type string).
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+𝑎
++
+𝑏
+𝑐		𝑑	𝑒

@@ -1,0 +1,21 @@
+Verifies that MathML row-like elements (mrow, mpadded, mphantom, merror, mstyle, maction) expose the Section role on Linux.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXMath
+    AXRole: AXSection
+        AXRole: AXStatic AXValue: 𝑎
+    AXRole: AXSection
+        AXRole: AXStatic AXValue: 𝑏
+    AXRole: AXSection
+        AXRole: AXStatic AXValue: 𝑑
+    AXRole: AXSection
+        AXRole: AXStatic AXValue: 𝑒
+    AXRole: AXSection
+        AXRole: AXStatic AXValue: 𝑓
+Accessibility Tree:
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
