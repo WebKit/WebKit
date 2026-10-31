@@ -921,6 +921,41 @@ bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(con
     return !newRequest.isNull();
 }
 
+void CachedResourceLoader::notifyInspectorOfFragmentIdentifier(CachedResource& resource, const String& fragmentIdentifier)
+{
+    if (!InspectorInstrumentation::hasFrontends()) [[likely]]
+        return;
+    if (!resource.shouldSendResourceLoadCallbacks())
+        return;
+
+    URL url = resource.url();
+    url.setFragmentIdentifier(fragmentIdentifier);
+
+    if (resource.status() == CachedResource::Cached) {
+        RefPtr frame = this->frame();
+        RefPtr documentLoader = m_documentLoader;
+        if (frame && documentLoader && documentLoader->haveToldClientAboutLoad(resource.url().string()))
+            InspectorInstrumentation::didLoadResourceFromMemoryCache(*frame, documentLoader.get(), &resource, url);
+        return;
+    }
+
+    if (!resource.isLoading() || !resource.loader())
+        return;
+
+    resource.whenLoaded([weakThis = WeakPtr { *this }, protectedResource = Ref { resource }, url = WTF::move(url)] {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis || protectedResource->errorOccurred() || protectedResource->loadFailedOrCanceled() || protectedResource->response().isNull())
+            return;
+
+        RefPtr frame = protectedThis->frame();
+        RefPtr documentLoader = protectedThis->m_documentLoader;
+        if (!frame || !documentLoader || frame->loader().documentLoader() != documentLoader)
+            return;
+
+        InspectorInstrumentation::didLoadResourceFromMemoryCache(*frame, documentLoader.get(), protectedResource.ptr(), url);
+    });
+}
+
 bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const CachedResource& resource, const CachedResourceRequest& request)
 {
     // WebKit is not supporting CORS for fonts (https://bugs.webkit.org/show_bug.cgi?id=86817), no need to update the resource before reusing it.
@@ -1348,6 +1383,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
 
     bool ignoreForRequestCount = request.ignoreForRequestCount();
     String fragmentIdentifier = request.fragmentIdentifier();
+    bool hiddenFromInspector = request.resourceRequest().hiddenFromInspector();
     auto mayAddToMemoryCache = computeMayAddToMemoryCache(request, resource.get()) ? MayAddToMemoryCache::Yes : MayAddToMemoryCache::No;
     RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get(), forPreload, imageLoading);
     switch (policy) {
@@ -1478,9 +1514,12 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
         m_validatedURLs.add(resource->resourceRequest().url());
 
     ASSERT(resource->url() == url.string());
-    m_documentResources.set(resource->url().string(), CachedResourceHandle { *resource });
-    if (!fragmentIdentifier.isEmpty())
-        m_documentResourceFragmentIdentifiers.add(resource->url().string(), WTF::move(fragmentIdentifier));
+    bool isNewDocumentResource = m_documentResources.set(resource->url().string(), CachedResourceHandle { *resource }).isNewEntry;
+    if (!fragmentIdentifier.isEmpty()) {
+        bool isFirstFragmentIdentifier = m_documentResourceFragmentIdentifiers.add(resource->url().string(), fragmentIdentifier).isNewEntry;
+        if (isFirstFragmentIdentifier && !isNewDocumentResource && policy == Use && !hiddenFromInspector)
+            notifyInspectorOfFragmentIdentifier(*resource, fragmentIdentifier);
+    }
     frame->loader().client().didLoadFromRegistrableDomain(RegistrableDomain(resource->resourceRequest().url()));
     return resource.releaseNonNull();
 }

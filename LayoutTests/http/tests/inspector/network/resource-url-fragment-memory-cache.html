@@ -17,9 +17,9 @@ function test()
             ]);
 
             for (let [label, query] of [["CSS background-image", "css"], ["<img>", "img"]]) {
-                let resource = WI.networkManager.resourcesForURL(`http://127.0.0.1:8000/inspector/network/resources/search.svg?resource-url-fragment-memory-cache-${query}#dark`).firstValue;
-                InspectorTest.expectThat(resource, `Should find the ${label} resource by its URL with the '#dark' fragment.`);
-                InspectorTest.expectEqual(resource?.responseSource, WI.Resource.ResponseSource.MemoryCache, "responseSource should be Symbol(memory-cache).");
+                let resources = WI.networkManager.mainFrame.resourcesForURL(`http://127.0.0.1:8000/inspector/network/resources/search.svg?resource-url-fragment-memory-cache-${query}#dark`);
+                InspectorTest.expectEqual(resources.size, 1, `Should find the ${label} resource by its URL with the '#dark' fragment once.`);
+                InspectorTest.expectEqual(resources.firstValue?.responseSource, WI.Resource.ResponseSource.MemoryCache, "responseSource should be Symbol(memory-cache).");
             }
         }
     });
@@ -32,10 +32,12 @@ function test()
 <p>Test that resources served from the memory cache keep the URL fragment they were requested with.</p>
 <button id="css">Search</button>
 <img id="img">
+<img id="img-again">
 <script>
 let fragment = performance.getEntriesByType("navigation")[0].type === "reload" ? "dark" : "light";
 document.getElementById("css").style.backgroundImage = `url(resources/search.svg?resource-url-fragment-memory-cache-css#${fragment})`;
-document.getElementById("img").src = `resources/search.svg?resource-url-fragment-memory-cache-img#${fragment}`;
+for (let id of ["img", "img-again"])
+    document.getElementById(id).src = `resources/search.svg?resource-url-fragment-memory-cache-img#${fragment}`;
 </script>
 </body>
 </html>

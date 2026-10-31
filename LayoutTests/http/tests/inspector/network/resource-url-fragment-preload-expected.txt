@@ -1,0 +1,16 @@
+Test that a request with a URL fragment for a resource that was preloaded without one is reported, whether or not the preload has finished.
+
+
+== Running test suite: Resource.URLFragment.Preload
+-- Running test case: Resource.URLFragment.Preload.StillLoading
+PASS: Should report the request with the '#dark' fragment once.
+PASS: responseSource should be Symbol(memory-cache).
+PASS: Resource type should be Image.
+PASS: Resource MIME type should be 'image/svg+xml'.
+
+-- Running test case: Resource.URLFragment.Preload.Finished
+PASS: Should report the request with the '#dark' fragment once.
+PASS: responseSource should be Symbol(memory-cache).
+PASS: Resource type should be Image.
+PASS: Resource MIME type should be 'image/svg+xml'.
+

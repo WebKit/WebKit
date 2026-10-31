@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+function addFrame(name, url, waitForPreload)
+{
+    let iframe = document.createElement("iframe");
+    iframe.name = name;
+    document.body.appendChild(iframe);
+
+    let frameDocument = iframe.contentDocument;
+    let link = frameDocument.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = url;
+
+    function requestWithFragment() {
+        let button = frameDocument.body.appendChild(frameDocument.createElement("button"));
+        button.textContent = "Search";
+        button.style.backgroundImage = `url("${url}#dark")`;
+        button.offsetHeight;
+    }
+
+    if (waitForPreload)
+        link.addEventListener("load", requestWithFragment);
+    frameDocument.head.appendChild(link);
+    if (!waitForPreload)
+        requestWithFragment();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.URLFragment.Preload");
+
+    function awaitResourceInFrame(frameName, url) {
+        return new Promise((resolve) => {
+            let listener = WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, (event) => {
+                if (event.target.name !== frameName || event.data.resource.url !== url)
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, listener);
+                resolve(event.data.resource);
+            });
+        });
+    }
+
+    function addTestCase({name, description, url, waitForPreload}) {
+        suite.addTestCase({
+            name, description,
+            async test() {
+                let resourcePromise = awaitResourceInFrame(name, url + "#dark");
+                InspectorTest.evaluateInPage(`addFrame(${JSON.stringify(name)}, ${JSON.stringify(url)}, ${waitForPreload})`);
+
+                let resource = await resourcePromise;
+                InspectorTest.expectEqual(resource.parentFrame.resourcesForURL(url + "#dark").size, 1, "Should report the request with the '#dark' fragment once.");
+                InspectorTest.expectEqual(resource.responseSource, WI.Resource.ResponseSource.MemoryCache, "responseSource should be Symbol(memory-cache).");
+                InspectorTest.expectEqual(resource.type, WI.Resource.Type.Image, "Resource type should be Image.");
+                InspectorTest.expectEqual(resource.mimeType, "image/svg+xml", "Resource MIME type should be 'image/svg+xml'.");
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Resource.URLFragment.Preload.StillLoading",
+        description: "A request with a fragment for a resource that is still being preloaded without one should be reported once the preload finishes.",
+        url: "http://127.0.0.1:8000/resources/load-and-stall.py?name=../inspector/network/resources/search.svg&mimeType=image/svg%2Bxml&stallAt=0&stallFor=1&rand=" + Math.random(),
+        waitForPreload: false,
+    });
+
+    addTestCase({
+        name: "Resource.URLFragment.Preload.Finished",
+        description: "A request with a fragment for a resource that was already preloaded without one should be reported.",
+        url: "http://127.0.0.1:8000/inspector/network/resources/search.svg?resource-url-fragment-preload-finished&rand=" + Math.random(),
+        waitForPreload: true,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that a request with a URL fragment for a resource that was preloaded without one is reported, whether or not the preload has finished.</p>
+</body>
+</html>

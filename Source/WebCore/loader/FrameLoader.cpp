@@ -4717,6 +4717,7 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource& resource, Resour
     }
 
     auto identifier = requestFromDelegate(newRequest, error);
+    documentloader->didTellClientAboutLoad(resource.url().string());
 
     ResourceResponse response = resource.response();
     response.setSource(ResourceResponse::Source::MemoryCache);

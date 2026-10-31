@@ -205,6 +205,7 @@ private:
     Ref<CachedResource> updateCachedResourceWithCurrentRequest(const CachedResource&, CachedResourceRequest&&, PAL::SessionID, const CookieJar&, const Settings&);
 
     bool shouldContinueAfterNotifyingLoadedFromMemoryCache(const CachedResourceRequest&, CachedResource&, ResourceError&);
+    void notifyInspectorOfFragmentIdentifier(CachedResource&, const String& fragmentIdentifier);
     bool checkInsecureContent(CachedResource::Type, const URL&, MixedContentChecker::IsUpgradable, IPAddressSpace targetAddressSpace) const;
 
     void performPostLoadActions();
