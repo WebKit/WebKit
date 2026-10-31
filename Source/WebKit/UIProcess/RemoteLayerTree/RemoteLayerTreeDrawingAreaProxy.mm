@@ -617,6 +617,14 @@ void RemoteLayerTreeDrawingAreaProxy::releaseDisplayOnlyImage(RemoteSnapshotIden
         m_remoteLayerTreeHost->releaseDisplayOnlyImage(image);
 }
 
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+void RemoteLayerTreeDrawingAreaProxy::updateDeferredInteractionRegions()
+{
+    if (m_remoteLayerTreeHost)
+        m_remoteLayerTreeHost->updateDeferredInteractionRegions();
+}
+#endif
+
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)
 {
     if (RefPtr connection = connectionForIdentifier(layerID.processIdentifier()))

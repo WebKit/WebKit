@@ -605,8 +605,12 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
 #endif
 
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
-    if (properties.changedProperties & LayerChange::EventRegionChanged || properties.changedProperties & LayerChange::VisibleRectChanged)
-        updateLayersForInteractionRegions(node);
+    if (properties.changedProperties.containsAny({ LayerChange::EventRegionChanged, LayerChange::VisibleRectChanged })) {
+        if (layerTreeHost)
+            layerTreeHost->updateOrDeferInteractionRegions(node);
+        else
+            updateLayersForInteractionRegions(node);
+    }
 #endif
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)

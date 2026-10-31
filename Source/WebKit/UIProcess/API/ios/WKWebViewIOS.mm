@@ -2172,6 +2172,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     _isScrollingWithOverlayRegion = NO;
 #endif
 
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+    if (RefPtr drawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->drawingArea()))
+        drawingArea->updateDeferredInteractionRegions();
+#endif
+
     [self _scheduleVisibleContentRectUpdate];
     [_contentView didFinishScrolling];
 

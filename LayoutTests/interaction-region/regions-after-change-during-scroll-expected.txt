@@ -1,0 +1,4 @@
+PASS: before scrolling, each of the 6 links has a region layer (found 6).
+PASS: the links were removed while the page was still scrolling.
+PASS: after the scroll ends, only the remaining link has a region layer (found 1).
+

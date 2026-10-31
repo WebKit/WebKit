@@ -60,6 +60,12 @@
 #if ENABLE(MODEL_PROCESS)
 #import "PortalPresentationManagerProxy.h"
 #endif
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+#import "RemoteLayerTreeInteractionRegionLayers.h"
+#import "RemoteScrollingCoordinatorProxyIOS.h"
+#import "UIKitUtilities.h"
+#import "WKWebView.h"
+#endif
 #endif
 
 #import <pal/cocoa/CoreMaterialSoftLink.h>
@@ -114,6 +120,56 @@ bool RemoteLayerTreeHost::cssUnprefixedBackdropFilterEnabled() const
     RefPtr page = drawingArea().page();
     return page && protect(page->preferences())->cssUnprefixedBackdropFilterEnabled();
 }
+
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+void RemoteLayerTreeHost::updateScrollViewsHidingInteractionRegions()
+{
+    m_mainScrollViewHidesInteractionRegions = false;
+    m_scrollViewsHidingInteractionRegions.clear();
+
+    RefPtr page = drawingArea().page();
+    if (m_isDebugLayerTreeHost || !page)
+        return;
+
+    RetainPtr mainScrollView = [page->cocoaView() scrollView];
+    if ([mainScrollView _wk_isHidingInteractionRegions]) {
+        m_mainScrollViewHidesInteractionRegions = true;
+        return;
+    }
+
+    if (RefPtr scrollingCoordinator = dynamicDowncast<RemoteScrollingCoordinatorProxyIOS>(page->scrollingCoordinatorProxy()))
+        m_scrollViewsHidingInteractionRegions = scrollingCoordinator->scrollViewsHidingInteractionRegions();
+}
+
+bool RemoteLayerTreeHost::shouldDeferInteractionRegionUpdate(const RemoteLayerTreeNode& node) const
+{
+    if (m_mainScrollViewHidesInteractionRegions)
+        return true;
+
+    RetainPtr view = node.uiView();
+    return std::ranges::any_of(m_scrollViewsHidingInteractionRegions, [&](auto& scrollView) {
+        return view.get() == scrollView.get() || [scrollView _wk_isAncestorOf:view.get()];
+    });
+}
+
+void RemoteLayerTreeHost::updateOrDeferInteractionRegions(RemoteLayerTreeNode& node)
+{
+    if (shouldDeferInteractionRegionUpdate(node)) {
+        m_layersWithDeferredInteractionRegionUpdates.add(node.layerID());
+        return;
+    }
+
+    updateLayersForInteractionRegions(node);
+}
+
+void RemoteLayerTreeHost::updateDeferredInteractionRegions()
+{
+    for (auto layerID : std::exchange(m_layersWithDeferredInteractionRegionUpdates, { })) {
+        if (RefPtr node = nodeForID(layerID))
+            updateLayersForInteractionRegions(*node);
+    }
+}
+#endif
 
 #if PLATFORM(MAC)
 bool RemoteLayerTreeHost::updateBannerLayers(const std::optional<MainFrameData>& mainFrameData)
@@ -215,6 +271,10 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
         protect(*m_drawingArea)->updateTimelinesRegistration(processIdentifier, transaction.timelinesUpdate(), MonotonicTime::now());
 #endif
 
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+    updateScrollViewsHidingInteractionRegions();
+#endif
+
     for (auto& changedLayer : transaction.changedLayerProperties()) {
         auto layerID = changedLayer.key;
         const auto& properties = changedLayer.value.get();
@@ -260,6 +320,13 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
             node->setAsyncContentsIdentifier(std::nullopt);
         }
     }
+
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+    if (!m_mainScrollViewHidesInteractionRegions && m_scrollViewsHidingInteractionRegions.isEmpty())
+        updateDeferredInteractionRegions();
+    m_mainScrollViewHidesInteractionRegions = false;
+    m_scrollViewsHidingInteractionRegions.clear();
+#endif
 
 #if PLATFORM(MAC)
     if (updateBannerLayers(mainFrameData))
@@ -385,6 +452,10 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::ProcessIdentifier processI
         m_modelLayers.remove(layerID);
     }
 #endif
+
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+    m_layersWithDeferredInteractionRegionUpdates.remove(layerID);
+#endif
 }
 
 void RemoteLayerTreeHost::animationDidStart(std::optional<WebCore::PlatformLayerIdentifier> layerID, CAAnimation *animation, MonotonicTime startTime)
@@ -445,6 +516,9 @@ void RemoteLayerTreeHost::clearLayers()
 
     m_nodes.clear();
     m_rootNode = nullptr;
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+    m_layersWithDeferredInteractionRegionUpdates.clear();
+#endif
 }
 
 RetainPtr<CALayer> RemoteLayerTreeHost::layerWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const

@@ -120,6 +120,13 @@
 #endif
 }
 
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+- (BOOL)_wk_isHidingInteractionRegions
+{
+    return self.dragging || self._wk_isScrollAnimating || self.decelerating;
+}
+#endif
+
 - (void)_wk_stopScrollingAndZooming
 {
 #if HAVE(UI_SCROLL_VIEW_APIS_ADDED_IN_RADAR_112474145)

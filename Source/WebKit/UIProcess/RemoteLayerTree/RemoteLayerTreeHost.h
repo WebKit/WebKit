@@ -42,6 +42,9 @@
 
 OBJC_CLASS CAAnimation;
 OBJC_CLASS WKAnimationDelegate;
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+OBJC_CLASS UIScrollView;
+#endif
 
 namespace IPC {
 class Connection;
@@ -116,6 +119,11 @@ public:
 
     void remotePageProcessDidTerminate(WebCore::ProcessIdentifier);
 
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+    void updateOrDeferInteractionRegions(RemoteLayerTreeNode&);
+    void updateDeferredInteractionRegions();
+#endif
+
 private:
 
     void createLayer(const IPC::Connection&, const RemoteLayerTreeTransaction::LayerCreationProperties&);
@@ -125,6 +133,11 @@ private:
 
     void applyDisplayOnlyImage(RemoteLayerTreeNode&, WebCore::ProcessIdentifier sender, Markable<RemoteSnapshotIdentifier>);
     void layerWillBeRemoved(WebCore::ProcessIdentifier, WebCore::PlatformLayerIdentifier);
+
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+    void updateScrollViewsHidingInteractionRegions();
+    bool shouldDeferInteractionRegionUpdate(const RemoteLayerTreeNode&) const;
+#endif
 
     WeakPtr<RemoteLayerTreeDrawingAreaProxy> m_drawingArea;
     ThreadSafeWeakPtr<RemoteLayerTreeNode> m_rootNode;
@@ -139,6 +152,11 @@ private:
 #endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
     HashSet<WebCore::PlatformLayerIdentifier> m_modelLayers;
+#endif
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+    HashSet<WebCore::PlatformLayerIdentifier> m_layersWithDeferredInteractionRegionUpdates;
+    Vector<RetainPtr<UIScrollView>> m_scrollViewsHidingInteractionRegions;
+    bool m_mainScrollViewHidesInteractionRegions { false };
 #endif
     bool m_isDebugLayerTreeHost { false };
 };

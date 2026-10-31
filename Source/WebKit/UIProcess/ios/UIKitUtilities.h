@@ -48,6 +48,9 @@ using FloatBoxExtent = RectEdges<float>;
 @property (readonly, nonatomic) CGFloat _wk_contentHeightIncludingInsets;
 @property (readonly, nonatomic) BOOL _wk_isScrollAnimating;
 @property (readonly, nonatomic) BOOL _wk_isZoomAnimating;
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+@property (readonly, nonatomic) BOOL _wk_isHidingInteractionRegions;
+#endif
 - (void)_wk_setContentOffsetAndShowScrollIndicators:(CGPoint)offset animated:(BOOL)animated;
 - (void)_wk_setTransfersHorizontalScrollingToParent:(BOOL)value;
 - (void)_wk_setTransfersVerticalScrollingToParent:(BOOL)value;
