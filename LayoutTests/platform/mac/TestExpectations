@@ -1199,6 +1199,10 @@ crypto/workers/subtle/rsa-pss-import-key-verify.html [ Pass ]
 http/wpt/crypto/rsa-pss-crash.any.html [ Pass ]
 http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
 
+# The Cocoa backend accepts empty AES-CBC cipher text; its fix will be handled separately.
+webkit.org/b/327745 http/wpt/crypto/aes-cbc-decrypt-invalid-length.any.html [ Failure ]
+webkit.org/b/327745 http/wpt/crypto/aes-cbc-decrypt-invalid-length.any.worker.html [ Failure ]
+
 # <rdar://problem/32864306> Unskip after bots have CTFontCopyPhysicalFont()
 fast/text/system-font-japanese-synthetic-italic.html [ Pass ImageOnlyFailure ]
 

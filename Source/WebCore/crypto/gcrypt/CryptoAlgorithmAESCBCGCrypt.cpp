@@ -104,6 +104,10 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(const Vector<uint8_t>& key, 
     if (!algorithm)
         return std::nullopt;
 
+    // A CBC cipher text must be a non-empty multiple of the block size.
+    if (cipherText.isEmpty() || cipherText.size() % gcry_cipher_get_algo_blklen(*algorithm))
+        return std::nullopt;
+
     // Create a new GCrypt cipher object for the AES algorithm and the CBC cipher mode.
     PAL::GCrypt::Handle<gcry_cipher_hd_t> handle;
     gcry_error_t error = gcry_cipher_open(&handle, *algorithm, GCRY_CIPHER_MODE_CBC, 0);
