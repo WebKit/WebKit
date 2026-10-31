@@ -1532,6 +1532,7 @@ public:
     void compileNewBoundFunction(Node*);
     void compileNewRegExp(Node*);
     void compileForwardVarargs(Node*);
+    void emitLoadVarargsFromContiguousStorage(LoadVarargsData*, Address sourceStart, GPRReg lengthGPR, GPRReg tempGPR);
     void compileVarargsLength(Node*);
     void compileLoadVarargs(Node*);
     void compileVarargsLengthWithSpread(Node*);
