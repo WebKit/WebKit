@@ -1,0 +1,67 @@
+<!doctype html>
+<title>
+    display-mode application value in same-origin, cross-origin, sandboxed,
+    data: and nested iframes
+</title>
+<body>
+    <script src="/applicationmanifest/resources/display-mode-application-frames.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        const dataURLScript = `
+    addEventListener("message", event => {
+        if (event.data === "report") {
+            event.source.postMessage({
+                origin: self.origin,
+                application: matchMedia("(display-mode: application)").matches,
+                notApplication: matchMedia("(not (display-mode: application))").matches,
+                standalone: matchMedia("(display-mode: standalone)").matches,
+            }, "*");
+        }
+    });
+`;
+
+        async function logAllFrames(heading) {
+            log(
+                `${heading}. Top level: application=${matchMedia("(display-mode: application)").matches}`,
+            );
+            await logIframeReport("Same-origin iframe", sameOriginURL);
+            await logIframeReport("Cross-origin iframe", crossOriginURL);
+            await logIframeReport(
+                "Sandboxed same-origin iframe",
+                sameOriginURL,
+                "allow-scripts",
+            );
+            await logIframeReport(
+                "data: URL iframe",
+                `data:text/html,<script>${encodeURIComponent(dataURLScript)}\x3c/script>`,
+            );
+            await logIframeReport(
+                "Same-origin grandchild under a cross-origin iframe",
+                nestedEmbedderURL,
+            );
+        }
+
+        async function run() {
+            try {
+                if (!window.internals) {
+                    log("FAIL: internals not available");
+                    return;
+                }
+                await logAllFrames("Standalone setting off");
+                internals.settings.setStandalone(true);
+                await logAllFrames("Standalone setting on");
+            } catch (error) {
+                log(`ERROR: ${error.message}`);
+            } finally {
+                if (window.internals) internals.settings.setStandalone(false);
+                if (window.testRunner) testRunner.notifyDone();
+            }
+        }
+
+        run();
+    </script>
+</body>

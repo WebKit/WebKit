@@ -1,0 +1,10 @@
+Top level: application=true standalone=true
+
+
+Same-origin iframe (origin http://127.0.0.1:8000): application=true notApplication=false standalone=true
+
+
+Cross-origin iframe (origin http://localhost:8000): application=true notApplication=false standalone=true
+
+
+Same-origin grandchild under a cross-origin iframe (origin http://127.0.0.1:8000): application=true notApplication=false standalone=true

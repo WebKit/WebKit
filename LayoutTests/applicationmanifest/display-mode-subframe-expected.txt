@@ -3,4 +3,4 @@
 --------
 Frame: '<!--frame1-->'
 --------
-(display-mode) (display-mode: standalone)
+(display-mode) (display-mode: application) (display-mode: standalone)
