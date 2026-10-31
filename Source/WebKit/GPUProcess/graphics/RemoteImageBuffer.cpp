@@ -193,30 +193,6 @@ void RemoteImageBuffer::copyNativeImage(RenderingResourceIdentifier imageIdentif
     MESSAGE_CHECK(success, "NativeImage already exists");
 }
 
-void RemoteImageBuffer::filteredNativeImage(Ref<WebCore::Filter> filter, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
-{
-    assertIsCurrent(workQueue());
-    std::optional<WebCore::ShareableBitmap::Handle> handle = [&]() -> std::optional<WebCore::ShareableBitmap::Handle> {
-        Ref imageBuffer = m_imageBuffer;
-        auto image = imageBuffer->filteredNativeImage(filter);
-        if (!image)
-            return std::nullopt;
-        auto imageSize = image->size();
-        auto bitmap = WebCore::ShareableBitmap::create({ imageSize, imageBuffer->colorSpace() });
-        if (!bitmap)
-            return std::nullopt;
-        auto handle = bitmap->createHandle();
-        if (m_renderingBackend->sharedResourceCache().resourceOwner())
-            handle->setOwnershipOfMemory(m_renderingBackend->sharedResourceCache().resourceOwner(), WebCore::MemoryLedger::Graphics);
-        auto context = bitmap->createGraphicsContext();
-        if (!context)
-            return std::nullopt;
-        context->drawNativeImage(*image, WebCore::FloatRect { { }, imageSize }, WebCore::FloatRect { { }, imageSize });
-        return handle;
-    }();
-    completionHandler(WTF::move(handle));
-}
-
 void RemoteImageBuffer::convertToLuminanceMask()
 {
     assertIsCurrent(workQueue());

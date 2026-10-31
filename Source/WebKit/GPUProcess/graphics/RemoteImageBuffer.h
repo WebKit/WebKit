@@ -77,7 +77,6 @@ private:
 #if PLATFORM(COCOA)
     void prepareForDisplay(IPC::Semaphore&& finishedSignal, CompletionHandler<void(MachSendRight&&)>&&);
 #endif
-    void filteredNativeImage(Ref<WebCore::Filter>, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
     void convertToLuminanceMask();
     void transformToColorSpace(const WebCore::ColorSpace&);
     void setFlushSignal(IPC::Signal&&);

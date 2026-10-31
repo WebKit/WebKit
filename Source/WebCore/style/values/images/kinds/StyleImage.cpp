@@ -484,6 +484,48 @@ ImageDrawResult Image::drawResolvedNinePiece(GraphicsContext& context, NativeIma
     }, ConcreteObjectSize::fixed(image.size()), pieceGeometry);
 }
 
+ImageDrawResult Image::drawResolved(GraphicsContext& context, ImageBuffer& image, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions options)
+{
+    if (context.paintingDisabled() || destination.isEmpty() || source.isEmpty())
+        return ImageDrawResult::DidNothing;
+
+    auto orientation = options.orientation();
+    if (orientation == WebCore::ImageOrientation::Orientation::FromImage)
+        orientation = WebCore::ImageOrientation::Orientation::None;
+
+    auto headroom = options.headroom();
+    if (headroom == Headroom::FromImage)
+        headroom = Headroom::None;
+
+    context.drawImageBuffer(image, destination, source, { options.rasterDrawingOptions(), orientation, headroom });
+    return ImageDrawResult::DidDraw;
+}
+
+ImageDrawResult Image::drawResolvedAsPattern(GraphicsContext& context, ImageBuffer& image, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions options)
+{
+    if (!tile.isEmpty())
+        drawPatternTile(context, { SourceImage { Ref { image } } }, destination, tile, patternTransform, phase, spacing, options);
+    return ImageDrawResult::DidDraw;
+}
+
+ImageDrawResult Image::drawResolvedTiled(GraphicsContext& context, ImageBuffer& image, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions options)
+{
+    return drawTiledUsing(context, NaturalDimensions::fixed(image.logicalSize()), [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source) {
+        return drawResolved(context, image, destination, source, options);
+    }, [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
+        return drawResolvedAsPattern(context, image, destination, tile, patternTransform, phase, spacing, options);
+    }, ConcreteObjectSize::fixed(image.logicalSize()), destination, phase, tileSize, spacing, options);
+}
+
+ImageDrawResult Image::drawResolvedNinePiece(GraphicsContext& context, ImageBuffer& image, const NinePieceGeometry& geometry, ImageDrawingOptions options)
+{
+    return drawNinePieceUsing(context, [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source) {
+        return drawResolved(context, image, destination, source, options);
+    }, [&](GraphicsContext& context, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing) {
+        return drawResolvedAsPattern(context, image, destination, tile, patternTransform, phase, spacing, { options.compositeOperator(), options.interpolationQuality() });
+    }, ConcreteObjectSize::fixed(image.logicalSize()), geometry);
+}
+
 ImageDrawResult Image::drawTiled(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions options, bool isForFirstLine) const
 {
     if (!canDrawAtSize(renderer, tileSize) || context.paintingDisabled())

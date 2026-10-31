@@ -113,8 +113,6 @@ private:
 
     RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread() final;
 
-    RefPtr<WebCore::NativeImage> filteredNativeImage(WebCore::Filter&) final;
-
     WebCore::GraphicsContext& context() const final;
 
     RefPtr<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect, const WebCore::ImageBufferAllocator&) const final;

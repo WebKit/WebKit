@@ -183,9 +183,6 @@ public:
     WEBCORE_EXPORT virtual RefPtr<NativeImage> createNativeImageReference() const;
     WEBCORE_EXPORT virtual bool isRemoteImageBufferProxy() const;
 
-    WEBCORE_EXPORT virtual RefPtr<NativeImage> filteredNativeImage(Filter&);
-    RefPtr<NativeImage> filteredNativeImage(Filter&, Function<void(GraphicsContext&)> drawCallback);
-
 #if HAVE(IOSURFACE)
     WEBCORE_EXPORT IOSurface* surface();
 #endif

@@ -46,6 +46,7 @@ class CSSStyleDeclaration;
 class CSSValue;
 class CSSValuePool;
 class Document;
+class ImageBuffer;
 class ImageSizingContext;
 class LayoutSize;
 class NativeImage;
@@ -183,6 +184,11 @@ protected:
     static ImageDrawResult drawResolvedAsPattern(GraphicsContext&, NativeImage&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions);
     static ImageDrawResult drawResolvedTiled(GraphicsContext&, NativeImage&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions);
     static ImageDrawResult drawResolvedNinePiece(GraphicsContext&, NativeImage&, const NinePieceGeometry&, ImageDrawingOptions);
+
+    static ImageDrawResult drawResolved(GraphicsContext&, ImageBuffer&, const FloatRect& destination, const FloatRect& source, ImageDrawingOptions);
+    static ImageDrawResult drawResolvedAsPattern(GraphicsContext&, ImageBuffer&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImageDrawingOptions);
+    static ImageDrawResult drawResolvedTiled(GraphicsContext&, ImageBuffer&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImageDrawingOptions);
+    static ImageDrawResult drawResolvedNinePiece(GraphicsContext&, ImageBuffer&, const NinePieceGeometry&, ImageDrawingOptions);
 
     using DestinationPaint = ImageDrawResult(GraphicsContext&);
     using TiledDraw = ImageDrawResult(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source);

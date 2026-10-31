@@ -33,9 +33,11 @@
             contextIdentifier: contextIdentifier,
         });
     
-        const remoteImageBuffer = streamConnection.newInterface("RemoteImageBuffer", imageBufferIdentifier);
+        const remoteGraphicsContext = streamConnection.newInterface("RemoteGraphicsContext", contextIdentifier);
     
-        remoteImageBuffer.FilteredNativeImage({
+        remoteGraphicsContext.DrawFilteredImageBuffer({
+            sourceImageIdentifier: {},
+            sourceImageRect: { location: { x: 0, y: 0 }, size: { width: 1, height: 1 } },
             filter: {
                 subclasses: {
                     variantType: 'WebCore::SVGFilterRenderer',
@@ -97,7 +99,7 @@
 
         streamConnection.connection.invalidate();
 
-        // Allow some time for the GPUP to receive the FilteredNativeImage message, otherwise we can finish
+        // Allow some time for the GPUP to receive the DrawFilteredImageBuffer message, otherwise we can finish
         // the test before we detect a possible GPUP crash.
         setTimeout(()=>{
             window.testRunner?.notifyDone();

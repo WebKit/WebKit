@@ -373,26 +373,6 @@ RefPtr<ImageBuffer> RemoteImageBufferProxy::sinkIntoBufferForDifferentThread()
     return copyBuffer;
 }
 
-RefPtr<NativeImage> RemoteImageBufferProxy::filteredNativeImage(Filter& filter)
-{
-    if (!m_renderingBackend) [[unlikely]]
-        return nullptr;
-    // FilteredNativeImage reads the buffer in the GPU process, so send any
-    // buffered line strokes into the stream first.
-    sendPendingDrawsIfNecessary();
-    auto sendResult = sendSync(Messages::RemoteImageBuffer::FilteredNativeImage(filter));
-    if (!sendResult.succeeded())
-        return nullptr;
-    auto [handle] = sendResult.takeReply();
-    if (!handle)
-        return nullptr;
-    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
-    auto bitmap = ShareableBitmap::create(WTF::move(*handle));
-    if (!bitmap)
-        return nullptr;
-    return NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::No));
-}
-
 RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, const ImageBufferAllocator& allocator) const
 {
     auto* backend = ImageBuffer::backend();

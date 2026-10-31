@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class NativeImage;
+class ImageBuffer;
 
 namespace Style {
 
@@ -81,7 +81,7 @@ private:
     // CachedImageClient.
     void imageChanged(WebCore::CachedImage*, const IntRect* = nullptr) final;
 
-    RefPtr<NativeImage> resolvedImage(const RenderElement&, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const;
+    RefPtr<ImageBuffer> resolvedImage(const RenderElement&, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const;
 
     RefPtr<Image> m_image;
     Filter m_filter;

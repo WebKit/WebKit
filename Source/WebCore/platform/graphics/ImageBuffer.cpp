@@ -40,7 +40,6 @@
 #include "MIMETypeRegistry.h"
 #include "NullImageBufferBackend.h"
 #include "ProcessCapabilities.h"
-#include "TransparencyLayerContextSwitcher.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
@@ -268,22 +267,6 @@ static RefPtr<ImageBuffer> copyImageBuffer(Ref<ImageBuffer> source, PreserveReso
     return copyBuffer;
 }
 
-static RefPtr<NativeImage> copyImageBufferToNativeImage(Ref<ImageBuffer> source, BackingStoreCopy copyBehavior, PreserveResolution preserveResolution)
-{
-    if (source->resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes) {
-        if (source->hasOneRef())
-            return ImageBuffer::sinkIntoNativeImage(WTF::move(source));
-        if (copyBehavior == CopyBackingStore)
-            return source->copyNativeImage();
-        return source->createNativeImageReference();
-    }
-    auto copyBuffer = copyImageBuffer(WTF::move(source), preserveResolution);
-    if (!copyBuffer)
-        return nullptr;
-    return ImageBuffer::sinkIntoNativeImage(WTF::move(copyBuffer));
-}
-
-
 RefPtr<ImageBuffer> ImageBuffer::clone() const
 {
     return copyImageBuffer(const_cast<ImageBuffer&>(*this), PreserveResolution::Yes);
@@ -384,46 +367,6 @@ RefPtr<ImageBuffer> ImageBuffer::sinkIntoBufferForDifferentThread()
 {
     ASSERT(hasOneRef());
     return this;
-}
-
-RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter)
-{
-    ASSERT(!filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext));
-
-    auto* backend = m_backend.get();
-    if (!backend)
-        return nullptr;
-
-    FilterResults results;
-    auto result = filter.apply(this, { { }, logicalSize() }, results);
-    if (!result)
-        return nullptr;
-
-    RefPtr imageBuffer = result->imageBuffer();
-    if (!imageBuffer)
-        return nullptr;
-
-    return copyImageBufferToNativeImage(*imageBuffer, CopyBackingStore, PreserveResolution::No);
-}
-
-RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter, Function<void(GraphicsContext&)> drawCallback)
-{
-    std::unique_ptr<GraphicsContextSwitcher> targetSwitcher;
-
-    if (filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext)) {
-        targetSwitcher = makeUnique<TransparencyLayerContextSwitcher>(context(), FloatRect { { }, logicalSize() }, &filter);
-        targetSwitcher->beginDrawSourceImage(context());
-    }
-
-    drawCallback(context());
-
-    if (filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext)) {
-        ASSERT(targetSwitcher);
-        targetSwitcher->endDrawSourceImage(context(), colorSpace());
-        return copyImageBufferToNativeImage(*this, CopyBackingStore, PreserveResolution::No);
-    }
-
-    return filteredNativeImage(filter);
 }
 
 #if HAVE(IOSURFACE)

@@ -36,12 +36,12 @@ class TransparencyLayerContextSwitcher final : public GraphicsContextSwitcher {
 public:
     TransparencyLayerContextSwitcher(GraphicsContext& destinationContext, const FloatRect& sourceImageRect, RefPtr<Filter>&&);
 
+    void beginDrawSourceImage(GraphicsContext& destinationContext, float opacity = 1.f) final;
+    void endDrawSourceImage(GraphicsContext& destinationContext, const ColorSpace&) final;
+
 private:
     void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect, const FloatRect& clipRect, NOESCAPE const Function<void(GraphicsContext&)>& applyAdditionalDestinationClip) override;
     void endClipAndDrawSourceImage(GraphicsContext& destinationContext, const ColorSpace& colorSpace) override { endDrawSourceImage(destinationContext, colorSpace); }
-
-    void beginDrawSourceImage(GraphicsContext& destinationContext, float opacity = 1.f) override;
-    void endDrawSourceImage(GraphicsContext& destinationContext, const ColorSpace&) override;
 
     FilterStyleVector m_filterStyles;
 };
