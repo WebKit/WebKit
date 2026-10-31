@@ -6255,7 +6255,7 @@ bool Page::requiresScriptTrackingPrivacyProtections(const URL& scriptURL) const
 {
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
     if (RefPtr document = localMainFrame ? localMainFrame->document() : nullptr) {
-        if (document->quirks().needsConsistentQueryParameterFilteringQuirk(scriptURL))
+        if (document->quirks().needsConsistentQueryParameterFilteringQuirkForScript(scriptURL))
             return true;
     }
     if (!advancedPrivacyProtections().contains(AdvancedPrivacyProtections::ScriptTrackingPrivacy))

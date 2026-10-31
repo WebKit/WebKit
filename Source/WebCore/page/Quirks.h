@@ -58,6 +58,13 @@ enum class IsSyntheticClick : bool;
 enum class StorageAccessWasGranted : uint8_t;
 enum class UserAgentType;
 
+enum class ConsistentQueryParameterFilteringLevel : uint8_t {
+    Disabled,
+    Low,
+    Medium,
+    High,
+};
+
 namespace Style {
 class ComputedStyle;
 }
@@ -162,7 +169,8 @@ public:
 
     bool needsPopupFromMicrosoftOfficeToOneDrive(const String& targetURLString) const;
 
-    WEBCORE_EXPORT bool needsConsistentQueryParameterFilteringQuirk(const URL&) const;
+    bool needsConsistentQueryParameterFilteringQuirkForScript(const URL&) const;
+    WEBCORE_EXPORT ConsistentQueryParameterFilteringLevel consistentQueryParameterFilteringLevel(const URL& sourceURL, const URL& destinationURL) const;
     bool mayBenefitFromFingerprintingProtectionQuirk(const URL&) const;
     static String standardUserAgentWithApplicationNameIncludingCompatOverrides(const String&, const String&, UserAgentType);
 

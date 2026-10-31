@@ -337,6 +337,7 @@ enum class CSSPropertyID : uint16_t;
 enum class DidUpdateAnyContentRelevancy : bool;
 
 enum class CompositeOperator : uint8_t;
+enum class ConsistentQueryParameterFilteringLevel : uint8_t;
 enum class ContentRelevancy : uint8_t;
 #if ENABLE(DOM_AUDIO_SESSION)
 enum class DOMAudioSessionType : uint8_t;
@@ -928,6 +929,7 @@ public:
     WEBCORE_EXPORT const URL& urlForBindings();
 
     URL adjustedURL() const;
+    ConsistentQueryParameterFilteringLevel consistentQueryParameterFilteringLevelForBindings();
 
     const URL& creationURL() const LIFETIME_BOUND { return m_creationURL; }
 
@@ -2413,6 +2415,7 @@ private:
     URL m_firstPartyForCookies; // The policy URL for third-party cookie blocking.
     URL m_siteForCookies; // The policy URL for Same-Site cookies.
     URL m_adjustedURL; // The URL to return for bindings after a cross-site navigation when advanced privacy protections are enabled.
+    std::optional<ConsistentQueryParameterFilteringLevel> m_consistentQueryParameterFilteringLevelForBindings;
 
     // Document.documentURI:
     // Although URL-like, Document.documentURI can actually be set to any
