@@ -134,19 +134,17 @@ static std::optional<std::string> hashForBlackImageOfSize(WKSize size)
 }
 #endif // PLATFORM(MAC)
 
-static void dumpBitmap(CGContextRef bitmapContext, const std::string& checksum, WKSize imageSize, WKSize windowSize)
+static void dumpBitmap(CGContextRef bitmapContext, const std::string& checksum, double scaleFactor)
 {
     auto image = adoptCF(CGBitmapContextCreateImage(bitmapContext));
     auto imageData = adoptCF(CFDataCreateMutable(0, 0));
     auto imageDest = adoptCF(CGImageDestinationCreateWithData(imageData.get(), bridge_cast(UTTypePNG.identifier), 1, 0));
 
     auto propertiesDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    double resolutionWidth = 72.0 * imageSize.width / windowSize.width;
-    double resolutionHeight = 72.0 * imageSize.height / windowSize.height;
-    auto resolutionWidthNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &resolutionWidth));
-    auto resolutionHeightNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &resolutionHeight));
-    CFDictionarySetValue(propertiesDictionary.get(), kCGImagePropertyDPIWidth, resolutionWidthNumber.get());
-    CFDictionarySetValue(propertiesDictionary.get(), kCGImagePropertyDPIHeight, resolutionHeightNumber.get());
+    double resolution = 72.0 * scaleFactor;
+    RetainPtr resolutionNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &resolution));
+    CFDictionarySetValue(propertiesDictionary.get(), kCGImagePropertyDPIWidth, resolutionNumber.get());
+    CFDictionarySetValue(propertiesDictionary.get(), kCGImagePropertyDPIHeight, resolutionNumber.get());
 
     CGImageDestinationAddImage(imageDest.get(), image.get(), propertiesDictionary.get());
     CGImageDestinationFinalize(imageDest.get());
@@ -252,8 +250,11 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(SnapshotResultType snapsho
 #endif
     } while (gotBlackSnapshot && numTries++ < maxNumTries);
 
-    if (!compareActualHashToExpectedAndDumpResults(snapshotHash))
-        dumpBitmap(context.get(), snapshotHash, imageSize, windowSize);
+    if (compareActualHashToExpectedAndDumpResults(snapshotHash))
+        return;
+
+    double scaleFactor = options().dumpPrintedPageBoxes() ? 1 : imageSize.width / windowSize.width;
+    dumpBitmap(context.get(), snapshotHash, scaleFactor);
 }
 
 } // namespace WTR

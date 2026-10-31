@@ -204,6 +204,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         GENERATED_WEB_PREFERENCE_KEY_TYPE_MAPPINGS
 
         { "dumpJSConsoleLogInStdErr", TestHeaderKeyType::BoolTestRunner },
+        { "dumpPrintedPageBoxes", TestHeaderKeyType::BoolTestRunner },
         { "dumpResourceLoadCallbacks", TestHeaderKeyType::BoolTestRunner },
         { "dumpResourceResponseMIMETypes", TestHeaderKeyType::StringTestRunner },
         { "enableDragDestinationActionLoad", TestHeaderKeyType::BoolTestRunner },

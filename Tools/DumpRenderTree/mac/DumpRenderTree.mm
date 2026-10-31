@@ -1687,9 +1687,14 @@ void dump()
             puts("#EOF");       // terminate the content block
     }
 
-    if (dumpPixelsForCurrentTest && gTestRunner->generatePixelResults())
+    if (dumpPixelsForCurrentTest && gTestRunner->generatePixelResults()) {
         // FIXME: when isPrinting is set, dump the image with page separators.
-        dumpWebViewAsPixelsAndCompareWithExpected(gTestRunner->expectedPixelHash());
+        // FIXME: Support print reftests (rdar://191464040). Comparing them as screenshots could pass for the wrong reason.
+        if (mainFrameTestOptions && mainFrameTestOptions->dumpPrintedPageBoxes())
+            fputs("DumpRenderTree doesn't support print reftests.\n", stderr);
+        else
+            dumpWebViewAsPixelsAndCompareWithExpected(gTestRunner->expectedPixelHash());
+    }
 
     puts("#EOF");   // terminate the (possibly empty) pixels block
     fflush(stdout);
