@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+.editor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font: 20px/20px Ahem;
+    width: 200px;
+    height: 200px;
+    padding: 0;
+    border: 0;
+    margin: 0;
+    outline: none;
+    resize: none;
+    white-space: pre-wrap;
+}
+</style>
+</head>
+<body>
+<div class="editor" id="editable" contenteditable></div>
+<textarea class="editor" id="textarea" style="left: 300px"></textarea>
+<script>
+// The caret on the second and later lines should be placed at the same inline position as on the first line.
+// In vertical writing modes, it used to be clamped to the line's position in the block direction.
+
+const lines = ["XXXX", "XX", "XXXXXX"];
+const glyphSize = 20;
+
+function lineStart(line)
+{
+    let offset = 0;
+    for (let i = 0; i < line; ++i)
+        offset += lines[i].length + 1;
+    return offset;
+}
+
+function caretRect(element, offset)
+{
+    if (element.tagName == "TEXTAREA")
+        element.setSelectionRange(offset, offset);
+    else
+        getSelection().collapse(element.firstChild, offset);
+    const rect = internals.absoluteCaretBounds();
+    return { x: rect.x - element.offsetLeft, y: rect.y - element.offsetTop, width: rect.width, height: rect.height };
+}
+
+for (const element of [document.getElementById("editable"), document.getElementById("textarea")]) {
+    for (const writingMode of ["horizontal-tb", "vertical-lr", "vertical-rl"]) {
+        test(() => {
+            element.style.writingMode = writingMode;
+            if (element.tagName == "TEXTAREA")
+                element.value = lines.join("\n");
+            else
+                element.textContent = lines.join("\n");
+            element.focus();
+
+            const isHorizontal = writingMode == "horizontal-tb";
+            const inlinePosition = rect => isHorizontal ? rect.x : rect.y;
+            const blockPosition = rect => isHorizontal ? rect.y : rect.x;
+            const firstLineStart = caretRect(element, 0);
+            const firstLineSecondCharacter = caretRect(element, 1);
+            const results = [];
+            const expected = [];
+            for (let line = 0; line < lines.length; ++line) {
+                const start = caretRect(element, lineStart(line));
+                const afterFirstCharacter = caretRect(element, lineStart(line) + 1);
+                const blockDirection = writingMode == "vertical-rl" ? -1 : 1;
+                results.push(`line ${line}: start (${inlinePosition(start)}, ${blockPosition(start)}), after first character (${inlinePosition(afterFirstCharacter)}, ${blockPosition(afterFirstCharacter)})`);
+                expected.push(`line ${line}: start (${inlinePosition(firstLineStart)}, ${blockPosition(firstLineStart) + blockDirection * line * glyphSize}), after first character (${inlinePosition(firstLineSecondCharacter)}, ${blockPosition(firstLineStart) + blockDirection * line * glyphSize})`);
+            }
+            assert_array_equals(results, expected);
+        }, `Caret positions on every line of a ${writingMode} ${element.tagName == "TEXTAREA" ? "textarea" : "contenteditable element"}`);
+    }
+}
+
+for (const element of document.querySelectorAll(".editor"))
+    element.remove();
+</script>
+</body>
+</html>

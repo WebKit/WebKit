@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<style>
+textarea {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    font: 20px/30px Ahem;
+    width: 200px;
+    height: 200px;
+    padding: 10px;
+    border: 4px solid gray;
+    margin: 0;
+    resize: none;
+    outline: none;
+}
+</style>
+</head>
+<body>
+<textarea id="textarea"></textarea>
+<script>
+// Hit testing a point on a line in a <textarea> should find a caret position on that line, in every writing mode,
+// whether or not the textarea is scrolled in the block direction. A point past the end of a line hits the inner text
+// block itself rather than a text box, which used to map the point to the mirrored line in vertical-rl.
+
+const glyphSize = 20;
+const lineHeight = 30;
+const border = 4;
+const padding = 10;
+
+const longLines = ["XXXX", "XX", "XXXXXX", "XXX", "XXXXX", "XX", "XXXX", "XXX", "XXXXXX", "XX", "XXXXX", "XXX"];
+const shortLines = ["XXXX", "XX", "XXXXXX", "XXX"];
+
+function lineStartsFor(lines)
+{
+    const lineStarts = [];
+    for (let offset = 0, i = 0; i < lines.length; offset += lines[i].length + 1, ++i)
+        lineStarts.push(offset);
+    return lineStarts;
+}
+
+function lineForOffset(lineStarts, offset)
+{
+    let line = 0;
+    while (line + 1 < lineStarts.length && lineStarts[line + 1] <= offset)
+        ++line;
+    return line;
+}
+
+const textarea = document.getElementById("textarea");
+
+function scrollTo(writingMode, fraction)
+{
+    if (writingMode == "horizontal-tb") {
+        textarea.scrollTop = fraction * (textarea.scrollHeight - textarea.clientHeight);
+        return;
+    }
+    const scrollRange = textarea.scrollWidth - textarea.clientWidth;
+    textarea.scrollLeft = (writingMode == "vertical-rl" ? -1 : 1) * fraction * scrollRange;
+}
+
+// The physical point at the center of |line| in the block direction and |inlineOffset| into the line in the inline direction.
+// Returns null if the line is not entirely visible.
+function pointInLine(writingMode, line, inlineOffset)
+{
+    const contentLeft = textarea.offsetLeft + border + padding;
+    const contentTop = textarea.offsetTop + border + padding;
+    const visibleBlockStart = writingMode == "horizontal-tb" ? textarea.offsetTop + border : textarea.offsetLeft + border;
+    const visibleBlockEnd = visibleBlockStart + (writingMode == "horizontal-tb" ? textarea.clientHeight : textarea.clientWidth);
+
+    let blockStart;
+    if (writingMode == "horizontal-tb")
+        blockStart = contentTop + line * lineHeight - textarea.scrollTop;
+    else if (writingMode == "vertical-lr")
+        blockStart = contentLeft + line * lineHeight - textarea.scrollLeft;
+    else {
+        const contentRight = textarea.offsetLeft + border + textarea.clientWidth - padding;
+        blockStart = contentRight - (line + 1) * lineHeight - textarea.scrollLeft;
+    }
+    if (blockStart < visibleBlockStart || blockStart + lineHeight > visibleBlockEnd)
+        return null;
+
+    const block = blockStart + lineHeight / 2;
+    if (writingMode == "horizontal-tb")
+        return { x: contentLeft + inlineOffset, y: block };
+    return { x: block, y: contentTop + inlineOffset };
+}
+
+function runTest(writingMode, lines, scrollFraction, target)
+{
+    const lineStarts = lineStartsFor(lines);
+    textarea.style.writingMode = writingMode;
+    textarea.value = lines.join("\n");
+    scrollTo(writingMode, scrollFraction);
+
+    const results = [];
+    const expected = [];
+    for (let line = 0; line < lines.length; ++line) {
+        // Either the line-start half of the second character, or the empty space past the longest line.
+        const inlineOffset = target == "character" ? glyphSize + glyphSize / 4 : 7 * glyphSize + glyphSize / 4;
+        const point = pointInLine(writingMode, line, inlineOffset);
+        if (!point)
+            continue;
+        const position = document.caretPositionFromPoint(point.x, point.y);
+        assert_equals(position.offsetNode, textarea);
+        const resultLine = lineForOffset(lineStarts, position.offset);
+        results.push(`line ${line}: line ${resultLine}, offset ${position.offset - lineStarts[resultLine]}`);
+        expected.push(`line ${line}: line ${line}, offset ${target == "character" ? 1 : lines[line].length}`);
+    }
+    assert_greater_than(results.length, 3, "number of visible lines");
+    assert_array_equals(results, expected);
+}
+
+for (const target of ["character", "end of line"]) {
+    for (const writingMode of ["horizontal-tb", "vertical-lr", "vertical-rl"]) {
+        test(() => runTest(writingMode, shortLines, 0, target),
+            `Caret position from a point on the ${target} in a ${writingMode} textarea without overflow`);
+        for (const scrollFraction of [0, 0.5, 1]) {
+            test(() => runTest(writingMode, longLines, scrollFraction, target),
+                `Caret position from a point on the ${target} in a ${writingMode} textarea scrolled to ${scrollFraction * 100}% in the block direction`);
+        }
+    }
+}
+</script>
+</body>
+</html>
