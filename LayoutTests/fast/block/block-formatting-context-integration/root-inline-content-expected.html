@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.flex { display: flex; margin-bottom: 6px; }
+.root { width: 300px; padding: 4px; border: 2px solid gray; background: lightgray; font-size: 20px; line-height: 20px; }
+.inline-block { display: inline-block; margin: 2px 6px; padding: 3px; border: 1px solid black; background: lightblue; }
+.abs { position: absolute; width: 10px; height: 10px; background: green; }
+</style>
+<!-- Flex items, inline-blocks and out-of-flow boxes whose containing block is a flex container are roots of their own. -->
+<div class="flex"><div class="root" id="resized">text in a root with <span style="background: yellow">inline boxes</span> only <span class="inline-block" style="width: 30%">percent</span> wrapping onto more lines</div></div>
+<div class="flex" id="narrowed" style="width: 320px"><div class="root" style="width: auto; flex: 1">a flex item <span class="inline-block" style="width: 30%">percent</span> of a narrowed flex container</div></div>
+<div class="flex"><div class="root" style="position: relative">a box <span class="abs"></span>in the middle of the text<span class="abs" style="right: 0; bottom: 0"></span></div></div>
+<div class="root">inline-blocks <span class="inline-block">one</span><span class="inline-block" style="width: 80px; text-align: right">two</span> and text</div>
+<div class="flex" style="width: 300px"><div style="flex: 1; background: lightblue">flex item text</div><div style="flex: 1; padding-left: 10px; background: orange" id="text">x</div></div>
+<div class="flex" style="position: relative; height: 30px"><div style="position: absolute; left: 20px; top: 5px; padding: 2px; background: lightblue">out-of-flow root</div></div>
+<div class="flex"><div class="root" contenteditable>   </div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "200px";
+document.getElementById("narrowed").style.width = "220px";
+document.getElementById("text").firstChild.data = "text that got longer";
+</script>
