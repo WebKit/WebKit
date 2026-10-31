@@ -191,6 +191,22 @@ static std::optional<size_t> damagedLineIndex(const DamagedContent& damagedConte
         // In case of content deletion, we may need to damage the "previous" line.
         if (damagedContent.type == DamagedContent::Type::Insertion || !damagedDisplayBox.lineIndex())
             return { damagedDisplayBox.lineIndex() };
+        auto previousLineEndsWithLineBreak = [&] {
+            // Under bidi, the line break may not be the visually last box on the previous line. Going back a line is unnecessary then, but still correct.
+            for (auto index = damagedDisplayBoxIndex; index--;) {
+                if (displayBoxes[index].lineIndex() != damagedDisplayBox.lineIndex())
+                    return displayBoxes[index].isLineBreak();
+            }
+            ASSERT_NOT_REACHED();
+            return false;
+        };
+        if (!previousLineEndsWithLineBreak()) {
+            // Removal may shrink the line's leading content so that it now fits on the previous line.
+            // FIXME: Only removals before the first soft wrap opportunity on the line can do that. Non-whitespace inline items end at
+            // soft wrap opportunities, so we could stay on the current line when the removal is past the line's leading inline item
+            // (keeping in mind that the leading content may continue into the next inline box, e.g. <b>ma</b>kes).
+            return { damagedDisplayBox.lineIndex() - 1 };
+        }
         if (!displayBoxes[damagedDisplayBoxIndex - 1].isRootInlineBox()) {
             // There's more content in front, it's safe to stay on the current line.
             ASSERT(displayBoxes[damagedDisplayBoxIndex - 1].lineIndex() == damagedDisplayBox.lineIndex());

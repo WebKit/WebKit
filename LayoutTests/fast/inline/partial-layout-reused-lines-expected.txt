@@ -14,7 +14,7 @@ Append a text node and insert another one: Full, laid out lines: 8, reused lines
 Remove a text node: FullFromDamage, laid out lines: 6, reused lines: 2.
 Remove a line break: FullFromDamage, laid out lines: 5, reused lines: 3.
 Delete text on the first line: FullFromDamage, laid out lines: 6, reused lines: 0.
-Delete text in the middle of a text node: FullFromDamage, laid out lines: 5, reused lines: 2.
+Delete text in the middle of a text node: FullFromDamage, laid out lines: 6, reused lines: 1.
 Remove a text node and change another one: Full, laid out lines: 8, reused lines: 0.
 Remove a text node that was never laid out: FullFromDamage, laid out lines: 1, reused lines: 7.
 Remove an image that was never laid out: Full, laid out lines: 8, reused lines: 0.
