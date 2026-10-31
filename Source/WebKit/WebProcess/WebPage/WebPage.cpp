@@ -4045,6 +4045,24 @@ RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bit
     return snapshot;
 }
 
+RefPtr<WebImage> WebPage::printedPageBoxesSnapshotForTesting(const FloatSize& defaultPageBoxSize, const FloatBoxExtent& defaultPageMargin)
+{
+    RefPtr coreFrame = m_mainFrame->coreLocalFrame();
+    if (!coreFrame)
+        return nullptr;
+
+    auto snapshotSize = PrintContext::printedPageBoxesSize(*coreFrame, defaultPageBoxSize, defaultPageMargin);
+    if (snapshotSize.isEmpty())
+        return nullptr;
+
+    auto snapshot = WebImage::create(expandedIntSize(snapshotSize), ImageOption::Shareable, ColorSpace::SRGB(), &m_page->chrome().client());
+    if (!snapshot->context())
+        return nullptr;
+
+    PrintContext::spoolAllPageBoxes(*coreFrame, *snapshot->context(), defaultPageBoxSize, defaultPageMargin);
+    return snapshot;
+}
+
 RefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions options, unsigned maximumPixelCount)
 {
     RefPtr coreFrame = m_mainFrame->coreLocalFrame();

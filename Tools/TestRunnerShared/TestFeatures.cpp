@@ -166,6 +166,14 @@ static bool shouldEnableLocalNetworkAccess(const std::string& pathOrURL)
     return pathContains(pathOrURL, "/local-network-access/");
 }
 
+static bool shouldDumpPrintedPageBoxes(const std::string& pathOrURL)
+{
+    if (!isWebPlatformTestURL(URL { { }, String::fromUTF8(pathOrURL.c_str()) }))
+        return false;
+
+    return pathContains(pathOrURL, "-print.") || pathContains(pathOrURL, "-print-expected") || pathContains(pathOrURL, "/print/");
+}
+
 TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
 {
     TestFeatures features;
@@ -203,6 +211,10 @@ TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
         features.boolTestRunnerFeatures.insert({ "globalPrivacyControl", true });
     if (shouldEnableLocalNetworkAccess(command.pathOrURL))
         features.boolWebPreferenceFeatures.insert({ "LocalNetworkAccessEnabled", true });
+    if (shouldDumpPrintedPageBoxes(command.pathOrURL)) {
+        features.boolTestRunnerFeatures.insert({ "dumpPrintedPageBoxes", true });
+        features.boolWebPreferenceFeatures.insert({ "ShouldPrintBackgrounds", true });
+    }
 
     return features;
 }

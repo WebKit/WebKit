@@ -1106,6 +1106,7 @@ public:
 #endif
 
     RefPtr<WebImage> scaledSnapshotWithOptions(const WebCore::IntRect&, double additionalScaleFactor, SnapshotOptions);
+    RefPtr<WebImage> printedPageBoxesSnapshotForTesting(const WebCore::FloatSize& defaultPageBoxSize, const WebCore::FloatBoxExtent& defaultPageMargin);
 
     static const WebEvent* LEGACY_NODELETE currentEvent();
 

@@ -33,6 +33,7 @@
 #include "WPTFunctions.h"
 #include "WebCoreTestSupport.h"
 #include <JavaScriptCore/JSStringRefPtr.h>
+#include <WebCore/CSSUnits.h>
 #include <cmath>
 #include <WebKit/WKArray.h>
 #include <WebKit/WKBundle.h>
@@ -518,6 +519,12 @@ void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuild
 #endif
 }
 
+static WKImageRef createPrintReftestSnapshot(WKBundlePageRef page)
+{
+    using WebCore::CSS::pixelsPerInch;
+    return WKBundlePageCreatePrintedPageBoxesSnapshotForTesting(page, WKSizeMake(5 * pixelsPerInch, 3 * pixelsPerInch), 0.5 * pixelsPerInch);
+}
+
 void InjectedBundlePage::dump()
 {
     auto& injectedBundle = InjectedBundle::singleton();
@@ -583,7 +590,9 @@ void InjectedBundlePage::dump()
 
     if (injectedBundle.shouldDumpPixels() && testRunner->shouldDumpPixels()) {
         bool shouldCreateSnapshot = injectedBundle.isPrinting();
-        if (shouldCreateSnapshot) {
+        if (injectedBundle.shouldDumpPrintedPageBoxes())
+            injectedBundle.setPixelResult(adoptWK(createPrintReftestSnapshot(m_page)).get());
+        else if (shouldCreateSnapshot) {
             WKSnapshotOptions options = kWKSnapshotOptionsShareable;
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             WKRect snapshotRect = WKBundleFrameGetVisibleContentBounds(WKBundlePageGetMainFrame(m_page));
@@ -601,7 +610,7 @@ void InjectedBundlePage::dump()
         } else
             injectedBundle.setPixelResultIsPending(true);
 
-        if (WKBundlePageIsTrackingRepaints(m_page) && !injectedBundle.isPrinting())
+        if (WKBundlePageIsTrackingRepaints(m_page) && !injectedBundle.isPrinting() && !injectedBundle.shouldDumpPrintedPageBoxes())
             injectedBundle.setRepaintRects(adoptWK(WKBundlePageCopyTrackedRepaintRects(m_page)).get());
     }
 

@@ -299,6 +299,11 @@ WKStringRef WKBundlePageCopyRenderTreeExternalRepresentationForPrinting(WKBundle
     return WebKit::toCopiedAPI(protect(WebKit::toImpl(pageRef))->renderTreeExternalRepresentationForPrinting());
 }
 
+WKImageRef WKBundlePageCreatePrintedPageBoxesSnapshotForTesting(WKBundlePageRef pageRef, WKSize defaultPageBoxSize, double defaultPageMargin)
+{
+    return WebKit::toAPILeakingRef(protect(WebKit::toImpl(pageRef))->printedPageBoxesSnapshotForTesting(WebKit::toIntSize(defaultPageBoxSize), defaultPageMargin));
+}
+
 void WKBundlePageClose(WKBundlePageRef pageRef)
 {
     protect(WebKit::toImpl(pageRef))->sendClose();

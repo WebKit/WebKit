@@ -99,15 +99,10 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
     computePageRectsWithPageSizeInternal(FloatSize(pageWidth / userScaleFactor, pageHeight / userScaleFactor), allowHorizontalTiling);
 }
 
-FloatBoxExtent PrintContext::computedPageMargin(FloatBoxExtent printMargin)
+static FloatBoxExtent pageMarginFromStyle(Document& document, const FloatBoxExtent& defaultMargin, float scaleFactor)
 {
-    RefPtr document = frame() ? frame()->document() : nullptr;
-    if (!document)
-        return printMargin;
     // FIXME Currently no pseudo class is supported.
-    auto style = protect(protect(document->styleScope())->resolver())->styleForPage(0);
-
-    float pixelToPointScaleFactor = 1.0f / CSS::pixelsPerPt;
+    auto style = protect(protect(document.styleScope())->resolver())->styleForPage(0);
 
     auto marginTop = style->marginTop().tryFixed();
     auto marginRight = style->marginRight().tryFixed();
@@ -116,11 +111,44 @@ FloatBoxExtent PrintContext::computedPageMargin(FloatBoxExtent printMargin)
     const auto& zoomFactor = style->usedZoomForLength();
 
     return {
-        marginTop ? marginTop->resolveZoom(zoomFactor) * pixelToPointScaleFactor : printMargin.top(),
-        marginRight ? marginRight->resolveZoom(zoomFactor) * pixelToPointScaleFactor : printMargin.right(),
-        marginBottom ? marginBottom->resolveZoom(zoomFactor) * pixelToPointScaleFactor : printMargin.bottom(),
-        marginLeft ? marginLeft->resolveZoom(zoomFactor) * pixelToPointScaleFactor : printMargin.left(),
+        marginTop ? marginTop->resolveZoom(zoomFactor) * scaleFactor : defaultMargin.top(),
+        marginRight ? marginRight->resolveZoom(zoomFactor) * scaleFactor : defaultMargin.right(),
+        marginBottom ? marginBottom->resolveZoom(zoomFactor) * scaleFactor : defaultMargin.bottom(),
+        marginLeft ? marginLeft->resolveZoom(zoomFactor) * scaleFactor : defaultMargin.left(),
     };
+}
+
+static FloatSize pageBoxSizeFromStyle(Document& document, const FloatSize& defaultSize, const FloatBoxExtent& pageMargin)
+{
+    auto style = protect(protect(document.styleScope())->resolver())->styleForPage(0);
+    return WTF::switchOn(style->pageSize(),
+        [&](const CSS::Keyword::Auto&) {
+            auto size = defaultSize;
+            const auto& zoomFactor = style->usedZoomForLength();
+            if (auto width = style->width().tryFixed())
+                size.setWidth(pageMargin.left() + width->resolveZoom(zoomFactor) + pageMargin.right());
+            if (auto height = style->height().tryFixed())
+                size.setHeight(pageMargin.top() + height->resolveZoom(zoomFactor) + pageMargin.bottom());
+            return size;
+        },
+        [&](const CSS::Keyword::Landscape&) {
+            return defaultSize.width() < defaultSize.height() ? defaultSize.transposedSize() : defaultSize;
+        },
+        [&](const CSS::Keyword::Portrait&) {
+            return defaultSize.width() > defaultSize.height() ? defaultSize.transposedSize() : defaultSize;
+        },
+        [&](const Style::PageSize::Lengths& lengths) {
+            return FloatSize { Style::evaluate<float>(lengths.width(), Style::ZoomFactor::none()), Style::evaluate<float>(lengths.height(), Style::ZoomFactor::none()) };
+        }
+    );
+}
+
+FloatBoxExtent PrintContext::computedPageMargin(FloatBoxExtent printMargin)
+{
+    RefPtr document = frame() ? frame()->document() : nullptr;
+    if (!document)
+        return printMargin;
+    return pageMarginFromStyle(*document, printMargin, 1.0f / CSS::pixelsPerPt);
 }
 
 FloatSize PrintContext::computedPageSize(FloatSize pageSize, FloatBoxExtent printMargin)
@@ -525,4 +553,75 @@ void PrintContext::spoolAllPagesWithBoundaries(LocalFrame& frame, GraphicsContex
     graphicsContext.restore();
 }
 
+auto PrintContext::beginWithPageBoxSize(const FloatSize& defaultPageBoxSizeInPixels, const FloatBoxExtent& defaultPageMarginInPixels) -> std::optional<PageBox>
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return std::nullopt;
+
+    RefPtr document = frame->document();
+    if (!document || !frame->view() || !document->renderView())
+        return std::nullopt;
+
+    document->updateLayout();
+
+    auto pageAreaSize = [](const PageBox& pageBox) {
+        return FloatSize { pageBox.size.width() - pageBox.margin.left() - pageBox.margin.right(), pageBox.size.height() - pageBox.margin.top() - pageBox.margin.bottom() };
+    };
+
+    auto defaultPageAreaSize = pageAreaSize({ defaultPageBoxSizeInPixels, defaultPageMarginInPixels });
+    if (defaultPageAreaSize.isEmpty())
+        return std::nullopt;
+
+    m_isPrinting = true;
+    frame->setPrinting(true, defaultPageAreaSize, defaultPageAreaSize, 1, AdjustViewSize::Yes);
+
+    auto pageMargin = pageMarginFromStyle(*document, defaultPageMarginInPixels, 1);
+    PageBox pageBox { pageBoxSizeFromStyle(*document, defaultPageBoxSizeInPixels, pageMargin), pageMargin };
+    auto usedPageAreaSize = pageAreaSize(pageBox);
+    if (usedPageAreaSize.isEmpty())
+        return std::nullopt;
+
+    if (usedPageAreaSize != defaultPageAreaSize)
+        frame->setPrinting(true, usedPageAreaSize, usedPageAreaSize, 1, AdjustViewSize::Yes);
+
+    computePageRectsWithPageSize(usedPageAreaSize, false);
+
+    // Like real printing, print a blank page when there is no content.
+    if (m_pageRects.isEmpty())
+        m_pageRects.append({ { }, flooredIntSize(usedPageAreaSize) });
+
+    return pageBox;
+}
+
+FloatSize PrintContext::printedPageBoxesSize(LocalFrame& frame, const FloatSize& defaultPageBoxSizeInPixels, const FloatBoxExtent& defaultPageMarginInPixels)
+{
+    Ref protectedFrame { frame };
+
+    Ref printContext = PrintContext::create(&frame);
+    auto pageBox = printContext->beginWithPageBoxSize(defaultPageBoxSizeInPixels, defaultPageMarginInPixels);
+    if (!pageBox)
+        return { };
+
+    return { pageBox->size.width(), pageBox->size.height() * static_cast<float>(printContext->pageCount()) };
+}
+
+void PrintContext::spoolAllPageBoxes(LocalFrame& frame, GraphicsContext& graphicsContext, const FloatSize& defaultPageBoxSizeInPixels, const FloatBoxExtent& defaultPageMarginInPixels)
+{
+    Ref protectedFrame { frame };
+
+    Ref printContext = PrintContext::create(&frame);
+    auto pageBox = printContext->beginWithPageBoxSize(defaultPageBoxSizeInPixels, defaultPageMarginInPixels);
+    if (!pageBox)
+        return;
+
+    graphicsContext.setFillColor(Color::white);
+    graphicsContext.fillRect(FloatRect(0, 0, pageBox->size.width(), pageBox->size.height() * static_cast<float>(printContext->pageCount())));
+
+    for (size_t pageIndex = 0; pageIndex < printContext->pageCount(); ++pageIndex) {
+        GraphicsContextStateSaver stateSaver(graphicsContext);
+        graphicsContext.translate(pageBox->margin.left(), static_cast<float>(pageIndex) * pageBox->size.height() + pageBox->margin.top());
+        printContext->spoolPage(graphicsContext, pageIndex, printContext->pageRect(pageIndex).width());
+    }
+}
 }
