@@ -153,6 +153,7 @@
 #include <pal/text/KillRing.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/text/MakeString.h>
@@ -218,6 +219,7 @@ static String inputEventDataForEditingStyleAndAction(EditingStyle& style, EditAc
 }
 
 class ClearTextCommand : public DeleteSelectionCommand {
+    WTF_MAKE_TZONE_ALLOCATED(ClearTextCommand);
 public:
     ClearTextCommand(Ref<Document>&&);
     static void CreateAndApply(Ref<Document>&&);
@@ -225,6 +227,8 @@ public:
 private:
     EditAction editingAction() const override;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ClearTextCommand);
 
 ClearTextCommand::ClearTextCommand(Ref<Document>&& document)
     : DeleteSelectionCommand(WTF::move(document), false, true, false, false, true)

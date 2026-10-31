@@ -30,8 +30,11 @@
 #include "ReplaceSelectionCommand.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WritingToolsCompositionCommand);
 
 WritingToolsCompositionCommand::WritingToolsCompositionCommand(Ref<Document>&& document, const SimpleRange& endingContextRange)
     : CompositeEditCommand(WTF::move(document), EditAction::InsertReplacement)

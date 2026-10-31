@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,6 +34,7 @@ namespace WebCore {
 // It is the base class of IncreaseSelectionListLevelCommand and DecreaseSelectionListLevelCommand.
 // It is not used on its own.
 class ModifySelectionListLevelCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(ModifySelectionListLevelCommand);
 protected:
     explicit ModifySelectionListLevelCommand(Ref<Document>&&);
     
@@ -46,6 +48,7 @@ private:
 
 // IncreaseSelectionListLevelCommand moves the selected list items one level deeper.
 class IncreaseSelectionListLevelCommand : public ModifySelectionListLevelCommand {
+    WTF_MAKE_TZONE_ALLOCATED(IncreaseSelectionListLevelCommand);
 public:
     enum class Type : uint8_t { InheritedListType, OrderedList, UnorderedList };
     static Ref<IncreaseSelectionListLevelCommand> create(Document& document, Type type)
@@ -71,6 +74,7 @@ private:
 
 // DecreaseSelectionListLevelCommand moves the selected list items one level shallower.
 class DecreaseSelectionListLevelCommand : public ModifySelectionListLevelCommand {
+    WTF_MAKE_TZONE_ALLOCATED(DecreaseSelectionListLevelCommand);
 public:
     static bool canDecreaseSelectionListLevel(Document*);
     static void decreaseSelectionListLevel(Document*);

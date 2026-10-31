@@ -29,8 +29,11 @@
 #include "Editing.h"
 #include "HTMLAnchorElement.h"
 #include "Text.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CreateLinkCommand);
 
 CreateLinkCommand::CreateLinkCommand(Ref<Document>&& document, const String& url)
     : CompositeEditCommand(WTF::move(document))
