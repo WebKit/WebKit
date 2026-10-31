@@ -6964,6 +6964,10 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         && &browsingContextGroup == m_browsingContextGroup.ptr()) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "continueNavigationInNewProcess: Continuing navigation in the committed page because it came back to the committed page's process");
         frame.transferNavigationCallbackToFrame(*committedMainFrame);
+        if (!committedMainFrame->provisionalURL().isEmpty())
+            committedMainFrame->didReceiveServerRedirectForProvisionalLoad(URL { navigation.currentRequest().url() });
+        else
+            committedMainFrame->didStartProvisionalLoad(URL { navigation.currentRequest().url() });
         continueNavigationInNewProcess(navigation, *committedMainFrame, nullptr, browsingContextGroup, WTF::move(newProcess), processSwapRequestedByClient, shouldTreatAsContinuingLoad, existingNetworkResourceLoadIdentifierToResume, loadedWebArchive, navigationUpgradeToHTTPSBehavior, processSwapDisposition, replacedDataStoreForWebArchiveLoad, originalNavigationStartTime);
         return;
     }
