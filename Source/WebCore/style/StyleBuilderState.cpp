@@ -44,6 +44,7 @@
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSLightDarkImageValue.h"
+#include "CSSMeshGradientValue.h"
 #include "CSSNamedImageValue.h"
 #include "CSSPaintImageValue.h"
 #include "CSSParserIdioms.h"
@@ -150,6 +151,8 @@ RefPtr<Image> BuilderState::createStyleImage(const CSSValue& value) const
         return filterImageValue->createStyleImage(*this);
     if (auto* gradientValue = dynamicDowncast<CSSGradientValue>(value))
         return gradientValue->createStyleImage(*this);
+    if (auto* meshGradientValue = dynamicDowncast<CSSMeshGradientValue>(value))
+        return meshGradientValue->createStyleImage(*this);
     if (auto* colorImageValue = dynamicDowncast<CSSColorImageValue>(value))
         return colorImageValue->createStyleImage(*this);
     if (auto* lightDarkImageValue = dynamicDowncast<CSSLightDarkImageValue>(value))

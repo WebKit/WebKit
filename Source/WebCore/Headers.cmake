@@ -1103,11 +1103,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/values/grid/CSSGridTrackSize.h
 
     css/values/images/CSSGradient.h
+    css/values/images/CSSGradientColorInterpolationMethod.h
 
     css/values/link-params/CSSLinkParameter.h
 
     css/values/motion/CSSRayFunction.h
 
+    css/values/primitives/CSSCoordinatePair.h
     css/values/primitives/CSSCustomIdent.h
     css/values/primitives/CSSDeclarationValue.h
     css/values/primitives/CSSKeyword.h
@@ -3304,6 +3306,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/grid/StyleGridTrackSizingDirection.h
 
     style/values/images/StyleGradient.h
+    style/values/images/StyleGradientColorInterpolationMethod.h
     style/values/images/StyleImageOrNone.h
     style/values/images/StyleImageOrientation.h
     style/values/images/StyleImageWrapper.h
@@ -3383,6 +3386,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/primitives/StyleCalcSizeValue+Evaluation.h
     style/values/primitives/StyleCalcSizeValue.h
+    style/values/primitives/StyleCoordinatePair.h
     style/values/primitives/StyleCustomIdent.h
     style/values/primitives/StyleDeclarationValue.h
     style/values/primitives/StyleCoordinatedValueList.h

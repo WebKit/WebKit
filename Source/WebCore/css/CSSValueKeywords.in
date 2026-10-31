@@ -1385,6 +1385,7 @@ repeating-conic-gradient
 filter
 -webkit-filter
 paint
+mesh-gradient
 
 // image-set's MIME type
 type

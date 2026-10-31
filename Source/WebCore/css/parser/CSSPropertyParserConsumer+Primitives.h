@@ -38,6 +38,9 @@ bool LEGACY_NODELETE consumeCommaIncludingWhitespace(CSSParserTokenRange&);
 // FIXME: Rename to `consumeSlash`.
 bool LEGACY_NODELETE consumeSlashIncludingWhitespace(CSSParserTokenRange&);
 
+// MARK: - Semicolon
+bool LEGACY_NODELETE consumeSemicolon(CSSParserTokenRange&);
+
 // MARK: - Function
 // NOTE: consumeFunction expects the range starts with a FunctionToken.
 CSSParserTokenRange LEGACY_NODELETE consumeFunction(CSSParserTokenRange&);

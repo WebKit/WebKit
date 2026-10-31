@@ -29,6 +29,7 @@
 
 #include <WebCore/CSSGradient.h>
 #include <WebCore/StyleColor.h>
+#include <WebCore/StyleGradientColorInterpolationMethod.h>
 #include <WebCore/StylePosition.h>
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
@@ -47,12 +48,6 @@ using Vertical                     = CSS::Vertical;
 
 using RadialGradientExtent         = CSS::RadialGradientExtent;
 using PrefixedRadialGradientExtent = CSS::PrefixedRadialGradientExtent;
-
-// MARK: - Gradient Color Interpolation Definitions.
-
-using GradientColorInterpolationMethod = CSS::GradientColorInterpolationMethod;
-
-template<> inline constexpr bool TreatAsNonConverting<GradientColorInterpolationMethod> = true;
 
 // MARK: - Gradient Color Stop Definitions.
 

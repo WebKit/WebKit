@@ -49,6 +49,14 @@ bool consumeSlashIncludingWhitespace(CSSParserTokenRange& range)
     return true;
 }
 
+bool consumeSemicolon(CSSParserTokenRange& range)
+{
+    if (range.peek().type() != SemicolonToken)
+        return false;
+    range.consumeIncludingWhitespace();
+    return true;
+}
+
 CSSParserTokenRange consumeFunction(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().type() == FunctionToken);

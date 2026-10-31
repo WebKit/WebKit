@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-enum class SerializationSeparatorType : uint8_t { None, Space, Comma, Slash };
+enum class SerializationSeparatorType : uint8_t { None, Space, Comma, Slash, Semicolon };
 enum class SerializationCoalescingType : uint8_t { None, Minimal };
 
 // Types that specialize TreatAsTupleLike or TreatAsRangeLike can specialize this to
@@ -55,6 +55,7 @@ template<SerializationSeparatorType> inline constexpr ASCIILiteral Serialization
 template<> inline constexpr ASCIILiteral SerializationSeparatorStringForType<SerializationSeparatorType::Space> = " "_s;
 template<> inline constexpr ASCIILiteral SerializationSeparatorStringForType<SerializationSeparatorType::Comma> = ", "_s;
 template<> inline constexpr ASCIILiteral SerializationSeparatorStringForType<SerializationSeparatorType::Slash> = " / "_s;
+template<> inline constexpr ASCIILiteral SerializationSeparatorStringForType<SerializationSeparatorType::Semicolon> = "; "_s;
 
 template<typename T> inline constexpr ASCIILiteral SerializationSeparatorString = SerializationSeparatorStringForType<SerializationSeparator<T>>;
 
@@ -604,6 +605,114 @@ template<typename T, size_t inlineCapacity = 0> struct CommaSeparatedVector {
 
 template<typename T, size_t N> inline constexpr auto TreatAsRangeLike<CommaSeparatedVector<T, N>> = true;
 template<typename T, size_t N> inline constexpr auto SerializationSeparator<CommaSeparatedVector<T, N>> = SerializationSeparatorType::Comma;
+
+// Wraps a variable number of elements of a single type, semantically marking them as serializing as "slash separated".
+template<typename T, size_t inlineCapacity = 0> struct SlashSeparatedVector {
+    using Container = WTF::Vector<T, inlineCapacity>;
+    using iterator = typename Container::iterator;
+    using reverse_iterator = typename Container::reverse_iterator;
+    using const_iterator = typename Container::const_iterator;
+    using const_reverse_iterator = typename Container::const_reverse_iterator;
+    using value_type = typename Container::value_type;
+
+    SlashSeparatedVector() = default;
+
+    SlashSeparatedVector(std::initializer_list<T> initializerList)
+        : value { initializerList }
+    {
+    }
+
+    SlashSeparatedVector(Container&& value)
+        : value { WTF::move(value) }
+    {
+    }
+
+    template<typename SizedRange, typename Mapper>
+    static SlashSeparatedVector map(SizedRange&& range, NOESCAPE const Mapper& mapper)
+    {
+        return WTF::map<inlineCapacity>(std::forward<SizedRange>(range), mapper);
+    }
+
+    iterator begin() LIFETIME_BOUND { return value.begin(); }
+    iterator end() LIFETIME_BOUND { return value.end(); }
+    reverse_iterator rbegin() LIFETIME_BOUND { return value.rbegin(); }
+    reverse_iterator rend() LIFETIME_BOUND { return value.rend(); }
+
+    const_iterator begin() const LIFETIME_BOUND { return value.begin(); }
+    const_iterator end() const LIFETIME_BOUND { return value.end(); }
+    const_reverse_iterator rbegin() const LIFETIME_BOUND { return value.rbegin(); }
+    const_reverse_iterator rend() const LIFETIME_BOUND { return value.rend(); }
+
+    bool isEmpty() const { return value.isEmpty(); }
+    size_t size() const { return value.size(); }
+    const T& operator[](size_t i) const LIFETIME_BOUND { return value[i]; }
+
+    bool contains(const auto& x) const { return value.contains(x); }
+    bool containsIf(NOESCAPE const Invocable<bool(const value_type&)> auto& f) const { return value.containsIf(f); }
+
+    template<typename F> decltype(auto) map(NOESCAPE const F& functor) const { return value.map(functor); }
+
+    bool operator==(const SlashSeparatedVector&) const = default;
+
+    Container value;
+};
+
+template<typename T, size_t N> inline constexpr auto TreatAsRangeLike<SlashSeparatedVector<T, N>> = true;
+template<typename T, size_t N> inline constexpr auto SerializationSeparator<SlashSeparatedVector<T, N>> = SerializationSeparatorType::Slash;
+
+// Wraps a variable number of elements of a single type, semantically marking them as serializing as "semicolon separated".
+template<typename T, size_t inlineCapacity = 0> struct SemicolonSeparatedVector {
+    using Container = WTF::Vector<T, inlineCapacity>;
+    using iterator = typename Container::iterator;
+    using reverse_iterator = typename Container::reverse_iterator;
+    using const_iterator = typename Container::const_iterator;
+    using const_reverse_iterator = typename Container::const_reverse_iterator;
+    using value_type = typename Container::value_type;
+
+    SemicolonSeparatedVector() = default;
+
+    SemicolonSeparatedVector(std::initializer_list<T> initializerList)
+        : value { initializerList }
+    {
+    }
+
+    SemicolonSeparatedVector(Container&& value)
+        : value { WTF::move(value) }
+    {
+    }
+
+    template<typename SizedRange, typename Mapper>
+    static SemicolonSeparatedVector map(SizedRange&& range, NOESCAPE const Mapper& mapper)
+    {
+        return WTF::map<inlineCapacity>(std::forward<SizedRange>(range), mapper);
+    }
+
+    iterator begin() LIFETIME_BOUND { return value.begin(); }
+    iterator end() LIFETIME_BOUND { return value.end(); }
+    reverse_iterator rbegin() LIFETIME_BOUND { return value.rbegin(); }
+    reverse_iterator rend() LIFETIME_BOUND { return value.rend(); }
+
+    const_iterator begin() const LIFETIME_BOUND { return value.begin(); }
+    const_iterator end() const LIFETIME_BOUND { return value.end(); }
+    const_reverse_iterator rbegin() const LIFETIME_BOUND { return value.rbegin(); }
+    const_reverse_iterator rend() const LIFETIME_BOUND { return value.rend(); }
+
+    bool isEmpty() const { return value.isEmpty(); }
+    size_t size() const { return value.size(); }
+    const T& operator[](size_t i) const LIFETIME_BOUND { return value[i]; }
+
+    bool contains(const auto& x) const { return value.contains(x); }
+    bool containsIf(NOESCAPE const Invocable<bool(const value_type&)> auto& f) const { return value.containsIf(f); }
+
+    template<typename F> decltype(auto) map(NOESCAPE const F& functor) const { return value.map(functor); }
+
+    bool operator==(const SemicolonSeparatedVector&) const = default;
+
+    Container value;
+};
+
+template<typename T, size_t N> inline constexpr auto TreatAsRangeLike<SemicolonSeparatedVector<T, N>> = true;
+template<typename T, size_t N> inline constexpr auto SerializationSeparator<SemicolonSeparatedVector<T, N>> = SerializationSeparatorType::Semicolon;
 
 // Wraps a variable (though known at construction) number of elements of a single type, semantically marking them as serializing as "space separated".
 template<typename T> struct SpaceSeparatedFixedVector {

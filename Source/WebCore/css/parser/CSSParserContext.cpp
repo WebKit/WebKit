@@ -139,6 +139,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssInheritFunctionEnabled { settings.cssInheritFunctionEnabled() }
     , cssFontPaletteMixFunctionEnabled { settings.cssFontPaletteMixFunctionEnabled() }
     , cssSymbolsFunctionEnabled { settings.cssSymbolsFunctionEnabled() }
+    , cssMeshGradientsEnabled { settings.cssMeshGradientsEnabled() }
     , viewportSegmentsAPIEnabled { settings.viewportSegmentsAPIEnabled() }
     , propertySettings { CSSPropertySettings { settings } }
 {
@@ -199,6 +200,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.cssInheritFunctionEnabled,
         context.cssFontPaletteMixFunctionEnabled,
         context.cssSymbolsFunctionEnabled,
+        context.cssMeshGradientsEnabled,
         context.legacyFontFaceAttributeMode,
         context.viewportSegmentsAPIEnabled
     );

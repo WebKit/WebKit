@@ -24,15 +24,13 @@
 
 #pragma once
 
+#include <WebCore/CSSCoordinatePair.h>
 #include <WebCore/CSSFillRule.h>
 #include <WebCore/CSSPosition.h>
 #include <WebCore/CSSPrimitiveNumericTypes.h>
 
 namespace WebCore {
 namespace CSS {
-
-// <coordinate-pair> = <length-percentage>{2}
-using CoordinatePair = SpaceSeparatedPoint<LengthPercentage<>>;
 
 // <by-to> = by | to
 // https://drafts.csswg.org/css-shapes-2/#typedef-shape-by-to

@@ -1060,6 +1060,14 @@ CSSMathDepthEnabled:
   humanReadableDescription: "Enable support for math-depth from MathML Core."
   defaultValue: true
 
+CSSMeshGradientsEnabled:
+  type: bool
+  status: unstable
+  category: css
+  humanReadableName: "CSS mesh gradients"
+  humanReadableDescription: "Enable support for CSS mesh gradients."
+  defaultValue: false
+
 CSSModuleScriptsEnabled:
   type: bool
   status: testable

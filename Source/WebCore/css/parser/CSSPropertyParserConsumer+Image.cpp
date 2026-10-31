@@ -38,6 +38,7 @@
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSLightDarkImageValue.h"
+#include "CSSMeshGradientValue.h"
 #include "CSSNamedImageValue.h"
 #include "CSSPaintImageValue.h"
 #include "CSSParserContext.h"
@@ -59,6 +60,7 @@
 #include "CSSPropertyParserConsumer+Position.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+ResolutionDefinitions.h"
+#include "CSSPropertyParserConsumer+Shapes.h"
 #include "CSSPropertyParserConsumer+String.h"
 #include "CSSPropertyParserConsumer+URL.h"
 #include "CSSPropertyParserOptions.h"
@@ -341,6 +343,23 @@ static bool stopColorIs8Bit(const Markable<CSS::Color>& color)
     return !color || stopColorIs8Bit(*color);
 }
 
+static CSS::GradientColorInterpolationMethod computeGradientColorInterpolationMethod(std::optional<CSS::ColorInterpolationMethod> parsedColorInterpolationMethod, CSS::GradientColorInterpolationMethod::Default defaultColorInterpolationMethod)
+{
+    if (parsedColorInterpolationMethod)
+        return { .method = *parsedColorInterpolationMethod, .defaultMethod = defaultColorInterpolationMethod };
+
+    switch (defaultColorInterpolationMethod) {
+    case CSS::GradientColorInterpolationMethod::Default::SRGB:
+        return { .method = { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Premultiplied }, .defaultMethod = defaultColorInterpolationMethod };
+
+    case CSS::GradientColorInterpolationMethod::Default::OKLab:
+        return { .method = { ColorInterpolationMethod::OKLab { }, AlphaPremultiplication::Premultiplied }, .defaultMethod = defaultColorInterpolationMethod };
+    }
+
+    ASSERT_NOT_REACHED();
+    return { .method = { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Premultiplied }, .defaultMethod = defaultColorInterpolationMethod };
+}
+
 template<typename Stop> static CSS::GradientColorInterpolationMethod computeGradientColorInterpolationMethod(std::optional<CSS::ColorInterpolationMethod> parsedColorInterpolationMethod, const CSS::GradientColorStopList<Stop>& stops)
 {
     // We detect whether stops use legacy vs. non-legacy CSS color syntax using the following rules:
@@ -359,19 +378,7 @@ template<typename Stop> static CSS::GradientColorInterpolationMethod computeGrad
         break;
     }
 
-    if (parsedColorInterpolationMethod)
-        return { .method = *parsedColorInterpolationMethod, .defaultMethod = defaultColorInterpolationMethod };
-
-    switch (defaultColorInterpolationMethod) {
-    case CSS::GradientColorInterpolationMethod::Default::SRGB:
-        return { .method = { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Premultiplied }, .defaultMethod = defaultColorInterpolationMethod };
-
-    case CSS::GradientColorInterpolationMethod::Default::OKLab:
-        return { .method = { ColorInterpolationMethod::OKLab { }, AlphaPremultiplication::Premultiplied }, .defaultMethod = defaultColorInterpolationMethod };
-    }
-
-    ASSERT_NOT_REACHED();
-    return { .method = { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Premultiplied }, .defaultMethod = defaultColorInterpolationMethod };
+    return computeGradientColorInterpolationMethod(parsedColorInterpolationMethod, defaultColorInterpolationMethod);
 }
 
 // MARK: Compat <gradient> values
@@ -975,6 +982,191 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeConicGradient(CSSParser
     );
 }
 
+// MARK: <mesh-gradient()>
+// https://github.com/w3c/csswg-drafts/blob/main/css-images-5/explainers/2d-gradients.md#mesh-gradient
+
+static std::optional<CSS::MeshGradientRelativeControlPoint> consumeMeshGradientRelativeControlPoint(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <mesh-relative-control-point> = <coordinate-pair> [from origin]?
+
+    auto rangeCopy = range;
+
+    auto offset = consumeCoordinatePair(rangeCopy, state);
+    if (!offset)
+        return { };
+
+    std::optional<CSS::Keyword::Origin> anchor;
+    if (consumeIdent<CSSValueID::From>(rangeCopy)) {
+        if (!consumeIdent<CSSValueID::Origin>(rangeCopy))
+            return { };
+        anchor = CSS::Keyword::Origin { };
+    }
+
+    range = rangeCopy;
+
+    return CSS::MeshGradientRelativeControlPoint {
+        .offset = WTF::move(*offset),
+        .anchor = WTF::move(anchor),
+    };
+}
+
+template<typename ControlPoints> static std::optional<ControlPoints> consumeMeshGradientControlPoints(CSSParserTokenRange& range, NOESCAPE const auto& consumeControlPoint)
+{
+    // [ with <control-point> [ / <control-point> ]{0,3} ]?
+
+    if (!consumeIdent<CSSValueID::With>(range))
+        return ControlPoints { };
+
+    typename ControlPoints::Container controlPoints;
+    do {
+        auto controlPoint = consumeControlPoint(range);
+        if (!controlPoint)
+            return { };
+        controlPoints.append(WTF::move(*controlPoint));
+    } while (controlPoints.size() < 4 && consumeSlashIncludingWhitespace(range));
+
+    return ControlPoints { WTF::move(controlPoints) };
+}
+
+static std::optional<CSS::MeshGradientPoint> consumeMeshGradientPoint(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <mesh-point> = <color> [ <mesh-absolute-position> | <mesh-relative-position> ]?
+
+    auto color = consumeUnresolvedColor(range, state);
+    if (!color)
+        return { };
+
+    std::optional<CSS::MeshGradientPoint::Location> location;
+
+    if (consumeIdent<CSSValueID::By>(range)) {
+        // <mesh-relative-position> = by <coordinate-pair> [ with <mesh-relative-control-point> [ / <mesh-relative-control-point> ]{0,3} ]?
+
+        auto offset = consumeCoordinatePair(range, state);
+        if (!offset)
+            return { };
+
+        auto controlPoints = consumeMeshGradientControlPoints<CSS::MeshGradientRelativePosition::ControlPoints>(range, [&](auto& range) {
+            return consumeMeshGradientRelativeControlPoint(range, state);
+        });
+        if (!controlPoints)
+            return { };
+
+        location = CSS::MeshGradientRelativePosition {
+            .offset = WTF::move(*offset),
+            .controlPoints = WTF::move(*controlPoints),
+        };
+    } else if (auto position = consumePositionUnresolved(range, state)) {
+        // <mesh-absolute-position> = <position> [ with <position> [ / <position> ]{0,3} ]?
+
+        auto controlPoints = consumeMeshGradientControlPoints<CSS::MeshGradientAbsolutePosition::ControlPoints>(range, [&](auto& range) {
+            return consumePositionUnresolved(range, state);
+        });
+        if (!controlPoints)
+            return { };
+
+        location = CSS::MeshGradientAbsolutePosition {
+            .position = WTF::move(*position),
+            .controlPoints = WTF::move(*controlPoints),
+        };
+    }
+
+    return CSS::MeshGradientPoint {
+        .color = WTF::move(*color),
+        .location = WTF::move(location),
+    };
+}
+
+static RefPtr<CSSValue> consumeMeshGradient(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // mesh-gradient( [ <color-interpolation-method> || <color> ]?,
+    //                <mesh-point># [ ';' <mesh-point># ]*
+    //              )
+    // <mesh-point> = <color> [ <mesh-absolute-position> | <mesh-relative-position> ]?
+    // <mesh-absolute-position> = <position> [ with <position> [ / <position> ]{0,3} ]?
+    // <mesh-relative-position> = by <coordinate-pair> [ with <mesh-relative-control-point> [ / <mesh-relative-control-points> ]{0,3} ]?
+    // <mesh-relative-control-point> = <coordinate-pair> [from origin]?
+
+    if (!state.context.cssMeshGradientsEnabled)
+        return nullptr;
+
+    // FIXME: A lone <color> is ambiguous between the prelude and the first <mesh-point> so the prelude is
+    // only recognized when it contains a <color-interpolation-method>.
+
+    std::optional<CSS::ColorInterpolationMethod> colorInterpolationMethod;
+    Markable<CSS::Color> backgroundColor;
+
+    auto preludeRange = range;
+    if (preludeRange.peek().id() == CSSValueID::In) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(preludeRange, state);
+        if (!colorInterpolationMethod)
+            return nullptr;
+
+        if (preludeRange.peek().type() != CommaToken) {
+            auto preludeColor = consumeUnresolvedColor(preludeRange, state);
+            if (!preludeColor)
+                return nullptr;
+            backgroundColor = WTF::move(*preludeColor);
+        }
+    } else if (auto preludeColor = consumeUnresolvedColor(preludeRange, state); preludeColor && preludeRange.peek().id() == CSSValueID::In) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(preludeRange, state);
+        if (!colorInterpolationMethod)
+            return nullptr;
+        backgroundColor = WTF::move(*preludeColor);
+    }
+
+    if (colorInterpolationMethod) {
+        if (!consumeCommaIncludingWhitespace(preludeRange))
+            return nullptr;
+        range = preludeRange;
+    }
+
+    CSS::MeshGradientRows::Container rows;
+    CSS::MeshGradientRow::Container row;
+    while (true) {
+        auto point = consumeMeshGradientPoint(range, state);
+        if (!point)
+            return nullptr;
+        row.append(WTF::move(*point));
+
+        if (consumeCommaIncludingWhitespace(range))
+            continue;
+
+        rows.append(CSS::MeshGradientRow { std::exchange(row, { }) });
+
+        if (range.atEnd())
+            break;
+        if (!consumeSemicolon(range))
+            return nullptr;
+    }
+
+    // FIXME: The explainer doesn't say what grids are valid. For now, require a minimum of 2x2 and that
+    // each row has the same number of points.
+    if (rows.size() < 2 || rows[0].size() < 2)
+        return nullptr;
+    for (auto& meshRow : rows) {
+        if (meshRow.size() != rows[0].size())
+            return nullptr;
+    }
+
+    auto defaultColorInterpolationMethod = CSS::GradientColorInterpolationMethod::Default::SRGB;
+    if (!stopColorIs8Bit(backgroundColor))
+        defaultColorInterpolationMethod = CSS::GradientColorInterpolationMethod::Default::OKLab;
+    for (auto& meshRow : rows) {
+        for (auto& point : meshRow) {
+            if (!stopColorIs8Bit(point.color))
+                defaultColorInterpolationMethod = CSS::GradientColorInterpolationMethod::Default::OKLab;
+        }
+    }
+
+    return CSSMeshGradientValue::create({
+        .parameters = {
+            .colorInterpolationMethod = computeGradientColorInterpolationMethod(colorInterpolationMethod, defaultColorInterpolationMethod),
+            .backgroundColor = WTF::move(backgroundColor),
+            .rows = { WTF::move(rows) },
+        }
+    });
+}
+
 // MARK: <-webkit-cross-fade()>
 
 static RefPtr<CSSValue> consumeWebkitCrossfade(CSSParserTokenRange& args, CSS::PropertyParserState& state)
@@ -1283,6 +1475,8 @@ RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSS::PropertyParserSta
             return consumeGeneratedImage([&](auto& args) { return consumeConicGradient<CSSValueID::ConicGradient>(args, state); });
         case CSSValueID::RepeatingConicGradient:
             return consumeGeneratedImage([&](auto& args) { return consumeConicGradient<CSSValueID::RepeatingConicGradient>(args, state); });
+        case CSSValueID::MeshGradient:
+            return consumeGeneratedImage([&](auto& args) { return consumeMeshGradient(args, state); });
         case CSSValueID::WebkitCrossFade:
             return consumeGeneratedImage([&](auto& args) { return consumeWebkitCrossfade(args, state); });
         case CSSValueID::CrossFade:

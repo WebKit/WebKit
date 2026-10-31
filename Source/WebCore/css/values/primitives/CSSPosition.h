@@ -91,7 +91,7 @@ struct Position {
         FourComponentPositionHorizontalVertical
     >;
 
-    template<typename T>
+    template<typename T> requires std::constructible_from<Kind, T>
     Position(T&& value)
         : value { std::forward<T>(value) }
     {

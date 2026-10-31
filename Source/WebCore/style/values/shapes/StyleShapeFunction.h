@@ -25,6 +25,7 @@
 #pragma once
 
 #include <WebCore/CSSShapeFunction.h>
+#include <WebCore/StyleCoordinatePair.h>
 #include <WebCore/StyleFillRule.h>
 #include <WebCore/StylePathComputation.h>
 #include <WebCore/StylePosition.h>
@@ -38,9 +39,6 @@ struct AcceleratedEffectShapeFunction;
 namespace Style {
 
 struct Path;
-
-// <coordinate-pair> = <length-percentage>{2}
-using CoordinatePair  = SpaceSeparatedPoint<LengthPercentage<>>;
 
 using CommandAffinity = CSS::CommandAffinity;
 using ArcSweep        = CSS::ArcSweep;

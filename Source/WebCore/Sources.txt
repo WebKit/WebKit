@@ -1012,6 +1012,7 @@ css/CSSMaskBorderSliceValue.cpp
 css/CSSMaskBorderSourceValue.cpp
 css/CSSMaskBorderWidthValue.cpp
 css/CSSMediaRule.cpp
+css/CSSMeshGradientValue.cpp
 css/CSSNamedImageValue.cpp
 css/CSSNamespaceRule.cpp
 css/CSSNestedDeclarations.cpp
@@ -1272,7 +1273,9 @@ css/values/grid/CSSGridSubgrid.cpp
 css/values/grid/CSSGridTemplateList.cpp
 css/values/grid/CSSGridTrackSizes.cpp
 css/values/images/CSSGradient.cpp
+css/values/images/CSSGradientColorInterpolationMethod.cpp
 css/values/images/CSSImageWrapper.cpp
+css/values/images/CSSMeshGradient.cpp
 css/values/masking/CSSClip.cpp
 css/values/masking/CSSMaskBorderOutset.cpp
 css/values/masking/CSSMaskBorderRepeat.cpp

@@ -111,7 +111,7 @@ template<typename Container> static std::optional<Container> consumePair(CSSPars
     return Container { WTF::move(*p1), WTF::move(*p2) };
 }
 
-static std::optional<CSS::CoordinatePair> consumeCoordinatePair(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+std::optional<CSS::CoordinatePair> consumeCoordinatePair(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // <coordinate-pair> = <length-percentage>{2}
     // https://drafts.csswg.org/css-shapes-2/#typedef-shape-coordinate-pair

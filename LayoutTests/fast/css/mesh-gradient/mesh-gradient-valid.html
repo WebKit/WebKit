@@ -1,0 +1,39 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSMeshGradientsEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Images Module Level 5: parsing mesh-gradient() with valid values</title>
+<link rel="help" href="https://github.com/w3c/csswg-drafts/blob/main/css-images-5/explainers/2d-gradients.md#mesh-gradient">
+<meta name="assert" content="mesh-gradient() supports the full grammar.">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+</head>
+<body>
+<script>
+// Grid of colors.
+test_valid_value("background-image", "mesh-gradient(red, blue; green, yellow)");
+test_valid_value("background-image", "mesh-gradient(red, blue, cyan; green, yellow, magenta)");
+test_valid_value("background-image", "mesh-gradient(red, blue; green, yellow; cyan, magenta)");
+
+// Absolute positions.
+test_valid_value("background-image", "mesh-gradient(red 0px 0px, blue 100% 0%; green left bottom, yellow right bottom)");
+test_valid_value("background-image", "mesh-gradient(red 0px 0px with 10px 0px, blue 100px 0px with 90px 0px / 100px 10px; green, yellow)");
+test_valid_value("background-image", "mesh-gradient(red 0px 0px with 1px 1px / 2px 2px / 3px 3px / 4px 4px, blue; green, yellow)");
+
+// Relative positions.
+test_valid_value("background-image", "mesh-gradient(red, blue by 5cm 0cm; green by 0cm 5cm, yellow by 5cm 5cm)");
+test_valid_value("background-image", "mesh-gradient(cyan 0cm 0cm, magenta by 5cm 0cm with 1cm 0cm / 4cm 0cm; yellow by 0cm 5cm with -1cm 0cm from origin, black by 5cm 5cm with 0cm -1cm / -1cm 0cm)");
+test_valid_value("background-image", "mesh-gradient(red, blue by 10% 0% with 1px 1px from origin / 2px 2px / 3px 3px from origin / 4px 4px; green, yellow)");
+
+// Color interpolation method and color.
+test_valid_value("background-image", "mesh-gradient(in oklab, red, blue; green, yellow)");
+test_valid_value("background-image", "mesh-gradient(in srgb, red, blue; green, yellow)", "mesh-gradient(red, blue; green, yellow)");
+test_valid_value("background-image", "mesh-gradient(in hsl longer hue, red, blue; green, yellow)");
+test_valid_value("background-image", "mesh-gradient(in oklab white, red, blue; green, yellow)");
+test_valid_value("background-image", "mesh-gradient(white in oklab, red, blue; green, yellow)", "mesh-gradient(in oklab white, red, blue; green, yellow)");
+test_valid_value("background-image", "mesh-gradient(in srgb white, red, blue; green, yellow)");
+test_valid_value("background-image", "mesh-gradient(white, red, blue; green, yellow, black)");
+</script>
+</body>
+</html>

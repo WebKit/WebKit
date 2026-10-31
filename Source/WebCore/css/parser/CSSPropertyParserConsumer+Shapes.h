@@ -25,15 +25,18 @@
 
 #pragma once
 
+#include "CSSPrimitiveNumeric+Forward.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class CSSParserTokenRange;
 class CSSValue;
+template<typename> struct SpaceSeparatedPoint;
 
 namespace CSS {
 struct PropertyParserState;
+using CoordinatePair = SpaceSeparatedPoint<LengthPercentage<>>;
 }
 
 namespace CSSPropertyParserHelpers {
@@ -60,6 +63,10 @@ RefPtr<CSSValue> consumePath(CSSParserTokenRange&, CSS::PropertyParserState&);
 // <'shape-outside'> = none | [ <basic-shape> || <shape-box> ] | <image>
 // https://drafts.csswg.org/css-shapes/#propdef-shape-outside
 RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange&, CSS::PropertyParserState&);
+
+// <coordinate-pair> = <length-percentage>{2}
+// https://drafts.csswg.org/css-shapes-2/#typedef-shape-coordinate-pair
+std::optional<CSS::CoordinatePair> consumeCoordinatePair(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 
 } // namespace CSSPropertyParserHelpers

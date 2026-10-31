@@ -102,6 +102,7 @@ struct CSSParserContext {
     bool cssInheritFunctionEnabled : 1 { false };
     bool cssFontPaletteMixFunctionEnabled : 1 { false };
     bool cssSymbolsFunctionEnabled : 1 { false };
+    bool cssMeshGradientsEnabled : 1 { false };
     bool viewportSegmentsAPIEnabled : 1 { false };
 
     // Enabled only for the legacy <font face> attribute: allows a numeric token within a family

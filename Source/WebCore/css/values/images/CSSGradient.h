@@ -27,7 +27,7 @@
 #pragma once
 
 #include <WebCore/CSSColor.h>
-#include <WebCore/CSSColorInterpolationMethod.h>
+#include <WebCore/CSSGradientColorInterpolationMethod.h>
 #include <WebCore/CSSPosition.h>
 #include <WebCore/CSSValueTypes.h>
 
@@ -43,28 +43,6 @@ using Vertical   = Variant<Keyword::Top, Keyword::Bottom>;
 
 using RadialGradientExtent         = Variant<Keyword::ClosestCorner, Keyword::ClosestSide, Keyword::FarthestCorner, Keyword::FarthestSide>;
 using PrefixedRadialGradientExtent = Variant<Keyword::ClosestCorner, Keyword::ClosestSide, Keyword::FarthestCorner, Keyword::FarthestSide, Keyword::Contain, Keyword::Cover>;
-
-// MARK: - Gradient Color Interpolation Definitions.
-
-struct GradientColorInterpolationMethod {
-    enum class Default : bool { SRGB, OKLab };
-
-    ColorInterpolationMethod method;
-    Default defaultMethod;
-
-    static GradientColorInterpolationMethod legacyMethod(AlphaPremultiplication alphaPremultiplication)
-    {
-        return {
-            .method = { WebCore::ColorInterpolationMethod::SRGB { }, alphaPremultiplication },
-            .defaultMethod = Default::SRGB
-        };
-    }
-
-    bool operator==(const GradientColorInterpolationMethod&) const = default;
-};
-
-template<> struct ComputedStyleDependenciesCollector<GradientColorInterpolationMethod> { constexpr void operator()(ComputedStyleDependencies&, const GradientColorInterpolationMethod&) { } };
-template<> struct CSSValueChildrenVisitor<GradientColorInterpolationMethod> { constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const GradientColorInterpolationMethod&) { return IterationStatus::Continue; } };
 
 // MARK: - Gradient Color Stop Definitions.
 

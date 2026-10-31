@@ -119,30 +119,15 @@ void Serialize<GradientDeprecatedColorStop>::operator()(StringBuilder& builder, 
 
 // MARK: - Gradient Color Interpolation
 
-static bool appendColorInterpolationMethod(StringBuilder& builder, CSS::GradientColorInterpolationMethod colorInterpolationMethod, bool needsLeadingSpace)
+static bool appendColorInterpolationMethod(StringBuilder& builder, const SerializationContext& context, const GradientColorInterpolationMethod& colorInterpolationMethod, bool needsLeadingSpace)
 {
-    return WTF::switchOn(colorInterpolationMethod.method.value.colorSpace,
-        [&](const WebCore::ColorInterpolationMethod::OKLab&) {
-            if (colorInterpolationMethod.defaultMethod != CSS::GradientColorInterpolationMethod::Default::OKLab) {
-                builder.append(needsLeadingSpace ? " "_s : ""_s, "in oklab"_s);
-                return true;
-            }
-            return false;
-        },
-        [&](const WebCore::ColorInterpolationMethod::SRGB&) {
-            if (colorInterpolationMethod.defaultMethod != CSS::GradientColorInterpolationMethod::Default::SRGB) {
-                builder.append(needsLeadingSpace ? " "_s : ""_s, "in srgb"_s);
-                return true;
-            }
-            return false;
-        },
-        [&]<typename MethodColorSpace>(const MethodColorSpace& methodColorSpace) {
-            builder.append(needsLeadingSpace ? " "_s : ""_s, "in "_s, WebCore::serializationForCSS(methodColorSpace.interpolationColorSpace));
-            if constexpr (hasHueInterpolationMethod<MethodColorSpace>)
-                WebCore::serializationForCSS(builder, methodColorSpace.hueInterpolationMethod);
-            return true;
-        }
-    );
+    if (colorInterpolationMethod.isDefault())
+        return false;
+
+    if (needsLeadingSpace)
+        builder.append(' ');
+    serializationForCSS(builder, context, colorInterpolationMethod);
+    return true;
 }
 
 // MARK: - LinearGradient
@@ -187,7 +172,7 @@ void Serialize<LinearGradient>::operator()(StringBuilder& builder, const Seriali
         }
     );
 
-    if (appendColorInterpolationMethod(builder, gradient.colorInterpolationMethod, wroteSomething))
+    if (appendColorInterpolationMethod(builder, context, gradient.colorInterpolationMethod, wroteSomething))
         wroteSomething = true;
 
     if (wroteSomething)
@@ -276,7 +261,7 @@ void Serialize<RadialGradient>::operator()(StringBuilder& builder, const Seriali
     serializationForCSS(builder, context, gradient.gradientBox);
     bool wroteSomething = builder.length() != lengthBefore;
 
-    if (appendColorInterpolationMethod(builder, gradient.colorInterpolationMethod, wroteSomething))
+    if (appendColorInterpolationMethod(builder, context, gradient.colorInterpolationMethod, wroteSomething))
         wroteSomething = true;
 
     if (wroteSomething)
@@ -393,7 +378,7 @@ void Serialize<ConicGradient>::operator()(StringBuilder& builder, const Serializ
     serializationForCSS(builder, context, gradient.gradientBox);
     bool wroteSomething = builder.length() != lengthBefore;
 
-    if (appendColorInterpolationMethod(builder, gradient.colorInterpolationMethod, wroteSomething))
+    if (appendColorInterpolationMethod(builder, context, gradient.colorInterpolationMethod, wroteSomething))
         wroteSomething = true;
 
     if (wroteSomething)

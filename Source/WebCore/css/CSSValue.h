@@ -121,6 +121,7 @@ public:
     bool isMaskBorderSliceValue() const { return m_classType == ClassType::MaskBorderSlice; }
     bool isMaskBorderSourceValue() const { return m_classType == ClassType::MaskBorderSource; }
     bool isMaskBorderWidthValue() const { return m_classType == ClassType::MaskBorderWidth; }
+    bool isMeshGradientValue() const { return m_classType == ClassType::MeshGradient; }
     bool isNamedImageValue() const { return m_classType == ClassType::NamedImage; }
     bool isOffsetRotateValue() const { return m_classType == ClassType::OffsetRotate; }
     bool isPaintImageValue() const { return m_classType == ClassType::PaintImage; }
@@ -151,7 +152,7 @@ public:
     bool isWebkitBoxReflectValue() const { return m_classType == ClassType::WebkitBoxReflect; }
 
     bool hasSubstitutionFunctions() const { return isSubstitutionValue() || isShorthandSubstitutionValue(); }
-    bool isImageGeneratorValue() const { return m_classType >= ClassType::Canvas && m_classType <= ClassType::Gradient; }
+    bool isImageGeneratorValue() const { return m_classType >= ClassType::Canvas && m_classType <= ClassType::MeshGradient; }
     bool isImplicitInitialValue() const { return m_isImplicitInitialValue; }
     bool containsVector() const { return m_classType >= ClassType::ValueList; }
 
@@ -215,6 +216,7 @@ protected:
         Crossfade,
         FilterImage,
         Gradient,
+        MeshGradient,
 
         // Other non-list classes.
         AppleColorFilter,
