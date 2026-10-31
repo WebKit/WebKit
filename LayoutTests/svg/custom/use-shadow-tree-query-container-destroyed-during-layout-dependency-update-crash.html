@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests that an element recorded in Style::DocumentScope::LayoutDependencyUpdateContext survives
+until LocalFrameViewLayoutContext::layout() returns.</p>
+<p>A &lt;use&gt; shadow tree clone can be a CSS query container, so
+invalidateForContainerDependencies() records it in
+LayoutDependencyUpdateContext::invalidatedContainers. That set lives on layout()'s stack across
+Document::updateStyleIfNeeded(), and SVGUseElement::updateUserAgentShadowTree() destroys and
+recreates the clone from inside that style update - so the recorded element dies while still
+referenced. With a CheckedRef this traps in
+CanMakeCheckedPtrBase::decrementCheckedPtrCount() when the sets are torn down.</p>
+<p>Passes if it does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// The <use> here targets its own ancestor <svg>, so expanding the shadow tree re-invalidates it
+// and the clones are rebuilt more than once. The cloned <text> carries container-type, which is
+// what puts it in the invalidatedContainers set.
+const markup = `<!DOCTYPE html><html><head><style>
+.class3 { container-type: inline-size; }
+</style></head><body>
+<svg id="rootSvg">
+    <text id="textElement" class="class3">
+        <tref xlink:href="#textPathTarget">
+            <textPath id="textPathTarget">
+                <altGlyph xlink:href="#rootSvg">
+                    Text</text>
+    <textPath id="secondTextPath"></textPath>
+    <circle id="circleElement" cx="0.66" cy="34%" r="1"></circle>
+    <use id="useCircle" xlink:href="#circleElement"></use>
+    <marker id="markerElement">
+        <menu id="menuElement">
+            <q id="quoteElement" class="class3">text</q>
+            <svg id="innerSvg" viewBox="1 1 1 62">
+                <use id="useRoot" xlink:href="#rootSvg"></use>
+            </svg>
+        </menu>
+    </marker>
+</svg>
+</body></html>`;
+
+// Whether the shadow tree rebuild lands inside the window where the element is already recorded
+// depends on how many rebuild rounds the recursive <use> takes, so load the document several
+// times rather than once.
+const FRAMES = 12;
+let remaining = FRAMES;
+for (let i = 0; i < FRAMES; ++i) {
+    const frame = document.createElement('iframe');
+    frame.onload = () => {
+        if (--remaining)
+            return;
+        document.body.textContent = 'PASS did not crash';
+        if (window.testRunner)
+            testRunner.notifyDone();
+    };
+    frame.srcdoc = markup;
+    document.body.appendChild(frame);
+}
+</script>
+</body>
+</html>
