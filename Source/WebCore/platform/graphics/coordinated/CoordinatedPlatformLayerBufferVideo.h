@@ -40,13 +40,8 @@ struct ImageOrientation;
 
 class CoordinatedPlatformLayerBufferVideo final : public CoordinatedPlatformLayerBuffer {
 public:
-#if USE(TEXTURE_MAPPER)
-    static std::unique_ptr<CoordinatedPlatformLayerBufferVideo> create(Ref<VideoFrameGStreamer>&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, const ImageOrientation&);
-    CoordinatedPlatformLayerBufferVideo(Ref<VideoFrameGStreamer>&&, IntSize&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
-#else
     static std::unique_ptr<CoordinatedPlatformLayerBufferVideo> create(Ref<VideoFrameGStreamer>&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, const ImageOrientation&, const sk_sp<GrContextThreadSafeProxy>&);
     CoordinatedPlatformLayerBufferVideo(Ref<VideoFrameGStreamer>&&, IntSize&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, Origin, Rotation, const sk_sp<GrContextThreadSafeProxy>&);
-#endif
     virtual ~CoordinatedPlatformLayerBufferVideo();
 
 #if USE(GSTREAMER_GL)
@@ -54,19 +49,6 @@ public:
 #endif
 
 private:
-#if USE(TEXTURE_MAPPER)
-    void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
-
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferIfNeeded(bool gstGLEnabled);
-#if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromDMABufMemory();
-#endif
-#if USE(GSTREAMER_GL)
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromGLMemory();
-#endif
-    void createBufferFromMappedFrameIfNeeded();
-
-#else
     sk_sp<SkImage> skiaImage() override { return m_image; }
 
     void createSkiaImageIfNeeded(const sk_sp<GrContextThreadSafeProxy>&, bool gstGLEnabled, Origin);
@@ -85,16 +67,10 @@ private:
     void createSkiaImageForSinglePlaneGLMemory(GstGLMemory*, std::unique_ptr<GstMappedFrame>&&, const sk_sp<GrContextThreadSafeProxy>&, Origin);
     void createSkiaImageForYUVGLMemory(std::unique_ptr<GstMappedFrame>&&, const sk_sp<GrContextThreadSafeProxy>&, Origin);
 #endif
-#endif
 
     const Ref<VideoFrameGStreamer> m_videoFrame;
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
-#if USE(TEXTURE_MAPPER)
-    const std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
-    std::optional<GstMappedFrame> m_mappedVideoFrame;
-#else
     sk_sp<SkImage> m_image;
-#endif
 };
 
 } // namespace WebCore

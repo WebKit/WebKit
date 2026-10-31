@@ -31,8 +31,7 @@ struct WebKit::RenderProcessInfo {
     String eglVersion;
     String eglVendor;
     String eglExtensions;
-    unsigned cpuPaintingThreadsCount;
-    unsigned gpuPaintingThreadsCount;
+    unsigned paintingThreadsCount;
     unsigned msaaSampleCount;
     Vector<WebKit::RendererBufferFormat::Format> supportedBufferFormats;
     String dmabufExportStrategy;

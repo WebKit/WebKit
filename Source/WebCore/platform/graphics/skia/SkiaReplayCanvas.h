@@ -26,19 +26,21 @@
 #pragma once
 
 #if USE(SKIA)
-#include "IntSize.h"
 #include "SkiaRecordingResult.h"
-#include "SkiaReplayAtlas.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/gpu/ganesh/GrContextThreadSafeProxy.h>
 #include <skia/utils/SkNWayCanvas.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/Assertions.h>
 #include <wtf/Function.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 class SkImage;
 
 namespace WebCore {
+class IntSize;
+class SkiaReplayAtlas;
 
 class SkiaReplayCanvas final : public SkNWayCanvas, public RefCounted<SkiaReplayCanvas> {
 public:
@@ -50,44 +52,12 @@ public:
 private:
     SkiaReplayCanvas(const IntSize&, const Ref<SkiaRecordingResult>&, const sk_sp<GrContextThreadSafeProxy>&);
 
-#if USE(TEXTURE_MAPPER)
-    sk_sp<SkImage> waitForRenderingCompletionAndRewrapImageIfNeeded(const SkImage*);
-
-    void invokeDrawFunctionWithImage(const SkImage*, NOESCAPE const Function<void(const SkImage*)>&);
-    void invokeDrawFunctionWithPaint(const SkPaint&, NOESCAPE const Function<void(const SkPaint&)>&);
-    void invokeDrawFunctionWithShader(const SkShader*, NOESCAPE const Function<void(const SkShader*)>&);
-#endif
-
     // SkNWayCanvas overrides
     void onDrawImage2(const SkImage*, SkScalar, SkScalar, const SkSamplingOptions&, const SkPaint*) override;
     void onDrawImageRect2(const SkImage*, const SkRect&, const SkRect&, const SkSamplingOptions&, const SkPaint*, SrcRectConstraint) override;
 
-#if USE(TEXTURE_MAPPER)
-    void onClipShader(sk_sp<SkShader>, SkClipOp) override;
-    void onDrawArc(const SkRect&, SkScalar, SkScalar, bool, const SkPaint&) override;
-    void onDrawAtlas2(const SkImage*, const SkRSXform[], const SkRect[], const SkColor[], int, SkBlendMode, const SkSamplingOptions&, const SkRect*, const SkPaint*) override;
-    void onDrawBehind(const SkPaint&) override;
-    void onDrawDRRect(const SkRRect&, const SkRRect&, const SkPaint&) override;
-    void onDrawEdgeAAImageSet2(const ImageSetEntry[], int, const SkPoint[], const SkMatrix[], const SkSamplingOptions&, const SkPaint*, SrcRectConstraint) override;
-    void onDrawGlyphRunList(const sktext::GlyphRunList&, const SkPaint&) override;
-    void onDrawImageLattice2(const SkImage*, const Lattice&, const SkRect&, SkFilterMode, const SkPaint*) override;
-    void onDrawOval(const SkRect&, const SkPaint&) override;
-    void onDrawPaint(const SkPaint&) override;
-    void onDrawPatch(const SkPoint[12], const SkColor[4], const SkPoint[4], SkBlendMode, const SkPaint&) override;
-    void onDrawPath(const SkPath&, const SkPaint&) override;
-    void onDrawPoints(PointMode, size_t, const SkPoint[], const SkPaint&) override;
-    void onDrawRRect(const SkRRect&, const SkPaint&) override;
-    void onDrawRect(const SkRect&, const SkPaint&) override;
-    void onDrawRegion(const SkRegion&, const SkPaint&) override;
-    void onDrawSlug(const sktext::gpu::Slug*, const SkPaint&) override;
-    void onDrawTextBlob(const SkTextBlob*, SkScalar x, SkScalar y, const SkPaint&) override;
-    void onDrawVerticesObject(const SkVertices*, SkBlendMode, const SkPaint&) override;
-#endif
-
     const Ref<SkiaRecordingResult> m_recording;
-#if !USE(TEXTURE_MAPPER)
     sk_sp<GrContextThreadSafeProxy> m_threadSafeGrContext;
-#endif
     Vector<std::unique_ptr<SkiaReplayAtlas>> m_atlases;
 };
 

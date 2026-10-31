@@ -69,10 +69,7 @@ public:
     ~CoordinatedTileManager();
 
 #if USE(SKIA)
-    static unsigned numberOfCPUPaintingThreads();
-#if USE(TEXTURE_MAPPER)
-    static unsigned numberOfGPUPaintingThreads();
-#endif
+    static unsigned numberOfPaintingThreads();
 
     const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext() const;
     Ref<SkiaRecordingResult> record(const GraphicsLayerCoordinated&, const IntRect& recordRect, bool contentsOpaque, float contentsScale, unsigned dirtyTilesCount);

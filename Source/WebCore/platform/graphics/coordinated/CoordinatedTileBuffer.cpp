@@ -32,10 +32,7 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #if USE(SKIA)
-#include "BitmapTexturePool.h"
 #include "FontRenderOptions.h"
-#include "GLContext.h"
-#include "GLFence.h"
 #include "PlatformDisplay.h"
 #include "ProcessCapabilities.h"
 #include "SkiaUtilities.h"
@@ -220,20 +217,6 @@ void CoordinatedUnacceleratedTileBuffer::finishPainting()
     m_surface = nullptr;
 }
 
-#if USE(TEXTURE_MAPPER)
-Ref<CoordinatedTileBuffer> CoordinatedAcceleratedTileBuffer::create(const IntSize& size, Flags flags)
-{
-    return adoptRef(*new CoordinatedAcceleratedTileBuffer(size, flags));
-}
-
-CoordinatedAcceleratedTileBuffer::CoordinatedAcceleratedTileBuffer(const IntSize& size, Flags flags)
-    : CoordinatedTileBuffer(flags)
-    , m_size(size)
-{
-}
-
-#else
-
 Ref<CoordinatedTileBuffer> CoordinatedAcceleratedTileBuffer::create(const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext, const IntSize& size, Flags flags)
 {
     auto alphaType = (flags & SupportsAlpha) ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
@@ -251,85 +234,35 @@ CoordinatedAcceleratedTileBuffer::CoordinatedAcceleratedTileBuffer(GrSurfaceChar
     , m_characterization(WTF::move(characterization))
 {
 }
-#endif
 
 CoordinatedAcceleratedTileBuffer::~CoordinatedAcceleratedTileBuffer() = default;
 
 IntSize CoordinatedAcceleratedTileBuffer::size() const
 {
-#if USE(TEXTURE_MAPPER)
-    return m_size;
-#else
     return { m_characterization.width(), m_characterization.height() };
-#endif
 }
 
 bool CoordinatedAcceleratedTileBuffer::prepareForPainting()
 {
-#if USE(TEXTURE_MAPPER)
-    if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
-        return false;
-
-    OptionSet<BitmapTexture::Flags> textureFlags;
-    if (supportsAlpha())
-        textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
-    m_texture = BitmapTexturePool::singleton().acquireTexture(m_size, textureFlags);
-    m_surface = m_texture->createSkiaSurface(PlatformDisplay::sharedDisplay().skiaGrContext());
-    if (!m_surface) {
-        m_texture = nullptr;
-        return false;
-    }
-#else
     m_recorder.emplace(m_characterization);
-#endif
-
     return true;
 }
 
 SkCanvas* CoordinatedAcceleratedTileBuffer::canvas()
 {
-#if USE(TEXTURE_MAPPER)
-    ASSERT(m_surface);
-    return m_surface->getCanvas();
-#else
     ASSERT(m_recorder);
     return m_recorder->getCanvas();
-#endif
 }
 
 void CoordinatedAcceleratedTileBuffer::finishPainting()
 {
-#if USE(TEXTURE_MAPPER)
-    if (!m_surface)
-        return;
-
-    auto* recordingContext = m_surface->recordingContext();
-    auto* grContext = recordingContext ? recordingContext->asDirectContext() : nullptr;
-    if (grContext)
-        m_fence = SkiaUtilities::flushAndSubmitSurfaceWithFence(grContext, m_surface.get());
-
-    // Surface is no longer needed, destroy it (in the same thread that created it).
-    m_surface = nullptr;
-#else
     if (!m_recorder)
         return;
 
     m_displayList = m_recorder->detach();
     m_recorder.reset();
-#endif
 }
 
-#if USE(TEXTURE_MAPPER)
-RefPtr<BitmapTexture> CoordinatedAcceleratedTileBuffer::takeTexture()
-{
-    if (m_fence) {
-        m_fence->serverWait();
-        m_fence = nullptr;
-    }
-
-    return std::exchange(m_texture, nullptr);
-}
-#endif
 #endif // USE(SKIA)
 
 CoordinatedTileBuffer::CoordinatedTileBuffer(Flags flags)

@@ -29,10 +29,6 @@
 #if USE(COORDINATED_GRAPHICS) && ENABLE(VIDEO)
 #include "IntRect.h"
 
-#if USE(TEXTURE_MAPPER)
-#include "TextureMapper.h"
-#endif
-
 #if USE(GSTREAMER)
 #include "GStreamerQuirks.h"
 #endif
@@ -45,11 +41,7 @@ std::unique_ptr<CoordinatedPlatformLayerBufferHolePunch> CoordinatedPlatformLaye
 }
 
 CoordinatedPlatformLayerBufferHolePunch::CoordinatedPlatformLayerBufferHolePunch(const IntSize& size)
-#if USE(TEXTURE_MAPPER)
-    : CoordinatedPlatformLayerBuffer(Type::HolePunch, size, { TextureMapperFlags::ShouldNotBlend }, nullptr)
-#else
     : CoordinatedPlatformLayerBuffer(Type::HolePunch, size)
-#endif
 {
 }
 
@@ -61,11 +53,7 @@ std::unique_ptr<CoordinatedPlatformLayerBufferHolePunch> CoordinatedPlatformLaye
 }
 
 CoordinatedPlatformLayerBufferHolePunch::CoordinatedPlatformLayerBufferHolePunch(const IntSize& size, GstElement* videoSink, RefPtr<GStreamerQuirksManager>&& quirksManager)
-#if USE(TEXTURE_MAPPER)
-    : CoordinatedPlatformLayerBuffer(Type::HolePunch, size, { TextureMapperFlags::ShouldNotBlend }, nullptr)
-#else
     : CoordinatedPlatformLayerBuffer(Type::HolePunch, size)
-#endif
     , m_videoSink(videoSink)
     , m_quirksManager(quirksManager)
 {
@@ -79,17 +67,6 @@ void CoordinatedPlatformLayerBufferHolePunch::setHolePunchVideoRectangle(const I
 {
     if (m_videoSink && m_quirksManager)
         m_quirksManager->setHolePunchVideoRectangle(m_videoSink.get(), rect);
-}
-#endif
-
-#if USE(TEXTURE_MAPPER)
-void CoordinatedPlatformLayerBufferHolePunch::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float)
-{
-#if USE(GSTREAMER)
-    if (m_videoSink && m_quirksManager)
-        setHolePunchVideoRectangle(enclosingIntRect(modelViewMatrix.mapRect(targetRect)));
-#endif
-    textureMapper.drawSolidColor(targetRect, modelViewMatrix, Color::transparentBlack, false);
 }
 #endif
 

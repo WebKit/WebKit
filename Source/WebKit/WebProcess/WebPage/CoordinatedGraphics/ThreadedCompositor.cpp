@@ -57,10 +57,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
-#if USE(TEXTURE_MAPPER)
-#include <WebCore/TextureMapperLayer.h>
-#endif
-
 #if USE(LIBEPOXY)
 #include <epoxy/egl.h>
 #include <epoxy/gl.h>
@@ -83,9 +79,6 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
     , m_layerTreeHost(&layerTreeHost)
     , m_surface(AcceleratedSurface::create(webPage, [this] { frameComplete(); }, AcceleratedSurface::RenderingPurpose::Composited))
     , m_sceneState(&sceneState)
-#if USE(TEXTURE_MAPPER)
-    , m_flipY(!m_surface->shouldPaintMirrored())
-#endif
     , m_renderTimer(m_workQueue->runLoop(), "ThreadedCompositor::RenderTimer"_s, this, &ThreadedCompositor::renderLayerTree)
 {
     ASSERT(RunLoop::isMain());
@@ -96,16 +89,10 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
 
     initializeFPSCounter();
 #if ENABLE(DAMAGE_TRACKING)
-#if USE(TEXTURE_MAPPER)
-    m_damage.visualizer = TextureMapperDamageVisualizer::create();
-#else
-    // The margin TextureMapperDamageVisualizer takes means nothing here, since the overlay fills the
-    // damage as a region, but the same variable enables both so it does not depend on the compositor.
     if (const auto* showDamageEnvvar = getenv("WEBKIT_SHOW_DAMAGE")) {
         if (auto value = parseInteger<unsigned>(StringView::fromLatin1(showDamageEnvvar)); value && *value)
             m_damage.showAccumulatedDamageOverlay = true;
     }
-#endif
 #endif
 
     updateSceneAttributes(webPage.size(), webPage.deviceScaleFactor());
@@ -128,17 +115,8 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
 
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_maxTextureSize);
 
-#if USE(TEXTURE_MAPPER)
-        m_context = WTF::move(context);
-        m_textureMapper = TextureMapper::create();
-#if USE(WPE_RENDERER)
-        if (m_surface->isLegacyWPERenderer() && !nativeSurfaceHandle)
-            m_flipY = !m_flipY;
-#endif
-#else
         PlatformDisplay::sharedDisplay().setSkiaGLContextForCurrentThread(WTF::move(context));
         m_threadSafeGrContext = PlatformDisplay::sharedDisplay().skiaGrContext()->threadSafeProxy();
-#endif
     });
 }
 
@@ -163,24 +141,12 @@ void ThreadedCompositor::invalidate()
 
     m_didCompositeRunLoopObserver->invalidate();
     m_workQueue->dispatchSync([this] {
-#if USE(TEXTURE_MAPPER)
-        if (!m_context || !m_context->makeContextCurrent())
-            return;
-#endif
-
         // Update the scene at this point ensures the layers state are correctly propagated.
         flushCompositingState(CompositionReason::RenderingUpdate);
 
         m_sceneState->invalidateCommittedLayers();
-#if USE(TEXTURE_MAPPER)
-        m_textureMapper = nullptr;
-#endif
         m_surface->willDestroyGLContext();
-#if USE(TEXTURE_MAPPER)
-        m_context = nullptr;
-#else
         PlatformDisplay::sharedDisplay().setSkiaGLContextForCurrentThread(nullptr);
-#endif
     });
     m_sceneState = nullptr;
     m_layerTreeHost = nullptr;
@@ -312,31 +278,48 @@ void ThreadedCompositor::setDamagePropagationSettings(std::optional<OptionSet<Da
 
 bool ThreadedCompositor::damageUsedForCompositing() const
 {
-    // Only the Skia compositor draws just the damage rects. TextureMapper scissors with the damage
-    // bounds, which needs neither fine-grained records nor swap-chain accumulation.
-#if USE(TEXTURE_MAPPER)
-    return false;
-#else
     return m_damage.flags && m_damage.flags->contains(DamagePropagationFlags::UseForCompositing);
-#endif
 }
 
 bool ThreadedCompositor::drawsOverlay() const
 {
-    // The damage overlay is drawn by paintToSkiaCanvas(), the visualizer by paintToTextureMapper(), so
-    // each path only has its own. Both draw over the damage itself, and damaging what they drew would
-    // feed their own rects back into what they show next, growing until they cover the surface. So the
-    // frame repaints in full instead. The FPS counter has no such loop and damages its own box.
-#if USE(TEXTURE_MAPPER)
-    return !!m_damage.visualizer;
-#else
+    // The damage overlay is drawn by paintToCurrentGLContext which draws over the damage itself.
+    // Damaging what it drew would feed its own rects back into what they show next, growing
+    // until they cover the surface. So the frame repaints in full instead.
+    // The FPS counter has no such loop and damages its own box.
     return m_damage.showAccumulatedDamageOverlay;
-#endif
 }
 
 void ThreadedCompositor::enableFrameDamageNotificationForTesting()
 {
     m_damage.shouldNotifyFrameDamageForTesting = true;
+}
+
+void ThreadedCompositor::recordFrameDamage(Damage&& damage)
+{
+    if (m_damage.shouldNotifyFrameDamageForTesting && m_layerTreeHost)
+        m_layerTreeHost->notifyFrameDamageForTesting(damage.regionForTesting());
+
+    // Nothing changed this frame: an empty damage contributes nothing to the targets, since Damage::add()
+    // ignores empty damage. Skip it rather than replace the recorded frame damage with an empty one.
+    if (damage.isEmpty())
+        return;
+
+    m_surface->setFrameDamage(WTF::move(damage));
+}
+
+static void drawDamageOverlay(SkCanvas& canvas, const Damage& damage, const IntSize& size, SkColor color)
+{
+    SkPaint paint;
+    paint.setStyle(SkPaint::kFill_Style);
+    paint.setColor(color);
+
+    // Drawn as a region, so the translucent overlay composites once even where the rects touch. No region
+    // means the damage covers the whole surface, which the overlay has to show as such.
+    if (auto damageRegion = SkiaDamageRegion::create(damage, size))
+        damageRegion->fillCanvasInDeviceSpace(canvas, paint);
+    else
+        canvas.drawPaint(paint);
 }
 #endif
 
@@ -356,104 +339,6 @@ void ThreadedCompositor::flushCompositingState(const OptionSet<CompositionReason
 }
 
 TargetContents ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& matrix, const IntSize& size, const OptionSet<CompositionReason>& reasons)
-{
-#if USE(TEXTURE_MAPPER)
-    paintToTextureMapper(matrix, size, reasons);
-    return TargetContents::Valid;
-#else
-    return paintToSkiaCanvas(matrix, size, reasons);
-#endif
-}
-
-#if USE(TEXTURE_MAPPER)
-void ThreadedCompositor::paintToTextureMapper(const TransformationMatrix& matrix, const IntSize& size, const OptionSet<CompositionReason>& reasons)
-{
-    FloatRect clipRect(FloatPoint { }, size);
-    TextureMapperLayer& currentRootLayer = m_sceneState->rootLayer().ensureTarget();
-    if (currentRootLayer.transform() != matrix)
-        currentRootLayer.setTransform(matrix);
-
-    bool sceneHasRunningAnimations = currentRootLayer.applyAnimationsRecursively(MonotonicTime::now());
-
-    m_textureMapper->beginPainting(m_flipY ? TextureMapper::FlipY::Yes : TextureMapper::FlipY::No);
-    m_textureMapper->beginClip(TransformationMatrix(), FloatRoundedRect(clipRect));
-
-#if ENABLE(DAMAGE_TRACKING)
-    std::optional<FloatRoundedRect> rectContainingRegionThatActuallyChanged;
-    currentRootLayer.prepareForPainting(*m_textureMapper);
-    if (m_damage.flags) {
-        Damage frameDamage(size, m_damage.flags->contains(DamagePropagationFlags::Unified) ? Damage::Mode::BoundingBox : Damage::Mode::Rectangles);
-
-        WTFBeginSignpost(this, CollectDamage);
-        currentRootLayer.collectDamage(*m_textureMapper, frameDamage);
-        WTFEndSignpost(this, CollectDamage);
-
-        recordFrameDamage(WTF::move(frameDamage));
-
-        if (m_damage.flags->contains(DamagePropagationFlags::UseForCompositing)) {
-            if (drawsOverlay()) {
-                // No damage means repaint the whole frame, so skip the scissor below too.
-                m_textureMapper->setDamage(std::nullopt);
-            } else {
-                const auto& damageSinceLastSurfaceUse = m_surface->renderTargetDamage();
-                if (damageSinceLastSurfaceUse && !FloatRect(damageSinceLastSurfaceUse->bounds()).contains(clipRect))
-                    rectContainingRegionThatActuallyChanged = FloatRoundedRect(damageSinceLastSurfaceUse->bounds());
-
-                m_textureMapper->setDamage(damageSinceLastSurfaceUse);
-            }
-        }
-    }
-
-    if (rectContainingRegionThatActuallyChanged)
-        m_textureMapper->beginClip(TransformationMatrix(), *rectContainingRegionThatActuallyChanged);
-#endif
-
-    m_surface->clear(reasons);
-
-    WTFBeginSignpost(this, PaintTextureMapperLayerTree);
-    currentRootLayer.paint(*m_textureMapper);
-    WTFEndSignpost(this, PaintTextureMapperLayerTree);
-
-#if ENABLE(DAMAGE_TRACKING)
-    if (rectContainingRegionThatActuallyChanged)
-        m_textureMapper->endClip();
-#endif
-
-#if ENABLE(DAMAGE_TRACKING)
-    if (m_damage.visualizer) {
-        m_damage.visualizer->paintDamage(*m_textureMapper, m_surface->frameDamage());
-        // When damage visualizer is active, we cannot send the original damage to the platform as in this case
-        // the damage rects visualized previous frame may not get erased if platform actually uses damage.
-        m_surface->setFrameDamageForPlatformOnly(Damage(size, Damage::Mode::Full));
-    }
-#endif
-
-    m_textureMapper->endClip();
-    m_textureMapper->endPainting();
-
-    if (sceneHasRunningAnimations)
-        requestComposition(CompositionReason::Animation);
-}
-
-#else
-
-#if ENABLE(DAMAGE_TRACKING)
-static void drawDamageOverlay(SkCanvas& canvas, const Damage& damage, const IntSize& size, SkColor color)
-{
-    SkPaint paint;
-    paint.setStyle(SkPaint::kFill_Style);
-    paint.setColor(color);
-
-    // Drawn as a region, so the translucent overlay composites once even where the rects touch. No region
-    // means the damage covers the whole surface, which the overlay has to show as such.
-    if (auto damageRegion = SkiaDamageRegion::create(damage, size))
-        damageRegion->fillCanvasInDeviceSpace(canvas, paint);
-    else
-        canvas.drawPaint(paint);
-}
-#endif
-
-TargetContents ThreadedCompositor::paintToSkiaCanvas(const TransformationMatrix& matrix, const IntSize& size, const OptionSet<CompositionReason>& reasons)
 {
     auto* canvas = m_surface->canvas();
     if (!canvas)
@@ -519,22 +404,6 @@ TargetContents ThreadedCompositor::paintToSkiaCanvas(const TransformationMatrix&
 
     return TargetContents::Valid;
 }
-#endif
-
-#if ENABLE(DAMAGE_TRACKING)
-void ThreadedCompositor::recordFrameDamage(Damage&& damage)
-{
-    if (m_damage.shouldNotifyFrameDamageForTesting && m_layerTreeHost)
-        m_layerTreeHost->notifyFrameDamageForTesting(damage.regionForTesting());
-
-    // Nothing changed this frame: an empty damage contributes nothing to the targets, since Damage::add()
-    // ignores empty damage. Skip it rather than replace the recorded frame damage with an empty one.
-    if (damage.isEmpty())
-        return;
-
-    m_surface->setFrameDamage(WTF::move(damage));
-}
-#endif
 
 #if HAVE(OS_SIGNPOST) || USE(SYSPROF_CAPTURE)
 static String reasonsToString(const OptionSet<CompositionReason>& reasons)
@@ -586,11 +455,6 @@ void ThreadedCompositor::renderLayerTree()
         m_state.state = State::InProgress;
     }
 
-#if USE(TEXTURE_MAPPER)
-    if (!m_context || !m_context->makeContextCurrent())
-        return;
-#endif
-
     // Retrieve the scene attributes in a thread-safe manner.
     IntSize viewportSize;
     float deviceScaleFactor;
@@ -628,12 +492,7 @@ void ThreadedCompositor::renderLayerTree()
 
     WTFEmitSignpost(this, DidRenderFrame, "reasons: %s", reasonsToString(reasons).utf8());
 
-#if USE(TEXTURE_MAPPER)
-    if (m_context)
-        m_context->swapBuffers();
-#else
     PlatformDisplay::sharedDisplay().skiaGLContext()->swapBuffers();
-#endif
 
     m_surface->didRenderFrame(targetContents);
     m_surface->sendFrame();

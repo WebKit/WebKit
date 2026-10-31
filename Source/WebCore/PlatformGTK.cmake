@@ -14,10 +14,6 @@ else ()
     include(platform/GCrypt.cmake)
 endif ()
 
-if (USE_TEXTURE_MAPPER)
-    include(platform/TextureMapper.cmake)
-endif ()
-
 list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "SourcesGTK.txt"
 

@@ -60,7 +60,7 @@ static bool canPerformAcceleratedRendering()
     return ProcessCapabilities::canUseAcceleratedBuffers() && PlatformDisplay::sharedDisplay().skiaGLContext();
 }
 
-unsigned CoordinatedTileManager::numberOfCPUPaintingThreads()
+unsigned CoordinatedTileManager::numberOfPaintingThreads()
 {
     static std::once_flag onceFlag;
     static unsigned numberOfThreads = 0;
@@ -68,7 +68,11 @@ unsigned CoordinatedTileManager::numberOfCPUPaintingThreads()
     std::call_once(onceFlag, [] {
         numberOfThreads = std::max(1, std::min(8, WTF::numberOfProcessorCores() / 2)); // By default, use half the CPU cores, capped at 8.
 
-        if (const char* envString = getenv("WEBKIT_SKIA_CPU_PAINTING_THREADS")) {
+        const char* envString = getenv("WEBKIT_SKIA_TILE_PAINTING_THREADS");
+        if (!envString)
+            envString = getenv("WEBKIT_SKIA_CPU_PAINTING_THREADS");
+
+        if (envString) {
             auto newValue = parseInteger<unsigned>(StringView::fromLatin1(envString));
             if (newValue && *newValue >= 1 && *newValue <= 8)
                 numberOfThreads = *newValue;
@@ -80,37 +84,9 @@ unsigned CoordinatedTileManager::numberOfCPUPaintingThreads()
     return numberOfThreads;
 }
 
-#if USE(TEXTURE_MAPPER)
-unsigned CoordinatedTileManager::numberOfGPUPaintingThreads()
-{
-    static std::once_flag onceFlag;
-    static unsigned numberOfThreads = 0;
-
-    std::call_once(onceFlag, [] {
-        // By default, use 2 GPU worker threads if there are four or more CPU cores, otherwise use 1 thread only.
-        numberOfThreads = WTF::numberOfProcessorCores() >= 4 ? 2 : 1;
-
-        if (const char* envString = getenv("WEBKIT_SKIA_GPU_PAINTING_THREADS")) {
-            auto newValue = parseInteger<unsigned>(StringView::fromLatin1(envString));
-            if (newValue && *newValue >= 1 && *newValue <= 4)
-                numberOfThreads = *newValue;
-            else
-                WTFLogAlways("The number of Skia/GPU painting threads is not between 1 and 4. Using the default value %u\n", numberOfThreads);
-        }
-    });
-
-    return numberOfThreads;
-}
-#endif
-
 static Ref<WorkerPool> createWorkerPool()
 {
-#if USE(TEXTURE_MAPPER)
-    if (canPerformAcceleratedRendering())
-        return WorkerPool::create("SkiaGPUWorker"_s, CoordinatedTileManager::numberOfGPUPaintingThreads());
-#endif
-
-    return WorkerPool::create("SkiaCPUWorker"_s, CoordinatedTileManager::numberOfCPUPaintingThreads());
+    return WorkerPool::create("SkiaWorker"_s, CoordinatedTileManager::numberOfPaintingThreads());
 }
 
 std::unique_ptr<CoordinatedTileManager> CoordinatedTileManager::create(sk_sp<GrContextThreadSafeProxy>&& threadSafeGrContext)
@@ -154,11 +130,7 @@ Ref<CoordinatedTileBuffer> CoordinatedTileManager::scheduleReplay(const Graphics
         if (recording->renderingMode() == RenderingMode::Unaccelerated)
             return CoordinatedUnacceleratedTileBuffer::create(dirtyRect.size(), flags);
 
-#if USE(TEXTURE_MAPPER)
-        return CoordinatedAcceleratedTileBuffer::create(dirtyRect.size(), flags);
-#else
         return CoordinatedAcceleratedTileBuffer::create(threadSafeGrContext(), tileRect.size(), flags);
-#endif
     }();
 
     Ref platformLayer = layer.coordinatedPlatformLayer();

@@ -31,10 +31,6 @@
 #include <WebCore/DMABufBuffer.h>
 #include <WebCore/GraphicsLayerContentsDisplayDelegateCoordinated.h>
 
-#if USE(TEXTURE_MAPPER)
-#include <WebCore/TextureMapperFlags.h>
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -93,16 +89,10 @@ void RemoteGraphicsContextGLProxyGBM::prepareForDisplay()
     if (!displayBuffer)
         return;
 
-#if USE(TEXTURE_MAPPER)
-    OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
-    if (contextAttributes().alpha)
-        flags.add(TextureMapperFlags::ShouldBlend);
-    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferDMABuf::create(protect(*displayBuffer), flags, WTF::move(fenceFD)));
-#else
     auto alphaMode = contextAttributes().alpha ? CoordinatedPlatformLayerBuffer::AlphaMode::Premultiplied : CoordinatedPlatformLayerBuffer::AlphaMode::Opaque;
     auto origin = CoordinatedPlatformLayerBuffer::Origin::BottomLeft;
     m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferDMABuf::create(protect(*displayBuffer), alphaMode, origin, WTF::move(fenceFD), m_layerContentsDisplayDelegate->threadSafeGrContext()));
-#endif
+
     m_hasPreparedForDisplay = true;
 }
 
