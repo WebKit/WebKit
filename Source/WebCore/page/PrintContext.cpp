@@ -233,6 +233,19 @@ void PrintContext::begin(float width, float height)
     frame->setPrinting(true, minLayoutSize, originalPageSize, maximumShrinkFactor() / minimumShrinkFactor(), AdjustViewSize::Yes);
 }
 
+void PrintContext::beginWithPageSizeInCSSPixels(float width, float height)
+{
+    if (!frame())
+        return;
+
+    Ref frame = *this->frame();
+    m_isPrinting = true;
+
+    FloatSize pageSize { width, height };
+    FloatSize layoutSize = frame->resizePageRectsKeepingRatio(pageSize, pageSize);
+    frame->setPrinting(true, layoutSize, pageSize, maximumShrinkFactor() / minimumShrinkFactor(), AdjustViewSize::Yes);
+}
+
 float PrintContext::computeAutomaticScaleFactor(const FloatSize& availablePaperSize)
 {
     if (!frame())
@@ -393,7 +406,7 @@ String PrintContext::pageProperty(LocalFrame* frame, const String& propertyName,
 
     RefPtr document = frame->document();
     Ref printContext = PrintContext::create(frame);
-    printContext->begin(800); // Any width is OK here.
+    printContext->beginWithPageSizeInCSSPixels(800); // Any width is OK here.
     document->updateLayout();
     auto style = protect(document->styleScope().resolver())->styleForPage(pageNumber);
 
@@ -464,7 +477,7 @@ bool PrintContext::beginAndComputePageRectsWithPageSize(LocalFrame& frame, const
 
     protect(frame.document())->updateLayout();
 
-    begin(pageSizeInPixels.width(), pageSizeInPixels.height());
+    beginWithPageSizeInCSSPixels(pageSizeInPixels.width(), pageSizeInPixels.height());
     RefPtr view = frame.view();
     if (!view)
         return false;

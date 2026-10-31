@@ -1,12 +1,12 @@
-layer at (0,0) size 1046x834
-  RenderView at (0,0) size 1046x834
-layer at (0,0) size 1046x834
-  RenderBlock {HTML} at (0,0) size 1046x834
-    RenderBody {BODY} at (0,0) size 1046x834
-      RenderBlock {DIV} at (0,0) size 800x798 [border: (1px solid #008000)]
+layer at (0,0) size 800x635
+  RenderView at (0,0) size 800x635
+layer at (0,0) size 800x635
+  RenderBlock {HTML} at (0,0) size 800x635
+    RenderBody {BODY} at (0,0) size 800x635
+      RenderBlock {DIV} at (0,0) size 800x599 [border: (1px solid #008000)]
         RenderText {#text} at (1,1) size 235x18
           text run at (1,1) width 235: "This test case should output 2 pages."
-      RenderBlock (anonymous) at (0,798) size 1046x36
-        RenderText {#text} at (0,0) size 1033x36
-          text run at (0,0) width 1033: "There should be a blue line above this test. This line is the boundary of 2 pages. As the height of green box is shorter than the height of a page by one pixel, there"
-          text run at (0,18) width 403: "should be a white line between the green box and the blue line."
+      RenderBlock (anonymous) at (0,599) size 800x36
+        RenderText {#text} at (0,0) size 779x36
+          text run at (0,0) width 779: "There should be a blue line above this test. This line is the boundary of 2 pages. As the height of green box is shorter than"
+          text run at (0,18) width 657: "the height of a page by one pixel, there should be a white line between the green box and the blue line."

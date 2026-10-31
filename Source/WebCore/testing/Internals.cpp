@@ -4496,7 +4496,7 @@ ExceptionOr<void> Internals::setViewExposedRect(float x, float y, float width, f
 void Internals::setPrinting(int width, int height)
 {
     printContextForTesting() = PrintContext::create(protect(frame()));
-    protect(printContextForTesting())->begin(width, height);
+    protect(printContextForTesting())->beginWithPageSizeInCSSPixels(width, height);
 }
 
 void Internals::setHeaderHeight(float height)
