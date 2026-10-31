@@ -39,7 +39,10 @@ class AvailableLineWidthOverride {
 public:
     AvailableLineWidthOverride() = default;
     AvailableLineWidthOverride(LayoutUnit globalLineWidthOverride) { m_globalLineWidthOverride = globalLineWidthOverride; }
-    AvailableLineWidthOverride(Vector<LayoutUnit> individualLineWidthOverrides) { m_individualLineWidthOverrides = individualLineWidthOverrides; }
+    AvailableLineWidthOverride(Vector<LayoutUnit>&& individualLineWidthOverrides)
+        : m_individualLineWidthOverrides(WTF::move(individualLineWidthOverrides))
+    {
+    }
     std::optional<LayoutUnit> availableLineWidthOverrideForLine(size_t lineIndex) const
     {
         if (m_globalLineWidthOverride)
