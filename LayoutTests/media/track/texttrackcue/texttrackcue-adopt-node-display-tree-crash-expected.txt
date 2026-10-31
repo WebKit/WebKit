@@ -1,0 +1,4 @@
+This tests adopting video element. The test passes if WebKit does not hit any ASAN failures.
+
+PASS
+
