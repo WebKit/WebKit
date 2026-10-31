@@ -49,9 +49,7 @@
 
 namespace WebKit {
 
-#if PLATFORM(COCOA)
 constexpr auto freshlyCreatedTimeout = 5_s;
-#endif
 
 static void addContextMessageReceivers(WebProcessPool& processPool, WebExtensionContext& context)
 {
@@ -98,14 +96,12 @@ WebExtensionController::WebExtensionController(Ref<WebExtensionControllerConfigu
     // should be fired for any loaded extensions during a brief time window. Start a timer
     // when the first extension is about to be loaded.
 
-#if PLATFORM(COCOA)
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(freshlyCreatedTimeout.seconds() * NSEC_PER_SEC)), mainDispatchQueueSingleton(), makeBlockPtr([this, weakThis = WeakPtr { *this }] {
+    RunLoop::mainSingleton().dispatchAfter(Seconds(freshlyCreatedTimeout.seconds()), [this, weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
 
         m_freshlyCreated = false;
-    }).get());
-#endif
+    });
 }
 
 WebExtensionController::~WebExtensionController()

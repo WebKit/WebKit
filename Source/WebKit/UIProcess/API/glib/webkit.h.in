@@ -130,6 +130,7 @@
 #include <@API_INCLUDE_PREFIX@/WebKitWebExtension.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebExtensionContext.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebExtensionMatchPattern.h>
+#include <@API_INCLUDE_PREFIX@/WebKitWebExtensionManager.h>
 #endif
 #if PLATFORM(GTK)
 #include <@API_INCLUDE_PREFIX@/WebKitWebInspector.h>
