@@ -136,18 +136,40 @@ set(_wk_sdk_watchos          "WatchOS"          "watchOS"  "watchos" "watchos" "
 set(_wk_sdk_watchsimulator   "WatchSimulator"   "watchOS"  "watchos" "watchos" "-mwatchos-simulator-version-min=@VERSION@")
 set(_wk_sdk_xros             "XROS"             "visionOS" "xros"    "xros"    "-mtargetos=xros@VERSION@")
 set(_wk_sdk_xrsimulator      "XRSimulator"      "visionOS" "xros"    "xros"    "-mtargetos=xros@VERSION@-simulator")
+set(_wk_sdk_macosx_iosmac    "MacOSX"           "Darwin"   "ios"     "ios"     "-mtargetos=ios@VERSION@-macabi")
+
+set(WEBKIT_SDK_VARIANT "" CACHE STRING "SDK variant to build for, as Xcode's SDK_VARIANT names it (iosmac for Mac Catalyst)")
+set(_wk_sdk_key ${WEBKIT_SDK_NAME})
+set(WEBKIT_SDK_SYSTEM_PREFIX "")
+if (WEBKIT_SDK_VARIANT)
+    file(READ "${CMAKE_OSX_SYSROOT}/SDKSettings.json" _wk_sdk_settings)
+    string(JSON _wk_sdk_variant_settings ERROR_VARIABLE _wk_sdk_variant_error
+        GET ${_wk_sdk_settings} SupportedTargets ${WEBKIT_SDK_VARIANT})
+    if (_wk_sdk_variant_error)
+        message(FATAL_ERROR "The ${WEBKIT_SDK_NAME} SDK at ${CMAKE_OSX_SYSROOT} has no "
+            "'${WEBKIT_SDK_VARIANT}' variant (WEBKIT_SDK_VARIANT).")
+    endif ()
+    string(JSON WEBKIT_SDK_SYSTEM_PREFIX ERROR_VARIABLE _wk_sdk_variant_error
+        GET ${_wk_sdk_variant_settings} SystemPrefix)
+    if (_wk_sdk_variant_error)
+        set(WEBKIT_SDK_SYSTEM_PREFIX "")
+    endif ()
+    string(JSON _wk_sdk_variant_deployment_target GET ${_wk_sdk_variant_settings} DefaultDeploymentTarget)
+    set(_wk_sdk_key ${WEBKIT_SDK_NAME}_${WEBKIT_SDK_VARIANT})
+    unset(_wk_sdk_variant_error)
+endif ()
 
 # Platform detection, derived once from the resolved SDK's PLATFORM_NAME. All
 # downstream CMake branches on these booleans instead of on PORT or an ad-hoc
 # CMAKE_IOS_SIMULATOR flag, so the platform is chosen purely by the selected SDK.
-if (NOT DEFINED _wk_sdk_${WEBKIT_SDK_NAME})
-    message(FATAL_ERROR "Unsupported Apple SDK '${WEBKIT_SDK_NAME}'. Add a row for it to "
+if (NOT DEFINED _wk_sdk_${_wk_sdk_key})
+    message(FATAL_ERROR "Unsupported Apple SDK '${_wk_sdk_key}'. Add a row for it to "
         "the SDK table in WebKitXcodeSDK.cmake so the platform name, the system name, the "
         "triple spellings, and the deployment-target flag that wtf/Platform.h is evaluated "
         "against are all derived for it.")
 endif ()
 
-set(_wk_sdk_entry ${_wk_sdk_${WEBKIT_SDK_NAME}})
+set(_wk_sdk_entry ${_wk_sdk_${_wk_sdk_key}})
 list(GET _wk_sdk_entry 0 WEBKIT_PLATFORM_NAME)
 list(GET _wk_sdk_entry 1 WEBKIT_SDK_SYSTEM_NAME)
 list(GET _wk_sdk_entry 2 WEBKIT_SDK_TARGET_OS)
@@ -157,20 +179,25 @@ unset(_wk_sdk_entry)
 
 # Cocoa is macOS plus the iOS family, the same split wtf/PlatformLegacy.h makes
 # between PLATFORM(MAC) and PLATFORM(IOS_FAMILY), so every SDK above that isn't
-# macOS belongs to the family.
+# macOS belongs to the family. Mac Catalyst is in the family too, but is not
+# PLATFORM(IOS), which wtf/PlatformLegacy.h limits to iPhone and iPad.
 set(WEBKIT_SDK_IS_MACOS OFF)
+set(WEBKIT_SDK_IS_MACCATALYST OFF)
 set(WEBKIT_SDK_IS_IOS_FAMILY OFF)
 set(WEBKIT_SDK_IS_IOS OFF)
 set(WEBKIT_SDK_IS_TVOS OFF)
 set(WEBKIT_SDK_IS_WATCHOS OFF)
 set(WEBKIT_SDK_IS_XROS OFF)
 set(WEBKIT_SDK_IS_SIMULATOR OFF)
-if (WEBKIT_SDK_NAME STREQUAL "macosx")
+if (_wk_sdk_key STREQUAL "macosx_iosmac")
+    set(WEBKIT_SDK_IS_MACCATALYST ON)
+    set(WEBKIT_SDK_IS_IOS_FAMILY ON)
+elseif (WEBKIT_SDK_NAME STREQUAL "macosx")
     set(WEBKIT_SDK_IS_MACOS ON)
 else ()
     set(WEBKIT_SDK_IS_IOS_FAMILY ON)
 endif ()
-if (WEBKIT_SDK_TARGET_OS STREQUAL "ios")
+if (WEBKIT_SDK_TARGET_OS STREQUAL "ios" AND NOT WEBKIT_SDK_IS_MACCATALYST)
     set(WEBKIT_SDK_IS_IOS ON)
 elseif (WEBKIT_SDK_TARGET_OS STREQUAL "tvos")
     set(WEBKIT_SDK_IS_TVOS ON)
@@ -183,8 +210,22 @@ if (WEBKIT_SDK_NAME MATCHES "simulator$")
     set(WEBKIT_SDK_IS_SIMULATOR ON)
 endif ()
 
+# Xcode's SHALLOW_BUNDLE.
+if (WEBKIT_SDK_IS_IOS_FAMILY AND NOT WEBKIT_SDK_IS_MACCATALYST)
+    set(WEBKIT_SDK_SHALLOW_BUNDLE ON)
+else ()
+    set(WEBKIT_SDK_SHALLOW_BUNDLE OFF)
+endif ()
+
+# As Configurations/SDKVariant.xcconfig derives it.
+if (WEBKIT_SDK_IS_MACCATALYST)
+    set(WK_PLATFORM_NAME maccatalyst)
+else ()
+    set(WK_PLATFORM_NAME ${WEBKIT_SDK_NAME})
+endif ()
+
 # The UIDeviceFamily values the SDK supports, most significant first:
-# 1=iPhone, 2=iPad, 3=Apple TV, 4=Apple Watch, 7=Apple Vision.
+# 1=iPhone, 2=iPad, 3=Apple TV, 4=Apple Watch, 6=Mac, 7=Apple Vision.
 function(_WEBKIT_SDK_DEVICE_FAMILIES _result)
     if (WEBKIT_SDK_IS_XROS)
         set(${_result} 7 PARENT_SCOPE)
@@ -192,6 +233,8 @@ function(_WEBKIT_SDK_DEVICE_FAMILIES _result)
         set(${_result} 3 PARENT_SCOPE)
     elseif (WEBKIT_SDK_IS_WATCHOS)
         set(${_result} 4 PARENT_SCOPE)
+    elseif (WEBKIT_SDK_IS_MACCATALYST)
+        set(${_result} 2 6 PARENT_SCOPE)
     else ()
         set(${_result} 1 2 PARENT_SCOPE)
     endif ()
@@ -215,13 +258,25 @@ function(WEBKIT_GET_DEVICE_FAMILY _result)
 endfunction()
 
 # Building for macOS defaults uses the host system's deployment target. Other
-# platforms deploy to the SDK version.
+# platforms deploy to the SDK version. Mac Catalyst deploys to the iOS version
+# the SDK pairs with the macOS one.
 if (NOT CMAKE_OSX_DEPLOYMENT_TARGET)
     execute_process(COMMAND sw_vers -productVersion
         OUTPUT_VARIABLE _host_version
         OUTPUT_STRIP_TRAILING_WHITESPACE
         COMMAND_ERROR_IS_FATAL ANY)
-    if (WEBKIT_SDK_IS_MACOS AND (_host_version VERSION_LESS WEBKIT_SDK_VERSION))
+    if (WEBKIT_SDK_IS_MACCATALYST)
+        set(_deployment_target ${_wk_sdk_variant_deployment_target})
+        if (_host_version VERSION_LESS WEBKIT_SDK_VERSION)
+            string(REGEX MATCH "^[0-9]+\\.[0-9]+" _host_version "${_host_version}")
+            string(JSON _deployment_target ERROR_VARIABLE _wk_sdk_version_map_error
+                GET ${_wk_sdk_settings} VersionMap macOS_iOSMac ${_host_version})
+            if (_wk_sdk_version_map_error)
+                message(FATAL_ERROR "The ${WEBKIT_SDK_NAME} SDK maps no Mac Catalyst version to "
+                    "macOS ${_host_version}; set CMAKE_OSX_DEPLOYMENT_TARGET to an iOS version.")
+            endif ()
+        endif ()
+    elseif (WEBKIT_SDK_IS_MACOS AND (_host_version VERSION_LESS WEBKIT_SDK_VERSION))
         set(_deployment_target ${_host_version})
     else ()
         set(_deployment_target ${WEBKIT_SDK_VERSION})
@@ -234,12 +289,22 @@ if (NOT CMAKE_OSX_DEPLOYMENT_TARGET)
 
     unset(_host_version)
     unset(_deployment_target)
-    message(STATUS "Deployment target: ${WEBKIT_SDK_NAME}${CMAKE_OSX_DEPLOYMENT_TARGET}")
+    message(STATUS "Deployment target: ${WK_PLATFORM_NAME}${CMAKE_OSX_DEPLOYMENT_TARGET}")
 endif ()
 
 if (CMAKE_OSX_DEPLOYMENT_TARGET)
     string(REPLACE "@VERSION@" "${CMAKE_OSX_DEPLOYMENT_TARGET}"
         WEBKIT_SDK_MIN_VERSION_FLAG "${_wk_sdk_min_version_flag}")
+endif ()
+
+if (WEBKIT_SDK_IS_MACCATALYST)
+    string(JSON WEBKIT_MACCATALYST_MACOS_DEPLOYMENT_TARGET ERROR_VARIABLE _wk_sdk_version_map_error
+        GET ${_wk_sdk_settings} VersionMap iOSMac_macOS ${CMAKE_OSX_DEPLOYMENT_TARGET})
+    if (_wk_sdk_version_map_error)
+        message(FATAL_ERROR "The ${WEBKIT_SDK_NAME} SDK maps no macOS version to Mac Catalyst "
+            "${CMAKE_OSX_DEPLOYMENT_TARGET} (CMAKE_OSX_DEPLOYMENT_TARGET).")
+    endif ()
+    unset(_wk_sdk_version_map_error)
 endif ()
 unset(_wk_sdk_min_version_flag)
 
@@ -248,12 +313,34 @@ unset(_wk_sdk_min_version_flag)
 # supplied explicitly. Both must be in place before project() runs. Device vs.
 # simulator is inferred by CMake from the sysroot path, so only the system name
 # differs from a macOS build here.
-if (WEBKIT_SDK_IS_IOS_FAMILY)
+# Mac Catalyst stays a Darwin build, with the compilers pointed at the -macabi
+# triple.
+if (WEBKIT_SDK_IS_MACCATALYST)
+    if (NOT CMAKE_OSX_ARCHITECTURES)
+        execute_process(COMMAND uname -m OUTPUT_VARIABLE _wk_sdk_arch OUTPUT_STRIP_TRAILING_WHITESPACE)
+        set(CMAKE_OSX_ARCHITECTURES "${_wk_sdk_arch}" CACHE STRING "Target architecture" FORCE)
+    endif ()
+    list(LENGTH CMAKE_OSX_ARCHITECTURES _wk_sdk_arch_count)
+    if (_wk_sdk_arch_count GREATER 1)
+        message(FATAL_ERROR "Mac Catalyst builds one architecture at a time; "
+            "CMAKE_OSX_ARCHITECTURES is '${CMAKE_OSX_ARCHITECTURES}'.")
+    endif ()
+    foreach (_lang IN ITEMS C CXX OBJC OBJCXX ASM)
+        set(CMAKE_${_lang}_COMPILER_TARGET "${CMAKE_OSX_ARCHITECTURES}-apple-ios${CMAKE_OSX_DEPLOYMENT_TARGET}-macabi")
+    endforeach ()
+    unset(_lang)
+    unset(_wk_sdk_arch)
+    unset(_wk_sdk_arch_count)
+elseif (WEBKIT_SDK_IS_IOS_FAMILY)
     set(CMAKE_SYSTEM_NAME ${WEBKIT_SDK_SYSTEM_NAME})
     if (NOT CMAKE_SYSTEM_PROCESSOR)
         set(CMAKE_SYSTEM_PROCESSOR "aarch64" CACHE STRING "Target processor" FORCE)
     endif ()
 endif ()
+unset(_wk_sdk_key)
+unset(_wk_sdk_settings)
+unset(_wk_sdk_variant_settings)
+unset(_wk_sdk_variant_deployment_target)
 
 # Subsequent use of `xcrun` or any of the system Xcode and BSD tools will
 # use the selected SDK and toolchain.

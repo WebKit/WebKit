@@ -303,6 +303,39 @@
             "inherits": ["mac-rosetta-debug", "dev"]
         },
         {
+            "name": "maccatalyst",
+            "hidden": true,
+            "inherits": ["mac"],
+            "cacheVariables": {
+                "WEBKIT_SDK_VARIANT": {
+                    "type": "STRING",
+                    "value": "iosmac"
+                }
+            }
+        },
+        {
+            "name": "maccatalyst-release",
+            "displayName": "Mac Catalyst Release",
+            "inherits": ["maccatalyst", "release"],
+            "binaryDir": "WebKitBuild/cmake-maccatalyst/Release"
+        },
+        {
+            "name": "maccatalyst-debug",
+            "displayName": "Mac Catalyst Debug",
+            "inherits": ["maccatalyst", "debug"],
+            "binaryDir": "WebKitBuild/cmake-maccatalyst/Debug"
+        },
+        {
+            "name": "maccatalyst-dev-release",
+            "displayName": "Mac Catalyst Development (Release, ccache, compile_commands)",
+            "inherits": ["maccatalyst-release", "dev"]
+        },
+        {
+            "name": "maccatalyst-dev-debug",
+            "displayName": "Mac Catalyst Development (Debug, ccache, compile_commands)",
+            "inherits": ["maccatalyst-debug", "dev"]
+        },
+        {
             "name": "ios",
             "hidden": true,
             "inherits": ["cocoa-embedded"],
@@ -611,6 +644,26 @@
             "name": "mac-rosetta-dev-debug",
             "displayName": "macOS x86_64/Rosetta Development Debug",
             "configurePreset": "mac-rosetta-dev-debug"
+        },
+        {
+            "name": "maccatalyst-release",
+            "displayName": "Mac Catalyst Release",
+            "configurePreset": "maccatalyst-release"
+        },
+        {
+            "name": "maccatalyst-debug",
+            "displayName": "Mac Catalyst Debug",
+            "configurePreset": "maccatalyst-debug"
+        },
+        {
+            "name": "maccatalyst-dev-release",
+            "displayName": "Mac Catalyst Development Release",
+            "configurePreset": "maccatalyst-dev-release"
+        },
+        {
+            "name": "maccatalyst-dev-debug",
+            "displayName": "Mac Catalyst Development Debug",
+            "configurePreset": "maccatalyst-dev-debug"
         },
         {
             "name": "gtk-release",

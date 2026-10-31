@@ -47,3 +47,7 @@ if (ENABLE_LLDB_WEBKIT_TESTER)
 endif ()
 
 endif ()
+
+if (WEBKIT_SDK_IS_MACCATALYST AND ENABLE_MINIBROWSER AND ENABLE_WEBKIT)
+    add_subdirectory(MobileMiniBrowser)
+endif ()

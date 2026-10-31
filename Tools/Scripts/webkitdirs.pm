@@ -1298,7 +1298,8 @@ sub usesPerConfigurationBuildDirectory
 }
 
 # The CMake tree of the platform being built, matching the binaryDir of the
-# presets in CMakePresets.json: cmake-mac, cmake-iphoneos, cmake-iphonesimulator.
+# presets in CMakePresets.json: cmake-mac, cmake-maccatalyst, cmake-iphoneos,
+# cmake-iphonesimulator.
 sub cmakeCocoaTreeName
 {
     determineXcodeSDKPlatformName();
@@ -3125,6 +3126,7 @@ sub generateBuildSystemFromCMakeProject
     my @args;
     push @args, "-DPORT=\"$port\"";
     push @args, "-DCMAKE_OSX_SYSROOT=\"" . xcodeSDK() . "\"" if isAppleCocoaWebKit();
+    push @args, "-DWEBKIT_SDK_VARIANT=iosmac" if willUseMacCatalystSDK();
     # Multi-arch builds are handed in buildUniversalCMakeProject() below.
     push @args, "-DCMAKE_OSX_ARCHITECTURES=" . architecture() if isAppleCocoaWebKit() && $didUserSpecifyArchitecture && !universalArchitectures();
     push @args, "-DCMAKE_INSTALL_PREFIX=\"$prefixPath\"" if $prefixPath;
@@ -3866,6 +3868,14 @@ sub appDisplayNameFromBundle($)
     return $bundleDisplayName;
 }
 
+sub appExecutablePathFromBundle($)
+{
+    my ($appBundle) = @_;
+    my $plistPath = File::Spec->rel2abs(plistPathFromBundle($appBundle)); # defaults(1) will complain if the specified path is not absolute.
+    chomp(my $executableName = `defaults read '$plistPath' CFBundleExecutable 2> /dev/null`);
+    return File::Spec->catfile($appBundle, "Contents", "MacOS", $executableName);
+}
+
 sub waitUntilIOSSimulatorDeviceIsInState($$)
 {
     my ($deviceUDID, $waitUntilState) = @_;
@@ -4137,6 +4147,11 @@ sub dyldFrameworkPathsForMacWebKitApp($)
 sub runMacWebKitApp($;$$)
 {
     my ($appPath, $useOpenCommand, $openDocumentPath) = @_;
+    # A Mac Catalyst system app that open(1) launches doesn't take the DYLD_* overrides.
+    if (isMacCatalystWebKit() && defined($useOpenCommand) && $useOpenCommand == USE_OPEN_COMMAND && !defined($openDocumentPath) && -d $appPath) {
+        $appPath = appExecutablePathFromBundle($appPath);
+        $useOpenCommand = DO_NOT_USE_OPEN_COMMAND;
+    }
     my @frameworkPaths = dyldFrameworkPathsForMacWebKitApp($appPath);
     print "Starting @{[basename($appPath)]} with DYLD_FRAMEWORK_PATH set to point to built WebKit in @{[join(', ', @frameworkPaths)]}.\n";
 
@@ -4237,7 +4252,7 @@ sub runSafari
 
 sub runMiniBrowser
 {
-    if (isAppleMacWebKit()) {
+    if (isAppleMacWebKit() || isMacCatalystWebKit()) {
         return runMacWebKitApp(File::Spec->catfile(productDir(), "MiniBrowser.app", "Contents", "MacOS", "MiniBrowser"));
     }
     if (isIOSWebKit()) {
@@ -4248,7 +4263,7 @@ sub runMiniBrowser
 
 sub debugMiniBrowser
 {
-    if (isAppleMacWebKit()) {
+    if (isAppleMacWebKit() || isMacCatalystWebKit()) {
         execMacWebKitAppForDebugging(File::Spec->catfile(productDir(), "MiniBrowser.app", "Contents", "MacOS", "MiniBrowser"));
     }
 

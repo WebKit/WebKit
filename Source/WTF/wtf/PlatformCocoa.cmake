@@ -153,14 +153,16 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR USE_APPLE_INTERNAL_SDK)
 endif ()
 
 
+if (WEBKIT_SDK_IS_MACOS OR WEBKIT_SDK_IS_MACCATALYST)
+    list(APPEND WTF_SOURCES
+        mac/FileSystemMac.mm
+    )
+endif ()
+
 if (WEBKIT_SDK_IS_MACOS)
     find_library(COCOA_LIBRARY Cocoa)
     list(APPEND WTF_LIBRARIES
         ${COCOA_LIBRARY}
-    )
-
-    list(APPEND WTF_SOURCES
-        mac/FileSystemMac.mm
     )
 else ()
     find_library(UIKIT_LIBRARY UIKit)

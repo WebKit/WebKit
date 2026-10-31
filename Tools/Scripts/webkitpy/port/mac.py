@@ -414,6 +414,23 @@ class MacCatalystPort(MacPort):
     def _build_driver_flags(self):
         return ['SDK_VARIANT=iosmac'] + super(MacCatalystPort, self)._build_driver_flags()
 
+    def path_to_api_test(self, program_name):
+        # The CMake build makes TestWebKitAPI a Mac Catalyst app.
+        app_executable = self._build_path(program_name + '.app', 'Contents', 'MacOS', program_name)
+        if self._filesystem.exists(app_executable):
+            return app_executable
+        return super(MacCatalystPort, self).path_to_api_test(program_name)
+
+    # LayoutTestHelper does nothing for PLATFORM(IOS_FAMILY), which includes Mac Catalyst.
+    def start_helper(self, pixel_tests=False, prefer_integrated_gpu=False):
+        return True
+
+    def start_helper_async(self, pixel_tests=False, prefer_integrated_gpu=False):
+        return True
+
+    def wait_for_helper_ready(self):
+        return True
+
     def configuration_for_upload(self, host=None):
         configuration = super(MacCatalystPort, self).configuration_for_upload(host=host)
         configuration['platform'] = self.port_name

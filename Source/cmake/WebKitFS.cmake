@@ -106,7 +106,7 @@ endif ()
 set(USE_FRAMEWORK_BUNDLES OFF)
 if (APPLE)
     set(USE_FRAMEWORK_BUNDLES ON)
-    if (WEBKIT_SDK_IS_MACOS)
+    if (NOT WEBKIT_SDK_SHALLOW_BUNDLE)
         # macOS uses a versioned bundle (Versions/A/ + Versions/Current/
         # symlinks); other platforms are flat.
         set(WEBKIT_FRAMEWORK_VERSION_PATH "Versions/A/")

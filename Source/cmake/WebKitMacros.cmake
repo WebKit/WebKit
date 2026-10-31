@@ -732,7 +732,7 @@ function(_WEBKIT_ADD_DYLD_FRAMEWORK_PATH _target)
             set(_output_name ${_target})
         endif ()
         string(APPEND _executable_dir "/${_output_name}.app")
-        if (WEBKIT_SDK_IS_MACOS)
+        if (NOT WEBKIT_SDK_SHALLOW_BUNDLE)
             string(APPEND _executable_dir "/Contents/MacOS")
         endif ()
     endif ()
@@ -837,7 +837,7 @@ function(_WEBKIT_ADD_CODE_SIGN _target)
     # Info.plist changes break the signature.
     get_target_property(_info_plist ${_target} MACOSX_FRAMEWORK_INFO_PLIST)
     if (_info_plist)
-        if (WEBKIT_SDK_IS_MACOS)
+        if (NOT WEBKIT_SDK_SHALLOW_BUNDLE)
             list(APPEND _arg_DEPENDS
                 "$<TARGET_BUNDLE_CONTENT_DIR:${_target}>/Resources/Info.plist")
         else ()
@@ -1004,7 +1004,7 @@ macro(WEBKIT_EXECUTABLE _target)
 endmacro()
 
 function(_WEBKIT_CREATE_FRAMEWORK_BUNDLE_STRUCTURE _target)
-    if (WEBKIT_SDK_IS_MACOS)
+    if (NOT WEBKIT_SDK_SHALLOW_BUNDLE)
         set(_version "Versions/A/")
         file(MAKE_DIRECTORY
             "${CMAKE_BINARY_DIR}/${_target}.framework/Versions/A")
@@ -1015,7 +1015,7 @@ function(_WEBKIT_CREATE_FRAMEWORK_BUNDLE_STRUCTURE _target)
     foreach (_name Headers Modules PrivateHeaders)
         file(MAKE_DIRECTORY
             "${CMAKE_BINARY_DIR}/${_target}.framework/${_version}${_name}")
-        if (WEBKIT_SDK_IS_MACOS)
+        if (NOT WEBKIT_SDK_SHALLOW_BUNDLE)
             file(CREATE_LINK "Versions/Current/${_name}"
                 "${CMAKE_BINARY_DIR}/${_target}.framework/${_name}" SYMBOLIC)
         endif ()
@@ -1261,6 +1261,7 @@ function(webkit_generate_platform_feature_defines_file)
     if (CMAKE_OSX_SYSROOT)
         list(APPEND _clang_cmd "-isysroot" "${CMAKE_OSX_SYSROOT}"
             "-F" "${CMAKE_BINARY_DIR}"
+            ${WEBKIT_SDK_SYSTEM_SEARCH_FLAGS}
             "-iframework" "${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks")
     endif ()
     if (CMAKE_OSX_ARCHITECTURES)
@@ -1323,7 +1324,7 @@ function(_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS _outvar)
     )
     # iOS WebKit_Internal headers gate textual #imports behind this macro that
     # trip strict cross-module-import-visibility checks (bug 312083).
-    if (NOT WEBKIT_SDK_IS_IOS_FAMILY)
+    if (NOT WEBKIT_SDK_IS_IOS_FAMILY OR WEBKIT_SDK_IS_MACCATALYST)
         list(APPEND _flags -DWK_SUPPORTS_SWIFT_OBJCXX_INTEROP=1)
     endif ()
     # -fexperimental-bounds-safety-attributes belongs to this hash-normalizing
@@ -1361,6 +1362,7 @@ function(_webkit_generate_platform_swift_args _target _resp_path)
         "${_depfile}" "${_resp_path}" "${WTF_FRAMEWORK_HEADERS_DIR}")
     if (CMAKE_OSX_SYSROOT)
         list(APPEND _clang_cmd "-isysroot" "${CMAKE_OSX_SYSROOT}"
+            ${WEBKIT_SDK_SYSTEM_SEARCH_FLAGS}
             "-iframework" "${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks")
     endif ()
     if (CMAKE_Swift_COMPILER_TARGET)
