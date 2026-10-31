@@ -29,6 +29,18 @@ public:
     {
         applyValueCoordinatedValueListProperty<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete, &ComputedStyle::ensureBackgroundLayers, WebCore::Style::Number<>, BackgroundLayers>(builderState, value);
     }
+    static void applyInitialBackgroundCoordinatedValueListPropertyTestSettingsFlag(BuilderState& builderState)
+    {
+        applyInitialCoordinatedValueListProperty<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag, &ComputedStyle::ensureBackgroundLayers, BackgroundLayers>(builderState);
+    }
+    static void applyInheritBackgroundCoordinatedValueListPropertyTestSettingsFlag(BuilderState& builderState)
+    {
+        applyInheritCoordinatedValueListProperty<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag, &ComputedStyle::ensureBackgroundLayers, &ComputedStyle::backgroundLayers, BackgroundLayers>(builderState);
+    }
+    static void applyValueBackgroundCoordinatedValueListPropertyTestSettingsFlag(BuilderState& builderState, CSSValue& value)
+    {
+        applyValueCoordinatedValueListProperty<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag, &ComputedStyle::ensureBackgroundLayers, WebCore::Style::Number<>, BackgroundLayers>(builderState, value);
+    }
     static void applyInitialBackgroundCoordinatedValueListPropertyTestTwo(BuilderState& builderState)
     {
         applyInitialCoordinatedValueListProperty<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo, &ComputedStyle::ensureBackgroundLayers, BackgroundLayers>(builderState);
@@ -235,6 +247,18 @@ public:
     {
         builderState.style().setTestRenderStyleStorageOneLevelReference(toStyleFromCSSValue<Style::Number<>>(builderState, value));
     }
+    static void applyInitialTestRenderStyleStorageOneLevelSettingsFlag(BuilderState& builderState)
+    {
+        builderState.style().setTestRenderStyleStorageOneLevelSettingsFlag(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelSettingsFlag());
+    }
+    static void applyInheritTestRenderStyleStorageOneLevelSettingsFlag(BuilderState& builderState)
+    {
+        builderState.style().setTestRenderStyleStorageOneLevelSettingsFlag(forwardInheritedValue(builderState.parentStyle().testRenderStyleStorageOneLevelSettingsFlag()));
+    }
+    static void applyValueTestRenderStyleStorageOneLevelSettingsFlag(BuilderState& builderState, CSSValue& value)
+    {
+        builderState.style().setTestRenderStyleStorageOneLevelSettingsFlag(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+    }
     static void applyInitialTestRenderStyleStorageOneLevelValue(BuilderState& builderState)
     {
         builderState.style().setTestRenderStyleStorageOneLevelValue(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelValue());
@@ -345,6 +369,19 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         case ApplyValueType::Value:
             BuilderFunctions::applyValueBackgroundCoordinatedValueListPropertyTestDiscrete(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialBackgroundCoordinatedValueListPropertyTestSettingsFlag(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritBackgroundCoordinatedValueListPropertyTestSettingsFlag(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueBackgroundCoordinatedValueListPropertyTestSettingsFlag(builderState, value);
             break;
         }
         break;
@@ -673,6 +710,19 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         case ApplyValueType::Value:
             BuilderFunctions::applyValueTestRenderStyleStorageOneLevelReference(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::TestRenderStyleStorageOneLevelSettingsFlag:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestRenderStyleStorageOneLevelSettingsFlag(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestRenderStyleStorageOneLevelSettingsFlag(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestRenderStyleStorageOneLevelSettingsFlag(builderState, value);
             break;
         }
         break;

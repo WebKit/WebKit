@@ -15,6 +15,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
 {
     switch (longhand) {
     case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete:
+    case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag:
     case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo:
     case CSSPropertyID::TestAnimationWrapper:
     case CSSPropertyID::TestAnimationWrapperAccelerationAlways:
@@ -35,6 +36,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyID::TestRenderStyleHasExplicitlySetPolicyAllBorderRadius:
     case CSSPropertyID::TestRenderStyleHasExplicitlySetPolicyValueOnly:
     case CSSPropertyID::TestRenderStyleStorageOneLevelReference:
+    case CSSPropertyID::TestRenderStyleStorageOneLevelSettingsFlag:
     case CSSPropertyID::TestRenderStyleStorageOneLevelValue:
     case CSSPropertyID::TestRenderStyleStorageTwoLevelReference:
     case CSSPropertyID::TestRenderStyleStorageTwoLevelValue:

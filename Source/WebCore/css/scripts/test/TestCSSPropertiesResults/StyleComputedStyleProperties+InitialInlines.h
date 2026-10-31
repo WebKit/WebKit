@@ -65,6 +65,12 @@ inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleStorageOne
     return 0_css_number;
 }
 
+inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleStorageOneLevelSettingsFlag()
+{
+    using namespace CSS::Literals;
+    return 0_css_number;
+}
+
 inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleStorageOneLevelValue()
 {
     using namespace CSS::Literals;
