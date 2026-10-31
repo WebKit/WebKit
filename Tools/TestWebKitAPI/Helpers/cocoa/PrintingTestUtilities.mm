@@ -26,10 +26,12 @@
 #import "config.h"
 #import "Helpers/cocoa/PrintingTestUtilities.h"
 
-#if PLATFORM(MAC) && HAVE(PDFKIT)
-
 #import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
+#import <WebKit/WKWebViewPrivateForTesting.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
+#if PLATFORM(MAC) && HAVE(PDFKIT)
 #import "Helpers/cocoa/TestPDFDocument.h"
 #import <AppKit/AppKit.h>
 
@@ -53,13 +55,62 @@
 }
 
 @end
+#endif // PLATFORM(MAC) && HAVE(PDFKIT)
 
 namespace TestWebKitAPI {
+
+RetainPtr<NSData> drawPagesToPDF(WKWebView *webView, _WKFrameHandle *frame, NSUInteger pageCount)
+{
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:frame completionHandler:^{
+        computedPages = true;
+    }];
+    Util::run(&computedPages);
+
+    return [webView _drawPagesToPDFSynchronouslyForTesting:frame pageCount:pageCount];
+}
+
+// Unlike TestPDFPage's colorAtPoint:, this can tell apart colors at different heights.
+std::optional<std::array<uint8_t, 3>> pdfPageColorAtCSSPixel(NSData *data, size_t pageNumber, CGPoint pointInCSSPixels)
+{
+    RetainPtr provider = adoptCF(CGDataProviderCreateWithCFData(bridge_cast(data)));
+    RetainPtr document = adoptCF(CGPDFDocumentCreateWithProvider(provider.get()));
+    CGPDFPageRef page = CGPDFDocumentGetPage(document.get(), pageNumber);
+    if (!page)
+        return std::nullopt;
+    auto bounds = CGPDFPageGetBoxRect(page, kCGPDFMediaBox);
+    size_t width = bounds.size.width;
+    size_t height = bounds.size.height;
+    RetainPtr colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    RetainPtr context = adoptCF(CGBitmapContextCreate(nullptr, width, height, 8, width * 4, colorSpace.get(), kCGImageAlphaPremultipliedLast));
+    CGContextSetRGBFillColor(context.get(), 1, 1, 1, 1);
+    CGContextFillRect(context.get(), CGRectMake(0, 0, width, height));
+    CGContextDrawPDFPage(context.get(), page);
+    auto pixels = unsafeMakeSpan(static_cast<const uint8_t*>(CGBitmapContextGetData(context.get())), width * height * 4);
+    size_t x = pointsFromCSSPixels(pointInCSSPixels.x);
+    size_t y = pointsFromCSSPixels(pointInCSSPixels.y);
+    auto pixel = pixels.subspan((y * width + x) * 4, 3);
+    return std::array { pixel[0], pixel[1], pixel[2] };
+}
+
+bool pdfPageHasColorAtCSSPixel(NSData *data, size_t pageNumber, CGPoint pointInCSSPixels, std::array<uint8_t, 3> color, uint8_t tolerance)
+{
+    auto actualColor = pdfPageColorAtCSSPixel(data, pageNumber, pointInCSSPixels);
+    if (!actualColor)
+        return false;
+    for (size_t i = 0; i < 3; ++i) {
+        if (std::abs((*actualColor)[i] - color[i]) > tolerance)
+            return false;
+    }
+    return true;
+}
+
+#if PLATFORM(MAC) && HAVE(PDFKIT)
 
 RetainPtr<TestPDFDocument> printToPDF(MakePrintOperation makePrintOperation, NSWindow *window)
 {
     RetainPtr printInfo = adoptNS([[NSPrintInfo alloc] init]);
-    [printInfo setPaperSize:NSMakeSize(612, 792)];
+    [printInfo setPaperSize:usLetterPaperSizeInPoints];
 
     RetainPtr pdfURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.pdf", NSUUID.UUID.UUIDString]] isDirectory:NO];
     [printInfo setJobDisposition:NSPrintSaveJob];
@@ -92,6 +143,6 @@ CGPoint firstCharacterPosition(TestPDFDocument *document)
     return CGPointMake(CGRectGetMinX(characterRect), CGRectGetMaxY([page bounds]) - CGRectGetMaxY(characterRect));
 }
 
-} // namespace TestWebKitAPI
-
 #endif // PLATFORM(MAC) && HAVE(PDFKIT)
+
+} // namespace TestWebKitAPI

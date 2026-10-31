@@ -129,14 +129,7 @@ TEST(Printing, DrawPagesToPDFSynchronously)
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:@"<body>Hello</body>"];
 
-    RetainPtr<_WKFrameHandle> mainFrame = [webView mainFrame].info._handle;
-    __block bool computedPages = false;
-    [webView _computePagesForPrinting:mainFrame.get() completionHandler:^{
-        computedPages = true;
-    }];
-    TestWebKitAPI::Util::run(&computedPages);
-
-    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:mainFrame.get() pageCount:1];
+    RetainPtr data = TestWebKitAPI::drawPagesToPDF(webView.get(), [webView mainFrame].info._handle, 1);
     ASSERT_NOT_NULL(data.get());
     EXPECT_TRUE([data length]);
 }
@@ -151,13 +144,7 @@ TEST(Printing, DrawPagesToPDFSynchronouslyDuringDOMPrint)
     [webView evaluateJavaScript:@"window.print()" completionHandler:nil];
     RetainPtr<_WKFrameHandle> frame = [delegate waitForPrintFrame];
 
-    __block bool computedPages = false;
-    [webView _computePagesForPrinting:frame.get() completionHandler:^{
-        computedPages = true;
-    }];
-    TestWebKitAPI::Util::run(&computedPages);
-
-    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:frame.get() pageCount:1];
+    RetainPtr data = TestWebKitAPI::drawPagesToPDF(webView.get(), frame.get(), 1);
     [delegate finishPrinting];
     ASSERT_NOT_NULL(data.get());
     EXPECT_TRUE([data length]);
@@ -249,7 +236,8 @@ static void expectFirstCharacterOffset(NSString *styleSheet, NSString *reference
 TEST(Printing, PrintedContentUsesCSSUnits)
 {
     // 1in = 96px = 72pt.
-    expectFirstCharacterOffset(@"@page { margin: 0 } div { margin-left: 1in; padding-top: 1in }", @"@page { margin: 0 }", 72, 72);
+    auto oneInch = TestWebKitAPI::pointsFromCSSPixels(96);
+    expectFirstCharacterOffset(@"@page { margin: 0 } div { margin-left: 1in; padding-top: 1in }", @"@page { margin: 0 }", oneInch, oneInch);
 }
 
 static CGSize drawnPDFPageSize(NSString *html)
@@ -257,14 +245,7 @@ static CGSize drawnPDFPageSize(NSString *html)
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:html];
 
-    RetainPtr<_WKFrameHandle> mainFrame = [webView mainFrame].info._handle;
-    __block bool computedPages = false;
-    [webView _computePagesForPrinting:mainFrame.get() completionHandler:^{
-        computedPages = true;
-    }];
-    TestWebKitAPI::Util::run(&computedPages);
-
-    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:mainFrame.get() pageCount:1];
+    RetainPtr data = TestWebKitAPI::drawPagesToPDF(webView.get(), [webView mainFrame].info._handle, 1);
     EXPECT_NOT_NULL(data.get());
     if (!data)
         return CGSizeZero;
@@ -278,8 +259,8 @@ TEST(Printing, DrawnPDFPagesArePaperSized)
     // The testing SPI prints on US Letter paper. The wide page is shrunk to fit.
     for (NSString *html in @[ @"<body>Hello</body>", @"<body style='margin: 0'><div style='width: 1000px'>Hello</div></body>" ]) {
         auto size = drawnPDFPageSize(html);
-        EXPECT_NEAR(size.width, 612, 1);
-        EXPECT_NEAR(size.height, 792, 1);
+        EXPECT_NEAR(size.width, TestWebKitAPI::usLetterPaperSizeInPoints.width, 1);
+        EXPECT_NEAR(size.height, TestWebKitAPI::usLetterPaperSizeInPoints.height, 1);
     }
 }
 #endif // HAVE(PDFKIT)

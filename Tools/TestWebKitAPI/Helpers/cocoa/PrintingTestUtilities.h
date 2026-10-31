@@ -25,16 +25,37 @@
 
 #pragma once
 
-#if PLATFORM(MAC) && HAVE(PDFKIT)
-
+#import <WebCore/CSSUnits.h>
+#import <array>
+#import <optional>
 #import <wtf/RetainPtr.h>
 
+OBJC_CLASS NSData;
 OBJC_CLASS NSPrintInfo;
 OBJC_CLASS NSPrintOperation;
 OBJC_CLASS NSWindow;
 OBJC_CLASS TestPDFDocument;
+OBJC_CLASS WKWebView;
+OBJC_CLASS _WKFrameHandle;
 
 namespace TestWebKitAPI {
+
+constexpr CGSize usLetterPaperSizeInPoints { 8.5 * WebCore::CSS::pointsPerInch, 11 * WebCore::CSS::pointsPerInch };
+constexpr CGSize usLetterPaperSizeInCSSPixels { 8.5 * WebCore::CSS::pixelsPerInch, 11 * WebCore::CSS::pixelsPerInch };
+
+constexpr CGFloat pointsFromCSSPixels(CGFloat cssPixels)
+{
+    return cssPixels * (WebCore::CSS::pointsPerInch / WebCore::CSS::pixelsPerInch);
+}
+
+RetainPtr<NSData> drawPagesToPDF(WKWebView *, _WKFrameHandle *, NSUInteger pageCount);
+
+// pageNumber counts from 1, like CGPDFDocumentGetPage().
+std::optional<std::array<uint8_t, 3>> pdfPageColorAtCSSPixel(NSData *, size_t pageNumber, CGPoint);
+
+bool pdfPageHasColorAtCSSPixel(NSData *, size_t pageNumber, CGPoint, std::array<uint8_t, 3> color, uint8_t tolerance = 2);
+
+#if PLATFORM(MAC) && HAVE(PDFKIT)
 
 using MakePrintOperation = NSPrintOperation *(^)(NSPrintInfo *);
 
@@ -44,6 +65,6 @@ RetainPtr<TestPDFDocument> printToPDF(MakePrintOperation, NSWindow *);
 // Measured from top left.
 CGPoint firstCharacterPosition(TestPDFDocument *);
 
-} // namespace TestWebKitAPI
-
 #endif // PLATFORM(MAC) && HAVE(PDFKIT)
+
+} // namespace TestWebKitAPI

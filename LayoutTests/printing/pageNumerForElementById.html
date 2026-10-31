@@ -25,7 +25,21 @@ function test()
     pageNumberForElementShouldBe('thirdPage', 2);
     pageNumberForElementShouldBe('thirdPage2', 2);
 
-    document.body.removeChild(document.getElementById("sandbox"));
+    var sandbox = document.getElementById("sandbox");
+    sandbox.replaceChildren();
+    var tallPage = printingPage({ width: 1000, height: 10000 });
+    tallPage.lines("firstTallPage", 20);
+    tallPage.lines("secondTallPage", 20);
+
+    tallPage.lines("thirdTallPage", 5);
+    tallPage.lines("thirdTallPage2", 5);
+
+    tallPage.pageNumberShouldBe('firstTallPage', 0);
+    tallPage.pageNumberShouldBe('secondTallPage', 1);
+    tallPage.pageNumberShouldBe('thirdTallPage', 2);
+    tallPage.pageNumberShouldBe('thirdTallPage2', 2);
+
+    document.body.removeChild(sandbox);
 }
 
 var successfullyParsed = true;

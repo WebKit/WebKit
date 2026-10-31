@@ -27,8 +27,8 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
-#import "Helpers/cocoa/TestPDFDocument.h"
 #import "Helpers/cocoa/PrintingTestUtilities.h"
+#import "Helpers/cocoa/TestPDFDocument.h"
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLView.h>
@@ -112,8 +112,9 @@ TEST(WebKitLegacy, PrintedContentUsesCSSUnits)
     // 1in = 96px = 72pt.
     auto position = firstCharacterPositionInPrintedWebView(@"div { margin-left: 1in; padding-top: 1in }");
     auto referencePosition = firstCharacterPositionInPrintedWebView(@"");
-    EXPECT_NEAR(position.x - referencePosition.x, 72, 0.05);
-    EXPECT_NEAR(position.y - referencePosition.y, 72, 0.05);
+    auto oneInch = pointsFromCSSPixels(96);
+    EXPECT_NEAR(position.x - referencePosition.x, oneInch, 0.05);
+    EXPECT_NEAR(position.y - referencePosition.y, oneInch, 0.05);
 }
 #endif // HAVE(PDFKIT)
 
