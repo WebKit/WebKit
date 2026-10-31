@@ -35,6 +35,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -46,7 +47,7 @@ namespace Calculation {
 struct EvaluationOptions;
 
 class Value : public RefCounted<Value> {
-    WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(Value);
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED(Value);
 public:
     WEBCORE_EXPORT static Ref<Value> LEGACY_NODELETE create(Tree&&);
     WEBCORE_EXPORT ~Value();

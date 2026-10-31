@@ -29,11 +29,13 @@
 
 #include "StyleCustomIdent.h"
 #include "StyleGeneratedImage.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 class NamedImage final : public GeneratedImage {
+    WTF_MAKE_TZONE_ALLOCATED(NamedImage);
 public:
     static Ref<NamedImage> create(CustomIdent&& name)
     {

@@ -34,6 +34,7 @@
 #include "ImageBuffer.h"
 #include "RenderElement.h"
 #include "Theme.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
 #include <WebKitAdditions/AXCustomColorModeController.h>
@@ -41,6 +42,8 @@
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NamedImage);
 
 NamedImage::NamedImage(CustomIdent&& name)
     : GeneratedImage { Type::NamedImage }

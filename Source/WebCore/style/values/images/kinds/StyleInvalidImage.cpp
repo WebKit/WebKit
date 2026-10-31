@@ -29,9 +29,12 @@
 
 #include "CSSImageValue.h"
 #include "DeprecatedCSSOMValue.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InvalidImage);
 
 Ref<InvalidImage> InvalidImage::create()
 {

@@ -42,6 +42,8 @@
 namespace WebCore {
 namespace Style {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GradientImage);
+
 static constexpr auto timeToKeepCachedGradients = 3_s;
 
 class GradientImage::CachedGradient {

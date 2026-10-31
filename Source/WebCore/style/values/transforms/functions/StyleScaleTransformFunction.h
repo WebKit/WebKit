@@ -27,6 +27,7 @@
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
 #include <WebCore/StyleTransformFunctionBase.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -41,6 +42,7 @@ namespace Style {
 // https://drafts.csswg.org/css-transforms-2/#funcdef-scale3d
 
 class ScaleTransformFunction final : public TransformFunctionBase {
+    WTF_MAKE_TZONE_ALLOCATED(ScaleTransformFunction);
 public:
     static Ref<const ScaleTransformFunction> LEGACY_NODELETE create(NumberOrPercentageResolvedToNumber<>, NumberOrPercentageResolvedToNumber<>, TransformFunctionBase::Type);
     static Ref<const ScaleTransformFunction> LEGACY_NODELETE create(NumberOrPercentageResolvedToNumber<>, NumberOrPercentageResolvedToNumber<>, NumberOrPercentageResolvedToNumber<>, TransformFunctionBase::Type);

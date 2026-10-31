@@ -28,9 +28,12 @@
 
 #include "StyleComputedStyle.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResolvedColors);
 
 ResolvedColors::ResolvedColors(WebCore::Color currentColor, StyleColorOptionsPurpose purpose)
     : m_currentColor(currentColor)

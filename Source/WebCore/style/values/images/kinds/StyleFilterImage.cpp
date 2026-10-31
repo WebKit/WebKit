@@ -46,9 +46,12 @@
 #include "StyleFilter.h"
 #include "TransparencyLayerContextSwitcher.h"
 #include <wtf/PointerComparison.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FilterImage);
 
 FilterImage::FilterImage(RefPtr<Image>&& image, Filter&& filter)
     : GeneratedImage { Type::FilterImage }

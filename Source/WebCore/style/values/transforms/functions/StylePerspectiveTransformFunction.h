@@ -29,6 +29,7 @@
 #include "StylePerspective.h"
 #include "StylePrimitiveNumericTypes.h"
 #include "StyleTransformFunctionBase.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -37,6 +38,7 @@ namespace Style {
 // https://drafts.csswg.org/css-transforms-2/#funcdef-perspective
 
 class PerspectiveTransformFunction final : public TransformFunctionBase {
+    WTF_MAKE_TZONE_ALLOCATED(PerspectiveTransformFunction);
 public:
     static Ref<const PerspectiveTransformFunction> LEGACY_NODELETE create(Perspective);
 

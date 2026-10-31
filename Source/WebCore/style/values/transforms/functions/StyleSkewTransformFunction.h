@@ -27,6 +27,7 @@
 
 #include "StylePrimitiveNumericTypes.h"
 #include "StyleTransformFunctionBase.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -39,6 +40,7 @@ namespace Style {
 // https://drafts.csswg.org/css-transforms/#funcdef-transform-skewy
 
 class SkewTransformFunction final : public TransformFunctionBase {
+    WTF_MAKE_TZONE_ALLOCATED(SkewTransformFunction);
 public:
     static Ref<const SkewTransformFunction> LEGACY_NODELETE create(Angle<>, Angle<>, TransformFunctionBase::Type);
 
