@@ -10510,10 +10510,16 @@ void Document::adjustStyleColorOptionsIfNeeded(OptionSet<StyleColorOptions>&) co
 
 bool Document::isAXCustomColorModeActive() const
 {
-    if (RefPtr page = this->page())
-        return page->isAXCustomColorModeActive();
+    RefPtr page = this->page();
+    if (!page || !page->isAXCustomColorModeActive())
+        return false;
 
-    return false;
+    for (RefPtr<Frame> frame = this->frame(); frame; frame = frame->tree().parent()) {
+        if (frame->isPrinting())
+            return false;
+    }
+
+    return true;
 }
 
 #endif // ENABLE(AX_CUSTOM_COLOR_MODE)
