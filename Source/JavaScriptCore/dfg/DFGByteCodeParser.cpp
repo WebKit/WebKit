@@ -12716,6 +12716,12 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
         return node;
     };
 
+    // The fast paths predict the iterated value from the getValue checkpoint's value profile.
+    auto addIteratedValue = [&](auto&&... args) {
+        SetForScope semanticOrigin(m_currentSemanticOrigin, CodeOrigin(BytecodeIndex(m_currentIndex.offset(), OpIteratorNext::getValue), inlineCallFrame()));
+        return addToGraph(std::forward<decltype(args)>(args)...);
+    };
+
     auto emitFastArrayIteratorNext = [&](IterationKind kind, JSSentinel* sentinelCell) {
         bool hasIterator = sentinelCell != m_vm->fastArraySentinel();
         VirtualRegister sentinelOperand = hasIterator ? bytecode.m_next : bytecode.m_iterator;
@@ -12812,7 +12818,9 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
                 addVarArgChild(iteratedObjectInLoad);
                 addVarArgChild(index);
                 addVarArgChild(nullptr); // Leave room for property storage.
-                Node* element = addToGraph(Node::VarArg, GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
+                Node* element = kind == IterationKind::Values
+                    ? addIteratedValue(Node::VarArg, GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction))
+                    : addToGraph(Node::VarArg, GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
                 if (kind == IterationKind::Entries) {
                     emitExitOK();
                     addVarArgChild(index);
@@ -12963,10 +12971,10 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             Node* value = nullptr;
             switch (kind) {
             case IterationKind::Keys:
-                value = addToGraph(MapIteratorKey, OpInfo(BucketOwnerType::Map), OpInfo(prediction), Edge(keyStorage), Edge(keyEntry));
+                value = addIteratedValue(MapIteratorKey, OpInfo(BucketOwnerType::Map), OpInfo(prediction), Edge(keyStorage), Edge(keyEntry));
                 break;
             case IterationKind::Values:
-                value = addToGraph(MapIteratorValue, OpInfo(BucketOwnerType::Map), OpInfo(prediction), Edge(keyStorage), Edge(keyEntry));
+                value = addIteratedValue(MapIteratorValue, OpInfo(BucketOwnerType::Map), OpInfo(prediction), Edge(keyStorage), Edge(keyEntry));
                 break;
             case IterationKind::Entries: {
                 Node* key = addToGraph(MapIteratorKey, OpInfo(BucketOwnerType::Map), OpInfo(SpecBytecodeTop), Edge(keyStorage), Edge(keyEntry));
@@ -13121,7 +13129,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
                 unsigned vectorHint = 2;
                 value = addToGraph(Node::VarArg, NewArray, OpInfo(ArrayWithContiguous), OpInfo(vectorHint));
             } else
-                value = addToGraph(MapIteratorKey, OpInfo(BucketOwnerType::Set), OpInfo(prediction), Edge(keyStorage), Edge(keyEntry));
+                value = addIteratedValue(MapIteratorKey, OpInfo(BucketOwnerType::Set), OpInfo(prediction), Edge(keyStorage), Edge(keyEntry));
             Node* falseNode = jsConstant(jsBoolean(false));
 
             // Commit the advanced state after the loads, so a key OSR exit cannot leave
