@@ -123,5 +123,145 @@ TEST(WebKit, FileInputTypeCancelEvent)
 
     Util::run(&done);
 }
-    
+
+TEST(WebKit, FileInputOpenPanelAfterMessageChannelHop)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
+    RetainPtr uiDelegate = adoptNS([[FileInputTypeCancelEventUIDelegate alloc] init]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    NSString *markup = @""
+        "<body style='margin: 0;'>"
+        "<button id='button' style='width: 100vw; height: 100vh;'>Choose</button>"
+        "<script>"
+        "    const channel = new MessageChannel();"
+        "    channel.port1.onmessage = () => {"
+        "        const input = document.createElement('input');"
+        "        input.type = 'file';"
+        "        input.addEventListener('cancel', () => webkit.messageHandlers.testHandler.postMessage('cancel'));"
+        "        document.body.appendChild(input);"
+        "        input.click();"
+        "        setTimeout(() => webkit.messageHandlers.testHandler.postMessage('timeout'), 1000);"
+        "    };"
+        "    document.getElementById('button').addEventListener('click', () => channel.port2.postMessage(0));"
+        "</script>"
+        "</body>";
+
+    [webView loadHTMLString:markup baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    __block bool done = false;
+    __block bool openPanelRan = false;
+    [webView performAfterReceivingMessage:@"cancel" action:^{
+        openPanelRan = true;
+        done = true;
+    }];
+    [webView performAfterReceivingMessage:@"timeout" action:^{
+        done = true;
+    }];
+
+    [webView sendClickAtPoint:NSMakePoint(50, 50)];
+
+    Util::run(&done);
+    EXPECT_TRUE(openPanelRan);
+}
+
+TEST(WebKit, FileInputOpenPanelAfterMessageChannelHopAndAnimationFrame)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
+    RetainPtr uiDelegate = adoptNS([[FileInputTypeCancelEventUIDelegate alloc] init]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    NSString *markup = @""
+        "<body style='margin: 0;'>"
+        "<button id='button' style='width: 100vw; height: 100vh;'>Choose</button>"
+        "<button id='hidden' style='display: none;'></button>"
+        "<script>"
+        "    const channel = new MessageChannel();"
+        "    document.getElementById('hidden').addEventListener('click', () => {"
+        "        const input = document.createElement('input');"
+        "        input.type = 'file';"
+        "        input.addEventListener('cancel', () => webkit.messageHandlers.testHandler.postMessage('cancel'));"
+        "        document.body.appendChild(input);"
+        "        input.click();"
+        "        setTimeout(() => webkit.messageHandlers.testHandler.postMessage('timeout'), 1000);"
+        "    });"
+        "    channel.port1.onmessage = () => requestAnimationFrame(() => document.getElementById('hidden').click());"
+        "    document.getElementById('button').addEventListener('click', () => channel.port2.postMessage(0));"
+        "</script>"
+        "</body>";
+
+    [webView loadHTMLString:markup baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    __block bool done = false;
+    __block bool openPanelRan = false;
+    [webView performAfterReceivingMessage:@"cancel" action:^{
+        openPanelRan = true;
+        done = true;
+    }];
+    [webView performAfterReceivingMessage:@"timeout" action:^{
+        done = true;
+    }];
+
+    [webView sendClickAtPoint:NSMakePoint(50, 50)];
+
+    Util::run(&done);
+    EXPECT_TRUE(openPanelRan);
+}
+
+TEST(WebKit, FileInputOpenPanelFromRunningMessageLoop)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
+    RetainPtr uiDelegate = adoptNS([[FileInputTypeCancelEventUIDelegate alloc] init]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    // A scheduler-style loop that is already running when the click arrives, so the click's work is
+    // picked up by a message that was posted before the user gesture existed.
+    NSString *markup = @""
+        "<body style='margin: 0;'>"
+        "<button id='button' style='width: 100vw; height: 100vh;'>Choose</button>"
+        "<script>"
+        "    const channel = new MessageChannel();"
+        "    const queue = [];"
+        "    let stopped = false;"
+        "    channel.port1.onmessage = () => {"
+        "        for (const task of queue.splice(0))"
+        "            task();"
+        "        if (!stopped)"
+        "            channel.port2.postMessage(0);"
+        "    };"
+        "    channel.port2.postMessage(0);"
+        "    document.getElementById('button').addEventListener('click', () => {"
+        "        queue.push(() => {"
+        "            const input = document.createElement('input');"
+        "            input.type = 'file';"
+        "            input.addEventListener('cancel', () => webkit.messageHandlers.testHandler.postMessage('cancel'));"
+        "            document.body.appendChild(input);"
+        "            input.click();"
+        "            setTimeout(() => { stopped = true; webkit.messageHandlers.testHandler.postMessage('timeout'); }, 1000);"
+        "        });"
+        "    });"
+        "</script>"
+        "</body>";
+
+    [webView loadHTMLString:markup baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    __block bool done = false;
+    __block bool openPanelRan = false;
+    [webView performAfterReceivingMessage:@"cancel" action:^{
+        openPanelRan = true;
+        done = true;
+    }];
+    [webView performAfterReceivingMessage:@"timeout" action:^{
+        done = true;
+    }];
+
+    [webView sendClickAtPoint:NSMakePoint(50, 50)];
+
+    Util::run(&done);
+    EXPECT_TRUE(openPanelRan);
+}
+
 } // namespace TestWebKitAPI
