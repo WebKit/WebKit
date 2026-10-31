@@ -41,4 +41,9 @@ WTF_EXPORT_PRIVATE double parseFixedDouble(std::span<const char16_t> string, siz
 WTF_EXPORT_PRIVATE std::optional<double> parseJSONDouble(std::span<const Latin1Character> string, size_t& parsedLength);
 WTF_EXPORT_PRIVATE std::optional<double> parseJSONDouble(std::span<const char16_t> string, size_t& parsedLength);
 
+// For a JSON number already split into its digits: |mantissa| holds at most 19 significant digits,
+// and the number is mantissa * 10^exponent. Callers handle the simple case first, where both the mantissa
+// and the power of ten are exact doubles and a single multiplication or division gives the result.
+WTF_EXPORT_PRIVATE double parseJSONDoubleFromDigits(uint64_t mantissa, int64_t exponent);
+
 } // namespace WTF
