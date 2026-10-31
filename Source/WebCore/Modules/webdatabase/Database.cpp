@@ -60,10 +60,13 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Database);
 
 // Registering "opened" databases with the DatabaseTracker
 // =======================================================

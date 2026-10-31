@@ -29,12 +29,14 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 struct VideoPlaybackQualityMetrics;
 
 class VideoPlaybackQuality : public RefCounted<VideoPlaybackQuality> {
+    WTF_MAKE_TZONE_ALLOCATED(VideoPlaybackQuality);
     WTF_MAKE_NONCOPYABLE(VideoPlaybackQuality)
 public:
     static Ref<VideoPlaybackQuality> LEGACY_NODELETE create(double creationTime, const VideoPlaybackQualityMetrics&);

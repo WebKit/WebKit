@@ -29,8 +29,11 @@
 
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SimpleReadableStreamSource);
 
 ReadableStreamSource::ReadableStreamSource() = default;
 ReadableStreamSource::~ReadableStreamSource() = default;

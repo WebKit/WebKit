@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "WebTransportError.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebTransportError);
 
 Ref<WebTransportError> WebTransportError::create(WebTransportErrorOptions&& options)
 {

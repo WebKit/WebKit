@@ -32,6 +32,7 @@
 #include "AudioArray.h"
 #include "FloatPoint3D.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -45,6 +46,7 @@ template<typename> class ExceptionOr;
 // marshalled to the main thread because releasing the AudioParams must happen there.
 
 class AudioListener : public ThreadSafeRefCounted<AudioListener, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED(AudioListener);
 public:
     static Ref<AudioListener> create(BaseAudioContext& context)
     {

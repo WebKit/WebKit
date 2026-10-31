@@ -30,10 +30,12 @@
 #include <WebCore/AuthenticatorResponse.h>
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/RegistrationResponseJSON.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class AuthenticatorAttestationResponse : public AuthenticatorResponse {
+    WTF_MAKE_TZONE_ALLOCATED(AuthenticatorAttestationResponse);
 public:
     static Ref<AuthenticatorAttestationResponse> LEGACY_NODELETE create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject, AuthenticatorAttachment, Vector<AuthenticatorTransport>&&);
     WEBCORE_EXPORT static Ref<AuthenticatorAttestationResponse> create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& attestationObject, AuthenticatorAttachment, Vector<AuthenticatorTransport>&&);

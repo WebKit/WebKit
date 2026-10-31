@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/FileSystemHandle.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -58,6 +59,7 @@ public:
     void getHandle(const String& name, CompletionHandler<void(ExceptionOr<Ref<FileSystemHandle>>&&)>&&);
 
     class Iterator : public RefCounted<FileSystemDirectoryHandle::Iterator> {
+        WTF_MAKE_TZONE_ALLOCATED(Iterator);
     public:
         static Ref<Iterator> LEGACY_NODELETE create(FileSystemDirectoryHandle&);
         using Result = std::optional<KeyValuePair<String, Ref<FileSystemHandle>>>;

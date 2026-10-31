@@ -25,10 +25,13 @@
 
 #include "config.h"
 #include "XRSubImage.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEBXR_LAYERS)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XRSubImage);
 
 XRSubImage::~XRSubImage() = default;
 

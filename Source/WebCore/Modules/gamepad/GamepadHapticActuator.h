@@ -32,6 +32,7 @@
 #include "VisibilityChangeClient.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -42,6 +43,7 @@ class Gamepad;
 struct GamepadEffectParameters;
 
 class GamepadHapticActuator : public RefCounted<GamepadHapticActuator>, public ActiveDOMObject, public VisibilityChangeClient {
+    WTF_MAKE_TZONE_ALLOCATED(GamepadHapticActuator);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

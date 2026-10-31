@@ -45,6 +45,10 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackProcessor::TrackObserverWrapper);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackProcessor::VideoFrameObserverWrapper);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackProcessor);
 
 ExceptionOr<Ref<MediaStreamTrackProcessor>> MediaStreamTrackProcessor::create(ScriptExecutionContext& context, Init&& init)

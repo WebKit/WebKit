@@ -28,11 +28,13 @@
 #include <WebCore/WebLockIdentifier.h>
 #include <WebCore/WebLockMode.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class WebLock : public RefCounted<WebLock> {
+    WTF_MAKE_TZONE_ALLOCATED(WebLock);
 public:
     static Ref<WebLock> LEGACY_NODELETE create(WebLockIdentifier, const String& name, WebLockMode);
 

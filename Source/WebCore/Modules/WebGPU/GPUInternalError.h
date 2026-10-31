@@ -29,11 +29,13 @@
 #include "WebGPUInternalError.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class GPUInternalError final : public GPUError {
+    WTF_MAKE_TZONE_ALLOCATED(GPUInternalError);
 public:
     static Ref<GPUInternalError> create(String&& message)
     {

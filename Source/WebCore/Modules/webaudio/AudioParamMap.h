@@ -31,6 +31,7 @@
 #if ENABLE(WEB_AUDIO)
 #include <wtf/OrderedHashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ class AudioParam;
 class DOMMapAdapter;
 
 class AudioParamMap : public RefCounted<AudioParamMap> {
+    WTF_MAKE_TZONE_ALLOCATED(AudioParamMap);
 public:
     static Ref<AudioParamMap> create()
     {

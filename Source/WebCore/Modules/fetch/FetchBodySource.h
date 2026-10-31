@@ -29,6 +29,7 @@
 #include "ReadableStreamSource.h"
 #include <WebCore/ActiveDOMObject.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -43,6 +44,7 @@ class FormDataConsumer;
 class ReadableByteStreamController;
 
 class FetchBodySource final : public RefCountedAndCanMakeWeakPtr<FetchBodySource> {
+    WTF_MAKE_TZONE_ALLOCATED(FetchBodySource);
 public:
     static Ref<FetchBodySource> LEGACY_NODELETE create(FetchBodyOwner&);
 

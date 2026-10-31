@@ -33,6 +33,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -61,7 +62,7 @@ class MediaControlsHost final
     , private MediaSessionObserver
 #endif
     {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MediaControlsHost);
+    WTF_MAKE_TZONE_ALLOCATED(MediaControlsHost);
 public:
     USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<MediaControlsHost>);
 

@@ -29,6 +29,7 @@
 #include "ReadableStreamSource.h"
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace JSC {
@@ -51,6 +52,7 @@ public:
 };
 
 class DatagramDefaultSource final : public DatagramSource, public RefCountedReadableStreamSource {
+    WTF_MAKE_TZONE_ALLOCATED(DatagramDefaultSource);
 public:
     static Ref<DatagramDefaultSource> create() { return adoptRef(*new DatagramDefaultSource()); }
     ~DatagramDefaultSource();

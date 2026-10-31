@@ -76,9 +76,12 @@
 #include "Settings.h"
 #include <JavaScriptCore/JSONObject.h>
 #include <JavaScriptCore/VM.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ApplePayPaymentHandler);
 
 static inline PaymentCoordinator& LEGACY_NODELETE paymentCoordinator(Document& document)
 {

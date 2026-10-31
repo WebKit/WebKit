@@ -30,6 +30,7 @@
 #include "RealtimeMediaSource.h"
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,6 +45,7 @@ class PlatformAudioData;
 class RealtimeMediaSourceCapabilities;
 
 class MediaStreamAudioSource final : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaStreamAudioSource, WTF::DestructionThread::MainRunLoop> {
+    WTF_MAKE_TZONE_ALLOCATED(MediaStreamAudioSource);
 public:
     static Ref<MediaStreamAudioSource> create(float sampleRate) { return adoptRef(*new MediaStreamAudioSource { sampleRate }); }
 

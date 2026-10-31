@@ -27,12 +27,14 @@
 
 #include "DOMException.h"
 #include "WebTransportErrorOptions.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 enum class WebTransportErrorSource : bool;
 
 class WebTransportError : public DOMException {
+    WTF_MAKE_TZONE_ALLOCATED(WebTransportError);
 public:
     static Ref<WebTransportError> LEGACY_NODELETE create(WebTransportErrorOptions&&);
     static Ref<WebTransportError> LEGACY_NODELETE create(String&&, WebTransportErrorOptions&&);

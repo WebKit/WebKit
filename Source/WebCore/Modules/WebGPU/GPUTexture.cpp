@@ -34,8 +34,11 @@
 #include <WebCore/WebGPUCppAPI.h>
 #include <bit>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUTexture);
 
 template<int dimension>
 static uint32_t getDimension(auto& extent3D)

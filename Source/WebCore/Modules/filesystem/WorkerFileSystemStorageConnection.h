@@ -28,6 +28,7 @@
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemStorageConnection.h>
 #include <WebCore/WorkerFileSystemStorageConnectionCallbackIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -39,6 +40,7 @@ class WorkerGlobalScope;
 class WorkerThread;
 
 class WorkerFileSystemStorageConnection final : public FileSystemStorageConnection, public CanMakeWeakPtr<WorkerFileSystemStorageConnection, WeakPtrFactoryInitialization::Eager>  {
+    WTF_MAKE_TZONE_ALLOCATED(WorkerFileSystemStorageConnection);
 public:
     static Ref<WorkerFileSystemStorageConnection> LEGACY_NODELETE create(WorkerGlobalScope&, Ref<FileSystemStorageConnection>&&);
     ~WorkerFileSystemStorageConnection();

@@ -31,9 +31,12 @@
 #include "ServiceWorkerRegistration.h"
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CookieStoreManager);
 
 Ref<CookieStoreManager> CookieStoreManager::create(ServiceWorkerRegistration& serviceWorkerRegistration)
 {

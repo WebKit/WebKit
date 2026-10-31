@@ -34,9 +34,12 @@
 #include "ScriptExecutionContext.h"
 #include "WebSocketChannelClient.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ThreadableWebSocketChannelClientWrapper);
 
 ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper(ScriptExecutionContext& context, WebSocketChannelClient& client)
     : m_context(context)

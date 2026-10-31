@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackHandle);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackHandle::DataHolder);
 
 ExceptionOr<Ref<MediaStreamTrackHandle>> MediaStreamTrackHandle::create(MediaStreamTrack& track)

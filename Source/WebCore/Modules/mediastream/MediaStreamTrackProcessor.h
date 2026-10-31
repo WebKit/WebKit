@@ -108,6 +108,7 @@ private:
 
     class TrackObserver;
     class TrackObserverWrapper : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<TrackObserverWrapper> {
+        WTF_MAKE_TZONE_ALLOCATED(TrackObserverWrapper);
     public:
         static Ref<TrackObserverWrapper> LEGACY_NODELETE create(ScriptExecutionContext&, MediaStreamTrackProcessor&, MediaStreamTrackHandle&);
         ~TrackObserverWrapper()
@@ -189,6 +190,7 @@ private:
     };
 
     class VideoFrameObserverWrapper : public ThreadSafeRefCounted<VideoFrameObserverWrapper, WTF::DestructionThread::Main> {
+        WTF_MAKE_TZONE_ALLOCATED(VideoFrameObserverWrapper);
     public:
         static Ref<VideoFrameObserverWrapper> create(ScriptExecutionContextIdentifier, MediaStreamTrackProcessor&, Ref<RealtimeMediaSource>&&, unsigned short maxVideoFramesCount);
 

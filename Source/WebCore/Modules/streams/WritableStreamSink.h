@@ -30,6 +30,7 @@
 #include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -69,6 +70,7 @@ private:
 };
 
 class SimpleWritableStreamSink : public WritableStreamSink {
+    WTF_MAKE_TZONE_ALLOCATED(SimpleWritableStreamSink);
 public:
     using WriteCallback = Function<ExceptionOr<void>(ScriptExecutionContext&, JSC::JSValue)>;
     static Ref<SimpleWritableStreamSink> create(WriteCallback&& writeCallback) { return adoptRef(*new SimpleWritableStreamSink(WTF::move(writeCallback))); }

@@ -27,6 +27,7 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,6 +35,7 @@ class WebTransportReceiveStream;
 class WebTransportSendStream;
 
 class WebTransportBidirectionalStream : public RefCounted<WebTransportBidirectionalStream> {
+    WTF_MAKE_TZONE_ALLOCATED(WebTransportBidirectionalStream);
 public:
     static Ref<WebTransportBidirectionalStream> LEGACY_NODELETE create(Ref<WebTransportReceiveStream>&&, Ref<WebTransportSendStream>&&);
     ~WebTransportBidirectionalStream();

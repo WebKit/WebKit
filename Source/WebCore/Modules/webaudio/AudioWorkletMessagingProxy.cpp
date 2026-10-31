@@ -44,8 +44,11 @@
 #include "WebRTCProvider.h"
 #include "WorkletParameters.h"
 #include "WorkletPendingTasks.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioWorkletMessagingProxy);
 
 static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
 {

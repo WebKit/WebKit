@@ -30,6 +30,7 @@
 #include "WebLockIdentifier.h"
 #include "WebLockMode.h"
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -43,6 +44,7 @@ struct ClientOrigin;
 struct WebLockManagerSnapshot;
 
 class WebLockManager : public RefCounted<WebLockManager>, public ActiveDOMObject {
+    WTF_MAKE_TZONE_ALLOCATED(WebLockManager);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

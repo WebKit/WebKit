@@ -27,6 +27,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -37,6 +38,7 @@ class WeakPtrImplWithEventTargetData;
 struct CookieStoreGetOptions;
 
 class CookieStoreManager : public RefCounted<CookieStoreManager> {
+    WTF_MAKE_TZONE_ALLOCATED(CookieStoreManager);
 public:
     static Ref<CookieStoreManager> LEGACY_NODELETE create(ServiceWorkerRegistration&);
     ~CookieStoreManager();

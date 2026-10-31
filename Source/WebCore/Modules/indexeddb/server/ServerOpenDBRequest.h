@@ -31,6 +31,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,6 +42,7 @@ namespace IDBServer {
 class UniqueIDBDatabaseTransaction;
 
 class ServerOpenDBRequest : public RefCounted<ServerOpenDBRequest> {
+    WTF_MAKE_TZONE_ALLOCATED(ServerOpenDBRequest);
 public:
     static Ref<ServerOpenDBRequest> LEGACY_NODELETE create(IDBConnectionToClient&, const IDBOpenRequestData&);
 

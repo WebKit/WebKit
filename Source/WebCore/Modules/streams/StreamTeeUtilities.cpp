@@ -43,10 +43,13 @@
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/MarkedVector.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class StreamTeeState final : public ReadableStream::DependencyToVisit, public RefCountedAndCanMakeWeakPtr<StreamTeeState> {
+    WTF_MAKE_TZONE_ALLOCATED(StreamTeeState);
 public:
     template<typename Reader>
     static Ref<StreamTeeState> create(JSDOMGlobalObject& globalObject, Ref<ReadableStream>&& stream, Ref<Reader>&& reader)
@@ -216,6 +219,8 @@ private:
     JSValueInWrappedObject m_branch2Reason;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StreamTeeState);
+
 // https://streams.spec.whatwg.org/#abstract-opdef-readablebytestreamtee
 ExceptionOr<Vector<Ref<ReadableStream>>> byteStreamTee(JSDOMGlobalObject& globalObject, ReadableStream& stream)
 {
@@ -372,6 +377,7 @@ static Ref<DOMPromise> pull2Steps(JSDOMGlobalObject& globalObject, StreamTeeStat
 }
 
 class TeeDefaultReadRequest : public ReadableStreamReadRequest {
+    WTF_MAKE_TZONE_ALLOCATED(TeeDefaultReadRequest);
 public:
     static Ref<TeeDefaultReadRequest> LEGACY_NODELETE create(Ref<StreamTeeState>&& state) { return adoptRef(*new TeeDefaultReadRequest(WTF::move(state))); }
 
@@ -487,7 +493,10 @@ private:
     const Ref<StreamTeeState> m_state;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TeeDefaultReadRequest);
+
 class TeeBYOBReadRequest : public ReadableStreamReadIntoRequest {
+    WTF_MAKE_TZONE_ALLOCATED(TeeBYOBReadRequest);
 public:
     static Ref<TeeBYOBReadRequest> LEGACY_NODELETE create(Ref<StreamTeeState>&& state, bool forBranch2) { return adoptRef(*new TeeBYOBReadRequest(WTF::move(state), forBranch2)); }
 
@@ -627,6 +636,8 @@ private:
     const Ref<StreamTeeState> m_state;
     const bool m_forBranch2 { false };
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TeeBYOBReadRequest);
 
 static void pullWithDefaultReader(JSDOMGlobalObject& globalObject, StreamTeeState& state)
 {

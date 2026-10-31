@@ -28,6 +28,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "WritableStreamSink.h"
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -37,6 +38,7 @@ class WebTransport;
 class WebTransportDatagramsWritable;
 
 class DatagramSink : public WritableStreamSink {
+    WTF_MAKE_TZONE_ALLOCATED(DatagramSink);
 public:
     static Ref<DatagramSink> create(WebTransport* transport) { return adoptRef(*new DatagramSink(transport)); }
     ~DatagramSink();

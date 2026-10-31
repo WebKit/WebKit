@@ -37,8 +37,11 @@
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/TopExceptionScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TransformStream);
 
 struct CreateInternalTransformStreamResult {
     JSC::JSValue transform;

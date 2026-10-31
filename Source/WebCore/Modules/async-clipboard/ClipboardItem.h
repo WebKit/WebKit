@@ -28,6 +28,7 @@
 #include <wtf/KeyValuePair.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -47,6 +48,7 @@ struct PasteboardItemInfo;
 template<typename> class ExceptionOr;
 
 class ClipboardItem : public RefCountedAndCanMakeWeakPtr<ClipboardItem> {
+    WTF_MAKE_TZONE_ALLOCATED(ClipboardItem);
 public:
     ~ClipboardItem();
 

@@ -95,6 +95,7 @@
 #include <JavaScriptCore/HeapInlines.h>
 #include <WebCore/HTTPStatusCodes.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
@@ -135,6 +136,7 @@ static const Seconds reloadModelDelay { 1_s };
 
 #if ENABLE(TOUCH_EVENTS)
 class HTMLModelElementEventListener final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED(HTMLModelElementEventListener);
 public:
     static Ref<HTMLModelElementEventListener> create()
     {
@@ -148,6 +150,8 @@ private:
         : EventListener(EventListener::CPPEventListenerType)
     { }
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLModelElementEventListener);
 #endif
 
 HTMLModelElement::HTMLModelElement(const QualifiedName& tagName, Document& document)

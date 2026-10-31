@@ -36,8 +36,11 @@
 #include "GPURenderPipeline.h"
 #include "InspectorInstrumentation.h"
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPURenderPassEncoder);
 
 static RefPtr<WebGPU::RenderPipeline> applyInspectorPipelineHighlight(WebGPU::RenderPassEncoder& encoder, GPURenderPipeline& pipeline, unsigned canvasColorAttachmentMask)
 {

@@ -30,8 +30,11 @@
 
 #include "MediaPlayer.h"
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoPlaybackQuality);
 
 Ref<VideoPlaybackQuality> VideoPlaybackQuality::create(double creationTime, const VideoPlaybackQualityMetrics& metrics)
 {

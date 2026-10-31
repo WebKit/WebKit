@@ -41,8 +41,11 @@
 #include "MediaKeys.h"
 #include "MediaKeysRequirement.h"
 #include <JavaScriptCore/HeapCellInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaKeySystemAccess);
 
 Ref<MediaKeySystemAccess> MediaKeySystemAccess::create(Document& document, const String& keySystem, MediaKeySystemConfiguration&& configuration, Ref<CDM>&& implementation)
 {

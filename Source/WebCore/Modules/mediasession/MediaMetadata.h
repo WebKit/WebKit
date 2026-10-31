@@ -77,6 +77,7 @@ private:
 };
 
 class MediaMetadata final : public RefCountedAndCanMakeWeakPtr<MediaMetadata> {
+    WTF_MAKE_TZONE_ALLOCATED(MediaMetadata);
 public:
     static ExceptionOr<Ref<MediaMetadata>> create(ScriptExecutionContext&, std::optional<MediaMetadataInit>&&);
     static Ref<MediaMetadata> create(MediaSession&, Vector<URL>&&);

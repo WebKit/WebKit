@@ -30,6 +30,7 @@
 #include "LibWebRTCProvider.h"
 #include "LibWebRTCUtils.h"
 #include "RTCIceCandidate.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -80,6 +81,7 @@ static inline RTCIceGatheringState LEGACY_NODELETE toRTCIceGatheringState(webrtc
 }
 
 class LibWebRTCIceTransportBackendObserver final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<LibWebRTCIceTransportBackendObserver> {
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCIceTransportBackendObserver);
 public:
     static Ref<LibWebRTCIceTransportBackendObserver> create(RTCIceTransportBackendClient& client, Ref<webrtc::IceTransportInterface> backend) { return adoptRef(*new LibWebRTCIceTransportBackendObserver(client, WTF::move(backend))); }
 
@@ -98,6 +100,8 @@ private:
     const Ref<webrtc::IceTransportInterface> m_backend;
     WeakPtr<RTCIceTransportBackendClient> m_client;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCIceTransportBackendObserver);
 
 LibWebRTCIceTransportBackendObserver::LibWebRTCIceTransportBackendObserver(RTCIceTransportBackendClient& client, Ref<webrtc::IceTransportInterface>&& backend)
     : m_backend(WTF::move(backend))

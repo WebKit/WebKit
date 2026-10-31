@@ -29,6 +29,7 @@
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,6 +38,7 @@ namespace WebCore {
 class GPUDevice;
 
 class GPUSampler : public RefCountedAndCanMakeWeakPtr<GPUSampler> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUSampler);
 public:
     static Ref<GPUSampler> create(Ref<::WebGPU::Sampler>&& backing, String&& label, GPUDevice& device)
     {

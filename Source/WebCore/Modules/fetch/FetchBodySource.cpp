@@ -36,8 +36,11 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSArrayBufferViewInlines.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FetchBodySource);
 
 Ref<FetchBodySource> FetchBodySource::create(FetchBodyOwner& bodyOwner)
 {

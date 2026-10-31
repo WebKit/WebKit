@@ -34,9 +34,12 @@
 #include "UniqueIDBDatabaseConnection.h"
 #include "UniqueIDBDatabaseManager.h"
 #include <algorithm>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBServer {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UniqueIDBDatabaseTransaction);
 
 static ClientOrigin clientOrigin(UniqueIDBDatabaseConnection& databaseConnection)
 {

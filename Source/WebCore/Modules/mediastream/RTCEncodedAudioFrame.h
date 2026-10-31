@@ -28,10 +28,12 @@
 #if ENABLE(WEB_RTC)
 
 #include "RTCEncodedFrame.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class RTCEncodedAudioFrame : public RTCEncodedFrame {
+    WTF_MAKE_TZONE_ALLOCATED(RTCEncodedAudioFrame);
 public:
     struct Options {
         std::optional<RTCEncodedAudioFrameMetadata> metadata;

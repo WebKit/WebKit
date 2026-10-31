@@ -24,8 +24,11 @@
 
 #include "config.h"
 #include "WebLock.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebLock);
 
 Ref<WebLock> WebLock::create(WebLockIdentifier identifier, const String& name, WebLockMode mode)
 {

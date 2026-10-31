@@ -37,8 +37,11 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <ranges>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaKeyStatusMap);
 
 MediaKeyStatusMap::MediaKeyStatusMap(const MediaKeySession& session)
     : m_session(&session)

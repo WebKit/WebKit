@@ -35,6 +35,7 @@
 #include "MediaKeyStatus.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,6 +44,7 @@ class ScriptExecutionContext;
 class SharedBuffer;
 
 class MediaKeyStatusMap : public RefCounted<MediaKeyStatusMap> {
+    WTF_MAKE_TZONE_ALLOCATED(MediaKeyStatusMap);
 public:
     using Status = MediaKeyStatus;
 

@@ -32,6 +32,7 @@
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -47,6 +48,7 @@ class GPUQuerySet;
 template<typename> class ExceptionOr;
 
 class GPUComputePassEncoder : public RefCountedAndCanMakeWeakPtr<GPUComputePassEncoder> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUComputePassEncoder);
 public:
     static Ref<GPUComputePassEncoder> create(Ref<::WebGPU::ComputePassEncoder>&& backing, String&& label, GPUCommandEncoder& commandEncoder)
     {

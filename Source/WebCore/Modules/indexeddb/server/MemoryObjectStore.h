@@ -34,6 +34,7 @@
 #include "ThreadSafeDataBuffer.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -57,6 +58,7 @@ class MemoryBackingStoreTransaction;
 typedef HashMap<IDBKeyData, ThreadSafeDataBuffer, DefaultHash<IDBKeyData>, IDBKeyDataHashTraits> KeyValueMap;
 
 class MemoryObjectStore : public RefCountedAndCanMakeWeakPtr<MemoryObjectStore> {
+    WTF_MAKE_TZONE_ALLOCATED(MemoryObjectStore);
 public:
     static Ref<MemoryObjectStore> LEGACY_NODELETE create(const IDBObjectStoreInfo&);
 

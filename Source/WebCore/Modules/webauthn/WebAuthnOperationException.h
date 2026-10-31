@@ -29,11 +29,13 @@
 
 #include <WebCore/DOMException.h>
 #include <WebCore/WebAuthnOperationErrorCode.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class WebAuthnOperationException final : public DOMException {
+    WTF_MAKE_TZONE_ALLOCATED(WebAuthnOperationException);
 public:
     static Ref<WebAuthnOperationException> create(WebAuthnOperationErrorCode, const String& message);
 

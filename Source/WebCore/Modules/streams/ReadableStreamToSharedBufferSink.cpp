@@ -39,10 +39,15 @@
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReadableStreamToSharedBufferSink);
+
 class SinkReadRequest : public ReadableStreamReadRequest {
+    WTF_MAKE_TZONE_ALLOCATED(SinkReadRequest);
 public:
     static Ref<SinkReadRequest> LEGACY_NODELETE create(ReadableStreamToSharedBufferSink& sink, ScriptExecutionContext& context) { return adoptRef(*new SinkReadRequest(sink, context)); }
     ~SinkReadRequest() = default;
@@ -105,6 +110,8 @@ private:
     WeakPtr<ReadableStreamToSharedBufferSink> m_sink;
     WeakPtr<ScriptExecutionContext> m_context;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SinkReadRequest);
 
 ReadableStreamToSharedBufferSink::ReadableStreamToSharedBufferSink(Callback&& callback, std::optional<size_t> backpressureThreshold)
     : m_callback { WTF::move(callback) }

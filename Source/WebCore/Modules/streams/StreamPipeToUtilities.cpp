@@ -40,6 +40,8 @@
 #include "StreamPipeOptions.h"
 #include "WritableStream.h"
 #include <JavaScriptCore/StrongInlines.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -63,6 +65,7 @@ std::optional<Exception> readableStreamPipeTo(JSDOMGlobalObject& globalObject, R
 
 class PipeToDefaultReadRequest;
 class StreamPipeToState : public RefCounted<StreamPipeToState>, public ContextDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(StreamPipeToState);
 public:
     static Ref<StreamPipeToState> create(JSDOMGlobalObject& globalObject, Ref<ReadableStream>&& source, Ref<WritableStream>&& destination, Ref<ReadableStreamDefaultReader>&& reader, Ref<InternalWritableStreamWriter>&& writer, StreamPipeOptions&& options, RefPtr<DeferredPromise>&& promise)
     {
@@ -90,6 +93,7 @@ public:
     void readableStreamIsClosing();
 
     class AllPromise : public RefCounted<AllPromise> {
+        WTF_MAKE_TZONE_ALLOCATED(AllPromise);
     public:
         static Ref<AllPromise> LEGACY_NODELETE create(Ref<DeferredPromise>&& promise) { return adoptRef(*new AllPromise(WTF::move(promise))); }
         void resolve()
@@ -164,7 +168,12 @@ private:
     RefPtr<DOMPromise> m_pendingWritePromise;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StreamPipeToState);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StreamPipeToState::AllPromise);
+
 class PipeToDefaultReadRequest : public ReadableStreamReadRequest, public CanMakeWeakPtr<PipeToDefaultReadRequest> {
+    WTF_MAKE_TZONE_ALLOCATED(PipeToDefaultReadRequest);
 public:
     static Ref<PipeToDefaultReadRequest> LEGACY_NODELETE create(Ref<StreamPipeToState>&& state) { return adoptRef(*new PipeToDefaultReadRequest(WTF::move(state))); }
 
@@ -236,6 +245,8 @@ private:
     bool m_isPending { true };
     Function<void()> m_whenSettledCallback;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PipeToDefaultReadRequest);
 
 // https://streams.spec.whatwg.org/#readable-stream-pipe-to
 void readableStreamPipeTo(JSDOMGlobalObject& globalObject, Ref<ReadableStream>&& source, Ref<WritableStream>&& destination, Ref<ReadableStreamDefaultReader>&& reader, Ref<InternalWritableStreamWriter>&& writer, StreamPipeOptions&& options, RefPtr<DeferredPromise>&& promise)

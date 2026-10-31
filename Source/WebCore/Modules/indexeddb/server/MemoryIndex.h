@@ -31,6 +31,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -58,7 +59,7 @@ class MemoryIndexCursor;
 class MemoryObjectStore;
 
 class MemoryIndex : public RefCounted<MemoryIndex>, public CanMakeThreadSafeCheckedPtr<MemoryIndex> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MemoryIndex);
+    WTF_MAKE_TZONE_ALLOCATED(MemoryIndex);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MemoryIndex);
 public:
     static Ref<MemoryIndex> LEGACY_NODELETE create(const IDBIndexInfo&, MemoryObjectStore&);

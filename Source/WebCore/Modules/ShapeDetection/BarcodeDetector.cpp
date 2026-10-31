@@ -41,8 +41,11 @@
 #include "JSDetectedBarcode.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerGlobalScope.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BarcodeDetector);
 
 ExceptionOr<Ref<BarcodeDetector>> BarcodeDetector::create(ScriptExecutionContext& scriptExecutionContext, const BarcodeDetectorOptions& barcodeDetectorOptions)
 {
