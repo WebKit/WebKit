@@ -28,6 +28,7 @@
 
 #include "WebPage.h"
 #include <WebCore/Page.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
@@ -40,14 +41,12 @@ NetworkInterceptionSink::NetworkInterceptionSink(WebPage& page)
 
 NetworkInterceptionSink::~NetworkInterceptionSink() = default;
 
-void NetworkInterceptionSink::setConfiguration(Inspector::NetworkInterception&& configuration)
+const Inspector::NetworkInterception& NetworkInterceptionSink::configuration() const
 {
-    m_configuration = WTF::move(configuration);
-
-    // Mirror onto the core page so that per-frame loading code (and test-only
-    // observers) in this process can consult the active configuration.
-    if (RefPtr corePage = Ref { m_page.get() }->corePage())
-        corePage->setNetworkInterceptionByWebInspector(Inspector::NetworkInterception { m_configuration });
+    static NeverDestroyed<Inspector::NetworkInterception> emptyConfiguration;
+    if (RefPtr corePage = Ref { m_page }->corePage())
+        return corePage->networkInterception();
+    return emptyConfiguration.get();
 }
 
 } // namespace WebKit
