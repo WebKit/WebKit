@@ -168,7 +168,9 @@ public:
     void walkUpInlineStack(NOESCAPE const Function&) const;
 
     inline bool inlineStackContainsActiveCheckpoint() const;
-    
+
+    inline bool inlineStackContains(InlineCallFrame&) const;
+
     // Get the inline stack. This is slow, and is intended for debugging only.
     Vector<CodeOrigin> inlineStack() const;
     
