@@ -37,7 +37,12 @@ WI.NetworkInstrument = class NetworkInstrument extends WI.Instrument
         // Nothing to do, network instrumentation is always happening.
     }
 
-    stopInstrumentation(initiatedByBackend)
+    startInstrumentationForTarget(target)
+    {
+        // Nothing to do, network instrumentation is always happening.
+    }
+
+    stopInstrumentation()
     {
         // Nothing to do, network instrumentation is always happening.
     }

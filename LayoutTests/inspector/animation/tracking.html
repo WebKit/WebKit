@@ -40,7 +40,7 @@ function test()
             let trackingComplete = null;
 
             let didTrackingStart = new Promise((resolve) => {
-                WI.timelineManager.animationTrackingStarted = (timestamp) => {
+                WI.timelineManager.animationTrackingStarted = (target, timestamp) => {
                     trackingStart = {timestamp};
                     resolve();
                 };
@@ -59,7 +59,7 @@ function test()
             });
 
             let didTrackingComplete = new Promise((resolve) => {
-                WI.timelineManager.animationTrackingCompleted = (timestamp) => {
+                WI.timelineManager.animationTrackingCompleted = (target, timestamp) => {
                     trackingComplete = {timestamp};
                     resolve();
                 };

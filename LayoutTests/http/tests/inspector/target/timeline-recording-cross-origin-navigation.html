@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function pageTimerFired() {
+    return 42;
+}
+
+function fireTimerInPage() {
+    setTimeout(pageTimerFired);
+}
+
+function test()
+{
+    function awaitEventMatching(object, eventType, predicate) {
+        return new Promise((resolve) => {
+            let listener = object.addEventListener(eventType, (event) => {
+                if (!predicate(event))
+                    return;
+
+                object.removeEventListener(eventType, listener);
+                resolve(event);
+            });
+        });
+    }
+
+    function awaitCapturingState(capturingState) {
+        return awaitEventMatching(WI.timelineManager, WI.TimelineManager.Event.CapturingStateChanged, () => WI.timelineManager.capturingState === capturingState);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Timeline.CrossOriginNavigation");
+
+    suite.addTestCase({
+        name: "Timeline.CrossOriginNavigation.ProvisionalPageTarget",
+        description: "Check that a capture records from the page target created by a cross-origin navigation, and stops after the previous page target is removed.",
+        async test() {
+            let previousPageTarget = WI.mainTarget;
+
+            let stoppedDomainsForTarget = new Map;
+            let originalCapturingStopped = WI.timelineManager.capturingStopped;
+            WI.timelineManager.capturingStopped = function(target, domain, ...rest) {
+                stoppedDomainsForTarget.getOrInsertComputed(target, () => new Set).add(domain);
+                return originalCapturingStopped.call(this, target, domain, ...rest);
+            };
+
+            let activePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            const newRecording = true;
+            WI.timelineManager.startCapturing(newRecording);
+            await activePromise;
+            InspectorTest.pass("Capturing is active.");
+
+            let navigationPromise = Promise.all([
+                awaitEventMatching(WI.targetManager, WI.TargetManager.Event.TargetAdded, (event) => event.data.target instanceof WI.PageTarget).then((event) => event.data.target),
+                awaitEventMatching(WI.targetManager, WI.TargetManager.Event.TargetRemoved, (event) => event.data.target === previousPageTarget),
+                InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad),
+            ]);
+            // Don't wait for the reply, since the target that would send it is being replaced.
+            previousPageTarget.RuntimeAgent.evaluate("location.hostname = 'localhost'");
+            let [provisionalPageTarget] = await navigationPromise;
+            InspectorTest.expectEqual(WI.mainTarget, provisionalPageTarget, "The page target created by the navigation should be the main target.");
+            InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Active, "Capturing should still be active after the previous page target is removed.");
+
+            let scriptTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Script);
+            await Promise.all([
+                awaitEventMatching(scriptTimeline, WI.Timeline.Event.RecordAdded, (event) => event.data.record.eventType === WI.ScriptTimelineRecord.EventType.TimerFired && event.data.record.target === provisionalPageTarget),
+                InspectorTest.evaluateInPage(`fireTimerInPage()`),
+            ]);
+            InspectorTest.pass("Recorded a timer from the page target created by the navigation.");
+
+            let inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            WI.timelineManager.stopCapturing();
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped.");
+
+            for (let domain of ["Timeline", "ScriptProfiler"])
+                InspectorTest.expectTrue(stoppedDomainsForTarget.get(provisionalPageTarget)?.has(domain), `The page target created by the navigation should report that ${domain} stopped.`);
+
+            WI.timelineManager.capturingStopped = originalCapturingStopped;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a Timeline recording continues across a cross-origin navigation that creates a new page target, and still stops.</p>
+</body>
+</html>

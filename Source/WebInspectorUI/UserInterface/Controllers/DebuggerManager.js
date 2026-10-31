@@ -121,6 +121,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             this._temporarilyDisabledBreakpointsRestoreSetting.value = null;
         }
         this._temporarilyDisableBreakpointsRequestCount = 0;
+        this._breakpointsDisabledForTimelineCapture = false;
 
         this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
 
@@ -1722,13 +1723,20 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     {
         switch (WI.timelineManager.capturingState) {
         case WI.TimelineManager.CapturingState.Starting:
-            this._startDisablingBreakpointsTemporarily();
+            // Capturing can restart before it becomes inactive, so only count one request until it does.
+            if (!this._breakpointsDisabledForTimelineCapture) {
+                this._breakpointsDisabledForTimelineCapture = true;
+                this._startDisablingBreakpointsTemporarily();
+            }
             if (this.paused)
                 this.resume();
             break;
 
         case WI.TimelineManager.CapturingState.Inactive:
-            this._stopDisablingBreakpointsTemporarily();
+            if (this._breakpointsDisabledForTimelineCapture) {
+                this._breakpointsDisabledForTimelineCapture = false;
+                this._stopDisablingBreakpointsTemporarily();
+            }
             break;
         }
     }

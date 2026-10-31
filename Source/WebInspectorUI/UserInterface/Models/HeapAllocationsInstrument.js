@@ -46,7 +46,7 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
 
         if (!initiatedByBackend) {
             for (let target of this.#allSupportedTargets())
-                target.HeapAgent.startTracking();
+                this.#startTrackingForTarget(target);
         }
 
         // Periodic snapshots.
@@ -54,12 +54,15 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
         this._snapshotIntervalIdentifier = setInterval(this._takeHeapSnapshot.bind(this), snapshotInterval);
     }
 
-    stopInstrumentation(initiatedByBackend)
+    startInstrumentationForTarget(target)
     {
-        if (!initiatedByBackend) {
-            for (let target of this.#allSupportedTargets())
-                target.HeapAgent.stopTracking();
-        }
+        if (this.#isSupportedTarget(target))
+            this.#startTrackingForTarget(target);
+    }
+
+    stopInstrumentation()
+    {
+        // TimelineManager stops every domain that is tracking.
 
         window.clearInterval(this._snapshotIntervalIdentifier);
         this._snapshotIntervalIdentifier = undefined;
@@ -81,10 +84,21 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
         }
     }
 
+    #startTrackingForTarget(target)
+    {
+        WI.timelineManager.willStartTrackingForTarget(target, "Heap");
+        target.HeapAgent.startTracking();
+    }
+
     // FIXME: <https://webkit.org/b/298984> Add Heap support for FrameTarget.
+    #isSupportedTarget(target)
+    {
+        return !(target instanceof WI.FrameTarget);
+    }
+
     *#allSupportedTargets() {
         for (let target of WI.targets) {
-            if (!(target instanceof WI.FrameTarget))
+            if (this.#isSupportedTarget(target))
                 yield target;
         }
     }
