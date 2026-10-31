@@ -122,7 +122,12 @@ void DocumentScope::addViewTransitionKeyframes(Ref<StyleRuleKeyframes>&& rule)
 
 void DocumentScope::releaseMemory()
 {
+<<<<<<< HEAD
     for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots()) {
+=======
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots())
+>>>>>>> d7a21c2b7fd6 (Fix UAF due to mutation of m_inDocumentShadowRoots during iteration)
         const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().releaseMemory();
     }
 
@@ -181,6 +186,7 @@ auto DocumentScope::collectResolverScopes() -> ResolverScopes
     if (RefPtr resolver = resolverIfExists())
         resolverScopes.add(*resolver, Vector<WeakPtr<Scope>> { this });
 
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     for (Ref shadowRoot : m_document->inDocumentShadowRoots()) {
         auto& scope = const_cast<ShadowRoot&>(shadowRoot.get()).styleScope();
 
@@ -227,7 +233,12 @@ void DocumentScope::didChangeStyleSheetEnvironment()
 
     m_sharedShadowTreeResolvers.clear();
 
+<<<<<<< HEAD
     for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots()) {
+=======
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots())
+>>>>>>> d7a21c2b7fd6 (Fix UAF due to mutation of m_inDocumentShadowRoots during iteration)
         const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().scheduleUpdate(UpdateType::ContentsOrInterpretation);
     }
 
@@ -242,7 +253,12 @@ void DocumentScope::didChangeExtensionStyleSheets()
     // Extension stylesheets may mutate in the middle of a style update when resource loading triggers
     // content extension processing. In this case we schedule an asyncronous full stylesheet update.
     // FIXME: We should defer all resource loading after style resolution completes.
+<<<<<<< HEAD
     for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots()) {
+=======
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    for (auto& descendantShadowRoot : m_document->inDocumentShadowRoots())
+>>>>>>> d7a21c2b7fd6 (Fix UAF due to mutation of m_inDocumentShadowRoots during iteration)
         const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().scheduleUpdate(UpdateType::FullForExtensionStyleSheets);
     }
 

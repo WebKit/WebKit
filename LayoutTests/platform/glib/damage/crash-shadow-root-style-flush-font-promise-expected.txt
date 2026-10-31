@@ -1,0 +1,4 @@
+document.fonts.status: loading
+FontFaceSet.prototype.then getter calls: 0
+PASS if no crash.
+

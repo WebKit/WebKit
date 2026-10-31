@@ -130,6 +130,7 @@
 #include "ResourceLoadObserver.h"
 #include "ScheduledAction.h"
 #include "Screen.h"
+#include "ScriptDisallowedScope.h"
 #include "ScrollAnimator.h"
 #include "ScrollToOptions.h"
 #include "SecurityOrigin.h"
@@ -668,7 +669,12 @@ void LocalDOMWindow::resumeFromBackForwardCache()
 CustomElementRegistry& LocalDOMWindow::ensureCustomElementRegistry()
 {
     if (!m_customElementRegistry) {
+<<<<<<< HEAD
         m_customElementRegistry = CustomElementRegistry::create(protect(*scriptExecutionContext()), *this);
+=======
+        m_customElementRegistry = CustomElementRegistry::create(*scriptExecutionContext(), *this);
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+>>>>>>> d7a21c2b7fd6 (Fix UAF due to mutation of m_inDocumentShadowRoots during iteration)
         for (Ref shadowRoot : document()->inDocumentShadowRoots()) {
             if (shadowRoot->mode() == ShadowRootMode::UserAgent || shadowRoot->hasScopedCustomElementRegistry())
                 continue;
