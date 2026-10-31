@@ -222,6 +222,11 @@
             "behaviors": [{ "id": "ShouldUseLayoutViewportForClientRectsQuirk" }]
         },
         {
+            "bugs": ["rdar://189766320"],
+            "matches": ["*://*.chatgpt.com/*"],
+            "behaviors": [{ "id": "NeedsMarginTrimInlineSupportsQuirk" }]
+        },
+        {
             "matches": ["*://*.chess.com/*"],
             "environment": "SmallScreen",
             "available": "iOS",

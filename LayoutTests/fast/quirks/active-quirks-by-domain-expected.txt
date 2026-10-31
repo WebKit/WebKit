@@ -58,7 +58,7 @@ https://www.capitalgroup.com/
 https://www.cbssports.com/
     (none)
 https://chatgpt.com/
-    (none)
+    NeedsMarginTrimInlineSupportsQuirk
 https://www.cnn.com/
     (none)
 https://configurator.audi.com/

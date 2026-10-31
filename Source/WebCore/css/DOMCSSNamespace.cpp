@@ -70,6 +70,9 @@ bool DOMCSSNamespace::supports(Document& document, const String& property, const
     if (value.isEmpty())
         return false;
 
+    if (propertyID == CSSPropertyID::MarginTrim && parserContext.marginTrimInlineSupportsQuirkEnabled && CSSSupportsParser::isMarginTrimInlineValue(value))
+        return true;
+
     auto dummyStyle = MutableStyleProperties::create();
     return CSSParser::parseValue(dummyStyle, propertyID, value, IsImportant::No, parserContext) != CSSParser::ParseResult::Error;
 }

@@ -54,6 +54,8 @@ public:
     static SupportsResult supportsCondition(CSSParserTokenRange, CSSParser&, ParsingMode);
     static SupportsResult supportsCondition(StringView, const CSSParserContext&, ParsingMode);
 
+    static bool isMarginTrimInlineValue(StringView);
+
 private:
     CSSSupportsParser(CSSParser& parser)
         : m_parser(parser)

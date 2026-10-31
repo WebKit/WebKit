@@ -131,6 +131,9 @@ NeedsCNNCaptionQuirk:
   available: cocoa
   export: true
 
+# chatgpt.com rdar://189766320
+NeedsMarginTrimInlineSupportsQuirk:
+
 NeedsLimitedMatroskaSupportQuirk:
   available: "mediaRecorder && cocoaWebMPlayer"
   accessor: needsLimitedMatroskaSupport

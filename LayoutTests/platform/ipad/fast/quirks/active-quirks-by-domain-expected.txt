@@ -63,6 +63,7 @@ https://www.capitalgroup.com/
 https://www.cbssports.com/
     ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk
 https://chatgpt.com/
+    NeedsMarginTrimInlineSupportsQuirk
     ShouldUseLayoutViewportForClientRectsQuirk
 https://www.cnn.com/
     NeedsCNNCaptionQuirk

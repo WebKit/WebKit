@@ -161,6 +161,35 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFunction(CSS
     }
 }
 
+// The CSSWG resolved that margin-trim has no inline keywords, but some sites still feature-detect them.
+static bool isMarginTrimInlineKeyword(CSSParserTokenRange range)
+{
+    range.consumeWhitespace();
+    switch (range.consumeIncludingWhitespace().id()) {
+    case CSSValueID::Inline:
+    case CSSValueID::InlineStart:
+    case CSSValueID::InlineEnd:
+        return range.atEnd();
+    default:
+        return false;
+    }
+}
+
+static bool isMarginTrimInlineDeclaration(CSSParserTokenRange range)
+{
+    if (range.consumeIncludingWhitespace().parseAsCSSPropertyID() != CSSPropertyID::MarginTrim)
+        return false;
+    if (range.consume().type() != ColonToken)
+        return false;
+    return isMarginTrimInlineKeyword(range);
+}
+
+bool CSSSupportsParser::isMarginTrimInlineValue(StringView value)
+{
+    CSSTokenizer tokenizer(value);
+    return isMarginTrimInlineKeyword(tokenizer.tokenRange());
+}
+
 // <supports-feature> | <general-enclosed>
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFeatureOrGeneralEnclosed(CSSParserTokenRange& range)
 {
@@ -169,7 +198,13 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFeatureOrGen
             return result;
     }
 
-    return range.peek().type() == IdentToken && m_parser.supportsDeclaration(range) ? Supported : Unsupported;
+    if (range.peek().type() != IdentToken)
+        return Unsupported;
+
+    if (m_parser.context().marginTrimInlineSupportsQuirkEnabled && isMarginTrimInlineDeclaration(range))
+        return Supported;
+
+    return m_parser.supportsDeclaration(range) ? Supported : Unsupported;
 }
 
 // <supports-selector-fn>
