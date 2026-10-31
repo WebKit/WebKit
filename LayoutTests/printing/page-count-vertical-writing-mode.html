@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; }
+#sandbox div { inline-size: 200px; block-size: 100px; }
+.page-break { break-before: page; }
+</style>
+<script src="resources/paged-media-test-utils.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function test()
+{
+    for (const writingMode of ["horizontal-tb", "vertical-rl", "vertical-lr"]) {
+        document.documentElement.style.writingMode = writingMode;
+        appendResult(writingMode + ":");
+        numberOfPagesShouldBe(3);
+        pageNumberForElementShouldBe("first", 0);
+        pageNumberForElementShouldBe("second", 1);
+        pageNumberForElementShouldBe("third", 2);
+    }
+    document.documentElement.style.writingMode = "";
+    document.body.removeChild(document.getElementById("sandbox"));
+}
+</script>
+</head>
+<body onload="runPrintingTest(test)">
+<p>Tests that page counting and page numbers agree in vertical writing modes. Each block starts a new page.</p>
+<div id="sandbox">
+    <div id="first"></div>
+    <div id="second" class="page-break"></div>
+    <div id="third" class="page-break"></div>
+</div>
+</body>
+</html>

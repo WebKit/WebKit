@@ -20480,6 +20480,12 @@ static std::optional<std::array<uint8_t, 3>> pdfPageColorAtPoint(NSData *data, s
     return std::array { pixel[0], pixel[1], pixel[2] };
 }
 
+// 1px = 0.75pt.
+static CGPoint pointsFromCSSPixels(CGFloat x, CGFloat y)
+{
+    return CGPointMake(x * 0.75, y * 0.75);
+}
+
 static bool pdfPageHasColorAtPoint(NSData *data, size_t pageNumber, CGPoint point, std::array<uint8_t, 3> color)
 {
     auto actualColor = pdfPageColorAtPoint(data, pageNumber, point);
@@ -20522,15 +20528,15 @@ TEST(SiteIsolation, DrawPagesToPDFIncludesCrossSiteFrameOnEveryPageItSpans)
     RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
     EXPECT_EQ([document pageCount], 2);
 
-    // The first page ends in the blue half of the iframe, and the second shows the rest of it.
+    // US Letter pages are 1056px tall. Probe the middle of each color.
     constexpr std::array<uint8_t, 3> red { 255, 0, 0 };
     constexpr std::array<uint8_t, 3> blue { 0, 0, 255 };
     constexpr std::array<uint8_t, 3> white { 255, 255, 255 };
-    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 1, CGPointMake(100, 300), red));
-    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 1, CGPointMake(100, 700), blue));
-    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(100, 100), blue));
-    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(100, 500), white));
-    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(500, 100), white));
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 1, pointsFromCSSPixels(200, 300), red));
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 1, pointsFromCSSPixels(200, 828), blue));
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, pointsFromCSSPixels(200, 72), blue));
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, pointsFromCSSPixels(200, 600), white));
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, pointsFromCSSPixels(608, 72), white));
 }
 
 TEST(SiteIsolation, DrawPagesToPDFDoesNotCarryTransformIntoNextPage)
@@ -20565,8 +20571,9 @@ TEST(SiteIsolation, DrawPagesToPDFDoesNotCarryTransformIntoNextPage)
     RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
     EXPECT_EQ([document pageCount], 2);
 
+    // The middle of the green box.
     constexpr std::array<uint8_t, 3> green { 0, 128, 0 };
-    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(100, 100), green));
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, pointsFromCSSPixels(100, 110), green));
 }
 
 static void collectImageBitsPerComponent(CGPDFDictionaryRef resources, Vector<CGPDFInteger>& bitsPerComponent, unsigned depth = 0)
@@ -20677,8 +20684,8 @@ TEST(SiteIsolation, DrawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit)
     for (auto value : bitsPerComponent)
         EXPECT_EQ(value, 8);
 
-    // The middle of each image, in points.
-    for (auto point : { CGPointMake(50 * 0.75, 50 * 0.75), CGPointMake(50 * 0.75, 150 * 0.75) }) {
+    // The middle of each image.
+    for (auto point : { pointsFromCSSPixels(50, 50), pointsFromCSSPixels(50, 150) }) {
         auto localColor = pdfPageColorAtPoint(localData.get(), 1, point);
         ASSERT_TRUE(localColor);
         EXPECT_TRUE(pdfPageHasColorAtPoint(remoteData.get(), 1, point, *localColor));

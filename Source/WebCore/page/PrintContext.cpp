@@ -321,19 +321,18 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
 {
     // Make sure the element is not freed during the layout.
     RefPtr<Element> elementRef(element);
-    protect(element->document())->updateLayout();
+
+    RefPtr frame = element->document().frame();
+    if (!frame)
+        return -1;
+
+    Ref printContext = PrintContext::create(frame.get());
+    if (!printContext->beginAndComputePageRectsWithPageSize(*frame, pageSizeInPixels))
+        return -1;
 
     CheckedPtr box = enclosingBoxModelObject(element->renderer());
     if (!box)
         return -1;
-
-    RefPtr frame = element->document().frame();
-    FloatRect pageRect(FloatPoint(0, 0), pageSizeInPixels);
-    Ref printContext = PrintContext::create(frame.get());
-    printContext->begin(pageRect.width(), pageRect.height());
-    FloatSize scaledPageSize = pageSizeInPixels;
-    scaledPageSize.scale(protect(frame->view())->contentsSize().width() / pageRect.width());
-    printContext->computePageRectsWithPageSize(scaledPageSize, false);
 
     int top = roundToInt(box->offsetTop());
     int left = roundToInt(box->offsetLeft());
@@ -461,8 +460,12 @@ bool PrintContext::beginAndComputePageRectsWithPageSize(LocalFrame& frame, const
     protect(frame.document())->updateLayout();
 
     begin(pageSizeInPixels.width(), pageSizeInPixels.height());
+    RefPtr view = frame.view();
+    if (!view)
+        return false;
+
     // Account for shrink-to-fit, rounding like begin() does.
-    FloatSize scaledPageSize = frame.resizePageRectsKeepingRatio(pageSizeInPixels, FloatSize(protect(frame.view())->contentsSize()));
+    FloatSize scaledPageSize = frame.resizePageRectsKeepingRatio(pageSizeInPixels, FloatSize(view->contentsSize()));
     computePageRectsWithPageSize(scaledPageSize, false);
 
     return true;

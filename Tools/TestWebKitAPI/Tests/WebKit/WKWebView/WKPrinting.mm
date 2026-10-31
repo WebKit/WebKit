@@ -28,6 +28,7 @@
 
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/PrintingTestUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestPDFDocument.h"
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -222,63 +223,19 @@ TEST(Printing, PrintPageBorders)
 }
 
 #if HAVE(PDFKIT)
-@interface PrintOperationObserver : NSObject
-- (void)waitForPrintOperation;
-@end
-
-@implementation PrintOperationObserver {
-    bool _didRun;
-}
-
-- (void)printOperationDidRun:(NSPrintOperation *)printOperation success:(BOOL)success contextInfo:(void *)contextInfo
-{
-    EXPECT_TRUE(success);
-    _didRun = true;
-}
-
-- (void)waitForPrintOperation
-{
-    TestWebKitAPI::Util::run(&_didRun);
-}
-
-@end
-
 static RetainPtr<TestPDFDocument> printToPDF(NSString *styleSheet)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<style>%@ body { margin: 0 }</style><div>Hello</div>", styleSheet]];
 
-    RetainPtr printInfo = adoptNS([[NSPrintInfo alloc] init]);
-    [printInfo setPaperSize:NSMakeSize(612, 792)];
-
-    RetainPtr pdfURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.pdf", NSUUID.UUID.UUIDString]] isDirectory:NO];
-    [printInfo setJobDisposition:NSPrintSaveJob];
-    [printInfo dictionary][NSPrintJobSavingURL] = pdfURL.get();
-
-    RetainPtr operation = [webView printOperationWithPrintInfo:printInfo.get()];
-    [operation setShowsPrintPanel:NO];
-    [operation setShowsProgressPanel:NO];
-
-    RetainPtr observer = adoptNS([PrintOperationObserver new]);
-    [operation runOperationModalForWindow:[webView hostWindow] delegate:observer.get() didRunSelector:@selector(printOperationDidRun:success:contextInfo:) contextInfo:nullptr];
-    [observer waitForPrintOperation];
-
-    RetainPtr data = adoptNS([[NSData alloc] initWithContentsOfURL:pdfURL.get()]);
-    [NSFileManager.defaultManager removeItemAtURL:pdfURL.get() error:nil];
-    EXPECT_NOT_NULL(data.get());
-    if (!data)
-        return nil;
-    return adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
+    return TestWebKitAPI::printToPDF(^(NSPrintInfo *printInfo) {
+        return [webView printOperationWithPrintInfo:printInfo];
+    }, [webView hostWindow]);
 }
 
-// Measured from the top left of the paper.
 static CGPoint firstCharacterPosition(NSString *styleSheet)
 {
-    RetainPtr document = printToPDF(styleSheet);
-    EXPECT_EQ([document pageCount], 1);
-    RetainPtr page = [document pageAtIndex:0];
-    CGRect characterRect = [page rectForCharacterAtIndex:0];
-    return CGPointMake(CGRectGetMinX(characterRect), CGRectGetMaxY([page bounds]) - CGRectGetMaxY(characterRect));
+    return TestWebKitAPI::firstCharacterPosition(printToPDF(styleSheet).get());
 }
 
 static void expectFirstCharacterOffset(NSString *styleSheet, NSString *referenceStyleSheet, CGFloat left, CGFloat top)
