@@ -34,6 +34,9 @@ PORT_GROUPS = {
 def expectations_port_names(port):
     """The keys to look up in WebDriverTests/TestExpectations.json, most specific first. 'all' comes after these."""
     names = []
+    # With Site Isolation, its entries take precedence over the port's other ones.
+    if port.get_option('site_isolation'):
+        names.append('%s-site-isolation' % port.port_name)
     for name in [port.name(), port.port_name, PORT_GROUPS.get(port.port_name)]:
         if name and name not in names:
             names.append(name)
