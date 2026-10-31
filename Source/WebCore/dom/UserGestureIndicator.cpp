@@ -228,7 +228,10 @@ UserGestureIndicator::UserGestureIndicator(std::optional<IsProcessingUserGesture
 
         if (RefPtr page = document->page()) {
             page->setUserDidInteractWithPage(true);
-            page->setUserDidInteractWithPageExcludingForcedUserGestures(processInteractionStyle != ProcessInteractionStyle::Never);
+            // A gesture that is forced, e.g. by script injection or requestStorageAccess(), isn't an interaction
+            // by the user, but it must not undo one that was.
+            if (processInteractionStyle != ProcessInteractionStyle::Never)
+                page->setUserDidInteractWithPageExcludingForcedUserGestures(true);
         }
         if (RefPtr frame = document->frame(); frame && !frame->hasHadUserInteraction()) {
             bool hasRemoteAncestor = false;
