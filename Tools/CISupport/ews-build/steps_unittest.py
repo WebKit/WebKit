@@ -658,6 +658,86 @@ Failed 1/40 test programs. 10/630 subtests failed.''')
         self.assertTrue(RunWebKitPerlTests.haltOnFailure)
 
 
+class TestRunLibpasTestsIfNeeded(BuildStepMixinAdditions, unittest.TestCase):
+    @staticmethod
+    def command(sdk):
+        return ['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'BUILD_DIR="$(perl Tools/Scripts/webkit-build-directory --top-level)/libpas" && cd Source/bmalloc/libpas && ./build_and_test.sh -s {sdk} -v testing -b "$BUILD_DIR"']
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self, change, additionalArguments=['--cmake']):
+        self.setup_step(RunLibpasTestsIfNeeded())
+        self.setProperty('builddir', 'builddir')
+        self.setProperty('additionalArguments', additionalArguments)
+        encoded_change = change.encode('utf-8') if change is not None else None
+        get_patch = patch.object(RunLibpasTestsIfNeeded, '_get_patch', lambda self: encoded_change)
+        get_patch.start()
+        self.addCleanup(get_patch.stop)
+
+    def expectLibpasCommand(self, exit_code):
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=1200,
+                        env={'PATH': cmake_tools_path('builddir')},
+                        command=self.command('cmake'))
+            .exit(exit_code),
+        )
+
+    def test_success_with_xcodebuild(self):
+        self.configureStep('Source/bmalloc/libpas/src/libpas/pas_heap.c', additionalArguments=None)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=1200,
+                        command=self.command('macosx'))
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Passed libpas tests')
+        return self.run_step()
+
+    def test_success_with_libpas_file_list(self):
+        self.configureStep('Source/JavaScriptCore/runtime/VM.cpp\nSource/bmalloc/libpas/src/libpas/pas_heap.c')
+        self.expectLibpasCommand(0)
+        self.expect_outcome(result=SUCCESS, state_string='Passed libpas tests')
+        return self.run_step()
+
+    def test_success_with_libpas_diff(self):
+        self.configureStep('diff --git a/Source/bmalloc/libpas/build.sh b/Source/bmalloc/libpas/build.sh\n--- a/Source/bmalloc/libpas/build.sh\n+++ b/Source/bmalloc/libpas/build.sh\n')
+        self.expectLibpasCommand(0)
+        self.expect_outcome(result=SUCCESS, state_string='Passed libpas tests')
+        return self.run_step()
+
+    def test_failure(self):
+        self.configureStep('Source/bmalloc/libpas/src/libpas/pas_heap.c')
+        self.expectLibpasCommand(1)
+        self.expect_outcome(result=FAILURE, state_string='Failed libpas tests')
+        return self.run_step()
+
+    def test_skipped_without_libpas_changes(self):
+        self.configureStep('Source/bmalloc/bmalloc/Heap.cpp\nSource/JavaScriptCore/runtime/VM.cpp')
+        self.expect_outcome(result=SKIPPED, state_string="Patch doesn't have relevant changes")
+        self.expect_hidden(True)
+        return self.run_step()
+
+    def test_skipped_when_diff_content_mentions_libpas(self):
+        self.configureStep('--- a/Tools/CISupport/ews-build/steps.py\n+++ b/Tools/CISupport/ews-build/steps.py\n+    path = "Source/bmalloc/libpas/"\n')
+        self.expect_outcome(result=SKIPPED, state_string="Patch doesn't have relevant changes")
+        self.expect_hidden(True)
+        return self.run_step()
+
+    def test_skipped_without_patch(self):
+        self.configureStep(None)
+        self.expect_outcome(result=SKIPPED, state_string="Patch doesn't have relevant changes")
+        self.expect_hidden(True)
+        return self.run_step()
+
+
 class TestRunWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True

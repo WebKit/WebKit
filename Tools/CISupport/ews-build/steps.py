@@ -2989,6 +2989,40 @@ class RunWebKitPerlTests(shell.ShellCommand):
         return {'step': 'Failed webkitperl tests'}
 
 
+class RunLibpasTestsIfNeeded(shell.ShellCommand, AnalyzeChange, ShellMixin):
+    name = 'libpas-tests'
+    description = ['libpas-tests running']
+    descriptionDone = ['libpas-tests']
+    flunkOnFailure = True
+    haltOnFailure = True
+    LIBPAS_PATH_REGEX = re.compile(rb'^(?:(?:\+\+\+|---) [ab]/)?Source/bmalloc/libpas/', re.MULTILINE)
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, **kwargs)
+
+    def doStepIf(self, step):
+        patch = self._get_patch()
+        return bool(patch and self.LIBPAS_PATH_REGEX.search(patch))
+
+    def hideStepIf(self, results, step):
+        return results == SKIPPED
+
+    def run(self):
+        sdk = 'macosx'
+        if '--cmake' in (self.getProperty('additionalArguments') or []):
+            sdk = 'cmake'
+            self.env['PATH'] = cmake_tools_path(self.getProperty('builddir'))
+        self.command = self.shell_command(f'BUILD_DIR="$(perl Tools/Scripts/webkit-build-directory --top-level)/libpas" && cd Source/bmalloc/libpas && ./build_and_test.sh -s {sdk} -v testing -b "$BUILD_DIR"')
+        return super().run()
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': 'Passed libpas tests'}
+        if self.results == FAILURE:
+            return {'step': 'Failed libpas tests'}
+        return super().getResultSummary()
+
+
 class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
     name = 'build-webkit-org-unit-tests'
     description = ['build-webkit-unit-tests running']

@@ -26,11 +26,11 @@
 
 case $variants in
     all|testing)
-        rm -rf build-$sdk-testing
+        rm -rf "$buildDir/build-$sdk-testing"
         ;;
 esac
 case $variants in
     all|default)
-        rm -rf build-$sdk-default
+        rm -rf "$buildDir/build-$sdk-default"
         ;;
 esac

@@ -238,6 +238,7 @@ class JSCBuildO3AndTestsFactory(Factory):
             self.addStep(InstallCMake())
             self.addStep(InstallNinja())
         self.addStep(ValidateChange(addURLs=False))
+        self.addStep(RunLibpasTestsIfNeeded())
         self.addStep(SetO3OptimizationLevel())
         self.addStep(CompileJSC(skipUpload=True))
         self.addStep(RunJavaScriptCoreTests())
