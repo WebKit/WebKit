@@ -39,6 +39,9 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
                     target.RuntimeAgent.setSavedResultAlias(WI.settings.consoleSavedResultAlias.value);
             }
         }, this);
+
+        WI.settings.showJavaScriptTypeInformation.addEventListener(WI.Setting.Event.Changed, this._showJavaScriptTypeInformationSettingChanged, this);
+        WI.settings.enableControlFlowProfiler.addEventListener(WI.Setting.Event.Changed, this._enableControlFlowProfilerSettingChanged, this);
     }
 
     // Static
@@ -211,6 +214,36 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
     }
 
     // Private
+
+    _showJavaScriptTypeInformationSettingChanged(event)
+    {
+        let shouldEnable = WI.settings.showJavaScriptTypeInformation.value;
+        for (let target of WI.targets) {
+            // COMPATIBILITY (macOS 26.4, iOS 26.4): Frame targets did not support the Runtime domain yet.
+            if (!target.hasCommand("Runtime.enableTypeProfiler"))
+                continue;
+
+            if (shouldEnable)
+                target.RuntimeAgent.enableTypeProfiler();
+            else
+                target.RuntimeAgent.disableTypeProfiler();
+        }
+    }
+
+    _enableControlFlowProfilerSettingChanged(event)
+    {
+        let shouldEnable = WI.settings.enableControlFlowProfiler.value;
+        for (let target of WI.targets) {
+            // COMPATIBILITY (macOS 26.4, iOS 26.4): Frame targets did not support the Runtime domain yet.
+            if (!target.hasCommand("Runtime.enableControlFlowProfiler"))
+                continue;
+
+            if (shouldEnable)
+                target.RuntimeAgent.enableControlFlowProfiler();
+            else
+                target.RuntimeAgent.disableControlFlowProfiler();
+        }
+    }
 
     _tryApplyAwaitConvenience(originalExpression)
     {

@@ -464,8 +464,10 @@ void InspectorRuntimeAgent::didCreateFrontendAndBackend()
 
 void InspectorRuntimeAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
 {
-    if (reason != DisconnectReason::InspectedTargetDestroyed && m_isTypeProfilingEnabled)
+    if (reason != DisconnectReason::InspectedTargetDestroyed || vmOutlivesInspectedTarget()) {
         setTypeProfilerEnabledState(false);
+        setControlFlowProfilerEnabledState(false);
+    }
 
     std::ignore = disable();
 }
