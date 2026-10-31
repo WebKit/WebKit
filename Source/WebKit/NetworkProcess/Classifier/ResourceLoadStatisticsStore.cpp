@@ -2614,6 +2614,8 @@ std::pair<ResourceLoadStatisticsStore::AddedRecord, std::optional<unsigned>> Res
 
 void ResourceLoadStatisticsStore::clearDatabaseContents()
 {
+    auto transactionScope = beginTransactionIfNecessary();
+
     m_database->clearAllTables();
 
     if (!createSchema())
