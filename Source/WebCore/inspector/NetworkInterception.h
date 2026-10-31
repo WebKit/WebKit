@@ -25,64 +25,66 @@
 
 #pragma once
 
+#include <wtf/URL.h>
+#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
 // The phase of a network load at which an intercept pattern takes effect.
-//
-// AuthRequired is representable so that a client's configuration round-trips
-// unchanged, but no phase-specific handling is serviced for it yet.
 enum class NetworkInterceptionPhase : uint8_t {
     BeforeRequestSent,
     ResponseStarted,
     AuthRequired,
 };
 
-// A single URL pattern registered by a client. The pattern is stored in its
-// native representation (a literal URL or a regular expression source), not as
-// wire JSON, so that any protocol front end can produce and consume it.
-struct InterceptPattern {
-    String urlPattern;
+// The consumer that registered an intercept pattern. Each consumer replaces only its own
+// patterns in the authority, and a load paused for a pattern is resolved by that pattern's owner.
+enum class NetworkInterceptOwner : uint8_t {
+    Inspector,
+    Automation,
+};
+
+// A Web Inspector URL filter: a literal URL or the source of a regular expression.
+struct InspectorURLPattern {
+    String url;
     bool caseSensitive { true };
     bool isRegex { false };
+
+    friend bool operator==(const InspectorURLPattern&, const InspectorURLPattern&) = default;
+
+    WEBCORE_EXPORT bool matches(const URL&) const;
+};
+
+// A single URL pattern registered by a consumer. The pattern is stored in its native
+// representation, not as wire JSON, so that any protocol front end can produce it and every
+// process matches it the same way.
+struct InterceptPattern {
+    NetworkInterceptOwner owner { NetworkInterceptOwner::Inspector };
     NetworkInterceptionPhase phase { NetworkInterceptionPhase::ResponseStarted };
+    Variant<InspectorURLPattern> urlPattern;
 
     friend bool operator==(const InterceptPattern&, const InterceptPattern&) = default;
 
-    WEBCORE_EXPORT bool matches(const String& url) const;
+    WEBCORE_EXPORT bool matches(const URL&) const;
 };
 
-// The process-agnostic network interception configuration. The UIProcess holds
-// the authoritative copy for a page and pushes it down to every WebContent
-// process hosting a frame of that page; each of those processes stores the copy
-// it receives. Configuration is union-additive: adding a pattern that is already
-// present is a no-op.
+// The process-agnostic network interception configuration of a page: the union of the patterns
+// of every consumer. The UI process holds the authoritative copy and pushes it down to every
+// WebContent process hosting a frame of the page, including processes created later.
 struct NetworkInterception {
-    bool enabled { false };
     Vector<InterceptPattern> patterns;
 
     friend bool operator==(const NetworkInterception&, const NetworkInterception&) = default;
 
-    bool isEmpty() const { return !enabled && patterns.isEmpty(); }
+    bool isEmpty() const { return patterns.isEmpty(); }
 
-    // Union-additive: returns true if the configuration changed.
-    bool add(const InterceptPattern& pattern)
-    {
-        if (patterns.contains(pattern))
-            return false;
-        patterns.append(pattern);
-        return true;
-    }
+    // Whether any consumer intercepts the URL at any phase.
+    WEBCORE_EXPORT bool isConfiguredForURL(const URL&) const;
 
-    // Returns true if the configuration changed.
-    bool remove(const InterceptPattern& pattern)
-    {
-        return patterns.removeFirst(pattern);
-    }
-
-    WEBCORE_EXPORT bool isConfiguredForURL(const String& url) const;
+    // Whether a pattern of the owner matches the URL at the phase.
+    WEBCORE_EXPORT bool matches(const URL&, NetworkInterceptionPhase, NetworkInterceptOwner) const;
 };
 
 } // namespace Inspector

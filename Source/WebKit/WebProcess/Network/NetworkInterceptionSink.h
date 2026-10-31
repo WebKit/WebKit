@@ -33,13 +33,9 @@ namespace WebKit {
 
 class WebPage;
 
-// Receives the network interception configuration that the UIProcess pushes down
-// to each WebContent process hosting a frame of the page, and holds the copy that
-// is active in this process. Under Site Isolation a page's frames are spread over
-// several processes, so every hosting process needs its own copy: the UIProcess
-// broadcasts on each configuration write and replays into late-joining processes.
-//
-// This only stores configuration. Pausing loads against it is a separate change.
+// The per-process end of network interception for a page. The UI process pushes the page's
+// interception configuration down to every WebContent process hosting one of its frames, which
+// stores it on its WebCore::Page; the sink is where loads in this process consult it.
 class NetworkInterceptionSink final {
     WTF_MAKE_TZONE_ALLOCATED(NetworkInterceptionSink);
     WTF_MAKE_NONCOPYABLE(NetworkInterceptionSink);
@@ -47,12 +43,10 @@ public:
     explicit NetworkInterceptionSink(WebPage&);
     ~NetworkInterceptionSink();
 
-    void setConfiguration(Inspector::NetworkInterception&&);
-    const Inspector::NetworkInterception& configuration() const { return m_configuration; }
+    const Inspector::NetworkInterception& configuration() const;
 
 private:
     WeakRef<WebPage> m_page;
-    Inspector::NetworkInterception m_configuration;
 };
 
 } // namespace WebKit
