@@ -144,7 +144,8 @@ function executeTest() {
     shouldBeEqualToString('text2.left.toFixed(2)', '350.00');
     shouldBeEqualToString('text2.top.toFixed(2)', '265.33');
     shouldBeEqualToString('text2.width.toFixed(2)', '96.00');
-    shouldBeEqualToString('text2.height.toFixed(2)', '11.87');
+    // The height is ~11.875 (rounds to either 11.87 or 11.88), tolerate float precision differences.
+    shouldBeCloseTo('text2.height', 11.87, 0.01);
     shouldBeEqualToString('text2.right.toFixed(2)', '446.00');
     shouldBeEqualToString('text2.bottom.toFixed(2)', '277.20');
     debug("");

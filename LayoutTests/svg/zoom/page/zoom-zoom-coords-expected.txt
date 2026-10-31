@@ -80,7 +80,7 @@ PASS image2.bottom.toFixed(2) is "250.00"
 PASS text2.left.toFixed(2) is "350.00"
 PASS text2.top.toFixed(2) is "265.33"
 PASS text2.width.toFixed(2) is "96.00"
-PASS text2.height.toFixed(2) is "11.87"
+PASS text2.height is within 0.01 of 11.87
 PASS text2.right.toFixed(2) is "446.00"
 PASS text2.bottom.toFixed(2) is "277.20"
 

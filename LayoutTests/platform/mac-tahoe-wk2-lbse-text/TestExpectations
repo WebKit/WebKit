@@ -34,10 +34,6 @@ svg/filters/feImage-reference-svg-primitive.svg                                 
 svg/filters/filter-on-root-tile-boundary.html                                          [ ImageOnlyFailure ]
 svg/filters/filter-on-tspan.svg                                                        [ ImageOnlyFailure ]
 
-# Precision differences
-svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
-svg/zoom/zoomed-inline-svg-getscreenctm.html [ Failure ]
-
 # Pattern problems
 svg/custom/pattern-content-inheritance-cycle.svg  [ ImageOnlyFailure ]
 
