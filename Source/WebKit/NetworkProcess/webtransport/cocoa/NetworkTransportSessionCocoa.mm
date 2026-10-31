@@ -259,9 +259,9 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
 
     RetainPtr parameters = adoptNS(MAYBE_SOFT_LINK(nw_parameters_create_webtransport_http)(configureWebTransport, configureTLS, configureQUIC, configureTCP));
     setNWParametersApplicationIdentifiers(parameters.get(), NetworkProcess::singleton().uiProcessBundleIdentifier().utf8(), NetworkProcess::singleton().sourceApplicationAuditToken(), emptyString());
-    bool isTracker = isKnownTracker(WebCore::RegistrableDomain { url });
-    bool isFirstParty = WebCore::RegistrableDomain { clientOrigin.clientOrigin } == WebCore::RegistrableDomain { clientOrigin.topOrigin };
-    setNWParametersTrackerOptions(parameters.get(), false, isFirstParty, isTracker, IsRTC::No);
+    // bool isTracker = isKnownTracker(WebCore::RegistrableDomain { url });
+    // bool isFirstParty = WebCore::RegistrableDomain { clientOrigin.clientOrigin } == WebCore::RegistrableDomain { clientOrigin.topOrigin };
+    // setNWParametersTrackerOptions(parameters.get(), false, isFirstParty, isTracker, IsRTC::No);
     return parameters;
 }
 
