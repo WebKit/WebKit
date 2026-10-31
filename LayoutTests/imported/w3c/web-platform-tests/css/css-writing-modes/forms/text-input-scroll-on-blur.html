@@ -39,7 +39,7 @@ for (const writingMode of ["horizontal-tb", "vertical-lr", "vertical-rl", "sidew
 
             input.focus();
             input.setSelectionRange(input.value.length, input.value.length);
-            await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+            await new Promise(resolve => requestAnimationFrame(() => t.step_timeout(resolve, 0)));
 
             assert_not_equals(
                 input[scrollProp], 0,
@@ -47,7 +47,7 @@ for (const writingMode of ["horizontal-tb", "vertical-lr", "vertical-rl", "sidew
             );
 
             input.blur();
-            await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+            await new Promise(resolve => requestAnimationFrame(() => t.step_timeout(resolve, 0)));
 
             assert_equals(
                 input[scrollProp], 0,

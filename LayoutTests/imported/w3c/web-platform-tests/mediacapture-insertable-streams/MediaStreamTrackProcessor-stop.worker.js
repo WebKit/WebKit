@@ -13,7 +13,7 @@ promise_test(async t => {
   const reader = processor.readable.getReader();
   const writer = generator.writable.getWriter();
 
-  await new Promise(resolve => setTimeout(resolve, 0));
+  await new Promise(resolve => t.step_timeout(resolve, 0));
   writer.write(makeVideoFrame(0));
   generator.track.stop();
 

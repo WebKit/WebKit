@@ -25,7 +25,7 @@
 
   const svg = target.closest('svg');
   svg.style.zoom = "0.5";
-  
+
   test_computed_value("border-spacing", "1px", "1px", "single value with SVG zoom: 0.5");
   test_computed_value("border-spacing", "1px 2px", "1px 2px", "two values with SVG zoom: 0.5");
   test_computed_value("border-spacing", "inherit", "10px 20px", "inherit with SVG zoom: 0.5");

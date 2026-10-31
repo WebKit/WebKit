@@ -9,7 +9,7 @@
             if(opened == 0) {
               opened = new Date().getTime()
             } else {
-              var diff = (new Date().getTime()) - opened 
+              var diff = (new Date().getTime()) - opened
               assert_true(Math.abs(1 - diff / timeoutms) < 0.25) // allow 25% difference
               this.close();
               test.done()
