@@ -30,12 +30,14 @@
 #include <WebCore/ResourceMonitorChecker.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class LocalFrame;
 
 class ResourceMonitor final : public RefCountedAndCanMakeWeakPtr<ResourceMonitor> {
+    WTF_MAKE_TZONE_ALLOCATED(ResourceMonitor);
 public:
     using Eligibility = ResourceMonitorEligibility;
     enum class UsageLevel : uint8_t {

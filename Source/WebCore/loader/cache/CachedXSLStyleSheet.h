@@ -28,12 +28,14 @@
 #if ENABLE(XSLT)
 
 #include "CachedResource.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class TextResourceDecoder;
 
 class CachedXSLStyleSheet final : public CachedResource {
+    WTF_MAKE_TZONE_ALLOCATED(CachedXSLStyleSheet);
 public:
     CachedXSLStyleSheet(CachedResourceRequest&&, PAL::SessionID, const CookieJar*);
     virtual ~CachedXSLStyleSheet();

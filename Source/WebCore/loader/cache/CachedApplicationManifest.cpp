@@ -31,8 +31,11 @@
 #include "ApplicationManifestParser.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedApplicationManifest);
 
 CachedApplicationManifest::CachedApplicationManifest(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : CachedResource(WTF::move(request), Type::ApplicationManifest, sessionID, cookieJar)

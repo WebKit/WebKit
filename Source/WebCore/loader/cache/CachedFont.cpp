@@ -45,10 +45,13 @@
 #include "TypedElementDescendantIteratorInlines.h"
 #include "WOFFFileFormat.h"
 #include <pal/crypto/CryptoDigest.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedFont);
 
 CachedFont::CachedFont(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar, Type type)
     : CachedResource(WTF::move(request), type, sessionID, cookieJar)

@@ -23,6 +23,7 @@
 #pragma once
 
 #include <WebCore/CachedResource.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -32,6 +33,7 @@ class SharedBuffer;
 class SharedBufferDataView;
 
 class CachedRawResource final : public CachedResource {
+    WTF_MAKE_TZONE_ALLOCATED(CachedRawResource);
 public:
     CachedRawResource(CachedResourceRequest&&, Type, PAL::SessionID, const CookieJar*);
 

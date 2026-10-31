@@ -32,6 +32,7 @@
 #include "TextFlags.h"
 #include "TrustedFonts.h"
 #include <pal/SessionID.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -48,6 +49,7 @@ template <typename T> class FontTaggedSettings;
 typedef FontTaggedSettings<int> FontFeatureSettings;
 
 class CachedFont : public CachedResource {
+    WTF_MAKE_TZONE_ALLOCATED(CachedFont);
 public:
     CachedFont(CachedResourceRequest&&, PAL::SessionID, const CookieJar*, Type = Type::FontResource);
     virtual ~CachedFont();

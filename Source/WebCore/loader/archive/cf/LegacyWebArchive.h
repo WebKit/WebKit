@@ -32,6 +32,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MarkupExclusionRule.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -42,6 +43,7 @@ struct MarkupExclusionRule;
 struct SimpleRange;
 
 class LegacyWebArchive final : public Archive {
+    WTF_MAKE_TZONE_ALLOCATED(LegacyWebArchive);
 public:
     // Archive is created directly from data or members so ArchiveOptions is not needed.
     WEBCORE_EXPORT static Ref<LegacyWebArchive> create(Ref<ArchiveResource>&& mainResource, Vector<Ref<ArchiveResource>>&& subresources, Vector<FrameIdentifier>&& subframeIdentifiers, std::optional<FrameIdentifier> mainFrameIdentifier);

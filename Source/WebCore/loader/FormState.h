@@ -29,6 +29,7 @@
 #pragma once
 
 #include <WebCore/FrameDestructionObserver.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,6 +45,7 @@ enum FormSubmissionTrigger { SubmittedByJavaScript, NotSubmittedByJavaScript };
 using StringPairVector = Vector<std::pair<String, String>>;
 
 class FormState : public RefCounted<FormState>, public FrameDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(FormState);
 public:
     static Ref<FormState> create(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger, HTMLFormControlElement* submitter = nullptr);
     ~FormState();

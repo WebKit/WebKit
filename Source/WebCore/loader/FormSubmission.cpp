@@ -51,11 +51,14 @@
 #include "LocalFrame.h"
 #include "ScriptDisallowedScope.h"
 #include <pal/text/TextEncoding.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/MakeString.h>
 #include "FrameDestructionObserverInlines.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FormSubmission);
 
 using namespace HTMLNames;
 

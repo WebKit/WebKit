@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CachedFont.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class Settings;
 class WeakPtrImplWithEventTargetData;
 
 class CachedSVGFont final : public CachedFont {
+    WTF_MAKE_TZONE_ALLOCATED(CachedSVGFont);
 public:
     CachedSVGFont(CachedResourceRequest&&, PAL::SessionID, const CookieJar*, const Settings&);
     CachedSVGFont(CachedResourceRequest&&, CachedSVGFont&);

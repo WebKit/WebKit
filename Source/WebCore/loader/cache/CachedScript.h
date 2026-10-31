@@ -27,6 +27,7 @@
 
 #include "CachedResource.h"
 #include <wtf/ScopedLambda.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadAssertions.h>
 
 namespace WebCore {
@@ -36,6 +37,7 @@ class TextResourceDecoder;
 enum class ScriptTrackingPrivacyProtectionsEnabled : bool { No, Yes };
 
 class CachedScript final : public CachedResource {
+    WTF_MAKE_TZONE_ALLOCATED(CachedScript);
 public:
     CachedScript(CachedResourceRequest&&, PAL::SessionID, const CookieJar*, ScriptTrackingPrivacyProtectionsEnabled);
     virtual ~CachedScript();

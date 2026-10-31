@@ -29,6 +29,7 @@
 #include <wtf/ContinuousApproximateTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/PriorityQueue.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -38,7 +39,7 @@ namespace WebCore {
 class ResourceMonitorPersistence;
 
 class ResourceMonitorThrottler final {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ResourceMonitorThrottler);
+    WTF_MAKE_TZONE_ALLOCATED(ResourceMonitorThrottler);
 public:
     ResourceMonitorThrottler(String&& databaseDirectoryPath, size_t count, Seconds duration, size_t maxHosts);
     ~ResourceMonitorThrottler();
@@ -60,7 +61,7 @@ private:
     };
 
     class AccessThrottler final {
-        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AccessThrottler);
+        WTF_MAKE_TZONE_ALLOCATED(AccessThrottler);
     public:
         AccessThrottler() = default;
 

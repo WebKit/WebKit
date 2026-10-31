@@ -31,6 +31,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 
 
@@ -45,6 +46,7 @@ class SecurityOrigin;
 enum class ReferrerPolicy : uint8_t;
 
 class DocumentPrefetcher : public RefCounted<DocumentPrefetcher>, public CachedRawResourceClient {
+    WTF_MAKE_TZONE_ALLOCATED(DocumentPrefetcher);
 public:
     struct PrefetchedResourceData {
         // The resource needs to be here in order to be kept alive.

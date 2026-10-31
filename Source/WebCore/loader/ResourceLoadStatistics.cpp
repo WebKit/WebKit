@@ -29,11 +29,14 @@
 #include "KeyedCoding.h"
 #include "PublicSuffixStore.h"
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ResourceLoadStatistics);
 
 static Seconds timestampResolution { 5_s };
 

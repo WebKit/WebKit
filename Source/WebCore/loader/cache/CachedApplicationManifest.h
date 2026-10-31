@@ -29,6 +29,7 @@
 
 #include "ApplicationManifest.h"
 #include "CachedResource.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ class Document;
 class TextResourceDecoder;
 
 class CachedApplicationManifest final : public CachedResource {
+    WTF_MAKE_TZONE_ALLOCATED(CachedApplicationManifest);
 public:
     CachedApplicationManifest(CachedResourceRequest&&, PAL::SessionID, const CookieJar*);
 

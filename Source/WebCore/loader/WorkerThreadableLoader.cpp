@@ -54,6 +54,8 @@
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/MakeString.h>
 
@@ -98,13 +100,15 @@ void WorkerThreadableLoader::computeIsDone()
 }
 
 struct LoaderTaskOptions {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LoaderTaskOptions);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(LoaderTaskOptions);
 
     LoaderTaskOptions(const ThreadableLoaderOptions&, const String&, Ref<SecurityOrigin>&&);
     ThreadableLoaderOptions options;
     String referrer;
     Ref<SecurityOrigin> origin;
 };
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(LoaderTaskOptions);
 
 LoaderTaskOptions::LoaderTaskOptions(const ThreadableLoaderOptions& options, const String& referrer, Ref<SecurityOrigin>&& origin)
     : options(options.isolatedCopy())

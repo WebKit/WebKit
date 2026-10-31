@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/SHA1.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -50,6 +51,7 @@ struct SameSiteInfo;
 enum class ShouldPartitionCookie : bool;
 
 class WEBCORE_EXPORT CookieJar : public RefCountedAndCanMakeWeakPtr<CookieJar> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CookieJar, WEBCORE_EXPORT);
 public:
     static Ref<CookieJar> LEGACY_NODELETE create(Ref<StorageSessionProvider>&&);
     
