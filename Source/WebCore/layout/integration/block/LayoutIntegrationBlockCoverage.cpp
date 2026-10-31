@@ -456,13 +456,24 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(c
             continue;
         if (auto reason = outOfFlowBoxAvoidanceReason(descendant))
             return reason;
-        // Its static position comes from its block container (a flex or grid container would align it instead), and the block formatting
-        // context lays out its content too.
+        // Its static position comes from its block container, or from a grid container, which puts it at the start of its content box
+        // (RenderGrid::prepareGridItemForPositionedLayout). A flex container aligns it with its size once it has one, laying it out again
+        // (FlexLayout::setStaticPositionForPositionedLayout), so only a box with insets that do not use its static position. The block
+        // formatting context lays out its content too.
         CheckedPtr staticPositionBlock = descendant->parent();
         while (staticPositionBlock->isInlineBox())
             staticPositionBlock = staticPositionBlock->parent();
+        auto hasSupportedStaticPosition = [&] {
+            if (is<RenderBlockFlow>(*staticPositionBlock) || staticPositionBlock->isRenderGrid())
+                return true;
+            if (!staticPositionBlock->isRenderFlexibleBox())
+                return false;
+            CheckedRef style = descendant->style();
+            auto isHorizontalWritingMode = staticPositionBlock->writingMode().isHorizontal();
+            return !style->hasStaticInlinePosition(isHorizontalWritingMode) && !style->hasStaticBlockPosition(isHorizontalWritingMode);
+        };
         CheckedPtr outOfFlowBlockContainer = dynamicDowncast<RenderBlockFlow>(descendant);
-        if (!is<RenderBlockFlow>(*staticPositionBlock) || (outOfFlowBlockContainer && !canUseForNestedBlockLayout(*outOfFlowBlockContainer)))
+        if (!hasSupportedStaticPosition() || (outOfFlowBlockContainer && !canUseForNestedBlockLayout(*outOfFlowBlockContainer)))
             return BlockAvoidanceReason::ContentHasOutOfFlowBox;
         for (CheckedPtr box = staticPositionBlock; box != containingBlock; box = box->parent()) {
             if (!isSupportedBoxInBetween(*box, *containingBlock))
