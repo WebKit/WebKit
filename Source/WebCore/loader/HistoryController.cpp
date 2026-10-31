@@ -577,7 +577,9 @@ void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
                 && m_frame->isMainFrame()
                 && !documentLoader->triggeringAction().processingUserGesture()
                 && !documentLoader->isRequestFromClientOrUserInput()) {
-                if (RefPtr document = m_frame->document(); document && !document->hasRecentUserInteractionForNavigationFromJS())
+                RefPtr document = m_frame->document();
+                RefPtr window = document ? document->window() : nullptr;
+                if (document && !document->hasRecentUserInteractionForNavigationFromJS() && !(window && window->hasStickyActivation()))
                     wasCreatedByJSWithoutUserInteraction = WasCreatedByJSWithoutUserInteraction::Yes;
             }
 #endif
