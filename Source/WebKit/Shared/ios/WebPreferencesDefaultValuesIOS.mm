@@ -115,6 +115,13 @@ bool defaultApplePayEnabled()
 }
 #endif
 
+#if HAVE(AVEXPERIENCECONTROLLER)
+bool defaultAVExperienceControllerFullscreenEnabled()
+{
+    return PAL::deviceClassIsHomeView();
+}
+#endif
+
 bool defaultAutomaticLiveResizeEnabled()
 {
 #if PLATFORM(VISION)

@@ -65,7 +65,7 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteSetPar
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteCopyPickableRoutes, CFArrayRef, (), ());
 #endif
 
-#if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
+#if PLATFORM(APPLETV)
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, MediaRemote, MRUIControllerProvider);
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, MediaRemote, MRNowPlayingActivityActiveRouteIdentifier, NSString *)
 #endif
