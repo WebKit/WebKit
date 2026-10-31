@@ -2757,7 +2757,7 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/226134"}}
             },
             "test_source_origin[cross_origin]": {
-                "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/205994"}}
+                "expected": {"mac-site-isolation": {"status": ["FAIL"], "note": "With Site Isolation, the screenshot of an element in a cross-origin iframe doesn't match its reference"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/205994"}}
             }
         }
     },
@@ -3175,7 +3175,12 @@
 
 
     "imported/w3c/webdriver/tests/bidi/browsing_context/activate/activate.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288324"}}
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288324"}},
+        "subtests": {
+            "test_switch_between_contexts[window]": {
+                "expected": {"mac-site-isolation": {"status": ["PASS"]}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/activate/invalid.py": {
         "subtests": {
@@ -3540,6 +3545,9 @@
             },
             "test_user_context[cross_origin-new]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/283784"}}
+            },
+            "test_cross_origin": {
+                "expected": {"mac-site-isolation": {"status": ["FAIL"], "note": "With Site Isolation, getTree reports a second top-level context after a cross-origin frame loads"}}
             }
         },
         "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/283784"}}
@@ -3948,7 +3956,12 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288331"}}
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/reload/frame.py": {
-        "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288332"}}
+        "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288332"}},
+        "subtests": {
+            "test_origin[cross_origin]": {
+                "expected": {"mac-site-isolation": {"status": ["FAIL"], "note": "With Site Isolation, getTree reports a second top-level context after a cross-origin frame loads"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/reload/invalid.py": {
         "subtests": {
@@ -4021,10 +4034,26 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288333"}}
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/context.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}}
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}},
+        "subtests": {
+            "test_top_level_contexts": {
+                "expected": {"mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/delta.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}}
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}},
+        "subtests": {
+            "test_delta_forward_and_back": {
+                "expected": {"mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
+            },
+            "test_navigate_special_protocols[data url]": {
+                "expected": {"mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
+            },
+            "test_navigate_special_protocols[file url]": {
+                "expected": {"mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/invalid.py": {
         "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/288334"}},
@@ -5432,7 +5461,7 @@
                 "expected": { "all": { "status": ["PASS"]}}
             },
             "test_iframe[cross_origin]": {
-                "expected": {"mac": {"status": ["PASS"]},  "all": { "status": ["FAIL"], "bug": "webkit.org/b/304305"}}
+                "expected": {"mac-site-isolation": {"status": ["FAIL"], "note": "With Site Isolation, there's no realmCreated event for a cross-origin iframe"}, "mac": {"status": ["PASS"]},  "all": { "status": ["FAIL"], "bug": "webkit.org/b/304305"}}
             },
             "test_sandbox[evaluate]": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
