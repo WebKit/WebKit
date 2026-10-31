@@ -26,8 +26,12 @@
 #define AudioUtilities_h
 
 #include <cmath>
+<<<<<<< HEAD
 #include <span>
 #include <wtf/Forward.h>
+=======
+#include <wtf/MathExtras.h>
+>>>>>>> 83247c7ac022 (Do not use the flush-denormals-to-zero mode)
 
 namespace WebCore {
 
@@ -68,6 +72,7 @@ inline float decibelsToLinear(float decibels)
 
 void applyNoise(std::span<float> values, float standardDeviation);
 
+<<<<<<< HEAD
 WEBCORE_EXPORT Vector<uint8_t> extractAudioSpecificConfigFromESDescriptor(std::span<const uint8_t> esDescriptor);
 
 // Returns a copy of an OpusHead with its pre-skip set to 0.
@@ -78,6 +83,19 @@ Vector<uint8_t> createFLACMagicCookie(std::span<const uint8_t> description);
 
 // Returns the WebCodecs flac description for a 'dfLa' magic cookie, or an empty vector if the cookie is invalid.
 WEBCORE_EXPORT Vector<uint8_t> flacDescriptionFromFLACMagicCookie(std::span<const uint8_t> cookie);
+=======
+// A nop on x86, where SSE arithmetic historically produced no denormals to flush because
+// the audio rendering path disabled them in hardware.
+inline float flushDenormalFloatToZero(float f)
+{
+// FIXME: Do any current ports fail this check?
+#if (COMPILER(GCC_COMPATIBLE) && defined(__SSE__)) || (OS(WINDOWS) && COMPILER(MSVC) && defined(_M_IX86_FP) && _M_IX86_FP)
+    return f;
+#else
+    return (std::abs(f) < FLT_MIN) ? 0.0f : f;
+#endif
+}
+>>>>>>> 83247c7ac022 (Do not use the flush-denormals-to-zero mode)
 
 } // AudioUtilites
 

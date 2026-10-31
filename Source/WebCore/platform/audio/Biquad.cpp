@@ -33,8 +33,11 @@
 #include "Biquad.h"
 
 #include "AudioUtilities.h"
+<<<<<<< HEAD
 #include "DenormalDisabler.h"
 #include "VectorMath.h"
+=======
+>>>>>>> 83247c7ac022 (Do not use the flush-denormals-to-zero mode)
 #include <algorithm>
 #include <numbers>
 #include <stdio.h>
@@ -105,10 +108,10 @@ void Biquad::process(std::span<const float> source, std::span<float> destination
 
         // Local variables back to member. Flush denormals here so we
         // don't slow down the inner loop above.
-        m_x1 = DenormalDisabler::flushDenormalFloatToZero(x1);
-        m_x2 = DenormalDisabler::flushDenormalFloatToZero(x2);
-        m_y1 = DenormalDisabler::flushDenormalFloatToZero(y1);
-        m_y2 = DenormalDisabler::flushDenormalFloatToZero(y2);
+        m_x1 = AudioUtilities::flushDenormalFloatToZero(x1);
+        m_x2 = AudioUtilities::flushDenormalFloatToZero(x2);
+        m_y1 = AudioUtilities::flushDenormalFloatToZero(y1);
+        m_y2 = AudioUtilities::flushDenormalFloatToZero(y2);
 
         // There is an assumption here that once we have sample accurate values we
         // can never go back to not having sample accurate values. This is
@@ -181,10 +184,10 @@ void Biquad::process(std::span<const float> source, std::span<float> destination
 
     // Local variables back to member. Flush denormals here so we
     // don't slow down the inner loop above.
-    m_x1 = DenormalDisabler::flushDenormalFloatToZero(x1);
-    m_x2 = DenormalDisabler::flushDenormalFloatToZero(x2);
-    m_y1 = DenormalDisabler::flushDenormalFloatToZero(y1);
-    m_y2 = DenormalDisabler::flushDenormalFloatToZero(y2);
+    m_x1 = AudioUtilities::flushDenormalFloatToZero(x1);
+    m_x2 = AudioUtilities::flushDenormalFloatToZero(x2);
+    m_y1 = AudioUtilities::flushDenormalFloatToZero(y1);
+    m_y2 = AudioUtilities::flushDenormalFloatToZero(y2);
 #endif
 }
 
