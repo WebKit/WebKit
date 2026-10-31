@@ -460,9 +460,10 @@ void GraphicsContext::drawVideoFrame(const VideoFrame& frame, const FloatRect& d
     if (options.orientation().usesWidthAsHeight())
         size = size.transposedSize();
     // Copy is equivalent to SourceOver when the frame's alpha is not used, and cheaper.
-    // FIXME: This overrides whatever composite operator the caller asked for, so drawing a video
-    // frame into a canvas ignores its globalCompositeOperation.
-    auto compositeOperator = ((shouldDiscardAlpha == ShouldDiscardAlpha::No) && image->hasAlpha()) ? CompositeOperator::SourceOver : CompositeOperator::Copy;
+    // Any other composite operator the caller asked for must be preserved.
+    auto compositeOperator = options.compositeOperator();
+    if (compositeOperator == CompositeOperator::SourceOver && (shouldDiscardAlpha == ShouldDiscardAlpha::Yes || !image->hasAlpha()))
+        compositeOperator = CompositeOperator::Copy;
     drawNativeImage(*image, destination, { { }, size }, { options, compositeOperator });
 }
 #endif

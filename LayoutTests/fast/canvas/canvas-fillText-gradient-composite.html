@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("fillText() and strokeText() must honor the composite operations that affect the whole canvas (copy, source-in, destination-in) for every kind of fill and stroke style: solid color, gradient and pattern.");
+
+const red = [255, 0, 0, 255];
+const green = [0, 200, 0, 255];
+const blue = [0, 0, 255, 255];
+const transparent = [0, 0, 0, 0];
+
+const patternCanvas = document.createElement("canvas");
+patternCanvas.width = 4;
+patternCanvas.height = 4;
+const patternContext = patternCanvas.getContext("2d");
+patternContext.fillStyle = "rgb(0, 0, 255)";
+patternContext.fillRect(0, 0, 4, 4);
+
+// [name, creates the style, expected color]
+const styles = [
+    ["solid color", context => "rgb(0, 200, 0)", green],
+    ["gradient", context => {
+        const gradient = context.createLinearGradient(0, 0, 200, 0);
+        gradient.addColorStop(0, "rgb(0, 200, 0)");
+        gradient.addColorStop(1, "rgb(0, 200, 0)");
+        return gradient;
+    }, green],
+    ["pattern", context => context.createPattern(patternCanvas, "repeat"), blue],
+];
+
+function createContext(fillWithRed = true)
+{
+    const canvas = document.createElement("canvas");
+    canvas.width = 200;
+    canvas.height = 100;
+    const context = canvas.getContext("2d");
+    if (fillWithRed) {
+        context.fillStyle = "rgb(255, 0, 0)";
+        context.fillRect(0, 0, 200, 100);
+    }
+    // The Ahem glyph "A" is a solid square: 50px at a baseline of 60 covers (20, 20)-(70, 70).
+    context.font = "50px Ahem";
+    return context;
+}
+
+function checkPixel(context, x, y, expected, expectedName)
+{
+    const pixel = Array.from(context.getImageData(x, y, 1, 1).data);
+    const description = `pixel at (${x}, ${y}) is ${expectedName}`;
+    if (pixel.every((value, i) => Math.abs(value - expected[i]) <= 2))
+        testPassed(description);
+    else
+        testFailed(`${description}, was [${pixel}] but expected [${expected}]`);
+}
+
+// The canvas is filled with red before drawing the text.
+for (const compositeOperation of ["copy", "source-in", "destination-in"]) {
+    for (const [styleName, createStyle, styleColor] of styles) {
+        debug("");
+        debug(`${styleName} fillText with ${compositeOperation}:`);
+        const context = createContext();
+        context.globalCompositeOperation = compositeOperation;
+        context.fillStyle = createStyle(context);
+        context.fillText("A", 20, 60);
+
+        if (compositeOperation == "destination-in")
+            checkPixel(context, 45, 45, red, "red");
+        else
+            checkPixel(context, 45, 45, styleColor, "the style color");
+        checkPixel(context, 45, 85, transparent, "transparent");
+        checkPixel(context, 150, 50, transparent, "transparent");
+        checkPixel(context, 5, 5, transparent, "transparent");
+    }
+}
+
+// The shape of the stroke is not checked directly. Instead, the stroke is drawn on its own into an empty canvas, and the
+// canvas that was filled with red before the stroke was drawn must match what the composite operation makes of that.
+function premultiplied(data, i)
+{
+    const alpha = data[i + 3];
+    return [data[i] * alpha / 255, data[i + 1] * alpha / 255, data[i + 2] * alpha / 255, alpha];
+}
+
+function strokeText(context, compositeOperation, createStyle)
+{
+    context.globalCompositeOperation = compositeOperation;
+    context.lineWidth = 10;
+    context.strokeStyle = createStyle(context);
+    context.strokeText("A", 20, 60);
+    return context.getImageData(0, 0, 200, 100).data;
+}
+
+for (const compositeOperation of ["copy", "source-in", "destination-in"]) {
+    for (const [styleName, createStyle] of styles) {
+        debug("");
+        debug(`${styleName} strokeText with ${compositeOperation}:`);
+        const strokeData = strokeText(createContext(false), "source-over", createStyle);
+        const actualData = strokeText(createContext(), compositeOperation, createStyle);
+
+        let strokedPixels = 0;
+        let mismatches = 0;
+        for (let i = 0; i < strokeData.length; i += 4) {
+            const stroke = premultiplied(strokeData, i);
+            if (stroke[3])
+                ++strokedPixels;
+            // The canvas is opaque red before the stroke is drawn: copy and source-in leave only the stroke, and
+            // destination-in leaves the red, scaled by the alpha of the stroke.
+            const expected = compositeOperation == "destination-in" ? [stroke[3], 0, 0, stroke[3]] : stroke;
+            const actual = premultiplied(actualData, i);
+            if (expected.some((value, j) => Math.abs(value - actual[j]) > 4))
+                ++mismatches;
+        }
+
+        if (strokedPixels > 0 && strokedPixels < strokeData.length / 4)
+            testPassed("the stroke covers part of the canvas");
+        else
+            testFailed(`the stroke covers part of the canvas, but it covers ${strokedPixels} of ${strokeData.length / 4} pixels`);
+        if (!mismatches)
+            testPassed("the canvas matches the stroke composited over red");
+        else
+            testFailed(`the canvas matches the stroke composited over red, but ${mismatches} pixels differ`);
+    }
+}
+</script>
+</body>
+</html>
