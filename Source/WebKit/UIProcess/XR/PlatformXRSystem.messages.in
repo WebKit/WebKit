@@ -43,6 +43,7 @@ messages -> PlatformXRSystem {
 #endif
 #if ENABLE(WEBXR_LAYERS)
     CreateCompositionLayer(PlatformXR::CompositionLayerType type, WebCore::IntSize size, PlatformXR::LayerLayout layout) -> (struct std::optional<PlatformXR::LayerInfo> info) Synchronous
+    DeleteLayer(int handle)
 #endif
 #if !USE(OPENXR)
     SubmitFrame()

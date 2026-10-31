@@ -48,6 +48,8 @@ public:
     virtual std::optional<PlatformXR::FrameData::LayerData> startFrame(OpenXRGraphicsBinding&) = 0;
     virtual Vector<XrCompositionLayerBaseHeader*> endFrame(OpenXRGraphicsBinding&, const PlatformXR::DeviceLayer&, XrSpace, const Vector<XrView>&) = 0;
 
+    void releaseExportedTextures(OpenXRGraphicsBinding&);
+
 protected:
     OpenXRLayer(UniqueRef<OpenXRSwapchain>&&);
 

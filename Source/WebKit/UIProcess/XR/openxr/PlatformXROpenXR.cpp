@@ -344,6 +344,29 @@ void OpenXRCoordinator::createCompositionLayer(PlatformXR::CompositionLayerType 
         });
 }
 
+void OpenXRCoordinator::deleteLayer(WebPageProxy& page, PlatformXR::LayerHandle handle)
+{
+    ASSERT(RunLoop::isMain());
+    WTF::switchOn(m_state,
+        [&](Idle&) { },
+        [&](Active& active) {
+            if (active.pageIdentifier != page.webPageIDInMainFrameProcess()) {
+                RELEASE_LOG(XR, "OpenXRCoordinator: trying to delete a layer owned by another page");
+                return;
+            }
+
+            // The render queue is serial, so this runs after any frame that was already dispatched. If the layer was started for the
+            // frame in flight, destroying it releases its acquired image and endFrame() skips it as an unknown handle.
+            active.renderQueue->dispatch([this, handle] {
+                auto layer = m_layers.take(handle);
+                if (!layer)
+                    return;
+                if (m_graphicsBinding)
+                    layer->releaseExportedTextures(*m_graphicsBinding);
+            });
+        });
+}
+
 #endif // ENABLE(WEBXR_LAYERS)
 
 void OpenXRCoordinator::startSession(WebPageProxy& page, WeakPtr<PlatformXRCoordinatorSessionEventClient>&& sessionEventClient, const WebCore::SecurityOriginData&, PlatformXR::SessionMode sessionMode, const PlatformXR::Device::FeatureList& features, std::optional<WebCore::XRCanvasConfiguration>&&)
@@ -1243,7 +1266,7 @@ void OpenXRCoordinator::endFrame(Box<RenderState> renderState, Vector<PlatformXR
         auto it = m_layers.find(layer.handle);
         if (it == m_layers.end()) {
             // This should not happen as handlers are created here and never changed in the WebProcess. However it could be the case that a layer
-            // is removed but still submitted for rendering due to some unfortunate timing of IPC messages and/or asynchronous methods.
+            // is removed (see deleteLayer()) but still submitted for rendering due to some unfortunate timing of IPC messages and/or asynchronous methods.
             RELEASE_LOG(XR, "OpenXRCoordinator::endFrame: skipping unknown layer handle %d", layer.handle);
             continue;
         }

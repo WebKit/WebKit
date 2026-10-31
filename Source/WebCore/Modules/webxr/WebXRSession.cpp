@@ -47,6 +47,7 @@
 #include "WebXRHitTestSource.h"
 #include "WebXRPlane.h"
 #include "WebXRTransientInputHitTestSource.h"
+#include "XRCompositionLayer.h"
 #include "XRFrameRequestCallback.h"
 #include "XRGPUProjectionLayerInit.h"
 #include "XRHitTestOptionsInit.h"
@@ -198,6 +199,11 @@ ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newSt
     // https://www.w3.org/TR/webxrlayers-1/#updaterenderstatechanges
 #if ENABLE(WEBXR_LAYERS)
     else if (newState.layers) {
+        for (auto& layer : *newState.layers) {
+            if (RefPtr compositionLayer = dynamicDowncast<XRCompositionLayer>(layer); compositionLayer && compositionLayer->isDestroyed())
+                return Exception { ExceptionCode::InvalidStateError, "Cannot set a destroyed layer in the layers list."_s };
+        }
+
         if (!m_requestedFeatures.contains(PlatformXR::SessionFeature::Layers) && newState.layers->size() > 1)
             return Exception { ExceptionCode::NotSupportedError, "Cannot set layers when the Layers feature is not enabled for this session."_s };
 
@@ -608,8 +614,10 @@ void WebXRSession::applyPendingRenderState()
         if (baseLayer->isCompositionEnabled())
             m_requestData->activeLayerHandles.append(baseLayer->layerHandle());
     } else {
-        for (Ref layer : m_activeRenderState->layers())
-            m_requestData->activeLayerHandles.append(layer->layerHandle());
+        for (Ref layer : m_activeRenderState->layers()) {
+            if (!layer->isDestroyed())
+                m_requestData->activeLayerHandles.append(layer->layerHandle());
+        }
     }
 }
 
@@ -811,8 +819,10 @@ void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
                     session.m_activeRenderState->baseLayer()->startFrame(session.m_frameData);
 #if ENABLE(WEBXR_LAYERS)
                 else if (session.m_activeRenderState->layers().size()) {
-                    for (Ref layer : session.m_activeRenderState->layers())
-                        layer->startFrame(session.m_frameData);
+                    for (Ref layer : session.m_activeRenderState->layers()) {
+                        if (!layer->isDestroyed())
+                            layer->startFrame(session.m_frameData);
+                    }
                 }
 #endif
             }
@@ -861,8 +871,10 @@ void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
                 frameLayers.append(session.m_activeRenderState->baseLayer()->endFrame());
 #if ENABLE(WEBXR_LAYERS)
             else if (!session.m_activeRenderState->layers().isEmpty()) {
-                for (Ref layer : session.m_activeRenderState->layers())
-                    frameLayers.append(layer->endFrame());
+                for (Ref layer : session.m_activeRenderState->layers()) {
+                    if (!layer->isDestroyed())
+                        frameLayers.append(layer->endFrame());
+                }
             }
 #endif
 
@@ -1046,6 +1058,36 @@ unsigned WebXRSession::maxRenderLayers() const
 {
     RefPtr device { m_device };
     return device ? device->maxRenderLayers() : 0;
+}
+
+void WebXRSession::layerDestroyed(const XRCompositionLayer& layer)
+{
+    auto handle = layer.layerHandle();
+
+    if (RefPtr device = this->device())
+        device->deleteLayer(handle);
+
+    auto containsLayer = [handle](const WebXRRenderState& state) {
+        return state.layers().containsIf([handle](auto& stateLayer) {
+            return stateLayer->layerHandle() == handle;
+        });
+    };
+
+    // https://www.w3.org/TR/webxrlayers-1/#dom-xrcompositionlayer-destroy steps 5 to 8.
+    if (!m_pendingRenderState) {
+        if (!containsLayer(*m_activeRenderState))
+            return;
+        m_pendingRenderState = m_activeRenderState->clone();
+    }
+
+    if (!containsLayer(*m_pendingRenderState))
+        return;
+
+    auto layers = m_pendingRenderState->layers();
+    layers.removeAllMatching([handle](auto& stateLayer) {
+        return stateLayer->layerHandle() == handle;
+    });
+    m_pendingRenderState->setLayers(layers);
 }
 #endif
 

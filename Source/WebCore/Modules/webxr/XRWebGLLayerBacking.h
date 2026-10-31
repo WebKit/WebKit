@@ -30,8 +30,10 @@
 #include "ExceptionOr.h"
 #include "GraphicsTypesGL.h"
 #include "IntSize.h"
+#include "WebGLOpaqueTexture.h"
 #include "XRLayerBacking.h"
 #include <optional>
+#include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace PlatformXR {
@@ -50,7 +52,6 @@ struct SwapchainFormats {
 };
 SwapchainFormats swapchainFormatsForLayerFormat(GCGLenum layerFormat);
 
-class WebGLOpaqueTexture;
 class WebGLRenderingContextBase;
 class WebXROpaqueFramebuffer;
 class WebXRSession;
@@ -87,6 +88,8 @@ public:
 
     void clearTexturesIfNeeded(const IntRect& viewport, std::optional<uint32_t> slice) final;
 
+    void invalidateTextures() final;
+
     bool isWebGLBacking() const final { return true; }
 
 protected:
@@ -103,12 +106,18 @@ protected:
     static ExceptionOr<XRLayerSwapchains> createProjectionLayerSwapchains(WebXRSession&, WebGLRenderingContextBase&, const XRProjectionLayerInit&);
 
 private:
+    using WebGLOpaqueTextureCache = HashMap<PlatformGLObject, Ref<WebGLOpaqueTexture>>;
+    static RefPtr<WebGLOpaqueTexture> cachedOpaqueTexture(WebGLOpaqueTextureCache&, WebXRWebGLSwapchain&, PlatformGLObject);
+
     static ExceptionOr<XRLayerSwapchains> createColorAndDepthSwapchains(WebGLRenderingContextBase&, PlatformXR::LayerHandle, GCGLenum colorFormat, std::optional<GCGLenum> depthFormat, IntSize, bool clearOnAccess, size_t numImages, uint32_t arrayLength, GCGLenum colorTextureType);
     static std::unique_ptr<WebXRWebGLSwapchain> createDepthSwapchain(WebGLRenderingContextBase&, GCGLenum depthFormat, IntSize, bool clearOnAccess, size_t imageCount, uint32_t arrayLength, GCGLenum textureType);
 
     const std::unique_ptr<WebXRWebGLSwapchain> m_colorSwapchain;
     const std::unique_ptr<WebXRWebGLSwapchain> m_depthSwapchain;
     uint32_t m_colorTextureArrayLength { 1 };
+    // The swapchain textures are wrapped once per GL object so that invalidateTextures() reaches the ones already returned in XRSubImages.
+    mutable WebGLOpaqueTextureCache m_colorTextureCache;
+    mutable WebGLOpaqueTextureCache m_depthTextureCache;
 #if !PLATFORM(COCOA)
     bool m_shouldSkipFrame { true };
 #endif
