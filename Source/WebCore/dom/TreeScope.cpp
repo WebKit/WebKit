@@ -67,6 +67,8 @@
 #include <JavaScriptCore/StructureInlines.h>
 #include <algorithm>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CString.h>
 
@@ -83,13 +85,15 @@ using namespace HTMLNames;
 using WeakSVGElementSet = WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>;
 struct SVGResourcesMap {
     WTF_MAKE_NONCOPYABLE(SVGResourcesMap);
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SVGResourcesMap);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(SVGResourcesMap);
     SVGResourcesMap() = default;
 
     MemoryCompactRobinHoodHashMap<AtomString, WeakSVGElementSet> pendingResources;
     MemoryCompactRobinHoodHashMap<AtomString, WeakSVGElementSet> pendingResourcesForRemoval;
     MemoryCompactRobinHoodHashMap<AtomString, SingleThreadWeakPtr<LegacyRenderSVGResourceContainer>> legacyResources;
 };
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(SVGResourcesMap);
 
 struct NodesInCommonTreeScope {
     SUPPRESS_UNCOUNTED_MEMBER TreeScope* treeScope { nullptr };

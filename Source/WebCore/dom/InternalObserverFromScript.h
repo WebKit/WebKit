@@ -28,6 +28,7 @@
 #include "InternalObserver.h"
 #include "VoidCallback.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ class SubscriptionObserverCallback;
 struct SubscriptionObserver;
 
 class InternalObserverFromScript final : public InternalObserver {
+    WTF_MAKE_TZONE_ALLOCATED(InternalObserverFromScript);
 public:
     static Ref<InternalObserverFromScript> create(ScriptExecutionContext&, RefPtr<JSSubscriptionObserverCallback>);
     static Ref<InternalObserverFromScript> create(ScriptExecutionContext&, SubscriptionObserver&&);

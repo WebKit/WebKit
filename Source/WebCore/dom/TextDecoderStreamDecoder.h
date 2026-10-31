@@ -25,10 +25,12 @@
 #pragma once
 
 #include "TextDecoder.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class TextDecoderStreamDecoder : public RefCounted<TextDecoderStreamDecoder> {
+    WTF_MAKE_TZONE_ALLOCATED(TextDecoderStreamDecoder);
 public:
     static ExceptionOr<Ref<TextDecoderStreamDecoder>> create(const String& label, bool fatal, bool ignoreBOM);
 

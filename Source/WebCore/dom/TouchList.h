@@ -33,11 +33,13 @@
 #include <wtf/FixedVector.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class TouchList : public RefCounted<TouchList> {
+    WTF_MAKE_TZONE_ALLOCATED(TouchList);
 public:
     static Ref<TouchList> create()
     {

@@ -36,10 +36,13 @@
 #include "SubscriberCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/TopExceptionScope.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class InternalObserverMap final : public InternalObserver {
+    WTF_MAKE_TZONE_ALLOCATED(InternalObserverMap);
 public:
     static Ref<InternalObserverMap> create(ScriptExecutionContext& context, Ref<Subscriber> subscriber, Ref<MapperCallback> mapper)
     {
@@ -49,6 +52,7 @@ public:
     }
 
     class SubscriberCallbackMap final : public SubscriberCallback {
+        WTF_MAKE_TZONE_ALLOCATED(SubscriberCallbackMap);
     public:
         static Ref<SubscriberCallbackMap> create(ScriptExecutionContext& context, Ref<Observable> source, Ref<MapperCallback> mapper)
         {
@@ -146,6 +150,10 @@ private:
     const Ref<MapperCallback> m_mapper;
     uint64_t m_idx { 0 };
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalObserverMap);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalObserverMap::SubscriberCallbackMap);
 
 Ref<SubscriberCallback> createSubscriberCallbackMap(ScriptExecutionContext& context, Ref<Observable> observable, Ref<MapperCallback> mapper)
 {

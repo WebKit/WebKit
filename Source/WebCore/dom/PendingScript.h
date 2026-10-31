@@ -30,6 +30,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {
@@ -41,6 +42,7 @@ class ScriptElement;
 // A container for scripts which may be loaded and executed.
 // This can hold LoadableScript and non external inline script.
 class PendingScript final : public RefCounted<PendingScript>, public LoadableScriptClient {
+    WTF_MAKE_TZONE_ALLOCATED(PendingScript);
 public:
     static Ref<PendingScript> create(ScriptElement&, LoadableScript&);
     static Ref<PendingScript> LEGACY_NODELETE create(ScriptElement&, TextPosition scriptStartPosition);

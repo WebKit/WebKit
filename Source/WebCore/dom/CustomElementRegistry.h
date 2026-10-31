@@ -33,6 +33,7 @@
 #include <wtf/Lock.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakListHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -59,6 +60,7 @@ class Node;
 class QualifiedName;
 
 class CustomElementRegistry : public RefCounted<CustomElementRegistry>, public ContextDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(CustomElementRegistry);
 public:
     static Ref<CustomElementRegistry> LEGACY_NODELETE create(ScriptExecutionContext&, LocalDOMWindow&);
     static Ref<CustomElementRegistry> LEGACY_NODELETE create(ScriptExecutionContext&);

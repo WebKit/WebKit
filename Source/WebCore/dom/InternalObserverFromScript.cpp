@@ -30,8 +30,11 @@
 #include "ScriptExecutionContext.h"
 #include "Subscriber.h"
 #include "SubscriptionObserver.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalObserverFromScript);
 
 Ref<InternalObserverFromScript> InternalObserverFromScript::create(ScriptExecutionContext& context, RefPtr<JSSubscriptionObserverCallback> callback)
 {

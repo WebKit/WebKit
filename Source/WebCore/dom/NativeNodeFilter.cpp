@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "NativeNodeFilter.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeNodeFilter);
 
 NativeNodeFilter::NativeNodeFilter(ScriptExecutionContext* context, Ref<NodeFilterCondition>&& condition)
     : NodeFilter(context)

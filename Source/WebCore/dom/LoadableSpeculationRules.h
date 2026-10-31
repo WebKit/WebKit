@@ -32,6 +32,7 @@
 #include "ResourceRequest.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
@@ -44,6 +45,7 @@ class WeakPtrImplWithEventTargetData;
 enum class LoadWillContinueInAnotherProcess : bool;
 
 class LoadableSpeculationRules final : public RefCounted<LoadableSpeculationRules>, public CachedResourceClient {
+    WTF_MAKE_TZONE_ALLOCATED(LoadableSpeculationRules);
 public:
     static Ref<LoadableSpeculationRules> LEGACY_NODELETE create(Document&, const URL&);
     ~LoadableSpeculationRules();

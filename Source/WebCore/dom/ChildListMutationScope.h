@@ -37,6 +37,7 @@
 #include <memory>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -45,6 +46,7 @@ class MutationObserverInterestGroup;
 
 // ChildListMutationAccumulator is not meant to be used directly; ChildListMutationScope is the public interface.
 class ChildListMutationAccumulator : public RefCounted<ChildListMutationAccumulator>, public CanMakeSingleThreadWeakPtr<ChildListMutationAccumulator> {
+    WTF_MAKE_TZONE_ALLOCATED(ChildListMutationAccumulator);
 public:
     static Ref<ChildListMutationAccumulator> getOrCreate(ContainerNode&);
     ~ChildListMutationAccumulator();

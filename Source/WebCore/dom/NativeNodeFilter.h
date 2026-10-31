@@ -28,10 +28,12 @@
 #include <WebCore/NodeFilter.h>
 #include <WebCore/NodeFilterCondition.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class NativeNodeFilter final : public NodeFilter {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(NativeNodeFilter, WEBCORE_EXPORT);
 public:
     static Ref<NativeNodeFilter> create(ScriptExecutionContext* context, Ref<NodeFilterCondition>&& condition)
     {

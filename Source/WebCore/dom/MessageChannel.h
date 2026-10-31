@@ -28,6 +28,7 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class MessagePort;
 class ScriptExecutionContext;
 
 class MessageChannel : public RefCounted<MessageChannel> {
+    WTF_MAKE_TZONE_ALLOCATED(MessageChannel);
 public:
     static Ref<MessageChannel> create(ScriptExecutionContext&);
     ~MessageChannel();

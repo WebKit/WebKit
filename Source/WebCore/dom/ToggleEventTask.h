@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Element.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,6 +42,7 @@ struct ToggleEventData {
 };
 
 class ToggleEventTask final: public RefCounted<ToggleEventTask> {
+    WTF_MAKE_TZONE_ALLOCATED(ToggleEventTask);
 public:
     static Ref<ToggleEventTask> LEGACY_NODELETE create(Element&);
 

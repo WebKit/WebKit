@@ -42,10 +42,13 @@
 #include "Subscriber.h"
 #include "SubscriberCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class InternalObserverLast final : public InternalObserver {
+    WTF_MAKE_TZONE_ALLOCATED(InternalObserverLast);
 public:
     static Ref<InternalObserverLast> create(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)
     {
@@ -96,6 +99,8 @@ private:
     JSValueInWrappedObject m_lastValue;
     const Ref<DeferredPromise> m_promise;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalObserverLast);
 
 void createInternalObserverOperatorLast(ScriptExecutionContext& context, Observable& observable, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {

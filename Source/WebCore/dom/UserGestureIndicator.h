@@ -74,6 +74,7 @@ struct UserGestureTokenData {
 };
 
 class UserGestureToken : public JSC::CrossTaskToken {
+    WTF_MAKE_TZONE_ALLOCATED(UserGestureToken);
 public:
     using GestureScope = WebCore::GestureScope;
 
