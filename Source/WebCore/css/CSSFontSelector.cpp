@@ -300,7 +300,7 @@ void CSSFontSelector::dispatchInvalidationCallbacks()
 
 void CSSFontSelector::opportunisticallyStartFontDataURLLoading(const FontCascadeDescription& description, const AtomString& familyName)
 {
-    const auto& segmentedFontFace = m_cssFontFaceSet->fontFace(description.fontSelectionRequest(), familyName);
+    RefPtr segmentedFontFace = m_cssFontFaceSet->fontFace(description.fontSelectionRequest(), familyName);
     if (!segmentedFontFace)
         return;
 
@@ -310,7 +310,7 @@ void CSSFontSelector::opportunisticallyStartFontDataURLLoading(const FontCascade
 
     auto trustedType = context->settingsValues().downloadableBinaryFontTrustedTypes;
 
-    for (auto& face : segmentedFontFace->constituentFaces())
+    for (Ref face : segmentedFontFace->constituentFaces())
         face->opportunisticallyStartFontDataURLLoading(trustedType);
 }
 
