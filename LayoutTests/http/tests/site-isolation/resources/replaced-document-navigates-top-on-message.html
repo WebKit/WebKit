@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+var isControl = false;
+
+window.addEventListener("message", function() {
+    var landing = isControl ? "should-have-loaded.html" : "should-not-have-loaded.html";
+    try {
+        top.location = "http://localhost:8000/security/resources/" + landing;
+    } catch (e) {
+        if (isControl) {
+            parent.postMessage("the control navigation was blocked: " + e.name, "*");
+            return;
+        }
+        // This time the user gesture happens in this document, so the reply must let it navigate.
+        isControl = true;
+        internals.withUserGesture(function() {
+            parent.postMessage("ask", "*");
+        });
+    }
+}, false);
+
+parent.postMessage("new document ready", "*");
+</script>
+</body>
+</html>

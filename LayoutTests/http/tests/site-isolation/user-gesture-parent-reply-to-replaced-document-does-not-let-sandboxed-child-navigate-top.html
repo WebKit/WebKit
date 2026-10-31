@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests that a sandboxed cross-site iframe with allow-top-navigation-by-user-activation can't navigate the top-level page
+when the user gesture happened in a document it has replaced since, even though its parent replies with that gesture. As a
+control, the new document then asks with a user gesture of its own, and the reply must let it navigate.</p>
+<p>On success, the top-level page is replaced by one that says PASS.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function fail(message)
+{
+    document.body.append("FAIL: " + message);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var newDocumentReady = false;
+
+window.addEventListener("message", function(event) {
+    if (event.data == "ask") {
+        // Timers carry the user gesture, so the reply still has it once the iframe has replaced its document.
+        var start = performance.now();
+        (function replyOnceDocumentIsReplaced() {
+            if (!newDocumentReady) {
+                setTimeout(replyOnceDocumentIsReplaced, 10);
+                return;
+            }
+            if (!internals.isProcessingUserGesture() || performance.now() - start > 800) {
+                fail("the reply would not carry the user gesture.");
+                return;
+            }
+            frames[0].postMessage("reply", "*");
+        })();
+    } else if (event.data == "new document ready")
+        newDocumentReady = true;
+    else {
+        // Only reached when the control navigation was blocked.
+        fail(event.data);
+    }
+}, false);
+</script>
+<iframe sandbox="allow-scripts allow-top-navigation-by-user-activation" src="http://localhost:8000/site-isolation/resources/sandboxed-frame-asks-parent-then-replaces-itself.html"></iframe>
+</body>
+</html>

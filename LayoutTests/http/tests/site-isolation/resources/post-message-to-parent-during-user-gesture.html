@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+onload = function() {
+    internals.withUserGesture(function() {
+        parent.postMessage("go", "*");
+    });
+};
+</script>
+</body>
+</html>

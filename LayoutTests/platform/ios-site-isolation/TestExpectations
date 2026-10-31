@@ -56,9 +56,6 @@ svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure ]
 ####################################
 fast/block/float/independent-align-positioning.html [ Missing ]
 
-# Top-level navigation by a sandboxed iframe with a propagated user gesture is not blocked.
-http/tests/security/block-top-level-navigations-by-sandboxed-iframe-with-propagated-user-gesture.html [ Failure ]
-
 # Document-Isolation-Policy is partially implemented.
 imported/w3c/web-platform-tests/html/document-isolation-policy/agent-cluster.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/back-forward-cache-frames.tentative.https.html [ Pass ]

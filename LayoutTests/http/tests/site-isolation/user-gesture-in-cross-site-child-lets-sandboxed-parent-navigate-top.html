@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests that a user gesture in a cross-site child frame lets its parent, which is in another process and sandboxed with
+allow-top-navigation-by-user-activation, navigate the top-level page when the child posts it a message.</p>
+<p>On success, the top-level page is replaced by one that says PASS.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// Only reached when the navigation was blocked, since it replaces this page otherwise.
+window.addEventListener("message", function(event) {
+    document.body.append("FAIL: " + event.data);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
+</script>
+<iframe sandbox="allow-scripts allow-top-navigation-by-user-activation" src="http://localhost:8000/site-isolation/resources/sandboxed-frame-navigates-top-when-child-posts-during-user-gesture.html"></iframe>
+</body>
+</html>

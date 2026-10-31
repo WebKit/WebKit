@@ -86,9 +86,6 @@ imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-scaled
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/path/closepath/segment-completing.svg [ ImageOnlyFailure ]
 
-# Top-level navigation by a sandboxed iframe with a propagated user gesture is not blocked.
-http/tests/security/block-top-level-navigations-by-sandboxed-iframe-with-propagated-user-gesture.html [ Failure ]
-
 # This test has different output with site isolation enabled. It is symlinked and run with site isolation
 # enabled at http/tests/site-isolation/inspector/unit-tests/target-manager.html.
 inspector/unit-tests/target-manager.html [ Failure ]

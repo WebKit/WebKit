@@ -2446,11 +2446,11 @@ TEST(SiteIsolation, TransientActivationFromForcedUserGestureInCrossOriginIframeI
     EXPECT_FALSE(hasTransientActivationInFrame(webView.get(), nil));
 }
 
-TEST(SiteIsolation, TransientActivationFromForcedUserGesturePostedToCrossOriginIframeIsRevoked)
+TEST(SiteIsolation, TransientActivationFromForcedUserGesturePostedFromCrossOriginIframeIsRevoked)
 {
     HTTPServer server({
-        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
-        { "/iframe"_s, { "<script>addEventListener('message', () => window.webkit.messageHandlers.testHandler.postMessage(navigator.userActivation.isActive ? 'active' : 'inactive'))</script>"_s } }
+        { "/mainframe"_s, { "<script>addEventListener('message', () => window.webkit.messageHandlers.testHandler.postMessage(navigator.userActivation.isActive ? 'active' : 'inactive'))</script><iframe id='iframe' style='width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "iframe text"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configurationWithInternals(server), CGRectMake(0, 0, 800, 600));
@@ -2458,16 +2458,16 @@ TEST(SiteIsolation, TransientActivationFromForcedUserGesturePostedToCrossOriginI
     [navigationDelegate waitForDidFinishNavigation];
     RetainPtr childFrame = [webView firstChildFrame];
 
-    // The forced user gesture is forwarded with the message, so the iframe has activation while it handles it.
+    // The pending timer keeps the forced user gesture in the iframe alive. Its activation was also given to the main
+    // frame, which is in another process, so the main frame has activation while it handles the message.
     __block bool receivedMessage = false;
     [webView performAfterReceivingMessage:@"active" action:^{
         receivedMessage = true;
     }];
-    evaluateJavaScriptInFrame(webView.get(), @"frames[0].postMessage('hello', '*'); 1", nil, YES);
+    evaluateJavaScriptInFrame(webView.get(), @"window.pendingTimer = setTimeout(() => { }, 100000); parent.postMessage('hello', '*'); 1", childFrame.get(), YES);
     Util::run(&receivedMessage);
 
-    // Querying the iframe first makes sure that it has finished handling the message, and that the main frame's
-    // process received the revocation of the activation that it gave the main frame.
+    evaluateJavaScriptInFrame(webView.get(), @"clearTimeout(window.pendingTimer)", childFrame.get(), NO);
     EXPECT_FALSE(hasTransientActivationInFrame(webView.get(), childFrame.get()));
     EXPECT_FALSE(hasTransientActivationInFrame(webView.get(), nil));
 }

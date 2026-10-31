@@ -27,6 +27,8 @@
 
 #include <JavaScriptCore/CrossTaskToken.h>
 #include <WebCore/DOMPasteAccess.h>
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/UserGestureTokenIdentifier.h>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/Function.h>
@@ -44,6 +46,7 @@ class VM;
 namespace WebCore {
 
 class Document;
+class Frame;
 class LocalDOMWindow;
 class LocalFrame;
 class WeakPtrImplWithEventTargetData;
@@ -66,6 +69,8 @@ struct UserGestureTokenData {
     DOMPasteAccessPolicy domPasteAccessPolicy { DOMPasteAccessPolicy::NotRequestedYet };
     GestureScope scope { GestureScope::All };
     bool removesTransientActivation { false };
+    Markable<FrameIdentifier> frameID;
+    Markable<ScriptExecutionContextIdentifier> documentID;
 
     bool hasExpired(Seconds expirationInterval) const
     {
@@ -82,6 +87,8 @@ public:
     WEBCORE_EXPORT static void LEGACY_NODELETE setMaximumIntervalForUserGestureForwardingForFetchForTesting(Seconds);
 
     static Ref<UserGestureToken> create(IsProcessingUserGesture, UserGestureType, Document*, std::optional<WTF::UUID> authorizationToken, CanRequestDOMPaste, MonotonicTime, DOMPasteAccessPolicy, GestureScope, RemoveTransientActivation);
+
+    static Ref<UserGestureToken> create(const UserGestureTokenData&, LocalFrame& receivingFrame);
 
     WEBCORE_EXPORT ~UserGestureToken();
 
@@ -142,7 +149,7 @@ public:
     const UserGestureTokenData& data() const { return m_data; }
 
 private:
-    UserGestureToken(IsProcessingUserGesture, UserGestureType, Document*, std::optional<WTF::UUID> authorizationToken, CanRequestDOMPaste, MonotonicTime, DOMPasteAccessPolicy, GestureScope, RemoveTransientActivation);
+    UserGestureToken(const UserGestureTokenData&, Frame* documentFrame, Document*);
 
     const UserGestureTokenIdentifier m_identifier { UserGestureTokenIdentifier::generate() };
     UserGestureTokenData m_data;
@@ -163,7 +170,7 @@ public:
 
     // If a document is provided, its last known user gesture timestamp is updated.
     using ProcessInteractionStyle = WebCore::ProcessInteractionStyle;
-    WEBCORE_EXPORT explicit UserGestureIndicator(const UserGestureTokenData&, Document*);
+    WEBCORE_EXPORT explicit UserGestureIndicator(const UserGestureTokenData&, LocalFrame& receivingFrame);
     WEBCORE_EXPORT explicit UserGestureIndicator(std::optional<IsProcessingUserGesture>, Document* = nullptr, UserGestureType = UserGestureType::ActivationTriggering, ProcessInteractionStyle = ProcessInteractionStyle::Immediate, std::optional<WTF::UUID> authorizationToken = std::nullopt, CanRequestDOMPaste = CanRequestDOMPaste::Yes, MonotonicTime startTime = MonotonicTime::now(), DOMPasteAccessPolicy = DOMPasteAccessPolicy::NotRequestedYet, GestureScope = GestureScope::All);
     UserGestureIndicator(std::optional<IsProcessingUserGesture>, Document*, UserGestureType, ProcessInteractionStyle, RemoveTransientActivation);
     // With ActivationNotification::Deferred, the caller must call notifyActivation() once it knows the document in which the activation triggering event fires.

@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+internals.withUserGesture(function() {
+    parent.postMessage("ask", "*");
+    location.href = "replaced-document-navigates-top-on-message.html";
+});
+</script>
+</body>
+</html>

@@ -1109,7 +1109,7 @@ void LocalDOMWindow::postMessageFromRemoteFrame(JSC::JSGlobalObject& lexicalGlob
     if (userGestureToForward && userGestureToForward->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwarding))
         userGestureToForward = std::nullopt;
 
-    auto userGestureIndicator = userGestureToForward ? UserGestureIndicator(*userGestureToForward, protect(frame()->document())) : UserGestureIndicator(std::nullopt);
+    auto userGestureIndicator = userGestureToForward ? UserGestureIndicator(*userGestureToForward, *protect(frame())) : UserGestureIndicator(std::nullopt);
 
     processPostMessage(lexicalGlobalObject, sourceOrigin.securityOrigin(), message, WTF::move(source), WTF::move(targetOrigin));
 }

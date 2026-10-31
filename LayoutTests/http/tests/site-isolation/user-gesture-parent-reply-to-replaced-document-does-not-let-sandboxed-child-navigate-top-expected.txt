@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://127.0.0.1:8000/' from frame with URL 'http://localhost:8000/site-isolation/resources/replaced-document-navigates-top-on-message.html'. The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.
+
+PASS Did the load
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
