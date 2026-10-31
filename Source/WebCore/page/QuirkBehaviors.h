@@ -29,6 +29,7 @@
 #include <WebCore/QuirkMatchPattern.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -73,5 +74,7 @@ struct QuirkBehavior {
     String documentSelector { };
     Vector<QuirkMatchPattern> secondaryURL { };
 };
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const QuirkBehavior&);
 
 } // namespace WebCore

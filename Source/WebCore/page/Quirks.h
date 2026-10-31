@@ -144,6 +144,7 @@ public:
     static bool shouldOmitHTMLDocumentSupportedPropertyNames();
 
     WEBCORE_EXPORT Vector<String> activeQuirks() const;
+    WEBCORE_EXPORT Vector<String> activeQuirkNames() const;
 
     bool LEGACY_NODELETE shouldEnableFontLoadingAPIQuirk() const;
 

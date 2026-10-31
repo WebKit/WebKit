@@ -1378,7 +1378,7 @@ void Quirks::logQuirksToConsoleIfNecessary() const
         return;
 
     // FIXME: should we log english sentences instead of the quirk enum names?
-    const auto quirks = activeQuirks();
+    const auto quirks = activeQuirkNames();
     if (quirks.isEmpty())
         return;
 
@@ -1391,8 +1391,22 @@ Vector<String> Quirks::activeQuirks() const
 {
     Vector<String> result;
 
-    for (auto quirk : m_quirksData.behaviors())
-        result.append(String { WTF::enumName(static_cast<QuirkBehaviorID>(quirk.id)) });
+    for (auto quirk : m_quirksData.behaviors()) {
+        TextStream stream;
+        stream << quirk;
+        result.append(stream.release());
+    }
+
+    std::ranges::sort(result, codePointCompareLessThan);
+    return result;
+}
+
+Vector<String> Quirks::activeQuirkNames() const
+{
+    Vector<String> result;
+
+    for (auto id : m_quirksData.behaviors() | std::views::transform(&QuirkBehavior::id))
+        result.append(WTF::enumName(id));
 
     std::ranges::sort(result, codePointCompareLessThan);
     return result;

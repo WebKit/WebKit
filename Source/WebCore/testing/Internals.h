@@ -1629,6 +1629,7 @@ public:
     void setSubframeURLForQuirks(const String&);
     void setTopDocumentHostForQuirks(const String&);
     Vector<String> activeQuirks() const;
+    Vector<String> activeQuirkNames() const;
     ExceptionOr<void> setQuirkTableForTesting(JSDOMGlobalObject&, JSC::JSValue table);
 
 #if ENABLE(APP_HIGHLIGHTS)

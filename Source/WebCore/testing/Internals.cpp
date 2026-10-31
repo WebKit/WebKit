@@ -9343,6 +9343,15 @@ Vector<String> Internals::activeQuirks() const
     return document->quirks().activeQuirks();
 }
 
+Vector<String> Internals::activeQuirkNames() const
+{
+    RefPtr document = contextDocument();
+    if (!document)
+        return { };
+
+    return document->quirks().activeQuirkNames();
+}
+
 #if ENABLE(DAMAGE_TRACKING)
 ExceptionOr<Vector<Internals::FrameDamage>> Internals::getFrameDamageHistory() const
 {

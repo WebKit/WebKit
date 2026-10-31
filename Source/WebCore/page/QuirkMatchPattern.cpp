@@ -41,6 +41,12 @@
 
 namespace WebCore {
 
+TextStream& operator<<(TextStream& textStream, const QuirkMatchPattern& quirkMatchPattern)
+{
+    textStream << quirkMatchPattern.string();
+    return textStream;
+}
+
 const String& URLMatchContext::registrableDomain() const
 {
     if (!m_registrableDomain)

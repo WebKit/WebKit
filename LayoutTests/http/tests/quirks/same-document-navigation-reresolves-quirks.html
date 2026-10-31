@@ -12,12 +12,12 @@ const quirk = "ShouldDisableScrollAnchoringQuirk";
 
 function topDocumentHasQuirk()
 {
-    return internals.activeQuirks().includes(quirk);
+    return internals.activeQuirkNames().includes(quirk);
 }
 
 function subframeHasQuirk()
 {
-    return frames[0].internals.activeQuirks().includes(quirk);
+    return frames[0].internals.activeQuirkNames().includes(quirk);
 }
 
 if (!window.internals)

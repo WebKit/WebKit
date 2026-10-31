@@ -1653,6 +1653,7 @@ enum ContentsFormat {
     undefined setSubframeURLForQuirks(DOMString urlString);
     undefined setTopDocumentHostForQuirks(DOMString host);
     sequence<DOMString> activeQuirks();
+    sequence<DOMString> activeQuirkNames();
     [CallWith=CurrentGlobalObject] undefined setQuirkTableForTesting(any table);
 
     [CallWith=CurrentGlobalObject] ReadableStream readableStreamFromMessagePort(MessagePort port);

@@ -44,7 +44,7 @@ TEST(QuirksURLChange, TopDocumentPushStateReresolvesSubframeQuirks)
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><iframe></iframe>" baseURL:[NSURL URLWithString:@"https://www.google.com/"]];
 
     auto subframeHasAnchorQuirk = [&] {
-        return [[webView objectByEvaluatingJavaScript:@"frames[0].internals.activeQuirks().includes('NeedsAnchorToBeMouseFocusableQuirk')"] boolValue];
+        return [[webView objectByEvaluatingJavaScript:@"frames[0].internals.activeQuirkNames().includes('NeedsAnchorToBeMouseFocusableQuirk')"] boolValue];
     };
 
     EXPECT_FALSE(subframeHasAnchorQuirk());

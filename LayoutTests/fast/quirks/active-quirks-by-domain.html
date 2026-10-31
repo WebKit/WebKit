@@ -206,16 +206,27 @@ const urls = [
     "https://claude.com/",
 ];
 
+// These are gated on ENABLE(TOUCH_EVENTS) or ENABLE(IOS_TOUCH_EVENTS), which on iOS depend on the SDK, so they are
+// left out here and checked by the TouchEventQuirksFollowTheirBuildConditions API test instead.
+const touchEventGatedQuirks = new Map([
+    ["https://www.linkedin.com/", ["ShouldAllowNativeTapsOnMediaElementsQuirk"]],
+    ["https://outlook.live.com/", ["ShouldPreventTouchMoveDispatchQuirk"]],
+    ["https://www.netflix.com/", ["ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick"]],
+    ["https://soylent.com/", ["ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick"]],
+    ["https://www.yahoo.com/", ["ShouldPreventTouchEndDispatchQuirk"]],
+]);
+
 let output = "";
 if (!window.internals)
     output = "FAIL: this test requires window.internals.\n";
 else {
     for (const url of urls) {
         internals.setTopDocumentURLForQuirks(url);
-        const active = internals.activeQuirks();
+        const excluded = touchEventGatedQuirks.get(url) ?? [];
+        const active = internals.activeQuirks().filter(quirk => !excluded.includes(quirk.split("\n")[0]));
         output += url + "\n";
         for (const name of active.length ? active : ["(none)"])
-            output += "    " + name + "\n";
+            output += "    " + name.replaceAll("\n", "\n    ") + "\n";
     }
 }
 document.getElementById("output").textContent = output;

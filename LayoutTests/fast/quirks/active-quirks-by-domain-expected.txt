@@ -16,12 +16,16 @@ https://www.airindiaexpress.com/
     NeedsAirIndiaExpressLayeringQuirk
 https://www.amazon.com/
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+        elementSelector: #magnifierLens, :has(+ #magnifierLens)
 https://sub.amazon.com/
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+        elementSelector: #magnifierLens, :has(+ #magnifierLens)
 https://www.amazon.co.uk/
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+        elementSelector: #magnifierLens, :has(+ #magnifierLens)
 https://amazon.design/
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+        elementSelector: #magnifierLens, :has(+ #magnifierLens)
 https://www.apple.com/
     (none)
 https://as.com/
@@ -30,6 +34,8 @@ https://www.att.com/
     (none)
 https://www.baidu.com/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+        script: (function() { let userAgent = Object.getOwnPropertyDescriptor(Navigator.prototype, 'userAgent').get.call(navigator); Object.defineProperty(navigator, 'userAgent', { get: () => { return new Error().stack?.includes('/molecules/app/chat-input/') ? userAgent + ' Chrome/152.0.0.0' : userAgent; }, configurable: true }); })();
+        secondaryURL: [*://pss.bdstatic.com/r/www/cache/static/molecules/app/chat-input/*]
 https://baidu.com/
     (none)
 https://tieba.baidu.com/
@@ -46,11 +52,15 @@ https://www.codepen.io/
     (none)
 https://www.bankofamerica.com/
     ShouldBypassBackForwardCacheWhenUnloadListenerAndElementMatchesQuirk
+        documentSelector: #signIn.loading
 https://www.bestbuy.com/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+        script: Object.defineProperty(navigator,'language',{get:function(){return'en-US'}});Object.defineProperty(navigator,'languages',{get:function(){return['en-US','en']}});
 https://www.bing.com/
     NeedsMediaRewriteRangeRequestQuirk
+        secondaryURL: [*://*.bing.com/*]
     ShouldBypassBackForwardCacheWhenRenderedElementMatchesQuirk
+        documentSelector: #sb_sbidialog
 https://bungalow.com/
     ShouldBypassAsyncScriptDeferring
 https://www.capitalgroup.com/
@@ -60,7 +70,7 @@ https://www.cbssports.com/
 https://chatgpt.com/
     NeedsMarginTrimInlineSupportsQuirk
 https://www.cnn.com/
-    (none)
+    NeedsFormControlToBeMouseFocusableQuirk
 https://configurator.audi.com/
     ShouldRenderModelElementFallbackContentQuirk
 https://www.digitaltrends.com/
@@ -75,6 +85,7 @@ https://digits.t-mobile.com/
     NeedsCustomUserAgentData
     NeedsNavigatorUserAgentDataQuirk
     NeedsUserAgentStringOverrideQuirk
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
 https://www.t-mobile.com/
     (none)
 https://www.descript.com/
@@ -85,8 +96,10 @@ https://www.disneyplus.com/
     (none)
 https://englishtest.duolingo.com/
     NeedsChromeCompatibilityUserAgentQuirk
+        chromeCompatibilityVersion: 157
 https://englishtest.duolingo.cn/
     NeedsChromeCompatibilityUserAgentQuirk
+        chromeCompatibilityVersion: 157
 https://www.duolingo.com/
     (none)
 https://duolingo.com/
@@ -99,12 +112,14 @@ https://notenglishtest.duolingo.com/
     (none)
 https://www.ea.com/
     ShouldPreventKeyframeEffectAccelerationQuirk
+        elementSelector: ea-network-nav
 https://www.espn.com/
     ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk
 https://www.facebook.com/
     NeedsFacebookRemoveNotSupportedQuirk
     RequiresUserGestureToPauseInPictureInPictureQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+        elementSelector: [role=slider]
     ShouldEnableCameraAndMicrophonePermissionStateQuirk
     ShouldEnableEnumerateDeviceQuirk
     ShouldEnableFacebookFlagQuirk
@@ -118,53 +133,74 @@ https://play.geforcenow.com/
     NeedsGeforcenowWarningDisplayNoneQuirk
 https://www.google.com/
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.com/search
     NeedsAnchorToBeMouseFocusableQuirk
+        elementSelector: [data-expc], [data-expc] *
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.com/search/howsearchworks
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.co.jp/search
     NeedsAnchorToBeMouseFocusableQuirk
+        elementSelector: [data-expc], [data-expc] *
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.com/maps
     MayNeedToIgnoreContentObservation
+        elementSelector: [aria-label=Suggestions], [aria-label=Suggestions] *
     NeedsGoogleMapsMagnificationWheelDeltaScalingQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.com/maps/
     MayNeedToIgnoreContentObservation
+        elementSelector: [aria-label=Suggestions], [aria-label=Suggestions] *
     NeedsGoogleMapsMagnificationWheelDeltaScalingQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.com/maps/@37.33,-122.01,15z
     MayNeedToIgnoreContentObservation
+        elementSelector: [aria-label=Suggestions], [aria-label=Suggestions] *
     NeedsGoogleMapsMagnificationWheelDeltaScalingQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.com/mapsearch
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://maps.google.com/maps/
     MayNeedToIgnoreContentObservation
+        elementSelector: [aria-label=Suggestions], [aria-label=Suggestions] *
     NeedsGoogleMapsMagnificationWheelDeltaScalingQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://docs.google.com/
     InputMethodMustUseCompositionEvents
     InputMethodUsesCorrectKeyEventOrder
     IsTouchBarUpdateSuppressedForHiddenContentEditableQuirk
     NeedsGoogleDocsNavigationWidgetScrollQuirk
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://translate.google.com/
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://mail.google.com/
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://sites.google.com/
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://meet.google.com/
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
     ShouldEnableCameraBackgroundPlayback
 https://www.google.co.uk/
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
+        documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.hbomax.com/
     ShouldEnableFontLoadingAPIQuirk
 https://play.hbomax.com/
@@ -172,66 +208,92 @@ https://play.hbomax.com/
     ShouldEnableFontLoadingAPIQuirk
 https://www.carrentals.com/
     NeedsExpediaGroupAnimationQuirk
+        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
 https://www.cheaptickets.com/
     NeedsExpediaGroupAnimationQuirk
+        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
 https://www.chess.com/
     (none)
 https://www.ebookers.de/
     NeedsExpediaGroupAnimationQuirk
+        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
 https://www.expedia.com/
     NeedsExpediaGroupAnimationQuirk
+        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
 https://www.expedia.fr/
     NeedsExpediaGroupAnimationQuirk
+        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
 https://www.hoteis.com/
     NeedsExpediaGroupAnimationQuirk
+        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
 https://www.hoteles.com/
     NeedsExpediaGroupAnimationQuirk
+        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
 https://www.hotels.com/
     NeedsExpediaGroupAnimationQuirk
+        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
 https://www.mrjet.se/
     NeedsExpediaGroupAnimationQuirk
+        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
 https://www.orbitz.com/
     NeedsExpediaGroupAnimationQuirk
+        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
 https://www.travelocity.com/
     NeedsExpediaGroupAnimationQuirk
+        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
 https://www.travelocity.ca/
     NeedsExpediaGroupAnimationQuirk
+        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
 https://www.wotif.com/
     NeedsExpediaGroupAnimationQuirk
+        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
 https://www.wotif.co.nz/
     NeedsExpediaGroupAnimationQuirk
+        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
 https://www.hulu.com/
     ImplicitMuteWhenVolumeSetToZero
     NeedsCanPlayAfterSeekedQuirk
     NeedsVideoShouldMaintainAspectRatioQuirk
 https://www.icloud.com/
     MayNeedToIgnoreContentObservation
+        elementSelector: [role=treeitem i], [role=treeitem i] *
     ShouldTreatLongClickAsSecondaryClickQuirk
+        elementSelector: .thread-list-item[role=treeitem i], .thread-list-item[role=treeitem i] *
 https://www.iheart.com/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+        script: document.cookie = 'app=listen:60; path=/; domain=.iheart.com';
 https://www.imdb.com/
     NeedsChromeMediaControlsPseudoElementQuirk
     NeedsWebKitMediaTextTrackDisplayQuirk
     NeedsZeroMaxTouchPointsQuirk
 https://www.instagram.com/
     NeedsInstagramResizingReelsQuirk
+        elementSelector: :has(video)
 https://invideo.io/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+        script: if(!window.chrome)window.chrome={};
     NeedsUserAgentStringOverrideQuirk
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
 https://www.linkedin.com/
     (none)
 https://outlook.live.com/
     MayNeedToIgnoreContentObservation
+        elementSelector: [id^=swatchColorPicker]
     NeedsMozillaFileTypeForDataTransferQuirk
     NeedsUserAgentStringOverrideQuirk
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldTreatLongClickAsSecondaryClickQuirk
+        elementSelector: [data-focusable-row], [data-focusable-row] *
 https://outlook.office.com/
     ShouldTreatLongClickAsSecondaryClickQuirk
+        elementSelector: [data-focusable-row], [data-focusable-row] *
 https://outlook.office365.com/
     ShouldTreatLongClickAsSecondaryClickQuirk
+        elementSelector: [data-focusable-row], [data-focusable-row] *
 https://outlook.cloud.microsoft/
     ShouldTreatLongClickAsSecondaryClickQuirk
+        elementSelector: [data-focusable-row], [data-focusable-row] *
 https://live.com/
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
 https://onedrive.live.com/
@@ -249,12 +311,15 @@ https://www.marcus.com/
     ShouldExposeShowModalDialog
 https://jalopnik.com/
     NeedsKinjaLoginStorageAccessQuirk
+        elementSelector: .js_switch-to-burner-login, .js_header-userbutton, .sc-1il3uru-3, .cIhKfd, .iyvn34-0, .bYIjtl, svg[aria-label="UserFilled icon"], svg[aria-label="UserFilled icon"] > path
 https://kotaku.com/
     NeedsKinjaLoginStorageAccessQuirk
+        elementSelector: .js_switch-to-burner-login, .js_header-userbutton, .sc-1il3uru-3, .cIhKfd, .iyvn34-0, .bYIjtl, svg[aria-label="UserFilled icon"], svg[aria-label="UserFilled icon"] > path
 https://medium.com/
     ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk
 https://www.microsoft.com/
     NeedsStorageAccessOnLoginButtonClickQuirk
+        elementSelector: .glyph_signIn_circle, .mectrl_headertext, .mectrl_header
 https://microsoft.com/
     (none)
 https://m365.cloud.microsoft/
@@ -286,8 +351,10 @@ https://www.pinterest.com/
     ShouldAllowNotificationPermissionWithoutUserGesture
 https://www.playstation.com/
     NeedsStorageAccessOnLoginButtonClickQuirk
+        elementSelector: .web-toolbar__signin-button, .web-toolbar__signin-button-label, .sb-signin-button
 https://my.playstation.com/
     NeedsStorageAccessOnLoginButtonClickQuirk
+        elementSelector: .web-toolbar__signin-button, .web-toolbar__signin-button-label, .sb-signin-button
 https://www.premierleague.com/
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldDispatchPlayPauseEventsOnResume
@@ -305,6 +372,7 @@ https://www.sharepoint.com/
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
 https://soundcloud.com/
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+        elementSelector: .sceneLayer
     ShouldExposeShowModalDialog
 https://soylent.com/
     (none)
@@ -321,22 +389,70 @@ https://www.spotify.com/
 https://ceac.state.gov/
     NeedsFormControlToBeMouseFocusableQuirk
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+        script: (function() {
+        if (window.__ceacBeforeUnloadFix) return;
+        window.__ceacBeforeUnloadFix = true;
+        var origAEL = window.addEventListener;
+        window.addEventListener = function(type, fn, opts) {
+            if (type === 'beforeunload') {
+                return origAEL.call(this, type, function(e) {
+                    var ae = document.activeElement;
+                    if (ae && ae.tagName === 'INPUT') {
+                        var t = (ae.type || '').toLowerCase();
+                        if (t === 'radio' || t === 'checkbox' || t === 'submit' || t === 'button')
+                            return;
+                    }
+                    if (typeof fn === 'function') fn.call(this, e);
+                }, opts);
+            }
+            return origAEL.apply(this, arguments);
+        };
+    })();
+        secondaryURL: [*://*/CheckBrowserClose.js, *://*/CheckBrowserClose.js?*, *://*/*/CheckBrowserClose.js, *://*/*/CheckBrowserClose.js?*]
 https://sub.ceac.state.gov/
     NeedsFormControlToBeMouseFocusableQuirk
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+        script: (function() {
+        if (window.__ceacBeforeUnloadFix) return;
+        window.__ceacBeforeUnloadFix = true;
+        var origAEL = window.addEventListener;
+        window.addEventListener = function(type, fn, opts) {
+            if (type === 'beforeunload') {
+                return origAEL.call(this, type, function(e) {
+                    var ae = document.activeElement;
+                    if (ae && ae.tagName === 'INPUT') {
+                        var t = (ae.type || '').toLowerCase();
+                        if (t === 'radio' || t === 'checkbox' || t === 'submit' || t === 'button')
+                            return;
+                    }
+                    if (typeof fn === 'function') fn.call(this, e);
+                }, opts);
+            }
+            return origAEL.apply(this, arguments);
+        };
+    })();
+        secondaryURL: [*://*/CheckBrowserClose.js, *://*/CheckBrowserClose.js?*, *://*/*/CheckBrowserClose.js, *://*/*/CheckBrowserClose.js?*]
 https://www.state.gov/
     (none)
 https://www.theguardian.com/
     (none)
 https://www.thesaurus.com/
     NeedsAnchorToBeMouseFocusableQuirk
+https://www.thetimes.com/
+    NeedsFormControlToBeMouseFocusableQuirk
 https://www.tiktok.com/
     NeedsChromeCompatibilityUserAgentQuirk
+        chromeCompatibilityVersion: 136
     NeedsTikTokCaptchaSliderTouchActionQuirk
+        elementSelector: #secsdk-captcha-drag-wrapper
     NeedsTikTokCommentsOverflowingContentQuirk
+        elementSelector: [class*=DivBrowserModeContainer] > [class*=DivContentContainer]
     NeedsTikTokVideoOverflowingContentQuirk
+        elementSelector: [class*=DivBrowserModeContainer] > [class*=DivVideoContainer]
     NeedsUserAgentStringOverrideQuirk
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+        elementSelector: [role=slider]
 https://trix-editor.org/
     IsNeverRichlyEditableForTouchBarQuirk
 https://www.twitch.tv/
@@ -352,6 +468,7 @@ https://vimeo.com/
     ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk
 https://www.walmart.com/
     MayNeedToIgnoreContentObservation
+        elementSelector: [role=listitem i] > [role=button i]
 https://en.wikipedia.org/
     ShouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk
 https://weather.com/
@@ -366,6 +483,16 @@ https://wpdevelopment.ca/
     NeedsFormControlToBeMouseFocusableQuirk
 https://x.com/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+        script: (function() {
+        if (window.__xGoogleSignInButtonFix)
+            return;
+        window.__xGoogleSignInButtonFix = true;
+        var style = document.createElement('style');
+        style.textContent = '.jf-gsi-hit > div > div:first-child:empty:not([role]) { display: none !important }';
+        (document.head || document.documentElement).appendChild(style);
+    })();
+
+        secondaryURL: [*://accounts.google.com/gsi/client, *://accounts.google.com/gsi/client?*]
     RequiresUserGestureToLoadInPictureInPictureQuirk
     RequiresUserGestureToPauseInPictureInPictureQuirk
 https://twitter.com/
@@ -397,6 +524,8 @@ https://www.dailymail.co.uk/
     ShouldUnloadHeavyFrames
 https://claude.ai/
     NeedsLogoutCookieCleanupQuirk
+        cookieNames: [__ssid, __cf_bm, anthropic-device-id, lastActiveOrg, activitySessionId]
+        secondaryURL: [*://claude.ai/api/auth/logout, *://claude.ai/api/auth/logout?*]
 https://claude.com/
     (none)
 

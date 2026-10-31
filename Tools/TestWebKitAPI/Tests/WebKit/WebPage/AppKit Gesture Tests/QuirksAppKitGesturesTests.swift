@@ -112,7 +112,7 @@ extension AppKitGesturesTests.Quirks {
         }
 
         let activeQuirks = try await page.callJavaScript(returning: [String].self) {
-            "return internals.activeQuirks();"
+            "return internals.activeQuirkNames();"
         }
         try #require(activeQuirks.contains("ShouldTreatLongClickAsSecondaryClickQuirk"))
 
@@ -164,7 +164,7 @@ extension AppKitGesturesTests.Quirks {
             returning: [String].self,
             arguments: ["frameID": manipulationSurfaceFrameID]
         ) {
-            "return document.getElementById(frameID).contentWindow.internals.activeQuirks();"
+            "return document.getElementById(frameID).contentWindow.internals.activeQuirkNames();"
         }
         try #require(subframeQuirks.contains("NeedsGoogleMapsEmbedManipulationSurfaceQuirk"))
 

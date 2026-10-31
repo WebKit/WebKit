@@ -768,6 +768,40 @@ TEST_F(QuirksTest, SitesThatNeedSimulatedMouseEventsEverywhereCarryNoSelector)
 }
 #endif // ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
 
+// On iOS, ENABLE(TOUCH_EVENTS) and ENABLE(IOS_TOUCH_EVENTS) are on only with the Apple internal SDK, so
+// fast/quirks/active-quirks-by-domain.html leaves these quirks out and they are checked here instead.
+TEST_F(QuirksTest, TouchEventQuirksFollowTheirBuildConditions)
+{
+    constexpr auto nativeTaps = WebCore::QuirkBehaviorID::ShouldAllowNativeTapsOnMediaElementsQuirk;
+    constexpr auto pointerOut = WebCore::QuirkBehaviorID::ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick;
+    constexpr auto touchMove = WebCore::QuirkBehaviorID::ShouldPreventTouchMoveDispatchQuirk;
+    constexpr auto touchEnd = WebCore::QuirkBehaviorID::ShouldPreventTouchEndDispatchQuirk;
+
+    auto linkedIn = resolveQuirksForTopURL("https://www.linkedin.com/"_s);
+    auto outlook = resolveQuirksForTopURL("https://outlook.live.com/"_s);
+    auto netflix = resolveQuirksForTopURL("https://www.netflix.com/"_s);
+    auto soylent = resolveQuirksForTopURL("https://soylent.com/"_s);
+    auto yahoo = resolveQuirksForTopURL("https://www.yahoo.com/"_s);
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
+    EXPECT_EQ(elementSelectorsFor(linkedIn, nativeTaps), Vector<String> { "video.vjs-tech, audio.vjs-tech"_str });
+#else
+    EXPECT_FALSE(linkedIn.isBehaviorEnabled(nativeTaps));
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+    EXPECT_TRUE(netflix.isBehaviorEnabled(pointerOut));
+    EXPECT_TRUE(soylent.isBehaviorEnabled(pointerOut));
+    EXPECT_EQ(elementSelectorsFor(outlook, touchMove), Vector<String> { ".ms-Suggestions, .ms-Suggestions *"_str });
+    EXPECT_EQ(elementSelectorsFor(yahoo, touchEnd), Vector<String> { ".DPvwYc.sm8sCf, .vjs-subs-cap-button.vjs-menu-button"_str });
+#else
+    EXPECT_FALSE(netflix.isBehaviorEnabled(pointerOut));
+    EXPECT_FALSE(soylent.isBehaviorEnabled(pointerOut));
+    EXPECT_FALSE(outlook.isBehaviorEnabled(touchMove));
+    EXPECT_FALSE(yahoo.isBehaviorEnabled(touchEnd));
+#endif
+}
+
 static bool matchesSelector(ASCIILiteral selector, const WebCore::Node* node)
 {
     return WebCore::Quirks::elementMatchesSelectorCondition(selector, node);
@@ -1533,7 +1567,7 @@ TEST_F(QuirksTest, InstagramReelsGrowToFillTheirFlexContainerOnlyWhenTheyContain
 
 static bool hasActiveQuirk(WebCore::Document& document, ASCIILiteral quirkName)
 {
-    return document.quirks().activeQuirks().contains(String { quirkName });
+    return document.quirks().activeQuirkNames().contains(String { quirkName });
 }
 
 static TestPageHarness createPageWithQuirksEnabled()

@@ -101,6 +101,8 @@ private:
     bool m_matchesAnyPublicSuffix { false };
 };
 
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const QuirkMatchPattern&);
+
 inline bool anyPatternMatches(std::span<const QuirkMatchPattern> patterns, const URLMatchContext& context)
 {
     return std::ranges::any_of(patterns, [&](auto& pattern) {
