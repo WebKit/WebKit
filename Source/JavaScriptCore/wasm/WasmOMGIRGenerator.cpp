@@ -1963,18 +1963,33 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
 
     m_proc.requestCallArgAreaSizeInBytes(calleeStackSize);
 
-    // Tail call patchpoint is emitted before the B3-level context switch so
-    // wasmContextInstancePointer still holds the caller's instance.
+    // Both paths below install a cross-instance callee's pinned registers from inside their call
+    // patchpoint's own generator, immediately before transferring to the callee. The callee code
+    // pointer is the only input consumed after that switch, so it gets a fixed register the switch
+    // does not write. Air cannot express this as a rep constraint: an input rep is an early use,
+    // which by design does not interfere with a patchpoint's late clobbers, and a late use would
+    // interfere with all of them, which for a call patchpoint means every caller-save register.
+    // FIXME: B3 has no way to declare a clobber internal to a patchpoint:
+    //   see https://bugs.webkit.org/show_bug.cgi?id=151823
+    static_assert(noOverlap(GPRInfo::nonPreservedNonArgumentGPR0, GPRInfo::wasmContextInstancePointer, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister));
+
     if (isTailCallRootCaller) {
         const TypeSignatureIndex callerTypeSignatureIndex = m_info.internalFunctionTypeSignatureIndices[m_functionIndex];
         const RTT& callerType = m_info.rtt(callerTypeSignatureIndex);
         CallInformation wasmCallerInfoAsCallee = callingConvention.callInformationFor(callerType, CallRole::Callee);
 
         auto [patchpoint, _, prepareForCall] = createTailCallPatchpoint(m_currentBlock, signature, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args, boxedCalleeCallee);
-        unsigned patchArgsIndex = patchpoint->reps().size();
-        patchpoint->append(calleeCode, ValueRep(GPRInfo::nonPreservedNonArgumentGPR0));
-        patchpoint->append(calleeInstance, ValueRep::SomeRegister);
+        unsigned patchArgsIndex = patchpoint->reps().size() + m_proc.resultCount(patchpoint->type());
+        // See the static_assert above for why the code pointer needs a fixed register.
+        patchpoint->append(calleeCode, ValueRep(GPRInfo::nonPreservedNonArgumentGPR0)); // patchArgsIndex
+        patchpoint->append(calleeInstance, ValueRep::SomeRegister); // patchArgsIndex + 1
+        // The callee test guarding the restore frame below needs boxedCalleeCallee in a register; the rep
+        // createTailCallPatchpoint already appends is LateColdAny and may be on the stack.
+        ASSERT(boxedCalleeCallee);
+        patchpoint->append(boxedCalleeCallee, ValueRep::SomeRegister); // patchArgsIndex + 2
         // Cross-instance setup below reloads pinned registers before the tail-call shuffle consumes late inputs.
+        // FIXME: We should not have to do this, but the wasm->wasm stub assumes it can
+        // use all the pinned registers as scratch: https://bugs.webkit.org/show_bug.cgi?id=172181
         patchpoint->clobberLate(RegisterSet::wasmPinnedRegisters());
         // emitRestoreInstanceFrameIfNeeded needs two scratches. wasmBaseMemoryPointer is
         // always pinned so B3 won't allocate it. wasmBoundsCheckingSizeRegister
@@ -1982,14 +1997,23 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         // scratch that avoids the inputs.
         if (m_mode == MemoryMode::Signaling)
             patchpoint->numGPScratchRegisters = 1;
-        patchArgsIndex += m_proc.resultCount(patchpoint->type());
         Checked<int32_t> callerStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallerInfoAsCallee.headerAndArgumentStackSizeInBytes);
         patchpoint->setGenerator([prepareForCall = prepareForCall, patchArgsIndex, callerStackSize = static_cast<int32_t>(callerStackSize), mode = m_mode](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+            GPRReg calleeCode = params[patchArgsIndex].gpr();
             GPRReg calleeInstanceGPR = params[patchArgsIndex + 1].gpr();
             GPRReg scratch2 = mode == MemoryMode::Signaling ? params.gpScratch(0) : GPRInfo::wasmBoundsCheckingSizeRegister;
-            auto sameInstance = jit.branchPtr(CCallHelpers::Equal, calleeInstanceGPR, GPRInfo::wasmContextInstancePointer);
+            // We need a restore frame if the wasm instance is different or if the call goes out to JS.
+            // In the latter case JS can grow wasm memory, invalidating memory base cached in a callee save register.
+            auto needsRestoreFrame = jit.branchPtr(CCallHelpers::NotEqual, calleeInstanceGPR, GPRInfo::wasmContextInstancePointer);
+        // FIXME: consider overloading WasmCallableFunction::targetInstance to hold a JSFunction when the
+        // callee exits to JS. The instance comparison above would then fail for a JS import on its own and
+        // this second test could go away. See also BBQJIT::emitIndirectTailCall().
+            GPRReg calleeCalleeGPR = params[patchArgsIndex + 2].gpr();
+            CCallHelpers::Jump skipRestoreFrame;
             {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
+                skipRestoreFrame = branchIfCalleeNotWasmToJS(jit, calleeCalleeGPR);
+                needsRestoreFrame.link(&jit);
                 int32_t topSource = -static_cast<int32_t>(params.code().frameSize());
                 for (unsigned i = 0; i < params.size(); ++i) {
                     if (params[i].isStack())
@@ -2001,51 +2025,21 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
                 emitRestoreInstanceFrameIfNeeded(jit, GPRInfo::wasmContextInstancePointer, callerStackSize, params.code().frameSize(), topSourceOffsetFromFP, GPRInfo::wasmBaseMemoryPointer, scratch2);
                 jit.move(calleeInstanceGPR, GPRInfo::wasmContextInstancePointer);
                 jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
-                jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, calleeInstanceGPR);
+                // cageConditionally clobbers its scratch, so the scratch must not be one of the registers we
+                // just loaded, nor the jump target we still have to consume. In BoundsChecking mode
+                // wasmBoundsCheckingSizeRegister is pinned, so the callee instance (dead by now) cannot be
+                // it. In Signaling mode it is not pinned, clobberLate(wasmPinnedRegisters()) prevents
+                // scratch from overlapping.
+                GPRReg cageScratch = mode == MemoryMode::Signaling ? scratch2 : calleeInstanceGPR;
+                ASSERT(noOverlap(cageScratch, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, calleeCode));
+                jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, cageScratch);
             }
-            sameInstance.link(&jit);
+            skipRestoreFrame.link(&jit);
             prepareForCall->run(jit, params);
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            jit.farJump(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
+            jit.farJump(calleeCode, WasmEntryPtrTag);
         });
         return { };
-    }
-
-    // Do a context switch if needed.
-    {
-        BasicBlock* continuation = m_proc.addBlock();
-        BasicBlock* doContextSwitch = m_proc.addBlock();
-
-        Value* isSameContextInstance = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
-            calleeInstance, instanceValue());
-        m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
-            isSameContextInstance, FrequentedBlock(continuation), FrequentedBlock(doContextSwitch));
-
-        PatchpointValue* patchpoint = doContextSwitch->appendNew<PatchpointValue>(m_proc, B3::Void, origin());
-        patchpoint->effects.writesPinned = true;
-        // We pessimistically assume we're calling something with BoundsChecking memory.
-        // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
-        patchpoint->clobber(RegisterSet::wasmPinnedRegisters());
-        patchpoint->clobber(RegisterSet::macroClobberedGPRs());
-        patchpoint->append(calleeInstance, ValueRep::SomeRegister);
-        patchpoint->numGPScratchRegisters = 1;
-
-        patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-            AllowMacroScratchRegisterUsage allowScratch(jit);
-            GPRReg calleeInstance = params[0].gpr();
-            ASSERT(calleeInstance != GPRInfo::wasmBaseMemoryPointer);
-            jit.storeWasmContextInstance(calleeInstance);
-            static_assert(GPRInfo::wasmBoundsCheckingSizeRegister != GPRInfo::wasmBaseMemoryPointer);
-            // FIXME: We should support more than one memory size register
-            //   see: https://bugs.webkit.org/show_bug.cgi?id=162952
-            ASSERT(GPRInfo::wasmBoundsCheckingSizeRegister != calleeInstance);
-            GPRReg scratch = params.gpScratch(0);
-            jit.loadPairPtr(calleeInstance, CCallHelpers::TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
-            jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratch);
-        });
-        doContextSwitch->appendNewControlValue(m_proc, Jump, origin(), continuation);
-
-        m_currentBlock = continuation;
     }
 
     auto [patchpoint, handle, prepareForCall] = createCallPatchpoint(m_currentBlock, signature, wasmCalleeInfo, args);
@@ -2056,19 +2050,46 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
     // use all the pinned registers as scratch: https://bugs.webkit.org/show_bug.cgi?id=172181
     patchpoint->clobberLate(RegisterSet::wasmPinnedRegisters());
 
-    unsigned patchArgsIndex = patchpoint->reps().size();
-    patchpoint->append(calleeCode, ValueRep::SomeRegister);
-    patchpoint->append(boxedCalleeCallee, ValueRep::SomeRegister);
-    patchArgsIndex += m_proc.resultCount(patchpoint->type());
-    patchpoint->setGenerator([this, handle = handle, prepareForCall = prepareForCall, patchArgsIndex, signature = Ref<const RTT>(signature), wasmCalleeInfo = WTF::move(wasmCalleeInfo)](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    unsigned patchArgsIndex = patchpoint->reps().size() + m_proc.resultCount(patchpoint->type());
+    // See the static_assert above for why the code pointer needs a fixed register.
+    patchpoint->append(calleeCode, ValueRep(GPRInfo::nonPreservedNonArgumentGPR0)); // patchArgsIndex
+    patchpoint->append(boxedCalleeCallee, ValueRep::SomeRegister); // patchArgsIndex + 1
+    patchpoint->append(calleeInstance, ValueRep::SomeRegister); // patchArgsIndex + 2
+    // cageConditionally clobbers its scratch, so the scratch must not be one of the registers we
+    // just loaded, nor the jump target we still have to consume. In BoundsChecking mode
+    // wasmBoundsCheckingSizeRegister is pinned, so the callee instance (dead by now) cannot be
+    // it. In Signaling mode it is not pinned, clobberLate(wasmPinnedRegisters()) prevents the
+    // scratch from overlapping.
+    if (m_mode == MemoryMode::Signaling)
+        patchpoint->numGPScratchRegisters = 1;
+    patchpoint->setGenerator([this, handle = handle, prepareForCall = prepareForCall, patchArgsIndex, signature = Ref<const RTT>(signature), wasmCalleeInfo = WTF::move(wasmCalleeInfo), mode = m_mode](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         if (prepareForCall)
             prepareForCall->run(jit, params);
         if (handle)
             handle->collectStackMap(this, params);
 
+        GPRReg calleeCodeGPR = params[patchArgsIndex].gpr();
         jit.storeWasmCalleeToCalleeCallFrame(params[patchArgsIndex + 1].gpr());
-        jit.call(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
+        GPRReg calleeInstanceGPR = params[patchArgsIndex + 2].gpr();
+        // Safe to reuse the callee instance in BoundsChecking mode: it is dead once
+        // storeWasmContextInstance below has copied it, and the caging happens after that.
+        GPRReg cageScratch = mode == MemoryMode::Signaling ? params.gpScratch(0) : calleeInstanceGPR;
+
+        // Do a context switch if needed. We pessimistically assume we're calling something with
+        // BoundsChecking memory.
+        // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
+        ASSERT(noOverlap(cageScratch, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, GPRInfo::wasmContextInstancePointer));
+        // The code pointer is still live at the call below, so the scratch must not be it.
+        ASSERT(cageScratch != calleeCodeGPR);
+
+        auto isSameContextInstance = jit.branchPtr(CCallHelpers::Equal, calleeInstanceGPR, GPRInfo::wasmContextInstancePointer);
+        jit.storeWasmContextInstance(calleeInstanceGPR);
+        jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+        jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, cageScratch);
+        isSameContextInstance.link(&jit);
+
+        jit.call(calleeCodeGPR, WasmEntryPtrTag);
         emitWasmCallStackResultsAndSPRestore(jit, params, signature, wasmCalleeInfo);
     });
     fillCallResults(patchpoint, signature, results);
@@ -6160,8 +6181,8 @@ auto OMGIRGenerator::emitDirectCall(unsigned callProfileIndex, FunctionSpaceInde
 
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndexSpace)) {
         auto emitCallToImport = [&, this](PatchpointValue* patchpoint, RefPtr<PatchpointExceptionHandle> handle, RefPtr<B3::StackmapGenerator> prepareForCall) -> void {
-            unsigned patchArgsIndex = patchpoint->reps().size();
-            patchpoint->append(jumpDestination, ValueRep(GPRInfo::nonPreservedNonArgumentGPR0));
+            unsigned patchArgsIndex = patchpoint->reps().size() + m_proc.resultCount(patchpoint->type());
+            patchpoint->append(jumpDestination, ValueRep(GPRInfo::nonPreservedNonArgumentGPR0)); // patchArgsIndex
             // We need to clobber all potential pinned registers since we might be leaving the instance.
             // We pessimistically assume we could be calling to something that is bounds checking.
             // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
@@ -6172,7 +6193,6 @@ auto OMGIRGenerator::emitDirectCall(unsigned callProfileIndex, FunctionSpaceInde
             // scratch that avoids the inputs.
             if (isTailCallRootCaller && m_mode == MemoryMode::Signaling)
                 patchpoint->numGPScratchRegisters = 1;
-            patchArgsIndex += m_proc.resultCount(patchpoint->type());
             patchpoint->setGenerator([this, patchArgsIndex, handle, isTailCallRootCaller, tailCallStackOffsetFromFP, prepareForCall, signature = Ref<const RTT>(signature), wasmCalleeInfo, callerStackSize = static_cast<int32_t>(WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallerInfoAsCallee.headerAndArgumentStackSizeInBytes)), mode = m_mode](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 if (isTailCallRootCaller) {

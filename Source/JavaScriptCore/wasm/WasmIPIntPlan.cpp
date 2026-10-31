@@ -148,8 +148,10 @@ void IPIntPlan::didCompleteCompilation()
             callee->setName(nameSection.get(callee->index()));
 
         NativeCalleeRegistry::singleton().registerCallees(*m_ipintCallees);
-        if (Options::useWasmTailCalls())
+        if (Options::useWasmTailCalls()) {
             RestoreFrameCallee::singleton();
+            WasmToJSCallee::singleton();
+        }
     }
 
     if (m_compilerMode == CompilerMode::Validation)
