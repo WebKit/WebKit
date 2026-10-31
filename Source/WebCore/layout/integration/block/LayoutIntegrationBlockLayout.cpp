@@ -30,6 +30,7 @@
 #include "BlockFormattingContext.h"
 #include "BlockFormattingUtils.h"
 #include "BlockIntegrationUtils.h"
+#include "FlexFormattingUtils.h"
 #include "LayoutIntegrationBlockCoverage.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LayoutRepainter.h"
@@ -199,6 +200,60 @@ static LayoutRect logicalPaddingBoxRect(const RenderBox& box)
     return paddingBox;
 }
 
+// How a flex container aligns an out-of-flow child in its content box in its inline and block axes, as if it were its only flex item
+// (css-flexbox-1 §4.1): justify-content in the main axis and align-self in the cross axis, like FlexLayout::staticMainAxisPositionForPositionedFlexItem
+// and staticCrossAxisPositionForPositionedFlexItem.
+using StaticPositionAlignment = Layout::OutOfFlowGeometry::StaticPosition::Alignment;
+static std::pair<StaticPositionAlignment, StaticPositionAlignment> flexStaticPositionAlignments(const RenderFlexibleBox& flexBox, const RenderBox& outOfFlowBox)
+{
+    using Position = StaticPositionAlignment::Position;
+    CheckedRef style = flexBox.style();
+    auto isColumn = style->isColumnFlexDirection();
+    auto mainAxisAlignment = [&] -> StaticPositionAlignment {
+        auto rectangleSize = isColumn ? flexBox.contentBoxLogicalHeight() : flexBox.contentBoxLogicalWidth();
+        auto justifyContent = style->justifyContent().resolve(FlexFormattingUtils::contentAlignmentNormalBehavior());
+        // With no other flex items, space-around and space-evenly center it, overflowing or not.
+        if (justifyContent.distribution() == ContentDistribution::SpaceAround || justifyContent.distribution() == ContentDistribution::SpaceEvenly)
+            return { rectangleSize, Position::Center };
+        // A reversed flex direction swaps the main-start and main-end edges, not start and end.
+        auto isReverse = style->isReverseFlexDirection();
+        auto isSafe = justifyContent.overflow() == OverflowAlignment::Safe;
+        switch (FlexFormattingUtils::resolveLeftRightAlignment(justifyContent, style, isReverse)) {
+        case ContentPosition::Center:
+            return { rectangleSize, Position::Center, isSafe };
+        case ContentPosition::Start:
+            return { rectangleSize, Position::Start, isSafe };
+        case ContentPosition::End:
+            return { rectangleSize, Position::End, isSafe };
+        case ContentPosition::FlexEnd:
+            return { rectangleSize, isReverse ? Position::Start : Position::End, isSafe };
+        default:
+            return { rectangleSize, isReverse ? Position::End : Position::Start, isSafe };
+        }
+    };
+    auto crossAxisAlignment = [&] -> StaticPositionAlignment {
+        auto rectangleSize = isColumn ? flexBox.contentBoxLogicalWidth() : flexBox.contentBoxLogicalHeight();
+        auto isSafe = outOfFlowBox.style().alignSelf().resolve(style.ptr()).overflow() == OverflowAlignment::Safe;
+        // wrap-reverse makes the cross-start edge the end one, which alignmentForFlexItem accounts for in flex-start and flex-end.
+        switch (FlexFormattingUtils::alignmentForFlexItem(outOfFlowBox)) {
+        case ItemPosition::Center:
+        case ItemPosition::AnchorCenter:
+            return { rectangleSize, Position::Center, isSafe };
+        case ItemPosition::FlexEnd:
+        // Without a baseline-sharing group, last baseline alignment falls back to end alignment (css-align-3 §4.2).
+        case ItemPosition::LastBaseline:
+            return { rectangleSize, Position::End, isSafe };
+        case ItemPosition::Stretch:
+            return { rectangleSize, FlexFormattingUtils::isWrapReverse(flexBox) ? Position::End : Position::Start, isSafe };
+        default:
+            return { rectangleSize, Position::Start, isSafe };
+        }
+    };
+    if (isColumn)
+        return { crossAxisAlignment(), mainAxisAlignment() };
+    return { mainAxisAlignment(), crossAxisAlignment() };
+}
+
 // The static position the in-flow layout of its parent gave the box (RenderLayer::staticInlinePosition, staticBlockPosition), relative to the
 // border box of its block container, moved through the positions of the boxes in between, relative offsets included (like PositionedLayoutConstraints::computedInlineStaticDistance)
 // to the padding box of its containing block. Coverage keeps those boxes in the containing block's writing mode.
@@ -208,8 +263,13 @@ static Layout::OutOfFlowGeometry::StaticPosition staticPosition(const RenderBox&
     while (staticPositionBlock->isInlineBox())
         staticPositionBlock = staticPositionBlock->parent();
     CheckedRef blockContainer = downcast<RenderBlock>(*staticPositionBlock);
+    // A flex container's is the start of its content box, which the layer has until the render tree path aligns the box there
+    // (FlexLayout::setStaticPositionForPositionedLayout).
+    CheckedPtr flexBox = dynamicDowncast<RenderFlexibleBox>(blockContainer);
     CheckedRef layer = *outOfFlowBox.layer();
-    auto position = LayoutPoint { blockContainer->writingMode().isLogicalLeftInlineStart() ? layer->staticInlinePosition() : blockContainer->logicalWidth() - layer->staticInlinePosition(), layer->staticBlockPosition() };
+    auto staticInlinePosition = flexBox ? flexBox->startOffsetForContent() : layer->staticInlinePosition();
+    auto staticBlockPosition = flexBox ? flexBox->borderAndPaddingBefore() : layer->staticBlockPosition();
+    auto position = LayoutPoint { blockContainer->writingMode().isLogicalLeftInlineStart() ? staticInlinePosition : blockContainer->logicalWidth() - staticInlinePosition, staticBlockPosition };
     // An out-of-flow box between them is positioned in its own containing block, which is where container() goes.
     for (CheckedPtr<const RenderElement> box = blockContainer.ptr(); box != &containingBlock; box = box->container()) {
         if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*box)) {
@@ -220,7 +280,10 @@ static Layout::OutOfFlowGeometry::StaticPosition staticPosition(const RenderBox&
     }
     auto paddingBox = logicalPaddingBoxRect(containingBlock);
     auto inlinePosition = containingBlock.writingMode().isLogicalLeftInlineStart() ? position.x() - paddingBox.x() : paddingBox.maxX() - position.x();
-    return { inlinePosition, position.y() - paddingBox.y(), blockContainer->writingMode().isLogicalLeftInlineStart() != containingBlock.writingMode().isLogicalLeftInlineStart() };
+    auto result = Layout::OutOfFlowGeometry::StaticPosition { inlinePosition, position.y() - paddingBox.y(), blockContainer->writingMode().isLogicalLeftInlineStart() != containingBlock.writingMode().isLogicalLeftInlineStart() };
+    if (flexBox)
+        std::tie(result.inlineAlignment, result.blockAlignment) = flexStaticPositionAlignments(*flexBox, outOfFlowBox);
+    return result;
 }
 
 // Like RenderBlock::layoutOutOfFlowBoxes once the containing block has its size: the out-of-flow boxes BlockLayout::updateRenderers registered
