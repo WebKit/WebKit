@@ -4045,6 +4045,26 @@ RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bit
     return snapshot;
 }
 
+RefPtr<WebImage> WebPage::printedPageBoxesSnapshotForTesting(const IntSize& defaultPageBoxSize, const IntBoxExtent& defaultPageMargin)
+{
+    RefPtr coreFrame = m_mainFrame->coreLocalFrame();
+    if (!coreFrame)
+        return nullptr;
+
+    auto snapshotSize = PrintContext::printedPageBoxesSize(*coreFrame, defaultPageBoxSize, defaultPageMargin);
+    if (snapshotSize.isEmpty())
+        return nullptr;
+
+    auto snapshot = WebImage::create(snapshotSize, ImageOption::Shareable, ColorSpace::SRGB(), &m_page->chrome().client());
+    if (!snapshot->context())
+        return nullptr;
+
+    // FIXME: Paint remote frames, as drawPrintingPagesToSnapshot() does (rdar://191464084). Cross-site iframes are blank under site isolation.
+    // FIXME: Dispatch beforeprint and afterprint, as beginPrinting() does, and wait for loads that printing starts (rdar://191464243).
+    PrintContext::spoolAllPageBoxes(*coreFrame, *snapshot->context(), defaultPageBoxSize, defaultPageMargin);
+    return snapshot;
+}
+
 RefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions options, unsigned maximumPixelCount)
 {
     RefPtr coreFrame = m_mainFrame->coreLocalFrame();

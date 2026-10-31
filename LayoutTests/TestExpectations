@@ -1079,8 +1079,6 @@ imported/w3c/web-platform-tests/speculation-rules/prefetch/redirect-to-prefetch-
 
 # Newly imported WPT ref tests failures.
 imported/w3c/web-platform-tests/compat/webkit-box-rtl-flex.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-scaled-print.sub.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-print.sub.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-transform-translatez.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-vertical.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-block-margins-2.html [ ImageOnlyFailure ]
@@ -2755,7 +2753,9 @@ webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/expected-fail
 webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_and_fail.html [ Skip ]
 webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_cycle_fail.html [ Skip ]
 webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_match_fail.html [ Skip ]
+webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_match_fail-print.html [ Skip ]
 webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_mismatch_fail.html [ Skip ]
+webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_mismatch_fail-print.html [ Skip ]
 webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_ref_timeout.html [ Skip ]
 webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_timeout.html [ Skip ]
 

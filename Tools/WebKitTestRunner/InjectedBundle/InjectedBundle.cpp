@@ -364,6 +364,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
         JSC::Options::setOptions(toWTFString(jscOpts).utf8().legacyCStringPointer());
 
     m_dumpPixels = booleanValue(settings, "DumpPixels");
+    m_dumpPrintedPageBoxes = booleanValue(settings, "DumpPrintedPageBoxes");
     m_timeout = Seconds::fromMilliseconds(uint64Value(settings, "Timeout"));
 
     m_pixelResult.clear();

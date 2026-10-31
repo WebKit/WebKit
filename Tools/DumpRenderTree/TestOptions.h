@@ -45,6 +45,7 @@ public:
 
     // Test-Runner-Specific Features
     bool dumpJSConsoleLogInStdErr() const { return boolTestRunnerFeatureValue("dumpJSConsoleLogInStdErr", false); }
+    bool dumpPrintedPageBoxes() const { return boolTestRunnerFeatureValue("dumpPrintedPageBoxes", false); }
     bool enableDragDestinationActionLoad() const { return boolTestRunnerFeatureValue("enableDragDestinationActionLoad", false); }
     bool layerBackedWebView() const { return boolTestRunnerFeatureValue("layerBackedWebView", false); }
     bool useEphemeralSession() const { return boolTestRunnerFeatureValue("useEphemeralSession", false); }

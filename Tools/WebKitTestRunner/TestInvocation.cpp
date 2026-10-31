@@ -139,6 +139,7 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
     setValue(beginTestMessageBody, "TestIdentifier", m_identifier);
     setValue(beginTestMessageBody, "UseFlexibleViewport", options().useFlexibleViewport());
     setValue(beginTestMessageBody, "DumpPixels", m_dumpPixels);
+    setValue(beginTestMessageBody, "DumpPrintedPageBoxes", options().dumpPrintedPageBoxes());
     setValue(beginTestMessageBody, "Timeout", static_cast<uint64_t>(m_timeout.milliseconds()));
     setValue(beginTestMessageBody, "additionalSupportedImageTypes", options().additionalSupportedImageTypes().c_str());
     auto allowedHostsValue = adoptWK(WKMutableArrayCreate());

@@ -75,7 +75,7 @@ class TestParser(object):
         if test_type == "manual":
             test_info = {'test': self.filename, 'manualtest': True}
 
-        elif test_type == "reftest":
+        elif test_type in ("reftest", "print-reftest"):
             assert len(test_items) == 1
             test_item = test_items[0]
 
