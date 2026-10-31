@@ -29,38 +29,39 @@ function runVariant(name, writingMode, direction, property, value, expectations)
 }
 
 runVariant('corner-block-start in horizontal-tb ltr',
-           'horizontal-tb', 'ltr', 'corner-block-start', '10px 20px bevel', {
+           'horizontal-tb', 'ltr', 'corner-block-start', 'bevel 10px 20px', {
   'border-top-left-radius': '10px',
   'border-top-right-radius': '20px',
   'corner-top-left-shape': 'superellipse(0)',
   'corner-top-right-shape': 'superellipse(0)',
 });
 runVariant('corner-block-start in horizontal-tb rtl',
-           'horizontal-tb', 'rtl', 'corner-block-start', '10px 20px bevel', {
+           'horizontal-tb', 'rtl', 'corner-block-start', 'bevel 10px 20px', {
   'border-top-right-radius': '10px',
   'border-top-left-radius': '20px',
   'corner-top-right-shape': 'superellipse(0)',
   'corner-top-left-shape': 'superellipse(0)',
 });
 runVariant('corner-block-start in vertical-rl ltr',
-           'vertical-rl', 'ltr', 'corner-block-start', '10px 20px bevel', {
+           'vertical-rl', 'ltr', 'corner-block-start', 'bevel 10px 20px', {
   'border-top-right-radius': '10px',
   'border-bottom-right-radius': '20px',
   'corner-top-right-shape': 'superellipse(0)',
   'corner-bottom-right-shape': 'superellipse(0)',
 });
 runVariant('corner-inline-start in horizontal-tb ltr',
-           'horizontal-tb', 'ltr', 'corner-inline-start', '10px 20px scoop', {
+           'horizontal-tb', 'ltr', 'corner-inline-start', 'scoop 10px 20px', {
   'border-top-left-radius': '10px',
   'border-bottom-left-radius': '20px',
   'corner-top-left-shape': 'superellipse(-1)',
   'corner-bottom-left-shape': 'superellipse(-1)',
 });
 runVariant('corner-inline-start in horizontal-tb rtl',
-           'horizontal-tb', 'rtl', 'corner-inline-start', '10px 20px scoop', {
+           'horizontal-tb', 'rtl', 'corner-inline-start', 'scoop 10px 20px', {
   'border-top-right-radius': '10px',
   'border-bottom-right-radius': '20px',
   'corner-top-right-shape': 'superellipse(-1)',
   'corner-bottom-right-shape': 'superellipse(-1)',
 });
 </script>
+

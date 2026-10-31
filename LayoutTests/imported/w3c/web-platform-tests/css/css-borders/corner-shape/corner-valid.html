@@ -3,7 +3,7 @@
 <title>CSS Borders and Box Decorations 4 Test: Parsing 'corner' with valid values</title>
 <link rel="author" title="Sebastian Zartner" href="mailto:sebastianzartner@gmail.com">
 <link rel="help" href="https://drafts.csswg.org/css-borders-4/#corner-shorthand">
-<meta name="assert" content="This test checks that 'corner' supports <'border-radius'> || <'corner-shape'>.">
+<meta name="assert" content="This test checks that 'corner' supports <'corner-shape'> || <'border-radius'>.">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/css/support/parsing-testcommon.js"></script>
@@ -16,28 +16,28 @@ test_valid_value("corner", "bevel");
 test_valid_value("corner", "round", "0px");
 test_valid_value("corner", "0", "0px");
 test_valid_value("corner", "0px round", "0px");
-test_valid_value("corner", "0% bevel");
+test_valid_value("corner", "0% bevel", "bevel 0%");
 
 // Order independence.
 test_valid_value("corner", "round 3px", "3px");
 test_valid_value("corner", "3px round", "3px");
-test_valid_value("corner", "bevel 0.25em", "0.25em bevel");
-test_valid_value("corner", "0.25em bevel");
-test_valid_value("corner", "10px bevel");
-test_valid_value("corner", "notch 10px", "10px notch");
-test_valid_value("corner", "superellipse(-0.5) 30% 10px", "30% 10px superellipse(-0.5)");
+test_valid_value("corner", "bevel 0.25em");
+test_valid_value("corner", "0.25em bevel", "bevel 0.25em");
+test_valid_value("corner", "10px bevel", "bevel 10px");
+test_valid_value("corner", "notch 10px");
+test_valid_value("corner", "superellipse(-0.5) 30% 10px");
 
 // Elliptical radii: the slash belongs to the radius grammar.
 test_valid_value("corner", "round 5px / 3px", "5px / 3px");
-test_valid_value("corner", "5px / 3px bevel");
-test_valid_value("corner", "10px 20px / 5px bevel");
+test_valid_value("corner", "5px / 3px bevel", "bevel 5px / 3px");
+test_valid_value("corner", "10px 20px / 5px bevel", "bevel 10px 20px / 5px");
 
 // 1-4 values with corner-copy rules for both components.
-test_valid_value("corner", "1px 2px 3px bevel");
-test_valid_value("corner", "bevel scoop 2px", "2px bevel scoop");
-test_valid_value("corner", "square bevel bevel square 10px / 50%", "10px / 50% square bevel bevel square");
-test_valid_value("corner", "bevel 0 5px 5px 0 / 0 50% 50% 0", "0px 5px 5px 0px / 0px 50% 50% 0px bevel");
-test_valid_value("corner", "bevel square bevel square 10px / 100%", "10px / 100% bevel square");
+test_valid_value("corner", "1px 2px 3px bevel", "bevel 1px 2px 3px");
+test_valid_value("corner", "bevel scoop 2px");
+test_valid_value("corner", "square bevel bevel square 10px / 50%");
+test_valid_value("corner", "bevel 0 5px 5px 0 / 0 50% 50% 0", "bevel 0px 5px 5px 0px / 0px 50% 50% 0px");
+test_valid_value("corner", "bevel square bevel square 10px / 100%", "bevel square 10px / 100%");
 
 test_shorthand_value("corner", "10px bevel", {
   "border-top-left-radius": "10px",
@@ -98,3 +98,4 @@ test(() => {
   assert_equals(div.style.getPropertyValue('border-top-left-radius'), '10px');
 }, "'corner' resets an omitted component to its initial value");
 </script>
+

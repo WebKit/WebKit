@@ -17,19 +17,20 @@ test_computed_value("corner", "10px", "10px");
 test_computed_value("corner", "bevel", "superellipse(0)");
 test_computed_value("corner", "round 3px", "3px");
 test_computed_value("corner", "4px 5% round", "4px 5%");
-test_computed_value("corner", "scoop 100%", "100% superellipse(-1)");
-test_computed_value("corner", "30px superellipse(0.4)");
-test_computed_value("corner", "3% 5rem superellipse(0.4)", "3% 80px superellipse(0.4)");
+test_computed_value("corner", "scoop 100%", "superellipse(-1) 100%");
+test_computed_value("corner", "30px superellipse(0.4)", "superellipse(0.4) 30px");
+test_computed_value("corner", "3% 5rem superellipse(0.4)", "superellipse(0.4) 3% 80px");
 test_computed_value("corner", "round 5px / 3px", "5px / 3px");
-test_computed_value("corner", "2% notch", "2% superellipse(-infinity)");
+test_computed_value("corner", "2% notch", "superellipse(-infinity) 2%");
 test_computed_value("corner", "0px notch", "superellipse(-infinity)");
-test_computed_value("corner", "1em squircle", "16px superellipse(2)");
+test_computed_value("corner", "1em squircle", "superellipse(2) 16px");
 test_computed_value("corner", "square bevel bevel square 10px / 50%",
-    "10px / 50% superellipse(infinity) superellipse(0) superellipse(0) superellipse(infinity)");
+    "superellipse(infinity) superellipse(0) superellipse(0) superellipse(infinity) 10px / 50%");
 test_computed_value("corner", "bevel 0 5px 5px 0 / 0 50% 50% 0",
-    "0px 5px 5px 0px / 0px 50% 50% 0px superellipse(0)");
-test_computed_value("corner", "bevel scoop 2px", "2px superellipse(0) superellipse(-1)");
+    "superellipse(0) 0px 5px 5px 0px / 0px 50% 50% 0px");
+test_computed_value("corner", "bevel scoop 2px", "superellipse(0) superellipse(-1) 2px");
 
 // 0% is not the initial radius, so the radius component is not omitted.
-test_computed_value("corner", "0% bevel", "0% superellipse(0)");
+test_computed_value("corner", "0% bevel", "superellipse(0) 0%");
 </script>
+

@@ -16,13 +16,13 @@ test_valid_value("corner-block-start", "bevel");
 test_valid_value("corner-block-start", "round", "0px");
 
 // Order independence.
-test_valid_value("corner-block-start", "10px bevel");
-test_valid_value("corner-block-start", "bevel 10px 20px", "10px 20px bevel");
-test_valid_value("corner-block-start", "4px 2% squircle");
+test_valid_value("corner-block-start", "10px bevel", "bevel 10px");
+test_valid_value("corner-block-start", "bevel 10px 20px");
+test_valid_value("corner-block-start", "4px 2% squircle", "squircle 4px 2%");
 
 // The slash separates horizontal and vertical radii.
 test_valid_value("corner-block-start", "round 10% / 2rem", "10% / 2rem");
-test_valid_value("corner-block-start", "10px 20px / 5px bevel scoop");
+test_valid_value("corner-block-start", "10px 20px / 5px bevel scoop", "bevel scoop 10px 20px / 5px");
 
 test_shorthand_value("corner-block-start", "10px bevel", {
   "border-start-start-radius": "10px",
@@ -43,3 +43,4 @@ test_shorthand_value("corner-block-start", "10px 20px / 5px bevel scoop", {
   "corner-start-end-shape": "scoop",
 });
 </script>
+
