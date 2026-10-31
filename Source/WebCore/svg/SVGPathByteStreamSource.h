@@ -48,31 +48,41 @@ private:
     std::optional<ArcToSegment> parseArcToSegment(FloatPoint) final;
 
     template<typename DataType>
-    DataType readType()
+    std::optional<DataType> readType()
     {
+        // The byte stream may come from an untrusted process, so it can be truncated.
+        if (m_streamCurrent.size() < sizeof(DataType)) {
+            m_streamCurrent = { };
+            return std::nullopt;
+        }
         DataType data;
-        size_t dataSize = sizeof(DataType);
-        memcpySpan(asMutableByteSpan(data), consumeSpan(m_streamCurrent, dataSize));
+        memcpySpan(asMutableByteSpan(data), consumeSpan(m_streamCurrent, sizeof(DataType)));
         return data;
     }
 
-    bool readFlag()
+    std::optional<bool> readFlag()
     {
-        return readType<bool>();
+        auto flag = readType<uint8_t>();
+        if (!flag || *flag > 1)
+            return std::nullopt;
+        return !!*flag;
     }
 
-    float readFloat()
+    std::optional<float> readFloat()
     {
         return readType<float>();
     }
 
-    SVGPathSegType readSVGSegmentType()
+    std::optional<SVGPathSegType> readSVGSegmentType()
     {
         static_assert(std::is_same_v<std::underlying_type_t<SVGPathSegType>, uint8_t>);
-        return static_cast<SVGPathSegType>(readType<uint8_t>());
+        auto type = readType<uint8_t>();
+        if (!type)
+            return std::nullopt;
+        return static_cast<SVGPathSegType>(*type);
     }
 
-    FloatPoint readFloatPoint()
+    std::optional<FloatPoint> readFloatPoint()
     {
         return readType<FloatPoint>();
     }
