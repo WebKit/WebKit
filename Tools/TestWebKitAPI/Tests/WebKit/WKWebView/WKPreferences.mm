@@ -32,7 +32,9 @@
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <wtf/ObjCRuntimeExtras.h>
+#import <wtf/Scope.h>
 
 @interface WKPreferencesMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -310,3 +312,163 @@ TEST(WKPreferences, UInt32TypeMismatchDoesNotCrash)
     // Restore original implementation.
     method_setImplementation(method, originalObjectForKeyIMP);
 }
+
+static auto withdrawGlobalPreferenceOverridesOnExit()
+{
+    return makeScopeExit([] {
+        [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ }];
+    });
+}
+
+TEST(WKPreferencesPrivate, GlobalPreferenceOverridesOfEachType)
+{
+    auto withdraw = withdrawGlobalPreferenceOverridesOnExit();
+
+    RetainPtr existing = adoptNS([[WKPreferences alloc] init]);
+    BOOL canOpenWindowsByDefault = [existing javaScriptCanOpenWindowsAutomatically];
+
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{
+        @"JavaScriptCanOpenWindowsAutomatically": canOpenWindowsByDefault ? @"false" : @"true",
+        @"EditableLinkBehavior": @"1",
+        @"MinimumFontSize": @"21.5",
+        @"StandardFontFamily": @"Courier",
+    }];
+
+    RetainPtr created = adoptNS([[WKPreferences alloc] init]);
+    for (WKPreferences *preferences in @[ existing.get(), created.get() ]) {
+        EXPECT_EQ(!canOpenWindowsByDefault, [preferences javaScriptCanOpenWindowsAutomatically]);
+        EXPECT_EQ(_WKEditableLinkBehaviorAlwaysLive, [preferences _editableLinkBehavior]);
+        EXPECT_EQ(21.5, [preferences minimumFontSize]);
+        EXPECT_WK_STREQ(@"Courier", [preferences _standardFontFamily]);
+    }
+
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ }];
+    EXPECT_EQ(canOpenWindowsByDefault, [existing javaScriptCanOpenWindowsAutomatically]);
+    EXPECT_EQ(_WKEditableLinkBehaviorNeverLive, [existing _editableLinkBehavior]);
+    EXPECT_EQ(0., [existing minimumFontSize]);
+    EXPECT_WK_STREQ(@"Times", [existing _standardFontFamily]);
+}
+
+TEST(WKPreferencesPrivate, GlobalPreferenceOverridesOutrankTheClient)
+{
+    auto withdraw = withdrawGlobalPreferenceOverridesOnExit();
+
+    RetainPtr preferences = adoptNS([[WKPreferences alloc] init]);
+    [preferences setMinimumFontSize:9];
+
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"MinimumFontSize": @"21" }];
+    EXPECT_EQ(21., [preferences minimumFontSize]);
+
+    [preferences setMinimumFontSize:12];
+    EXPECT_EQ(21., [preferences minimumFontSize]);
+
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ }];
+    EXPECT_EQ(12., [preferences minimumFontSize]);
+
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"MinimumFontSize": @"21", @"StandardFontFamily": @"Courier" }];
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"StandardFontFamily": @"Courier" }];
+    EXPECT_EQ(12., [preferences minimumFontSize]);
+    EXPECT_WK_STREQ(@"Courier", [preferences _standardFontFamily]);
+}
+
+TEST(WKPreferencesPrivate, GlobalPreferenceOverridesRefuseWhatDoesNotParse)
+{
+    auto withdraw = withdrawGlobalPreferenceOverridesOnExit();
+
+    RetainPtr preferences = adoptNS([[WKPreferences alloc] init]);
+    BOOL canOpenWindowsByDefault = [preferences javaScriptCanOpenWindowsAutomatically];
+    NSString *inverted = canOpenWindowsByDefault ? @"false" : @"true";
+
+    for (NSString *value in @[ canOpenWindowsByDefault ? @"0" : @"1", canOpenWindowsByDefault ? @"NO" : @"YES", [inverted uppercaseString], [NSString stringWithFormat:@" %@", inverted], @"" ]) {
+        [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"JavaScriptCanOpenWindowsAutomatically": value }];
+        EXPECT_EQ(canOpenWindowsByDefault, [preferences javaScriptCanOpenWindowsAutomatically]) << value.UTF8String;
+    }
+
+    for (NSString *value in @[ @"-1", @" 1", @"1 ", @"1.0", @"0x1", @"4294967296", @"" ]) {
+        [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"EditableLinkBehavior": value }];
+        EXPECT_EQ(_WKEditableLinkBehaviorNeverLive, [preferences _editableLinkBehavior]) << value.UTF8String;
+    }
+
+    for (NSString *value in @[ @"abc", @"inf", @"nan", @"" ]) {
+        [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"MinimumFontSize": value }];
+        EXPECT_EQ(0., [preferences minimumFontSize]) << value.UTF8String;
+    }
+
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"NoSuchPreference": @"true", @"MinimumFontSize": @"21" }];
+    EXPECT_EQ(21., [preferences minimumFontSize]);
+}
+
+TEST(WKPreferencesPrivate, GlobalPreferenceOverridesReachThePage)
+{
+    auto withdraw = withdrawGlobalPreferenceOverridesOnExit();
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    NSString *html = @"<title>static</title><script>document.title = 'ran';</script>";
+    auto loadAndWaitForTitle = [&](NSString *expected) {
+        [webView synchronouslyLoadHTMLString:html];
+        TestWebKitAPI::Util::waitFor([&] {
+            return [[webView title] isEqualToString:expected];
+        });
+        TestWebKitAPI::Util::runFor(0.2_s);
+        EXPECT_WK_STREQ(expected, [webView title]);
+    };
+
+    loadAndWaitForTitle(@"ran");
+
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ @"JavaScriptEnabled": @"false" }];
+    loadAndWaitForTitle(@"static");
+
+    [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ }];
+    loadAndWaitForTitle(@"ran");
+}
+
+#if HAVE(SECURITY_OVERRIDES) && defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+
+static void setSecurityOverridesInNetworkProcess(WKWebsiteDataStore *dataStore, NSDictionary<NSString *, NSString *> *overrides)
+{
+    bool done = false;
+    [dataStore _setSecurityOverridesInNetworkProcessForTesting:overrides completionHandler:[&] {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WKPreferencesPrivate, SecurityOverridesFromTheNetworkProcessReachWebPreferences)
+{
+    RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    auto withdraw = makeScopeExit([&] {
+        setSecurityOverridesInNetworkProcess(dataStore.get(), nil);
+        [WKPreferences _setGlobalPreferenceOverridesForTesting:@{ }];
+    });
+
+    // The network process, and so the observer, only exists once something needs it.
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<body>network process</body>"];
+
+    RetainPtr preferences = adoptNS([[WKPreferences alloc] init]);
+    EXPECT_EQ(0., [preferences minimumFontSize]);
+
+    setSecurityOverridesInNetworkProcess(dataStore.get(), @{ @"MinimumFontSize": @"21.5", @"NoSuchPreference": @"1" });
+    TestWebKitAPI::Util::waitFor([&] {
+        return [preferences minimumFontSize] == 21.5;
+    });
+    EXPECT_EQ(21.5, [preferences minimumFontSize]);
+
+    // A later answer replaces the earlier one rather than adding to it.
+    setSecurityOverridesInNetworkProcess(dataStore.get(), @{ @"StandardFontFamily": @"Courier" });
+    TestWebKitAPI::Util::waitFor([&] {
+        return ![preferences minimumFontSize];
+    });
+    EXPECT_EQ(0., [preferences minimumFontSize]);
+    EXPECT_WK_STREQ(@"Courier", [preferences _standardFontFamily]);
+
+    setSecurityOverridesInNetworkProcess(dataStore.get(), @{ });
+    TestWebKitAPI::Util::waitFor([&] {
+        return [[preferences _standardFontFamily] isEqualToString:@"Times"];
+    });
+    EXPECT_WK_STREQ(@"Times", [preferences _standardFontFamily]);
+}
+
+#endif // HAVE(SECURITY_OVERRIDES) && ENGINEERING_BUILD

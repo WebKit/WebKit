@@ -125,6 +125,9 @@ class NetworkStorageManager;
 class ProcessAssertion;
 class RTCDataChannelRemoteManagerProxy;
 class SandboxExtensionHandle;
+#if HAVE(SECURITY_OVERRIDES)
+class SecurityOverridesObserver;
+#endif
 class WebPageNetworkParameters;
 enum class CallDownloadDidStart : bool;
 enum class DidFilterKnownLinkDecoration : bool;
@@ -565,6 +568,9 @@ private:
     void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
     void securityFlagsDidChange(SecurityFlags::Storage&&);
     void isSecurityFlagEnabledForTesting(const String&, CompletionHandler<void(std::optional<bool>)>&&);
+#if HAVE(SECURITY_OVERRIDES)
+    void setSecurityOverridesForTesting(std::optional<HashMap<String, String>>&&, CompletionHandler<void()>&&);
+#endif
 
     void fetchWebsitesWithUserInteractions(PAL::SessionID, CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>&&)>&&);
 
@@ -728,6 +734,9 @@ private:
     bool m_enableModernDownloadProgress { false };
 #if HAVE(ENHANCED_SECURITY_LINKS)
     bool m_isEnhancedSecurityLinksEnabled { false };
+#endif
+#if HAVE(SECURITY_OVERRIDES)
+    std::unique_ptr<SecurityOverridesObserver> m_securityOverridesObserver;
 #endif
 
     struct DeleteWebsiteDataTask {

@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "WebPreferencesDefinitions.h"
 #include "WebPreferencesStore.h"
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SwiftBridging.h>
 #include <wtf/WeakHashSet.h>
@@ -101,8 +102,16 @@ public:
     static void LEGACY_NODELETE forceSiteIsolationAlwaysOnForTesting();
     static bool LEGACY_NODELETE forcedSiteIsolationAlwaysOnForTesting();
 
+    // Re-applies the global preference overrides to every live WebPreferences and updates their pages.
+    static void globalOverridesDidChange();
+
 private:
+    static HashSet<WebPreferences*>& allPreferences();
+
     void platformInitializeStore();
+
+    void applyGlobalOverrides();
+    void applyGlobalOverridesAndUpdate();
 
     void update();
 

@@ -23,6 +23,7 @@
 struct WebKit::WebPreferencesStore {
     WebKit::WebPreferencesStore::ValueMap m_values;
     WebKit::WebPreferencesStore::ValueMap m_overriddenDefaults;
+    WebKit::WebPreferencesStore::ValueMap m_overriddenValues;
 };
 
 using WebKit::WebPreferencesStore::ValueMap = MemoryCompactRobinHoodHashMap<String, WebKit::WebPreferencesStore::Value>;

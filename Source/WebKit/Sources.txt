@@ -382,6 +382,7 @@ UIProcess/FrameLoadState.cpp
 UIProcess/FrameProcess.cpp
 UIProcess/GeolocationPermissionRequestManagerProxy.cpp @cost:3
 UIProcess/GeolocationPermissionRequestProxy.cpp
+UIProcess/GlobalPreferenceOverridesController.cpp
 UIProcess/LegacyGlobalSettings.cpp
 UIProcess/MediaKeySystemPermissionRequestManagerProxy.cpp @cost:4
 UIProcess/MediaKeySystemPermissionRequestProxy.cpp
