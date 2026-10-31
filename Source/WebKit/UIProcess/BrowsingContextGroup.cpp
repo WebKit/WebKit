@@ -411,6 +411,15 @@ bool BrowsingContextGroup::hasVisiblePage() const
     return false;
 }
 
+bool BrowsingContextGroup::hasPageWithDifferentSecurityRestrictions(WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const WebPageProxy* excludedPage) const
+{
+    for (auto& page : m_pages) {
+        if (&page != excludedPage && !page.siteIsolatedProcess().matchesLockdownModeAndEnhancedSecurity(lockdownMode, enhancedSecurity))
+            return true;
+    }
+    return false;
+}
+
 void BrowsingContextGroup::forEachPage(NOESCAPE const Function<void(WebPageProxy&)>& function)
 {
     for (Ref page : m_pages)

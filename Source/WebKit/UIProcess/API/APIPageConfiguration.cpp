@@ -278,8 +278,8 @@ BrowsingContextGroup* PageConfiguration::preferredBrowsingContextGroup() const
         return opener->browsingContextGroup.ptr();
 
     // Only an opener can bring a page into a cross-origin-isolated group.
-    if (auto relatedPage = this->relatedPage()) {
-        if (!relatedPage->isClosed() && relatedPage->browsingContextGroup().crossOriginMode() == WebCore::CrossOriginMode::Shared)
+    if (RefPtr relatedPage { this->relatedPage() }) {
+        if (!relatedPage->isClosed() && relatedPage->browsingContextGroup().crossOriginMode() == WebCore::CrossOriginMode::Shared && !protect(relatedPage->browsingContextGroup())->hasPageWithDifferentSecurityRestrictions(lockdownMode(), enhancedSecurity()))
             return &relatedPage->browsingContextGroup();
     }
 
@@ -364,6 +364,18 @@ bool PageConfiguration::lockdownModeEnabled() const
     if (RefPtr policies = m_data.defaultWebsitePolicies.getIfExists())
         return policies->lockdownModeEnabled();
     return lockdownModeEnabledBySystem();
+}
+
+WebProcessProxy::LockdownMode PageConfiguration::lockdownMode() const
+{
+    return lockdownModeEnabled() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled;
+}
+
+EnhancedSecurity PageConfiguration::enhancedSecurity() const
+{
+    auto lockdownMode { this->lockdownMode() };
+    bool useEnhancedSecurityFallback { lockdownMode == WebProcessProxy::LockdownMode::Disabled && lockdownModeEnabledBySystem() };
+    return (preferences().forceEnhancedSecurity() || isEnhancedSecurityEnabled() || isEnhancedSecurityEnabledByDefault(lockdownMode == WebProcessProxy::LockdownMode::Enabled) || useEnhancedSecurityFallback) ? EnhancedSecurity::EnabledPolicy : EnhancedSecurity::Disabled;
 }
 
 bool PageConfiguration::isEnhancedSecurityEnabled() const

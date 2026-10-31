@@ -1707,7 +1707,7 @@ void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisional
     ASSERT(!m_drawingArea);
     setDrawingArea(provisionalPage->takeDrawingArea());
 
-    // The group was chosen in browsingContextGroupForNavigation(); adopt whatever the provisional page carries.
+    // The provisional page was created with the group chosen for the navigation; adopt it.
     setBrowsingContextGroup(provisionalPage->browsingContextGroup());
 
     protect(legacyMainFrameProcess())->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::No);
@@ -6367,17 +6367,27 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         internals().enhancedSecurityTracker.trackNavigation(navigation, hasOpenedPage(), internals().pageLoadState.httpFallbackInProgress());
 
     auto enhancedSecurity = securityRestrictionsSourceFrame ? securityRestrictionsSourceFrame->process().enhancedSecurity() : currentEnhancedSecurityState(websitePolicies.get());
-
-    if (RefPtr process = browsingContextGroup->processForSite(Site { navigation.currentRequest().url() }))
-        enhancedSecurity = process->process().enhancedSecurity();
-
     if (preferences->enhancedSecurityForceDisabled())
         enhancedSecurity = EnhancedSecurity::Disabled;
+
+    Site site { navigation.currentRequest().url() };
+    auto enhancedSecurityInGroup = [&] {
+        RefPtr process = browsingContextGroup->processForSite(site);
+        return process && !preferences->enhancedSecurityForceDisabled() ? process->process().enhancedSecurity() : enhancedSecurity;
+    };
+
+    // Pages in a group share the processes of their sites, so they must share security restrictions.
+    if (frame.isMainFrame()) {
+        bool staysOnCurrentSite { browsingContextGroup.ptr() == m_browsingContextGroup.ptr() && m_mainFrame && Site { m_mainFrame->url() } == site };
+        if (browsingContextGroup->hasPageWithDifferentSecurityRestrictions(lockdownMode, staysOnCurrentSite ? enhancedSecurityInGroup() : enhancedSecurity, this))
+            browsingContextGroup = BrowsingContextGroup::create(browsingContextGroup->crossOriginMode());
+    }
+
+    enhancedSecurity = enhancedSecurityInGroup();
 
     if (shouldUseEnhancedSecurityHeuristics(preferences) && enhancedSecurity != EnhancedSecurity::EnabledPolicy)
         protect(this->websiteDataStore())->trackEnhancedSecurityForDomain(RegistrableDomain { navigation.currentRequest().url() }, enhancedSecurity);
 
-    Site site { navigation.currentRequest().url() };
     Site mainFrameSite = frame.isMainFrame() ? site : Site { pageLoadState().activeURL() };
     auto continueWithAllowedProcessForNavigation = [
         this,
@@ -12206,6 +12216,8 @@ void WebPageProxy::triggerProcessSwapForEnhancedSecurity(WebCore::NavigationIden
         return completionHandler(NavigationResponseWithoutProcessSwap::ResumeLoad);
 
     Ref browsingContextGroupForSwap = browsingContextGroupForCommittingNavigation(navigation);
+    if (browsingContextGroupForSwap->hasPageWithDifferentSecurityRestrictions(processLoadingNavigation->lockdownMode(), EnhancedSecurity::EnabledInsecure, this))
+        browsingContextGroupForSwap = BrowsingContextGroup::create(browsingContextGroupForSwap->crossOriginMode());
 
     RefPtr provisionalPage = m_provisionalPage;
 
