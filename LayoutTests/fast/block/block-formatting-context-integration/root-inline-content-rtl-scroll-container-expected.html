@@ -1,0 +1,6 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { width: 300px; padding: 4px; border: 2px solid gray; background: lightgray; font-size: 20px; line-height: 20px; }
+</style>
+<!-- A flex item is a root of its own. Its vertical scrollbar is on the left when it is right to left, except on iOS. -->
+<div style="display: flex"><div class="root" dir="rtl" style="overflow: scroll; height: 50px">right to left text in a scroll container that wraps</div></div>

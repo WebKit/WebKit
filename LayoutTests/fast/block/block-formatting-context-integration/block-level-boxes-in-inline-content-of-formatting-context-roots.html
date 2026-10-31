@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 250px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+.c { background: silver; }
+.n { display: flow-root; background: silver; border: 1px solid black; }
+.p { position: relative; height: 70px; }
+.a { position: absolute; width: 150px; background: silver; border: 1px solid black; }
+.b { height: 12px; background: rgba(0, 128, 0, 0.6); }
+span { background: rgba(0, 0, 255, 0.2); }
+</style>
+<div class="roots">
+<div class="root">
+  <div class="n"><span style="padding: 0 10px">text before<div class="b" style="margin: 10px 0"></div>text after</span></div>
+  <div class="n" style="border: none"><span><div class="b" style="margin: 15px 0"></div></span></div>
+  <div class="n" style="border: none"><span><div style="margin: 10px 0"></div></span></div>
+  <div class="b"></div>
+  <div class="n" style="margin-top: 10px; border: none"><span><div class="b" style="margin-top: 20px"></div>after</span></div>
+  <div class="n" style="margin-bottom: 10px; border: none"><span>before<div class="b" style="margin-bottom: 20px"></div></span></div>
+  <div class="c"><span>outside<div class="n" style="margin: 6px 0"><span>a<div class="b" style="margin: 9px 0"></div>b</span></div>outside</span></div>
+  <div class="n" style="overflow: hidden"><span>p<div><span>deep<div class="b" style="margin: 4px 0"></div>er</span></div>q</span></div>
+  <div class="n" dir="rtl"><span id="rtl-span">rtl text<div class="b" style="width: 100px; margin-right: 10px">own text</div>more</span></div>
+  <div class="n" style="writing-mode: vertical-rl; height: 60px"><span>tb<div class="b" style="width: 12px; margin: 0 5px"></div>rl</span></div>
+</div>
+<div class="root">
+  <div class="p"><div class="a"><span style="padding: 0 10px">text before<div class="b" style="margin: 10px 0"></div>text after</span></div></div>
+  <div class="p"><div class="a" style="right: 0; border: none"><span>before<div class="b" style="margin-bottom: 20px"></div></span></div></div>
+  <div class="p"><div class="a" style="bottom: 0; border: none"><span><div class="b" style="margin-top: 20px"></div>after</span></div></div>
+  <div class="p"><div class="a" style="height: 30px"><span><div style="margin: 10px 0"></div></span></div></div>
+  <div class="p">static position <div class="a" style="top: auto"><span>a<div class="b" style="margin: 5px 0"></div>b</span></div> continues</div>
+  <div class="p"><div class="a" style="width: 50%; top: 5px; bottom: 5px; height: auto"><span>stretched<div class="b"><span>c<div class="n"><span>d<div class="b"></div>e</span></div>f</span></div>g</span></div></div>
+</div>
+</div>

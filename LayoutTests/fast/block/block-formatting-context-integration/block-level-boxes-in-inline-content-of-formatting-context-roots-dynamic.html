@@ -1,0 +1,44 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 250px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+.n { display: flow-root; background: silver; border: 1px solid black; }
+.p { position: relative; height: 70px; }
+.a { position: absolute; width: 150px; background: silver; border: 1px solid black; }
+.b { height: 12px; background: rgba(0, 128, 0, 0.6); }
+span { background: rgba(0, 0, 255, 0.2); }
+</style>
+<div class="roots">
+<div class="root" id="resized">
+  <div class="n"><span>text before<div class="b" id="margin" style="margin: 10px 0"></div>text after</span></div>
+  <div class="n"><span id="inserted">start<div class="b"></div>end</span></div>
+  <div class="n"><span>a<div id="text">x</div>b</span></div>
+  <div class="b" id="before-kept"></div>
+  <div class="n" style="border: none"><span><div class="b" style="margin-top: 20px"></div>kept after</span></div>
+  <div class="n" style="border: none"><span>kept before<div class="b" style="margin-bottom: 20px"></div></span></div>
+  <div class="n"><span>text that wraps once the root gets narrower<div class="b" style="width: 50%"></div>tail</span></div>
+</div>
+<div class="root">
+  <div class="p" id="containing-block"><div class="a" style="width: 50%"><span>text that wraps<div class="b" style="margin: 5px 0"></div>tail</span></div></div>
+  <div class="p"><div class="a"><span>front<div class="b" id="removed"></div>back</span></div></div>
+  <div class="p"><div class="a"><span>a<div class="b" id="height" style="margin: 5px 0"></div>b</span></div></div>
+  <div class="p"><div class="b" id="sibling"></div><div class="a" style="border: none"><span>kept before<div class="b" style="margin-bottom: 20px"></div></span></div></div>
+</div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("margin").style.marginBottom = "25px";
+var block = document.createElement("div");
+block.className = "b";
+block.style.margin = "5px 0";
+document.getElementById("inserted").appendChild(block);
+document.getElementById("text").firstChild.data = "changed text in the block that is now longer than a line";
+document.getElementById("resized").style.width = "180px";
+document.getElementById("containing-block").style.width = "200px";
+document.getElementById("removed").remove();
+document.getElementById("height").style.height = "30px";
+document.body.offsetHeight;
+// The boxes after these are clean, and keep their lines and the block-level boxes in them.
+document.getElementById("before-kept").style.height = "30px";
+document.getElementById("sibling").style.height = "30px";
+</script>

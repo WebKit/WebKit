@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; }
+.replaced { display: block; background: green; }
+</style>
+<div class="root">
+  <canvas class="replaced" width="40" height="20" style="margin: 10px 0"></canvas>
+  <canvas class="replaced" width="40" height="20" style="margin: 0 auto"></canvas>
+  <canvas class="replaced" width="40" height="20" style="margin-left: auto; border: 5px solid blue; padding: 3px"></canvas>
+  <canvas class="replaced" style="width: 50%; height: 10px"></canvas>
+  <canvas class="replaced" width="40" height="20" style="max-width: 100%; width: 400px; height: auto"></canvas>
+  <img class="replaced" style="width: 30px; height: 30px; margin: 5px 0 15px">
+  <div style="margin-top: 20px"><canvas class="replaced" width="20" height="20"></canvas></div>
+  <canvas class="replaced" style="width: 50px; aspect-ratio: 2"></canvas>
+  <canvas class="replaced" width="40" height="20" style="width: 80px; height: auto"></canvas>
+</div>
+<div class="root" style="height: 100px"><canvas class="replaced" style="height: 50%; width: 20px"></canvas></div>
+<div class="root" dir="rtl"><canvas class="replaced" width="40" height="20"></canvas><canvas class="replaced" width="40" height="20" style="margin-right: 30px"></canvas></div>
+<div class="root" id="resized"><canvas class="replaced" style="width: 50%; height: 20px"></canvas><canvas class="replaced" width="40" height="20" style="margin: 0 auto"></canvas></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "200px";
+</script>
