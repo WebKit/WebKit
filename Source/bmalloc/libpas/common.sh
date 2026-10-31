@@ -30,6 +30,7 @@ archs=blank
 variants=all
 target=all
 port=10022
+buildDir=.
 testArgs=""
 
 show_help() {
@@ -49,6 +50,8 @@ show_help() {
     echo "                       verifier, or chaos. Default is $target."
     echo "-p <port>              Set the localhost port to use for iOS on-device testing."
     echo "                       Default is $port."
+    echo "-b <dir>               Set the directory that build products go in."
+    echo "                       Default is the libpas directory."
     echo "--child-processes <n>  Set the maximum number of concurrent test-runner processes."
     echo "                       Default is nprocs / 2."
     exit 0
@@ -95,7 +98,7 @@ done
 # We need to reset positional parameters for getopts to work
 eval set -- $scriptArgs
 
-while getopts ":hc:s:a:v:t:p:" opt
+while getopts ":hc:s:a:v:t:p:b:" opt
 do
     case $opt in
         h)
@@ -119,6 +122,9 @@ do
         p)
             port=$OPTARG
             ;;
+        b)
+            buildDir=$OPTARG
+            ;;
         \?)
             echo "Bad argument: -$OPTARG. Use -h for help."
             exit 1
@@ -141,8 +147,13 @@ if echo "$sdk" | grep -q iphone
 then
     ios=yes
     configdir=$config-iphoneos
+    if [ "x$buildDir" != "x." ]
+    then
+        echo "-b is not supported for iOS"
+        exit 1
+    fi
 fi
 
-argsSansVariants="-c $config -s $sdk -a $archs -t $target -p $port"
+argsSansVariants="-c $config -s $sdk -a $archs -t $target -p $port -b $buildDir"
 
 args="$argsSansVariants -v $variants"

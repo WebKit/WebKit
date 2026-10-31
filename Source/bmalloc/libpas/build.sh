@@ -29,7 +29,7 @@ build_variant_xcodebuild() {
     target=$2
     extra_defines=$3
 
-    build_dir=build-$sdk-$variant
+    build_dir=$buildDir/build-$sdk-$variant
     mkdir -p $build_dir
 
     xcodebuild_options="-project libpas.xcodeproj -configuration $config -sdk $sdk OBJROOT=$build_dir SYMROOT=$build_dir"
@@ -45,11 +45,12 @@ build_variant_xcodebuild() {
         mbmalloc|all)
             link_mbmalloc_personality() {
                 personality=$1
-                
+                products_dir=$(cd $build_dir/$configdir && pwd)
+
                 mkdir -p $build_dir/$configdir/mbmalloc_$personality
-                ln -fs $PWD/$build_dir/$configdir/libpas.dylib $build_dir/$configdir/mbmalloc_$personality
-                ln -fs $PWD/$build_dir/$configdir/libpas_verifier.dylib $build_dir/$configdir/mbmalloc_$personality
-                ln -fs $PWD/$build_dir/$configdir/libmbmalloc_$personality.dylib $build_dir/$configdir/mbmalloc_$personality/libmbmalloc.dylib
+                ln -fs $products_dir/libpas.dylib $build_dir/$configdir/mbmalloc_$personality
+                ln -fs $products_dir/libpas_verifier.dylib $build_dir/$configdir/mbmalloc_$personality
+                ln -fs $products_dir/libmbmalloc_$personality.dylib $build_dir/$configdir/mbmalloc_$personality/libmbmalloc.dylib
             }
             
             link_mbmalloc_personality iso_common_primitive
@@ -75,18 +76,18 @@ build_variant_cmake() {
             exit 1
     esac
 
-    build_dir=build-$sdk-$variant/$configdir
+    build_dir=$buildDir/build-$sdk-$variant/$configdir
     mkdir -p $build_dir
 
     extra_cmake_options=""
     for option in $extra_options; do
         extra_cmake_options="${extra_cmake_options} -D${option}"
     done
-    extra_cmake_options=\"${extra_cmake_options#* }\"
+    extra_cmake_options="${extra_cmake_options#* }"
 
     echo $extra_cmake_options
 
-    cmake -DCMAKE_BUILD_TYPE=$config -DCMAKE_C_FLAGS=$extra_cmake_options -DCMAKE_CXX_FLAGS=$extra_cmake_options -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B $build_dir
+    cmake -DCMAKE_BUILD_TYPE=$config "-DCMAKE_C_FLAGS=$extra_cmake_options" "-DCMAKE_CXX_FLAGS=$extra_cmake_options" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B $build_dir
     cmake --build $build_dir --parallel
 }
 
