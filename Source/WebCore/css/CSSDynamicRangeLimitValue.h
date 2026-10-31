@@ -26,10 +26,12 @@
 
 #include "CSSDynamicRangeLimit.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSDynamicRangeLimitValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSDynamicRangeLimitValue);
 public:
     static Ref<CSSDynamicRangeLimitValue> create(CSS::DynamicRangeLimit);
 

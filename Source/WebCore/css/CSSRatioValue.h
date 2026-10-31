@@ -26,10 +26,12 @@
 
 #include "CSSRatio.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSRatioValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSRatioValue);
 public:
     static Ref<CSSRatioValue> LEGACY_NODELETE create(CSS::Ratio&&);
     static Ref<CSSRatioValue> LEGACY_NODELETE create(const CSS::Ratio&);

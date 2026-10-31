@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CSSColor.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,7 +35,7 @@ struct PlatformColorResolutionState;
 namespace CSS {
 
 struct ContrastColor {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ContrastColor);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(ContrastColor);
 
     Color color;
 

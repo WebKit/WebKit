@@ -28,8 +28,11 @@
 
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFontStyleRangeValue);
 
 Ref<CSSFontStyleRangeValue> CSSFontStyleRangeValue::create(CSS::FontStyleRange&& fontStyleRange)
 {

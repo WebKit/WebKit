@@ -27,11 +27,13 @@
 
 #include "MainThreadStylePropertyMapReadOnly.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
 class HashMapStylePropertyMapReadOnly final : public MainThreadStylePropertyMapReadOnly {
+    WTF_MAKE_TZONE_ALLOCATED(HashMapStylePropertyMapReadOnly);
 public:
     static Ref<HashMapStylePropertyMapReadOnly> LEGACY_NODELETE create(HashMap<AtomString, RefPtr<CSSValue>>&&);
     ~HashMapStylePropertyMapReadOnly();

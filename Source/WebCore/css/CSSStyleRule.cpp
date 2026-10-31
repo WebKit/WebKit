@@ -38,9 +38,12 @@
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSStyleRule);
 
 typedef HashMap<const CSSStyleRule*, String> SelectorTextCache;
 static SelectorTextCache& LEGACY_NODELETE selectorTextCache()

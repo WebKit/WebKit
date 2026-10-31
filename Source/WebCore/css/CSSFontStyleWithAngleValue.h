@@ -27,11 +27,13 @@
 
 #include "CSSPrimitiveNumericTypes.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // This class is currently only used for oblique. If we use it for more styles in the future we'll need to store the keyword.
 class CSSFontStyleWithAngleValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontStyleWithAngleValue);
 public:
     using ObliqueAngle = CSS::Angle<CSS::Range{-90, 90}>;
 

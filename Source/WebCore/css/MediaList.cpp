@@ -29,10 +29,13 @@
 #include "MediaQuery.h"
 #include "MediaQueryParser.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaList);
 
 MediaList::MediaList(CSSStyleSheet* parentSheet)
     : m_parentStyleSheet(parentSheet)

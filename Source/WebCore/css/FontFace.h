@@ -29,6 +29,7 @@
 #include "CSSFontFace.h"
 #include "CSSPropertyNames.h"
 #include "IDLTypes.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -43,6 +44,7 @@ template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 template<typename> class ExceptionOr;
 
 class FontFace final : public RefCounted<FontFace>, public ActiveDOMObject, public CSSFontFaceClient {
+    WTF_MAKE_TZONE_ALLOCATED(FontFace);
 public:
     struct Descriptors {
         String style;

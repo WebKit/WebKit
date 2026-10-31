@@ -32,9 +32,12 @@
 
 #include "config.h"
 #include "CSSCalcValue.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace CSSCalc {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Value);
 
 Ref<Value> Value::create(CSS::Category category, CSS::Range range, CSSCalc::Tree&& tree)
 {

@@ -26,12 +26,14 @@
 #pragma once
 
 #include "CSSGroupingRule.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class StyleRuleFunction;
 
 class CSSFunctionRule final : public CSSGroupingRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFunctionRule);
 public:
     static Ref<CSSFunctionRule> LEGACY_NODELETE create(StyleRuleFunction&, CSSStyleSheet* parent);
 

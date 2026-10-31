@@ -29,10 +29,12 @@
 #include "CSSRule.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 class StyleRuleCounterStyle final : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleCounterStyle);
 public:
     static Ref<StyleRuleCounterStyle> create(CSSCounterStyleDescriptors&&);
     ~StyleRuleCounterStyle();
@@ -63,6 +65,7 @@ private:
 };
 
 class CSSCounterStyleRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSCounterStyleRule);
 public:
     static Ref<CSSCounterStyleRule> LEGACY_NODELETE create(StyleRuleCounterStyle&, CSSStyleSheet*);
     virtual ~CSSCounterStyleRule();

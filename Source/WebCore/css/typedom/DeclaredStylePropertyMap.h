@@ -26,6 +26,7 @@
 #pragma once
 
 #include "StylePropertyMap.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ class StyleRule;
 
 // https://drafts.css-houdini.org/css-typed-om/#declared-stylepropertymap-objects
 class DeclaredStylePropertyMap final : public StylePropertyMap {
+    WTF_MAKE_TZONE_ALLOCATED(DeclaredStylePropertyMap);
 public:
     static Ref<DeclaredStylePropertyMap> LEGACY_NODELETE create(CSSStyleRule&);
 

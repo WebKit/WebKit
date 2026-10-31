@@ -35,6 +35,7 @@
 #include <wtf/NoVirtualDestructorBase.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/TextStream.h>
 
@@ -210,6 +211,7 @@ private:
 };
 
 class StyleRuleFontFace final : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleFontFace);
 public:
     static Ref<StyleRuleFontFace> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRuleFontFace(WTF::move(properties))); }
     ~StyleRuleFontFace();
@@ -227,6 +229,7 @@ private:
 };
 
 class StyleRuleFontPaletteValues final : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleFontPaletteValues);
 public:
     static Ref<StyleRuleFontPaletteValues> LEGACY_NODELETE create(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&&);
 
@@ -249,6 +252,7 @@ private:
 };
 
 class StyleRuleFontFeatureValuesBlock final : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleFontFeatureValuesBlock);
 public:
     static Ref<StyleRuleFontFeatureValuesBlock> create(FontFeatureValuesType type, const Vector<FontFeatureValuesTag>& tags)
     {
@@ -269,6 +273,7 @@ private:
 };
 
 class StyleRuleFontFeatureValues final : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleFontFeatureValues);
 public:
     static Ref<StyleRuleFontFeatureValues> create(const Vector<AtomString>& fontFamilies, Ref<FontFeatureValues>&&);
 
@@ -288,6 +293,7 @@ private:
 };
 
 class StyleRulePage final : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRulePage);
 public:
     static Ref<StyleRulePage> create(Ref<StyleProperties>&&, CSSSelectorList&&);
 
@@ -310,6 +316,7 @@ private:
 };
 
 class StyleRuleGroup : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleGroup);
 public:
     const Vector<Ref<StyleRuleBase>>& LEGACY_NODELETE childRules() const;
 
@@ -329,6 +336,7 @@ private:
 };
 
 class StyleRuleMedia final : public StyleRuleGroup {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleMedia);
 public:
     static Ref<StyleRuleMedia> create(MQ::MediaQueryList&&, Vector<Ref<StyleRuleBase>>&&);
     Ref<StyleRuleMedia> copy() const;
@@ -345,6 +353,7 @@ private:
 };
 
 class StyleRuleSupports final : public StyleRuleGroup {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleSupports);
 public:
     static Ref<StyleRuleSupports> create(const String& conditionText, bool conditionIsSupported, Vector<Ref<StyleRuleBase>>&&);
     Ref<StyleRuleSupports> copy() const { return adoptRef(*new StyleRuleSupports(*this)); }
@@ -361,6 +370,7 @@ private:
 };
 
 class StyleRuleLayer final : public StyleRuleGroup {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleLayer);
 public:
     static Ref<StyleRuleLayer> createStatement(Vector<CascadeLayerName>&&);
     static Ref<StyleRuleLayer> createBlock(CascadeLayerName&&, Vector<Ref<StyleRuleBase>>&&);
@@ -380,6 +390,7 @@ private:
 };
 
 class StyleRuleContainer final : public StyleRuleGroup {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleContainer);
 public:
     static Ref<StyleRuleContainer> create(CQ::ContainerQuery&&, Vector<Ref<StyleRuleBase>>&&);
     Ref<StyleRuleContainer> copy() const { return adoptRef(*new StyleRuleContainer(*this)); }
@@ -394,6 +405,7 @@ private:
 };
 
 class StyleRuleProperty final : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleProperty);
 public:
     struct Descriptor {
         AtomString name;
@@ -414,6 +426,7 @@ private:
 };
 
 class StyleRuleScope final : public StyleRuleGroup {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleScope);
 public:
     static Ref<StyleRuleScope> LEGACY_NODELETE create(CSSSelectorList&&, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&&);
     ~StyleRuleScope();
@@ -443,6 +456,7 @@ private:
 };
 
 class StyleRuleStartingStyle final : public StyleRuleGroup {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleStartingStyle);
 public:
     static Ref<StyleRuleStartingStyle> LEGACY_NODELETE create(Vector<Ref<StyleRuleBase>>&&);
     Ref<StyleRuleStartingStyle> copy() const { return adoptRef(*new StyleRuleStartingStyle(*this)); }
@@ -454,6 +468,7 @@ private:
 
 // This is only used by the CSS parser.
 class StyleRuleCharset final : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleCharset);
 public:
     static Ref<StyleRuleCharset> create() { return adoptRef(*new StyleRuleCharset); }
     Ref<StyleRuleCharset> copy() const { return adoptRef(*new StyleRuleCharset(*this)); }
@@ -464,6 +479,7 @@ private:
 };
 
 class StyleRuleNamespace final : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleNamespace);
 public:
     static Ref<StyleRuleNamespace> LEGACY_NODELETE create(const AtomString& prefix, const AtomString& uri);
 

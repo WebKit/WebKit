@@ -24,10 +24,13 @@
 
 #include "config.h"
 #include "CSSColorSchemeValue.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(DARK_MODE_CSS)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSColorSchemeValue);
 
 Ref<CSSColorSchemeValue> CSSColorSchemeValue::create(CSS::ColorScheme colorScheme)
 {

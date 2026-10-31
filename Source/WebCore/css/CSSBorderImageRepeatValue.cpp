@@ -27,8 +27,11 @@
 #include "CSSBorderImageRepeatValue.h"
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSBorderImageRepeatValue);
 
 CSSBorderImageRepeatValue::CSSBorderImageRepeatValue(CSS::BorderImageRepeat&& repeats)
     : CSSValue(ClassType::BorderImageRepeat)

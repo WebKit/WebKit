@@ -33,6 +33,7 @@
 #include "CSSSubstitutionValue.h"
 #include "CSSValue.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,6 +42,7 @@ namespace WebCore {
 // During style resolution, the shared value is resolved and parsed as the shorthand
 // to extract individual longhand values.
 class CSSShorthandSubstitutionValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSShorthandSubstitutionValue);
 public:
     static Ref<CSSShorthandSubstitutionValue> LEGACY_NODELETE create(CSSPropertyID shorthandPropertyId, Ref<CSSSubstitutionValue>&&);
 

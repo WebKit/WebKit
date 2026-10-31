@@ -26,10 +26,12 @@
 
 #include <WebCore/CSSCalcSizeFunction.h>
 #include <WebCore/CSSValue.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSCalcSizeValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSCalcSizeValue);
 public:
     static Ref<CSSCalcSizeValue> LEGACY_NODELETE create(CSS::CalcSizeFunction&&);
 

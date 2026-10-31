@@ -27,10 +27,12 @@
 
 #include "CSSBorderImageRepeat.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSBorderImageRepeatValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSBorderImageRepeatValue);
 public:
     static Ref<CSSBorderImageRepeatValue> LEGACY_NODELETE create(CSS::BorderImageRepeat&&);
     ~CSSBorderImageRepeatValue();

@@ -30,6 +30,7 @@
 #include "CSSColorInterpolationMethod.h"
 #include "CSSPrimitiveNumericTypes.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,7 +42,7 @@ namespace CSS {
 struct PlatformColorResolutionState;
 
 struct ColorMix {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ColorMix);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(ColorMix);
 
     struct Component {
         using Percentage = CSS::Percentage<Range{0, 100}>;

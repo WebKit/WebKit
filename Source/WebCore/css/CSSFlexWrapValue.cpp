@@ -27,8 +27,11 @@
 
 #include "CSSKeywordValueInlines.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFlexWrapValue);
 
 Ref<CSSFlexWrapValue> CSSFlexWrapValue::create(Ref<CSSValue> wrap, Ref<CSSValue> balance)
 {

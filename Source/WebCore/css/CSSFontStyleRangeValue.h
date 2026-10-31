@@ -27,10 +27,12 @@
 
 #include "CSSFontStyleRange.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSFontStyleRangeValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontStyleRangeValue);
 public:
     static Ref<CSSFontStyleRangeValue> LEGACY_NODELETE create(CSS::FontStyleRange&&);
 

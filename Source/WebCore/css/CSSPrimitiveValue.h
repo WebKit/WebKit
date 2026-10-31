@@ -27,6 +27,7 @@
 #include <WebCore/CSSValue.h>
 #include <utility>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ class RenderView;
 template<typename> class ExceptionOr;
 
 class CSSPrimitiveValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSPrimitiveValue);
 public:
     // FIXME: Some of these use primitiveUnitType() and some use LEGACY_NODELETE primitiveType(). Many that use primitiveUnitType() are likely broken with calc().
 

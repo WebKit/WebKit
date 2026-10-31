@@ -28,6 +28,7 @@
 #include "CSSPrimitiveNumeric.h"
 #include "CSSRule.h"
 #include "StyleRule.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ class StyleProperties;
 class StyleRuleCSSStyleProperties;
 
 class StyleRuleKeyframe final : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleKeyframe);
 public:
     static Ref<StyleRuleKeyframe> LEGACY_NODELETE create(Ref<StyleProperties>&&);
     static Ref<StyleRuleKeyframe> create(Vector<std::pair<CSSValueID, CSS::Percentage<>>>&& keys, Ref<StyleProperties>&&);
@@ -77,6 +79,7 @@ private:
 };
 
 class CSSKeyframeRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSKeyframeRule);
 public:
     virtual ~CSSKeyframeRule();
 

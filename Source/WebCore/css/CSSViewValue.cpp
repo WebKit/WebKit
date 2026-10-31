@@ -30,9 +30,12 @@
 #include "CSSViewValue.h"
 
 #include "StyleKeyword+Mappings.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSViewValue);
 
 String CSSViewValue::customCSSText(const CSS::SerializationContext& context) const
 {

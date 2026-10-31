@@ -26,10 +26,12 @@
 
 #include "CSSFlexWrap.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSFlexWrapValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFlexWrapValue);
 public:
     // Called by the generated `flex-wrap` parser with the two keywords matched by
     // `[ wrap | wrap-reverse ] || balance`, in grammar order rather than input order.

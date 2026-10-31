@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSColor.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +39,7 @@ struct PlatformColorResolutionState;
 enum class LightDarkColorAppearance : bool { Light, Dark };
 
 struct LightDarkColor {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LightDarkColor);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(LightDarkColor);
 
     Color lightColor;
     Color darkColor;

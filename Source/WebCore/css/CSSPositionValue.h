@@ -26,10 +26,12 @@
 
 #include "CSSPosition.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSPositionValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSPositionValue);
 public:
     static Ref<CSSPositionValue> LEGACY_NODELETE create(CSS::Position&&);
 
@@ -47,6 +49,7 @@ private:
 };
 
 class CSSPositionXValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSPositionXValue);
 public:
     static Ref<CSSPositionXValue> LEGACY_NODELETE create(CSS::PositionX&&);
 
@@ -64,6 +67,7 @@ private:
 };
 
 class CSSPositionYValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSPositionYValue);
 public:
     static Ref<CSSPositionYValue> LEGACY_NODELETE create(CSS::PositionY&&);
 

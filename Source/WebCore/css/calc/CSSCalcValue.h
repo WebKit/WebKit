@@ -34,6 +34,7 @@
 #include <WebCore/CSSCalcTree.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -46,6 +47,7 @@ namespace CSSCalc {
 
 // Boxes a `CSSCalc::Tree` along with the `Style::Calculation::Category` and `CSS::Range` used to construct it.
 class Value final : public RefCounted<Value> {
+    WTF_MAKE_TZONE_ALLOCATED(Value);
 public:
     static Ref<Value> LEGACY_NODELETE create(CSS::Category, CSS::Range, Tree&&);
     ~Value();

@@ -27,9 +27,12 @@
 #include "CSSResolvedColor.h"
 
 #include "ColorSerialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace CSS {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ResolvedColor);
 
 void Serialize<ResolvedColor>::operator()(StringBuilder& builder, const SerializationContext&, const ResolvedColor& value)
 {

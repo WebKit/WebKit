@@ -26,12 +26,14 @@
 #pragma once
 
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 enum class CSSValueID : uint16_t;
 
 class CSSBackgroundRepeatValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSBackgroundRepeatValue);
 public:
     static Ref<CSSBackgroundRepeatValue> LEGACY_NODELETE create(CSSValueID repeatXValue, CSSValueID repeatYValue);
 

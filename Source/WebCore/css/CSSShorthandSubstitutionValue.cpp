@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "CSSShorthandSubstitutionValue.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSShorthandSubstitutionValue);
 
 Ref<CSSShorthandSubstitutionValue> CSSShorthandSubstitutionValue::create(CSSPropertyID shorthandPropertyId, Ref<CSSSubstitutionValue>&& shorthandValue)
 {

@@ -26,12 +26,14 @@
 #pragma once
 
 #include "CSSGroupingRule.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class StyleRuleStartingStyle;
 
 class CSSStartingStyleRule final : public CSSGroupingRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSStartingStyleRule);
 public:
     static Ref<CSSStartingStyleRule> create(StyleRuleStartingStyle& rule, CSSStyleSheet* parent)
     {

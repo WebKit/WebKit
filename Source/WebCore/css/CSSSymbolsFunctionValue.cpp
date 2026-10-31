@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "CSSSymbolsFunctionValue.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSSymbolsFunctionValue);
 
 Ref<CSSSymbolsFunctionValue> CSSSymbolsFunctionValue::create(CSS::SymbolsFunction symbolsFunction)
 {

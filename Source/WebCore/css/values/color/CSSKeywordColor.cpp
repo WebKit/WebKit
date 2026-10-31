@@ -34,6 +34,7 @@
 #include "RenderTheme.h"
 #include "StyleColorOptions.h"
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -41,6 +42,8 @@
 
 namespace WebCore {
 namespace CSS {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(KeywordColor);
 
 static bool LEGACY_NODELETE isVGAPaletteColor(CSSValueID id)
 {

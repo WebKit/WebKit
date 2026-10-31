@@ -28,10 +28,12 @@
 
 #include <WebCore/CSSValue.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSValuePair final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSValuePair);
 public:
     static Ref<CSSValuePair> create(Ref<CSSValue>, Ref<CSSValue>);
     static Ref<CSSValuePair> createSlashSeparated(Ref<CSSValue>, Ref<CSSValue>);

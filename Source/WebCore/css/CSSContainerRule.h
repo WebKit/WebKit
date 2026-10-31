@@ -26,12 +26,14 @@
 #pragma once
 
 #include "CSSConditionRule.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class StyleRuleContainer;
 
 class CSSContainerRule final : public CSSConditionRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSContainerRule);
 public:
     static Ref<CSSContainerRule> create(StyleRuleContainer&, CSSStyleSheet* parent);
 

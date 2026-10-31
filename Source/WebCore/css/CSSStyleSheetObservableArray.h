@@ -27,6 +27,7 @@
 
 #include "CSSStyleSheet.h"
 #include "JSObservableArray.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,6 +35,7 @@ class ContainerNode;
 template<typename> class ExceptionOr;
 
 class CSSStyleSheetObservableArray : public JSC::ObservableArray {
+    WTF_MAKE_TZONE_ALLOCATED(CSSStyleSheetObservableArray);
 public:
     static Ref<CSSStyleSheetObservableArray> LEGACY_NODELETE create(ContainerNode& treeScope);
 

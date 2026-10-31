@@ -49,10 +49,13 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSPrimitiveValue);
 
 static HashMap<const CSSPrimitiveValue*, String>& LEGACY_NODELETE serializedPrimitiveValues()
 {

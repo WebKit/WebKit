@@ -28,6 +28,7 @@
 #include "CSSRule.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ enum class ViewTransitionNavigation : bool {
 };
 
 class StyleRuleViewTransition final : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleViewTransition);
 public:
     static Ref<StyleRuleViewTransition> create(Ref<StyleProperties>&&);
     ~StyleRuleViewTransition();
@@ -62,6 +64,7 @@ private:
 };
 
 class CSSViewTransitionRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSViewTransitionRule);
 public:
     using ViewTransitionNavigation = WebCore::ViewTransitionNavigation;
 

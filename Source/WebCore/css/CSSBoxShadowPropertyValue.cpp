@@ -30,8 +30,11 @@
 #include "CSSPrimitiveNumericTypes+DeprecatedCSSOMValueCreation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSValuePool.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSBoxShadowPropertyValue);
 
 Ref<CSSBoxShadowPropertyValue> CSSBoxShadowPropertyValue::create(CSS::BoxShadowProperty shadow)
 {
