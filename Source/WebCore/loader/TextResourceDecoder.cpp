@@ -33,10 +33,13 @@
 #include <pal/text/TextEncodingRegistry.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextResourceDecoder);
 
 using namespace HTMLNames;
 

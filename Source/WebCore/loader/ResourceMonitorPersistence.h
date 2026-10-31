@@ -27,6 +27,7 @@
 
 #include "SQLiteDatabase.h"
 #include <wtf/ContinuousApproximateTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -34,7 +35,7 @@ namespace WebCore {
 class SQLiteDatabase;
 
 class ResourceMonitorPersistence final {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ResourceMonitorPersistence);
+    WTF_MAKE_TZONE_ALLOCATED(ResourceMonitorPersistence);
 public:
     struct Record {
         String host;

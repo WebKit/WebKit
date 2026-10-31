@@ -94,6 +94,7 @@
 #include <JavaScriptCore/HeapInlines.h>
 #include <pal/SessionID.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -119,6 +120,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyCryptoClient);
 class UserMessageHandlerDescriptor;
 
 class EmptyBackForwardClient final : public BackForwardClient {
+    WTF_MAKE_TZONE_ALLOCATED(EmptyBackForwardClient);
     void LEGACY_NODELETE addItem(Ref<HistoryItem>&&) final { }
     void LEGACY_NODELETE setChildItem(BackForwardFrameItemIdentifier, Ref<HistoryItem>&&) final { }
     void LEGACY_NODELETE goToItem(HistoryItem&) final { }
@@ -129,6 +131,8 @@ class EmptyBackForwardClient final : public BackForwardClient {
     bool LEGACY_NODELETE containsItem(const HistoryItem&) const final { return false; }
     void LEGACY_NODELETE close() final { }
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyBackForwardClient);
 
 #if ENABLE(CONTEXT_MENUS)
 
@@ -168,6 +172,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyContextMenuClient);
 #endif // ENABLE(CONTEXT_MENUS)
 
 class EmptyDisplayRefreshMonitor final : public DisplayRefreshMonitor {
+    WTF_MAKE_TZONE_ALLOCATED(EmptyDisplayRefreshMonitor);
 public:
     static Ref<EmptyDisplayRefreshMonitor> create(PlatformDisplayID displayID)
     {
@@ -188,6 +193,8 @@ private:
     }
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyDisplayRefreshMonitor);
+
 class EmptyDisplayRefreshMonitorFactory final : public DisplayRefreshMonitorFactory {
 public:
     static DisplayRefreshMonitorFactory* LEGACY_NODELETE sharedEmptyDisplayRefreshMonitorFactory()
@@ -204,7 +211,9 @@ private:
 };
 
 class EmptyDatabaseProvider final : public DatabaseProvider {
+    WTF_MAKE_TZONE_ALLOCATED(EmptyDatabaseProvider);
     struct EmptyIDBConnectionToServerDeletegate final : public IDBClient::IDBConnectionToServerDelegate, public RefCounted<EmptyIDBConnectionToServerDeletegate> {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(EmptyIDBConnectionToServerDeletegate);
         static Ref<EmptyIDBConnectionToServerDeletegate> LEGACY_NODELETE create() { return adoptRef(*new EmptyIDBConnectionToServerDeletegate); }
 
         void LEGACY_NODELETE ref() const final { RefCounted::ref(); }
@@ -249,6 +258,10 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
         return emptyConnection->get();
     }
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyDatabaseProvider);
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(EmptyDatabaseProvider::EmptyIDBConnectionToServerDeletegate);
 
 class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
     WTF_MAKE_TZONE_ALLOCATED(EmptyDiagnosticLoggingClient);
@@ -422,6 +435,7 @@ private:
 WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyEditorClient);
 
 class EmptyFrameNetworkingContext final : public FrameNetworkingContext {
+    WTF_MAKE_TZONE_ALLOCATED(EmptyFrameNetworkingContext);
 public:
     static Ref<EmptyFrameNetworkingContext> LEGACY_NODELETE create() { return adoptRef(*new EmptyFrameNetworkingContext); }
 
@@ -441,6 +455,8 @@ private:
     ResourceError blockedError(const ResourceRequest&) const final { return { }; }
 #endif
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyFrameNetworkingContext);
 
 class EmptyInspectorBackendClient final : public InspectorBackendClient {
     WTF_MAKE_TZONE_ALLOCATED(EmptyInspectorBackendClient);
@@ -525,12 +541,16 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyCredentialRequestCoordinatorClient);
 #endif
 
 class EmptyPluginInfoProvider final : public PluginInfoProvider {
+    WTF_MAKE_TZONE_ALLOCATED(EmptyPluginInfoProvider);
     void LEGACY_NODELETE refreshPlugins() final { };
     Vector<PluginInfo> LEGACY_NODELETE pluginInfo(Page&, std::optional<Vector<SupportedPluginIdentifier>>&) final { return { }; }
     Vector<PluginInfo> LEGACY_NODELETE webVisiblePluginInfo(Page&, const URL&) final { return { }; }
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyPluginInfoProvider);
+
 class EmptyPopupMenu : public PopupMenu {
+    WTF_MAKE_TZONE_ALLOCATED(EmptyPopupMenu);
 private:
     void LEGACY_NODELETE show(const IntRect&, LocalFrameView&, int) final { }
     void LEGACY_NODELETE hide() final { }
@@ -538,7 +558,10 @@ private:
     void LEGACY_NODELETE disconnectClient() final { }
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyPopupMenu);
+
 class EmptyProgressTrackerClient final : public ProgressTrackerClient {
+    WTF_MAKE_TZONE_ALLOCATED(EmptyProgressTrackerClient);
     void LEGACY_NODELETE willChangeEstimatedProgress() final { }
     void LEGACY_NODELETE didChangeEstimatedProgress() final { }
     void LEGACY_NODELETE progressStarted(LocalFrame&) final { }
@@ -546,7 +569,10 @@ class EmptyProgressTrackerClient final : public ProgressTrackerClient {
     void LEGACY_NODELETE progressFinished(LocalFrame&) final { }
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyProgressTrackerClient);
+
 class EmptySearchPopupMenu : public SearchPopupMenu {
+    WTF_MAKE_TZONE_ALLOCATED(EmptySearchPopupMenu);
 public:
     EmptySearchPopupMenu()
         : m_popup(adoptRef(*new EmptyPopupMenu))
@@ -562,8 +588,12 @@ private:
     const Ref<EmptyPopupMenu> m_popup;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptySearchPopupMenu);
+
 class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
+    WTF_MAKE_TZONE_ALLOCATED(EmptyStorageNamespaceProvider);
     struct EmptyStorageArea : public StorageArea {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(EmptyStorageArea);
         unsigned LEGACY_NODELETE length() final { return 0; }
         String LEGACY_NODELETE key(unsigned) final { return { }; }
         String LEGACY_NODELETE item(const String&) final { return { }; }
@@ -576,6 +606,7 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
     };
 
     struct EmptyStorageNamespace final : public StorageNamespace {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(EmptyStorageNamespace);
         explicit EmptyStorageNamespace(PAL::SessionID sessionID)
             : m_sessionID(sessionID)
         {
@@ -597,7 +628,14 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
     RefPtr<StorageNamespace> sessionStorageNamespace(const SecurityOrigin&, Page&, ShouldCreateNamespace) final;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyStorageNamespaceProvider);
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(EmptyStorageNamespaceProvider::EmptyStorageArea);
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(EmptyStorageNamespaceProvider::EmptyStorageNamespace);
+
 class EmptyUserContentProvider final : public UserContentProvider {
+    WTF_MAKE_TZONE_ALLOCATED(EmptyUserContentProvider);
     void LEGACY_NODELETE forEachUserScript(NOESCAPE const Function<void(DOMWrapperWorld&, const UserScript&)>&) const final { }
     void LEGACY_NODELETE forEachUserStyleSheet(NOESCAPE const Function<void(const UserStyleSheet&)>&) const final { }
 #if ENABLE(USER_MESSAGE_HANDLERS)
@@ -610,10 +648,15 @@ class EmptyUserContentProvider final : public UserContentProvider {
 #endif
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyUserContentProvider);
+
 class EmptyVisitedLinkStore final : public VisitedLinkStore {
+    WTF_MAKE_TZONE_ALLOCATED(EmptyVisitedLinkStore);
     bool LEGACY_NODELETE isLinkVisited(Page&, SharedStringHash, const URL&, const AtomString&) final { return false; }
     void LEGACY_NODELETE addVisitedLink(Page&, SharedStringHash) final { }
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyVisitedLinkStore);
 
 RefPtr<Page> EmptyChromeClient::createWindow(LocalFrame&, const String&, const WindowFeatures&, const NavigationAction&)
 {
@@ -1225,10 +1268,14 @@ Ref<StorageNamespace> EmptyStorageNamespaceProvider::createTransientLocalStorage
 }
 
 class EmptyStorageSessionProvider final : public StorageSessionProvider {
+    WTF_MAKE_TZONE_ALLOCATED(EmptyStorageSessionProvider);
     CookieStorageSession* LEGACY_NODELETE storageSession() const final { return nullptr; }
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyStorageSessionProvider);
+
 class EmptyBroadcastChannelRegistry final : public BroadcastChannelRegistry {
+    WTF_MAKE_TZONE_ALLOCATED(EmptyBroadcastChannelRegistry);
 public:
     static Ref<EmptyBroadcastChannelRegistry> LEGACY_NODELETE create()
     {
@@ -1242,7 +1289,10 @@ private:
     void LEGACY_NODELETE postMessage(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) final { }
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyBroadcastChannelRegistry);
+
 class EmptyWebTransportSession final : public WebTransportSession, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<EmptyWebTransportSession> {
+    WTF_MAKE_TZONE_ALLOCATED(EmptyWebTransportSession);
 public:
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
@@ -1267,12 +1317,17 @@ public:
     void outgoingMaxBufferedDatagramsUpdated(uint32_t) final { }
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyWebTransportSession);
+
 class EmptySocketProvider final : public SocketProvider {
+    WTF_MAKE_TZONE_ALLOCATED(EmptySocketProvider);
 public:
     RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&, IsInitiatedByWorker) final { return nullptr; }
 
     Ref<WebTransportSession> createWebTransportSession(ScriptExecutionContext&, WebTransportSessionClient&) { return adoptRef(*new EmptyWebTransportSession()); }
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptySocketProvider);
 
 Ref<SocketProvider> emptySocketProvider()
 {

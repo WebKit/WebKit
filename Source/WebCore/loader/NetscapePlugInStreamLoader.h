@@ -32,6 +32,7 @@
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Function.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -53,6 +54,7 @@ protected:
 };
 
 class NetscapePlugInStreamLoader final : public ResourceLoader {
+    WTF_MAKE_TZONE_ALLOCATED(NetscapePlugInStreamLoader);
 public:
     WEBCORE_EXPORT static void create(LocalFrame&, NetscapePlugInStreamLoaderClient&, ResourceRequest&&, FetchOptions::Destination, CompletionHandler<void(RefPtr<NetscapePlugInStreamLoader>&&)>&&);
     virtual ~NetscapePlugInStreamLoader();

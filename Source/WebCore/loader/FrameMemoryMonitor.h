@@ -26,12 +26,14 @@
 #pragma once
 
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 namespace WebCore {
 
 class LocalFrame;
 
 class FrameMemoryMonitor final : public RefCounted<FrameMemoryMonitor> {
+    WTF_MAKE_TZONE_ALLOCATED(FrameMemoryMonitor);
 public:
     static Ref<FrameMemoryMonitor> LEGACY_NODELETE create(const LocalFrame&);
     WEBCORE_EXPORT ~FrameMemoryMonitor() = default;

@@ -31,8 +31,11 @@
 #include "CachedStyleSheetClient.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedXSLStyleSheet);
 
 #if ENABLE(XSLT)
 

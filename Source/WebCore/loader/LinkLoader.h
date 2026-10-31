@@ -37,6 +37,7 @@
 #include <WebCore/LinkLoaderClient.h>
 #include <WebCore/LinkRelAttribute.h>
 #include <WebCore/ReferrerPolicy.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -58,6 +59,7 @@ struct LinkLoadParameters {
 };
 
 class LinkLoader : public CachedResourceClient, public RefCounted<LinkLoader> {
+    WTF_MAKE_TZONE_ALLOCATED(LinkLoader);
 public:
     static Ref<LinkLoader> LEGACY_NODELETE create(LinkLoaderClient&);
     virtual ~LinkLoader();

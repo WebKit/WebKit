@@ -48,6 +48,7 @@
 #include "SubresourceLoader.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "SystemMemory.h"
@@ -62,6 +63,10 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedImage);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedImage::CachedImageObserver);
 
 CachedImage::CachedImage(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : CachedResource(WTF::move(request), Type::ImageResource, sessionID, cookieJar)

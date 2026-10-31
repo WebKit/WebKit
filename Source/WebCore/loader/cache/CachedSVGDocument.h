@@ -25,12 +25,14 @@
 #include <WebCore/CachedResource.h>
 #include <WebCore/SVGDocument.h>
 #include <WebCore/TextResourceDecoder.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class Settings;
 
 class CachedSVGDocument final : public CachedResource {
+    WTF_MAKE_TZONE_ALLOCATED(CachedSVGDocument);
 public:
     explicit CachedSVGDocument(CachedResourceRequest&&, PAL::SessionID, const CookieJar*, const Settings&);
     explicit CachedSVGDocument(CachedResourceRequest&&, CachedSVGDocument&);

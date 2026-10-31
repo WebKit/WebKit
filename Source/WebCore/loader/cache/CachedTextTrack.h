@@ -26,12 +26,14 @@
 #pragma once
 
 #include "CachedResource.h"
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(VIDEO)
 
 namespace WebCore {
 
 class CachedTextTrack final : public CachedResource {
+    WTF_MAKE_TZONE_ALLOCATED(CachedTextTrack);
 public:
     CachedTextTrack(CachedResourceRequest&&, PAL::SessionID, const CookieJar*);
 

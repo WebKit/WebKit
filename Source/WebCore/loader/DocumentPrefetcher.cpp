@@ -45,8 +45,11 @@
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentPrefetcher);
 
 DocumentPrefetcher::DocumentPrefetcher(LocalFrame& frame)
     : m_frame(frame)

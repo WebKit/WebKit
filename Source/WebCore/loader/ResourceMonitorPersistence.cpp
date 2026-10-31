@@ -32,6 +32,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -39,6 +40,8 @@
 #define RESOURCEMONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(ResourceMonitoring, "ResourceMonitorPersistence::" fmt, ##__VA_ARGS__)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceMonitorPersistence);
 
 ResourceMonitorPersistence::ResourceMonitorPersistence()
 {

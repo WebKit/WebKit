@@ -63,6 +63,7 @@
 #include <algorithm>
 #include <wtf/OrderedHashSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URLHash.h>
 #include <wtf/URLParser.h>
 #include <wtf/text/CString.h>
@@ -70,6 +71,8 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyWebArchive);
 
 static constexpr unsigned maxFileNameSizeInBytes = 255;
 static constexpr char defaultFileName[] = "file";

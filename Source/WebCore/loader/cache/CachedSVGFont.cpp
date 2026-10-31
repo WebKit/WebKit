@@ -44,8 +44,11 @@
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedSVGFont);
 
 CachedSVGFont::CachedSVGFont(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar, const Settings& settings)
     : CachedFont(WTF::move(request), sessionID, cookieJar, Type::SVGFontResource)

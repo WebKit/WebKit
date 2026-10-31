@@ -31,12 +31,15 @@
 #include "CachedResourceRequest.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(MAC)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedScript);
 
 CachedScript::CachedScript(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar, ScriptTrackingPrivacyProtectionsEnabled requiresPrivacyProtections)
     : CachedResource(WTF::move(request), request.options().destination == FetchOptionsDestination::Json ? Type::JSON : request.options().destination == FetchOptionsDestination::Text ? Type::Text : Type::Script, sessionID, cookieJar)

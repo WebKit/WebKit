@@ -49,6 +49,7 @@
 #include <wtf/DateMath.h>
 #include <wtf/PlainGregorianDateTime.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -57,6 +58,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MHTMLArchive);
 
 constexpr auto quotedPrintable = "quoted-printable"_s;
 constexpr auto base64 = "base64"_s;

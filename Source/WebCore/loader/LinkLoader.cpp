@@ -68,9 +68,12 @@
 #include "StyleResolver.h"
 #include "UserContentProvider.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LinkLoader);
 
 Ref<LinkLoader> LinkLoader::create(LinkLoaderClient& client)
 {

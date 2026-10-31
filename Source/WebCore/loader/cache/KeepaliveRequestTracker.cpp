@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "KeepaliveRequestTracker.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(KeepaliveRequestTracker);
 
 constexpr uint64_t maxInflightKeepaliveBytes { 65536 }; // 64 kibibytes as per Fetch specification.
 

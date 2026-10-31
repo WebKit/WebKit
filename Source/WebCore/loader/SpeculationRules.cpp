@@ -32,6 +32,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/URLHash.h>
 #include <wtf/Vector.h>
@@ -39,6 +40,10 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculationRules);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculationRules::DocumentPredicate);
 
 Ref<SpeculationRules> SpeculationRules::create()
 {
