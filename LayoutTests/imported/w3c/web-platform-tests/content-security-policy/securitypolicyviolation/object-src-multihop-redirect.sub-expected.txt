@@ -1,0 +1,3 @@
+
+PASS The blocked URI in the security policy violation event for an object element should be the original URI, not an intermediate one, after more than one redirect.
+
