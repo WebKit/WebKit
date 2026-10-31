@@ -642,6 +642,9 @@ webkit.org/b/315030 media/media-source/media-source-webm-seek-singlekeyframe.htm
 webkit.org/b/329406 media/media-source/media-source-seek-unbuffered-readystate.html [ Failure Timeout Pass ]
 webkit.org/b/329406 imported/w3c/web-platform-tests/media-source/mediasource-seek-unbuffered-readystate.html [ Failure Timeout Pass ]
 
+# MSE in worker requires a thread-safe MediaSource implementation, which the GStreamer ports lack.
+webkit.org/b/329641 imported/w3c/web-platform-tests/media-source/dedicated-worker/managed [ Failure ]
+
 # NOTIFICATION_EVENT tests
 http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
 http/tests/workers/service/shownotification-icon-from-worker.html [ Pass ]

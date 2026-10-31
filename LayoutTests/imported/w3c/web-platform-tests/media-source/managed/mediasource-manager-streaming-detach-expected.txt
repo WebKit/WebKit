@@ -1,0 +1,4 @@
+
+PASS Detaching a streaming ManagedMediaSource sets streaming to false and fires endstreaming
+PASS Detaching a ManagedMediaSource that is not streaming does not fire endstreaming
+
