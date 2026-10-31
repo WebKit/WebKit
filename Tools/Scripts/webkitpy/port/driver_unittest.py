@@ -29,6 +29,9 @@
 import unittest
 import optparse
 
+from unittest import mock
+from webkitcorepy import OutputCapture
+
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
 from webkitpy.port import Port, Driver, DriverInput, DriverOutput
@@ -216,6 +219,16 @@ class DriverTest(unittest.TestCase):
             self.assertEqual(driver.cmd_line(True, []), ['/mock-build/WebKitTestRunner.exe', '--no-timeout', '-'])
         else:
             self.assertEqual(driver.cmd_line(True, []), ['/mock-build/WebKitTestRunner', '--no-timeout', '-'])
+
+    def test_warn_if_system_slept(self):
+        driver = Driver(TestWebKitPort(), 0, pixel_tests=False)
+        with mock.patch('time.time', return_value=2035.0), mock.patch('time.monotonic', return_value=112.0), OutputCapture() as captured:
+            driver._warn_if_system_slept('fast/asleep.html', 1000.0, 100.0)
+        self.assertIn('fast/asleep.html: the system was asleep for about 1023 seconds during this test; the timeout may be caused by the sleep.', captured.root.log.getvalue())
+
+        with mock.patch('time.time', return_value=1055.0), mock.patch('time.monotonic', return_value=134.0), OutputCapture() as captured:
+            driver._warn_if_system_slept('fast/clock-step.html', 1000.0, 100.0)
+        self.assertEqual(captured.root.log.getvalue(), '')
 
     def test_check_for_driver_crash(self):
         port = TestWebKitPort()

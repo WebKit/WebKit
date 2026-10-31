@@ -173,7 +173,7 @@ class Executive(AbstractExecutive):
         # to work in cygwin, however it occasionally raises EAGAIN.
         retries_left = 10 if self._is_cygwin else 5
         current_signal = signal.SIGTERM
-        while retries_left > 0 and self.check_running_pid(pid):
+        while retries_left > 0 and self.check_running_pid(pid) and not self._is_zombie(pid):
             try:
                 retries_left -= 1
                 os.kill(pid, current_signal)
@@ -203,6 +203,36 @@ class Executive(AbstractExecutive):
                 retries_left = 1
             else:
                 time.sleep(0.05)  # give the process a chance to finish
+
+    def _is_zombie(self, pid):
+        # A child that exited but hasn't been reaped yet still passes check_running_pid().
+        if self._is_native_win or self._is_cygwin:
+            return False
+        exited = self._child_exited(pid)
+        if exited is not None:
+            return exited
+        try:
+            return self.run_command(['ps', '-o', 'stat=', '-p', str(pid)], ignore_errors=True).strip().startswith('Z')
+        except OSError:
+            return False
+
+    @staticmethod
+    def _child_exited(pid):
+        # WNOWAIT leaves the child for its owner to reap. Returns None if pid isn't our child.
+        options = os.WEXITED | os.WNOHANG | os.WNOWAIT
+        try:
+            if hasattr(os, 'waitid'):
+                return os.waitid(os.P_PID, pid, options) is not None
+            if sys.platform != 'darwin':
+                return None
+            # Python exposes os.waitid() on macOS only from 3.13.
+            import ctypes
+            info = ctypes.create_string_buffer(128)
+            if ctypes.CDLL(None, use_errno=True).waitid(os.P_PID, pid, info, options):
+                return None
+            return ctypes.c_int.from_buffer(info, 12).value != 0  # siginfo_t.si_pid
+        except (OSError, AttributeError):
+            return None
 
     def _win32_check_running_pid(self, pid):
         # importing ctypes at the top-level seems to cause weird crashes at
