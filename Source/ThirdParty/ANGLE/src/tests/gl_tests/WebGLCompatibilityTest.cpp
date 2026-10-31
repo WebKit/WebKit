@@ -7,6 +7,7 @@
 // WebGLCompatibilityTest.cpp : Tests of the GL_ANGLE_webgl_compatibility extension.
 
 #include <array>
+#include <functional>
 
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
@@ -357,7 +358,14 @@ class WebGL1CompatibilityTest : public WebGLCompatibilityTest
 {};
 
 class WebGL2CompatibilityTest : public WebGLCompatibilityTest
-{};
+{
+  protected:
+    // Draws in-bounds indices stored past 4GiB into an element array buffer, calls |overwrite| with
+    // the draw's byte offset and an out-of-bounds index to write over them, then checks the same
+    // draw is rejected.
+    void testOverwrittenIndicesPast4GiB(
+        const std::function<void(GLintptr offset, const std::vector<GLuint> &indices)> &overwrite);
+};
 
 class HardenedContextTest : public ANGLETest<>
 {
@@ -8566,6 +8574,121 @@ TEST_P(WebGL2CompatibilityTest, DrawLargeIndexOOB)
     {
         EXPECT_GL_NO_ERROR();
     }
+}
+
+void WebGL2CompatibilityTest::testOverwrittenIndicesPast4GiB(
+    const std::function<void(GLintptr offset, const std::vector<GLuint> &indices)> &overwrite)
+{
+    ANGLE_SKIP_TEST_IF(sizeof(GLintptr) < sizeof(uint64_t));
+    // Out-of-bounds indices are only rejected when the backend can't clamp them.
+    ANGLE_SKIP_TEST_IF(IsGLExtensionEnabled("GL_KHR_robust_buffer_access_behavior"));
+
+    constexpr char kVS[] =
+        R"(attribute float a_pos;
+void main()
+{
+    gl_Position = vec4(a_pos, a_pos, a_pos, 1.0);
+    gl_PointSize = 1.0;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Red());
+    GLint posLocation = glGetAttribLocation(program, "a_pos");
+    ASSERT_NE(-1, posLocation);
+    glUseProgram(program);
+
+    constexpr GLuint kVertexCount = 3;
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, kVertexCount * sizeof(GLfloat), nullptr, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(posLocation);
+    glVertexAttribPointer(posLocation, 1, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    constexpr GLintptr kOffset        = (GLintptr{1} << 32) + 0x10000;
+    constexpr GLintptr kControlOffset = kOffset + 0x8000;
+    constexpr GLsizeiptr kBufferSize  = kOffset + 0x10000;
+    constexpr GLsizei kIndexCount     = 16;
+
+    std::vector<GLuint> inBoundsIndices(kIndexCount);
+    for (GLsizei i = 0; i < kIndexCount; ++i)
+    {
+        inBoundsIndices[i] = i % kVertexCount;
+    }
+    // Just past the end of the vertex buffer, so a wrongly admitted draw stays near it.
+    const std::vector<GLuint> outOfBoundsIndices(kIndexCount, kVertexCount);
+    const GLsizeiptr indicesSize = kIndexCount * sizeof(GLuint);
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, kBufferSize, nullptr, GL_STATIC_DRAW);
+    const GLenum allocationError = glGetError();
+    // Skip, rather than pass, where the device can't allocate a buffer this large.
+    ANGLE_SKIP_TEST_IF(allocationError == GL_OUT_OF_MEMORY);
+    ASSERT_GLENUM_EQ(GL_NO_ERROR, allocationError);
+
+    // Check that out-of-bounds indices this far into the buffer are rejected at all.
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, kControlOffset, indicesSize,
+                    outOfBoundsIndices.data());
+    glDrawElements(GL_POINTS, kIndexCount, GL_UNSIGNED_INT,
+                   reinterpret_cast<const void *>(kControlOffset));
+    ASSERT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // Cache the index range of in-bounds indices, then overwrite them.
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, kOffset, indicesSize, inBoundsIndices.data());
+    glDrawElements(GL_POINTS, kIndexCount, GL_UNSIGNED_INT,
+                   reinterpret_cast<const void *>(kOffset));
+    ASSERT_GL_NO_ERROR();
+
+    overwrite(kOffset, outOfBoundsIndices);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glDrawElements(GL_POINTS, kIndexCount, GL_UNSIGNED_INT,
+                   reinterpret_cast<const void *>(kOffset));
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Test that bufferSubData past 4GiB invalidates the cached index range of the indices it
+// overwrites.
+TEST_P(WebGL2CompatibilityTest, BufferSubDataPast4GiBInvalidatesIndexRange)
+{
+    testOverwrittenIndicesPast4GiB([](GLintptr offset, const std::vector<GLuint> &indices) {
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, indices.size() * sizeof(GLuint),
+                        indices.data());
+    });
+}
+
+// Test that copyBufferSubData past 4GiB invalidates the cached index range of the indices it
+// overwrites.
+TEST_P(WebGL2CompatibilityTest, CopyBufferSubDataPast4GiBInvalidatesIndexRange)
+{
+    GLBuffer sourceBuffer;
+    testOverwrittenIndicesPast4GiB(
+        [&sourceBuffer](GLintptr offset, const std::vector<GLuint> &indices) {
+            const GLsizeiptr size = indices.size() * sizeof(GLuint);
+            GLint indexBuffer     = 0;
+            glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &indexBuffer);
+
+            // WebGL only allows copies between buffers first bound as element array buffers.
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sourceBuffer);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices.data(), GL_STATIC_DRAW);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+            glBindBuffer(GL_COPY_READ_BUFFER, sourceBuffer);
+            glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_ELEMENT_ARRAY_BUFFER, 0, offset, size);
+        });
+}
+
+// Test that mapBufferRange for writing past 4GiB invalidates the cached index range of the indices
+// it overwrites.
+TEST_P(WebGL2CompatibilityTest, MapBufferRangePast4GiBInvalidatesIndexRange)
+{
+    testOverwrittenIndicesPast4GiB([](GLintptr offset, const std::vector<GLuint> &indices) {
+        const GLsizeiptr size = indices.size() * sizeof(GLuint);
+        void *mapped = glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, offset, size, GL_MAP_WRITE_BIT);
+        ASSERT_NE(nullptr, mapped);
+        ANGLE_UNSAFE_TODO(memcpy(mapped, indices.data(), size));
+        EXPECT_GL_TRUE(glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER));
+    });
 }
 
 // Tests that calling draw with a uniform buffer bound range that exceeds the buffer size

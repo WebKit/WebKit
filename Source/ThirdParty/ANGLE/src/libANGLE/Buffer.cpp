@@ -306,8 +306,8 @@ angle::Result Buffer::bufferSubData(const Context *context,
     ANGLE_TRY_WITH_FINALLY(mImpl->setSubData(context, target, data, size, offset, &feedback),
                            applyImplFeedback(context, feedback));
 
-    mIndexRangeCache.invalidateRange(static_cast<unsigned int>(offset),
-                                     static_cast<unsigned int>(size));
+    mIndexRangeCache.invalidateRange(static_cast<size_t>(offset),
+                                     static_cast<size_t>(size));
 
     // Notify when data changes.
     onContentsChange(context);
@@ -326,8 +326,8 @@ angle::Result Buffer::copyBufferSubData(const Context *context,
                                               destOffset, size, &feedback),
                            applyImplFeedback(context, feedback));
 
-    mIndexRangeCache.invalidateRange(static_cast<unsigned int>(destOffset),
-                                     static_cast<unsigned int>(size));
+    mIndexRangeCache.invalidateRange(static_cast<size_t>(destOffset),
+                                     static_cast<size_t>(size));
 
     // Notify when data changes.
     onContentsChange(context);
@@ -386,8 +386,8 @@ angle::Result Buffer::mapRange(const Context *context,
 
     if ((access & GL_MAP_WRITE_BIT) > 0)
     {
-        mIndexRangeCache.invalidateRange(static_cast<unsigned int>(offset),
-                                         static_cast<unsigned int>(length));
+        mIndexRangeCache.invalidateRange(static_cast<size_t>(offset),
+                                         static_cast<size_t>(length));
     }
 
     // Notify when state changes.
