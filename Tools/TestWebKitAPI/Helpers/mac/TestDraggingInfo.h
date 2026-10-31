@@ -23,15 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
 #import <AppKit/NSDragging.h>
+
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @class DragAndDropSimulator;
 
 @interface TestDraggingInfo : NSObject <NSDraggingInfo>
 
-- (instancetype)initWithDragAndDropSimulator:(DragAndDropSimulator *)simulator NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDragAndDropSimulator:(nullable DragAndDropSimulator *)simulator NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithPasteboard:(NSPasteboard *)pasteboard;
 - (instancetype)init NS_UNAVAILABLE;
 
 @property (nonatomic) NSPoint draggingLocation;
@@ -39,11 +44,13 @@
 @property (nonatomic) NSInteger draggingSequenceNumber;
 @property (nonatomic) NSDragOperation draggingSourceOperationMask;
 @property (nonatomic, strong) NSPasteboard *draggingPasteboard;
-@property (nonatomic, strong) NSImage *draggedImage;
-@property (nonatomic, weak) id draggingSource;
+@property (nonatomic, strong, nullable) NSImage *draggedImage;
+@property (nonatomic, weak, nullable) id draggingSource;
 @property (nonatomic, readonly) NSArray<NSFilePromiseReceiver *> *filePromiseReceivers;
-@property (nonatomic, readonly) id localContext;
+@property (nonatomic, readonly, nullable) id localContext;
 
 @end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
