@@ -66,6 +66,8 @@ Ref<WebKitJSHandle> WebKitJSHandle::create(JSC::JSObject* object)
 
 WebKitJSHandle::~WebKitJSHandle()
 {
+    if (!m_object)
+        return;
     jsHandleDestroyed(m_identifier);
 }
 
@@ -112,6 +114,7 @@ WebKitJSHandle::WebKitJSHandle(JSC::JSObject* object)
     global->addJSHandle(m_identifier, *object);
     ASSERT(&global->vm() == commonVMOrNull());
     handleToGlobalMap(global->vm()).set(m_identifier, global);
+    m_object = JSC::Weak<JSC::JSObject>(object);
 }
 
 }
