@@ -981,6 +981,16 @@ void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerMo
     if (!repaintContainer)
         return;
 
+    if (isLegacyRenderSVGModelObject()) {
+        if (CheckedPtr element = dynamicDowncast<RenderElement>(*this)) {
+            auto expandedRect = SVGRenderSupport::repaintRectIncludingFilteredAncestors(*element, repaintContainer.get(), r);
+            if (expandedRect != r) {
+                repaintUsingContainer(WTF::move(repaintContainer), expandedRect, clipRepaintToLayer, rectIsPartial);
+                return;
+            }
+        }
+    }
+
     propagateRepaintToParentWithOutlineAutoIfNeeded(*repaintContainer, r);
 
     if (repaintContainer->hasFilter() && repaintContainer->layer() && repaintContainer->layer()->requiresFullLayerImageForFilters()) {
