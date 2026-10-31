@@ -217,14 +217,14 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
             WTFEndSignpost(this, UpdateTile);
         }
 
-#if !HAVE(OS_SIGNPOST) && !USE(SYSPROF_CAPTURE)
+#if !HAVE(OS_SIGNPOST) && !USE(SYSPROF_CAPTURE) && !USE(ATRACE_CAPTURE)
         UNUSED_VARIABLE(dirtyTileIndex);
 #endif
 
         WTFEndSignpost(this, UpdateTiles);
     }
 
-#if !HAVE(OS_SIGNPOST) && !USE(SYSPROF_CAPTURE)
+#if !HAVE(OS_SIGNPOST) && !USE(SYSPROF_CAPTURE) && !USE(ATRACE_CAPTURE)
     UNUSED_VARIABLE(dirtyTilesCount);
 #endif
 

@@ -53,7 +53,8 @@
 
 // Trace point codes can be up to 14 bits (0-16383).
 // When adding or changing these codes, update Source/WebKit/Resources/Signposts/SystemTracePoints.plist to match,
-// and SysprofAnnotator::tracePoint(), which pairs the begin and end of each for Sysprof.
+// SysprofAnnotator::tracePoint(), which pairs the begin and end of each for Sysprof, and WTF_TRACE_POINT_CODE_LIST
+// in ATraceAnnotator.cpp, which names them for ATrace.
 enum TracePointCode {
     WTFRange = 0,
 
@@ -217,6 +218,10 @@ enum TracePointCode {
 #include <wtf/glib/SysprofAnnotator.h>
 #endif
 
+#if USE(ATRACE_CAPTURE)
+#include <wtf/android/ATraceAnnotator.h>
+#endif
+
 namespace WTF {
 
 inline void tracePoint(TracePointCode code, uint64_t data1 = 0, uint64_t data2 = 0, uint64_t data3 = 0, uint64_t data4 = 0)
@@ -226,6 +231,11 @@ inline void tracePoint(TracePointCode code, uint64_t data1 = 0, uint64_t data2 =
 #elif USE(SYSPROF_CAPTURE)
     if (auto* annotator = SysprofAnnotator::singletonIfCreated())
         annotator->tracePoint(code, data1);
+    UNUSED_PARAM(data2);
+    UNUSED_PARAM(data3);
+    UNUSED_PARAM(data4);
+#elif USE(ATRACE_CAPTURE)
+    ATraceAnnotator::tracePoint(code, data1);
     UNUSED_PARAM(data2);
     UNUSED_PARAM(data3);
     UNUSED_PARAM(data4);
@@ -517,6 +527,73 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END \
         if (auto* annotator = SysprofAnnotator::singletonIfCreated()) \
             annotator->setCounter(std::span(_STRINGIFY(name)), value); \
     } while (0)
+
+#elif USE(ATRACE_CAPTURE)
+
+#define WTF_ATRACE_UNUSED(...) ((void)sizeof(WTF::aTraceIgnore(0 __VA_OPT__(, __VA_ARGS__))))
+// Arguments go through LOG_PRINTF_TYPE, as for sysprof, so string objects reach the
+// printf-style formatter as plain C strings.
+#define WTFATraceFormatAndArgs(name, ...) _STRINGIFY(name) __VA_OPT__(" " WTFATraceSplitFormatAndArgs(__VA_ARGS__))
+#define WTFATraceSplitFormatAndArgs(format, ...) format __VA_OPT__(, LOG_PRINTF_TYPE(__VA_ARGS__))
+
+#define WTFEmitSignpost(pointer, name, ...) \
+    do { \
+        IGNORE_WARNINGS_BEGIN("format-zero-length") \
+        IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage-in-format-attr-call") \
+        if (WTF::ATraceAnnotator::isEnabled()) \
+            WTF::ATraceAnnotator::instant(WTFATraceFormatAndArgs(name, __VA_ARGS__)); \
+        IGNORE_WARNINGS_END \
+        IGNORE_WARNINGS_END \
+        UNUSED_PARAM((pointer)); \
+    } while (0)
+
+#define WTFBeginSignpost(pointer, name, ...) \
+    do { \
+        IGNORE_WARNINGS_BEGIN("format-zero-length") \
+        IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage-in-format-attr-call") \
+        if (WTF::ATraceAnnotator::isEnabled()) { \
+            WTF::ATraceAnnotator::beginAsync(_STRINGIFY(name), WTF::ATraceAnnotator::cookieForPointer(pointer)); \
+            __VA_OPT__(WTF::ATraceAnnotator::instant(WTFATraceFormatAndArgs(name, __VA_ARGS__));) \
+        } \
+        IGNORE_WARNINGS_END \
+        IGNORE_WARNINGS_END \
+    } while (0)
+
+#define WTFEndSignpost(pointer, name, ...) \
+    do { \
+        IGNORE_WARNINGS_BEGIN("format-zero-length") \
+        IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage-in-format-attr-call") \
+        if (WTF::ATraceAnnotator::isEnabled()) { \
+            __VA_OPT__(WTF::ATraceAnnotator::instant(WTFATraceFormatAndArgs(name, __VA_ARGS__));) \
+            WTF::ATraceAnnotator::endAsync(_STRINGIFY(name), WTF::ATraceAnnotator::cookieForPointer(pointer)); \
+        } \
+        IGNORE_WARNINGS_END \
+        IGNORE_WARNINGS_END \
+    } while (0)
+
+#define WTFEmitSignpostAlways(pointer, name, ...) WTFEmitSignpost((pointer), name, ##__VA_ARGS__)
+#define WTFBeginSignpostAlways(pointer, name, ...) WTFBeginSignpost((pointer), name, ##__VA_ARGS__)
+#define WTFEndSignpostAlways(pointer, name, ...) WTFEndSignpost((pointer), name, ##__VA_ARGS__)
+
+// ATrace timestamps events as they are emitted and cannot backdate one, so the variants
+// that carry their own time have nowhere to put it.
+#define WTFEmitSignpostWithTimeDelta(pointer, name, timeDelta, ...) do { UNUSED_PARAM((pointer)); UNUSED_PARAM((timeDelta)); WTF_ATRACE_UNUSED(__VA_ARGS__); } while (0)
+#define WTFBeginSignpostWithTimeDelta(pointer, name, timeDelta, ...) WTFEmitSignpostWithTimeDelta((pointer), name, (timeDelta), ##__VA_ARGS__)
+#define WTFEndSignpostWithTimeDelta(pointer, name, timeDelta, ...) WTFEmitSignpostWithTimeDelta((pointer), name, (timeDelta), ##__VA_ARGS__)
+
+#define WTFEmitSignpostAlwaysWithTimeDelta(pointer, name, timeDelta, ...) WTFEmitSignpostWithTimeDelta((pointer), name, (timeDelta), ##__VA_ARGS__)
+#define WTFBeginSignpostAlwaysWithTimeDelta(pointer, name, timeDelta, ...) WTFEmitSignpostWithTimeDelta((pointer), name, (timeDelta), ##__VA_ARGS__)
+#define WTFEndSignpostAlwaysWithTimeDelta(pointer, name, timeDelta, ...) WTFEmitSignpostWithTimeDelta((pointer), name, (timeDelta), ##__VA_ARGS__)
+
+#define WTFEmitSignpostWithSpecificTime(pointer, name, specificTime, ...) do { UNUSED_PARAM((pointer)); UNUSED_PARAM((specificTime)); WTF_ATRACE_UNUSED(__VA_ARGS__); } while (0)
+#define WTFBeginSignpostWithSpecificTime(pointer, name, specificTime, ...) WTFEmitSignpostWithSpecificTime((pointer), name, (specificTime), ##__VA_ARGS__)
+#define WTFEndSignpostWithSpecificTime(pointer, name, specificTime, ...) WTFEmitSignpostWithSpecificTime((pointer), name, (specificTime), ##__VA_ARGS__)
+
+#define WTFEmitSignpostAlwaysWithSpecificTime(pointer, name, specificTime, ...) WTFEmitSignpostWithSpecificTime((pointer), name, (specificTime), ##__VA_ARGS__)
+#define WTFBeginSignpostAlwaysWithSpecificTime(pointer, name, specificTime, ...) WTFEmitSignpostWithSpecificTime((pointer), name, (specificTime), ##__VA_ARGS__)
+#define WTFEndSignpostAlwaysWithSpecificTime(pointer, name, specificTime, ...) WTFEmitSignpostWithSpecificTime((pointer), name, (specificTime), ##__VA_ARGS__)
+
+#define WTFSetCounter(name, value) WTF::ATraceAnnotator::counter(_STRINGIFY(name), value)
 
 #else
 

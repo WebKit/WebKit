@@ -1,4 +1,5 @@
 list(APPEND WTF_SOURCES
+    android/ATraceAnnotator.cpp
     android/LoggingAndroid.cpp
     android/RefPtrAndroid.cpp
 
@@ -52,6 +53,7 @@ endif ()
 list(APPEND WTF_PUBLIC_HEADERS
     PlatformEnableGlib.h
 
+    android/ATraceAnnotator.h
     android/RefPtrAndroid.h
 
     glib/ActivityObserver.h

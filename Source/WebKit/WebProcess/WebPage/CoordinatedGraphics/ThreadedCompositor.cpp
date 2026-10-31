@@ -536,7 +536,7 @@ void ThreadedCompositor::recordFrameDamage(Damage&& damage)
 }
 #endif
 
-#if HAVE(OS_SIGNPOST) || USE(SYSPROF_CAPTURE)
+#if HAVE(OS_SIGNPOST) || USE(SYSPROF_CAPTURE) || USE(ATRACE_CAPTURE)
 static String reasonsToString(const OptionSet<CompositionReason>& reasons)
 {
     StringBuilder builder;
