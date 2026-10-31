@@ -56,6 +56,7 @@
 #include "RuleSet.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGStyleElement.h"
+#include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleDocumentScope.h"
@@ -126,6 +127,25 @@ void Scope::createOrFindSharedShadowTreeResolver()
 
     auto key = makeResolverSharingKey();
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    if (RefPtr existingResolver = documentScope().m_sharedShadowTreeResolvers.get(key)) {
+        m_resolver = WTF::move(existingResolver);
+        m_resolver->setSharedBetweenShadowTrees();
+        return;
+    }
+
+    {
+        SetForScope isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
+        m_resolver = Resolver::create(m_document, Resolver::ScopeType::ShadowTree);
+
+        m_resolver->ruleSets().setUsesSharedUserStyle(!isForUserAgentShadowTree());
+        protect(m_resolver)->appendAuthorStyleSheets(m_activeStyleSheets);
+    }
+
+    auto result = documentScope().m_sharedShadowTreeResolvers.add(WTF::move(key), protect(*m_resolver));
+#else
     auto result = documentScope().m_sharedShadowTreeResolvers.ensure(WTF::move(key), [&] {
         SetForScope isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
 
@@ -136,6 +156,7 @@ void Scope::createOrFindSharedShadowTreeResolver()
 
         return protect(*m_resolver);
     });
+#endif
 
     if (!result.isNewEntry) {
         m_resolver = result.iterator->value.ptr();
@@ -633,6 +654,9 @@ void Scope::updateResolver(std::span<const Ref<CSSStyleSheet>> activeStyleSheets
         unshareShadowTreeResolverBeforeMutation();
 
     SetForScope isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+#endif
 
     if (updateType == ResolverUpdateType::Reset) {
         customPropertyRegistry().clearRegisteredFromStylesheets();
