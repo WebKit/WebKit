@@ -3321,10 +3321,6 @@ std::unique_ptr<Style::ComputedStyle> Document::styleForElementIgnoringPendingSt
 
     auto elementStyle = resolver->styleForElement(element, { parentStyle.get() });
     if (pseudoElementIdentifier) {
-        auto type = pseudoElementIdentifier->type;
-        if ((type == PseudoElementType::FirstLetter || type == PseudoElementType::FirstLine) && elementStyle.style && !Style::supportsFirstLineAndLetterPseudoElement(*elementStyle.style))
-            return { };
-
         auto style = resolver->styleForPseudoElement(element, { *pseudoElementIdentifier }, { parentStyle.get() });
         if (!style)
             return nullptr;

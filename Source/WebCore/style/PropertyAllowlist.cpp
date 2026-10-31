@@ -42,6 +42,10 @@ PropertyAllowlist propertyAllowlistForPseudoElement(PseudoElementType type)
         return PropertyAllowlist::Highlight;
     case PseudoElementType::Marker:
         return PropertyAllowlist::Marker;
+    case PseudoElementType::FirstLetter:
+        return PropertyAllowlist::FirstLetter;
+    case PseudoElementType::FirstLine:
+        return PropertyAllowlist::FirstLine;
     default:
         return PropertyAllowlist::None;
     }
@@ -57,8 +61,7 @@ bool isValidHighlightStyleProperty(CSSPropertyID id)
     return CSSProperty::appliesToHighlightPseudoElements(id);
 }
 
-// https://drafts.csswg.org/css-lists-3/#marker-properties (Editor's Draft, 14 July 2021)
-// FIXME: this is outdated, see https://bugs.webkit.org/show_bug.cgi?id=218791.
+// https://drafts.csswg.org/css-lists-3/#marker-properties
 bool isValidMarkerStyleProperty(CSSPropertyID id)
 {
     switch (id) {
@@ -134,6 +137,223 @@ bool isValidMarkerStyleProperty(CSSPropertyID id)
     case CSSPropertyID::TransitionTimingFunction:
     case CSSPropertyID::TransitionDelay:
     case CSSPropertyID::TransitionProperty:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
+// https://drafts.csswg.org/css-pseudo/#first-letter-styling
+bool isValidFirstLetterStyleProperty(CSSPropertyID id)
+{
+    switch (id) {
+    case CSSPropertyID::BackgroundAttachment:
+    case CSSPropertyID::BackgroundBlendMode:
+    case CSSPropertyID::BackgroundClip:
+    case CSSPropertyID::BackgroundColor:
+    case CSSPropertyID::BackgroundImage:
+    case CSSPropertyID::BackgroundOrigin:
+    case CSSPropertyID::BackgroundPositionX:
+    case CSSPropertyID::BackgroundPositionY:
+    case CSSPropertyID::BackgroundRepeat:
+    case CSSPropertyID::BackgroundSize:
+    case CSSPropertyID::BorderBottomColor:
+    case CSSPropertyID::BorderBottomStyle:
+    case CSSPropertyID::BorderBottomWidth:
+    case CSSPropertyID::BorderLeftColor:
+    case CSSPropertyID::BorderLeftStyle:
+    case CSSPropertyID::BorderLeftWidth:
+    case CSSPropertyID::BorderRightColor:
+    case CSSPropertyID::BorderRightStyle:
+    case CSSPropertyID::BorderRightWidth:
+    case CSSPropertyID::BorderTopColor:
+    case CSSPropertyID::BorderTopStyle:
+    case CSSPropertyID::BorderTopWidth:
+    case CSSPropertyID::BorderBottomLeftRadius:
+    case CSSPropertyID::BorderBottomRightRadius:
+    case CSSPropertyID::BorderTopLeftRadius:
+    case CSSPropertyID::BorderTopRightRadius:
+    case CSSPropertyID::BorderBlockStyle:
+    case CSSPropertyID::BorderImageSource:
+    case CSSPropertyID::BorderImageWidth:
+    case CSSPropertyID::BorderImageOutset:
+    case CSSPropertyID::BorderImageRepeat:
+    case CSSPropertyID::BorderImageSlice:
+    case CSSPropertyID::BorderInlineStartColor:
+    case CSSPropertyID::BorderInlineStartStyle:
+    case CSSPropertyID::BorderInlineStartWidth:
+    case CSSPropertyID::BorderInlineEndColor:
+    case CSSPropertyID::BorderInlineEndStyle:
+    case CSSPropertyID::BorderInlineEndWidth:
+    case CSSPropertyID::BorderBlockStartColor:
+    case CSSPropertyID::BorderBlockStartStyle:
+    case CSSPropertyID::BorderBlockStartWidth:
+    case CSSPropertyID::BorderBlockEndColor:
+    case CSSPropertyID::BorderBlockEndStyle:
+    case CSSPropertyID::BorderBlockEndWidth:
+    case CSSPropertyID::BorderStartStartRadius:
+    case CSSPropertyID::BorderStartEndRadius:
+    case CSSPropertyID::BorderEndStartRadius:
+    case CSSPropertyID::BorderEndEndRadius:
+    case CSSPropertyID::WebkitBorderImage:
+    case CSSPropertyID::BoxShadow:
+    case CSSPropertyID::CornerStartStartShape:
+    case CSSPropertyID::CornerStartEndShape:
+    case CSSPropertyID::CornerEndStartShape:
+    case CSSPropertyID::CornerEndEndShape:
+    case CSSPropertyID::CornerBottomLeftShape:
+    case CSSPropertyID::CornerBottomRightShape:
+    case CSSPropertyID::CornerTopLeftShape:
+    case CSSPropertyID::CornerTopRightShape:
+    case CSSPropertyID::Color:
+    case CSSPropertyID::Custom:
+    case CSSPropertyID::Float:
+    case CSSPropertyID::FontFamily:
+    case CSSPropertyID::FontFeatureSettings:
+    case CSSPropertyID::FontKerning:
+    case CSSPropertyID::FontSize:
+    case CSSPropertyID::FontSizeAdjust:
+    case CSSPropertyID::FontPalette:
+    case CSSPropertyID::FontStyle:
+    case CSSPropertyID::FontSynthesisWeight:
+    case CSSPropertyID::FontSynthesisStyle:
+    case CSSPropertyID::FontSynthesisSmallCaps:
+    case CSSPropertyID::FontVariantAlternates:
+    case CSSPropertyID::FontVariantCaps:
+    case CSSPropertyID::FontVariantEastAsian:
+    case CSSPropertyID::FontVariantLigatures:
+    case CSSPropertyID::FontVariantNumeric:
+    case CSSPropertyID::FontVariantEmoji:
+    case CSSPropertyID::FontVariantPosition:
+    case CSSPropertyID::FontWeight:
+#if ENABLE(VARIATION_FONTS)
+    case CSSPropertyID::FontOpticalSizing:
+    case CSSPropertyID::FontVariationSettings:
+#endif
+    case CSSPropertyID::LetterSpacing:
+    case CSSPropertyID::LineHeight:
+    case CSSPropertyID::MarginBottom:
+    case CSSPropertyID::MarginLeft:
+    case CSSPropertyID::MarginRight:
+    case CSSPropertyID::MarginTop:
+    case CSSPropertyID::MarginBlockEnd:
+    case CSSPropertyID::MarginBlockStart:
+    case CSSPropertyID::MarginInlineEnd:
+    case CSSPropertyID::MarginInlineStart:
+    case CSSPropertyID::Opacity:
+    case CSSPropertyID::PaddingTop:
+    case CSSPropertyID::PaddingRight:
+    case CSSPropertyID::PaddingBottom:
+    case CSSPropertyID::PaddingLeft:
+    case CSSPropertyID::TextDecorationStyle:
+    case CSSPropertyID::TextDecorationColor:
+    case CSSPropertyID::TextDecorationLine:
+    case CSSPropertyID::TextDecorationSkipInk:
+    case CSSPropertyID::TextDecorationThickness:
+    case CSSPropertyID::TextJustify:
+    case CSSPropertyID::TextShadow:
+    case CSSPropertyID::TextTransform:
+    case CSSPropertyID::TextUnderlinePosition:
+    case CSSPropertyID::TextUnderlineOffset:
+    case CSSPropertyID::VerticalAlign:
+    case CSSPropertyID::Visibility:
+    case CSSPropertyID::WebkitBorderHorizontalSpacing:
+    case CSSPropertyID::WebkitBorderVerticalSpacing:
+    case CSSPropertyID::WebkitFontSmoothing:
+    case CSSPropertyID::WebkitInitialLetter:
+    case CSSPropertyID::WebkitLineBoxContain:
+    case CSSPropertyID::WordSpacing:
+    case CSSPropertyID::AnimationComposition:
+    case CSSPropertyID::AnimationDelay:
+    case CSSPropertyID::AnimationDirection:
+    case CSSPropertyID::AnimationDuration:
+    case CSSPropertyID::AnimationFillMode:
+    case CSSPropertyID::AnimationIterationCount:
+    case CSSPropertyID::AnimationName:
+    case CSSPropertyID::AnimationPlayState:
+    case CSSPropertyID::AnimationRangeEnd:
+    case CSSPropertyID::AnimationRangeStart:
+    case CSSPropertyID::AnimationTimeline:
+    case CSSPropertyID::AnimationTimingFunction:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
+// https://drafts.csswg.org/css-pseudo/#first-line-styling
+bool isValidFirstLineStyleProperty(CSSPropertyID id)
+{
+    switch (id) {
+    case CSSPropertyID::BackgroundAttachment:
+    case CSSPropertyID::BackgroundBlendMode:
+    case CSSPropertyID::BackgroundClip:
+    case CSSPropertyID::BackgroundColor:
+    case CSSPropertyID::BackgroundImage:
+    case CSSPropertyID::BackgroundOrigin:
+    case CSSPropertyID::BackgroundPosition:
+    case CSSPropertyID::BackgroundPositionX:
+    case CSSPropertyID::BackgroundPositionY:
+    case CSSPropertyID::BackgroundRepeat:
+    case CSSPropertyID::BackgroundSize:
+    case CSSPropertyID::BoxShadow:
+    case CSSPropertyID::Color:
+    case CSSPropertyID::Custom:
+    case CSSPropertyID::FontFamily:
+    case CSSPropertyID::FontFeatureSettings:
+    case CSSPropertyID::FontKerning:
+    case CSSPropertyID::FontSize:
+    case CSSPropertyID::FontSizeAdjust:
+    case CSSPropertyID::FontPalette:
+    case CSSPropertyID::FontStyle:
+    case CSSPropertyID::FontSynthesis:
+    case CSSPropertyID::FontSynthesisWeight:
+    case CSSPropertyID::FontSynthesisStyle:
+    case CSSPropertyID::FontSynthesisSmallCaps:
+    case CSSPropertyID::FontVariantAlternates:
+    case CSSPropertyID::FontVariantCaps:
+    case CSSPropertyID::FontVariantEastAsian:
+    case CSSPropertyID::FontVariantLigatures:
+    case CSSPropertyID::FontVariantNumeric:
+    case CSSPropertyID::FontVariantEmoji:
+    case CSSPropertyID::FontVariantPosition:
+    case CSSPropertyID::FontWeight:
+#if ENABLE(VARIATION_FONTS)
+    case CSSPropertyID::FontOpticalSizing:
+    case CSSPropertyID::FontVariationSettings:
+#endif
+    case CSSPropertyID::LetterSpacing:
+    case CSSPropertyID::LineHeight:
+    case CSSPropertyID::Opacity:
+    case CSSPropertyID::RubyPosition:
+    case CSSPropertyID::TextDecorationStyle:
+    case CSSPropertyID::TextDecorationColor:
+    case CSSPropertyID::TextDecorationLine:
+    case CSSPropertyID::TextDecorationSkipInk:
+    case CSSPropertyID::TextDecorationThickness:
+    case CSSPropertyID::TextJustify:
+    case CSSPropertyID::TextShadow:
+    case CSSPropertyID::TextTransform:
+    case CSSPropertyID::TextUnderlinePosition:
+    case CSSPropertyID::TextUnderlineOffset:
+    case CSSPropertyID::VerticalAlign:
+    case CSSPropertyID::Visibility:
+    case CSSPropertyID::WebkitFontSmoothing:
+    case CSSPropertyID::WordSpacing:
+    case CSSPropertyID::AnimationComposition:
+    case CSSPropertyID::AnimationDelay:
+    case CSSPropertyID::AnimationDirection:
+    case CSSPropertyID::AnimationDuration:
+    case CSSPropertyID::AnimationFillMode:
+    case CSSPropertyID::AnimationIterationCount:
+    case CSSPropertyID::AnimationName:
+    case CSSPropertyID::AnimationPlayState:
+    case CSSPropertyID::AnimationRangeEnd:
+    case CSSPropertyID::AnimationRangeStart:
+    case CSSPropertyID::AnimationTimeline:
+    case CSSPropertyID::AnimationTimingFunction:
         return true;
     default:
         break;

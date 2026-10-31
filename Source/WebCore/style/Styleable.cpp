@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -116,6 +116,16 @@ const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement
     case PseudoElementType::Before:
         if (auto* element = renderer.element())
             return fromElement(*element);
+        break;
+    case PseudoElementType::FirstLetter:
+        // ::first-letter is a typographic (non-tree-abiding) pseudo-element realized as an anonymous
+        // renderer with no element of its own. Walk up to the originating block (the one carrying the
+        // pseudo style) to recover the Styleable that owns any animations targeting the pseudo-element.
+        // ::first-line has no associated renderer, so it cannot get here.
+        for (CheckedPtr ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
+            if (RefPtr element = ancestor->element(); element && ancestor->style().hasPseudoStyle(PseudoElementType::FirstLetter))
+                return Styleable(*element, Style::PseudoElementIdentifier { PseudoElementType::FirstLetter });
+        }
         break;
     default:
         return std::nullopt;
