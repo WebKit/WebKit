@@ -77,6 +77,7 @@
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/HTTPStatusCodes.h>
+#include <WebCore/IPAddressSpace.h>
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LinkHeader.h>
 #include <WebCore/LinkRelAttribute.h>
@@ -1622,7 +1623,7 @@ void NetworkResourceLoader::sendDidReceiveResponseWithPotentialProcessSwap(const
             && m_parameters.shouldConsiderEnhancedSecurityForInsecureResponse
             && m_parameters.navigationID
             && response.url().protocolIs("http"_s)
-            && !WebCore::SecurityOrigin::isLocalHostOrLoopbackIPAddress(response.url().host());
+            && !WebCore::isLoopbackOrLinkLocalAddress(response.url());
         if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::StayInGroup && !shouldConsiderProcessSwapForEnhancedSecurity && isFirstResponse)
             shouldConsiderProcessSwapForDocumentIsolationPolicy = this->shouldConsiderProcessSwapForDocumentIsolationPolicy(response);
     }

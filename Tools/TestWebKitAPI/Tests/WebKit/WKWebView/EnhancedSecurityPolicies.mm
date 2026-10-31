@@ -484,6 +484,30 @@ static void runHttpLocalhostLoad(bool useSiteIsolation)
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpLocalhostLoad)
 
+static void runHttpLocalAddressSpaceLoad(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://foo.local/"_s, { "<script>alert('mdns-page')</script>"_s } },
+        { "http://169.254.1.1/"_s, { "<script>alert('link-local-ip-page')</script>"_s } },
+        { "http://192.168.1.1/"_s, { "<script>alert('private-ip-page')</script>"_s } },
+    });
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, useSiteIsolation);
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://foo.local/", {
+        { "mdns-page"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://169.254.1.1/", {
+        { "link-local-ip-page"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://192.168.1.1/", {
+        { "private-ip-page"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpLocalAddressSpaceLoad)
+
 // MARK: - Process Cycling Tests
 
 static void runHttpToHttpsRedirectNoEnhancedSecurityProcess(bool useSiteIsolation)
