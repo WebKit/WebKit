@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +82,8 @@ extern "C" void exit_implanted_slice(void);
 extern "C" void get_sentinel_frame_return_pc_return_location(void);
 extern "C" void get_sentinel_frame_return_pc_trampoline(void);
 extern "C" void wasm_restore_frame_return(void);
+extern "C" void crossInstanceRestoreFrameOriginalReturnPCRetagTrampoline(void);
+extern "C" void crossInstanceRestoreFrameTaggedRestoreFramePtrTrampoline(void);
 JSC_ANNOTATE_JIT_OPERATION_RETURN(relocate_jit_return_pc_return_location);
 JSC_ANNOTATE_JIT_OPERATION_RETURN(exit_implanted_slice);
 JSC_ANNOTATE_JIT_OPERATION_RETURN(get_sentinel_frame_return_pc_return_location);
@@ -415,6 +418,27 @@ void initialize()
 #endif
             codeRef.construct(MacroAssemblerCodeRef<NativeToJITGatePtrTag>::createSelfManagedCodeRef(CodePtr<NativeToJITGatePtrTag>::fromTaggedPtr(retagCodePtr<void*, CFunctionPtrTag, NativeToJITGatePtrTag>(&wasm_restore_frame_return))));
         g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::wasmRestoreFrame)] = codeRef.get().code().taggedPtr();
+    }
+    {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;
+#if ENABLE(JIT)
+        if (Options::useJIT())
+            codeRef.construct(retagGateThunk(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(&crossInstanceRestoreFrameOriginalReturnPCRetagGateAfter)));
+        else
+#endif
+            codeRef.construct(MacroAssemblerCodeRef<NativeToJITGatePtrTag>::createSelfManagedCodeRef(CodePtr<NativeToJITGatePtrTag>::fromTaggedPtr(retagCodePtr<void*, CFunctionPtrTag, NativeToJITGatePtrTag>(&crossInstanceRestoreFrameOriginalReturnPCRetagTrampoline))));
+        g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::crossInstanceRestoreFrameOriginalReturnPCRetag)] = codeRef.get().code().taggedPtr();
+    }
+    {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;
+#if ENABLE(JIT)
+        if (Options::useJIT()) {
+            const void* restoreFrameReturnPC = removeCodePtrTag(g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::wasmRestoreFrame)]);
+            codeRef.construct(tagConstantGateThunk(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(&crossInstanceRestoreFrameTaggedRestoreFramePtrGateAfter), restoreFrameReturnPC));
+        } else
+#endif
+            codeRef.construct(MacroAssemblerCodeRef<NativeToJITGatePtrTag>::createSelfManagedCodeRef(CodePtr<NativeToJITGatePtrTag>::fromTaggedPtr(retagCodePtr<void*, CFunctionPtrTag, NativeToJITGatePtrTag>(&crossInstanceRestoreFrameTaggedRestoreFramePtrTrampoline))));
+        g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::crossInstanceRestoreFrameReturnAddressToRestoreFrameGate)] = codeRef.get().code().taggedPtr();
     }
 #endif
 
