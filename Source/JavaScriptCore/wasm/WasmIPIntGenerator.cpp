@@ -2564,6 +2564,10 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
 
 // Control Flow Branches
 
+// BranchTargetMetadata::toKeep is 16 bits wide.
+static_assert(maxFunctionParams <= std::numeric_limits<uint16_t>::max());
+static_assert(maxFunctionReturns <= std::numeric_limits<uint16_t>::max());
+
 [[nodiscard]] PartialResult IPIntGenerator::addReturn(const ControlType&, std::span<const TypedExpression>)
 {
     return { };
@@ -2582,7 +2586,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     IPInt::BranchMetadata branch {
         .target = {
             .block = { .deltaPC = 0xbeef, .deltaMC = 0xbeef },
-            .toPop = safeCast<uint16_t>(m_stackSize - block.stackSize() - block.branchTargetArity()),
+            .toPop = safeCast<uint32_t>(m_stackSize - block.stackSize() - block.branchTargetArity()),
             .toKeep = safeCast<uint16_t>(block.branchTargetArity()),
         },
         .instructionLength = { .length = safeCast<uint8_t>(getCurrentInstructionLength()) }
@@ -2609,7 +2613,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     IPInt::BranchMetadata branch {
         .target = {
             .block = { .deltaPC = 0xbeef, .deltaMC = 0xbeef },
-            .toPop = safeCast<uint16_t>(toPop),
+            .toPop = safeCast<uint32_t>(toPop),
             .toKeep = safeCast<uint16_t>(block.branchTargetArity()),
         },
         .instructionLength = { .length = safeCast<uint8_t>(getCurrentInstructionLength()) }
@@ -2635,7 +2639,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     m_metadata->appendMetadata<IPInt::BranchMetadata>({
         .target = {
             .block = { .deltaPC = 0xbeef, .deltaMC = 0xbeef },
-            .toPop = safeCast<uint16_t>(m_stackSize - block.stackSize() - block.branchTargetArity()),
+            .toPop = safeCast<uint32_t>(m_stackSize - block.stackSize() - block.branchTargetArity()),
             .toKeep = safeCast<uint16_t>(block.branchTargetArity()),
         },
         .instructionLength = { .length = safeCast<uint8_t>(getCurrentInstructionLength()) }
@@ -2657,7 +2661,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     for (auto* block : jumps) {
         IPInt::BranchTargetMetadata target {
             .block = { .deltaPC = 0xbeef, .deltaMC = 0xbeef },
-            .toPop = safeCast<uint16_t>(m_stackSize - block->stackSize() - block->branchTargetArity()),
+            .toPop = safeCast<uint32_t>(m_stackSize - block->stackSize() - block->branchTargetArity()),
             .toKeep = safeCast<uint16_t>(block->branchTargetArity())
         };
         IPIntLocation here = { curPC(), curMC() };
@@ -2666,7 +2670,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     }
     IPInt::BranchTargetMetadata defaultTarget {
         .block = { .deltaPC = 0xbeef, .deltaMC = 0xbeef },
-        .toPop = safeCast<uint16_t>(m_stackSize - defaultJump.stackSize() - defaultJump.branchTargetArity()),
+        .toPop = safeCast<uint32_t>(m_stackSize - defaultJump.stackSize() - defaultJump.branchTargetArity()),
         .toKeep = safeCast<uint16_t>(defaultJump.branchTargetArity())
     };
     IPIntLocation here = { curPC(), curMC() };
