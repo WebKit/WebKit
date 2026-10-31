@@ -2165,6 +2165,7 @@ void InspectorDebuggerAgent::clearInspectorBreakpointState()
 
     m_symbolicBreakpoints.clear();
 
+    cancelPauseAtNextOpportunity();
     clearDebuggerBreakpointState();
 }
 
@@ -2182,14 +2183,20 @@ void InspectorDebuggerAgent::clearDebuggerBreakpointState()
     m_debuggerBreakpointsForProtocolBreakpointID.clear();
     m_nextDebuggerBreakpointID = JSC::noBreakpointID + 1;
     m_continueToLocationDebuggerBreakpoint = nullptr;
-    clearPauseDetails();
-    m_javaScriptPauseScheduled = false;
     m_hasExceptionValue = false;
 
+    // JSC keeps the pause when the global object is replaced, but can drop it without telling the agent, such as at the end of a program.
+    m_javaScriptPauseScheduled = m_javaScriptPauseScheduled && m_debugger.isPauseAtNextOpportunityScheduled();
+
     if (isPaused()) {
+        // Continuing also cancels a scheduled pause.
+        m_javaScriptPauseScheduled = false;
         m_debugger.continueProgram();
         m_frontendDispatcher->resumed();
     }
+
+    if (!m_javaScriptPauseScheduled)
+        clearPauseDetails();
 }
 
 void InspectorDebuggerAgent::didClearGlobalObject()

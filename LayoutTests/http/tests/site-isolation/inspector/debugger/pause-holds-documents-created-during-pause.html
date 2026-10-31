@@ -83,8 +83,7 @@ function test() {
             InspectorTest.expectNotNull(frameCTarget, "Should find the frame target for the inserted frame C.");
             InspectorTest.expectThat(await waitForExpressionInTarget(frameCTarget, "'ticks' in window"), "Frame C's script should have run.");
 
-            // DebuggerManager asks a target that appears during a pause to pause too. Replacing frame C's global object makes the agent forget that request while JSC keeps it, so request and cancel it again, or frame C pauses once frame A resumes.
-            await frameCTarget.DebuggerAgent.pause();
+            // DebuggerManager asks a target that appears during a pause to pause too; cancel that, or frame C pauses once frame A resumes.
             await frameCTarget.DebuggerAgent.resume();
 
             await expectHeldUntilResumed(frameCTarget, "Frame C");
@@ -121,7 +120,6 @@ function test() {
             InspectorTest.expectThat(await waitForExpressionInTarget(newFrameDTarget, "'ticks' in window"), "Frame D's new script should have run.");
 
             // Cancel the pause request that DebuggerManager sent to the new target, for the same reason as for frame C.
-            await newFrameDTarget.DebuggerAgent.pause();
             await newFrameDTarget.DebuggerAgent.resume();
 
             await expectHeldUntilResumed(newFrameDTarget, "Frame D's new document");

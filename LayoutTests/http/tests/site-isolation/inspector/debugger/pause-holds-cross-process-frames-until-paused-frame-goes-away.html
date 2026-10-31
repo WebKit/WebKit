@@ -66,8 +66,7 @@ function test() {
             InspectorTest.expectNotNull(newTarget, "Should find the frame target of the frame's new document.");
             InspectorTest.expectEqual(processIdentifier(newTarget), processIdentifier(InspectorTest.mainFrameTarget), "The frame's new document should be in the main frame's process.");
 
-            // DebuggerManager asks a target that appears during a pause to pause too. Requesting and cancelling it again resumes the new document if it already paused in the main frame's process, and otherwise cancels the request, which the agent forgot when the global object was replaced but JSC keeps.
-            await newTarget.DebuggerAgent.pause();
+            // DebuggerManager asks a target that appears during a pause to pause too. Resuming resumes the new document if it already paused in the main frame's process, and otherwise cancels the request.
             await newTarget.DebuggerAgent.resume();
 
             InspectorTest.expectThat(await waitForExpressionInTarget(InspectorTest.mainFrameTarget, `window.mainTicks > ${before}`), "The main frame's interval should advance after the paused frame leaves its process.");

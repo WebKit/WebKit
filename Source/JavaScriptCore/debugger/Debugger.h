@@ -145,6 +145,7 @@ public:
     void clearBlackbox();
 
     bool isPaused() const { return m_isPaused; }
+    bool isPauseAtNextOpportunityScheduled() const { return m_pauseAtNextOpportunity; }
     bool isStepping() const { return m_steppingMode == SteppingModeEnabled; }
 
     bool suppressAllPauses() const { return m_suppressAllPauses; }

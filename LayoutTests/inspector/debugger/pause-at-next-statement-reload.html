@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+window.firstStatementOfThePage = true;
+</script>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.PauseAtNextStatementAcrossReload");
+
+    suite.addTestCase({
+        name: "Debugger.PauseAtNextStatementAcrossReload.Reload",
+        description: "A pause requested for the next statement before a reload should stop at the first statement of the new document, as a pause requested by the user.",
+        async test() {
+            let target = InspectorTest.mainFrameTarget;
+            let events = [];
+            WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptsCleared, () => { events.push("ScriptsCleared"); });
+            let pausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused).then(() => { events.push("Paused"); });
+            let loadedPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+            // Nothing may run in the page between requesting the pause and reloading it, or that code takes the pause.
+            await target.DebuggerAgent.pause();
+            InspectorTest.reloadPage();
+            await pausedPromise;
+
+            let callFrame = WI.debuggerManager.activeCallFrame;
+            InspectorTest.expectThat(events.length >= 2 && events.at(-1) === "Paused" && events.slice(0, -1).every((event) => event === "ScriptsCleared"), "The debugger should pause after the global object was cleared.");
+            InspectorTest.expectEqual(WI.debuggerManager.dataForTarget(callFrame.target).pauseReason, WI.DebuggerManager.PauseReason.PauseOnNextStatement, "The pause should be reported as a pause on the next statement.");
+
+            let {result} = await callFrame.target.DebuggerAgent.evaluateOnCallFrame.invoke({
+                callFrameId: callFrame.id,
+                expression: "typeof window.firstStatementOfThePage",
+                objectGroup: "test",
+                doNotPauseOnExceptionsAndMuteConsole: true,
+                returnByValue: true,
+            });
+            InspectorTest.expectEqual(result.value, "undefined", "The debugger should stop before the scripts of the new document run.");
+
+            await WI.debuggerManager.resume();
+            await loadedPromise;
+            InspectorTest.pass("The page should finish loading after resuming.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a pause requested for the next statement before a reload stops at the first statement of the new document and is reported as the pause that was requested.</p>
+</body>
+</html>
