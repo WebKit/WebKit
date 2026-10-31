@@ -921,12 +921,14 @@ bool Debugger::cancelPauseForSpecialBreakpoint(Breakpoint& breakpoint)
     return true;
 }
 
+bool Debugger::canBreakProgram() const
+{
+    return !m_isPaused && !isPauseBlockedByAnotherDebugger() && m_vm.topCallFrame;
+}
+
 void Debugger::breakProgram(RefPtr<Breakpoint>&& specialBreakpoint)
 {
-    if (m_isPaused || isPauseBlockedByAnotherDebugger())
-        return;
-
-    if (!m_vm.topCallFrame)
+    if (!canBreakProgram())
         return;
 
     if (specialBreakpoint) {

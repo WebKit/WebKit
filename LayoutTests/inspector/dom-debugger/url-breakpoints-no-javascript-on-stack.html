@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/url-breakpoint-utilities.js"></script>
+<script>
+function loadFont(token, eventName)
+{
+    // A pending style update would start the font request with script disallowed, which skips URL breakpoints.
+    document.body.offsetTop;
+
+    let dispatch = () => { TestPage.dispatchEventToFrontend(eventName); };
+    new FontFace("URLBreakpointFont", `url(../../resources/Ahem.woff?${token}-${Math.random()})`).load().then(dispatch, dispatch);
+}
+
+function triggerDebuggerStatement()
+{
+    debugger;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("URLBreakpoint.NoJavaScriptOnStack");
+
+    suite.addTestCase({
+        name: "URLBreakpoint.NoJavaScriptOnStack.NextPauseReason",
+        description: "Check that a URL breakpoint matching a load that starts with no JavaScript on the stack does not change the reason of the next pause.",
+        async test() {
+            const token = "fontLoadWithoutJavaScript";
+            await InspectorTest.URLBreakpoint.createBreakpoint(WI.URLBreakpoint.Type.Text, token);
+
+            let paused = false;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+                WI.debuggerManager.resume();
+            });
+
+            InspectorTest.log("Loading font...");
+            const fontLoadedEventName = "TestPage-FontLoaded";
+            await Promise.all([
+                InspectorTest.awaitEvent(fontLoadedEventName),
+                InspectorTest.evaluateInPage(`loadFont("${token}", "${fontLoadedEventName}")`),
+            ]);
+
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+            InspectorTest.expectFalse(paused, "Should not pause for a load that starts with no JavaScript on the stack.");
+
+            InspectorTest.log("Triggering debugger statement...");
+            InspectorTest.evaluateInPage("setTimeout(triggerDebuggerStatement)");
+            await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+            let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+            InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.DebuggerStatement, "Pause reason should be debugger statement.");
+            InspectorTest.expectFalse(targetData.pauseData, "Pause should not have data.");
+
+            await WI.debuggerManager.resume();
+        },
+        teardown: InspectorTest.URLBreakpoint.teardown,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a URL breakpoint matching a load with no JavaScript on the stack does not change the reason of the next pause.</p>
+</body>
+</html>

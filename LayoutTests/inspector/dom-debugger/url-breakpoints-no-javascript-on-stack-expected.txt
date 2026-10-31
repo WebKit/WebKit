@@ -1,0 +1,13 @@
+Tests that a URL breakpoint matching a load with no JavaScript on the stack does not change the reason of the next pause.
+
+
+== Running test suite: URLBreakpoint.NoJavaScriptOnStack
+-- Running test case: URLBreakpoint.NoJavaScriptOnStack.NextPauseReason
+Adding "text:fontLoadWithoutJavaScript" URL Breakpoint...
+Loading font...
+PASS: Should not pause for a load that starts with no JavaScript on the stack.
+Triggering debugger statement...
+PASS: Pause reason should be debugger statement.
+PASS: Pause should not have data.
+-- Running test teardown.
+
