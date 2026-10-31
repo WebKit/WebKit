@@ -80,13 +80,30 @@ enum class SignedMediumEnum : int16_t {
     Pos = 100
 };
 
+enum class BoolEnum : bool {
+    No,
+    Yes
+};
+
 namespace WTF {
-template<> bool isValidEnum<TestEnum>(std::underlying_type_t<TestEnum> value)
+template<> bool isValidEnum<TestEnum>(WTF::UnderlyingTypeWithBoolPromotedToUint8t<TestEnum> value)
 {
+    static_assert(std::is_same_v<WTF::UnderlyingTypeWithBoolPromotedToUint8t<TestEnum>, std::underlying_type_t<TestEnum>>);
     switch (value) {
     case std::to_underlying(TestEnum::A):
     case std::to_underlying(TestEnum::B):
     case std::to_underlying(TestEnum::C):
+        return true;
+    default:
+        return false;
+    }
+}
+template<> bool isValidEnum<BoolEnum>(WTF::UnderlyingTypeWithBoolPromotedToUint8t<BoolEnum> value)
+{
+    static_assert(std::is_same_v<WTF::UnderlyingTypeWithBoolPromotedToUint8t<BoolEnum>, uint8_t>);
+    switch (value) {
+    case 0:
+    case 1:
         return true;
     default:
         return false;
@@ -119,6 +136,10 @@ template<> struct EnumTraits<SignedMediumEnum> {
     static constexpr Underlying min = static_cast<Underlying>(SignedMediumEnum::Neg);
 };
 
+template<> struct EnumTraitsForPersistence<TestEnum> {
+    using values = EnumValues<TestEnum, TestEnum::A, TestEnum::B, TestEnum::C>;
+};
+
 }
 
 namespace TestWebKitAPI {
@@ -126,8 +147,33 @@ namespace TestWebKitAPI {
 TEST(WTF_EnumTraits, IsValidEnum)
 {
     EXPECT_TRUE(isValidEnum<TestEnum>(0));
+    EXPECT_TRUE(isValidEnum<TestEnum>(1));
+    EXPECT_TRUE(isValidEnum<TestEnum>(2));
     EXPECT_FALSE(isValidEnum<TestEnum>(-1));
     EXPECT_FALSE(isValidEnum<TestEnum>(3));
+
+    EXPECT_TRUE(WTF::isValidEnum<BoolEnum>(0));
+    EXPECT_TRUE(WTF::isValidEnum<BoolEnum>(1));
+    for (uint8_t u = 2; !u; ++u)
+        EXPECT_FALSE(WTF::isValidEnum<BoolEnum>(u)) << u;
+}
+
+TEST(WTF_EnumTraits, isValidEnumForPersistence)
+{
+    EXPECT_TRUE(WTF::isValidEnumForPersistence<TestEnum>(0));
+    EXPECT_TRUE(WTF::isValidEnumForPersistence<TestEnum>(1));
+    EXPECT_TRUE(WTF::isValidEnumForPersistence<TestEnum>(2));
+    EXPECT_FALSE(WTF::isValidEnumForPersistence<TestEnum>(-1));
+    EXPECT_FALSE(WTF::isValidEnumForPersistence<TestEnum>(3));
+    EXPECT_FALSE(WTF::isValidEnumForPersistence<TestEnum>(uint64_t(-1)));
+
+    EXPECT_TRUE(WTF::isValidEnumForPersistence<BoolEnum>(0));
+    EXPECT_TRUE(WTF::isValidEnumForPersistence<BoolEnum>(1));
+    EXPECT_FALSE(WTF::isValidEnumForPersistence<BoolEnum>(-1));
+    EXPECT_FALSE(WTF::isValidEnumForPersistence<BoolEnum>(2));
+    EXPECT_FALSE(WTF::isValidEnumForPersistence<BoolEnum>(256 + 0));
+    EXPECT_FALSE(WTF::isValidEnumForPersistence<BoolEnum>(256 + 1));
+    EXPECT_FALSE(WTF::isValidEnumForPersistence<BoolEnum>(uint64_t(-1)));
 }
 
 TEST(WTF_EnumTraits, ValuesTraits)
@@ -144,6 +190,12 @@ TEST(WTF_EnumTraits, ValuesTraits)
         EXPECT_EQ(value, expectedValues.takeFirst());
     });
     EXPECT_EQ(expectedValues.size(), 0UL);
+
+    EXPECT_TRUE(WTF::EnumTraits<TestEnum>::values::contains(TestEnum::A));
+    EXPECT_TRUE(WTF::EnumTraits<TestEnum>::values::contains(TestEnum::B));
+    EXPECT_TRUE(WTF::EnumTraits<TestEnum>::values::contains(TestEnum::C));
+    EXPECT_FALSE(WTF::EnumTraits<TestEnum>::values::contains(std::underlying_type_t<TestEnum>(-1)));
+    EXPECT_FALSE(WTF::EnumTraits<TestEnum>::values::contains(std::underlying_type_t<TestEnum>(3)));
 }
 
 TEST(WTF_EnumTraits, ZeroBasedContiguousEnum)
