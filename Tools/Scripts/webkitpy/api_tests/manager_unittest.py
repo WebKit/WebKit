@@ -23,12 +23,16 @@
 """Unit tests for manager.py."""
 
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
+
+from webkitcorepy import OutputCapture
 
 from webkitpy.api_tests.manager import Manager
 from webkitpy.api_tests.test_expectations import PASS, FAIL, CRASH, TIMEOUT
+from webkitpy.common.host_mock import MockHost
 from webkitpy.common.program_status import ProgramStatus
 from webkitpy.common.program_status_mock import TTYStringIO, encoded
+from webkitpy.tool.mocktool import MockOptions
 from webkitexpectationspy.expectations import Expectation
 
 
@@ -203,3 +207,12 @@ TestWebKitAPI.WKWebViewSwiftOverlayTests/evaluateJavaScriptYieldsExpectedRespons
             'state=working:app=run-api-tests',
             'state=error:app=run-api-tests:msg=' + encoded('Build check failed'),
         ])
+
+    def test_run_warns_once_about_ignored_sanitizer_options(self):
+        port = MockHost().port_factory.get('test', options=MockOptions(additional_env_var=[], api_binary=['TestWTF']))
+        port.check_api_test_build = lambda binaries: False
+        manager = Manager(port, MockOptions(test_list=None), MagicMock())
+        with patch.dict('os.environ', {'ASAN_OPTIONS': 'log_path=/tmp/shell'}), OutputCapture() as captured:
+            self.assertEqual(manager.run([]), Manager.FAILED_BUILD_CHECK)
+        warnings = [line for line in captured.root.log.getvalue().splitlines() if line.startswith('ASAN_OPTIONS is set')]
+        self.assertEqual(['ASAN_OPTIONS is set in the environment but is ignored; pass it with --additional-env-var=ASAN_OPTIONS=... instead.'], warnings)

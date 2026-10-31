@@ -106,6 +106,11 @@ class Port(object):
     DRIVER_NAMES = ('WebKitTestRunner',)
     DEFAULT_SUPPORTED_DRIVERS = DRIVER_NAMES
 
+    SANITIZER_OPTIONS_VARIABLES = ('ASAN_OPTIONS', 'LSAN_OPTIONS', 'TSAN_OPTIONS', 'UBSAN_OPTIONS')
+    # Sanitizers split their options on any of these characters outside a quoted value.
+    SANITIZER_OPTION_SEPARATORS = ' ,:\t\n\r'
+    SANITIZER_OPTION_PATTERN = re.compile(r'''[^{0}=]*=(?:"[^"]*"|'[^']*'|[^{0}]*)|[^{0}]+'''.format(SANITIZER_OPTION_SEPARATORS))
+
     # Do test runners support alias hostnames such as web-platform.test
     supports_localhost_aliases = False
 
@@ -355,7 +360,9 @@ class Port(object):
         return True
 
     def environment_for_api_tests(self):
-        return self.setup_environ_for_server()
+        environment = self.setup_environ_for_server()
+        self._append_sanitizer_options(environment)
+        return environment
 
     def _check_driver(self):
         driver_path = self._path_to_driver()
@@ -841,6 +848,36 @@ class Port(object):
             env[name] = env[name] + os.pathsep + value
         else:
             env[name] = value
+
+    @staticmethod
+    def _merge_sanitizer_options(options, additions):
+        # Join with ':', never os.pathsep (';' on Windows).
+        # Keep every setting in options, including repeated keys, and add only the additions whose key options lacks.
+        options = Port.SANITIZER_OPTION_PATTERN.findall(options)
+        keys = set(each.split('=', 1)[0] for each in options)
+        return ':'.join(options + [each for each in Port.SANITIZER_OPTION_PATTERN.findall(additions) if each.split('=', 1)[0] not in keys])
+
+    def _append_sanitizer_options(self, environment):
+        defaults = {'ASAN_OPTIONS': 'allocator_may_return_null=1'}
+        if self._config.tsan:
+            suppressions = self.path_from_webkit_base('Tools', 'Scripts', 'tsan_suppressions.txt')
+            if re.search('[{}]'.format(self.SANITIZER_OPTION_SEPARATORS), suppressions):
+                suppressions = '"{}"'.format(suppressions)
+            defaults['TSAN_OPTIONS'] = 'second_deadlock_stack=1:suppressions=' + suppressions
+        for variable in self.SANITIZER_OPTIONS_VARIABLES:
+            options = self._merge_sanitizer_options(environment.get(variable, ''), defaults.get(variable, ''))
+            # XPC services see only the __XPC_-prefixed twin, so copy each setting there unless the twin already has its key.
+            xpc_options = self._merge_sanitizer_options(environment.get('__XPC_' + variable, ''), options)
+            for name, value in [(variable, options), ('__XPC_' + variable, xpc_options)]:
+                if value:
+                    environment[name] = value
+
+    def warn_about_ignored_sanitizer_options(self):
+        passed_variables = set(each.split('=', 1)[0] for each in self.get_option('additional_env_var', []))
+        for variable in self.SANITIZER_OPTIONS_VARIABLES:
+            for name in [variable, '__XPC_' + variable]:
+                if os.environ.get(name) and name not in passed_variables:
+                    _log.warning('%s is set in the environment but is ignored; pass it with --additional-env-var=%s=... instead.', name, name)
 
     def show_results_html_file(self, results_filename):
         """This routine should display the HTML file pointed at by

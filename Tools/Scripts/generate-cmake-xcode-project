@@ -409,7 +409,7 @@ def generate_pbxproj(build_dir: Path, source_dir: Path, ninja_path: str) -> str:
 
 def asan_options(build_dir: Path) -> str:
     """ASAN_OPTIONS for any process built with -fsanitize=address.
-    allocator_may_return_null=1 matches Tools/Scripts/webkitpy/port/driver.py.
+    allocator_may_return_null=1 matches Tools/Scripts/webkitpy/port/base.py.
     The sandbox profiles allow ASan's sigaltstack/socketpair calls when
     preprocessed with -fsanitize=address (see PlatformMac.cmake), so no
     use_sigaltstack workaround is needed."""

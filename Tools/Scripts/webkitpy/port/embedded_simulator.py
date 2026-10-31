@@ -50,13 +50,10 @@ class EmbeddedSimulatorPort(EmbeddedPort):
 
     def environment_for_api_tests(self):
         inherited_env = super().environment_for_api_tests()
-        new_environment = {}
         SIMCTL_ENV_PREFIX = 'SIMCTL_CHILD_'
-        for value in inherited_env:
-            if not value.startswith(SIMCTL_ENV_PREFIX):
-                new_environment[SIMCTL_ENV_PREFIX + value] = inherited_env[value]
-            else:
-                new_environment[value] = inherited_env[value]
+        new_environment = {SIMCTL_ENV_PREFIX + name: value for name, value in inherited_env.items() if not name.startswith(SIMCTL_ENV_PREFIX)}
+        # A variable passed with the prefix wins over the same variable without it.
+        new_environment.update({name: value for name, value in inherited_env.items() if name.startswith(SIMCTL_ENV_PREFIX)})
         return new_environment
 
     def setup_environ_for_server(self, server_name=None):

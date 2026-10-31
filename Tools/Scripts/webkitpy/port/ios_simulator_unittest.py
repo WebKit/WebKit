@@ -27,6 +27,7 @@ from webkitcorepy import Version
 import unittest
 
 from webkitpy.common.system.systemhost_mock import MockSystemHost
+from webkitpy.port.driver import Driver
 from webkitpy.port.ios_simulator import IOSSimulatorPort
 from webkitpy.port import ios_testcase
 from webkitpy.port import port_testcase
@@ -55,6 +56,34 @@ class IOSSimulatorTest(ios_testcase.IOSTest):
         self.assertEqual(env['MallocStackLogging'], '1')
         self.assertEqual(env['MallocScribble'], '1')
         self.assertEqual(env['DYLD_INSERT_LIBRARIES'], '/usr/lib/libgmalloc.dylib')
+
+    SANITIZER_ADDITIONAL_ENV_VARS = [
+        'ASAN_OPTIONS=log_path=/tmp/asan',
+        'TSAN_OPTIONS=halt_on_error=1',
+        '__XPC_TSAN_OPTIONS=log_path=/tmp/xpc',
+    ]
+
+    def test_setup_environ_for_test_sanitizer_options(self):
+        port = self.make_port(options=MockOptions(additional_env_var=self.SANITIZER_ADDITIONAL_ENV_VARS))
+        env = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+        self.assertEqual(env['ASAN_OPTIONS'], 'log_path=/tmp/asan:allocator_may_return_null=1')
+        self.assertEqual(env['__XPC_ASAN_OPTIONS'], 'log_path=/tmp/asan:allocator_may_return_null=1')
+        self.assertEqual(env['TSAN_OPTIONS'], 'halt_on_error=1')
+        self.assertEqual(env['__XPC_TSAN_OPTIONS'], 'log_path=/tmp/xpc:halt_on_error=1')
+
+    def test_environment_for_api_tests_sanitizer_options(self):
+        port = self.make_port(options=MockOptions(additional_env_var=self.SANITIZER_ADDITIONAL_ENV_VARS))
+        env = port.environment_for_api_tests()
+        self.assertEqual(env['SIMCTL_CHILD_ASAN_OPTIONS'], 'log_path=/tmp/asan:allocator_may_return_null=1')
+        self.assertEqual(env['SIMCTL_CHILD___XPC_ASAN_OPTIONS'], 'log_path=/tmp/asan:allocator_may_return_null=1')
+        self.assertEqual(env['SIMCTL_CHILD_TSAN_OPTIONS'], 'halt_on_error=1')
+        self.assertEqual(env['SIMCTL_CHILD___XPC_TSAN_OPTIONS'], 'log_path=/tmp/xpc:halt_on_error=1')
+
+    def test_environment_for_api_tests_simctl_child_variable_wins(self):
+        port = self.make_port(options=MockOptions(additional_env_var=['SIMCTL_CHILD_ASAN_OPTIONS=detect_leaks=0', 'SIMCTL_CHILD_FOO=prefixed', 'FOO=unprefixed']))
+        env = port.environment_for_api_tests()
+        self.assertEqual(env['SIMCTL_CHILD_ASAN_OPTIONS'], 'detect_leaks=0')
+        self.assertEqual(env['SIMCTL_CHILD_FOO'], 'prefixed')
 
     def test_operating_system(self):
         self.assertEqual('ios-simulator', self.make_port().operating_system())

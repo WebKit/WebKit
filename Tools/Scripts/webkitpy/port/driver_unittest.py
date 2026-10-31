@@ -358,6 +358,187 @@ class DriverTest(unittest.TestCase):
             self.assertIn('WEBKIT_OUTPUTDIR', environment_driver_test)
             self.assertEqual(environment_user['WEBKIT_OUTPUTDIR'], environment_driver_test['WEBKIT_OUTPUTDIR'])
 
+    def test_setup_environ_for_test_asan_options(self):
+        # No ASAN_OPTIONS: set our default.
+        with patch('os.environ', {}):
+            port = self.make_port()
+            driver = Driver(port, None, pixel_tests=False)
+            environment = driver._setup_environ_for_test()
+            self.assertEqual('allocator_may_return_null=1', environment['ASAN_OPTIONS'])
+            self.assertEqual(environment['ASAN_OPTIONS'], environment['__XPC_ASAN_OPTIONS'])
+
+    def test_setup_environ_for_test_asan_options_additive(self):
+        # ASAN_OPTIONS set with a different key: keep theirs, append ours.
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=['ASAN_OPTIONS=detect_leaks=1']))
+            driver = Driver(port, None, pixel_tests=False)
+            environment = driver._setup_environ_for_test()
+            self.assertEqual('detect_leaks=1:allocator_may_return_null=1', environment['ASAN_OPTIONS'])
+
+    def test_setup_environ_for_test_asan_options_not_clobbered(self):
+        # ASAN_OPTIONS already sets our key: leave it alone.
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=['ASAN_OPTIONS=allocator_may_return_null=0']))
+            driver = Driver(port, None, pixel_tests=False)
+            environment = driver._setup_environ_for_test()
+            self.assertEqual('allocator_may_return_null=0', environment['ASAN_OPTIONS'])
+
+    def make_tsan_port(self, additional_env_var=None):
+        # A TSan build is identified by the marker file build-webkit --tsan writes.
+        port = self.make_port(options=MockOptions(additional_env_var=additional_env_var or []))
+        port.host.filesystem.write_text_file(port.host.filesystem.join(port._config.build_directory(None), 'TSan'), 'YES\n')
+        return port
+
+    def test_setup_environ_for_test_tsan_options_non_tsan_build(self):
+        # Not a TSan build: leave TSAN_OPTIONS alone entirely.
+        with patch('os.environ', {}):
+            port = self.make_port()
+            driver = Driver(port, None, pixel_tests=False)
+            environment = driver._setup_environ_for_test()
+            self.assertNotIn('TSAN_OPTIONS', environment)
+            self.assertNotIn('__XPC_TSAN_OPTIONS', environment)
+
+    def test_setup_environ_for_test_tsan_options_unset(self):
+        # TSan build, no TSAN_OPTIONS: set the in-tree suppressions file.
+        with patch('os.environ', {}):
+            port = self.make_tsan_port()
+            driver = Driver(port, None, pixel_tests=False)
+            environment = driver._setup_environ_for_test()
+            self.assertEqual('second_deadlock_stack=1:suppressions=' + port.path_from_webkit_base('Tools', 'Scripts', 'tsan_suppressions.txt'), environment['TSAN_OPTIONS'])
+            # XPC-spawned children only inherit the __XPC_-prefixed twin.
+            self.assertEqual(environment['TSAN_OPTIONS'], environment['__XPC_TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_tsan_options_without_suppressions(self):
+        # TSAN_OPTIONS set without suppressions=: append ours, keep theirs.
+        # The separator is always ':', even on Windows where os.pathsep is ';'
+        # (TSan fails flag parsing and aborts on ';').
+        with patch('os.environ', {}):
+            port = self.make_tsan_port(additional_env_var=['TSAN_OPTIONS=log_path=/tmp/tsan'])
+            driver = Driver(port, None, pixel_tests=False)
+            environment = driver._setup_environ_for_test()
+            self.assertEqual('log_path=/tmp/tsan:second_deadlock_stack=1:suppressions=' + port.path_from_webkit_base('Tools', 'Scripts', 'tsan_suppressions.txt'), environment['TSAN_OPTIONS'])
+            self.assertNotIn(';', environment['TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_tsan_options_with_suppressions(self):
+        # TSAN_OPTIONS already names a suppressions file: leave it alone.
+        with patch('os.environ', {}):
+            port = self.make_tsan_port(additional_env_var=['TSAN_OPTIONS=suppressions=/tmp/mine.txt'])
+            driver = Driver(port, None, pixel_tests=False)
+            environment = driver._setup_environ_for_test()
+            self.assertEqual('suppressions=/tmp/mine.txt:second_deadlock_stack=1', environment['TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_asan_options_reach_xpc_services(self):
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=['ASAN_OPTIONS=log_path=/tmp/asan:allocator_may_return_null=0']))
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('log_path=/tmp/asan:allocator_may_return_null=0', environment['ASAN_OPTIONS'])
+            self.assertEqual('log_path=/tmp/asan:allocator_may_return_null=0', environment['__XPC_ASAN_OPTIONS'])
+
+    def test_setup_environ_for_test_xpc_asan_options_kept(self):
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=['__XPC_ASAN_OPTIONS=log_path=/tmp/xpc']))
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('allocator_may_return_null=1', environment['ASAN_OPTIONS'])
+            self.assertEqual('log_path=/tmp/xpc:allocator_may_return_null=1', environment['__XPC_ASAN_OPTIONS'])
+
+    def test_setup_environ_for_test_xpc_asan_options_override_asan_options(self):
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=[
+                'ASAN_OPTIONS=log_path=/tmp/asan:detect_stack_use_after_return=1',
+                '__XPC_ASAN_OPTIONS=allocator_may_return_null=0:log_path=/tmp/xpc',
+            ]))
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('log_path=/tmp/asan:detect_stack_use_after_return=1:allocator_may_return_null=1', environment['ASAN_OPTIONS'])
+            self.assertEqual('allocator_may_return_null=0:log_path=/tmp/xpc:detect_stack_use_after_return=1', environment['__XPC_ASAN_OPTIONS'])
+
+    def test_setup_environ_for_test_asan_options_repeated_key_reaches_xpc_services(self):
+        # The sanitizer uses the last setting for a repeated key, so XPC services must get every copy in order.
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=[
+                'ASAN_OPTIONS=log_path=/tmp/a:log_path=/tmp/b',
+                '__XPC_ASAN_OPTIONS=halt_on_error=0',
+            ]))
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('log_path=/tmp/a:log_path=/tmp/b:allocator_may_return_null=1', environment['ASAN_OPTIONS'])
+            self.assertEqual('halt_on_error=0:log_path=/tmp/a:log_path=/tmp/b:allocator_may_return_null=1', environment['__XPC_ASAN_OPTIONS'])
+
+    def test_setup_environ_for_test_tsan_options_reach_xpc_services_non_tsan_build(self):
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=['TSAN_OPTIONS=halt_on_error=1:log_path=/tmp/tsan']))
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('halt_on_error=1:log_path=/tmp/tsan', environment['TSAN_OPTIONS'])
+            self.assertEqual('halt_on_error=1:log_path=/tmp/tsan', environment['__XPC_TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_tsan_options_reach_xpc_services(self):
+        with patch('os.environ', {}):
+            port = self.make_tsan_port(additional_env_var=['TSAN_OPTIONS=log_path=/tmp/tsan:second_deadlock_stack=0'])
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            expected = 'log_path=/tmp/tsan:second_deadlock_stack=0:suppressions=' + port.path_from_webkit_base('Tools', 'Scripts', 'tsan_suppressions.txt')
+            self.assertEqual(expected, environment['TSAN_OPTIONS'])
+            self.assertEqual(expected, environment['__XPC_TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_xpc_tsan_options_kept(self):
+        with patch('os.environ', {}):
+            port = self.make_tsan_port(additional_env_var=['__XPC_TSAN_OPTIONS=halt_on_error=1'])
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            suppressions = 'suppressions=' + port.path_from_webkit_base('Tools', 'Scripts', 'tsan_suppressions.txt')
+            self.assertEqual('second_deadlock_stack=1:' + suppressions, environment['TSAN_OPTIONS'])
+            self.assertEqual('halt_on_error=1:second_deadlock_stack=1:' + suppressions, environment['__XPC_TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_xpc_tsan_options_override_tsan_options(self):
+        with patch('os.environ', {}):
+            port = self.make_tsan_port(additional_env_var=[
+                'TSAN_OPTIONS=suppressions=/tmp/mine.txt:halt_on_error=0',
+                '__XPC_TSAN_OPTIONS=suppressions=/tmp/xpc.txt:second_deadlock_stack=0',
+            ])
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('suppressions=/tmp/mine.txt:halt_on_error=0:second_deadlock_stack=1', environment['TSAN_OPTIONS'])
+            self.assertEqual('suppressions=/tmp/xpc.txt:second_deadlock_stack=0:halt_on_error=0', environment['__XPC_TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_xpc_tsan_options_kept_non_tsan_build(self):
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=['__XPC_TSAN_OPTIONS=halt_on_error=1']))
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertNotIn('TSAN_OPTIONS', environment)
+            self.assertEqual('halt_on_error=1', environment['__XPC_TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_lsan_and_ubsan_options_reach_xpc_services(self):
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=[
+                'LSAN_OPTIONS=log_path=/tmp/lsan:report_objects=1',
+                '__XPC_LSAN_OPTIONS=log_path=/tmp/xpc',
+                'UBSAN_OPTIONS=print_stacktrace=1',
+            ]))
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('log_path=/tmp/lsan:report_objects=1', environment['LSAN_OPTIONS'])
+            self.assertEqual('log_path=/tmp/xpc:report_objects=1', environment['__XPC_LSAN_OPTIONS'])
+            self.assertEqual('print_stacktrace=1', environment['UBSAN_OPTIONS'])
+            self.assertEqual('print_stacktrace=1', environment['__XPC_UBSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_sanitizer_options_ignore_shell_environment(self):
+        with patch('os.environ', {'ASAN_OPTIONS': 'log_path=/tmp/shell', '__XPC_TSAN_OPTIONS': 'halt_on_error=1'}):
+            port = self.make_port()
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('allocator_may_return_null=1', environment['ASAN_OPTIONS'])
+            self.assertEqual('allocator_may_return_null=1', environment['__XPC_ASAN_OPTIONS'])
+            self.assertNotIn('__XPC_TSAN_OPTIONS', environment)
+
+    def test_setup_environ_for_test_sanitizer_options_match_api_tests(self):
+        for additional_env_var in [
+            [],
+            ['ASAN_OPTIONS=log_path=/tmp/asan', '__XPC_ASAN_OPTIONS=halt_on_error=0'],
+            ['TSAN_OPTIONS=halt_on_error=1', '__XPC_TSAN_OPTIONS=log_path=/tmp/xpc'],
+            ['UBSAN_OPTIONS=print_stacktrace=1', 'LSAN_OPTIONS=report_objects=1'],
+        ]:
+            for is_tsan_build in [False, True]:
+                with patch('os.environ', {}):
+                    port = self.make_tsan_port(additional_env_var) if is_tsan_build else self.make_port(options=MockOptions(additional_env_var=additional_env_var))
+                    driver_environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+                    api_tests_environment = port.environment_for_api_tests()
+                    for variable in Port.SANITIZER_OPTIONS_VARIABLES:
+                        for name in [variable, '__XPC_' + variable]:
+                            self.assertEqual(driver_environment.get(name), api_tests_environment.get(name), '{} with {}'.format(name, additional_env_var))
+
     def test_setup_environ_for_test_webkit_prefix(self):
         environment_user = {}
         environment_user['WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH'] = '1'

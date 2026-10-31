@@ -383,6 +383,8 @@ class Manager(object):
                     _log.critical('--test-list file "{}" not found'.format(list_path))
                     return test_run_results.RunDetails(exit_code=-1)
 
+        self._port.warn_about_ignored_sanitizer_options()
+
         overall_initial_results = None
         overall_retry_results = None
         overall_enabled_pixel_tests_in_retry = False

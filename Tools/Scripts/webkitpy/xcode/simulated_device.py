@@ -828,13 +828,11 @@ class SimulatedDevice(object):
 
     # FIXME: Increase timeout for <rdar://problem/31331576>
     def launch_app(self, bundle_id, args, env=None, timeout=300):
-        environment_to_use = {}
+        env = env or {}
         SIMCTL_ENV_PREFIX = 'SIMCTL_CHILD_'
-        for value in (env or {}):
-            if not value.startswith(SIMCTL_ENV_PREFIX):
-                environment_to_use[SIMCTL_ENV_PREFIX + value] = env[value]
-            else:
-                environment_to_use[value] = env[value]
+        environment_to_use = {SIMCTL_ENV_PREFIX + name: value for name, value in env.items() if not name.startswith(SIMCTL_ENV_PREFIX)}
+        # A variable passed with the prefix wins over the same variable without it.
+        environment_to_use.update({name: value for name, value in env.items() if name.startswith(SIMCTL_ENV_PREFIX)})
 
         # FIXME: This is a workaround for <rdar://problem/30172453>.
         def _log_debug_error(error):

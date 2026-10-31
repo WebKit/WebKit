@@ -672,6 +672,23 @@ class SimulatedDeviceTest(unittest.TestCase):
             self.assertEqual(SimulatedDevice.DeviceState.SHUT_DOWN, device.state(force_update=True))
 
 
+class LaunchAppTest(unittest.TestCase):
+
+    class RecordingExecutive(MockExecutive2):
+        def run_command(self, args, env=None, **kwargs):
+            self.env = env
+            return '{}: {}\n'.format(args[4], 1234)
+
+        def check_running_pid(self, pid):
+            return True
+
+    def test_simctl_child_variable_wins(self):
+        executive = self.RecordingExecutive()
+        device = SimulatedDevice('iPhone 12', 'UDID-1', MockSystemHost(executive=executive), DeviceType.from_string('iPhone 12', Version(15)), '19A1', '/runtime')
+        self.assertEqual(1234, device.launch_app('com.apple.test', [], env={'SIMCTL_CHILD_TSAN_OPTIONS': 'halt_on_error=1', 'TSAN_OPTIONS': 'suppressions=/a.txt', 'FOO': 'bar'}))
+        self.assertEqual({'SIMCTL_CHILD_TSAN_OPTIONS': 'halt_on_error=1', 'SIMCTL_CHILD_FOO': 'bar'}, executive.env)
+
+
 class LaunchdConfigurationBeforeBootTest(unittest.TestCase):
     """Configuration a device needs launchd to have is written before it boots, so it applies to the boot itself.
     webkitpy defines the configuration; ports add to it through apple_additions."""

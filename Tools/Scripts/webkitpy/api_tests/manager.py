@@ -328,6 +328,8 @@ class Manager(object):
             if not self.host.filesystem.isdir(self.host.filesystem.dirname(json_output)) or self.host.filesystem.isdir(json_output):
                 raise RuntimeError(f'Cannot write to {json_output}')
 
+        self._port.warn_about_ignored_sanitizer_options()
+
         start_time = time.time()
 
         self._write_update('Checking build ...')
