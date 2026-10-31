@@ -57,6 +57,8 @@ enum class URLEnvironment : uint8_t {
 
 WEBCORE_EXPORT bool evaluateURLEnvironment(URLEnvironment);
 
+enum class IsTopDocument : bool { No, Yes };
+
 class URLMatchContext {
 public:
     URLMatchContext(URL url)
