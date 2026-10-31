@@ -44,6 +44,7 @@ namespace WebKit {
 
 void setNWParametersApplicationIdentifiers(nw_parameters_t parameters, const UTF8CString& sourceApplicationBundleIdentifier, std::optional<audit_token_t> sourceApplicationAuditToken, const String& attributedBundleIdentifier)
 {
+    WTFLogAlways("setNWParametersApplicationIdentifiers: sourceApplicationBundleIdentifier empty: %d, have sourceApplicationAuditToken: %d, attributedBundleIdentifier is empty: %d", sourceApplicationBundleIdentifier.isEmpty(), !!sourceApplicationAuditToken, attributedBundleIdentifier.isEmpty());
     if (!sourceApplicationBundleIdentifier.isEmpty())
         nw_parameters_set_source_application_by_bundle_id(parameters, sourceApplicationBundleIdentifier.legacyCStringPointer());
     else if (sourceApplicationAuditToken)
