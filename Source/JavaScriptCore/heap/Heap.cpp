@@ -70,6 +70,9 @@
 #include "JSWeakMap.h"
 #include "JSWeakObjectRef.h"
 #include "JSWeakSet.h"
+#if ENABLE(WEBASSEMBLY)
+#include "JSWebAssemblySuspendingWrapper.h"
+#endif
 #include "MachineStackMarker.h"
 #include "MarkStackMergingConstraint.h"
 #include "MarkedSpaceInlines.h"

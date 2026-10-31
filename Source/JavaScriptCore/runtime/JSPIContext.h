@@ -48,7 +48,7 @@ class VM;
 // deactivated by calling .deactivate(), which deregisters it with the VM.
 //
 // The 'limitFrame' identifies the call frame of the promising wrapper or fulfillment
-// handler that created this context. When a WebAssembly.Suspending wrapper triggers
+// handler that created this context. When a suspending function triggers
 // suspension, the stack walker uses limitFrame to determine which frames to evacuate:
 // everything between the suspending call site and this frame. After evacuation, the
 // suspending function "teleports" by returning into the limitFrame, skipping the

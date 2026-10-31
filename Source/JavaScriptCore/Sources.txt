@@ -1238,6 +1238,7 @@ wasm/js/WebAssemblyPromising.cpp
 wasm/js/JSWebAssemblyRuntimeError.cpp
 wasm/js/JSWebAssemblySuspendError.cpp
 wasm/js/JSWebAssemblyStruct.cpp
+wasm/js/JSWebAssemblySuspendingWrapper.cpp
 wasm/js/WebAssemblySuspending.cpp
 wasm/js/JSWebAssemblyTable.cpp
 wasm/js/JSWebAssemblyTag.cpp

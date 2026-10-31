@@ -830,6 +830,7 @@
 		2392A1302DD51DB100DD1CB9 /* WebAssemblyBuiltin.h in Headers */ = {isa = PBXBuildFile; fileRef = 2392A12A2DD51DB100DD1CB9 /* WebAssemblyBuiltin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2392A1312DD51DB100DD1CB9 /* WebAssemblyCompileOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2392A12C2DD51DB100DD1CB9 /* WebAssemblyCompileOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		23968F0E2F295B1B001AED63 /* WebAssemblySuspending.h in Headers */ = {isa = PBXBuildFile; fileRef = 23968F0C2F295B1B001AED63 /* WebAssemblySuspending.h */; };
+		23968F1C2F295B1B001AED63 /* JSWebAssemblySuspendingWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 23968F1A2F295B1B001AED63 /* JSWebAssemblySuspendingWrapper.h */; };
 		23968F0F2F295B1B001AED63 /* WebAssemblyPromising.h in Headers */ = {isa = PBXBuildFile; fileRef = 23968F0A2F295B1B001AED63 /* WebAssemblyPromising.h */; };
 		23A356912E9790F40039C82A /* PinballCompletion.h in Headers */ = {isa = PBXBuildFile; fileRef = 23A3568E2E9790F40039C82A /* PinballCompletion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		23A9696C2E95A903005A36F5 /* EvacuatedStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 23A969692E95A903005A36F5 /* EvacuatedStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4257,6 +4258,8 @@
 		23968F0A2F295B1B001AED63 /* WebAssemblyPromising.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblyPromising.h; path = js/WebAssemblyPromising.h; sourceTree = "<group>"; };
 		23968F0B2F295B1B001AED63 /* WebAssemblyPromising.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyPromising.cpp; path = js/WebAssemblyPromising.cpp; sourceTree = "<group>"; };
 		23968F0C2F295B1B001AED63 /* WebAssemblySuspending.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblySuspending.h; path = js/WebAssemblySuspending.h; sourceTree = "<group>"; };
+		23968F1A2F295B1B001AED63 /* JSWebAssemblySuspendingWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblySuspendingWrapper.h; path = js/JSWebAssemblySuspendingWrapper.h; sourceTree = "<group>"; };
+		23968F1B2F295B1B001AED63 /* JSWebAssemblySuspendingWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebAssemblySuspendingWrapper.cpp; path = js/JSWebAssemblySuspendingWrapper.cpp; sourceTree = "<group>"; };
 		23968F0D2F295B1B001AED63 /* WebAssemblySuspending.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblySuspending.cpp; path = js/WebAssemblySuspending.cpp; sourceTree = "<group>"; };
 		23A3568E2E9790F40039C82A /* PinballCompletion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PinballCompletion.h; sourceTree = "<group>"; };
 		23A3568F2E9790F40039C82A /* PinballCompletion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PinballCompletion.cpp; sourceTree = "<group>"; };
@@ -10954,6 +10957,8 @@
 				14D01BE026DEEF3800CAE0D0 /* JSWebAssemblyStruct.h */,
 				234E91BE2EE2571E000BAE2C /* JSWebAssemblySuspendError.cpp */,
 				234E91BD2EE2571E000BAE2C /* JSWebAssemblySuspendError.h */,
+				23968F1B2F295B1B001AED63 /* JSWebAssemblySuspendingWrapper.cpp */,
+				23968F1A2F295B1B001AED63 /* JSWebAssemblySuspendingWrapper.h */,
 				AD2FCBAE1DB58DA400B3E736 /* JSWebAssemblyTable.cpp */,
 				AD2FCBAF1DB58DA400B3E736 /* JSWebAssemblyTable.h */,
 				14D01BE426DEEF3800CAE0D0 /* JSWebAssemblyTag.cpp */,
@@ -12558,6 +12563,7 @@
 				AD5BBA1AD2AF430387EE8771 /* JSWebAssemblyStreamingContextInlines.h in Headers */,
 				14D01A7721FBEF3800CAE0D0 /* JSWebAssemblyStruct.h in Headers */,
 				234E91BF2EE2571E000BAE2C /* JSWebAssemblySuspendError.h in Headers */,
+				23968F1C2F295B1B001AED63 /* JSWebAssemblySuspendingWrapper.h in Headers */,
 				AD2FCBEB1DB58DAD00B3E736 /* JSWebAssemblyTable.h in Headers */,
 				14D01BEC26DEEF3800CAE0D0 /* JSWebAssemblyTag.h in Headers */,
 				1442566215EDE98D0066A49B /* JSWithScope.h in Headers */,
