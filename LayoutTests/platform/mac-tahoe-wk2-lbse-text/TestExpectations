@@ -41,9 +41,6 @@ svg/zoom/zoomed-inline-svg-getscreenctm.html [ Failure ]
 # Pattern problems
 svg/custom/pattern-content-inheritance-cycle.svg  [ ImageOnlyFailure ]
 
-# Clipping problems
-svg/batik/text/textProperties.svg [ ImageOnlyFailure ]
-
 # Failing WPT reftests
 imported/w3c/web-platform-tests/svg/painting/marker-009.svg                                                    [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/scripted/marker-element-added.html                                [ ImageOnlyFailure ]
