@@ -48,7 +48,6 @@
 
 #if HAVE(IOSURFACE)
 #include "ImageBufferRemoteIOSurfaceBackend.h"
-#include "ImageBufferShareableMappedIOSurfaceBackend.h"
 #endif
 
 #if PLATFORM(COCOA)

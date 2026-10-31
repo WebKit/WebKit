@@ -30,7 +30,6 @@
 #import "DynamicContentScalingImageBufferBackend.h"
 #import "GPUProcess.h"
 #import "ImageBufferBackendHandleSharing.h"
-#import "ImageBufferSet.h"
 #import "Logging.h"
 #import "PlatformCALayerRemote.h"
 #import "PrepareBackingStoreBuffersData.h"
@@ -41,8 +40,7 @@
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeLayers.h"
 #import "RemoteLayerTreeNode.h"
-#import "RemoteLayerWithInProcessRenderingBackingStore.h"
-#import "RemoteLayerWithRemoteRenderingBackingStore.h"
+#import "RemoteRenderingBackendProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcess.h"
 #import "WebProcessPool.h"
@@ -105,26 +103,25 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DelegatedContentsFenceFlusher);
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerBackingStore);
 
-std::unique_ptr<RemoteLayerBackingStore> RemoteLayerBackingStore::createForLayer(PlatformCALayerRemote& layer)
-{
-    switch (processModelForLayer(layer)) {
-    case ProcessModel::Remote:
-        return makeUnique<RemoteLayerWithRemoteRenderingBackingStore>(layer);
-    case ProcessModel::InProcess:
-        return makeUnique<RemoteLayerWithInProcessRenderingBackingStore>(layer);
-    }
-}
-
 RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote& layer)
     : m_layer(layer)
     , m_lastDisplayTime(-MonotonicTime::infinity())
 {
-    if (RefPtr collection = backingStoreCollection())
-        collection->backingStoreWasCreated(*this);
+    RefPtr collection = backingStoreCollection();
+    if (!collection) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    collection->backingStoreWasCreated(*this);
+    lazyInitialize(m_bufferSet, protect(protect(collection->layerTreeContext())->ensureRemoteRenderingBackendProxy())->createImageBufferSet(*CheckedPtr { this }));
 }
 
 RemoteLayerBackingStore::~RemoteLayerBackingStore()
 {
+    if (m_bufferSet)
+        m_bufferSet->close();
+
     if (RefPtr collection = backingStoreCollection())
         collection->backingStoreWillBeDestroyed(*this);
 }
@@ -139,8 +136,7 @@ RemoteLayerBackingStoreCollection* RemoteLayerBackingStore::backingStoreCollecti
 
 void RemoteLayerBackingStore::clearBackingStore()
 {
-    m_contentsBufferHandle = std::nullopt;
-    setNeedsDisplay();
+    m_cleared = true;
 }
 
 void RemoteLayerBackingStore::ensureBackingStore(const Parameters& parameters)
@@ -150,13 +146,116 @@ void RemoteLayerBackingStore::ensureBackingStore(const Parameters& parameters)
 
     m_parameters = parameters;
     clearBackingStore();
+
+    auto useLosslessCompression = UseLosslessCompression::No;
+    if (RefPtr context = m_layer->context())
+        useLosslessCompression = context->useIOSurfaceLosslessCompression();
+
+    if (m_bufferSet) {
+        RemoteImageBufferSetConfiguration configuration {
+            .logicalSize = size(),
+            .resolutionScale = scale(),
+            .colorSpace = colorSpace(),
+            .contentsFormat = contentsFormat(),
+            .bufferFormat = { pixelFormat(), useLosslessCompression },
+            .renderingMode = type() == RemoteLayerBackingStore::Type::IOSurface ? RenderingMode::Accelerated : RenderingMode::Unaccelerated,
+            .renderingPurpose = WebCore::RenderingPurpose::LayerBacking,
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+            .includeDisplayList = m_parameters.includeDisplayList,
+#endif
+        };
+        m_bufferSet->setConfiguration(WTF::move(configuration));
+    }
 }
 
-RemoteLayerBackingStore::ProcessModel RemoteLayerBackingStore::processModelForLayer(PlatformCALayerRemote&)
+bool RemoteLayerBackingStore::hasFrontBuffer() const
 {
-    if (WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM))
-        return ProcessModel::Remote;
-    return ProcessModel::InProcess;
+    if (m_contentsBufferHandle)
+        return true;
+    return !m_cleared && !(m_bufferSet && m_bufferSet->remoteFrontBufferIsMissing());
+}
+
+bool RemoteLayerBackingStore::frontBufferMayBeVolatile() const
+{
+    if (!m_bufferSet)
+        return false;
+    return m_bufferSet->requestedVolatility().contains(BufferInSetType::Front);
+}
+
+void RemoteLayerBackingStore::prepareToDisplay()
+{
+    if (performDelegatedLayerDisplay())
+        return;
+
+    RefPtr bufferSet = this->bufferSet();
+    if (!bufferSet)
+        return;
+
+    if (!hasFrontBuffer() || !supportsPartialRepaint())
+        setNeedsDisplay();
+
+    dirtyRepaintCounterIfNecessary();
+
+    bufferSet->prepareToDisplay(dirtyRegion(), supportsPartialRepaint(), hasEmptyDirtyRegion(), drawingRequiresClearedPixels());
+    m_contentsBufferHandle = std::nullopt;
+}
+
+std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerBackingStore::createFlusher(ThreadSafeImageBufferSetFlusher::FlushType flushType)
+{
+    if (!m_bufferSet)
+        return { };
+    return m_bufferSet->flushFrontBufferAsync(flushType);
+}
+
+void RemoteLayerBackingStore::submitDrawingCommands()
+{
+    if (!m_bufferSet)
+        return;
+    return m_bufferSet->submitDrawingCommands();
+}
+
+void RemoteLayerBackingStore::createContextAndPaintContents()
+{
+    RefPtr bufferSet = m_bufferSet;
+    if (!bufferSet)
+        return;
+
+    if (!bufferSet->hasContext()) {
+        // The platform layer delegates display or bufferSet does not have a working connection to GPUP anymore.
+        return;
+    }
+
+    drawInContext(bufferSet->context());
+    m_cleared = false;
+}
+
+std::optional<ImageBufferSetIdentifier> RemoteLayerBackingStore::bufferSetIdentifier() const
+{
+    if (!m_bufferSet)
+        return std::nullopt;
+    return m_bufferSet->identifier();
+}
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+std::optional<DynamicContentScalingDisplayList> RemoteLayerBackingStore::displayListHandle() const
+{
+    if (!m_layer->owner())
+        return { };
+
+    if (auto list = m_layer->owner()->platformCALayerDynamicContentScalingDisplayList(m_layer.ptr()))
+        return list;
+    return m_bufferSet ? m_bufferSet->dynamicContentScalingDisplayList() : std::nullopt;
+}
+#endif
+
+void RemoteLayerBackingStore::dump(WTF::TextStream& ts) const
+{
+    ts.dumpProperty("buffer set"_s, m_bufferSet);
+    ts.dumpProperty("is opaque"_s, isOpaque());
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    ts.dumpProperty("requested-headroom", m_maxRequestedEDRHeadroom);
+    ts.dumpProperty("painted-headroom", m_maxPaintedEDRHeadroom);
+#endif
 }
 
 void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
@@ -399,7 +498,7 @@ void RemoteLayerBackingStore::paintContents()
     }
 
     m_lastDisplayTime = MonotonicTime::now();
-    m_paintingRects = ImageBufferSet::computePaintingRects(m_dirtyRegion, m_parameters.scale);
+    m_paintingRects = computePaintingRects(m_dirtyRegion, m_parameters.scale);
 
     createContextAndPaintContents();
 }
@@ -471,7 +570,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
 
     m_previouslyPaintedRect = dirtyBounds;
 #if HAVE(CGIOSURFACECONTEXT_FLUSH_QUEUE)
-    if (type() == Type::IOSurface && processModel() == ProcessModel::Remote) {
+    if (type() == Type::IOSurface) {
         m_needsFlush = true;
         submitDrawingCommands();
         return;

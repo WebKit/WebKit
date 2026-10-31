@@ -283,7 +283,7 @@ void PlatformCALayerRemote::ensureBackingStore()
     ASSERT(m_properties.backingStoreAttached);
 
     if (m_context && !m_properties.backingStoreOrProperties.store)
-        m_properties.backingStoreOrProperties.store = RemoteLayerBackingStore::createForLayer(*this);
+        m_properties.backingStoreOrProperties.store = makeUnique<RemoteLayerBackingStore>(*this);
 
     updateBackingStore();
 }

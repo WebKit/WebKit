@@ -38,12 +38,10 @@ TEST(ProcessInfo, BasicTest)
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"Hello world!"];
 
-#if ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
     RetainPtr gpuProcessInfo = [WKProcessPool _gpuProcessInfo];
     EXPECT_TRUE(gpuProcessInfo);
     EXPECT_NE([gpuProcessInfo pid], pid_t { });
     EXPECT_GT([gpuProcessInfo physicalFootprint], 0u);
-#endif
 
     RetainPtr networkProcessInfo = [WKProcessPool _networkingProcessInfo];
     EXPECT_GT([networkProcessInfo count], 0u);

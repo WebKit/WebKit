@@ -481,12 +481,6 @@ void RemoteLayerTreeDrawingArea::displayDidRefresh(MonotonicTime start)
 
     auto wasWaitingForBackingStoreSwap = std::exchange(m_waitingForBackingStoreSwap, false);
 
-    if (!WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM)) {
-        // This empty transaction serves to trigger CA's garbage collection of IOSurfaces. See <rdar://problem/16110687>
-        [CATransaction begin];
-        [CATransaction commit];
-    }
-
     if (m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap || (m_isScheduled && !m_scheduleRenderingTimer.isActive())) {
         m_updateStartTime = start;
         triggerRenderingUpdate();

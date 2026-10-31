@@ -63,7 +63,7 @@ public:
     ~RemoteVideoFrameObjectHeapProxyProcessor();
 
     using Callback = Function<void(RetainPtr<CVPixelBufferRef>&&)>;
-    void getVideoFrameBuffer(const RemoteVideoFrameProxy&, bool canUseIOSurfce, Callback&&);
+    void getVideoFrameBuffer(const RemoteVideoFrameProxy&, Callback&&);
     RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame&, ShouldApplyRotation = ShouldApplyRotation::No);
 
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return IPC::WorkQueueMessageReceiver<WTF::DestructionThread::MainRunLoop>::controlBlock(); }

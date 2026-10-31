@@ -232,9 +232,7 @@ def parse_args(args):
         optparse.make_option('--remote-layer-tree', action='store_true', default=False,
                              help='Does nothing, the remote layer tree drawing model is always used'),
         optparse.make_option('--use-gpu-process', action='store_true', default=False,
-                             help='Enable GPU process DOM rendering'),
-        optparse.make_option('--no-use-gpu-process', action='store_true', default=False,
-                             help='Disable GPU process DOM rendering'),
+                             help='Does nothing, DOM rendering always uses the GPU process'),
     ]))
     option_group_definitions.append(('Expectation Options', [
         optparse.make_option('--additional-expectations', action='append', default=[],
