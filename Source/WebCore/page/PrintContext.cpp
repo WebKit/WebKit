@@ -525,4 +525,95 @@ void PrintContext::spoolAllPagesWithBoundaries(LocalFrame& frame, GraphicsContex
     graphicsContext.restore();
 }
 
+struct PrintContext::PageBox {
+    IntSize size;
+    IntBoxExtent margin;
+};
+
+auto PrintContext::beginWithPageBoxSize(const IntSize& defaultPageBoxSize, const IntBoxExtent& defaultPageMargin) -> std::optional<PageBox>
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return std::nullopt;
+
+    RefPtr document = frame->document();
+    if (!document || !frame->view() || !document->renderView())
+        return std::nullopt;
+
+    document->updateLayout();
+
+    auto pageAreaSize = [](const PageBox& pageBox) {
+        return IntSize { pageBox.size.width() - pageBox.margin.left() - pageBox.margin.right(), pageBox.size.height() - pageBox.margin.top() - pageBox.margin.bottom() };
+    };
+
+    PageBox pageBox { defaultPageBoxSize, defaultPageMargin };
+    auto defaultPageAreaSize = pageAreaSize(pageBox);
+    if (defaultPageAreaSize.isEmpty())
+        return std::nullopt;
+
+    m_isPrinting = true;
+    frame->setPrinting(true, defaultPageAreaSize, defaultPageAreaSize, 1, AdjustViewSize::Yes);
+
+    // FIXME: Lay out each page with its own @page size and margins (rdar://191464090). Every page uses the
+    // first page's, so :left, :right and named pages can't change them.
+    // FIXME: Size the page area with @page width and height, as css-page-3 does (rdar://191464115).
+    // FIXME: Resolve top and bottom margin percentages against the page height, and margin: auto as for a
+    // block in normal flow, as css-page-3 does (rdar://191464164). They resolve against the width, and auto keeps the default
+    // margin. Real printing (computedPageMargin()) ignores percentage margins.
+    document->pageSizeAndMarginsInPixels(0, pageBox.size, pageBox.margin.top(), pageBox.margin.right(), pageBox.margin.bottom(), pageBox.margin.left());
+    auto usedPageAreaSize = pageAreaSize(pageBox);
+    if (usedPageAreaSize.isEmpty())
+        return std::nullopt;
+
+    // FIXME: Make the first page's page area the initial containing block, as css-page-3 does (rdar://191464194).
+    // Only its width is used. Viewport units and percentage heights still resolve against the view, since
+    // LocalFrameView::calculateSizeForCSSViewportUnitsOverride() has no printing case and
+    // RenderView::availableLogicalHeight() uses the layout size. Real printing has the same problem.
+    if (usedPageAreaSize != defaultPageAreaSize)
+        frame->setPrinting(true, usedPageAreaSize, usedPageAreaSize, 1, AdjustViewSize::Yes);
+
+    computePageRectsWithPageSize(usedPageAreaSize, false);
+
+    if (m_pageRects.isEmpty())
+        m_pageRects.append({ { }, usedPageAreaSize });
+
+    return pageBox;
+}
+
+IntSize PrintContext::printedPageBoxesSize(LocalFrame& frame, const IntSize& defaultPageBoxSize, const IntBoxExtent& defaultPageMargin)
+{
+    Ref protectedFrame { frame };
+
+    Ref printContext = PrintContext::create(&frame);
+    auto pageBox = printContext->beginWithPageBoxSize(defaultPageBoxSize, defaultPageMargin);
+    if (!pageBox)
+        return { };
+
+    int pageCount = static_cast<int>(printContext->pageCount());
+    return { pageBox->size.width(), pageCount * (pageBox->size.height() + 1) - 1 };
+}
+
+void PrintContext::spoolAllPageBoxes(LocalFrame& frame, GraphicsContext& graphicsContext, const IntSize& defaultPageBoxSize, const IntBoxExtent& defaultPageMargin)
+{
+    Ref protectedFrame { frame };
+
+    Ref printContext = PrintContext::create(&frame);
+    auto pageBox = printContext->beginWithPageBoxSize(defaultPageBoxSize, defaultPageMargin);
+    if (!pageBox)
+        return;
+
+    int pageCount = static_cast<int>(printContext->pageCount());
+    int pageBoxHeight = pageBox->size.height();
+    graphicsContext.fillRect(IntRect(0, 0, pageBox->size.width(), pageCount * (pageBoxHeight + 1) - 1), Color::blue);
+
+    for (int pageIndex = 0; pageIndex < pageCount; ++pageIndex) {
+        IntRect pageBoxRect { { 0, pageIndex * (pageBoxHeight + 1) }, pageBox->size };
+        graphicsContext.fillRect(pageBoxRect, Color::white);
+
+        GraphicsContextStateSaver stateSaver(graphicsContext);
+        graphicsContext.translate(pageBoxRect.x() + pageBox->margin.left(), pageBoxRect.y() + pageBox->margin.top());
+        printContext->spoolPage(graphicsContext, pageIndex, printContext->pageRect(pageIndex).width());
+    }
+}
+
 }

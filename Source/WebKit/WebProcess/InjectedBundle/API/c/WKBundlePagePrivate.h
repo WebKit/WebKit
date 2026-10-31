@@ -53,6 +53,9 @@ WK_EXPORT bool WKBundlePageIsClosed(WKBundlePageRef page);
 WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef page, RenderTreeExternalRepresentationBehavior);
 WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentationForPrinting(WKBundlePageRef page);
 
+// Sizes are in whole CSS pixels.
+WK_EXPORT WKImageRef WKBundlePageCreatePrintedPageBoxesSnapshotForTesting(WKBundlePageRef page, WKSize defaultPageBoxSize, double defaultPageMargin);
+
 WK_EXPORT double WKBundlePageGetTextZoomFactor(WKBundlePageRef page);
 WK_EXPORT double WKBundlePageGetPageZoomFactor(WKBundlePageRef page);
 
