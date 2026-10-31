@@ -236,7 +236,9 @@ private:
     id<MTLSharedEvent> _Nullable m_sharedEvent { nil };
     uint64_t m_sharedEventSignalValue { 0 };
     const Ref<Device> m_device;
-    uint64_t m_uniqueId;
+    // const so that a constructor which forgets to initialize this is a compile error rather than
+    // an uninitialized read in ~CommandEncoder(). rdar://178679545
+    const uint64_t m_uniqueId;
 #if ENABLE(WEBGPU_BY_DEFAULT)
     uint32_t m_currentResidencySetCount { 0 };
 #endif
