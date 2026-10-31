@@ -44,8 +44,8 @@ typedef enum pas_msl_is_enabled_flag pas_msl_is_enabled_flag;
 extern pas_msl_is_enabled_flag pas_msl_is_enabled_flag_value;
 PAS_API bool pas_compute_msl_is_enabled(void);
 
-PAS_API PAS_NEVER_INLINE pas_allocation_result pas_msl_malloc_logging_slow(size_t size, pas_allocation_result result);
-PAS_API PAS_NEVER_INLINE void pas_msl_free_logging_slow(void*);
+PAS_API PAS_NEVER_INLINE pas_allocation_result pas_msl_malloc_logging_slow(size_t size, pas_allocation_result result, const pas_heap_config*, pas_lock_hold_mode heap_lock_hold_mode);
+PAS_API PAS_NEVER_INLINE void pas_msl_free_logging_slow(void*, const pas_heap_config*, pas_lock_hold_mode heap_lock_hold_mode);
 
 static PAS_ALWAYS_INLINE bool pas_msl_is_enabled(void)
 {
@@ -60,24 +60,28 @@ static PAS_ALWAYS_INLINE bool pas_msl_is_enabled(void)
     return false;
 }
 
-static PAS_ALWAYS_INLINE pas_allocation_result pas_msl_malloc_logging(size_t size, pas_allocation_result result)
+static PAS_ALWAYS_INLINE pas_allocation_result pas_msl_malloc_logging(size_t size, pas_allocation_result result, const pas_heap_config* config, pas_lock_hold_mode heap_lock_hold_mode)
 {
 #if PAS_ENABLE_MALLOC_STACK_LOGGER
     if (PAS_UNLIKELY(malloc_logger))
-        return pas_msl_malloc_logging_slow(size, result); /* Keep it tail-call to avoid messing up the fast path code. */
+        return pas_msl_malloc_logging_slow(size, result, config, heap_lock_hold_mode); /* Keep it tail-call to avoid messing up the fast path code. */
 #else
     PAS_UNUSED_PARAM(size);
+    PAS_UNUSED_PARAM(config);
+    PAS_UNUSED_PARAM(heap_lock_hold_mode);
 #endif
     return result;
 }
 
-static PAS_ALWAYS_INLINE void pas_msl_free_logging(void* ptr)
+static PAS_ALWAYS_INLINE void pas_msl_free_logging(void* ptr, const pas_heap_config* config, pas_lock_hold_mode heap_lock_hold_mode)
 {
 #if PAS_ENABLE_MALLOC_STACK_LOGGER
     if (PAS_UNLIKELY(malloc_logger))
-        return pas_msl_free_logging_slow(ptr); /* Keep it tail-call to avoid messing up the fast path code. */
+        return pas_msl_free_logging_slow(ptr, config, heap_lock_hold_mode); /* Keep it tail-call to avoid messing up the fast path code. */
 #else
     PAS_UNUSED_PARAM(ptr);
+    PAS_UNUSED_PARAM(config);
+    PAS_UNUSED_PARAM(heap_lock_hold_mode);
 #endif
 }
 

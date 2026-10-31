@@ -196,7 +196,7 @@ pas_try_reallocate_table_bitfit_case(pas_page_base* page_base,
         old_heap, heap, (void*)begin, old_size, new_size, teleport_rule,
         allocate_callback, allocate_callback_arg);
     if (result.begin || free_mode == pas_reallocate_free_always) {
-        pas_msl_free_logging((void*)begin); /* This will not go to TLC, thus, we need to record deallocation here. */
+        pas_msl_free_logging((void*)begin, bitfit_config.base.heap_config_ptr, pas_lock_is_not_held); /* This will not go to TLC, thus, we need to record deallocation here. */
         bitfit_config.specialized_page_deallocate_with_page(page, begin);
     }
     return result;

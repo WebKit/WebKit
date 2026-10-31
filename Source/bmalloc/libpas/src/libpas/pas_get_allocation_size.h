@@ -36,8 +36,8 @@
 PAS_BEGIN_EXTERN_C;
 
 /* Returns zero if we don't own this object. */
-static PAS_ALWAYS_INLINE size_t pas_get_allocation_size(void* ptr,
-                                                        pas_heap_config config)
+static PAS_ALWAYS_INLINE size_t pas_get_allocation_size_with_heap_lock_hold_mode(
+    void* ptr, pas_heap_config config, pas_lock_hold_mode heap_lock_hold_mode)
 {
     uintptr_t begin;
     
@@ -97,7 +97,7 @@ static PAS_ALWAYS_INLINE size_t pas_get_allocation_size(void* ptr,
             return 0;
         }
         
-        pas_heap_lock_lock();
+        pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
         
         entry = pas_large_map_find(begin);
         
@@ -111,13 +111,20 @@ static PAS_ALWAYS_INLINE size_t pas_get_allocation_size(void* ptr,
         } else
             result = 0;
         
-        pas_heap_lock_unlock();
+        pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
         
         return result;
     } }
     
     PAS_ASSERT_NOT_REACHED();
     return 0;
+}
+
+/* Returns zero if we don't own this object. */
+static PAS_ALWAYS_INLINE size_t pas_get_allocation_size(void* ptr,
+                                                        pas_heap_config config)
+{
+    return pas_get_allocation_size_with_heap_lock_hold_mode(ptr, config, pas_lock_is_not_held);
 }
 
 PAS_END_EXTERN_C;

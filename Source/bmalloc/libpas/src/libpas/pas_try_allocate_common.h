@@ -187,7 +187,7 @@ pas_try_allocate_common_impl_slow(
 
     result = pas_try_allocate_pgm(verbose, heap, size, alignment, config);
     if (PAS_UNLIKELY(result.did_succeed))
-        return pas_msl_malloc_logging(size, result);
+        return pas_msl_malloc_logging(size, result, config.config_ptr, pas_lock_is_not_held);
 
     if (verbose)
         pas_log("Asking heap for a directory.\n");
@@ -221,7 +221,7 @@ pas_try_allocate_common_impl_slow(
         
         pas_scavenger_notify_eligibility_if_needed();
         
-        return pas_msl_malloc_logging(size, result);
+        return pas_msl_malloc_logging(size, result, config.config_ptr, pas_lock_is_not_held);
     }
     
     if (verbose)
@@ -243,7 +243,7 @@ pas_try_allocate_common_impl_slow(
     if (baseline_allocator_result.lock)
         pas_lock_unlock(baseline_allocator_result.lock);
 
-    return pas_msl_malloc_logging(size, result);
+    return pas_msl_malloc_logging(size, result, config.config_ptr, pas_lock_is_not_held);
 }
 
 static PAS_ALWAYS_INLINE pas_allocation_result
