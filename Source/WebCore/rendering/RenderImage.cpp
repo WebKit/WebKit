@@ -564,7 +564,7 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
             auto concreteObjectSize = concreteObjectSizeForPainting();
             if (!concreteObjectSize.isEmpty()) {
                 auto changedRect = styleImage->mapChangedRectToSource(*this, concreteObjectSize, *rect);
-                repaintRect.intersect(enclosingIntRect(mapRect(changedRect, FloatRect { { }, concreteObjectSize.size() }, replacedContentRect())));
+                repaintRect.intersect(enclosingIntRect(mapRect(changedRect, FloatRect { { }, concreteObjectSize.size() }, replacedContentPaintRect())));
             }
         }
         // FIXME: This needs to account for filter outsets: webkit.org/b/293553.
