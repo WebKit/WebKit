@@ -30,6 +30,8 @@
 
 #if ENABLE(IPC_TESTING_API) && !ENABLE(IPC_TESTING_SWIFT)
 
+#include "Connection.h"
+#include "Logging.h"
 #include <wtf/CompletionHandler.h>
 
 namespace WebKit {
@@ -54,6 +56,59 @@ void IPCTesterReceiver::completeDeferredReply(uint32_t arg0)
 {
     if (auto completionHandler = std::exchange(m_deferredReply, nullptr))
         completionHandler(static_cast<uint64_t>(m_deferredReplyArgument) + arg0 + 1u);
+}
+
+void IPCTesterReceiver::transformInner(const IPCTesterInner& inner, CompletionHandler<void(IPCTesterInner&&)>&& completionHandler)
+{
+    completionHandler({ static_cast<int32_t>(0u - static_cast<uint32_t>(inner.value)), inner.label });
+}
+
+void IPCTesterReceiver::transformInnerSwift(const IPCTesterInner& inner, CompletionHandler<void(IPCTesterInner&&)>&& completionHandler)
+{
+    completionHandler(ipcTesterTransformed(inner));
+}
+
+void IPCTesterReceiver::transformPayloadSwift(const IPCTesterPayload& payload, CompletionHandler<void(IPCTesterPayload&&)>&& completionHandler)
+{
+    completionHandler(ipcTesterTransformed(payload));
+}
+
+void IPCTesterReceiver::transformPayloadSynchronouslySwift(const IPCTesterPayload& payload, CompletionHandler<void(IPCTesterPayload&&)>&& completionHandler)
+{
+    completionHandler(ipcTesterTransformed(payload));
+}
+
+void IPCTesterReceiver::transformNodeSwift(Ref<IPCTesterNode>&& node, RefPtr<IPCTesterNode>&& link, CompletionHandler<void(RefPtr<IPCTesterNode>&&, uint32_t)>&& completionHandler)
+{
+    uint32_t nodeCount = ipcTesterNodeCount(node) + (link ? ipcTesterNodeCount(*link) : 0);
+    completionHandler(link ? RefPtr { ipcTesterMirrored(node) } : nullptr, nodeCount);
+}
+
+void IPCTesterReceiver::describeSwift(IPCTesterColor color, OptionSet<IPCTesterFlag> flags, IPCTesterChoice choice, IPCConnectionTesterIdentifier identifier, const IPCTesterVariant& variant, bool flag, CompletionHandler<void(String&&)>&& completionHandler)
+{
+    completionHandler(ipcTesterDescription(color, flags, choice, identifier, variant, flag));
+}
+
+void IPCTesterReceiver::halveEvenNumberSwift(IPC::Connection& connection, uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
+{
+    MESSAGE_CHECK_COMPLETION_BASE(!(value % 2), connection, completionHandler(0));
+    completionHandler(value / 2);
+}
+
+void IPCTesterReceiver::recordSwift(const String& text)
+{
+    m_recordedTexts.append(text);
+}
+
+void IPCTesterReceiver::takeRecordedSwift(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+{
+    completionHandler(std::exchange(m_recordedTexts, { }));
+}
+
+void IPCTesterReceiver::clearRecordedSwift(CompletionHandler<void()>&& completionHandler)
+{
+    m_recordedTexts.clear();
+    completionHandler();
 }
 
 }

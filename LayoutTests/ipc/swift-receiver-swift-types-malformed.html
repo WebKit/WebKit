@@ -1,0 +1,101 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that a Swift receiver taking Swift types rejects malformed messages.</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ipc.js"></script>
+<body>
+<script>
+
+function takeInvalidMessageString()
+{
+    const reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);
+    return reply?.arguments?.[0]?.value ?? '';
+}
+
+// Resolves with the reply, or with null if the message was not handled. (IPC.sendWithPromisedReply
+// never settles in that case.)
+function send(messageName, args)
+{
+    return new Promise(resolve => {
+        IPC.connectionForProcessTarget('UI').sendWithAsyncReply(0, messageName, args, result => resolve(result?.arguments ? result : null));
+    });
+}
+
+function describe(args)
+{
+    return send(IPC.messages.IPCTesterReceiver_DescribeSwift.name, args);
+}
+
+// The arguments of DescribeSwift, as the C++ encoder lays them out.
+function validDescribeArguments()
+{
+    return [
+        { type: 'uint8_t', value: 1 }, // IPCTesterColor::Green
+        { type: 'uint8_t', value: 3 }, // IPCTesterFlag::First | IPCTesterFlag::Second
+        { type: 'bool', value: 1 }, // IPCTesterChoice::Yes
+        { type: 'uint64_t', value: 7 }, // IPCConnectionTesterIdentifier
+        { type: 'uint8_t', value: 1 }, { type: 'String', value: 'abc' }, // IPCTesterVariant holding a String
+        { type: 'bool', value: 0 },
+    ];
+}
+
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+    // The UI process, unlike WebContent, survives invalid messages when the IPC testing API is enabled.
+    const swiftUsed = IPC.sendSyncMessage('UI', 0, IPC.messages.IPCTester_AddReceiverForSwiftTypesTesting.name, 1000, []).arguments[0].value;
+    takeInvalidMessageString();
+    try {
+        let result = await describe(validDescribeArguments());
+        assert_equals(result.arguments[0].value, 'color=green flags=first|second choice=yes identifier=7 variant=string:abc flag=false');
+
+        let args = validDescribeArguments();
+        args.splice(4, 2, { type: 'uint8_t', value: 2 }, { type: 'int32_t', value: -3 }, { type: 'String', value: '☺' });
+        result = await describe(args);
+        assert_equals(result.arguments[0].value, 'color=green flags=first|second choice=yes identifier=7 variant=inner:-3:☺ flag=false');
+        assert_equals(takeInvalidMessageString(), '');
+
+        const malformedArguments = [
+            ['an unknown enum value', args => args[0] = { type: 'uint8_t', value: 3 }],
+            ['an unknown option bit', args => args[1] = { type: 'uint8_t', value: 8 }],
+            ['a bool enum that is neither 0 nor 1', args => args[2] = { type: 'uint8_t', value: 2 }],
+            ['a zero identifier', args => args[3] = { type: 'uint64_t', value: 0 }],
+            ['the hash table deleted identifier', args => args[3] = { type: 'uint64_t', value: 18446744073709551615n }],
+            ['an out of range variant index', args => args[4] = { type: 'uint8_t', value: 3 }],
+            ['a String with an invalid 8-bit flag', args => args.splice(5, 1, { type: 'uint32_t', value: 3 }, { type: 'uint8_t', value: 2 })],
+            ['a String longer than the message', args => args.splice(5, 2, { type: 'uint32_t', value: 1000 }, { type: 'bool', value: 1 })],
+            ['a bool that is neither 0 nor 1', args => args[6] = { type: 'uint8_t', value: 2 }],
+            ['a missing argument', args => args.pop()],
+        ];
+        for (const [description, makeMalformed] of malformedArguments) {
+            let args = validDescribeArguments();
+            makeMalformed(args);
+            assert_equals(await describe(args), null, `A message with ${description} is not handled`);
+            // Only Swift decoding reports why; C++ decoding just drops the message.
+            const invalidMessageString = takeInvalidMessageString();
+            if (swiftUsed)
+                assert_not_equals(invalidMessageString, '', `A message with ${description} is marked invalid`);
+        }
+
+        // A synchronous message and a message without a reply, cut short.
+        assert_throws_js(TypeError, () => IPC.sendSyncMessage('UI', 0, IPC.messages.IPCTesterReceiver_TransformPayloadSynchronouslySwift.name, 1000, [{ type: 'uint8_t', value: 1 }]));
+        IPC.sendMessage('UI', 0, IPC.messages.IPCTesterReceiver_RecordSwift.name, [{ type: 'uint32_t', value: 3 }, { type: 'uint8_t', value: 2 }]);
+        const invalidMessageString = takeInvalidMessageString();
+        if (swiftUsed)
+            assert_not_equals(invalidMessageString, '', 'A message without a reply that cannot be decoded is marked invalid');
+
+        result = await send(IPC.messages.IPCTesterReceiver_HalveEvenNumberSwift.name, [{ type: 'uint32_t', value: 8 }]);
+        assert_equals(result.arguments[0].value, 4);
+        assert_equals(takeInvalidMessageString(), '');
+
+        // A handler that finds its message invalid replies with the default reply.
+        result = await send(IPC.messages.IPCTesterReceiver_HalveEvenNumberSwift.name, [{ type: 'uint32_t', value: 7 }]);
+        assert_equals(result.arguments[0].value, 0);
+        assert_not_equals(takeInvalidMessageString(), '');
+    } finally {
+        IPC.sendSyncMessage('UI', 0, IPC.messages.IPCTester_RemoveReceiverForSwiftTypesTesting.name, 1000, []);
+    }
+    done();
+}, "Malformed messages to a receiver taking Swift types are rejected.");
+</script>
+</body>

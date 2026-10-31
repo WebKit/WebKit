@@ -378,3 +378,98 @@ using WebCore::ConditionalVariant = Variant<
 >;
 
 using WebCore::NonConditionalVariant = Variant<int, double>
+
+header: <wtf/ObjectIdentifier.h>
+template: struct WebCore::FrameIdentifierType
+template: class WebKit::NotAnIdentifierTag
+class WTF::ObjectIdentifier {
+    [Validator='WTF::ObjectIdentifierGenericBase::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
+}
+
+template: struct WebKit::SwiftAtomicTestIdentifierType
+[CustomHeader] class WTF::AtomicObjectIdentifier {
+    [Validator='WTF::ObjectIdentifierGenericBase::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
+}
+
+headers: "SwiftTypes.h"
+[Swift] enum class Namespace::SwiftEnum : uint8_t {
+    FirstValue,
+    HTTPSOnly,
+    URL,
+    Default,
+#if ENABLE(SWIFT_ENUM_VALUE)
+    ConditionalValue,
+#endif
+}
+
+[Swift] enum class Namespace::SwiftBoolEnum : bool {
+    No,
+    Yes,
+}
+
+[Swift, OptionSet] enum class Namespace::SwiftOptionSet : uint16_t {
+    FirstOption,
+#if ENABLE(SWIFT_OPTION)
+    ConditionalOption,
+#endif
+    ThirdOption,
+}
+
+[Swift, CustomHeader] struct Namespace::SwiftInner {
+    int32_t value;
+    String label;
+}
+
+[Swift, CustomHeader] struct Namespace::SwiftStruct {
+    bool m_flag;
+    String m_name;
+    Vector<uint64_t> m_numbers;
+    Vector<String> m_strings;
+    std::optional<double> m_optionalDouble;
+    Markable<WebCore::FrameIdentifier> m_markableFrameID;
+    WebCore::FrameIdentifier m_frameID;
+    WebKit::SwiftAtomicTestIdentifier m_atomicID;
+    Namespace::SwiftInner m_inner;
+    std::optional<Namespace::SwiftInner> m_optionalInner;
+    Namespace::SwiftEnum m_enumValue;
+    Namespace::SwiftBoolEnum m_boolEnum;
+    OptionSet<Namespace::SwiftOptionSet> m_options;
+    Namespace::SwiftVariant m_variant;
+    [BitField] bool m_default;
+#if ENABLE(SWIFT_MEMBER)
+    uint32_t m_conditionalMember;
+#endif
+    [NotSerialized] int m_notSerialized;
+    float accessor();
+}
+
+[Swift, RefCounted, CustomHeader] class Namespace::SwiftNode {
+    String name();
+    Vector<Ref<Namespace::SwiftNode>> children();
+    RefPtr<Namespace::SwiftNode> parent();
+    Ref<Namespace::SwiftLeaf> leaf();
+}
+
+[Swift, RefCounted, CustomHeader] class Namespace::SwiftLeaf {
+    uint64_t m_value;
+#if ENABLE(SWIFT_MEMBER)
+    double m_conditionalValue;
+#endif
+}
+
+[CustomHeader] class Namespace::SwiftBase {
+    uint32_t baseValue;
+}
+
+#if ENABLE(SWIFT_TYPE_CONDITION)
+[Swift, CustomHeader] class Namespace::SwiftDerived : Namespace::SwiftBase {
+    double derivedValue;
+}
+#endif
+
+[Swift] using Namespace::SwiftVariant = Variant<std::monostate, uint64_t, String, Vector<String>, Namespace::SwiftInner, Ref<Namespace::SwiftNode>>
+
+[Swift] using Namespace::SwiftMultiLineVariant = Variant<
+    WebCore::FrameIdentifier,
+    std::optional<Namespace::SwiftEnum>
+>;

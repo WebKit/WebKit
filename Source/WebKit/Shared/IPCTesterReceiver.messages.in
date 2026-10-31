@@ -32,6 +32,18 @@ messages -> IPCTesterReceiver {
     void AsyncMessage(uint32_t arg1) -> (uint32_t reply) Asynchronous
     void DeferredReplyMessage(uint32_t arg1) -> (uint64_t reply) Asynchronous
     void CompleteDeferredReply(uint32_t arg1)
+
+    TransformInner(struct WebKit::IPCTesterInner inner) -> (struct WebKit::IPCTesterInner reply)
+
+    TransformInnerSwift(struct WebKit::IPCTesterInner inner) -> (struct WebKit::IPCTesterInner reply) SwiftTypes
+    TransformPayloadSwift(struct WebKit::IPCTesterPayload payload) -> (struct WebKit::IPCTesterPayload reply) SwiftTypes
+    TransformPayloadSynchronouslySwift(struct WebKit::IPCTesterPayload payload) -> (struct WebKit::IPCTesterPayload reply) Synchronous SwiftTypes
+    TransformNodeSwift(Ref<WebKit::IPCTesterNode> node, RefPtr<WebKit::IPCTesterNode> link) -> (RefPtr<WebKit::IPCTesterNode> mirrored, uint32_t nodeCount) SwiftTypes
+    DescribeSwift(WebKit::IPCTesterColor color, OptionSet<WebKit::IPCTesterFlag> flags, WebKit::IPCTesterChoice choice, WebKit::IPCConnectionTesterIdentifier identifier, WebKit::IPCTesterVariant variant, bool flag) -> (String description) SwiftTypes
+    HalveEvenNumberSwift(uint32_t value) -> (uint32_t half) SwiftTypes
+    RecordSwift(String text) SwiftTypes
+    TakeRecordedSwift() -> (Vector<String> texts) SwiftTypes
+    ClearRecordedSwift() -> () SwiftTypes
 }
 
 #endif

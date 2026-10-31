@@ -44,6 +44,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/GPUProcessMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/GPUProcessProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/GPUProcessProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/GeneratedSerializers.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/GeneratedSerializers.swift
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/GeneratedSerializersCommon.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/GeneratedSerializersGPUProcess.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/GeneratedSerializersModelProcess.mm

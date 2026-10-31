@@ -33,6 +33,7 @@
 #include <memory>
 #include <span>
 #include <wtf/ArgumentCoder.h>
+#include <wtf/CanBorrow.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/Markable.h>
@@ -63,7 +64,7 @@ template<typename T, typename = IsObjCObject<T>> Class getClass()
 }
 #endif
 
-class Decoder {
+class Decoder : public CanBorrow {
     WTF_MAKE_TZONE_ALLOCATED(Decoder);
 public:
     static std::unique_ptr<Decoder> create(std::span<const uint8_t> buffer, Vector<Attachment>&&);

@@ -27,6 +27,7 @@
 
 #if ENABLE(IPC_TESTING_API) && !ENABLE(IPC_TESTING_SWIFT)
 
+#include "IPCTesterPayload.h"
 #include "MessageReceiver.h"
 #include <wtf/CompletionHandler.h>
 
@@ -46,6 +47,7 @@ public:
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 private:
     IPCTesterReceiver() = default;
 
@@ -53,9 +55,20 @@ private:
     void asyncMessage(uint32_t, CompletionHandler<void(uint32_t)>&&);
     void deferredReplyMessage(uint32_t, CompletionHandler<void(uint64_t)>&&);
     void completeDeferredReply(uint32_t);
+    void transformInner(const IPCTesterInner&, CompletionHandler<void(IPCTesterInner&&)>&&);
+    void transformInnerSwift(const IPCTesterInner&, CompletionHandler<void(IPCTesterInner&&)>&&);
+    void transformPayloadSwift(const IPCTesterPayload&, CompletionHandler<void(IPCTesterPayload&&)>&&);
+    void transformPayloadSynchronouslySwift(const IPCTesterPayload&, CompletionHandler<void(IPCTesterPayload&&)>&&);
+    void transformNodeSwift(Ref<IPCTesterNode>&&, RefPtr<IPCTesterNode>&&, CompletionHandler<void(RefPtr<IPCTesterNode>&&, uint32_t)>&&);
+    void describeSwift(IPCTesterColor, OptionSet<IPCTesterFlag>, IPCTesterChoice, IPCConnectionTesterIdentifier, const IPCTesterVariant&, bool, CompletionHandler<void(String&&)>&&);
+    void halveEvenNumberSwift(IPC::Connection&, uint32_t, CompletionHandler<void(uint32_t)>&&);
+    void recordSwift(const String&);
+    void takeRecordedSwift(CompletionHandler<void(Vector<String>&&)>&&);
+    void clearRecordedSwift(CompletionHandler<void()>&&);
 
     CompletionHandler<void(uint64_t)> m_deferredReply;
     uint32_t m_deferredReplyArgument { 0 };
+    Vector<String> m_recordedTexts;
 };
 
 }
