@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function readBlob()
+{
+    let reader = new FileReader;
+    reader.onloadend = () => TestPage.dispatchEventToFrontend("ReadFinished", {result: reader.result});
+    reader.readAsText(new Blob(["blob contents"]));
+}
+
+function loadBlobScript()
+{
+    let script = document.createElement("script");
+    script.onload = () => TestPage.dispatchEventToFrontend("ScriptLoaded");
+    script.src = URL.createObjectURL(new Blob([";"], {type: "text/javascript"}));
+    document.head.appendChild(script);
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("URLBreakpoint.HiddenLoads");
+
+    let pauses = [];
+    InspectorProtocol.addEventListener("Debugger.paused", (message) => {
+        pauses.push(message.params);
+        InspectorProtocol.sendCommand("Debugger.resume");
+    });
+
+    InspectorProtocol.sendCommand("Debugger.enable", {}, InspectorProtocol.checkForError);
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true}, InspectorProtocol.checkForError);
+    InspectorProtocol.sendCommand("DOMDebugger.setURLBreakpoint", {url: "blob:"}, InspectorProtocol.checkForError);
+
+    async function evaluateInPageAndAwaitEvent(expression, eventName)
+    {
+        pauses = [];
+        let [event] = await Promise.all([
+            ProtocolTest.awaitEvent(eventName),
+            ProtocolTest.evaluateInPage(expression),
+        ]);
+        return event.data;
+    }
+
+    suite.addTestCase({
+        name: "URLBreakpoint.HiddenFileReaderLoad",
+        description: "Check that debugger does not pause for the load of a blob read by FileReader, which is hidden from the inspector.",
+        async test() {
+            ProtocolTest.log("Reading a blob with FileReader...");
+            let data = await evaluateInPageAndAwaitEvent("readBlob()", "ReadFinished");
+            ProtocolTest.expectEqual(pauses.length, 0, "Should not pause for a load hidden from the inspector.");
+            ProtocolTest.expectEqual(data.result, "blob contents", "FileReader should finish reading the blob.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "URLBreakpoint.VisibleBlobLoad",
+        description: "Check that the same breakpoint pauses for the load of a blob that is visible to the inspector.",
+        async test() {
+            ProtocolTest.log("Loading a blob script...");
+            await evaluateInPageAndAwaitEvent("loadBlobScript()", "ScriptLoaded");
+            ProtocolTest.expectEqual(pauses.length, 1, "Should pause for a load visible to the inspector.");
+            ProtocolTest.expectEqual(pauses[0]?.reason, "URL", "Pause reason should be URL.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that URL breakpoints do not pause for loads that are hidden from the inspector.</p>
+</body>
+</html>
