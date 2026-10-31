@@ -41,6 +41,7 @@ public:
     size_t numberOfFrames() const final;
     std::optional<uint64_t> duration() const final;
     int64_t timestamp() const final;
+    MediaChannelLayout channelLayout() const final;
 
     size_t memoryCost() const final;
 

@@ -95,7 +95,7 @@ private:
         return *m_converter;
     }
     void processedDecodedOutputs();
-    String createConverter(uint64_t sampleRate, uint64_t numberOfChannels, unsigned preSkip, bool useWebAudioChannelOrder);
+    String createConverter(uint64_t sampleRate, uint64_t numberOfChannels, unsigned preSkip);
 
     AudioDecoder::OutputCallback m_outputCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     RefPtr<AudioSampleBufferConverter> m_converter WTF_GUARDED_BY_CAPABILITY(queueSingleton());
@@ -165,14 +165,13 @@ static CAAudioStreamDescription outputDescription(uint64_t sampleRate, uint64_t 
     return { double(sampleRate), uint32_t(numberOfChannels), AudioStreamDescription::Float32, CAAudioStreamDescription::IsInterleaved::Yes };
 }
 
-static AudioSampleBufferConverter::Options converterOptions(const CAAudioStreamDescription& outputDescription, unsigned preSkip, bool useWebAudioChannelOrder)
+static AudioSampleBufferConverter::Options converterOptions(const CAAudioStreamDescription& outputDescription, unsigned preSkip)
 {
     return {
         .format = kAudioFormatLinearPCM,
         .description = outputDescription.streamDescription(),
         .generateTimestamp = false,
-        .preSkip = preSkip,
-        .useWebAudioChannelOrder = useWebAudioChannelOrder
+        .preSkip = preSkip
     };
 }
 
@@ -182,7 +181,7 @@ bool AudioDecoderCocoa::canDecode(const AudioInfo& info)
     if (!formatDescription)
         return false;
 
-    return AudioSampleBufferConverter::canConvert(formatDescription, converterOptions(outputDescription(info.rate(), info.channels()), 0, false));
+    return AudioSampleBufferConverter::canConvert(formatDescription, converterOptions(outputDescription(info.rate(), info.channels()), 0));
 }
 
 AudioDecoderCocoa::AudioDecoderCocoa(OutputCallback&& outputCallback)
@@ -367,7 +366,7 @@ String InternalAudioDecoderCocoa::initialize(const String& codecName, const Audi
     if (!m_inputFormatDescription)
         return description.empty() ? "Invalid configuration"_s : "Invalid AudioDecoderConfig's description (extradata)"_s;
 
-    return createConverter(config.sampleRate, config.numberOfChannels, preSkip, config.useWebAudioChannelOrder);
+    return createConverter(config.sampleRate, config.numberOfChannels, preSkip);
 }
 
 String InternalAudioDecoderCocoa::initialize(const AudioInfo& info)
@@ -378,16 +377,16 @@ String InternalAudioDecoderCocoa::initialize(const AudioInfo& info)
     if (!m_inputFormatDescription)
         return "Invalid AudioInfo"_s;
 
-    return createConverter(info.rate(), info.channels(), 0, false);
+    return createConverter(info.rate(), info.channels(), 0);
 }
 
-String InternalAudioDecoderCocoa::createConverter(uint64_t sampleRate, uint64_t numberOfChannels, unsigned preSkip, bool useWebAudioChannelOrder)
+String InternalAudioDecoderCocoa::createConverter(uint64_t sampleRate, uint64_t numberOfChannels, unsigned preSkip)
 {
     assertIsCurrent(queueSingleton());
 
     m_outputDescription = outputDescription(sampleRate, numberOfChannels);
 
-    auto options = converterOptions(*m_outputDescription, preSkip, useWebAudioChannelOrder);
+    auto options = converterOptions(*m_outputDescription, preSkip);
 
     m_converter = AudioSampleBufferConverter::create([weakThis = ThreadSafeWeakPtr { *this }] {
         queueSingleton().dispatch([weakThis] {

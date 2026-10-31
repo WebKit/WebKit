@@ -35,6 +35,7 @@
 #include <AudioToolbox/AudioConverter.h>
 #include <AudioToolbox/AudioFormat.h>
 #include <algorithm>
+#include <bit>
 #include <pal/cf/CoreAudioExtras.h>
 
 #include <pal/cf/AudioToolboxSoftLink.h>
@@ -148,142 +149,9 @@ Vector<uint8_t> createESDescriptor(std::span<const uint8_t> audioSpecificConfig)
     return esDescriptor;
 }
 
-// https://webaudio.github.io/web-audio-api/#ChannelOrdering
-// The order is the one of the WAVE channel mask, which CoreAudio labels Left to TopBackRight follow.
-enum class WebAudioChannel : uint8_t {
-    FrontLeft,
-    FrontRight,
-    FrontCenter,
-    LowFrequency,
-    BackLeft,
-    BackRight,
-    FrontLeftOfCenter,
-    FrontRightOfCenter,
-    BackCenter,
-    SideLeft,
-    SideRight,
-    TopCenter,
-    TopFrontLeft,
-    TopFrontCenter,
-    TopFrontRight,
-    TopBackLeft,
-    TopBackCenter,
-    TopBackRight,
-};
-
-static std::optional<WebAudioChannel> webAudioChannel(AudioChannelLabel label, bool surroundsAreSides)
-{
-    switch (label) {
-    case kAudioChannelLabel_Left:
-        return WebAudioChannel::FrontLeft;
-    case kAudioChannelLabel_Right:
-        return WebAudioChannel::FrontRight;
-    case kAudioChannelLabel_Center:
-    case kAudioChannelLabel_Mono:
-        return WebAudioChannel::FrontCenter;
-    case kAudioChannelLabel_LFEScreen:
-        return WebAudioChannel::LowFrequency;
-    case kAudioChannelLabel_LeftSurround:
-        return surroundsAreSides ? WebAudioChannel::SideLeft : WebAudioChannel::BackLeft;
-    case kAudioChannelLabel_RightSurround:
-        return surroundsAreSides ? WebAudioChannel::SideRight : WebAudioChannel::BackRight;
-    case kAudioChannelLabel_RearSurroundLeft:
-    case kAudioChannelLabel_LeftBackSurround:
-        return WebAudioChannel::BackLeft;
-    case kAudioChannelLabel_RearSurroundRight:
-    case kAudioChannelLabel_RightBackSurround:
-        return WebAudioChannel::BackRight;
-    case kAudioChannelLabel_LeftCenter:
-        return WebAudioChannel::FrontLeftOfCenter;
-    case kAudioChannelLabel_RightCenter:
-        return WebAudioChannel::FrontRightOfCenter;
-    case kAudioChannelLabel_CenterSurround:
-        return WebAudioChannel::BackCenter;
-    case kAudioChannelLabel_LeftSurroundDirect:
-    case kAudioChannelLabel_LeftSideSurround:
-        return WebAudioChannel::SideLeft;
-    case kAudioChannelLabel_RightSurroundDirect:
-    case kAudioChannelLabel_RightSideSurround:
-        return WebAudioChannel::SideRight;
-    case kAudioChannelLabel_TopCenterSurround:
-        return WebAudioChannel::TopCenter;
-    case kAudioChannelLabel_VerticalHeightLeft:
-        return WebAudioChannel::TopFrontLeft;
-    case kAudioChannelLabel_VerticalHeightCenter:
-        return WebAudioChannel::TopFrontCenter;
-    case kAudioChannelLabel_VerticalHeightRight:
-        return WebAudioChannel::TopFrontRight;
-    case kAudioChannelLabel_TopBackLeft:
-    case kAudioChannelLabel_LeftTopRear:
-        return WebAudioChannel::TopBackLeft;
-    case kAudioChannelLabel_TopBackCenter:
-    case kAudioChannelLabel_CenterTopRear:
-        return WebAudioChannel::TopBackCenter;
-    case kAudioChannelLabel_TopBackRight:
-    case kAudioChannelLabel_RightTopRear:
-        return WebAudioChannel::TopBackRight;
-    default:
-        return { };
-    }
-}
-
-// Returns the channel labels in Web Audio order, or std::nullopt if they are already in that order
-// or if a channel has no Web Audio position.
-static std::optional<Vector<AudioChannelLabel>> webAudioReorderedChannelLabels(std::span<const AudioChannelDescription> descriptions)
-{
-    // Surround channels are at the back, unless the layout also has back or back center channels; they are then at the side.
-    bool surroundsAreSides = std::ranges::any_of(descriptions, [](auto& description) {
-        switch (description.mChannelLabel) {
-        case kAudioChannelLabel_RearSurroundLeft:
-        case kAudioChannelLabel_RearSurroundRight:
-        case kAudioChannelLabel_LeftBackSurround:
-        case kAudioChannelLabel_RightBackSurround:
-        case kAudioChannelLabel_CenterSurround:
-            return true;
-        default:
-            return false;
-        }
-    });
-
-    Vector<std::pair<WebAudioChannel, AudioChannelLabel>> channels;
-    channels.reserveInitialCapacity(descriptions.size());
-    for (auto& description : descriptions) {
-        auto channel = webAudioChannel(description.mChannelLabel, surroundsAreSides);
-        if (!channel)
-            return { };
-        channels.append({ *channel, description.mChannelLabel });
-    }
-    if (std::ranges::is_sorted(channels, { }, &std::pair<WebAudioChannel, AudioChannelLabel>::first))
-        return { };
-    std::ranges::sort(channels, { }, &std::pair<WebAudioChannel, AudioChannelLabel>::first);
-    if (std::ranges::adjacent_find(channels, { }, &std::pair<WebAudioChannel, AudioChannelLabel>::first) != channels.end())
-        return { };
-
-    return channels.map([](auto& channel) {
-        return channel.second;
-    });
-}
-
-static bool isOggLayout(AudioChannelLayoutTag layoutTag)
-{
-    switch (layoutTag) {
-    case kAudioChannelLayoutTag_Ogg_3_0:
-    case kAudioChannelLayoutTag_Ogg_4_0:
-    case kAudioChannelLayoutTag_Ogg_5_0:
-    case kAudioChannelLayoutTag_Ogg_5_1:
-    case kAudioChannelLayoutTag_Ogg_6_1:
-    case kAudioChannelLayoutTag_Ogg_7_1:
-        return true;
-    default:
-        return false;
-    }
-}
-
-using ChannelLayoutWithSize = decltype(channelLayoutFromChannelLayoutTag(0));
-
 // Returns the layout read by getProperty, allocated with the size given by getPropertySize.
 template<typename GetPropertySize, typename GetProperty>
-static ChannelLayoutWithSize channelLayoutFromProperty(const GetPropertySize& getPropertySize, const GetProperty& getProperty)
+static AudioChannelLayoutWithSize channelLayoutFromProperty(const GetPropertySize& getPropertySize, const GetProperty& getProperty)
 {
     UInt32 size = 0;
     if (getPropertySize(size) || size < offsetof(AudioChannelLayout, mChannelDescriptions))
@@ -296,7 +164,7 @@ static ChannelLayoutWithSize channelLayoutFromProperty(const GetPropertySize& ge
 }
 
 // Returns the layout of the tag with its channel descriptions.
-static ChannelLayoutWithSize channelLayoutWithDescriptionsForTag(AudioChannelLayoutTag layoutTag)
+static AudioChannelLayoutWithSize channelLayoutWithDescriptionsForTag(AudioChannelLayoutTag layoutTag)
 {
     return channelLayoutFromProperty([&](UInt32& size) {
         return PAL::AudioFormatGetPropertyInfo(kAudioFormatProperty_ChannelLayoutForTag, sizeof(layoutTag), &layoutTag, &size);
@@ -306,7 +174,7 @@ static ChannelLayoutWithSize channelLayoutWithDescriptionsForTag(AudioChannelLay
 }
 
 // Returns the converter's input channel layout. For a decoder, it is the layout of the decoded channels.
-static ChannelLayoutWithSize converterInputChannelLayout(AudioConverterRef converter)
+static AudioChannelLayoutWithSize converterInputChannelLayout(AudioConverterRef converter)
 {
     return channelLayoutFromProperty([&](UInt32& size) {
         return PAL::AudioConverterGetPropertyInfo(converter, kAudioConverterInputChannelLayout, &size, nullptr);
@@ -315,52 +183,81 @@ static ChannelLayoutWithSize converterInputChannelLayout(AudioConverterRef conve
     });
 }
 
-static void setConverterChannelLayouts(AudioConverterRef converter, const ChannelLayoutWithSize& inputLayout, const ChannelLayoutWithSize& outputLayout)
+static bool setConverterChannelLayouts(AudioConverterRef converter, const AudioChannelLayoutWithSize& inputLayout, const AudioChannelLayoutWithSize& outputLayout)
 {
     if (!inputLayout.first || !outputLayout.first)
-        return;
-    if (auto error = PAL::AudioConverterSetProperty(converter, kAudioConverterInputChannelLayout, inputLayout.second, inputLayout.first.get()))
+        return false;
+    if (auto error = PAL::AudioConverterSetProperty(converter, kAudioConverterInputChannelLayout, inputLayout.second, inputLayout.first.get())) {
         RELEASE_LOG_ERROR(Media, "setWebAudioChannelOrderIfNeeded: setting input channel layout failed with %d", static_cast<int>(error));
-    if (auto error = PAL::AudioConverterSetProperty(converter, kAudioConverterOutputChannelLayout, outputLayout.second, outputLayout.first.get()))
+        return false;
+    }
+    if (auto error = PAL::AudioConverterSetProperty(converter, kAudioConverterOutputChannelLayout, outputLayout.second, outputLayout.first.get())) {
         RELEASE_LOG_ERROR(Media, "setWebAudioChannelOrderIfNeeded: setting output channel layout failed with %d", static_cast<int>(error));
+        return false;
+    }
+    return true;
 }
 
-void setWebAudioChannelOrderIfNeeded(AudioConverterRef converter, AudioChannelLayoutTag layoutTag, uint32_t numberOfChannels, ChannelReorderPolicy policy)
+std::optional<MediaChannelLayout> setWebAudioChannelOrderIfNeeded(AudioConverterRef converter, AudioChannelLayoutTag layoutTag, uint32_t numberOfChannels)
 {
-    // WebAudio API requires the channels to be ordered as per https://webaudio.github.io/web-audio-api/#ChannelOrdering.
-    // However WebKit has been returning the codec's channel order for as long as WebAudio has been supported and
-    // sites have adopted workarounds. To avoid breaking existing behaviour, ChannelReorderPolicy::OggLayoutsOnly
-    // only reorders the Ogg layouts.
-    if (numberOfChannels <= 2)
-        return;
-    if (policy == ChannelReorderPolicy::OggLayoutsOnly && !isOggLayout(layoutTag))
-        return;
-
     // When the tag doesn't define the channels, as with ADTS AAC or a program config element, the decoder's layout
-    // is used. Without a speaker layout, as with PCM, discrete channels or a channel with no Web Audio position, the
-    // channels keep their coded order.
+    // is used. Without a speaker layout, as with PCM, the channels keep their coded order.
     bool tagDefinesChannels = layoutTag != kAudioChannelLayoutTag_UseChannelDescriptions
         && layoutTag != kAudioChannelLayoutTag_UseChannelBitmap
         && (layoutTag & kAudioChannelLayoutTag_Unknown) != kAudioChannelLayoutTag_Unknown;
     auto inputLayout = tagDefinesChannels ? channelLayoutFromChannelLayoutTag(layoutTag) : converterInputChannelLayout(converter);
     if (!inputLayout.first)
-        return;
+        return { };
 
-    ChannelLayoutWithSize layoutWithDescriptions;
+    // Discrete and ambisonic channels have no speaker position, and a bitmap's channels are already in Web Audio
+    // order; the channels keep their coded order. A layout that doesn't match the number of channels, such as
+    // ambisonic components that don't fill an order, is discrete.
+    auto inputLayoutTag = inputLayout.first->mChannelLayoutTag;
+    if (auto layout = mediaChannelLayoutFromChannelLayout(*inputLayout.first)) {
+        bool tagHasNumberOfChannels = inputLayoutTag != kAudioChannelLayoutTag_UseChannelDescriptions && inputLayoutTag != kAudioChannelLayoutTag_UseChannelBitmap;
+        if (!layout->isValid(numberOfChannels) || (tagHasNumberOfChannels && (inputLayoutTag & 0xFFFF) != numberOfChannels))
+            return MediaChannelLayout { .kind = MediaChannelLayout::Kind::Discrete };
+        return layout;
+    }
+
+    if (numberOfChannels <= 2)
+        return { };
+
+    AudioChannelLayoutWithSize layoutWithDescriptions;
     std::span<const AudioChannelDescription> descriptions;
-    if (inputLayout.first->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelDescriptions)
+    if (inputLayoutTag == kAudioChannelLayoutTag_UseChannelDescriptions)
         descriptions = PAL::span(*inputLayout.first);
     else {
-        layoutWithDescriptions = channelLayoutWithDescriptionsForTag(inputLayout.first->mChannelLayoutTag);
+        layoutWithDescriptions = channelLayoutWithDescriptionsForTag(inputLayoutTag);
         if (!layoutWithDescriptions.first)
-            return;
+            return { };
         descriptions = PAL::span(*layoutWithDescriptions.first);
     }
 
-    auto orderedLabels = webAudioReorderedChannelLabels(descriptions);
-    if (!orderedLabels || orderedLabels->size() != numberOfChannels)
-        return;
-    setConverterChannelLayouts(converter, inputLayout, channelLayoutFromChannelLabels(orderedLabels->span()));
+    // When a channel has no Web Audio position, or two channels share one, the channels keep their coded order
+    // and are discrete.
+    auto channels = webAudioChannelsFromChannelDescriptions(descriptions);
+    if (!channels || channels->size() != numberOfChannels)
+        return MediaChannelLayout { .kind = MediaChannelLayout::Kind::Discrete };
+    uint32_t mask = 0;
+    for (auto channel : *channels)
+        mask |= webAudioChannelBit(channel);
+    if (static_cast<uint32_t>(std::popcount(mask)) != numberOfChannels)
+        return MediaChannelLayout { .kind = MediaChannelLayout::Kind::Discrete };
+
+    if (!std::ranges::is_sorted(*channels)) {
+        Vector<std::pair<WebAudioChannel, AudioChannelLabel>> orderedChannels(numberOfChannels, [&](size_t index) {
+            return std::pair { (*channels)[index], descriptions[index].mChannelLabel };
+        });
+        std::ranges::sort(orderedChannels, { }, &std::pair<WebAudioChannel, AudioChannelLabel>::first);
+        auto orderedLabels = orderedChannels.map([](auto& channel) {
+            return channel.second;
+        });
+        if (!setConverterChannelLayouts(converter, inputLayout, channelLayoutFromChannelLabels(orderedLabels.span())))
+            return MediaChannelLayout { .kind = MediaChannelLayout::Kind::Discrete };
+    }
+
+    return MediaChannelLayout { .kind = MediaChannelLayout::Kind::Positional, .mask = mask };
 }
 
 }

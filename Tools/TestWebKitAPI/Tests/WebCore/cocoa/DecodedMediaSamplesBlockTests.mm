@@ -47,7 +47,7 @@ using namespace WebCore;
 
 static constexpr uint32_t sampleRate = 48000;
 
-static Ref<AudioInfo> makeDecodedAudioInfo(uint32_t channels, AudioSampleFormat sampleFormat = AudioSampleFormat::F32)
+static Ref<AudioInfo> makeDecodedAudioInfo(uint32_t channels, AudioSampleFormat sampleFormat = AudioSampleFormat::F32, std::optional<MediaChannelLayout> channelLayout = std::nullopt)
 {
     return AudioInfo::create({
         {
@@ -57,7 +57,8 @@ static Ref<AudioInfo> makeDecodedAudioInfo(uint32_t channels, AudioSampleFormat 
             .channels = channels,
             .framesPerPacket = 1,
             .bitDepth = 32,
-            .sampleFormat = sampleFormat
+            .sampleFormat = sampleFormat,
+            .channelLayout = channelLayout
         }
     });
 }
@@ -158,6 +159,130 @@ TEST(DecodedMediaSamplesBlock, AudioRejectsInvalidData)
     MediaSamplesBlock::SamplesVector items;
     items.append(makeAudioItem(MediaTime::zeroTime(), { 0.f, 0.f }, 2));
     EXPECT_FALSE(!!toCMSampleBuffer(MediaSamplesBlock { integerInfo.ptr(), WTF::move(items) }));
+}
+
+static RetainPtr<CMFormatDescriptionRef> decodedAudioFormatDescription(uint32_t channels, const MediaChannelLayout& channelLayout)
+{
+    Ref info = makeDecodedAudioInfo(channels, AudioSampleFormat::F32, channelLayout);
+    MediaSamplesBlock::SamplesVector items;
+    items.append(makeAudioItem(MediaTime::zeroTime(), Vector<float>(FillWith { }, channels * 2, 0.f), channels));
+    auto result = toCMSampleBuffer(MediaSamplesBlock { info.ptr(), WTF::move(items) });
+    if (!result)
+        return nullptr;
+    return PAL::CMSampleBufferGetFormatDescription(result->get());
+}
+
+static Vector<AudioChannelLabel> channelLabels(const AudioChannelLayout& layout)
+{
+    EXPECT_EQ(static_cast<AudioChannelLayoutTag>(kAudioChannelLayoutTag_UseChannelDescriptions), layout.mChannelLayoutTag);
+    auto descriptions = unsafeMakeSpan(layout.mChannelDescriptions, layout.mNumberChannelDescriptions);
+    return Vector<AudioChannelLabel>(descriptions.size(), [&](size_t index) {
+        return descriptions[index].mChannelLabel;
+    });
+}
+
+TEST(DecodedMediaSamplesBlock, AudioChannelLayout)
+{
+    // 5.1: the surround channels are the back channels.
+    constexpr MediaChannelLayout surround { .kind = MediaChannelLayout::Kind::Positional, .mask = 0x3F };
+    RetainPtr format = decodedAudioFormatDescription(6, surround);
+    ASSERT_TRUE(!!format);
+    size_t layoutSize = 0;
+    const AudioChannelLayout* layout = PAL::CMAudioFormatDescriptionGetChannelLayout(format, &layoutSize);
+    ASSERT_NE(nullptr, layout);
+    EXPECT_EQ(channelLabels(*layout), (Vector<AudioChannelLabel> { kAudioChannelLabel_Left, kAudioChannelLabel_Right, kAudioChannelLabel_Center, kAudioChannelLabel_LFEScreen, kAudioChannelLabel_LeftSurround, kAudioChannelLabel_RightSurround }));
+    EXPECT_EQ(mediaChannelLayoutFromChannelLayout(*layout), surround);
+
+    // 7.1: the surround channels are the side channels, and the back channels are rear surround channels.
+    constexpr MediaChannelLayout surround71 { .kind = MediaChannelLayout::Kind::Positional, .mask = 0x63F };
+    format = decodedAudioFormatDescription(8, surround71);
+    ASSERT_TRUE(!!format);
+    layout = PAL::CMAudioFormatDescriptionGetChannelLayout(format, &layoutSize);
+    ASSERT_NE(nullptr, layout);
+    EXPECT_EQ(channelLabels(*layout), (Vector<AudioChannelLabel> { kAudioChannelLabel_Left, kAudioChannelLabel_Right, kAudioChannelLabel_Center, kAudioChannelLabel_LFEScreen, kAudioChannelLabel_RearSurroundLeft, kAudioChannelLabel_RearSurroundRight, kAudioChannelLabel_LeftSurround, kAudioChannelLabel_RightSurround }));
+    EXPECT_EQ(mediaChannelLayoutFromChannelLayout(*layout), surround71);
+
+    // A single channel without a position is mono.
+    constexpr MediaChannelLayout mono { .kind = MediaChannelLayout::Kind::Discrete };
+    format = decodedAudioFormatDescription(1, mono);
+    ASSERT_TRUE(!!format);
+    layout = PAL::CMAudioFormatDescriptionGetChannelLayout(format.get(), &layoutSize);
+    ASSERT_NE(nullptr, layout);
+    EXPECT_EQ(static_cast<AudioChannelLayoutTag>(kAudioChannelLayoutTag_Mono), layout->mChannelLayoutTag);
+    EXPECT_EQ(mediaChannelLayoutFromChannelLayout(*layout), mono);
+
+    // A single channel at the front center is the center channel.
+    constexpr MediaChannelLayout center { .kind = MediaChannelLayout::Kind::Positional, .mask = webAudioChannelBit(WebAudioChannel::FrontCenter) };
+    format = decodedAudioFormatDescription(1, center);
+    ASSERT_TRUE(!!format);
+    layout = PAL::CMAudioFormatDescriptionGetChannelLayout(format.get(), &layoutSize);
+    ASSERT_NE(nullptr, layout);
+    EXPECT_EQ(channelLabels(*layout), (Vector<AudioChannelLabel> { kAudioChannelLabel_Center }));
+    EXPECT_EQ(mediaChannelLayoutFromChannelLayout(*layout), center);
+
+    constexpr MediaChannelLayout discrete { .kind = MediaChannelLayout::Kind::Discrete };
+    format = decodedAudioFormatDescription(4, discrete);
+    ASSERT_TRUE(!!format);
+    layout = PAL::CMAudioFormatDescriptionGetChannelLayout(format, &layoutSize);
+    ASSERT_NE(nullptr, layout);
+    EXPECT_EQ(static_cast<AudioChannelLayoutTag>(kAudioChannelLayoutTag_DiscreteInOrder | 4), layout->mChannelLayoutTag);
+    EXPECT_EQ(mediaChannelLayoutFromChannelLayout(*layout), discrete);
+
+    // First order ambisonics.
+    constexpr MediaChannelLayout ambisonic { .kind = MediaChannelLayout::Kind::Ambisonic };
+    EXPECT_EQ(ambisonic.ambisonicOrder(4), 1u);
+    format = decodedAudioFormatDescription(4, ambisonic);
+    ASSERT_TRUE(!!format);
+    layout = PAL::CMAudioFormatDescriptionGetChannelLayout(format, &layoutSize);
+    ASSERT_NE(nullptr, layout);
+    EXPECT_EQ(static_cast<AudioChannelLayoutTag>(kAudioChannelLayoutTag_HOA_ACN_SN3D | 4), layout->mChannelLayoutTag);
+    EXPECT_EQ(mediaChannelLayoutFromChannelLayout(*layout), ambisonic);
+
+    // Second order ambisonics with a non-diegetic stereo pair.
+    constexpr MediaChannelLayout ambisonicWithStereo { .kind = MediaChannelLayout::Kind::Ambisonic, .mask = MediaChannelLayout::nonDiegeticStereoMask };
+    EXPECT_EQ(ambisonicWithStereo.ambisonicOrder(11), 2u);
+    format = decodedAudioFormatDescription(11, ambisonicWithStereo);
+    ASSERT_TRUE(!!format);
+    layout = PAL::CMAudioFormatDescriptionGetChannelLayout(format, &layoutSize);
+    ASSERT_NE(nullptr, layout);
+    EXPECT_EQ(static_cast<AudioChannelLayoutTag>(kAudioChannelLayoutTag_UseChannelDescriptions), layout->mChannelLayoutTag);
+    ASSERT_EQ(11u, layout->mNumberChannelDescriptions);
+    auto descriptions = unsafeMakeSpan(layout->mChannelDescriptions, layout->mNumberChannelDescriptions);
+    for (uint32_t index = 0; index < 9; ++index)
+        EXPECT_EQ(kAudioChannelLabel_HOA_ACN_0 + index, descriptions[index].mChannelLabel);
+    EXPECT_EQ(static_cast<AudioChannelLabel>(kAudioChannelLabel_Left), descriptions[9].mChannelLabel);
+    EXPECT_EQ(static_cast<AudioChannelLabel>(kAudioChannelLabel_Right), descriptions[10].mChannelLabel);
+    EXPECT_EQ(mediaChannelLayoutFromChannelLayout(*layout), ambisonicWithStereo);
+}
+
+TEST(DecodedMediaSamplesBlock, AudioChannelLayoutRoundTrip)
+{
+    // Every positional layout converts to a CoreAudio layout and back unchanged.
+    size_t failures = 0;
+    for (uint32_t mask = 1; mask < (1U << numberOfWebAudioChannels); ++mask) {
+        MediaChannelLayout positional { .kind = MediaChannelLayout::Kind::Positional, .mask = mask };
+        auto layout = channelLayoutFromMediaChannelLayout(positional, static_cast<uint32_t>(std::popcount(mask)));
+        if (!layout.first || mediaChannelLayoutFromChannelLayout(*layout.first) != positional)
+            ++failures;
+    }
+    EXPECT_EQ(0u, failures);
+}
+
+TEST(DecodedMediaSamplesBlock, AudioRejectsInvalidChannelLayout)
+{
+    // The mask must have one bit per channel.
+    EXPECT_FALSE(!!decodedAudioFormatDescription(6, { .kind = MediaChannelLayout::Kind::Positional, .mask = 0x0F }));
+    // Only the 18 Web Audio channels are defined.
+    EXPECT_FALSE(!!decodedAudioFormatDescription(1, { .kind = MediaChannelLayout::Kind::Positional, .mask = 1U << 18 }));
+    // Channels without speaker positions have no mask.
+    EXPECT_FALSE(!!decodedAudioFormatDescription(2, { .kind = MediaChannelLayout::Kind::Discrete, .mask = 0x3 }));
+    // Ambisonic components must fill an order: 1, 4, 9, 16... channels.
+    EXPECT_FALSE(!!decodedAudioFormatDescription(5, { .kind = MediaChannelLayout::Kind::Ambisonic }));
+    EXPECT_FALSE(!!decodedAudioFormatDescription(4, { .kind = MediaChannelLayout::Kind::Ambisonic, .mask = MediaChannelLayout::nonDiegeticStereoMask }));
+    EXPECT_FALSE(!!decodedAudioFormatDescription(2, { .kind = MediaChannelLayout::Kind::Ambisonic, .mask = MediaChannelLayout::nonDiegeticStereoMask }));
+    // The only non-diegetic channels are a stereo pair.
+    EXPECT_FALSE(!!decodedAudioFormatDescription(5, { .kind = MediaChannelLayout::Kind::Ambisonic, .mask = webAudioChannelBit(WebAudioChannel::FrontCenter) }));
+    EXPECT_FALSE(MediaChannelLayout { .kind = MediaChannelLayout::Kind::Ambisonic }.isValid(std::numeric_limits<uint32_t>::max()));
 }
 
 TEST(DecodedMediaSamplesBlock, AudioRejectsMismatchedFormatDescription)
