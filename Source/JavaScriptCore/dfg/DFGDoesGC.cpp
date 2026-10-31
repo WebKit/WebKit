@@ -242,15 +242,7 @@ bool doesGC(Graph& graph, Node* node)
     case LogShadowChickenPrologue:
     case LogShadowChickenTail:
     case NukeStructureAndSetButterfly:
-    case AtomicsAdd:
-    case AtomicsAnd:
-    case AtomicsCompareExchange:
-    case AtomicsExchange:
-    case AtomicsLoad:
-    case AtomicsOr:
     case AtomicsStore:
-    case AtomicsSub:
-    case AtomicsXor:
     case AtomicsIsLockFree:
     case MatchStructure:
     case FilterCallLinkStatus:
@@ -608,12 +600,33 @@ bool doesGC(Graph& graph, Node* node)
     case GetIndexedPropertyStorage:
         return false;
 
+    case AtomicsAdd:
+    case AtomicsAnd:
+    case AtomicsCompareExchange:
+    case AtomicsExchange:
+    case AtomicsLoad:
+    case AtomicsOr:
+    case AtomicsSub:
+    case AtomicsXor:
+        switch (node->arrayMode().type()) {
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
+            return true;
+        default:
+            return false;
+        }
+
     case GetByVal:
     case GetByValMegamorphic:
     case EnumeratorGetByVal:
-        if (node->arrayMode().type() == Array::String)
+        switch (node->arrayMode().type()) {
+        case Array::String:
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
             return true;
-        return false;
+        default:
+            return false;
+        }
 
     case MultiGetByVal:
         return true;

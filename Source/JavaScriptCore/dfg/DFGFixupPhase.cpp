@@ -1131,10 +1131,12 @@ private:
             switch (node->arrayMode().type()) {
             case Array::BigInt64Array:
             case Array::BigUint64Array:
-                // Make it Array::Generic.
-                // FIXME: Add BigInt64Array / BigUint64Array support.
-                // https://bugs.webkit.org/show_bug.cgi?id=221172
-                node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
+                if (node->op() != GetByVal)
+                    node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
+#if USE(BIGINT32)
+                else
+                    node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
+#endif
                 break;
 
             case Array::Float16Array:
@@ -1263,6 +1265,8 @@ private:
             case Array::Float16Array:
             case Array::Float32Array:
             case Array::Float64Array:
+            case Array::BigInt64Array:
+            case Array::BigUint64Array:
                 fixEdge<KnownCellUse>(m_graph.varArgChild(node, 0));
                 fixEdge<Int32Use>(m_graph.varArgChild(node, 1));
                 break;
@@ -1371,10 +1375,12 @@ private:
             switch (node->arrayMode().type()) {
             case Array::BigInt64Array:
             case Array::BigUint64Array:
-                // Make it Array::Generic.
-                // FIXME: Add BigInt64Array / BigUint64Array support.
-                // https://bugs.webkit.org/show_bug.cgi?id=221172
+#if USE(BIGINT32)
                 node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
+#else
+                if (!child3->shouldSpeculateHeapBigInt())
+                    node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
+#endif
                 break;
             case Array::Float16Array: {
                 if (!CCallHelpers::supportsFloat16())
@@ -1475,6 +1481,12 @@ private:
                 fixEdge<Int32Use>(child2);
                 fixDoubleOrBooleanEdge(child3);
                 break;
+            case Array::BigInt64Array:
+            case Array::BigUint64Array:
+                fixEdge<KnownCellUse>(child1);
+                fixEdge<Int32Use>(child2);
+                fixEdge<HeapBigIntUse>(child3);
+                break;
             case Array::Contiguous:
             case Array::ArrayStorage:
             case Array::SlowPutArrayStorage:
@@ -1501,28 +1513,11 @@ private:
         case AtomicsXor: {
             Edge& base = m_graph.child(node, 0);
             Edge& index = m_graph.child(node, 1);
-            
-            bool badNews = false;
-            for (unsigned i = numExtraAtomicsArgs(node->op()); i--;) {
-                Edge& child = m_graph.child(node, 2 + i);
-                // NOTE: DFG is not smart enough to handle double->int conversions in atomics. So, we
-                // just call the function when that happens. But the FTL is totally cool with those
-                // conversions.
-                if (!child->shouldSpeculateInt32()
-                    && !child->shouldSpeculateInt52()
-                    && !(child->shouldSpeculateNumberOrBoolean() && m_graph.m_plan.isFTL()))
-                    badNews = true;
-            }
-            
-            if (badNews) {
-                node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
-                break;
-            }
 
             node->setArrayMode(
                 node->arrayMode().refine(
                     m_graph, node, base->prediction(), index->prediction()));
-            
+
             switch (node->arrayMode().type()) {
             case Array::Int8Array:
             case Array::Uint8Array:
@@ -1530,6 +1525,22 @@ private:
             case Array::Uint16Array:
             case Array::Int32Array:
             case Array::Uint32Array: {
+                bool badNews = false;
+                for (unsigned i = numExtraAtomicsArgs(node->op()); i--;) {
+                    Edge& child = m_graph.child(node, 2 + i);
+                    // NOTE: DFG is not smart enough to handle double->int conversions in atomics. So, we
+                    // just call the function when that happens. But the FTL is totally cool with those
+                    // conversions.
+                    if (!child->shouldSpeculateInt32()
+                        && !child->shouldSpeculateInt52()
+                        && !(child->shouldSpeculateNumberOrBoolean() && m_graph.m_plan.isFTL()))
+                        badNews = true;
+                }
+                if (badNews) {
+                    node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
+                    break;
+                }
+
                 for (unsigned i = numExtraAtomicsArgs(node->op()); i--;) {
                     Edge& child = m_graph.child(node, 2 + i);
                     if (child->shouldSpeculateInt32())
@@ -1573,13 +1584,32 @@ private:
                 }
                 break;
             }
-            default: {
-                // Make it Array::Generic.
-                // FIXME: Add BigInt64Array / BigUint64Array / Float16Array support.
-                // https://bugs.webkit.org/show_bug.cgi?id=221172
+            case Array::BigInt64Array:
+            case Array::BigUint64Array: {
+#if USE(BIGINT32)
                 node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
                 break;
+#else
+                bool badNews = false;
+                for (unsigned i = numExtraAtomicsArgs(node->op()); i--;) {
+                    if (!m_graph.child(node, 2 + i)->shouldSpeculateHeapBigInt())
+                        badNews = true;
+                }
+                if (badNews) {
+                    node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
+                    break;
+                }
+                for (unsigned i = numExtraAtomicsArgs(node->op()); i--;)
+                    fixEdge<HeapBigIntUse>(m_graph.child(node, 2 + i));
+                blessArrayOperation(base, index, m_graph.child(node, 2 + numExtraAtomicsArgs(node->op())));
+                fixEdge<CellUse>(base);
+                fixEdge<Int32Use>(index);
+                break;
+#endif
             }
+            default:
+                node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
+                break;
             }
             break;
         }

@@ -2564,6 +2564,8 @@ void SpeculativeJIT::compileGetByVal(Node* node, NOESCAPE const ScopedLambda<std
     }
     case Array::BigInt64Array:
     case Array::BigUint64Array:
+        compileGetByValOnBigIntTypedArray(node, node->arrayMode().typedArrayType(), prefix);
+        break;
     case Array::Generic: {
         if (m_graph.m_slowGetByVal.contains(node)) {
             if (m_graph.varArgChild(node, 0).useKind() == ObjectUse) {
@@ -3941,7 +3943,11 @@ void SpeculativeJIT::compile(Node* node)
         }
         
         TypedArrayType type = node->arrayMode().typedArrayType();
-        
+        if (JSC::isBigInt(type)) {
+            compileAtomicsOnBigIntTypedArray(node, type);
+            break;
+        }
+
         SpeculateCellOperand base(this, baseEdge);
         SpeculateStrictInt32Operand index(this, indexEdge);
         GPRTemporary scratch(this);
@@ -7558,6 +7564,8 @@ void SpeculativeJIT::compilePutByVal(Node* node)
         break;
     case Array::BigInt64Array:
     case Array::BigUint64Array:
+        compilePutByValForBigIntTypedArray(node, arrayMode.typedArrayType());
+        break;
     case Array::Generic: {
         DFG_ASSERT(m_graph, node, node->op() == PutByVal || node->op() == PutByValDirect, node->op());
         if (m_graph.m_slowPutByVal.contains(node) || (child1.useKind() != CellUse && child1.useKind() != KnownCellUse)) {
