@@ -126,6 +126,7 @@ public:
     NODELETE void cancelPauseAtNextOpportunity();
     bool schedulePauseForSpecialBreakpoint(Breakpoint&);
     bool cancelPauseForSpecialBreakpoint(Breakpoint&);
+    bool canBreakProgram() const;
     void breakProgram(RefPtr<Breakpoint>&& specialBreakpoint = nullptr);
     void continueProgram();
     void stepNextExpression();
