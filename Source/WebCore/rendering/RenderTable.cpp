@@ -342,7 +342,7 @@ void RenderTable::updateLogicalWidth()
 
 // This method takes a Style::ComputedStyle's logical width, min-width, or max-width length and computes its actual value.
 
-template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const SizeType& styleLogicalWidth, LayoutUnit availableWidth)
+template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const SizeType& styleLogicalWidth, LayoutUnit availableWidth) const
 {
     if (styleLogicalWidth.isIntrinsicOrStretch())
         return computeSizingKeywordLogicalWidthUsing(styleLogicalWidth, availableWidth, bordersPaddingAndSpacingInRowDirection());
@@ -1026,15 +1026,15 @@ void RenderTable::constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit
     // A table is never narrower than its min-content width, so max-width only clamps the max-content contribution, and not below that.
     auto& styleToUse = style();
     // FIXME: This should probably be checking for isSpecified since you should be able to use percentage or calc values for min-width.
-    // FIXME: The contributions include border, padding and cell spacing, but the min-width and max-width compared to them don't.
     if (auto fixedLogicalMinWidth = styleToUse.logicalMinWidth().tryFixed(); fixedLogicalMinWidth && fixedLogicalMinWidth->isPositive()) {
-        maxContentLogicalWidthContribution = std::max(maxContentLogicalWidthContribution, adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalMinWidth));
-        minContentLogicalWidthContribution = std::max(minContentLogicalWidthContribution, adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalMinWidth));
+        auto minLogicalWidth = convertStyleLogicalWidthToComputedWidth(styleToUse.logicalMinWidth(), { });
+        maxContentLogicalWidthContribution = std::max(maxContentLogicalWidthContribution, minLogicalWidth);
+        minContentLogicalWidthContribution = std::max(minContentLogicalWidthContribution, minLogicalWidth);
     }
 
     // FIXME: This should probably be checking for isSpecified since you should be able to use percentage or calc values for maxWidth.
-    if (auto fixedLogicalMaxWidth = styleToUse.logicalMaxWidth().tryFixed()) {
-        maxContentLogicalWidthContribution = std::min(maxContentLogicalWidthContribution, adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalMaxWidth));
+    if (styleToUse.logicalMaxWidth().isFixed()) {
+        maxContentLogicalWidthContribution = std::min(maxContentLogicalWidthContribution, convertStyleLogicalWidthToComputedWidth(styleToUse.logicalMaxWidth(), { }));
         maxContentLogicalWidthContribution = std::max(maxContentLogicalWidthContribution, minContentLogicalWidthContribution);
     }
 }
