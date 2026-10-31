@@ -305,12 +305,14 @@ static LocalFrame* LEGACY_NODELETE frameForEvent(KeyboardEvent* event)
     return downcast<Node>(event->target())->document().frame();
 }
 
-bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>& commands, KeyboardEvent* event)
+bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>& passedCommands, KeyboardEvent* event)
 {
     RefPtr frame = event ? frameForEvent(event) : m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return false;
     ASSERT(frame->page() == corePage());
+
+    auto commands = passedCommands;
 
     Ref editor = frame->editor();
     bool eventWasHandled = false;

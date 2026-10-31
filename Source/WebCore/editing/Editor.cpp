@@ -2466,9 +2466,12 @@ public:
     UserTypingGestureIndicator m_typingGestureIndicator;
 };
 
-void Editor::setComposition(const String& text, SetCompositionMode mode)
+void Editor::setComposition(const String& passedText, SetCompositionMode mode)
 {
     ASSERT(mode == ConfirmComposition || mode == CancelComposition);
+
+    auto text = passedText;
+
     Ref document = this->document();
     SetCompositionScope setCompositionScope(document.copyRef());
 
