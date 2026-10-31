@@ -51,9 +51,11 @@ struct ConstraintsForInFlowContent {
 
     enum BaseTypeFlag : uint8_t {
         GenericContent,
-        InlineContent
+        InlineContent,
+        BlockContent
     };
     bool isConstraintsForInlineContent() const { return baseTypeFlags().contains(InlineContent); }
+    bool isConstraintsForBlockContent() const { return baseTypeFlags().contains(BlockContent); }
 
 protected:
     ConstraintsForInFlowContent(HorizontalConstraints, LayoutUnit logicalTop, EnumSet<BaseTypeFlag>);
@@ -64,6 +66,18 @@ private:
     unsigned m_baseTypeFlags : 4; // EnumSet<BaseTypeFlag>
     HorizontalConstraints m_horizontal;
     LayoutUnit m_logicalTop;
+};
+
+// What a parent formatting context decides for an independent formatting context root it lays out, in the root's writing mode.
+struct ConstraintsForIndependentFormattingContext {
+    // The containing block (CSS 2.2 §10.1): percentages resolve against it, and no block size means an indefinite one (§10.5).
+    LayoutUnit containingBlockInlineSize;
+    std::optional<LayoutUnit> containingBlockBlockSize;
+    // The containing block lays its children out again (RenderBlockFlow::layoutBlockChildren), the root included.
+    bool relayoutChildren { false };
+    // The border box inline size the parent formatting context decides (stretch-fit in a block formatting context, §10.3.3). Without it the
+    // root's own formatting context sizes it.
+    std::optional<LayoutUnit> borderBoxInlineSize;
 };
 
 struct ConstraintsForOutOfFlowContent {

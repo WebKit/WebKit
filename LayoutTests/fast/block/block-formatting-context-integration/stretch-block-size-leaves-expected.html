@@ -1,0 +1,39 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 250px; background: lightgray; font-family: monospace; font-size: 10px; }
+.cb { height: 40px; margin: 4px 0; background: silver; }
+.leaf { background: rgba(0, 128, 0, 0.5); }
+.leaf > div { background: blue; width: 20px; height: 10px; }
+</style>
+<div class="roots">
+<div class="root" style="height: 500px">
+  <div class="cb"><div class="leaf" style="display: flex; height: stretch"><div></div></div></div>
+  <div class="cb" style="padding: 3px 0"><div class="leaf" style="display: flex; height: stretch; margin: 5px 0"><div></div></div></div>
+  <div class="cb"><div class="leaf" style="display: flex; height: stretch; margin: 5px 0; padding: 4px; border: 2px solid black"><div></div></div></div>
+  <div class="cb"><div class="leaf" style="display: grid; min-height: stretch"><div></div></div></div>
+  <div class="cb"><div class="leaf" style="display: flex; flex-direction: column; max-height: stretch"><div style="height: 60px"></div></div></div>
+  <div class="cb"><table class="leaf" style="height: stretch"><tr><td>table</td></tr></table></div>
+  <div class="cb"><button class="leaf" style="display: block; height: stretch">button</button></div>
+  <div class="cb"><canvas class="leaf" width="40" height="20" style="display: block; height: stretch"></canvas></div>
+  <div class="cb" style="height: 10%"><div class="leaf" style="display: flex; height: stretch"><div></div></div></div>
+  <div class="cb" style="height: auto"><div class="leaf" style="display: flex; height: stretch"><div></div></div></div>
+  <div class="cb" style="height: 30px; box-sizing: border-box; border: 3px solid black"><div class="leaf" style="display: flex; height: stretch; box-sizing: border-box; padding: 2px; margin-bottom: 4px"><div></div></div></div>
+</div>
+<div class="root" style="height: 300px">
+  <div class="cb" style="height: auto; aspect-ratio: 5 / 1"><div class="leaf" style="display: flex; height: stretch"><div></div></div></div>
+  <div class="cb" id="resized-ratio" style="height: auto; width: 100px; aspect-ratio: 2 / 1"><div class="leaf" style="display: flex; height: stretch"><div></div></div></div>
+  <div class="cb" id="resized"><div class="leaf" style="display: flex; height: stretch"><div></div></div></div>
+  <div class="cb" style="width: 100px"><div class="leaf" style="display: flex; writing-mode: vertical-lr; width: stretch; margin-right: 10px"><div></div></div></div>
+  <div class="cb">text <span class="leaf" style="display: inline-block; height: stretch; width: 20px; margin-top: 4px"></span></div>
+  <div class="cb"><div style="height: 5px"></div>anonymous <span class="leaf" style="display: inline-block; height: stretch; width: 20px"></span></div>
+</div>
+<div class="root" style="height: 100px">
+  <div class="leaf" style="display: flex; height: stretch; margin: 10px 0"><div></div></div>
+</div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.height = "70px";
+document.getElementById("resized-ratio").style.width = "200px";
+</script>
