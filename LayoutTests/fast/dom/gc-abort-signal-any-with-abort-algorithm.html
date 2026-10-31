@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that a signal returned by AbortSignal.any() stays alive while its source signals can still abort it if it has abort algorithms, like the ones added by the signal option of addEventListener() and by fetch(), and that it can be collected otherwise.");
+jsTestIsAsync = true;
+
+const count = 50;
+let listenerCallCount;
+let notAbortedCount;
+let collectedCount;
+
+function nextTask()
+{
+    return new Promise(resolve => setTimeout(resolve, 0));
+}
+
+async function collectGarbage()
+{
+    // Collect from a new task so that the signals are not found on the stack.
+    await nextTask();
+    gc();
+    await nextTask();
+}
+
+async function testListeners(type, makeSignal, abort)
+{
+    const rootController = new AbortController();
+    const controllers = [];
+    let callCount = 0;
+    for (let i = 0; i < count; ++i) {
+        const controller = new AbortController();
+        controllers.push(controller);
+        // Nothing references the signal after this call, except through its source signals.
+        window.addEventListener(type, () => ++callCount, { signal: makeSignal(rootController.signal, controller.signal) });
+    }
+    await collectGarbage();
+    abort(rootController, controllers);
+    window.dispatchEvent(new Event(type));
+    listenerCallCount = callCount;
+    shouldBe("listenerCallCount", "0");
+}
+
+// fetch() creates its Request the same way.
+async function testRequests(makeSignal, abort)
+{
+    const controllers = [];
+    const requests = [];
+    for (let i = 0; i < count; ++i) {
+        const controller = new AbortController();
+        controllers.push(controller);
+        requests.push(new Request("data:text/plain,", { signal: makeSignal(controller.signal) }));
+    }
+    await collectGarbage();
+    await abort(controllers);
+    notAbortedCount = requests.filter(request => !request.signal.aborted).length;
+    shouldBe("notAbortedCount", "0");
+}
+
+async function testCollected(type, dropSources)
+{
+    let controllers = [];
+    const weakRefs = [];
+    for (let i = 0; i < count; ++i) {
+        const controller = new AbortController();
+        controllers.push(controller);
+        const signal = AbortSignal.any([controller.signal]);
+        window.addEventListener(type, () => { }, { signal });
+        weakRefs.push(new WeakRef(signal));
+    }
+    controllers = dropSources(controllers);
+    // A first collection may only collect the source signals.
+    await collectGarbage();
+    await collectGarbage();
+    collectedCount = weakRefs.filter(weakRef => !weakRef.deref()).length;
+    shouldBeTrue("collectedCount > count / 2");
+}
+
+const abortControllers = (rootController, controllers) => controllers.forEach(controller => controller.abort());
+
+onload = async () => {
+    debug("addEventListener() with AbortSignal.any([root, signal]), signal's controller aborts:");
+    await testListeners("test-any-own", (root, signal) => AbortSignal.any([root, signal]), abortControllers);
+
+    debug("addEventListener() with AbortSignal.any([root, signal]), root's controller aborts:");
+    await testListeners("test-any-root", (root, signal) => AbortSignal.any([root, signal]), rootController => rootController.abort());
+
+    debug("addEventListener() with AbortSignal.any([signal]), signal's controller aborts:");
+    await testListeners("test-any-single", (root, signal) => AbortSignal.any([signal]), abortControllers);
+
+    debug("new Request() with AbortSignal.any([signal]), signal's controller aborts:");
+    await testRequests(signal => AbortSignal.any([signal]), controllers => controllers.forEach(controller => controller.abort()));
+
+    debug("new Request() with AbortSignal.any([AbortSignal.timeout(10)]), the timeout expires:");
+    const timeoutSignals = [];
+    await testRequests(() => {
+        timeoutSignals.push(AbortSignal.timeout(10));
+        return AbortSignal.any([timeoutSignals.at(-1)]);
+    }, async () => {
+        // A signal's dependent signals are aborted in the same task as the signal.
+        while (timeoutSignals.some(signal => !signal.aborted))
+            await nextTask();
+    });
+
+    debug("Aborted signals can be collected:");
+    await testCollected("test-collected-aborted", controllers => {
+        controllers.forEach(controller => controller.abort());
+        return controllers;
+    });
+
+    debug("Signals whose source signals were all collected can be collected:");
+    await testCollected("test-collected-no-sources", () => null);
+
+    finishJSTest();
+};
+</script>
+</body>
+</html>

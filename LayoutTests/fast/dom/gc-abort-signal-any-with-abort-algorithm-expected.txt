@@ -1,0 +1,23 @@
+Tests that a signal returned by AbortSignal.any() stays alive while its source signals can still abort it if it has abort algorithms, like the ones added by the signal option of addEventListener() and by fetch(), and that it can be collected otherwise.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+addEventListener() with AbortSignal.any([root, signal]), signal's controller aborts:
+PASS listenerCallCount is 0
+addEventListener() with AbortSignal.any([root, signal]), root's controller aborts:
+PASS listenerCallCount is 0
+addEventListener() with AbortSignal.any([signal]), signal's controller aborts:
+PASS listenerCallCount is 0
+new Request() with AbortSignal.any([signal]), signal's controller aborts:
+PASS notAbortedCount is 0
+new Request() with AbortSignal.any([AbortSignal.timeout(10)]), the timeout expires:
+PASS notAbortedCount is 0
+Aborted signals can be collected:
+PASS collectedCount > count / 2 is true
+Signals whose source signals were all collected can be collected:
+PASS collectedCount > count / 2 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

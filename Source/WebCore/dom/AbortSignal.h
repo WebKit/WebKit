@@ -68,6 +68,7 @@ public:
 
     bool hasActiveTimeoutTimer() const { return m_hasActiveTimeoutTimer; }
     bool hasAbortEventListener() const { return m_hasAbortEventListener; }
+    bool hasAbortAlgorithms() const { return !m_algorithms.isEmpty(); }
 
     using Algorithm = Function<void(JSC::JSValue reason)>;
     uint32_t addAlgorithm(Algorithm&&);

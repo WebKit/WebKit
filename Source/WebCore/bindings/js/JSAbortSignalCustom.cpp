@@ -44,28 +44,37 @@ bool JSAbortSignalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
         return true;
     }
 
-    if (abortSignal.hasAbortEventListener()) {
+    // https://dom.spec.whatwg.org/#abort-signal-garbage-collection
+    // Source signals only hold weak references to their dependent signals, so a dependent signal whose abort
+    // is observable through abort event listeners or abort algorithms (e.g. the one addEventListener() adds
+    // for its signal option) has to stay alive while it has source signals.
+    if (abortSignal.isDependent()) {
+        // Only signals returned by AbortSignal.timeout() have a timeout timer, and they are not dependent.
+        ASSERT(!abortSignal.hasActiveTimeoutTimer());
+        if (abortSignal.hasAbortEventListener() || abortSignal.hasAbortAlgorithms()) {
+            // Called on parallel GC marker threads, so this must not mutate the set.
+            if (!abortSignal.sourceSignals().isEmptyIgnoringNullReferencesWithoutCleanup()) {
+                if (reason) [[unlikely]]
+                    *reason = "Has Source Signals And Abort Event Listener Or Abort Algorithm"_s;
+                return true;
+            }
+        }
+    } else if (abortSignal.hasAbortEventListener()) {
         if (abortSignal.hasActiveTimeoutTimer()) {
             if (reason) [[unlikely]]
                 *reason = "Has Timeout And Abort Event Listener"_s;
             return true;
         }
-        if (abortSignal.isDependent()) {
-            // Called on parallel GC marker threads, so this must not mutate the set.
-            if (!abortSignal.sourceSignals().isEmptyIgnoringNullReferencesWithoutCleanup()) {
-                if (reason) [[unlikely]]
-                    *reason = "Has Source Signals And Abort Event Listener"_s;
-                return true;
-            }
-        } else {
-            bool isReachable = containsWebCoreOpaqueRoot(visitor, abortSignal);
-            if (isReachable && reason) [[unlikely]]
-                *reason = "Has Abort Event Listener And Is Referenced By Other Objects"_s;
-            return isReachable;
-        }
+        bool isReachable = containsWebCoreOpaqueRoot(visitor, abortSignal);
+        if (isReachable && reason) [[unlikely]]
+            *reason = "Has Abort Event Listener And Is Referenced By Other Objects"_s;
+        return isReachable;
     }
 
-    return containsWebCoreOpaqueRoot(visitor, abortSignal);
+    bool isReachable = containsWebCoreOpaqueRoot(visitor, abortSignal);
+    if (isReachable && reason) [[unlikely]]
+        *reason = "Is Referenced By Other Objects"_s;
+    return isReachable;
 }
 
 template<typename Visitor>
