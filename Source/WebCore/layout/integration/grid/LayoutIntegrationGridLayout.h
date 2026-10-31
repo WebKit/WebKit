@@ -69,7 +69,7 @@ private:
     void updateGridItemRenderers(const GridItemBorderBoxRects& previousGridItemRects);
     void updateFormattingContextRootRendererBeforeLayout();
     void updateGridItemGridAreas(const Layout::UsedTrackSizes&, const Layout::GridItemRects&);
-    void updateFormattingContextRootRenderer(const Layout::UsedTrackSizes&, LayoutUnit usedBlockContentSize, const Layout::GridItemRects&, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks);
+    void updateFormattingContextRootRenderer(const Layout::UsedTrackSizes&, LayoutUnit usedBlockContentSize, const Layout::GridItemRects&, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, bool autoRepeatColumnsTruncatedByLimit, bool autoRepeatRowsTruncatedByLimit, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks);
     void layoutOutOfFlowBoxes();
     void updateOverflow(RenderGrid&);
     void populateGridPositions(const Layout::UsedTrackSizes&, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks);

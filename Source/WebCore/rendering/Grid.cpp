@@ -136,8 +136,10 @@ void Grid::setGridItemArea(const RenderBox& item, GridArea area)
 
 void Grid::setAutoRepeatTracks(unsigned autoRepeatRows, unsigned autoRepeatColumns)
 {
-    ASSERT(static_cast<unsigned>(Style::GridPosition::max()) >= numTracks(Style::GridTrackSizingDirection::Rows) + autoRepeatRows);
-    ASSERT(static_cast<unsigned>(Style::GridPosition::max()) >= numTracks(Style::GridTrackSizingDirection::Columns) + autoRepeatColumns);
+    // The auto-repeat tracks are part of the explicit grid, which is limited to GridPosition::max() tracks. numTracks() is not
+    // part of this check: it is the size of the grid before it is placed, or the whole used grid when GFC calls this after sizing the grid.
+    ASSERT(static_cast<unsigned>(Style::GridPosition::max()) >= autoRepeatRows);
+    ASSERT(static_cast<unsigned>(Style::GridPosition::max()) >= autoRepeatColumns);
     m_autoRepeatRows = autoRepeatRows;
     m_autoRepeatColumns =  autoRepeatColumns;
 }

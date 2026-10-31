@@ -37,6 +37,7 @@
 #include "RenderChildIterator.h"
 #include "RenderGrid.h"
 #include "RenderView.h"
+#include "StyleGridPositionsResolver.h"
 #include "StyleKeyword+Logging.h"
 #include "UsedTrackSizes.h"
 #include <wtf/CheckedPtr.h>
@@ -340,7 +341,7 @@ void GridLayout::updateGridItemGridAreas(const Layout::UsedTrackSizes& usedTrack
     }
 }
 
-void GridLayout::updateFormattingContextRootRenderer(const Layout::UsedTrackSizes& usedTrackSizes, LayoutUnit usedBlockContentSize, const Layout::GridItemRects& gridItemRects, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks)
+void GridLayout::updateFormattingContextRootRenderer(const Layout::UsedTrackSizes& usedTrackSizes, LayoutUnit usedBlockContentSize, const Layout::GridItemRects& gridItemRects, size_t autoRepeatColumnsCount, size_t autoRepeatRowsCount, bool autoRepeatColumnsTruncatedByLimit, bool autoRepeatRowsTruncatedByLimit, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, const BitVector& collapsedColumnTracks, const BitVector& collapsedRowTracks)
 {
     CheckedRef renderGrid = gridBoxRenderer();
     auto& currentGrid = renderGrid->currentGrid();
@@ -359,14 +360,15 @@ void GridLayout::updateFormattingContextRootRenderer(const Layout::UsedTrackSize
 
     // The grid was emptied before layout, so this sizes it to the used tracks, whether or not there are out-of-flow boxes:
     // gridAreaRangeForOutOfFlow relies on numTracks() to tell the last line from an interior one.
-    // This has to precede setAutoRepeatTracks, which asserts on the track count.
     currentGrid.ensureGridSize(usedTrackSizes.rowSizes.size(), usedTrackSizes.columnSizes.size());
 
     // Out-of-flow boxes are placed by RenderGrid, which resolves their grid lines against the explicit
     // grid it computes from style plus these auto-repeated track counts, offset by the explicit grid start.
     currentGrid.setAutoRepeatTracks(autoRepeatRowsCount, autoRepeatColumnsCount);
-    // GFC does not report yet whether the limit on the number of tracks cut the auto-repeat.
-    currentGrid.setAutoRepeatTruncatedByLimit(false, false);
+    currentGrid.setAutoRepeatTruncatedByLimit(autoRepeatRowsTruncatedByLimit, autoRepeatColumnsTruncatedByLimit);
+    // The used tracks hold the leading implicit tracks and the explicit grid, whose size RenderGrid reads from style and these auto-repeated track counts.
+    ASSERT(currentGrid.numTracks(Style::GridTrackSizingDirection::Rows) >= leadingImplicitRowsCount + Style::GridPositionsResolver::explicitGridCount(renderGrid.get(), Style::GridTrackSizingDirection::Rows));
+    ASSERT(currentGrid.numTracks(Style::GridTrackSizingDirection::Columns) >= leadingImplicitColumnsCount + Style::GridPositionsResolver::explicitGridCount(renderGrid.get(), Style::GridTrackSizingDirection::Columns));
     currentGrid.setExplicitGridStart(leadingImplicitRowsCount, leadingImplicitColumnsCount);
 
     auto emptyTrackIndexes = [](const BitVector& collapsedTracks) -> std::unique_ptr<OrderedTrackIndexSet> {
@@ -458,11 +460,12 @@ void GridLayout::layout()
 
     auto [ usedTrackSizes, gridItemRects, usedBlockContentSize,
         autoRepeatColumnsCount, autoRepeatRowsCount,
+        autoRepeatColumnsTruncatedByLimit, autoRepeatRowsTruncatedByLimit,
         leadingImplicitColumnsCount, leadingImplicitRowsCount,
         collapsedColumnTracks, collapsedRowTracks, baselines ] = Layout::GridFormattingContext { gridBox(), protect(layoutState()) }.layout(gridLayoutConstraints);
     updateGridItemRenderers(previousGridItemRects);
     updateGridItemGridAreas(usedTrackSizes, gridItemRects);
-    updateFormattingContextRootRenderer(usedTrackSizes, usedBlockContentSize, gridItemRects, autoRepeatColumnsCount, autoRepeatRowsCount, leadingImplicitColumnsCount, leadingImplicitRowsCount, collapsedColumnTracks, collapsedRowTracks);
+    updateFormattingContextRootRenderer(usedTrackSizes, usedBlockContentSize, gridItemRects, autoRepeatColumnsCount, autoRepeatRowsCount, autoRepeatColumnsTruncatedByLimit, autoRepeatRowsTruncatedByLimit, leadingImplicitColumnsCount, leadingImplicitRowsCount, collapsedColumnTracks, collapsedRowTracks);
     auto contentBoxBlockStart = layoutState().geometryForBox(gridBox()).contentBoxTop();
     auto borderBoxOffset = [&](std::optional<LayoutUnit> baseline) -> std::optional<LayoutUnit> {
         if (!baseline)

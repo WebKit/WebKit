@@ -77,6 +77,13 @@ struct GridLayoutResult {
     // The number of explicit grid tracks that came from an auto-repeat.
     size_t autoRepeatColumnsCount { 0 };
     size_t autoRepeatRowsCount { 0 };
+    // https://drafts.csswg.org/css-grid-1/#overlarge-grids
+    // Whether the limit on the number of tracks left out repetitions of the auto-repeat, or part of the last one, that the container
+    // would have fitted. The resolved track list needs it to name the last line of the auto-repeat (a repeat that ends exactly at the
+    // limit is followed by the lines after it, one that was cut is not). Only integration reads it, to write the RenderGrid state that
+    // the resolved track list is built from; the formatting context does not use it.
+    bool autoRepeatColumnsTruncatedByLimit { false };
+    bool autoRepeatRowsTruncatedByLimit { false };
 
     size_t leadingImplicitColumnsCount { 0 };
     size_t leadingImplicitRowsCount { 0 };
