@@ -283,7 +283,7 @@ RenderMathMLBlock::SizeAppliedToMathContent RenderMathMLBlock::sizeAppliedToMath
     CheckedRef style = this->style();
     auto usedZoom = style->usedZoomForLength();
 
-    // The intrinsic width contributions apply min-width and max-width when they are computed (see constrainIntrinsicLogicalWidthContributionsByMinMax()).
+    // The intrinsic width contributions apply min-width and max-width when they are read (see constrainIntrinsicLogicalWidthContributionsByMinMax()).
     if (phase == LayoutPhase::Layout) {
         // FIXME: Resolve percentages and sizing keywords.
         if (auto fixedLogicalMinWidth = style->logicalMinWidth().tryFixed())

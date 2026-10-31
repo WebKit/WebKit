@@ -529,13 +529,14 @@ std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentForFlexItem
         // width is auto we can use its cached contribution instead.
         // (Compare code in RenderBlock::computeIntrinsicLogicalWidthContributions)
         if (flexLayoutItem.style().logicalWidth().isAuto() && !FlexFormattingUtils::flexItemHasAspectRatio(flexItem)) {
+            // The item's own min-width and max-width are its min and max main sizes, which the flex algorithm applies itself.
             if (size.isMinContent()) {
                 invalidateFlexItemContentLogicalWidthsIfNeeded(flexLayoutItem);
-                return flexItem->minContentLogicalWidthContribution() - flexItem->borderAndPaddingLogicalWidth();
+                return flexItem->intrinsicLogicalWidthContributionsIgnoringMinMax().first - flexItem->borderAndPaddingLogicalWidth();
             }
             if (size.isMaxContent()) {
                 invalidateFlexItemContentLogicalWidthsIfNeeded(flexLayoutItem);
-                return flexItem->maxContentLogicalWidthContribution() - flexItem->borderAndPaddingLogicalWidth();
+                return flexItem->intrinsicLogicalWidthContributionsIgnoringMinMax().second - flexItem->borderAndPaddingLogicalWidth();
             }
         }
         return flexItem->computeLogicalWidthUsing(size, mainAxisSizeForLengthResolution, flexBox()) - flexItem->borderAndPaddingLogicalWidth();
@@ -582,10 +583,15 @@ LayoutUnit FlexIntegrationUtils::resolveCalcSizeMainAxisExtentForFlexItem(const 
 LayoutUnit FlexIntegrationUtils::maxContentMainAxisExtentForFlexItem(const FlexLayoutItem& flexLayoutItem)
 {
     CheckedRef flexItem = flexLayoutItem.renderer;
+    if (CheckedPtr replaced = dynamicDowncast<RenderReplaced>(flexItem)) {
+        if (auto logicalWidth = replaced->stretchFitLogicalWidthWithoutNaturalSize())
+            return *logicalWidth;
+    }
     auto definiteCrossSizeScope = FlexItemDefiniteCrossSizeScope { flexItem, FlexItemDefiniteCrossSizeScope::InvalidateContentWidths::Yes };
     auto intrinsicWidthComputationScope = FlexItemIntrinsicWidthComputationScope { flexItem };
     auto mainAxisBorderAndPadding = FlexFormattingUtils::isHorizontalFlow(flexBox()) ? flexItem->horizontalBorderAndPaddingExtent() : flexItem->verticalBorderAndPaddingExtent();
-    return flexItem->maxContentLogicalWidthContribution() - mainAxisBorderAndPadding;
+    // The flex base size ignores the item's own min and max main sizes; its hypothetical main size applies them.
+    return flexItem->intrinsicLogicalWidthContributionsIgnoringMinMax().second - mainAxisBorderAndPadding;
 }
 
 // The item's min-content main size (border and padding excluded, like the flex algorithm's other main sizes), measured

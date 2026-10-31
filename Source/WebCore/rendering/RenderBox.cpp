@@ -1546,21 +1546,27 @@ void RenderBox::computeIntrinsicLogicalWidthContributionsIfNeeded()
     auto borderAndPadding = borderAndPaddingLogicalWidth();
     m_minContentLogicalWidthContribution = minContentLogicalWidth + borderAndPadding;
     m_maxContentLogicalWidthContribution = maxContentLogicalWidth + borderAndPadding;
-    // After the transferred min/max sizes, which they win over (CSS Sizing 4 section 5.3).
-    constrainIntrinsicLogicalWidthContributionsByMinMax(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
     clearContentLogicalWidthsInvalidation();
+}
+
+std::pair<LayoutUnit, LayoutUnit> RenderBox::intrinsicLogicalWidthContributionsIgnoringMinMax() const
+{
+    const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributionsIfNeeded();
+    return { m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution };
 }
 
 LayoutUnit RenderBox::minContentLogicalWidthContribution() const
 {
-    const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributionsIfNeeded();
-    return m_minContentLogicalWidthContribution;
+    auto [minContentLogicalWidthContribution, maxContentLogicalWidthContribution] = intrinsicLogicalWidthContributionsIgnoringMinMax();
+    constrainIntrinsicLogicalWidthContributionsByMinMax(minContentLogicalWidthContribution, maxContentLogicalWidthContribution);
+    return minContentLogicalWidthContribution;
 }
 
 LayoutUnit RenderBox::maxContentLogicalWidthContribution() const
 {
-    const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributionsIfNeeded();
-    return m_maxContentLogicalWidthContribution;
+    auto [minContentLogicalWidthContribution, maxContentLogicalWidthContribution] = intrinsicLogicalWidthContributionsIgnoringMinMax();
+    constrainIntrinsicLogicalWidthContributionsByMinMax(minContentLogicalWidthContribution, maxContentLogicalWidthContribution);
+    return maxContentLogicalWidthContribution;
 }
 
 RenderBoxOverridingSizes& RenderBox::ensureOverridingSizes()
@@ -4120,6 +4126,11 @@ void RenderBox::constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& 
     };
 
     auto measureKeywordLogicalWidth = [&](bool isMaxContent) {
+        // The contributions are constrained when they are read, which may be outside of their computation.
+        SetLayoutNeededForbiddenScope layoutForbiddenScope(*this);
+        std::optional<IntrinsicLogicalWidthComputationScope> intrinsicWidthComputationScope;
+        if (!layoutContext().isComputingIntrinsicLogicalWidthFor(*this))
+            intrinsicWidthComputationScope.emplace(layoutContext(), *this);
         if (isMaxContent)
             return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MaxContent { }, contentBoxLogicalWidth(), { });
         return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, contentBoxLogicalWidth(), { });
@@ -5580,16 +5591,6 @@ LayoutBoxExtent RenderBox::scrollPaddingForViewportRect(const LayoutRect& viewpo
 LayoutUnit RenderBox::intrinsicLogicalWidth() const
 {
     return writingMode().isHorizontal() ? intrinsicSize().width() : intrinsicSize().height();
-}
-
-bool RenderBox::shouldIgnoreLogicalMinMaxWidthSizes() const
-{
-    if (!isFlexItem())
-        return false;
-    if (auto* flexBox = dynamicDowncast<RenderFlexibleBox>(parent()))
-        return flexBox->isComputingFlexBaseSizes() && writingMode().isHorizontal() == FlexFormattingUtils::isHorizontalFlow(*flexBox);
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 bool RenderBox::shouldIgnoreLogicalMinMaxHeightSizes() const

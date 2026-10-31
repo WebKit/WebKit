@@ -880,8 +880,8 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(IsComputingIntrinsicSize 
                 // calculated from the constraint equation used for block-level,
                 // non-replaced elements in normal flow.
                 if (computedHeightIsAuto && !hasIntrinsicWidth && !hasIntrinsicHeight) {
-                    bool isFlexItemComputingBaseSize = isFlexItem() && downcast<RenderFlexibleBox>(parent())->isComputingFlexBaseSizes();
-                    if (isComputingIntrinsicSize == IsComputingIntrinsicSize::Yes && !isFlexItemComputingBaseSize) {
+                    // A flex base size measures such an item into the available space instead (see stretchFitLogicalWidthWithoutNaturalSize()).
+                    if (isComputingIntrinsicSize == IsComputingIntrinsicSize::Yes) {
                         // When there's a min/max-height and an intrinsic ratio, the preferred width
                         // should reflect the transferred size constraints from the opposite axis.
                         auto [transferredMin, transferredMax] = computeMinMaxLogicalWidthFromAspectRatio();
@@ -1049,9 +1049,6 @@ std::pair<LayoutUnit, LayoutUnit> RenderReplaced::computeIntrinsicLogicalWidthCo
 
 void RenderReplaced::constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& minContentLogicalWidthContribution, LayoutUnit& maxContentLogicalWidthContribution) const
 {
-    if (shouldIgnoreLogicalMinMaxWidthSizes())
-        return;
-
     auto& style = this->style();
     auto& logicalMinWidth = style.logicalMinWidth();
     auto& logicalMaxWidth = style.logicalMaxWidth();
@@ -1097,6 +1094,26 @@ void RenderReplaced::constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutU
 
     minContentLogicalWidthContribution = minLogicalWidth + borderAndPadding;
     maxContentLogicalWidthContribution = maxLogicalWidth + borderAndPadding;
+}
+
+std::optional<LayoutUnit> RenderReplaced::stretchFitLogicalWidthWithoutNaturalSize() const
+{
+    // The max-content width of a box with a preferred aspect ratio but no natural size is the stretch fit into a definite
+    // available space (CSS Box Sizing 3 section 5.1). See the matching case in computeReplacedLogicalWidth().
+    auto& style = this->style();
+    if (!behavesAsAutoSize(style.logicalWidth(), style.logicalHeight()) || !behavesAsAutoSize(style.logicalHeight(), style.logicalWidth()))
+        return { };
+
+    FloatSize intrinsicRatio;
+    FloatSize constrainedSize;
+    computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(constrainedSize, intrinsicRatio);
+    bool hasIntrinsicWidth = constrainedSize.width() > 0 || (!constrainedSize.width() && shouldRespectZeroIntrinsicWidth()) || shouldApplySizeOrInlineSizeContainment();
+    bool hasIntrinsicHeight = constrainedSize.height() > 0 || (!constrainedSize.height() && shouldRespectZeroIntrinsicHeight()) || shouldApplySizeContainment();
+    if (intrinsicRatio.isEmpty() || hasIntrinsicWidth || hasIntrinsicHeight)
+        return { };
+
+    auto [transferredMinLogicalWidth, transferredMaxLogicalWidth] = computeMinMaxLogicalWidthFromAspectRatio();
+    return std::clamp(computeConstrainedLogicalWidth(), transferredMinLogicalWidth, transferredMaxLogicalWidth);
 }
 
 PositionWithAffinity RenderReplaced::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)
@@ -1310,7 +1327,7 @@ void RenderReplaced::computeReplacedOutOfFlowPositionedLogicalHeight(LogicalExte
 LayoutUnit RenderReplaced::computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, IsComputingIntrinsicSize isComputingIntrinsicSize) const
 {
     // The intrinsic width contributions apply min-width and max-width once, in constrainIntrinsicLogicalWidthContributionsByMinMax().
-    if (isComputingIntrinsicSize == IsComputingIntrinsicSize::Yes || shouldIgnoreLogicalMinMaxWidthSizes())
+    if (isComputingIntrinsicSize == IsComputingIntrinsicSize::Yes)
         return logicalWidth;
 
     auto& logicalMinWidth = style().logicalMinWidth();

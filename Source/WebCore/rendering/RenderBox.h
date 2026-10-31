@@ -347,6 +347,9 @@ public:
 
     virtual LayoutUnit minContentLogicalWidthContribution() const;
     virtual LayoutUnit maxContentLogicalWidthContribution() const;
+    // The min-content and max-content contributions before the box's own min-width and max-width are applied to them, which
+    // is how a flex item's flex base size is measured.
+    std::pair<LayoutUnit, LayoutUnit> intrinsicLogicalWidthContributionsIgnoringMinMax() const;
     virtual std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const = 0;
 
     virtual LayoutSize intrinsicSize() const { return LayoutSize(); }
@@ -448,7 +451,6 @@ public:
     bool shouldComputeLogicalHeightFromAspectRatio() const;
     bool shouldComputeLogicalWidthFromAspectRatio() const;
     bool LEGACY_NODELETE hasFullyConstrainedLogicalHeight() const;
-    bool LEGACY_NODELETE shouldIgnoreLogicalMinMaxWidthSizes() const;
     bool LEGACY_NODELETE shouldIgnoreLogicalMinMaxHeightSizes() const;
 
     // The explicit intrinsic inner size of contain-intrinsic-size
@@ -733,10 +735,12 @@ private:
 protected:
     LayoutBoxExtent m_marginBox;
 
-    // The min-content contribution: the box's min-content size after its CSS width and min/max-width have been applied.
+    // The min-content contribution: the box's min-content size after its CSS width has been applied. Its min-width and
+    // max-width are applied when it is read (see minContentLogicalWidthContribution()).
     LayoutUnit m_minContentLogicalWidthContribution;
 
-    // The max-content contribution: the box's max-content size after its CSS width and min/max-width have been applied.
+    // The max-content contribution: the box's max-content size after its CSS width has been applied. Its min-width and
+    // max-width are applied when it is read (see maxContentLogicalWidthContribution()).
     LayoutUnit m_maxContentLogicalWidthContribution;
 
     // Our overflow information.
