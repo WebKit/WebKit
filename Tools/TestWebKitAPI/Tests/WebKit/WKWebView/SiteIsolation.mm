@@ -9082,6 +9082,258 @@ TEST(SiteIsolation, IntentionalAboutBlankIframeBackForwardNotSkipped)
     EXPECT_TRUE(childURLIs(@"about:blank"));
 }
 
+TEST(SiteIsolation, AboutBlankPopupGoBackReturnsToInitiatorProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+        { "/apple"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server);
+    pid_t openerPID = [opener.webView mainFrame].info._processIdentifier;
+
+    // The opener initiates the navigation to about:blank, so the popup inherits the opener's origin and process.
+    [opener.webView evaluateJavaScript:@"w.location = 'about:blank'" completionHandler:nil];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([opened.webView mainFrame].info._processIdentifier, openerPID);
+
+    [opened.webView evaluateJavaScript:@"location = 'https://apple.com/apple'" completionHandler:nil];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_NE([opened.webView mainFrame].info._processIdentifier, openerPID);
+
+    // The apple.com document performs the traversal, but about:blank must return to the origin it inherited.
+    [opened.webView goBack];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([opened.webView mainFrame].info._processIdentifier, openerPID);
+    EXPECT_WK_STREQ([opener.webView objectByEvaluatingJavaScript:@"w.location.href"], "about:blank");
+}
+
+TEST(SiteIsolation, SelfInitiatedAboutBlankPopupGoBackReturnsToInitiatorProcess)
+{
+    // The opener's iframe keeps a webkit.org process in the browsing context group for the popup to return to.
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/iframe'></iframe><script>onload = () => { w = window.open('https://webkit.org/webkit') }</script>"_s } },
+        { "/iframe"_s, { "hi"_s } },
+        { "/webkit"_s, { "hi"_s } },
+        { "/apple"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server);
+    pid_t openerPID = [opener.webView mainFrame].info._processIdentifier;
+    pid_t webKitPID = [opener.webView mainFrame].childFrames.firstObject.info._processIdentifier;
+    EXPECT_NE(webKitPID, openerPID);
+    EXPECT_EQ([opened.webView mainFrame].info._processIdentifier, webKitPID);
+
+    // The popup initiates its own navigation to about:blank, so it inherits webkit.org, not its opener's origin.
+    [opened.webView evaluateJavaScript:@"location = 'about:blank'" completionHandler:nil];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([opened.webView mainFrame].info._processIdentifier, webKitPID);
+
+    [opened.webView evaluateJavaScript:@"location = 'https://apple.com/apple'" completionHandler:nil];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    pid_t applePID = [opened.webView mainFrame].info._processIdentifier;
+    EXPECT_NE(applePID, webKitPID);
+    EXPECT_NE(applePID, openerPID);
+
+    // Neither the frame performing the traversal (apple.com) nor the opener (example.com) is the about:blank's initiator.
+    [opened.webView goBack];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([opened.webView mainFrame].info._processIdentifier, webKitPID);
+}
+
+static bool waitUntilFirstChildFrameEvaluatesToTrue(TestWKWebView *webView, NSString *condition)
+{
+    return TestWebKitAPI::Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:condition inFrame:[webView firstChildFrame]] boolValue];
+    });
+}
+
+static bool waitForFirstChildFrameToLoadAboutBlank(TestWKWebView *webView)
+{
+    return waitUntilFirstChildFrameEvaluatesToTrue(webView, @"location.href == 'about:blank' && document.readyState == 'complete'");
+}
+
+TEST(SiteIsolation, SelfInitiatedAboutBlankIframeHistoryBackReturnsToInitiatorProcess)
+{
+    // The second webkit.org iframe keeps a webkit.org process in the browsing context group for the first one to return to.
+    // The shared process is disabled so that each site's iframes get their own process.
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/frame1'></iframe><iframe src='https://webkit.org/frame2'></iframe>"_s } },
+        { "/frame1"_s, { "<script>onload = () => alert('frame1')</script>"_s } },
+        { "/frame2"_s, { "<script>onload = () => alert('frame2')</script>"_s } },
+        { "/apple"_s, { "<script>onload = () => alert('apple')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    RetainPtr<NSString> firstAlert = [webView _test_waitForAlert];
+    RetainPtr<NSString> secondAlert = [webView _test_waitForAlert];
+    EXPECT_TRUE(([[NSSet setWithObjects:firstAlert.get(), secondAlert.get(), nil] isEqualToSet:[NSSet setWithObjects:@"frame1", @"frame2", nil]]));
+
+    auto firstIframePID = [webView = RetainPtr { webView }] {
+        return [webView mainFrame].childFrames.firstObject.info._processIdentifier;
+    };
+    pid_t mainFramePID = [webView mainFrame].info._processIdentifier;
+    pid_t webKitPID = [webView mainFrame].childFrames.lastObject.info._processIdentifier;
+    EXPECT_NE(webKitPID, mainFramePID);
+    EXPECT_EQ(firstIframePID(), webKitPID);
+
+    // The iframe initiates its own navigation to about:blank, so it inherits webkit.org, not its parent's origin.
+    [webView evaluateJavaScript:@"location.href = 'about:blank'" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_TRUE(waitForFirstChildFrameToLoadAboutBlank(webView.get()));
+    EXPECT_EQ(firstIframePID(), webKitPID);
+
+    [webView evaluateJavaScript:@"location.href = 'https://apple.com/apple'" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "apple");
+    EXPECT_NE(firstIframePID(), webKitPID);
+
+    // Only the iframe goes back; the main frame is not navigated. Neither the frame performing the traversal (apple.com)
+    // nor the parent (example.com) is the about:blank's initiator.
+    [webView evaluateJavaScript:@"history.back()" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_TRUE(waitForFirstChildFrameToLoadAboutBlank(webView.get()));
+    EXPECT_EQ(firstIframePID(), webKitPID);
+    EXPECT_EQ([webView mainFrame].info._processIdentifier, mainFramePID);
+}
+
+TEST(SiteIsolation, SelfInitiatedAboutBlankIframeHistoryBackAfterReloadReturnsToInitiatorProcess)
+{
+    // The second webkit.org iframe keeps a webkit.org process in the browsing context group for the first one to return to.
+    // The shared process is disabled so that each site's iframes get their own process.
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/frame1'></iframe><iframe src='https://webkit.org/frame2'></iframe>"_s } },
+        { "/frame1"_s, { "<script>onload = () => alert('frame1')</script>"_s } },
+        { "/frame2"_s, { "<script>onload = () => alert('frame2')</script>"_s } },
+        { "/apple"_s, { "<script>onload = () => alert('apple')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    RetainPtr<NSString> firstAlert = [webView _test_waitForAlert];
+    RetainPtr<NSString> secondAlert = [webView _test_waitForAlert];
+    EXPECT_TRUE(([[NSSet setWithObjects:firstAlert.get(), secondAlert.get(), nil] isEqualToSet:[NSSet setWithObjects:@"frame1", @"frame2", nil]]));
+
+    auto firstIframePID = [webView = RetainPtr { webView }] {
+        return [webView mainFrame].childFrames.firstObject.info._processIdentifier;
+    };
+    pid_t webKitPID = [webView mainFrame].childFrames.lastObject.info._processIdentifier;
+    EXPECT_EQ(firstIframePID(), webKitPID);
+
+    // The iframe initiates its own navigation to about:blank, so it inherits webkit.org, not its parent's origin.
+    [webView evaluateJavaScript:@"location.href = 'about:blank'" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_TRUE(waitForFirstChildFrameToLoadAboutBlank(webView.get()));
+
+    // Reloading the about:blank must not replace the origin recorded for its history entry.
+    [webView evaluateJavaScript:@"document.body.dataset.beforeReload = 'yes'; location.reload()" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_TRUE(waitUntilFirstChildFrameEvaluatesToTrue(webView.get(), @"location.href == 'about:blank' && document.readyState == 'complete' && !document.body.dataset.beforeReload"));
+
+    [webView evaluateJavaScript:@"location.href = 'https://apple.com/apple'" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "apple");
+    EXPECT_NE(firstIframePID(), webKitPID);
+
+    [webView evaluateJavaScript:@"history.back()" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_TRUE(waitForFirstChildFrameToLoadAboutBlank(webView.get()));
+    EXPECT_EQ(firstIframePID(), webKitPID);
+}
+
+TEST(SiteIsolation, SelfInitiatedAboutBlankIframeHistoryBackStaysInCurrentProcessWhenInitiatorProcessIsGone)
+{
+    // The iframe is the only webkit.org frame, so the webkit.org process goes away once it navigates to apple.com.
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/frame1'></iframe>"_s } },
+        { "/frame1"_s, { "<script>onload = () => alert('frame1')</script>"_s } },
+        { "/apple"_s, { "<script>onload = () => alert('apple')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "frame1");
+
+    auto iframePID = [webView = RetainPtr { webView }] {
+        return [webView mainFrame].childFrames.firstObject.info._processIdentifier;
+    };
+    pid_t mainFramePID = [webView mainFrame].info._processIdentifier;
+    pid_t webKitPID = iframePID();
+    EXPECT_NE(webKitPID, mainFramePID);
+
+    [webView evaluateJavaScript:@"location.href = 'about:blank'" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_TRUE(waitForFirstChildFrameToLoadAboutBlank(webView.get()));
+    EXPECT_EQ(iframePID(), webKitPID);
+
+    [webView evaluateJavaScript:@"location.href = 'https://apple.com/apple'" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "apple");
+    pid_t applePID = iframePID();
+    EXPECT_NE(applePID, webKitPID);
+    EXPECT_NE(applePID, mainFramePID);
+    while (processStillRunning(webKitPID))
+        Util::spinRunLoop();
+
+    // With no process left for the origin the about:blank inherited, the traversal stays in the iframe's current process.
+    [webView evaluateJavaScript:@"history.back()" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_TRUE(waitForFirstChildFrameToLoadAboutBlank(webView.get()));
+    EXPECT_EQ(iframePID(), applePID);
+    EXPECT_EQ([webView mainFrame].info._processIdentifier, mainFramePID);
+}
+
+TEST(SiteIsolation, SelfInitiatedAboutBlankIframeHistoryBackReturnsToSharedProcess)
+{
+    // The webkit.org iframes run in the shared process. The second one keeps it alive for the first one to return to.
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/frame1'></iframe><iframe src='https://webkit.org/frame2'></iframe>"_s } },
+        { "/frame1"_s, { "<script>onload = () => alert('frame1')</script>"_s } },
+        { "/frame2"_s, { "<script>onload = () => alert('frame2')</script>"_s } },
+        { "/same-site-as-main-frame"_s, { "<script>onload = () => alert('same-site-as-main-frame')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    RetainPtr<NSString> firstAlert = [webView _test_waitForAlert];
+    RetainPtr<NSString> secondAlert = [webView _test_waitForAlert];
+    EXPECT_TRUE(([[NSSet setWithObjects:firstAlert.get(), secondAlert.get(), nil] isEqualToSet:[NSSet setWithObjects:@"frame1", @"frame2", nil]]));
+
+    auto firstIframePID = [webView = RetainPtr { webView }] {
+        return [webView mainFrame].childFrames.firstObject.info._processIdentifier;
+    };
+    pid_t mainFramePID = [webView mainFrame].info._processIdentifier;
+    pid_t sharedProcessPID = [webView mainFrame].childFrames.lastObject.info._processIdentifier;
+    EXPECT_NE(sharedProcessPID, mainFramePID);
+    EXPECT_EQ(firstIframePID(), sharedProcessPID);
+
+    [webView evaluateJavaScript:@"location.href = 'about:blank'" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_TRUE(waitForFirstChildFrameToLoadAboutBlank(webView.get()));
+    EXPECT_EQ(firstIframePID(), sharedProcessPID);
+
+    [webView evaluateJavaScript:@"location.href = 'https://example.com/same-site-as-main-frame'" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "same-site-as-main-frame");
+    EXPECT_EQ(firstIframePID(), mainFramePID);
+
+    [webView evaluateJavaScript:@"history.back()" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_TRUE(waitForFirstChildFrameToLoadAboutBlank(webView.get()));
+    EXPECT_EQ(firstIframePID(), sharedProcessPID);
+}
+
+TEST(SiteIsolation, SrcdocIframeHistoryBackReturnsToMainFrameProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe srcdoc=\"<script>onload = () => alert('srcdoc')</script>\"></iframe><script>onload = () => alert('example')</script>"_s } },
+        { "/apple"_s, { "<script>onload = () => alert('apple')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "srcdoc");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "example");
+
+    auto iframePID = [webView = RetainPtr { webView }] {
+        return [webView mainFrame].childFrames.firstObject.info._processIdentifier;
+    };
+    pid_t mainFramePID = [webView mainFrame].info._processIdentifier;
+    EXPECT_EQ(iframePID(), mainFramePID);
+
+    [webView evaluateJavaScript:@"location.href = 'https://apple.com/apple'" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "apple");
+    EXPECT_NE(iframePID(), mainFramePID);
+
+    [webView evaluateJavaScript:@"history.back()" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "srcdoc");
+    EXPECT_EQ(iframePID(), mainFramePID);
+}
+
 TEST(SiteIsolation, RedirectToCSP)
 {
     HTTPServer server({

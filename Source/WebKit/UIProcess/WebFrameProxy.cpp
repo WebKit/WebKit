@@ -651,7 +651,7 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, String&&
 #endif
 }
 
-void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process, API::Navigation& navigation, BrowsingContextGroup& group, std::optional<SecurityOriginData> effectiveOrigin, CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&& completionHandler)
+void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process, API::Navigation& navigation, BrowsingContextGroup& group, std::optional<Site> effectiveSite, CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&& completionHandler)
 {
     if (isMainFrame())
         return completionHandler(*webPageIDInCurrentProcess());
@@ -662,7 +662,7 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
         return completionHandler(*webPageIDInCurrentProcess());
     }
 
-    Site site = effectiveOrigin ? Site { *effectiveOrigin } : Site { navigation.currentRequest().url() };
+    Site site = effectiveSite ? *effectiveSite : Site { navigation.currentRequest().url() };
     // A document without a site, such as a data: URL document, joins the process's site.
     if (auto& processSite = process.site(); site.isEmpty() && processSite)
         site = *processSite;
@@ -677,9 +677,9 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
     Site mainFrameSite(page->mainFrame()->url());
     auto mainFrameDomain = WebCore::RegistrableDomain { protect(page->mainFrame())->securityOrigin()->data() };
 
-    // If we have an effectiveOrigin, it means we are loading about:blank which doesn't have any resources
+    // If we have an effectiveSite, it means we are loading about:blank which doesn't have any resources
     // to load can commit it's provisional frame immediately
-    CommitTiming commitTiming = effectiveOrigin ? CommitTiming::Immediately : CommitTiming::WaitForLoad;
+    CommitTiming commitTiming = effectiveSite ? CommitTiming::Immediately : CommitTiming::WaitForLoad;
 
     m_provisionalFrame = nullptr;
     m_provisionalFrame = adoptRef(*new ProvisionalFrameProxy(*this, group.ensureProcessForSite(site, mainFrameSite, process, protect(page->preferences())), commitTiming, navigation.navigationID()));

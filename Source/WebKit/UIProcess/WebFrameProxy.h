@@ -72,6 +72,7 @@ class FrameTreeSyncData;
 class ResourceRequest;
 class SecurityOrigin;
 class ShareableBitmapHandle;
+class Site;
 class TextIndicator;
 
 struct FocusEventData;
@@ -242,7 +243,7 @@ public:
     Vector<Ref<WebFrameProxy>> takeChildFrames();
     void adoptChildFrames(Vector<Ref<WebFrameProxy>>&&);
     ProcessID LEGACY_NODELETE processID() const;
-    void prepareForProvisionalLoadInProcess(WebProcessProxy&, API::Navigation&, BrowsingContextGroup&, std::optional<WebCore::SecurityOriginData>, CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&&);
+    void prepareForProvisionalLoadInProcess(WebProcessProxy&, API::Navigation&, BrowsingContextGroup&, std::optional<WebCore::Site>, CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&&);
 
     void commitProvisionalFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const UserData&, WebCore::RestoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState);
 

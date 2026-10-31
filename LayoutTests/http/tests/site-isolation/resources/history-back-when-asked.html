@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<!-- Goes back on request rather than immediately, so the test can verify which process this
+     document committed in before the traversal happens. Cross-origin to the opener, so the request
+     arrives over postMessage: the opener cannot touch this frame's history object. -->
+<script>
+addEventListener("message", (event) => {
+    if (event.data === "go-back")
+        history.back();
+});
+
+if (window.opener)
+    window.opener.postMessage({ type: "ready", historyLength: history.length }, "*");
+</script>
+<body>history-back-when-asked</body>
