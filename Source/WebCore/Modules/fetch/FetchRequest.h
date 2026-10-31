@@ -37,6 +37,7 @@
 #include "FetchRequestInit.h"
 #include "ResourceRequest.h"
 #include "URLKeepingBlobAlive.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -47,6 +48,7 @@ class WebCoreOpaqueRoot;
 template<typename> class ExceptionOr;
 
 class FetchRequest final : public FetchBodyOwner {
+    WTF_MAKE_TZONE_ALLOCATED(FetchRequest);
 public:
     using Init = FetchRequestInit;
     using Info = Variant<Ref<FetchRequest>, String>;

@@ -34,6 +34,7 @@
 #include "SQLValue.h"
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -57,6 +58,7 @@ public:
 };
 
 class SQLTransaction : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SQLTransaction>, public SQLTransactionStateMachine<SQLTransaction> {
+    WTF_MAKE_TZONE_ALLOCATED(SQLTransaction);
 public:
     static Ref<SQLTransaction> LEGACY_NODELETE create(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
     ~SQLTransaction();

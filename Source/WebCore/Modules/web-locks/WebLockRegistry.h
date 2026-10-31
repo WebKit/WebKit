@@ -33,6 +33,7 @@
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -59,6 +60,7 @@ protected:
 };
 
 class LocalWebLockRegistry final : public WebLockRegistry, public CanMakeWeakPtr<LocalWebLockRegistry> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LocalWebLockRegistry, WEBCORE_EXPORT);
 public:
     static Ref<LocalWebLockRegistry> create() { return adoptRef(*new LocalWebLockRegistry); }
     ~LocalWebLockRegistry();

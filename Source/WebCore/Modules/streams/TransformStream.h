@@ -29,6 +29,7 @@
 #include "JSValueInWrappedObject.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -47,6 +48,7 @@ struct DetachedTransformStream {
 };
 
 class TransformStream : public RefCounted<TransformStream> {
+    WTF_MAKE_TZONE_ALLOCATED(TransformStream);
 public:
     static ExceptionOr<Ref<TransformStream>> create(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, JSC::Strong<JSC::JSObject>&&, JSC::Strong<JSC::JSObject>&&);
     static Ref<TransformStream> LEGACY_NODELETE create(Ref<ReadableStream>&&, Ref<WritableStream>&&);

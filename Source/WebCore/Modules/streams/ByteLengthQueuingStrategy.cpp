@@ -28,8 +28,11 @@
 
 #include "JSDOMGlobalObject.h"
 #include <JavaScriptCore/JSCJSValue.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ByteLengthQueuingStrategy);
 
 Ref<ByteLengthQueuingStrategy> ByteLengthQueuingStrategy::create(Init&& init)
 {

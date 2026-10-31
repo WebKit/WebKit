@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WritableStream.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -44,6 +45,7 @@ class WebTransportWriter;
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 
 class WebTransportSendStream : public WritableStream {
+    WTF_MAKE_TZONE_ALLOCATED(WebTransportSendStream);
 public:
     static ExceptionOr<Ref<WebTransportSendStream>> create(WebTransport&, JSDOMGlobalObject&, Ref<WebTransportSendStreamSink>&&, const WebTransportSendStreamOptions&);
     ~WebTransportSendStream();

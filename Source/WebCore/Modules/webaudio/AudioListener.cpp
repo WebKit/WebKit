@@ -37,8 +37,11 @@
 #include "AudioParam.h"
 #include "AudioUtilities.h"
 #include "ExceptionOr.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioListener);
 
 AudioListener::AudioListener(BaseAudioContext& context)
     : m_positionX(AudioParam::create(context, "positionX"_s, 0.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))

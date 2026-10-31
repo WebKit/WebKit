@@ -29,6 +29,7 @@
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,6 +39,7 @@ class GPUDevice;
 class GPUTexture;
 
 class GPUTextureView : public RefCountedAndCanMakeWeakPtr<GPUTextureView> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUTextureView);
 public:
     static Ref<GPUTextureView> create(Ref<::WebGPU::TextureView>&& backing, String&& label, const GPUTexture& texture)
     {

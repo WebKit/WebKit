@@ -44,8 +44,11 @@
 #include <ranges>
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaKeys);
 
 #if !RELEASE_LOG_DISABLED
 static WTFLogChannel& LEGACY_NODELETE logChannel() { return LogEME; }

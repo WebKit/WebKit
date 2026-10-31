@@ -30,6 +30,7 @@
 #include <WebCore/BufferSource.h>
 #include <WebCore/VideoEncodedData.h>
 #include <WebCore/WebCodecsEncodedVideoChunkData.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
@@ -56,6 +57,7 @@ private:
 };
 
 class WebCodecsEncodedVideoChunk : public RefCounted<WebCodecsEncodedVideoChunk> {
+    WTF_MAKE_TZONE_ALLOCATED(WebCodecsEncodedVideoChunk);
 public:
     struct Init {
         WebCodecsEncodedVideoChunkType type { WebCodecsEncodedVideoChunkType::Key };

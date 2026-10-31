@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "GPUDeviceLostInfo.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUDeviceLostInfo);
 
 GPUDeviceLostReason GPUDeviceLostInfo::reason() const
 {

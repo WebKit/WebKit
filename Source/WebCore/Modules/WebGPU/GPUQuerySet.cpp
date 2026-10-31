@@ -28,8 +28,11 @@
 
 #include "GPUDevice.h"
 #include "GPUQuerySetDescriptor.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUQuerySet);
 
 GPUQuerySet::GPUQuerySet(Ref<WebGPU::QuerySet>&& backing, const GPUQuerySetDescriptor& descriptor, GPUDevice& device)
     : m_backing(WTF::move(backing))

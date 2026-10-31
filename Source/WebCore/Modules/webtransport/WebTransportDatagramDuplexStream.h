@@ -27,6 +27,7 @@
 
 #include <wtf/Deque.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace JSC {
@@ -45,6 +46,7 @@ struct WebTransportSendOptions;
 template<typename> class ExceptionOr;
 
 class WebTransportDatagramDuplexStream : public RefCounted<WebTransportDatagramDuplexStream> {
+    WTF_MAKE_TZONE_ALLOCATED(WebTransportDatagramDuplexStream);
 public:
     static Ref<WebTransportDatagramDuplexStream> LEGACY_NODELETE create(Ref<ReadableStream>&&);
     ~WebTransportDatagramDuplexStream();

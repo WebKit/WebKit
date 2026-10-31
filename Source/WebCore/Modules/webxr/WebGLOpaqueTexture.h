@@ -30,11 +30,13 @@
 #include "GraphicsTypesGL.h"
 #include "WebGLTexture.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class WebGLOpaqueTexture final : public WebGLTexture {
+    WTF_MAKE_TZONE_ALLOCATED(WebGLOpaqueTexture);
 public:
     virtual ~WebGLOpaqueTexture();
 

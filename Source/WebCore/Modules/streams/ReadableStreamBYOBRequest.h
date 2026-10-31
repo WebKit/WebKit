@@ -28,6 +28,7 @@
 #include "ExceptionOr.h"
 #include "JSValueInWrappedObject.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
@@ -40,6 +41,7 @@ class JSDOMGlobalObject;
 class ReadableByteStreamController;
 
 class ReadableStreamBYOBRequest : public RefCounted<ReadableStreamBYOBRequest> {
+    WTF_MAKE_TZONE_ALLOCATED(ReadableStreamBYOBRequest);
 public:
     static Ref<ReadableStreamBYOBRequest> create(ReadableByteStreamController&, Ref<JSC::ArrayBufferView>&&);
 

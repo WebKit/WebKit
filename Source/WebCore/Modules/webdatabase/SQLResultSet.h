@@ -29,6 +29,7 @@
 #pragma once
 
 #include "SQLResultSetRowList.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -36,6 +37,7 @@ namespace WebCore {
 template<typename> class ExceptionOr;
 
 class SQLResultSet : public ThreadSafeRefCounted<SQLResultSet> {
+    WTF_MAKE_TZONE_ALLOCATED(SQLResultSet);
 public:
     static Ref<SQLResultSet> create() { return adoptRef(*new SQLResultSet); }
 

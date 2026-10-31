@@ -28,10 +28,13 @@
 
 #include "config.h"
 #include "OverconstrainedError.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OverconstrainedError);
 
 OverconstrainedError::OverconstrainedError(const String& constraint, const String& message)
     : DOMException(0, "OverconstrainedError"_s, message, Type::OverconstrainedError)

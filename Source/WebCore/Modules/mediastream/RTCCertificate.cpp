@@ -24,10 +24,13 @@
 
 #include "config.h"
 #include "RTCCertificate.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEB_RTC)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCCertificate);
 
 Ref<RTCCertificate> RTCCertificate::create(Ref<SecurityOrigin>&& origin, double expires, Vector<DtlsFingerprint>&& fingerprints, String&& pemCertificate, String&& pemPrivateKey)
 {

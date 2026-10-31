@@ -27,6 +27,7 @@
 
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
@@ -39,6 +40,7 @@ struct WebTransportSendGroupIdentifierType;
 using WebTransportSendGroupIdentifier = ObjectIdentifier<WebTransportSendGroupIdentifierType>;
 
 class WebTransportSendGroup : public RefCounted<WebTransportSendGroup> {
+    WTF_MAKE_TZONE_ALLOCATED(WebTransportSendGroup);
 public:
     static Ref<WebTransportSendGroup> LEGACY_NODELETE create(WebTransport&);
     ~WebTransportSendGroup();

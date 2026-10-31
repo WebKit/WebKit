@@ -35,8 +35,11 @@
 #include "WorkerThread.h"
 #include <JavaScriptCore/VMManager.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerFileSystemStorageConnection);
 
 Ref<WorkerFileSystemStorageConnection> WorkerFileSystemStorageConnection::create(WorkerGlobalScope& scope, Ref<FileSystemStorageConnection>&& mainThreadConnection)
 {

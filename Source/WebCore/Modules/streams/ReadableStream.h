@@ -34,6 +34,7 @@
 #include <JavaScriptCore/Strong.h>
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
@@ -63,6 +64,7 @@ struct DetachedReadableStream {
 };
 
 class ReadableStream : public RefCounted<ReadableStream>, public ActiveDOMObject {
+    WTF_MAKE_TZONE_ALLOCATED(ReadableStream);
 public:
     enum class ReaderMode { Byob };
     struct GetReaderOptions {
@@ -169,6 +171,7 @@ public:
     JSDOMGlobalObject* globalObject();
 
     class Iterator : public RefCountedAndCanMakeWeakPtr<Iterator> {
+        WTF_MAKE_TZONE_ALLOCATED(Iterator);
     public:
         static Ref<Iterator> LEGACY_NODELETE create(Ref<ReadableStreamDefaultReader>&&, bool preventCancel);
         ~Iterator();

@@ -29,6 +29,7 @@
 #include "CacheStorageConnection.h"
 #include "FetchRequest.h"
 #include "FetchResponse.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -36,6 +37,7 @@ namespace WebCore {
 class ScriptExecutionContext;
 
 class DOMCache final : public RefCounted<DOMCache>, public ActiveDOMObject {
+    WTF_MAKE_TZONE_ALLOCATED(DOMCache);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

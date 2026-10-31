@@ -29,8 +29,11 @@
 #include "RTCEncodedVideoFrame.h"
 
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCEncodedVideoFrame);
 
 Ref<RTCEncodedVideoFrame> RTCEncodedVideoFrame::create(RTCEncodedVideoFrame& frame, const Options& options)
 {

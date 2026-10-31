@@ -34,8 +34,11 @@
 #include "WebTransportReceiveStreamStats.h"
 #include "WebTransportSendStreamStats.h"
 #include "WritableStreamSink.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerWebTransportSession);
 
 Ref<WorkerWebTransportSession> WorkerWebTransportSession::create(ScriptExecutionContextIdentifier contextID, WebTransportSessionClient& client)
 {

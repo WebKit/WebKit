@@ -29,6 +29,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -45,6 +46,7 @@ namespace IDBServer {
 class UniqueIDBDatabaseConnection;
 
 class IDBConnectionToClient : public RefCounted<IDBConnectionToClient> {
+    WTF_MAKE_TZONE_ALLOCATED(IDBConnectionToClient);
 public:
     WEBCORE_EXPORT static Ref<IDBConnectionToClient> LEGACY_NODELETE create(IDBConnectionToClientDelegate&);
 

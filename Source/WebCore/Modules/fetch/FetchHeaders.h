@@ -31,6 +31,7 @@
 #include <WebCore/FetchHeadersGuard.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <wtf/HashTraits.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -39,6 +40,7 @@ class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
 class FetchHeaders : public RefCounted<FetchHeaders> {
+    WTF_MAKE_TZONE_ALLOCATED(FetchHeaders);
 public:
     using Guard = FetchHeadersGuard;
     using Init = Variant<Vector<Vector<String>>, Vector<KeyValuePair<String, String>>>;

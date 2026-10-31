@@ -35,6 +35,7 @@
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/UserGestureIndicator.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -46,7 +47,7 @@ class FormData;
 class ReadableStream;
 
 class FetchBodyConsumer final : public CanMakeWeakPtr<FetchBodyConsumer>, public CanMakeCheckedPtr<FetchBodyConsumer> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FetchBodyConsumer);
+    WTF_MAKE_TZONE_ALLOCATED(FetchBodyConsumer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FetchBodyConsumer);
 public:
     enum class Type { None, ArrayBuffer, Blob, Bytes, JSON, Text, FormData };

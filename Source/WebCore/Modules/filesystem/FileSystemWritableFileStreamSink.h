@@ -27,11 +27,13 @@
 
 #include "FileSystemWritableFileStreamIdentifier.h"
 #include "WritableStreamSink.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class FileSystemFileHandle;
 
 class FileSystemWritableFileStreamSink final : public WritableStreamSink {
+    WTF_MAKE_TZONE_ALLOCATED(FileSystemWritableFileStreamSink);
 public:
     static ExceptionOr<Ref<FileSystemWritableFileStreamSink>> create(FileSystemWritableFileStreamIdentifier, FileSystemFileHandle&);
     ~FileSystemWritableFileStreamSink();

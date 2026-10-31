@@ -35,8 +35,11 @@
 #include "JSGPUAdapter.h"
 #include "JSWGSLLanguageFeatures.h"
 #include "WGSLLanguageFeatures.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPU);
 
 GPU::GPU(Ref<WebGPUIntegration>&& backing)
     : m_backing(WTF::move(backing))

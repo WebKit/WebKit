@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "GPUCommandBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUCommandBuffer);
 
 bool GPUCommandBuffer::hasActiveInspectorCanvasCallTracer() const
 {

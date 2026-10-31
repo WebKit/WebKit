@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "GPUInternalError.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUInternalError);
 
 GPUInternalError::GPUInternalError(String&& message)
     : m_message(WTF::move(message))

@@ -25,6 +25,8 @@
 #include "config.h"
 #include "RTCController.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if ENABLE(WEB_RTC)
 
 #include "DocumentSecurityOrigin.h"
@@ -40,6 +42,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCController);
 
 RTCController::RTCController() = default;
 

@@ -28,6 +28,7 @@
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/FileSystemHandleGlobalIdentifier.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
@@ -36,6 +37,7 @@ namespace WebCore {
 class FileSystemStorageConnection;
 
 class FileSystemHandleStorageKeepAlive : public ThreadSafeRefCounted<FileSystemHandleStorageKeepAlive> {
+    WTF_MAKE_TZONE_ALLOCATED(FileSystemHandleStorageKeepAlive);
 public:
     WEBCORE_EXPORT static Ref<FileSystemHandleStorageKeepAlive> LEGACY_NODELETE create(ClientOrigin&&, Vector<FileSystemHandleGlobalIdentifier>&&, Ref<FileSystemStorageConnection>&&);
     WEBCORE_EXPORT ~FileSystemHandleStorageKeepAlive();

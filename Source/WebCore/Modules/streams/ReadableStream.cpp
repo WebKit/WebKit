@@ -56,8 +56,14 @@
 #include "WritableStream.h"
 #include <JavaScriptCore/IteratorOperations.h>
 #include <wtf/Compiler.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReadableStream);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReadableStream::Iterator);
 
 // https://streams.spec.whatwg.org/#validate-and-normalize-high-water-mark
 static inline ExceptionOr<double> extractHighWaterMark(const QueuingStrategy& strategy, double defaultValue)
@@ -175,6 +181,7 @@ Ref<ReadableStream> ReadableStream::create(Ref<InternalReadableStream>&& interna
 }
 
 class AsyncIteratorSource : public ReadableStreamSource, public RefCountedAndCanMakeWeakPtr<AsyncIteratorSource> {
+    WTF_MAKE_TZONE_ALLOCATED(AsyncIteratorSource);
 public:
     static Ref<AsyncIteratorSource> LEGACY_NODELETE create(Ref<DOMAsyncIterator>&& iterator) { return adoptRef(*new AsyncIteratorSource(WTF::move(iterator))); }
 
@@ -240,6 +247,8 @@ private:
     const Ref<DOMAsyncIterator> m_iterator;
     bool m_isCancelled { false };
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AsyncIteratorSource);
 
 ExceptionOr<Ref<ReadableStream>> ReadableStream::from(JSDOMGlobalObject& globalObject, JSC::JSValue iterable)
 {
@@ -717,6 +726,7 @@ ReadableStream::Iterator::Iterator(Ref<ReadableStreamDefaultReader>&& reader, bo
 ReadableStream::Iterator::~Iterator() = default;
 
 class ReadableStreamIteratorReadRequest : public ReadableStreamReadRequest {
+    WTF_MAKE_TZONE_ALLOCATED(ReadableStreamIteratorReadRequest);
 public:
     static Ref<ReadableStreamIteratorReadRequest> LEGACY_NODELETE create(ReadableStreamDefaultReader& reader, Ref<DeferredPromise>&& promise) { return adoptRef(*new ReadableStreamIteratorReadRequest(reader,  WTF::move(promise))); }
 
@@ -769,6 +779,8 @@ private:
     WeakPtr<ReadableStreamDefaultReader> m_reader;
     const Ref<DeferredPromise> m_promise;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReadableStreamIteratorReadRequest);
 
 Ref<DOMPromise> ReadableStream::Iterator::next(JSDOMGlobalObject& globalObject)
 {

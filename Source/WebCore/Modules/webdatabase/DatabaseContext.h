@@ -31,6 +31,7 @@
 #include "Document.h"
 #include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -43,6 +44,7 @@ class SecurityOrigin;
 class SecurityOriginData;
 
 class DatabaseContext final : public ThreadSafeRefCounted<DatabaseContext>, private ActiveDOMObject {
+    WTF_MAKE_TZONE_ALLOCATED(DatabaseContext);
 public:
     // ActiveDOMObject.
     void ref() const final { ThreadSafeRefCounted::ref(); }

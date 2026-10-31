@@ -28,12 +28,14 @@
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/WebTransportSession.h>
 #include <WebCore/WebTransportSessionClient.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebTransport;
 
 class WorkerWebTransportSession : public WebTransportSession, public WebTransportSessionClient {
+    WTF_MAKE_TZONE_ALLOCATED(WorkerWebTransportSession);
 public:
     WEBCORE_EXPORT static Ref<WorkerWebTransportSession> LEGACY_NODELETE create(ScriptExecutionContextIdentifier, WebTransportSessionClient&);
     ~WorkerWebTransportSession();

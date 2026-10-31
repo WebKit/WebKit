@@ -25,10 +25,13 @@
 
 #include "config.h"
 #include "WebAuthnOperationException.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEB_AUTHN)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebAuthnOperationException);
 
 Ref<WebAuthnOperationException> WebAuthnOperationException::create(WebAuthnOperationErrorCode operationError, const String& message)
 {

@@ -33,6 +33,7 @@
 #include <WebCore/ContextDestructionObserver.h>
 #include <WebCore/WebCodecsAudioInternalData.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,6 +41,7 @@ class PlatformRawAudioData;
 template<typename> class ExceptionOr;
 
 class WebCodecsAudioData : public RefCounted<WebCodecsAudioData>, public ContextDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(WebCodecsAudioData);
 public:
     ~WebCodecsAudioData();
 

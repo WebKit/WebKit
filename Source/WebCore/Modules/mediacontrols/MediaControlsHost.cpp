@@ -82,10 +82,14 @@
 #include <wtf/Function.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaControlsHost);
 
 const AtomString& MediaControlsHost::automaticKeyword()
 {
@@ -504,6 +508,7 @@ String MediaControlsHost::base64StringForIconNameAndType(const String& iconName,
 
 #if ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
 class MediaControlsContextMenuProvider final : public ContextMenuProvider {
+    WTF_MAKE_TZONE_ALLOCATED(MediaControlsContextMenuProvider);
 public:
     static Ref<MediaControlsContextMenuProvider> create(HTMLMediaElementIdentifier identifier, Vector<ContextMenuItem>&& items, Function<void(uint64_t)>&& callback)
     {
@@ -564,7 +569,10 @@ private:
     bool m_didDismiss { false };
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaControlsContextMenuProvider);
+
 class MediaControlsContextMenuEventListener final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED(MediaControlsContextMenuEventListener);
 public:
     static Ref<MediaControlsContextMenuEventListener> LEGACY_NODELETE create(Ref<MediaControlsContextMenuProvider>&& contextMenuProvider)
     {
@@ -598,6 +606,8 @@ private:
 
     const Ref<MediaControlsContextMenuProvider> m_contextMenuProvider;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaControlsContextMenuEventListener);
 
 #endif // ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
 

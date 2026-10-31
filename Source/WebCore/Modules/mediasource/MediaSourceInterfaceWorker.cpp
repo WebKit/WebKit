@@ -35,8 +35,11 @@
 #include "MediaSourcePrivateClient.h"
 #include "PlatformTimeRanges.h"
 #include "TimeRanges.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSourceInterfaceWorker);
 
 MediaSourceInterfaceWorker::MediaSourceInterfaceWorker(Ref<MediaSourceHandle>&& handle)
     : m_handle(WTF::move(handle))

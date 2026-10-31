@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "GPUSupportedLimits.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUSupportedLimits);
 
 uint32_t GPUSupportedLimits::maxTextureDimension1D() const
 {

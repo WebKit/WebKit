@@ -32,6 +32,7 @@
 #include "config.h"
 #include "SourceBuffer.h"
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(MEDIA_SOURCE)
@@ -81,6 +82,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceBuffer);
 
 class SourceBufferClientImpl final : public SourceBufferPrivateClient {
+    WTF_MAKE_TZONE_ALLOCATED(SourceBufferClientImpl);
 public:
     static Ref<SourceBufferClientImpl> LEGACY_NODELETE create(SourceBuffer& parent) { return adoptRef(*new SourceBufferClientImpl(parent)); }
     Ref<MediaPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment) final
@@ -169,6 +171,8 @@ private:
     WeakPtr<SourceBuffer> m_parent;
     const ScriptExecutionContextIdentifier m_identifier;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceBufferClientImpl);
 
 Ref<SourceBuffer> SourceBuffer::create(Ref<SourceBufferPrivate>&& sourceBufferPrivate, MediaSource& source)
 {

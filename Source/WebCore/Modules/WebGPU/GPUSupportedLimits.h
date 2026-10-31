@@ -26,10 +26,12 @@
 #pragma once
 
 #include "WebGPUSupportedLimits.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class GPUSupportedLimits : public RefCounted<GPUSupportedLimits> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUSupportedLimits);
 public:
     static Ref<GPUSupportedLimits> create(Ref<WebGPUSupportedLimits>&& backing)
     {

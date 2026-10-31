@@ -34,6 +34,7 @@
 #include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -48,6 +49,7 @@ template<typename> class ExceptionOr;
 using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
 
 class DigitalCredential final : public BasicCredential {
+    WTF_MAKE_TZONE_ALLOCATED(DigitalCredential);
 public:
     static Ref<DigitalCredential> LEGACY_NODELETE create(JSC::Strong<JSC::JSObject>&&, DigitalCredentialPresentationProtocol);
 

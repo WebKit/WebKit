@@ -28,6 +28,7 @@
 #if ENABLE(WEBXR_LAYERS)
 
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class WebXRViewport;
 
 // https://immersive-web.github.io/layers/#xrsubimagetype
 class XRSubImage : public RefCounted<XRSubImage> {
+    WTF_MAKE_TZONE_ALLOCATED(XRSubImage);
 public:
     virtual const WebXRViewport& viewport() const = 0;
     virtual ~XRSubImage();

@@ -33,8 +33,11 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalWebLockRegistry);
 
 static RefPtr<WebLockRegistry>& LEGACY_NODELETE sharedRegistry()
 {

@@ -25,10 +25,13 @@
 
 #include "config.h"
 #include "GamepadButton.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(GAMEPAD)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GamepadButton);
 
 GamepadButton::GamepadButton() = default;
 

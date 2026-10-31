@@ -36,6 +36,7 @@
 #include "WorkerThreadableWebSocketChannel.h"
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -46,6 +47,7 @@ class ScriptExecutionContext;
 class WebSocketChannelClient;
 
 class ThreadableWebSocketChannelClientWrapper : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ThreadableWebSocketChannelClientWrapper> {
+    WTF_MAKE_TZONE_ALLOCATED(ThreadableWebSocketChannelClientWrapper);
 public:
     static Ref<ThreadableWebSocketChannelClientWrapper> LEGACY_NODELETE create(ScriptExecutionContext&, WebSocketChannelClient&);
 

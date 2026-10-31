@@ -40,9 +40,13 @@
 #include "JSFetchResponse.h"
 #include "ScriptExecutionContextInlines.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMCache);
 using namespace WebCore::DOMCacheEngine;
 
 Ref<DOMCache> DOMCache::create(ScriptExecutionContext& context, String&& name, DOMCacheIdentifier identifier, Ref<CacheStorageConnection>&& connection)
@@ -186,6 +190,7 @@ static inline bool hasResponseVaryStarHeaderValue(const FetchResponse& response)
 }
 
 class FetchTasksHandler : public RefCounted<FetchTasksHandler> {
+    WTF_MAKE_TZONE_ALLOCATED(FetchTasksHandler);
 public:
     static Ref<FetchTasksHandler> create(Ref<DOMCache>&& domCache, CompletionHandler<void(ExceptionOr<Vector<Record>>&&)>&& callback) { return adoptRef(*new FetchTasksHandler(WTF::move(domCache), WTF::move(callback))); }
 
@@ -250,6 +255,8 @@ private:
     HashMap<String, Vector<size_t>> m_recordPositionsByURL;
     CompletionHandler<void(ExceptionOr<Vector<Record>>&&)> m_callback;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FetchTasksHandler);
 
 ExceptionOr<Ref<FetchRequest>> DOMCache::requestFromInfo(RequestInfo&& info, bool ignoreMethod, bool* requestValidationFailed)
 {

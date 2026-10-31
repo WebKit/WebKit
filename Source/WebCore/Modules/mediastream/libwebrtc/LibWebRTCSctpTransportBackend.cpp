@@ -29,6 +29,7 @@
 
 #include "LibWebRTCDtlsTransportBackend.h"
 #include "LibWebRTCProvider.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -52,6 +53,7 @@ static inline RTCSctpTransportState LEGACY_NODELETE toRTCSctpTransportState(webr
 }
 
 class LibWebRTCSctpTransportBackendObserver final : public ThreadSafeRefCounted<LibWebRTCSctpTransportBackendObserver>, public webrtc::SctpTransportObserverInterface {
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCSctpTransportBackendObserver);
 public:
     static Ref<LibWebRTCSctpTransportBackendObserver> LEGACY_NODELETE create(RTCSctpTransportBackendClient& client, Ref<webrtc::SctpTransportInterface>&& backend) { return adoptRef(*new LibWebRTCSctpTransportBackendObserver(client, WTF::move(backend))); }
 
@@ -68,6 +70,8 @@ private:
     const Ref<webrtc::SctpTransportInterface> m_backend;
     WeakPtr<RTCSctpTransportBackendClient> m_client;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCSctpTransportBackendObserver);
 
 LibWebRTCSctpTransportBackendObserver::LibWebRTCSctpTransportBackendObserver(RTCSctpTransportBackendClient& client, Ref<webrtc::SctpTransportInterface>&& backend)
     : m_backend(WTF::move(backend))

@@ -29,11 +29,13 @@
 
 #include <WebCore/PlatformSpeechSynthesisVoice.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class SpeechSynthesisVoice : public RefCounted<SpeechSynthesisVoice> {
+    WTF_MAKE_TZONE_ALLOCATED(SpeechSynthesisVoice);
 public:
     virtual ~SpeechSynthesisVoice() = default;
     static Ref<SpeechSynthesisVoice> LEGACY_NODELETE create(PlatformSpeechSynthesisVoice&);

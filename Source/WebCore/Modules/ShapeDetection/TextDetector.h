@@ -31,6 +31,7 @@
 #include "TextDetectorInterface.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,6 +40,7 @@ struct DetectedText;
 template<typename> class ExceptionOr;
 
 class TextDetector : public RefCounted<TextDetector> {
+    WTF_MAKE_TZONE_ALLOCATED(TextDetector);
 public:
     static ExceptionOr<Ref<TextDetector>> create(ScriptExecutionContext&);
 

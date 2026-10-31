@@ -52,6 +52,7 @@
 #include "XRReferenceSpaceType.h"
 #include "XRSessionInit.h"
 #include <wtf/Scope.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -661,6 +662,7 @@ RefPtr<WebXRSession> WebXRSystem::activeImmersiveSession() const
 }
 
 class InlineRequestAnimationFrameCallback final: public RequestAnimationFrameCallback {
+    WTF_MAKE_TZONE_ALLOCATED(InlineRequestAnimationFrameCallback);
 public:
     static Ref<InlineRequestAnimationFrameCallback> create(ScriptExecutionContext& scriptExecutionContext, Function<void()>&& callback)
     {
@@ -688,6 +690,8 @@ private:
 
     Function<void()> m_callback;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineRequestAnimationFrameCallback);
 
 Ref<WebXRSystem::DummyInlineDevice> WebXRSystem::DummyInlineDevice::create(ScriptExecutionContext& scriptExecutionContext)
 {
