@@ -157,9 +157,7 @@ public:
         RequireUserGestureForVideoDueToLowPowerMode = 1 << 15,
         RequirePageVisibilityToPlayAudio = 1 << 16,
         RequireUserGestureForVideoDueToAggressiveThermalMitigation = 1 << 17,
-#if ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
         RequirePageVisibilityForVideoToBeNowPlaying = 1 << 18,
-#endif
         RequireUserGestureToStartAudiblePlaybackWhenHidden = 1 << 19,
         AllRestrictions = ~NoRestrictions,
     };

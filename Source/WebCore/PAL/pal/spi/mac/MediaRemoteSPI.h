@@ -144,10 +144,17 @@ CFArrayRef MRMediaRemoteCopyPickableRoutes();
 
 WTF_EXTERN_C_END
 
+typedef NS_ENUM(NSInteger, MRNowPlayingActivityUIState) {
+    MRNowPlayingActivityUIStateRound = 1,
+    MRNowPlayingActivityUIStateFullScreen = 4,
+};
+
 @protocol MRUIControllable <NSObject>
 @end
 
 @protocol MRNowPlayingActivityUIControllable <MRUIControllable>
+- (void)setPreferredState:(MRNowPlayingActivityUIState)state forBundleIdentifier:(NSString *)bundleIdentifier;
+- (void)suppressPresentationOverBundleIdentifiers:(NSSet<NSString *> *)bundleIdentifiers;
 @end
 
 @interface MRUIControllerProvider : NSObject

@@ -1813,14 +1813,14 @@ static WebCore::EditableLinkBehavior LEGACY_NODELETE toEditableLinkBehavior(_WKE
 
 - (void)_setRequiresPageVisibilityForVideoToBeNowPlayingForTesting:(BOOL)enabled
 {
-#if ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
+#if PLATFORM(APPLETV)
     protect(*_preferences)->setRequiresPageVisibilityForVideoToBeNowPlaying(enabled);
 #endif
 }
 
 - (BOOL)_requiresPageVisibilityForVideoToBeNowPlayingForTesting
 {
-#if ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
+#if PLATFORM(APPLETV)
     return protect(*_preferences)->requiresPageVisibilityForVideoToBeNowPlaying();
 #else
     return NO;
