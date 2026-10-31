@@ -61,6 +61,11 @@ static inline IPC::Connection& networkProcessConnection()
 
 void WebMessagePortChannelProvider::createNewMessagePortChannel(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2)
 {
+    // A channel that outlived a Networking process is created again before one of its ports is shipped.
+    // It is already known if its first creation was still on its way from a worker thread when the connection closed.
+    if (m_portsKnownToNetworkProcess.contains(port1) || m_portsKnownToNetworkProcess.contains(port2))
+        return;
+
     ASSERT(!m_inProcessPortMessages.contains(port1));
     ASSERT(!m_inProcessPortMessages.contains(port2));
     m_inProcessPortMessages.add(port1, Vector<MessageWithMessagePorts> { });
