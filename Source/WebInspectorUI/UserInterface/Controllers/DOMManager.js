@@ -1511,14 +1511,23 @@ WI.DOMManager = class DOMManager extends WI.Object
         }
     }
 
-    highlightSelector(selectorString, frameId, mode)
+    highlightSelector(selectorString, node, mode)
     {
+        console.assert(node instanceof WI.DOMNode, node);
+        let target = node.owningTarget || WI.assumingMainTarget();
+        if (!target.hasCommand("DOM.highlightSelector")) {
+            node.highlight(mode);
+            return;
+        }
+
         this.cancelPendingHighlightHide();
 
-        let target = WI.assumingMainTarget();
+        this.hideDOMNodeHighlight({excludedTargets: new Set([target])});
+
         target.DOMAgent.highlightSelector.invoke({
             selectorString,
-            frameId,
+            // node.frame can fall back to the parent frame, which a frame target would reject.
+            frameId: node.owningTarget ? undefined : node.frame?.id,
             ...WI.DOMManager.buildHighlightConfigs(mode),
         });
     }

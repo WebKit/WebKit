@@ -625,11 +625,11 @@
         {
             "name": "highlightSelector",
             "description": "Highlights all DOM nodes that match a given selector. A string containing a CSS selector must be specified.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "condition": "defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY",
             "parameters": [
                 { "name": "selectorString", "type": "string", "description": "A CSS selector for finding matching nodes to highlight." },
-                { "name": "frameId", "type": "string", "optional": true, "description": "Identifier of the frame which will be searched using the selector.  If not provided, the main frame will be used." },
+                { "name": "frameId", "type": "string", "optional": true, "description": "Identifier of the frame which will be searched using the selector. If not provided, the main frame is used for a page target, or the target's own frame for a frame target. A frame target accepts only its own frame." },
                 { "name": "highlightConfig", "$ref": "HighlightConfig", "description": "A descriptor for the highlight appearance." },
                 { "name": "gridOverlayConfig", "$ref": "GridOverlayConfig", "optional": true, "description": "If provided, used to configure a grid overlay shown during element selection. This overrides DOM.showGridOverlay." },
                 { "name": "flexOverlayConfig", "$ref": "FlexOverlayConfig", "optional": true, "description": "If provided, used to configure a flex overlay shown during element selection. This overrides DOM.showFlexOverlay." }
@@ -638,11 +638,11 @@
         {
             "name": "highlightSelector",
             "description": "Highlights all DOM nodes that match a given selector. A string containing a CSS selector must be specified.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "condition": "!(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)",
             "parameters": [
                 { "name": "selectorString", "type": "string", "description": "A CSS selector for finding matching nodes to highlight." },
-                { "name": "frameId", "type": "string", "optional": true, "description": "Identifier of the frame which will be searched using the selector.  If not provided, the main frame will be used." },
+                { "name": "frameId", "type": "string", "optional": true, "description": "Identifier of the frame which will be searched using the selector. If not provided, the main frame is used for a page target, or the target's own frame for a frame target. A frame target accepts only its own frame." },
                 { "name": "highlightConfig", "$ref": "HighlightConfig", "description": "A descriptor for the highlight appearance." },
                 { "name": "gridOverlayConfig", "$ref": "GridOverlayConfig", "optional": true, "description": "If provided, used to configure a grid overlay shown during element selection. This overrides DOM.showGridOverlay." },
                 { "name": "flexOverlayConfig", "$ref": "FlexOverlayConfig", "optional": true, "description": "If provided, used to configure a flex overlay shown during element selection. This overrides DOM.showFlexOverlay." },

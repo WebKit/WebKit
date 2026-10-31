@@ -1,0 +1,232 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-document-splicing-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.HighlightSelectorFrameTarget");
+
+    let pageTarget = WI.assumingMainTarget();
+    let crossTarget = null;
+    let sameTarget = null;
+    let crossCell = null;
+    let sameCell = null;
+    let pageCell = null;
+
+    function highlightConfig() {
+        return {
+            contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+            paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
+            borderColor: {r: 255, g: 229, b: 153, a: 0.66},
+            marginColor: {r: 246, g: 178, b: 107, a: 0.66},
+        };
+    }
+
+    async function frameQuads(target) {
+        return evaluateInFrameTarget(target, "internals.inspectorFrameHighlightRects().length");
+    }
+
+    async function pageQuads() {
+        return InspectorTest.evaluateInPage("window.internals.inspectorHighlightRects().length");
+    }
+
+    // Resolves to an error message, or null when the command succeeded.
+    async function errorFrom(promise) {
+        try {
+            await promise;
+            return null;
+        } catch (error) {
+            return error.message ?? String(error);
+        }
+    }
+
+    async function frameHighlightSelector(selectorString, frameId) {
+        if (!crossTarget.hasCommand("DOM.highlightSelector"))
+            return "DOM.highlightSelector is not exposed by the frame target";
+        return errorFrom(crossTarget.DOMAgent.highlightSelector.invoke({selectorString, frameId, highlightConfig: highlightConfig()}));
+    }
+
+    async function pushNodeIntoPageTree(expression) {
+        let {result} = await pageTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+        let {nodeId} = await pageTarget.DOMAgent.requestNode(result.objectId);
+        await pageTarget.RuntimeAgent.releaseObjectGroup("test");
+        return WI.domManager.nodeForId(nodeId);
+    }
+
+    async function hideHighlights() {
+        WI.domManager.hideDOMNodeHighlight();
+        await Promise.all([pageTarget, crossTarget, sameTarget].map((target) => target.DOMAgent.hideHighlight()));
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Resolve a grid cell in the cross-site frame target, and one in the same-site frame through the page target.",
+        async test() {
+            crossTarget = await frameTargetForURLContainingWhenReady("highlight-selector-frame.html?cross");
+            sameTarget = await frameTargetForURLContainingWhenReady("highlight-selector-frame.html?same");
+            InspectorTest.expectNotNull(crossTarget, "Should find the cross-site frame target.");
+            InspectorTest.expectNotNull(sameTarget, "Should find the same-site frame target.");
+            InspectorTest.expectThat(crossTarget !== sameTarget, "The two frames should be distinct targets.");
+            InspectorTest.expectThat(crossTarget !== pageTarget, "The cross-site frame should not be the page target.");
+
+            crossCell = await pushNodeIntoFrameTargetTree(crossTarget, `document.querySelector("#grid div")`);
+            InspectorTest.expectNotNull(crossCell, "Should resolve a grid cell in the cross-site frame.");
+            InspectorTest.expectEqual(crossCell.owningTarget, crossTarget, "The cross-site grid cell should belong to the cross-site frame target.");
+
+            await new Promise((resolve) => WI.domManager.requestDocument(resolve));
+            sameCell = await pushNodeIntoPageTree(`document.getElementById("same").contentDocument.querySelector("#grid div")`);
+            InspectorTest.expectNotNull(sameCell, "Should resolve a grid cell in the same-site frame.");
+            InspectorTest.expectNull(sameCell.owningTarget, "The same-site grid cell should belong to the page target.");
+
+            pageCell = await pushNodeIntoPageTree(`document.querySelector("#grid div")`);
+            InspectorTest.expectNotNull(pageCell, "Should resolve a grid cell in the main frame.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "HookObservesFrameOverlay",
+        description: "Highlighting one node in the cross-site frame should draw in that frame's overlay only.",
+        async test() {
+            crossCell.highlight();
+            InspectorTest.expectEqual(await frameQuads(crossTarget), 4, "The cross-site frame should highlight one node.");
+            InspectorTest.expectEqual(await pageQuads(), 0, "The page should not highlight anything.");
+            await hideHighlights();
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightsEveryMatch",
+        description: "DOM.highlightSelector on a frame target should highlight every match in that frame's document.",
+        async test() {
+            InspectorTest.expectNull(await frameHighlightSelector("#grid div"), "DOM.highlightSelector should be accepted by the frame target.");
+            InspectorTest.expectEqual(await frameQuads(crossTarget), 24, "The cross-site frame should highlight its six grid cells.");
+            InspectorTest.expectEqual(await pageQuads(), 0, "The page should not highlight its own grid.");
+            await hideHighlights();
+        }
+    });
+
+    suite.addTestCase({
+        name: "MatchesPseudoElements",
+        description: "DOM.highlightSelector on a frame target should highlight matching pseudo-elements.",
+        async test() {
+            InspectorTest.expectNull(await frameHighlightSelector("#grid div::before"), "DOM.highlightSelector should be accepted by the frame target.");
+            InspectorTest.expectEqual(await frameQuads(crossTarget), 4, "The cross-site frame should highlight its one ::before pseudo-element.");
+            await hideHighlights();
+        }
+    });
+
+    suite.addTestCase({
+        name: "AcceptsOwnFrameId",
+        description: "A frame target should accept its own frame's frameId.",
+        async test() {
+            InspectorTest.expectNull(await frameHighlightSelector("#grid div", crossCell.ownerDocument.frameIdentifier), "DOM.highlightSelector should accept the frame target's own frameId.");
+            InspectorTest.expectEqual(await frameQuads(crossTarget), 24, "The cross-site frame should highlight its six grid cells.");
+            await hideHighlights();
+        }
+    });
+
+    suite.addTestCase({
+        name: "RejectsOtherFrameIds",
+        description: "A frame target should reject any frameId other than its own frame's.",
+        async test() {
+            let pageDocument = await new Promise((resolve) => WI.domManager.requestDocument(resolve));
+            InspectorTest.expectEqual(await frameHighlightSelector("#grid div", pageDocument.frameIdentifier), "Missing frame for given frameId", "Should reject the main frame's frameId.");
+            InspectorTest.expectEqual(await frameHighlightSelector("#grid div", "bogus"), "Missing frame for given frameId", "Should reject a malformed frameId.");
+            InspectorTest.expectEqual(await frameQuads(crossTarget), 0, "The cross-site frame should not highlight anything.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "IgnoresInvalidSelector",
+        description: "A selector that does not parse should be accepted and highlight nothing.",
+        async test() {
+            InspectorTest.expectNull(await frameHighlightSelector("#grid div["), "DOM.highlightSelector should accept a selector that does not parse.");
+            InspectorTest.expectEqual(await frameQuads(crossTarget), 0, "The cross-site frame should not highlight anything.");
+            await hideHighlights();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SameSiteControlUsesPageTarget",
+        description: "The page target should highlight every match in a same-site frame.",
+        async test() {
+            InspectorTest.expectNull(await errorFrom(pageTarget.DOMAgent.highlightSelector.invoke({selectorString: "#grid div", frameId: sameCell.ownerDocument.frameIdentifier, highlightConfig: highlightConfig()})), "DOM.highlightSelector should be accepted by the page target.");
+            InspectorTest.expectEqual(await pageQuads(), 24, "The page should highlight the same-site frame's six grid cells.");
+            await hideHighlights();
+        }
+    });
+
+    suite.addTestCase({
+        name: "StylesHoverRoutesToOwningTarget",
+        description: "WI.DOMManager.highlightSelector should send a cross-site frame node's selector to that frame's target.",
+        async test() {
+            WI.domManager.highlightSelector("#grid div", crossCell);
+            InspectorTest.expectEqual(await frameQuads(crossTarget), 24, "The cross-site frame should highlight its six grid cells.");
+            InspectorTest.expectEqual(await pageQuads(), 0, "The page should not highlight anything.");
+            await hideHighlights();
+        }
+    });
+
+    suite.addTestCase({
+        name: "StylesHoverClearsOtherTargets",
+        description: "WI.DOMManager.highlightSelector should clear the highlight of every other target.",
+        async test() {
+            pageCell.highlight();
+            InspectorTest.expectGreaterThan(await pageQuads(), 0, "The page should highlight its grid cell.");
+
+            WI.domManager.highlightSelector("#grid div", crossCell);
+            InspectorTest.expectEqual(await pageQuads(), 0, "The page should clear its highlight.");
+            InspectorTest.expectEqual(await frameQuads(crossTarget), 24, "The cross-site frame should highlight its six grid cells.");
+            await hideHighlights();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SameSiteStylesHoverUsesPageTarget",
+        description: "WI.DOMManager.highlightSelector should send a same-site frame node's selector to the page target.",
+        async test() {
+            WI.domManager.highlightSelector("#grid div", sameCell);
+            InspectorTest.expectEqual(await pageQuads(), 24, "The page should highlight the same-site frame's six grid cells.");
+            InspectorTest.expectEqual(await frameQuads(sameTarget), 0, "The same-site frame's own overlay should not highlight anything.");
+            await hideHighlights();
+        }
+    });
+
+    suite.addTestCase({
+        name: "NestedStylesHoverUsesOwnFrameTarget",
+        description: "WI.DOMManager.highlightSelector should send the selector of a node in a frame nested in a cross-site frame, and same-site with the page, to that frame's own target.",
+        async test() {
+            let middleTarget = await frameTargetForURLContainingWhenReady("splice-child-frame.html");
+            let nestedTarget = await frameTargetForURLContainingWhenReady("dom-frame.html");
+            InspectorTest.expectNotNull(middleTarget, "Should find the cross-site middle frame target.");
+            InspectorTest.expectNotNull(nestedTarget, "Should find the nested frame target.");
+            InspectorTest.expectThat(nestedTarget !== middleTarget && nestedTarget !== pageTarget, "The nested frame should have its own target.");
+
+            let nestedItem = await pushNodeIntoFrameTargetTree(nestedTarget, `document.querySelector("#list .item")`);
+            InspectorTest.expectEqual(nestedItem?.owningTarget, nestedTarget, "The nested frame's list item should belong to the nested frame target.");
+
+            WI.domManager.highlightSelector("#list .item", nestedItem);
+            InspectorTest.expectEqual(await frameQuads(nestedTarget), 8, "The nested frame should highlight its two list items.");
+            InspectorTest.expectEqual(await frameQuads(middleTarget), 0, "The middle frame should not highlight anything.");
+            InspectorTest.expectEqual(await pageQuads(), 0, "The page should not highlight anything.");
+
+            WI.domManager.hideDOMNodeHighlight();
+            await Promise.all([pageTarget, middleTarget, nestedTarget].map((target) => target.DOMAgent.hideHighlight()));
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    #grid { display: grid; grid-template-columns: repeat(2, 40px); grid-template-rows: 30px; gap: 10px; }
+    #grid div { background: lightgreen; }
+</style>
+
+<body onload="runTest()">
+<p>Tests that DOM.highlightSelector highlights every match in a cross-site frame through its frame target.</p>
+<div id="grid"><div></div><div></div></div>
+<iframe id="cross" src="http://localhost:8000/inspector/dom/resources/highlight-selector-frame.html?cross" width="300" height="200"></iframe>
+<iframe id="same" src="http://127.0.0.1:8000/inspector/dom/resources/highlight-selector-frame.html?same" width="300" height="200"></iframe>
+<iframe id="nested" src="http://localhost:8000/site-isolation/inspector/dom/resources/splice-child-frame.html" width="300" height="300"></iframe>
+</body>

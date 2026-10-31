@@ -5,9 +5,8 @@
 function test() {
     let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameLayoutOverlays");
 
-    // Geometry is deliberately not asserted, for the same reason as highlight-frame-target.html:
-    // internals.inspectorHighlightRects() reads the PAGE controller's overlay, so it cannot observe a
-    // frame overlay's quads. These cases assert dispatch to the frame target and acceptance.
+    // Geometry is not asserted: no Internals hook reads a frame overlay's grid or flex overlays.
+    // These cases assert dispatch to the frame target and acceptance.
     // Unlike element highlight, layout overlays are persistent, so the cases below also cover the
     // state that persistence introduces: several overlays live at once across separate processes,
     // survival across scroll, and teardown on navigation.

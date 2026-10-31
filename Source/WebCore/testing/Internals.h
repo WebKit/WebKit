@@ -407,6 +407,7 @@ public:
     Ref<DOMRect> boundingBoxInMainFrameViewCoordinates(Element&);
 
     ExceptionOr<Ref<DOMRectList>> inspectorHighlightRects();
+    ExceptionOr<Ref<DOMRectList>> inspectorFrameHighlightRects();
     ExceptionOr<unsigned> inspectorGridOverlayCount();
     ExceptionOr<unsigned> inspectorFlexOverlayCount();
     ExceptionOr<unsigned> inspectorPaintRectCount();
