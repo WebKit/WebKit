@@ -58,7 +58,7 @@ void webkitWebViewLoadChanged(WebKitWebView*, WebKitLoadEvent, API::Navigation* 
 void webkitWebViewLoadFailed(WebKitWebView*, WebKitLoadEvent, const String& failingURI, GError*);
 void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView*, const String& failingURI, GError*, GTlsCertificateFlags, GTlsCertificate*);
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
-void webkitWebViewGetLoadDecisionForIcons(WebKitWebView*, const HashMap<WebKit::CallbackID, WebCore::LinkIcon>&, CompletionHandler<void(HashSet<WebKit::CallbackID>&&)>&&);
+void webkitWebViewGetLoadDecisionForIcons(WebKitWebView*, const Vector<std::pair<WebKit::CallbackID, WebCore::LinkIcon>>&, CompletionHandler<void(HashSet<WebKit::CallbackID>&&)>&&);
 void webkitWebViewSetIcon(WebKitWebView*, const WebCore::LinkIcon&, API::Data&);
 void webkitWebViewUpdatePageIcons(WebKitWebView*);
 #endif

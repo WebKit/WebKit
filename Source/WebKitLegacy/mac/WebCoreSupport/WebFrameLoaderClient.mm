@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2015,16 +2015,22 @@ void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCor
 
 #if !PLATFORM(IOS_FAMILY)
     ASSERT(!m_loadingIcon);
-    // WebKit 1, which only supports one icon per page URL, traditionally has preferred the last icon in case of multiple icons listed.
-    // To preserve that behavior we walk the list backwards.
-    for (auto icon = icons.rbegin(); icon != icons.rend(); ++icon) {
-        if (icon->first.type != WebCore::LinkIconType::Favicon || m_loadingIcon) {
-            documentLoader->didGetLoadDecisionForIcon(false, icon->second, [](auto) { });
+    // WebKit 1 supports one icon per page URL. Load the smallest favicon, and the last declared of those.
+    std::optional<size_t> iconToLoad;
+    for (size_t i = 0; i < icons.size(); ++i) {
+        auto& icon = icons[i].first;
+        if (icon.type == WebCore::LinkIconType::Favicon && (!iconToLoad || icon.size.value_or(0) < icons[*iconToLoad].first.size.value_or(0)))
+            iconToLoad = i;
+    }
+
+    for (size_t i = 0; i < icons.size(); ++i) {
+        if (i != iconToLoad) {
+            documentLoader->didGetLoadDecisionForIcon(false, icons[i].second, [](auto) { });
             continue;
         }
 
         m_loadingIcon = true;
-        documentLoader->didGetLoadDecisionForIcon(true, icon->second, [weakThis = WeakPtr { *this }] (WebCore::FragmentedSharedBuffer* buffer) {
+        documentLoader->didGetLoadDecisionForIcon(true, icons[i].second, [weakThis = WeakPtr { *this }](WebCore::FragmentedSharedBuffer* buffer) {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->finishedLoadingIcon(buffer);
         });

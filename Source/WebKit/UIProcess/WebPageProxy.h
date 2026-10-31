@@ -2388,7 +2388,7 @@ public:
 
     void didRestoreScrollPosition();
 
-    void getLoadDecisionForIcons(const HashMap<WebKit::CallbackID, WebCore::LinkIcon>&);
+    void getLoadDecisionForIcons(IPC::Connection&, const Vector<std::pair<WebKit::CallbackID, WebCore::LinkIcon>>&);
 
     void focusFromServiceWorker(CompletionHandler<void()>&&);
     void setFocus(bool focused, std::optional<WebCore::UserGestureTokenIdentifier> = std::nullopt);
