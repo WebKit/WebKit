@@ -31,10 +31,25 @@ struct BlitParams
 {
     // xy: lower left, zw: upper right
     float4 srcTexCoords;
+    // For GL_NEAREST, the source texel of the destination texel nearestDstOrigin + m is
+    // nearestSrcBase + nearestSrcSign * (nearestQ0 + m * nearestA + (nearestR0 + m * nearestB) /
+    // nearestDenominator), computed in integers, with nearestR0 and nearestB in
+    // [0, nearestDenominator).
+    int2 nearestQ0;
+    int2 nearestA;
+    int2 nearestR0;
+    int2 nearestB;
+    int2 nearestDenominator;
+    int2 nearestSrcBase;
+    int2 nearestSrcSign;
+    int2 nearestDstOrigin;
     int srcLevel;  // Source texture level.
     int srcLayer;  // Source texture layer.
     bool dstLuminance;  // destination texture is luminance. Unused by depth & stencil blitting.
-    uint8_t padding[7];
+    // Read the texel that contains the source coordinate instead of sampling. Unused by depth &
+    // stencil blitting.
+    bool nearestFilter;
+    uint8_t padding[6];
 };
 
 struct BlitVSOut
@@ -62,11 +77,36 @@ static uint2 getImageCoords(SrcTexture2d srcTexture, float2 texCoords)
     return coords;
 }
 
-template <typename T>
-static inline vec<T, 4> blitSampleTextureMS(texture2d_ms<T> srcTexture, float2 texCoords)
+// Returns the GL_NEAREST texel, in a source level of the given size, of the destination position.
+// The computation is in integers, so a source coordinate on an edge between texels is exact,
+// unlike the interpolated texture coordinates.
+static inline uint2 blitTexelCoords(uint2 size, float4 position, constant BlitParams &options)
 {
-    uint2 coords = getImageCoords(srcTexture, texCoords);
-    return resolveTextureMS(srcTexture, coords);
+    int2 m = int2(position.xy) - options.nearestDstOrigin;
+    int2 t =
+        options.nearestQ0 + m * options.nearestA +
+        int2(uint2(options.nearestR0 + m * options.nearestB) / uint2(options.nearestDenominator));
+    int2 texel = options.nearestSrcBase + options.nearestSrcSign * t;
+    return uint2(clamp(texel, int2(0), int2(size) - 1));
+}
+
+template <typename SrcTexture>
+static inline uint2 blitTexelCoords(SrcTexture srcTexture,
+                                    float4 position,
+                                    constant BlitParams &options)
+{
+    uint level = options.srcLevel;
+    return blitTexelCoords(uint2(srcTexture.get_width(level), srcTexture.get_height(level)),
+                           position, options);
+}
+
+template <typename T>
+static inline uint2 blitTexelCoords(texture2d_ms<T> srcTexture,
+                                    float4 position,
+                                    constant BlitParams &options)
+{
+    return blitTexelCoords(uint2(srcTexture.get_width(), srcTexture.get_height()), position,
+                           options);
 }
 
 template <typename T>
@@ -106,21 +146,50 @@ static inline vec<T, 4> blitReadTexture(BLIT_COLOR_FS_PARAMS(T))
     switch (kSourceTextureType)
     {
         case kTextureType2D:
+            if (options.nearestFilter)
+            {
+                output = srcTexture2d.read(blitTexelCoords(srcTexture2d, input.position, options),
+                                           uint(options.srcLevel));
+                break;
+            }
             output = srcTexture2d.sample(textureSampler, input.texCoords, level(options.srcLevel));
             break;
         case kTextureType2DArray:
+            if (options.nearestFilter)
+            {
+                output = srcTexture2dArray.read(
+                    blitTexelCoords(srcTexture2dArray, input.position, options),
+                    uint(options.srcLayer), uint(options.srcLevel));
+                break;
+            }
             output = srcTexture2dArray.sample(textureSampler, input.texCoords, options.srcLayer,
                                               level(options.srcLevel));
             break;
         case kTextureType2DMultisample:
-            output = blitSampleTextureMS(srcTexture2dMS, input.texCoords);
+            output = resolveTextureMS(srcTexture2dMS,
+                                      blitTexelCoords(srcTexture2dMS, input.position, options));
             break;
         case kTextureTypeCube:
+            if (options.nearestFilter)
+            {
+                output = srcTextureCube.read(
+                    blitTexelCoords(srcTextureCube, input.position, options),
+                    uint(options.srcLayer), uint(options.srcLevel));
+                break;
+            }
             output = srcTextureCube.sample(textureSampler,
                                            cubeTexcoords(input.texCoords, options.srcLayer),
                                            level(options.srcLevel));
             break;
         case kTextureType3D:
+            if (options.nearestFilter)
+            {
+                output = srcTexture3d.read(
+                    uint3(blitTexelCoords(srcTexture3d, input.position, options),
+                          uint(options.srcLayer)),
+                    uint(options.srcLevel));
+                break;
+            }
             output = blitSampleTexture3D(srcTexture3d, textureSampler, input.texCoords, options);
             break;
     }

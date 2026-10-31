@@ -57,7 +57,11 @@ struct NormalizedCoords
     NormalizedCoords();
     NormalizedCoords(float x, float y, float width, float height, const gl::Rectangle &rect);
     NormalizedCoords(const gl::Rectangle &rect, const gl::Extents &extents);
+    // x0, y0, x1 and y1 of the source rectangle, divided by the size of the source.
     float v[4];
+    // The same without the division, and the size, to compute exact texel coordinates.
+    float unnormalized[4];
+    float size[2];
 };
 
 struct BlitParams
@@ -86,6 +90,17 @@ struct BlitParams
     bool srcYFlipped = false;  // source texture has data flipped in Y direction
     bool unpackFlipX = false;  // flip texture data copying process in X direction
     bool unpackFlipY = false;  // flip texture data copying process in Y direction
+
+    // For glBlitFramebuffer(), the source and destination rectangles of the call, unclipped, with
+    // signed extents, in GL window coordinates. GL_NEAREST computes the source texel of each
+    // destination pixel from them, so that it does not depend on the clipping. Without them, it
+    // computes it from srcNormalizedCoords, which is exact for integer rectangles.
+    bool hasBlitCallRects = false;
+    gl::Rectangle blitCallSrcRect;
+    gl::Rectangle blitCallDstRect;
+    // The read framebuffer has GL's row 0 last, and its height.
+    bool blitCallSrcFlipY = false;
+    int blitCallSrcHeight = 0;
 };
 
 struct ColorBlitParams : public BlitParams
