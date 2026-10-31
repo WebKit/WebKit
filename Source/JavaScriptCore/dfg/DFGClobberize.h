@@ -590,7 +590,6 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
     case SetArgumentMaybe:
     case Jump:
     case Branch:
-    case Switch:
     case EntrySwitch:
     case ForceOSRExit:
     case CPUIntrinsic:
@@ -614,7 +613,13 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
     case FilterSetPrivateBrandStatus:
         write(SideState);
         return;
-        
+
+    case Switch:
+        if (node->switchData()->kind == SwitchStructure)
+            read(JSCell_structureID);
+        write(SideState);
+        return;
+
     case StoreBarrier:
         read(JSCell_cellState);
         write(JSCell_cellState);

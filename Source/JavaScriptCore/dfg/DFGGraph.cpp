@@ -424,8 +424,12 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
     if (node->isSwitch()) {
         SwitchData* data = node->switchData();
         out.print(comma, data->kind);
-        for (unsigned i = 0; i < data->cases.size(); ++i)
-            out.print(comma, inContext(data->cases[i].value, context), ":"_s, data->cases[i].target);
+        for (unsigned i = 0; i < data->cases.size(); ++i) {
+            if (data->kind == SwitchStructure)
+                out.print(comma, inContext(*data->cases[i].value.value()->cast<Structure*>(), context), ":"_s, data->cases[i].target);
+            else
+                out.print(comma, inContext(data->cases[i].value, context), ":"_s, data->cases[i].target);
+        }
         out.print(comma, "default:"_s, data->fallThrough);
     }
     if (node->isEntrySwitch()) {

@@ -13013,7 +13013,8 @@ void SpeculativeJIT::emitSwitch(Node* node)
         emitSwitchString(node, data);
         return;
     }
-    case SwitchCell: {
+    case SwitchCell:
+    case SwitchStructure: {
         DFG_CRASH(m_graph, node, "Bad switch kind"_s);
         return;
     } }

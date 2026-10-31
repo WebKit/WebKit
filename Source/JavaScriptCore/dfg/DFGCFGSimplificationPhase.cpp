@@ -140,7 +140,16 @@ public:
                     
                 case Switch: {
                     SwitchData* data = block->terminal()->switchData();
-                    
+
+                    // A target that the abstract interpreter never visited, although it finished this block,
+                    // is one this switch never takes.
+                    if (block->cfaDidFinish) {
+                        if (pruneUnvisitedTargets(block, data)) {
+                            innerChanged = outerChanged = true;
+                            break;
+                        }
+                    }
+
                     // Prune out cases that end up jumping to default.
                     for (unsigned i = 0; i < data->cases.size(); ++i) {
                         if (data->cases[i].target.block == data->fallThrough.block) {
@@ -149,7 +158,7 @@ public:
                             data->cases.removeLast();
                         }
                     }
-                    
+
                     // If there are no cases other than default then this turns
                     // into a jump.
                     if (data->cases.isEmpty()) {
@@ -158,9 +167,10 @@ public:
                         break;
                     }
                     
-                    // Switch on constant -> jettison all other targets and merge.
+                    // Switch on constant -> jettison all other targets and merge. A structure switch
+                    // compares the cell's structure, not the cell itself, against its cases.
                     Node* terminal = block->terminal();
-                    if (terminal->child1()->hasConstant()) {
+                    if (data->kind != SwitchStructure && terminal->child1()->hasConstant()) {
                         FrozenValue* value = terminal->child1()->constant();
                         TriState found = TriState::False;
                         BasicBlock* targetBlock = nullptr;
@@ -176,29 +186,8 @@ public:
                             targetBlock = data->fallThrough.block;
                         ASSERT(targetBlock);
                         
-                        Vector<BasicBlock*, 1> jettisonedBlocks;
-                        for (BasicBlock* successor : terminal->successors()) {
-                            if (successor != targetBlock && !jettisonedBlocks.contains(successor))
-                                jettisonedBlocks.append(successor);
-                        }
-                        
-                        if (canMergeWithBlock(targetBlock)) {
-                            dataLogLnIf(extremeLogging, m_graph);
-                            m_graph.dethread();
-                            
-                            mergeBlocks(block, targetBlock, jettisonedBlocks);
-                        } else {
-                            dataLogLnIf(extremeLogging, m_graph);
-                            m_graph.dethread();
-                            
-                            NodeOrigin boundaryNodeOrigin = terminal->origin;
-
-                            for (unsigned i = jettisonedBlocks.size(); i--;)
-                                jettisonBlock(block, jettisonedBlocks[i], boundaryNodeOrigin);
-                            
-                            block->replaceTerminal(
-                                m_graph, SpecNone, Jump, boundaryNodeOrigin, OpInfo(targetBlock));
-                        }
+                        dataLogLnIf(extremeLogging, m_graph);
+                        jumpToOnlySuccessor(block, targetBlock);
                         innerChanged = outerChanged = true;
                         break;
                     }
@@ -254,6 +243,62 @@ public:
     }
 
 private:
+    bool pruneUnvisitedTargets(BasicBlock* block, SwitchData* data)
+    {
+        Vector<BasicBlock*, 2> jettisonedBlocks;
+        data->cases.removeAllMatching([&](const SwitchCase& switchCase) {
+            BasicBlock* target = switchCase.target.block;
+            if (target->cfaHasVisited)
+                return false;
+            if (target != data->fallThrough.block)
+                jettisonedBlocks.appendIfNotContains(target);
+            return true;
+        });
+
+        BasicBlock* onlyTarget = nullptr;
+        if (!data->fallThrough.block->cfaHasVisited && !data->cases.isEmpty()) {
+            onlyTarget = data->cases[0].target.block;
+            for (const SwitchCase& switchCase : data->cases) {
+                if (switchCase.target.block != onlyTarget) {
+                    onlyTarget = nullptr;
+                    break;
+                }
+            }
+        }
+
+        if (jettisonedBlocks.isEmpty() && !onlyTarget)
+            return false;
+
+        m_graph.dethread();
+        NodeOrigin boundaryNodeOrigin = block->terminal()->origin;
+        for (BasicBlock* jettisonedBlock : jettisonedBlocks)
+            jettisonBlock(block, jettisonedBlock, boundaryNodeOrigin);
+        if (onlyTarget)
+            jumpToOnlySuccessor(block, onlyTarget);
+        return true;
+    }
+
+    void jumpToOnlySuccessor(BasicBlock* block, BasicBlock* targetBlock)
+    {
+        Node* terminal = block->terminal();
+        Vector<BasicBlock*, 1> jettisonedBlocks;
+        for (BasicBlock* successor : terminal->successors()) {
+            if (successor != targetBlock && !jettisonedBlocks.contains(successor))
+                jettisonedBlocks.append(successor);
+        }
+
+        m_graph.dethread();
+        if (canMergeBlocks(block, targetBlock)) {
+            mergeBlocks(block, targetBlock, jettisonedBlocks);
+            return;
+        }
+
+        NodeOrigin boundaryNodeOrigin = terminal->origin;
+        for (unsigned i = jettisonedBlocks.size(); i--;)
+            jettisonBlock(block, jettisonedBlocks[i], boundaryNodeOrigin);
+        block->replaceTerminal(m_graph, SpecNone, Jump, boundaryNodeOrigin, OpInfo(targetBlock));
+    }
+
     void convertToJump(BasicBlock* block, BasicBlock* targetBlock)
     {
         ASSERT(targetBlock);
