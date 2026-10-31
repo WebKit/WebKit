@@ -29,6 +29,9 @@
 #include <WebCore/InlineRect.h>
 #include <WebCore/LayoutBox.h>
 #include <WebCore/TextFlags.h>
+#include <algorithm>
+#include <cmath>
+#include <limits>
 #include <unicode/ubidi.h>
 #include <wtf/EnumSet.h>
 
@@ -138,7 +141,12 @@ struct Box {
 
     void setInkOverflow(const FloatRect& inkOverflow) { m_inkOverflow = inkOverflow; }
     FloatBoxExtent glyphOverflow() const { return { static_cast<float>(m_glyphOverflowTop), 0.f, static_cast<float>(m_glyphOverflowBottom), 0.f }; }
-    void setGlyphOverflow(uint8_t top, uint8_t bottom) { m_glyphOverflowTop = top; m_glyphOverflowBottom = bottom; }
+    void setGlyphOverflow(float top, float bottom)
+    {
+        constexpr float maximumGlyphOverflow = std::numeric_limits<uint8_t>::max();
+        m_glyphOverflowTop = static_cast<uint8_t>(std::min(std::max(0.f, std::ceil(top)), maximumGlyphOverflow));
+        m_glyphOverflowBottom = static_cast<uint8_t>(std::min(std::max(0.f, std::ceil(bottom)), maximumGlyphOverflow));
+    }
     void setLeft(float physicalLeft);
     void setRight(float physicalRight);
     void setTop(float physicalTop);
@@ -205,8 +213,8 @@ private:
     bool m_isFirstFragment : 1 { false };
     bool m_isLastFragment : 1 { false };
     // FIXME: Move this to Box::Text when there's enough bit in there.
-    uint8_t m_glyphOverflowTop : 5 { 0 };
-    uint8_t m_glyphOverflowBottom : 3 { 0 };
+    uint8_t m_glyphOverflowTop { 0 };
+    uint8_t m_glyphOverflowBottom { 0 };
 
     Text m_text;
 };

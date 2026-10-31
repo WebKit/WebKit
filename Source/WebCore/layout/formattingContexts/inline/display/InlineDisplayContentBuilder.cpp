@@ -169,22 +169,17 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
     auto& textStyle = isFirstFormattedLine() ? inlineTextBox->parent().firstLineStyle() : inlineTextBox->parent().style();
     m_contentHasInkOverflow = m_contentHasInkOverflow || textStyle.textDecorationLineInEffect() || !Style::shadowOutsetExtent(textStyle.textShadow(), textStyle.usedZoomForLength()).isZero() || textStyle.hasPositiveStrokeWidth() || style.fontCascade().letterSpacing() < 0 || !lineRun.glyphOverflow().isEmpty();
 
-    auto glyphOverflow = [&] {
-        auto glyphOverflow = lineRun.glyphOverflow();
-        if (glyphOverflow.isEmpty())
-            return glyphOverflow;
-
-        // Maxed-out glyph overflow values indicate arithmetic overflow. Fallback to collecting overflow post-measure.
-        constexpr size_t maximumAscent = 31;
-        constexpr size_t maximumDescent = 7;
-        if (glyphOverflow.top == maximumAscent || glyphOverflow.bottom == maximumDescent) {
-            auto enclosingAscentAndDescent = TextUtil::enclosingGlyphBoundsForText(StringView(content).substring(text.start, text.length), style, inlineTextBox->shouldUseSimpleGlyphOverflowCodePath() ? TextUtil::ShouldUseSimpleGlyphOverflowCodePath::Yes : TextUtil::ShouldUseSimpleGlyphOverflowCodePath::No);
-            auto& fontMetrics = style.metricsOfPrimaryFont();
-            glyphOverflow.top = std::max(0.f, -enclosingAscentAndDescent.ascent - fontMetrics.ascent(FontBaseline::Alphabetic));
-            glyphOverflow.bottom = std::max(0.f, enclosingAscentAndDescent.descent - fontMetrics.descent(FontBaseline::Alphabetic));
-        }
-        return glyphOverflow;
-    }();
+    float glyphOverflowTop = lineRun.glyphOverflow().top;
+    float glyphOverflowBottom = lineRun.glyphOverflow().bottom;
+    // Maxed-out glyph overflow values indicate arithmetic overflow. Fallback to collecting overflow post-measure.
+    constexpr size_t maximumAscent = 31;
+    constexpr size_t maximumDescent = 7;
+    if (glyphOverflowTop == maximumAscent || glyphOverflowBottom == maximumDescent) {
+        auto enclosingAscentAndDescent = TextUtil::enclosingGlyphBoundsForText(StringView(content).substring(text.start, text.length), style, inlineTextBox->shouldUseSimpleGlyphOverflowCodePath() ? TextUtil::ShouldUseSimpleGlyphOverflowCodePath::Yes : TextUtil::ShouldUseSimpleGlyphOverflowCodePath::No);
+        auto& fontMetrics = style.metricsOfPrimaryFont();
+        glyphOverflowTop = std::max(0.f, -enclosingAscentAndDescent.ascent - fontMetrics.ascent(FontBaseline::Alphabetic));
+        glyphOverflowBottom = std::max(0.f, enclosingAscentAndDescent.descent - fontMetrics.descent(FontBaseline::Alphabetic));
+    }
 
     auto inkOverflow = textRunRect;
 
@@ -203,7 +198,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
             , isContentful
             , isLineFullyTruncatedInBlockDirection()
         });
-        boxes.last().setGlyphOverflow(glyphOverflow.top, glyphOverflow.bottom);
+        boxes.last().setGlyphOverflow(glyphOverflowTop, glyphOverflowBottom);
         return;
     }
 
@@ -231,7 +226,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
         , isContentful
         , isLineFullyTruncatedInBlockDirection()
     });
-    boxes.last().setGlyphOverflow(glyphOverflow.top, glyphOverflow.bottom);
+    boxes.last().setGlyphOverflow(glyphOverflowTop, glyphOverflowBottom);
 }
 
 void InlineDisplayContentBuilder::appendSoftLineBreakDisplayBox(const Line::Run& lineRun, const InlineRect& softLineBreakRunRect, InlineDisplay::Boxes& boxes) const

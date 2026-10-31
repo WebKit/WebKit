@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+    body { margin: 0; padding: 80px 20px; font: 10px/1.2 verdana, arial, helvetica, sans-serif; }
+    .tagline { margin: 0; color: gray; }
+    .author { color: #369; text-decoration: none; font-weight: bold; }
+    ul { list-style: none; margin: 0; padding: 0; margin-top: 8px; }
+    li { display: inline-block; width: 80px; }
+    li a { color: #888; font-weight: bold; text-decoration: none; }
+    li a.changed { color: red; text-decoration: underline; }
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        if (testRunner.dontForceRepaint)
+            testRunner.dontForceRepaint();
+    }
+    window.addEventListener('load', async () => {
+        await UIHelper.renderingUpdate();
+        for (let id of ['l1', 'l2', 'l3', 'l4']) {
+            document.getElementById(id).classList.add('changed');
+            await UIHelper.renderingUpdate();
+        }
+        await UIHelper.renderingUpdate();
+        window.testRunner?.notifyDone();
+    }, false);
+</script>
+</head>
+<body>
+<p class="tagline"><a class="author" href="#">z̤̙̪̮̦̫̰̙̱̦̓̈̋̔̐̀̎̇̔́à̲̭̣̣̖̖̥̥̤̤̆̍̈̅̌̅̂̄̓l̨̧̨̖̪̬̤̣̘̩̉̊̆̑̔̆̅̆̌̕ģ̮̩̤̮̮̤̗̖̪̓̒̀̓̊̂̉̋̉̕ǒ̤̲̥̙̦̭̪̯̪̯̀̑̍̋̌̒̀̎́ ̧̨̩̯̲̪̣̩̰̘̈̎̃̒̋̉́̍̂̆ņ̗̘̲̰̫̗̦̲̪̊̉̅̂̔̄̉̏̅̕ạ̱̣̳̬̙̤̬̪̣̎̔̍̄́̔́̏̊̆ḿ̧̨̩̮̮̫̣̙̫̰̍̉̄̎̓̅̐̎̏ę̧̯̪̘̪̱̗̪̰̅̔̏̊̅̂̏̈̐̑</a> 5 points 5 years ago</p>
+<ul><li><a id="l1" class="" href="#">permalink</a></li><li><a id="l2" class="" href="#">embed</a></li><li><a id="l3" class="" href="#">save</a></li><li><a id="l4" class="" href="#">parent</a></li></ul>
+</body>
+</html>
