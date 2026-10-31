@@ -32,6 +32,7 @@ PASS PerformanceNavigationTiming interface: attribute type
 PASS PerformanceNavigationTiming interface: attribute redirectCount
 FAIL PerformanceNavigationTiming interface: attribute criticalCHRestart assert_true: The prototype object must have a property "criticalCHRestart" expected true got false
 FAIL PerformanceNavigationTiming interface: attribute notRestoredReasons assert_true: The prototype object must have a property "notRestoredReasons" expected true got false
+FAIL PerformanceNavigationTiming interface: attribute confidence assert_true: The prototype object must have a property "confidence" expected true got false
 PASS PerformanceNavigationTiming interface: operation toJSON()
 PASS PerformanceNavigationTiming must be primary interface of performance.getEntriesByType("navigation")[0]
 PASS Stringification of performance.getEntriesByType("navigation")[0]
@@ -47,8 +48,18 @@ PASS PerformanceNavigationTiming interface: performance.getEntriesByType("naviga
 PASS PerformanceNavigationTiming interface: performance.getEntriesByType("navigation")[0] must inherit property "redirectCount" with the proper type
 FAIL PerformanceNavigationTiming interface: performance.getEntriesByType("navigation")[0] must inherit property "criticalCHRestart" with the proper type assert_inherits: property "criticalCHRestart" not found in prototype chain
 FAIL PerformanceNavigationTiming interface: performance.getEntriesByType("navigation")[0] must inherit property "notRestoredReasons" with the proper type assert_inherits: property "notRestoredReasons" not found in prototype chain
+FAIL PerformanceNavigationTiming interface: performance.getEntriesByType("navigation")[0] must inherit property "confidence" with the proper type assert_inherits: property "confidence" not found in prototype chain
 PASS PerformanceNavigationTiming interface: performance.getEntriesByType("navigation")[0] must inherit property "toJSON()" with the proper type
 FAIL PerformanceNavigationTiming interface: default toJSON operation on performance.getEntriesByType("navigation")[0] assert_true: property "criticalCHRestart" should be present in the output of PerformanceNavigationTiming.prototype.toJSON() expected true got false
+FAIL PerformanceTimingConfidence interface: existence and properties of interface object assert_own_property: self does not have own property "PerformanceTimingConfidence" expected property "PerformanceTimingConfidence" missing
+FAIL PerformanceTimingConfidence interface object length assert_own_property: self does not have own property "PerformanceTimingConfidence" expected property "PerformanceTimingConfidence" missing
+FAIL PerformanceTimingConfidence interface object name assert_own_property: self does not have own property "PerformanceTimingConfidence" expected property "PerformanceTimingConfidence" missing
+FAIL PerformanceTimingConfidence interface: existence and properties of interface prototype object assert_own_property: self does not have own property "PerformanceTimingConfidence" expected property "PerformanceTimingConfidence" missing
+FAIL PerformanceTimingConfidence interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "PerformanceTimingConfidence" expected property "PerformanceTimingConfidence" missing
+FAIL PerformanceTimingConfidence interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "PerformanceTimingConfidence" expected property "PerformanceTimingConfidence" missing
+FAIL PerformanceTimingConfidence interface: attribute randomizedTriggerRate assert_own_property: self does not have own property "PerformanceTimingConfidence" expected property "PerformanceTimingConfidence" missing
+FAIL PerformanceTimingConfidence interface: attribute value assert_own_property: self does not have own property "PerformanceTimingConfidence" expected property "PerformanceTimingConfidence" missing
+FAIL PerformanceTimingConfidence interface: operation toJSON() assert_own_property: self does not have own property "PerformanceTimingConfidence" expected property "PerformanceTimingConfidence" missing
 PASS PerformanceTiming interface: existence and properties of interface object
 PASS PerformanceTiming interface object length
 PASS PerformanceTiming interface object name

@@ -1,7 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: Payment Handler API (https://w3c.github.io/payment-handler/)
+// Source: Web-based Payment Handler API (https://w3c.github.io/web-based-payment-handler/)
 
 partial interface ServiceWorkerRegistration {
   [SameObject] readonly attribute PaymentManager paymentManager;

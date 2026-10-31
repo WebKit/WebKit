@@ -22,6 +22,14 @@ PASS ClipboardEvent interface: attribute clipboardData
 PASS ClipboardEvent must be primary interface of new ClipboardEvent("x")
 PASS Stringification of new ClipboardEvent("x")
 PASS ClipboardEvent interface: new ClipboardEvent("x") must inherit property "clipboardData" with the proper type
+FAIL ClipboardChangeEvent interface: existence and properties of interface object assert_own_property: self does not have own property "ClipboardChangeEvent" expected property "ClipboardChangeEvent" missing
+FAIL ClipboardChangeEvent interface object length assert_own_property: self does not have own property "ClipboardChangeEvent" expected property "ClipboardChangeEvent" missing
+FAIL ClipboardChangeEvent interface object name assert_own_property: self does not have own property "ClipboardChangeEvent" expected property "ClipboardChangeEvent" missing
+FAIL ClipboardChangeEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ClipboardChangeEvent" expected property "ClipboardChangeEvent" missing
+FAIL ClipboardChangeEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ClipboardChangeEvent" expected property "ClipboardChangeEvent" missing
+FAIL ClipboardChangeEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ClipboardChangeEvent" expected property "ClipboardChangeEvent" missing
+FAIL ClipboardChangeEvent interface: attribute types assert_own_property: self does not have own property "ClipboardChangeEvent" expected property "ClipboardChangeEvent" missing
+FAIL ClipboardChangeEvent interface: attribute changeId assert_own_property: self does not have own property "ClipboardChangeEvent" expected property "ClipboardChangeEvent" missing
 PASS ClipboardItem interface: existence and properties of interface object
 PASS ClipboardItem interface object length
 PASS ClipboardItem interface object name

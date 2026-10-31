@@ -83,6 +83,7 @@ interface AudioContext : BaseAudioContext {
     [SecureContext] readonly attribute (DOMString or AudioSinkInfo) sinkId;
     attribute EventHandler onsinkchange;
     attribute EventHandler onerror;
+    [SameObject] readonly attribute AudioPlaybackStats playbackStats;
     AudioTimestamp getOutputTimestamp ();
     Promise<undefined> resume ();
     Promise<undefined> suspend ();
@@ -120,16 +121,17 @@ dictionary AudioTimestamp {
 interface OfflineAudioContext : BaseAudioContext {
     constructor(OfflineAudioContextOptions contextOptions);
     constructor(unsigned long numberOfChannels, unsigned long length, float sampleRate);
-    Promise<AudioBuffer> startRendering();
+    Promise<AudioBuffer> startRendering(optional unsigned long? chunkSize = null);
     Promise<undefined> resume();
     Promise<undefined> suspend(double suspendTime);
-    readonly attribute unsigned long length;
+    Promise<undefined> close();
+    readonly attribute unsigned long? length;
     attribute EventHandler oncomplete;
 };
 
 dictionary OfflineAudioContextOptions {
     unsigned long numberOfChannels = 1;
-    required unsigned long length;
+    unsigned long? length = null;
     required float sampleRate;
     (AudioContextRenderSizeCategory or unsigned long) renderSizeHint = "default";
 };
@@ -654,4 +656,16 @@ dictionary AudioParamDescriptor {
     float minValue = -3.4028235e38;
     float maxValue = 3.4028235e38;
     AutomationRate automationRate = "a-rate";
+};
+
+[Exposed=Window, SecureContext]
+interface AudioPlaybackStats {
+    readonly attribute double underrunDuration;
+    readonly attribute unsigned long underrunEvents;
+    readonly attribute double totalDuration;
+    readonly attribute double averageLatency;
+    readonly attribute double minimumLatency;
+    readonly attribute double maximumLatency;
+    undefined resetLatency();
+    [Default] object toJSON();
 };

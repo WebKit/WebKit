@@ -4,7 +4,7 @@ PASS idl_test validation
 PASS Partial interface Element: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
 PASS HTMLElement includes ElementContentEditable: member names are unique
-PASS HTMLElement includes HTMLOrSVGElement: member names are unique
+PASS HTMLElement includes HTMLOrSVGOrMathMLElement: member names are unique
 PASS MessagePort includes MessageEventTarget: member names are unique
 PASS Element includes ParentNode: member names are unique
 PASS Element includes NonDocumentTypeChildNode: member names are unique
@@ -54,6 +54,7 @@ PASS AudioContext interface: attribute outputLatency
 FAIL AudioContext interface: attribute sinkId assert_true: The prototype object must have a property "sinkId" expected true got false
 FAIL AudioContext interface: attribute onsinkchange assert_true: The prototype object must have a property "onsinkchange" expected true got false
 FAIL AudioContext interface: attribute onerror assert_true: The prototype object must have a property "onerror" expected true got false
+FAIL AudioContext interface: attribute playbackStats assert_true: The prototype object must have a property "playbackStats" expected true got false
 PASS AudioContext interface: operation getOutputTimestamp()
 PASS AudioContext interface: operation resume()
 PASS AudioContext interface: operation suspend()
@@ -70,6 +71,7 @@ PASS AudioContext interface: context must inherit property "outputLatency" with 
 FAIL AudioContext interface: context must inherit property "sinkId" with the proper type assert_inherits: property "sinkId" not found in prototype chain
 FAIL AudioContext interface: context must inherit property "onsinkchange" with the proper type assert_inherits: property "onsinkchange" not found in prototype chain
 FAIL AudioContext interface: context must inherit property "onerror" with the proper type assert_inherits: property "onerror" not found in prototype chain
+FAIL AudioContext interface: context must inherit property "playbackStats" with the proper type assert_inherits: property "playbackStats" not found in prototype chain
 PASS AudioContext interface: context must inherit property "getOutputTimestamp()" with the proper type
 PASS AudioContext interface: context must inherit property "resume()" with the proper type
 PASS AudioContext interface: context must inherit property "suspend()" with the proper type
@@ -131,17 +133,20 @@ PASS OfflineAudioContext interface object name
 PASS OfflineAudioContext interface: existence and properties of interface prototype object
 PASS OfflineAudioContext interface: existence and properties of interface prototype object's "constructor" property
 PASS OfflineAudioContext interface: existence and properties of interface prototype object's @@unscopables property
-PASS OfflineAudioContext interface: operation startRendering()
+PASS OfflineAudioContext interface: operation startRendering(optional unsigned long?)
 PASS OfflineAudioContext interface: operation resume()
 PASS OfflineAudioContext interface: operation suspend(double)
+FAIL OfflineAudioContext interface: operation close() assert_own_property: interface prototype object missing non-static operation expected property "close" missing
 PASS OfflineAudioContext interface: attribute length
 PASS OfflineAudioContext interface: attribute oncomplete
 PASS OfflineAudioContext must be primary interface of new OfflineAudioContext(1, 1, sample_rate)
 PASS Stringification of new OfflineAudioContext(1, 1, sample_rate)
-PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "startRendering()" with the proper type
+PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "startRendering(optional unsigned long?)" with the proper type
+PASS OfflineAudioContext interface: calling startRendering(optional unsigned long?) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError
 PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "resume()" with the proper type
 PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "suspend(double)" with the proper type
 PASS OfflineAudioContext interface: calling suspend(double) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError
+FAIL OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "close()" with the proper type assert_inherits: property "close" not found in prototype chain
 PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "length" with the proper type
 PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "oncomplete" with the proper type
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "destination" with the proper type
@@ -1156,4 +1161,18 @@ PASS AudioNode interface: worklet_node must inherit property "channelCount" with
 PASS AudioNode interface: worklet_node must inherit property "channelCountMode" with the proper type
 PASS AudioNode interface: worklet_node must inherit property "channelInterpretation" with the proper type
 PASS AudioWorkletProcessor interface: existence and properties of interface object
+FAIL AudioPlaybackStats interface: existence and properties of interface object assert_own_property: self does not have own property "AudioPlaybackStats" expected property "AudioPlaybackStats" missing
+FAIL AudioPlaybackStats interface object length assert_own_property: self does not have own property "AudioPlaybackStats" expected property "AudioPlaybackStats" missing
+FAIL AudioPlaybackStats interface object name assert_own_property: self does not have own property "AudioPlaybackStats" expected property "AudioPlaybackStats" missing
+FAIL AudioPlaybackStats interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioPlaybackStats" expected property "AudioPlaybackStats" missing
+FAIL AudioPlaybackStats interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioPlaybackStats" expected property "AudioPlaybackStats" missing
+FAIL AudioPlaybackStats interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AudioPlaybackStats" expected property "AudioPlaybackStats" missing
+FAIL AudioPlaybackStats interface: attribute underrunDuration assert_own_property: self does not have own property "AudioPlaybackStats" expected property "AudioPlaybackStats" missing
+FAIL AudioPlaybackStats interface: attribute underrunEvents assert_own_property: self does not have own property "AudioPlaybackStats" expected property "AudioPlaybackStats" missing
+FAIL AudioPlaybackStats interface: attribute totalDuration assert_own_property: self does not have own property "AudioPlaybackStats" expected property "AudioPlaybackStats" missing
+FAIL AudioPlaybackStats interface: attribute averageLatency assert_own_property: self does not have own property "AudioPlaybackStats" expected property "AudioPlaybackStats" missing
+FAIL AudioPlaybackStats interface: attribute minimumLatency assert_own_property: self does not have own property "AudioPlaybackStats" expected property "AudioPlaybackStats" missing
+FAIL AudioPlaybackStats interface: attribute maximumLatency assert_own_property: self does not have own property "AudioPlaybackStats" expected property "AudioPlaybackStats" missing
+FAIL AudioPlaybackStats interface: operation resetLatency() assert_own_property: self does not have own property "AudioPlaybackStats" expected property "AudioPlaybackStats" missing
+FAIL AudioPlaybackStats interface: operation toJSON() assert_own_property: self does not have own property "AudioPlaybackStats" expected property "AudioPlaybackStats" missing
 

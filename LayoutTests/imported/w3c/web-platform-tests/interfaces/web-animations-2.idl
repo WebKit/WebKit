@@ -1,7 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: Web Animations Level 2 (https://drafts.csswg.org/web-animations-2/)
+// Source: Web Animations Module Level 2 (https://drafts.csswg.org/web-animations-2/)
 
 [Exposed=Window]
 partial interface AnimationTimeline {
@@ -113,25 +113,3 @@ dictionary AnimationPlaybackEventInit : EventInit {
     CSSNumberish? currentTime = null;
     CSSNumberish? timelineTime = null;
 };
-
-[Exposed=Window]
-interface AnimationTrigger {
-  constructor(optional AnimationTriggerOptions options = {});
-  attribute AnimationTimeline timeline;
-  attribute AnimationTriggerBehavior behavior;
-  attribute any rangeStart;
-  attribute any rangeEnd;
-  attribute any exitRangeStart;
-  attribute any exitRangeEnd;
-};
-
-dictionary AnimationTriggerOptions {
-  AnimationTimeline? timeline;
-  AnimationTriggerBehavior? behavior = "once";
-  (TimelineRangeOffset or CSSNumericValue or CSSKeywordValue or DOMString) rangeStart = "normal";
-  (TimelineRangeOffset or CSSNumericValue or CSSKeywordValue or DOMString) rangeEnd = "normal";
-  (TimelineRangeOffset or CSSNumericValue or CSSKeywordValue or DOMString) exitRangeStart = "auto";
-  (TimelineRangeOffset or CSSNumericValue or CSSKeywordValue or DOMString) exitRangeEnd = "auto";
-};
-
-enum AnimationTriggerBehavior { "once", "repeat", "alternate", "state" };
