@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cross-Origin Highlight Refresh Frame</title>
+    <style>
+        html, body { margin: 0; }
+        body { height: 1000px; background: white; }
+        #mover { position: absolute; top: 50%; left: 50px; width: 50px; height: 50px; background: green; }
+        #spinner { position: absolute; top: 20px; left: 150px; width: 50px; height: 50px; background: green; will-change: transform; transform: translateX(0); }
+        #iframe-fixed { position: fixed; top: 240px; left: 300px; width: 50px; height: 50px; background: green; }
+    </style>
+    <script>
+        function afterRendering(callback)
+        {
+            requestAnimationFrame(() => requestAnimationFrame(callback));
+        }
+
+        async function waitForInnerHeight(height)
+        {
+            while (window.innerHeight !== height)
+                await new Promise((resolve) => setTimeout(resolve, 10));
+        }
+
+        window.addEventListener("message", async (event) => {
+            let {command, argument} = event.data;
+            switch (command) {
+            case "scroll":
+                window.scrollTo(0, argument);
+                break;
+            case "setMoverTop":
+                document.getElementById("mover").style.top = argument;
+                break;
+            case "setSpinnerTransform":
+                document.getElementById("spinner").style.transform = argument;
+                break;
+            case "waitForInnerHeight":
+                await waitForInnerHeight(argument);
+                break;
+            }
+            afterRendering(() => event.source.postMessage({done: command}, "*"));
+        });
+    </script>
+</head>
+<body>
+    <div id="container">
+        <div id="mover"></div>
+        <div id="spinner"></div>
+        <div id="iframe-fixed"></div>
+    </div>
+</body>
+</html>

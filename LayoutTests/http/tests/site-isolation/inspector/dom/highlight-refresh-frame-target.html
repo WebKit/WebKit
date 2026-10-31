@@ -1,0 +1,359 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncFrameScrollingEnabled=true AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    body { margin: 0; }
+    #spacer { height: 3000px; }
+    #fixed-header { position: fixed; top: 0; left: 0; width: 200px; height: 40px; background: yellow; }
+    #main-mover { position: absolute; top: 60px; left: 450px; width: 50px; height: 50px; background: green; }
+    #grid { position: absolute; top: 150px; left: 600px; width: 100px; height: 100px; display: grid; grid-template: 50px 50px / 50px 50px; }
+    iframe { position: absolute; top: 100px; left: 0; width: 400px; height: 300px; border: none; }
+</style>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function afterRendering()
+{
+    return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+function frameCommand(command, argument)
+{
+    return new Promise((resolve) => {
+        window.addEventListener("message", function listener(event) {
+            if (event.data?.done !== command)
+                return;
+            window.removeEventListener("message", listener);
+            resolve();
+        });
+        document.querySelector("iframe").contentWindow.postMessage({command, argument}, "*");
+    });
+}
+
+async function scrollMainFrame(y)
+{
+    window.scrollTo(0, y);
+    await afterRendering();
+}
+
+async function setMainMoverLeft(left)
+{
+    document.getElementById("main-mover").style.left = left;
+    await afterRendering();
+}
+
+async function setFixedHeaderDisplay(display)
+{
+    document.getElementById("fixed-header").style.display = display;
+    await afterRendering();
+}
+
+async function setIframeHeight(height)
+{
+    document.querySelector("iframe").style.height = height + "px";
+    await frameCommand("waitForInnerHeight", height);
+}
+
+async function snapshotColors(points, radius)
+{
+    await afterRendering();
+    await testRunner.updatePresentation();
+    let dataURL = await new Promise((resolve) => testRunner.takeViewPortSnapshot(resolve));
+
+    let image = new Image;
+    await new Promise((resolve, reject) => {
+        image.onload = resolve;
+        image.onerror = reject;
+        image.src = dataURL;
+    });
+
+    let canvas = document.createElement("canvas");
+    canvas.width = image.width;
+    canvas.height = image.height;
+    let context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0);
+
+    let scale = image.width / window.innerWidth;
+    return points.map(([x, y]) => {
+        let data = context.getImageData(Math.round((x - radius) * scale), Math.round(y * scale), Math.round(2 * radius * scale) + 1, 1).data;
+        let colors = [];
+        for (let i = 0; i < data.length; i += 4)
+            colors.push([data[i], data[i + 1], data[i + 2]]);
+        return colors;
+    });
+}
+
+const samplers = {
+    highlight: {radius: 0, matches: ([r, g, b]) => r <= 8 && g <= 8 && b >= 247},
+    gridLine: {radius: 3, matches: ([r, g, b]) => b - Math.max(r, g) >= 100},
+};
+
+// Overlays fade and repaint asynchronously, so sample until every point matches or attempts run out.
+async function waitForSamples(samplerName, expectations)
+{
+    let {radius, matches} = samplers[samplerName];
+    let points = expectations.map(({point}) => point);
+    let results;
+    for (let attempt = 0; attempt < 20; ++attempt) {
+        results = (await snapshotColors(points, radius)).map((colors) => colors.some(matches));
+        if (results.every((result, i) => result === expectations[i].expected))
+            break;
+    }
+    return results;
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameHighlightRefresh");
+
+    const Scope = {
+        Page: "page",
+        MainFrame: "main-frame",
+        Frame: "frame",
+    };
+
+    async function containerNodeForFrame(resourceName) {
+        let target = await frameTargetForURLContaining(resourceName);
+        if (target.isProvisional) {
+            let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+            target = committedEvent.data.target;
+        }
+        await target.ensureTargetExecutionContext();
+
+        let frameDoc = WI.domManager.frameTargetDocumentForTarget(target);
+        if (!frameDoc) {
+            let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+            frameDoc = docEvent.data.document;
+        }
+
+        let htmlNode = frameDoc.children.find((child) => child.nodeName() === "HTML");
+        await new Promise((resolve) => htmlNode.getChildNodes(resolve));
+        let bodyNode = htmlNode.children.find((child) => child.nodeName() === "BODY");
+        await new Promise((resolve) => bodyNode.getChildNodes(resolve));
+
+        let containerNode = bodyNode.children.find((child) => child.getAttribute("id") === "container");
+        await new Promise((resolve) => containerNode.getChildNodes(resolve));
+
+        return {target, containerNode};
+    }
+
+    async function nodeForHighlight(scope, selector) {
+        let hasFrameTargets = WI.targets.some((target) => target.type === WI.TargetType.Frame);
+        if (scope !== Scope.Page && hasFrameTargets) {
+            let resourceName = scope === Scope.Frame ? "resources/highlight-refresh-frame.html" : "highlight-refresh-frame-target.html";
+            let {target, containerNode} = await containerNodeForFrame(resourceName);
+            let node = WI.domManager.nodeForId(await containerNode.querySelector(selector));
+            return {target, nodeId: node ? node.backendNodeId : null};
+        }
+
+        let documentNode = await WI.domManager.requestDocument();
+        if (scope === Scope.Frame) {
+            let iframeNode = WI.domManager.nodeForId(await documentNode.querySelector("iframe"));
+            documentNode = iframeNode.children[0];
+        }
+        let node = WI.domManager.nodeForId(await documentNode.querySelector(selector));
+        return {target: WI.assumingMainTarget(), nodeId: node ? node.backendNodeId : null};
+    }
+
+    async function evaluateInPage(expression) {
+        let target = WI.assumingMainTarget();
+        let {result: promise} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+        let {result, wasThrown} = await target.RuntimeAgent.awaitPromise.invoke({promiseObjectId: promise.objectId, returnByValue: true});
+        if (wasThrown)
+            throw result.description;
+        return result.value;
+    }
+
+    function sampleInPage(samplerName, expectations) {
+        return evaluateInPage(`waitForSamples("${samplerName}", ${JSON.stringify(expectations)})`);
+    }
+
+    function reportSamples(expectations, results) {
+        for (let i = 0; i < expectations.length; ++i) {
+            if (expectations[i].expected)
+                InspectorTest.expectTrue(results[i], expectations[i].message);
+            else
+                InspectorTest.expectFalse(results[i], expectations[i].message);
+        }
+    }
+
+    async function expectSamples(samplerName, expectations) {
+        reportSamples(expectations, await sampleInPage(samplerName, expectations));
+    }
+
+    const highlightConfig = {
+        showInfo: false,
+        contentColor: {r: 0, g: 0, b: 255, a: 1},
+    };
+
+    function addHighlightRefreshTestCase({name, description, scope, selector, initialPoint, changeDescription, change, changedPoint, stalePoint, reset}) {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let {target, nodeId} = await nodeForHighlight(scope, selector);
+                InspectorTest.expectNotNull(nodeId, `Should get a nodeId for '${selector}'.`);
+
+                await target.DOMAgent.highlightNode.invoke({nodeId, highlightConfig});
+                await expectSamples("highlight", [{point: initialPoint, expected: true, message: `Should draw the highlight over '${selector}'.`}]);
+
+                await evaluateInPage(change);
+                let expectations = [{point: changedPoint, expected: true, message: `Should draw the highlight over '${selector}' after ${changeDescription}.`}];
+                if (stalePoint)
+                    expectations.push({point: stalePoint, expected: false, message: `Should not leave the highlight where '${selector}' was before ${changeDescription}.`});
+                await expectSamples("highlight", expectations);
+
+                await target.DOMAgent.hideHighlight();
+                await evaluateInPage(reset);
+                await expectSamples("highlight", [{point: initialPoint, expected: false, message: "Should remove the highlight."}]);
+            }
+        });
+    }
+
+    suite.addTestCase({
+        name: "Canary",
+        description: "A highlight sent through the iframe's target should be visible, and hiding it should remove it.",
+        async test() {
+            let {target, nodeId} = await nodeForHighlight(Scope.Frame, "#mover");
+            InspectorTest.expectNotNull(nodeId, "Should get a nodeId for '#mover'.");
+
+            await target.DOMAgent.highlightNode.invoke({nodeId, highlightConfig});
+            await expectSamples("highlight", [{point: [75, 275], expected: true, message: "Should draw the highlight over '#mover'."}]);
+
+            await target.DOMAgent.hideHighlight();
+            await expectSamples("highlight", [{point: [75, 275], expected: false, message: "Should remove the highlight."}]);
+        }
+    });
+
+    addHighlightRefreshTestCase({
+        name: "IframeFixedElementFollowsIframeScroll",
+        description: "A highlight of a fixed element sent through the iframe's target should stay on it when the iframe scrolls.",
+        scope: Scope.Frame,
+        selector: "#iframe-fixed",
+        initialPoint: [325, 365],
+        changeDescription: "the iframe scrolls",
+        change: `frameCommand("scroll", 100)`,
+        changedPoint: [325, 365],
+        stalePoint: [325, 265],
+        reset: `frameCommand("scroll", 0)`,
+    });
+
+    addHighlightRefreshTestCase({
+        name: "PageTargetFixedElementFollowsMainFrameScroll",
+        description: "A highlight of a fixed element sent through the page target should stay on it when the main frame scrolls.",
+        scope: Scope.Page,
+        selector: "#fixed-header",
+        initialPoint: [100, 20],
+        changeDescription: "the main frame scrolls",
+        change: `scrollMainFrame(200)`,
+        changedPoint: [100, 20],
+        reset: `scrollMainFrame(0)`,
+    });
+
+    addHighlightRefreshTestCase({
+        name: "MainFrameTargetFixedElementFollowsMainFrameScroll",
+        description: "A highlight of a fixed element sent through the main frame's target should stay on it when the main frame scrolls.",
+        scope: Scope.MainFrame,
+        selector: "#fixed-header",
+        initialPoint: [100, 20],
+        changeDescription: "the main frame scrolls",
+        change: `scrollMainFrame(200)`,
+        changedPoint: [100, 20],
+        reset: `scrollMainFrame(0)`,
+    });
+
+    suite.addTestCase({
+        name: "MainFrameTargetExtendedGridLinesFollowMainFrameScroll",
+        description: "Extended grid lines sent through the main frame's target should cover the viewport after the main frame scrolls.",
+        async test() {
+            // A main frame scroll lays out fixed elements again, which would also repaint the overlay.
+            await evaluateInPage(`setFixedHeaderDisplay("none")`);
+
+            let {target, nodeId} = await nodeForHighlight(Scope.MainFrame, "#grid");
+            InspectorTest.expectNotNull(nodeId, "Should get a nodeId for '#grid'.");
+
+            const point = [600, 550];
+            await target.DOMAgent.showGridOverlay.invoke({nodeId, gridOverlayConfig: {gridColor: {r: 0, g: 0, b: 255, a: 1}, showExtendedGridLines: true}});
+
+            // Report after scrolling, since laying out a result line would also repaint the overlay.
+            let beforeExpectations = [{point, expected: true, message: "Should draw the extended grid line below '#grid'."}];
+            let beforeResults = await sampleInPage("gridLine", beforeExpectations);
+            await evaluateInPage(`scrollMainFrame(200)`);
+            let afterExpectations = [{point, expected: true, message: "Should draw the extended grid line below '#grid' after the main frame scrolls."}];
+            let afterResults = await sampleInPage("gridLine", afterExpectations);
+            reportSamples(beforeExpectations, beforeResults);
+            reportSamples(afterExpectations, afterResults);
+
+            await target.DOMAgent.hideGridOverlay.invoke({nodeId});
+            await evaluateInPage(`scrollMainFrame(0)`);
+            await evaluateInPage(`setFixedHeaderDisplay("")`);
+            await expectSamples("gridLine", [{point, expected: false, message: "Should remove the grid overlay."}]);
+        }
+    });
+
+    addHighlightRefreshTestCase({
+        name: "FrameTargetHighlightFollowsDOMChange",
+        description: "A highlight sent through the iframe's target should follow its node when a style change moves it.",
+        scope: Scope.Frame,
+        selector: "#mover",
+        initialPoint: [75, 275],
+        changeDescription: "it moves",
+        change: `frameCommand("setMoverTop", "75%")`,
+        changedPoint: [75, 350],
+        stalePoint: [75, 275],
+        reset: `frameCommand("setMoverTop", "")`,
+    });
+
+    addHighlightRefreshTestCase({
+        name: "FrameTargetHighlightFollowsTransformChange",
+        description: "A highlight sent through the iframe's target should follow its node when a transform on a composited layer moves it.",
+        scope: Scope.Frame,
+        selector: "#spinner",
+        initialPoint: [175, 145],
+        changeDescription: "its transform changes",
+        change: `frameCommand("setSpinnerTransform", "translateX(100px)")`,
+        changedPoint: [275, 145],
+        stalePoint: [175, 145],
+        reset: `frameCommand("setSpinnerTransform", "")`,
+    });
+
+    addHighlightRefreshTestCase({
+        name: "FrameTargetHighlightFollowsIframeResize",
+        description: "A highlight sent through the iframe's target should follow its node when resizing the iframe lays it out again.",
+        scope: Scope.Frame,
+        selector: "#mover",
+        initialPoint: [75, 275],
+        changeDescription: "the iframe grows",
+        change: `setIframeHeight(400)`,
+        changedPoint: [75, 325],
+        stalePoint: [75, 275],
+        reset: `setIframeHeight(300)`,
+    });
+
+    addHighlightRefreshTestCase({
+        name: "MainFrameTargetHighlightFollowsDOMChange",
+        description: "A highlight sent through the main frame's target should follow its node when a style change moves it.",
+        scope: Scope.MainFrame,
+        selector: "#main-mover",
+        initialPoint: [475, 85],
+        changeDescription: "it moves",
+        change: `setMainMoverLeft("550px")`,
+        changedPoint: [575, 85],
+        stalePoint: [475, 85],
+        reset: `setMainMoverLeft("")`,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that highlights sent through a frame target follow scrolling, style and layout changes.</p>
+<div id="container">
+    <div id="fixed-header"></div>
+    <div id="main-mover"></div>
+    <div id="grid"><div></div><div></div><div></div><div></div></div>
+    <iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/highlight-refresh-frame.html"></iframe>
+</div>
+<div id="spacer"></div>
+</body>
+</html>

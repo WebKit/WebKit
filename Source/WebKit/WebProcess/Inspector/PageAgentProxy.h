@@ -91,6 +91,8 @@ public:
     void didRecalculateStyle() final;
 
 private:
+    void setFrameHighlightsNeedDisplay();
+
     WeakRef<WebCore::Page> m_inspectedPage;
     WeakRef<WebPage> m_page;
 
