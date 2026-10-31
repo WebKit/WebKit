@@ -357,6 +357,7 @@ private:
     void setPreload(WebCore::MediaPlayer::Preload) final;
 
     bool hasAvailableVideoFrame() const final;
+    bool videoFrameHasAlpha() const final;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     String wirelessPlaybackTargetName() const final;

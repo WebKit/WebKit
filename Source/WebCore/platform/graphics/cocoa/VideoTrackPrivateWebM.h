@@ -48,6 +48,7 @@ public:
     std::optional<bool> defaultEnabled() const final;
     uint32_t LEGACY_NODELETE width() const;
     uint32_t LEGACY_NODELETE height() const;
+    bool hasAlpha() const;
 
 private:
     VideoTrackPrivateWebM(webm::TrackEntry&&);
