@@ -39,8 +39,6 @@ public:
     // This variant is expensive. Use ScriptDisallowedScope::InMainThread whenever possible.
     ScriptDisallowedScope()
     {
-        if (!isMainThread())
-            return;
         ++s_count;
     }
 
@@ -51,8 +49,6 @@ public:
 
     ~ScriptDisallowedScope()
     {
-        if (!isMainThread())
-            return;
         ASSERT(s_count);
         s_count--;
     }
@@ -65,6 +61,11 @@ public:
     static bool isScriptAllowedInMainThread()
     {
         return !isInWebProcess() || !isMainThread() || !s_count;
+    }
+
+    static bool isScriptAllowedInCurrentThread()
+    {
+        return !isInWebProcess() || !s_count;
     }
 
     class InMainThread {
@@ -170,7 +171,7 @@ public:
     };
 
 private:
-    WEBCORE_EXPORT static unsigned s_count;
+    WEBCORE_EXPORT static thread_local unsigned s_count;
 };
 
 } // namespace WebCore
