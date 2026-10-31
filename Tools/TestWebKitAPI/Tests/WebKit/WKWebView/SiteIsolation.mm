@@ -91,15 +91,67 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
+#import <CoreLocation/CLLocation.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebCore/DOMPasteAccess.h>
 #import <WebCore/FrameIdentifier.h>
 #import <WebKit/_WKActivatedElementInfo.h>
+#import <WebKit/_WKGeolocationCoreLocationProvider.h>
+#import <WebKit/_WKGeolocationPosition.h>
 
 @interface WKContentView ()
 - (BOOL)hasSelectablePositionAtPoint:(CGPoint)point;
 - (BOOL)screenIsBeingCaptured;
 - (void)_sceneCaptureStateDidChange;
+@end
+
+@interface SiteIsolationCoreLocationProvider : NSObject<_WKGeolocationCoreLocationProvider>
+@end
+
+@implementation SiteIsolationCoreLocationProvider {
+    __unsafe_unretained id<_WKGeolocationCoreLocationListener> _listener;
+}
+
+- (void)setListener:(id<_WKGeolocationCoreLocationListener>)listener
+{
+    _listener = listener;
+}
+
+- (void)requestGeolocationAuthorization
+{
+    [_listener geolocationAuthorizationGranted];
+}
+
+- (void)start
+{
+    RetainPtr location = adoptNS([[CLLocation alloc] initWithLatitude:37.3348 longitude:-122.009]);
+    [_listener positionChanged:[_WKGeolocationPosition positionWithLocation:location.get()]];
+}
+
+- (void)stop
+{
+}
+
+- (void)setEnableHighAccuracy:(BOOL)flag
+{
+}
+@end
+
+@interface SiteIsolationGeolocationUIDelegate : NSObject<WKUIDelegatePrivate>
+@property (nonatomic, readonly) NSString *alertMessage;
+@end
+
+@implementation SiteIsolationGeolocationUIDelegate
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    _alertMessage = message;
+    completionHandler();
+}
+
+- (void)_webView:(WKWebView *)webView requestGeolocationAuthorizationForURL:(NSURL *)url frame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL))decisionHandler
+{
+    decisionHandler(YES);
+}
 @end
 #endif
 
@@ -15828,6 +15880,36 @@ TEST(SiteIsolation, ScreenCaptureStateReachesCrossSiteIframeProcesses)
     RetainPtr newChildFrame = [webView firstChildFrame];
     EXPECT_NE([newChildFrame _processIdentifier], [childFrame _processIdentifier]);
     EXPECT_TRUE(screenIsBeingCapturedInProcessForFrame(webView.get(), newChildFrame.get()));
+}
+
+TEST(SiteIsolation, ClearGeolocationWatchInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<script>onmessage = (event) => alert(event.data);</script><iframe allow='geolocation' src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<script>"
+            "var id = navigator.geolocation.watchPosition("
+            "() => { navigator.geolocation.clearWatch(id); parent.postMessage('CLEARED', '*'); },"
+            "() => parent.postMessage('ERROR', '*'));"
+            "</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr coreLocationProvider = adoptNS([SiteIsolationCoreLocationProvider new]);
+    RetainPtr processPool = adoptNS([WKProcessPool new]);
+    processPool.get()._coreLocationProvider = coreLocationProvider.get();
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().processPool = processPool.get();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+
+    RetainPtr uiDelegate = adoptNS([SiteIsolationGeolocationUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+
+    Util::waitFor([&] {
+        return !!uiDelegate.get().alertMessage;
+    });
+    EXPECT_WK_STREQ(uiDelegate.get().alertMessage, "CLEARED");
 }
 
 #endif // PLATFORM(IOS_FAMILY)
