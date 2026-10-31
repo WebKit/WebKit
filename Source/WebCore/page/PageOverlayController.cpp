@@ -312,6 +312,15 @@ void PageOverlayController::uninstallPageOverlay(PageOverlay& overlay, PageOverl
     installedPageOverlaysChanged();
 }
 
+RefPtr<PageOverlay> PageOverlayController::documentOverlayForRootFrame(const PageOverlayClient& client, const LocalFrame& rootFrame) const
+{
+    for (auto& overlay : m_pageOverlays) {
+        if (&overlay->client() == &client && overlay->associatedFrame() == &rootFrame)
+            return overlay.ptr();
+    }
+    return nullptr;
+}
+
 void PageOverlayController::updateForceSynchronousScrollLayerPositionUpdates()
 {
 #if ENABLE(ASYNC_SCROLLING)

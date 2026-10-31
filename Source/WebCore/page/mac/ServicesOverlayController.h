@@ -67,7 +67,7 @@ public:
 
 private:
     // PageOverlayClient
-    void willMoveToPage(PageOverlay&, Page*) override;
+    void willMoveToPage(PageOverlay&, Page*) override { }
     void LEGACY_NODELETE didMoveToPage(PageOverlay&, Page*) override;
     void LEGACY_NODELETE drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
@@ -112,7 +112,6 @@ private:
     Page& page() const { return m_page; }
 
     WeakRef<Page> m_page;
-    Vector<WeakPtr<PageOverlay>> m_servicesOverlays;
 
     RefPtr<DataDetectorHighlight> m_activeHighlight;
     RefPtr<DataDetectorHighlight> m_nextActiveHighlight;

@@ -2290,6 +2290,11 @@ void EventHandler::mouseDidLeaveLocalRoot()
 #if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
     protect(page->servicesOverlayController())->mouseDidLeaveLocalRoot(frame);
 #endif
+
+#if PLATFORM(MAC)
+    if (RefPtr imageOverlayController { page->imageOverlayControllerIfExists() })
+        imageOverlayController->mouseDidLeaveLocalRoot(frame);
+#endif
 }
 
 bool EventHandler::passMouseMovedEventToScrollbars(const PlatformMouseEvent& event)
