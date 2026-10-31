@@ -2756,7 +2756,9 @@ webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/expected-fail
 webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_and_fail.html [ Skip ]
 webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_cycle_fail.html [ Skip ]
 webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_match_fail.html [ Skip ]
+webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_match_fail-print.html [ Skip ]
 webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_mismatch_fail.html [ Skip ]
+webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_mismatch_fail-print.html [ Skip ]
 webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_ref_timeout.html [ Skip ]
 webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_timeout.html [ Skip ]
 

@@ -57,6 +57,31 @@ class TestParserTest(unittest.TestCase):
         self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
         self.assertFalse('jstest' in test_info.keys(), 'test should not have been analyzed as a jstest')
 
+    def test_analyze_print_reftest(self):
+        test_html = b"""<head>
+<link rel="match" href="somefile-print-ref.html" />
+</head>
+"""
+        test_path = os.path.join(os.path.sep, 'some', 'madeup', 'path')
+        parser = TestParser(options, os.path.join(test_path, 'somefile-print.html'))
+        test_info = parser.analyze_test(test_contents=test_html)
+
+        self.assertNotEqual(test_info, None, 'did not find a test')
+        self.assertTrue('match_reference' in test_info.keys(), 'did not find a reference file')
+        self.assertEqual(test_info['match_reference'], os.path.join(test_path, 'somefile-print-ref.html'))
+
+    def test_analyze_print_reftest_in_print_directory(self):
+        test_html = b"""<head>
+<link rel="match" href="somefile-ref.html" />
+</head>
+"""
+        test_path = os.path.join(os.path.sep, 'some', 'madeup', 'print')
+        parser = TestParser(options, os.path.join(test_path, 'somefile.html'))
+        test_info = parser.analyze_test(test_contents=test_html)
+
+        self.assertNotEqual(test_info, None, 'did not find a test')
+        self.assertTrue('match_reference' in test_info.keys(), 'did not find a reference file')
+
     def test_analyze_test_reftest_one_mismatch(self):
         test_html = b"""<head>
 <link rel="mismatch" href="green-box-ref.xht" />
