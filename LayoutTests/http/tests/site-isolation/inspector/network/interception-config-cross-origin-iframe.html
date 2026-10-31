@@ -12,8 +12,8 @@ function addCrossOriginIFrame() {
 function test() {
     let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.InterceptionConfig");
 
-    // The interception commands are declared `targetTypes: ["page"]`, so they are not exposed on
-    // the web-page target's NetworkAgent. Invoke them directly against the backend connection.
+    // Invoke the commands directly against the backend connection, which hosts the Network domain
+    // under Site Isolation.
     function invokeInterceptionCommand(name, parameters) {
         return InspectorBackend.invokeCommand(`Network.${name}`, WI.TargetType.Page, WI.backendTarget.connection, parameters);
     }
@@ -30,11 +30,12 @@ function test() {
         return result.value;
     }
 
+    // The first frame target to appear can be the iframe's initial document in the parent's process,
+    // which a provisional target in the cross-origin process later replaces. Wait for the committed
+    // target of the cross-origin document so the later cases do not talk to a replaced target.
     async function addIFrameAndGetTarget() {
-        let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
         InspectorTest.evaluateInPage("addCrossOriginIFrame()");
-        let event = await targetAddedPromise;
-        return event.data.target;
+        return waitForFrameTargetForURLContaining("iframe-with-fetch.html");
     }
 
     // Captured by the first test case and reused, so the later cases do not race the

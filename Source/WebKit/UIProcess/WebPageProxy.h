@@ -118,8 +118,10 @@ class WebsitePolicies;
 namespace Inspector {
 enum class InspectorTargetType : uint8_t;
 enum class NetworkInterceptOwner : uint8_t;
+enum class NetworkInterceptionPhase : uint8_t;
 struct InterceptPattern;
 struct NetworkInterception;
+struct NetworkInterceptionResolution;
 }
 
 namespace IPC {
@@ -476,6 +478,7 @@ using PlatformLayerIdentifier = ProcessQualified<ObjectIdentifier<PlatformLayerI
 using PlaybackTargetClientContextIdentifier = ProcessQualified<ObjectIdentifier<PlaybackTargetClientContextIdentifierType>>;
 using PointerID = uint32_t;
 using ResourceLoaderIdentifier = AtomicObjectIdentifier<ResourceLoaderIdentifierType>;
+using ScopedResourceLoaderIdentifier = ProcessQualified<ResourceLoaderIdentifier>;
 using SandboxFlags = OptionSet<SandboxFlag>;
 using ScrollingNodeID = ProcessQualified<ObjectIdentifier<ScrollingNodeIDType>>;
 using ScrollPosition = IntPoint;
@@ -3099,11 +3102,9 @@ public:
     const Inspector::NetworkInterception& networkInterception() const;
     // Replaces the patterns of one consumer. The handler runs once every hosting process has the new configuration.
     void setNetworkInterceptPatterns(Inspector::NetworkInterceptOwner, Vector<Inspector::InterceptPattern>&&, CompletionHandler<void()>&&);
-    void setInspectorNetworkInterceptionEnabled(bool);
-    void addInspectorNetworkInterceptPattern(Inspector::InterceptPattern&&);
-    void removeInspectorNetworkInterceptPattern(const Inspector::InterceptPattern&);
-    void clearInspectorNetworkInterception();
     void updateNetworkInterception(CompletionHandler<void()>&&);
+    // Sends the resolution of a paused load to the process that paused it.
+    void resolveNetworkInterception(const WebCore::ScopedResourceLoaderIdentifier&, Inspector::NetworkInterceptOwner, Inspector::NetworkInterceptionPhase, Inspector::NetworkInterceptionResolution&&);
 
     void hitTestAtPoint(WebCore::FrameIdentifier, WebCore::FloatPoint, API::ContentWorld&, CompletionHandler<void(std::expected<std::optional<JSHandleInfo>, HitTestAtPointError>&&, WebHitTestResultData&&)>&&);
     void convertRectToMainFrameCoordinates(WebCore::FloatRect, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<WebCore::FloatRect>)>&&);
