@@ -56,7 +56,6 @@ enum class GridAvoidanceReason : uint8_t {
     GridItemDoesNotHaveElement,
     GridItemIsSubgrid,
     GridIsEmpty,
-    GridIsFieldsetWithRenderedLegend,
     GridHasGridTemplateAreas,
     GridHasColumnAutoFlow,
     GridHasNonFixedGaps,
@@ -327,12 +326,14 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
     if (!renderGridStyle->isOverflowVisible())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasNonVisibleOverflow, reasons, reasonCollectionMode);
 
-    if (!renderGrid.firstInFlowChild())
-        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridIsEmpty, reasons, reasonCollectionMode);
+    // The rendered legend of a fieldset is not a grid item: it sits in the border and GFC does not lay it out.
+    CheckedPtr renderedLegend = renderGrid.renderedFieldsetLegend();
 
-    // The rendered legend sits in the fieldset's border and is not a grid item, but GFC lays out every child as an item.
-    if (renderGrid.renderedFieldsetLegend())
-        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridIsFieldsetWithRenderedLegend, reasons, reasonCollectionMode);
+    CheckedPtr firstGridItem = renderGrid.firstInFlowChild();
+    if (firstGridItem && firstGridItem.get() == renderedLegend.get())
+        firstGridItem = firstGridItem->nextInFlowSibling();
+    if (!firstGridItem)
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridIsEmpty, reasons, reasonCollectionMode);
 
     // GFC currently supports grid-auto-flow: row and row dense
     // Column auto-flow is not yet supported
@@ -408,6 +409,9 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasPercentageRowsWithIndefiniteHeight, reasons, reasonCollectionMode);
 
     for (CheckedRef gridItem : childrenOfType<RenderBox>(renderGrid)) {
+        if (&gridItem.get() == renderedLegend.get())
+            continue;
+
         // We do not yet support grid item sizing spec for replaced elements.
         // See: https://drafts.csswg.org/css-grid/#grid-item-sizing
         RefPtr gridItemElement = gridItem->element();
@@ -660,9 +664,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridIsEmpty:
         stream << "grid is empty";
-        break;
-    case GridAvoidanceReason::GridIsFieldsetWithRenderedLegend:
-        stream << "grid is a fieldset with a rendered legend";
         break;
     case GridAvoidanceReason::GridHasGridTemplateAreas:
         stream << "grid has grid-template-areas";
