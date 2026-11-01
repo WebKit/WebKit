@@ -1,0 +1,16 @@
+Verifies that MathML elements expose the Link role, URL, and are not pruned from the tree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXMath
+    AXRole: AXLink AXValue: 𝑥<\n>
+        AXRole: AXStatic AXValue: 𝑥
+    AXRole: AXLink AXValue: 𝑥<\n>
+        AXRole: AXStatic AXValue: 𝑥
+
+Accessibility Tree:
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

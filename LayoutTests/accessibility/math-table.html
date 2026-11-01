@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../resources/js-test.js"></script>
+    <script src="../resources/accessibility-helper.js"></script>
+  </head>
+  <body>
+    <!--
+      Matrix Layout:
+      [ (a + b) (rowspan=2) ] [        c        ]
+      [      (spanned)      ] [ (empty / mrow)  ]
+      [          d          ] [        e        ]
+    -->
+    <math id="math">
+      <mtable id="table">
+        <!-- Row 0 -->
+        <mtr id="row0">
+          <mtd id="cell_0_0" rowspan="2">
+            <mrow>
+              <mi>a</mi>
+              <mo>+</mo>
+              <mi>b</mi>
+            </mrow>
+          </mtd>
+          <mtd id="cell_0_1">
+            <mi>c</mi>
+          </mtd>
+        </mtr>
+
+        <!-- Row 1 -->
+        <mtr id="row1">
+          <mtd id="cell_1_1">
+            <mrow></mrow>
+          </mtd>
+        </mtr>
+
+        <!-- Row 2 -->
+        <mtr id="row2">
+          <mtd id="cell_2_0">
+            <mi>d</mi>
+          </mtd>
+          <mtd id="cell_2_1">
+            <mi>e</mi>
+          </mtd>
+        </mtr>
+      </mtable>
+    </math>
+
+    <script>
+      description(
+        "Verifies that MathML <mtable> exposes proper grid dimensions, and <mtd> properly computes rowIndexRange and columnIndexRange across multi-row spans and empty cells."
+      );
+
+      if (window.accessibilityController) {
+        dumpAccessibilityTree(
+          accessibilityController.accessibleElementById("math"),
+          null,
+          0,
+          false,
+          false,
+          true
+        );
+
+        // 2. Table Dimension & Grid Validation
+        var table = accessibilityController.accessibleElementById("table");
+        shouldBe("table.rowCount", "3");
+        shouldBe("table.columnCount", "2");
+
+        // 3. Spanning Cell: Row 0, Col 0 with rowspan="2"
+        var cellSpanning =
+          accessibilityController.accessibleElementById("cell_0_0");
+        shouldBe("cellSpanning.rowIndexRange()", "{0, 2}");
+        shouldBe("cellSpanning.columnIndexRange()", "{0, 1}");
+
+        // 4. Regular Cell: Row 0, Col 1
+        var cellTopRight =
+          accessibilityController.accessibleElementById("cell_0_1");
+        shouldBe("cellTopRight.rowIndexRange()", "{0, 1}");
+        shouldBe("cellTopRight.columnIndexRange()", "{1, 1}");
+
+        // 5. Offset Cell in Row 1 (Col 0 is occupied by the span, so this cell is at Col 1)
+        var cellOffset =
+          accessibilityController.accessibleElementById("cell_1_1");
+        shouldBe("cellOffset.rowIndexRange()", "{1, 1}");
+        shouldBe("cellOffset.columnIndexRange()", "{1, 1}");
+
+        // 6. Normal Bottom Row Cells
+        var cellBottomLeft =
+          accessibilityController.accessibleElementById("cell_2_0");
+        shouldBe("cellBottomLeft.rowIndexRange()", "{2, 1}");
+        shouldBe("cellBottomLeft.columnIndexRange()", "{0, 1}");
+
+        var cellBottomRight =
+          accessibilityController.accessibleElementById("cell_2_1");
+        shouldBe("cellBottomRight.rowIndexRange()", "{2, 1}");
+        shouldBe("cellBottomRight.columnIndexRange()", "{1, 1}");
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+Verifies that empty MathML elements (none, mprescripts, mspace) are retained in the a11y tree with Section role.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXMath
+    AXRole: AXSection
+        AXRole: AXStatic AXValue: 𝑥
+        AXRole: AXSection
+        AXRole: AXSection
+        AXRole: AXSection
+        AXRole: AXSection
+        AXRole: AXSuperscript AXValue: 1
+    AXRole: AXSection
+
+Accessibility Tree:
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../resources/js-test.js"></script>
+    <script src="../resources/accessibility-helper.js"></script>
+  </head>
+  <body>
+    <div id="content">
+      <math id="math">
+        <mmultiscripts id="multiscript">
+          <mi>x</mi>
+          <none id="none-post" />
+          <none id="none-post2" />
+          <mprescripts id="prescripts" />
+          <none id="none-pre" />
+          <mn>1</mn>
+        </mmultiscripts>
+        <mspace id="space" width="20px" height="20px"></mspace>
+      </math>
+    </div>
+    <p id="description"></p>
+    <pre id="tree"></pre>
+    <div id="console"></div>
+    <script>
+      description(
+        "Verifies that empty MathML elements (none, mprescripts, mspace) are retained in the a11y tree with Section role."
+      );
+
+      if (window.accessibilityController) {
+        debug("\nAccessibility Tree:");
+        dumpAccessibilityTree(
+          accessibilityController.accessibleElementById("math"),
+          null,
+          0,
+          false,
+          false,
+          true
+        );
+        document.getElementById("content").style.visibility = "hidden";
+      }
+    </script>
+  </body>
+</html>

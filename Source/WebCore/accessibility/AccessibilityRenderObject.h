@@ -112,7 +112,7 @@ public:
     RenderObject* renderer() const final { return m_renderer.get(); }
     Document* document() const final;
 
-    URL url() const final;
+    URL url() const override;
     CharacterRange selectedTextRange() const final;
     int insertionPointLineNumber() const final;
     String stringValue() const override;
