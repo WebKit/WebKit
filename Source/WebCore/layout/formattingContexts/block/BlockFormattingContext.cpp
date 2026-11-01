@@ -166,7 +166,7 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
     auto geometry = blockContainerState.geometry;
     // FIXME: Floats need the block container's top before the inline content is laid out; decide whether it has line boxes from its
     // inline items then.
-    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(downcast<RenderBlockFlow>(blockContainer), constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.relayoutChildren, m_blockLayoutState, *this, result);
+    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(downcast<RenderBlockFlow>(blockContainer), constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.replacedElementAvailableBlockSize, blockContainerState.relayoutChildren, m_blockLayoutState, *this, result);
     auto& blockContainerStateAfterLayout = containingBlockStates.last();
     auto& marginCollapse = m_blockLayoutState.marginCollapse();
     if (auto& margins = inlineContentLayoutResult.marginsOfKeptBlockLevelBoxes) {
@@ -242,7 +242,7 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
         // Its content is in a formatting context of its own; a block formatting context gets a block layout state of its own.
         auto blockLayoutState = BlockLayoutState { { } };
         auto horizontalConstraints = HorizontalConstraints { rootState.inlineRange.min(), rootState.inlineRange.size() };
-        auto rootResult = BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, rootState.borderAndPaddingBefore }, rootState.contentBoxBlockSize, rootState.fillAvailableBlockSize, rootState.relayoutChildren }, rootState.geometry);
+        auto rootResult = BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, rootState.borderAndPaddingBefore }, rootState.contentBoxBlockSize, rootState.fillAvailableBlockSize, rootState.replacedElementAvailableBlockSize, rootState.relayoutChildren }, rootState.geometry);
         result.boxes.appendVector(WTF::move(rootResult.boxes));
         m_blockLayoutState.marginCollapse().resetAdjoiningMargins(rootState.contentBoxLogicalTop() + rootResult.intrinsicContentBlockSize);
         result.outOfFlowBoxes.appendVector(WTF::move(rootResult.outOfFlowBoxes));
@@ -272,7 +272,7 @@ void BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree
     auto& geometry = boxState.geometry;
     auto constraints = ConstraintsForIndependentFormattingContext {
         .containingBlockInlineSize = containingBlockInlineSize,
-        .containingBlockBlockSize = containingBlockState.contentBoxBlockSize,
+        .containingBlockBlockSize = box.isRenderReplaced() && box.document().inQuirksMode() ? std::optional { containingBlockState.replacedElementAvailableBlockSize } : containingBlockState.contentBoxBlockSize,
         .relayoutChildren = containingBlockState.relayoutChildren,
         .borderBoxInlineSize = decidesItsOwnInlineSize(box, root().writingMode()) ? std::nullopt : std::optional { geometry.borderBoxWidth() }
     };
@@ -393,10 +393,10 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
         // The box establishes an independent formatting context for its content, a block formatting context with a block layout state of its own.
         auto blockLayoutState = BlockLayoutState { { } };
         auto horizontalConstraints = HorizontalConstraints { geometry.borderAndPaddingStart(), geometry.contentBoxWidth() };
-        // Coverage keeps out the -webkit-fill-available block sizes inside.
-        auto fillAvailableBlockSize = contentBoxBlockSize.value_or(0_lu);
+        // Coverage keeps out the -webkit-fill-available block sizes inside, and the percentage block sizes of replaced elements in quirks mode.
+        auto availableBlockSize = contentBoxBlockSize.value_or(0_lu);
         auto relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(box, geometry.contentBoxWidth());
-        auto contentResult = BlockFormattingContext { box, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, geometry.borderAndPaddingBefore() }, contentBoxBlockSize, fillAvailableBlockSize, relayoutChildren }, geometry);
+        auto contentResult = BlockFormattingContext { box, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, geometry.borderAndPaddingBefore() }, contentBoxBlockSize, availableBlockSize, availableBlockSize, relayoutChildren }, geometry);
         intrinsicContentBlockSize = contentResult.intrinsicContentBlockSize;
         result.boxes.appendVector(WTF::move(contentResult.boxes));
         result.outOfFlowBoxes.appendVector(WTF::move(contentResult.outOfFlowBoxes));
@@ -428,6 +428,7 @@ ContainingBlockState BlockFormattingContext::containingBlockStateForRoot(const C
         .borderAndPaddingBefore = constraints.logicalTop(),
         .contentBoxBlockSize = constraints.contentBoxBlockSize(),
         .fillAvailableBlockSize = constraints.fillAvailableBlockSize(),
+        .replacedElementAvailableBlockSize = constraints.replacedElementAvailableBlockSize(),
         .margins = { },
         .isLaidOutThroughRenderTree = false,
         .relayoutChildren = constraints.relayoutChildren(),
@@ -445,7 +446,8 @@ ContainingBlockState BlockFormattingContext::containingBlockStateFor(const Rende
         .borderBoxLogicalTop = { },
         .borderAndPaddingBefore = geometry.borderAndPaddingBefore(),
         .contentBoxBlockSize = contentBoxBlockSize,
-        .fillAvailableBlockSize = BlockFormattingUtils::fillAvailableBlockSize(blockContainer, geometry, contentBoxBlockSize, parentState.contentBoxBlockSize, parentState.fillAvailableBlockSize, stretchFitBorderBoxBlockSize(blockContainer, geometry, parentState), root().writingMode()),
+        .fillAvailableBlockSize = BlockFormattingUtils::availableBlockSize(blockContainer, geometry, contentBoxBlockSize, parentState.contentBoxBlockSize, parentState.fillAvailableBlockSize, stretchFitBorderBoxBlockSize(blockContainer, geometry, parentState), root().writingMode(), AvailableLogicalHeightType::ExcludeMarginBorderPadding),
+        .replacedElementAvailableBlockSize = BlockFormattingUtils::availableBlockSize(blockContainer, geometry, contentBoxBlockSize, parentState.contentBoxBlockSize, parentState.replacedElementAvailableBlockSize, stretchFitBorderBoxBlockSize(blockContainer, geometry, parentState), root().writingMode(), AvailableLogicalHeightType::IncludeMarginBorderPadding),
         .margins = { },
         .isLaidOutThroughRenderTree = false,
         .relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(blockContainer, geometry.contentBoxWidth()),

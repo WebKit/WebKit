@@ -157,14 +157,16 @@ bool BlockFormattingUtils::hasFillAvailableBlockSize(const RenderBox& box, Writi
     return style->logicalHeight(writingMode).isFillAvailable() || style->logicalMinHeight(writingMode).isFillAvailable() || style->logicalMaxHeight(writingMode).isFillAvailable();
 }
 
-LayoutUnit BlockFormattingUtils::fillAvailableBlockSize(const RenderBox& blockContainer, const BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, LayoutUnit containingBlockFillAvailableBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode writingMode)
+LayoutUnit BlockFormattingUtils::availableBlockSize(const RenderBox& blockContainer, const BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, LayoutUnit containingBlockAvailableBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode writingMode, AvailableLogicalHeightType type)
 {
     CheckedRef style = blockContainer.style();
     auto borderAndPaddingBlockSize = geometry.verticalBorderAndPadding();
     // An anonymous block box or one with an auto block size passes the percentages through, but not this.
     if (contentBoxBlockSize && !blockContainer.isAnonymous() && !style->logicalHeight(writingMode).isAuto())
         return *contentBoxBlockSize;
-    auto blockSize = containingBlockFillAvailableBlockSize - geometry.marginBefore() - geometry.marginAfter() - borderAndPaddingBlockSize;
+    auto blockSize = containingBlockAvailableBlockSize;
+    if (type == AvailableLogicalHeightType::ExcludeMarginBorderPadding)
+        blockSize -= geometry.marginBefore() + geometry.marginAfter() + borderAndPaddingBlockSize;
     if (auto maximumBlockSize = borderBoxBlockSizeFor(style->logicalMaxHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize))
         blockSize = std::min(blockSize, *maximumBlockSize - borderAndPaddingBlockSize);
     if (auto minimumBlockSize = borderBoxBlockSizeFor(style->logicalMinHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize))
