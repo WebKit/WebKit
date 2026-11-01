@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; position: relative; width: 300px; height: 60px; background: lightgray; margin-bottom: 10px; }
+.box { height: 20px; background: lightblue; }
+.moves { position: absolute; top: 0; left: 0; width: 30px; height: 10px; background: green; }
+</style>
+<!-- The float keeps the document's block formatting context on the render tree path, which lays out each root on its own. -->
+<div style="float: left; width: 10px; height: 10px; background: blue"></div>
+<!-- Only the out-of-flow box moves. -->
+<div class="root"><div class="box"></div><div class="moves" id="absolute"></div></div>
+<!-- A fixed positioned box whose containing block is the transformed root. -->
+<div class="root" style="transform: translateX(0)"><div class="box"></div><div class="moves" style="position: fixed" id="fixed"></div></div>
+<script>
+document.body.offsetHeight;
+for (const id of ["absolute", "fixed"]) {
+    document.getElementById(id).style.top = "30px";
+    document.getElementById(id).style.left = "100px";
+}
+</script>
