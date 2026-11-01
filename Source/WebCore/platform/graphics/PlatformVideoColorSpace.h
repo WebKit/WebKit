@@ -54,7 +54,7 @@ inline PlatformVideoColorSpace srgbColorSpace()
     return {
         .primaries = PlatformVideoColorPrimaries::Bt709,
         .transfer = PlatformVideoTransferCharacteristics::Iec6196621,
-        .matrix = PlatformVideoMatrixCoefficients::Bt709,
+        .matrix = PlatformVideoMatrixCoefficients::Rgb,
         .fullRange = true
     };
 }
