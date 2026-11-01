@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 30px; }
+.root div { background: rgba(0, 128, 0, 0.3); }
+</style>
+<div class="root" style="border-top: 2px solid">
+  <div style="border-bottom: 1px solid">
+    <div style="height: 10px; margin-top: -50px"></div>
+  </div>
+  <div style="height: 10px"></div>
+</div>
+<div class="root">
+  <div style="border-top: 1px solid">
+    <div style="height: 10px; margin-top: -50px"></div>
+  </div>
+  <div style="height: 10px; margin-top: -30px"></div>
+</div>
+<div class="root">
+  <div style="height: 10px; margin-bottom: -40px"></div>
+</div>
+<div class="root">
+  <div style="margin-top: -10px; margin-bottom: -20px"></div>
+</div>
