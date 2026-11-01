@@ -5587,6 +5587,7 @@ header: <WebCore/InspectorOverlay.h>
     Vector<WebCore::InspectorOverlayHighlight::GridHighlightOverlay> gridHighlightOverlays;
     Vector<WebCore::InspectorOverlayHighlight::FlexHighlightOverlay> flexHighlightOverlays;
     Vector<WebCore::InspectorOverlayHighlight::NodeInfo> nodeInfos;
+    bool showRulers;
     bool usePageCoordinates;
 };
 

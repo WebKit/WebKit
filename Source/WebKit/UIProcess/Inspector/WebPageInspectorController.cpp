@@ -57,6 +57,7 @@
 #if PLATFORM(MAC)
 #include "PageClient.h"
 #include "RemoteScrollingCoordinatorProxy.h"
+#include <WebCore/LocalFrameView.h>
 #endif
 
 namespace WebKit {
@@ -751,11 +752,31 @@ void WebPageInspectorController::frameHighlightsDidChange()
 
 WebCore::InspectorOverlay::PageGeometry WebPageInspectorController::frameHighlightPageGeometry() const
 {
-    RefPtr scrollingCoordinator { m_inspectedPage->scrollingCoordinatorProxy() };
+    Ref inspectedPage { m_inspectedPage };
+    RefPtr scrollingCoordinator { inspectedPage->scrollingCoordinatorProxy() };
     if (!scrollingCoordinator)
         return { };
 
-    return { scrollingCoordinator->sizeForVisibleContent(), scrollingCoordinator->obscuredContentInsets() };
+    // The main frame's process reports this size, and the rulers draw ticks across it, so keep it within the view.
+    auto viewportSize { scrollingCoordinator->sizeForVisibleContent().shrunkTo(inspectedPage->viewSize()) };
+    auto obscuredContentInsets { scrollingCoordinator->obscuredContentInsets() };
+    auto scrollPosition { scrollingCoordinator->currentMainFrameScrollPosition() };
+    float pageScaleFactor { static_cast<float>(inspectedPage->pageScaleFactor()) };
+
+    // As ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition() computes the visual viewport.
+    WebCore::FloatRect unobscuredContentRect { scrollPosition, viewportSize };
+    unobscuredContentRect.contract(obscuredContentInsets.left() + obscuredContentInsets.right(), obscuredContentInsets.top() + obscuredContentInsets.bottom());
+    auto visualViewportRect { WebCore::LocalFrameView::visibleDocumentRect(unobscuredContentRect, scrollingCoordinator->headerHeight(), scrollingCoordinator->footerHeight(), scrollingCoordinator->totalContentsSize(), pageScaleFactor) };
+
+    return {
+        viewportSize,
+        obscuredContentInsets,
+        roundedIntPoint(scrollPosition),
+        visualViewportRect.size(),
+        pageScaleFactor,
+        static_cast<float>(inspectedPage->pageZoomFactor()),
+        inspectedPage->preferences().sansSerifFontFamily(),
+    };
 }
 
 #endif // PLATFORM(MAC)

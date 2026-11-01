@@ -758,8 +758,10 @@ void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, Insp
             highlight.flexHighlightOverlays.append(*flexHighlightOverlay);
     }
 
-    if (localRootView)
+    if (localRootView) {
+        highlight.showRulers = m_showRulersForNodeHighlight;
         mapToMainFrameView(highlight, *localRootView, *geometryView);
+    }
 }
 
 void InspectorOverlay::hideHighlight()
@@ -837,6 +839,7 @@ void InspectorOverlay::setIndicating(bool indicating)
 bool InspectorOverlay::shouldDrawRulers() const
 {
     // Rulers are page-wide, so a frame overlay draws neither them nor their guide lines and insets.
+    // On macOS the UI process draws them for a frame highlight, see drawFrameHighlight().
     if (isFrameScoped())
         return false;
 
@@ -1079,15 +1082,36 @@ void InspectorOverlay::drawPaintRects(GraphicsContext& context, const Deque<Time
         context.fillRect(pair.second);
 }
 
+std::optional<InspectorOverlay::PageGeometry> InspectorOverlay::mainFramePageGeometry() const
+{
+    RefPtr page { this->page() };
+    RefPtr localMainFrame { page ? page->localMainFrame() : nullptr };
+    RefPtr pageView { localMainFrame ? localMainFrame->view() : nullptr };
+    if (!pageView)
+        return std::nullopt;
+
+    PageGeometry pageGeometry;
+    pageGeometry.viewportSize = pageView->sizeForVisibleContent();
+    pageGeometry.obscuredContentInsets = pageView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset);
+    if (!pageView->delegatesScrollingToNativeView())
+        pageGeometry.scrollOffset = pageView->visibleContentRect().location();
+    pageGeometry.visualViewportSize = pageView->visualViewportRect().size();
+    pageGeometry.pageScaleFactor = page->pageScaleFactor();
+    pageGeometry.pageZoomFactor = localMainFrame->pageZoomFactor();
+    pageGeometry.fontFamily = page->settings().sansSerifFontFamily();
+    return pageGeometry;
+}
+
 void InspectorOverlay::drawBounds(GraphicsContext& context, const InspectorOverlay::Highlight::Bounds& bounds)
 {
-    RefPtr geometryFrame = frameForGeometry();
-    RefPtr pageView = geometryFrame ? geometryFrame->virtualView() : nullptr;
-    if (!pageView)
-        return;
+    if (auto pageGeometry { mainFramePageGeometry() })
+        drawBounds(context, bounds, *pageGeometry);
+}
 
-    FloatSize viewportSize = pageView->sizeForVisibleContent();
-    auto obscuredContentInsets = pageView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset);
+FloatRect InspectorOverlay::drawBounds(GraphicsContext& context, const InspectorOverlay::Highlight::Bounds& bounds, const PageGeometry& pageGeometry)
+{
+    auto& viewportSize { pageGeometry.viewportSize };
+    auto& obscuredContentInsets { pageGeometry.obscuredContentInsets };
 
     Path path;
 
@@ -1131,34 +1155,30 @@ void InspectorOverlay::drawBounds(GraphicsContext& context, const InspectorOverl
     context.setStrokeColor(boundsColor);
 
     context.strokePath(path);
+
+    return path.boundingRect();
 }
 
 void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverlay::RulerExclusion& rulerExclusion)
+{
+    // Rulers are page-wide. Every caller gates on shouldDrawRulers(), which is false when frame scoped.
+    ASSERT(!isFrameScoped());
+
+    if (auto pageGeometry { mainFramePageGeometry() })
+        drawRulers(context, rulerExclusion, *pageGeometry);
+}
+
+auto InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverlay::RulerExclusion& rulerExclusion, const PageGeometry& pageGeometry) -> FrameHighlightGeometry::Rulers
 {
     constexpr auto rulerBackgroundColor = Color::white.colorWithAlphaByte(153);
     constexpr auto lightRulerColor = Color::black.colorWithAlphaByte(51);
     constexpr auto darkRulerColor = Color::black.colorWithAlphaByte(128);
 
-    // Rulers are page-wide. Every caller gates on shouldDrawRulers(), which is false when frame scoped.
-    ASSERT(!isFrameScoped());
-
-    IntPoint scrollOffset;
-    RefPtr page = this->page();
-    RefPtr localMainFrame = page ? page->localMainFrame() : nullptr;
-    if (!localMainFrame)
-        return;
-
-    RefPtr pageView = localMainFrame->view();
-    if (!pageView)
-        return;
-
-    if (!pageView->delegatesScrollingToNativeView())
-        scrollOffset = pageView->visibleContentRect().location();
-
-    FloatSize viewportSize = pageView->sizeForVisibleContent();
-    auto obscuredContentInsets = pageView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset);
-    float pageScaleFactor = page->pageScaleFactor();
-    float pageZoomFactor = localMainFrame->pageZoomFactor();
+    auto& scrollOffset { pageGeometry.scrollOffset };
+    auto& viewportSize { pageGeometry.viewportSize };
+    auto& obscuredContentInsets { pageGeometry.obscuredContentInsets };
+    float pageScaleFactor { pageGeometry.pageScaleFactor };
+    float pageZoomFactor { pageGeometry.pageZoomFactor };
 
     float pageFactor = pageZoomFactor * pageScaleFactor;
     float scrollX = scrollOffset.x() * pageScaleFactor;
@@ -1174,6 +1194,15 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
 
     const auto multipleBelow = [&] (float value, float step) -> float {
         return value - std::fmod(value, step);
+    };
+
+    // Ticks and labels are counted rather than stepped with a float, which stops advancing once it is large enough, and
+    // are not drawn closer together than a device pixel, so that their number is bounded by the viewport size.
+    float deviceScaleFactor { context.scaleFactor().width() };
+    const auto tickCount = [&](float first, float end, float step) -> unsigned {
+        if (!(zoom(step) * deviceScaleFactor >= 1))
+            return 0;
+        return clampTo<unsigned>(std::ceil((static_cast<double>(end) - first) / step));
     };
 
     float width = viewportSize.width() / pageFactor;
@@ -1222,7 +1251,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     // Draw lines.
     {
         FontCascadeDescription fontDescription;
-        fontDescription.setOneFamily(AtomString { page->settings().sansSerifFontFamily() });
+        fontDescription.setOneFamily(AtomString { pageGeometry.fontFamily });
         fontDescription.setUsedSize(10);
 
         FontCascade font(WTF::move(fontDescription));
@@ -1239,7 +1268,9 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
 
             context.translate(obscuredContentInsets.left() - scrollX + 0.5f, cornerY - scrollY);
 
-            for (float x = multipleBelow(minX, rulerSubStepIncrement); x < maxX; x += rulerSubStepIncrement) {
+            float firstTickX { multipleBelow(minX, rulerSubStepIncrement) };
+            for (unsigned i = 0, count = tickCount(firstTickX, maxX, rulerSubStepIncrement); i < count; ++i) {
+                float x { firstTickX + i * rulerSubStepIncrement };
                 if (!x && !scrollX)
                     continue;
 
@@ -1260,7 +1291,9 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
             }
 
             // Draw labels.
-            for (float x = multipleBelow(minX, rulerStepIncrement * 2); x < maxX; x += rulerStepIncrement * 2) {
+            float firstLabelX { multipleBelow(minX, rulerStepIncrement * 2) };
+            for (unsigned i = 0, count = tickCount(firstLabelX, maxX, rulerStepIncrement * 2); i < count; ++i) {
+                float x { firstLabelX + i * rulerStepIncrement * 2 };
                 if (!x && !scrollX)
                     continue;
 
@@ -1276,7 +1309,9 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
 
             context.translate(cornerX - scrollX, obscuredContentInsets.top() - scrollY + 0.5f);
 
-            for (float y = multipleBelow(minY, rulerSubStepIncrement); y < maxY; y += rulerSubStepIncrement) {
+            float firstTickY { multipleBelow(minY, rulerSubStepIncrement) };
+            for (unsigned i = 0, count = tickCount(firstTickY, maxY, rulerSubStepIncrement); i < count; ++i) {
+                float y { firstTickY + i * rulerSubStepIncrement };
                 if (!y && !scrollY)
                     continue;
 
@@ -1297,7 +1332,9 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
             }
 
             // Draw labels.
-            for (float y = multipleBelow(minY, rulerStepIncrement * 2); y < maxY; y += rulerStepIncrement * 2) {
+            float firstLabelY { multipleBelow(minY, rulerStepIncrement * 2) };
+            for (unsigned i = 0, count = tickCount(firstLabelY, maxY, rulerStepIncrement * 2); i < count; ++i) {
+                float y { firstLabelY + i * rulerStepIncrement * 2 };
                 if (!y && !scrollY)
                     continue;
 
@@ -1309,17 +1346,20 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         }
     }
 
+    FrameHighlightGeometry::Rulers rulers { drawTopEdge, drawLeftEdge, { } };
+
     // Draw viewport size.
     {
         FontCascadeDescription fontDescription;
-        fontDescription.setOneFamily(AtomString { page->settings().sansSerifFontFamily() });
+        fontDescription.setOneFamily(AtomString { pageGeometry.fontFamily });
         fontDescription.setUsedSize(12);
 
         FontCascade font(WTF::move(fontDescription));
         font.update(nullptr);
 
-        auto viewportRect = pageView->visualViewportRect();
-        TextRun viewportTextRun(makeString(viewportRect.width() / pageZoomFactor, "px"_s, ' ', multiplicationSign, ' ', viewportRect.height() / pageZoomFactor, "px"_s));
+        auto& visualViewportSize { pageGeometry.visualViewportSize };
+        rulers.viewportSizeText = makeString(visualViewportSize.width() / pageZoomFactor, "px"_s, ' ', multiplicationSign, ' ', visualViewportSize.height() / pageZoomFactor, "px"_s);
+        TextRun viewportTextRun(rulers.viewportSizeText);
 
         const float margin = 4;
         const float padding = 2;
@@ -1365,6 +1405,8 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         context.setFillColor(Color::black);
         context.drawText(font, viewportTextRun, { margin +  padding, margin + padding + fontHeight - font.metricsOfPrimaryFont().intDescent() });
     }
+
+    return rulers;
 }
 
 NODELETE static bool rendererIsFlexboxItem(RenderObject& renderer)
@@ -1591,9 +1633,22 @@ auto InspectorOverlay::drawFrameHighlight(GraphicsContext& context, const Highli
 {
     FrameHighlightGeometry geometry;
 
+    std::optional<RulerExclusion> rulerExclusion;
+    auto titleInsets { pageGeometry.obscuredContentInsets };
+    if (highlight.showRulers) {
+        rulerExclusion.emplace();
+        titleInsets.setTop(titleInsets.top() + rulerSize);
+        titleInsets.setLeft(titleInsets.left() + rulerSize);
+    }
+
     if (highlight.type == Highlight::Type::Rects && !highlight.quads.isEmpty()) {
         Highlight::Bounds bounds;
         drawOutlinedQuad(context, highlight.quads[0], highlight.contentColor, highlight.contentOutlineColor, bounds);
+
+        if (rulerExclusion) {
+            drawBounds(context, bounds, pageGeometry);
+            rulerExclusion->bounds.unite(bounds);
+        }
     }
 
     for (auto& nodeInfo : highlight.nodeInfos) {
@@ -1603,12 +1658,24 @@ auto InspectorOverlay::drawFrameHighlight(GraphicsContext& context, const Highli
         if (nodeInfo.shapeOutside)
             drawShapeHighlight(context, *nodeInfo.shapeOutside, bounds);
 
+        FloatRect guidesBounds;
+        if (rulerExclusion)
+            guidesBounds = drawBounds(context, bounds, pageGeometry);
+
+        Path titlePath;
         FloatRect titleBounds;
         if (!bounds.isEmpty() && !nodeInfo.titleContents.isEmpty()) {
             auto titleContents { nodeInfo.titleContents };
-            auto label { elementTitleLabel(WTF::move(titleContents), bounds, pageGeometry.viewportSize, pageGeometry.obscuredContentInsets) };
-            titleBounds = drawElementTitleLabel(context, label).boundingRect();
+            auto label { elementTitleLabel(WTF::move(titleContents), bounds, pageGeometry.viewportSize, titleInsets) };
+            titlePath = drawElementTitleLabel(context, label);
+            titleBounds = titlePath.boundingRect();
             titleBounds.moveBy(label.location());
+        }
+
+        if (rulerExclusion) {
+            rulerExclusion->bounds.unite(bounds);
+            if (highlight.type == Highlight::Type::Node)
+                rulerExclusion->titlePath = WTF::move(titlePath);
         }
 
         if (nodeInfo.gridHighlightOverlay)
@@ -1617,7 +1684,7 @@ auto InspectorOverlay::drawFrameHighlight(GraphicsContext& context, const Highli
         if (nodeInfo.flexHighlightOverlay)
             drawFlexOverlay(context, *nodeInfo.flexHighlightOverlay);
 
-        geometry.nodes.append({ bounds, titleBounds });
+        geometry.nodes.append({ bounds, titleBounds, guidesBounds });
     }
 
     for (auto& gridHighlightOverlay : highlight.gridHighlightOverlays)
@@ -1625,6 +1692,9 @@ auto InspectorOverlay::drawFrameHighlight(GraphicsContext& context, const Highli
 
     for (auto& flexHighlightOverlay : highlight.flexHighlightOverlays)
         drawFlexOverlay(context, flexHighlightOverlay);
+
+    if (rulerExclusion)
+        geometry.rulers = drawRulers(context, *rulerExclusion, pageGeometry);
 
     return geometry;
 }

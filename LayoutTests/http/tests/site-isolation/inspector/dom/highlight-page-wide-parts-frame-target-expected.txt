@@ -37,6 +37,24 @@ PASS: Should draw the rect at 230, 320 in the page.
 PASS: Main frame should be scrolled by 100px.
 PASS: Should draw the box of '#target' 100px higher.
 
+-- Running test case: RulersAndGuides
+PASS: Should draw the rulers along the top and left edges.
+PASS: Should draw guide lines from '#target' to the edges of the page's viewport.
+PASS: Should label the page's visual viewport size.
+
+-- Running test case: RulerExclusion
+PASS: Should draw the horizontal ruler along the bottom edge.
+
+-- Running test case: NoRulersRequested
+PASS: Should draw no rulers or guide lines.
+
+-- Running test case: RulersAtTinyPageScale
+PASS: UI process should draw the rulers of the cross-site iframe's highlight.
+PASS: The page's process should draw the rulers of the page's highlight.
+
+-- Running test case: ViewportSizeLabelWithHeader
+PASS: Should label the page's visual viewport size without the 50px header.
+
 -- Running test case: ControlStaysOnPagePath
 PASS: Page should draw the box of the same-site '#target'.
 PASS: UI process should draw no frame highlight.

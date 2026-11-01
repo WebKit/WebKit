@@ -335,7 +335,7 @@ public:
     FloatRect mapAbsoluteToChildFrameViewRect(const FloatRect&, const Frame& child) const;
     NODELETE static FloatRect mapAbsoluteToChildFrameViewRect(const FloatRect& rectInAbsolute, const TransformationMatrix& absoluteToChildFrameOwnerLocalTransform, FloatPoint childFrameOwnerContentBoxLocation);
 
-    static LayoutRect visibleDocumentRect(const FloatRect& visibleContentRect, float headerHeight, float footerHeight, const FloatSize& totalContentsSize, float pageScaleFactor);
+    WEBCORE_EXPORT static LayoutRect visibleDocumentRect(const FloatRect& visibleContentRect, float headerHeight, float footerHeight, const FloatSize& totalContentsSize, float pageScaleFactor);
 
     // This is different than visibleContentRect() in that it ignores negative (or overly positive)
     // offsets from rubber-banding, and it takes zooming into account. 

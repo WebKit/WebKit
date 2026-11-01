@@ -1434,6 +1434,8 @@ RetainPtr<NSDictionary> WebPageProxy::frameInspectorHighlightsForTesting() const
         for (size_t i = 0; i < geometry.nodes.size(); ++i) {
             RetainPtr node { adoptNS([[NSMutableDictionary alloc] init]) };
             [node setObject:dictionaryForRect(geometry.nodes[i].bounds).get() forKey:@"bounds"];
+            if (!geometry.nodes[i].guidesBounds.isEmpty())
+                [node setObject:dictionaryForRect(geometry.nodes[i].guidesBounds).get() forKey:@"guides"];
 
             if (!geometry.nodes[i].titleBounds.isEmpty()) {
                 StringBuilder titleText;
@@ -1452,7 +1454,17 @@ RetainPtr<NSDictionary> WebPageProxy::frameInspectorHighlightsForTesting() const
         for (auto& quad : highlight.quads)
             [quads addObject:dictionaryForRect(quad.boundingBox()).get()];
 
-        [frames addObject:@{ @"nodes": nodes.get(), @"quads": quads.get() }];
+        RetainPtr frame { adoptNS([[NSMutableDictionary alloc] init]) };
+        [frame setObject:nodes.get() forKey:@"nodes"];
+        [frame setObject:quads.get() forKey:@"quads"];
+        if (auto& rulers { geometry.rulers }) {
+            [frame setObject:@{
+                @"top": @(rulers->drawTopEdge),
+                @"left": @(rulers->drawLeftEdge),
+                @"viewportLabel": rulers->viewportSizeText.createNSString().get(),
+            } forKey:@"rulers"];
+        }
+        [frames addObject:frame.get()];
     }
 
     return @{

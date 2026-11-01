@@ -895,6 +895,12 @@ void PageClientImpl::frameInspectorHighlightsDidChange()
         impl->frameInspectorHighlightsDidChange();
 }
 
+void PageClientImpl::frameInspectorHighlightPageGeometryMayHaveChanged()
+{
+    if (CheckedPtr impl { m_impl })
+        impl->frameInspectorHighlightPageGeometryMayHaveChanged();
+}
+
 #if ENABLE(FULLSCREEN_API)
 
 WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()

@@ -268,6 +268,7 @@ public:
     bool isPointInScrollbar(CGPoint locationInView);
 
     void frameInspectorHighlightsDidChange();
+    void frameInspectorHighlightPageGeometryMayHaveChanged();
 
     bool isViewVisible(NSView *);
 
