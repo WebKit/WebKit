@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <style>
 .container { width: 300px; }
+.plain { unicode-bidi: normal; }
 .isolated { unicode-bidi: isolate; }
 h3, .block { margin: 10px 0; height: 20px; font-size: 16px; }
 </style>
@@ -13,19 +14,21 @@ if (window.testRunner)
 const log = document.getElementById("log");
 const cases = document.getElementById("cases");
 
+// The baseline sets unicode-bidi: normal explicitly because the UA stylesheet isolates div, form and h3.
 // Which of the container, the inline box and the block level child are unicode-bidi: isolate
 // should not change the geometry of an inline box wrapping a block.
 const markups = {
     "span wrapping a div": '<div class="container {c}"><span class="{i}"><div class="block {b}"></div></span></div>',
+    "span with padding and border wrapping a div": '<div class="container {c}"><span class="{i}" style="padding: 5px; border: 3px solid black"><div class="block {b}"></div></span></div>',
     "inline form wrapping an h3": '<div class="container {c}"><form class="{i}" style="display: inline"><h3 class="{b}"></h3></form></div>',
 };
 const variants = {
-    "inline isolated": { c: "", i: "isolated", b: "" },
-    "block isolated": { c: "", i: "", b: "isolated" },
-    "container isolated": { c: "isolated", i: "", b: "" },
-    "inline and block isolated": { c: "", i: "isolated", b: "isolated" },
-    "container and inline isolated": { c: "isolated", i: "isolated", b: "" },
-    "container and block isolated": { c: "isolated", i: "", b: "isolated" },
+    "inline isolated": { c: "plain", i: "isolated", b: "plain" },
+    "block isolated": { c: "plain", i: "plain", b: "isolated" },
+    "container isolated": { c: "isolated", i: "plain", b: "plain" },
+    "inline and block isolated": { c: "plain", i: "isolated", b: "isolated" },
+    "container and inline isolated": { c: "isolated", i: "isolated", b: "plain" },
+    "container and block isolated": { c: "isolated", i: "plain", b: "isolated" },
     "container, inline and block isolated": { c: "isolated", i: "isolated", b: "isolated" },
 };
 
@@ -44,7 +47,7 @@ function rects(wrapper) {
 }
 
 for (const [markupName, markup] of Object.entries(markups)) {
-    const expected = rects(build(markup, { c: "", i: "", b: "" }));
+    const expected = rects(build(markup, { c: "plain", i: "plain", b: "plain" }));
     for (const [variantName, classes] of Object.entries(variants)) {
         const actual = rects(build(markup, classes));
         log.textContent += `${actual === expected ? "PASS" : "FAIL"}: ${markupName}, ${variantName}\n`;
