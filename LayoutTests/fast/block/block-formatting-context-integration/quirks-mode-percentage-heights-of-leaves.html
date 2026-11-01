@@ -1,0 +1,22 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<html style="margin: 3px; padding: 2px; border: 1px solid">
+<body style="margin: 5px; padding: 4px; border: 2px solid blue">
+<style>
+.leaf { background: green; width: 20px; }
+.flex { display: flex; }
+.grid { display: grid; }
+.table { display: table; }
+.inline-block { display: inline-block; vertical-align: top; }
+.inner { background: orange; width: 10px; }
+</style>
+<div style="height: 40px; background: lightblue"><div><div class="leaf flex" style="height: 50%"></div></div></div>
+<div style="height: 40px; padding: 3px; background: lightblue"><div style="margin: 2px; padding: 4px"><span class="leaf inline-block" style="height: 75%"></span> <span class="leaf flex" style="display: inline-flex; height: 50%"></span></div></div>
+<div class="leaf grid" style="height: 4%"></div>
+<div class="leaf table" style="height: 3%"></div>
+<div style="height: 60px; background: lightblue"><div class="leaf flex" style="height: 10px; min-height: 50%"></div><div class="leaf grid" style="height: 50px; max-height: 20%"></div></div>
+<div style="height: 30px; background: lightblue"><div><div class="leaf flex" style="height: calc(50% + 5px)"></div></div></div>
+<div class="leaf flex" style="height: 30px"><div class="inner" style="height: 50%"></div></div>
+<div class="leaf grid"><div><div class="inner" style="height: 50%">x</div></div></div>
+<div class="leaf flex" style="width: 40px"><div style="height: 50%; background: orange">y</div><div style="height: 20px; width: 10px"></div></div>
+</body>
+</html>
