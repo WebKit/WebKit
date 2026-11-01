@@ -1,0 +1,165 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Regression test for rdar://187163818: a copyBufferToBuffer recorded into a still open command " +
+           "encoder bumps the index contents generation at record time, long before the copy executes, so a " +
+           "drawIndexed validated in that window re-seeded the skip-validation cache over index contents the " +
+           "pending copy was about to replace. The identical drawIndexed on the still open encoder then " +
+           "matched that verdict and was encoded unclamped. The clear colour means the clamp pass ran " +
+           "instead; anything else means an out-of-bounds vertex fetch.");
+
+// Out of bounds for any vertex buffer, and deliberately not 0xffffffff, which is primitive restart.
+const POISON = 0x40000000;
+const INDEX_COUNT = 32;
+const VERTEX_COUNT = 4;
+// float32x4, so an unclamped fetch of POISON reads POISON * 16 bytes into a 64-byte vertex buffer.
+const VERTEX_STRIDE = 16;
+
+// Every in-bounds vertex is green, so the pixel says whether a draw happened, not which vertex it read.
+const CLEAR_VALUE = { r: 1, g: 0, b: 0, a: 1 };
+const CLEARED = '255,0,0,255';
+const DREW = '0,255,0,255';
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    let queue = device.queue;
+    device.pushErrorScope('validation');
+
+    const format = 'rgba8unorm';
+    // Constant position so the point covers the 1x1 target whatever the attribute fetch returns, and the
+    // colour carries the fetched attribute.
+    let module = device.createShaderModule({ code: `
+        struct VSOut {
+            @builtin(position) pos: vec4f,
+            @location(0) color: vec4f,
+        }
+        @vertex fn vs(@location(0) v: vec4f) -> VSOut {
+            var o: VSOut;
+            o.pos = vec4f(0, 0, 0, 1);
+            o.color = v;
+            return o;
+        }
+        @fragment fn fs(in: VSOut) -> @location(0) vec4f { return in.color; }
+    ` });
+    let pipeline = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: {
+            module,
+            entryPoint: 'vs',
+            buffers: [{ arrayStride: VERTEX_STRIDE, stepMode: 'vertex', attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x4' }] }],
+        },
+        fragment: { module, entryPoint: 'fs', targets: [{ format }] },
+        primitive: { topology: 'point-list' },
+    });
+
+    // VERTEX_COUNT vertices over VERTEX_STRIDE bytes, so computeMininumVertexInstanceCount() reports a
+    // minVertexCount of VERTEX_COUNT and every cached verdict is a tight bound.
+    let vertexData = new Float32Array(VERTEX_COUNT * VERTEX_STRIDE / 4);
+    for (let i = 0; i < VERTEX_COUNT; ++i)
+        vertexData.set([0, 1, 0, 1], i * VERTEX_STRIDE / 4);
+    let vertexBuffer = device.createBuffer({ size: vertexData.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
+    queue.writeBuffer(vertexBuffer, 0, vertexData);
+
+    let indexBuffer = device.createBuffer({ size: INDEX_COUNT * 4, usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST });
+    let poisonBuffer = device.createBuffer({ size: INDEX_COUNT * 4, usage: GPUBufferUsage.COPY_SRC, mappedAtCreation: true });
+    new Uint32Array(poisonBuffer.getMappedRange()).fill(POISON);
+    poisonBuffer.unmap();
+
+    let inBoundsIndices = new Uint32Array(INDEX_COUNT);
+    for (let i = 0; i < INDEX_COUNT; ++i)
+        inBoundsIndices[i] = i % VERTEX_COUNT;
+    queue.writeBuffer(indexBuffer, 0, inBoundsIndices);
+
+    let victimTexture = device.createTexture({ size: [1, 1], format, usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+    let scratchTexture = device.createTexture({ size: [1, 1], format, usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let warmReadback = device.createBuffer({ size: 256, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    let poisonReadback = device.createBuffer({ size: 256, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+    // Every draw has to be identical, or it lands on a different m_drawIndexedCache key.
+    function recordDraw(commandEncoder, texture) {
+        let pass = commandEncoder.beginRenderPass({
+            colorAttachments: [{ view: texture.createView(), loadOp: 'clear', storeOp: 'store', clearValue: CLEAR_VALUE }],
+        });
+        pass.setPipeline(pipeline);
+        pass.setVertexBuffer(0, vertexBuffer);
+        pass.setIndexBuffer(indexBuffer, 'uint32');
+        pass.drawIndexed(INDEX_COUNT, 1, 0, 0, 0);
+        pass.end();
+    }
+
+    // A clamp pass records its verdict by way of Queue::scheduleWork(), which onSubmittedWorkDone() does not
+    // order itself against. Without this the cache is never seeded and every check below passes vacuously.
+    async function settleValidationVerdict() {
+        await queue.onSubmittedWorkDone();
+        queue.submit([device.createCommandEncoder().finish()]);
+        await queue.onSubmittedWorkDone();
+        await new Promise(resolve => setTimeout(resolve, 700));
+    }
+
+    async function readPixel(buffer) {
+        await buffer.mapAsync(GPUMapMode.READ);
+        let pixel = [...new Uint8Array(buffer.getMappedRange(0, 4))];
+        buffer.unmap();
+        return pixel.join();
+    }
+
+    // Step 1: with in-bounds indices and no encoder outstanding, draw once to reach a verdict and cache it,
+    // then draw again so the second draw is the cache hit. This is the state the fix must leave alone, and it
+    // has to come first because didReadOOB() is sticky.
+    {
+        let commandEncoder = device.createCommandEncoder();
+        recordDraw(commandEncoder, scratchTexture);
+        queue.submit([commandEncoder.finish()]);
+        await settleValidationVerdict();
+    }
+    {
+        let commandEncoder = device.createCommandEncoder();
+        recordDraw(commandEncoder, victimTexture);
+        commandEncoder.copyTextureToBuffer({ texture: victimTexture }, { buffer: warmReadback, bytesPerRow: 256 }, [1, 1]);
+        queue.submit([commandEncoder.finish()]);
+        await queue.onSubmittedWorkDone();
+    }
+    window.warmPixel = await readPixel(warmReadback);
+    shouldBeEqualToString('warmPixel', DREW);
+
+    // Step 2: record the poison copy and keep its encoder open. indirectBufferInvalidated() runs here, at
+    // record time, while the index buffer still holds the in-bounds values. Nothing has skipped validation
+    // yet, so the commit-time backstop is not armed either.
+    let pendingEncoder = device.createCommandEncoder();
+    pendingEncoder.copyBufferToBuffer(poisonBuffer, 0, indexBuffer, 0, INDEX_COUNT * 4);
+
+    // Step 3: the identical draw through the clamp pass on a second encoder. It reads the still clean index
+    // contents, and stamps that verdict with the generation the recorded copy already bumped to, which is
+    // what made the stamps match again.
+    {
+        let commandEncoder = device.createCommandEncoder();
+        recordDraw(commandEncoder, scratchTexture);
+        queue.submit([commandEncoder.finish()]);
+        await settleValidationVerdict();
+    }
+
+    // Step 4: the identical draw on the still open encoder must not reuse that verdict. This encoder runs its
+    // own copy first, so the clamp pass has to reject the draw and leave the target at its clear colour.
+    recordDraw(pendingEncoder, victimTexture);
+    pendingEncoder.copyTextureToBuffer({ texture: victimTexture }, { buffer: poisonReadback, bytesPerRow: 256 }, [1, 1]);
+    queue.submit([pendingEncoder.finish()]);
+    await queue.onSubmittedWorkDone();
+    window.poisonPixel = await readPixel(poisonReadback);
+    shouldBeEqualToString('poisonPixel', CLEARED);
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

@@ -163,6 +163,7 @@ private:
     void incrementBufferMapCount();
     void decrementBufferMapCount();
     void clearIndexBufferForCommandBuffer(CommandBuffer&);
+    bool hasPendingRecordedIndexWrite() const;
 
     id<MTLBuffer> m_buffer { nil };
 
@@ -188,6 +189,7 @@ private:
     mutable ThreadSafeWeakHashSet<RenderBundle> m_renderBundles;
     mutable HashMap<uint64_t, uint32_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_gpuResourceMap;
     HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_skippedValidationCommandEncoders;
+    mutable HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_pendingIndexWriteCommandEncoders; // NOLINT
     bool m_mustTakeSlowIndexValidationPath { false };
     // Identity of the command buffer this buffer was last cleared for, so that several failed validations
     // sharing one command buffer do not each capture a "prior" copy and queue a restore of it.
