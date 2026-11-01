@@ -78,6 +78,9 @@ public:
     static bool shouldInvalidateLineLayoutAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout&, bool isRemoval);
 
     void updateFormattingContextGeometries(LayoutUnit availableLogicalWidth);
+    // Block formatting context integration: the block formatting context computes the root's geometry and constraints.
+    // FIXME: Temporary, until the inline formatting context drops layout boxes and block layout runs it directly.
+    void updateFormattingContextGeometries(const Layout::ConstraintsForInlineContent&, const Layout::BoxGeometry& rootGeometry);
 
     std::optional<LayoutRect> updateOverflow();
 
@@ -95,7 +98,15 @@ public:
     void resetIntrinsicWidthConstraints();
 
     enum class ForceFullLayout : bool { No, Yes };
-    std::optional<LayoutRect> layout(RenderBlockFlow::MarginInfo&, ForceFullLayout = ForceFullLayout::No);
+    struct LayoutResult {
+        // The area to repaint, or none for all of it.
+        std::optional<LayoutRect> repaintRect;
+        // What is left of the margins after the content.
+        Layout::BlockLayoutState::MarginState marginState;
+    };
+    // The block formatting context the inline content is in gives its state.
+    LayoutResult layout(const Layout::BlockLayoutState&, ForceFullLayout = ForceFullLayout::No);
+    const std::optional<Layout::ConstraintsForInlineContent>& inlineContentConstraints() const LIFETIME_BOUND { return m_inlineContentConstraints; }
     // Builds the display content without line layout. Returns false when the content needs the full layout.
     bool layoutSVGText();
     void paint(PaintInfo&, const LayoutPoint& paintOffset, const RenderBoxModelObject* layerRenderer = nullptr);
