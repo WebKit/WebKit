@@ -1,0 +1,11 @@
+Ensure that dropping the ImageDecoder of an mp4 image while an asynchronous frame request is outstanding does not destroy the decoder on the image decoding thread.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS images.length is imageCount
+PASS Destroying the image decoders did not crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
