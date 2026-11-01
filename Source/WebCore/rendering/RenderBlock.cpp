@@ -43,6 +43,8 @@
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InlineIteratorInlineBox.h"
+#include "LayoutIntegrationBlockCoverage.h"
+#include "LayoutIntegrationBlockLayout.h"
 #include "LayoutRepainter.h"
 #include "LayoutScope.h"
 #include "LocalFrame.h"
@@ -824,8 +826,13 @@ bool RenderBlock::simplifiedLayout()
     // relative positioned container. So if we can have fixed pos objects in our positioned objects list check if any of them
     // are statically positioned and thus need to move with their absolute ancestors.
     bool canContainFixedPosObjects = canContainFixedPositionObjects();
-    if (outOfFlowChildNeedsLayout() || canContainFixedPosObjects)
-        layoutOutOfFlowBoxes(RelayoutChildren::No, !outOfFlowChildNeedsLayout() && canContainFixedPosObjects);
+    if (outOfFlowChildNeedsLayout() || canContainFixedPosObjects) {
+        // The block formatting context lays out the out-of-flow boxes whose containing block it lays out.
+        if (CheckedPtr root = outOfFlowBoxes() ? LayoutIntegration::coveredBlockFormattingContextRoot(*this) : nullptr)
+            LayoutIntegration::BlockLayout { *root }.layoutOutOfFlowBoxes(*this);
+        else
+            layoutOutOfFlowBoxes(RelayoutChildren::No, !outOfFlowChildNeedsLayout() && canContainFixedPosObjects);
+    }
     addOverflowFromOutOfFlowBoxes();
 
     // Transform-origin depends on box size. When simplified layout doesn't change our
@@ -1807,7 +1814,7 @@ void RenderBlock::addOutOfFlowBox(RenderBox& outOfFlowBox)
     ASSERT(outOfFlowBox.isOutOfFlowPositioned());
     ASSERT(!isAnonymousBlock());
 
-    outOfFlowBox.clearGridAreaContentSize();
+    outOfFlowBox.clearOverridingContainingBlockContentSize();
 
     if (outOfFlowBox.isRenderFragmentedFlow())
         return;
@@ -3068,7 +3075,7 @@ bool RenderBlock::hasDefiniteLogicalHeightForPercentageResolutionFromStyle() con
             return true;
     }
 
-    if (isGridItem() && gridAreaContentLogicalHeight())
+    if (isGridItem() && overridingContainingBlockContentLogicalHeight())
         return true;
 
     if (isFlexItem()) {
