@@ -212,6 +212,9 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
     if (widget) {
         widgetRendererMap().add(*widget, *this);
         view().frameView().didAddWidgetToRenderTree(*m_widget);
+        // The content's style may have been resolved without this owner's zoom.
+        if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget); frameView && hasInitializedStyle())
+            protect(frameView->frame())->frameOwnerZoomDidChange();
         // If we've already received a layout, apply the calculated space to the
         // widget immediately, but we have to have really been fully constructed.
         if (hasInitializedStyle()) {
@@ -262,13 +265,10 @@ void RenderWidget::styleDidChange(Style::Difference diff, const Style::ComputedS
     if (oldStyle && embeddedSVGRoot() && (oldStyle->objectFit() != style().objectFit() || oldStyle->objectPosition() != style().objectPosition() || oldStyle->objectViewBox() != style().objectViewBox()))
         setNeedsLayout();
 
-    // If this is an iframe and the zoom property changed, notify the iframe's content frame
-    // to trigger a resize event since devicePixelRatio will have changed.
-    if (oldStyle && oldStyle->zoom() != style().zoom()) {
-        if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget.get())) {
-            protect(frameView->frame())->deviceOrPageScaleFactorChanged();
-            frameView->scheduleResizeEventIfNeeded();
-        }
+    // If this is an iframe and its zoom or an ancestor's changed, the content's root zoom and devicePixelRatio change.
+    if (oldStyle && oldStyle->usedZoom() != style().usedZoom()) {
+        if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget))
+            protect(frameView->frame())->frameOwnerZoomDidChange();
     }
 }
 
@@ -377,7 +377,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     // FIXME: Shouldn't check if the frame view needs layout during event region painting. This is a workaround
     // for the fact that non-composited frames depend on their enclosing compositing layer to perform an event
     // region update on their behalf. See <https://webkit.org/b/210311> for more details.
-    RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget.get());
+    RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget);
     bool needsEventRegionContentPaint = paintInfo.phase == PaintPhase::EventRegion && frameView && !frameView->needsLayout();
     if (paintInfo.phase != PaintPhase::Foreground && !needsEventRegionContentPaint)
         return;

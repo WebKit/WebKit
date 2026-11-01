@@ -159,15 +159,12 @@ public:
     virtual std::optional<AgentClusterIdentifier> frameAgentClusterIdentifier() const = 0;
     WEBCORE_EXPORT virtual String frameURLProtocol() const = 0;
 
-    // The scale factor of this frame with respect to its container.
-    //
-    // For a main frame whose page does not delegate scaling, this is the page
-    // scale factor. For a subframe, this is the cumulative effect of CSS zoom
-    // values on the frame owner element and its ancestors.
+    // The scale factor of this frame with respect to its container. This is the page
+    // scale factor for a main frame whose page does not delegate scaling, and 1 otherwise.
     WEBCORE_EXPORT float frameScaleFactor() const;
 
-    // The scale factor of a child frame with respect to this frame.
-    virtual float frameScaleFactorForChild(const Frame&) const = 0;
+    // The frame owner zoom factor of a child frame.
+    virtual float frameOwnerZoomFactorForChild(const Frame&) const = 0;
 
     WEBCORE_EXPORT virtual void setPrinting(bool printing, FloatSize pageSize, FloatSize originalPageSize, float maximumShrinkRatio, AdjustViewSize, NotifyUIProcess = NotifyUIProcess::Yes);
 

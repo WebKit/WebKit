@@ -1019,6 +1019,9 @@ void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Col
     if (CheckedPtr ownerRenderer = this->ownerRenderer())
         ownerRenderer->setWidget(frameView);
 
+    // A frame whose owner is in another process may have received its owner's zoom before it had a view.
+    frameOwnerZoomDidChange();
+
     protect(view())->setCanHaveScrollbars(scrollingMode() != ScrollbarMode::AlwaysOff);
 }
 
@@ -1130,9 +1133,21 @@ void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomF
     }
 }
 
-float LocalFrame::frameScaleFactorForChild(const Frame& child) const
+void LocalFrame::frameOwnerZoomDidChange()
 {
-    // The frame scale factor for a child frame is the accumulated CSS zoom
+    // https://github.com/w3c/csswg-drafts/issues/9644
+    RefPtr parentFrame = tree().parent();
+    auto frameOwnerZoomFactor = parentFrame ? parentFrame->frameOwnerZoomFactorForChild(*this) : 1.0f;
+    if (frameOwnerZoomFactor == m_frameOwnerZoomFactor)
+        return;
+    m_frameOwnerZoomFactor = frameOwnerZoomFactor;
+    if (RefPtr document = this->document())
+        document->scheduleFullStyleRebuild();
+}
+
+float LocalFrame::frameOwnerZoomFactorForChild(const Frame& child) const
+{
+    // The frame owner zoom factor for a child frame is the accumulated CSS zoom
     // applied to the frame element. On the ComputedStyle, the used zoom also
     // includes the page zoom factor, so we must divide it out to get back to
     // the accumulated CSS zoom value.
