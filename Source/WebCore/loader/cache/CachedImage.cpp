@@ -40,7 +40,6 @@
 #include "MemoryCache.h"
 #include "NativeImage.h"
 #include "SVGElementTypeHelpers.h"
-#include "SVGImage.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
