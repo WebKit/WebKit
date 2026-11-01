@@ -212,17 +212,54 @@ static bool isAtomicInlineLevelBox(const RenderObject& renderer)
     return renderer.isInline() && is<RenderBox>(renderer) && !is<RenderLineBreak>(renderer);
 }
 
-// In quirks mode a percentage block size of the box or of a box in it looks through containing blocks with an auto height for one with a height
-// (RenderBox::computePercentageLogicalHeight), past the containing block size the block formatting context gives a box it lays out through the
-// render tree.
-static bool hasPercentageBlockSizeInQuirksMode(const RenderBox& box)
+static bool hasStretchBlockSize(const RenderBox& box)
 {
-    if (!box.document().inQuirksMode())
+    CheckedRef style = box.style();
+    auto writingMode = box.writingMode();
+    return style->logicalHeight(writingMode).isStretch() || style->logicalMinHeight(writingMode).isStretch() || style->logicalMaxHeight(writingMode).isStretch();
+}
+
+// In quirks mode a percentage block size looks past the containing blocks with an auto block size (RenderBox::computePercentageLogicalHeight).
+// The block formatting context gives a leaf the block size its own percentages resolve against (BlockIntegrationUtils::layoutIndependentFormattingContext),
+// but the render tree resolves the ones inside it, which reach past the leaf when every containing block up to and including the leaf has an
+// auto block size, to containing blocks whose geometry the block formatting context writes once all of its content is laid out. Those of
+// out-of-flow boxes resolve against their containing block (PositionedLayoutConstraints).
+// FIXME: The stretch block sizes in quirks mode.
+static bool hasPercentageBlockSizeInQuirksMode(const RenderBox& leaf)
+{
+    if (!leaf.document().inQuirksMode())
         return false;
-    if (Layout::BlockFormattingUtils::hasPercentageBlockSize(box, box.writingMode()))
+    auto isInsideLeaf = [&](const RenderBox& containingBlock) {
+        return &containingBlock == &leaf || containingBlock.isDescendantOf(&leaf);
+    };
+    auto resolvesOutsideLeaf = [&](const RenderBox& box) {
+        auto isHorizontalWritingMode = box.isHorizontalWritingMode();
+        for (CheckedPtr containingBlock = box.containingBlock(); containingBlock && isInsideLeaf(*containingBlock); containingBlock = containingBlock->containingBlock()) {
+            if (!box.skipContainingBlockForPercentHeightCalculation(*containingBlock, isHorizontalWritingMode != containingBlock->isHorizontalWritingMode()))
+                return false;
+        }
         return true;
-    for (CheckedRef descendant : descendantsOfType<RenderBox>(box)) {
-        if (Layout::BlockFormattingUtils::hasPercentageBlockSize(descendant, descendant->writingMode()))
+    };
+    // A replaced element resolves one against the available block size of its containing block instead, which looks past the ones with an
+    // auto block size too (RenderBox::availableLogicalHeightUsing), unless that is a flex container (RenderBox::hasAutoHeightOrContainingBlockWithAutoHeight).
+    auto replacedElementResolvesOutsideLeaf = [&](const RenderBox& replaced) {
+        for (CheckedPtr containingBlock = replaced.containingBlock(); containingBlock && isInsideLeaf(*containingBlock); containingBlock = containingBlock->containingBlock()) {
+            CheckedRef style = containingBlock->style();
+            if (!style->logicalHeight().isAuto() || containingBlock->isRenderTableCell() || containingBlock->isOutOfFlowPositioned() || style->aspectRatio().hasRatio())
+                return false;
+            if (containingBlock == replaced.containingBlock() && containingBlock->isFlexibleBoxIncludingDeprecated())
+                return false;
+        }
+        return true;
+    };
+    // FIXME: The percentage block size of a replaced element, which resolves against the available block size of its containing block, with
+    // the margins, borders and padding of the body and the root element.
+    if (hasStretchBlockSize(leaf) || (leaf.isRenderReplaced() && Layout::BlockFormattingUtils::hasPercentageBlockSize(leaf, leaf.writingMode())))
+        return true;
+    for (CheckedRef descendant : descendantsOfType<RenderBox>(leaf)) {
+        if (descendant->isOutOfFlowPositioned() || !Layout::BlockFormattingUtils::hasPercentageBlockSize(descendant, descendant->writingMode()))
+            continue;
+        if (hasStretchBlockSize(descendant) || (descendant->isRenderReplaced() ? replacedElementResolvesOutsideLeaf(descendant) : resolvesOutsideLeaf(descendant)))
             return true;
     }
     return false;
