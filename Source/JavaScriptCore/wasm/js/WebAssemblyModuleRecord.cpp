@@ -285,6 +285,8 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                 const Wasm::RTT& expectedRTT = moduleInformation.rtt(moduleInformation.importFunctionTypeSignatureIndices[import.kindIndex]);
                 if (!importedRTT || !importedRTT->isSubRTT(expectedRTT))
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported function"_s, "signature doesn't match the provided WebAssembly function's signature"_s)));
+                if (wasmWrapperFunction)
+                    m_instance->setFunctionWrapper(import.kindIndex, wasmWrapperFunction);
             }
             // iii. Otherwise:
             // a. Let closure be a new host function of the given signature which calls v by coercing WebAssembly arguments to JavaScript arguments via ToJSValue and returns the result, if any, by coercing via ToWebAssemblyValue.
