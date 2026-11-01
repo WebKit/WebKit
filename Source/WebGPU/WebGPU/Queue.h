@@ -144,6 +144,7 @@ private:
     bool isSchedulingIdle() const { return m_submittedCommandBufferCount == m_scheduledCommandBufferCount; }
     id<MTLComputeCommandEncoder> _Nullable ensureStagedCopyEncoder();
     id<MTLComputePipelineState> _Nullable stagedCopyPipelineState();
+    std::pair<id<MTLBuffer>, uint64_t> reserveTemporaryBuffer(size_t);
     void removeMTLCommandBufferInternal(id<MTLCommandBuffer>);
     void clearTextureIfNeeded(Texture&, uint32_t mipLevelCount, uint32_t arrayLayerCount, uint32_t baseMipLevel, uint32_t baseArrayLayer);
 
