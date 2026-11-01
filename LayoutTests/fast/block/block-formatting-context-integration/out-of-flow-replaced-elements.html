@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; position: relative; width: 300px; height: 120px; padding: 5px; background: lightgray; margin-bottom: 10px; font-size: 20px; line-height: 20px; }
+canvas { position: absolute; background: green; }
+</style>
+<div class="root">
+  <canvas width="40" height="20" style="top: 10px; left: 10px"></canvas>
+  <canvas width="40" height="20" style="right: 10px; bottom: 10px; border: 3px solid blue; padding: 2px"></canvas>
+  <canvas width="40" height="20" style="left: 0; right: 0; margin: 0 auto; top: 40px"></canvas>
+  <canvas width="40" height="20" style="top: 0; bottom: 0; margin: auto 0; right: 60px"></canvas>
+  <canvas style="width: 20%; height: 25%; left: 50%; top: 70px"></canvas>
+  <canvas width="40" height="20" style="width: 60px; height: auto; left: 100px; top: 10px"></canvas>
+</div>
+<div class="root"><div style="height: 30px"></div>text <canvas width="20" height="20"></canvas> after<div><canvas width="30" height="10" style="background: blue"></canvas></div></div>
+<div class="root" dir="rtl"><canvas width="40" height="20" style="top: 10px"></canvas><canvas width="40" height="20" style="top: 40px; left: 10px; margin-right: 5px"></canvas></div>
+<div class="root" id="resized"><canvas style="width: 50%; height: 20px; right: 0; top: 0"></canvas><canvas width="40" height="20" style="left: 0; right: 0; margin: 0 auto; bottom: 0"></canvas></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "200px";
+document.getElementById("resized").style.height = "60px";
+</script>
+<div class="root"><canvas style="writing-mode: vertical-lr; width: 40px; height: 20px; top: 10px; right: 10px; border-left: 4px solid blue"></canvas></div>
