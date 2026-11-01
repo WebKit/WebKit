@@ -1,7 +1,5 @@
 dom/CollectionIndexCache.h
 dom/Node.cpp
-dom/Node.h
-dom/TreeScope.h
 layout/formattingContexts/inline/InlineItemsBuilder.h
 rendering/RenderLayer.h
 rendering/RenderLayerBacking.cpp

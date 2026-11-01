@@ -3,7 +3,6 @@ StyleChangedAnimatablePropertiesGenerated.cpp
 css/CSSStyleProperties.cpp
 dom/Attr.cpp
 dom/ComposedTreeIterator.h
-dom/ContainerNode.cpp
 dom/Document.cpp
 dom/Element.cpp
 dom/EventPath.cpp
@@ -44,7 +43,6 @@ rendering/RenderWidget.cpp
 [ macOS ] rendering/cocoa/RenderThemeCocoa.mm
 rendering/shapes/ShapeOutsideInfo.h
 rendering/style/BorderData.cpp
-rendering/svg/RenderSVGTextPath.cpp
 rendering/svg/legacy/LegacyRenderSVGImage.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceFilter.cpp
 rendering/svg/legacy/LegacyRenderSVGRoot.cpp
