@@ -942,6 +942,9 @@ std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidths() co
 #endif
         return widths;
     };
+    // The rendered legend of a fieldset is not a grid item, so the grid does not size it. Its widths, with its margins, are
+    // a lower bound for the fieldset's. https://html.spec.whatwg.org/multipage/rendering.html#the-fieldset-and-legend-elements
+    auto [legendMinWidth, legendMaxWidth] = computeIntrinsicLogicalWidthsForFieldsetLegend();
     if (useGridFormattingContext) {
         // const_cast is safe here: computeIntrinsicWidths() only reads grid properties
         // and does not mutate RenderGrid state, matching the legacy path pattern below.
@@ -956,10 +959,8 @@ std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidths() co
         auto [minLogicalWidth, maxLogicalWidth] = gridLayout.computeIntrinsicWidths();
 
         auto scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
-        return recordIntrinsicWidthsForAssert({ minLogicalWidth + scrollbarWidth, maxLogicalWidth + scrollbarWidth });
+        return recordIntrinsicWidthsForAssert({ std::max(minLogicalWidth, legendMinWidth) + scrollbarWidth, std::max(maxLogicalWidth, legendMaxWidth) + scrollbarWidth });
     }
-
-    auto [legendMinWidth, legendMaxWidth] = computeIntrinsicLogicalWidthsForFieldsetLegend();
 
     // The grid formatting context path above clears the items' grid areas while the grid needs layout, since those are
     // the ones a previous layout set. This path only gives an item one that has none (placeItemsOnGrid) and keeps the

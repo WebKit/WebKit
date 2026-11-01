@@ -83,7 +83,7 @@ inline bool BoxTreeUpdater::isInLiveFormattingContext(const RenderObject& render
         return renderer.isRenderReplica() || renderer.isRenderScrollbarPart() || Layout::isExcludedFromLayoutBoxNavigation(renderer);
     };
     if (!parent->childrenInline()) [[likely]]
-        return parent->layoutBox().isGridIntegrationRoot() && !isOutsideChildList();
+        return parent->layoutBox().isGridIntegrationRoot() && !isOutsideChildList() && !renderer.layoutBox().isExcludedFromGridFormattingContextForIntegration();
     if (isOutsideChildList()) [[unlikely]]
         return false;
     while (parent->isInlineBox()) {

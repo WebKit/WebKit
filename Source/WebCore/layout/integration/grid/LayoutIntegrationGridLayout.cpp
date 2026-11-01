@@ -53,6 +53,10 @@ GridLayout::GridLayout(RenderGrid& renderGrid)
     , m_layoutState(renderGrid.view().layoutState())
 {
     gridBox().setIsGridIntegrationRoot(true);
+    // The rendered legend of a fieldset sits in the border and is not a grid item, so the grid formatting context leaves it alone.
+    // BoxTreeUpdater::tearDown() clears this.
+    if (CheckedPtr renderedLegend = renderGrid.renderedFieldsetLegend())
+        renderedLegend->layoutBox().setIsExcludedFromGridFormattingContextForIntegration(true);
 }
 
 GridLayout::~GridLayout()
@@ -281,8 +285,11 @@ static inline Layout::GridLayoutConstraints constraintsForGridContent(const Layo
 GridLayout::GridItemBorderBoxRects GridLayout::gridItemBorderBoxRects() const
 {
     GridItemBorderBoxRects gridItemBorderBoxRects;
-    for (CheckedRef layoutBox : formattingContextBoxes(gridBox()))
+    for (CheckedRef layoutBox : formattingContextBoxes(gridBox())) {
+        if (layoutBox->isExcludedFromGridFormattingContextForIntegration())
+            continue;
         gridItemBorderBoxRects.append(CheckedRef { downcast<RenderBox>(*layoutBox->rendererForIntegration()) }->borderBoxRectInContainer());
+    }
     return gridItemBorderBoxRects;
 }
 
@@ -295,6 +302,8 @@ void GridLayout::updateGridItemRenderers(const GridItemBorderBoxRects& previousG
 
     size_t gridItemIndex = 0;
     for (CheckedRef layoutBox : formattingContextBoxes(gridBox())) {
+        if (layoutBox->isExcludedFromGridFormattingContextForIntegration())
+            continue;
         CheckedRef renderer = downcast<RenderBox>(*layoutBox->rendererForIntegration());
         auto& gridItemGeometry = layoutState->geometryForBox(layoutBox);
         auto borderBoxRect = Layout::BoxGeometry::borderBoxRect(gridItemGeometry);
@@ -322,8 +331,11 @@ void GridLayout::updateFormattingContextRootRendererBeforeLayout()
 
 void GridLayout::clearGridItemGridAreas()
 {
-    for (CheckedRef layoutBox : formattingContextBoxes(gridBox()))
+    for (CheckedRef layoutBox : formattingContextBoxes(gridBox())) {
+        if (layoutBox->isExcludedFromGridFormattingContextForIntegration())
+            continue;
         CheckedRef { downcast<RenderBox>(*layoutBox->rendererForIntegration()) }->clearGridAreaContentSize();
+    }
 }
 
 // Some code (e.g. relative positioning) needs the grid areas after layout is done.
@@ -386,8 +398,11 @@ void GridLayout::updateFormattingContextRootRenderer(const Layout::UsedTrackSize
 
     renderGrid->setBorderBoxHeight(usedBlockContentSize + renderGrid->borderAndPaddingLogicalHeight());
 
-    for (CheckedRef layoutBox : formattingContextBoxes(gridBox()))
+    for (CheckedRef layoutBox : formattingContextBoxes(gridBox())) {
+        if (layoutBox->isExcludedFromGridFormattingContextForIntegration())
+            continue;
         orderIteratorPopulator.collectChild(CheckedRef { downcast<RenderBox>(*layoutBox->rendererForIntegration()) });
+    }
 }
 
 // Layout takes the grid formatting context or the legacy path depending on the grid as it is now, so it can switch
@@ -432,6 +447,8 @@ std::pair<LayoutUnit, LayoutUnit> GridLayout::computeIntrinsicWidths()
     };
     Vector<GridAreaContentSize> previousGridAreaContentSizes;
     for (CheckedRef layoutBox : formattingContextBoxes(gridBox())) {
+        if (layoutBox->isExcludedFromGridFormattingContextForIntegration())
+            continue;
         CheckedRef renderer = downcast<RenderBox>(*layoutBox->rendererForIntegration());
         previousGridAreaContentSizes.append({ renderer, renderer->gridAreaContentLogicalWidth(), renderer->gridAreaContentLogicalHeight() });
     }

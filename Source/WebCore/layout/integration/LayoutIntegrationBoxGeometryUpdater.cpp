@@ -673,8 +673,11 @@ void BoxGeometryUpdater::setFormattingContextContentGeometry(std::optional<Layou
     }
 
     if (rootLayoutBox().establishesGridFormattingContext()) {
-        for (auto* gridItemOrOutOfFlowPositionedChild = rootLayoutBox().firstChild(); gridItemOrOutOfFlowPositionedChild; gridItemOrOutOfFlowPositionedChild = gridItemOrOutOfFlowPositionedChild->nextSibling())
+        for (auto* gridItemOrOutOfFlowPositionedChild = rootLayoutBox().firstChild(); gridItemOrOutOfFlowPositionedChild; gridItemOrOutOfFlowPositionedChild = gridItemOrOutOfFlowPositionedChild->nextSibling()) {
+            if (gridItemOrOutOfFlowPositionedChild->isExcludedFromGridFormattingContextForIntegration())
+                continue;
             updateBoxGeometry(downcast<RenderElement>(*gridItemOrOutOfFlowPositionedChild->rendererForIntegration()), availableLogicalWidth, intrinsicWidthMode);
+        }
         return;
     }
 

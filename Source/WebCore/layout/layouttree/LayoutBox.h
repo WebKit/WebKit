@@ -169,6 +169,8 @@ public:
     bool isGridIntegrationRoot() const { return m_isGridIntegrationRoot; }
     bool isIntegrationRoot() const { return m_isInlineIntegrationRoot || m_isGridIntegrationRoot; }
     bool isAnonymousTextIndentCandidateForIntegration() const { return m_isAnonymousTextIndentCandidateForIntegration; }
+    // Set while the parent is the root of a live GridLayout, on a child that is neither a grid item nor out-of-flow (the rendered legend of a fieldset).
+    bool isExcludedFromGridFormattingContextForIntegration() const { return m_isExcludedFromGridFormattingContextForIntegration; }
 
     // Navigation follows the render tree, skipping excluded list markers. The initial containing block is the parent of
     // RenderView and of renderers without a parent. parent() is defined in RenderElement.h, the siblings in RenderText.h.
@@ -205,6 +207,7 @@ public:
     void setIsInlineIntegrationRoot(bool value) { m_isInlineIntegrationRoot = value; }
     void setIsGridIntegrationRoot(bool value) { m_isGridIntegrationRoot = value; }
     void setIsAnonymousTextIndentCandidateForIntegration(bool value) { m_isAnonymousTextIndentCandidateForIntegration = value; }
+    void setIsExcludedFromGridFormattingContextForIntegration(bool value) { m_isExcludedFromGridFormattingContextForIntegration = value; }
     bool mayHaveFirstLineStyle() const { return m_mayHaveFirstLineStyle; }
     void setMayHaveFirstLineStyle(bool value) { m_mayHaveFirstLineStyle = value; }
 
@@ -268,6 +271,7 @@ private:
     bool m_isInlineIntegrationRoot : 1 { false };
     bool m_isGridIntegrationRoot : 1 { false };
     bool m_isAnonymousTextIndentCandidateForIntegration : 1 { false }; // Either first anonymous block box child or simple anonymous block container (e.g flex item).
+    bool m_isExcludedFromGridFormattingContextForIntegration : 1 { false };
     // Set when the box may have a first-line style, or for text, its parent. Use of first-line styles is rare.
     bool m_mayHaveFirstLineStyle : 1 { false };
 

@@ -61,7 +61,7 @@ static LogicalGridItems constructLogicalGridItems(const ElementBox& gridBox)
 {
     LogicalGridItems logicalGridItems;
     for (CheckedRef gridItem : childrenOfType<ElementBox>(gridBox)) {
-        if (gridItem->isOutOfFlowPositioned())
+        if (gridItem->isOutOfFlowPositioned() || gridItem->isExcludedFromGridFormattingContextForIntegration())
             continue;
 
         logicalGridItems.append(gridItem);
@@ -514,7 +514,7 @@ IntrinsicWidthSizingPath GridFormattingContext::classifyIntrinsicWidthSizingPath
 
     auto anyGridItemInlineContributionMayRequireFullSizingAlgorithm = [&] {
         for (CheckedRef gridItem : childrenOfType<ElementBox>(m_gridBox)) {
-            if (gridItem->isOutOfFlowPositioned())
+            if (gridItem->isOutOfFlowPositioned() || gridItem->isExcludedFromGridFormattingContextForIntegration())
                 continue;
             if (GridLayoutUtils::inlineContributionMayRequireFullSizingAlgorithmForIntrinsicWidth(gridItem, containerWritingMode))
                 return true;
