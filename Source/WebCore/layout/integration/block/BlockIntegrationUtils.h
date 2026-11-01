@@ -112,7 +112,7 @@ public:
     // The content box block size is the percentage basis of the atomic inline-level boxes in it. Relayout children lays the lines out from
     // scratch, like when the inline size, border or padding of the block container changed. The block formatting context lays out the
     // block-level boxes in the content when the inline formatting context reaches them, and adds them to the result it is building.
-    InlineContentLayoutResult layoutInlineContent(const RenderBlockFlow&, const Layout::ConstraintsForInlineContent&, const Layout::BoxGeometry&, std::optional<LayoutUnit> contentBoxBlockSize, bool relayoutChildren, const Layout::BlockLayoutState&, Layout::BlockFormattingContext&, Layout::BlockLayoutResult&);
+    InlineContentLayoutResult layoutInlineContent(const RenderBlockFlow&, const Layout::ConstraintsForInlineContent&, const Layout::BoxGeometry&, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit replacedElementAvailableBlockSize, bool relayoutChildren, const Layout::BlockLayoutState&, Layout::BlockFormattingContext&, Layout::BlockLayoutResult&);
     // The geometry its parent formatting context gave a block formatting context root, which its renderer has before its content is laid out.
     static Layout::BoxGeometry rootGeometry(const RenderBlockFlow&);
     // The min-content and max-content inline sizes of the inline content of a block container (css-sizing-3 §5.1), from the inline formatting

@@ -111,7 +111,8 @@ static Layout::ConstraintsForBlockContent constraintsForBlockContent(const Rende
     if (scrollbarIsOnLogicalLeft == writingMode.isLogicalLeftInlineStart())
         contentBoxLogicalLeft += std::min<LayoutUnit>(rootRenderer.scrollbarLogicalWidth(), std::max(0_lu, rootRenderer.logicalWidth() - rootRenderer.borderAndPaddingLogicalWidth()));
     auto horizontalConstraints = Layout::HorizontalConstraints { contentBoxLogicalLeft, rootRenderer.contentBoxLogicalWidth() };
-    return { { horizontalConstraints, borderBefore + rootRenderer.paddingBefore() }, contentBoxBlockSizeForPercentages(rootRenderer), rootRenderer.availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding), relayoutChildren == RelayoutChildren::Yes };
+    return { { horizontalConstraints, borderBefore + rootRenderer.paddingBefore() }, contentBoxBlockSizeForPercentages(rootRenderer), rootRenderer.availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding),
+        rootRenderer.availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding), relayoutChildren == RelayoutChildren::Yes };
 }
 
 void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)

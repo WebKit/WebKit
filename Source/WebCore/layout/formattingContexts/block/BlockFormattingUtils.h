@@ -34,6 +34,8 @@ namespace WebCore {
 
 class RenderBox;
 
+enum class AvailableLogicalHeightType : bool;
+
 namespace Style {
 class ComputedStyle;
 class UnevaluatedCalcSize;
@@ -90,10 +92,11 @@ public:
     static bool hasPercentageBlockSize(const RenderBox&, WritingMode);
     // Its block-size, min-block-size or max-block-size is -webkit-fill-available.
     static bool hasFillAvailableBlockSize(const RenderBox&, WritingMode);
-    // The block size -webkit-fill-available block sizes of the children of a block container resolve to (RenderBox::availableLogicalHeight):
-    // its definite content box block size, or else the one of its containing block without its margins, border and padding, within its min
-    // and max block sizes.
-    static LayoutUnit fillAvailableBlockSize(const RenderBox& blockContainer, const BoxGeometry&, std::optional<LayoutUnit> contentBoxBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, LayoutUnit containingBlockFillAvailableBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
+    // The available block size of a block container (RenderBox::availableLogicalHeight): -webkit-fill-available block sizes of its children
+    // resolve to the one without margins, border and padding, and in quirks mode percentage block sizes of its replaced children resolve
+    // against the one with them (RenderReplaced::computeReplacedLogicalHeightUsing). It is its definite content box block size, or else the
+    // one of its containing block, without its margins, border and padding for the first, within its min and max block sizes.
+    static LayoutUnit availableBlockSize(const RenderBox& blockContainer, const BoxGeometry&, std::optional<LayoutUnit> contentBoxBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, LayoutUnit containingBlockAvailableBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode, AvailableLogicalHeightType);
     // The block size of the content of an empty editable block container: the line height of its first line, for the caret (RenderBlock::hasLineIfEmpty,
     // RenderBox::lineHeight).
     static std::optional<LayoutUnit> emptyEditableContentBlockSize(const RenderBox& blockContainer);
