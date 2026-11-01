@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function finish(message)
+{
+    document.body.appendChild(document.createTextNode(message));
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+const worker = new Worker('resources/opportunistic-load-reentrancy-worker.js');
+worker.onmessage = function () { finish("PASS if no crash"); };
+worker.onerror = function (event) { finish("FAIL: worker error: " + event.message); };
+</script>
+</body>
+</html>
