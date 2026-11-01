@@ -1,0 +1,186 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+// Two shaders with identical @group/@binding sets but reversed declaration order, so the WGSL
+// emitter assigns their synthetic __X_ArrayLength entries swapped argument buffer slots.
+const wgslAFirst = `
+@group(0) @binding(0) var<storage, read_write> a : array<u32>;
+@group(0) @binding(1) var<storage, read_write> b : array<u32>;
+@compute @workgroup_size(1)
+fn main() {
+    a[0] = arrayLength(&a);
+    b[0] = arrayLength(&b);
+}`;
+
+const wgslBFirst = `
+@group(0) @binding(1) var<storage, read_write> b : array<u32>;
+@group(0) @binding(0) var<storage, read_write> a : array<u32>;
+@compute @workgroup_size(1)
+fn main() {
+    b[0] = arrayLength(&b);
+    for (var i : u32 = 0u; i < arrayLength(&a); i = i + 1u) {
+        a[i] = 0x41414141u;
+    }
+}`;
+
+let device, bindGroup, autoBindGroupLayout;
+
+// Build a bind group against pipeline A's auto-generated layout, then drop every reference to the
+// pipeline so GC destroys its auto GPUPipelineLayout.
+function makeBindGroupFromAutoLayout(shaderModule, buf0, buf1)
+{
+    let pipeline = device.createComputePipeline({ layout: 'auto', compute: { module: shaderModule, entryPoint: 'main' } });
+    bindGroup = device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(0),
+        entries: [
+            { binding: 0, resource: { buffer: buf0 } },
+            { binding: 1, resource: { buffer: buf1 } },
+        ],
+    });
+}
+
+// Retain pipeline B's auto-generated layout but drop the pipeline, so its auto GPUPipelineLayout is
+// destroyed too. Both auto layouts now have a destroyed owning pipeline layout.
+function makeAutoLayoutFromDroppedPipeline(shaderModule)
+{
+    let pipeline = device.createComputePipeline({ layout: 'auto', compute: { module: shaderModule, entryPoint: 'main' } });
+    autoBindGroupLayout = pipeline.getBindGroupLayout(0);
+}
+
+async function collectGarbage()
+{
+    await new Promise(r => setTimeout(r, 0));
+    for (let i = 0; i < 5; ++i)
+        GCController.collect();
+    await new Promise(r => setTimeout(r, 0));
+}
+
+onload = async () => {
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        device = await adapter.requestDevice();
+        const moduleAFirst = device.createShaderModule({ code: wgslAFirst });
+        const moduleBFirst = device.createShaderModule({ code: wgslBFirst });
+        const small = device.createBuffer({ size: 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+        const large = device.createBuffer({ size: 64 * 1024, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+
+        makeBindGroupFromAutoLayout(moduleAFirst, small, large);
+        await collectGarbage();
+        makeAutoLayoutFromDroppedPipeline(moduleBFirst);
+        await collectGarbage();
+
+        // An auto-generated bind group layout has a non-null [[exclusivePipeline]], so
+        // createPipelineLayout() must reject it.
+        device.pushErrorScope('validation');
+        const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [autoBindGroupLayout] });
+        const pipeline = device.createComputePipeline({ layout: pipelineLayout, compute: { module: moduleBFirst, entryPoint: 'main' } });
+        const encoder = device.createCommandEncoder();
+        const pass = encoder.beginComputePass();
+        pass.setPipeline(pipeline);
+        pass.setBindGroup(0, bindGroup);
+        pass.dispatchWorkgroups(1);
+        pass.end();
+        device.queue.submit([encoder.finish()]);
+        const error = await device.popErrorScope();
+        await device.queue.onSubmittedWorkDone();
+
+        if (error)
+            testPassed(`dispatch was rejected: ${error.message}`);
+        else
+            testFailed("an auto-generated bind group layout was accepted by createPipelineLayout and dispatched with a bind group from a different auto-generated layout");
+
+        // The shader stores arrayLength(&b) into b[0]. If the mismatched pair had been accepted, the
+        // pipeline would have read the 16-byte buffer's length as arrayLength(&b) and written past
+        // the 16-byte buffer through a[].
+        const readback = device.createBuffer({ size: 16, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+        const copyEncoder = device.createCommandEncoder();
+        copyEncoder.copyBufferToBuffer(large, 0, readback, 0, 16);
+        device.queue.submit([copyEncoder.finish()]);
+        await readback.mapAsync(GPUMapMode.READ);
+        const observedArrayLength = new Uint32Array(readback.getMappedRange())[0];
+        if (observedArrayLength === 16 / 4)
+            testFailed(`the pipeline read arrayLength(&b) from the wrong argument buffer slot: ${observedArrayLength}`);
+        else
+            testPassed(`no dispatch happened: arrayLength(&b) was not stored (${observedArrayLength})`);
+
+        // Positive control: an explicitly created bind group layout has a null [[exclusivePipeline]]
+        // and must still be accepted by createPipelineLayout, both with and without entries, and the
+        // resulting pipeline must still dispatch.
+        device.pushErrorScope('validation');
+        const explicitBindGroupLayout = device.createBindGroupLayout({
+            entries: [
+                { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage', minBindingSize: 4 } },
+                { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage', minBindingSize: 4 } },
+            ],
+        });
+        const emptyBindGroupLayout = device.createBindGroupLayout({ entries: [] });
+        device.createPipelineLayout({ bindGroupLayouts: [emptyBindGroupLayout] });
+        const explicitPipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [explicitBindGroupLayout] });
+        const explicitPipeline = device.createComputePipeline({ layout: explicitPipelineLayout, compute: { module: moduleAFirst, entryPoint: 'main' } });
+        const explicitBindGroup = device.createBindGroup({
+            layout: explicitBindGroupLayout,
+            entries: [
+                { binding: 0, resource: { buffer: small } },
+                { binding: 1, resource: { buffer: large } },
+            ],
+        });
+        const explicitEncoder = device.createCommandEncoder();
+        const explicitPass = explicitEncoder.beginComputePass();
+        explicitPass.setPipeline(explicitPipeline);
+        explicitPass.setBindGroup(0, explicitBindGroup);
+        explicitPass.dispatchWorkgroups(1);
+        explicitPass.end();
+        device.queue.submit([explicitEncoder.finish()]);
+        const explicitError = await device.popErrorScope();
+        await device.queue.onSubmittedWorkDone();
+
+        if (explicitError)
+            testFailed(`an explicitly created bind group layout was rejected: ${explicitError.message}`);
+        else
+            testPassed("explicitly created bind group layouts are still accepted by createPipelineLayout");
+
+        // The explicit pipeline must have read each buffer's real length from its own slot.
+        const explicitReadback = device.createBuffer({ size: 16, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+        const explicitCopyEncoder = device.createCommandEncoder();
+        explicitCopyEncoder.copyBufferToBuffer(large, 0, explicitReadback, 0, 16);
+        device.queue.submit([explicitCopyEncoder.finish()]);
+        await explicitReadback.mapAsync(GPUMapMode.READ);
+        const explicitArrayLength = new Uint32Array(explicitReadback.getMappedRange())[0];
+        if (explicitArrayLength === 64 * 1024 / 4)
+            testPassed("the explicit pipeline read arrayLength(&b) from the correct argument buffer slot");
+        else
+            testFailed(`the explicit pipeline read arrayLength(&b) as ${explicitArrayLength}, expected ${64 * 1024 / 4}`);
+
+        // Positive control: a pipeline created with layout 'auto' must still be usable with a bind
+        // group made from its own auto-generated layout.
+        device.pushErrorScope('validation');
+        const autoPipeline = device.createComputePipeline({ layout: 'auto', compute: { module: moduleAFirst, entryPoint: 'main' } });
+        const autoBindGroup = device.createBindGroup({
+            layout: autoPipeline.getBindGroupLayout(0),
+            entries: [
+                { binding: 0, resource: { buffer: small } },
+                { binding: 1, resource: { buffer: large } },
+            ],
+        });
+        const autoEncoder = device.createCommandEncoder();
+        const autoPass = autoEncoder.beginComputePass();
+        autoPass.setPipeline(autoPipeline);
+        autoPass.setBindGroup(0, autoBindGroup);
+        autoPass.dispatchWorkgroups(1);
+        autoPass.end();
+        device.queue.submit([autoEncoder.finish()]);
+        const autoError = await device.popErrorScope();
+        await device.queue.onSubmittedWorkDone();
+
+        if (autoError)
+            testFailed(`an auto-layout pipeline was rejected with its own bind group: ${autoError.message}`);
+        else
+            testPassed("an auto-layout pipeline is still usable with its own auto-generated bind group layout");
+    } catch (e) {
+        testFailed(`${e}`);
+    }
+    globalThis.testRunner?.notifyDone();
+};
+</script>
