@@ -23,7 +23,7 @@
 import platform
 import requests
 
-from webkitscmpy import Package, Version
+from webkitscmpy import AutoInstall, Package, Version
 
 
 class GeckoDriverPackage(Package):
@@ -32,14 +32,17 @@ class GeckoDriverPackage(Package):
     def __init__(self, version=None):
         super(GeckoDriverPackage, self).__init__('geckodriver', version=version)
 
-    def archives(self):
-        try:
-            response = requests.get(self.URL)
-        except requests.RequestException:
-            return []
-
+    @staticmethod
+    def _releases(response):
         if response.status_code != 200:
-            return []
+            raise IOError('Failed to retrieve the geckodriver releases with response code {}'.format(response.status_code))
+        return response.json()
+
+    def archives(self):
+        releases = AutoInstall.with_retries(
+            'retrieve the geckodriver releases', self.URL, self._releases,
+            request=lambda url: requests.get(url, timeout=AutoInstall.timeout),
+        )
 
         os_name = platform.system()
         if os_name == 'Darwin':
@@ -48,7 +51,7 @@ class GeckoDriverPackage(Package):
             os = '{}{}'.format(os_name, platform.machine()[-2:])
 
         archives = []
-        for candidate in reversed(response.json()):
+        for candidate in reversed(releases):
             try:
                 version = Version.from_string(candidate.get('tag_name').split('v')[-1])
             except ValueError:
