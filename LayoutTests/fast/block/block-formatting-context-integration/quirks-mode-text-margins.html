@@ -1,0 +1,18 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; }
+</style>
+<div class="root">
+  <p>quirky paragraph margins at the top</p>
+  <h1>heading</h1>
+  <ul><li style="display: block">block list entry</li></ul>
+  <div><p>nested paragraph</p></div>
+  <p style="margin-top: 30px">explicit margin</p>
+</div>
+<table><tr><td>
+  <div class="root"><p>paragraph in a flow-root in a table cell</p><p>second</p></div>
+</td></tr></table>
+<div class="root" style="padding: 5px">
+  <div style="margin: 10px 0"><div style="margin-top: 20px; height: 10px"></div></div>
+  <div style="height: 50%">percentage height stays on the legacy path</div>
+</div>
