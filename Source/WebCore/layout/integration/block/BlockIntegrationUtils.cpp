@@ -299,7 +299,7 @@ bool BlockIntegrationUtils::laysOutThroughRenderTree(const RenderBox& box)
     return !blockContainer || !canUseForNestedBlockLayout(*blockContainer);
 }
 
-BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, bool relayoutChildren, const Layout::BlockLayoutState& blockLayoutState, Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult)
+BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit replacedElementAvailableBlockSize, bool relayoutChildren, const Layout::BlockLayoutState& blockLayoutState, Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult)
 {
     // Only the line layout of this block container and its inline content are written here, and nothing else in the block formatting
     // context reads them.
@@ -358,7 +358,7 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
         }
         box->setOverridingContainingBlockContentLogicalWidth(constraints.horizontal().logicalWidth);
         if (!box->writingMode().isOrthogonal(inlineContentRoot.writingMode()) && Layout::BlockFormattingUtils::hasPercentageBlockSize(*box, box->writingMode()))
-            box->setOverridingContainingBlockContentLogicalHeight(contentBoxBlockSize);
+            box->setOverridingContainingBlockContentLogicalHeight(box->isRenderReplaced() && box->document().inQuirksMode() ? std::optional { replacedElementAvailableBlockSize } : contentBoxBlockSize);
         atomicInlineLevelBoxes.append(*box);
         if (CheckedPtr drawableContent = drawableContentBlock(*box))
             drawableContent->setOverridingContainingBlockContentLogicalWidth(constraints.horizontal().logicalWidth);
