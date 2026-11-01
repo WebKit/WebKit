@@ -137,6 +137,15 @@ class DriverTest(unittest.TestCase):
         self.assertEqual(driver.uri_to_test('https://localhost:9443/WebKit/bar2.https.html'), 'http/wpt/bar2.https.html')
         self.assertEqual(driver.uri_to_test('http://127.0.0.1:8000/root/foo/bar.html'), 'foo/bar.html')
 
+    def test_command_from_driver_input_strips_variant_from_absolute_path(self):
+        port = self.make_port()
+        driver = Driver(port, None, pixel_tests=False)
+        for test_name in ['imported/w3c/web-platform-tests/foo/bar.any.html', 'http/tests/foo/bar.html']:
+            for variant in ['?1-10', '#fragment']:
+                arguments = driver._command_from_driver_input(DriverInput(test_name + variant, 1000, None, False)).rstrip('\n').split("'")
+                self.assertTrue(arguments[0].endswith(variant), arguments[0])
+                self.assertEqual(arguments[arguments.index('--absolutePath') + 1], port.abspath_for_test(test_name))
+
     def test_read_block(self):
         port = TestWebKitPort()
         driver = Driver(port, 0, pixel_tests=False)
@@ -208,6 +217,50 @@ class DriverTest(unittest.TestCase):
         self.assertEqual(content_block.content, b'MTIzNDU2NzgK')
         self.assertEqual(content_block.decoded_content, b'12345678\n')
 
+    def _make_driver_with_output(self, lines, err_lines, pixel_tests=False):
+        port = TestWebKitPort()
+        port._test_runner_process_constructor = lambda *args, **kwargs: MockServerProcess(lines=lines, err_lines=err_lines)
+        return Driver(port, 0, pixel_tests=pixel_tests)
+
+    def test_run_test_reports_skip_reply(self):
+        driver = self._make_driver_with_output(
+            lines=['Content-Type: text/x-webkit-skipped', 'skipIfDisabled: TestKey', '#EOF', '#EOF'],
+            err_lines=['#EOF'])
+        output = driver.run_test(DriverInput('fast/harness/skip-if-disabled.html', 1000, None, False), stop_when_done=False)
+        self.assertTrue(output.skipped)
+        self.assertEqual(output.skipped_key, 'TestKey')
+        self.assertFalse(output.crash)
+        self.assertFalse(output.timeout)
+        self.assertIsNone(output.image)
+
+    def test_run_test_reports_skip_reply_with_pixel_tests(self):
+        driver = self._make_driver_with_output(
+            lines=['Content-Type: text/x-webkit-skipped', 'skipIfDisabled: TestKey', '#EOF', '#EOF'],
+            err_lines=['#EOF'],
+            pixel_tests=True)
+        output = driver.run_test(DriverInput('fast/harness/skip-if-disabled.html', 1000, None, True), stop_when_done=False)
+        self.assertTrue(output.skipped)
+        self.assertEqual(output.skipped_key, 'TestKey')
+        self.assertIsNone(output.image)
+        self.assertIsNone(output.image_hash)
+
+    def test_run_test_normal_reply_is_not_skipped(self):
+        driver = self._make_driver_with_output(
+            lines=['Content-Type: text/plain', 'PASS', '#EOF', '#EOF'],
+            err_lines=['#EOF'])
+        output = driver.run_test(DriverInput('fast/harness/skip-if-disabled.html', 1000, None, False), stop_when_done=False)
+        self.assertFalse(output.skipped)
+        self.assertIsNone(output.skipped_key)
+        self.assertEqual(output.text, 'PASS\n')
+
+    def test_run_test_reports_skip_reply_without_key(self):
+        driver = self._make_driver_with_output(
+            lines=['Content-Type: text/x-webkit-skipped', '#EOF', '#EOF'],
+            err_lines=['#EOF'])
+        output = driver.run_test(DriverInput('fast/harness/skip-if-disabled.html', 1000, None, False), stop_when_done=False)
+        self.assertTrue(output.skipped)
+        self.assertEqual(output.skipped_key, '?')
+
     def test_no_timeout(self):
         port = TestWebKitPort(options=optparse.Values({'enable_all_experimental_features': True}))
         port._config.build_directory = lambda configuration: '/mock-build'
@@ -216,6 +269,24 @@ class DriverTest(unittest.TestCase):
             self.assertEqual(driver.cmd_line(True, []), ['/mock-build/WebKitTestRunner.exe', '--no-timeout', '-'])
         else:
             self.assertEqual(driver.cmd_line(True, []), ['/mock-build/WebKitTestRunner', '--no-timeout', '-'])
+
+    def _make_port_for_cmd_line(self, **options):
+        values = {'enable_all_experimental_features': True}
+        values.update(options)
+        port = TestWebKitPort(options=optparse.Values(values))
+        port._config.build_directory = lambda configuration: '/mock-build'
+        return port
+
+    def test_cmd_line_has_no_disabled_keys_by_default(self):
+        cmd = Driver(self._make_port_for_cmd_line(), 0, pixel_tests=False).cmd_line(False, [])
+        self.assertNotIn('--disabled-keys', cmd)
+
+    def test_cmd_line_passes_disabled_keys_as_one_sorted_comma_list(self):
+        port = self._make_port_for_cmd_line(disabled_keys=['TestKey', 'OtherKey,TestKey'])
+        cmd = Driver(port, 0, pixel_tests=False).cmd_line(False, [])
+        self.assertEqual(cmd.count('--disabled-keys'), 1)
+        self.assertEqual(cmd[cmd.index('--disabled-keys') + 1], 'OtherKey,TestKey')
+        self.assertEqual(cmd[-1], '-')
 
     def test_check_for_driver_crash(self):
         port = TestWebKitPort()

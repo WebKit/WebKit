@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2013 University of Szeged. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
- * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -121,6 +121,12 @@ static bool handleOptionAllowedHost(Options& options, const char*, const char* h
     return true;
 }
 
+static bool handleOptionDisabledKeys(Options& options, const char*, const char* keys)
+{
+    options.disabledKeys.merge(parseDisabledKeys(keys));
+    return true;
+}
+
 static bool handleOptionLocalhostAlias(Options& options, const char*, const char* host)
 {
     options.localhostAliases.insert(host);
@@ -218,6 +224,7 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--complex-text", "Force complex tests.", handleOptionComplexText));
     optionList.append(Option("--accelerated-drawing", "Use accelerated drawing.", handleOptionAcceleratedDrawing));
     optionList.append(Option("--allowed-host", "Allows access to the specified host from tests.", handleOptionAllowedHost, true));
+    optionList.append(Option("--disabled-keys", "Skips tests whose webkit-test-runner header lists one of these comma-separated keys in skipIfDisabled=.", handleOptionDisabledKeys, true));
     optionList.append(Option("--localhost-alias", "Adds hostname alias to localhost if the port supports it.", handleOptionLocalhostAlias, true));
     optionList.append(Option("--allow-any-certificate-for-allowed-hosts", "Allows any HTTPS certificate for an allowed host.", handleOptionAllowAnyHTTPSCertificateForAllowedHosts));
     optionList.append(Option("--show-webview", "DEPRECATED. Same as --show-window", handleOptionShowWindow));

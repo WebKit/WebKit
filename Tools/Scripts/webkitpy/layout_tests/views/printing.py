@@ -186,12 +186,20 @@ class Printer(object):
             ndigits = int(math.log10(len(num))) + 1
         return ndigits
 
-    def print_results(self, run_time, run_results, summarized_results):
+    def print_results(self, run_time, run_results, summarized_results, skipped_by_disabled_keys):
         self._print_timing_statistics(run_time, run_results)
         self._print_one_line_summary(run_results.total - run_results.expected_skips,
                                      run_results.expected - run_results.expected_skips,
                                      run_results.unexpected)
+        self._print_disabled_keys_summary(skipped_by_disabled_keys)
         self._report_finished(run_results)
+
+    def _print_disabled_keys_summary(self, skipped_by_disabled_keys):
+        disabled_keys = self._port.disabled_keys()
+        if not disabled_keys:
+            return
+        self._print_quiet('%s skipped by --disabled-keys=%s' % (pluralize(skipped_by_disabled_keys, 'test'), ','.join(disabled_keys)))
+        self._print_quiet('')
 
     def _report_finished(self, run_results):
         self._finished = True

@@ -1,6 +1,6 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
-# Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2011, 2013-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -43,6 +43,7 @@ from webkitpy.common.host import Host
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.controllers.manager import Manager
+from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS, RunDetails
 from webkitpy.layout_tests.views import printing
 from webkitpy.port import test
@@ -182,6 +183,61 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         # properly on cygwin (bug 63846).
         self.should_test_processes = not self._platform.is_win()
 
+    def test_disabled_keys_skip_annotated_tests_named_on_the_command_line(self):
+        tests = ['corner-cases/skip-if-disabled/text.html', 'corner-cases/skip-if-disabled/other-key.html', 'corner-cases/skip-if-disabled/reftest.html']
+        self.assertEqual(get_tests_run(tests), [
+            'corner-cases/skip-if-disabled/other-key.html',
+            'corner-cases/skip-if-disabled/reftest.html',
+            'corner-cases/skip-if-disabled/text.html',
+        ])
+        self.assertEqual(get_tests_run(['--disabled-keys=TestKey'] + tests), ['corner-cases/skip-if-disabled/other-key.html'])
+
+    def test_disabled_key_skip_is_an_expected_skip(self):
+        details, _, _ = logging_run(['--disabled-keys=TestKey', 'corner-cases/skip-if-disabled/text.html'], tests_included=True)
+        self.assertEqual(details.exit_code, 0)
+        result = details.initial_results.results_by_name['corner-cases/skip-if-disabled/text.html']
+        self.assertEqual(result.type, test_expectations.SKIP)
+        self.assertEqual(result.skipped_by_disabled_key, 'TestKey')
+        self.assertEqual(details.initial_results.unexpected_results_by_name, {})
+
+    def test_disabled_keys_summary_and_skip_list(self):
+        host = MockHost()
+        details, err, _ = logging_run(['--disabled-keys=TestKey', 'corner-cases/skip-if-disabled'], tests_included=True, host=host)
+        self.assertEqual(details.exit_code, 0)
+        self.assertContains(err, '2 tests skipped by --disabled-keys=TestKey\n')
+        self.assertEqual(host.filesystem.read_text_file('/tmp/layout-test-results/skipped-by-disabled-keys.txt'),
+                         'corner-cases/skip-if-disabled/reftest.html\tTestKey\n'
+                         'corner-cases/skip-if-disabled/text.html\tTestKey\n')
+
+    def test_disabled_keys_summary_counts_each_driver(self):
+        host = MockHost()
+        details, err, _ = logging_run(['--disabled-keys=TestKey', '--dump-render-tree', '--webkit-test-runner', 'corner-cases/skip-if-disabled'], tests_included=True, host=host, shared_port=False)
+        self.assertEqual(details.exit_code, 0)
+        self.assertContains(err, '4 tests skipped by --disabled-keys=TestKey\n')
+        skip_list = 'corner-cases/skip-if-disabled/reftest.html\tTestKey\ncorner-cases/skip-if-disabled/text.html\tTestKey\n'
+        self.assertEqual(host.filesystem.read_text_file('/tmp/layout-test-results/skipped-by-disabled-keys.txt'), skip_list)
+        self.assertEqual(host.filesystem.read_text_file('/tmp/layout-test-results/wk1/skipped-by-disabled-keys.txt'), skip_list)
+
+    def test_disabled_keys_matching_nothing_report_zero(self):
+        host = MockHost()
+        details, err, _ = logging_run(['--disabled-keys=NoSuchKey', 'corner-cases/skip-if-disabled'], tests_included=True, host=host)
+        self.assertEqual(details.exit_code, 0)
+        self.assertContains(err, '0 tests skipped by --disabled-keys=NoSuchKey\n')
+        self.assertEqual(host.filesystem.read_text_file('/tmp/layout-test-results/skipped-by-disabled-keys.txt'), '')
+
+    def test_default_run_has_no_disabled_keys_output(self):
+        host = MockHost()
+        details, err, _ = logging_run(['corner-cases/skip-if-disabled'], tests_included=True, host=host)
+        self.assertEqual(details.exit_code, 0)
+        self.assertNotIn('skipped by --disabled-keys', err.getvalue())
+        self.assertFalse(host.filesystem.exists('/tmp/layout-test-results/skipped-by-disabled-keys.txt'))
+
+    def test_disabled_keys_appear_in_logged_driver_command_line(self):
+        _, err, _ = logging_run(['--disabled-keys=TestKey', 'passes/text.html'], tests_included=True)
+        self.assertContains(err, '--disabled-keys TestKey')
+        _, err, _ = logging_run(['passes/text.html'], tests_included=True)
+        self.assertNotIn('--disabled-keys', err.getvalue())
+
     def serial_test_basic(self):
         options, args = parse_args(['--show-results'], tests_included=True)
         logging_stream = StringIO()
@@ -255,6 +311,54 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         if self.should_test_processes:
             self.assertRaises(BaseException, logging_run,
                 ['--child-processes', '2', '--force', 'failures/expected/exception.html', 'passes/text.html'], tests_included=True, shared_port=False)
+
+    def test_disabled_keys_option_is_repeatable(self):
+        options, _ = run_webkit_tests.parse_args(['--disabled-keys=TestKey,OtherKey', '--disabled-keys', 'ThirdKey'])
+        self.assertEqual(options.disabled_keys, ['TestKey,OtherKey', 'ThirdKey'])
+
+    def test_disabled_keys_option_default_is_empty(self):
+        options, _ = run_webkit_tests.parse_args([])
+        self.assertEqual(options.disabled_keys, [])
+
+    def test_invalid_disabled_key_warns_and_the_run_continues(self):
+        details, err, _ = logging_run(['--disabled-keys=Bad-Key,TestKey', 'passes/text.html'], tests_included=True)
+        self.assertEqual(details.exit_code, 0)
+        self.assertContains(err, "Ignoring invalid --disabled-keys key 'Bad-Key': keys must match [A-Za-z_][A-Za-z0-9_]*\n")
+        self.assertNotIn('Traceback', err.getvalue())
+        self.assertEqual(details.initial_results.total, 1)
+
+    def test_derived_options_normalize_disabled_keys(self):
+        options, _ = run_webkit_tests.parse_args(['--disabled-keys=KeyB,Bad-Key', '--disabled-keys=KeyA'])
+        port = MockHost().port_factory.get('test', options)
+        run_webkit_tests._set_up_derived_options(port, options)
+        self.assertEqual(options.disabled_keys, ['KeyA', 'KeyB'])
+
+    def test_derived_options_strip_whitespace_around_disabled_keys(self):
+        options, _ = run_webkit_tests.parse_args(['--disabled-keys=KeyA, KeyB'])
+        port = MockHost().port_factory.get('test', options)
+        with OutputCapture() as captured:
+            run_webkit_tests._set_up_derived_options(port, options)
+        self.assertNotIn('Ignoring invalid', captured.root.log.getvalue())
+        self.assertEqual(options.disabled_keys, ['KeyA', 'KeyB'])
+
+    def test_derived_options_warn_once_per_invalid_key_in_sorted_order(self):
+        options, _ = run_webkit_tests.parse_args(['--disabled-keys=Key 5,Bad-Key,,KeyA', '--disabled-keys=Bad-Key'])
+        port = MockHost().port_factory.get('test', options)
+        with OutputCapture() as captured:
+            run_webkit_tests._set_up_derived_options(port, options)
+        self.assertEqual(captured.root.log.getvalue(),
+                         "Ignoring invalid --disabled-keys key 'Bad-Key': keys must match [A-Za-z_][A-Za-z0-9_]*\n"
+                         "Ignoring invalid --disabled-keys key 'Key 5': keys must match [A-Za-z_][A-Za-z0-9_]*\n")
+        self.assertEqual(options.disabled_keys, ['KeyA'])
+
+    def test_derived_options_ignore_digit_leading_disabled_keys(self):
+        options, _ = run_webkit_tests.parse_args(['--disabled-keys=3SAR,_Key,SAR3'])
+        port = MockHost().port_factory.get('test', options)
+        with OutputCapture() as captured:
+            run_webkit_tests._set_up_derived_options(port, options)
+        self.assertEqual(captured.root.log.getvalue(),
+                         "Ignoring invalid --disabled-keys key '3SAR': keys must match [A-Za-z_][A-Za-z0-9_]*\n")
+        self.assertEqual(options.disabled_keys, ['SAR3', '_Key'])
 
     def serial_test_full_results_html(self):
         # FIXME: verify html?

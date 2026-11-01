@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -63,6 +63,24 @@ class TestDriver:
         """do nothing"""
 
 
+class SkippingDriver:
+    def __init__(self, host, crash=False, timeout=False):
+        self.host = host
+        self.events = []
+        self.crash = crash
+        self.timeout = timeout
+
+    def run_test(self, driver_input, stop_when_done):
+        self.events.append('run {}'.format(driver_input.test_name))
+        return DriverOutput('skipIfDisabled: TestKey\n', None, None, None, crash=self.crash, timeout=self.timeout, skipped_key='TestKey')
+
+    def start(self):
+        pass
+
+    def stop(self):
+        self.events.append('stop')
+
+
 class SingleTestRunnerTest(unittest.TestCase):
 
     def _add_file(self, port, file_path, contents):
@@ -81,6 +99,59 @@ class SingleTestRunnerTest(unittest.TestCase):
 
         test_input = TestInput(Test(test_name))
         return SingleTestRunner(port, port._options, results_directory, worker_name, driver, test_input, True)
+
+    def _run_skipped_test(self, extra_args=(), with_baseline=True, with_reference=False, is_wpt_crash_test=False, crash=False, timeout=False):
+        options, _ = parse_args(list(extra_args))
+        self.port = TestPort(MockHost(), options=options)
+        expected_text_path = None
+        reference_files = None
+        if with_baseline:
+            self._add_file(self.port, 'known/test-expected.txt', b'PASS\n')
+            expected_text_path = self.port.host.filesystem.join(self.port.layout_tests_dir(), 'known/test-expected.txt')
+        if with_reference:
+            reference_files = [('==', self.port.host.filesystem.join(self.port.layout_tests_dir(), 'known/test-expected.html'))]
+        self.driver = SkippingDriver(self.port.host, crash=crash, timeout=timeout)
+        test = Test('known/test.html', expected_text_path=expected_text_path, reference_files=reference_files, is_wpt_crash_test=is_wpt_crash_test)
+        return SingleTestRunner(self.port, self.port._options, 'layout-test-results', '', self.driver, TestInput(test, timeout='30000'), False).run()
+
+    def _assert_skipped_after_one_run(self, result):
+        self.assertEqual(test_expectations.SKIP, result.type)
+        self.assertEqual('TestKey', result.skipped_by_disabled_key)
+        self.assertEqual(['run known/test.html'], self.driver.events)
+        self.assertFalse(self.port.host.filesystem.exists('layout-test-results'))
+
+    def test_skip_reply_in_compare_test(self):
+        self._assert_skipped_after_one_run(self._run_skipped_test())
+
+    def test_skip_reply_in_wpt_crash_test(self):
+        self._assert_skipped_after_one_run(self._run_skipped_test(with_baseline=False, is_wpt_crash_test=True))
+
+    def test_skip_reply_does_not_reset_the_baseline(self):
+        self._assert_skipped_after_one_run(self._run_skipped_test(extra_args=['--reset-results']))
+        baseline = self.port.host.filesystem.join(self.port.layout_tests_dir(), 'known/test-expected.txt')
+        self.assertEqual(b'PASS\n', self.port.host.filesystem.read_binary_file(baseline))
+
+    def test_skip_reply_in_reftest_never_loads_the_reference(self):
+        self._assert_skipped_after_one_run(self._run_skipped_test(with_baseline=False, with_reference=True))
+
+    def test_skip_reply_in_site_isolation_reftest_runs_once(self):
+        self._assert_skipped_after_one_run(self._run_skipped_test(extra_args=['--site-isolation'], with_baseline=False, with_reference=True))
+
+    def test_skip_reply_in_site_isolation_test_runs_once(self):
+        self._assert_skipped_after_one_run(self._run_skipped_test(extra_args=['--site-isolation']))
+
+    def test_skip_reply_with_self_compare_header_runs_once(self):
+        self._assert_skipped_after_one_run(self._run_skipped_test(extra_args=['--self-compare-with-header', 'SiteIsolationEnabled=true']))
+
+    def test_skip_reply_from_a_crashed_test_is_a_crash(self):
+        result = self._run_skipped_test(crash=True)
+        self.assertEqual(test_expectations.CRASH, result.type)
+        self.assertIsNone(result.skipped_by_disabled_key)
+
+    def test_skip_reply_from_a_timed_out_test_is_a_timeout(self):
+        result = self._run_skipped_test(timeout=True)
+        self.assertEqual(test_expectations.TIMEOUT, result.type)
+        self.assertIsNone(result.skipped_by_disabled_key)
 
     def _run_with_expected_failure_time_out(self, expected_results, outputs, baseline=b'PASS\n', extra_args=()):
         options, _ = parse_args(['--expected-failure-time-out-ms', '6000'] + list(extra_args))

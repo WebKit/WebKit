@@ -53,6 +53,7 @@ class TestInstance(object):
         self.timeout = False
         self.is_reftest = False
         self.is_wpt_crash_test = False
+        self.skip_if_disabled = []
 
         # The values of each field are treated as raw byte strings. They
         # will be converted to unicode strings where appropriate using
@@ -108,7 +109,7 @@ class TestList(object):
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 91
+TOTAL_TESTS = 94
 TOTAL_SKIPS = 12
 TOTAL_RETRIES = 15
 
@@ -272,6 +273,9 @@ layer at (0,0) size 800x34
     tests.add('corner-cases/ews/directory-flaky/timeout.html', timeout=True)
     tests.add('corner-cases/multiple-failures/failure-crash.html', expected_text='ok-txt', actual_text='text_fail-txt')
     tests.add('corner-cases/multiple-failures/failure-timeout.html', expected_text='ok-txt', actual_text='text_fail-txt')
+    tests.add('corner-cases/skip-if-disabled/text.html', skip_if_disabled=['TestKey'])
+    tests.add('corner-cases/skip-if-disabled/other-key.html', skip_if_disabled=['OtherKey'])
+    tests.add_reftest('corner-cases/skip-if-disabled/reftest.html', 'corner-cases/skip-if-disabled/reftest-expected.html', same_image=True, skip_if_disabled=['TestKey'])
 
     tests.add('imported/w3c/web-platform-tests/some/new.html',
         expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None)
@@ -597,7 +601,9 @@ class TestDriver(Driver):
 
     def cmd_line(self, pixel_tests, per_test_args):
         pixel_tests_flag = '-p' if pixel_tests else ''
-        return [self._port._path_to_driver()] + [pixel_tests_flag] + self._port.get_option('additional_drt_flag', []) + per_test_args
+        disabled_keys = self._port.disabled_keys()
+        disabled_keys_flags = ['--disabled-keys', ','.join(disabled_keys)] if disabled_keys else []
+        return [self._port._path_to_driver()] + [pixel_tests_flag] + disabled_keys_flags + self._port.get_option('additional_drt_flag', []) + per_test_args
 
     def run_test(self, test_input, stop_when_done):
         if not self.is_valid_state:
@@ -612,6 +618,13 @@ class TestDriver(Driver):
         test_name = test_input.test_name
         test_args = test_input.args or []
         test = self._port._tests[test_name]
+        disabled_keys = self._port.disabled_keys()
+        matching_key = next((key for key in test.skip_if_disabled if key in disabled_keys), None)
+        if matching_key:
+            if stop_when_done:
+                self.stop()
+            return DriverOutput('skipIfDisabled: {}\n'.format(matching_key), None, None, None,
+                                test_time=time.time() - start_time, pid=self.pid, skipped_key=matching_key)
         if test.keyboard:
             raise KeyboardInterrupt()
         if test.exception:

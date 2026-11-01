@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ skipIfDisabled=TestKey ] -->
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Runs only when TestKey is not passed to --disabled-keys.");
+
+window.jsTestIsAsync = true;
+
+var message;
+var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/echo");
+ws.onopen = function()
+{
+    ws.send("echo");
+};
+ws.onmessage = function(event)
+{
+    message = event.data;
+    shouldBeEqualToString("message", "echo");
+    ws.close();
+    finishJSTest();
+};
+</script>
+</body>
+</html>

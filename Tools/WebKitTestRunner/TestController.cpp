@@ -980,6 +980,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_forceComplexText = options.forceComplexText;
     m_paths = options.paths;
     m_allowedHosts = options.allowedHosts;
+    m_disabledKeys = options.disabledKeys;
     m_localhostAliases = options.localhostAliases;
     m_checkForWorldLeaks = options.checkForWorldLeaks;
     m_allowAnyHTTPSCertificateForAllowedHosts = options.allowAnyHTTPSCertificateForAllowedHosts;
@@ -2217,14 +2218,14 @@ WKURLRef TestController::createTestURL(std::span<const char> pathOrURL)
     return url.leakRef();
 }
 
-TestOptions TestController::testOptionsForTest(const TestCommand& command) const
+TestOptions TestController::testOptionsForTest(const TestCommand& command, TestFeatures testHeaderFeatures) const
 {
     TestFeatures features = TestOptions::defaults();
     merge(features, m_globalFeatures);
     merge(features, hardcodedFeaturesBasedOnPathForTest(command));
     merge(features, platformSpecificFeatureDefaultsForTest(command));
     merge(features, featureDefaultsFromSelfComparisonHeader(command, TestOptions::keyTypeMapping()));
-    merge(features, featureDefaultsFromTestHeaderForTest(command, TestOptions::keyTypeMapping()));
+    merge(features, WTF::move(testHeaderFeatures));
     merge(features, featureFromAdditionalHeaderOption(command, TestOptions::keyTypeMapping()));
     merge(features, platformSpecificFeatureOverridesDefaultsForTest(command));
     return TestOptions { features };
@@ -3387,10 +3388,16 @@ bool TestController::runTest(const char* inputLine)
     WKTextCheckerSetTestingMode(true);
     
     auto command = parseInputLine(std::string(inputLine));
+    auto testHeader = testHeaderForTest(command, TestOptions::keyTypeMapping());
+
+    if (auto disabledKey = firstDisabledKeyForTest(testHeader, m_disabledKeys)) {
+        dumpSkippedTestReply(*disabledKey);
+        return true;
+    }
 
     m_state = RunningTest;
 
-    TestOptions options = testOptionsForTest(command);
+    TestOptions options = testOptionsForTest(command, WTF::move(testHeader.features));
 
     m_mainResourceURL = adoptWK(createTestURL(command.pathOrURL));
     if (!m_mainResourceURL)

@@ -1,6 +1,6 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
-# Copyright (C) 2011-2025 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -356,6 +356,7 @@ def parse_args(args):
         optparse.make_option("--world-leaks", action="store_true", default=False, help="Check for world leaks (currently, only documents). Differs from --leaks in that this uses internal instrumentation, rather than external tools."),
         optparse.make_option("--accessibility-isolated-tree", action="store_true", default=False, help="Runs tests in accessibility isolated tree mode."),
         optparse.make_option("--allowed-host", type="string", action="append", default=[], help="If specified, tests are allowed to make requests to the specified hostname."),
+        optparse.make_option("--disabled-keys", type="string", action="append", default=[], help="Skip tests whose webkit-test-runner header lists one of these keys in skipIfDisabled= (comma-separated; may be repeated)"),
         optparse.make_option("--disable-expected-crash-logs-gathering", action="store_false", default=True, dest="gather-expected-crash-logs", help="Disable crash logs gathering for tests expected to crash.")
     ]))
 
@@ -506,6 +507,10 @@ def _set_up_derived_options(port, options):
         options.time_out_ms = str(port.default_timeout_ms())
 
     options.slow_time_out_ms = str(5 * int(options.time_out_ms))
+
+    for key in sorted(port.requested_disabled_keys() - set(port.disabled_keys())):
+        _log.warning("Ignoring invalid --disabled-keys key '%s': keys must match [A-Za-z_][A-Za-z0-9_]*", key)
+    options.disabled_keys = port.disabled_keys()
 
     if port.port_name == "mac" and options.use_gpu_process and options.remote_layer_tree:
         host = Host()
