@@ -695,10 +695,12 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 @interface WKInspectorFrameHighlightView : NSView
 - (instancetype)initWithFrame:(NSRect)frame page:(WebKit::WebPageProxy&)page;
+- (void)pageGeometryMayHaveChanged;
 @end
 
 @implementation WKInspectorFrameHighlightView {
     WeakPtr<WebKit::WebPageProxy> _page;
+    std::optional<WebCore::InspectorOverlay::PageGeometry> _drawnPageGeometry;
 }
 
 - (instancetype)initWithFrame:(NSRect)frame page:(WebKit::WebPageProxy&)page
@@ -749,6 +751,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
     auto& inspectorController { page->inspectorController() };
     auto pageGeometry { inspectorController.frameHighlightPageGeometry() };
+    _drawnPageGeometry = pageGeometry;
 
     RetainPtr cgContext { surface->createPlatformContext() };
     {
@@ -771,6 +774,13 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
     [super viewDidChangeBackingProperties];
     [self setNeedsDisplay:YES];
+}
+
+- (void)pageGeometryMayHaveChanged
+{
+    RefPtr page { _page };
+    if (page && page->inspectorController().frameHighlightPageGeometry() != _drawnPageGeometry)
+        [self setNeedsDisplay:YES];
 }
 
 @end
@@ -1970,6 +1980,11 @@ void WebViewImpl::frameInspectorHighlightsDidChange()
     }
 
     [m_inspectorFrameHighlightView setNeedsDisplay:YES];
+}
+
+void WebViewImpl::frameInspectorHighlightPageGeometryMayHaveChanged()
+{
+    [m_inspectorFrameHighlightView pageGeometryMayHaveChanged];
 }
 
 void WebViewImpl::removeAllPDFHUDs()
