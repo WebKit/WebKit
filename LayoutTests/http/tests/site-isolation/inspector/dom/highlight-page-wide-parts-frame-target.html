@@ -2,6 +2,7 @@
 <html>
 <head>
 <style>
+    html { overflow-x: hidden; }
     body { margin: 0; height: 2000px; }
     iframe { position: absolute; border: 0; }
     #cross { left: 20px; top: 150px; width: 360px; height: 300px; }
@@ -21,6 +22,12 @@ async function scrollMainFrame(y)
     window.scrollTo(0, y);
     await afterRendering();
     return window.scrollY;
+}
+
+async function setPageScale(scale)
+{
+    await new Promise((resolve) => testRunner.runUIScript(`uiController.zoomToScale(${scale}, () => uiController.uiScriptComplete())`, resolve));
+    await afterRendering();
 }
 
 async function hoverTo(x, y)
@@ -124,9 +131,9 @@ function test() {
             InspectorTest.log("Actual: " + JSON.stringify(actual));
     }
 
-    async function highlightAndWaitForBounds(target, expression, expectedBounds) {
+    async function highlightAndWaitForBounds(target, expression, expectedBounds, options = {}) {
         let objectId = await objectIdFor(target, expression);
-        await target.DOMAgent.highlightNode.invoke({objectId, highlightConfig});
+        await target.DOMAgent.highlightNode.invoke({objectId, highlightConfig, ...options});
         return waitForUIHighlight((ui) => boundsMatch(onlyNode(ui)?.bounds, expectedBounds));
     }
 
@@ -273,6 +280,99 @@ function test() {
                 await hideAndWaitForNoFrames(crossTarget);
             } finally {
                 await evaluateInPage("scrollMainFrame(0)");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "RulersAndGuides",
+        description: "A highlight with rulers in a cross-site iframe should draw page-wide rulers, guide lines and the viewport size label.",
+        async test() {
+            let ui = await highlightAndWaitForBounds(crossTarget, "document.getElementById('target')", crossTargetBounds, {showRulers: true});
+            let rulers = ui?.frames?.[0]?.rulers;
+            expectThatOrLog(!!rulers && rulers.top && rulers.left, "Should draw the rulers along the top and left edges.", rulers);
+
+            let [clientWidth, clientHeight] = await evaluateInPage("Promise.resolve([document.documentElement.clientWidth, document.documentElement.clientHeight])");
+            expectThatOrLog(boundsMatch(onlyNode(ui)?.guides, [0, 0, clientWidth, clientHeight]), "Should draw guide lines from '#target' to the edges of the page's viewport.", onlyNode(ui)?.guides);
+
+            let viewportLabel = await evaluateInPage("Promise.resolve(`${visualViewport.width}px \u00d7 ${visualViewport.height}px`)");
+            expectThatOrLog(rulers?.viewportLabel === viewportLabel, "Should label the page's visual viewport size.", rulers?.viewportLabel);
+
+            await hideAndWaitForNoFrames(crossTarget);
+        }
+    });
+
+    suite.addTestCase({
+        name: "RulerExclusion",
+        description: "Rulers should move to the bottom edge when the highlighted node is under the top edge.",
+        async test() {
+            await evaluateInPage("scrollMainFrame(205)");
+
+            try {
+                const expectedBounds = [70, 5, 100, 40];
+                let ui = await highlightAndWaitForBounds(crossTarget, "document.getElementById('target')", expectedBounds, {showRulers: true});
+                let rulers = ui?.frames?.[0]?.rulers;
+                expectThatOrLog(!!rulers && !rulers.top && rulers.left, "Should draw the horizontal ruler along the bottom edge.", ui);
+
+                await hideAndWaitForNoFrames(crossTarget);
+            } finally {
+                await evaluateInPage("scrollMainFrame(0)");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "NoRulersRequested",
+        description: "A highlight without rulers should draw no rulers or guide lines.",
+        async test() {
+            let ui = await highlightAndWaitForBounds(crossTarget, "document.getElementById('target')", crossTargetBounds);
+            expectThatOrLog(!!onlyNode(ui) && !ui.frames[0].rulers && !onlyNode(ui).guides, "Should draw no rulers or guide lines.", ui);
+
+            await hideAndWaitForNoFrames(crossTarget);
+        }
+    });
+
+    suite.addTestCase({
+        name: "RulersAtTinyPageScale",
+        description: "Rulers at a page scale that puts their ticks far closer together than a pixel should be drawn without hanging the UI process or the page's process.",
+        async test() {
+            await evaluateInPage("setPageScale(0.000001)");
+
+            try {
+                let objectId = await objectIdFor(crossTarget, "document.getElementById('target')");
+                await crossTarget.DOMAgent.highlightNode.invoke({objectId, highlightConfig, showRulers: true});
+                let ui = await waitForUIHighlight((ui) => !!ui?.frames?.[0]?.rulers);
+                expectThatOrLog(!!ui?.frames?.[0]?.rulers, "UI process should draw the rulers of the cross-site iframe's highlight.", ui);
+                await hideAndWaitForNoFrames(crossTarget);
+
+                await pageTarget.DOMAgent.highlightNode.invoke({objectId: await objectIdFor(pageTarget, "document.body"), highlightConfig, showRulers: true});
+                await evaluateInPage("afterRendering()");
+                InspectorTest.pass("The page's process should draw the rulers of the page's highlight.");
+                await pageTarget.DOMAgent.hideHighlight();
+            } finally {
+                await evaluateInPage("setPageScale(1)");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "ViewportSizeLabelWithHeader",
+        description: "The viewport size label should leave out a header, as the page's visual viewport does.",
+        async test() {
+            await evaluateInPage("(async () => { internals.setHeaderHeight(50); await afterRendering(); })()");
+
+            try {
+                let viewportLabel = await evaluateInPage("Promise.resolve(`${visualViewport.width}px \u00d7 ${visualViewport.height}px`)");
+                let objectId = await objectIdFor(crossTarget, "document.getElementById('target')");
+                await crossTarget.DOMAgent.highlightNode.invoke({objectId, highlightConfig, showRulers: true});
+
+                let ui = await waitForUIHighlight((ui) => ui?.frames?.[0]?.rulers?.viewportLabel === viewportLabel);
+                let actual = ui?.frames?.[0]?.rulers?.viewportLabel;
+                expectThatOrLog(actual === viewportLabel, "Should label the page's visual viewport size without the 50px header.", {expected: viewportLabel, actual});
+
+                await hideAndWaitForNoFrames(crossTarget);
+            } finally {
+                await evaluateInPage("(async () => { internals.setHeaderHeight(0); await afterRendering(); })()");
             }
         }
     });

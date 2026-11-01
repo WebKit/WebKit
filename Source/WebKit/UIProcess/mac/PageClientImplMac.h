@@ -252,6 +252,7 @@ private:
     bool everMagnifiedDuringCurrentGesture() const final;
 
     void frameInspectorHighlightsDidChange() final;
+    void frameInspectorHighlightPageGeometryMayHaveChanged() final;
 
     void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 

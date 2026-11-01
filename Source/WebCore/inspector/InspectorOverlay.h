@@ -36,6 +36,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/InspectorBackendClient.h>
 #include <WebCore/InspectorOverlayLabel.h>
+#include <WebCore/IntPoint.h>
 #include <WebCore/Path.h>
 #include <WebCore/Timer.h>
 #include <wtf/AbstractCanMakeCheckedPtr.h>
@@ -159,6 +160,7 @@ struct InspectorOverlayHighlight {
     Vector<GridHighlightOverlay> gridHighlightOverlays;
     Vector<FlexHighlightOverlay> flexHighlightOverlays;
     Vector<NodeInfo> nodeInfos;
+    bool showRulers { false };
     bool usePageCoordinates { true };
 
     using Bounds = FloatRect;
@@ -240,14 +242,28 @@ public:
     struct PageGeometry {
         FloatSize viewportSize;
         FloatBoxExtent obscuredContentInsets;
+        IntPoint scrollOffset;
+        FloatSize visualViewportSize;
+        float pageScaleFactor { 1 };
+        float pageZoomFactor { 1 };
+        String fontFamily;
+
+        friend bool operator==(const PageGeometry&, const PageGeometry&) = default;
     };
 
     struct FrameHighlightGeometry {
         struct NodeGeometry {
             FloatRect bounds;
             FloatRect titleBounds;
+            FloatRect guidesBounds;
+        };
+        struct Rulers {
+            bool drawTopEdge { true };
+            bool drawLeftEdge { true };
+            String viewportSizeText;
         };
         Vector<NodeGeometry> nodes;
+        std::optional<Rulers> rulers;
     };
 
     void update();
@@ -303,6 +319,9 @@ private:
     void drawPaintRects(GraphicsContext&, const Deque<TimeRectPair>&);
     void drawBounds(GraphicsContext&, const Highlight::Bounds&);
     void drawRulers(GraphicsContext&, const RulerExclusion&);
+    static FloatRect drawBounds(GraphicsContext&, const Highlight::Bounds&, const PageGeometry&);
+    static FrameHighlightGeometry::Rulers drawRulers(GraphicsContext&, const RulerExclusion&, const PageGeometry&);
+    std::optional<PageGeometry> mainFramePageGeometry() const;
 
     Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
     

@@ -66,6 +66,7 @@
 #import "WebEventModifier.h"
 #import "WebFrameProxy.h"
 #import "WebPage.h"
+#import "WebPageInspectorController.h"
 #import "WebPageLoadTiming.h"
 #import "WebPageMessages.h"
 #import "WebPageProxyInternals.h"
@@ -201,8 +202,15 @@ static bool LEGACY_NODELETE exceedsRenderTreeSizeSizeThreshold(uint64_t threshol
 
 void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction, const std::optional<MainFrameData>& mainFrameData, const PageData& pageData, const TransactionID& transactionID)
 {
-    if (RefPtr pageClient = this->pageClient())
+    if (RefPtr pageClient = this->pageClient()) {
         pageClient->didCommitLayerTree(layerTreeTransaction, mainFrameData, pageData, transactionID);
+
+#if PLATFORM(MAC)
+        // Frame highlights draw rulers and labels against the page's scroll position and viewport.
+        if (mainFrameData && !m_inspectorController->frameHighlights().isEmpty())
+            pageClient->frameInspectorHighlightPageGeometryMayHaveChanged();
+#endif
+    }
 
     // FIXME: Remove this special mechanism and fold it into the transaction's layout milestones.
     if (internals().observedLayoutMilestones.contains(WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold) && !m_hitRenderTreeSizeThreshold

@@ -698,6 +698,7 @@ public:
     virtual bool everMagnifiedDuringCurrentGesture() const { return false; }
 
     virtual void frameInspectorHighlightsDidChange() { }
+    virtual void frameInspectorHighlightPageGeometryMayHaveChanged() { }
 #endif
 
     virtual void didFirstVisuallyNonEmptyLayoutForMainFrame() = 0;
