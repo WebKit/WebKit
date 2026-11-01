@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Local Root Frame With A Nested Same-Site Frame</title>
+    <style>
+    body { margin: 0; }
+    #root-target { position: absolute; left: 300px; top: 10px; width: 100px; height: 20px; background: papayawhip; }
+    iframe { position: absolute; left: 20px; top: 30px; width: 240px; height: 80px; border: 0; }
+    </style>
+</head>
+<body>
+    <div id="root-target">root frame node</div>
+    <script>
+    let params = new URLSearchParams(location.search);
+    let root = params.get("root");
+    let iframe = document.createElement("iframe");
+    if (params.get("nest") === "main") {
+        // Back to the main frame's site, so the nested frame is a local root in the main frame's process.
+        iframe.src = `http://127.0.0.1:8000/site-isolation/inspector/dom/resources/highlight-nested-root-frame.html?root=${root}-main`;
+    } else {
+        // Same origin as this frame, so the nested frame shares its process and is not a local root.
+        iframe.src = `${location.origin}/site-isolation/inspector/dom/resources/hover-inner-frame.html?root=${root}`;
+    }
+    document.body.appendChild(iframe);
+    </script>
+</body>
+</html>

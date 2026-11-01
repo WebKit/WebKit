@@ -1,0 +1,54 @@
+Tests that a node in a same-site frame nested inside a cross-site iframe is highlighted on the iframe's surface.
+
+
+
+== Running test suite: SiteIsolation.DOM.NestedFrameHighlight
+-- Running test case: Setup
+PASS: Should find the cross-site root frame target.
+PASS: Should find the second cross-site root frame target.
+PASS: Should find the nested frame target for hover-inner-frame.html?root=cross.
+PASS: #inner-target should belong to the nested frame target.
+PASS: The nested frame and its root should be distinct targets.
+PASS: Should resolve #root-target in the cross-site root.
+
+-- Running test case: RootNodeHighlightIsHosted
+PASS: The root should draw #root-target.
+PASS: The root should draw nothing after hiding.
+
+-- Running test case: NestedNodeHighlightIsHosted
+PASS: The root should draw the nested #inner-target.
+
+-- Running test case: NestedNodeListHighlightIsHosted
+PASS: The root should draw the nested #inner-target.
+
+-- Running test case: HideClearsNestedHighlight
+PASS: The root should draw the nested #inner-target.
+PASS: The root should draw nothing after hiding.
+
+-- Running test case: RootAndNestedShareTheRootSurface
+PASS: The root should draw both highlights.
+PASS: The root should keep drawing its own highlight.
+
+-- Running test case: NestedFrameRemovalTearsDownHighlight
+PASS: The root should draw the nested #inner-target.
+PASS: The root should draw nothing once the nested frame is gone.
+PASS: The root should still draw #root-target.
+PASS: Should find the nested frame target for hover-inner-frame.html?root=cross-again.
+PASS: #inner-target should belong to the nested frame target.
+
+-- Running test case: RootRemovalWhileNestedHighlighted
+PASS: The root should draw the nested #inner-target.
+PASS: The other root in the same process should draw #root-target.
+
+-- Running test case: MainProcessNestedNodeHighlightIsHosted
+PASS: Should find the local root frame target in the main frame's process.
+PASS: Should find the nested frame target for hover-inner-frame.html?root=back-main.
+PASS: #inner-target should belong to the nested frame target.
+PASS: The root should draw the nested #inner-target.
+PASS: The root should draw nothing after hiding.
+
+-- Running test case: SameSiteControl
+PASS: Should resolve the same-site nested #inner-target.
+PASS: The same-site nested #inner-target should belong to the page target.
+PASS: The page should draw the same-site nested #inner-target.
+

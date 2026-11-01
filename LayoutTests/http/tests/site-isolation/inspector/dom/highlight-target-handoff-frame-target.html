@@ -77,9 +77,9 @@ function test() {
         name: "BothTargetsAcceptHideHighlight",
         description: "Highlighting an inner node must be clearable on both targets, or both keep drawing.",
         async test() {
-            // Observed through the protocol rather than the backend overlay, which no Internals hook
-            // exposes per frame: hideHighlight must reach the page target when an inner node is
-            // highlighted, otherwise the page keeps drawing the owner iframe element too.
+            // Observed through the protocol rather than the backend overlay: hideHighlight must reach
+            // the page target when an inner node is highlighted, otherwise the page keeps drawing the
+            // owner iframe element too.
             let pageTarget = WI.assumingMainTarget();
             InspectorTest.expectThat(pageTarget !== frameTarget, "Page and frame targets should be distinct.");
             InspectorTest.expectThat(pageTarget.hasCommand("DOM.hideHighlight"), "Page target should support DOM.hideHighlight.");

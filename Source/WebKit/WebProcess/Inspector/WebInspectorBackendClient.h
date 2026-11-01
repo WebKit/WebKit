@@ -85,6 +85,7 @@ private:
     void frameDebuggerDidContinue(WebCore::FrameIdentifier) override;
     void inspectedFrameDestroyed(WebCore::LocalFrame&) override;
     unsigned paintRectCount() const override;
+    Vector<WebCore::FloatQuad> highlightQuadsForLocalRootForTesting(WebCore::LocalFrame&) const override;
 
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>) final;
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
@@ -105,10 +106,13 @@ private:
 
     WeakPtr<WebCore::PageOverlay> m_pageHighlightOverlay;
 
-    // Frame-scoped highlight overlays, keyed by local root. Separate lifetimes from m_paintRectOverlays.
+    // Frame highlight overlays, keyed by the frame that holds the state; each is hosted by that frame's
+    // local root. Separate lifetimes from m_paintRectOverlays.
     WeakHashMap<WebCore::LocalFrame, RefPtr<WebCore::PageOverlay>> m_frameHighlightOverlays;
 
     RefPtr<WebCore::PageOverlay> ensureHighlightOverlayForFrame(WebCore::LocalFrame&);
+    void releaseFrameOverlayContainerIfUnused(WebCore::LocalFrame& rootFrame);
+    WebCore::LocalFrame* frameForHighlightOverlay(const WebCore::PageOverlay&) const;
 
     // Paint-rect overlays are per local root frame: under Site Isolation one process can host several
     // local roots, each with its own compositing tree, so each needs its own Document overlay.

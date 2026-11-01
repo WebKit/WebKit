@@ -111,10 +111,13 @@ WebInspectorBackendClient::~WebInspectorBackendClient()
     }
 
     for (auto entry : frameHighlightOverlays) {
-        Ref frame = entry.key;
-        if (RefPtr overlay = entry.value)
-            corePage->pageOverlayController().uninstallPageOverlay(*overlay, PageOverlay::FadeMode::DoNotFade);
-        corePage->pageOverlayController().willDestroyRootFrameOverlayContainer(frame.get());
+        RefPtr overlay { entry.value };
+        if (!overlay)
+            continue;
+        RefPtr hostFrame { overlay->associatedFrame() };
+        corePage->pageOverlayController().uninstallPageOverlay(*overlay, PageOverlay::FadeMode::DoNotFade);
+        if (hostFrame)
+            corePage->pageOverlayController().willDestroyRootFrameOverlayContainer(*hostFrame);
     }
 }
 
@@ -230,7 +233,7 @@ RefPtr<PageOverlay> WebInspectorBackendClient::ensureHighlightOverlayForFrame(Lo
         // root layer and attachViewOverlayGraphicsLayer() to stop hardcoding the main frame.
         // DoNotFade matches hideHighlightForFrame(): a Fade uninstall defers the real uninstall.
         Ref newOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
-        newOverlay->setAssociatedFrame(&frame);
+        newOverlay->setAssociatedFrame(&frame.rootFrame());
         corePage->pageOverlayController().installPageOverlay(newOverlay.copyRef(), PageOverlay::FadeMode::DoNotFade);
         return newOverlay.ptr();
     }).iterator->value;
@@ -245,14 +248,7 @@ void WebInspectorBackendClient::highlightFrame(LocalFrame& frame)
     if (!corePage)
         return;
 
-    // Only a local root hosts its own compositing tree; a local subframe draws via the page overlay.
-    // FIXME: a nested local subframe's state lives on its own overlay, which nothing consults.
-    if (!frame.isRootFrame()) {
-        highlight();
-        return;
-    }
-
-    // The frame must also own the state; update() guarantees it, so this is defence-in-depth.
+    // The frame must own the state; update() guarantees it, so this is defence-in-depth.
     if (!frame.inspectorController().hasOverlayContentToDraw()) {
         highlight();
         return;
@@ -289,13 +285,12 @@ void WebInspectorBackendClient::hideHighlightForFrame(LocalFrame& frame)
     }
 
     // Erase before uninstalling; DoNotFade so the overlay is gone before its entry is.
-    RefPtr overlay = m_frameHighlightOverlays.take(frame);
-    if (overlay)
+    if (RefPtr overlay { m_frameHighlightOverlays.take(frame) }) {
+        RefPtr hostFrame { overlay->associatedFrame() };
         corePage->pageOverlayController().uninstallPageOverlay(*overlay, PageOverlay::FadeMode::DoNotFade);
-
-    // The container is keyed by frame and shared with the paint-rect overlay; release it only if free.
-    if (!m_paintRectOverlays.contains(frame))
-        corePage->pageOverlayController().willDestroyRootFrameOverlayContainer(frame);
+        if (hostFrame)
+            releaseFrameOverlayContainerIfUnused(*hostFrame);
+    }
 
 #if PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(PLAYSTATION) || PLATFORM(WPE)
     if (!corePage->settings().acceleratedCompositingEnabled()) {
@@ -309,6 +304,36 @@ void WebInspectorBackendClient::hideHighlightForFrame(LocalFrame& frame)
     UNUSED_PARAM(frame);
     hideHighlight();
 #endif
+}
+
+void WebInspectorBackendClient::releaseFrameOverlayContainerIfUnused(LocalFrame& rootFrame)
+{
+    RefPtr page { m_page };
+    RefPtr corePage { page ? page->corePage() : nullptr };
+    if (!corePage)
+        return;
+
+    // The container is keyed by local root and shared by its paint-rect overlay and the highlight
+    // overlays it hosts.
+    if (m_paintRectOverlays.contains(rootFrame))
+        return;
+
+    for (auto entry : m_frameHighlightOverlays) {
+        if (entry.value && entry.value->associatedFrame() == &rootFrame)
+            return;
+    }
+
+    corePage->pageOverlayController().willDestroyRootFrameOverlayContainer(rootFrame);
+}
+
+LocalFrame* WebInspectorBackendClient::frameForHighlightOverlay(const PageOverlay& overlay) const
+{
+    // Several frame overlays can share a local root, so match the overlay, not its associated frame.
+    for (auto entry : m_frameHighlightOverlays) {
+        if (entry.value.get() == &overlay)
+            return &entry.key;
+    }
+    return nullptr;
 }
 
 auto WebInspectorBackendClient::ensurePaintRectOverlayForFrame(LocalFrame& frame) -> PaintRectOverlayForFrame&
@@ -393,6 +418,34 @@ unsigned WebInspectorBackendClient::paintRectCount() const
     return count;
 }
 
+Vector<FloatQuad> WebInspectorBackendClient::highlightQuadsForLocalRootForTesting(LocalFrame& rootFrame) const
+{
+    RefPtr page { m_page };
+    RefPtr corePage { page ? page->corePage() : nullptr };
+    if (!corePage)
+        return { };
+
+    Vector<FloatQuad> quads;
+    for (auto& overlay : corePage->pageOverlayController().pageOverlays()) {
+        if (overlay->associatedFrame() != &rootFrame)
+            continue;
+
+        RefPtr frame { frameForHighlightOverlay(overlay) };
+        if (!frame)
+            continue;
+
+        // Count an overlay only once its container is attached to the local root's compositing tree.
+        RefPtr container { overlay->layer().parent() };
+        if (!container || !container->parent())
+            continue;
+
+        InspectorOverlay::Highlight highlight;
+        protect(frame->inspectorController())->getHighlight(highlight, InspectorOverlay::CoordinateSystem::Document);
+        quads.appendVector(WTF::move(highlight.quads));
+    }
+    return quads;
+}
+
 void WebInspectorBackendClient::animationEndedForLayer(LocalFrame* frame, const GraphicsLayer* layer)
 {
     // The layer client that fired identifies the bucket directly. If the frame is gone (torn down
@@ -428,15 +481,26 @@ void WebInspectorBackendClient::willDestroyFrameOverlays(LocalFrame& frame)
     RefPtr page = m_page.get();
     RefPtr corePage = page ? page->corePage() : nullptr;
 
-    // Tear the highlight overlay down too, or a stale one re-parents under the main frame.
-    // Erase it first: uninstalling re-enters willMoveToPage(), which mutates this map.
-    if (auto highlightOverlay = m_frameHighlightOverlays.takeOptional(frame); highlightOverlay && corePage) {
-        if (RefPtr overlay = *highlightOverlay)
-            corePage->pageOverlayController().uninstallPageOverlay(*overlay, PageOverlay::FadeMode::DoNotFade);
+    // Tear the highlight overlays down too, or a stale one re-parents under the main frame: this frame's
+    // own, and those it hosts for nested frames, which outlive it when a remote ancestor removes it.
+    // Erase them first: uninstalling re-enters willMoveToPage(), which mutates this map.
+    Vector<Ref<PageOverlay>> highlightOverlays;
+    m_frameHighlightOverlays.removeIf([&](auto& entry) {
+        RefPtr overlay { entry.value };
+        if (&entry.key != &frame && (!overlay || overlay->associatedFrame() != &frame))
+            return false;
+        if (overlay)
+            highlightOverlays.append(overlay.releaseNonNull());
+        return true;
+    });
 
-        // Shared with the paint-rect overlay; the step below releases the container otherwise.
-        if (!m_paintRectOverlays.contains(frame))
-            corePage->pageOverlayController().willDestroyRootFrameOverlayContainer(frame);
+    if (corePage) {
+        for (auto& overlay : highlightOverlays) {
+            // Not ref'd when this frame hosts it: this frame can be mid-destruction.
+            RefPtr otherHostFrame { overlay->associatedFrame() != &frame ? overlay->associatedFrame() : nullptr };
+            corePage->pageOverlayController().uninstallPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
+            releaseFrameOverlayContainerIfUnused(otherHostFrame ? *otherHostFrame : frame);
+        }
     }
 
     // Buckets are keyed by local root frame; a frame owns a bucket only if it is that root. Uninstall
@@ -590,16 +654,19 @@ void WebInspectorBackendClient::drawRect(PageOverlay& overlay, WebCore::Graphics
     if (!corePage)
         return;
 
-    // Map the PageOverlay back to the InspectorOverlay holding its state. Membership, not just
-    // associatedFrame(): paint-rect overlays set one too. Never paint a frame surface with page state.
-    if (RefPtr frame = overlay.associatedFrame(); frame && m_frameHighlightOverlays.contains(*frame)) {
-        Ref frameController = frame->inspectorController();
-        if (frameController->hasOverlayContentToDraw())
-            frameController->drawHighlight(context);
+    if (&overlay == m_pageHighlightOverlay.get()) {
+        protect(corePage->inspectorController())->drawHighlight(context);
         return;
     }
 
-    protect(corePage->inspectorController())->drawHighlight(context);
+    // Never paint a frame surface with page state.
+    RefPtr frame { frameForHighlightOverlay(overlay) };
+    if (!frame)
+        return;
+
+    Ref frameController { frame->inspectorController() };
+    if (frameController->hasOverlayContentToDraw())
+        frameController->drawHighlight(context);
 }
 
 bool WebInspectorBackendClient::mouseEvent(PageOverlay&, const PlatformMouseEvent&)

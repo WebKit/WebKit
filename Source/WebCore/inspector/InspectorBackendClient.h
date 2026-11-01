@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <WebCore/FloatQuad.h>
 #include <WebCore/FrameIdentifier.h>
 #include <optional>
 #include <wtf/Forward.h>
@@ -86,6 +87,7 @@ public:
     virtual void frameDebuggerDidPause(FrameIdentifier) { }
     virtual void frameDebuggerDidContinue(FrameIdentifier) { }
     virtual unsigned paintRectCount() const { return 0; }
+    virtual Vector<FloatQuad> highlightQuadsForLocalRootForTesting(LocalFrame&) const { return { }; }
     virtual void didSetSearchingForNode(bool) { }
     virtual void elementSelectionChanged(bool) { }
     virtual void timelineRecordingChanged(bool) { }

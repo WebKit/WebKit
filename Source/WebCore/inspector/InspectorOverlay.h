@@ -160,7 +160,7 @@ public:
     // Not cached by callers: destroyed by PageInspectorController::inspectedPageDestroyed().
     virtual InspectorBackendClient* LEGACY_NODELETE overlayOwnerBackendClient() const = 0;
 
-    // The frame the overlay draws in, or null for the page overlay. See frameForGeometry().
+    // The frame whose state the overlay holds, or null for the page overlay.
     virtual LocalFrame* LEGACY_NODELETE overlayOwnerFrame() const { return nullptr; }
 
     // Flex line-wrap positions for line separators, from the owning DOM agent's cache.
@@ -281,7 +281,7 @@ private:
     // Null once the owner is detached from its page; every geometry path must tolerate that.
     Page* LEGACY_NODELETE page() const;
 
-    // The frame this overlay draws in: the owner's frame, else the page's local main frame.
+    // The frame this overlay draws in: the owner's local root, else the page's local main frame.
     LocalFrame* LEGACY_NODELETE frameForGeometry() const;
 
     // True when scoped to one frame rather than the whole page.

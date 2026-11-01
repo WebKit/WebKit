@@ -11,8 +11,8 @@ function test() {
     // Unlike element highlight, layout overlays are persistent, so the cases below also cover the
     // state that persistence introduces: several overlays live at once across separate processes,
     // survival across scroll, and teardown on navigation.
-    // A same-origin frame nested inside a cross-origin root is not covered: its overlay is not drawn
-    // yet (see WebInspectorBackendClient::highlightFrame()).
+    // A same-origin frame nested inside a cross-origin root is not covered here;
+    // highlight-nested-frame-target.html covers its node highlights.
 
     async function containerNodeForFrame(resourceName) {
         let target = await frameTargetForURLContaining(resourceName);
