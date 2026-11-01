@@ -41,9 +41,9 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
+#if USE(GBM)
 typedef void *EGLImage;
 
-#if USE(GBM)
 struct gbm_bo;
 #endif
 
@@ -171,6 +171,7 @@ private:
     };
 #endif
 
+#if USE(GBM)
     class BufferEGLImage final : public Buffer {
     public:
         static RefPtr<Buffer> create(WebPageProxy&, uint64_t id, uint64_t surfaceID, const WebCore::IntSize&, RendererBufferFormat::Usage, WebCore::DMABufBufferAttributes&&);
@@ -199,6 +200,7 @@ private:
         unsigned m_textureID { 0 };
 #endif
     };
+#endif // USE(GBM)
 
 #if USE(GBM)
     class BufferGBM final : public Buffer {
