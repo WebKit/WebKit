@@ -1,0 +1,21 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; font-size: 20px; line-height: 20px; }
+.leaf { margin: 10px 0; background: lightblue; }
+</style>
+<!-- Quirks mode: tables, flex and grid containers without percentage block sizes size the same as in standards mode. -->
+<div class="root">
+  <table class="leaf"><tr><td>table cell</td><td>cell</td></tr></table>
+  <div class="leaf" style="display: flex"><div style="flex: 1">flex</div><div>item</div></div>
+  <div class="leaf" style="display: grid; grid-template-columns: 1fr 1fr"><div>grid</div><div>item</div></div>
+  <div class="leaf" style="contain: layout"><div style="margin: 5px">contained</div></div>
+</div>
+<!-- Quirky margins next to leaves. -->
+<div class="root"><p>paragraph</p><table class="leaf" style="margin: 0"><tr><td>table</td></tr></table><p>paragraph</p></div>
+<!-- A percentage block size in a leaf keeps the root on the render tree path. -->
+<div class="root" style="height: 100px"><div class="leaf" style="display: flex"><div style="height: 50%">percentage</div></div></div>
+<div class="root"><div class="leaf" style="display: flex"><div id="text">x</div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "text that wraps onto more lines inside the flex item";
+</script>
