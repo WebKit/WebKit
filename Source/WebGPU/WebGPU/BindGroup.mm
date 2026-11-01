@@ -1738,6 +1738,9 @@ bool BindGroup::updateExternalTextures(WebGPU::ExternalTexture& apiExternalTextu
 {
     // Every WebGPU::ExternalTexture that reaches a WebGPU::Metal::BindGroup is a WebGPU::Metal::ExternalTexture.
     auto& externalTexture = downcast<ExternalTexture>(apiExternalTexture);
+    if (m_renderBundleConsumerCount)
+        return false;
+
     if (!m_bindGroupLayout)
         return false;
 

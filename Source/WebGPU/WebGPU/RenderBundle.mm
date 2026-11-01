@@ -66,6 +66,11 @@ RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, Ve
     , m_commandCount(commandCount)
     , m_makeSubmitInvalid(makeSubmitInvalid)
 {
+    // This bundle's indirect command buffer references these bind groups' argument buffers, and its
+    // residency snapshot is frozen here. See BindGroup::updateExternalTextures().
+    for (RefPtr bindGroup : m_bindGroups)
+        bindGroup->addRenderBundleConsumer();
+
     ASSERT(m_renderBundleEncoder || m_renderBundlesResources);
 }
 
@@ -75,7 +80,11 @@ RenderBundle::RenderBundle(Device& device, NSString* errorString)
 {
 }
 
-RenderBundle::~RenderBundle() = default;
+RenderBundle::~RenderBundle()
+{
+    for (RefPtr bindGroup : m_bindGroups)
+        bindGroup->removeRenderBundleConsumer();
+}
 
 bool RenderBundle::isValid() const
 {
