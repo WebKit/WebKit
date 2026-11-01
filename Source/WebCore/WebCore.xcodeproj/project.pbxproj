@@ -19196,6 +19196,10 @@
 		BC1777712F42418A00E318C5 /* StyleGeneratedImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleGeneratedImage.h; sourceTree = "<group>"; };
 		BC1777722F42418A00E318C5 /* StyleGeneratedImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleGeneratedImage.cpp; sourceTree = "<group>"; };
 		BC1777732F42418A00E318C5 /* StyleGradientImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleGradientImage.h; sourceTree = "<group>"; };
+		23E0FEABA2D79B1892BCCE18 /* StyleMeshGradientImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleMeshGradientImage.cpp; sourceTree = "<group>"; };
+		0BFDDBDACD1084D68932CD0C /* StyleMeshGradientImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleMeshGradientImage.h; sourceTree = "<group>"; };
+		563341B9CB7707EF51940F44 /* StyleMeshGradient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleMeshGradient.cpp; sourceTree = "<group>"; };
+		9994AB996BE33735E18F51EB /* StyleMeshGradient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleMeshGradient.h; sourceTree = "<group>"; };
 		BC1777742F42418A00E318C5 /* StyleGradientImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleGradientImage.cpp; sourceTree = "<group>"; };
 		BC1777752F42418A00E318C5 /* StyleImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleImage.h; sourceTree = "<group>"; };
 		BC1777762F42418A00E318C5 /* StyleImageSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleImageSet.h; sourceTree = "<group>"; };
@@ -37482,6 +37486,8 @@
 				BC1777762F42418A00E318C5 /* StyleImageSet.h */,
 				BC1777792F42418A00E318C5 /* StyleInvalidImage.cpp */,
 				BC1777782F42418A00E318C5 /* StyleInvalidImage.h */,
+				23E0FEABA2D79B1892BCCE18 /* StyleMeshGradientImage.cpp */,
+				0BFDDBDACD1084D68932CD0C /* StyleMeshGradientImage.h */,
 				BC17777B2F42418A00E318C5 /* StyleMultiImage.cpp */,
 				BC17777A2F42418A00E318C5 /* StyleMultiImage.h */,
 				BC17777D2F42418A00E318C5 /* StyleNamedImage.cpp */,
@@ -39061,6 +39067,8 @@
 				BC731E742E636D8700A6584F /* StyleImageOrNone.h */,
 				BC22AA9F2E36A554009AC0C3 /* StyleImageWrapper.cpp */,
 				BC22AA9D2E36A2BD009AC0C3 /* StyleImageWrapper.h */,
+				563341B9CB7707EF51940F44 /* StyleMeshGradient.cpp */,
+				9994AB996BE33735E18F51EB /* StyleMeshGradient.h */,
 				BCD9F1742E20384800D1C3DF /* StyleObjectPosition.h */,
 				DCD61E9000DE48A88138DCA4 /* StyleObjectViewBox.cpp */,
 				CEA340CB3EC1453981DF6B56 /* StyleObjectViewBox.h */,

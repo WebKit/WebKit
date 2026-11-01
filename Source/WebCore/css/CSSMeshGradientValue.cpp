@@ -28,14 +28,15 @@
 
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
-#include "StyleImage.h"
+#include "StyleBuilderState.h"
+#include "StyleMeshGradientImage.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
 
 namespace WebCore {
 
-RefPtr<Style::Image> CSSMeshGradientValue::createStyleImage(const Style::BuilderState&) const
+RefPtr<Style::Image> CSSMeshGradientValue::createStyleImage(const Style::BuilderState& state) const
 {
-    // FIXME: Add a Style::Image for mesh-gradient().
-    return nullptr;
+    return Style::MeshGradientImage::create(Style::toStyle(m_gradient, state));
 }
 
 String CSSMeshGradientValue::customCSSText(const CSS::SerializationContext& context) const

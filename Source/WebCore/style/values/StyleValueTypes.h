@@ -148,6 +148,8 @@ template<typename T> struct ToCSSMapping<MinimallySerializingSpaceSeparatedRectE
 // Standard Range-Like type mappings:
 template<typename T, size_t N> struct ToCSSMapping<SpaceSeparatedVector<T, N>> { using type = SpaceSeparatedVector<CSSType<T>, N>; };
 template<typename T, size_t N> struct ToCSSMapping<CommaSeparatedVector<T, N>> { using type = CommaSeparatedVector<CSSType<T>, N>; };
+template<typename T, size_t N> struct ToCSSMapping<SlashSeparatedVector<T, N>> { using type = SlashSeparatedVector<CSSType<T>, N>; };
+template<typename T, size_t N> struct ToCSSMapping<SemicolonSeparatedVector<T, N>> { using type = SemicolonSeparatedVector<CSSType<T>, N>; };
 
 // Standard Variant-Like type mappings:
 template<typename... Ts> struct ToCSSMapping<Variant<Ts...>> {
@@ -224,6 +226,26 @@ template<typename StyleType, size_t inlineCapacity> struct ToCSS<CommaSeparatedV
     }
 };
 
+// Specialization for `SlashSeparatedVector`.
+template<typename StyleType, size_t inlineCapacity> struct ToCSS<SlashSeparatedVector<StyleType, inlineCapacity>> {
+    using Result = SlashSeparatedVector<CSSType<StyleType>, inlineCapacity>;
+
+    template<typename... Rest> Result operator()(const SlashSeparatedVector<StyleType, inlineCapacity>& value, const Style::ComputedStyle& style, Rest&&... rest)
+    {
+        return Result { value.value.template map<typename Result::Container>([&](const auto& x) { return toCSS(x, style, rest...); }) };
+    }
+};
+
+// Specialization for `SemicolonSeparatedVector`.
+template<typename StyleType, size_t inlineCapacity> struct ToCSS<SemicolonSeparatedVector<StyleType, inlineCapacity>> {
+    using Result = SemicolonSeparatedVector<CSSType<StyleType>, inlineCapacity>;
+
+    template<typename... Rest> Result operator()(const SemicolonSeparatedVector<StyleType, inlineCapacity>& value, const Style::ComputedStyle& style, Rest&&... rest)
+    {
+        return Result { value.value.template map<typename Result::Container>([&](const auto& x) { return toCSS(x, style, rest...); }) };
+    }
+};
+
 // MARK: - Conversion from "CSS" to "Style"
 
 struct ToStyleInvoker {
@@ -292,6 +314,8 @@ template<typename T> struct ToStyleMapping<MinimallySerializingSpaceSeparatedRec
 // Standard Range-Like type mappings:
 template<typename T, size_t N> struct ToStyleMapping<SpaceSeparatedVector<T, N>> { using type = SpaceSeparatedVector<StyleType<T>, N>; };
 template<typename T, size_t N> struct ToStyleMapping<CommaSeparatedVector<T, N>> { using type = CommaSeparatedVector<StyleType<T>, N>; };
+template<typename T, size_t N> struct ToStyleMapping<SlashSeparatedVector<T, N>> { using type = SlashSeparatedVector<StyleType<T>, N>; };
+template<typename T, size_t N> struct ToStyleMapping<SemicolonSeparatedVector<T, N>> { using type = SemicolonSeparatedVector<StyleType<T>, N>; };
 
 // Standard Variant-Like type mappings:
 template<typename... Ts> struct ToStyleMapping<Variant<Ts...>> {
@@ -363,6 +387,26 @@ template<typename CSSType, size_t inlineCapacity> struct ToStyle<CommaSeparatedV
     using Result = CommaSeparatedVector<StyleType<CSSType>, inlineCapacity>;
 
     template<typename... Rest> Result operator()(const CommaSeparatedVector<CSSType, inlineCapacity>& value, Rest&&... rest)
+    {
+        return Result { value.value.template map<typename Result::Container>([&](const auto& x) { return toStyle(x, rest...); }) };
+    }
+};
+
+// Specialization for `SlashSeparatedVector`.
+template<typename CSSType, size_t inlineCapacity> struct ToStyle<SlashSeparatedVector<CSSType, inlineCapacity>> {
+    using Result = SlashSeparatedVector<StyleType<CSSType>, inlineCapacity>;
+
+    template<typename... Rest> Result operator()(const SlashSeparatedVector<CSSType, inlineCapacity>& value, Rest&&... rest)
+    {
+        return Result { value.value.template map<typename Result::Container>([&](const auto& x) { return toStyle(x, rest...); }) };
+    }
+};
+
+// Specialization for `SemicolonSeparatedVector`.
+template<typename CSSType, size_t inlineCapacity> struct ToStyle<SemicolonSeparatedVector<CSSType, inlineCapacity>> {
+    using Result = SemicolonSeparatedVector<StyleType<CSSType>, inlineCapacity>;
+
+    template<typename... Rest> Result operator()(const SemicolonSeparatedVector<CSSType, inlineCapacity>& value, Rest&&... rest)
     {
         return Result { value.value.template map<typename Result::Container>([&](const auto& x) { return toStyle(x, rest...); }) };
     }

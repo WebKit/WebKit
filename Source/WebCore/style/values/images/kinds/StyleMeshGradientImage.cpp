@@ -1,0 +1,97 @@
+/*
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "StyleMeshGradientImage.h"
+
+#include "CSSMeshGradientValue.h"
+#include "DeprecatedCSSOMValue.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
+
+namespace WebCore {
+namespace Style {
+
+MeshGradientImage::MeshGradientImage(Gradient&& gradient)
+    : GeneratedImage { Type::MeshGradientImage }
+    , m_gradient { WTF::move(gradient) }
+{
+}
+
+MeshGradientImage::~MeshGradientImage() = default;
+
+bool MeshGradientImage::operator==(const Image& other) const
+{
+    auto* otherMeshGradientImage = dynamicDowncast<MeshGradientImage>(other);
+    return otherMeshGradientImage && equals(*otherMeshGradientImage);
+}
+
+bool MeshGradientImage::equals(const MeshGradientImage& other) const
+{
+    return m_gradient == other.m_gradient;
+}
+
+Ref<CSSValue> MeshGradientImage::computedStyleValue(const Style::ComputedStyle& style) const
+{
+    return CSSMeshGradientValue::create(toCSS(m_gradient, style));
+}
+
+Ref<DeprecatedCSSOMValue> MeshGradientImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
+{
+    return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
+}
+
+bool MeshGradientImage::isPending() const
+{
+    return false;
+}
+
+void MeshGradientImage::load(CachedResourceLoader&, const ResourceLoaderOptions&)
+{
+}
+
+ImageDrawResult MeshGradientImage::draw(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect&, const FloatRect&, bool) const
+{
+    // FIXME: Render mesh-gradient().
+    return ImageDrawResult::DidNothing;
+}
+
+ImageDrawResult MeshGradientImage::drawAsPattern(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, bool) const
+{
+    // FIXME: Render mesh-gradient().
+    return ImageDrawResult::DidNothing;
+}
+
+bool MeshGradientImage::knownToBeOpaque(const RenderElement&) const
+{
+    return false;
+}
+
+bool MeshGradientImage::containsCurrentColor() const
+{
+    return Style::containsCurrentColor(m_gradient.parameters);
+}
+
+} // namespace Style
+} // namespace WebCore

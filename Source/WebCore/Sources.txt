@@ -3492,6 +3492,7 @@ style/values/images/kinds/StyleGradientImage.cpp @header:RenderStyleGetters @cos
 style/values/images/kinds/StyleImage.cpp
 style/values/images/kinds/StyleImageSet.cpp
 style/values/images/kinds/StyleInvalidImage.cpp
+style/values/images/kinds/StyleMeshGradientImage.cpp
 style/values/images/kinds/StyleMultiImage.cpp
 style/values/images/kinds/StyleColorImage.cpp
 style/values/images/kinds/StyleNamedImage.cpp
@@ -3500,6 +3501,7 @@ style/values/images/StyleGradient.cpp @header:RenderStyleGetters @cost:6
 style/values/images/StyleImageOrNone.cpp
 style/values/images/StyleImageOrientation.cpp
 style/values/images/StyleImageWrapper.cpp
+style/values/images/StyleMeshGradient.cpp
 style/values/images/StyleObjectViewBox.cpp
 style/values/inline/StyleLineHeight.cpp @header:RenderStyleGetters @cost:5
 style/values/inline/StyleVerticalAlign.cpp
