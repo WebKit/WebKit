@@ -31,12 +31,14 @@
 #include "DocumentView.h"
 #include "ElementIterator.h"
 #include "FloatRoundedRect.h"
+#include "FontCascadeInlines.h"
 #include "FontSelector.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "HitTestResult.h"
 #include "InteractionRegion.h"
+#include "LayoutIntegrationBlockCoverage.h"
 #include "LocalFrameView.h"
 #include "Page.h"
 #include "PageOverlay.h"
@@ -76,7 +78,7 @@ public:
     virtual bool shouldPaintOverlayIntoLayer() const { return true; }
 
 protected:
-    RegionOverlay(Page&, Color);
+    RegionOverlay(Page&, Color, PageOverlay::OverlayType = PageOverlay::OverlayType::Document);
 
 private:
     void willMoveToPage(PageOverlay&, Page*) final;
@@ -723,6 +725,73 @@ void EnhancedSecurityOverlay::drawRect(PageOverlay&, GraphicsContext& context, c
 }
 
 #if COMPILER(CLANG)
+#pragma mark - BlockLayoutCoverageOverlay
+#endif
+
+// How many of the block-level boxes of the main frame the new block formatting context lays out, in the top right corner of the view.
+class BlockLayoutCoverageOverlay final : public RegionOverlay {
+public:
+    static Ref<BlockLayoutCoverageOverlay> create(Page& page)
+    {
+        return adoptRef(*new BlockLayoutCoverageOverlay(page));
+    }
+
+private:
+    explicit BlockLayoutCoverageOverlay(Page& page)
+        : RegionOverlay(page, Color::transparentBlack, PageOverlay::OverlayType::View)
+    {
+        // What the badge shows doesn't depend on the scroll position.
+        protect(overlay())->setNeedsSynchronousScrolling(false);
+    }
+
+    bool updateRegion() final;
+    void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) final;
+
+    LayoutIntegration::BlockLayoutCoverage m_coverage;
+    FloatBoxExtent m_obscuredContentInsets;
+};
+
+bool BlockLayoutCoverageOverlay::updateRegion()
+{
+    RefPtr page = m_page;
+    RefPtr localMainFrame = page ? page->localMainFrame() : nullptr;
+    CheckedPtr renderView = localMainFrame ? localMainFrame->contentRenderer() : nullptr;
+    auto coverage = renderView ? LayoutIntegration::computeBlockLayoutCoverage(*renderView) : LayoutIntegration::BlockLayoutCoverage { };
+    // The view can extend under the window's toolbar, which the obscured content insets cover.
+    auto obscuredContentInsets = page ? page->obscuredContentInsets() : FloatBoxExtent { };
+    if (coverage == m_coverage && obscuredContentInsets == m_obscuredContentInsets)
+        return false;
+    m_coverage = coverage;
+    m_obscuredContentInsets = obscuredContentInsets;
+    return true;
+}
+
+void BlockLayoutCoverageOverlay::drawRect(PageOverlay& pageOverlay, GraphicsContext& context, const IntRect& dirtyRect)
+{
+    context.clearRect(dirtyRect);
+
+    auto percentage = m_coverage.boxes ? 100 * m_coverage.coveredBoxes / m_coverage.boxes : 0;
+    auto textRun = TextRun(makeString(percentage, "% ("_s, m_coverage.coveredBoxes, '/', m_coverage.boxes, ')'));
+
+    FontCascadeDescription fontDescription;
+    fontDescription.setOneFamily("Helvetica"_s);
+    fontDescription.setComputedSize(12);
+    fontDescription.setUsedSize(12);
+    fontDescription.setWeight(FontSelectionValue(500));
+    FontCascade font(WTF::move(fontDescription));
+    font.update(nullptr);
+
+    constexpr float padding = 6;
+    constexpr float margin = 10;
+    auto& fontMetrics = font.metricsOfPrimaryFont();
+    auto badgeSize = FloatSize { font.width(textRun) + 2 * padding, fontMetrics.ascent() + fontMetrics.descent() + 2 * padding };
+    auto badgeRect = FloatRect { { pageOverlay.bounds().maxX() - m_obscuredContentInsets.right() - margin - badgeSize.width(), m_obscuredContentInsets.top() + margin }, badgeSize };
+    context.fillRoundedRect(FloatRoundedRect { badgeRect, CornerRadii { 6 } }, Color::black.colorWithAlphaByte(160));
+    context.setFillColor(Color::white);
+    context.drawText(font, textRun, badgeRect.location() + FloatSize { padding, padding + fontMetrics.ascent() });
+}
+
+#if COMPILER(CLANG)
 #pragma mark - RegionOverlay
 #endif
 
@@ -737,14 +806,16 @@ Ref<RegionOverlay> RegionOverlay::create(Page& page, DebugPageOverlays::RegionTy
         return InteractionRegionOverlay::create(page);
     case DebugPageOverlays::RegionType::EnhancedSecurity:
         return EnhancedSecurityOverlay::create(page);
+    case DebugPageOverlays::RegionType::BlockLayoutCoverage:
+        return BlockLayoutCoverageOverlay::create(page);
     }
     ASSERT_NOT_REACHED();
     return MouseWheelRegionOverlay::create(page);
 }
 
-RegionOverlay::RegionOverlay(Page& page, Color regionColor)
+RegionOverlay::RegionOverlay(Page& page, Color regionColor, PageOverlay::OverlayType overlayType)
     : m_page(page)
-    , m_overlay(PageOverlay::create(*this, PageOverlay::OverlayType::Document))
+    , m_overlay(PageOverlay::create(*this, overlayType))
     , m_color(regionColor)
 {
 }
@@ -917,10 +988,16 @@ void DebugPageOverlays::updateOverlayRegionVisibility(Page& page, OptionSet<Debu
 void DebugPageOverlays::settingsChanged(Page& page)
 {
     auto activeOverlayRegions = OptionSet<DebugOverlayRegions>::fromRaw(page.settings().visibleDebugOverlayRegions());
-    if (!activeOverlayRegions && !hasOverlays(page))
+    auto showsBlockLayoutCoverage = page.settings().blockFormattingContextIntegrationEnabled() && page.settings().blockFormattingContextCoverageIndicatorEnabled();
+    if (!activeOverlayRegions && !showsBlockLayoutCoverage && !hasOverlays(page))
         return;
 
-    DebugPageOverlays::singleton().updateOverlayRegionVisibility(page, activeOverlayRegions);
+    auto& debugPageOverlays = DebugPageOverlays::singleton();
+    debugPageOverlays.updateOverlayRegionVisibility(page, activeOverlayRegions);
+    if (showsBlockLayoutCoverage)
+        debugPageOverlays.showRegionOverlay(page, RegionType::BlockLayoutCoverage);
+    else
+        debugPageOverlays.hideRegionOverlay(page, RegionType::BlockLayoutCoverage);
 }
 
 bool DebugPageOverlays::shouldPaintOverlayIntoLayer(Page& page, RegionType regionType) const
