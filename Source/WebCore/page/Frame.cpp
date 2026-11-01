@@ -365,7 +365,7 @@ void Frame::updateFrameTreeSyncData(const FrameTreeSyncSerializationData& data)
         return;
     }
 
-    auto invalidateChildFrameForDarkAppearanceChange = [&](const auto& oldMap, const auto& newMap) {
+    auto invalidateChildFramesForGeometryChange = [&](const auto& oldMap, const auto& newMap) {
         for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
             RefPtr localChild = dynamicDowncast<LocalFrame>(child);
             if (!localChild)
@@ -373,6 +373,12 @@ void Frame::updateFrameTreeSyncData(const FrameTreeSyncSerializationData& data)
 
             RefPtr oldFrameInfo = oldMap.get(child->frameID());
             RefPtr newFrameInfo = newMap.get(child->frameID());
+
+            // The frame rect arrives separately, and can stay the same when only the owner's zoom changes.
+            if (oldFrameInfo && newFrameInfo && oldFrameInfo->frameScaleFactor() != newFrameInfo->frameScaleFactor()) {
+                if (RefPtr localChildView = localChild->view())
+                    localChildView->ownerZoomDidChange();
+            }
 
             if (!oldFrameInfo || !newFrameInfo || oldFrameInfo->ownerElementAppearance().contains(FrameOwnerElementAppearance::IsDark) != newFrameInfo->ownerElementAppearance().contains(FrameOwnerElementAppearance::IsDark)) {
                 RefPtr localChildView = localChild->view();
@@ -389,7 +395,7 @@ void Frame::updateFrameTreeSyncData(const FrameTreeSyncSerializationData& data)
 
     protect(frameTreeSyncData())->update(data);
 
-    invalidateChildFrameForDarkAppearanceChange(oldChildrenFrameLayoutMap, m_frameTreeSyncData->frameGeometry.childrenFrameLayoutInfo);
+    invalidateChildFramesForGeometryChange(oldChildrenFrameLayoutMap, m_frameTreeSyncData->frameGeometry.childrenFrameLayoutInfo);
 }
 
 bool Frame::frameCanCreatePaymentSession() const

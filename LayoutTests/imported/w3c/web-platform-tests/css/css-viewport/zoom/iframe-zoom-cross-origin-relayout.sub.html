@@ -1,0 +1,48 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>A cross-origin iframe relays out when its zoom changes without its frame rect changing</title>
+<link rel="help" href="https://drafts.csswg.org/css-viewport/#zoom-property">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  iframe { width: 1572px; height: 100px; zoom: 0.5; border: 0; }
+</style>
+<iframe src="http://{{hosts[alt][]}}:{{ports[http][0]}}/css/css-viewport/zoom/resources/iframe-zoom-layout-report.html"></iframe>
+<script>
+const iframe = document.querySelector("iframe");
+const loaded = new Promise(resolve => iframe.addEventListener("load", resolve, { once: true }));
+const nextFrame = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+function childLayout(tag) {
+  return new Promise(resolve => {
+    addEventListener("message", function listener(event) {
+      if (event.data.tag !== tag)
+        return;
+      removeEventListener("message", listener);
+      resolve(event.data);
+    });
+    iframe.contentWindow.postMessage(tag, "*");
+  });
+}
+
+// Each step keeps the frame rect at 786px wide, so only the owner's zoom changes the child's layout viewport.
+for (const { zoom, width } of [{ zoom: 1, width: 786 }, { zoom: 2, width: 393 }, { zoom: 0.5, width: 1572 }]) {
+  promise_test(async () => {
+    await loaded;
+    iframe.style.zoom = zoom;
+    iframe.style.width = width + "px";
+    await nextFrame();
+    // The child may lay out a frame or two after the parent, and nothing signals when it has.
+    let layout;
+    for (let attempt = 0; attempt < 20; ++attempt) {
+      layout = await childLayout(`zoom ${zoom} attempt ${attempt}`);
+      if (layout.fill == width && layout.viewportWidth == width)
+        break;
+      await new Promise(resolve => step_timeout(resolve, 50));
+    }
+    assert_equals(layout.fill, width, "width: 100%");
+    assert_equals(layout.viewportWidth, width, "width: 100vw");
+    assert_equals(layout.clientWidth, width, "clientWidth");
+  }, `Cross-origin child layout follows zoom ${zoom} with size ${width}px`);
+}
+</script>
