@@ -392,20 +392,17 @@ bool RenderSVGModelObject::applyCachedClipAndScrollPosition(RepaintRects& rects,
     return intersects;
 }
 
-void RenderSVGModelObject::computeClipContentTransform(AffineTransform& transform) const
+AffineTransform RenderSVGModelObject::computeClipChildUserSpaceTransform() const
 {
-    if (isTransformed())
-        transform.multiply(computeRendererTransform());
+    auto transform = computeUserSpaceTransform();
 
     RefPtr useElement = dynamicDowncast<SVGUseElement>(protect(element()));
     if (!useElement)
-        return;
+        return transform;
 
-    if (CheckedPtr clipChildRenderer = useElement->rendererClipChild()) {
-        CheckedRef layerModelObject = downcast<RenderLayerModelObject>(*clipChildRenderer);
-        if (layerModelObject->isTransformed())
-            transform.multiply(layerModelObject->computeRendererTransform());
-    }
+    if (CheckedPtr clipChildRenderer = useElement->rendererClipChild())
+        transform.multiply(downcast<RenderLayerModelObject>(*clipChildRenderer).computeUserSpaceTransform());
+    return transform;
 }
 
 Path RenderSVGModelObject::computeClipPathGeometry() const

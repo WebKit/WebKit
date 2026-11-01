@@ -1042,6 +1042,13 @@ AffineTransform RenderLayerModelObject::computeNominalTransform() const
     return transform.toAffineTransform();
 }
 
+AffineTransform RenderLayerModelObject::computeUserSpaceTransform() const
+{
+    if (!isTransformed())
+        return { };
+    return convertToUserSpaceTransform(computeNominalTransform());
+}
+
 AffineTransform RenderLayerModelObject::nominalTransform() const
 {
     if (hasLayer()) {
@@ -1052,16 +1059,16 @@ AffineTransform RenderLayerModelObject::nominalTransform() const
     return cachedNominalTransform().value_or(AffineTransform());
 }
 
-AffineTransform RenderLayerModelObject::computeRendererTransform() const
+AffineTransform RenderLayerModelObject::convertToUserSpaceTransform(const AffineTransform& nominalTransform) const
 {
-    if (!isTransformed())
-        return { };
-    if (CheckedPtr renderLayer = layer())
-        return renderLayer->currentTransform(Style::TransformResolver::individualTransformOperations).toAffineTransform();
-    TransformationMatrix matrix;
-    auto referenceBoxRect = transformReferenceBoxRect(style());
-    applyTransform(matrix, style(), referenceBoxRect, Style::TransformResolver::individualTransformOperations);
-    return matrix.toAffineTransform();
+    if (nominalTransform.isIdentity())
+        return nominalTransform;
+    auto offset = toFloatSize(FloatPoint(nominalSVGLayoutLocation()));
+    AffineTransform transform;
+    transform.translate(offset);
+    transform.multiply(nominalTransform);
+    transform.translate(-offset);
+    return transform;
 }
 
 void RenderLayerModelObject::contentChanged(ContentChangeType changeType, const std::optional<FloatRect>& dirtyRect)
