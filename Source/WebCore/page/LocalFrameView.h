@@ -324,8 +324,6 @@ public:
     WEBCORE_EXPORT LayoutRect layoutViewportRect() const final;
     WEBCORE_EXPORT LayoutRect visualViewportRect() const;
 
-    LayoutRect layoutViewportRectIncludingObscuredInsets() const;
-
     std::optional<LayoutRect> visibleRectOfChild(const Frame&) const final;
     OptionSet<FrameOwnerElementAppearance> appearanceOfOwnerElementOfChildFrame(const Frame&) const final;
     LayoutPoint childFrameOwnerContentBoxLocation(const Frame&) const final;

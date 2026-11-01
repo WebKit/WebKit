@@ -1454,9 +1454,35 @@ RetainPtr<NSDictionary> WebPageProxy::frameInspectorHighlightsForTesting() const
         for (auto& quad : highlight.quads)
             [quads addObject:dictionaryForRect(quad.boundingBox()).get()];
 
+        FloatRect gridLinesBounds { FloatRect::smallestRect() };
+        RetainPtr gridLabels { adoptNS([[NSMutableArray alloc] init]) };
+        auto addGridOverlay = [&](const InspectorOverlayHighlight::GridHighlightOverlay& gridOverlay) {
+            for (auto& gridLine : gridOverlay.gridLines) {
+                gridLinesBounds.extend(gridLine.start());
+                gridLinesBounds.extend(gridLine.end());
+            }
+            for (auto label : gridOverlay.labels) {
+                auto labelBounds { label.draw(context).boundingRect() };
+                labelBounds.moveBy(label.location());
+                [gridLabels addObject:dictionaryForRect(labelBounds).get()];
+            }
+        };
+        for (auto& nodeInfo : highlight.nodeInfos) {
+            if (nodeInfo.gridHighlightOverlay)
+                addGridOverlay(*nodeInfo.gridHighlightOverlay);
+        }
+        for (auto& gridOverlay : highlight.gridHighlightOverlays)
+            addGridOverlay(gridOverlay);
+
         RetainPtr frame { adoptNS([[NSMutableDictionary alloc] init]) };
         [frame setObject:nodes.get() forKey:@"nodes"];
         [frame setObject:quads.get() forKey:@"quads"];
+        [frame setObject:gridLabels.get() forKey:@"gridLabels"];
+        if (!gridLinesBounds.isSmallest()) {
+            // As drawn, under the view's clip.
+            gridLinesBounds.intersect({ { }, pageGeometry.viewportSize });
+            [frame setObject:dictionaryForRect(gridLinesBounds).get() forKey:@"gridLines"];
+        }
         if (auto& rulers { geometry.rulers }) {
             [frame setObject:@{
                 @"top": @(rulers->drawTopEdge),

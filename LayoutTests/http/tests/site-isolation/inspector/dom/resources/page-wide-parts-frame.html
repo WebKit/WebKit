@@ -5,13 +5,22 @@
     body { margin: 0; min-height: 1000px; }
     #target { position: absolute; left: 50px; top: 60px; width: 100px; height: 40px; background: lightblue; }
     #n { position: absolute; left: 5px; top: 5px; width: 68px; height: 48px; background: lightgreen; }
+    #grid { position: absolute; left: 30px; top: 20px; display: grid; grid-template-columns: 36px 36px 36px; grid-template-rows: 36px 36px; }
     #inner { position: absolute; left: 200px; top: 150px; width: 140px; height: 100px; border: 0; }
 </style>
 </head>
 <body>
 <div id="target"></div>
 <div id="n"></div>
+<div id="grid"><div></div><div></div><div></div><div></div><div></div><div></div></div>
 <script>
+if (location.search !== "?grid")
+    document.getElementById("grid").remove();
+if (location.search === "?sentinel") {
+    document.body.insertAdjacentHTML("beforeend", '<div id="visible-part" style="position: absolute; left: 0; top: 0; width: 100px; height: 160px"></div>');
+    let thresholds = Array.from({length: 161}, (_, i) => i / 160);
+    new IntersectionObserver(([entry]) => window.visibleHeight = Math.round(entry.intersectionRect.height), {threshold: thresholds}).observe(document.getElementById("visible-part"));
+}
 if (location.search === "?cross")
     document.body.insertAdjacentHTML("beforeend", '<iframe id="inner" src="page-wide-parts-frame.html?inner"></iframe>');
 </script>

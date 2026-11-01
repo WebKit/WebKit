@@ -8,6 +8,8 @@
     #cross { left: 20px; top: 150px; width: 360px; height: 300px; }
     #same { left: 420px; top: 150px; width: 360px; height: 300px; }
     #small { left: 20px; top: 480px; width: 110px; height: 90px; }
+    #grid-frame { left: 200px; top: 480px; width: 300px; height: 110px; }
+    #sentinel { left: 600px; top: 700px; width: 100px; height: 160px; }
 </style>
 <script src="../../../inspector/resources/inspector-test.js"></script>
 <script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
@@ -51,6 +53,12 @@ async function removeFrame(id)
     await afterRendering();
 }
 
+async function setObscuredTopInset(top)
+{
+    await new Promise((resolve) => testRunner.runUIScript(`uiController.setObscuredInsets(${top}, 0, 0, 0)`, resolve));
+    await afterRendering();
+}
+
 function uiInspectorHighlight()
 {
     return new Promise((resolve) => {
@@ -74,6 +82,7 @@ function test() {
     let pageTarget = null;
     let crossTarget = null;
     let smallTarget = null;
+    let gridTarget = null;
     let innerTarget = null;
 
     async function evaluateInPage(expression) {
@@ -137,6 +146,18 @@ function test() {
         return waitForUIHighlight((ui) => boundsMatch(onlyNode(ui)?.bounds, expectedBounds));
     }
 
+    async function waitForValueInFrame(target, expression, predicate, timeout = 5000) {
+        let deadline = Date.now() + timeout;
+        let value;
+        do {
+            value = (await target.RuntimeAgent.evaluate.invoke({expression, returnByValue: true})).result.value;
+            if (predicate(value))
+                break;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        } while (Date.now() < deadline);
+        return value;
+    }
+
     async function hideAndWaitForNoFrames(target) {
         await target.DOMAgent.hideHighlight();
         return waitForUIHighlight((ui) => !frameCount(ui));
@@ -149,13 +170,15 @@ function test() {
             pageTarget = WI.assumingMainTarget();
             crossTarget = await waitForFrameTargetForURLContaining("page-wide-parts-frame.html?cross");
             smallTarget = await waitForFrameTargetForURLContaining("page-wide-parts-frame.html?small");
+            gridTarget = await waitForFrameTargetForURLContaining("page-wide-parts-frame.html?grid");
             innerTarget = await waitForFrameTargetForURLContaining("page-wide-parts-frame.html?inner");
 
             InspectorTest.expectNotNull(crossTarget, "Should find the frame target for the cross-site iframe.");
             InspectorTest.expectNotNull(smallTarget, "Should find the frame target for the small cross-site iframe.");
+            InspectorTest.expectNotNull(gridTarget, "Should find the frame target for the cross-site iframe with a grid.");
             InspectorTest.expectNotNull(innerTarget, "Should find the frame target for the frame nested in the cross-site iframe.");
-            InspectorTest.expectThat(crossTarget !== pageTarget && smallTarget !== pageTarget, "Cross-site iframes should not use the page target.");
-            InspectorTest.expectThat(crossTarget !== smallTarget, "Each cross-site iframe should have its own frame target.");
+            InspectorTest.expectThat(crossTarget !== pageTarget && smallTarget !== pageTarget && gridTarget !== pageTarget, "Cross-site iframes should not use the page target.");
+            InspectorTest.expectThat(crossTarget !== smallTarget && crossTarget !== gridTarget && smallTarget !== gridTarget, "Each cross-site iframe should have its own frame target.");
         }
     });
 
@@ -378,6 +401,64 @@ function test() {
     });
 
     suite.addTestCase({
+        name: "GridLabelsOutside",
+        description: "Grid line labels of a grid near a cross-site iframe's edges should be placed outside the grid against the page, as for the page highlight.",
+        async test() {
+            // The grid's top left corner is at 230, 500 in the page and at 30, 20 in the iframe, so labels
+            // flipped against the iframe's edges would land inside the grid.
+            const [gridLeft, gridTop] = [230, 500];
+
+            let objectId = await objectIdFor(gridTarget, "document.getElementById('grid')");
+            let {nodeId} = await gridTarget.DOMAgent.requestNode.invoke({objectId});
+            await gridTarget.DOMAgent.showGridOverlay.invoke({nodeId, gridOverlayConfig: {gridColor: {r: 0, g: 0, b: 255, a: 1}, showLineNumbers: true}});
+
+            try {
+                let isAbove = (label) => label.y + label.height <= gridTop + 1;
+                let isLeft = (label) => label.x + label.width <= gridLeft + 1;
+                let ui = await waitForUIHighlight((ui) => ui?.frames?.[0]?.gridLabels?.length === 7);
+                let labels = ui?.frames?.[0]?.gridLabels ?? [];
+                expectThatOrLog(labels.length === 7, "Should draw a label for each of the 4 column lines and 3 row lines.", ui);
+                expectThatOrLog(labels.filter(isAbove).length === 4, "Should draw the column line labels above the grid.", labels);
+                expectThatOrLog(labels.filter((label) => !isAbove(label) && isLeft(label)).length === 3, "Should draw the row line labels to the left of the grid.", labels);
+            } finally {
+                await gridTarget.DOMAgent.hideGridOverlay.invoke({nodeId});
+                await waitForUIHighlight((ui) => !frameCount(ui));
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExtendedGridLinesUnderObscuredInset",
+        description: "Extended grid lines should reach the edges of the view under an obscured inset, as for the page highlight.",
+        async test() {
+            // Scroll the grid's rows away from the bottom edge, so only the extended column lines reach it.
+            await evaluateInPage("scrollMainFrame(200)");
+            await evaluateInPage("setObscuredTopInset(40)");
+
+            // The grid frame's process learns the main frame's smaller layout viewport from another process. An
+            // intersection observer in '#sentinel', a frame of the same site across the bottom of the view, shows when.
+            let sentinelTarget = await waitForFrameTargetForURLContaining("page-wide-parts-frame.html?sentinel");
+            let visibleHeight = await waitForValueInFrame(sentinelTarget, "window.visibleHeight", (height) => height === 60);
+            InspectorTest.expectEqual(visibleHeight, 60, "The frame's process should know that the inset leaves 60px of '#sentinel' in the layout viewport.");
+
+            let objectId = await objectIdFor(gridTarget, "document.getElementById('grid')");
+            let {nodeId} = await gridTarget.DOMAgent.requestNode.invoke({objectId});
+            await gridTarget.DOMAgent.showGridOverlay.invoke({nodeId, gridOverlayConfig: {gridColor: {r: 0, g: 0, b: 255, a: 1}, showExtendedGridLines: true}});
+
+            try {
+                let linesReachEdges = (ui) => boundsMatch(ui?.frames?.[0]?.gridLines, [0, 0, ui?.viewport?.width, ui?.viewport?.height]);
+                let ui = await waitForUIHighlight(linesReachEdges);
+                expectThatOrLog(linesReachEdges(ui), "Should extend the grid lines to all four edges of the view, including under the 40px inset.", {gridLines: ui?.frames?.[0]?.gridLines, viewport: ui?.viewport});
+            } finally {
+                await gridTarget.DOMAgent.hideGridOverlay.invoke({nodeId});
+                await waitForUIHighlight((ui) => !frameCount(ui));
+                await evaluateInPage("setObscuredTopInset(0)");
+                await evaluateInPage("scrollMainFrame(0)");
+            }
+        }
+    });
+
+    suite.addTestCase({
         name: "ControlStaysOnPagePath",
         description: "A same-site iframe's node highlighted through the page target should still be drawn by the page.",
         async test() {
@@ -548,5 +629,7 @@ function test() {
 <iframe id="cross" src="http://localhost:8000/site-isolation/inspector/dom/resources/page-wide-parts-frame.html?cross"></iframe>
 <iframe id="same" src="resources/page-wide-parts-frame.html?same"></iframe>
 <iframe id="small" src="http://localhost:8000/site-isolation/inspector/dom/resources/page-wide-parts-frame.html?small"></iframe>
+<iframe id="grid-frame" src="http://localhost:8000/site-isolation/inspector/dom/resources/page-wide-parts-frame.html?grid"></iframe>
+<iframe id="sentinel" src="http://localhost:8000/site-isolation/inspector/dom/resources/page-wide-parts-frame.html?sentinel"></iframe>
 </body>
 </html>

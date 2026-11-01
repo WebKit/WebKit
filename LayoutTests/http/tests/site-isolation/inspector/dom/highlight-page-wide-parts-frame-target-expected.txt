@@ -6,6 +6,7 @@ Tests that the UI process draws highlights of nodes in cross-site iframes over t
 -- Running test case: Setup
 PASS: Should find the frame target for the cross-site iframe.
 PASS: Should find the frame target for the small cross-site iframe.
+PASS: Should find the frame target for the cross-site iframe with a grid.
 PASS: Should find the frame target for the frame nested in the cross-site iframe.
 PASS: Cross-site iframes should not use the page target.
 PASS: Each cross-site iframe should have its own frame target.
@@ -54,6 +55,15 @@ PASS: The page's process should draw the rulers of the page's highlight.
 
 -- Running test case: ViewportSizeLabelWithHeader
 PASS: Should label the page's visual viewport size without the 50px header.
+
+-- Running test case: GridLabelsOutside
+PASS: Should draw a label for each of the 4 column lines and 3 row lines.
+PASS: Should draw the column line labels above the grid.
+PASS: Should draw the row line labels to the left of the grid.
+
+-- Running test case: ExtendedGridLinesUnderObscuredInset
+PASS: The frame's process should know that the inset leaves 60px of '#sentinel' in the layout viewport.
+PASS: Should extend the grid lines to all four edges of the view, including under the 40px inset.
 
 -- Running test case: ControlStaysOnPagePath
 PASS: Page should draw the box of the same-site '#target'.

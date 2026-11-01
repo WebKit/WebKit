@@ -645,7 +645,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
         drawRulers(context, rulerExclusion);
 }
 
-auto InspectorOverlay::buildNodeInfo(Node& node) -> Highlight::NodeInfo
+auto InspectorOverlay::buildNodeInfo(Node& node, const LocalFrameView& localRootView) -> Highlight::NodeInfo
 {
     Highlight nodeHighlight;
     buildNodeHighlight(node, m_nodeHighlightConfig, nodeHighlight, CoordinateSystem::Document);
@@ -658,8 +658,10 @@ auto InspectorOverlay::buildNodeInfo(Node& node) -> Highlight::NodeInfo
     }
 
     // Kept with the node, since paint() draws them right after it.
-    if (m_nodeGridOverlayConfig)
-        nodeInfo.gridHighlightOverlay = buildGridOverlay({ node, *m_nodeGridOverlayConfig });
+    if (m_nodeGridOverlayConfig) {
+        constexpr bool offsetBoundsByScroll = false;
+        nodeInfo.gridHighlightOverlay = buildGridOverlay({ node, *m_nodeGridOverlayConfig }, offsetBoundsByScroll, &localRootView);
+    }
     if (m_nodeFlexOverlayConfig)
         nodeInfo.flexHighlightOverlay = buildFlexOverlay({ node, *m_nodeFlexOverlayConfig });
 
@@ -690,7 +692,7 @@ void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, Insp
     if (m_highlightNode && isMainFrameView) {
         highlight.setDataFromConfig(m_nodeHighlightConfig);
         highlight.type = InspectorOverlay::Highlight::Type::Node;
-        highlight.nodeInfos.append(buildNodeInfo(protect(*m_highlightNode)));
+        highlight.nodeInfos.append(buildNodeInfo(protect(*m_highlightNode), *localRootView));
     } else if (m_highlightNode) {
         buildNodeHighlight(protect(*m_highlightNode), m_nodeHighlightConfig, highlight, coordinateSystem);
 
@@ -709,7 +711,7 @@ void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, Insp
             RefPtr node = highlightNodeList->item(i);
 
             if (isMainFrameView) {
-                highlight.nodeInfos.append(buildNodeInfo(*node));
+                highlight.nodeInfos.append(buildNodeInfo(*node, *localRootView));
                 continue;
             }
 
@@ -742,7 +744,7 @@ void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, Insp
                 continue;
         }
 
-        if (auto gridHighlightOverlay = buildGridOverlay(gridOverlay, offsetBoundsByScroll))
+        if (auto gridHighlightOverlay = buildGridOverlay(gridOverlay, offsetBoundsByScroll, localRootView.get()))
             highlight.gridHighlightOverlays.append(*gridHighlightOverlay);
     }
 
@@ -1960,7 +1962,7 @@ static Style::GridOrderedNamedLinesMap gridLineNames(const Style::ComputedStyle*
     return combinedGridLineNames;
 }
 
-std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::buildGridOverlay(const InspectorOverlay::Grid& gridOverlay, bool offsetBoundsByScroll)
+std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::buildGridOverlay(const InspectorOverlay::Grid& gridOverlay, bool offsetBoundsByScroll, const LocalFrameView* localRootViewForMainFrameView)
 {
     // If the node WeakPtr has been cleared, then the node is gone and there's nothing to draw.
     if (!gridOverlay.gridNode) {
@@ -1990,7 +1992,22 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     auto scrollPosition = pageView->scrollPosition();
     if (offsetBoundsByScroll)
         viewportBounds.setLocation(scrollPosition);
-    
+
+    // The area under the window's toolbar is drawable, but not meaningfully visible, so we must account for that space.
+    auto topEdgeInset = pageView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset).top();
+
+    // Against the page's view, as for the page highlight.
+    if (localRootViewForMainFrameView) {
+        RefPtr page { this->page() };
+        RefPtr mainFrameView { page ? protect(page->mainFrame())->virtualView() : nullptr };
+        if (!mainFrameView)
+            return { };
+
+        viewportBounds = localRootViewForMainFrameView->convertFromRootViewAcrossIsolatedFrames(FloatRect { { }, FloatSize { mainFrameView->layoutViewportRectIncludingObscuredInsets().size() } });
+        scrollPosition = mainFrameView->scrollPosition();
+        topEdgeInset = page->obscuredContentInsets().top();
+    }
+
     CheckedRef renderGrid = downcast<RenderGrid>(*renderer);
     auto columnPositions = renderGrid->columnPositions();
     auto rowPositions = renderGrid->rowPositions();
@@ -2195,8 +2212,6 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
             auto expectedLabelSize = InspectorOverlayLabel::expectedSize(text, arrowDirection);
             auto gapLabelPosition = gapLabelLine.start();
 
-            // The area under the window's toolbar is drawable, but not meaningfully visible, so we must account for that space.
-            auto topEdgeInset = pageView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset).top();
             if (gapLabelLine.start().y() - expectedLabelSize.height() - topEdgeInset + scrollPosition.y() - viewportBounds.y() < 0) {
                 arrowDirection = correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Up, Style::GridTrackSizingDirection::Columns);
 

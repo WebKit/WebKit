@@ -326,6 +326,29 @@ FloatRect FrameView::absoluteToLayoutViewportRect(FloatRect rect) const
     return rect;
 }
 
+LayoutRect FrameView::layoutViewportRectIncludingObscuredInsets() const
+{
+    auto layoutViewportRect = this->layoutViewportRect();
+    if (!frame().isMainFrame())
+        return layoutViewportRect;
+
+    FloatBoxExtent insets;
+    if (auto* page = frame().page()) {
+#if PLATFORM(IOS_FAMILY)
+        insets = page->obscuredInsets();
+#else
+        insets = page->obscuredContentInsets();
+#endif
+    }
+    layoutViewportRect.expand({
+        LayoutUnit::fromFloatRound(insets.top()),
+        LayoutUnit::fromFloatRound(insets.right()),
+        LayoutUnit::fromFloatRound(insets.bottom()),
+        LayoutUnit::fromFloatRound(insets.left()),
+    });
+    return layoutViewportRect;
+}
+
 // MARK: -
 
 IntPoint FrameView::convertToContainingView(IntPoint localPoint) const

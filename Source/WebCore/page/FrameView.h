@@ -147,6 +147,7 @@ public:
     template<typename RectType> ViewCoordinateSpaceRect<ViewCoordinateSpace::MainFrameView, RectType> contentsToMainFrameView(const ViewCoordinateSpaceRect<ViewCoordinateSpace::Contents, RectType>& rect) const { return inMainFrameViewSpace(contentsToMainFrameView(rect.raw())); }
 
     WEBCORE_EXPORT virtual LayoutRect layoutViewportRect() const = 0;
+    LayoutRect layoutViewportRectIncludingObscuredInsets() const;
 
     // Computes the visible area of a child frame in this frame as a rectangle.
     // std::nullopt is returned if the child frame is entirely invisible, or

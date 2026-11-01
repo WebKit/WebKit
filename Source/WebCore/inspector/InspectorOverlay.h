@@ -65,6 +65,7 @@ class FloatPoint;
 class GraphicsContext;
 class InspectorBackendClient;
 class LocalFrame;
+class LocalFrameView;
 class Node;
 class NodeList;
 class Page;
@@ -325,8 +326,8 @@ private:
 
     Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
     
-    Highlight::NodeInfo buildNodeInfo(Node&);
-    std::optional<InspectorOverlayHighlight::GridHighlightOverlay> buildGridOverlay(const InspectorOverlay::Grid&, bool offsetBoundsByScroll = false);
+    Highlight::NodeInfo buildNodeInfo(Node&, const LocalFrameView& localRootView);
+    std::optional<InspectorOverlayHighlight::GridHighlightOverlay> buildGridOverlay(const InspectorOverlay::Grid&, bool offsetBoundsByScroll = false, const LocalFrameView* localRootViewForMainFrameView = nullptr);
     std::optional<InspectorOverlayHighlight::FlexHighlightOverlay> buildFlexOverlay(const InspectorOverlay::Flex&);
 
     void updatePaintRectsTimerFired();
