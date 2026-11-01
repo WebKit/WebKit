@@ -41,6 +41,10 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(MAC)
+#include <WebCore/InspectorOverlay.h>
+#endif
+
 namespace Inspector {
 class BackendDispatcher;
 class FrontendChannel;
@@ -126,6 +130,14 @@ public:
 
     void debuggerPauseSessionDidChange(WebCore::DebuggerPauseSessionIdentifier, bool isPaused, const Vector<String>& stoppingTargetIDs);
 
+#if PLATFORM(MAC)
+    using FrameHighlights = HashMap<WebCore::FrameIdentifier, std::pair<WebCore::ProcessIdentifier, WebCore::InspectorOverlayHighlight>>;
+    void setFrameHighlight(WebCore::FrameIdentifier, WebCore::ProcessIdentifier, WebCore::InspectorOverlayHighlight&&);
+    void clearFrameHighlight(WebCore::FrameIdentifier);
+    const FrameHighlights& frameHighlights() const LIFETIME_BOUND { return m_frameHighlights; }
+    WebCore::InspectorOverlay::PageGeometry frameHighlightPageGeometry() const;
+#endif
+
 private:
     void browsingContextGroupPageWasAddedToProcess(WebProcessProxy&, WebCore::PageIdentifier);
 
@@ -139,6 +151,12 @@ private:
 
     void finishTimelineScreenshot();
     void sendTimelineScreenshotRecord(double timestamp, const String& imageData);
+
+#if PLATFORM(MAC)
+    void clearFrameHighlightNotFromProcess(WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
+    void clearAllFrameHighlights();
+    void frameHighlightsDidChange();
+#endif
 
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
@@ -162,6 +180,10 @@ private:
     uint64_t m_timelineScreenshotID { 0 };
 #endif
     CompletionHandler<void()> m_timelineScreenshotCompletionHandler;
+
+#if PLATFORM(MAC)
+    FrameHighlights m_frameHighlights;
+#endif
 };
 
 } // namespace WebKit

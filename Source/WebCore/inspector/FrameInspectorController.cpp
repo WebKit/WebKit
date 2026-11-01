@@ -138,6 +138,11 @@ void FrameInspectorController::drawHighlight(GraphicsContext& context) const
     m_overlay->paint(context);
 }
 
+void FrameInspectorController::getHighlight(InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
+{
+    m_overlay->getHighlight(highlight, coordinateSystem);
+}
+
 bool FrameInspectorController::hasOverlayContentToDraw() const
 {
     return m_overlay->shouldShowOverlay();
@@ -277,6 +282,12 @@ void FrameInspectorController::disconnectFrontend(Inspector::FrontendChannel& fr
     if (disconnectedLastFrontend) {
         m_pendingNodeToInspect = nullptr;
         m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
+
+        // As InspectorDOMAgent does for the page; FrameDOMAgent cannot, see its willDestroyFrontendAndBackend().
+        m_overlay->hideHighlight();
+        m_overlay->clearAllGridOverlays();
+        m_overlay->clearAllFlexOverlays();
+
         m_injectedScriptManager->removeClient();
         InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
     }
