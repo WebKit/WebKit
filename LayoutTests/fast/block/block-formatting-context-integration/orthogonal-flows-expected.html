@@ -1,0 +1,39 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 8px; font-family: monospace; font-size: 10px; border: solid blue; border-width: 1px 2px 3px 4px; padding: 3px 5px 7px 9px; }
+.vertical-root { display: inline-block; vertical-align: top; width: auto; height: 200px; writing-mode: vertical-lr; margin-right: 8px; }
+.box { background: lightblue; block-size: 10px; margin-block: 4px; }
+.rl { writing-mode: vertical-rl; }
+.lr { writing-mode: vertical-lr; }
+.tb { writing-mode: horizontal-tb; }
+.orthogonal { background: green; color: white; border: solid orange; border-width: 2px 5px 3px 4px; padding: 6px 3px 7px 8px; margin: 10px 6px 4px 12px; }
+.inline { display: inline-block; background: purple; color: white; margin: 3px 7px 5px 2px; }
+</style>
+<div class="root" style="height: 120px">
+  <div class="box"></div>
+  <div class="orthogonal rl">vertical text in a fixed block size container</div>
+  <div class="box"></div>
+</div>
+<div class="root">
+  <div class="box"></div>
+  <div class="orthogonal lr" style="height: 60px">vertical-lr text with a height</div>
+  <div class="orthogonal rl" style="width: 40px; margin-inline: auto">centered</div>
+  <div class="orthogonal rl" style="height: 50%; width: 20%">percentages</div>
+  <div class="box"></div>
+</div>
+<div class="root" dir="rtl" style="height: 100px">
+  <div class="orthogonal rl" style="margin-inline-start: 20px">right to left</div>
+  <div class="box"></div>
+</div>
+<div class="root" style="height: 60px">text <span class="inline rl">orthogonal inline-block</span> text <span class="inline lr" style="height: 40px">fixed</span></div>
+<div class="root vertical-root">
+  <div class="box"></div>
+  <div class="orthogonal tb">horizontal text in a vertical root</div>
+  <div class="orthogonal rl">vertical-rl in vertical-lr</div>
+  <div class="orthogonal tb" style="width: 60px; margin-block: 8px 2px">fixed width</div>
+  <div class="box"></div>
+</div>
+<div class="root vertical-root" style="writing-mode: vertical-rl" dir="rtl">
+  <div class="orthogonal tb">horizontal text</div>
+  <div class="box"></div>
+</div>
