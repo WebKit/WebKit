@@ -1,0 +1,8 @@
+
+FAIL overscroll-behavior-y: none prevents scroll propagation on y axis assert_approx_equals: root got unexpected scroll on Y axis expected 100 +/- 0.5 but got 0
+FAIL overscroll-behavior-x: none prevents scroll propagation on x axis assert_approx_equals: root got unexpected scroll on X axis expected 100 +/- 0.5 but got 0
+FAIL overscroll-behavior-x: chain allows scroll propagation on x axis assert_approx_equals: root got unexpected scroll on Y axis expected 100 +/- 0.5 but got 0
+FAIL overscroll-behavior-y: chain allows scroll propagation on y axis assert_approx_equals: root got unexpected scroll on X axis expected 100 +/- 0.5 but got 0
+FAIL overscroll-behavior allows inner scrolling when both axes are none assert_approx_equals: root got unexpected scroll on Y axis expected 100 +/- 0.5 but got 0
+PASS overscroll-behavior on non-scrollable area allows scroll propagation
+
