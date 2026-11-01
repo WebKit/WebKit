@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../../../../inspector/model/remote-object/resources/remote-object-utilities.js"></script>
+<script>
+
+function makeRegistryWithUnrootedTokens(count)
+{
+    let registry = new FinalizationRegistry(() => { });
+
+    function makeOversizeToken() {
+        function inner() { return arguments; }
+        return inner.apply(null, new Array(1024));
+    }
+
+    window.targets = [];
+    let tokens = [];
+    for (let i = 0; i < count; ++i) {
+        let target = {};
+        window.targets.push(target);
+        let token = makeOversizeToken();
+        tokens.push(token);
+        registry.register(target, i, token);
+    }
+    tokens = null;
+
+    window.registry = registry;
+    return registry;
+}
+
+function test()
+{
+    WI.runtimeManager.evaluateInInspectedWindow(`makeRegistryWithUnrootedTokens(500)`, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: false}, (remoteObject, wasThrown) => {
+        InspectorTest.expectFalse(wasThrown, "Should evaluate the setup without throwing.");
+        InspectorTest.expectThat(remoteObject instanceof WI.RemoteObject, "Should get a RemoteObject for the FinalizationRegistry.");
+
+        remoteObject.getPropertyDescriptors((properties) => {
+            let live = properties.find((property) => property.name === "live");
+            let dead = properties.find((property) => property.name === "dead");
+            InspectorTest.expectThat(properties.some((property) => property.name === "cleanupCallback"), "Should report the internal \"cleanupCallback\" property.");
+            InspectorTest.expectThat(!!dead, "Should report the internal \"dead\" property.");
+            InspectorTest.expectThat(!!live, "Should report the internal \"live\" property.");
+            InspectorTest.expectEqual(live ? live.value.size : -1, 500, "Should walk all 500 live registrations without a use-after-free.");
+            InspectorTest.completeTest();
+        }, {generatePreview: false});
+    });
+}
+</script>
+</head>
+<body onload="runTest()"></body>
+</html>

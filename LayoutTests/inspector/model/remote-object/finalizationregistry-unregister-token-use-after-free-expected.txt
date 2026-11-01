@@ -1,0 +1,7 @@
+PASS: Should evaluate the setup without throwing.
+PASS: Should get a RemoteObject for the FinalizationRegistry.
+PASS: Should report the internal "cleanupCallback" property.
+PASS: Should report the internal "dead" property.
+PASS: Should report the internal "live" property.
+PASS: Should walk all 500 live registrations without a use-after-free.
+
