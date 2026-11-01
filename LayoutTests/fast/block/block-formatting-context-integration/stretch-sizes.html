@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 8px; vertical-align: top; }
+.inline { display: inline-block; width: 60px; margin-right: 4px; }
+.fill { background: green; }
+</style>
+<div class="root inline" style="height: 100px" id="resized"><div class="fill" style="height: stretch; margin: 10px 0"></div></div>
+<div class="root inline" style="height: 100px"><div style="height: 80px"><div class="fill" style="height: stretch; margin-top: 20px"></div></div></div>
+<div class="root inline" style="height: 100px"><div style="height: 80px; border-top: 5px solid blue"><div class="fill" style="height: stretch; margin-top: 20px"></div></div></div>
+<div class="root inline"><div class="fill" style="height: stretch">auto</div></div>
+<div class="root inline" style="height: 100px"><div class="fill" style="height: 20px; min-height: stretch; padding: 5px"></div></div>
+<div class="root inline" style="height: 100px"><div class="fill" style="height: 300px; max-height: stretch"></div></div>
+<div class="root">
+  <div class="fill" style="width: stretch; margin: 0 30px; height: 10px"></div>
+  <div class="fill" style="width: -webkit-fill-available; margin-left: 50px; height: 10px"></div>
+  <div class="fill" style="width: 10px; min-width: stretch; margin-right: 100px; height: 10px"></div>
+  <div style="display: flex; width: stretch; margin: 2px 20px; height: 10px; background: blue"></div>
+</div>
+<div class="root inline" style="height: 100px"><div class="fill" id="calc-size" style="height: stretch"></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.height = "60px";
+document.getElementById("calc-size").style.height = "calc-size(stretch, size / 2)";
+</script>
