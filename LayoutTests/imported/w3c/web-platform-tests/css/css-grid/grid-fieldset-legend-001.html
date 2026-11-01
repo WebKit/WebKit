@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: the rendered legend of a grid fieldset is not a grid item</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/rendering.html#the-fieldset-and-legend-elements">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-item">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+body { margin: 0; }
+/* min-width: 0 replaces the UA stylesheet's min-width: min-content. */
+fieldset {
+  display: grid;
+  min-width: 0;
+  margin: 0;
+  padding: 5px;
+  border: 10px solid blue;
+  width: 300px;
+  grid-template-columns: 100px 100px;
+  grid-auto-rows: 20px;
+}
+legend { padding: 0; width: 60px; height: 10px; }
+.item { background: orange; }
+</style>
+<fieldset id="plain"><legend>L</legend><div class="item" id="plain-a"></div><div class="item" id="plain-b"></div><div class="item" id="plain-c"></div></fieldset>
+<fieldset id="tall"><legend style="height: 40px; margin: 0 0 4px 20px">L</legend><div class="item" id="tall-a"></div><div class="item" id="tall-b"></div><div class="item" id="tall-c"></div></fieldset>
+<fieldset id="definite" style="height: 200px; grid-template-rows: 50px"><legend style="height: 40px">L</legend><div class="item" id="definite-a"></div><div class="item" id="definite-b"></div><div class="item" id="definite-c"></div></fieldset>
+<fieldset id="two"><legend id="two-first">1</legend><legend id="two-second">2</legend><div class="item" id="two-a"></div><div class="item" id="two-b"></div></fieldset>
+<fieldset id="only"><legend>L</legend></fieldset>
+<fieldset id="margin-auto"><legend style="margin: 0 auto">L</legend><div class="item" id="margin-auto-a"></div></fieldset>
+<fieldset id="vertical"><legend style="writing-mode: vertical-rl">L</legend><div class="item" id="vertical-a"></div></fieldset>
+<fieldset id="notfirst"><div class="item" id="notfirst-a"></div><legend>L</legend><div class="item" id="notfirst-b"></div><div class="item" id="notfirst-c"></div></fieldset>
+<fieldset id="notfirst-two"><div class="item" id="notfirst-two-a"></div><legend id="notfirst-two-first">1</legend><legend id="notfirst-two-second">2</legend><div class="item" id="notfirst-two-b"></div></fieldset>
+<fieldset id="thick-border" style="border-top-width: 12px"><legend>L</legend><div class="item" id="thick-border-a"></div><div class="item" id="thick-border-b"></div><div class="item" id="thick-border-c"></div></fieldset>
+<fieldset id="thin-border" style="border-top-width: 2px"><legend style="height: 40px">L</legend><div class="item" id="thin-border-a"></div><div class="item" id="thin-border-b"></div><div class="item" id="thin-border-c"></div></fieldset>
+<fieldset id="nolegend"><div class="item" id="nolegend-a"></div><div class="item" id="nolegend-b"></div><div class="item" id="nolegend-c"></div></fieldset>
+<div id="notfieldset" style="display: grid; grid-template-columns: 100px 100px; grid-auto-rows: 20px; width: 300px"><legend id="notfieldset-legend" style="width: auto; height: auto"></legend><div class="item" id="notfieldset-a"></div></div>
+<script>
+// Border box rect of |el| relative to the border box of |container|, as "x,y wxh".
+function rect(el, container) {
+  const r = el.getBoundingClientRect();
+  const c = container.getBoundingClientRect();
+  return `${r.left - c.left},${r.top - c.top} ${r.width}x${r.height}`;
+}
+
+function check(id, expected) {
+  const fieldset = document.getElementById(id);
+  assert_equals(rect(fieldset, fieldset).split(" ")[1], expected.size, "fieldset size");
+  const legends = fieldset.querySelectorAll("legend");
+  expected.legends.forEach((legendRect, i) => assert_equals(rect(legends[i], fieldset), legendRect, `legend ${i}`));
+  const items = fieldset.querySelectorAll(".item");
+  expected.items.forEach((itemRect, i) => assert_equals(rect(items[i], fieldset), itemRect, `item ${i}`));
+}
+
+test(() => {
+  check("plain", {
+    size: "330x70",
+    legends: ["15,0 60x10"],
+    items: ["15,15 100x20", "115,15 100x20", "15,35 100x20"],
+  });
+}, "The rendered legend is in the border, and the items fill the content box");
+
+test(() => {
+  check("tall", {
+    size: "330x104",
+    legends: ["35,0 60x40"],
+    items: ["15,49 100x20", "115,49 100x20", "15,69 100x20"],
+  });
+}, "A tall rendered legend with margins pushes the content box down");
+
+test(() => {
+  check("definite", {
+    size: "330x230",
+    legends: ["15,0 60x40"],
+    items: ["15,45 100x50", "115,45 100x50", "15,95 100x20"],
+  });
+}, "A definite height and a tall legend: the first row is the first row of the content box");
+
+test(() => {
+  check("two", {
+    size: "330x70",
+    legends: ["15,0 60x10", "15,15 60x10"],
+    items: ["115,15 100x20", "15,35 100x20"],
+  });
+}, "Only the first legend is the rendered legend, the second one is a grid item");
+
+test(() => {
+  check("only", {
+    size: "330x30",
+    legends: ["15,0 60x10"],
+    items: [],
+  });
+}, "A grid fieldset with only a rendered legend has no grid items");
+
+test(() => {
+  check("margin-auto", {
+    size: "330x50",
+    legends: ["135,0 60x10"],
+    items: ["15,15 100x20"],
+  });
+}, "The style of the rendered legend does not matter to the grid: margin: auto");
+
+test(() => {
+  check("vertical", {
+    size: "330x50",
+    legends: ["15,0 60x10"],
+    items: ["15,15 100x20"],
+  });
+}, "The style of the rendered legend does not matter to the grid: a vertical writing mode");
+
+test(() => {
+  check("nolegend", {
+    size: "330x70",
+    legends: [],
+    items: ["15,15 100x20", "115,15 100x20", "15,35 100x20"],
+  });
+}, "A grid fieldset without a legend");
+
+test(() => {
+  check("notfieldset", {
+    size: "300x20",
+    legends: ["0,0 100x20"],
+    items: ["100,0 100x20"],
+  });
+}, "A legend in a grid that is not a fieldset is a grid item");
+
+test(() => {
+  check("notfirst", {
+    size: "330x70",
+    legends: ["15,0 60x10"],
+    items: ["15,15 100x20", "115,15 100x20", "15,35 100x20"],
+  });
+}, "The rendered legend does not have to be the first child");
+
+test(() => {
+  check("notfirst-two", {
+    size: "330x70",
+    legends: ["15,0 60x10", "115,15 60x10"],
+    items: ["15,15 100x20", "15,35 100x20"],
+  });
+}, "Only the first legend is the rendered legend when it is not the first child");
+
+test(() => {
+  check("thick-border", {
+    size: "330x72",
+    legends: ["15,1 60x10"],
+    items: ["15,17 100x20", "115,17 100x20", "15,37 100x20"],
+  });
+}, "A rendered legend shorter than the border is centered over the border, and the border sets the content box");
+
+test(() => {
+  check("thin-border", {
+    size: "330x100",
+    legends: ["15,0 60x40"],
+    items: ["15,45 100x20", "115,45 100x20", "15,65 100x20"],
+  });
+}, "A rendered legend taller than a thin border replaces the border");
+
+test(() => {
+  for (const id of ["plain", "tall", "definite", "two", "thick-border"]) {
+    const fieldset = document.getElementById(id);
+    const legend = fieldset.querySelector("legend");
+    fieldset.scrollIntoView();
+    const r = fieldset.getBoundingClientRect();
+    // 40px in and 3px down from the border box origin is in the rendered legend and in the fieldset's border.
+    // A legend laid out as a grid item would be in the content box instead, and this point would hit the fieldset.
+    assert_equals(document.elementFromPoint(r.left + 40, r.top + 3), legend, id);
+  }
+}, "The rendered legend is hit-tested in the border");
+</script>

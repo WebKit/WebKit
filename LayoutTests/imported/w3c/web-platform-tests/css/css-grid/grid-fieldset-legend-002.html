@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: the rendered legend contributes to the intrinsic widths of a grid fieldset</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/rendering.html#the-fieldset-and-legend-elements">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+body { margin: 0; }
+/* min-width: 0 replaces the UA stylesheet's min-width: min-content. */
+fieldset {
+  display: grid;
+  min-width: 0;
+  float: left;
+  clear: left;
+  margin: 0;
+  padding: 5px;
+  border: 10px solid blue;
+  grid-template-columns: auto;
+}
+legend { padding: 0; height: 10px; }
+.item { width: 40px; height: 20px; background: orange; }
+</style>
+<fieldset id="wide"><legend style="width: 250px">L</legend><div class="item"></div></fieldset>
+<fieldset id="narrow"><legend style="width: 20px">L</legend><div class="item"></div></fieldset>
+<fieldset id="min-content" style="width: min-content"><legend style="width: 250px">L</legend><div class="item"></div></fieldset>
+<fieldset id="max-content" style="width: max-content"><legend style="width: 250px">L</legend><div class="item"></div></fieldset>
+<fieldset id="margins"><legend style="width: 100px; margin: 0 7px 0 11px">L</legend><div class="item"></div></fieldset>
+<fieldset id="auto-fill" style="grid-template-columns: repeat(auto-fill, 50px)"><legend style="width: 250px">L</legend><div class="item"></div><div class="item"></div><div class="item"></div><div class="item"></div><div class="item"></div><div class="item"></div></fieldset>
+<fieldset id="auto-fill-definite" style="width: 120px; grid-template-columns: repeat(auto-fill, 50px)"><legend style="width: 250px">L</legend><div class="item"></div><div class="item"></div><div class="item"></div></fieldset>
+<fieldset id="dynamic"><legend style="width: 20px">L</legend><div class="item"></div></fieldset>
+<div id="shrink" style="display: inline-block; clear: left"><fieldset style="float: none"><legend style="width: 250px">L</legend><div class="item"></div></fieldset></div>
+<script>
+function width(el) { return el.getBoundingClientRect().width; }
+
+function itemRects(el) {
+  const c = el.getBoundingClientRect();
+  return Array.from(el.querySelectorAll(".item"), item => {
+    const r = item.getBoundingClientRect();
+    return `${r.left - c.left},${r.top - c.top}`;
+  }).join(" ");
+}
+
+test(() => {
+  assert_equals(width(wide), 280);
+}, "A legend wider than the grid sizes the fieldset");
+
+test(() => {
+  assert_equals(width(narrow), 70);
+}, "A legend narrower than the grid does not change the width of the fieldset");
+
+test(() => {
+  assert_equals(width(document.getElementById("min-content")), 280);
+}, "width: min-content includes the legend");
+
+test(() => {
+  assert_equals(width(document.getElementById("max-content")), 280);
+}, "width: max-content includes the legend");
+
+test(() => {
+  assert_equals(width(margins), 148);
+}, "The margins of the legend are part of its contribution");
+
+test(() => {
+  assert_equals(width(shrink), 280);
+}, "A fieldset in a shrink-to-fit container");
+
+test(() => {
+  // The grid gets the 250px the legend asks for, so there are 5 columns and not the 1 of the grid's own max-content size.
+  const el = document.getElementById("auto-fill");
+  assert_equals(width(el), 280);
+  assert_equals(itemRects(el), "15,15 65,15 115,15 165,15 215,15 15,35");
+}, "A legend wider than the grid gives an auto-fill grid more columns");
+
+test(() => {
+  // The legend does not make the columns of a fieldset with a definite width.
+  const el = document.getElementById("auto-fill-definite");
+  assert_equals(width(el), 150);
+  assert_equals(itemRects(el), "15,15 65,15 15,35");
+}, "A legend wider than a definite width does not give an auto-fill grid more columns");
+
+test(() => {
+  const el = document.getElementById("dynamic");
+  const legend = el.firstElementChild;
+  assert_equals(width(el), 70, "narrow legend");
+
+  legend.style.width = "250px";
+  assert_equals(width(el), 280, "wide legend");
+
+  legend.style.width = "20px";
+  assert_equals(width(el), 70, "narrow legend again");
+
+  legend.style.width = "100px";
+  legend.style.marginRight = "30px";
+  assert_equals(width(el), 160, "the margin of the legend is part of the contribution");
+
+  legend.style.width = "250px";
+  legend.style.marginRight = "0";
+  legend.style.display = "none";
+  assert_equals(width(el), 70, "hidden legend");
+
+  legend.style.display = "";
+  assert_equals(width(el), 280, "shown again");
+}, "Changing the legend of a fieldset with a shrink-to-fit width");
+</script>

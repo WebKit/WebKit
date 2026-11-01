@@ -56,6 +56,7 @@ enum class GridAvoidanceReason : uint8_t {
     GridItemDoesNotHaveElement,
     GridItemIsSubgrid,
     GridIsEmpty,
+    GridIsFieldsetWithRenderedLegend,
     GridHasGridTemplateAreas,
     GridHasColumnAutoFlow,
     GridHasNonFixedGaps,
@@ -328,6 +329,10 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
     if (!renderGrid.firstInFlowChild())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridIsEmpty, reasons, reasonCollectionMode);
+
+    // The rendered legend sits in the fieldset's border and is not a grid item, but GFC lays out every child as an item.
+    if (renderGrid.renderedFieldsetLegend())
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridIsFieldsetWithRenderedLegend, reasons, reasonCollectionMode);
 
     // GFC currently supports grid-auto-flow: row and row dense
     // Column auto-flow is not yet supported
@@ -655,6 +660,9 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridIsEmpty:
         stream << "grid is empty";
+        break;
+    case GridAvoidanceReason::GridIsFieldsetWithRenderedLegend:
+        stream << "grid is a fieldset with a rendered legend";
         break;
     case GridAvoidanceReason::GridHasGridTemplateAreas:
         stream << "grid has grid-template-areas";

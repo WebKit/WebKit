@@ -551,16 +551,18 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
         // legacy path) fails to repopulate it.
         m_resolvedTrackList.invalidate();
 
+        // Fieldsets need to find their legend and position it inside the border of the object.
+        // The legend then gets skipped during normal layout.
+        // This also sets (or resets, if the legend went away) the fieldset's intrinsic border, which the grid
+        // formatting context reads when it builds the geometry of the grid container, and its intrinsic margin,
+        // which the parent reads through marginBefore(). Both layout paths need them, so it comes before the choice.
+        layoutExcludedChildren(relayoutChildren);
+
         // GridLayout::layout() commits the scroll info transaction begun above.
         if (useGridFormattingContext) {
             layoutUsingGridFormattingContext();
             return;
         }
-
-        // Fieldsets need to find their legend and position it inside the border of the object.
-        // The legend then gets skipped during normal layout. The same is true for ruby text.
-        // It doesn't get included in the normal layout process but is instead skipped.
-        layoutExcludedChildren(relayoutChildren);
 
         LayoutUnit availableSpaceForColumns = contentBoxLogicalWidth();
         placeItemsOnGrid(availableSpaceForColumns);
