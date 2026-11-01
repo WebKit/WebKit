@@ -56,6 +56,7 @@ class CommandBuffer;
 class CommandEncoder;
 class Device;
 class RenderBundle;
+class Queue;
 
 // https://gpuweb.github.io/gpuweb/#gpubuffer
 class Buffer final : public WebGPU::Buffer, public CanBorrow, public TrackedResource {
@@ -164,6 +165,8 @@ private:
     void decrementBufferMapCount();
     void clearIndexBufferForCommandBuffer(CommandBuffer&);
     bool hasPendingRecordedIndexWrite() const;
+    id<MTLBuffer> _Nullable snapshotRangeBeforeClear(Queue&, NSUInteger offset, NSUInteger size);
+    void restoreSnapshotAfterCommit(CommandBuffer&, Queue&, id<MTLBuffer> _Nullable snapshot, NSUInteger offset);
 
     id<MTLBuffer> m_buffer { nil };
 
