@@ -1312,7 +1312,7 @@ void NetworkResourceLoader::startPreconnectTask(const URL& baseURL, const LinkHe
     parameters.request = constructPreconnectRequest(originalRequest(), url);
     parameters.isNavigatingToAppBoundDomain = this->parameters().isNavigatingToAppBoundDomain;
 
-    startPreconnectTaskAfterContentRuleListCheck(WTF::move(parameters), originalRequest().url());
+    startPreconnectTaskAfterContentRuleListCheck(WTF::move(parameters), baseURL);
 #else
     UNUSED_PARAM(baseURL);
     UNUSED_PARAM(header);
