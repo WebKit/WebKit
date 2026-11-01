@@ -1,0 +1,20 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Removing a tfoot updates the collapsed border of the row group above</title>
+<link rel="help" href="https://drafts.csswg.org/css-tables/#border-collapse-property">
+<link rel="match" href="collapsed-border-remove-row-group-tfoot-ref.html">
+<style>
+  table { border-collapse: collapse; }
+  td { padding: 5px; }
+  .thick { border-top: 10px solid green; }
+</style>
+<table>
+  <tbody><tr><td>Kept</td></tr></tbody>
+  <tfoot id="removeMe"><tr><td class="thick">Removed</td></tr></tfoot>
+</table>
+<script>
+  onload = function () {
+    removeMe.getBoundingClientRect();
+    removeMe.remove();
+  };
+</script>
