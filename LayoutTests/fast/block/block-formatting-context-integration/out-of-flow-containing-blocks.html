@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 400px; background: lightgray; margin-bottom: 10px; }
+.containing-block { transform: translateX(0); background: lightblue; margin: 10px 20px; padding: 5px; }
+.box { height: 20px; margin: 5px; background: rgba(0, 0, 255, 0.3); }
+.abs { position: absolute; background: green; }
+</style>
+<div class="root" id="root">
+  <div class="containing-block" id="grows">
+    <div class="box"></div>
+    <div class="abs" style="right: 0; bottom: 0; width: 20%; height: 50%"></div>
+    <div><div class="abs" style="left: 10px; width: 10px; height: 10px; background: orange"></div><div class="box"></div></div>
+  </div>
+  <div style="display: flow-root; margin: 10px">
+    <div class="box"></div>
+    <div class="abs" style="width: 40px; height: 10px; background: purple"></div>
+  </div>
+  <div class="abs" style="top: 0; right: 0; width: 30px; height: 30px; background: blue"></div>
+</div>
+<div class="root">
+  <div class="containing-block">
+    <span style="display: inline-block; width: 50px; height: 20px; background: yellow"><div class="abs" style="top: 0; right: 0; width: 15px; height: 15px"></div></span>
+  </div>
+</div>
+<div class="root">
+  <div class="containing-block" style="display: flex; height: 40px">
+    <div style="width: 60px; background: yellow"><div class="abs" style="bottom: 0; left: 50%; width: 15px; height: 15px"></div></div>
+  </div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("root").style.width = "300px";
+document.getElementById("grows").appendChild(document.createElement("div")).className = "box";
+document.body.offsetHeight;
+</script>
