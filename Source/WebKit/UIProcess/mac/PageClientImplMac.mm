@@ -886,6 +886,12 @@ bool PageClientImpl::everMagnifiedDuringCurrentGesture() const
 #endif
 }
 
+void PageClientImpl::frameInspectorHighlightsDidChange()
+{
+    if (CheckedPtr impl { m_impl })
+        impl->frameInspectorHighlightsDidChange();
+}
+
 #if ENABLE(FULLSCREEN_API)
 
 WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()
