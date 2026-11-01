@@ -1,0 +1,77 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<p>Test that WebPageProxy::TranscodeChosenFiles only transcodes file paths the UI process previously
+approved for the sending WebContent process, and still transcodes the ones it did approve.</p>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText(); }
+function out(s) { document.getElementById('log').textContent += s + '\n'; }
+
+// Never navigated to, so never approved for this WebContent process.
+const unapprovedRelativePath = '../fast/images/resources/green-256x256.png';
+// Navigated to below, which is what makes the UI process approve it.
+const approvedRelativePath = '../fast/images/resources/red-100x100.png';
+
+function fileSystemPath(relativePath)
+{
+    return decodeURIComponent(new URL(relativePath, location.href).pathname);
+}
+
+function loadInSubframe(relativePath)
+{
+    return new Promise(resolve => {
+        const frame = document.createElement('iframe');
+        frame.onload = frame.onerror = () => resolve();
+        frame.src = relativePath;
+        document.body.appendChild(frame);
+    });
+}
+
+function transcode(CoreIPC, path)
+{
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error('reply timeout')), 20000);
+        CoreIPC.UI.WebPageProxy.TranscodeChosenFiles(IPC.webPageProxyID, {
+            transcodingPaths: [path],
+            destinationUTI: 'public.jpeg',
+            destinationExtension: 'jpg',
+        }, reply => {
+            clearTimeout(timer);
+            let paths = reply;
+            if (paths && typeof paths === 'object' && 'replacementPaths' in paths)
+                paths = paths.replacementPaths;
+            else if (Array.isArray(paths) && paths.length === 1)
+                paths = paths[0];
+            resolve((Array.isArray(paths) ? paths : Object.values(paths || {})).filter(p => typeof p === 'string' && p.length));
+        });
+    });
+}
+
+async function main() {
+    const { CoreIPC } = await import('./coreipc.js');
+
+    const unapproved = await transcode(CoreIPC, fileSystemPath(unapprovedRelativePath));
+    if (unapproved.length)
+        out('FAIL: an unapproved file path was transcoded into ' + unapproved.length + ' UI process copy/copies');
+    else
+        out('PASS: no unapproved file path was transcoded');
+
+    await loadInSubframe(approvedRelativePath);
+    const approved = await transcode(CoreIPC, fileSystemPath(approvedRelativePath));
+    if (approved.length)
+        out('PASS: an approved file path was still transcoded');
+    else
+        out('FAIL: an approved file path was rejected');
+}
+
+if (window.IPC)
+    main().catch(e => out('FAIL: ' + e)).finally(() => testRunner?.notifyDone());
+else {
+    out('PASS: no unapproved file path was transcoded');
+    out('PASS: an approved file path was still transcoded');
+    testRunner?.notifyDone();
+}
+</script>
+</body>
+</html>
