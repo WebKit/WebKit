@@ -31,26 +31,30 @@ namespace WebCore {
 namespace Layout {
 
 struct ConstraintsForBlockContent : public ConstraintsForInFlowContent {
-    ConstraintsForBlockContent(const ConstraintsForInFlowContent&, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit fillAvailableBlockSize, bool relayoutChildren = false);
+    ConstraintsForBlockContent(const ConstraintsForInFlowContent&, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit fillAvailableBlockSize, LayoutUnit replacedElementAvailableBlockSize, bool relayoutChildren = false);
 
     // The root's content box block size when it is definite. Percentage block sizes of in-flow boxes resolve against it,
     // and behave as auto when there is none (CSS 2.2 §10.5).
     std::optional<LayoutUnit> contentBoxBlockSize() const { return m_contentBoxBlockSize; }
     // The block size -webkit-fill-available block sizes of in-flow boxes resolve to, which is always there (RenderBox::availableLogicalHeight).
     LayoutUnit fillAvailableBlockSize() const { return m_fillAvailableBlockSize; }
+    // The block size percentage block sizes of replaced in-flow boxes resolve against in quirks mode (RenderReplaced::computeReplacedLogicalHeightUsing).
+    LayoutUnit replacedElementAvailableBlockSize() const { return m_replacedElementAvailableBlockSize; }
     // The parent formatting context lays the root's children out again, like when the root's inline size changed (RenderBlockFlow::layoutBlock).
     bool relayoutChildren() const { return m_relayoutChildren; }
 
 private:
     std::optional<LayoutUnit> m_contentBoxBlockSize;
     LayoutUnit m_fillAvailableBlockSize;
+    LayoutUnit m_replacedElementAvailableBlockSize;
     bool m_relayoutChildren { false };
 };
 
-inline ConstraintsForBlockContent::ConstraintsForBlockContent(const ConstraintsForInFlowContent& genericConstraints, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit fillAvailableBlockSize, bool relayoutChildren)
+inline ConstraintsForBlockContent::ConstraintsForBlockContent(const ConstraintsForInFlowContent& genericConstraints, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit fillAvailableBlockSize, LayoutUnit replacedElementAvailableBlockSize, bool relayoutChildren)
     : ConstraintsForInFlowContent(genericConstraints.horizontal(), genericConstraints.logicalTop(), BlockContent)
     , m_contentBoxBlockSize(contentBoxBlockSize)
     , m_fillAvailableBlockSize(fillAvailableBlockSize)
+    , m_replacedElementAvailableBlockSize(replacedElementAvailableBlockSize)
     , m_relayoutChildren(relayoutChildren)
 {
 }

@@ -59,6 +59,9 @@ struct ContainingBlockState {
     std::optional<LayoutUnit> contentBoxBlockSize;
     // -webkit-fill-available block sizes of the children resolve to this (RenderBox::availableLogicalHeight).
     LayoutUnit fillAvailableBlockSize;
+    // In quirks mode percentage block sizes of replaced children resolve against this, which keeps the margins, borders and padding of the
+    // boxes with an auto block size it passes through (RenderReplaced::computeReplacedLogicalHeightUsing).
+    LayoutUnit replacedElementAvailableBlockSize;
     BlockMarginCollapse::BlockContainer margins;
     // Its own formatting context lays it out through the render tree and gives it its block size.
     bool isLaidOutThroughRenderTree { false };

@@ -225,7 +225,7 @@ static bool hasStretchBlockSize(const RenderBox& box)
 // auto block size, to containing blocks whose geometry the block formatting context writes once all of its content is laid out. Those of
 // out-of-flow boxes resolve against their containing block (PositionedLayoutConstraints).
 // FIXME: The stretch block sizes in quirks mode.
-static bool hasPercentageBlockSizeInQuirksMode(const RenderBox& leaf)
+static bool hasPercentageBlockSizeInQuirksMode(const RenderBox& leaf, const RenderBlockFlow& rootContainer)
 {
     if (!leaf.document().inQuirksMode())
         return false;
@@ -252,10 +252,17 @@ static bool hasPercentageBlockSizeInQuirksMode(const RenderBox& leaf)
         }
         return true;
     };
-    // FIXME: The percentage block size of a replaced element, which resolves against the available block size of its containing block, with
-    // the margins, borders and padding of the body and the root element.
-    if (hasStretchBlockSize(leaf) || (leaf.isRenderReplaced() && Layout::BlockFormattingUtils::hasPercentageBlockSize(leaf, leaf.writingMode())))
+    if (hasStretchBlockSize(leaf))
         return true;
+    // The block formatting context gives a replaced leaf the available block size of its containing block (ContainingBlockState::replacedElementAvailableBlockSize).
+    // FIXME: The ones inside an out-of-flow box, whose available block size can come from its containing block, or a box with a preferred aspect ratio,
+    // whose available block size is its border box block size (RenderBox::availableLogicalHeightUsing).
+    if (leaf.isRenderReplaced() && Layout::BlockFormattingUtils::hasPercentageBlockSize(leaf, leaf.writingMode())) {
+        for (CheckedPtr ancestor = leaf.parent(); ancestor && ancestor != &rootContainer; ancestor = ancestor->parent()) {
+            if (ancestor->isOutOfFlowPositioned() || ancestor->style().aspectRatio().hasRatio())
+                return true;
+        }
+    }
     for (CheckedRef descendant : descendantsOfType<RenderBox>(leaf)) {
         if (descendant->isOutOfFlowPositioned() || !Layout::BlockFormattingUtils::hasPercentageBlockSize(descendant, descendant->writingMode()))
             continue;
@@ -291,7 +298,7 @@ static std::optional<BlockAvoidanceReason> atomicInlineLevelBoxAvoidanceReason(c
 {
     if (!hasAvailableInlineSpaceFromStyle(box))
         return BlockAvoidanceReason::ContentHasOrthogonalFlow;
-    if (hasPercentageBlockSizeInQuirksMode(box))
+    if (hasPercentageBlockSizeInQuirksMode(box, rootContainer))
         return BlockAvoidanceReason::ContentHasQuirksModePercentageHeight;
     return outOfFlowBoxesInLeafAvoidanceReason(box, rootContainer);
 }
@@ -527,7 +534,7 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
             return BlockAvoidanceReason::ContentHasBlockInInline;
     } else if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(box.parent()); !parent || parent->childrenInline())
         return BlockAvoidanceReason::ContentHasBlockInInline;
-    if (hasPercentageBlockSizeInQuirksMode(box))
+    if (hasPercentageBlockSizeInQuirksMode(box, rootContainer))
         return BlockAvoidanceReason::ContentHasQuirksModePercentageHeight;
     // Quirks mode: a body laid out through the render tree stretches to the viewport from the size of its renderer's ancestors
     // (RenderBox::computeLogicalHeight), which the block formatting context has not committed yet.
