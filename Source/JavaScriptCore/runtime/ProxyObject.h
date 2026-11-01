@@ -104,6 +104,11 @@ public:
     const WriteBarrier<Unknown>& internalField(Field field) const { return Base::internalField(static_cast<uint32_t>(field)); }
     WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
 
+    static constexpr ptrdiff_t offsetOfHandlerStructureID() { return OBJECT_OFFSETOF(ProxyObject, m_handlerStructureID); }
+    static constexpr ptrdiff_t offsetOfHandlerPrototypeStructureID() { return OBJECT_OFFSETOF(ProxyObject, m_handlerPrototypeStructureID); }
+    static constexpr ptrdiff_t offsetOfHandlerTrapsOffsetsCache() { return OBJECT_OFFSETOF(ProxyObject, m_handlerTrapsOffsetsCache); }
+    static constexpr uint64_t emptyHandlerTrapsOffsetsCacheWord() { return std::bit_cast<uint64_t>(std::array<ProxyHandlerOffset, sizeof(uint64_t)> { }); }
+
     JSObject* getHandlerTrap(JSGlobalObject*, JSObject*, CallData&, const Identifier&, HandlerTrap);
     inline JSObject* callTargetIfKnownToHaveNoApplyTrap();
     bool LEGACY_NODELETE forwardsGetOwnPropertyNamesToTarget(DontEnumPropertiesMode);
@@ -200,6 +205,9 @@ private:
     WriteBarrierStructureID m_handlerPrototypeStructureID;
     std::array<ProxyHandlerOffset, numberOfCachedHandlerTrapsOffsets> m_handlerTrapsOffsetsCache { };
 };
+
+static_assert(ProxyObject::offsetOfHandlerTrapsOffsetsCache() == sizeof(ProxyObject::Base) + 2 * sizeof(WriteBarrierStructureID));
+static_assert(roundUpToMultipleOf<sizeof(uint64_t)>(ProxyObject::offsetOfHandlerTrapsOffsetsCache() + ProxyObject::numberOfCachedHandlerTrapsOffsets) == sizeof(ProxyObject));
 
 ALWAYS_INLINE bool ProxyObject::isHandlerTrapsCacheValid(JSObject* handler)
 {

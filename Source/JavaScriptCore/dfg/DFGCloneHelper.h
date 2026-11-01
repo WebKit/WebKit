@@ -303,6 +303,7 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, NOESCAPE const Cust
     CLONE_STATUS(NewPromise, Common) \
     CLONE_STATUS(NewMap, Common) \
     CLONE_STATUS(NewObject, Common) \
+    CLONE_STATUS(NewProxyObject, Common) \
     CLONE_STATUS(NewRegExp, Common) \
     CLONE_STATUS(NewRegExpUntyped, Common) \
     CLONE_STATUS(NewSet, Common) \

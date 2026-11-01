@@ -4707,6 +4707,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case NewProxyObject: {
+        compileNewProxyObject(node);
+        break;
+    }
+
     case ToObject:
     case CallObjectConstructor: {
         compileToObjectOrCallObjectConstructor(node);

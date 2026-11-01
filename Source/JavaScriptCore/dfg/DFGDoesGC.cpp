@@ -444,6 +444,7 @@ bool doesGC(Graph& graph, Node* node)
     case NewSet:
     case NewWeakMap:
     case NewWeakSet:
+    case NewProxyObject:
     case NewSymbol:
     case MakeRope:
     case MakeAtomString:

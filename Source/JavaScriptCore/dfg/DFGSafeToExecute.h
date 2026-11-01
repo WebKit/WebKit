@@ -706,6 +706,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case NewSet:
     case NewWeakMap:
     case NewWeakSet:
+    case NewProxyObject:
     case NewSymbol:
     case ProfileType:
     case ProfileControlFlow:

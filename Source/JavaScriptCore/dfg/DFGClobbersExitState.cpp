@@ -63,6 +63,7 @@ bool clobbersExitState(Graph& graph, Node* node)
     case NewSet:
     case NewWeakMap:
     case NewWeakSet:
+    case NewProxyObject:
     case NewStringObject:
     case NewBoundFunction:
     case PhantomNewObject:

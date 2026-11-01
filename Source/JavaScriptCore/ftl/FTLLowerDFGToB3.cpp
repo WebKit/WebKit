@@ -112,6 +112,7 @@
 #include "PCToCodeOriginMap.h"
 #include "ProbeContext.h"
 #include "PropertyInlineCache.h"
+#include "ProxyObject.h"
 #include "RegExpObject.h"
 #include "ScratchRegisterAllocator.h"
 #include "SetupVarargsFrame.h"
@@ -1893,6 +1894,9 @@ private:
             break;
         case NewWeakSet:
             compileNewWeakSet();
+            break;
+        case NewProxyObject:
+            compileNewProxyObject();
             break;
         case SetFunctionName:
             compileSetFunctionName();
@@ -20472,6 +20476,37 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(slowCase, continuation);
         ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), operationNewWeakSet, m_vmValue, frozenPointer(m_graph.freezeStrong(m_node->structure().get()))));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
+    }
+
+    void compileNewProxyObject()
+    {
+        LValue target = lowObject(m_node->child1());
+        LValue handler = lowObject(m_node->child2());
+
+        LBasicBlock fastCase = m_out.newBlock();
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(m_out.bitOr(isType(target, FinalObjectType), isType(target, ArrayType)), usually(fastCase), rarely(slowCase));
+
+        LBasicBlock lastNext = m_out.appendTo(fastCase, slowCase);
+        LValue object = allocateObject<ProxyObject>(sizeof(ProxyObject), m_node->structure(), m_out.intPtrZero, slowCase);
+        m_out.store64(target, object, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(ProxyObject::Field::Target)]);
+        m_out.store64(handler, object, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(ProxyObject::Field::Handler)]);
+        m_out.store32(m_out.int32Zero, object, m_heaps.ProxyObject_handlerStructureID);
+        m_out.store32(m_out.int32Zero, object, m_heaps.ProxyObject_handlerPrototypeStructureID);
+        for (size_t offset = ProxyObject::offsetOfHandlerTrapsOffsetsCache(); offset < sizeof(ProxyObject); offset += sizeof(uint64_t))
+            m_out.store64(m_out.constInt64(ProxyObject::emptyHandlerTrapsOffsetsCacheWord()), m_out.address(m_heaps.ProxyObject_handlerTrapsOffsetsCache, object, offset));
+        mutatorFence();
+        ValueFromBlock fastResult = m_out.anchor(object);
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowCase, continuation);
+        ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), operationNewProxyObject, weakPointer(m_node->structure()->realm()), target, handler));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);

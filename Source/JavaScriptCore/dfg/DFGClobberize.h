@@ -2275,6 +2275,7 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
     case NewSet:
     case NewWeakMap:
     case NewWeakSet:
+    case NewProxyObject:
     case PhantomNewObject:
     case MaterializeNewObject:
     case PhantomNewFunction:

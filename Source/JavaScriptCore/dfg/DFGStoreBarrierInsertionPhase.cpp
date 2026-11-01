@@ -449,6 +449,7 @@ private:
             case NewSet:
             case NewWeakMap:
             case NewWeakSet:
+            case NewProxyObject:
             case NewSymbol:
             case MaterializeNewObject:
             case MaterializeNewArrayWithButterfly:

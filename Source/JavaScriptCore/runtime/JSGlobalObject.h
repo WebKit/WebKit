@@ -988,6 +988,7 @@ public:
     Structure* syntheticModuleRecordStructure() const { return m_syntheticModuleRecordStructure.get(this); }
     Structure* moduleNamespaceObjectStructure() const { return m_moduleNamespaceObjectStructure.get(this); }
     Structure* proxyObjectStructure() const { return m_proxyObjectStructure.get(this); }
+    Structure* proxyObjectStructureConcurrently() const { return m_proxyObjectStructure.getConcurrently(); }
     Structure* callableProxyObjectStructure() const { return m_callableProxyObjectStructure.get(this); }
     Structure* proxyRevocableResultStructure() const { return m_proxyRevocableResultStructure.get(this); }
     Structure* disposableStackStructure() const { return m_disposableStackStructure.get(this); }

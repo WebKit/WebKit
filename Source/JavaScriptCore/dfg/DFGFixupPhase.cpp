@@ -2013,6 +2013,12 @@ private:
             break;
         }
 
+        case NewProxyObject: {
+            fixEdge<ObjectUse>(node->child1());
+            fixEdge<ObjectUse>(node->child2());
+            break;
+        }
+
         case NewRegExpUntyped: {
             if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString()) {
                 fixEdge<StringUse>(node->child1());

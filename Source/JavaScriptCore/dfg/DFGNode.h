@@ -2523,6 +2523,7 @@ public:
         case NewSet:
         case NewWeakMap:
         case NewWeakSet:
+        case NewProxyObject:
         case NewArrayWithSizeAndStructure:
         case NewTypedArrayBuffer:
         case RegExpStringIteratorNext:

@@ -82,6 +82,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "MicrotaskCall.h"
 #include "ProbeContext.h"
+#include "ProxyObject.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "ThunkGenerators.h"
@@ -11497,6 +11498,44 @@ void SpeculativeJIT::compileNewWeakSet(Node* node)
     mutatorFence(vm());
 
     addSlowPathGenerator(slowPathCall(slowCases, this, operationNewWeakSet, resultGPR, TrustedImmPtr(&vm()), TrustedImmPtr(structure)));
+
+    cellResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileNewProxyObject(Node* node)
+{
+    SpeculateCellOperand target(this, node->child1());
+    SpeculateCellOperand handler(this, node->child2());
+    GPRTemporary result(this);
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+
+    GPRReg targetGPR = target.gpr();
+    GPRReg handlerGPR = handler.gpr();
+    GPRReg resultGPR = result.gpr();
+    GPRReg scratch1GPR = scratch1.gpr();
+    GPRReg scratch2GPR = scratch2.gpr();
+
+    speculateObject(node->child1(), targetGPR);
+    speculateObject(node->child2(), handlerGPR);
+
+    JumpList slowCases;
+
+    Jump isFinalObject = branchIfType(targetGPR, FinalObjectType);
+    slowCases.append(branchIfNotType(targetGPR, ArrayType));
+    isFinalObject.link(this);
+
+    auto butterfly = TrustedImmPtr(nullptr);
+    emitAllocateJSObjectWithKnownSize<ProxyObject>(resultGPR, TrustedImmPtr(node->structure()), butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(ProxyObject), SlowAllocationResult::UndefinedBehavior);
+    store64(targetGPR, Address(resultGPR, ProxyObject::offsetOfInternalField(static_cast<unsigned>(ProxyObject::Field::Target))));
+    store64(handlerGPR, Address(resultGPR, ProxyObject::offsetOfInternalField(static_cast<unsigned>(ProxyObject::Field::Handler))));
+    store32(TrustedImm32(0), Address(resultGPR, ProxyObject::offsetOfHandlerStructureID()));
+    store32(TrustedImm32(0), Address(resultGPR, ProxyObject::offsetOfHandlerPrototypeStructureID()));
+    for (size_t offset = ProxyObject::offsetOfHandlerTrapsOffsetsCache(); offset < sizeof(ProxyObject); offset += sizeof(uint64_t))
+        store64(TrustedImm64(ProxyObject::emptyHandlerTrapsOffsetsCacheWord()), Address(resultGPR, offset));
+    mutatorFence(vm());
+
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationNewProxyObject, resultGPR, LinkableConstant(*this, node->structure()->realm()), targetGPR, handlerGPR));
 
     cellResult(resultGPR, node);
 }

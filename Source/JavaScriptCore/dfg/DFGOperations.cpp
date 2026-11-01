@@ -6476,6 +6476,15 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationNewWeakSet, JSWeakSet*, (VM* vmPointe
     return JSWeakSet::create(vm, structure);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationNewProxyObject, JSCell*, (JSGlobalObject* globalObject, JSObject* target, JSObject* handler))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, ProxyObject::create(globalObject, target, handler));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationWeakSetAdd, void, (JSGlobalObject* globalObject, JSCell* set, JSCell* key, int32_t hash))
 {
     VM& vm = globalObject->vm();

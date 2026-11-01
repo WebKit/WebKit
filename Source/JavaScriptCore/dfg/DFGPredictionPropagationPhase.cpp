@@ -1449,6 +1449,11 @@ private:
             break;
         }
 
+        case NewProxyObject: {
+            setPrediction(SpecProxyObject);
+            break;
+        }
+
         case PushWithScope:
         case CreateActivation: {
             setPrediction(SpecObjectOther);

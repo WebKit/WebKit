@@ -454,6 +454,7 @@ namespace JSC { namespace DFG {
     macro(NewSet, NodeResultJS) \
     macro(NewWeakMap, NodeResultJS) \
     macro(NewWeakSet, NodeResultJS) \
+    macro(NewProxyObject, NodeResultJS) \
     /* Rest Parameter */\
     macro(CreateRest, NodeResultJS | NodeMustGenerate) \
     \

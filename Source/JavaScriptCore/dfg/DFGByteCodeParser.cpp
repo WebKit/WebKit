@@ -92,6 +92,7 @@
 #include "PreciseJumpTargetsInlines.h"
 #include "PrivateFieldPutKind.h"
 #include "PropertyInlineCache.h"
+#include "ProxyConstructor.h"
 #include "PutByIdFlags.h"
 #include "PutByStatus.h"
 #include "RegExpConstructor.h"
@@ -6664,6 +6665,7 @@ static bool constantFunctionSupportsCalleeFromAnyRealm(const ClassInfo* classInf
         || classInfo == SetConstructor::info()
         || classInfo == WeakMapConstructor::info()
         || classInfo == WeakSetConstructor::info()
+        || classInfo == ProxyConstructor::info()
         || classInfo == JSArrayBufferConstructor::info()
         || classInfo == JSSharedArrayBufferConstructor::info();
 }
@@ -6921,6 +6923,17 @@ bool ByteCodeParser::handleConstantFunction(
             insertChecks();
             Node* resultNode = addToGraph(NewWeakSet, OpInfo(m_graph.registerStructure(structure)));
             set(result, resultNode);
+            return true;
+        }
+    }
+
+    if (function->classInfo() == ProxyConstructor::info() && kind == CodeSpecializationKind::CodeForConstruct) {
+        auto* structure = function->realm()->proxyObjectStructureConcurrently();
+        if (structure && argumentCountIncludingThis >= 3 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)) {
+            insertChecks();
+            Node* target = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            Node* handler = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
+            set(result, addToGraph(NewProxyObject, OpInfo(m_graph.registerStructure(structure)), target, handler));
             return true;
         }
     }

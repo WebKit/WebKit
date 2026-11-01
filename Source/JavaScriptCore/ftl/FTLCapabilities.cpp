@@ -418,6 +418,7 @@ inline CapabilityLevel canCompile(DFG::Node* node)
     case NewSet:
     case NewWeakMap:
     case NewWeakSet:
+    case NewProxyObject:
     case StringReplace:
     case StringReplaceAll:
     case StringReplaceRegExp:

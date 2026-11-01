@@ -1319,6 +1319,7 @@ public:
     void compileNewSet(Node*);
     void compileNewWeakMap(Node*);
     void compileNewWeakSet(Node*);
+    void compileNewProxyObject(Node*);
     void compileNewRegExpUntyped(Node*);
 
     void emitNewTypedArrayWithSizeInRegister(Node*, TypedArrayType, RegisteredStructure, GPRReg sizeGPR);
