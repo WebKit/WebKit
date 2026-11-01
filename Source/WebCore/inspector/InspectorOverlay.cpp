@@ -281,25 +281,22 @@ static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, co
     context.strokePath(path);
 }
 
-static void drawFragmentHighlight(GraphicsContext& context, Node& node, const InspectorOverlay::Highlight::Config& highlightConfig, InspectorOverlay::Highlight::Bounds& bounds)
+static void drawFragmentHighlight(GraphicsContext& context, const Vector<FloatQuad>& quads, const InspectorOverlay::Highlight& highlight, InspectorOverlay::Highlight::Bounds& bounds)
 {
-    InspectorOverlay::Highlight highlight;
-    buildNodeHighlight(node, highlightConfig, highlight, InspectorOverlay::CoordinateSystem::Document);
-
     FloatQuad marginQuad;
     FloatQuad borderQuad;
     FloatQuad paddingQuad;
     FloatQuad contentQuad;
 
-    size_t size = highlight.quads.size();
+    size_t size = quads.size();
     if (size >= 1)
-        marginQuad = highlight.quads[0];
+        marginQuad = quads[0];
     if (size >= 2)
-        borderQuad = highlight.quads[1];
+        borderQuad = quads[1];
     if (size >= 3)
-        paddingQuad = highlight.quads[2];
+        paddingQuad = quads[2];
     if (size >= 4)
-        contentQuad = highlight.quads[3];
+        contentQuad = quads[3];
 
     if (!marginQuad.boundingBoxIsEmpty() && marginQuad != borderQuad && highlight.marginColor.isVisible())
         drawOutlinedQuadWithClip(context, marginQuad, borderQuad, highlight.marginColor, bounds);
@@ -314,40 +311,47 @@ static void drawFragmentHighlight(GraphicsContext& context, Node& node, const In
         drawOutlinedQuad(context, contentQuad, highlight.contentColor, highlight.contentOutlineColor, bounds);
 }
 
-static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOverlay::Highlight::Bounds& bounds)
+static void drawFragmentHighlight(GraphicsContext& context, Node& node, const InspectorOverlay::Highlight::Config& highlightConfig, InspectorOverlay::Highlight::Bounds& bounds)
+{
+    InspectorOverlay::Highlight highlight;
+    buildNodeHighlight(node, highlightConfig, highlight, InspectorOverlay::CoordinateSystem::Document);
+    drawFragmentHighlight(context, highlight.quads, highlight, bounds);
+}
+
+static std::optional<InspectorOverlay::Highlight::ShapeOutside> buildShapeOutsideHighlight(Node& node)
 {
     CheckedPtr renderer = node.renderer();
     if (!renderer || renderer->isSkippedContent() || !is<RenderBox>(renderer))
-        return;
+        return std::nullopt;
 
     const ShapeOutsideInfo* shapeOutsideInfo = downcast<RenderBox>(renderer.get())->shapeOutsideInfo();
     if (!shapeOutsideInfo)
-        return;
+        return std::nullopt;
 
     RefPtr containingFrame = protect(node.document())->frame();
     if (!containingFrame)
-        return;
+        return std::nullopt;
 
     RefPtr containingView = containingFrame->view();
     if (!containingView)
-        return;
+        return std::nullopt;
 
     // See buildRendererHighlight(): only read under CoordinateSystem::View, which frames never reach.
     RefPtr containingPage = containingFrame->page();
     RefPtr mainView = containingPage ? protect(containingPage->mainFrame())->virtualView() : nullptr;
 
-    static constexpr auto shapeHighlightColor = SRGBA<uint8_t> { 96, 82, 127, 204 };
-
     LayoutShape::DisplayPaths paths;
     protect(shapeOutsideInfo->computedShape())->buildDisplayPaths(paths);
+
+    InspectorOverlay::Highlight::ShapeOutside shapeOutside;
 
     if (paths.shape.isEmpty()) {
         LayoutRect shapeBounds = shapeOutsideInfo->computedShapePhysicalBoundingBox();
         // FIXME: Remove suppression once rdar://189998444 is fixed.
         SUPPRESS_MEMORY_UNSAFE_CAST FloatQuad shapeQuad = renderer->localToAbsoluteQuad(FloatRect(shapeBounds));
         contentsQuadToCoordinateSystem(mainView, *containingView, shapeQuad, InspectorOverlay::CoordinateSystem::Document);
-        drawOutlinedQuad(context, shapeQuad, shapeHighlightColor, Color::transparentBlack, bounds);
-        return;
+        shapeOutside.boundingQuad = shapeQuad;
+        return shapeOutside;
     }
 
     const auto mapPoints = [&] (const Path& path) {
@@ -383,24 +387,44 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
         return newPath;
     };
 
-    if (paths.marginShape.length()) {
-        Path marginPath = mapPoints(paths.marginShape);
-        bounds.unite(marginPath.boundingRect());
+    if (paths.marginShape.length())
+        shapeOutside.marginPath = mapPoints(paths.marginShape);
+
+    shapeOutside.shapePath = mapPoints(paths.shape);
+    return shapeOutside;
+}
+
+static void drawShapeHighlight(GraphicsContext& context, const InspectorOverlay::Highlight::ShapeOutside& shapeOutside, InspectorOverlay::Highlight::Bounds& bounds)
+{
+    static constexpr auto shapeHighlightColor = SRGBA<uint8_t> { 96, 82, 127, 204 };
+
+    if (shapeOutside.boundingQuad) {
+        drawOutlinedQuad(context, *shapeOutside.boundingQuad, shapeHighlightColor, Color::transparentBlack, bounds);
+        return;
+    }
+
+    if (shapeOutside.marginPath) {
+        bounds.unite(shapeOutside.marginPath->boundingRect());
 
         GraphicsContextStateSaver stateSaver(context);
 
         constexpr auto shapeMarginHighlightColor = SRGBA<uint8_t> { 96, 82, 127, 153 };
         context.setFillColor(shapeMarginHighlightColor);
-        context.fillPath(marginPath);
+        context.fillPath(*shapeOutside.marginPath);
     }
 
-    Path shapePath = mapPoints(paths.shape);
-    bounds.unite(shapePath.boundingRect());
+    bounds.unite(shapeOutside.shapePath.boundingRect());
 
     GraphicsContextStateSaver stateSaver(context);
 
     context.setFillColor(shapeHighlightColor);
-    context.fillPath(shapePath);
+    context.fillPath(shapeOutside.shapePath);
+}
+
+static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOverlay::Highlight::Bounds& bounds)
+{
+    if (auto shapeOutside { buildShapeOutsideHighlight(node) })
+        drawShapeHighlight(context, *shapeOutside, bounds);
 }
 
 InspectorOverlay::InspectorOverlay(InspectorOverlayOwner& owner)
@@ -1239,11 +1263,8 @@ NODELETE static bool rendererIsGridItem(RenderObject& renderer)
     return false;
 }
 
-Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, const InspectorOverlay::Highlight::Bounds& bounds)
+static Vector<InspectorOverlayLabel::Content> elementTitleContents(Node& node)
 {
-    if (bounds.isEmpty())
-        return { };
-
     RefPtr element = effectiveElementForNode(node);
     if (!element)
         return { };
@@ -1356,24 +1377,11 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         }
     }
 
-    RefPtr geometryFrame = frameForGeometry();
-    RefPtr pageView = geometryFrame ? geometryFrame->virtualView() : nullptr;
-    if (!pageView)
-        return { };
+    return labelContents;
+}
 
-    FloatSize viewportSize = pageView->sizeForVisibleContent();
-    auto obscuredContentInsets = pageView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset);
-    // Only reserve space for rulers that were actually drawn, or the label is displaced by rulerSize.
-    if (shouldDrawRulers()) {
-        obscuredContentInsets.setTop(obscuredContentInsets.top() + rulerSize);
-        obscuredContentInsets.setLeft(obscuredContentInsets.left() + rulerSize);
-    }
-
-    // FIXME: For a frame overlay these clamps are against the frame's own viewport, so a tooltip for a
-    // node near an iframe edge is confined to the iframe instead of the window. Fixing it needs the
-    // label drawn into a surface that can extend past the frame, which a per-frame overlay cannot do
-    // today -- it is the same constraint as <rdar://116202544>'s OverlayType::View work.
-
+static InspectorOverlayLabel elementTitleLabel(Vector<InspectorOverlayLabel::Content>&& labelContents, const InspectorOverlay::Highlight::Bounds& bounds, FloatSize viewportSize, const FloatBoxExtent& obscuredContentInsets)
+{
     auto expectedLabelSize = InspectorOverlayLabel::expectedSize(labelContents, InspectorOverlayLabel::Arrow::Direction::Up);
     auto boundsCenterX = bounds.center().x();
 
@@ -1417,14 +1425,50 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     }
 
     constexpr auto elementTitleBackgroundColor = SRGBA<uint8_t> { 255, 255, 194 };
+
+    return { WTF::move(labelContents), { labelX, labelY }, elementTitleBackgroundColor, { arrowDirection, arrowAlignment } };
+}
+
+static Path drawElementTitleLabel(GraphicsContext& context, InspectorOverlayLabel& label)
+{
     constexpr auto elementTitleBorderColor = Color::darkGray;
 
     GraphicsContextStateSaver stateSaver(context);
     context.setStrokeThickness(1);
     context.setStrokeColor(elementTitleBorderColor);
 
-    InspectorOverlayLabel label = { WTF::move(labelContents), { labelX, labelY }, elementTitleBackgroundColor, { arrowDirection, arrowAlignment } };
     return label.draw(context);
+}
+
+Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, const InspectorOverlay::Highlight::Bounds& bounds)
+{
+    if (bounds.isEmpty())
+        return { };
+
+    auto labelContents { elementTitleContents(node) };
+    if (labelContents.isEmpty())
+        return { };
+
+    RefPtr geometryFrame = frameForGeometry();
+    RefPtr pageView = geometryFrame ? geometryFrame->virtualView() : nullptr;
+    if (!pageView)
+        return { };
+
+    FloatSize viewportSize = pageView->sizeForVisibleContent();
+    auto obscuredContentInsets = pageView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset);
+    // Only reserve space for rulers that were actually drawn, or the label is displaced by rulerSize.
+    if (shouldDrawRulers()) {
+        obscuredContentInsets.setTop(obscuredContentInsets.top() + rulerSize);
+        obscuredContentInsets.setLeft(obscuredContentInsets.left() + rulerSize);
+    }
+
+    // FIXME: For a frame overlay these clamps are against the frame's own viewport, so a tooltip for a
+    // node near an iframe edge is confined to the iframe instead of the window. Fixing it needs the
+    // label drawn into a surface that can extend past the frame, which a per-frame overlay cannot do
+    // today -- it is the same constraint as <rdar://116202544>'s OverlayType::View work.
+
+    auto label { elementTitleLabel(WTF::move(labelContents), bounds, viewportSize, obscuredContentInsets) };
+    return drawElementTitleLabel(context, label);
 }
 
 static void drawLayoutPattern(GraphicsContext& context, const FloatQuad& quad, int hatchSpacing, Flip flip)
