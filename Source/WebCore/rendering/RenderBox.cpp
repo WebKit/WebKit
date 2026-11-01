@@ -3965,8 +3965,11 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computePercenta
     const RenderBox* containingBlockChild = this;
     LayoutUnit rootMarginBorderPaddingHeight;
     bool isHorizontal = isHorizontalWritingMode();
+    // A formatting context that gives the box the content block size of its containing block has taken the margins, borders and padding
+    // of the body and the root element off already (BlockFormattingUtils::definiteContentBoxBlockSize).
+    auto hasContainingBlockContentBlockSize = overridingContainingBlockContentLogicalHeight().has_value();
     while (containingBlock && !is<RenderView>(*containingBlock) && skipContainingBlockForPercentHeightCalculation(*containingBlock, isHorizontal != containingBlock->isHorizontalWritingMode())) {
-        if (containingBlock->isBody() || containingBlock->isDocumentElementRenderer())
+        if (!hasContainingBlockContentBlockSize && (containingBlock->isBody() || containingBlock->isDocumentElementRenderer()))
             rootMarginBorderPaddingHeight += containingBlock->marginBefore(containingBlock->writingMode()) + containingBlock->marginAfter(containingBlock->writingMode()) + containingBlock->borderAndPaddingLogicalHeight();
         skippedAutoHeightContainingBlock = true;
         containingBlockChild = containingBlock;
