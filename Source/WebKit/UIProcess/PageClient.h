@@ -696,6 +696,8 @@ public:
 
 #if PLATFORM(MAC)
     virtual bool everMagnifiedDuringCurrentGesture() const { return false; }
+
+    virtual void frameInspectorHighlightsDidChange() { }
 #endif
 
     virtual void didFirstVisuallyNonEmptyLayoutForMainFrame() = 0;

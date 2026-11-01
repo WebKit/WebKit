@@ -220,6 +220,11 @@ void WebInspectorBackendClient::hideHighlight()
 
 void WebInspectorBackendClient::setFrameHighlightsNeedDisplay()
 {
+#if PLATFORM(MAC)
+    if (RefPtr page { m_page })
+        page->frameInspectorHighlightsNeedUpdate();
+#endif
+
     for (auto entry : m_frameHighlightOverlays) {
         if (RefPtr overlay { entry.value })
             overlay->setNeedsDisplay();
@@ -234,8 +239,8 @@ RefPtr<PageOverlay> WebInspectorBackendClient::ensureHighlightOverlayForFrame(Lo
         return nullptr;
 
     auto& overlay = m_frameHighlightOverlays.ensure(frame, [&] -> RefPtr<PageOverlay> {
-        // FIXME: <rdar://116202544> Should be OverlayType::View, which needs a per-frame view-overlay
-        // root layer and attachViewOverlayGraphicsLayer() to stop hardcoding the main frame.
+        // FIXME: On ports other than macOS, should be OverlayType::View, which needs a
+        // per-frame view-overlay root layer and attachViewOverlayGraphicsLayer() to stop hardcoding the main frame.
         // DoNotFade matches hideHighlightForFrame(): a Fade uninstall defers the real uninstall.
         Ref newOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
         newOverlay->setAssociatedFrame(&frame);
@@ -253,6 +258,10 @@ void WebInspectorBackendClient::highlightFrame(LocalFrame& frame)
     if (!corePage)
         return;
 
+#if PLATFORM(MAC)
+    // The UI process draws the highlight over the page, so it is not clipped to the frame.
+    page->frameInspectorHighlightNeedsUpdate(frame);
+#else
     // Only a local root hosts its own compositing tree; a local subframe draws via the page overlay.
     // FIXME: a nested local subframe's state lives on its own overlay, which nothing consults.
     if (!frame.isRootFrame()) {
@@ -280,6 +289,7 @@ void WebInspectorBackendClient::highlightFrame(LocalFrame& frame)
     // iOS highlights go through a page-level singleton with no frame parameter.
     highlight();
 #endif
+#endif // PLATFORM(MAC)
 }
 
 void WebInspectorBackendClient::hideHighlightForFrame(LocalFrame& frame)
@@ -289,7 +299,9 @@ void WebInspectorBackendClient::hideHighlightForFrame(LocalFrame& frame)
     if (!corePage)
         return;
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
+    page->hideFrameInspectorHighlight(frame.frameID());
+#elif !PLATFORM(IOS_FAMILY)
     // Only uninstall an overlay this client installed; otherwise this is the page path.
     if (!m_frameHighlightOverlays.contains(frame)) {
         hideHighlight();
@@ -435,6 +447,11 @@ void WebInspectorBackendClient::willDestroyFrameOverlays(LocalFrame& frame)
     // runs from ~LocalFrame.
     RefPtr page = m_page.get();
     RefPtr corePage = page ? page->corePage() : nullptr;
+
+#if PLATFORM(MAC)
+    if (page)
+        page->hideFrameInspectorHighlight(frame.frameID());
+#endif
 
     // Tear the highlight overlay down too, or a stale one re-parents under the main frame.
     // Erase it first: uninstalling re-enters willMoveToPage(), which mutates this map.
