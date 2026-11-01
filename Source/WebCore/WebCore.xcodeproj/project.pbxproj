@@ -7524,6 +7524,9 @@
 		B1EA5351EAA94AFA936F8771 /* PageIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F630DF69544CEA9A7BE1E2 /* PageIndexedDBAgent.h */; };
 		63CF7B735BFB48D09CC3FA61 /* DebuggerPauseSessionIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 8673CA88C6A741C6B689B59A /* DebuggerPauseSessionIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8388CA7C42BEE5A116A9DF69 /* NativeImageCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 0266086DEAF2F2D10EC0FF0F /* NativeImageCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0CEBF20D2F07F3689744454A /* ImageDrawDescriptorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 920A67A63082764F62086B03 /* ImageDrawDescriptorTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		807547D380B36BF6457BF6C4 /* ColorAppearance.h in Headers */ = {isa = PBXBuildFile; fileRef = A0FE1D51155B617031EC275F /* ColorAppearance.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5A8EA984E6E737343E65221A /* ImageContentSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9696F89359DB2093C05E5988 /* ImageContentSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -24137,6 +24140,11 @@
 		8673CA88C6A741C6B689B59A /* DebuggerPauseSessionIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerPauseSessionIdentifier.h; sourceTree = "<group>"; };
 		0266086DEAF2F2D10EC0FF0F /* NativeImageCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NativeImageCocoa.h; sourceTree = "<group>"; };
 		AFA81AFC192B3B83C4D127ED /* NativeImageCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeImageCocoa.mm; sourceTree = "<group>"; };
+		920A67A63082764F62086B03 /* ImageDrawDescriptorTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageDrawDescriptorTypes.h; sourceTree = "<group>"; };
+		A0FE1D51155B617031EC275F /* ColorAppearance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorAppearance.h; sourceTree = "<group>"; };
+		1BA5B0B524C398F9ED0D21D8 /* ImageContentSettings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageContentSettings.cpp; sourceTree = "<group>"; };
+		9696F89359DB2093C05E5988 /* ImageContentSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageContentSettings.h; sourceTree = "<group>"; };
+		E0BA4176CB20FD04A40E4570 /* ImageRenditionOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageRenditionOptions.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31102,6 +31110,7 @@
 				7B2DDD5F27CCF3A70060ABAB /* ChromeClient.cpp */,
 				14D824060AF93AEB0004F057 /* ChromeClient.h */,
 				4107908A1FC3E4F20061B27A /* ClientOrigin.h */,
+				A0FE1D51155B617031EC275F /* ColorAppearance.h */,
 				065AD4F20B0C2EDA005A2B1D /* ContextMenuClient.h */,
 				5106D7BB18BDB76F000AB166 /* ContextMenuContext.cpp */,
 				5106D7BC18BDB76F000AB166 /* ContextMenuContext.h */,
@@ -44132,9 +44141,13 @@
 				B27535420B053814002CE64F /* Image.h */,
 				72ECA8AB2B62FBB30094F595 /* ImageAdapter.cpp */,
 				72ECA8AC2B62FBB40094F595 /* ImageAdapter.h */,
+				1BA5B0B524C398F9ED0D21D8 /* ImageContentSettings.cpp */,
+				9696F89359DB2093C05E5988 /* ImageContentSettings.h */,
 				7B0C389D2ACED2F000F1FDDC /* ImageDrawDescriptor.cpp */,
 				72C18A3F230B04B7006847C7 /* ImageDrawDescriptor.h */,
+				920A67A63082764F62086B03 /* ImageDrawDescriptorTypes.h */,
 				BC7F44A70B9E324E00A9D081 /* ImageObserver.h */,
+				E0BA4176CB20FD04A40E4570 /* ImageRenditionOptions.cpp */,
 				89AAA5F5CEBC35EFDF20580F /* ImageRenditionOptions.h */,
 				563C1375F94DDADF69B40207 /* SizedImage.h */,
 			);
@@ -44878,6 +44891,7 @@
 				CD814C332996C90E005A780A /* CollectionTraversalInlines.h in Headers */,
 				93C442000F813AE100C1A634 /* CollectionType.h in Headers */,
 				B27535670B053814002CE64F /* Color.h in Headers */,
+				807547D380B36BF6457BF6C4 /* ColorAppearance.h in Headers */,
 				33B1AB242BE309F00006EFC7 /* ColorBlending.h in Headers */,
 				C330A22313EC196B0000B45B /* ColorChooser.h in Headers */,
 				C37CDEBD149EF2030042090D /* ColorChooserClient.h in Headers */,
@@ -46390,6 +46404,7 @@
 				322B61152C50C26300FB5440 /* ImageBufferResourceLimits.h in Headers */,
 				74D182473E2A6702BD173A73 /* ImageBufferTransferIdentifier.h in Headers */,
 				073930C32AC4E85300C1D1B1 /* ImageCapture.h in Headers */,
+				5A8EA984E6E737343E65221A /* ImageContentSettings.h in Headers */,
 				725053152972B4C300D22D5F /* ImageControlsButtonPart.h in Headers */,
 				44EEA100274757F100594A83 /* ImageControlsMac.h in Headers */,
 				A779791A0D6B9D0C003851B9 /* ImageData.h in Headers */,
@@ -46403,6 +46418,7 @@
 				1D47658E25CCA778007AF312 /* ImageDecoderIdentifier.h in Headers */,
 				97205AB61239291000B17380 /* ImageDocument.h in Headers */,
 				7B0C389F2ACEDEF400F1FDDC /* ImageDrawDescriptor.h in Headers */,
+				0CEBF20D2F07F3689744454A /* ImageDrawDescriptorTypes.h in Headers */,
 				5576A5651D88A70800CCC04C /* ImageFrame.h in Headers */,
 				F55B3DC21251F12D003EF269 /* ImageInputType.h in Headers */,
 				281A941CB72C48E5886C9BC1 /* ImageInputTypeSizing.h in Headers */,

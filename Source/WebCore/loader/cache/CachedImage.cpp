@@ -620,17 +620,6 @@ void CachedImage::scheduleRenderingUpdate(const Image& image)
         client->scheduleRenderingUpdateForImage(*this);
 }
 
-bool CachedImage::useSystemDarkAppearance() const
-{
-    CachedResourceClientWalker<CachedImageClient> walker(*this);
-    while (RefPtr client = walker.next()) {
-        if (client->useSystemDarkAppearance())
-            return true;
-    }
-
-    return false;
-}
-
 bool CachedImage::allowsAnimation(const Image& image) const
 {
     if (&image != m_image)

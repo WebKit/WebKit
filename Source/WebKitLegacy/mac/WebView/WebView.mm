@@ -143,6 +143,7 @@
 #import <WebCore/CSSStyleProperties.h>
 #import <WebCore/CacheStorageProvider.h>
 #import <WebCore/Chrome.h>
+#import <WebCore/ColorAppearance.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/ColorSerialization.h>
 #import <WebCore/CookieJar.h>
@@ -1695,7 +1696,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCore::ResourceHandle::forceContentSniffing();
 
     page->setDeviceScaleFactor([self _deviceScaleFactor]);
-    page->setUseColorAppearance(self._effectiveAppearanceIsDark, self._effectiveUserInterfaceLevelIsElevated);
+    page->setUseColorAppearance(self._effectiveAppearanceIsDark ? WebCore::UseDarkAppearance::Yes : WebCore::UseDarkAppearance::No, self._effectiveUserInterfaceLevelIsElevated ? WebCore::UseElevatedUserInterfaceLevel::Yes : WebCore::UseElevatedUserInterfaceLevel::No);
 
     [WebViewVisualIdentificationOverlay installForWebViewIfNeeded:self kind:@"WebView" deprecated:YES];
 
@@ -2680,7 +2681,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (!_private || !_private->page)
         return;
-    protect(_private->page)->setUseColorAppearance(useDarkAppearance, useElevatedUserInterfaceLevel);
+    protect(_private->page)->setUseColorAppearance(useDarkAppearance ? WebCore::UseDarkAppearance::Yes : WebCore::UseDarkAppearance::No, useElevatedUserInterfaceLevel ? WebCore::UseElevatedUserInterfaceLevel::Yes : WebCore::UseElevatedUserInterfaceLevel::No);
 }
 
 + (void)_setIconLoadingEnabled:(BOOL)enabled
@@ -4895,7 +4896,7 @@ IGNORE_WARNINGS_END
     if (!_private || !_private->page)
         return;
 
-    protect(_private->page)->setUseColorAppearance(self._effectiveAppearanceIsDark, self._effectiveUserInterfaceLevelIsElevated);
+    protect(_private->page)->setUseColorAppearance(self._effectiveAppearanceIsDark ? WebCore::UseDarkAppearance::Yes : WebCore::UseDarkAppearance::No, self._effectiveUserInterfaceLevelIsElevated ? WebCore::UseElevatedUserInterfaceLevel::Yes : WebCore::UseElevatedUserInterfaceLevel::No);
 }
 #endif
 

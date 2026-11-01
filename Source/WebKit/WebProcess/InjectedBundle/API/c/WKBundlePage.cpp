@@ -63,6 +63,7 @@
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/CSSPropertyParserConsumer+Color.h>
 #include <WebCore/CaptionUserPreferences.h>
+#include <WebCore/ColorAppearance.h>
 #include <WebCore/CompositionHighlight.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/LocalFrameInlines.h>
@@ -566,7 +567,7 @@ void WKBundlePageSetUseDarkAppearance(WKBundlePageRef pageRef, bool useDarkAppea
 {
     RefPtr webPage = WebKit::toImpl(pageRef);
     if (RefPtr page = webPage ? webPage->corePage() : nullptr)
-        page->setUseColorAppearance(useDarkAppearance, page->useElevatedUserInterfaceLevel());
+        page->setUseColorAppearance(useDarkAppearance ? WebCore::UseDarkAppearance::Yes : WebCore::UseDarkAppearance::No, page->useElevatedUserInterfaceLevel() ? WebCore::UseElevatedUserInterfaceLevel::Yes : WebCore::UseElevatedUserInterfaceLevel::No);
 }
 
 bool WKBundlePageIsUsingDarkAppearance(WKBundlePageRef pageRef)

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<title>An SVG image shared by two pages draws with the appearance of each</title>
+<link rel="author" title="Sam Weinig" href="mailto:sam@webkit.org">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="resources/svg-image-per-page.js"></script>
+<script>
+const imageURL = new URL("../custom/resources/prefers-color-scheme-dark-red-green.svg", location.href).href;
+const green = [0, 128, 0, 255];
+const red = [255, 0, 0, 255];
+
+promise_test(async test => {
+    assert_own_property(window, "internals");
+    internals.settings.setUseDarkAppearance(true);
+
+    const secondPage = openSecondPage(test);
+    const darkImage = await loadImage(document, imageURL);
+    const lightImage = await loadImage(secondPage.document, imageURL);
+
+    assert_array_equals(pixelOfDraw(darkImage, 50, 50), green, "dark page");
+    assert_array_equals(pixelOfDraw(lightImage, 50, 50), red, "light page");
+    assert_array_equals(pixelOfDraw(darkImage, 50, 50), green, "dark page after the light page");
+});
+</script>

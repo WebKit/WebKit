@@ -1871,7 +1871,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     loader/images/Image.h
     loader/images/ImageAdapter.h
+    loader/images/ImageContentSettings.h
     loader/images/ImageDrawDescriptor.h
+    loader/images/ImageDrawDescriptorTypes.h
     loader/images/ImageObserver.h
     loader/images/ImageRenditionOptions.h
     loader/images/SizedImage.h
@@ -1902,6 +1904,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/CaptionUserPreferencesMediaAF.h
     page/Chrome.h
     page/ChromeClient.h
+    page/ColorAppearance.h
     page/ClientOrigin.h
     page/ContextMenuClient.h
     page/ContextMenuContext.h

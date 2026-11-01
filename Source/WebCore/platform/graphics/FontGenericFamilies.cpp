@@ -33,6 +33,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FontGenericFamilies);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FontGenericFamilies::Families);
 
 using namespace WebKitFontFamilyNames;
 
@@ -64,114 +65,140 @@ static const String& genericFontFamilyForScript(const ScriptFontFamilyMap& fontM
     return emptyAtom();
 }
 
-FontGenericFamilies::FontGenericFamilies() = default;
+FontGenericFamilies::FontGenericFamilies()
+    : m_families(Families::create())
+{
+}
 
 FontGenericFamilies FontGenericFamilies::isolatedCopy() const &
 {
     FontGenericFamilies copy;
-    copy.m_standardFontFamilyMap = crossThreadCopy(m_standardFontFamilyMap);
-    copy.m_serifFontFamilyMap = crossThreadCopy(m_serifFontFamilyMap);
-    copy.m_fixedFontFamilyMap = crossThreadCopy(m_fixedFontFamilyMap);
-    copy.m_sansSerifFontFamilyMap = crossThreadCopy(m_sansSerifFontFamilyMap);
-    copy.m_cursiveFontFamilyMap = crossThreadCopy(m_cursiveFontFamilyMap);
-    copy.m_fantasyFontFamilyMap = crossThreadCopy(m_fantasyFontFamilyMap);
-    copy.m_pictographFontFamilyMap = crossThreadCopy(m_pictographFontFamilyMap);
-    copy.m_mathFontFamilyMap = crossThreadCopy(m_mathFontFamilyMap);
+    Ref copyFamilies = copy.m_families.access();
+    copyFamilies->standardFontFamilyMap = crossThreadCopy(m_families->standardFontFamilyMap);
+    copyFamilies->serifFontFamilyMap = crossThreadCopy(m_families->serifFontFamilyMap);
+    copyFamilies->fixedFontFamilyMap = crossThreadCopy(m_families->fixedFontFamilyMap);
+    copyFamilies->sansSerifFontFamilyMap = crossThreadCopy(m_families->sansSerifFontFamilyMap);
+    copyFamilies->cursiveFontFamilyMap = crossThreadCopy(m_families->cursiveFontFamilyMap);
+    copyFamilies->fantasyFontFamilyMap = crossThreadCopy(m_families->fantasyFontFamilyMap);
+    copyFamilies->pictographFontFamilyMap = crossThreadCopy(m_families->pictographFontFamilyMap);
+    copyFamilies->mathFontFamilyMap = crossThreadCopy(m_families->mathFontFamilyMap);
     return copy;
 }
 
 FontGenericFamilies FontGenericFamilies::isolatedCopy() &&
 {
+    Ref families = m_families.access();
     FontGenericFamilies copy;
-    copy.m_standardFontFamilyMap = crossThreadCopy(WTF::move(m_standardFontFamilyMap));
-    copy.m_serifFontFamilyMap = crossThreadCopy(WTF::move(m_serifFontFamilyMap));
-    copy.m_fixedFontFamilyMap = crossThreadCopy(WTF::move(m_fixedFontFamilyMap));
-    copy.m_sansSerifFontFamilyMap = crossThreadCopy(WTF::move(m_sansSerifFontFamilyMap));
-    copy.m_cursiveFontFamilyMap = crossThreadCopy(WTF::move(m_cursiveFontFamilyMap));
-    copy.m_fantasyFontFamilyMap = crossThreadCopy(WTF::move(m_fantasyFontFamilyMap));
-    copy.m_pictographFontFamilyMap = crossThreadCopy(WTF::move(m_pictographFontFamilyMap));
-    copy.m_mathFontFamilyMap = crossThreadCopy(WTF::move(m_mathFontFamilyMap));
+    Ref copyFamilies = copy.m_families.access();
+    copyFamilies->standardFontFamilyMap = crossThreadCopy(WTF::move(families->standardFontFamilyMap));
+    copyFamilies->serifFontFamilyMap = crossThreadCopy(WTF::move(families->serifFontFamilyMap));
+    copyFamilies->fixedFontFamilyMap = crossThreadCopy(WTF::move(families->fixedFontFamilyMap));
+    copyFamilies->sansSerifFontFamilyMap = crossThreadCopy(WTF::move(families->sansSerifFontFamilyMap));
+    copyFamilies->cursiveFontFamilyMap = crossThreadCopy(WTF::move(families->cursiveFontFamilyMap));
+    copyFamilies->fantasyFontFamilyMap = crossThreadCopy(WTF::move(families->fantasyFontFamilyMap));
+    copyFamilies->pictographFontFamilyMap = crossThreadCopy(WTF::move(families->pictographFontFamilyMap));
+    copyFamilies->mathFontFamilyMap = crossThreadCopy(WTF::move(families->mathFontFamilyMap));
     return copy;
 }
 
 const String& FontGenericFamilies::standardFontFamily(UScriptCode script) const
 {
-    return genericFontFamilyForScript(m_standardFontFamilyMap, script);
+    return genericFontFamilyForScript(m_families->standardFontFamilyMap, script);
 }
 
 const String& FontGenericFamilies::fixedFontFamily(UScriptCode script) const
 {
-    return genericFontFamilyForScript(m_fixedFontFamilyMap, script);
+    return genericFontFamilyForScript(m_families->fixedFontFamilyMap, script);
 }
 
 const String& FontGenericFamilies::serifFontFamily(UScriptCode script) const
 {
-    return genericFontFamilyForScript(m_serifFontFamilyMap, script);
+    return genericFontFamilyForScript(m_families->serifFontFamilyMap, script);
 }
 
 const String& FontGenericFamilies::sansSerifFontFamily(UScriptCode script) const
 {
-    return genericFontFamilyForScript(m_sansSerifFontFamilyMap, script);
+    return genericFontFamilyForScript(m_families->sansSerifFontFamilyMap, script);
 }
 
 const String& FontGenericFamilies::cursiveFontFamily(UScriptCode script) const
 {
-    return genericFontFamilyForScript(m_cursiveFontFamilyMap, script);
+    return genericFontFamilyForScript(m_families->cursiveFontFamilyMap, script);
 }
 
 const String& FontGenericFamilies::fantasyFontFamily(UScriptCode script) const
 {
-    return genericFontFamilyForScript(m_fantasyFontFamilyMap, script);
+    return genericFontFamilyForScript(m_families->fantasyFontFamilyMap, script);
 }
 
 const String& FontGenericFamilies::pictographFontFamily(UScriptCode script) const
 {
-    return genericFontFamilyForScript(m_pictographFontFamilyMap, script);
+    return genericFontFamilyForScript(m_families->pictographFontFamilyMap, script);
 }
 
 const String& FontGenericFamilies::mathFontFamily(UScriptCode script) const
 {
-    return genericFontFamilyForScript(m_mathFontFamilyMap, script);
+    return genericFontFamilyForScript(m_families->mathFontFamilyMap, script);
 }
 
 bool FontGenericFamilies::setStandardFontFamily(const String& family, UScriptCode script)
 {
-    return setGenericFontFamilyForScript(m_standardFontFamilyMap, family, script);
+    return setFontFamily(&Families::standardFontFamilyMap, family, script);
 }
 
 bool FontGenericFamilies::setFixedFontFamily(const String& family, UScriptCode script)
 {
-    return setGenericFontFamilyForScript(m_fixedFontFamilyMap, family, script);
+    return setFontFamily(&Families::fixedFontFamilyMap, family, script);
 }
 
 bool FontGenericFamilies::setSerifFontFamily(const String& family, UScriptCode script)
 {
-    return setGenericFontFamilyForScript(m_serifFontFamilyMap, family, script);
+    return setFontFamily(&Families::serifFontFamilyMap, family, script);
 }
 
 bool FontGenericFamilies::setSansSerifFontFamily(const String& family, UScriptCode script)
 {
-    return setGenericFontFamilyForScript(m_sansSerifFontFamilyMap, family, script);
+    return setFontFamily(&Families::sansSerifFontFamilyMap, family, script);
 }
 
 bool FontGenericFamilies::setCursiveFontFamily(const String& family, UScriptCode script)
 {
-    return setGenericFontFamilyForScript(m_cursiveFontFamilyMap, family, script);
+    return setFontFamily(&Families::cursiveFontFamilyMap, family, script);
 }
 
 bool FontGenericFamilies::setFantasyFontFamily(const String& family, UScriptCode script)
 {
-    return setGenericFontFamilyForScript(m_fantasyFontFamilyMap, family, script);
+    return setFontFamily(&Families::fantasyFontFamilyMap, family, script);
 }
 
 bool FontGenericFamilies::setPictographFontFamily(const String& family, UScriptCode script)
 {
-    return setGenericFontFamilyForScript(m_pictographFontFamilyMap, family, script);
+    return setFontFamily(&Families::pictographFontFamilyMap, family, script);
 }
 
 bool FontGenericFamilies::setMathFontFamily(const String& family, UScriptCode script)
 {
-    return setGenericFontFamilyForScript(m_mathFontFamilyMap, family, script);
+    return setFontFamily(&Families::mathFontFamilyMap, family, script);
+}
+
+bool FontGenericFamilies::setFontFamily(ScriptFontFamilyMap Families::* map, const String& family, UScriptCode script)
+{
+    auto& currentMap = m_families.get().*map;
+    if (family.isEmpty() ? !currentMap.contains(static_cast<int>(script)) : currentMap.get(static_cast<int>(script)) == family)
+        return false;
+    return setGenericFontFamilyForScript(m_families.access().*map, family, script);
+}
+
+bool FontGenericFamilies::Families::operator==(const Families& other) const
+{
+    return standardFontFamilyMap == other.standardFontFamilyMap
+        && serifFontFamilyMap == other.serifFontFamilyMap
+        && fixedFontFamilyMap == other.fixedFontFamilyMap
+        && sansSerifFontFamilyMap == other.sansSerifFontFamilyMap
+        && cursiveFontFamilyMap == other.cursiveFontFamilyMap
+        && fantasyFontFamilyMap == other.fantasyFontFamilyMap
+        && pictographFontFamilyMap == other.pictographFontFamilyMap
+        && mathFontFamilyMap == other.mathFontFamilyMap;
 }
 
 const String* FontGenericFamilies::fontFamily(FamilyNamesIndex family, UScriptCode script) const

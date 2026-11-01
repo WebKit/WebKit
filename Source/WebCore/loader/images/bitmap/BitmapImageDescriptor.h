@@ -27,6 +27,7 @@
 
 #include "Color.h"
 #include "ColorSpace.h"
+#include "ImageDrawDescriptorTypes.h"
 #include "ImageOrientation.h"
 #include "ImageTypes.h"
 #include "IntPoint.h"

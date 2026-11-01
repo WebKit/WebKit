@@ -2242,7 +2242,9 @@ loader/cache/TrustedFonts.cpp
 loader/icon/IconLoader.cpp
 loader/images/Image.cpp
 loader/images/ImageAdapter.cpp
+loader/images/ImageContentSettings.cpp
 loader/images/ImageDrawDescriptor.cpp
+loader/images/ImageRenditionOptions.cpp
 loader/images/bitmap/BitmapImage.cpp
 loader/images/bitmap/BitmapImageDescriptor.cpp
 loader/images/bitmap/BitmapImageSource.cpp

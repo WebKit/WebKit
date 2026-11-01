@@ -24,13 +24,18 @@
 
 #pragma once
 
+#include <WebCore/ColorAppearance.h>
 #include <WebCore/GraphicsTypes.h>
+#include <WebCore/ImageContentSettings.h>
+#include <WebCore/ImageDrawDescriptorTypes.h>
 #include <WebCore/ImageTypes.h>
 #include <WebCore/PlatformDynamicRangeLimit.h>
 #include <WebCore/StyleLinkParameters.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
+
+class Document;
 
 // The parts of an ImageDrawDescriptor that change what an image draws, rather than where or how it is
 // composited. Caches of an image's output are keyed on these.
@@ -42,11 +47,23 @@ struct ImageRenditionOptions {
     DrawsHDRContent drawsHDRContent { DrawsHDRContent::No };
     Headroom headroom { Headroom::FromImage };
     PlatformDynamicRangeLimit dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
+    UseDarkAppearance useDarkAppearance { UseDarkAppearance::No };
+    UseElevatedUserInterfaceLevel useElevatedUserInterfaceLevel { UseElevatedUserInterfaceLevel::No };
+    std::optional<ImageContentSettings> contentSettings { };
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     InvertContent invertContent { InvertContent::FromResource };
 #endif
 
+    // Fills in the appearance and settings of the document drawing the image.
+    static ImageRenditionOptions forDocument(const Document&);
+    WEBCORE_EXPORT static ImageRenditionOptions forDocument(const Document&, ImageRenditionOptions);
+
     bool operator==(const ImageRenditionOptions&) const = default;
 };
+
+inline ImageRenditionOptions ImageRenditionOptions::forDocument(const Document& document)
+{
+    return forDocument(document, { });
+}
 
 } // namespace WebCore

@@ -1079,7 +1079,6 @@ public:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) { }
     virtual bool allowsAnimation() const { return true; }
     virtual bool canDestroyDecodedData() const { return true; }
-    virtual bool useSystemDarkAppearance() const { return false; }
     virtual VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect*);
     virtual VisibleInViewportState imageVisibleInViewport(const Document&) const { return VisibleInViewportState::No; }
     virtual void didRemoveCachedImageClient(CachedImage&) { }
@@ -1170,7 +1169,6 @@ private:
         void imageChanged(CachedImage*, const IntRect* = nullptr) final;
         bool allowsAnimation() const final;
         bool canDestroyDecodedData() const final;
-        bool useSystemDarkAppearance() const final;
         VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect*) final;
         VisibleInViewportState imageVisibleInViewport(const Document&) const final;
         void didRemoveCachedImageClient(CachedImage&) final;

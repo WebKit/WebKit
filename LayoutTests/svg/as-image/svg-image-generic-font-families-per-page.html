@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<title>An SVG image shared by two pages draws with the generic font families of each</title>
+<link rel="author" title="Sam Weinig" href="mailto:sam@webkit.org">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="resources/svg-image-per-page.js"></script>
+<script>
+const imageURL = new URL("resources/serif-letter-o.svg", location.href).href;
+
+function letterURL(family)
+{
+    return "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><text x="0" y="80" font-family="${family}" font-size="100">O</text></svg>`);
+}
+
+promise_test(async test => {
+    assert_own_property(window, "internals");
+
+    // Opening a page reapplies the shared preferences to every page, so change the setting after.
+    const secondPage = openSecondPage(test);
+    await new Promise(requestAnimationFrame);
+    internals.settings.setSerifFontFamily("Courier", "Zyyy");
+
+    const courierImage = await loadImage(document, imageURL);
+    const timesImage = await loadImage(secondPage.document, imageURL);
+
+    const courier = alphaOfDraw(await loadImage(document, letterURL("Courier")));
+    const times = alphaOfDraw(await loadImage(document, letterURL("Times")));
+    assert_not_equals(courier, times, "Courier and Times draw differently");
+
+    assert_equals(alphaOfDraw(courierImage), courier, "page with Courier as serif");
+    assert_equals(alphaOfDraw(timesImage), times, "page with the default serif");
+    assert_equals(alphaOfDraw(courierImage), courier, "page with Courier as serif after the other page");
+});
+</script>

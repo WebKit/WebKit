@@ -106,33 +106,7 @@ enum class ImagePaintTimeTransformation : uint8_t {
 };
 #endif
 
-enum class ShowDebugBackground : bool {
-    No,
-    Yes
-};
-
-// Treats an SVG root's preserveAspectRatio as none for an <svg:image>.
-enum class IgnoreRootPreserveAspectRatio : bool {
-    No,
-    Yes
-};
-
-enum class DrawLuminanceMask : bool {
-    No,
-    Yes
-};
-
-enum class AllowImageSubsampling : bool {
-    No,
-    Yes
-};
-
 enum class DrawsHDRContent : uint8_t {
-    No,
-    Yes
-};
-
-enum class AllowAcceleratedApplyGainMap : bool {
     No,
     Yes
 };

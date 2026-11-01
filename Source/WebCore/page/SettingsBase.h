@@ -80,6 +80,7 @@ public:
 
     virtual FontGenericFamilies& fontGenericFamilies() LIFETIME_BOUND = 0;
     virtual const FontGenericFamilies& fontGenericFamilies() const LIFETIME_BOUND = 0;
+    void setFontGenericFamilies(const FontGenericFamilies&);
 
     WEBCORE_EXPORT void setStandardFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
     WEBCORE_EXPORT const String& standardFontFamily(UScriptCode = USCRIPT_COMMON) const LIFETIME_BOUND;

@@ -280,6 +280,8 @@ WebCore::ImageOrientation CachedImage::usedOrientation(WebCore::ImageOrientation
 
 ImageRenditionOptions CachedImage::renditionOptionsForRenderer(const RenderElement& renderer, ImageRenditionOptions rendition) const
 {
+    rendition = ImageRenditionOptions::forDocument(protect(renderer.document()), WTF::move(rendition));
+
     auto fragmentURL = m_url.resolved;
     auto fragmentDirective = fragmentURL.consumeFragmentDirective();
     rendition.fragmentURL = WTF::move(fragmentURL);

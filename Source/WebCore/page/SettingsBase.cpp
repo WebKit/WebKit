@@ -207,6 +207,14 @@ void SettingsBase::setMathFontFamily(const String& family, UScriptCode script)
         invalidateAfterGenericFamilyChange(protect(m_page).get());
 }
 
+void SettingsBase::setFontGenericFamilies(const FontGenericFamilies& families)
+{
+    if (fontGenericFamilies() == families)
+        return;
+    fontGenericFamilies() = families;
+    invalidateAfterGenericFamilyChange(protect(m_page).get());
+}
+
 void SettingsBase::setMinimumDOMTimerInterval(Seconds interval)
 {
     auto oldTimerInterval = std::exchange(m_minimumDOMTimerInterval, interval);

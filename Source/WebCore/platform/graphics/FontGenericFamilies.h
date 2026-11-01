@@ -27,7 +27,9 @@
 
 #include <WebCore/WebKitFontFamilyNames.h>
 #include <unicode/uscript.h>
+#include <wtf/DataRef.h>
 #include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
@@ -73,15 +75,44 @@ public:
     bool setPictographFontFamily(const String&, UScriptCode);
     bool setMathFontFamily(const String&, UScriptCode);
 
+    bool operator==(const FontGenericFamilies&) const = default;
+
 private:
-    ScriptFontFamilyMap m_standardFontFamilyMap;
-    ScriptFontFamilyMap m_serifFontFamilyMap;
-    ScriptFontFamilyMap m_fixedFontFamilyMap;
-    ScriptFontFamilyMap m_sansSerifFontFamilyMap;
-    ScriptFontFamilyMap m_cursiveFontFamilyMap;
-    ScriptFontFamilyMap m_fantasyFontFamilyMap;
-    ScriptFontFamilyMap m_pictographFontFamilyMap;
-    ScriptFontFamilyMap m_mathFontFamilyMap;
+    struct Families : RefCounted<Families> {
+        WTF_MAKE_TZONE_ALLOCATED(Families);
+    public:
+        static Ref<Families> create() { return adoptRef(*new Families); }
+        Ref<Families> copy() const { return adoptRef(*new Families(*this)); }
+
+        bool operator==(const Families&) const;
+
+        ScriptFontFamilyMap standardFontFamilyMap;
+        ScriptFontFamilyMap serifFontFamilyMap;
+        ScriptFontFamilyMap fixedFontFamilyMap;
+        ScriptFontFamilyMap sansSerifFontFamilyMap;
+        ScriptFontFamilyMap cursiveFontFamilyMap;
+        ScriptFontFamilyMap fantasyFontFamilyMap;
+        ScriptFontFamilyMap pictographFontFamilyMap;
+        ScriptFontFamilyMap mathFontFamilyMap;
+
+    private:
+        Families() = default;
+        Families(const Families& other)
+            : standardFontFamilyMap(other.standardFontFamilyMap)
+            , serifFontFamilyMap(other.serifFontFamilyMap)
+            , fixedFontFamilyMap(other.fixedFontFamilyMap)
+            , sansSerifFontFamilyMap(other.sansSerifFontFamilyMap)
+            , cursiveFontFamilyMap(other.cursiveFontFamilyMap)
+            , fantasyFontFamilyMap(other.fantasyFontFamilyMap)
+            , pictographFontFamilyMap(other.pictographFontFamilyMap)
+            , mathFontFamilyMap(other.mathFontFamilyMap)
+        {
+        }
+    };
+
+    bool setFontFamily(ScriptFontFamilyMap Families::*, const String&, UScriptCode);
+
+    DataRef<Families> m_families;
 };
 
 }

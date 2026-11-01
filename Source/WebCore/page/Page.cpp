@@ -47,6 +47,7 @@
 #include "CaptionDisplaySettingsClient.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ColorAppearance.h"
 #include "CommonAtomStrings.h"
 #include "CommonVM.h"
 #include "ContainerNodeInlines.h"
@@ -4668,14 +4669,16 @@ void Page::useSystemAppearanceChanged()
     });
 }
 
-void Page::setUseColorAppearance(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
+void Page::setUseColorAppearance(UseDarkAppearance useDarkAppearance, UseElevatedUserInterfaceLevel useElevatedUserInterfaceLevel)
 {
+    bool useElevated = useElevatedUserInterfaceLevel == UseElevatedUserInterfaceLevel::Yes;
 #if ENABLE(DARK_MODE_CSS)
-    if (m_useDarkAppearance == useDarkAppearance && m_useElevatedUserInterfaceLevel == useElevatedUserInterfaceLevel)
+    bool useDark = useDarkAppearance == UseDarkAppearance::Yes;
+    if (m_useDarkAppearance == useDark && m_useElevatedUserInterfaceLevel == useElevated)
         return;
 
-    m_useDarkAppearance = useDarkAppearance;
-    m_useElevatedUserInterfaceLevel = useElevatedUserInterfaceLevel;
+    m_useDarkAppearance = useDark;
+    m_useElevatedUserInterfaceLevel = useElevated;
 
     InspectorInstrumentation::defaultAppearanceDidChange(*this);
 
@@ -4683,20 +4686,13 @@ void Page::setUseColorAppearance(bool useDarkAppearance, bool useElevatedUserInt
 #else
     UNUSED_PARAM(useDarkAppearance);
 
-    if (m_useElevatedUserInterfaceLevel == useElevatedUserInterfaceLevel)
+    if (m_useElevatedUserInterfaceLevel == useElevated)
         return;
 
-    m_useElevatedUserInterfaceLevel = useElevatedUserInterfaceLevel;
+    m_useElevatedUserInterfaceLevel = useElevated;
 
     appearanceDidChange();
 #endif
-
-    forEachRenderableDocument([useDarkAppearance, useElevatedUserInterfaceLevel] (Document& document) {
-        for (auto& image : protect(document.cachedResourceLoader())->allCachedSVGImages()) {
-            if (RefPtr page = image->internalPage())
-                page->setUseColorAppearance(useDarkAppearance, useElevatedUserInterfaceLevel);
-        }
-    });
 }
 
 bool Page::useDarkAppearance() const

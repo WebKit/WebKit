@@ -205,6 +205,9 @@ auto SVGImage::documentStateForDraw(const ImageDrawDescriptor& descriptor) const
 {
     DocumentState state { roundedIntSize(descriptor.concreteObjectSize.size()), descriptor.rendition };
 
+    if (!state.rendition.contentSettings)
+        state.rendition.contentSettings = m_appliedDocumentState.rendition.contentSettings;
+
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     if (state.rendition.invertContent == InvertContent::FromResource)
         state.rendition.invertContent = m_fallbackInvertContent ? InvertContent::Yes : InvertContent::No;
@@ -221,6 +224,20 @@ void SVGImage::applyDocumentState(Document& document, LocalFrameView& view, cons
         return;
 
     bool updateStyle = false;
+
+    if (state.rendition.useDarkAppearance != m_appliedDocumentState.rendition.useDarkAppearance || state.rendition.useElevatedUserInterfaceLevel != m_appliedDocumentState.rendition.useElevatedUserInterfaceLevel) {
+        protect(m_page)->setUseColorAppearance(state.rendition.useDarkAppearance, state.rendition.useElevatedUserInterfaceLevel);
+        updateStyle = true;
+    }
+
+    if (state.rendition.contentSettings != m_appliedDocumentState.rendition.contentSettings) {
+        // FIXME: The layer-based SVG engine and CSS d property settings take effect only when the document is parsed,
+        // so a draw with different ones still gets those of the document that loaded the image.
+        Ref settings = protect(m_page)->settings();
+        settings->setFontGenericFamilies(state.rendition.contentSettings->fontGenericFamilies);
+        settings->setDownloadableBinaryFontTrustedTypes(state.rendition.contentSettings->downloadableBinaryFontTrustedTypes);
+        updateStyle = true;
+    }
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     if (state.rendition.invertContent != m_appliedDocumentState.rendition.invertContent) {
@@ -547,6 +564,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 settings->fontGenericFamilies() = parentSettings->fontGenericFamilies();
                 settings->setCSSDPropertyEnabled(parentSettings->cssDPropertyEnabled());
                 settings->setDownloadableBinaryFontTrustedTypes(parentSettings->downloadableBinaryFontTrustedTypes());
+                m_appliedDocumentState.rendition.contentSettings = ImageContentSettings { *parentSettings };
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
                 m_fallbackInvertContent = AXCustomColorModeController::shouldAdjustSVGImages(m_page);
                 m_appliedDocumentState.rendition.invertContent = m_fallbackInvertContent ? InvertContent::Yes : InvertContent::No;
@@ -554,7 +572,6 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 settings->setAxCustomColorModeAppearanceDetectionEnabled(false);
 #endif
             }
-            protect(m_page)->setUseColorAppearance(observer->useSystemDarkAppearance(), false);
         }
 
         RefPtr localMainFrame = m_page->localMainFrame();

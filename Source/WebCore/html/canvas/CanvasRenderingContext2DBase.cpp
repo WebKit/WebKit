@@ -2070,19 +2070,18 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Im
 
     ImageDrawDescriptor descriptor {
         concreteObjectSize,
+        ImageRenditionOptions::forDocument(document),
         op,
         blendMode,
         orientation,
         document.settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
-        document.settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No
+        document.settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        ,
-        InvertContent::No
+        InvertContent::No,
 #endif
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-        ,
         (isHDR() && !firstFrame && sourceImage.hasHDRContent()) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
-        document.settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No
+        document.settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,
 #endif
     };
 

@@ -28,6 +28,7 @@
 #include "InternalSettings.h"
 
 #include "CaptionUserPreferences.h"
+#include "ColorAppearance.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentView.h"
 #include "FontCache.h"
@@ -185,7 +186,7 @@ void InternalSettings::resetToConsistentState()
     if (RefPtr localMainFrame = page->localMainFrame())
         localMainFrame->setPageAndTextZoomFactors(1, 1);
     page->setCanStartMedia(true);
-    page->setUseColorAppearance(false, false);
+    page->setUseColorAppearance(UseDarkAppearance::No, UseElevatedUserInterfaceLevel::No);
 
     Ref settings = this->settings();
     m_backup.restoreTo(settings);
@@ -509,7 +510,7 @@ ExceptionOr<void> InternalSettings::setUseDarkAppearance(bool useDarkAppearance)
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
     RefPtr page = m_page;
-    page->setUseColorAppearance(useDarkAppearance, page->useElevatedUserInterfaceLevel());
+    page->setUseColorAppearance(useDarkAppearance ? UseDarkAppearance::Yes : UseDarkAppearance::No, page->useElevatedUserInterfaceLevel() ? UseElevatedUserInterfaceLevel::Yes : UseElevatedUserInterfaceLevel::No);
     return { };
 }
 
@@ -518,7 +519,7 @@ ExceptionOr<void> InternalSettings::setUseElevatedUserInterfaceLevel(bool useEle
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
     RefPtr page = m_page;
-    page->setUseColorAppearance(page->useDarkAppearance(), useElevatedUserInterfaceLevel);
+    page->setUseColorAppearance(page->useDarkAppearance() ? UseDarkAppearance::Yes : UseDarkAppearance::No, useElevatedUserInterfaceLevel ? UseElevatedUserInterfaceLevel::Yes : UseElevatedUserInterfaceLevel::No);
     return { };
 }
 

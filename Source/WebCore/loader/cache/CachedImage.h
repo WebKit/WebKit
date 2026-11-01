@@ -154,7 +154,6 @@ private:
 
         bool allowsAnimation(const Image&) const final;
         const Settings* settings() final { return !m_cachedImages.isEmptyIgnoringNullReferences() ? (*m_cachedImages.begin()).m_settings.get() : nullptr; }
-        bool useSystemDarkAppearance() const final { return !m_cachedImages.isEmptyIgnoringNullReferences() && protect(*m_cachedImages.begin())->useSystemDarkAppearance(); }
 
         WeakHashSet<CachedImage> m_cachedImages;
     };
@@ -167,7 +166,6 @@ private:
     void changedInRect(const Image&, const IntRect*);
     void imageContentChanged(const Image&);
     void scheduleRenderingUpdate(const Image&);
-    bool useSystemDarkAppearance() const;
 
     void updateBufferInternal(const FragmentedSharedBuffer&);
 

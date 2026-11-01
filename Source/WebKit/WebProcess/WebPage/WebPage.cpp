@@ -193,6 +193,7 @@
 #include <WebCore/CachedPage.h>
 #include <WebCore/CaptionUserPreferences.h>
 #include <WebCore/Chrome.h>
+#include <WebCore/ColorAppearance.h>
 #include <WebCore/CommonVM.h>
 #include <WebCore/ContactsRequestData.h>
 #include <WebCore/ContainerNodeInlines.h>
@@ -7416,7 +7417,7 @@ void WebPage::setContentInversion(ContentInversion contentInversion)
 
 void WebPage::setUseColorAppearance(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 {
-    protect(corePage())->setUseColorAppearance(useDarkAppearance, useElevatedUserInterfaceLevel);
+    protect(corePage())->setUseColorAppearance(useDarkAppearance ? WebCore::UseDarkAppearance::Yes : WebCore::UseDarkAppearance::No, useElevatedUserInterfaceLevel ? WebCore::UseElevatedUserInterfaceLevel::Yes : WebCore::UseElevatedUserInterfaceLevel::No);
 
     if (m_inspectorUI)
         m_inspectorUI->effectiveAppearanceDidChange(useDarkAppearance ? WebCore::InspectorFrontendClient::Appearance::Dark : WebCore::InspectorFrontendClient::Appearance::Light);

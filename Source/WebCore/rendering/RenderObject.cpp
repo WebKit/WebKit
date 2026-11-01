@@ -3214,13 +3214,6 @@ bool RenderObject::CachedImageListener::allowsAnimation() const
     return true;
 }
 
-bool RenderObject::CachedImageListener::useSystemDarkAppearance() const
-{
-    if (CheckedPtr renderer = m_renderer.get())
-        return renderer->useSystemDarkAppearance();
-    return false;
-}
-
 bool RenderObject::CachedImageListener::canDestroyDecodedData() const
 {
     if (CheckedPtr renderer = m_renderer.get())

@@ -39,6 +39,7 @@
 #include "CSSValueKeywords.h"
 #include "CacheStorageProvider.h"
 #include "ChildListMutationScope.h"
+#include "ColorAppearance.h"
 #include "Comment.h"
 #include "CommonAtomStrings.h"
 #include "ComposedTreeIterator.h"
@@ -222,8 +223,8 @@ void removeSubresourceURLAttributes(Ref<DocumentFragment>&& fragment, Function<b
 
 Ref<Page> createPageForSanitizingWebContent(Document* destinationDocument, std::optional<PageConfiguration>&& overrideConfiguration)
 {
-    bool useDarkAppearance = false;
-    bool useElevatedUserInterfaceLevel = false;
+    auto useDarkAppearance = UseDarkAppearance::No;
+    auto useElevatedUserInterfaceLevel = UseElevatedUserInterfaceLevel::No;
     std::optional<FontGenericFamilies> fontGenericFamilies;
     DownloadableBinaryFontTrustedTypes fontTrustedTypes = DownloadableBinaryFontTrustedTypes::Any;
 
@@ -236,8 +237,8 @@ Ref<Page> createPageForSanitizingWebContent(Document* destinationDocument, std::
                 return false;
             }();
 
-            useDarkAppearance = documentNeedsDarkAppearance && destinationPage->useDarkAppearance();
-            useElevatedUserInterfaceLevel = destinationPage->useElevatedUserInterfaceLevel();
+            useDarkAppearance = documentNeedsDarkAppearance && destinationPage->useDarkAppearance() ? UseDarkAppearance::Yes : UseDarkAppearance::No;
+            useElevatedUserInterfaceLevel = destinationPage->useElevatedUserInterfaceLevel() ? UseElevatedUserInterfaceLevel::Yes : UseElevatedUserInterfaceLevel::No;
             fontGenericFamilies = destinationPage->settings().fontGenericFamilies();
             fontTrustedTypes = destinationPage->settings().downloadableBinaryFontTrustedTypes();
         }

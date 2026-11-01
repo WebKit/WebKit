@@ -28,6 +28,7 @@
 #include <WebCore/ConcreteObjectSize.h>
 #include <WebCore/DecodingOptions.h>
 #include <WebCore/GraphicsTypes.h>
+#include <WebCore/ImageDrawDescriptorTypes.h>
 #include <WebCore/ImageOrientation.h>
 #include <WebCore/ImageRenditionOptions.h>
 #include <WebCore/ImageTypes.h>
@@ -57,6 +58,8 @@ struct ImageDrawDescriptor {
 #endif
         || std::is_same_v<Type, ShowDebugBackground>
         || std::is_same_v<Type, IgnoreRootPreserveAspectRatio>
+        || std::is_same_v<Type, UseDarkAppearance>
+        || std::is_same_v<Type, UseElevatedUserInterfaceLevel>
         || std::is_same_v<Type, DrawsHDRContent>
         || std::is_same_v<Type, AllowAcceleratedApplyGainMap>
         || std::is_same_v<Type, Headroom>
@@ -121,6 +124,8 @@ private:
 #endif
     void setOption(ShowDebugBackground option) { showDebugBackground = option; }
     void setOption(IgnoreRootPreserveAspectRatio option) { rendition.ignoreRootPreserveAspectRatio = option; }
+    void setOption(UseDarkAppearance option) { rendition.useDarkAppearance = option; }
+    void setOption(UseElevatedUserInterfaceLevel option) { rendition.useElevatedUserInterfaceLevel = option; }
     void setOption(DrawsHDRContent option) { rendition.drawsHDRContent = option; }
     void setOption(AllowAcceleratedApplyGainMap option) { allowAcceleratedApplyGainMap = option; }
     void setOption(Headroom option) { rendition.headroom = option; }
