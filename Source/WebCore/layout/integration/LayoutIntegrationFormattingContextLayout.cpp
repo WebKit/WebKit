@@ -226,8 +226,7 @@ static inline void LEGACY_NODELETE updateIFCLineClampAfterLayout(auto& inlineLay
 
 void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block, LayoutPoint blockLineLogicalTopLeft, Layout::InlineLayoutState& inlineLayoutState, Layout::LayoutState& layoutState)
 {
-    auto& parentBlockLayoutState = inlineLayoutState.parentBlockLayoutState();
-    auto& placedFloats = parentBlockLayoutState.placedFloats();
+    auto& placedFloats = inlineLayoutState.placedFloats();
     CheckedRef blockRenderer = downcast<RenderBox>(*block.rendererForIntegration());
     CheckedRef rootBlockContainer = downcast<RenderBlockFlow>(*rootLayoutBox(block).rendererForIntegration());
     auto& renderTreeLayoutState = *rootBlockContainer->view().frameView().layoutContext().layoutState();
@@ -240,12 +239,15 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
 
     auto positionAndMargin = RenderBlockFlow::BlockPositionAndMargin { };
     auto layoutBlockRenderer = [&] {
+        // Like RenderBlockFlow::layoutInlineContent's, with what the inline content changed so far.
+        auto marginInfo = RenderBlockFlow::MarginInfo { rootBlockContainer.get(), RenderBlockFlow::MarginInfo::IgnoreScrollbarForAfterMargin::No };
+        Layout::IntegrationUtils::updateMarginInfo(marginInfo, inlineLayoutState.marginState());
         if (inlineLayoutState.lineCount()) {
             auto textBoxTrimStartDisabler = TextBoxTrimStartDisabler { blockRenderer.get() };
-            positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), Layout::IntegrationUtils::toMarginInfo(parentBlockLayoutState.marginState()));
+            positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), marginInfo);
             return;
         }
-        positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), Layout::IntegrationUtils::toMarginInfo(parentBlockLayoutState.marginState()));
+        positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), marginInfo);
     };
     layoutBlockRenderer();
     ASSERT(!blockRenderer->needsLayout());
@@ -282,8 +284,8 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
         // the box starts at, even though the box keeps it for that content (CSS 2.2 8.3.1, 9.5.2). A negative margin
         // before is not above the border box at all, which is why this is the positive part only.
         if (auto marginBeforeWithClearance = rootBlockContainer->selfCollapsingMarginBeforeWithClear(blockRenderer.ptr()))
-            marginState.marginBeforeWithClearance = *marginBeforeWithClearance;
-        parentBlockLayoutState.marginState() = marginState;
+            marginState.marginBeforeIncludedInClearance = *marginBeforeWithClearance;
+        inlineLayoutState.marginState() = marginState;
     };
     updateIFCAfterLayout();
 }
