@@ -4028,6 +4028,11 @@ bool RenderLayerCompositor::requiresCompositingForWillChange(RenderLayerModelObj
     if (!renderer.style().willChange().canTriggerCompositing())
         return false;
 
+    // Composited layers are not fragmented. Keep layers inside a fragmented flow non-composited
+    // so that they get painted once per fragment.
+    if (renderer.fragmentedFlowState() != RenderObject::FragmentedFlowState::NotInsideFlow)
+        return false;
+
 #if ENABLE(FULLSCREEN_API)
     // FIXME: does this require layout?
     if (renderer.layer() && isDescendantOfFullScreenLayer(*renderer.layer()) == FullScreenDescendant::No)
