@@ -1,0 +1,258 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CSS zoom on an iframe does not shrink the child document's layout viewport</title>
+<link rel="help" href="https://drafts.csswg.org/css-viewport/#zoom-property">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  iframe { width: 1572px; height: 922px; zoom: 0.5; border: 0; }
+</style>
+<iframe srcdoc="<!doctype html><style>html,body{margin:0;height:100%;overflow:hidden}#vw{width:100vw;height:100vh}#fill{width:100%;height:100px}</style><div id=vw></div><div id=fill></div>"></iframe>
+<script>
+const iframe = document.querySelector("iframe");
+const loaded = new Promise(resolve => addEventListener("load", resolve, { once: true }));
+const nextFrame = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+// The child's layout viewport is the iframe's content box in its own (zoomed) coordinate space.
+promise_test(async () => {
+  await loaded;
+  const doc = iframe.contentDocument;
+  assert_approx_equals(doc.documentElement.clientWidth, 1572, 2, "clientWidth");
+  assert_approx_equals(doc.documentElement.clientHeight, 922, 2, "clientHeight");
+}, "Child documentElement client size equals the zoomed iframe's specified size");
+
+promise_test(async () => {
+  await loaded;
+  const doc = iframe.contentDocument;
+  const win = iframe.contentWindow;
+  assert_approx_equals(doc.documentElement.clientWidth, win.innerWidth, 2, "clientWidth vs innerWidth");
+  assert_approx_equals(doc.documentElement.clientHeight, win.innerHeight, 2, "clientHeight vs innerHeight");
+}, "Child documentElement client size matches the child window's inner size");
+
+promise_test(async () => {
+  await loaded;
+  const doc = iframe.contentDocument;
+  assert_approx_equals(doc.getElementById("fill").offsetWidth, 1572, 2, "width: 100%");
+  assert_approx_equals(doc.getElementById("vw").offsetWidth, 1572, 2, "width: 100vw");
+  assert_approx_equals(doc.getElementById("vw").offsetHeight, 922, 2, "height: 100vh");
+}, "Child percentage and viewport units resolve against the same layout viewport");
+
+for (const { zoom, width, height } of [{ zoom: 1, width: 786, height: 461 }, { zoom: 2, width: 393, height: 230.5 }]) {
+  // Changing zoom and size together can leave the iframe's frame rect unchanged, so the child must still relayout.
+  promise_test(async () => {
+    await loaded;
+    const doc = iframe.contentDocument;
+    iframe.style.zoom = zoom;
+    iframe.style.width = width + "px";
+    iframe.style.height = height + "px";
+    await nextFrame();
+    assert_approx_equals(doc.getElementById("fill").offsetWidth, width, 2, "width: 100%");
+    assert_approx_equals(doc.getElementById("vw").offsetWidth, width, 2, "width: 100vw");
+    assert_approx_equals(doc.getElementById("vw").offsetHeight, height, 2, "height: 100vh");
+  }, `Child layout follows a combined change to zoom ${zoom} and size ${width}x${height}`);
+}
+
+// However the iframe's box is snapped to device pixels, the child's layout viewport, viewport units and
+// window size must agree with each other and must not overflow it.
+const sizesChild = "<!doctype html><style>html,body{margin:0}#fill{height:10px}#vw{width:100vw;height:10px}</style><div id=fill></div><div id=vw></div>";
+function childWidth(frame) {
+  const doc = frame.contentDocument;
+  const width = doc.documentElement.clientWidth;
+  // The layout viewport may be fractional while clientWidth is a whole number.
+  const fill = doc.getElementById("fill").getBoundingClientRect().width;
+  const viewportWidth = doc.getElementById("vw").getBoundingClientRect().width;
+  assert_less_than(Math.abs(fill - width), 1, `width: 100% (${fill}) matches clientWidth (${width})`);
+  assert_less_than(Math.abs(viewportWidth - width), 1, `width: 100vw (${viewportWidth}) matches clientWidth (${width})`);
+  assert_equals(frame.contentWindow.innerWidth, width, "innerWidth matches clientWidth");
+  frame.contentWindow.scrollTo(100000, 0);
+  assert_equals(frame.contentWindow.scrollX, 0, "no horizontal scrolling");
+  return width;
+}
+
+async function createSizesFrame(t, style) {
+  const frame = document.createElement("iframe");
+  t.add_cleanup(() => frame.remove());
+  frame.style.cssText = `border: 0; height: 100px; ${style}`;
+  frame.srcdoc = sizesChild;
+  document.body.appendChild(frame);
+  await new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+  return frame;
+}
+
+// A whole pixel width is the child's exact width in its own coordinates, even when the zoomed box is not.
+for (const { zoom, width } of [{ zoom: 0.3, width: 1000 }, { zoom: 0.6, width: 1572 }, { zoom: 0.6, width: 1571 }, { zoom: 0.5, width: 401 }]) {
+  promise_test(async t => {
+    const frame = await createSizesFrame(t, `width: ${width}px; zoom: ${zoom}`);
+    assert_equals(childWidth(frame), width);
+  }, `Child layout viewport is exactly ${width}px for a ${width}px iframe at zoom ${zoom}`);
+}
+
+// A fractional width has to be rounded, which may go either way.
+promise_test(async t => {
+  const frame = await createSizesFrame(t, "width: 200.7px; zoom: 2");
+  assert_approx_equals(childWidth(frame), 200.7, 1);
+}, "Child layout viewport is about 200.7px for a 200.7px iframe at zoom 2");
+
+promise_test(async t => {
+  const frame = await createSizesFrame(t, "width: 801.2px; zoom: 0.5");
+  const before = childWidth(frame);
+  assert_approx_equals(before, 801.2, 1, "before");
+  // At zoom 0.5 both widths are 401px in the parent.
+  frame.style.width = "802.8px";
+  await nextFrame();
+  const after = childWidth(frame);
+  assert_approx_equals(after, 802.8, 1, "after");
+  assert_greater_than(after, before, "the child is wider");
+}, "Child relays out after a sub-pixel width change");
+
+promise_test(async t => {
+  const frame = document.createElement("iframe");
+  t.add_cleanup(() => frame.remove());
+  frame.style.cssText = "border: 0; width: 9px; height: 9px; zoom: 0.5";
+  frame.srcdoc = "<!doctype html><style>html{overflow:scroll}</style>";
+  document.body.appendChild(frame);
+  await new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+  assert_greater_than_equal(frame.contentDocument.documentElement.clientWidth, 0, "clientWidth");
+  assert_greater_than_equal(frame.contentDocument.documentElement.clientHeight, 0, "clientHeight");
+}, "Child layout viewport is not negative when scrollbars are wider than the frame");
+
+// Content that fits the layout viewport must not cause scrollbars at any zoom.
+for (const zoom of [0.5, 0.8, 2]) {
+  promise_test(async t => {
+    const frame = document.createElement("iframe");
+    t.add_cleanup(() => frame.remove());
+    frame.style.cssText = `border: 0; width: 400px; height: 300px; zoom: ${zoom}`;
+    document.body.appendChild(frame);
+    frame.contentDocument.open();
+    frame.contentDocument.write("<!doctype html><style>html,body{margin:0}</style><div style='height: 50px'></div>");
+    frame.contentDocument.close();
+    await nextFrame();
+    assert_equals(frame.contentDocument.documentElement.clientWidth, 400, "clientWidth");
+    assert_equals(frame.contentDocument.documentElement.clientHeight, 300, "clientHeight");
+  }, `Child has no scrollbars when written to a new iframe at zoom ${zoom}`);
+}
+
+promise_test(async t => {
+  const frame = document.createElement("iframe");
+  t.add_cleanup(() => frame.remove());
+  frame.style.cssText = "border: 0; width: 400px; height: 300px";
+  frame.srcdoc = "<!doctype html><style>html,body{margin:0}</style><div style='height: 50px'></div>";
+  document.body.appendChild(frame);
+  await new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+  frame.style.zoom = "0.5";
+  await nextFrame();
+  assert_equals(frame.contentDocument.documentElement.clientWidth, 400, "clientWidth");
+  assert_equals(frame.contentDocument.documentElement.clientHeight, 300, "clientHeight");
+}, "Child has no scrollbars after the iframe's zoom changes from 1 to 0.5");
+
+// The scroll view compares the document with the frame at any zoom, so content that fits must not scroll and tall content must reach the bottom.
+for (const zoom of [0.5, 2]) {
+  promise_test(async t => {
+    const frame = document.createElement("iframe");
+    t.add_cleanup(() => frame.remove());
+    frame.style.cssText = `border: 0; width: 400px; height: 300px; zoom: ${zoom}`;
+    frame.srcdoc = "<!doctype html><style>html,body{margin:0}</style><div style='height: 50px'></div>";
+    document.body.appendChild(frame);
+    await new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+    assert_equals(frame.contentDocument.documentElement.clientWidth, 400, "clientWidth");
+    assert_equals(frame.contentDocument.documentElement.clientHeight, 300, "clientHeight");
+  }, `Child markup that fits has no scrollbars at zoom ${zoom}`);
+
+  promise_test(async t => {
+    const frame = document.createElement("iframe");
+    t.add_cleanup(() => frame.remove());
+    frame.style.cssText = `border: 0; width: 400px; height: 300px; zoom: ${zoom}`;
+    frame.srcdoc = "<!doctype html><style>html,body{margin:0}</style><div style='height: 1000px'></div>";
+    document.body.appendChild(frame);
+    await new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+    frame.contentWindow.scrollTo(0, 100000);
+    await nextFrame();
+    assert_approx_equals(frame.contentWindow.scrollY, 1000 - frame.contentWindow.innerHeight, 1, "scrollY at the bottom");
+  }, `Tall child content scrolls to the bottom at zoom ${zoom}`);
+}
+
+// A zoom change between two zooms other than 1 only changes the root's scale transform.
+for (const { from, to } of [{ from: 2, to: 0.5 }, { from: 0.5, to: 2 }]) {
+  promise_test(async t => {
+    const frame = document.createElement("iframe");
+    t.add_cleanup(() => frame.remove());
+    frame.style.cssText = `border: 0; width: 400px; height: 300px; zoom: ${from}`;
+    frame.srcdoc = "<!doctype html><style>html,body{margin:0}</style><div style='height: 1000px'></div>";
+    document.body.appendChild(frame);
+    await new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+    frame.style.zoom = to;
+    await nextFrame();
+    const win = frame.contentWindow;
+    win.scrollTo(100000, 100000);
+    await nextFrame();
+    assert_equals(win.scrollX, 0, "no horizontal scrolling");
+    assert_approx_equals(win.scrollY, 1000 - win.innerHeight, 1, "scrollY at the bottom");
+  }, `Scrollable child content is correct after the zoom changes from ${from} to ${to}`);
+}
+
+promise_test(async t => {
+  const frame = document.createElement("iframe");
+  t.add_cleanup(() => frame.remove());
+  frame.style.cssText = "border: 0; width: 400px; height: 300px; zoom: 0.5";
+  frame.srcdoc = "<!doctype html><script>window.resizeCount = 0; addEventListener('resize', () => ++resizeCount);<\/script>";
+  document.body.appendChild(frame);
+  await new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+  await nextFrame();
+  await nextFrame();
+  assert_equals(frame.contentWindow.resizeCount, 0);
+}, "A zoomed iframe does not fire a resize event when it first loads");
+
+// The child's style and layout size must follow a zoom change made while the iframe had no box.
+promise_test(async t => {
+  const frame = await createSizesFrame(t, "width: 400px; zoom: 2");
+  frame.style.display = "none";
+  frame.offsetWidth;
+  frame.style.zoom = 1;
+  frame.offsetWidth;
+  frame.style.display = "";
+  await nextFrame();
+  assert_equals(childWidth(frame), 400);
+  assert_equals(frame.contentDocument.documentElement.clientHeight, 100, "clientHeight");
+}, "Child layout viewport follows a zoom change made while the iframe was not rendered");
+
+promise_test(async t => {
+  const frame = await createSizesFrame(t, "width: 400px; zoom: 2");
+  frame.style.display = "none";
+  frame.offsetWidth;
+  frame.contentDocument.designMode = "on";
+  frame.contentDocument.documentElement.offsetWidth;
+  frame.style.display = "";
+  await nextFrame();
+  assert_equals(childWidth(frame), 400);
+}, "Child layout viewport is correct when the child's style changes while the iframe is not rendered");
+
+function writeFrame(doc, style, markup) {
+  const frame = doc.createElement("iframe");
+  frame.style.cssText = `border: 0; ${style}`;
+  doc.body.appendChild(frame);
+  frame.contentDocument.open();
+  frame.contentDocument.write(markup);
+  frame.contentDocument.close();
+  return frame;
+}
+
+promise_test(async t => {
+  const blank = "<!doctype html><style>html,body{margin:0}</style>";
+  const outer = writeFrame(document, "width: 400px; height: 300px; zoom: 2", blank);
+  t.add_cleanup(() => outer.remove());
+  const middle = writeFrame(outer.contentDocument, "width: 300px; height: 200px; zoom: 0.5", blank);
+  const inner = writeFrame(middle.contentDocument, "width: 100px; height: 50px; zoom: 2", blank);
+  await nextFrame();
+  for (const [frame, width, height] of [[outer, 400, 300], [middle, 300, 200], [inner, 100, 50]]) {
+    assert_equals(frame.contentDocument.documentElement.clientWidth, width, "clientWidth");
+    assert_equals(frame.contentDocument.documentElement.clientHeight, height, "clientHeight");
+  }
+}, "Each of three nested zoomed iframes has its specified size as its layout viewport");
+
+promise_test(async t => {
+  const frame = await createSizesFrame(t, "width: 400px; zoom: 2");
+  const win = frame.contentWindow;
+  assert_true(win.matchMedia("(width: 400px)").matches, "(width: 400px)");
+  assert_true(win.matchMedia("(height: 100px)").matches, "(height: 100px)");
+}, "Media queries in a zoomed iframe match its specified size");
+</script>

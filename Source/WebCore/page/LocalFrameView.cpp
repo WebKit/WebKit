@@ -1324,7 +1324,7 @@ void LocalFrameView::willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot)
         // 0x0 to actual size transition as a genuine resize per the CSSOM View spec.
         if (!m_loadedWhileHidden) {
             m_lastViewportSize = sizeForResizeEvent();
-            m_lastUsedZoomFactor = layoutRoot->style().usedZoom();
+            m_lastUsedZoomFactor = zoomFactorForResizeEvent(layoutRoot->style().usedZoom());
         }
         m_firstLayoutCallbackPending = true;
     }
@@ -2287,6 +2287,80 @@ LayoutRect LocalFrameView::rectForFixedPositionLayout() const
 float LocalFrameView::frameScaleFactor() const
 {
     return m_frame->frameScaleFactor();
+}
+
+void LocalFrameView::ownerZoomDidChange(OwnerRendererChanged ownerRendererChanged)
+{
+    // The factor may come from another process, and sizes are divided by it.
+    auto zoom = m_frame->isMainFrame() ? 1.0f : m_frame->frameScaleFactor();
+    zoom = std::isfinite(zoom) && zoom > 0 ? zoom : 1;
+    // Style resolved while the owner had no renderer has no frame scale, so it is only known to be current at zoom 1.
+    if (zoom == m_ownerZoomFactor && (ownerRendererChanged == OwnerRendererChanged::No || zoom == 1))
+        return;
+    m_ownerZoomFactor = zoom;
+
+    protect(m_frame)->deviceOrPageScaleFactorChanged();
+    if (RefPtr document = m_frame->document()) {
+        // The root's scale transform comes from the document style.
+        document->scheduleFullStyleRebuild();
+        // The frame rect can stay the same while the layout viewport, and so the viewport units, change.
+        document->updateViewportUnitsOnResize();
+    }
+    setNeedsLayoutAfterViewConfigurationChange();
+}
+
+float LocalFrameView::ownerZoomFactor() const
+{
+    if (useFixedLayout() && !fixedLayoutSize().isEmpty())
+        return 1;
+    return m_ownerZoomFactor;
+}
+
+void LocalFrameView::setOwnerContentBoxSize(FloatSize size)
+{
+    if (m_ownerContentBoxSize == size)
+        return;
+    m_ownerContentBoxSize = size;
+    // A sub-pixel change leaves the frame rect alone but can still change the size without the owner's zoom.
+    if (ownerZoomFactor() == 1)
+        return;
+    if (RefPtr document = m_frame->document())
+        document->updateViewportUnitsOnResize();
+    setNeedsLayoutAfterViewConfigurationChange();
+}
+
+FloatSize LocalFrameView::sizeWithoutOwnerZoom(FloatSize size) const
+{
+    auto zoom = ownerZoomFactor();
+    if (zoom == 1)
+        return size;
+
+    // The frame rect is the owner's content box snapped to whole pixels, so start from the unsnapped box while it is current.
+    auto unsnappedSize = size;
+    if (m_ownerContentBoxSize && roundedIntSize(*m_ownerContentBoxSize) == frameRect().size())
+        unsnappedSize += *m_ownerContentBoxSize - FloatSize { frameRect().size() };
+
+    // Round half down, but never so far up that the result scaled back up exceeds the size, which would cause scrollbars.
+    auto fit = [zoom](float length, float sizeLength) {
+        auto largest = std::max(0.0, std::ceil((std::floor(sizeLength) + 1.0) / zoom) - 1);
+        return static_cast<float>(std::clamp(std::ceil(length / zoom - 0.5), 0.0, largest));
+    };
+    return { fit(unsnappedSize.width(), size.width()), fit(unsnappedSize.height(), size.height()) };
+}
+
+IntSize LocalFrameView::layoutSize() const
+{
+    // The frame rect already has the owner element's CSS zoom applied, and the root's frame scale transform applies it again.
+    return flooredIntSize(sizeWithoutOwnerZoom(FloatSize { ScrollView::layoutSize() }));
+}
+
+IntSize LocalFrameView::unobscuredContentSizeInCSSUnits() const
+{
+    auto size = unobscuredContentRectIncludingScrollbars().size();
+    if (ownerZoomFactor() == 1)
+        return { mapFromLayoutToCSSUnits(static_cast<int>(size.width())), mapFromLayoutToCSSUnits(static_cast<int>(size.height())) };
+    // A subframe's frame scale is its owner's zoom, so take it out the way the layout size does.
+    return flooredIntSize(sizeWithoutOwnerZoom(FloatSize { size }) / m_frame->pageZoomFactor());
 }
 
 LayoutPoint LocalFrameView::scrollPositionForFixedPosition() const
@@ -5045,6 +5119,12 @@ void LocalFrameView::updateAnchorPositionedAfterScroll()
         Style::AnchorPositionEvaluator::updateScrollAdjustments(*view);
 }
 
+float LocalFrameView::zoomFactorForResizeEvent(float usedZoom) const
+{
+    // The owner's zoom changes devicePixelRatio without changing the size, since the size is in the frame's own units.
+    return usedZoom * ownerZoomFactor();
+}
+
 IntSize LocalFrameView::sizeForResizeEvent() const
 {
     if (m_customSizeForResizeEvent)
@@ -5054,7 +5134,7 @@ IntSize LocalFrameView::sizeForResizeEvent() const
 
     // The window doesn't change size when the page is zoomed, so neither may this. The visible content rect
     // is the view divided by the page scale when scaling is delegated, so scale it back up. A no-op otherwise.
-    auto size = FloatSize { visibleContentRectIncludingScrollbars().size() };
+    auto size = sizeWithoutOwnerZoom(FloatSize { visibleContentRectIncludingScrollbars().size() });
     size.scale(visibleContentScaleFactor());
     return expandedIntSize(size);
 }
@@ -5080,7 +5160,7 @@ void LocalFrameView::scheduleResizeEventIfNeeded()
         return;
 
     IntSize currentSize = sizeForResizeEvent();
-    float currentZoomFactor = renderView->style().usedZoom();
+    float currentZoomFactor = zoomFactorForResizeEvent(renderView->style().usedZoom());
 
     if (currentSize == m_lastViewportSize && currentZoomFactor == m_lastUsedZoomFactor)
         return;
@@ -7223,7 +7303,7 @@ FloatSize LocalFrameView::calculateSizeForCSSViewportUnitsOverride(std::optional
     // Viewport units must not shrink as the page is zoomed, and visibleContentRectIncludingScrollbars() is
     // the zoomed rect when scaling is delegated. The two are the same otherwise.
     auto visibleContentSizeIncludingScrollbars = !hasDelegatedPageScale(*this)
-        ? visibleContentRectIncludingScrollbars().size()
+        ? sizeWithoutOwnerZoom(FloatSize { visibleContentRectIncludingScrollbars().size() })
         : sizeForUnobscuredContent(VisibleContentRectIncludesScrollbars::Yes);
     viewportSize.width = viewportSize.width.value_or(visibleContentSizeIncludingScrollbars.width());
     viewportSize.height = viewportSize.height.value_or(visibleContentSizeIncludingScrollbars.height());
@@ -7242,10 +7322,10 @@ FloatSize LocalFrameView::sizeForCSSDynamicViewportUnits() const
         // As in calculateSizeForCSSViewportUnitsOverride(), the unobscured rect is zoomed and viewport units are not.
         if (hasDelegatedPageScale(*this))
             return sizeForUnobscuredContent(VisibleContentRectIncludesScrollbars::Yes);
-        return unobscuredContentRectIncludingScrollbars().size();
+        return sizeWithoutOwnerZoom(unobscuredContentRectIncludingScrollbars().size());
     }
 
-    return viewportConstrainedVisibleContentRect().size();
+    return sizeWithoutOwnerZoom(FloatSize { viewportConstrainedVisibleContentRect().size() });
 }
 
 bool LocalFrameView::shouldPlaceVerticalScrollbarOnLeft() const

@@ -1,0 +1,30 @@
+
+
+PASS Child documentElement client size equals the zoomed iframe's specified size
+PASS Child documentElement client size matches the child window's inner size
+PASS Child percentage and viewport units resolve against the same layout viewport
+PASS Child layout follows a combined change to zoom 1 and size 786x461
+PASS Child layout follows a combined change to zoom 2 and size 393x230.5
+PASS Child layout viewport is exactly 1000px for a 1000px iframe at zoom 0.3
+PASS Child layout viewport is exactly 1572px for a 1572px iframe at zoom 0.6
+PASS Child layout viewport is exactly 1571px for a 1571px iframe at zoom 0.6
+PASS Child layout viewport is exactly 401px for a 401px iframe at zoom 0.5
+PASS Child layout viewport is about 200.7px for a 200.7px iframe at zoom 2
+PASS Child relays out after a sub-pixel width change
+PASS Child layout viewport is not negative when scrollbars are wider than the frame
+PASS Child has no scrollbars when written to a new iframe at zoom 0.5
+PASS Child has no scrollbars when written to a new iframe at zoom 0.8
+PASS Child has no scrollbars when written to a new iframe at zoom 2
+PASS Child has no scrollbars after the iframe's zoom changes from 1 to 0.5
+PASS Child markup that fits has no scrollbars at zoom 0.5
+PASS Tall child content scrolls to the bottom at zoom 0.5
+PASS Child markup that fits has no scrollbars at zoom 2
+PASS Tall child content scrolls to the bottom at zoom 2
+PASS Scrollable child content is correct after the zoom changes from 2 to 0.5
+PASS Scrollable child content is correct after the zoom changes from 0.5 to 2
+PASS A zoomed iframe does not fire a resize event when it first loads
+PASS Child layout viewport follows a zoom change made while the iframe was not rendered
+PASS Child layout viewport is correct when the child's style changes while the iframe is not rendered
+PASS Each of three nested zoomed iframes has its specified size as its layout viewport
+PASS Media queries in a zoomed iframe match its specified size
+
