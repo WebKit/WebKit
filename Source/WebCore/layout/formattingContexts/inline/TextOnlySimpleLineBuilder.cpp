@@ -44,15 +44,18 @@ struct TextOnlyLineBreakResult {
 };
 
 struct CandidateTextContent {
-    void LEGACY_NODELETE append(InlineLayoutUnit contentWidth)
+    void append(InlineLayoutUnit contentWidth)
     {
         logicalWidth += contentWidth;
+        itemWidths.append(contentWidth);
         ++endIndex;
     }
 
     size_t startIndex { 0 };
     size_t endIndex { 0 };
     InlineLayoutUnit logicalWidth { 0.f };
+    // Measured width of each candidate item (indexed from startIndex) so that committing does not measure again.
+    Vector<InlineLayoutUnit, 16> itemWidths { };
 };
 
 InlineLayoutUnit TextOnlySimpleLineBuilder::measuredInlineTextItem(const InlineTextItem& inlineTextItem, const Style::ComputedStyle& style, InlineLayoutUnit contentLogicalLeft)
@@ -320,11 +323,17 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::commitCandidateContent(const 
             return *logicalWidth;
         return measuredInlineTextItem(inlineTextItem, rootStyle, m_line.contentLogicalRight() + contentOffset);
     };
+    // The candidate items were already measured while collecting them. The leading partial item is the exception (it is not measured
+    // there) and it also shifts the offset of the items after it, so in that case we measure again.
+    auto candidateItemWidth = [&](size_t index) {
+        ASSERT(index >= candidateContent.startIndex && index < candidateContent.endIndex);
+        return candidateContent.itemWidths[index - candidateContent.startIndex];
+    };
 
     if (candidateContent.logicalWidth <= availableWidth() && !hasLeadingPartiaContent) {
         for (auto index = candidateContent.startIndex; index < candidateContent.endIndex; ++index) {
             auto& inlineTextItem = downcast<InlineTextItem>(m_inlineItemList[index]);
-            m_line.appendTextFast(inlineTextItem, rootStyle, contentWidth(inlineTextItem, { }));
+            m_line.appendTextFast(inlineTextItem, rootStyle, candidateItemWidth(index));
         }
 
         if (m_line.hasContent())
@@ -341,7 +350,8 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::commitCandidateContent(const 
     }
     for (auto index = startIndex; index < candidateContent.endIndex; ++index) {
         auto& inlineTextItem = downcast<InlineTextItem>(m_inlineItemList[index]);
-        candidateContentForLineBreaking.appendTextContent(inlineTextItem, rootStyle, contentWidth(inlineTextItem, candidateContentForLineBreaking.logicalWidth()));
+        auto itemWidth = hasLeadingPartiaContent ? contentWidth(inlineTextItem, candidateContentForLineBreaking.logicalWidth()) : candidateItemWidth(index);
+        candidateContentForLineBreaking.appendTextContent(inlineTextItem, rootStyle, itemWidth);
     }
     return handleOverflowingTextContent(rootStyle, candidateContentForLineBreaking, layoutRange);
 }
