@@ -77,7 +77,7 @@ bool LEGACY_NODELETE isOrthogonalParent(const RenderGrid&, const RenderElement& 
 bool isAspectRatioBlockSizeDependentGridItem(const RenderBox&);
 Style::GridTrackSizingDirection LEGACY_NODELETE flowAwareDirectionForGridItem(const RenderGrid&, const RenderBox&, Style::GridTrackSizingDirection);
 Style::GridTrackSizingDirection LEGACY_NODELETE flowAwareDirectionForParent(const RenderGrid&, const RenderElement& parent, Style::GridTrackSizingDirection);
-std::optional<RenderBox::GridAreaSize> LEGACY_NODELETE overridingContainingBlockContentSizeForGridItem(const RenderBox&, Style::GridTrackSizingDirection);
+std::optional<RenderBox::ContainingBlockContentSize> LEGACY_NODELETE overridingContainingBlockContentSizeForGridItem(const RenderBox&, Style::GridTrackSizingDirection);
 bool LEGACY_NODELETE hasRelativeOrKeywordOrAutoSizeForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection);
 
 bool LEGACY_NODELETE isFlippedDirection(const RenderGrid&, Style::GridTrackSizingDirection);
