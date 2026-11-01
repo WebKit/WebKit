@@ -104,6 +104,11 @@ bool RenderGrid::isExtrinsicallySized() const
         return false;
 
     for (auto& gridItem : childrenOfType<RenderBox>(*this)) {
+        // The rendered legend of a fieldset is not a grid item, so it has no grid area. It also moves the content box of the
+        // fieldset (the intrinsic border), which only layoutExcludedChildren() updates, so a change to it needs a full layout.
+        if (gridItem.isExcludedFromNormalLayout())
+            return false;
+
         // FIXME: If we do not need to perform item placement we should be able
         // to check any implicitly created tracks as well.
         if (!isPlacedWithinExtrinsicallySizedExplicitTracks(gridItem))
