@@ -406,11 +406,14 @@ void ScrollTimeline::animationTimingDidChange(WebAnimation& animation)
 {
     AnimationTimeline::animationTimingDidChange(animation);
 
-    auto source = m_source.styleable();
-    if (!source || !animation.pending() || animation.isEffectInvalidationSuspended())
+    if (!animation.pending() || animation.isEffectInvalidationSuspended())
         return;
 
-    if (RefPtr page = source->element.document().page())
+    RefPtr sourceElement = source();
+    if (!sourceElement)
+        return;
+
+    if (RefPtr page = sourceElement->document().page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::Animations);
 }
 
