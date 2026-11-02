@@ -1,0 +1,15 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<html style="margin: 3px; padding: 2px; border: 1px solid">
+<body style="margin: 5px; padding: 4px; border: 2px solid blue">
+<style>
+.box { background: lightblue; width: 60px; display: inline-block; vertical-align: top; margin-right: 4px; }
+.fill { background: green; width: 20px; }
+</style>
+<div class="box" style="height: 120px"><div><div class="fill" style="height: 50%"></div></div></div>
+<div class="box" style="height: 120px"><div style="padding: 5px"><div style="margin: 3px"><div class="fill" style="height: 75%; min-height: 10%"></div></div></div></div>
+<div class="box" style="height: 100px"><div style="display: flow-root"><div class="fill" style="height: 30px; max-height: 20%"></div></div></div>
+<div class="box" style="height: 100px"><div style="height: 50%"><div class="fill" style="height: 50%"></div></div></div>
+<div style="width: 50px; height: 25%; background: orange"></div>
+<div style="width: 30px"><div style="height: 10%; background: purple"></div></div>
+</body>
+</html>

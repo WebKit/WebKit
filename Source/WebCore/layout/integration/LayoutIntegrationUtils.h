@@ -36,13 +36,18 @@
 namespace WebCore {
 namespace Layout {
 
+class BlockFormattingContext;
+class BoxGeometry;
 class ElementBox;
 class InlineLayoutState;
 class LayoutState;
+struct BlockLayoutResult;
 
 class IntegrationUtils {
 public:
-    IntegrationUtils(const LayoutState&);
+    IntegrationUtils(LayoutState&);
+    // The block formatting context the inline content is in lays out the block-level boxes in it, and adds them to the result it is building.
+    IntegrationUtils(LayoutState&, BlockFormattingContext&, BlockLayoutResult&);
 
     void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth = { }, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight = { }) const;
     std::pair<LayoutUnit, LayoutUnit> borderAndPaddingForGridItem(const ElementBox&, std::optional<LayoutUnit> gridAreaInlineSize) const;
@@ -60,15 +65,19 @@ public:
     LayoutUnit maxContentLogicalWidthContribution(const ElementBox&) const;
     std::optional<LayoutUnit> firstLineBaselineForGridItem(const ElementBox&) const;
     std::optional<LayoutUnit> lastLineBaselineForGridItem(const ElementBox&) const;
-    void layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, const InlineLayoutState&) const;
+    void layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, InlineLayoutState&) const;
     static const Style::ComputedStyle& LEGACY_NODELETE firstNonAnonymousAncestorStyle(const Box&);
 
+    // What of RenderBlockFlow::MarginInfo crosses into the inline content; the rest stays with the block container (MarginInfo(const RenderBlockFlow&)).
     static BlockLayoutState::MarginState LEGACY_NODELETE toMarginState(const RenderBlockFlow::MarginInfo&);
-    static RenderBlockFlow::MarginInfo toMarginInfo(const Layout::BlockLayoutState::MarginState&);
+    static void updateMarginInfo(RenderBlockFlow::MarginInfo&, const BlockLayoutState::MarginState&);
     static std::pair<LayoutRect, LayoutRect> LEGACY_NODELETE toMarginAndBorderBoxVisualRect(const BoxGeometry& logicalGeometry, const LayoutSize& containerSize, WritingMode);
 
 private:
-    const CheckedRef<const LayoutState> m_globalLayoutState;
+    const CheckedRef<LayoutState> m_globalLayoutState;
+    // FIXME: The block formatting context lays out the block-level boxes itself once it splits the inline content at them.
+    BlockFormattingContext* const m_blockFormattingContext { nullptr };
+    BlockLayoutResult* const m_blockLayoutResult { nullptr };
 };
 
 }
