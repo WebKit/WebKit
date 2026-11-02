@@ -1503,6 +1503,10 @@ RefPtr<WebGPU::BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescrip
                     return BindGroup::createInvalid(*this);
                 }
                 Ref externalTexture = metal(externalTextureResource->get());
+                if (&externalTexture->device() != this) {
+                    VALIDATION_ERROR(@"External texture was created from a different device");
+                    return BindGroup::createInvalid(*this);
+                }
                 auto textureData = createExternalTextureFromPixelBuffer(protect(externalTexture->pixelBuffer()), externalTexture->colorSpace(), PremultiplyAlpha::Yes);
                 id<MTLTexture> texture0 = textureData.texture0 ?: placeholderTexture(WebGPU::TextureFormat::Bgra8unorm);
                 auto metalStage = metalRenderStage(stage);
@@ -1741,7 +1745,7 @@ bool BindGroup::updateExternalTextures(WebGPU::ExternalTexture& apiExternalTextu
     if (m_renderBundleConsumerCount)
         return false;
 
-    if (!m_bindGroupLayout)
+    if (!m_bindGroupLayout || &externalTexture.device() != m_device.ptr())
         return false;
 
     bool foundBoundExternalTexture = false;

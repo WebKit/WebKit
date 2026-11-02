@@ -75,6 +75,7 @@ public:
     void updateExternalTexture(CVPixelBufferRef pixelBuffer) final { update(pixelBuffer); }
     size_t openCommandEncoderCount() const;
     void updateExternalTextures(id<MTLTexture>, id<MTLTexture>);
+    Device& device() const { return m_device; }
 
 private:
     ExternalTexture(CVPixelBufferRef, WebGPU::PredefinedColorSpace, simd::uint2 visibleSize, Device&);
