@@ -1031,7 +1031,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
 
-        this.dispatchEventToListeners(WI.DebuggerManager.Event.ScriptsCleared);
+        this.dispatchEventToListeners(WI.DebuggerManager.Event.ScriptsCleared, {target});
 
         // `paused` spans every target, so only resume if no other target is still paused.
         if (wasPaused && !this.paused)
