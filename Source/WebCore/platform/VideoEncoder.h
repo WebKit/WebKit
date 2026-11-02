@@ -58,6 +58,8 @@ public:
         int64_t timestamp { 0 };
         std::optional<uint64_t> duration;
         std::optional<unsigned> temporalIndex;
+        VideoFrameRotation rotation { VideoFrameRotation::None };
+        bool isMirrored { false };
     };
     struct RawFrame {
         Ref<VideoFrame> frame;

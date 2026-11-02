@@ -84,6 +84,8 @@ private:
     const RefPtr<WebKitVideoEncoderBitRateAllocation> m_bitrateAllocation;
     int64_t m_timestamp { 0 };
     std::optional<uint64_t> m_duration;
+    VideoFrameRotation m_rotation { VideoFrameRotation::None };
+    bool m_isMirrored { false };
     bool m_isClosed { false };
     bool m_isInitialized { false };
     const RefPtr<GStreamerElementHarness> m_harness;
@@ -288,7 +290,7 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(const VideoEncoder:
         GST_TRACE_OBJECT(m_harness->element(), "Notifying encoded%s frame", isKeyFrame ? " key" : "");
         GstMappedBuffer encodedImage(outputBuffer, GST_MAP_READ);
 
-        VideoEncoder::EncodedFrame encodedFrame { encodedImage.createVector(), isKeyFrame, m_timestamp, m_duration, temporalIndex };
+        VideoEncoder::EncodedFrame encodedFrame { encodedImage.createVector(), isKeyFrame, m_timestamp, m_duration, temporalIndex, m_rotation, m_isMirrored };
         m_outputCallback({ WTF::move(encodedFrame) });
     }));
 }
@@ -330,6 +332,8 @@ bool GStreamerInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bo
 
     m_timestamp = rawFrame.timestamp;
     m_duration = rawFrame.duration;
+    m_rotation = rawFrame.frame->rotation();
+    m_isMirrored = rawFrame.frame->isMirrored();
 
     if (shouldGenerateKeyFrame) {
         GST_INFO_OBJECT(m_harness->element(), "Requesting key-frame!");
