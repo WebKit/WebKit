@@ -72,6 +72,7 @@ my $gnuParallelChunkSize;
 my $testWriter;
 my $fullConfiguration;
 my $memoryLimited;
+my @disabledKeys;
 my $reportExecutionTime;
 my $treatFailingAsFlaky;
 
@@ -332,6 +333,9 @@ Usage: $programName [options] [options to pass to build system]
   --memory-limited              Indicate that we are targeting the test for a memory limited device.
                                 Skip tests tagged with //\@skip if \$memoryLimited
 
+  --disabled-keys=              Comma-separated keys (repeatable). Skip stress tests tagged with
+                                //\@ skip if \$disabledKeys&.include?(:<KEY>) for any listed key.
+
   --report-execution-time       Print execution time for each stress test.
   --treat-failing-as-flaky      Treat failing stress tests as flaky.
                                 Expects 3 or 4 comma-separated values: passPercentage,maxTries,maxFailing[,maxRetrySeconds]
@@ -416,6 +420,7 @@ GetOptions(
     'gnu-parallel-chunk-size=s' => \$gnuParallelChunkSize,
     'test-writer=s' => \$testWriter,
     'memory-limited' => \$memoryLimited,
+    'disabled-keys=s' => \@disabledKeys,
     'report-execution-time' => \$reportExecutionTime,
     'treat-failing-as-flaky=s' => \$treatFailingAsFlaky,
     'filter=s' => \$filter,
@@ -1056,6 +1061,12 @@ sub runJSCStressTests
 
     if ($memoryLimited) {
         push(@jscStressDriverCmd, "--memory-limited");
+    }
+
+    my $disabledKeysValue = join(",", grep { length } @disabledKeys);
+    if (length $disabledKeysValue) {
+        push(@jscStressDriverCmd, "--disabled-keys");
+        push(@jscStressDriverCmd, $disabledKeysValue);
     }
 
     if ($reportExecutionTime) {
