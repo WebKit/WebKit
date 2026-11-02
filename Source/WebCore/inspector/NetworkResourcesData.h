@@ -53,7 +53,7 @@ public:
     public:
         enum class LoadState : uint8_t { Loading, Finished, Failed };
 
-        ResourceData(const String& requestId, const String& loaderId);
+        NODELETE ResourceData(const String& requestId, const String& loaderId);
 
         const String& requestId() const LIFETIME_BOUND { return m_requestId; }
         const String& loaderId() const LIFETIME_BOUND { return m_loaderId; }

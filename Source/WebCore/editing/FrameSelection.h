@@ -70,7 +70,7 @@ class CaretBase {
 public:
     WEBCORE_EXPORT static Color computeCaretColor(const Style::ComputedStyle& elementStyle, const Node*, std::optional<LayoutRect> caretRectInPainterSpace = std::nullopt);
 protected:
-    explicit CaretBase(CaretVisibility = CaretVisibility::Hidden);
+    NODELETE explicit CaretBase(CaretVisibility = CaretVisibility::Hidden);
 
     void invalidateCaretRect(Node*, bool caretRectChanged = false, CaretAnimator* = nullptr);
     void LEGACY_NODELETE clearCaretRect();
@@ -97,7 +97,7 @@ class DragCaretController : private CaretBase {
     WTF_MAKE_TZONE_ALLOCATED(DragCaretController);
     WTF_MAKE_NONCOPYABLE(DragCaretController);
 public:
-    DragCaretController();
+    NODELETE DragCaretController();
 
     RenderBlock* caretRenderer() const;
     void paintDragCaret(LocalFrame*, GraphicsContext&, const LayoutPoint&) const;

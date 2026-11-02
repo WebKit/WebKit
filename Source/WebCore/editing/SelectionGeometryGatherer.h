@@ -58,7 +58,7 @@ public:
         WTF_MAKE_TZONE_ALLOCATED(Notifier);
         WTF_MAKE_NONCOPYABLE(Notifier);
     public:
-        Notifier(SelectionGeometryGatherer&);
+        NODELETE Notifier(SelectionGeometryGatherer&);
         ~Notifier();
 
     private:

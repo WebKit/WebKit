@@ -49,8 +49,8 @@ class DOMEditor {
     WTF_MAKE_TZONE_ALLOCATED(DOMEditor);
     WTF_MAKE_NONCOPYABLE(DOMEditor);
 public:
-    explicit DOMEditor(InspectorHistory&);
-    ~DOMEditor();
+    NODELETE explicit DOMEditor(InspectorHistory&);
+    NODELETE ~DOMEditor();
 
     ExceptionOr<void> insertBefore(ContainerNode& parentNode, Ref<Node>&&, Node* anchorNode);
     ExceptionOr<void> removeChild(ContainerNode& parentNode, Node&);

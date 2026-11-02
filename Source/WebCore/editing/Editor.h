@@ -331,8 +331,8 @@ public:
 
     class Command {
     public:
-        WEBCORE_EXPORT Command();
-        Command(const EditorInternalCommand*, EditorCommandSource, Document&);
+        NODELETE WEBCORE_EXPORT Command();
+        NODELETE Command(const EditorInternalCommand*, EditorCommandSource, Document&);
 
         WEBCORE_EXPORT bool execute(const String& parameter = String(), Event* triggeringEvent = nullptr) const;
         WEBCORE_EXPORT bool execute(Event* triggeringEvent) const;

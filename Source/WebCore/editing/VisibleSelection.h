@@ -41,7 +41,7 @@ enum class SelectionDirection : uint8_t { Forward, Backward, Right, Left };
 class VisibleSelection {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(VisibleSelection);
 public:
-    WEBCORE_EXPORT VisibleSelection();
+    NODELETE WEBCORE_EXPORT VisibleSelection();
     static const VisibleSelection& LEGACY_NODELETE emptySelection();
 
     static constexpr auto defaultAffinity = VisiblePosition::defaultAffinity;

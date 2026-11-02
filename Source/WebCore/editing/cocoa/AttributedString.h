@@ -238,7 +238,7 @@ struct WEBCORE_EXPORT AttributedString {
     Vector<std::pair<Range, HashMap<String, AttributeValue>>> attributes;
     std::optional<HashMap<String, AttributeValue>> documentAttributes;
 
-    AttributedString();
+    NODELETE AttributedString();
     AttributedString(String&&, Vector<std::pair<Range, HashMap<String, AttributeValue>>>&&, std::optional<HashMap<String, AttributeValue>>&&);
     AttributedString(AttributedString&&);
     AttributedString(const AttributedString&);

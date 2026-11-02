@@ -46,7 +46,7 @@ class VisiblePosition;
 
 class RenderedPosition {
 public:
-    RenderedPosition();
+    NODELETE RenderedPosition();
     explicit RenderedPosition(const VisiblePosition&);
     explicit RenderedPosition(const Position&, Affinity);
     bool LEGACY_NODELETE isEquivalent(const RenderedPosition&) const;
@@ -81,7 +81,7 @@ public:
 
 private:
     bool operator==(const RenderedPosition&) const { return false; }
-    explicit RenderedPosition(const RenderObject*, InlineIterator::LeafBoxIterator, unsigned offset);
+    NODELETE explicit RenderedPosition(const RenderObject*, InlineIterator::LeafBoxIterator, unsigned offset);
 
     InlineIterator::LeafBoxIterator LEGACY_NODELETE previousLeafOnLine() const;
     InlineIterator::LeafBoxIterator LEGACY_NODELETE nextLeafOnLine() const;

@@ -45,7 +45,7 @@ class FragmentedSharedBuffer;
 
 class BlobBuilder {
 public:
-    BlobBuilder(EndingType);
+    NODELETE BlobBuilder(EndingType);
 
     void append(Ref<JSC::ArrayBuffer>&&);
     void append(Ref<JSC::ArrayBufferView>&&);

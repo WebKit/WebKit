@@ -214,7 +214,7 @@ static RefPtr<CSSValue> backgroundColorInEffect(Node*);
 class HTMLElementEquivalent {
     WTF_MAKE_TZONE_ALLOCATED(HTMLElementEquivalent);
 public:
-    HTMLElementEquivalent(CSSPropertyID, CSSValueID, const QualifiedName&);
+    NODELETE HTMLElementEquivalent(CSSPropertyID, CSSValueID, const QualifiedName&);
     virtual ~HTMLElementEquivalent() = default;
 
     virtual bool matches(const Element& element) const { return !m_tagName || element.hasTagName(*m_tagName); }
@@ -224,8 +224,8 @@ public:
     virtual void addToStyle(Element*, EditingStyle*) const;
 
 protected:
-    HTMLElementEquivalent(CSSPropertyID);
-    HTMLElementEquivalent(CSSPropertyID, const QualifiedName&);
+    NODELETE HTMLElementEquivalent(CSSPropertyID);
+    NODELETE HTMLElementEquivalent(CSSPropertyID, const QualifiedName&);
     const CSSPropertyID m_propertyID;
     const RefPtr<CSSKeywordValue> m_keywordValue;
     const QualifiedName* m_tagName { nullptr }; // We can store a pointer because HTML tag names are const global.
@@ -339,8 +339,8 @@ private:
 
 class HTMLAttributeEquivalent : public HTMLElementEquivalent {
 public:
-    HTMLAttributeEquivalent(CSSPropertyID, const QualifiedName& tagName, const QualifiedName& attrName);
-    HTMLAttributeEquivalent(CSSPropertyID, const QualifiedName& attrName);
+    NODELETE HTMLAttributeEquivalent(CSSPropertyID, const QualifiedName& tagName, const QualifiedName& attrName);
+    NODELETE HTMLAttributeEquivalent(CSSPropertyID, const QualifiedName& attrName);
 
     bool matches(const Element& element) const override { return HTMLElementEquivalent::matches(element) && element.hasAttribute(m_attrName); }
     bool hasAttribute() const override { return true; }
@@ -394,7 +394,7 @@ RefPtr<CSSValue> HTMLAttributeEquivalent::attributeValueAsCSSValue(Element* elem
 
 class HTMLFontSizeEquivalent : public HTMLAttributeEquivalent {
 public:
-    HTMLFontSizeEquivalent();
+    NODELETE HTMLFontSizeEquivalent();
 
     RefPtr<CSSValue> attributeValueAsCSSValue(Element*) const override;
 };
