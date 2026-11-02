@@ -164,7 +164,7 @@ public:
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Node);
     };
 
-    class ThreadSafeNode : public NodeBase, public CanMakeThreadSafeCheckedPtr<Node> {
+    class ThreadSafeNode : public NodeBase, public CanMakeThreadSafeCheckedPtr<ThreadSafeNode> {
         WTF_MAKE_TZONE_ALLOCATED_INLINE(ThreadSafeNode);
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ThreadSafeNode);
     };

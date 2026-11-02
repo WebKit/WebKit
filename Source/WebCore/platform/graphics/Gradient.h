@@ -66,7 +66,7 @@ class FloatRect;
 class GraphicsContext;
 
 // Note: currently this class is not usable from multiple threads due to mutating interface.
-class Gradient final : public ThreadSafeRefCounted<Gradient>, public CanMakeThreadSafeCheckedPtr<NativeImage> {
+class Gradient final : public ThreadSafeRefCounted<Gradient>, public CanMakeThreadSafeCheckedPtr<Gradient> {
     WTF_MAKE_TZONE_ALLOCATED(Gradient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Gradient);
 public:

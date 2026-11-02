@@ -427,6 +427,7 @@ class CanMakeCheckedPtr : public CanMakeCheckedPtrBase<SingleThreadIntegralWrapp
 public:
     ~CanMakeCheckedPtr()
     {
+        static_assert(std::is_base_of_v<CanMakeCheckedPtr, T>, "T must be the class that inherits from CanMakeCheckedPtr<T>");
         static_assert(std::is_same<typename T::WTFIsFastMallocAllocated, int>::value, "Objects that use CanMakeCheckedPtr must use TZoneMalloc (WTF_MAKE_TZONE_ALLOCATED or one of its variants)");
         static_assert(std::is_same<typename T::WTFDidOverrideDeleteForCheckedPtr, int>::value, "Objects that use CanMakeCheckedPtr must use WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR");
     }
@@ -443,6 +444,7 @@ class CanMakeThreadSafeCheckedPtr : public CanMakeCheckedPtrBase<std::atomic<uin
 public:
     ~CanMakeThreadSafeCheckedPtr()
     {
+        static_assert(std::is_base_of_v<CanMakeThreadSafeCheckedPtr, T>, "T must be the class that inherits from CanMakeThreadSafeCheckedPtr<T>");
         static_assert(std::is_same<typename T::WTFIsFastMallocAllocated, int>::value, "Objects that use CanMakeCheckedPtr must use TZoneMalloc (WTF_MAKE_TZONE_ALLOCATED or one of its variants)");
         static_assert(std::is_same<typename T::WTFDidOverrideDeleteForCheckedPtr, int>::value, "Objects that use CanMakeCheckedPtr must use WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR");
     }
