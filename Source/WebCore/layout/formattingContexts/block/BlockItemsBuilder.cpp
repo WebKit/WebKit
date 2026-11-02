@@ -57,9 +57,17 @@ static bool hasInlineContent(const RenderBox& box)
     return blockContainer && blockContainer->childrenInline() && blockContainer->firstChild() && !blockContainer->createsNewFormattingContext();
 }
 
+// Its parent lays out a box excluded from normal layout, like a text control's placeholder (RenderBlock::layoutExcludedChildren).
+static const RenderBox* firstBoxInNormalLayout(const RenderBox* box)
+{
+    while (box && box->isExcludedFromNormalLayout())
+        box = box->nextSiblingBox();
+    return box;
+}
+
 BlockItemList BlockItemsBuilder::build()
 {
-    CheckedPtr firstChild = root().firstChildBox();
+    CheckedPtr firstChild = firstBoxInNormalLayout(root().firstChildBox());
     return firstChild ? build(*firstChild, nullptr) : BlockItemList { };
 }
 
@@ -86,7 +94,7 @@ BlockItemList BlockItemsBuilder::build(const RenderBox& firstBox, const RenderBo
             // back when it reaches them (BlockFormattingContext::layoutBlockLevelBoxInInlineContent).
             if (hasInlineContent(*box))
                 blockItems.append({ *box, BlockItem::Type::InlineContent });
-            else if (CheckedPtr firstChild = box->firstChildBox(); firstChild && contentTakesPartInBlockFormattingContext(*box)) {
+            else if (CheckedPtr firstChild = firstBoxInNormalLayout(box->firstChildBox()); firstChild && contentTakesPartInBlockFormattingContext(*box)) {
                 box = WTF::move(firstChild);
                 continue;
             }
@@ -97,7 +105,7 @@ BlockItemList BlockItemsBuilder::build(const RenderBox& firstBox, const RenderBo
                 blockItems.append({ *box, BlockItem::Type::BlockContainerEnd });
             if (box == onlyBox)
                 return blockItems;
-            if (CheckedPtr nextSibling = box->nextSiblingBox()) {
+            if (CheckedPtr nextSibling = firstBoxInNormalLayout(box->nextSiblingBox())) {
                 box = WTF::move(nextSibling);
                 break;
             }
