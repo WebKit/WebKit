@@ -47,6 +47,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'GTK-Build-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -92,6 +93,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'iOS-26-Build-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -110,6 +112,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'iOS-27-Simulator-Build-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -272,6 +275,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'macOS-Sequoia-Release-Build-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -450,6 +454,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'visionOS-27-Build-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -468,6 +473,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'visionOS-27-Simulator-Build-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -512,6 +518,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'watchOS-27-Build-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -530,6 +537,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'watchOS-27-Simulator-Build-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -548,6 +556,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'tvOS-27-Build-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -566,6 +575,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'tvOS-27-Simulator-Build-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -584,6 +594,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'PlayStation-Build-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -603,6 +614,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'Win-Build-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -642,6 +654,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'WPE-Build-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -662,6 +675,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'GTK-GTK3-GCC-Build-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
