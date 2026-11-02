@@ -261,16 +261,8 @@ bool SVGTextBoxPainter::acquirePaintingResource(SVGPaintServerHandling& paintSer
         context.setTextDrawingMode(TextDrawingMode::Stroke);
 
         if (style.vectorEffect() == VectorEffect::NonScalingStroke) {
-            if (style.fontDescription().textRenderingMode() == TextRenderingMode::GeometricPrecision)
-                scalingFactor = 1.0 / RenderSVGInlineText::computeScalingFactorForRenderer(renderer);
-            else
-                scalingFactor = 1.0;
-
-            if (auto zoomFactor = renderer.style().usedZoom(); zoomFactor != 1.0)
-                scalingFactor *= zoomFactor;
-
-            if (auto deviceScaleFactor = renderer.document().deviceScaleFactor(); deviceScaleFactor != 1.0)
-                scalingFactor *= deviceScaleFactor;
+            if (auto nonScalingStrokeScale = RenderSVGInlineText::computeNonScalingStrokeScaleForRenderer(renderer); nonScalingStrokeScale > 0)
+                scalingFactor /= nonScalingStrokeScale;
         }
 
         if (scalingFactor != 1.0)
@@ -327,16 +319,8 @@ bool SVGTextBoxPainter::acquireLegacyPaintingResource(GraphicsContext*& context,
 
     if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToStroke)) {
         if (style.vectorEffect() == VectorEffect::NonScalingStroke) {
-            if (style.fontDescription().textRenderingMode() == TextRenderingMode::GeometricPrecision)
-                scalingFactor = 1.0 / RenderSVGInlineText::computeScalingFactorForRenderer(renderer);
-            else
-                scalingFactor = 1.0;
-
-            if (auto zoomFactor = renderer.style().usedZoom(); zoomFactor != 1.0)
-                scalingFactor *= zoomFactor;
-
-            if (auto deviceScaleFactor = renderer.document().deviceScaleFactor(); deviceScaleFactor != 1.0)
-                scalingFactor *= deviceScaleFactor;
+            if (auto nonScalingStrokeScale = RenderSVGInlineText::computeNonScalingStrokeScaleForRenderer(renderer); nonScalingStrokeScale > 0)
+                scalingFactor /= nonScalingStrokeScale;
         }
 
         if (scalingFactor != 1.0)

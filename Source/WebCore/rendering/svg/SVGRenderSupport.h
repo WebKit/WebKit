@@ -105,6 +105,8 @@ public:
     static void LEGACY_NODELETE elementInsertedIntoTree(RenderElement&);
     static void LEGACY_NODELETE elementWillBeRemovedFromTree(RenderElement&);
 
+    static AffineTransform legacyNonScalingStrokeTransform(const SVGElement&);
+
     // Shared between SVG renderers and resources.
     static void applyStrokeStyleToContext(GraphicsContext&, const Style::ComputedStyle&, const RenderElement&);
 

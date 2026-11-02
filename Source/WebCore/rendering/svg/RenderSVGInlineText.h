@@ -44,10 +44,7 @@ public:
     bool hasValidTextMetrics() const { return m_hasValidTextMetrics; }
     void setHasValidTextMetrics(bool value) { m_hasValidTextMetrics = value; }
 
-    // computeScalingFactor() returns the font-size scaling factor, ignoring the text-rendering mode.
-    // scalingFactor() takes it into account, and thus returns 1 whenever text-rendering is set to 'geometricPrecision'.
-    // Therefore if you need access to the vanilla scaling factor, use this method directly (e.g. for non-scaling-stroke).
-    static float computeScalingFactorForRenderer(const RenderObject&);
+    static float computeNonScalingStrokeScaleForRenderer(const RenderObject&);
 
     float scalingFactor() const { return m_scalingFactor; }
     const FontCascade& scaledFont() const { return m_scaledFont; }
