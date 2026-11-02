@@ -46,6 +46,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-data.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-others.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/split-byte-order-mark.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/stream-response.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.js

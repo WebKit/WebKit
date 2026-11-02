@@ -1,0 +1,7 @@
+
+PASS text() strips a UTF-8 byte order mark split across chunks
+PASS text() does not strip a UTF-8 byte order mark in a later chunk
+PASS text() decodes a UTF-8 sequence split across chunks
+PASS text() does not use a UTF-16LE byte order mark split across chunks
+PASS json() strips a UTF-8 byte order mark split across chunks
+
