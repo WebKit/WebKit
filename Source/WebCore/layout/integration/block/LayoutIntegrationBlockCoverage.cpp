@@ -147,10 +147,9 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     };
     if ((rootContainer.isFlexItemIncludingDeprecated() || rootContainer.isGridItem()) && rootContainer.isAnonymous() && hasPercentageBlockSizeContent())
         return BlockAvoidanceReason::RootIsAnonymousFlexOrGridItem;
-    // FIXME: A table cell in quirks mode, where it is a quirk container (RenderBlockFlow::MarginInfo), and percentage block sizes inside one,
-    // which resolve against the height the row gives it, and only once it has one (RenderBox::computePercentageLogicalHeight,
-    // RenderTableSection::relayoutCellIfFlexed).
-    if (rootContainer.isRenderTableCell() && (rootContainer.document().inQuirksMode() || hasPercentageBlockSizeContent()))
+    // FIXME: Percentage block sizes inside a table cell, which resolve against the height the row gives it, and only once it has one
+    // (RenderBox::computePercentageLogicalHeight, RenderTableSection::relayoutCellIfFlexed).
+    if (rootContainer.isRenderTableCell() && hasPercentageBlockSizeContent())
         return BlockAvoidanceReason::RootIsTableCell;
     // FIXME: horizontal-bt, whose inline content the inline formatting context places from the border and padding at the top, its block-end
     // side (BoxGeometryUpdater::formattingContextConstraints).

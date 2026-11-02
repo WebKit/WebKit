@@ -67,6 +67,9 @@ public:
         friend class BlockMarginCollapse;
         MarginsWithQuirk m_collapsedMarginsBefore;
         bool m_marginBeforeIsQuirky { false };
+        // endsWithQuirk() before the box, which a box whose margins collapse through it or that ends without a margin leaves as it was
+        // (RenderBlockFlow::collapseMarginsWithChildInfo).
+        std::optional<bool> m_endsWithQuirkBefore;
         // Its block-start margin collapses with its containing block's, which was still waiting for its top when the block container started.
         bool m_collapsesWithContainingBlockMarginBefore { false };
     };
@@ -77,7 +80,7 @@ public:
     // Where the adjoining margins start: the last edge that separated margins.
     LayoutUnit logicalTop() const { return m_logicalTop; }
     LayoutUnit collapsedLogicalBottom() const { return m_logicalTop + m_adjoiningMargins.collapsedValue(); }
-    // The same for a box whose margins collapse through it: in a quirk container, the margins of the child count when they are not all quirky.
+    // The same for a box whose margins collapse through it, which also counts the margins at the block-start side of the quirk container.
     LayoutUnit collapsedLogicalBottomForCollapsedThroughBox() const;
     // Whether the margin after the last box that did not collapse through is quirky (RenderBlockFlow::MarginInfo::hasMarginAfterQuirk).
     bool endsWithQuirk() const { return m_endsWithQuirk.value_or(false); }
@@ -106,7 +109,7 @@ public:
     // The block-end margin of a box whose margins do not collapse through it. It follows the bottom border edge of the box, and collapses
     // with the margins after its content unless something separates them.
     // Returns whether the margins that collapse with it are quirky.
-    bool addBlockEndMargin(LayoutUnit, bool isQuirky, bool collapsesWithMarginsAfterContent, LayoutUnit borderBoxLogicalBottom);
+    bool addBlockEndMargin(const ContainingBlockState& blockContainerState, LayoutUnit, bool isQuirky, bool collapsesWithMarginsAfterContent, LayoutUnit borderBoxLogicalBottom);
     // The block container separates margins. Unless it is the quirk container itself (its block-start border and padding), this ends the
     // quirk container's block-start side.
     void endQuirkContainerBlockStartSide(const ContainingBlockState& blockContainerState);
@@ -115,16 +118,28 @@ private:
     // The margins that collapse with the block-start edge of the block container collapse with its containing block's too, and so does its
     // block-end margin when its margins collapse through it.
     static bool marginsBeforeCollapseWithContainingBlock(const ContainingBlockState& blockContainerState, const ContainingBlockState&);
-    void resolveQuirkContainerChildMargins();
+    enum class QuirkContainerBlockStartSideEnd : bool { AtContent, AtBlockEnd };
+    void endQuirkContainerBlockStartSide(QuirkContainerBlockStartSideEnd);
 
     AdjoiningMargins m_adjoiningMargins;
     LayoutUnit m_logicalTop;
     // Unset after line boxes, until the block-end margin of their block container.
     std::optional<bool> m_endsWithQuirk { false };
-    // Quirks mode: body is a quirk container (RenderBlockFlow::MarginInfo). At its block-start side, until something in it separates margins,
-    // the margins that collapse with the block-start edge of its current child are kept here, apart from the adjoining margins, and dropped
-    // when they are all quirky. A body inside another one stays on the render tree path.
-    std::optional<MarginsWithQuirk> m_quirkContainerChildMargins;
+    // Quirks mode: body and table cells are quirk containers (RenderBlockFlow::MarginInfo). At its block-start side, until content in it
+    // separates margins, the margins of its children are kept here, apart from the adjoining margins (RenderBlockFlow::collapseMarginsWithChildInfo).
+    // When they collapse with the quirk container's own block-start margin, the quirky ones of each child are dropped. Otherwise they are all
+    // dropped when the last child with margins has quirky ones, and the children whose margins collapse through them are placed below all of
+    // them. A quirk container inside another one stays on the render tree path.
+    struct QuirkContainerBlockStartSide {
+        void endChild();
+
+        AdjoiningMargins childrenMargins;
+        // The margins that collapse with the block-start edge of the current child.
+        MarginsWithQuirk childMargins;
+        bool lastMarginsAreQuirky { false };
+        bool marginsCollapseWithQuirkContainer { true };
+    };
+    std::optional<QuirkContainerBlockStartSide> m_quirkContainerBlockStartSide;
 };
 
 }

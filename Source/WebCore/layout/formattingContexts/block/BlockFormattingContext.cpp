@@ -836,7 +836,7 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
     auto minimumBlockSizeSeparatesMargins = style->logicalHeight(writingMode).isAuto() && !style->logicalMinHeight(writingMode).isPossiblyZero() && geometry.contentBoxHeight() > intrinsicContentBlockSize;
     // What follows is placed below the bottom border edge, also when min/max-height moved that away from where the content ends.
     auto borderBoxLogicalTop = *blockContainerState.borderBoxLogicalTop;
-    auto marginAfterIsQuirky = m_blockLayoutState.marginCollapse().addBlockEndMargin(geometry.marginAfter(), style->marginAfter().hasQuirk(), marginAfterCollapsesWithChildren && !minimumBlockSizeSeparatesMargins, borderBoxLogicalTop + geometry.borderBoxHeight());
+    auto marginAfterIsQuirky = m_blockLayoutState.marginCollapse().addBlockEndMargin(blockContainerState, geometry.marginAfter(), style->marginAfter().hasQuirk(), marginAfterCollapsesWithChildren && !minimumBlockSizeSeparatesMargins, borderBoxLogicalTop + geometry.borderBoxHeight());
 
     geometry.setTop(borderBoxLogicalTop - *containingBlockState.borderBoxLogicalTop);
     result.boxes.append({ box, WTF::move(geometry), intrinsicContentBlockSize, collapsedMarginsBefore, m_blockLayoutState.marginCollapse().adjoiningMargins(), blockContainerState.margins.collapsedMarginsBeforeAreQuirky(), marginAfterIsQuirky, blockContainerState.isLaidOutThroughRenderTree });

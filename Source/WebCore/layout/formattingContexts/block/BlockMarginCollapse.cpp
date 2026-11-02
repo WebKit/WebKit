@@ -84,14 +84,17 @@ void MarginsWithQuirk::add(const MarginsWithQuirk& other)
 
 bool BlockMarginCollapse::isQuirkContainer(const RenderBox& box)
 {
-    return box.document().inQuirksMode() && box.isBody();
+    return box.document().inQuirksMode() && (box.isBody() || box.isRenderTableCell());
 }
 
 LayoutUnit BlockMarginCollapse::collapsedLogicalBottomForCollapsedThroughBox() const
 {
     auto margins = m_adjoiningMargins;
-    if (m_quirkContainerChildMargins && !m_quirkContainerChildMargins->areQuirky())
-        margins.add(m_quirkContainerChildMargins->margins);
+    if (m_quirkContainerBlockStartSide) {
+        margins.add(m_quirkContainerBlockStartSide->childrenMargins);
+        if (!m_quirkContainerBlockStartSide->marginsCollapseWithQuirkContainer || !m_quirkContainerBlockStartSide->childMargins.areQuirky())
+            margins.add(m_quirkContainerBlockStartSide->childMargins.margins);
+    }
     return m_logicalTop + margins.collapsedValue();
 }
 
@@ -110,7 +113,7 @@ void BlockMarginCollapse::resetAdjoiningMarginsAfterLineBoxes(LayoutUnit logical
 
 void BlockMarginCollapse::separateMarginsAtLineBox(LayoutUnit lineBoxLogicalTop)
 {
-    resolveQuirkContainerChildMargins();
+    endQuirkContainerBlockStartSide(QuirkContainerBlockStartSideEnd::AtContent);
     resetAdjoiningMargins(lineBoxLogicalTop);
 }
 
@@ -122,16 +125,14 @@ void BlockMarginCollapse::addKeptContentMarginsBefore(ContainingBlockState& bloc
 
 void BlockMarginCollapse::startBlockContainer(ContainingBlockState& blockContainerState, const ContainingBlockState& containingBlockState, LayoutUnit marginBefore)
 {
-    m_endsWithQuirk = false;
+    blockContainerState.margins.m_endsWithQuirkBefore = std::exchange(m_endsWithQuirk, false);
     CheckedRef box = blockContainerState.blockContainer;
     auto isQuirky = box->style().marginBefore().hasQuirk();
     // A child of the quirk container starts the margins that collapse with its block-start edge.
-    if (m_quirkContainerChildMargins && isQuirkContainer(containingBlockState.blockContainer)) {
-        resolveQuirkContainerChildMargins();
-        m_quirkContainerChildMargins = MarginsWithQuirk { };
-    }
-    if (m_quirkContainerChildMargins)
-        m_quirkContainerChildMargins->add(marginBefore, isQuirky);
+    if (m_quirkContainerBlockStartSide && isQuirkContainer(containingBlockState.blockContainer))
+        m_quirkContainerBlockStartSide->endChild();
+    if (m_quirkContainerBlockStartSide)
+        m_quirkContainerBlockStartSide->childMargins.add(marginBefore, isQuirky);
     else
         m_adjoiningMargins.add(marginBefore);
     auto& margins = blockContainerState.margins;
@@ -139,15 +140,15 @@ void BlockMarginCollapse::startBlockContainer(ContainingBlockState& blockContain
     margins.m_collapsedMarginsBefore.add(marginBefore, isQuirky);
     margins.m_collapsesWithContainingBlockMarginBefore = !containingBlockState.borderBoxLogicalTop;
     if (isQuirkContainer(box)) {
-        ASSERT(!m_quirkContainerChildMargins);
-        m_quirkContainerChildMargins = MarginsWithQuirk { };
+        ASSERT(!m_quirkContainerBlockStartSide);
+        m_quirkContainerBlockStartSide = QuirkContainerBlockStartSide { };
     }
 }
 
 void BlockMarginCollapse::endBlockContainer(const ContainingBlockState& blockContainerState, ContainingBlockState& containingBlockState)
 {
     if (isQuirkContainer(blockContainerState.blockContainer))
-        resolveQuirkContainerChildMargins();
+        endQuirkContainerBlockStartSide(QuirkContainerBlockStartSideEnd::AtBlockEnd);
     if (marginsBeforeCollapseWithContainingBlock(blockContainerState, containingBlockState))
         containingBlockState.margins.m_collapsedMarginsBefore.add(blockContainerState.margins.m_collapsedMarginsBefore);
 }
@@ -155,26 +156,27 @@ void BlockMarginCollapse::endBlockContainer(const ContainingBlockState& blockCon
 void BlockMarginCollapse::startBlockFormattingContextRoot(const ContainingBlockState& rootState)
 {
     if (isQuirkContainer(rootState.blockContainer))
-        m_quirkContainerChildMargins = MarginsWithQuirk { };
+        m_quirkContainerBlockStartSide = QuirkContainerBlockStartSide { .marginsCollapseWithQuirkContainer = false };
 }
 
 void BlockMarginCollapse::endBlockFormattingContextRoot(const ContainingBlockState& rootState)
 {
     if (isQuirkContainer(rootState.blockContainer))
-        resolveQuirkContainerChildMargins();
+        endQuirkContainerBlockStartSide(QuirkContainerBlockStartSideEnd::AtBlockEnd);
 }
 
 void BlockMarginCollapse::addCollapsedThroughBlockEndMargin(const ContainingBlockState& blockContainerState, ContainingBlockState& containingBlockState, LayoutUnit marginAfter)
 {
-    if (m_quirkContainerChildMargins)
-        m_quirkContainerChildMargins->add(marginAfter, { });
+    if (m_quirkContainerBlockStartSide)
+        m_quirkContainerBlockStartSide->childMargins.add(marginAfter, { });
     else
         m_adjoiningMargins.add(marginAfter);
+    m_endsWithQuirk = blockContainerState.margins.m_endsWithQuirkBefore;
     if (marginsBeforeCollapseWithContainingBlock(blockContainerState, containingBlockState))
         containingBlockState.margins.m_collapsedMarginsBefore.add(marginAfter, { });
 }
 
-bool BlockMarginCollapse::addBlockEndMargin(LayoutUnit margin, bool isQuirky, bool collapsesWithMarginsAfterContent, LayoutUnit borderBoxLogicalBottom)
+bool BlockMarginCollapse::addBlockEndMargin(const ContainingBlockState& blockContainerState, LayoutUnit margin, bool isQuirky, bool collapsesWithMarginsAfterContent, LayoutUnit borderBoxLogicalBottom)
 {
     if (!collapsesWithMarginsAfterContent)
         m_adjoiningMargins = { };
@@ -183,8 +185,8 @@ bool BlockMarginCollapse::addBlockEndMargin(LayoutUnit margin, bool isQuirky, bo
     m_adjoiningMargins.add(margin);
     if (m_adjoiningMargins.collapsedValue())
         m_endsWithQuirk = isQuirky;
-    else if (!m_endsWithQuirk)
-        m_endsWithQuirk = false;
+    else
+        m_endsWithQuirk = blockContainerState.margins.m_endsWithQuirkBefore;
     m_logicalTop = borderBoxLogicalBottom;
     return isQuirky;
 }
@@ -201,16 +203,37 @@ bool BlockMarginCollapse::marginsBeforeCollapseWithContainingBlock(const Contain
 void BlockMarginCollapse::endQuirkContainerBlockStartSide(const ContainingBlockState& blockContainerState)
 {
     if (!isQuirkContainer(blockContainerState.blockContainer))
-        resolveQuirkContainerChildMargins();
+        endQuirkContainerBlockStartSide(QuirkContainerBlockStartSideEnd::AtContent);
+    else if (m_quirkContainerBlockStartSide) {
+        // Its own block-start border or padding separates its block-start margin from its children's.
+        m_quirkContainerBlockStartSide->marginsCollapseWithQuirkContainer = false;
+    }
 }
 
-void BlockMarginCollapse::resolveQuirkContainerChildMargins()
+void BlockMarginCollapse::QuirkContainerBlockStartSide::endChild()
 {
-    // The child's margins join the adjoining margins unless they are all quirky. Without a next child to start new ones, the block-start side
-    // ends here.
-    auto childMargins = std::exchange(m_quirkContainerChildMargins, std::nullopt);
-    if (childMargins && !childMargins->areQuirky())
-        m_adjoiningMargins.add(childMargins->margins);
+    auto margins = std::exchange(childMargins, { });
+    if (marginsCollapseWithQuirkContainer) {
+        if (!margins.areQuirky())
+            childrenMargins.add(margins.margins);
+        return;
+    }
+    // A child with margins decides whether the ones so far are quirky, but only the before ones of a child whose margins collapse through it.
+    if (margins.margins.collapsedValue())
+        lastMarginsAreQuirky = margins.areQuirky();
+    childrenMargins.add(margins.margins);
+}
+
+void BlockMarginCollapse::endQuirkContainerBlockStartSide(QuirkContainerBlockStartSideEnd end)
+{
+    // The margins join the adjoining margins unless content ends the block-start side and the last child with margins has quirky ones. When
+    // every child collapses through, the quirk container keeps them (RenderBlockFlow::handleAfterSideOfBlock).
+    auto blockStartSide = std::exchange(m_quirkContainerBlockStartSide, std::nullopt);
+    if (!blockStartSide)
+        return;
+    blockStartSide->endChild();
+    if (end == QuirkContainerBlockStartSideEnd::AtBlockEnd || !blockStartSide->lastMarginsAreQuirky)
+        m_adjoiningMargins.add(blockStartSide->childrenMargins);
 }
 
 }
