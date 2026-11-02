@@ -1550,6 +1550,15 @@ class CheckChangeRelevance(AnalyzeChange):
         re.compile(rb'Tools/CISupport/safer-cpp-swift-version', re.IGNORECASE)
     ]
 
+    build_skip_regexes = [
+        re.compile(rb'\.md$', re.IGNORECASE),
+        re.compile(rb'^Websites/', re.IGNORECASE),
+        re.compile(rb'^docs/', re.IGNORECASE),
+        re.compile(rb'^(LICENSE|COPYING|NOTICE)', re.IGNORECASE),
+        re.compile(rb'^metadata/', re.IGNORECASE),
+        re.compile(rb'^Tools/CISupport/', re.IGNORECASE),
+    ]
+
     group_to_paths_mapping = {
         'bindings': bindings_path_regexes,
         'monterey-release-build': monterey_builder_path_regexes,
@@ -1558,10 +1567,11 @@ class CheckChangeRelevance(AnalyzeChange):
         'webkitpy': webkitpy_path_regexes,
         'wk1-tests': wk1_path_regexes,
         'safer-cpp': safer_cpp_path_regexes,
+        'build': build_skip_regexes,
     }
 
     # Groups here use skip-list semantics: skip only if every file matches an entry.
-    inverted_groups = set()
+    inverted_groups = {'build'}
 
     def _patch_is_relevant(self, patch, builderName, timeout=30):
         group = [group for group in self.group_to_paths_mapping.keys() if group.lower() in builderName.lower()]
