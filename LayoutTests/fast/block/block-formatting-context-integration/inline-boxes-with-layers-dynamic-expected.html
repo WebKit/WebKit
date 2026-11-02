@@ -1,0 +1,32 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 250px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+.c { background: silver; margin-bottom: 5px; }
+span { background: rgba(0, 0, 255, 0.2); }
+</style>
+<div class="root" id="resized">
+  <div class="c">text <span id="offset" style="position: relative; top: 5px">moves down</span> after</div>
+  <div class="c">text <span id="text" style="position: relative">grows</span> after</div>
+  <div class="c">text <span id="gets-layer">gets a layer</span> after</div>
+  <div class="c">text <span id="loses-layer" style="position: relative; left: 10px">loses its layer</span> after</div>
+  <div class="c">text <span id="opacity" style="opacity: 0.5">gets opaque</span> after</div>
+  <div id="before" style="height: 10px"></div>
+  <div class="c"><span style="position: relative; top: 4px">moved by the content before</span></div>
+</div>
+<div class="root" style="position: relative; height: 40px">
+  text <span id="becomes-container" style="position: relative">stops being a containing block and becomes one again<span style="position: absolute; top: 12px; left: 0">absolute</span></span>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("offset").style.top = "15px";
+document.getElementById("text").firstChild.data = "grows a lot so that it wraps onto another line";
+document.getElementById("gets-layer").style.position = "relative";
+document.getElementById("gets-layer").style.left = "5px";
+document.getElementById("loses-layer").style.position = "static";
+document.getElementById("opacity").style.opacity = "1";
+document.getElementById("becomes-container").style.position = "static";
+document.body.offsetHeight;
+document.getElementById("becomes-container").style.position = "relative";
+document.getElementById("before").style.height = "30px";
+document.getElementById("resized").style.width = "200px";
+</script>

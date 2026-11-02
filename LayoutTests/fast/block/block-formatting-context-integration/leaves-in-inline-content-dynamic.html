@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 250px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+.c { background: silver; }
+.f { display: flex; gap: 5px; background: rgba(0, 128, 0, 0.6); }
+span { background: rgba(0, 0, 255, 0.2); }
+</style>
+<div class="roots">
+<div class="root" id="resized">
+  <div class="c"><span>before<div class="f" id="margin" style="margin: 10px 0"><div>margin</div></div>after</span></div>
+  <div class="c"><span>before<div class="f"><div id="text">flex text</div></div>after</span></div>
+  <div class="c"><span>before<div class="f"><div>flex item text that wraps once the root is narrower</div><div>second</div></div>after</span></div>
+  <div class="c"><span id="inserted">start<div>block</div>end</span></div>
+  <div class="c"><span>front<div class="f" id="removed"><div>removed</div></div>back</span></div>
+</div>
+<div class="root">
+  <div class="c"><span>canvas<canvas id="canvas" width="50" height="20" style="display: block; background: green"></canvas>after</span></div>
+  <div class="c"><span>table<table><tr><td id="cell">cell</td></tr></table>after</span></div>
+  <div class="c"><span>display<div class="f" id="display"><div>inline-flex and back</div></div>after</span></div>
+  <div class="b" id="before-kept" style="height: 10px"></div>
+  <div class="c"><span>kept<div class="f" style="margin: 7px 0"><div>lines</div></div>after</span></div>
+</div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("margin").style.marginBottom = "30px";
+document.getElementById("text").firstChild.data = "flex text that got a lot longer than it was";
+document.getElementById("resized").style.width = "180px";
+var flex = document.createElement("div");
+flex.className = "f";
+flex.style.margin = "4px 0";
+flex.appendChild(document.createElement("div")).appendChild(document.createTextNode("inserted"));
+document.getElementById("inserted").insertBefore(flex, document.getElementById("inserted").lastChild);
+document.getElementById("removed").remove();
+document.getElementById("canvas").style.height = "40px";
+document.getElementById("cell").firstChild.data = "cell text that is longer";
+document.getElementById("display").style.display = "inline-flex";
+document.body.offsetHeight;
+document.getElementById("display").style.display = "flex";
+// The block containers after this one are clean, and keep their lines and the boxes in them.
+document.getElementById("before-kept").style.height = "30px";
+</script>
