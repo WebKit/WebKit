@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -37,6 +38,7 @@ class UserContentProvider;
 class WebKitBuffer;
 
 class WebKitBufferNamespace : public RefCounted<WebKitBufferNamespace> {
+    WTF_MAKE_TZONE_ALLOCATED(WebKitBufferNamespace);
 public:
     static Ref<WebKitBufferNamespace> create(LocalFrame& frame, UserContentProvider& userContentProvider)
     {

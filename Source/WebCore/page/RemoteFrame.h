@@ -31,6 +31,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/Markable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueRef.h>
 
@@ -51,6 +52,7 @@ enum class RenderAsTextFlag : uint16_t;
 struct AccessibilityRemoteToken;
 
 class RemoteFrame final : public Frame {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteFrame);
 public:
     using ClientCreator = CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)>;
     WEBCORE_EXPORT static Ref<RemoteFrame> createMainFrame(Page&, ClientCreator&&, FrameIdentifier, Frame* opener, Ref<FrameTreeSyncData>&&);

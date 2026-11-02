@@ -31,6 +31,7 @@
 #include <wtf/Markable.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class JSGlobalObject;
@@ -46,6 +47,7 @@ using WebProcessJSHandleIdentifier = ObjectIdentifier<JSHandleIdentifierType>;
 using JSHandleIdentifier = ProcessQualified<WebProcessJSHandleIdentifier>;
 
 class WEBCORE_EXPORT WebKitJSHandle : public RefCountedAndCanMakeWeakPtr<WebKitJSHandle> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebKitJSHandle, WEBCORE_EXPORT);
 public:
     static Ref<WebKitJSHandle> create(JSC::JSObject*);
     static JSC::JSObject* objectForIdentifier(JSHandleIdentifier);

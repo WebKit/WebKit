@@ -30,6 +30,7 @@
 #include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 struct NavigatorUABrandVersion;
@@ -38,6 +39,7 @@ struct UALowEntropyJSON;
 struct UserAgentStringData;
 
 class NavigatorUAData : public RefCounted<NavigatorUAData> {
+    WTF_MAKE_TZONE_ALLOCATED(NavigatorUAData);
 public:
     NODELETE static Ref<NavigatorUAData> create();
     static Ref<NavigatorUAData> create(Ref<UserAgentStringData>&&);

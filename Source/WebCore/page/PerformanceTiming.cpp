@@ -42,8 +42,11 @@
 #include "Performance.h"
 #include "ResourceResponse.h"
 #include <wtf/ReducedResolutionSeconds.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerformanceTiming);
 
 PerformanceTiming::PerformanceTiming(LocalDOMWindow* window)
     : LocalDOMWindowProperty(window)

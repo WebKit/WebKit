@@ -33,6 +33,7 @@
 #include "Page.h"
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if !LOG_DISABLED
@@ -41,6 +42,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WheelEventTestMonitor);
 
 WheelEventTestMonitor::WheelEventTestMonitor(Page& page)
     : m_page(page)

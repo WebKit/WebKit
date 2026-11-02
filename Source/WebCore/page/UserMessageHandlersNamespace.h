@@ -33,6 +33,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -43,6 +44,7 @@ class LocalFrame;
 class UserMessageHandler;
 
 class UserMessageHandlersNamespace : public RefCounted<UserMessageHandlersNamespace>, public FrameDestructionObserver, public UserContentProviderInvalidationClient {
+    WTF_MAKE_TZONE_ALLOCATED(UserMessageHandlersNamespace);
 public:
     static Ref<UserMessageHandlersNamespace> create(LocalFrame& frame, UserContentProvider& userContentProvider)
     {

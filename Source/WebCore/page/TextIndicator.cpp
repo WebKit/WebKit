@@ -55,12 +55,15 @@
 #include "TextIterator.h"
 #include "TextPaintStyle.h"
 #include "FrameDestructionObserverInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "SelectionGeometry.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextIndicator);
 
 static bool initializeIndicator(TextIndicatorData&, LocalFrame&, const SimpleRange&, FloatSize margin, bool indicatesCurrentSelection);
 

@@ -36,8 +36,11 @@
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <wtf/DataLog.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpportunisticTaskScheduler);
 
 OpportunisticTaskScheduler::OpportunisticTaskScheduler(Page& page)
     : m_page(&page)

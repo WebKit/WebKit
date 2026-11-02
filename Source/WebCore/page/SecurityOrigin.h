@@ -31,6 +31,7 @@
 #include <WebCore/AgentClusterIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,6 +40,7 @@ namespace WebCore {
 class OriginAccessPatterns;
 
 class SecurityOrigin : public ThreadSafeRefCounted<SecurityOrigin> {
+    WTF_MAKE_TZONE_ALLOCATED(SecurityOrigin);
 public:
     enum class Policy : uint8_t {
         AlwaysDeny = 0,

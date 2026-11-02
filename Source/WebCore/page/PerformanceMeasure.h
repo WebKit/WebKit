@@ -27,6 +27,7 @@
 
 #include "ExceptionOr.h"
 #include "PerformanceEntry.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -41,6 +42,7 @@ class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
 class PerformanceMeasure final : public PerformanceEntry {
+    WTF_MAKE_TZONE_ALLOCATED(PerformanceMeasure);
 public:
     static ExceptionOr<Ref<PerformanceMeasure>> create(const String& name, double startTime, double endTime, Ref<SerializedScriptValue>&& detail);
 

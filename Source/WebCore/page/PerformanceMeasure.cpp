@@ -29,8 +29,11 @@
 #include "ExceptionOr.h"
 #include "SerializedScriptValue.h"
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerformanceMeasure);
 
 ExceptionOr<Ref<PerformanceMeasure>> PerformanceMeasure::create(const String& name, double startTime, double endTime, Ref<SerializedScriptValue>&& serializedDetail)
 {

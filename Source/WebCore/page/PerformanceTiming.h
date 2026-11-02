@@ -34,6 +34,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -45,6 +46,7 @@ class NetworkLoadMetrics;
 struct DocumentEventTiming;
 
 class PerformanceTiming : public RefCounted<PerformanceTiming>, public LocalDOMWindowProperty {
+    WTF_MAKE_TZONE_ALLOCATED(PerformanceTiming);
 public:
     static Ref<PerformanceTiming> create(LocalDOMWindow* window) { return adoptRef(*new PerformanceTiming(window)); }
 

@@ -31,6 +31,7 @@
 #include "EventTimingInteractionID.h"
 #include "PerformanceEntry.h"
 #include <wtf/ReducedResolutionSeconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -39,6 +40,7 @@ class Node;
 struct PerformanceEventTimingCandidate;
 
 class PerformanceEventTiming final : public PerformanceEntry {
+    WTF_MAKE_TZONE_ALLOCATED(PerformanceEventTiming);
 public:
     NODELETE static Ref<PerformanceEventTiming> create(const PerformanceEventTimingCandidate&, bool isFirst = false);
     ~PerformanceEventTiming();

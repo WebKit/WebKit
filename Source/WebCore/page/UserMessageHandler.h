@@ -29,6 +29,7 @@
 
 #include <WebCore/FrameDestructionObserver.h>
 #include <WebCore/UserMessageHandlerDescriptor.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class JSGlobalObject;
@@ -41,6 +42,7 @@ class DeferredPromise;
 template<typename> class ExceptionOr;
 
 class UserMessageHandler : public RefCounted<UserMessageHandler>, public FrameDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(UserMessageHandler);
 public:
     static Ref<UserMessageHandler> create(LocalFrame& frame, const UserMessageHandlerDescriptor& descriptor)
     {

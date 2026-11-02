@@ -34,6 +34,7 @@
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
@@ -56,6 +57,7 @@ enum class WheelEventTestMonitorDeferReason : uint16_t {
 };
 
 class WheelEventTestMonitor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WheelEventTestMonitor> {
+    WTF_MAKE_TZONE_ALLOCATED(WheelEventTestMonitor);
 public:
     WheelEventTestMonitor(Page&);
 

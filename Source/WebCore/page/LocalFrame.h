@@ -32,6 +32,7 @@
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/ScrollbarMode.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakRef.h>
 
@@ -136,6 +137,7 @@ using NodeQualifier = Function<RefPtr<Node> (const HitTestResult&, Node* termina
 #endif
 
 class LocalFrame final : public Frame {
+    WTF_MAKE_TZONE_ALLOCATED(LocalFrame);
 public:
     using ClientCreator = CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)>;
     WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, ClientCreator&&, FrameIdentifier, SandboxFlags, ReferrerPolicy, Frame* opener, Ref<FrameTreeSyncData>&&, float pageZoomFactor = 1, float textZoomFactor = 1);

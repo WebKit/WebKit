@@ -35,8 +35,11 @@
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
 #include "LocalFrame.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerformanceNavigation);
 
 PerformanceNavigation::PerformanceNavigation(LocalDOMWindow* window)
     : LocalDOMWindowProperty(window)

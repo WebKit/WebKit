@@ -28,10 +28,12 @@
 #include <WebCore/UserContentProvider.h>
 #include <WebCore/UserScriptTypes.h>
 #include <WebCore/UserStyleSheetTypes.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class UserContentController final : public UserContentProvider {
+    WTF_MAKE_TZONE_ALLOCATED(UserContentController);
 public:
     NODELETE WEBCORE_EXPORT static Ref<UserContentController> create();
     WEBCORE_EXPORT ~UserContentController();

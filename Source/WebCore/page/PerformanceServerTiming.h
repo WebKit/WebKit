@@ -27,11 +27,13 @@
 #pragma once
 
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class PerformanceServerTiming : public RefCounted<PerformanceServerTiming> {
+    WTF_MAKE_TZONE_ALLOCATED(PerformanceServerTiming);
 public:
     NODELETE static Ref<PerformanceServerTiming> create(String&& name, double duration, String&& description);
     ~PerformanceServerTiming();

@@ -31,8 +31,11 @@
 #include "NodeDocument.h"
 #include "PerformanceEventTimingCandidate.h"
 #include <cmath>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerformanceEventTiming);
 
 Ref<PerformanceEventTiming> PerformanceEventTiming::create(const PerformanceEventTimingCandidate& candidate, bool isFirst)
 {

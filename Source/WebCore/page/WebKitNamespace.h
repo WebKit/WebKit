@@ -31,6 +31,7 @@
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class JSGlobalObject;
@@ -48,6 +49,7 @@ class WebKitJSHandle;
 class WebKitNodeSnapshot;
 
 class WebKitNamespace : public LocalDOMWindowProperty, public RefCounted<WebKitNamespace> {
+    WTF_MAKE_TZONE_ALLOCATED(WebKitNamespace);
 public:
     static Ref<WebKitNamespace> create(LocalDOMWindow& window, UserContentProvider& userContentProvider)
     {

@@ -27,8 +27,11 @@
 #include "VisitedLinkStore.h"
 
 #include "Page.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VisitedLinkStore);
 
 VisitedLinkStore::VisitedLinkStore() = default;
 
