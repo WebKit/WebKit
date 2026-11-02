@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<script src='/js-test-resources/js-test.js'></script>
+<script>
+  description('garbage collect SVG script elements adopted from a removed iframe before the load events are dispatched');
+  jsTestIsAsync = true;
+  onload = async () => {
+      const iframe = document.createElement('iframe');
+      iframe.srcdoc = '<!DOCTYPE html>';
+      await new Promise(resolve => {
+          iframe.onload = resolve;
+          document.body.appendChild(iframe);
+      });
+      const iframeDocument = iframe.contentDocument;
+      let scripts = Array(10).fill().map(() => document.adoptNode(iframeDocument.createElementNS('http://www.w3.org/2000/svg', 'script')));
+      iframe.remove();
+      let promises = scripts.map(s =>
+          new Promise(resolve => {
+              s.setAttribute('href', '/resources/slow-script.pl?delay=1000');
+              s.onload = () => resolve('onload');
+              document.body.appendChild(s);
+          }));
+      scripts = null;
+      await new Promise(resolve => setTimeout(resolve, 100));
+      document.querySelectorAll('script').forEach(i => i.remove());
+      gc();
+      for (const promise of promises)
+          debug(await promise);
+      finishJSTest();
+  }
+</script>
