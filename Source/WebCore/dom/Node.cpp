@@ -1481,18 +1481,26 @@ static Node* traverseToShadowIncludingRoot(Node* current)
         current = parent;
     return current;
 }
+
+static Node* realRootFromShadowIncludingRoot(Node* shadowIncludingRoot)
+{
+    auto* root = shadowIncludingRoot;
+    if (auto* parent = root->parentNode(); parent && parent->isDocumentFragmentForInnerOuterHTML())
+        return parent;
+    return root;
+}
 #endif
 
 ALWAYS_INLINE void Node::updateShadowIncludingRoot()
 {
-    if (auto* parent = parentNode())
+    if (auto* parent = parentNode(); parent && !parent->isDocumentFragmentForInnerOuterHTML())
         m_shadowIncludingRoot = parent->m_shadowIncludingRoot;
     else if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(this)) [[unlikely]] {
         auto* host = shadowRoot->host();
         m_shadowIncludingRoot = host ? host->m_shadowIncludingRoot : shadowRoot;
     } else
         m_shadowIncludingRoot = this;
-    ASSERT(traverseToShadowIncludingRoot(this) == m_shadowIncludingRoot);
+    ASSERT(traverseToShadowIncludingRoot(this) == realRootFromShadowIncludingRoot(m_shadowIncludingRoot));
 }
 
 Node::NeedsPostConnectionSteps Node::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
