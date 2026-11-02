@@ -139,4 +139,6 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteNetworkConnectionIntegrityPolicy) {
 
 @property (nonatomic, setter=setOverrideReferrer:) NSString *_overrideReferrerForAllRequests WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
+@property (nonatomic, setter=_setForceDisableAXCustomColorMode:) BOOL _forceDisableAXCustomColorMode;
+
 @end

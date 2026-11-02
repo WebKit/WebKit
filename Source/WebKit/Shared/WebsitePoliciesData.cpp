@@ -235,6 +235,10 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
         websitePolicies.overrideReferrerForAllRequests,
     });
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    documentLoader.setForceDisableAXCustomColorMode(websitePolicies.forceDisableAXCustomColorMode);
+#endif
+
     RefPtr frame = documentLoader.frame();
     if (!frame)
         return;
