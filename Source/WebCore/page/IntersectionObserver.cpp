@@ -242,6 +242,7 @@ String IntersectionObserver::scrollMargin() const
 
 bool IntersectionObserver::isObserving(const Element& element) const
 {
+    Locker locker { m_observationTargetsLock };
     return m_observationTargets.contains(element);
 }
 
@@ -256,6 +257,27 @@ void IntersectionObserver::resetPreviousThresholdIndexForTarget(const Element& t
     }
 }
 
+Vector<Ref<Element>> IntersectionObserver::observationTargets() const
+{
+    Locker locker { m_observationTargetsLock };
+    return copyToVectorOf<Ref<Element>>(m_observationTargets);
+}
+
+Vector<Ref<Element>> IntersectionObserver::takeAllTargets()
+{
+    Locker locker { m_observationTargetsLock };
+    auto targets = copyToVectorOf<Ref<Element>>(m_observationTargets);
+    m_observationTargets.clear();
+    m_targetsWaitingForFirstObservation.clear();
+    return targets;
+}
+
+Vector<GCReachableRef<Element>> IntersectionObserver::takeTargetsWaitingForFirstObservation()
+{
+    Locker locker { m_observationTargetsLock };
+    return std::exchange(m_targetsWaitingForFirstObservation, { });
+}
+
 void IntersectionObserver::observe(Element& target)
 {
     if (!trackingDocument() || isObserving(target))
@@ -263,12 +285,15 @@ void IntersectionObserver::observe(Element& target)
 
     target.ensureIntersectionObserverData().registrations.append({ *this, std::nullopt });
     bool hadObservationTargets = hasObservationTargets();
-    m_observationTargets.add(target);
+    {
+        Locker locker { m_observationTargetsLock };
+        m_observationTargets.add(target);
 
-    // Per the specification, we should dispatch at least one observation for the target. For this reason, we make sure to keep the
-    // target alive until this first observation. This, in turn, will keep the IntersectionObserver's JS wrapper alive via
-    // isReachableFromOpaqueRoots(), so the callback stays alive.
-    m_targetsWaitingForFirstObservation.append(target);
+        // Per the specification, we should dispatch at least one observation for the target. For this reason, we make sure to keep the
+        // target alive until this first observation. This, in turn, will keep the IntersectionObserver's JS wrapper alive via
+        // isReachableFromOpaqueRoots(), so the callback stays alive.
+        m_targetsWaitingForFirstObservation.append(target);
+    }
 
     RefPtr document = trackingDocument();
     if (!hadObservationTargets)
@@ -281,9 +306,12 @@ void IntersectionObserver::unobserve(Element& target)
     if (!removeTargetRegistration(target))
         return;
 
-    bool removed = m_observationTargets.remove(&target);
-    ASSERT_UNUSED(removed, removed);
-    m_targetsWaitingForFirstObservation.removeFirstMatching([&](auto& pendingTarget) { return pendingTarget.ptr() == &target; });
+    {
+        Locker locker { m_observationTargetsLock };
+        bool removed = m_observationTargets.remove(&target);
+        ASSERT_UNUSED(removed, removed);
+        m_targetsWaitingForFirstObservation.removeFirstMatching([&](auto& pendingTarget) { return pendingTarget.ptr() == &target; });
+    }
 
     if (!hasObservationTargets()) {
         if (RefPtr document = trackingDocument())
@@ -294,7 +322,7 @@ void IntersectionObserver::unobserve(Element& target)
 void IntersectionObserver::disconnect()
 {
     if (!hasObservationTargets()) {
-        ASSERT(m_targetsWaitingForFirstObservation.isEmpty());
+        ASSERT(!hasTargetsWaitingForFirstObservation());
         return;
     }
 
@@ -305,13 +333,18 @@ void IntersectionObserver::disconnect()
 
 auto IntersectionObserver::takeRecords() -> TakenRecords
 {
+    Locker locker { m_observationTargetsLock };
     return { WTF::move(m_queuedEntries), WTF::move(m_pendingTargets) };
 }
 
 void IntersectionObserver::targetDestroyed(Element& target)
 {
-    m_observationTargets.remove(target);
-    m_targetsWaitingForFirstObservation.removeFirstMatching([&](auto& pendingTarget) { return pendingTarget.ptr() == &target; });
+    {
+        Locker locker { m_observationTargetsLock };
+        m_observationTargets.remove(target);
+        ASSERT(!m_targetsWaitingForFirstObservation.containsIf([&](auto& pendingTarget) { return pendingTarget.ptr() == &target; }));
+    }
+
     if (!hasObservationTargets()) {
         if (RefPtr document = trackingDocument())
             document->removeIntersectionObserver(*this);
@@ -332,12 +365,10 @@ bool IntersectionObserver::removeTargetRegistration(Element& target)
 
 void IntersectionObserver::removeAllTargets()
 {
-    for (Ref target : m_observationTargets) {
+    for (Ref target : takeAllTargets()) {
         bool removed = removeTargetRegistration(target);
         ASSERT_UNUSED(removed, removed);
     }
-    m_observationTargets.clear();
-    m_targetsWaitingForFirstObservation.clear();
 }
 
 void IntersectionObserver::rootDestroyed()
@@ -594,7 +625,7 @@ auto IntersectionObserver::updateObservations(const Frame& hostFrame) -> NeedNot
         return isFullyActive;
     };
 
-    for (const auto& target : copyToVectorOf<Ref<Element>>(m_observationTargets)) {
+    for (const auto& target : observationTargets()) {
         // Per HTML spec, "update the rendering" step (which includes "run the update intersection
         // observations") only occurs for fully active documents. Hence skip updating the target if
         // its document is not fully active.
@@ -691,17 +722,19 @@ std::optional<ReducedResolutionSeconds> IntersectionObserver::nowTimestamp() con
 
 void IntersectionObserver::appendQueuedEntry(Ref<IntersectionObserverEntry>&& entry)
 {
-    m_pendingTargets.append(entry->target());
+    {
+        Locker locker { m_observationTargetsLock };
+        m_pendingTargets.append(entry->target());
+    }
     m_queuedEntries.append(WTF::move(entry));
 }
 
 void IntersectionObserver::notify()
 {
     if (m_queuedEntries.isEmpty()) {
-        ASSERT(m_pendingTargets.isEmpty());
+        ASSERT(!hasPendingTargets());
         return;
     }
-
 
     if (RefPtr context = m_callback->scriptExecutionContext()) {
         if (RefPtr document = dynamicDowncast<Document>(context.get())) {
@@ -713,7 +746,7 @@ void IntersectionObserver::notify()
     }
 
     auto takenRecords = takeRecords();
-    auto targetsWaitingForFirstObservation = std::exchange(m_targetsWaitingForFirstObservation, { });
+    auto targetsWaitingForFirstObservation = takeTargetsWaitingForFirstObservation();
 
     // FIXME: The JSIntersectionObserver wrapper should be kept alive as long as the intersection observer can fire events.
     ASSERT(m_callback->hasCallback());
@@ -739,6 +772,8 @@ void IntersectionObserver::notify()
 
 bool IntersectionObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visitor) const
 {
+    Locker locker { m_observationTargetsLock };
+
     // Cannot ref on the GC thread.
     for (SUPPRESS_UNCOUNTED_LOCAL auto& target : m_observationTargets) {
         if (containsWebCoreOpaqueRoot(visitor, target))

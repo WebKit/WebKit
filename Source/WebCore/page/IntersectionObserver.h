@@ -30,6 +30,7 @@
 #include "GCReachableRef.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverMarginBox.h"
+#include <wtf/Lock.h>
 #include <wtf/ReducedResolutionSeconds.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakListHashSet.h>
@@ -98,8 +99,12 @@ public:
     const IntersectionObserverMarginBox& rootMarginBox() const LIFETIME_BOUND { return m_rootMargin; }
     const IntersectionObserverMarginBox& scrollMarginBox() const LIFETIME_BOUND { return m_scrollMargin; }
     const Vector<double>& thresholds() const LIFETIME_BOUND { return m_thresholds; }
-    const WeakListHashSet<Element, WeakPtrImplWithEventTargetData>& observationTargets() const LIFETIME_BOUND { return m_observationTargets; }
-    bool hasObservationTargets() const { return !m_observationTargets.isEmptyIgnoringNullReferences(); }
+    Vector<Ref<Element>> observationTargets() const;
+    bool hasObservationTargets() const
+    {
+        Locker locker { m_observationTargetsLock };
+        return !m_observationTargets.isEmptyIgnoringNullReferences();
+    }
     bool LEGACY_NODELETE isObserving(const Element&) const;
 
     void LEGACY_NODELETE resetPreviousThresholdIndexForTarget(const Element&);
@@ -134,6 +139,21 @@ private:
     bool removeTargetRegistration(Element&);
     void removeAllTargets();
 
+    Vector<GCReachableRef<Element>> takeTargetsWaitingForFirstObservation();
+    Vector<Ref<Element>> takeAllTargets();
+
+    bool hasPendingTargets() const
+    {
+        Locker locker { m_observationTargetsLock };
+        return !m_pendingTargets.isEmpty();
+    }
+
+    bool hasTargetsWaitingForFirstObservation() const
+    {
+        Locker locker { m_observationTargetsLock };
+        return !m_targetsWaitingForFirstObservation.isEmpty();
+    }
+
     struct IntersectionObservationState {
         FloatRect rootBounds;
         // "Absolute" means in the absolute coordinate system of the target's frame.
@@ -158,10 +178,13 @@ private:
     IntersectionObserverMarginBox m_scrollMargin;
     Vector<double> m_thresholds;
     const Ref<IntersectionObserverCallback> m_callback;
-    WeakListHashSet<Element, WeakPtrImplWithEventTargetData> m_observationTargets;
-    Vector<GCReachableRef<Element>> m_pendingTargets;
+
+    mutable Lock m_observationTargetsLock;
+    WeakListHashSet<Element, WeakPtrImplWithEventTargetData> m_observationTargets WTF_GUARDED_BY_LOCK(m_observationTargetsLock);
+    Vector<GCReachableRef<Element>> m_pendingTargets WTF_GUARDED_BY_LOCK(m_observationTargetsLock);
+    Vector<GCReachableRef<Element>> m_targetsWaitingForFirstObservation WTF_GUARDED_BY_LOCK(m_observationTargetsLock);
+
     Vector<Ref<IntersectionObserverEntry>> m_queuedEntries;
-    Vector<GCReachableRef<Element>> m_targetsWaitingForFirstObservation;
     IncludeObscuredInsets m_includeObscuredInsets { IncludeObscuredInsets::No };
 };
 
