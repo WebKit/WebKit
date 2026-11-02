@@ -52,6 +52,8 @@ namespace Metal {
 #define CHECK_FORWARD_PROGRESS_VOLATILE_COUNTER "if (++__wgslEnsureForwardProgress == 4294967295u) break;"_s
 #define DECLARE_OPAQUE_SCOPE "volatile uint32_t __wgslEnsureSwitchClauseScope = 0; if (!__wgslEnsureSwitchClauseScope)"
 
+// Variadic so that helper bodies may contain top-level commas, e.g. in a
+// template parameter list
 #define STRINGIFY_(...) #__VA_ARGS__##_s
 #define STRINGIFY(...) STRINGIFY_(__VA_ARGS__)
 
@@ -254,6 +256,37 @@ DEFINE_HELPER_TEXT(TextureSampleBiasWithOffset3d,
     "    return __texture.sample(__sampler, __coords, bias(__bias), int3(__x, __y, __z));\n"
     "}\n"_s)
 
+DEFINE_HELPER(NegateInt, \
+    template<typename T>\n \
+    [[clang::always_inline]] static T __wgslNegateInt(T value)\n \
+    {\n \
+        return as_type<T>(make_unsigned_t<T>(0) - make_unsigned_t<T>(value)); \
+    }\n)
+
+DEFINE_HELPER(AddInt, \
+    template<typename T, typename U>\n \
+    [[clang::always_inline]] static auto __wgslAddInt(T lhs, U rhs)\n \
+    {\n \
+        using V = decltype(lhs + rhs); \
+        return as_type<V>(make_unsigned_t<V>(lhs) + make_unsigned_t<V>(rhs)); \
+    }\n)
+
+DEFINE_HELPER(SubInt, \
+    template<typename T, typename U>\n \
+    [[clang::always_inline]] static auto __wgslSubInt(T lhs, U rhs)\n \
+    {\n \
+        using V = decltype(lhs - rhs); \
+        return as_type<V>(make_unsigned_t<V>(lhs) - make_unsigned_t<V>(rhs)); \
+    }\n)
+
+DEFINE_HELPER(MulInt, \
+    template<typename T, typename U>\n \
+    [[clang::always_inline]] static auto __wgslMulInt(T lhs, U rhs)\n \
+    {\n \
+        using V = decltype(lhs * rhs); \
+        return as_type<V>(make_unsigned_t<V>(lhs) * make_unsigned_t<V>(rhs)); \
+    }\n)
+
 };
 
 #undef DEFINE_TRIG_HELPER
@@ -409,6 +442,16 @@ static ASCIILiteral serializeAddressSpace(AddressSpace addressSpace)
     case AddressSpace::Handle:
         return { };
     }
+}
+
+static bool isSignedIntegerArithmeticType(const Type* type)
+{
+    if (auto* reference = std::get_if<Types::Reference>(type))
+        type = reference->element;
+    if (auto* vector = std::get_if<Types::Vector>(type))
+        type = vector->element;
+    auto* primitive = std::get_if<Types::Primitive>(type);
+    return primitive && primitive->kind == Types::Primitive::I32;
 }
 
 void FunctionDefinitionWriter::write()
@@ -2992,6 +3035,16 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
 void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
 {
+    // `-x` on a signed integer must wrap rather than be assumed not to overflow.
+    if (unary.operation() == AST::UnaryOperation::Negate && isSignedIntegerArithmeticType(unary.inferredType())) {
+        if (!std::exchange(m_helperGenerator.didEmitNegateInt, true))
+            m_helperGenerator.emitNegateInt();
+        m_body.append("__wgslNegateInt("_s);
+        visit(unary.expression());
+        m_body.append(')');
+        return;
+    }
+
     m_body.append('(');
     switch (unary.operation()) {
     case AST::UnaryOperation::Complement:
@@ -3032,6 +3085,42 @@ void FunctionDefinitionWriter::serializeBinaryExpression(AST::Expression& lhs, A
                 helperFunction = "__wgslMod"_s;
         } else if (isMod)
             helperFunction = "fmod"_s;
+
+        if (!helperFunction.isNull()) {
+            m_body.append(helperFunction, '(');
+            visit(lhs);
+            m_body.append(", "_s);
+            visit(rhs);
+            m_body.append(')');
+            return;
+        }
+    }
+
+    // `+`, `-` and `*` on signed integers must wrap rather than be assumed not
+    // to overflow. Both operands are checked because WGSL only declares these
+    // operators over matching element types, so a matrix operand (whose element
+    // type is always floating point) never reaches the helpers.
+    if (isSignedIntegerArithmeticType(lhs.inferredType()) && isSignedIntegerArithmeticType(rhs.inferredType())) {
+        ASCIILiteral helperFunction;
+        switch (operation) {
+        case AST::BinaryOperation::Add:
+            if (!std::exchange(m_helperGenerator.didEmitAddInt, true))
+                m_helperGenerator.emitAddInt();
+            helperFunction = "__wgslAddInt"_s;
+            break;
+        case AST::BinaryOperation::Subtract:
+            if (!std::exchange(m_helperGenerator.didEmitSubInt, true))
+                m_helperGenerator.emitSubInt();
+            helperFunction = "__wgslSubInt"_s;
+            break;
+        case AST::BinaryOperation::Multiply:
+            if (!std::exchange(m_helperGenerator.didEmitMulInt, true))
+                m_helperGenerator.emitMulInt();
+            helperFunction = "__wgslMulInt"_s;
+            break;
+        default:
+            break;
+        }
 
         if (!helperFunction.isNull()) {
             m_body.append(helperFunction, '(');
@@ -3310,13 +3399,19 @@ void FunctionDefinitionWriter::visitStatements(AST::Statement::List& statements)
 
 void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement)
 {
+    // `x++` / `x--` on a signed integer must wrap, for the same reason `x + 1`
+    // and `x - 1` must. Performing the arithmetic in the unsigned domain carries
+    // no overflow assumption, and the compound assignment form keeps the
+    // reference evaluated exactly once, as WGSL requires.
+    bool wraps = isSignedIntegerArithmeticType(statement.expression().inferredType());
+
     visit(statement.expression());
     switch (statement.operation()) {
     case AST::DecrementIncrementStatement::Operation::Increment:
-        m_body.append("++"_s);
+        m_body.append(wraps ? " += 1u"_s : "++"_s);
         break;
     case AST::DecrementIncrementStatement::Operation::Decrement:
-        m_body.append("--"_s);
+        m_body.append(wraps ? " -= 1u"_s : "--"_s);
         break;
     }
 }
