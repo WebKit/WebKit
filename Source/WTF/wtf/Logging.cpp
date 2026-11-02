@@ -71,6 +71,7 @@ static int releaseLogPriority(ReleaseLogType type)
 
 void releaseLogPreformatted(WTFLogChannel& channel, ReleaseLogType type, const String& file, unsigned line, const String& function, const String& message)
 {
+    UNUSED_PARAM(line);
     auto fileUTF8 = file.utf8();
     auto functionUTF8 = function.utf8();
     auto messageUTF8 = message.utf8();
