@@ -28,20 +28,16 @@
 
 #include "BitmapImageSource.h"
 #include "ImageDecoder.h"
+#include "ImageFrameWorkQueuePool.h"
 #include "Logging.h"
 #include <wtf/SystemTracing.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-Ref<ImageFrameWorkQueue> ImageFrameWorkQueue::create(BitmapImageSource& source)
+Ref<ImageFrameWorkQueue> ImageFrameWorkQueue::create()
 {
-    return adoptRef(*new ImageFrameWorkQueue(source));
-}
-
-ImageFrameWorkQueue::ImageFrameWorkQueue(BitmapImageSource& source)
-    : m_source(source)
-{
+    return adoptRef(*new ImageFrameWorkQueue());
 }
 
 ImageFrameWorkQueue::RequestQueue& ImageFrameWorkQueue::requestQueue()
@@ -57,107 +53,133 @@ void ImageFrameWorkQueue::start()
     if (m_workQueue)
         return;
 
-    RefPtr decoder = m_source.get()->decoder();
-    if (!decoder)
-        return;
-
     m_workQueue = WorkQueue::create("org.webkit.ImageDecoder"_s, WorkQueue::QOS::Default);
 
-    protect(m_workQueue)->dispatch([protectedThis = Ref { *this }, weakRunLoop = ThreadSafeWeakPtr { RunLoop::currentSingleton() }, protectedWorkQueue = Ref { *m_workQueue }, protectedSource = m_source.get(), protectedDecoder = Ref { *decoder }, protectedRequestQueue = Ref { requestQueue() }] mutable {
-        Request request;
-        while (protectedRequestQueue->dequeue(request)) {
+    protect(m_workQueue)->dispatch([protectedThis = Ref { *this }, weakRunLoop = ThreadSafeWeakPtr { RunLoop::currentSingleton() }, protectedWorkQueue = Ref { *m_workQueue }, protectedRequestQueue = Ref { requestQueue() }] mutable {
+        while (auto request = protectedRequestQueue->dequeue()) {
             TraceScope tracingScope(AsyncImageDecodeStart, AsyncImageDecodeEnd);
 
-            auto minimumDecodingDuration = protectedThis->minimumDecodingDurationForTesting();
+            auto minimumDecodingDuration = request->minimumDecodingDurationForTesting;
+            auto startingTime = MonotonicTime::now();
 
-            MonotonicTime startingTime;
-            if (minimumDecodingDuration > 0_s)
-                startingTime = MonotonicTime::now();
+            Ref decoder = request->decoder;
+            DecodingDestination decodingDestination = request->options.decodingDestination();
 
             RefPtr<NativeImage> nativeImage;
-            DecodingDestination decodingDestination = request.options.decodingDestination();
-
-            if (auto result = protectedDecoder->createNativeImageAtIndex(request.index, request.subsamplingLevel, request.options)) {
+            if (auto result = decoder->createNativeImageAtIndex(request->index, request->subsamplingLevel, request->options)) {
                 nativeImage = WTF::move(std::get<Ref<NativeImage>>(*result));
                 decodingDestination = std::get<DecodingDestination>(*result);
             }
 
-            request.options = { request.options.decodingMode(), decodingDestination, request.options.sizeForDrawing() };
+            request->options = { request->options.decodingMode(), decodingDestination, request->options.sizeForDrawing() };
 
             // Pretend as if decoding the frame took minimumDecodingDuration.
-            if (minimumDecodingDuration > 0_s) {
+            if (minimumDecodingDuration) {
                 auto actualDecodingDuration = MonotonicTime::now() - startingTime;
-                if (minimumDecodingDuration > actualDecodingDuration)
-                    sleep(minimumDecodingDuration - actualDecodingDuration);
+                if (*minimumDecodingDuration > actualDecodingDuration)
+                    sleep(*minimumDecodingDuration - actualDecodingDuration);
             }
 
             if (RefPtr protectedRunLoop = weakRunLoop.get()) {
                 // Even if we fail to decode the frame, it is important to sync the creation thread with this result.
-                callOnRunLoop(*protectedRunLoop, [protectedThis, protectedWorkQueue, protectedSource, request, nativeImage = WTF::move(nativeImage)] mutable {
+                callOnRunLoop(*protectedRunLoop, [protectedThis, protectedWorkQueue, request = WTF::move(request), nativeImage = WTF::move(nativeImage)] mutable {
                     // The WorkQueue may have been recreated before the frame was decoded.
-                    if (protectedWorkQueue.ptr() != protectedThis->m_workQueue || protectedSource.ptr() != protectedThis->m_source.get().ptr()) {
-                        LOG(Images, "AsyncImageDecoder::%s - %p. WorkQueue was recreated at index = %d.", __FUNCTION__, protectedThis.ptr(), request.index);
+                    if (protectedWorkQueue.ptr() != protectedThis->m_workQueue) {
+                        LOG(Images, "ImageFrameWorkQueue::%s - %p. WorkQueue was recreated at index = %d.", __FUNCTION__, protectedThis.ptr(), request->index);
                         return;
                     }
 
-                    // The DecodeQueue may have been cleared before the frame was decoded.
-                    if (protectedThis->decodeQueue().isEmpty() || !request.isCompatibleWith(protectedThis->decodeQueue().first())) {
-                        LOG(Images, "AsyncImageDecoder::%s - %p. DecodeQueue was cleared at index = %d.", __FUNCTION__, protectedThis.ptr(), request.index);
-                        return;
-                    }
-
-                    protectedThis->decodeQueue().removeFirst();
-                    protectedSource->imageFrameDecodeAtIndexHasFinished(request.index, request.subsamplingLevel, request.animatingState, request.options, WTF::move(nativeImage));
+                    protectedThis->settleRequest(WTF::move(*request), WTF::move(nativeImage));
                 });
             }
         }
 
-        if (RefPtr protectedRunLoop = weakRunLoop.get()) {
+        if (RefPtr protectedRunLoop = weakRunLoop) {
             // Ensure destruction happens on creation thread.
-            callOnRunLoop(*protectedRunLoop, [protectedThis = WTF::move(protectedThis), weakRunLoop = WTF::move(weakRunLoop), protectedWorkQueue = WTF::move(protectedWorkQueue), protectedSource = WTF::move(protectedSource)] mutable { });
+            callOnRunLoop(*protectedRunLoop, [protectedThis = WTF::move(protectedThis), weakRunLoop = WTF::move(weakRunLoop), protectedWorkQueue = WTF::move(protectedWorkQueue)] mutable { });
         }
     });
 }
 
-void ImageFrameWorkQueue::dispatch(const Request& request)
+void ImageFrameWorkQueue::close()
 {
-    protect(requestQueue())->enqueue(request);
-    decodeQueue().append(request);
-
-    start();
-}
-
-void ImageFrameWorkQueue::stop()
-{
-    Ref source = m_source.get();
-
-    for (auto& request : m_decodeQueue) {
-        LOG(Images, "AsyncImageDecoder::%s - %p. Decoding was cancelled for frame at index = %d.", __FUNCTION__, this, request.index);
-        source->destroyNativeImageAtIndex(request.index);
-    }
+    if (!m_decodeQueue.isEmpty())
+        return;
 
     if (m_requestQueue) {
         protect(m_requestQueue)->close();
         m_requestQueue = nullptr;
     }
 
-    m_decodeQueue.clear();
     m_workQueue = nullptr;
 }
 
-bool ImageFrameWorkQueue::isPendingDecodingAtIndex(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options) const
+void ImageFrameWorkQueue::dispatchRequest(Request&& request)
 {
-    auto it = std::find_if(m_decodeQueue.begin(), m_decodeQueue.end(), [index, subsamplingLevel, &options](const Request& request) {
-        return request.index == index && subsamplingLevel >= request.subsamplingLevel && request.options.isCompatibleWith(options);
+    protect(requestQueue())->enqueue(request);
+    decodeQueue().append(WTF::move(request));
+
+    start();
+}
+
+void ImageFrameWorkQueue::settleRequest(Request&& request, RefPtr<NativeImage>&& nativeImage)
+{
+    // The DecodeQueue may have been cleared before the frame was decoded.
+    if (decodeQueue().isEmpty() || request != decodeQueue().first()) {
+        LOG(Images, "ImageFrameWorkQueue::%s - %p. DecodeQueue was cleared at index = %d.", __FUNCTION__, this, request.index);
+        return;
+    }
+
+    decodeQueue().removeFirst();
+    sharedWorkQueuePool().settleRequest(WTF::move(request), WTF::move(nativeImage));
+}
+
+bool ImageFrameWorkQueue::hasPendingDecodingRequest(const BitmapImageSource& source, unsigned index, SubsamplingLevel subsamplingLevel, ImageAnimatingState animatingState, const DecodingOptions& options) const
+{
+    return m_decodeQueue.containsIf([&](const Request& request) {
+        return request.source.ptr() == &source
+            && request.index == index
+            && request.subsamplingLevel == subsamplingLevel
+            && request.animatingState == animatingState
+            && request.options.isCompatibleWith(options);
     });
-    return it != m_decodeQueue.end();
+}
+
+bool ImageFrameWorkQueue::hasPendingDecodingRequests(const BitmapImageSource& source) const
+{
+    return m_decodeQueue.containsIf([&](const Request& request) {
+        return request.source.ptr() == &source;
+    });
+}
+
+Vector<unsigned> ImageFrameWorkQueue::cancelPendingDecodingRequests(BitmapImageSource& source)
+{
+    Vector<Request> pendingDecodingRequests;
+
+    if (RefPtr requestQueue = m_requestQueue) {
+        requestQueue->removeAllMatching([&](const auto& request) {
+            if (request.source.ptr() != &source)
+                return false;
+            pendingDecodingRequests.append(request);
+            return true;
+        });
+    }
+
+    m_decodeQueue.removeAllMatching([&](const auto& request) {
+        return pendingDecodingRequests.contains(request);
+    });
+
+    if (m_decodeQueue.isEmpty())
+        close();
+
+    return WTF::map(pendingDecodingRequests, [&](const auto& request) {
+        LOG(Images, "ImageFrameWorkQueue::%s - %p. Decoding was cancelled for frame at index = %d.", __FUNCTION__, this, request.index);
+        return request.index;
+    });
 }
 
 void ImageFrameWorkQueue::dump(TextStream& ts) const
 {
-    if (isIdle())
-        return;
-
     ts.dumpProperty("pending-for-decoding"_s, m_decodeQueue.size());
 }
 

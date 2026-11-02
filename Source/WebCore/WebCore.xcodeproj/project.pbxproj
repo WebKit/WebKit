@@ -14444,6 +14444,8 @@
 		724EE54E1DC7F25B00A91FFB /* ActivityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivityState.h; sourceTree = "<group>"; };
 		724EE54F1DC7F25B00A91FFB /* ActivityStateChangeObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivityStateChangeObserver.h; sourceTree = "<group>"; };
 		7252396B254CADC200F5FB15 /* NativeImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NativeImage.cpp; sourceTree = "<group>"; };
+		725F395E3098F8C60079784D /* ImageFrameWorkQueuePool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageFrameWorkQueuePool.h; sourceTree = "<group>"; };
+		725F395F3098F8C60079784D /* ImageFrameWorkQueuePool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageFrameWorkQueuePool.cpp; sourceTree = "<group>"; };
 		725F64BC2C7D633100F87348 /* ElementTextDirection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ElementTextDirection.h; sourceTree = "<group>"; };
 		725F64BD2C7D633100F87348 /* ElementTextDirection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ElementTextDirection.cpp; sourceTree = "<group>"; };
 		7261481A2A97BD9B00B75E32 /* DisplayListItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayListItem.cpp; sourceTree = "<group>"; };
@@ -44197,6 +44199,8 @@
 				72854E5E2B6987B300E0181A /* ImageFrameAnimator.h */,
 				72E0375D2FC9573200088DDE /* ImageFrameWorkQueue.cpp */,
 				72E0375C2FC9323300088DDE /* ImageFrameWorkQueue.h */,
+				725F395F3098F8C60079784D /* ImageFrameWorkQueuePool.cpp */,
+				725F395E3098F8C60079784D /* ImageFrameWorkQueuePool.h */,
 				554675771FD1FC1A003B10B0 /* ImageSource.cpp */,
 				554675781FD1FC1A003B10B0 /* ImageSource.h */,
 			);

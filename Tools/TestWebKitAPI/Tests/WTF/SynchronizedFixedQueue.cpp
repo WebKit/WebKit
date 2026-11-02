@@ -81,9 +81,9 @@ public:
 
         produceQueue()->dispatch([this] {
             ASCIICString lower;
-            while (m_lowerQueue->dequeue(lower)) {
-                m_upperQueue->enqueue(toUpper(lower));
-                EXPECT_TRUE(lower == textItem(m_produceCount++));
+            while (auto lower = m_lowerQueue->dequeue()) {
+                m_upperQueue->enqueue(toUpper(*lower));
+                EXPECT_TRUE(*lower == textItem(m_produceCount++));
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
             m_produceCloseSemaphore.signal();
@@ -96,15 +96,14 @@ public:
             return;
 
         consumeQueue()->dispatch([this] {
-            ASCIICString upper;
-            while (m_upperQueue->dequeue(upper)) {
-                EXPECT_TRUE(upper == toUpper(textItem(m_consumeCount++)));
+            while (auto upper = m_upperQueue->dequeue()) {
+                EXPECT_TRUE(*upper == toUpper(textItem(m_consumeCount++)));
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
             m_consumeCloseSemaphore.signal();
         });
     }
-    
+
     void start()
     {
         startProducing();
@@ -226,6 +225,68 @@ TEST(WTF_SynchronizedFixedQueue, Limits)
     
     EXPECT_EQ(converter.produceCount(), count);
     EXPECT_EQ(converter.consumeCount(), count);
+}
+
+TEST(WTF_SynchronizedFixedQueue, RemoveAllMatching)
+{
+    auto queue = SynchronizedFixedQueue<int, 8U>::create();
+
+    // Removing from an empty queue removes nothing.
+    EXPECT_EQ(queue->removeAllMatching([](int) {
+        return true;
+    }), 0U);
+
+    for (int i = 1; i <= 6; ++i)
+        EXPECT_TRUE(queue->enqueue(i));
+
+    // No match.
+    EXPECT_EQ(queue->removeAllMatching([](int value) {
+        return value > 100;
+    }), 0U);
+
+    // Remove the even items; the order of the remaining items is preserved.
+    EXPECT_EQ(queue->removeAllMatching([](int value) {
+        return !(value % 2);
+    }), 3U);
+
+    EXPECT_EQ(queue->dequeue(), 1);
+    EXPECT_EQ(queue->dequeue(), 3);
+    EXPECT_EQ(queue->dequeue(), 5);
+
+    // Remove everything.
+    for (int i = 0; i < 4; ++i)
+        EXPECT_TRUE(queue->enqueue(i));
+    EXPECT_EQ(queue->removeAllMatching([](int) {
+        return true;
+    }), 4U);
+
+    // The queue is still usable.
+    EXPECT_TRUE(queue->enqueue(42));
+    EXPECT_EQ(queue->dequeue(), 42);
+}
+
+TEST(WTF_SynchronizedFixedQueue, RemoveAllMatchingWakesBlockedEnqueue)
+{
+    auto queue = SynchronizedFixedQueue<int, 2U>::create();
+    EXPECT_TRUE(queue->enqueue(1));
+    EXPECT_TRUE(queue->enqueue(2));
+
+    BinarySemaphore enqueued;
+    auto workQueue = WorkQueue::create("org.webkit.Enqueue"_s);
+    workQueue->dispatch([queue, &enqueued] {
+        // The queue is full, so this blocks until removeAllMatching() makes room.
+        EXPECT_TRUE(queue->enqueue(3));
+        enqueued.signal();
+    });
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    EXPECT_EQ(queue->removeAllMatching([](int value) {
+        return value == 1;
+    }), 1U);
+    enqueued.wait();
+
+    EXPECT_EQ(queue->dequeue(), 2);
+    EXPECT_EQ(queue->dequeue(), 3);
 }
 
 }
