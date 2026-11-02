@@ -48,7 +48,7 @@ namespace WebCore {
 class VTTScanner {
     WTF_MAKE_NONCOPYABLE(VTTScanner);
 public:
-    explicit VTTScanner(const String& line);
+    NODELETE explicit VTTScanner(const String& line);
 
     using Position = const void*;
 

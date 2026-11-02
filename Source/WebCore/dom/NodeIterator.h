@@ -58,7 +58,7 @@ private:
         bool isPointerBeforeNode { true };
 
         NodePointer() = default;
-        NodePointer(Node&, bool);
+        NODELETE NodePointer(Node&, bool);
 
         void clear();
         bool moveToNext(Node& root);

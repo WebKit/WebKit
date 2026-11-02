@@ -54,8 +54,8 @@ struct SerializedNode {
         String localName;
         String namespaceURI;
 
-        QualifiedName(const WebCore::QualifiedName&);
-        WEBCORE_EXPORT QualifiedName(String&&, String&&, String&&);
+        NODELETE QualifiedName(const WebCore::QualifiedName&);
+        NODELETE WEBCORE_EXPORT QualifiedName(String&&, String&&, String&&);
         WebCore::QualifiedName qualifiedName() &&;
     };
     struct Attr {

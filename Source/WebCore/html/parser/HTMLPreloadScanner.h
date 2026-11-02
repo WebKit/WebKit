@@ -49,7 +49,7 @@ class TokenPreloadScanner {
     WTF_MAKE_TZONE_ALLOCATED(TokenPreloadScanner);
     WTF_MAKE_NONCOPYABLE(TokenPreloadScanner);
 public:
-    explicit TokenPreloadScanner(const URL& documentURL, float deviceScaleFactor = 1.0);
+    NODELETE explicit TokenPreloadScanner(const URL& documentURL, float deviceScaleFactor = 1.0);
 
     void scan(const HTMLToken&, PreloadRequestStream&, Document&);
 

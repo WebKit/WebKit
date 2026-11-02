@@ -31,7 +31,7 @@ class Document;
 
 class HTMLParserOptions {
 public:
-    explicit HTMLParserOptions();
+    NODELETE explicit HTMLParserOptions();
     explicit HTMLParserOptions(Document&);
 
     // See https://html.spec.whatwg.org/#scripting-flag for more information.

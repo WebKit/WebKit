@@ -85,7 +85,7 @@ public:
     using FormStateRestorePayload = CustomElementFormValue;
     using Payload = std::optional<Variant<AdoptedPayload, AttributeChangedPayload, FormAssociatedPayload, FormDisabledPayload, FormStateRestorePayload>>;
 
-    CustomElementReactionQueueItem();
+    NODELETE CustomElementReactionQueueItem();
     CustomElementReactionQueueItem(CustomElementReactionQueueItem&&);
     CustomElementReactionQueueItem(Type, Payload = std::nullopt);
     ~CustomElementReactionQueueItem();

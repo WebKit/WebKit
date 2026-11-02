@@ -49,13 +49,13 @@ DecodedHTMLEntity decodeNamedHTMLEntityForXMLParser(const char*);
 
 class DecodedHTMLEntity {
 public:
-    constexpr DecodedHTMLEntity();
-    constexpr DecodedHTMLEntity(char16_t);
-    constexpr DecodedHTMLEntity(char16_t, char16_t);
-    constexpr DecodedHTMLEntity(char16_t, char16_t, char16_t);
+    NODELETE constexpr DecodedHTMLEntity();
+    NODELETE constexpr DecodedHTMLEntity(char16_t);
+    NODELETE constexpr DecodedHTMLEntity(char16_t, char16_t);
+    NODELETE constexpr DecodedHTMLEntity(char16_t, char16_t, char16_t);
 
     enum ConstructNotEnoughCharactersType { ConstructNotEnoughCharacters };
-    constexpr DecodedHTMLEntity(ConstructNotEnoughCharactersType);
+    NODELETE constexpr DecodedHTMLEntity(ConstructNotEnoughCharactersType);
 
     constexpr bool failed() const { return !m_length; }
     constexpr bool notEnoughCharacters() const { return m_notEnoughCharacters; }

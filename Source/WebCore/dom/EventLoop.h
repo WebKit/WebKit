@@ -76,10 +76,10 @@ private:
 class EventLoopTimerHandle {
     WTF_MAKE_TZONE_ALLOCATED(EventLoopTimerHandle);
 public:
-    EventLoopTimerHandle();
-    EventLoopTimerHandle(EventLoopTimer&);
-    EventLoopTimerHandle(const EventLoopTimerHandle&);
-    EventLoopTimerHandle(EventLoopTimerHandle&&);
+    NODELETE EventLoopTimerHandle();
+    NODELETE EventLoopTimerHandle(EventLoopTimer&);
+    NODELETE EventLoopTimerHandle(const EventLoopTimerHandle&);
+    NODELETE EventLoopTimerHandle(EventLoopTimerHandle&&);
     ~EventLoopTimerHandle();
 
     EventLoopTimerHandle& operator=(const EventLoopTimerHandle&);

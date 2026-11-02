@@ -193,8 +193,8 @@ private:
 
     class FragmentParsingContext {
     public:
-        FragmentParsingContext();
-        FragmentParsingContext(DocumentFragment&, Element& contextElement);
+        NODELETE FragmentParsingContext();
+        NODELETE FragmentParsingContext(DocumentFragment&, Element& contextElement);
 
         DocumentFragment* fragment() const;
         Element& LEGACY_NODELETE contextElement();

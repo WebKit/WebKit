@@ -36,7 +36,7 @@ class SegmentedString;
 
 class HTMLTokenizer {
 public:
-    explicit HTMLTokenizer(const HTMLParserOptions& = HTMLParserOptions());
+    NODELETE explicit HTMLTokenizer(const HTMLParserOptions& = HTMLParserOptions());
 
     // If we can't parse a whole token, this returns null.
     class TokenPtr;

@@ -105,7 +105,7 @@ static constexpr DecodedHTMLEntity LEGACY_NODELETE makeEntity(HTMLEntityTableEnt
 
 class SegmentedStringSource {
 public:
-    explicit SegmentedStringSource(SegmentedString&);
+    NODELETE explicit SegmentedStringSource(SegmentedString&);
 
     bool LEGACY_NODELETE isEmpty() const { return m_source.isEmpty(); }
     char16_t LEGACY_NODELETE currentCharacter() const { return m_source.currentCharacter(); }

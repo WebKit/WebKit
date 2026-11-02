@@ -44,7 +44,7 @@ public:
 
 class TypeAhead {
 public:
-    TypeAhead(TypeAheadDataSource*);
+    NODELETE TypeAhead(TypeAheadDataSource*);
 
     enum ModeFlag {
         MatchPrefix = 1 << 0,

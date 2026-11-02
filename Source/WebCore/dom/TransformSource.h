@@ -35,7 +35,7 @@ class TransformSource {
     WTF_MAKE_TZONE_ALLOCATED(TransformSource);
     WTF_MAKE_NONCOPYABLE(TransformSource);
 public:
-    explicit TransformSource(const PlatformTransformSource&);
+    NODELETE explicit TransformSource(const PlatformTransformSource&);
     ~TransformSource();
 
     PlatformTransformSource platformSource() const { return m_source; }

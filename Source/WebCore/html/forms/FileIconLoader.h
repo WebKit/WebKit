@@ -46,7 +46,7 @@ public:
 class FileIconLoader {
     WTF_MAKE_TZONE_ALLOCATED(FileIconLoader);
 public:
-    explicit FileIconLoader(FileIconLoaderClient&);
+    NODELETE explicit FileIconLoader(FileIconLoaderClient&);
 
     void LEGACY_NODELETE invalidate();
     WEBCORE_EXPORT void iconLoaded(RefPtr<Icon>&&);

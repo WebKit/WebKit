@@ -35,7 +35,7 @@ namespace WebCore {
 class CSSPreloadScanner {
     WTF_MAKE_NONCOPYABLE(CSSPreloadScanner);
 public:
-    CSSPreloadScanner();
+    NODELETE CSSPreloadScanner();
     ~CSSPreloadScanner();
 
     void reset();

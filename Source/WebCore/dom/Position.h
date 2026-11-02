@@ -72,11 +72,11 @@ public:
 
     // For creating before/after positions:
     WEBCORE_EXPORT Position(RefPtr<Node>&& anchorNode, AnchorType);
-    Position(RefPtr<Text>&& textNode, unsigned offset);
+    NODELETE Position(RefPtr<Text>&& textNode, unsigned offset);
 
     // For creating offset positions:
     // FIXME: This constructor should eventually go away. See bug 63040.
-    WEBCORE_EXPORT Position(RefPtr<Node>&& anchorNode, unsigned offset, AnchorType);
+    NODELETE WEBCORE_EXPORT Position(RefPtr<Node>&& anchorNode, unsigned offset, AnchorType);
 
     AnchorType anchorType() const { return static_cast<AnchorType>(m_anchorType); }
 

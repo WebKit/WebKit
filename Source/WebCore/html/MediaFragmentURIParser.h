@@ -36,7 +36,7 @@ namespace WebCore {
 class MediaFragmentURIParser final {
 public:
     
-    MediaFragmentURIParser(const URL&);
+    NODELETE MediaFragmentURIParser(const URL&);
 
     MediaTime startTime();
     MediaTime endTime();

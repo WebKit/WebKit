@@ -60,7 +60,7 @@ using EventListenerVector = Vector<Ref<RegisteredEventListener>, 1, CrashOnOverf
 
 class EventListenerMap {
 public:
-    WEBCORE_EXPORT EventListenerMap();
+    NODELETE WEBCORE_EXPORT EventListenerMap();
 
     bool isEmpty() const { return m_entries.isEmpty(); }
     bool contains(const AtomString& eventType) const { return find(eventType); }

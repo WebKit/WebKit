@@ -46,8 +46,8 @@ bool simulateClick(Element&, Event* underlyingEvent, SimulatedClickMouseEventOpt
 class SimulatedClickWithoutPointerEventsScope {
     WTF_MAKE_NONCOPYABLE(SimulatedClickWithoutPointerEventsScope);
 public:
-    SimulatedClickWithoutPointerEventsScope();
-    ~SimulatedClickWithoutPointerEventsScope();
+    NODELETE SimulatedClickWithoutPointerEventsScope();
+    NODELETE ~SimulatedClickWithoutPointerEventsScope();
 
     static bool isActive();
 };

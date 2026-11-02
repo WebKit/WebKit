@@ -38,7 +38,7 @@ class Element;
 class HTMLFormattingElementList {
     WTF_MAKE_NONCOPYABLE(HTMLFormattingElementList);
 public:
-    HTMLFormattingElementList();
+    NODELETE HTMLFormattingElementList();
     ~HTMLFormattingElementList();
 
     // Ideally Entry would be private, but HTMLTreeBuilder has to coordinate

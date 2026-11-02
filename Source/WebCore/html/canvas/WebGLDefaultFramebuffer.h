@@ -44,7 +44,7 @@ public:
     // Creates the framebuffer with a 0x0 size. The caller must call setSize() once the context
     // is initialized. The attachments are allocated and configured by the first ensureSize().
     static std::unique_ptr<WebGLDefaultFramebuffer> create(WebGLRenderingContextBase&);
-    ~WebGLDefaultFramebuffer();
+    NODELETE ~WebGLDefaultFramebuffer();
 
     // Deletes the GraphicsContextGL objects. The object names are meaningful only in the
     // GraphicsContextGL instance that created them, so the caller must call this while that
