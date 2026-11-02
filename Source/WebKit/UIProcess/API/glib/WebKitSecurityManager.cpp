@@ -77,7 +77,6 @@ static void registerSecurityPolicyForURIScheme(WebKitSecurityManager* manager, c
     // a given URI scheme synchronously without blocking.
     switch (policy) {
     case SecurityPolicyLocal:
-        WebCore::LegacySchemeRegistry::registerURLSchemeAsLocal(urlScheme);
         processPool->registerURLSchemeAsLocal(urlScheme);
         break;
     case SecurityPolicyNoAccess:
@@ -89,7 +88,6 @@ static void registerSecurityPolicyForURIScheme(WebKitSecurityManager* manager, c
         processPool->registerURLSchemeAsDisplayIsolated(urlScheme);
         break;
     case SecurityPolicySecure:
-        WebCore::LegacySchemeRegistry::registerURLSchemeAsSecure(urlScheme);
         processPool->registerURLSchemeAsSecure(urlScheme);
         break;
     case SecurityPolicyCORSEnabled:
