@@ -2623,11 +2623,9 @@ public:
     {
         static_assert((*repatch).contains(RepatchingFlag::Flush));
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
-        intptr_t offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(from)) >> 2;
-        ASSERT(static_cast<int>(offset) == offset);
-        ASSERT(isInt<26>(offset));
+        intptr_t offset = branchDisplacement(from, to);
         constexpr bool isCall = false;
-        int insn = unconditionalBranchImmediate(isCall, static_cast<int>(offset));
+        int insn = unconditionalBranchImmediate(isCall, offset);
         machineCodeCopy<noFlush(repatch)>(from, &insn, sizeof(int));
         cacheFlush(from, sizeof(int));
     }
@@ -3873,18 +3871,16 @@ public:
 
     static void replaceWithJump(void* where, void* to)
     {
-        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(where)) >> 2;
-        ASSERT(static_cast<int>(offset) == offset);
+        intptr_t offset = branchDisplacement(where, to);
 
 #if ENABLE(JUMP_ISLANDS)
         if (!isInt<26>(offset)) {
             to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(where, to);
-            offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(where)) >> 2;
-            RELEASE_ASSERT(isInt<26>(offset));
+            offset = branchDisplacement(where, to);
         }
 #endif
 
-        int insn = unconditionalBranchImmediate(false, static_cast<int>(offset));
+        int insn = unconditionalBranchImmediate(false, offset);
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(where) == where);
         performJITMemcpy<jitMemcpyRepatchAtomic>(where, &insn, sizeof(int));
         cacheFlush(where, sizeof(int));
@@ -4013,10 +4009,7 @@ public:
 #if ENABLE(JUMP_ISLANDS)
     static void* prepareForAtomicRelinkJumpConcurrently(void* from, void* to)
     {
-        intptr_t offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(from)) >> 2;
-        ASSERT(static_cast<int>(offset) == offset);
-
-        if (isInt<26>(offset))
+        if (isInt<26>(branchDisplacement(from, to)))
             return to;
 
         return ExecutableAllocator::singleton().getJumpIslandToConcurrently(from, to);
@@ -4199,10 +4192,14 @@ public:
         }
     }
 
+    static ALWAYS_INLINE intptr_t branchDisplacement(const void* from, const void* to)
+    {
+        return (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(from)) >> 2;
+    }
+
     static ALWAYS_INLINE bool canEmitJump(void* from, void* to)
     {
-        intptr_t diff = (std::bit_cast<intptr_t>(from) - std::bit_cast<intptr_t>(to)) >> 2;
-        return isInt<26>(diff);
+        return isInt<26>(branchDisplacement(from, to));
     }
 
 protected:
@@ -4258,8 +4255,7 @@ protected:
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
         assertIsNotTagged(to);
         assertIsNotTagged(fromInstruction);
-        intptr_t offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(fromInstruction)) >> 2;
-        ASSERT(static_cast<int>(offset) == offset);
+        intptr_t offset = branchDisplacement(fromInstruction, to);
 
 #if ENABLE(JUMP_ISLANDS)
         if (!isInt<26>(offset)) {
@@ -4267,12 +4263,11 @@ protected:
                 to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(std::bit_cast<void*>(fromInstruction), to);
             else
                 to = ExecutableAllocator::singleton().getJumpIslandToUsingMemcpy(std::bit_cast<void*>(fromInstruction), to);
-            offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(fromInstruction)) >> 2;
-            RELEASE_ASSERT(isInt<26>(offset));
+            offset = branchDisplacement(fromInstruction, to);
         }
 #endif
 
-        int insn = unconditionalBranchImmediate(isCall, static_cast<int>(offset));
+        int insn = unconditionalBranchImmediate(isCall, offset);
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
         machineCodeCopy<repatch>(from, &insn, sizeof(int));
     }
@@ -4283,7 +4278,7 @@ protected:
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
-        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
+        intptr_t offset = branchDisplacement(fromInstruction, to);
 
         bool useDirect = isInt<19>(offset);
         ASSERT(type == IndirectBranch || useDirect);
@@ -4309,7 +4304,7 @@ protected:
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
-        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
+        intptr_t offset = branchDisplacement(fromInstruction, to);
 
         bool useDirect = isInt<19>(offset);
         ASSERT(type == IndirectBranch || useDirect);
@@ -4335,7 +4330,7 @@ protected:
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
-        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
+        intptr_t offset = branchDisplacement(fromInstruction, to);
         ASSERT(static_cast<int>(offset) == offset);
 
         bool useDirect = isInt<14>(offset);
@@ -4896,10 +4891,10 @@ protected:
     }
 
     // 'op' means link
-    ALWAYS_INLINE static int unconditionalBranchImmediate(bool op, int32_t imm26)
+    ALWAYS_INLINE static int unconditionalBranchImmediate(bool op, intptr_t imm26)
     {
-        ASSERT(imm26 == (imm26 << 6) >> 6);
-        return (0x14000000 | op << 31 | (imm26 & 0x3ffffff));
+        RELEASE_ASSERT(isInt<26>(imm26));
+        return (0x14000000 | op << 31 | (static_cast<int32_t>(imm26) & 0x3ffffff));
     }
 
     // 'op' means page
