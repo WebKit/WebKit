@@ -4545,6 +4545,144 @@ void testVectorRelaxedDotI8x16I7x16AddAliasing()
     }
 }
 
+void testAtomicStrongCASWithStatusUnderContention()
+{
+    // The word only ever holds 0, so a CAS expecting 1 must always fail. Another thread keeps
+    // storing to it so that the store-exclusive of the CAS failure path fails and retries.
+    auto test = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        GPRReg address = GPRInfo::argumentGPR0;
+        GPRReg count = GPRInfo::argumentGPR1;
+        GPRReg expected = GPRInfo::argumentGPR2;
+        GPRReg newValue = GPRInfo::argumentGPR3;
+        GPRReg result = GPRInfo::argumentGPR4;
+
+        auto loop = jit.label();
+        jit.move(CCallHelpers::TrustedImm32(1), expected);
+        jit.move(CCallHelpers::TrustedImm32(2), newValue);
+        jit.atomicStrongCAS32(CCallHelpers::Success, expected, newValue, CCallHelpers::Address(address), result);
+        auto succeeded = jit.branchTest32(CCallHelpers::NonZero, result);
+        auto observedNonZero = jit.branchTest32(CCallHelpers::NonZero, expected);
+        jit.sub64(CCallHelpers::TrustedImm32(1), count);
+        jit.branchTest64(CCallHelpers::NonZero, count).linkTo(loop, &jit);
+        jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+        auto done = jit.jump();
+
+        succeeded.link(&jit);
+        observedNonZero.link(&jit);
+        jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+
+        done.link(&jit);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    std::atomic<uint32_t> word { 0 };
+    std::atomic<bool> stop { false };
+    Ref<Thread> writer = Thread::create("testmasm CAS writer"_s, [&] {
+        while (!stop.load(std::memory_order_relaxed))
+            word.store(0, std::memory_order_relaxed);
+    });
+
+    uint64_t result = invoke<uint64_t>(test, &word, static_cast<uint64_t>(500000));
+
+    stop.store(true, std::memory_order_relaxed);
+    writer->waitForCompletion();
+
+    CHECK_EQ(result, 0);
+    CHECK_EQ(word.load(), 0);
+}
+
+void testAtomicRelaxedCAS()
+{
+    // address: argumentGPR0, expected: argumentGPR1, new value: argumentGPR2, observed out: argumentGPR3.
+    auto strong32 = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.atomicRelaxedStrongCAS32(CCallHelpers::Success, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2, CCallHelpers::Address(GPRInfo::argumentGPR0), GPRInfo::argumentGPR4);
+        jit.store64(GPRInfo::argumentGPR1, CCallHelpers::Address(GPRInfo::argumentGPR3));
+        jit.move(GPRInfo::argumentGPR4, GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+    auto strong64 = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.atomicRelaxedStrongCAS64(CCallHelpers::Success, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2, CCallHelpers::Address(GPRInfo::argumentGPR0), GPRInfo::argumentGPR4);
+        jit.store64(GPRInfo::argumentGPR1, CCallHelpers::Address(GPRInfo::argumentGPR3));
+        jit.move(GPRInfo::argumentGPR4, GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    {
+        uint64_t memory = 0xffffffff00000005ULL;
+        uint64_t observed = 0;
+        CHECK_EQ(invoke<uint64_t>(strong32, &memory, static_cast<uint64_t>(5), static_cast<uint64_t>(7), &observed), 1U);
+        CHECK_EQ(memory, 0xffffffff00000007ULL);
+        CHECK_EQ(observed, 5U);
+
+        CHECK_EQ(invoke<uint64_t>(strong32, &memory, static_cast<uint64_t>(5), static_cast<uint64_t>(9), &observed), 0U);
+        CHECK_EQ(memory, 0xffffffff00000007ULL);
+        CHECK_EQ(observed, 7U);
+    }
+    {
+        uint64_t memory = 0x1234567800000005ULL;
+        uint64_t observed = 0;
+        CHECK_EQ(invoke<uint64_t>(strong64, &memory, 0x1234567800000005ULL, 0x8765432100000007ULL, &observed), 1U);
+        CHECK_EQ(memory, 0x8765432100000007ULL);
+        CHECK_EQ(observed, 0x1234567800000005ULL);
+
+        CHECK_EQ(invoke<uint64_t>(strong64, &memory, 0x1234567800000007ULL, 0x5ULL, &observed), 0U);
+        CHECK_EQ(memory, 0x8765432100000007ULL);
+        CHECK_EQ(observed, 0x8765432100000007ULL);
+    }
+
+    // A weak CAS may fail spuriously, so retry the matching case a few times.
+    auto weak32 = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        auto success = jit.branchAtomicRelaxedWeakCAS32(CCallHelpers::Success, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2, CCallHelpers::Address(GPRInfo::argumentGPR0));
+        jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+        auto done = jit.jump();
+        success.link(&jit);
+        jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+        done.link(&jit);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+    auto weak64 = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        auto success = jit.branchAtomicRelaxedWeakCAS64(CCallHelpers::Success, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2, CCallHelpers::Address(GPRInfo::argumentGPR0));
+        jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+        auto done = jit.jump();
+        success.link(&jit);
+        jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+        done.link(&jit);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    {
+        uint64_t memory = 0xffffffff00000005ULL;
+        CHECK_EQ(invoke<uint64_t>(weak32, &memory, static_cast<uint64_t>(6), static_cast<uint64_t>(7)), 0U);
+        CHECK_EQ(memory, 0xffffffff00000005ULL);
+        uint64_t result = 0;
+        for (unsigned i = 0; i < 100 && !result; ++i)
+            result = invoke<uint64_t>(weak32, &memory, static_cast<uint64_t>(5), static_cast<uint64_t>(7));
+        CHECK_EQ(result, 1U);
+        CHECK_EQ(memory, 0xffffffff00000007ULL);
+    }
+    {
+        uint64_t memory = 0x1234567800000005ULL;
+        CHECK_EQ(invoke<uint64_t>(weak64, &memory, 0x0000000000000005ULL, 0x7ULL), 0U);
+        CHECK_EQ(memory, 0x1234567800000005ULL);
+        uint64_t result = 0;
+        for (unsigned i = 0; i < 100 && !result; ++i)
+            result = invoke<uint64_t>(weak64, &memory, 0x1234567800000005ULL, 0x8765432100000007ULL);
+        CHECK_EQ(result, 1U);
+        CHECK_EQ(memory, 0x8765432100000007ULL);
+    }
+}
+
 #endif // CPU(ARM64)
 
 void testLoadStorePair32()
@@ -9187,6 +9325,8 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
         RUN(testAtomicStrongCASFill16());
     }
     RUN(testVectorRelaxedDotI8x16I7x16AddAliasing());
+    RUN(testAtomicStrongCASWithStatusUnderContention());
+    RUN(testAtomicRelaxedCAS());
 #endif
 
 #if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)

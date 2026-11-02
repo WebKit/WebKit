@@ -2665,6 +2665,7 @@ public:
     void stxr(RegisterID result, RegisterID src, RegisterID dst)
     {
         CHECK_MEMOPSIZE();
+        ASSERT(result != src && result != dst);
         insn(exoticStore(MEMOPSIZE, ExoticStoreFence_None, result, src, dst));
     }
 
@@ -2679,6 +2680,7 @@ public:
     void stlxr(RegisterID result, RegisterID src, RegisterID dst)
     {
         CHECK_MEMOPSIZE();
+        ASSERT(result != src && result != dst);
         insn(exoticStore(MEMOPSIZE, ExoticStoreFence_Release, result, src, dst));
     }
     

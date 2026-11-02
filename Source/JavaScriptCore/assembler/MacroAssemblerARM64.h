@@ -8067,7 +8067,7 @@ protected:
     template<int datasize>
     void storeCond(RegisterID src, RegisterID dest, RegisterID result)
     {
-        m_assembler.stxr<datasize>(src, dest, result);
+        m_assembler.stxr<datasize>(result, src, dest);
     }
     
     template<int datasize>
@@ -8111,9 +8111,9 @@ protected:
         Jump done = jump();
         
         failure.link(this);
-        move(tmp, expectedAndResult);
         storeCondRel<datasize>(tmp, simpleAddress, result);
         branchTest32(NonZero, result).linkTo(reloop, this);
+        move(tmp, expectedAndResult);
         move(TrustedImm32(cond == Failure), result);
         
         done.link(this);

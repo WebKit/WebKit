@@ -639,23 +639,24 @@ void BBQJIT::emitAtomicOpGeneric(ExtAtomicOpType op, Address address, GPRReg old
         RELEASE_ASSERT_NOT_REACHED();
     }
 #elif CPU(ARM64)
+    GPRReg statusGPR = m_jit.scratchRegister();
     switch (accessWidth) {
     case Width8:
-        m_jit.storeCondRel8(scratchGPR, address, scratchGPR);
+        m_jit.storeCondRel8(scratchGPR, address, statusGPR);
         break;
     case Width16:
-        m_jit.storeCondRel16(scratchGPR, address, scratchGPR);
+        m_jit.storeCondRel16(scratchGPR, address, statusGPR);
         break;
     case Width32:
-        m_jit.storeCondRel32(scratchGPR, address, scratchGPR);
+        m_jit.storeCondRel32(scratchGPR, address, statusGPR);
         break;
     case Width64:
-        m_jit.storeCondRel64(scratchGPR, address, scratchGPR);
+        m_jit.storeCondRel64(scratchGPR, address, statusGPR);
         break;
     case Width128:
         RELEASE_ASSERT_NOT_REACHED();
     }
-    m_jit.branchTest32(ResultCondition::NonZero, scratchGPR).linkTo(reloopLabel, &m_jit);
+    m_jit.branchTest32(ResultCondition::NonZero, statusGPR).linkTo(reloopLabel, &m_jit);
 #endif
 }
 
