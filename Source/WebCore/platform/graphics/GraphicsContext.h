@@ -298,6 +298,7 @@ public:
     // Clips to the path mapped by pathTransform, leaving the CTM unchanged.
     WEBCORE_EXPORT virtual void clipTransformedPath(const AffineTransform& pathTransform, const Path&, WindRule = WindRule::EvenOdd);
     WEBCORE_EXPORT virtual void clipToImageBuffer(ImageBuffer&, const FloatRect&) = 0;
+    WEBCORE_EXPORT virtual void clipToNativeImage(const NativeImage&, const FloatRect&) = 0;
     WEBCORE_EXPORT virtual IntRect clipBounds() const;
 
     // Text

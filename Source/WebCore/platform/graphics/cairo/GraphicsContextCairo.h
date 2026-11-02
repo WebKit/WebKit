@@ -102,6 +102,7 @@ public:
     void clipPath(const Path&, WindRule) final;
     IntRect clipBounds() const final;
     void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
+    void clipToNativeImage(const NativeImage&, const FloatRect&) final;
     
     RenderingMode renderingMode() const final;
 

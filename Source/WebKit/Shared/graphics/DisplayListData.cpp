@@ -122,7 +122,7 @@ private:
                 result.append(item);
                 return true;
             },
-            [](const DisplayList::ClipToImageBuffer&) { return false; },
+            [](const DisplayList::ClipToNativeImage&) { return false; },
             [](const DisplayList::DrawImageBuffer&) { return false; },
             [](const DisplayList::DrawMeshGradient&) { return false; },
             [](const DisplayList::DrawNativeImage&) { return false; },
