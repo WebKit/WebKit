@@ -154,6 +154,12 @@ class PullRequest(Command):
             action=arguments.NoAction,
         )
         parser.add_argument(
+            '--wpt-export', '--no-wpt-export',
+            dest='wpt_export', default=False,
+            help='Check (or do not check) whether changes to web-platform-tests need to be exported',
+            action=arguments.NoAction,
+        )
+        parser.add_argument(
             '--security', '--redacted',
             dest='redact', action='store_true',
             default=False,
@@ -496,7 +502,7 @@ class PullRequest(Command):
             print('Posted pull request link to {}'.format(issue.link))
 
     @classmethod
-    def create_pull_request(cls, repository, args, branch_point, callback=None, unblock=True, update_issue=None):
+    def create_pull_request(cls, repository, args, branch_point, callback=None, unblock=True, update_issue=None, wpt_export_check=None):
         if update_issue is None:
             update_issue = getattr(args, 'update_issue', True)
         source_remote = args.remote or repository.default_remote
@@ -858,6 +864,9 @@ class PullRequest(Command):
                 labels.append(cls.SKIP_EWS_LABEL)
                 pr_issue.set_labels(labels)
 
+        if wpt_export_check and update_issue and issues and getattr(args, 'wpt_export', True) and repository.config().get('webkitscmpy.check-wpt-export', 'true') == 'true':
+            wpt_export_check(repository, commits, interactive=args.defaults is None)
+
         if pr.url:
             print(pr.url)
 
@@ -869,7 +878,7 @@ class PullRequest(Command):
         return 0
 
     @classmethod
-    def main(cls, args, repository, hooks=None, **kwargs):
+    def main(cls, args, repository, hooks=None, wpt_export_check=None, **kwargs):
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only '{}' on a native Git repository\n".format(cls.name))
             return 1
@@ -895,4 +904,4 @@ class PullRequest(Command):
             if result:
                 return result
 
-        return cls.create_pull_request(repository, args, branch_point)
+        return cls.create_pull_request(repository, args, branch_point, wpt_export_check=wpt_export_check)

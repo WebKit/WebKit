@@ -1095,6 +1095,82 @@ No pre-PR checks to run""")
             captured.stderr.getvalue(),
         )
 
+    def run_wpt_export_check(self, *args, config=None, **kwargs):
+        calls = []
+
+        def wpt_export_check(repository, commits, interactive=True):
+            calls.append((repository.root_path, [commit.hash for commit in commits], interactive))
+
+        with OutputCapture(level=logging.INFO), mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            )), patch(
+                'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
+            repo.commits['eng/pr-branch'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/pr-branch',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/pr-branch",
+                    timestamp=int(time.time()),
+                    message='[Testing] Existing commit\nbugs.example.com/show_bug.cgi?id=1'
+                )
+            ]
+            repo.head = repo.commits['eng/pr-branch'][-1]
+            if config:
+                for key, value in config.items():
+                    repo.edit_config(key, value)
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history') + args,
+                path=self.path,
+                wpt_export_check=lambda repository: wpt_export_check,
+                **kwargs
+            ))
+        return calls
+
+    def test_wpt_export_check(self):
+        self.assertEqual(
+            self.run_wpt_export_check(),
+            [(self.path, ['06de5d56554e693db72313f4ca1fb969c30b8ccb'], True)],
+        )
+
+    def test_wpt_export_check_defaults(self):
+        calls = self.run_wpt_export_check('--defaults')
+        self.assertEqual([call[2] for call in calls], [False])
+
+    def test_wpt_export_check_disabled(self):
+        self.assertEqual(self.run_wpt_export_check('--no-wpt-export'), [])
+
+    def test_wpt_export_check_disabled_by_config(self):
+        self.assertEqual(self.run_wpt_export_check(config={'webkitscmpy.check-wpt-export': 'false'}), [])
+
+    def test_wpt_export_check_not_provided(self):
+        with OutputCapture(level=logging.INFO), mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1], projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+            environment=Environment(BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com', BUGS_EXAMPLE_COM_PASSWORD='password'),
+        ), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
+            repo.commits['eng/pr-branch'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb', branch='eng/pr-branch',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/pr-branch", timestamp=int(time.time()),
+                    message='[Testing] Existing commit\nbugs.example.com/show_bug.cgi?id=1',
+                ),
+            ]
+            repo.head = repo.commits['eng/pr-branch'][-1]
+            self.assertEqual(0, program.main(args=('pull-request', '-v', '--no-history'), path=self.path))
 
     def test_github_bugzilla(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(

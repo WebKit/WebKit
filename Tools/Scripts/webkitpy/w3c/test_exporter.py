@@ -26,15 +26,16 @@
 
 import argparse
 import logging
+import os
 import re
 import string
 import sys
 import subprocess
 import textwrap
 
-from webkitcorepy import arguments, string_utils, run
+from webkitcorepy import Terminal, arguments, string_utils, run
 from webkitbugspy import Tracker, bugzilla, radar
-from webkitscmpy import PullRequest, local
+from webkitscmpy import PullRequest, local, remote
 from webkitscmpy.program.pull_request import PullRequest as PullRequestProgram
 
 from webkitpy.common.host import Host
@@ -49,6 +50,9 @@ _log = logging.getLogger(__name__)
 WEBKIT_WPT_DIR = 'LayoutTests/imported/w3c/web-platform-tests'
 WPT_PR_URL = f'{WPT_GH_URL}/pull/'
 WEBKIT_EXPORT_PR_LABEL = 'webkit-export'
+IMPORT_TITLE_RE = re.compile(r'\b(re-?)?(import(ing)?|sync(ing)?|synchroniz(e|ing))\b', re.IGNORECASE)
+WPT_TITLE_RE = re.compile(r'\bWPT\b', re.IGNORECASE)
+WPT_PULL_REQUEST_RE = re.compile(rf'{re.escape(WPT_GH_URL)}/pull/\d+')
 
 EXCLUDED_FILE_SUFFIXES = ['-expected.txt', '-expected.html', '-expected.htm', '-expected.xht', '-expected.xhtml', '-expected.xml', '-expected.svg', '-expected-mismatch.html', '-expected-mismatch.xht', '-expected-mismatch.xhtml', '-expected-mismatch.svg', 'w3c-import.log', *TEMPLATED_TEST_WRAPPER_SUFFIXES]
 
@@ -207,6 +211,29 @@ class WebPlatformTestExporter(object):
     def has_wpt_changes(self):
         _log.info('Checking for WPT changes')
         return bool(self._wpt_patch)
+
+    def find_existing_wpt_pull_request(self):
+        """Returns (url, recorded_on_bug) of the WPT pull request exporting this bug, or (None, False)."""
+        for link in self._bug.related_links or []:
+            match = WPT_PULL_REQUEST_RE.search(link)
+            if match:
+                return match.group(0), True
+        for comment in self._bug.comments:
+            match = WPT_PULL_REQUEST_RE.search(comment.content or '')
+            if match:
+                return match.group(0), True
+
+        try:
+            wpt_remote = remote.GitHub(WPT_GH_URL)
+            for pr in wpt_remote.pull_requests.find(opened=None, head=self._public_branch_name):
+                if pr.head == self._public_branch_name:
+                    return pr.url, False
+        except Exception as e:
+            _log.warning(f'Failed to search for an existing WPT pull request: {e}')
+        return None, False
+
+    def record_existing_wpt_pull_request(self, url):
+        self._bug.add_comment(f'Existing web-platform-tests pull request: {url}')
 
     def _find_filename(self, line):
         return line.split(b' ')[-1][2:]
@@ -517,6 +544,56 @@ def parse_args(args):
     options, args = parser.parse_known_args(args)
 
     return options
+
+
+def check_export(repository, commits, interactive=True):
+    """Called by `git-webkit pr`: checks whether the commits need a WPT export, and offers to do it."""
+    host = Host()
+    # The exporter works on the checkout webkitpy lives in, which must be the repository being pushed.
+    if os.path.realpath(WebKitFinder(host.filesystem).webkit_base()) != os.path.realpath(repository.root_path):
+        return
+
+    _log.info('Checking if changes need to be exported to web-platform-tests...')
+    exporter = None
+    skipped_import = False
+    for commit in reversed(commits):
+        title = (commit.message or '').split('\n', 1)[0]
+        if IMPORT_TITLE_RE.search(title) and WPT_TITLE_RE.search(title):
+            skipped_import = True
+            continue
+        try:
+            candidate = WebPlatformTestExporter(host, parse_args(['-g', commit.hash]))
+            if candidate.has_wpt_changes():
+                exporter = candidate
+                break
+        except Exception as e:
+            _log.info(f'Skipping web-platform-tests export check for {commit.hash[:12]}: {e}')
+    if not exporter:
+        if skipped_import:
+            print('Skipping web-platform-tests pull request creation: this change is a WPT import or sync.')
+        return
+
+    wpt_pr_url, is_recorded = exporter.find_existing_wpt_pull_request()
+    if wpt_pr_url:
+        print(f'Found web-platform-tests pull request: {wpt_pr_url}')
+        if not is_recorded:
+            exporter.record_existing_wpt_pull_request(wpt_pr_url)
+            print(f'Posted web-platform-tests pull request link to {exporter._bug.link}')
+        return
+
+    print('This change modifies web-platform-tests and has not been exported yet.')
+    export_args = ['-c', '-g', exporter._options.git_commit]
+    if not interactive or Terminal.choose(
+        'Would you like to export it to web-platform-tests now?',
+        options=('Yes', 'No'),
+        default='No',
+    ) != 'Yes':
+        print(f"To export it later, run 'Tools/Scripts/export-w3c-test-changes {' '.join(export_args)}'")
+        return
+
+    configure_logging()
+    if main(export_args, sys.stdout, sys.stderr):
+        sys.stderr.write('Failed to export to web-platform-tests, error is non fatal, continuing...\n')
 
 
 def configure_logging():
