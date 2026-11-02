@@ -33,7 +33,7 @@ namespace WTF {
 
 class StringPrintStream final : public PrintStream {
 public:
-    WTF_EXPORT_PRIVATE StringPrintStream();
+    NODELETE WTF_EXPORT_PRIVATE StringPrintStream();
     WTF_EXPORT_PRIVATE ~StringPrintStream() final;
     
     WTF_EXPORT_PRIVATE void vprintf(const char* format, va_list) final WTF_ATTRIBUTE_PRINTF(2, 0);

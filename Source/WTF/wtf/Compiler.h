@@ -595,6 +595,12 @@
     IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_ATTRIBUTE("alpha.webkit.RetainPtrCtorAdoptChecker")
 #define CLANG_POINTER_CONVERSION [[clang::annotate_type("webkit.pointerconversion")]]
 
+// Add this annotation to a function when the function does not run any destruct a heap allocated object.
+// Static analyzer does not require the use of smart pointers in the code which calls a function with this annotation.
+#ifndef NODELETE
+#define NODELETE [[clang::annotate("webkit.nodelete")]]
+#endif
+
 // Add this annotation to right after the return type of a function when the function does not run any destructor or free memory.
 // Static analyzer does not require the use of smart pointers in the code which calls a function with this annotation.
 #ifndef LEGACY_NODELETE

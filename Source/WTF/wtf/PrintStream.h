@@ -56,7 +56,7 @@ inline const char* boolForPrinting(const std::optional<bool>& value)
 class PrintStream {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PrintStream); WTF_MAKE_NONCOPYABLE(PrintStream);
 public:
-    WTF_EXPORT_PRIVATE PrintStream();
+    NODELETE WTF_EXPORT_PRIVATE PrintStream();
     WTF_EXPORT_PRIVATE virtual ~PrintStream();
 
     WTF_EXPORT_PRIVATE void printf(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);

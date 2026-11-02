@@ -38,7 +38,7 @@ class Decoder {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Decoder);
 public:
     WTF_EXPORT_PRIVATE Decoder(std::span<const uint8_t>);
-    WTF_EXPORT_PRIVATE ~Decoder();
+    NODELETE WTF_EXPORT_PRIVATE ~Decoder();
 
     size_t length() const { return m_buffer.size(); }
     size_t currentOffset() const { return static_cast<size_t>(std::distance(m_buffer.begin(), m_bufferPosition)); }

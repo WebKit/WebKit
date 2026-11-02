@@ -73,7 +73,7 @@ typedef WTF::Function<void(Critical, Synchronous)> LowMemoryHandler;
 struct MemoryPressureHandlerConfiguration {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MemoryPressureHandlerConfiguration);
     WTF_EXPORT_PRIVATE MemoryPressureHandlerConfiguration();
-    WTF_EXPORT_PRIVATE MemoryPressureHandlerConfiguration(uint64_t, double, double, std::optional<double>, Seconds);
+    NODELETE WTF_EXPORT_PRIVATE MemoryPressureHandlerConfiguration(uint64_t, double, double, std::optional<double>, Seconds);
 
     uint64_t baseThreshold;
     double conservativeThresholdFraction;

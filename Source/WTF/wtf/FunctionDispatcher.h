@@ -43,7 +43,7 @@ public:
     virtual void dispatch(Function<void ()>&&) = 0;
 
 protected:
-    FunctionDispatcher();
+    NODELETE FunctionDispatcher();
 };
 
 class WTF_CAPABILITY("is current") WTF_EXPORT_PRIVATE SerialFunctionDispatcher : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SerialFunctionDispatcher>, public FunctionDispatcher {

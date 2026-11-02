@@ -67,8 +67,8 @@ template<typename T> inline bool TryMallocReturnValue::getValue(T*& data)
 class ForbidMallocUseForCurrentThreadScope {
 public:
 #if ASSERT_ENABLED
-    WTF_EXPORT_PRIVATE ForbidMallocUseForCurrentThreadScope();
-    WTF_EXPORT_PRIVATE ~ForbidMallocUseForCurrentThreadScope();
+    NODELETE WTF_EXPORT_PRIVATE ForbidMallocUseForCurrentThreadScope();
+    NODELETE WTF_EXPORT_PRIVATE ~ForbidMallocUseForCurrentThreadScope();
 #else
     ForbidMallocUseForCurrentThreadScope() = default;
     ALWAYS_INLINE ~ForbidMallocUseForCurrentThreadScope() { }
@@ -83,8 +83,8 @@ public:
 class DisableMallocRestrictionsForCurrentThreadScope {
 public:
 #if ASSERT_ENABLED
-    WTF_EXPORT_PRIVATE DisableMallocRestrictionsForCurrentThreadScope();
-    WTF_EXPORT_PRIVATE ~DisableMallocRestrictionsForCurrentThreadScope();
+    NODELETE WTF_EXPORT_PRIVATE DisableMallocRestrictionsForCurrentThreadScope();
+    NODELETE WTF_EXPORT_PRIVATE ~DisableMallocRestrictionsForCurrentThreadScope();
 #else
     DisableMallocRestrictionsForCurrentThreadScope() = default;
     ~DisableMallocRestrictionsForCurrentThreadScope() { }

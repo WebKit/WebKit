@@ -45,7 +45,7 @@ public:
 
     MachSendRight() = default;
     WTF_EXPORT_PRIVATE explicit MachSendRight(const MachSendRight&);
-    WTF_EXPORT_PRIVATE MachSendRight(MachSendRight&&);
+    NODELETE WTF_EXPORT_PRIVATE MachSendRight(MachSendRight&&);
     WTF_EXPORT_PRIVATE ~MachSendRight();
 
     WTF_EXPORT_PRIVATE MachSendRight& operator=(MachSendRight&&);
@@ -57,7 +57,7 @@ public:
     [[nodiscard]] WTF_EXPORT_PRIVATE mach_port_t LEGACY_NODELETE leakSendRight();
 
 private:
-    explicit MachSendRight(mach_port_t);
+    NODELETE explicit MachSendRight(mach_port_t);
 
     mach_port_t m_port { MACH_PORT_NULL };
 };

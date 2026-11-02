@@ -71,14 +71,14 @@ enum class FileSeekOrigin {
 
 class FileHandle {
 public:
-    WTF_EXPORT_PRIVATE FileHandle();
+    NODELETE WTF_EXPORT_PRIVATE FileHandle();
 
     static FileHandle adopt(PlatformFileHandle handle, OptionSet<FileLockMode> lockMode = { })
     {
         return FileHandle { handle, lockMode };
     }
 
-    WTF_EXPORT_PRIVATE FileHandle(FileHandle&&);
+    NODELETE WTF_EXPORT_PRIVATE FileHandle(FileHandle&&);
     WTF_EXPORT_PRIVATE FileHandle& operator=(FileHandle&&);
 
     WTF_EXPORT_PRIVATE ~FileHandle();
