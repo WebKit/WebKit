@@ -89,8 +89,7 @@ def build_parser() -> argparse.ArgumentParser:
         "-e",
         "--explain",
         action="store_true",
-        help="Explain how to read the report, alongside the report itself"
-        " (text format only)",
+        help="Explain how to read the report.",
     )
 
     cycle_analysis_parser = _add_subcommand(
