@@ -21514,7 +21514,7 @@ static bool isFrameHostedByProcess(const WebFrameProxy* frame, const WebPageProx
 void WebPageProxy::completeTargetedElementRequest(Vector<WebCore::TargetedElementInfo>&& elements, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&& completionHandler)
 {
     mergeContentFromRemoteFrames(WTF::move(elements), [completionHandler = WTF::move(completionHandler), weakThis = WeakPtr { *this }](Vector<WebCore::TargetedElementInfo>&& elements) mutable {
-        RefPtr protectedThis = weakThis.get();
+        RefPtr protectedThis = weakThis;
         if (!protectedThis)
             return completionHandler({ });
 
@@ -21545,7 +21545,7 @@ void WebPageProxy::mergeContentFromRemoteFrames(Vector<WebCore::TargetedElementI
     auto frameIDs = copyToVector(remoteFrameIDs);
     forEachWebContentProcess([&](auto& process, auto pageID) {
         process.sendWithAsyncReply(Messages::WebPage::RequestTargetedFrameContent(frameIDs), [contentByFrame, aggregator, process = Ref { process }, weakThis = WeakPtr { *this }](HashMap<WebCore::FrameIdentifier, WebCore::TargetedFrameContent>&& result) {
-            RefPtr protectedThis = weakThis.get();
+            RefPtr protectedThis = weakThis;
             if (!protectedThis)
                 return;
 

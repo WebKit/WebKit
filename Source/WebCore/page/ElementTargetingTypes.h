@@ -98,6 +98,7 @@ struct TargetedTextSearchResult {
 struct TargetedFrameContent {
     bool hasAudibleMedia { false };
     Vector<IntSize> largestReplacedContentSizes;
+    HashSet<URL> mediaAndLinkURLs;
 };
 
 WEBCORE_EXPORT void mergeRemoteFrameContent(TargetedElementInfo&, const TargetedFrameContent&);
