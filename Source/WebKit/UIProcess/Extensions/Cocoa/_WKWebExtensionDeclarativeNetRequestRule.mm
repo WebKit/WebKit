@@ -847,6 +847,8 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
     }
 
     if ([chromeActionType isEqualToString:declarativeNetRequestRuleActionTypeRedirect]) {
+        actionDictionary[@"priority"] = @(_priority);
+
         NSDictionary<NSString *, id> *inputRedirectDictonary = _action[declarativeNetRequestRuleActionRedirect];
         NSMutableDictionary<NSString *, id> *outputRedirectDictonary = [NSMutableDictionary dictionary];
 

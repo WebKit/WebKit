@@ -3104,9 +3104,10 @@ TEST_F(ContentExtensionTest, Serialization)
         auto deserialized = RedirectAction::deserialize(buffer.span());
         EXPECT_EQ(deserialized, action);
     };
-    checkRedirectActionSerialization({ { RedirectAction::ExtensionPathAction { "extensionPath"_s } } }, 18);
-    checkRedirectActionSerialization({ { RedirectAction::RegexSubstitutionAction { "regexSubstitution"_s, "regexFilter"_s } } }, 41);
-    checkRedirectActionSerialization({ { RedirectAction::URLAction { "url"_s } } }, 8);
+    checkRedirectActionSerialization({ { RedirectAction::ExtensionPathAction { "extensionPath"_s } } }, 22);
+    checkRedirectActionSerialization({ { RedirectAction::RegexSubstitutionAction { "regexSubstitution"_s, "regexFilter"_s } } }, 45);
+    checkRedirectActionSerialization({ { RedirectAction::URLAction { "url"_s } } }, 12);
+    checkRedirectActionSerialization({ { RedirectAction::URLAction { "url"_s } }, 7 }, 12);
     checkRedirectActionSerialization({ { RedirectAction::URLTransformAction {
         String::fromUTF8("frägment"),
         "host"_s,
@@ -3116,11 +3117,11 @@ TEST_F(ContentExtensionTest, Serialization)
         { /* query */ },
         "scheme"_s,
         "username"_s
-    } } }, 68);
-    checkRedirectActionSerialization({ { RedirectAction::URLTransformAction { { }, { }, { }, { }, { }, { "query"_s }, { }, { } } } }, 20);
+    } } }, 72);
+    checkRedirectActionSerialization({ { RedirectAction::URLTransformAction { { }, { }, { }, { }, { }, { "query"_s }, { }, { } } } }, 24);
     checkRedirectActionSerialization({ { RedirectAction::URLTransformAction { { }, { }, { }, { }, { },
         { RedirectAction::URLTransformAction::QueryTransform { { { "key1"_s, false, "value1"_s }, { String::fromUTF8("key💩"), false, "value2"_s } }, { "testString1"_s, "testString2"_s } } }, { }, { },
-    } } }, 90);
+    } } }, 94);
 
     ModifyHeadersAction modifyHeaders { {
         { { ModifyHeadersAction::ModifyHeaderInfo::AppendOperation { "key1"_s, "value1"_s } } },

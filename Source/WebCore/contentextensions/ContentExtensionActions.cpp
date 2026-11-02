@@ -283,26 +283,51 @@ size_t ModifyHeadersAction::ModifyHeaderInfo::serializedLength(std::span<const u
     return deserializeLength(span, 0);
 }
 
+RedirectAction::RedirectAction(ActionVariant&& action, uint32_t priority)
+    : hashTableType(HashTableType::Full)
+    , action(WTF::move(action))
+    , priority(priority)
+{
+}
+
+bool RedirectAction::onlyRemovesQueryParameters() const
+{
+    auto* transform = std::get_if<URLTransformAction>(&action);
+    if (!transform)
+        return false;
+
+    if (!transform->fragment.isNull() || !transform->host.isNull() || !transform->password.isNull() || !transform->path.isNull())
+        return false;
+
+    if (transform->port || !transform->scheme.isNull() || !transform->username.isNull())
+        return false;
+
+    auto* queryTransform = std::get_if<URLTransformAction::QueryTransform>(&transform->queryTransform);
+    return queryTransform && queryTransform->addOrReplaceParams.isEmpty() && !queryTransform->removeParams.isEmpty();
+}
+
 std::expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Object& redirectObject, const String& urlFilter)
 {
     auto redirect = redirectObject.getObject("redirect"_s);
     if (!redirect)
         return makeUnexpected(ContentExtensionError::JSONRedirectMissing);
 
+    auto priority = static_cast<uint32_t>(std::max(redirectObject.getInteger("priority"_s).value_or(0), 0));
+
     if (auto extensionPath = redirect->getString("extension-path"_s); !!extensionPath) {
         if (!extensionPath.startsWith('/'))
             return makeUnexpected(ContentExtensionError::JSONRedirectExtensionPathDoesNotStartWithSlash);
-        return RedirectAction { ExtensionPathAction { WTF::move(extensionPath) } };
+        return RedirectAction { ExtensionPathAction { WTF::move(extensionPath) }, priority };
     }
 
     if (auto regexSubstitution = redirect->getString("regex-substitution"_s); !!regexSubstitution)
-        return RedirectAction { RegexSubstitutionAction { WTF::move(regexSubstitution), urlFilter } };
+        return RedirectAction { RegexSubstitutionAction { WTF::move(regexSubstitution), urlFilter }, priority };
 
     if (auto transform = redirect->getObject("transform"_s)) {
         auto parsedTransform = URLTransformAction::parse(*transform);
         if (!parsedTransform)
             return makeUnexpected(parsedTransform.error());
-        return RedirectAction { WTF::move(*parsedTransform) };
+        return RedirectAction { WTF::move(*parsedTransform), priority };
     }
 
     if (auto urlString = redirect->getString("url"_s); !!urlString) {
@@ -311,7 +336,7 @@ std::expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON:
             return makeUnexpected(ContentExtensionError::JSONRedirectURLInvalid);
         if (url.protocolIsJavaScript())
             return makeUnexpected(ContentExtensionError::JSONRedirectToJavaScriptURL);
-        return RedirectAction { URLAction { WTF::move(urlString) } };
+        return RedirectAction { URLAction { WTF::move(urlString) }, priority };
     }
 
     return makeUnexpected(ContentExtensionError::JSONRedirectInvalidType);
@@ -319,18 +344,19 @@ std::expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON:
 
 RedirectAction RedirectAction::isolatedCopy() const &
 {
-    return { crossThreadCopy(action) };
+    return { crossThreadCopy(action), priority };
 }
 
 RedirectAction RedirectAction::isolatedCopy() &&
 {
-    return { crossThreadCopy(WTF::move(action)) };
+    return { crossThreadCopy(WTF::move(action)), priority };
 }
 
 void RedirectAction::serialize(Vector<uint8_t>& vector) const
 {
     auto beginIndex = vector.size();
     append(vector, 0);
+    append(vector, priority);
     vector.append(action.index());
     WTF::visit(WTF::makeVisitor([&](const ExtensionPathAction& action) {
         append(vector, action.extensionPath.utf8());
@@ -346,11 +372,12 @@ void RedirectAction::serialize(Vector<uint8_t>& vector) const
 
 RedirectAction RedirectAction::deserialize(std::span<const uint8_t> span)
 {
-    constexpr auto headerSize = sizeof(uint32_t) + sizeof(uint8_t);
+    constexpr auto headerSize = sizeof(uint32_t) * 2 + sizeof(uint8_t);
     auto stringLength = deserializeLength(span, 0) - headerSize;
     RELEASE_ASSERT(span.size() >= headerSize);
+    uint32_t priority = deserializeLength(span, sizeof(uint32_t));
     return { [&] () -> ActionVariant {
-        switch (span[sizeof(uint32_t)]) {
+        switch (span[sizeof(uint32_t) * 2]) {
         case WTF::alternativeIndexV<ExtensionPathAction, ActionVariant>:
             return ExtensionPathAction { deserializeUTF8String(span, headerSize, stringLength) };
         case WTF::alternativeIndexV<RegexSubstitutionAction, ActionVariant>:
@@ -361,7 +388,7 @@ RedirectAction RedirectAction::deserialize(std::span<const uint8_t> span)
             return URLAction { deserializeUTF8String(span, headerSize, stringLength) };
         }
         RELEASE_ASSERT_NOT_REACHED();
-    }() };
+    }(), priority };
 }
 
 size_t RedirectAction::serializedLength(std::span<const uint8_t> span)

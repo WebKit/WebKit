@@ -1728,6 +1728,204 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
         }
     }
 
+    private func queryTransformRedirectRule(id: Int, urlFilter: String, removeParams: [String]) -> [String: Any] {
+        [
+            "id": id,
+            "priority": 1,
+
+            "action": [
+                "type": "redirect",
+                "redirect": [
+                    "transform": [
+                        "queryTransform": [
+                            "removeParams": removeParams
+                        ]
+                    ]
+                ],
+            ],
+
+            "condition": [
+                "urlFilter": urlFilter,
+                "resourceTypes": ["main_frame"],
+            ],
+        ]
+    }
+
+    private func runEqualPriorityRedirectComposition(
+        rules: [[String: Any]],
+        requestQuery: String,
+        expectedQuery: String,
+        unexpectedQuery: String = "?unexpected"
+    ) async throws {
+        let correctPageScript = """
+            <script>
+              browser.test.notifyPass()
+            </script>
+            """
+
+        let incorrectPageScript = """
+            <script>
+              browser.test.notifyFail('Equal-priority redirects should compose into ' + '\(expectedQuery)' + ', but loaded ' + location.search)
+            </script>
+            """
+
+        var server = try HTTPServer(protocol: .http) {
+            Route("/\(expectedQuery)", headerFields: ["Content-Type": "text/html"]) {
+                correctPageScript
+            }
+            Route("/\(requestQuery)", headerFields: ["Content-Type": "text/html"]) {
+                incorrectPageScript
+            }
+            Route("/\(unexpectedQuery)", headerFields: ["Content-Type": "text/html"]) {
+                incorrectPageScript
+            }
+        }
+
+        let manifest: [String: Any] = [
+            "manifest_version": 3,
+
+            "name": "Test",
+            "description": "Test",
+            "version": "1",
+
+            "background": [
+                "scripts": ["background.js"],
+                "type": "module",
+                "persistent": false,
+            ],
+
+            "permissions": ["declarativeNetRequestWithHostAccess"],
+            "host_permissions": ["*://localhost/*"],
+
+            "declarative_net_request": [
+                "rule_resources": [
+                    [
+                        "id": "redirectRule",
+                        "enabled": true,
+                        "path": "rules.json",
+                    ]
+                ]
+            ],
+        ]
+
+        let backgroundScript = """
+            browser.test.sendMessage('Load Tab')
+            """
+
+        try await server.run { configuration in
+            let urlRequest = URLRequest(url: try #require(URL(string: requestQuery, relativeTo: configuration.localhostAddress)))
+
+            let resources: [String: Any] = [
+                "background.js": backgroundScript,
+                "rules.json": rules,
+            ]
+
+            let manager = try loadWebExtension(manifest: manifest, resources: resources)
+            let context = try #require(manager.context)
+
+            context.setPermissionStatus(.grantedExplicitly, for: configuration.localhostAddress)
+
+            try await manager.waitForTestMessage("Load Tab")
+
+            let webView = try #require(manager.defaultTab?.webView)
+            webView.load(urlRequest)
+
+            try await manager.run()
+        }
+    }
+
+    @Test
+    func equalPriorityQueryTransformRedirectsCompose() async throws {
+        let rules = [
+            queryTransformRedirectRule(id: 1, urlFilter: "localhost", removeParams: ["utm_source"]),
+            queryTransformRedirectRule(id: 2, urlFilter: "from=", removeParams: ["from"]),
+        ]
+
+        try await runEqualPriorityRedirectComposition(rules: rules, requestQuery: "?utm_source=em&from=glia&id=1", expectedQuery: "?id=1")
+    }
+
+    @Test
+    func noOpQueryTransformRedirectDoesNotSuppressEqualPriorityRedirect() async throws {
+        let rules = [
+            queryTransformRedirectRule(id: 1, urlFilter: "localhost", removeParams: ["utm_source"]),
+            queryTransformRedirectRule(id: 2, urlFilter: "af_xp=", removeParams: ["c", "pid"]),
+        ]
+
+        try await runEqualPriorityRedirectComposition(
+            rules: rules,
+            requestQuery: "?utm_source=em&af_xp=1&id=1",
+            expectedQuery: "?af_xp=1&id=1"
+        )
+    }
+
+    @Test
+    func equalPriorityRegexSubstitutionRedirectDoesNotComposeWithQueryTransform() async throws {
+        let regexSubstitutionRule: [String: Any] = [
+            "id": 2,
+            "priority": 1,
+
+            "action": [
+                "type": "redirect",
+                "redirect": [
+                    "regexSubstitution": "\\1"
+                ],
+            ],
+
+            "condition": [
+                "regexFilter": "^(.*)&debug=1$",
+                "resourceTypes": ["main_frame"],
+            ],
+        ]
+
+        let rules = [
+            queryTransformRedirectRule(id: 1, urlFilter: "localhost", removeParams: ["utm_source"]),
+            regexSubstitutionRule,
+        ]
+
+        try await runEqualPriorityRedirectComposition(
+            rules: rules,
+            requestQuery: "?utm_source=em&id=1&debug=1",
+            expectedQuery: "?utm_source=em&id=1",
+            unexpectedQuery: "?id=1"
+        )
+    }
+
+    @Test
+    func equalPriorityAddOrReplaceParamsRedirectDoesNotComposeWithRemoveParams() async throws {
+        let addParamsRule: [String: Any] = [
+            "id": 2,
+            "priority": 1,
+
+            "action": [
+                "type": "redirect",
+                "redirect": [
+                    "transform": [
+                        "queryTransform": [
+                            "addOrReplaceParams": [["key": "ref", "value": "feed"]]
+                        ]
+                    ]
+                ],
+            ],
+
+            "condition": [
+                "urlFilter": "localhost",
+                "resourceTypes": ["main_frame"],
+            ],
+        ]
+
+        let rules = [
+            queryTransformRedirectRule(id: 1, urlFilter: "localhost", removeParams: ["utm_source"]),
+            addParamsRule,
+        ]
+
+        try await runEqualPriorityRedirectComposition(
+            rules: rules,
+            requestQuery: "?utm_source=em&id=1",
+            expectedQuery: "?utm_source=em&id=1&ref=feed",
+            unexpectedQuery: "?id=1&ref=feed"
+        )
+    }
+
     @Test
     func redirectRuleWithoutHostAccessPermission() async throws {
         let pageScript = """
@@ -4697,6 +4895,7 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
             let correctRuleConversion = withDebugIdentifiers([
                 "action": [
                     "type": "redirect",
+                    "priority": 1,
                     "redirect": expectedRedirect,
                 ],
                 "trigger": [
