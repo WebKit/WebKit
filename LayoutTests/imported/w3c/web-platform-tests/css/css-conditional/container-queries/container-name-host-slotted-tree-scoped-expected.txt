@@ -1,0 +1,4 @@
+
+PASS Slotted host's :host size query matches name set by :host of the slot's host
+PASS Slotted host's :host style query matches name set by :host of the slot's host
+
