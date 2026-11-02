@@ -29,8 +29,6 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "RemoteInspectorClient.h"
-#include <wtf/FileSystem.h>
-#include <wtf/URL.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GSpanExtras.h>

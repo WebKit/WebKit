@@ -23,8 +23,6 @@
 #if USE(ATSPI)
 
 #include "AccessibilityAtspiEnums.h"
-#include "AccessibilityObject.h"
-#include "RenderObjectInlines.h"
 #include <gio/gio.h>
 #include <wtf/glib/GLibExtras.h>
 

@@ -27,15 +27,10 @@
 #include "config.h"
 #include "WebFrameNetworkingContext.h"
 
-#include "MessageSenderInlines.h"
-#include "NetworkSession.h"
-#include "NetworkSessionCreationParameters.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/FrameLoader.h>
-#include <WebCore/Settings.h>
-#include <WebCore/SoupNetworkSession.h>
 
 namespace WebKit {
 using namespace WebCore;

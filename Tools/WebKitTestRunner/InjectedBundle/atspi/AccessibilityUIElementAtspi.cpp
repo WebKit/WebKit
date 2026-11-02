@@ -29,7 +29,6 @@
 #if USE(ATSPI)
 #include "AccessibilityNotificationHandler.h"
 #include "InjectedBundle.h"
-#include "InjectedBundlePage.h"
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <WebCore/AccessibilityAtspiEnums.h>

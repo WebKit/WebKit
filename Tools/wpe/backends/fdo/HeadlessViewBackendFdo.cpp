@@ -26,9 +26,7 @@
 #include "HeadlessViewBackend.h"
 
 #include <cassert>
-#include <fcntl.h>
 #include <mutex>
-#include <unistd.h>
 
 #if WPE_FDO_CHECK_VERSION(1,7,0)
 #include <wayland-server.h>

@@ -22,11 +22,9 @@
 
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationDecisionListener.h"
-#include "WebCredential.h"
 #include "WebKitAuthenticationRequestPrivate.h"
 #include "WebKitCredentialPrivate.h"
 #include "WebKitSecurityOriginPrivate.h"
-#include "WebProtectionSpace.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/ProtectionSpace.h>
 #include <glib/gi18n-lib.h>

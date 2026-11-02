@@ -22,7 +22,6 @@
 #include "WebKitError.h"
 
 #include "APIError.h"
-#include "WebKitPrivate.h"
 #include <wtf/glib/GLibExtras.h>
 
 using namespace WebCore;

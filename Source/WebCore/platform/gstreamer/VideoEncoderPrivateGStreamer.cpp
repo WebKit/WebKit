@@ -33,8 +33,6 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/MakeString.h>
-#include <wtf/text/StringToIntegerConversion.h>
-#include <wtf/text/StringView.h>
 
 using namespace WebCore;
 

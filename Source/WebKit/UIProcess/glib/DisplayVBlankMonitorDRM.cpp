@@ -29,13 +29,11 @@
 #if USE(LIBDRM)
 
 #include "Logging.h"
-#include <WebCore/PlatformDisplay.h>
 #include <chrono>
 #include <errno.h>
 #include <fcntl.h>
 #include <thread>
 #include <wtf/SafeStrerror.h>
-#include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>

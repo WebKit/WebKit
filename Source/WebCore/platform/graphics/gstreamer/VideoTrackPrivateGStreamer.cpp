@@ -35,7 +35,6 @@
 #include <gst/pbutils/pbutils.h>
 #include <wtf/Scope.h>
 #include <wtf/glib/GMallocString.h>
-#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 

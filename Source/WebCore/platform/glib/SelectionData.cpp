@@ -23,9 +23,7 @@
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "APIHTTPCookieStore.h"
 
-#include "NetworkProcess.h"
 #include "NetworkProcessProxy.h"
 #include "SoupCookiePersistentStorageType.h"
 #include "WebCookieManagerMessages.h"

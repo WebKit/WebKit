@@ -33,9 +33,7 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/DataTransfer.h>
-#include <WebCore/DragData.h>
 #include <WebCore/Pasteboard.h>
-#include <WebCore/SelectionData.h>
 #include <WebCore/ShareableBitmap.h>
 
 #include <optional>

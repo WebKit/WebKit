@@ -30,7 +30,6 @@
 #include "GStreamerCommon.h"
 #include <gst/app/gstappsrc.h>
 #include <gst/audio/audio-info.h>
-#include <gst/pbutils/missing-plugins.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/Scope.h>

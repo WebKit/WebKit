@@ -38,12 +38,9 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include <WebCore/HTTPParsers.h>
-#include <WebCore/PlatformScreen.h>
 #include <WebCore/UserAgent.h>
 #include <cmath>
 #include <glib/gi18n-lib.h>
-#include <pal/text/TextEncodingRegistry.h>
-#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/UTF8CStringView.h>

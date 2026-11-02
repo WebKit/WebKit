@@ -34,22 +34,16 @@
 #include "CDMKeySystemConfiguration.h"
 #include "CDMProxyThunder.h"
 #include "CDMRestrictions.h"
-#include "CDMSessionType.h"
 #include "CDMUtilities.h"
 #include "GStreamerEMEUtilities.h"
-#include "Logging.h"
 #include "MediaKeyMessageType.h"
 #include "NotImplemented.h"
 #include "SharedBuffer.h"
-#include "WebKitThunderDecryptorGStreamer.h"
 #include <algorithm>
-#include <iterator>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/Base64.h>
-#include <wtf/text/StringToIntegerConversion.h>
 
 GST_DEBUG_CATEGORY(webkitMediaThunderDebugCategory);
 #define GST_CAT_DEFAULT webkitMediaThunderDebugCategory

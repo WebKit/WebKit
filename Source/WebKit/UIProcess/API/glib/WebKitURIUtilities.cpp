@@ -22,7 +22,6 @@
 
 #include <wtf/URLHelpers.h>
 #include <wtf/glib/GLibExtras.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 /**

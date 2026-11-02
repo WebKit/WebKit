@@ -25,7 +25,6 @@
 #include "WebKitFormSubmissionRequestPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <wtf/glib/GRefPtr.h>
-#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 

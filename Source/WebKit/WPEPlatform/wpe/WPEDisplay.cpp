@@ -35,19 +35,16 @@
 #include <gio/gio.h>
 #include <mutex>
 #include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/UTF8CStringView.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(LIBDRM)
 #include <drm_fourcc.h>
-#include <xf86drm.h>
 #endif
 
 #if USE(MANETTE)

@@ -23,11 +23,7 @@
 #include "IconDatabase.h"
 #include "WebKitFaviconDatabasePrivate.h"
 #include <WebCore/Image.h>
-#include <WebCore/IntSize.h>
-#include <WebCore/NotImplemented.h>
-#include <WebCore/SharedBuffer.h>
 #include <glib/gi18n-lib.h>
-#include <wtf/FileSystem.h>
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>

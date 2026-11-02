@@ -20,7 +20,6 @@
 #include "config.h"
 #include "LowPowerModeNotifier.h"
 
-#include <cstring>
 #include <gio/gio.h>
 #include <wtf/glib/GUniquePtr.h>
 

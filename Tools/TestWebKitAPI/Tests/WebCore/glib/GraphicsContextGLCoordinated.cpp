@@ -33,12 +33,8 @@
 #include <WebCore/Color.h>
 #include <WebCore/GraphicsContextGLCoordinated.h>
 #include <WebCore/NativeImage.h>
-#include <WebCore/ProcessIdentity.h>
-#include <atomic>
 #include <limits>
 #include <optional>
-#include <wtf/HashSet.h>
-#include <wtf/MemoryFootprint.h>
 #include <wtf/StdLibExtras.h>
 
 namespace TestWebKitAPI {

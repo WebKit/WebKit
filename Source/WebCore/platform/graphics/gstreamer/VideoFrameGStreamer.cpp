@@ -29,14 +29,11 @@
 #include "GStreamerVideoFrameConverter.h"
 #include "GraphicsContext.h"
 #include "ImageGStreamer.h"
-#include "ImageOrientation.h"
 #include "NativeImage.h"
 #include "PixelBuffer.h"
 #include "PlatformDisplay.h"
 #include "VideoFrameContentHint.h"
 #include "VideoPixelFormat.h"
-#include <JavaScriptCore/JSCInlines.h>
-#include <JavaScriptCore/TypedArrayInlines.h>
 #include <skia/core/SkData.h>
 #include <skia/core/SkImage.h>
 #include <wtf/glib/GMallocString.h>

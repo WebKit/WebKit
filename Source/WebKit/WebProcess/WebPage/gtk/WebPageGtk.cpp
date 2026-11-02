@@ -30,27 +30,17 @@
 
 #include "MessageSenderInlines.h"
 #include "WebFrame.h"
-#include "WebKeyboardEvent.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
-#include <WebCore/BackForwardController.h>
 #include <WebCore/DocumentView.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EventHandler.h>
-#include <WebCore/FocusController.h>
-#include <WebCore/KeyboardEvent.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
-#include <WebCore/PlatformKeyboardEvent.h>
-#include <WebCore/PlatformScreen.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/RenderThemeAdwaita.h>
-#include <WebCore/Settings.h>
-#include <WebCore/SharedBuffer.h>
-#include <WebCore/WindowsKeyboardCodes.h>
-#include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {

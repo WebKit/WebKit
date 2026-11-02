@@ -22,7 +22,6 @@
 #include "WPEQtView.h"
 
 #include "WPEQtViewLoadRequest.h"
-#include "WPEQtViewLoadRequestPrivate.h"
 #include "WPEQtViewPrivate.h"
 #include "WPEViewQtQuick.h"
 

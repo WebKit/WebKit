@@ -27,8 +27,6 @@
 #include "PlatformWebView.h"
 
 #include "TestController.h"
-#include <cstdio>
-#include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(LIBWPE)

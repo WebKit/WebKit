@@ -26,13 +26,9 @@
 #include "BlobRegistryImpl.h"
 #include "GUniquePtrSoup.h"
 #include "HTTPParsers.h"
-#include "MIMETypeRegistry.h"
-#include "RegistrableDomain.h"
-#include "SharedBuffer.h"
 #include "URLSoup.h"
 #include "WebKitFormDataInputStream.h"
 #include <wtf/glib/GLibExtras.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

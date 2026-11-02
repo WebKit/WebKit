@@ -27,7 +27,6 @@
 
 #include "WPEMockPlatformTest.h"
 #include <glib.h>
-#include <wtf/FileSystem.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 

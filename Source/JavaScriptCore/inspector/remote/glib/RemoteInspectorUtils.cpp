@@ -29,7 +29,6 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include <gio/gio.h>
-#include <mutex>
 #include <wtf/SHA1.h>
 #include <wtf/glib/GSpanExtras.h>
 

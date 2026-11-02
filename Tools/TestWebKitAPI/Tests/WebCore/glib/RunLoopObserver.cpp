@@ -19,10 +19,8 @@
 
 #include "config.h"
 
-#include "Helpers/Test.h"
 #include "Helpers/Utilities.h"
 
-#include <WebCore/PlatformExportMacros.h>
 #include <WebCore/RunLoopObserver.h>
 #include <atomic>
 #include <wtf/Threading.h>

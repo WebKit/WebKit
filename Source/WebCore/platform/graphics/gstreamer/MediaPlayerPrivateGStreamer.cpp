@@ -31,7 +31,6 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "AudioTrackPrivateGStreamer.h"
-#include "GStreamerAudioMixer.h"
 #include "GStreamerCaptureDeviceManager.h"
 #include "GStreamerCommon.h"
 #include "GStreamerQuirks.h"
@@ -44,14 +43,11 @@
 #include "InbandTextTrackPrivateGStreamer.h"
 #include "IntRect.h"
 #include "Logging.h"
-#include "MIMETypeRegistry.h"
 #include "MediaPlayer.h"
-#include "NotImplemented.h"
 #include "OriginAccessPatterns.h"
 #include "SecurityOrigin.h"
 #include "TextCombinerGStreamer.h"
 #include "TextSinkGStreamer.h"
-#include "TimeRanges.h"
 #include "VideoFrameMetadataGStreamer.h"
 #include "VideoSinkGStreamer.h"
 #include "VideoTrackPrivateGStreamer.h"
@@ -65,14 +61,12 @@
 
 #if ENABLE(MEDIA_SOURCE)
 #include "MediaSource.h"
-#include "WebKitMediaSourceGStreamer.h"
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "CDMInstance.h"
 #include "GStreamerEMEUtilities.h"
 #include "SharedBuffer.h"
-#include "WebKitCommonEncryptionDecryptorGStreamer.h"
 #if ENABLE(THUNDER)
 #include "CDMThunder.h"
 #endif
@@ -82,16 +76,12 @@
 #include "AudioSourceProviderGStreamer.h"
 #endif
 
-#include <cstring>
 #include <glib.h>
 #include <gst/audio/streamvolume.h>
 #include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
 #include <gst/pbutils/pbutils.h>
-#include <gst/video/gstvideometa.h>
-#include <limits>
 #include <wtf/FileSystem.h>
-#include <wtf/HexNumber.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/MathExtras.h>
@@ -102,11 +92,9 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
-#include <wtf/UniStdExtras.h>
 #include <wtf/WallTime.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GSpanExtras.h>
-#include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -123,7 +111,6 @@
 #endif // USE(GSTREAMER_GL)
 
 #if USE(COORDINATED_GRAPHICS)
-#include "BitmapTexture.h"
 #include "BitmapTexturePool.h"
 #include "CoordinatedPlatformLayerBufferHolePunch.h"
 #include "CoordinatedPlatformLayerBufferProxy.h"

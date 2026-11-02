@@ -28,7 +28,6 @@
 
 #include "GStreamerCaptureDeviceManager.h"
 #include "IntSize.h"
-#include "MockRealtimeMediaSourceCenter.h"
 #include "PixelBuffer.h"
 #include "VideoFrameGStreamer.h"
 #include <gst/app/gstappsrc.h>

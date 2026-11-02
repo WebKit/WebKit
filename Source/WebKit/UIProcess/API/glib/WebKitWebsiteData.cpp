@@ -20,11 +20,8 @@
 #include "config.h"
 #include "WebKitWebsiteData.h"
 
-#include "WebKitSecurityOriginPrivate.h"
 #include "WebKitWebsiteDataPrivate.h"
 #include <glib/gi18n-lib.h>
-#include <wtf/HashTable.h>
-#include <wtf/Vector.h>
 
 using namespace WebKit;
 

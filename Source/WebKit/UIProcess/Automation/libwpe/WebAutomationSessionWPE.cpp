@@ -29,7 +29,6 @@
 #include "WebAutomationSession.h"
 
 #include "WebAutomationSessionLibWPE.h"
-#include "WebAutomationSessionMacros.h"
 #include "WebEventModifier.h"
 #include "WebPageProxy.h"
 #include <optional>

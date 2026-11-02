@@ -29,7 +29,6 @@
 #include <wtf/UUID.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

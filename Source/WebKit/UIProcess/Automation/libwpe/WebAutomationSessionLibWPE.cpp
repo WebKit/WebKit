@@ -28,7 +28,6 @@
 
 #if USE(LIBWPE)
 #include "WebAutomationSession.h"
-#include "WebAutomationSessionMacros.h"
 #include "WebPageProxy.h"
 #include <wpe/wpe.h>
 

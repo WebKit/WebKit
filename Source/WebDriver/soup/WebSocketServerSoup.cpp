@@ -34,8 +34,6 @@
 #include <libsoup/soup-websocket-connection.h>
 #include <libsoup/soup.h>
 #include <optional>
-#include <span>
-#include <tuple>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/WTFString.h>

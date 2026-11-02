@@ -27,8 +27,6 @@
 #include <gio/gunixfdlist.h>
 #include <gst/video/video-format.h>
 #include <optional>
-#include <unistd.h>
-#include <wtf/Scope.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakRandomNumber.h>
 #include <wtf/glib/GLibExtras.h>

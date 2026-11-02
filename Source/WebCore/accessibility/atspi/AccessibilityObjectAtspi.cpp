@@ -38,7 +38,6 @@
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include <glib/gi18n-lib.h>
-#include <wtf/UUID.h>
 #include <wtf/glib/GLibExtras.h>
 
 namespace WebCore {

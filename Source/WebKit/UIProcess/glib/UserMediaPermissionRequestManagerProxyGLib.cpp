@@ -23,9 +23,6 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/CaptureDeviceWithCapabilities.h>
-#include <WebCore/ContextDestructionObserverInlines.h>
-#include <WebCore/MediaConstraintType.h>
-#include <WebCore/UserMediaRequest.h>
 
 namespace IPC {
 class Decoder;

@@ -23,7 +23,6 @@
 #include "APISecurityOrigin.h"
 #include "WebKitPermissionStateQueryPrivate.h"
 #include "WebKitSecurityOriginPrivate.h"
-#include <wtf/glib/WTFGType.h>
 
 /**
  * WebKitPermissionStateQuery:

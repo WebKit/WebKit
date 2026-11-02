@@ -19,7 +19,6 @@
 
 #include "config.h"
 
-#include "Helpers/Test.h"
 #include <wtf/RunLoop.h>
 
 namespace TestWebKitAPI {

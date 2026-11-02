@@ -26,7 +26,6 @@
 #if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER) && USE(GSTREAMER)
 
 #include "CDMProxyThunder.h"
-#include "GStreamerCommon.h"
 #include "GStreamerEMEUtilities.h"
 #include <wtf/glib/WTFGType.h>
 

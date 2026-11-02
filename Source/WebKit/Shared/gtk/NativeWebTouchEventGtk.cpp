@@ -28,10 +28,8 @@
 
 #if ENABLE(TOUCH_EVENTS)
 
-#include "GtkVersioning.h"
 #include "WebEventFactory.h"
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/MonotonicTime.h>
 
 namespace WebKit {
 

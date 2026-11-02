@@ -22,13 +22,7 @@
 
 #include "APIInjectedBundleClient.h"
 #include "APIString.h"
-#include "WebImage.h"
-#include "WebKitPrivate.h"
-#include "WebKitURIRequestPrivate.h"
-#include "WebKitURIResponsePrivate.h"
 #include "WebKitWebContextPrivate.h"
-#include "WebKitWebResourcePrivate.h"
-#include "WebKitWebViewPrivate.h"
 #include <wtf/glib/GUniquePtr.h>
 
 using namespace WebKit;

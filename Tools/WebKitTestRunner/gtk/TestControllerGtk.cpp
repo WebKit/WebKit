@@ -34,7 +34,6 @@
 #include <WebKit/WKTextCheckerGLib.h>
 #include <WebKit/WKViewPrivate.h>
 #include <gtk/gtk.h>
-#include <wtf/Platform.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WTFProcess.h>
 #include <wtf/glib/GRefPtr.h>

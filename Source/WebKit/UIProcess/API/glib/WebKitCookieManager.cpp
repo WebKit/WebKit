@@ -28,14 +28,12 @@
 #include "WebKitEnumTypes.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebKitWebsiteDataPrivate.h"
-#include "WebsiteDataRecord.h"
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <glib/gi18n-lib.h>
 #include <pal/SessionID.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
-#include <wtf/text/CString.h>
 
 using namespace WebKit;
 

@@ -27,8 +27,6 @@
 #include "config.h"
 #include "RemoteWebInspectorUI.h"
 
-#include <glib.h>
-#include <wtf/FileSystem.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

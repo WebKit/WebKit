@@ -34,19 +34,12 @@
 #include <fcntl.h>
 #include <gio/gio.h>
 #include <optional>
-#include <unistd.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
-#include <wtf/text/CString.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if USE(GBM)
 #include <gbm.h>
-#endif
-
-#if USE(LIBDRM)
-#include <drm_fourcc.h>
-#include <xf86drm.h>
 #endif
 
 /**

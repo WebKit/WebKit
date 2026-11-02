@@ -20,7 +20,6 @@
 #include "config.h"
 #include "Pasteboard.h"
 
-#include "CommonAtomStrings.h"
 #include "DragData.h"
 #include "PasteboardStrategy.h"
 #include "PlatformStrategies.h"

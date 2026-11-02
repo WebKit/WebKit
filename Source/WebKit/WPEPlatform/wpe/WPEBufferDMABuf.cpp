@@ -30,8 +30,6 @@
 #include "WPEDisplayPrivate.h"
 #include <epoxy/egl.h>
 #include <fcntl.h>
-#include <mutex>
-#include <unistd.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>

@@ -27,10 +27,8 @@
 #include <wtf/glib/FilePathWatcher.h>
 
 #include "GLibMainLoopUtilities.h"
-#include "Helpers/Test.h"
 #include <gio/gio.h>
 #include <glib/gstdio.h>
-#include <unistd.h>
 #include <wtf/FileSystem.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>

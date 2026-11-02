@@ -24,7 +24,6 @@
 #include "jsc/JSCContextInternal.h"
 #undef JSC_COMPILATION
 
-#include <JavaScriptCore/JSContextRef.h>
 #include <array>
 #include <jsc/jsc.h>
 #include <wtf/HashSet.h>

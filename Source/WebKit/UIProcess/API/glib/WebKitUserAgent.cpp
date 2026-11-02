@@ -22,7 +22,6 @@
 
 #include <WebCore/UserAgent.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

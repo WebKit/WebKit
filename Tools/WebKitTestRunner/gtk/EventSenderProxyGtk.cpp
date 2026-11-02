@@ -42,11 +42,9 @@
 #include <gdk/gdkkeysyms.h>
 #include <webkit/WebKitWebViewBaseInternal.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WTR {
 

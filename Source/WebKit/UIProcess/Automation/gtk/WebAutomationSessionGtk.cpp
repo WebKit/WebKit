@@ -29,7 +29,6 @@
 #include "GtkUtilities.h"
 #include "GtkVersioning.h"
 #include "ViewSnapshotStore.h"
-#include "WebAutomationSessionMacros.h"
 #include "WebKitWebViewBaseInternal.h"
 #include "WebPageProxy.h"
 #include <WebCore/Scrollbar.h>

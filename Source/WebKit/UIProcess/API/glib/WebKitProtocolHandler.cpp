@@ -33,16 +33,13 @@
 #include "WebPageMessages.h"
 #include "WebProcessPool.h"
 #include <WebCore/FloatRect.h>
-#include <WebCore/GLContext.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformScreen.h>
 #include <cstdlib>
 #include <epoxy/gl.h>
-#include <fcntl.h>
 #include <gio/gio.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
-#include <wtf/WorkQueue.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GRefPtr.h>
@@ -51,7 +48,6 @@
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/unix/UnixFileDescriptor.h>
 
 #if OS(UNIX)
 #include <sys/utsname.h>

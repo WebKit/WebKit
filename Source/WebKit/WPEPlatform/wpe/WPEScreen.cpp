@@ -31,7 +31,6 @@
 
 #if USE(LIBDRM)
 #include "WPEScreenSyncObserverDRM.h"
-#include <errno.h>
 #include <fcntl.h>
 #include <optional>
 #include <wtf/IndexedRange.h>

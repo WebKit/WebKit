@@ -30,7 +30,6 @@
 #include "NativeWebMouseEvent.h"
 #include "WebPageProxy.h"
 #include <WebCore/PlatformMouseEvent.h>
-#include <WebCore/PointerEvent.h>
 #include <WebCore/PointerID.h>
 #include <gtk/gtk.h>
 #include <wtf/TZoneMallocInlines.h>

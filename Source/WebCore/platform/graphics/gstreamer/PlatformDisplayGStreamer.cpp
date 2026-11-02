@@ -23,7 +23,6 @@
 #if USE(GSTREAMER_GL)
 
 #include "GLContext.h"
-#include "GStreamerCommon.h"
 #define GST_USE_UNSTABLE_API
 #include <gst/gl/gl.h>
 #if GST_GL_HAVE_PLATFORM_EGL

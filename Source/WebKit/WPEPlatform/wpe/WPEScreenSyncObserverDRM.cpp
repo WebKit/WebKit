@@ -28,14 +28,11 @@
 
 #include <chrono>
 #include <errno.h>
-#include <fcntl.h>
 #include <thread>
 #include <wtf/Condition.h>
-#include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Threading.h>
-#include <wtf/Vector.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
 #include <xf86drm.h>

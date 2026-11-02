@@ -26,8 +26,6 @@
 #include "GStreamerCommon.h"
 #include "GStreamerElementHarness.h"
 #include "GStreamerRegistryScanner.h"
-#include "PlatformDisplay.h"
-#include "SharedBuffer.h"
 #include "VideoFrameGStreamer.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>

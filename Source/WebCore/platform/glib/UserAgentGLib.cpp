@@ -30,7 +30,6 @@
 #include "HTTPParsers.h"
 #include "UserAgentQuirks.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 

@@ -28,7 +28,6 @@
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #include "Blob.h"
-#include "BlobURL.h"
 #include "DOMURL.h"
 #include "Document.h"
 #include "DocumentFragment.h"

@@ -42,11 +42,9 @@
 #include <libudev.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/IndexedRange.h>
-#include <wtf/Scope.h>
 #include <wtf/dtoa.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 

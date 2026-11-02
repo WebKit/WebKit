@@ -32,10 +32,8 @@
 #include <gio/gunixinputstream.h>
 #include <gio/gunixoutputstream.h>
 #include <glib-unix.h>
-#include <wayland-client.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GSpanExtras.h>
-#include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 
 /**

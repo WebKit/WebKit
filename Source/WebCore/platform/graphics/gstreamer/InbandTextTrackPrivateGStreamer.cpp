@@ -29,9 +29,6 @@
 
 #include "InbandTextTrackPrivateGStreamer.h"
 
-#include <wtf/Lock.h>
-#include <wtf/text/StringToIntegerConversion.h>
-
 namespace WebCore {
 
 GST_DEBUG_CATEGORY(webkit_text_track_debug);

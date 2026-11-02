@@ -24,7 +24,6 @@
 
 #include "AccessibilityAtspi.h"
 #include <gio/gio.h>
-#include <wtf/URL.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 

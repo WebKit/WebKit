@@ -31,7 +31,6 @@
 #include "PlatformStrategies.h"
 #include "SelectionData.h"
 #include "SharedBuffer.h"
-#include <wtf/URL.h>
 
 namespace WebCore {
 

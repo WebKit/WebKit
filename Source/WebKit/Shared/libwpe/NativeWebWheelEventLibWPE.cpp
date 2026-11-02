@@ -29,7 +29,6 @@
 #if USE(LIBWPE)
 #include "WebEventFactory.h"
 #include <wtf/TZoneMallocInlines.h>
-#include <cstdio>
 
 namespace WebKit {
 

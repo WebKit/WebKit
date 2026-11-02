@@ -53,7 +53,6 @@
 // These includes need to be in this order because wayland-egl.h defines WL_EGL_PLATFORM
 // and egl.h checks that to decide whether it's Wayland platform.
 #include <wayland-client-protocol.h>
-#include <wayland-egl.h>
 #include <epoxy/egl.h>
 
 #ifndef EGL_WL_create_wayland_buffer_from_image

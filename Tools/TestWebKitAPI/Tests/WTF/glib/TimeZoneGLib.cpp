@@ -27,7 +27,6 @@
 #include <wtf/TimeZone.h>
 
 #include "GLibMainLoopUtilities.h"
-#include "Helpers/Test.h"
 #include <gio/gio.h>
 
 namespace TestWebKitAPI {

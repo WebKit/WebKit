@@ -26,7 +26,6 @@
 
 #include "config.h"
 #include "TestRunner.h"
-#include "InjectedBundle.h"
 
 #include <JavaScriptCore/JSStringRefCPP.h>
 #include <glib.h>

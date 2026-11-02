@@ -26,7 +26,6 @@
 #include "ApplicationGLib.h"
 #include "FloatSize.h"
 #include "GLVideoSinkGStreamer.h"
-#include "GStreamerAudioMixer.h"
 #include "GStreamerQuirks.h"
 #include "GStreamerRegistryScanner.h"
 #include "GStreamerSinksWorkarounds.h"
@@ -101,7 +100,6 @@
 #endif
 
 #if USE(GBM)
-#include "DRMDeviceManager.h"
 #include <drm_fourcc.h>
 #endif
 

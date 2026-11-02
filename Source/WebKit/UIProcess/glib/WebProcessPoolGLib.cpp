@@ -34,7 +34,6 @@
 #include "WebMemoryPressureHandler.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
-#include <WebCore/PlatformDisplay.h>
 #include <WebCore/SystemSettings.h>
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
@@ -64,7 +63,6 @@
 
 #if PLATFORM(GTK)
 #include "AcceleratedBackingStore.h"
-#include "Display.h"
 #include <gtk/gtk.h>
 #endif
 

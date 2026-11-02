@@ -27,7 +27,6 @@
  */
 
 #include "config.h"
-#include "MIMETypeRegistry.h"
 #include "ResourceLoader.h"
 
 #include "HTTPParsers.h"

@@ -32,11 +32,8 @@
 #include "GtkVersioning.h"
 #include "WebEventConversion.h"
 #include <WebCore/Scrollbar.h>
-#include <WebCore/WindowsKeyboardCodes.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
-#include <wtf/ASCIICType.h>
-#include <wtf/MathExtras.h>
 
 namespace WebKit {
 

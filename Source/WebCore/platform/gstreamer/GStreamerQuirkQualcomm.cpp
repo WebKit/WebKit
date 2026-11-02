@@ -22,8 +22,6 @@
 
 #if USE(GSTREAMER)
 
-#include "GStreamerCommon.h"
-
 namespace WebCore {
 
 GST_DEBUG_CATEGORY_STATIC(webkit_qualcomm_quirks_debug);

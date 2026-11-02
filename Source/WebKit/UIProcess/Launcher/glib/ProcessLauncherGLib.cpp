@@ -32,13 +32,10 @@
 #include "FlatpakLauncher.h"
 #include "IPCUtilities.h"
 #include "ProcessExecutablePath.h"
-#include <errno.h>
-#include <fcntl.h>
 #include <glib.h>
 #include <sys/socket.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RunLoop.h>
-#include <wtf/UniStdExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
 #include <wtf/text/CString.h>

@@ -33,7 +33,6 @@
 #include "GtkUtilities.h"
 #include "GtkVersioning.h"
 #include "NativeWebKeyboardEvent.h"
-#include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "ValidationBubbleGtk.h"
 #include "ViewSnapshotStore.h"
@@ -41,7 +40,6 @@
 #include "WebContextMenuProxyGtk.h"
 #include "WebDataListSuggestionsDropdownGtk.h"
 #include "WebDateTimePickerGtk.h"
-#include "WebEventFactory.h"
 #include "WebKitClipboardPermissionRequestPrivate.h"
 #include "WebKitColorChooser.h"
 #include "WebKitPopupMenu.h"
@@ -51,19 +49,14 @@
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <WebCore/DOMPasteAccess.h>
-#include <WebCore/EventNames.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PasteboardCustomData.h>
-#include <WebCore/RefPtrCairo.h>
 #include <WebCore/Region.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SystemSettings.h>
-#include <wtf/Compiler.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GWeakPtr.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/unix/UnixFileDescriptor.h>
 
 namespace WebKit {
 using namespace WebCore;

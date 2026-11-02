@@ -29,7 +29,6 @@
 #include <WebCore/JSNode.h>
 #include <jsc/JSCContextPrivate.h>
 #include <jsc/JSCValuePrivate.h>
-#include <wtf/glib/WTFGType.h>
 
 using namespace WebCore;
 

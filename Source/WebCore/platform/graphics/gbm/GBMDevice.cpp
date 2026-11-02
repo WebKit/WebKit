@@ -29,11 +29,9 @@
 #if USE(GBM)
 #include <fcntl.h>
 #include <gbm.h>
-#include <unistd.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/posix/POSIXExtras.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

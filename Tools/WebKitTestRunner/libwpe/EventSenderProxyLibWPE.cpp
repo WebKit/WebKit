@@ -26,7 +26,6 @@
 #include "config.h"
 #include "EventSenderProxy.h"
 
-#include "PlatformWebView.h"
 #include "TestController.h"
 #include <WebCore/NotImplemented.h>
 #include <WebKit/WKPagePrivate.h>

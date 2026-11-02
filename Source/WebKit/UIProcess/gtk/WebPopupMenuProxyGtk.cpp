@@ -34,7 +34,6 @@
 #include <WebCore/IntRect.h>
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/CString.h>
 
 namespace WebKit {
 using namespace WebCore;

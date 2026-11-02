@@ -30,7 +30,6 @@
 #include "WebKit2Initialize.h"
 #include <JavaScriptCore/RemoteInspector.h>
 #include <JavaScriptCore/RemoteInspectorServer.h>
-#include <limits>
 #include <mutex>
 #include <skia/core/SkGraphics.h>
 #include <wtf/glib/GRefPtr.h>

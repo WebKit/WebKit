@@ -26,7 +26,6 @@
 #include "config.h"
 #include "NativeWebWheelEvent.h"
 
-#include "GtkVersioning.h"
 #include "WebEventFactory.h"
 #include <wtf/TZoneMallocInlines.h>
 

@@ -31,7 +31,6 @@
 #include <sys/wait.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/WTFString.h>
 
 #if OS(LINUX)
 #include <sys/prctl.h>

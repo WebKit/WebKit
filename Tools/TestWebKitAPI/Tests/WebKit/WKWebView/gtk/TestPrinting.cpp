@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebViewTest.h"
 #include <WebKit/GtkVersioning.h>
-#include <glib/gstdio.h>
 #include <wtf/glib/GRefPtr.h>
 
 #ifdef HAVE_GTK_UNIX_PRINTING

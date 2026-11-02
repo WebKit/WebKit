@@ -22,9 +22,7 @@
 
 #include "WebKitFramePrivate.h"
 #include "WebKitScriptWorldPrivate.h"
-#include "WebKitWebFormManagerPrivate.h"
 #include <JavaScriptCore/APICast.h>
-#include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/JSNode.h>

@@ -20,8 +20,6 @@
 #include "config.h"
 #include "WebKitWebView.h"
 
-#include <gtk/gtk.h>
-
 #if !USE(GTK4)
 guint createContextMenuSignal(WebKitWebViewClass* webViewClass)
 {

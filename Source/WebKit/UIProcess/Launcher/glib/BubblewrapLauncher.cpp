@@ -29,7 +29,6 @@
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/UUID.h>
-#include <wtf/UniStdExtras.h>
 #include <wtf/glib/Application.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
@@ -46,8 +45,6 @@
 #if !defined(MFD_ALLOW_SEALING) && HAVE(LINUX_MEMFD_H)
 #include <linux/memfd.h>
 #endif
-
-#include "Syscalls.h"
 
 #if !defined(MFD_ALLOW_SEALING) && HAVE(LINUX_MEMFD_H)
 

@@ -39,8 +39,6 @@
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
 #include <wtf/CallbackAggregator.h>
-#include <wtf/FileSystem.h>
-#include <wtf/RAMSize.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>

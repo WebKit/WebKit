@@ -40,7 +40,6 @@
 #include "GamepadProviderWPE.h"
 #include "WPEUtilities.h"
 #include "WPEWebViewPlatform.h"
-#include <wpe/wpe-platform.h>
 #endif
 #endif
 

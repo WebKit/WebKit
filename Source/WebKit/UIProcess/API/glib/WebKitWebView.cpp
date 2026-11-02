@@ -26,8 +26,6 @@
 #include "APIData.h"
 #include "APINavigation.h"
 #include "APIPageConfiguration.h"
-#include "APISerializedScriptValue.h"
-#include "FrameInfoData.h"
 #include "ImageOptions.h"
 #include "JavaScriptEvaluationResult.h"
 #include "NotificationService.h"
@@ -37,13 +35,11 @@
 #include "ProvisionalPageProxy.h"
 #include "RunJavaScriptParameters.h"
 #include "SystemSettingsManagerProxy.h"
-#include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
 #include "WebFrameProxy.h"
 #include "WebKitAuthenticationRequestPrivate.h"
 #include "WebKitBackForwardListPrivate.h"
 #include "WebKitContextMenuClient.h"
-#include "WebKitContextMenuItemPrivate.h"
 #include "WebKitContextMenuPrivate.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitEditingCommands.h"
@@ -55,8 +51,6 @@
 #include "WebKitIconLoadingClient.h"
 #include "WebKitInputMethodContextPrivate.h"
 #include "WebKitNavigationClient.h"
-#include "WebKitNotificationPrivate.h"
-#include "WebKitPermissionStateQueryPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitResponsePolicyDecision.h"
 #include "WebKitScriptDialogPrivate.h"
@@ -76,11 +70,9 @@
 #include "WebKitWebsitePoliciesPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include "WebPageMessages.h"
-#include <JavaScriptCore/APICast.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatSize.h>
-#include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/RunJavaScriptParameters.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/URLSoup.h>
@@ -111,7 +103,6 @@
 #include "WebKitPrintOperationPrivate.h"
 #include "WebKitWebInspectorPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
-#include <WebCore/RefPtrCairo.h>
 #endif
 
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)

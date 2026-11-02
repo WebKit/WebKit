@@ -31,7 +31,6 @@
 #include "WKBundleInitialize.h"
 #include <wtf/FileSystem.h>
 #include <wtf/glib/GLibExtras.h>
-#include <wtf/text/CString.h>
 
 namespace WebKit {
 

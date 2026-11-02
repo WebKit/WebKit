@@ -29,12 +29,10 @@
 #include "APIPageConfiguration.h"
 #include "APIViewClient.h"
 #include "DrawingAreaProxy.h"
-#include "EditingRange.h"
 #include "EditorState.h"
 #include "NativeWebMouseEvent.h"
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
-#include <WebCore/CompositionUnderline.h>
 #include <WebCore/DoublePoint.h>
 #include <WebCore/DragData.h>
 #include <WebCore/SelectionData.h>

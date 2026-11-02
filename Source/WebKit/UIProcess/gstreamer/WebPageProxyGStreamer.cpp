@@ -28,7 +28,6 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(SPEECH_SYNTHESIS)
 
-#include "MessageSenderInlines.h"
 #include "WebPageMessages.h"
 #include "WebPageProxyInternals.h"
 #include "WebProcessProxy.h"

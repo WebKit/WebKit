@@ -24,7 +24,6 @@
 #include "WebKitNavigationActionPrivate.h"
 #include "WebKitNavigationPolicyDecisionPrivate.h"
 #include "WebKitPolicyDecisionPrivate.h"
-#include "WebKitURIRequestPrivate.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>

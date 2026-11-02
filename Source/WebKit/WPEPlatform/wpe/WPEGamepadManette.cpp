@@ -27,7 +27,6 @@
 #include "WPEGamepadManette.h"
 
 #include <linux/input-event-codes.h>
-#include <optional>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 

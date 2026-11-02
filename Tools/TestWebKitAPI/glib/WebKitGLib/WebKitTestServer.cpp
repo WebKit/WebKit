@@ -24,7 +24,6 @@
 #include <wtf/Threading.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 WebKitTestServer::WebKitTestServer(ServerOptionsBitSet options)
 {

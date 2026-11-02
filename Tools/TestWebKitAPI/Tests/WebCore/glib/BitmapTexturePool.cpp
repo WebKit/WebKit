@@ -30,7 +30,6 @@
 
 #include "config.h"
 
-#include "Helpers/Test.h"
 #include "Helpers/Utilities.h"
 #include <WebCore/BitmapTexturePool.h>
 #include <WebCore/GLContext.h>

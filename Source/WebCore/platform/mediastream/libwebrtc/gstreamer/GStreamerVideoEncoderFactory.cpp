@@ -42,10 +42,7 @@
 
 #include <gst/video/video.h>
 #include <wtf/HashMap.h>
-#include <wtf/Lock.h>
-#include <wtf/StdMap.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/MakeString.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtcenc_debug);
 #define GST_CAT_DEFAULT webkit_webrtcenc_debug

@@ -30,12 +30,9 @@
 #if USE(GLIB)
 
 #include <gio/gio.h>
-#include <wtf/Function.h>
 #include <wtf/MainThread.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 

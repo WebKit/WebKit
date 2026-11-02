@@ -30,10 +30,7 @@
 
 #include <WebCore/GLContext.h>
 #include <WebCore/GLDisplay.h>
-#include <WebCore/XErrorTrapper.h>
-#include <X11/Xatom.h>
 #include <epoxy/egl.h>
-#include <gtk/gtk.h>
 
 #if USE(GTK4)
 #include <gdk/x11/gdkx.h>

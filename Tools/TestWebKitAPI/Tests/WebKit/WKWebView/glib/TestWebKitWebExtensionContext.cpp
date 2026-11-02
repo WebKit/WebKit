@@ -26,8 +26,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/text/MakeString.h>
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 static GRefPtr<GBytes> createGBytes(const gchar* string)

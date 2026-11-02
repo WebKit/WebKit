@@ -20,8 +20,6 @@
 #include "config.h"
 #include "WebKitContextMenu.h"
 
-#include "APIArray.h"
-#include "WebContextMenuItem.h"
 #include "WebKitContextMenuGAction.h"
 #include "WebKitContextMenuItem.h"
 #include "WebKitContextMenuItemPrivate.h"

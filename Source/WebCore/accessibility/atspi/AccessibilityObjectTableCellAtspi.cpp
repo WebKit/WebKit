@@ -23,7 +23,6 @@
 #if USE(ATSPI)
 
 #include "AccessibilityAtspi.h"
-#include "AccessibilityAtspiEnums.h"
 #include <gio/gio.h>
 
 namespace WebCore {

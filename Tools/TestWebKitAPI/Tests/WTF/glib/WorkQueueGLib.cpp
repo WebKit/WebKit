@@ -25,9 +25,7 @@
 
 #include "config.h"
 
-#include "Helpers/Test.h"
 #include <gio/gio.h>
-#include <thread>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/WorkQueue.h>

@@ -30,7 +30,6 @@
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GRefPtr.h>
-#include <wtf/text/CString.h>
 
 namespace WTF {
 

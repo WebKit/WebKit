@@ -29,7 +29,6 @@
 #include "DisplayVBlankMonitorTimer.h"
 #include "Logging.h"
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/Vector.h>
 
 #if USE(LIBDRM)
 #include "DisplayVBlankMonitorDRM.h"

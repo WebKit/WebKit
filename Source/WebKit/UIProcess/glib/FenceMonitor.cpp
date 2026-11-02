@@ -27,7 +27,6 @@
 #include "FenceMonitor.h"
 
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
-#include <glib-unix.h>
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>

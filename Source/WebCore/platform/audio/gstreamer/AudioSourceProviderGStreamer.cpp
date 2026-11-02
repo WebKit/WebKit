@@ -31,7 +31,6 @@
 #include <wtf/text/MakeString.h>
 
 #if ENABLE(MEDIA_STREAM)
-#include "GStreamerAudioData.h"
 #include "GStreamerMediaStreamSource.h"
 #include "MediaStreamPrivate.h"
 #endif

@@ -32,14 +32,12 @@
 #include "Display.h"
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxy.h"
-#include "HardwareAccelerationManager.h"
 #include "LayerTreeContext.h"
 #include "MessageSenderInlines.h"
 #include "RendererBufferTransportMode.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/DMABufBuffer.h>
-#include <WebCore/FloatRect.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/NativeImage.h>
@@ -60,10 +58,6 @@
 #include <WebCore/DRMDeviceManager.h>
 #include <WebCore/GBMDevice.h>
 #include <gbm.h>
-#endif
-
-#if PLATFORM(X11) && USE(GTK4)
-#include <gdk/x11/gdkx.h>
 #endif
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN

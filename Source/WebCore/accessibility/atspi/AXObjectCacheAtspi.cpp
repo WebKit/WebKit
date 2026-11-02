@@ -23,17 +23,13 @@
 #if USE(ATSPI)
 #include "AXNotifications.h"
 #include "AXTextStateChangeIntent.h"
-#include "AccessibilityNodeObjectInlines.h"
 #include "AccessibilityObject.h"
 #include "AccessibilityObjectAtspi.h"
 #include "AccessibilityRenderObject.h"
 #include "DocumentPage.h"
 #include "DocumentView.h"
 #include "Element.h"
-#include "HTMLSelectElement.h"
-#include "Range.h"
 #include "RenderView.h"
-#include "TextIterator.h"
 
 namespace WebCore {
 
