@@ -387,6 +387,8 @@ public:
             || a.lineSnap != b.lineSnap
             || a.lineAlign != b.lineAlign
             || a.hangingPunctuation != b.hangingPunctuation
+            || a.widows != b.widows
+            || a.orphans != b.orphans
             || a.usedContentVisibility != b.usedContentVisibility
     #if ENABLE(WEBKIT_OVERFLOW_SCROLLING_CSS_PROPERTY)
             || a.overflowScrolling != b.overflowScrolling
