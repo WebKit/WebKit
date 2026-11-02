@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face { font-family: reentrantface; src: local("Helvetica"); }
+#scroller { width: 320px; height: 180px; overflow-y: scroll; }
+.spacer { height: 260px; }
+#subject { height: 80px; }
+#target { width: 10px; height: 10px; font-family: reentrantface; font-size: 16px; }
+</style>
+</head>
+<body>
+<div id="scroller">
+  <div class="spacer"></div>
+  <div id="subject"><div id="target"></div></div>
+  <div class="spacer"></div>
+</div>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(message)
+{
+    document.getElementById("log").textContent += message + "\n";
+}
+
+// Resolving a font-relative animation range start against the effect target realizes the target's
+// primary font, which settles the matching FontFace's already-materialized loaded promise. Promise
+// resolution reads FontFace.prototype.then, so the getter below runs while getKeyframes() is
+// computing the keyframes' offsets, and replaces the very keyframes being iterated over. This must
+// not use freed keyframe storage.
+
+const target = document.getElementById("target");
+const subject = document.getElementById("subject");
+const scroller = document.getElementById("scroller");
+document.body.offsetHeight;
+scroller.scrollTop = 220;
+target.offsetHeight;
+
+const face = [...document.fonts].find(fontFace => fontFace.family.replaceAll('"', "") === "reentrantface");
+// Materialize the loaded promise so that realizing the font has a promise to settle.
+face.loaded;
+
+const keyframes = [];
+for (let i = 0; i < 12; ++i)
+    keyframes.push({ offset: `entry ${Math.floor(i * 100 / 11)}%`, opacity: (i & 1) ? "0.25" : "0.75" });
+
+const timeline = new ViewTimeline({ subject, axis: "block" });
+const effect = new KeyframeEffect(target, keyframes, { duration: 1000, fill: "both" });
+const animation = new Animation(effect, timeline);
+try {
+    animation.rangeStart = "1ch";
+} catch(e) { }
+
+let reentered = false;
+Object.defineProperty(FontFace.prototype, "then", {
+    configurable: true,
+    get() {
+        if (reentered)
+            return;
+        reentered = true;
+        animation.effect = null;
+        effect.setKeyframes([]);
+        return;
+    },
+});
+
+log("PASS if this did not crash.");
+</script>
+</body>
+</html>
