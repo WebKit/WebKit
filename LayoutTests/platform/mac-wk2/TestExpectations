@@ -2668,3 +2668,5 @@ webkit.org/b/329010 [ Tahoe+ ] compositing/filters/filter-fractional-translation
 webkit.org/b/329010 [ Tahoe+ ] compositing/filters/filter-fractional-translation-flipped.html [ ImageOnlyFailure ]
 webkit.org/b/329010 [ Tahoe+ ] compositing/filters/filter-fractional-translation-perspective.html [ ImageOnlyFailure ]
 webkit.org/b/329010 [ Tahoe+ ] compositing/filters/filter-fractional-translation-rotate-y.html [ ImageOnlyFailure ]
+
+webkit.org/b/327798 [ Release ] compositing/backing/backface-visibility-flip.html [ Pass Failure ]
