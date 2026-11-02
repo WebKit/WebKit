@@ -4654,6 +4654,10 @@ void MediaPlayerPrivateGStreamer::installVideoSinkStatsProbe(const GRefPtr<GstEl
 {
     ASSERT(isMainThread());
 
+    // May be null if initialization was deferred to the playbin auto-plugging stage in the holepunch case.
+    if (!videoSink)
+        return;
+
     DataMutexLocker<VideoSinkStats> videoSinkStats { m_videoSinkStatsDataMutex };
     if (videoSinkStats->videoSink)
         uninstallVideoSinkStatsProbe();
