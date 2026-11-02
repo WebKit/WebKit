@@ -2,15 +2,11 @@
 //@ $skipModes << :lockdown
 //@ requireOptions("--forceUnlinkedDFG=0")
 
-// The baseline JIT's fast-array op_iterator_next path must profile the iterated element into the
-// getValue checkpoint's value profile. When it wrote to the computeNext slot instead, the DFG kept
-// predicting the loop variable from whatever the LLInt had sampled, so it re-speculated the same
-// wrong type on every recompilation until the reoptimization retry counter ran out.
+// Once a number shows up among strings, recompiling walk must not re-speculate that the loop variable is a string.
 
 function events(i)
 {
-    // Only the baseline JIT ever sees the number: by iteration 20000 this function is long past the
-    // LLInt.
+    // By iteration 20000, walk has long since tiered up past the LLInt.
     return i < 20000 ? ["a", "bb", "ccc"] : ["a", "bb", 0];
 }
 noInline(events);
