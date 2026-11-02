@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+    #target { color: rgb(1, 1, 1); }
+    @keyframes base-fade { from { opacity: 0; } to { opacity: 1; } }
+</style>
+</head>
+<body>
+<div id="container">
+    <div id="target" class="item">target</div>
+    <div id="sibling" class="item">sibling</div>
+    <div id="parent"><span id="child">child</span></div>
+</div>
+<script>
+const target = document.getElementById("target");
+const sibling = document.getElementById("sibling");
+const child = document.getElementById("child");
+
+function addSheet(css, before) {
+    const style = document.createElement("style");
+    style.textContent = css;
+    document.head.insertBefore(style, before ?? null);
+    return style;
+}
+
+function color(element) {
+    return getComputedStyle(element).color;
+}
+
+function cleanup(...sheets) {
+    for (const sheet of sheets)
+        sheet.remove();
+    color(target);
+}
+
+test(() => {
+    const middle = addSheet("#target { color: rgb(2, 2, 2); }");
+    const last = addSheet(".unrelated { color: rgb(9, 9, 9); }");
+    assert_equals(color(target), "rgb(2, 2, 2)");
+    middle.remove();
+    assert_equals(color(target), "rgb(1, 1, 1)");
+    cleanup(last);
+}, "Removing a sheet in the middle drops its rules");
+
+test(() => {
+    const first = addSheet("#target { color: rgb(2, 2, 2); }");
+    const second = addSheet("#target { color: rgb(3, 3, 3); }");
+    assert_equals(color(target), "rgb(3, 3, 3)");
+    first.remove();
+    assert_equals(color(target), "rgb(3, 3, 3)");
+    second.remove();
+    assert_equals(color(target), "rgb(1, 1, 1)");
+}, "Removing sheets in turn keeps the cascade order of the others");
+
+test(() => {
+    const first = addSheet("#target { color: rgb(2, 2, 2); }");
+    const second = addSheet("#target { color: rgb(3, 3, 3); }");
+    assert_equals(color(target), "rgb(3, 3, 3)");
+    document.head.appendChild(first);
+    assert_equals(color(target), "rgb(2, 2, 2)");
+    cleanup(first, second);
+}, "Moving a sheet after another one changes which rule wins");
+
+test(() => {
+    const sheet = addSheet("#target { color: rgb(2, 2, 2); }");
+    const last = addSheet(".unrelated { color: rgb(9, 9, 9); }");
+    assert_equals(color(target), "rgb(2, 2, 2)");
+    sheet.textContent = "#sibling { color: rgb(4, 4, 4); }";
+    assert_equals(color(target), "rgb(1, 1, 1)");
+    assert_equals(color(sibling), "rgb(4, 4, 4)");
+    cleanup(sheet, last);
+}, "Changing a sheet's text replaces its rules");
+
+test(() => {
+    const sheet = addSheet(".item + .item { color: rgb(5, 5, 5); } #parent > span { color: rgb(6, 6, 6); }");
+    const last = addSheet(".unrelated { color: rgb(9, 9, 9); }");
+    assert_equals(color(sibling), "rgb(5, 5, 5)");
+    assert_equals(color(child), "rgb(6, 6, 6)");
+    sheet.remove();
+    assert_not_equals(color(sibling), "rgb(5, 5, 5)");
+    assert_not_equals(color(child), "rgb(6, 6, 6)");
+    cleanup(last);
+}, "Removing a sheet updates elements its combinators matched");
+
+test(() => {
+    const sheet = addSheet("#container:has(#child) #target { color: rgb(7, 7, 7); }");
+    const last = addSheet(".unrelated { color: rgb(9, 9, 9); }");
+    assert_equals(color(target), "rgb(7, 7, 7)");
+    sheet.remove();
+    assert_equals(color(target), "rgb(1, 1, 1)");
+    cleanup(last);
+}, "Removing a sheet with :has() updates the elements it matched");
+
+test(() => {
+    const sheet = addSheet("@media all { #target { color: rgb(8, 8, 8); } }");
+    const last = addSheet(".unrelated { color: rgb(9, 9, 9); }");
+    assert_equals(color(target), "rgb(8, 8, 8)");
+    sheet.remove();
+    assert_equals(color(target), "rgb(1, 1, 1)");
+    cleanup(last);
+}, "Removing a sheet drops the rules of its media queries");
+
+test(() => {
+    const sheet = addSheet("@keyframes removed-fade { from { opacity: 0; } to { opacity: 1; } } #target { animation: removed-fade 100s; }");
+    const last = addSheet(".unrelated { color: rgb(9, 9, 9); }");
+    assert_equals(target.getAnimations().length, 1);
+    sheet.remove();
+    sibling.style.animation = "removed-fade 100s";
+    assert_equals(sibling.getAnimations().length, 0);
+    sibling.style.animation = "base-fade 100s";
+    assert_equals(sibling.getAnimations().length, 1);
+    sibling.style.animation = "";
+    cleanup(last);
+}, "Removing a sheet drops its keyframes");
+
+test(() => {
+    const order = addSheet("@layer first, second;");
+    const layered = addSheet("@layer second { #child { color: rgb(10, 10, 10); } } @layer first { #child { color: rgb(11, 11, 11); } }");
+    assert_equals(color(child), "rgb(10, 10, 10)");
+    order.remove();
+    assert_equals(color(child), "rgb(11, 11, 11)");
+    cleanup(layered);
+}, "Removing a sheet that orders layers reorders the layers of the others");
+
+test(() => {
+    const layered = addSheet("@layer second { #child { color: rgb(10, 10, 10); } } @layer first { #child { color: rgb(11, 11, 11); } }");
+    const last = addSheet(".unrelated { color: rgb(9, 9, 9); }");
+    assert_equals(color(child), "rgb(11, 11, 11)");
+    const order = addSheet("@layer first, second;", layered);
+    assert_equals(color(child), "rgb(10, 10, 10)");
+    cleanup(order, layered, last);
+}, "Inserting a sheet that orders layers before others reorders their layers");
+</script>
+</body>
+</html>

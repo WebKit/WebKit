@@ -69,6 +69,8 @@ static bool LEGACY_NODELETE shouldDirtyAllStyle(const Vector<Ref<StyleRuleBase>>
 
 static bool LEGACY_NODELETE shouldDirtyAllStyle(const StyleSheetContents& sheet)
 {
+    if (!sheet.layerRulesBeforeImportRules().isEmpty())
+        return true;
     for (auto& import : sheet.importRules()) {
         if (!import->styleSheet())
             continue;
