@@ -2090,9 +2090,12 @@ void InspectorDebuggerAgent::didContinue()
         m_frontendDispatcher->resumed();
 }
 
-void InspectorDebuggerAgent::didNotPauseForSpecialBreakpoint()
+void InspectorDebuggerAgent::didNotPauseForSpecialBreakpoint(bool willPauseForStep)
 {
-    clearPauseDetails();
+    // Unlike `clearPauseDetails()`, this does not make the breakpoint's reason the last pause reason, which a pause after
+    // an `await` or a blackboxed script reports.
+    m_pauseReason = willPauseForStep && m_javaScriptPauseScheduled ? DebuggerFrontendDispatcher::Reason::PauseOnNextStatement : DebuggerFrontendDispatcher::Reason::Other;
+    m_pauseData = nullptr;
 }
 
 void InspectorDebuggerAgent::didDeferBreakpointPause(JSC::BreakpointID breakpointId)

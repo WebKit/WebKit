@@ -1166,11 +1166,11 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
                 pausingBreakpointID = deferredBreakpoint->id();
         }
 
-        // A step that still pauses here may have no reason of its own, such as inside `breakProgram()`, so it keeps
-        // the reason of the special breakpoint. A special breakpoint armed by a condition or action is still pending.
-        if (hasSpecialBreakpoint && !hasEvaluatedSpecialBreakpoint && !didPauseForStep && !m_specialBreakpoint) {
+        // Only `breakProgram()` pauses without a reason, so a step that still pauses inside it keeps the reason of the
+        // special breakpoint. A special breakpoint armed by a condition or action is still pending.
+        if (hasSpecialBreakpoint && !hasEvaluatedSpecialBreakpoint && (!didPauseForStep || m_reasonForPause != NotPaused) && !m_specialBreakpoint) {
             dispatchFunctionToObservers([&](Observer& observer) {
-                observer.didNotPauseForSpecialBreakpoint();
+                observer.didNotPauseForSpecialBreakpoint(didPauseForStep);
             });
         }
 
@@ -1495,9 +1495,11 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
         if (shouldKeepPause) {
             schedulePauseAtNextOpportunity();
             m_afterBlackboxedScript = wasAfterBlackboxedScript;
-        } else if (hadSpecialBreakpoint) {
+        }
+
+        if (hadSpecialBreakpoint) {
             dispatchFunctionToObservers([&](Observer& observer) {
-                observer.didNotPauseForSpecialBreakpoint();
+                observer.didNotPauseForSpecialBreakpoint(shouldKeepPause);
             });
         }
     }
