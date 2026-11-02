@@ -193,13 +193,21 @@ protected:
     static ImageDrawResult drawResolvedTiled(GraphicsContext&, ImageBuffer&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing);
     static ImageDrawResult drawResolvedNinePiece(GraphicsContext&, ImageBuffer&, const ImageDrawDescriptor&, const NinePieceGeometry&);
 
+    static ImageDrawResult drawPatternBuffer(GraphicsContext&, ImageBuffer&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing);
+
     using DestinationPaint = ImageDrawResult(GraphicsContext&);
+    using PatternBufferPaint = void(GraphicsContext&);
     using TiledDraw = ImageDrawResult(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source);
     using TiledDrawPattern = ImageDrawResult(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing);
 
     static ImageDrawResult drawIntoDestination(GraphicsContext& context, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& source, NOESCAPE auto&& draw)
     {
         return drawIntoDestinationImpl(context, descriptor, destination, source, draw);
+    }
+
+    static RefPtr<ImageBuffer> createPatternBuffer(GraphicsContext& context, const ImageDrawDescriptor& descriptor, const FloatSize& size, NOESCAPE auto&& paint)
+    {
+        return createPatternBufferImpl(context, descriptor, size, paint);
     }
 
     static ImageDrawResult drawTiledUsing(GraphicsContext& context, NaturalDimensions naturalDimensions, NOESCAPE auto&& draw, NOESCAPE auto&& drawPattern, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing)
@@ -214,6 +222,7 @@ protected:
 
 private:
     static ImageDrawResult drawIntoDestinationImpl(GraphicsContext&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source, const ScopedLambda<DestinationPaint>&);
+    static RefPtr<ImageBuffer> createPatternBufferImpl(GraphicsContext&, const ImageDrawDescriptor&, const FloatSize&, const ScopedLambda<PatternBufferPaint>&);
     static ImageDrawResult drawTiledUsingImpl(GraphicsContext&, NaturalDimensions, const ScopedLambda<TiledDraw>&, const ScopedLambda<TiledDrawPattern>&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing);
     static ImageDrawResult drawTiledUsingImpl(GraphicsContext&, const ScopedLambda<TiledDrawPattern>&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, NinePieceImageRule horizontalRule, NinePieceImageRule verticalRule);
     static ImageDrawResult drawNinePieceUsingImpl(GraphicsContext&, const ScopedLambda<TiledDraw>&, const ScopedLambda<TiledDrawPattern>&, ConcreteObjectSize, const NinePieceGeometry&);

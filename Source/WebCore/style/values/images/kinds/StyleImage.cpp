@@ -119,6 +119,35 @@ ImageDrawResult Image::drawIntoDestinationImpl(GraphicsContext& context, const I
     return paint(context);
 }
 
+RefPtr<ImageBuffer> Image::createPatternBufferImpl(GraphicsContext& context, const ImageDrawDescriptor& descriptor, const FloatSize& size, const ScopedLambda<PatternBufferPaint>& paint)
+{
+    RefPtr buffer = context.createAlignedImageBuffer(size);
+    if (!buffer)
+        return nullptr;
+
+    paint(buffer->context());
+
+    if (descriptor.drawLuminanceMask == DrawLuminanceMask::Yes)
+        buffer->convertToLuminanceMask();
+
+    return buffer;
+}
+
+ImageDrawResult Image::drawPatternBuffer(GraphicsContext& context, ImageBuffer& buffer, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& tile, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing)
+{
+    // Factor in the destination context's scale to generate at the best resolution.
+    auto contextCTM = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    double xScale = std::abs(contextCTM.xScale());
+    double yScale = std::abs(contextCTM.yScale());
+    auto adjustedPatternCTM = patternTransform;
+    adjustedPatternCTM.scale(1.0 / xScale, 1.0 / yScale);
+    auto adjustedTile = tile;
+    adjustedTile.scale(xScale, yScale);
+
+    context.drawPattern(buffer, destination, adjustedTile, adjustedPatternCTM, phase, spacing, descriptor.rasterDrawingOptions());
+    return ImageDrawResult::DidDraw;
+}
+
 ImageDrawResult Image::drawTiledUsingImpl(GraphicsContext& ctxt, NaturalDimensions naturalDimensions, const ScopedLambda<TiledDraw>& draw, const ScopedLambda<TiledDrawPattern>& drawPattern, const ImageDrawDescriptor& descriptor, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing)
 {
     auto concreteObjectSize = descriptor.concreteObjectSize;

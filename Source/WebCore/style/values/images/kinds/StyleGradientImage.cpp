@@ -250,35 +250,23 @@ ImageDrawResult GradientImage::drawAsPattern(GraphicsContext& context, const Ren
     auto adjustedTile = tile;
     gradient->adjustParametersForTiledDrawing(adjustedSize, adjustedTile, spacing);
 
-    // Factor in the destination context's scale to generate at the best resolution.
-    auto contextCTM = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
-    double xScale = std::abs(contextCTM.xScale());
-    double yScale = std::abs(contextCTM.yScale());
-    auto adjustedPatternCTM = patternTransform;
-    adjustedPatternCTM.scale(1.0 / xScale, 1.0 / yScale);
-    adjustedTile.scale(xScale, yScale);
-
     auto gradientHash = gradient->hash();
     auto scaleFactor = context.scaleFactor();
 
     RefPtr buffer = cached ? cached->patternBuffer(adjustedSize, gradientHash, scaleFactor) : nullptr;
     if (!buffer) {
-        auto newBuffer = context.createAlignedImageBuffer(adjustedSize);
+        RefPtr newBuffer = createPatternBuffer(context, descriptor, adjustedSize, [&](GraphicsContext& context) {
+            context.fillRect(FloatRect { { }, adjustedSize }, gradient);
+        });
         if (!newBuffer)
             return ImageDrawResult::DidDraw;
-
-        newBuffer->context().fillRect(FloatRect { { }, adjustedSize }, gradient);
-
-        if (descriptor.drawLuminanceMask == DrawLuminanceMask::Yes)
-            newBuffer->convertToLuminanceMask();
 
         buffer = newBuffer.copyRef();
         if (cached)
             cached->setPatternBuffer(newBuffer.releaseNonNull(), adjustedSize, gradientHash, scaleFactor);
     }
 
-    context.drawPattern(*buffer, destination, adjustedTile, adjustedPatternCTM, phase, spacing, descriptor.rasterDrawingOptions());
-    return ImageDrawResult::DidDraw;
+    return drawPatternBuffer(context, *buffer, descriptor, destination, adjustedTile, patternTransform, phase, spacing);
 }
 
 bool GradientImage::knownToBeOpaque(const RenderElement& renderer) const
