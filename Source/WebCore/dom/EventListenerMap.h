@@ -71,6 +71,7 @@ public:
     void clearEntriesForTearDown()
     {
         releaseAssertOrSetThreadUID();
+        Locker locker { m_lock };
         m_entries.clear();
     }
 
