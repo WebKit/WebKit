@@ -1255,14 +1255,16 @@ TEST(CSSViewportUnits, EmptyUnobscuredSizeOverrides)
     EXPECT_FLOAT_EQ(10.5, viewportUnitLength(webView, @"lvi"));
 
     {
-        double fixedWidth = widthOfElementWithID(webView, @"fixed") + scrollbarSize();
-        double fixedHeight = heightOfElementWithID(webView, @"fixed") + scrollbarSize();
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvw"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvh"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvmin"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvmax"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvb"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvi"));
+        double layoutWidth = evaluateForNumber(webView, @"document.documentElement.clientWidth");
+        double layoutHeight = evaluateForNumber(webView, @"document.documentElement.clientHeight");
+        EXPECT_FLOAT_EQ(11, layoutWidth);
+        EXPECT_FLOAT_EQ(21, layoutHeight);
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvw"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvh"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvmin"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvmax"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvb"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvi"));
     }
 
     [webView scrollView].zoomScale = 2;
@@ -1290,14 +1292,16 @@ TEST(CSSViewportUnits, EmptyUnobscuredSizeOverrides)
     EXPECT_FLOAT_EQ(10.5, viewportUnitLength(webView, @"lvi"));
 
     {
-        double fixedWidth = widthOfElementWithID(webView, @"fixed") + scrollbarSize();
-        double fixedHeight = heightOfElementWithID(webView, @"fixed") + scrollbarSize();
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvw"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvh"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvmin"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvmax"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvb"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvi"));
+        double layoutWidth = evaluateForNumber(webView, @"document.documentElement.clientWidth");
+        double layoutHeight = evaluateForNumber(webView, @"document.documentElement.clientHeight");
+        EXPECT_FLOAT_EQ(11, layoutWidth);
+        EXPECT_FLOAT_EQ(21, layoutHeight);
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvw"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvh"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvmin"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvmax"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvb"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvi"));
     }
 
     changeCSSPropertyOfElements(webView, @"body", @"writingMode", @"'vertical-lr'");
@@ -1325,14 +1329,16 @@ TEST(CSSViewportUnits, EmptyUnobscuredSizeOverrides)
     EXPECT_FLOAT_EQ(20.5, viewportUnitLength(webView, @"lvi"));
 
     {
-        double fixedWidth = widthOfElementWithID(webView, @"fixed") + scrollbarSize();
-        double fixedHeight = heightOfElementWithID(webView, @"fixed") + scrollbarSize();
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvw"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvh"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvmin"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvmax"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvb"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvi"));
+        double layoutWidth = evaluateForNumber(webView, @"document.documentElement.clientWidth");
+        double layoutHeight = evaluateForNumber(webView, @"document.documentElement.clientHeight");
+        EXPECT_FLOAT_EQ(11, layoutWidth);
+        EXPECT_FLOAT_EQ(21, layoutHeight);
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvw"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvh"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvmin"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvmax"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvb"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvi"));
     }
 
     changeCSSPropertyOfElements(webView, @"div", @"writingMode", @"'horizontal-tb'");
@@ -1360,14 +1366,16 @@ TEST(CSSViewportUnits, EmptyUnobscuredSizeOverrides)
     EXPECT_FLOAT_EQ(10.5, viewportUnitLength(webView, @"lvi"));
 
     {
-        double fixedWidth = widthOfElementWithID(webView, @"fixed") + scrollbarSize();
-        double fixedHeight = heightOfElementWithID(webView, @"fixed") + scrollbarSize();
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvw"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvh"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvmin"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvmax"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvb"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvi"));
+        double layoutWidth = evaluateForNumber(webView, @"document.documentElement.clientWidth");
+        double layoutHeight = evaluateForNumber(webView, @"document.documentElement.clientHeight");
+        EXPECT_FLOAT_EQ(11, layoutWidth);
+        EXPECT_FLOAT_EQ(21, layoutHeight);
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvw"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvh"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvmin"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvmax"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvb"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvi"));
     }
 }
 
@@ -1401,14 +1409,16 @@ TEST(CSSViewportUnits, SameUnobscuredSizeOverrides)
     EXPECT_FLOAT_EQ(10.5, viewportUnitLength(webView, @"lvi"));
 
     {
-        double fixedWidth = widthOfElementWithID(webView, @"fixed") + scrollbarSize();
-        double fixedHeight = heightOfElementWithID(webView, @"fixed") + scrollbarSize();
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvw"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvh"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvmin"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvmax"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvb"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvi"));
+        double layoutWidth = evaluateForNumber(webView, @"document.documentElement.clientWidth");
+        double layoutHeight = evaluateForNumber(webView, @"document.documentElement.clientHeight");
+        EXPECT_FLOAT_EQ(11, layoutWidth);
+        EXPECT_FLOAT_EQ(21, layoutHeight);
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvw"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvh"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvmin"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvmax"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvb"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvi"));
     }
 
     [webView scrollView].zoomScale = 2;
@@ -1436,14 +1446,16 @@ TEST(CSSViewportUnits, SameUnobscuredSizeOverrides)
     EXPECT_FLOAT_EQ(10.5, viewportUnitLength(webView, @"lvi"));
 
     {
-        double fixedWidth = widthOfElementWithID(webView, @"fixed") + scrollbarSize();
-        double fixedHeight = heightOfElementWithID(webView, @"fixed") + scrollbarSize();
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvw"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvh"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvmin"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvmax"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvb"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvi"));
+        double layoutWidth = evaluateForNumber(webView, @"document.documentElement.clientWidth");
+        double layoutHeight = evaluateForNumber(webView, @"document.documentElement.clientHeight");
+        EXPECT_FLOAT_EQ(11, layoutWidth);
+        EXPECT_FLOAT_EQ(21, layoutHeight);
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvw"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvh"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvmin"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvmax"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvb"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvi"));
     }
 
     changeCSSPropertyOfElements(webView, @"body", @"writingMode", @"'vertical-lr'");
@@ -1471,14 +1483,16 @@ TEST(CSSViewportUnits, SameUnobscuredSizeOverrides)
     EXPECT_FLOAT_EQ(20.5, viewportUnitLength(webView, @"lvi"));
 
     {
-        double fixedWidth = widthOfElementWithID(webView, @"fixed") + scrollbarSize();
-        double fixedHeight = heightOfElementWithID(webView, @"fixed") + scrollbarSize();
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvw"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvh"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvmin"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvmax"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvb"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvi"));
+        double layoutWidth = evaluateForNumber(webView, @"document.documentElement.clientWidth");
+        double layoutHeight = evaluateForNumber(webView, @"document.documentElement.clientHeight");
+        EXPECT_FLOAT_EQ(11, layoutWidth);
+        EXPECT_FLOAT_EQ(21, layoutHeight);
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvw"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvh"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvmin"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvmax"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvb"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvi"));
     }
 
     changeCSSPropertyOfElements(webView, @"div", @"writingMode", @"'horizontal-tb'");
@@ -1506,14 +1520,16 @@ TEST(CSSViewportUnits, SameUnobscuredSizeOverrides)
     EXPECT_FLOAT_EQ(10.5, viewportUnitLength(webView, @"lvi"));
 
     {
-        double fixedWidth = widthOfElementWithID(webView, @"fixed") + scrollbarSize();
-        double fixedHeight = heightOfElementWithID(webView, @"fixed") + scrollbarSize();
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvw"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvh"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvmin"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvmax"));
-        EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvb"));
-        EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvi"));
+        double layoutWidth = evaluateForNumber(webView, @"document.documentElement.clientWidth");
+        double layoutHeight = evaluateForNumber(webView, @"document.documentElement.clientHeight");
+        EXPECT_FLOAT_EQ(11, layoutWidth);
+        EXPECT_FLOAT_EQ(21, layoutHeight);
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvw"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvh"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvmin"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvmax"));
+        EXPECT_FLOAT_EQ(layoutHeight, viewportUnitLength(webView, @"dvb"));
+        EXPECT_FLOAT_EQ(layoutWidth, viewportUnitLength(webView, @"dvi"));
     }
 }
 
@@ -1660,6 +1676,29 @@ TEST(CSSViewportUnits, DifferentUnobscuredSizeOverrides)
         EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvb"));
         EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvi"));
     }
+}
+
+TEST(CSSViewportUnits, DynamicViewportHeightDoesNotDependOnDocumentHeight)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 390, 844)]);
+    [webView setOverrideSafeAreaInset:UIEdgeInsetsMake(0, 0, 34, 0)];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'>"
+        "<style>body { margin: 0; } #content { height: 820px; } #container { width: 0; height: 0; overflow: hidden; } #dvh { width: 100dvh; height: 0; }</style>"
+        "<div id='container'><div id='dvh'></div></div><div id='content'></div>"];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(34., [webView safeAreaInsets].bottom);
+    EXPECT_EQ(810, evaluateForNumber(webView, @"document.documentElement.clientHeight"));
+
+    double dynamicViewportHeight = widthOfElementWithID(webView, @"dvh");
+    EXPECT_EQ(810, dynamicViewportHeight);
+
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('content').style.height = '830px'"];
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(dynamicViewportHeight, widthOfElementWithID(webView, @"dvh"));
 }
 
 #endif // PLATFORM(IOS_FAMILY)
