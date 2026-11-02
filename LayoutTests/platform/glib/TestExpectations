@@ -5192,6 +5192,9 @@ webkit.org/b/227061 imported/w3c/web-platform-tests/css/css-ui/outline-negative-
 
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-for-repeat-key-ending-after-scroll-container-end-is-reached.html [ Failure ] # Different outputs
 
+webkit.org/b/318345 [ x86_64 ] media/track/video-track-configuration-mp4-default-colorspace.html [ Failure Pass ]
+webkit.org/b/329812 [ arm64 ] imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
