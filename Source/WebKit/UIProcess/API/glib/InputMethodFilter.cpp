@@ -71,8 +71,6 @@ void InputMethodFilter::setContext(WebKitInputMethodContext* context)
     }
 
     m_context = context;
-    m_cursorRect = { };
-    m_surrounding = { };
     if (!m_context)
         return;
 
@@ -85,15 +83,24 @@ void InputMethodFilter::setContext(WebKitInputMethodContext* context)
 
     notifyContentType();
 
-    if (isEnabled() && isViewFocused())
+    if (!isEnabled())
+        return;
+
+    if (isViewFocused())
         notifyFocusedIn();
+    else
+        notifyCursorRectAndSurroundingToContext();
 }
 
 void InputMethodFilter::setState(std::optional<InputMethodState>&& state)
 {
     bool focusChanged = state.has_value() != m_state.has_value();
-    if (focusChanged && !state)
+    if (focusChanged && !state) {
         notifyFocusedOut();
+        // The cursor area and surrounding text are the ones of the element that lost the focus.
+        m_cursorRect = { };
+        m_surrounding = { };
+    }
 
     m_state = WTF::move(state);
     notifyContentType();
@@ -234,6 +241,10 @@ void InputMethodFilter::notifyFocusedIn()
         return;
 
     webkit_input_method_context_notify_focus_in(m_context.get());
+
+    // The cursor area and surrounding text might not change when the focus comes back, or when the context is new, so
+    // notify the ones known right away.
+    notifyCursorRectAndSurroundingToContext();
 }
 
 void InputMethodFilter::notifyFocusedOut()
@@ -242,14 +253,13 @@ void InputMethodFilter::notifyFocusedOut()
         return;
 
     cancelComposition();
-    m_cursorRect = { };
-    m_surrounding = { };
     webkit_input_method_context_notify_focus_out(m_context.get());
 }
 
 void InputMethodFilter::notifyCursorRect(const IntRect& cursorRect)
 {
-    if (!isEnabled() || !m_context)
+    // The cursor area is kept without a context too, to notify the next one of it.
+    if (!isEnabled())
         return;
 
     // Don't notify cursor area when cursorRect is default-initialized (location and size are all 0).
@@ -260,13 +270,28 @@ void InputMethodFilter::notifyCursorRect(const IntRect& cursorRect)
         return;
 
     m_cursorRect = cursorRect;
-    auto translatedRect = platformTransformCursorRectToViewCoordinates(cursorRect);
+    if (m_context)
+        notifyCursorRectToContext();
+}
+
+void InputMethodFilter::notifyCursorRectAndSurroundingToContext()
+{
+    if (m_cursorRect != IntRect { })
+        notifyCursorRectToContext();
+    if (!m_surrounding.text.isNull())
+        notifySurroundingToContext();
+}
+
+void InputMethodFilter::notifyCursorRectToContext()
+{
+    auto translatedRect = platformTransformCursorRectToViewCoordinates(m_cursorRect);
     webkit_input_method_context_notify_cursor_area(m_context.get(), translatedRect.x(), translatedRect.y(), translatedRect.width(), translatedRect.height());
 }
 
 void InputMethodFilter::notifySurrounding(const String& text, uint64_t cursorPosition, uint64_t selectionPosition)
 {
-    if (!isEnabled() || !m_context)
+    // The surrounding text is kept without a context too, to notify the next one of it.
+    if (!isEnabled())
         return;
 
     if (m_surrounding.text == text && m_surrounding.cursorPosition == cursorPosition && m_surrounding.selectionPosition == selectionPosition)
@@ -275,8 +300,16 @@ void InputMethodFilter::notifySurrounding(const String& text, uint64_t cursorPos
     m_surrounding.text = text;
     m_surrounding.cursorPosition = cursorPosition;
     m_surrounding.selectionPosition = selectionPosition;
+    if (m_context)
+        notifySurroundingToContext();
+}
 
-    auto textUTF8 = m_surrounding.text.utf8();
+void InputMethodFilter::notifySurroundingToContext()
+{
+    const auto& text = m_surrounding.text;
+    auto cursorPosition = m_surrounding.cursorPosition;
+    auto selectionPosition = m_surrounding.selectionPosition;
+    auto textUTF8 = text.utf8();
     auto cursorPositionUTF8 = cursorPosition != text.length() ? StringView(text).left(cursorPosition).utf8().length() : textUTF8.length();
     auto selectionPositionUTF8 = cursorPositionUTF8;
     if (cursorPosition != selectionPosition)

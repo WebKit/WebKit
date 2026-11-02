@@ -539,6 +539,22 @@ public:
         g_signal_emit_by_name(m_context.get(), "delete-surrounding", offset, characterCount, nullptr);
     }
 
+    GRefPtr<WebKitInputMethodContextMock> replaceContext()
+    {
+        GRefPtr<WebKitInputMethodContextMock> context = adoptGRef(static_cast<WebKitInputMethodContextMock*>(g_object_new(webkit_input_method_context_mock_get_type(), nullptr)));
+#if ENABLE(WPE_PLATFORM)
+        if (m_display)
+            webkitInputMethodContextMockSetInUsingWPEPlatformAPI(context.get());
+#endif
+        webkit_web_view_set_input_method_context(m_webView.get(), WEBKIT_INPUT_METHOD_CONTEXT(context.get()));
+        return context;
+    }
+
+    void restoreContext()
+    {
+        webkit_web_view_set_input_method_context(m_webView.get(), WEBKIT_INPUT_METHOD_CONTEXT(m_context.get()));
+    }
+
     unsigned editableSelectionStart()
     {
         auto* jsResult = runJavaScriptAndWaitUntilFinished("document.getElementById('editable').selectionStart", nullptr);
@@ -1612,6 +1628,57 @@ static void testWebKitInputMethodContextCursorArea(InputMethodTest* test, gconst
     test->waitForCursorAreaCount(1, 1000);
     test->waitForSurroundingCount(1, 1000);
 }
+
+static void testWebKitInputMethodContextSetContext(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body><div id='editable' contenteditable></div></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'abc'; getSelection().collapse(editable.firstChild, 3)", nullptr);
+    test->waitForSurroundingText("abc");
+
+    // A new context is notified of the cursor area and the surrounding text right away, although neither has changed.
+    auto context = test->replaceContext();
+    g_assert_cmpuint(context->cursorAreaCount, ==, 1);
+    g_assert_cmpstr(context->surroundingText, ==, "abc");
+    g_assert_cmpuint(context->surroundingCursorIndex, ==, 3);
+    test->restoreContext();
+
+    // The surrounding text is kept while there is no context, to notify the next one of it.
+    webkit_web_view_set_input_method_context(test->webView(), nullptr);
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'abcd'; getSelection().collapse(editable.firstChild, 4)", nullptr);
+    test->restoreContext();
+    test->waitForSurroundingText("abcd");
+}
+
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+static void testWebKitInputMethodContextViewFocus(InputMethodTest* test, gconstpointer)
+{
+    if (!test->m_display) {
+        g_test_skip("Needs the WPE platform API");
+        return;
+    }
+
+    test->loadHtml("<html><body><div id='editable' contenteditable></div></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'abc'; getSelection().collapse(editable.firstChild, 3)", nullptr);
+    test->waitForSurroundingText("abc");
+
+    // When the view gets the focus back, the input method is notified of the cursor area and the surrounding text right
+    // away, although neither has changed.
+    auto* view = webkit_web_view_get_wpe_view(test->webView());
+    wpe_view_focus_out(view);
+    test->clearInputMethodCounters();
+    wpe_view_focus_in(view);
+    g_assert_cmpuint(test->focusInCount(), ==, 1);
+    g_assert_cmpuint(test->cursorAreaCount(), ==, 1);
+    g_assert_cmpuint(test->surroundingCount(), ==, 1);
+    g_assert_cmpstr(test->surroundingText(), ==, "abc");
+}
+#endif
 
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
 static void testWebKitInputMethodContextTapEndsComposition(InputMethodTest* test, gconstpointer)
@@ -2782,6 +2849,10 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-prevented", testWebKitInputMethodContextDeleteSurroundingPrevented);
     InputMethodTest::add("WebKitInputMethodContext", "reset", testWebKitInputMethodContextReset);
     InputMethodTest::add("WebKitInputMethodContext", "cursor-area", testWebKitInputMethodContextCursorArea);
+    InputMethodTest::add("WebKitInputMethodContext", "set-context", testWebKitInputMethodContextSetContext);
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    InputMethodTest::add("WebKitInputMethodContext", "view-focus", testWebKitInputMethodContextViewFocus);
+#endif
     InputMethodTest::add("WebKitInputMethodContext", "preedit-cursor", testWebKitInputMethodContextPreeditCursor);
     InputMethodTest::add("WebKitInputMethodContext", "preedit-over-selection", testWebKitInputMethodContextPreeditOverSelection);
     InputMethodTest::add("WebKitInputMethodContext", "commit-without-preedit", testWebKitInputMethodContextCommitWithoutPreedit);
