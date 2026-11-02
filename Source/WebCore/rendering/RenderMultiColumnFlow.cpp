@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -273,12 +273,32 @@ void RenderMultiColumnFlow::setFragmentRangeForBox(const RenderBox& box, RenderF
     RenderFragmentedFlow::setFragmentRangeForBox(box, startFragment, endFragment);
 }
 
-bool RenderMultiColumnFlow::addForcedFragmentBreak(const RenderBlock* block, LayoutUnit offset, RenderBox* /*breakChild*/, bool /*isBefore*/, LayoutUnit* offsetBreakAdjustment)
+// An offset on a column top is normally treated as the bottom of the previous column, since the
+// content before it filled that column and the break coincides with the natural one. That does not
+// hold when the box carrying the break (break-after), or the sibling preceding it (break-before),
+// is empty and so has not moved the offset to the next column itself.
+static bool isForcedBreakPrecededByEmptyBox(const RenderBox* breakChild, bool isBefore)
+{
+    if (!breakChild)
+        return false;
+    const RenderObject* emptyCandidate = breakChild;
+    if (isBefore) {
+        emptyCandidate = breakChild->previousSibling();
+        while (emptyCandidate && emptyCandidate->isOutOfFlowPositioned())
+            emptyCandidate = emptyCandidate->previousSibling();
+    }
+    auto* emptyBox = dynamicDowncast<RenderBox>(emptyCandidate);
+    return emptyBox && !emptyBox->logicalHeight();
+}
+
+bool RenderMultiColumnFlow::addForcedFragmentBreak(const RenderBlock* block, LayoutUnit offset, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment)
 {
     if (auto* multicolSet = downcast<RenderMultiColumnSet>(fragmentAtBlockOffset(block, offset))) {
         multicolSet->addForcedBreak(offset);
-        if (offsetBreakAdjustment)
-            *offsetBreakAdjustment = pageLogicalHeightForOffset(offset) ? pageRemainingLogicalHeightForOffset(offset, IncludePageBoundary) : 0_lu;
+        if (offsetBreakAdjustment) {
+            auto pageBoundaryRule = isForcedBreakPrecededByEmptyBox(breakChild, isBefore) ? ExcludePageBoundary : IncludePageBoundary;
+            *offsetBreakAdjustment = pageLogicalHeightForOffset(offset) ? pageRemainingLogicalHeightForOffset(offset, pageBoundaryRule) : 0_lu;
+        }
         return true;
     }
     return false;
