@@ -76,7 +76,7 @@ private:
 
     void LEGACY_NODELETE consumeBadUrlRemnants();
     void LEGACY_NODELETE consumeSingleWhitespaceIfNext();
-    void LEGACY_NODELETE consumeUntilCommentEndFound();
+    void consumeUntilCommentEndFound();
 
     bool LEGACY_NODELETE consumeIfNext(char16_t);
     StringView consumeName();

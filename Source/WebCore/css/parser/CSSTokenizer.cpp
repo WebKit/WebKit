@@ -35,6 +35,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSTokenizerInputStream.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SIMDHelpers.h>
 #include <wtf/text/CodePointIterator.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -655,11 +656,33 @@ CSSParserToken CSSTokenizer::consumeIdentLikeToken()
     return CSSParserToken(IdentToken, name);
 }
 
+template<typename VectorMatch, typename ScalarMatch>
+static ALWAYS_INLINE unsigned skipUntilMatch8Bit(const CSSTokenizerInputStream& input, unsigned lookaheadOffset, NOESCAPE const VectorMatch& vectorMatch, NOESCAPE const ScalarMatch& scalarMatch)
+{
+    if (!input.is8Bit())
+        return lookaheadOffset;
+    auto characters = input.remainingSpan8(lookaheadOffset);
+    return lookaheadOffset + (SIMD::find(characters, vectorMatch, scalarMatch) - characters.data());
+}
+
 // http://dev.w3.org/csswg/css-syntax/#consume-a-string-token
 CSSParserToken CSSTokenizer::consumeStringTokenUntil(char16_t endingCodePoint)
 {
+    auto endingCodePointMask = SIMD::splat<Latin1Character>(endingCodePoint);
+    constexpr auto backslashMask = SIMD::splat<Latin1Character>('\\');
+    constexpr auto newlineMask = SIMD::splat<Latin1Character>('\n');
+    constexpr auto carriageReturnMask = SIMD::splat<Latin1Character>('\r');
+    constexpr auto formFeedMask = SIMD::splat<Latin1Character>('\f');
+    auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+        auto mask = SIMD::bitOr(SIMD::equal(input, endingCodePointMask), SIMD::equal(input, backslashMask), SIMD::equal(input, newlineMask), SIMD::equal(input, carriageReturnMask), SIMD::equal(input, formFeedMask));
+        return SIMD::findFirstNonZeroIndex(mask);
+    };
+    auto scalarMatch = [&](Latin1Character cc) ALWAYS_INLINE_LAMBDA {
+        return cc == endingCodePoint || cc == '\\' || isCSSNewline(cc);
+    };
+
     // Strings without escapes get handled without allocations
-    for (unsigned size = 0; ; size++) {
+    for (unsigned size = skipUntilMatch8Bit(m_input, 0, vectorMatch, scalarMatch); ; size++) {
         char16_t cc = m_input.peek(size);
         if (cc == endingCodePoint) {
             unsigned startOffset = m_input.offset();
@@ -706,8 +729,23 @@ CSSParserToken CSSTokenizer::consumeURLToken()
 {
     m_input.advanceUntilNonWhitespace();
 
+    constexpr auto spaceMask = SIMD::splat<Latin1Character>(' ');
+    constexpr auto rightParenthesisMask = SIMD::splat<Latin1Character>(')');
+    constexpr auto backslashMask = SIMD::splat<Latin1Character>('\\');
+    constexpr auto quotationMarkMask = SIMD::splat<Latin1Character>('"');
+    constexpr auto apostropheMask = SIMD::splat<Latin1Character>('\'');
+    constexpr auto leftParenthesisMask = SIMD::splat<Latin1Character>('(');
+    constexpr auto deleteMask = SIMD::splat<Latin1Character>('\x7f');
+    auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+        auto mask = SIMD::bitOr(SIMD::lessThanOrEqual(input, spaceMask), SIMD::equal(input, rightParenthesisMask), SIMD::equal(input, backslashMask), SIMD::equal(input, quotationMarkMask), SIMD::equal(input, apostropheMask), SIMD::equal(input, leftParenthesisMask), SIMD::equal(input, deleteMask));
+        return SIMD::findFirstNonZeroIndex(mask);
+    };
+    auto scalarMatch = [](Latin1Character cc) ALWAYS_INLINE_LAMBDA {
+        return cc <= ' ' || cc == ')' || cc == '\\' || cc == '"' || cc == '\'' || cc == '(' || cc == '\x7f';
+    };
+
     // URL tokens without escapes get handled without allocations
-    for (unsigned size = 0; ; size++) {
+    for (unsigned size = skipUntilMatch8Bit(m_input, 0, vectorMatch, scalarMatch); ; size++) {
         char16_t cc = m_input.peek(size);
         if (cc == ')') {
             unsigned startOffset = m_input.offset();
@@ -773,11 +811,20 @@ void CSSTokenizer::consumeSingleWhitespaceIfNext()
 
 void CSSTokenizer::consumeUntilCommentEndFound()
 {
+    constexpr auto asteriskMask = SIMD::splat<Latin1Character>('*');
+    auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+        return SIMD::findFirstNonZeroIndex(SIMD::equal(input, asteriskMask));
+    };
+    auto scalarMatch = [](Latin1Character c) ALWAYS_INLINE_LAMBDA {
+        return c == '*';
+    };
+
     char16_t c = consume();
     while (true) {
         if (c == kEndOfFileMarker)
             return;
         if (c != '*') {
+            m_input.advance(skipUntilMatch8Bit(m_input, 0, vectorMatch, scalarMatch));
             c = consume();
             continue;
         }
@@ -803,8 +850,27 @@ bool CSSTokenizer::consumeIfNext(char16_t character)
 // http://www.w3.org/TR/css3-syntax/#consume-a-name
 StringView CSSTokenizer::consumeName()
 {
+    constexpr auto caseFoldMask = SIMD::splat<Latin1Character>(0x20);
+    constexpr auto lowerAMask = SIMD::splat<Latin1Character>('a');
+    constexpr auto lowerZMask = SIMD::splat<Latin1Character>('z');
+    constexpr auto zeroMask = SIMD::splat<Latin1Character>('0');
+    constexpr auto nineMask = SIMD::splat<Latin1Character>('9');
+    constexpr auto underscoreMask = SIMD::splat<Latin1Character>('_');
+    constexpr auto hyphenMask = SIMD::splat<Latin1Character>('-');
+    constexpr auto nonASCIIMask = SIMD::splat<Latin1Character>(0x80);
+    auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+        auto folded = SIMD::bitOr(input, caseFoldMask);
+        auto isAlpha = SIMD::bitAnd(SIMD::greaterThanOrEqual(folded, lowerAMask), SIMD::lessThanOrEqual(folded, lowerZMask));
+        auto isDigit = SIMD::bitAnd(SIMD::greaterThanOrEqual(input, zeroMask), SIMD::lessThanOrEqual(input, nineMask));
+        auto isNameCodePoint = SIMD::bitOr(isAlpha, isDigit, SIMD::equal(input, underscoreMask), SIMD::equal(input, hyphenMask), SIMD::greaterThanOrEqual(input, nonASCIIMask));
+        return SIMD::findFirstNonZeroIndex(SIMD::bitNot(isNameCodePoint));
+    };
+    auto scalarMatch = [](Latin1Character cc) ALWAYS_INLINE_LAMBDA {
+        return !isNameCodePoint(cc);
+    };
+
     // Names without escapes get handled without allocations
-    for (unsigned size = 0; ; ++size) {
+    for (unsigned size = skipUntilMatch8Bit(m_input, 0, vectorMatch, scalarMatch); ; ++size) {
         char16_t cc = m_input.peek(size);
         if (isNameCodePoint(cc))
             continue;
