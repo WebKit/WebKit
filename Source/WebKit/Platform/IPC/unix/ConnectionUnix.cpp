@@ -369,7 +369,7 @@ auto Connection::platformCreateOutgoingMessage(UniqueRef<Encoder>&& encoder) -> 
 
 bool Connection::platformCanSendOutgoingMessages() const
 {
-    return true;
+    return m_isConnected;
 }
 
 auto Connection::platformSendOutgoingMessage(OutgoingMessage& message) -> PlatformSendResult

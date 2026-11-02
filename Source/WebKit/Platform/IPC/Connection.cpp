@@ -331,6 +331,7 @@ Connection::Connection(Identifier&& identifier, bool isServer, Thread::QOS recei
     : m_uniqueID(UniqueID::generate())
     , m_isServer(isServer)
     , m_connectionQueue(WorkQueue::create("com.apple.IPC.ReceiveQueue"_s, receiveQueueQOS))
+    , m_connectionQueueQOS(receiveQueueQOS)
 {
     {
         Locker locker { s_connectionMapLock };
@@ -488,7 +489,7 @@ void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWo
 
 void Connection::setOutgoingMessageQueueIsGrowingLargeCallback(OutgoingMessageQueueIsGrowingLargeCallback&& callback)
 {
-    Locker locker { m_outgoingMessagesLock };
+    Locker locker { m_sendLock };
     m_outgoingMessageQueueIsGrowingLargeCallback = Box<OutgoingMessageQueueIsGrowingLargeCallback>::create(WTF::move(callback));
 }
 
@@ -513,13 +514,13 @@ bool Connection::platformPrepareForOpen()
 
 Error Connection::flushSentMessages(Timeout timeout)
 {
-    Locker locker { m_outgoingMessagesLock };
+    Locker locker { m_sendLock };
     do {
         if (!isValid())
             return Error::InvalidConnection;
         if (!hasUnsentMessages())
             return Error::NoError;
-        m_outgoingMessagesEmptyCondition.waitUntil(m_outgoingMessagesLock, timeout.deadline());
+        m_outgoingMessagesEmptyCondition.waitUntil(m_sendLock, timeout.deadline());
     } while (!timeout.didTimeOut());
     return Error::Timeout;
 }
@@ -532,7 +533,7 @@ void Connection::invalidate()
     assertIsCurrent(dispatcher());
     m_client = nullptr;
     {
-        Locker locker { m_outgoingMessagesLock };
+        Locker locker { m_sendLock };
         m_outgoingMessageQueueIsGrowingLargeCallback = nullptr;
     }
     {
@@ -651,6 +652,11 @@ Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOp
     if (!message)
         return Error::FailedToEncodeMessageArguments;
 
+#if PLATFORM(COCOA)
+    if (trySendOnCallingThread(*message, qos))
+        return Error::NoError;
+#endif
+
     bool shouldDispatchMessageSend;
     size_t outgoingMessagesCount;
     bool shouldNotifyOfQueueGrowingLarge;
@@ -658,7 +664,9 @@ Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOp
     unsigned maxOutgoingMessageNameCount = 0;
     ASCIILiteral maxOutgoingMessageName;
     {
-        Locker locker { m_outgoingMessagesLock };
+        Locker locker { m_sendLock };
+        if (m_receiverIsGone)
+            return Error::InvalidConnection;
         shouldDispatchMessageSend = m_outgoingMessages.isEmpty();
         m_outgoingMessages.append(WTF::move(*message));
         outgoingMessagesCount = m_outgoingMessages.size();
@@ -953,7 +961,7 @@ auto Connection::sendSyncMessage(SyncRequestID syncRequestID, UniqueRef<Encoder>
 
     // Since sync IPC is blocking the current thread, make sure we use the same priority for the IPC sending thread
     // as the current thread.
-    auto sendError = sendMessageImpl(WTF::move(encoder), sendOptions, Thread::currentThreadQOS());
+    auto sendError = sendMessageImpl(WTF::move(encoder), sendOptions, Thread::currentThreadQOS().value_or(Thread::QOS::Default));
     if (sendError != Error::NoError) {
         didFailToSendSyncMessage(sendError);
         return makeUnexpected(sendError);
@@ -1285,51 +1293,115 @@ void Connection::connectionDidClose()
     dispatchDidCloseAndInvalidate();
 }
 
+#if PLATFORM(COCOA)
+
+bool Connection::canSendOnCallingThread(std::optional<Thread::QOS> qos) const
+{
+    // Never send at a lower QoS than the connection queue or the requested one, or from a thread without a QoS class.
+    // Lower Thread::QOS values are higher QoS classes.
+    auto requiredQOS = std::min(m_connectionQueueQOS, qos.value_or(m_connectionQueueQOS));
+    auto currentQOS = Thread::currentThreadQOS();
+    return currentQOS && *currentQOS <= requiredQOS;
+}
+
+bool Connection::trySendOnCallingThread(OutgoingMessage& message, std::optional<Thread::QOS> qos)
+{
+    if (!canSendOnCallingThread(qos))
+        return false;
+
+    Locker locker { m_sendLock };
+    if (!m_outgoingMessages.isEmpty() || !platformCanSendOutgoingMessages())
+        return false;
+
+    switch (platformSendOutgoingMessage(message)) {
+    case PlatformSendResult::Done:
+        break;
+    case PlatformSendResult::ReceiverIsFull:
+        m_outgoingMessages.append(WTF::move(message));
+        break;
+    case PlatformSendResult::ReceiverIsGone:
+        markReceiverGone();
+        break;
+    }
+    return true;
+}
+
+#endif // PLATFORM(COCOA)
+
 void Connection::sendOutgoingMessages()
 {
     assertIsCurrent(m_connectionQueue.get());
 
-    Locker locker { m_outgoingMessagesLock };
-    // The platform finishes sending a message it took on the connection queue, and then calls this.
-    m_sendInProgress = platformHasMessageInFlight();
-    while (m_isConnected && !m_sendInProgress && platformCanSendOutgoingMessages() && !m_outgoingMessages.isEmpty()) {
-        // Only the connection queue sends, so the message can be sent without m_outgoingMessagesLock.
-        auto message = m_outgoingMessages.takeFirst();
-        m_sendInProgress = true;
-        auto result = [&] {
-            DropLockForScope unlocker { locker };
-            return platformSendOutgoingMessage(message);
-        }();
-        m_sendInProgress = platformHasMessageInFlight();
-
-        if (result == PlatformSendResult::ReceiverIsFull) {
-            m_outgoingMessages.prepend(WTF::move(message));
+    while (true) {
+        Locker locker { m_sendLock };
+        if (!platformCanSendOutgoingMessages() || m_outgoingMessages.isEmpty())
             break;
-        }
-        if (result == PlatformSendResult::ReceiverIsGone) {
-            // No queued message can be sent anymore either, so drop them all. This releases the send rights
-            // that they carry. For example, a queued InitializeConnection message carries the send right to this
-            // connection's receive port, and this connection only gets the no-senders notification that closes
-            // it once that send right is released.
-            m_receiverIsGone = true;
-            m_outgoingMessages.clear();
-        }
+#if PLATFORM(COCOA)
+        // Keep the first message in m_outgoingMessages across the send, so that threads that send
+        // directly see a non-empty queue and can't send ahead of it.
+        auto result = platformSendOutgoingMessage(m_outgoingMessages.first());
+        if (result != PlatformSendResult::ReceiverIsFull)
+            m_outgoingMessages.removeFirst();
+#else
+        // Only the connection queue sends, so the message can be sent without m_sendLock.
+        auto message = m_outgoingMessages.takeFirst();
+        auto result = sendWithoutLock(locker, message);
+        if (result == PlatformSendResult::ReceiverIsFull)
+            m_outgoingMessages.prepend(WTF::move(message));
+#endif
+        if (result == PlatformSendResult::ReceiverIsFull)
+            break;
+        if (result == PlatformSendResult::ReceiverIsGone)
+            markReceiverGone();
     }
 
+    Locker locker { m_sendLock };
+#if !PLATFORM(COCOA)
+    m_sendInProgress = platformHasMessageInFlight();
+#endif
     if (!hasUnsentMessages())
         m_outgoingMessagesEmptyCondition.notifyAll();
 }
 
+#if !PLATFORM(COCOA)
+auto Connection::sendWithoutLock(Locker<SendLock>& locker, OutgoingMessage& message) -> PlatformSendResult
+{
+    m_sendInProgress = true;
+    auto result = [&] {
+        DropLockForScope unlocker { locker };
+        return platformSendOutgoingMessage(message);
+    }();
+    m_sendInProgress = platformHasMessageInFlight();
+    return result;
+}
+#endif
+
 bool Connection::hasUnsentMessages() const
 {
-    return !m_outgoingMessages.isEmpty() || m_sendInProgress || m_receiverIsGone;
+#if !PLATFORM(COCOA)
+    if (m_sendInProgress)
+        return true;
+#endif
+    return !m_outgoingMessages.isEmpty() || m_receiverIsGone;
+}
+
+void Connection::markReceiverGone()
+{
+    // No message can be sent anymore, so drop them all. This releases the send rights that they carry.
+    // For example, a queued InitializeConnection message carries the send right to this connection's
+    // receive port, and this connection only gets the no-senders notification that closes it once that
+    // send right is released.
+    m_receiverIsGone = true;
+    m_outgoingMessages.clear();
 }
 
 void Connection::clearOutgoingMessages()
 {
-    Locker locker { m_outgoingMessagesLock };
+    Locker locker { m_sendLock };
     m_outgoingMessages.clear();
+#if !PLATFORM(COCOA)
     m_sendInProgress = false;
+#endif
     m_outgoingMessagesEmptyCondition.notifyAll();
 }
 
