@@ -244,8 +244,8 @@ def parse_args():
     parser.add_argument('--output-xcfilelist-path', type=Path,
                         help='Path of the generated output .xcfilelist file.')
     parser.add_argument('--print-arc-sources', type=Path, metavar='PATH',
-                        help='While printing all sources, also write the .mm sources that were '
-                             'not annotated @nonARC (one per line) to PATH.')
+                        help='Write the .mm sources that were not annotated @nonARC (one per line) to '
+                             'PATH. While generating bundles, only standalone sources are written.')
     parser.add_argument('--max-cpp-bundle-count', type=int, default=None,
                         help='Use global sequential numbers for cpp bundle filenames and set the limit on the number.')
     parser.add_argument('--max-c-bundle-count', type=int, default=None,
@@ -365,6 +365,9 @@ def main() -> None:
             if args.mode == 'GenerateBundles' and args.print_bundled_sources \
                     and bundle_managers.get(source_file.bundle_manager_key) and source_file.unifiable:
                 bundled_members.append(source_file.bundled_source_form())
+            # Standalone sources don't land in an *-ARC.mm bundle, so report them separately.
+            if args.mode == 'GenerateBundles' and source_file.bundle_manager_key == '.mm' and not source_file.unifiable:
+                arc_members.append(str(source_file))
         elif args.mode == 'PrintAllSources':
             generated_sources.append(str(source_file))
             if source_file.bundle_manager_key == '.mm':
@@ -402,7 +405,7 @@ def main() -> None:
             if bundled_members:
                 f.write("\n")
 
-    if args.mode == 'PrintAllSources' and args.print_arc_sources:
+    if args.mode in ('PrintAllSources', 'GenerateBundles') and args.print_arc_sources:
         with open(args.print_arc_sources, 'w') as f:
             f.write("\n".join(arc_members))
             if arc_members:
