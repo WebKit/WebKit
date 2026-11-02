@@ -925,55 +925,40 @@ NSString* Device::addPipelineLayouts(Vector<Vector<ResolvedBindGroupLayoutEntry>
     for (auto& bindGroupLayout : pipelineLayout.bindGroupLayouts) {
         auto& entries = pipelineEntries[bindGroupLayout.group];
         HashMap<String, uint64_t> entryMap;
-        // Wrapping the bump would let the array-length entry alias a user binding and defeat the bounds check.
-        auto bumpForArrayLength = [&](uint32_t webBinding) -> std::optional<uint32_t> {
-            auto checked = checkedSum<uint32_t>(webBinding, limits().maxBindingsPerBindGroup);
-            if (checked.hasOverflowed())
-                return std::nullopt;
-            return checked.value();
-        };
         for (auto& entry : bindGroupLayout.entries) {
             auto visibility = convertVisibility(entry.visibility);
             // The entries of a shader have the visibility of its stage.
             auto stage = static_cast<size_t>(shaderStage(visibility));
             ResolvedBindGroupLayoutEntry newEntry;
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=265204 - use a set instead
-            bool isArrayLength = false;
+            bool isArrayLength = entry.name.length() && entry.name.endsWith("_ArrayLength"_s);
             uint32_t webBinding = entry.webBinding;
-            if (auto& entryName = entry.name; entryName.length()) {
-                if (entryName.endsWith("_ArrayLength"_s)) {
-                    auto bumped = bumpForArrayLength(webBinding);
-                    if (!bumped)
-                        return @"Binding index overflow in auto-generated layouts";
-                    webBinding = *bumped;
-                    isArrayLength = true;
-                }
-            }
-
-            if (auto existingBindingIndex = entries.findIf([&](const ResolvedBindGroupLayoutEntry& e) {
-                return e.binding == webBinding;
-            }); existingBindingIndex != notFound) {
-                entries[existingBindingIndex].visibility |= visibility;
-                std::span(entries[existingBindingIndex].metalBinding)[stage] = entry.binding;
-                if (!BindGroupLayout::equalBindingEntries(entries[existingBindingIndex].bindingLayout, makeBindingLayout(entry.bindingMember)))
-                    return @"Binding mismatch in auto-generated layouts";
-                entryMap.set(entry.name, webBinding);
-                continue;
-            }
             uint64_t bufferSizeForBinding = 0;
             std::optional<BindGroupLayout::BufferBindingType> bufferTypeOverride;
-            if (auto& entryName = entry.name; entryName.length()) {
-                if (isArrayLength) {
-                    auto bumped = bumpForArrayLength(webBinding);
-                    if (!bumped)
-                        return @"Binding index overflow in auto-generated layouts";
-                    webBinding = *bumped;
-                    bufferTypeOverride = BindGroupLayout::BufferBindingType::ArrayLength;
-                    auto shortName = entryName.substring(2, entryName.length() - (sizeof("_ArrayLength") + 1));
-                    if (auto it = entryMap.find(shortName); it != entryMap.end())
-                        bufferSizeForBinding = it->value;
-                } else
-                    entryMap.set(entryName, webBinding);
+
+            if (isArrayLength) {
+                auto checked = checkedSum<uint32_t>(webBinding, deviceLimits.maxBindingsPerBindGroup);
+                if (checked.hasOverflowed())
+                    return @"Binding index overflow in auto-generated layouts";
+                webBinding = checked.value();
+                bufferTypeOverride = BindGroupLayout::BufferBindingType::ArrayLength;
+                auto shortName = entry.name.substring(2, entry.name.length() - (sizeof("_ArrayLength") + 1));
+                if (auto it = entryMap.find(shortName); it != entryMap.end())
+                    bufferSizeForBinding = it->value;
+            } else {
+                if (auto existingBindingIndex = entries.findIf([&](const ResolvedBindGroupLayoutEntry& e) {
+                    auto* bufferLayout = std::get_if<BindGroupLayout::BufferBindingLayout>(&e.bindingLayout);
+                    return e.binding == webBinding && !(bufferLayout && bufferLayout->type == BindGroupLayout::BufferBindingType::ArrayLength);
+                }); existingBindingIndex != notFound) {
+                    entries[existingBindingIndex].visibility |= visibility;
+                    std::span(entries[existingBindingIndex].metalBinding)[stage] = entry.binding;
+                    if (!BindGroupLayout::equalBindingEntries(entries[existingBindingIndex].bindingLayout, makeBindingLayout(entry.bindingMember)))
+                        return @"Binding mismatch in auto-generated layouts";
+                    entryMap.set(entry.name, webBinding);
+                    continue;
+                }
+                if (entry.name.length())
+                    entryMap.set(entry.name, webBinding);
             }
 
             newEntry.binding = webBinding;
