@@ -1273,22 +1273,61 @@ def generate_one_impl(type, template_argument, serialized_types):
     return result
 
 
+def is_soft_link_header(header):
+    return header.header[1:-1].endswith('SoftLink.h')
+
+
+def unique_headers(headers):
+    conditions = {}
+    for header in headers:
+        conditions.setdefault(header.header, []).append(header.condition)
+    result = []
+    for name, header_conditions in conditions.items():
+        header_conditions = list(dict.fromkeys(header_conditions))
+        if None in header_conditions:
+            condition = None
+        elif len(header_conditions) == 1:
+            condition = header_conditions[0]
+        else:
+            condition = ' || '.join(f'({header_condition})' for header_condition in header_conditions)
+        result.append(ConditionalHeader(name, condition))
+    return sorted(result)
+
+
+def generate_impl_headers(headers):
+    headers = [header for header in headers if not header.webkit_platform and not is_soft_link_header(header)]
+    headers.append(ConditionalHeader('"GeneratedSerializers.h"', None))
+    headers.append(ConditionalHeader('"GeneratedWebKitSecureCoding.h"', None))
+    headers.append(ConditionalHeader('<wtf/IsIncreasing.h>', None))
+    headers = unique_headers(headers)
+    result = []
+    result.append(_license_header)
+    result.append('#pragma once')
+    result.append('')
+    result.extend(output_sorted_headers([header for header in headers if header.header.startswith('"')]))
+    result.append('')
+    result.extend(output_sorted_headers([header for header in headers if not header.header.startswith('"')]))
+    result.append('')
+    return '\n'.join(result)
+
+
 def generate_impl(serialized_types, serialized_enums, headers, generating_webkit_platform_impl, objc_wrapped_types, bundle_filter=None):
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
     result.append('#include "GeneratedSerializers.h"')
-    result.append('#include "GeneratedWebKitSecureCoding.h"')
-    result.append('#include <wtf/IsIncreasing.h>')
-    result.append('')
-    for header in headers:
-        if header.webkit_platform != generating_webkit_platform_impl:
-            continue
-        if header.condition is not None:
-            result.append(f'#if {header.condition}')
-        result.append(f'#include {header.header}')
-        if header.condition is not None:
-            result.append('#endif')
+    if generating_webkit_platform_impl:
+        result.append('#include "GeneratedWebKitSecureCoding.h"')
+        result.append('#include <wtf/IsIncreasing.h>')
+        result.append('')
+        impl_headers = [header for header in headers if header.webkit_platform]
+    else:
+        result.append('')
+        result.append('#include "GeneratedSerializersHeaders.h"')
+        impl_headers = unique_headers([header for header in headers if not header.webkit_platform and is_soft_link_header(header)])
+        if impl_headers:
+            result.append('')
+    result.extend(output_sorted_headers(impl_headers))
     result.append('')
     result.append('template<uint64_t...> struct BitsInIncreasingOrder;')
     result.append('template<uint64_t onlyBit> struct BitsInIncreasingOrder<onlyBit> {')
@@ -2269,6 +2308,8 @@ def main(argv):
 
     with open(output_path('GeneratedSerializers.h'), "w+") as output:
         output.write(generate_header(serialized_types, serialized_enums, additional_forward_declarations_list))
+    with open(output_path('GeneratedSerializersHeaders.h'), "w+") as output:
+        output.write(generate_impl_headers(headers))
     if split_by_directory:
         # Emit one .{ext} per bundle. Each bundle file is always emitted
         # (even if empty) so CMake/Xcode output lists stay deterministic. The

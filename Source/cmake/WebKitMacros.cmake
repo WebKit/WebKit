@@ -398,9 +398,10 @@ function(WEBKIT_DEFINE_SUBTARGET _target _parent)
 endfunction()
 
 macro(WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX _target _subtarget)
-    # Subtargets claim sources first-match-wins, so define HEADER_GROUPS subtargets
-    # before any DIRS subtarget whose directories overlap.
-    cmake_parse_arguments(_arg "" "PREFIX;CHAIN_PARENT" "PREFIX_LANGUAGES;DIRS;HEADER_GROUPS" ${ARGN})
+    # Subtargets claim sources first-match-wins, so define HEADER_GROUPS and FILES
+    # subtargets before any DIRS subtarget whose directories overlap. FILES are
+    # regular expressions matched against file names.
+    cmake_parse_arguments(_arg "" "PREFIX;CHAIN_PARENT" "PREFIX_LANGUAGES;DIRS;FILES;HEADER_GROUPS" ${ARGN})
     if (${_target}_FINALIZED)
         message(FATAL_ERROR "WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(${_target} ${_subtarget}) must be called before WEBKIT_FRAMEWORK(${_target})")
     endif ()
@@ -419,6 +420,10 @@ macro(WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX _target _subtarget)
         if (_arg_DIRS)
             string(JOIN "|" _dirs ${_arg_DIRS})
             list(FILTER ${_subtarget}_SOURCES INCLUDE REGEX "(^|[-/])(${_dirs})[-/]")
+        endif ()
+        if (_arg_FILES)
+            string(JOIN "|" _files ${_arg_FILES})
+            list(FILTER ${_subtarget}_SOURCES INCLUDE REGEX "/(${_files})$")
         endif ()
         if (_arg_HEADER_GROUPS)
             string(JOIN "|" _groups ${_arg_HEADER_GROUPS})
@@ -443,6 +448,7 @@ macro(WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX _target _subtarget)
     unset(_arg_PREFIX)
     unset(_arg_PREFIX_LANGUAGES)
     unset(_arg_DIRS)
+    unset(_arg_FILES)
     unset(_arg_HEADER_GROUPS)
 endmacro()
 

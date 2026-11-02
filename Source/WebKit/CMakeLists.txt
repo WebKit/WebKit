@@ -1271,6 +1271,7 @@ endif ()
 
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
+    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersHeaders.h
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersShared.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedExtensions.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersSharedWebGPU.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
@@ -1298,6 +1299,7 @@ endif ()
 set(_serializers_stage_dir ${WebKit_DERIVED_SOURCES_DIR}/.serializers-stage)
 set(_serializers_outputs
     GeneratedSerializers.h
+    GeneratedSerializersHeaders.h
     GeneratedSerializersShared.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     GeneratedSerializersSharedExtensions.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     GeneratedSerializersSharedWebGPU.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
@@ -1612,6 +1614,11 @@ WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebKit WebKitNetworkProcess
     PREFIX WebKitNetworkProcessPrefix.h
     PREFIX_LANGUAGES CXX OBJCXX
     DIRS NetworkProcess)
+WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebKit WebKitSerializers
+    PREFIX WebKitSerializersPrefix.h
+    PREFIX_LANGUAGES OBJCXX
+    FILES "GeneratedSerializers[A-Za-z]*\\.mm"
+    CHAIN_PARENT WebKitShared)
 WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebKit WebKitShared
     PREFIX WebKitSharedPrefix.h
     PREFIX_LANGUAGES CXX OBJCXX
