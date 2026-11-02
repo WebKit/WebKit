@@ -98,6 +98,8 @@ public:
 
     String deviceIdToPersistentId(const String&) const;
 
+    static bool isFeaturePolicyAllowingSpeakerSelection(const Document&);
+
     void willStartMediaCapture(bool microphone, bool camera);
 
 private:

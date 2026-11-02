@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      AudioContext.setSinkId() and the speaker-selection permissions policy
+    </title>
+    <script src="../../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+      // https://webaudio.github.io/web-audio-api/#validating-sink-identifier
+      // Step 2: if the document is not allowed to use the feature identified by
+      // "speaker-selection", the setSinkId() promise is rejected with NotAllowedError.
+
+      function makeFrame(t, allow) {
+        const frame = document.createElement('iframe');
+        if (allow !== undefined)
+          frame.allow = allow;
+        document.body.appendChild(frame);
+        t.add_cleanup(() => frame.remove());
+        return frame;
+      }
+
+      function makeFrameContext(t, allow) {
+        const frameWindow = makeFrame(t, allow).contentWindow;
+        const context = new frameWindow.AudioContext();
+        // The frame may be removed before this cleanup runs, in which case close() rejects.
+        t.add_cleanup(() => context.close().catch(() => {}));
+        return { frameWindow, context };
+      }
+
+      promise_test(async t => {
+        const context = new AudioContext();
+        t.add_cleanup(() => context.close());
+        await context.setSinkId({ type: 'none' });
+      }, 'setSinkId() succeeds in a top-level document, speaker-selection defaults to self.');
+
+      promise_test(async t => {
+        const { context } = makeFrameContext(t, undefined);
+        await context.setSinkId({ type: 'none' });
+      }, 'setSinkId() succeeds in a same-origin iframe without an allow attribute.');
+
+      promise_test(async t => {
+        const { frameWindow, context } = makeFrameContext(t, "speaker-selection 'none'");
+        await promise_rejects_dom(t, 'NotAllowedError', frameWindow.DOMException,
+          context.setSinkId({ type: 'none' }));
+      }, 'setSinkId() with an AudioSinkOptions rejects with NotAllowedError when speaker-selection is disallowed.');
+
+      promise_test(async t => {
+        const { frameWindow, context } = makeFrameContext(t, "speaker-selection 'none'");
+        await promise_rejects_dom(t, 'NotAllowedError', frameWindow.DOMException,
+          context.setSinkId('nonexistent-device-id'));
+      }, 'setSinkId() with a device id rejects with NotAllowedError, not NotFoundError, when speaker-selection is disallowed.');
+
+      promise_test(async t => {
+        const { context } = makeFrameContext(t, "speaker-selection 'none'");
+        // sinkId is already the empty string: setSinkId() returns early as an idempotent
+        // no-op before the sink identifier is validated.
+        await context.setSinkId('');
+      }, 'Idempotent setSinkId("") resolves even when speaker-selection is disallowed.');
+    </script>
+  </body>
+</html>

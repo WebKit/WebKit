@@ -1,0 +1,7 @@
+
+PASS setSinkId() succeeds in a top-level document, speaker-selection defaults to self.
+PASS setSinkId() succeeds in a same-origin iframe without an allow attribute.
+PASS setSinkId() with an AudioSinkOptions rejects with NotAllowedError when speaker-selection is disallowed.
+PASS setSinkId() with a device id rejects with NotAllowedError, not NotFoundError, when speaker-selection is disallowed.
+PASS Idempotent setSinkId("") resolves even when speaker-selection is disallowed.
+

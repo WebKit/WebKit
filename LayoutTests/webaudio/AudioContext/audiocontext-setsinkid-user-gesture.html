@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AudioContext.setSinkId() and the speaker-selection user gesture requirement</title>
+    <script src="../../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+      // Like HTMLMediaElement.setSinkId(), rerouting requires a user gesture when the
+      // SpeakerSelectionRequiresUserGesture setting is on (LayoutTests/http/wpt/audio-output).
+      promise_test(async t => {
+        internals.settings.setSpeakerSelectionRequiresUserGesture(true);
+        t.add_cleanup(() => internals.settings.setSpeakerSelectionRequiresUserGesture(false));
+
+        const context = new AudioContext();
+        t.add_cleanup(() => context.close());
+
+        await promise_rejects_dom(t, 'NotAllowedError', context.setSinkId({ type: 'none' }));
+
+        // A request for the current sink resolves before the gesture check.
+        await context.setSinkId('');
+
+        let promise;
+        internals.withUserGesture(() => { promise = context.setSinkId({ type: 'none' }); });
+        await promise;
+        assert_equals(context.sinkId.type, 'none');
+      }, 'setSinkId() requires a user gesture when SpeakerSelectionRequiresUserGesture is set.');
+    </script>
+  </body>
+</html>
