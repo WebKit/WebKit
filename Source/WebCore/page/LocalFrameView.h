@@ -324,8 +324,6 @@ public:
     WEBCORE_EXPORT LayoutRect layoutViewportRect() const final;
     WEBCORE_EXPORT LayoutRect visualViewportRect() const;
 
-    LayoutRect layoutViewportRectIncludingObscuredInsets() const;
-
     std::optional<LayoutRect> visibleRectOfChild(const Frame&) const final;
     OptionSet<FrameOwnerElementAppearance> appearanceOfOwnerElementOfChildFrame(const Frame&) const final;
     LayoutPoint childFrameOwnerContentBoxLocation(const Frame&) const final;
@@ -335,7 +333,7 @@ public:
     FloatRect mapAbsoluteToChildFrameViewRect(const FloatRect&, const Frame& child) const;
     static FloatRect LEGACY_NODELETE mapAbsoluteToChildFrameViewRect(const FloatRect& rectInAbsolute, const TransformationMatrix& absoluteToChildFrameOwnerLocalTransform, FloatPoint childFrameOwnerContentBoxLocation);
 
-    static LayoutRect visibleDocumentRect(const FloatRect& visibleContentRect, float headerHeight, float footerHeight, const FloatSize& totalContentsSize, float pageScaleFactor);
+    WEBCORE_EXPORT static LayoutRect visibleDocumentRect(const FloatRect& visibleContentRect, float headerHeight, float footerHeight, const FloatSize& totalContentsSize, float pageScaleFactor);
 
     // This is different than visibleContentRect() in that it ignores negative (or overly positive)
     // offsets from rubber-banding, and it takes zooming into account. 

@@ -29,12 +29,14 @@
 
 #pragma once
 
+#include <WebCore/BoxExtents.h>
 #include <WebCore/Color.h>
 #include <WebCore/FloatLine.h>
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/InspectorBackendClient.h>
 #include <WebCore/InspectorOverlayLabel.h>
+#include <WebCore/IntPoint.h>
 #include <WebCore/Path.h>
 #include <WebCore/Timer.h>
 #include <wtf/AbstractCanMakeCheckedPtr.h>
@@ -63,6 +65,7 @@ class FloatPoint;
 class GraphicsContext;
 class InspectorBackendClient;
 class LocalFrame;
+class LocalFrameView;
 class Node;
 class NodeList;
 class Page;
@@ -119,6 +122,24 @@ struct InspectorOverlayHighlight {
         Vector<InspectorOverlayLabel> labels;
     };
 
+    struct ShapeOutside {
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ShapeOutside);
+
+        std::optional<FloatQuad> boundingQuad;
+        std::optional<Path> marginPath;
+        Path shapePath;
+    };
+
+    struct NodeInfo {
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(NodeInfo);
+
+        Vector<FloatQuad> quads;
+        std::optional<ShapeOutside> shapeOutside;
+        Vector<InspectorOverlayLabel::Content> titleContents;
+        std::optional<GridHighlightOverlay> gridHighlightOverlay;
+        std::optional<FlexHighlightOverlay> flexHighlightOverlay;
+    };
+
     void setDataFromConfig(const Config& config)
     {
         contentColor = config.content;
@@ -139,6 +160,8 @@ struct InspectorOverlayHighlight {
     Vector<FloatQuad> quads;
     Vector<GridHighlightOverlay> gridHighlightOverlays;
     Vector<FlexHighlightOverlay> flexHighlightOverlays;
+    Vector<NodeInfo> nodeInfos;
+    bool showRulers { false };
     bool usePageCoordinates { true };
 
     using Bounds = FloatRect;
@@ -214,6 +237,34 @@ public:
     enum class CoordinateSystem {
         View, // Adjusts for the main frame's scroll offset.
         Document, // Does not adjust for the main frame's scroll offset.
+        MainFrameView, // Main frame view coordinates across isolated frames, with each node in nodeInfos.
+    };
+
+    struct PageGeometry {
+        FloatSize viewportSize;
+        FloatBoxExtent obscuredContentInsets;
+        IntPoint scrollOffset;
+        FloatSize visualViewportSize;
+        float pageScaleFactor { 1 };
+        float pageZoomFactor { 1 };
+        String fontFamily;
+
+        friend bool operator==(const PageGeometry&, const PageGeometry&) = default;
+    };
+
+    struct FrameHighlightGeometry {
+        struct NodeGeometry {
+            FloatRect bounds;
+            FloatRect titleBounds;
+            FloatRect guidesBounds;
+        };
+        struct Rulers {
+            bool drawTopEdge { true };
+            bool drawLeftEdge { true };
+            String viewportSizeText;
+        };
+        Vector<NodeGeometry> nodes;
+        std::optional<Rulers> rulers;
     };
 
     void update();
@@ -254,6 +305,8 @@ public:
     WEBCORE_EXPORT static void drawGridOverlay(GraphicsContext&, const InspectorOverlayHighlight::GridHighlightOverlay&);
     WEBCORE_EXPORT static void drawFlexOverlay(GraphicsContext&, const InspectorOverlayHighlight::FlexHighlightOverlay&);
 
+    WEBCORE_EXPORT static FrameHighlightGeometry drawFrameHighlight(GraphicsContext&, const Highlight&, const PageGeometry&);
+
 private:
     using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
 
@@ -267,10 +320,14 @@ private:
     void drawPaintRects(GraphicsContext&, const Deque<TimeRectPair>&);
     void drawBounds(GraphicsContext&, const Highlight::Bounds&);
     void drawRulers(GraphicsContext&, const RulerExclusion&);
+    static FloatRect drawBounds(GraphicsContext&, const Highlight::Bounds&, const PageGeometry&);
+    static FrameHighlightGeometry::Rulers drawRulers(GraphicsContext&, const RulerExclusion&, const PageGeometry&);
+    std::optional<PageGeometry> mainFramePageGeometry() const;
 
     Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
     
-    std::optional<InspectorOverlayHighlight::GridHighlightOverlay> buildGridOverlay(const InspectorOverlay::Grid&, bool offsetBoundsByScroll = false);
+    Highlight::NodeInfo buildNodeInfo(Node&, const LocalFrameView& localRootView);
+    std::optional<InspectorOverlayHighlight::GridHighlightOverlay> buildGridOverlay(const InspectorOverlay::Grid&, bool offsetBoundsByScroll = false, const LocalFrameView* localRootViewForMainFrameView = nullptr);
     std::optional<InspectorOverlayHighlight::FlexHighlightOverlay> buildFlexOverlay(const InspectorOverlay::Flex&);
 
     void updatePaintRectsTimerFired();

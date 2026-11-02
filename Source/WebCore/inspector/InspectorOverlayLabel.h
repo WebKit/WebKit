@@ -94,7 +94,10 @@ public:
     WEBCORE_EXPORT InspectorOverlayLabel(Vector<Content>&&, FloatPoint, Color backgroundColor, Arrow);
     InspectorOverlayLabel(const String&, FloatPoint, Color backgroundColor, Arrow);
 
-    Path draw(GraphicsContext&, float maximumLineWidth = 0);
+    WEBCORE_EXPORT Path draw(GraphicsContext&, float maximumLineWidth = 0);
+
+    FloatPoint location() const { return m_location; }
+    void setLocation(FloatPoint location) { m_location = location; }
 
     static FloatSize expectedSize(const Vector<Content>&, Arrow::Direction);
     static FloatSize expectedSize(const String&, Arrow::Direction);

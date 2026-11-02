@@ -94,6 +94,7 @@ OBJC_CLASS WKEditorUndoTarget;
 OBJC_CLASS WKFullScreenWindowController;
 OBJC_CLASS WKImageAnalysisOverlayViewDelegate;
 OBJC_CLASS WKImmediateActionController;
+OBJC_CLASS WKInspectorFrameHighlightView;
 OBJC_CLASS WKMouseTrackingObserver;
 OBJC_CLASS WKAppKitGestureController;
 OBJC_CLASS WKRevealItemPresenter;
@@ -265,6 +266,9 @@ public:
     bool isPointOnPDFHUD(WebCore::FloatPoint locationInView);
     RetainPtr<NSView> hitTestPDFHUD(WebCore::FloatPoint locationInView);
     bool isPointInScrollbar(CGPoint locationInView);
+
+    void frameInspectorHighlightsDidChange();
+    void frameInspectorHighlightPageGeometryMayHaveChanged();
 
     bool isViewVisible(NSView *);
 
@@ -1043,6 +1047,8 @@ private:
 #endif
 
     HashMap<WebKit::PDFPluginIdentifier, RetainPtr<NSView<WKPDFHUDView>>> _pdfHUDViews;
+
+    RetainPtr<WKInspectorFrameHighlightView> m_inspectorFrameHighlightView;
 
     RetainPtr<WKShareSheet> _shareSheet;
 

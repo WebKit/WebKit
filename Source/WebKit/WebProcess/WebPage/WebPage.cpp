@@ -1403,6 +1403,9 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
 #if ENABLE(PDF_HUD)
     updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
 #endif
+#if PLATFORM(MAC)
+    frameInspectorHighlightsNeedUpdate();
+#endif
 }
 
 void WebPage::frameGeometryChangedInAnotherProcess(Vector<FrameGeometryUpdate>&& updates)
@@ -1436,6 +1439,9 @@ void WebPage::frameGeometryChangedInAnotherProcess(Vector<FrameGeometryUpdate>&&
     updateRemoteIntersectionObservers();
 #if ENABLE(PDF_HUD)
     updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
+#endif
+#if PLATFORM(MAC)
+    frameInspectorHighlightsNeedUpdate();
 #endif
 }
 
@@ -3310,6 +3316,9 @@ void WebPage::didScalePage(double scale, const IntPoint& origin)
 
 #if ENABLE(PDF_HUD)
     updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
+#endif
+#if PLATFORM(MAC)
+    frameInspectorHighlightsNeedUpdate();
 #endif
 }
 
@@ -5957,6 +5966,9 @@ void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> fl
         m_remoteRenderingBackendProxy->finalizeRenderingUpdate();
 #endif
     flushDeferredDidReceiveMouseEvent();
+#if PLATFORM(MAC)
+    sendFrameInspectorHighlights();
+#endif
 
 #if !PLATFORM(COCOA)
     WTFEndSignpost(this, FinalizeRenderingUpdate);

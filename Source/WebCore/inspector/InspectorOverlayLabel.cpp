@@ -241,16 +241,23 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
             auto textRun = TextRun(text);
             float textWidth = font.width(textRun);
 
-            // FIXME: This looks very inefficient.
-            if (maximumLineWidth && currentLineWidth + textWidth + (labelPadding * 2) > maximumLineWidth) {
-                text = makeString(text, ellipsis);
-                while (currentLineWidth + textWidth + (labelPadding * 2) > maximumLineWidth && text.length() > 1) {
-                    // Remove the second from last character (the character before the ellipsis) and remeasure.
-                    text = makeStringByRemoving(text, text.length() - 2, 1);
-                    TextRun truncatedTextRun(text);
-                    textWidth = font.width(truncatedTextRun);
-                    textRun = truncatedTextRun;
+            if (maximumLineWidth && currentLineWidth + textWidth + (labelPadding * 2) > maximumLineWidth && !text.isEmpty()) {
+                // Bisect for the longest prefix that fits before the ellipsis, since each measurement is linear in its length.
+                auto truncatedText = [&](unsigned length) {
+                    return makeString(StringView { text }.left(length), ellipsis);
+                };
+                unsigned fittingLength { 0 };
+                unsigned maximumLength { text.length() - 1 };
+                while (fittingLength < maximumLength) {
+                    unsigned length { fittingLength + (maximumLength - fittingLength + 1) / 2 };
+                    if (currentLineWidth + font.width(TextRun { truncatedText(length) }) + (labelPadding * 2) <= maximumLineWidth)
+                        fittingLength = length;
+                    else
+                        maximumLength = length - 1;
                 }
+                text = truncatedText(fittingLength);
+                textRun = TextRun { text };
+                textWidth = font.width(textRun);
             }
 
             computedContentRuns.append({ textRun, content.textColor, content.decoration, startsNewLine, textWidth });

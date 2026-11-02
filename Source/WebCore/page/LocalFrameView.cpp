@@ -2129,29 +2129,6 @@ LayoutRect LocalFrameView::visualViewportRect() const
     return visibleDocumentRect(visibleContentRect, headerHeight(), footerHeight(), totalContentsSize(), frameScaleFactor());
 }
 
-LayoutRect LocalFrameView::layoutViewportRectIncludingObscuredInsets() const
-{
-    auto layoutViewportRect = this->layoutViewportRect();
-    if (!m_frame->isMainFrame())
-        return layoutViewportRect;
-
-    FloatBoxExtent insets;
-    if (auto* page = m_frame->page()) {
-#if PLATFORM(IOS_FAMILY)
-        insets = page->obscuredInsets();
-#else
-        insets = page->obscuredContentInsets();
-#endif
-    }
-    layoutViewportRect.expand({
-        LayoutUnit::fromFloatRound(insets.top()),
-        LayoutUnit::fromFloatRound(insets.right()),
-        LayoutUnit::fromFloatRound(insets.bottom()),
-        LayoutUnit::fromFloatRound(insets.left()),
-    });
-    return layoutViewportRect;
-}
-
 LayoutRect LocalFrameView::viewportConstrainedVisibleContentRect() const
 {
     ASSERT(!m_frame->settings().visualViewportEnabled());
@@ -3816,7 +3793,7 @@ void LocalFrameView::didChangeScrollOffset()
 {
     if (RefPtr page = m_frame->page()) {
         page->pageOverlayController().didScrollFrame(m_frame.get());
-        InspectorInstrumentation::didScroll(*page);
+        InspectorInstrumentation::didScroll(m_frame.get());
     }
 
     m_frame->loader().client().didChangeScrollOffset();

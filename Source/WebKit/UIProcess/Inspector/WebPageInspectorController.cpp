@@ -54,6 +54,12 @@
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if PLATFORM(MAC)
+#include "PageClient.h"
+#include "RemoteScrollingCoordinatorProxy.h"
+#include <WebCore/LocalFrameView.h>
+#endif
+
 namespace WebKit {
 
 using namespace Inspector;
@@ -153,6 +159,9 @@ void WebPageInspectorController::disconnectFrontend(FrontendChannel& frontendCha
             m_networkAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
         if (m_pageAgent)
             m_pageAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
+#if PLATFORM(MAC)
+        clearAllFrameHighlights();
+#endif
     }
 
     Ref inspectedPage = m_inspectedPage.get();
@@ -182,6 +191,10 @@ void WebPageInspectorController::disconnectAllFrontends()
 
     // Disconnect any remaining remote frontends.
     m_frontendRouter->disconnectAllFrontends();
+
+#if PLATFORM(MAC)
+    clearAllFrameHighlights();
+#endif
 
     Ref inspectedPage = m_inspectedPage.get();
     inspectedPage->didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
@@ -412,6 +425,10 @@ void WebPageInspectorController::frameDidChangeProcess(WebCore::FrameIdentifier 
 {
     if (m_debuggerPauseCoordinator)
         CheckedPtr { m_debuggerPauseCoordinator }->frameDidChangeProcess(frameID, newProcessID);
+
+#if PLATFORM(MAC)
+    clearFrameHighlightNotFromProcess(frameID, newProcessID);
+#endif
 }
 
 void WebPageInspectorController::mainFrameDidStartProvisionalLoad()
@@ -442,6 +459,11 @@ void WebPageInspectorController::processDidTerminate(WebProcessProxy& process)
 {
     if (m_debuggerPauseCoordinator)
         CheckedPtr { m_debuggerPauseCoordinator }->processDidTerminate(process);
+
+#if PLATFORM(MAC)
+    if (m_frameHighlights.removeIf([processID = process.coreProcessIdentifier()](auto& entry) { return entry.value.first == processID; }))
+        frameHighlightsDidChange();
+#endif
 }
 
 void WebPageInspectorController::didCreateFrame(WebFrameProxy& frame)
@@ -468,6 +490,10 @@ void WebPageInspectorController::willDestroyFrame(const WebFrameProxy& frame)
 {
     if (m_debuggerPauseCoordinator)
         CheckedPtr { m_debuggerPauseCoordinator }->frameWillBeDestroyed(frame.frameID());
+
+#if PLATFORM(MAC)
+    clearFrameHighlight(frame.frameID());
+#endif
 
     if (!shouldManageFrameTargets())
         return;
@@ -542,6 +568,10 @@ void WebPageInspectorController::willDestroyProvisionalFrame(const ProvisionalFr
 
 void WebPageInspectorController::didCommitProvisionalFrame(WebFrameProxy& frame, WebCore::ProcessIdentifier oldProcessID, std::optional<WebCore::PageIdentifier> oldPageID, WebCore::ProcessIdentifier newProcessID)
 {
+#if PLATFORM(MAC)
+    clearFrameHighlightNotFromProcess(frame.frameID(), newProcessID);
+#endif
+
     if (!shouldManageFrameTargets())
         return;
 
@@ -680,6 +710,76 @@ void WebPageInspectorController::browserExtensionsDisabled(HashSet<String>&& ext
     if (CheckedPtr enabledBrowserAgent = m_enabledBrowserAgent)
         enabledBrowserAgent->extensionsDisabled(WTF::move(extensionIDs));
 }
+
+#if PLATFORM(MAC)
+
+void WebPageInspectorController::setFrameHighlight(WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier processID, WebCore::InspectorOverlayHighlight&& highlight)
+{
+    m_frameHighlights.set(frameID, std::pair { processID, WTF::move(highlight) });
+    frameHighlightsDidChange();
+}
+
+void WebPageInspectorController::clearFrameHighlight(WebCore::FrameIdentifier frameID)
+{
+    if (m_frameHighlights.remove(frameID))
+        frameHighlightsDidChange();
+}
+
+void WebPageInspectorController::clearFrameHighlightNotFromProcess(WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier processID)
+{
+    auto iterator { m_frameHighlights.find(frameID) };
+    if (iterator == m_frameHighlights.end() || iterator->value.first == processID)
+        return;
+
+    m_frameHighlights.remove(iterator);
+    frameHighlightsDidChange();
+}
+
+void WebPageInspectorController::clearAllFrameHighlights()
+{
+    if (m_frameHighlights.isEmpty())
+        return;
+
+    m_frameHighlights.clear();
+    frameHighlightsDidChange();
+}
+
+void WebPageInspectorController::frameHighlightsDidChange()
+{
+    if (RefPtr pageClient { m_inspectedPage->pageClient() })
+        pageClient->frameInspectorHighlightsDidChange();
+}
+
+WebCore::InspectorOverlay::PageGeometry WebPageInspectorController::frameHighlightPageGeometry() const
+{
+    Ref inspectedPage { m_inspectedPage };
+    RefPtr scrollingCoordinator { inspectedPage->scrollingCoordinatorProxy() };
+    if (!scrollingCoordinator)
+        return { };
+
+    // The main frame's process reports this size, and the rulers draw ticks across it, so keep it within the view.
+    auto viewportSize { scrollingCoordinator->sizeForVisibleContent().shrunkTo(inspectedPage->viewSize()) };
+    auto obscuredContentInsets { scrollingCoordinator->obscuredContentInsets() };
+    auto scrollPosition { scrollingCoordinator->currentMainFrameScrollPosition() };
+    float pageScaleFactor { static_cast<float>(inspectedPage->pageScaleFactor()) };
+
+    // As ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition() computes the visual viewport.
+    WebCore::FloatRect unobscuredContentRect { scrollPosition, viewportSize };
+    unobscuredContentRect.contract(obscuredContentInsets.left() + obscuredContentInsets.right(), obscuredContentInsets.top() + obscuredContentInsets.bottom());
+    auto visualViewportRect { WebCore::LocalFrameView::visibleDocumentRect(unobscuredContentRect, scrollingCoordinator->headerHeight(), scrollingCoordinator->footerHeight(), scrollingCoordinator->totalContentsSize(), pageScaleFactor) };
+
+    return {
+        viewportSize,
+        obscuredContentInsets,
+        roundedIntPoint(scrollPosition),
+        visualViewportRect.size(),
+        pageScaleFactor,
+        static_cast<float>(inspectedPage->pageZoomFactor()),
+        inspectedPage->preferences().sansSerifFontFamily(),
+    };
+}
+
+#endif // PLATFORM(MAC)
 
 // Unlike closing the inspector, this leaves the page target and other frame targets connected.
 void WebPageInspectorController::disconnectFrameTargetForTesting(WebCore::FrameIdentifier frameID)

@@ -1,0 +1,635 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncFrameScrollingEnabled=true AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    html { overflow-x: hidden; }
+    body { margin: 0; height: 2000px; }
+    iframe { position: absolute; border: 0; }
+    #cross { left: 20px; top: 150px; width: 360px; height: 300px; }
+    #same { left: 420px; top: 150px; width: 360px; height: 300px; }
+    #small { left: 20px; top: 480px; width: 110px; height: 90px; }
+    #grid-frame { left: 200px; top: 480px; width: 300px; height: 110px; }
+    #sentinel { left: 600px; top: 700px; width: 100px; height: 160px; }
+</style>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function afterRendering()
+{
+    return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+async function scrollMainFrame(y)
+{
+    window.scrollTo(0, y);
+    await afterRendering();
+    return window.scrollY;
+}
+
+async function setPageScale(scale)
+{
+    await new Promise((resolve) => testRunner.runUIScript(`uiController.zoomToScale(${scale}, () => uiController.uiScriptComplete())`, resolve));
+    await afterRendering();
+}
+
+async function hoverTo(x, y)
+{
+    await eventSender.asyncMouseMoveTo(x, y);
+    await afterRendering();
+}
+
+function navigateFrame(id, url)
+{
+    return new Promise((resolve) => {
+        let frame = document.getElementById(id);
+        frame.onload = () => resolve();
+        frame.src = url;
+    });
+}
+
+async function removeFrame(id)
+{
+    document.getElementById(id).remove();
+    await afterRendering();
+}
+
+async function setObscuredTopInset(top)
+{
+    await new Promise((resolve) => testRunner.runUIScript(`uiController.setObscuredInsets(${top}, 0, 0, 0)`, resolve));
+    await afterRendering();
+}
+
+function uiInspectorHighlight()
+{
+    return new Promise((resolve) => {
+        testRunner.runUIScript(`(() => uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem("inspectorHighlight") ?? null)))()`, resolve);
+    });
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameHighlightPageWideParts");
+
+    // Page coordinates of the nodes, from the iframe and node positions in this page and the resource.
+    const crossTargetBounds = [70, 210, 100, 40];
+    const sameTargetBounds = [470, 210, 100, 40];
+    const smallNodeBounds = [25, 485, 68, 48];
+
+    const highlightConfig = {
+        showInfo: true,
+        contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+    };
+
+    let pageTarget = null;
+    let crossTarget = null;
+    let smallTarget = null;
+    let gridTarget = null;
+    let innerTarget = null;
+
+    async function evaluateInPage(expression) {
+        let {result: promise} = await pageTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+        let {result, wasThrown} = await pageTarget.RuntimeAgent.awaitPromise.invoke({promiseObjectId: promise.objectId, returnByValue: true});
+        if (wasThrown)
+            throw result.description;
+        return result.value;
+    }
+
+    async function objectIdFor(target, expression) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+        return result.objectId;
+    }
+
+    // What the UI process draws for frame highlights. Null or no frames means it draws none.
+    async function readUIHighlight() {
+        let json = await evaluateInPage("uiInspectorHighlight()");
+        try {
+            return JSON.parse(json)?.inspectorHighlight ?? null;
+        } catch {
+            return null;
+        }
+    }
+
+    function frameCount(ui) {
+        return ui?.frames?.length ?? 0;
+    }
+
+    function onlyNode(ui) {
+        if (frameCount(ui) !== 1 || ui.frames[0].nodes.length !== 1)
+            return null;
+        return ui.frames[0].nodes[0];
+    }
+
+    // Frame highlights reach the UI process after a rendering update of the frame's process, so poll.
+    async function waitForUIHighlight(predicate, timeout = 5000) {
+        let deadline = Date.now() + timeout;
+        let ui = await readUIHighlight();
+        while (!predicate(ui) && Date.now() < deadline) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            ui = await readUIHighlight();
+        }
+        return ui;
+    }
+
+    function boundsMatch(bounds, [x, y, width, height]) {
+        let near = (a, b) => Math.abs(a - b) <= 1;
+        return !!bounds && near(bounds.x, x) && near(bounds.y, y) && near(bounds.width, width) && near(bounds.height, height);
+    }
+
+    function expectThatOrLog(condition, message, actual) {
+        InspectorTest.expectThat(condition, message);
+        if (!condition)
+            InspectorTest.log("Actual: " + JSON.stringify(actual));
+    }
+
+    async function highlightAndWaitForBounds(target, expression, expectedBounds, options = {}) {
+        let objectId = await objectIdFor(target, expression);
+        await target.DOMAgent.highlightNode.invoke({objectId, highlightConfig, ...options});
+        return waitForUIHighlight((ui) => boundsMatch(onlyNode(ui)?.bounds, expectedBounds));
+    }
+
+    async function waitForValueInFrame(target, expression, predicate, timeout = 5000) {
+        let deadline = Date.now() + timeout;
+        let value;
+        do {
+            value = (await target.RuntimeAgent.evaluate.invoke({expression, returnByValue: true})).result.value;
+            if (predicate(value))
+                break;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        } while (Date.now() < deadline);
+        return value;
+    }
+
+    async function hideAndWaitForNoFrames(target) {
+        await target.DOMAgent.hideHighlight();
+        return waitForUIHighlight((ui) => !frameCount(ui));
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Wait until the cross-site frame targets have attached.",
+        async test() {
+            pageTarget = WI.assumingMainTarget();
+            crossTarget = await waitForFrameTargetForURLContaining("page-wide-parts-frame.html?cross");
+            smallTarget = await waitForFrameTargetForURLContaining("page-wide-parts-frame.html?small");
+            gridTarget = await waitForFrameTargetForURLContaining("page-wide-parts-frame.html?grid");
+            innerTarget = await waitForFrameTargetForURLContaining("page-wide-parts-frame.html?inner");
+
+            InspectorTest.expectNotNull(crossTarget, "Should find the frame target for the cross-site iframe.");
+            InspectorTest.expectNotNull(smallTarget, "Should find the frame target for the small cross-site iframe.");
+            InspectorTest.expectNotNull(gridTarget, "Should find the frame target for the cross-site iframe with a grid.");
+            InspectorTest.expectNotNull(innerTarget, "Should find the frame target for the frame nested in the cross-site iframe.");
+            InspectorTest.expectThat(crossTarget !== pageTarget && smallTarget !== pageTarget && gridTarget !== pageTarget, "Cross-site iframes should not use the page target.");
+            InspectorTest.expectThat(crossTarget !== smallTarget && crossTarget !== gridTarget && smallTarget !== gridTarget, "Each cross-site iframe should have its own frame target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "CrossSiteBoxDrawnByUIProcess",
+        description: "A highlight sent through a cross-site iframe's target should be drawn by the UI process in page coordinates, with its title.",
+        async test() {
+            let ui = await highlightAndWaitForBounds(crossTarget, "document.getElementById('target')", crossTargetBounds);
+            let node = onlyNode(ui);
+            expectThatOrLog(boundsMatch(node?.bounds, crossTargetBounds), "Should draw the box of '#target' at its page position.", ui);
+
+            let title = node?.title?.text ?? "";
+            expectThatOrLog(title.startsWith("div#target") && title.includes("100px"), "Should draw the title of '#target'.", title);
+
+            ui = await hideAndWaitForNoFrames(crossTarget);
+            expectThatOrLog(!frameCount(ui), "Should stop drawing after DOM.hideHighlight.", ui);
+        }
+    });
+
+    suite.addTestCase({
+        name: "BoxPastIframeEdge",
+        description: "A node scrolled partly above the iframe should be drawn past the iframe's top edge.",
+        async test() {
+            await crossTarget.RuntimeAgent.evaluate.invoke({expression: "window.scrollTo(0, 80)"});
+
+            try {
+                const expectedBounds = [70, 130, 100, 40];
+                let ui = await highlightAndWaitForBounds(crossTarget, "document.getElementById('target')", expectedBounds);
+                let bounds = onlyNode(ui)?.bounds;
+                expectThatOrLog(boundsMatch(bounds, expectedBounds), "Should draw the box of '#target' from y 130, above the iframe's top at y 150.", ui);
+
+                await hideAndWaitForNoFrames(crossTarget);
+            } finally {
+                await crossTarget.RuntimeAgent.evaluate.invoke({expression: "window.scrollTo(0, 0)"});
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "TitleOutsideSmallFrame",
+        description: "The title of a node in a small cross-site iframe should be placed in the window, outside the iframe.",
+        async test() {
+            let ui = await highlightAndWaitForBounds(smallTarget, "document.getElementById('n')", smallNodeBounds);
+            let node = onlyNode(ui);
+            expectThatOrLog(boundsMatch(node?.bounds, smallNodeBounds), "Should draw the box of '#n' at its page position.", ui);
+
+            let title = node?.title;
+            expectThatOrLog(!!title && title.y + title.height <= smallNodeBounds[1] + 1, "Should draw the title above '#n'.", title);
+            expectThatOrLog(!!title && title.y < 480, "Should draw the title past the iframe's top at y 480.", title);
+
+            await hideAndWaitForNoFrames(smallTarget);
+        }
+    });
+
+    suite.addTestCase({
+        name: "LongTitle",
+        description: "A node with a very long title should be drawn with its whole title.",
+        async test() {
+            const id = "long" + "x".repeat(5000);
+            await crossTarget.RuntimeAgent.evaluate.invoke({expression: `document.body.insertAdjacentHTML("beforeend", '<div id="${id}" style="position: absolute; left: 200px; top: 20px; width: 50px; height: 20px"></div>')`});
+
+            try {
+                let ui = await highlightAndWaitForBounds(crossTarget, `document.getElementById("${id}")`, [220, 170, 50, 20]);
+                let title = onlyNode(ui)?.title?.text ?? "";
+                expectThatOrLog(title.startsWith(`div#${id}`), "Should draw the title with the whole 5004 character id.", title.slice(0, 40));
+
+                await hideAndWaitForNoFrames(crossTarget);
+            } finally {
+                await crossTarget.RuntimeAgent.evaluate.invoke({expression: `document.getElementById("${id}").remove()`});
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "NodeList",
+        description: "Each node of a node list in a cross-site iframe should be drawn at its page position with its title.",
+        async test() {
+            let nodeIds = [];
+            for (let expression of ["document.getElementById('target')", "document.getElementById('n')"]) {
+                let {nodeId} = await crossTarget.DOMAgent.requestNode.invoke({objectId: await objectIdFor(crossTarget, expression)});
+                nodeIds.push(nodeId);
+            }
+            await crossTarget.DOMAgent.highlightNodeList.invoke({nodeIds, highlightConfig});
+
+            const expectedBounds = [crossTargetBounds, [25, 155, 68, 48]];
+            let nodesMatch = (ui) => frameCount(ui) === 1 && ui.frames[0].nodes.length === 2 && ui.frames[0].nodes.every((node, i) => boundsMatch(node.bounds, expectedBounds[i]));
+            let ui = await waitForUIHighlight(nodesMatch);
+            expectThatOrLog(nodesMatch(ui), "Should draw the box of '#target' and '#n' at their page positions.", ui);
+            expectThatOrLog(!!ui?.frames?.[0]?.nodes?.every((node) => node.title?.text), "Should draw the title of each node.", ui);
+
+            await hideAndWaitForNoFrames(crossTarget);
+        }
+    });
+
+    suite.addTestCase({
+        name: "NestedFrameRect",
+        description: "A rect highlighted through a same-site frame nested in a cross-site iframe should be drawn at its page position.",
+        async test() {
+            await innerTarget.DOMAgent.highlightRect.invoke({x: 10, y: 20, width: 30, height: 40, color: {r: 255, g: 0, b: 0, a: 0.5}});
+
+            // The nested frame is at 200, 150 in the cross-site iframe, which is at 20, 150 in the page.
+            const expectedBounds = [230, 320, 30, 40];
+            let ui = await waitForUIHighlight((ui) => boundsMatch(ui?.frames?.[0]?.quads?.[0], expectedBounds));
+            expectThatOrLog(boundsMatch(ui?.frames?.[0]?.quads?.[0], expectedBounds), "Should draw the rect at 230, 320 in the page.", ui);
+
+            await hideAndWaitForNoFrames(innerTarget);
+        }
+    });
+
+    suite.addTestCase({
+        name: "MainFrameScrolled",
+        description: "A highlight in a cross-site iframe should account for the main frame's scroll position.",
+        async test() {
+            let scrollY = await evaluateInPage("scrollMainFrame(100)");
+            InspectorTest.expectEqual(scrollY, 100, "Main frame should be scrolled by 100px.");
+
+            try {
+                const expectedBounds = [70, 110, 100, 40];
+                let ui = await highlightAndWaitForBounds(crossTarget, "document.getElementById('target')", expectedBounds);
+                expectThatOrLog(boundsMatch(onlyNode(ui)?.bounds, expectedBounds), "Should draw the box of '#target' 100px higher.", ui);
+
+                await hideAndWaitForNoFrames(crossTarget);
+            } finally {
+                await evaluateInPage("scrollMainFrame(0)");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "RulersAndGuides",
+        description: "A highlight with rulers in a cross-site iframe should draw page-wide rulers, guide lines and the viewport size label.",
+        async test() {
+            let ui = await highlightAndWaitForBounds(crossTarget, "document.getElementById('target')", crossTargetBounds, {showRulers: true});
+            let rulers = ui?.frames?.[0]?.rulers;
+            expectThatOrLog(!!rulers && rulers.top && rulers.left, "Should draw the rulers along the top and left edges.", rulers);
+
+            let [clientWidth, clientHeight] = await evaluateInPage("Promise.resolve([document.documentElement.clientWidth, document.documentElement.clientHeight])");
+            expectThatOrLog(boundsMatch(onlyNode(ui)?.guides, [0, 0, clientWidth, clientHeight]), "Should draw guide lines from '#target' to the edges of the page's viewport.", onlyNode(ui)?.guides);
+
+            let viewportLabel = await evaluateInPage("Promise.resolve(`${visualViewport.width}px \u00d7 ${visualViewport.height}px`)");
+            expectThatOrLog(rulers?.viewportLabel === viewportLabel, "Should label the page's visual viewport size.", rulers?.viewportLabel);
+
+            await hideAndWaitForNoFrames(crossTarget);
+        }
+    });
+
+    suite.addTestCase({
+        name: "RulerExclusion",
+        description: "Rulers should move to the bottom edge when the highlighted node is under the top edge.",
+        async test() {
+            await evaluateInPage("scrollMainFrame(205)");
+
+            try {
+                const expectedBounds = [70, 5, 100, 40];
+                let ui = await highlightAndWaitForBounds(crossTarget, "document.getElementById('target')", expectedBounds, {showRulers: true});
+                let rulers = ui?.frames?.[0]?.rulers;
+                expectThatOrLog(!!rulers && !rulers.top && rulers.left, "Should draw the horizontal ruler along the bottom edge.", ui);
+
+                await hideAndWaitForNoFrames(crossTarget);
+            } finally {
+                await evaluateInPage("scrollMainFrame(0)");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "NoRulersRequested",
+        description: "A highlight without rulers should draw no rulers or guide lines.",
+        async test() {
+            let ui = await highlightAndWaitForBounds(crossTarget, "document.getElementById('target')", crossTargetBounds);
+            expectThatOrLog(!!onlyNode(ui) && !ui.frames[0].rulers && !onlyNode(ui).guides, "Should draw no rulers or guide lines.", ui);
+
+            await hideAndWaitForNoFrames(crossTarget);
+        }
+    });
+
+    suite.addTestCase({
+        name: "RulersAtTinyPageScale",
+        description: "Rulers at a page scale that puts their ticks far closer together than a pixel should be drawn without hanging the UI process or the page's process.",
+        async test() {
+            await evaluateInPage("setPageScale(0.000001)");
+
+            try {
+                let objectId = await objectIdFor(crossTarget, "document.getElementById('target')");
+                await crossTarget.DOMAgent.highlightNode.invoke({objectId, highlightConfig, showRulers: true});
+                let ui = await waitForUIHighlight((ui) => !!ui?.frames?.[0]?.rulers);
+                expectThatOrLog(!!ui?.frames?.[0]?.rulers, "UI process should draw the rulers of the cross-site iframe's highlight.", ui);
+                await hideAndWaitForNoFrames(crossTarget);
+
+                await pageTarget.DOMAgent.highlightNode.invoke({objectId: await objectIdFor(pageTarget, "document.body"), highlightConfig, showRulers: true});
+                await evaluateInPage("afterRendering()");
+                InspectorTest.pass("The page's process should draw the rulers of the page's highlight.");
+                await pageTarget.DOMAgent.hideHighlight();
+            } finally {
+                await evaluateInPage("setPageScale(1)");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "ViewportSizeLabelWithHeader",
+        description: "The viewport size label should leave out a header, as the page's visual viewport does.",
+        async test() {
+            await evaluateInPage("(async () => { internals.setHeaderHeight(50); await afterRendering(); })()");
+
+            try {
+                let viewportLabel = await evaluateInPage("Promise.resolve(`${visualViewport.width}px \u00d7 ${visualViewport.height}px`)");
+                let objectId = await objectIdFor(crossTarget, "document.getElementById('target')");
+                await crossTarget.DOMAgent.highlightNode.invoke({objectId, highlightConfig, showRulers: true});
+
+                let ui = await waitForUIHighlight((ui) => ui?.frames?.[0]?.rulers?.viewportLabel === viewportLabel);
+                let actual = ui?.frames?.[0]?.rulers?.viewportLabel;
+                expectThatOrLog(actual === viewportLabel, "Should label the page's visual viewport size without the 50px header.", {expected: viewportLabel, actual});
+
+                await hideAndWaitForNoFrames(crossTarget);
+            } finally {
+                await evaluateInPage("(async () => { internals.setHeaderHeight(0); await afterRendering(); })()");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "GridLabelsOutside",
+        description: "Grid line labels of a grid near a cross-site iframe's edges should be placed outside the grid against the page, as for the page highlight.",
+        async test() {
+            // The grid's top left corner is at 230, 500 in the page and at 30, 20 in the iframe, so labels
+            // flipped against the iframe's edges would land inside the grid.
+            const [gridLeft, gridTop] = [230, 500];
+
+            let objectId = await objectIdFor(gridTarget, "document.getElementById('grid')");
+            let {nodeId} = await gridTarget.DOMAgent.requestNode.invoke({objectId});
+            await gridTarget.DOMAgent.showGridOverlay.invoke({nodeId, gridOverlayConfig: {gridColor: {r: 0, g: 0, b: 255, a: 1}, showLineNumbers: true}});
+
+            try {
+                let isAbove = (label) => label.y + label.height <= gridTop + 1;
+                let isLeft = (label) => label.x + label.width <= gridLeft + 1;
+                let ui = await waitForUIHighlight((ui) => ui?.frames?.[0]?.gridLabels?.length === 7);
+                let labels = ui?.frames?.[0]?.gridLabels ?? [];
+                expectThatOrLog(labels.length === 7, "Should draw a label for each of the 4 column lines and 3 row lines.", ui);
+                expectThatOrLog(labels.filter(isAbove).length === 4, "Should draw the column line labels above the grid.", labels);
+                expectThatOrLog(labels.filter((label) => !isAbove(label) && isLeft(label)).length === 3, "Should draw the row line labels to the left of the grid.", labels);
+            } finally {
+                await gridTarget.DOMAgent.hideGridOverlay.invoke({nodeId});
+                await waitForUIHighlight((ui) => !frameCount(ui));
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExtendedGridLinesUnderObscuredInset",
+        description: "Extended grid lines should reach the edges of the view under an obscured inset, as for the page highlight.",
+        async test() {
+            // Scroll the grid's rows away from the bottom edge, so only the extended column lines reach it.
+            await evaluateInPage("scrollMainFrame(200)");
+            await evaluateInPage("setObscuredTopInset(40)");
+
+            // The grid frame's process learns the main frame's smaller layout viewport from another process. An
+            // intersection observer in '#sentinel', a frame of the same site across the bottom of the view, shows when.
+            let sentinelTarget = await waitForFrameTargetForURLContaining("page-wide-parts-frame.html?sentinel");
+            let visibleHeight = await waitForValueInFrame(sentinelTarget, "window.visibleHeight", (height) => height === 60);
+            InspectorTest.expectEqual(visibleHeight, 60, "The frame's process should know that the inset leaves 60px of '#sentinel' in the layout viewport.");
+
+            let objectId = await objectIdFor(gridTarget, "document.getElementById('grid')");
+            let {nodeId} = await gridTarget.DOMAgent.requestNode.invoke({objectId});
+            await gridTarget.DOMAgent.showGridOverlay.invoke({nodeId, gridOverlayConfig: {gridColor: {r: 0, g: 0, b: 255, a: 1}, showExtendedGridLines: true}});
+
+            try {
+                let linesReachEdges = (ui) => boundsMatch(ui?.frames?.[0]?.gridLines, [0, 0, ui?.viewport?.width, ui?.viewport?.height]);
+                let ui = await waitForUIHighlight(linesReachEdges);
+                expectThatOrLog(linesReachEdges(ui), "Should extend the grid lines to all four edges of the view, including under the 40px inset.", {gridLines: ui?.frames?.[0]?.gridLines, viewport: ui?.viewport});
+            } finally {
+                await gridTarget.DOMAgent.hideGridOverlay.invoke({nodeId});
+                await waitForUIHighlight((ui) => !frameCount(ui));
+                await evaluateInPage("setObscuredTopInset(0)");
+                await evaluateInPage("scrollMainFrame(0)");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "ControlStaysOnPagePath",
+        description: "A same-site iframe's node highlighted through the page target should still be drawn by the page.",
+        async test() {
+            let objectId = await objectIdFor(pageTarget, "document.getElementById('same').contentDocument.getElementById('target')");
+            await pageTarget.DOMAgent.highlightNode.invoke({objectId, highlightConfig});
+            await evaluateInPage("afterRendering()");
+
+            let rects = JSON.parse(await evaluateInPage("Promise.resolve(JSON.stringify(Array.from(window.internals.inspectorHighlightRects())))"));
+            expectThatOrLog(boundsMatch(rects[0], sameTargetBounds), "Page should draw the box of the same-site '#target'.", rects);
+
+            let ui = await readUIHighlight();
+            expectThatOrLog(!frameCount(ui), "UI process should draw no frame highlight.", ui);
+
+            await pageTarget.DOMAgent.hideHighlight();
+        }
+    });
+
+    suite.addTestCase({
+        name: "InspectModeHover",
+        description: "Hovering a node of a cross-site iframe in inspect mode should be drawn by the UI process against the page viewport.",
+        async test() {
+            let inspectModeOptions = {enabled: true, highlightConfig};
+            await pageTarget.DOMAgent.setInspectModeEnabled.invoke(inspectModeOptions);
+            await crossTarget.DOMAgent.setInspectModeEnabled.invoke(inspectModeOptions);
+
+            try {
+                await evaluateInPage("hoverTo(120, 230)");
+                let ui = await waitForUIHighlight((ui) => boundsMatch(onlyNode(ui)?.bounds, crossTargetBounds));
+                expectThatOrLog(boundsMatch(onlyNode(ui)?.bounds, crossTargetBounds), "Should draw the box of the hovered '#target' at its page position.", ui);
+
+                let clientWidth = await evaluateInPage("Promise.resolve(document.documentElement.clientWidth)");
+                expectThatOrLog(ui?.viewport?.width === clientWidth, "Should place labels against the page's viewport width.", ui?.viewport);
+            } finally {
+                await crossTarget.DOMAgent.setInspectModeEnabled.invoke({enabled: false});
+                await pageTarget.DOMAgent.setInspectModeEnabled.invoke({enabled: false});
+                await evaluateInPage("hoverTo(790, 590)");
+            }
+
+            let ui = await waitForUIHighlight((ui) => !frameCount(ui));
+            expectThatOrLog(!frameCount(ui), "Should stop drawing after inspect mode ends.", ui);
+        }
+    });
+
+    suite.addTestCase({
+        name: "HugeGridGaps",
+        description: "Grid overlays whose gaps a transform makes far larger than the view should be drawn without hanging the UI process or the page's process, and one whose geometry overflows should not be drawn.",
+        async test() {
+            const hugeGrid = `<div id="huge-grid" style="position: absolute; left: 0; top: 0; display: grid; grid-template-columns: 0 0; grid-template-rows: 10px; column-gap: 30px; transform: scale(10000000); transform-origin: 0 0; pointer-events: none"><div></div><div></div></div>`;
+            const overflowingGrid = hugeGrid.replace("huge-grid", "overflowing-grid").replace("scale(10000000)", "scale(1e38)");
+            const gridOverlayConfig = {gridColor: {r: 0, g: 0, b: 255, a: 1}};
+
+            await crossTarget.RuntimeAgent.evaluate.invoke({expression: `document.body.insertAdjacentHTML("beforeend", '${hugeGrid}${overflowingGrid}')`});
+            let {nodeId: frameNodeId} = await crossTarget.DOMAgent.requestNode.invoke({objectId: await objectIdFor(crossTarget, "document.getElementById('huge-grid')")});
+            let {nodeId: overflowingNodeId} = await crossTarget.DOMAgent.requestNode.invoke({objectId: await objectIdFor(crossTarget, "document.getElementById('overflowing-grid')")});
+            await crossTarget.DOMAgent.showGridOverlay.invoke({nodeId: frameNodeId, gridOverlayConfig});
+            try {
+                let ui = await waitForUIHighlight((ui) => frameCount(ui) === 1);
+                expectThatOrLog(frameCount(ui) === 1, "UI process should draw the cross-site iframe's grid overlay.", ui);
+
+                await crossTarget.DOMAgent.showGridOverlay.invoke({nodeId: overflowingNodeId, gridOverlayConfig});
+                ui = await waitForUIHighlight((ui) => !frameCount(ui));
+                expectThatOrLog(!frameCount(ui), "UI process should drop the frame's highlight once a grid overlay's geometry is not finite.", ui);
+            } finally {
+                await crossTarget.DOMAgent.hideGridOverlay.invoke({nodeId: overflowingNodeId});
+                await crossTarget.DOMAgent.hideGridOverlay.invoke({nodeId: frameNodeId});
+                await waitForUIHighlight((ui) => !frameCount(ui));
+                await crossTarget.RuntimeAgent.evaluate.invoke({expression: "document.getElementById('huge-grid').remove(), document.getElementById('overflowing-grid').remove()"});
+            }
+
+            await evaluateInPage(`Promise.resolve(document.body.insertAdjacentHTML("beforeend", '${hugeGrid}'))`);
+            let {nodeId: pageNodeId} = await pageTarget.DOMAgent.requestNode.invoke({objectId: await objectIdFor(pageTarget, "document.getElementById('huge-grid')")});
+            await pageTarget.DOMAgent.showGridOverlay.invoke({nodeId: pageNodeId, gridOverlayConfig});
+            try {
+                await evaluateInPage("afterRendering()");
+                InspectorTest.pass("The page's process should draw the page's grid overlay.");
+            } finally {
+                await pageTarget.DOMAgent.hideGridOverlay.invoke({nodeId: pageNodeId});
+                await evaluateInPage("Promise.resolve(document.getElementById('huge-grid').remove())");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "LongGridAreaName",
+        description: "A grid area name far wider than its area should be truncated without hanging the UI process or the page's process.",
+        async test() {
+            const addNamedGrid = `(() => {
+                let grid = document.createElement("div");
+                grid.id = "named-grid";
+                grid.style.cssText = "position: absolute; left: 0; top: 0; display: grid; grid-template-columns: 30px; grid-template-rows: 20px; pointer-events: none";
+                grid.style.gridTemplateAreas = '"' + "a".repeat(200000) + '"';
+                document.body.append(grid);
+            })()`;
+            const gridOverlayConfig = {gridColor: {r: 0, g: 0, b: 255, a: 1}, showAreaNames: true};
+
+            await crossTarget.RuntimeAgent.evaluate.invoke({expression: addNamedGrid});
+            let {nodeId: frameNodeId} = await crossTarget.DOMAgent.requestNode.invoke({objectId: await objectIdFor(crossTarget, "document.getElementById('named-grid')")});
+            await crossTarget.DOMAgent.showGridOverlay.invoke({nodeId: frameNodeId, gridOverlayConfig});
+            try {
+                let ui = await waitForUIHighlight((ui) => frameCount(ui) === 1);
+                expectThatOrLog(frameCount(ui) === 1, "UI process should draw the cross-site iframe's grid overlay with its area name.", ui);
+            } finally {
+                await crossTarget.DOMAgent.hideGridOverlay.invoke({nodeId: frameNodeId});
+                await waitForUIHighlight((ui) => !frameCount(ui));
+                await crossTarget.RuntimeAgent.evaluate.invoke({expression: "document.getElementById('named-grid').remove()"});
+            }
+
+            await evaluateInPage(`Promise.resolve(${addNamedGrid})`);
+            let {nodeId: pageNodeId} = await pageTarget.DOMAgent.requestNode.invoke({objectId: await objectIdFor(pageTarget, "document.getElementById('named-grid')")});
+            await pageTarget.DOMAgent.showGridOverlay.invoke({nodeId: pageNodeId, gridOverlayConfig});
+            try {
+                await evaluateInPage("afterRendering()");
+                InspectorTest.pass("The page's process should draw the page's grid overlay with its area name.");
+            } finally {
+                await pageTarget.DOMAgent.hideGridOverlay.invoke({nodeId: pageNodeId});
+                await evaluateInPage("Promise.resolve(document.getElementById('named-grid').remove())");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "DisconnectedFrameTargetClearsUI",
+        description: "Disconnecting a frame target, as closing Web Inspector does, should stop the UI process from drawing its highlight.",
+        async test() {
+            // '#n' is at 5, 5 in the nested frame.
+            const expectedBounds = [225, 305, 68, 48];
+            let ui = await highlightAndWaitForBounds(innerTarget, "document.getElementById('n')", expectedBounds);
+            expectThatOrLog(frameCount(ui) === 1, "Should draw the highlight before the frame target disconnects.", ui);
+
+            innerTarget.RuntimeAgent.evaluate.invoke({expression: "setTimeout(() => testRunner.disconnectFrameInspectorTarget())"});
+            ui = await waitForUIHighlight((ui) => !frameCount(ui));
+            expectThatOrLog(!frameCount(ui), "Should stop drawing after the frame target disconnects.", ui);
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemovedFrameClearsUI",
+        description: "Removing a highlighted cross-site iframe should stop the UI process from drawing its highlight.",
+        async test() {
+            let ui = await highlightAndWaitForBounds(crossTarget, "document.getElementById('target')", crossTargetBounds);
+            expectThatOrLog(frameCount(ui) === 1, "Should draw the highlight before the iframe is removed.", ui);
+
+            await evaluateInPage("removeFrame('cross')");
+            ui = await waitForUIHighlight((ui) => !frameCount(ui));
+            expectThatOrLog(!frameCount(ui), "Should stop drawing after the iframe is removed.", ui);
+        }
+    });
+
+    suite.addTestCase({
+        name: "NavigatedFrameClearsUI",
+        description: "Navigating a highlighted cross-site iframe to another site should stop the UI process from drawing its highlight.",
+        async test() {
+            let ui = await highlightAndWaitForBounds(smallTarget, "document.getElementById('n')", smallNodeBounds);
+            expectThatOrLog(frameCount(ui) === 1, "Should draw the highlight before the iframe navigates.", ui);
+
+            await evaluateInPage("navigateFrame('small', 'http://127.0.0.1:8000/site-isolation/inspector/dom/resources/page-wide-parts-frame.html?navigated')");
+            ui = await waitForUIHighlight((ui) => !frameCount(ui));
+            expectThatOrLog(!frameCount(ui), "Should stop drawing after the iframe navigates to another site.", ui);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that the UI process draws highlights of nodes in cross-site iframes over the page, in page coordinates.</p>
+<iframe id="cross" src="http://localhost:8000/site-isolation/inspector/dom/resources/page-wide-parts-frame.html?cross"></iframe>
+<iframe id="same" src="resources/page-wide-parts-frame.html?same"></iframe>
+<iframe id="small" src="http://localhost:8000/site-isolation/inspector/dom/resources/page-wide-parts-frame.html?small"></iframe>
+<iframe id="grid-frame" src="http://localhost:8000/site-isolation/inspector/dom/resources/page-wide-parts-frame.html?grid"></iframe>
+<iframe id="sentinel" src="http://localhost:8000/site-isolation/inspector/dom/resources/page-wide-parts-frame.html?sentinel"></iframe>
+</body>
+</html>
