@@ -7175,6 +7175,126 @@ class TestCheckChangeRelevanceForWebDriver(unittest.TestCase):
         self.assertTrue(CheckChangeRelevance()._patch_is_relevant('Source/WebCore/dom/Document.cpp', 'macOS-Tahoe-Debug-API-Tests-EWS'))
 
 
+class TestCheckChangeRelevanceBuildGroup(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def test_skips_pure_readme(self):
+        CheckChangeRelevance._get_patch = lambda x: b'README.md'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'iOS-26-Build-EWS')
+        self.expect_outcome(result=FAILURE, state_string="Patch doesn't have relevant changes")
+        return self.run_step()
+
+    def test_skips_metadata_only(self):
+        CheckChangeRelevance._get_patch = lambda x: b'metadata/contributors.json'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'macOS-Sequoia-Release-Build-EWS')
+        self.expect_outcome(result=FAILURE, state_string="Patch doesn't have relevant changes")
+        return self.run_step()
+
+    def test_skips_cisupport_only(self):
+        CheckChangeRelevance._get_patch = lambda x: b'Tools/CISupport/ews-build/steps.py'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'GTK-Build-EWS')
+        self.expect_outcome(result=FAILURE, state_string="Patch doesn't have relevant changes")
+        return self.run_step()
+
+    def test_skips_websites_only(self):
+        CheckChangeRelevance._get_patch = lambda x: b'Websites/webkit.org/_posts/2026-10-19-foo.md'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'WPE-Build-EWS')
+        self.expect_outcome(result=FAILURE, state_string="Patch doesn't have relevant changes")
+        return self.run_step()
+
+    def test_skips_docs_only(self):
+        CheckChangeRelevance._get_patch = lambda x: b'docs/porting-webkit.md'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'iOS-26-Simulator-Build-EWS')
+        self.expect_outcome(result=FAILURE, state_string="Patch doesn't have relevant changes")
+        return self.run_step()
+
+    def test_skips_wpe_platform_docs(self):
+        CheckChangeRelevance._get_patch = lambda x: b'Source/WebKit/WPEPlatform/docs/tutorial-platform.md'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'WPE-Build-EWS')
+        self.expect_outcome(result=FAILURE, state_string="Patch doesn't have relevant changes")
+        return self.run_step()
+
+    def test_fires_for_source_change(self):
+        CheckChangeRelevance._get_patch = lambda x: b'Source/WebCore/dom/Node.cpp'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'iOS-26-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_fires_for_layouttests_change(self):
+        CheckChangeRelevance._get_patch = lambda x: b'LayoutTests/fast/foo.html'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'macOS-Sequoia-Release-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_fires_for_jstests_change(self):
+        # JSTests fires platform Builds so downstream JSC-Tests-x86-64 can run.
+        CheckChangeRelevance._get_patch = lambda x: b'JSTests/microbenchmarks/foo.js'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'macOS-Sequoia-Release-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_fires_for_tools_scripts_change(self):
+        # Tools/Scripts/* fires; the skip list intentionally doesn't carve out subpaths.
+        CheckChangeRelevance._get_patch = lambda x: b'Tools/Scripts/filter-test-logs'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'iOS-26-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_fires_for_mixed_docs_and_source(self):
+        CheckChangeRelevance._get_patch = lambda x: b'README.md\nSource/WebCore/dom/Node.cpp'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'iOS-26-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_fires_for_unknown_new_path(self):
+        # Safe default: unknown paths fire.
+        CheckChangeRelevance._get_patch = lambda x: b'SomeNewTopLevelDir/foo.txt'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'iOS-26-Build-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_services_group_still_runs_for_cisupport(self):
+        # Services-EWS uses its own services-ews group, not build.
+        CheckChangeRelevance._get_patch = lambda x: b'Tools/CISupport/ews-build/steps.py'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'Services-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_webkitpy_group_still_runs_for_metadata(self):
+        # WebKitPy-Tests-EWS uses the webkitpy group.
+        CheckChangeRelevance._get_patch = lambda x: b'metadata/contributors.json'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'WebKitPy-Tests-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+    def test_jsc_group_still_runs_for_jstests(self):
+        # JSC-Tests-O3-Debug-arm64-EWS uses the jsc group.
+        CheckChangeRelevance._get_patch = lambda x: b'JSTests/microbenchmarks/foo.js'
+        self.setup_step(CheckChangeRelevance())
+        self.setProperty('buildername', 'JSC-Tests-O3-Debug-arm64-EWS')
+        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.run_step()
+
+
 class TestGetTestExpectationsBaseline(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
