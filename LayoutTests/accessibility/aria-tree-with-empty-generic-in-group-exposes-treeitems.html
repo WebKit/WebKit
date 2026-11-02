@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<div id="tree" role="tree">
+  <div role="treeitem" aria-level="1">Cats</div>
+  <div id="item-1" role="treeitem" aria-level="1" aria-expanded="true">Jungle Animals</div>
+  <div role="group" aria-owns="lions zebras"><div></div></div>
+  <div><div id="wrapped" role="treeitem" aria-level="2">Wrapped</div></div>
+  <div id="lions" role="treeitem" aria-level="2">Lions</div>
+  <div id="zebras" role="treeitem" aria-level="2">Zebras</div>
+</div>
+</div>
+
+<script>
+var output = "This test ensures treeitems are still exposed when the tree contains empty generic elements, or generic elements wrapping treeitems.\n\n";
+
+function dump(element, indent) {
+    output += `${indent}${element.role}\n`;
+    for (let i = 0; i < element.childrenCount; ++i)
+        dump(element.childAtIndex(i), indent + "  ");
+}
+
+if (window.accessibilityController) {
+    dump(accessibilityController.accessibleElementById("tree"), "");
+    document.getElementById("content").style.display = "none";
+    debug(output);
+}
+</script>
+</body>
+</html>
