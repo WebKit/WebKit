@@ -98,8 +98,8 @@ using RepaintRequirements = OptionSet<RepaintRequirement>;
 
 class AnnotationTrackingState {
 public:
-    RepaintRequirements startAnnotationTracking(RetainPtr<PDFAnnotation>&&, WebCore::PlatformEventType, WebCore::MouseButton);
-    RepaintRequirements finishAnnotationTracking(PDFAnnotation* annotationUnderMouse, WebCore::PlatformEventType, WebCore::MouseButton);
+    RepaintRequirements startAnnotationTracking(RetainPtr<PDFAnnotation>&&, WebCore::PlatformEventType, std::optional<WebCore::MouseButton>);
+    RepaintRequirements finishAnnotationTracking(PDFAnnotation* annotationUnderMouse, WebCore::PlatformEventType, std::optional<WebCore::MouseButton>);
 
     PDFAnnotation *trackedAnnotation() const { return m_trackedAnnotation.get(); }
     bool LEGACY_NODELETE isBeingHovered() const;
@@ -593,9 +593,9 @@ private:
 
     void followLinkAnnotation(PDFAnnotation *, std::optional<WebCore::PlatformMouseEvent>&& = std::nullopt);
 
-    void startTrackingAnnotation(RetainPtr<PDFAnnotation>&&, WebCore::PlatformEventType, WebCore::MouseButton);
+    void startTrackingAnnotation(RetainPtr<PDFAnnotation>&&, WebCore::PlatformEventType, std::optional<WebCore::MouseButton>);
     void updateTrackedAnnotation(PDFAnnotation *annotationUnderMouse);
-    void finishTrackingAnnotation(PDFAnnotation *annotationUnderMouse, WebCore::PlatformEventType, WebCore::MouseButton, RepaintRequirements = { });
+    void finishTrackingAnnotation(PDFAnnotation *annotationUnderMouse, WebCore::PlatformEventType, std::optional<WebCore::MouseButton>, RepaintRequirements = { });
 
     void revealAnnotation(PDFAnnotation *);
 

@@ -77,8 +77,8 @@ WebCore::PlatformGestureEvent platform(const WebGestureEvent&);
 WebCore::MouseEventInputSource LEGACY_NODELETE platform(WebEventInputSource);
 WebEventInputSource LEGACY_NODELETE kit(WebCore::MouseEventInputSource);
 
-WebCore::MouseButton platform(WebMouseEventButton);
-WebMouseEventButton LEGACY_NODELETE kit(WebCore::MouseButton);
+std::optional<WebCore::MouseButton> platform(WebMouseEventButton);
+WebMouseEventButton LEGACY_NODELETE kit(std::optional<WebCore::MouseButton>);
 
 WebCore::PlatformEvent::Type LEGACY_NODELETE platform(WebEventType);
 WebEventType LEGACY_NODELETE kit(WebCore::PlatformEvent::Type);

@@ -50,7 +50,7 @@ public:
 // FIXME: This function doesn't really belong in this header.
 WEBCORE_EXPORT NSPoint globalPoint(const NSPoint& windowPoint, NSWindow *);
 
-WEBCORE_EXPORT MouseButton mouseButtonForEvent(NSEvent *);
+WEBCORE_EXPORT std::optional<MouseButton> mouseButtonForEvent(NSEvent *);
 WEBCORE_EXPORT unsigned short currentlyPressedMouseButtons();
 WEBCORE_EXPORT PlatformEvent::Type mouseEventTypeForEvent(NSEvent *);
 WEBCORE_EXPORT int clickCountForEvent(NSEvent *);

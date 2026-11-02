@@ -948,7 +948,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
     NSWindow *window = [sender window];
     NSEvent *nsEvent = [window currentEvent];
-    WebCore::MouseButton button = WebCore::MouseButton::None;
+    std::optional<WebCore::MouseButton> button;
     RefPtr<WebCore::Event> event;
     switch ([nsEvent type]) {
     case NSEventTypeLeftMouseUp:
@@ -969,7 +969,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     default:
         break;
     }
-    if (button != WebCore::MouseButton::None) {
+    if (button) {
         // FIXME: Use createPlatformMouseEvent instead.
         event = WebCore::MouseEvent::create(
             WebCore::eventNames().clickEvent,

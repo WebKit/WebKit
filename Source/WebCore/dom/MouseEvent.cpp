@@ -110,7 +110,7 @@ Ref<MouseEvent> MouseEvent::create(
     double movementX,
     double movementY,
     OptionSet<Modifier> modifiers,
-    MouseButton button,
+    std::optional<MouseButton> button,
     unsigned short buttons,
     RefPtr<EventTarget>&& relatedTarget,
     double force,
@@ -226,7 +226,7 @@ MouseEvent::MouseEvent(
     double movementX,
     double movementY,
     OptionSet<Modifier> modifiers,
-    MouseButton button,
+    std::optional<MouseButton> button,
     unsigned short buttons,
     RefPtr<EventTarget>&& relatedTarget,
     double force,
@@ -254,10 +254,10 @@ MouseEvent::MouseEvent(
         isSimulated,
         isTrusted
     )
-    , m_button(std::to_underlying(button == MouseButton::None ? MouseButton::Left : button))
+    , m_button(std::to_underlying(button.value_or(MouseButton::Left)))
     , m_buttons(buttons)
-    , m_syntheticClickType(button == MouseButton::None ? SyntheticClickType::NoTap : syntheticClickType)
-    , m_buttonDown(button != MouseButton::None)
+    , m_syntheticClickType(button ? syntheticClickType : SyntheticClickType::NoTap)
+    , m_buttonDown(button.has_value())
     , m_relatedTarget(WTF::move(relatedTarget))
     , m_force(force)
     , m_coalescedEvents(coalescedEvents)
@@ -301,10 +301,10 @@ MouseEvent::MouseEvent(
         modifiers,
         IsSimulated::No
     )
-    , m_button(std::to_underlying(button == MouseButton::None ? MouseButton::Left : button))
+    , m_button(std::to_underlying(button))
     , m_buttons(buttons)
-    , m_syntheticClickType(button == MouseButton::None ? SyntheticClickType::NoTap : syntheticClickType)
-    , m_buttonDown(button != MouseButton::None)
+    , m_syntheticClickType(syntheticClickType)
+    , m_buttonDown(true)
     , m_relatedTarget(WTF::move(relatedTarget))
 {
     initCoordinates(clientLocation);
@@ -322,7 +322,6 @@ MouseEvent::MouseEvent(
     , m_buttonDown(true)
     , m_relatedTarget(initializer.relatedTarget)
 {
-    ASSERT(isTrusted == IsTrusted::No || initializer.button != std::to_underlying(MouseButton::None));
     initCoordinates({ initializer.clientX, initializer.clientY });
 }
 
