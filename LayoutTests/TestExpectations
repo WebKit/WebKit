@@ -7111,7 +7111,6 @@ imported/w3c/web-platform-tests/css/css-break/avoid-border-break.html [ ImageOnl
 imported/w3c/web-platform-tests/css/css-break/background-attachment-fixed.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/background-image-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/block-in-inline-011.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-break/border-image-000.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/borders-000.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/borders-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/borders-002.html [ ImageOnlyFailure ]
