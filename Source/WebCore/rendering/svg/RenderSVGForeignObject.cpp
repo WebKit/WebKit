@@ -27,6 +27,7 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
@@ -84,12 +85,14 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint& pain
 
 void RenderSVGForeignObject::updateLogicalWidth()
 {
-    setBorderBoxWidth(enclosingLayoutRect(m_viewport).width());
+    auto viewportRect = enclosingLayoutRect(m_viewport);
+    setLogicalWidth(writingMode().isHorizontal() ? viewportRect.width() : viewportRect.height());
 }
 
 RenderBox::LogicalExtentComputedValues RenderSVGForeignObject::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop) const
 {
-    return { enclosingLayoutRect(m_viewport).height(), logicalTop, ComputedMarginValues() };
+    auto viewportRect = enclosingLayoutRect(m_viewport);
+    return { writingMode().isHorizontal() ? viewportRect.height() : viewportRect.width(), logicalTop, ComputedMarginValues() };
 }
 
 void RenderSVGForeignObject::layout()
