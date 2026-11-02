@@ -33,7 +33,7 @@
 namespace WTF {
 
 template<typename Type>
-inline Type unalignedLoad(const void* pointer)
+SUPPRESS_NODELETE NODELETE inline Type unalignedLoad(const void* pointer)
 {
     static_assert(std::is_trivially_copyable<Type>::value);
     Type result { };
@@ -44,7 +44,7 @@ inline Type unalignedLoad(const void* pointer)
 }
 
 template<typename Type>
-inline void unalignedStore(void* pointer, Type value)
+SUPPRESS_NODELETE NODELETE inline void unalignedStore(void* pointer, Type value)
 {
     static_assert(std::is_trivially_copyable<Type>::value);
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

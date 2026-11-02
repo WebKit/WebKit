@@ -55,7 +55,7 @@ class PowersOfTenCache {
   // The given decimal_exponent must satisfy
   //   kMinDecimalExponent <= requested_exponent, and
   //   requested_exponent < kMaxDecimalExponent + kDecimalExponentDistance.
-  static void LEGACY_NODELETE GetCachedPowerForDecimalExponent(int requested_exponent,
+  NODELETE static void GetCachedPowerForDecimalExponent(int requested_exponent,
                                                DiyFp* power,
                                                int* found_exponent);
 };

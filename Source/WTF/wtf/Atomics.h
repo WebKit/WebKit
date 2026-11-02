@@ -152,7 +152,7 @@ inline void compilerFence()
 // below a later load. Every CPU we support already orders the underlying atomic instructions as MemoryOrder
 // documents.
 template<MemoryOrder order>
-SUPPRESS_NODELETE ALWAYS_INLINE void LEGACY_NODELETE compilerFenceBefore()
+NODELETE SUPPRESS_NODELETE ALWAYS_INLINE void compilerFenceBefore()
 {
     if constexpr (order == MemoryOrder::FullyFenced)
         compilerFence();
@@ -161,7 +161,7 @@ SUPPRESS_NODELETE ALWAYS_INLINE void LEGACY_NODELETE compilerFenceBefore()
 }
 
 template<MemoryOrder order>
-SUPPRESS_NODELETE ALWAYS_INLINE void LEGACY_NODELETE compilerFenceAfter()
+NODELETE SUPPRESS_NODELETE ALWAYS_INLINE void compilerFenceAfter()
 {
     if constexpr (order == MemoryOrder::FullyFenced)
         compilerFence();

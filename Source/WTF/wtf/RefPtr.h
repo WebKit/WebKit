@@ -410,7 +410,7 @@ inline RefPtr<match_constness_t<Source, Target>, TargetPtrTraits, TargetRefDeref
 }
 
 template<typename T, typename U>
-SUPPRESS_NODELETE ALWAYS_INLINE void LEGACY_NODELETE lazyInitialize(const RefPtr<T>& ptr, Ref<U>&& obj)
+NODELETE SUPPRESS_NODELETE ALWAYS_INLINE void lazyInitialize(const RefPtr<T>& ptr, Ref<U>&& obj)
 {
     RELEASE_ASSERT(!ptr);
     const_cast<RefPtr<T>&>(ptr) = WTF::move(obj);

@@ -99,12 +99,12 @@ public:
     }
     
     // Asserts that the time is of the type you want.
-    WTF_EXPORT_PRIVATE WallTime LEGACY_NODELETE wallTime() const;
-    WTF_EXPORT_PRIVATE MonotonicTime LEGACY_NODELETE monotonicTime() const;
-    WTF_EXPORT_PRIVATE ApproximateTime LEGACY_NODELETE approximateTime() const;
-    WTF_EXPORT_PRIVATE ContinuousTime LEGACY_NODELETE continuousTime() const;
-    WTF_EXPORT_PRIVATE ContinuousApproximateTime LEGACY_NODELETE continuousApproximateTime() const;
-    WTF_EXPORT_PRIVATE UnbarrieredMonotonicTime LEGACY_NODELETE unbarrieredMonotonicTime() const;
+    NODELETE WTF_EXPORT_PRIVATE WallTime wallTime() const;
+    NODELETE WTF_EXPORT_PRIVATE MonotonicTime monotonicTime() const;
+    NODELETE WTF_EXPORT_PRIVATE ApproximateTime approximateTime() const;
+    NODELETE WTF_EXPORT_PRIVATE ContinuousTime continuousTime() const;
+    NODELETE WTF_EXPORT_PRIVATE ContinuousApproximateTime continuousApproximateTime() const;
+    NODELETE WTF_EXPORT_PRIVATE UnbarrieredMonotonicTime unbarrieredMonotonicTime() const;
 
     WTF_EXPORT_PRIVATE WallTime approximateWallTime() const;
     WTF_EXPORT_PRIVATE MonotonicTime approximateMonotonicTime() const;
@@ -113,14 +113,14 @@ public:
     bool isInfinity() const { return std::isinf(m_value); }
     bool isFinite() const { return std::isfinite(m_value); }
 
-    explicit LEGACY_NODELETE operator bool() const { return !!m_value; }
+    NODELETE explicit operator bool() const { return !!m_value; }
     
     TimeWithDynamicClockType operator+(Seconds other) const
     {
         return withSameClockAndRawSeconds(m_value + other.value());
     }
     
-    TimeWithDynamicClockType LEGACY_NODELETE operator-(Seconds other) const
+    NODELETE TimeWithDynamicClockType operator-(Seconds other) const
     {
         return withSameClockAndRawSeconds(m_value - other.value());
     }
@@ -142,12 +142,12 @@ public:
         return *this = *this - other;
     }
     
-    WTF_EXPORT_PRIVATE Seconds LEGACY_NODELETE operator-(const TimeWithDynamicClockType&) const;
+    NODELETE WTF_EXPORT_PRIVATE Seconds operator-(const TimeWithDynamicClockType&) const;
     
     friend bool operator==(const TimeWithDynamicClockType&, const TimeWithDynamicClockType&) = default;
     
     // To do relative comparisons, you must be using times with the same clock type.
-    WTF_EXPORT_PRIVATE friend std::partial_ordering LEGACY_NODELETE operator<=>(const TimeWithDynamicClockType&, const TimeWithDynamicClockType&);
+    WTF_EXPORT_PRIVATE friend std::partial_ordering operator<=>(const TimeWithDynamicClockType&, const TimeWithDynamicClockType&);
     
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
     
@@ -155,6 +155,8 @@ private:
     double m_value { 0 };
     ClockType m_type { ClockType::Wall };
 };
+
+NODELETE WTF_EXPORT_PRIVATE std::partial_ordering operator<=>(const TimeWithDynamicClockType&, const TimeWithDynamicClockType&);
 
 WTF_EXPORT_PRIVATE void sleep(const TimeWithDynamicClockType&);
 

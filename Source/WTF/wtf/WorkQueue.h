@@ -80,7 +80,7 @@ protected:
     uint32_t m_threadID { 0 };
 private:
     void platformInitialize(ASCIILiteral name, Type, QOS);
-    void LEGACY_NODELETE platformInvalidate();
+    NODELETE void platformInvalidate();
 };
 
 /**
@@ -93,7 +93,7 @@ private:
 class WTF_CAPABILITY("is current") WTF_EXPORT_PRIVATE WorkQueue : public WorkQueueBase, public GuaranteedSerialFunctionDispatcher {
 public:
     static WorkQueue& mainSingleton();
-    static Ref<WorkQueue> LEGACY_NODELETE create(ASCIILiteral name, QOS = QOS::Default);
+    NODELETE static Ref<WorkQueue> create(ASCIILiteral name, QOS = QOS::Default);
 
 
     // WorkQueueBase
@@ -122,7 +122,7 @@ private:
  */
 class WTF_EXPORT_PRIVATE ConcurrentWorkQueue final : public WorkQueueBase, public FunctionDispatcher, public ThreadSafeRefCounted<ConcurrentWorkQueue> {
 public:
-    static Ref<ConcurrentWorkQueue> LEGACY_NODELETE create(ASCIILiteral name, QOS = QOS::Default);
+    NODELETE static Ref<ConcurrentWorkQueue> create(ASCIILiteral name, QOS = QOS::Default);
     static void apply(size_t iterations, WTF::Function<void(size_t index)>&&);
     void dispatch(Function<void()>&&) override;
 

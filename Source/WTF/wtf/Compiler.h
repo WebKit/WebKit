@@ -597,8 +597,13 @@
 
 // Add this annotation to a function when the function does not run any destruct a heap allocated object.
 // Static analyzer does not require the use of smart pointers in the code which calls a function with this annotation.
+// Only enabled for the static analyzer since [[clang::annotate]] forces the emission of every annotated inline function.
 #ifndef NODELETE
+#if defined(__clang_analyzer__)
 #define NODELETE [[clang::annotate("webkit.nodelete")]]
+#else
+#define NODELETE
+#endif
 #endif
 
 // Add this annotation to right after the return type of a function when the function does not run any destructor or free memory.

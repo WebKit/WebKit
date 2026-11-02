@@ -40,23 +40,23 @@
 namespace WTF {
 
 static Lock languagesLock;
-static Vector<String>& LEGACY_NODELETE cachedFullPlatformPreferredLanguages() WTF_REQUIRES_LOCK(languagesLock)
+NODELETE static Vector<String>& cachedFullPlatformPreferredLanguages() WTF_REQUIRES_LOCK(languagesLock)
 {
     static NeverDestroyed<Vector<String>> languages;
     return languages;
 }
-static Vector<String>& LEGACY_NODELETE cachedMinimizedPlatformPreferredLanguages() WTF_REQUIRES_LOCK(languagesLock)
+NODELETE static Vector<String>& cachedMinimizedPlatformPreferredLanguages() WTF_REQUIRES_LOCK(languagesLock)
 {
     static NeverDestroyed<Vector<String>> languages;
     return languages;
 }
-static Vector<String>& LEGACY_NODELETE preferredLanguagesOverride() WTF_REQUIRES_LOCK(languagesLock)
+NODELETE static Vector<String>& preferredLanguagesOverride() WTF_REQUIRES_LOCK(languagesLock)
 {
     static NeverDestroyed<Vector<String>> override;
     return override;
 }
 static std::optional<bool> cachedUserPrefersSimplifiedChinese WTF_GUARDED_BY_LOCK(languagesLock);
-static String& LEGACY_NODELETE cachedUserPreferredChineseLocale() WTF_REQUIRES_LOCK(languagesLock)
+NODELETE static String& cachedUserPreferredChineseLocale() WTF_REQUIRES_LOCK(languagesLock)
 {
     static NeverDestroyed<String> locale;
     return locale;
@@ -64,7 +64,7 @@ static String& LEGACY_NODELETE cachedUserPreferredChineseLocale() WTF_REQUIRES_L
 
 static Lock observerMapLock;
 using ObserverMap = HashMap<void*, LanguageChangeObserverFunction>;
-static ObserverMap& LEGACY_NODELETE observerMap() WTF_REQUIRES_LOCK(observerMapLock)
+NODELETE static ObserverMap& observerMap() WTF_REQUIRES_LOCK(observerMapLock)
 {
     static NeverDestroyed<ObserverMap> map;
     return map.get();

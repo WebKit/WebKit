@@ -43,7 +43,7 @@ using URLDecodeFunction = String(*)(const String&);
 WTF_EXPORT_PRIVATE String userVisibleURL(std::span<const char8_t> URL);
 void loadIDNAllowedScriptList();
 void addScriptToIDNAllowedScriptList(const char* scriptName);
-void LEGACY_NODELETE initializeDefaultIDNAllowedScriptList();
+NODELETE void initializeDefaultIDNAllowedScriptList();
 std::optional<String> mapHostName(const String&, URLDecodeFunction);
 String mapHostNames(const String&, URLDecodeFunction);
 

@@ -52,7 +52,7 @@ public:
 
     RegisteredSymbolImpl* asRegisteredSymbolImpl();
 
-    WTF_EXPORT_PRIVATE static Ref<SymbolImpl> LEGACY_NODELETE createNullSymbol();
+    NODELETE WTF_EXPORT_PRIVATE static Ref<SymbolImpl> createNullSymbol();
     WTF_EXPORT_PRIVATE static Ref<SymbolImpl> create(StringImpl& rep);
 
     class StaticSymbolImpl final : private StringImplShape {
@@ -71,7 +71,7 @@ public:
     };
 
 protected:
-    WTF_EXPORT_PRIVATE static unsigned LEGACY_NODELETE nextHashForSymbol();
+    NODELETE WTF_EXPORT_PRIVATE static unsigned nextHashForSymbol();
 
     friend class StringImpl;
 

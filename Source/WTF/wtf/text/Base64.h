@@ -53,11 +53,11 @@ struct Base64Specification {
 // Rather than being perfectly precise, this is a bit conservative.
 static constexpr unsigned maximumBase64EncoderInputBufferSize = std::numeric_limits<unsigned>::max() / 77 * 76 / 4 * 3 - 2;
 
-WTF_EXPORT_PRIVATE unsigned LEGACY_NODELETE calculateBase64EncodedSize(size_t inputLength, OptionSet<Base64EncodeOption>);
+NODELETE WTF_EXPORT_PRIVATE unsigned calculateBase64EncodedSize(size_t inputLength, OptionSet<Base64EncodeOption>);
 
 template<typename CharacterType> bool isBase64OrBase64URLCharacter(CharacterType);
 
-WTF_EXPORT_PRIVATE void LEGACY_NODELETE base64Encode(std::span<const std::byte>, std::span<char16_t>, OptionSet<Base64EncodeOption> = { });
+NODELETE WTF_EXPORT_PRIVATE void base64Encode(std::span<const std::byte>, std::span<char16_t>, OptionSet<Base64EncodeOption> = { });
 WTF_EXPORT_PRIVATE void base64Encode(std::span<const std::byte>, std::span<Latin1Character>, OptionSet<Base64EncodeOption> = { });
 
 WTF_EXPORT_PRIVATE Vector<uint8_t> base64EncodeToVector(std::span<const std::byte>, OptionSet<Base64EncodeOption> = { });

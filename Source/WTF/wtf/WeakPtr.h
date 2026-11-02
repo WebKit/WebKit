@@ -155,13 +155,13 @@ public:
     bool operator!() const { return !m_impl || !*m_impl; }
     explicit operator bool() const { return m_impl && *m_impl; }
 
-    SUPPRESS_NODELETE WeakPtr& LEGACY_NODELETE operator=(const WeakPtr&) = default;
-    SUPPRESS_NODELETE WeakPtr& LEGACY_NODELETE operator=(WeakPtr&&) = default;
-    SUPPRESS_NODELETE WeakPtr& LEGACY_NODELETE operator=(std::nullptr_t) { m_impl = nullptr; return *this; }
-    template<typename U> WeakPtr& LEGACY_NODELETE operator=(const WeakPtr<U, WeakPtrImpl, PtrTraits>&);
-    template<typename U> WeakPtr& LEGACY_NODELETE operator=(WeakPtr<U, WeakPtrImpl, PtrTraits>&&);
-    template<typename U> WeakPtr& LEGACY_NODELETE operator=(const WeakRef<U, WeakPtrImpl>&);
-    template<typename U> WeakPtr& LEGACY_NODELETE operator=(WeakRef<U, WeakPtrImpl>&&);
+    NODELETE SUPPRESS_NODELETE WeakPtr& operator=(const WeakPtr&) = default;
+    NODELETE SUPPRESS_NODELETE WeakPtr& operator=(WeakPtr&&) = default;
+    NODELETE SUPPRESS_NODELETE WeakPtr& operator=(std::nullptr_t) { m_impl = nullptr; return *this; }
+    template<typename U> NODELETE WeakPtr& operator=(const WeakPtr<U, WeakPtrImpl, PtrTraits>&);
+    template<typename U> NODELETE WeakPtr& operator=(WeakPtr<U, WeakPtrImpl, PtrTraits>&&);
+    template<typename U> NODELETE WeakPtr& operator=(const WeakRef<U, WeakPtrImpl>&);
+    template<typename U> NODELETE WeakPtr& operator=(WeakRef<U, WeakPtrImpl>&&);
 
     T* operator->() const
     {

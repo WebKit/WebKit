@@ -58,13 +58,13 @@ void MemoryPressureHandler::platformReleaseMemory(Critical critical)
     }
 }
 
-static OSObjectPtr<dispatch_source_t>& LEGACY_NODELETE memoryPressureEventSource()
+NODELETE static OSObjectPtr<dispatch_source_t>& memoryPressureEventSource()
 {
     static NeverDestroyed<OSObjectPtr<dispatch_source_t>> source;
     return source.get();
 }
 
-static OSObjectPtr<dispatch_source_t>& LEGACY_NODELETE timerEventSource()
+NODELETE static OSObjectPtr<dispatch_source_t>& timerEventSource()
 {
     static NeverDestroyed<OSObjectPtr<dispatch_source_t>> source;
     return source.get();

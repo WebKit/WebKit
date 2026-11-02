@@ -36,7 +36,7 @@ public:
 
 private:
     MainThreadDispatcher() = default;
-    bool LEGACY_NODELETE isCurrent() const final;
+    NODELETE bool isCurrent() const final;
     void dispatch(Function<void ()>&&) final;
     void dispatchAfter(Seconds, Function<void ()>&&) final;
 };

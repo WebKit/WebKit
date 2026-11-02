@@ -84,7 +84,7 @@ struct Config {
     WTF_EXPORT_PRIVATE static void permanentlyFreeze();
     WTF_EXPORT_PRIVATE static void initialize();
     WTF_EXPORT_PRIVATE static void finalize();
-    WTF_EXPORT_PRIVATE static void LEGACY_NODELETE disableFreezingForTesting();
+    NODELETE WTF_EXPORT_PRIVATE static void disableFreezingForTesting();
 
     struct AssertNotFrozenScope {
         AssertNotFrozenScope();

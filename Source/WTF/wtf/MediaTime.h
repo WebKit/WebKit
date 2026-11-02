@@ -58,29 +58,29 @@ public:
     constexpr MediaTime(int64_t value, uint32_t scale, uint8_t flags = Valid);
     MediaTime(const MediaTime&) = default;
 
-    static MediaTime LEGACY_NODELETE createWithFloat(float floatTime);
-    static MediaTime LEGACY_NODELETE createWithFloat(float floatTime, uint32_t timeScale);
-    static MediaTime LEGACY_NODELETE createWithDouble(double doubleTime);
+    NODELETE static MediaTime createWithFloat(float floatTime);
+    NODELETE static MediaTime createWithFloat(float floatTime, uint32_t timeScale);
+    NODELETE static MediaTime createWithDouble(double doubleTime);
     static MediaTime createWithDouble(double doubleTime, uint32_t timeScale);
     static MediaTime createWithSeconds(Seconds seconds) { return createWithDouble(seconds.value()); }
 
-    float LEGACY_NODELETE toFloat() const;
-    double LEGACY_NODELETE toDouble() const;
-    int64_t LEGACY_NODELETE toMicroseconds() const;
+    NODELETE float toFloat() const;
+    NODELETE double toDouble() const;
+    NODELETE int64_t toMicroseconds() const;
 
-    MediaTime& LEGACY_NODELETE operator=(const MediaTime&) = default;
+    NODELETE MediaTime& operator=(const MediaTime&) = default;
     MediaTime& operator+=(const MediaTime& rhs) { return *this = *this + rhs; }
     MediaTime& operator-=(const MediaTime& rhs) { return *this = *this - rhs; }
     MediaTime operator+(const MediaTime& rhs) const;
     MediaTime operator-(const MediaTime& rhs) const;
-    MediaTime LEGACY_NODELETE operator-() const;
+    NODELETE MediaTime operator-() const;
     MediaTime operator*(int32_t) const;
-    bool LEGACY_NODELETE operator!() const;
-    explicit operator bool LEGACY_NODELETE () const;
+    NODELETE bool operator!() const;
+    NODELETE explicit operator bool() const;
 
-    WTF_EXPORT_PRIVATE friend std::partial_ordering LEGACY_NODELETE operator<=>(const MediaTime&, const MediaTime&);
+    WTF_EXPORT_PRIVATE friend std::partial_ordering operator<=>(const MediaTime&, const MediaTime&);
     friend bool operator==(const MediaTime& a, const MediaTime& b) { return is_eq(a <=> b); }
-    bool LEGACY_NODELETE isBetween(const MediaTime&, const MediaTime&) const;
+    NODELETE bool isBetween(const MediaTime&, const MediaTime&) const;
 
     bool isValid() const { return m_timeFlags & Valid; }
     bool isInvalid() const { return !isValid(); }
@@ -92,11 +92,11 @@ public:
     bool hasDoubleValue() const { return m_timeFlags & DoubleValue; }
     uint8_t timeFlags() const { return m_timeFlags; }
 
-    static const MediaTime& LEGACY_NODELETE zeroTime();
-    static const MediaTime& LEGACY_NODELETE invalidTime();
-    static const MediaTime& LEGACY_NODELETE positiveInfiniteTime();
-    static const MediaTime& LEGACY_NODELETE negativeInfiniteTime();
-    static const MediaTime& LEGACY_NODELETE indefiniteTime();
+    NODELETE static const MediaTime& zeroTime();
+    NODELETE static const MediaTime& invalidTime();
+    NODELETE static const MediaTime& positiveInfiniteTime();
+    NODELETE static const MediaTime& negativeInfiniteTime();
+    NODELETE static const MediaTime& indefiniteTime();
 
     int64_t timeValue() const { return m_timeValue; }
     uint32_t timeScale() const { return m_timeScale; }
@@ -112,7 +112,7 @@ public:
     operator int() const = delete;
     MediaTime(int) = delete;
 
-    friend WTF_EXPORT_PRIVATE MediaTime LEGACY_NODELETE abs(const MediaTime& rhs);
+    friend WTF_EXPORT_PRIVATE MediaTime abs(const MediaTime& rhs);
 
     static const uint32_t DefaultTimeScale = 10000000;
     static const uint32_t MaximumTimeScale;
@@ -126,7 +126,7 @@ public:
     };
 
     MediaTime toTimeScale(uint32_t, RoundingFlags = RoundingFlags::HalfAwayFromZero) const;
-    MediaTime LEGACY_NODELETE isolatedCopy() const;
+    NODELETE MediaTime isolatedCopy() const;
 
 private:
     void setTimeScale(uint32_t, RoundingFlags = RoundingFlags::HalfAwayFromZero);
@@ -169,7 +169,9 @@ constexpr MediaTime::MediaTime(int64_t value, uint32_t scale, uint8_t flags)
 
 inline MediaTime operator*(int32_t lhs, const MediaTime& rhs) { return rhs.operator*(lhs); }
 
-WTF_EXPORT_PRIVATE extern MediaTime abs(const MediaTime& rhs);
+NODELETE WTF_EXPORT_PRIVATE std::partial_ordering operator<=>(const MediaTime&, const MediaTime&);
+
+NODELETE WTF_EXPORT_PRIVATE extern MediaTime abs(const MediaTime& rhs);
 
 struct WTF_EXPORT_PRIVATE MediaTimeRange {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MediaTimeRange);

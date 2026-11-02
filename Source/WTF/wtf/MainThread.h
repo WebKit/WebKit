@@ -52,7 +52,7 @@ WTF_EXPORT_PRIVATE void dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded(void 
 WTF_EXPORT_PRIVATE void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)());
 #endif
 
-WTF_EXPORT_PRIVATE bool LEGACY_NODELETE isMainThread();
+NODELETE WTF_EXPORT_PRIVATE bool isMainThread();
 
 WTF_EXPORT_PRIVATE bool canCurrentThreadAccessThreadLocalData(Thread&);
 WTF_EXPORT_PRIVATE bool canCurrentThreadIDAccessThreadLocalData(uint32_t);
@@ -72,7 +72,7 @@ inline bool isWebThread() { return isMainThread(); }
 inline bool isUIThread() { return isMainThread(); }
 #endif // USE(WEB_THREAD)
 
-WTF_EXPORT_PRIVATE bool LEGACY_NODELETE isMainThreadOrGCThread();
+NODELETE WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
 
 // NOTE: these functions are internal to the callOnMainThread implementation.
 void initializeMainThreadPlatform();

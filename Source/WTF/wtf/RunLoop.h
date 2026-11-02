@@ -97,7 +97,7 @@ public:
 #endif
 
     WTF_EXPORT_PRIVATE static RunLoop& currentSingleton();
-    WTF_EXPORT_PRIVATE static RunLoop& LEGACY_NODELETE mainSingleton();
+    NODELETE WTF_EXPORT_PRIVATE static RunLoop& mainSingleton();
 #if USE(WEB_THREAD)
     WTF_EXPORT_PRIVATE static RunLoop& webSingleton();
     WTF_EXPORT_PRIVATE static RunLoop* webIfExists();

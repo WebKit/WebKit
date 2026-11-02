@@ -92,7 +92,7 @@ public:
 
     // DefaultWeakPtrImpl is an implementation detail of WeakPtr.
     // Deleting this object does not logically result in destruction of a user object.
-    SUPPRESS_NODELETE void LEGACY_NODELETE deref() const {
+    NODELETE SUPPRESS_NODELETE void deref() const {
         WeakPtrImplBase<DefaultWeakPtrImpl>::deref();
     }
 };
@@ -169,7 +169,7 @@ public:
 
     // SingleThreadWeakPtrImpl is an implementation detail of SingleThreadWeakPtr.
     // Deleting this object does not logically result in destruction of a user object.
-    SUPPRESS_NODELETE void LEGACY_NODELETE deref() const {
+    NODELETE SUPPRESS_NODELETE void deref() const {
         WeakPtrImplBaseSingleThread<SingleThreadWeakPtrImpl>::deref();
     }
 };
