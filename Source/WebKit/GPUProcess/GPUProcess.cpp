@@ -524,10 +524,15 @@ void GPUProcess::recomputeNowPlayingOwner()
     m_activeNowPlayingOwner = eligibleOwner;
     m_remoteCommandTarget = commandTarget;
 
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     // The UI process owns the per-page "is the NowPlaying session" state, so it hears the election result
     // directly rather than through the content processes, none of which can see the whole picture.
     if (ownerPage != previousOwnerPage)
         protect(parentProcessConnection())->send(Messages::GPUProcessProxy::NowPlayingOwnerDidChange(ownerPage), 0);
+#else
+    UNUSED_VARIABLE(ownerPage);
+    UNUSED_VARIABLE(previousOwnerPage);
+#endif
 }
 
 void GPUProcess::setNowPlayingFallbackSession(std::optional<WebCore::QualifiedMediaSessionIdentifier> session)

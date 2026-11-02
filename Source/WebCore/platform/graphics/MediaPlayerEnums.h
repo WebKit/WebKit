@@ -187,6 +187,13 @@ enum class MediaPlayerScope : uint8_t {
     Supports,
 };
 
+enum class MediaPlatformType {
+    Mock,
+    AVFObjC,
+    GStreamer,
+    Remote
+};
+
 } // namespace WebCore
 
 

@@ -162,13 +162,6 @@ struct SeekTarget {
     WEBCORE_EXPORT String toString() const;
 };
 
-enum class MediaPlatformType {
-    Mock,
-    AVFObjC,
-    GStreamer,
-    Remote
-};
-
 enum class MediaPlayerType {
     Null,
     Mock,
