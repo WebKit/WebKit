@@ -196,6 +196,19 @@ class MiscTests(Base):
                         "expectations:2 Path does not exist. non-existent-test.html")
             self.assertEqual(str(e), warnings)
 
+    def test_disabled_fallback_removed_now_warns(self):
+        # The dead `-disabled` fallback is gone: a test present only as
+        # `<name>-disabled` on disk (i.e. renamed to disable it, per the old
+        # convention) now warns as missing rather than being silently
+        # accepted.
+        try:
+            filesystem = self._port.host.filesystem
+            filesystem.write_text_file(filesystem.join(self._port.layout_tests_dir(), 'renamed.html-disabled'), 'content')
+            self.parse_exp("Bug(rniwa) renamed.html [ Failure ]", is_lint_mode=True)
+            self.assertFalse(True, "ParseError wasn't raised")
+        except ParseError as e:
+            self.assertEqual(str(e), "expectations:1 Path does not exist. renamed.html")
+
     def test_parse_warnings_are_logged_if_not_in_lint_mode(self):
         with OutputCapture() as captured:
             self.parse_exp('-- this should be a syntax error', is_lint_mode=False)
