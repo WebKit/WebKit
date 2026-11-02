@@ -1,0 +1,30 @@
+
+PASS rect rx: valueAsString = "-20" does not throw
+PASS rect rx: value = -20 does not throw
+PASS rect rx: newValueSpecifiedUnits(PX, -20) does not throw
+PASS rect rx: valueAsString = "rubbish" still throws a SyntaxError
+PASS rect ry: valueAsString = "-20" does not throw
+PASS rect ry: value = -20 does not throw
+PASS rect ry: newValueSpecifiedUnits(PX, -20) does not throw
+PASS rect ry: valueAsString = "rubbish" still throws a SyntaxError
+PASS rect width: valueAsString = "-20" does not throw
+PASS rect width: value = -20 does not throw
+PASS rect width: newValueSpecifiedUnits(PX, -20) does not throw
+PASS rect width: valueAsString = "rubbish" still throws a SyntaxError
+PASS rect height: valueAsString = "-20" does not throw
+PASS rect height: value = -20 does not throw
+PASS rect height: newValueSpecifiedUnits(PX, -20) does not throw
+PASS rect height: valueAsString = "rubbish" still throws a SyntaxError
+PASS ellipse rx: valueAsString = "-20" does not throw
+PASS ellipse rx: value = -20 does not throw
+PASS ellipse rx: newValueSpecifiedUnits(PX, -20) does not throw
+PASS ellipse rx: valueAsString = "rubbish" still throws a SyntaxError
+PASS ellipse ry: valueAsString = "-20" does not throw
+PASS ellipse ry: value = -20 does not throw
+PASS ellipse ry: newValueSpecifiedUnits(PX, -20) does not throw
+PASS ellipse ry: valueAsString = "rubbish" still throws a SyntaxError
+PASS circle r: valueAsString = "-20" does not throw
+PASS circle r: value = -20 does not throw
+PASS circle r: newValueSpecifiedUnits(PX, -20) does not throw
+PASS circle r: valueAsString = "rubbish" still throws a SyntaxError
+

@@ -115,12 +115,36 @@ class SVGAnimatedLengthAccessor final : public SVGAnimatedPropertyAccessor<Owner
     using Base::property;
 
 public:
-    using Base::Base;
+    SVGAnimatedLengthAccessor(const Ref<SVGAnimatedLength> OwnerType::*property, SVGLengthNegativeValuesMode negativeValuesMode, ASCIILiteral initialValue)
+        : Base(property)
+        , m_negativeValuesMode(negativeValuesMode)
+        , m_initialValue(initialValue)
+    {
+    }
+
+    // property stays a template argument so that each attribute gets its own singleton.
     template<auto property>
-    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedLengthAccessor, property>(); }
+    static const SVGMemberAccessor<OwnerType>& singleton(SVGLengthNegativeValuesMode negativeValuesMode, ASCIILiteral initialValue)
+    {
+        static NeverDestroyed<SVGAnimatedLengthAccessor> propertyAccessor { property, negativeValuesMode, initialValue };
+        return propertyAccessor;
+    }
 
 private:
     bool isAnimatedLength() const override { return true; }
+
+    bool isBaseValOutOfRange(const OwnerType& owner) const final
+    {
+        return m_negativeValuesMode == SVGLengthNegativeValuesMode::Forbid && property(owner)->baseVal()->value().valueInSpecifiedUnits() < 0;
+    }
+
+    // The length mode is the one the property was born with, so only the text is stored here.
+    void resetBaseVal(const OwnerType& owner) const final
+    {
+        Ref animatedLength = property(owner);
+        auto lengthMode = animatedLength->baseVal()->value().lengthMode();
+        animatedLength->setBaseValInternal(m_initialValue.isNull() ? SVGLengthValue(lengthMode) : SVGLengthValue(lengthMode, m_initialValue));
+    }
 
     RefPtr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
     {
@@ -132,6 +156,9 @@ private:
     {
         downcast<SVGAnimatedLengthAnimator>(animator).appendAnimatedInstance(property(owner));
     }
+
+    const SVGLengthNegativeValuesMode m_negativeValuesMode;
+    const ASCIILiteral m_initialValue;
 };
 
 template<typename OwnerType>

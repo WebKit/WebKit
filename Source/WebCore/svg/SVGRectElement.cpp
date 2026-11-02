@@ -49,10 +49,10 @@ inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document& do
         didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGRectElement::m_x>();
         PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGRectElement::m_y>();
-        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGRectElement::m_width>();
-        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGRectElement::m_height>();
-        PropertyRegistry::registerProperty<SVGNames::rxAttr, &SVGRectElement::m_rx>();
-        PropertyRegistry::registerProperty<SVGNames::ryAttr, &SVGRectElement::m_ry>();
+        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGRectElement::m_width>(SVGLengthNegativeValuesMode::Forbid);
+        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGRectElement::m_height>(SVGLengthNegativeValuesMode::Forbid);
+        PropertyRegistry::registerProperty<SVGNames::rxAttr, &SVGRectElement::m_rx>(SVGLengthNegativeValuesMode::Forbid);
+        PropertyRegistry::registerProperty<SVGNames::ryAttr, &SVGRectElement::m_ry>(SVGLengthNegativeValuesMode::Forbid);
     }
 }
 

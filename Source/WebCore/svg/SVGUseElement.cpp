@@ -71,8 +71,8 @@ inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document& docu
         didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGUseElement::m_x>();
         PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGUseElement::m_y>();
-        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGUseElement::m_width>();
-        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGUseElement::m_height>();
+        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGUseElement::m_width>(SVGLengthNegativeValuesMode::Forbid);
+        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGUseElement::m_height>(SVGLengthNegativeValuesMode::Forbid);
     }
 }
 

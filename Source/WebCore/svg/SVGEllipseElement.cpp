@@ -47,8 +47,8 @@ inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Docume
         didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::cxAttr, &SVGEllipseElement::m_cx>();
         PropertyRegistry::registerProperty<SVGNames::cyAttr, &SVGEllipseElement::m_cy>();
-        PropertyRegistry::registerProperty<SVGNames::rxAttr, &SVGEllipseElement::m_rx>();
-        PropertyRegistry::registerProperty<SVGNames::ryAttr, &SVGEllipseElement::m_ry>();
+        PropertyRegistry::registerProperty<SVGNames::rxAttr, &SVGEllipseElement::m_rx>(SVGLengthNegativeValuesMode::Forbid);
+        PropertyRegistry::registerProperty<SVGNames::ryAttr, &SVGEllipseElement::m_ry>(SVGLengthNegativeValuesMode::Forbid);
     }
 }    
 
