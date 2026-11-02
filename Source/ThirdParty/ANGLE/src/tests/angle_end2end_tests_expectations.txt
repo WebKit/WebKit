@@ -2563,7 +2563,6 @@
 42266907 WGPU : DebugMarkerTest.Rendering/* = SKIP
 42266907 WGPU : DepthStencilFormatsTest.DepthBuffer16/* = SKIP
 42266907 WGPU : DepthStencilTest.StencilOnlyEmulatedWithPacked/* = SKIP
-42267100 WGPU : GLSLTest.SwizzledChainedAssignIncrement/* = SKIP
 42267100 WGPU : GLSLTest.MaxVaryingVec4_TwoBuiltins/* = SKIP
 42267100 WGPU : GLSLTest.MaxVaryingVec4_ThreeBuiltins/* = SKIP
 42267100 WGPU : GLSLTest.MaxVaryingVec3Array/* = SKIP
