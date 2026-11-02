@@ -1182,6 +1182,8 @@ bool RenderBlockFlow::layoutUsingBlockFormattingContext(RelayoutChildren relayou
     if (!LayoutIntegration::canUseForBlockLayout(*this))
         return false;
 
+    // Like layoutBlockChildren and layoutInlineChildren.
+    layoutExcludedChildren(relayoutChildren);
     LayoutIntegration::BlockLayout { *this }.layout(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
     return true;
 }
